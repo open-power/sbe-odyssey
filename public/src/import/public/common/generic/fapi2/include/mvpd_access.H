@@ -65,6 +65,31 @@ ReturnCode getMvpdField(const MvpdRecord i_record,
                         uint32_t& io_fieldSize);
 
 ///
+/// @brief Get Module VPD field.
+///
+/// A Module VPD field is specified using a record and keyword enumerator
+///
+/// Suggested way to call this routine is to call it once with a NULL buffer
+/// pointer to to retrieve the size of the record, then allocate the proper
+/// size of the buffer and call again.
+///
+/// @param[in] i_record     Record enumerator
+/// @param[in] i_keyword    Keyword enumerator
+/// @param[in] i_target     Reference to hub chip target for the record
+/// @param[in] i_pBuffer    Pointer to buffer where record will be stored. If
+///                         NULL then the size of record will be stored in
+///                         io_fieldSize
+/// @param[in,out] io_fieldSize Size of i_pBuffer in bytes
+///
+/// @return fapi2::ReturnCode. FAPI_RC_SUCCESS, or failure value.
+///
+ReturnCode getMvpdField(const MvpdRecord i_record,
+                        const MvpdKeyword i_keyword,
+                        const Target<TARGET_TYPE_HUB_CHIP>& i_target,
+                        uint8_t* const i_pBuffer,
+                        uint32_t& io_fieldSize);
+
+///
 /// @brief Set Module VPD field.
 ///
 /// A Module VPD field is specified using a record and keyword enumerator
@@ -82,6 +107,26 @@ ReturnCode setMvpdField(const MvpdRecord i_record,
                         const Target<TARGET_TYPE_PROC_CHIP>& i_target,
                         const uint8_t* const i_pBuffer,
                         const uint32_t i_fieldSize);
+
+///
+/// @brief Set Module VPD field.
+///
+/// A Module VPD field is specified using a record and keyword enumerator
+///
+/// @param[in] i_record     Record enumerator
+/// @param[in] i_keyword    Keyword enumerator
+/// @param[in] i_target     Reference to hub chip target for the record
+/// @param[in] i_pBuffer    Pointer to buffer where data to set is stored
+/// @param[in] i_fieldSize  Size of i_pBuffer in bytes
+///
+/// @return fapi2::ReturnCode. FAPI_RC_SUCCESS, or failure value.
+///
+ReturnCode setMvpdField(const MvpdRecord i_record,
+                        const MvpdKeyword i_keyword,
+                        const Target<TARGET_TYPE_HUB_CHIP>& i_target,
+                        const uint8_t* const i_pBuffer,
+                        const uint32_t i_fieldSize);
 }
+
 
 #endif

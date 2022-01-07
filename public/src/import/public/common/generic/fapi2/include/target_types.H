@@ -84,8 +84,16 @@ enum TargetType : uint64_t
     TARGET_TYPE_PMIC            = 0x0000000800000000, ///< PMIC type
     TARGET_TYPE_PAUC            = 0x0000001000000000, ///< PAUC type
     TARGET_TYPE_GENERICI2CSLAVE = 0x0000002000000000, ///< GENERICI2CSLAVE type
+    TARGET_TYPE_GENERICI2CRESPONDER = 0x0000002000000000, ///< GENERICI2CRESPONDER type
     TARGET_TYPE_IOLINK          = 0x0000004000000000, ///< IOLINK type
     TARGET_TYPE_MDS_CTLR        = 0x0000008000000000, ///< MDS Media Controller type
+    TARGET_TYPE_COMPUTE_CHIP    = 0x0000010000000000, ///< Compute chip type
+    TARGET_TYPE_HUB_CHIP        = 0x0000020000000000, ///< Hub chip type
+    TARGET_TYPE_TBUSC           = 0x0000040000000000, ///< TBUS chiplet type
+    TARGET_TYPE_TBUSL           = 0x0000080000000000, ///< TBUS link type
+    TARGET_TYPE_L3CACHE         = 0x0000100000000000, ///< L3CACHE type
+    TARGET_TYPE_INT             = 0x0000200000000000, ///< INT type
+    TARGET_TYPE_NX              = 0x0000400000000000, ///< NX type
     TARGET_TYPE_MULTICAST       = 0x8000000000000000, ///< MULTICAST type
     TARGET_TYPE_ALL             = 0x7FFFFFFFFFFFFFFF, ///< Any/All types
     TARGET_TYPE_ALL_MC          = 0xFFFFFFFFFFFFFFFF, ///< Any/All types + Multicast
@@ -93,7 +101,9 @@ enum TargetType : uint64_t
     // Compound target types
     TARGET_TYPE_CHIPS         = TARGET_TYPE_PROC_CHIP |
                                 TARGET_TYPE_MEMBUF_CHIP |
-                                TARGET_TYPE_OCMB_CHIP,
+                                TARGET_TYPE_OCMB_CHIP |
+                                TARGET_TYPE_COMPUTE_CHIP |
+                                TARGET_TYPE_HUB_CHIP,
 
     TARGET_TYPE_CHIPLETS      = TARGET_TYPE_EX            |
                                 TARGET_TYPE_MBA           |
@@ -124,7 +134,12 @@ enum TargetType : uint64_t
                                 TARGET_TYPE_IOHS          |
                                 TARGET_TYPE_FC            |
                                 TARGET_TYPE_PAUC          |
-                                TARGET_TYPE_IOLINK,
+                                TARGET_TYPE_IOLINK        |
+                                TARGET_TYPE_TBUSC         |
+                                TARGET_TYPE_TBUSL         |
+                                TARGET_TYPE_L3CACHE       |
+                                TARGET_TYPE_INT           |
+                                TARGET_TYPE_NX,
 
     TARGET_TYPE_MULTICASTABLE = TARGET_TYPE_CORE   |
                                 TARGET_TYPE_EQ     |
@@ -132,7 +147,15 @@ enum TargetType : uint64_t
                                 TARGET_TYPE_MC     |
                                 TARGET_TYPE_PAUC   |
                                 TARGET_TYPE_PEC    |
-                                TARGET_TYPE_PERV,
+                                TARGET_TYPE_PERV   |
+                                TARGET_TYPE_TBUSC  |
+                                TARGET_TYPE_NX     |
+                                TARGET_TYPE_PAU    |
+                                TARGET_TYPE_L3CACHE,
+
+    TARGET_TYPE_MULTICAST_CHIP = TARGET_TYPE_PROC_CHIP  |
+                                 TARGET_TYPE_HUB_CHIP   |
+                                 TARGET_TYPE_COMPUTE_CHIP,
 
     // Mappings to target types found in the error xml files
     TARGET_TYPE_EX_CHIPLET    = TARGET_TYPE_EX,
