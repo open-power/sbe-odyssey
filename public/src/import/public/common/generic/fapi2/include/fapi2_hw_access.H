@@ -98,8 +98,8 @@ inline OpModes getOpMode(void);
 /// If the hardware supports a "broadcast" group, that must also be mapped
 /// explicitly via this function - platforms are not expected to map the
 /// broadcast group implicitly.
-template< MulticastType M, typename V >
-inline ReturnCode setMulticastGroupMap(const Target<TARGET_TYPE_PROC_CHIP, M, V>& i_chip,
+template< TargetType K, MulticastType M, typename V >
+inline ReturnCode setMulticastGroupMap(const Target<K, M, V>& i_chip,
                                        const std::vector< MulticastGroupMapping >& i_mappings);
 
 //--------------------------------------------------------------------------
@@ -186,6 +186,17 @@ inline ReturnCode modifyCfamRegister(const Target<K, M, V>& i_target,
 template< TargetType K, MulticastType M, typename V >
 ReturnCode putRing(const Target<K, M, V>& i_target,
                    const RingId_t i_ringID,
+                   const RingMode i_ringMode = RING_MODE_HEADER_CHECK);
+
+/// @brief Writes a ring to a chip.
+/// @tparam K template parameter, passed in target.
+/// @param[in] i_target   Target to operate on.
+/// @param[in] i_ringID   Ring ID name that will identify the Ring in the image.
+/// @param[in] i_ringMode Ring operation mode.
+/// @return fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
+template< TargetType K, MulticastType M, typename V >
+ReturnCode putRing(const Target<K, M, V>& i_target,
+                   const char* i_ringID,
                    const RingMode i_ringMode = RING_MODE_HEADER_CHECK);
 
 // variable_buffer isn't supported on PPE
