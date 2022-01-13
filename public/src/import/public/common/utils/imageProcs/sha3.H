@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/emb/p11/kernels/ppe/baselib/endian.h $ */
+/* $Source: public/src/import/public/common/utils/imageProcs/sha3.H $     */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2022                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,45 +22,55 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __ENDIAN_H__
-#define __ENDIAN_H__
+#ifndef SHA3_H
+#define SHA3_H
 
-#ifndef __PPE42__
-#include_next <endian.h>
-#else
+#include <stddef.h>
 #include <stdint.h>
 
-static inline uint16_t __swap16( uint16_t __u16)
-{
-    return (uint16_t)((__u16 >> 8) | (__u16) << 8);
-}
-
-static inline uint32_t __swap32(uint32_t __u32)
-{
-    uint32_t val = ((__u32 << 8) & 0xff00ff00) | ((__u32 >> 8) & 0x00ff00ff);
-    return (val << 16) | (val >> 16);
-}
-
-static inline uint64_t __swap64(uint64_t __u64)
-{
-    return __swap32(__u64 >> 32) | (uint64_t(__swap32(__u64 & 0xFFFFFFFF)) << 32);
-}
-
-#  define htobe16(x)   (x)
-#  define htole16(x) __swap16 (x)
-#  define be16toh(x)   (x)
-#  define le16toh(x) __swap16 (x)
-
-#  define htobe32(x)   (x)
-#  define htole32(x) __swap32 (x)
-#  define be32toh(x)   (x)
-#  define le32toh(x) __swap32 (x)
-
-#  define htobe64(x)   (x)
-#  define htole64(x) __swap64(x)
-#  define be64toh(x)   (x)
-#  define le64toh(x) __swap64(x)
-
+#ifndef KECCAKF_ROUNDS
+    #define KECCAKF_ROUNDS 24
 #endif
+
+#ifndef ROTL64
+    #define ROTL64(x, y) (((x) << (y)) | ((x) >> (64 - (y))))
+#endif
+
+#define SHA3_DIGEST_LENGTH 64
+
+typedef uint8_t sha3_t[SHA3_DIGEST_LENGTH];
+
+// state context
+typedef struct
+{
+    union                                   // state:
+    {
+        uint8_t b[200];                     // 8-bit bytes
+        uint64_t q[25];                     // 64-bit words
+    } st;
+    int pt, rsiz, mdlen;                    // these don't overflow
+} sha3_ctx_t;
+
+// Compression function.
+void sha3_keccakf(uint64_t st[25]);
+
+// OpenSSL - like interfece
+int sha3_init(sha3_ctx_t* c);    // mdlen = hash output in bytes
+int sha3_update(sha3_ctx_t* c, const void* data, size_t len);
+int sha3_final(sha3_t* md, sha3_ctx_t* c);    // digest goes to md
+
+// compute a sha3 hash (md) of given byte length from "in"
+void* sha3(const void* in, size_t inlen, void* md, int mdlen);
+
+// SHAKE128 and SHAKE256 extensible-output functions
+//#define shake128_init(c) sha3_init(c, 16)
+//#define shake256_init(c) sha3_init(c, 32)
+//#define shake_update sha3_update
+
+//void shake_xof(sha3_ctx_t *c);
+//void shake_out(sha3_ctx_t *c, void *out, size_t len);
+
+void SHA3_dump(sha3_t* result);
+
 
 #endif

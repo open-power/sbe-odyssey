@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/emb/p11/kernels/ppe/baselib/endian.h $ */
+/* $Source: public/src/import/public/common/utils/imageProcs/archive_config.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2022                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,45 +22,74 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __ENDIAN_H__
-#define __ENDIAN_H__
+#pragma once
 
-#ifndef __PPE42__
-#include_next <endian.h>
+// __PPE42__ is emitted by the PPE compiler
+// __PPE__ is defined in SBE code
+
+#ifdef __PPE42__
+    #include "ppe42_string.h"
 #else
-#include <stdint.h>
+    #include <string.h>
+#endif
 
-static inline uint16_t __swap16( uint16_t __u16)
+
+#if defined(__PPE__) && !defined(__PPE_QME)
+
+#define __SBE_PPE__
+#define __USE_COMPRESSION__
+#define __USE_SHA3__
+#define __USE_HWP_STREAM__
+
+#include "sbetrace.H"
+#include "sbe_sp_intf.H"
+#include "crypto_rom.H"
+
+#define ARC_ERROR(...) SBE_ERROR(__VA_ARGS__)
+#define ARC_ERROR_BIN(...) SBE_ERROR_BIN(__VA_ARGS__)
+
+typedef int ARC_RET_t;
+
+enum ARCHIVE_RETURN_CODES
 {
-    return (uint16_t)((__u16 >> 8) | (__u16) << 8);
-}
+    ARC_OPERATION_SUCCESSFUL = SBE_SEC_OPERATION_SUCCESSFUL,
+    ARC_FUNCTIONALITY_NOT_SUPPORTED = SBE_SEC_FUNCTIONALITY_NOT_SUPPORTED,
+    ARC_INPUT_BUFFER_OVERFLOW = SBE_SEC_INPUT_BUFFER_OVERFLOW,
+    ARC_FILE_CORRUPTED = SBE_SEC_FILE_CORRUPTED,
+    ARC_FILE_NOT_FOUND = SBE_SEC_FILE_NOT_FOUND,
+};
 
-static inline uint32_t __swap32(uint32_t __u32)
-{
-    uint32_t val = ((__u32 << 8) & 0xff00ff00) | ((__u32 >> 8) & 0x00ff00ff);
-    return (val << 16) | (val >> 16);
-}
+#else
 
-static inline uint64_t __swap64(uint64_t __u64)
-{
-    return __swap32(__u64 >> 32) | (uint64_t(__swap32(__u64 & 0xFFFFFFFF)) << 32);
-}
+#ifndef __PPE_QME
 
-#  define htobe16(x)   (x)
-#  define htole16(x) __swap16 (x)
-#  define be16toh(x)   (x)
-#  define le16toh(x) __swap16 (x)
+    #include "fapi2.H"
 
-#  define htobe32(x)   (x)
-#  define htole32(x) __swap32 (x)
-#  define be32toh(x)   (x)
-#  define le32toh(x) __swap32 (x)
+    #define ARC_ERROR(...) FAPI_ERR(__VA_ARGS__)
+    #define ARC_ERROR_BIN(...)
 
-#  define htobe64(x)   (x)
-#  define htole64(x) __swap64(x)
-#  define be64toh(x)   (x)
-#  define le64toh(x) __swap64(x)
+    #define __USE_COMPRESSION__
+    #include "sha3.H"
+
+#else
+
+    #include "iota_trace.h"
+    typedef void sha3_t;
+    typedef uint32_t trace_hash_val;
+    #define ARC_ERROR(...) PK_TRACE(__VA_ARGS__)
+    #define ARC_ERROR_BIN(...)
 
 #endif
+
+typedef int ARC_RET_t;
+
+enum ARCHIVE_RETURN_CODES
+{
+    ARC_OPERATION_SUCCESSFUL,
+    ARC_FUNCTIONALITY_NOT_SUPPORTED,
+    ARC_INPUT_BUFFER_OVERFLOW,
+    ARC_FILE_CORRUPTED,
+    ARC_FILE_NOT_FOUND,
+};
 
 #endif

@@ -48,6 +48,7 @@ $(IMAGE)_COMMONFLAGS+= -D__PPE_PLAT
 $(IMAGE)_COMMONFLAGS+= -DAPPCFG_OCC_INSTANCE_ID=2
 $(IMAGE)_COMMONFLAGS+= -DUNIFIED_IRQ_HANDLER_GPE
 $(IMAGE)_COMMONFLAGS+= -DSTATIC_IPC_TABLES
+$(IMAGE)_COMMONFLAGS+= -D__PPE_QME
 
 OBJS := $(_PPE_TYPE)_init.o
 
@@ -70,14 +71,16 @@ OBJS += pk_trace_core.o
 OBJS += pk_trace_big.o
 OBJS += pk_trace_binary.o
 
+# archive test
+OBJS += archive.o
+
 # component objects
-OBJS += iota_main.o
+OBJS += iota_main1.o
 OBJS += iota_test_uih.o
 OBJS += iota_test_irq_priority_table.o
 
 
 # Add source code directories for the above objects
-PPE_SRCDIR=$(ROOTPATH)/chips/p10/common/ppe
 
 $(call ADD_PPEIMAGE_SRCDIR,$(IMAGE),$(IOTA_SRCDIR))
 #$(call ADD_PPEIMAGE_SRCDIR,$(IMAGE),$(PK_SRCDIR)/ppe42)
@@ -86,6 +89,7 @@ $(call ADD_PPEIMAGE_SRCDIR,$(IMAGE),$(PPETRACE_SRCDIR))
 $(call ADD_PPEIMAGE_SRCDIR,$(IMAGE),$(OCC_SRCDIR)/occlib)
 $(call ADD_PPEIMAGE_SRCDIR,$(IMAGE),$(IOTA_SRCDIR)/test)
 $(call ADD_PPEIMAGE_SRCDIR,$(IMAGE),$(BASELIB_SRCDIR))
+$(call ADD_PPEIMAGE_SRCDIR,$(IMAGE),$(ROOTPATH)/public/common/utils/imageProcs)
 
 # Include paths
 $(call ADD_PPEIMAGE_INCDIR,$(IMAGE), \
@@ -96,6 +100,9 @@ $(call ADD_PPEIMAGE_INCDIR,$(IMAGE), \
 	$(OCC_SRCDIR)/commonlib \
 	$(POWMANLIB_SRCDIR) \
 	$(PMLIB_INCDIR)/registers \
+	$(ROOTPATH)/public/common/utils/imageProcs \
+	$(ROOTPATH)/public/common/generic/fapi2/include \
+	$(ROOTPATH)/public/common/generic/fapi2/include/plat \
 	)
 
 $(IMAGE)_TRACE_HASH_PREFIX := $(shell echo $(IMAGE) | md5sum | cut -c1-4 \
