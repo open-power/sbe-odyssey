@@ -1,0 +1,62 @@
+/* IBM_PROLOG_BEGIN_TAG                                                   */
+/* This is an automatically generated prolog.                             */
+/*                                                                        */
+/* $Source: public/src/import/public/hwp/generic/perv/poz_ipl/mod.C.template $ */
+/*                                                                        */
+/* OpenPOWER sbe Project                                                  */
+/*                                                                        */
+/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* [+] International Business Machines Corp.                              */
+/*                                                                        */
+/*                                                                        */
+/* Licensed under the Apache License, Version 2.0 (the "License");        */
+/* you may not use this file except in compliance with the License.       */
+/* You may obtain a copy of the License at                                */
+/*                                                                        */
+/*     http://www.apache.org/licenses/LICENSE-2.0                         */
+/*                                                                        */
+/* Unless required by applicable law or agreed to in writing, software    */
+/* distributed under the License is distributed on an "AS IS" BASIS,      */
+/* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or        */
+/* implied. See the License for the specific language governing           */
+/* permissions and limitations under the License.                         */
+/*                                                                        */
+/* IBM_PROLOG_END_TAG                                                     */
+//------------------------------------------------------------------------------
+/// @brief
+//------------------------------------------------------------------------------
+// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
+//------------------------------------------------------------------------------
+
+#include "{{step.name}}.H"
+{% for target in step.targets() %}
+#include <p10_scom_{{target}}.H>
+{% endfor %}
+
+{% for shortname, fullname, target in step.used_regs() %}
+SCOMT_{{target|upper}}_USE_{{fullname|upper}};
+{% endfor %}
+
+using namespace fapi2;
+{% for target in step.targets() %}
+using namespace scomt::{{target}};
+{% endfor %}
+
+enum {{step.name | upper}}_Private_Constants
+{
+};
+{% for hwp in step.hwps %}
+
+{% if hwp.name.startswith("mod_") %}
+ReturnCode {{hwp.name}}({{hwp.expand_params(False, True, False)}})
+{% else %}
+static ReturnCode {{hwp.name}}({{hwp.expand_params(False, True, False)}})
+{% endif %}
+{
+{{hwp.expanded_body | join("\n")}}
+
+fapi_try_exit:
+    return current_err;
+}
+{% endfor %}
