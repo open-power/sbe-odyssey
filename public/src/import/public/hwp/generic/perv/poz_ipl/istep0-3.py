@@ -378,6 +378,8 @@ ISTEP(1, 21, "ph_tp_startclocks", "SPPE")
 
 def p11s_tp_startclocks():
     mod_start_stop_clocks(regions=[perv, net, occ])
+    ## Put PLATs into flush mode
+    CPLT_CTRL0.CTRL_CC_FLUSHMODE_INH_DC = 0
 
 ISTEP(1, 22, "ph_tp_init", "SPPE")
 
@@ -482,22 +484,22 @@ ISTEP(2, 5, "pc_pib_initf", "SPPE")
 def p11t_pib_initf():
     putRing( pc_pib_initf = *_gptr, *_time, *_repr, pib_abst (optional) )
 
-ISTEP(2, 6, "pc_pib_arrayinit_start", "SPPE")
+ISTEP(2, 6, "pc_tp_arrayinit_start", "SPPE")
 
-def p11t_pib_arrayinit_start():
-    mod_abist_start(TP chiplet, regions=pib)
+def p11t_tp_arrayinit_start():
+    mod_abist_start(TP chiplet, regions=pib+perv)
 
-ISTEP(2, 7, "pc_pib_arrayinit_poll", "SPPE")
+ISTEP(2, 7, "pc_tp_arrayinit_poll", "SPPE")
 
-def p11t_pib_arrayinit_poll():
+def p11t_tp_arrayinit_poll():
     mod_abist_poll(TP chiplet)
-    compareRing( pc_pib_abist_check )   # skip if image empty or not present
+    compareRing( pc_tp_abist_check )   # skip if image empty or not present
 
-ISTEP(2, 8, "pc_pib_arrayinit_cleanup", "SPPE")
+ISTEP(2, 8, "pc_tp_arrayinit_cleanup", "SPPE")
 
-def p11t_pib_arrayinit_cleanup():
+def p11t_tp_arrayinit_cleanup():
     mod_abist_cleanup(TP chiplet)
-    mod_scan0(TP chiplet, regions=pib)
+    mod_scan0(TP chiplet, regions=pib+perv)
 
 ISTEP(2, 9, "pc_tp_lbist", "SPPE")
 
@@ -632,6 +634,8 @@ ISTEP(2, 19, "pc_tp_startclocks", "TSBE")
 
 def p11t_tp_startclocks():
     mod_start_stop_clocks(perv chiplet, regions=[perv, net])
+    ## Put PLATs into flush mode
+    CPLT_CTRL0.CTRL_CC_FLUSHMODE_INH_DC = 0
 
 ISTEP(2, 20, "pc_tp_init", "TSBE")
 
