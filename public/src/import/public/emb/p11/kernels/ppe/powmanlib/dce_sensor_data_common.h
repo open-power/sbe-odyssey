@@ -22,10 +22,15 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+#ifndef __DCE_SENSOR_DATA_COMMON_H__
+#define __DCE_SENSOR_DATA_COMMON_H__
+
 #include <stdint.h>
+#include <p11_hcd_memmap_tcc_sram.H>
+#include <p11_hcode_image_defines.H>
 
 
-// Quad and Core defs
+// Quad and Core defs (CMO-TBD: These must be defined somewhere else. Where?)
 #define QUADS_PER_TCC           (2)  // 2 Quads per TCC
 #define CORES_PER_QUAD          (4)  // 4 Cores per Quad
 #define CORES_PER_TCC           (QUADS_PER_TCC * CORES_PER_QUAD) // Cores per TCC
@@ -171,42 +176,76 @@ typedef struct
 } QuadData_t;
 
 //
-// High-level DCE Tap data struct for 405 and OCE
+// High-level DCE sensor data struct for DCE, OCC(405) and OCE
 //
 // Notes:
 // - The underlying assumption here is that the DCE data is *live* and can only be updated
 //   by the DCE after both the OCE *and* the 405 have used the data.
 // - Compared to the P10 implementation approach, which would have consumed a total of
-//   8 x 96B = 768B, the below struct reduces this to 8 x 88B + 16B = 720B.
-// - The data struct needs to be put a specific place in shared SRAM to guarantee 8-byte
-//   alignment.
+//   8 x 96B = 768B, the below struct reduces this to 8 x 88B + 24B = 728B.
+// - The data block is managed in link.ld to guarantee 8-byte alignment.
 //
-typedef struct DCETapData
+typedef struct
 {
-    CoreData_t  core_data[CORES_PER_TCC]; // 8 x 88B
-    QuadData_t  quad_data[QUADS_PER_TCC]; // 2 x 2B
-    uint32_t    ttbr_32ns;                // 4B
-    uint32_t    tod_2mhz;                 // 4B
-    uint8_t     data_status_oce;          // 1B - Updated by DCE and OCE
-    uint8_t     data_status_405;          // 1B - Updated by DCE and DB0 IRQ handler (405 proxy)
-    uint16_t    undefined;                // 2B- Pad to 8B alignment
-} DCETapData_t;
+    CoreData_t  core_data[CORES_PER_TCC];  // 8 x 88B
+    QuadData_t  quad_data[QUADS_PER_TCC];  // 2 x 2B
+    uint32_t    tbr_beacon_period;         // 4B - Most recent beacon period (DB or FIT)
+    uint32_t    tbr_beacon_rcvd;           // 4B - Most recent beacon reception time (DB or FIT)
+    uint32_t    tbr_data_collect_duration; // 4B - Data collection duration (since beacon_rcvd)
+    uint32_t    tod_data_rcvd;             // 4B - For optional use by 405 using local 2MHz TOD
+    uint16_t    dce_status_flag;           // 2B - Status vector. See DCE_STATUS_FLAGS enum below.
+    uint16_t    undefined;                 // 2B - Pad to 4B
+} DCESensorData_t;
 
-extern DCETapData_t g_dce_tap_data;
-
+extern DCESensorData_t*  G_dce_sensor_data; //Big "G_" because it's shared across CEs.
 
 //
-// Enum indicating the [shared] status of the most recently collected DCETapData data set.
+// Enum of DCE status flags (used by DCESensorData_t.dce_status_flags)
 //
 // Notes:
-// - OCE:  The enum is used to communicate *back and forth* by the DCE and OCE the status
-//         of the data usage between them via the data_status flag in the DCETapData struct.
-// - 405:  Since the 405 is on the Spinal chip and does not have direct access to the
-//         DCETapData struct on the Tap chip, the DCE's DB0 interrupt handler updates the
-//         data_status flag on behalf of the 405.
+// - Used for indicating protocol violations to the 405 (and possibly the OCE too).
+// - These violations are detected at the time of DB0 IRQ reception and at commencement
+//   of data collection.
 //
-enum DATA_STATUS
+enum DCE_STATUS_FLAGS
 {
-    DATA_STATUS_NEW       = 1, // New data for OCE (set by DCE, cleared by OCE)
-    DATA_STATUS_USED      = 2, // Data used by OCE (set by OCE, cleared by DCE)
+    DCE_STATUS_RESET              = 0b0000000000000000, //Reset init value
+    DCE_STATUS_BEACON_VIOLATION   = 0b0000000000000001, //DB rcvd before prev data collected.
+    DCE_STATUS_OCE_IS_CALCULATING = 0b0000000000000010, //OCE is still calculating IDDQ
+    DCE_STATUS_OCE_NOT_RESPONDING = 0b0000000000000100, //OCE did not even use the prev data
+    DCE_STATUS_AUTO_MODE          = 0b0000000000001000, //DCE is in AUTO lab mode
 };
+
+
+//
+// Variable used by DCE and OCE to signal eachother about their usage of the DCESensorData data.
+// - Uses the DCE_DATA_USAGE_STATUS enum below
+// - This variable is initially set by DCE to STATUS_NEW upon the first new sensor data reads.
+// - OCE will be polling this variable for ==STATUS_NEW upon which it will set this variable
+//   to STATUS_USING and start calculating IDDQ.
+// - When OCE done calculating IDDQ, it will set this variable to STATUS_USED.
+//
+typedef struct
+{
+    uint32_t  status;
+} DCESensorDataUsage_t;
+
+extern DCESensorDataUsage_t*  G_dce_sensor_data_usage;
+
+//
+// Enum indicating the DCE-OCE usage status of the most recently collected DCESensorData data set.
+//
+// Notes:
+// - The enum contains signal values used to communicate *back and forth*, between the DCE and
+//   OCE, the status of the data usage between them via the g_dce_data_usage_status signal
+//   variable visible to both DCE and OCE.
+//
+enum DCE_DATA_USAGE_STATUS
+{
+    DCE_DATA_USAGE_STATUS_UNDEFINED = 0,
+    DCE_DATA_USAGE_STATUS_NEW       = 1, // New data for OCE (set by DCE, cleared by OCE)
+    DCE_DATA_USAGE_STATUS_USING     = 2, // Data is being used by OCE (set by OCE, cleared by DCE)
+    DCE_DATA_USAGE_STATUS_USED      = 3, // Data has been used by OCE (set by OCE, cleared by DCE)
+};
+
+#endif /* __DCE_SENSOR_DATA_COMMON_H__ */
