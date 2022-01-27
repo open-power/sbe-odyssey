@@ -1,0 +1,114 @@
+#!/bin/sh
+# IBM_PROLOG_BEGIN_TAG
+# This is an automatically generated prolog.
+#
+# $Source: public/src/build/utils/mesonwrap $
+#
+# OpenPOWER sbe Project
+#
+# Contributors Listed Below - COPYRIGHT 2021,2022
+# [+] International Business Machines Corp.
+#
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+# IBM_PROLOG_END_TAG
+
+#Akhilesh S - created 08/12/2021
+# Script to run Meson.
+
+# Exit if any command fails
+set -e
+
+TOOL_VERSION=1
+BASE_CMD="meson"
+MESON_BUILD_DIR="$SBEROOT/builddir"
+MESON_CROSS_FILE_PATH="$SBEROOT_PUB/src/build/cross_file.txt"
+MESON_NATIVE_FILE_PATH="$SBEROOT_PUB/src/build/native_file.txt"
+INSTALL_DIR="$SBEROOT/images"
+
+# @brief Print the help/usage info to the console
+usage()
+{
+    echo "TOOL VERSION : $TOOL_VERSION"
+    echo ""
+    echo "To setup meson:"
+    echo "mesonwrap setup"
+    echo ""
+    echo "To Compile Code:"
+    echo "mesonwrap compile"
+    echo "To print all make commands during compile process:"
+    echo "mesonwrap compile -v"
+    echo ""
+    echo "To Install:"
+    echo "mesonwrap install"
+    echo ""
+    echo "To clean:"
+    echo "mesonwrap clean"
+    echo ""
+    echo "To check available build option:"
+    echo "mesonwrap configure"
+    echo ""
+    echo "To build a image:"
+    echo "mesonwrap setup"
+    echo "mesonwrap compile"
+    echo "mesonwrap install"
+    echo ""
+    echo "Note: Any second arg passed to this script as input will be appended
+    with the default cmd"
+    echo "To disable parts of build/images pass -D option during setup/configure
+    Ex: -Dsppe=disabled
+    All available build options can be found in meson_options.txt"
+
+}
+
+#Execute a given command and exit
+exc_cmd()
+{
+    echo $1
+    $1
+    exit 1
+}
+
+if [ "$1" == "setup" ]; then
+    CMD="$BASE_CMD $1 $MESON_BUILD_DIR -Dplatform=$SBE_PLATFORM --cross-file $MESON_CROSS_FILE_PATH --native-file $MESON_NATIVE_FILE_PATH --prefix $INSTALL_DIR $2"
+    exc_cmd "$CMD"
+fi
+
+if [ "$1" == "compile" ]; then
+    CMD="$BASE_CMD $1 -C $MESON_BUILD_DIR -j32 $2"
+    exc_cmd "$CMD"
+fi
+
+if [ "$1" == "install" ]; then
+    CMD="$BASE_CMD $1 -C $MESON_BUILD_DIR --only-changed --no-rebuild $2"
+    exc_cmd "$CMD"
+fi
+
+if [ "$1" == "clean" ]; then
+    CMD="$BASE_CMD compile --clean -C $MESON_BUILD_DIR"
+    exc_cmd "$CMD"
+fi
+
+if [ "$1" == "configure" ]; then
+    CMD="$BASE_CMD $1 $MESON_BUILD_DIR $2"
+    exc_cmd "$CMD"
+fi
+
+if [ "$1" == "help" ]; then
+    usage
+    exit 0
+fi
+
+CMD="$BASE_CMD $@"
+exc_cmd "$CMD"

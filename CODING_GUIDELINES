@@ -1,0 +1,94 @@
+sbe-p11 design guideline
+
+General Requirements
+1.      Files must be in UNIX format as opposed to DOS/Windows format.
+2.      Must be free of compiling error and warning and functionally tested.
+3.      Must pass CI Jenkins test.
+
+C++ Requirements
+4.  Use the keyword const to prevent elements from being changed (const correctness.)
+    In general, function input-only parameters must be of type const, including references..
+5.  Do not use global nor static variables (not thread safe).  This means no persistent
+    variables should be used across procedures.
+6.  Containers must use iterators (to prevent container overrun and eliminate the name[] syntax).
+7.  Do not use “using namespace”
+    To avoid namespace pollution. This is important as FAPI2 and FAPI share some common names
+    (Target and Return Code are two.) You may, however, use a using-declaration or a namespace
+    alias in a source file.
+8.  All allocated memory must be freed before exiting function.
+    Limitation of memory allocation is TBD.  Must use FAPI_NEW func to allocate memory.
+9.  Define variables in the narrowest scope possible.
+    Prevents patterns like "buffer::flush(0)" to re-use an integral buffer we don't
+    need to reuse. The new FAPI2 buffers don't need this. It also allows much simpler
+    initialization of variables from the first "read" of the information where possible.
+    The corollary to this is to use new scopes where it makes sense, too.
+10. C++ style casts (static_cast<>, etc.) are preferred over C-style casts.
+11. const_cast<> is never allowed. This allows a much more targeted casting operation and
+    allows the compiler to catch more weird things. It also allows to find const_cast<> more easily.
+
+Coding Style Requirements
+    The main purpose of these requirements is to make it easier to understand the procedures, thus
+    expedites review and debug process.
+1.  Every function must have Doxygen header explaining what the function does, and a list of I/O
+    parameter definitions:
+    a.  For external function, Doxygen header is placed in the H file (no need to be in C file).
+    b.  For internal function, Doxygen header is placed in the C file.
+    c.  State if the procedure can be run in parallel (so FW can spin off tasks to run the HWP)
+    d.  State if a pre-req is needed for the HWP to run.
+    e.  Specifying HW target type to operate on.
+2.  A function should not be longer than 1 page.  Add comments explaining the purpose of each block
+    of code within function.
+3.  Use correct variable pre-fixes:
+    Input: ‘i_’; Output: ‘o_’; Input/Output: ‘io_’; Local variable: ‘l_’; Object member: ‘iv_’;
+    Class static: ‘g_’.
+4.  Remove unused stuff:
+    a.  All unused code must be removed unless it needs to remain there for a good reason (for example,
+        to be uncommented and used in the near future).  In that case:
+        i. Add a comment explaining why the code should be kept.
+        ii. #ifdef 0/#endif is preferred for the unused code.
+    b.    All unused local variables must be removed or Host boot compiler will generate an error.
+5.  Use consistent indention, line up your brackets.
+
+6.  Trace must be used wisely:
+    a. There must be an ERROR trace for each error path.  This trace must list the values leading to
+       the error.
+    b. INFO trace can be used to briefly show the function flow and input/output parameter values.
+    c. All trace that is used for ‘deep ‘debugging must use DEBUG trace.
+    d. The number of trace parameters (i.e. number of %x, %d, etc...) in a trace should be limited
+       to 4; otherwise trace may not work in firmware.
+    e. Trace cannot print 64-bit data as single parameter. Need to split into two 32-bit variable.
+7.  For each FAPI_ASSERT, a FFDC function must be defined to handle the error condition.
+    This function must contain:
+    a. List of HW to be called out.
+    b. List of HW to be de-configured and garded
+    c. All needed FFDC to be added to error log to understand the cause of failure.
+
+Please keep in mind that we cannot assume we can get trace in the field.  FFDC in the trace, must
+also be in the error log.
+
+#############################################################################################################
+
+Alignment constraints in PPE:
+SRAM Access:
+
+1) Every memory access should be aligned to corresponding size of the data. 
+   In assembly code, if there is short read/write (2-byte), then address should be
+   2-byte aligned. 
+2) If there is a word (4-byte) read/write, then address should be 4-byte aligned
+3) If there is a double word (8-byte) read/write, then address should be 8-byte
+   aligned
+   We need to consider this, when defining a packed struct
+4) We may have to add padding at the end also, if this struct is used inside
+   another struct.
+5) We can enforce every internal structure starts at 8-byte aligned, then we can
+   decide the padding of the internal strcuture
+
+SEEPROM Access
+
+1) SEEPROM access should be always 8-byte aligned.
+
+Library Constraints:
+1) Floating point arithmetic libraries are not supported
+2) STL library is not supported (std::array, std::map)
+3) No heap is allocated, so should not use dynamic memory allocation
+4) Native implementation of Vector/String is available

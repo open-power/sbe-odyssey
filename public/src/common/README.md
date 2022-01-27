@@ -1,3 +1,1 @@
-GITROOT/Public
-----------------
-Any common code/tools etc between two or more chips will go into this level dir.
+Any common code/tools etc between runtime & onetime images will go into this level dir

@@ -1,0 +1,93 @@
+[host_machine]
+
+system     = 'none'
+cpu_family = 'ppc'
+cpu        = 'ppe42'
+endian     = 'big'
+
+[constants]
+cc_base_path = '/afs/awd/projects/cte/tools/ppetools/prod/bin/'
+cc_tools_base_path = '/afs/awd/projects/cte/tools/ppetools/prod/powerpc-eabi/bin/'
+
+[binaries]
+
+powerpc-eabi-gcc = cc_base_path + 'powerpc-eabi-gcc'
+objdump = cc_tools_base_path + 'objdump'
+objcopy = cc_tools_base_path + 'objcopy'
+ld      = cc_tools_base_path + 'ld'
+ar      = cc_tools_base_path + 'ar'
+as      = cc_tools_base_path + 'as'
+nm      = cc_tools_base_path + 'nm'
+strip   = cc_tools_base_path + 'strip'
+
+c = '/afs/awd/projects/cte/tools/ppetools/prod/bin/powerpc-eabi-gcc'
+cpp = '/afs/awd/projects/cte/tools/ppetools/prod/bin/powerpc-eabi-gcc'
+
+[properties]
+
+pre_processing_args = ['-E']
+
+obj_args_cpp = [
+    '-Wno-conversion-null',
+    '-std=c++11',
+    '-nostdinc++',
+    '-fno-rtti',
+    '-fno-threadsafe-statics',
+    '-fno-strict-aliasing',
+    ]
+
+cc_flags_cmn = [
+    '-c',
+    '-MD',
+    '-Wall',
+    '-Werror',
+    '-Wno-unused-label',
+    '-msoft-float',
+    '-meabi',
+    '-msdata=eabi',
+    '-gpubnames',
+    '-gdwarf-3',
+    '-ffreestanding',
+    '-fno-common',
+    '-fno-exceptions',
+    '-fsigned-char',
+    '-fno-inline-functions-called-once',
+    '-mcpu=ppe42x',
+    '-ffunction-sections',
+    '-fdata-sections',
+    '-fstack-usage',
+    '-mno-ppe42x-stack',
+    '-pipe',
+    '-Os',
+    ]
+
+gcc_defs_cmn_p = [
+        '-DIMAGE_NAME=SBE_TRACE',
+        '-DPK_TIMER_SUPPORT=1',
+        '-DPK_THREAD_SUPPORT=1',
+        '-DPK_TRACE_SUPPORT=1',
+        '-DPK_TRACE_HASH_PREFIX=14355',
+        '-DUSE_PK_APP_CFG_H=1',
+        '-D__PK__=1',
+        '-D__SBE__=1',
+        '-D__PPE__=1',
+        '-DMINIMUM_FFDC=1',
+        '-DFAPI_TRACE_LEVEL=2',
+        '-DSBE_TRACE_LEVEL=2',
+        '-DSBEM_TRACE_LEVEL=2',
+        '-DSBEV_TRACE_LEVEL=2',
+        '-DPLAT_NO_THREAD_LOCAL_STORAGE=1',
+        '-DHOST_INTERFACE_AVAILABLE=1',
+        '-DPERIODIC_IO_TOGGLE_SUPPORTED=1',
+        '-DSEEPROM_IMAGE',
+        '-D_S0_=1',
+        '-DDD1',
+        '-DSBE_CONSOLE_SUPPORT',
+        ]
+
+link_cmd_args = [
+            '-E',
+            '-x',
+            'c++',
+            '-P',
+            ]
