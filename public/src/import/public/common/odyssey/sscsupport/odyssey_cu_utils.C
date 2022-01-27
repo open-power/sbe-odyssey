@@ -93,11 +93,66 @@ extern "C"
         printf("\n     Chip EC: 0x%.2X\n", i_chipEcLevel);
         printf("        Addr: 0x%08lx_%08llx\n", (i_addr >> 32), (i_addr & 0xFFFFFFFFULL));
         printf("   ChipletId: 0x%02X\n", l_scom.getChipletId());
+        printf("   Chip Unit Type: 0x%01X\n", i_chipUnitType);
         printf("    Endpoint: 0x%02X\n", l_scom.getEndpoint());
         printf("      RingId: 0x%.1X\n", l_scom.getRingId());
         printf("       SatId: 0x%.1X\n", l_scom.getSatId());
         printf("      SatReg: 0x%.2X\n", l_scom.getSatOffset());
+
+        if ( l_scom.isIndirect() )
+        {
+            // Display  values of the TBUSL (upper 32-bit)
+            printf("\nIndirect SCOM:\n");
+            printf("    Reg addr: 0x%.3X\n", l_scom.getIoRegAddr());
+            printf("TX/RX select: 0x%.1X\n", l_scom.getIoTxRxBit());
+            printf("  Group Addr: 0x%.2X\n", l_scom.getIoGroupAddr());
+            printf("        Lane: 0x%.2X\n", l_scom.getIoLane());
+        }
+
         return;
+    }
+
+    // See header file for function description
+    uint8_t odyssey_validateChipUnitNum(const uint8_t i_chipUnitNum,
+                                        const odysseyChipUnits_t i_chipUnitType)
+    {
+        uint8_t l_rc = 0;
+        uint8_t l_index;
+
+        for (l_index = 0;
+             l_index < (sizeof(odysseyChipUnitDescriptionTable) / sizeof(odyssey_chipUnitDescription_t));
+             l_index++)
+        {
+            // Looking for input chip unit type in table
+            if (i_chipUnitType == odysseyChipUnitDescriptionTable[l_index].enumVal)
+            {
+                // Found a match, check input i_chipUnitNum to be <= max chip unit num
+                // for this unit type
+                if (i_chipUnitNum > odysseyChipUnitDescriptionTable[l_index].maxChipUnitNum)
+                {
+                    l_rc = 1;
+                }
+
+                // Additional check for PERV targets, where there are gaps between instances
+                else if (i_chipUnitType == ODYSSEY_PERV_CHIPUNIT)
+                {
+                    if (i_chipUnitNum > MAX_ODYSSEY_PERV_CHIPUNIT) //invalid for pervasive target
+                    {
+                        l_rc = 1;
+                    }
+                }
+
+                break;
+            }
+        }
+
+        // Can't find i_chipUnitType in table
+        if ( l_index >= (sizeof(odysseyChipUnitDescriptionTable) / sizeof(odyssey_chipUnitDescription_t)) )
+        {
+            l_rc = 1;
+        }
+
+        return (l_rc);
     }
 
 } // extern "C"

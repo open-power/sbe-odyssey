@@ -26,7 +26,7 @@
 /// @file odyssey_scaninfo.H
 /// @brief ODYSSEY scan address control functions for platform
 ///
-/// *HWP HW Maintainer: Joe McGill <jmcgill@us.ibm.com>
+/// *HWP HW Maintainer: Thi Tran <thi@us.ibm.com>
 /// *HWP FW Maintainer:
 /// *HWP Consumed by: Cronus
 ///

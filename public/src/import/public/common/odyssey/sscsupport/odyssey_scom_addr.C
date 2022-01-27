@@ -45,11 +45,11 @@ extern "C"
     {
         bool l_pervTarget = false;
 
-        if (getChipletId() != 0)
+        if (getChipletId() <= 0x1)  // Allow PIB (0x00) and Perv chiplet (0x01)
         {
             if (getEndpoint() == PSCOM_ENDPOINT)            // 0x1
             {
-                if ( (getRingId() == PSCOM_RING_ID) ||  // 0x0
+                if ( (getRingId() == PSCOM_RING_ID) ||    // 0x0
                      (getRingId() == PERV_RING_ID) )    // 0x1
                 {
                     l_pervTarget = true;
@@ -87,7 +87,7 @@ extern "C"
         bool l_omiTarget = false;
 
         if ( ( getRingId() == OMI0_RING_ID ||
-               getRingId() == DLX_RING_ID ) && ( getChipletId() == ODYSSEY_CHIPLET_ID ) )
+               getRingId() == DLX_RING_ID ) && ( getChipletId() == MEM_CHIPLET_ID ) )
         {
             l_omiTarget = true;
         }
@@ -107,8 +107,9 @@ extern "C"
     {
         bool l_memportTarget = false;
 
-        if ( getChipletId() == ODYSSEY_CHIPLET_ID )
-            // TODO: need more decoding here
+        if ( (getChipletId() == MEM_CHIPLET_ID) &&
+             ( (getRingId() == MEMPORT0_RING_ID) ||
+               (getRingId() == MEMPORT1_RING_ID) ) )
         {
             l_memportTarget = true;
         }
@@ -120,9 +121,15 @@ extern "C"
     uint8_t odyssey_scom_addr::getMemportTargetInstance()
     {
         uint8_t l_instance = 0;
-        //TODO: There are 2 memory ports/OCMB
+
+        if (getRingId() == MEMPORT1_RING_ID)
+        {
+            l_instance = 1;
+        }
+
         return l_instance;
     }
+
 
 } // extern "C"
 

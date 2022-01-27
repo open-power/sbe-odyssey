@@ -100,15 +100,6 @@ extern "C"
             uint32_t& o_modifiedChipUnitNum,
             const odysseyTranslationMode_t i_mode = ODYSSEY_DEFAULT_MODE);
 
-    /// @brief Validate the chip unit number to be within range
-    ///        of a chip unit type.
-    /// @param[in] i_chipUnitNum   Value of chip unit number (instance)
-    /// @param[in] i_chipUnitType  Chip unit type
-    /// @retval Non-zero if error
-    uint8_t odyssey_validateChipUnitNum(const uint8_t i_chipUnitNum,
-                                        const odysseyChipUnits_t i_chipUnitType);
-
-
 } // extern "C"
 
 #endif /* ODYSSEY_SCOMINFO_H */
