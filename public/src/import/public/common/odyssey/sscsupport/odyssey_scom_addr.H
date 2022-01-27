@@ -46,20 +46,17 @@ extern "C"
     {
         PIB_CHIPLET_ID       = 0x00,    ///< PIB chiplet (FSI)
         PERV_CHIPLET_ID      = 0x01,    ///< TP chiplet
-        ODYSSEY_CHIPLET_ID   = 0x08,
+        MEM_CHIPLET_ID       = 0x08,
     } odysseyChipletId_t;
 
     /// ODYSSEY SCOM Endpoint ID enumeration
     typedef enum
     {
         CHIPLET_CTRL_ENDPOINT   = 0x0,    ///< Chiplet Control
-        PSCOM_ENDPOINT          = 0x1,    ///< EQ:PSCOM (L3), others: PSCOM
-        PSCOM_2_ENDPOINT        = 0x2,    ///< EQ:PSCOM (Core/L2), TP:ITR, Nest:TOD (Time Of Day)
+        PSCOM_ENDPOINT          = 0x1,    ///< PSCOM
         CLOCK_CTRL_ENDPOINT     = 0x3,    ///< Clock controller
         FIR_ENDPOINT            = 0x4,    ///< FIR
         THERMAL_ENDPOINT        = 0x5,    ///< Thermal
-        DPLL_ENDPOINT           = 0x6,    ///< TP (only): DPLL
-        QME_ENDPOINT            = 0xE,    ///< EQ (only): QME
         PCBSLV_ENDPOINT         = 0xF,    ///< PCB Slave registers
     } odysseyEndpointID_t;
 
@@ -69,14 +66,18 @@ extern "C"
         PSCOM_RING_ID = 0x0,
         PERV_RING_ID  = 0x1,
     } odyssey_PSCOM_PERV_RingId_t;
-
-    /// ODYSSEY MC chiplet ring ID enumeration
     typedef enum
     {
         OMI0_RING_ID = 0x3,
         DLX_RING_ID  = 0x9,
     } odyssey_MC_RingId_t;
 
+    /// ODYSSEY MEMPORT chiplet ring ID enumeration
+    typedef enum
+    {
+        MEMPORT0_RING_ID = 0x6,  // RDF0
+        MEMPORT1_RING_ID = 0xA,  // RDF1
+    } odyssey_MEMPORT_RingId_t;
 
     /// ODYSSEY SCOM address class
     class odyssey_scom_addr
@@ -303,8 +304,6 @@ extern "C"
             /// Function prereq: Address must belong to Memport target type
             /// @retval uint8_t Memport target instance.
             uint8_t getMemportTargetInstance();
-
-
 
         private:
             uint64_t iv_addr;   ///< 64-bit raw SCOM address

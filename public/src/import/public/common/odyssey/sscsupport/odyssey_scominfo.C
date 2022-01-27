@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <odyssey_scominfo.H>
 #include <odyssey_scom_addr.H>
+#include <odyssey_cu_utils.H>
 
 #define ODYSSEY_SCOMINFO_C
 
@@ -82,11 +83,18 @@ extern "C"
                     break;
 
                 case ODYSSEY_MEMPORT_CHIPUNIT:
-                    //TODO
+                    if (i_chipUnitNum == 0)
+                    {
+                        l_scom.setRingId(MEMPORT0_RING_ID);
+                    }
+                    else
+                    {
+                        l_scom.setRingId(MEMPORT1_RING_ID);
+                    }
+
                     break;
 
                 case ODYSSEY_OMI_CHIPUNIT:
-                    //TODO
                     break;
 
                 default:
@@ -168,51 +176,6 @@ extern "C"
         o_odysseyCU = i_odysseyCU;
         o_modifiedChipUnitNum = i_targetChipUnitNum;
         return l_rc;
-    }
-
-    // See header file for function description
-    uint8_t odyssey_validateChipUnitNum(const uint8_t i_chipUnitNum,
-                                        const odysseyChipUnits_t i_chipUnitType)
-    {
-        uint8_t l_rc = 0;
-        uint8_t l_index;
-
-        for (l_index = 0;
-             l_index < (sizeof(odysseyChipUnitDescriptionTable) / sizeof(odyssey_chipUnitDescription_t));
-             l_index++)
-        {
-            // Looking for input chip unit type in table
-            if (i_chipUnitType == odysseyChipUnitDescriptionTable[l_index].enumVal)
-            {
-                // Found a match, check input i_chipUnitNum to be <= max chip unit num
-                // for this unit type
-                if (i_chipUnitNum > odysseyChipUnitDescriptionTable[l_index].maxChipUnitNum)
-                {
-                    l_rc = 1;
-                }
-
-                // Additional check for PERV targets, where there are gaps between instances
-                else if (i_chipUnitType == ODYSSEY_PERV_CHIPUNIT)
-                {
-                    // Note: No support for ocmb.perv–c0 (FSI)
-                    if ( (i_chipUnitNum == 0) || //invalid for pervasive target
-                         (i_chipUnitNum > 1) )
-                    {
-                        l_rc = 1;
-                    }
-                }
-
-                break;
-            }
-        }
-
-        // Can't find i_chipUnitType in table
-        if ( l_index >= (sizeof(odysseyChipUnitDescriptionTable) / sizeof(odyssey_chipUnitDescription_t)) )
-        {
-            l_rc = 1;
-        }
-
-        return (l_rc);
     }
 
 } // extern "C"

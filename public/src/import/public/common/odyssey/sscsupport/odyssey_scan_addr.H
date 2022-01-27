@@ -26,7 +26,7 @@
 /// @file odyssey_scan_addr.H
 /// @brief ODYSSEY scan address utility functions for platforms
 ///
-/// *HWP HW Maintainer: Joe McGill <jmcgill@us.ibm.com>
+/// *HWP HW Maintainer: Thi Tran <thi@us.ibm.com>
 /// *HWP FW Maintainer:
 /// *HWP Consumed by: Cronus
 ///
@@ -34,7 +34,7 @@
 #ifndef ODYSSEY_SCAN_ADDR_H
 #define ODYSSEY_SCAN_ADDR_H
 
-#include "odyssey_cu.H"
+#include <odyssey_cu.H>
 
 extern "C"
 {
@@ -42,6 +42,11 @@ extern "C"
     class odyssey_scan_addr
     {
         public:
+            static bool isVitlRing(uint32_t i_addr);
+            static uint32_t getRegion(uint32_t i_addr);
+            static uint32_t getExtendedRegion(uint32_t i_addr);
+            static uint32_t getChiplet(uint32_t i_addr);
+            static uint32_t getScanType(uint32_t i_addr);
     };
 
 } // extern "C"

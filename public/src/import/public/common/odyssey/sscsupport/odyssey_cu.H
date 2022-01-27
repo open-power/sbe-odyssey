@@ -75,9 +75,9 @@ extern "C"
 
     // Max chip unit positions
     const uint8_t MAX_ODYSSEY_NO_CU             =  0;
-    const uint8_t MAX_ODYSSEY_PERV_CHIPUNIT     =  2;
+    const uint8_t MAX_ODYSSEY_PERV_CHIPUNIT     =  8; // TP memory chiplet ID is 0x08
     const uint8_t MAX_ODYSSEY_MEMPORT_CHIPUNIT  =  1;
-    const uint8_t MAX_ODYSSEY_OMI_CHIPUNIT      =  1;
+    const uint8_t MAX_ODYSSEY_OMI_CHIPUNIT      =  0; // 1 OMI link back to the host proc
 
     // Chip unit string/enum/max targes table
     const odyssey_chipUnitDescription_t odysseyChipUnitDescriptionTable[] =

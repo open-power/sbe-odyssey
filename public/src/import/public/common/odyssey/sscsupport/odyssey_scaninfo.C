@@ -26,7 +26,7 @@
 /// @file odyssey_scaninfo.C
 /// @brief ODYSSEY scan address control functions for platform
 ///
-/// *HWP HW Maintainer: Joe McGill <jmcgill@us.ibm.com>
+/// *HWP HW Maintainer: Thi Tran <thi@us.ibm.com>
 /// *HWP FW Maintainer:
 /// *HWP Consumed by: Cronus
 ///
@@ -34,18 +34,20 @@
 #ifndef ODYSSEY_SCANINFO_C
 #define ODYSSEY_SCANINFO_C
 
-#include "odyssey_scaninfo.H"
-#include "odyssey_scan_addr.H"
+#include <odyssey_scaninfo.H>
+#include <odyssey_scan_addr.H>
+#include <odyssey_cu.H>
 
 extern "C"
 {
-
     uint32_t odyssey_scaninfo_isChipUnitScanRing(
         uint32_t i_scanAddr,
         bool& o_chipUnitRelated,
         std::vector<odyssey_chipUnitPairing_t>& o_chipUnitPairing)
     {
         uint32_t l_rc = 0;
+        // There is no chip unit associated scan rings for Odyssey
+        o_chipUnitRelated = false;
         return l_rc;
     }
 
@@ -54,9 +56,17 @@ extern "C"
         uint8_t i_ChipUnitNum,
         uint32_t i_scanAddr)
     {
-        uint32_t o_scanAddr = RC_ODYSSEY_SCANINFO_BAD_ADDR;
-        return o_scanAddr;
+        // There is no chip unit associated scan rings for Odyssey
+        // If input chip unit is a chip, return input scan address; otherwise, return bad address
 
+        uint32_t l_returnAddr = i_scanAddr;
+
+        if (i_odysseyCU != ODYSSEY_NO_CU)
+        {
+            l_returnAddr = RC_ODYSSEY_SCANINFO_BAD_ADDR;
+        }
+
+        return l_returnAddr;
     }
 
 } // extern "C"
