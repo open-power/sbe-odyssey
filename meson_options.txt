@@ -1,0 +1,23 @@
+#Build Platform
+option('platform',type : 'combo', value : 'all', choices : ['p11', 'metis', 'p11_dft', 'metis_dft', 'odyssey', 'all'], description : 'Build Platform Type [p11,z,dft]')
+
+#otprom build enabled by def
+option('otprom', type : 'feature', value : 'enabled', description : 'Enable/Disable otprom image build')
+
+#srom build enabled by def
+option('srom', type : 'feature', value : 'enabled', description :'Enable/Disable secure rom image build')
+
+#shv build enabled by def
+option('shv', type : 'feature', value : 'enabled', description :'Enable/Disable secure header verification image build')
+
+#crt build enabled by def
+option('crt', type : 'feature', value : 'enabled', description :'Enable/Disable core root of trust / measurement image build')
+
+#tsbe build enabled by def
+option('tsbe', type : 'feature', value : 'enabled', description :'Enable/Disable Tap SBE image build')
+
+#hsbe build enabled by def
+option('hsbe', type : 'feature', value : 'enabled', description :'Enable/Disable Hub SBE image build')
+
+#sppe build enabled by def
+option('sppe', type : 'feature', value : 'enabled', description :'Enable/Disable SPPE image build')

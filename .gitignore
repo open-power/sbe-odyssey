@@ -1,0 +1,12 @@
+#Ignore below files
+internal/customrc
+tags
+
+#Ignore images, obj, simics dir
+images/**
+builddir/**
+simics/**
+
+# Ignore Python cache
+__pycache__
+*.pyc
