@@ -1,12 +1,11 @@
-#!/bin/sh
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/projectrc $
+# $Source: public/src/build/buildekb/common/boltonlib/meson.build $
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2015,2022
+# Contributors Listed Below - COPYRIGHT 2022
 # [+] International Business Machines Corp.
 #
 #
@@ -23,11 +22,21 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-# Never checkin this file other than changes in BACKING_BUILD
 
-# The following ENV variables are required by the pre/post commit hooks
-export PROJECT_NAME=sbe
-export LICENSE=$SBEROOT/LICENSE_PROLOG # Copyright license file for PPE
-export USER_BIN_DIR=$HOME/.local/bin
-export SBE_MESON_WRAP=$SBEROOT_PUB/src/build/mesonutils/
-export PATH=${PATH}:$SBE_MESON_WRAP:$USER_BIN_DIR # Update PATH
+import_dir_path = pub_import_dir_path + '/emb/p11/kernels/ppe/boltonlib/exppe/'
+
+infile_c = ['std_init.c',
+            'std_irq_init.c',
+           ]
+
+#Create abs path for input files before creating .o
+abs_infiles_c_path = []
+
+foreach infile : infile_c
+
+  abs_infile_c_path = import_dir_path + infile
+  abs_infiles_c_path += abs_infile_c_path
+
+endforeach
+
+boltonlib_std_obj_file_c = obj_gen_c.process(abs_infiles_c_path)

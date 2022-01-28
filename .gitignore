@@ -2,10 +2,11 @@
 internal/customrc
 tags
 
-#Ignore images, obj, simics dir
+#Ignore images, obj, simics dir, import dir
 images/**
 builddir/**
 simics/**
+public/src/import/**
 
 # Ignore Python cache
 __pycache__

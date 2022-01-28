@@ -5,7 +5,7 @@ This project is SBE repository for P & Z Processor.
 To Setup Environment:
 ./sb workon [<platform>]
 ./sb workon [<p11 metis p11_dft metis_dft odyssey all>]
-Ex: ./sb workon metis
+Ex: ./sb workon odyssey
 
 Note: If platform option is not provided, it defaults to "all".
       In this case all images will be built for all supported platforms in the
@@ -16,8 +16,14 @@ To install required packages to build images:
 
 To build a image:
 mesonwrap setup
-mesonwrap compile
-mesonwrap install
+mesonwrap build
+
+To Clean:
+mesonwrap clean
 
 For more available build options check:
 mesonwrap help
+
+Note: After build, all images are available in images dir.
+      All .o, .s, .a etc are available in builddir.
+

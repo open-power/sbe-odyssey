@@ -1,6 +1,9 @@
 #Build Platform
 option('platform',type : 'combo', value : 'all', choices : ['p11', 'metis', 'p11_dft', 'metis_dft', 'odyssey', 'all'], description : 'Build Platform Type [p11,z,dft]')
 
+#Build Level/DD Level
+option('ddlevel',type : 'combo', value : 'DD1', choices : ['DD1'], description : 'DD Level. Currently supporting DD1 ')
+
 #otprom build enabled by def
 option('otprom', type : 'feature', value : 'enabled', description : 'Enable/Disable otprom image build')
 
@@ -12,6 +15,9 @@ option('shv', type : 'feature', value : 'enabled', description :'Enable/Disable 
 
 #crt build enabled by def
 option('crt', type : 'feature', value : 'enabled', description :'Enable/Disable core root of trust / measurement image build')
+
+#bldr build enabled by def
+option('bldr', type : 'feature', value : 'enabled', description :'Enable/Disable Boot Loader image.(shv + crt)')
 
 #tsbe build enabled by def
 option('tsbe', type : 'feature', value : 'enabled', description :'Enable/Disable Tap SBE image build')

@@ -2,7 +2,7 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/build/utils/mesonwrap $
+# $Source: public/src/build/mesonutils/mesonwrap $
 #
 # OpenPOWER sbe Project
 #
@@ -33,8 +33,11 @@ set -e
 TOOL_VERSION=1
 BASE_CMD="meson"
 MESON_BUILD_DIR="$SBEROOT/builddir"
-MESON_CROSS_FILE_PATH="$SBEROOT_PUB/src/build/cross_file.txt"
-MESON_NATIVE_FILE_PATH="$SBEROOT_PUB/src/build/native_file.txt"
+MESON_INSTALL_DIR="$SBEROOT/images"
+CMN_MESON_CROSS_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/common/cross_file.txt"
+CMN_MESON_NATIVE_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/common/native_file.txt"
+ODYSSEY_MESON_CROSS_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/odyssey/cross_file.txt"
+P11_MESON_CROSS_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/p11/cross_file.txt"
 INSTALL_DIR="$SBEROOT/images"
 
 # @brief Print the help/usage info to the console
@@ -53,7 +56,10 @@ usage()
     echo "To Install:"
     echo "mesonwrap install"
     echo ""
-    echo "To clean:"
+    echo "To Compile & Install:"
+    echo "mesonwrap build"
+    echo ""
+    echo "To clean(Removes install dir):"
     echo "mesonwrap clean"
     echo ""
     echo "To check available build option:"
@@ -81,27 +87,44 @@ exc_cmd()
 }
 
 if [ "$1" == "setup" ]; then
-    CMD="$BASE_CMD $1 $MESON_BUILD_DIR -Dplatform=$SBE_PLATFORM --cross-file $MESON_CROSS_FILE_PATH --native-file $MESON_NATIVE_FILE_PATH --prefix $INSTALL_DIR $2"
+    if [ "$SBE_PLATFORM" == "all" ]; then
+        CROSS_FILES=" --cross-file $CMN_MESON_CROSS_FILE_PATH --cross-file $ODYSSEY_MESON_CROSS_FILE_PATH --cross-file $P11_MESON_CROSS_FILE_PATH"
+
+    elif [ "$SBE_PLATFORM" == "odyssey" ]; then
+        CROSS_FILES=" --cross-file $CMN_MESON_CROSS_FILE_PATH --cross-file $ODYSSEY_MESON_CROSS_FILE_PATH "
+
+    elif [ "$SBE_PLATFORM" == "p11" ]; then
+        CROSS_FILES=" --cross-file $CMN_MESON_CROSS_FILE_PATH --cross-file $P11_MESON_CROSS_FILE_PATH "
+    fi
+
+    CMD="$BASE_CMD $1 $MESON_BUILD_DIR -Dplatform=$SBE_PLATFORM $CROSS_FILES --native-file $CMN_MESON_NATIVE_FILE_PATH --prefix $INSTALL_DIR ${@:2}"
     exc_cmd "$CMD"
 fi
 
 if [ "$1" == "compile" ]; then
-    CMD="$BASE_CMD $1 -C $MESON_BUILD_DIR -j32 $2"
+    CMD="$BASE_CMD $1 -C $MESON_BUILD_DIR -j32 ${@:2}"
     exc_cmd "$CMD"
 fi
 
 if [ "$1" == "install" ]; then
-    CMD="$BASE_CMD $1 -C $MESON_BUILD_DIR --only-changed --no-rebuild $2"
+    CMD="$BASE_CMD $1 -C $MESON_BUILD_DIR --only-changed --no-rebuild ${@:2}"
+    exc_cmd "$CMD"
+fi
+
+if [ "$1" == "build" ]; then
+    CMD="$BASE_CMD install -C $MESON_BUILD_DIR ${@:2}"
     exc_cmd "$CMD"
 fi
 
 if [ "$1" == "clean" ]; then
+    echo "Removing images dir"
+    rm -rf $MESON_INSTALL_DIR || exit -1
     CMD="$BASE_CMD compile --clean -C $MESON_BUILD_DIR"
     exc_cmd "$CMD"
 fi
 
 if [ "$1" == "configure" ]; then
-    CMD="$BASE_CMD $1 $MESON_BUILD_DIR $2"
+    CMD="$BASE_CMD $1 $MESON_BUILD_DIR ${@:2}"
     exc_cmd "$CMD"
 fi
 
