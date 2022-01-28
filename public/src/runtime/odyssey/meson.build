@@ -1,13 +1,11 @@
-#!/bin/sh
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/projectrc $
+# $Source: public/src/runtime/odyssey/meson.build $
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2015,2022
-# [+] International Business Machines Corp.
+# Contributors Listed Below - COPYRIGHT 2022
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,11 +21,7 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-# Never checkin this file other than changes in BACKING_BUILD
 
-# The following ENV variables are required by the pre/post commit hooks
-export PROJECT_NAME=sbe
-export LICENSE=$SBEROOT/LICENSE_PROLOG # Copyright license file for PPE
-export USER_BIN_DIR=$HOME/.local/bin
-export SBE_MESON_WRAP=$SBEROOT_PUB/src/build/mesonutils/
-export PATH=${PATH}:$SBE_MESON_WRAP:$USER_BIN_DIR # Update PATH
+if get_option('sppe').enabled()
+  subdir('sppe')
+endif

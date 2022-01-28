@@ -61,7 +61,15 @@ cc_flags_cmn = [
     '-Os',
     ]
 
-gcc_defs_cmn_p = [
+link_cmd_args = [
+            '-E',
+            '-x',
+            'c++',
+            '-P',
+            ]
+
+gcc_defs_cmn = [
+        '-DSBE_TRACE_LEVEL=2',
         '-DIMAGE_NAME=SBE_TRACE',
         '-DPK_TIMER_SUPPORT=1',
         '-DPK_THREAD_SUPPORT=1',
@@ -72,22 +80,20 @@ gcc_defs_cmn_p = [
         '-D__SBE__=1',
         '-D__PPE__=1',
         '-DMINIMUM_FFDC=1',
-        '-DFAPI_TRACE_LEVEL=2',
-        '-DSBE_TRACE_LEVEL=2',
-        '-DSBEM_TRACE_LEVEL=2',
-        '-DSBEV_TRACE_LEVEL=2',
         '-DPLAT_NO_THREAD_LOCAL_STORAGE=1',
-        '-DHOST_INTERFACE_AVAILABLE=1',
         '-DPERIODIC_IO_TOGGLE_SUPPORTED=1',
-        '-DSEEPROM_IMAGE',
-        '-D_S0_=1',
-        '-DDD1',
         '-DSBE_CONSOLE_SUPPORT',
         ]
 
-link_cmd_args = [
-            '-E',
-            '-x',
-            'c++',
-            '-P',
+cmn_inc_paths = [
+            '/public/src/import/emb/p11/kernels/ppe/baselib',
+            '/public/src/import/emb/p11/kernels/ppe/boltonlib',
+            '/public/src/import/emb/p11/kernels/ppe/ppetrace',
+            '/public/src/import/emb/p11/kernels/ppe/pk/ppe42',
+            '/public/src/import/emb/p11/kernels/ppe/pk/kernel',
+            '/public/src/import/emb/p11/kernels/ppe/ppetrace/ppetracepp/',
+            '/public/src/import/emb/p11/kernels/ppe/boltonlib/exppe',
+            '/public/src/common/core',
+            '/public/src/common/utils',
+            '/public/src/common/algorithms'
             ]

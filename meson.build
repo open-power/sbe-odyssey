@@ -22,6 +22,7 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
+
 project(
         'sbe',
         'c','cpp',
@@ -30,7 +31,8 @@ project(
                             'werror=true',
                          ],
         license: 'Apache-2.0',
-        version: '0.1',
+        meson_version : '0.60.3',
+        version: '1.0',
        )
 
 #Compilers
@@ -48,8 +50,8 @@ strip   = find_program('strip')
 output_dir_path = get_option('prefix')
 run_command('mkdir', output_dir_path)
 
-#Runtime gen-files path
-genfiles_dir_path = output_dir_path + '/genfiles/'
-run_command('mkdir', genfiles_dir_path)
+#Runtime common genfiles path
+cmn_genfiles_dir_path = output_dir_path + '/genfiles/'
+run_command('mkdir', cmn_genfiles_dir_path)
 
-#subdir('public/')
+subdir('public/src')
