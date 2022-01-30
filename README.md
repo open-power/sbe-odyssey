@@ -2,6 +2,13 @@ Gerrit Project: hw/sbe
 --------------------------
 This project is SBE repository for P & Z Processor.
 
+Before workon:
+    * Create a file in ~/.sbe/customrc for any personal rc settings. This will be
+    applied during workon
+
+    * To enable bash complete for sb script:
+        source public/src/tools/utils/sb/sb_complete
+
 To Setup Environment:
 ./sb workon [<platform>]
 ./sb workon [<p11 metis p11_dft metis_dft odyssey all>]

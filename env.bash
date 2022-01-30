@@ -23,6 +23,13 @@
 #
 # IBM_PROLOG_END_TAG
 
+# Apply generci bashrc
+if [ -e ${HOME}/.bashrc ]; then
+    source ${HOME}/.bashrc
+fi
+
+echo "Setting environment variables..."
+
 ROOTDIR=.
 export SBEROOT=`pwd`
 export SBEROOT_PUB="${SBEROOT}/public"
@@ -35,3 +42,10 @@ fi
 if [ -e ${SBEROOT_INT}/customrc ]; then
     source ${SBEROOT_INT}/customrc
 fi
+
+# Apply personal settings
+if [ -e ${HOME}/.sbe/customrc ]; then
+    source ${HOME}/.sbe/customrc
+fi
+
+source public/src/tools/utils/sb/sb_complete
