@@ -1,5 +1,4 @@
 #Ignore below files
-internal/customrc
 tags
 
 #Ignore images, obj, simics dir, import dir
@@ -10,3 +9,6 @@ simics/**
 # Ignore Python cache
 __pycache__
 *.pyc
+
+# Ignore vscode config files
+.vscode/**
