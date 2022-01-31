@@ -23,7 +23,7 @@
 #
 # IBM_PROLOG_END_TAG
 
-import_dir_path = pub_import_dir_path + '/emb/p11/kernels/ppe/boltonlib/exppe/'
+import_dir_path = pub_import_dir_path + '/emb/p11/kernels/ppe/boltonlib/standard/'
 
 infile_c = ['std_init.c',
             'std_irq_init.c',
