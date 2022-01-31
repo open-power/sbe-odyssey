@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -42,6 +43,14 @@ MEMORY
 SECTIONS
 {
     . = SROM_ORIGIN;
+    _origin = .;
+
+    //pkVector should be at top of pibmem memory
+    .pkVectors . : {
+      _pkVectors_origin = .; _pkVectors_offset = . - _origin;
+      KEEP(*(.vectors));
+    } > rom
+    _pkVectors_size = . - _pkVectors_origin;
 
     ////////////////////////////////
     // Read-only Data

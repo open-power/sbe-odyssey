@@ -112,7 +112,9 @@ int  main(int argc, char **argv)
         }
         OSPPE_INFO(OSPPE_FUNC "Completed PK initialization for SPPE Image");
 
-    }while(true);
+    }while(false);
+
+    while(1);
 
     OSPPE_EXIT(OSPPE_FUNC);
     return 0;

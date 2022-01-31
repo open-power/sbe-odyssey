@@ -7,6 +7,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2016,2022
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,7 +44,7 @@ def parserElf(argv):
     #TODO:Need disussion on what will be the first section in p11 basis zip design.
     #As per p10 xip its .header. For p11 lets take it as .text.
     #firstSection = b".header"
-    firstSection = b".text"
+    firstSection = b".pkVectors"
 
     cmd = "readelf -S "+SBE_OUT
     cmd1 = "nm "+SBE_OUT+" | grep  _sbe_image_size"
