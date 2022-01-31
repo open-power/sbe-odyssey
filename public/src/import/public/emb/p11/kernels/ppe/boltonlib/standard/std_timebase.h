@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/emb/p11/kernels/ppe/boltonlib/exppe/std_init.c $ */
+/* $Source: public/src/import/public/emb/p11/kernels/ppe/boltonlib/standard/std_timebase.h $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2022                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,44 +22,40 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+#ifndef __STD_TIMEBASE_H__
+#define __STD_TIMEBASE_H__
 
-/// \file std_init.c
-/// \brief PK initialization for a standard PPE.
+/// \file std_timebase.h
+/// \brief support for using the standard PPE 32 bit timebase register
 ///
-/// The entry points in this routine are used during initialization.  This
-/// code space can be deallocated and reassigned after application
-/// initialization if required.
+/// Each standard PPE has it's own timebase register that runs at a constant
+/// frequency.
 
-#if defined(__PK__)
-    #include "pk.h"
-#elif defined(__IOTA__)
-    #include "iota.h"
-#endif
+#include "ppe42_mmio.h"
+#include "std_register_addresses.h"
 
-/// Standard PPE environment initial setup.
-///
-/// This is setup common to all standard PPE Macro applications.  This setup takes place
-/// during boot, before main() is called.
+#ifndef __ASSEMBLER__
 
-void
-__hwmacro_setup(void)
+#ifndef APPCFG_USE_EXT_TIMEBASE
+static inline
+uint32_t pk_timebase32_get(void)
 {
-    //mask all interrupts to prevent spurious pulse to PPE
-    out64(STD_LCL_EIMR, 0xffffffffffffffffull);
-
-    //set up the configured polarity
-    out64(STD_LCL_EIPR, g_ext_irqs_polarity);
-
-    //set up the configured type
-    out64(STD_LCL_EITR, g_ext_irqs_type);
-
-    //clear the status of all edge interrupts
-    out64(STD_LCL_EISR_CLR, g_ext_irqs_type);
-
-    //unmask the interrupts that are to be enabled by default
-    out64(STD_LCL_EIMR_CLR, g_ext_irqs_enable);
-
-    //wait for the last operation to complete
-    sync();
-
+    return (uint32_t)((in64(STD_LCL_TBR)) >> 32);
 }
+
+#else
+//assembly function is defined in ppe42_timebase.S
+uint32_t pk_timebase32_get(void);
+
+#endif  /* APPCFG_USE_EXT_TIMEBASE */
+
+#else
+
+.macro _pk_timebase32_get rT, rA
+lis \rA, STD_LCL_TBR@ha
+lvd \rT, STD_LCL_TBR@l(\rA)
+.endm
+
+#endif  /* __ASSEMBLER__ */
+
+#endif /* __STD_TIMEBASE_H__ */

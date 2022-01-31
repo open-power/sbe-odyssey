@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/emb/p11/kernels/ppe/boltonlib/exppe/std_timebase.h $ */
+/* $Source: public/src/import/public/emb/p11/kernels/ppe/boltonlib/standard/std.h $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2022                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,40 +22,18 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __STD_TIMEBASE_H__
-#define __STD_TIMEBASE_H__
+#ifndef __STD_H__
+#define __STD_H__
 
-/// \file std_timebase.h
-/// \brief support for using the standard PPE 32 bit timebase register
-///
-/// Each standard PPE has it's own timebase register that runs at a constant
-/// frequency.
+/// \file pgp.h
+/// \brief The STD environment for PK.
 
-#include "ppe42_mmio.h"
+#ifndef HWMACRO_STD
+    #define HWMACRO_STD
+    #include "ppe42.h"
+#endif
+
 #include "std_register_addresses.h"
+#include "std_common.h"
 
-#ifndef __ASSEMBLER__
-
-#ifndef APPCFG_USE_EXT_TIMEBASE
-static inline
-uint32_t pk_timebase32_get(void)
-{
-    return (uint32_t)((in64(STD_LCL_TBR)) >> 32);
-}
-
-#else
-//assembly function is defined in ppe42_timebase.S
-uint32_t pk_timebase32_get(void);
-
-#endif  /* APPCFG_USE_EXT_TIMEBASE */
-
-#else
-
-.macro _pk_timebase32_get rT, rA
-lis \rA, STD_LCL_TBR@ha
-lvd \rT, STD_LCL_TBR@l(\rA)
-.endm
-
-#endif  /* __ASSEMBLER__ */
-
-#endif /* __STD_TIMEBASE_H__ */
+#endif  /* __STD_H__ */
