@@ -6,7 +6,6 @@ tags
 images/**
 builddir/**
 simics/**
-public/src/import/**
 
 # Ignore Python cache
 __pycache__
