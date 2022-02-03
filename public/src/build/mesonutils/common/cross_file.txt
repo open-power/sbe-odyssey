@@ -86,13 +86,13 @@ gcc_defs_cmn = [
         ]
 
 cmn_inc_paths = [
-            '/public/src/import/emb/p11/kernels/ppe/baselib',
-            '/public/src/import/emb/p11/kernels/ppe/boltonlib',
-            '/public/src/import/emb/p11/kernels/ppe/ppetrace',
-            '/public/src/import/emb/p11/kernels/ppe/pk/ppe42',
-            '/public/src/import/emb/p11/kernels/ppe/pk/kernel',
-            '/public/src/import/emb/p11/kernels/ppe/ppetrace/ppetracepp/',
-            '/public/src/import/emb/p11/kernels/ppe/boltonlib/exppe',
+            '/public/src/import/public/emb/p11/kernels/ppe/baselib',
+            '/public/src/import/public/emb/p11/kernels/ppe/boltonlib',
+            '/public/src/import/public/emb/p11/kernels/ppe/ppetrace',
+            '/public/src/import/public/emb/p11/kernels/ppe/pk/ppe42',
+            '/public/src/import/public/emb/p11/kernels/ppe/pk/kernel',
+            '/public/src/import/public/emb/p11/kernels/ppe/ppetrace/ppetracepp/',
+            '/public/src/import/public/emb/p11/kernels/ppe/boltonlib/exppe',
             '/public/src/common/core',
             '/public/src/common/utils',
             '/public/src/common/algorithms'

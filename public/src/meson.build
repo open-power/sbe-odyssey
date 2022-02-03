@@ -35,10 +35,10 @@ tracehash = find_program('tools/trace/tracehash.pl')
 buildInfo = find_program('build/utils/buildInfo.py')
 
 #ekb-src public mirror path.(import dir path)
-pub_import_dir_path = meson.global_source_root() + '/public/src/import/'
+pub_import_dir_path = meson.global_source_root() + '/public/src/import/public/'
 
 #Generate ppetrace app
-ppetraceapp_dir = 'import/emb/p11/kernels/ppe/ppetrace/ppetracepp/'
+ppetraceapp_dir = 'import/public/emb/p11/kernels/ppe/ppetrace/ppetracepp/'
 inc_dir = include_directories(ppetraceapp_dir)
 ppetraceapp = executable('ppetraceapp',
               ppetraceapp_dir + 'ppetracepp.C',
