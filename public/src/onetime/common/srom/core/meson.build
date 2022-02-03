@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +30,25 @@ lib_file_name = 'cmnsromcore'
 
 cmn_srom_obj_file_cpp = obj_gen_cpp.process(infile_c)
 
-infile  = [cmn_srom_obj_file_cpp]
+infile_s = ['cmdtable.S',
+            ]
+
+fsm_pre_process = custom_target(
+                    output : '@BASENAME@.s',
+                    input : infile_s,
+                    command : [ cc,
+                                meson.get_external_property('pre_processing_args'),
+                                meson.get_external_property('gcc_defs_cmn'),
+                                meson.get_external_property('pre_processing_args'),
+                                ekb_cmn_abs_inc_paths, onetime_cmn_abs_inc_paths,
+                                '-o','@OUTPUT@','@INPUT@'],
+                    build_by_default: true,
+                    depfile : '@BASENAME@.d'
+                             )
+
+fsm_obj_file_s = obj_gen_s.process(fsm_pre_process)
+
+infile  = [cmn_srom_obj_file_cpp, fsm_obj_file_s]
 
 libcmnsromcore = custom_target( lib_file_name,
                                  output : 'lib' + lib_file_name,
