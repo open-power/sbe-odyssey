@@ -118,7 +118,12 @@ def p11_pre_poweron():
 # BMC executes voltage power on sequence
 def sim_poweron_sequence():
     Turn on VDN, VDD, VIO in that order; clock a few thousand FSI cycles in between each
+    Turn on Odyssey power
     Enable refclock, wait a few thousand refclock cycles
+
+    Toggle Ody CFAM_RESET
+    # Depending on model wiring the processor might still be holding Ody CFAM_RESET
+    # at this point. Let's find out!
 
 ISTEP(0, 6, "setup_ref_clock", "BMC")
 
@@ -184,11 +189,16 @@ ISTEP(0, 13, "proc_sppe_config_update", "BMC")
 def p11_sppe_config_update():
     # TBD
 
+def ody_sppe_config_update():
+    # TBD
+
 ISTEP(0, 14, "cbs_start", "BMC")
 
 def p11s_cbs_start(target<HUB_CHIP>, bool i_start_sbe=true):
     mod_cbs_start(i_target, i_start_sbe)
 
+def ody_cbs_start(target<OCMB_CHIP>, bool i_start_sbe=true):
+    mod_cbs_start(i_target, i_start_sbe)
 
 """
 Step 1: Spinal TP init, SPPE tries to find its feet
@@ -212,7 +222,10 @@ ISTEP(1, 1, "ph_enable_seeprom", "SPPE")
 # executes from OTPROM, implemented in Assembler by SBE team
 
 def p11s_enable_seeprom():
-    # stuff
+    # delivered by SBE team
+
+def ody_enable_seeprom():
+    # delivered by SBE team
 
 ISTEP(1, 2, "ph_tp_chiplet_reset", "SPPE")
 # executes from ROM driven by command table
@@ -230,11 +243,22 @@ def p11s_tp_chiplet_reset():
     CPLT_CONF1.TP_AN_NEST_PROGDLY_SETTING_DC = 7   # Set up static progdelay for the nest mesh
     PERV_CTRL1.TP_CPLT_CLK_NEST_PDLY_BYPASS_DC = 0 # Drop nest PDLY/DCC bypass
 
+def ody_tp_chiplet_reset():
+    ROOT_CTRL0.PCB_RESET_DC = 0       # Drop PCB interface reset to enable access into TP chiplet
+
+    OPCG_ALIGN = 0
+    OPCG_ALIGN.INOP_ALIGN = 7          # 16:1 INOP alignment
+    OPCG_ALIGN.SCAN_RATIO = 0          # 1:1 scan ratio
+    OPCG_ALIGN.OPCG_WAIT_CYCLES = 0x20 # 32 wait cycles so PLATs can safely exit flush
+
 ISTEP(1, 3, "ph_tp_pll_initf", "SPPE")
 # executes from ROM driven by command table
 # PLL buckets for Z!
 
 def p11s_tp_pll_initf():
+    putRing( perv_pll = perv_pll_bndy )
+
+def ody_tp_pll_initf():
     putRing( perv_pll = perv_pll_bndy )
 
 ISTEP(1, 4, "ph_tp_pll_setup", "SPPE")
@@ -259,10 +283,36 @@ def p11s_tp_pll_setup():
             CLOCK_CONFIG = getScom(addr)
             CLOCK_CONFIG.SCK_CLOCK_DIVIDER = 59
             CLOCK_CONFIG.SCK_RECEIVE_DELAY = 0x80 >> 1
-            putScom(addr, SPI_COLOCK_CONFIG_REG)
+            putScom(addr, SPI_CLOCK_CONFIG_REG)
 
         ## Start nest PLL
         mod_lock_plls(TP chiplet, PLLNEST)
+
+def ody_tp_pll_setup():
+    CPLT_CTRL1.TC_REGION13_FENCE_DC = 0   # Drop PLL region fence
+
+    if not ATTR_PLL_BYPASS:
+        ## Attempt to lock PLL
+        ROOT_CTRL3.TP_MCPLL_TEST_EN_DC = 0    # not available in headers yet - bit 24
+        ROOT_CTRL3.TP_MCPLL_RESET_DC = 0      # not available in headers yet - bit 25
+        mod_poll_pll_lock_fsi2pib(i_target, ODY_PERV_MCPLL)    # ODY_PERV_MCPLL = 0x02
+
+        ## Prepare chip for at-speed operation
+        OPCG_ALIGN.SCAN_RATIO = 3         # Swich scan ratio to 4:1
+
+        # Update the SPI bit rate divisor for 5MHz operation.
+        # SPI freq = PLL freq / 4 / ($divider+1) / 2
+        # ==> $divider + 1 = PLL freq / (4 * 2 * 5)
+        # PLL freq = 2400 ==> $divider = 2400 / 40 - 1 = 59
+        for addr in C0003: #probably not: C0023, C0043, C0063, 70003, 70032, 70043, 70063:
+            CLOCK_CONFIG = getScom(addr)
+            # TODO: Determine correct values for Odyssey frequency buckets
+            CLOCK_CONFIG.SCK_CLOCK_DIVIDER = 59
+            CLOCK_CONFIG.SCK_RECEIVE_DELAY = 0x80 >> 1
+            putScom(addr, SPI_CLOCK_CONFIG_REG)
+
+        ## Take PLL out of bypass
+        ROOT_CTRL3.TP_MCPLL_BYPASS_DC = 0     # not available in headers yet - bit 26
 
 ISTEP(1, 5, "ph_pib_repr_initf", "SPPE")
 # executes from ROM driven by command table
@@ -271,8 +321,14 @@ ISTEP(1, 5, "ph_pib_repr_initf", "SPPE")
 def p11s_pib_repr_initf():
     putRing( pib_gtr = pib_gptr+pib_time+pib_repr(+ optional pib_abst) )
 
+def ody_pib_repr_initf():
+    putRing( pib_gtr = pib_gptr+pib_time+pib_repr(+ optional pib_abst) )
+
 """
-Insert PIB ABIST here, can continue to LBIST below without reboot due to arrayinit in between
+Arrayinit is split into two steps; the first starts+polls, the second cleans up.
+The intent is for DFT to use these steps for ABIST; they can scan in an ABIST
+configuration during repr_initf, then run arrayinit to run ABIST and move in
+to collect results before we clean up.
 """
 
 ISTEP(1, 6, "ph_pib_arrayinit", "SPPE")
@@ -282,12 +338,18 @@ def p11s_pib_arrayinit():
     mod_abist_start(regions=[pib])
     mod_abist_poll()
 
+def ody_pib_arrayinit():
+    p11s_pib_arrayinit()
+
 ISTEP(1, 7, "ph_pib_arrayinit_cleanup", "SPPE")
 # executes from ROM driven by command table
 
 def p11s_pib_arrayinit_cleanup():
     mod_abist_cleanup()
     mod_scan0(regions=[perv, pib, occ, net])
+
+def ody_pib_arrayinit():
+    p11s_pib_arrayinit_cleanup()
 
 """
 Insert SBE/PIB LBIST here, you need these extra steps:
@@ -301,11 +363,17 @@ ISTEP(1, 8, "ph_pib_initf", "SPPE")
 def p11s_pib_initf():
     putRing( pib_func = pib_func )
 
+def ody_pib_initf():
+    putRing( pib_func = pib_func )
+
 ISTEP(1, 9, "ph_pib_startclocks", "SPPE")
 # executes from ROM driven by command table
 
 def p11s_pib_startclocks():
     mod_start_stop_clocks(regions=[pib])
+
+def ody_pib_startclocks():
+    p11s_pib_startclocks()
 
 ISTEP(1, 10, "ph_sppe_measure", "SPPE")
 # executes from ROM
@@ -325,6 +393,9 @@ def p11s_sppe_boot_check():
     # Cronus HWP may wish to output progress updates :)
     # It will wait for SPPE standby, which depending on scratch settings
     # is either _before_ the rest of isteps or _after_ (in case of autoboot)
+
+def ody_sppe_boot_check():
+    "TODO: need this?"
 
 ISTEP(1, 13, "ph_sppe_attr_setup", "SPPE")
 
@@ -352,10 +423,18 @@ ISTEP(1, 17, "ph_tp_repr_initf", "SPPE")
 def p11s_tp_repr_initf():
     putRing( perv_gtr = {perv,net,occ}_{gptr,time,repr}(+*_abst as needed))} )
 
+def ody_tp_repr_initf():
+    putRing( perv_gtr = {perv,net}_{gptr,time,repr}(+*_abst as needed))} )
+
 ISTEP(1, 18, "ph_tp_arrayinit", "SPPE")
 
 def p11s_tp_arrayinit():
     mod_abist_start(regions=[perv, occ, net])
+    mod_abist_poll()
+    compareRing( perv_abst_check )   # if perv_abst_check is empty or does not exist, skip check
+
+def ody_tp_arrayinit():
+    mod_abist_start(regions=[perv, net])
     mod_abist_poll()
     compareRing( perv_abst_check )   # if perv_abst_check is empty or does not exist, skip check
 
@@ -364,6 +443,10 @@ ISTEP(1, 19, "ph_tp_arrayinit_cleanup", "SPPE")
 def p11s_tp_arrayinit_cleanup():
     mod_abist_cleanup()
     mod_scan0(regions=[perv, occ, net])
+
+def ody_tp_arrayinit_cleanup():
+    mod_abist_cleanup()
+    mod_scan0(regions=[perv, net])
 
 """
 LBIST: DFT can wedge in LBIST for perv, net, occ in here
@@ -374,12 +457,16 @@ ISTEP(1, 20, "ph_tp_initf", "SPPE")
 def p11s_tp_initf():
     putRing( perv_func = {perv,net,occ}_func )
 
+def ody_tp_initf():
+    putRing( perv_func = {perv,net}_func )
+
 ISTEP(1, 21, "ph_tp_startclocks", "SPPE")
 
 def p11s_tp_startclocks():
     mod_start_stop_clocks(regions=[perv, net, occ])
-    ## Put PLATs into flush mode
-    CPLT_CTRL0.CTRL_CC_FLUSHMODE_INH_DC = 0
+
+def ody_tp_startclocks():
+    mod_start_stop_clocks(regions=[perv, net])
 
 ISTEP(1, 22, "ph_tp_init", "SPPE")
 
@@ -405,6 +492,23 @@ def p11s_tp_init():
 
     ## Set up constant hang pulses
     mod_constant_hangpulse_setup(i_target, TP_TPCHIP_PIB_PSU_HANG_PULSE_CONFIG_REG, {{37, 1, 0}, {153, 27, 0}, {0, 0, 0}, {0, 0, 0}})
+
+    ## Miscellaneous TP setup
+    mod_poz_tp_init_common(i_target)
+
+def ody_tp_init():
+    # TODO : Set up TOD error routing, error mask via scan inits
+    # TODO : Set up perv LFIR, XSTOP_MASK, RECOV_MASK via scan inits
+
+    ## Start using PCB network
+    mod_switch_pcbmux(i_target, mux::PCB2PCB)
+
+    ## Set up static multicast groups
+    mod_multicast_setup(i_target, MCGROUP_GOOD, 0x7FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL)
+    mod_multicast_setup(i_target, MCGROUP_GOOD_NO_TP, 0x3FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL)
+
+    ## Set up chiplet hang pulses
+    mod_hangpulse_setup(MCGROUP_GOOD, 1, {{0, 16, 0}, {1, 1, 0}, {5, 6, 0}, {6, 7, 0, 1}})
 
     ## Miscellaneous TP setup
     mod_poz_tp_init_common(i_target)
@@ -483,6 +587,12 @@ ISTEP(2, 5, "pc_pib_initf", "SPPE")
 
 def p11t_pib_initf():
     putRing( pc_pib_initf = *_gptr, *_time, *_repr, pib_abst (optional) )
+
+"""
+For Tap, the arrayinit start+poll steps are separate to allow for parallel
+execution of arrayinit - the SPPE can first go through starting all Taps
+before moving on to polling on all Taps in sequence.
+"""
 
 ISTEP(2, 6, "pc_tp_arrayinit_start", "SPPE")
 
@@ -686,6 +796,9 @@ ISTEP(3, 2, "proc_chiplet_clk_config", "SSBE, TSBE")
 def p11_chiplet_clk_config():
     poz_chiplet_clk_config()
 
+def ody_chiplet_clk_config():
+    poz_chiplet_clk_config()
+
 def poz_chiplet_clk_config():
     if ATTR_HOTPLUG:
         chiplets = All functional chiplets except TP
@@ -714,6 +827,9 @@ def p11s_chiplet_reset():
 
 def p11t_chiplet_reset():
     poz_chiplet_reset(i_target, p11t_chiplet_delay_table)
+
+def ody_chiplet_reset():
+    poz_chiplet_reset(i_target, ody_chiplet_delay_table)
 
 def poz_chiplet_reset(const uint8_t i_chiplet_delays[64]):
     if ATTR_HOTPLUG:
@@ -758,6 +874,9 @@ ISTEP(3, 5, "proc_chiplet_unused_psave", "SSBE, TSBE")
 def p11_chiplet_unused_psave():
     poz_chiplet_unused_psave()
 
+def ody_chiplet_unused_psave():
+    poz_chiplet_unused_psave()
+
 def poz_chiplet_unused_psave():
     # now put all non-functional chiplets into a state of minimal power usage
     for chiplet in all PRESENT chiplets:
@@ -786,6 +905,9 @@ def p11t_chiplet_pll_initf():
 ISTEP(3, 7, "proc_chiplet_pll_setup", "SSBE, TSBE")
 
 def p11_chiplet_pll_setup():
+    poz_chiplet_pll_setup()
+
+def ody_chiplet_pll_setup():
     poz_chiplet_pll_setup()
 
 def poz_chiplet_pll_setup():
@@ -818,15 +940,27 @@ def poz_chiplet_pll_setup():
 
 ISTEP(3, 8, "proc_bist_repr_initf", "SSBE, TSBE")
 
-def p11_bist_repr_initf():
+def poz_bist_repr_initf():
     if not ATTR_ENABLE_BIST:
         return
 
     p11_chiplet_repr_initf()
 
+def ody_bist_repr_initf():
+    if not ATTR_ENABLE_BIST:
+        return
+
+    ody_chiplet_repr_initf()
+
 ISTEP(3, 9, "proc_abist", "SSBE, TSBE")
 
 def p11_abist():
+    poz_abist()
+
+def ody_abist():
+    poz_abist()
+
+def poz_abist():
     if not ATTR_ENABLE_BIST:
         return
 
@@ -835,6 +969,12 @@ def p11_abist():
 ISTEP(3, 10, "proc_lbist", "SSBE, TSBE")
 
 def p11_lbist():
+    poz_abist()
+
+def ody_lbist():
+    poz_abist()
+
+def poz_lbist():
     if not ATTR_ENABLE_BIST:
         return
 
@@ -847,11 +987,20 @@ def p11_lbist():
 ISTEP(3, 11, "proc_chiplet_repr_initf", "SSBE, TSBE")
 
 def p11_chiplet_repr_initf():
+    poz_chiplet_repr_initf()
+
+def ody_chiplet_repr_initf():
+    poz_chiplet_repr_initf()
+
+def poz_chiplet_repr_initf():
     putRing(chiplet_repr_initf = *_gptr+*_time+*_repr for all chiplets except TP)
 
 ISTEP(3, 12, "proc_chiplet_arrayinit", "SSBE, TSBE")
 
 def p11_chiplet_arrayinit():
+    poz_chiplet_arrayinit()
+
+def ody_chiplet_arrayinit():
     poz_chiplet_arrayinit()
 
 def poz_chiplet_arrayinit():
@@ -877,6 +1026,12 @@ def p11t_chiplet_undo_force_on():
 ISTEP(3, 14, "proc_chiplet_initf", "SSBE, TSBE")
 
 def p11_chiplet_initf():
+    poz_chiplet_initf()
+
+def ody_chiplet_initf():
+    poz_chiplet_initf()
+
+def poz_chiplet_initf():
     putRing( chiplet_initf = everything under the sun that has not been scanned yet )
 
 ISTEP(3, 15, "proc_chiplet_init", "SSBE, TSBE")
@@ -892,6 +1047,9 @@ def p11t_chiplet_init():
     CPLT_CONF0.TC_TOPOLOGY_ID_DC   = ATTR_FABRIC_TOPOLOGY_ID
     CPLT_CONF0.TC_OCTANT_ID_DC     = ATTR_FABRIC_OCTANT_ID
 
+def ody_chiplet_init():
+    "TODO: What to do here"
+
 ISTEP(3, 20, "proc_chiplet_startclocks", "SSBE, TSBE")
 
 def p11s_chiplet_startclocks():
@@ -903,6 +1061,9 @@ def p11t_chiplet_startclocks():
 
     ## Starting EQ chiplet clocks
     poz_chiplet_startclocks(MCGROUP_GOOD_NO_EQ, cc::P11T_EQ_PERV | cc::P11T_EQ_QME | cc::P11T_EQ_CLKADJ)
+
+def ody_chiplet_startclocks():
+    poz_chiplet_startclocks(MCGROUP_GOOD_NO_TP)
 
 def poz_chiplet_startclocks(target<PERV|MC>, uint16_t i_clock_regions=cc::REGION_ALL_BUT_PLL):
     ## Switch ABIST and sync clock muxes to functional state
@@ -933,9 +1094,15 @@ def p11s_chiplet_fir_init():
 def p11t_chiplet_fir_init():
     mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, p11t_chiplet_delay_table)
 
+def ody_chiplet_fir_init():
+    mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, ody_chiplet_delay_table)
+
 ISTEP(3, 22, "proc_chiplet_dts_init", "SSBE, TSBE")
 
 def p11_chiplet_dts_init():
+    poz_chiplet_dts_init()
+
+def ody_chiplet_dts_init():
     poz_chiplet_dts_init()
 
 def poz_chiplet_dts_init():
@@ -966,6 +1133,9 @@ def p11s_nest_enable_io():
 def p11t_nest_enable_io():
     poz_nest_enable_io(i_target, filter=N0)
 
+def ody_nest_enable_io():
+    "Any content here?"
+
 def poz_nest_enable_io(target<ANY_POZ_CHIP>, fapi2::TargetFilter i_nest_chiplets):
     ROOT_CTRL1.TPFSI_TP_GLB_PERST_OVR_DC = 0
     ROOT_CTRL1.TP_RI_DC_B  = 1
@@ -990,6 +1160,10 @@ ISTEP(3, 30, "proc_ioppe_load", "SPPE")
 #    multicast/unicast on SPINAL to all used IOPPEs (TBUS)
 # Dynamic reload: only needed for Spinal IOPPEs, which have a fast load path
 # On IO chiplet reboot, IOPPE SRAM will have remaining state from previous run and may have to be overwritten with a fresh image.
+
+def ody_ioppe_load():
+    Load IOPPE and boot it
+    Load ARC but do not boot it
 
 ISTEP(3, 31, "proc_g2p_disable", "SSBE, TSBE")
 

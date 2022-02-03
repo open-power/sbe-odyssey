@@ -53,15 +53,22 @@ def mod_clock_test(target<ANY_POZ_CHIP>, bool i_use_cfam_path):
 
             ASSERT(clockA_ok && clockB_ok, RCS_CLOCK_TEST_OUT_ERROR)
 
-def mod_poll_pll_lock(target<PERV|MC, MCAST_AND>, pll_lock_bits i_pll_mask):
+def _mod_poll_pll_lock(target<ANY_POZ_CHIP|PERV|MC, MCAST_AND>, uint32_t i_reg_addr, uint64_t i_check_value):
     # basically this is p10_perv_sbe_cmn_poll_pll_lock, only with a shifted parameter
-    uint64_t l_check_value = i_pll_mask << 56;
     for loop in 1..50:
-        if (PLL_LOCK_REG & l_check_value) == l_check_value:
+        if (getScom(i_target, i_reg_addr) & i_check_value) == i_check_value:
             return SUCCESS
         delay(100us, 100kcyc)
 
     return TIMEOUT
+
+# Standard poll for PLL lock using the PCB Responder
+def mod_poll_pll_lock(target<PERV|MC, MCAST_AND>, pll_lock_bits i_pll_mask):
+    return _mod_poll_pll_lock(i_target, PLL_LOCK_REG, i_pll_mask << 56)
+
+# Poll for PLL lock using the FSI2PIB status register, for cases where the PCB is not up yet
+def mod_poll_pll_lock_fsi2pib(target<ANY_POZ_CHIP>, pll_lock_bits i_pll_mask):
+    return _mod_poll_pll_lock(i_target, 0x50000, i_pll_mask << 44)
 
 ISTEP(99, 99, "poz_perv_mod_rcs", "")
 
@@ -325,7 +332,7 @@ def mod_poz_tp_init_common(target<ANY_POZ_CHIP>):
 
 ISTEP(99, 99, "poz_perv_mod_bist", "")
 
-def poz_bist(target<POZ_ANY_CHIP>, bist_params &i_params):
+def poz_bist(target<ANY_POZ_CHIP>, bist_params &i_params):
     mod_multicast_setup(group6 = i_params.chiplets)
 
     if i_params.do_pre_scan0_gtr:
