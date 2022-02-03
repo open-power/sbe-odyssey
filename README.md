@@ -34,3 +34,17 @@ mesonwrap help
 Note: After build, all images are available in images dir.
       All .o, .s, .a etc are available in builddir.
 
+To Run simics:
+    After building image run following steps.
+        ./sb prime
+
+        cd simics
+        ./runsim -m p11_standalone odyssey_sram_img="images/odyssey/odyssey_sppe_DD1.bin" sbe_script_to_run="targets/odyssey_standalone/sbeTest/sbe_startup_ody_standalone.simics" sbe_scripts_path="targets/odyssey_standalone/sbeTest/"
+
+    In simics console run this.
+        simics> start-cbs 0
+        simics> run     // This code will start exeuting code form reset vector. Put any breakpoint required before this.
+
+    To get the trace run:
+        simics> sbe-trace 0
+
