@@ -24,9 +24,8 @@
 # IBM_PROLOG_END_TAG
 
 infile_c = ['ecdsa.C',
-           #'sha512.C',
             'sha3.C',
-           #'dilithium.C'
+            'dilithium.C'
             ]
 
 lib_file_name = 'cmnalgo'

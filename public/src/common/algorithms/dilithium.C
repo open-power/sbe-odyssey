@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -47,8 +48,8 @@
 #include <stdio.h>         // diags only
 #endif
 
-#include "pqalgs.H"                                    /* our own prototypes */
-#include "commonbase.H"
+#include "pqalgs.h"
+#include "common-base.h"
 
 
 #if 1       //-----  delimiter: pseudo-RNG  ----------------------------------
@@ -74,13 +75,13 @@ static uint64_t rng_seed;
 //--------------------------------------
 static inline uint64_t cu_mix64(uint64_t seed)
 {
-	seed ^= CU__RR64(seed, 25) ^ CU__RR64(seed, 47);
-	seed *= UINT64_C(0x9e6c63d0676a9a99);
+    seed ^= CU__RR64(seed, 25) ^ CU__RR64(seed, 47);
+    seed *= UINT64_C(0x9e6c63d0676a9a99);
 
-	seed ^= (seed >> 23) ^ (seed >> 51);
-	seed *= UINT64_C(0x9e6d62d06f6a9a9b);
+    seed ^= (seed >> 23) ^ (seed >> 51);
+    seed *= UINT64_C(0x9e6d62d06f6a9a9b);
 
-	return seed ^ (seed >> 23) ^ (seed >> 51);
+    return seed ^ (seed >> 23) ^ (seed >> 51);
 }
 
 
@@ -88,16 +89,16 @@ static inline uint64_t cu_mix64(uint64_t seed)
 // writes 8N-byte units, do not use with other granularity
 static void randombytes(unsigned char *r, size_t rbytes)
 {
-	if (r && rbytes) {
-		unsigned int i = 0;
+    if (r && rbytes) {
+        unsigned int i = 0;
 
-		while ((i+1)*8 <= rbytes) {
-			uint64_t v = cu_mix64(++rng_seed);
+        while ((i+1)*8 <= rbytes) {
+            uint64_t v = cu_mix64(++rng_seed);
 
-			MSBF8_WRITE(r +i*8, v);
-			++i;
-		}
-	}
+            MSBF8_WRITE(r +i*8, v);
+            ++i;
+        }
+    }
 }
 #endif     //-----  pseudo-RNG  ---------------------------------------------
 
@@ -877,7 +878,7 @@ void shake256(uint8_t *out, size_t outlen, const uint8_t *in, size_t inlen)
 
 
 #if 0
-	// VT: not referenced
+    // VT: not referenced
 /*************************************************
 * Name:        sha3_256
 *
@@ -992,16 +993,16 @@ typedef  Keccak_state              stream256_state ;
 **************************************************/
 static
 uint32_t montgomery_reduce(uint64_t a) {
-	uint64_t t;
+    uint64_t t;
 
-	t =  a * DIL_QINV;
-	t &= ((uint64_t)1 << 32) - 1;
-	t *= DIL_Q;
-	t += a;
+    t =  a * DIL_QINV;
+    t &= ((uint64_t)1 << 32) - 1;
+    t *= DIL_Q;
+    t += a;
 
-	t >>= 32;
+    t >>= 32;
 
-	return t;
+    return t;
 }
 
 
@@ -1017,13 +1018,13 @@ uint32_t montgomery_reduce(uint64_t a) {
 **************************************************/
 static
 uint32_t reduce32(uint32_t a) {
-	uint32_t t;
+    uint32_t t;
 
-	t = a & 0x7FFFFF;
-	a >>= 23;
-	t += (a << 13) - a;
+    t = a & 0x7FFFFF;
+    a >>= 23;
+    t += (a << 13) - a;
 
-	return t;
+    return t;
 }
 
 
@@ -1038,11 +1039,11 @@ uint32_t reduce32(uint32_t a) {
 **************************************************/
 static
 uint32_t csubq(uint32_t a) {
-	a -= DIL_Q;
+    a -= DIL_Q;
 
-	a += ((int32_t)a >> 31) & DIL_Q;
+    a += ((int32_t)a >> 31) & DIL_Q;
 
-	return a;
+    return a;
 }
 
 
@@ -1058,9 +1059,9 @@ uint32_t csubq(uint32_t a) {
 **************************************************/
 static
 uint32_t freeze(uint32_t a) {
-	a = reduce32(a);
-	a = csubq(a);
-	return a;
+    a = reduce32(a);
+    a = csubq(a);
+    return a;
 }
 
 #endif      /*-----  /delimiter: reduce  -----------------------------------*/
@@ -1152,22 +1153,22 @@ static const uint32_t dil_zetas_inv[DIL_N] = {6403635, 846154, 6979993, 4442679,
 **************************************************/
 static
 void ntt256(uint32_t p[ DIL_N ]) {
-	unsigned int len, start, j, k;
-	uint32_t zeta, t;
+    unsigned int len, start, j, k;
+    uint32_t zeta, t;
 
-	k = 1;
-	for (len = 128; len > 0; len >>= 1) {
-		for (start = 0; start < DIL_N; start = j + len) {
-			zeta = dil_zetas[k++];
+    k = 1;
+    for (len = 128; len > 0; len >>= 1) {
+        for (start = 0; start < DIL_N; start = j + len) {
+            zeta = dil_zetas[k++];
 
-			for (j = start; j < start + len; ++j) {
-				t = montgomery_reduce((uint64_t)zeta *
-				                      p[j + len]);
-				p[j + len] = p[j] + 2*DIL_Q - t;
-				p[j] = p[j] + t;
-			}
-		}
-	}
+            for (j = start; j < start + len; ++j) {
+                t = montgomery_reduce((uint64_t)zeta *
+                                      p[j + len]);
+                p[j + len] = p[j] + 2*DIL_Q - t;
+                p[j] = p[j] + t;
+            }
+        }
+    }
 }
 
 
@@ -1183,30 +1184,30 @@ void ntt256(uint32_t p[ DIL_N ]) {
 **************************************************/
 static
 void invntt_tomont256(uint32_t p[ DIL_N ]) {
-	unsigned int start, len, j, k;
-	uint32_t t, zeta;
-	const uint32_t f = (((uint64_t)DIL_MONT*DIL_MONT % DIL_Q) *
-	                    (DIL_Q-1) % DIL_Q) *
-	                    ((DIL_Q-1) >> 8) % DIL_Q;
+    unsigned int start, len, j, k;
+    uint32_t t, zeta;
+    const uint32_t f = (((uint64_t)DIL_MONT*DIL_MONT % DIL_Q) *
+                        (DIL_Q-1) % DIL_Q) *
+                        ((DIL_Q-1) >> 8) % DIL_Q;
 
-	k = 0;
-	for (len = 1; len < DIL_N; len <<= 1) {
-		for (start = 0; start < DIL_N; start = j + len) {
-			zeta = dil_zetas_inv[k++];
-			for (j = start; j < start + len; ++j) {
-				t = p[j];
+    k = 0;
+    for (len = 1; len < DIL_N; len <<= 1) {
+        for (start = 0; start < DIL_N; start = j + len) {
+            zeta = dil_zetas_inv[k++];
+            for (j = start; j < start + len; ++j) {
+                t = p[j];
 
-				p[j]       = t + p[j + len];
-				p[j + len] = t + 256*DIL_Q - p[j + len];
-				p[j + len] = montgomery_reduce((uint64_t)zeta *
-				             p[j + len]);
-			}
-		}
-	}
+                p[j]       = t + p[j + len];
+                p[j + len] = t + 256*DIL_Q - p[j + len];
+                p[j + len] = montgomery_reduce((uint64_t)zeta *
+                             p[j + len]);
+            }
+        }
+    }
 
-	for (j = 0; j < DIL_N; ++j) {
-		p[j] = montgomery_reduce((uint64_t)f * p[j]);
-	}
+    for (j = 0; j < DIL_N; ++j) {
+        p[j] = montgomery_reduce((uint64_t)f * p[j]);
+    }
 }
 
 #endif      /*-----  /delimiter: NTT  --------------------------------------*/
@@ -1227,18 +1228,18 @@ void invntt_tomont256(uint32_t p[ DIL_N ]) {
 **************************************************/
 static
 uint32_t power2round(uint32_t a, uint32_t *a0)  {
-	int32_t t;
+    int32_t t;
 
-	/* Centralized remainder mod 2^D */
-	t =  a & ((1U << DIL_D) - 1);
-	t -= (1U << (DIL_D-1)) + 1;
-	t += (t >> 31) & (1U << DIL_D);
-	t -= (1U << (DIL_D-1)) - 1;
+    /* Centralized remainder mod 2^D */
+    t =  a & ((1U << DIL_D) - 1);
+    t -= (1U << (DIL_D-1)) + 1;
+    t += (t >> 31) & (1U << DIL_D);
+    t -= (1U << (DIL_D-1)) - 1;
 
-	*a0 = DIL_Q + t;
-	a = (a - t) >> DIL_D;
+    *a0 = DIL_Q + t;
+    a = (a - t) >> DIL_D;
 
-	return a;
+    return a;
 }
 
 
@@ -1261,26 +1262,26 @@ uint32_t decompose(uint32_t a, uint32_t *a0) {
 #if DIL_ALPHA != (DIL_Q-1)/16
 #error "decompose assumes ALPHA == (Q-1)/16"
 #endif
-	int32_t t, u;
+    int32_t t, u;
 
-	/* Centralized remainder mod ALPHA */
-	t = a & 0x7FFFF;
-	t += (a >> 19) << 9;
-	t -= DIL_ALPHA/2 + 1;
-	t += (t >> 31) & DIL_ALPHA;
-	t -= DIL_ALPHA/2 - 1;
-	a -= t;
+    /* Centralized remainder mod ALPHA */
+    t = a & 0x7FFFF;
+    t += (a >> 19) << 9;
+    t -= DIL_ALPHA/2 + 1;
+    t += (t >> 31) & DIL_ALPHA;
+    t -= DIL_ALPHA/2 - 1;
+    a -= t;
 
-	/* Divide by ALPHA (possible to avoid) */
-	u = a - 1;
-	u >>= 31;
-	a = (a >> 19) + 1;
-	a -= u & 1;
+    /* Divide by ALPHA (possible to avoid) */
+    u = a - 1;
+    u >>= 31;
+    a = (a >> 19) + 1;
+    a -= u & 1;
 
-	/* Border case */
-	*a0 = DIL_Q + t - (a >> 4);
-	a &= 0xF;
-	return a;
+    /* Border case */
+    *a0 = DIL_Q + t - (a >> 4);
+    a &= 0xF;
+    return a;
 }
 
 
@@ -1298,11 +1299,11 @@ uint32_t decompose(uint32_t a, uint32_t *a0) {
 **************************************************/
 static
 unsigned int make_hint(uint32_t a0, uint32_t a1) {
-	if ((a0 <= DIL_GAMMA2) || (a0 > DIL_Q - DIL_GAMMA2) ||
-	    ((a0 == DIL_Q - DIL_GAMMA2) && !a1))
-		return 0;
+    if ((a0 <= DIL_GAMMA2) || (a0 > DIL_Q - DIL_GAMMA2) ||
+        ((a0 == DIL_Q - DIL_GAMMA2) && !a1))
+        return 0;
 
-	return 1;
+    return 1;
 }
 
 
@@ -1318,29 +1319,29 @@ unsigned int make_hint(uint32_t a0, uint32_t a1) {
 **************************************************/
 static
 uint32_t use_hint(uint32_t a, unsigned int hint) {
-	uint32_t a0, a1;
+    uint32_t a0, a1;
 
-	a1 = decompose(a, &a0);
-	if (!hint) {
-		return a1;
+    a1 = decompose(a, &a0);
+    if (!hint) {
+        return a1;
 
-	} else if (a0 > DIL_Q) {
-		return (a1 + 1) & 0xF;
+    } else if (a0 > DIL_Q) {
+        return (a1 + 1) & 0xF;
 
-	} else {
-		return (a1 - 1) & 0xF;
-	}
+    } else {
+        return (a1 - 1) & 0xF;
+    }
 
 /* note: dead code in ref.impl? */
 #if 0
-	/* If decompose does not divide out ALPHA:
-	if (!hint) {
-		return a1;
-	} else if (a0 > DIL_Q)
-		return (a1 + DIL_ALPHA) % (DIL_Q - 1);
-	else
-		return (a1 - DIL_ALPHA) % (DIL_Q - 1);
-	*/
+    /* If decompose does not divide out ALPHA:
+    if (!hint) {
+        return a1;
+    } else if (a0 > DIL_Q)
+        return (a1 + DIL_ALPHA) % (DIL_Q - 1);
+    else
+        return (a1 - DIL_ALPHA) % (DIL_Q - 1);
+    */
 #endif
 }
 
@@ -1395,9 +1396,9 @@ void shake256_stream_init(Keccak_state *state,
 static inline size_t dil_crh(unsigned char *res,  size_t rbytes,
                        const unsigned char *seed, size_t sbytes)
 {
-	shake256(res, rbytes, seed, sbytes);
+    shake256(res, rbytes, seed, sbytes);
 
-	return rbytes;
+    return rbytes;
 }
 
 #endif      /*-----  /delimiter: poly -> symmetric.h  ----------------------*/
@@ -1405,7 +1406,7 @@ static inline size_t dil_crh(unsigned char *res,  size_t rbytes,
 
 #if 1       /*-----  delimiter: poly  --------------------------------------*/
 typedef struct {
-	uint32_t coeffs[ DIL_N ];
+    uint32_t coeffs[ DIL_N ];
 } poly;
 
 
@@ -1419,10 +1420,10 @@ typedef struct {
 **************************************************/
 static
 void poly_reduce(poly *a) {
-	unsigned int i;
+    unsigned int i;
 
-	for (i = 0; i < DIL_N; ++i)
-		a->coeffs[i] = reduce32(a->coeffs[i]);
+    for (i = 0; i < DIL_N; ++i)
+        a->coeffs[i] = reduce32(a->coeffs[i]);
 }
 
 
@@ -1436,10 +1437,10 @@ void poly_reduce(poly *a) {
 **************************************************/
 static
 void poly_csubq(poly *a) {
-	unsigned int i;
+    unsigned int i;
 
-	for (i = 0; i < DIL_N; ++i)
-		a->coeffs[i] = csubq(a->coeffs[i]);
+    for (i = 0; i < DIL_N; ++i)
+        a->coeffs[i] = csubq(a->coeffs[i]);
 }
 
 
@@ -1453,10 +1454,10 @@ void poly_csubq(poly *a) {
 **************************************************/
 static
 void poly_freeze(poly *a) {
-	unsigned int i;
+    unsigned int i;
 
-	for (i = 0; i < DIL_N; ++i)
-		a->coeffs[i] = freeze(a->coeffs[i]);
+    for (i = 0; i < DIL_N; ++i)
+        a->coeffs[i] = freeze(a->coeffs[i]);
 }
 
 
@@ -1471,10 +1472,10 @@ void poly_freeze(poly *a) {
 **************************************************/
 static
 void poly_add(poly *c, const poly *a, const poly *b)  {
-	unsigned int i;
+    unsigned int i;
 
-	for (i = 0; i < DIL_N; ++i)
-		c->coeffs[i] = a->coeffs[i] + b->coeffs[i];
+    for (i = 0; i < DIL_N; ++i)
+        c->coeffs[i] = a->coeffs[i] + b->coeffs[i];
 }
 
 
@@ -1492,10 +1493,10 @@ void poly_add(poly *c, const poly *a, const poly *b)  {
 **************************************************/
 static
 void poly_sub(poly *c, const poly *a, const poly *b) {
-	unsigned int i;
+    unsigned int i;
 
-	for (i = 0; i < DIL_N; ++i)
-		c->coeffs[i] = a->coeffs[i] + 2*DIL_Q - b->coeffs[i];
+    for (i = 0; i < DIL_N; ++i)
+        c->coeffs[i] = a->coeffs[i] + 2*DIL_Q - b->coeffs[i];
 }
 
 
@@ -1509,10 +1510,10 @@ void poly_sub(poly *c, const poly *a, const poly *b) {
 **************************************************/
 static
 void poly_shiftl(poly *a) {
-	unsigned int i;
+    unsigned int i;
 
-	for (i = 0; i < DIL_N; ++i)
-		a->coeffs[i] <<= DIL_D;
+    for (i = 0; i < DIL_N; ++i)
+        a->coeffs[i] <<= DIL_D;
 }
 
 
@@ -1526,7 +1527,7 @@ void poly_shiftl(poly *a) {
 **************************************************/
 static
 void poly_ntt256(poly *a) {
-	ntt256(a->coeffs);
+    ntt256(a->coeffs);
 }
 
 
@@ -1541,7 +1542,7 @@ void poly_ntt256(poly *a) {
 **************************************************/
 static
 void poly_invntt_tomont(poly *a) {
-	invntt_tomont256(a->coeffs);
+    invntt_tomont256(a->coeffs);
 }
 
 
@@ -1559,12 +1560,12 @@ void poly_invntt_tomont(poly *a) {
 **************************************************/
 static
 void poly_pointwise_montgomery(poly *c, const poly *a, const poly *b) {
-	unsigned int i;
+    unsigned int i;
 
-	for (i = 0; i < DIL_N; ++i) {
-		c->coeffs[i] = montgomery_reduce((uint64_t) a->coeffs[i] *
-		                                            b->coeffs[i]);
-	}
+    for (i = 0; i < DIL_N; ++i) {
+        c->coeffs[i] = montgomery_reduce((uint64_t) a->coeffs[i] *
+                                                    b->coeffs[i]);
+    }
 }
 
 
@@ -1625,14 +1626,14 @@ void poly_decompose(poly *a1, poly *a0, const poly *a) {
 **************************************************/
 static
 unsigned int poly_make_hint(poly *h, const poly *a0, const poly *a1) {
-	unsigned int i, s = 0;
+    unsigned int i, s = 0;
 
-	for (i = 0; i < DIL_N; ++i) {
-		h->coeffs[i] = make_hint(a0->coeffs[i], a1->coeffs[i]);
-		s += h->coeffs[i];
-	}
+    for (i = 0; i < DIL_N; ++i) {
+        h->coeffs[i] = make_hint(a0->coeffs[i], a1->coeffs[i]);
+        s += h->coeffs[i];
+    }
 
-	return s;
+    return s;
 }
 
 
@@ -1647,10 +1648,10 @@ unsigned int poly_make_hint(poly *h, const poly *a0, const poly *a1) {
 **************************************************/
 static
 void poly_use_hint(poly *b, const poly *a, const poly *h) {
-	unsigned int i;
+    unsigned int i;
 
-	for (i = 0; i < DIL_N; ++i)
-		b->coeffs[i] = use_hint(a->coeffs[i], h->coeffs[i]);
+    for (i = 0; i < DIL_N; ++i)
+        b->coeffs[i] = use_hint(a->coeffs[i], h->coeffs[i]);
 }
 
 
@@ -1669,26 +1670,26 @@ ATTR_PURE__
 static
 /**/
 int poly_chknorm(const poly *a, uint32_t B) {
-	unsigned int i;
-	uint32_t t;
+    unsigned int i;
+    uint32_t t;
 
-	/* It is ok to leak which coefficient violates the bound since
-	 the probability for each coefficient is independent of secret
-	 data but we must not leak sign of the centralized representative. */
+    /* It is ok to leak which coefficient violates the bound since
+     the probability for each coefficient is independent of secret
+     data but we must not leak sign of the centralized representative. */
 
-	for (i = 0; i < DIL_N; ++i) {
-		/* Absolute value of centralized representative */
+    for (i = 0; i < DIL_N; ++i) {
+        /* Absolute value of centralized representative */
 
-		t =  (DIL_Q-1)/2 - a->coeffs[i];
-		t ^= (int32_t)t >> 31;
-		t =  (DIL_Q-1)/2 - t;
+        t =  (DIL_Q-1)/2 - a->coeffs[i];
+        t ^= (int32_t)t >> 31;
+        t =  (DIL_Q-1)/2 - t;
 
-		if (t >= B) {
-			return 1;
-		}
-	}
+        if (t >= B) {
+            return 1;
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 
@@ -1711,22 +1712,22 @@ static unsigned int rej_uniform(uint32_t *a,
                                 const uint8_t *buf,
                                 unsigned int buflen)
 {
-	unsigned int ctr = 0, pos = 0;
-	uint32_t t;
+    unsigned int ctr = 0, pos = 0;
+    uint32_t t;
 
-	while ((ctr < len) && (pos + 3 <= buflen)) {
-		t  = buf[pos++];
+    while ((ctr < len) && (pos + 3 <= buflen)) {
+        t  = buf[pos++];
 
-		t |= (uint32_t)buf[pos++] << 8;
-		t |= (uint32_t)buf[pos++] << 16;
+        t |= (uint32_t)buf[pos++] << 8;
+        t |= (uint32_t)buf[pos++] << 16;
 
-		t &= 0x7FFFFF;
+        t &= 0x7FFFFF;
 
-		if (t < DIL_Q)
-			a[ctr++] = t;
-	}
+        if (t < DIL_Q)
+            a[ctr++] = t;
+    }
 
-	return ctr;
+    return ctr;
 }
 
 /*************************************************
@@ -1748,27 +1749,27 @@ void poly_uniform(poly *a,
                   const uint8_t seed[ DIL_SEEDBYTES ],
                   uint16_t nonce)
 {
-	unsigned int i, ctr, off;
-	unsigned int buflen = POLY_UNIFORM_NBLOCKS * DIL_STREAM128_BLOCKBYTES;
-	uint8_t buf[ POLY_UNIFORM_NBLOCKS * DIL_STREAM128_BLOCKBYTES +2 ];
-	stream128_state state;
+    unsigned int i, ctr, off;
+    unsigned int buflen = POLY_UNIFORM_NBLOCKS * DIL_STREAM128_BLOCKBYTES;
+    uint8_t buf[ POLY_UNIFORM_NBLOCKS * DIL_STREAM128_BLOCKBYTES +2 ];
+    stream128_state state;
 
-	stream128_init(&state, seed, nonce);
-	stream128_squeezeblocks(buf, POLY_UNIFORM_NBLOCKS, &state);
+    stream128_init(&state, seed, nonce);
+    stream128_squeezeblocks(buf, POLY_UNIFORM_NBLOCKS, &state);
 
-	ctr = rej_uniform(a->coeffs, DIL_N, buf, buflen);
+    ctr = rej_uniform(a->coeffs, DIL_N, buf, buflen);
 
-	while(ctr < DIL_N) {
-		off = buflen % 3;
-		for (i = 0; i < off; ++i)
-			buf[i] = buf[buflen - off + i];
+    while(ctr < DIL_N) {
+        off = buflen % 3;
+        for (i = 0; i < off; ++i)
+            buf[i] = buf[buflen - off + i];
 
-		buflen = DIL_STREAM128_BLOCKBYTES + off;
+        buflen = DIL_STREAM128_BLOCKBYTES + off;
 
-		stream128_squeezeblocks(buf + off, 1, &state);
+        stream128_squeezeblocks(buf + off, 1, &state);
 
-		ctr += rej_uniform(a->coeffs + ctr, DIL_N - ctr, buf, buflen);
-	}
+        ctr += rej_uniform(a->coeffs + ctr, DIL_N - ctr, buf, buflen);
+    }
 }
 
 
@@ -1792,26 +1793,26 @@ static unsigned int rej_eta(uint32_t *a,
                             unsigned int buflen,
                             unsigned int eta)
 {
-	unsigned int ctr = 0, pos = 0;
-	uint32_t t0, t1;
+    unsigned int ctr = 0, pos = 0;
+    uint32_t t0, t1;
 
-	while ((ctr < len) && (pos < buflen)) {
-		if (eta <= 3) {
-			t0 = buf[pos  ] &  0x07;
-			t1 = buf[pos++] >> 5;
-		} else {
-			t0 = buf[pos  ] &  0x0F;
-			t1 = buf[pos++] >> 4;
-		}
+    while ((ctr < len) && (pos < buflen)) {
+        if (eta <= 3) {
+            t0 = buf[pos  ] &  0x07;
+            t1 = buf[pos++] >> 5;
+        } else {
+            t0 = buf[pos  ] &  0x0F;
+            t1 = buf[pos++] >> 4;
+        }
 
-		if (t0 <= 2*eta)
-			a[ctr++] = DIL_Q + eta - t0;
+        if (t0 <= 2*eta)
+            a[ctr++] = DIL_Q + eta - t0;
 
-		if ((t1 <= 2*eta) && (ctr < len))
-			a[ctr++] = DIL_Q + eta - t1;
-	}
+        if ((t1 <= 2*eta) && (ctr < len))
+            a[ctr++] = DIL_Q + eta - t1;
+    }
 
-	return ctr;
+    return ctr;
 }
 
 
@@ -1835,22 +1836,22 @@ void poly_uniform_eta(poly *a,
                        unsigned int eta,
                       uint16_t nonce)
 {
-	unsigned int ctr;
-	unsigned int buflen = POLY_UNIFORM_ETA_NBLOCKS * DIL_STREAM128_BLOCKBYTES;
-	uint8_t buf[ POLY_UNIFORM_ETA_NBLOCKS * DIL_STREAM128_BLOCKBYTES ];
-	stream128_state state;
+    unsigned int ctr;
+    unsigned int buflen = POLY_UNIFORM_ETA_NBLOCKS * DIL_STREAM128_BLOCKBYTES;
+    uint8_t buf[ POLY_UNIFORM_ETA_NBLOCKS * DIL_STREAM128_BLOCKBYTES ];
+    stream128_state state;
 
-	stream128_init(&state, seed, nonce);
-	stream128_squeezeblocks(buf, POLY_UNIFORM_ETA_NBLOCKS, &state);
+    stream128_init(&state, seed, nonce);
+    stream128_squeezeblocks(buf, POLY_UNIFORM_ETA_NBLOCKS, &state);
 
-	ctr = rej_eta(a->coeffs, DIL_N, buf, buflen, eta);
+    ctr = rej_eta(a->coeffs, DIL_N, buf, buflen, eta);
 
-	while (ctr < DIL_N) {
-		stream128_squeezeblocks(buf, 1, &state);
+    while (ctr < DIL_N) {
+        stream128_squeezeblocks(buf, 1, &state);
 
-		ctr += rej_eta(a->coeffs + ctr, DIL_N - ctr, buf,
-		               DIL_STREAM128_BLOCKBYTES, eta);
-	}
+        ctr += rej_eta(a->coeffs + ctr, DIL_N - ctr, buf,
+                       DIL_STREAM128_BLOCKBYTES, eta);
+    }
 }
 
 /*************************************************
@@ -1876,31 +1877,31 @@ static unsigned int rej_gamma1m1(uint32_t *a,
 #if DIL_GAMMA1 > (1 << 19)
 #error "rej_gamma1m1() assumes GAMMA1 - 1 fits in 19 bits"
 #endif
-	unsigned int ctr, pos;
-	uint32_t t0, t1;
+    unsigned int ctr, pos;
+    uint32_t t0, t1;
 
-	ctr = pos = 0;
+    ctr = pos = 0;
 
-	while(ctr < len && pos + 5 <= buflen) {
-		t0  = buf[pos];
-		t0 |= (uint32_t)buf[pos + 1] << 8;
-		t0 |= (uint32_t)buf[pos + 2] << 16;
-		t0 &= 0xFFFFF;
+    while(ctr < len && pos + 5 <= buflen) {
+        t0  = buf[pos];
+        t0 |= (uint32_t)buf[pos + 1] << 8;
+        t0 |= (uint32_t)buf[pos + 2] << 16;
+        t0 &= 0xFFFFF;
 
-		t1  = buf[pos + 2] >> 4;
-		t1 |= (uint32_t)buf[pos + 3] << 4;
-		t1 |= (uint32_t)buf[pos + 4] << 12;
+        t1  = buf[pos + 2] >> 4;
+        t1 |= (uint32_t)buf[pos + 3] << 4;
+        t1 |= (uint32_t)buf[pos + 4] << 12;
 
-		pos += 5;
+        pos += 5;
 
-		if (t0 <= 2*DIL_GAMMA1 - 2)
-			a[ctr++] = DIL_Q + DIL_GAMMA1 - 1 - t0;
+        if (t0 <= 2*DIL_GAMMA1 - 2)
+            a[ctr++] = DIL_Q + DIL_GAMMA1 - 1 - t0;
 
-		if (t1 <= 2*DIL_GAMMA1 - 2 && ctr < len)
-			a[ctr++] = DIL_Q + DIL_GAMMA1 - 1 - t1;
-	}
+        if (t1 <= 2*DIL_GAMMA1 - 2 && ctr < len)
+            a[ctr++] = DIL_Q + DIL_GAMMA1 - 1 - t1;
+    }
 
-	return ctr;
+    return ctr;
 }
 
 
@@ -1924,28 +1925,28 @@ void poly_uniform_gamma1m1(poly *a,
                            const uint8_t seed[ DIL_CRHBYTES ],
                            uint16_t nonce)
 {
-	unsigned int i, ctr, off;
-	unsigned int buflen = POLY_UNIFORM_GAMMA1M1_NBLOCKS *
-												DIL_STREAM256_BLOCKBYTES;
-	uint8_t buf[POLY_UNIFORM_GAMMA1M1_NBLOCKS * DIL_STREAM256_BLOCKBYTES + 4];
-	stream256_state state;
+    unsigned int i, ctr, off;
+    unsigned int buflen = POLY_UNIFORM_GAMMA1M1_NBLOCKS *
+                                                DIL_STREAM256_BLOCKBYTES;
+    uint8_t buf[POLY_UNIFORM_GAMMA1M1_NBLOCKS * DIL_STREAM256_BLOCKBYTES + 4];
+    stream256_state state;
 
-	stream256_init(&state, seed, nonce);
-	stream256_squeezeblocks(buf, POLY_UNIFORM_GAMMA1M1_NBLOCKS, &state);
+    stream256_init(&state, seed, nonce);
+    stream256_squeezeblocks(buf, POLY_UNIFORM_GAMMA1M1_NBLOCKS, &state);
 
-	ctr = rej_gamma1m1(a->coeffs, DIL_N, buf, buflen);
+    ctr = rej_gamma1m1(a->coeffs, DIL_N, buf, buflen);
 
-	while(ctr < DIL_N) {
-		off = buflen % 5;
-		for (i = 0; i < off; ++i)
-			buf[i] = buf[buflen - off + i];
+    while(ctr < DIL_N) {
+        off = buflen % 5;
+        for (i = 0; i < off; ++i)
+            buf[i] = buf[buflen - off + i];
 
-		buflen = DIL_STREAM256_BLOCKBYTES + off;
+        buflen = DIL_STREAM256_BLOCKBYTES + off;
 
-		stream256_squeezeblocks(buf + off, 1, &state);
+        stream256_squeezeblocks(buf + off, 1, &state);
 
-		ctr += rej_gamma1m1(a->coeffs + ctr, DIL_N - ctr, buf, buflen);
-	}
+        ctr += rej_gamma1m1(a->coeffs + ctr, DIL_N - ctr, buf, buflen);
+    }
 }
 
 
@@ -1958,33 +1959,33 @@ void poly_uniform_gamma1m1(poly *a,
 **************************************************/
 static
 void polyeta_pack(uint8_t *r, const poly *a, unsigned int eta) {
-	unsigned int i;
-	uint8_t t[8];
+    unsigned int i;
+    uint8_t t[8];
 
-	if (2*eta <= 7) {
-		for (i = 0; i < DIL_N/8; ++i) {
-			t[0] = DIL_Q + eta - a->coeffs[8*i+0];
-			t[1] = DIL_Q + eta - a->coeffs[8*i+1];
-			t[2] = DIL_Q + eta - a->coeffs[8*i+2];
-			t[3] = DIL_Q + eta - a->coeffs[8*i+3];
-			t[4] = DIL_Q + eta - a->coeffs[8*i+4];
-			t[5] = DIL_Q + eta - a->coeffs[8*i+5];
-			t[6] = DIL_Q + eta - a->coeffs[8*i+6];
-			t[7] = DIL_Q + eta - a->coeffs[8*i+7];
+    if (2*eta <= 7) {
+        for (i = 0; i < DIL_N/8; ++i) {
+            t[0] = DIL_Q + eta - a->coeffs[8*i+0];
+            t[1] = DIL_Q + eta - a->coeffs[8*i+1];
+            t[2] = DIL_Q + eta - a->coeffs[8*i+2];
+            t[3] = DIL_Q + eta - a->coeffs[8*i+3];
+            t[4] = DIL_Q + eta - a->coeffs[8*i+4];
+            t[5] = DIL_Q + eta - a->coeffs[8*i+5];
+            t[6] = DIL_Q + eta - a->coeffs[8*i+6];
+            t[7] = DIL_Q + eta - a->coeffs[8*i+7];
 
-			r[3*i+0]  = (t[0] >> 0) | (t[1] << 3) | (t[2] << 6);
-			r[3*i+1]  = (t[2] >> 2) | (t[3] << 1) |
-			            (t[4] << 4) | (t[5] << 7);
-			r[3*i+2]  = (t[5] >> 1) | (t[6] << 2) | (t[7] << 5);
-		}
+            r[3*i+0]  = (t[0] >> 0) | (t[1] << 3) | (t[2] << 6);
+            r[3*i+1]  = (t[2] >> 2) | (t[3] << 1) |
+                        (t[4] << 4) | (t[5] << 7);
+            r[3*i+2]  = (t[5] >> 1) | (t[6] << 2) | (t[7] << 5);
+        }
 
-	} else {
-		for (i = 0; i < DIL_N/2; ++i) {
-			t[0] = DIL_Q + eta - a->coeffs[2*i+0];
-			t[1] = DIL_Q + eta - a->coeffs[2*i+1];
-			r[i] = t[0] | (t[1] << 4);
-		}
-	}
+    } else {
+        for (i = 0; i < DIL_N/2; ++i) {
+            t[0] = DIL_Q + eta - a->coeffs[2*i+0];
+            t[1] = DIL_Q + eta - a->coeffs[2*i+1];
+            r[i] = t[0] | (t[1] << 4);
+        }
+    }
 }
 
 
@@ -2046,19 +2047,19 @@ void polyeta_unpack(poly *r, const uint8_t *a, unsigned int eta) {
 **************************************************/
 static
 void polyt1_pack(uint8_t *r, const poly *a) {
-	unsigned int i;
+    unsigned int i;
 
-	for (i = 0; i < DIL_N/8; ++i) {
-		r[9*i+0] = (a->coeffs[8*i+0] >> 0);
-		r[9*i+1] = (a->coeffs[8*i+0] >> 8) | (a->coeffs[8*i+1] << 1);
-		r[9*i+2] = (a->coeffs[8*i+1] >> 7) | (a->coeffs[8*i+2] << 2);
-		r[9*i+3] = (a->coeffs[8*i+2] >> 6) | (a->coeffs[8*i+3] << 3);
-		r[9*i+4] = (a->coeffs[8*i+3] >> 5) | (a->coeffs[8*i+4] << 4);
-		r[9*i+5] = (a->coeffs[8*i+4] >> 4) | (a->coeffs[8*i+5] << 5);
-		r[9*i+6] = (a->coeffs[8*i+5] >> 3) | (a->coeffs[8*i+6] << 6);
-		r[9*i+7] = (a->coeffs[8*i+6] >> 2) | (a->coeffs[8*i+7] << 7);
-		r[9*i+8] = (a->coeffs[8*i+7] >> 1);
-	}
+    for (i = 0; i < DIL_N/8; ++i) {
+        r[9*i+0] = (a->coeffs[8*i+0] >> 0);
+        r[9*i+1] = (a->coeffs[8*i+0] >> 8) | (a->coeffs[8*i+1] << 1);
+        r[9*i+2] = (a->coeffs[8*i+1] >> 7) | (a->coeffs[8*i+2] << 2);
+        r[9*i+3] = (a->coeffs[8*i+2] >> 6) | (a->coeffs[8*i+3] << 3);
+        r[9*i+4] = (a->coeffs[8*i+3] >> 5) | (a->coeffs[8*i+4] << 4);
+        r[9*i+5] = (a->coeffs[8*i+4] >> 4) | (a->coeffs[8*i+5] << 5);
+        r[9*i+6] = (a->coeffs[8*i+5] >> 3) | (a->coeffs[8*i+6] << 6);
+        r[9*i+7] = (a->coeffs[8*i+6] >> 2) | (a->coeffs[8*i+7] << 7);
+        r[9*i+8] = (a->coeffs[8*i+7] >> 1);
+    }
 }
 
 /*************************************************
@@ -2101,26 +2102,26 @@ void polyt0_pack(uint8_t *r, const poly *a) {
 #if DIL_D != 14
 #error "polyt0_pack() assumes D == 14"
 #endif
-	unsigned int i;
-	uint32_t t[4];
+    unsigned int i;
+    uint32_t t[4];
 
-	for (i = 0; i < DIL_N/4; ++i) {
-		t[0] = DIL_Q + (1U << (DIL_D -1)) - a->coeffs[4*i+0];
-		t[1] = DIL_Q + (1U << (DIL_D -1)) - a->coeffs[4*i+1];
-		t[2] = DIL_Q + (1U << (DIL_D -1)) - a->coeffs[4*i+2];
-		t[3] = DIL_Q + (1U << (DIL_D -1)) - a->coeffs[4*i+3];
+    for (i = 0; i < DIL_N/4; ++i) {
+        t[0] = DIL_Q + (1U << (DIL_D -1)) - a->coeffs[4*i+0];
+        t[1] = DIL_Q + (1U << (DIL_D -1)) - a->coeffs[4*i+1];
+        t[2] = DIL_Q + (1U << (DIL_D -1)) - a->coeffs[4*i+2];
+        t[3] = DIL_Q + (1U << (DIL_D -1)) - a->coeffs[4*i+3];
 
-		r[7*i+0]  =  t[0];
-		r[7*i+1]  =  t[0] >> 8;
-		r[7*i+1] |=  t[1] << 6;
-		r[7*i+2]  =  t[1] >> 2;
-		r[7*i+3]  =  t[1] >> 10;
-		r[7*i+3] |=  t[2] << 4;
-		r[7*i+4]  =  t[2] >> 4;
-		r[7*i+5]  =  t[2] >> 12;
-		r[7*i+5] |=  t[3] << 2;
-		r[7*i+6]  =  t[3] >> 6;
-	}
+        r[7*i+0]  =  t[0];
+        r[7*i+1]  =  t[0] >> 8;
+        r[7*i+1] |=  t[1] << 6;
+        r[7*i+2]  =  t[1] >> 2;
+        r[7*i+3]  =  t[1] >> 10;
+        r[7*i+3] |=  t[2] << 4;
+        r[7*i+4]  =  t[2] >> 4;
+        r[7*i+5]  =  t[2] >> 12;
+        r[7*i+5] |=  t[3] << 2;
+        r[7*i+6]  =  t[3] >> 6;
+    }
 }
 
 
@@ -2179,24 +2180,24 @@ void polyz_pack(uint8_t *r, const poly *a) {
 #if DIL_GAMMA1 > (1 << 19)
 #error "polyz_pack() assumes GAMMA1 - 1 fits in 19 bits"
 #endif
-	unsigned int i;
-	uint32_t t[2];
+    unsigned int i;
+    uint32_t t[2];
 
-	for (i = 0; i < DIL_N/2; ++i) {
-		/* Map to {0,...,2*GAMMA1 - 2} */
-		t[0] =  DIL_GAMMA1 - 1 - a->coeffs[2*i+0];
-		t[0] += ((int32_t)t[0] >> 31) & DIL_Q;
+    for (i = 0; i < DIL_N/2; ++i) {
+        /* Map to {0,...,2*GAMMA1 - 2} */
+        t[0] =  DIL_GAMMA1 - 1 - a->coeffs[2*i+0];
+        t[0] += ((int32_t)t[0] >> 31) & DIL_Q;
 
-		t[1] =  DIL_GAMMA1 - 1 - a->coeffs[2*i+1];
-		t[1] += ((int32_t)t[1] >> 31) & DIL_Q;
+        t[1] =  DIL_GAMMA1 - 1 - a->coeffs[2*i+1];
+        t[1] += ((int32_t)t[1] >> 31) & DIL_Q;
 
-		r[5*i+0]  = t[0];
-		r[5*i+1]  = t[0] >> 8;
-		r[5*i+2]  = t[0] >> 16;
-		r[5*i+2] |= t[1] << 4;
-		r[5*i+3]  = t[1] >> 4;
-		r[5*i+4]  = t[1] >> 12;
-	}
+        r[5*i+0]  = t[0];
+        r[5*i+1]  = t[0] >> 8;
+        r[5*i+2]  = t[0] >> 16;
+        r[5*i+2] |= t[1] << 4;
+        r[5*i+3]  = t[1] >> 4;
+        r[5*i+4]  = t[1] >> 12;
+    }
 }
 
 
@@ -2212,23 +2213,23 @@ void polyz_pack(uint8_t *r, const poly *a) {
 **************************************************/
 static
 void polyz_unpack(poly *r, const unsigned char *a) {
-	unsigned int i;
+    unsigned int i;
 
-	for (i = 0; i < DIL_N/2; ++i) {
-		r->coeffs[2*i+0]  = a[5*i+0];
-		r->coeffs[2*i+0] |= (uint32_t)a[5*i+1] << 8;
-		r->coeffs[2*i+0] |= (uint32_t)a[5*i+2] << 16;
-		r->coeffs[2*i+0] &= 0xFFFFF;
+    for (i = 0; i < DIL_N/2; ++i) {
+        r->coeffs[2*i+0]  = a[5*i+0];
+        r->coeffs[2*i+0] |= (uint32_t)a[5*i+1] << 8;
+        r->coeffs[2*i+0] |= (uint32_t)a[5*i+2] << 16;
+        r->coeffs[2*i+0] &= 0xFFFFF;
 
-		r->coeffs[2*i+1]  = a[5*i+2] >> 4;
-		r->coeffs[2*i+1] |= (uint32_t)a[5*i+3] << 4;
-		r->coeffs[2*i+1] |= (uint32_t)a[5*i+4] << 12;
+        r->coeffs[2*i+1]  = a[5*i+2] >> 4;
+        r->coeffs[2*i+1] |= (uint32_t)a[5*i+3] << 4;
+        r->coeffs[2*i+1] |= (uint32_t)a[5*i+4] << 12;
 
-		r->coeffs[2*i+0] =  DIL_GAMMA1 - 1 - r->coeffs[2*i+0];
-		r->coeffs[2*i+0] += ((int32_t)r->coeffs[2*i+0] >> 31) & DIL_Q;
-		r->coeffs[2*i+1] =  DIL_GAMMA1 - 1 - r->coeffs[2*i+1];
-		r->coeffs[2*i+1] += ((int32_t)r->coeffs[2*i+1] >> 31) & DIL_Q;
-	}
+        r->coeffs[2*i+0] =  DIL_GAMMA1 - 1 - r->coeffs[2*i+0];
+        r->coeffs[2*i+0] += ((int32_t)r->coeffs[2*i+0] >> 31) & DIL_Q;
+        r->coeffs[2*i+1] =  DIL_GAMMA1 - 1 - r->coeffs[2*i+1];
+        r->coeffs[2*i+1] += ((int32_t)r->coeffs[2*i+1] >> 31) & DIL_Q;
+    }
 }
 
 
@@ -2244,10 +2245,10 @@ void polyz_unpack(poly *r, const unsigned char *a) {
 **************************************************/
 static
 void polyw1_pack(uint8_t *r, const poly *a) {
-	unsigned int i;
+    unsigned int i;
 
-	for (i = 0; i < DIL_N/2; ++i)
-		r[i] = a->coeffs[2*i+0] | (a->coeffs[2*i+1] << 4);
+    for (i = 0; i < DIL_N/2; ++i)
+        r[i] = a->coeffs[2*i+0] | (a->coeffs[2*i+1] << 4);
 }
 #endif      /*-----  /delimiter: poly  -------------------------------------*/
 
@@ -2257,7 +2258,7 @@ void polyw1_pack(uint8_t *r, const poly *a) {
  * safe to cast to any valid, smaller size
  */
 typedef struct {
-	poly vec[ DIL_VECT_MAX ];
+    poly vec[ DIL_VECT_MAX ];
 } polyvec_max ;
 
 
@@ -2265,15 +2266,15 @@ typedef struct {
 // 0 if K is not a valid predefined category
 static unsigned int dil_eta(unsigned int k)
 {
-	switch (k) {
-//	case 4: return 6;
-	case 5: return 5;
-	case 6: return 3;        /* Category IV */
-	case 8: return 2;        /* Category V? */
+    switch (k) {
+//  case 4: return 6;
+    case 5: return 5;
+    case 6: return 3;        /* Category IV */
+    case 8: return 2;        /* Category V? */
 
-	default:
-		return 0;
-	}
+    default:
+        return 0;
+    }
 }
 
 
@@ -2281,10 +2282,10 @@ static unsigned int dil_eta(unsigned int k)
 // raw bytecount, excluding ASN framing
 static size_t dil_prv_wirebytes(unsigned int k)
 {
-	return DIL_SEEDBYTES *2                            +
-	       DIL_CRHBYTES                                +
-	       (k + k -1) * ((dil_eta(k) <= 3) ? 96 : 128) +   /* (K+L)* ... */
-	       k * DIL_POLYT0_PACKEDBYTES ;
+    return DIL_SEEDBYTES *2                            +
+           DIL_CRHBYTES                                +
+           (k + k -1) * ((dil_eta(k) <= 3) ? 96 : 128) +   /* (K+L)* ... */
+           k * DIL_POLYT0_PACKEDBYTES ;
 }
 
 
@@ -2292,30 +2293,30 @@ static size_t dil_prv_wirebytes(unsigned int k)
 // raw bytecount, excluding ASN framing
 static size_t dil_pub_wirebytes(unsigned int k)
 {
-	switch (k) {
-//	case 4: return DIL_PUB4x3_BYTES;
-	case 5: return DIL_PUB5x4_BYTES;
-	case 6: return DIL_PUB6x5_BYTES;
-	case 8: return DIL_PUB8x7_BYTES;
+    switch (k) {
+//  case 4: return DIL_PUB4x3_BYTES;
+    case 5: return DIL_PUB5x4_BYTES;
+    case 6: return DIL_PUB6x5_BYTES;
+    case 8: return DIL_PUB8x7_BYTES;
 
-	default:
-		return 0;
-	}
+    default:
+        return 0;
+    }
 }
 
 
 //--------------------------------------
 static unsigned dil_omega(unsigned int k)
 {
-	switch (k) {
-//	case 4: return 80;
-	case 5: return 96;
-	case 6: return 120;
-	case 8: return 140;
+    switch (k) {
+//  case 4: return 80;
+    case 5: return 96;
+    case 6: return 120;
+    case 8: return 140;
 
-	default:
-		return 0;
-	}
+    default:
+        return 0;
+    }
 }
 
 
@@ -2324,15 +2325,15 @@ static unsigned dil_omega(unsigned int k)
 //
 static unsigned dil_beta(unsigned int k)
 {
-	switch (k) {
-//	case 4: return 325;
-	case 5: return 275;
-	case 6: return 175;
-	case 8: return 120;
+    switch (k) {
+//  case 4: return 325;
+    case 5: return 275;
+    case 6: return 175;
+    case 8: return 120;
 
-	default:
-		return 0;
-	}
+    default:
+        return 0;
+    }
 }
 
 
@@ -2346,15 +2347,15 @@ static unsigned dil_beta(unsigned int k)
 //
 static size_t dil_signature_bytes(unsigned int k)
 {
-	switch (k) {
-//	case 4: return 2044;
-	case 5: return 2701;      /* double-check; do we pad to 2n? */
-	case 6: return 3366;
-	case 8: return 4668;
+    switch (k) {
+//  case 4: return 2044;
+    case 5: return 2701;      /* double-check; do we pad to 2n? */
+    case 6: return 3366;
+    case 8: return 4668;
 
-	default:
-		return 0;
-	}
+    default:
+        return 0;
+    }
 }
 
 
@@ -2367,8 +2368,8 @@ static size_t dil_signature_bytes(unsigned int k)
  * all valid X/Y/Z are single-byte, so sizeof(OID) == sizeof(...stub) +3
  */
 static const unsigned char dil_oidstub[] = {
-	0x06,0x0b,                                     // OID{
-	     0x2b,0x06,0x01,0x04,0x01, 0x02,0x82,0x0b, //     ...}
+    0x06,0x0b,                                     // OID{
+         0x2b,0x06,0x01,0x04,0x01, 0x02,0x82,0x0b, //     ...}
 } ;
 
 #define DIL_OIDTAIL_BYTES  ((size_t) 3)
@@ -2383,33 +2384,33 @@ static const unsigned char dil_oidstub[] = {
  */
 static unsigned int dil_oid2type(const unsigned char *oid, size_t obytes)
 {
-	unsigned int rc = 0;
+    unsigned int rc = 0;
 
-	if (oid && (obytes == sizeof(dil_oidstub) +DIL_OIDTAIL_BYTES) &&
-	    !memcmp(oid, dil_oidstub, obytes -DIL_OIDTAIL_BYTES))
-	{
-		switch (MSBF4_READ(oid +obytes -4) & 0xffffff) {
-						/* (.1) Dilithium round2 */
-		case 0x010504: rc = PQCA_ID_DIL3_R2;     break;
-		case 0x010605: rc = PQCA_ID_DIL4_R2;     break;
-		case 0x010807: rc = PQCA_ID_DIL5_R2;     break;
+    if (oid && (obytes == sizeof(dil_oidstub) +DIL_OIDTAIL_BYTES) &&
+        !memcmp(oid, dil_oidstub, obytes -DIL_OIDTAIL_BYTES))
+    {
+        switch (MSBF4_READ(oid +obytes -4) & 0xffffff) {
+                        /* (.1) Dilithium round2 */
+        case 0x010504: rc = PQCA_ID_DIL3_R2;     break;
+        case 0x010605: rc = PQCA_ID_DIL4_R2;     break;
+        case 0x010807: rc = PQCA_ID_DIL5_R2;     break;
 
-				/* (.6) Dilithium round2, 'raw' key objects */
-		case 0x060504: rc = PQCA_ID_DIL3_R2_RAW; break;
-		case 0x060605: rc = PQCA_ID_DIL4_R2_RAW; break;
-		case 0x060807: rc = PQCA_ID_DIL5_R2_RAW; break;
+                /* (.6) Dilithium round2, 'raw' key objects */
+        case 0x060504: rc = PQCA_ID_DIL3_R2_RAW; break;
+        case 0x060605: rc = PQCA_ID_DIL4_R2_RAW; break;
+        case 0x060807: rc = PQCA_ID_DIL5_R2_RAW; break;
 
-			/* (.7) Dilithium round3, compressed signatures */
-		case 0x070504: rc = PQCA_ID_DIL3_R3;     break;
-		case 0x070605: rc = PQCA_ID_DIL4_R3;     break;
-		case 0x070807: rc = PQCA_ID_DIL5_R3;     break;
+            /* (.7) Dilithium round3, compressed signatures */
+        case 0x070504: rc = PQCA_ID_DIL3_R3;     break;
+        case 0x070605: rc = PQCA_ID_DIL4_R3;     break;
+        case 0x070807: rc = PQCA_ID_DIL5_R3;     break;
 
-		default:
-			break;
-		}
-	}
+        default:
+            break;
+        }
+    }
 
-	return rc;
+    return rc;
 }
 
 
@@ -2421,39 +2422,39 @@ static unsigned int dil_oid2type(const unsigned char *oid, size_t obytes)
 static size_t dil_oid2wire(unsigned char *wire, size_t wbytes,
                             unsigned int type)
 {
-	uint32_t tail = 0;
-	size_t wr;
+    uint32_t tail = 0;
+    size_t wr;
 
-	switch (type) {
-		case PQCA_ID_DIL3_R2:     tail = 0x010504; break;
-		case PQCA_ID_DIL4_R2:     tail = 0x010605; break;
-		case PQCA_ID_DIL5_R2:     tail = 0x010807; break;
-		case PQCA_ID_DIL3_R2_RAW: tail = 0x060504; break;
-		case PQCA_ID_DIL4_R2_RAW: tail = 0x060605; break;
-		case PQCA_ID_DIL5_R2_RAW: tail = 0x060807; break;
-		case PQCA_ID_DIL3_R3:     tail = 0x070504; break;
-		case PQCA_ID_DIL4_R3:     tail = 0x070605; break;
-		case PQCA_ID_DIL5_R3:     tail = 0x070807; break;
-		default:
-			break;
-	}
+    switch (type) {
+        case PQCA_ID_DIL3_R2:     tail = 0x010504; break;
+        case PQCA_ID_DIL4_R2:     tail = 0x010605; break;
+        case PQCA_ID_DIL5_R2:     tail = 0x010807; break;
+        case PQCA_ID_DIL3_R2_RAW: tail = 0x060504; break;
+        case PQCA_ID_DIL4_R2_RAW: tail = 0x060605; break;
+        case PQCA_ID_DIL5_R2_RAW: tail = 0x060807; break;
+        case PQCA_ID_DIL3_R3:     tail = 0x070504; break;
+        case PQCA_ID_DIL4_R3:     tail = 0x070605; break;
+        case PQCA_ID_DIL5_R3:     tail = 0x070807; break;
+        default:
+            break;
+    }
 
-	if (!tail)
-		return 0;
+    if (!tail)
+        return 0;
 
-	wr = sizeof(dil_oidstub) + DIL_OIDTAIL_BYTES;
-	if (wire && (wr > wbytes))
-		return ~((size_t) 0);              // insufficient output
+    wr = sizeof(dil_oidstub) + DIL_OIDTAIL_BYTES;
+    if (wire && (wr > wbytes))
+        return ~((size_t) 0);              // insufficient output
 
-	if (wire) {
-		memcpy(wire, dil_oidstub, sizeof(dil_oidstub));
+    if (wire) {
+        memcpy(wire, dil_oidstub, sizeof(dil_oidstub));
 
-		wire[ wr -3 ] = (unsigned char) (tail >> 16);
-		wire[ wr -2 ] = (unsigned char) (tail >>  8);
-		wire[ wr -1 ] = (unsigned char)  tail;
-	}
+        wire[ wr -3 ] = (unsigned char) (tail >> 16);
+        wire[ wr -2 ] = (unsigned char) (tail >>  8);
+        wire[ wr -1 ] = (unsigned char)  tail;
+    }
 
-	return wr;
+    return wr;
 }
 
 
@@ -2492,7 +2493,7 @@ static size_t dil_oid2wire(unsigned char *wire, size_t wbytes,
 // excludes OID; OIDs include their Tag+Len fields, not separately
 // framed, therefore missing from above
 
-	/* Tag+Len+fixed Value byte for SEEDBYTES-sized BIT STRINGs */
+    /* Tag+Len+fixed Value byte for SEEDBYTES-sized BIT STRINGs */
 #define DIL__ASN1_BITSTR_SEED    0x032100
 #define DIL__ASN1_BITSTR_SEED_B  ((size_t) 3)     /* sizeof(..._BITSTR_SEED) */
 
@@ -2509,28 +2510,28 @@ static size_t dil_oid2wire(unsigned char *wire, size_t wbytes,
 static size_t dil_asn_bitstr(unsigned char *wire, size_t wbytes,
                                     size_t bstring_net_bytes)
 {
-	if (bstring_net_bytes < 0x80) {          // 03 ...len... 00
-		if (wire && (wbytes >= 3)) {
-			wire[ wbytes-3 ] = DIL__ASN1_BITSTRING;
-			wire[ wbytes-2 ] = (unsigned char) bstring_net_bytes +1;
-			wire[ wbytes-1 ] = 0;
-		}
-		return 3;
+    if (bstring_net_bytes < 0x80) {          // 03 ...len... 00
+        if (wire && (wbytes >= 3)) {
+            wire[ wbytes-3 ] = DIL__ASN1_BITSTRING;
+            wire[ wbytes-2 ] = (unsigned char) bstring_net_bytes +1;
+            wire[ wbytes-1 ] = 0;
+        }
+        return 3;
 
-	} else {                                 // assume  03 82 xx yy 00
-		if (wire && (wbytes >= 5)) {
-			wire[ wbytes-5 ] = DIL__ASN1_BITSTRING;
-			wire[ wbytes-4 ] = 0x82;
+    } else {                                 // assume  03 82 xx yy 00
+        if (wire && (wbytes >= 5)) {
+            wire[ wbytes-5 ] = DIL__ASN1_BITSTRING;
+            wire[ wbytes-4 ] = 0x82;
 
-			wire[ wbytes-3 ] =
-				(unsigned char) ((bstring_net_bytes +1) >>8);
-			wire[ wbytes-2 ] =
-				(unsigned char)   bstring_net_bytes +1;
+            wire[ wbytes-3 ] =
+                (unsigned char) ((bstring_net_bytes +1) >>8);
+            wire[ wbytes-2 ] =
+                (unsigned char)   bstring_net_bytes +1;
 
-			wire[ wbytes-1 ] = 0;
-		}
-		return 5;
-	}
+            wire[ wbytes-1 ] = 0;
+        }
+        return 5;
+    }
 }
 
 
@@ -2538,37 +2539,37 @@ static size_t dil_asn_bitstr(unsigned char *wire, size_t wbytes,
 static size_t dil_asn_sequence(unsigned char *wire, size_t wbytes,
                                       size_t seq_net_bytes)
 {
-	if (seq_net_bytes < 0x80) {              // 30 ...len... 00
-		if (wire && (wbytes >= 2)) {
-			wire[ wbytes-2 ] = DIL__ASN1_SEQUENCE;
-			wire[ wbytes-1 ] = (unsigned char) seq_net_bytes;
-		}
-		return 2;
+    if (seq_net_bytes < 0x80) {              // 30 ...len... 00
+        if (wire && (wbytes >= 2)) {
+            wire[ wbytes-2 ] = DIL__ASN1_SEQUENCE;
+            wire[ wbytes-1 ] = (unsigned char) seq_net_bytes;
+        }
+        return 2;
 
-	} else {                                 // assume  30 82 xx yy
-		if (wire && (wbytes >= 4)) {
-			wire[ wbytes-4 ] = DIL__ASN1_SEQUENCE;
-			wire[ wbytes-3 ] = 0x82;
+    } else {                                 // assume  30 82 xx yy
+        if (wire && (wbytes >= 4)) {
+            wire[ wbytes-4 ] = DIL__ASN1_SEQUENCE;
+            wire[ wbytes-3 ] = 0x82;
 
-			wire[ wbytes-2 ] =
-				(unsigned char) (seq_net_bytes >>8);
-			wire[ wbytes-1 ] =
-				(unsigned char)  seq_net_bytes;
-		}
-		return 4;
-	}
+            wire[ wbytes-2 ] =
+                (unsigned char) (seq_net_bytes >>8);
+            wire[ wbytes-1 ] =
+                (unsigned char)  seq_net_bytes;
+        }
+        return 4;
+    }
 }
 
 
 //--------------------------------------
 static size_t dil_asn_null(unsigned char *wire, size_t wbytes)
 {
-	if (wire && (wbytes >= DIL__ASN_NULL_BYTES)) {
-		wire[ wbytes-2 ] = DIL__ASN1_NULL;
-		wire[ wbytes-1 ] = 0x00;
-	}
+    if (wire && (wbytes >= DIL__ASN_NULL_BYTES)) {
+        wire[ wbytes-2 ] = DIL__ASN1_NULL;
+        wire[ wbytes-1 ] = 0x00;
+    }
 
-	return DIL__ASN_NULL_BYTES;
+    return DIL__ASN_NULL_BYTES;
 }
 
 
@@ -2577,85 +2578,85 @@ static size_t dil_pub2wire(unsigned char *wire,  size_t wbytes,
                      const unsigned char *pub,   size_t pbytes,
                      const unsigned char *algid, size_t ibytes)
 {
-	size_t wr = 0, offs = 0, oidb;
-	unsigned int type;
+    size_t wr = 0, offs = 0, oidb;
+    unsigned int type;
 
 // TODO: deduplicate
-	switch (pub ? pbytes : 0) {
-	case DIL_PUB5x4_BYTES: type = PQCA_ID_DIL3_R2; break;
- 	case DIL_PUB6x5_BYTES: type = PQCA_ID_DIL4_R2; break;
-	case DIL_PUB8x7_BYTES: type = PQCA_ID_DIL5_R2; break;
-	default:
-		return 0;
-	}
-	if (!type)
-		return 0;
+    switch (pub ? pbytes : 0) {
+    case DIL_PUB5x4_BYTES: type = PQCA_ID_DIL3_R2; break;
+    case DIL_PUB6x5_BYTES: type = PQCA_ID_DIL4_R2; break;
+    case DIL_PUB8x7_BYTES: type = PQCA_ID_DIL5_R2; break;
+    default:
+        return 0;
+    }
+    if (!type)
+        return 0;
 
-	(void) algid;
-	(void) ibytes;
+    (void) algid;
+    (void) ibytes;
 
-	wr = DIL_SPKI_ADDL_BYTES +sizeof(dil_oidstub) +DIL_OIDTAIL_BYTES +
-	     pbytes;
+    wr = DIL_SPKI_ADDL_BYTES +sizeof(dil_oidstub) +DIL_OIDTAIL_BYTES +
+         pbytes;
 
-	if (!wire)
-		return wr;
-	if (wr > wbytes)
-		return ~0;
+    if (!wire)
+        return wr;
+    if (wr > wbytes)
+        return ~0;
 
-				/* concatenate fields back to front */
+                /* concatenate fields back to front */
 
-	pbytes -= DIL_SEEDBYTES;
-	offs   =  wr -pbytes;
+    pbytes -= DIL_SEEDBYTES;
+    offs   =  wr -pbytes;
 
-		// seed is (pub, DIL_SEEDBYTES)
-		// raw T1 is rest
+        // seed is (pub, DIL_SEEDBYTES)
+        // raw T1 is rest
 
-	memmove(&( wire[ offs ] ), &(pub[ DIL_SEEDBYTES ]), pbytes);
+    memmove(&( wire[ offs ] ), &(pub[ DIL_SEEDBYTES ]), pbytes);
 
-	offs -= dil_asn_bitstr(wire, offs, pbytes);
-					// BIT STRING { t1 }
+    offs -= dil_asn_bitstr(wire, offs, pbytes);
+                    // BIT STRING { t1 }
 
-			// TODO: offset sanity checks
+            // TODO: offset sanity checks
 
-	offs -= DIL_SEEDBYTES;
+    offs -= DIL_SEEDBYTES;
 
-	memmove(&( wire[ offs ] ), pub, DIL_SEEDBYTES);
-	offs -= dil_asn_bitstr(wire, offs, DIL_SEEDBYTES);
-					// BIT STRING { seed }
+    memmove(&( wire[ offs ] ), pub, DIL_SEEDBYTES);
+    offs -= dil_asn_bitstr(wire, offs, DIL_SEEDBYTES);
+                    // BIT STRING { seed }
 
-	offs -= dil_asn_sequence(wire, offs, wr -offs);
-					// SEQ { BIT { seed } BIT { t1 } }
+    offs -= dil_asn_sequence(wire, offs, wr -offs);
+                    // SEQ { BIT { seed } BIT { t1 } }
 
-	offs -= dil_asn_bitstr(wire, offs, wr -offs);
-				// BIT { SEQ { BIT { seed } BIT { t1 } } }
+    offs -= dil_asn_bitstr(wire, offs, wr -offs);
+                // BIT { SEQ { BIT { seed } BIT { t1 } } }
 
-	offs -= dil_asn_null(wire, offs);
+    offs -= dil_asn_null(wire, offs);
 
-				// TODO: write OID to end; saves indirection
+                // TODO: write OID to end; saves indirection
 
-	oidb = dil_oid2wire(NULL, ~0, type);
+    oidb = dil_oid2wire(NULL, ~0, type);
 
-	if (oidb <= offs)
-		oidb = dil_oid2wire(&( wire[ offs -oidb ] ), oidb, type);
+    if (oidb <= offs)
+        oidb = dil_oid2wire(&( wire[ offs -oidb ] ), oidb, type);
 
-	// TODO: ...other sanity-checks...
+    // TODO: ...other sanity-checks...
 
-	offs -= oidb;
+    offs -= oidb;
 
-	offs -= dil_asn_sequence(wire, offs, oidb +DIL__ASN_NULL_BYTES);
-				// SEQ { OID { ... } NULL }
+    offs -= dil_asn_sequence(wire, offs, oidb +DIL__ASN_NULL_BYTES);
+                // SEQ { OID { ... } NULL }
 
-	offs -= dil_asn_sequence(wire, offs, wr -offs);
+    offs -= dil_asn_sequence(wire, offs, wr -offs);
 
-	return wr;
+    return wr;
 }
 
 
 //--------------------------------------
 typedef enum {
-	DIL_SPKI_SEEDFRAME  = 1,  // seed[32] in its own BIT STRING frame
-	DIL_SPKI_T1FRAME    = 2,  // T1[var-len] in its own BIT STRING frame
-	DIL_SPKI_FULLFRAME  = 4   // seed || T1 in a single BIT STRING
+    DIL_SPKI_SEEDFRAME  = 1,  // seed[32] in its own BIT STRING frame
+    DIL_SPKI_T1FRAME    = 2,  // T1[var-len] in its own BIT STRING frame
+    DIL_SPKI_FULLFRAME  = 4   // seed || T1 in a single BIT STRING
 } DIL_SPKIflags_t ;
 
 
@@ -2667,40 +2668,40 @@ typedef enum {
  *   3) pick up type, nonce[32] and T1[size-dependent] offsets if valid
  */
 static const struct {       /* field names "...b" all abbreviate "...bytes" */
-	size_t totalb;
-	const char *descr;
+    size_t totalb;
+    const char *descr;
 
-	unsigned int type;
+    unsigned int type;
 
-	size_t oidoffs;    /* full 06(...) frame incl. Tag+Len */
-	size_t oidb;
+    size_t oidoffs;    /* full 06(...) frame incl. Tag+Len */
+    size_t oidb;
 
-	size_t seedoffs;   /* raw value, w/o any ASN frame excl. 00 start
-	                      byte of BIT STRING; see also flags */
-	size_t seedb;
+    size_t seedoffs;   /* raw value, w/o any ASN frame excl. 00 start
+                          byte of BIT STRING; see also flags */
+    size_t seedb;
 
-	size_t t1offs;    /* raw T1 value, w/o any ASN frame, see also flags */
-	size_t t1b;
+    size_t t1offs;    /* raw T1 value, w/o any ASN frame, see also flags */
+    size_t t1b;
 
-	unsigned int flags;           /* see DIL_SPKIflags_t */
+    unsigned int flags;           /* see DIL_SPKIflags_t */
 } dil_spkis_der[] = {
-						/* round2, standard SPKIs */
+                        /* round2, standard SPKIs */
 
-	{ 1510, "Dil, round2 std. SPKI, Cat. III [Dil-5-4]",
-	  PQCA_ID_DIL3_R2,
-	  6, 13, /*OID*/ 33, 32, /*DIL_SEEDBYTES*/ 70, 1440,
-	  DIL_SPKI_SEEDFRAME | DIL_SPKI_T1FRAME,
-	},
-	{ 1798, "Dil, round2 std. SPKI, Cat. IV [Dil-6-5]",
-	  PQCA_ID_DIL4_R2,
-	  6, 13, /*OID*/ 33, 32, /*DIL_SEEDBYTES*/ 70, 1728,
-	  DIL_SPKI_SEEDFRAME | DIL_SPKI_T1FRAME,
-	},
-	{ 2374, "Dil, round2 std. SPKI, Cat. V [Dil-8-7]",
-	  PQCA_ID_DIL5_R2,
-	  6, 13, /*OID*/ 33, 32, /*DIL_SEEDBYTES*/ 70, 2304,
-	  DIL_SPKI_SEEDFRAME | DIL_SPKI_T1FRAME,
-	},
+    { 1510, "Dil, round2 std. SPKI, Cat. III [Dil-5-4]",
+      PQCA_ID_DIL3_R2,
+      6, 13, /*OID*/ 33, 32, /*DIL_SEEDBYTES*/ 70, 1440,
+      DIL_SPKI_SEEDFRAME | DIL_SPKI_T1FRAME,
+    },
+    { 1798, "Dil, round2 std. SPKI, Cat. IV [Dil-6-5]",
+      PQCA_ID_DIL4_R2,
+      6, 13, /*OID*/ 33, 32, /*DIL_SEEDBYTES*/ 70, 1728,
+      DIL_SPKI_SEEDFRAME | DIL_SPKI_T1FRAME,
+    },
+    { 2374, "Dil, round2 std. SPKI, Cat. V [Dil-8-7]",
+      PQCA_ID_DIL5_R2,
+      6, 13, /*OID*/ 33, 32, /*DIL_SEEDBYTES*/ 70, 2304,
+      DIL_SPKI_SEEDFRAME | DIL_SPKI_T1FRAME,
+    },
 
 } ;
 
@@ -2719,103 +2720,103 @@ static size_t dil_wire2pub(unsigned char *pub,   size_t pbytes,
                      const unsigned char *wire,  size_t wbytes,
                      const unsigned char *algid, size_t ibytes)
 {
-	size_t seedoffs = 0, seedb = 0, t1offs = 0, t1b = 0;
-						// any valid offset is >0
-	unsigned int idx = 0, i;
-	size_t wr = 0;
+    size_t seedoffs = 0, seedb = 0, t1offs = 0, t1b = 0;
+                        // any valid offset is >0
+    unsigned int idx = 0, i;
+    size_t wr = 0;
 
-	if (type)
-		*type = 0;
+    if (type)
+        *type = 0;
 
-	if (!wire || !wbytes)
-		return 0;
+    if (!wire || !wbytes)
+        return 0;
 
-	for (i=0; i<ARRAY_ELEMS(dil_spkis_der); ++i) {
-		unsigned int otype;
+    for (i=0; i<ARRAY_ELEMS(dil_spkis_der); ++i) {
+        unsigned int otype;
 
-		if (dil_spkis_der[i].totalb != wbytes)
-			continue;
+        if (dil_spkis_der[i].totalb != wbytes)
+            continue;
 
-		//-----  retrieve <seed || T1> into (pub, pbytes)  -----------
+        //-----  retrieve <seed || T1> into (pub, pbytes)  -----------
 
-			// OID retrieval+verification is unconditional
+            // OID retrieval+verification is unconditional
 
-		otype = dil_oid2type(wire +dil_spkis_der[i].oidoffs,
-		                           dil_spkis_der[i].oidb);
-			//
-		if (!otype || (otype != dil_spkis_der[i].type))
-			continue;
+        otype = dil_oid2type(wire +dil_spkis_der[i].oidoffs,
+                                   dil_spkis_der[i].oidb);
+            //
+        if (!otype || (otype != dil_spkis_der[i].type))
+            continue;
 
 
-			// TODO: check seed offs >= _SEED_B for all entries
+            // TODO: check seed offs >= _SEED_B for all entries
 
-				/* is this a seed-sized BIT STRING Tag+Len? */
-		if (DIL_SPKI_SEEDFRAME & dil_spkis_der[i].flags) {
-			uint32_t v =
-				(wire[ dil_spkis_der[i].seedoffs -3 ] << 16) +
-				(wire[ dil_spkis_der[i].seedoffs -2 ] <<  8) +
-				 wire[ dil_spkis_der[i].seedoffs -1 ] ;
-							// i.e., MSBF3_READ()
+                /* is this a seed-sized BIT STRING Tag+Len? */
+        if (DIL_SPKI_SEEDFRAME & dil_spkis_der[i].flags) {
+            uint32_t v =
+                (wire[ dil_spkis_der[i].seedoffs -3 ] << 16) +
+                (wire[ dil_spkis_der[i].seedoffs -2 ] <<  8) +
+                 wire[ dil_spkis_der[i].seedoffs -1 ] ;
+                            // i.e., MSBF3_READ()
 
-			if (v != DIL__ASN1_BITSTR_SEED)
-				continue;
+            if (v != DIL__ASN1_BITSTR_SEED)
+                continue;
 
-			seedoffs = dil_spkis_der[i].seedoffs;
-			seedb    = dil_spkis_der[i].seedb;
-		}
+            seedoffs = dil_spkis_der[i].seedoffs;
+            seedb    = dil_spkis_der[i].seedb;
+        }
 
-			/* is this "03 82 xx yy 00" (xxyy == sizeof(T1)+1)? */
+            /* is this "03 82 xx yy 00" (xxyy == sizeof(T1)+1)? */
 
-		if (DIL_SPKI_T1FRAME & dil_spkis_der[i].flags) {
-			uint32_t v =
-				MSBF4_READ(wire + dil_spkis_der[i].t1offs -5);
+        if (DIL_SPKI_T1FRAME & dil_spkis_der[i].flags) {
+            uint32_t v =
+                MSBF4_READ(wire + dil_spkis_der[i].t1offs -5);
 
-				// TODO: const
-			if (((((uint16_t) DIL__ASN1_BITSTRING) <<8) +0x82) !=
-			    (v >> 16))
-				continue;
+                // TODO: const
+            if (((((uint16_t) DIL__ASN1_BITSTRING) <<8) +0x82) !=
+                (v >> 16))
+                continue;
 
-			/* BIT STRING { 00 ...T1... }, so +1 byte */
+            /* BIT STRING { 00 ...T1... }, so +1 byte */
 
-			if ((uint16_t) v != dil_spkis_der[i].t1b +1)
-				continue;
+            if ((uint16_t) v != dil_spkis_der[i].t1b +1)
+                continue;
 
-				/* verify 00 (no unused BIT STRING bits) */
+                /* verify 00 (no unused BIT STRING bits) */
 
-			if (wire[ dil_spkis_der[i].t1offs -1 ] != 0)
-				continue;
+            if (wire[ dil_spkis_der[i].t1offs -1 ] != 0)
+                continue;
 
-				/* BIT STRING { .... } covers rest of data */
+                /* BIT STRING { .... } covers rest of data */
 
-			t1offs = dil_spkis_der[i].t1offs;
-			t1b    = dil_spkis_der[i].t1b;
-		}
+            t1offs = dil_spkis_der[i].t1offs;
+            t1b    = dil_spkis_der[i].t1b;
+        }
 
-		if (seedoffs && t1offs) {
-			idx = i;
-			break;
-		}
-	}
+        if (seedoffs && t1offs) {
+            idx = i;
+            break;
+        }
+    }
 
-			/* fields are in the same order
-			 * writing seed, then T1 with memmove works in-place
-			 */
-	if (seedoffs && seedb && t1offs && t1b) {
-		wr = seedb +t1b;
+            /* fields are in the same order
+             * writing seed, then T1 with memmove works in-place
+             */
+    if (seedoffs && seedb && t1offs && t1b) {
+        wr = seedb +t1b;
 
-		if (type)
-			*type = dil_spkis_der[ idx ].type;
+        if (type)
+            *type = dil_spkis_der[ idx ].type;
 
-		if (pub && (pbytes >= wr)) {
-			memmove(pub,       wire +seedoffs, seedb);
-			memmove(pub +seedb, wire +t1offs,  t1b);
-		}
-	}
+        if (pub && (pbytes >= wr)) {
+            memmove(pub,       wire +seedoffs, seedb);
+            memmove(pub +seedb, wire +t1offs,  t1b);
+        }
+    }
 
-	(void) algid;
-	(void) ibytes;
+    (void) algid;
+    (void) ibytes;
 
-	return wr;
+    return wr;
 }
 #endif      /*-----  /delimiter: ASN.1/BER  --------------------------------*/
 
@@ -2829,7 +2830,7 @@ static unsigned int dil_type2k(unsigned int type)
 {
 // TODO: build-assert checks
 
-	return (type & 0xff);
+    return (type & 0xff);
 }
 
 
@@ -2838,25 +2839,25 @@ static unsigned int dil_type2k(unsigned int type)
  */
 static unsigned int dil_type2eta(unsigned int type)
 {
-	switch (type) {
-	case PQCA_ID_DIL3_R2:
-	case PQCA_ID_DIL3_R3:
-	case PQCA_ID_DIL3_R2_RAW:
-		return 5;
+    switch (type) {
+    case PQCA_ID_DIL3_R2:
+    case PQCA_ID_DIL3_R3:
+    case PQCA_ID_DIL3_R2_RAW:
+        return 5;
 
-	case PQCA_ID_DIL4_R2:
-	case PQCA_ID_DIL4_R3:
-	case PQCA_ID_DIL4_R2_RAW:
-		return 3;
+    case PQCA_ID_DIL4_R2:
+    case PQCA_ID_DIL4_R3:
+    case PQCA_ID_DIL4_R2_RAW:
+        return 3;
 
-	case PQCA_ID_DIL5_R2:
-	case PQCA_ID_DIL5_R3:
-	case PQCA_ID_DIL5_R2_RAW:
-		return 2;
+    case PQCA_ID_DIL5_R2:
+    case PQCA_ID_DIL5_R3:
+    case PQCA_ID_DIL5_R2_RAW:
+        return 2;
 
-	default:
-		return 0;
-	}
+    default:
+        return 0;
+    }
 }
 
 
@@ -2879,63 +2880,63 @@ size_t dil_sig2wire(unsigned char *sig, size_t sbytes,
                        const poly *c,
                      unsigned int dil_k)
 {
-	unsigned int i, j, k = 0, omega = dil_omega(dil_k);
-	size_t sb = dil_signature_bytes(dil_k);
-	uint64_t signs, mask;
+    unsigned int i, j, k = 0, omega = dil_omega(dil_k);
+    size_t sb = dil_signature_bytes(dil_k);
+    uint64_t signs, mask;
 
-	if (!sb || !omega)
-		return 0;
-	if (sbytes < sb)
-		return 0;
-	memset(sig, 0, sb);
+    if (!sb || !omega)
+        return 0;
+    if (sbytes < sb)
+        return 0;
+    memset(sig, 0, sb);
 
-	for (i = 0; i < (dil_k -1); ++i)                          /* ... < L */
-		polyz_pack(sig + i * DIL_POLYZ_PACKEDBYTES, &( z->vec[i] ));
+    for (i = 0; i < (dil_k -1); ++i)                          /* ... < L */
+        polyz_pack(sig + i * DIL_POLYZ_PACKEDBYTES, &( z->vec[i] ));
 
-	sig += (dil_k -1) * DIL_POLYZ_PACKEDBYTES;                /* L * ... */
+    sig += (dil_k -1) * DIL_POLYZ_PACKEDBYTES;                /* L * ... */
 
-						/* Encode h */
-	for (i = 0; i < dil_k; ++i) {
-		for (j = 0; j < DIL_N; ++j) {
-			if(h->vec[i].coeffs[j] != 0)
-				sig[k++] = j;
-		}
+                        /* Encode h */
+    for (i = 0; i < dil_k; ++i) {
+        for (j = 0; j < DIL_N; ++j) {
+            if(h->vec[i].coeffs[j] != 0)
+                sig[k++] = j;
+        }
 
-		sig[ omega + i ] = k;
-	}
+        sig[ omega + i ] = k;
+    }
 
 #if 0
-	while (k < omega)
-		sig[k++] = 0;       /* was cleared at start */
+    while (k < omega)
+        sig[k++] = 0;       /* was cleared at start */
 #endif
 
-	sig += omega + dil_k;
+    sig += omega + dil_k;
 
- 							 /* Encode c */
-	signs = 0;
-	mask  = 1;
+                             /* Encode c */
+    signs = 0;
+    mask  = 1;
 
-	for (i = 0; i < DIL_N/8; ++i) {
-		sig[i] = 0;
+    for (i = 0; i < DIL_N/8; ++i) {
+        sig[i] = 0;
 
-		for (j = 0; j < 8; ++j) {
-			if (c->coeffs[ 8*i+j ] != 0) {
-				sig[i] |= (1U << j);
+        for (j = 0; j < 8; ++j) {
+            if (c->coeffs[ 8*i+j ] != 0) {
+                sig[i] |= (1U << j);
 
-				if (c->coeffs[ 8*i+j ] == (DIL_Q - 1))
-					signs |= mask;
+                if (c->coeffs[ 8*i+j ] == (DIL_Q - 1))
+                    signs |= mask;
 
-				mask <<= 1;
-			}
-		}
-	}
+                mask <<= 1;
+            }
+        }
+    }
 
-	sig += DIL_N/8;
+    sig += DIL_N/8;
 
-	for (i = 0; i < 8; ++i)
-		sig[i] = signs >> 8*i;                     // TODO: LSBF8_WRITE
+    for (i = 0; i < 8; ++i)
+        sig[i] = signs >> 8*i;                     // TODO: LSBF8_WRITE
 
-	return sb;
+    return sb;
 }
 
 
@@ -2959,76 +2960,76 @@ int dil_wire2sig(polyvec_max *z,
                 unsigned int dil_k,
          const unsigned char *sig, size_t sbytes)
 {
-	unsigned int i, j, k, omega = dil_omega(dil_k);
-	size_t sb = dil_signature_bytes(dil_k);
-	uint64_t signs;
+    unsigned int i, j, k, omega = dil_omega(dil_k);
+    size_t sb = dil_signature_bytes(dil_k);
+    uint64_t signs;
 
-	if (sb != sbytes)
-		return 1;
+    if (sb != sbytes)
+        return 1;
 
-	for (i = 0; i < dil_k-1; ++i)                                    /* L */
-		polyz_unpack(&( z->vec[i] ), sig + i* DIL_POLYZ_PACKEDBYTES);
+    for (i = 0; i < dil_k-1; ++i)                                    /* L */
+        polyz_unpack(&( z->vec[i] ), sig + i* DIL_POLYZ_PACKEDBYTES);
 
-	sig += (dil_k -1) * DIL_POLYZ_PACKEDBYTES;                /* L * ... */
+    sig += (dil_k -1) * DIL_POLYZ_PACKEDBYTES;                /* L * ... */
 
   /* Decode h */
-	k = 0;
+    k = 0;
 
-	for (i = 0; i < dil_k; ++i) {
-		for (j = 0; j < DIL_N; ++j)
-			h->vec[i].coeffs[j] = 0;
+    for (i = 0; i < dil_k; ++i) {
+        for (j = 0; j < DIL_N; ++j)
+            h->vec[i].coeffs[j] = 0;
 
-		if ((sig[ omega +i ] < k) || (sig[ omega +i ] > omega))
-			return 1;
+        if ((sig[ omega +i ] < k) || (sig[ omega +i ] > omega))
+            return 1;
 
-		for (j = k; j < sig[ omega +i ]; ++j) {
-			/* Coefficients are ordered for strong unforgeability */
+        for (j = k; j < sig[ omega +i ]; ++j) {
+            /* Coefficients are ordered for strong unforgeability */
 
-			if ((j > k) && (sig[j] <= sig[ j-1 ]))
-				return 1;
+            if ((j > k) && (sig[j] <= sig[ j-1 ]))
+                return 1;
 
-			h->vec[i].coeffs[ sig[j] ] = 1;
-		}
+            h->vec[i].coeffs[ sig[j] ] = 1;
+        }
 
-		k = sig[ omega +i ];
-	}
+        k = sig[ omega +i ];
+    }
 
-			/* Extra indices are zero for strong unforgeability */
-	for (j = k; j < omega; ++j) {
-		if (sig[j])
-			return 1;
-	}
+            /* Extra indices are zero for strong unforgeability */
+    for (j = k; j < omega; ++j) {
+        if (sig[j])
+            return 1;
+    }
 
-	sig += omega + dil_k;
+    sig += omega + dil_k;
 
-							/* Decode c */
-	for (i = 0; i < DIL_N; ++i)
-		c->coeffs[i] = 0;
+                            /* Decode c */
+    for (i = 0; i < DIL_N; ++i)
+        c->coeffs[i] = 0;
 
-	signs = 0;
-	for (i = 0; i < 8; ++i)
-		signs |= ((uint64_t) sig[ DIL_N/8 +i ]) << 8*i;
+    signs = 0;
+    for (i = 0; i < 8; ++i)
+        signs |= ((uint64_t) sig[ DIL_N/8 +i ]) << 8*i;
 
-		// TODO: LSBF8_READ
+        // TODO: LSBF8_READ
 
-		/* Extra sign bits are zero for strong unforgeability */
+        /* Extra sign bits are zero for strong unforgeability */
 
-	if (signs >> 60)
-		return 1;
+    if (signs >> 60)
+        return 1;
 
-	for (i = 0; i < DIL_N/8; ++i) {
-		for (j = 0; j < 8; ++j) {
-			if ((sig[i] >> j) & 0x01) {
-				c->coeffs[ 8*i+j ] =  1;
-				c->coeffs[ 8*i+j ] ^= -(signs & 1) &
-				                       (1 ^ (DIL_Q -1));
+    for (i = 0; i < DIL_N/8; ++i) {
+        for (j = 0; j < 8; ++j) {
+            if ((sig[i] >> j) & 0x01) {
+                c->coeffs[ 8*i+j ] =  1;
+                c->coeffs[ 8*i+j ] ^= -(signs & 1) &
+                                       (1 ^ (DIL_Q -1));
 
-				signs >>= 1;
-			}
-		}
-	}
+                signs >>= 1;
+            }
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 #endif      /*-----  /delimiter: polyvec, some of packing.c  ---------------*/
@@ -3037,18 +3038,18 @@ int dil_wire2sig(polyvec_max *z,
 #if 1       /*-----  delimiter: sign/verify  -------------------------------*/
 
 typedef struct {
-	unsigned char seed[ 2*DIL_SEEDBYTES + 3*DIL_CRHBYTES ];
-	polyvec_max s1, s2;
+    unsigned char seed[ 2*DIL_SEEDBYTES + 3*DIL_CRHBYTES ];
+    polyvec_max s1, s2;
 
-	polyvec_max t0, t1;
+    polyvec_max t0, t1;
 
-	polyvec_max w0, w1;
+    polyvec_max w0, w1;
 
-	polyvec_max h, y, z;
+    polyvec_max h, y, z;
 
-	poly c, chat;
+    poly c, chat;
 
-	Keccak_state state;
+    Keccak_state state;
 } DilState ;
 
 
@@ -3067,50 +3068,50 @@ void dil_challenge(poly *c,
        const polyvec_max *w1,
             unsigned int k)
 {
-	unsigned char buf[ DIL_CRHBYTES +
-	                   DIL_VECT_MAX * DIL_POLYW1_PACKEDBYTES ];
-	unsigned int i, b, pos;
-	uint64_t signs = 0;
-	Keccak_state state;
+    unsigned char buf[ DIL_CRHBYTES +
+                       DIL_VECT_MAX * DIL_POLYW1_PACKEDBYTES ];
+    unsigned int i, b, pos;
+    uint64_t signs = 0;
+    Keccak_state state;
 
-	memmove(buf, mu, DIL_CRHBYTES);
+    memmove(buf, mu, DIL_CRHBYTES);
 
-	for (i = 0; i < k; ++i) {
-		polyw1_pack(buf + DIL_CRHBYTES + i * DIL_POLYW1_PACKEDBYTES,
-		            &( w1->vec[i] ));
-	}
+    for (i = 0; i < k; ++i) {
+        polyw1_pack(buf + DIL_CRHBYTES + i * DIL_POLYW1_PACKEDBYTES,
+                    &( w1->vec[i] ));
+    }
 
-	shake256_init(&state);
-	shake256_absorb(&state, buf, DIL_CRHBYTES + k *DIL_POLYW1_PACKEDBYTES);
-	shake256_finalize(&state);
-	shake256_squeezeblocks(buf, 1, &state);
+    shake256_init(&state);
+    shake256_absorb(&state, buf, DIL_CRHBYTES + k *DIL_POLYW1_PACKEDBYTES);
+    shake256_finalize(&state);
+    shake256_squeezeblocks(buf, 1, &state);
 
-	signs = 0;
-	for (i = 0; i < 8; ++i)
-		signs |= (uint64_t)buf[i] << 8*i;           // TODO: LSBF8_READ
+    signs = 0;
+    for (i = 0; i < 8; ++i)
+        signs |= (uint64_t)buf[i] << 8*i;           // TODO: LSBF8_READ
 
-	pos = 8;
+    pos = 8;
 
-	for (i = 0; i < DIL_N; ++i)
-		c->coeffs[i] = 0;
+    for (i = 0; i < DIL_N; ++i)
+        c->coeffs[i] = 0;
 
-	for (i = 196; i < 256; ++i) {
-		do {
-			if(pos >= SHAKE256_RATE) {
-				shake256_squeezeblocks(buf, 1, &state);
-				pos = 0;
-			}
+    for (i = 196; i < 256; ++i) {
+        do {
+            if(pos >= SHAKE256_RATE) {
+                shake256_squeezeblocks(buf, 1, &state);
+                pos = 0;
+            }
 
-			b = buf[pos++];
-		} while (b > i);
+            b = buf[pos++];
+        } while (b > i);
 
-		c->coeffs[i] = c->coeffs[b];
-		c->coeffs[b] = 1;
-		c->coeffs[b] ^= -((uint32_t) signs & 1) & (1 ^ (DIL_Q-1));
-		signs >>= 1;
-	}
+        c->coeffs[i] = c->coeffs[b];
+        c->coeffs[b] = 1;
+        c->coeffs[b] ^= -((uint32_t) signs & 1) & (1 ^ (DIL_Q-1));
+        signs >>= 1;
+    }
 
-	// TODO: wipe
+    // TODO: wipe
 }
 
 
@@ -3130,292 +3131,292 @@ size_t ref_sign(unsigned char *sig, size_t siglen,
                 const uint8_t *sk,  size_t skbytes,
                  unsigned int type)
 {
-	unsigned int i, n = 0, K = 0, beta;
-	uint8_t seedbuf[ 2*DIL_SEEDBYTES + 3*DIL_CRHBYTES ];
-	uint8_t *rho, *tr, *key, *mu, *rhoprime;
-	uint16_t nonce = 0;
-	poly c, chat;
-	polyvec_max mat[ DIL_VECT_MAX ];        /* using only K * L */
-	polyvec_max s1, y, z;                   /* L */
-	polyvec_max t0, s2, w1, w0, h;          /* K */
-	Keccak_state state;
+    unsigned int i, n = 0, K = 0, beta;
+    uint8_t seedbuf[ 2*DIL_SEEDBYTES + 3*DIL_CRHBYTES ];
+    uint8_t *rho, *tr, *key, *mu, *rhoprime;
+    uint16_t nonce = 0;
+    poly c, chat;
+    polyvec_max mat[ DIL_VECT_MAX ];        /* using only K * L */
+    polyvec_max s1, y, z;                   /* L */
+    polyvec_max t0, s2, w1, w0, h;          /* K */
+    Keccak_state state;
 
-	(void) type;
+    (void) type;
 
-				// layout: [key || mu] MUST be consecutive
+                // layout: [key || mu] MUST be consecutive
 
-	rho = seedbuf;
-	tr  = rho + DIL_SEEDBYTES;
-	key = tr  + DIL_CRHBYTES;
-	mu  = key + DIL_SEEDBYTES;
-	rhoprime = mu + DIL_CRHBYTES;
+    rho = seedbuf;
+    tr  = rho + DIL_SEEDBYTES;
+    key = tr  + DIL_CRHBYTES;
+    mu  = key + DIL_SEEDBYTES;
+    rhoprime = mu + DIL_CRHBYTES;
 
-	switch (skbytes) {
-	case DIL_PRV5x4_BYTES: K=5; break;
- 	case DIL_PRV6x5_BYTES: K=6; break;
-	case DIL_PRV8x7_BYTES: K=8; break;
-	default:
-		return 0;
-	}
+    switch (skbytes) {
+    case DIL_PRV5x4_BYTES: K=5; break;
+    case DIL_PRV6x5_BYTES: K=6; break;
+    case DIL_PRV8x7_BYTES: K=8; break;
+    default:
+        return 0;
+    }
 
-	beta = dil_beta(K);
+    beta = dil_beta(K);
 
-		// unpack_sk(rho, key, tr, &s1, &s2, &t0, sk);
+        // unpack_sk(rho, key, tr, &s1, &s2, &t0, sk);
 
-	switch (K) {                     /* s1 is L-sized; s2+t0 are K-sized */
-	case 5:
-		unpack_prv5(rho, key, tr, (polyvec4 *) &s1, (polyvec5 *) &s2,
-		            (polyvec5 *) &t0, sk);
-		break;
-	case 6:
-		unpack_prv6(rho, key, tr, (polyvec5 *) &s1, (polyvec6 *) &s2,
-		            (polyvec6 *) &t0, sk);
-		break;
-	case 8:
-		unpack_prv8(rho, key, tr, (polyvec7 *) &s1, (polyvec8 *) &s2,
-		            (polyvec8 *) &t0, sk);
-		break;
-	}
+    switch (K) {                     /* s1 is L-sized; s2+t0 are K-sized */
+    case 5:
+        unpack_prv5(rho, key, tr, (polyvec4 *) &s1, (polyvec5 *) &s2,
+                    (polyvec5 *) &t0, sk);
+        break;
+    case 6:
+        unpack_prv6(rho, key, tr, (polyvec5 *) &s1, (polyvec6 *) &s2,
+                    (polyvec6 *) &t0, sk);
+        break;
+    case 8:
+        unpack_prv8(rho, key, tr, (polyvec7 *) &s1, (polyvec8 *) &s2,
+                    (polyvec8 *) &t0, sk);
+        break;
+    }
 
-					/* Compute CRH(tr, msg) */
-	shake256_init(&state);
-	shake256_absorb(&state, tr, DIL_CRHBYTES);
-	shake256_absorb(&state, m, mlen);
-	shake256_finalize(&state);
-	shake256_squeeze(mu, DIL_CRHBYTES, &state);
+                    /* Compute CRH(tr, msg) */
+    shake256_init(&state);
+    shake256_absorb(&state, tr, DIL_CRHBYTES);
+    shake256_absorb(&state, m, mlen);
+    shake256_finalize(&state);
+    shake256_squeeze(mu, DIL_CRHBYTES, &state);
 
 #if 0 && DILITHIUM_RANDOMIZED_SIGNING
-	randombytes(rhoprime, CRHBYTES);
+    randombytes(rhoprime, CRHBYTES);
 #endif
-	dil_crh(rhoprime, DIL_CRHBYTES, key, DIL_SEEDBYTES +DIL_CRHBYTES);
+    dil_crh(rhoprime, DIL_CRHBYTES, key, DIL_SEEDBYTES +DIL_CRHBYTES);
 
-				/* Expand matrix and transform vectors */
-	switch (K) {
-	case 5:
-		expand_matrix_5x4(mat, rho);
-		polyvec4_ntt((polyvec4 *) &s1);   /* L */
-		polyvec5_ntt((polyvec5 *) &s2);   /* K */
-		polyvec5_ntt((polyvec5 *) &t0);
-		break;
-	case 6:
-		expand_matrix_6x5(mat, rho);
-		polyvec5_ntt((polyvec5 *) &s1);   /* L */
-		polyvec6_ntt((polyvec6 *) &s2);   /* K */
-		polyvec6_ntt((polyvec6 *) &t0);
-		break;
-	case 8:
-		expand_matrix_8x7(mat, rho);
-		polyvec7_ntt((polyvec7 *) &s1);   /* L */
-		polyvec8_ntt((polyvec8 *) &s2);   /* K */
-		polyvec8_ntt((polyvec8 *) &t0);
-		break;
-	}
+                /* Expand matrix and transform vectors */
+    switch (K) {
+    case 5:
+        expand_matrix_5x4(mat, rho);
+        polyvec4_ntt((polyvec4 *) &s1);   /* L */
+        polyvec5_ntt((polyvec5 *) &s2);   /* K */
+        polyvec5_ntt((polyvec5 *) &t0);
+        break;
+    case 6:
+        expand_matrix_6x5(mat, rho);
+        polyvec5_ntt((polyvec5 *) &s1);   /* L */
+        polyvec6_ntt((polyvec6 *) &s2);   /* K */
+        polyvec6_ntt((polyvec6 *) &t0);
+        break;
+    case 8:
+        expand_matrix_8x7(mat, rho);
+        polyvec7_ntt((polyvec7 *) &s1);   /* L */
+        polyvec8_ntt((polyvec8 *) &s2);   /* K */
+        polyvec8_ntt((polyvec8 *) &t0);
+        break;
+    }
 
 REJECT:
-	/* Sample intermediate vector y */
-	for (i = 0; i < K-1; ++i)                                       /* L */
-		poly_uniform_gamma1m1(&( y.vec[i] ), rhoprime, nonce++);
+    /* Sample intermediate vector y */
+    for (i = 0; i < K-1; ++i)                                       /* L */
+        poly_uniform_gamma1m1(&( y.vec[i] ), rhoprime, nonce++);
 
-				/* Matrix-vector multiplication */
-	z = y;
+                /* Matrix-vector multiplication */
+    z = y;
 
-	switch (K) {    	      // K->L, +1 difference is not a typo
-	case 5: polyvec4_ntt((polyvec4 *) &z); break;
-	case 6: polyvec5_ntt((polyvec5 *) &z); break;
-	case 8: polyvec7_ntt((polyvec7 *) &z); break;
-	}
+    switch (K) {              // K->L, +1 difference is not a typo
+    case 5: polyvec4_ntt((polyvec4 *) &z); break;
+    case 6: polyvec5_ntt((polyvec5 *) &z); break;
+    case 8: polyvec7_ntt((polyvec7 *) &z); break;
+    }
 
-	for (i = 0; i < K; ++i) {
-		switch (K) {          // K->L, +1 difference is not a typo
-		case 5:
-		polyvec4_pointwise_acc_montgomery(&( w1.vec[i] ),
-		                           (const polyvec4 *) &( mat[i] ),
-		                           (const polyvec4 *) &z);
-		break;
-		case 6:
-		polyvec5_pointwise_acc_montgomery(&( w1.vec[i] ),
-		                           (const polyvec5 *) &( mat[i] ),
-		                           (const polyvec5 *) &z);
-		break;
-		case 8:
-		polyvec7_pointwise_acc_montgomery(&( w1.vec[i] ),
-		                           (const polyvec7 *) &( mat[i] ),
-		                           (const polyvec7 *) &z);
-		break;
-		}
+    for (i = 0; i < K; ++i) {
+        switch (K) {          // K->L, +1 difference is not a typo
+        case 5:
+        polyvec4_pointwise_acc_montgomery(&( w1.vec[i] ),
+                                   (const polyvec4 *) &( mat[i] ),
+                                   (const polyvec4 *) &z);
+        break;
+        case 6:
+        polyvec5_pointwise_acc_montgomery(&( w1.vec[i] ),
+                                   (const polyvec5 *) &( mat[i] ),
+                                   (const polyvec5 *) &z);
+        break;
+        case 8:
+        polyvec7_pointwise_acc_montgomery(&( w1.vec[i] ),
+                                   (const polyvec7 *) &( mat[i] ),
+                                   (const polyvec7 *) &z);
+        break;
+        }
 
-		poly_reduce(&( w1.vec[i] ));
-		poly_invntt_tomont(&( w1.vec[i] ));
-	}
+        poly_reduce(&( w1.vec[i] ));
+        poly_invntt_tomont(&( w1.vec[i] ));
+    }
 
- 				/* Decompose w and call the random oracle */
+                /* Decompose w and call the random oracle */
 
-	switch (K) {
-	case 5:
-		polyvec5_csubq((polyvec5 *) &w1);
-		polyvec5_decompose((polyvec5 *) &w1, (polyvec5 *) &w0,
-		                   (polyvec5 *) &w1);
-		break;
-	case 6:
-		polyvec6_csubq((polyvec6 *) &w1);
-		polyvec6_decompose((polyvec6 *) &w1, (polyvec6 *) &w0,
-		                   (polyvec6 *) &w1);
-		break;
-	case 8:
-		polyvec8_csubq((polyvec8 *) &w1);
-		polyvec8_decompose((polyvec8 *) &w1, (polyvec8 *) &w0,
-		                   (polyvec8 *) &w1);
-		break;
-	}
-	dil_challenge(&c, mu, &w1, K);
+    switch (K) {
+    case 5:
+        polyvec5_csubq((polyvec5 *) &w1);
+        polyvec5_decompose((polyvec5 *) &w1, (polyvec5 *) &w0,
+                           (polyvec5 *) &w1);
+        break;
+    case 6:
+        polyvec6_csubq((polyvec6 *) &w1);
+        polyvec6_decompose((polyvec6 *) &w1, (polyvec6 *) &w0,
+                           (polyvec6 *) &w1);
+        break;
+    case 8:
+        polyvec8_csubq((polyvec8 *) &w1);
+        polyvec8_decompose((polyvec8 *) &w1, (polyvec8 *) &w0,
+                           (polyvec8 *) &w1);
+        break;
+    }
+    dil_challenge(&c, mu, &w1, K);
 
-	chat = c;
-	poly_ntt256(&chat);
+    chat = c;
+    poly_ntt256(&chat);
 
- 				 /* Compute z, reject if it reveals secret */
+                 /* Compute z, reject if it reveals secret */
 
-	for (i = 0; i < K-1; ++i) {                                     /* L */
-		poly_pointwise_montgomery(&( z.vec[i] ), &chat, &( s1.vec[i] ));
-		poly_invntt_tomont(&( z.vec[i] ));
-	}
+    for (i = 0; i < K-1; ++i) {                                     /* L */
+        poly_pointwise_montgomery(&( z.vec[i] ), &chat, &( s1.vec[i] ));
+        poly_invntt_tomont(&( z.vec[i] ));
+    }
 
-	{
-	unsigned fail = 0;
+    {
+    unsigned fail = 0;
 
-	switch (K) {          // -> L, so choices are off-by-one
-	case 5:
-		polyvec4_add((polyvec4 *) &z, (const polyvec4 *) &z,
-		             (const polyvec4 *) &y);
-		polyvec4_freeze((polyvec4 *) &z);
-		fail = !!polyvec4_chknorm((const polyvec4 *) &z,
-		                          DIL_GAMMA1 - beta);
-		break;
-	case 6:
-		polyvec5_add((polyvec5 *) &z, (const polyvec5 *) &z,
-		             (const polyvec5 *) &y);
-		polyvec5_freeze((polyvec5 *) &z);
-		fail = !!polyvec5_chknorm((const polyvec5 *) &z,
-		                          DIL_GAMMA1 - beta);
-		break;
-	case 8:
-		polyvec7_add((polyvec7 *) &z, (const polyvec7 *) &z,
-		             (const polyvec7 *) &y);
-		polyvec7_freeze((polyvec7 *) &z);
-		fail = !!polyvec7_chknorm((const polyvec7 *) &z,
-		                          DIL_GAMMA1 - beta);
-		break;
-	}
+    switch (K) {          // -> L, so choices are off-by-one
+    case 5:
+        polyvec4_add((polyvec4 *) &z, (const polyvec4 *) &z,
+                     (const polyvec4 *) &y);
+        polyvec4_freeze((polyvec4 *) &z);
+        fail = !!polyvec4_chknorm((const polyvec4 *) &z,
+                                  DIL_GAMMA1 - beta);
+        break;
+    case 6:
+        polyvec5_add((polyvec5 *) &z, (const polyvec5 *) &z,
+                     (const polyvec5 *) &y);
+        polyvec5_freeze((polyvec5 *) &z);
+        fail = !!polyvec5_chknorm((const polyvec5 *) &z,
+                                  DIL_GAMMA1 - beta);
+        break;
+    case 8:
+        polyvec7_add((polyvec7 *) &z, (const polyvec7 *) &z,
+                     (const polyvec7 *) &y);
+        polyvec7_freeze((polyvec7 *) &z);
+        fail = !!polyvec7_chknorm((const polyvec7 *) &z,
+                                  DIL_GAMMA1 - beta);
+        break;
+    }
 
-	if (fail)
-		goto REJECT;
-	}
+    if (fail)
+        goto REJECT;
+    }
 
-		/* Check that subtracting cs2 does not change high bits of w
-		 * and low bits do not reveal secret information */
+        /* Check that subtracting cs2 does not change high bits of w
+         * and low bits do not reveal secret information */
 
-	for (i = 0; i < K; ++i) {
-		poly_pointwise_montgomery(&( h.vec[i] ), &chat, &( s2.vec[i] ));
-		poly_invntt_tomont(&( h.vec[i] ));
-	}
+    for (i = 0; i < K; ++i) {
+        poly_pointwise_montgomery(&( h.vec[i] ), &chat, &( s2.vec[i] ));
+        poly_invntt_tomont(&( h.vec[i] ));
+    }
 
-	{
-	unsigned int fail = 0;
+    {
+    unsigned int fail = 0;
 
-	switch (K) {
-	case 5:
-		polyvec5_sub((polyvec5 *) &w0, (const polyvec5 *) &w0,
-		             (const polyvec5 *) &h);
-		polyvec5_freeze((polyvec5 *) &w0);
-		fail = !!polyvec5_chknorm((const polyvec5 *) &w0,
-		                          DIL_GAMMA2 - beta);
-		break;
-	case 6:
-		polyvec6_sub((polyvec6 *) &w0, (const polyvec6 *) &w0,
-		             (const polyvec6 *) &h);
-		polyvec6_freeze((polyvec6 *) &w0);
-		fail = !!polyvec6_chknorm((const polyvec6 *) &w0,
-		                          DIL_GAMMA2 - beta);
-		break;
-	case 8:
-		polyvec8_sub((polyvec8 *) &w0, (const polyvec8 *) &w0,
-		             (const polyvec8 *) &h);
-		polyvec8_freeze((polyvec8 *) &w0);
-		fail = !!polyvec8_chknorm((const polyvec8 *) &w0,
-		                          DIL_GAMMA2 - beta);
-		break;
-	default:
-		break;
-	}
-	if (fail)
-		goto REJECT;
-	}
+    switch (K) {
+    case 5:
+        polyvec5_sub((polyvec5 *) &w0, (const polyvec5 *) &w0,
+                     (const polyvec5 *) &h);
+        polyvec5_freeze((polyvec5 *) &w0);
+        fail = !!polyvec5_chknorm((const polyvec5 *) &w0,
+                                  DIL_GAMMA2 - beta);
+        break;
+    case 6:
+        polyvec6_sub((polyvec6 *) &w0, (const polyvec6 *) &w0,
+                     (const polyvec6 *) &h);
+        polyvec6_freeze((polyvec6 *) &w0);
+        fail = !!polyvec6_chknorm((const polyvec6 *) &w0,
+                                  DIL_GAMMA2 - beta);
+        break;
+    case 8:
+        polyvec8_sub((polyvec8 *) &w0, (const polyvec8 *) &w0,
+                     (const polyvec8 *) &h);
+        polyvec8_freeze((polyvec8 *) &w0);
+        fail = !!polyvec8_chknorm((const polyvec8 *) &w0,
+                                  DIL_GAMMA2 - beta);
+        break;
+    default:
+        break;
+    }
+    if (fail)
+        goto REJECT;
+    }
 
-						/* Compute hints for w1 */
+                        /* Compute hints for w1 */
 
-	for (i = 0; i < K; ++i) {
-		poly_pointwise_montgomery(&( h.vec[i] ), &chat, &( t0.vec[i] ));
-		poly_invntt_tomont(&( h.vec[i] ));
-	}
+    for (i = 0; i < K; ++i) {
+        poly_pointwise_montgomery(&( h.vec[i] ), &chat, &( t0.vec[i] ));
+        poly_invntt_tomont(&( h.vec[i] ));
+    }
 
-	{
-	unsigned int fail = 0;
+    {
+    unsigned int fail = 0;
 
-	switch (K) {
-	case 5:
-		polyvec5_csubq((polyvec5 *) &h);
-		fail = !!polyvec5_chknorm((const polyvec5 *) &h, DIL_GAMMA2);
-		break;
-	case 6:
-		polyvec6_csubq((polyvec6 *) &h);
-		fail = !!polyvec6_chknorm((const polyvec6 *) &h, DIL_GAMMA2);
-		break;
-	case 8:
-		polyvec8_csubq((polyvec8 *) &h);
-		fail = !!polyvec8_chknorm((const polyvec8 *) &h, DIL_GAMMA2);
-		break;
+    switch (K) {
+    case 5:
+        polyvec5_csubq((polyvec5 *) &h);
+        fail = !!polyvec5_chknorm((const polyvec5 *) &h, DIL_GAMMA2);
+        break;
+    case 6:
+        polyvec6_csubq((polyvec6 *) &h);
+        fail = !!polyvec6_chknorm((const polyvec6 *) &h, DIL_GAMMA2);
+        break;
+    case 8:
+        polyvec8_csubq((polyvec8 *) &h);
+        fail = !!polyvec8_chknorm((const polyvec8 *) &h, DIL_GAMMA2);
+        break;
 
-	default:
-		break;
-	}
-	if (fail)
-		goto REJECT;
-	}
+    default:
+        break;
+    }
+    if (fail)
+        goto REJECT;
+    }
 
-	switch (K) {
-	case 5:
-		polyvec5_add((polyvec5 *) &w0, (const polyvec5 *) &w0,
-		             (const polyvec5 *) &h);
-		polyvec5_csubq((polyvec5 *) &w0);
-		n = polyvec5_make_hint((polyvec5 *) &h, (const polyvec5 *) &w0,
-		                       (const polyvec5 *) &w1);
-		break;
-	case 6:
-		polyvec6_add((polyvec6 *) &w0, (const polyvec6 *) &w0,
-		             (const polyvec6 *) &h);
-		polyvec6_csubq((polyvec6 *) &w0);
-		n = polyvec6_make_hint((polyvec6 *) &h, (const polyvec6 *) &w0,
-		                       (const polyvec6 *) &w1);
-		break;
-	case 8:
-		polyvec8_add((polyvec8 *) &w0, (const polyvec8 *) &w0,
-		             (const polyvec8 *) &h);
-		polyvec8_csubq((polyvec8 *) &w0);
-		n = polyvec8_make_hint((polyvec8 *) &h, (const polyvec8 *) &w0,
-		                       (const polyvec8 *) &w1);
-		break;
+    switch (K) {
+    case 5:
+        polyvec5_add((polyvec5 *) &w0, (const polyvec5 *) &w0,
+                     (const polyvec5 *) &h);
+        polyvec5_csubq((polyvec5 *) &w0);
+        n = polyvec5_make_hint((polyvec5 *) &h, (const polyvec5 *) &w0,
+                               (const polyvec5 *) &w1);
+        break;
+    case 6:
+        polyvec6_add((polyvec6 *) &w0, (const polyvec6 *) &w0,
+                     (const polyvec6 *) &h);
+        polyvec6_csubq((polyvec6 *) &w0);
+        n = polyvec6_make_hint((polyvec6 *) &h, (const polyvec6 *) &w0,
+                               (const polyvec6 *) &w1);
+        break;
+    case 8:
+        polyvec8_add((polyvec8 *) &w0, (const polyvec8 *) &w0,
+                     (const polyvec8 *) &h);
+        polyvec8_csubq((polyvec8 *) &w0);
+        n = polyvec8_make_hint((polyvec8 *) &h, (const polyvec8 *) &w0,
+                               (const polyvec8 *) &w1);
+        break;
 
-	default:
-		break;
-	}
+    default:
+        break;
+    }
 
-	if (n > dil_omega(K))
-		goto REJECT;
+    if (n > dil_omega(K))
+        goto REJECT;
 
-	siglen = dil_sig2wire(sig, siglen, &z, &h, &c, K);
+    siglen = dil_sig2wire(sig, siglen, &z, &h, &c, K);
 
-		/* TODO: cleanup potentially-sensitive stuff */
+        /* TODO: cleanup potentially-sensitive stuff */
 
-	return siglen;
+    return siglen;
 }
 
 
@@ -3437,172 +3438,172 @@ int ref_verify(const uint8_t *sig,
                   const uint8_t *pk,
                   size_t pkbytes)
 {
-	unsigned int i, K = 0, beta;
-	uint8_t rho[ DIL_SEEDBYTES ];
-	uint8_t mu[ DIL_CRHBYTES ];
-	size_t sigb;
-	poly c, cp;
-	polyvec_max mat[ DIL_VECT_MAX ], z;        /* L; LxK (mat) */
-	polyvec_max t1, h, w1;                     /* K */
-	Keccak_state state;
+    unsigned int i, K = 0, beta;
+    uint8_t rho[ DIL_SEEDBYTES ];
+    uint8_t mu[ DIL_CRHBYTES ];
+    size_t sigb;
+    poly c, cp;
+    polyvec_max mat[ DIL_VECT_MAX ], z;        /* L; LxK (mat) */
+    polyvec_max t1, h, w1;                     /* K */
+    Keccak_state state;
 
-	switch (pkbytes) {
-	case DIL_PUB5x4_BYTES: K=5; break;
- 	case DIL_PUB6x5_BYTES: K=6; break;
-	case DIL_PUB8x7_BYTES: K=8; break;
-	default:
-		return PQCA_EKEYTYPE;
-	}
+    switch (pkbytes) {
+    case DIL_PUB5x4_BYTES: K=5; break;
+    case DIL_PUB6x5_BYTES: K=6; break;
+    case DIL_PUB8x7_BYTES: K=8; break;
+    default:
+        return PQCA_EKEYTYPE;
+    }
 
-	sigb = dil_signature_bytes(K);
-	beta = dil_beta(K);
-	if (!sigb || (siglen != sigb))
-		return 0;
+    sigb = dil_signature_bytes(K);
+    beta = dil_beta(K);
+    if (!sigb || (siglen != sigb))
+        return 0;
 
-	switch (K) {
-	case 5: unpack_pk5(rho, (polyvec5 *) &t1, pk); break;
-	case 6: unpack_pk6(rho, (polyvec6 *) &t1, pk); break;
-	case 8: unpack_pk8(rho, (polyvec8 *) &t1, pk); break;
-	default:
-		return PQCA_EINTERN;
-	}
+    switch (K) {
+    case 5: unpack_pk5(rho, (polyvec5 *) &t1, pk); break;
+    case 6: unpack_pk6(rho, (polyvec6 *) &t1, pk); break;
+    case 8: unpack_pk8(rho, (polyvec8 *) &t1, pk); break;
+    default:
+        return PQCA_EINTERN;
+    }
 
-	if (dil_wire2sig(&z, &h, &c, K, sig, siglen))
-		return 0;
+    if (dil_wire2sig(&z, &h, &c, K, sig, siglen))
+        return 0;
 
-	{
-	unsigned int fail = 0;
-	switch (K){              /* check Lx vector, so -1 is not off-by-one */
-	case 5:
-		fail = !!polyvec4_chknorm((const polyvec4 *) &z,
-		                          DIL_GAMMA1 -beta);
-		break;
-	case 6:
-		fail = !!polyvec5_chknorm((const polyvec5 *) &z,
-		                          DIL_GAMMA1 -beta);
-		break;
-	case 8:
-		fail = !!polyvec7_chknorm((const polyvec7 *) &z,
-		                          DIL_GAMMA1 -beta);
-		break;
-	default:
-		break;
-	}
-	if (fail)
-		return 0;
-	}
+    {
+    unsigned int fail = 0;
+    switch (K){              /* check Lx vector, so -1 is not off-by-one */
+    case 5:
+        fail = !!polyvec4_chknorm((const polyvec4 *) &z,
+                                  DIL_GAMMA1 -beta);
+        break;
+    case 6:
+        fail = !!polyvec5_chknorm((const polyvec5 *) &z,
+                                  DIL_GAMMA1 -beta);
+        break;
+    case 8:
+        fail = !!polyvec7_chknorm((const polyvec7 *) &z,
+                                  DIL_GAMMA1 -beta);
+        break;
+    default:
+        break;
+    }
+    if (fail)
+        return 0;
+    }
 
-				/* Compute CRH(CRH(rho, t1), msg) */
+                /* Compute CRH(CRH(rho, t1), msg) */
 
-	dil_crh(mu, DIL_CRHBYTES, pk, pkbytes);
-		//
-	shake256_init(&state);
-	shake256_absorb(&state, mu, DIL_CRHBYTES);
-	shake256_absorb(&state, m, mlen);
-	shake256_finalize(&state);
-	shake256_squeeze(mu, DIL_CRHBYTES, &state);
+    dil_crh(mu, DIL_CRHBYTES, pk, pkbytes);
+        //
+    shake256_init(&state);
+    shake256_absorb(&state, mu, DIL_CRHBYTES);
+    shake256_absorb(&state, m, mlen);
+    shake256_finalize(&state);
+    shake256_squeeze(mu, DIL_CRHBYTES, &state);
 
-			/* Matrix-vector multiplication; compute Az - c2^dt1 */
+            /* Matrix-vector multiplication; compute Az - c2^dt1 */
 
-	switch (K) {                 /* NTT on L-sized vector, K-1 */
-	case 5:
-		expand_matrix_5x4(mat, rho);
-		polyvec4_ntt((polyvec4 *) &z);   /* L */
-		break;
-	case 6:
-		expand_matrix_6x5(mat, rho);
-		polyvec5_ntt((polyvec5 *) &z);   /* L */
-		break;
-	case 8:
-		expand_matrix_8x7(mat, rho);
-		polyvec7_ntt((polyvec7 *) &z);   /* L */
-		break;
-	}
+    switch (K) {                 /* NTT on L-sized vector, K-1 */
+    case 5:
+        expand_matrix_5x4(mat, rho);
+        polyvec4_ntt((polyvec4 *) &z);   /* L */
+        break;
+    case 6:
+        expand_matrix_6x5(mat, rho);
+        polyvec5_ntt((polyvec5 *) &z);   /* L */
+        break;
+    case 8:
+        expand_matrix_8x7(mat, rho);
+        polyvec7_ntt((polyvec7 *) &z);   /* L */
+        break;
+    }
 
-	for (i = 0; i < K ; ++i) {
-	switch (K) {
-	case 5:
-		polyvec4_pointwise_acc_montgomery(&( w1.vec[i] ),
-		                       (const polyvec4 *) &( mat[i] ),
-		                       (const polyvec4 *) &z);
-		break;
-	case 6:
-		polyvec5_pointwise_acc_montgomery(&( w1.vec[i] ),
-		                       (const polyvec5 *) &( mat[i] ),
-		                       (const polyvec5 *) &z);
-		break;
-	case 8:
-		polyvec7_pointwise_acc_montgomery(&( w1.vec[i] ),
-		                       (const polyvec7 *) &( mat[i] ),
-		                       (const polyvec7 *) &z);
-		break;
-	}
-	}
+    for (i = 0; i < K ; ++i) {
+    switch (K) {
+    case 5:
+        polyvec4_pointwise_acc_montgomery(&( w1.vec[i] ),
+                               (const polyvec4 *) &( mat[i] ),
+                               (const polyvec4 *) &z);
+        break;
+    case 6:
+        polyvec5_pointwise_acc_montgomery(&( w1.vec[i] ),
+                               (const polyvec5 *) &( mat[i] ),
+                               (const polyvec5 *) &z);
+        break;
+    case 8:
+        polyvec7_pointwise_acc_montgomery(&( w1.vec[i] ),
+                               (const polyvec7 *) &( mat[i] ),
+                               (const polyvec7 *) &z);
+        break;
+    }
+    }
 
-	cp = c;
-	poly_ntt256(&cp);
+    cp = c;
+    poly_ntt256(&cp);
 
-	switch (K) {
-	case 5:
-		polyvec5_shiftl((polyvec5 *) &t1);
-		polyvec5_ntt((polyvec5 *) &t1);
-		break;
-	case 6:
-		polyvec6_shiftl((polyvec6 *) &t1);
-		polyvec6_ntt((polyvec6 *) &t1);
-		break;
-	case 8:
-		polyvec8_shiftl((polyvec8 *) &t1);
-		polyvec8_ntt((polyvec8 *) &t1);
-		break;
-	}
+    switch (K) {
+    case 5:
+        polyvec5_shiftl((polyvec5 *) &t1);
+        polyvec5_ntt((polyvec5 *) &t1);
+        break;
+    case 6:
+        polyvec6_shiftl((polyvec6 *) &t1);
+        polyvec6_ntt((polyvec6 *) &t1);
+        break;
+    case 8:
+        polyvec8_shiftl((polyvec8 *) &t1);
+        polyvec8_ntt((polyvec8 *) &t1);
+        break;
+    }
 
-	for (i = 0; i < K; ++i) {
-		poly_pointwise_montgomery(&( t1.vec[i] ), &cp,
-		                          &( t1.vec[i] ));
-	}
+    for (i = 0; i < K; ++i) {
+        poly_pointwise_montgomery(&( t1.vec[i] ), &cp,
+                                  &( t1.vec[i] ));
+    }
 
   /* csubq: Reconstruct w1 */
-	switch (K) {
-	case 5:
-		polyvec5_sub((polyvec5 *) &w1, (const polyvec5 *) &w1,
-		             (const polyvec5 *) &t1);
-		polyvec5_reduce((polyvec5 *) &w1);
-		polyvec5_invntt_tomont((polyvec5 *) &w1);
-		polyvec5_csubq((polyvec5 *) &w1);
-		polyvec5_use_hint((polyvec5 *) &w1, (const polyvec5 *) &w1,
-		                  (const polyvec5 *) &h);
-		break;
-	case 6:
-		polyvec6_sub((polyvec6 *) &w1, (const polyvec6 *) &w1,
-		             (const polyvec6 *) &t1);
-		polyvec6_reduce((polyvec6 *) &w1);
-		polyvec6_invntt_tomont((polyvec6 *) &w1);
-		polyvec6_csubq((polyvec6 *) &w1);
-		polyvec6_use_hint((polyvec6 *) &w1, (const polyvec6 *) &w1,
-		                  (const polyvec6 *) &h);
-		break;
-	case 8:
-		polyvec8_sub((polyvec8 *) &w1, (const polyvec8 *) &w1,
-		             (const polyvec8 *) &t1);
-		polyvec8_reduce((polyvec8 *) &w1);
-		polyvec8_invntt_tomont((polyvec8 *) &w1);
-		polyvec8_csubq((polyvec8 *) &w1);
-		polyvec8_use_hint((polyvec8 *) &w1, (const polyvec8 *) &w1,
-		                  (const polyvec8 *) &h);
-		break;
-	}
+    switch (K) {
+    case 5:
+        polyvec5_sub((polyvec5 *) &w1, (const polyvec5 *) &w1,
+                     (const polyvec5 *) &t1);
+        polyvec5_reduce((polyvec5 *) &w1);
+        polyvec5_invntt_tomont((polyvec5 *) &w1);
+        polyvec5_csubq((polyvec5 *) &w1);
+        polyvec5_use_hint((polyvec5 *) &w1, (const polyvec5 *) &w1,
+                          (const polyvec5 *) &h);
+        break;
+    case 6:
+        polyvec6_sub((polyvec6 *) &w1, (const polyvec6 *) &w1,
+                     (const polyvec6 *) &t1);
+        polyvec6_reduce((polyvec6 *) &w1);
+        polyvec6_invntt_tomont((polyvec6 *) &w1);
+        polyvec6_csubq((polyvec6 *) &w1);
+        polyvec6_use_hint((polyvec6 *) &w1, (const polyvec6 *) &w1,
+                          (const polyvec6 *) &h);
+        break;
+    case 8:
+        polyvec8_sub((polyvec8 *) &w1, (const polyvec8 *) &w1,
+                     (const polyvec8 *) &t1);
+        polyvec8_reduce((polyvec8 *) &w1);
+        polyvec8_invntt_tomont((polyvec8 *) &w1);
+        polyvec8_csubq((polyvec8 *) &w1);
+        polyvec8_use_hint((polyvec8 *) &w1, (const polyvec8 *) &w1,
+                          (const polyvec8 *) &h);
+        break;
+    }
 
- 				 /* Call random oracle and verify challenge */
+                 /* Call random oracle and verify challenge */
 
-	dil_challenge(&cp, mu, &w1, K);
+    dil_challenge(&cp, mu, &w1, K);
 
-	for (i = 0; i < DIL_N; ++i) {
-		if (c.coeffs[i] != cp.coeffs[i])
-			return 0;
-	}
+    for (i = 0; i < DIL_N; ++i) {
+        if (c.coeffs[i] != cp.coeffs[i])
+            return 0;
+    }
 
-	return 1;
+    return 1;
 }
 
 
@@ -3611,9 +3612,10 @@ int ref_verify(const uint8_t *sig,
 
 
 
-
+#if defined(STANDALONE)
 // devel only
 static unsigned long crd_keycnt;
+#endif //-----STANDALONE--------------------
 
 
 #if 1       /*-----  delimiter: key.generate  ------------------------------*/
@@ -3630,154 +3632,157 @@ int dil_keygen(unsigned char *prv,   size_t prbytes,
                unsigned char *pub,   size_t *pbbytes,
          const unsigned char *algid, size_t ibytes)
 {
-	unsigned int i, type, K, eta;
-	unsigned char seedbuf[ 3*DIL_SEEDBYTES ];
-	unsigned char tr[ DIL_CRHBYTES ];
-	const unsigned char *rho, *rhoprime, *key;
-	uint16_t nonce = 0;
-	polyvec_max mat[ DIL_VECT_MAX ];        /* using only K * L */
-	polyvec_max s1, s1hat;                  /* L */
-	polyvec_max s2, t1, t0;                 /* K */
-	size_t wrb;
+    unsigned int i, type, K, eta;
+    unsigned char seedbuf[ 3*DIL_SEEDBYTES ];
+    unsigned char tr[ DIL_CRHBYTES ];
+    const unsigned char *rho, *rhoprime, *key;
+    uint16_t nonce = 0;
+    polyvec_max mat[ DIL_VECT_MAX ];        /* using only K * L */
+    polyvec_max s1, s1hat;                  /* L */
+    polyvec_max s2, t1, t0;                 /* K */
+    size_t wrb;
 
-	if (!pbbytes)
-		return PQCA_EPARAM;
+    if (!pbbytes)
+        return PQCA_EPARAM;
 
-	type = dil_oid2type(algid, ibytes);
-	K    = dil_type2k  (type);
-	eta  = dil_type2eta(type);
-	wrb  = dil_prv_wirebytes(K);
-	if (!type || !K || !wrb)
-		return PQCA_EKEYTYPE;
+    type = dil_oid2type(algid, ibytes);
+    K    = dil_type2k  (type);
+    eta  = dil_type2eta(type);
+    wrb  = dil_prv_wirebytes(K);
+    if (!type || !K || !wrb)
+        return PQCA_EKEYTYPE;
 
-	if ((wrb > prbytes) || (dil_pub_wirebytes(K) > *pbbytes))
-		return PQCA_ETOOSMALL;
-	*pbbytes = dil_pub_wirebytes(K);
+    if ((wrb > prbytes) || (dil_pub_wirebytes(K) > *pbbytes))
+        return PQCA_ETOOSMALL;
+    *pbbytes = dil_pub_wirebytes(K);
 
-				/* Get randomness for rho, rhoprime and key */
+                /* Get randomness for rho, rhoprime and key */
 
-	randombytes(seedbuf, sizeof(seedbuf));
+    randombytes(seedbuf, sizeof(seedbuf));
 
-	if (getenv("CRDEBUG")) {
-		++crd_keycnt;
+#if defined(STANDALONE)
+    if (getenv("CRDEBUG"))
+    {
+        ++crd_keycnt;
 
-		for (i=0; i<DIL_SEEDBYTES; ++i) {
-			seedbuf[ 3*i   ] = 1 +   crd_keycnt +i +1;
-			seedbuf[ 3*i+1 ] = 2 +(((crd_keycnt +i +1) *5) >>  5);
-			seedbuf[ 3*i+2 ] = 3 +(((crd_keycnt +i +1) *7) >> 10);
-		}
-	}
+        for (i=0; i<DIL_SEEDBYTES; ++i) {
+            seedbuf[ 3*i   ] = 1 +   crd_keycnt +i +1;
+            seedbuf[ 3*i+1 ] = 2 +(((crd_keycnt +i +1) *5) >>  5);
+            seedbuf[ 3*i+2 ] = 3 +(((crd_keycnt +i +1) *7) >> 10);
+        }
+    }
+#endif //-----STANDALONE-----
 
-	rho      = seedbuf;
-	rhoprime = seedbuf + DIL_SEEDBYTES;
-	key      = seedbuf + 2* DIL_SEEDBYTES;
+    rho      = seedbuf;
+    rhoprime = seedbuf + DIL_SEEDBYTES;
+    key      = seedbuf + 2* DIL_SEEDBYTES;
 
-	/* Expand matrix */
+    /* Expand matrix */
 
-	switch (K) {
-	case 5: expand_matrix_5x4(mat, rho); break;
-	case 6: expand_matrix_6x5(mat, rho); break;
-	case 8: expand_matrix_8x7(mat, rho); break;
-	}
+    switch (K) {
+    case 5: expand_matrix_5x4(mat, rho); break;
+    case 6: expand_matrix_6x5(mat, rho); break;
+    case 8: expand_matrix_8x7(mat, rho); break;
+    }
 
-			/* Sample short vectors s1 and s2 */
-	for (i = 0; i < K-1; ++i)                                /* L */
-		poly_uniform_eta(&( s1.vec[i] ), rhoprime, eta, nonce++);
+            /* Sample short vectors s1 and s2 */
+    for (i = 0; i < K-1; ++i)                                /* L */
+        poly_uniform_eta(&( s1.vec[i] ), rhoprime, eta, nonce++);
 
-	for (i = 0; i < K; ++i)
-		poly_uniform_eta(&( s2.vec[i] ), rhoprime, eta, nonce++);
+    for (i = 0; i < K; ++i)
+        poly_uniform_eta(&( s2.vec[i] ), rhoprime, eta, nonce++);
 
-	s1hat = s1;
+    s1hat = s1;
 
-	switch (K) {
-	case 5: polyvec4_ntt((polyvec4 *) &s1hat); break;
-	case 6: polyvec5_ntt((polyvec5 *) &s1hat); break;
-	case 8: polyvec7_ntt((polyvec7 *) &s1hat); break;
-	default:
-		break;
-	}
+    switch (K) {
+    case 5: polyvec4_ntt((polyvec4 *) &s1hat); break;
+    case 6: polyvec5_ntt((polyvec5 *) &s1hat); break;
+    case 8: polyvec7_ntt((polyvec7 *) &s1hat); break;
+    default:
+        break;
+    }
 
-	for (i = 0; i < K; ++i) {
-		switch (K) {             /* K -> L, so -1 offset is not typo */
-		case 5:
-		polyvec4_pointwise_acc_montgomery(&t1.vec[i],
-		               (const polyvec4 *) &( mat[i] ),
-		               (const polyvec4 *) &s1hat);
-		break;
+    for (i = 0; i < K; ++i) {
+        switch (K) {             /* K -> L, so -1 offset is not typo */
+        case 5:
+        polyvec4_pointwise_acc_montgomery(&t1.vec[i],
+                       (const polyvec4 *) &( mat[i] ),
+                       (const polyvec4 *) &s1hat);
+        break;
 
-		case 6:
-		polyvec5_pointwise_acc_montgomery(&t1.vec[i],
-		               (const polyvec5 *) &( mat[i] ),
-		               (const polyvec5 *) &s1hat);
-		break;
+        case 6:
+        polyvec5_pointwise_acc_montgomery(&t1.vec[i],
+                       (const polyvec5 *) &( mat[i] ),
+                       (const polyvec5 *) &s1hat);
+        break;
 
-		case 8:
-		polyvec7_pointwise_acc_montgomery(&t1.vec[i],
-		               (const polyvec7 *) &( mat[i] ),
-		               (const polyvec7 *) &s1hat);
-		break;
-		}
-	}
-	for (i = 0; i < K; ++i) {
-		poly_reduce(&( t1.vec[i] ));
-		poly_invntt_tomont(&( t1.vec[i] ));
-	}
+        case 8:
+        polyvec7_pointwise_acc_montgomery(&t1.vec[i],
+                       (const polyvec7 *) &( mat[i] ),
+                       (const polyvec7 *) &s1hat);
+        break;
+        }
+    }
+    for (i = 0; i < K; ++i) {
+        poly_reduce(&( t1.vec[i] ));
+        poly_invntt_tomont(&( t1.vec[i] ));
+    }
 
-		/* Add error vector s2 (..._add()), then
-		 * Extract t1 and write public key
-		 */
+        /* Add error vector s2 (..._add()), then
+         * Extract t1 and write public key
+         */
 
-	switch (K) {
-	case 5:
-		polyvec5_add((polyvec5 *) &t1, (polyvec5 *) &t1,
-		             (const polyvec5 *) &s2);
-		polyvec5_freeze((polyvec5 *) &t1);
-		polyvec5_power2round((polyvec5 *) &t1, (polyvec5 *) &t0,
-		                     (const polyvec5 *) &t1);
-		pack_pk5(pub, rho, (const polyvec5 *) &t1);
-		break;
+    switch (K) {
+    case 5:
+        polyvec5_add((polyvec5 *) &t1, (polyvec5 *) &t1,
+                     (const polyvec5 *) &s2);
+        polyvec5_freeze((polyvec5 *) &t1);
+        polyvec5_power2round((polyvec5 *) &t1, (polyvec5 *) &t0,
+                             (const polyvec5 *) &t1);
+        pack_pk5(pub, rho, (const polyvec5 *) &t1);
+        break;
 
-	case 6:
-		polyvec6_add((polyvec6 *) &t1, (polyvec6 *) &t1,
-		             (const polyvec6 *) &s2);
-		polyvec6_freeze((polyvec6 *) &t1);
-		polyvec6_power2round((polyvec6 *) &t1, (polyvec6 *) &t0,
-		                     (const polyvec6 *) &t1);
-		pack_pk6(pub, rho, (const polyvec6 *) &t1);
-		break;
+    case 6:
+        polyvec6_add((polyvec6 *) &t1, (polyvec6 *) &t1,
+                     (const polyvec6 *) &s2);
+        polyvec6_freeze((polyvec6 *) &t1);
+        polyvec6_power2round((polyvec6 *) &t1, (polyvec6 *) &t0,
+                             (const polyvec6 *) &t1);
+        pack_pk6(pub, rho, (const polyvec6 *) &t1);
+        break;
 
-	case 8:
-		polyvec8_add((polyvec8 *) &t1, (polyvec8 *) &t1,
-		             (const polyvec8 *) &s2);
-		polyvec8_freeze((polyvec8 *) &t1);
-		polyvec8_power2round((polyvec8 *) &t1, (polyvec8 *) &t0,
-		                     (const polyvec8 *) &t1);
-		pack_pk8(pub, rho, (const polyvec8 *) &t1);
-		break;
+    case 8:
+        polyvec8_add((polyvec8 *) &t1, (polyvec8 *) &t1,
+                     (const polyvec8 *) &s2);
+        polyvec8_freeze((polyvec8 *) &t1);
+        polyvec8_power2round((polyvec8 *) &t1, (polyvec8 *) &t0,
+                             (const polyvec8 *) &t1);
+        pack_pk8(pub, rho, (const polyvec8 *) &t1);
+        break;
 
-	default:
-		break;
-	}
+    default:
+        break;
+    }
 
-				/* Compute CRH(rho, t1) and write priv. key */
+                /* Compute CRH(rho, t1) and write priv. key */
 
-	dil_crh(tr, DIL_CRHBYTES, pub, *pbbytes);
+    dil_crh(tr, DIL_CRHBYTES, pub, *pbbytes);
 
-	switch (K) {
-	case 5: pack_prv5(prv, rho, key, tr, (const polyvec4 *) &s1,
-	                  (const polyvec5 *) &s2, (const polyvec5 *) &t0);
-	        break;
-	case 6: pack_prv6(prv, rho, key, tr, (const polyvec5 *) &s1,
-	                  (const polyvec6 *) &s2, (const polyvec6 *) &t0);
-	        break;
-	case 8: pack_prv8(prv, rho, key, tr, (const polyvec7 *) &s1,
-	                  (const polyvec8 *) &s2, (const polyvec8 *) &t0);
-	        break;
-	default:
-		break;
-	}
+    switch (K) {
+    case 5: pack_prv5(prv, rho, key, tr, (const polyvec4 *) &s1,
+                      (const polyvec5 *) &s2, (const polyvec5 *) &t0);
+            break;
+    case 6: pack_prv6(prv, rho, key, tr, (const polyvec5 *) &s1,
+                      (const polyvec6 *) &s2, (const polyvec6 *) &t0);
+            break;
+    case 8: pack_prv8(prv, rho, key, tr, (const polyvec7 *) &s1,
+                      (const polyvec8 *) &s2, (const polyvec8 *) &t0);
+            break;
+    default:
+        break;
+    }
 
-	return (int) wrb;
+    return (int) wrb;
 }
 
 #endif      /*-----  /delimiter: key.generate  -----------------------------*/
@@ -3789,22 +3794,22 @@ int pqca_generate(unsigned char *prv,   size_t prvbytes,
                   unsigned char *pub,   size_t *pubbytes,
             const unsigned char *algid, size_t ibytes)
 {
-	int rc;
+    int rc;
 
-	if (!prv || !prvbytes || !pub || !pubbytes)
-		return 0;
+    if (!prv || !prvbytes || !pub || !pubbytes)
+        return 0;
 
-	rc = dil_keygen(prv, prvbytes, pub, pubbytes, algid, ibytes);
+    rc = dil_keygen(prv, prvbytes, pub, pubbytes, algid, ibytes);
 
-		/* placeholder: reference yet-unused internal fns */
+        /* placeholder: reference yet-unused internal fns */
 
-	if (0) {
-		shake128(NULL, ~0, NULL, ~0);
-	}
+    if (0) {
+        shake128(NULL, ~0, NULL, ~0);
+    }
 
-		// ...log any failure(reason) etc...
+        // ...log any failure(reason) etc...
 
-	return (size_t) rc;
+    return (size_t) rc;
 }
 
 
@@ -3814,21 +3819,21 @@ int pqca_sign(unsigned char *sig,   size_t sbytes,
         const unsigned char *prv,   size_t pbytes,
         const unsigned char *algid, size_t ibytes)
 {
-	int v;
+    int v;
 
-	if (!sig || !sbytes || !msg || !mbytes || !prv || !pbytes)
-		(void) 0;
+    if (!sig || !sbytes || !msg || !mbytes || !prv || !pbytes)
+        (void) 0;
 
-		// TODO: currently, picks defaults
-	(void) algid;
-	(void) ibytes;
+        // TODO: currently, picks defaults
+    (void) algid;
+    (void) ibytes;
 
-	v = ref_sign(sig, sbytes, msg, mbytes, prv, pbytes,
-	             0 /* alg.id -> type, currently ignored */);
+    v = ref_sign(sig, sbytes, msg, mbytes, prv, pbytes,
+                 0 /* alg.id -> type, currently ignored */);
 
 // TODO: log other, non-verify-indicating errors
 
-	return !!(v > 0);
+    return !!(v > 0);
 }
 
 
@@ -3838,20 +3843,20 @@ int pqca_verify(const unsigned char *sig,   size_t sbytes,
                 const unsigned char *pub,   size_t pbytes,
                 const unsigned char *algid, size_t ibytes)
 {
-	int v;
+    int v;
 
-	if (!sig || !sbytes || !msg || !mbytes || !pub || !pbytes)
-		(void) 0;
+    if (!sig || !sbytes || !msg || !mbytes || !pub || !pbytes)
+        (void) 0;
 
-		// TODO: currently, picks defaults
-	(void) algid;
-	(void) ibytes;
+        // TODO: currently, picks defaults
+    (void) algid;
+    (void) ibytes;
 
-	v = ref_verify(sig, sbytes, msg, mbytes, pub, pbytes);
+    v = ref_verify(sig, sbytes, msg, mbytes, pub, pbytes);
 
 // TODO: log other, non-verify-indicating errors
 
-	return !!(v > 0);
+    return !!(v > 0);
 }
 
 
@@ -3860,13 +3865,13 @@ int pqca_key2wire(unsigned char *wire,  size_t wbytes,
             const unsigned char *key,   size_t kbytes,
             const unsigned char *algid, size_t ibytes)
 {
-	size_t wr;
+    size_t wr;
 
-	wr = dil_pub2wire(wire, wbytes, key, kbytes, algid, ibytes);
+    wr = dil_pub2wire(wire, wbytes, key, kbytes, algid, ibytes);
 
 // TODO: check for prv->pkcs8 conversion too
 
-	return (int) wr;
+    return (int) wr;
 }
 
 
@@ -3875,16 +3880,16 @@ int pqca_wire2key(unsigned char *key,   size_t kbytes,
             const unsigned char *wire,  size_t wbytes,
             const unsigned char *algid, size_t ibytes)
 {
-	unsigned int type;
-	size_t wr;
+    unsigned int type;
+    size_t wr;
 
-	wr = dil_wire2pub(key, kbytes, &type, wire, wbytes, algid, ibytes);
+    wr = dil_wire2pub(key, kbytes, &type, wire, wbytes, algid, ibytes);
 
-	(void) type;
+    (void) type;
 
 // TODO: check for pkcs8->prv conversion too
 
-	return (int) wr;
+    return (int) wr;
 }
 #endif      /*-----  /delimiter: PKCS11 wrappers  --------------------------*/
 
@@ -3895,126 +3900,126 @@ int pqca_wire2key(unsigned char *key,   size_t kbytes,
 #define  BIG_ENOUGH  ((size_t) 6000)
 
 static const struct {
-	const unsigned char *oid;
-	size_t obytes;
+    const unsigned char *oid;
+    size_t obytes;
 } dilt_oids[] = {
 
-	{
-	(const unsigned char *)
-	"\x06\x0b" "\x2b\x06\x01\x04\x01\x02\x82\x0b\x01\x08\x07", 13,
-	},         // round2, 8-7
+    {
+    (const unsigned char *)
+    "\x06\x0b" "\x2b\x06\x01\x04\x01\x02\x82\x0b\x01\x08\x07", 13,
+    },         // round2, 8-7
 
 #if 0
-	{
-	(const unsigned char *)
-	"\x06\x0b" "\x2b\x06\x01\x04\x01\x02\x82\x0b\x06\x05\x04", 13,
-	},         // round2 raw, 5-4
-	{
-	(const unsigned char *)
-	"\x06\x0b" "\x2b\x06\x01\x04\x01\x02\x82\x0b\x06\x06\x05", 13,
-	},         // round2 raw, 6-5
-	{
-	(const unsigned char *)
-	"\x06\x0b" "\x2b\x06\x01\x04\x01\x02\x82\x0b\x06\x08\x07", 13,
-	},         // round2 raw, 8-7
+    {
+    (const unsigned char *)
+    "\x06\x0b" "\x2b\x06\x01\x04\x01\x02\x82\x0b\x06\x05\x04", 13,
+    },         // round2 raw, 5-4
+    {
+    (const unsigned char *)
+    "\x06\x0b" "\x2b\x06\x01\x04\x01\x02\x82\x0b\x06\x06\x05", 13,
+    },         // round2 raw, 6-5
+    {
+    (const unsigned char *)
+    "\x06\x0b" "\x2b\x06\x01\x04\x01\x02\x82\x0b\x06\x08\x07", 13,
+    },         // round2 raw, 8-7
 #endif
 
 } ;
 
 
 static unsigned char dilt_msg0[] = {
-	0x14,0x15,0x92,0x65,0x35, 0x89,0x79,0x32,0x38,0x46,
-	0x26,0x43,0x38,0x32,0x79, 0x50,0x28,0x84,0x19,0x71,
-	0x69,0x39,0x93,0x75,0x10, 0x58,0x20,0x97,0x49,0x44,
-	0x59,0x23,0x07,0x81,0x64, 0x06,0x28,0x62,0x08,0x99,
-	0x86,0x28,0x03,0x48,0x25, 0x34,0x21,0x17,0x06,0x79,
-	0x82,0x14,0x80,0x86,0x51, 0x32,0x82,0x30,0x66,0x47,
-	0x09,0x38,0x44,0x60};
+    0x14,0x15,0x92,0x65,0x35, 0x89,0x79,0x32,0x38,0x46,
+    0x26,0x43,0x38,0x32,0x79, 0x50,0x28,0x84,0x19,0x71,
+    0x69,0x39,0x93,0x75,0x10, 0x58,0x20,0x97,0x49,0x44,
+    0x59,0x23,0x07,0x81,0x64, 0x06,0x28,0x62,0x08,0x99,
+    0x86,0x28,0x03,0x48,0x25, 0x34,0x21,0x17,0x06,0x79,
+    0x82,0x14,0x80,0x86,0x51, 0x32,0x82,0x30,0x66,0x47,
+    0x09,0x38,0x44,0x60};
 
 //--------------------------------------
 int main(void)
 {
-	unsigned char prv[ 5136 ],
-	              pub[ 2336 ],
-	              sig[ 4668 ];
-	unsigned int i, offs = 0;
-	size_t prvb, pubb;
-	int rc = 0;
+    unsigned char prv[ 5136 ],
+                  pub[ 2336 ],
+                  sig[ 4668 ];
+    unsigned int i, offs = 0;
+    size_t prvb, pubb;
+    int rc = 0;
 
-	printf("DIL.PRV.B(%u)=%zu\n", 5, dil_prv_wirebytes(5));
-	printf("DIL.PRV.B(%u)=%zu\n", 6, dil_prv_wirebytes(6));
-	printf("DIL.PRV.B(%u)=%zu\n", 8, dil_prv_wirebytes(8));
+    printf("DIL.PRV.B(%u)=%zu\n", 5, dil_prv_wirebytes(5));
+    printf("DIL.PRV.B(%u)=%zu\n", 6, dil_prv_wirebytes(6));
+    printf("DIL.PRV.B(%u)=%zu\n", 8, dil_prv_wirebytes(8));
 
-	printf("DIL.PUB.B(%u)=%zu\n", 5, dil_pub_wirebytes(5));
-	printf("DIL.PUB.B(%u)=%zu\n", 6, dil_pub_wirebytes(6));
-	printf("DIL.PUB.B(%u)=%zu\n", 8, dil_pub_wirebytes(8));
+    printf("DIL.PUB.B(%u)=%zu\n", 5, dil_pub_wirebytes(5));
+    printf("DIL.PUB.B(%u)=%zu\n", 6, dil_pub_wirebytes(6));
+    printf("DIL.PUB.B(%u)=%zu\n", 8, dil_pub_wirebytes(8));
 
-	printf("DIL.SIG.B(%u)=%zu\n", 5, dil_signature_bytes(5));
-	printf("DIL.SIG.B(%u)=%zu\n", 6, dil_signature_bytes(6));
-	printf("DIL.SIG.B(%u)=%zu\n", 8, dil_signature_bytes(8));
+    printf("DIL.SIG.B(%u)=%zu\n", 5, dil_signature_bytes(5));
+    printf("DIL.SIG.B(%u)=%zu\n", 6, dil_signature_bytes(6));
+    printf("DIL.SIG.B(%u)=%zu\n", 8, dil_signature_bytes(8));
 
-	for (i = 0; i < ARRAY_ELEMS(dilt_oids); ++i) {
-		unsigned int j;
-		size_t asnb;
+    for (i = 0; i < ARRAY_ELEMS(dilt_oids); ++i) {
+        unsigned int j;
+        size_t asnb;
 
-		if (!dilt_oids[i].oid || !dilt_oids[i].obytes)
-			continue;
-		++offs;
+        if (!dilt_oids[i].oid || !dilt_oids[i].obytes)
+            continue;
+        ++offs;
 
-		if (getenv("CRDEBUG")) {
-			crd_keycnt = 0;
-		}
+        if (getenv("CRDEBUG")) {
+            crd_keycnt = 0;
+        }
 
-		for (j=0; j<1; ++j) {
+        for (j=0; j<1; ++j) {
 
-		prvb = sizeof(prv);
-		pubb = sizeof(pub);
+        prvb = sizeof(prv);
+        pubb = sizeof(pub);
 
-		memset(prv, i+i+offs+j+1, sizeof(prv));
-		memset(pub, i+i+offs+j+2, sizeof(pub));
+        memset(prv, i+i+offs+j+1, sizeof(prv));
+        memset(pub, i+i+offs+j+2, sizeof(pub));
 
-		rc = dil_keygen(prv, sizeof(prv), pub, &pubb,
-		                dilt_oids[i].oid, dilt_oids[i].obytes);
-		if (rc < 0)
-			break;
+        rc = dil_keygen(prv, sizeof(prv), pub, &pubb,
+                        dilt_oids[i].oid, dilt_oids[i].obytes);
+        if (rc < 0)
+            break;
 
-		if (rc > 0) {
-			prvb = (size_t) rc;
+        if (rc > 0) {
+            prvb = (size_t) rc;
 
-			printf("PRV.B=%zu\n", prvb);
-			//cu_hexprint("PRV=", prv, prvb);
+            printf("PRV.B=%zu\n", prvb);
+            //cu_hexprint("PRV=", prv, prvb);
 
-			printf("PUB.B=%zu\n", pubb);
-			//cu_hexprint("PUB=", pub, pubb);
-		}
+            printf("PUB.B=%zu\n", pubb);
+            //cu_hexprint("PUB=", pub, pubb);
+        }
 
 
-		if (rc < 0)
-			break;
+        if (rc < 0)
+            break;
 
-		{
-		size_t mb, sigb;
-		int ver;
+        {
+        size_t mb, sigb;
+        int ver;
         mb=64;
-			printf("MSG.B=%zu\n", mb);
-			//cu_hexprint("MSG=", dilt_msg0, mb);
+            printf("MSG.B=%zu\n", mb);
+            //cu_hexprint("MSG=", dilt_msg0, mb);
 
-			sigb = ref_sign(sig, sizeof(sig), dilt_msg0, mb,
-			                prv, prvb, 0);
-			if (sigb) {
-				printf("SIG.B=%zu\n", sigb);
-				//cu_hexprint("SIG=", sig, sigb);
-			}
+            sigb = ref_sign(sig, sizeof(sig), dilt_msg0, mb,
+                            prv, prvb, 0);
+            if (sigb) {
+                printf("SIG.B=%zu\n", sigb);
+                //cu_hexprint("SIG=", sig, sigb);
+            }
 
-			ver = ref_verify(sig, sigb, dilt_msg0, mb, pub, pubb);
-			printf("VER=%d\n", ver);
-		}
-		}
-		if (rc < 0)
-			break;
-	}
+            ver = ref_verify(sig, sigb, dilt_msg0, mb, pub, pubb);
+            printf("VER=%d\n", ver);
+        }
+        }
+        if (rc < 0)
+            break;
+    }
 
-	return (rc < 0) ? -1 : 0;
+    return (rc < 0) ? -1 : 0;
 }
 #endif         /* defined(STANDALONE) */
 
