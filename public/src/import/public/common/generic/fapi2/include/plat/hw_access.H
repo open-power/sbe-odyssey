@@ -39,6 +39,7 @@
 
 #include <plat_hw_access.H>
 #include <fapi2_hw_access.H>
+#include <iostream>
 
 namespace fapi2
 {
