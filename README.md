@@ -38,8 +38,7 @@ To Run simics:
     After building image run following steps.
         ./sb prime
 
-        cd simics
-        ./runsim -m p11_standalone odyssey_sram_img="images/odyssey/odyssey_sppe_DD1.bin" sbe_script_to_run="targets/odyssey_standalone/sbeTest/sbe_startup_ody_standalone.simics" sbe_scripts_path="targets/odyssey_standalone/sbeTest/"
+        ./sb runsimics
 
     In simics console run this.
         simics> start-cbs 0
