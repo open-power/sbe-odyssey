@@ -29,6 +29,9 @@
  *        The status code will be updated in scratch reg.
  *        These codes are common for SROM and Boot Loader
  *
+ * This file is included by assembly code, so please keep the
+ * contents to #defines only!
+ *
  */
 
 #ifndef STATUS_CODES_H
@@ -40,15 +43,31 @@
 //Area Indicator
 //0x0 --> Reserved
 //0x1 --> ASM Code (SPI Init etc) Fails
-//0x2 --> FSM Code Fails
+//0x2 --> HWP Code Fails
 //0x3 --> Boot Code Fails
 //0x4 --> Secure Header Verification Fails
 //0x5 --> File Errors Fails
 //0x6 .. 0xf --> Unused
 
 // Area 0x1 --> ASM Code (SPI Init etc) Fails
+// 0x100..0x10f - errors locating command tables
+#define BOOT_RC_MISSING_MAIN_FSM    0x101
+#define BOOT_RC_INVALID_MAIN_FSM    0x102
+#define BOOT_RC_INVALID_CUST_FSM    0x103
+#define BOOT_RC_INVALID_PAK_MAGIC   0x104
+#define BOOT_RC_INVALID_FN_SIZE     0x105
+#define BOOT_RC_FILE_COMPRESSED     0x106
 
-// Area 0x2 -->  FSM Code Fails
+// 0x110..0x11f - errors during command table execution
+#define BOOT_RC_INSTRUCTION_OVERRUN 0x110
+#define BOOT_RC_VALUE_OVERRUN       0x111
+#define BOOT_RC_INVALID_CALL        0x112
+#define BOOT_RC_INVALID_BRANCH      0x113
+#define BOOT_RC_ADDRESS_BLOCKED     0x114
+#define BOOT_RC_SCAN_TYPE_BLOCKED   0x115
+
+// Area 0x2 --> HWP Code Fails
+// TODO: #include <asm_hwp_error_codes.H> from EKB
 
 //Area 0x3 --> Boot Code Fails
 // 0x10 to 0x1f are used for SROM Initial Boot Checks
@@ -56,7 +75,7 @@
 #define BOOT_RC_INVALID_DILITHIUM_FUSE_CHECK_CNFG 0x311
 
 //Area 0x4 --> Secure Header Verification Fails
-// 0x00 to 0xf (These are not error code's)
+// 0x00 to 0xf (These are not error codes)
 #define NO_ERROR 0x400
 #define SB_ENFORCEMENT_DISABLED 0x40f   // This is set to indicate Enforcement was disabled
 
