@@ -24,8 +24,11 @@
 # IBM_PROLOG_END_TAG
 
 # Apply generci bashrc
-if [ -e ${HOME}/.bashrc ]; then
-    source ${HOME}/.bashrc
+
+if [ -z $SBE_CI_ENV_SETUP ]; then
+    if [ -e ${HOME}/.bashrc ]; then
+        source ${HOME}/.bashrc
+    fi
 fi
 
 echo "Setting environment variables..."
@@ -48,4 +51,6 @@ if [ -e ${HOME}/.sbe/customrc ]; then
     source ${HOME}/.sbe/customrc
 fi
 
-source public/src/tools/utils/sb/sb_complete
+if [ -z $SBE_CI_ENV_SETUP ]; then
+    source public/src/tools/utils/sb/sb_complete
+fi
