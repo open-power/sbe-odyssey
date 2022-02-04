@@ -347,7 +347,7 @@ rs4_overlay( CompressedScanData* o_rs4Final,
 #define RS4_IV_TYPE_ORIG_BASE       (uint8_t)0b00000100 // Base
 #define RS4_IV_TYPE_ORIG_BMC        (uint8_t)0b00001000 // BMC override
 #define RS4_IV_TYPE_ORIG_HB         (uint8_t)0b00010000 // Hostboot override
-#define RS4_IV_TYPE_ORIG_VPD        (uint8_t)0b00100000 // VPD
+#define RS4_IV_TYPE_ORIG_CUST       (uint8_t)0b00100000 // Customized
 #define RS4_IV_TYPE_ORIG_OTHER      (uint8_t)0b01000000 // Other source
 // Instance ring type (or Common if==0)
 #define RS4_IV_TYPE_INSTANCE        (uint8_t)0b10000000
