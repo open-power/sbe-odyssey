@@ -83,7 +83,8 @@ exc_cmd()
 {
     echo $1
     $1
-    exit 1
+    rc=$?
+    exit $rc
 }
 
 if [ "$1" == "setup" ]; then
