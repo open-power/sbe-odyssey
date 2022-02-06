@@ -18,4 +18,5 @@ gcc_defs_odyssey_sppe = [
         ]
 
 odyssey_cmn_inc_paths = [
-                        ]
+        '/public/src/runtime/odyssey/sppe/plat/targeting'
+        ]

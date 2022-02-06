@@ -1,7 +1,7 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/common/core/meson.build $
+# $Source: public/src/runtime/odyssey/sppe/plat/targeting/meson.build $
 #
 # OpenPOWER sbe Project
 #
@@ -23,18 +23,21 @@
 #
 # IBM_PROLOG_END_TAG
 
-infile_c = ['threadutil.C',
-            'cmnglobals.C',
-            'pool.C',
-           ]
+infile_c = ['odytarget.C'
+            ]
 
-lib_file_name = 'cmncore'
+lib_file_name = 'odysseytarget'
 
-cmn_core_obj_file_cpp = obj_gen_cpp.process(infile_c)
+odyssey_target_obj_file_cpp = obj_gen_cpp.process(infile_c,
+                                        extra_args : [
+                                        meson.get_external_property('gcc_defs_cmn_odyssey'),
+                                        meson.get_external_property('gcc_defs_odyssey_sppe'),
+                                        odyssey_cmn_abs_inc_paths,
+                                        runtime_cmn_abs_inc_paths])
 
-infile  = [cmn_core_obj_file_cpp]
+infile  = [odyssey_target_obj_file_cpp]
 
-libcmncore = custom_target( lib_file_name,
+libodysseytarget = custom_target( lib_file_name,
                                  output : 'lib' + lib_file_name,
                                  input : infile,
                                  command : [ ar,
@@ -44,6 +47,7 @@ libcmncore = custom_target( lib_file_name,
                                  build_by_default: true,
                              )
 
-cmn_core_libs = '-l' + lib_file_name
-cmn_core_lib_paths = '-L' + meson.current_build_dir()
-cmn_core_dep_libs = libcmncore
+odyssey_sppe_libs += '-l' + lib_file_name
+odyssey_sppe_lib_paths += '-L' + meson.current_build_dir()
+odyssey_sppe_dep_libs += libodysseytarget
+

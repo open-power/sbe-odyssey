@@ -64,6 +64,7 @@ odyssey_sppe_install_path = 'odyssey/runtime/sppe'
 #Odyssey SPPE Base Image name
 odyssey_sppe_img_name = 'odyssey_sppe_' + ddlvl
 
+subdir('plat')
 subdir('core')
 subdir('hwpf')
 

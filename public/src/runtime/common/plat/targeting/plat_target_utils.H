@@ -1,11 +1,12 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/core/pool.C $                       */
+/* $Source: public/src/runtime/common/plat/targeting/plat_target_utils.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2012,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -21,50 +22,37 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#include <stdint.h>
-#include <sbetrace.H>
-#include <stddef.h>
-#include<pool.H>
-#include "assert.h"
+/**
+ * @file plat_target_util.H
+ * @brief platform utility definitions for fapi2 targets
+ */
 
-namespace SBEVECTORPOOL
+#ifndef __FAPI2_PLAT_TARGET_UTIL__
+#define __FAPI2_PLAT_TARGET_UTIL__
+
+
+//
+// Platform Utility functions..
+//
+namespace fapi2
 {
+    ///
+    /// @brief Function to print the G_targets vector
+    ///
+    void plat_PrintTargets();
 
-vectorMemPool_t g_pool[G_POOLSIZE];
+    ///
+    /// @brief Function to initialize the G_targets vector based on partial good
+    ///        targets
+    /// @return FAPI2_RC_SUCCESS if okay
+    ///
+    ReturnCode plat_TargetsInit();
 
-vectorMemPool_t * allocMem()
-{
-    vectorMemPool_t *pool = NULL;
-    size_t idx;
-    for( idx = 0; idx < G_POOLSIZE; idx++ )
-    {
-        if( 0 == g_pool[idx].refCount )
-        {
-            pool = g_pool + idx;
-            g_pool[idx].refCount++;
-            break;
-        }
-    }
-    if(NULL == pool )
-    {
-        SBE_ERROR("NULL pool idx:%u", idx);
-        pk_halt();
-    }
-    return pool;
+    ///
+    /// @brief Function to get the proc chip target initialize the G_targets vector
+    /// @return proc target
+    ///
+    Target<TARGET_TYPE_PROC_CHIP> plat_getChipTarget();
+
 }
-
-void releaseMem( vectorMemPool_t * i_pool )
-{
-    do
-    {
-        if ( NULL == i_pool )   break;
-
-       // Assert here.  This pool was not supposed to be in use.
-        assert( 0 != i_pool->refCount )
-        SBE_DEBUG(" Releasing pool 0x%08X", i_pool);
-        i_pool->refCount--;
-        SBE_DEBUG(" In releaseMem() RefCount:%u", i_pool->refCount);
-    }while(0);
-}
-
-} // namesspace SBEVECTORPOOL
+#endif

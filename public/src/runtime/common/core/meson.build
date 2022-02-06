@@ -25,7 +25,6 @@
 
 infile_c = ['sbeSpMsg.C',
             'sbeirq.C',
-            'pool.C',
             'sbeFifoMsgUtils.C',
             'chipop_handler.C',
             'sberegaccess.C',

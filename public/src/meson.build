@@ -91,10 +91,11 @@ obj_gen_c = generator(ppetraceapp,
                     output  : '@BASENAME@.o',
                     arguments : [
                                  '/afs/awd/projects/cte/tools/ppetools/prod/bin/powerpc-eabi-gcc',
+                                 '@EXTRA_ARGS@',
                                  meson.get_external_property('cc_flags_cmn'),
                                  cmn_abs_inc_paths, ekb_cmn_abs_inc_paths,
                                  meson.get_external_property('gcc_defs_cmn'),
-                                 '@EXTRA_ARGS@','-o','@OUTPUT@','@INPUT@'],
+                                 '-o','@OUTPUT@','@INPUT@'],
                     depfile : '@BASENAME@.d'
                     )
 
@@ -102,11 +103,12 @@ obj_gen_cpp = generator(ppetraceapp,
                     output  : '@BASENAME@.o',
                     arguments : [
                                  '/afs/awd/projects/cte/tools/ppetools/prod/bin/powerpc-eabi-gcc',
+                                 '@EXTRA_ARGS@',
                                  meson.get_external_property('cc_flags_cmn'),
                                  cmn_abs_inc_paths, ekb_cmn_abs_inc_paths,
                                  meson.get_external_property('obj_args_cpp'),
                                  meson.get_external_property('gcc_defs_cmn'),
-                                 '@EXTRA_ARGS@','-o','@OUTPUT@','@INPUT@'],
+                                 '-o','@OUTPUT@','@INPUT@'],
                     depfile : '@BASENAME@.d'
                     )
 
@@ -114,8 +116,9 @@ obj_gen_s = generator(as,
                     output  : '@BASENAME@.o',
                     arguments : [
                                  '-mppe42x',
+                                 '@EXTRA_ARGS@',
                                  cmn_abs_inc_paths, ekb_cmn_abs_inc_paths,
-                                 '@EXTRA_ARGS@','-o','@OUTPUT@','@INPUT@']
+                                 '-o','@OUTPUT@','@INPUT@']
                     )
 
 subdir('build/buildekb')
