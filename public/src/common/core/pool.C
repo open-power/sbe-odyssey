@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/core/pool.H $                       */
+/* $Source: public/src/common/core/pool.C $                               */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -21,38 +21,50 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-
-#ifndef SBE_VECTOR_POOL_H
-#define SBE_VECTOR_POOL_H
+#include <stdint.h>
+#include <sbetrace.H>
+#include <stddef.h>
+#include<pool.H>
+#include "assert.h"
 
 namespace SBEVECTORPOOL
 {
 
-// Size of a block  for a vector
-static const size_t G_BLOCKSIZE = 1024;
+vectorMemPool_t g_pool[G_POOLSIZE];
 
-//Pool size
-static const size_t G_POOLSIZE = 8;
-
-typedef struct
+vectorMemPool_t * allocMem()
 {
-    size_t refCount;
-    uint8_t data[G_BLOCKSIZE] __attribute__ ((aligned (8)));
-}vectorMemPool_t;
+    vectorMemPool_t *pool = NULL;
+    size_t idx;
+    for( idx = 0; idx < G_POOLSIZE; idx++ )
+    {
+        if( 0 == g_pool[idx].refCount )
+        {
+            pool = g_pool + idx;
+            g_pool[idx].refCount++;
+            break;
+        }
+    }
+    if(NULL == pool )
+    {
+        SBE_ERROR("NULL pool idx:%u", idx);
+        pk_halt();
+    }
+    return pool;
+}
 
-/**
-  * @brief Returns memory pool block.
-  *
-  * @return  Memory block if available, NULL otherwise.
-  */
-vectorMemPool_t * allocMem();
+void releaseMem( vectorMemPool_t * i_pool )
+{
+    do
+    {
+        if ( NULL == i_pool )   break;
 
-/**
-  * @brief Release memory pool block.
-  *
-  * @param[in] i_pool pool pointer.
-  */
-void releaseMem( vectorMemPool_t * i_pool );
+       // Assert here.  This pool was not supposed to be in use.
+        assert( 0 != i_pool->refCount )
+        SBE_DEBUG(" Releasing pool 0x%08X", i_pool);
+        i_pool->refCount--;
+        SBE_DEBUG(" In releaseMem() RefCount:%u", i_pool->refCount);
+    }while(0);
+}
 
-} // namespace SBEVECTORPOOL
-#endif //SBE_VECTOR_POOL_H
+} // namesspace SBEVECTORPOOL

@@ -86,6 +86,7 @@ gcc_defs_cmn = [
         ]
 
 ekb_cmn_inc_path = [
+    '/common/generic/ppe/include/std',
     '/common/generic/fapi2/include',
     '/common/generic/fapi2/include/plat',
     '/emb/p11/kernels/ppe/baselib',
@@ -95,21 +96,21 @@ ekb_cmn_inc_path = [
     '/emb/p11/kernels/ppe/pk/kernel',
     '/emb/p11/kernels/ppe/ppetrace/ppetracepp',
     '/emb/p11/kernels/ppe/boltonlib/exppe',
-    '/common/generic/ppe/include/std/',
         ]
 
 ekb_hwp_inc_path = [
         ]
 
 cmn_inc_paths = [
-            '/public/src/common/hwpf',
-            '/public/src/common/core',
-            '/public/src/common/utils',
-            '/public/src/common/algorithms',
-            '/public/src/build/links',
+    '/public/src/common/hwpf',
+    '/public/src/common/core',
+    '/public/src/common/utils',
+    '/public/src/common/algorithms',
+    '/public/src/build/links',
         ]
 
 runtime_cmn_inc_paths = [
     '/public/src/runtime/common/core',
     '/public/src/runtime/common/plat/ffdc',
+    '/public/src/runtime/common/plat/targeting',
         ]
