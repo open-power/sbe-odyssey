@@ -59,6 +59,9 @@ usage()
     echo "To Compile & Install:"
     echo "mesonwrap build"
     echo ""
+    echo "To Sync PLATFORM env var:"
+    echo "mesonwrap sync"
+    echo ""
     echo "To clean(Removes install dir):"
     echo "mesonwrap clean"
     echo ""
@@ -88,15 +91,9 @@ exc_cmd()
 }
 
 if [ "$1" == "setup" ]; then
-    if [ "$SBE_PLATFORM" == "all" ]; then
-        CROSS_FILES=" --cross-file $CMN_MESON_CROSS_FILE_PATH --cross-file $ODYSSEY_MESON_CROSS_FILE_PATH --cross-file $P11_MESON_CROSS_FILE_PATH"
 
-    elif [ "$SBE_PLATFORM" == "odyssey" ]; then
-        CROSS_FILES=" --cross-file $CMN_MESON_CROSS_FILE_PATH --cross-file $ODYSSEY_MESON_CROSS_FILE_PATH "
-
-    elif [ "$SBE_PLATFORM" == "p11" ]; then
-        CROSS_FILES=" --cross-file $CMN_MESON_CROSS_FILE_PATH --cross-file $P11_MESON_CROSS_FILE_PATH "
-    fi
+    #Pass all cross files ir-respective of platform used.
+    CROSS_FILES=" --cross-file $CMN_MESON_CROSS_FILE_PATH --cross-file $ODYSSEY_MESON_CROSS_FILE_PATH --cross-file $P11_MESON_CROSS_FILE_PATH"
 
     CMD="$BASE_CMD $1 $MESON_BUILD_DIR -Dplatform=$SBE_PLATFORM $CROSS_FILES --native-file $CMN_MESON_NATIVE_FILE_PATH --prefix $INSTALL_DIR ${@:2}"
     exc_cmd "$CMD"
@@ -118,14 +115,22 @@ if [ "$1" == "build" ]; then
 fi
 
 if [ "$1" == "clean" ]; then
-    echo "Removing images dir"
-    rm -rf $MESON_INSTALL_DIR || exit -1
+    echo "Removing...."
+    CMD="rm -rf $MESON_INSTALL_DIR/odyssey"
+    echo $CMD
+    $CMD || exit -1
+    echo "Cleaning up builddir...."
     CMD="$BASE_CMD compile --clean -C $MESON_BUILD_DIR"
     exc_cmd "$CMD"
 fi
 
 if [ "$1" == "configure" ]; then
     CMD="$BASE_CMD $1 $MESON_BUILD_DIR ${@:2}"
+    exc_cmd "$CMD"
+fi
+
+if [ "$1" == "sync" ]; then
+    CMD="$BASE_CMD configure $MESON_BUILD_DIR -Dplatform=$SBE_PLATFORM"
     exc_cmd "$CMD"
 fi
 
