@@ -21,6 +21,9 @@ Note: If platform option is not provided, it defaults to "all".
 To install required packages to build images:
 ./sb install
 
+To sync platform env variable with existing meson build dir:
+mesonwrap sync
+
 To build a image:
 mesonwrap setup
 mesonwrap build
