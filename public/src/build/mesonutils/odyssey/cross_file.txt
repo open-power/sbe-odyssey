@@ -9,15 +9,12 @@ gcc_defs_cmn_odyssey = [
         ]
 
 gcc_defs_odyssey_srom = [
-        '-DOSROM_TRACE_LEVEL=2',
         ]
 
 gcc_defs_odyssey_bldr = [
-        '-DOBLDR_TRACE_LEVEL=2',
         ]
 
 gcc_defs_odyssey_sppe = [
-        '-DOSPPE_TRACE_LEVEL=2',
         ]
 
 odyssey_cmn_inc_paths = [ ]

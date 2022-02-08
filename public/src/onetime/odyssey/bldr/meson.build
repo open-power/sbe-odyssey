@@ -162,7 +162,7 @@ obldr_rm_string_file = custom_target( 'obldr_rm_string_file',
 #Generate string file
 obldr_string_file_gen = custom_target(output : 'odysseyBldrStringFile_' + ddlvl,
                                       depends : [obldr_out_map_gen,obldr_rm_string_file],
-                                      command : [ tracehash, '-c', '-d',
+                                      command : [ tracehash, '-c', '-FC', '-d',
                                                   meson.global_build_root() + '/public/src/',
                                                   '-s','@OUTPUT@', ],
                                       build_by_default : true,
