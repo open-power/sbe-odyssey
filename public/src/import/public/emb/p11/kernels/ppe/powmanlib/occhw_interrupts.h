@@ -46,72 +46,70 @@
 // Note that the bits named *RESERVED* are actually implemented in the
 // controller, but the interrupt input is tied low. That means they can also
 // be used as IPI targets. Logical bits 32..63 are not implemented.
-
-#define OCCHW_IRQ_TRACE_TRIGGER_0               0  /* 0x00 */
-#define OCCHW_IRQ_OCC_ERROR                     1  /* 0x01 */
-#define OCCHW_IRQ_GPE2_ERROR                    2  /* 0x02 */
-#define OCCHW_IRQ_GPE3_ERROR                    3  /* 0x03 */
-#define OCCHW_IRQ_CHECK_STOP_GPE2               4  /* 0x04 */
-#define OCCHW_IRQ_CHECK_STOP_GPE3               5  /* 0x05 */
-#define OCCHW_IRQ_OCC_MALF_ALERT                6  /* 0x06 */
-#define OCCHW_IRQ_PVREF_ERROR                   7  /* 0x07 */
-#define OCCHW_IRQ_IPI2_HI_PRIORITY              8  /* 0x08 */
-#define OCCHW_IRQ_IPI3_HI_PRIORITY              9  /* 0x09 */
-#define OCCHW_IRQ_DEBUG_TRIGGER                 10 /* 0x0a */
-#define OCCHW_IRQ_GPE3_FUNCTION_TRIGGER         11 /* 0x0b */
-#define OCCHW_IRQ_PBAX_PGPE_ATTN                12 /* 0x0c */
-#define OCCHW_IRQ_PBAX_PGPE_PUSH0               13 /* 0x0d */
-#define OCCHW_IRQ_PBAX_PGPE_PUSH1               14 /* 0x0e */
-#define OCCHW_IRQ_PBA_OVERCURRENT_INDICATOR     15 /* 0x0f */
-#define OCCHW_IRQ_PMC_PCB_INTR_TYPE0_PENDING    16 /* 0x10 */
-#define OCCHW_IRQ_PMC_PCB_INTR_TYPE1_PENDING    17 /* 0x11 */
-#define OCCHW_IRQ_PMC_PCB_INTR_TYPE2_PENDING    18 /* 0x12 */
-#define OCCHW_IRQ_PMC_PCB_INTR_TYPE3_PENDING    19 /* 0x13 */
-#define OCCHW_IRQ_PMC_PCB_INTR_TYPE4_PENDING    20 /* 0x14 */
-#define OCCHW_IRQ_PMC_PCB_INTR_TYPE5_PENDING    21 /* 0x15 */
-#define OCCHW_IRQ_PMC_PCB_INTR_TYPE6_PENDING    22 /* 0x16 */
-#define OCCHW_IRQ_PMC_PCB_INTR_TYPE7_PENDING    23 /* 0x17 */
-#define OCCHW_IRQ_PMC_PCB_INTR_TYPE8_PENDING    24 /* 0x18 */
-#define OCCHW_IRQ_PMC_PCB_INTR_TYPE9_PENDING    25 /* 0x19 */
-#define OCCHW_IRQ_PMC_PCB_INTR_TYPEA_PENDING    26 /* 0x1a */
-#define OCCHW_IRQ_PMC_PCB_INTR_TYPEB_PENDING    27 /* 0x1b */
-#define OCCHW_IRQ_PMC_PCB_INTR_TYPEC_PENDING    28 /* 0x1c */
-#define OCCHW_IRQ_PMC_PCB_INTR_TYPED_PENDING    29 /* 0x1d */
-#define OCCHW_IRQ_PMC_PCB_INTR_TYPEE_PENDING    30 /* 0x1e */
-#define OCCHW_IRQ_PMC_PCB_INTR_TYPEF_PENDING    31 /* 0x1f */
-#define OCCHW_IRQ_DEBUGGER                      32 /* 0x20 */
-#define OCCHW_IRQ_TRACE_TRIGGER_33              33 /* 0x21 */
-#define OCCHW_IRQ_RESERVED_34                   34 /* 0x22 */
-#define OCCHW_IRQ_PBA_ERROR                     35 /* 0x23 */
-#define OCCHW_IRQ_GPE0_ERROR                    36 /* 0x24 */
-#define OCCHW_IRQ_GPE1_ERROR                    37 /* 0x25 */
-#define OCCHW_IRQ_CHECK_STOP_PPC405             38 /* 0x26 */
-#define OCCHW_IRQ_EXTERNAL_TRAP                 39 /* 0x27 */
-#define OCCHW_IRQ_OCC_TIMER0                    40 /* 0x28 */
-#define OCCHW_IRQ_OCC_TIMER1                    41 /* 0x29 */
-#define OCCHW_IRQ_IPI0_HI_PRIORITY              42 /* 0x2a */
-#define OCCHW_IRQ_IPI1_HI_PRIORITY              43 /* 0x2b */
-#define OCCHW_IRQ_IPI4_HI_PRIORITY              44 /* 0x2c */
-#define OCCHW_IRQ_I2CM_INTR                     45 /* 0x2d */
-#define OCCHW_IRQ_IPI_SCOM                      46 /* 0x2e */
-#define OCCHW_IRQ_DCM_INTF_ONGOING              47 /* 0x2f */
-#define OCCHW_IRQ_PBAX_OCC_SEND                 48 /* 0x30 */
-#define OCCHW_IRQ_PBAX_OCC_PUSH0                49 /* 0x31 */
-#define OCCHW_IRQ_PBAX_OCC_PUSH1                50 /* 0x32 */
-#define OCCHW_IRQ_PBA_BCDE_ATTN                 51 /* 0x33 */
-#define OCCHW_IRQ_PBA_BCUE_ATTN                 52 /* 0x34 */
-#define OCCHW_IRQ_STRM0_PULL                    53 /* 0x35 */
-#define OCCHW_IRQ_STRM0_PUSH                    54 /* 0x36 */
-#define OCCHW_IRQ_STRM1_PULL                    55 /* 0x37 */
-#define OCCHW_IRQ_STRM1_PUSH                    56 /* 0x38 */
-#define OCCHW_IRQ_STRM2_PULL                    57 /* 0x39 */
-#define OCCHW_IRQ_STRM2_PUSH                    58 /* 0x3a */
-#define OCCHW_IRQ_STRM3_PULL                    59 /* 0x3b */
-#define OCCHW_IRQ_STRM3_PUSH                    60 /* 0x3c */
-#define OCCHW_IRQ_IPI0_LO_PRIORITY              61 /* 0x3d */
-#define OCCHW_IRQ_IPI1_LO_PRIORITY              62 /* 0x3e */
-#define OCCHW_IRQ_IPI4_LO_PRIORITY              63 /* 0x3f */
-
+#define OCCHW_IRQ_DEBUGGER                       0 /* 0x0 */
+#define OCCHW_IRQ_TRACE_TRIGGER_1                1 /* 0x1 */
+#define OCCHW_IRQ_RESERVED_2                     2 /* 0x2 */
+#define OCCHW_IRQ_PBA_ERROR                      3 /* 0x3 */
+#define OCCHW_IRQ_GPE0_ERROR                     4 /* 0x4 */
+#define OCCHW_IRQ_GPE1_ERROR                     5 /* 0x5 */
+#define OCCHW_IRQ_CHECK_STOP_PPC405              6 /* 0x6 */
+#define OCCHW_IRQ_EXTERNAL_TRAP                  7 /* 0x7 */
+#define OCCHW_IRQ_OCC_TIMER0                     8 /* 0x8 */
+#define OCCHW_IRQ_OCC_TIMER1                     9 /* 0x9 */
+#define OCCHW_IRQ_IPI0_HI_PRIORITY              10 /* 0xa */
+#define OCCHW_IRQ_IPI1_HI_PRIORITY              11 /* 0xb */
+#define OCCHW_IRQ_IPI4_HI_PRIORITY              12 /* 0xc */
+#define OCCHW_IRQ_I2CM_INTR                     13 /* 0xd */
+#define OCCHW_IRQ_IPI_SCOM                      14 /* 0xe */
+#define OCCHW_IRQ_RESERVED_15                   15 /* 0xf */
+#define OCCHW_IRQ_PBAX_OCC_SEND                 16 /* 0x10 */
+#define OCCHW_IRQ_PBAX_OCC_PUSH0                17 /* 0x11 */
+#define OCCHW_IRQ_PBAX_OCC_PUSH1                18 /* 0x12 */
+#define OCCHW_IRQ_PBA_BCDE_ATTN                 19 /* 0x13 */
+#define OCCHW_IRQ_PBA_BCUE_ATTN                 20 /* 0x14 */
+#define OCCHW_IRQ_STRM0_PULL                    21 /* 0x15 */
+#define OCCHW_IRQ_STRM0_PUSH                    22 /* 0x16 */
+#define OCCHW_IRQ_STRM1_PULL                    23 /* 0x17 */
+#define OCCHW_IRQ_STRM1_PUSH                    24 /* 0x18 */
+#define OCCHW_IRQ_STRM2_PULL                    25 /* 0x19 */
+#define OCCHW_IRQ_STRM2_PUSH                    26 /* 0x1a */
+#define OCCHW_IRQ_STRM3_PULL                    27 /* 0x1b */
+#define OCCHW_IRQ_STRM3_PUSH                    28 /* 0x1c */
+#define OCCHW_IRQ_IPI0_LO_PRIORITY              29 /* 0x1d */
+#define OCCHW_IRQ_IPI1_LO_PRIORITY              30 /* 0x1e */
+#define OCCHW_IRQ_IPI4_LO_PRIORITY              31 /* 0x1f */
+#define OCCHW_IRQ_TRACE_TRIGGER_32              32 /* 0x32 */
+#define OCCHW_IRQ_OCC_ERROR                     33 /* 0x33 */
+#define OCCHW_IRQ_GPE2_ERROR                    34 /* 0x34 */
+#define OCCHW_IRQ_GPE3_ERROR                    35 /* 0x35 */
+#define OCCHW_IRQ_CHECK_STOP_GPE2               36 /* 0x36 */
+#define OCCHW_IRQ_CHECK_STOP_GPE3               37 /* 0x37 */
+#define OCCHW_IRQ_OCC_MALF_ALERT                38 /* 0x38 */
+#define OCCHW_IRQ_PVREF_ERROR                   39 /* 0x39 */
+#define OCCHW_IRQ_IPI2_HI_PRIORITY              40 /* 0x40 */
+#define OCCHW_IRQ_IPI3_HI_PRIORITY              41 /* 0x41 */
+#define OCCHW_IRQ_DEBUG_TRIGGER                 42 /* 0x42 */
+#define OCCHW_IRQ_GPE3_FUNCTION_TRIGGER         43 /* 0x43 */
+#define OCCHW_IRQ_PBAX_PGPE_ATTN                44 /* 0x44 */
+#define OCCHW_IRQ_PBAX_PGPE_PUSH0               45 /* 0x45 */
+#define OCCHW_IRQ_PBAX_PGPE_PUSH1               46 /* 0x46 */
+#define OCCHW_IRQ_PBA_OVERCURRENT_INDICATOR     47 /* 0x47 */
+#define OCCHW_IRQ_PSPI_MSGDOORBELL_0            48 /* 0x48 */
+#define OCCHW_IRQ_PSPI_MSGDOORBELL_1            49 /* 0x49 */
+#define OCCHW_IRQ_PSPI_MSGDOORBELL_2            50 /* 0x50 */
+#define OCCHW_IRQ_PSPI_MSGDOORBELL_3            51 /* 0x51 */
+#define OCCHW_IRQ_PSPI_DOORBELL_0               52 /* 0x52 */
+#define OCCHW_IRQ_PSPI_DOORBELL_1               53 /* 0x53 */
+#define OCCHW_IRQ_PSPI_DOORBELL_2               54 /* 0x54 */
+#define OCCHW_IRQ_PSPI_DOORBELL_3               55 /* 0x55 */
+#define OCCHW_IRQ_PSPI_INTR_PENDING_GRP0        56 /* 0x56 */
+#define OCCHW_IRQ_PSPI_INTR_PENDING_GRP1        57 /* 0x57 */
+#define OCCHW_IRQ_PSPI_INTR_PENDING_GRP2        58 /* 0x58 */
+#define OCCHW_IRQ_PSPI_INTR_PENDING_GRP3        59 /* 0x59 */
+#define OCCHW_IRQ_RESERVED_60                   60 /* 0x60 */
+#define OCCHW_IRQ_VC1_PUSH_RECEIVE_COMPLETE     61 /* 0x61 */
+#define OCCHW_IRQ_VC2_PUSH_RECEIVE_COMPLETE     62 /* 0x62 */
+#define OCCHW_IRQ_VC3_PUSH_RECEIVE_COMPLETE     63 /* 0x63 */
 /// This constant is used to define the size of the table of interrupt handler
 /// structures as well as a limit for error checking.  The entire 64-bit
 /// vector is now in use.
@@ -123,41 +121,9 @@
 
 #define OCCHW_IRQ_STRINGS(var)                      \
     const char* var[OCCHW_IRQS] = {                 \
-                                                    "OCCHW_IRQ_TRACE_TRIGGER_0",                \
-                                                    "OCCHW_IRQ_OCC_ERROR",                      \
-                                                    "OCCHW_IRQ_GPE2_ERROR",                     \
-                                                    "OCCHW_IRQ_GPE3_ERROR",                     \
-                                                    "OCCHW_IRQ_CHECK_STOP_GPE2",                \
-                                                    "OCCHW_IRQ_CHECK_STOP_GPE3",                \
-                                                    "OCCHW_IRQ_OCC_MALF_ALERT",                 \
-                                                    "OCCHW_IRQ_PVREF_ERROR",                    \
-                                                    "OCCHW_IRQ_IPI2_HI_PRIORITY",               \
-                                                    "OCCHW_IRQ_IPI3_HI_PRIORITY",               \
-                                                    "OCCHW_IRQ_DEBUG_TRIGGER",                  \
-                                                    "OCCHW_IRQ_GPE3_FUNCTION_TRIGGER",          \
-                                                    "OCCHW_IRQ_PBAX_PGPE_ATTN",                 \
-                                                    "OCCHW_IRQ_PBAX_PGPE_PUSH0",                \
-                                                    "OCCHW_IRQ_PBAX_PGPE_PUSH1",                \
-                                                    "OCCHW_IRQ_PBA_OVERCURRENT_INDICATOR",      \
-                                                    "OCCHW_IRQ_PMC_PCB_INTR_TYPE0_PENDING",     \
-                                                    "OCCHW_IRQ_PMC_PCB_INTR_TYPE1_PENDING",     \
-                                                    "OCCHW_IRQ_PMC_PCB_INTR_TYPE2_PENDING",     \
-                                                    "OCCHW_IRQ_PMC_PCB_INTR_TYPE3_PENDING",     \
-                                                    "OCCHW_IRQ_PMC_PCB_INTR_TYPE4_PENDING",     \
-                                                    "OCCHW_IRQ_PMC_PCB_INTR_TYPE5_PENDING",     \
-                                                    "OCCHW_IRQ_PMC_PCB_INTR_TYPE6_PENDING",     \
-                                                    "OCCHW_IRQ_PMC_PCB_INTR_TYPE7_PENDING",     \
-                                                    "OCCHW_IRQ_PMC_PCB_INTR_TYPE8_PENDING",     \
-                                                    "OCCHW_IRQ_PMC_PCB_INTR_TYPE9_PENDING",     \
-                                                    "OCCHW_IRQ_PMC_PCB_INTR_TYPEA_PENDING",     \
-                                                    "OCCHW_IRQ_PMC_PCB_INTR_TYPEB_PENDING",     \
-                                                    "OCCHW_IRQ_PMC_PCB_INTR_TYPEC_PENDING",     \
-                                                    "OCCHW_IRQ_PMC_PCB_INTR_TYPED_PENDING",     \
-                                                    "OCCHW_IRQ_PMC_PCB_INTR_TYPEE_PENDING",     \
-                                                    "OCCHW_IRQ_PMC_PCB_INTR_TYPEF_PENDING",     \
                                                     "OCCHW_IRQ_DEBUGGER",                       \
-                                                    "OCCHW_IRQ_TRACE_TRIGGER_33",               \
-                                                    "OCCHW_IRQ_RESERVED_34",                    \
+                                                    "OCCHW_IRQ_TRACE_TRIGGER_1",                \
+                                                    "OCCHW_IRQ_RESERVED_2",                     \
                                                     "OCCHW_IRQ_PBA_ERROR",                      \
                                                     "OCCHW_IRQ_GPE0_ERROR",                     \
                                                     "OCCHW_IRQ_GPE1_ERROR",                     \
@@ -170,7 +136,7 @@
                                                     "OCCHW_IRQ_IPI4_HI_PRIORITY",               \
                                                     "OCCHW_IRQ_I2CM_INTR",                      \
                                                     "OCCHW_IRQ_IPI_SCOM",                       \
-                                                    "OCCHW_IRQ_DCM_INTF_ONGOING",               \
+                                                    "OCCHW_IRQ_RESERVED_15",                    \
                                                     "OCCHW_IRQ_PBAX_OCC_SEND",                  \
                                                     "OCCHW_IRQ_PBAX_OCC_PUSH0",                 \
                                                     "OCCHW_IRQ_PBAX_OCC_PUSH1",                 \
@@ -187,6 +153,38 @@
                                                     "OCCHW_IRQ_IPI0_LO_PRIORITY",               \
                                                     "OCCHW_IRQ_IPI1_LO_PRIORITY",               \
                                                     "OCCHW_IRQ_IPI4_LO_PRIORITY",               \
+                                                    "OCCHW_IRQ_TRACE_TRIGGER_32",               \
+                                                    "OCCHW_IRQ_OCC_ERROR",                      \
+                                                    "OCCHW_IRQ_GPE2_ERROR",                     \
+                                                    "OCCHW_IRQ_GPE3_ERROR",                     \
+                                                    "OCCHW_IRQ_CHECK_STOP_GPE2",                \
+                                                    "OCCHW_IRQ_CHECK_STOP_GPE3",                \
+                                                    "OCCHW_IRQ_OCC_MALF_ALERT",                 \
+                                                    "OCCHW_IRQ_PVREF_ERROR",                    \
+                                                    "OCCHW_IRQ_IPI2_HI_PRIORITY",               \
+                                                    "OCCHW_IRQ_IPI3_HI_PRIORITY",               \
+                                                    "OCCHW_IRQ_DEBUG_TRIGGER",                  \
+                                                    "OCCHW_IRQ_GPE3_FUNCTION_TRIGGER",          \
+                                                    "OCCHW_IRQ_PBAX_PGPE_ATTN",                 \
+                                                    "OCCHW_IRQ_PBAX_PGPE_PUSH0",                \
+                                                    "OCCHW_IRQ_PBAX_PGPE_PUSH1",                \
+                                                    "OCCHW_IRQ_PBA_OVERCURRENT_INDICATOR",      \
+                                                    "OCCHW_IRQ_PSPI_MSGDOORBELL_0",             \
+                                                    "OCCHW_IRQ_PSPI_MSGDOORBELL_1",             \
+                                                    "OCCHW_IRQ_PSPI_MSGDOORBELL_2",             \
+                                                    "OCCHW_IRQ_PSPI_MSGDOORBELL_3",             \
+                                                    "OCCHW_IRQ_DOORBELL_0",                     \
+                                                    "OCCHW_IRQ_DOORBELL_1",                     \
+                                                    "OCCHW_IRQ_DOORBELL_2",                     \
+                                                    "OCCHW_IRQ_DOORBELL_3",                     \
+                                                    "OCCHW_IRQ_PSPI_INTR_PENDING_GRP0",         \
+                                                    "OCCHW_IRQ_PSPI_INTR_PENDING_GRP1",         \
+                                                    "OCCHW_IRQ_PSPI_INTR_PENDING_GRP2",         \
+                                                    "OCCHW_IRQ_PSPI_INTR_PENDING_GRP3",         \
+                                                    "OCCHW_IRQ_RESERVED_28",                    \
+                                                    "OCCHW_IRQ_VC1_PUSH_RECEIVE_COMPLETE",      \
+                                                    "OCCHW_IRQ_VC2_PUSH_RECEIVE_COMPLETE",      \
+                                                    "OCCHW_IRQ_VC3_PUSH_RECEIVE_COMPLETE",      \
                                   };
 
 
@@ -238,7 +236,7 @@
     ({unsigned __irq = (unsigned)(irq); \
         ((__irq < OCCHW_IRQS) &&                                  \
          ((OCCHW_IRQ_MASK64(__irq) &                              \
-           (OCCHW_IRQ_MASK64(OCCHW_IRQ_RESERVED_34))) == 0));})
+           (OCCHW_IRQ_MASK64(OCCHW_IRQ_RESERVED_60))) == 0));})
 
 /// This is a 32-bit mask, with big-endian bit (irq % 32) set.
 #define OCCHW_IRQ_MASK32(irq) (((uint32_t)0x80000000) >> ((irq) % 32))
