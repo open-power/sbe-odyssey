@@ -154,7 +154,7 @@ osppe_rm_string_file = custom_target( 'osppe_rm_string_file',
 #Generate string file
 osppe_string_file_gen = custom_target(output : 'odysseySppeStringFile_' + ddlvl,
                                       depends : [osppe_out_map_gen,osppe_rm_string_file],
-                                      command : [ tracehash, '-c', '-d',
+                                      command : [ tracehash, '-c', '-FC', '-d',
                                                   meson.global_build_root() + '/public/src/',
                                                   '-s','@OUTPUT@', ],
                                       build_by_default : true,

@@ -23,7 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#include "trace.H"
+#include "sbetrace.H"
 #include "threadroutine.H"
 #include "globals.H"
 #include "sbeexeintf.H"
@@ -98,7 +98,7 @@ void __eabi()
 ////////////////////////////////////////////////////////////////
 int  main(int argc, char **argv)
 {
-    #define OSROM_FUNC " OBLDR_main "
+    #define SBE_FUNC " Boot Loader SBE_main "
 
     int rc = 0;
 
@@ -109,14 +109,14 @@ int  main(int argc, char **argv)
                 INITIAL_PK_TIMEBASE, // initial_timebase
                 g_odysseyfreqency );
 
-        OBLDR_ENTER(OBLDR_FUNC);
+        SBE_ENTER(SBE_FUNC);
 
         if (rc)
         {
-            OBLDR_ERROR(OBLDR_FUNC "PK Initialization failed for Boot Loader image");
+            SBE_ERROR(SBE_FUNC "PK Initialization failed for Boot Loader image");
             break;
         }
-        OBLDR_INFO(OBLDR_FUNC "Completed PK initialization for Boot Loader Image");
+        SBE_INFO(SBE_FUNC "Completed PK initialization for Boot Loader Image");
 
         //Initialize Boot Loader Thread
         rc = createAndResumeThreadHelper(&bldr_thread,
@@ -127,16 +127,16 @@ int  main(int argc, char **argv)
                 THREAD_PRIORITY_5);
         if (rc)
         {
-            OBLDR_ERROR(OBLDR_FUNC "Initialize Boot Loader secure boot thread failed with rc 0x%08X", rc);
+            SBE_ERROR(SBE_FUNC "Initialize Boot Loader secure boot thread failed with rc 0x%08X", rc);
             break;
         }
 
-        OBLDR_INFO(OBLDR_FUNC "bldrSecureBoot_thread thread initilised");
+        SBE_INFO(SBE_FUNC "bldrSecureBoot_thread thread initilised");
 
         pk_start_threads();
 
     }while(false);
 
-    OBLDR_EXIT(OBLDR_FUNC);
+    SBE_EXIT(SBE_FUNC);
     return 0;
 }

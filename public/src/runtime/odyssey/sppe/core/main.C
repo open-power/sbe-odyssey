@@ -23,7 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#include "trace.H"
+#include "sbetrace.H"
 #include "globals.H"
 #include "sbeexeintf.H"
 
@@ -92,7 +92,7 @@ void __eabi()
 ////////////////////////////////////////////////////////////////
 int  main(int argc, char **argv)
 {
-    #define OSPPE_FUNC " OSPPE_main "
+    #define SBE_FUNC " SPPE SBE_main "
 
     int rc = 0;
 
@@ -103,19 +103,19 @@ int  main(int argc, char **argv)
                 INITIAL_PK_TIMEBASE, // initial_timebase
                 g_odysseyfreqency );
 
-        OSPPE_ENTER(OSPPE_FUNC);
+        SBE_ENTER(SBE_FUNC);
 
         if (rc)
         {
-            OSPPE_ERROR(OSPPE_FUNC "PK Initialization failed for SPPE image");
+            SBE_ERROR(SBE_FUNC "PK Initialization failed for SPPE image");
             break;
         }
-        OSPPE_INFO(OSPPE_FUNC "Completed PK initialization for SPPE Image");
+        SBE_INFO(SBE_FUNC "Completed PK initialization for SPPE Image");
 
     }while(false);
 
     while(1);
 
-    OSPPE_EXIT(OSPPE_FUNC);
+    SBE_EXIT(SBE_FUNC);
     return 0;
 }

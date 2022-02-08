@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,20 +23,20 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#include "trace.H"
+#include "sbetrace.H"
 
 void bldrthreadroutine(void *i_pArg)
 {
-    #define OBLDR_FUNC " bldrthreadroutine "
-    OBLDR_ENTER(OBLDR_FUNC);
+    #define SBE_FUNC " bldrthreadroutine "
+    SBE_ENTER(SBE_FUNC);
 
-    OBLDR_INFO("Inside Boot Loader thread");
+    SBE_INFO("Inside Boot Loader thread");
 
     do{
 
     }while(false);
 
-    OBLDR_EXIT(OBLDR_FUNC);
-    #undef OBLDR_FUNC
+    SBE_EXIT(SBE_FUNC);
+    #undef SBE_FUNC
 }
 
