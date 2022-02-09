@@ -83,7 +83,20 @@ void multicast_doc(uint8_t i_core_select)
       # Option B: Your procedure takes a chip target
         # Derive MC targets yourself */
 
-    auto l_all_mcs = l_chip_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_MEMCTL);
+    auto l_all_mcs = l_chip_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD);
+
+    /*
+    Multicast group setup
+    =====================
+
+      # Only a few groups are statically defined:
+        # MCGROUP_GOOD       - all functional/good chiplets
+        # MCGROUP_GOOD_NO_TP - the same, but excluding the PERV chiplet
+        # MCGROUP_ALL        - all chiplets regardless of functional state
+      # Other groups are free for HWPs to set up as they need
+        # "Make your own bed" strategy
+        # Utility function provided for easy group setup
+     */
 
     /*# Abstract MC groups
         # FAPI code never handles numeric group IDs but abstract role descriptors, such as

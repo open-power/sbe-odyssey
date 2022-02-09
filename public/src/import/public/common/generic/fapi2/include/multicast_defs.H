@@ -37,30 +37,33 @@ enum MulticastType : uint32_t
 };
 
 /**
- * @brief Abstract multicast group definitions
+ * @brief Statically defined multicast groups
  *
- * These are abstract multicast groups that a procedure may want to talk to.
- * They are being mapped to hardware MC group IDs by the platform layer.
- * Due to the limited amount of hardware MC groups, the availability of
- * certain abstract groups will be dependent on system state, for example
- * the currently executing istep.
+ * These multicast groups are set up statically on every chip
+ * and available everywhere across chip types.
  *
- * The actual multicast group enumerations will be defined in a project specific header.
+ * If a specific chip has other statically defined groups,
+ * it may define them in a separate multicast_group_defs.H.
+ *
+ * Any groups that are not static are free for HWPs to set up
+ * as required. The philosophy is to "make your own bed", i.e.
+ * set up all the MC groups you need before you go.
  */
-enum MulticastGroup : uint32_t;
-
-    /**
-     * @brief Single FAPI->HW multicast group mapping
-     *
-     * This is used to provide a mapping of an abstract MulticastGroup to a hardware dependent
-     * value. The calling HWP and platform layer must have the same understanding of the HW
-     * value (e.g. PCB multicast group ID), FAPI2 is only the conduit and imposes no restriction
-     * on hwValue.
-     */
-    struct MulticastGroupMapping
+enum MulticastGroup : uint32_t
 {
-    MulticastGroup abstractGroup;
-    uint32_t       hwValue;
+    MCGROUP_GOOD       = 0,    ///< All good chiplets
+    MCGROUP_GOOD_NO_TP = 1,    ///< All good chiplets except PERV
+    MCGROUP_2          = 2,
+    MCGROUP_3          = 3,
+    MCGROUP_4          = 4,
+    MCGROUP_5          = 5,
+    MCGROUP_6          = 6,
+    MCGROUP_ALL        = 7,    ///< All chiplets, good or bad, a.k.a. broadcast
+};
+
+/// @brief Leftover from P10 days to keep platform compilation intact
+struct MulticastGroupMapping
+{
 };
 
 /**
