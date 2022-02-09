@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/build/links/odysseylink.H $                        */
+/* $Source: public/src/runtime/common/core/pool.C $                       */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,27 +21,50 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __ODYSSEY_LINK_H
-#define __ODYSSEY_LINK_H
+#include <stdint.h>
+#include <sbetrace.H>
+#include <stddef.h>
+#include<pool.H>
+#include "assert.h"
 
-/// \file odysseylink.H
-/// \brief Constants required for linking SBE code images
+namespace SBEVECTORPOOL
+{
 
-//TODO:Update file with actual offset's and size
+vectorMemPool_t g_pool[G_POOLSIZE];
 
-//SROM Start location
-#define SROM_ORIGIN 0xFFF70000
+vectorMemPool_t * allocMem()
+{
+    vectorMemPool_t *pool = NULL;
+    size_t idx;
+    for( idx = 0; idx < G_POOLSIZE; idx++ )
+    {
+        if( 0 == g_pool[idx].refCount )
+        {
+            pool = g_pool + idx;
+            g_pool[idx].refCount++;
+            break;
+        }
+    }
+    if(NULL == pool )
+    {
+        SBE_ERROR("NULL pool idx:%u", idx);
+        pk_halt();
+    }
+    return pool;
+}
 
-//SROM Size
-#define SROM_SIZE 0x10000
+void releaseMem( vectorMemPool_t * i_pool )
+{
+    do
+    {
+        if ( NULL == i_pool )   break;
 
-//SRAM Start location
-#define SRAM_ORIGIN 0xFFF80000
+       // Assert here.  This pool was not supposed to be in use.
+        assert( 0 != i_pool->refCount )
+        SBE_DEBUG(" Releasing pool 0x%08X", i_pool);
+        i_pool->refCount--;
+        SBE_DEBUG(" In releaseMem() RefCount:%u", i_pool->refCount);
+    }while(0);
+}
 
-//SRAM Size
-#define SRAM_SIZE 0x80000
-
-#define SBE_CODE_BOOT_PIBMEM_MAIN_MSG 0x0F
-
-#endif  // __ODYSSEY_LINK_H
-
+} // namesspace SBEVECTORPOOL

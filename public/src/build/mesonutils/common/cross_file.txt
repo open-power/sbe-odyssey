@@ -92,8 +92,16 @@ cmn_inc_paths = [
             '/public/src/import/public/emb/p11/kernels/ppe/pk/ppe42',
             '/public/src/import/public/emb/p11/kernels/ppe/pk/kernel',
             '/public/src/import/public/emb/p11/kernels/ppe/ppetrace/ppetracepp/',
+            '/public/src/import/emb/p11/kernels/ppe/boltonlib/exppe',
+            '/public/src/import/public/emb/p11/kernels/ppe/ppetrace/ppetracepp',
             '/public/src/import/public/emb/p11/kernels/ppe/boltonlib/exppe',
+            '/public/src/import/public/common/generic/fapi2/include',
+            '/public/src/import/public/common/generic/fapi2/include/plat',
+            '/public/src/import/public/common/generic/fapi2/include/std',
             '/public/src/common/core',
             '/public/src/common/utils',
-            '/public/src/common/algorithms'
+            '/public/src/runtime/common/core',
+            '/public/src/common/algorithms',
+            '/public/src/build/links',
+            '/public/src/runtime/common/plat/ffdc',
             ]

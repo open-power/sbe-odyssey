@@ -23,6 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 #include "sbeutil.H"
+#include "sbeglobals.H"
 
 namespace SBE
 {
@@ -53,6 +54,17 @@ namespace SBE
         {
             cdest[i] = csrc[i];
         }
+    }
+
+    bool isHreset(void)
+    {
+        #define SBE_FUNC "IS_HRESET"
+        bool isHreset = false;
+        sbe_local_LFR lfrReg;
+        PPE_LVD(0xc0002040, lfrReg);
+        isHreset = lfrReg.runtime_reset;
+        return (isHreset);
+        #undef SBE_FUNC
     }
 }
 

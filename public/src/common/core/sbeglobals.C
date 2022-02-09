@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/build/links/odysseylink.H $                        */
+/* $Source: public/src/common/core/sbeglobals.C $                         */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2017,2022                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,27 +22,21 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __ODYSSEY_LINK_H
-#define __ODYSSEY_LINK_H
+#include "sbetrace.H"
+#include "sbeglobals.H"
 
-/// \file odysseylink.H
-/// \brief Constants required for linking SBE code images
+////////////////////////////////////////////////////////////////
+//// @brief Stacks for Non-critical Interrupts and Threads
+//////////////////////////////////////////////////////////////////
 
-//TODO:Update file with actual offset's and size
+SBEGlobalsSingleton* sbeGlobal = &SBEGlobalsSingleton::getInstance();
+SBEGlobalsSingleton& SBEGlobalsSingleton::getInstance()
+{
+    static SBEGlobalsSingleton iv_instance;
+    return iv_instance;
+}
+bool  SBEGlobalsSingleton::isHreset = false;
 
-//SROM Start location
-#define SROM_ORIGIN 0xFFF70000
-
-//SROM Size
-#define SROM_SIZE 0x10000
-
-//SRAM Start location
-#define SRAM_ORIGIN 0xFFF80000
-
-//SRAM Size
-#define SRAM_SIZE 0x80000
-
-#define SBE_CODE_BOOT_PIBMEM_MAIN_MSG 0x0F
-
-#endif  // __ODYSSEY_LINK_H
-
+#ifdef SBE_CONSOLE_SUPPORT
+bool SBEGlobalsSingleton::sbeUartActive = false;
+#endif

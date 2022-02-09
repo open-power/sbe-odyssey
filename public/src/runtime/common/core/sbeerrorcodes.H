@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/build/links/odysseylink.H $                        */
+/* $Source: public/src/runtime/common/core/sbeerrorcodes.H $              */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2022                        */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,27 +21,29 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __ODYSSEY_LINK_H
-#define __ODYSSEY_LINK_H
+/*
+ * @file: ppe/sbe/sbefw/sbeerrorcodes.H
+ *
+ * @brief This file contains the SBE internal error status codes
+ *
+ */
 
-/// \file odysseylink.H
-/// \brief Constants required for linking SBE code images
+#ifndef __SBEFW_SBEERRORCODES_H
+#define __SBEFW_SBEERRORCODES_H
 
-//TODO:Update file with actual offset's and size
+#include <stdint.h>
 
-//SROM Start location
-#define SROM_ORIGIN 0xFFF70000
 
-//SROM Size
-#define SROM_SIZE 0x10000
+/**
+ * @brief enums SBE internal error codes
+ *
+*/
+enum sbeInternalResponseCodes
+{
+    SBE_FIFO_RESET_RECEIVED  = 0xFA00,
+    SBE_FIFO_RESET_HANDLING_FAILED = 0xFB00,
+    SBE_FUNC_NOT_SUPPORTED   = 0xFC00,
+};
 
-//SRAM Start location
-#define SRAM_ORIGIN 0xFFF80000
 
-//SRAM Size
-#define SRAM_SIZE 0x80000
-
-#define SBE_CODE_BOOT_PIBMEM_MAIN_MSG 0x0F
-
-#endif  // __ODYSSEY_LINK_H
-
+#endif // __SBEFW_SBEERRORCODES_H

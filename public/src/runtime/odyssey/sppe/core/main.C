@@ -26,6 +26,11 @@
 #include "sbetrace.H"
 #include "globals.H"
 #include "sbeexeintf.H"
+#include "sberegaccess.H"
+#include "sbestates.H"
+#include "sbeglobals.H"
+#include "ppe42_scom.h"
+#include "odysseylink.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -92,8 +97,11 @@ void __eabi()
 ////////////////////////////////////////////////////////////////
 int  main(int argc, char **argv)
 {
-    #define SBE_FUNC " SPPE SBE_main "
+    #define SBE_FUNC " OSPPE_main "
+    SBE_ENTER(SBE_FUNC);
 
+    uint64_t loadValue = (uint64_t)(SBE_CODE_BOOT_PIBMEM_MAIN_MSG)<<32;
+    PPE_STVD(0x50009, loadValue);
     int rc = 0;
 
     do
@@ -102,8 +110,6 @@ int  main(int argc, char **argv)
                 SPPE_NONCRITICAL_STACK_SIZE,
                 INITIAL_PK_TIMEBASE, // initial_timebase
                 g_odysseyfreqency );
-
-        SBE_ENTER(SBE_FUNC);
 
         if (rc)
         {

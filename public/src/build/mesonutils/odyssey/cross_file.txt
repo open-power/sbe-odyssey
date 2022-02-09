@@ -17,4 +17,5 @@ gcc_defs_odyssey_bldr = [
 gcc_defs_odyssey_sppe = [
         ]
 
-odyssey_cmn_inc_paths = [ ]
+odyssey_cmn_inc_paths = [
+                        ]

@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/meson.build $
+# $Source: public/src/runtime/common/meson.build $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,17 +21,4 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-
-subdir('common')
-
-if platform == 'p11' or platform == 'all'
-  #subdir('p11')
-endif
-
-if platform == 'metis' or platform == 'all'
-  #subdir('metis')
-endif
-
-if platform == 'odyssey' or platform == 'all'
-  subdir('odyssey')
-endif
+subdir('core')

@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/build/links/odysseylink.H $                        */
+/* $Source: public/src/runtime/common/core/sbeSpMsg.C $                   */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2017,2022                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,27 +21,47 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __ODYSSEY_LINK_H
-#define __ODYSSEY_LINK_H
+#include "sbetrace.H"
+#include "sbeSpMsg.H"
+#include "sbeglobals.H"
 
-/// \file odysseylink.H
-/// \brief Constants required for linking SBE code images
+extern sbeRole g_sbeRole;
 
-//TODO:Update file with actual offset's and size
+void sbeRespGenHdr_t::init(void)
+{
+    _magicCode = 0xC0DE;
+    _cmdClass  = SBE_GLOBAL->sbeFifoCmdHdr.cmdClass;
+    _command = SBE_GLOBAL->sbeFifoCmdHdr.command;
+    _primaryStatus = SBE_PRI_OPERATION_SUCCESSFUL;
+    _secondaryStatus = SBE_SEC_OPERATION_SUCCESSFUL;
+}
 
-//SROM Start location
-#define SROM_ORIGIN 0xFFF70000
+void sbeCmdRespHdr_t::setStatus(const uint16_t i_prim,
+                                const uint16_t i_sec)
+{
+    prim_status = i_prim;
+    sec_status  = i_sec;
+    if(i_prim != SBE_PRI_OPERATION_SUCCESSFUL)
+    {
+        SBE_GLOBAL->failedPrimStatus = i_prim;
+        SBE_GLOBAL->failedSecStatus  = i_sec;
+        SBE_GLOBAL->failedSeqId      = 0;
+        SBE_GLOBAL->failedCmdClass   = SBE_GLOBAL->sbeFifoCmdHdr.cmdClass;
+        SBE_GLOBAL->failedCmd        = SBE_GLOBAL->sbeFifoCmdHdr.command;
+    }
+}
 
-//SROM Size
-#define SROM_SIZE 0x10000
+void sbeRespGenHdr_t::setStatus( const uint16_t i_prim, const uint16_t i_sec)
+{
+    _primaryStatus = i_prim;
+    _secondaryStatus = i_sec;
 
-//SRAM Start location
-#define SRAM_ORIGIN 0xFFF80000
-
-//SRAM Size
-#define SRAM_SIZE 0x80000
-
-#define SBE_CODE_BOOT_PIBMEM_MAIN_MSG 0x0F
-
-#endif  // __ODYSSEY_LINK_H
-
+    if(i_prim != SBE_PRI_OPERATION_SUCCESSFUL)
+    {
+        SBE_GLOBAL->failedPrimStatus = _primaryStatus;
+        SBE_GLOBAL->failedSecStatus  = _secondaryStatus;
+        SBE_GLOBAL->failedSeqId      = 0;
+        SBE_GLOBAL->failedCmdClass   = _cmdClass;
+        SBE_GLOBAL->failedCmd        = _command;
+    }
+}

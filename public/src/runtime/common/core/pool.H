@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/build/links/odysseylink.H $                        */
+/* $Source: public/src/runtime/common/core/pool.H $                       */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2022                        */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,27 +21,38 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __ODYSSEY_LINK_H
-#define __ODYSSEY_LINK_H
 
-/// \file odysseylink.H
-/// \brief Constants required for linking SBE code images
+#ifndef SBE_VECTOR_POOL_H
+#define SBE_VECTOR_POOL_H
 
-//TODO:Update file with actual offset's and size
+namespace SBEVECTORPOOL
+{
 
-//SROM Start location
-#define SROM_ORIGIN 0xFFF70000
+// Size of a block  for a vector
+static const size_t G_BLOCKSIZE = 1024;
 
-//SROM Size
-#define SROM_SIZE 0x10000
+//Pool size
+static const size_t G_POOLSIZE = 8;
 
-//SRAM Start location
-#define SRAM_ORIGIN 0xFFF80000
+typedef struct
+{
+    size_t refCount;
+    uint8_t data[G_BLOCKSIZE] __attribute__ ((aligned (8)));
+}vectorMemPool_t;
 
-//SRAM Size
-#define SRAM_SIZE 0x80000
+/**
+  * @brief Returns memory pool block.
+  *
+  * @return  Memory block if available, NULL otherwise.
+  */
+vectorMemPool_t * allocMem();
 
-#define SBE_CODE_BOOT_PIBMEM_MAIN_MSG 0x0F
+/**
+  * @brief Release memory pool block.
+  *
+  * @param[in] i_pool pool pointer.
+  */
+void releaseMem( vectorMemPool_t * i_pool );
 
-#endif  // __ODYSSEY_LINK_H
-
+} // namespace SBEVECTORPOOL
+#endif //SBE_VECTOR_POOL_H
