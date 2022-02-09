@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +23,8 @@
 #
 # IBM_PROLOG_END_TAG
 
-infile_c = ['threadutil.C'
+infile_c = ['threadutil.C',
+            'sbeglobals.C'
             ]
 
 lib_file_name = 'cmncore'

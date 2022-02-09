@@ -31,6 +31,7 @@ extern "C" {
 
 #include "pk.h"
 #include "pk_api.h"
+#include "ppe42_scom.h"
 
 #ifdef __cplusplus
 }
@@ -116,6 +117,16 @@ inline void SBE_MAGIC_INSTRUCTION(int _n)
 
 namespace SBE
 {
+    // Nest to SBE frequency ratio
+    static const uint8_t  SBE_TO_NEST_FREQ_FACTOR = 4;
+
+    /* @brief - Check if the boot is on HRESET of SBE
+     *
+     * @return - True if HRESET, false otherwise
+     */
+     bool isHreset(void);
+
+
     // enum for magic instructions
     enum
     {

@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/build/links/odysseylink.H $                        */
+/* $Source: public/src/runtime/common/core/sbehandleresponse.H $          */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2019,2022                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,27 +21,24 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __ODYSSEY_LINK_H
-#define __ODYSSEY_LINK_H
+#ifndef __SBEFW_SBEHANDLERESPONSE_H
+#define __SBEFW_SBEHANDLERESPONSE_H
 
-/// \file odysseylink.H
-/// \brief Constants required for linking SBE code images
+#include "sbefifo.H"
 
-//TODO:Update file with actual offset's and size
+/**
+ * @brief sbeHandleFifoResponse : Function for handling FIFO response
+ * @param[in] i_rc - return code as input
+ * @param[in] i_fifoType - FIFO type.
+ **/
+void sbeHandleFifoResponse ( const uint32_t i_rc, sbeFifoType i_fifoType = SBE_FIFO );
 
-//SROM Start location
-#define SROM_ORIGIN 0xFFF70000
-
-//SROM Size
-#define SROM_SIZE 0x10000
-
-//SRAM Start location
-#define SRAM_ORIGIN 0xFFF80000
-
-//SRAM Size
-#define SRAM_SIZE 0x80000
-
-#define SBE_CODE_BOOT_PIBMEM_MAIN_MSG 0x0F
-
-#endif  // __ODYSSEY_LINK_H
-
+//TODO: P11SBE Porting
+# if 0
+/**
+ * @brief sbeHandlePsuResponse : Function for handling PSU response
+ * @param[in] i_rc - return code as input
+ **/
+void sbeHandlePsuResponse ( const uint32_t i_rc );
+#endif
+#endif // __SBEFW_SBEHANDLERESPONSE_H

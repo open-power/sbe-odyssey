@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/build/links/odysseylink.H $                        */
+/* $Source: public/src/runtime/common/core/sbestates.H $                  */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -22,27 +22,47 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __ODYSSEY_LINK_H
-#define __ODYSSEY_LINK_H
+/*
+ * @file: ppe/sbe/sbefw/sbestates.H
+ *
+ * @brief This file contains interfaces pertaining to SBE state/role management
+ *
+ */
 
-/// \file odysseylink.H
-/// \brief Constants required for linking SBE code images
+#ifndef __SBEFW_SBESTATES_H
+#define __SBEFW_SBESTATES_H
 
-//TODO:Update file with actual offset's and size
+/**
+ * @brief An enumeration of all SBE states
+ *
+ */
+enum sbeState
+{
+    SBE_STATE_UNKNOWN = 0x0, // Unkown, initial state
+    SBE_STATE_IPLING  = 0x1, // IPL'ing - autonomous mode (transient)
+    SBE_STATE_ISTEP   = 0x2, // ISTEP - Running IPL by steps (transient)
+    SBE_STATE_MPIPL   = 0x3, // MPIPL
+    SBE_STATE_RUNTIME = 0x4, // SBE Runtime
+    SBE_STATE_DMT     = 0x5, // Dead Man Timer State (transient)
+    SBE_STATE_DUMP    = 0x6, // Dumping
+    SBE_STATE_FAILURE = 0x7, // Internal SBE failure
+    SBE_STATE_QUIESCE = 0x8, // This state quiesces any seeprom access
+    SBE_STATE_HALT    = 0x9, // SBE halted via chip-op driven from Hostboot.Needs SBE reset to get out
 
-//SROM Start location
-#define SROM_ORIGIN 0xFFF70000
+    // Max States, Always keep it at the last of the enum and sequential
+    SBE_MAX_STATE     = 0xA,
+    // Don't count this in the state, just to intialize the state variables
+    SBE_INVALID_STATE = 0xF,
+};
 
-//SROM Size
-#define SROM_SIZE 0x10000
+//TODO: P11SBE Porting
+//Can be moved to top level common 
+enum sbeRole
+{
+    SBE_ROLE_MASTER = 0,
+    SBE_ROLE_SLAVE = 1,
+    SBE_ROLE_ALT_MASTER = 2,
+};
 
-//SRAM Start location
-#define SRAM_ORIGIN 0xFFF80000
-
-//SRAM Size
-#define SRAM_SIZE 0x80000
-
-#define SBE_CODE_BOOT_PIBMEM_MAIN_MSG 0x0F
-
-#endif  // __ODYSSEY_LINK_H
+#endif //__SBEFW_SBESTATES_H
 
