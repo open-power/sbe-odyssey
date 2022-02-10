@@ -41,18 +41,21 @@ odyssey_sppe_lib_paths = [ekb_cmn_lib_paths,
                           cmn_core_lib_paths,
                           runtime_cmn_core_lib_paths,
                           cmn_utils_lib_paths,
+                          cmn_hwpf_lib_paths,
                          ]
 
 odyssey_sppe_libs = [ekb_cmn_libs,
                      cmn_core_libs,
                      runtime_cmn_core_libs,
                      cmn_utils_libs,
+                     cmn_hwpf_libs,
                     ]
 
 odyssey_sppe_dep_libs = [ekb_cmn_dep_libs,
                          cmn_core_dep_libs,
                          runtime_cmn_core_dep_libs,
                          cmn_utils_dep_libs,
+                         cmn_hwpf_dep_libs,
                         ]
 
 #Odyssey SPPE install path
@@ -62,6 +65,7 @@ odyssey_sppe_install_path = 'odyssey/runtime/sppe'
 odyssey_sppe_img_name = 'odyssey_sppe_' + ddlvl
 
 subdir('core')
+subdir('hwpf')
 
 ########################################## Build Odyssey SPPE Image ######################################################
 

@@ -31,6 +31,7 @@
 #include "sbeglobals.H"
 #include "ppe42_scom.h"
 #include "odysseylink.H"
+#include "plat_hw_access.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -104,6 +105,10 @@ int  main(int argc, char **argv)
     PPE_STVD(0x50009, loadValue);
     int rc = 0;
 
+    const uint32_t i_target = 0;
+    rc = fapi2::getscom_abs_wrap(&i_target, 0x50009, &loadValue);
+    SBE_ERROR("0x%08X 0x%08X", (loadValue >> 32) & 0xFFFFFFFF, (loadValue & 0xFFFFFFFF));
+    
     do
     {
         rc = pk_initialize((PkAddress)sppe_Kernel_NC_Int_stack,
