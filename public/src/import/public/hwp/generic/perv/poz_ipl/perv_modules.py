@@ -174,7 +174,7 @@ def mod_scan0(target<PERV|MC>, uint16_t i_clock_regions, uint16_t i_scan_types=S
     # Set up clock regions for NSL fill
     CLK_REGION = 0
     CLK_REGION[16 bits starting at CLOCK_REGION_PERV] = i_clock_regions
-    CLK_REGION[4 bits starting at SEL_THOLD_SL] = i_clock_types
+    CLK_REGION.SEL_THOLD_NSL = 1
 
     # Set up scan regions for scan0
     SCAN_REGION_TYPE = 0
@@ -197,7 +197,7 @@ def mod_start_stop_clocks(target<PERV|MC>, uint16_t i_clock_regions, uint16_t i_
 
     # Drop fences before starting clocks
     if i_start_not_stop:
-        CPLT_CTRL1_WO_CLEAR = i_clock_regions << 40
+        CPLT_CTRL1_WO_CLEAR = i_clock_regions << 44
 
     # Issue clock start/stop command
     CLK_REGION = 0
@@ -214,7 +214,7 @@ def mod_start_stop_clocks(target<PERV|MC>, uint16_t i_clock_regions, uint16_t i_
 
     # Raise fences after clocks are stopped
     if not i_start_not_stop:
-        CPLT_CTRL1_WO_OR = i_clock_regions << 40
+        CPLT_CTRL1_WO_OR = i_clock_regions << 44
 
 ISTEP(99, 99, "poz_perv_mod_misc", "")
 
@@ -282,7 +282,7 @@ def mod_hangpulse_setup(target<PERV | MC>, uint8_t i_pre_divider, hang_pulse_t *
         HANG_PULSE_0_REG.SUPPRESS_HANG_0  = i_hangpulse_table->stop_on_xstop
         putScom(i_target, scomt::perv::HANG_PULSE_0_REG + i_hangpulse_table->id, HANG_PULSE_0_REG);
 
-        if i_handpulse_table->last:
+        if i_hangpulse_table->last:
             return
 
         i_hangpulse_table++;

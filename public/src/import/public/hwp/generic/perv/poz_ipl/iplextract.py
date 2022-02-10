@@ -141,7 +141,7 @@ class HWP(object):
                     cmd = "%s.set_%s(%s);" % (reg, field, value)
 
             elif cmd.startswith("delay("):
-                cmd = cmd + ";"
+                cmd = "FAPI_TRY(" + cmd + ");"
 
             elif cmd.startswith("putRing(") or cmd.startswith("compareRing("):
                 ring_name, *ring_def = cmd.split("(", 1)[1].rstrip(")").split("=")
