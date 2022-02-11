@@ -773,6 +773,13 @@ TINF_RET_t tinf_uncompress(void* dest, unsigned int destLen,
         sha3_init(&d.hash_ctx);
     }
 
+#else
+
+    if (hash)
+    {
+        return ARC_FUNCTIONALITY_NOT_SUPPORTED;
+    }
+
 #endif
 
     refill_read_buf(&d);
