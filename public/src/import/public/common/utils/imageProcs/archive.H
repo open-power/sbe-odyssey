@@ -154,8 +154,8 @@ class FileArchive
             protected:
 #endif
                 friend class FileArchive;
-                bool iv_compressed;
-                void* iv_compressedData;
+                uint16_t iv_method;
+                void*    iv_compressedData;
                 uint32_t iv_compressedSize;
                 uint32_t iv_uncompressedSize;
 

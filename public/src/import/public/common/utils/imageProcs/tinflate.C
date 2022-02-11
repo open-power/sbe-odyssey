@@ -113,6 +113,9 @@ struct tinf_data
     sha3_t* hash;
 #endif
 
+    bool ppc_filter;
+    uint32_t filter_offset;
+
     struct tinf_tree ltree; /* literal/length tree */
     struct tinf_tree dtree; /* distance tree */
 };
@@ -521,6 +524,59 @@ static TINF_RET_t tinf_decode_trees(struct tinf_data* d,
 }
 
 /*
+ * This filter treats the entire file content as a stream of PowerPC instructions
+ * and replaces any relative branch-and-link instructions with absolute ones. This
+ * causes calls to the same function to be identical across the code, improving
+ * compression rate.
+ *
+ * Of course there will be false positives, but since we undo the transformation
+ * after decompression the false positives will be undone as well. They will
+ * harm the compression ratio though, so only files that consist mostly of PPC code
+ * should be treated by this filter.
+ */
+static void ppc_filter(struct tinf_data* d, uint32_t size)
+{
+    if (!d->ppc_filter)
+    {
+        return;
+    }
+
+    size &= ~3;
+
+    for (uint32_t i = 0; i < size; i += sizeof(uint32_t))
+    {
+        uint32_t* insn = (uint32_t*)(d->dict + i);
+        uint32_t value = be32toh(*insn);
+
+        if ((value & 0xFC000003) == 0x48000001)
+        {
+            *insn = htobe32(((value + (d->filter_offset + i)) & 0x03FFFFFC) | 0x48000001);
+        }
+    }
+}
+
+static void ppc_filter_inverse(struct tinf_data* d, uint32_t size)
+{
+    if (!d->ppc_filter)
+    {
+        return;
+    }
+
+    size &= ~3;
+
+    for (uint32_t i = 0; i < size; i += sizeof(uint32_t))
+    {
+        uint32_t* insn = (uint32_t*)(d->dict + i);
+        uint32_t value = be32toh(*insn);
+
+        if ((value & 0xFC000003) == 0x48000001)
+        {
+            *insn = htobe32(((value - (d->filter_offset + i)) & 0x03FFFFFC) | 0x48000001);
+        }
+    }
+}
+
+/*
  * Behind the dictionary we maintain a tail of the maximum match length which is
  * identical to the beginning of the dictionary at all times, so we can copy
  * matches without bounds checking each byte.
@@ -533,12 +589,20 @@ static const uint32_t DICTIONARY_TAIL = FileArchive::MAX_MATCH_LEN;
 
 static TINF_RET_t tinf_stream_wrap(struct tinf_data* d)
 {
+    /* Undo the PPC transformation before we hand the block to the receiver */
+    ppc_filter_inverse(d, DICTIONARY_SIZE);
+
     TINF_RET_t rc = d->receiver->consume(d->dict, DICTIONARY_SIZE);
 
     if (rc)
     {
         return rc;
     }
+
+    /* Since the buffer is also our dictionary we now have to re-apply the PPC
+     * transformation to prevent corruption - sucks but what can you do */
+    ppc_filter(d, DICTIONARY_SIZE);
+    d->filter_offset += DICTIONARY_SIZE;
 
     unsigned char* dict_end = d->dict + DICTIONARY_SIZE;
     uint32_t tail_length = d->dest - dict_end;
@@ -752,7 +816,7 @@ static TINF_RET_t tinf_inflate_dynamic_block(struct tinf_data* d)
 TINF_RET_t tinf_uncompress(void* dest, unsigned int destLen,
                            const void* source, unsigned int sourceLen,
                            FileArchive::StreamReceiver* receiver,
-                           sha3_t* hash)
+                           sha3_t* hash, int filter)
 {
     struct tinf_data d;
     int bfinal;
@@ -764,6 +828,8 @@ TINF_RET_t tinf_uncompress(void* dest, unsigned int destLen,
     d.bitcount = 0;
     d.read_buf_ptr = 0;
     d.receiver = receiver;
+    d.ppc_filter = filter == TINF_FILTER_PPC;
+    d.filter_offset = 0;
 
 #ifdef __USE_SHA3__
     d.hash = hash;
@@ -829,6 +895,8 @@ TINF_RET_t tinf_uncompress(void* dest, unsigned int destLen,
         }
     }
     while (!bfinal);
+
+    ppc_filter_inverse(&d, d.dest - d.dict);
 
     if (d.receiver && d.dest != d.dict)
     {

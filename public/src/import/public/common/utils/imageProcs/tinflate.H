@@ -62,6 +62,9 @@
 #define TINF_VER_PATCH 0        /**< Patch version number */
 #define TINF_VER_STRING "1.1.0" /**< Version number as a string */
 
+#define TINF_FILTER_NONE 0      /**< Don't apply any filter post decompression */
+#define TINF_FILTER_PPC  1      /**< Apply reverse PowerPC instruction filter post decompression */
+
 /**
  * Decompress `sourceLen` bytes of deflate data from `source` to `dest`.
  *
@@ -75,6 +78,6 @@
 int tinf_uncompress(void* dest, unsigned int destLen,
                     const void* source, unsigned int sourceLen,
                     FileArchive::StreamReceiver* receiver,
-                    sha3_t* hash);
+                    sha3_t* hash, int filter);
 
 #endif /* TINF_H_INCLUDED */

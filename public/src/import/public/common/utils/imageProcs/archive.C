@@ -60,6 +60,7 @@ static const uint32_t ZIPFILE_MAGIC = 0x04034B50;
 static const uint32_t END_MAGIC = 0xFFFE4B50;
 static const uint16_t METHOD_STORE = 0;
 static const uint16_t METHOD_DEFLATE = 8;
+static const uint16_t METHOD_DEFLATEPPC = 0x0108;
 
 struct ZipFileHeader
 {
@@ -115,11 +116,12 @@ ARC_RET_t FileArchive::Entry::stream_uncompressed_with_hash(StreamReceiver& i_re
 
 ARC_RET_t FileArchive::Entry::stream_decompress(StreamReceiver& i_receiver, void* i_scratch, sha3_t* o_hash)
 {
-    if (iv_compressed)
+    if (iv_method != METHOD_STORE)
     {
 #ifdef __USE_COMPRESSION__
-
-        return tinf_uncompress(i_scratch, STREAM_SCRATCH_SIZE, iv_compressedData, iv_compressedSize, &i_receiver, o_hash);
+        const int filter = (iv_method == METHOD_DEFLATEPPC) ? TINF_FILTER_PPC : TINF_FILTER_NONE;
+        return tinf_uncompress(i_scratch, STREAM_SCRATCH_SIZE, iv_compressedData, iv_compressedSize, &i_receiver, o_hash,
+                               filter);
 #else
         return ARC_FUNCTIONALITY_NOT_SUPPORTED;
 #endif
@@ -157,23 +159,30 @@ static __attribute__((noinline)) void hash_block(const void* i_data, uint32_t i_
 
 ARC_RET_t FileArchive::Entry::decompress(void* o_buffer, uint32_t i_size, sha3_t* o_hash)
 {
-    if (iv_compressed)
+    if ((uintptr_t)o_buffer & 3)
+    {
+        ARC_ERROR("FileArchive::Entry::decompress: Output buffer is not 4-byte aligned - o_buffer=%p", o_buffer);
+        return ARC_INVALID_PARAMS;
+    }
+
+    if (i_size < iv_uncompressedSize)
+    {
+        ARC_ERROR("FileArchive::Entry::decompress: Output buffer too small - i_size=%d iv_uncompressedSize=%d",
+                  i_size, iv_uncompressedSize);
+        return ARC_INPUT_BUFFER_OVERFLOW;
+    }
+
+    if (iv_method != METHOD_STORE)
     {
 #ifdef __USE_COMPRESSION__
-        return tinf_uncompress(o_buffer, i_size, iv_compressedData, iv_compressedSize, NULL, o_hash);
+        const int filter = (iv_method == METHOD_DEFLATEPPC) ? TINF_FILTER_PPC : TINF_FILTER_NONE;
+        return tinf_uncompress(o_buffer, i_size, iv_compressedData, iv_compressedSize, NULL, o_hash, filter);
 #else
         return ARC_FUNCTIONALITY_NOT_SUPPORTED;
 #endif
     }
     else
     {
-        if (i_size < iv_uncompressedSize)
-        {
-            ARC_ERROR("FileArchive::Entry::decompress: Output buffer too small - i_size=%d iv_uncompressedSize=%d",
-                      i_size, iv_uncompressedSize);
-            return ARC_INPUT_BUFFER_OVERFLOW;
-        }
-
         memcpy(o_buffer, iv_compressedData, iv_uncompressedSize);
 
         if (o_hash)
@@ -193,7 +202,7 @@ ARC_RET_t FileArchive::Entry::decompress(void* o_buffer, uint32_t i_size, sha3_t
 
 ARC_RET_t FileArchive::Entry::get_stored_data_ptr(const void*& o_buffer)
 {
-    if (iv_compressed)
+    if (iv_method != METHOD_STORE)
     {
         ARC_ERROR("Attempting to get stored data pointer for compressed file");
         return ARC_FUNCTIONALITY_NOT_SUPPORTED;
@@ -206,7 +215,7 @@ ARC_RET_t FileArchive::Entry::get_stored_data_ptr(const void*& o_buffer)
 #ifdef __USE_HWP_STREAM__
 ARC_RET_t FileArchive::Entry::get_stored_data_stream(fapi2::hwp_array_istream& o_stream)
 {
-    if (iv_compressed)
+    if (iv_method != METHOD_STORE)
     {
         ARC_ERROR("Attempting to get stored data pointer for compressed file");
         return ARC_FUNCTIONALITY_NOT_SUPPORTED;
@@ -277,16 +286,17 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
             const uint16_t method = hdr->iv_method.value();
 #ifndef __USE_COMPRESSION__
 
-            if(method == METHOD_DEFLATE)
+            if(method == METHOD_DEFLATE || method == METHOD_DEFLATEPPC)
             {
-                ARC_ERROR("Archives is compressed, "
+                ARC_ERROR("Archive is compressed, "
                           "but compression support is not enabled");
                 return ARC_FUNCTIONALITY_NOT_SUPPORTED;
             }
 
-            if(method != METHOD_STORE)
+            if (method != METHOD_STORE)
 #else
-            if (method != METHOD_STORE && method != METHOD_DEFLATE)
+            if (method != METHOD_STORE && method != METHOD_DEFLATE
+                && method != METHOD_DEFLATEPPC)
 #endif
             {
                 ARC_ERROR("Unsupported compression format: 0x%04x", method);
@@ -305,7 +315,7 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
                 return ARC_FILE_CORRUPTED;
             }
 
-            o_entry->iv_compressed = method == METHOD_DEFLATE;
+            o_entry->iv_method = method;
             o_entry->iv_compressedData = ptr;
             o_entry->iv_compressedSize = compsize;
             o_entry->iv_uncompressedSize = hdr->iv_uncompsize.value();
