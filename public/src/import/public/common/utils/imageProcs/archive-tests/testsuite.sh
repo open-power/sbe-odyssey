@@ -31,7 +31,7 @@ IZTOOL=/afs/bb/u/fenkes/public/imagezip.py
 
 echo "### Creating test zips"
 dd if=test of=facontrol.bin bs=12345 count=1             # small file - smaller than dictionary size
-cp test pibmem.bin                                       # large file - several times dictionary size
+dd if=test of=pibmem.bin bs=264537 count=1               # large file - several times dictionary size
 dd if=pibmem.bin of=32ktest.bin bs=1024 count=32         # boundary test - exactly dictionary size; test that stream consumer is called exactly once
 dd if=pibmem.bin of=32kplus.bin bs=33026 count=1         # boundary test - exactly first wrap boundary; test that stream consumer is called exactly once
 dd if=pibmem.bin of=128ktest.bin bs=1024 count=128       # boundary test - test that stream consumer is called correctly on last chunk
@@ -41,6 +41,8 @@ dd if=pibmem.bin of=128kplus.bin bs=131330 count=1       # boundary test - test 
 $IZTOOL add test.zip facontrol.bin pibmem.bin 32ktest.bin 128ktest.bin 32kplus.bin 128kplus.bin hashbndy.bin hashnonbndy.bin
 dd if=pibmem.bin of=stored.bin bs=66001 count=1          # test uncompressed files too, make sure file length is unaligned
 $IZTOOL add test.zip stored.bin -m store
+cp pibmem.bin ppc.bin                                    # large file - test for PPC instruction filter
+$IZTOOL add test.zip ppc.bin -m deflate-ppc
 ./make_nastyzip.py                                       # specially crafted zip with stored block crossing wrap boundary - to test streaming
 echo
 
@@ -55,6 +57,7 @@ for flags in 0 1 2 3; do
     ./test test.zip hashbndy.bin    $flags
     ./test test.zip hashnonbndy.bin $flags
     ./test test.zip stored.bin      $flags
+    ./test test.zip ppc.bin         $flags
 
     ./test nastytest.zip nastytest.bin $flags
     ./test hashblockbndy.zip hashblockbndy.bin $flags
