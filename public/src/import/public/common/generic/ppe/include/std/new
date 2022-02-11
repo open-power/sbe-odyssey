@@ -1,0 +1,21 @@
+/* IBM_PROLOG_BEGIN_TAG                                                   */
+/* Contributors Listed Below - COPYRIGHT 2019                             */
+/* IBM_PROLOG_END_TAG                                                     */
+#ifndef __NEW_H
+#define __NEW_H
+
+#ifdef __cplusplus
+inline
+void *operator new(size_t, void* place)
+{
+    return place;
+}
+
+inline
+void *operator new[](size_t, void* place)
+{
+    return place;
+}
+#endif
+
+#endif
