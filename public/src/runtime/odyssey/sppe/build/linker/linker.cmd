@@ -42,8 +42,8 @@ SECTIONS
 {
     . = SRAM_ORIGIN;
 
-    //pkVector should be at top of pibmem memory
-    .pkVectors . : {
+    //pk_vector should be at top of pibmem memory
+    .pk_vectors . : {
       KEEP(*(.vectors));
     } > sram
 
