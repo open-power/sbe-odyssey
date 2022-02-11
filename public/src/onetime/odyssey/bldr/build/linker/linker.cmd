@@ -45,8 +45,8 @@ SECTIONS
     . = SROM_ORIGIN;
     _origin = .;
 
-    //pkVector should be at top of pibmem memory
-    .pkVectors . : {
+    //pk_vector should be at top of pibmem memory
+    .pk_vectors . : {
       _pkVectors_origin = .; _pkVectors_offset = . - _origin;
       KEEP(*(.vectors));
     } > rom

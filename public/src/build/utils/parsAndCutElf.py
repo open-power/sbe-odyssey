@@ -23,10 +23,9 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
+
 import os
 import subprocess
-import re
-import random
 import sys
 
 # Workaround to cut SBE image from elf image.
@@ -44,12 +43,12 @@ def parserElf(argv):
     #TODO:Need disussion on what will be the first section in p11 basis zip design.
     #As per p10 xip its .header. For p11 lets take it as .text.
     #firstSection = b".header"
-    firstSection = b".pkVectors"
+    firstSection = b".pk_vectors"
 
     cmd = "readelf -S "+SBE_OUT
-    cmd1 = "nm "+SBE_OUT+" | grep  _sbe_image_size"
+    cmd1 = "nm "+SBE_OUT+" | grep _sbe_image_size"
     output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-    i = 0;
+
     for line in output.stdout:
         line = line.strip()
 
