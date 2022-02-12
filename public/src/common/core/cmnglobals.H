@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/common/core/sbeglobals.H $                         */
+/* $Source: public/src/common/core/cmnglobals.H $                         */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2017,2022                        */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,110 +21,41 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __SBE_GLOBALS_H
-#define __SBE_GLOBALS_H
+#ifndef __CMN_GLOBALS_H
+#define __CMN_GLOBALS_H
 
 #include "sbestates.H"
-#include "sbeexeintf.H"
-#include "sbeSpMsg.H"
 #include "sbeutil.H"
 
-#define SBE_GLOBAL sbeGlobal
+#define CMN_GLOBAL cmnGlobal
 
-#define SBE_REF_BASE_FREQ_HZ ((133 * 1000 * 1000)/4)
-#define SBE_PAU_DPLL_BASE_FREQ_HZ ((1968 * 1000 * 1000)/4)
-#define MASK_BIT25 0x4000000000
-
-class SBEGlobalsSingleton
+class CMNGlobalsSingleton
 {
     public:
-        // Disable copy contructor and assingment operator
-        SBEGlobalsSingleton(const SBEGlobalsSingleton&) = delete;
-        SBEGlobalsSingleton& operator=(const SBEGlobalsSingleton&) = delete;
-        static SBEGlobalsSingleton& getInstance();
+    // Disable copy contructor and assingment operator
+    CMNGlobalsSingleton(const CMNGlobalsSingleton&) = delete;
+    CMNGlobalsSingleton& operator=(const CMNGlobalsSingleton&) = delete;
+    static CMNGlobalsSingleton& getInstance();
+    sbeRole SBERole;
 
-        sbeFifoCmdReqBuf_t sbeFifoCmdHdr;
-        sbeCmdRespHdr_t sbeCmdRespHdr;
+    // SBE Frequency.
+    uint32_t sbefreq;
 
-        sbeIntrHandle_t sbeIntrSource;
-        ////////////////////////////////////////////////////////////////
-        //// @brief Global semaphores
-        /////////////////////////////////////////////////////////////////
-        /**
-         * @brief Global semaphore : SBE_GLOBAL->sbeSemCmdRecv
-         *
-         *   This is used to synchronize between the ISR and
-         *   the command receiver thread.
-         *
-         */
-        PkSemaphore sbeSemCmdRecv;
-        /**
-         * @brief Global semaphore : SBE_GLOBAL->sbeSemCmdProcess
-         *
-         *   This is used to synchronize between command receiver thread
-         *   and synchronous command processor thread.
-         *
-         */
-        PkSemaphore sbeSemCmdProcess;
+    // Hreset flow.
+    static bool isHreset;
 
-        /**
-         * @brief Global semaphore for async task
-         *
-         *   This is used to send invoke commands on Async process
-         *
-         */
-        PkSemaphore sbeSemAsyncProcess;
-
-        #ifdef SBE_CONSOLE_SUPPORT
-        // Binary semaphore to protect uart access
-        PkSemaphore sbeUartBinSem;
-        static bool sbeUartActive;
-        #endif
-
-        sbeRole SBERole;
-        // SBE Frequency. Initially nest frequency is 133 MHZ
-        uint32_t sbefreq;
-
-        //TODO: P11SBE Porting
-        // hreset flow
-        static bool isHreset;
-        // i2c mode register register
-        static uint64_t i2cModeRegister;
-        // Last failed rc's - for SBE internal ffdc
-        static uint16_t failedPrimStatus;
-        static uint16_t failedSecStatus;
-        static uint16_t failedSeqId;
-        static uint8_t  failedCmdClass;
-        static uint8_t  failedCmd;
-        ////////////////////////////////////////////////////////////////
-        //// @brief PkThread structure for SBE Command Receiver thread
-        //////////////////////////////////////////////////////////////////
-        PkThread sbeCommandReceiver_thread;
-        ////////////////////////////////////////////////////////////////
-        //// @brief PkThread structure for SBE Synchronous ChipOps
-        ////        processing thread
-        //////////////////////////////////////////////////////////////////
-        PkThread sbeSyncCommandProcessor_thread;
-        ////////////////////////////////////////////////////////////////
-        ////// @brief PkThread structure for SBE Asynchronous ChipOps
-        //////        processing thread
-        //////////////////////////////////////////////////////////////////
-        PkThread sbeAsyncCommandProcessor_thread;
     private:
-        /* Constructor
-         */
-        SBEGlobalsSingleton():
-            sbeFifoCmdHdr(),
-            sbeCmdRespHdr(),
-            sbeIntrSource(),
-            sbeSemCmdRecv(),
-            sbeSemCmdProcess(),
-            sbeSemAsyncProcess(),
-            sbefreq(( 133 * 1000 * 1000) /SBE::SBE_TO_NEST_FREQ_FACTOR)
-            {
-            }
+    // Constructor
+    CMNGlobalsSingleton():
+    SBERole(SBE_ROLE_MASTER),
+    sbefreq(( 133 * 1000 * 1000)/SBE::SBE_TO_NEST_FREQ_FACTOR)
+    {
+    }
 };
-extern SBEGlobalsSingleton* sbeGlobal;
+
+extern CMNGlobalsSingleton* cmnGlobal;
+//TODO: P11SBE Porting
+//This will be changed in P11.
 
 //This is a struct defintion for the local register 0xC0002040.
 //This local register will be used to save the SPI clock divider and round trip

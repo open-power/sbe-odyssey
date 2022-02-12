@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/common/utils/sbeutil.C $                           */
+/* $Source: public/src/runtime/common/core/sbeglobals.C $                 */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2017,2022                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,49 +21,15 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#include "sbeutil.H"
-#include "cmnglobals.H"
+#include "sbeglobals.H"
 
-namespace SBE
+////////////////////////////////////////////////////////////////
+//// @brief Stacks for Non-critical Interrupts and Threads
+//////////////////////////////////////////////////////////////////
+
+SBEGlobalsSingleton* sbeGlobal = &SBEGlobalsSingleton::getInstance();
+SBEGlobalsSingleton& SBEGlobalsSingleton::getInstance()
 {
-    bool isSimics() __attribute__((alias("__isSimicsRunning")));
-    extern "C" void __isSimicsRunning() __attribute__ ((noinline));
-
-    void __isSimicsRunning()
-    {
-        asm volatile("li 3, 0");
-        SBE_MAGIC_INSTRUCTION(MAGIC_SIMICS_CHECK);
-    }
-
-    bool isSimicsRunning()
-    {
-        static bool simics = isSimics();
-        return simics;
-    }
-
-    void memcpy_byte(void* vdest, const void* vsrc, size_t len)
-    {
-
-        // Loop, copying 1 byte
-        uint8_t* cdest = (uint8_t *)vdest;
-        const uint8_t* csrc = (const uint8_t *)vsrc;
-        size_t i = 0;
-
-        for (; i < len; ++i)
-        {
-            cdest[i] = csrc[i];
-        }
-    }
-
-    bool isHreset(void)
-    {
-        #define SBE_FUNC "IS_HRESET"
-        bool isHreset = false;
-        sbe_local_LFR lfrReg;
-        PPE_LVD(0xc0002040, lfrReg);
-        isHreset = lfrReg.runtime_reset;
-        return (isHreset);
-        #undef SBE_FUNC
-    }
+    static SBEGlobalsSingleton iv_instance;
+    return iv_instance;
 }
-

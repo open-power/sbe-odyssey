@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/common/core/sbeglobals.C $                         */
+/* $Source: public/src/common/core/cmnglobals.C $                         */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2017,2022                        */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,21 +21,16 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#include "sbetrace.H"
-#include "sbeglobals.H"
+#include "cmnglobals.H"
 
 ////////////////////////////////////////////////////////////////
 //// @brief Stacks for Non-critical Interrupts and Threads
 //////////////////////////////////////////////////////////////////
 
-SBEGlobalsSingleton* sbeGlobal = &SBEGlobalsSingleton::getInstance();
-SBEGlobalsSingleton& SBEGlobalsSingleton::getInstance()
+CMNGlobalsSingleton* cmnGlobal = &CMNGlobalsSingleton::getInstance();
+CMNGlobalsSingleton& CMNGlobalsSingleton::getInstance()
 {
-    static SBEGlobalsSingleton iv_instance;
+    static CMNGlobalsSingleton iv_instance;
     return iv_instance;
 }
-bool  SBEGlobalsSingleton::isHreset = false;
-
-#ifdef SBE_CONSOLE_SUPPORT
-bool SBEGlobalsSingleton::sbeUartActive = false;
-#endif
+bool  CMNGlobalsSingleton::isHreset = false;
