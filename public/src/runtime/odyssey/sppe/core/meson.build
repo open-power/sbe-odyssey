@@ -23,7 +23,7 @@
 #
 # IBM_PROLOG_END_TAG
 infile_c = ['main.C',
-            'irq.C'
+            'irq.C',
             ]
 
 lib_file_name = 'odysseysppe'

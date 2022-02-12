@@ -24,12 +24,12 @@
 # IBM_PROLOG_END_TAG
 
 infile_c = ['threadutil.C',
-            'sbeglobals.C'
+             'cmnglobals.C'
             ]
 
 lib_file_name = 'cmncore'
 
-cmn_core_obj_file_cpp = obj_gen_cpp.process(infile_c, extra_args : '-mlongcall')
+cmn_core_obj_file_cpp = obj_gen_cpp.process(infile_c)
 
 infile  = [cmn_core_obj_file_cpp]
 
