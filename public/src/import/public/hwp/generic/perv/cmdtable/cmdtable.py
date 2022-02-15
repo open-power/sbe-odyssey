@@ -152,8 +152,8 @@ def parse_command_args(cmd, argtypes, args):
                 try:
                     # Try to evaluate the parameter as a Python expression with no access to any global or local variables
                     arg = eval(arg, {__builtins__: {}})
-                except:
-                    raise ParseError("invalid %s: %s" % (COMMAND_ARGTYPES[argtype], arg))
+                except Exception as e:
+                    raise ParseError("invalid %s (%s): %s" % (COMMAND_ARGTYPES[argtype], e.args[0], arg))
             elif argtype in "sl":
                 if has_whitespace(arg):
                     raise ParseError("%s must not contain whitespace: %s" % (COMMAND_ARGTYPES[argtype], arg))
@@ -233,7 +233,11 @@ def parse_script(script):
     return None if error else [c[2] for c in commands]
 
 def cmd_assemble(args):
-    cppout = subprocess.run(["/usr/bin/cpp", "-undef", "-nostdinc", "-I.", args.script], stdout=subprocess.PIPE)
+    args.includepaths.extend([os.path.dirname(args.script), os.path.dirname(sys.argv[0])])
+    cppcmd = [ "/usr/bin/cpp", "-undef", "-nostdinc" ]
+    cppcmd.extend("-I" + path for path in args.includepaths if path)
+    cppcmd.append(args.script)
+    cppout = subprocess.run(cppcmd, stdout=subprocess.PIPE)
     if cppout.returncode:
         exit(1)
 
@@ -258,7 +262,8 @@ def cmd_link(args):
                 commands.append(Command.fromText(line))
 
     if commands[-1].op != Opcode.RETURN:
-        print("WARNING: Commands do not end in RETURN, adding one")
+        if not args.quiet:
+            print("WARNING: Commands do not end in RETURN, adding one")
         commands.append(Command(Opcode.RETURN, 0, 0, 0, 0))
 
     masks = set(cmd.mask for cmd in commands)
@@ -271,9 +276,10 @@ def cmd_link(args):
     small_data = sorted(params) + sorted(addresses - params)
     big_data = sorted(masks) + sorted(data - masks)
 
-    print("%d commands" % len(commands))
-    print("  %d params + %d addresses -> %d small values" % (len(params), len(addresses), len(small_data)))
-    print("  %d masks + %d data -> %d big values" % (len(masks), len(data), len(big_data)))
+    if not args.quiet:
+        print("%d commands" % len(commands))
+        print("  %d params + %d addresses -> %d small values" % (len(params), len(addresses), len(small_data)))
+        print("  %d masks + %d data -> %d big values" % (len(masks), len(data), len(big_data)))
 
     if (len(commands) + len(small_data)) & 1 == 0:
         # If header + commands + small data would leave big data unaligned, add a dummy value
@@ -296,7 +302,8 @@ def cmd_link(args):
         for value in big_data:
             write64(f, value)
 
-        print("Total FSM blob length: %d bytes" % f.tell())
+        if not args.quiet:
+            print("Total FSM blob length: %d bytes" % f.tell())
 
 def load_commands(fname):
     commands = []
@@ -415,11 +422,14 @@ if __name__ == "__main__":
     sub = subparsers.add_parser("assemble", help="Compile FSM assembler into raw FSM command table")
     sub.add_argument("script", help="Source script file, use '-' to read from stdin")
     sub.add_argument("outfile", help="Output file, use '-' to write to stdout")
+    sub.add_argument("-I", dest="includepaths", metavar="includepath", action="append", default=[],
+                     help="Include directory to add to search path; defaults are the locations of the source file and the cmdtable tool")
     sub.set_defaults(func=cmd_assemble)
 
     sub = subparsers.add_parser("link", help="Combine command tables into blob for SBE")
     sub.add_argument("table", nargs="+", help="Input table(s), use '-' to read from stdin")
     sub.add_argument("-o", "--outfile", default="fsm_table.bin", help="Output file name, defaults to fsm_table.bin")
+    sub.add_argument("-q", "--quiet", action="store_true", help="Don't print statistics or warn on missing RETURN")
     sub.set_defaults(func=cmd_link)
 
     sub = subparsers.add_parser("disassemble", help="Reverse an SBE blob back into a command table")
