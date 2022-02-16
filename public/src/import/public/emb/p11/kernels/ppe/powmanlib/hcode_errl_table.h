@@ -37,17 +37,20 @@
 
 #define HCODE_ELOG_TABLE_MAGIC_NUMBER 0x454C5443 // "ELTC"
 
-// Max number of error log slots per GPE
-// Support 1 unrecoverable & 1 informational elog per GPE
-#define MAX_ELOG_SLOTS_PER_GPE 2
+// Max number of error log slots per PPE
+// Support 1 unrecoverable & 1 informational elog per PPE
+#define MAX_ELOG_SLOTS_PER_PPE 2
 
 // Maximum number of error log entries in error log table
 #ifdef __PPE_QME
-    // QME local table in QME SRAM .. logs downloaded by XGPE
+    // QME local table in QME SRAM
     #define MAX_ELOG_ENTRIES 2
+#elif __PPE_CE
+    // TCC global table in TCC SRAM .. (DCE+OCE+PCE+XCE) * 2
+    #define MAX_ELOG_ENTRIES 8
 #else
-    // OCC global table in OCC SRAM .. (8 QMEs + 1 PGPE + 1 XPGE)*2
-    #define MAX_ELOG_ENTRIES 20
+    // OCC global table in OCC SRAM .. (NGPE+PGPE+XGPE) * 2
+    #define MAX_ELOG_ENTRIES 6
 #endif
 
 // Structure of an individual error log entry in the table
