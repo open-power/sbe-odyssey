@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/odyssey/sppe/build/utils/build.sh $
+# $Source: public/src/runtime/tools/attributes/attrtoolutils.py $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,18 +21,11 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
+global g_verbose
+g_verbose = False
+def vprint(*args):
+    if g_verbose:
+        print(*args)
 
-#This scrpit does all packaging(zip),secure header addition etc.
-#We will not add these functionalities into meson
-#The input to this script is meson current build directory where the image is
-#built and stored before we install.
-#This script can use all the files created in the path.
-
-#Note:Do not change name of any files while modifications.
-#Meson will pick up files from same builddir during install phase.
-
-# Exit if any command fails
-set -e
-
-set -x
-$2 setfixed $1.attr.db $1.bin -v
+def hexint(arg):
+    return int(arg, 16)

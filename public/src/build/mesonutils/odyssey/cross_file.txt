@@ -21,7 +21,9 @@ odyssey_cmn_inc_paths = [
         ]
 
 odyssey_runtime_inc_paths = [
-        '/public/src/runtime/odyssey/sppe/plat/targeting'
+    '/public/src/runtime/odyssey/sppe/plat/targeting',
+    '/genfiles/runtime/odyssey/sppe',
+    '/public/src/runtime/odyssey/sppe/plat/attributes'
         ]
 
 odyssey_srom_inc_paths = [

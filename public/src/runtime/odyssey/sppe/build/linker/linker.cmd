@@ -74,6 +74,13 @@ SECTIONS {
      */
     _sda2_start = .;
     .sdata2 . : {
+        // Used for dumping attributes
+        _attrs_start_ = .;
+        KEEP(*(.attrs))
+        KEEP(*(.attrs.*))
+        // Used for dumping attributes
+        _attrs_end_ = .;
+
         *(.sdata2)
         *(.sdata2.*)
         . = ALIGN(DOUBLE_WORD_SIZE);
