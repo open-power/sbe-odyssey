@@ -67,6 +67,7 @@ odyssey_sppe_img_name = 'odyssey_sppe_' + ddlvl
 subdir('hwpf')
 subdir('plat')
 subdir('core')
+subdir('build')
 
 ########################################## Build Odyssey SPPE Image ######################################################
 
@@ -101,7 +102,8 @@ osppe_out_map_gen = custom_target('osppe_out_map_gen',
                                          '-Map','@OUTPUT0@',
                                          '-Bstatic','-o','@OUTPUT1@',
                                          odyssey_sppe_lib_paths,
-                                         '--start-group',odyssey_sppe_libs,'--end-group','--gc-sections'],
+                                         '--start-group',odyssey_sppe_libs,'--end-group','--gc-sections',
+                                          '--undefined=_ZN5fapi24ATTR18ATTR_IS_SIMULATIONE'],
                             build_by_default: true,
                             build_always_stale : true,
                             install : true,
@@ -109,24 +111,12 @@ osppe_out_map_gen = custom_target('osppe_out_map_gen',
                           )
 
 infile  = osppe_out_map_gen
-outfile = odyssey_sppe_img_name + '.bin'
-
-osppe_bin_gen = custom_target('osppe_bin_gen',
-                              input : infile,
-                              output : outfile,
-                              command : [ parsAndCutElf, '@INPUT1@'],
-                              build_by_default: true,
-                              install : true,
-                              install_dir : odyssey_sppe_install_path
-                            )
-
-infile  = osppe_out_map_gen
 outfile = odyssey_sppe_img_name + '.syms'
 
 osppe_symbol_file_gen = custom_target('osppe_symbol_file_gen',
                                       output : outfile,
                                       input : infile,
-                                      command : [ nm,'-S','@INPUT1@'],
+                                      command : [ nm, '-C', '-S','@INPUT1@'],
                                       build_by_default : true,
                                       capture : true,
                                       install : true,
@@ -144,6 +134,33 @@ osppe_dis_file = custom_target( 'osppe_dis_gen',
                                capture : true,
                                install : true,
                                install_dir : odyssey_sppe_install_path
+                            )
+
+# include actual offset of the attribute variable in attr db file
+infiles = [odyssey_sbe_attr_db_file_name,
+            osppe_symbol_file_gen]
+outfile = odyssey_sppe_img_name + '.attr.db'
+
+osppe_attr_tank = custom_target('ospee_attr_compile',
+                            output : outfile,
+                            input : infiles,
+                            command : [attrTool, 'compile',
+                                        '@INPUT@', '@OUTPUT@', '-v'],
+                            build_by_default : true,
+                            install : true,
+                            install_dir : odyssey_sppe_install_path
+                                )
+
+infile  = osppe_out_map_gen
+outfile = odyssey_sppe_img_name + '.bin'
+
+osppe_bin_gen = custom_target('osppe_bin_gen',
+                              input : infile,
+                              output : outfile,
+                              command : [ parsAndCutElf, '@INPUT1@'],
+                              build_by_default: true,
+                              install : true,
+                              install_dir : odyssey_sppe_install_path
                             )
 
 #Generate a rpt file which has elf header & sections info
@@ -185,7 +202,9 @@ osppe_string_file_gen = custom_target(output : 'odysseySppeStringFile_' + ddlvl,
 osppe_package_img = custom_target( 'osppe_package_img',
                                output : 'osppe_package_img_none',
                                depends : [ osppe_string_file_gen, osppe_symbol_file_gen,
-                                           osppe_dis_file ],
-                               command : [ packaging, meson.current_build_dir() ],
+                                           osppe_dis_file, osppe_attr_tank ],
+                               command : [ packaging,
+                                           meson.current_build_dir() + '/' + odyssey_sppe_img_name,
+                                           attrTool ],
                                build_by_default : true,
                               )

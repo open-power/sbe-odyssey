@@ -33,7 +33,6 @@ ddlvl = get_option('ddlevel')
 parsAndCutElf = find_program('build/utils/parsAndCutElf.py')
 tracehash = find_program('tools/trace/tracehash.pl')
 buildInfo = find_program('build/utils/buildInfo.py')
-parseErrorInfo = find_program('import/public/common/generic/fapi2/tools/parseErrorInfo.pl')
 
 # we are using multiple tools for generating source code and using run_command
 #   for invoking these tools. So, whenever these tools or files passed to tool is
@@ -60,6 +59,10 @@ ppetraceapp = executable('ppetraceapp',
 #Output Path for common genfiles
 cmn_genfiles_dir_path = genfiles_dir_path + '/common/'
 run_command('mkdir', cmn_genfiles_dir_path)
+
+#Lets define all genfiles paths that can be used elsewhere in the project
+onetime_genfiles_dir_path = genfiles_dir_path + '/onetime/'
+runtime_genfiles_dir_path = genfiles_dir_path + '/runtime/'
 
 #Common genfiles
 result_buildInfo = run_command(buildInfo, cmn_genfiles_dir_path)
@@ -112,18 +115,19 @@ if platform == 'odyssey' or platform == 'all'
 
   endforeach
 
-    #Odyssey specific genfiles directory path
-    odyssey_genfiles_dir_path = genfiles_dir_path + '/odyssey/'
-    run_command('mkdir', odyssey_genfiles_dir_path)
-endif
-
-if platform == 'odyssey' or platform == 'all'
   foreach inc_path : meson.get_external_property('odyssey_runtime_inc_paths')
 
     abs_inc_path = '-I' + meson.global_source_root() + inc_path
     odyssey_runtime_abs_inc_paths += abs_inc_path
 
   endforeach
+
+  #Odyssey genfiles dir path
+  odyssey_srom_genfiles_dir_path = onetime_genfiles_dir_path + '/odyssey/srom/'
+  odyssey_bldr_genfiles_dir_path = onetime_genfiles_dir_path + '/odyssey/bldr/'
+  odyssey_sppe_genfiles_dir_path = runtime_genfiles_dir_path + '/odyssey/sppe/'
+  run_command('mkdir','-p', odyssey_srom_genfiles_dir_path, odyssey_bldr_genfiles_dir_path,
+      odyssey_sppe_genfiles_dir_path)
 endif
 
 #Object file generation generator's (api's)

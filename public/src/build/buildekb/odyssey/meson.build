@@ -24,10 +24,10 @@
 # IBM_PROLOG_END_TAG
 
 if get_option('sppe').enabled()
-    #Odyssey SPPE specific genfiles directory path
-    odyssey_sppe_genfiles_dir_path = odyssey_genfiles_dir_path + '/sppe/'
-    run_command('mkdir', odyssey_sppe_genfiles_dir_path)
+    parseErrorInfo = find_program('../../../import/public/common/generic/fapi2/tools/parseErrorInfo.pl')
+    attrTool = find_program('../../../runtime/tools/attributes/attrtool')
 
     subdir('hwp')
     subdir('errorxml')
+    subdir('attributes')
 endif

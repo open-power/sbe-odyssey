@@ -44,4 +44,5 @@ if (get_option('sppe').enabled()) or (get_option('tsbe').enabled()) or
                                      (get_option('hsbe').enabled())
     subdir('errorxml')
     subdir('hwp')
+    subdir('attributes')
 endif
