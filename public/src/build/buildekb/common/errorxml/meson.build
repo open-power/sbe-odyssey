@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/build/buildekb/meson.build $
+# $Source: public/src/build/buildekb/common/errorxml/meson.build $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,9 +21,15 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
+import_generic_xml_dir_base_path = pub_import_dir_path + '/hwp/generic/xml/error_info/'
 
-subdir('common')
+common_error_xml_files = []
 
-if platform == 'odyssey' or platform == 'all'
-    subdir('odyssey')
-endif
+#Create abs path for input xml files
+common_abs_error_xml_files = []
+foreach error_xml_file : common_error_xml_files
+
+abs_error_xml_file = import_generic_xml_dir_base_path + error_xml_file
+common_abs_error_xml_files += abs_error_xml_file
+
+endforeach

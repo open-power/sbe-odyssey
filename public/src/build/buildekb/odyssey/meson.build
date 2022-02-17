@@ -1,7 +1,7 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/build/buildekb/common/meson.build $
+# $Source: public/src/build/buildekb/odyssey/meson.build $
 #
 # OpenPOWER sbe Project
 #
@@ -23,25 +23,11 @@
 #
 # IBM_PROLOG_END_TAG
 
-#List containing all EKB common lib paths
-ekb_cmn_lib_paths = []
+if get_option('sppe').enabled()
+    #Odyssey SPPE specific genfiles directory path
+    odyssey_sppe_genfiles_dir_path = odyssey_genfiles_dir_path + '/sppe/'
+    run_command('mkdir', odyssey_sppe_genfiles_dir_path)
 
-#List containing all lib names for seeprom image
-ekb_cmn_libs = []
-
-#List of all dependent libs from ekb common. (For custom target depends input)
-#Image generation will not start unless all the libs in below list are built
-#This list is basically custom target lib generation output object
-ekb_cmn_dep_libs = []
-
-subdir('ppebaselib')
-subdir('ppetrace')
-subdir('pkkernel')
-subdir('boltonlib')
-subdir('ppe42')
-
-if (get_option('sppe').enabled()) or (get_option('tsbe').enabled()) or
-                                     (get_option('hsbe').enabled())
-    subdir('errorxml')
     subdir('hwp')
+    subdir('errorxml')
 endif
