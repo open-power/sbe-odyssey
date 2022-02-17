@@ -94,6 +94,13 @@ enum TargetType : uint64_t
     TARGET_TYPE_L3CACHE         = 0x0000100000000000, ///< L3CACHE type
     TARGET_TYPE_INT             = 0x0000200000000000, ///< INT type
     TARGET_TYPE_NX              = 0x0000400000000000, ///< NX type
+    TARGET_TYPE_PAX             = 0x0000800000000000, ///< PAX type
+    TARGET_TYPE_PAXO            = 0x0001000000000000, ///< PAXO type
+    TARGET_TYPE_SMPLINK         = 0x0002000000000000, ///< SMPLINK type
+    TARGET_TYPE_PEC6P           = 0x0004000000000000, ///< PEC6P type
+    TARGET_TYPE_PEC2P           = 0x0008000000000000, ///< PEC2P type
+    TARGET_TYPE_PHB248X         = 0x0010000000000000, ///< PHB248X type
+    TARGET_TYPE_PHB16X          = 0x0020000000000000, ///< PHB16X type
     TARGET_TYPE_MULTICAST       = 0x8000000000000000, ///< MULTICAST type
     TARGET_TYPE_ALL             = 0x7FFFFFFFFFFFFFFF, ///< Any/All types
     TARGET_TYPE_ALL_MC          = 0xFFFFFFFFFFFFFFFF, ///< Any/All types + Multicast
@@ -139,19 +146,32 @@ enum TargetType : uint64_t
                                 TARGET_TYPE_TBUSL         |
                                 TARGET_TYPE_L3CACHE       |
                                 TARGET_TYPE_INT           |
-                                TARGET_TYPE_NX,
+                                TARGET_TYPE_NX            |
+                                TARGET_TYPE_PAX           |
+                                TARGET_TYPE_PAXO          |
+                                TARGET_TYPE_SMPLINK       |
+                                TARGET_TYPE_PEC6P         |
+                                TARGET_TYPE_PEC2P         |
+                                TARGET_TYPE_PHB248X       |
+                                TARGET_TYPE_PHB16X,
 
-    TARGET_TYPE_MULTICASTABLE = TARGET_TYPE_CORE   |
-                                TARGET_TYPE_EQ     |
-                                TARGET_TYPE_IOHS   |
-                                TARGET_TYPE_MC     |
-                                TARGET_TYPE_PAUC   |
-                                TARGET_TYPE_PEC    |
-                                TARGET_TYPE_PERV   |
-                                TARGET_TYPE_TBUSC  |
-                                TARGET_TYPE_NX     |
-                                TARGET_TYPE_PAU    |
-                                TARGET_TYPE_L3CACHE,
+    TARGET_TYPE_MULTICASTABLE = TARGET_TYPE_CORE        |
+                                TARGET_TYPE_EQ          |
+                                TARGET_TYPE_IOHS        |
+                                TARGET_TYPE_MC          |
+                                TARGET_TYPE_PAUC        |
+                                TARGET_TYPE_PEC         |
+                                TARGET_TYPE_PERV        |
+                                TARGET_TYPE_TBUSC       |
+                                TARGET_TYPE_TBUSL       |
+                                TARGET_TYPE_NX          |
+                                TARGET_TYPE_PAU         |
+                                TARGET_TYPE_L3CACHE     |
+                                TARGET_TYPE_PAX         |
+                                TARGET_TYPE_PAXO        |
+                                TARGET_TYPE_PEC6P       |
+                                TARGET_TYPE_PEC2P       |
+                                TARGET_TYPE_PHB16X,
 
     TARGET_TYPE_MULTICAST_CHIP = TARGET_TYPE_PROC_CHIP  |
                                  TARGET_TYPE_HUB_CHIP   |
