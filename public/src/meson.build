@@ -33,6 +33,7 @@ ddlvl = get_option('ddlevel')
 parsAndCutElf = find_program('build/utils/parsAndCutElf.py')
 tracehash = find_program('tools/trace/tracehash.pl')
 buildInfo = find_program('build/utils/buildInfo.py')
+parseErrorInfo = find_program('import/public/common/generic/fapi2/tools/parseErrorInfo.pl')
 
 #ekb-src public mirror path.(import dir path)
 pub_import_dir_path = meson.global_source_root() + '/public/src/import/public/'
@@ -92,6 +93,10 @@ if platform == 'odyssey' or platform == 'all'
     odyssey_cmn_abs_inc_paths += abs_inc_path
 
   endforeach
+
+    #Odyssey specific genfiles directory path
+    odyssey_genfiles_dir_path = genfiles_dir_path + '/odyssey/'
+    run_command('mkdir', odyssey_genfiles_dir_path)
 endif
 
 #Object file generation generator's (api's)
