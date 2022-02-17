@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/core/chipop_handler.C $             */
+/* $Source: public/src/runtime/odyssey/sppe/core/chipop_handler.C $       */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -211,3 +211,5 @@ sbeChipOpRc_t sbeIsCmdAllowed (const uint8_t i_cmdClass,
     return retRc;
     #undef SBE_FUNC
 }
+// Mandatory macro inclusion
+CMD_CLASS_DEFAULT_INTIALISATION

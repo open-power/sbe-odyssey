@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/core/sbecmdprocessor.C $            */
+/* $Source: public/src/runtime/odyssey/sppe/core/sbecmdprocessor.C $      */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -155,7 +155,7 @@ void sbeHandleFifoResponse (const uint32_t i_rc, sbeFifoType i_type)
 void sbeSyncCommandProcessor_routine(void *i_pArg)
 {
     #define SBE_FUNC " sbeSyncCommandProcessor_routine "
-    SBE_ENTER(SBE_FUNC);
+    SBE_INFO(SBE_FUNC " Thread started");
 
     // Update SBE msgg reg to indicate that control loop
     // is ready now to receive data on its interfaces
@@ -168,6 +168,8 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
         (void)SbeRegAccess::theSbeRegAccess().
               updateSbeState(SBE_STATE_RUNTIME);
     }
+
+    chipOpParam_t configStr = { SBE_FIFO, 0x00, (uint8_t*)i_pArg };
     do
     {
         uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
@@ -189,14 +191,33 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
             //fapi2::current_err = fapi2::FAPI2_RC_SUCCESS;
 
             // SBE ChipOp associating config settings to processing functions
-            chipOpParam_t configStr = { SBE_FIFO, 0x00, (uint8_t*)i_pArg };
+            // chipOpParam_t configStr = { SBE_FIFO, 0x00, (uint8_t*)i_pArg };
             // configStr.pkThreadRoutine_param = reinterpret_cast<uint8_t*>(i_pArg);
-            if ( SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE,
-                                             SBE_INTERFACE_FIFO) )
+            if ( SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE,(sbeInterfaceSrc_t)(
+                                             SBE_INTERFACE_FIFO
+                                           | SBE_INTERFACE_HFIFO
+                                           | SBE_INTERFACE_PIPE1
+                                           | SBE_INTERFACE_PIPE2
+                                           | SBE_INTERFACE_PIPE3
+                                           | SBE_INTERFACE_PIPE4
+                                           | SBE_INTERFACE_PIPE5
+                                           | SBE_INTERFACE_PIPE6
+                                           | SBE_INTERFACE_PIPE7
+                                           | SBE_INTERFACE_PIPE8)) )
             {
                 l_rc         = SBE_GLOBAL->sbeCmdRespHdr.sec_status;
                 l_cmdClass   = SBE_GLOBAL->sbeFifoCmdHdr.cmdClass;
                 l_cmdOpCode  = SBE_GLOBAL->sbeFifoCmdHdr.command;
+                if      (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_FIFO))  configStr.fifoType = SBE_FIFO;
+                else if (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_HFIFO)) configStr.fifoType = SBE_HB_FIFO;
+                else if (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_PIPE1)) configStr.fifoType = SBE_PIPE1;
+                else if (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_PIPE2)) configStr.fifoType = SBE_PIPE2;
+                else if (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_PIPE3)) configStr.fifoType = SBE_PIPE3;
+                else if (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_PIPE4)) configStr.fifoType = SBE_PIPE4;
+                else if (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_PIPE5)) configStr.fifoType = SBE_PIPE5;
+                else if (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_PIPE6)) configStr.fifoType = SBE_PIPE5;
+                else if (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_PIPE7)) configStr.fifoType = SBE_PIPE7;
+                else if (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_PIPE8)) configStr.fifoType = SBE_PIPE8;
                 SBE_INFO(SBE_FUNC"Processing command from client :0x%01X",
                             (uint32_t)(SBE_GLOBAL->sbeFifoCmdHdr.clientId));
                 // Set this here, so that during response handling we know which
@@ -242,21 +263,35 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
         } while(false); // Inner do..while loop ends here
 
         SBE_INFO (SBE_FUNC"Command processesed. l_rc=[0x%04X]", l_rc );
-        if ( SBE_GLOBAL->sbeIntrSource.isSet(SBE_PROC_ROUTINE, SBE_INTERFACE_FIFO) )
+        if ( SBE_GLOBAL->sbeIntrSource.isSet(SBE_PROC_ROUTINE, (sbeInterfaceSrc_t)(
+                                             SBE_INTERFACE_FIFO
+                                           | SBE_INTERFACE_HFIFO
+                                           | SBE_INTERFACE_PIPE1
+                                           | SBE_INTERFACE_PIPE2
+                                           | SBE_INTERFACE_PIPE3
+                                           | SBE_INTERFACE_PIPE4
+                                           | SBE_INTERFACE_PIPE5
+                                           | SBE_INTERFACE_PIPE6
+                                           | SBE_INTERFACE_PIPE7
+                                           | SBE_INTERFACE_PIPE8)))
         {
-            sbeHandleFifoResponse (l_rc, SBE_FIFO);
+            sbeHandleFifoResponse (l_rc, (sbeFifoType)configStr.fifoType);
 
             // Enable the new data available interrupt
-            SBE_GLOBAL->sbeIntrSource.clearIntrSource(SBE_ALL_HANDLER,SBE_INTERFACE_FIFO);
+            SBE_GLOBAL->sbeIntrSource.clearIntrSource(SBE_ALL_HANDLER, (sbeInterfaceSrc_t)(
+                                             SBE_INTERFACE_FIFO
+                                           | SBE_INTERFACE_HFIFO
+                                           | SBE_INTERFACE_PIPE1
+                                           | SBE_INTERFACE_PIPE2
+                                           | SBE_INTERFACE_PIPE3
+                                           | SBE_INTERFACE_PIPE4
+                                           | SBE_INTERFACE_PIPE5
+                                           | SBE_INTERFACE_PIPE6
+                                           | SBE_INTERFACE_PIPE7
+                                           | SBE_INTERFACE_PIPE8));
             pk_irq_enable(SBE_IRQ_SBEFIFO_DATA);
             pk_irq_enable(SBE_IRQ_SBEFIFO_RESET);
-        }
-        else if ( SBE_GLOBAL->sbeIntrSource.isSet(SBE_PROC_ROUTINE, SBE_INTERFACE_SBEHFIFO) )
-        {
-            sbeHandleFifoResponse (l_rc, SBE_HB_FIFO);
-            SBE_GLOBAL->sbeIntrSource.clearIntrSource(SBE_ALL_HANDLER,SBE_INTERFACE_SBEHFIFO);
-            pk_irq_enable(SBE_IRQ_SBEHFIFO_DATA);
-            pk_irq_enable(SBE_IRQ_SBEHFIFO_RESET);
+            SBE_GLOBAL->sbeIntrSource.clearIntrSource(SBE_ALL_HANDLER,SBE_INTERFACE_FIFO);
         }
     } while(true); // Thread always exists
     SBE_EXIT(SBE_FUNC);

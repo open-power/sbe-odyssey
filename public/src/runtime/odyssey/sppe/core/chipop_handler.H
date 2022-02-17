@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/core/chipop_handler.H $             */
+/* $Source: public/src/runtime/odyssey/sppe/core/chipop_handler.H $       */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2017,2022                        */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,7 +21,9 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#pragma once
+
+#ifndef __CHIOP_HANDLER_H__
+#define __CHIOP_HANDLER_H__
 
 #include <stdint.h>
 #include <stddef.h>
@@ -230,3 +231,4 @@ constexpr bool validateCmdClassHash(uint8_t index) { \
 \
 static_assert(validateCmdClassHash(0), "Bad chipop_table, check cmdclass hashes");
 
+#endif

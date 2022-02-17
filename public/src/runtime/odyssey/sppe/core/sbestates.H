@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/core/sbeglobals.C $                 */
+/* $Source: public/src/runtime/odyssey/sppe/core/sbestates.H $            */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2022                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,21 +21,38 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#include "sbeglobals.H"
+/*
+ * @file: ppe/sbe/sbefw/sbestates.H
+ *
+ * @brief This file contains interfaces pertaining to SBE state/role management
+ *
+ */
 
-////////////////////////////////////////////////////////////////
-//// @brief Stacks for Non-critical Interrupts and Threads
-//////////////////////////////////////////////////////////////////
+#ifndef __SBEFW_SBESTATES_H
+#define __SBEFW_SBESTATES_H
 
-SBEGlobalsSingleton* sbeGlobal = &SBEGlobalsSingleton::getInstance();
-SBEGlobalsSingleton& SBEGlobalsSingleton::getInstance()
+/**
+ * @brief An enumeration of all SBE states
+ *
+ */
+enum sbeState
 {
-    static SBEGlobalsSingleton iv_instance;
-    return iv_instance;
-}
+    SBE_STATE_UNKNOWN = 0x0, // Unkown, initial state
+    SBE_STATE_IPLING  = 0x1, // IPL'ing - autonomous mode (transient)
+    SBE_STATE_ISTEP   = 0x2, // ISTEP - Running IPL by steps (transient)
+    SBE_STATE_MPIPL   = 0x3, // MPIPL
+    SBE_STATE_RUNTIME = 0x4, // SBE Runtime
+    SBE_STATE_DMT     = 0x5, // Dead Man Timer State (transient)
+    SBE_STATE_DUMP    = 0x6, // Dumping
+    SBE_STATE_FAILURE = 0x7, // Internal SBE failure
+    SBE_STATE_QUIESCE = 0x8, // This state quiesces any seeprom access
+    SBE_STATE_HALT    = 0x9, // SBE halted via chip-op driven from Hostboot.Needs SBE reset to get out
 
-uint16_t SBEGlobalsSingleton::failedPrimStatus = SBE_PRI_OPERATION_SUCCESSFUL;
-uint16_t SBEGlobalsSingleton::failedSecStatus  = SBE_SEC_OPERATION_SUCCESSFUL;
-uint16_t SBEGlobalsSingleton::failedSeqId      = 0;
-uint8_t  SBEGlobalsSingleton::failedCmdClass   = 0;
-uint8_t  SBEGlobalsSingleton::failedCmd        = 0;
+    // Max States, Always keep it at the last of the enum and sequential
+    SBE_MAX_STATE     = 0xA,
+    // Don't count this in the state, just to intialize the state variables
+    SBE_INVALID_STATE = 0xF,
+};
+
+#endif //__SBEFW_SBESTATES_H
+

@@ -57,29 +57,21 @@ void sbe_interrupt_handler (void *i_pArg, PkIrqId i_irq)
 
     switch (i_irq)
     {
-        case SBE_IRQ_SBEFIFO_DATA:
+        case SBE_IRQ_SBEFIFO_RESET:
+
+            // Read the FIFO / PIPE registers to route it to correct interrupt.
             SBE_GLOBAL->sbeIntrSource.setIntrSource(SBE_INTERRUPT_ROUTINE,
-                                            SBE_INTERFACE_FIFO);
+                                            SBE_INTERFACE_FIFO_RESET);
             pk_irq_disable(SBE_IRQ_SBEFIFO_RESET);
             break;
 
-        case SBE_IRQ_SBEFIFO_RESET:
+        case SBE_IRQ_SBEFIFO_DATA:
+
+            // Read the FIFO / PIPE registers it to correct interrupt.
             SBE_GLOBAL->sbeIntrSource.setIntrSource(SBE_INTERRUPT_ROUTINE,
-                                            SBE_INTERFACE_FIFO_RESET);
+                                            SBE_INTERFACE_FIFO);
             pk_irq_disable(SBE_IRQ_SBEFIFO_DATA);
             break;
-
-        case SBE_IRQ_SBEHFIFO_RESET:
-            SBE_GLOBAL->sbeIntrSource.setIntrSource(SBE_INTERRUPT_ROUTINE,
-                                            SBE_INTERFACE_SBEHFIFO_RESET);
-            pk_irq_disable(SBE_IRQ_SBEHFIFO_DATA);
-            break;
-
-        case SBE_IRQ_SBEHFIFO_DATA:
-            SBE_GLOBAL->sbeIntrSource.setIntrSource(SBE_INTERRUPT_ROUTINE,
-                                            SBE_INTERFACE_SBEHFIFO);
-            pk_irq_disable(SBE_IRQ_SBEHFIFO_RESET);
-            break; 
 
 #ifdef _S0_
         case SBE_IRQ_INTR0:
@@ -112,8 +104,6 @@ void sbe_interrupt_handler (void *i_pArg, PkIrqId i_irq)
 static uint32_t G_supported_irqs[] = {
                                         SBE_IRQ_SBEFIFO_DATA,
                                         SBE_IRQ_SBEFIFO_RESET,
-                                        SBE_IRQ_SBEHFIFO_RESET,
-                                        SBE_IRQ_SBEHFIFO_DATA,
 #ifdef _S0_
                                         SBE_IRQ_INTR0,
 #endif
@@ -142,6 +132,7 @@ int sbeIRQSetup (void)
     for(uint32_t cnt=0; cnt<sizeof(G_supported_irqs)/sizeof(uint32_t); cnt++)
     {
         // Register the IRQ handler with PK
+        SBE_INFO(SBE_FUNC " Registering the interrupt handler for count %d and IRQ %d", cnt, G_supported_irqs[cnt]);
         rc = pk_irq_handler_set(G_supported_irqs[cnt], sbe_interrupt_handler, NULL);
         if(rc)
         {

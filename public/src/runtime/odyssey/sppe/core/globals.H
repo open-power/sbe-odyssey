@@ -34,7 +34,4 @@
 #define SBE_REF_BASE_FREQ_HZ ((133 * 1000 * 1000)/4)
 #define SBE_PAU_DPLL_BASE_FREQ_HZ ((1968 * 1000 * 1000)/4)
 
-////////////////////////////////////////////////////////////////
-////// @brief Stacks for Non-critical Interrupts and Threads
-////////////////////////////////////////////////////////////////////
 #endif //__GLOBALS_H

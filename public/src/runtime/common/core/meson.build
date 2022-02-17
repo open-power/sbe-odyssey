@@ -26,11 +26,7 @@
 infile_c = ['sbeSpMsg.C',
             'sbeirq.C',
             'sbeFifoMsgUtils.C',
-            'chipop_handler.C',
-            'sberegaccess.C',
-            'sbecmdprocessor.C',
-            'sbecmdreceiver.C',
-            'sbeglobals.C'
+            'sbeglobals.C',
            ]
 
 lib_file_name = 'runtimecmncore'

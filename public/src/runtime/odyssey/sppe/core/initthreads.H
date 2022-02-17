@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/core/sbestates.H $                  */
+/* $Source: public/src/runtime/odyssey/sppe/core/initthreads.H $          */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2022                             */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,38 +21,28 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-/*
- * @file: ppe/sbe/sbefw/sbestates.H
- *
- * @brief This file contains interfaces pertaining to SBE state/role management
- *
- */
+#ifndef __SBE_INIT_THREAD__
+#define __SBE_INIT_THREAD__
 
-#ifndef __SBEFW_SBESTATES_H
-#define __SBEFW_SBESTATES_H
+#include <stdint.h>
+////////////////////////////////////////////////////////////////
+//// @brief   sbeInitThreads
+////          Create and resume for all the firmware threads
+////
+//// @return  See createAndResumeThreadHelper for more details
+////////////////////////////////////////////////////////////////
 
-/**
- * @brief An enumeration of all SBE states
- *
- */
-enum sbeState
-{
-    SBE_STATE_UNKNOWN = 0x0, // Unkown, initial state
-    SBE_STATE_IPLING  = 0x1, // IPL'ing - autonomous mode (transient)
-    SBE_STATE_ISTEP   = 0x2, // ISTEP - Running IPL by steps (transient)
-    SBE_STATE_MPIPL   = 0x3, // MPIPL
-    SBE_STATE_RUNTIME = 0x4, // SBE Runtime
-    SBE_STATE_DMT     = 0x5, // Dead Man Timer State (transient)
-    SBE_STATE_DUMP    = 0x6, // Dumping
-    SBE_STATE_FAILURE = 0x7, // Internal SBE failure
-    SBE_STATE_QUIESCE = 0x8, // This state quiesces any seeprom access
-    SBE_STATE_HALT    = 0x9, // SBE halted via chip-op driven from Hostboot.Needs SBE reset to get out
+int sbeInitThreads(void);
 
-    // Max States, Always keep it at the last of the enum and sequential
-    SBE_MAX_STATE     = 0xA,
-    // Don't count this in the state, just to intialize the state variables
-    SBE_INVALID_STATE = 0xF,
-};
 
-#endif //__SBEFW_SBESTATES_H
+////////////////////////////////////////////////////////////////
+//// @brief  sbeInitSems - Create the necessary semaphores
+////
+//// @return  PK_OK                          - Success
+////         PK_INVALID_SEMAPHORE_AT_CREATE - Invalid PkSemaphore
+////         PK_INVALID_ARGUMENT_SEMAPHORE  - max_count is non-zero
+////                               and less than the initial_count
+//////////////////////////////////////////////////////////////////
 
+uint32_t sbeInitSems(void);
+#endif

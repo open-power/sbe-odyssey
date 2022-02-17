@@ -80,7 +80,15 @@ static const uint64_t DOWNSTREAM_EOT_DATA = 0x100000000ull;
 enum sbeFifoType
 {
    SBE_FIFO,
-   SBE_HB_FIFO
+   SBE_HB_FIFO = 1,
+   SBE_PIPE1   = 2,
+   SBE_PIPE2   = 3,
+   SBE_PIPE3   = 4,
+   SBE_PIPE4   = 5,
+   SBE_PIPE5   = 6,
+   SBE_PIPE6   = 7,
+   SBE_PIPE7   = 8,
+   SBE_PIPE8   = 9,
 };
 
 /**

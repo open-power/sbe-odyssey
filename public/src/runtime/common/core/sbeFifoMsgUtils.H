@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -157,4 +158,23 @@ uint32_t sbeDownFifoSignalEot ( sbeFifoType i_type = SBE_FIFO);
 uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
                           sbeResponseFfdc_t *i_ffdc=NULL,
                           sbeFifoType i_type = SBE_FIFO );
+
+/**
+ * @brief sbeFifoGetSource : Find where the request originated from
+ *
+ * @param[in]    reset     Reset interrupt.
+ *
+ * @return                 FIFO type
+ */
+sbeFifoType sbeFifoGetSource (bool reset);
+
+/**
+ * @brief sbeFifoGetInstSource : Find SBE Interface source
+ *
+ * @param[in]    upFifoType   Upstream Fifo type
+ * @param[in]    reset        Reset interrupt
+ *
+ * @return                    SBE interface source.
+ */
+sbeInterfaceSrc_t sbeFifoGetInstSource (sbeFifoType upFifoType, bool reset);
 #endif // __SBEFW_SBEFIFOMSGUTILS_H
