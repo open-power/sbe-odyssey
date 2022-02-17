@@ -413,3 +413,80 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
     return rc;
     #undef SBE_FUNC
 }
+
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+sbeFifoType sbeFifoGetSource (bool reset)
+{
+    // TODO: reset case handling
+    // Time to figure out where the request originated from
+    // Priority: SBE FIFO > 2nd SBE FIFO > PIPE1 >  ... > PIPE8
+    // SBE FIFO:         0x000B0001 (11 - empty)
+    // SBE HFIFO:        0x000B0021 (11 - empty)
+    // SBE PIPE1:        0x000B0101 (11 - empty)
+    // SBE PIPE2:        0x000B0201 (11 - empty)
+    // SBE PIPE3:        0x000B0301 (11 - empty)
+    // SBE PIPE4:        0x000B0401 (11 - empty)
+    // SBE PIPE5:        0x000B0501 (11 - empty)
+    // SBE PIPE6:        0x000B0601 (11 - empty)
+    // SBE PIPE7:        0x000B0701 (11 - empty)
+    // SBE PIPE8:        0x000B0801 (11 - empty)
+    // SBE PIPE STATUS:  0x000B0120 (i*8:i*8+7: Status)
+    // SBE PIPE MST_ID:  0x000B0123 (i*8:i*8+7: Master IDs)
+    //uint64_t pipe_status;
+    //uint64_t pipe_mst_id;
+    //uint64_t ppe_mst_id = 0x2;
+    //ppe_mst_id = 0xD;
+    uint64_t l_data;
+    uint32_t l_pibRc = 0;
+    l_pibRc = l_pibRc; // Silence unused errors when SBE Tracing is lowered
+    l_pibRc = getscom_abs(SBE_UPSTREAM_FIFO_STATUS + FIFO_BASE_ADDR(SBE_FIFO), &l_data);
+    SBE_INFO("getScom(%08X): pibRc: 0x%08X, 0x%08X%08X", SBE_UPSTREAM_FIFO_STATUS + FIFO_BASE_ADDR(SBE_FIFO), l_pibRc, (l_data >> 32), static_cast<uint32_t>(l_data & 0xFFFFFFFF));
+    if (!reset && !(l_data & 0x0010000000000000ULL))
+    {
+        return SBE_FIFO;
+    }
+    if ( reset &&  (l_data & 0x0200000000000000ULL))
+    {
+        return SBE_FIFO;
+    }
+    return SBE_FIFO;
+}
+
+sbeInterfaceSrc_t sbeFifoGetInstSource (sbeFifoType upFifoType, bool reset) 
+{
+    if (!reset) 
+    {
+        switch(upFifoType)
+        {
+            case SBE_FIFO:     return SBE_INTERFACE_FIFO;
+            case SBE_HB_FIFO:  return SBE_INTERFACE_HFIFO;
+            case SBE_PIPE1:    return SBE_INTERFACE_PIPE1;
+            case SBE_PIPE2:    return SBE_INTERFACE_PIPE2;
+            case SBE_PIPE3:    return SBE_INTERFACE_PIPE3;
+            case SBE_PIPE4:    return SBE_INTERFACE_PIPE4;
+            case SBE_PIPE5:    return SBE_INTERFACE_PIPE5;
+            case SBE_PIPE6:    return SBE_INTERFACE_PIPE6;
+            case SBE_PIPE7:    return SBE_INTERFACE_PIPE7;
+            case SBE_PIPE8:    return SBE_INTERFACE_PIPE8;
+       }
+    }
+    else
+    {
+        switch(upFifoType) 
+        {
+            case SBE_FIFO:     return SBE_INTERFACE_FIFO_RESET;
+            case SBE_HB_FIFO:  return SBE_INTERFACE_HFIFO_RESET;
+            case SBE_PIPE1:    return SBE_INTERFACE_PIPE1_RESET;
+            case SBE_PIPE2:    return SBE_INTERFACE_PIPE2_RESET;
+            case SBE_PIPE3:    return SBE_INTERFACE_PIPE3_RESET;
+            case SBE_PIPE4:    return SBE_INTERFACE_PIPE4_RESET;
+            case SBE_PIPE5:    return SBE_INTERFACE_PIPE5_RESET;
+            case SBE_PIPE6:    return SBE_INTERFACE_PIPE6_RESET;
+            case SBE_PIPE7:    return SBE_INTERFACE_PIPE7_RESET;
+            case SBE_PIPE8:    return SBE_INTERFACE_PIPE8_RESET;
+       }
+    }
+    /// BAAAAAD CASE
+    return SBE_INTERFACE_FIFO;
+}

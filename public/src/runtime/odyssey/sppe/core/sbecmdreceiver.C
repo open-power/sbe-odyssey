@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/core/sbecmdreceiver.C $             */
+/* $Source: public/src/runtime/odyssey/sppe/core/sbecmdreceiver.C $       */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -46,9 +46,10 @@
 void sbeCommandReceiver_routine(void *i_pArg)
 {
     #define SBE_FUNC " sbeCommandReceiver_routine "
-    SBE_ENTER(SBE_FUNC);
+    SBE_INFO(SBE_FUNC "thread started");
     uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
     sbeInterfaceSrc_t curInterface = SBE_INTERFACE_UNKNOWN;
+    sbeFifoType fifoType = SBE_FIFO;
 
     do
     {
@@ -81,15 +82,8 @@ void sbeCommandReceiver_routine(void *i_pArg)
             {
                 SBE_INFO(SBE_FUNC"SBE FIFO reset received");
                 l_rc = SBE_FIFO_RESET_RECEIVED;
-                curInterface = SBE_INTERFACE_FIFO_RESET;
-                break;
-            }
-            if (  SBE_GLOBAL->sbeIntrSource.isSet(SBE_INTERRUPT_ROUTINE,
-                                         SBE_INTERFACE_SBEHFIFO_RESET) )
-            {
-                SBE_INFO(SBE_FUNC"SBE HB FIFO reset received");
-                l_rc = SBE_FIFO_RESET_RECEIVED;
-                curInterface = SBE_INTERFACE_SBEHFIFO_RESET;
+                fifoType = sbeFifoGetSource(true);
+                curInterface = sbeFifoGetInstSource(fifoType, true);
                 break;
             }
             // Received FIFO New Data interrupt
@@ -99,7 +93,8 @@ void sbeCommandReceiver_routine(void *i_pArg)
                 //Clear the Interrupt Source bit for FIFO
                 SBE_GLOBAL->sbeIntrSource.clearIntrSource(SBE_INTERRUPT_ROUTINE,
                                                 SBE_INTERFACE_FIFO);
-                curInterface = SBE_INTERFACE_FIFO;
+                fifoType = sbeFifoGetSource(false);
+                curInterface = sbeFifoGetInstSource(fifoType, false);
 
                 // This thread will attempt to unblock the command processor
                 // thread on the following scenarios:
@@ -185,14 +180,8 @@ void sbeCommandReceiver_routine(void *i_pArg)
         // If there was a FIFO reset request,
         if (l_rc == SBE_FIFO_RESET_RECEIVED)
         {
-            sbeFifoType type = SBE_FIFO;
-            if(curInterface == SBE_INTERFACE_SBEHFIFO_RESET)
-            {
-                type = SBE_HB_FIFO;
-            }
-            
             // Perform FIFO Reset
-            l_rc = sbeUpFifoPerformReset(type);
+            l_rc = sbeUpFifoPerformReset(fifoType);
             if (l_rc)
             {
                 // Perform FIFO Reset failed
@@ -206,11 +195,6 @@ void sbeCommandReceiver_routine(void *i_pArg)
                 SBE_GLOBAL->sbeIntrSource.clearIntrSource(SBE_ALL_HANDLER,
                                                  SBE_INTERFACE_FIFO);
             }
-            if ( SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_SBEHFIFO) )
-            {
-                SBE_GLOBAL->sbeIntrSource.clearIntrSource(SBE_ALL_HANDLER,
-                                                 SBE_INTERFACE_SBEHFIFO);
-            }
 
             if ( SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE,
                                         SBE_INTERFACE_FIFO_RESET) )
@@ -218,18 +202,9 @@ void sbeCommandReceiver_routine(void *i_pArg)
                 SBE_GLOBAL->sbeIntrSource.clearIntrSource(SBE_ALL_HANDLER,
                                                  SBE_INTERFACE_FIFO_RESET);
             }
-            if ( SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE,
-                                        SBE_INTERFACE_SBEHFIFO_RESET) )
-            {
-                SBE_GLOBAL->sbeIntrSource.clearIntrSource(SBE_ALL_HANDLER,
-                                                 SBE_INTERFACE_SBEHFIFO_RESET);
-            }
-
 
             pk_irq_enable(SBE_IRQ_SBEFIFO_DATA);
             pk_irq_enable(SBE_IRQ_SBEFIFO_RESET);
-            pk_irq_enable(SBE_IRQ_SBEHFIFO_DATA);
-            pk_irq_enable(SBE_IRQ_SBEHFIFO_RESET);
             continue;
         } // FIFO reset handling ends
 

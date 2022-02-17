@@ -25,7 +25,7 @@
 #ifndef __SBE_GLOBALS_H
 #define __SBE_GLOBALS_H
 
-#include "sbestates.H"
+//#include "sbestates.H"
 #include "sbeexeintf.H"
 #include "sbeSpMsg.H"
 #include "sbeutil.H"

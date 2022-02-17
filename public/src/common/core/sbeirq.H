@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -46,8 +47,8 @@
 #define SBE_IRQ_SBEHFIFO_RESET  10  /* Host FIFO - SBE HFIFO RESET*/
 #define SBE_IRQ_SBEHFIFO_DATA   11  /* Host FIFO - SBE HFIFO DATA*/
 
-#define SBE_IRQ_RESERVED_8 8
-#define SBE_IRQ_RESERVED_9  9
+#define SBE_IRQ_RESERVED_8   8
+#define SBE_IRQ_RESERVED_9   9
 #define SBE_IRQ_RESERVED_12 12
 #define SBE_IRQ_RESERVED_13 13
 #define SBE_IRQ_RESERVED_14 14

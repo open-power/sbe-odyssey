@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -86,15 +87,27 @@ enum sbeThreadStackSize
  */
 typedef enum
 {
-    SBE_INTERFACE_UNKNOWN        = 0x00,
-    SBE_INTERFACE_FIFO           = 0x01,
-    SBE_INTERFACE_PSU            = 0x02,
-    SBE_INTERFACE_FIFO_RESET     = 0x04,
-#ifdef _S0_
-    SBE_INTERFACE_S0             = 0x08,
-#endif
-    SBE_INTERFACE_SBEHFIFO_RESET = 0x10,
-    SBE_INTERFACE_SBEHFIFO       = 0x20,
+    SBE_INTERFACE_UNKNOWN            = 0x00000000,
+    SBE_INTERFACE_FIFO               = 0x00000001,
+    SBE_INTERFACE_FIFO_RESET         = 0x00000002,
+    SBE_INTERFACE_HFIFO              = 0x00000004,
+    SBE_INTERFACE_HFIFO_RESET        = 0x00000008,
+    SBE_INTERFACE_PIPE1              = 0x00000010,
+    SBE_INTERFACE_PIPE1_RESET        = 0x00000020,
+    SBE_INTERFACE_PIPE2              = 0x00000040,
+    SBE_INTERFACE_PIPE2_RESET        = 0x00000080,
+    SBE_INTERFACE_PIPE3              = 0x00000100,
+    SBE_INTERFACE_PIPE3_RESET        = 0x00000200,
+    SBE_INTERFACE_PIPE4              = 0x00000400,
+    SBE_INTERFACE_PIPE4_RESET        = 0x00000800,
+    SBE_INTERFACE_PIPE5              = 0x00001000,
+    SBE_INTERFACE_PIPE5_RESET        = 0x00002000,
+    SBE_INTERFACE_PIPE6              = 0x00004000,
+    SBE_INTERFACE_PIPE6_RESET        = 0x00008000,
+    SBE_INTERFACE_PIPE7              = 0x00010000,
+    SBE_INTERFACE_PIPE7_RESET        = 0x00020000,
+    SBE_INTERFACE_PIPE8              = 0x00040000,
+    SBE_INTERFACE_PIPE8_RESET        = 0x00080000,
 } sbeInterfaceSrc_t;
 
 /*

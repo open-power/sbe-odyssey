@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -32,7 +33,6 @@
 #ifndef __SBEFW_SBESP_MSG_H
 #define __SBEFW_SBESP_MSG_H
 
-#include "sbestates.H"
 #include "sbe_sp_intf.H"
 
 //TODO: P11SBE Porting
