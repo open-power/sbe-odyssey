@@ -1,9 +1,19 @@
-sbe-p11 design guideline
+sbe repo design guideline
 
 General Requirements
 1.      Files must be in UNIX format as opposed to DOS/Windows format.
 2.      Must be free of compiling error and warning and functionally tested.
 3.      Must pass CI Jenkins test.
+
+File and Directory naming format:
+1. Use of underscore(_) is prohibited while naming dir's/files.
+2. Use only small case
+   Ex: ppetraceapp  --> Dir name
+       ppe42utils.x --> File name
+
+File extensions:
+1. CPP/C++ --> .C, .H
+2. C       --> .c, .h
 
 C++ Requirements
 4.  Use the keyword const to prevent elements from being changed (const correctness.)
