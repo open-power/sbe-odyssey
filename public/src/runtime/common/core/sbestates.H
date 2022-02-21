@@ -55,14 +55,5 @@ enum sbeState
     SBE_INVALID_STATE = 0xF,
 };
 
-//TODO: P11SBE Porting
-//Can be moved to top level common 
-enum sbeRole
-{
-    SBE_ROLE_MASTER = 0,
-    SBE_ROLE_SLAVE = 1,
-    SBE_ROLE_ALT_MASTER = 2,
-};
-
 #endif //__SBEFW_SBESTATES_H
 

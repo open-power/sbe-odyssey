@@ -36,7 +36,9 @@ infile_c = ['sbeSpMsg.C',
 
 lib_file_name = 'runtimecmncore'
 
-runtime_cmn_core_obj_file_cpp = obj_gen_cpp.process(infile_c)
+runtime_cmn_core_obj_file_cpp = obj_gen_cpp.process(
+                                    infile_c,
+                                    extra_args : [runtime_cmn_abs_inc_paths])
 
 infile  = [runtime_cmn_core_obj_file_cpp]
 

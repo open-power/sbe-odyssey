@@ -65,7 +65,7 @@ ppe42_pre_process = custom_target(
                                  input : S,
                                  command : [ cc,
                                              meson.get_external_property('cc_flags_cmn'),
-                                             cmn_abs_inc_paths,
+                                             cmn_abs_inc_paths, ekb_cmn_abs_inc_paths,
                                              meson.get_external_property('gcc_defs_cmn'),
                                              meson.get_external_property('pre_processing_args'),
                                              '-o','@OUTPUT@','@INPUT@'],

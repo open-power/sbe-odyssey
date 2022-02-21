@@ -28,7 +28,9 @@ infile_c = ['plat_hw_access.C'
 
 lib_file_name = 'odysseyhwpf'
 
-odyssey_hwpf_obj_file_cpp = obj_gen_cpp.process(infile_c)
+odyssey_hwpf_obj_file_cpp = obj_gen_cpp.process(
+                                        infile_c,
+                                        extra_args : [runtime_cmn_abs_inc_paths])
 
 infile  = [odyssey_hwpf_obj_file_cpp]
 

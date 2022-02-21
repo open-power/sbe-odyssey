@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2017,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -24,6 +25,7 @@
 #include "sbetrace.H"
 #include "sbeSpMsg.H"
 #include "sbeglobals.H"
+#include "cmnglobals.H"
 
 extern sbeRole g_sbeRole;
 

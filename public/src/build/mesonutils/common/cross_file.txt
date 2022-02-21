@@ -85,25 +85,31 @@ gcc_defs_cmn = [
         '-DSBE_CONSOLE_SUPPORT',
         ]
 
+ekb_cmn_inc_path = [
+    '/common/generic/fapi2/include',
+    '/common/generic/fapi2/include/plat',
+    '/emb/p11/kernels/ppe/baselib',
+    '/emb/p11/kernels/ppe/boltonlib',
+    '/emb/p11/kernels/ppe/ppetrace',
+    '/emb/p11/kernels/ppe/pk/ppe42',
+    '/emb/p11/kernels/ppe/pk/kernel',
+    '/emb/p11/kernels/ppe/ppetrace/ppetracepp',
+    '/emb/p11/kernels/ppe/boltonlib/exppe',
+    '/common/generic/ppe/include/std/',
+        ]
+
+ekb_hwp_inc_path = [
+        ]
+
 cmn_inc_paths = [
-            '/public/src/import/public/emb/p11/kernels/ppe/baselib',
-            '/public/src/import/public/emb/p11/kernels/ppe/boltonlib',
-            '/public/src/import/public/emb/p11/kernels/ppe/ppetrace',
-            '/public/src/import/public/emb/p11/kernels/ppe/pk/ppe42',
-            '/public/src/import/public/emb/p11/kernels/ppe/pk/kernel',
-            '/public/src/import/public/emb/p11/kernels/ppe/ppetrace/ppetracepp/',
-            '/public/src/import/emb/p11/kernels/ppe/boltonlib/exppe',
-            '/public/src/import/public/emb/p11/kernels/ppe/ppetrace/ppetracepp',
-            '/public/src/import/public/emb/p11/kernels/ppe/boltonlib/exppe',
             '/public/src/common/hwpf',
-            '/public/src/import/public/common/generic/ppe/include',
-            '/public/src/import/public/common/generic/ppe/include/plat',
-            '/public/src/import/public/common/generic/ppe/include/std',
-            '/public/src/import/public/common/generic/fapi2/include',
             '/public/src/common/core',
             '/public/src/common/utils',
-            '/public/src/runtime/common/core',
             '/public/src/common/algorithms',
             '/public/src/build/links',
-            '/public/src/runtime/common/plat/ffdc',
-            ]
+        ]
+
+runtime_cmn_inc_paths = [
+    '/public/src/runtime/common/core',
+    '/public/src/runtime/common/plat/ffdc',
+        ]
