@@ -52,12 +52,28 @@ run_command(buildInfo, cmn_genfiles_dir_path)
 
 #Update cmn include path with -I and global source dir.
 cmn_abs_inc_paths = []
+ekb_cmn_abs_inc_paths = []
+runtime_cmn_abs_inc_paths = []
 odyssey_cmn_abs_inc_paths = []
 
 foreach inc_path : meson.get_external_property('cmn_inc_paths')
 
   abs_inc_path = '-I' + meson.global_source_root() + inc_path
   cmn_abs_inc_paths += abs_inc_path
+
+endforeach
+
+foreach inc_path : meson.get_external_property('ekb_cmn_inc_path')
+
+  abs_inc_path = '-I' + pub_import_dir_path + inc_path
+  ekb_cmn_abs_inc_paths += abs_inc_path
+
+endforeach
+
+foreach inc_path : meson.get_external_property('runtime_cmn_inc_paths')
+
+  abs_inc_path = '-I' + meson.global_source_root() + inc_path
+  runtime_cmn_abs_inc_paths += abs_inc_path
 
 endforeach
 
@@ -76,7 +92,7 @@ obj_gen_c = generator(ppetraceapp,
                     arguments : [
                                  '/afs/awd/projects/cte/tools/ppetools/prod/bin/powerpc-eabi-gcc',
                                  meson.get_external_property('cc_flags_cmn'),
-                                 cmn_abs_inc_paths,
+                                 cmn_abs_inc_paths, ekb_cmn_abs_inc_paths,
                                  meson.get_external_property('gcc_defs_cmn'),
                                  '@EXTRA_ARGS@','-o','@OUTPUT@','@INPUT@'],
                     depfile : '@BASENAME@.d'
@@ -87,7 +103,7 @@ obj_gen_cpp = generator(ppetraceapp,
                     arguments : [
                                  '/afs/awd/projects/cte/tools/ppetools/prod/bin/powerpc-eabi-gcc',
                                  meson.get_external_property('cc_flags_cmn'),
-                                 cmn_abs_inc_paths,
+                                 cmn_abs_inc_paths, ekb_cmn_abs_inc_paths,
                                  meson.get_external_property('obj_args_cpp'),
                                  meson.get_external_property('gcc_defs_cmn'),
                                  '@EXTRA_ARGS@','-o','@OUTPUT@','@INPUT@'],
@@ -98,7 +114,7 @@ obj_gen_s = generator(as,
                     output  : '@BASENAME@.o',
                     arguments : [
                                  '-mppe42x',
-                                 cmn_abs_inc_paths,
+                                 cmn_abs_inc_paths, ekb_cmn_abs_inc_paths,
                                  '@EXTRA_ARGS@','-o','@OUTPUT@','@INPUT@']
                     )
 

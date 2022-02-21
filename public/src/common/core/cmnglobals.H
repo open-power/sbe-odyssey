@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2017,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -24,10 +25,16 @@
 #ifndef __CMN_GLOBALS_H
 #define __CMN_GLOBALS_H
 
-#include "sbestates.H"
 #include "sbeutil.H"
 
 #define CMN_GLOBAL cmnGlobal
+
+enum sbeRole
+{
+    SBE_ROLE_MASTER = 0,
+    SBE_ROLE_SLAVE = 1,
+    SBE_ROLE_ALT_MASTER = 2,
+};
 
 class CMNGlobalsSingleton
 {
