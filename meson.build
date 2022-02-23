@@ -45,13 +45,13 @@ as      = find_program('as')
 nm      = find_program('nm')
 strip   = find_program('strip')
 
-#Output path for genfiles as well install files.
+#Output path for install files.
 #Fetch the path from --prefix arg
 output_dir_path = get_option('prefix')
 run_command('mkdir', output_dir_path)
 
-#Runtime common genfiles path
-cmn_genfiles_dir_path = output_dir_path + '/genfiles/'
-run_command('mkdir', cmn_genfiles_dir_path)
+#Outpath for genfiles
+genfiles_dir_path = meson.global_source_root() + '/genfiles/'
+run_command('mkdir', genfiles_dir_path)
 
 subdir('public/src')

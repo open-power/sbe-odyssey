@@ -47,8 +47,16 @@ ppetraceapp = executable('ppetraceapp',
               implicit_include_directories : false,
               native : true)
 
+#Output Path for common genfiles
+cmn_genfiles_dir_path = genfiles_dir_path + '/common/'
+run_command('mkdir', cmn_genfiles_dir_path)
+
 #Common genfiles
-run_command(buildInfo, cmn_genfiles_dir_path)
+result_buildInfo = run_command(buildInfo, cmn_genfiles_dir_path)
+if not (result_buildInfo.returncode() == 0)
+      message(result_buildInfo.stdout())
+      error(result_buildInfo.stderr())
+endif
 
 #Update cmn include path with -I and global source dir.
 cmn_abs_inc_paths = []

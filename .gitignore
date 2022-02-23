@@ -1,10 +1,11 @@
 #Ignore below files
 tags
 
-#Ignore images, obj, simics dir, import dir
+#Ignore images, obj, simics dir, genfiles dir
 images/**
 builddir/**
 simics/**
+genfiles/**
 
 # Ignore Python cache
 __pycache__

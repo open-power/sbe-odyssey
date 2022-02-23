@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/onetime/odyssey/meson.build $
+# $Source: public/src/onetime/odyssey/otprom/core/meson.build $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,14 +22,4 @@
 #
 # IBM_PROLOG_END_TAG
 
-if get_option('otprom').enabled()
-  subdir('otprom')
-endif
-
-if get_option('srom').enabled()
-  subdir('srom')
-endif
-
-if get_option('bldr').enabled()
-  subdir('bldr')
-endif
+odyssey_otprom_fuse_map_json = files('fusemap.json')
