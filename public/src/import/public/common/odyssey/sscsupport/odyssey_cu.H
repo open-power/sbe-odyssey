@@ -62,7 +62,7 @@ extern "C"
             : chipUnitType(type), chipUnitNum(num) {}
 
         odysseyChipUnits_t chipUnitType;  ///< chip unit type
-        uint32_t chipUnitNum;             ///< chip unit instance number
+        uint8_t chipUnitNum;             ///< chip unit instance number
     };
 
     struct odyssey_chipUnitDescription_t
