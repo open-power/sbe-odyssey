@@ -118,7 +118,7 @@ fi
 
 if [ "$1" == "clean" ]; then
     echo "Removing...."
-    CMD="rm -rf $MESON_INSTALL_DIR/odyssey"
+    CMD="rm -rf $MESON_INSTALL_DIR"
     echo $CMD
     $CMD || exit -1
     echo "Cleaning up builddir...."
