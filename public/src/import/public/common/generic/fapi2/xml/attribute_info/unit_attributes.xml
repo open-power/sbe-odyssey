@@ -6,6 +6,7 @@
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
 <!-- Contributors Listed Below - COPYRIGHT 2021,2022                        -->
+<!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
 <!-- Licensed under the Apache License, Version 2.0 (the "License");        -->
@@ -41,7 +42,8 @@
       TARGET_TYPE_PAUC,
       TARGET_TYPE_IOLINK,
       TARGET_TYPE_TBUSC, TARGET_TYPE_TBUSL, TARGET_TYPE_L3CACHE,
-      TARGET_TYPE_INT, TARGET_TYPE_NX
+      TARGET_TYPE_INT, TARGET_TYPE_NX, TARGET_TYPE_PAX, TARGET_TYPE_PAXO, TARGET_TYPE_SMPLINK,
+      TARGET_TYPE_PEC6P, TARGET_TYPE_PEC2P, TARGET_TYPE_PHB248X, TARGET_TYPE_PHB16X
     </targetType>
     <description>
       A unit's position within the chip with respect to similar units.
