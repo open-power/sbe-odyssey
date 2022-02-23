@@ -46,11 +46,13 @@
 void
 __hwmacro_setup(void)
 {
+    uint64_t oirrB = 0;
+    uint64_t oirrC = 0;
+    uint64_t owned_actual = 0;
+    uint64_t reverse_polarity = 0;
+
+#ifdef __OCC_PLAT
     uint64_t oirrA;
-    uint64_t oirrB;
-    uint64_t oirrC;
-    uint64_t owned_actual;
-    uint64_t reverse_polarity;
 
     //verify that this code is running on the correct GPE instance (one time check)
     if((mfspr(SPRN_PIR) & PIR_PPE_INSTANCE_MASK) != APPCFG_OCC_INSTANCE_ID)
@@ -92,6 +94,47 @@ __hwmacro_setup(void)
 
     //All interrupts routed to a GPE will have a bit set in routeA
     owned_actual = oirrA;
+#endif
+
+#ifdef __TCC_PLAT
+
+    //verify that this code is running on the correct GPE instance (one time check)
+    if((mfspr(SPRN_PIR) & PIR_PPE_INSTANCE_MASK) != APPCFG_OCC_INSTANCE_ID)
+    {
+        //APPCFG_OCC_INSTANCE_ID does not match actual instance ID!
+        APPCFG_PANIC(OCCHW_INSTANCE_MISMATCH);
+    }
+
+    // If two engines are ever started at about the same time there could be
+    // a race condition, but that would require an ambitious unit tester,
+    // and won't happen in production.  Also,the engines should be writing
+    // the same values anyway.
+    if(0 == (in32(OCB_OIRR0B) |
+             in32(OCB_OIRR1B) | in32(OCB_OIRR0C) | in32(OCB_OIRR1C)))
+    {
+        //This instance must be the first instance to run within the OCC
+        //This will be done while all external interrupts are masked.
+        //APPCFG_TRACE("Initializing External Interrupt Routing Registers");
+        out32(OCB_OIMR0_OR, 0xffffffff);
+        out32(OCB_OIMR1_OR, 0xffffffff);
+
+        out32(OCB_OIRR0B, (uint32_t)(g_ext_irqs_routeB >> 32));
+        out32(OCB_OIRR1B, (uint32_t)g_ext_irqs_routeB);
+        out32(OCB_OIRR0C, (uint32_t)(g_ext_irqs_routeC >> 32));
+        out32(OCB_OIRR1C, (uint32_t)g_ext_irqs_routeC);
+    }
+
+    //Determine from the routing registers which irqs are owned by this instance
+    //NOTE: If a bit is not set in the routeA register, it is not owned by a GPE
+
+    oirrB = ((uint64_t)in32(OCB_OIRR0B)) << 32;
+    oirrB |= in32(OCB_OIRR1B);
+    oirrC = ((uint64_t)in32(OCB_OIRR0C)) << 32;
+    oirrC |= in32(OCB_OIRR1C);
+
+    //All interrupts routed to a GPE will have a bit set in routeA
+    owned_actual = oirrB;
+#endif
 
     //wittle it down by bits in the routeB register
 #if APPCFG_OCC_INSTANCE_ID & 0x2
