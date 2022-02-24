@@ -68,6 +68,9 @@ usage()
     echo "To check available build option:"
     echo "mesonwrap configure"
     echo ""
+    echo "To reconfigure project setup(Re-run setup phase):"
+    echo "mesonwrap reconfigure"
+    echo ""
     echo "To build a image:"
     echo "mesonwrap setup"
     echo "mesonwrap compile"
@@ -78,7 +81,6 @@ usage()
     echo "To disable parts of build/images pass -D option during setup/configure
     Ex: -Dsppe=disabled
     All available build options can be found in meson_options.txt"
-
 }
 
 #Execute a given command and exit
@@ -131,6 +133,11 @@ fi
 
 if [ "$1" == "sync" ]; then
     CMD="$BASE_CMD configure $MESON_BUILD_DIR -Dplatform=$SBE_PLATFORM"
+    exc_cmd "$CMD"
+fi
+
+if [ "$1" == "reconfigure" ]; then
+    CMD="$BASE_CMD setup $MESON_BUILD_DIR --reconfigure"
     exc_cmd "$CMD"
 fi
 
