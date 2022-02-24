@@ -37,7 +37,7 @@
 #define SROM_SIZE 0x10000
 
 //SRAM Start location
-#define SRAM_ORIGIN 0xFFF80000
+#define SRAM_ORIGIN 0xFFE80000
 
 //SRAM Size
 #define SRAM_SIZE 0x80000
