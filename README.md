@@ -23,6 +23,10 @@ To install required packages to build images:
 To sync platform env variable with existing meson build dir:
     mesonwrap sync
 
+To re run setup phase:
+    mesonwrap reconfigure
+(This is required when there is a change in any of the genfile scripts that can't be tracked by meson and that needs to be re run)
+
 To build a image:
     mesonwrap setup
     mesonwrap build
