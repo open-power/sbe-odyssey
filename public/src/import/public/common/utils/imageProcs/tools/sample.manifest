@@ -1,0 +1,163 @@
+#!/usr/bin/env python3
+# (This is not actually an executable python script, instead a hint for text editors)
+
+# Manifest file for a pak file
+#
+# This manifest describes the input and constraints for creating the image
+# This is simply a nested Python dictionary.  Sorta looks like JSON, but allows comments
+{
+    # Global options that affect the entire archive
+    # These can be overrriden on a per entry basis if needed
+    "global": {
+        # If False, the archive end marker will not be stored. This is useful for fixed-size archives that are
+        # meant to be written to SEEPROM with another archive right behind them.
+        # If True, it will have the standard pak end marker
+        #
+        # Default: False
+        "end-marker": True,
+
+        # The compression method to be used across the image
+        # Can be overridden on a per entry basis as needed
+        #
+        # Default: zlib
+        "method": "zlib",
+    }, # end global
+
+    # Layout of the files within the image
+    # The order given here is preserved and how they will be written out
+    #
+    # The basic format of an entry is:
+    # "path-within-image": {
+    #     "file": "path-to-file-to-place-in-image"
+    # },
+    #
+    # Supported values are:
+    # "file": "path-to-file"
+    # This can be either a fully qualified path or a relative path
+    # If given to izbuild, the basepath option is prepended to the path
+    #
+    # "directory": "path-to-dir"
+    # "pattern": ["*.ring"]
+    # These two need to be specified together
+    # Same as with "file", "directory" can be full or relative and joined with basepath
+    # A "pattern" is required to prevent unintended files from being included in the image
+    # The input is a python list, so multple values can be given: ["*_l1", "*_l2"]
+    #
+    # "method": "value"
+    # Will override the default compress in global
+    #
+    "layout": {
+        #################
+        # All DD1 content
+        #################
+        "dd1/dynamic": {
+            "file": "out/dd1/dynamic",
+            "method": "store",
+        },
+        "dd1/overlays": {
+            "file": "out/dd1/overlays",
+            "method": "zlib_fast"
+        },
+        "dd1/pgpe/hcode": {
+            "file": "out/dd1/pgpe/hcode",
+            "method": "zlib_ppc"
+        },
+        "dd1/pgpe/ppmr_hdr": {
+            "file": "out/dd1/pgpe/ppmr_hdr",
+        },
+        "dd1/qme": {
+            "file": "out/dd1/qme",
+        },
+        "dd1/restore/cpmr_hdr": {
+            "file": "out/dd1/restore/cpmr_hdr",
+        },
+        "dd1/sbe": {
+            "file": "out/dd1/sbe",
+        },
+        "dd1/xgpe/hcode": {
+            "file": "out/dd1/xgpe/hcode",
+        },
+        "dd1/xgpe/xpmr_hdr": {
+            "file": "out/dd1/xgpe/xpmr_hdr",
+        },
+
+        #################
+        # All DD2 content
+        #################
+        "dd2/dynamic": {
+            "file": "out/dd2/dynamic",
+            "method": "store",
+        },
+        "dd2/overlays": {
+            "file": "out/dd2/overlays",
+        },
+        "dd2/pgpe/hcode": {
+            "file": "out/dd2/pgpe/hcode",
+        },
+        "dd2/pgpe/ppmr_hdr": {
+            "file": "out/dd2/pgpe/ppmr_hdr",
+        },
+        "dd2/qme": {
+            "file": "out/dd2/qme",
+        },
+        "dd2/restore/cpmr_hdr": {
+            "file": "out/dd2/restore/cpmr_hdr",
+        },
+        "dd2/sbe": {
+            "file": "out/dd2/sbe",
+        },
+        "dd2/xgpe/hcode": {
+            "file": "out/dd2/xgpe/hcode",
+        },
+        "dd2/xgpe/xpmr_hdr": {
+            "file": "out/dd2/xgpe/xpmr_hdr",
+        },
+
+        ####################
+        # All common content
+        ####################
+        "dyn_features": {
+            "file": "out/dyn_features",
+            "method": "store",
+        },
+        "dyn_services": {
+            "file": "out/dyn_services",
+            "size": 0x800
+        },
+        "iop/iop_fw": {
+            "file": "out/iop/iop_fw",
+        },
+        "ioppe": {
+            "directory": "out/ioppe",
+        #    "pattern": ["ioo", "memregs"],
+            "pattern": ["io*", "mem*"],
+        },
+        #"ioppe/ioo": {
+        #    "file": "out/ioppe/ioo",
+        #},
+        #"ioppe/memregs": {
+        #    "file": "out/ioppe/memregs",
+        #},
+        #"ioppe/nv": {
+        #    "file": "out/ioppe/nv",
+        #},
+        "pgpe/lvl1_bl": {
+            "file": "out/pgpe/lvl1_bl",
+        },
+        "pgpe/lvl2_bl": {
+            "file": "out/pgpe/lvl2_bl",
+        },
+        "restore/self_save_restore": {
+            "file": "out/restore/self_save_restore",
+        },
+        "xgpe/aux_task": {
+            "file": "out/xgpe/aux_task",
+        },
+        "xgpe/lvl1_bl": {
+            "file": "out/xgpe/lvl1_bl",
+        },
+        "xgpe/lvl2_bl": {
+            "file": "out/xgpe/lvl2_bl",
+        },
+    }, # end layout
+} # end dict

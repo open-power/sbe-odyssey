@@ -1,0 +1,240 @@
+#!/usr/bin/env python3
+
+############################################################
+# Imports - Imports - Imports - Imports - Imports - Imports
+############################################################
+# Python provided
+import argparse
+import time
+import datetime
+import sys
+import os
+import textwrap
+import re
+import hashlib
+
+# Add program modules to the path
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "pymod"))
+# Import and init output first
+# All other modules will use the `out` variable created here
+import output
+import pakconstants
+pakconstants.out = output.out()
+from pakconstants import out
+import pakcore as pak
+import pakutils
+import operator
+
+############################################################
+# Functions - Functions - Functions - Functions - Functions
+############################################################
+def cmd_add(args):
+    '''
+    Add files to the archive from the command line
+    If output archive specified exists, it will try to load that data in first
+    '''
+    # Create and load the archive
+    archive = pak.Archive(args.archive)
+    archive.load()
+
+    # Create the manifest object get some sane defaults
+    manifest = pak.Manifest()
+    # Parse the manifest if given on the command line
+    if (args.manifest):
+        manifest.parse(args.manifest)
+
+    # Go through all files passed in and process
+    addFiles = list()
+    for fname in args.file:
+        # A directory, try to load in everything under that
+        if os.path.isdir(fname):
+            for dirpath, _, dirfiles in os.walk(fname):
+                for name in dirfiles:
+                    addFiles.append(os.path(dirpath, name))
+        elif os.path.isfile(fname):
+            addFiles.append(fname)
+        else:
+            raise pak.ArchiveError("File not found: " + fname)
+
+    # All the input files have been processed, put them into the archive
+    for fname in addFiles:
+        with open(fname, "rb") as f:
+            entry = pak.ArchiveEntry()
+            entry.ingest(fname, args.method, f.read())
+            archive.append(entry)
+
+    # Write the new or updated archive
+    return archive.save(manifest)
+
+def cmd_extract(args):
+    '''
+    Extract files out of the given archive to the path specified
+    '''
+    # Create and load the archive
+    archive = pak.Archive(args.archive)
+    archive.load()
+
+    # Filter the list
+    archive = select_files(archive, args.file)
+
+    # Write the files
+    for entry in archive:
+        out.print("Extracting", entry.name)
+        entry.name = os.path.join(args.outdir, entry.name)
+        os.makedirs(os.path.dirname(entry.name), exist_ok=True)
+        with open(entry.name, "wb") as f:
+            f.write(entry.ddata)
+
+def cmd_list(args):
+    '''
+    List the contents of an archive and the pak header information
+    '''
+    # Create and load the archive
+    archive = pak.Archive(args.archive)
+    archive.load()
+
+    # Filter the list
+    archive = select_files(archive, args.file)
+
+    # Write the listing info
+    for entry in archive:
+        entry.build()
+        entry.display()
+
+    out.print("Overall Size: 0x%06X (%s)" % (len(archive.image), pakutils.humanBytes(len(archive.image))))
+
+def cmd_remove(args):
+    '''
+    Remove file(s) from an archive and then rewrite it to same location
+    '''
+    # Create and load the archive
+    archive = pak.Archive(args.archive)
+    archive.load()
+
+    # Remove files
+    for entry in select_files(archive, args.file):
+        out.print("Removing", entry.name)
+        archive.remove(entry)
+
+    # Write it back out
+    return archive.save()
+
+def cmd_hash(args):
+    '''
+    Hash the contents of an archive and write it to a file
+    '''
+    # Create and load the archive
+    archive = pak.Archive(args.archive)
+    archive.load()
+
+    # Filter the list
+    archive = select_files(archive, args.file)
+
+    with open(args.hashfile, "wb") as f:
+        out.print("Writing hash", args.hashfile)
+        out.moreIndent()
+        for entry in sorted(archive, key=operator.attrgetter('name')):
+            out.print(entry.name)
+            hasher = hashlib.new(args.algorithm)
+            hasher.update(entry.cdata)
+            f.write(bytes([len(entry.name)]))
+            f.write(entry.name.encode())
+            f.write(hasher.digest())
+        out.lessIndent()
+        f.write(b'\0')
+
+    return
+
+# Support functions for cmd_* functions
+def _match_files(archive, pattern):
+    pattern = re.compile(re.escape(pattern).replace("\*", ".*").replace("\?", "."))
+    for entry in archive:
+        if pattern.match(entry.name):
+            yield entry
+
+def select_files(archive, patterns):
+    if not patterns:
+        return archive
+
+    result = list()
+    for fname in patterns:
+        matches = list(_match_files(archive, fname)) + list(_match_files(archive, fname+"/*"))
+        if not matches:
+            raise pak.ArchiveError("No files matching '%s' found in archive" % fname)
+        result.extend(matches)
+
+    return result
+
+############################################################
+# Main - Main - Main - Main - Main - Main - Main - Main
+############################################################
+rc = 0
+progStartTime = time.time()
+# Create a generic time stamp we can use throughout the program
+timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+
+################################################
+# Command line options
+# Create the argparser object
+parser = argparse.ArgumentParser(description="Work with hardware .pak files")
+
+# Add optional args shared across all commands
+parser.add_argument('-m', '--manifest', default=None, help="Manifest file describing the archive constraints")
+parser.add_argument('-c', '--console-level', default=out.levels.WARN, type=out.levels.argparse, choices=list(out.levels),
+                      help="The output level to send to send to the console.  BASE is the default")
+
+# Create the sub parser that we'll add each of our sub commands
+subparsers = parser.add_subparsers()
+
+# add sub command
+sub = subparsers.add_parser("add", description="Add files to an archive or replace existing files",
+                            formatter_class=argparse.RawDescriptionHelpFormatter)
+sub.add_argument("archive", help="Archive file, will be created if it does not exist")
+sub.add_argument("file", nargs="+", help="List of files to add; directories will be added recursively")
+sub.add_argument("--method", default=pak.CM.zlib, type=pak.CM.argparse, choices=list(pak.CM), help="Compression method to use")
+sub.epilog = textwrap.dedent('''
+
+examples:
+  > paktool -m <manifest> add archive file1 file2
+''')
+sub.set_defaults(func=cmd_add)
+
+# hash sub command
+sub = subparsers.add_parser("hash", description="Hash a set of archived files")
+sub.add_argument("archive", help="Archive file")
+sub.add_argument("hashfile", help="File name to write the resulting hash data to")
+sub.add_argument("file", nargs="*", help="List of files to hash; their compressed data will be hashed one after the other. If no files are provided, all files in the archive will be hashed.")
+sub.add_argument("-a", "--algorithm", default="sha3_512", help="Hashing algorithm to use; default is sha3_512")
+sub.set_defaults(func=cmd_hash)
+
+# extract sub command
+sub = subparsers.add_parser("extract", description="Extract files from an archive")
+sub.add_argument("archive", help="Archive file")
+sub.add_argument("file", nargs="*", help="List of files to extract; if none are given, all files will be extracted")
+sub.add_argument("-o", "--outdir", default=".", help="Output directory, defaults to current directory")
+sub.set_defaults(func=cmd_extract)
+
+# list sub command
+sub = subparsers.add_parser("list", description="List files in an archive")
+sub.add_argument("archive", help="Archive file")
+sub.add_argument("file", nargs="*", help="List of files to list; if none are given, all files will be listed")
+sub.set_defaults(func=cmd_list)
+
+# remove sub command
+sub = subparsers.add_parser("remove", description="Remove files from an archive")
+sub.add_argument("archive", help="Archive file")
+sub.add_argument("file", nargs="*", help="List of files to remove; if none are given, all files will be removed")
+sub.set_defaults(func=cmd_remove)
+
+# cmdline loaded up, now parse for it and handle what is found
+args = parser.parse_args()
+
+# Set the console output level selected
+out.setConsoleLevel(args.console_level)
+
+# Call the function defined for each sub command
+try:
+    args.func(args)
+except pak.ArchiveError as e:
+    out.error(str(e))
+    sys.exit(1)
