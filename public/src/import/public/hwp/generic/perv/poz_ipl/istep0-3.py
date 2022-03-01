@@ -401,6 +401,12 @@ def ody_sppe_boot_check():
 
 ISTEP(1, 13, "ph_sppe_attr_setup", "SPPE")
 
+def p11s_sppe_attr_setup():
+    pass
+
+def ody_sppe_attr_setup():
+    pass
+
 """
 TODO: Figure out where SEEPROM update goes and how it works
 """
@@ -685,6 +691,12 @@ def p11_sbe_start():
         wait for boot, fail if times out
 
 ISTEP(2, 16, "proc_sbe_attr_setup", "SSBE, TSBE")
+
+def p11s_sbe_attr_setup():
+    pass
+
+def p11t_sbe_attr_setup():
+    pass
 
 ISTEP(2, 17, "pc_pll_initf", "TSBE")
 
