@@ -87,7 +87,8 @@ ISTEP(0, 1, "pre_cfam_reset", "BMC")
 
 def p11_shutdown():
     # This HWP is called both prior to power off as well as prior to pulling CFAM reset during IPL
-    GPWRP = 0x4453FFFF_00000000                   # Disable Write Protection for Root/Perv Control registers (in case the chip has just been reset)
+    # CONTROL_WRITE_PROTECT_DISABLE = 0x4453FFFF
+    GPWRP = CONTROL_WRITE_PROTECT_DISABLE         # Disable Write Protection for Root/Perv Control registers (in case the chip has just been reset)
 
     ROOT_CTRL1.TPFSI_TP_GLB_PERST_OVR_DC = 0      # Assert all PERST# outputs
     ROOT_CTRL0.TPFSI_IO_OCMB_RESET_EN = 1         # Assert OCMB reset
@@ -129,7 +130,8 @@ ISTEP(0, 6, "setup_ref_clock", "BMC")
 
 def p11_setup_ref_clock():
     ## Disable Write Protection for Root/Perv Control registers
-    GPWRP = 0x4453FFFF_00000000
+    # CONTROL_WRITE_PROTECT_DISABLE = 0x4453FFFF
+    GPWRP = CONTROL_WRITE_PROTECT_DISABLE
 
     ## Set RCS control signals to CFAM reset values, apply basic configuration for output clock enables and forced input clock.
     ROOT_CTRL5 = 0
@@ -483,9 +485,9 @@ def p11s_tp_init():
 
     ## Set up chiplet hang pulses
     mod_hangpulse_setup(MCGROUP_GOOD, 1, {{0, 16, 0}, {5, 6, 0}, {6, 7, 0, 1}})
-    mod_hangpulse_setup(N0, 1, {{1, 24, 1}, {3, 15, 1, 1}})
-    mod_hangpulse_setup(N1, 1, {{1, 24, 1}, {3, 15, 1}, {4, 17, 1, 1}})
-    mod_hangpulse_setup(N2, 1, {{1, 22, 1}, {2, 16, 1}, {3, 20, 1, 1}})
+    mod_hangpulse_setup(N0 chiplet, 1, {{1, 24, 1}, {3, 15, 1, 1}})
+    mod_hangpulse_setup(N1 chiplet, 1, {{1, 24, 1}, {3, 15, 1}, {4, 17, 1, 1}})
+    mod_hangpulse_setup(N2 chiplet, 1, {{1, 22, 1}, {2, 16, 1}, {3, 20, 1, 1}})
     mod_hangpulse_setup(all good PAXO, 1, {{1, 3, 0, 1}})
     mod_hangpulse_setup(all good TBUS, 1, {{1, 3, 0, 1}})
     mod_hangpulse_setup(all good MC, 1, {{1, 3, 0, 1}})
@@ -547,7 +549,8 @@ ISTEP(2, 2, "pc_fsi_config", "SPPE")
 
 def p11t_fsi_config():
     ## Disable Write Protection for Root/Perv Control registers
-    GPWRP = 0x4453FFFF_00000000
+    # CONTROL_WRITE_PROTECT_DISABLE = 0x4453FFFF
+    GPWRP = CONTROL_WRITE_PROTECT_DISABLE
 
     ## Set up Tap clock muxing
     ROOT_CTRL4 = 0 (reset value)
@@ -681,14 +684,14 @@ def p11_sbe_start():
     for sbe in (spinal SBE, all Tap SBEs):
         wait for boot, fail if times out
 
-ISTEP(2, 15, "proc_sbe_attr_setup", "SSBE, TSBE")
+ISTEP(2, 16, "proc_sbe_attr_setup", "SSBE, TSBE")
 
-ISTEP(2, 16, "pc_pll_initf", "TSBE")
+ISTEP(2, 17, "pc_pll_initf", "TSBE")
 
 def p11t_pll_initf():
     putRing( pc_pll = perv_pll_cfg ) # perv_pll_cfg for DPLL
 
-ISTEP(2, 17, "pc_pll_setup", "TSBE")
+ISTEP(2, 18, "pc_pll_setup", "TSBE")
 
 def p11t_pll_setup():
     if ATTR_DPLL_BYPASS:
@@ -735,19 +738,19 @@ def p11t_pll_setup():
     ERROR_REG = 0xFFFF_FFFF_FFFF_FFFF
     SLAVE_CONFIG_REG.CFG_MASK_PLL_ERRS[0] = 0
 
-ISTEP(2, 18, "pc_tp_initf", "TSBE")
+ISTEP(2, 19, "pc_tp_initf", "TSBE")
 
 def p11t_tp_initf():
     putRing( tp_initf = perv_func+net_func )
 
-ISTEP(2, 19, "pc_tp_startclocks", "TSBE")
+ISTEP(2, 20, "pc_tp_startclocks", "TSBE")
 
 def p11t_tp_startclocks():
-    mod_start_stop_clocks(perv chiplet, regions=[perv, net])
+    mod_start_stop_clocks(TP chiplet, regions=[perv, net])
     ## Put PLATs into flush mode
     CPLT_CTRL0.CTRL_CC_FLUSHMODE_INH_DC = 0
 
-ISTEP(2, 20, "pc_tp_init", "TSBE")
+ISTEP(2, 21, "pc_tp_init", "TSBE")
 
 def p11t_tp_init():
     # TODO : Set up TOD error routing, error mask via scan inits
@@ -764,14 +767,15 @@ def p11t_tp_init():
 
     ## Set up chiplet hang pulses
     mod_hangpulse_setup(MCGROUP_GOOD, 1, {{0, 16, 0}, {5, 6, 0}, {6, 7, 0, 1}})
-    mod_hangpulse_setup(N0, 1, {{4, 17, 1, 1}})
+    mod_hangpulse_setup(N0 chiplet, 1, {{4, 17, 1, 1}})
 
     ## Set up constant hang pulses
-    mod_constant_hangpulse_setup(i_target, 0x03020000, {{37, 1, 0}, {0, 0, 0}, {9, 1, 0}, {0, 0, 0}})
+    mod_constant_hangpulse_setup(i_target, scomt::tbusl::HANGP_HANG_PULSE_CONFIG_REG, {{37, 1, 0}, {0, 0, 0}, {9, 1, 0}, {0, 0, 0}})
 
     ## Set up special NET_CTRL1 init value for EQs
     with all EQ chiplets via multicast:
-        NET_CTRL1 = 0x00FF_FFFF_0000_0000
+        # EQ_NET_CTRL1_INIT_VALUE = 0x00FF_FFFF_0000_0000
+        NET_CTRL1 = EQ_NET_CTRL1_INIT_VALUE
 
     ## Miscellaneous TP setup
     mod_poz_tp_init_common(i_target)
@@ -793,7 +797,10 @@ def p11t_chiplet_force_on():
 
 ISTEP(3, 2, "proc_chiplet_clk_config", "SSBE, TSBE")
 
-def p11_chiplet_clk_config():
+def p11t_chiplet_clk_config():
+    poz_chiplet_clk_config()
+
+def p11s_chiplet_clk_config():
     poz_chiplet_clk_config()
 
 def ody_chiplet_clk_config():
@@ -871,7 +878,10 @@ def poz_chiplet_reset(const uint8_t i_chiplet_delays[64]):
 ISTEP(3, 5, "proc_chiplet_unused_psave", "SSBE, TSBE")
 # NOT executed as part of hotplug
 
-def p11_chiplet_unused_psave():
+def p11t_chiplet_unused_psave():
+    poz_chiplet_unused_psave()
+
+def p11s_chiplet_unused_psave():
     poz_chiplet_unused_psave()
 
 def ody_chiplet_unused_psave():
@@ -904,7 +914,10 @@ def p11t_chiplet_pll_initf():
 
 ISTEP(3, 7, "proc_chiplet_pll_setup", "SSBE, TSBE")
 
-def p11_chiplet_pll_setup():
+def p11t_chiplet_pll_setup():
+    poz_chiplet_pll_setup()
+
+def p11s_chiplet_pll_setup():
     poz_chiplet_pll_setup()
 
 def ody_chiplet_pll_setup():
@@ -940,11 +953,17 @@ def poz_chiplet_pll_setup():
 
 ISTEP(3, 8, "proc_bist_repr_initf", "SSBE, TSBE")
 
-def poz_bist_repr_initf():
+def p11s_bist_repr_initf():
     if not ATTR_ENABLE_BIST:
         return
 
-    p11_chiplet_repr_initf()
+    p11s_chiplet_repr_initf()
+
+def p11t_bist_repr_initf():
+    if not ATTR_ENABLE_BIST:
+        return
+
+    p11t_chiplet_repr_initf()
 
 def ody_bist_repr_initf():
     if not ATTR_ENABLE_BIST:
@@ -954,7 +973,10 @@ def ody_bist_repr_initf():
 
 ISTEP(3, 9, "proc_abist", "SSBE, TSBE")
 
-def p11_abist():
+def p11s_abist():
+    poz_abist()
+
+def p11t_abist():
     poz_abist()
 
 def ody_abist():
@@ -968,7 +990,10 @@ def poz_abist():
 
 ISTEP(3, 10, "proc_lbist", "SSBE, TSBE")
 
-def p11_lbist():
+def p11s_lbist():
+    poz_abist()
+
+def p11t_lbist():
     poz_abist()
 
 def ody_lbist():
@@ -986,7 +1011,10 @@ def poz_lbist():
 
 ISTEP(3, 11, "proc_chiplet_repr_initf", "SSBE, TSBE")
 
-def p11_chiplet_repr_initf():
+def p11s_chiplet_repr_initf():
+    poz_chiplet_repr_initf()
+
+def p11t_chiplet_repr_initf():
     poz_chiplet_repr_initf()
 
 def ody_chiplet_repr_initf():
@@ -997,7 +1025,10 @@ def poz_chiplet_repr_initf():
 
 ISTEP(3, 12, "proc_chiplet_arrayinit", "SSBE, TSBE")
 
-def p11_chiplet_arrayinit():
+def p11s_chiplet_arrayinit():
+    poz_chiplet_arrayinit()
+
+def p11t_chiplet_arrayinit():
     poz_chiplet_arrayinit()
 
 def ody_chiplet_arrayinit():
@@ -1025,7 +1056,10 @@ def p11t_chiplet_undo_force_on():
 
 ISTEP(3, 14, "proc_chiplet_initf", "SSBE, TSBE")
 
-def p11_chiplet_initf():
+def p11s_chiplet_initf():
+    poz_chiplet_initf()
+
+def p11t_chiplet_initf():
     poz_chiplet_initf()
 
 def ody_chiplet_initf():
@@ -1060,7 +1094,7 @@ def p11t_chiplet_startclocks():
     poz_chiplet_startclocks(MCGROUP_GOOD_NO_TPEQ)
 
     ## Starting EQ chiplet clocks
-    poz_chiplet_startclocks(MCGROUP_GOOD_NO_EQ, cc::P11T_EQ_PERV | cc::P11T_EQ_QME | cc::P11T_EQ_CLKADJ)
+    poz_chiplet_startclocks(MCGROUP_EQ, cc::P11T_EQ_PERV | cc::P11T_EQ_QME | cc::P11T_EQ_CLKADJ)
 
 def ody_chiplet_startclocks():
     poz_chiplet_startclocks(MCGROUP_GOOD_NO_TP)
@@ -1099,7 +1133,10 @@ def ody_chiplet_fir_init():
 
 ISTEP(3, 22, "proc_chiplet_dts_init", "SSBE, TSBE")
 
-def p11_chiplet_dts_init():
+def p11s_chiplet_dts_init():
+    poz_chiplet_dts_init()
+
+def p11t_chiplet_dts_init():
     poz_chiplet_dts_init()
 
 def ody_chiplet_dts_init():
@@ -1178,6 +1215,12 @@ ISTEP(3, 32, "proc_tbus_setup", "SSBE, TSBE")
 
 ISTEP(3, 40, "proc_fabricinit", "SSBE, TSBE")
 # run on Spinal only, except if we're on a Tap-only sim mode, then run on Tap
+
+def p11s_fabricinit():
+    p11_fabricinit(i_target)
+
+def p11t_fabricinit():
+    p11_fabricinit(i_target)
 
 def p11_fabricinit():
     if on TSBE and ATTR_IPL_MODE != TAP_ONLY_SIMULATION:

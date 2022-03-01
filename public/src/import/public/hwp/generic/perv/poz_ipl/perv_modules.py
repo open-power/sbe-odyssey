@@ -68,7 +68,8 @@ def mod_poll_pll_lock(target<PERV|MC, MCAST_AND>, pll_lock_bits i_pll_mask):
 
 # Poll for PLL lock using the FSI2PIB status register, for cases where the PCB is not up yet
 def mod_poll_pll_lock_fsi2pib(target<ANY_POZ_CHIP>, pll_lock_bits i_pll_mask):
-    return _mod_poll_pll_lock(i_target, 0x50000, i_pll_mask << 44)
+    # FSI2PIB_STATUS_MIRROR = 0x50000
+    return _mod_poll_pll_lock(i_target, FSI2PIB_STATUS_MIRROR, i_pll_mask << 44)
 
 ISTEP(99, 99, "poz_perv_mod_rcs", "")
 
@@ -238,7 +239,8 @@ def mod_cbs_start(target<ANY_POZ_CHIP>, bool start_sbe=true):
     CBS_CS.START_BOOT_SEQUENCER = 1   # Start CBS
     # Leave START_BOOT_SEQUENCER at 1 to prevent accidental restarts
 
-    wait until CBS_CS.INTERNAL_STATE_VECTOR == 0x002, time out after 200 x delay(640us, 750kcyc)
+    # CBS_STATE_IDLE = 0x002
+    wait until CBS_CS.INTERNAL_STATE_VECTOR == CBS_STATE_IDLE, time out after 200 x delay(640us, 750kcyc)
     if timed out:
         ASSERT(CBS_NOT_IN_IDLE_STATE)
 
@@ -261,21 +263,24 @@ def mod_setup_clockstop_on_xstop(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_d
     if not ATTR_CLOCKSTOP_ON_XSTOP:
         return
 
+    # XSTOP1_INIT_VALUE = 0x97FFE00000000000
     # you can copy this code from p10_sbe_chiplet_fir_init.C
     if ATTR_CLOCKSTOP_ON_XSTOP[bit EPS_FIR_CLKSTOP_ON_XSTOP_MASK1_SYS_XSTOP_STAGED_ERR]:
         ## Staged xstop is masked, leave all delays at 0 for fast stopping
         with MCGROUP_ALL_BUT_TP:
-            XSTOP1 = 0x97FFE00000000000
+            XSTOP1 = XSTOP1_INIT_VALUE
     else:
         ## Staged xstop is unmasked, set up per-chiplet delays
         for chiplet in MCGROUP_ALL_BUT_TP:
-            XSTOP1 = 0x97FFE00000000000
+            XSTOP1 = XSTOP1_INIT_VALUE
             XSTOP1.WAIT_CYCLES = i_chiplet_delays[chiplet.getChipletNumber()]
 
     ## Enable clockstop on checkstop
     EPS_FIR_CLKSTOP_ON_XSTOP_MASK1.flush<1>.insertFromRight<0, 8>(ATTR_CLOCKSTOP_ON_XSTOP);
 
 def mod_hangpulse_setup(target<PERV | MC>, uint8_t i_pre_divider, hang_pulse_t *i_hangpulse_table):
+    PRE_COUNTER_REG = 0
+    PRE_COUNTER_REG.PRE_COUNTER = i_pre_divider
     while True:
         HANG_PULSE_0_REG = 0
         HANG_PULSE_0_REG.HANG_PULSE_REG_0 = i_hangpulse_table->value
@@ -309,7 +314,11 @@ def mod_multicast_setup(target<ANY_POZ_CHIP>, uint8_t i_group_id, uint64_t i_chi
     l_required_group_members = l_eligible_chiplets & i_chiplets
 
     ## Determine current group members
-    l_current_group_members = getScom(i_target, 0x500F0001 | ((uint32_t)i_group_id << 24))
+    # MC_GROUP_MEMBERSHIP_BITX_READ = 0x500F0001
+    # This performs a multicast read with the BITX merge operation.
+    # It reads a register that has bit 0 tied to 1, so the return value
+    # will have a 1 for each chiplet that is a member of the targeted group.
+    l_current_group_members = getScom(i_target, MC_GROUP_MEMBERSHIP_BITX_READ | ((uint32_t)i_group_id << 24))
 
     ## Update group membership where needed
     for i in 0..63:
@@ -321,10 +330,11 @@ def mod_multicast_setup(target<ANY_POZ_CHIP>, uint8_t i_group_id, uint64_t i_chi
 
         const uint64_t prev_group = have ? i_group_id : 7;
         const uint64_t new_group  = want ? i_group_id : 7;
-        putScom(i_target, (0xF0001 + i_group_id) | (i << 24), (new_group << 58) | (prev_group << 42));
+        putScom(i_target, (PCB_RESPONDER_MULTICAST_GROUP_1 + i_group_id) | (i << 24), (new_group << 58) | (prev_group << 42));
 
 def mod_poz_tp_init_common(target<ANY_POZ_CHIP>):
-    HOST_MASK_REG = 0xFC00_0000_0000_0000    # Set up IPOLL mask
+    # IPOLL_MASK_INIT = 0xFC00_0000_0000_0000
+    HOST_MASK_REG = IPOLL_MASK_INIT          # Set up IPOLL mask
     ROOT_CTRL0.GLOBAL_EP_RESET_DC = 0        # Drop Global Endpoint reset
     CPLT_CTRL2 = ATTR_PG(PERV)               # Transfer PERV partial good attribute into region good register
     PERV_CTRL0.TP_TCPERV_VITL_CG_DIS = 0     # Enabe PERV vital clock gating

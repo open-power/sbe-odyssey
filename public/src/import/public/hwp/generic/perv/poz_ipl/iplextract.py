@@ -37,26 +37,46 @@ def replace(string, pattern, substitution):
     return result + string[pos:]
 
 class HWP(object):
-    default_params = [
-        ("p11t_", "target<TAP_CHIP>"),
-        ("p11s_", "target<HUB_CHIP>"),
-        ("p11_",  "target<HUB_CHIP>"),
-        ("ody_",  "target<OCMB_CHIP>"),
-        ("zme_",  "target<PROC_CHIP>"),
-        ("poz_",  "target<ANY_POZ_CHIP>"),
-    ]
+    target_types = {
+        "p11t": "COMPUTE_CHIP",
+        "p11s": "HUB_CHIP",
+        "p11":  "HUB_CHIP",
+        "ody":  "OCMB_CHIP",
+        "zme":  "PROC_CHIP",
+        "poz":  "ANY_POZ_CHIP",
+    }
+
+    chip_types = {
+        "p11t": "pc",
+        "p11s": "ph",
+        "p11":  "ph",
+        "ody":  "odyssey",
+        "zme":  "pu",
+    }
 
     def __init__(self, istep, name, params):
         self.istep = istep
         self.name = name
         self.params = params
         if not self.params:
-            for prefix, params in self.default_params:
-                if self.name.startswith(prefix):
-                    self.params = params
-                    break
+            try:
+                self.params = "target<%s>" % self.target_type
+            except KeyError:
+                pass
         self.body = []
         self.regs = {}
+
+    @property
+    def target_type(self):
+        return self.target_types[self.prefix]
+
+    @property
+    def prefix(self):
+        return self.name.split("_")[0]
+
+    @property
+    def chip_type(self):
+        return self.chip_types[self.prefix]
 
     target_re = re.compile(r"target<(?P<types>.*?)>")
     default_re = re.compile(r"=.*?(,|$)")
@@ -278,6 +298,22 @@ def generate_shells(outdir, steps):
             with open(path.join(outdir, hwp.name + ".H"), "wt") as f:
                 f.write(h_template.render(hwp=hwp))
 
+def generate_wrappers(outdir, steps):
+    os.makedirs(outdir, exist_ok=True)
+
+    env = jinja2.Environment(loader=jinja2.FileSystemLoader(path.dirname(sys.argv[0])), trim_blocks=True, lstrip_blocks=True)
+    c_template = env.get_template("wrapper.C.template")
+
+    for step in steps:
+        for hwp in step.hwps:
+            try:
+                hwp.chip_type
+            except KeyError:
+                continue
+
+            with open(path.join(outdir, hwp.name + "_wrap.C"), "wt") as f:
+                f.write(c_template.render(hwp=hwp))
+
 def generate_modules(outdir, steps):
     os.makedirs(outdir, exist_ok=True)
 
@@ -295,6 +331,7 @@ if __name__ == "__main__":
     parser = ArgumentParser(description="Extract information from IPL pseudocode script")
     parser.add_argument("script", help="Script file")
     parser.add_argument("--shells", metavar="outdir", help="Generate HWP shells in outdir")
+    parser.add_argument("--wrappers", metavar="outdir", help="Generate wrappers in outdir")
     parser.add_argument("--modules", metavar="outdir", help="Generate module shells in outdir")
     parser.add_argument("--scom", help="Path to SCOM headers")
     parser.add_argument("--empty", action="store_true", help="Generate HWP/module shells without instructions")
@@ -347,6 +384,9 @@ if __name__ == "__main__":
 
     if args.shells:
         generate_shells(args.shells, steps)
+
+    if args.wrappers:
+        generate_wrappers(args.wrappers, steps)
 
     if args.modules:
         generate_modules(args.modules, steps)
