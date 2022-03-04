@@ -59,7 +59,7 @@ SECTIONS
 
         . = ALIGN(8);
         ctor_start_address = .;
-        *(.ctors) *(.ctors.*)
+        KEEP(*(.ctors)) KEEP(*(.ctors.*))
         ctor_end_address = .;
         *(rodata*) *(.got2) } > sram
 
