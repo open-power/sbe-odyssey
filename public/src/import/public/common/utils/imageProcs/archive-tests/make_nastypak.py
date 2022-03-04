@@ -2,7 +2,7 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/import/public/common/utils/imageProcs/archive-tests/make_nastyzip.py $
+# $Source: public/src/import/public/common/utils/imageProcs/archive-tests/make_nastypak.py $
 #
 # OpenPOWER sbe Project
 #
@@ -24,7 +24,7 @@
 #
 # IBM_PROLOG_END_TAG
 """
-Create a zip file with specially constructed compressed data:
+Create a pak file with specially constructed compressed data:
 30K deflated, followed by 4K stored, followed by 30+K deflated
 
 This is supposed to exercise the streaming code in tinflate.C,
@@ -41,25 +41,28 @@ from zlib import *
 from collections import namedtuple
 from struct import Struct
 
-ZipHeader = namedtuple("ZipHeader", "magic, version, flags, method, mtime, mdate, crc32, compsize, uncompsize, fnlen, exlen")
-ZipHeaderStruct = Struct("<IHHHHHIIIHH")
-ZIP_MAGIC = 0x04034B50
-ZIP_VERSION = 20
-METHOD_DEFLATE = 8
+PakHeader = namedtuple("PakHeader", "magic, version, hesize, flags, method, nsize, crc, csize, dsize, psize")
+PakFooterStruct = Struct(">II")
+PakHeaderStruct = Struct(">IHHBBHIIII")
+PAK_MAGIC = 0x50414B21
+PAK_END = 0x2F50414B
+PAK_VERSION = 1
+METHOD_DEFLATE = 2
 
 def comp(data, zdict, level, flush=Z_SYNC_FLUSH):
     c = compressobj(wbits=-15, level=level, zdict=zdict)
     return c.compress(data) + c.flush(flush)
 
-def craft_zip(zip_name, uncompressed_data, compressed_data, compressed_name):
-    # construct the zip header
+def craft_pak(pak_name, uncompressed_data, compressed_data, compressed_name):
+    # construct the pak header
     fname = compressed_name.encode()
-    compressed_data += bytes(-len(compressed_data) & 7)
-    padding = -(ZipHeaderStruct.size + len(fname) + len(compressed_data)) & 7
-    zip_header = ZipHeader(ZIP_MAGIC, ZIP_VERSION, 0, METHOD_DEFLATE, 0, 0, crc32(uncompressed_data), len(compressed_data), len(uncompressed_data), len(fname), padding)
+    data_padding = -len(compressed_data) & 7
+    hdr_padding = -(PakHeaderStruct.size + len(fname)) & 7
+    pak_header = PakHeader(PAK_MAGIC, PAK_VERSION, 20 + len(fname) + hdr_padding, 0, METHOD_DEFLATE, len(fname), crc32(uncompressed_data), len(compressed_data), len(uncompressed_data), len(compressed_data) + data_padding)
 
-    # write zip and bin
-    open(zip_name, "wb").write(ZipHeaderStruct.pack(*zip_header) + fname + bytes(padding) + compressed_data)
+    # write pak and bin
+    pak_data = PakHeaderStruct.pack(*pak_header) + fname + bytes(hdr_padding) + compressed_data + bytes(data_padding)
+    open(pak_name, "wb").write(pak_data + PakFooterStruct.pack(PAK_END, len(pak_data)))
     open(compressed_name, "wb").write(uncompressed_data)
 
 # grab arbitrary compressible data from the test suite for test data
@@ -71,13 +74,13 @@ data3 = open("test", "rb").read(32*1024)
 compressed_data = comp(data1, bytes(), 9) + comp(data2, data1, 0) + comp(data3, data1+data2, 9, Z_FINISH)
 uncompressed_data = data1 + data2 + data3
 
-craft_zip("nastytest.zip", uncompressed_data, compressed_data, "nastytest.bin")
+craft_pak("nastytest.pak", uncompressed_data, compressed_data, "nastytest.bin")
 
 
-# Craft a second special zip that tests out hash block boundaries
+# Craft a second special pak that tests out hash block boundaries
 # Any "errors" in this string are intentional to hit the target compressed size, do not change!
 uncompressed_data = b"This string is going to compress down to a little less than a hash hash boundary! "
 compressed_data = comp(uncompressed_data, bytes(), 9)
 compressed_data = compressed_data * 100 + comp(uncompressed_data, bytes(), 9, Z_FINISH)
 uncompressed_data = uncompressed_data * 101
-craft_zip("hashblockbndy.zip", uncompressed_data, compressed_data, "hashblockbndy.bin")
+craft_pak("hashblockbndy.pak", uncompressed_data, compressed_data, "hashblockbndy.bin")
