@@ -29,55 +29,35 @@
     #include "tinflate.H"
 #endif
 
-struct uint16le
-{
-    uint16_t v;
-    uint16_t value() const
-    {
-        return le16toh(v);
-    }
-};
 
-struct uint32le
-{
-    uint32_t v;
-    uint32_t value() const
-    {
-        return le32toh(v);
-    }
-};
+static const uint32_t PAK_START = 0x50414B21; // PAK!
+static const uint32_t PAK_END = 0x2F50414B; // /PAK
+static const uint8_t PAK_METHOD_STORE = 1;
+static const uint8_t PAK_METHOD_ZLIB = 2;
+static const uint8_t PAK_METHOD_ZLIB_FAST = 3;
+static const uint8_t PAK_METHOD_ZLIB_PPC = 4;
 
-struct unaligned_uint32le
+// The header is comprised of two parts, the core and extended
+// Must read the core first to check magic and get extended header size
+struct PakFileHeaderCore
 {
-    uint16_t lo, hi;
-    uint32_t value() const
-    {
-        return (uint32_t(le16toh(hi)) << 16) | le16toh(lo);
-    }
-};
-
-static const uint32_t ZIPFILE_MAGIC = 0x04034B50;
-static const uint32_t END_MAGIC = 0xFFFE4B50;
-static const uint16_t METHOD_STORE = 0;
-static const uint16_t METHOD_DEFLATE = 8;
-static const uint16_t METHOD_DEFLATEPPC = 0x0108;
-
-struct ZipFileHeader
-{
-    uint32le iv_magic;  //0
-    uint16le iv_version; //4
-    uint16le iv_flags;   //6
-    uint16le iv_method;  //8
-    uint16le iv_mtime;   //10
-    uint16le iv_mdate;   //12
-    unaligned_uint32le iv_crc32;    //14
-    unaligned_uint32le iv_compsize; //18
-    unaligned_uint32le iv_uncompsize; //22
-    uint16le iv_fnlen; //26
-    uint16le iv_exlen; //28
-    char iv_fname[0];  //30
+    uint32_t iv_magic;   //0
+    uint16_t iv_version; //4
+    uint16_t iv_hesize;  //6
 } __attribute__((packed));
-static_assert(sizeof(ZipFileHeader) == 30, "ZipFileHeader defined incorrectly, must be 30 bytes");
+static_assert(sizeof(PakFileHeaderCore) == 8, "PakFileHeaderCore defined incorrectly, must be 8 bytes");
+
+struct PakFileHeaderExtended
+{
+    uint8_t iv_flags;    //0
+    uint8_t iv_method;   //1
+    uint16_t iv_nsize;   //2
+    uint32_t iv_crc;     //4
+    uint32_t iv_csize;   //8
+    uint32_t iv_dsize;   //12
+    uint32_t iv_psize;   //16
+    char* iv_name;       //20
+} __attribute__((packed));
 
 #ifdef __USE_SHA3__
 ARC_RET_t FileArchive::Entry::stream_uncompressed_with_hash(StreamReceiver& i_receiver, void* i_scratch, sha3_t* o_hash)
@@ -116,10 +96,10 @@ ARC_RET_t FileArchive::Entry::stream_uncompressed_with_hash(StreamReceiver& i_re
 
 ARC_RET_t FileArchive::Entry::stream_decompress(StreamReceiver& i_receiver, void* i_scratch, sha3_t* o_hash)
 {
-    if (iv_method != METHOD_STORE)
+    if (iv_method != PAK_METHOD_STORE)
     {
 #ifdef __USE_COMPRESSION__
-        const int filter = (iv_method == METHOD_DEFLATEPPC) ? TINF_FILTER_PPC : TINF_FILTER_NONE;
+        const int filter = (iv_method == PAK_METHOD_ZLIB_PPC) ? TINF_FILTER_PPC : TINF_FILTER_NONE;
         return tinf_uncompress(i_scratch, STREAM_SCRATCH_SIZE, iv_compressedData, iv_compressedSize, &i_receiver, o_hash,
                                filter);
 #else
@@ -172,10 +152,10 @@ ARC_RET_t FileArchive::Entry::decompress(void* o_buffer, uint32_t i_size, sha3_t
         return ARC_INPUT_BUFFER_OVERFLOW;
     }
 
-    if (iv_method != METHOD_STORE)
+    if (iv_method != PAK_METHOD_STORE)
     {
 #ifdef __USE_COMPRESSION__
-        const int filter = (iv_method == METHOD_DEFLATEPPC) ? TINF_FILTER_PPC : TINF_FILTER_NONE;
+        const int filter = (iv_method == PAK_METHOD_ZLIB_PPC) ? TINF_FILTER_PPC : TINF_FILTER_NONE;
         return tinf_uncompress(o_buffer, i_size, iv_compressedData, iv_compressedSize, NULL, o_hash, filter);
 #else
         return ARC_FUNCTIONALITY_NOT_SUPPORTED;
@@ -202,7 +182,7 @@ ARC_RET_t FileArchive::Entry::decompress(void* o_buffer, uint32_t i_size, sha3_t
 
 ARC_RET_t FileArchive::Entry::get_stored_data_ptr(const void*& o_buffer)
 {
-    if (iv_method != METHOD_STORE)
+    if (iv_method != PAK_METHOD_STORE)
     {
         ARC_ERROR("Attempting to get stored data pointer for compressed file");
         return ARC_FUNCTIONALITY_NOT_SUPPORTED;
@@ -215,7 +195,7 @@ ARC_RET_t FileArchive::Entry::get_stored_data_ptr(const void*& o_buffer)
 #ifdef __USE_HWP_STREAM__
 ARC_RET_t FileArchive::Entry::get_stored_data_stream(fapi2::hwp_array_istream& o_stream)
 {
-    if (iv_method != METHOD_STORE)
+    if (iv_method != PAK_METHOD_STORE)
     {
         ARC_ERROR("Attempting to get stored data pointer for compressed file");
         return ARC_FUNCTIONALITY_NOT_SUPPORTED;
@@ -242,10 +222,17 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
             return ARC_FILE_CORRUPTED;
         }
 
-        const ZipFileHeader* hdr = (ZipFileHeader*)ptr;
-        const uint32_t magic = hdr->iv_magic.value();
+        // Read just the first 8 bytes to check magic
+        // This prevents any out of bound access just to read the whole header
+        PakFileHeaderCore hdrc;
+        memcpy(&hdrc, ptr, 8);
+        // The pak layout is big endian
+        hdrc.iv_magic = be32toh(hdrc.iv_magic);
+        hdrc.iv_version = be16toh(hdrc.iv_version);
+        hdrc.iv_hesize = be16toh(hdrc.iv_hesize);
 
-        if (magic == END_MAGIC)
+        // Check the magic to make sure we are at the start of an entry
+        if (hdrc.iv_magic == PAK_END)
         {
             if (i_fname)
             {
@@ -254,52 +241,69 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
 #else
                 ARC_ERROR("File not found: %s", i_fname);
 #endif
-
                 return ARC_FILE_NOT_FOUND;
             }
             else
             {
-                o_ptr = ptr + 4;
+                // The end magic is 4 bytes + 4 bytes of total size
+                o_ptr = ptr + 8;
                 return ARC_OPERATION_SUCCESSFUL;
             }
         }
 
-        if (magic != ZIPFILE_MAGIC)
+        if (hdrc.iv_magic != PAK_START)
         {
-            ARC_ERROR("Incorrect file header magic value: 0x%08X", magic);
+            ARC_ERROR("Incorrect file header magic value: 0x%08X, expected: 0x%08X", hdrc.iv_magic, PAK_START);
             o_ptr = ptr;
             return ARC_FILE_CORRUPTED;
         }
 
-        const uint32_t hdr_len = sizeof(*hdr) + hdr->iv_fnlen.value() + hdr->iv_exlen.value();
-        const uint32_t compsize = hdr->iv_compsize.value();
-        ptr += hdr_len;
+        // The header core checked out, advance to the extended data
+        ptr += 8;
+
+        // Safe to read in the header extended
+        // If the version were to change - that would be handled here
+        // Do this in two pieces:
+        // 1) Copy in the values for the fixed length vars
+        // 2) Set iv_name to name start in ptr to avoid allocating a new copy of the name
+        PakFileHeaderExtended hdre;
+        size_t hdreFixedLen = 20;
+        memcpy(&hdre, ptr, hdreFixedLen);
+        hdre.iv_name = (char*)(ptr + hdreFixedLen);
+        // The pak layout is big endian
+        hdre.iv_nsize = be16toh(hdre.iv_nsize);
+        hdre.iv_crc = be32toh(hdre.iv_crc);
+        hdre.iv_csize = be32toh(hdre.iv_csize);
+        hdre.iv_dsize = be32toh(hdre.iv_dsize);
+        hdre.iv_psize = be32toh(hdre.iv_psize);
+
+        // Advance over the extended header to the data
+        ptr += hdrc.iv_hesize;
 
         /*
-         * The file name in the ZIP header is not zero-terminated,
-         * so we first compare the name length and if that matches
-         * we use memcmp.
+         * The file name in the pak header is not zero-terminated
+         * Use the length first and then memcmp to find the file
          */
-        if (i_fname && (hdr->iv_fnlen.value() == fname_len)
-            && !memcmp(hdr->iv_fname, i_fname, fname_len))
+        if (i_fname && (hdre.iv_nsize == fname_len)
+            && !memcmp(hdre.iv_name, i_fname, fname_len))
         {
-            const uint16_t method = hdr->iv_method.value();
 #ifndef __USE_COMPRESSION__
 
-            if(method == METHOD_DEFLATE || method == METHOD_DEFLATEPPC)
+            if(hdre.iv_method == PAK_METHOD_ZLIB || hdre.iv_method == PAK_METHOD_ZLIB_FAST
+               || hdre.iv_method == PAK_METHOD_ZLIB_PPC)
             {
                 ARC_ERROR("Archive is compressed, "
                           "but compression support is not enabled");
                 return ARC_FUNCTIONALITY_NOT_SUPPORTED;
             }
 
-            if (method != METHOD_STORE)
+            if (hdre.iv_method != PAK_METHOD_STORE)
 #else
-            if (method != METHOD_STORE && method != METHOD_DEFLATE
-                && method != METHOD_DEFLATEPPC)
+            if (hdre.iv_method != PAK_METHOD_STORE && hdre.iv_method != PAK_METHOD_ZLIB
+                && hdre.iv_method != PAK_METHOD_ZLIB_FAST && hdre.iv_method != PAK_METHOD_ZLIB_PPC)
 #endif
             {
-                ARC_ERROR("Unsupported compression format: 0x%04x", method);
+                ARC_ERROR("Unsupported compression format: 0x%04x", hdre.iv_method);
                 return ARC_FUNCTIONALITY_NOT_SUPPORTED;
             }
 
@@ -309,21 +313,24 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
                 return ARC_FILE_CORRUPTED;
             }
 
-            if (compsize & 7)
+            if (hdre.iv_psize & 7)
             {
-                ARC_ERROR("Unaligned compressed size: %d", compsize);
+                ARC_ERROR("Unaligned payload size: %d", hdre.iv_dsize);
                 return ARC_FILE_CORRUPTED;
             }
 
-            o_entry->iv_method = method;
+            // Everything checks out, setup the return data
+            o_entry->iv_method = hdre.iv_method;
             o_entry->iv_compressedData = ptr;
-            o_entry->iv_compressedSize = compsize;
-            o_entry->iv_uncompressedSize = hdr->iv_uncompsize.value();
+            o_entry->iv_compressedSize = hdre.iv_csize;
+            o_entry->iv_uncompressedSize = hdre.iv_dsize;
+            // Advance to the end of the entry
+            o_ptr = ptr + hdre.iv_psize;
             return ARC_OPERATION_SUCCESSFUL;
         }
 
         // Not the right file, skip to the next header
-        ptr += compsize;
+        ptr += hdre.iv_psize;
     }
 }
 

@@ -91,7 +91,8 @@ void checkFile(string fname, void* unpacked, FileArchive::Entry& entry, sha3_t* 
         sha3_t expect_hash;
 
         sha3_init(&ctx);
-        sha3_update(&ctx, entry.iv_compressedData, entry.iv_method != 0 ? entry.iv_compressedSize : entry.iv_uncompressedSize);
+        sha3_update(&ctx, entry.iv_compressedData,
+                    entry.iv_method != 1 ? ((entry.iv_compressedSize + 7) & ~7) : entry.iv_uncompressedSize);
         sha3_final(&expect_hash, &ctx);
 
         if (memcmp(hash, expect_hash, sizeof(expect_hash)))
