@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -308,6 +309,8 @@ extern "C" void __sbe_register_saveoff()
 extern "C" void __sbe_machine_check_handler()
 {
     asm(
+    "# TODO: remove halt and execute register saveoff\n"
+    "b pk_halt\n"
     "# reclaim function callstack\n"
     "#lwz     %r0,12(%r1)\n"
     "#mtlr    %r0\n"
