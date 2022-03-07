@@ -483,6 +483,7 @@ def p11s_tp_init():
     # TODO : Set up perv LFIR, XSTOP_MASK, RECOV_MASK via scan inits
 
     ## Start using PCB network
+    ROOT_CTRL0.GLOBAL_EP_RESET_DC = 0        # Drop Global Endpoint reset
     mod_switch_pcbmux(i_target, mux::PCB2PCB)
 
     ## Set up static multicast groups
@@ -509,6 +510,7 @@ def ody_tp_init():
     # TODO : Set up perv LFIR, XSTOP_MASK, RECOV_MASK via scan inits
 
     ## Start using PCB network
+    ROOT_CTRL0.GLOBAL_EP_RESET_DC = 0        # Drop Global Endpoint reset
     mod_switch_pcbmux(i_target, mux::PCB2PCB)
 
     ## Set up static multicast groups
@@ -759,8 +761,6 @@ ISTEP(2, 20, "pc_tp_startclocks", "TSBE")
 
 def p11t_tp_startclocks():
     mod_start_stop_clocks(TP chiplet, regions=[perv, net])
-    ## Put PLATs into flush mode
-    CPLT_CTRL0.CTRL_CC_FLUSHMODE_INH_DC = 0
 
 ISTEP(2, 21, "pc_tp_init", "TSBE")
 
@@ -769,6 +769,7 @@ def p11t_tp_init():
     # TODO : Set up perv LFIR, XSTOP_MASK, RECOV_MASK via scan inits
 
     ## Start using PCB network
+    ROOT_CTRL0.GLOBAL_EP_RESET_DC = 0        # Drop Global Endpoint reset
     mod_switch_pcbmux(i_target, mux::PCB2PCB)
 
     ## Set up static multicast groups
@@ -781,8 +782,9 @@ def p11t_tp_init():
     mod_hangpulse_setup(MCGROUP_GOOD, 1, {{0, 16, 0}, {5, 6, 0}, {6, 7, 0, 1}})
     mod_hangpulse_setup(N0 chiplet, 1, {{4, 17, 1, 1}})
 
-    ## Set up constant hang pulses
-    mod_constant_hangpulse_setup(i_target, scomt::tbusl::HANGP_HANG_PULSE_CONFIG_REG, {{37, 1, 0}, {0, 0, 0}, {9, 1, 0}, {0, 0, 0}})
+    # We cannot set up constant hang pulses here yet since the generation
+    # logic is in the TBUS chiplet. The constant hang pulse setup for Tap
+    # will happen at the end of p11t_chiplet_startclocks.
 
     ## Set up special NET_CTRL1 init value for EQs
     with all EQ chiplets via multicast:
@@ -1107,6 +1109,9 @@ def p11t_chiplet_startclocks():
 
     ## Starting EQ chiplet clocks
     poz_chiplet_startclocks(MCGROUP_EQ, cc::P11T_EQ_PERV | cc::P11T_EQ_QME | cc::P11T_EQ_CLKADJ)
+
+    ## Set up constant hang pulses
+    mod_constant_hangpulse_setup(i_target, scomt::tbusl::HANGP_HANG_PULSE_CONFIG_REG, {{37, 1, 0}, {0, 0, 0}, {9, 1, 0}, {0, 0, 0}})
 
 def ody_chiplet_startclocks():
     poz_chiplet_startclocks(MCGROUP_GOOD_NO_TP)

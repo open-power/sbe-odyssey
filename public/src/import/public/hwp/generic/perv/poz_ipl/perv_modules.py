@@ -296,12 +296,12 @@ def mod_constant_hangpulse_setup(target<ANY_POZ_CHIP>, uint32_t i_base_address, 
     for i in 0..3:
         PRE_COUNTER_REG_0 = 0
         PRE_COUNTER_REG_0.PRE_COUNTER0 = i_hangpulses[i].pre_divider
-        putScom(i_target, i_base_address + i * 2 + 1, PRE_COUNTER_REG_0);
+        putScom(i_target, i_base_address + i * 2 + 2, PRE_COUNTER_REG_0);
 
         HANG_PULSE_0_REG = 0
         HANG_PULSE_0_REG.HANG_PULSE_REG_0 = i_hangpulses[i].value
         HANG_PULSE_0_REG.SUPPRESS_HANG_0  = i_hangpulses[i].stop_on_xstop
-        putScom(i_target, i_base_address + i * 2 + 2, HANG_PULSE_0_REG);
+        putScom(i_target, i_base_address + i * 2 + 1, HANG_PULSE_0_REG);
 
 def mod_multicast_setup(target<ANY_POZ_CHIP>, uint8_t i_group_id, uint64_t i_chiplets, TargetState i_pgood_policy):
     if i_group_id > 6:
@@ -335,7 +335,6 @@ def mod_multicast_setup(target<ANY_POZ_CHIP>, uint8_t i_group_id, uint64_t i_chi
 def mod_poz_tp_init_common(target<ANY_POZ_CHIP>):
     # IPOLL_MASK_INIT = 0xFC00_0000_0000_0000
     HOST_MASK_REG = IPOLL_MASK_INIT          # Set up IPOLL mask
-    ROOT_CTRL0.GLOBAL_EP_RESET_DC = 0        # Drop Global Endpoint reset
     CPLT_CTRL2 = ATTR_PG(PERV)               # Transfer PERV partial good attribute into region good register
     PERV_CTRL0.TP_TCPERV_VITL_CG_DIS = 0     # Enabe PERV vital clock gating
     CPLT_CTRL0.CTRL_CC_FLUSHMODE_INH_DC = 0  # Allow chiplet PLATs to enter flush
