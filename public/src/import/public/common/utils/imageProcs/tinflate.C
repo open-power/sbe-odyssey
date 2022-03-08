@@ -95,7 +95,11 @@ struct tinf_data
             uint64_t q[READ_BUF_WORDS];
         };
     } read_buf;
-    const uint64_t* source;
+
+    // volatile forces the compiler to implement reads as lvd instructions
+    // which is what we want for performance, especially when reading from
+    // slow SPI attached memory.
+    const volatile uint64_t* source;
     unsigned int source_remaining;
     int read_buf_ptr;
 
@@ -134,7 +138,8 @@ static void refill_read_buf(struct tinf_data* d)
         return;
     }
 
-    const int nwords = (d->source_remaining > READ_BUF_SIZE) ? READ_BUF_WORDS : (d->source_remaining + 7) >> 3;
+    const bool whole_buffer = d->source_remaining >= READ_BUF_SIZE;
+    const int nwords = whole_buffer ? READ_BUF_WORDS : (d->source_remaining + 7) >> 3;
 
     // refill read buffer, update hash context if needed
     for (int i = 0; i < nwords; i++)
@@ -143,7 +148,7 @@ static void refill_read_buf(struct tinf_data* d)
 
 #ifdef __USE_SHA3__
 
-        if (d->hash)
+        if (d->hash && whole_buffer)
         {
             d->hash_ctx.st.q[i] ^= tmp;
         }
@@ -155,9 +160,16 @@ static void refill_read_buf(struct tinf_data* d)
 
 #ifdef __USE_SHA3__
 
-    if (d->hash && nwords == READ_BUF_WORDS)
+    if (d->hash)
     {
-        sha3_keccakf(d->hash_ctx.st.q);
+        if (whole_buffer)
+        {
+            sha3_keccakf(d->hash_ctx.st.q);
+        }
+        else
+        {
+            sha3_update(&d->hash_ctx, d->read_buf.b, d->source_remaining);
+        }
     }
 
 #endif
@@ -176,7 +188,6 @@ static void refill_read_buf(struct tinf_data* d)
     // At the end of the input stream, finalize the hash
     if (d->source_remaining == 0 && d->hash)
     {
-        d->hash_ctx.pt = (nwords == READ_BUF_WORDS) ? 0 : (nwords << 3);
         sha3_final(d->hash, &d->hash_ctx);
     }
 
