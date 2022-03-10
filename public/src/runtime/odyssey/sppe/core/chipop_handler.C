@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2017,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -26,7 +27,6 @@
 #include "sbestates.H"
 #include "sberegaccess.H"
 #include "sbeglobals.H"
-
 #include "chipop_handler.H"
 
 ////////////////////////////////////////////////////////////////
@@ -170,13 +170,6 @@ sbeChipOpRc_t sbeIsCmdAllowed (const uint8_t i_cmdClass,
                 {
                     l_ret = ((l_pCmd->cmd_state_fence &
                              SBE_FENCE_AT_DUMPING)? false:true);
-                    break;
-                }
-
-                case SBE_STATE_MPIPL:
-                {
-                    l_ret = ((l_pCmd->cmd_state_fence &
-                             SBE_FENCE_AT_MPIPL)? false:true);
                     break;
                 }
 

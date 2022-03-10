@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2017,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -28,48 +29,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "sbe_sp_intf.H"
-
-// Chip-op response codes
-typedef struct sbeChipOpRc
-{
-    sbePrimResponse primStatus;
-    sbeSecondaryResponse secStatus;
-
-    sbeChipOpRc():primStatus(SBE_PRI_OPERATION_SUCCESSFUL),
-                  secStatus(SBE_SEC_OPERATION_SUCCESSFUL)
-    {}
-
-    bool success()
-    {
-        return (primStatus == SBE_PRI_OPERATION_SUCCESSFUL) &&
-               (secStatus == SBE_SEC_OPERATION_SUCCESSFUL);
-    }
-} sbeChipOpRc_t;
-
-/**
- * @brief SBE chip-op parameter definition
- *
- */
-typedef struct chipOpParam
-{
-    uint8_t  fifoType;          // Refer to enum sbeFifoType
-    uint16_t reserved;          // Reserved
-    uint8_t* pkThreadParam;     // Private data to be passed as the argument to
-                                // the thread routine when it begins execution
-} chipOpParam_t;
-
-/**
- *  @brief SBE Command structure associating an opcode of a command
- *         to the processing function as well as the allowed states
- *
- */
-typedef uint32_t (*sbeChipOpFunc_t) (uint8_t *i_pArg);
-
-typedef struct sbeCmdStruct {
-    sbeChipOpFunc_t  cmd_func;        /* Command function pointer */
-    uint8_t          cmd_opcode;      /* Command opcode */
-    uint16_t         cmd_state_fence; /* Command fencing based on SBE state */
-} sbeCmdStruct_t;
+#include "chipop_struct.H"
 
 /**
  *  @brief SBE Command Fence attributes
@@ -79,7 +39,6 @@ enum sbe_command_fence_attrs
 {
     SBE_NO_FENCE                = 0x0000, ///< Allow cmd in all states
     SBE_FENCE_AT_DUMPING        = 0x0001, ///< Fence off at DUMPING State
-    SBE_FENCE_AT_MPIPL          = 0x0002, ///< Fence off at MPIPL state
     SBE_FENCE_AT_CONTINUOUS_IPL = 0x0004, ///< Fence off at cont IPL
     SBE_FENCE_AT_ISTEP          = 0x0008, ///< Fence off at istep state
     SBE_FENCE_AT_RUNTIME        = 0x0010, ///< Fence off at Runtime state
@@ -193,29 +152,11 @@ struct cmdStructP_t
 
 // Keep this hash updated with the cmdClassArr
 
-#define HASH_KEY(key) (key < 0xD1 ? (key-0xA1) : (key-0xD1+0x0C))
+#define HASH_KEY(key) (key < 0xD1 ? (key-0xA2) : (key-0xD1+0x0C))
 
 #define CMD_CLASS_DEFAULT_INTIALISATION \
 constexpr cmdClass_t cmdClassArr[] = { \
-    CMD_CLASS(A1), \
     CMD_CLASS(A2), \
-    CMD_CLASS(A3), \
-    CMD_CLASS(A4), \
-    CMD_CLASS(A5), \
-    CMD_CLASS(A6), \
-    CMD_CLASS(A7), \
-    CMD_CLASS(A8), \
-    CMD_CLASS(A9), \
-    CMD_CLASS(AA), \
-    CMD_CLASS(AB), \
-    CMD_CLASS(AC), \
-    CMD_CLASS(D1), \
-    CMD_CLASS(D2), \
-    CMD_CLASS(D3), \
-    CMD_CLASS(D4), \
-    CMD_CLASS(D5), \
-    CMD_CLASS(D6), \
-    CMD_CLASS(D7), \
 }; \
 \
 cmdClassTable_t cmdClassTable = { \
