@@ -60,30 +60,24 @@ use File::Basename;
 #
 
 #--------------------------------------------------------------------------------
-# P10 system specific properties
+# P11 system specific properties
 #--------------------------------------------------------------------------------
 # used to check/ensure MRW required attribute values are specified for each
 # expected target instance
 my %nps = (
-    'VBU_P10'     => 1,
-    'WAFER'       => 1,
-    'DENALI'      => 4,
-    'DENALI_WRAP' => 1,
-    'RAINIER'     => 1,
-    'EVEREST'     => 1,
+    'VBU_P11'      => 1,
+    'WAFER_TAP'    => 1,
+    'WAFER_SPINAL' => 1,
 );
 
 my %cpn = (
-    'VBU_P10'     => 2,
-    'WAFER'       => 1,
-    'DENALI'      => 4,
-    'DENALI_WRAP' => 4,
-    'RAINIER'     => 4,
-    'EVEREST'     => 8,
+    'VBU_P11'      => 1,
+    'WAFER_TAP'    => 1,
+    'WAFER_SPINAL' => 1,
 );
 
 #--------------------------------------------------------------------------------
-# P10 chip specific properties
+# P11 chip specific properties
 #--------------------------------------------------------------------------------
 
 sub instances_to_check($$)
@@ -104,13 +98,17 @@ sub instances_to_check($$)
             for ( my $p = 0; $p < $cpn{$mrw_name}; $p++ )
             {
                 my $chipstr = "sys0node${n}proc${p}";
-                if ( $type eq "TARGET_TYPE_PROC_CHIP" )
+                if ( $type eq "TARGET_TYPE_COMPUTE_CHIP" )
+                {
+                    push( @ret, $chipstr );
+                }
+                elsif ( $type eq "TARGET_TYPE_HUB_CHIP" )
                 {
                     push( @ret, $chipstr );
                 }
                 elsif ( $type eq "TARGET_TYPE_CORE" )
                 {
-                    for ( my $eq = 0; $eq < 8; $eq++ )
+                    for ( my $eq = 0; $eq < 2; $eq++ )
                     {
                         for ( my $c = 0; $c < 4; $c++ )
                         {
@@ -118,11 +116,42 @@ sub instances_to_check($$)
                         }
                     }
                 }
+                elsif ( $type eq "TARGET_TYPE_L3CACHE" )
+                {
+                    for ( my $eq = 0; $eq < 2; $eq++ )
+                    {
+                        for ( my $c = 0; $c < 4; $c++ )
+                        {
+                            push( @ret, "${chipstr}eq${eq}l3${c}" );
+                        }
+                    }
+                }
                 elsif ( $type eq "TARGET_TYPE_EQ" )
                 {
-                    for ( my $eq = 0; $eq < 8; $eq++ )
+                    for ( my $eq = 0; $eq < 2; $eq++ )
                     {
                         push( @ret, "${chipstr}eq${eq}" );
+                    }
+                }
+                elsif ( $type eq "TARGET_TYPE_PAU" )
+                {
+                    for ( my $pau = 0; $pau < 8; $pau++ )
+                    {
+                        push( @ret, "${chipstr}pau${pau}" );
+                    }
+                }
+                elsif ( $type eq "TARGET_TYPE_INT" )
+                {
+                    for ( my $int = 0; $int < 2; $int++ )
+                    {
+                        push( @ret, "${chipstr}int${int}" );
+                    }
+                }
+                elsif ( $type eq "TARGET_TYPE_NX" )
+                {
+                    for ( my $nx = 0; $nx < 2; $nx++ )
+                    {
+                        push( @ret, "${chipstr}nx${nx}" );
                     }
                 }
                 elsif ( $type eq "TARGET_TYPE_MC" )
@@ -132,32 +161,11 @@ sub instances_to_check($$)
                         push( @ret, "${chipstr}mc${mc}" );
                     }
                 }
-                elsif ( $type eq "TARGET_TYPE_MI" )
-                {
-                    for ( my $mc = 0; $mc < 4; $mc++ )
-                    {
-                        push( @ret, "${chipstr}mc${mc}" );
-                    }
-                }
-                elsif ( $type eq "TARGET_TYPE_PEC" )
-                {
-                    for ( my $pec = 0; $pec < 2; $pec++ )
-                    {
-                        push( @ret, "${chipstr}pec${pec}" );
-                    }
-                }
-                elsif ( $type eq "TARGET_TYPE_PHB" )
-                {
-                    for ( my $phb = 0; $phb < 6; $phb++ )
-                    {
-                        push( @ret, "${chipstr}phb${phb}" );
-                    }
-                }
                 elsif ( $type eq "TARGET_TYPE_OMI" )
                 {
                     for ( my $mc = 0; $mc < 4; $mc++ )
                     {
-                        for ( my $mcc = 0; $mcc < 2; $mcc++ )
+                        for ( my $mcc = 0; $mcc < 4; $mcc++ )
                         {
                             for ( my $omi = 0; $omi < 2; $omi++ )
                             {
@@ -168,19 +176,65 @@ sub instances_to_check($$)
                 }
                 elsif ( $type eq "TARGET_TYPE_IOHS" )
                 {
-                    for ( my $pauc = 0; $pauc < 4; $pauc++ )
+                    for ( my $iohs = 0; $iohs < 12; $iohs++ )
                     {
-                        for ( my $iohs = 0; $iohs < 2; $iohs++ )
-                        {
-                            push( @ret, "${chipstr}pauc${pauc}iohs${iohs}" );
-                        }
+                        push( @ret, "${chipstr}iohs${iohs}" );
                     }
                 }
-                elsif ( $type eq "TARGET_TYPE_PAU" )
+                elsif ( $type eq "TARGET_TYPE_PAX" )
                 {
-                    for ( my $pau = 0; $pau < 8; $pau++ )
+                    for ( my $pax = 0; $pax < 8; $pax++ )
                     {
-                        push( @ret, "${chipstr}pau${pau}" );
+                        push( @ret, "${chipstr}pax${pax}" );
+                    }
+                }
+                elsif ( $type eq "TARGET_TYPE_PAXO" )
+                {
+                    for ( my $paxo = 0; $paxo < 4; $paxo++ )
+                    {
+                        push( @ret, "${chipstr}paxo${paxo}" );
+                    }
+                }
+                elsif ( $type eq "TARGET_TYPE_PEC2P" )
+                {
+                    for ( my $pec = 0; $pec < 2; $pec++ )
+                    {
+                        push( @ret, "${chipstr}pec2p${pec}" );
+                    }
+                }
+                elsif ( $type eq "TARGET_TYPE_PEC6P" )
+                {
+                    for ( my $pec = 0; $pec < 4; $pec++ )
+                    {
+                        push( @ret, "${chipstr}pec6p${pec}" );
+                    }
+                }
+                elsif ( $type eq "TARGET_TYPE_PHB248X" )
+                {
+                    for ( my $phb = 0; $phb < 24; $phb++ )
+                    {
+                        push( @ret, "${chipstr}phb248x${phb}" );
+                    }
+                }
+                elsif ( $type eq "TARGET_TYPE_PHB16X" )
+                {
+                    for ( my $phb = 0; $phb < 6; $phb++ )
+                    {
+                        push( @ret, "${chipstr}phb16x${phb}" );
+                    }
+                }
+                elsif ( $type eq "TARGET_TYPE_TBUSC" )
+                {
+                    for ( my $tbusc = 0; $tbusc < 4; $tbusc++ )
+                    {
+                        push( @ret, "${chipstr}tbusc${tbusc}" );
+                    }
+                }
+                elsif ( $type eq "TARGET_TYPE_TBUSL" )
+                {
+                    for ( my $tbusl = 0; $tbusl < 8; $tbusl++ )
+                    {
+                        push( @ret, "${chipstr}tbusl${tbusl}" );
                     }
                 }
                 else
@@ -198,33 +252,42 @@ my %CSV_ATTR_SKIP = (
     "ATTR_REL_POS"  => 1,
 );
 
-#RAINIER: sys0node0proc0mc0mi0mcc0omi0
-#DENALI : DENALI_hb.mrw.xml
-
 #--------------------------------------------------------------------------------
 # FAPI vs MRW target type arrays, they must be in sync.
 # Used to look up a matched target type in MRW xml file given a FAPI target type
 #--------------------------------------------------------------------------------
 my %fapi_to_sys_xml_type_map = (
-    'TARGET_TYPE_SYSTEM'    => 'sys-sys-power10',
-    'TARGET_TYPE_DIMM'      => 'lcard-dimm-ddimm',
-    'TARGET_TYPE_PROC_CHIP' => 'chip-processor-power10',
-    'TARGET_TYPE_CORE'      => 'unit-core-power10',
-    'TARGET_TYPE_EQ'        => 'unit-eq-power10',
-    'TARGET_TYPE_MI'        => 'unit-mi-power10',
-    'TARGET_TYPE_PERV'      => 'unit-perv-power10',
-    'TARGET_TYPE_PEC'       => 'unit-pec-power10',
-    'TARGET_TYPE_PHB'       => 'unit-phb-power10',
-    'TARGET_TYPE_MC'        => 'unit-mc-power10',
-    'TARGET_TYPE_OMI'       => 'unit-omi-power10',
-    'TARGET_TYPE_OMIC'      => 'unit-omic-power10',
-    'TARGET_TYPE_MCC'       => 'unit-mcc-power10',
+    'TARGET_TYPE_SYSTEM' => 'sys-sys-power11',
+    'TARGET_TYPE_DIMM'   => 'lcard-dimm-ddimm',
+    'TARGET_TYPE_PERV'   => 'unit-perv-power11',
+
+    'TARGET_TYPE_COMPUTE_CHIP' => 'chip-processor-power11-compute',
+    'TARGET_TYPE_CORE'         => 'unit-core-power11',
+    'TARGET_TYPE_L3CACHE'      => 'unit-l3cache-power11',
+    'TARGET_TYPE_EQ'           => 'unit-eq-power11',
+    'TARGET_TYPE_TBUSL'        => 'unit-tbusl-power11',
+
+    'TARGET_TYPE_HUB_CHIP' => 'chip-processor-power11-hub',
+    'TARGET_TYPE_PAU'      => 'unit-pau-power11',
+    'TARGET_TYPE_INT'      => 'unit-int-power11',
+    'TARGET_TYPE_NX'       => 'unit-nx-power11',
+    'TARGET_TYPE_MC'       => 'unit-mc-power11',
+    'TARGET_TYPE_MI'       => 'unit-mi-power11',
+    'TARGET_TYPE_MCC'      => 'unit-mcc-power11',
+    'TARGET_TYPE_OMIC'     => 'unit-omic-power11',
+    'TARGET_TYPE_OMI'      => 'unit-omi-power11',
+    'TARGET_TYPE_IOHS'     => 'unit-iohs-power11',
+    'TARGET_TYPE_PAX'      => 'unit-pax-power11',
+    'TARGET_TYPE_PAXO'     => 'unit-paxo-power11',
+    'TARGET_TYPE_PEC6P'    => 'unit-pec6p-power11',
+    'TARGET_TYPE_PEC2P'    => 'unit-pec2p-power11',
+    'TARGET_TYPE_PHB248X'  => 'unit-phb248x-power11',
+    'TARGET_TYPE_PHB16X'   => 'unit-phb16x-power11',
+    'TARGET_TYPE_TBUS'     => 'unit-tbus-power11',
+    'TARGET_TYPE_TBUSL'    => 'unit-tbusl-power11',
+
     'TARGET_TYPE_OCMB_CHIP' => 'chip-ocmb',
     'TARGET_TYPE_MEM_PORT'  => 'unit-mem_port',
-    'TARGET_TYPE_NMMU'      => 'unit-nmmu-power10',
-    'TARGET_TYPE_PAU'       => 'unit-pau-power10',
-    'TARGET_TYPE_IOHS'      => 'unit-iohs-power10',
-    'TARGET_TYPE_PAUC'      => 'unit-pauc-power10',
     'TARGET_TYPE_PMIC'      => 'chip-vreg-generic',
 );
 
@@ -239,16 +302,16 @@ foreach my $key ( keys(%fapi_to_sys_xml_type_map) )
 }
 
 my %sys_xml_type_exclusions = (
-    'unit-fc-power10'   => 1,
-    'unit-nx-power10'   => 1,
-    'unit-occ-power10'  => 1,
-    'unit-spi-master'   => 1,
-    'unit-abus-power10' => 1,
-    'chip-adc'          => 1,
-    'chip-PCA9554'      => 1,
-    'chip-bmc-ast2600'  => 1,
-    'chip-vreg-generic' => 1,
-    'enc-node-power10'  => 1,
+    'unit-fc-power11'      => 1,
+    'unit-smplink-power11' => 1,
+    'unit-occ-power11'     => 1,
+    'unit-spi-master'      => 1,
+    'unit-abus-power11'    => 1,
+    'chip-adc'             => 1,
+    'chip-PCA9554'         => 1,
+    'chip-bmc-ast2600'     => 1,
+    'chip-vreg-generic'    => 1,
+    'enc-node-power11'     => 1,
 );
 
 # MRW data source value
@@ -515,7 +578,7 @@ while ( my $line = <INFILE> )
                     my $sys_xml_type;
 
                     # Look up for equivalent target instance type use in MRW xml file
-                    # ex: <type>unit-eq-power10</type>
+                    # ex: <type>unit-eq-power11</type>
                     my @keys = split( /\|/, $fapi2_target_type );
                     foreach my $key (@keys)
                     {
