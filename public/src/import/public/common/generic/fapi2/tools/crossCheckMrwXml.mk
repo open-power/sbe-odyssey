@@ -42,7 +42,7 @@ CLEAN_TARGETS += $(GENPATH)/mrw_attributes.txt
 
 # Need to also filter-out attribute_ids.H file from SOURCES input to the script.
 define crossCheckMrwXml_RUN
-$(C1) $$< --attribute-ids-dir=$$($(GENERATED)_PATH) --output-dir=$$($(GENERATED)_PATH) $$(filter-out $(ATTRIBUTE_IDS_H_FILE),$$(filter-out $$<,$$^))
+$(C1) $$< --attribute-ids-dir=$$($(GENERATED)_PATH) --output-dir=$$($(GENERATED)_PATH) $$(filter-out %/attribute_ids.H,$$(filter-out $$<,$$^))
 endef
 
 $(call BUILD_GENERATED)
