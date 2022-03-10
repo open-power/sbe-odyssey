@@ -34,3 +34,17 @@
 #include <fapi2.H>
 
 fapi2::Target<fapi2::TARGET_TYPE_PERV> get_tp_chiplet_target(const fapi2::Target<fapi2::TARGET_TYPE_CHIPS> i_chip);
+
+/**
+ * @brief Determine (and init) multicast group for hotplug operations
+ *
+ * Depending on whether or not we want to hotplug we may need to use different
+ * sets of targets. This either returns a matching static group or initializes
+ * the required dynamic group and returns the group ID.
+ *
+ * @param i_target  Chip to operate on
+ * @param o_mcgroup Resulting MC group to use for further operations
+ */
+fapi2::ReturnCode get_hotplug_mc_group(
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    fapi2::MulticastGroup& o_mcgroup);

@@ -87,7 +87,7 @@ fapi2::ReturnCode mod_abist_cleanup(
 fapi2::ReturnCode mod_scan0(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
     uint16_t i_clock_regions,
-    uint16_t i_scan_types = SCAN_TYPE_NOT_GTR);
+    uint16_t i_scan_types = SCAN_TYPE_NOT_RTG);
 
 /// @brief   clock start/stop module.
 /// @param[in]   i_target          Reference to TARGET_TYPE_PERV

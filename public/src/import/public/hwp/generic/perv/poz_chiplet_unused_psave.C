@@ -23,18 +23,24 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  poz_chiplet_unused_psave.C
+///
+/// @brief put all non-functional chiplets into a state of minimal power usage
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 // *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
 #include "poz_chiplet_unused_psave.H"
 #include "poz_perv_common_params.H"
+#include <p11_scom_perv.H>
+
+SCOMT_PERV_USE_NET_CTRL0;
 
 
 using namespace fapi2;
+using namespace scomt::perv;
 
 enum POZ_CHIPLET_UNUSED_PSAVE_Private_Constants
 {
@@ -42,8 +48,30 @@ enum POZ_CHIPLET_UNUSED_PSAVE_Private_Constants
 
 ReturnCode poz_chiplet_unused_psave(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
 {
+    NET_CTRL0_t NET_CTRL0;
+    auto l_chiplets_uc = i_target.getChildren<TARGET_TYPE_PERV>(TARGET_STATE_PRESENT);
 
+    FAPI_INF("Entering ...");
+    FAPI_DBG("put all non-functional chiplets into a state of minimal power usage");
+
+    for (auto& targ : l_chiplets_uc)
+    {
+        if (!targ.isFunctional())
+        {
+            FAPI_TRY(NET_CTRL0.getScom(targ));
+            NET_CTRL0.set_CHIPLET_ENABLE(0);
+            NET_CTRL0.set_PCB_EP_RESET(1);
+            NET_CTRL0.set_TP_FENCE_PCB(1);
+            FAPI_TRY(NET_CTRL0.putScom(targ));
+
+            NET_CTRL0.set_PLLFORCE_OUT_EN(0);
+            NET_CTRL0.set_CLK_ASYNC_RESET(1);
+            NET_CTRL0.set_LVLTRANS_FENCE(1);
+            FAPI_TRY(NET_CTRL0.putScom(targ));
+        }
+    }
 
 fapi_try_exit:
+    FAPI_INF("Exiting ...");
     return current_err;
 }
