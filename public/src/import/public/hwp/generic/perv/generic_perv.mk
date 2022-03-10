@@ -28,8 +28,9 @@
 #
 define __GENERIC_PERV_PROCEDURE
 PROCEDURE=$(1)
-#$$(call ADD_MODULE_OBJ,$$(PROCEDURE),poz_perv_mod_misc.o)
-#$$(call ADD_MODULE_OBJ,$$(PROCEDURE),poz_perv_mod_chiplet_clocking.o)
+$$(call ADD_MODULE_OBJ,$$(PROCEDURE),poz_perv_mod_misc.o)
+$$(call ADD_MODULE_OBJ,$$(PROCEDURE),poz_perv_mod_chiplet_clocking.o)
+$$(call ADD_MODULE_OBJ,$$(PROCEDURE),poz_perv_utils.o)
 $$(call BUILD_PROCEDURE)
 endef
 GENERIC_PERV_PROCEDURE = $(eval $(call __GENERIC_PERV_PROCEDURE,$1))

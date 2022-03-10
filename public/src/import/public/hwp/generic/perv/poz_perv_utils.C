@@ -30,6 +30,7 @@
 //------------------------------------------------------------------------------
 
 #include <poz_perv_utils.H>
+#include <poz_perv_mod_misc.H>
 #include <target_filters.H>
 #include <assert.h>
 
@@ -45,4 +46,26 @@ Target<TARGET_TYPE_PERV> get_tp_chiplet_target(const Target<TARGET_TYPE_CHIPS> i
     // assert() instead of FAPI_ASSERT() as a sanity check.
     assert(!l_children.empty());
     return l_children[0];
+}
+
+ReturnCode get_hotplug_mc_group(
+    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    MulticastGroup& o_mcgroup)
+{
+    buffer<uint8_t> l_attr_hotplug;
+    FAPI_TRY(FAPI_ATTR_GET(ATTR_HOTPLUG, i_target, l_attr_hotplug),
+             "Error from FAPI_ATTR_GET (ATTR_HOTPLUG)");
+
+    if (l_attr_hotplug)
+    {
+        o_mcgroup = MCGROUP_GOOD_NO_TP;
+    }
+    else
+    {
+        FAPI_TRY(mod_multicast_setup(i_target, MCGROUP_2, 0x3FFFFFFFFFFFFFFF, TARGET_STATE_PRESENT));
+        o_mcgroup = MCGROUP_2;
+    }
+
+fapi_try_exit:
+    return current_err;
 }

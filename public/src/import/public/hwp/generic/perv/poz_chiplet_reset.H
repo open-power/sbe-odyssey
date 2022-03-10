@@ -23,9 +23,11 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file   poz_chiplet_reset.H
+///
+/// @brief  chiplet reset common code for poz projects
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 // *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
@@ -34,12 +36,18 @@
 
 #include <fapi2.H>
 
-typedef fapi2::ReturnCode (*poz_chiplet_reset_FP_t)(const uint8_t i_chiplet_delays[64]);
+typedef fapi2::ReturnCode (*poz_chiplet_reset_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&,
+        const uint8_t i_chiplet_delays[64]);
 
 /// @brief
-/// @param[in]   i_chiplet_delays[64]
+/// -- Enable and reset chiplets, setup clock controllers & OPCG delays
+/// -- do SCAN0 on all regions, transfer PGOOD attr into CPLT_CTRL[2,3]
+///
+/// @param[in]   i_target              Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_chiplet_delays[64]  array of per-chiplet delays to be programmed in OPCG_WAIT_CYCLES
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {
-    fapi2::ReturnCode poz_chiplet_reset(const uint8_t i_chiplet_delays[64]);
+    fapi2::ReturnCode poz_chiplet_reset(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+                                        const uint8_t i_chiplet_delays[64]);
 }

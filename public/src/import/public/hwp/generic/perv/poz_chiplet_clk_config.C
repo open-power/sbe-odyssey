@@ -23,18 +23,26 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  poz_chiplet_clk_config.C
+///
+/// @brief Enable clocks for chiplets
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Pretty Mariam Jacob (prettymjacob@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 // *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
 #include "poz_chiplet_clk_config.H"
 #include "poz_perv_common_params.H"
+#include "poz_perv_mod_misc.H"
+#include "poz_perv_utils.H"
+#include <target_filters.H>
+#include <p11_scom_perv.H>
 
+SCOMT_PERV_USE_NET_CTRL0;
 
 using namespace fapi2;
+using namespace scomt::perv;
 
 enum POZ_CHIPLET_CLK_CONFIG_Private_Constants
 {
@@ -42,8 +50,31 @@ enum POZ_CHIPLET_CLK_CONFIG_Private_Constants
 
 ReturnCode poz_chiplet_clk_config(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
 {
+    NET_CTRL0_t NET_CTRL0;
+    MulticastGroup l_mc_group;
 
+    FAPI_INF("Entering ...");
+    FAPI_TRY(get_hotplug_mc_group(i_target, l_mc_group));
+
+    {
+        // Initializing chiplets inside a new scope to prevent issues with FAPI_TRY
+        auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(l_mc_group);
+
+        FAPI_INF("Set up chiplet clock muxing (TBD)");
+        // TBD, not needed on Tap
+
+        FAPI_INF("Enable chiplet clocks");
+        NET_CTRL0 = 0;
+        NET_CTRL0.set_CLK_ASYNC_RESET(1);
+        NET_CTRL0.set_LVLTRANS_FENCE(1);
+        FAPI_TRY(NET_CTRL0.putScom_AND(l_chiplets_mc));
+
+        NET_CTRL0 = 0;
+        NET_CTRL0.set_PLLFORCE_OUT_EN(1);
+        FAPI_TRY(NET_CTRL0.putScom_SET(l_chiplets_mc));
+    }
 
 fapi_try_exit:
+    FAPI_INF("Exiting ...");
     return current_err;
 }

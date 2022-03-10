@@ -54,7 +54,7 @@ constexpr uint16_t REGION(const int number)
 enum clock_region
 {
     REGION_PERV = REGION(0),
-    REGION_PLL  = REGION(12),
+    REGION_PLL  = REGION(13),
 
     REGION_ALL  = 0xFFFE,
     REGION_ALL_BUT_PLL = REGION_ALL & ~REGION_PLL,
@@ -184,8 +184,8 @@ enum scan_type
     SCAN_TYPE_CMSK = 0x800 >> 10,
     SCAN_TYPE_INEX = 0x800 >> 11,
     SCAN_TYPE_ALL  = 0xFFF,
-    SCAN_TYPE_GTR  = 0x230,  // gptr+time+repr
-    SCAN_TYPE_NOT_GTR = 0xDCF,
+    SCAN_TYPE_RTG  = 0x230,  // repr+time+gptr
+    SCAN_TYPE_NOT_RTG = 0xDCF,
 };
 };
 
