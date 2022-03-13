@@ -33,6 +33,7 @@
 #include "sbetrace.H"
 #include "sbeglobals.H"
 #include "sbeutil.H"
+#include "p11_scom_perv_cfam.H"
 #include <ppe42_scom.h>
 
 //using namespace fapi2;
@@ -145,7 +146,7 @@ uint32_t SbeRegAccess::init(bool forced)
             break;
         }
         // Read SBE messaging register into iv_messagingReg
-        rc = getscom_abs(0x00050009, &messagingReg.iv_messagingReg);
+        rc = getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, &messagingReg.iv_messagingReg);
         if(PCB_ERROR_NONE != rc)
         {
             SBE_ERROR(SBE_FUNC"Failed reading sbe messaging reg., RC: 0x%08X. ",
@@ -153,7 +154,7 @@ uint32_t SbeRegAccess::init(bool forced)
             break;
         }
         // Read Mailbox register 8 to check if mbox registers 3 and 6 are valid
-        rc = getscom_abs(0x0005003F, &mbx8.iv_mbx8);
+        rc = getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_8_RW, &mbx8.iv_mbx8);
         if(PCB_ERROR_NONE != rc)
         {
             SBE_ERROR(SBE_FUNC"Failed reading mailbox reg 8, RC: 0x%08X. ", rc);
@@ -162,21 +163,21 @@ uint32_t SbeRegAccess::init(bool forced)
         SBE_INFO(SBE_FUNC "MBX_reg8 read : 0x%08X", (uint32_t)(mbx8.iv_mbx8 >> 32));
         if(mbx8.iv_mbx5_valid)
         {
-            // Read mbx5
-            rc = getscom_abs(0x0005003C, &mbx5.iv_mbx5);
+            // Read mbx11
+            rc = getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, &mbx11.iv_mbx11);
             if(PCB_ERROR_NONE != rc)
             {
                 SBE_ERROR(SBE_FUNC"Failed reading mailbox reg 3, RC: 0x%08X. ",
                         rc);
                 break;
             }
-            SBE_INFO(SBE_FUNC "MBX_reg3 from scratch : 0x%08X", (uint32_t)(mbx5.iv_mbx5 >> 32));
+            SBE_INFO(SBE_FUNC "MBX_reg3 from scratch : 0x%08X", (uint32_t)(mbx11.iv_mbx11 >> 32));
         }
     } while(false);
 
-    SBE_INFO(SBE_FUNC"Read mailbox registers: mbx8: 0x%08X, mbx5: 0x%08X, "
+    SBE_INFO(SBE_FUNC"Read mailbox registers: mbx8: 0x%08X, mbx11: 0x%08X, "
               "mbx6: 0x%08X", (uint32_t)(mbx8.iv_mbx8 >> 32),
-              (uint32_t)(mbx5.iv_mbx5 >> 32), (uint32_t)(mbx6.iv_mbx6 >> 32));
+              (uint32_t)(mbx11.iv_mbx11 >> 32), (uint32_t)(mbx6.iv_mbx6 >> 32));
     l_initDone = true;
     return rc;
     #undef SBE_FUNC
@@ -208,7 +209,7 @@ uint32_t SbeRegAccess::updateSbeState(const sbeState &i_state)
         messagingReg.iv_currState = SBE_STATE_RUNTIME;
     }
 
-    rc = putscom_abs(0x50009, messagingReg.iv_messagingReg);
+    rc = putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
     if(PCB_ERROR_NONE != rc)
     {
         SBE_ERROR(SBE_FUNC"Failed to update state to messaging "
@@ -238,7 +239,7 @@ uint32_t SbeRegAccess::updateSbeStep(const uint8_t i_major,
     messagingReg.iv_majorStep = i_major;
     messagingReg.iv_minorStep = i_minor;
 
-    rc = putscom_abs(0x50009, messagingReg.iv_messagingReg);
+    rc = putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
     if(rc)
     {
         SBE_ERROR(SBE_FUNC"Failed to update SBE step to messaging "
@@ -263,7 +264,7 @@ uint32_t SbeRegAccess::setSbeReady()
     uint32_t rc = 0;
 
     messagingReg.iv_sbeBooted = true;
-    rc = putscom_abs(0x50009, messagingReg.iv_messagingReg);
+    rc = putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
     if(rc)
     {
         SBE_ERROR(SBE_FUNC"Failed to update SBE ready state to "
@@ -280,7 +281,7 @@ uint32_t SbeRegAccess::updateAsyncFFDCBit( bool i_on )
 
     messagingReg.iv_asyncFFDC = i_on;
 
-    rc = putscom_abs(0x50009, messagingReg.iv_messagingReg);
+    rc = putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
     if(rc)
     {
         SBE_ERROR(SBE_FUNC"Failed to update SBE Aync bit in message "

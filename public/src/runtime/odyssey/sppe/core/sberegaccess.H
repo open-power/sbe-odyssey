@@ -35,7 +35,7 @@
 #include <stdint.h>
 #include "sbestates.H"
 #include "sbeevents.H"
-#include "odysseymbxscratch.H"
+#include "mbxscratch.H"
 
 //TODO: P11SBE Porting
 #if 0
@@ -129,17 +129,6 @@ class SbeRegAccess
         uint32_t setMpIplMode(const bool i_set);
 
         /**
-         * @brief Check if we are on an FSP attached
-         *
-         * @return true if FSP attached system, false otherwise
-         *
-         */
-        inline bool isFspSystem() const
-        {
-            return mbx5.iv_fspAttached;
-        }
-
-        /**
          * @brief Check if we are in ISTEP IPL mode
          *
          * @return true if in istep mode, false otherwise
@@ -147,7 +136,7 @@ class SbeRegAccess
          */
         inline bool isIstepMode() const
         {
-            return mbx5.iv_istepMode;
+            return mbx11.iv_istepMode;
         }
 
         /**
@@ -158,7 +147,7 @@ class SbeRegAccess
          */
         inline bool isSkipMpiplDump() const
         {
-            return mbx5.iv_skipMpiplDumpCollection;
+            return mbx11.iv_skipMpiplDumpCollection;
         }
 
         /**
@@ -171,18 +160,7 @@ class SbeRegAccess
          */
         inline bool isDestBitRuntime() const
         {
-            return mbx5.iv_sbeDestRuntime;
-        }
-
-        /**
-         * @brief Check if SBE should collect FFDC
-         *
-         * @return true if in istep mode, false otherwise
-         *
-         */
-        inline bool isCollectFFDCSet() const
-        {
-            return mbx5.iv_collectFFDC;
+            return mbx11.iv_sbeDestRuntime;
         }
 
         /**
@@ -194,12 +172,12 @@ class SbeRegAccess
          */
         inline bool isSendInternalFFDCSet() const
         {
-            return mbx5.iv_sendFFDC;
+            return mbx11.iv_sendFFDC;
         }
 
         inline bool isSystemCheckStopForDMTFail() const
         {
-            return !mbx5.iv_dontCheckStopForDMT;
+            return !mbx11.iv_dontCheckStopForDMT;
         }
         /**
          * @brief Check if SBE is master
@@ -292,7 +270,7 @@ class SbeRegAccess
 
     private:
 
-        mbx5_t mbx5 = {0};
+        mbx11_t mbx11 = {0};
         mbx6_t mbx6 = {0};
         messagingReg_t messagingReg = {0};
         mbx8_t mbx8 = {0};

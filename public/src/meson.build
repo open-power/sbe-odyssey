@@ -72,6 +72,7 @@ endif
 cmn_abs_inc_paths = []
 ekb_cmn_abs_inc_paths = []
 runtime_cmn_abs_inc_paths = []
+onetime_cmn_abs_inc_paths = []
 odyssey_cmn_abs_inc_paths = []
 odyssey_runtime_abs_inc_paths = []
 
@@ -93,6 +94,13 @@ foreach inc_path : meson.get_external_property('runtime_cmn_inc_paths')
 
   abs_inc_path = '-I' + meson.global_source_root() + inc_path
   runtime_cmn_abs_inc_paths += abs_inc_path
+
+endforeach
+
+foreach inc_path : meson.get_external_property('onetime_cmn_inc_paths')
+
+  abs_inc_path = '-I' + meson.global_source_root() + inc_path
+  onetime_cmn_abs_inc_paths += abs_inc_path
 
 endforeach
 

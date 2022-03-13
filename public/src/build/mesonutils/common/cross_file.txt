@@ -83,6 +83,7 @@ gcc_defs_cmn = [
         '-DPLAT_NO_THREAD_LOCAL_STORAGE=1',
         '-DPERIODIC_IO_TOGGLE_SUPPORTED=1',
         '-DSBE_CONSOLE_SUPPORT',
+        '-DSCOMT_OMIT_FIELD_ACCESSORS'
         ]
 
 ekb_cmn_inc_path = [
@@ -96,6 +97,7 @@ ekb_cmn_inc_path = [
     '/emb/p11/kernels/ppe/pk/kernel',
     '/emb/p11/kernels/ppe/ppetrace/ppetracepp',
     '/emb/p11/kernels/ppe/boltonlib/exppe',
+    '/common/p11/registers'
         ]
 
 ekb_hwp_inc_path = [
@@ -113,4 +115,8 @@ runtime_cmn_inc_paths = [
     '/public/src/runtime/common/core',
     '/public/src/runtime/common/plat/ffdc',
     '/public/src/runtime/common/plat/targeting',
+        ]
+
+onetime_cmn_inc_paths = [
+    '/public/src/onetime/common/srom/core'
         ]
