@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/common/algorithms/sha3.H $                         */
+/* $Source: public/src/common/algorithms/dilithium.H $                    */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022                             */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,55 +21,52 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef SHA3_H
-#define SHA3_H
 
-#include <stddef.h>
-#include <stdint.h>
+#ifndef _DILITHIUM_H
+#define _DILITHIUM_H
 
-#ifndef KECCAKF_ROUNDS
-#define KECCAKF_ROUNDS 24
-#endif
+#define DILITHIUM_PUB_KEY_SIZE 2336
+#define DILITHIUM_SIG_SIZE 4668
 
-#ifndef ROTL64
-#define ROTL64(x, y) (((x) << (y)) | ((x) >> (64 - (y))))
-#endif
+#define DIL_N ((unsigned int)256)
+#define DIL_VECT_MAX ((unsigned int)8) /* MAX(K, L) for any config */
 
-#define SHA3_DIGEST_LENGTH 64
+typedef uint8_t dilithium_key_t[DILITHIUM_PUB_KEY_SIZE];
+typedef uint8_t dilithium_signature_t[DILITHIUM_SIG_SIZE];
 
-typedef uint8_t sha3_t[SHA3_DIGEST_LENGTH];
-
-// state context
-typedef struct {
-    union {                                 // state:
-        uint8_t b[200];                     // 8-bit bytes
-        uint64_t q[25];                     // 64-bit words
-    } st;
-    int pt, rsiz, mdlen;                    // these don't overflow
-} sha3_ctx_t;
-
-typedef uint8_t  sha3_byte;     /* Exactly 1 byte */
-typedef uint32_t sha3_word32;   /* Exactly 4 bytes */
-typedef uint64_t sha3_word64;   /* Exactly 8 bytes */
-
-// Compression function.
-void sha3_keccakf(uint64_t st[25]);
-
-// OpenSSL - like interfece
-int sha3_init(sha3_ctx_t *c);    // mdlen = hash output in bytes
-int sha3_update(sha3_ctx_t *c, const sha3_byte *data, size_t len);
-int sha3_final(sha3_t *md, sha3_ctx_t *c);    // digest goes to md
+typedef struct
+{
+    uint32_t coeffs[DIL_N];
+} poly;
 
 /**
- * @brief compute a sha3 hash (md) of given byte length from "data"
+ * @brief the largest polyvecl, polyveck possible safe to cast to any valid, smaller size
  *
- * @param data Data on which sha3 needs to be calculated
- * @param len Length of data
- * @param result sha3 result store location ptr
  */
-void sha3_Hash(const sha3_byte *data, size_t len, sha3_t *result);
+typedef struct
+{
+    poly vec[DIL_VECT_MAX];
+} polyvec_max;
 
-//Print SHA3-512 result
-void SHA3_dump(sha3_t *result);
+/**
+ * @brief Verifies dilithium signature
+ *
+ * @param *m: pointer to input signature
+ *
+ * @param siglen: length of signature
+ *
+ * @param *m: pointer to message
+ *
+ * @param mlen: length of message
+ *
+ * @return >0 if signature could be verified correctly and 0 otherwise
+ */
+int __attribute__((noinline)) ref_verify2(const uint8_t *sig,
+                                          size_t siglen,
+                                          const uint8_t *m,
+                                          size_t mlen,
+                                          const uint8_t *pk,
+                                          size_t pkbytes, polyvec_max *w1, polyvec_max *mat01, polyvec_max *mat234, polyvec_max *mat567,
+                                          polyvec_max *z, polyvec_max *h);
 
-#endif
+#endif //----------_DILITHIUM_H-------

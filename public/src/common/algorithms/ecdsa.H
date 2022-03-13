@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2020,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -23,6 +24,8 @@
 /* IBM_PROLOG_END_TAG                                                     */
 #ifndef __EC_VERIFY_CORE_
 #define __EC_VERIFY_CORE_
+
+#include <stdint.h>                /* uint_fast8_t, uintN_t        */
 
 #define  EC_PRIMEBITS  521    /* P521 */
 
@@ -164,6 +167,18 @@ const consts_t consts = {
     },
 } ;
 
+/**
+ * @brief Function to verify ECDSA Signature
+ *
+ * @param *publicpt Public key
+ *
+ * @param *hash Hash of message
+ *
+ * @param *signature ECDSA Signature to be verified
+ *
+ * @return >1 if signature could be verified correctly
+ *
+ */
 int ec_verify (const unsigned char *publicpt,    /* 2*EC_COORDBYTES */
                const unsigned char *hash,        /*   EC_HASHBYTES  */
                const unsigned char *signature);   /* 2*EC_COORDBYTES */
@@ -186,4 +201,4 @@ inline const consts_t* __attribute__((pure)) consts_p()
     return &consts;
 };
 
-#endif
+#endif  //*** __EC_VERIFY_CORE_ ***
