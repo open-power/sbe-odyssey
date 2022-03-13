@@ -40,8 +40,8 @@
 // SROM IMAGE
 #define SROM_ORIGIN                     0xFFF70000
 #define SROM_SIZE                       0x10000
-#define SROM_DATA_SIZE                  0x4000
-#define SROM_BOOTLOADER_SCRATCH_START   (SRAM_ORIGIN + SRAM_IMAGE_SIZE)
+#define SROM_DATA_SIZE                  0xFFFF  //TODO: Reduce after PAK is  added
+#define SROM_BOOTLOADER_SCRATCH_START   (SRAM_ORIGIN + SROM_DATA_SIZE + LAST_BYTE)
 #define SROM_BOOTLOADER_SCRATCH_SIZE    0x2D000
 
 // BOOTLOADER IMAGE

@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/onetime/meson.build $
+# $Source: public/src/onetime/common/meson.build $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,20 +22,6 @@
 #
 # IBM_PROLOG_END_TAG
 
-#Tools registration
-fusemapgen = find_program('common/otprom/build/utils/fusemapgen.py')
-
-subdir('common')
-
-if platform == 'odyssey' or platform == 'all'
-  subdir('odyssey')
+if get_option('srom').enabled()
+  subdir('srom')
 endif
-
-if platform == 'p11' or platform == 'all'
-  #subdir('p11')
-endif
-
-if platform == 'metis' or platform == 'all'
-  #subdir('metis')
-endif
-

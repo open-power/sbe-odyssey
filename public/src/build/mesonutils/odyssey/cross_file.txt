@@ -23,3 +23,7 @@ odyssey_cmn_inc_paths = [
 odyssey_runtime_inc_paths = [
         '/public/src/runtime/odyssey/sppe/plat/targeting'
         ]
+
+odyssey_srom_inc_paths = [
+        '/genfiles/onetime/odyssey/srom'
+        ]

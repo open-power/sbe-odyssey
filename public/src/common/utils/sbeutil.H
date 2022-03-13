@@ -32,6 +32,10 @@ extern "C" {
 #include "pk.h"
 #include "pk_api.h"
 #include "ppe42_scom.h"
+//TODO: For compiling p11_scom_perv_cfam.H we are currently adding
+//-DSCOMT_OMIT_FIELD_ACCESSORS in cross_file.txt. Once fapi support is enabled
+//we need to remove that.
+#include "p11_scom_perv_cfam.H"
 
 #ifdef __cplusplus
 }
@@ -40,6 +44,9 @@ extern "C" {
 #define MASK_ZERO_L32B_UINT64(x)    ((x) & 0xFFFFFFFF00000000ull)
 #define MASK_ZERO_H32B_UINT64(x)    ((x) & 0x00000000FFFFFFFFull)
 #define SHIFT_RIGHT(x, bits)        ((x) >> bits)
+#define SHIFT_LEFT(x, bits)         ((x) << bits)
+
+#define SBE_MESSAGE_REG_PROGRESS_CODE_BIT_MASK 0x3F00000000
 
 // To handle unused variables compilation error
 static inline void UNUSED(int dummy, ...) {}
@@ -141,7 +148,8 @@ namespace SBE
     enum
     {
         // For defining new panic codes refer to pk/ppe42/pk_panic_codes.h
-        PANIC_ASSERT = PK_APP_OFFSET_SBE_START
+        PANIC_ASSERT = PK_APP_OFFSET_SBE_START,
+        PANIC_SCRATCH = PK_APP_OFFSET_SBE_START + 1,
     };
 
     /*@brief - checks if sbe is running on simics
@@ -235,6 +243,12 @@ namespace SBE
         uint8_t dest;
         memcpy_byte(&dest, src,sizeof(uint8_t));
         return dest;
+    }
+
+    inline void updateProgressCode(uint64_t data, uint8_t value)
+    {
+        data = ((data & (~(SBE_MESSAGE_REG_PROGRESS_CODE_BIT_MASK))) | (uint64_t)(value)<<32);
+        putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, data);
     }
 
 } // namespace SBE

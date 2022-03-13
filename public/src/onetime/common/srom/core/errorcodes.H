@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/common/algorithms/sha3.H $                         */
+/* $Source: public/src/onetime/common/srom/core/errorcodes.H $            */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,57 +21,56 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef SHA3_H
-#define SHA3_H
-
-#include <stddef.h>
-#include <stdint.h>
-
-#ifndef KECCAKF_ROUNDS
-#define KECCAKF_ROUNDS 24
-#endif
-
-#ifndef ROTL64
-#define ROTL64(x, y) (((x) << (y)) | ((x) >> (64 - (y))))
-#endif
-
-#define SHA3_DIGEST_LENGTH 64
-
-typedef uint8_t sha3_t[SHA3_DIGEST_LENGTH];
-
-// state context
-typedef struct {
-    union {                                 // state:
-        uint8_t b[200];                     // 8-bit bytes
-        uint64_t q[25];                     // 64-bit words
-    } st;
-    int pt, rsiz, mdlen;                    // these don't overflow
-} sha3_ctx_t;
-
-typedef uint8_t  sha3_byte;     /* Exactly 1 byte */
-typedef uint32_t sha3_word32;   /* Exactly 4 bytes */
-typedef uint64_t sha3_word64;   /* Exactly 8 bytes */
-
-// Compression function.
-void sha3_keccakf(uint64_t st[25]);
-
-// OpenSSL - like interfece
-int sha3_init(sha3_ctx_t *c);    // mdlen = hash output in bytes
-int sha3_update(sha3_ctx_t *c, const sha3_byte *data, size_t len);
-int sha3_final(sha3_t *md, sha3_ctx_t *c);    // digest goes to md
 
 /**
- * @brief compute a sha3 hash (md) of given byte length from "data"
+ * @brief This file contains failure status codes incase of secure header varification failure.
+ *        The status code will be updated in scratch reg.
  *
- * @param data Data on which sha3 needs to be calculated
- * @param len Length of data
- * @param result sha3 result store location ptr
  */
-void sha3_Hash(const sha3_byte *data, size_t len, sha3_t *result);
 
-uint32_t make32Bit(uint8_t *ptr);
+#ifndef STATUS_CODES_H
+#define STATUS_CODES_H
 
-//Print SHA3-512 result
-void SHA3_dump(sha3_t *result);
+//0x00 and 0xff are not Error Codes
+#define COMPLETED 0x00
+#define SB_ENFORCEMENT_DISABLED 0xFF
+
+#define INVALID_ECDSA_FUSE_CHECK_CNFG 0x01
+#define INVALID_DILITHIUM_FUSE_CHECK_CNFG 0x02
+#define CONTAINER_SIZE_CHECK 0x03
+#define MINIMUM_PAYLOAD_SIZE_CHECK 0x04
+#define MINIMUM_SCRATCH_SIZE_CHECK 0x05
+#define SCRATCH_START_OFFSET_CHECK 0x06
+
+#define MAGIC_NUMBER_TEST 0x07
+#define CONTAINER_VERSION_TEST 0x08
+#define CONTAINER_SIZE_TEST 0x09
+
+#define HW_KEY_HASH_TEST 0x0A
+
+#define PREFIX_HDR_VER_TEST 0x10
+#define PREFIX_HASH_ALGO_TEST 0x11
+#define PREFIX_SIG_ALGO_TEST 0x12
+#define PREFIX_HEADER_SZ_TEST 0x13
+#define HW_ECDSA_SIG_TEST 0x14
+#define HW_DILITHIUM_SIG_TEST 0x15
+#define PREFIX_ECID_TEST 0x16
+#define PREFIX_HASH_TEST 0x17
+#define SW_KEY_PROTECTION_TEST 0x18
+#define SW_KEY_INVALID_COUNT 0x19
+#define PREFIX_PAYLD_SZ_TEST 0x1A
+
+#define SW_HDR_VER_TEST 0x20
+#define SW_HASH_ALGO_TEST 0x21
+#define SW_SIG_ALGO_TEST 0x22
+#define SW_HEADER_SZ_TEST 0x23
+#define SW_PROTECTED_PAYLD_SZ_TEST 0x24
+#define SW_UNPROTECTED_PAYLD_SZ_TEST 0x25
+#define COMPONENT_ID_TEST 0x26
+#define SECURE_VERSION_TEST 0x27
+#define SW_ECDSA_SIG_TEST 0x28
+#define SW_DILITHIUM_SIG_TEST 0x29
+#define SW_ECID_TEST 0x2A
+#define SW_HASH_TEST 0x2B
 
 #endif

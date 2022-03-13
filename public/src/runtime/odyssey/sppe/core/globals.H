@@ -31,6 +31,10 @@
 #endif
 #define SBE_TRACE_LEVEL 2
 
+//SPPE Runtime progress code .
+//We will have only 1 status code for runtime image
+#define CODE_REACHED_RUNTIME 0x3f
+
 #define SBE_REF_BASE_FREQ_HZ ((133 * 1000 * 1000)/4)
 #define SBE_PAU_DPLL_BASE_FREQ_HZ ((1968 * 1000 * 1000)/4)
 
