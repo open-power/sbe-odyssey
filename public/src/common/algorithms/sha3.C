@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -23,8 +24,9 @@
 /* IBM_PROLOG_END_TAG                                                     */
 
 #include "sha3.H"
-// update the state with given number of rounds
+#include "sbetrace.H"
 
+// update the state with given number of rounds
 void sha3_keccakf(uint64_t st[25])
 {
     // constants
@@ -129,14 +131,14 @@ int sha3_init(sha3_ctx_t *c)
 
 // update state with more data
 
-int sha3_update(sha3_ctx_t *c, const void *data, size_t len)
+int sha3_update(sha3_ctx_t *c, const sha3_byte *data, size_t len)
 {
     size_t i;
     int j;
 
     j = c->pt;
     for (i = 0; i < len; i++) {
-        c->st.b[j++] ^= ((const uint8_t *) data)[i];
+        c->st.b[j++] ^= ( data)[i];
         if (j >= c->rsiz) {
             sha3_keccakf(c->st.q);
             j = 0;
@@ -164,6 +166,15 @@ int sha3_final(sha3_t *result, sha3_ctx_t *c)
     return 1;
 }
 
+void sha3_Hash(const sha3_byte *data, size_t len, sha3_t *result)
+{
+    sha3_ctx_t context;
+
+    sha3_init(&context);
+    sha3_update(&context, data, len);
+    sha3_final(result, &context);
+}
+
 uint32_t make32Bit(uint8_t *ptr){
   uint32_t val=0;
   for(uint32_t y=0;y<4;y++){
@@ -175,7 +186,9 @@ uint32_t make32Bit(uint8_t *ptr){
 }
 
 void SHA3_dump(sha3_t *result){
-  /*uint8_t *myptr=(uint8_t*)result;
-  for(uint32_t x=0;x<SHA3_DIGEST_LENGTH;x+=16){
-    SBE_INFO("%08x%08x%08x%08x", make32Bit(&myptr[x]),make32Bit(&myptr[x+4]),make32Bit(&myptr[x+8]),make32Bit(&myptr[x+12]));*/
+  uint8_t *myptr=(uint8_t*)result;
+  for(uint32_t x=0;x<SHA3_DIGEST_LENGTH;x+=16)
+  {
+    SBE_INFO("%08x%08x%08x%08x", make32Bit(&myptr[x]),make32Bit(&myptr[x+4]),make32Bit(&myptr[x+8]),make32Bit(&myptr[x+12]));
   }
+}

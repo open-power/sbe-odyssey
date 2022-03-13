@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2020,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -21,20 +22,9 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#define __STDC_FORMAT_MACROS 1     /* add 64-bit printf modifiers  */
-#include <ppe42_string.h>
-#include <stdint.h>                /* uint_fast8_t, uintN_t        */
 
-#ifndef __PPE__
-#include "ec_verify_core.H"
-#else
 #include "ecdsa.H"
-#define SPPE_IMAGE
-#endif
-
-#define __LITTLE_ENDIAN
-
-#ifdef SPPE_IMAGE
+#include <ppe42_string.h>
 
 bn_t *lookup[16][3];
 
@@ -74,12 +64,6 @@ int ec_double (bn_t *x, bn_t *y, bn_t *z) ;
 // if we ever need to support other curves, #ifdef their equivalent functions
 //
 // this code is limited to p = 2^521 -1 (P-521) and its order
-
-
-
-
-
-
 
 #define  bn_ge_prime(val)  (bn_cmp((val), consts_p()->ec_prime) >= 0)
 #define  bn_ge_order(val)  (bn_cmp((val), consts_p()->ec_order) >= 0)
@@ -1619,49 +1603,3 @@ int ec_verify (const unsigned char *publicpt,    /* 2*EC_COORDBYTES */
 
     return (! bn_cmp(r, res_x));
 }
-
-#else
-
-int ec_verify (const unsigned char *publicpt,    /* 2*EC_COORDBYTES */
-               const unsigned char *hash,        /*   EC_HASHBYTES  */
-               const unsigned char *signature)   /* 2*EC_COORDBYTES */
-{
-    return 0;
-}
-
-void bn_read_pt(bn_t *r, const unsigned char *data) {
-    return;
-}
-void __attribute__((noinline)) BN_COPY (bn_t *dst, const bn_t *src) {
-    return;
-}
-bn_t bn_sub    (bn_t *a, const bn_t *b) {
-    return *a;
-}
-void bn_add    (bn_t *a, const bn_t *b) {
-    return;
-}
-void bn_mul    (bn_t *r, const bn_t *a, const bn_t *b) {
-    return;
-}
-void bn_modadd (bn_t *a, const bn_t *b) {
-    return;
-}
-void bn_modsub (bn_t *a, const bn_t *b) {
-    return;
-}
-
-int bn_cmp (const bn_t a[NWORDS], const bn_t b[NWORDS]) {
-    return 0;
-}
-void bn_modmul_prime (bn_t *a, const bn_t *b)  {
-  return;
-}
-int ec_multiply (bn_t *x, bn_t *y, bn_t *z, const bn_t *k)  {
-    return 0;
-}
-void ec_projective2affine (bn_t *x, const bn_t *z)  {
-    return;
-}
-
-#endif
