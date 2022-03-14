@@ -68,12 +68,13 @@ obldr_link_cmd_processing = custom_target('obldr_link_cmd_processing',
                                       output : outfile,
                                       input : infile,
                                       command : [ cc,
-                                      '-I' + odyssey_link_file_path,
+                                      '-I' + odyssey_link_file_path, '-MD',
                                       meson.get_external_property('link_cmd_args'),
                                       meson.get_external_property('gcc_defs_cmn'),
                                       '@INPUT0@',
                                       '-o',
                                       '@OUTPUT@'],
+                                      depfile : '@BASENAME@.d',
                                       build_by_default: true
                                     )
 
