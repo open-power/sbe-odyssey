@@ -574,9 +574,6 @@ def p11t_fsi_config():
     ROOT_CTRL0.CFAM_PROTECTION_0_DC = 0
     ROOT_CTRL0_COPY.CFAM_PROTECTION_0_DC = 0
 
-    ## Set up Tap scratch registers
-    # TBD, not immediately needed for SoA work
-
 ISTEP(2, 3, "pc_cbs_start", "SPPE")
 
 def p11t_cbs_start():
@@ -852,7 +849,7 @@ def p11t_chiplet_reset():
 def ody_chiplet_reset():
     poz_chiplet_reset(i_target, ody_chiplet_delay_table)
 
-def poz_chiplet_reset(const uint8_t i_chiplet_delays[64]):
+def poz_chiplet_reset(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64]):
     if ATTR_HOTPLUG:
         chiplets = All functional chiplets except TP
     else:
