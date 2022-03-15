@@ -183,6 +183,56 @@ int main(int argc, char* argv[])
 
     checkFile(argv[2], unpacked, entry, phash);
 
+    // Test store-append into new archive
+    const int testArchiveSize = 2 * entry.get_size() + 1024;
+    void* testArchive = malloc(testArchiveSize);
+
+    FileArchive arc2(testArchive);
+    arc2.initialize();
+
+    void* end_of_archive = arc2.archive_end();
+
+    rc = arc2.append("TestFile",
+                     unpacked,
+                     entry.get_size(),
+                     testArchiveSize,
+                     end_of_archive);
+
+    if (!rc)
+    {
+        // append the real one
+
+        rc = arc2.append(fileName,
+                         unpacked,
+                         entry.get_size(),
+                         testArchiveSize,
+                         end_of_archive);
+    }
+
+    //saveFile(testArchive, testArchiveSize, std::string(argv[2]) + ".archive");
+    if(rc)
+    {
+        error(1, 0, "%s:%s: append() failed: 0x%X", argv[1], argv[2], rc);
+    }
+
+    rc = arc2.locate_file(argv[2], entry);
+
+    if (rc)
+    {
+        error(1, 0, "%s:%s: append() then locateFile() failed: 0x%X", argv[1], argv[2], rc);
+    }
+
+    rc = entry.decompress(unpacked, entry.get_size(), phash);
+
+    if (rc)
+    {
+        error(1, 0, "%s:%s: append then decompress() failed: 0x%X", argv[1], argv[2], rc);
+    }
+
+
+    checkFile(argv[2], unpacked, entry, phash);
+
+
     printf("%s:%s OK\n", argv[1], argv[2]);
     return 0;
 }

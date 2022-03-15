@@ -32,6 +32,7 @@
 
 static const uint32_t PAK_START = 0x50414B21; // PAK!
 static const uint32_t PAK_END = 0x2F50414B; // /PAK
+static const uint16_t PAK_VERSION = 1;
 static const uint8_t PAK_METHOD_STORE = 1;
 static const uint8_t PAK_METHOD_ZLIB = 2;
 static const uint8_t PAK_METHOD_ZLIB_FAST = 3;
@@ -42,8 +43,15 @@ static const uint8_t PAK_METHOD_ZLIB_PPC = 4;
 struct PakFileHeaderCore
 {
     uint32_t iv_magic;   //0
-    uint16_t iv_version; //4
-    uint16_t iv_hesize;  //6
+    union
+    {
+        uint32_t iv_asize;  // total archive length
+        struct
+        {
+            uint16_t iv_version; //4
+            uint16_t iv_hesize;  //6   Size of extended header
+        };
+    };
 } __attribute__((packed));
 static_assert(sizeof(PakFileHeaderCore) == 8, "PakFileHeaderCore defined incorrectly, must be 8 bytes");
 
@@ -51,13 +59,15 @@ struct PakFileHeaderExtended
 {
     uint8_t iv_flags;    //0
     uint8_t iv_method;   //1
-    uint16_t iv_nsize;   //2
+    uint16_t iv_nsize;   //2    name size
     uint32_t iv_crc;     //4
-    uint32_t iv_csize;   //8
-    uint32_t iv_dsize;   //12
-    uint32_t iv_psize;   //16
-    char* iv_name;       //20
+    uint32_t iv_csize;   //8    Compressed size
+    uint32_t iv_dsize;   //12   Uncompressed size
+    uint32_t iv_psize;   //16   Payload size
+    char     iv_name[0];       //20
 } __attribute__((packed));
+
+const size_t PakHeaderExtendedSize = sizeof(PakFileHeaderExtended);
 
 #ifdef __USE_SHA3__
 ARC_RET_t FileArchive::Entry::stream_uncompressed_with_hash(StreamReceiver& i_receiver, void* i_scratch, sha3_t* o_hash)
@@ -210,7 +220,7 @@ ARC_RET_t FileArchive::Entry::get_stored_data_stream(fapi2::hwp_array_istream& o
 
 ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& o_ptr)
 {
-    uint8_t* ptr = (uint8_t*)iv_firstFile;
+    uint8_t* ptr = static_cast<uint8_t*>(iv_firstFile);
     uint16_t fname_len = i_fname ? strlen(i_fname) : 0;
 
     while (true)
@@ -225,7 +235,14 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
         // Read just the first 8 bytes to check magic
         // This prevents any out of bound access just to read the whole header
         PakFileHeaderCore hdrc;
+#ifdef __PPE42__
+        //ptr and hdrc should always 8 byte aligned, so take advantage of 64 bit load/store
+        uint64_t d64;
+        asm volatile ("lvd %0, %1 \n" : "=r"(d64): "o"(*ptr));
+        asm volatile ("stvd %1, %0 \n":"=o"(hdrc): "r"(d64));
+#else
         memcpy(&hdrc, ptr, 8);
+#endif
         // The pak layout is big endian
         hdrc.iv_magic = be32toh(hdrc.iv_magic);
         hdrc.iv_version = be16toh(hdrc.iv_version);
@@ -265,11 +282,10 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
         // If the version were to change - that would be handled here
         // Do this in two pieces:
         // 1) Copy in the values for the fixed length vars
-        // 2) Set iv_name to name start in ptr to avoid allocating a new copy of the name
+        // 2) Set name to name start in ptr to avoid allocating a new copy of the name
         PakFileHeaderExtended hdre;
-        size_t hdreFixedLen = 20;
-        memcpy(&hdre, ptr, hdreFixedLen);
-        hdre.iv_name = (char*)(ptr + hdreFixedLen);
+        memcpy(&hdre, ptr, PakHeaderExtendedSize);
+        char* name = (char*)(ptr + PakHeaderExtendedSize);
         // The pak layout is big endian
         hdre.iv_nsize = be16toh(hdre.iv_nsize);
         hdre.iv_crc = be32toh(hdre.iv_crc);
@@ -285,7 +301,7 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
          * Use the length first and then memcmp to find the file
          */
         if (i_fname && (hdre.iv_nsize == fname_len)
-            && !memcmp(hdre.iv_name, i_fname, fname_len))
+            && !memcmp(name, i_fname, fname_len))
         {
 #ifndef __USE_COMPRESSION__
 
@@ -345,4 +361,135 @@ void* FileArchive::archive_end()
     void* end;
     _locate_file(NULL, NULL, end);
     return end;
+}
+
+ARC_RET_t FileArchive::initialize(void)
+{
+    ARC_RET_t rc = ARC_OPERATION_SUCCESSFUL;
+
+    if (uintptr_t(iv_firstFile) & 7)
+    {
+        ARC_ERROR("initialize: Unaligned file header: %p", iv_firstFile);
+        return ARC_FILE_CORRUPTED;
+    }
+
+    PakFileHeaderCore* hdrc = reinterpret_cast<PakFileHeaderCore*>(iv_firstFile);
+    hdrc->iv_magic = htobe32(PAK_END);
+    hdrc->iv_asize = sizeof(PakFileHeaderCore);
+    return rc;
+}
+
+
+/**
+ * append - store an uncompressed image(file) at the end of the archive
+ * @param[in] Image filename
+ * @param[in] Image pointer
+ * @param[in] Image size in bytes
+ * @param[in] FileArchive max size
+ * @param[out] New FileArchive size
+ * @returns error code
+ */
+
+ARC_RET_t FileArchive::append(const char* i_fname,
+                              const void* i_data,
+                              uint32_t i_dataSize,
+                              size_t i_archiveMaxSize,
+                              void*& io_end)
+{
+    ARC_RET_t rc = ARC_OPERATION_SUCCESSFUL;
+    uint8_t* next_entry = NULL;
+    uint32_t name_len = strlen(i_fname);
+
+    if(i_fname == NULL || name_len == 0 || i_data == NULL || i_dataSize == 0)
+    {
+        // Note: There seems to be a weird bug in PPE trace macro expansion,
+        // where two of "%p" in sequence causes a problem, but putting
+        // something between them (like %x) resolves it.
+        // So the order is here deliberate.
+        ARC_ERROR("append: Invalid parms. i_data: %p i_dataSize: %x i_fname: %p",
+                  i_data, i_dataSize, i_fname);
+        return ARC_INVALID_PARAMS;
+    }
+
+    if(io_end == iv_firstFile)
+    {
+        // uninitialized archive
+        next_entry = static_cast<uint8_t*>(iv_firstFile);
+    }
+    else if(io_end == NULL)
+    {
+        // locate the end
+        void* end;
+        rc = _locate_file(NULL, NULL, end);
+
+        if(rc != ARC_OPERATION_SUCCESSFUL)
+        {
+            return rc;
+        }
+
+        if(static_cast<uint8_t*>(end) == iv_firstFile)
+        {
+            return ARC_FILE_CORRUPTED;
+        }
+
+        // point to end marker
+        next_entry = static_cast<uint8_t*>(end) - sizeof(PakFileHeaderCore);
+    }
+    else
+    {
+        // point to end marker
+        next_entry = static_cast<uint8_t*>(io_end) - sizeof(PakFileHeaderCore);
+
+        if(next_entry < iv_firstFile ||
+           next_entry > (static_cast<uint8_t*>(iv_firstFile) + i_archiveMaxSize))
+        {
+            ARC_ERROR("FileArchive::append: io_end is not within archive");
+            return ARC_INVALID_PARAMS;
+        }
+    }
+
+    // Get sizes
+    uint32_t paySize = (i_dataSize + 7) & ~(0x7); // payload size must by multiple of 8
+
+    uint32_t hesize = PakHeaderExtendedSize + name_len;
+    hesize = (hesize + 7) & ~(0x7); // multiple of 8
+    uint32_t entry_size = hesize + sizeof(PakFileHeaderCore) + paySize;
+
+    // Check for overflow
+    if(((next_entry - static_cast<uint8_t*>(iv_firstFile)) + entry_size + sizeof(PakFileHeaderCore) ) > i_archiveMaxSize)
+    {
+        ARC_ERROR("FileArchive::append: Append would overflow archive");
+        return ARC_INPUT_BUFFER_OVERFLOW;
+    }
+
+    PakFileHeaderCore* hdrc = reinterpret_cast<PakFileHeaderCore*>(next_entry);
+    hdrc->iv_magic = htobe32(PAK_START);
+    hdrc->iv_version = htobe16(PAK_VERSION);
+    hdrc->iv_hesize = htobe16(hesize);
+
+    PakFileHeaderExtended* hdex = reinterpret_cast<PakFileHeaderExtended*>(next_entry + sizeof(PakFileHeaderCore));
+    hdex->iv_flags = 0;
+    hdex->iv_method = PAK_METHOD_STORE;
+    hdex->iv_nsize = htobe16(name_len);
+    hdex->iv_crc = 0;  // TBD Can zero mean 'don't check'?
+    hdex->iv_csize = htobe32(i_dataSize);
+    hdex->iv_dsize = htobe32(i_dataSize);
+    hdex->iv_psize = htobe32(paySize);
+
+    reinterpret_cast<uint64_t*>(hdex)[(hesize / 8) - 1] = 0; // padding at end of fname
+
+    memcpy(hdex->iv_name, i_fname, name_len);
+
+    uint8_t* payloadDest = next_entry + hesize + sizeof(PakFileHeaderCore);
+    memcpy(payloadDest, i_data, i_dataSize);
+
+    // add new end marker
+    hdrc = reinterpret_cast<PakFileHeaderCore*>(payloadDest + paySize);
+    hdrc->iv_magic = htobe32(PAK_END);
+
+    io_end = reinterpret_cast<uint8_t*>(hdrc) + sizeof(PakFileHeaderCore);
+
+    hdrc->iv_asize = (uint32_t)(reinterpret_cast<uint8_t*>(io_end) - reinterpret_cast<uint8_t*>(iv_firstFile));
+
+    return rc;
 }

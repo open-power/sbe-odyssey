@@ -178,6 +178,13 @@ int main()
         }
     }
 
+    void* end = NULL;
+    arc.append("Some_Junk",
+               unpacked,
+               entry.get_size(),
+               sizeof(fake_hw_image),
+               end);
+
 
     iota_run();
     return 0;
