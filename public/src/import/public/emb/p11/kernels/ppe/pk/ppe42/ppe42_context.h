@@ -167,7 +167,7 @@
         .macro _pk_ctx_push_as_needed branch_addr:req
 
         // Store entire context with single instruction
-        stcxtu  %r1,    -PK_CTX_SIZE(%r1)
+        stcxu   %r1,    -PK_CTX_SIZE(%r1)
         _liw    %r3,    \branch_addr
         mtlr    %r3
         mfsprg0 %r4

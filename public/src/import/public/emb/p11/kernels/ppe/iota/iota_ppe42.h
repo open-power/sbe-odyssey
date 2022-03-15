@@ -160,7 +160,7 @@
 
 .macro __m_iota_interrupt_and_exception_handler, iota_schedule_reason
 # Creates Stack frame and saves CR,SPRG0,R0,R1,R3-R10,XER,CTR,SRR0,SRR1,R28-R31
-stcxtu  %r1,-IOTA_CTX_SIZE(%r1)
+stcxu   %r1,-IOTA_CTX_SIZE(%r1)
 li      %r3, \iota_schedule_reason
 bl      _iota_schedule
 # modify stack copy of SRR1 (MSR), turn off WE
