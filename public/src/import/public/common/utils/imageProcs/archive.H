@@ -168,13 +168,13 @@ class FileArchive
          *
          * @param[in] i_address Location of the beginning of the archive in addressable memory
          */
-        FileArchive(const void* i_address) : iv_firstFile(i_address) {};
+        FileArchive(void* i_address) : iv_firstFile(i_address) {};
 
         /**
          * @brief Locate a file inside the archive
          *
-         * @param[in]  Name of the file to locate
-         * @param[out] Entry that will receive the file information if found
+         * @param[in]  i_fname Name of the file to locate
+         * @param[out] o_entry Entry that will receive the file information if found
          *
          * @return     ARC_OPERATION_SUCCESSFUL        if the file was found and o_entry is valid
          *             ARC_FILE_NOT_FOUND              if the file could not be found in the archive
@@ -189,8 +189,33 @@ class FileArchive
          * @return An 8-byte aligned pointer to the first memory location after the end of the archive
          */
         void* archive_end();
+
+        /**
+         * @brief Append an uncompressed file to the end of the archive
+         *
+         * @param[in] i_fname    Image filename
+         * @param[in] i_data     Image pointer
+         * @param[in] i_dataSize Image size in bytes
+         * @param[in] i_archiveMaxSize FileArchive max size in bytes
+         * @param[in/out] io_end ptr to end of archive + 1 (next free space)
+         *                If NULL then will seek the end from the beginning
+         * @return  ARC_...
+         * @note No compression support at this time... Store only
+         */
+        ARC_RET_t append(const char* i_fname,
+                         const void* i_data,
+                         uint32_t i_dataSize,
+                         size_t   i_archiveMaxSize,
+                         void*& io_end);
+
+        /**
+         * @brief Initailize/reset the archive buffer to empty
+         * @return ARC_OPERATION_SUCCESSFUL || ARC_FILE_CORRUPTED if internal buffer is not 8 byte aligned
+         */
+        ARC_RET_t initialize(void);
+
     private:
-        const void* iv_firstFile;
+        void* iv_firstFile;
 
         /**
          * @brief Internal function used for both locate_file and archive_end
