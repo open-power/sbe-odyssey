@@ -367,7 +367,7 @@ ctx_continue_push:
         stvd    %d30,   PK_CTX_GPR30(%r1)
         b       ctx_interrupt_check
 #else
-        ## ctx_check_discard for PPE42X with stcxtu
+        ## ctx_check_discard for PPE42X with stcxu
         ## Expect r4 to have sprg0
         bb0wi   %r4, PPE42_DISCARD_CTX_BIT, ctx_interrupt_check
 
@@ -408,7 +408,7 @@ __ctx_switch:
         stw     %r3,    PK_CTX_KERNEL_CTX(%r1)
 #else
         ## create stack frame and push all context
-        stcxtu  %r1,    -PK_CTX_SIZE(%r1)
+        stcxu  %r1,    -PK_CTX_SIZE(%r1)
 #endif
         ## Set lr to the desired destination
         _liw    %r5     __pk_next_thread_resume
