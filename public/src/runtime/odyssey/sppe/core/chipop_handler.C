@@ -204,5 +204,3 @@ sbeChipOpRc_t sbeIsCmdAllowed (const uint8_t i_cmdClass,
     return retRc;
     #undef SBE_FUNC
 }
-// Mandatory macro inclusion
-CMD_CLASS_DEFAULT_INTIALISATION

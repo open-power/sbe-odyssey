@@ -29,7 +29,8 @@ infile_c = ['main.C',
             'chipop_handler.C',
             'sbecmdreceiver.C',
             'sbecmdprocessor.C',
-            ]
+            'chipop_table.C'
+           ]
 
 lib_file_name = 'odysseysppe'
 
