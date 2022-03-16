@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////////
 //// @brief Stacks for Non-critical Interrupts and Threads
 //////////////////////////////////////////////////////////////////
+sbeRole g_sbeRole = SBE_ROLE_MASTER;
 
 SBEGlobalsSingleton* sbeGlobal = &SBEGlobalsSingleton::getInstance();
 SBEGlobalsSingleton& SBEGlobalsSingleton::getInstance()
