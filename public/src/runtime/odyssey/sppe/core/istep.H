@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/chipop_table.C $         */
+/* $Source: public/src/runtime/odyssey/sppe/core/istep.H $                */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2017,2022                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,43 +21,22 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+#ifndef __ISTEP_TABLE_H
+#define __ISTEP_TABLE_H
 
-#include "sbecmdscomaccess.H"
-#include "istep.H"
-#include "sbetrace.H"
-#include "sbe_sp_intf.H"
-#include "chipop_handler.H"
-#include "chipop_table.H"
+/**
+  * @brief structure for execute istep chipop (0xA101) contents.
+  *
+  */
 
-static const uint16_t HARDWARE_FENCED_STATE =
-     SBE_FENCE_AT_CONTINUOUS_IPL|SBE_FENCE_AT_DMT;
+typedef struct
+{
+    uint32_t reserved1:8;
+    uint32_t major:8;
+    uint32_t reserved2:8;
+    uint32_t minor:8;
+}sbeIstepReqMsg_t;
 
-static const uint16_t PUT_HARDWARE_FENCED_STATE =
-     HARDWARE_FENCED_STATE;
+    uint32_t sbeHandleIstep (uint8_t *i_pArg);
 
-////////////////////////////////////////////////////////////////
-// @brief g_sbeIplControlCmdArray
-//
-////////////////////////////////////////////////////////////////
-CMD_ARR(
-   A1,
-   {sbeHandleIstep,
-    SBE_CMD_EXECUTE_ISTEP,
-    HARDWARE_FENCED_STATE|SBE_FENCE_AT_DUMPING,
-   },
-)
-
-CMD_ARR(
-    A2,
-    {sbeGetScom,
-     SBE_CMD_GETSCOM,
-     HARDWARE_FENCED_STATE,
-    },
-    {sbePutScom,
-     SBE_CMD_PUTSCOM,
-     HARDWARE_FENCED_STATE,
-    }
-)
-
-// Mandatory macro inclusion
-CMD_CLASS_DEFAULT_INTIALISATION
+#endif

@@ -25,12 +25,12 @@
 #ifndef __SBE_GLOBALS_H
 #define __SBE_GLOBALS_H
 
-//#include "sbestates.H"
 #include "sbeexeintf.H"
 #include "sbeSpMsg.H"
 #include "sbeutil.H"
-
+#include "cmnglobals.H"
 #define SBE_GLOBAL sbeGlobal
+extern sbeRole g_sbeRole;
 
 class SBEGlobalsSingleton
 {

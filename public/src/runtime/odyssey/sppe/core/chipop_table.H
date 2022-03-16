@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -24,6 +25,19 @@
 #ifndef __CHIPOP_TABLE_H
 #define __CHIPOP_TABLE_H
 
+/**
+  * @brief enums for SBE Istep Control command class
+  *
+  */
+enum sbeIplControlCommands
+{
+    SBE_CMD_EXECUTE_ISTEP      = 0x01, /* Execute istep */
+};
+
+/**
+  * @brief enums for SCOM Access Messages
+  *
+  */
 enum sbeScomAccessCommands
 {
     SBE_CMD_GETSCOM          = 0x01, /* Get SCOM */
