@@ -1,11 +1,12 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/plat/targeting/odytarget.C $  */
+/* $Source: public/src/runtime/odyssey/sppe/plat/targeting/target_service.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2012,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -21,52 +22,37 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+#ifndef __TARGET_SERVICE__
+#define __TARGET_SERVICE__
 
-
-#include <target_types.H>
-#include <vector>
-#include <plat_target.H>
-#include <plat_utils.H>
-#include <plat_target_base.H>
-
-// Global Vector containing ALL targets.  This structure is referenced by
-// fapi2::getChildren to produce the resultant returned vector from that
-// call.
-std::vector<fapi2::plat_target_handle_t> G_vec_targets;
-
+#include "plat_target_service.H"
 namespace fapi2
 {
-    plat_target_odyssey_handle l_handle;
-    template<TargetType K>
-    plat_target_handle_t createPlatTargetHandle(const uint32_t i_plat_argument)
-    {
-        static_assert(K != TARGET_TYPE_ALL, "Target instances cannot be of type ALL");
+  
+    /*
+     * Derived class for target services.
+     * It will be derived in each image.
+     */
 
-        if(K & TARGET_TYPE_PROC_CHIP)
+    class target_service : public sbe_target_service{
+        public:
+        // Disable copy contructor and assignment operator
+        target_service(const target_service & ) = delete;
+        target_service& operator=(const target_service & ) = delete;
+        static target_service& getInstance()
         {
-            plat_target_odyssey_handle l_odyTarget(0, PPE_TARGET_TYPE_PROC_CHIP);
-            l_handle = l_odyTarget;
+            return iv_instance;
         }
-        else
-        {
-            STATIC_COMPILE_ERROR("Unhandled target type");
-        }
-        return l_handle;
-    }
-
-    /// @brief Function to initialize the G_targets vector based on target
-    ///        values as per odyssey attributes
-    uint32_t plat_TargetsInit()
-    {
-        plat_target_handle_t l_platHandle;
-
-        uint32_t l_beginning_offset;
+        private:
+        static target_service iv_instance;
         /*
-         * Chip Target is the first one
+         * Constructor
          */
-        l_beginning_offset = 0; // CHIP_TARGET_OFFSET;
-        G_vec_targets[l_beginning_offset] = createPlatTargetHandle<fapi2::TARGET_TYPE_PROC_CHIP>(0);
+         target_service():sbe_target_service()
+         {
+         }
+    };
 
-        return 0;
-    }
-} // fapi2
+}
+extern fapi2::target_service *g_platTarget;
+#endif

@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/plat/targeting/plat_target.H $ */
+/* $Source: public/src/runtime/odyssey/sppe/plat/targeting/odyTarget.C $  */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,16 +22,35 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+/**
+ * @file plat_target.H
+ * @brief platform definitions for fapi2 targets
+ */
 
-#include "plat_target_sbe.H"
-
-#ifndef __FAPI2_PLAT_TARGET__
-#define __FAPI2_PLAT_TARGET__
+#include "plat_target_base.H"
 
 namespace fapi2
 {
-    typedef plat_target_sbe_handle plat_target_handle_t;
-};
+    /*
+     * Target map for Odyssey.
+     */
+     //struct targetInfo odyTargetMap;
 
-#endif
+     targetInfo_t odyTargetMap[] =
+     {
+         {0x0, PPE_TARGET_TYPE_PROC_CHIP, 0, 1},
+         {0x1, PPE_TARGET_TYPE_PERV, 1, 1},
+         {0xC, PPE_TARGET_TYPE_MC, 1, 1}
+     };
 
+     targetInfo_t * getTargetMap()
+     {
+         return odyTargetMap;
+     }
+     uint32_t targetCount = sizeof(odyTargetMap) / sizeof(odyTargetMap[0]);
+
+     uint32_t getTargetCount()
+     {
+         return targetCount;
+     }
+}

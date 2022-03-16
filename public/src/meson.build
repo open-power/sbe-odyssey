@@ -73,6 +73,7 @@ cmn_abs_inc_paths = []
 ekb_cmn_abs_inc_paths = []
 runtime_cmn_abs_inc_paths = []
 odyssey_cmn_abs_inc_paths = []
+odyssey_runtime_abs_inc_paths = []
 
 foreach inc_path : meson.get_external_property('cmn_inc_paths')
 
@@ -106,6 +107,15 @@ if platform == 'odyssey' or platform == 'all'
     #Odyssey specific genfiles directory path
     odyssey_genfiles_dir_path = genfiles_dir_path + '/odyssey/'
     run_command('mkdir', odyssey_genfiles_dir_path)
+endif
+
+if platform == 'odyssey' or platform == 'all'
+  foreach inc_path : meson.get_external_property('odyssey_runtime_inc_paths')
+
+    abs_inc_path = '-I' + meson.global_source_root() + inc_path
+    odyssey_runtime_abs_inc_paths += abs_inc_path
+
+  endforeach
 endif
 
 #Object file generation generator's (api's)

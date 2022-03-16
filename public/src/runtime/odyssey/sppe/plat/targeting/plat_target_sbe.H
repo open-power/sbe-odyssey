@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/plat/targeting/plat_target.H $ */
+/* $Source: public/src/runtime/odyssey/sppe/plat/targeting/plat_target_sbe.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -22,16 +22,48 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+#ifndef __TARGET_SBE__
+#define __TARGET_SBE__
 
-#include "plat_target_sbe.H"
+#include "plat_target_base.H"
 
-#ifndef __FAPI2_PLAT_TARGET__
-#define __FAPI2_PLAT_TARGET__
 
 namespace fapi2
 {
-    typedef plat_target_sbe_handle plat_target_handle_t;
-};
+    /*
+     * Derived class for target handle.
+     * It will be derived in each image.
+     */
+
+    class plat_target_sbe_handle : public plat_target_base_handle{
+
+        public:
+            ///
+            /// @brief     Plat target handle constructor
+            /// @param[in] i_value value to instantiate handle with
+            ///
+            plat_target_sbe_handle(uint32_t i_value = 0):
+                plat_target_base_handle(i_value)
+            {}
+
+            ///
+            /// @brief     Plat target handle constructor
+            /// @param[in] i_chipletNum to update FAPI target type
+            /// @param[in] i_type to update PPE target type
+            /// @param[in] i_present to set target present or not
+            /// @param[in] i_functional to set target functional state
+            ///
+            plat_target_sbe_handle(uint8_t i_chipletNum,
+                                uint8_t i_type,
+                                bool i_present = true,
+                                bool i_functional = true):
+                plat_target_base_handle(i_chipletNum,
+                                        i_type,
+                                        i_present,
+                                        i_functional)
+            {
+            }
+    };
+}
 
 #endif
-

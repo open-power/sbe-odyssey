@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/plat/targeting/plat_target_utils.H $ */
+/* $Source: public/src/runtime/odyssey/sppe/plat/targeting/odyTarget.H $  */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2012,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,36 +23,11 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 /**
- * @file plat_target_util.H
- * @brief platform utility definitions for fapi2 targets
+ * @file plat_target.H
+ * @brief platform definitions for fapi2 targets
  */
 
-#ifndef __FAPI2_PLAT_TARGET_UTIL__
-#define __FAPI2_PLAT_TARGET_UTIL__
+#ifndef __ODY_TARGET__
+#define __ODY_TARGET__
 
-
-//
-// Platform Utility functions..
-//
-namespace fapi2
-{
-    ///
-    /// @brief Function to print the G_targets vector
-    ///
-    void plat_PrintTargets();
-
-    ///
-    /// @brief Function to initialize the G_targets vector based on partial good
-    ///        targets
-    /// @return FAPI2_RC_SUCCESS if okay
-    ///
-    ReturnCode plat_TargetsInit();
-
-    ///
-    /// @brief Function to get the proc chip target initialize the G_targets vector
-    /// @return proc target
-    ///
-    Target<TARGET_TYPE_PROC_CHIP> plat_getChipTarget();
-
-}
 #endif

@@ -1,11 +1,12 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/plat/targeting/odytarget.H $  */
+/* $Source: public/src/runtime/odyssey/sppe/plat/targeting/target_service.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2012,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,37 +23,13 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 /**
- * @file target.H
- * @brief platform specializations for fapi2 targets
+ * @file plat_target.H
+ * @brief platform definitions for fapi2 targets
  */
 
-#ifndef __FAPI2_TARGET__
-#define __FAPI2_TARGET__
+#include "plat_target_base.H"
+#include "target_service.H"
+#include "target.H"
 
-#include <plat_target.H>
-#include <fapi2_target.H>
-#include <utils.H>
-#include <stdint.h>
-#include <vector>
-#include <plat_target_utils.H>
-#include <plat_target_base.H>
-
-extern std::vector<fapi2::plat_target_handle_t> G_vec_targets;
-
-namespace fapi2
-{
-    template<TargetType T>
-    constexpr plat_target_type_t fapiTargetTypeToPlatTargetType()
-    {
-        static_assert(T == TARGET_TYPE_PROC_CHIP, "Invalid or composite target type");
-        return PPE_TARGET_TYPE_NONE;
-    }
-
-    template<>
-    constexpr plat_target_type_t fapiTargetTypeToPlatTargetType<TARGET_TYPE_PROC_CHIP>()
-    {
-        return PPE_TARGET_TYPE_PROC_CHIP;
-    }
-}
-
-#endif
+fapi2::target_service * g_platTarget = &fapi2::target_service::getInstance();
+fapi2::target_service fapi2::target_service::iv_instance;

@@ -22,8 +22,8 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-
-infile_c = ['odytarget.C'
+infile_c = ['odyTarget.C',
+            'target_service.C'
             ]
 
 lib_file_name = 'odysseytarget'
@@ -32,6 +32,7 @@ odyssey_target_obj_file_cpp = obj_gen_cpp.process(infile_c,
                                         extra_args : [
                                         meson.get_external_property('gcc_defs_cmn_odyssey'),
                                         meson.get_external_property('gcc_defs_odyssey_sppe'),
+                                        odyssey_runtime_abs_inc_paths,
                                         odyssey_cmn_abs_inc_paths,
                                         runtime_cmn_abs_inc_paths])
 
@@ -50,4 +51,3 @@ libodysseytarget = custom_target( lib_file_name,
 odyssey_sppe_libs += '-l' + lib_file_name
 odyssey_sppe_lib_paths += '-L' + meson.current_build_dir()
 odyssey_sppe_dep_libs += libodysseytarget
-
