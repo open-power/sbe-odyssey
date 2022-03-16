@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -34,6 +35,7 @@
 #include <stdint.h>
 #include "sbestates.H"
 #include "sbeevents.H"
+#include "odysseymbxscratch.H"
 
 //TODO: P11SBE Porting
 #if 0
@@ -134,7 +136,7 @@ class SbeRegAccess
          */
         inline bool isFspSystem() const
         {
-            return iv_fspAttached;
+            return mbx5.iv_fspAttached;
         }
 
         /**
@@ -145,7 +147,7 @@ class SbeRegAccess
          */
         inline bool isIstepMode() const
         {
-            return iv_istepMode;
+            return mbx5.iv_istepMode;
         }
 
         /**
@@ -156,7 +158,7 @@ class SbeRegAccess
          */
         inline bool isSkipMpiplDump() const
         {
-            return iv_skipMpiplDumpCollection;
+            return mbx5.iv_skipMpiplDumpCollection;
         }
 
         /**
@@ -169,7 +171,7 @@ class SbeRegAccess
          */
         inline bool isDestBitRuntime() const
         {
-            return iv_sbeDestRuntime;
+            return mbx5.iv_sbeDestRuntime;
         }
 
         /**
@@ -180,7 +182,7 @@ class SbeRegAccess
          */
         inline bool isCollectFFDCSet() const
         {
-            return iv_collectFFDC;
+            return mbx5.iv_collectFFDC;
         }
 
         /**
@@ -192,12 +194,12 @@ class SbeRegAccess
          */
         inline bool isSendInternalFFDCSet() const
         {
-            return iv_sendFFDC;
+            return mbx5.iv_sendFFDC;
         }
 
         inline bool isSystemCheckStopForDMTFail() const
         {
-            return !iv_dontCheckStopForDMT;
+            return !mbx5.iv_dontCheckStopForDMT;
         }
         /**
          * @brief Check if SBE is master
@@ -207,7 +209,7 @@ class SbeRegAccess
          */
         inline bool isSbeMaster() const
         {
-            return iv_isMaster;
+            return mbx6.iv_isMaster;
         }
 
         /**
@@ -218,7 +220,7 @@ class SbeRegAccess
          */
         uint64_t getSbeState() const
         {
-            return iv_currState;
+            return messagingReg.iv_currState;
         }
 
         /**
@@ -229,7 +231,7 @@ class SbeRegAccess
          */
         uint64_t getSbePrevState() const
         {
-            return iv_prevState;
+            return messagingReg.iv_prevState;
         }
 
 
@@ -241,7 +243,7 @@ class SbeRegAccess
          */
         uint8_t getSbeMajorIstepNumber() const
         {
-            return iv_majorStep;
+            return messagingReg.iv_majorStep;
         }
 
         /**
@@ -252,7 +254,7 @@ class SbeRegAccess
          */
         uint8_t getSbeMinorIstepNumber() const
         {
-            return iv_minorStep;
+            return messagingReg.iv_minorStep;
         }
         /**
          * @brief Update the SBE State as per the transition event
@@ -290,78 +292,16 @@ class SbeRegAccess
 
     private:
 
+        mbx5_t mbx5 = {0};
+        mbx6_t mbx6 = {0};
+        messagingReg_t messagingReg = {0};
+        mbx8_t mbx8 = {0};
+
         /**
-         * @brief Constructor
-         */
-        SbeRegAccess() : iv_mbx3(0), iv_mbx6(0), iv_messagingReg(0), iv_mbx8(0)
+        * @brief Constructor
+        */
+        SbeRegAccess()
         {}
-
-        union
-        {
-            struct
-            {
-                uint64_t iv_istepMode : 1;
-                uint64_t iv_sbeDestRuntime : 1;
-                uint64_t iv_mpiplMode : 1;
-                uint64_t iv_fspAttached : 1;
-                uint64_t iv_collectFFDC : 1;
-                uint64_t iv_sendFFDC : 1;
-                uint64_t iv_mbx3DontCare1 : 4;
-                uint64_t iv_dontCheckStopForDMT : 1;
-                uint64_t iv_disableScomFiltering : 1;
-                uint64_t iv_disableInvalidScomAddrCheck : 1;
-                uint64_t iv_mbx3DontCare2 : 2;
-                uint64_t iv_skipMpiplDumpCollection : 1;
-                uint64_t iv_mbx3DontCare3 : 16;
-                uint64_t iv_mbx3Unused : 32;
-            };
-            uint64_t iv_mbx3;
-        };
-
-        union
-        {
-            struct
-            {
-                uint64_t iv_mbx6DontCare : 24;
-                uint64_t iv_isMaster : 1;
-                uint64_t iv_mbx6DontCare2 : 7;
-                uint64_t iv_mbx6Unused : 32;
-            };
-            uint64_t iv_mbx6;
-        };
-
-        union
-        {
-//TODO: P11SBE Porting
-//This must be in top level common. 
-            struct
-            {
-                uint64_t iv_sbeBooted : 1;
-                uint64_t iv_asyncFFDC : 1;
-                uint64_t iv_reserved1 : 2;
-                uint64_t iv_prevState : 4;
-                uint64_t iv_currState : 4;
-                uint64_t iv_majorStep : 8; // Max major is 97
-                uint64_t iv_minorStep : 6; // Max minor is 34
-                uint64_t iv_reserved2 : 2; // Unused
-                uint64_t iv_progressCode  : 4;
-                uint64_t iv_unused : 32;
-            };
-            uint64_t iv_messagingReg;
-        };
-
-        union
-        {
-            struct
-            {
-                uint64_t iv_mbox8Reserve1 : 2;
-                uint64_t iv_mbx3_valid : 1;
-                uint64_t iv_mbox8Reserve2 : 2;
-                uint64_t iv_mbx6_valid : 1;
-                uint64_t iv_mbox8Reserve3 : 58;
-            };
-            uint64_t iv_mbx8;
-        };
 
         // Bit masks defining bits in the above registers that the SBE is
         // interested in
