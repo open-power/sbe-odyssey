@@ -33,6 +33,7 @@
 #include "odysseylink.H"
 #include "plat_hw_access.H"
 #include "initthreads.H"
+#include "target.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -148,6 +149,16 @@ int  main(int argc, char **argv)
 
         //if ( (!SBE::isMpiplReset()) && (!SBE_GLOBAL->isHreset) )
         {
+            fapi2::ReturnCode fapiRc = g_platTarget->plat_TargetsInit();
+            if( fapiRc != fapi2::FAPI2_RC_SUCCESS )
+            {
+                SBE_ERROR(SBE_FUNC"plat_TargetsInit failed");
+                (void)SbeRegAccess::theSbeRegAccess().
+                        stateTransition(SBE_FAILURE_EVENT);
+                // Hard Reset SBE to recover
+                break;
+            }
+
             if(SbeRegAccess::theSbeRegAccess().init())
             {
                 SBE_ERROR(SBE_FUNC"Failed to initialize SbeRegAccess.");

@@ -36,12 +36,70 @@
 
 namespace fapi2
 {
+   /*
+    * Structure for target params
+    */
+    typedef struct targetInfo
+    {
+        uint32_t chipletNum:8;
+        uint32_t targetType:6;
+        uint32_t isPervType:1;
+        uint32_t targetCnt:17;
+    }targetInfo_t;
 
+    targetInfo_t * getTargetMap();
+    uint32_t getTargetCount();
     typedef enum plat_target_type
     {
         PPE_TARGET_TYPE_NONE           = 0x00,
         PPE_TARGET_TYPE_PROC_CHIP      = 0x01,
+        PPE_TARGET_TYPE_PERV           = 0x06,
+        PPE_TARGET_TYPE_MC             = 0x0B,
+        PPE_TARGET_TYPE_SYSTEM         = 0x08,
     } plat_target_type_t;
+
+    // TODO: Merge _PLAT_TARGET_TYPE_TRAITS with struct plat_target_type.
+    constexpr struct {
+        bool is_chiplet;
+        unsigned int first_chiplet;
+    } _PLAT_TARGET_TYPE_TRAITS[] = {
+        { false, 0                   }, // PPE_TARGET_TYPE_NONE
+        { false, 0                   }, // PPE_TARGET_TYPE_PROC_CHIP
+        { false, 0                   }, // PPE_TARGET_TYPE_PAU
+        { false, 0                   }, // PPE_TARGET_TYPE_CORE
+        { true,  0x20                }, // PPE_TARGET_TYPE_EQ
+        { false, 0                   }, // 0x05
+        { true,  0                   }, // PPE_TARGET_TYPE_PERV
+        { true,  0x08                }, // PPE_TARGET_TYPE_PEC
+        { false, 0                   }, // PPE_TARGET_TYPE_SYSTEM
+        { false, 0                   }, // PPE_TARGET_TYPE_PHB
+        { false, 0                   }, // PPE_TARGET_TYPE_MI
+        { true,  0x0C                }, // PPE_TARGET_TYPE_MC
+        { true,  0x10                }, // PPE_TARGET_TYPE_PAUC
+        { true,  0x18                }, // PPE_TARGET_TYPE_IOHS
+        { false, 0                   }, // PPE_TARGET_TYPE_NMMU
+        { false, 0                   }, // PPE_TARGET_TYPE_OCMB
+        { false, 0                   }, // PPE_TARGET_TYPE_PMIC
+        { false, 0                   }, // PPE_TARGET_TYPE_GENERICI2CSLAVE
+        { false, 0                   }, // PPE_TARGET_TYPE_MCC
+        { false, 0                   }, // PPE_TARGET_TYPE_OMIC
+        { false, 0                   }, // PPE_TARGET_TYPE_OMI
+    };
+
+    template <plat_target_type T>
+    constexpr bool plat_target_is_chiplet()
+    {
+        return _PLAT_TARGET_TYPE_TRAITS[T].is_chiplet;
+    }
+
+    template <plat_target_type T>
+    constexpr unsigned int plat_target_first_chiplet()
+    {
+        static_assert(plat_target_is_chiplet<T>(),
+                      "Destination type is not a chiplet");
+
+        return _PLAT_TARGET_TYPE_TRAITS[T].first_chiplet;
+    }
 
     /*
      * The plat_target_base_handle bit layout is designed so that when the bits
@@ -54,10 +112,10 @@ namespace fapi2
      * plat_target_base_handle bit layout :
      * BIT VALUES FOR BIT-0 TO BIT-31:
      *   Chiplet_Num : 08 Bits => FAPI target type [ bit00 – bit07 ]
-     *   Type        : 05 Bits => PPE target type  [ bit08 – bit12 ]
-     *   Present     : 01 Bit  => Target present or not [ bit13 ]
-     *   Functional  : 01 Bit  => Target functional state is on or off [ bit14 ]
-     *   Reserve     : 17 Bits => Free Bits [ bit15 – bit31 ]
+     *   Type        : 06 Bits => PPE target type  [ bit08 – bit13 ]
+     *   Present     : 01 Bit  => Target present or not [ bit14 ]
+     *   Functional  : 01 Bit  => Target functional state is on or off [ bit15 ]
+     *   Reserve     : 16 Bits => Free Bits [ bit16 – bit31 ]
      */
     class plat_target_base_handle {
 
@@ -117,7 +175,7 @@ namespace fapi2
             ///
             plat_target_type getTargetType() const
             {
-                return static_cast<plat_target_type>(iv_value.getBits<8,5>());
+                return static_cast<plat_target_type>(iv_value.getBits<8,6>());
             }
 
             ///
@@ -184,12 +242,12 @@ namespace fapi2
                 }
                 return l_targetType;
             }
-
             ///
             /// @brief Gets the plat target handle as a uint32
             /// @return Plat target handle as a uint32_t
             ///
             operator uint32_t() const {return iv_value();}
+
     };
 };
 
