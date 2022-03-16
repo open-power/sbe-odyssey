@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -144,7 +145,7 @@ uint32_t SbeRegAccess::init(bool forced)
             break;
         }
         // Read SBE messaging register into iv_messagingReg
-        rc = getscom_abs(0x00050009, &iv_messagingReg);
+        rc = getscom_abs(0x00050009, &messagingReg.iv_messagingReg);
         if(PCB_ERROR_NONE != rc)
         {
             SBE_ERROR(SBE_FUNC"Failed reading sbe messaging reg., RC: 0x%08X. ",
@@ -152,30 +153,30 @@ uint32_t SbeRegAccess::init(bool forced)
             break;
         }
         // Read Mailbox register 8 to check if mbox registers 3 and 6 are valid
-        rc = getscom_abs(0x0005003F, &iv_mbx8);
+        rc = getscom_abs(0x0005003F, &mbx8.iv_mbx8);
         if(PCB_ERROR_NONE != rc)
         {
             SBE_ERROR(SBE_FUNC"Failed reading mailbox reg 8, RC: 0x%08X. ", rc);
             break;
         }
-        SBE_INFO(SBE_FUNC "MBX_reg8 read : 0x%08X", (uint32_t)(iv_mbx8 >> 32));
-        if(iv_mbx3_valid)
+        SBE_INFO(SBE_FUNC "MBX_reg8 read : 0x%08X", (uint32_t)(mbx8.iv_mbx8 >> 32));
+        if(mbx8.iv_mbx5_valid)
         {
-            // Read MBX3
-            rc = getscom_abs(0x0005003A, &iv_mbx3);
+            // Read mbx5
+            rc = getscom_abs(0x0005003C, &mbx5.iv_mbx5);
             if(PCB_ERROR_NONE != rc)
             {
                 SBE_ERROR(SBE_FUNC"Failed reading mailbox reg 3, RC: 0x%08X. ",
                         rc);
                 break;
             }
-            SBE_INFO(SBE_FUNC "MBX_reg3 from scratch : 0x%08X", (uint32_t)(iv_mbx3 >> 32));
+            SBE_INFO(SBE_FUNC "MBX_reg3 from scratch : 0x%08X", (uint32_t)(mbx5.iv_mbx5 >> 32));
         }
     } while(false);
 
-    SBE_INFO(SBE_FUNC"Read mailbox registers: mbx8: 0x%08X, mbx3: 0x%08X, "
-              "mbx6: 0x%08X", (uint32_t)(iv_mbx8 >> 32),
-              (uint32_t)(iv_mbx3 >> 32), (uint32_t)(iv_mbx6 >> 32));
+    SBE_INFO(SBE_FUNC"Read mailbox registers: mbx8: 0x%08X, mbx5: 0x%08X, "
+              "mbx6: 0x%08X", (uint32_t)(mbx8.iv_mbx8 >> 32),
+              (uint32_t)(mbx5.iv_mbx5 >> 32), (uint32_t)(mbx6.iv_mbx6 >> 32));
     l_initDone = true;
     return rc;
     #undef SBE_FUNC
@@ -197,17 +198,17 @@ uint32_t SbeRegAccess::updateSbeState(const sbeState &i_state)
     #define SBE_FUNC "SbeRegAccess::updateSbeState "
     uint32_t rc = 0;
 
-    iv_prevState = iv_currState;
-    iv_currState = i_state;
+    messagingReg.iv_prevState = messagingReg.iv_currState;
+    messagingReg.iv_currState = i_state;
 
     //Update SBE State to runtime if current sbe state is SBE_STATE_HALT and is
     //HRESET
-    if((iv_prevState == SBE_STATE_HALT) && (iv_currState == SBE_STATE_HALT))
+    if((messagingReg.iv_prevState == SBE_STATE_HALT) && (messagingReg.iv_currState == SBE_STATE_HALT))
     {
-        iv_currState = SBE_STATE_RUNTIME;
+        messagingReg.iv_currState = SBE_STATE_RUNTIME;
     }
 
-    rc = putscom_abs(0x50009, iv_messagingReg);
+    rc = putscom_abs(0x50009, messagingReg.iv_messagingReg);
     if(PCB_ERROR_NONE != rc)
     {
         SBE_ERROR(SBE_FUNC"Failed to update state to messaging "
@@ -234,10 +235,10 @@ uint32_t SbeRegAccess::updateSbeStep(const uint8_t i_major,
     #define SBE_FUNC "SbeRegAccess::updateSbeStep "
     uint32_t rc = 0;
 
-    iv_majorStep = i_major;
-    iv_minorStep = i_minor;
+    messagingReg.iv_majorStep = i_major;
+    messagingReg.iv_minorStep = i_minor;
 
-    rc = putscom_abs(0x50009, iv_messagingReg);
+    rc = putscom_abs(0x50009, messagingReg.iv_messagingReg);
     if(rc)
     {
         SBE_ERROR(SBE_FUNC"Failed to update SBE step to messaging "
@@ -261,8 +262,8 @@ uint32_t SbeRegAccess::setSbeReady()
     #define SBE_FUNC "SbeRegAccess::setSbeReady "
     uint32_t rc = 0;
 
-    iv_sbeBooted = true;
-    rc = putscom_abs(0x50009, iv_messagingReg);
+    messagingReg.iv_sbeBooted = true;
+    rc = putscom_abs(0x50009, messagingReg.iv_messagingReg);
     if(rc)
     {
         SBE_ERROR(SBE_FUNC"Failed to update SBE ready state to "
@@ -277,9 +278,9 @@ uint32_t SbeRegAccess::updateAsyncFFDCBit( bool i_on )
     #define SBE_FUNC "SbeRegAccess::updateAsyncFFDCBit "
     uint32_t rc = 0;
 
-    iv_asyncFFDC = i_on;
+    messagingReg.iv_asyncFFDC = i_on;
 
-    rc = putscom_abs(0x50009, iv_messagingReg);
+    rc = putscom_abs(0x50009, messagingReg.iv_messagingReg);
     if(rc)
     {
         SBE_ERROR(SBE_FUNC"Failed to update SBE Aync bit in message "
