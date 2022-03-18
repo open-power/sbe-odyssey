@@ -25,7 +25,7 @@
 //------------------------------------------------------------------------------
 /// @file  poz_perv_mod_chip_clocking.H
 ///
-/// @brief  prototype declarations for modules poll pll lock
+/// @brief  prototype declarations for module poll pll lock
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Pretty Mariam Jacob (prettymjacob@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
@@ -36,7 +36,6 @@
 #include <fapi2.H>
 #include "poz_perv_common_params.H"
 
-using namespace cc;
 using namespace pll;
 /// @brief   Poll for pll lock module.
 /// @param[in]   i_target          Reference to TARGET_TYPE_PERV

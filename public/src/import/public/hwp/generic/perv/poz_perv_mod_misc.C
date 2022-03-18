@@ -38,10 +38,11 @@
 #include <p11_scom_pc.H>
 #include <target_filters.H>
 
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL0;
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL0_COPY;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_CBS_CS;
 SCOMT_PC_USE_TP_CFAM_FSI_W_SBE_FIFO_FSB_DOWNFIFO_RESET;
 SCOMT_PC_USE_TP_CFAM_FSI_W_FSI2PIB_STATUS;
-SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL0;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_SB_MSG;
 SCOMT_PERV_USE_HANG_PULSE_0_REG;
 //SCOMT_PERV_USE_FSXCOMP_FSXLOG_CBS_ENVSTAT; TODO
@@ -76,6 +77,8 @@ ReturnCode mod_cbs_start(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     bool start_sbe)
 {
+    FSXCOMP_FSXLOG_ROOT_CTRL0_t ROOT_CTRL0;
+    FSXCOMP_FSXLOG_ROOT_CTRL0_COPY_t ROOT_CTRL0_COPY;
     FSXCOMP_FSXLOG_CBS_CS_t CBS_CS;
     TP_CFAM_FSI_W_SBE_FIFO_FSB_DOWNFIFO_RESET_t FSB_DOWNFIFO_RESET;
     TP_CFAM_FSI_W_FSI2PIB_STATUS_t FSI2PIB_STATUS;
@@ -83,6 +86,16 @@ ReturnCode mod_cbs_start(
     int l_timeout = 0;
 
     FAPI_INF("Entering ...");
+
+    FAPI_INF("Drop CFAM protection 0 to ungate VDN_PRESENT");
+    FAPI_TRY(ROOT_CTRL0.getCfam(i_target));
+    ROOT_CTRL0.set_CFAM_PROTECTION_0_DC(0);
+    FAPI_TRY(ROOT_CTRL0.putCfam(i_target));
+    // not using putCfam_CLEAR scope here coz I need to write same value into COPY reg also
+
+    ROOT_CTRL0_COPY = ROOT_CTRL0;
+    FAPI_TRY(ROOT_CTRL0_COPY.putCfam(i_target));
+
     FAPI_INF("Read FSI2PIB_STATUS register and check whether VDN power is on or not(VDD_NEST_OBSERVE).");
     FAPI_TRY(FSI2PIB_STATUS.getCfam(i_target));
 

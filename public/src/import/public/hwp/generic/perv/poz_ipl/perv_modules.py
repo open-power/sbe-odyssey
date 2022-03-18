@@ -111,7 +111,7 @@ def mod_abist_poll(target<PERV|MC, MCAST_AND>):
     if not CPLT_STAT0.ABIST_DONE_DC:
         ASSERT(SRAM_ABIST_DONE_BIT_ERR)
 
-def mod_abist_cleanup(target<PERV|MC>, bool i_clear_sram_abist_mode=false):
+def mod_abist_cleanup(target<PERV|MC>, bool i_clear_sram_abist_mode=true):
     OPCG_REG0 = 0
     CLK_REGION = 0
     CPLT_CTRL0.CTRL_CC_ABSTCLK_MUXSEL_DC = 0
@@ -222,6 +222,10 @@ ISTEP(99, 99, "poz_perv_mod_misc", "")
 def mod_cbs_start(target<ANY_POZ_CHIP>, bool start_sbe=true):
     # This module uses CFAM accesses for everything
     # You can pretty much copy the code of p10_start_cbs but be aware that I moved a few steps around and removed some others
+
+    # Drop CFAM protection 0 to ungate VDN_PRESENT
+    ROOT_CTRL0.CFAM_PROTECTION_0_DC = 0
+    ROOT_CTRL0_COPY.CFAM_PROTECTION_0_DC = 0
 
     # check for PGOOD
     if not FSI2PIB_STATUS.VDN_PRESENT:

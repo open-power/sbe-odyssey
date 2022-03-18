@@ -25,15 +25,13 @@
 //------------------------------------------------------------------------------
 /// @file  poz_perv_mod_chip_clocking.C
 ///
-/// @brief  contains definitions for modules poll/cleanup, scan0
-///                                          start_stop_clocks, align_regions
+/// @brief  contains definition for module poll_pll_lock
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Pretty Mariam Jacob (prettymjacob@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
 #include "poz_perv_mod_chip_clocking.H"
-#include "poz_perv_common_params.H"
 #include <p11_scom_perv.H>
 
 using namespace fapi2;

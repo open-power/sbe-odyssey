@@ -41,7 +41,7 @@ Register reads/writes are described like record accesses:
 The target to use for these accesses should always be obvious from context:
   * At a procedure/module top level it's the function's input target
   * Inside a for loop over targets it's the for loop variable
-  * Otherwise it's explicitly specified through a when block
+  * Otherwise it's explicitly specified through a with block
 
 Consecutive changes to the same register can be bundled into a single write
 unless specified otherwise. If a write ends up statically setting or clearing
@@ -570,10 +570,6 @@ def p11t_fsi_config():
 
     ROOT_CTRL4_COPY = ROOT_CTRL4      # Update copy register to match
 
-    ## Drop CFAM protection 0
-    ROOT_CTRL0.CFAM_PROTECTION_0_DC = 0
-    ROOT_CTRL0_COPY.CFAM_PROTECTION_0_DC = 0
-
 ISTEP(2, 3, "pc_cbs_start", "SPPE")
 
 def p11t_cbs_start():
@@ -745,8 +741,7 @@ def p11t_pll_setup():
 
     DPLL_CTRL.FF_BYPASS = 0
 
-    ## Clear PCB responder errors and unmask PLL unlock reporting
-    ERROR_REG = 0xFFFF_FFFF_FFFF_FFFF
+    ## Unmask PLL unlock reporting
     SLAVE_CONFIG_REG.CFG_MASK_PLL_ERRS[0] = 0
 
 ISTEP(2, 19, "pc_tp_initf", "TSBE")
@@ -803,28 +798,54 @@ def p11s_chiplet_force_on():
     CPLT_CONF1[bits 0:15] = 0xFFFF
 
 def p11t_chiplet_force_on():
-    proc_hcd_core_poweron(all good cores)
-    proc_hcd_cache_poweron(all good cores)
+    pass
 
 ISTEP(3, 2, "proc_chiplet_clk_config", "SSBE, TSBE")
 
-def p11t_chiplet_clk_config():
-    poz_chiplet_clk_config()
-
 def p11s_chiplet_clk_config():
-    poz_chiplet_clk_config()
+
+    def paxo_mux_setup():
+        NET_CTRL1.REFCLK_CLKMUX_SEL[0] = ATTR_CLOCK_PLL_CROSS_FEED_MUX89    # uint8, OWN_PLL = 0, OTHER_PLL = 1
+        NET_CTRL1.REFCLK_CLKMUX_SEL[1] = ATTR_CLOCK_NEST_SYNC_MUX67         # uint8, PLL = 0, NEST = 1
+        NET_CTRL1.REFCLK_CLKMUX_SEL[2:3] = ATTR_CLOCK_PLL_INPUT_MUX3031     # uint8, 133M_MUX26 = 0, 100M_MUX27 = 1, 133M_MUX28 = 2
+
+    def pci_mux_setup():
+        NET_CTRL1.REFCLK_CLKMUX_SEL[0] = ATTR_CLOCK_PLL_USED_MUX5           # uint8, EVEN_PAXO = 0, ODD_PAXO = 1
+        NET_CTRL1.REFCLK_CLKMUX_SEL[1] = ATTR_CLOCK_NEST_SYNC_MUX4          # uint8, PAXO = 0, NEST = 1
+
+    def mux_setup():
+        for chiplet in all MC that match i_chiplet_mask:
+            NET_CTRL1.REFCLK_CLKMUX_SEL[0] = ATTR_CLOCK_NEST_SYNC_MUX3      # uint8, PLL = 0, NEST = 1
+
+        for chiplet in all PAX+PAXO that match i_chiplet_mask:
+            paxo_mux_setup()
+
+        for chiplet in all PEC2P+PEC6P that match l_chiplet_mask:
+            pci_mux_setup()
+
+    poz_chiplet_clk_config(i_target, mux_setup)
+
+def p11t_chiplet_clk_config():
+    def mux_setup():
+        pass  # Nothing to do
+
+    poz_chiplet_clk_config(i_target, mux_setup)
 
 def ody_chiplet_clk_config():
     poz_chiplet_clk_config()
 
-def poz_chiplet_clk_config():
+# typedef fapi2::ReturnCode (*chiplet_mux_setup_FP_t)(
+#     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_chip_target,
+#     const fapi2::buffer<uint64_t> i_chiplet_mask);
+
+def poz_chiplet_clk_config(target<ANY_POZ_CHIP> i_target, chiplet_mux_setup_FP_t i_mux_setup):
     if ATTR_HOTPLUG:
         chiplets = All functional chiplets except TP
     else:
         chiplets = All PRESENT chiplets regardless of functional or not, except TP
 
     ## Set up chiplet clock muxing
-    # TBD, not needed on Tap
+    i_mux_setup(i_target, chiplets converted to chiplet mask)
 
     with chiplets via multicast:
         ## Enable chiplet clocks
@@ -845,6 +866,12 @@ def p11s_chiplet_reset():
 
 def p11t_chiplet_reset():
     poz_chiplet_reset(i_target, p11t_chiplet_delay_table)
+
+    if not ATTR_HOTPLUG:
+        proc_hcd_core_poweron(all good cores)
+        proc_hcd_cache_poweron(all good cores)
+        proc_hcd_core_reset(all good cores)
+        proc_hcd_cache_reset(all good cores)
 
 def ody_chiplet_reset():
     poz_chiplet_reset(i_target, ody_chiplet_delay_table)
@@ -1046,10 +1073,13 @@ def ody_chiplet_arrayinit():
     poz_chiplet_arrayinit()
 
 def poz_chiplet_arrayinit():
-    mod_abist_start(all chiplets except TP, regions=all but pll)
+    # Note that we're including the "PLL" regions in arrayinit too:
+    # Clocking them will not cause any damage, and this way we don't
+    # have to special-case EQs since they have MMAs on region 13.
+    mod_abist_start(all chiplets except TP, regions=all)
     mod_abist_poll()
     mod_abist_cleanup()
-    mod_scan0(all chiplets except TP, regions=all but pll)
+    mod_scan0(all chiplets except TP, regions=all)
 
 ISTEP(3, 13, "proc_chiplet_undo_force_on", "SSBE, TSBE")
 # NOT executed as part of hotplug
@@ -1119,11 +1149,11 @@ def poz_chiplet_startclocks(target<PERV|MC>, uint16_t i_clock_regions=cc::REGION
     CPLT_CTRL0.TC_UNIT_SYNCCLK_MUXSEL_DC = 0
 
     ## Disable listen to sync
-    for chiplet in i_target.getChildren<PERV>:
-        SYNC_CONFIG.LISTEN_TO_SYNC_DIS = 1
+    # Use read-compare here to make sure all clock controllers are set up the same coming in
+    SYNC_CONFIG.LISTEN_TO_SYNC_DIS = 1
 
     ## Align chiplets
-    mod_align_chiplet(i_target, i_clock_regions)
+    mod_align_regions(i_target, i_clock_regions)
 
     ## Start chiplet clocks
     mod_start_stop_clocks(i_target, i_clock_regions)
@@ -1267,107 +1297,3 @@ def poz_stopclocks():
     # 3. Stop Pervasive (perv, net, occ) - switch to PIB2PCB path
     # 4. Stop SBE (pib, sbe) - switch to FSI2PCB path
     pass
-
-
-"""
-Step 4: Core init
-"""
-
-ISTEP(4, 1, "pc_cache_poweron", "TSBE")
-
-def p11t_cache_poweron(target<CORE|MC>):
-    mod_power_headers(cache, ON)
-    mod_align_regions(regions=l3)
-
-ISTEP(4, 2, "pc_cache_reset", "TSBE")
-
-def p11t_cache_reset(target<CORE|MC>):
-    mod_scan0(regions=l3, scan_types=GTR)
-    mod_scan0(regions=l3, scan_types=NOT_GTR)
-
-ISTEP(4, 3, "pc_cache_repr_initf", "TSBE")
-
-def p11t_cache_repr_initf(target<CORE|MC>):
-    putRing(cache_repr_initf = l3_repr+l3_gptr+l3_time)
-
-ISTEP(4, 4, "pc_cache_arrayinit", "TSBE")
-
-def p11t_cache_arrayinit(target<CORE|MC>):
-    mod_abist_start(regions=l3)
-    mod_abist_poll()
-    mod_abist_cleanup(false)
-    mod_scan0(regions=l3)
-
-ISTEP(4, 5, "pc_cache_initf", "TSBE")
-
-def p11t_cache_initf(target<CORE|MC>):
-    putRing(cache_initf = l3_func)
-
-ISTEP(4, 6, "pc_cache_startclocks", "TSBE")
-
-def p11t_cache_startclocks(target<CORE|MC>):
-    mod_start_stop_clocks(regions=l3)
-
-ISTEP(4, 7, "pc_cache_scominit", "TSBE")
-
-# Generated code
-
-ISTEP(4, 8, "pc_cache_scom_customize", "TSBE")
-# What goes here?
-
-ISTEP(4, 9, "pc_cache_ras_runtime_scom", "TSBE")
-# And what goes here?
-
-ISTEP(4, 10, "pc_core_poweron", "TSBE")
-
-def p11t_core_poweron(target<CORE|MC>):
-    mod_power_headers(core, ON)
-    mod_align_regions(regions=[core, mma])
-
-ISTEP(4, 11, "pc_core_reset", "TSBE")
-
-def p11t_core_reset(target<CORE|MC>):
-    mod_scan0(regions=[core, mma], scan_types=GTR)
-    mod_scan0(regions=[core, mma], scan_types=NOT_GTR)
-
-ISTEP(4, 12, "pc_core_repr_initf", "TSBE")
-
-def p11t_core_repr_initf(target<CORE|MC>):
-    putRing(core_repr_initf = {cl3,mma}_{gptr,time,repr})
-
-ISTEP(4, 13, "pc_core_arrayinit", "TSBE")
-
-def p11t_core_arrayinit(target<CORE|MC>):
-    mod_abist_start(regions=[core, mma])
-    mod_abist_poll()
-    mod_abist_cleanup(false)
-    mod_scan0(regions=[core, mma])
-
-ISTEP(4, 14, "pc_core_initf", "TSBE")
-
-def p11t_core_initf(target<CORE|MC>):
-    putRing(core_initf = {cl2,mma}_{func,regf})
-
-ISTEP(4, 15, "pc_core_startclocks", "TSBE")
-
-def p11t_core_startclocks(target<CORE|MC>):
-    mod_start_stop_clocks(regions=[cl2, mma])
-
-ISTEP(4, 16, "pc_core_scominit", "TSBE")
-
-# Generated code
-
-ISTEP(4, 17, "pc_core_scom_customize", "TSBE")
-# What goes here?
-
-ISTEP(4, 18, "pc_core_ras_runtime_scom", "TSBE")
-# And what goes here?
-
-
-ISTEP(4, 50, "pc_cache_stopclocks", "TSBE")
-
-ISTEP(4, 51, "pc_cache_poweroff", "TSBE")
-
-ISTEP(4, 52, "pc_core_stopclocks", "TSBE")
-
-ISTEP(4, 53, "pc_core_poweroff", "TSBE")
