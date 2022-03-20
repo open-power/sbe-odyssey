@@ -74,7 +74,7 @@ headerFileTemplate = """
 #ifndef __OTPROM_FUSE_MAP_H
 #define __OTPROM_FUSE_MAP_H
 
-#include <stdint.H>
+#include <stdint.h>
 
 /**
 * @brief Macros defining OTPROM FUSE Reg Addresse's
@@ -101,7 +101,7 @@ typedef union $@ value[0]['scom_reg_name'].lower() @$
 }$@ value[0]['scom_reg_name'].lower() + "_t" @$;
 $$$@@@ endfor @@@$$$
 
-#endif /***** __OTPROM_FUSE_MAP_H *********
+#endif /***** __OTPROM_FUSE_MAP_H *********/
 """
 ############################################################
 # Function - Functions - Functions - Functions - Functions
@@ -146,7 +146,7 @@ def generateFuseBin(args:argparse.Namespace):
                         (jsonData[key][ofset]['field_size'],len(data),key,jsonData[key][ofset]['field']))
 
             # Concatenate the data if its bit filed's
-            value = data + value
+            value = value + data
 
         # Check if length of value exceeds 64 bits
         assert not len(value) != regSize, \
@@ -184,7 +184,7 @@ def printFusebin(args:argparse.Namespace):
     for key in jsonData:
         value = int.from_bytes(fuseMapBin.read(8),"big")
         position = 1
-        for ofset in range (1, len(jsonData[key]), 1):
+        for ofset in range (len(jsonData[key])-1, 1, -1):
             bitFieldValue = extractedBits(value, jsonData[key][ofset]['field_size'], position)
             position += jsonData[key][ofset]['field_size']
             jsonData[key][ofset]['value'] = hex(bitFieldValue).upper()
