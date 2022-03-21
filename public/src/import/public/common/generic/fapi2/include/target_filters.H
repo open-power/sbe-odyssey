@@ -43,15 +43,24 @@ enum TargetFilter : uint64_t
     TARGET_FILTER_N2         = (1ull << 63) >> 3,
     TARGET_FILTER_N3         = (1ull << 63) >> 4,
     TARGET_FILTER_NEST       = TARGET_FILTER_N0 | TARGET_FILTER_N1 | TARGET_FILTER_N2 | TARGET_FILTER_N3,
-    TARGET_FILTER_PCI        = (1ull << 63) >> 5,
-    TARGET_FILTER_MC         = (1ull << 63) >> 6,
-    TARGET_FILTER_PAXO       = (1ull << 63) >> 7,
-    TARGET_FILTER_EQ         = (1ull << 63) >> 8,
-    TARGET_FILTER_XBUS       = (1ull << 63) >> 9,
-    TARGET_FILTER_ABUS       = (1ull << 63) >> 10,
-    TARGET_FILTER_CORE       = (1ull << 63) >> 11,
-    TARGET_FILTER_TBUS       = (1ull << 63) >> 12,
+    TARGET_FILTER_PEC2P      = (1ull << 63) >> 5,
+    TARGET_FILTER_PEC6P      = (1ull << 63) >> 6,
+    TARGET_FILTER_MC         = (1ull << 63) >> 7,
+    TARGET_FILTER_PAX        = (1ull << 63) >> 8,
+    TARGET_FILTER_PAXO       = (1ull << 63) >> 9,
+    TARGET_FILTER_EQ         = (1ull << 63) >> 10,
+    TARGET_FILTER_XBUS       = (1ull << 63) >> 11,
+    TARGET_FILTER_ABUS       = (1ull << 63) >> 12,
+    TARGET_FILTER_CORE       = (1ull << 63) >> 13,
+    TARGET_FILTER_TBUS       = (1ull << 63) >> 14,
 };
+
+constexpr TargetFilter operator|(const TargetFilter a, const TargetFilter b)
+{
+    return static_cast<TargetFilter>(
+               static_cast<uint64_t>(a) |
+               static_cast<uint64_t>(b));
+}
 
 // Helper macros to make chiplet masks easier to write and read
 #define _CHIPLET(id) ((id) ? (1ULL << (63 - (id))) : 0)
