@@ -30,6 +30,7 @@
 #ifndef __FAPI2_TARGET_TYPES__
 #define __FAPI2_TARGET_TYPES__
 #include <stdint.h>
+#include <base_utils.H>
 
 /// FAPI namespace
 namespace fapi2
@@ -216,23 +217,8 @@ constexpr TargetType operator~(TargetType x)
 {
     return static_cast<TargetType>(~static_cast<uint64_t>(x));
 }
-#endif
-
-template<uint64_t V>
-class bitCount
-{
-    public:
-        // Don't use enums, too hard to compare
-        static const uint8_t count = bitCount < (V >> 1) >::count + (V & 1);
-};
-
-template<>
-class bitCount<0>
-{
-    public:
-        static const uint8_t count = 0;
-};
 /// @endcond
+#endif
 
 }
 

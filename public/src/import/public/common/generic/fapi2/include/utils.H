@@ -41,32 +41,6 @@ namespace fapi2
 {
 
 ///
-/// @brief Endian swapping
-/// @tparam T input type
-/// @param[in,out] io_input integral input
-/// @note https://stackoverflow.com/questions/105252/how-do-i-convert-between-big-endian-and-little-endian-values-in-c
-/// This function does not take into account the system's endianness, but just does the endian swap
-///
-template < typename T >
-void endian_swap(T& io_input)
-{
-    constexpr size_t MIN_BYTES = 2;
-    static_assert(sizeof(T) >= MIN_BYTES, "Byte swapping requires at least 2 bytes of data");
-
-    uint8_t* l_varArray = reinterpret_cast<uint8_t*>(&io_input);
-
-    for(size_t i = 0; i < sizeof(io_input) / 2; i++)
-    {
-        const size_t BYTE_SWAP_INDEX = sizeof(io_input) - 1 - i;
-
-        // Rolling our own swap as certain downstream libraries do not have std::swap enabled
-        const auto l_temp = l_varArray[BYTE_SWAP_INDEX];
-        l_varArray[BYTE_SWAP_INDEX] = l_varArray[i];
-        l_varArray[i] = l_temp;
-    }
-}
-
-///
 /// @brief Macro to check for a given platform.
 /// Platforms are expected to define a constant PLATFORM value in plat_utils.H
 ///
@@ -77,8 +51,6 @@ static inline constexpr bool is_platform()
     static_assert(static_cast<int>(fapi2::PLATFORM) != 0xDEADBEEF, "");
     return fapi2::PLATFORM == i_type;
 }
-
-#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 #if !defined(__PPE__) && !defined(BOOTLOADER)
 ///
