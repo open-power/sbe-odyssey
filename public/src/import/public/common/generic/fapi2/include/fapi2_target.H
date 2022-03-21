@@ -219,9 +219,9 @@ class Target
         /// @brief Get the target type
         /// @return The type of target represented by this target
         ///
-        inline TargetType getType(void) const
+        constexpr TargetType getType(void) const
         {
-            return iv_type;
+            return K;
         }
 
         ///
@@ -457,10 +457,11 @@ class Target
 #endif
         }
 
+        static const TargetType TYPE = K;
+
     private:
         // Don't use enums here as it makes it hard to assign
         // in the platform target cast constructor.
-        static const TargetType iv_type = K;
         V iv_handle;
 
         // No multicast support for Hostboot Bootloader
@@ -530,7 +531,7 @@ class Target
                           "Parent target must be part of TARGET_TYPE_MULTICAST_CHIP");
             static_assert((T & TARGET_TYPE_MULTICASTABLE) != 0,
                           "Requested target type must be part of TARGET_TYPE_MULTICASTABLE");
-            static_assert(bitCount<T>::count == 1,
+            static_assert(_bitCount(T) == 1,
                           "Requested target type must be a single type, TARGET_TYPE_MULTICAST will be added automatically");
         }
 #endif
