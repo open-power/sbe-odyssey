@@ -30,6 +30,7 @@
 #ifndef __FAPI2_TOP_LEVEL__
 #define __FAPI2_TOP_LEVEL__
 
+#include <base_utils.H>
 #include <target.H>
 #include <return_code.H>
 #include <buffer.H>

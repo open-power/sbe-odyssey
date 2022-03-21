@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/emb/p11/kernels/ppe/baselib/endian.h $ */
+/* $Source: public/src/import/public/common/generic/fapi2/include/base_utils.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2022                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,28 +22,49 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __ENDIAN_H__
-#define __ENDIAN_H__
+#pragma once
 
-#ifndef __PPE42__
-    #include_next <endian.h>
-#else
-    #include <byteswap.h>
+#include <stdint.h>
+#include <byteswap.h>
 
-    #define htobe16(x)   (x)
-    #define htole16(x) bswap_16(x)
-    #define be16toh(x)   (x)
-    #define le16toh(x) bswap_16(x)
+/// @brief Basic utility macros and functions that are independent of anything in the fapi2 namespace
 
-    #define htobe32(x)   (x)
-    #define htole32(x) bswap_32(x)
-    #define be32toh(x)   (x)
-    #define le32toh(x) bswap_32(x)
+/// @brief Determine the number of elements in an array
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
-    #define htobe64(x)   (x)
-    #define htole64(x) bswap_64(x)
-    #define be64toh(x)   (x)
-    #define le64toh(x) bswap_64(x)
-#endif
+namespace fapi2
+{
 
-#endif
+/// @brief Determine the number of bits set in a constant value
+constexpr int _bitCount(const uint64_t x)
+{
+    return x ? (_bitCount(x >> 1) + (x & 1)) : 0;
+}
+
+/// @brief Template variant of _bitCount() for legacy support
+template<uint64_t V>
+class bitCount
+{
+    public:
+        static const uint8_t count = _bitCount(V);
+};
+
+/// @brief Unconditional byte swap, type-overloaded for convenience
+static inline uint16_t byte_swap(const uint16_t x)
+{
+    return bswap_16(x);
+}
+
+/// @brief Unconditional byte swap, type-overloaded for convenience
+static inline uint32_t byte_swap(const uint32_t x)
+{
+    return bswap_32(x);
+}
+
+/// @brief Unconditional byte swap, type-overloaded for convenience
+static inline uint64_t byte_swap(const uint64_t x)
+{
+    return bswap_64(x);
+}
+
+}
