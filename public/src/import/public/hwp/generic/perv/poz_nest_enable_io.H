@@ -23,9 +23,11 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
+/// @file poz_nest_enable_io.H
+///
 /// @brief
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 // *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
@@ -38,8 +40,8 @@ typedef fapi2::ReturnCode (*poz_nest_enable_io_FP_t)(const fapi2::Target<fapi2::
         fapi2::TargetFilter);
 
 /// @brief
-/// @param[in]   i_target
-/// @param[in]   i_nest_chiplets
+/// @param[in]   i_target         Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_nest_chiplets  nest targets TARGET_FILTER_[N0/N1/N2]
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {

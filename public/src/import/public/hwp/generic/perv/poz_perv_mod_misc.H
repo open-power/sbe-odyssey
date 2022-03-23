@@ -25,8 +25,8 @@
 //------------------------------------------------------------------------------
 /// @file  poz_perv_mod_misc.H
 ///
-/// @brief prototype declarations for modules CBS start, switch pcbmux
-///                                           multicast setup & hangpulse setup
+/// @brief prototype declarations for modules : CBS start, switch pcbmux
+/// multicast & hangpulse setup, setup clockstop on checkstop, Miscellaneous TP setup
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
@@ -104,3 +104,11 @@ fapi2::ReturnCode mod_constant_hangpulse_setup(
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_poz_tp_init_common(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target);
+
+/// @brief       Setup clockstop on checkstop module
+/// @param[in]   i_target              Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_chiplet_delays[64]  array of per-chiplet delays
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode mod_setup_clockstop_on_xstop(
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const uint8_t i_chiplet_delays[64]);

@@ -76,7 +76,7 @@ fapi2::ReturnCode mod_abist_poll(
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_abist_cleanup(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
-    bool i_clear_sram_abist_mode = false);
+    bool i_clear_sram_abist_mode = true);
 
 /// @brief   SCAN0 module.
 /// @param[in]   i_target          Reference to TARGET_TYPE_PERV
@@ -101,3 +101,13 @@ fapi2::ReturnCode mod_start_stop_clocks(
     uint16_t i_clock_regions,
     uint16_t i_clock_types = CLOCK_TYPE_ALL,
     bool i_start_not_stop = true);
+
+/// @brief
+/// -- Enable alignment, wait for chiplets to be aligned (Poll OPCG), Disable alignment
+///
+/// @param[in]   i_target          Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
+/// @param[in]   i_clock_regions   select clock regions
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode mod_align_regions(
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > &i_target,
+    uint16_t i_clock_regions);

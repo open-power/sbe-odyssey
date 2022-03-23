@@ -23,9 +23,11 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  poz_chiplet_startclocks.H
+///
+/// @brief startclocks sequence for chiplets
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 // *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
@@ -33,17 +35,21 @@
 #pragma once
 
 #include <fapi2.H>
-#include <poz_perv_common_params.H>
+#include "poz_perv_common_params.H"
 
 typedef fapi2::ReturnCode (*poz_chiplet_startclocks_FP_t)(const fapi2::Target < fapi2::TARGET_TYPE_PERV |
-        fapi2::TARGET_TYPE_MC > &, uint16_t);
+        fapi2::TARGET_TYPE_MULTICAST > &, uint16_t);
 
 /// @brief
-/// @param[in]   i_target
-/// @param[in]   i_clock_regions
+/// -- switch ABIST&SYNC CLK muxes to functional state, Disable listen to sync
+/// -- align chiplets, start chiplet clocks, Put PLATs into flush mode, Drop chiplet fence
+///
+/// @param[in]   i_target          Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
+/// @param[in]   i_clock_regions   select clock regions (default REGION_ALL_BUT_PLL)
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {
-    fapi2::ReturnCode poz_chiplet_startclocks(const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MC >
-            &i_target, uint16_t i_clock_regions = cc::REGION_ALL_BUT_PLL);
+    fapi2::ReturnCode poz_chiplet_startclocks(
+        const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > &i_target,
+        uint16_t i_clock_regions = cc::REGION_ALL_BUT_PLL);
 }
