@@ -62,4 +62,13 @@
       <ffdc>PROC_TARGET</ffdc>
    </hwpError>
    <!-- ******************************************************************** -->
+   <hwpError>
+      <rc>RC_CPLT_NOT_ALIGNED_ERR</rc>
+      <description>Chiplet not aligned</description>
+      <ffdc>PERV_CPLT_STAT0</ffdc>
+      <ffdc>LOOP_COUNT</ffdc>
+      <ffdc>HW_DELAY</ffdc>
+      <ffdc>PROC_TARGET</ffdc>
+   </hwpError>
+   <!-- ******************************************************************** -->
 </hwpErrors>

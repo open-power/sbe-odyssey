@@ -23,28 +23,70 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  poz_chiplet_startclocks.C
+///
+/// @brief switch ABIST&SYNC CLK muxes to functional state, Disable listen to sync
+///        align chiplets, start chiplet clocks, Drop chiplet fence
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 // *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
 #include "poz_chiplet_startclocks.H"
-#include "poz_perv_common_params.H"
+#include "poz_perv_mod_chiplet_clocking.H"
+#include "p11_scom_perv.H"
 
+SCOMT_PERV_USE_CPLT_CTRL0;
+SCOMT_PERV_USE_SYNC_CONFIG;
+SCOMT_PERV_USE_NET_CTRL0;
 
 using namespace fapi2;
+using namespace scomt::perv;
 
 enum POZ_CHIPLET_STARTCLOCKS_Private_Constants
 {
 };
 
-ReturnCode poz_chiplet_startclocks(const Target < TARGET_TYPE_PERV | TARGET_TYPE_MC > &i_target,
-                                   uint16_t i_clock_regions)
+ReturnCode poz_chiplet_startclocks(
+    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > &i_target,
+    uint16_t i_clock_regions)
 {
+    CPLT_CTRL0_t CPLT_CTRL0;
+    SYNC_CONFIG_t SYNC_CONFIG;
+    NET_CTRL0_t NET_CTRL0;
+    Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_COMPARE > l_mcast_cmp_target = i_target;
 
+    FAPI_INF("Entering ...");
+
+    FAPI_INF("Switch ABIST and sync clock muxes to functional state");
+    CPLT_CTRL0 = 0;
+    CPLT_CTRL0.set_CTRL_CC_ABSTCLK_MUXSEL_DC(1);
+    CPLT_CTRL0.set_TC_UNIT_SYNCCLK_MUXSEL_DC(1);
+    FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
+
+    FAPI_DBG("Disable listen to sync");
+    FAPI_TRY(SYNC_CONFIG.getScom(l_mcast_cmp_target));
+    SYNC_CONFIG.set_SYNC_PULSE_INPUT_DIS(1);
+    FAPI_TRY(SYNC_CONFIG.putScom(i_target));
+
+    FAPI_INF("Align chiplets");
+    FAPI_TRY(mod_align_regions(i_target, i_clock_regions));
+
+    FAPI_INF("Start chiplet clocks");
+    FAPI_TRY(mod_start_stop_clocks(i_target, i_clock_regions));
+
+    FAPI_INF("Put PLATs into flush mode");
+    CPLT_CTRL0 = 0;
+    CPLT_CTRL0.set_CTRL_CC_FLUSHMODE_INH(1);
+    FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
+
+    FAPI_INF("Drop chiplet fence");
+    NET_CTRL0 = 0;
+    NET_CTRL0.set_FENCE_EN(1);
+    FAPI_TRY(NET_CTRL0.putScom_AND(i_target));
 
 fapi_try_exit:
+    FAPI_INF("Exiting ...");
     return current_err;
 }

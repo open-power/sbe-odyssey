@@ -25,8 +25,8 @@
 //------------------------------------------------------------------------------
 /// @file  poz_perv_mod_misc.C
 ///
-/// @brief  definitions for modules CBS start, switch pcbmux
-///                                 multicast setup & hangpulse setup
+/// @brief  definitions for modules CBS start, switch pcbmux, multicast setup
+///         hangpulse setup, setup clockstop on checkstop & Miscellaneous TP setup
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
@@ -49,6 +49,8 @@ SCOMT_PERV_USE_PRE_COUNTER_REG;
 SCOMT_PERV_USE_PCBCTL_COMP_INTR_HOST_MASK_REG;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_PERV_CTRL0;
 SCOMT_PC_USE_TP_TPCHIP_TPC_CPLT_CTRL0;
+SCOMT_PERV_USE_XSTOP1;
+SCOMT_PERV_USE_EPS_FIR_CLKSTOP_ON_XSTOP_MASK1;
 
 using namespace fapi2;
 //using namespace fapi2::p11t;
@@ -64,6 +66,7 @@ enum POZ_PERV_MOD_MISC_Private_Constants
     P11_CBS_IDLE_SIM_CYCLE_DELAY = 750000, // unit is sim cycles,to match the poll count change ( 250000 * 30 )
     MC_GROUP_MEMBERSHIP_BITX_READ = 0x500F0001,
     HOST_MASK_REG_IPOLL_MASK = 0xFC00000000000000,
+    XSTOP1_INIT_VALUE = 0x97FFE00000000000,
     PGOOD_REGIONS_STARTBIT = 4,
     PGOOD_REGIONS_LENGTH = 15,
     PGOOD_REGIONS_OFFSET = 12,
@@ -334,6 +337,52 @@ ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
     CPLT_CTRL0.flush<0>();
     CPLT_CTRL0.set_CTRL_CC_FLUSHMODE_INH(1);
     FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
+
+fapi_try_exit:
+    FAPI_INF("Exiting ...");
+    return current_err;
+}
+
+ReturnCode mod_setup_clockstop_on_xstop(
+    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const uint8_t i_chiplet_delays[64])
+{
+    XSTOP1_t XSTOP1;
+    EPS_FIR_CLKSTOP_ON_XSTOP_MASK1_t EPS_FIR_CLKSTOP_ON_XSTOP_MASK1;
+    fapi2::buffer<uint8_t>  l_clkstop_on_xstop;
+    auto l_chiplets_mc   = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
+    auto l_chiplets_uc   = l_chiplets_mc.getChildren<TARGET_TYPE_PERV>();
+
+    FAPI_INF("Entering ...");
+
+    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CLOCKSTOP_ON_XSTOP, i_target, l_clkstop_on_xstop));
+
+    if (l_clkstop_on_xstop)
+    {
+        if (l_clkstop_on_xstop.getBit<EPS_FIR_CLKSTOP_ON_XSTOP_MASK1_SYS_XSTOP_STAGED_ERR>())
+        {
+            FAPI_DBG("Staged xstop is masked, leave all delays at 0 for fast stopping.");
+
+            XSTOP1 = XSTOP1_INIT_VALUE;
+            FAPI_TRY(XSTOP1.putScom(l_chiplets_mc));
+        }
+        else
+        {
+            FAPI_DBG("Staged xstop is unmasked, set up per-chiplet delays");
+
+            for (auto& l_chiplet : l_chiplets_uc)
+            {
+                XSTOP1 = XSTOP1_INIT_VALUE;
+                XSTOP1.set_WAIT_CYCLES(i_chiplet_delays[l_chiplet.getChipletNumber()]);
+                FAPI_TRY(XSTOP1.putScom(l_chiplet));
+            }
+        }
+
+        FAPI_INF("Enable clockstop on checkstop");
+        EPS_FIR_CLKSTOP_ON_XSTOP_MASK1.flush<1>();
+        EPS_FIR_CLKSTOP_ON_XSTOP_MASK1.insert<0, 8>(l_clkstop_on_xstop);
+        FAPI_TRY(EPS_FIR_CLKSTOP_ON_XSTOP_MASK1.putScom(l_chiplets_mc));
+    }
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
