@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/common/meson.build $
+# $Source: public/src/runtime/common/plat/meson.build $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,5 +21,6 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-subdir('core')
-subdir('plat')
+
+subdir('ffdc')
+

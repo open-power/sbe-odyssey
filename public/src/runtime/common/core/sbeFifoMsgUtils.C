@@ -37,6 +37,10 @@
 #include "sbeFFDC.H"
 #include "sbeerrorcodes.H"
 #include "assert.h"
+#include "return_code_defs.H"
+#include "error_info_defs.H"
+#include <ffdc.H>
+#include <error_info.H>
 
 // If we can not perform FIFO operation ( FIFO FULL while writing
 // or EMPTY while reading ) we will sleep for FIFO_WAIT_SLEEP_TIME
@@ -349,11 +353,8 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
         distance += len;
 
         // If no ffdc , exit;
-//TODO: P11SBE Porting
-#if 0
-        if( (i_ffdc != NULL) && (i_ffdc->getRc() != FAPI2_RC_SUCCESS))
+        if( (i_ffdc != NULL) && (i_ffdc->getRc() != fapi2::FAPI2_RC_SUCCESS))
         {
-            SBE_ERROR( SBE_FUNC" FAPI RC:0x%08X", i_ffdc->getRc());
             // making sure ffdc length is multiples of uint32_t
             assert((g_FfdcData.ffdcLength % sizeof(uint32_t)) == 0);
             uint32_t ffdcDataLenInWords = g_FfdcData.ffdcLength
@@ -385,6 +386,7 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
         if((i_hdr.primaryStatus() != SBE_PRI_OPERATION_SUCCESSFUL) ||\
            (i_hdr.secondaryStatus() != SBE_SEC_OPERATION_SUCCESSFUL))
         {
+#if 0
             SBE_ERROR( SBE_FUNC" PriStatus:0x%08X SecStatus:0x%08X"
                 " Fifo Type is:[%02X]", (uint32_t)i_hdr.primaryStatus(),
                 (uint32_t)i_hdr.secondaryStatus(), i_type);
@@ -399,8 +401,8 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
                 break;
             }
             distance += len;
-        }
 #endif
+        }
         len = sizeof(distance)/sizeof(uint32_t);
         rc = sbeDownFifoEnq_mult ( len, &distance, i_type);
         if (rc)

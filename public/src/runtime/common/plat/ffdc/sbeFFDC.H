@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -29,6 +30,8 @@
 #include "sbeFFDCType.H"
 #include "sbeSpMsg.H"
 
+#include "error_info_defs.H"
+extern fapi2::SbeFfdcData_t g_FfdcData;
 //TODO: P11SBE Porting
 #if 0
 #include "fapi2.H"

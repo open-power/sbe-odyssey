@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/common/core/meson.build $
+# $Source: public/src/runtime/common/plat/ffdc/meson.build $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,15 +22,12 @@
 #
 # IBM_PROLOG_END_TAG
 
-infile_c = ['sbeSpMsg.C',
-            'sbeirq.C',
-            'sbeFifoMsgUtils.C',
-            'sbeglobals.C',
+infile_c = ['ffdc.C'
            ]
 
-lib_file_name = 'runtimecmncore'
+lib_file_name = 'runtimecmnffdc'
 
-runtime_cmn_core_obj_file_cpp = obj_gen_cpp.process(
+runtime_cmn_ffdc_obj_file_cpp = obj_gen_cpp.process(
                                     infile_c,
                                     extra_args : [
                                                   odyssey_runtime_abs_inc_paths,
@@ -39,9 +35,9 @@ runtime_cmn_core_obj_file_cpp = obj_gen_cpp.process(
                                                   runtime_cmn_abs_inc_paths
                                                  ])
 
-infile  = [runtime_cmn_core_obj_file_cpp]
+infile  = [runtime_cmn_ffdc_obj_file_cpp]
 
-libruntimecmncore = custom_target( lib_file_name,
+libruntimecmnffdc = custom_target( lib_file_name,
                                    output : 'lib' + lib_file_name,
                                    input : infile,
                                    command : [ ar,
@@ -51,6 +47,6 @@ libruntimecmncore = custom_target( lib_file_name,
                                    build_by_default: true,
                                )
 
-runtime_cmn_core_libs = '-l' + lib_file_name
-runtime_cmn_core_lib_paths = '-L' + meson.current_build_dir()
-runtime_cmn_core_dep_libs = libruntimecmncore
+runtime_cmn_ffdc_libs = '-l' + lib_file_name
+runtime_cmn_ffdc_lib_paths = '-L' + meson.current_build_dir()
+runtime_cmn_ffdc_dep_libs = libruntimecmnffdc
