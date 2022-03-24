@@ -28,21 +28,33 @@
 /// \file odysseylink.H
 /// \brief Constants required for linking SBE code images
 
-//TODO:Update file with actual offset's and size
+// Common
+#define LAST_BYTE                       0x01
+#define HASH_LIST_SIZE                  0x800
 
-//SROM Start location
-#define SROM_ORIGIN 0xFFF70000
+// SRAM IMAGE
+#define SRAM_ORIGIN                     0xFFF80000
+#define SRAM_SIZE                       0x80000
+#define SRAM_END                        (SRAM_ORIGIN + SRAM_SIZE - LAST_BYTE)
 
-//SROM Size
-#define SROM_SIZE 0x10000
+// SROM IMAGE
+#define SROM_ORIGIN                     0xFFF70000
+#define SROM_SIZE                       0x10000
+#define SROM_DATA_SIZE                  0x4000
+#define SROM_BOOTLOADER_SCRATCH_START   (SRAM_ORIGIN + SRAM_IMAGE_SIZE)
+#define SROM_BOOTLOADER_SCRATCH_SIZE    0x2D000
 
-//SRAM Start location
-#define SRAM_ORIGIN 0xFFF80000
+// BOOTLOADER IMAGE
+#define BOOTLOADER_SIZE                 0xA800
+#define BOOTLOADER_ORIGIN               (SRAM_END + LAST_BYTE - BOOTLOADER_SIZE - HASH_LIST_SIZE)
 
-//SRAM Size
-#define SRAM_SIZE 0x80000
-
-#define SBE_CODE_BOOT_PIBMEM_MAIN_MSG 0x0F
+// RUNTIME SPPE IMAGE
+#define RUNTIME_EMBED_PAK               0xA000
+#define SPPE_SCRATCH_SIZE               0xA000
+#define SPPE_ORIGIN                     SRAM_ORIGIN
+#define SPPE_SIZE                       (SRAM_SIZE - HASH_LIST_SIZE - SPPE_SCRATCH_SIZE - RUNTIME_EMBED_PAK)
+#define SPPE_SCRATCH_START              (SPPE_ORIGIN + SPPE_SIZE)
+#define SBE_CODE_BOOT_PIBMEM_MAIN_MSG   0x0F
 
 #endif  // __ODYSSEY_LINK_H
 

@@ -23,87 +23,141 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-// Need to do this so that elf32-powerpc is not modified!
+ /* Need to do this so that elf32-powerpc is not modified! */
 #undef powerpc
 
-//TODO:This is a basic linker.Update as per needs/design
-
 #include "odysseylink.H"
-#define INITIAL_STACK_SIZE 256
+#define MINIMUM_STACK_SIZE 256
+#define DOUBLE_WORD_SIZE   8
 
 OUTPUT_FORMAT(elf32-powerpc);
 
-MEMORY
-{
- sram(rw)  : ORIGIN = SRAM_ORIGIN, LENGTH = SRAM_SIZE
+MEMORY {
+    sram    :   ORIGIN = SPPE_ORIGIN, LENGTH = SPPE_SIZE
 }
 
-SECTIONS
-{
-    . = SRAM_ORIGIN;
+SECTIONS {
+    /* Text, read only data and other permanent read-only sections. */
+    . = SPPE_ORIGIN;
+    _sppe_start = .;
 
-    //pk_vector should be at top of pibmem memory
+    /* Vectors should be at top of memory. */
     .pk_vectors . : {
-      KEEP(*(.vectors));
-    } > sram
+        KEEP(*(.vectors));
+    }
 
-    ////////////////////////////////
-    // Read-only Data
-    ////////////////////////////////
-
-    . = ALIGN(8);
-    _RODATA_SECTION_BASE = .;
-
+    /* Text section */
    .text . : {
-       *(.text)
+        *(.text)
+        *(.text.*)
+        *(.dtors)
+        *(.dtors.*)
+        . = ALIGN(DOUBLE_WORD_SIZE);
+    }
 
-        . = ALIGN(8);
+   /* Other read-only data */
+   .rodata . :
+   {
         ctor_start_address = .;
-        KEEP(*(.ctors)) KEEP(*(.ctors.*))
+        KEEP(*(.ctors));
+        KEEP(*(.ctors.*));
         ctor_end_address = .;
-        *(rodata*) *(.got2) } > sram
+        KEEP(*(.rodata*));
+    }
+    . = ALIGN(DOUBLE_WORD_SIZE);
+    _code_size = . - SPPE_ORIGIN;
 
-    ////////////////////////////////
-    // Read-write Data
-    ////////////////////////////////
+    /* Read-write data */
 
+    /* Small data area 2 sections .sdata and .sbss must be adjacent to each
+     * other.
+     */
+    _sda2_start = .;
+    .sdata2 . : {
+        *(.sdata2)
+        *(.sdata2.*)
+        . = ALIGN(DOUBLE_WORD_SIZE);
+    }
+    /* Size of initialised data section i.e. .sdata2 */
+    _sdata2_size = . - _sda2_start;
 
-    // SDA2 constant sections .sdata2 and .sbss2 must be adjacent to each
-    // other.  Our SDATA sections are small so we'll use strictly positive
-    // offsets.
+    _sbss2_start = .;
+    .sbss2 . : {
+        *(.sbss2)
+        *(.sbss2.*)
+        ASSERT ((_sbss2_start == .), "Error: Small data area 2 containing \
+        uninitialized data.");
+    }
+    . = ALIGN(DOUBLE_WORD_SIZE);
 
-    . = ALIGN(8);
+    /* _SDA2_BASE_ should point to the center of SDA2, so that whole
+     * SDA2 can be addressed with 16-bit signed offsets.
+     */
+    _SDA2_BASE_ = _sda2_start + ((. - _sda2_start) / 2);
 
-   .sdata2 . : { *(.sdata2*) } > sram
-    _SDA2_BASE_ = .;
-   .sbss2  . : { *(.sbss2*) } > sram
+    /* Data section. */
+    _data_start = .;
+    .data . : {
+        *(.data)
+        *(.data.*)
+        . = ALIGN(DOUBLE_WORD_SIZE);
+    }
+    /* Size of initialised data section i.e. .data */
+    _data_size = . - _data_start;
 
-    . = ALIGN(8);
-    _DATA_SECTION_BASE = .;
+    /* SDA sections .sdata and .sbss must be adjacent to each
+     * other.
+     */
+    _sda_start = .;
 
-    // SDA sections .sdata and .sbss must be adjacent to each
-    // other.  Our SDATA sections are small so we'll use strictly positive
-    // offsets.
+    .sdata . : {
+        *(.sdata)
+        *(.sdata.*)
+        . = ALIGN(DOUBLE_WORD_SIZE);
+    }
+    /* Size of initialised data section i.e. .sdata */
+    _sdata_size = . - _sda_start;
 
-    .sdata  . : { *(.data*) *(.sdata*)  } > sram
-
-    . = ALIGN(8);
-
-    _SDA_BASE_ = .;
-
-    . = ALIGN(8);
-
-    _sbe_image_size = . - SRAM_ORIGIN;
-
+    /* Start of sbss section is also the end of data section. */
     _sbss_start = .;
-    .sbss   . : { *(.sbss*) *(.bss*)  } > sram
+    .sbss . : {
+        *(.sbss)
+        *(.sbss.*)
+    }
+    . = ALIGN(DOUBLE_WORD_SIZE);
 
-    . = ALIGN(8);
+    /* _SDA_BASE_ should point to the center of SDA, so that whole SDA
+     * can be addressed with 16-bit signed offsets.
+     */
+    _SDA_BASE_ = _sda_start + ((. - _sda_start) / 2);
 
-    _sbss_end = .;
+    /* BSS section. */
+    .bss . : {
+        *(.bss)
+        *(.bss.*)
+        . = ALIGN(DOUBLE_WORD_SIZE);
+        /* Total uninitialised data is .sbss + .bss sections. */
+        _bss_end = .;
+        _ram_consumed = . - _sppe_start;
 
-    . = ALIGN(8);
-   _PK_INITIAL_STACK_LIMIT = .;
-   . = . + INITIAL_STACK_SIZE;
-   _PK_INITIAL_STACK = . - 1;
+        /* Assert if more RAM consumed than allocated. */
+        ASSERT ((_ram_consumed < SPPE_SIZE), "Error: Not enough RAM \
+        space.");
+    }
+
+    /* Image size will contain code segment and initialised data sections. */
+    _sbe_image_size = _code_size + _data_size + _sdata_size + _sdata2_size;
+
+    /* Stack segment */
+    PROVIDE (_stack_size = SPPE_SIZE - _ram_consumed);
+    .stack . :
+    {
+        /* Assert if stack space less than MINIMUM_STACK_SIZE. */
+        ASSERT ((_stack_size > MINIMUM_STACK_SIZE), "Error: Not enough stack \
+        space.");
+        . = ALIGN(DOUBLE_WORD_SIZE);
+        _PK_INITIAL_STACK_LIMIT = .;
+        . = . + _stack_size;
+        _PK_INITIAL_STACK = . - 1;
+    }
 }
