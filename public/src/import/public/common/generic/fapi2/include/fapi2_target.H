@@ -441,7 +441,8 @@ class Target
             static_assert( (K & O) != 0,
                            "unable to cast Target, no shared types");
 
-            static_assert( bitCount<K>::count >= bitCount<O>::count,
+            // New target type must include _all_ of the old types
+            static_assert( (K & O) == O,
                            "unable to cast to specialized Target");
 
             // No multicast support for Hostboot Bootloader
