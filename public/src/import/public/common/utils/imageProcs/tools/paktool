@@ -12,6 +12,9 @@ import os
 import textwrap
 import re
 import hashlib
+# For doing a tree listing of archive contents
+from collections import defaultdict
+def tree(): return defaultdict(tree)
 
 # Add program modules to the path
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "pymod"))
@@ -28,6 +31,7 @@ import operator
 ############################################################
 # Functions - Functions - Functions - Functions - Functions
 ############################################################
+# The cmd_* functions correspond to the top level command line option
 def cmd_add(args):
     '''
     Add files to the archive from the command line
@@ -96,12 +100,40 @@ def cmd_list(args):
     # Filter the list
     archive = select_files(archive, args.file)
 
-    # Write the listing info
-    for entry in archive:
-        entry.build()
-        entry.display()
+    if (args.details):
+        # Utilize the entry debug code to provide the detailed info on each entry
+        for entry in archive:
+            entry.display()
+    else:
+        # Print an easy to read tree of the archive contents
+        # An elm is a good tree
+        elm = tree()
 
-    out.print("Overall Size: 0x%06X (%s)" % (len(archive.image), pakutils.humanBytes(len(archive.image))))
+        # Loop through the flat list of files to build a tree representation of the layout
+        for entry in archive:
+            # Start at the top of the tree for each branch we build
+            branch = elm
+            # Split the file name into its 'directory' pieces
+            # The loop through each piece and build the tree
+            nameparts = entry.name.split('/')
+            for part in nameparts:
+                if (nameparts[-1] == part):
+                    # The last entry in parts is file
+                    # Save some basic info incase we need it for printing
+                    branch[part] = (entry.method, entry.csize, entry.dsize)
+                else:
+                    # Any other part is a branch in tree
+                    # If it doesn't already exist, create it
+                    if (part not in branch):
+                        branch[part] = tree()
+                    # Advance our branch as we descend down
+                    branch = branch[part]
+
+        # Display what we've built
+        print_tree(elm, root=os.path.basename(args.archive))
+
+    # Common output of file count and size
+    out.print("\n%d files, total size: %s (0x%08X)" % (len(archive), pakutils.humanBytes(len(archive.image)), len(archive.image)))
 
 def cmd_remove(args):
     '''
@@ -165,6 +197,46 @@ def select_files(archive, patterns):
 
     return result
 
+def print_tree(branch, root=None, prefix=''):
+    '''
+    Walk the tree passed in and print info about it
+    This mimics the output of the tree cmdline
+    '''
+    # The tree is anchored to the root, will be set by the top level caller
+    # All recursive calls within this function will not set root
+    if (root):
+        out.print(root)
+
+    # Loop through the tree by its keys
+    # This makes it easier to identify the last key at each layer
+    # That's important for properly formatting the output
+    keys = list(branch.keys())
+    for key in keys:
+        # Start to build our output line
+        # The prefix has all the stuff to the left of the current entry we are building on
+        line = prefix
+        # Identify the last entry in the list to setup both our current line and what we add to prefix
+        last = (keys[-1] == key)
+        if (last):
+            line += '`-- '
+            addfix = '    '
+        else:
+            line += '|-- '
+            addfix = '|   '
+        line += key
+        # Optionally add more info about the file to the output
+        # Disabled for now, anything done here needs to be very clean to keep the output readable
+        if (False and (type(branch[key]) == tuple)):
+            line += " [%s]" % (pakutils.humanBytes(branch[key][1]))
+        # We have built the full line, display it
+        out.print(line)
+
+        # Lastly, keep going if there is another layer
+        if type(branch[key]) == defaultdict:
+            print_tree(branch[key], prefix=prefix + addfix)
+
+    return
+
 ############################################################
 # Main - Main - Main - Main - Main - Main - Main - Main
 ############################################################
@@ -215,9 +287,18 @@ sub.add_argument("-o", "--outdir", default=".", help="Output directory, defaults
 sub.set_defaults(func=cmd_extract)
 
 # list sub command
-sub = subparsers.add_parser("list", description="List files in an archive")
+sub = subparsers.add_parser("list", description="List files in an archive",
+                            formatter_class=argparse.RawDescriptionHelpFormatter)
 sub.add_argument("archive", help="Archive file")
 sub.add_argument("file", nargs="*", help="List of files to list; if none are given, all files will be listed")
+sub.add_argument("-d", "--details", action='store_true', help="Print details")
+sub.epilog = textwrap.dedent('''
+
+examples:
+  > paktool list archive
+  > paktool list archive file1 file2
+  > paktool list archive -d
+''')
 sub.set_defaults(func=cmd_list)
 
 # remove sub command

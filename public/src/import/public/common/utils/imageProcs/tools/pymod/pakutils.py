@@ -35,9 +35,9 @@ from pakconstants import out
 # Function - Functions - Functions - Functions - Functions
 ############################################################
 def formatTime(timePassed, fraction=True):
-    """
+    '''
     Handles time formatting in common function
-    """
+    '''
     # The time comes out as 0:00:45.3482..
     # We find the break from the full seconds to the fractional seconds
     timeString = str(datetime.timedelta(seconds=timePassed))
@@ -64,12 +64,12 @@ def humanBytes(B):
     TB = float(KB ** 4) # 1,099,511,627,776
 
     if B < KB:
-        return '{0} B'.format(B)
+        return '{0}B'.format(B)
     elif KB <= B < MB:
-        return '{0:.2f} KB'.format(B/KB)
+        return '{0:.2f}K'.format(B/KB)
     elif MB <= B < GB:
-        return '{0:.2f} MB'.format(B/MB)
+        return '{0:.2f}M'.format(B/MB)
     elif GB <= B < TB:
-        return '{0:.2f} GB'.format(B/GB)
+        return '{0:.2f}G'.format(B/GB)
     elif TB <= B:
-        return '{0:.2f} TB'.format(B/TB)
+        return '{0:.2f}T'.format(B/TB)
