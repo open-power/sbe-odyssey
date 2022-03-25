@@ -87,11 +87,10 @@ if (not os.path.exists(outputPath)):
         out.critical("The output path does not exist.  Please check the path and re-run")
         out.critical("Problem creating: %s" % outputPath)
         out.critical("Exception: %s" % sys.exc_info()[0])
-        # os._exit bypasses the atexit code as we want to do a hard exit
-        os._exit(1)
+        sys.exit(1)
 
 # Make sure the user knows where it's all going
-out.print("All output in: %s" % outputPath)
+out.print("All output going to: %s/%s.*" % (outputPath, args.name))
 
 # Store our filenames
 # Put them in a dict should we have additional ouput files besides the output pak
@@ -113,7 +112,7 @@ if (not os.path.exists(manifestFile)):
     sys.exit(1)
 
 # Put a message to the screen with the manifest being used
-out.print("Manifest File: %s" % manifestFile)
+out.print("Manifest file: %s" % manifestFile)
 out.moreIndent()
 
 manifest = pak.Manifest()
@@ -177,7 +176,7 @@ with open(filenames["manifest"], 'w') as f:
 # Print all the output file
 out.print("All output in: %s" % outputPath)
 out.moreIndent()
-out.print("Image: %s" % filenames["pak"])
+out.print("Archive: %s" % filenames["pak"])
 out.print("Manifest: %s" % filenames["manifest"])
 out.lessIndent()
 

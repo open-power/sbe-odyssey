@@ -88,12 +88,9 @@ PAK_START = 0x50414B21 # PAK!
 PAK_END = 0x2F50414B # /PAK
 PAK_VERSION = 1
 
+# If a file is added with a fixed size, store that in the header flags
+# This would preserve the psize should the archive be rewritten
 PAK_FLAG_FIXED_SIZE = 0x20
-
-PAK_METHOD_STORE = 1
-PAK_METHOD_ZLIB = 2
-PAK_METHOD_ZLIB_FAST = 3
-PAK_METHOD_ZLIB_PPC = 4
 
 class ArchiveEntry(object):
     def __init__(self):
@@ -328,11 +325,13 @@ class ArchiveEntry(object):
         # If a fixed_size is given, use that
         # Otherwise, just pad out to 8B for alignment
         if (self.fixed_size):
+            # Make sure fixed_size isn't smaller than the data
+            # If not checked for, the cdata would force the pdata larger and have bad downstream effects
+            if (self.fixed_size < self.csize):
+                raise ArchiveError("On %s, given size: 0x%X smaller than data size: 0x%X" % (self.name, self.fixed_size, self.csize))
             self.pdata = bytearray(self.fixed_size)
         else:
             self.pdata = bytearray(self.align(self.csize))
-
-        # UPDATE - make sure csize isn't bigger than fixed_size above
 
         # Insert the data
         self.pdata[0:self.csize] = self.cdata
@@ -500,7 +499,6 @@ class Archive(UserList):
             self.image = f.read()
 
         # Loop through bytearray image in memory and pull out the data
-        # UPDATE - this needs better end condition/end marker checking
         offset = 0
         while (offset < len(self.image)):
             # Create the entry we are going to fill in
@@ -654,11 +652,6 @@ class Manifest(object):
                 out.critical("Found at location: line=%d, col=%d" % (last_tb.tb_frame.f_locals["node"].lineno,
                                                                      last_tb.tb_frame.f_locals["node"].col_offset))
                 return 1
-
-        # Debug data
-        # out.print(data)
-        # for key in data:
-        #    out.print("key: %s, data: %s" % (key, data[key]))
 
         ################################################
         # Validate the values read in
