@@ -33,16 +33,18 @@ namespace scomt
 
 // Using the notion of "forbidden" here instead of "allowed" since it allows us to have
 // a mask of all-0 in the default case, optimizing out the check.
-static const uint32_t FORBIDDEN_CHIP_P10DD1 = 0x00000001;
-static const uint32_t FORBIDDEN_CHIP_P10DD2 = 0x00000002;
-static const uint32_t FORBIDDEN_CHIP_ODYDD1 = 0x00000004;
-static const uint32_t FORBIDDEN_CHIP_ODYDD2 = 0x00000008;
-static const uint32_t FORBIDDEN_CHIP_P11DD1 = 0x00000010;
-static const uint32_t FORBIDDEN_CHIP_P11DD2 = 0x00000020;
+static const uint32_t FORBIDDEN_CHIP_P10DD1 =  0x00000001;
+static const uint32_t FORBIDDEN_CHIP_P10DD2 =  0x00000002;
+static const uint32_t FORBIDDEN_CHIP_ODYDD1 =  0x00000004;
+static const uint32_t FORBIDDEN_CHIP_ODYDD2 =  0x00000008;
+static const uint32_t FORBIDDEN_CHIP_P11TDD1 = 0x00000010;
+static const uint32_t FORBIDDEN_CHIP_P11TDD2 = 0x00000020;
+static const uint32_t FORBIDDEN_CHIP_P11SDD1 = 0x00000040;
+static const uint32_t FORBIDDEN_CHIP_P11SDD2 = 0x00000080;
 
 // Both this and forbiddenAccess() below only need to be declared
 // somewhere on the Cronus platform; other platforms won't use it.
-extern uint32_t forbidden_chips;
+extern uint32_t current_chip;
 
 // This is getting called when a forbidden field is accessed.
 // It should be very loud and not return.
@@ -82,7 +84,7 @@ class ScomRegister : public fapi2::buffer<uint64_t>
         template <uint32_t FORBIDDEN_MASK>
         inline __attribute__((always_inline)) void checkAvailability() const
         {
-            if (fapi2::is_platform<fapi2::PLAT_CRONUS>() && (forbidden_chips & FORBIDDEN_MASK))
+            if (fapi2::is_platform<fapi2::PLAT_CRONUS>() && (current_chip & FORBIDDEN_MASK))
             {
                 forbiddenAccess(FORBIDDEN_MASK);
             }
@@ -137,7 +139,7 @@ class CfamRegister : public fapi2::buffer<uint32_t>
         template <uint32_t FORBIDDEN_MASK>
         inline __attribute__((always_inline)) void checkAvailability() const
         {
-            if (fapi2::is_platform<fapi2::PLAT_CRONUS>() && (forbidden_chips & FORBIDDEN_MASK))
+            if (fapi2::is_platform<fapi2::PLAT_CRONUS>() && (current_chip & FORBIDDEN_MASK))
             {
                 forbiddenAccess(FORBIDDEN_MASK);
             }

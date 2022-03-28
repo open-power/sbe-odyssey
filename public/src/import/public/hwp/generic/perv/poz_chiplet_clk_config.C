@@ -67,7 +67,7 @@ ReturnCode poz_chiplet_clk_config(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
         NET_CTRL0 = 0;
         NET_CTRL0.set_CLK_ASYNC_RESET(1);
         NET_CTRL0.set_LVLTRANS_FENCE(1);
-        FAPI_TRY(NET_CTRL0.putScom_AND(l_chiplets_mc));
+        FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
 
         NET_CTRL0 = 0;
         NET_CTRL0.set_PLLFORCE_OUT_EN(1);

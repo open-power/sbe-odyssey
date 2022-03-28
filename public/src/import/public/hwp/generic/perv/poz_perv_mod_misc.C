@@ -50,7 +50,7 @@ SCOMT_PERV_USE_PCBCTL_COMP_INTR_HOST_MASK_REG;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_PERV_CTRL0;
 SCOMT_PC_USE_TP_TPCHIP_TPC_CPLT_CTRL0;
 SCOMT_PERV_USE_XSTOP1;
-SCOMT_PERV_USE_EPS_FIR_CLKSTOP_ON_XSTOP_MASK1;
+SCOMT_PERV_USE_EPS_CLKSTOP_ON_XSTOP_MASK1;
 
 using namespace fapi2;
 //using namespace fapi2::p11t;
@@ -348,7 +348,7 @@ ReturnCode mod_setup_clockstop_on_xstop(
     const uint8_t i_chiplet_delays[64])
 {
     XSTOP1_t XSTOP1;
-    EPS_FIR_CLKSTOP_ON_XSTOP_MASK1_t EPS_FIR_CLKSTOP_ON_XSTOP_MASK1;
+    EPS_CLKSTOP_ON_XSTOP_MASK1_t EPS_CLKSTOP_ON_XSTOP_MASK1;
     fapi2::buffer<uint8_t>  l_clkstop_on_xstop;
     auto l_chiplets_mc   = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
     auto l_chiplets_uc   = l_chiplets_mc.getChildren<TARGET_TYPE_PERV>();
@@ -359,7 +359,7 @@ ReturnCode mod_setup_clockstop_on_xstop(
 
     if (l_clkstop_on_xstop)
     {
-        if (l_clkstop_on_xstop.getBit<EPS_FIR_CLKSTOP_ON_XSTOP_MASK1_SYS_XSTOP_STAGED_ERR>())
+        if (l_clkstop_on_xstop.getBit<EPS_CLKSTOP_ON_XSTOP_MASK1_SYS_XSTOP_STAGED_ERR>())
         {
             FAPI_DBG("Staged xstop is masked, leave all delays at 0 for fast stopping.");
 
@@ -379,9 +379,9 @@ ReturnCode mod_setup_clockstop_on_xstop(
         }
 
         FAPI_INF("Enable clockstop on checkstop");
-        EPS_FIR_CLKSTOP_ON_XSTOP_MASK1.flush<1>();
-        EPS_FIR_CLKSTOP_ON_XSTOP_MASK1.insert<0, 8>(l_clkstop_on_xstop);
-        FAPI_TRY(EPS_FIR_CLKSTOP_ON_XSTOP_MASK1.putScom(l_chiplets_mc));
+        EPS_CLKSTOP_ON_XSTOP_MASK1.flush<1>();
+        EPS_CLKSTOP_ON_XSTOP_MASK1.insert<0, 8>(l_clkstop_on_xstop);
+        FAPI_TRY(EPS_CLKSTOP_ON_XSTOP_MASK1.putScom(l_chiplets_mc));
     }
 
 fapi_try_exit:
