@@ -48,7 +48,9 @@ enum POZ_CHIPLET_CLK_CONFIG_Private_Constants
 {
 };
 
-ReturnCode poz_chiplet_clk_config(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
+ReturnCode poz_chiplet_clk_config(
+    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    chiplet_mux_setup_FP_t i_mux_setup)
 {
     NET_CTRL0_t NET_CTRL0;
     MulticastGroup l_mc_group;
@@ -60,8 +62,15 @@ ReturnCode poz_chiplet_clk_config(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
         // Initializing chiplets inside a new scope to prevent issues with FAPI_TRY
         auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(l_mc_group);
 
+        buffer<uint64_t> l_chiplet_mask = 0;
+
+        for (auto l_chiplet : l_chiplets_mc.getChildren<TARGET_TYPE_PERV>(TARGET_STATE_PRESENT))
+        {
+            l_chiplet_mask.setBit(l_chiplet.getChipletNumber());
+        }
+
         FAPI_INF("Set up chiplet clock muxing (TBD)");
-        // TBD, not needed on Tap
+        i_mux_setup(i_target, l_chiplet_mask);
 
         FAPI_INF("Enable chiplet clocks");
         NET_CTRL0 = 0;
