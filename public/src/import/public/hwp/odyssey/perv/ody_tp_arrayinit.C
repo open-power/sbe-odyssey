@@ -25,25 +25,42 @@
 //------------------------------------------------------------------------------
 /// @brief
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
-// *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
+// *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
+// *HWP FW Maintainer   : Kevin Duffy (kjduffy@us.ibm.com)
 // *HWP Consumed by     : SPPE
 //------------------------------------------------------------------------------
 
 #include "ody_tp_arrayinit.H"
 #include "poz_perv_common_params.H"
-
+#include "poz_perv_mod_chiplet_clocking.H"
+#include <poz_perv_utils.H>
+#include <target_filters.H>
 
 using namespace fapi2;
+using namespace cc;
 
 enum ODY_TP_ARRAYINIT_Private_Constants
 {
+    ODY_PERV_NET_PERV = ODY_PERV_NET | ODY_PERV_PERV,
 };
 
 ReturnCode ody_tp_arrayinit(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
 
+    FAPI_INF("Entering ...");
+    fapi2::Target<fapi2::TARGET_TYPE_PERV> l_tpchiplet = get_tp_chiplet_target(i_target);
+
+    FAPI_INF("Calling mod_abist_start for PERV & NET regions ...");
+    FAPI_TRY(mod_abist_start(l_tpchiplet, ODY_PERV_NET_PERV));
+
+    FAPI_INF("Calling mod_abist_poll ...");
+    FAPI_TRY(mod_abist_poll(l_tpchiplet))
+
+
+    //TODO: FAPI_TRY(putRing(i_target, ring_names::perv_abst_check, RING_MODE_COMPARE)); // if perv_abst_check is empty or does not exist, skip check
+
 
 fapi_try_exit:
+    FAPI_INF("Exiting ...");
     return current_err;
 }

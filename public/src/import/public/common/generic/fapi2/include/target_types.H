@@ -175,6 +175,7 @@ enum TargetType : uint64_t
                                 TARGET_TYPE_PHB16X,
 
     TARGET_TYPE_MULTICAST_CHIP = TARGET_TYPE_PROC_CHIP  |
+                                 TARGET_TYPE_OCMB_CHIP   |
                                  TARGET_TYPE_HUB_CHIP   |
                                  TARGET_TYPE_COMPUTE_CHIP,
 
