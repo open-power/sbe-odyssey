@@ -34,7 +34,7 @@
       <ffdc>CBS_CS_IDLE_VALUE</ffdc>
       <ffdc>LOOP_COUNT</ffdc>
       <ffdc>HW_DELAY</ffdc>
-      <ffdc>PROC_TARGET</ffdc> 
+      <ffdc>PROC_TARGET</ffdc>
     </hwpError>
   <!-- ******************************************************************** -->
     <hwpError>
