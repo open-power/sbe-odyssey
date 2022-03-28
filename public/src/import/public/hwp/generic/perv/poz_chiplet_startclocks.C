@@ -84,7 +84,7 @@ ReturnCode poz_chiplet_startclocks(
     FAPI_INF("Drop chiplet fence");
     NET_CTRL0 = 0;
     NET_CTRL0.set_FENCE_EN(1);
-    FAPI_TRY(NET_CTRL0.putScom_AND(i_target));
+    FAPI_TRY(NET_CTRL0.putScom_CLEAR(i_target));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");

@@ -34,7 +34,7 @@
 
 #include "poz_perv_mod_chip_clocking.H"
 #include "poz_perv_common_params.H"
-#include <p11_scom_perv_net.H>
+#include <p11_scom_perv.H>
 
 using namespace fapi2;
 using namespace scomt::perv;
