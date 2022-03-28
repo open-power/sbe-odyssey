@@ -22,6 +22,26 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
+
+
+#
+# Command table code for istep 1
+#
+# The order of HWPs matters here since it will
+# determine the order in the command table!
+#
+CMDTABLE_HWPS += ody_tp_chiplet_reset
+#CMDTABLE_HWPS += ody_tp_pll_initf
+CMDTABLE_HWPS += ody_tp_pll_setup
+#CMDTABLE_HWPS += ody_pib_repr_initf
+CMDTABLE_HWPS += ody_pib_arrayinit
+CMDTABLE_HWPS += ody_pib_arrayinit_cleanup
+#CMDTABLE_HWPS += ody_pib_initf
+CMDTABLE_HWPS += ody_pib_startclocks
+$(call BUILD_CMDTABLE,odyssey,10,main,$(CMDTABLE_HWPS))
+
+
+
 #
 # A macro to contain all our boilerplate
 #

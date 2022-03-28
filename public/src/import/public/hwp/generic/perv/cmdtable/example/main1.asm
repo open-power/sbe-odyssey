@@ -52,6 +52,14 @@ start:
         putscom     0x50009, -1, 0xl00008003
 
         /*
+         * If a single line would become too unwieldy, you can insert
+         * line breaks after commas:
+         */
+        putscom     0x50009,
+                    0xFFFFFFFFFFFFFFFF,
+                    0x0000800300000000
+
+        /*
          * Now for some more symbolic programming, let's define some named constants:
          */
 
