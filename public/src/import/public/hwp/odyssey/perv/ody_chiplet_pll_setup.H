@@ -23,9 +23,9 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @brief Setup PLLs on all chiplets except TP
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 // *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
@@ -36,7 +36,7 @@
 
 typedef fapi2::ReturnCode (*ody_chiplet_pll_setup_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
 
-/// @brief
+/// @brief      Setup PLLs on all chiplets except TP
 /// @param[in]   i_target
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"

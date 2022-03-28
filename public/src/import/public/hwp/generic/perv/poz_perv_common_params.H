@@ -53,6 +53,7 @@ constexpr uint16_t REGION(const int number)
 
 enum clock_region
 {
+
     REGION_PERV = REGION(0),
     REGION_PLL  = REGION(13),
 
@@ -159,6 +160,22 @@ enum clock_region
     P11S_PAXO_DL = REGION(3),
     P11S_PAXO_IOPPE = REGION(12),
     P11S_PAXO_PLLIOO = REGION(13),
+
+    ODY_PERV_PERV = REGION(0),
+    ODY_PERV_SBE = REGION(1),
+    ODY_PERV_PIB = REGION(2),
+    ODY_PERV_NET = REGION(3),
+    ODY_PERV_PLLMC = REGION(13),
+
+    ODY_MC_PERV = REGION(0),
+    ODY_MC_IOO = REGION(1),
+    ODY_MC_CORE = REGION(2),
+    ODY_MC_CFG = REGION(3),
+    ODY_MC_DFI = REGION(4),
+    ODY_MC_PUB0 = REGION(5),
+    ODY_MC_PUB1 = REGION(6),
+    ODY_MC_PRIM0 = REGION(13),
+    ODY_MC_PRIM1 = REGION(14),
 };
 
 enum clock_type
