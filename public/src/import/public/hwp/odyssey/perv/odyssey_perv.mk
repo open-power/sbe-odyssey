@@ -29,12 +29,16 @@ define __ODYSSEY_PERV_PROCEDURE
 PROCEDURE=$(1)
 $$(call ADD_MODULE_INCDIR,$$(PROCEDURE),$(dir $(lastword $(MAKEFILE_LIST)))/../../generic/perv)
 $$(call ADD_MODULE_SRCDIR,$$(PROCEDURE),$(dir $(lastword $(MAKEFILE_LIST)))/../../generic/perv)
-# $$(call ADD_MODULE_OBJ,$$(PROCEDURE),poz_perv_utils.o)
-# $$(call ADD_MODULE_OBJ,$$(PROCEDURE),poz_perv_mod_misc.o)
-# $$(call ADD_MODULE_OBJ,$$(PROCEDURE),poz_perv_mod_chiplet_clocking.o)
+$$(call ADD_MODULE_OBJ,$$(PROCEDURE),poz_perv_utils.o)
+$$(call ADD_MODULE_OBJ,$$(PROCEDURE),poz_perv_mod_misc.o)
+$$(call ADD_MODULE_OBJ,$$(PROCEDURE),poz_perv_mod_chiplet_clocking.o)
+$$(call ADD_MODULE_OBJ,$$(PROCEDURE),poz_perv_mod_chip_clocking.o)
+ifneq ($(2),)
+$$(call ADD_MODULE_OBJ,$$(PROCEDURE),$(2).o)
+endif
 $$(call BUILD_PROCEDURE)
 endef
-ODYSSEY_PERV_PROCEDURE = $(eval $(call __ODYSSEY_PERV_PROCEDURE,$1))
+ODYSSEY_PERV_PROCEDURE = $(eval $(call __ODYSSEY_PERV_PROCEDURE,$1,$2))
 
 #
 # And now the actual HWP definitions
@@ -58,7 +62,7 @@ $(call ODYSSEY_PERV_PROCEDURE,ody_tp_init)
 $(call ODYSSEY_PERV_PROCEDURE,ody_chiplet_clk_config)
 $(call ODYSSEY_PERV_PROCEDURE,ody_chiplet_reset)
 $(call ODYSSEY_PERV_PROCEDURE,ody_chiplet_unused_psave)
-$(call ODYSSEY_PERV_PROCEDURE,ody_chiplet_pll_setup)
+$(call ODYSSEY_PERV_PROCEDURE,ody_chiplet_pll_setup,poz_chiplet_pll_setup)
 $(call ODYSSEY_PERV_PROCEDURE,ody_bist_repr_initf)
 $(call ODYSSEY_PERV_PROCEDURE,ody_abist)
 $(call ODYSSEY_PERV_PROCEDURE,ody_lbist)

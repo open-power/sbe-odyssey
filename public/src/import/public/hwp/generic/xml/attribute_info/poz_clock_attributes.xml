@@ -1,0 +1,38 @@
+<!-- IBM_PROLOG_BEGIN_TAG                                                   -->
+<!-- This is an automatically generated prolog.                             -->
+<!--                                                                        -->
+<!-- $Source: public/src/import/public/hwp/generic/xml/attribute_info/poz_clock_attributes.xml $ -->
+<!--                                                                        -->
+<!-- OpenPOWER sbe Project                                                  -->
+<!--                                                                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022                             -->
+<!-- [+] International Business Machines Corp.                              -->
+<!--                                                                        -->
+<!--                                                                        -->
+<!-- Licensed under the Apache License, Version 2.0 (the "License");        -->
+<!-- you may not use this file except in compliance with the License.       -->
+<!-- You may obtain a copy of the License at                                -->
+<!--                                                                        -->
+<!--     http://www.apache.org/licenses/LICENSE-2.0                         -->
+<!--                                                                        -->
+<!-- Unless required by applicable law or agreed to in writing, software    -->
+<!-- distributed under the License is distributed on an "AS IS" BASIS,      -->
+<!-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or        -->
+<!-- implied. See the License for the specific language governing           -->
+<!-- permissions and limitations under the License.                         -->
+<!--                                                                        -->
+<!-- IBM_PROLOG_END_TAG                                                     -->
+<attributes>
+<!-- ********************************************************************** -->
+<attribute>
+  <id>ATTR_IO_PLL_BYPASS</id>
+  <targetType>TARGET_TYPE_COMPUTE_CHIP, TARGET_TYPE_HUB_CHIP, TARGET_TYPE_OCMB_CHIP, TARGET_TYPE_PROC_CHIP</targetType>
+  <description>
+    Skip locking sequence and check for lock of IO PLL
+  </description>
+  <valueType>uint8</valueType>
+  <enum>BYPASS = 0x1, NO_BYPASS = 0x0</enum>
+  <initToZero/>
+</attribute>
+<!-- ********************************************************************** -->
+</attributes>
