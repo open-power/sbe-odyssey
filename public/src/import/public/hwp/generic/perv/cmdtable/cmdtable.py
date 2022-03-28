@@ -173,9 +173,21 @@ def parse_script(script):
     error = False
     fname = "<unknown>"
     lineno = 0
+    tmpline = None
 
     for line in script:
         lineno += 1
+
+        # if this is a continuation of a previous line, prepend that
+        if tmpline:
+            line = tmpline + line
+            tmpline = None
+
+        # if the line ends in a dangling comma, append another one
+        if line.rstrip().endswith(","):
+            tmpline = line.rstrip()
+            continue
+
         try:
             # parse cpp line information
             if line and line[0] == "#":
