@@ -9,11 +9,13 @@ Before workon:
         source public/src/tools/utils/sb/sb_complete
 
 To Setup Environment:
-    ./sb workon [<platform>]
-    ./sb workon [<p11 metis p11_dft metis_dft odyssey all>]
-    Ex: ./sb workon odyssey
+    ./sb workon [<platform>] [<imageType>]
+    ./sb workon [<p11 metis p11_dft metis_dft odyssey all>][<sppe bldr srom pnor>]
+    Ex: ./sb workon odyssey sppe
+        ./sb workon odyssey pnor
 
 Note: If platform option is not provided, it defaults to "all".
+      If image option is not provided, it defaults to "sppe".
       In this case all images will be built for all supported platforms in the
       repo unless user manually over-rides using mesonwrap option's.
 
