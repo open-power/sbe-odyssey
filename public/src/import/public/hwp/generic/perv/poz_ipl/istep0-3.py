@@ -1189,17 +1189,17 @@ def ody_chiplet_dts_init():
 def poz_chiplet_dts_init():
     # DTS calibration is scanned in via the repr ring, but we can use this to calibrate KVREF
     ## Calibrating voltage reference
-    KVREF_AND_VMEAS_MODE_STATUS_REG.KVREF_START_CAL = 1
+    KVREF_START_CAL = 1ULL << 63
     delay(10us, 1000cyc)   # Give KVREF some time to get the message and drop CAL_DONE
 
     try 100 times:
-        if KVREF_AND_VMEAS_MODE_STATUS_REG.KVREF_CAL_DONE:
+        if KVREF_CAL_DONE:
             break
         delay(100us, 1000cyc)
     else:
         ASSERT(KVREF_CAL_NOT_DONE_ERR)
 
-    KVREF_AND_VMEAS_MODE_STATUS_REG.KVREF_START_CAL = 0
+    KVREF_START_CAL = 0
 
 ISTEP(3, 23, "proc_chiplet_skewadj_setup", "TSBE")
 
@@ -1215,7 +1215,9 @@ def p11t_nest_enable_io():
     poz_nest_enable_io(i_target, filter=N0)
 
 def ody_nest_enable_io():
-    "Any content here?"
+    ROOT_CTRL1.TP_RI_DC_B  = 1
+    ROOT_CTRL1.TP_DI1_DC_B = 1
+    ROOT_CTRL1.TP_DI2_DC_B = 1
 
 def poz_nest_enable_io(target<ANY_POZ_CHIP>, fapi2::TargetFilter i_nest_chiplets):
     ROOT_CTRL1.TPFSI_TP_GLB_PERST_OVR_DC = 0
