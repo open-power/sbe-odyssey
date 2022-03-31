@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/common/algorithms/sha3.H $                         */
+/* $Source: public/src/common/pakwrapper/archive_config.H $               */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022                             */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,57 +21,36 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef SHA3_H
-#define SHA3_H
+#pragma once
 
-#include <stddef.h>
-#include <stdint.h>
+// __PPE42__ is emitted by the PPE compiler
+// __PPE__ is defined in SBE code
 
-#ifndef KECCAKF_ROUNDS
-#define KECCAKF_ROUNDS 24
+
+#include "ppe42_string.h"
+
+#define __SBE_PPE__
+#define __USE_SHA3__
+
+#ifndef __SROM_IMAGE__
+    #define __USE_COMPRESSION__
+    #define __USE_HWP_STREAM__
 #endif
 
-#ifndef ROTL64
-#define ROTL64(x, y) (((x) << (y)) | ((x) >> (64 - (y))))
-#endif
+#include "sbetrace.H"
+#include "sha3.H"
 
-#define SHA3_DIGEST_LENGTH 64
+#define ARC_ERROR(...) SBE_ERROR(__VA_ARGS__)
+#define ARC_ERROR_BIN(...) SBE_ERROR_BIN(__VA_ARGS__)
 
-typedef uint8_t sha3_t[SHA3_DIGEST_LENGTH];
+typedef int ARC_RET_t;
 
-// state context
-typedef struct {
-    union {                                 // state:
-        uint8_t b[200];                     // 8-bit bytes
-        uint64_t q[25];                     // 64-bit words
-    } st;
-    int pt, rsiz, mdlen;                    // these don't overflow
-} sha3_ctx_t;
-
-typedef uint8_t  sha3_byte;     /* Exactly 1 byte */
-typedef uint32_t sha3_word32;   /* Exactly 4 bytes */
-typedef uint64_t sha3_word64;   /* Exactly 8 bytes */
-
-// Compression function.
-void sha3_keccakf(uint64_t st[25]);
-
-// OpenSSL - like interfece
-int sha3_init(sha3_ctx_t *c);    // mdlen = hash output in bytes
-int sha3_update(sha3_ctx_t *c, const void *data, size_t len);
-int sha3_final(sha3_t *md, sha3_ctx_t *c);    // digest goes to md
-
-/**
- * @brief compute a sha3 hash (md) of given byte length from "data"
- *
- * @param data Data on which sha3 needs to be calculated
- * @param len Length of data
- * @param result sha3 result store location ptr
- */
-void sha3_Hash(const sha3_byte *data, size_t len, sha3_t *result);
-
-uint32_t make32Bit(uint8_t *ptr);
-
-//Print SHA3-512 result
-void SHA3_dump(sha3_t *result);
-
-#endif
+enum ARCHIVE_RETURN_CODES
+{
+    ARC_OPERATION_SUCCESSFUL = 0x00,
+    ARC_INVALID_PARAMS,
+    ARC_FUNCTIONALITY_NOT_SUPPORTED,
+    ARC_INPUT_BUFFER_OVERFLOW,
+    ARC_FILE_CORRUPTED,
+    ARC_FILE_NOT_FOUND,
+};

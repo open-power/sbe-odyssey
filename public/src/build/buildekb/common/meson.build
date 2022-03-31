@@ -40,6 +40,15 @@ subdir('pkkernel')
 subdir('boltonlib')
 subdir('ppe42')
 
+if (get_option('srom').enabled())
+    subdir('paksrom')
+endif
+
+if (get_option('sppe').enabled()) or (get_option('tsbe').enabled()) or
+                            (get_option('hsbe').enabled() or bldr.enabled())
+    subdir('pak')
+endif
+
 if (get_option('sppe').enabled()) or (get_option('tsbe').enabled()) or
                                      (get_option('hsbe').enabled())
     subdir('errorxml')
