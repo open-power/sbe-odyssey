@@ -43,7 +43,7 @@
 
 #include "sbetrace.H"
 #include "sbe_sp_intf.H"
-#include "crypto_rom.H"
+#include "sha3.H"
 
 #define ARC_ERROR(...) SBE_ERROR(__VA_ARGS__)
 #define ARC_ERROR_BIN(...) SBE_ERROR_BIN(__VA_ARGS__)
