@@ -55,7 +55,7 @@
 #ifndef TINF_H_INCLUDED
 #define TINF_H_INCLUDED
 
-#include <archive.H>
+#include "archive.H"
 
 #define TINF_VER_MAJOR 1        /**< Major version number */
 #define TINF_VER_MINOR 1        /**< Minor version number */
