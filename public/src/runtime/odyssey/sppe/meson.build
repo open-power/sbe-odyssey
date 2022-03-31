@@ -42,6 +42,8 @@ odyssey_sppe_lib_paths = [ekb_cmn_lib_paths,
                           runtime_cmn_core_lib_paths,
                           runtime_cmn_ffdc_lib_paths,
                           cmn_utils_lib_paths,
+                          ekb_cmn_pak_lib_paths,
+                          cmn_pak_wrapper_lib_paths
                          ]
 
 odyssey_sppe_libs = [ekb_cmn_libs,
@@ -49,6 +51,8 @@ odyssey_sppe_libs = [ekb_cmn_libs,
                      runtime_cmn_core_libs,
                      runtime_cmn_ffdc_libs,
                      cmn_utils_libs,
+                     ekb_cmn_pak_libs,
+                     cmn_pak_wrapper_libs
                     ]
 
 odyssey_sppe_dep_libs = [ekb_cmn_dep_libs,
@@ -56,6 +60,8 @@ odyssey_sppe_dep_libs = [ekb_cmn_dep_libs,
                          runtime_cmn_core_dep_libs,
                          runtime_cmn_ffdc_dep_libs,
                          cmn_utils_dep_libs,
+                         ekb_cmn_pak_dep_libs,
+                         cmn_pak_wrapper_dep_libs
                         ]
 
 #Odyssey SPPE install path

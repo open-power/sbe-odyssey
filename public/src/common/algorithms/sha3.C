@@ -131,14 +131,14 @@ int sha3_init(sha3_ctx_t *c)
 
 // update state with more data
 
-int sha3_update(sha3_ctx_t *c, const sha3_byte *data, size_t len)
+int sha3_update(sha3_ctx_t *c, const void *data, size_t len)
 {
     size_t i;
     int j;
 
     j = c->pt;
     for (i = 0; i < len; i++) {
-        c->st.b[j++] ^= ( data)[i];
+        c->st.b[j++] ^= ((const uint8_t*) data)[i];
         if (j >= c->rsiz) {
             sha3_keccakf(c->st.q);
             j = 0;

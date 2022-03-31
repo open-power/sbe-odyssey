@@ -1,0 +1,47 @@
+# IBM_PROLOG_BEGIN_TAG
+# This is an automatically generated prolog.
+#
+# $Source: public/src/common/pakwrapper/meson.build $
+#
+# OpenPOWER sbe Project
+#
+# Contributors Listed Below - COPYRIGHT 2022
+#
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+# IBM_PROLOG_END_TAG
+sbe_pak_wrapper = files('pakwrapper.C')
+
+infile_c = [sbe_pak_wrapper
+            ]
+
+lib_file_name = 'cmnpakwrapper'
+
+cmn_pak_wrapper_obj_file_cpp = obj_gen_cpp.process(infile_c)
+
+infile  = [cmn_pak_wrapper_obj_file_cpp]
+
+libcmnpakwrapper = custom_target( lib_file_name,
+                                 output : 'lib' + lib_file_name,
+                                 input : infile,
+                                 command : [ ar,
+                                             'crs',
+                                             '@OUTPUT@'+'.a',
+                                             '@INPUT@'],
+                                 build_by_default: true,
+                             )
+
+cmn_pak_wrapper_libs = '-l' + lib_file_name
+cmn_pak_wrapper_lib_paths = '-L' + meson.current_build_dir()
+cmn_pak_wrapper_dep_libs = libcmnpakwrapper
