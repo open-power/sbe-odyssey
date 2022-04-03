@@ -46,13 +46,13 @@
 void
 __hwmacro_setup(void)
 {
-    uint64_t oirrB = 0;
-    uint64_t oirrC = 0;
     uint64_t owned_actual = 0;
     uint64_t reverse_polarity = 0;
 
 #ifdef __OCC_PLAT
-    uint64_t oirrA;
+    uint64_t oirrA = 0;
+    uint64_t oirrB = 0;
+    uint64_t oirrC = 0;
 
     //verify that this code is running on the correct GPE instance (one time check)
     if((mfspr(SPRN_PIR) & PIR_PPE_INSTANCE_MASK) != APPCFG_OCC_INSTANCE_ID)
@@ -83,7 +83,8 @@ __hwmacro_setup(void)
     }
 
     //Determine from the routing registers which irqs are owned by this instance
-    //NOTE: If a bit is not set in the routeA register, it is not owned by a GPE
+    //NOTE: For info about the routing rules, see description of the OIRRna reg
+    //      in the PM HW Spec.
 
     oirrA = ((uint64_t)in32(OCB_OIRR0A)) << 32;
     oirrA |= in32(OCB_OIRR1A);
@@ -94,9 +95,26 @@ __hwmacro_setup(void)
 
     //All interrupts routed to a GPE will have a bit set in routeA
     owned_actual = oirrA;
+
+    //wittle it down by bits in the routeB register
+#if APPCFG_OCC_INSTANCE_ID & 0x2
+    owned_actual &= oirrB;
+#else
+    owned_actual &= ~oirrB;
 #endif
 
+    //wittle it down further by bits in the routeC register
+#if APPCFG_OCC_INSTANCE_ID & 0x1
+    owned_actual &= oirrC;
+#else
+    owned_actual &= ~oirrC;
+#endif
+
+#endif //End of __OCC_PLAT
+
 #ifdef __TCC_PLAT
+    uint64_t oirrB = 0;
+    uint64_t oirrC = 0;
 
     //verify that this code is running on the correct GPE instance (one time check)
     if((mfspr(SPRN_PIR) & PIR_PPE_INSTANCE_MASK) != APPCFG_OCC_INSTANCE_ID)
@@ -125,30 +143,25 @@ __hwmacro_setup(void)
     }
 
     //Determine from the routing registers which irqs are owned by this instance
-    //NOTE: If a bit is not set in the routeA register, it is not owned by a GPE
+    //NOTE: For info about the routing rules, see description of the TIRRna reg
+    //      in the PM HW Spec.
 
     oirrB = ((uint64_t)in32(OCB_OIRR0B)) << 32;
     oirrB |= in32(OCB_OIRR1B);
     oirrC = ((uint64_t)in32(OCB_OIRR0C)) << 32;
     oirrC |= in32(OCB_OIRR1C);
 
-    //All interrupts routed to a GPE will have a bit set in routeA
-    owned_actual = oirrB;
+#if   (APPCFG_OCC_INSTANCE_ID == 0x0)
+    owned_actual = ~oirrB & ~oirrC;
+#elif (APPCFG_OCC_INSTANCE_ID == 0x1)
+    owned_actual = ~oirrB &  oirrC;
+#elif (APPCFG_OCC_INSTANCE_ID == 0x2)
+    owned_actual =  oirrB & ~oirrC;
+#elif (APPCFG_OCC_INSTANCE_ID == 0x3)
+    owned_actual =  oirrB &  oirrC;
 #endif
 
-    //wittle it down by bits in the routeB register
-#if APPCFG_OCC_INSTANCE_ID & 0x2
-    owned_actual &= oirrB;
-#else
-    owned_actual &= ~oirrB;
-#endif
-
-    //wittle it down further by bits in the routeC register
-#if APPCFG_OCC_INSTANCE_ID & 0x1
-    owned_actual &= oirrC;
-#else
-    owned_actual &= ~oirrC;
-#endif
+#endif //End of __TCC_PLAT
 
     //Panic if we don't own the irqs we were expecting
     //NOTE: we don't panic if we are given more IRQ's than expected
