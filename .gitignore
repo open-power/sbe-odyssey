@@ -13,3 +13,7 @@ __pycache__
 
 # Ignore vscode config files
 .vscode/**
+
+# Ignore backup files
+*~
+*.bak
