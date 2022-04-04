@@ -48,14 +48,14 @@ extern "C"
 #endif
 
 #ifdef __SBE__
-#define WEEK_FUNCTION_ATTRIBUTE
+#define WEAK_FUNCTION_ATTRIBUTE
 #else
-#define WEEK_FUNCTION_ATTRIBUTE __attribute__ ((weak))
+#define WEAK_FUNCTION_ATTRIBUTE __attribute__ ((weak))
 #endif
 
-void* memset(void* s, int c, size_t n) WEEK_FUNCTION_ATTRIBUTE;
+void* memset(void* s, int c, size_t n) WEAK_FUNCTION_ATTRIBUTE;
 //    void bzero(void *vdest, size_t len);   USE memset
-void* memcpy(void* dest, const void* src, size_t num) WEEK_FUNCTION_ATTRIBUTE;
+void* memcpy(void* dest, const void* src, size_t num) WEAK_FUNCTION_ATTRIBUTE;
 void* memmove(void* vdest, const void* vsrc, size_t len)  __attribute__ ((weak));
 int memcmp(const void* p1, const void* p2, size_t len) __attribute__((weak, pure));
 void* memmem(const void* haystack, size_t haystacklen,
