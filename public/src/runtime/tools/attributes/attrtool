@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 from attrdb import *
-from attrsrcgen import *
 from attrtank import *
 from attrtoolutils import *
 from argparse import ArgumentParser
 from contextlib import suppress
-import pickle
+import pickle, jinja2, sys, os
 
 
 class ArgumentError(Exception):
@@ -25,10 +24,37 @@ def cmd_parse(args):
 
     sbe_attr_tank = AttributeStructure(db)
 
-    AttrTankFileGen(sbe_attr_tank, args.gen_file_dir, args.virtual_fn_header[0])
-
     vprint("Storing attribute database to " + args.dbfile[0])
     pickle.dump(sbe_attr_tank, open(args.dbfile[0], "wb"))
+
+def cmd_gensrc(args):
+    sbe_attr_tank = pickle.load(open(args.dbfile, "rb"))
+    env = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(sys.argv[0]), "templates")),
+        trim_blocks=True,
+        lstrip_blocks=True,
+        undefined=jinja2.StrictUndefined,
+    )
+    env.globals = {
+        "toolname": "attrtool",
+        "attributes": sbe_attr_tank.field_list,
+        "virt_header": args.virtual_fn_header,
+    }
+    env.filters = {
+        "hex": lambda x: "0x%X" % x,
+    }
+
+    def generate(fname):
+        with open(os.path.join(args.outdir, fname), "w") as f:
+            # templates named .t to prevent them from being code-formatted
+            f.write(env.get_template(fname + ".t").render())
+
+    generate("attribute_ids.H")
+    generate("attribute_properties.H")
+    generate("attribute.C")
+    generate("attribute.H")
+    generate("attribute_macros.H")
+    generate("ec_features.H")
 
 def cmd_compile(args):
     sbe_attr_tank = pickle.load(open(args.ipdbfile, "rb"))
@@ -124,15 +150,20 @@ if __name__ == "__main__":
     parser = ArgumentParser(description="Tools to generate code and modify images according to attributes")
     subparsers = parser.add_subparsers()
 
-    sub = subparsers.add_parser("parse", help="Parse attribute XML and generate attribute tank source code and attribute database")
-    sub.add_argument("gen_file_dir", help="Path to the directory file where generated file has to be saved")
+    sub = subparsers.add_parser("parse", help="Parse attribute XML and generate attribute database")
+    sub.add_argument("attr_xml", nargs="+", help="Attribute definition XML files")
     sub.add_argument("-fx", "--sbe_attrs", nargs='+', help="Path to xmls which will filter the sbe required attributes")
-    sub.add_argument("-ax", "--attr_xml", nargs="+", help="Attribute definition XML files")
-    sub.add_argument("-vfh", "--virtual_fn_header", nargs=1, help="The header file need to be included in attribute_macro.H" +
-                    "This option can be used to pass header file containing virtual attribute get function")
     sub.add_argument("-db", "--dbfile", nargs=1, help="Name of the database to be written")
     sub.add_argument("-v", "--verbose", action="store_true", help="Increase verbosity")
     sub.set_defaults(func=cmd_parse)
+
+    sub = subparsers.add_parser("gensrc", help="Generate attribute tank source code")
+    sub.add_argument("dbfile", help="Name of the attributes database")
+    sub.add_argument("outdir", help="Output directory for generated source")
+    sub.add_argument("--virtual_fn_header", "--vfh", default=None, help="The header file need to be included in attribute_macro.H. " +
+                     "This option can be used to pass header file containing virtual attribute get function")
+    sub.add_argument("-v", "--verbose", action="store_true", help="Increase verbosity")
+    sub.set_defaults(func=cmd_gensrc)
 
     sub = subparsers.add_parser("compile", help="Parse attribute XML and an image's symbol file into an attribute database")
     sub.add_argument("ipdbfile", help="Name of the database to be read")

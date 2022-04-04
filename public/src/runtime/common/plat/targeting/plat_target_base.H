@@ -159,6 +159,9 @@ namespace fapi2
                 return static_cast<uint8_t>(iv_value.getBits<0,8>());
             }
 
+        uint8_t getTargetInstance() const
+            { return 0; }
+
             ///
             /// @brief Get the plat target type
             /// @param[in] i_value for target number to set
@@ -252,4 +255,3 @@ namespace fapi2
 };
 
 #endif
-

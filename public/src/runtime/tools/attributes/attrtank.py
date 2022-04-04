@@ -7,6 +7,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2021,2022
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -84,6 +85,9 @@ class _ArrayValueType(object):
 
 
 class AttrFieldInfo(object):
+    has_storage = False
+    has_ec = False
+
     def __init__(self,
                  name: str,
                  hash: int,
@@ -121,8 +125,16 @@ class AttrFieldInfo(object):
     def hash(self) -> str:
         return hex(self._hash)
 
+    @property
+    def type_dims(self):
+        return ""
+
+    internal_dims = type_dims
+
 
 class RealAttrFieldInfo(AttrFieldInfo):
+    has_storage = True
+
     _VALUE_TYPES = {
         "int8":   _AttrIntValueType(">b"),
         "uint8":  _AttrIntValueType(">B"),
@@ -179,8 +191,44 @@ class RealAttrFieldInfo(AttrFieldInfo):
     def get(self, image, image_base):
         return self._type.get(image, self.sbe_address - image_base)
 
+    @property
+    def type_dims(self):
+        retval = ""
+        if len(self.array_dims) == 1:
+            retval += "[%d]" % self.array_dims[0]
+        elif len(self.array_dims) > 1:
+            raise ValueError("Multidimensional array attributs not supportd on SBE")
+        return retval
+
+    @property
+    def internal_dims(self):
+        retval = self.type_dims
+        if self.num_targ_inst > 1:
+            retval += "[%d]" % self.num_targ_inst
+        return retval
+
+    def var_name(self):
+        var_name = "fapi2::ATTR::" + self.name
+        if self.num_targ_inst > 1:
+            var_name += "[TARGET.get().getTargetInstance()]"
+        return var_name
+
+    @property
+    def getter(self):
+        return "VAL = " + self.var_name() if not self.array_dims else ("memcpy(VAL, %s, %d)" % (self.var_name(), self.tot_size))
+
+    @property
+    def setter(self):
+        return self.var_name() + " = VAL" if not self.array_dims else ("memcpy(%s, VAL, %d)" % (self.var_name(), self.tot_size))
+
 
 class VirtualAttrFieldInfo(AttrFieldInfo):
+    VIRTUAL_FUNCTION = {
+        "ATTR_NAME": "fapi2::_getAttrName",
+        "ATTR_EC": "fapi2::_getAttrEC",
+        "ATTR_CHIP_UNIT_POS": "fapi2::_getAttrChipUnitPos"
+    }
+
     def __init__(self,
                  name: str,
                  hash: int,
@@ -195,8 +243,14 @@ class VirtualAttrFieldInfo(AttrFieldInfo):
     def get(self, image, image_base):
         raise NotImplementedError("Querying virtual attributes is not implemented")
 
+    @property
+    def getter(self):
+        return self.VIRTUAL_FUNCTION[self.name] + "(TARGET, VAL)"
+
 
 class EcAttrFieldInfo(AttrFieldInfo):
+    has_ec = True
+
     def __init__(self,
                  name: str,
                  hash: int,
@@ -216,6 +270,10 @@ class EcAttrFieldInfo(AttrFieldInfo):
 
     def get(self, image, image_base):
         raise NotImplementedError("Querying EC level attributes is not implemented")
+
+    @property
+    def getter(self):
+        return "fapi2::queryChipEcFeature(fapi2::int2Type<ID>(), TARGET, VAL)"
 
 
 class AttributeStructure(object):

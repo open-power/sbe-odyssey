@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,12 +40,19 @@ endforeach
 odyssey_sbe_attr_filter_xml_paths = ''
 odyssey_sbe_attr_db_file_name = odyssey_sppe_genfiles_dir_path + '/sbe_attr.db'
 
-run_cmd_result = run_command(attrTool, 'parse', odyssey_sppe_genfiles_dir_path,
+run_cmd_result = run_command(attrTool, 'parse', ekb_cmn_attr_xml_paths, odyssey_attr_xml_paths,
     '-fx', ekb_cmn_sbe_attr_filter_xml_paths, odyssey_sbe_attr_filter_xml_paths,
-    '-ax', ekb_cmn_attr_xml_paths, odyssey_attr_xml_paths,
     '-db', odyssey_sbe_attr_db_file_name,
     # we can keep -v options to get the backtrace if it failed.
-    '-vfh', 'odyvirtualattrfunctions.H', '-v')
+    '-v')
+if run_cmd_result.returncode() != 0
+    message(run_cmd_result.stdout())
+    error(run_cmd_result.stderr())
+endif
+
+run_cmd_result = run_command(attrTool, 'gensrc', odyssey_sbe_attr_db_file_name, odyssey_sppe_genfiles_dir_path,
+    # we can keep -v options to get the backtrace if it failed.
+    '--vfh', 'odyvirtualattrfunctions.H', '-v')
 if run_cmd_result.returncode() != 0
     message(run_cmd_result.stdout())
     error(run_cmd_result.stderr())
@@ -53,8 +61,13 @@ endif
 # Additional dependey files for attrtool
 attrtool_deps = ['attrdb.py',
                  'attrtank.py',
-                 'attrsrcgen.py',
-                 'attrtoolutils.py']
+                 'attrtoolutils.py',
+                 '/templates/attribute.C.t',
+                 '/templates/attribute.H.t',
+                 '/templates/attribute_ids.H.t',
+                 '/templates/attribute_macros.H.t',
+                 '/templates/attribute_properties.H.t',
+                 '/templates/ec_features.H.t' ]
 attrtool_path = meson.global_source_root() + '/public/src/runtime/tools/attributes/'
 
 foreach depfile : attrtool_deps
