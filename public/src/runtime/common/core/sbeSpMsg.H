@@ -40,6 +40,8 @@
 using namespace fapi2;
 #endif
 
+static const uint32_t SBE_PUT_RING_RS4_MAX_DOUBLE_WORDS =
+                      SBE_PUT_RING_RS4_MAX_PAYLOAD_BYTES/sizeof(uint64_t);
 // @NOTE Make sure all FIFO structures are 32 bit alligned ( the largest
 // member should be atleast 4 byte). It is required as in sbe fifo
 // operation we are casting these structures to uint32_t pointer. It can
@@ -207,5 +209,21 @@ typedef struct
     void setStatus(const uint16_t i_prim,
                    const uint16_t i_sec);
 } sbeCmdRespHdr_t;
+
+/**
+ * @brief Get Ring access message header
+ */
+typedef struct
+{
+    uint32_t ringAddr;
+    uint32_t ringLenInBits;
+    uint32_t reserved:16;
+    uint32_t ringMode:16;
+}sbeGetRingAccessMsgHdr_t;
+
+typedef struct
+{
+    uint64_t rs4Payload[SBE_PUT_RING_RS4_MAX_DOUBLE_WORDS];
+}sbePutRingMsg_t;
 
 #endif // __SBEFW_SBESP_MSG_H

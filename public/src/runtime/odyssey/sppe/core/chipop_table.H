@@ -47,4 +47,10 @@ enum sbeScomAccessCommands
     SBE_CMD_MULTISCOM        = 0x05, /* Execute Multi SCOM */
 };
 
+enum sbeRingAccessCommands
+{
+    SBE_CMD_GETRING          = 0x01, /* Get Ring */
+    SBE_CMD_PUTRING          = 0x02, /* Put Ring */
+};
+
 #endif
