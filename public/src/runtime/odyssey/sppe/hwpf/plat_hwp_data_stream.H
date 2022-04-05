@@ -142,13 +142,6 @@ namespace fapi2
                                   iv_fifoType(type),
                                   iv_primarySecondaryRc(SBE_PRI_OPERATION_SUCCESSFUL),
                                   iv_ffdcRc(FAPI2_RC_SUCCESS)
-                                  //pbaFlag(),
-                                  //iv_memInterface(
-                                  //SBE_MEM_ACCESS_PBA,
-                                  //hbMemAddr
-                                  //&pbaFlag,
-                                  //SBE_MEM_ACCESS_WRITE,sbeMemAccessInterface::PBA_GRAN_SIZE_BYTES
-                                  //)
         {
 
             SBE_INFO("sbefifo_hwp_data_ostream() Constructor");

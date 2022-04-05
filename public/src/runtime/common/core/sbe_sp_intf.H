@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -43,6 +44,10 @@ extern "C" {
 static const uint16_t SBE_FW_MAJOR_VERSION = 1;
 static const uint16_t SBE_FW_MINOR_VERSION = 4;
 
+/*
+ * @brief maximum length for putring RS4 payload for chipop operation
+ */
+static const uint32_t SBE_PUT_RING_RS4_MAX_PAYLOAD_BYTES = 10240;
 /**
  * @brief enums for SBE command classes
  *

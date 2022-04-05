@@ -158,6 +158,7 @@ struct cmdStructP_t
 constexpr cmdClass_t cmdClassArr[] = { \
     CMD_CLASS(A1), \
     CMD_CLASS(A2), \
+    CMD_CLASS(A3), \
 }; \
 \
 cmdClassTable_t cmdClassTable = { \

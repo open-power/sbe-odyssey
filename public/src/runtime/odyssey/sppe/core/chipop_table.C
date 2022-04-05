@@ -29,6 +29,7 @@
 #include "sbe_sp_intf.H"
 #include "chipop_handler.H"
 #include "chipop_table.H"
+#include "sbecmdringaccess.H"
 
 static const uint16_t HARDWARE_FENCED_STATE =
      SBE_FENCE_AT_CONTINUOUS_IPL|SBE_FENCE_AT_DMT;
@@ -57,6 +58,19 @@ CMD_ARR(
     {sbePutScom,
      SBE_CMD_PUTSCOM,
      HARDWARE_FENCED_STATE,
+    }
+)
+
+CMD_ARR(
+    A3,
+    {sbeGetRing,
+     SBE_CMD_GETRING,
+     SBE_FENCE_AT_CONTINUOUS_IPL|SBE_FENCE_AT_QUIESCE,
+    },
+
+    {sbePutRing,
+     SBE_CMD_PUTRING,
+     HARDWARE_FENCED_STATE|SBE_FENCE_AT_QUIESCE,
     }
 )
 

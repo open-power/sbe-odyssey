@@ -33,7 +33,8 @@ infile_c = ['main.C',
             'ipl_table.C',
             'istep.C',
             'sbecmdscomaccess.C',
-            'sbescom.C'
+            'sbescom.C',
+            'sbecmdringaccess.C',
            ]
 
 lib_file_name = 'odysseysppe'
