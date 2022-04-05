@@ -38,7 +38,11 @@
 ///   necessarily have to do this?  Wouldn't a gentle recovery from a SCOM fail
 ///   be preferred?
 
-#include "pk.h"
+#ifdef __IOTA__
+    #include "iota.h"
+#else
+    #include "pk.h"
+#endif
 #include "ppe42_scom.h"
 #include "ppe42_msr.h"
 
