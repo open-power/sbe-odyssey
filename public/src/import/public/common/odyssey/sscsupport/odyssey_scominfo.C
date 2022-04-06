@@ -83,15 +83,33 @@ extern "C"
                     break;
 
                 case ODYSSEY_MEMPORT_CHIPUNIT:
-                    if (i_chipUnitNum == 0)
                     {
-                        l_scom.setRingId(MEMPORT0_RING_ID);
-                    }
-                    else
-                    {
-                        l_scom.setRingId(MEMPORT1_RING_ID);
-                    }
+                        uint8_t l_ring = l_scom.getRingId();
 
+                        if (l_ring == MEMPORT0_RING_ID || l_ring == MEMPORT1_RING_ID)
+                        {
+                            if (i_chipUnitNum == 0)
+                            {
+                                l_scom.setRingId(MEMPORT0_RING_ID);
+                            }
+                            else
+                            {
+                                l_scom.setRingId(MEMPORT1_RING_ID);
+                            }
+                        }
+
+                        if (l_ring == MEMPORT0_PHY_RING_ID || l_ring == MEMPORT1_PHY_RING_ID)
+                        {
+                            if (i_chipUnitNum == 0)
+                            {
+                                l_scom.setRingId(MEMPORT0_PHY_RING_ID);
+                            }
+                            else
+                            {
+                                l_scom.setRingId(MEMPORT1_PHY_RING_ID);
+                            }
+                        }
+                    }
                     break;
 
                 case ODYSSEY_OMI_CHIPUNIT:
