@@ -31,15 +31,19 @@ odyssey_otprom_install_path = 'odyssey/onetime/otprom'
 #Odyssey OTPROM Base Image name
 odyssey_otprom_img_name = 'odyssey_otprom_' + ddlvl
 
-# As this binary is not part of install lets create the dir
-odyssey_otprom_install_path_dir = output_dir_path + '/' + odyssey_otprom_install_path
-run_command('mkdir','-p', odyssey_otprom_install_path_dir)
+infile = odyssey_otprom_fuse_map_json[0]
+outfile = odyssey_otprom_img_name + '.bin'
+depfiles = [pymodtemplateUtil]
 
 #Generate the fuse map binary basis JSON
-result_fusemapgen = run_command(fusemapgen, '-i', odyssey_otprom_fuse_map_json[0] ,'bingenerator',
-    '-o', odyssey_otprom_install_path_dir + '/' + odyssey_otprom_img_name + '.bin')
+odyssey_otprom_bin_gen = custom_target( 'odyssey_otprom_bin_gen',
+                                 output : outfile,
+                                 input : infile,
+                                 depend_files : depfiles,
+                                 command : [ fusemapgen,
+                                              '-i', '@INPUT@','bingenerator','-o','@OUTPUT@'],
+                                 build_by_default: true,
+                                 install : true,
+                                 install_dir : odyssey_otprom_install_path
+                             )
 
-if not (result_fusemapgen.returncode() == 0)
-    message(result_fusemapgen.stdout())
-    error(result_fusemapgen.stderr())
-endif

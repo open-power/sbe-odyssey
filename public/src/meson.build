@@ -143,6 +143,7 @@ obj_gen_s = generator(as,
                                  '-o','@OUTPUT@','@INPUT@']
                     )
 
+subdir('tools')
 subdir('build/buildekb')
 subdir('common')
 

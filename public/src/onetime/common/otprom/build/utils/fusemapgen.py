@@ -162,7 +162,6 @@ def generateFuseBin(args:argparse.Namespace):
     # Lets zero pad to OTPROM size
     binFileSize = os.path.getsize(args.outputBinFilePath)
     padding = [0x0 for _ in range(otpromSizeWithEcc - binFileSize)]  # Create bytearray
-    print(otpromSizeWithEcc - binFileSize)
     with open(args.outputBinFilePath, "ab") as fuseMapBin:
         fuseMapBin.write(bytearray(padding))  # Append bytes to the end
 
