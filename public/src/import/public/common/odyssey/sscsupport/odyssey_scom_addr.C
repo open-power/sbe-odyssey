@@ -109,7 +109,9 @@ extern "C"
 
         if ( (getChipletId() == MEM_CHIPLET_ID) &&
              ( (getRingId() == MEMPORT0_RING_ID) ||
-               (getRingId() == MEMPORT1_RING_ID) ) )
+               (getRingId() == MEMPORT1_RING_ID) ||
+               (getRingId() == MEMPORT0_PHY_RING_ID) ||
+               (getRingId() == MEMPORT1_PHY_RING_ID) ))
         {
             l_memportTarget = true;
         }
@@ -123,6 +125,11 @@ extern "C"
         uint8_t l_instance = 0;
 
         if (getRingId() == MEMPORT1_RING_ID)
+        {
+            l_instance = 1;
+        }
+
+        if (getRingId() == MEMPORT1_PHY_RING_ID)
         {
             l_instance = 1;
         }

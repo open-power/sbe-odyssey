@@ -77,6 +77,8 @@ extern "C"
     {
         MEMPORT0_RING_ID = 0x6,  // RDF0
         MEMPORT1_RING_ID = 0xA,  // RDF1
+        MEMPORT0_PHY_RING_ID = 0xC,
+        MEMPORT1_PHY_RING_ID = 0xD,
     } odyssey_MEMPORT_RingId_t;
 
     /// ODYSSEY SCOM address class
