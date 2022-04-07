@@ -35,6 +35,15 @@ tracehash = find_program('tools/trace/tracehash.pl')
 buildInfo = find_program('build/utils/buildInfo.py')
 parseErrorInfo = find_program('import/public/common/generic/fapi2/tools/parseErrorInfo.pl')
 
+# we are using multiple tools for generating source code and using run_command
+#   for invoking these tools. So, whenever these tools or files passed to tool is
+#   is changed, meson will automatically trigger the setup phase again. But meson
+#   is not tracking the files which is invoked by any of these tools. So this
+#   variable can be used to collect all such dependency file and we will put a work-around
+#   (at the end of this file) to invoke a dummy command, so that any of change in
+#   these files will trigger meson setup again.
+meson_setup_extra_dependencies = []
+
 #ekb-src public mirror path.(import dir path)
 pub_import_dir_path = meson.global_source_root() + '/public/src/import/public/'
 
@@ -139,3 +148,6 @@ subdir('common')
 
 subdir('onetime')
 subdir('runtime')
+
+# Dummy call to create dependency on the files invoked by different tools
+run_command('ls', meson_setup_extra_dependencies)
