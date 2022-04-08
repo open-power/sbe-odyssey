@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/emb/p11/kernels/ppe/powmanlib/occhw_irq_config.h $ */
+/* $Source: public/src/import/public/emb/p11/kernels/ppe/powmanlib/occ/occhw_irq_config.h $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2022                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -30,6 +30,10 @@
 ///        and configuration for processors running in the OCC complex.
 ///
 
+
+/// Number of OCC instance ID's that can be read from the PPE42 PIR and used in IPCs.
+#define OCCHW_MAX_INSTANCES 5
+
 /// This macro should be defined in the pk_app_cfg.h file for external interrupts
 /// that are to be used by the OCC instance.  If not defined elsewhere then
 /// interrupts owned by this instance will have the default configuration and be
@@ -52,9 +56,6 @@
 
 #endif
 
-/// Convert a GPE instance ID to an IRQ target ID
-#define OCCHW_GPEID_2_IRQTARGET(gpe_id) (gpe_id + OCCHW_IRQ_TARGET_ID_GPE0)
-
 /// Add a pseudo target to indicate that an interrupt is not owned by anyone
 #define OCCHW_IRQ_TARGET_ID_NONE    8
 
@@ -63,7 +64,7 @@
 #define OCCHW_IRQ_ROUTES \
     OCCHW_IRQ_DEBUGGER                      OCCHW_IRQ_TARGET_ID_405_NONCRIT \
     OCCHW_IRQ_TRACE_TRIGGER_1               OCCHW_IRQ_TARGET_ID_405_NONCRIT \
-    OCCHW_IRQ_RESERVED_2                    OCCHW_IRQ_TARGET_ID_NONE \
+    OCCHW_IRQ_SPARE_2                       OCCHW_IRQ_TARGET_ID_NONE \
     OCCHW_IRQ_PBA_ERROR                     OCCHW_IRQ_TARGET_ID_NONE \
     OCCHW_IRQ_GPE0_ERROR                    OCCHW_IRQ_TARGET_ID_405_NONCRIT \
     OCCHW_IRQ_GPE1_ERROR                    OCCHW_IRQ_TARGET_ID_405_NONCRIT \
@@ -75,21 +76,21 @@
     OCCHW_IRQ_IPI1_HI_PRIORITY              OCCHW_IRQ_TARGET_ID_GPE1 \
     OCCHW_IRQ_IPI4_HI_PRIORITY              OCCHW_IRQ_TARGET_ID_405_CRIT \
     OCCHW_IRQ_I2CM_INTR                     OCCHW_IRQ_TARGET_ID_405_CRIT \
-    OCCHW_IRQ_IPI_SCOM                      OCCHW_IRQ_TARGET_ID_GPE1 \
-    OCCHW_IRQ_RESERVED_15                   OCCHW_IRQ_TARGET_ID_NONE \
-    OCCHW_IRQ_PBAX_OCC_SEND                 OCCHW_IRQ_TARGET_ID_405_NONCRIT \
+    OCCHW_IRQ_IPI_SCOM                      OCCHW_IRQ_TARGET_ID_GPE0 \
+    OCCHW_IRQ_SPARE_15                      OCCHW_IRQ_TARGET_ID_NONE \
+    OCCHW_IRQ_PBAX_OCC_SEND_ATTN            OCCHW_IRQ_TARGET_ID_405_NONCRIT \
     OCCHW_IRQ_PBAX_OCC_PUSH0                OCCHW_IRQ_TARGET_ID_405_NONCRIT \
     OCCHW_IRQ_PBAX_OCC_PUSH1                OCCHW_IRQ_TARGET_ID_405_NONCRIT \
     OCCHW_IRQ_PBA_BCDE_ATTN                 OCCHW_IRQ_TARGET_ID_405_NONCRIT \
     OCCHW_IRQ_PBA_BCUE_ATTN                 OCCHW_IRQ_TARGET_ID_405_NONCRIT \
-    OCCHW_IRQ_STRM0_PULL                    OCCHW_IRQ_TARGET_ID_405_NONCRIT \
-    OCCHW_IRQ_STRM0_PUSH                    OCCHW_IRQ_TARGET_ID_405_NONCRIT \
-    OCCHW_IRQ_STRM1_PULL                    OCCHW_IRQ_TARGET_ID_405_NONCRIT \
-    OCCHW_IRQ_STRM1_PUSH                    OCCHW_IRQ_TARGET_ID_405_NONCRIT \
-    OCCHW_IRQ_STRM2_PULL                    OCCHW_IRQ_TARGET_ID_405_NONCRIT \
-    OCCHW_IRQ_STRM2_PUSH                    OCCHW_IRQ_TARGET_ID_405_NONCRIT \
-    OCCHW_IRQ_STRM3_PULL                    OCCHW_IRQ_TARGET_ID_405_NONCRIT \
-    OCCHW_IRQ_STRM3_PUSH                    OCCHW_IRQ_TARGET_ID_405_NONCRIT \
+    OCCHW_IRQ_OCC_STRM0_PULL                OCCHW_IRQ_TARGET_ID_405_NONCRIT \
+    OCCHW_IRQ_OCC_STRM0_PUSH                OCCHW_IRQ_TARGET_ID_405_NONCRIT \
+    OCCHW_IRQ_OCC_STRM1_PULL                OCCHW_IRQ_TARGET_ID_405_NONCRIT \
+    OCCHW_IRQ_OCC_STRM1_PUSH                OCCHW_IRQ_TARGET_ID_405_NONCRIT \
+    OCCHW_IRQ_OCC_STRM2_PULL                OCCHW_IRQ_TARGET_ID_405_NONCRIT \
+    OCCHW_IRQ_OCC_STRM2_PUSH                OCCHW_IRQ_TARGET_ID_405_NONCRIT \
+    OCCHW_IRQ_OCC_STRM3_PULL                OCCHW_IRQ_TARGET_ID_405_NONCRIT \
+    OCCHW_IRQ_OCC_STRM3_PUSH                OCCHW_IRQ_TARGET_ID_405_NONCRIT \
     OCCHW_IRQ_IPI0_LO_PRIORITY              OCCHW_IRQ_TARGET_ID_GPE0 \
     OCCHW_IRQ_IPI1_LO_PRIORITY              OCCHW_IRQ_TARGET_ID_GPE1 \
     OCCHW_IRQ_IPI4_LO_PRIORITY              OCCHW_IRQ_TARGET_ID_405_NONCRIT \
@@ -100,38 +101,34 @@
     OCCHW_IRQ_CHECK_STOP_GPE2               OCCHW_IRQ_TARGET_ID_GPE2 \
     OCCHW_IRQ_CHECK_STOP_GPE3               OCCHW_IRQ_TARGET_ID_GPE3 \
     OCCHW_IRQ_OCC_MALF_ALERT                OCCHW_IRQ_TARGET_ID_NONE \
-    OCCHW_IRQ_PVREF_ERROR                   OCCHW_IRQ_TARGET_ID_GPE2 \
+    OCCHW_IRQ_PVREF_ERROR                   OCCHW_IRQ_TARGET_ID_GPE3 \
     OCCHW_IRQ_IPI2_HI_PRIORITY              OCCHW_IRQ_TARGET_ID_GPE2 \
     OCCHW_IRQ_IPI3_HI_PRIORITY              OCCHW_IRQ_TARGET_ID_GPE3 \
     OCCHW_IRQ_DEBUG_TRIGGER                 OCCHW_IRQ_TARGET_ID_NONE \
-    OCCHW_IRQ_GPE3_FUNCTION_TRIGGER         OCCHW_IRQ_TARGET_ID_GPE3 \
-    OCCHW_IRQ_PBAX_PGPE_ATTN                OCCHW_IRQ_TARGET_ID_GPE2 \
+    OCCHW_IRQ_AVS_PENDING                   OCCHW_IRQ_TARGET_ID_GPE2 \
+    OCCHW_IRQ_PBAX_PGPE_SEND_ATTN           OCCHW_IRQ_TARGET_ID_GPE2 \
     OCCHW_IRQ_PBAX_PGPE_PUSH0               OCCHW_IRQ_TARGET_ID_GPE2 \
     OCCHW_IRQ_PBAX_PGPE_PUSH1               OCCHW_IRQ_TARGET_ID_GPE2 \
     OCCHW_IRQ_PBA_OVERCURRENT_INDICATOR     OCCHW_IRQ_TARGET_ID_GPE3 \
     OCCHW_IRQ_PSPI_MSGDOORBELL_0            OCCHW_IRQ_TARGET_ID_NONE \
-    OCCHW_IRQ_PSPI_MSGDOORBELL_1            OCCHW_IRQ_TARGET_ID_NONE \
+    OCCHW_IRQ_PSPI_MSGDOORBELL_1            OCCHW_IRQ_TARGET_ID_405_NONCRIT \
     OCCHW_IRQ_PSPI_MSGDOORBELL_2            OCCHW_IRQ_TARGET_ID_GPE2 \
     OCCHW_IRQ_PSPI_MSGDOORBELL_3            OCCHW_IRQ_TARGET_ID_GPE3 \
     OCCHW_IRQ_PSPI_DOORBELL_0               OCCHW_IRQ_TARGET_ID_NONE \
-    OCCHW_IRQ_PSPI_DOORBELL_1               OCCHW_IRQ_TARGET_ID_GPE0 \
+    OCCHW_IRQ_PSPI_DOORBELL_1               OCCHW_IRQ_TARGET_ID_NONE \
     OCCHW_IRQ_PSPI_DOORBELL_2               OCCHW_IRQ_TARGET_ID_NONE \
     OCCHW_IRQ_PSPI_DOORBELL_3               OCCHW_IRQ_TARGET_ID_NONE \
     OCCHW_IRQ_PSPI_INTR_PENDING_GRP0        OCCHW_IRQ_TARGET_ID_NONE \
     OCCHW_IRQ_PSPI_INTR_PENDING_GRP1        OCCHW_IRQ_TARGET_ID_NONE \
     OCCHW_IRQ_PSPI_INTR_PENDING_GRP2        OCCHW_IRQ_TARGET_ID_GPE2 \
     OCCHW_IRQ_PSPI_INTR_PENDING_GRP3        OCCHW_IRQ_TARGET_ID_GPE3 \
-    OCCHW_IRQ_RESERVED_60                   OCCHW_IRQ_TARGET_ID_NONE \
+    OCCHW_IRQ_IPI3_LO_PRIORITY              OCCHW_IRQ_TARGET_ID_GPE3 \
     OCCHW_IRQ_VC1_PUSH_RECEIVE_COMPLETE     OCCHW_IRQ_TARGET_ID_405_NONCRIT \
     OCCHW_IRQ_VC2_PUSH_RECEIVE_COMPLETE     OCCHW_IRQ_TARGET_ID_405_NONCRIT \
     OCCHW_IRQ_VC3_PUSH_RECEIVE_COMPLETE     OCCHW_IRQ_TARGET_ID_405_NONCRIT \
 
 #endif
 
-// convenience macros for retrieving the IPI IRQ numbers for an OCC instance
-// NOTE: this assumes the IPI IRQs are routed as shown above
-#define OCCHW_IPI_LO_IRQ(instance_id) (OCCHW_IRQ_IPI0_LO_PRIORITY + instance_id)
-#define OCCHW_IPI_HI_IRQ(instance_id) (OCCHW_IRQ_IPI0_HI_PRIORITY + instance_id)
 
 #ifdef __ASSEMBLER__
 // *INDENT-OFF*
