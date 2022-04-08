@@ -66,18 +66,23 @@
     #define SIMICS_ENVIRONMENT 0
 #endif
 
-/// OCC instance ID's that can be read from the PPE42 PIR and used in IPC operations.
+//
+//CMO: I think it makes more sense to define the below in the occhw_irq_config file.
+//
+/// OCC or TCC instance ID's that can be read from the PPE42 PIR and used in IPC operations.
 /// NOTE: The PPC instance ID is not associated with a register and was assigned to be
 ///       four as it was most convenient to do so in the code.
-#define OCCHW_MAX_INSTANCES 5
-
 #define OCCHW_INST_ID_GPE0 0
 #define OCCHW_INST_ID_GPE1 1
 #define OCCHW_INST_ID_GPE2 2
 #define OCCHW_INST_ID_GPE3 3
-#define OCCHW_INST_ID_PPC  4
-#define OCCHW_INST_ID_MAX (OCCHW_MAX_INSTANCES - 1)
 #define OCCHW_INST_ID_MAX_GPE 3
+#if defined(__OCC_PLAT)
+    #define OCCHW_INST_ID_PPC  4
+    #define OCCHW_INST_ID_MAX  4
+#elif defined(__TCC_PLAT)
+    #define OCCHW_INST_ID_MAX  3
+#endif
 
 /// Fail to compile if APPCFG_OCC_INSTANCE_ID is not defined somewhere or is out of range
 #ifndef APPCFG_OCC_INSTANCE_ID

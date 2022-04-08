@@ -49,6 +49,7 @@ $(IMAGE)_COMMONFLAGS+= -DAPPCFG_OCC_INSTANCE_ID=2
 $(IMAGE)_COMMONFLAGS+= -DUNIFIED_IRQ_HANDLER_GPE
 $(IMAGE)_COMMONFLAGS+= -DSTATIC_IPC_TABLES
 $(IMAGE)_COMMONFLAGS+= -D__PPE_QME
+$(IMAGE)_COMMONFLAGS+= -D__OCC_PLAT
 
 OBJS := $(_PPE_TYPE)_init.o
 
@@ -99,6 +100,7 @@ $(call ADD_PPEIMAGE_INCDIR,$(IMAGE), \
 	$(OCC_SRCDIR)/commonlib/include \
 	$(OCC_SRCDIR)/commonlib \
 	$(POWMANLIB_SRCDIR) \
+	$(POWMANLIB_SRCDIR)/occ \
 	$(PMLIB_INCDIR)/registers \
 	$(ROOTPATH)/public/common/utils/imageProcs \
 	$(ROOTPATH)/public/common/generic/fapi2/include \

@@ -95,7 +95,13 @@
 /// GPE's and the 405 inside the OCC complex.  This is called from the ppe42_exceptions.S
 /// file.
     .macro .hwmacro_irq_cfg_bitmaps
+#if defined(__OCC_PLAT)
         .occhw_irq_cfg_bitmaps
+#elif defined(__TCC_PLAT)
+        .tcchw_irq_cfg_bitmaps
+#else
+#error "Either __OCC_PLAT or __TCC_OPLAT must be defined by the application"
+#endif
     .endm
 // *INDENT-ON*
 #endif /* __ASSEMBLER__ */

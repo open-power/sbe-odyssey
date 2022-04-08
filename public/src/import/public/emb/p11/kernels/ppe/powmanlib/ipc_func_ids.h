@@ -77,8 +77,10 @@ IPC_FUNCIDS_ST_END(OCCHW_INST_ID_GPE3)
 
 //Functions that are only supported by PPC should be defined here
 //These function ID's can only be sent to the PPC
-IPC_FUNCIDS_ST_START(OCCHW_INST_ID_PPC)
-IPC_FUNCIDS_ST_END(OCCHW_INST_ID_PPC)
+#if defined(__OCC_PLAT)
+    IPC_FUNCIDS_ST_START(OCCHW_INST_ID_PPC)
+    IPC_FUNCIDS_ST_END(OCCHW_INST_ID_PPC)
+#endif
 
 IPC_FUNCIDS_TABLE_END
 

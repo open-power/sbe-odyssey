@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/emb/p11/kernels/ppe/powmanlib/occhw_interrupts.h $ */
+/* $Source: public/src/import/public/emb/p11/kernels/ppe/powmanlib/occ/occhw_interrupts.h $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2022                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -25,7 +25,7 @@
 #ifndef __OCCHW_INTERRUPTS_H__
 #define __OCCHW_INTERRUPTS_H__
 
-/// \file occ_interrupts.h
+/// \file occhw_interrupts.h
 /// \brief Interrupt assignments and macros for the OCC
 ///
 
@@ -43,73 +43,73 @@
 // 64-bit interrupt controller, while the code underlying the abstraction
 // manipulates the 2 x 32-bit controllers independently.
 //
-// Note that the bits named *RESERVED* are actually implemented in the
+// Note that the bits named *SPARE* are actually implemented in the
 // controller, but the interrupt input is tied low. That means they can also
 // be used as IPI targets. Logical bits 32..63 are not implemented.
-#define OCCHW_IRQ_DEBUGGER                       0 /* 0x0 */
-#define OCCHW_IRQ_TRACE_TRIGGER_1                1 /* 0x1 */
-#define OCCHW_IRQ_RESERVED_2                     2 /* 0x2 */
-#define OCCHW_IRQ_PBA_ERROR                      3 /* 0x3 */
-#define OCCHW_IRQ_GPE0_ERROR                     4 /* 0x4 */
-#define OCCHW_IRQ_GPE1_ERROR                     5 /* 0x5 */
-#define OCCHW_IRQ_CHECK_STOP_PPC405              6 /* 0x6 */
-#define OCCHW_IRQ_EXTERNAL_TRAP                  7 /* 0x7 */
-#define OCCHW_IRQ_OCC_TIMER0                     8 /* 0x8 */
-#define OCCHW_IRQ_OCC_TIMER1                     9 /* 0x9 */
-#define OCCHW_IRQ_IPI0_HI_PRIORITY              10 /* 0xa */
-#define OCCHW_IRQ_IPI1_HI_PRIORITY              11 /* 0xb */
-#define OCCHW_IRQ_IPI4_HI_PRIORITY              12 /* 0xc */
-#define OCCHW_IRQ_I2CM_INTR                     13 /* 0xd */
-#define OCCHW_IRQ_IPI_SCOM                      14 /* 0xe */
-#define OCCHW_IRQ_RESERVED_15                   15 /* 0xf */
-#define OCCHW_IRQ_PBAX_OCC_SEND                 16 /* 0x10 */
-#define OCCHW_IRQ_PBAX_OCC_PUSH0                17 /* 0x11 */
-#define OCCHW_IRQ_PBAX_OCC_PUSH1                18 /* 0x12 */
-#define OCCHW_IRQ_PBA_BCDE_ATTN                 19 /* 0x13 */
-#define OCCHW_IRQ_PBA_BCUE_ATTN                 20 /* 0x14 */
-#define OCCHW_IRQ_STRM0_PULL                    21 /* 0x15 */
-#define OCCHW_IRQ_STRM0_PUSH                    22 /* 0x16 */
-#define OCCHW_IRQ_STRM1_PULL                    23 /* 0x17 */
-#define OCCHW_IRQ_STRM1_PUSH                    24 /* 0x18 */
-#define OCCHW_IRQ_STRM2_PULL                    25 /* 0x19 */
-#define OCCHW_IRQ_STRM2_PUSH                    26 /* 0x1a */
-#define OCCHW_IRQ_STRM3_PULL                    27 /* 0x1b */
-#define OCCHW_IRQ_STRM3_PUSH                    28 /* 0x1c */
-#define OCCHW_IRQ_IPI0_LO_PRIORITY              29 /* 0x1d */
-#define OCCHW_IRQ_IPI1_LO_PRIORITY              30 /* 0x1e */
-#define OCCHW_IRQ_IPI4_LO_PRIORITY              31 /* 0x1f */
-#define OCCHW_IRQ_TRACE_TRIGGER_32              32 /* 0x32 */
-#define OCCHW_IRQ_OCC_ERROR                     33 /* 0x33 */
-#define OCCHW_IRQ_GPE2_ERROR                    34 /* 0x34 */
-#define OCCHW_IRQ_GPE3_ERROR                    35 /* 0x35 */
-#define OCCHW_IRQ_CHECK_STOP_GPE2               36 /* 0x36 */
-#define OCCHW_IRQ_CHECK_STOP_GPE3               37 /* 0x37 */
-#define OCCHW_IRQ_OCC_MALF_ALERT                38 /* 0x38 */
-#define OCCHW_IRQ_PVREF_ERROR                   39 /* 0x39 */
-#define OCCHW_IRQ_IPI2_HI_PRIORITY              40 /* 0x40 */
-#define OCCHW_IRQ_IPI3_HI_PRIORITY              41 /* 0x41 */
-#define OCCHW_IRQ_DEBUG_TRIGGER                 42 /* 0x42 */
-#define OCCHW_IRQ_GPE3_FUNCTION_TRIGGER         43 /* 0x43 */
-#define OCCHW_IRQ_PBAX_PGPE_ATTN                44 /* 0x44 */
-#define OCCHW_IRQ_PBAX_PGPE_PUSH0               45 /* 0x45 */
-#define OCCHW_IRQ_PBAX_PGPE_PUSH1               46 /* 0x46 */
-#define OCCHW_IRQ_PBA_OVERCURRENT_INDICATOR     47 /* 0x47 */
-#define OCCHW_IRQ_PSPI_MSGDOORBELL_0            48 /* 0x48 */
-#define OCCHW_IRQ_PSPI_MSGDOORBELL_1            49 /* 0x49 */
-#define OCCHW_IRQ_PSPI_MSGDOORBELL_2            50 /* 0x50 */
-#define OCCHW_IRQ_PSPI_MSGDOORBELL_3            51 /* 0x51 */
-#define OCCHW_IRQ_PSPI_DOORBELL_0               52 /* 0x52 */
-#define OCCHW_IRQ_PSPI_DOORBELL_1               53 /* 0x53 */
-#define OCCHW_IRQ_PSPI_DOORBELL_2               54 /* 0x54 */
-#define OCCHW_IRQ_PSPI_DOORBELL_3               55 /* 0x55 */
-#define OCCHW_IRQ_PSPI_INTR_PENDING_GRP0        56 /* 0x56 */
-#define OCCHW_IRQ_PSPI_INTR_PENDING_GRP1        57 /* 0x57 */
-#define OCCHW_IRQ_PSPI_INTR_PENDING_GRP2        58 /* 0x58 */
-#define OCCHW_IRQ_PSPI_INTR_PENDING_GRP3        59 /* 0x59 */
-#define OCCHW_IRQ_RESERVED_60                   60 /* 0x60 */
-#define OCCHW_IRQ_VC1_PUSH_RECEIVE_COMPLETE     61 /* 0x61 */
-#define OCCHW_IRQ_VC2_PUSH_RECEIVE_COMPLETE     62 /* 0x62 */
-#define OCCHW_IRQ_VC3_PUSH_RECEIVE_COMPLETE     63 /* 0x63 */
+#define OCCHW_IRQ_DEBUGGER                       0 /*  0 */
+#define OCCHW_IRQ_TRACE_TRIGGER_1                1 /*  1 */
+#define OCCHW_IRQ_SPARE_2                        2 /*  2 */
+#define OCCHW_IRQ_PBA_ERROR                      3 /*  3 */
+#define OCCHW_IRQ_GPE0_ERROR                     4 /*  4 */
+#define OCCHW_IRQ_GPE1_ERROR                     5 /*  5 */
+#define OCCHW_IRQ_CHECK_STOP_PPC405              6 /*  6 */
+#define OCCHW_IRQ_EXTERNAL_TRAP                  7 /*  7 */
+#define OCCHW_IRQ_OCC_TIMER0                     8 /*  8 */
+#define OCCHW_IRQ_OCC_TIMER1                     9 /*  9 */
+#define OCCHW_IRQ_IPI0_HI_PRIORITY              10 /* 10 */
+#define OCCHW_IRQ_IPI1_HI_PRIORITY              11 /* 11 */
+#define OCCHW_IRQ_IPI4_HI_PRIORITY              12 /* 12 */
+#define OCCHW_IRQ_I2CM_INTR                     13 /* 13 */
+#define OCCHW_IRQ_IPI_SCOM                      14 /* 14 */
+#define OCCHW_IRQ_SPARE_15                      15 /* 15 */
+#define OCCHW_IRQ_PBAX_OCC_SEND_ATTN            16 /* 16 */
+#define OCCHW_IRQ_PBAX_OCC_PUSH0                17 /* 17 */
+#define OCCHW_IRQ_PBAX_OCC_PUSH1                18 /* 18 */
+#define OCCHW_IRQ_PBA_BCDE_ATTN                 19 /* 19 */
+#define OCCHW_IRQ_PBA_BCUE_ATTN                 20 /* 20 */
+#define OCCHW_IRQ_OCC_STRM0_PULL                21 /* 21 */
+#define OCCHW_IRQ_OCC_STRM0_PUSH                22 /* 22 */
+#define OCCHW_IRQ_OCC_STRM1_PULL                23 /* 23 */
+#define OCCHW_IRQ_OCC_STRM1_PUSH                24 /* 24 */
+#define OCCHW_IRQ_OCC_STRM2_PULL                25 /* 25 */
+#define OCCHW_IRQ_OCC_STRM2_PUSH                26 /* 26 */
+#define OCCHW_IRQ_OCC_STRM3_PULL                27 /* 27 */
+#define OCCHW_IRQ_OCC_STRM3_PUSH                28 /* 28 */
+#define OCCHW_IRQ_IPI0_LO_PRIORITY              29 /* 29 */
+#define OCCHW_IRQ_IPI1_LO_PRIORITY              30 /* 30 */
+#define OCCHW_IRQ_IPI4_LO_PRIORITY              31 /* 31 */
+#define OCCHW_IRQ_TRACE_TRIGGER_32              32 /* 32 */
+#define OCCHW_IRQ_OCC_ERROR                     33 /* 33 */
+#define OCCHW_IRQ_GPE2_ERROR                    34 /* 34 */
+#define OCCHW_IRQ_GPE3_ERROR                    35 /* 35 */
+#define OCCHW_IRQ_CHECK_STOP_GPE2               36 /* 36 */
+#define OCCHW_IRQ_CHECK_STOP_GPE3               37 /* 37 */
+#define OCCHW_IRQ_OCC_MALF_ALERT                38 /* 38 */
+#define OCCHW_IRQ_PVREF_ERROR                   39 /* 39 */
+#define OCCHW_IRQ_IPI2_HI_PRIORITY              40 /* 40 */
+#define OCCHW_IRQ_IPI3_HI_PRIORITY              41 /* 41 */
+#define OCCHW_IRQ_DEBUG_TRIGGER                 42 /* 42 */
+#define OCCHW_IRQ_AVS_PENDING                   43 /* 43 */
+#define OCCHW_IRQ_PBAX_PGPE_SEND_ATTN           44 /* 44 */
+#define OCCHW_IRQ_PBAX_PGPE_PUSH0               45 /* 45 */
+#define OCCHW_IRQ_PBAX_PGPE_PUSH1               46 /* 46 */
+#define OCCHW_IRQ_PBA_OVERCURRENT_INDICATOR     47 /* 47 */
+#define OCCHW_IRQ_PSPI_MSGDOORBELL_0            48 /* 48 */
+#define OCCHW_IRQ_PSPI_MSGDOORBELL_1            49 /* 49 */
+#define OCCHW_IRQ_PSPI_MSGDOORBELL_2            50 /* 50 */
+#define OCCHW_IRQ_PSPI_MSGDOORBELL_3            51 /* 51 */
+#define OCCHW_IRQ_PSPI_DOORBELL_0               52 /* 52 */
+#define OCCHW_IRQ_PSPI_DOORBELL_1               53 /* 53 */
+#define OCCHW_IRQ_PSPI_DOORBELL_2               54 /* 54 */
+#define OCCHW_IRQ_PSPI_DOORBELL_3               55 /* 55 */
+#define OCCHW_IRQ_PSPI_INTR_PENDING_GRP0        56 /* 56 */
+#define OCCHW_IRQ_PSPI_INTR_PENDING_GRP1        57 /* 57 */
+#define OCCHW_IRQ_PSPI_INTR_PENDING_GRP2        58 /* 58 */
+#define OCCHW_IRQ_PSPI_INTR_PENDING_GRP3        59 /* 59 */
+#define OCCHW_IRQ_IPI3_LO_PRIORITY              60 /* 60 */
+#define OCCHW_IRQ_VC1_PUSH_RECEIVE_COMPLETE     61 /* 61 */
+#define OCCHW_IRQ_VC2_PUSH_RECEIVE_COMPLETE     62 /* 62 */
+#define OCCHW_IRQ_VC3_PUSH_RECEIVE_COMPLETE     63 /* 63 */
 /// This constant is used to define the size of the table of interrupt handler
 /// structures as well as a limit for error checking.  The entire 64-bit
 /// vector is now in use.
@@ -123,7 +123,7 @@
     const char* var[OCCHW_IRQS] = {                 \
                                                     "OCCHW_IRQ_DEBUGGER",                       \
                                                     "OCCHW_IRQ_TRACE_TRIGGER_1",                \
-                                                    "OCCHW_IRQ_RESERVED_2",                     \
+                                                    "OCCHW_IRQ_SPARE_2",                        \
                                                     "OCCHW_IRQ_PBA_ERROR",                      \
                                                     "OCCHW_IRQ_GPE0_ERROR",                     \
                                                     "OCCHW_IRQ_GPE1_ERROR",                     \
@@ -136,7 +136,7 @@
                                                     "OCCHW_IRQ_IPI4_HI_PRIORITY",               \
                                                     "OCCHW_IRQ_I2CM_INTR",                      \
                                                     "OCCHW_IRQ_IPI_SCOM",                       \
-                                                    "OCCHW_IRQ_RESERVED_15",                    \
+                                                    "OCCHW_IRQ_SPARE_15",                       \
                                                     "OCCHW_IRQ_PBAX_OCC_SEND",                  \
                                                     "OCCHW_IRQ_PBAX_OCC_PUSH0",                 \
                                                     "OCCHW_IRQ_PBAX_OCC_PUSH1",                 \
@@ -164,8 +164,8 @@
                                                     "OCCHW_IRQ_IPI2_HI_PRIORITY",               \
                                                     "OCCHW_IRQ_IPI3_HI_PRIORITY",               \
                                                     "OCCHW_IRQ_DEBUG_TRIGGER",                  \
-                                                    "OCCHW_IRQ_GPE3_FUNCTION_TRIGGER",          \
-                                                    "OCCHW_IRQ_PBAX_PGPE_ATTN",                 \
+                                                    "OCCHW_IRQ_AVS_PENDING",                    \
+                                                    "OCCHW_IRQ_PBAX_PGPE_SEND_ATTN",            \
                                                     "OCCHW_IRQ_PBAX_PGPE_PUSH0",                \
                                                     "OCCHW_IRQ_PBAX_PGPE_PUSH1",                \
                                                     "OCCHW_IRQ_PBA_OVERCURRENT_INDICATOR",      \
@@ -181,7 +181,7 @@
                                                     "OCCHW_IRQ_PSPI_INTR_PENDING_GRP1",         \
                                                     "OCCHW_IRQ_PSPI_INTR_PENDING_GRP2",         \
                                                     "OCCHW_IRQ_PSPI_INTR_PENDING_GRP3",         \
-                                                    "OCCHW_IRQ_RESERVED_28",                    \
+                                                    "OCCHW_IRQ_IPI3_LO_PRIORITY",               \
                                                     "OCCHW_IRQ_VC1_PUSH_RECEIVE_COMPLETE",      \
                                                     "OCCHW_IRQ_VC2_PUSH_RECEIVE_COMPLETE",      \
                                                     "OCCHW_IRQ_VC3_PUSH_RECEIVE_COMPLETE",      \
@@ -230,26 +230,24 @@
 
 // There are so many invalid interrupts now that it's a slight improvement in
 // code size to let the compiler optimize the invalid IRQs to a bit mask for
-// the comparison.
+// the comparison. (CMO: This still true?)
+
+#define OCCHW_VALID_IRQ_MASK \
+    ( ~( OCCHW_IRQ_MASK64(OCCHW_IRQ_SPARE_2)  | \
+         OCCHW_IRQ_MASK64(OCCHW_IRQ_SPARE_15) ) )
 
 #define OCCHW_IRQ_VALID(irq) \
-    ({unsigned __irq = (unsigned)(irq); \
-        ((__irq < OCCHW_IRQS) &&                                  \
-         ((OCCHW_IRQ_MASK64(__irq) &                              \
-           (OCCHW_IRQ_MASK64(OCCHW_IRQ_RESERVED_60))) == 0));})
-
-/// This is a 32-bit mask, with big-endian bit (irq % 32) set.
-#define OCCHW_IRQ_MASK32(irq) (((uint32_t)0x80000000) >> ((irq) % 32))
+    ( { unsigned __irq = (unsigned)(irq); \
+        ( OCCHW_IRQ_MASK64(__irq) & OCCHW_VALID_IRQ_MASK ); } )
 
 /// This is a 64-bit mask, with big-endian bit 'irq' set.
 #define OCCHW_IRQ_MASK64(irq) (0x8000000000000000ull >> (irq))
 
-#else
-
-//assembler version of OCCHW_IRQ_MASK32
-#define OCCHW_IRQ_MASK32(irq) ((0x80000000) >> ((irq) % 32))
-
 #endif  /* __ASSEMBLER__ */
+
+/// This is a 32-bit mask, with big-endian bit (irq % 32) set.
+#define OCCHW_IRQ_MASK32(irq) (0x80000000 >> ((irq) % 32))
+
 
 #ifndef __ASSEMBLER__
 
