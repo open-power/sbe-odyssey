@@ -1128,9 +1128,16 @@ def ody_chiplet_init():
 ISTEP(3, 20, "proc_chiplet_startclocks", "SSBE, TSBE")
 
 def p11s_chiplet_startclocks():
+    ## Drop TP chiplet fence
+    PERV_CTRL0.TC_PERV_CHIPLET_FENCE_DC = 0    # new field - bit 17
+
+    ## Start chiplet clocks
     poz_chiplet_startclocks(MCGROUP_GOOD_NO_TP)
 
 def p11t_chiplet_startclocks():
+    ## Dropping TP chiplet fence
+    PERV_CTRL0.TC_PERV_CHIPLET_FENCE_DC = 0    # new field - bit 17
+
     ## Starting chiplet clocks (except EQ)
     poz_chiplet_startclocks(MCGROUP_GOOD_NO_TPEQ)
 
@@ -1141,6 +1148,10 @@ def p11t_chiplet_startclocks():
     mod_constant_hangpulse_setup(i_target, scomt::tbusl::HANGP_HANG_PULSE_CONFIG_REG, {{37, 1, 0}, {0, 0, 0}, {9, 1, 0}, {0, 0, 0}})
 
 def ody_chiplet_startclocks():
+    ## Drop TP chiplet fence
+    PERV_CTRL0.TC_PERV_CHIPLET_FENCE_DC = 0    # new field - bit 17
+
+    ## Start chiplet clocks
     poz_chiplet_startclocks(MCGROUP_GOOD_NO_TP)
 
 def poz_chiplet_startclocks(target<PERV|MC>, uint16_t i_clock_regions=cc::REGION_ALL_BUT_PLL):
