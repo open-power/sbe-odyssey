@@ -73,6 +73,7 @@
 // 0x10 to 0x1f are used for SROM Initial Boot Checks
 #define BOOT_RC_INVALID_ECDSA_FUSE_CHECK_CNFG 0x310
 #define BOOT_RC_INVALID_DILITHIUM_FUSE_CHECK_CNFG 0x311
+#define BOOT_RC_SROM_COMPLETE_BIT_NOT_SET 0x312
 
 //Area 0x4 --> Secure Header Verification Fails
 // 0x00 to 0xf (These are not error codes)
@@ -120,27 +121,33 @@
 
 // Area 0x5 --> File Errors Fails
 //
-// 0x50 to 0x5f are used for secure header file error
+// 0x10 to 0xf are used for secure header file error
 // In case of any pak read fail, the below base error value is added
 // with the actual pak rc provided in:
 // public/src/common/pakwrapper/archive_config.H (ARCHIVE_RETURN_CODES)
 #define FILE_RC_SECURE_HEADER_FILE_READ_BASE_ERROR 0x510
 
-// 0x60 to 0x6f are used for hash list file error
+// 0x20 to 0x2f are used for hash list file error
 // In case of any pak read fail, the below base error value is added
 // with the actual pak rc provided in:
 // public/src/common/pakwrapper/archive_config.H (ARCHIVE_RETURN_CODES)
 #define FILE_RC_HASH_LIST_FILE_READ_BASE_ERROR 0x520
 
-// 0x70 to 0x7f are used for payload file error(bootloader.bin/runtime.bin)
+// 0x30 to 0x3f are used for HW Keys Hash and MSV file
 // In case of any pak read fail, the below base error value is added
 // with the actual pak rc provided in:
 // public/src/common/pakwrapper/archive_config.H (ARCHIVE_RETURN_CODES)
-#define FILE_RC_PAYLOAD_FILE_READ_BASE_ERROR 0x530
+#define FILE_RC_HW_KEYS_HASH_MSV_FILE_READ_BASE_ERROR 0x530
 
-// 0x80 to 0x8f are used for payload hash verification with hash list
+// 0x40 to 0x4f are used for payload file error(bootloader.bin/runtime.bin)
+// In case of any pak read fail, the below base error value is added
+// with the actual pak rc provided in:
+// public/src/common/pakwrapper/archive_config.H (ARCHIVE_RETURN_CODES)
+#define FILE_RC_PAYLOAD_FILE_READ_BASE_ERROR 0x540
+
+// 0x50 to 0x5f are used for payload hash verification with hash list
 // The below base error value is added with the actual pak rc provided in:
 // public/src/common/utils/sbeutil.H (HASH_LIST_RETURN_CODES)
-#define FILE_RC_PAYLOAD_HASH_VERIFICATION 0x540
+#define FILE_RC_PAYLOAD_HASH_VERIFICATION 0x550
 
 #endif

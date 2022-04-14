@@ -42,7 +42,8 @@
 ////////////////////////////////////////////////////////////////
 #define INITIAL_PK_TIMEBASE   0
 #define BLDR_NONCRITICAL_STACK_SIZE 512
-//Keep stack size greater than SPI_READ_SIZE_BYTES.
-#define BLDR_THREAD_SECURE_BOOT_STACK_SIZE 12288
+
+//Keep stack size as 24kb. Required for ECDSA .
+#define BLDR_THREAD_SECURE_BOOT_STACK_SIZE (24 * 1024)
 
 #endif //__GLOBALS_H

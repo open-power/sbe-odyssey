@@ -40,16 +40,24 @@
 // SROM IMAGE
 #define SROM_ORIGIN                     0xFFF70000
 #define SROM_SIZE                       0x10000
-#define SROM_DATA_SIZE                  0x10000
+#define SROM_DATA_SIZE                  0x7800
+
+// Common scratch used by SROM and Boot Loader code for dilithium
 #define SROM_BOOTLOADER_SCRATCH_START   (SRAM_ORIGIN + SROM_DATA_SIZE)
 #define SROM_BOOTLOADER_SCRATCH_SIZE    0x2D000
+
+// SROM Scratch used for storing Secure Header
+#define SROM_SCRATCH_START              (SROM_BOOTLOADER_SCRATCH_START + SROM_BOOTLOADER_SCRATCH_SIZE)
 #define VECTOR_SIZE                     0x200
 #define FUNCTION_TABLE_OFFSET           SROM_ORIGIN + VECTOR_SIZE
 #define FUNCTION_TABLE_SIZE             0x40
 
 // BOOTLOADER IMAGE
-#define BOOTLOADER_SIZE                 0xA800
+#define BOOTLOADER_SIZE                 0xC800
 #define BOOTLOADER_ORIGIN               (SRAM_END + LAST_BYTE - BOOTLOADER_SIZE - HASH_LIST_SIZE)
+
+// Boot Loader Scratch used for storing Secure Header
+#define BOOTLOADER_SCRATCH_START        (SROM_BOOTLOADER_SCRATCH_START + SROM_BOOTLOADER_SCRATCH_SIZE)
 
 // RUNTIME SPPE IMAGE
 #define RUNTIME_EMBED_PAK               0xA000
@@ -63,5 +71,6 @@
 // NOTE: We will always keep hash list at end of sram
 #define HASH_LIST_START_OFFSET          (SRAM_END - HASH_LIST_SIZE)
 
-#endif  // __ODYSSEY_LINK_H
+#define NOR_PARTITION_0_OFFSET          0xFE000000
 
+#endif  // __ODYSSEY_LINK_H

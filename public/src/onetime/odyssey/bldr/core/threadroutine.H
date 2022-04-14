@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -23,6 +24,8 @@
 /* IBM_PROLOG_END_TAG                                                     */
 #ifndef __THREAD_ROUTINE_H
 #define __THREAD_ROUTINE_H
+
+#define RUN_TIME_SH_COMPONENT_ID 0x52554E5F54494D45ull  //RUN_TIME
 
 /**
  * @brief sromSecureBoot_routine

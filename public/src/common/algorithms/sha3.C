@@ -186,9 +186,9 @@ uint32_t make32Bit(uint8_t *ptr){
 }
 
 void SHA3_dump(sha3_t *result){
-  uint8_t *myptr=(uint8_t*)result;
+/*  uint8_t *myptr=(uint8_t*)result;
   for(uint32_t x=0;x<SHA3_DIGEST_LENGTH;x+=16)
   {
     SBE_INFO("%08x%08x%08x%08x", make32Bit(&myptr[x]),make32Bit(&myptr[x+4]),make32Bit(&myptr[x+8]),make32Bit(&myptr[x+12]));
-  }
+  }*/
 }

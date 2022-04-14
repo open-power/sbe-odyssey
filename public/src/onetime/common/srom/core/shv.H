@@ -57,6 +57,21 @@ typedef struct shvRsp
 }shvRsp_t;
 
 /**
+ * @brief Struct for Runtime HW Keys Hash and MSV
+ *
+ */
+typedef union hwKeysHashMsv
+{
+
+    uint8_t hwKeysHashMsv[SHA3_DIGEST_LENGTH + 1] = {0x00};
+    struct
+    {
+        sha3_t hwKeyHash;
+        uint8_t msv;
+    };
+}hwKeysHashMsv_t;
+
+/**
  * @brief Request struct of secure header verification
  *
  */

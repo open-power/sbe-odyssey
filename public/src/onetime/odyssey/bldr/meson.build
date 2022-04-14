@@ -34,6 +34,15 @@ odyssey_bldr_libs = []
 #This list is basically custom target lib generation output object
 odyssey_bldr_dep_libs = []
 
+#Update odyssey bldr include path with -I and global source dir.
+odyssey_bldr_abs_inc_paths = []
+foreach inc_path : meson.get_external_property('odyssey_bldr_inc_paths')
+
+  abs_inc_path = '-I' + meson.global_source_root() + inc_path
+  odyssey_bldr_abs_inc_paths += abs_inc_path
+
+endforeach
+
 #Tools
 packaging = find_program('build/utils/build.sh')
 
@@ -41,19 +50,22 @@ packaging = find_program('build/utils/build.sh')
 odyssey_bldr_libs += [ekb_cmn_libs,
                       cmn_core_libs,
                       ekb_cmn_pak_libs,
-                      cmn_pak_wrapper_libs
+                      cmn_pak_wrapper_libs,
+                      cmn_algo_libs
                      ]
 
 odyssey_bldr_lib_paths += [ekb_cmn_lib_paths,
                            cmn_core_lib_paths,
                            ekb_cmn_pak_lib_paths,
-                           cmn_pak_wrapper_lib_paths
+                           cmn_pak_wrapper_lib_paths,
+                           cmn_algo_lib_paths
                           ]
 
 odyssey_bldr_dep_libs += [ekb_cmn_dep_libs,
                           cmn_core_dep_libs,
                           ekb_cmn_pak_dep_libs,
-                          cmn_pak_wrapper_dep_libs
+                          cmn_pak_wrapper_dep_libs,
+                          cmn_algo_dep_libs
                          ]
 
 #Odyssey Boot Loader install path

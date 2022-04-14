@@ -30,13 +30,14 @@ infile_c = ['main.C',
 
 lib_file_name = 'odysseybldr'
 
-odyssey_bldr_obj_file_cpp = obj_gen_cpp.process(infile_c,
-                                        extra_args : [
+odyssey_bldr_obj_file_cpp_gen = obj_gen_cpp.process(infile_c,
+                                        extra_args : [onetime_cmn_abs_inc_paths,
+                                        odyssey_bldr_abs_inc_paths,
                                         meson.get_external_property('gcc_defs_cmn_odyssey'),
                                         meson.get_external_property('gcc_defs_odyssey_bldr'),
                                         onetime_cmn_abs_inc_paths])
 
-infile  = [odyssey_bldr_obj_file_cpp]
+infile  = [odyssey_bldr_obj_file_cpp_gen]
 
 libodysseybldr = custom_target( lib_file_name,
                                  output : 'lib' + lib_file_name,

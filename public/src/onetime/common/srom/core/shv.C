@@ -28,6 +28,9 @@
  *
  **/
 
+// Disable any trace code in this files, since this will be called by bootloader
+#undef PK_TRACE_SUPPORT
+
 #include "shv.H"
 #include "sbetrace.H"
 #include "ecdsa.H"
@@ -46,7 +49,8 @@
                                 return ROM_FAILED; } \
 
 //Lets add the progress code start offset before we write into messaging register
-#define UPDATE_SBE_PROGRESS_CODE(value) SBE::updateProgressCode(shvReq->sbeMsgRegValue, (value + shvReq->shvProgressCodeStartOffset));
+#define UPDATE_SBE_PROGRESS_CODE(value) \
+        SBE::updateProgressCode(shvReq->sbeMsgRegValue, (value + shvReq->shvProgressCodeStartOffset)); \
 
 #define MINIMUM_DILITHIUM_SCRATCH_SIZE (150 * 1024)
 
@@ -125,14 +129,6 @@ static int dilithium_wrap(const unsigned char *sig,
     } else {
       SBE_INFO("No problemo with stack!!!");
     }
-
-    const unsigned char *local = pub;
-            SBE_INFO(SBE_FUNC "Pub Key is %x %x %x %x",
-                     *local,*(local+1),*(local+2),*(local+3));
-            local  = sig;
-            SBE_INFO(SBE_FUNC "Sig is %x %x %x %x",
-                     *local,*(local+1),*(local+2),*(local+3));
-
 
     // Run the signature verification
     int retval = ref_verify2(sig, DILITHIUM_SIG_SIZE,
@@ -477,7 +473,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
         VERIFY_FAILED(SHV_RC_SW_UNPROTECTED_PAYLD_SZ_TEST);
     }
 
-    UPDATE_SBE_PROGRESS_CODE(COMPLETED_UNPROCTCTED_PAYLOAD_SIZE_CHECK);
+    UPDATE_SBE_PROGRESS_CODE(COMPLETED_UNPROTECTED_PAYLOAD_SIZE_CHECK);
 
     // Validate hash of hash list(payload).
     //Return the calculated SHA3-512 Payload Hash.
@@ -512,8 +508,6 @@ ROM_response verifySecureHdr(shvReq_t *shvReq, shvRsp_t *shvRsp)
     SBE_ENTER(SBE_FUNC);
 
     ROM_response status = ROM_DONE;
-
-    UPDATE_SBE_PROGRESS_CODE(SECURE_HEADER_VERIFICATION_START);
 
     // Get the current SBE Messaging Register value
     getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, &shvReq->sbeMsgRegValue);
@@ -550,7 +544,8 @@ ROM_response verifySecureHdr(shvReq_t *shvReq, shvRsp_t *shvRsp)
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_SCRATCH_SIZE_CHECK);
 
     //If Dilithium check is enabled, check if scratch start offest is not NULL
-    if(shvReq->controlData.dilithiumCheck && (shvReq->scratchStart != 0x00))
+    SBE_INFO(SBE_FUNC "scratch start is %08x ", shvReq->scratchStart);
+    if(shvReq->controlData.dilithiumCheck && (shvReq->scratchStart == 0x00))
     {
         SBE_INFO(SBE_FUNC "Sanity Check: Scratch start offset is NULL");
         VERIFY_FAILED(SHV_RC_SCRATCH_START_OFFSET_CHECK);

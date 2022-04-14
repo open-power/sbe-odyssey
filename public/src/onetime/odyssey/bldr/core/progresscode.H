@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -32,18 +33,25 @@
  */
 
 //Before Secure Header Verification Call
-#define COMPLETED_PK_INIT 0x01
-#define COMPLETED_THREAD_CREATION 0x02
-#define COMPLETED_READING_SROM_SECURE_BOOT_SETTINGS 0x03
-#define COMPLETED_WRITING_BLDR_SECURE_BOOT_SETTINGS 0x04
+#define EABI_ENTER                                            0x01
+#define EABI_EXIT                                             0x02
+#define ENTERED_BLDR_MAIN                                     0x03
+#define COMPLETED_PK_INIT                                     0x04
+#define COMPLETED_THREAD_CREATION                             0x05
+#define COMPLETED_BLDR_LOADING_SECURE_HEADER_INTO_PIB         0x06
+#define COMPLETED_BLDR_LOADING_HASH_LIST_INTO_PIB             0x07
+#define COMPLETED_BLDR_LOADING_HW_KEYS_HASH_MSV_INTO_PIB      0x08
+#define COMPLETED_BLDR_READING_SROM_SETTINGS_FROM_MEASUREMENT 0x09
+#define COMPLETED_BLDR_READING_ECID_FROM_OTPROM               0x0A
 
 //Secure Header Verification Call start
 #define SHV_PROGRESS_CODE_START_OFFSET 0x0D
 
 //After Secure Header Verification Call
-#define COMPLETED_HASH_CALCULATION_OF_FINAL_RESULT 0x38
-#define COMPLETED_HASH_WRITE_INTO_MEASUREMENT_REG 0x39
-#define COMPLETED_STATUS_CODE_WRITE_INTO_SCRATCH 0x3A
-#define COMPLETED_BLDR 0x3B
+#define COMPLETED_HASH_CALCULATION_OF_FINAL_RESULT     0x38
+#define COMPLETED_HASH_WRITE_INTO_MEASUREMENT_REG      0x39
+#define COMPLETED_STATUS_CODE_WRITE_INTO_SCRATCH       0x3A
+#define COMPLETED_BLDR_WRITING_SECURE_BOOT_SETTINGS    0x3B
+#define COMPLETED_BLDR                                 0x3C
 
 #endif /* _PROGRESSCODE_H_ */

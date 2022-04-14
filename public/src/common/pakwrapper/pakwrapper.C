@@ -25,7 +25,7 @@
 
 #include "pakwrapper.H"
 
-ARC_RET_t PakWrapper::read_file(const char* i_fileName, void* i_destinationAddr, uint32_t i_destinationBufferSize, void* o_hash, uint32_t *o_uncompressedSize)
+ARC_RET_t PakWrapper::read_file(const char* i_fileName, void* i_destinationAddr, uint32_t i_destinationBufferSize, sha3_t* o_hash, uint32_t *o_uncompressedSize)
 {
     ARC_RET_t rc = ARC_INVALID_PARAMS;
     if((i_fileName != nullptr) || (i_destinationAddr != nullptr))

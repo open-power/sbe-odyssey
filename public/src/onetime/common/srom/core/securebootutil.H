@@ -30,6 +30,12 @@
 #include "ppe42_scom.h"
 #include "securehdrv2.H"
 
+#define UPDATE_ERROR_CODE_AND_HALT(value) \
+    secureBootFailStatus.iv_secureHeaderFailStatusCode = value; \
+    putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW,secureBootFailStatus.iv_mbx13); \
+    SBE_INFO(SBE_FUNC "Halting PPE..."); \
+    pk_halt(); \
+
 #define SHA3_TRUNCATED_SIZE 48
 
 typedef uint8_t sha3truncated_t[SHA3_TRUNCATED_SIZE];
