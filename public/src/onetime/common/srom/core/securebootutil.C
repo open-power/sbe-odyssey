@@ -73,10 +73,10 @@ uint8_t getMSV(uint64_t msvFuseBank0, uint64_t msvFuseBank1,
 //NOTE: make32Bit() is just used for convertinf uint8_t array to uint32_t.
 //Alternatively it can be achieved by typecasting
 void SHA3TruncatedDump(sha3truncated_t *result){
-  uint8_t *myptr=(uint8_t*)result;
+/*  uint8_t *myptr=(uint8_t*)result;
   for(uint32_t x=0;x<SHA3_TRUNCATED_SIZE;x+=16)
   {
     SBE_INFO("%08x%08x%08x%08x", make32Bit(&myptr[x]),make32Bit(&myptr[x+4]),
                                  make32Bit(&myptr[x+8]),make32Bit(&myptr[x+12]));
-  }
+  }*/
 }

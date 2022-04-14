@@ -28,6 +28,8 @@
 #include "globals.H"
 #include "sbeexeintf.H"
 #include "threadutil.H"
+#include "mbxscratch.H"
+#include "ppe42_scom.h"
 #include "progresscode.H"
 #include "sbeutil.H"
 
@@ -66,6 +68,8 @@ extern uint64_t _bss_end __attribute__ ((section (".bss")));
 
 void __eabi()
 {
+    UPDATE_BLDR_SBE_PROGRESS_CODE(EABI_ENTER);
+
     do
     {
         // Initialise bss and sbss section.
@@ -83,6 +87,8 @@ void __eabi()
             ctors++;
         }
     } while (false);
+
+     UPDATE_BLDR_SBE_PROGRESS_CODE(EABI_EXIT);
 }
 
 } // end extern "C"
@@ -98,8 +104,9 @@ int  main(int argc, char **argv)
 
     do
     {
-         //Clear out old progress code
-         UPDATE_BLDR_SBE_PROGRESS_CODE(0x00)
+        //Clear out old progress code
+        UPDATE_BLDR_SBE_PROGRESS_CODE(0x00)
+        UPDATE_BLDR_SBE_PROGRESS_CODE(ENTERED_BLDR_MAIN);
 
         rc = pk_initialize((PkAddress)bldr_Kernel_NC_Int_stack,
                 BLDR_NONCRITICAL_STACK_SIZE,

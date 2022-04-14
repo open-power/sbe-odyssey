@@ -30,7 +30,7 @@ infile_c = ['ecdsa.C',
 
 lib_file_name = 'cmnalgo'
 
-cmn_algo_obj_file_cpp = obj_gen_cpp.process(infile_c)
+cmn_algo_obj_file_cpp = obj_gen_cpp.process(infile_c, extra_args : '-G0')
 
 infile  = [cmn_algo_obj_file_cpp]
 

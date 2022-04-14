@@ -149,7 +149,7 @@ SECTIONS {
     _sbe_image_size = _code_size + _data_size + _sdata_size + _sdata2_size;
 
     /* Stack segment */
-    PROVIDE (_stack_size = BOOTLOADER_SIZE - _ram_consumed);
+    PROVIDE (_stack_size = BOOTLOADER_SIZE - _ram_consumed - HASH_LIST_SIZE);
     .stack . :
     {
         /* Assert if stack space less than MINIMUM_STACK_SIZE. */
@@ -159,5 +159,12 @@ SECTIONS {
         _PK_INITIAL_STACK_LIMIT = .;
         . = . + _stack_size;
         _PK_INITIAL_STACK = . - 1;
+    }
+
+    /* Hash List*/
+    . = HASH_LIST_START_OFFSET;
+    /* Hash List should be at constant location i.e end of sram. */
+    .hashlist . : {
+        KEEP(*(.hash_list));
     }
 }
