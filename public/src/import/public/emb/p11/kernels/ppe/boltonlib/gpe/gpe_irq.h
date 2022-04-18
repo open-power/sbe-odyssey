@@ -41,7 +41,7 @@
 /// to enter a critical section to enable/disable/clear interrupts and
 /// interrupt status.
 
-#include "occhw_common.h"
+#include "pmhw_common.h"
 #include "ocb_register_addresses.h"
 #include "ppe42.h"
 
@@ -70,7 +70,7 @@ UNLESS__PPE42_IRQ_CORE_C__(extern)
 inline void
 ppe_irq_enable(IrqId irq)
 {
-    out32(OCCHW_OIMR_CLR(irq), OCCHW_IRQ_MASK32(irq));
+    out32(PMHW_OIMR_CLR(irq), PMHW_IRQ_MASK32(irq));
 }
 
 
@@ -105,7 +105,7 @@ UNLESS__PPE42_IRQ_CORE_C__(extern)
 inline void
 ppe_irq_disable(IrqId irq)
 {
-    out32(OCCHW_OIMR_OR(irq), OCCHW_IRQ_MASK32(irq));
+    out32(PMHW_OIMR_OR(irq), PMHW_IRQ_MASK32(irq));
 }
 
 
@@ -127,7 +127,7 @@ UNLESS__PPE42_IRQ_CORE_C__(extern)
 inline void
 ppe_irq_status_clear(IrqId irq)
 {
-    out32(OCCHW_OISR_CLR(irq), OCCHW_IRQ_MASK32(irq));
+    out32(PMHW_OISR_CLR(irq), PMHW_IRQ_MASK32(irq));
 }
 
 
@@ -149,7 +149,7 @@ UNLESS__PPE42_IRQ_CORE_C__(extern)
 inline int
 ppe_irq_status_get(IrqId irq)
 {
-    return (in32(OCCHW_OISR(irq)) & OCCHW_IRQ_MASK32(irq)) != 0;
+    return (in32(PMHW_OISR(irq)) & PMHW_IRQ_MASK32(irq)) != 0;
 }
 
 
@@ -161,11 +161,11 @@ ppe_irq_status_set(IrqId irq, int value)
 {
     if (value)
     {
-        out32(OCCHW_OISR_OR(irq), OCCHW_IRQ_MASK32(irq));
+        out32(PMHW_OISR_OR(irq), PMHW_IRQ_MASK32(irq));
     }
     else
     {
-        out32(OCCHW_OISR_CLR(irq), OCCHW_IRQ_MASK32(irq));
+        out32(PMHW_OISR_CLR(irq), PMHW_IRQ_MASK32(irq));
     }
 }
 

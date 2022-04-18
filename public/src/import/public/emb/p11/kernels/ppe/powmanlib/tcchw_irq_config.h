@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/emb/p11/kernels/ppe/powmanlib/tcc/occhw_irq_config.h $ */
+/* $Source: public/src/import/public/emb/p11/kernels/ppe/powmanlib/tcchw_irq_config.h $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -22,25 +22,18 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __OCCHW_IRQ_CONFIG_H__
-#define __OCCHW_IRQ_CONFIG_H__
+#ifndef __TCCHW_IRQ_CONFIG_H__
+#define __TCCHW_IRQ_CONFIG_H__
 
-/// \file occhw_irq_config.h
+/// \file tcchw_irq_config.h
 /// \brief Contains data and macros pertaining to external interrupt routing
 ///        and configuration for processors running in the TCC complex.
 ///
 
 
 /// Number of TCC instance ID's that can be read from the PPE42 PIR and used in IPCs.
-#define TCCHW_MAX_INSTANCES 4
+#define PLATHW_MAX_INSTANCES 4
 
-/// This macro should be defined in the pk_app_cfg.h file for external interrupts
-/// that are to be used by the TCC instance.  If not defined elsewhere then
-/// interrupts owned by this instance will have the default configuration and be
-/// masked.
-#ifndef OCCHW_EXT_IRQS_CONFIG
-    #define OCCHW_EXT_IRQS_CONFIG
-#endif
 
 #ifndef __ASSEMBLER__
     /// These globals are statically initialized elsewhere
@@ -52,80 +45,80 @@
     extern uint64_t g_ext_irqs_polarity;
     extern uint64_t g_ext_irqs_enable;
 
-    #define OCCHW_IRQ_OWNED(irq) ((OCCHW_IRQ_MASK64(irq) & g_ext_irqs_owned) != 0)
+    #define PLATHW_IRQ_OWNED(irq) ((TCCHW_IRQ_MASK64(irq) & g_ext_irqs_owned) != 0)
 
 #endif
 
 /// Add a pseudo target to indicate that an interrupt is not owned by anyone
-#define OCCHW_IRQ_TARGET_ID_NONE    8
+#define TCCHW_IRQ_TARGET_ID_NONE    8
 
 /// Default interrupt routing table
 #ifndef TCCHW_IRQ_ROUTES
 #define TCCHW_IRQ_ROUTES \
-    TCCHW_IRQ_DEBUGGER                      OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_TRACE_TRIGGER_1               OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_CE0_ERROR                     OCCHW_IRQ_TARGET_ID_GPE3 \
-    TCCHW_IRQ_CE1_ERROR                     OCCHW_IRQ_TARGET_ID_GPE3 \
-    TCCHW_IRQ_CHECK_STOP_CE0                OCCHW_IRQ_TARGET_ID_GPE0 \
-    TCCHW_IRQ_CHECK_STOP_CE1                OCCHW_IRQ_TARGET_ID_GPE1 \
-    TCCHW_IRQ_PBA_ERROR                     OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_SPARE_7                       OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_TCC_TIMER0                    OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_TCC_TIMER1                    OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_IPI0_HI_PRIORITY              OCCHW_IRQ_TARGET_ID_GPE0 \
-    TCCHW_IRQ_IPI1_HI_PRIORITY              OCCHW_IRQ_TARGET_ID_GPE1 \
-    TCCHW_IRQ_SPARE_12                      OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_SPARE_13                      OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_SPARE_14                      OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_SPARE_15                      OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_PBAX_TCC_SEND_ATTN            OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_PBAX_TCC_PUSH0                OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_PBAX_TCC_PUSH1                OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_PBA_BCDE_ATTN                 OCCHW_IRQ_TARGET_ID_GPE3 \
-    TCCHW_IRQ_PBA_BCUE_ATTN                 OCCHW_IRQ_TARGET_ID_GPE3 \
-    TCCHW_IRQ_STRM0_PULL                    OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_STRM0_PUSH                    OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_STRM1_PULL                    OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_STRM1_PUSH                    OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_STRM2_PULL                    OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_STRM2_PUSH                    OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_STRM3_PULL                    OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_STRM3_PUSH                    OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_IPI0_LO_PRIORITY              OCCHW_IRQ_TARGET_ID_GPE0 \
-    TCCHW_IRQ_IPI1_LO_PRIORITY              OCCHW_IRQ_TARGET_ID_GPE1 \
-    TCCHW_IRQ_SPARE_31                      OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_TRACE_TRIGGER_32              OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_TCC_ERROR                     OCCHW_IRQ_TARGET_ID_GPE2 \
-    TCCHW_IRQ_CE2_ERROR                     OCCHW_IRQ_TARGET_ID_GPE3 \
-    TCCHW_IRQ_CE3_ERROR                     OCCHW_IRQ_TARGET_ID_GPE2 \
-    TCCHW_IRQ_CHECK_STOP_CE2                OCCHW_IRQ_TARGET_ID_GPE2 \
-    TCCHW_IRQ_CHECK_STOP_CE3                OCCHW_IRQ_TARGET_ID_GPE3 \
-    TCCHW_IRQ_TCC_MALF_ALERT                OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_PVREF_ERROR                   OCCHW_IRQ_TARGET_ID_GPE2 \
-    TCCHW_IRQ_IPI2_HI_PRIORITY              OCCHW_IRQ_TARGET_ID_GPE2 \
-    TCCHW_IRQ_IPI3_HI_PRIORITY              OCCHW_IRQ_TARGET_ID_GPE3 \
-    TCCHW_IRQ_DEBUG_TRIGGER                 OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_IPI2_LO_PRIORITY              OCCHW_IRQ_TARGET_ID_GPE2 \
-    TCCHW_IRQ_PBAX_HCODE_SEND_ATTN          OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_PBAX_HCODE_PUSH0              OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_PBAX_HCODE_PUSH1              OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_PBA_OVERCURRENT_INDICATOR     OCCHW_IRQ_TARGET_ID_GPE3 \
-    TCCHW_IRQ_PSPI_MSGDOORBELL_0            OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_PSPI_MSGDOORBELL_1            OCCHW_IRQ_TARGET_ID_GPE1 \
-    TCCHW_IRQ_PSPI_MSGDOORBELL_2            OCCHW_IRQ_TARGET_ID_GPE2 \
-    TCCHW_IRQ_PSPI_MSGDOORBELL_3            OCCHW_IRQ_TARGET_ID_GPE3 \
-    TCCHW_IRQ_PSPI_DOORBELL_0               OCCHW_IRQ_TARGET_ID_GPE0 \
-    TCCHW_IRQ_PSPI_DOORBELL_1               OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_PSPI_DOORBELL_2               OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_PSPI_DOORBELL_3               OCCHW_IRQ_TARGET_ID_GPE3 \
-    TCCHW_IRQ_PCB_INTR_PENDING_GRP0         OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_PCB_INTR_PENDING_GRP1         OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_PCB_INTR_PENDING_GRP2         OCCHW_IRQ_TARGET_ID_GPE2 \
-    TCCHW_IRQ_PCB_INTR_PENDING_GRP3         OCCHW_IRQ_TARGET_ID_GPE3 \
-    TCCHW_IRQ_IPI3_LO_PRIORITY              OCCHW_IRQ_TARGET_ID_GPE3 \
-    TCCHW_IRQ_VC1_PUSH_RECEIVE_COMPLETE     OCCHW_IRQ_TARGET_ID_NONE \
-    TCCHW_IRQ_VC2_PUSH_RECEIVE_COMPLETE     OCCHW_IRQ_TARGET_ID_GPE2 \
-    TCCHW_IRQ_VC3_PUSH_RECEIVE_COMPLETE     OCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_DEBUGGER                      TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_TRACE_TRIGGER_1               TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_CE0_ERROR                     TCCHW_IRQ_TARGET_ID_GPE3 \
+    TCCHW_IRQ_CE1_ERROR                     TCCHW_IRQ_TARGET_ID_GPE3 \
+    TCCHW_IRQ_CHECK_STOP_CE0                TCCHW_IRQ_TARGET_ID_GPE0 \
+    TCCHW_IRQ_CHECK_STOP_CE1                TCCHW_IRQ_TARGET_ID_GPE1 \
+    TCCHW_IRQ_PBA_ERROR                     TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_SPARE_7                       TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_TCC_TIMER0                    TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_TCC_TIMER1                    TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_IPI0_HI_PRIORITY              TCCHW_IRQ_TARGET_ID_GPE0 \
+    TCCHW_IRQ_IPI1_HI_PRIORITY              TCCHW_IRQ_TARGET_ID_GPE1 \
+    TCCHW_IRQ_SPARE_12                      TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_SPARE_13                      TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_SPARE_14                      TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_SPARE_15                      TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_PBAX_TCC_SEND_ATTN            TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_PBAX_TCC_PUSH0                TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_PBAX_TCC_PUSH1                TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_PBA_BCDE_ATTN                 TCCHW_IRQ_TARGET_ID_GPE3 \
+    TCCHW_IRQ_PBA_BCUE_ATTN                 TCCHW_IRQ_TARGET_ID_GPE3 \
+    TCCHW_IRQ_STRM0_PULL                    TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_STRM0_PUSH                    TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_STRM1_PULL                    TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_STRM1_PUSH                    TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_STRM2_PULL                    TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_STRM2_PUSH                    TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_STRM3_PULL                    TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_STRM3_PUSH                    TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_IPI0_LO_PRIORITY              TCCHW_IRQ_TARGET_ID_GPE0 \
+    TCCHW_IRQ_IPI1_LO_PRIORITY              TCCHW_IRQ_TARGET_ID_GPE1 \
+    TCCHW_IRQ_SPARE_31                      TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_TRACE_TRIGGER_32              TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_TCC_ERROR                     TCCHW_IRQ_TARGET_ID_GPE2 \
+    TCCHW_IRQ_CE2_ERROR                     TCCHW_IRQ_TARGET_ID_GPE3 \
+    TCCHW_IRQ_CE3_ERROR                     TCCHW_IRQ_TARGET_ID_GPE2 \
+    TCCHW_IRQ_CHECK_STOP_CE2                TCCHW_IRQ_TARGET_ID_GPE2 \
+    TCCHW_IRQ_CHECK_STOP_CE3                TCCHW_IRQ_TARGET_ID_GPE3 \
+    TCCHW_IRQ_TCC_MALF_ALERT                TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_PVREF_ERROR                   TCCHW_IRQ_TARGET_ID_GPE2 \
+    TCCHW_IRQ_IPI2_HI_PRIORITY              TCCHW_IRQ_TARGET_ID_GPE2 \
+    TCCHW_IRQ_IPI3_HI_PRIORITY              TCCHW_IRQ_TARGET_ID_GPE3 \
+    TCCHW_IRQ_DEBUG_TRIGGER                 TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_IPI2_LO_PRIORITY              TCCHW_IRQ_TARGET_ID_GPE2 \
+    TCCHW_IRQ_PBAX_HCODE_SEND_ATTN          TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_PBAX_HCODE_PUSH0              TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_PBAX_HCODE_PUSH1              TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_PBA_OVERCURRENT_INDICATOR     TCCHW_IRQ_TARGET_ID_GPE3 \
+    TCCHW_IRQ_PSPI_MSGDOORBELL_0            TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_PSPI_MSGDOORBELL_1            TCCHW_IRQ_TARGET_ID_GPE1 \
+    TCCHW_IRQ_PSPI_MSGDOORBELL_2            TCCHW_IRQ_TARGET_ID_GPE2 \
+    TCCHW_IRQ_PSPI_MSGDOORBELL_3            TCCHW_IRQ_TARGET_ID_GPE3 \
+    TCCHW_IRQ_PSPI_DOORBELL_0               TCCHW_IRQ_TARGET_ID_GPE0 \
+    TCCHW_IRQ_PSPI_DOORBELL_1               TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_PSPI_DOORBELL_2               TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_PSPI_DOORBELL_3               TCCHW_IRQ_TARGET_ID_GPE3 \
+    TCCHW_IRQ_PCB_INTR_PENDING_GRP0         TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_PCB_INTR_PENDING_GRP1         TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_PCB_INTR_PENDING_GRP2         TCCHW_IRQ_TARGET_ID_GPE2 \
+    TCCHW_IRQ_PCB_INTR_PENDING_GRP3         TCCHW_IRQ_TARGET_ID_GPE3 \
+    TCCHW_IRQ_IPI3_LO_PRIORITY              TCCHW_IRQ_TARGET_ID_GPE3 \
+    TCCHW_IRQ_VC1_PUSH_RECEIVE_COMPLETE     TCCHW_IRQ_TARGET_ID_NONE \
+    TCCHW_IRQ_VC2_PUSH_RECEIVE_COMPLETE     TCCHW_IRQ_TARGET_ID_GPE2 \
+    TCCHW_IRQ_VC3_PUSH_RECEIVE_COMPLETE     TCCHW_IRQ_TARGET_ID_NONE \
 
 #endif
 
@@ -157,32 +150,32 @@
             g_ext_irqs_enable:
             .quad .ext_irqs_enable
         .else
-            .if (( \irq_num < 0 ) || ( \irq_num > (OCCHW_IRQS - 1)))
+            .if (( \irq_num < 0 ) || ( \irq_num > (TCCHW_IRQS - 1)))
                 .error "###### .tcchw_irq_config: invalid irq number \irq_num ######"
-            .elseif ((.ext_irqs_owned & (1 << ( OCCHW_IRQS - 1 - \irq_num ))) == 0 )
+            .elseif ((.ext_irqs_owned & (1 << ( TCCHW_IRQS - 1 - \irq_num ))) == 0 )
                 .error "###### .tcchw_irq_config: Attempt to configure unowned irq number \irq_num ######"
-            .elseif (.ext_irqs_defd & (1 << ( OCCHW_IRQS - 1 - \irq_num )))
+            .elseif (.ext_irqs_defd & (1 << ( TCCHW_IRQS - 1 - \irq_num )))
                 .error "###### .tcchw_irq_config: duplicate definition for irq \irq_num ######"
             .else
-                .ext_irqs_defd = .ext_irqs_defd | (1 << ( OCCHW_IRQS - 1 - \irq_num ))
+                .ext_irqs_defd = .ext_irqs_defd | (1 << ( TCCHW_IRQS - 1 - \irq_num ))
             .endif
 
             .if (( \irq_type < 0 ) || ( \irq_type > 1 ))
                 .error "###### .tcchw_irq_config: invalid/unspecified irq type \irq_type for irq \irq_num ######"
             .else
-                .ext_irqs_type = .ext_irqs_type | ( \irq_type << ( OCCHW_IRQS - 1 - \irq_num ))
+                .ext_irqs_type = .ext_irqs_type | ( \irq_type << ( TCCHW_IRQS - 1 - \irq_num ))
             .endif
 
             .if (( \irq_polarity < 0 ) || ( \irq_polarity > 1 ))
                 .error "###### .tcchw_irq_config: invalid/unspecified irq polarity ( \irq_polarity ) for irq \irq_num ######"
             .else
-                .ext_irqs_polarity = .ext_irqs_polarity | ( \irq_polarity << ( OCCHW_IRQS - 1 - \irq_num ))
+                .ext_irqs_polarity = .ext_irqs_polarity | ( \irq_polarity << ( TCCHW_IRQS - 1 - \irq_num ))
             .endif
 
             .if (( \irq_mask < 0 ) || ( \irq_mask > 1 ))
                 .error "###### .tcchw_irq_config: invalid/unspecified irq mask ( \irq_mask ) for irq \irq_num ######"
             .else
-                .ext_irqs_enable = .ext_irqs_enable | ( \irq_mask << ( OCCHW_IRQS - 1 - \irq_num ))
+                .ext_irqs_enable = .ext_irqs_enable | ( \irq_mask << ( TCCHW_IRQS - 1 - \irq_num ))
             .endif
 
             .tcchw_irq_config \parms
@@ -210,19 +203,19 @@
             g_ext_irqs_owned:
             .quad .ext_irqs_owned
         .else
-            .if (( \irq_num < 0) || ( \irq_num > (OCCHW_IRQS - 1)))
+            .if (( \irq_num < 0) || ( \irq_num > (TCCHW_IRQS - 1)))
                 .error "###### .tcchw_irq_route: invalid irq number \irq_num ######"
-            .elseif .ext_irqs_defd & (1 << ( OCCHW_IRQS - 1 - \irq_num ))
+            .elseif .ext_irqs_defd & (1 << ( TCCHW_IRQS - 1 - \irq_num ))
                 .error "###### .tcchw_irq_route: Route for irq \irq_num is already defined ######"
             .else
-                .ext_irqs_defd = .ext_irqs_defd | (1 << ( OCCHW_IRQS - 1 - \irq_num ))
+                .ext_irqs_defd = .ext_irqs_defd | (1 << ( TCCHW_IRQS - 1 - \irq_num ))
             .endif
 
             .if (( \irq_route < 4) || ( \irq_route > 8 ))
                 .error "###### .tcchw_irq_route: route # \irq_route is invalid for irq # \irq_num ######"
             .endif
 
-            .irq_mask = 1 << ( OCCHW_IRQS - 1 - \irq_num)
+            .irq_mask = 1 << ( TCCHW_IRQS - 1 - \irq_num)
             .if \irq_route & 4
                 .ext_irqs_routeA = .ext_irqs_routeA | .irq_mask
             .endif
@@ -237,7 +230,7 @@
 
             .if ( \irq_route == 8 )
                 //do nothing, this irq is not owned by any TCC processor
-            .elseif ( \irq_route == (OCCHW_IRQ_TARGET_ID_GPE0 + APPCFG_OCC_INSTANCE_ID))
+            .elseif ( \irq_route == (TCCHW_IRQ_TARGET_ID_GPE0 + APPCFG_OCC_INSTANCE_ID))
                 .ext_irqs_owned = .ext_irqs_owned | .irq_mask
             .endif
 
@@ -264,4 +257,4 @@
 // *INDENT-ON*
 #endif /*__ASSEMBLER__*/
 
-#endif /*__OCCHW_IRQ_CONFIG_H__*/
+#endif /*__TCCHW_IRQ_CONFIG_H__*/

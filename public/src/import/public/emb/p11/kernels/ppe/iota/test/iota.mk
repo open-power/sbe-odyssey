@@ -100,7 +100,6 @@ $(call ADD_PPEIMAGE_INCDIR,$(IMAGE), \
 	$(OCC_SRCDIR)/commonlib/include \
 	$(OCC_SRCDIR)/commonlib \
 	$(POWMANLIB_SRCDIR) \
-	$(POWMANLIB_SRCDIR)/occ \
 	$(PMLIB_INCDIR)/registers \
 	$(ROOTPATH)/public/common/utils/imageProcs \
 	$(ROOTPATH)/public/common/generic/fapi2/include \

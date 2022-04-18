@@ -59,8 +59,8 @@ pk_irq_setup(PkIrqId irq,
 
     if (PK_ERROR_CHECK_API)
     {
-        PK_ERROR_IF(!OCCHW_IRQ_VALID(irq) ||
-                    !OCCHW_IRQ_OWNED(irq) ||
+        PK_ERROR_IF(!PLATHW_IRQ_VALID(irq) ||
+                    !PLATHW_IRQ_OWNED(irq) ||
                     !((polarity == PK_IRQ_POLARITY_ACTIVE_HIGH) ||
                       (polarity == PK_IRQ_POLARITY_ACTIVE_LOW)) ||
                     !((trigger == PK_IRQ_TRIGGER_LEVEL_SENSITIVE) ||
@@ -72,20 +72,20 @@ pk_irq_setup(PkIrqId irq,
 
     if (polarity == PK_IRQ_POLARITY_ACTIVE_HIGH)
     {
-        out32(OCCHW_OIEPR_OR(irq), OCCHW_IRQ_MASK32(irq));
+        out32(PMHW_OIEPR_OR(irq), PMHW_IRQ_MASK32(irq));
     }
     else
     {
-        out32(OCCHW_OIEPR_CLR(irq), OCCHW_IRQ_MASK32(irq));
+        out32(PMHW_OIEPR_CLR(irq), PMHW_IRQ_MASK32(irq));
     }
 
     if (trigger == PK_IRQ_TRIGGER_EDGE_SENSITIVE)
     {
-        out32(OCCHW_OITR_OR(irq), OCCHW_IRQ_MASK32(irq));
+        out32(PMHW_OITR_OR(irq), PMHW_IRQ_MASK32(irq));
     }
     else
     {
-        out32(OCCHW_OITR_CLR(irq), OCCHW_IRQ_MASK32(irq));
+        out32(PMHW_OITR_CLR(irq), PMHW_IRQ_MASK32(irq));
     }
 
     pk_critical_section_exit(&ctx);
@@ -115,7 +115,8 @@ pk_irq_handler_set(PkIrqId      irq,
 
     if (PK_ERROR_CHECK_API)
     {
-        PK_ERROR_IF(!OCCHW_IRQ_VALID(irq) ||
+        PK_ERROR_IF(!PLATHW_IRQ_VALID(irq) ||
+                    !PLATHW_IRQ_OWNED(irq) ||
                     (handler == 0),
                     PK_INVALID_ARGUMENT_IRQ_HANDLER);
     }

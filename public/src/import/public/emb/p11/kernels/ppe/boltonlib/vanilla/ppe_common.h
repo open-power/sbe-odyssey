@@ -27,13 +27,6 @@
 
 /// \file ppe_common.h
 /// \brief Common header for PPE
-///
-/// This header is maintained as part of the PK port for PPE, but needs to be
-/// physically present in the PMX area to allow dropping PMX code as a whole
-/// to other teams.
-
-// -*- WARNING: This file is maintained as part of PK.  Do not edit in -*-
-// -*- the PMX area as your edits will be lost.                         -*-
 
 #ifndef __ASSEMBLER__
     #include <stdint.h>

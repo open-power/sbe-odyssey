@@ -117,7 +117,6 @@ $(call ADD_PPEIMAGE_INCDIR,$(IMAGE),\
 	$(PMLIB_INCDIR)/registers \
 	$(OCC_SRCDIR)/occlib \
 	$(POWMANLIB_SRCDIR) \
-	$(POWMANLIB_SRCDIR)/occ \
 	$(PMLIB_INCDIR)/registers \
 	$(BOLTONLIB_SRCDIR)/$(_PPE_TYPE)\
 	)

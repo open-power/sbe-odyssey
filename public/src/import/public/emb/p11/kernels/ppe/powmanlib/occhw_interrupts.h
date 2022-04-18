@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/emb/p11/kernels/ppe/powmanlib/occ/occhw_interrupts.h $ */
+/* $Source: public/src/import/public/emb/p11/kernels/ppe/powmanlib/occhw_interrupts.h $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -115,6 +115,7 @@
 /// vector is now in use.
 
 #define OCCHW_IRQS 64
+#define EXTERNAL_IRQS OCCHW_IRQS
 
 // Please keep the string definitions up-to-date as they are used for
 // reporting in the Simics simulation.
@@ -198,20 +199,6 @@
 #define OCCHW_IRQ_TARGET_ID_GPE2            6
 #define OCCHW_IRQ_TARGET_ID_GPE3            7
 
-// OCB interrupt type values (level or edge)
-#define OCCHW_IRQ_TYPE_LEVEL            0
-#define OCCHW_IRQ_TYPE_EDGE             1
-
-// OCB interrupt polarity values (high or low, rising falling)
-#define OCCHW_IRQ_POLARITY_LO           0
-#define OCCHW_IRQ_POLARITY_FALLING      0
-#define OCCHW_IRQ_POLARITY_HI           1
-#define OCCHW_IRQ_POLARITY_RISING       1
-
-// OCB interrupt mask values (masked or enabled)
-#define OCCHW_IRQ_MASKED                0
-#define OCCHW_IRQ_ENABLED               1
-
 // Note: All standard-product IPI uses are declared here to avoid conflicts
 // Validation- and lab-only IPI uses are documented in validation.h
 
@@ -225,58 +212,23 @@
 
 #ifndef __ASSEMBLER__
 
+// This is a 64-bit mask, with big-endian bit 'irq' set.
+#define OCCHW_IRQ_MASK64(irq) (0x8000000000000000ull >> (irq))
+
 /// This expression recognizes only those IRQ numbers that have named
 /// (non-reserved) interrupts in the OCB interrupt controller.
 
 // There are so many invalid interrupts now that it's a slight improvement in
 // code size to let the compiler optimize the invalid IRQs to a bit mask for
-// the comparison. (CMO: This still true?)
-
+// the comparison.
 #define OCCHW_VALID_IRQ_MASK \
     ( ~( OCCHW_IRQ_MASK64(OCCHW_IRQ_SPARE_2)  | \
          OCCHW_IRQ_MASK64(OCCHW_IRQ_SPARE_15) ) )
 
-#define OCCHW_IRQ_VALID(irq) \
+#define PLATHW_IRQ_VALID(irq) \
     ( { unsigned __irq = (unsigned)(irq); \
         ( OCCHW_IRQ_MASK64(__irq) & OCCHW_VALID_IRQ_MASK ); } )
 
-/// This is a 64-bit mask, with big-endian bit 'irq' set.
-#define OCCHW_IRQ_MASK64(irq) (0x8000000000000000ull >> (irq))
-
-#endif  /* __ASSEMBLER__ */
-
-/// This is a 32-bit mask, with big-endian bit (irq % 32) set.
-#define OCCHW_IRQ_MASK32(irq) (0x80000000 >> ((irq) % 32))
-
-
-#ifndef __ASSEMBLER__
-
-    // These macros select OCB interrupt controller registers based on the IRQ
-    // number.
-
-    #define OCCHW_OIMR_CLR(irq) (((irq) & 0x20) ? OCB_OIMR1_CLR : OCB_OIMR0_CLR)
-    #define OCCHW_OIMR_OR(irq)  (((irq) & 0x20) ? OCB_OIMR1_OR  : OCB_OIMR0_OR)
-
-    #define OCCHW_OISR(irq)     (((irq) & 0x20) ? OCB_OISR1     : OCB_OISR0)
-    #define OCCHW_OISR_CLR(irq) (((irq) & 0x20) ? OCB_OISR1_CLR : OCB_OISR0_CLR)
-    #define OCCHW_OISR_OR(irq)  (((irq) & 0x20) ? OCB_OISR1_OR  : OCB_OISR0_OR)
-
-    #define OCCHW_OIEPR(irq)     (((irq) & 0x20) ? OCB_OIEPR1     : OCB_OIEPR0)
-    #define OCCHW_OIEPR_OR(irq)  (((irq) & 0x20) ? OCB_OIEPR1_OR  : OCB_OIEPR0_OR)
-    #define OCCHW_OIEPR_CLR(irq) (((irq) & 0x20) ? OCB_OIEPR1_CLR : OCB_OIEPR0_CLR)
-    #define OCCHW_OITR(irq)      (((irq) & 0x20) ? OCB_OITR1      : OCB_OITR0)
-    #define OCCHW_OITR_OR(irq)   (((irq) & 0x20) ? OCB_OITR1_OR   : OCB_OITR0_OR)
-    #define OCCHW_OITR_CLR(irq)  (((irq) & 0x20) ? OCB_OITR1_CLR  : OCB_OITR0_CLR)
-
-    #define OCCHW_OIRRA(irq)     (((irq) & 0x20) ? OCB_OIRR1A     : OCB_OIRR0A)
-    #define OCCHW_OIRRA_OR(irq)  (((irq) & 0x20) ? OCB_OIRR1A_OR  : OCB_OIRR0A_OR)
-    #define OCCHW_OIRRA_CLR(irq) (((irq) & 0x20) ? OCB_OIRR1A_CLR : OCB_OIRR0A_CLR)
-    #define OCCHW_OIRRB(irq)     (((irq) & 0x20) ? OCB_OIRR1B     : OCB_OIRR0B)
-    #define OCCHW_OIRRB_OR(irq)  (((irq) & 0x20) ? OCB_OIRR1B_OR  : OCB_OIRR0B_OR)
-    #define OCCHW_OIRRB_CLR(irq) (((irq) & 0x20) ? OCB_OIRR1B_CLR : OCB_OIRR0B_CLR)
-    #define OCCHW_OIRRC(irq)     (((irq) & 0x20) ? OCB_OIRR1C     : OCB_OIRR0C)
-    #define OCCHW_OIRRC_OR(irq)  (((irq) & 0x20) ? OCB_OIRR1C_OR  : OCB_OIRR0C_OR)
-    #define OCCHW_OIRRC_CLR(irq) (((irq) & 0x20) ? OCB_OIRR1C_CLR : OCB_OIRR0C_CLR)
 #endif  /* __ASSEMBLER__ */
 
 #endif  /* __OCCHW_INTERRUPTS_H__ */
