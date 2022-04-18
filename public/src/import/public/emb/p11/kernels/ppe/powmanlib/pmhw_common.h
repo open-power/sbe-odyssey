@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/emb/p11/kernels/ppe/powmanlib/occhw_common.h $ */
+/* $Source: public/src/import/public/emb/p11/kernels/ppe/powmanlib/pmhw_common.h $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2022                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,28 +22,50 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __OCCHW_COMMON_H__
-#define __OCCHW_COMMON_H__
+#ifndef __PMHW_COMMON_H__
+#define __PMHW_COMMON_H__
 
-/// \file occhw_common.h
-/// \brief Common header for SSX and PMX versions of OCCHW
-///
-/// This header is maintained as part of the SSX port for OCCHW, but needs to be
-/// physically present in the PMX area to allow dropping PMX code as a whole
-/// to other teams.
+/// \file pmhw_common.h
+/// \brief Common header for OCC and TCC platforms (all kernels)
 
-// -*- WARNING: This file is maintained as part of SSX.  Do not edit in -*-
-// -*- the PMX area as your edits will be lost.                         -*-
-
-#include "occhw_interrupts.h"
-#include "occhw_irq_config.h"
-
-#define EXTERNAL_IRQS OCCHW_IRQS
 
 #ifndef __ASSEMBLER__
     #include <stdint.h>
     extern unsigned int g_ocb_timer_divider; //grm
 #endif
+
+
+////////////////////////////////////////////////////////////////////////////
+// Interrupt trigger definitions, IRQ list and IRQ routing table
+////////////////////////////////////////////////////////////////////////////
+
+// OCB interrupt type values (level or edge)
+#define PMHW_IRQ_TYPE_LEVEL            0
+#define PMHW_IRQ_TYPE_EDGE             1
+
+// OCB interrupt polarity values (high or low, rising falling)
+#define PMHW_IRQ_POLARITY_LO           0
+#define PMHW_IRQ_POLARITY_FALLING      0
+#define PMHW_IRQ_POLARITY_HI           1
+#define PMHW_IRQ_POLARITY_RISING       1
+
+// OCB interrupt mask values (masked or enabled)
+#define PMHW_IRQ_MASKED                0
+#define PMHW_IRQ_ENABLED               1
+
+
+#if (defined(__OCC_PLAT) && defined(__TCC_PLAT))
+    #error "Both __OCC_PLAT and __TCC_PLAT cannot simultaneously be defined"
+#elif defined(__OCC_PLAT)
+    #include "occhw_interrupts.h"
+    #include "occhw_irq_config.h"
+#elif defined(__TCC_PLAT)
+    #include "tcchw_interrupts.h"
+    #include "tcchw_irq_config.h"
+#else
+    #error "Either __OCC_PLAT or __TCC_PLAT must be defined by the application"
+#endif
+
 
 ////////////////////////////////////////////////////////////////////////////
 // Configuration
@@ -56,19 +78,15 @@
 #define OCCHW_NTHREADS           8
 #define OCCHW_NDTSCPM            4
 
-#ifndef PROCESSOR_EC_LEVEL
-    #define MURANO_DD10 1
-#else
-    #define MURANO_DD10 0
-#endif
-
 #ifndef SIMICS_ENVIRONMENT
     #define SIMICS_ENVIRONMENT 0
 #endif
 
-//
-//CMO: I think it makes more sense to define the below in the occhw_irq_config file.
-//
+
+////////////////////////////////////////////////////////////////////////////
+// Instances and IRQ register macros
+////////////////////////////////////////////////////////////////////////////
+
 /// OCC or TCC instance ID's that can be read from the PPE42 PIR and used in IPC operations.
 /// NOTE: The PPC instance ID is not associated with a register and was assigned to be
 ///       four as it was most convenient to do so in the code.
@@ -94,6 +112,38 @@
 #endif
 #define OCCHW_INST_ID_SELF APPCFG_OCC_INSTANCE_ID
 
+/// This is a 32-bit mask, with big-endian bit (irq % 32) set.
+#define PMHW_IRQ_MASK32(irq) (0x80000000 >> ((irq) % 32))
+
+#ifndef __ASSEMBLER__
+    // These macros select OCB interrupt controller regs based on IRQ number.
+
+    #define PMHW_OIMR_CLR(irq) (((irq) & 0x20) ? OCB_OIMR1_CLR : OCB_OIMR0_CLR)
+    #define PMHW_OIMR_OR(irq)  (((irq) & 0x20) ? OCB_OIMR1_OR  : OCB_OIMR0_OR)
+
+    #define PMHW_OISR(irq)     (((irq) & 0x20) ? OCB_OISR1     : OCB_OISR0)
+    #define PMHW_OISR_CLR(irq) (((irq) & 0x20) ? OCB_OISR1_CLR : OCB_OISR0_CLR)
+    #define PMHW_OISR_OR(irq)  (((irq) & 0x20) ? OCB_OISR1_OR  : OCB_OISR0_OR)
+
+    #define PMHW_OIEPR(irq)     (((irq) & 0x20) ? OCB_OIEPR1     : OCB_OIEPR0)
+    #define PMHW_OIEPR_OR(irq)  (((irq) & 0x20) ? OCB_OIEPR1_OR  : OCB_OIEPR0_OR)
+    #define PMHW_OIEPR_CLR(irq) (((irq) & 0x20) ? OCB_OIEPR1_CLR : OCB_OIEPR0_CLR)
+    #define PMHW_OITR(irq)      (((irq) & 0x20) ? OCB_OITR1      : OCB_OITR0)
+    #define PMHW_OITR_OR(irq)   (((irq) & 0x20) ? OCB_OITR1_OR   : OCB_OITR0_OR)
+    #define PMHW_OITR_CLR(irq)  (((irq) & 0x20) ? OCB_OITR1_CLR  : OCB_OITR0_CLR)
+
+    #define PMHW_OIRRA(irq)     (((irq) & 0x20) ? OCB_OIRR1A     : OCB_OIRR0A)
+    #define PMHW_OIRRA_OR(irq)  (((irq) & 0x20) ? OCB_OIRR1A_OR  : OCB_OIRR0A_OR)
+    #define PMHW_OIRRA_CLR(irq) (((irq) & 0x20) ? OCB_OIRR1A_CLR : OCB_OIRR0A_CLR)
+    #define PMHW_OIRRB(irq)     (((irq) & 0x20) ? OCB_OIRR1B     : OCB_OIRR0B)
+    #define PMHW_OIRRB_OR(irq)  (((irq) & 0x20) ? OCB_OIRR1B_OR  : OCB_OIRR0B_OR)
+    #define PMHW_OIRRB_CLR(irq) (((irq) & 0x20) ? OCB_OIRR1B_CLR : OCB_OIRR0B_CLR)
+    #define PMHW_OIRRC(irq)     (((irq) & 0x20) ? OCB_OIRR1C     : OCB_OIRR0C)
+    #define PMHW_OIRRC_OR(irq)  (((irq) & 0x20) ? OCB_OIRR1C_OR  : OCB_OIRR0C_OR)
+    #define PMHW_OIRRC_CLR(irq) (((irq) & 0x20) ? OCB_OIRR1C_CLR : OCB_OIRR0C_CLR)
+#endif  /* __ASSEMBLER__ */
+
+
 ////////////////////////////////////////////////////////////////////////////
 // Clocking
 ////////////////////////////////////////////////////////////////////////////
@@ -103,15 +153,7 @@
 // designs.
 
 /// The pervasive hang timer divider used for the OCB timer
-///
-/// This is supposed to yield an approximately 1us timer, however for MURANO
-/// DD10 we need to use an approximate 64us timer
-
-#if MURANO_DD10
-    #define OCB_TIMER_DIVIDER_DEFAULT (64 * 512)
-#else
-    #define OCB_TIMER_DIVIDER_DEFAULT 512
-#endif
+#define OCB_TIMER_DIVIDER_DEFAULT (64 * 512)
 
 /// This is set to the above default at compile time but may be updated
 /// at run time. grm

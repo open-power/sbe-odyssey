@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/emb/p11/kernels/ppe/powmanlib/occ/occhw_irq_config.h $ */
+/* $Source: public/src/import/public/emb/p11/kernels/ppe/powmanlib/occhw_irq_config.h $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -32,15 +32,8 @@
 
 
 /// Number of OCC instance ID's that can be read from the PPE42 PIR and used in IPCs.
-#define OCCHW_MAX_INSTANCES 5
+#define PLATHW_MAX_INSTANCES 5
 
-/// This macro should be defined in the pk_app_cfg.h file for external interrupts
-/// that are to be used by the OCC instance.  If not defined elsewhere then
-/// interrupts owned by this instance will have the default configuration and be
-/// masked.
-#ifndef OCCHW_EXT_IRQS_CONFIG
-    #define OCCHW_EXT_IRQS_CONFIG
-#endif
 
 #ifndef __ASSEMBLER__
     /// These globals are statically initialized elsewhere
@@ -52,7 +45,7 @@
     extern uint64_t g_ext_irqs_polarity;
     extern uint64_t g_ext_irqs_enable;
 
-    #define OCCHW_IRQ_OWNED(irq) ((OCCHW_IRQ_MASK64(irq) & g_ext_irqs_owned) != 0)
+    #define PLATHW_IRQ_OWNED(irq) ((OCCHW_IRQ_MASK64(irq) & g_ext_irqs_owned) != 0)
 
 #endif
 

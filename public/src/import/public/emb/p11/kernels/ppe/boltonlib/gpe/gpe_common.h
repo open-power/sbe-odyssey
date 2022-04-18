@@ -28,19 +28,12 @@
 
 /// \file gpe_common.h
 /// \brief Common header for GPE
-///
-/// This header is maintained as part of the PK port for GPE, but needs to be
-/// physically present in the PMX area to allow dropping PMX code as a whole
-/// to other teams.
-
-// -*- WARNING: This file is maintained as part of PK.  Do not edit in -*-
-// -*- the PMX area as your edits will be lost.                         -*-
 
 #ifndef __ASSEMBLER__
     #include <stdint.h>
 #endif
 
-#include "occhw_common.h"
+#include "pmhw_common.h"
 
 /// Each GPE instance has it's own interrupt status register these macros
 /// are added for convenience in accessing the correct register
