@@ -40,8 +40,8 @@
 // SROM IMAGE
 #define SROM_ORIGIN                     0xFFF70000
 #define SROM_SIZE                       0x10000
-#define SROM_DATA_SIZE                  0xFFFF  //TODO: Reduce after PAK is  added
-#define SROM_BOOTLOADER_SCRATCH_START   (SRAM_ORIGIN + SROM_DATA_SIZE + LAST_BYTE)
+#define SROM_DATA_SIZE                  0x10000
+#define SROM_BOOTLOADER_SCRATCH_START   (SRAM_ORIGIN + SROM_DATA_SIZE)
 #define SROM_BOOTLOADER_SCRATCH_SIZE    0x2D000
 
 // BOOTLOADER IMAGE
@@ -55,6 +55,10 @@
 #define SPPE_SIZE                       (SRAM_SIZE - HASH_LIST_SIZE - SPPE_SCRATCH_SIZE - RUNTIME_EMBED_PAK)
 #define SPPE_SCRATCH_START              (SPPE_ORIGIN + SPPE_SIZE)
 #define SBE_CODE_BOOT_PIBMEM_MAIN_MSG   0x0F
+
+// HASH LIST START OFFSET
+// NOTE: We will always keep hash list at end of sram
+#define HASH_LIST_START_OFFSET          (SRAM_END - HASH_LIST_SIZE)
 
 #endif  // __ODYSSEY_LINK_H
 

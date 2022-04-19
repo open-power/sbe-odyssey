@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -179,7 +180,7 @@ const uint16_t ROM_VERSION = 2;
 const uint8_t  ROM_HASH_ALG = 2;
 const uint8_t  ROM_SIG_ALG = 2;
 const uint8_t  SW_KEY_COUNT = 2;
-const size_t   SECURE_HEADER_SIZE = 15368;
+const size_t   SECURE_HEADER_SIZE = 15360;
 // The payload should contain minimum a hash,size of the file name and file name
 // Hence it can never be less that 65 bytes
 const size_t   MINIMUM_SECURE_HEADER_PAYLOAD_SIZE = 65;

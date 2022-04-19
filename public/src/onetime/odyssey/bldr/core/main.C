@@ -28,18 +28,12 @@
 #include "globals.H"
 #include "sbeexeintf.H"
 #include "threadutil.H"
+#include "progresscode.H"
+#include "sbeutil.H"
 
 extern "C" {
 #include "pk_api.h"
 }
-
-////////////////////////////////////////////////////////////////
-//// @brief Stacks for Non-critical Interrupts ( timebase, timers )
-////////////////////////////////////////////////////////////////
-#define INITIAL_PK_TIMEBASE   0
-#define BLDR_NONCRITICAL_STACK_SIZE 512
-//Keep stack size greater than SPI_READ_SIZE_BYTES.
-#define BLDR_THREAD_SECURE_BOOT_STACK_SIZE 12288
 
 // SBE Frequency to be used to initialise PK
 uint32_t g_odysseyfreqency = SBE_REF_BASE_FREQ_HZ;
@@ -104,12 +98,17 @@ int  main(int argc, char **argv)
 
     do
     {
+         //Clear out old progress code
+         UPDATE_BLDR_SBE_PROGRESS_CODE(0x00)
+
         rc = pk_initialize((PkAddress)bldr_Kernel_NC_Int_stack,
                 BLDR_NONCRITICAL_STACK_SIZE,
                 INITIAL_PK_TIMEBASE, // initial_timebase
                 g_odysseyfreqency );
 
         SBE_ENTER(SBE_FUNC);
+
+        UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_PK_INIT)
 
         if (rc)
         {
@@ -132,6 +131,8 @@ int  main(int argc, char **argv)
         }
 
         SBE_INFO(SBE_FUNC "bldrSecureBoot_thread thread initilised");
+
+        UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_THREAD_CREATION)
 
         pk_start_threads();
 

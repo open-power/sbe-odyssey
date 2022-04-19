@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -68,7 +69,7 @@ static int valid_ver_alg(ROM_version_raw* ver_alg, uint8_t hdr_type)
     if(SBE::get16(&ver_alg->version) != HEADER_VERSION)
     {
         SBE_ERROR(SBE_FUNC "FAILED: bad header version");
-        status = (hdr_type == PREFIX_HDR) ? PREFIX_HDR_VER_TEST : SW_HDR_VER_TEST;
+        status = (hdr_type == PREFIX_HDR) ? SHV_RC_PREFIX_HDR_VER_TEST : SHV_RC_SW_HDR_VER_TEST;
         return status;
     }
 
@@ -77,7 +78,7 @@ static int valid_ver_alg(ROM_version_raw* ver_alg, uint8_t hdr_type)
     if(SBE::get8(&ver_alg->hash_alg) != HASH_ALG_SHA3_512)
     {
         SBE_ERROR(SBE_FUNC "FAILED: bad hash algorithm version");
-        status = (hdr_type == PREFIX_HDR) ? PREFIX_HASH_ALGO_TEST : SW_HASH_ALGO_TEST;
+        status = (hdr_type == PREFIX_HDR) ? SHV_RC_PREFIX_HASH_ALGO_TEST : SHV_RC_SW_HASH_ALGO_TEST;
         return status;
     }
 
@@ -86,7 +87,7 @@ static int valid_ver_alg(ROM_version_raw* ver_alg, uint8_t hdr_type)
     if(SBE::get8(&ver_alg->sig_alg) != SIG_ALG_ECDSA521_DILITHIUM)
     {
         SBE_ERROR(SBE_FUNC "FAILED: bad signature algorithm version");
-        status = (hdr_type == PREFIX_HDR) ? PREFIX_SIG_ALGO_TEST : SW_SIG_ALGO_TEST;
+        status = (hdr_type == PREFIX_HDR) ? SHV_RC_PREFIX_SIG_ALGO_TEST : SHV_RC_SW_SIG_ALGO_TEST;
         return status;
     }
 
@@ -185,7 +186,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     if(SBE::get32(&container->magic_number) != ROM_MAGIC_NUMBER)
     {
         SBE_ERROR (SBE_FUNC "FAILED : bad container magic number");
-        VERIFY_FAILED(MAGIC_NUMBER_TEST);
+        VERIFY_FAILED(SHV_RC_MAGIC_NUMBER_TEST);
     }
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_MAGIC_CHECK);
@@ -195,17 +196,17 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     if(SBE::get16(&container->version) != CONTAINER_VERSION)
     {
         SBE_ERROR (SBE_FUNC "FAILED : bad container version");
-        VERIFY_FAILED(CONTAINER_VERSION_TEST);
+        VERIFY_FAILED(SHV_RC_CONTAINER_VERSION_TEST);
     }
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_CONTAINER_VER_CHECK);
 
     //Validate Container Size
     SBE_INFO("Container Size: 0x%X", SBE::get64(&container->container_size));
-    if(SBE::get64(&container->container_size) != SECURE_HEADER_SIZE)
+    if(SBE::get64(&container->container_size) != (shvReq->containerSize + shvReq->hashListSize))
     {
         SBE_ERROR (SBE_FUNC "FAILED : bad container size");
-        VERIFY_FAILED(CONTAINER_SIZE_TEST);
+        VERIFY_FAILED(SHV_RC_CONTAINER_SIZE_TEST);
     }
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_CONTAINER_SIZE_CHECK);
@@ -227,7 +228,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
             {
                 SBE_INFO(SBE_FUNC "HW Key Hash Set1 & Set2 Invalid");
                 SBE_ERROR (SBE_FUNC "FAILED : Invalid HW key's");
-                VERIFY_FAILED(HW_KEY_HASH_TEST);
+                VERIFY_FAILED(SHV_RC_HW_KEY_HASH_TEST);
             }
         }
     }
@@ -256,7 +257,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     // Validate the PREFIX_HEADER_SIZE fits in our hashDataBuff
     if(hashDataBuffSize < PREFIX_HEADER_SIZE(prefix))
     {
-        VERIFY_FAILED(PREFIX_HEADER_SZ_TEST);
+        VERIFY_FAILED(SHV_RC_PREFIX_HEADER_SZ_TEST);
     }
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_PREFIX_HDR_SIZE_CHECK);
@@ -273,7 +274,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
         if(ec_verify(container->hw_pkey_a, digest, hw_data->hw_sig_a) < 1)
         {
             SBE_ERROR(SBE_FUNC "FAILED : Invalid HW signature A, ECDSA521");
-            VERIFY_FAILED(HW_ECDSA_SIG_TEST);
+            VERIFY_FAILED(SHV_RC_HW_ECDSA_SIG_TEST);
         }
     }
 
@@ -289,7 +290,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
                         shvReq->scratchSize)))
         {
             SBE_ERROR(SBE_FUNC "FAILED : Invalid HW signature D, Dilithium");
-            VERIFY_FAILED(HW_DILITHIUM_SIG_TEST);
+            VERIFY_FAILED(SHV_RC_HW_DILITHIUM_SIG_TEST);
         }
     }
 
@@ -306,7 +307,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
         if(memcmp(prefix->ecid,shvReq->hwEcid,ECID_SIZE))
         {
             SBE_ERROR(SBE_FUNC "FAILED : unauthorized prefix ecid");
-            VERIFY_FAILED(PREFIX_ECID_TEST);
+            VERIFY_FAILED(SHV_RC_PREFIX_ECID_TEST);
         }
     }
 
@@ -319,7 +320,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     // Validate the prefix payload fits in our hashDataBuff
     if (hashDataBuffSize < size)
     {
-        VERIFY_FAILED(PREFIX_PAYLD_SZ_TEST);
+        VERIFY_FAILED(SHV_RC_PREFIX_PAYLD_SZ_TEST);
     }
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_PREFIX_PAYLD_SZ_CHECK);
@@ -335,7 +336,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     if(memcmp(&hashDataBuff, digest, sizeof(sha3_t)))
     {
         SBE_ERROR(SBE_FUNC "FAILED : invalid prefix payload hash");
-        VERIFY_FAILED(PREFIX_HASH_TEST);
+        VERIFY_FAILED(SHV_RC_PREFIX_HASH_TEST);
     }
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_PREFIX_PAYLOAD_HASH_CHECK);
@@ -345,7 +346,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     if (SBE::get8(&prefix->sw_key_count) != SW_KEY_COUNT)
     {
         SBE_ERROR(SBE_FUNC "FAILED : sw key count not equal to 2");
-        VERIFY_FAILED(SW_KEY_INVALID_COUNT);
+        VERIFY_FAILED(SHV_RC_SW_KEY_INVALID_COUNT);
     }
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_SW_KEY_COUNT_CHECK);
@@ -355,7 +356,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     if(size != (sizeof(ecc_key_t) + sizeof(dilithium_key_t)))
     {
         SBE_ERROR(SBE_FUNC "FAILED : incomplete sw key protection in prefix header");
-        VERIFY_FAILED(SW_KEY_PROTECTION_TEST);
+        VERIFY_FAILED(SHV_RC_SW_KEY_PROTECTION_TEST);
     }
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_SW_KEY_PROTECTION_CHECK);
@@ -374,7 +375,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
         if(SBE::get8(&header->fw_secure_version) != shvReq->msv)
         {
             SBE_ERROR(SBE_FUNC "FAILED : bad container fw secure version");
-            VERIFY_FAILED(SECURE_VERSION_TEST);
+            VERIFY_FAILED(SHV_RC_SECURE_VERSION_TEST);
         }
     }
     else
@@ -382,7 +383,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
         if(SBE::get8(&header->fw_secure_version) >= shvReq->msv)
         {
             SBE_ERROR(SBE_FUNC "FAILED : bad container fw secure version");
-            VERIFY_FAILED(SECURE_VERSION_TEST);
+            VERIFY_FAILED(SHV_RC_SECURE_VERSION_TEST);
         }
     }
 
@@ -404,7 +405,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
         if(memcmp(prefix->ecid,shvReq->swEcid,ECID_SIZE))
         {
             SBE_ERROR(SBE_FUNC "FAILED : unauthorized SW ecid");
-            VERIFY_FAILED(SW_ECID_TEST);
+            VERIFY_FAILED(SHV_RC_SW_ECID_TEST);
         }
     }
 
@@ -425,7 +426,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
         if(ec_verify(hw_data->sw_pkey_p, digest, sw_sig->sw_sig_p) < 1)
         {
             SBE_ERROR(SBE_FUNC "FAILED : Invalid SW signature P, ECDSA521");
-            VERIFY_FAILED(SW_ECDSA_SIG_TEST);
+            VERIFY_FAILED(SHV_RC_SW_ECDSA_SIG_TEST);
         }
     }
 
@@ -441,7 +442,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
                         shvReq->scratchSize)))
         {
             SBE_ERROR(SBE_FUNC "FAILED : Invalid SW signature S, Dilithium");
-            VERIFY_FAILED(SW_DILITHIUM_SIG_TEST);
+            VERIFY_FAILED(SHV_RC_SW_DILITHIUM_SIG_TEST);
         }
     }
 
@@ -451,7 +452,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     if(SBE::get64(&header->component_id) != shvReq->componentId)
     {
         SBE_ERROR(SBE_FUNC "FAILED : invalid component ID ");
-        VERIFY_FAILED(COMPONENT_ID_TEST);
+        VERIFY_FAILED(SHV_RC_COMPONENT_ID_TEST);
     }
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_COMPONENT_ID_CHECK);
@@ -462,7 +463,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     {
         SBE_ERROR(SBE_FUNC "FAILED : Invalid protcted payload section size exp:%d, act:%d",
                    SBE::get64(&header->payload_size_protected),shvReq->hashListSize);
-        VERIFY_FAILED(SW_PROTECTED_PAYLD_SZ_TEST);
+        VERIFY_FAILED(SHV_RC_SW_PROTECTED_PAYLD_SZ_TEST);
     }
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_PROTECTED_PAYLOAD_SIZE_CHECK);
@@ -473,23 +474,24 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     {
         SBE_ERROR(SBE_FUNC "FAILED : Invalid un-protcted payload section size exp:%d, act:%d",
                    SBE::get64(&header->payload_size_unprotected),shvReq->unproctectedPayloadSize);
-        VERIFY_FAILED(SW_UNPROTECTED_PAYLD_SZ_TEST);
+        VERIFY_FAILED(SHV_RC_SW_UNPROTECTED_PAYLD_SZ_TEST);
     }
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_UNPROCTCTED_PAYLOAD_SIZE_CHECK);
 
     // Validate hash of hash list(payload).
-    sha3_Hash((uint8_t*)shvReq->hashListStartOffset, shvReq->hashListSize, &digest);
     //Return the calculated SHA3-512 Payload Hash.
-    memcpy(shvRsp->sha3.payloadHash, digest, sizeof(sha3_t));
+    //We are just returing the hash calculated during pak read, which was passed
+    //as a input
+    memcpy(shvRsp->sha3.payloadHash, shvReq->payloadHash, sizeof(sha3_t));
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_PAYLOAD_HASH_CALCULATION);
 
     SBE::memcpy_byte(hashDataBuff, &header->payload_hash_protected, SHA3_DIGEST_LENGTH);
-    if(memcmp(&hashDataBuff, digest, SHA3_DIGEST_LENGTH))
+    if(memcmp(&hashDataBuff, shvReq->payloadHash, SHA3_DIGEST_LENGTH))
     {
         SBE_ERROR(SBE_FUNC "FAILED : invalid sw payload hash");
-        VERIFY_FAILED(SW_HASH_TEST);
+        VERIFY_FAILED(SHV_RC_SW_HASH_TEST);
     }
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_PAYLOAD_HASH_CHECK);
@@ -497,7 +499,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     /**************************************************************************************************/
 
     SBE_INFO("Secure HDR Verified");
-    shvRsp->statusCode = COMPLETED;
+    shvRsp->statusCode = NO_ERROR;
 
     SBE_EXIT(SBE_FUNC);
     return ROM_DONE;
@@ -524,17 +526,15 @@ ROM_response verifySecureHdr(shvReq_t *shvReq, shvRsp_t *shvRsp)
     if(shvReq->containerSize != SECURE_HEADER_SIZE)
     {
         SBE_INFO(SBE_FUNC "Sanity Check: Invalid Container size");
-        VERIFY_FAILED(CONTAINER_SIZE_CHECK);
+        VERIFY_FAILED(SHV_RC_CONTAINER_SIZE_CHECK);
     }
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_CONTAINER_SIZE_CHECK);
 
-    // TODO: Uncomment below line once we start checking with actual payload.
-    //if(shvReq->hashListSize < MINIMUM_SECURE_HEADER_PAYLOAD_SIZE)
-    if(shvReq->hashListSize < 8)
+    if(shvReq->hashListSize < MINIMUM_SECURE_HEADER_PAYLOAD_SIZE)
     {
         SBE_INFO(SBE_FUNC "Sanity Check: Invalid payload size");
-        VERIFY_FAILED(MINIMUM_PAYLOAD_SIZE_CHECK);
+        VERIFY_FAILED(SHV_RC_MINIMUM_PAYLOAD_SIZE_CHECK);
     }
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_HASH_LIST_SIZE_CHECK);
@@ -544,7 +544,7 @@ ROM_response verifySecureHdr(shvReq_t *shvReq, shvRsp_t *shvRsp)
     {
         SBE_INFO(SBE_FUNC "Sanity Check: Not enough scratch size.Minimum scratch size required %d ",
                  MINIMUM_DILITHIUM_SCRATCH_SIZE);
-        VERIFY_FAILED(MINIMUM_SCRATCH_SIZE_CHECK);
+        VERIFY_FAILED(SHV_RC_MINIMUM_SCRATCH_SIZE_CHECK);
     }
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_SCRATCH_SIZE_CHECK);
@@ -553,7 +553,7 @@ ROM_response verifySecureHdr(shvReq_t *shvReq, shvRsp_t *shvRsp)
     if(shvReq->controlData.dilithiumCheck && (shvReq->scratchStart != 0x00))
     {
         SBE_INFO(SBE_FUNC "Sanity Check: Scratch start offset is NULL");
-        VERIFY_FAILED(SCRATCH_START_OFFSET_CHECK);
+        VERIFY_FAILED(SHV_RC_SCRATCH_START_OFFSET_CHECK);
     }
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_SCRATCH_START_OFFSET_CHECK);

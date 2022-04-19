@@ -36,6 +36,7 @@ extern "C" {
 //-DSCOMT_OMIT_FIELD_ACCESSORS in cross_file.txt. Once fapi support is enabled
 //we need to remove that.
 #include "p11_scom_perv_cfam.H"
+#include "sha3.H"
 
 #ifdef __cplusplus
 }
@@ -129,7 +130,7 @@ namespace SBE
     // through code comments. Expectation is 0x1cxx range is for
     // non-pk code.
     static const uint32_t PK_APP_OFFSET_SBE_START = 0x1c00;
-    enum
+    enum SH_LIST_RET_t
     {
         // For defining new panic codes refer to pk/ppe42/pk_panic_codes.h
         PANIC_ASSERT = PK_APP_OFFSET_SBE_START,
@@ -141,6 +142,29 @@ namespace SBE
      * @return - True if sbe is running on simics , false otherwise
      */
     bool isSimicsRunning();
+
+    typedef int HASH_LIST_RET_t;
+
+    enum HASH_LIST_RETURN_CODES
+    {
+        HASH_COMPARE_PASS = 0x00,
+        HASH_COMPARE_FAIL,
+        FILE_NOT_FOUND,
+    };
+
+    /*@brief - checks if file calculated file hash returned during pak read
+     *         matches with the one in hash list
+     *
+     * @param[in] - i_fname - name of the file with which hash has to be compared
+     *
+     * @param[in] - i_hash - Hash calculated during pak read
+     *
+     * @param[in] - i_hash_list - Hash list start offset
+     *
+     * @return - HASH_LIST_RET_t - If hash matches ARC_OPERATION_SUCCESSFUL else
+     *                       respective error codes
+     */
+     HASH_LIST_RET_t check_file_hash(const char *i_fname, const sha3_t &i_hash, const uint8_t *i_hash_list);
 
     /*@brief - Copy memory from an unaligned address byte by byte into
      * destination address

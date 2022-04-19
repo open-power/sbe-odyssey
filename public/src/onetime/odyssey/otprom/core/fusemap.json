@@ -7,8 +7,8 @@
         {
             "field": "ecid0",
             "field_size": 64,
-            "value": "0xFEEDFACECAFEBEEF",
-            "description": "Machine Specific ECID(0..7)"
+            "value": null,
+            "description": "Machine Specific ECID(0..7)."
         }
     ],
     "0x18001": [
@@ -19,8 +19,8 @@
         {
             "field": "ecid1",
             "field_size": 64,
-            "value": "0xFEEDFACECAFEBEEF",
-            "description": "Machine Specific ECID(8..15)"
+            "value": null,
+            "description": "Machine Specific ECID(8..15)."
         }
     ],
     "0x18002": [
