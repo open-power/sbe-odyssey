@@ -62,8 +62,9 @@ ReturnCode get_hotplug_mc_group(
     }
     else
     {
-        FAPI_TRY(mod_multicast_setup(i_target, MCGROUP_2, 0x3FFFFFFFFFFFFFFF, TARGET_STATE_PRESENT));
-        o_mcgroup = MCGROUP_2;
+        FAPI_INF("Configure all PRESENT chiplets except TP as part of multicast group 4");
+        FAPI_TRY(mod_multicast_setup(i_target, MCGROUP_4, 0x3FFFFFFFFFFFFFFF, TARGET_STATE_PRESENT));
+        o_mcgroup = MCGROUP_4;
     }
 
 fapi_try_exit:
