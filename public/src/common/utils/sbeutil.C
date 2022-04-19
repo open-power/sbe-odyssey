@@ -24,6 +24,8 @@
 /* IBM_PROLOG_END_TAG                                                     */
 #include "sbeutil.H"
 #include "cmnglobals.H"
+#include "ppe42_string.h"
+#include "sbetrace.H"
 
 namespace SBE
 {
@@ -40,6 +42,37 @@ namespace SBE
     {
         static bool simics = isSimics();
         return simics;
+    }
+
+    HASH_LIST_RET_t check_file_hash(const char *i_fname, const sha3_t &i_hash, const uint8_t *i_hash_list)
+    {
+        const int in_fnlen = strlen(i_fname);
+        while (true)
+        {
+            const uint8_t fnlen = *i_hash_list++;
+            if (!fnlen)
+            {
+                SBE_ERROR_BIN("File not found in hash list", i_fname, in_fnlen);
+                return FILE_NOT_FOUND;
+            }
+
+            const sha3_t *filehash = (const sha3_t *)(i_hash_list + fnlen);
+            if (in_fnlen == fnlen && !memcmp(i_fname, i_hash_list, fnlen))
+            {
+                if (!memcmp(filehash, i_hash, sizeof(i_hash)))
+                {
+                    SBE_INFO("File hash matches");
+                    return HASH_COMPARE_PASS;
+                }
+                else
+                {
+                    SBE_ERROR_BIN("File hash does not match", i_fname, in_fnlen);
+                    return HASH_COMPARE_FAIL;
+                }
+            }
+
+            i_hash_list = (const uint8_t *)(filehash + 1);
+        }
     }
 
     void memcpy_byte(void* vdest, const void* vsrc, size_t len)

@@ -49,8 +49,9 @@ class PakWrapper
          * @param[in] i_destinationAddr Destination buffer address.
          * @param[in] i_destinationBufferSize Size of destination buffer.
          * @param[out] o_hash Pointer to sha3_t, if NULL no hash is returned else hash is returned.
+         * @param[out] o_uncompressedSize Pointer to uncompressed file size.
          */
-        ARC_RET_t read_file(const char* i_fileName, void* i_destinationAddr, uint32_t i_destinationBufferSize, void* o_hash);
+        ARC_RET_t read_file(const char* i_fileName, void* i_destinationAddr, uint32_t i_destinationBufferSize, void* o_hash, uint32_t *o_uncompressedSize);
 
 
         __attribute__((always_inline))

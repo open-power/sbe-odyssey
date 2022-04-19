@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -52,7 +53,7 @@ typedef struct shvRsp
     }sha3;
 
     uint32_t flag = 0x00;
-    uint8_t statusCode = 0x00;
+    uint16_t statusCode = 0x00;
 }shvRsp_t;
 
 /**
@@ -62,10 +63,10 @@ typedef struct shvRsp
 typedef struct shvReq
 {
     uint32_t *containerStartOffset = NULL;
-    size_t containerSize = 0x00;
-    uint32_t *hashListStartOffset = NULL;
-    size_t hashListSize = 0x00;
-    size_t unproctectedPayloadSize = 0x00;
+    uint32_t containerSize = 0x00;
+    uint32_t hashListSize = 0x00;
+    uint32_t unproctectedPayloadSize = 0x00;
+    sha3_t *payloadHash = NULL;
     sha3_t *pubKeyHashSet1 = NULL;
     sha3_t *pubKeyHashSet2 = NULL;
     uint64_t componentId = 0x00;

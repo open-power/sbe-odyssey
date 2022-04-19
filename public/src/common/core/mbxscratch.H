@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -110,8 +111,8 @@ typedef union secureBootFailStatus
 {
     struct
     {
-        uint64_t iv_reserved : 24;
-        uint64_t iv_secureHeaderFailStatusCode : 8;
+        uint64_t iv_reserved : 20;
+        uint64_t iv_secureHeaderFailStatusCode : 12;
         uint64_t iv_unused : 32;
     };
     uint64_t iv_mbx13;

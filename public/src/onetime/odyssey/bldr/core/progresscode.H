@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/onetime/odyssey/bldr/core/globals.H $              */
+/* $Source: public/src/onetime/odyssey/bldr/core/progresscode.H $         */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2022                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2022                             */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,27 +21,29 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __GLOBALS_H
-#define __GLOBALS_H
 
-//Define trace level for Boot Loader Image
-#ifdef SBE_TRACE_LEVEL
-#undef SBE_TRACE_LEVEL
-#endif
-#define SBE_TRACE_LEVEL 2
+#ifndef _PROGRESSCODE_H_
+#define _PROGRESSCODE_H_
 
-#define SBE_REF_BASE_FREQ_HZ ((133 * 1000 * 1000)/4)
-#define SBE_PAU_DPLL_BASE_FREQ_HZ ((1968 * 1000 * 1000)/4)
+/**
+ * @brief This file contains all progress code's for odyssey Boot Loader that will be updated in
+ *        sbe messaging register
+ *
+ */
 
-//Lets set BLDR image bit as well while updating progress code
-#define UPDATE_BLDR_SBE_PROGRESS_CODE(value) SBE::updateProgressCode(0x1000000000000000, value);
+//Before Secure Header Verification Call
+#define COMPLETED_PK_INIT 0x01
+#define COMPLETED_THREAD_CREATION 0x02
+#define COMPLETED_READING_SROM_SECURE_BOOT_SETTINGS 0x03
+#define COMPLETED_WRITING_BLDR_SECURE_BOOT_SETTINGS 0x04
 
-////////////////////////////////////////////////////////////////
-//// @brief Stacks for Non-critical Interrupts ( timebase, timers )
-////////////////////////////////////////////////////////////////
-#define INITIAL_PK_TIMEBASE   0
-#define BLDR_NONCRITICAL_STACK_SIZE 512
-//Keep stack size greater than SPI_READ_SIZE_BYTES.
-#define BLDR_THREAD_SECURE_BOOT_STACK_SIZE 12288
+//Secure Header Verification Call start
+#define SHV_PROGRESS_CODE_START_OFFSET 0x0D
 
-#endif //__GLOBALS_H
+//After Secure Header Verification Call
+#define COMPLETED_HASH_CALCULATION_OF_FINAL_RESULT 0x38
+#define COMPLETED_HASH_WRITE_INTO_MEASUREMENT_REG 0x39
+#define COMPLETED_STATUS_CODE_WRITE_INTO_SCRATCH 0x3A
+#define COMPLETED_BLDR 0x3B
+
+#endif /* _PROGRESSCODE_H_ */

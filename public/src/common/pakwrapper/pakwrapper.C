@@ -25,7 +25,7 @@
 
 #include "pakwrapper.H"
 
-ARC_RET_t PakWrapper::read_file(const char* i_fileName, void* i_destinationAddr, uint32_t i_destinationBufferSize, void* o_hash)
+ARC_RET_t PakWrapper::read_file(const char* i_fileName, void* i_destinationAddr, uint32_t i_destinationBufferSize, void* o_hash, uint32_t *o_uncompressedSize)
 {
     ARC_RET_t rc = ARC_INVALID_PARAMS;
     if((i_fileName != nullptr) || (i_destinationAddr != nullptr))
@@ -34,7 +34,7 @@ ARC_RET_t PakWrapper::read_file(const char* i_fileName, void* i_destinationAddr,
 
         if (rc != ARC_OPERATION_SUCCESSFUL)
         {
-            ARC_ERROR("%s: locate_file() failed: 0x%X", i_fileName, rc);
+            ARC_ERROR(" Pak Read Failed. Rc: %x ", rc);
         }
         else
         {
@@ -42,7 +42,12 @@ ARC_RET_t PakWrapper::read_file(const char* i_fileName, void* i_destinationAddr,
                     i_destinationBufferSize, static_cast<sha3_t *>(o_hash));
             if (rc != ARC_OPERATION_SUCCESSFUL)
             {
-                ARC_ERROR("%s: decompress() failed: 0x%X", i_fileName, rc);
+                ARC_ERROR(" Pak Read Failed. Rc: %x ", rc);
+            }
+            else
+            {
+                if(o_uncompressedSize)
+                    *o_uncompressedSize = fileArchiveEntry.get_size();
             }
         }
     }
@@ -68,7 +73,7 @@ uint32_t PakWrapper::stream_file(const char* i_fileName,
             rc = iv_fileArchive.locate_file(i_fileName, fileArchiveEntry);
             if (rc != ARC_OPERATION_SUCCESSFUL)
             {
-                ARC_ERROR("%s: stream_file() failed: 0x%X", i_fileName, rc);
+                ARC_ERROR(" Pak Read Failed. Rc: %x ", rc);
             }
             else
             {
@@ -81,8 +86,7 @@ uint32_t PakWrapper::stream_file(const char* i_fileName,
                                                         scratch, static_cast<sha3_t *>(o_hash));
                     if(rc != ARC_OPERATION_SUCCESSFUL)
                     {
-                        ARC_ERROR("%s: get_stored_data_ptr() failed: 0x%X",
-                                                            i_fileName, rc);
+                        ARC_ERROR(" Pak Read Failed. Rc: %x ", rc);
                     }
                 }
                 else
