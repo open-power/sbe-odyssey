@@ -275,7 +275,6 @@ def print_ringnames(steps):
     names = []
     for step in steps:
         for hwp in step.hwps:
-            hwp.expand_body()
             names.extend(hwp.ring_names)
 
     for ring_name, ring_def in names:

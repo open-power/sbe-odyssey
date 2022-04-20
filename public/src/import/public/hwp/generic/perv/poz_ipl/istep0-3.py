@@ -271,9 +271,27 @@ def p11s_tp_pll_setup():
 
     if not ATTR_FILTER_PLL_BYPASS:
         ## Start chip filter PLLs
-        mod_lock_plls(TP chiplet, FPLL1..4)
+        ROOT_CTRL3.TP_PLLFLT1_TEST_EN_DC = 0
+        ROOT_CTRL3.TP_PLLFLT1_RESET_DC = 0
+        ROOT_CTRL3.TP_PLLFLT2_TEST_EN_DC = 0
+        ROOT_CTRL3.TP_PLLFLT2_RESET_DC = 0
+        ROOT_CTRL3.TP_PLLFLT3_TEST_EN_DC = 0
+        ROOT_CTRL3.TP_PLLFLT3_RESET_DC = 0
+        ROOT_CTRL3.TP_PLLFLT4_TEST_EN_DC = 0
+        ROOT_CTRL3.TP_PLLFLT4_RESET_DC = 0
+        mod_poll_pll_lock_fsi2pib(i_target, P11S_PERV_FPLL1 | P11S_PERV_FPLL2 | P11S_PERV_FPLL3 | P11S_PERV_FPLL4)
+
+        ## Take chip filter PLLs out of bypass
+        ROOT_CTRL3.TP_PLLFLT1_BYPASS_DC = 0
+        ROOT_CTRL3.TP_PLLFLT2_BYPASS_DC = 0
+        ROOT_CTRL3.TP_PLLFLT3_BYPASS_DC = 0
+        ROOT_CTRL3.TP_PLLFLT4_BYPASS_DC = 0
 
     if not ATTR_NEST_PLL_BYPASS:
+        ## Attempt to lock Nest PLL
+        ROOT_CTRL3.TP_PLLNEST_TEST_EN_DC = 0    # not available in headers yet - bit 24
+        ROOT_CTRL3.TP_PLLNEST_RESET_DC = 0      # not available in headers yet - bit 25
+
         ## Prepare chip for at-speed operation
         OPCG_ALIGN.SCAN_RATIO = 3         # Swich scan ratio to 4:1
 
@@ -287,8 +305,8 @@ def p11s_tp_pll_setup():
             CLOCK_CONFIG.SCK_RECEIVE_DELAY = 0x80 >> 1
             putScom(addr, SPI_CLOCK_CONFIG_REG)
 
-        ## Start nest PLL
-        mod_lock_plls(TP chiplet, PLLNEST)
+        ## Take Nest PLL out of bypass
+        ROOT_CTRL3.TP_PLLNEST_BYPASS_DC = 0
 
 def ody_tp_pll_setup():
     CPLT_CTRL1.TC_REGION13_FENCE_DC = 0   # Drop PLL region fence
@@ -677,13 +695,23 @@ def p11_sbe_config_update():
 ISTEP(2, 15, "proc_sbe_start", "SPPE")
 
 def p11_sbe_start():
-    # Kick SBEs on both Spinal and Tap
-    for sbe in (spinal SBE, all Tap SBEs):
-        kick SBE
+    ## Boot SBEs on both Spinal and Tap
+    for chip in (Spinal, all functional Taps):
+        SB_CS.SB_CS_START_RESTART_VECTOR0 = 0
+        SB_CS.SB_CS_START_RESTART_VECTOR0 = 1
+        SB_CS.SB_CS_START_RESTART_VECTOR0 = 0
 
-    # Wait for all SBEs to complete boot
-    for sbe in (spinal SBE, all Tap SBEs):
-        wait for boot, fail if times out
+    ## Wait for all SBEs to complete boot
+    bool all_done = false
+    for loop in 1..100:
+        delay(1ms, 10kcyc)
+        all_done = true
+        for chip in (Spinal, all functional Taps):
+            all_done = all_done and SB_MSG2[0]     # SB_MSG2 not defined in headers yet, it's at 5000A
+        if all_done:
+            break
+
+    fail if not all_done
 
 ISTEP(2, 16, "proc_sbe_attr_setup", "SSBE, TSBE")
 
@@ -732,7 +760,7 @@ def p11t_pll_setup():
     ## Start PLL clock and check for lock
     mod_start_stop_clock(TP chiplet, P11T_PERV_DPLLNEST)
 
-    if mod_poll_pll_lock(TP chiplet, pll::P11T_PERV_DPLLNEST) returns TIMEOUT:
+    if mod_poll_pll_lock_fsi2pib(TP chiplet, pll::P11T_PERV_DPLLNEST) returns TIMEOUT:
         ASSERT(DPLL_LOCK_ERR)
 
     ## Take DPLL out of bypass and enable frequency slewing
@@ -868,10 +896,9 @@ def p11t_chiplet_reset():
     poz_chiplet_reset(i_target, p11t_chiplet_delay_table)
 
     if not ATTR_HOTPLUG:
-        proc_hcd_core_poweron(all good cores)
-        proc_hcd_cache_poweron(all good cores)
-        proc_hcd_core_reset(all good cores)
-        proc_hcd_cache_reset(all good cores)
+        p11_hcd_ex_manual_poweron(all good cores)
+        p11_hcd_cache_reset(all good cores)
+        p11_hcd_core_reset(all good cores)
 
 def ody_chiplet_reset():
     poz_chiplet_reset(i_target, ody_chiplet_delay_table)
@@ -1059,7 +1086,7 @@ def ody_chiplet_repr_initf():
     poz_chiplet_repr_initf()
 
 def poz_chiplet_repr_initf():
-    putRing(chiplet_repr_initf = *_gptr+*_time+*_repr for all chiplets except TP)
+    putRing(chiplet_rtg = *_gptr+*_time+*_repr for all chiplets except TP)
 
 ISTEP(3, 12, "proc_chiplet_arrayinit", "SSBE, TSBE")
 
@@ -1092,8 +1119,7 @@ def p11s_chiplet_undo_force_on():
         ASSERT(STATIC_POWER_GATING_PFET_CNFG_ERR)
 
 def p11t_chiplet_undo_force_on():
-    proc_hcd_core_poweroff(all cores)
-    proc_hcd_cache_poweroff(all cores)
+    p11_hcd_ex_manual_poweroff(all good cores)
 
 ISTEP(3, 14, "proc_chiplet_initf", "SSBE, TSBE")
 
@@ -1215,7 +1241,71 @@ def poz_chiplet_dts_init():
 ISTEP(3, 23, "proc_chiplet_skewadj_setup", "TSBE")
 
 def p11t_chiplet_skewadj_setup():
-    # TBD
+    with all EQs via multicast:
+        ## Drop SkewAdj / DCAdj resets
+        NET_CTRL1[24:31] = 0
+
+    with all cores on all EQs via multicast:
+        ## Initialize Skew Adjust
+        # Put SKADJ into INIT state
+        SKEW_WRAP_SKEWADJ_SET_INIT_MODE = 0
+        # Put SKADJ into HOLD state
+        SKEW_WRAP_SKEWADJ_SET_HOLD_MODE = 0
+        # Set up wait cycles between adjust and next measurement
+        SKEW_WRAP_SKEWADJ_SET_WAIT_CNT = 0
+        SKEW_WRAP_SKEWADJ_SET_WAIT_CNT.WAIT_CNT_VALUE = SKEWADJ_WAIT_CNT       # 8
+        # Set up number of sensor toggles to ignore
+        SKEW_WRAP_SKEWADJ_SET_IGNORE_CNT = 0
+        SKEW_WRAP_SKEWADJ_SET_IGNORE_CNT.IGNORE_CNT_VALUE = SKEWADJ_IGNORE_CNT # 2
+        # Set up core PDLY override
+        SKEW_WRAP_SKEWADJ_CORE_OVERRIDE = 0
+        SKEW_WRAP_SKEWADJ_CORE_OVERRIDE.CORE_OVR_ENABLE = ATTR_SKEWADJ_CORE_PDLY_OVERRIDE[0]
+        SKEW_WRAP_SKEWADJ_CORE_OVERRIDE.CORE_OVR_VALUE  = ATTR_SKEWADJ_CORE_PDLY_OVERRIDE[12:15]
+        # Set up cache PDLY override
+        SKEW_WRAP_SKEWADJ_CACHE_OVERRIDE = 0
+        SKEW_WRAP_SKEWADJ_CACHE_OVERRIDE.CACHE_OVR_ENABLE = ATTR_SKEWADJ_CACHE_PDLY_OVERRIDE[0]
+        SKEW_WRAP_SKEWADJ_CACHE_OVERRIDE.CACHE_OVR_VALUE  = ATTR_SKEWADJ_CACHE_PDLY_OVERRIDE[12:15]
+
+        ## Initialize DC Adjust
+        # Put DCAdj into INIT state
+        DCADJ_WRAP_SET_INIT_MODE = 0
+        # Put DCAdj into HOLD state
+        DCADJ_WRAP_SET_HOLD_MODE = 0
+        # Set up DCADJ configuration:  - Invert adjustment direction
+        DCADJ_WRAP_SET_CONFIG = 0
+        DCADJ_WRAP_SET_CONFIG.ADJUSTMENT_DIR = 1
+        # Set up low pass filter delay
+        DCADJ_WRAP_SET_LOW_PASS_DLY = 0
+        DCADJ_WRAP_SET_LOW_PASS_DLY.LOW_PASS_DELAY_VALUE = DCADJ_LOW_PASS_DELAY  # 8192
+        # Set up DAC settlement delay
+        DCADJ_WRAP_SET_DAC_DLY = 0
+        DCADJ_WRAP_SET_DAC_DLY.DAC_DELAY_VALUE = DCADJ_DAC_DELAY                 # 256
+        # Set up comparator settlement delay
+        DCADJ_WRAP_SET_COMP_DLY = 0
+        DCADJ_WRAP_SET_COMP_DLY.COMP_DELAY_VALUE = DCADJ_COMP_DELAY              # 64
+        # Set up DCC override
+        DCADJ_WRAP_DCC_OVERRIDE = 0
+        DCADJ_WRAP_DCC_OVERRIDE.OVR_ENABLE = ATTR_DCADJ_DCC_OVERRIDE[0]
+        DCADJ_WRAP_DCC_OVERRIDE.OVR_VALUE  = ATTR_DCADJ_DCC_OVERRIDE[8:15]
+        # Set up duty cycle target
+        const int8_t target_override = ATTR_DCADJ_TARGET_OVERRIDE[0] ? ATTR_DCADJ_TARGET_OVERRIDE[8:15] : 0;
+        DCADJ_WRAP_SET_DCC_TARGET = 0
+        DCADJ_WRAP_SET_DCC_TARGET.TARGET_VALUE = DCADJ_DEFAULT_TARGET + target_override   # DCADJ_DEFAULT_TARGET = 64
+
+    ## Start adjusting
+    # Drop SkewAdj and DCAdj bypass
+    with all EQs via multicast:
+        if ATTR_DCADJ_BYPASS == 0:
+            NET_CTRL1[8:15] = 0
+        if ATTR_SKEWADJ_BYPASS == 0:
+            NET_CTRL1[16:23] = 0
+
+    # Start Adjust logic
+    with all cores on all EQs via multicast:
+        if ATTR_DCADJ_BYPASS == 0 and not ATTR_DCADJ_DCC_OVERRIDE[0]:
+            DCADJ_WRAP_SET_ADJUST_MODE = 0
+        if ATTR_SKEWADJ_BYPASS == 0 and not ATTR_SKEWADJ_CORE_PDLY_OVERRIDE[0]:
+            SKEW_WRAP_SKEWADJ_SET_ADJUST_MODE = 0
 
 ISTEP(3, 24, "proc_nest_enable_io", "SSBE, TSBE")
 

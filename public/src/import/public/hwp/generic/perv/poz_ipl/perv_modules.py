@@ -232,7 +232,7 @@ def mod_cbs_start(target<ANY_POZ_CHIP>, bool start_sbe=true):
         ASSERT(VDN_PGOOD_NOT_SET)
 
     SB_MSG = 0                        # Clear Selfboot Message Register
-    FSB_DOWNFIFO_RESET = 0x80000000_00000000   # Reset SBE FIFO
+    FSB_DOWNFIFO_RESET = 0x80000000   # Reset SBE FIFO
 
     # Prepare for CBS start
     CBS_CS.START_BOOT_SEQUENCER = 0
