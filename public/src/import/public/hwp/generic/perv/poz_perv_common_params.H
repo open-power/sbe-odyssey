@@ -216,28 +216,6 @@ enum mux_type : int
 };
 };
 
-
-enum chiplet_type : uint8_t
-{
-    NO_CHIPLET = 0xFF,
-
-    P11S_CT_PERV = 0,
-    P11S_CT_N0,
-    P11S_CT_N1,
-    P11S_CT_N2,
-    P11S_CT_TBUS,
-    P11S_CT_PCI,
-    P11S_CT_MC,
-    P11S_CT_PAXO,
-    P11S_CT_COUNT,
-
-    P11T_CT_PERV = 0,
-    P11T_CT_NEST,
-    P11T_CT_TBUS,
-    P11T_CT_EQ,
-    P11T_CT_COUNT,
-};
-
 /* Chiplet delays measured in PCB network levels relative to the lowest level chiplet */
 const uint8_t p11s_chiplet_delay_table[64] =
 {
@@ -260,101 +238,8 @@ const uint8_t p11t_chiplet_delay_table[64] =
     2, 3, 4,    /* EQs */
 };
 
-/* Map from chiplet ID to chiplet type */
-const chiplet_type p11s_chiplets[64] =
-{
-    /* 0x00..0x07 */
-    NO_CHIPLET, P11S_CT_PERV, NO_CHIPLET, NO_CHIPLET, P11S_CT_N0, P11S_CT_N1, P11S_CT_N2, NO_CHIPLET,
-    /* 0x08..0x0F */
-    P11S_CT_MC, P11S_CT_MC, P11S_CT_MC, P11S_CT_MC, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET,
-    /* 0x10..0x17 */
-    P11S_CT_PAXO, P11S_CT_PAXO, P11S_CT_PAXO, P11S_CT_PAXO, P11S_CT_PAXO, P11S_CT_PAXO, P11S_CT_PAXO, P11S_CT_PAXO,
-    /* 0x18..0x1F */
-    P11S_CT_PAXO, P11S_CT_PAXO, P11S_CT_PAXO, P11S_CT_PAXO, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET,
-    /* 0x20..0x27 */
-    P11S_CT_PCI, P11S_CT_PCI, P11S_CT_PCI, P11S_CT_PCI, P11S_CT_PCI, P11S_CT_PCI, NO_CHIPLET, NO_CHIPLET,
-    /* 0x28..0x2F */
-    P11S_CT_TBUS, P11S_CT_TBUS, P11S_CT_TBUS, P11S_CT_TBUS, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET,
-    /* 0x30..0x37 */
-    NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET,
-    /* 0x38..0x2F */
-    NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET,
-};
-
-const chiplet_type p11t_chiplets[64] =
-{
-    /* 0x00..0x0F */
-    NO_CHIPLET, P11T_CT_PERV, P11T_CT_NEST, P11T_CT_TBUS, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET,
-    NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET,
-    /* 0x10..0x1F */
-    NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET,
-    NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET,
-    /* 0x20..0x2F */
-    P11T_CT_EQ, P11T_CT_EQ, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET,
-    NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET,
-    /* 0x30..0x3F */
-    NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET,
-    NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET, NO_CHIPLET,
-};
-
-#define P11S_SUPPORT 1
-#define P11T_SUPPORT 1
-#define ODY_SUPPORT 0
-#define ZME_SUPPORT 0
-
-#if 0
-ReturnCode _get_chiplet_type(
-    Target<TARGET_TYPE_PERV>& i_target,
-    ATTR_NAME_Type& o_chip_type,
-    chiplet_type& o_chiplet_type)
-{
-    auto l_chip = i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>();
-    FAPI_TRY(FAPI_ATTR_GET(ATTR_NAME, l_chip, o_chip_type));
-
-    if (P11S_SUPPORT && (o_chip_type == ENUM_ATTR_NAME_P11S))
-    {
-        o_chiplet_type = p11s_chiplets[i_target.getChipletNumber()];
-    }
-    else if (P11T_SUPPORT && (o_chip_type == ENUM_ATTR_NAME_P11T))
-    {
-        o_chiplet_type = p11t_chiplets[i_target.getChipletNumber()];
-    }
-    else if (ODY_SUPPORT && (o_chip_type == ENUM_ATTR_NAME_ODYSSEY))
-    {
-        o_chiplet_type = ody_chiplets[i_target.getChipletNumber()];
-    }
-    else if (ZME_SUPPORT && (o_chip_type == ENUM_ATTR_NAME_ZMETIS))
-    {
-        o_chiplet_type = zme_chiplets[i_target.getChipletNumber()];
-    }
-    else
-    {
-        ASSERT(chip type not supported);
-    }
-
-    FAPI_ASSERT(o_chiplet_type != NO_CHIPLET, invalid chiplet target);
-
-fapi_try_exit:
-    return current_err;
-}
-
-static inline ReturnCode get_hang_pulse_config(Target<TARGET_TYPE_PERV> i_target, hang_pulse_t*& o_config)
-{
-
-}
-
-template <typename T>
-static inline ReturnCode p11s_get_chiplet_traits(Target<TARGET_TYPE_PERV> i_target, T* i_traits, T*& o_trait)
-{
-    STATIC_ASSERT(false);
-}
-
-template <typename T>
-static inline const T& p11t_get_chiplet_traits(Target<TARGET_TYPE_PERV> i_target, T* i_traits)
-{
-    return get_chiplet_traits(i_target, p11t_chiplets, i_traits);
-}
-#endif
+/* Odyssey is super boring since it only has two chiplets and both are at the same level */
+const uint8_t ody_chiplet_delay_table[64] = { 0 };
 
 /// @brief Describes a hang pulse configuration
 struct hang_pulse_t
@@ -372,60 +257,6 @@ struct constant_hang_pulse_t
     uint16_t pre_divider   : 8; ///< Pre-divider for this hang pulse
     uint16_t value         : 6; ///< Frequency value for this hang pulse
     uint16_t stop_on_xstop : 1; ///< Hang pulse should stop when a checkstop comes in
-};
-
-#if 0
-const hang_pulse_t p11s_hangpulse_setup[P11S_CT_COUNT] =
-{
-    /* P11S_CT_PERV */ p11s_perv_hangpulses,
-    /* P11S_CT_N0   */ p11s_n0_hangpulses,
-    /* P11S_CT_N1   */ p11s_n1_hangpulses,
-    /* P11S_CT_N2   */ p11s_n2_hangpulses,
-    /* P11S_CT_TBUS */ p11s_tbus_hangpulses,
-    /* P11S_CT_PCI  */ p11s_pci_hangpulses,
-    /* P11S_CT_MC   */ p11s_mc_hangpulses,
-    /* P11S_CT_PAXO */ p11s_paxo_hangpulses,
-};
-
-const hang_pulse_t p11t_hangpulse_setup[P11T_CT_COUNT] =
-{
-    /* P11S_CT_PERV */ p11t_perv_hangpulses,
-    /* P11S_CT_NEST */ p11t_nest_hangpulses,
-    /* P11S_CT_TBUS */ p11t_tbus_hangpulses,
-    /* P11S_CT_EQ   */ p11t_eq_hangpulses,
-};
-#endif
-
-struct scan_traits
-{
-    uint8_t chip_targeted  : 1; ///< Ring operations target the chip vs. the chiplet
-    uint8_t eq_chiplet     : 1; ///< Use EQ chiplet targeting rules
-};
-
-const scan_traits p11s_scan_traits[P11S_CT_COUNT] =
-{
-    //                   chip_targeted
-    //                   |      eq_chiplet
-    //                   |      |
-    /* P11S_CT_PERV */ { true,  false },
-    /* P11S_CT_N0   */ { true,  false },
-    /* P11S_CT_N1   */ { true,  false },
-    /* P11S_CT_N2   */ { true,  false },
-    /* P11S_CT_TBUS */ { false, false },
-    /* P11S_CT_PCI  */ { false, false },
-    /* P11S_CT_MC   */ { false, false },
-    /* P11S_CT_PAXO */ { false, false },
-};
-
-const scan_traits p11t_scan_traits[P11T_CT_COUNT] =
-{
-    //                   chip_targeted
-    //                   |      eq_chiplet
-    //                   |      |
-    /* P11S_CT_PERV */ { true,  false },
-    /* P11S_CT_NEST */ { true,  false },
-    /* P11S_CT_TBUS */ { false, false },
-    /* P11S_CT_EQ   */ { false, true  },
 };
 
 struct bist_params
