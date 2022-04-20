@@ -33,7 +33,7 @@
 #include "pk_trace.h"
 
 #if (PK_TRACE_SUPPORT)
-void pk_trace_binary(uint32_t i_hash_and_size, void* bufp)
+void pk_trace_binary(uint32_t i_hash_and_size, const void* bufp)
 {
     PkTraceBinary           footer;
     PkTraceBinary*          footer_ptr;
@@ -45,7 +45,7 @@ void pk_trace_binary(uint32_t i_hash_and_size, void* bufp)
     uint32_t                cb_offset;
     uint32_t                footer_offset;
     uint8_t*                dest;
-    uint8_t*                src;
+    const uint8_t*          src;
     uint32_t                index;
 
     //fill in the footer data

@@ -990,7 +990,7 @@ pk_bh_schedule(PkBottomHalf* bottom_half)
 void pk_trace_tiny(uint32_t i_parm);
 void pk_trace_big(uint32_t i_hash_and_count,
                   uint64_t i_parm1, uint64_t i_parm2);
-void pk_trace_binary(uint32_t i_hash_and_size, void* bufp);
+void pk_trace_binary(uint32_t i_hash_and_size, const void* bufp);
 void pk_trace_set_timebase(PkTimebase timebase);
 
 // set the frequency (hz) of the timebase for trace timestamps
