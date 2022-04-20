@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -47,6 +48,10 @@ extern "C" {
 #define SBE_EXIT(args...)
 #define SBE_DEBUG(args...)
 
+#define SBE_ERROR_BIN(msg, data, size)
+#define SBE_INFO_BIN(msg, data, size)
+#define SBE_DEBUG_BIN(msg, data, size)
+
 // Levels of logging
 // 0 - No tracing
 // 1 - Error
@@ -55,11 +60,15 @@ extern "C" {
 // 4 - Error, info, entry/exit, debug
 #if (SBE_TRACE_LEVEL >= 1)
 #undef SBE_ERROR
+#undef SBE_ERROR_BIN
 #define SBE_ERROR(args...) PK_TRACE(SBE_ERR_MRK"" args)
+#define SBE_ERROR_BIN(msg, data, size) PK_TRACE_BIN(SBE_ERR_MRK "" msg, data, size)
 #endif
 #if (SBE_TRACE_LEVEL >= 2)
 #undef SBE_INFO
+#undef SBE_INFO_BIN
 #define SBE_INFO(args...) PK_TRACE(SBE_INF_MRK"" args)
+#define SBE_INFO_BIN(msg, data, size) PK_TRACE_BIN(SBE_INF_MRK "" msg, data, size)
 #endif
 #if (SBE_TRACE_LEVEL >= 3)
 #undef SBE_ENTER
@@ -69,7 +78,10 @@ extern "C" {
 #endif
 #if (SBE_TRACE_LEVEL >= 4)
 #undef SBE_DEBUG
+#undef SBE_DEBUG_BIN
 #define SBE_DEBUG(args...) PK_TRACE(SBE_DEBUG_MRK"" args)
+#define SBE_DEBUG_BIN(msg, data, size) PK_TRACE_BIN(SBE_DEBUG_MRK "" msg, data, size)
 #endif
 #define SBE_TRACE(args...) PK_TRACE(args)
+#define SBE_TRACE_BIN PK_TRACE_BIN
 #endif // _SBE_TRACE_H
