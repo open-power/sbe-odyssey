@@ -10,7 +10,6 @@ import datetime
 import sys
 import os
 import textwrap
-import re
 import hashlib
 # For doing a tree listing of archive contents
 from collections import defaultdict
@@ -42,12 +41,6 @@ def cmd_add(args):
     if os.path.isfile(args.archive):
         archive.load()
 
-    # Create the manifest object get some sane defaults
-    manifest = pak.Manifest()
-    # Parse the manifest if given on the command line
-    if (args.manifest):
-        manifest.parse(args.manifest)
-
     # Go through all files passed in and process
     addFiles = list()
     for fname in args.file:
@@ -64,12 +57,10 @@ def cmd_add(args):
     # All the input files have been processed, put them into the archive
     for fname in addFiles:
         with open(fname, "rb") as f:
-            entry = pak.ArchiveEntry()
-            entry.ingest(fname, args.method, f.read())
-            archive.append(entry)
+            archive.add(fname, args.method, f.read())
 
     # Write the new or updated archive
-    return archive.save(manifest)
+    return archive.save()
 
 def cmd_extract(args):
     '''
@@ -80,14 +71,14 @@ def cmd_extract(args):
     archive.load()
 
     # Filter the list
-    archive = select_files(archive, args.file)
+    result = archive.find(args.file)
 
     # Write the files
-    for entry in archive:
-        out.print("Extracting", entry.name)
-        entry.name = os.path.join(args.outdir, entry.name)
-        os.makedirs(os.path.dirname(entry.name), exist_ok=True)
-        with open(entry.name, "wb") as f:
+    for entry in result:
+        ename = os.path.join(args.outdir, entry.name)
+        out.print("Extracting %s -> %s " % (entry.name, ename))
+        os.makedirs(os.path.dirname(ename), exist_ok=True)
+        with open(ename, "wb") as f:
             f.write(entry.ddata)
 
 def cmd_list(args):
@@ -99,11 +90,13 @@ def cmd_list(args):
     archive.load()
 
     # Filter the list
-    archive = select_files(archive, args.file)
+    result = archive.find(args.file)
+    # Rebuild the image in case anything was filtered out
+    result.build()
 
     if (args.details):
         # Utilize the entry debug code to provide the detailed info on each entry
-        for entry in archive:
+        for entry in result:
             entry.display()
     else:
         # Print an easy to read tree of the archive contents
@@ -111,7 +104,7 @@ def cmd_list(args):
         elm = tree()
 
         # Loop through the flat list of files to build a tree representation of the layout
-        for entry in archive:
+        for entry in result:
             # Start at the top of the tree for each branch we build
             branch = elm
             # Split the file name into its 'directory' pieces
@@ -134,7 +127,7 @@ def cmd_list(args):
         print_tree(elm, root=os.path.basename(args.archive))
 
     # Common output of file count and size
-    out.print("\n%d files, total size: %s (0x%08X)" % (len(archive), pakutils.humanBytes(len(archive.image)), len(archive.image)))
+    out.print("\n%d files, total size: %s (0x%08X)" % (len(result), pakutils.humanBytes(len(result.image)), len(result.image)))
 
 def cmd_remove(args):
     '''
@@ -144,9 +137,13 @@ def cmd_remove(args):
     archive = pak.Archive(args.archive)
     archive.load()
 
-    # Remove files
-    for entry in select_files(archive, args.file):
-        out.print("Removing", entry.name)
+    # Filter the list
+    result = archive.find(args.file)
+
+    # Now go through the resolved entries and remove
+    # The remove is done against the original archive
+    for entry in result:
+        out.print("Removing %s" % entry.name)
         archive.remove(entry)
 
     # Write it back out
@@ -161,12 +158,12 @@ def cmd_hash(args):
     archive.load()
 
     # Filter the list
-    archive = select_files(archive, args.file)
+    result = archive.find(args.file)
 
     with open(args.hashfile, "wb") as f:
         out.print("Writing hash", args.hashfile)
         out.moreIndent()
-        for entry in sorted(archive, key=operator.attrgetter('name')):
+        for entry in sorted(result, key=operator.attrgetter('name')):
             out.print(entry.name)
             hasher = hashlib.new(args.algorithm)
             hasher.update(entry.cdata)
@@ -179,25 +176,6 @@ def cmd_hash(args):
     return
 
 # Support functions for cmd_* functions
-def _match_files(archive, pattern):
-    pattern = re.compile(re.escape(pattern).replace("\*", ".*").replace("\?", "."))
-    for entry in archive:
-        if pattern.match(entry.name):
-            yield entry
-
-def select_files(archive, patterns):
-    if not patterns:
-        return archive
-
-    result = list()
-    for fname in patterns:
-        matches = list(_match_files(archive, fname)) + list(_match_files(archive, fname+"/*"))
-        if not matches:
-            raise pak.ArchiveError("No files matching '%s' found in archive" % fname)
-        result.extend(matches)
-
-    return result
-
 def print_tree(branch, root=None, prefix=''):
     '''
     Walk the tree passed in and print info about it
@@ -252,7 +230,6 @@ timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 parser = argparse.ArgumentParser(description="Work with hardware .pak files")
 
 # Add optional args shared across all commands
-parser.add_argument('-m', '--manifest', default=None, help="Manifest file describing the archive constraints")
 parser.add_argument('-c', '--console-level', default=out.levels.WARN, type=out.levels.argparse, choices=list(out.levels),
                       help="The output level to send to send to the console.  BASE is the default")
 
@@ -264,11 +241,11 @@ sub = subparsers.add_parser("add", description="Add files to an archive or repla
                             formatter_class=argparse.RawDescriptionHelpFormatter)
 sub.add_argument("archive", help="Archive file, will be created if it does not exist")
 sub.add_argument("file", nargs="+", help="List of files to add; directories will be added recursively")
-sub.add_argument("--method", default=pak.CM.zlib, type=pak.CM.argparse, choices=list(pak.CM), help="Compression method to use")
+sub.add_argument("-m", "--method", default=pak.CM.zlib, type=pak.CM.argparse, choices=list(pak.CM), help="Compression method to use")
 sub.epilog = textwrap.dedent('''
 
 examples:
-  > paktool -m <manifest> add archive file1 file2
+  > paktool add archive file1 file2
 ''')
 sub.set_defaults(func=cmd_add)
 

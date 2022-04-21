@@ -45,11 +45,13 @@ import tempfile
 import sys
 import signal
 import bz2
+import copy
+from enum import Enum
+
 # Import builtins so we can call the actual python print function
 # for output to the screen
 # Without that, we get stuck in a loop of calling the module print
 import builtins
-from enum import Enum
 
 # Define terminal colors
 class tcolors(Enum):
@@ -131,9 +133,52 @@ class LogLevels(Enum):
         except KeyError:
             return self
 
+class ConsoleWriter:
+    '''
+    A simple class for logging to write to the console
+    Directly using sys.stdout would be the usual path for this
+    However, the capture code plays with sys.stdout
+    Once closed there, logging breaks, even when reopened and restored
+    By putting all the output through regular print, we are insulated from that
+    We can't directly pass in print, the handler expects an object with write()
+    '''
+    def write(self, msg):
+        # Assume all output at this point has newlines, etc..
+        builtins.print(msg, end='')
+
+class LogFileFormatter(logging.Formatter):
+    '''
+    For formatting output bound for the .log file
+    '''
+    def format(self, record):
+        # Strip any colors from logged lines
+        record.msg = colorStrip(record.msg)
+        # The message to go to the log.  For now, the same across output levels
+        formatter = logging.Formatter("%(asctime)s %(levelname)-5s| %(message)s","%Y%m%d-%H%M%S")
+        return formatter.format(record)
+
+class ConsoleFormatter(logging.Formatter):
+    '''
+    For console output, either the screen or the .console file
+    Adjustments to output based on destination controlled by screenMode init variable
+    '''
+    def __init__(self, screenMode=True):
+        self.screenMode = screenMode
+
+    def format(self, record):
+        # Since we have multiple handlers, can't directly manipulate the record
+        # Create a local copy for any modifications
+        lrecord = copy.deepcopy(record)
+        if (not self.screenMode):
+            lrecord.msg = colorStrip(lrecord.msg)
+        # Format the message to go
+        formatter = logging.Formatter("%(message)s")
+        return formatter.format(lrecord)
+
 class out:
     def __init__(self, name="out"):
         self.name = name
+        # Bring the enum levels into the class for local reference
         self.levels = LogLevels
         self.consoleLevel = self.levels.BASE
         self.logLevel = self.levels.INFO
@@ -141,10 +186,33 @@ class out:
         self.indentStep = 2
         self.prefix = ""
         self.postfix = ""
-        # The consuming program can optionally setup to log
-        # By default, it is disabled
-        self.log = None
-        self.console = None
+
+        # Load in custom levels
+        for level in self.levels:
+            logging.addLevelName(level.value, level.name)
+
+        # Define the two different loggers we'll make use of
+        # These will always be defined
+        # But may not do anything if handler(s) are not active
+        self.log = logging.getLogger(self.name + "-log")
+        self.log.setLevel(self.logLevel.value)
+        # Disable until the user specifies a file to log to
+        self.log.disabled = True
+        self.console = logging.getLogger(self.name + "-console")
+        self.console.setLevel(self.consoleLevel.value)
+        # There are three types of output handled here
+        # 1) Console output to a screen
+        # 2) Console output to a file
+        # 3) Log output to a file
+        # Each requires its own handler, with console output always established
+        # Then if file logging is needed, those additional handlers are defined
+        self.consoleWrite = ConsoleWriter()
+        self.consoleScreenHandler = logging.StreamHandler(self.consoleWrite)
+        self.consoleScreenHandler.setFormatter(ConsoleFormatter())
+        self.console.addHandler(self.consoleScreenHandler)
+        self.consoleFileHandler = None
+        self.logFileHandler = None
+
         # Default value for logOnly option on output calls
         # When None, nothing happens and should be this way 99% of the time
         # This is a master chicken switch to force the output function logOnly value
@@ -220,49 +288,45 @@ class out:
         else:
             lines = [str(l_message)]
 
+        # Finally, build the output line by line
         for line in lines:
             # Set up the base line we are going to log
             # It will then get tweaked as necessary for file or screen
             formatLine = self.prefix + (' ' * self.indent) + line + self.postfix
 
             # First - the normal log
-            # This stays as is, just need to remove colors
-            logLine = formatLine
-            logLine = colorStrip(logLine)
-            logLines.append(logLine)
+            # This stays as is
+            logLines.append(formatLine)
 
-            # Second - the console and console log
-            # We need to store the console output 2 different ways
-            # s = the output going to the screen - can have color codes
-            # l = the output going to the log - can't have color codes
-            consoleLine = dict()
+            # Second - the console output/log
             # Setup the screen output
-            consoleLine['s'] = formatLine
+            consoleLine = formatLine
             # If the level is to be on the message, find the start of the line and insert
             if (doLevel):
-                idx = consoleLine['s'].find(line[0:20])
-                consoleLine['s'] =  consoleLine['s'][:idx] + level.name + ": " +  consoleLine['s'][idx:]
+                idx = consoleLine.find(line[0:20])
+                consoleLine = consoleLine[:idx] + level.name + ": " + consoleLine[idx:]
             # Setup the log output
-            consoleLine['l'] = consoleLine['s']
-            consoleLine['l'] = colorStrip(consoleLine['s'])
             consoleLines.append(consoleLine)
 
         ####
         # Output the text
         ####
         # .log output
-        if (self.log):
-            for line in logLines:
-                self.log.log(level.value, line)
+        for line in logLines:
+            self.log.log(level.value, line)
 
         # Various console output types
-        for line in consoleLines:
-            if (self.console):
-                self.console.log(level.value, line['l'])
+        # If logOnly is active, we remove the consoleScreenHanlder before call log
+        if (logOnly):
+            self.console.removeHandler(self.consoleScreenHandler)
 
-            if (not logOnly):
-                if (self.consoleLevel <= level):
-                    builtins.print(line['s'])
+        # .console output
+        for line in consoleLines:
+            self.console.log(level.value, line)
+
+        # Restore if required
+        if (logOnly):
+            self.console.addHandler(self.consoleScreenHandler)
 
     ###########################
     # setup/support functions
@@ -323,6 +387,7 @@ class out:
         If not called, will use the default defined in VarBox
         """
         self.consoleLevel = level
+        self.console.setLevel(level.value)
 
     def getLogLevel(self):
         """
@@ -336,38 +401,35 @@ class out:
         If not called, will use the default defined in VarBox
         """
         self.logLevel = level
+        self.log.setLevel(level.value)
 
     def setupLogging(self, filenameLog, filenameConsole):
         """
         Setup the logging infrastructure
         """
-        # Load in custom levels
-        for level in self.levels:
-            logging.addLevelName(level.value, level.name)
-
         # Setup main log file
         if (filenameLog):
             if (filenameLog.endswith(".bz2")):
-                logHandler = logging.StreamHandler(bz2.open(filenameLog, mode='wt', encoding='utf-8'))
+                self.logFileHandler = logging.StreamHandler(bz2.open(filenameLog, mode='wt', encoding='utf-8'))
             else:
-                logHandler = logging.FileHandler(filenameLog, mode='w')
-            logHandler.setFormatter(logging.Formatter("%(asctime)s %(levelname)-5s| %(message)s","%Y%m%d-%H%M%S"))
-
-            self.log = logging.getLogger(self.name + "-log")
-            self.log.addHandler(logHandler)
-            self.log.setLevel(self.logLevel.value)
+                self.logFileHandler = logging.FileHandler(filenameLog, mode='w')
+            # Set the output format
+            self.logFileHandler.setFormatter(LogFileFormatter())
+            # Add the new handler
+            self.log.addHandler(self.logFileHandler)
+            # Proper file created, now enable
+            self.log.disabled = False
 
         # Setup console log file
         if (filenameConsole):
             if (filenameConsole.endswith(".bz2")):
-                consoleHandler = logging.StreamHandler(bz2.open(filenameConsole, mode='wt', encoding='utf-8'))
+                self.consoleFileHandler = logging.StreamHandler(bz2.open(filenameConsole, mode='wt', encoding='utf-8'))
             else:
-                consoleHandler = logging.FileHandler(filenameConsole, mode='w')
-            consoleHandler.setFormatter(logging.Formatter("%(message)s"))
-
-            self.console = logging.getLogger(self.name + "-console")
-            self.console.addHandler(consoleHandler)
-            self.console.setLevel(self.consoleLevel.value)
+                self.consoleFileHandler = logging.FileHandler(filenameConsole, mode='w')
+            # Set the output format
+            self.consoleFileHandler.setFormatter(ConsoleFormatter(screenMode=False))
+            # Add the new handler
+            self.console.addHandler(self.consoleFileHandler)
 
     def shutdown(self):
         """

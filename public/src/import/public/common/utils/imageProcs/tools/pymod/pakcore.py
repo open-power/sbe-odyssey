@@ -35,6 +35,9 @@ from collections import UserList
 from enum import IntEnum
 from pakconstants import out
 import ast
+import fnmatch
+import copy
+import re
 
 ############################################################
 # Classes - Classes - Classes - Classes - Classes - Classes
@@ -69,7 +72,7 @@ class CM(IntEnum):
 
 class ArchiveError(Exception):
     '''
-    Put all program errors through exceptions instead of return codes
+    Put most program errors through exceptions instead of return codes
     Give us hooks into the messages should it be needed
     '''
     def __init__(self, message):
@@ -166,10 +169,13 @@ class ArchiveEntry(object):
 
         #################
         # Extended Info
-        # Track where the entry starts when read from a file
-        self.offset = None
-        # Define the entry to a fixed size defined here
+        # Define the entry to a fixed size
+        # If set on creation, used to write out the file
+        # If the flag is set on read, this variable is set to the payload size
         self.fixed_size = None
+        # Track where the entry starts when read from a file
+        # This is purely useful extra debug info to compare against a file
+        self.offset = None
 
     # The property functions for the derived values
     @property
@@ -417,12 +423,19 @@ class ArchiveEntry(object):
         Display debug data about the entry
         '''
         out.print("file: %s" % self.name)
+        # Display useful info like the compression ratio
         try:
             ratio = (self.dsize/self.csize)
         except ZeroDivisionError:
             ratio = 0
-        out.print("  offset: 0x%06X, size: %6d, flags: 0x%02X, hesize: %2d, nsize: %2d, method: %9s, crc: %04X, csize: %6d: dsize: %6d: ratio: %4.1fx, psize: %6d" %
-                  (self.offset, self.isize, self.flags, self.hesize, self.nsize, self.method, self.crc, self.csize, self.dsize, ratio, self.psize))
+        # The offset may be set if the archive has gone through the build process or been freshly read in
+        # It is not guaranteed to be set though, so print a good indicator when it is not
+        if (self.offset != None):
+            offset = "0x%06X" % self.offset
+        else:
+            offset = "N/A"
+        out.print("  size: %6d, flags: 0x%02X, hesize: %2d, nsize: %2d, method: %9s, crc: %04X, csize: %6d: dsize: %6d: ratio: %5.1fx, psize: %6d, offset: %s" %
+                  (self.isize, self.flags, self.hesize, self.nsize, self.method, self.crc, self.csize, self.dsize, ratio, self.psize, offset))
 
     def align(self, value):
         '''
@@ -438,14 +451,17 @@ class Archive(UserList):
     '''
     The class representing the archive to be created
     '''
-    def __init__(self, filename):
+    def __init__(self, filename=None):
         super().__init__()
         # The file to use when load is invoked or to write to for save
+        # Optionally given at creation, can also be set in the load/save functions
         self.filename = filename
         # The contents of file from a load or the in memory image to write on save
         self.image = None
+        # Does the pak have an end marker
+        self.end_marker = True
 
-    def validate_append(self, add):
+    def _validate_append(self, add):
         '''
         Override list append functions to prevent duplicate addition of the same file
         When a duplicate is found, instead replace it with the new entry at the same location
@@ -459,21 +475,21 @@ class Archive(UserList):
         '''
         Override list append and send through the validated append
         '''
-        self.validate_append(add)
+        self._validate_append(add)
 
     def extend(self, adds):
         '''
         Override list extend and send through the validated append
         '''
         for add in adds:
-            self.validate_append(add)
+            self._validate_append(add)
 
     def __add__(self, adds):
         '''
         Override list + operator and send through the validated append
         '''
         for add in adds:
-            self.validate_append(add)
+            self._validate_append(add)
         return self
 
     def __iadd__(self, adds):
@@ -481,18 +497,106 @@ class Archive(UserList):
         Override list += operator and send through the validated append
         '''
         for add in adds:
-            self.validate_append(add)
+            self._validate_append(add)
         return self
 
-    def load(self):
+    def remove(self, entry):
+        '''
+        Remove the entry either by name or direct object match
+
+        --------
+        Remove is a normal list function that has its behavior modified depending on input
+        If the input is a string, it assumes the user is trying to remove by entry name
+        Otherwise, it tries to do a normal list remove of the entry passed in.
+        '''
+        # If the entry is a str, match that against the name field
+        if type(entry) == str:
+            rdata = [keep for keep in self.data if keep.name != entry]
+            # If they are the same length, we didn't remove anything - let the user know
+            if len(rdata) == len(self.data):
+                raise ArchiveError("'%s' not found in archive, remove failed!" % entry)
+            # It worked, assign the new smaller list
+            self.data = rdata
+        else:
+            # Try the default list remove
+            self.data.remove(entry)
+
+    def add(self, name, method, data):
+        '''
+        Add a file to the archive
+        '''
+        # This handles creating the underlying entry for the user
+        # It does flow through append to ensure we don't duplicate something
+        entry = ArchiveEntry()
+        entry.ingest(name, method, data)
+        self.append(entry)
+
+    def extract(self, name):
+        '''
+        Return the uncompressed contents of the entry specified by name
+        '''
+        # First find it
+        result = self.find(name)
+
+        # No result, throw an error
+        if not result:
+            raise ArchiveError("File '%s' not found for extact!" % (name))
+
+        # Too many matches to name, throw an error
+        if len(result) > 1:
+            raise ArchiveError("%d matches for name '%s' found!  Only 1 allowed." % (len(result), name))
+
+        # Return the data
+        return result[0].ddata
+
+    def find(self, patterns):
+        '''
+        Search the archive for names matching patterns and return them
+        '''
+        if not patterns:
+            return self
+
+        # If the input patterns is a string, recast as a single value in list
+        # Otherwise below it will be gone through character by character
+        if type(patterns) == str:
+            patterns = [patterns]
+
+        # Local function to assist in our search below
+        def _match_files(archive, pattern):
+            pattern = re.compile(re.escape(pattern).replace("\*", ".*").replace("\?", "."))
+            for entry in archive:
+                if pattern.match(entry.name):
+                    yield entry
+
+        # Search for it
+        result = Archive()
+        for fname in patterns:
+            matches = list(_match_files(self, fname)) + list(_match_files(self, fname+"/*"))
+            if not matches:
+                raise ArchiveError("No files matching '%s' found in archive" % fname)
+            result.extend(matches)
+
+        return result
+
+    def load(self, filename=None):
         '''
         Load the given archive and process it into the ArchiveEntry classes
         '''
+
+        # If the filename was given at load time, set the internal variable
+        if (filename):
+            self.filename = filename
+
         # See if the input archive already exists as a file
         # If it doesn't, throw an error.. maybe make that supressable
         if not os.path.isfile(self.filename):
             out.error("The given archive file \'%s\' does not exist!" % self.filename)
             return None
+
+        # Assume a load of an existing archive will not have the end marker
+        # If it does, we will catch that in the processing and set the indicator
+        # This will preserve that value across archive operations
+        self.end_marker = False
 
         # Read the entire file into the image for reference
         with open(self.filename, "rb") as f:
@@ -510,6 +614,7 @@ class Archive(UserList):
                 pass # Do nothing, this looks like a valid block that will get processed further
             elif (int.from_bytes(self.image[offset:(offset + 4)], 'big') == PAK_END):
                 # Hit the end, get out of here
+                self.end_marker = True
                 break
             else:
                 raise ArchiveError("Unknown magic block found at offset: %d" % offset)
@@ -535,15 +640,10 @@ class Archive(UserList):
 
         return
 
-    def save(self, manifest=None):
+    def build(self):
         '''
-        Write out the ArchiveEntry information into a useable archive
+        Build the image that will be written out
         '''
-        # If a manifest is not passed in, create an empty one
-        # This gets us the defaults for manifest globals
-        if (not manifest):
-            manifest = Manifest()
-
         # Build all the contents for each entry before we try to write it
         for entry in self:
             entry.build()
@@ -557,11 +657,26 @@ class Archive(UserList):
             offset += entry.isize
 
         # Add the end marker if requested
-        if manifest.end_marker:
+        if self.end_marker:
             # First 4 bytes are the end magic
             self.image += PAK_END.to_bytes(4, 'big')
             # Last 4 bytes are the total length of the archive
             self.image += (len(self.image) + 4).to_bytes(4, 'big')
+
+    def save(self, filename=None):
+        '''
+        Write out the ArchiveEntry information into a useable archive
+        '''
+        # All the passing in of the filename to save to
+        if (filename):
+            self.filename = filename
+
+        # Make sure filename to save to is specified
+        if (self.filename == None):
+            raise ArchiveError("filename to save to not specified!")
+
+        # Rebuild the full archive, including the image to be written out
+        self.build()
 
         # We've got the image, write it out
         with open(self.filename, "wb") as f:
@@ -585,7 +700,7 @@ class Manifest(object):
     def to_dict(self):
         '''
         First attempt at function to turn the manifest class back into a dictionary
-        Would be useful to write out the fully resolved manifest that matches the create archive
+        Would be useful to write out the fully resolved manifest that matches the created archive
         It works, but needs some major work
         '''
         # Main dict and top sections
@@ -618,7 +733,7 @@ class Manifest(object):
 
         return d
 
-    def parse(self, manifestFile, basepath=None):
+    def parse(self, manifestFile):
         '''
         Opens, parses and fully validates a .manifest file
         '''
@@ -681,17 +796,9 @@ class Manifest(object):
                 if (subkey == "method"):
                     entry.method = CM[subvalue]
                 elif (subkey == "file"):
-                    if (basepath):
-                        # Create the fully qualified file name
-                        entry.file = os.path.join(basepath, subvalue)
-                    else:
-                        entry.file = subvalue
+                    entry.file = subvalue
                 elif (subkey == "directory"):
-                    if (basepath):
-                        # Create the fully qualified director name
-                        entry.directory = os.path.join(basepath, subvalue)
-                    else:
-                        entry.file = subvalue
+                    entry.directory = subvalue
                 elif (subkey == "pattern"):
                     entry.pattern = subvalue
                 elif (subkey == "location"):
@@ -723,6 +830,87 @@ class Manifest(object):
 
         # All done, return the total count of parsing errors encountered
         return errors
+
+
+    def build(self, basepath=None):
+        '''
+        Build out the manifest using the basepath and searching for files in the directory entries
+        '''
+        errors = 0
+        newLayouts = list()
+
+        out.print("Building manifest paths")
+
+        for layout in self.layouts:
+            # Do directory entries
+            # Walk everything under and see how it matches against the patterns provided
+            if layout.directory:
+                # Track if we find something valid in the directory
+                found = False
+                # Build the full directory path by joining with the base path
+                if (basepath):
+                    fdirectory = os.path.join(basepath, layout.directory)
+                else:
+                    fdirectory = layout.directory
+                if (os.path.isdir(fdirectory)):
+                    for walkroot, walkdir, walkfiles in os.walk(fdirectory):
+                        for pat in layout.pattern:
+                            for f in fnmatch.filter(walkfiles, pat):
+                                # We found a match, create a new layout entry to load into the final
+                                lnew = ManifestLayout()
+                                lnew.name = os.path.join(layout.name, f)
+                                lnew.method = layout.method
+                                lnew.file = os.path.join(walkroot, f)
+                                newLayouts.append(lnew)
+                                found = True
+                # If nothing valid was found, flag it for the user - safe to assume they meant to find something
+                if not found:
+                    errors += 1
+                    out.error("For layout entry '%s', the directory '%s' had no matches for the pattern '%s'" % (layout.name, layout.directory, layout.pattern))
+
+            # If it's an individual file layout, do some simple check and expand the file name
+            elif layout.file:
+                # Build the full file name (ffile), if basepath was given
+                if (basepath):
+                    ffile = os.path.join(basepath, layout.file)
+                else:
+                    ffile = layout.file
+                # Add if the file exists, otherwise throw an error for the user
+                if os.path.isfile(ffile):
+                    layout.file = ffile
+                    newLayouts.append(layout)
+                else:
+                    errors += 1
+                    out.error("For layout entry '%s', the file is not found '%s'" % (layout.name, layout.file))
+
+            # Catch all for unhandled cases, should never get there
+            else:
+                errors += 1
+                out.error("For layout entry '%s', unknown layout type!" % (layout.name))
+
+        # All done, replace the original layouts with the new layouts
+        self.layouts = copy.deepcopy(newLayouts)
+
+        return errors
+
+    def createArchive(self):
+        '''
+        Build an archive object from the layout data
+        '''
+        # The archive object to build and return
+        archive = Archive()
+
+        # With everything fully resolved, go through all the layout entries and create archive entries
+        for layout in self.layouts:
+            with open(layout.file, "rb") as f:
+                entry = ArchiveEntry()
+                entry.ingest(layout.name, layout.method, f.read(), i_size=layout.size)
+                archive.append(entry)
+
+        # Set the archive end_marker value to the manifest value
+        archive.end_marker = self.end_marker
+
+        return archive
 
 class ManifestLayout(object):
     '''
