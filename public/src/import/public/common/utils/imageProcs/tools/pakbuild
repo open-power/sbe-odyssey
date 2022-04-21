@@ -10,8 +10,6 @@ import argparse
 import textwrap
 import time
 import datetime
-import fnmatch
-import copy
 
 # Add program modules to the path
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "pymod"))
@@ -116,7 +114,7 @@ out.print("Manifest file: %s" % manifestFile)
 out.moreIndent()
 
 manifest = pak.Manifest()
-manifestErrors = manifest.parse(manifestFile, args.basepath)
+manifestErrors = manifest.parse(manifestFile)
 
 # If we've accumlated errors, exit here.  A valid manifest is a must
 if (manifestErrors):
@@ -124,60 +122,36 @@ if (manifestErrors):
     out.critical("Please correct the above errors and run again!")
     sys.exit(manifestErrors)
 
+# Build the full manifest paths and expand directory entries
+manifestErrors = manifest.build(args.basepath)
+
+# If we've accumulated errors, exit here.  All the files must exist
+if (manifestErrors):
+    out.critical("%d error(s) found building the manifest!" % manifestErrors)
+    out.critical("Please correct the above errors and run again!")
+    sys.exit(manifestErrors)
+
 out.lessIndent()
 
-# Create the archive to load into
-archive = pak.Archive(filenames["pak"])
-
-# Create the "full" manifest that the expanded data will be loaded into
-# This will resolve all base paths and expand directory wildcards
-manifestFull = pak.Manifest()
-manifestFull = copy.deepcopy(manifest)
-# Zero out the layouts, those get filled in below
-manifestFull.layouts = list()
-
-# Go through layout from manifest and start loading data
-for layout in manifest.layouts:
-    # Do directory entries
-    # Walk everything under and see how it matches against the patterns provided
-    if layout.directory and os.path.isdir(layout.directory):
-        for walkroot, walkdir, walkfiles in os.walk(layout.directory):
-            for pat in layout.pattern:
-                for f in fnmatch.filter(walkfiles, pat):
-                    # We found a match, create a new layout entry to load into the final
-                    lnew = pak.ManifestLayout()
-                    lnew.name = os.path.join(layout.name, f)
-                    lnew.method = layout.method
-                    lnew.file = os.path.join(walkroot, f)
-                    manifestFull.layouts.append(lnew)
-    elif layout.file and os.path.isfile(layout.file):
-        manifestFull.layouts.append(layout)
-    else:
-        raise pak.ArchiveError("File not found: " + layout.file)
-
-out.print("Building archive")
-# With everything fully resolved, go through all the layout entries and create archive entries
-for layout in manifestFull.layouts:
-    with open(layout.file, "rb") as f:
-        entry = pak.ArchiveEntry()
-        entry.ingest(layout.name, layout.method, f.read(), i_size=layout.size)
-        archive.append(entry)
+# Create the archive to load into from the manifest data
+out.print("Creating archive")
+archive = manifest.createArchive()
 
 out.print("Writing archive")
 # All data loaded into the archive, just write it
-archive.save(manifestFull)
+archive.save(filenames["pak"])
 
-# Write out the manifestFull as a reporting of everything in the archive
+# Write out the now fully built manifest as a reporting of everything in the archive
 # It is horribly formatted now, cleanup in the future
 with open(filenames["manifest"], 'w') as f:
-    print("#!/usr/bin/env pthon3\n", file=f)
-    print(manifestFull.to_dict(), file=f)
+    print("#!/usr/bin/env python3\n", file=f)
+    print(manifest.to_dict(), file=f)
 
 # Print all the output file
 out.print("All output in: %s" % outputPath)
 out.moreIndent()
-out.print("Archive: %s" % filenames["pak"])
 out.print("Manifest: %s" % filenames["manifest"])
+out.print("Archive: %s" % filenames["pak"])
 out.lessIndent()
 
 # Report on total run time of the program
