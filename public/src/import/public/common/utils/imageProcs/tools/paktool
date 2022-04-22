@@ -39,7 +39,8 @@ def cmd_add(args):
     '''
     # Create and load the archive
     archive = pak.Archive(args.archive)
-    archive.load()
+    if os.path.isfile(args.archive):
+        archive.load()
 
     # Create the manifest object get some sane defaults
     manifest = pak.Manifest()
