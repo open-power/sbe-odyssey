@@ -293,7 +293,7 @@ def cmd_link(args):
         print("  %d params + %d addresses -> %d small values" % (len(params), len(addresses), len(small_data)))
         print("  %d masks + %d data -> %d big values" % (len(masks), len(data), len(big_data)))
 
-    if (len(commands) + len(small_data)) & 1 == 0:
+    if (len(commands) + len(small_data)) & 1:
         # If header + commands + small data would leave big data unaligned, add a dummy value
         small_data.append(0)
 
@@ -311,6 +311,7 @@ def cmd_link(args):
             write32(f, cmd.op << 28 | small_data.index(cmd.param) << 22 | small_data.index(cmd.address) << 15 | big_data.index(cmd.mask) << 9 | big_data.index(cmd.data))
         for value in small_data:
             write32(f, value)
+        assert(f.tell() & 7 == 0)
         for value in big_data:
             write64(f, value)
 
