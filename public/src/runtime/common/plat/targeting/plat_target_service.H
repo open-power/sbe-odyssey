@@ -124,7 +124,7 @@ namespace fapi2
             {
                  for (uint32_t i = 1; i < iv_targetCnt; i++)
                  {
-                     plat_target_handle_t l_target = iv_targets[i];
+                     plat_target_sbe_handle l_target = iv_targets[i];
                      if ((l_target.getTargetType() == i_child_type) &&
                          (i_include_nonfunctional || l_target.getFunctional()) &&
                          (l_target.getPresent()))
