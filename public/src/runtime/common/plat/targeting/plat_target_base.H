@@ -145,9 +145,9 @@ namespace fapi2
                                      bool i_functional = true )
             {
                 iv_value.insertFromRight(i_chipletNum, 0, 8);
-                iv_value.insertFromRight(i_type, 8, 5);
-                iv_value.writeBit<13>(i_present);
-                iv_value.writeBit<14>(i_functional);
+                iv_value.insertFromRight(i_type, 8, 6);
+                iv_value.writeBit<14>(i_present);
+                iv_value.writeBit<15>(i_functional);
             }
 
             ///
@@ -173,6 +173,37 @@ namespace fapi2
             }
 
             ///
+            /// @brief Get the target instance number.
+            /// @return uint8 of target instance number
+            ///
+            uint32_t getTargetInstance()
+            {
+                // Get the target type.
+                plat_target_type targetType = getTargetType();
+
+                // Get the chiplet Number
+                uint8_t chipletNum = getChipletNumber();
+
+                // Get the target Count.
+                uint32_t targetCount = getTargetCount();
+
+                // Get the chiplet offset based on target type from target Map.
+                targetInfo_t * targetMap = getTargetMap();
+                uint8_t targetOffset = 0;
+                for(uint32_t i = 0; i < targetCount; i++)
+                {
+                    SBE_DEBUG("target count is 0x%08X", (uint32_t)targetMap[i].targetCnt);
+                    if(targetMap[i].targetType == targetType)
+                    {
+                        targetOffset = targetMap[i].chipletNum;
+                        break;
+                    }
+                }
+
+                return (chipletNum - targetOffset);
+            }
+
+            ///
             /// @brief Get the plat target type
             /// @return The plat target type as a fapi2::TargetType
             ///
@@ -187,7 +218,7 @@ namespace fapi2
             ///
             void setTargetType(uint8_t i_value)
             {
-                iv_value.insertFromRight(i_value, 8, 5);
+                iv_value.insertFromRight(i_value, 8, 6);
             }
 
             ///
@@ -196,7 +227,7 @@ namespace fapi2
             ///
             bool getPresent() const
             {
-                return iv_value.getBit<13>();
+                return iv_value.getBit<14>();
             }
 
             ///
@@ -205,7 +236,7 @@ namespace fapi2
             ///
             void setPresent(const bool i_state)
             {
-               iv_value.writeBit<13>(i_state);
+               iv_value.writeBit<14>(i_state);
             }
 
             ///
@@ -214,7 +245,7 @@ namespace fapi2
             ///
             bool getFunctional() const
             {
-                return iv_value.getBit<14>();
+                return iv_value.getBit<15>();
             }
 
             ///
@@ -223,7 +254,7 @@ namespace fapi2
             ///
             void setFunctional(const bool i_state)
             {
-                iv_value.writeBit<14>(i_state);
+                iv_value.writeBit<15>(i_state);
             }
 
             ///
