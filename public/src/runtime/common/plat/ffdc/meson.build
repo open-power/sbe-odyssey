@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,3 +51,4 @@ libruntimecmnffdc = custom_target( lib_file_name,
 runtime_cmn_ffdc_libs = '-l' + lib_file_name
 runtime_cmn_ffdc_lib_paths = '-L' + meson.current_build_dir()
 runtime_cmn_ffdc_dep_libs = libruntimecmnffdc
+

@@ -22,5 +22,6 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
+#subdir('hwpf')
 subdir('core')
 subdir('plat')

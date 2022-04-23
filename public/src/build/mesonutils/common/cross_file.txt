@@ -117,6 +117,8 @@ runtime_cmn_inc_paths = [
     '/public/src/runtime/common/plat/targeting',
     '/public/src/runtime/common/plat/attributes',
     '/public/src/runtime/common/plat',
+    '/genfiles/odyssey/sppe/',
+    '/public/src/runtime/odyssey/sppe/plat/targeting/',
         ]
 
 onetime_cmn_inc_paths = [

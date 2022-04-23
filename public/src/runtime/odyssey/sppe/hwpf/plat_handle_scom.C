@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,26 +23,6 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#include "plat_hw_access.H"
-
 namespace fapi2
 {
-    fapi2::ReturnCode pibRcToFapiRc(const uint32_t i_pibRc)
-    {
-        fapi2::ReturnCode l_fapiRc = FAPI2_RC_SUCCESS;
-        //TODO: P11SBE Porting
-        // Need Error XML support.
-
-        return l_fapiRc;
-    }
-
-    fapi2::ReturnCode handle_scom_error(const uint32_t i_addr, uint8_t i_pibRc)
-    {
-        fapi2::ReturnCode l_fapiRc = FAPI2_RC_SUCCESS;
-        //TODO: P11SBE Porting
-        // Need Error XML support.
-
-        return l_fapiRc;
-    }
-
 };

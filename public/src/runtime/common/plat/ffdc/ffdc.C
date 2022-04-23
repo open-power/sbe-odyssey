@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -32,6 +33,9 @@
 
 namespace fapi2
 {
+#ifndef __noRC__
+    ReturnCode current_err;
+#endif
 
 #ifdef MINIMUM_FFDC
     // buffer used to hold ffdc data

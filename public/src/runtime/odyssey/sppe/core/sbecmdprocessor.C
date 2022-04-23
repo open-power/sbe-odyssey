@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -45,7 +46,7 @@
 
 const uint64_t PERIODIC_TIMER_INTERVAL_SECONDS = 24*60*60; // 24 hours
 
-//using namespace fapi2;
+using namespace fapi2;
 
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////

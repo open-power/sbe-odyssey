@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -31,6 +32,8 @@
 #include "plat_hw_access.H"
 #include "sbeglobals.H"
 #include "chipop_struct.H"
+
+using namespace fapi2;
 
 //////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
