@@ -36,8 +36,6 @@
 #include "target.H"
 #include "p11_scom_perv_cfam.H"
 #include "fapi2_attribute_service.H"
-#include <ffdc.H>
-#include <error_info.H>
 
 extern "C" {
 #include "pk_api.h"
@@ -53,8 +51,6 @@ extern "C" {
 uint32_t g_odysseyfreqency = SBE_REF_BASE_FREQ_HZ;
 
 uint8_t sppe_Kernel_NC_Int_stack[SPPE_NONCRITICAL_STACK_SIZE];
-
-fapi2::SbeFfdcData_t g_FfdcData;
 
 ///////////////////////////////////////////////////////////////////
 //// @brief PkThread structure for SBE Verification thread .

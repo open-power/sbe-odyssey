@@ -142,7 +142,8 @@ extern inline uint32_t sbeBuildRespHeaderStatusWordLocal (
   *             FIFO.
   */
 uint32_t sbeDownFifoSignalEot ( sbeFifoType i_type = SBE_FIFO);
-
+namespace fapi2
+{
 /**
  * @brief sbeDsSendRespHdr : Send response header to DS FIFO
  *           - This also sends the FFDC if exist.
@@ -158,7 +159,7 @@ uint32_t sbeDownFifoSignalEot ( sbeFifoType i_type = SBE_FIFO);
 uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
                           sbeResponseFfdc_t *i_ffdc=NULL,
                           sbeFifoType i_type = SBE_FIFO );
-
+}
 /**
  * @brief sbeFifoGetSource : Find where the request originated from
  *
