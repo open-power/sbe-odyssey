@@ -82,7 +82,16 @@ __machine_check:
         .global __system_reset
         .org __vectors + 0x0040
 __system_reset:
-        b   __pk_boot
+        ### __system_reset_handler is defined as a weak symbol in
+        ### ppe42_boot.S that equals __pk_boot. Thus, by default the
+        ### reset will jump to __pk_boot immediately.
+        ### You can wedge in your own handler by defining a symbol
+        ### __system_reset_handler which will override the weak
+        ### symbol and cause your own handler to be called.
+        ### If you do, remember to branch to __pk_boot eventually.
+        ### Also make sure you link your own object before libpk so
+        ### the linker gets the memo about your strong symbol.
+        b   __system_reset_handler
 
         ############################################################
         # 0x0060 : Data Storage Interrupt

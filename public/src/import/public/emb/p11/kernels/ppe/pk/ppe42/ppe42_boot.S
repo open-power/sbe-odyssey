@@ -67,6 +67,11 @@
         .global_function __pk_boot
         .global __reset_trap
 
+### The reset vector in ppe42_exceptions.S uses the weak symbol
+### __system_reset_handler, so users can define their own reset handler
+### and preempt __pk_boot. If you do, remember to call __pk_boot yourself.
+.weak __system_reset_handler
+__system_reset_handler:
 __pk_boot:
         ## Trap the reset for the debugger.  Set R0 to a non-zero value in the
         ## debugger to continue.
