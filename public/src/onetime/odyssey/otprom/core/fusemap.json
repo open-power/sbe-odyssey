@@ -407,28 +407,22 @@
             "description": "Bit 5 : Disable Dilithium Signature checks"
         },
         {
-            "field": "powerRuntimeSignatureAuthority",
-            "field_size": 1,
-            "value": "0x1",
-            "description": "Bit 6 : "
-        },
-        {
             "field": "ecidCheckEnable",
             "field_size": 1,
             "value": "0x0",
-            "description": "Bit 7 : Enable ECID check.Denotes that this part can only boot FW with matching ECIDs"
+            "description": "Bit 6 : Enable ECID check.Denotes that this part can only boot FW with matching ECIDs"
         },
         {
             "field": "matchingSecurityVersionEnforcement",
             "field_size": 1,
             "value": "0x1",
-            "description": "Bit 8 : Check for matching MSV in Secure Header"
+            "description": "Bit 7 : Check for matching MSV in Secure Header"
         },
         {
             "field": "reserved",
-            "field_size": 55,
+            "field_size": 56,
             "value": null,
-            "description": "Bit 9..63 : Reserved for future use"
+            "description": "Bit 8..63 : Reserved for future use"
         }
     ],
     "0x18018": [
