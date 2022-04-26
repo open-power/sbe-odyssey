@@ -45,7 +45,12 @@ struct PakFileHeaderCore
     uint32_t iv_magic;   //0
     union
     {
+        // Depending on the magic value this is either a file header or an end marker.
+        // If it's an end marker the next 4 bytes denote the total size of the archive.
         uint32_t iv_asize;  // total archive length
+
+        // If it's a file header the next four bytes indicate format version and
+        // the size of the extended header that follows.
         struct
         {
             uint16_t iv_version; //4
@@ -234,22 +239,24 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
 
         // Read just the first 8 bytes to check magic
         // This prevents any out of bound access just to read the whole header
-        PakFileHeaderCore hdrc;
-#ifdef __PPE42__
-        //ptr and hdrc should always 8 byte aligned, so take advantage of 64 bit load/store
-        uint64_t d64;
-        asm volatile ("lvd %0, %1 \n" : "=r"(d64): "o"(*ptr));
-        asm volatile ("stvd %1, %0 \n":"=o"(hdrc): "r"(d64));
-#else
-        memcpy(&hdrc, ptr, 8);
-#endif
+        union
+        {
+            // Make this a union of the actual header struct and a uint64_t so we can
+            // leverage the PPE's lvd/stvd instructions to fetch the header from flash.
+            PakFileHeaderCore h;
+            uint64_t u;
+        } hdrc __attribute__((aligned(8)));
+
+        // Using a volatile pointer forces the PPE compiler to emit lvd/stvd
+        hdrc.u = *(volatile uint64_t*)ptr;
+
         // The pak layout is big endian
-        hdrc.iv_magic = be32toh(hdrc.iv_magic);
-        hdrc.iv_version = be16toh(hdrc.iv_version);
-        hdrc.iv_hesize = be16toh(hdrc.iv_hesize);
+        hdrc.h.iv_magic = be32toh(hdrc.h.iv_magic);
+        hdrc.h.iv_version = be16toh(hdrc.h.iv_version);
+        hdrc.h.iv_hesize = be16toh(hdrc.h.iv_hesize);
 
         // Check the magic to make sure we are at the start of an entry
-        if (hdrc.iv_magic == PAK_END)
+        if (hdrc.h.iv_magic == PAK_END)
         {
             if (i_fname)
             {
@@ -268,9 +275,9 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
             }
         }
 
-        if (hdrc.iv_magic != PAK_START)
+        if (hdrc.h.iv_magic != PAK_START)
         {
-            ARC_ERROR("Incorrect file header magic value: 0x%08X, expected: 0x%08X", hdrc.iv_magic, PAK_START);
+            ARC_ERROR("Incorrect file header magic value: 0x%08X, expected: 0x%08X", hdrc.h.iv_magic, PAK_START);
             o_ptr = ptr;
             return ARC_FILE_CORRUPTED;
         }
@@ -294,7 +301,7 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
         hdre.iv_psize = be32toh(hdre.iv_psize);
 
         // Advance over the extended header to the data
-        ptr += hdrc.iv_hesize;
+        ptr += hdrc.h.iv_hesize;
 
         /*
          * The file name in the pak header is not zero-terminated
