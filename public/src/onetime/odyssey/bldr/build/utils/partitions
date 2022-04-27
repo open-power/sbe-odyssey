@@ -1,0 +1,8 @@
+[
+#    name        size
+    ("boot",     0x20000),
+    ("runtime",  0xC0000),
+    ("bmc",      0x8000),
+    ("hostboot", 0x8000),
+    ("vpd",      0x10000),
+]

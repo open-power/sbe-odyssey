@@ -177,11 +177,32 @@ obldr_string_file_gen = custom_target(output : 'odysseyBldrStringFile_' + ddlvl,
                                       install_dir : odyssey_bldr_install_path
                                 )
 
+obldr_part_tbl_gen = custom_target( 'obldr_part_tbl_gen',
+                                    input: 'build/utils/partitions',
+                                    output: 'part.tbl',
+                                    command: [ flashBuildTool, 'compile-ptable', '@INPUT@', '@OUTPUT@' ]
+                                  )
+
+#Create a Boot Loader empty pak file
+#This is done so that build.sh can use it and meson can install it
+outfile = odyssey_bldr_img_name + '.pak'
+
+obldr_empty_pak_file_gen = custom_target( 'obldr_empty_pak_file_gen',
+                                      output : outfile,
+                                      command : [ 'touch', '@OUTPUT@'],
+                                      build_by_default : true,
+                                      install : true,
+                                      install_dir : odyssey_bldr_install_path
+                                        )
+
 #Now lets run the post build script to package the image
 obldr_package_img = custom_target( 'obldr_package_img',
                                output : 'obldr_package_img_none',
                                depends : [ obldr_string_file_gen, obldr_symbol_file_gen,
-                                           obldr_dis_file ],
-                               command : [ packaging, meson.current_build_dir() ],
+                                           obldr_dis_file,obldr_empty_pak_file_gen,obldr_part_tbl_gen ],
+                               command : [ packaging, meson.current_build_dir(),
+                                           odyssey_bldr_img_name, pakTool,
+                                           pakBuildTool, signHashList,
+                                           odyssey_main_fsm_path],
                                build_by_default : true,
                               )

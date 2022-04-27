@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,5 +35,34 @@
 # Exit if any command fails
 set -e
 
-#Test code
-echo "Packaging..."
+BLDR_MESON_IMAGE_DIR_PATH=$1
+BLDR_BASE_IMAGE_NAME=$2
+
+#Tools
+PAK_TOOL_PATH=$3
+PAK_BUILD_TOOL_PATH=$4
+SBE_SIGN_TOOL=$5
+
+#Files
+ODYSSEY_MAIN_FSM_PATH=$6
+
+#Boot Loader manifest file path
+BLDR_MANIFEST_PATH=$SBEROOT/public/src/onetime/odyssey/bldr/build/utils/manifest
+
+# Create the pak based on boot loader manifest file
+$PAK_BUILD_TOOL_PATH $BLDR_MANIFEST_PATH -o ${BLDR_MESON_IMAGE_DIR_PATH} -n ${BLDR_BASE_IMAGE_NAME}
+
+#Lets generate the hash list
+mkdir -p ${BLDR_MESON_IMAGE_DIR_PATH}/boot
+$PAK_TOOL_PATH hash ${BLDR_MESON_IMAGE_DIR_PATH}/${BLDR_BASE_IMAGE_NAME}.pak ${BLDR_MESON_IMAGE_DIR_PATH}/boot/hash.list
+
+#Sign the Hash List
+$SBE_SIGN_TOOL -s ${BLDR_MESON_IMAGE_DIR_PATH}/scratch -i ${BLDR_MESON_IMAGE_DIR_PATH}/boot/hash.list -o ${BLDR_MESON_IMAGE_DIR_PATH}/boot/secure.hdr -c BOOT_LDR
+
+#Change dir into meson image dir path(builddir where output images are stored)
+#and then add the files into pak so that we dont endup adding the complete file
+#path as file name
+cd ${BLDR_MESON_IMAGE_DIR_PATH}
+
+#Add the hash list and secure header into the pak
+$PAK_TOOL_PATH add ${BLDR_BASE_IMAGE_NAME}.pak boot --method store
