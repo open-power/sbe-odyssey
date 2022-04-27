@@ -42,13 +42,17 @@ if [ -e ${SBEROOT_PUB}/projectrc ]; then
     source ${SBEROOT_PUB}/projectrc
 fi
 
-if [ -e ${SBEROOT_INT}/customrc ]; then
-    source ${SBEROOT_INT}/customrc
+if [ -e ${SBEROOT_INT}/projectrc ]; then
+    source ${SBEROOT_INT}/projectrc
 fi
 
 # Apply personal settings
 if [ -e ${HOME}/.sbe/customrc ]; then
     source ${HOME}/.sbe/customrc
+fi
+
+if [ -e ${SBEROOT}/customrc ]; then
+    source ${SBEROOT}/customrc
 fi
 
 if [ -z $SBE_CI_ENV_SETUP ]; then

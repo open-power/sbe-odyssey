@@ -1,4 +1,5 @@
 #Ignore below files
+customrc
 tags
 
 #Ignore images, obj, simics dir, genfiles dir
