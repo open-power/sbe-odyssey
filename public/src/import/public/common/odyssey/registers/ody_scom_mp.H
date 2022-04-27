@@ -1,0 +1,138 @@
+/* IBM_PROLOG_BEGIN_TAG                                                   */
+/* This is an automatically generated prolog.                             */
+/*                                                                        */
+/* $Source: public/src/import/public/common/odyssey/registers/ody_scom_mp.H $ */
+/*                                                                        */
+/* OpenPOWER sbe Project                                                  */
+/*                                                                        */
+/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* [+] International Business Machines Corp.                              */
+/*                                                                        */
+/*                                                                        */
+/* Licensed under the Apache License, Version 2.0 (the "License");        */
+/* you may not use this file except in compliance with the License.       */
+/* You may obtain a copy of the License at                                */
+/*                                                                        */
+/*     http://www.apache.org/licenses/LICENSE-2.0                         */
+/*                                                                        */
+/* Unless required by applicable law or agreed to in writing, software    */
+/* distributed under the License is distributed on an "AS IS" BASIS,      */
+/* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or        */
+/* implied. See the License for the specific language governing           */
+/* permissions and limitations under the License.                         */
+/*                                                                        */
+/* IBM_PROLOG_END_TAG                                                     */
+#pragma once
+
+#include "ody_scom_mp_rdf.H"
+#include "ody_scom_mp_acsm0_b0.H"
+#include "ody_scom_mp_acsm0_b1.H"
+#include "ody_scom_mp_acsm0_b2.H"
+#include "ody_scom_mp_acsm0_b3.H"
+#include "ody_scom_mp_anib0_b0.H"
+#include "ody_scom_mp_anib0_b1.H"
+#include "ody_scom_mp_anib0_b2.H"
+#include "ody_scom_mp_anib0_b3.H"
+#include "ody_scom_mp_anib10_b0.H"
+#include "ody_scom_mp_anib10_b1.H"
+#include "ody_scom_mp_anib10_b2.H"
+#include "ody_scom_mp_anib10_b3.H"
+#include "ody_scom_mp_anib11_b0.H"
+#include "ody_scom_mp_anib11_b1.H"
+#include "ody_scom_mp_anib11_b2.H"
+#include "ody_scom_mp_anib11_b3.H"
+#include "ody_scom_mp_anib12_b0.H"
+#include "ody_scom_mp_anib12_b1.H"
+#include "ody_scom_mp_anib12_b2.H"
+#include "ody_scom_mp_anib12_b3.H"
+#include "ody_scom_mp_anib13_b0.H"
+#include "ody_scom_mp_anib13_b1.H"
+#include "ody_scom_mp_anib13_b2.H"
+#include "ody_scom_mp_anib13_b3.H"
+#include "ody_scom_mp_anib1_b0.H"
+#include "ody_scom_mp_anib1_b1.H"
+#include "ody_scom_mp_anib1_b2.H"
+#include "ody_scom_mp_anib1_b3.H"
+#include "ody_scom_mp_anib2_b0.H"
+#include "ody_scom_mp_anib2_b1.H"
+#include "ody_scom_mp_anib2_b2.H"
+#include "ody_scom_mp_anib2_b3.H"
+#include "ody_scom_mp_anib3_b0.H"
+#include "ody_scom_mp_anib3_b1.H"
+#include "ody_scom_mp_anib3_b2.H"
+#include "ody_scom_mp_anib3_b3.H"
+#include "ody_scom_mp_anib4_b0.H"
+#include "ody_scom_mp_anib4_b1.H"
+#include "ody_scom_mp_anib4_b2.H"
+#include "ody_scom_mp_anib4_b3.H"
+#include "ody_scom_mp_anib5_b0.H"
+#include "ody_scom_mp_anib5_b1.H"
+#include "ody_scom_mp_anib5_b2.H"
+#include "ody_scom_mp_anib5_b3.H"
+#include "ody_scom_mp_anib6_b0.H"
+#include "ody_scom_mp_anib6_b1.H"
+#include "ody_scom_mp_anib6_b2.H"
+#include "ody_scom_mp_anib6_b3.H"
+#include "ody_scom_mp_anib7_b0.H"
+#include "ody_scom_mp_anib7_b1.H"
+#include "ody_scom_mp_anib7_b2.H"
+#include "ody_scom_mp_anib7_b3.H"
+#include "ody_scom_mp_anib8_b0.H"
+#include "ody_scom_mp_anib8_b1.H"
+#include "ody_scom_mp_anib8_b2.H"
+#include "ody_scom_mp_anib8_b3.H"
+#include "ody_scom_mp_anib9_b0.H"
+#include "ody_scom_mp_anib9_b1.H"
+#include "ody_scom_mp_anib9_b2.H"
+#include "ody_scom_mp_anib9_b3.H"
+#include "ody_scom_mp_apbonly0.H"
+#include "ody_scom_mp_dbyte0_b0.H"
+#include "ody_scom_mp_dbyte0_b1.H"
+#include "ody_scom_mp_dbyte0_b2.H"
+#include "ody_scom_mp_dbyte0_b3.H"
+#include "ody_scom_mp_dbyte1_b0.H"
+#include "ody_scom_mp_dbyte1_b1.H"
+#include "ody_scom_mp_dbyte1_b2.H"
+#include "ody_scom_mp_dbyte1_b3.H"
+#include "ody_scom_mp_dbyte2_b0.H"
+#include "ody_scom_mp_dbyte2_b1.H"
+#include "ody_scom_mp_dbyte2_b2.H"
+#include "ody_scom_mp_dbyte2_b3.H"
+#include "ody_scom_mp_dbyte3_b0.H"
+#include "ody_scom_mp_dbyte3_b1.H"
+#include "ody_scom_mp_dbyte3_b2.H"
+#include "ody_scom_mp_dbyte3_b3.H"
+#include "ody_scom_mp_dbyte4_b0.H"
+#include "ody_scom_mp_dbyte4_b1.H"
+#include "ody_scom_mp_dbyte4_b2.H"
+#include "ody_scom_mp_dbyte4_b3.H"
+#include "ody_scom_mp_dbyte5_b0.H"
+#include "ody_scom_mp_dbyte5_b1.H"
+#include "ody_scom_mp_dbyte5_b2.H"
+#include "ody_scom_mp_dbyte5_b3.H"
+#include "ody_scom_mp_dbyte6_b0.H"
+#include "ody_scom_mp_dbyte6_b1.H"
+#include "ody_scom_mp_dbyte6_b2.H"
+#include "ody_scom_mp_dbyte6_b3.H"
+#include "ody_scom_mp_dbyte7_b0.H"
+#include "ody_scom_mp_dbyte7_b1.H"
+#include "ody_scom_mp_dbyte7_b2.H"
+#include "ody_scom_mp_dbyte7_b3.H"
+#include "ody_scom_mp_dbyte8_b0.H"
+#include "ody_scom_mp_dbyte8_b1.H"
+#include "ody_scom_mp_dbyte8_b2.H"
+#include "ody_scom_mp_dbyte8_b3.H"
+#include "ody_scom_mp_dbyte9_b0.H"
+#include "ody_scom_mp_dbyte9_b1.H"
+#include "ody_scom_mp_dbyte9_b2.H"
+#include "ody_scom_mp_dbyte9_b3.H"
+#include "ody_scom_mp_drtub0.H"
+#include "ody_scom_mp_intgo_b0.H"
+#include "ody_scom_mp_intgo_b1.H"
+#include "ody_scom_mp_intgo_b2.H"
+#include "ody_scom_mp_intgo_b3.H"
+#include "ody_scom_mp_mastr_b0.H"
+#include "ody_scom_mp_mastr_b1.H"
+#include "ody_scom_mp_mastr_b2.H"
+#include "ody_scom_mp_mastr_b3.H"
+#include "ody_scom_mp_ppgc0.H"
