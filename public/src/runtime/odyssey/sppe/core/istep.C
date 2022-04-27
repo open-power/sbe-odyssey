@@ -49,8 +49,10 @@ bool validateIstep (const uint8_t i_major, const uint8_t i_minor)
         {
             break;
         }
+#if 0
         // istep 2.1 loads image to PIBMEM
         // So SBE control loop can not execute istep 2.1.
+        //TODO : P11 SBE porting
         if(( i_major == 2 ) && ( i_minor == 1) )
         {
             break;
@@ -64,6 +66,7 @@ bool validateIstep (const uint8_t i_major, const uint8_t i_minor)
                 break;
             }
         }
+#endif
 
         uint32_t prevMajorNumber =
                     SbeRegAccess::theSbeRegAccess().getSbeMajorIstepNumber();
@@ -73,8 +76,8 @@ bool validateIstep (const uint8_t i_major, const uint8_t i_minor)
                          prevMajorNumber, prevMinorNumber );
         if( 0 == prevMajorNumber )
         {
-            prevMajorNumber = 2;
-            prevMinorNumber = 1;
+            prevMajorNumber = 1;
+            prevMinorNumber = 12;
         }
 
         uint32_t nextMajorIstep = prevMajorNumber;
