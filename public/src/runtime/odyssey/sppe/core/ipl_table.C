@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -35,15 +36,35 @@ ReturnCode istepNoOp( voidfuncptr_t i_hwp)
     return FAPI2_RC_SUCCESS ;
 }
 
-// File static data
-static istepMap_t g_istep2PtrTbl[] =
+
+static istepMap_t g_istep1PtrTbl[] =
          {
              ISTEP_MAP( NULL, NULL ),
-             ISTEP_MAP(istepNoOp, NULL),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( istepNoOp, NULL ),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( NULL, NULL ),
+             ISTEP_MAP( NULL, NULL ),
          };
 
 istepTableEntry_t istepTableEntries[] = {
-    ISTEP_ENTRY(  2, g_istep2PtrTbl),
+    ISTEP_ENTRY(  1, g_istep1PtrTbl),
 };
 
 REGISTER_ISTEP_TABLE(istepTableEntries)
