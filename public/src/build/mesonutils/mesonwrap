@@ -93,9 +93,13 @@ exc_cmd()
 }
 
 if [ "$1" == "setup" ]; then
+    cat > $SBEROOT/.user_cross_file.txt <<EOF
+[constants]
+ppetools_path = '$PPETOOLS'
+EOF
 
     #Pass all cross files ir-respective of platform used.
-    CROSS_FILES=" --cross-file $CMN_MESON_CROSS_FILE_PATH --cross-file $ODYSSEY_MESON_CROSS_FILE_PATH --cross-file $P11_MESON_CROSS_FILE_PATH"
+    CROSS_FILES=" --cross-file $CMN_MESON_CROSS_FILE_PATH --cross-file $ODYSSEY_MESON_CROSS_FILE_PATH --cross-file $P11_MESON_CROSS_FILE_PATH --cross-file $SBEROOT/.user_cross_file.txt"
 
     CMD="$BASE_CMD $1 $MESON_BUILD_DIR -Dplatform=$SBE_PLATFORM $CROSS_FILES --native-file $CMN_MESON_NATIVE_FILE_PATH --prefix $INSTALL_DIR ${@:2}"
     exc_cmd "$CMD"

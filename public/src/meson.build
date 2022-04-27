@@ -134,7 +134,7 @@ endif
 obj_gen_c = generator(ppetraceapp,
                     output  : '@BASENAME@.o',
                     arguments : [
-                                 '/afs/awd/projects/cte/tools/ppetools/prod/bin/powerpc-eabi-gcc',
+                                 meson.get_external_property('powerpc_eabi_gcc'),
                                  '@EXTRA_ARGS@',
                                  meson.get_external_property('cc_flags_cmn'),
                                  cmn_abs_inc_paths, ekb_cmn_abs_inc_paths,
@@ -146,7 +146,7 @@ obj_gen_c = generator(ppetraceapp,
 obj_gen_cpp = generator(ppetraceapp,
                     output  : '@BASENAME@.o',
                     arguments : [
-                                 '/afs/awd/projects/cte/tools/ppetools/prod/bin/powerpc-eabi-gcc',
+                                 meson.get_external_property('powerpc_eabi_gcc'),
                                  '@EXTRA_ARGS@',
                                  meson.get_external_property('cc_flags_cmn'),
                                  cmn_abs_inc_paths, ekb_cmn_abs_inc_paths,
