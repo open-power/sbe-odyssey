@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+# (This is not actually an executable python script, instead a hint for text editors)
+
+# Manifest file for a pak file
+#
+# This manifest describes the input and constraints for creating the image
+# This is simply a nested Python dictionary.  Sorta looks like JSON, but allows comments
+{
+    # Global options that affect the entire archive
+    # These can be overrriden on a per entry basis if needed
+    "global": {
+        # If False, the archive end marker will not be stored. This is useful
+        # for fixed-size archives that are
+        # meant to be written to SEEPROM with another archive right behind them.
+        # If True, it will have the standard pak end marker
+        #
+        # Default: False
+        "end-marker": True,
+
+        # The compression method to be used across the image
+        # Can be overridden on a per entry basis as needed
+        #
+        # Default: store
+        "method": "store",
+    }, # end global
+    "layout": {
+        #################
+        # All DD1 content
+        #################
+        "boot/bldr.bin": {
+            "file": "public/src/onetime/odyssey/bldr/odyssey_bldr_DD1.bin",
+        },
+        "main.fsm": {
+            "file": "public/src/build/buildekb/odyssey/fsm/main.fsm",
+        },
+        "part.tbl": {
+            "file": "public/src/onetime/odyssey/bldr/part.tbl",
+        },
+    }, # end layout
+} # end dict
