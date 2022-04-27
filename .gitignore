@@ -1,6 +1,7 @@
 #Ignore below files
 customrc
 tags
+.user_cross_file.txt
 
 #Ignore images, obj, simics dir, genfiles dir
 images/**

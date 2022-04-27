@@ -6,24 +6,27 @@ cpu        = 'ppe42'
 endian     = 'big'
 
 [constants]
-cc_base_path = '/afs/awd/projects/cte/tools/ppetools/prod/bin/'
-cc_tools_base_path = '/afs/awd/projects/cte/tools/ppetools/prod/powerpc-eabi/bin/'
+ppetools_path = '/afs/awd/projects/cte/tools/ppetools/prod'
+cc_base_path = ppetools_path / 'bin'
+cc_tools_base_path = ppetools_path / 'powerpc-eabi/bin'
 
 [binaries]
 
-powerpc-eabi-gcc = cc_base_path + 'powerpc-eabi-gcc'
-objdump = cc_tools_base_path + 'objdump'
-objcopy = cc_tools_base_path + 'objcopy'
-ld      = cc_tools_base_path + 'ld'
-ar      = cc_tools_base_path + 'ar'
-as      = cc_tools_base_path + 'as'
-nm      = cc_tools_base_path + 'nm'
-strip   = cc_tools_base_path + 'strip'
+powerpc-eabi-gcc = cc_base_path / 'powerpc-eabi-gcc'
+objdump = cc_tools_base_path / 'objdump'
+objcopy = cc_tools_base_path / 'objcopy'
+ld      = cc_tools_base_path / 'ld'
+ar      = cc_tools_base_path / 'ar'
+as      = cc_tools_base_path / 'as'
+nm      = cc_tools_base_path / 'nm'
+strip   = cc_tools_base_path / 'strip'
 
-c = '/afs/awd/projects/cte/tools/ppetools/prod/bin/powerpc-eabi-gcc'
-cpp = '/afs/awd/projects/cte/tools/ppetools/prod/bin/powerpc-eabi-gcc'
+c = cc_base_path / 'powerpc-eabi-gcc'
+cpp = cc_base_path / 'powerpc-eabi-gcc'
 
 [properties]
+
+powerpc_eabi_gcc = cc_base_path / 'powerpc-eabi-gcc'
 
 pre_processing_args = ['-E']
 
