@@ -81,5 +81,3 @@ mod_scan0:  //regions=[perv, pib, occ, net])
 
          //SCAN_REGION_TYPE = 0
          putscom       SCAN_REGION_TYPE, ALL, 0xl0
-
-return

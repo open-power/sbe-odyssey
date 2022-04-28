@@ -44,5 +44,3 @@ ody_tp_chiplet_reset:
         //OPCG_ALIGN.set_SCAN_RATIO(0);          // 1:1 scan ratio
         //OPCG_ALIGN.set_OPCG_WAIT_CYCLES(0x20); // 32 wait cycles so PLATs can safely exit flush
         putscom      OPCG_ALIGN, ALL, OPCG_ALIGN__INOP_ALIGN(7) | OPCG_ALIGN__SCAN_RATIO(0) | OPCG_ALIGN__OPCG_WAIT_CYCLES(0x20)
-
-return

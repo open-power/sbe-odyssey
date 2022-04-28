@@ -80,4 +80,3 @@ mod_abist_poll:
          //if not CPLT_STAT0.ABIST_DONE_DC:
            //FAPI_TRY(ASSERT(SRAM_ABIST_DONE_BIT_ERR));
          poll     CPLT_STAT, ABIST_DONE, ABIST_DONE, ERR_ROTATE_TIMEOUT   //TODO uncomment once fencing issue is resolved
-return
