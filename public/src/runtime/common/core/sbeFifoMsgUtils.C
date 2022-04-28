@@ -51,7 +51,7 @@ static const uint32_t FIFO_WAIT_SLEEP_TIME = 1;
 extern fapi2::SbeFfdcData_t g_FfdcData;
 
 //TODO: P11SBE Porting
-#if 0
+#if 1
 using namespace fapi2;
 #endif
 inline uint32_t sbeBuildRespHeaderStatusWordGlobal (void)
@@ -337,8 +337,8 @@ uint32_t sbeDownFifoSignalEot ( sbeFifoType i_type )
     #undef SBE_FUNC
 }
 
-namespace fapi2
-{
+//namespace fapi2
+//{
 uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
                           sbeResponseFfdc_t *i_ffdc, sbeFifoType i_type )
 {
@@ -357,12 +357,12 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
         distance += len;
 
         // If no ffdc , exit;
-        if( (i_ffdc != NULL) && (i_ffdc->getRc() != fapi2::FAPI2_RC_SUCCESS))
+        if( (i_ffdc != NULL) && (i_ffdc->getRc() != FAPI2_RC_SUCCESS))
         {
             SBE_ERROR( SBE_FUNC" FAPI RC:0x%08X", i_ffdc->getRc());
             // making sure ffdc length is multiples of uint32_t
-            assert((g_FfdcData.ffdcLength % sizeof(uint32_t)) == 0);
-            uint32_t ffdcDataLenInWords = g_FfdcData.ffdcLength
+            assert((fapi2::g_FfdcData.ffdcLength % sizeof(uint32_t)) == 0);
+            uint32_t ffdcDataLenInWords = fapi2::g_FfdcData.ffdcLength
                                             / sizeof(uint32_t);
             // Set failed command information
             // Sequence Id is 0 by default for Fifo interface
@@ -379,13 +379,13 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
 
             // Send HWP ffdc data
             rc = sbeDownFifoEnq_mult ( ffdcDataLenInWords,
-                                   ( uint32_t *) &g_FfdcData.ffdcData, i_type);
+                                   ( uint32_t *) &fapi2::g_FfdcData.ffdcData, i_type);
             if (rc)
             {
                 break;
             }
             distance += ffdcDataLenInWords;
-            SBE_ERROR( SBE_FUNC" FAPI RC:0x%08X len :0x%08X", ffdcDataLenInWords, len);
+            SBE_ERROR( SBE_FUNC" ffdc length 0x%08X len :0x%08X", ffdcDataLenInWords, len);
         }
 #if 0
         // If there is a SBE internal failure
@@ -420,7 +420,7 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
     return rc;
     #undef SBE_FUNC
 }
-}
+//}
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 sbeFifoType sbeFifoGetSource (bool reset)

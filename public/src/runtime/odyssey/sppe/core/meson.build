@@ -23,7 +23,6 @@
 #
 # IBM_PROLOG_END_TAG
 infile_c = ['main.C',
-            'irq.C',
             'initthreads.C',
             'sberegaccess.C',
             'chipop_handler.C',
