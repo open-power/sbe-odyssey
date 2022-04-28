@@ -23,14 +23,17 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  ody_chiplet_arrayinit.C
+///
+/// @brief Arrayinit all chiplets except TP
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 // *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
 #include "ody_chiplet_arrayinit.H"
+#include "poz_chiplet_arrayinit.H"
 #include "poz_perv_common_params.H"
 
 
@@ -42,8 +45,10 @@ enum ODY_CHIPLET_ARRAYINIT_Private_Constants
 
 ReturnCode ody_chiplet_arrayinit(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
-
+    FAPI_INF("Entering ...");
+    FAPI_TRY(poz_chiplet_arrayinit(i_target));
 
 fapi_try_exit:
+    FAPI_INF("Exiting ...");
     return current_err;
 }
