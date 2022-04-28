@@ -23,9 +23,11 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file ody_chiplet_init.C
+///
+/// @brief configure TOPOLOGY MODE, ID & OCTANT ID in CPLT_CONF0 for all chiplets
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 // *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
@@ -42,8 +44,9 @@ enum ODY_CHIPLET_INIT_Private_Constants
 
 ReturnCode ody_chiplet_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
-
+    FAPI_INF("Entering ...");
 
 fapi_try_exit:
+    FAPI_INF("Exiting ...");
     return current_err;
 }
