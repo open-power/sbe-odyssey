@@ -67,5 +67,3 @@ ody_pib_startclocks:
         // Raise fences after clocks are stopped
         //if not i_start_not_stop:
         //CPLT_CTRL1_WO_OR = i_clock_regions << 44
-
-return

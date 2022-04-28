@@ -72,12 +72,10 @@ lock_pll:
             //CLOCK_CONFIG.set_SCK_CLOCK_DIVIDER(59);
             //CLOCK_CONFIG.set_SCK_RECEIVE_DELAY(0x80 >> 1);
             //FAPI_TRY(putScom(addr, SPI_CLOCK_CONFIG_REG));
-        putscom        CLK_CONFIG, 0xlFFFFF, CLK_CONFIG__SCK_CLOCK_DIVIDER(59) | CLK_CONFIG__SCK_RECEIVE_DELAY(0x80 >> 1)
+        //putscom        CLK_CONFIG, 0xlFFFFF, CLK_CONFIG__SCK_CLOCK_DIVIDER(59) | CLK_CONFIG__SCK_RECEIVE_DELAY(0x80 >> 1)
 
         //FAPI_INF("Take PLL out of bypass");
         //ROOT_CTRL3.set_TP_MCPLL_BYPASS_DC(0);  // not available in headers yet - bit 26
         putscom        ROOT_CTRL3_CLEAR, ALL, ROOT_CTRL3__TP_MCPLL_BYPASS_DC
-bypass_pll
+bypass_pll:
      //do nothing
-
-return
