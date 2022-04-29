@@ -26,4 +26,3 @@
 subdir('algorithms')
 subdir('utils')
 subdir('core')
-subdir('hwpf')

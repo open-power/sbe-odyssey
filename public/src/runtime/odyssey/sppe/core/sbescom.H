@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/common/hwpf/plat_handle_scom.C $                   */
+/* $Source: public/src/runtime/odyssey/sppe/core/sbescom.H $              */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2022                        */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -23,26 +22,26 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#include "plat_hw_access.H"
+#include "sbeSpMsg.H"
+#include "sbeutil.H"
+#include "sbefifo.H"
 
-namespace fapi2
-{
-    fapi2::ReturnCode pibRcToFapiRc(const uint32_t i_pibRc)
-    {
-        fapi2::ReturnCode l_fapiRc = FAPI2_RC_SUCCESS;
-        //TODO: P11SBE Porting
-        // Need Error XML support.
-
-        return l_fapiRc;
-    }
-
-    fapi2::ReturnCode handle_scom_error(const uint32_t i_addr, uint8_t i_pibRc)
-    {
-        fapi2::ReturnCode l_fapiRc = FAPI2_RC_SUCCESS;
-        //TODO: P11SBE Porting
-        // Need Error XML support.
-
-        return l_fapiRc;
-    }
-
-};
+/**
+  * @brief check if scom address is Indirect scom and perform scom
+  *
+  * @param[in]  i_isRead True if read operation, false otherwise
+  * @param[in]  i_addr scom addess
+  * @param[in]  io_data data for scom operation. For read, it is output operand.
+  * @param[out] o_hdr response header object
+  * @param[out] o_ffdc ffdc object
+  * @param[out] i_fifoType fifo type
+  * @param[in]  i_mask mask for data
+  *
+  */
+void checkIndirectAndDoScom( const bool i_isRead,
+                                 const uint64_t i_addr,
+                                 uint64_t & io_data,
+                                 sbeRespGenHdr_t *const o_hdr,
+                                 sbeResponseFfdc_t *const o_ffdc,
+                                 sbeFifoType i_fifoType = SBE_FIFO,
+                                 uint64_t i_mask = 0xffffffffffffffffull);

@@ -1,11 +1,12 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/common/hwpf/hw_access.H $                          */
+/* $Source: public/src/runtime/odyssey/sppe/hwpf/hw_access.H $            */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2012,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -49,14 +50,9 @@ namespace fapi2
     /// @param[in]  i_address    SCOM register address to read from.
     /// @param[out] o_data       Buffer that holds data read from HW target.
     /// @return fapi::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
-//TODO: P11SBE Porting
-#if 0
     template< TargetType K, MulticastType M, typename V >
         __attribute__((always_inline))
         inline ReturnCode  getScom(const Target<K, M, V>& i_target, const uint64_t i_address,
-                buffer<uint64_t>& o_data)
-#endif
-        inline ReturnCode getScom(const uint32_t i_target, const uint64_t i_address,
                 buffer<uint64_t>& o_data)
         {
             ReturnCode l_rc;
@@ -74,14 +70,9 @@ namespace fapi2
     /// @param[in] i_address    SCOM register address to write to.
     /// @param[in] i_data       Buffer that holds data to write into address.
     /// @return fapi::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
-//TODO: P11SBE Porting
-#if 0
     template< TargetType K, MulticastType M, typename V >
     __attribute__((always_inline))
     inline ReturnCode  putScom(const Target<K, M, V>& i_target, const uint64_t i_address,
-                       const buffer<uint64_t> i_data)
-#endif
-    inline ReturnCode putScom(const uint32_t i_target, const uint64_t i_address,
                        const buffer<uint64_t> i_data)
     {
         ReturnCode l_rc;

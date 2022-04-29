@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/hwpf/plat_hw_access.C $       */
+/* $Source: public/src/runtime/odyssey/sppe/core/sbecmdscomaccess.H $     */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2022                             */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,46 +21,61 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+#ifndef __SBECMDSCOMACCESS_H
+#define __SBECMDSCOMACCESS_H
 
-#include "target.H"
-#include "hw_access.H"
-#include "plat_hw_access.H"
-#include "ppe42_scom.h"
+#include <stdint.h>
 
-namespace fapi2
+/**
+  * @brief structure for GetScom Chipop (0xA201) contents.
+  *
+  */
+typedef struct
 {
+    uint32_t hiAddr;
+    uint32_t lowAddr;
+}sbeGetScomReqMsg_t;
 
-static uint32_t getEffectiveAddress(const uint32_t *i_target, const uint32_t i_addr)
+/**
+  * @brief structure for PutScom Chipop (0xA202) contents.
+  *
+  */
+typedef struct
 {
+    uint32_t hiAddr;
+    uint32_t lowAddr;
+    uint32_t hiInputData;
+    uint32_t lowInputData;
 
-    uint32_t translatedAddr = i_addr;
-    // TODO: P11SBE Porting
-    // Need target support
+    /**
+      * @brief return 64-bit Scom data
+      *
+      * @return 64-bit Scom data
+      */
+    uint64_t getScomData()
+    {
+        uint64_t data = ((uint64_t)hiInputData << 32) | lowInputData;
+        return data;
+    }
+}sbePutScomReqMsg_t;
 
-    return translatedAddr;
-}
+/*
+ * @brief sbeDownFifoGetStatus : Write data into Downstream FIFO
+ *
+ * @param[in] i_pArg Buffer to be passed to the function (not used as of now)
+ *
+ * @return    Rc from the FIFO access utility
+ */
+uint32_t sbeGetScom (uint8_t *i_pArg);
 
 
-fapi2::ReturnCode getscom_abs_wrap(const void *i_target,
-                                   const uint32_t i_addr, uint64_t *o_data)
-{
-    uint32_t l_pibRc = 0;
-    uint32_t l_addr = i_addr;
-    l_addr = getEffectiveAddress((uint32_t *)i_target, i_addr);
-    l_pibRc = getscom_abs(l_addr, o_data);
-    return (l_pibRc == PIB_NO_ERROR) ? fapi2::ReturnCode(FAPI2_RC_SUCCESS) :
-                 handle_scom_error(l_addr, l_pibRc);
-}
+/**
+ * @brief sbeDownFifoGetStatus : Write data into Downstream FIFO
+ *
+ * @param[in] i_pArg Buffer to be passed to the function (not used as of now)
+ *
+ * @return    Rc from the FIFO access utility
+ */
+uint32_t sbePutScom (uint8_t *i_pArg);
 
-fapi2::ReturnCode putscom_abs_wrap(const void *i_target,
-                                    const uint32_t i_addr, uint64_t i_data)
-{
-    uint32_t l_pibRc = 0;
-    uint32_t l_addr = i_addr;
-    l_addr = getEffectiveAddress((uint32_t *)i_target, i_addr);
-    l_pibRc = putscom_abs(l_addr, i_data);
-    return (l_pibRc == PIB_NO_ERROR) ? fapi2::ReturnCode(FAPI2_RC_SUCCESS) :
-                 handle_scom_error(l_addr, l_pibRc);
-}
-
-};
+#endif /* __SBEFW_SBECMDSCOMACCESS_H */

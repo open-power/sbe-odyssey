@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/core/sbecmdscomaccess.H $           */
+/* $Source: public/src/runtime/odyssey/sppe/hwpf/plat_handle_scom.C $     */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -21,61 +21,27 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __SBECMDSCOMACCESS_H
-#define __SBECMDSCOMACCESS_H
 
-#include <stdint.h>
+#include "plat_hw_access.H"
 
-/**
-  * @brief structure for GetScom Chipop (0xA201) contents.
-  *
-  */
-typedef struct
+namespace fapi2
 {
-    uint32_t hiAddr;
-    uint32_t lowAddr;
-}sbeGetScomReqMsg_t;
-
-/**
-  * @brief structure for PutScom Chipop (0xA202) contents.
-  *
-  */
-typedef struct
-{
-    uint32_t hiAddr;
-    uint32_t lowAddr;
-    uint32_t hiInputData;
-    uint32_t lowInputData;
-
-    /**
-      * @brief return 64-bit Scom data
-      *
-      * @return 64-bit Scom data
-      */
-    uint64_t getScomData()
+    fapi2::ReturnCode pibRcToFapiRc(const uint32_t i_pibRc)
     {
-        uint64_t data = ((uint64_t)hiInputData << 32) | lowInputData;
-        return data;
+        fapi2::ReturnCode l_fapiRc = FAPI2_RC_SUCCESS;
+        //TODO: P11SBE Porting
+        // Need Error XML support.
+
+        return l_fapiRc;
     }
-}sbePutScomReqMsg_t;
 
-/*
- * @brief sbeDownFifoGetStatus : Write data into Downstream FIFO
- *
- * @param[in] i_pArg Buffer to be passed to the function (not used as of now)
- *
- * @return    Rc from the FIFO access utility
- */
-uint32_t sbeGetScom (uint8_t *i_pArg);
+    fapi2::ReturnCode handle_scom_error(const uint32_t i_addr, uint8_t i_pibRc)
+    {
+        fapi2::ReturnCode l_fapiRc = FAPI2_RC_SUCCESS;
+        //TODO: P11SBE Porting
+        // Need Error XML support.
 
+        return l_fapiRc;
+    }
 
-/**
- * @brief sbeDownFifoGetStatus : Write data into Downstream FIFO
- *
- * @param[in] i_pArg Buffer to be passed to the function (not used as of now)
- *
- * @return    Rc from the FIFO access utility
- */
-uint32_t sbePutScom (uint8_t *i_pArg);
-
-#endif /* __SBEFW_SBECMDSCOMACCESS_H */
+};
