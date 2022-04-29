@@ -25,6 +25,30 @@
     ],
     "0x18002": [
         {
+            "scom_reg_name": "UNUSED0",
+            "description": "Unused"
+        },
+        {
+            "field": "unused",
+            "field_size": 64,
+            "value": null,
+            "description": "Unused"
+        }
+    ],
+    "0x18003": [
+        {
+            "scom_reg_name": "UNUSED1",
+            "description": "Unused"
+        },
+        {
+            "field": "unused",
+            "field_size": 64,
+            "value": null,
+            "description": "Unused"
+        }
+    ],
+    "0x18004": [
+        {
             "scom_reg_name": "EXPORT_REGULATION_AND_SECURE_FUSE",
             "description": "Export Regulation and Secure Fuse bits"
         },
@@ -125,7 +149,7 @@
             "description": "Bit 63"
         }
     ],
-    "0x18003": [
+    "0x18005": [
         {
             "scom_reg_name": "UNUSED",
             "description": "Unused"
@@ -137,7 +161,7 @@
             "description": "Unused"
         }
     ],
-    "0x18004": [
+    "0x18006": [
         {
             "scom_reg_name": "HW_PUB_KEY_HASH_SET1_1",
             "description": "Hardware Public Key Hash Set 1. (0..7)"
@@ -149,7 +173,7 @@
             "description": "Hardware Public Key Hash Set 1. (0..7)"
         }
     ],
-    "0x18005": [
+    "0x18007": [
         {
             "scom_reg_name": "HW_PUB_KEY_HASH_SET1_2",
             "description": "Hardware Public Key Hash Set 1. (8..15)"
@@ -161,7 +185,7 @@
             "description": "Hardware Public Key Hash Set 1. (8..15)"
         }
     ],
-    "0x18006": [
+    "0x18008": [
         {
             "scom_reg_name": "HW_PUB_KEY_HASH_SET1_3",
             "description": "Hardware Public Key Hash Set 1. (16..23)"
@@ -173,7 +197,7 @@
             "description": "Hardware Public Key Hash Set 1. (16..23)"
         }
     ],
-    "0x18007": [
+    "0x18009": [
         {
             "scom_reg_name": "HW_PUB_KEY_HASH_SET1_4",
             "description": "Hardware Public Key Hash Set 1. (24..31)"
@@ -185,7 +209,7 @@
             "description": "Hardware Public Key Hash Set 1. (24..31)"
         }
     ],
-    "0x18008": [
+    "0x1800A": [
         {
             "scom_reg_name": "HW_PUB_KEY_HASH_SET1_5",
             "description": "Hardware Public Key Hash Set 1. (32..39)"
@@ -197,7 +221,7 @@
             "description": "Hardware Public Key Hash Set 1. (32..39)"
         }
     ],
-    "0x18009": [
+    "0x1800B": [
         {
             "scom_reg_name": "HW_PUB_KEY_HASH_SET1_6",
             "description": "Hardware Public Key Hash Set 1. (40..47)"
@@ -209,7 +233,7 @@
             "description": "Hardware Public Key Hash Set 1. (40..47)"
         }
     ],
-    "0x1800A": [
+    "0x1800C": [
         {
             "scom_reg_name": "HW_PUB_KEY_HASH_SET1_7",
             "description": "Hardware Public Key Hash Set 1. (48..55)"
@@ -221,7 +245,7 @@
             "description": "Hardware Public Key Hash Set 1. (48..55)"
         }
     ],
-    "0x1800B": [
+    "0x1800D": [
         {
             "scom_reg_name": "HW_PUB_KEY_HASH_SET1_8",
             "description": "Hardware Public Key Hash Set 1. (56..63)"
@@ -233,7 +257,7 @@
             "description": "Hardware Public Key Hash Set 1. (56..63)"
         }
     ],
-    "0x1800C": [
+    "0x1800E": [
         {
             "scom_reg_name": "HW_PUB_KEY_HASH_SET2_1",
             "description": "Hardware Public Key Hash Set 2. (0..7)"
@@ -245,7 +269,7 @@
             "description": "Hardware Public Key Hash Set 2. (0..7)"
         }
     ],
-    "0x1800D": [
+    "0x1800F": [
         {
             "scom_reg_name": "HW_PUB_KEY_HASH_SET2_2",
             "description": "Hardware Public Key Hash Set 2. (8..15)"
@@ -257,7 +281,7 @@
             "description": "Hardware Public Key Hash Set 2. (8..15)"
         }
     ],
-    "0x1800E": [
+    "0x18010": [
         {
             "scom_reg_name": "HW_PUB_KEY_HASH_SET2_3",
             "description": "Hardware Public Key Hash Set 2. (16..23)"
@@ -269,7 +293,7 @@
             "description": "Hardware Public Key Hash Set 2. (16..23)"
         }
     ],
-    "0x1800F": [
+    "0x18011": [
         {
             "scom_reg_name": "HW_PUB_KEY_HASH_SET2_4",
             "description": "Hardware Public Key Hash Set 2. (24..31)"
@@ -281,7 +305,7 @@
             "description": "Hardware Public Key Hash Set 2. (24..31)"
         }
     ],
-    "0x18010": [
+    "0x18012": [
         {
             "scom_reg_name": "HW_PUB_KEY_HASH_SET2_5",
             "description": "Hardware Public Key Hash Set 2. (32..39)"
@@ -293,7 +317,7 @@
             "description": "Hardware Public Key Hash Set 2. (32..39)"
         }
     ],
-    "0x18011": [
+    "0x18013": [
         {
             "scom_reg_name": "HW_PUB_KEY_HASH_SET2_6",
             "description": "Hardware Public Key Hash Set 2. (40..47)"
@@ -305,7 +329,7 @@
             "description": "Hardware Public Key Hash Set 2. (40..47)"
         }
     ],
-    "0x18012": [
+    "0x18014": [
         {
             "scom_reg_name": "HW_PUB_KEY_HASH_SET2_7",
             "description": "Hardware Public Key Hash Set 2. (48..55)"
@@ -317,7 +341,7 @@
             "description": "Hardware Public Key Hash Set 2. (48..55)"
         }
     ],
-    "0x18013": [
+    "0x18015": [
         {
             "scom_reg_name": "HW_PUB_KEY_HASH_SET2_8",
             "description": "Hardware Public Key Hash Set 2. (56..63)"
@@ -329,7 +353,7 @@
             "description": "Hardware Public Key Hash Set 2. (56..63)"
         }
     ],
-    "0x18014": [
+    "0x18016": [
         {
             "scom_reg_name": "MSV_FUSE_BANK0",
             "description": "Minimum Secure Version Fuse Bank 0"
@@ -341,7 +365,7 @@
             "description": "Minimum Secure Version Fuse Bank 0"
         }
     ],
-    "0x18015": [
+    "0x18017": [
         {
             "scom_reg_name": "MSV_FUSE_BANK1",
             "description": "Minimum Secure Version Fuse Bank 1"
@@ -353,7 +377,7 @@
             "description": "Minimum Secure Version Fuse Bank 1"
         }
     ],
-    "0x18016": [
+    "0x18018": [
         {
             "scom_reg_name": "MSV_FUSE_BANK2",
             "description": "Minimum Secure Version Fuse Bank 2"
@@ -365,7 +389,7 @@
             "description": "Minimum Secure Version Fuse Bank 2"
         }
     ],
-    "0x18017": [
+    "0x18019": [
         {
             "scom_reg_name": "CONTROL_REG",
             "description": "This register holds all control data pertaining to secure header verification"
@@ -425,7 +449,7 @@
             "description": "Bit 8..63 : Reserved for future use"
         }
     ],
-    "0x18018": [
+    "0x1801A": [
         {
             "scom_reg_name": "OTPROM_BINARY_VERSION",
             "description": "OTPROM Fuse Binary Version. Lets keep this value always at the end of the binary"
