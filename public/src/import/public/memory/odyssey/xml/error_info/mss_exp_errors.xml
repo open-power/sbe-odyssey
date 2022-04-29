@@ -1,0 +1,1433 @@
+<!-- IBM_PROLOG_BEGIN_TAG                                                   -->
+<!-- This is an automatically generated prolog.                             -->
+<!--                                                                        -->
+<!-- $Source: public/src/import/public/memory/odyssey/xml/error_info/mss_exp_errors.xml $ -->
+<!--                                                                        -->
+<!-- OpenPOWER sbe Project                                                  -->
+<!--                                                                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022                             -->
+<!-- [+] International Business Machines Corp.                              -->
+<!--                                                                        -->
+<!--                                                                        -->
+<!-- Licensed under the Apache License, Version 2.0 (the "License");        -->
+<!-- you may not use this file except in compliance with the License.       -->
+<!-- You may obtain a copy of the License at                                -->
+<!--                                                                        -->
+<!--     http://www.apache.org/licenses/LICENSE-2.0                         -->
+<!--                                                                        -->
+<!-- Unless required by applicable law or agreed to in writing, software    -->
+<!-- distributed under the License is distributed on an "AS IS" BASIS,      -->
+<!-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or        -->
+<!-- implied. See the License for the specific language governing           -->
+<!-- permissions and limitations under the License.                         -->
+<!--                                                                        -->
+<!-- IBM_PROLOG_END_TAG                                                     -->
+<!-- EKB-Mirror-To: hw/ppe                                                  -->
+<hwpErrors>
+
+
+  <registerFfdc>
+    <id>REG_FFDC_EXP_MEMDIAGS_FAILURE</id>
+    <scomRegister>EXPLR_MCBIST_MCBMR0Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBCFGQ</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCB_CNTLQ</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCB_CNTLSTATQ</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBSTATQ</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBMCATQ</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBPARMQ</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBAGRAQ</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MBSEC1Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MBSTRQ</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBISTFIRQ</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBAMR0A0Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBAMR1A0Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBAMR2A0Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBAMR3A0Q</scomRegister>
+
+    <scomRegister>EXPLR_MCBIST_MCBFD0Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBFD1Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBFD2Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBFD3Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBFD4Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBFD5Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBFD6Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBFD7Q</scomRegister>
+
+    <scomRegister>EXPLR_MCBIST_MCBSA0Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBSA1Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBSA2Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBSA3Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBEA0Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBEA1Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBEA2Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBEA3Q</scomRegister>
+  </registerFfdc>
+
+  <!-- Note: error should be handled by PRD, so no deconfig desired -->
+  <hwpError>
+    <rc>RC_EXP_MEMDIAGS_COMPARE_ERROR_IN_LAST_PATTERN</rc>
+    <description>A miscompare error was caused by the last MCBIST pattern</description>
+    <ffdc>PORT</ffdc>
+    <ffdc>SUBTEST</ffdc>
+    <collectRegisterFfdc>
+      <id>REG_FFDC_EXP_MEMDIAGS_FAILURE</id>
+      <target>MC_TARGET</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </collectRegisterFfdc>
+    <callout>
+      <target>MC_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <!-- Note: error should be handled by PRD, so no deconfig desired -->
+  <hwpError>
+    <rc>RC_EXP_MEMDIAGS_ERROR_IN_LAST_PATTERN</rc>
+    <description>An error was caused by the last MCBIST pattern</description>
+    <ffdc>STATUS0</ffdc>
+    <ffdc>STATUS1</ffdc>
+    <collectRegisterFfdc>
+      <id>REG_FFDC_EXP_MEMDIAGS_FAILURE</id>
+      <target>MC_TARGET</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </collectRegisterFfdc>
+    <callout>
+      <target>MC_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <!-- Note: error should be handled by PRD, so no deconfig desired -->
+  <hwpError>
+    <rc>RC_EXP_MEMDIAGS_MCBIST_FAILED_TO_START</rc>
+    <description>The MCBIST engine failed to start its program</description>
+    <collectRegisterFfdc>
+      <id>REG_FFDC_EXP_MEMDIAGS_FAILURE</id>
+      <target>MC_TARGET</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </collectRegisterFfdc>
+    <callout>
+      <target>MC_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <!-- Note: error should be handled by PRD, so no deconfig desired -->
+  <hwpError>
+    <rc>RC_EXP_MEMDIAGS_PORT_NOT_FUNCTIONAL</rc>
+    <description>The port used in an MCBIST program is not functional</description>
+    <ffdc>RELATIVE_PORT_POSITION</ffdc>
+    <ffdc>ADDRESS</ffdc>
+    <ffdc>MC_TARGET</ffdc>
+    <collectRegisterFfdc>
+      <id>REG_FFDC_EXP_MEMDIAGS_FAILURE</id>
+      <target>MC_TARGET</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </collectRegisterFfdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <!-- Note: error should be handled by PRD, so no deconfig desired -->
+  <hwpError>
+    <rc>RC_EXP_MEMDIAGS_SUPERFAST_INIT_FAILED_TO_INIT</rc>
+    <description>A superfast init operation failed initialization</description>
+    <collectRegisterFfdc>
+      <id>REG_FFDC_EXP_MEMDIAGS_FAILURE</id>
+      <target>MC_TARGET</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </collectRegisterFfdc>
+    <callout>
+      <target>MC_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <!-- Note: error should be handled by PRD, so no deconfig desired -->
+  <hwpError>
+    <rc>RC_EXP_MEMDIAGS_SUPERFAST_READ_FAILED_TO_INIT</rc>
+    <description>A superfast read operation failed initialization</description>
+    <collectRegisterFfdc>
+      <id>REG_FFDC_EXP_MEMDIAGS_FAILURE</id>
+      <target>MC_TARGET</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </collectRegisterFfdc>
+    <callout>
+      <target>MC_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <!-- Note: error should be handled by PRD, so no deconfig desired -->
+  <hwpError>
+    <rc>RC_EXP_MEMDIAGS_MCBIST_FAILED_TO_STOP</rc>
+    <description>The MCBIST engine failed to stop its program</description>
+    <collectRegisterFfdc>
+      <id>REG_FFDC_EXP_MEMDIAGS_FAILURE</id>
+      <target>MC_TARGET</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </collectRegisterFfdc>
+    <ffdc>POLL_COUNT</ffdc>
+    <callout>
+      <target>MC_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <!-- Note: error should be handled by PRD, so no deconfig desired -->
+  <hwpError>
+    <rc>RC_EXP_MEMDIAGS_CONTINUOUS_SCRUB_FAILED_TO_INIT</rc>
+    <description>A continuous scrub operation failed initialization</description>
+    <collectRegisterFfdc>
+      <id>REG_FFDC_EXP_MEMDIAGS_FAILURE</id>
+      <target>MC_TARGET</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </collectRegisterFfdc>
+    <callout>
+      <target>MC_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <!-- Note: error should be handled by PRD, so no deconfig desired -->
+  <hwpError>
+    <rc>RC_EXP_MEMDIAGS_TARGETED_SCRUB_FAILED_TO_INIT</rc>
+    <description>A continuous scrub operation failed initialization</description>
+    <collectRegisterFfdc>
+      <id>REG_FFDC_EXP_MEMDIAGS_FAILURE</id>
+      <target>MC_TARGET</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </collectRegisterFfdc>
+    <callout>
+      <target>MC_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <!-- Note: error should be handled by PRD, so no deconfig desired -->
+  <hwpError>
+    <rc>RC_EXP_MEMDIAGS_ALREADY_AT_BOUNDARY</rc>
+    <description>A continue request asked to stop at a boundary, but we are there already</description>
+    <ffdc>MC_TARGET</ffdc>
+    <ffdc>BOUNDARY</ffdc>
+    <collectRegisterFfdc>
+      <id>REG_FFDC_EXP_MEMDIAGS_FAILURE</id>
+      <target>MC_TARGET</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </collectRegisterFfdc>
+    <callout>
+        <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_EXP_MCBIST_TIMEOUT</rc>
+    <description>
+        MCBIST program failed to return in the time allowed
+        Software timer, MCBIST has not finished in the time allowed
+    </description>
+    <collectRegisterFfdc>
+      <id>REG_FFDC_EXP_MEMDIAGS_FAILURE</id>
+      <target>MC_TARGET</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </collectRegisterFfdc>
+    <callout>
+      <target>MC_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>MC_TARGET</target>
+    </deconfigure>
+    <gard>
+        <target>MC_TARGET</target>
+    </gard>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_EXP_MCBIST_DATA_FAIL</rc>
+    <description>
+        MCBIST program appeared to have failed, but set conflicting bits in the status register
+    </description>
+    <ffdc>STATUS_REGISTER</ffdc>
+    <collectRegisterFfdc>
+      <id>REG_FFDC_EXP_MEMDIAGS_FAILURE</id>
+      <target>MC_TARGET</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </collectRegisterFfdc>
+    <callout>
+      <target>MC_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>MC_TARGET</target>
+    </deconfigure>
+    <gard>
+        <target>MC_TARGET</target>
+    </gard>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_EXP_MCBIST_UNKNOWN_FAILURE</rc>
+    <description>MCBIST program reported a failure but no error status was found</description>
+    <ffdc>STATUS_REGISTER</ffdc>
+    <collectRegisterFfdc>
+      <id>REG_FFDC_EXP_MEMDIAGS_FAILURE</id>
+      <target>MC_TARGET</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </collectRegisterFfdc>
+    <callout>
+      <target>MC_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>MC_TARGET</target>
+    </deconfigure>
+    <gard>
+        <target>MC_TARGET</target>
+    </gard>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_DRAMINIT_UNSUPPORTED_DIMM_TYPE</rc>
+    <description>Unsupported DIMM type encountered in draminit_training procedure</description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>PORT</ffdc>
+    <ffdc>TYPE</ffdc>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+    <callout>
+      <hw>
+        <hwid>VPD_PART</hwid>
+        <refTarget>OCMB_TARGET</refTarget>
+      </hw>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_DRAMINIT_UNSUPPORTED_DRAM_WIDTH</rc>
+    <description>Unsupported DRAM width encountered in draminit_training procedure</description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>PORT</ffdc>
+    <ffdc>DATA_WIDTH</ffdc>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+    <callout>
+      <hw>
+        <hwid>VPD_PART</hwid>
+        <refTarget>OCMB_TARGET</refTarget>
+      </hw>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_DRAMINIT_UNSUPPORTED_3DS_HEIGHT</rc>
+    <description>Unsupported 3DS height encountered in draminit_training procedure</description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>PORT</ffdc>
+    <ffdc>HEIGHT</ffdc>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+    <callout>
+      <hw>
+        <hwid>VPD_PART</hwid>
+        <refTarget>OCMB_TARGET</refTarget>
+      </hw>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_FW_STATUS_POLLING_TIMEOUT</rc>
+    <description>
+      An OCMB chip failed to reply over i2c during FW_STATUS loop.
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_HALF_DIMM_MODE_NOT_SUPPORTED</rc>
+    <description>
+      The enterprise settings do not support half dimm mode.
+    </description>
+    <ffdc>ENTERPRISE_SETTING</ffdc>
+    <ffdc>HALF_DIMM_SETTING</ffdc>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_ENTERPRISE_INVALID_CONFIGURATION</rc>
+    <description>
+      The enterprise supported bit from explorer fuse
+      conflicts with the enterprise policy setting.
+    </description>
+    <ffdc>ENTERPRISE_SUPPORTED</ffdc>
+    <ffdc>POLICY</ffdc>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_ENTERPRISE_SETUP_ERROR</rc>
+    <description>The enterprise mode bit is in the incorrect state</description>
+    <ffdc>EXPECTED</ffdc>
+    <ffdc>ACTUAL</ffdc>
+    <ffdc>REGISTER_DATA</ffdc>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_I2C_FW_STATUS_BUSY</rc>
+    <description>
+      Received FW_BUSY status after polling timeout for
+      command ID EXP_FW_STATUS. See CMD_ID for the failing command id.
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>CMD_ID</ffdc>
+    <ffdc>COMMAND</ffdc>
+    <ffdc>STATUS_DATA</ffdc>
+    <ffdc>EXP_ACTIVE_LOG_SIZE</ffdc>
+    <!-- TODO: ZEN:MST-1621 -->
+    <!--<collectFfdc>exp_collect_explorer_active_log, OCMB_TARGET, EXP_ACTIVE_LOG_SIZE</collectFfdc> -->
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_POLL_ABORT_FW_STATUS_BUSY</rc>
+    <description>
+      Received FW_BUSY status after polling timeout for
+      command ID EXP_FW_STATUS after sending the POLL_ABORT command.
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>CMD_ID</ffdc>
+    <ffdc>COMMAND</ffdc>
+    <ffdc>STATUS_DATA</ffdc>
+    <ffdc>HOST_DL0_TRAINING_STATUS</ffdc>
+    <ffdc>HOST_DL0_ERROR_HOLD</ffdc>
+    <ffdc>HOST_DL0_EDPL_MAX_COUNT</ffdc>
+    <ffdc>HOST_DL0_STATUS</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_I2C_CMD_FAIL</rc>
+    <description>
+      Received non-SUCCESS status for command ID EXP_FW_STATUS.
+      See CMD_ID for the failing command id.
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>CMD_ID</ffdc>
+    <ffdc>COMMAND</ffdc>
+    <ffdc>STATUS</ffdc>
+    <ffdc>STATUS_DATA</ffdc>
+    <ffdc>EXP_ACTIVE_LOG_SIZE</ffdc>
+    <!-- TODO: ZEN:MST-1621 -->
+    <!--<collectFfdc>exp_collect_explorer_active_log, OCMB_TARGET, EXP_ACTIVE_LOG_SIZE</collectFfdc> -->
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_MDS_I2C_WRONG_RSP_SIZE</rc>
+    <description>
+      Received an incorrect response size for MDS I2C scoms.
+    </description>
+    <ffdc>MDS_MDIA_CTL_TARGET</ffdc>
+    <ffdc>RSP_SIZE</ffdc>
+    <ffdc>COMMAND</ffdc>
+    <ffdc>RESPONSE</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_MDS_I2C_CMD_FAIL</rc>
+    <description>
+      Received non-SUCCESS status for MDS I2C scoms.
+    </description>
+    <ffdc>MDS_MDIA_CTL_TARGET</ffdc>
+    <ffdc>STATUS</ffdc>
+    <ffdc>COMMAND</ffdc>
+    <ffdc>RESPONSE</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_I2C_WRONG_BOOT_STAGE</rc>
+    <description>
+      Received incorrect boot stage from command ID EXP_FW_STATUS
+      This RC is set during check_for_ready.
+      At this time, the only stages that can come out are RUNTIME_FW, BOOT_ROM, and FW_UPGRADE.
+      Likely this RC is set for FW_UPGRADE, which means that explorer has missing or corrupted FW.
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>BOOT_STAGE</ffdc>
+    <ffdc>EXPECTED_BOOT_STAGE</ffdc>
+    <ffdc>STATUS_DATA</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_I2C_POLLING_TIMEOUT_RESET</rc>
+    <description>
+      Polling the explorer I2C interface for an ACK
+      timed out when explorer was coming out of reset.
+    </description>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <callout>
+      <target>PROC_TARGET</target>
+      <priority>LOW</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_I2C_POLLING_TIMEOUT_BOOT_ROM</rc>
+    <description>
+      Polling the explorer I2C interface for an ACK
+      timed out during explorer boot ROM to runtime FW transition
+    </description>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_I2C_FW_STATUS_INVALID_SIZE</rc>
+    <description>
+      Received incorrect EXP_FW_STATUS data size
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>STATUS_CODE_SIZE</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_RSP_ARG_FAILED</rc>
+    <description>
+      The response_argument field of the host_fw_response_struct returned a FAILURE
+    </description>
+    <ffdc>CMD_ID</ffdc>
+    <ffdc>RSP_ID</ffdc>
+    <ffdc>ERROR_CODE</ffdc>
+    <ffdc>EXTENDED_ERROR_CODE</ffdc>
+    <ffdc>EXPECTED_REQID</ffdc>
+    <ffdc>ACTUAL_REQID</ffdc>
+    <ffdc>EXP_ACTIVE_LOG_SIZE</ffdc>
+    <!-- TODO: ZEN:MST-1621 -->
+    <!--<collectFfdc>exp_collect_explorer_active_log, TARGET, EXP_ACTIVE_LOG_SIZE</collectFfdc> -->
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <!-- Note: we do not want to knock out a whole DIMM for a sensor cache fail -->
+    <!--       HB will handle the lack of deconfig on their side -->
+    <rc>RC_MSS_EXP_SENSOR_CACHE_ENABLE_FAILED</rc>
+    <description>
+      The response_argument field of the host_fw_response_struct returned
+      a FAILURE for enabling sensor cache
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>RSP_ID</ffdc>
+    <ffdc>CMD_ID</ffdc>
+    <ffdc>RSP_REQUEST_ID</ffdc>
+    <ffdc>CMD_REQUEST_ID</ffdc>
+    <ffdc>ERROR_CODE_1</ffdc>
+    <ffdc>ERROR_CODE_2</ffdc>
+    <ffdc>FW_PARTITION_ID</ffdc>
+    <ffdc>FW_VERSION_A</ffdc>
+    <ffdc>FW_VERSION_B</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_BOOT_CONFIG_INVALID_CMD</rc>
+    <description>
+      BOOT_CONFIG command was invalid.
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>COMMAND</ffdc>
+    <ffdc>BOOT_MODE</ffdc>
+    <ffdc>STATUS_DATA</ffdc>
+    <ffdc>EXP_ACTIVE_LOG_SIZE</ffdc>
+    <!-- TODO: ZEN:MST-1621 -->
+    <!--<collectFfdc>exp_collect_explorer_active_log, OCMB_TARGET, EXP_ACTIVE_LOG_SIZE</collectFfdc> -->
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_BOOT_CONFIG_LOOPBACK_FAIL</rc>
+    <description>
+      BOOT_CONFIG command encountered an OMI loopback test failure.
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>COMMAND</ffdc>
+    <ffdc>BOOT_MODE</ffdc>
+    <ffdc>STATUS_DATA</ffdc>
+    <ffdc>EXP_ACTIVE_LOG_SIZE</ffdc>
+    <!-- TODO: ZEN:MST-1621 -->
+    <!--<collectFfdc>exp_collect_explorer_active_log, OCMB_TARGET, EXP_ACTIVE_LOG_SIZE</collectFfdc> -->
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+    <gard>
+      <target>OCMB_TARGET</target>
+    </gard>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_BOOT_CONFIG_SERDES_INIT_FAIL</rc>
+    <description>
+      BOOT_CONFIG command encountered an OMI SerDes initialization
+      failure.
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>COMMAND</ffdc>
+    <ffdc>BOOT_MODE</ffdc>
+    <ffdc>STATUS_DATA</ffdc>
+    <ffdc>EXT_ERR_CODE</ffdc>
+    <ffdc>EXP_ACTIVE_LOG_SIZE</ffdc>
+    <!-- TODO: ZEN:MST-1621 -->
+    <!--<collectFfdc>exp_collect_explorer_active_log, OCMB_TARGET, EXP_ACTIVE_LOG_SIZE</collectFfdc> -->
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+    <gard>
+      <target>OCMB_TARGET</target>
+    </gard>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_BOOT_CONFIG_SERDES_DLL_LOCK_FAIL</rc>
+    <description>
+      BOOT_CONFIG command encountered an OMI SerDes DLL lock
+      failure.
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>OMI_TARGET</ffdc>
+    <ffdc>COMMAND</ffdc>
+    <ffdc>BOOT_MODE</ffdc>
+    <ffdc>STATUS_DATA</ffdc>
+    <ffdc>EXT_ERR_CODE</ffdc>
+    <ffdc>EXP_ACTIVE_LOG_SIZE</ffdc>
+    <!-- TODO: ZEN:MST-1621 -->
+    <!--<collectFfdc>exp_collect_explorer_active_log, OCMB_TARGET, EXP_ACTIVE_LOG_SIZE</collectFfdc> -->
+    <callout>
+      <target>OMI_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OMI_TARGET</target>
+    </deconfigure>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+    <gard>
+      <target>OMI_TARGET</target>
+    </gard>
+    <gard>
+      <target>OCMB_TARGET</target>
+    </gard>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_BOOT_CONFIG_DLX_CONFIG_FAIL</rc>
+    <description>
+      BOOT_CONFIG command encountered an OMI DL config or training
+      failure.
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>COMMAND</ffdc>
+    <ffdc>BOOT_MODE</ffdc>
+    <ffdc>STATUS_DATA</ffdc>
+    <ffdc>EXP_ACTIVE_LOG_SIZE</ffdc>
+    <!-- TODO: ZEN:MST-1621 -->
+    <!--<collectFfdc>exp_collect_explorer_active_log, OCMB_TARGET, EXP_ACTIVE_LOG_SIZE</collectFfdc> -->
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+    <gard>
+      <target>OCMB_TARGET</target>
+    </gard>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_BOOT_CONFIG_LANE_INV_FAIL</rc>
+    <description>
+      BOOT_CONFIG command encountered an OMI lane inversion
+      failure.
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>COMMAND</ffdc>
+    <ffdc>BOOT_MODE</ffdc>
+    <ffdc>STATUS_DATA</ffdc>
+    <ffdc>EXP_ACTIVE_LOG_SIZE</ffdc>
+    <!-- TODO: ZEN:MST-1621 -->
+    <!--<collectFfdc>exp_collect_explorer_active_log, OCMB_TARGET, EXP_ACTIVE_LOG_SIZE</collectFfdc> -->
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+    <gard>
+      <target>OCMB_TARGET</target>
+    </gard>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_BOOT_CONFIG_PARITY_UECC_ERROR</rc>
+    <description>
+      BOOT_CONFIG command encountered OMI parity or UECC errors.
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>COMMAND</ffdc>
+    <ffdc>BOOT_MODE</ffdc>
+    <ffdc>STATUS_DATA</ffdc>
+    <ffdc>EXP_ACTIVE_LOG_SIZE</ffdc>
+    <!-- TODO: ZEN:MST-1621 -->
+    <!--<collectFfdc>exp_collect_explorer_active_log, OCMB_TARGET, EXP_ACTIVE_LOG_SIZE</collectFfdc> -->
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+    <gard>
+      <target>OCMB_TARGET</target>
+    </gard>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_DDR_PHY_INIT_UNSUPPORTED_MODE</rc>
+    <description>
+      Phy Init command configured with an unsupported phy init mode.
+    </description>
+    <ffdc>TARGET</ffdc>
+    <ffdc>PROCEDURE</ffdc>
+    <ffdc>PHY_INIT_MODE</ffdc>
+    <ffdc>ERROR_CODE</ffdc>
+    <ffdc>EXTENDED_ERROR_CODE</ffdc>
+    <ffdc>FW_PARTITION_ID</ffdc>
+    <ffdc>FW_VERSION_A</ffdc>
+    <ffdc>FW_VERSION_B</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_DDR_PHY_INIT_USER_INPUT_MSDG_SIZE_ERROR</rc>
+    <description>
+      Phy Init command sent user_input_msdg with an incorrect size.
+    </description>
+    <ffdc>TARGET</ffdc>
+    <ffdc>PROCEDURE</ffdc>
+    <ffdc>COMMAND_SIZE</ffdc>
+    <ffdc>ERROR_CODE</ffdc>
+    <ffdc>EXTENDED_ERROR_CODE</ffdc>
+    <ffdc>FW_PARTITION_ID</ffdc>
+    <ffdc>FW_VERSION_A</ffdc>
+    <ffdc>FW_VERSION_B</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_DDR_PHY_INIT_USER_INPUT_MSDG_MISSING_FLAG</rc>
+    <description>
+      Phy Init command sent user_input_msdg missing extended data flag.
+    </description>
+    <ffdc>TARGET</ffdc>
+    <ffdc>PROCEDURE</ffdc>
+    <ffdc>COMMAND_FLAGS</ffdc>
+    <ffdc>ERROR_CODE</ffdc>
+    <ffdc>EXTENDED_ERROR_CODE</ffdc>
+    <ffdc>FW_PARTITION_ID</ffdc>
+    <ffdc>FW_VERSION_A</ffdc>
+    <ffdc>FW_VERSION_B</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_DDR_PHY_INIT_USER_INPUT_MSDG_ERROR</rc>
+    <description>
+      Phy Init command encountered user_input_msdg error.
+      This could be caused by bad SPD or attribute overrides.
+    </description>
+    <ffdc>TARGET</ffdc>
+    <ffdc>PROCEDURE</ffdc>
+    <ffdc>ERROR_CODE</ffdc>
+    <ffdc>EXTENDED_ERROR_CODE</ffdc>
+    <ffdc>FW_PARTITION_ID</ffdc>
+    <ffdc>FW_VERSION_A</ffdc>
+    <ffdc>FW_VERSION_B</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_DDR_PHY_INIT_TRAINING_FAIL</rc>
+    <description>
+      Phy Init command encountered a training fail.
+      Note: this should be logged as recovered and bad DRAM repaired
+    </description>
+    <ffdc>TARGET</ffdc>
+    <ffdc>PROCEDURE</ffdc>
+    <ffdc>ERROR_CODE</ffdc>
+    <ffdc>EXTENDED_ERROR_CODE</ffdc>
+    <ffdc>RANK0_BADDQ0_63</ffdc>
+    <ffdc>RANK0_BADDQ64_80</ffdc>
+    <ffdc>RANK1_BADDQ0_63</ffdc>
+    <ffdc>RANK1_BADDQ64_80</ffdc>
+    <ffdc>RANK2_BADDQ0_63</ffdc>
+    <ffdc>RANK2_BADDQ64_80</ffdc>
+    <ffdc>RANK3_BADDQ0_63</ffdc>
+    <ffdc>RANK3_BADDQ64_80</ffdc>
+    <ffdc>FW_PARTITION_ID</ffdc>
+    <ffdc>FW_VERSION_A</ffdc>
+    <ffdc>FW_VERSION_B</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_DRAMINIT_TRAINING_TIMEOUT_FAIL</rc>
+    <description>
+      Phy Init command encountered a training timeout fail.
+      These can usually be solved by retrying training
+      As we are not able to retrigger training, we deconfigure the part
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>ERROR_CODE</ffdc>
+    <ffdc>EXTENDED_ERROR_CODE</ffdc>
+    <ffdc>FW_PARTITION_ID</ffdc>
+    <ffdc>FW_VERSION_A</ffdc>
+    <ffdc>FW_VERSION_B</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_CATASTROPHIC_DRAMINIT_TRAINING_FAIL</rc>
+    <description>
+      Phy Init command encountered a catastrophic training fail.
+      This error means that the bad bits coming out of training cannot be trusted
+      As such, the part will be deconfigured
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>ERROR_CODE</ffdc>
+    <ffdc>EXTENDED_ERROR_CODE</ffdc>
+    <ffdc>FW_PARTITION_ID</ffdc>
+    <ffdc>FW_VERSION_A</ffdc>
+    <ffdc>FW_VERSION_B</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_DDR_PHY_INIT_UNKNOWN_ERROR</rc>
+    <description>
+      Phy Init command encountered an unknown fail.
+      Check error code and extended codes in trace data.
+    </description>
+    <ffdc>TARGET</ffdc>
+    <ffdc>PROCEDURE</ffdc>
+    <ffdc>ERROR_CODE</ffdc>
+    <ffdc>EXTENDED_ERROR_CODE</ffdc>
+    <ffdc>FW_PARTITION_ID</ffdc>
+    <ffdc>FW_VERSION_A</ffdc>
+    <ffdc>FW_VERSION_B</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+    <callout>
+      <target>TARGET</target>
+      <priority>MEDIUM</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <registerFfdc>
+    <id>REG_FFDC_EXP_CCS_FAILURE</id>
+    <scomRegister>EXPLR_MCBIST_CCS_MODEQ</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_STATQ</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_CNTLQ</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MCBMCATQ</scomRegister>
+
+    <!-- Instructions -->
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_00</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_01</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_02</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_03</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_04</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_05</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_06</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_07</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_08</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_09</scomRegister>
+
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_10</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_11</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_12</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_13</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_14</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_15</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_16</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_17</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_18</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_19</scomRegister>
+
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_20</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_21</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_22</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_23</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_24</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_25</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_26</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_27</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_28</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_29</scomRegister>
+
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_30</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR0_31</scomRegister>
+
+    <!-- Control array -->
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_00</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_01</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_02</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_03</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_04</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_05</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_06</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_07</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_08</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_09</scomRegister>
+
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_10</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_11</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_12</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_13</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_14</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_15</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_16</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_17</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_18</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_19</scomRegister>
+
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_20</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_21</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_22</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_23</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_24</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_25</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_26</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_27</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_28</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_29</scomRegister>
+
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_30</scomRegister>
+    <scomRegister>EXPLR_MCBIST_CCS_INST_ARR1_31</scomRegister>
+
+    <!-- to get the CCS state machine hung state -->
+    <scomRegister>EXPLR_MCBIST_MBA_MCBERRPT0Q</scomRegister>
+    <scomRegister>EXPLR_MCBIST_MBA_MCBERRPT1Q</scomRegister>
+  </registerFfdc>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_CCS_READ_MISCOMPARE</rc>
+    <description>
+        CCS reports a read miscompare.
+    </description>
+    <ffdc>FAIL_TYPE</ffdc>
+    <collectRegisterFfdc>
+      <id>REG_FFDC_EXP_CCS_FAILURE</id>
+      <target>MC_TARGET</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </collectRegisterFfdc>
+    <callout>
+      <target>PORT_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>PORT_TARGET</target>
+    </deconfigure>
+    <gard>
+        <target>PORT_TARGET</target>
+    </gard>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_CCS_UE_SUE</rc>
+    <description>
+        CCS reports a UE or SUE in the CCS program array
+        Chould be an indicator of corruption in the CCS program
+    </description>
+    <ffdc>FAIL_TYPE</ffdc>
+    <collectRegisterFfdc>
+      <id>REG_FFDC_EXP_CCS_FAILURE</id>
+      <target>MC_TARGET</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </collectRegisterFfdc>
+    <callout>
+      <target>MC_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>MC_TARGET</target>
+    </deconfigure>
+    <gard>
+        <target>MC_TARGET</target>
+    </gard>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_CCS_HUNG</rc>
+    <description>
+        Software reported that the machine is not seeing the CCS finish in the alloted time
+    </description>
+    <collectRegisterFfdc>
+      <id>REG_FFDC_EXP_CCS_FAILURE</id>
+      <target>MC_TARGET</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </collectRegisterFfdc>
+   <callout>
+      <target>MC_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>MC_TARGET</target>
+    </deconfigure>
+    <gard>
+        <target>MC_TARGET</target>
+    </gard>
+    <callout>
+        <procedure>CODE</procedure>
+        <priority>MEDIUM</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_EXP_CCS_HUNG_TRYING_TO_STOP</rc>
+    <description>
+        CCS failed to return from in-progress status while trying to stop a previous program
+        Software reported that CCS did not finish in alloted time after manually triggering stop
+    </description>
+    <collectRegisterFfdc>
+      <id>REG_FFDC_EXP_CCS_FAILURE</id>
+      <target>MC_TARGET</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </collectRegisterFfdc>
+    <callout>
+      <target>MC_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>MC_TARGET</target>
+    </deconfigure>
+    <gard>
+        <target>MC_TARGET</target>
+    </gard>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_EXP_RESPONSE_WRONG_REQID</rc>
+    <description>
+        Request ID in Explorer response was not equal to the ID in the command.
+        Indicates a mismatch between command and response.
+    </description>
+    <ffdc>CMD_ID</ffdc>
+    <ffdc>CMD_REQ_ID</ffdc>
+    <ffdc>RSP_ID</ffdc>
+    <ffdc>RSP_REQ_ID</ffdc>
+    <ffdc>FW_PARTITION_ID</ffdc>
+    <ffdc>FW_VERSION_A</ffdc>
+    <ffdc>FW_VERSION_B</ffdc>
+    <callout>
+      <target>TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET</target>
+    </deconfigure>
+    <gard>
+      <target>TARGET</target>
+    </gard>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_UNKNOWN_PHY_INIT_MODE</rc>
+    <description>
+      The PHY init mode value was an unknown value.
+    </description>
+    <ffdc>TARGET</ffdc>
+    <ffdc>VALUE</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_INVALID_PHY_INIT_RSP_DATA_LENGTH</rc>
+    <description>
+      The data buffer vector retrieved from the EXP_FW_DDR_PHY_INIT response did not match the expected length
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>PHY_INIT_MODE</ffdc>
+    <ffdc>EXPECTED_LENGTH</ffdc>
+    <ffdc>ACTUAL_LENGTH</ffdc>
+    <ffdc>FW_PARTITION_ID</ffdc>
+    <ffdc>FW_VERSION_A</ffdc>
+    <ffdc>FW_VERSION_B</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_INVALID_FW_ADAPTER_PROPERTIES_RSP_DATA_LENGTH</rc>
+    <description>
+      The data buffer vector retrieved from the EXP_FW_ADAPTER_PROPERTIES_GET response did not match the expected length
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>EXPECTED_LENGTH</ffdc>
+    <ffdc>ACTUAL_LENGTH</ffdc>
+    <ffdc>EXP_ACTIVE_LOG_SIZE</ffdc>
+    <!-- TODO: ZEN:MST-1621 -->
+    <!--<collectFfdc>exp_collect_explorer_active_log, OCMB_TARGET, EXP_ACTIVE_LOG_SIZE</collectFfdc> -->
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_SUM_MASK_REG_SCOM_FAIL</rc>
+    <description>
+        A Scom fail occurred when attempting to access EXPLR_TP_MB_UNIT_TOP_SUM_MASK_REG at address
+        0x08040017. This is likely due to using an unsupported Explorer firmware version (prior to CL402648)
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>ADDRESS</ffdc>
+    <callout>
+      <target>TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_EXP_UNKNOWN_THERMAL_SENSOR</rc>
+    <description>
+      The thermal sensor type for the given port was not a known value
+    </description>
+    <ffdc>PORT_TARGET</ffdc>
+    <ffdc>VALUE</ffdc>
+    <callout>
+      <target>PORT_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>PORT_TARGET</target>
+    </deconfigure>
+    <callout>
+      <hw>
+        <hwid>VPD_PART</hwid>
+        <refTarget>PORT_TARGET</refTarget>
+      </hw>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_EXP_MAINT_SYMBOL_NOT_FOUND</rc>
+    <description>
+       The requested symbol does not match a steer index.
+    </description>
+    <ffdc>SYMBOL</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_EXP_MAINT_BAD_RANK_INPUT</rc>
+    <description>
+       The rank passed into a steer function was invalid.
+    </description>
+    <ffdc>PORT_TARGET</ffdc>
+    <ffdc>RANK</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_EXP_MAINT_BAD_SPARE_INDEX</rc>
+    <description>
+       A spare index returned from symbol translation was invalid.
+    </description>
+    <ffdc>PORT_TARGET</ffdc>
+    <ffdc>SPARE0_INDEX</ffdc>
+    <ffdc>SPARE1_INDEX</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_EXP_MAINT_BAD_STEER_MUX_TYPE</rc>
+    <description>
+       The steer mux type passed into a steer function was invalid.
+    </description>
+    <ffdc>PORT_TARGET</ffdc>
+    <ffdc>STEER_TYPE</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_EXP_MAINT_INVALID_SYMBOL</rc>
+    <description>
+       The symbol passed into a steer function was invalid.
+    </description>
+    <ffdc>PORT_TARGET</ffdc>
+    <ffdc>SYMBOL</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_EXP_MAINT_DO_STEER_ALL_SPARES_DEPLOYED</rc>
+    <description>
+       All spares are already deployed when do_steer called.
+    </description>
+    <ffdc>PORT_TARGET</ffdc>
+    <ffdc>RANK</ffdc>
+    <ffdc>SYMBOL</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>PORT_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfig>
+      <target>PORT_TARGET</target>
+    </deconfig>
+  </hwpError>
+
+</hwpErrors>
