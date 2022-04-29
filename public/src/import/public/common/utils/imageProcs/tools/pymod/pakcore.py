@@ -38,6 +38,7 @@ import ast
 import fnmatch
 import copy
 import re
+import hashlib
 
 ############################################################
 # Classes - Classes - Classes - Classes - Classes - Classes
@@ -176,6 +177,10 @@ class ArchiveEntry(object):
         # Track where the entry starts when read from a file
         # This is purely useful extra debug info to compare against a file
         self.offset = None
+        # The hash value for this entry, created by calling hash()
+        # This is not part of the pak spec, instead a convenience feature
+        # to assist in the creation of a hash.list file that can go into the pak
+        self.hashvalue = None
 
     # The property functions for the derived values
     @property
@@ -418,6 +423,29 @@ class ArchiveEntry(object):
 
         return
 
+    def hash(self, i_algorithm="sha3_512", i_version=1):
+        '''
+        Generate the hash value for this archive entry
+
+        Note: this is not part of the pak spec, just a convenience feature for
+        hash.list file creation
+        '''
+        # The version is completely unused at this point, just provided for the future
+        if (i_version != 1):
+            raise ArchiveError("Unknown version '%d' given!" % i_version)
+        if (i_algorithm != "sha3_512"):
+            raise ArchiveError("Unknown algorithm '%s' given!" % i_algorithm)
+
+        # Hash the data
+        hasher = hashlib.new(i_algorithm)
+        hasher.update(self.cdata)
+        # Insert the name length in 2 bytes, then the name itself and finally the hash value
+        self.hashvalue = len(self.name).to_bytes(2, 'big')
+        self.hashvalue += self.name.encode()
+        self.hashvalue += hasher.digest()
+
+        return
+
     def display(self):
         '''
         Display debug data about the entry
@@ -436,6 +464,8 @@ class ArchiveEntry(object):
             offset = "N/A"
         out.print("  size: %6d, flags: 0x%02X, hesize: %2d, nsize: %2d, method: %9s, crc: %04X, csize: %6d: dsize: %6d: ratio: %5.1fx, psize: %6d, offset: %s" %
                   (self.isize, self.flags, self.hesize, self.nsize, self.method, self.crc, self.csize, self.dsize, ratio, self.psize, offset))
+
+        return
 
     def align(self, value):
         '''
@@ -578,6 +608,35 @@ class Archive(UserList):
 
         return result
 
+    def createHashList(self, i_algorithm="sha3_512"):
+        '''
+        For all entries that have a hash value defined, create a hash list entry
+        '''
+        contents = bytearray()
+        # A simple 2 byte header on the hash list
+        # 1st byte - file version.  Good for layout changes.
+        fversion = 1
+        contents += fversion.to_bytes(1, 'big')
+
+        # 2nd byte - algorithm version.  Indicate what algorithm is in use
+        if (i_algorithm == "sha3_512"):
+            aversion = 1
+        else:
+            raise ArchiveError("Unknown algoritm '%s' given!" % i_algorithm)
+        contents += aversion.to_bytes(1, 'big')
+
+        # Now create all the entries
+        for entry in self:
+            if entry.hashvalue:
+                contents += entry.hashvalue
+
+        # Tack a 0000 onto the end of the file
+        # This is especially useful when the 'file' is being read in memory
+        # Instead of eof(), the 0000 indicates end of data and also a valid length of 0
+        contents += bytes(2)
+
+        return contents
+
     def load(self, filename=None):
         '''
         Load the given archive and process it into the ArchiveEntry classes
@@ -694,6 +753,8 @@ class Manifest(object):
         self.method = CM.zlib
         # Add in the end marker
         self.end_marker = True
+        # A hashfile to put hashes in to
+        self.hashfile = None
         # The list of layout entries
         self.layouts = list()
 
@@ -714,6 +775,8 @@ class Manifest(object):
             d["global"]["method"] = self.method.name
         if self.end_marker != None:
             d["global"]["end-marker"] = self.end_marker
+        if self.hashfile != None:
+            d["global"]["hashfile"] = self.hashfile
 
         # Layout
         for layout in self.layouts:
@@ -730,6 +793,8 @@ class Manifest(object):
                 d["layout"][layout.name]["location"] = layout.location
             if layout.size != None:
                 d["layout"][layout.name]["size"] = layout.size
+            if layout.hash != None:
+                d["layout"][layout.name]["hash"] = layout.hash
 
         return d
 
@@ -779,9 +844,18 @@ class Manifest(object):
                 self.method = CM[value]
             elif (key == "end-marker"):
                 self.end_marker = value
+            elif (key == "hashfile"):
+                self.hashfile = value
             else:
                 out.error("global keyword '%s' not known!" % key)
                 errors += 1
+
+        # We don't care where the hashfile goes, we just want it named "hash.list" for consistency
+        if self.hashfile and not self.hashfile.endswith("hash.list"):
+            out.error("Your hashfile is named '%s'" % self.hashfile)
+            out.error("Convention requires the file be named 'hash.list'")
+            out.error("The directory does not matter, just the name")
+            errors += 1
 
         # Now validate all the layout keywords in the same method
         out.print("Validating 'layout' keyword values")
@@ -790,6 +864,8 @@ class Manifest(object):
             entry.name = key
             # Set the default from the manifest
             entry.method = self.method
+            # Set the default based on hashfile existence
+            entry.hash = True if self.hashfile else False
 
             # Make sure every key given for the layout is valild
             for subkey, subvalue in value.items():
@@ -805,6 +881,8 @@ class Manifest(object):
                     entry.location = subvalue
                 elif (subkey == "size"):
                     entry.size = subvalue
+                elif (subkey == "hash"):
+                    entry.hash = subvalue
                 else:
                     out.error("layout keyword '%s' in file '%s' not known!" % (subkey, key))
                     errors += 1
@@ -822,6 +900,19 @@ class Manifest(object):
 
             if (entry.directory and not entry.pattern):
                 out.error("A keyword 'pattern' required to be used with a directory entry")
+                errors += 1
+                continue
+
+            # Make sure hash is just a True/False
+            if entry.hash not in [True, False]:
+                out.error("Invalid value for 'hash' in entry for layout '%s'" % key)
+                out.error("Only 'True' or 'False' are valid")
+                errors += 1
+                continue
+
+            # If hash generation is enabled, make sure a hash file is given
+            if entry.hash and not self.hashfile:
+                out.error("global hashfile not given, but hash creation enabled for layout '%s'" % key)
                 errors += 1
                 continue
 
@@ -905,7 +996,15 @@ class Manifest(object):
             with open(layout.file, "rb") as f:
                 entry = ArchiveEntry()
                 entry.ingest(layout.name, layout.method, f.read(), i_size=layout.size)
+                # If hash was enabled for this layout, also trigger that creation
+                if layout.hash:
+                    entry.hash()
                 archive.append(entry)
+
+        # If hashfile is enabled, create the hash list and stick it into the archive
+        if self.hashfile:
+            contents = archive.createHashList()
+            archive.add(self.hashfile, CM.zlib, contents)
 
         # Set the archive end_marker value to the manifest value
         archive.end_marker = self.end_marker
@@ -930,3 +1029,5 @@ class ManifestLayout(object):
         self.location = None
         # The fixed size in the archive
         self.size = None
+        # Create a hash entry in the hash file
+        self.hash = None
