@@ -31,3 +31,7 @@ if get_option('sppe').enabled()
     subdir('errorxml')
     subdir('attributes')
 endif
+
+if get_option('srom').enabled()
+    subdir('fsm')
+endif

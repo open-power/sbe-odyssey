@@ -31,6 +31,10 @@ ddlvl = get_option('ddlevel')
 
 #Tools
 parsAndCutElf = find_program('build/utils/parsAndCutElf.py')
+pakTool = find_program('import/public/common/utils/imageProcs/tools/paktool')
+pakBuildTool = find_program('import/public/common/utils/imageProcs/tools/pakbuild')
+cmdTableTool = find_program('import/public/hwp/generic/perv/cmdtable/cmdtable.py')
+signHashList = find_program('build/utils/signHashList')
 tracehash = find_program('tools/trace/tracehash.pl')
 buildInfo = find_program('build/utils/buildInfo.py')
 
