@@ -61,10 +61,7 @@ namespace fapi2
 
     template<TargetType K, MulticastType M, typename V>
     static constexpr void plat_apply_target_limits(void)
-    {
-        static_assert(!(K & TARGET_TYPE_MULTICAST),
-                       "Multicast targets are not supported on this platform");
-    }
+    {}
 
 // TODO: P11 SBE PORTING
     template<TargetType T, MulticastType M, typename V>
@@ -172,10 +169,10 @@ namespace fapi2
 
         static_assert(sizeof(Target<T, M, V>) == sizeof(plat_target_sbe_handle),
                   "Sizes of plat target and FAPI target must match");
-
+#if 0
         static_assert(K == TARGET_TYPE_PROC_CHIP,
                   "Parent target must be the proc chip");
-
+#endif
         static_assert((T & ~TARGET_TYPE_PROC_CHILDREN) == 0,
                   "Child target type must be a pervasive chiplet");
 
