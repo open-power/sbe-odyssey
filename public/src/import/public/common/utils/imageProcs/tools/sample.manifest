@@ -21,6 +21,14 @@
         #
         # Default: zlib
         "method": "zlib",
+
+        # Allow the user to specify a file to put the hash list into
+        # If given, assume all files want hashes created.  This can be disabled on a per file basis.
+        # If not given, then no hashes will be created.  A file must be given here for hashes to be enabled
+        # The hash.list can be in any path in the archive, but must be named hash.list
+        #
+        # Default: None
+        "hashfile": "boot/hash.list",
     }, # end global
 
     # Layout of the files within the image
@@ -155,6 +163,7 @@
         },
         "xgpe/lvl1_bl": {
             "file": "out/xgpe/lvl1_bl",
+            "hash": False,
         },
         "xgpe/lvl2_bl": {
             "file": "out/xgpe/lvl2_bl",
