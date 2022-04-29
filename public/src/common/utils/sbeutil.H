@@ -100,27 +100,11 @@ inline void SBE_MAGIC_INSTRUCTION(int _n)
         "i" ((((n) >> 0) & 0xf) | 16));
 }
 
-// Macro to execute HWP
-#ifdef SEEPROM_IMAGE
 #define SBE_EXEC_HWP_NOARG(...) SBE_EXEC_HWP(__VA_ARGS__)
 #define SBE_EXEC_HWP(fapiRc, hwp, ...) \
 { \
     fapiRc = hwp(__VA_ARGS__); \
 }
-#else
-#define SBE_EXEC_HWP_NOARG(fapiRc, hwp) \
-{ \
-    SBE_INFO("Procedure not present in the image:No-Op"); \
-    fapiRc = FAPI2_RC_SUCCESS; \
-}
-#define SBE_EXEC_HWP(fapiRc, hwp, ...) \
-{ \
-    /* handling unused variables */ \
-    UNUSED(0, __VA_ARGS__); \
-    SBE_INFO("Procedure not present in the image:No-Op"); \
-    fapiRc = FAPI2_RC_SUCCESS; \
-}
-#endif
 
 namespace SBE
 {
