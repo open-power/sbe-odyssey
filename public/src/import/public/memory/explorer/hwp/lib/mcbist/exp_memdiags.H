@@ -1,0 +1,79 @@
+/* IBM_PROLOG_BEGIN_TAG                                                   */
+/* This is an automatically generated prolog.                             */
+/*                                                                        */
+/* $Source: public/src/import/public/memory/explorer/hwp/lib/mcbist/exp_memdiags.H $ */
+/*                                                                        */
+/* OpenPOWER sbe Project                                                  */
+/*                                                                        */
+/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* [+] International Business Machines Corp.                              */
+/*                                                                        */
+/*                                                                        */
+/* Licensed under the Apache License, Version 2.0 (the "License");        */
+/* you may not use this file except in compliance with the License.       */
+/* You may obtain a copy of the License at                                */
+/*                                                                        */
+/*     http://www.apache.org/licenses/LICENSE-2.0                         */
+/*                                                                        */
+/* Unless required by applicable law or agreed to in writing, software    */
+/* distributed under the License is distributed on an "AS IS" BASIS,      */
+/* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or        */
+/* implied. See the License for the specific language governing           */
+/* permissions and limitations under the License.                         */
+/*                                                                        */
+/* IBM_PROLOG_END_TAG                                                     */
+
+///
+/// @file exp_memdiags.H
+/// @brief API for memory diagnostics
+///
+// *HWP HWP Owner: Stephen Glancy <sglancy@us.ibm.com>
+// *HWP HWP Backup: Marc Gollub <gollub@us.ibm.com>
+// *HWP Team: Memory
+// *HWP Level: 3
+// *HWP Consumed by: HB:FSP
+//
+
+#ifndef _MSS_EXP_MEMDIAGS_H_
+#define _MSS_EXP_MEMDIAGS_H_
+
+#include <fapi2.H>
+
+#include <lib/shared/exp_consts.H>
+#include <lib/mcbist/exp_mcbist.H>
+#include <generic/memory/lib/utils/mcbist/gen_mss_memdiags.H>
+
+// This file is still necessary to put traits and generic code together
+
+namespace mss
+{
+namespace exp
+{
+namespace memdiags
+{
+
+///
+/// @brief Process the result from the mcbist sf_read subtest after memdiags
+///
+/// @param[in] i_target OCMB target for traces
+/// @param[in] l_fail_behavior_attr
+/// @param[in, out] i_rc ReturnCode from sf_read
+/// @return fapi2::ReturnCode
+///
+fapi2::ReturnCode process_subtest_result(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+        const uint8_t l_fail_behavior_attr,
+        fapi2::ReturnCode& io_rc);
+
+///
+/// @brief Perform a read only mcbist subtest at the end of memdiags
+///
+/// @param[in] i_target OCMB Chip
+/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS iff success, else error
+///
+fapi2::ReturnCode perform_read_only_subtest(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
+
+} // memdiags
+} // exp
+} // mss
+
+#endif

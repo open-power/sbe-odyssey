@@ -1,0 +1,561 @@
+<!-- IBM_PROLOG_BEGIN_TAG                                                   -->
+<!-- This is an automatically generated prolog.                             -->
+<!--                                                                        -->
+<!-- $Source: public/src/import/public/memory/generic/xml/attribute_info/generic_memory_attributes.xml $ -->
+<!--                                                                        -->
+<!-- OpenPOWER sbe Project                                                  -->
+<!--                                                                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022                             -->
+<!-- [+] International Business Machines Corp.                              -->
+<!--                                                                        -->
+<!--                                                                        -->
+<!-- Licensed under the Apache License, Version 2.0 (the "License");        -->
+<!-- you may not use this file except in compliance with the License.       -->
+<!-- You may obtain a copy of the License at                                -->
+<!--                                                                        -->
+<!--     http://www.apache.org/licenses/LICENSE-2.0                         -->
+<!--                                                                        -->
+<!-- Unless required by applicable law or agreed to in writing, software    -->
+<!-- distributed under the License is distributed on an "AS IS" BASIS,      -->
+<!-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or        -->
+<!-- implied. See the License for the specific language governing           -->
+<!-- permissions and limitations under the License.                         -->
+<!--                                                                        -->
+<!-- IBM_PROLOG_END_TAG                                                     -->
+<attributes>
+
+  <attribute>
+    <id>ATTR_MEM_DRAM_CWL</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      CAS Write Latency.
+    </description>
+    <mssUnits> nck </mssUnits>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <mssAccessorName>dram_cwl</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_RDIMM_BUFFER_DELAY</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      Delay due to the presence of a buffer, in number of clocks
+    </description>
+    <mssUnits> nck </mssUnits>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <mssAccessorName>dimm_buffer_delay</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_REORDER_QUEUE_SETTING</id>
+    <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    <description>
+      Contains the settings for write/read reorder queue
+    </description>
+    <enum>REORDER = 0, FIFO = 1</enum>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <mssAccessorName>reorder_queue_setting</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_2N_MODE</id>
+    <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    <description>
+      Default value for 2N Mode from Signal Integrity.
+      0x0 = Invalid Mode, 0x01 = 1N Mode , 0x02 = 2N Mode
+      If value is set to 0x0 this indicate value was never
+      initialized correctly.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <mssAccessorName>mem_2n_mode</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_VPD_DQ_MAP</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      ARRAY[Dimm DQ PIN]
+      The map from the Dual Inline Memory Module
+      (DIMM) Data (DQ) Pin to the Module Package Data (DQ) Pinout
+    </description>
+    <platInit/>
+    <mrwHide/>
+    <default>
+        <!-- Default to a 1:1 layout to match the DDIMM specification -->
+        0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,
+        27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,
+        51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71
+    </default>
+    <valueType>uint8</valueType>
+    <mssUnits></mssUnits>
+    <mssBlobStart>0</mssBlobStart>
+    <mssBlobLength>72</mssBlobLength>
+    <mssAccessorName>mem_vpd_dq_map</mssAccessorName>
+    <array>72</array>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_DIMM_DDR4_F0RC0F</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      ARRAY[DIMM]
+      F0RC0F - Command Latency Adder Control Word;
+      Default value - 04. Values Range from 00 to 04.
+      No need to calculate; User can override with desired experimental value.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <array>2</array>
+    <mssAccessorName>dimm_ddr4_f0rc0f</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_CS_CMD_LATENCY</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      ARRAY[DIMM]
+      CS to CMD/ADDR Latency.
+      This is for DDR4 MRS4.
+      Computed in mss_eff_cnfg.
+      Each memory channel will have a value.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <enum>DISABLE = 0, 3CYC = 3, 4CYC = 4, 5CYC = 5, 6CYC = 6, 8CYC = 8</enum>
+    <writeable/>
+    <array>2</array>
+    <mssAccessorName>cs_cmd_latency</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_CA_PARITY_LATENCY</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      ARRAY[DIMM]
+      C/A Parity Latency Mode. This is for DDR4 MRS5.
+      Computed in mss_eff_cnfg. Each memory channel will have a value.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <enum>DISABLE = 0, PL4 = 4, PL5 = 5, PL6 = 6, PL8 = 8</enum>
+    <writeable/>
+    <array>2</array>
+    <mssAccessorName>ca_parity_latency</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_DIMM_DDR4_F0RC02</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      ARRAY[DIMM]
+      F0RC02: Timing and IBT Control Word; Default value - 0x00.
+      Values Range from 0-8. No need to calculate;
+      User can override with desired experimental value.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <array>2</array>
+    <mssAccessorName>dimm_ddr4_f0rc02</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_DIMM_DDR4_F0RC03</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      ARRAY[DIMM]
+      F0RC03 - CA and CS Signals Driver Characteristics Control Word;
+      Default value - 0x05 (Moderate Drive). Values Range from 00 to 0F.
+      Has to be picked up from SPD byte 137, 1st Nibble for CS and CA.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <array>2</array>
+    <mssAccessorName>dimm_ddr4_f0rc03</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_DIMM_DDR4_F0RC04</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      ARRAY[DIMM]
+      F0RC04 - ODT and CKE Signals Driver Characteristics Control Word;
+      Default value - 0x05 (Moderate Drive).
+      Values Range from 00 to 0F. Has to be picked up from SPD byte 137, 2nd Nibble for ODT and CKE.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <array>2</array>
+    <mssAccessorName>dimm_ddr4_f0rc04</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_DIMM_DDR4_F0RC05</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      ARRAY[DIMM]
+      F0RC05 - Clock Driver Characteristics Control Word;
+      Default value - 0x05 (Moderate Drive).
+      Values Range from 00 to 0F. Has to be picked up from SPD byte 138, 2nd Nibble for CK.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <array>2</array>
+    <mssAccessorName>dimm_ddr4_f0rc05</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_DIMM_DDR4_F0RC0B</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      ARRAY[DIMM]
+      Operating Voltage VDD and VrefCA Source Control Word;
+      Read from ATTR_MSS_VOLT_VDDR. Default value - 14. Values Range from 00 to 15 decimal.
+      No need to calculate; User can override with desired experimental value.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <array>2</array>
+    <mssAccessorName>dimm_ddr4_f0rc0b</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_DIMM_DDR4_F0RC1X</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      ARRAY[DIMM]
+      F0RC1x - Internal VrefCA Control Word;
+      Default value - 00. Values Range from 00 to 3F.
+      No need to calculate; User can override with desired experimental value.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <array>2</array>
+    <mssAccessorName>dimm_ddr4_f0rc1x</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_DIMM_DDR4_F0RC7X</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      ARRAY[DIMM]
+      F0RC7x: IBT Control Word;
+      Default value - 00. Values Range from 00 to FF.No need to calculate.
+      User can override with desired experimental value.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <array>2</array>
+    <mssAccessorName>dimm_ddr4_f0rc7x</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_DIMM_DDR4_F1RC00</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      ARRAY[DIMM]
+      F1RC00: Data Buffer Interface Driver Characteristics Control Word;
+      Default value - 00. Values Range from 00 to 0F. No need to calculate.
+      User can override with desired experimental value.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <array>2</array>
+    <mssAccessorName>dimm_ddr4_f1rc00</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_DIMM_DDR4_F1RC02</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      ARRAY[DIMM]
+      F1RC00: Data Buffer Interface Driver Characteristics Control Word;
+      Default value - 00. Values Range from 00 to 0F. No need to calculate;
+      User can override with desired experimental value.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <array>2</array>
+    <mssAccessorName>dimm_ddr4_f1rc02</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_DIMM_DDR4_F1RC03</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      ARRAY[DIMM]
+      F1RC00: Data Buffer Interface Driver Characteristics Control Word.
+      Default value - 00. Values Range from 00 to 0F. No need to calculate.
+      User can override with desired experimental value.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <array>2</array>
+    <mssAccessorName>dimm_ddr4_f1rc03</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_DIMM_DDR4_F1RC04</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      ARRAY[DIMM]
+      F1RC00: Data Buffer Interface Driver Characteristics Control Word;
+      Default value - 00. Values Range from 00 to 0F. No need to calculate.
+      User can override with desired experimental value.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <array>2</array>
+    <mssAccessorName>dimm_ddr4_f1rc04</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_DIMM_DDR4_F1RC05</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      ARRAY[DIMM]
+      F1RC00: Data Buffer Interface Driver Characteristics Control Word.
+      Default value - 00. Values Range from 00 to 0F. No need to calculate.
+      User can override with desired experimental value.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <array>2</array>
+    <mssAccessorName>dimm_ddr4_f1rc05</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_DIMM_POS_METADATA</id>
+    <targetType>TARGET_TYPE_DIMM</targetType>
+    <description>
+      To get the FAPI_POS to the equivilent of ATTR_POS, we need to normalize the fapi_pos value
+      to the processor (stride across which ever processor we're on) and then add in the delta
+      per processor as ATTR_POS isn't processor relative (delta is the total dimm on a processor)
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint32</valueType>
+    <writeable/>
+    <mssAccessorName>dimm_pos_metadata</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_DRAM_GEN_METADATA</id>
+    <targetType>TARGET_TYPE_DIMM</targetType>
+    <description>
+      DRAM Device Type.
+      Decodes SPD byte 2.
+      Created for use by attributes that need this data
+      earlier than eff_config, such as c_str and the hypervisor.
+      Not meant for direct HWP use. This is just an abstraction
+      of any chip specific EFF_DRAM_GEN attribute.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <enum>EMPTY = 0, DDR3 = 1, DDR4 = 2</enum>
+    <writeable/>
+    <mssAccessorName>dram_gen_metadata</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_DIMM_TYPE_METADATA</id>
+    <targetType>TARGET_TYPE_DIMM</targetType>
+    <description>
+      Base Module Type.
+      Decodes SPD Byte 3 (bits 3~0).
+      Created for use by attributes that need this data
+      earlier than eff_config, such as c_str and the hypervisor.
+      Not meant for direct HWP use. This is just an abstraction
+      of any chip specific EFF_DIMM_TYPE attribute.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <enum> EMPTY = 0, RDIMM = 1, UDIMM = 2, LRDIMM = 3, DDIMM = 4</enum>
+    <writeable/>
+    <mssAccessorName>dimm_type_metadata</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_OMI_EDPL_DISABLE</id>
+    <targetType>TARGET_TYPE_SYSTEM</targetType>
+    <description>
+      EDPL (Error Detection Per Lane) is a feature in the DL that adds some additional checks to
+      the traffic going across the OpenCAPI link in order to better track which lanes are having issues.
+      Note: EDPL must be set the same on both sides of the link. This attribute affects both the proc/mc
+      side and the OCMB side.
+    </description>
+    <valueType>uint8</valueType>
+    <enum>FALSE = 0, TRUE = 1</enum>
+    <platInit/>
+    <initToZero/>
+    <mssAccessorName>mss_omi_edpl_disable</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_IGNORE_PLUG_RULES</id>
+    <targetType>TARGET_TYPE_SYSTEM</targetType>
+    <description>
+      Set to YES if you want to ignore the plug rules. Sometimes
+      this is needed in a partial-good configuration or on a test board.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <enum>NO = 0, YES = 1</enum>
+    <mssAccessorName>ignore_mem_plug_rules</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_IGNORE_PLUG_RULES_DIMM_SIZE_MIX</id>
+    <targetType>TARGET_TYPE_SYSTEM</targetType>
+    <description>
+      Set to YES if you want to ignore the DIMM size plug rules. Sometimes
+      this maybe required for characterization testing or on a test board.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <enum>NO = 0, YES = 1</enum>
+    <mssAccessorName>ignore_mem_plug_rules_dimm_size_mix</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MEM_IGNORE_PLUG_RULES_DIMM_HEIGHT_MIX</id>
+    <targetType>TARGET_TYPE_SYSTEM</targetType>
+    <description>
+      Set to YES if you want to ignore the DIMM height plug rules. Sometimes
+      this maybe required for characterization testing or on a test board.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <enum>NO = 0, YES = 1</enum>
+    <mssAccessorName>ignore_mem_plug_rules_dimm_height_mix</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_OMI_DL_PREIPL_PRBS_TIME</id>
+    <targetType>TARGET_TYPE_OMI</targetType>
+    <description>
+      The time to send pre-ipl PRBS in ms.
+    </description>
+    <valueType>uint32</valueType>
+    <default>0x400</default>
+    <platInit/>
+    <mrwHide/>
+    <mssAccessorName>omi_dl_preipl_prbs_time</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_OMI_X4_DEGRADE_ACTION</id>
+    <targetType>TARGET_TYPE_SYSTEM</targetType>
+    <description>
+        Selects the settings for Host and Explorer FIRs
+        for when x4 channel degrade occurs.
+        Default: RECOVERABLE (channel degrade will cause recoverable error)
+        Performance team request is to XSTOP when degrade occurs
+    </description>
+    <valueType>uint8</valueType>
+    <enum>
+      MASKED = 0x00,
+      XSTOP = 0x01,
+      LOCAL_XSTOP = 0x02,
+      RECOVERABLE = 0x03
+    </enum>
+    <default>0x03</default>
+    <platInit/>
+    <writeable/>
+    <mssAccessorName>omi_x4_degrade_action</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_OMI_CRC_DEBUG</id>
+    <targetType>TARGET_TYPE_SYSTEM</targetType>
+    <description>
+        Selects the settings for Host and Explorer FIRs
+        for CRC and NACK errors.
+        Default: MASKED
+    </description>
+    <valueType>uint8</valueType>
+    <enum>
+      MASKED = 0x00,
+      XSTOP = 0x01,
+      LOCAL_XSTOP = 0x02,
+      RECOVERABLE = 0x03
+    </enum>
+    <default>0x00</default>
+    <platInit/>
+    <writeable/>
+    <overrideOnly/>
+    <mssAccessorName>omi_crc_debug</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_ENABLE_FIR_UNMASKING</id>
+    <targetType>TARGET_TYPE_SYSTEM</targetType>
+    <description>
+      Enable FIR Unmasking for HWPs, applies to functions that are specifically referencing this attribute.
+    </description>
+    <valueType>uint8</valueType>
+    <enum> DISABLED = 0, ENABLED = 1 </enum>
+    <writeable/>
+    <default>ENABLED</default>
+    <mssAccessorName>enable_fir_unmasking</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_IS_APOLLO</id>
+    <targetType>TARGET_TYPE_SYSTEM</targetType>
+    <description>
+      Indicates if the target system is an Apollo system.
+      Will be set automatically in Cronus based on SYSTEM_TYPE
+    </description>
+    <valueType>uint8</valueType>
+    <enum> FALSE = 0, TRUE = 1 </enum>
+    <initToZero></initToZero>
+    <platInit/>
+    <mrwHide/>
+    <mssAccessorName>is_apollo</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_ROW_REPAIR_DATA</id>
+    <targetType>TARGET_TYPE_DIMM</targetType>
+    <description>
+      Row Repair Data for a DIMM target.
+      Data for 4 dimm ranks * 32 bits per row repair
+      Each row repair contains:
+      -5 bits:  DRAM position (x8: 0-9, x4: 0-19)
+      -3 bits:  sub ranks (0-7)
+      -2 bits:  bank group (0-3)
+      -3 bits:  bank (0-7)
+      -18 bits: row
+      -1 bits:  repair validity (0: repair is invalid, 1: repair is valid)
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <array>4 4</array>
+    <mssAccessorName>row_repair_data</mssAccessorName>
+  </attribute>
+
+</attributes>
