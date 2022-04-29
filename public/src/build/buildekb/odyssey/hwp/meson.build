@@ -53,7 +53,7 @@ if ( abs_infiles_c_path.length() != 0 )
                                      build_by_default: true,
                                  )
 
-    odyssey_hwp_lib_paths = '-l' + lib_file_name
-    odyssey_hwp_libs = '-L' + meson.current_build_dir()
+    odyssey_hwp_libs = '-l' + lib_file_name
+    odyssey_hwp_lib_paths = '-L' + meson.current_build_dir()
     odyssey_hwp_dep_libs = libodysseyhwp
 endif
