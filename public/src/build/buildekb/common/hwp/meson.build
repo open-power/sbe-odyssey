@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,7 +53,7 @@ if ( abs_generic_infiles_c_path.length() != 0 )
                                      build_by_default: true,
                                  )
 
-    ekb_cmn_hwp_lib_paths = '-l' + lib_ekb_cmn_file_name
-    ekb_cmn_hwp_libs = '-L' + meson.current_build_dir()
+    ekb_cmn_hwp_libs = '-l' + lib_ekb_cmn_file_name
+    ekb_cmn_hwp_lib_paths = '-L' + meson.current_build_dir()
     ekb_cmn_hwp_dep_libs = libekbcmnhwp
 endif
