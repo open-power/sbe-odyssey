@@ -97,6 +97,6 @@ typedef struct shvReq
  *
  * @return Secure container verification response(ROM_DONE/POM_FAILED)
  */
-ROM_response verifySecureHdr(shvReq_t *shvReq, shvRsp_t *shvRsp);
+extern "C" ROM_response verifySecureHdr(shvReq_t *shvReq, shvRsp_t *shvRsp);
 
 #endif /* __SHV_H */
