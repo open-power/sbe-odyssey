@@ -27,8 +27,6 @@ infile_c = ['sbeSpMsg.C',
             'sbeirq.C',
             'sbeFifoMsgUtils.C',
             'sbeglobals.C',
-            'sbecmdscomaccess.C',
-            'sbescom.C',
            ]
 
 lib_file_name = 'runtimecmncore'

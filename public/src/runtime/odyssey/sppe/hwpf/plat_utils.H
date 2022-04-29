@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/core/sbescom.H $                    */
+/* $Source: public/src/runtime/odyssey/sppe/hwpf/plat_utils.H $           */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -21,27 +21,59 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+#ifndef _PLAT_UTILS_H_
+#define _PLAT_UTILS_H_
 
-#include "sbeSpMsg.H"
-#include "sbeutil.H"
-#include "sbefifo.H"
+#include <plat_types.H>
 
-/**
-  * @brief check if scom address is Indirect scom and perform scom
-  *
-  * @param[in]  i_isRead True if read operation, false otherwise
-  * @param[in]  i_addr scom addess
-  * @param[in]  io_data data for scom operation. For read, it is output operand.
-  * @param[out] o_hdr response header object
-  * @param[out] o_ffdc ffdc object
-  * @param[out] i_fifoType fifo type
-  * @param[in]  i_mask mask for data
-  *
-  */
-void checkIndirectAndDoScom( const bool i_isRead,
-                                 const uint64_t i_addr,
-                                 uint64_t & io_data,
-                                 sbeRespGenHdr_t *const o_hdr,
-                                 sbeResponseFfdc_t *const o_ffdc,
-                                 sbeFifoType i_fifoType = SBE_FIFO,
-                                 uint64_t i_mask = 0xffffffffffffffffull);
+namespace fapi2 {
+#ifdef __PPE_QME
+static const PlatformType PLATFORM = PLAT_QME;
+#else
+static const PlatformType PLATFORM = PLAT_SBE;
+#endif
+}
+
+/// @brief Cause a compile time error unless eliminated by dead code elimination
+/// Use this if you have nested if statements and would like the compile to fail
+/// if a given condition is possible to be hit.
+#define STATIC_COMPILE_ERROR(msg)                           \
+    {                                                       \
+        extern void __attribute__((error(msg))) e();		\
+        e();                                                \
+    }
+
+/// @brief Static assertion that can be optimized out
+#define STATIC_CHECK(cond, msg)                 \
+    {                                           \
+        if (!(cond))                            \
+        {                                       \
+            STATIC_COMPILE_ERROR(msg);          \
+        }                                       \
+    }
+
+#ifdef __ASSEMBLER__
+
+#ifndef ULL
+#define ULL(x) x
+#endif
+
+#else
+
+#ifndef ULL
+#define ULL(x) x##ull
+
+#endif
+
+#endif // __ASSEMBLER
+
+/// Create a multi-bit mask of \a n bits starting at bit \a b
+#ifndef BITS
+    #define BITS(b, n) ((ULL(0xffffffffffffffff) << (64 - (n))) >> (b))
+#endif
+
+/// Create a single bit mask at bit \a b
+#ifndef BIT
+    #define BIT(b) BITS((b), 1)
+#endif
+#endif //_PLAT_UTILS_H_
