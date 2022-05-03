@@ -1,0 +1,61 @@
+# Syntax:
+# composite_image_name      ring_name [ ring_name ... ]
+#
+# Standard shell globbing rules apply for matching ring names:
+#   * matches any number of characters
+#   pre_{a,b,c}_post expands to pre_a_post, pre_b_post, pre_c_post
+#
+# A prefix of "chip:" matches a ring only on the specified chip,
+# otherwise any chip's rings match.
+#
+# The list is parsed from top to bottom;
+# the first entry that matches a given ring wins.
+# If a composite image name is "FAIL" it means fail the build
+# if any remaining ring matches the rule at this point.
+#
+
+# Tap Perv PLL is set up using scan infra
+pc_pll        pc:perv_pll_bndy perv_pll_cfg
+
+# PAXO, PCI, MC, TBUS are bucketed PLL rings
+paxo_pll_X    paxo_pll_bndy
+pci_pll_X     pci_pll_bndy
+mc_pll_X      mc_pll_bndy
+tbus_pll_X    tbus_pll_bndy
+
+# perv_pll on all chips except Tap is set up via
+# command table and must not be present in init files
+FAIL          perv_pll_bndy
+
+# Tap repair is set up using scan infra
+pc_pib_rtg    pc:pib_{gptr,time,repr}
+
+# On all other chips, PIB repair is set up via
+# command table and must not be present here
+FAIL          pib_{gptr,time,repr}
+
+# Other TP regions, on the other hand, use the scan infra
+perv_rtg      {perv,net,occ,ana,mbio}_{gptr,time,repr}
+perv_initf    {perv,net,occ,ana,mbio}_func
+
+# Catch all TP stragglers
+FAIL          {perv,net,sbe,occ,ana,mbio}_*
+
+# Core rings for power management
+cl2_rtg       ec_cl2_{gptr,time,repr}
+cl2_initf     ec_cl2_{func,mode}
+l3_rtg        ec_l3_{gptr,time,repr}
+l3_initf      ec_l3_{func,mode}
+mma_rtg       ec_mma_{gptr,time,repr}
+mma_initf     ec_mma_{func,mode}
+
+# That should be it for core rings
+FAIL          ec_*
+
+# Catch all remaining regions in the big composite images
+chiplet_pll   *_pll_bndy
+chiplet_rtg   *_{gptr,time,repr}
+chiplet_initf *_{func,mode}
+
+# Fail if any rings fell through to here
+FAIL          *
