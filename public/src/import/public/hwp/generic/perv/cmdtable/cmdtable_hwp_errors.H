@@ -25,11 +25,11 @@
 #pragma once
 
 //Errors
-#define ERR_ABIST_TIMEOUT           1
-#define ERR_OPCG_TIMEOUT_ABIST      2
-#define ERR_OPCG_TIMEOUT_SCAN0      3
-#define ERR_OPCG_TIMEOUT_START_CLK  4
-#define ERR_LOCK_PLL_TIMEOUT        5
-#define ERR_CLOCK_STAT_SL           6
-#define ERR_CLOCK_STAT_NSL          7
-#define ERR_CLOCK_STAT_ARY          8
+#define ERR_ABIST_TIMEOUT           0x201
+#define ERR_OPCG_TIMEOUT_ABIST      0x202
+#define ERR_OPCG_TIMEOUT_SCAN0      0x203
+#define ERR_OPCG_TIMEOUT_START_CLK  0x204
+#define ERR_LOCK_PLL_TIMEOUT        0x205
+#define ERR_CLOCK_STAT_SL           0x206
+#define ERR_CLOCK_STAT_NSL          0x207
+#define ERR_CLOCK_STAT_ARY          0x208
