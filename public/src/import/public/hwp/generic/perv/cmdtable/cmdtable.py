@@ -154,6 +154,8 @@ def parse_command_args(cmd, argtypes, args):
                     arg = eval(arg, {__builtins__: {}})
                 except Exception as e:
                     raise ParseError("invalid %s (%s): %s" % (COMMAND_ARGTYPES[argtype], e.args[0], arg))
+                if argtype == "c" and arg & 0xFFFFFF00 != 0x200:
+                    raise ParseError("TEST/POLL error code must be 0x2xx")
             elif argtype in "sl":
                 if has_whitespace(arg):
                     raise ParseError("%s must not contain whitespace: %s" % (COMMAND_ARGTYPES[argtype], arg))

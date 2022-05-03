@@ -26,6 +26,6 @@
 #define CPLT_STAT        0x01000100
 #define OPCG_DONE        0xl008
 
-#define ERR_ROTATE_TIMEOUT    1
-#define ERR_HEADER_CHECK      2
-#define ERR_CLOCK_STAT        3
+#define ERR_ROTATE_TIMEOUT    0x201
+#define ERR_HEADER_CHECK      0x202
+#define ERR_CLOCK_STAT        0x203
