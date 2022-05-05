@@ -35,5 +35,41 @@
 # Exit if any command fails
 set -e
 
-set -x
-$2 setfixed $1.attr.db $1.bin -v
+SPPE_MESON_IMAGE_DIR_PATH=$1
+SPPE_BASE_IMAGE_NAME=$2
+
+SPPE_IMAGE_ABS=$1/$2
+
+#Tools
+ATTR_TOOL=$3
+PAK_TOOL_PATH=$4
+PAK_BUILD_TOOL_PATH=$5
+SBE_SIGN_TOOL=$6
+
+$ATTR_TOOL setfixed $SPPE_IMAGE_ABS.attr.db $SPPE_IMAGE_ABS.bin -v
+
+# Create fake embedded archive for now
+echo "test" > test.bin
+$PAK_TOOL_PATH add ${SPPE_MESON_IMAGE_DIR_PATH}/embedded_archive.pak test.bin
+rm test.bin
+
+#SPPE manifest file path
+SPPE_MANIFEST_PATH=$SBEROOT/public/src/runtime/odyssey/sppe/build/utils/manifest
+
+# Create the pak based on SPPE manifest file
+$PAK_BUILD_TOOL_PATH $SPPE_MANIFEST_PATH -o ${SPPE_MESON_IMAGE_DIR_PATH} -n ${SPPE_BASE_IMAGE_NAME}
+
+#Lets generate the hash list
+mkdir -p ${SPPE_MESON_IMAGE_DIR_PATH}/rt
+$PAK_TOOL_PATH hash ${SPPE_MESON_IMAGE_DIR_PATH}/${SPPE_BASE_IMAGE_NAME}.pak ${SPPE_MESON_IMAGE_DIR_PATH}/rt/hash.list
+
+#Sign the Hash List
+$SBE_SIGN_TOOL -s ${SPPE_MESON_IMAGE_DIR_PATH}/scratch -i ${SPPE_MESON_IMAGE_DIR_PATH}/rt/hash.list -o ${SPPE_MESON_IMAGE_DIR_PATH}/rt/secure.hdr -c BOOT_LDR
+
+#Change dir into meson image dir path(builddir where output images are stored)
+#and then add the files into pak so that we dont endup adding the complete file
+#path as file name
+cd ${SPPE_MESON_IMAGE_DIR_PATH}
+
+#Add the hash list and secure header into the pak
+$PAK_TOOL_PATH add ${SPPE_BASE_IMAGE_NAME}.pak rt --method zlib
