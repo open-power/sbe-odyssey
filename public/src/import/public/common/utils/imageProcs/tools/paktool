@@ -48,7 +48,7 @@ def cmd_add(args):
         if os.path.isdir(fname):
             for dirpath, _, dirfiles in os.walk(fname):
                 for name in dirfiles:
-                    addFiles.append(os.path(dirpath, name))
+                    addFiles.append(os.path.join(dirpath, name))
         elif os.path.isfile(fname):
             addFiles.append(fname)
         else:
@@ -287,6 +287,9 @@ sub.set_defaults(func=cmd_remove)
 
 # cmdline loaded up, now parse for it and handle what is found
 args = parser.parse_args()
+if not hasattr(args, "func"):
+    parser.print_help()
+    sys.exit(1)
 
 # Set the console output level selected
 out.setConsoleLevel(args.console_level)
