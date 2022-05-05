@@ -74,7 +74,7 @@
       TARGET_TYPE_COMPUTE_CHIP, TARGET_TYPE_HUB_CHIP
     </targetType>
     <description>
-      Physical position of chip/dimm within drawer
+      Physical position of chip/dimm within socket/slot
       This data is from the MRW.
     </description>
     <valueType>uint32</valueType>
