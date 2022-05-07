@@ -51,6 +51,13 @@
         },
         {
             "cmdClass":"A8",
+            "command":"0x01",
+            "function":"sbeGetFfdc",
+            "fences":["SBE_NO_FENCE"],
+            "headerFile":"sbecmdgenericffdc.H"
+        },
+        {
+            "cmdClass":"A8",
             "command":"0x02",
             "function":"sbeGetCapability",
             "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
