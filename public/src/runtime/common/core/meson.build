@@ -36,7 +36,8 @@ infile_c = ['sbeSpMsg.C',
             'sbestates.C',
             'sbecmdgeneric.C',
             'sbecmnhwpwrapper.C',
-	    'sbestreampaktohwp.C'
+            'sbestreampaktohwp.C',
+            'sbecmdgenericffdc.C',
            ]
 
 abs_runtime_cmn_core_c_path = []
