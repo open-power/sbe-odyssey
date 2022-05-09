@@ -420,8 +420,9 @@ def cmd_run(args):
     else:
         import pyecmd
         with pyecmd.Ecmd(args=args.ecmd_args):
-            target = pyecmd.loopTargets(args.chip, pyecmd.ECMD_SELECTED_TARGETS_LOOP_DEFALL)[0]
-            run_commands(main, cust, target)
+            for target in pyecmd.loopTargets(args.chip, pyecmd.ECMD_SELECTED_TARGETS_LOOP_DEFALL):
+                print(target)
+                run_commands(main, cust, target)
 
 def cmd_reverse(args):
     commands = load_commands(args.blob)
