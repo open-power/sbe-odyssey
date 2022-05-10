@@ -365,13 +365,13 @@ ISTEP(1, 5, "ph_pib_repr_initf", "SPPE")
 # scan0 has been performed by CBS
 
 def p11s_pib_repr_initf():
-    putRing( pib_gtr = pib_gptr+pib_time+pib_repr(+ optional pib_abst) )
+    putRing( pib_rtg = pib_gptr+pib_time+pib_repr(+ optional pib_abst) )
 
 def ody_pib_repr_initf():
-    putRing( pib_gtr = pib_gptr+pib_time+pib_repr(+ optional pib_abst) )
+    putRing( pib_rtg = pib_gptr+pib_time+pib_repr(+ optional pib_abst) )
 
 def zme_pib_repr_initf():
-    putRing( pib_gtr = pib_gptr+pib_time+pib_repr(+ optional pib_abst) )
+    putRing( pib_rtg = pib_gptr+pib_time+pib_repr(+ optional pib_abst) )
 
 """
 Arrayinit is split into two steps; the first starts+polls, the second cleans up.
@@ -479,13 +479,13 @@ def zme_rcs_setup():
 ISTEP(1, 17, "ph_tp_repr_initf", "SPPE")
 
 def p11s_tp_repr_initf():
-    putRing( perv_gtr = {perv,net,occ}_{gptr,time,repr}(+*_abst as needed))} )
+    putRing( perv_rtg = {perv,net,occ}_{gptr,time,repr}(+*_abst as needed))} )
 
 def ody_tp_repr_initf():
-    putRing( perv_gtr = {perv,net}_{gptr,time,repr}(+*_abst as needed))} )
+    putRing( perv_rtg = {perv,net}_{gptr,time,repr}(+*_abst as needed))} )
 
 def zme_tp_repr_initf():
-    putRing( perv_gtr = {perv,net,ana,mbio}_{gptr,time,repr}(+*_abst as needed))} )
+    putRing( perv_rtg = {perv,net,ana,mbio}_{gptr,time,repr}(+*_abst as needed))} )
 
 ISTEP(1, 18, "ph_tp_arrayinit", "SPPE")
 
@@ -525,13 +525,13 @@ LBIST: DFT can wedge in LBIST for perv, net, occ in here
 ISTEP(1, 20, "ph_tp_initf", "SPPE")
 
 def p11s_tp_initf():
-    putRing( perv_func = {perv,net,occ}_func )
+    putRing( perv_initf = {perv,net,occ}_func )
 
 def ody_tp_initf():
-    putRing( perv_func = {perv,net}_func )
+    putRing( perv_initf = {perv,net}_func )
 
 def zme_tp_initf():
-    putRing( perv_func = {perv,net,ana,mbio}_func )
+    putRing( perv_initf = {perv,net,ana,mbio}_func )
 
 ISTEP(1, 21, "ph_tp_startclocks", "SPPE")
 
@@ -685,7 +685,7 @@ def p11t_tp_chiplet_reset():
 ISTEP(2, 5, "pc_pib_initf", "SPPE")
 
 def p11t_pib_initf():
-    putRing( pc_pib_initf = *_gptr, *_time, *_repr, pib_abst (optional) )
+    putRing( pc_pib_rtg = *_gptr, *_time, *_repr, pib_abst (optional) )
 
 """
 For Tap, the arrayinit start+poll steps are separate to allow for parallel
@@ -852,7 +852,7 @@ def p11t_pll_setup():
 ISTEP(2, 19, "pc_tp_initf", "TSBE")
 
 def p11t_tp_initf():
-    putRing( tp_initf = perv_func+net_func )
+    putRing( perv_initf = perv_func+net_func )
 
 ISTEP(2, 20, "pc_tp_startclocks", "TSBE")
 
@@ -1069,18 +1069,23 @@ ISTEP(3, 6, "proc_chiplet_pll_initf", "SSBE, TSBE")
 
 def p11s_chiplet_pll_initf():
     putRing( chiplet_pll_common = all static PLL settings if any )
-    putRing( PAXO bucket ring based on bucket attr, attr defaults to max freq during boot to catch errors early )
-    putRing( PCI bucket ring based on bucket attr, attr defaults to max freq during boot to catch errors early )
-    ....
+    # Load bucketed rings based on bucket attrs
+    # Default to max freq during boot to catch errors early
+    putRing( paxo_pll_n )
+    putRing( pci_pll_n )
+    putRing( mc_pll_n )
 
 def p11t_chiplet_pll_initf():
     putRing( chiplet_pll_common = all static PLL settings if any )
-    putRing( TBUS bucket ring based on bucket attr, attr defaults to max freq during boot to catch errors early )
-    ....
+    # Load bucketed rings based on bucket attrs
+    # Default to max freq during boot to catch errors early
+    putRing( tbus_pll_n )
 
 def zme_chiplet_pll_initf():
     putRing( chiplet_pll_common = all static PLL settings if any )
-    putRing( TBUS bucket ring based on bucket attr, attr defaults to max freq during boot to catch errors early )
+    # Load bucketed rings based on bucket attrs
+    # Default to max freq during boot to catch errors early
+    putRing( xx_pll_n ) # TODO Daniel
     ....
 
 ISTEP(3, 7, "proc_chiplet_pll_setup", "SSBE, TSBE")
@@ -1206,7 +1211,7 @@ def ody_chiplet_repr_initf():
     poz_chiplet_repr_initf()
 
 def poz_chiplet_repr_initf():
-    putRing(chiplet_rtg = *_gptr+*_time+*_repr for all chiplets except TP)
+    putRing( chiplet_rtg = *_gptr+*_time+*_repr for all chiplets except TP)
 
 ISTEP(3, 12, "proc_chiplet_arrayinit", "SSBE, TSBE")
 
