@@ -78,7 +78,7 @@ def mod_rcs_setup(target<HUB_CHIP|PROC_CHIP>):
 
 ISTEP(99, 99, "poz_perv_mod_chiplet_clocking", "")
 
-def mod_abist_start(target<PERV|MC>, uint16_t i_clock_regions, uint32_t i_runn_cycles=0x42FFF, uint32_t i_abist_start_at=0xF0):
+def mod_abist_start(target<PERV|MC>, uint16_t i_clock_regions, uint32_t i_runn_cycles=0x42FFF, uint32_t i_abist_start_at=0xF0, uint32_t i_abist_start_stagger=0):
     # Switch dual-clocked arrays to ABIST clock domain
     CPLT_CTRL0.CTRL_CC_ABSTCLK_MUXSEL_DC = 1
 
@@ -95,7 +95,10 @@ def mod_abist_start(target<PERV|MC>, uint16_t i_clock_regions, uint32_t i_runn_c
     CLK_REGION.SEL_THOLD_ARY = 1
 
     # Configure idle count
-    OPCG_REG1[bits 0:35] = i_abist_start_at
+    uint32_t idle_count = i_abist_start_at;
+    for chiplet in unicast children of i_target:
+        OPCG_REG1[bits 0:35] = idle_count
+        idle_count += i_abist_start_stagger
 
     # Configure loop count and start OPCG
     OPCG_REG0 = 0
@@ -176,6 +179,7 @@ def mod_scan0(target<PERV|MC>, uint16_t i_clock_regions, uint16_t i_scan_types=S
     CLK_REGION = 0
     CLK_REGION[16 bits starting at CLOCK_REGION_PERV] = i_clock_regions
     CLK_REGION.SEL_THOLD_NSL = 1
+    CLK_REGION.SEL_THOLD_ARY = 1
 
     # Set up scan regions for scan0
     SCAN_REGION_TYPE = 0
@@ -277,7 +281,7 @@ def mod_setup_clockstop_on_xstop(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_d
         ## Staged xstop is unmasked, set up per-chiplet delays
         for chiplet in MCGROUP_ALL_BUT_TP:
             XSTOP1 = XSTOP1_INIT_VALUE
-            XSTOP1.WAIT_CYCLES = i_chiplet_delays[chiplet.getChipletNumber()]
+            XSTOP1.WAIT_CYCLES = 4 * (4 - i_chiplet_delays[chiplet.getChipletNumber()])
 
     ## Enable clockstop on checkstop
     EPS_FIR_CLKSTOP_ON_XSTOP_MASK1.flush<1>.insertFromRight<0, 8>(ATTR_CLOCKSTOP_ON_XSTOP);
@@ -341,6 +345,8 @@ def mod_poz_tp_init_common(target<ANY_POZ_CHIP>):
     HOST_MASK_REG = IPOLL_MASK_INIT          # Set up IPOLL mask
     CPLT_CTRL2 = ATTR_PG(PERV)               # Transfer PERV partial good attribute into region good register
     PERV_CTRL0.TP_TCPERV_VITL_CG_DIS = 0     # Enabe PERV vital clock gating
+    CPLT_CTRL0.CTRL_CC_FORCE_ALIGN_DC = 0    # Disable alignment pulse
+    delay(10us, 1000cyc)
     CPLT_CTRL0.CTRL_CC_FLUSHMODE_INH_DC = 0  # Allow chiplet PLATs to enter flush
 
 ISTEP(99, 99, "poz_perv_mod_bist", "")
