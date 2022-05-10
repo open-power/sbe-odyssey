@@ -25,4 +25,5 @@
 PROCEDURE = archive
 OBJS+=tinflate.o
 OBJS+=sha3.o
+$(call ADD_MODULE_INCDIR,$(PROCEDURE),$(ROOTPATH)/public/common/utils/imageProcs/archive-tests)
 $(call BUILD_PROCEDURE)
