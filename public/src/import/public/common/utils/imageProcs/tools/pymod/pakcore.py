@@ -297,7 +297,7 @@ class ArchiveEntry(object):
 
     def packPayload(self):
         '''
-        Handle compression of the data and then create 
+        Handle compression of the data and then create
         the bytearray payload data that can be written
         '''
         # Set the level of zlib compression based on the method
@@ -695,7 +695,9 @@ class Archive(UserList):
             offset += readsz
 
             # The entry is created without error, add it to the list
-            self.append(entry)
+            # Skip entries with empty names; they are padding inserted by flashbuild
+            if entry.name:
+                self.append(entry)
 
         return
 
