@@ -84,3 +84,15 @@ fapi_try_exit:
     FAPI_INF("Exiting ...");
     return current_err;
 }
+
+ReturnCode mod_poll_pll_lock_fsi2pib(
+    const Target < TARGET_TYPE_ANY_POZ_CHIP >& i_target,
+    pll_lock_bits i_pll_mask)
+{
+    FAPI_INF("Entering ...");
+    return _mod_poll_pll_lock(i_target, FSXCOMP_FSXLOG_MIRR_FSI2PIB_STAT, ((uint64_t)i_pll_mask << 36));
+
+fapi_try_exit:
+    FAPI_INF("Exiting ...");
+    return current_err;
+}
