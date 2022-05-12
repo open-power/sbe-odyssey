@@ -47,6 +47,64 @@ static const char hash_list_fname[] =  "rt/hash.list";
 static const char secure_hdr_fname[] = "rt/secure.hdr";
 static const char sppe_bin_fname[] =   "rt/sppe.bin";
 static const char hw_keys_hash_fname[] = "rt/hwkeyshash.bin";
+static const char sppe_pak_fname[] =   "rt/sppe.pak";
+static const char vpd_pak_fname[] =    "vpd/sppe.pak";
+
+enum load_image_flags {
+    LIF_IS_PAK = 1,
+    LIF_ALLOW_ABSENT = 2,
+};
+
+// MBX fail status code
+secureBootFailStatus_t secureBootFailStatus = {0};
+
+/// @brief Wrapper that loads an image from PNOR into SRAM and checks its hash
+///
+/// This function will make sure that the bootloader does not get overwritten
+/// by the loaded file.
+/// It will halt with an error code on any unmasked error,
+/// so there is no return value.
+///
+/// @param[in]    i_pak           PakWrapper targeted to PNOR
+/// @param[in]    i_fname         Name of file to load
+/// @param[inout] io_load_offset  Address to load file to; will be advanced
+///                               to the end of the file after loading
+/// @param[in]    i_flags         Flags to control operation details
+void load_image(PakWrapper &i_pak, const char *i_fname, uint32_t &io_load_offset,
+                uint32_t i_flags = 0)
+{
+    sha3_t digest;
+    uint32_t size = 0;
+    uint32_t size_available = BOOTLOADER_ORIGIN - io_load_offset;
+
+    ARC_RET_t pakRc = i_pak.read_file(i_fname, (void *)io_load_offset, size_available, &digest, &size);
+    if (pakRc == ARC_FILE_NOT_FOUND && (i_flags & LIF_ALLOW_ABSENT))
+    {
+        SBE_INFO(SBE_FUNC "Optional payload not found - skipping");
+        return;
+    }
+    if (pakRc != ARC_OPERATION_SUCCESSFUL)
+    {
+        SBE_INFO(SBE_FUNC "Failed to read payload");
+        UPDATE_ERROR_CODE_AND_HALT(FILE_RC_PAYLOAD_FILE_READ_BASE_ERROR + pakRc);
+    }
+
+    auto hashListRc = SBE::check_file_hash(i_fname, digest, hashList);
+    if(hashListRc != SBE::HASH_COMPARE_PASS)
+    {
+        SBE_INFO(SBE_FUNC "Failed to verify payload hash");
+        UPDATE_ERROR_CODE_AND_HALT(FILE_RC_PAYLOAD_HASH_VERIFICATION + hashListRc);
+    }
+
+    io_load_offset += size;
+
+    if (i_flags & LIF_IS_PAK)
+    {
+        // Rewind the write pointer by 8 bytes so that the next load overwrites
+        // the pak end marker and appends the next pak to the current one.
+        io_load_offset -= 8;
+    }
+}
 
 void bldrthreadroutine(void *i_pArg)
 {
@@ -59,9 +117,6 @@ void bldrthreadroutine(void *i_pArg)
         sha3_t digest;
         hwKeysHashMsv_t hwKeysHashMsv;
         uint32_t hwKeysHashMsvFileSize = 0x00;
-
-        // MBX fail status code
-        secureBootFailStatus_t secureBootFailStatus;
 
         // Input for Secure Hdr verification
         shvReq_t shvReq;
@@ -237,6 +292,28 @@ void bldrthreadroutine(void *i_pArg)
             SBE_INFO(SBE_FUNC "Enforcement Enabled Halting PPE..." );
             pk_halt();
         }
+
+        SBE_INFO("Loading SPPE main binary");
+        uint32_t load_offset = SRAM_ORIGIN;
+        load_image(pak, sppe_bin_fname, load_offset);
+
+        UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_SPPE_BINARY_LOAD);
+
+        SBE_INFO("Loading SPPE embedded archive");
+        load_image(pak, sppe_pak_fname, load_offset, LIF_IS_PAK);
+
+        UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_SPPE_PAK_LOAD);
+
+        SBE_INFO("Loading optional VPD archive");
+        load_image(pak, vpd_pak_fname, load_offset, LIF_IS_PAK | LIF_ALLOW_ABSENT);
+
+        UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_VPD_PAK_LOAD);
+
+        // SET IVPR
+        uint64_t data = (uint64_t)SRAM_ORIGIN << 32;
+        PPE_STVD(0xc0000160, data);
+        SBE_INFO("Launching payload");
+        asm volatile ( "mtlr %0; blr" : : "r"(SRAM_ORIGIN + 0x40) : );
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR);
 

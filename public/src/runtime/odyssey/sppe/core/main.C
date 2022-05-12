@@ -116,7 +116,8 @@ int  main(int argc, char **argv)
 
     const uint32_t i_target = 0;
     rc = fapi2::getscom_abs_wrap(&i_target, 0x50009, &loadValue);
-    SBE_ERROR("0x%08X 0x%08X", (loadValue >> 32) & 0xFFFFFFFF, (loadValue & 0xFFFFFFFF));
+    SBE_INFO("SBE Messaging Register : 0x%08X 0x%08X",
+                (loadValue >> 32) & 0xFFFFFFFF, (loadValue & 0xFFFFFFFF));
 
     do
     {
