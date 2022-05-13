@@ -177,5 +177,8 @@ subdir('common')
 subdir('onetime')
 subdir('runtime')
 
+#After all images are built lets call packaging
+subdir('packaging')
+
 # Dummy call to create dependency on the files invoked by different tools
 run_command('ls', meson_setup_extra_dependencies)
