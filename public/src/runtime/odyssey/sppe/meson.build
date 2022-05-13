@@ -204,25 +204,14 @@ osppe_string_file_gen = custom_target(output : 'odysseySppeStringFile_' + ddlvl,
                                       install_dir : odyssey_sppe_install_path
                                 )
 
-#Create a Boot Loader empty pak file
-#This is done so that build.sh can use it and meson can install it
+#Now lets run the post build script to package the image
 outfile = odyssey_sppe_img_name + '.pak'
 
-osppe_empty_pak_file_gen = custom_target( 'osppe_empty_pak_file_gen',
-                                      output : outfile,
-                                      command : [ 'touch', '@OUTPUT@'],
-                                      build_by_default : true,
-                                      install : true,
-                                      install_dir : odyssey_sppe_install_path
-                                        )
-
-
-#Now lets run the post build script to package the image
 osppe_package_img = custom_target( 'osppe_package_img',
-                               output : 'osppe_package_img_none',
+                               output : outfile,
                                depends : [ osppe_string_file_gen, osppe_symbol_file_gen,
                                            osppe_dis_file, osppe_attr_tank,
-                                           osppe_empty_pak_file_gen ],
+                                         ],
                                command : [ packaging,
                                            meson.current_build_dir(), odyssey_sppe_img_name,
                                            attrTool, pakTool,
