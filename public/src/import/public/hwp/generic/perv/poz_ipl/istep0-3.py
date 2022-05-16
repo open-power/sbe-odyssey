@@ -675,11 +675,6 @@ ISTEP(2, 4, "pc_tp_chiplet_reset", "SPPE")
 def p11t_tp_chiplet_reset():
     ROOT_CTRL0.PCB_RESET_DC = 0       # Drop PCB interface reset to enable access into TP chiplet
 
-    OPCG_ALIGN = 0
-    OPCG_ALIGN.INOP_ALIGN = 7          # 16:1 INOP alignment
-    OPCG_ALIGN.SCAN_RATIO = 0          # 1:1 scan ratio
-    OPCG_ALIGN.OPCG_WAIT_CYCLES = 0x20 # 32 wait cycles so PLATs can safely exit flush
-
     # No scan0 needed since the CBS just took care of that
 
 ISTEP(2, 5, "pc_pib_initf", "SPPE")
