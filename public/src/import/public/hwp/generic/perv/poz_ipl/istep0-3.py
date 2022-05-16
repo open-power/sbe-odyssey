@@ -1416,7 +1416,7 @@ ISTEP(3, 23, "proc_chiplet_skewadj_setup", "TSBE")
 def p11t_chiplet_skewadj_setup():
     with all EQs via multicast:
         ## Drop SkewAdj / DCAdj resets
-        NET_CTRL1[24:31] = 0
+        NET_CTRL1[16:23] = 0
 
     with all cores on all EQs via multicast:
         ## Initialize Skew Adjust
@@ -1469,9 +1469,9 @@ def p11t_chiplet_skewadj_setup():
     # Drop SkewAdj and DCAdj bypass
     with all EQs via multicast:
         if ATTR_DCADJ_BYPASS == 0:
-            NET_CTRL1[8:15] = 0
+            NET_CTRL1[0:7] = 0
         if ATTR_SKEWADJ_BYPASS == 0:
-            NET_CTRL1[16:23] = 0
+            NET_CTRL1[8:15] = 0
 
     # Start Adjust logic
     with all cores on all EQs via multicast:
