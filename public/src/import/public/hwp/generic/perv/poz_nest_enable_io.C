@@ -25,7 +25,8 @@
 //------------------------------------------------------------------------------
 /// @file poz_nest_enable_io.C
 ///
-/// @brief
+/// @brief  Allow PHB control. Enable receiver & drivers [1,2].
+///         Chiplet receiver enable, Chiplet driver enable.
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
@@ -35,6 +36,7 @@
 #include "poz_nest_enable_io.H"
 #include "poz_perv_common_params.H"
 #include <p11_scom_perv.H>
+#include <target_filters.H>
 
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL1;
 SCOMT_PERV_USE_NET_CTRL0;
@@ -46,11 +48,10 @@ enum POZ_NEST_ENABLE_IO_Private_Constants
 {
 };
 
-ReturnCode poz_nest_enable_io(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, TargetFilter i_nest_chiplets)
+ReturnCode poz_nest_enable_io(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
 {
     FSXCOMP_FSXLOG_ROOT_CTRL1_t ROOT_CTRL1;
     NET_CTRL0_t NET_CTRL0;
-    auto l_nest_chiplets = i_target.getChildren<TARGET_TYPE_PERV>(i_nest_chiplets, TARGET_STATE_FUNCTIONAL);
 
     FAPI_INF("Entering ...");
 
@@ -64,7 +65,7 @@ ReturnCode poz_nest_enable_io(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, 
 
     FAPI_DBG("Chiplet receiver enable, Chiplet driver enable.");
 
-    for (auto& chiplet : l_nest_chiplets)
+    for (auto& chiplet : i_target.getChildren<TARGET_TYPE_PERV>(TARGET_FILTER_NEST, TARGET_STATE_FUNCTIONAL))
     {
         NET_CTRL0 = 0;
         NET_CTRL0.set_CPLT_DCTRL(1);

@@ -109,13 +109,16 @@ ReturnCode mod_abist_start(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
     uint16_t i_clock_regions,
     uint32_t i_runn_cycles,
-    uint64_t i_abist_start_at)
+    uint64_t i_abist_start_at,
+    uint32_t i_abist_start_stagger)
 {
     CPLT_CTRL0_t CPLT_CTRL0;
     BIST_t BIST;
     CLK_REGION_t CLK_REGION;
     OPCG_REG0_t OPCG_REG0;
     OPCG_REG1_t OPCG_REG1;
+    uint64_t idle_count = i_abist_start_at;
+    auto l_chiplets_uc = i_target.getChildren<TARGET_TYPE_PERV>();
 
     FAPI_INF("Entering ...");
     FAPI_INF("Switch dual-clocked arrays to ABIST clock domain.");
@@ -139,9 +142,14 @@ ReturnCode mod_abist_start(
     FAPI_TRY(CLK_REGION.putScom(i_target));
 
     FAPI_INF("Configure idle count in OPCG_REG1.");
-    FAPI_TRY(OPCG_REG1.getScom(i_target));
-    OPCG_REG1.insertFromRight<0, 36>(i_abist_start_at);
-    FAPI_TRY(OPCG_REG1.putScom(i_target));
+
+    for (auto& targ : l_chiplets_uc)
+    {
+        FAPI_TRY(OPCG_REG1.getScom(targ));
+        OPCG_REG1.insertFromRight<0, 36>(idle_count);
+        FAPI_TRY(OPCG_REG1.putScom(targ));
+        idle_count += i_abist_start_stagger;
+    }
 
     FAPI_INF("Configure loop count and start OPCG.");
     OPCG_REG0 = 0;
@@ -293,7 +301,8 @@ ReturnCode mod_scan0(
     FAPI_INF("Set up clock regions for NSL fill.")
     CLK_REGION = 0;
     CLK_REGION.insertFromRight<CLK_REGION_CLOCK_REGION_PERV, 16>(i_clock_regions)
-    .setBit<CLK_REGION_SEL_THOLD_NSL>();
+    .setBit<CLK_REGION_SEL_THOLD_NSL>()
+    .setBit<CLK_REGION_SEL_THOLD_ARY>();
     FAPI_TRY(CLK_REGION.putScom(i_target));
 
     FAPI_INF("Set up scan regions for scan0.")
