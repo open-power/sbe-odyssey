@@ -115,11 +115,16 @@ namespace fapi2
     /*
      * plat_target_base_handle bit layout :
      * BIT VALUES FOR BIT-0 TO BIT-31:
-     *   Chiplet_Num : 08 Bits => FAPI target type [ bit00 – bit07 ]
-     *   Type        : 06 Bits => PPE target type  [ bit08 – bit13 ]
-     *   Present     : 01 Bit  => Target present or not [ bit14 ]
-     *   Functional  : 01 Bit  => Target functional state is on or off [ bit15 ]
-     *   Reserve     : 16 Bits => Free Bits [ bit16 – bit31 ]
+     *   Chiplet_Num/Multicast_settings : 08 Bits => FAPI target type [ bit00 – bit07 ]
+     *          Multicast_settings:
+     *                  unused          : 01
+     *                  is_multicast    : 01
+     *                  mcast_type      : 03
+     *                  mcast_group     : 03
+     *   Type                           : 06 Bits => PPE target type  [ bit08 – bit13 ]
+     *   Present                        : 01 Bit  => Target present or not [ bit14 ]
+     *   Functional                     : 01 Bit  => Target functional state is on or off [ bit15 ]
+     *   Reserve                        : 16 Bits => Free Bits [ bit16 – bit31 ]
      */
     class plat_target_base_handle {
 
@@ -161,6 +166,60 @@ namespace fapi2
             uint8_t getChipletNumber() const
             {
                 return static_cast<uint8_t>(iv_value.getBits<0,8>());
+            }
+
+            ///
+            /// @brief Get the is_multicast for this target
+            /// @return is_multicast value
+            ///
+            bool getIsMulticast() const
+            {
+                return static_cast<bool>(iv_value.getBits<1>());
+            }
+
+            ///
+            /// @brief Set the is_multicast for this target
+            /// @param[in] i_is_multicast present state to set
+            ///
+            void setIsMulticast(const bool i_is_multicast)
+            {
+                iv_value.writeBit<1>(i_is_multicast);
+            }
+
+            ///
+            /// @brief Get the mcast_type for this target
+            /// @return mcast_type value
+            ///
+            bool getMcastType() const
+            {
+                return static_cast<uint8_t>(iv_value.getBits<2,3>());
+            }
+
+            ///
+            /// @brief Set the mcast_type for this target
+            /// @param[in] i_mcast_type present state to set
+            ///
+            void setMcastType(uint8_t i_mcast_type)
+            {
+                iv_value.insertFromRight(i_mcast_type, 2, 3);
+            }
+
+            ///
+            /// @brief Get the mcast_group for this target
+            /// @return mcast_group value
+            ///
+            bool getMcastGroup() const
+            {
+                return static_cast<uint8_t>(iv_value.getBits<5,3>());
+            }
+
+            ///
+            /// @brief Set the mcast_group for this target
+            /// @param[in] i_mcast_group present state to set
+            ///
+            void setMcastGroup(uint8_t i_mcast_group)
+            {
+                iv_value.insertFromRight(i_mcast_group, 5, 3);
             }
 
             ///

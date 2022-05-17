@@ -69,10 +69,15 @@ namespace fapi2
     static constexpr void plat_apply_target_limits(void)
     {}
 
-// TODO: P11 SBE PORTING
     template<TargetType T, MulticastType M, typename V>
     inline void Target<T, M, V>::mcUpdateHandle()
     {
+        plat_target_base_handle* l_platTarget =
+                reinterpret_cast<plat_target_base_handle*>(this);
+        if(l_platTarget->getIsMulticast())
+        {
+            l_platTarget->setMcastType(static_cast<int>(M));
+        }
     }
 
     ///
@@ -186,6 +191,51 @@ namespace fapi2
         g_platTarget->getChildren(i_filter, l_include_nonfunctional,
                       reinterpret_cast<std::vector<plat_target_sbe_handle>&>(l_children));
         return l_children;
+    }
+
+    // TODO: Need to support getchildren for multicast targets
+
+    ///
+    /// @brief Returns the chiplet number associated with the Target
+    /// @return The chiplet number for the Target. 0 is returned if the
+    /// Target does not have a chiplet number (for ex, the PROC_CHIP Target)
+    /// @note For logical targets such as the EX, the chiplet number of
+    /// their immediate parent chiplet is returned
+    ///
+    template<TargetType K, MulticastType M, typename V>
+    inline uint8_t
+    Target<K, M, V>::getChipletNumber(void) const
+    {
+        check_getChipletNumber();
+
+        return reinterpret_cast<const plat_target_base_handle*>(this)->getChipletNumber();
+    }
+
+    ///
+    /// @brief Get a multicast target for a given chip
+    /// @tparam T The type of target to return; TARGET_TYPE_MULTICAST is added automatically
+    /// @tparam O The type of multicast read operation for the target; defaults to OR
+    /// @param[in] i_group The abstract multicast group the target should point to
+    /// @return The multicast target
+    ///
+    /// This method is only applicable to chip-level targets.
+    /// If the requested multicast group cannot be mapped to an available HW multicast
+    /// group, a platform specific error will be thrown.
+    ///
+    template<TargetType K, MulticastType M, typename V>
+    template< TargetType T, MulticastType O >
+    inline Target < T | TARGET_TYPE_MULTICAST, O, V >
+    Target<K, M, V>::getMulticast(const MulticastGroup i_group) const
+    {
+        check_getMulticast<T, O>();
+        plat_target_handle_t l_platTarget;
+        constexpr plat_target_type_t l_plat_type = fapiTargetTypeToPlatTargetType<T>();
+
+        l_platTarget.setIsMulticast(1);
+        l_platTarget.setMcastGroup(i_group);
+        l_platTarget.setTargetType(l_plat_type);
+
+        return l_platTarget;
     }
 }
 #endif
