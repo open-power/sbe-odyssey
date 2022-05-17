@@ -60,6 +60,8 @@ using namespace scomt::pc;
 
 enum POZ_PERV_MOD_MISC_Private_Constants
 {
+    DELAY_10us = 10000,      // unit in nano seconds
+    SIM_CYCLE_DELAY = 1000, // unit in cycles
     P11_CFAM_CBS_POLL_COUNT = 200, // Observed Number of times CBS read for CBS_INTERNAL_STATE_VECTOR
     CBS_IDLE_VALUE = 0x002, // Read the value of CBS_CS_INTERNAL_STATE_VECTOR
     P11_CBS_IDLE_HW_NS_DELAY = 640000, // unit is nano seconds [min : 64k x (1/100MHz) = 64k x 10(-8) = 640 us
@@ -330,21 +332,30 @@ ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
     fapi2::buffer<uint64_t> l_data64;
 
     FAPI_INF("Entering ...");
+    fapi2::Target<fapi2::TARGET_TYPE_PERV> l_tpchiplet = get_tp_chiplet_target(i_target);
+
     FAPI_DBG("Set up IPOLL mask");
     HOST_MASK_REG = HOST_MASK_REG_IPOLL_MASK ;
     FAPI_TRY(HOST_MASK_REG.putScom(i_target));
 
     FAPI_DBG("Transfer PERV partial good attribute into region good register (cplt_ctrl2 reg)");
-    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_PG, get_tp_chiplet_target(i_target), l_attr_pg));
+    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_PG, l_tpchiplet, l_attr_pg));
     l_attr_pg.invert();
     l_data64.flush<0>();
     l_data64.insert< PGOOD_REGIONS_STARTBIT, PGOOD_REGIONS_LENGTH, PGOOD_REGIONS_OFFSET >(l_attr_pg);
-    FAPI_TRY(putScom(get_tp_chiplet_target(i_target), scomt::perv::CPLT_CTRL2_RW, l_data64));
+    FAPI_TRY(putScom(l_tpchiplet, scomt::perv::CPLT_CTRL2_RW, l_data64));
 
     FAPI_DBG("Enabe PERV vital clock gating");
     PERV_CTRL0 = 0;
     PERV_CTRL0.set_TP_TCPERV_VITL_CG_DIS(1);
     FAPI_TRY(PERV_CTRL0.putScom_CLEAR(i_target));
+
+    FAPI_DBG("Disable alignment pulse");
+    CPLT_CTRL0.flush<0>();
+    CPLT_CTRL0.set_CTRL_CC_FORCE_ALIGN(1);
+    FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
+
+    FAPI_TRY(delay(DELAY_10us, SIM_CYCLE_DELAY));
 
     FAPI_DBG("Allow chiplet PLATs to enter flush");
     CPLT_CTRL0.flush<0>();
@@ -386,7 +397,7 @@ ReturnCode mod_setup_clockstop_on_xstop(
             for (auto& l_chiplet : l_chiplets_uc)
             {
                 XSTOP1 = XSTOP1_INIT_VALUE;
-                XSTOP1.set_WAIT_CYCLES(i_chiplet_delays[l_chiplet.getChipletNumber()]);
+                XSTOP1.set_WAIT_CYCLES(4 * (4 - i_chiplet_delays[l_chiplet.getChipletNumber()]));
                 FAPI_TRY(XSTOP1.putScom(l_chiplet));
             }
         }

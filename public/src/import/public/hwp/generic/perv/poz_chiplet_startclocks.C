@@ -73,6 +73,12 @@ ReturnCode poz_chiplet_startclocks(
     FAPI_INF("Align chiplets");
     FAPI_TRY(mod_align_regions(i_target, i_clock_regions));
 
+    FAPI_INF("Drop chiplet fence");
+    // Drop fences before starting clocks because fences are DC and might glitch
+    NET_CTRL0 = 0;
+    NET_CTRL0.set_FENCE_EN(1);
+    FAPI_TRY(NET_CTRL0.putScom_CLEAR(i_target));
+
     FAPI_INF("Start chiplet clocks");
     FAPI_TRY(mod_start_stop_clocks(i_target, i_clock_regions));
 
@@ -80,11 +86,6 @@ ReturnCode poz_chiplet_startclocks(
     CPLT_CTRL0 = 0;
     CPLT_CTRL0.set_CTRL_CC_FLUSHMODE_INH(1);
     FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
-
-    FAPI_INF("Drop chiplet fence");
-    NET_CTRL0 = 0;
-    NET_CTRL0.set_FENCE_EN(1);
-    FAPI_TRY(NET_CTRL0.putScom_CLEAR(i_target));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");

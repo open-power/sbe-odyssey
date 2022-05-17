@@ -25,7 +25,8 @@
 //------------------------------------------------------------------------------
 /// @file poz_nest_enable_io.H
 ///
-/// @brief
+/// @brief  Allow PHB control. Enable receiver & drivers [1,2].
+///         Chiplet receiver enable, Chiplet driver enable.
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
@@ -36,15 +37,13 @@
 
 #include <fapi2.H>
 
-typedef fapi2::ReturnCode (*poz_nest_enable_io_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&,
-        fapi2::TargetFilter);
+typedef fapi2::ReturnCode (*poz_nest_enable_io_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&);
 
-/// @brief
+/// @brief  Allow PHB control. Enable receiver & drivers [1,2].
+/// --  Chiplet receiver enable, Chiplet driver enable.
 /// @param[in]   i_target         Reference to TARGET_TYPE_ANY_POZ_CHIP
-/// @param[in]   i_nest_chiplets  nest targets TARGET_FILTER_[N0/N1/N2]
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {
-    fapi2::ReturnCode poz_nest_enable_io(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-                                         fapi2::TargetFilter i_nest_chiplets);
+    fapi2::ReturnCode poz_nest_enable_io(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target);
 }

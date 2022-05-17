@@ -55,7 +55,8 @@ fapi2::ReturnCode mod_abist_start(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
     uint16_t i_clock_regions,
     uint32_t i_runn_cycles = 0x42FFF,
-    uint64_t i_abist_start_at = 0xF0);
+    uint64_t i_abist_start_at = 0xF0,
+    uint32_t i_abist_start_stagger = 0);
 
 
 /// @brief   Poll OPCG done bit to check for run-N completeness.

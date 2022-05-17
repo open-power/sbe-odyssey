@@ -73,13 +73,13 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, c
 
         FAPI_INF("Enable and reset chiplets");
         NET_CTRL0 = 0;
-        NET_CTRL0.set_CHIPLET_ENABLE(1);
         NET_CTRL0.set_PCB_EP_RESET(1);
         FAPI_TRY(NET_CTRL0.putScom_SET(l_chiplets_mc));
 
-        NET_CTRL0 = 0;
-        NET_CTRL0.set_PCB_EP_RESET(1);
-        FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
+        FAPI_TRY(NET_CTRL0.getScom(l_chiplets_mc));
+        NET_CTRL0.set_PCB_EP_RESET(0);
+        NET_CTRL0.set_CHIPLET_ENABLE(1);
+        FAPI_TRY(NET_CTRL0.putScom(l_chiplets_mc));
 
         FAPI_INF("Set up clock controllers (decimal 9 -> 10 cycles) ");
         SYNC_CONFIG = 0;
@@ -94,7 +94,7 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, c
             OPCG_ALIGN.set_INOP_ALIGN(7);
             OPCG_ALIGN.set_INOP_WAIT(0);
             OPCG_ALIGN.set_SCAN_RATIO(3);
-            OPCG_ALIGN.set_OPCG_WAIT_CYCLES(0x20 + 4 * i_chiplet_delays[targ.getChipletNumber()]);
+            OPCG_ALIGN.set_OPCG_WAIT_CYCLES(0x30 - 4 * i_chiplet_delays[targ.getChipletNumber()]);
             FAPI_TRY(OPCG_ALIGN.putScom(targ));
         }
 
