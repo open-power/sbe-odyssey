@@ -142,14 +142,11 @@ if [ ! -z $SIGNING_BASE_DIR ]; then
     DEV_KEY_DIR=${SIGNING_BASE_DIR}/sb-signing-keys
 
 elif [ -z $SBE_IMG_DIR_OP ]; then
-    #TODO: Change this to correct paths in /afs/.. once v2 sigining server is ready
-    #echo "***INFO | SBE | signHashList : Not OP_build. Fetching keys and signing scripts from /afs/..."
+    echo "***INFO | SBE | signHashList : Not OP_build. Fetching keys and signing scripts from /gsa/..."
     #RH_DIR=`sed 's/^.*release \([0-9]*\)\..*$/rh\1/' /etc/redhat-release`
-    #DEV_KEY_DIR=/afs/rchland.ibm.com/projects/esw/bin/sb-signing/sb-signing-keys/
-    #SIGNING_DIR=/afs/rchland.ibm.com/projects/esw/bin/sb-signing/$RH_DIR/sb-signing-utils
-    echo "***INFO | SBE | signHashList : Not OP_build. Fetching keys and signing scripts from user:akhis777 local"
-    DEV_KEY_DIR=/esw/user/nfs/akhis777/myworkspace/sb-signing-utils/test/keys/
-    SIGNING_DIR=/esw/user/nfs/akhis777/myworkspace/sb-signing-utils
+    #TODO: Update below paths
+    DEV_KEY_DIR=/gsa/rchgsa/home/c/e/cengel/signtool/RHEL7/sb-signing-utils/test/v2_keys/
+    SIGNING_DIR=/gsa/rchgsa/home/c/e/cengel/signtool/RHEL7/bin/
 
 else
     echo "***INFO | SBE | signHashList : OP_build. Fetching keys and signing scripts from OP-Build Tree"
@@ -158,12 +155,9 @@ else
 fi
 
 # Adjust paths to pick up the signing tools
-#TODO: Change this to correct paths in /afs/.. once v2 sigining server is ready
-#LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SIGNING_DIR
-#PATH=$SIGNING_DIR:$PATH
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SIGNING_DIR
+PATH=$SIGNING_DIR:$PATH
 
-export LD_LIBRARY_PATH+=:/esw/user/nfs/akhis777/myworkspace/openssl
-export PATH+=:/esw/user/nfs/akhis777/myworkspace/sb-signing-utils:/esw/user/nfs/akhis777/myworkspace/dilithium_tools
 
 #TODO: Change to p11 env variable once op-build is enabled
 # Check for signing mode passed in by environment (p10)
@@ -178,12 +172,25 @@ fi
 
 #Set flag basis Development or production mode.
 if [ "$SIGNING_MODE" = "Development" ]; then
-    echo "***INFO | SBE | signHashList : Development Mode Signing"
-    SIGNTOOL_ARGS="$SIGNTOOL_ARGS --mode development --flags 0x40080000 \
-                   --hwKeyA ${DEV_KEY_DIR}/hw_key_a.key  \
-                   --hwKeyD ${DEV_KEY_DIR}/hw_key_d.key  \
-                   --swKeyP ${DEV_KEY_DIR}/sw_key_p.key  \
-                   --swKeyS ${DEV_KEY_DIR}/sw_key_s.key  "
+    if [ "$COMPONENT_ID" = "BOOT_LDR" ]; then
+        echo "***INFO | SBE | signHashList : Development Mode Signing."
+        echo "***INFO | SBE | signHashList : Signing Boot Loader Hash List."
+        SIGNTOOL_ARGS="$SIGNTOOL_ARGS --mode development --flags 0x40080000 \
+                    --hwKeyA ${DEV_KEY_DIR}/boot_hw_key_a.key  \
+                    --hwKeyD ${DEV_KEY_DIR}/boot_hw_key_d.key  \
+                    --swKeyP ${DEV_KEY_DIR}/boot_sw_key_p.key  \
+                    --swKeyS ${DEV_KEY_DIR}/boot_sw_key_s.key  "
+    fi
+
+    if [ "$COMPONENT_ID" = "RUN_TIME" ]; then
+        echo "***INFO | SBE | signHashList : Development Mode Signing."
+        echo "***INFO | SBE | signHashList : Signing Run Time Hash List."
+        SIGNTOOL_ARGS="$SIGNTOOL_ARGS --mode development --flags 0x40080000 \
+                    --hwKeyA ${DEV_KEY_DIR}/runtime_hw_key_a.key  \
+                    --hwKeyD ${DEV_KEY_DIR}/runtime_hw_key_d.key  \
+                    --swKeyP ${DEV_KEY_DIR}/runtime_sw_key_p.key  \
+                    --swKeyS ${DEV_KEY_DIR}/runtime_sw_key_s.key  "
+    fi
 
 #TODO: Check op-build env value
 elif [ "$SIGNING_MODE" = "Production" ] ; then
@@ -228,10 +235,14 @@ else
 fi
 
 # Do some sanity checks on things we expect the script to consume
-check_path ${DEV_KEY_DIR}/hw_key_a.key
-check_path ${DEV_KEY_DIR}/hw_key_d.key
-check_path ${DEV_KEY_DIR}/sw_key_p.key
-check_path ${DEV_KEY_DIR}/sw_key_s.key
+check_path ${DEV_KEY_DIR}/boot_hw_key_a.key
+check_path ${DEV_KEY_DIR}/boot_hw_key_d.key
+check_path ${DEV_KEY_DIR}/boot_sw_key_p.key
+check_path ${DEV_KEY_DIR}/boot_sw_key_s.key
+check_path ${DEV_KEY_DIR}/runtime_hw_key_a.key
+check_path ${DEV_KEY_DIR}/runtime_hw_key_d.key
+check_path ${DEV_KEY_DIR}/runtime_sw_key_p.key
+check_path ${DEV_KEY_DIR}/runtime_sw_key_s.key
 check_path ${HASH_LIST}
 check_path ${SIGNING_DIR}/crtSignedContainer.sh
 
