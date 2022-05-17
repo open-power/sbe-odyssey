@@ -86,10 +86,15 @@ class ArchiveError(Exception):
 ##############################
 # All archive related info
 ##############################
-# Magic at the start of each entry
-PAK_START = 0x50414B21 # PAK!
-# The total length (4 bytes) will follow the end magic to make it an 8 byte block
+# Magic to indicate a file entry
+PAK_FILE = 0x50414B21 # PAK!
+# Magic to indicate a pad entry
+# The 4 byte size of the pad follows, making it an 8 byte block
+PAK_PAD = 0x50414B50 # PAKP
+# Magic to indicate pak end
+# The 4 byte total length of the archive follows,  making it an 8 byte block
 PAK_END = 0x2F50414B # /PAK
+# Track version changes in the pak format
 PAK_VERSION = 1
 
 # If a file is added with a fixed size, store that in the header flags
@@ -97,7 +102,7 @@ PAK_VERSION = 1
 PAK_FLAG_FIXED_SIZE = 0x20
 
 class ArchiveEntry(object):
-    def __init__(self):
+    def __init__(self, i_type=PAK_FILE):
         '''
         Define the structure of a .pak file entry
         The contents is created by unpacking data into it or through ingest
@@ -110,8 +115,19 @@ class ArchiveEntry(object):
         # Header Core
         # A single 8 byte block that describes core info about the entry
         #
-        # 4 bytes - sanity check we are at the start
-        self.magic = PAK_START
+        # 4 bytes - a sanity check we are at the start
+        # This can now be for either a file or pad
+        # We do not store the end marker as an archive entry
+        self.magic = i_type
+
+        # The next 4 bytes depends on the magic type
+        # PAK_PAD
+        # The pad case is very simple - it just 1 8 byte total block
+        # 4 bytes - the size of the pad to follow
+        self.padsize = None
+
+        # PAK_FILE
+        # The pak file entry is more complex, finish out the header core definition
         # 2 byte - the version
         self.version = PAK_VERSION
         # 2 bytes - the size header extended, to guide the next read
@@ -136,7 +152,7 @@ class ArchiveEntry(object):
         # 4 bytes - the size of the payload data
         #self.psize - a derived property function
         # N bytes - the name of the entry
-        self.name = None
+        self.name = ""
 
         #################
         # Payload
@@ -151,7 +167,6 @@ class ArchiveEntry(object):
 
         #################
         # The Data
-        # What it's all about!
         # N bytes - the decompressed data
         self.ddata = None
         # N bytes - the compressed data
@@ -210,7 +225,18 @@ class ArchiveEntry(object):
 
     @property
     def idata(self):
-        return (self.hdrc + self.hdre + self.pdata)
+        '''
+        This property assumes the build function has previously been called
+        to generate the values for the PAK_FILE case
+        PAK_PAD does not require a build call
+        '''
+        if (self.magic == PAK_FILE):
+            return (self.hdrc + self.hdre + self.pdata)
+        elif (self.magic == PAK_PAD):
+            return self.magic.to_bytes(4, 'big') + self.padsize.to_bytes(4, 'big') + bytes(self.padsize)
+
+        # We should never get here, raise if we do
+        raise ArchiveError("Unknown magic '%s' in idata call!" % self.magic.to_bytes(4, 'big').decode())
 
     @property
     def isize(self):
@@ -241,7 +267,7 @@ class ArchiveEntry(object):
         self.magic, self.version, l_hesize = struct.unpack('>IHH', i_hdrc)
 
         # Error checks
-        if self.magic != PAK_START:
+        if self.magic != PAK_FILE:
             raise ArchiveError("Unable to unpack hdrc, invalid magic: 0x%08X!" % self.magic)
 
         # Only 1 version for now, direct check
@@ -399,11 +425,13 @@ class ArchiveEntry(object):
         Trigger all the functions required to build a complete image to write
         Also useful to update entry state
         '''
-        # Pack all the data segments
-        # Do them in reverse layout order because they inform the prior data segment
-        self.packPayload()
-        self.packHdre()
-        self.packHdrc()
+        # Build the on disk image for the PAK_FILE
+        # Nothing to do for PAK_PAD - the idata assembly does that automatically
+        if (self.magic == PAK_FILE):
+            # Do them in reverse layout order because they inform the prior data segment
+            self.packPayload()
+            self.packHdre()
+            self.packHdrc()
 
         return
 
@@ -450,20 +478,26 @@ class ArchiveEntry(object):
         '''
         Display debug data about the entry
         '''
-        out.print("file: %s" % self.name)
-        # Display useful info like the compression ratio
-        try:
-            ratio = (self.dsize/self.csize)
-        except ZeroDivisionError:
-            ratio = 0
         # The offset may be set if the archive has gone through the build process or been freshly read in
         # It is not guaranteed to be set though, so print a good indicator when it is not
         if (self.offset != None):
             offset = "0x%06X" % self.offset
         else:
             offset = "N/A"
-        out.print("  size: %6d, flags: 0x%02X, hesize: %2d, nsize: %2d, method: %9s, crc: %04X, csize: %6d: dsize: %6d: ratio: %5.1fx, psize: %6d, offset: %s" %
-                  (self.isize, self.flags, self.hesize, self.nsize, self.method, self.crc, self.csize, self.dsize, ratio, self.psize, offset))
+        if (self.magic == PAK_FILE):
+            out.print(self.name)
+            # Display useful info like the compression ratio
+            try:
+                ratio = (self.dsize/self.csize)
+            except ZeroDivisionError:
+                ratio = 0
+            out.print("  size: %6d, flags: 0x%02X, hesize: %2d, nsize: %2d, method: %9s, crc: %08X, csize: %6d: dsize: %6d: ratio: %5.1fx, psize: %6d, offset: %s" %
+                     (self.isize, self.flags, self.hesize, self.nsize, self.method, self.crc, self.csize, self.dsize, ratio, self.psize, offset))
+        elif (self.magic == PAK_PAD):
+            out.print("|<pad>|")
+            out.print("  size: %d, offset: %s" % (self.padsize, offset))
+        else:
+            raise ArchiveError("Unknown magic '%s' in display!" % self.magic.to_bytes(4, 'big').decode())
 
         return
 
@@ -487,7 +521,7 @@ class Archive(UserList):
         # Optionally given at creation, can also be set in the load/save functions
         self.filename = filename
         # The contents of file from a load or the in memory image to write on save
-        self.image = None
+        self.image = bytearray()
         # Does the pak have an end marker
         self.end_marker = True
 
@@ -495,8 +529,9 @@ class Archive(UserList):
         '''
         Override list append functions to prevent duplicate addition of the same file
         When a duplicate is found, instead replace it with the new entry at the same location
+        This checking does not apply to pads, which can be inserted multiple times
         '''
-        if any(add.name == x.name for x in self.data):
+        if (add.magic == PAK_FILE) and any((add.name == x.name) for x in self.data):
             self.data = [add if add.name == x.name else x for x in self.data]
         else:
             self.data.append(add)
@@ -561,6 +596,20 @@ class Archive(UserList):
         entry.ingest(name, method, data)
         self.append(entry)
 
+    def addPad(self, i_padsize):
+        '''
+        Add a pad to the archive
+
+        This is the overall size of the pad to add.  Accounting for header,
+        etc.. space is accounted for in the function.
+        '''
+        # This handles creating the underlying entry for the user
+        # It does flow through append to ensure we don't duplicate something
+        entry = ArchiveEntry(i_type=PAK_PAD)
+        entry.padsize = i_padsize - 8 # PAK_PAD + 4 bytes of pad size
+        entry.build()
+        self.append(entry)
+
     def extract(self, name):
         '''
         Return the uncompressed contents of the entry specified by name
@@ -595,7 +644,7 @@ class Archive(UserList):
         def _match_files(archive, pattern):
             pattern = re.compile(re.escape(pattern).replace("\*", ".*").replace("\?", "."))
             for entry in archive:
-                if pattern.match(entry.name):
+                if ((entry.magic == PAK_FILE) and (pattern.match(entry.name))):
                     yield entry
 
         # Search for it
@@ -664,35 +713,45 @@ class Archive(UserList):
         # Loop through bytearray image in memory and pull out the data
         offset = 0
         while (offset < len(self.image)):
-            # Create the entry we are going to fill in
-            entry = ArchiveEntry()
-            entry.offset = offset
-
             # Check for the start or end marker before trying to process
-            if (int.from_bytes(self.image[offset:(offset + 4)], 'big') == PAK_START):
-                pass # Do nothing, this looks like a valid block that will get processed further
+            if (int.from_bytes(self.image[offset:(offset + 4)], 'big') == PAK_FILE):
+                # Create the entry we are going to fill in
+                entry = ArchiveEntry(i_type=PAK_FILE)
+
+                # Unpack the hdrc block
+                readsz = 8
+                l_hesize = entry.unpackHdrc(self.image[offset:(offset + readsz)])
+                offset += readsz
+
+                # Unpack the hdre block
+                readsz = l_hesize
+                (l_crc, l_csize, l_dsize, l_psize) = entry.unpackHdre(self.image[offset:(offset + readsz)])
+                offset += readsz
+
+                # Unpack the payload
+                readsz = l_psize
+                entry.unpackPayload(self.image[offset:(offset + readsz)], l_crc, l_csize, l_dsize)
+                offset += readsz
+            elif (int.from_bytes(self.image[offset:(offset + 4)], 'big') == PAK_PAD):
+                # Advance the magic we just read
+                offset += 4
+
+                # Create the entry we are going to fill in
+                entry = ArchiveEntry(i_type=PAK_PAD)
+
+                # Fill in the pad length from the other 4 bytes
+                readsz = 4
+                entry.padsize = int.from_bytes(self.image[offset:(offset + readsz)], 'big')
+                offset += readsz
+
+                # Advance the length of the pad size
+                offset += entry.padsize
             elif (int.from_bytes(self.image[offset:(offset + 4)], 'big') == PAK_END):
                 # Hit the end, get out of here
                 self.end_marker = True
                 break
             else:
                 raise ArchiveError("Unknown magic block found at offset: %d" % offset)
-
-            # Not at the end, process it as good
-            # Unpack the hdrc block
-            readsz = 8
-            l_hesize = entry.unpackHdrc(self.image[offset:(offset + readsz)])
-            offset += readsz
-
-            # Unpack the hdre block
-            readsz = l_hesize
-            (l_crc, l_csize, l_dsize, l_psize) = entry.unpackHdre(self.image[offset:(offset + readsz)])
-            offset += readsz
-
-            # Unpack the payload
-            readsz = l_psize
-            entry.unpackPayload(self.image[offset:(offset + readsz)], l_crc, l_csize, l_dsize)
-            offset += readsz
 
             # The entry is created without error, add it to the list
             self.append(entry)
@@ -702,11 +761,10 @@ class Archive(UserList):
     def build(self):
         '''
         Build the image that will be written out
-        '''
-        # Build all the contents for each entry before we try to write it
-        for entry in self:
-            entry.build()
 
+        This archive level build assumes the entry level build has already been done
+        This will grab the pre-existing idata in each entry to build the full archive image
+        '''
         # Build the full image from all the parts
         self.image = bytearray()
         offset = 0
