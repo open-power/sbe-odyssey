@@ -112,9 +112,9 @@ def cmd_list(args):
             nameparts = entry.name.split('/')
             for part in nameparts:
                 if (nameparts[-1] == part):
-                    # The last entry in parts is file
-                    # Save some basic info incase we need it for printing
-                    branch[part] = (entry.method, entry.csize, entry.dsize)
+                    # The last entry in parts is the file
+                    # Stick the entry into the branch in case we need any part of it during print
+                    branch[entry] = True
                 else:
                     # Any other part is a branch in tree
                     # If it doesn't already exist, create it
@@ -126,8 +126,16 @@ def cmd_list(args):
         # Display what we've built
         print_tree(elm, root=os.path.basename(args.archive))
 
-    # Common output of file count and size
-    out.print("\n%d files, total size: %s (0x%08X)" % (len(result), pakutils.humanBytes(len(result.image)), len(result.image)))
+    # Common output of file info
+    # Get counts of files vs pads and put them into the summary
+    fileCount = len([x for x in result if (x.magic == pak.PAK_FILE)])
+    padCount = len([x for x in result if (x.magic == pak.PAK_PAD)])
+    summary = "\n%d files" % fileCount
+    if (padCount):
+        summary += ", %d pads" % padCount
+    # Add file size info and then display
+    summary += ", total size: %s (0x%08X)" % (pakutils.humanBytes(len(result.image)), len(result.image))
+    out.print(summary)
 
 def cmd_remove(args):
     '''
@@ -202,11 +210,19 @@ def print_tree(branch, root=None, prefix=''):
         else:
             line += '|-- '
             addfix = '|   '
-        line += key
-        # Optionally add more info about the file to the output
-        # Disabled for now, anything done here needs to be very clean to keep the output readable
-        if (False and (type(branch[key]) == tuple)):
-            line += " [%s]" % (pakutils.humanBytes(branch[key][1]))
+        # We can have two different types of keys, str or ArchiveEntry
+        if type(key) == str:
+            line += key
+        else:
+            # Just grab the last part of the archive entry to display the name
+            if (key.magic == pak.PAK_FILE):
+                line += os.path.basename(key.name)
+            else:
+                line += "|<pad>|"
+            # Optionally add more info about the file to the output
+            # Disabled for now, anything done here needs to be very clean to keep the output readable
+            if (False):
+                line += " [%s]" % (pakutils.humanBytes(key.csize))
         # We have built the full line, display it
         out.print(line)
 

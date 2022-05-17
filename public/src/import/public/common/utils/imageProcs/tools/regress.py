@@ -28,11 +28,9 @@
 # Imports - Imports - Imports - Imports - Imports - Imports
 ############################################################
 # Python provided
-from concurrent.futures.process import _threads_wakeups
 import sys
 import os
 import tempfile
-import traceback
 import random
  
 # Add program modules to the path
@@ -99,6 +97,7 @@ def regress():
     files['dir1/largefile'] = (pak.CM.zlib, bytearray(os.urandom(50000)))
     files['dir2/smallfile'] = (pak.CM.zlib, bytearray(os.urandom(2048)))
     files['dir2/largefile'] = (pak.CM.zlib, bytearray(os.urandom(150000)))
+    files['PAD-01'] = 32768
     files['top-store'] = (pak.CM.store, bytearray(50000))
     files['top-zlib'] = (pak.CM.zlib, bytearray(5000))
     files['feedb0b0'] = (pak.CM.zlib, bytearray(b'FEEDB0B0' * 1000))
@@ -118,7 +117,10 @@ def regress():
     # Test adding files
     for file in files:
         out.print(file)
-        archive.add(file, files[file][0], files[file][1])
+        if file.startswith('PAD'):
+            archive.addPad(files[file])
+        else:
+            archive.add(file, files[file][0], files[file][1])
     out.lessIndent()
 
     # Validate the results
@@ -137,16 +139,18 @@ def regress():
     out.print("Extracting and comparing files..")
     out.moreIndent()
     for file in files:
-        out.print(file)
-        if files[file][1] != archive.extract(file):
-            raise pak.ArchiveError("Data mismatch on %s" % file)
+        # Don't do if pad
+        if not file.startswith('PAD'):
+            out.print(file)
+            if files[file][1] != archive.extract(file):
+                raise pak.ArchiveError("Data mismatch on %s" % file)
     out.lessIndent()
 
     # Test extraction of missing file
     out.print(banner)
     out.print("Extracting file that doesn't exist")
     try:
-        archive.remove('nofile')
+        archive.extract('nofile')
     except:
         # We know this fails
         out.print("Raised expected exception!")
@@ -157,7 +161,7 @@ def regress():
     out.print(banner)
     out.print("Extracting multiple files")
     try:
-        archive.remove('dir1')
+        archive.extract('dir1')
     except:
         # We know this fails
         out.print("Raised expected exception!")

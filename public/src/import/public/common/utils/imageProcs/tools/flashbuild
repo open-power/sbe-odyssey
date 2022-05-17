@@ -8,7 +8,7 @@ import sys, os
 
 # Add program modules to the path
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "pymod"))
-from pakcore import ArchiveEntry, Archive, CM, PAK_END
+from pakcore import Archive, PAK_END
 
 PART_NAME_MAXLEN = 16
 PT_FORMAT_VER = 1
@@ -19,35 +19,36 @@ class Partition(object):
             raise ValueError("Partition name '%s' exceeds maximum length of %d bytes" % (name, PART_NAME_MAXLEN))
         self.name = name
         self.start = start
+        # Space for the end marker on the last entry
         self.size = size - (8 if last else 0)
         self.last = last
-        self.pak = None
+        self.pak = Archive()
+        self.pak.end_marker = False
 
     def load_pak(self, fname):
-        self.pak = Archive(fname)
+        self.pak.filename = fname
         self.pak.load()
+
+        # Make sure the pak isn't bigger than the partition
+        if len(self.pak.image) > self.size:
+            raise ValueError("Partition '%s': Partition image '%s' exceeds available space (%d > %d)" %
+                             (self.name, fname, len(self.pak.image), self.size))
+
+        # If the end marker is there, strip it off the pak
+        # Also disable it being re-added when the pak image is rebuilt
         if self.pak.end_marker:
             self.pak.image = self.pak.image[:-8]
-
-        size_available = self.size - 32
-        if len(self.pak.image) > size_available:
-            raise ValueError("Partition '%s': Partition image '%s' exceeds available space (%d > %d)" %
-                             (self.name, fname, len(self.pak.image), size_available))
+        self.pak.end_marker = False
 
     def expand(self):
-        self.padding = ArchiveEntry()
-        self.padding.fixed_size = self.size - 32
-        if self.pak:
-            self.padding.fixed_size -= len(self.pak.image)
-        self.padding.method = CM.store
-        self.padding.ddata = bytes()
-        self.padding.name = ""
-        self.padding.build()
+        # Calc the size to pad
+        size = self.size - len(self.pak.image)
+        self.pak.addPad(size)
 
     def write_partition(self, f):
-        if self.pak:
-            f.write(self.pak.image)
-        f.write(self.padding.idata)
+        # Rebuild the pak image before the write
+        self.pak.build()
+        f.write(self.pak.image)
 
     def table_entry(self):
         name = self.name.encode()
@@ -67,6 +68,7 @@ def cmd_build_image(args, partitions):
             part.expand()
             part.write_partition(image)
 
+        # Add a new end marker with the updated total size
         image.write(PAK_END.to_bytes(4, 'big'))
         image.write((image.tell() + 4).to_bytes(4, 'big'))
 
