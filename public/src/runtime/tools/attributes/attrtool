@@ -54,7 +54,7 @@ def cmd_gensrc(args):
     generate("attribute.C")
     generate("attribute.H")
     generate("attribute_macros.H")
-    generate("ec_features.H")
+    generate("fapi2_chip_ec_feature.H")
 
 def cmd_compile(args):
     sbe_attr_tank = pickle.load(open(args.ipdbfile, "rb"))

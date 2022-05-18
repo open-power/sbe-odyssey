@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -27,7 +28,7 @@
 
 #include <attribute_ids.H>
 #include <virtualattrfunctions.H>
-#include <ec_features.H>
+#include <fapi2_chip_ec_feature.H>
 
 namespace fapi2
 {

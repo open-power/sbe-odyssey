@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/tools/attributes/templates/ec_features.H.t $ */
+/* $Source: public/src/runtime/tools/attributes/templates/fapi2_chip_ec_feature.H.t $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
