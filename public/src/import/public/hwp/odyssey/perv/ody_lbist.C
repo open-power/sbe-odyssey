@@ -23,17 +23,16 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  ody_lbist.C
+/// @brief Execute Logic Built In Self Test
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
 // *HWP FW Maintainer   : Mike Hamilton (mikehami@us.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
-#include "ody_lbist.H"
-#include "poz_perv_common_params.H"
-#include "poz_bist.H"
-
+#include <ody_lbist.H>
+#include <poz_perv_common_params.H>
+#include <poz_bist.H>
 
 using namespace fapi2;
 

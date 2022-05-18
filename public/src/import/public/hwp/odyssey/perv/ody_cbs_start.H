@@ -23,11 +23,11 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  ody_cbs_start.H
+/// @brief Start CFAM boot sequencer
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : BMC
 //------------------------------------------------------------------------------
 
 #pragma once
@@ -36,9 +36,11 @@
 
 typedef fapi2::ReturnCode (*ody_cbs_start_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&, bool);
 
-/// @brief
-/// @param[in]   i_target
-/// @param[in]   i_start_sbe
+/// @brief Start CFAM boot sequencer
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
+/// @param[in]   i_start_sbe               Optionally start SBE (default=true)
+///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {

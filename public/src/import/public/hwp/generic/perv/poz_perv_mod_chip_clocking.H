@@ -24,8 +24,7 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  poz_perv_mod_chip_clocking.H
-///
-/// @brief  prototype declarations for module poll pll lock
+/// @brief Chip PLL lock checking
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Pretty Mariam Jacob (prettymjacob@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
@@ -34,20 +33,25 @@
 #pragma once
 
 #include <fapi2.H>
-#include "poz_perv_common_params.H"
+#include <poz_perv_common_params.H>
 
 using namespace pll;
-/// @brief   Poll for pll lock module.
-/// @param[in]   i_target          Reference to TARGET_TYPE_PERV
-/// @param[in]   i_pll_mask        Select pll_mask bits
+
+/// @brief Chip PLL lock checking
+///
+/// @param[in]   i_target                  Reference to target
+/// @param[in]   i_pll_mask                Select pll_mask bits
+///
 /// @return  FAPI2_RC_SUCCESS if success, else error code
 fapi2::ReturnCode mod_poll_pll_lock(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV |  fapi2::TARGET_TYPE_MULTICAST, fapi2::MULTICAST_AND > &i_target,
     pll_lock_bits i_pll_mask);
 
 /// @brief   Poll for pll lock using FSI2PIB status register for cases where the PCB is not up yet.
-/// @param[in]   i_target          Reference to TARGET_TYPE_ANY_POZ
-/// @param[in]   i_pll_mask        Select pll_mask bits
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ
+/// @param[in]   i_pll_mask                Select pll_mask bits
+///
 /// @return  FAPI2_RC_SUCCESS if success, else error code
 fapi2::ReturnCode mod_poll_pll_lock_fsi2pib(
     const fapi2::Target < fapi2::TARGET_TYPE_ANY_POZ_CHIP >& i_target,

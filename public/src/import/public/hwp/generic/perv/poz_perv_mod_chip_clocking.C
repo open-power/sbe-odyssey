@@ -24,18 +24,16 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  poz_perv_mod_chip_clocking.C
-///
-/// @brief  contains definition for module poll_pll_lock
+/// @brief Chip PLL lock checking
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Pretty Mariam Jacob (prettymjacob@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#include "poz_perv_mod_chip_clocking.H"
-#include <p11_scom_perv.H>
+#include <poz_perv_mod_chip_clocking.H>
+#include <poz_perv_mod_chip_clocking_regs.H>
 
 using namespace fapi2;
-using namespace scomt::perv;
 using namespace pll;
 
 enum POZ_PERV_MOD_CHIP_CLOCKING_Private_Constants
@@ -76,8 +74,10 @@ ReturnCode mod_poll_pll_lock(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > &i_target,
     pll_lock_bits i_pll_mask)
 {
+    PLL_LOCK_t PLL_LOCK;
+
     FAPI_INF("Entering ...");
-    return _mod_poll_pll_lock(i_target, PLL_LOCK_REG, ((uint64_t)i_pll_mask << 56));
+    return _mod_poll_pll_lock(i_target, PLL_LOCK.addr, ((uint64_t)i_pll_mask << 56));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");

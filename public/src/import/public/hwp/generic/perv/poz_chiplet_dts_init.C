@@ -23,24 +23,18 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file poz_chiplet_dts_init.C
-///
+/// @file  poz_chiplet_dts_init.C
 /// @brief Start KVREF calibration and check for calibration done
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
-#include "poz_chiplet_dts_init.H"
-#include "poz_perv_common_params.H"
-#include <p11_scom_pc_an.H>
-
-SCOMT_PC_USE_ANALOG_SHIM_VOLTAGE_WRAP_SCOMSAT_KVREF_START_CAL;
-SCOMT_PC_USE_ANALOG_SHIM_VOLTAGE_WRAP_SCOMSAT_KVREF_CAL_DONE;
+#include <poz_chiplet_dts_init.H>
+#include <poz_chiplet_dts_init_regs.H>
+#include <poz_perv_common_params.H>
 
 using namespace fapi2;
-using namespace scomt::pc;
 
 enum POZ_CHIPLET_DTS_INIT_Private_Constants
 {
@@ -52,8 +46,8 @@ enum POZ_CHIPLET_DTS_INIT_Private_Constants
 
 ReturnCode poz_chiplet_dts_init(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
 {
-    ANALOG_SHIM_VOLTAGE_WRAP_SCOMSAT_KVREF_START_CAL_t KVREF_START_CAL;
-    ANALOG_SHIM_VOLTAGE_WRAP_SCOMSAT_KVREF_CAL_DONE_t KVREF_CAL_DONE;
+    KVREF_START_CAL_t KVREF_START_CAL;
+    KVREF_CAL_DONE_t KVREF_CAL_DONE;
     int l_timeout = 0;
 
     FAPI_INF("Entering ...");
@@ -89,7 +83,7 @@ ReturnCode poz_chiplet_dts_init(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target
     FAPI_DBG("Loop Count :%d", l_timeout);
 
     FAPI_ASSERT(l_timeout > 0,
-                fapi2::KVREF_CAL_NOT_DONE_ERR()
+                fapi2::POZ_KVREF_CAL_NOT_DONE_ERR()
                 .set_KVREF_CAL_DONE(KVREF_CAL_DONE)
                 .set_LOOP_COUNT(POLL_COUNT)
                 .set_HW_DELAY(DELAY_100us),

@@ -24,25 +24,17 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  poz_chiplet_startclocks.C
-///
-/// @brief switch ABIST&SYNC CLK muxes to functional state, Disable listen to sync
-///        align chiplets, start chiplet clocks, Drop chiplet fence
+/// @brief Align and start chiplet clocks, drop chiplet fence
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
-#include "poz_chiplet_startclocks.H"
-#include "poz_perv_mod_chiplet_clocking.H"
-#include "p11_scom_perv.H"
-
-SCOMT_PERV_USE_CPLT_CTRL0;
-SCOMT_PERV_USE_SYNC_CONFIG;
-SCOMT_PERV_USE_NET_CTRL0;
+#include <poz_chiplet_startclocks.H>
+#include <poz_chiplet_startclocks_regs.H>
+#include <poz_perv_mod_chiplet_clocking.H>
 
 using namespace fapi2;
-using namespace scomt::perv;
 
 enum POZ_CHIPLET_STARTCLOCKS_Private_Constants
 {
@@ -77,7 +69,9 @@ ReturnCode poz_chiplet_startclocks(
     // Drop fences before starting clocks because fences are DC and might glitch
     NET_CTRL0 = 0;
     NET_CTRL0.set_FENCE_EN(1);
-    FAPI_TRY(NET_CTRL0.putScom_CLEAR(i_target));
+    FAPI_TRY(fapi2::putScom(i_target, 0xF0041, NET_CTRL0));
+    //TODO: update Odyssey FigTree
+    //FAPI_TRY(NET_CTRL0.putScom_CLEAR(i_target));
 
     FAPI_INF("Start chiplet clocks");
     FAPI_TRY(mod_start_stop_clocks(i_target, i_clock_regions));

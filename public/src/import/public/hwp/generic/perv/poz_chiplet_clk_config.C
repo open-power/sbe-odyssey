@@ -24,25 +24,20 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  poz_chiplet_clk_config.C
-///
 /// @brief Enable clocks for chiplets
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Pretty Mariam Jacob (prettymjacob@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
-#include "poz_chiplet_clk_config.H"
-#include "poz_perv_common_params.H"
-#include "poz_perv_mod_misc.H"
-#include "poz_perv_utils.H"
+#include <poz_chiplet_clk_config.H>
+#include <poz_chiplet_clk_config_regs.H>
+#include <poz_perv_common_params.H>
+#include <poz_perv_mod_misc.H>
+#include <poz_perv_utils.H>
 #include <target_filters.H>
-#include <p11_scom_perv.H>
-
-SCOMT_PERV_USE_NET_CTRL0;
 
 using namespace fapi2;
-using namespace scomt::perv;
 
 enum POZ_CHIPLET_CLK_CONFIG_Private_Constants
 {
@@ -69,14 +64,16 @@ ReturnCode poz_chiplet_clk_config(
             l_chiplet_mask.setBit(l_chiplet.getChipletNumber());
         }
 
-        FAPI_INF("Set up chiplet clock muxing (TBD)");
-        i_mux_setup(i_target, l_chiplet_mask);
+        FAPI_INF("Set up chiplet clock muxing");
+        FAPI_TRY(i_mux_setup(i_target, l_chiplet_mask));
 
         FAPI_INF("Enable chiplet clocks");
         NET_CTRL0 = 0;
         NET_CTRL0.set_CLK_ASYNC_RESET(1);
         NET_CTRL0.set_LVLTRANS_FENCE(1);
-        FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
+        FAPI_TRY(fapi2::putScom(l_chiplets_mc, 0xF0041, NET_CTRL0));
+        //TODO: update Odyssey FigTree
+        //FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
 
         NET_CTRL0 = 0;
         NET_CTRL0.set_PLLFORCE_OUT_EN(1);

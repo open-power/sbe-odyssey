@@ -24,26 +24,19 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  poz_chiplet_pll_setup.C
-///
 /// @brief Start chiplet PLLs & Check for PLL lock
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
-#include "poz_chiplet_pll_setup.H"
-#include "poz_perv_common_params.H"
-#include "poz_perv_mod_chip_clocking.H"
+#include <poz_chiplet_pll_setup.H>
+#include <poz_chiplet_pll_setup_regs.H>
+#include <poz_perv_common_params.H>
+#include <poz_perv_mod_chip_clocking.H>
 #include <target_filters.H>
-#include <p11_scom_perv.H>
-
-SCOMT_PERV_USE_CPLT_CTRL1;
-SCOMT_PERV_USE_NET_CTRL0;
-SCOMT_PERV_USE_PCB_RESPONDER_CONFIG_REG;
 
 using namespace fapi2;
-using namespace scomt::perv;
 
 enum POZ_CHIPLET_PLL_SETUP_Private_Constants
 {
@@ -54,7 +47,7 @@ ReturnCode poz_chiplet_pll_setup(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targe
     buffer<uint8_t> l_attr_io_pll_bypass;
     CPLT_CTRL1_t CPLT_CTRL1;
     NET_CTRL0_t NET_CTRL0;
-    PCB_RESPONDER_CONFIG_REG_t PCB_RESPONDER_CONFIG_REG;
+    PCB_RESPONDER_CONFIG_t PCB_RESPONDER_CONFIG;
     auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
     auto l_chiplets_uc = l_chiplets_mc.getChildren<TARGET_TYPE_PERV>();
 
@@ -74,11 +67,15 @@ ReturnCode poz_chiplet_pll_setup(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targe
         FAPI_INF("Start chiplet PLLs");
         NET_CTRL0 = 0;
         NET_CTRL0.set_PLL_TEST_EN(1);
-        FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
+        FAPI_TRY(fapi2::putScom(l_chiplets_mc, 0xF0041, NET_CTRL0));
+        //TODO: update Odyssey FigTree
+        //FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
 
         NET_CTRL0 = 0;
         NET_CTRL0.set_PLL_RESET(1);
-        FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
+        FAPI_TRY(fapi2::putScom(l_chiplets_mc, 0xF0041, NET_CTRL0));
+        //TODO: update Odyssey FigTree
+        //FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
 
         FAPI_INF("Check for PLL lock");
         FAPI_TRY(mod_poll_pll_lock(l_chiplets_mc, pll::ALL_PLLS));
@@ -86,15 +83,17 @@ ReturnCode poz_chiplet_pll_setup(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targe
         FAPI_INF("Release PLL bypass");
         NET_CTRL0 = 0;
         NET_CTRL0.set_PLL_BYPASS(1);
-        FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
+        FAPI_TRY(fapi2::putScom(l_chiplets_mc, 0xF0041, NET_CTRL0));
+        //TODO: update Odyssey FigTree
+        //FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
 
         FAPI_INF("Enable PLL unlock error reporting");
 
         for (auto& targ : l_chiplets_uc)
         {
-            FAPI_TRY(PCB_RESPONDER_CONFIG_REG.getScom(targ));
-            PCB_RESPONDER_CONFIG_REG.clearBit<PCB_RESPONDER_CONFIG_REG_CFG_MASK_PLL_ERRS>();
-            FAPI_TRY(PCB_RESPONDER_CONFIG_REG.putScom(targ))
+            FAPI_TRY(PCB_RESPONDER_CONFIG.getScom(targ));
+            PCB_RESPONDER_CONFIG.set_CFG_MASK_PLL_ERRS(0);
+            FAPI_TRY(PCB_RESPONDER_CONFIG.putScom(targ))
         }
     }
 

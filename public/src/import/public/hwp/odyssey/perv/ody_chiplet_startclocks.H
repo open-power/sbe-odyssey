@@ -24,12 +24,10 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  ody_chiplet_startclocks.H
-///
-/// @brief chiplet startclocks procedure for Odyssey chip
+/// @brief Align and start chiplet clocks, drop chiplet fence
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
 #pragma once
@@ -38,8 +36,10 @@
 
 typedef fapi2::ReturnCode (*ody_chiplet_startclocks_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
 
-/// @brief       start clocks for all chiplets & setup constant hangpulse for TBUS
-/// @param[in]   i_target     Reference to TARGET_TYPE_OCMB_CHIP
+/// @brief Align and start chiplet clocks, drop chiplet fence
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
+///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {

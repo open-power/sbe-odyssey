@@ -23,14 +23,11 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file poz_nest_enable_io.H
-///
-/// @brief  Allow PHB control. Enable receiver & drivers [1,2].
-///         Chiplet receiver enable, Chiplet driver enable.
+/// @file  poz_nest_enable_io.H
+/// @brief Enable chip/nest drivers and receivers
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
 #pragma once
@@ -39,9 +36,10 @@
 
 typedef fapi2::ReturnCode (*poz_nest_enable_io_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&);
 
-/// @brief  Allow PHB control. Enable receiver & drivers [1,2].
-/// --  Chiplet receiver enable, Chiplet driver enable.
-/// @param[in]   i_target         Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @brief Enable chip/nest drivers and receivers
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
+///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {

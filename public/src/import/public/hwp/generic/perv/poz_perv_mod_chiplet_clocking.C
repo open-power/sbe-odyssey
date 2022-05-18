@@ -24,34 +24,16 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  poz_perv_mod_chiplet_clocking.C
-///
-/// @brief  contains definitions for modules abist_setup/start/poll/cleanup,
-///                                          opcg_go, scan0 start_stop_clocks,
-///                                          align_regions
+/// @brief Chiplet clocking related modules
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#include "poz_perv_mod_chiplet_clocking.H"
-#include <p11_scom_perv.H>
-
-SCOMT_PERV_USE_BIST;
-SCOMT_PERV_USE_CLK_REGION;
-SCOMT_PERV_USE_CPLT_CTRL0;
-SCOMT_PERV_USE_CPLT_CTRL4;
-SCOMT_PERV_USE_CPLT_CTRL1;
-SCOMT_PERV_USE_OPCG_REG0;
-SCOMT_PERV_USE_OPCG_REG1;
-SCOMT_PERV_USE_CPLT_STAT0;
-SCOMT_PERV_USE_SCAN_REGION_TYPE;
-SCOMT_PERV_USE_CLOCK_STAT_SL;
-SCOMT_PERV_USE_CLOCK_STAT_NSL;
-SCOMT_PERV_USE_CLOCK_STAT_ARY;
-SCOMT_PERV_USE_SYNC_CONFIG;
+#include <poz_perv_mod_chiplet_clocking.H>
+#include <poz_perv_mod_chiplet_clocking_regs.H>
 
 using namespace fapi2;
-using namespace scomt::perv;
 
 enum POZ_PERV_MOD_CHIPLET_CLOCKING_Private_Constants
 {
@@ -60,14 +42,14 @@ enum POZ_PERV_MOD_CHIPLET_CLOCKING_Private_Constants
     SIM_CYCLE_DELAY = 1000, // unit in cycles
     CPLT_ALIGN_CHECK_POLL_COUNT = 10, // count to wait for chiplet aligned
     CPLT_OPCG_DONE_DC_POLL_COUNT = 10,    // count to wait for chiplet opcg done
-    P11_OPCG_DONE_SCAN0_POLL_COUNT = 200, // Scan0 Poll count
-    P11_OPCG_DONE_SCAN0_HW_NS_DELAY = 16000, // unit is nano seconds [min : 8k cycles x 4 = 8000/2 x 4 = 16000 x 10(-9) = 16 us
+    OPCG_DONE_SCAN0_POLL_COUNT = 200, // Scan0 Poll count
+    OPCG_DONE_SCAN0_HW_NS_DELAY = 16000, // unit is nano seconds [min : 8k cycles x 4 = 8000/2 x 4 = 16000 x 10(-9) = 16 us
     //                       max : 8k cycles  =  (8000/25) x 10 (-6) = 320 us]
-    P11_OPCG_DONE_SCAN0_SIM_CYCLE_DELAY = 800000, // unit is cycles, to match the poll count change ( 10000 * 8 )
-    P11_OPCG_DONE_ARRAYINIT_HW_NS_DELAY = 200000, // unit is nano seconds [min : 400k/2 = 200k ns = 200 us
+    OPCG_DONE_SCAN0_SIM_CYCLE_DELAY = 800000, // unit is cycles, to match the poll count change ( 10000 * 8 )
+    OPCG_DONE_ARRAYINIT_HW_NS_DELAY = 200000, // unit is nano seconds [min : 400k/2 = 200k ns = 200 us
     //                       max : 200k /25 = 8000 us = 8 ms]
-    P11_OPCG_DONE_ARRAYINIT_POLL_COUNT = 400, // Arrayinit Poll count
-    P11_OPCG_DONE_ARRAYINIT_SIM_CYCLE_DELAY = 1120000, // unit is cycles,to match the poll count change ( 280000 * 4 )
+    OPCG_DONE_ARRAYINIT_POLL_COUNT = 400, // Arrayinit Poll count
+    OPCG_DONE_ARRAYINIT_SIM_CYCLE_DELAY = 1120000, // unit is cycles,to match the poll count change ( 280000 * 4 )
 };
 
 static ReturnCode poll_opcg_done(
@@ -95,7 +77,7 @@ static ReturnCode poll_opcg_done(
     FAPI_DBG("Loop Count :%d", i_poll_count);
 
     FAPI_ASSERT(i_poll_count > 0,
-                fapi2::OPCG_DONE_NOT_SET_ERR()
+                fapi2::POZ_OPCG_DONE_NOT_SET_ERR()
                 .set_PERV_CPLT_STAT0(CPLT_STAT0)
                 .set_POLL_COUNT(i_poll_count)
                 .set_HW_DELAY(i_hw_delay)
@@ -152,7 +134,7 @@ ReturnCode mod_abist_setup(
         idle_count += i_abist_start_stagger;
     }
 
-    FAPI_INF("Configure loop count and start OPCG.");
+    FAPI_INF("Configure loop count and prep OPCG.");
     OPCG_REG0 = 0;
     OPCG_REG0.set_RUNN_MODE(1);
     OPCG_REG0.set_OPCG_STARTS_BIST(1);
@@ -163,7 +145,6 @@ fapi_try_exit:
     FAPI_INF("Exiting ...");
     return current_err;
 }
-
 
 ReturnCode mod_lbist_setup(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
@@ -219,13 +200,13 @@ ReturnCode mod_abist_poll(const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAS
     CPLT_STAT0_t CPLT_STAT0;
     FAPI_INF("Entering ...");
     FAPI_DBG("Poll OPCG done bit to check for run-N completeness.");
-    FAPI_TRY(poll_opcg_done(i_target, P11_OPCG_DONE_ARRAYINIT_HW_NS_DELAY, P11_OPCG_DONE_ARRAYINIT_SIM_CYCLE_DELAY,
-                            P11_OPCG_DONE_ARRAYINIT_POLL_COUNT));
+    FAPI_TRY(poll_opcg_done(i_target, OPCG_DONE_ARRAYINIT_HW_NS_DELAY, OPCG_DONE_ARRAYINIT_SIM_CYCLE_DELAY,
+                            OPCG_DONE_ARRAYINIT_POLL_COUNT));
 
     FAPI_TRY(CPLT_STAT0.getScom(i_target));
     FAPI_DBG("Checking sram abist done.");
     FAPI_ASSERT(CPLT_STAT0.get_ABIST_DONE_DC() == 1,
-                fapi2::SRAM_ABIST_DONE_BIT_ERR()
+                fapi2::POZ_SRAM_ABIST_DONE_BIT_ERR()
                 .set_PERV_CPLT_STAT(CPLT_STAT0)
                 .set_SELECT_SRAM(true)
                 .set_PROC_TARGET(i_target),
@@ -275,6 +256,10 @@ static ReturnCode check_clock_status(
     uint16_t i_clock_type,
     bool i_start_stop)
 {
+    CLOCK_STAT_SL_t CLOCK_STAT_SL;
+    CLOCK_STAT_NSL_t CLOCK_STAT_NSL;
+    CLOCK_STAT_ARY_t CLOCK_STAT_ARY;
+
     fapi2::buffer<uint64_t> clock_stat_getscom_value;
     fapi2::buffer<uint64_t> clock_stat_expect;
     fapi2::buffer<uint64_t> clock_regions64;
@@ -286,23 +271,23 @@ static ReturnCode check_clock_status(
 
     if (i_clock_type == CLOCK_TYPE_SL)
     {
-        addr = CLOCK_STAT_SL;
+        addr = CLOCK_STAT_SL.addr;
         FAPI_INF("Reading CLOCK_STAT_SL register");
     }
     else if (i_clock_type == CLOCK_TYPE_NSL)
     {
-        addr = CLOCK_STAT_NSL;
+        addr = CLOCK_STAT_NSL.addr;
         FAPI_INF("Reading CLOCK_STAT_NSL register");
     }
     else if (i_clock_type == CLOCK_TYPE_ARY)
     {
-        addr = CLOCK_STAT_ARY;
+        addr = CLOCK_STAT_ARY.addr;
         FAPI_INF("Reading CLOCK_STAT_ARY register");
     }
     else
     {
         FAPI_ASSERT(false,
-                    fapi2::INVALID_CLOCK_TYPE()
+                    fapi2::POZ_INVALID_CLOCK_TYPE()
                     .set_CLOCK_TYPE_VALUE(i_clock_type)
                     .set_PROC_TARGET(i_target),
                     "ERROR: Invalid clock_type passed to check_clock_status function.");
@@ -329,7 +314,7 @@ static ReturnCode check_clock_status(
              clock_stat_getscom_value & 0xFFFFFFFF);
 
     FAPI_ASSERT(((clock_regions64 & clock_stat_getscom_value) == clock_stat_expect),
-                fapi2::THOLD_ERR()
+                fapi2::POZ_THOLD_ERR()
                 .set_CLOCK_CMD(i_start_stop)
                 .set_CLOCK_TYPE(i_clock_type)
                 .set_REGIONS(clock_regions64)
@@ -370,8 +355,8 @@ ReturnCode mod_scan0(
     FAPI_TRY(OPCG_REG0.putScom(i_target));
 
     FAPI_INF("Wait for scan0 to complete. Polling for OPCG_DONE.")
-    FAPI_TRY(poll_opcg_done(i_target, P11_OPCG_DONE_SCAN0_HW_NS_DELAY, P11_OPCG_DONE_SCAN0_SIM_CYCLE_DELAY,
-                            P11_OPCG_DONE_SCAN0_POLL_COUNT));
+    FAPI_TRY(poll_opcg_done(i_target, OPCG_DONE_SCAN0_HW_NS_DELAY, OPCG_DONE_SCAN0_SIM_CYCLE_DELAY,
+                            OPCG_DONE_SCAN0_POLL_COUNT));
 
     FAPI_INF("Clean up scan0.")
     CLK_REGION = 0;
@@ -493,7 +478,7 @@ ReturnCode mod_align_regions(
     FAPI_DBG("Loop Count :%d", l_timeout);
 
     FAPI_ASSERT(l_timeout > 0,
-                fapi2::CPLT_NOT_ALIGNED_ERR()
+                fapi2::POZ_CPLT_NOT_ALIGNED_ERR()
                 .set_PERV_CPLT_STAT0(CPLT_STAT0)
                 .set_LOOP_COUNT(l_timeout)
                 .set_HW_DELAY(NS_DELAY)

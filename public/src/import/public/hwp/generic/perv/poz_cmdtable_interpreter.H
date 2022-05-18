@@ -23,11 +23,11 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
+/// @file  poz_cmdtable_interpreter.H
 /// @brief Interpreter for boot ROM command tables
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Joachim Fenkes <fenkes@de.ibm.com>
 // *HWP FW Maintainer   : Kahn Evans <kahneva@us.ibm.com>
-// *HWP Consumed by     : Cronus
 //------------------------------------------------------------------------------
 
 #pragma once
@@ -43,12 +43,12 @@ typedef fapi2::ReturnCode (*poz_cmdtable_interpreter_FP_t)(
 ///
 /// This executes the command tables from SEEPROM like the boot ROM would.
 ///
-/// @param[in]   i_target           The chip to operate on
-/// @param[in]   i_main_table       Pointer to memory where the main command table resides
-/// @param[in]   i_main_table_size  Size of the main command table in bytes
-/// @param[in]   i_main_table       Pointer to memory where the custom command table resides,
-///                                 or NULL if there is no custom table
-/// @param[in]   i_main_table_size  Size of the custom command table in bytes, or 0 if no table
+/// @param[in]   i_target                  The chip to operate on
+/// @param[in]   i_main_table              Pointer to memory where the main command table resides
+/// @param[in]   i_main_table_size         Size of the main command table in bytes
+/// @param[in]   i_main_table              Pointer to memory where the custom command table resides,
+///                                        or NULL if there is no custom table
+/// @param[in]   i_main_table_size         Size of the custom command table in bytes, or 0 if no table
 ///
 /// @return  FAPI2_RC_SUCCESS if the command table returned
 /// @return  FAPI2_RC_FALSE   if command table execution failed and the SBE would have halted

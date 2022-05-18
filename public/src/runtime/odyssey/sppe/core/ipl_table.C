@@ -101,7 +101,7 @@ static istepMap_t g_istep3PtrTbl[] =
              ISTEP_MAP( NULL, NULL ),                               // 3.19
              ISTEP_MAP( istepWithOcmb, ody_chiplet_startclocks ),   // 3.20
              ISTEP_MAP( istepWithOcmb, ody_chiplet_fir_init ),      // 3.21
-             ISTEP_MAP( istepWithOcmb, ody_chiplet_dts_init ),      // 3.22
+             ISTEP_MAP( NULL, NULL ),                               // 3.22
              ISTEP_MAP( NULL, NULL ),                               // 3.23
              ISTEP_MAP( istepWithOcmb, ody_nest_enable_io ),        // 3.24
              ISTEP_MAP( NULL, NULL ),                               // 3.25
@@ -109,7 +109,7 @@ static istepMap_t g_istep3PtrTbl[] =
              ISTEP_MAP( NULL, NULL ),                               // 3.27
              ISTEP_MAP( NULL, NULL ),                               // 3.28
              ISTEP_MAP( NULL, NULL ),                               // 3.29
-             ISTEP_MAP( istepWithOcmb, ody_ioppe_load ),            // 3.30
+             ISTEP_MAP( NULL, NULL ),                               // 3.30
          };
 
 istepTableEntry_t istepTableEntries[] = {

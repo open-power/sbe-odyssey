@@ -23,16 +23,16 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  ody_tp_arrayinit.C
+/// @brief Initalize arrays in TP chiplet
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
-// *HWP FW Maintainer   : Kevin Duffy (kjduffy@us.ibm.com)
-// *HWP Consumed by     : SPPE
+// *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#include "ody_tp_arrayinit.H"
-#include "poz_perv_common_params.H"
-#include "poz_perv_mod_chiplet_clocking.H"
+#include <ody_tp_arrayinit.H>
+#include <poz_perv_common_params.H>
+#include <poz_perv_mod_chiplet_clocking.H>
 #include <poz_perv_utils.H>
 #include <target_filters.H>
 
@@ -56,9 +56,7 @@ ReturnCode ody_tp_arrayinit(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
     FAPI_INF("Calling mod_abist_poll ...");
     FAPI_TRY(mod_abist_poll(l_tpchiplet))
 
-
     //TODO: FAPI_TRY(putRing(i_target, ring_names::perv_abst_check, RING_MODE_COMPARE)); // if perv_abst_check is empty or does not exist, skip check
-
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");

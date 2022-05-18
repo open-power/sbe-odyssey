@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2017,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -42,8 +43,9 @@
 #include <ody_chiplet_initf.H>
 #include <ody_chiplet_startclocks.H>
 #include <ody_chiplet_fir_init.H>
-#include <ody_chiplet_dts_init.H>
 #include <ody_nest_enable_io.H>
-#include <ody_ioppe_load.H>
+#include <poz_chiplet_dts_init_regs.H>
+#include <ody_cmdtable_interpreter.H>
+#include <poz_cmdtable_interpreter.H>
 
 #endif

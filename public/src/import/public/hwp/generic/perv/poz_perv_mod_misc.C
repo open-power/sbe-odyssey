@@ -24,50 +24,30 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  poz_perv_mod_misc.C
-///
-/// @brief  definitions for modules CBS start, switch pcbmux, multicast setup
-///         hangpulse setup, setup clockstop on checkstop & Miscellaneous TP setup
+/// @brief Miscellaneous module definitions
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#include "poz_perv_mod_misc.H"
+#include <poz_perv_mod_misc.H>
 #include <poz_perv_utils.H>
-#include <p11_scom_perv.H>
-#include <p11_scom_pc.H>
+#include <poz_perv_mod_misc_regs.H>
 #include <target_filters.H>
 
-SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL0;
-SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL0_COPY;
-SCOMT_PERV_USE_FSXCOMP_FSXLOG_CBS_CS;
-SCOMT_PC_USE_TP_CFAM_FSI_W_SBE_FIFO_FSB_DOWNFIFO_RESET;
-SCOMT_PC_USE_TP_CFAM_FSI_W_FSI2PIB_STATUS;
-SCOMT_PERV_USE_FSXCOMP_FSXLOG_SB_MSG;
-SCOMT_PERV_USE_HANG_PULSE_0_REG;
-//SCOMT_PERV_USE_FSXCOMP_FSXLOG_CBS_ENVSTAT; TODO
-SCOMT_PERV_USE_PRE_COUNTER_REG;
-SCOMT_PERV_USE_PCBCTL_COMP_INTR_HOST_MASK_REG;
-SCOMT_PERV_USE_FSXCOMP_FSXLOG_PERV_CTRL0;
-SCOMT_PC_USE_TP_TPCHIP_TPC_CPLT_CTRL0;
-SCOMT_PERV_USE_XSTOP1;
-SCOMT_PERV_USE_EPS_CLKSTOP_ON_XSTOP_MASK1;
-
 using namespace fapi2;
-//using namespace fapi2::p11t;
-using namespace scomt::perv;
-using namespace scomt::pc;
 
 enum POZ_PERV_MOD_MISC_Private_Constants
 {
     DELAY_10us = 10000,      // unit in nano seconds
     SIM_CYCLE_DELAY = 1000, // unit in cycles
-    P11_CFAM_CBS_POLL_COUNT = 200, // Observed Number of times CBS read for CBS_INTERNAL_STATE_VECTOR
+    CFAM_CBS_POLL_COUNT = 200, // Observed Number of times CBS read for CBS_INTERNAL_STATE_VECTOR
     CBS_IDLE_VALUE = 0x002, // Read the value of CBS_CS_INTERNAL_STATE_VECTOR
-    P11_CBS_IDLE_HW_NS_DELAY = 640000, // unit is nano seconds [min : 64k x (1/100MHz) = 64k x 10(-8) = 640 us
+    CBS_IDLE_HW_NS_DELAY = 640000, // unit is nano seconds [min : 64k x (1/100MHz) = 64k x 10(-8) = 640 us
     //                       max : 64k x (1/50MHz) = 128k x 10(-8) = 1280 us]
-    P11_CBS_IDLE_SIM_CYCLE_DELAY = 750000, // unit is sim cycles,to match the poll count change ( 250000 * 30 )
+    CBS_IDLE_SIM_CYCLE_DELAY = 750000, // unit is sim cycles,to match the poll count change ( 250000 * 30 )
     MC_GROUP_MEMBERSHIP_BITX_READ = 0x500F0001,
+    PCB_RESPONDER_MCAST_GROUP_1 = 0xF0001,
     HOST_MASK_REG_IPOLL_MASK = 0xFC00000000000000,
     XSTOP1_INIT_VALUE = 0x97FFE00000000000,
     PGOOD_REGIONS_STARTBIT = 4,
@@ -79,12 +59,12 @@ ReturnCode mod_cbs_start(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     bool start_sbe)
 {
-    FSXCOMP_FSXLOG_ROOT_CTRL0_t ROOT_CTRL0;
-    FSXCOMP_FSXLOG_ROOT_CTRL0_COPY_t ROOT_CTRL0_COPY;
-    FSXCOMP_FSXLOG_CBS_CS_t CBS_CS;
-    TP_CFAM_FSI_W_SBE_FIFO_FSB_DOWNFIFO_RESET_t FSB_DOWNFIFO_RESET;
-    TP_CFAM_FSI_W_FSI2PIB_STATUS_t FSI2PIB_STATUS;
-    FSXCOMP_FSXLOG_SB_MSG_t SB_MSG;
+    ROOT_CTRL0_t ROOT_CTRL0;
+    ROOT_CTRL0_COPY_t ROOT_CTRL0_COPY;
+    CBS_CS_t CBS_CS;
+    SBE_FIFO_FSB_DOWNFIFO_RESET_t FSB_DOWNFIFO_RESET;
+    FSI2PIB_STATUS_t FSI2PIB_STATUS;
+    SB_MSG_t SB_MSG;
     int l_timeout = 0;
 
     FAPI_INF("Entering ...");
@@ -93,7 +73,7 @@ ReturnCode mod_cbs_start(
     FAPI_TRY(ROOT_CTRL0.getCfam(i_target));
     ROOT_CTRL0.set_CFAM_PROTECTION_0_DC(0);
     FAPI_TRY(ROOT_CTRL0.putCfam(i_target));
-    // not using putCfam_CLEAR scope here coz I need to write same value into COPY reg also
+    // not using putCfam_CLEAR scope here since the same value needs to be written into COPY
 
     ROOT_CTRL0_COPY = ROOT_CTRL0;
     FAPI_TRY(ROOT_CTRL0_COPY.putCfam(i_target));
@@ -102,7 +82,7 @@ ReturnCode mod_cbs_start(
     FAPI_TRY(FSI2PIB_STATUS.getCfam(i_target));
 
     FAPI_ASSERT(FSI2PIB_STATUS.get_VDD_NEST_OBSERVE(),
-                fapi2::VDN_POWER_NOT_ON()
+                fapi2::POZ_VDN_POWER_NOT_ON()
                 .set_FSI2PIB_STATUS_READ(FSI2PIB_STATUS)
                 .set_PROC_TARGET(i_target),
                 "ERROR: VDN power is NOT on. i.e. FSI2PIB_STATUS register bit 16 is NOT set.");
@@ -126,7 +106,7 @@ ReturnCode mod_cbs_start(
     // Leave START_BOOT_SEQUENCER at 1 to prevent accidental restarts
 
     FAPI_DBG("Monitor CBS_CS INTERNAL_STATE_VECTOR to know current state of CBS state machine.");
-    l_timeout = P11_CFAM_CBS_POLL_COUNT;
+    l_timeout = CFAM_CBS_POLL_COUNT;
 
     while (l_timeout != 0)
     {
@@ -137,7 +117,7 @@ ReturnCode mod_cbs_start(
             break;
         }
 
-        FAPI_TRY(fapi2::delay(P11_CBS_IDLE_HW_NS_DELAY, P11_CBS_IDLE_SIM_CYCLE_DELAY));
+        FAPI_TRY(fapi2::delay(CBS_IDLE_HW_NS_DELAY, CBS_IDLE_SIM_CYCLE_DELAY));
         --l_timeout;
     }
 
@@ -147,11 +127,11 @@ ReturnCode mod_cbs_start(
     //FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CP_REFCLOCK_SELECT, i_target_chip, l_cp_refclck_select));
 
     FAPI_ASSERT(l_timeout > 0,
-                fapi2::CBS_NOT_IN_IDLE_STATE()
+                fapi2::POZ_CBS_NOT_IN_IDLE_STATE()
                 .set_CBS_CS_READ(CBS_CS)
                 .set_CBS_CS_IDLE_VALUE(CBS_IDLE_VALUE)
-                .set_LOOP_COUNT(P11_CFAM_CBS_POLL_COUNT)
-                .set_HW_DELAY(P11_CBS_IDLE_HW_NS_DELAY)
+                .set_LOOP_COUNT(CFAM_CBS_POLL_COUNT)
+                .set_HW_DELAY(CBS_IDLE_HW_NS_DELAY)
                 .set_PROC_TARGET(i_target),
                 //.set_CLOCK_POS(l_callout_clock),
                 "ERROR: CBS HAS NOT REACHED IDLE STATE VALUE 0x002 ");
@@ -165,7 +145,7 @@ ReturnCode mod_switch_pcbmux(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     mux_type i_path)
 {
-    FSXCOMP_FSXLOG_ROOT_CTRL0_t ROOT_CTRL0;
+    ROOT_CTRL0_t ROOT_CTRL0;
 
     FAPI_INF("Entering ...");
     FAPI_DBG("Raise OOB Mux.");
@@ -180,15 +160,15 @@ ReturnCode mod_switch_pcbmux(
 
     FAPI_DBG("Enable the new path first to prevent glitches.");
     ROOT_CTRL0 = 0;
-    ROOT_CTRL0.setBit(i_path);
+    FAPI_TRY(ROOT_CTRL0.setBit(i_path));
     FAPI_TRY(ROOT_CTRL0.putScom_SET(i_target));
 
     FAPI_DBG("Disable the old path.");
     ROOT_CTRL0 = 0;
-    ROOT_CTRL0.setBit<FSXCOMP_FSXLOG_ROOT_CTRL0_FSI2PCB_DC>()
-    .setBit<FSXCOMP_FSXLOG_ROOT_CTRL0_PIB2PCB_DC>()
-    .setBit<FSXCOMP_FSXLOG_ROOT_CTRL0_PCB2PCB_DC>()
-    .clearBit(i_path);
+    ROOT_CTRL0.set_FSI2PCB_DC(1);
+    ROOT_CTRL0.set_PIB2PCB_DC(1);
+    ROOT_CTRL0.set_PCB2PCB_DC(1);
+    FAPI_TRY(ROOT_CTRL0.clearBit(i_path));
     FAPI_TRY(ROOT_CTRL0.putScom_CLEAR(i_target));
 
     FAPI_DBG("Clear PCB_RESET_DC.");
@@ -219,7 +199,7 @@ ReturnCode mod_multicast_setup(
 
     FAPI_INF("Entering ...");
     FAPI_ASSERT(!(i_group_id > 6),
-                fapi2::INVALID_GROUP_ID()
+                fapi2::POZ_INVALID_GROUP_ID()
                 .set_GROUP_ID_VALUE(i_group_id)
                 .set_PROC_TARGET(i_target),
                 "ERROR: INVALID group id passed to module multicast setup.");
@@ -257,7 +237,7 @@ ReturnCode mod_multicast_setup(
 
         const uint64_t prev_group = have ? i_group_id : 7;
         const uint64_t new_group  = want ? i_group_id : 7;
-        FAPI_TRY(fapi2::putScom(i_target, (PCB_RESPONDER_MULTICAST_GROUP_1 + i_group_id) | (i << 24),
+        FAPI_TRY(fapi2::putScom(i_target, (PCB_RESPONDER_MCAST_GROUP_1 + i_group_id) | (i << 24),
                                 (new_group << 58) | (prev_group << 42)));
     }
 
@@ -269,21 +249,21 @@ fapi_try_exit:
 ReturnCode mod_hangpulse_setup(const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
                                uint8_t i_pre_divider, const hang_pulse_t* i_hangpulse_table)
 {
-    HANG_PULSE_0_REG_t HANG_PULSE_0_REG;
-    PRE_COUNTER_REG_t PRE_COUNTER_REG;
+    HANG_PULSE_0_t HANG_PULSE_0;
+    PRE_COUNTER_t PRE_COUNTER;
 
     FAPI_INF("Entering ...");
     FAPI_DBG("Set pre_divider value in pre_counter register.");
-    PRE_COUNTER_REG = 0;
-    PRE_COUNTER_REG.set_PRE_COUNTER(i_pre_divider);
-    FAPI_TRY(PRE_COUNTER_REG.putScom(i_target));
+    PRE_COUNTER = 0;
+    PRE_COUNTER.set_PRE_COUNTER(i_pre_divider);
+    FAPI_TRY(PRE_COUNTER.putScom(i_target));
 
     while(1)
     {
-        HANG_PULSE_0_REG = 0;
-        HANG_PULSE_0_REG.set_HANG_PULSE_REG_0(i_hangpulse_table->value);
-        HANG_PULSE_0_REG.set_SUPPRESS_HANG_0(i_hangpulse_table->stop_on_xstop);
-        FAPI_TRY(putScom(i_target, scomt::perv::HANG_PULSE_0_REG + i_hangpulse_table->id, HANG_PULSE_0_REG));
+        HANG_PULSE_0 = 0;
+        HANG_PULSE_0.set_HANG_PULSE_REG_0(i_hangpulse_table->value);
+        HANG_PULSE_0.set_SUPPRESS_HANG_0(i_hangpulse_table->stop_on_xstop);
+        FAPI_TRY(putScom(i_target, HANG_PULSE_0.addr + i_hangpulse_table->id, HANG_PULSE_0));
 
         if (i_hangpulse_table->last)
         {
@@ -301,21 +281,21 @@ fapi_try_exit:
 ReturnCode mod_constant_hangpulse_setup(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, uint32_t i_base_address,
                                         const constant_hang_pulse_t i_hangpulses[4])
 {
-    PRE_COUNTER_REG_t PRE_COUNTER_REG;
-    HANG_PULSE_0_REG_t HANG_PULSE_0_REG;
+    PRE_COUNTER_t PRE_COUNTER;
+    HANG_PULSE_0_t HANG_PULSE_0;
 
     FAPI_INF("Entering ...");
 
     for (int i = 0; i <= 3; i++)
     {
-        PRE_COUNTER_REG = 0;
-        PRE_COUNTER_REG.set_PRE_COUNTER(i_hangpulses[i].pre_divider);
-        FAPI_TRY(putScom(i_target, i_base_address + i * 2 + 2, PRE_COUNTER_REG));
+        PRE_COUNTER = 0;
+        PRE_COUNTER.set_PRE_COUNTER(i_hangpulses[i].pre_divider);
+        FAPI_TRY(putScom(i_target, i_base_address + i * 2 + 2, PRE_COUNTER));
 
-        HANG_PULSE_0_REG = 0;
-        HANG_PULSE_0_REG.set_HANG_PULSE_REG_0(i_hangpulses[i].value);
-        HANG_PULSE_0_REG.set_SUPPRESS_HANG_0(i_hangpulses[i].stop_on_xstop);
-        FAPI_TRY(putScom(i_target, i_base_address + i * 2 + 1, HANG_PULSE_0_REG));
+        HANG_PULSE_0 = 0;
+        HANG_PULSE_0.set_HANG_PULSE_REG_0(i_hangpulses[i].value);
+        HANG_PULSE_0.set_SUPPRESS_HANG_0(i_hangpulses[i].stop_on_xstop);
+        FAPI_TRY(putScom(i_target, i_base_address + i * 2 + 1, HANG_PULSE_0));
     }
 
 fapi_try_exit:
@@ -325,9 +305,10 @@ fapi_try_exit:
 
 ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
 {
-    PCBCTL_COMP_INTR_HOST_MASK_REG_t HOST_MASK_REG;
-    FSXCOMP_FSXLOG_PERV_CTRL0_t PERV_CTRL0;
-    TP_TPCHIP_TPC_CPLT_CTRL0_t CPLT_CTRL0;
+    INTR_HOST_MASK_t HOST_MASK;
+    PERV_CTRL0_t PERV_CTRL0;
+    CPLT_CTRL0_t CPLT_CTRL0;
+    CPLT_CTRL2_t CPLT_CTRL2;
     fapi2::buffer<uint32_t> l_attr_pg;
     fapi2::buffer<uint64_t> l_data64;
 
@@ -335,17 +316,18 @@ ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
     fapi2::Target<fapi2::TARGET_TYPE_PERV> l_tpchiplet = get_tp_chiplet_target(i_target);
 
     FAPI_DBG("Set up IPOLL mask");
-    HOST_MASK_REG = HOST_MASK_REG_IPOLL_MASK ;
-    FAPI_TRY(HOST_MASK_REG.putScom(i_target));
+    HOST_MASK = HOST_MASK_REG_IPOLL_MASK ;
+    FAPI_TRY(HOST_MASK.putScom(i_target));
 
     FAPI_DBG("Transfer PERV partial good attribute into region good register (cplt_ctrl2 reg)");
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_PG, l_tpchiplet, l_attr_pg));
     l_attr_pg.invert();
     l_data64.flush<0>();
     l_data64.insert< PGOOD_REGIONS_STARTBIT, PGOOD_REGIONS_LENGTH, PGOOD_REGIONS_OFFSET >(l_attr_pg);
-    FAPI_TRY(putScom(l_tpchiplet, scomt::perv::CPLT_CTRL2_RW, l_data64));
+    CPLT_CTRL2 = l_data64();
+    FAPI_TRY(CPLT_CTRL2.putScom(get_tp_chiplet_target(i_target)));
 
-    FAPI_DBG("Enabe PERV vital clock gating");
+    FAPI_DBG("Enable PERV vital clock gating");
     PERV_CTRL0 = 0;
     PERV_CTRL0.set_TP_TCPERV_VITL_CG_DIS(1);
     FAPI_TRY(PERV_CTRL0.putScom_CLEAR(i_target));
@@ -353,14 +335,18 @@ ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
     FAPI_DBG("Disable alignment pulse");
     CPLT_CTRL0.flush<0>();
     CPLT_CTRL0.set_CTRL_CC_FORCE_ALIGN(1);
-    FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
+    //TODO: fixme
+    //FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
+    FAPI_TRY(fapi2::putScom(i_target, 0x01000020, CPLT_CTRL0()));
 
     FAPI_TRY(delay(DELAY_10us, SIM_CYCLE_DELAY));
 
     FAPI_DBG("Allow chiplet PLATs to enter flush");
     CPLT_CTRL0.flush<0>();
     CPLT_CTRL0.set_CTRL_CC_FLUSHMODE_INH(1);
-    FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
+    //TODO: fixme
+    //FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
+    FAPI_TRY(fapi2::putScom(i_target, 0x01000020, CPLT_CTRL0()));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
@@ -372,7 +358,7 @@ ReturnCode mod_setup_clockstop_on_xstop(
     const uint8_t i_chiplet_delays[64])
 {
     XSTOP1_t XSTOP1;
-    EPS_CLKSTOP_ON_XSTOP_MASK1_t EPS_CLKSTOP_ON_XSTOP_MASK1;
+    CLKSTOP_ON_XSTOP_MASK1_t EPS_CLKSTOP_ON_XSTOP_MASK1;
     fapi2::buffer<uint8_t>  l_clkstop_on_xstop;
     auto l_chiplets_mc   = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
     auto l_chiplets_uc   = l_chiplets_mc.getChildren<TARGET_TYPE_PERV>();
@@ -383,7 +369,10 @@ ReturnCode mod_setup_clockstop_on_xstop(
 
     if (l_clkstop_on_xstop)
     {
-        if (l_clkstop_on_xstop.getBit<EPS_CLKSTOP_ON_XSTOP_MASK1_SYS_XSTOP_STAGED_ERR>())
+        EPS_CLKSTOP_ON_XSTOP_MASK1.flush<1>();
+        EPS_CLKSTOP_ON_XSTOP_MASK1.insert<0, 8>(l_clkstop_on_xstop);
+
+        if (EPS_CLKSTOP_ON_XSTOP_MASK1.get_SYS_XSTOP_STAGED_ERR())
         {
             FAPI_DBG("Staged xstop is masked, leave all delays at 0 for fast stopping.");
 
@@ -403,8 +392,6 @@ ReturnCode mod_setup_clockstop_on_xstop(
         }
 
         FAPI_INF("Enable clockstop on checkstop");
-        EPS_CLKSTOP_ON_XSTOP_MASK1.flush<1>();
-        EPS_CLKSTOP_ON_XSTOP_MASK1.insert<0, 8>(l_clkstop_on_xstop);
         FAPI_TRY(EPS_CLKSTOP_ON_XSTOP_MASK1.putScom(l_chiplets_mc));
     }
 

@@ -24,23 +24,18 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  poz_chiplet_unused_psave.C
-///
-/// @brief put all non-functional chiplets into a state of minimal power usage
+/// @brief Place non-functional chiplets into low power state
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
-#include "poz_chiplet_unused_psave.H"
-#include "poz_perv_common_params.H"
-#include <p11_scom_perv.H>
-
-SCOMT_PERV_USE_NET_CTRL0;
-
+#include <poz_chiplet_unused_psave.H>
+#include <poz_chiplet_unused_psave_regs.H>
+#include <poz_perv_common_params.H>
 
 using namespace fapi2;
-using namespace scomt::perv;
+
 
 enum POZ_CHIPLET_UNUSED_PSAVE_Private_Constants
 {

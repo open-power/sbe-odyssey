@@ -24,34 +24,16 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  poz_perv_mod_bist.C
-///
-/// @brief  contains definitions for modules bist_poll and bist_reg_cleanup
+/// @brief Contains definitions for modules bist_poll and bist_reg_cleanup
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Andrew Singer (andrew.singer@ibm.com)
 //------------------------------------------------------------------------------
 
-#include "poz_perv_mod_bist.H"
-#include "poz_perv_mod_chiplet_clocking.H"
-#include <p11_scom_perv.H>
-
-SCOMT_PERV_USE_BIST;
-SCOMT_PERV_USE_CLK_REGION;
-SCOMT_PERV_USE_CPLT_CTRL0;
-SCOMT_PERV_USE_CPLT_CTRL4;
-SCOMT_PERV_USE_CPLT_CTRL1;
-SCOMT_PERV_USE_OPCG_REG0;
-SCOMT_PERV_USE_OPCG_REG1;
-SCOMT_PERV_USE_CPLT_STAT0;
-SCOMT_PERV_USE_SCAN_REGION_TYPE;
-SCOMT_PERV_USE_CLOCK_STAT_SL;
-SCOMT_PERV_USE_CLOCK_STAT_NSL;
-SCOMT_PERV_USE_CLOCK_STAT_ARY;
-SCOMT_PERV_USE_SYNC_CONFIG;
+#include <poz_perv_mod_bist.H>
+#include <poz_perv_mod_chiplet_clocking.H>
 
 using namespace fapi2;
-using namespace scomt::perv;
-
 
 enum POZ_PERV_MOD_BIST_Private_Constants
 {

@@ -23,18 +23,19 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  poz_bist.C
+/// @brief Common module for ABIST/LBIST
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
 // *HWP FW Maintainer   : Andrew Singer (andrew.singer@ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
-#include "poz_bist.H"
-#include "poz_perv_mod_misc.H"
-#include "poz_perv_mod_chiplet_clocking.H"
-#include "poz_perv_mod_bist.H"
-#include "poz_chiplet_arrayinit.H"
+#include <poz_bist.H>
+#include <poz_perv_common_params.H>
+#include <poz_perv_mod_misc.H>
+#include <poz_perv_mod_chiplet_clocking.H>
+#include <poz_perv_mod_bist.H>
+#include <poz_chiplet_arrayinit.H>
 #include <target_filters.H>
 
 

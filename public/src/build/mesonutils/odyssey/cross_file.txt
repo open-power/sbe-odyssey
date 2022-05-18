@@ -24,7 +24,7 @@ odyssey_runtime_inc_paths = [
     '/public/src/runtime/odyssey/sppe/plat/targeting',
     '/public/src/runtime/odyssey/sppe/hwpf',
     '/genfiles/runtime/odyssey/sppe',
-    '/public/src/runtime/odyssey/sppe/plat/attributes'
+    '/public/src/runtime/odyssey/sppe/plat/attributes',
         ]
 
 odyssey_hwp_inc_paths = [
@@ -32,6 +32,9 @@ odyssey_hwp_inc_paths = [
     '/hwp/odyssey/perv',
     '/memory/odyssey/hwp',
     '/memory/odyssey/hwp/lib/phy',
+    '/common/odyssey/registers',
+    '/hwp/generic/perv',
+    '/common/generic/scomt',
         ]
 
 odyssey_srom_inc_paths = [

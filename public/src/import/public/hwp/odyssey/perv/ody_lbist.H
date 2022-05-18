@@ -23,11 +23,11 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  ody_lbist.H
+/// @brief Execute Logic Built In Self Test
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
 // *HWP FW Maintainer   : Mike Hamilton (mikehami@us.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
 #pragma once
@@ -36,8 +36,10 @@
 
 typedef fapi2::ReturnCode (*ody_lbist_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
 
-/// @brief
-/// @param[in]   i_target
+/// @brief Execute Logic Built In Self Test
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
+///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {

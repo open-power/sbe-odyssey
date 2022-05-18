@@ -23,16 +23,15 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  ody_tp_initf.C
+/// @brief Install TP chiplet scan overrides
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SPPE
 //------------------------------------------------------------------------------
 
-#include "ody_tp_initf.H"
-#include "poz_perv_common_params.H"
-
+#include <ody_tp_initf.H>
+#include <poz_perv_common_params.H>
 
 using namespace fapi2;
 

@@ -24,12 +24,10 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  ody_chiplet_unused_psave.H
-///
-/// @brief put all non-functional chiplets into a state of minimal power usage
+/// @brief Place non-functional chiplets into low power state
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
 #pragma once
@@ -38,8 +36,10 @@
 
 typedef fapi2::ReturnCode (*ody_chiplet_unused_psave_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
 
-/// @brief       put all non-functional chiplets into a state of minimal power usage
-/// @param[in]   i_target          Reference to TARGET_TYPE_OCMB_CHIP
+/// @brief Place non-functional chiplets into low power state
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
+///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {

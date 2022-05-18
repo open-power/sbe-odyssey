@@ -23,10 +23,11 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file poz_perv_utils.C
-/// @brief utility functions support for perv HWP's
+/// @file  poz_perv_utils.C
+/// @brief Utility function support for pervasive HWP code
 //------------------------------------------------------------------------------
-/// *HWP HW Maintainer: Sreekanth Reddy <skadapal@in.ibm.com>
+// *HWP HW Maintainer   : Sreekanth Reddy <skadapal@in.ibm.com>
+// *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
 #include <poz_perv_utils.H>

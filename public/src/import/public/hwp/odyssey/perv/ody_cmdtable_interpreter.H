@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/generic/perv/poz_perv_utils.H $  */
+/* $Source: public/src/import/public/hwp/odyssey/perv/ody_cmdtable_interpreter.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,10 +23,10 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  poz_perv_utils.H
-/// @brief Utility function support for pervasive HWP code
+/// @file  ody_cmdtable_interpreter.H
+/// @brief Interpet and execute command table binary image
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Sreekanth Reddy <skadapal@in.ibm.com>
+// *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
@@ -34,18 +34,30 @@
 
 #include <fapi2.H>
 
-fapi2::Target<fapi2::TARGET_TYPE_PERV> get_tp_chiplet_target(const fapi2::Target<fapi2::TARGET_TYPE_CHIPS> i_chip);
+typedef fapi2::ReturnCode (*ody_cmdtable_interpreter_FP_t)(
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
+    const void*, const size_t,
+    const void*, const size_t);
 
-
-/// @brief Determine (and init) multicast group for hotplug operations
+/// @brief Interpreter for boot ROM command tables
 ///
-/// Depending on whether or not we want to hotplug we may need to use different
-/// sets of targets. This either returns a matching static group or initializes
-/// the required dynamic group and returns the group ID.
+/// This executes the command tables from SEEPROM like the boot ROM would.
 ///
-/// @param[in]   i_target                  Chip to operate on
-/// @param[out]  o_mcgroup                 Resulting MC group to use for further operations
+/// @param[in]   i_target                  The chip to operate on
+/// @param[in]   i_main_table              Pointer to memory where the main command table resides
+/// @param[in]   i_main_table_size         Size of the main command table in bytes
+/// @param[in]   i_main_table              Pointer to memory where the custom command table resides,
+///                                        or NULL if there is no custom table
+/// @param[in]   i_main_table_size         Size of the custom command table in bytes, or 0 if no table
 ///
-fapi2::ReturnCode get_hotplug_mc_group(
-    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    fapi2::MulticastGroup& o_mcgroup);
+/// @return  FAPI2_RC_SUCCESS if the command table returned
+/// @return  FAPI2_RC_FALSE   if command table execution failed and the SBE would have halted
+/// @return  FAPI2_RC_INVALID_PARAMETER if either command table is malformed
+/// @return  FAPI error code  if another FAPI error occurred, such as a SCOM error
+extern "C"
+{
+    fapi2::ReturnCode ody_cmdtable_interpreter(
+        const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+        const void* i_main_table, const size_t i_main_table_size,
+        const void* i_cust_table, const size_t i_cust_table_size);
+}

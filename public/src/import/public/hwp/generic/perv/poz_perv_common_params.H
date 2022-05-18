@@ -22,6 +22,14 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+//------------------------------------------------------------------------------
+/// @file  poz_perv_common_params.H
+/// @brief Common parameters used by pervasive module code
+//------------------------------------------------------------------------------
+// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
+//------------------------------------------------------------------------------
+
 #pragma once
 
 namespace pll

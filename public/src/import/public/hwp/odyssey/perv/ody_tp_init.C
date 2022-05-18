@@ -23,24 +23,24 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  ody_tp_init.C
+/// @brief Install pervasive-specific chiplet personalization
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SPPE
 //------------------------------------------------------------------------------
 
-#include "ody_tp_init.H"
-#include "poz_perv_common_params.H"
-#include "poz_perv_mod_misc.H"
+#include <ody_tp_init.H>
+#include <poz_perv_common_params.H>
+#include <poz_perv_mod_misc.H>
 #include <multicast_defs.H>
 #include <target_filters.H>
-#include <p11_scom_perv.H>
-
-SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL0;
+#include <ody_scom_perv.H>
 
 using namespace fapi2;
 using namespace scomt::perv;
+
+SCOMT_PERV_USE_CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_ROOT_CTRL0;
 
 enum ODY_TP_INIT_Private_Constants
 {
@@ -50,7 +50,7 @@ ReturnCode ody_tp_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     auto l_mc_allgood = i_target.getMulticast<fapi2::TARGET_TYPE_PERV>(fapi2::MCGROUP_GOOD);
     static const hang_pulse_t SETUP_HANG_COUNTERS_PERV[] = {{0, 16, 0}, {1, 1, 0}, {2, 1, 0}, {5, 6, 0}, {6, 7, 0, 1}} ;
-    FSXCOMP_FSXLOG_ROOT_CTRL0_t ROOT_CTRL0;
+    CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_ROOT_CTRL0_t ROOT_CTRL0;
 
     // TODO : Set up TOD error routing, error mask via scan inits
     // TODO : Set up perv LFIR, XSTOP_MASK, RECOV_MASK via scan inits

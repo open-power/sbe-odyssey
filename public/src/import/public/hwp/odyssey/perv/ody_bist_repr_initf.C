@@ -23,16 +23,15 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  ody_bist_repr_initf.C
+/// @brief Apply repairs for BIST
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
-#include "ody_bist_repr_initf.H"
-#include "poz_perv_common_params.H"
-
+#include <ody_bist_repr_initf.H>
+#include <poz_perv_common_params.H>
 
 using namespace fapi2;
 

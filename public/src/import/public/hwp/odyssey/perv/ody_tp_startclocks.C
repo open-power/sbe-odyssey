@@ -23,16 +23,16 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  ody_tp_startclocks.C
+/// @brief Start TP chiplet clocks
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
-// *HWP FW Maintainer   : Kevin Duffy (kjduffy@us.ibm.com)
-// *HWP Consumed by     : SPPE
+// *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#include "ody_tp_startclocks.H"
-#include "poz_perv_common_params.H"
-#include "poz_perv_mod_chiplet_clocking.H"
+#include <ody_tp_startclocks.H>
+#include <poz_perv_common_params.H>
+#include <poz_perv_mod_chiplet_clocking.H>
 #include <target_filters.H>
 #include <poz_perv_utils.H>
 

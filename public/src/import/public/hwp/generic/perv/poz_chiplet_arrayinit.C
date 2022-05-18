@@ -24,17 +24,15 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  poz_chiplet_arrayinit.C
-///
 /// @brief Arrayinit all chiplets except TP
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
-#include "poz_chiplet_arrayinit.H"
-#include "poz_perv_common_params.H"
-#include "poz_perv_mod_chiplet_clocking.H"
+#include <poz_chiplet_arrayinit.H>
+#include <poz_perv_common_params.H>
+#include <poz_perv_mod_chiplet_clocking.H>
 
 
 using namespace fapi2;

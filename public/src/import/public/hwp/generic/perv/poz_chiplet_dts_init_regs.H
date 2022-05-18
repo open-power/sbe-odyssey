@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_ioppe_load.H $  */
+/* $Source: public/src/import/public/hwp/generic/perv/poz_chiplet_dts_init_regs.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,23 +23,21 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  poz_chiplet_dts_init_regs.H
+/// @brief Registers referenced by poz_chiplet_dts_init module
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SPPE
 //------------------------------------------------------------------------------
 
 #pragma once
 
-#include <fapi2.H>
+#include <p11_scom_pc_an.H>
 
-typedef fapi2::ReturnCode (*ody_ioppe_load_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
+using namespace scomt::pc;
 
-/// @brief
-/// @param[in]   i_target
-/// @return  FAPI2_RC_SUCCESS if success, else error code.
-extern "C"
-{
-    fapi2::ReturnCode ody_ioppe_load(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
-}
+SCOMT_PC_USE_ANALOG_SHIM_VOLTAGE_WRAP_SCOMSAT_KVREF_START_CAL;
+SCOMT_PC_USE_ANALOG_SHIM_VOLTAGE_WRAP_SCOMSAT_KVREF_CAL_DONE;
+
+typedef ANALOG_SHIM_VOLTAGE_WRAP_SCOMSAT_KVREF_START_CAL_t KVREF_START_CAL_t;
+typedef ANALOG_SHIM_VOLTAGE_WRAP_SCOMSAT_KVREF_CAL_DONE_t KVREF_CAL_DONE_t;

@@ -23,16 +23,15 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  ody_sppe_boot_check.C
+/// @brief Confirm SPPE boot progress
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SPPE, BMC
 //------------------------------------------------------------------------------
 
-#include "ody_sppe_boot_check.H"
-#include "poz_perv_common_params.H"
-
+#include <ody_sppe_boot_check.H>
+#include <poz_perv_common_params.H>
 
 using namespace fapi2;
 
