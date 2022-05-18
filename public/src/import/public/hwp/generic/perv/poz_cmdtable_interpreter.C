@@ -23,20 +23,20 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
+/// @file  poz_cmdtable_interpreter.C
 /// @brief Interpreter for boot ROM command tables
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Joachim Fenkes <fenkes@de.ibm.com>
 // *HWP FW Maintainer   : Kahn Evans <kahneva@us.ibm.com>
-// *HWP Consumed by     : Cronus
 //------------------------------------------------------------------------------
 
-#include "poz_cmdtable_interpreter.H"
+#include <poz_cmdtable_interpreter.H>
 #include <vector>
 #include <endian.h>
 
 using namespace fapi2;
 
-enum P11T_PLL_SETUP_Private_Constants
+enum POZ_CMDTABLE_INTERPRETER_Private_Constants
 {
     FORMAT_MAGIC = 0x434d5461,    // 'CMTa'
     POLL_TIMEOUT = 100,
@@ -113,9 +113,9 @@ ReturnCode Executor::check()
     }
 
     const uint32_t header = be32toh(iv_table[1]);
-    iv_ninsn = header >> 16;
-    iv_nsmall = (header >> 8) & 0xFF;
-    iv_nbig = header & 0xFF;
+    iv_ninsn = (header >> 16) + 1;
+    iv_nsmall = ((header >> 9) & 0x7F) + 1;
+    iv_nbig = (header & 0x1FF) + 1;
     FAPI_DBG("%s Command table: %d instructions, %d small values, %d big values",
              iv_type, iv_ninsn, iv_nsmall, iv_nbig);
 
@@ -130,7 +130,7 @@ ReturnCode Executor::check()
 
     iv_insn = iv_table + 2;
     iv_small = iv_insn + iv_ninsn;
-    iv_big = (const uint64_t*)(iv_small + iv_nbig);
+    iv_big = (const uint64_t*)(iv_small + iv_nsmall);
 
     return FAPI2_RC_SUCCESS;
 }
@@ -138,9 +138,9 @@ ReturnCode Executor::check()
 static const char* opcode_names[8] =
 {
     "NOP",
-    "PUTSCOM",
     "CALL",
     "RETURN",
+    "PUTSCOM",
     "TEST",
     "POLL",
     "CMPBEQ",
@@ -163,10 +163,13 @@ ReturnCode Executor::run(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, int i
         // Decode instruction
         const uint32_t insn = be32toh(iv_insn[ip]);
         const uint32_t opcode = (insn >> 28),
-                       _param = ((insn >> 22) % 0x3F),
+                       _param = ((insn >> 22) & 0x3F),
                        _address = (insn >> 15) & 0x7F,
                        _mask = (insn >> 9) & 0x3F,
                        _data = insn & 0x1FF;
+
+        FAPI_DBG("insn: %08X, opcode: %d, param idx: %d, addr idx: %d, mask idx: %d, data idx: %d",
+                 insn, opcode, _param, _address, _mask, _data);
 
         // Check value bounds
         if (opcode > ARRAY_SIZE(opcode_names))
@@ -185,12 +188,12 @@ ReturnCode Executor::run(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, int i
 
         // Load arguments from tables
         const uint32_t param = be32toh(iv_small[_param]),
-                       address = be32toh(iv_small[_address]),
-                       mask = be64toh(iv_big[_mask]),
+                       address = be32toh(iv_small[_address]);
+        const uint64_t mask = be64toh(iv_big[_mask]),
                        data = be64toh(iv_big[_data]);
 
         // Output instruction
-        FAPI_DBG("%s:%04d|%-7s|%07X|%08X|%016X|%016X|",
+        FAPI_DBG("%s:%04d|%-7s|%07X|%08X|%016lX|%016lX|",
                  iv_type, ip, opcode_names[opcode],
                  param, address, mask, data);
 

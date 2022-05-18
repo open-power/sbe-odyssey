@@ -23,15 +23,15 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  poz_chiplet_repr_initf.C
+/// @brief Load chiplet repair rings
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
-#include "poz_chiplet_repr_initf.H"
-#include "poz_perv_common_params.H"
+#include <poz_chiplet_repr_initf.H>
+#include <poz_perv_common_params.H>
 
 
 using namespace fapi2;

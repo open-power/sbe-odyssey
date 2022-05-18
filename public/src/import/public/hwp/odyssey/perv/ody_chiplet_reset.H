@@ -24,12 +24,10 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  ody_chiplet_reset.H
-///
-/// @brief chiplet reset procedure for Odyssey chip
+/// @brief Enable and reset chiplets
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
 #pragma once
@@ -38,11 +36,10 @@
 
 typedef fapi2::ReturnCode (*ody_chiplet_reset_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
 
-/// @brief
-/// -- Enable and reset chiplets, setup clock controllers & OPCG delays
-/// -- do SCAN0 on all regions, transfer PGOOD attr into CPLT_CTRL[2,3]
+/// @brief Enable and reset chiplets
 ///
-/// @param[in]   i_target          Reference to TARGET_TYPE_OCMB_CHIP
+/// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
+///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {

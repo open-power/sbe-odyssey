@@ -23,23 +23,22 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file ody_chiplet_init.C
-///
+/// @file  ody_chiplet_init.C
 /// @brief Program DDR PHY Nto1 clock division ratios
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
-#include "ody_chiplet_init.H"
-#include "poz_perv_common_params.H"
-#include "p11_scom_perv.H"
-
-SCOMT_PERV_USE_CPLT_CONF1;
+#include <ody_chiplet_init.H>
+#include <poz_perv_common_params.H>
+#include <ody_scom_perv.H>
 
 using namespace fapi2;
 using namespace scomt::perv;
+
+SCOMT_PERV_USE_TPCHIP_TPC_CPLT_CONF1;
+typedef TPCHIP_TPC_CPLT_CONF1_t CPLT_CONF1_t;
 
 enum ODY_CHIPLET_INIT_Private_Constants
 {

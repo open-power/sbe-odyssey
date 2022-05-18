@@ -23,16 +23,16 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  ody_tp_arrayinit_cleanup.C
+/// @brief Cleanup after TP chiplet arrayinit
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
 // *HWP FW Maintainer   : Kevin Duffy (kjduffy@us.ibm.com)
-// *HWP Consumed by     : SPPE
 //------------------------------------------------------------------------------
 
-#include "ody_tp_arrayinit_cleanup.H"
-#include "poz_perv_common_params.H"
-#include "poz_perv_mod_chiplet_clocking.H"
+#include <ody_tp_arrayinit_cleanup.H>
+#include <poz_perv_common_params.H>
+#include <poz_perv_mod_chiplet_clocking.H>
 #include <poz_perv_utils.H>
 #include <target_filters.H>
 

@@ -24,9 +24,7 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  poz_perv_mod_misc.H
-///
-/// @brief prototype declarations for modules : CBS start, switch pcbmux
-/// multicast & hangpulse setup, setup clockstop on checkstop, Miscellaneous TP setup
+/// @brief Miscellaneous module definitions
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
@@ -35,38 +33,41 @@
 #pragma once
 
 #include <fapi2.H>
-#include "poz_perv_common_params.H"
+#include <poz_perv_common_params.H>
 
 using namespace mux;
 
-/// @brief   CBS start module.
+/// @brief CBS start module
 /// -- Assert for VDN power ON, start CBS.
 /// -- Monitor CBS_CS INTERNAL_STATE_VECTOR, assert for CBS IDLE state.
 ///
-/// @param[in]   i_target     Reference to TARGET_TYPE_ANY_POZ_CHIP
-/// @param[in]   i_start_sbe  option to prevent SBE start
+/// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_start_sbe               Option to prevent SBE start
+///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_cbs_start(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     bool i_start_sbe = true);
 
-/// @brief switch pcbmux module
+/// @brief Switch pcbmux module
 /// -- enable the new path first and disable the old path.
 ///
-/// @param[in]   i_target     Reference to TARGET_TYPE_ANY_POZ_CHIP
-/// @param[in]   i_path       Path to be enabled FSI2PCB/PIB2PCB/PCB2PCB
+/// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_path                    Path to be enabled FSI2PCB/PIB2PCB/PCB2PCB
+///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_switch_pcbmux(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     mux_type i_path);
 
-/// @brief multicast setup module
+/// @brief Multicast setup module
 /// -- Determine required/current group members and update group memebership where needed.
 ///
-/// @param[in]   i_target        Reference to TARGET_TYPE_ANY_POZ_CHIP
-/// @param[in]   i_group_id      multicast group number
-/// @param[in]   i_chiplets      64bit address having corresponding bit location set for required chiplets
-/// @param[in]   i_pgood_policy  partial good policy TARGET_STATE_[FUNCTIONAL/PRESENT/others]
+/// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_group_id                Multicast group number
+/// @param[in]   i_chiplets                64bit address having corresponding bit location set for required chiplets
+/// @param[in]   i_pgood_policy            Partial good policy TARGET_STATE_[FUNCTIONAL/PRESENT/others]
+///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_multicast_setup(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
@@ -74,24 +75,26 @@ fapi2::ReturnCode mod_multicast_setup(
     uint64_t i_chiplets,
     fapi2::TargetState i_pgood_policy);
 
-/// @brief hangpulse setup module
+/// @brief Hangpulse setup module
 /// -- write hang pulse table values into corresponding HANG_PULSE_* registers
 ///
-/// @param[in]   i_target           Reference to TARGET_TYPE_PERV or TARGET_TYPE_MULTICAST
-/// @param[in]   i_pre_divider      Divider for hang counter clock
-/// @param[in]   i_hangpulse_table  hang pulse table having id, frequency and stop_on_xstop values
+/// @param[in]   i_target                  Reference to TARGET_TYPE_PERV or TARGET_TYPE_MULTICAST
+/// @param[in]   i_pre_divider             Divider for hang counter clock
+/// @param[in]   i_hangpulse_table         Hang pulse table having id, frequency and stop_on_xstop values
+///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_hangpulse_setup(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
     uint8_t i_pre_divider,
     const hang_pulse_t* i_hangpulse_table);
 
-/// @brief constant hangpulse setup module
+/// @brief Constant hangpulse setup module
 /// -- write constant hang pulse table values into corresponding HANG_PULSE_* & PRE_COUNTER registers
 ///
-/// @param[in]   i_target          Reference to TARGET_TYPE_ANY_POZ_CHIP
-/// @param[in]   i_base_address    Base address (HANG_PULSE_CONFIG_REG address of the chiplet)
-/// @param[in]   i_hangpulses[4]   4 Hang pulse arrays having predivider, frequency & stop_on_xstop values
+/// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_base_address            Base address (HANG_PULSE_CONFIG_REG address of the chiplet)
+/// @param[in]   i_hangpulses[4]           4 Hang pulse arrays having predivider, frequency & stop_on_xstop values
+///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_constant_hangpulse_setup(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
@@ -100,14 +103,17 @@ fapi2::ReturnCode mod_constant_hangpulse_setup(
 
 /// @brief Miscellaneous TP setup
 ///
-/// @param[in]   i_target     Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
+///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_poz_tp_init_common(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target);
 
-/// @brief       Setup clockstop on checkstop module
-/// @param[in]   i_target              Reference to TARGET_TYPE_ANY_POZ_CHIP
-/// @param[in]   i_chiplet_delays[64]  array of per-chiplet delays
+/// @brief Setup clockstop on checkstop module
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_chiplet_delays[64]      Array of per-chiplet delays
+///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_setup_clockstop_on_xstop(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,

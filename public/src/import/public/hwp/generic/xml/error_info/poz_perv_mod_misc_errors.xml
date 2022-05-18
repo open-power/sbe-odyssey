@@ -28,7 +28,7 @@
 <hwpErrors>
   <!-- ******************************************************************** -->
     <hwpError>
-      <rc>RC_CBS_NOT_IN_IDLE_STATE</rc>
+      <rc>RC_POZ_CBS_NOT_IN_IDLE_STATE</rc>
       <description>CBS did not complete (did not arrive in IDLE state) within timeout</description>
       <ffdc>CBS_CS_READ</ffdc>
       <ffdc>CBS_CS_IDLE_VALUE</ffdc>
@@ -38,7 +38,7 @@
     </hwpError>
   <!-- ******************************************************************** -->
     <hwpError>
-      <rc>RC_VDN_POWER_NOT_ON</rc>
+      <rc>RC_POZ_VDN_POWER_NOT_ON</rc>
       <description>Nest power VDN is not on.(VDD_NEST_OBSERVE not set)</description>
       <!-- <ffdc>CBS_ENVSTAT_READ</ffdc> -->
       <ffdc>FSI2PIB_STATUS_READ</ffdc>
@@ -46,7 +46,7 @@
     </hwpError>
   <!-- ******************************************************************** -->
    <hwpError>
-      <rc>RC_INVALID_GROUP_ID</rc>
+      <rc>RC_POZ_INVALID_GROUP_ID</rc>
       <description>Invalid group id passed to module multicast setup</description>
       <ffdc>GROUP_ID_VALUE</ffdc>
       <ffdc>PROC_TARGET</ffdc>

@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/generic/perv/poz_perv_utils.H $  */
+/* $Source: public/src/import/public/hwp/odyssey/perv/ody_cmdtable_interpreter.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,29 +23,31 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  poz_perv_utils.H
-/// @brief Utility function support for pervasive HWP code
+/// @file  ody_cmdtable_interpreter.C
+/// @brief Interpet and execute command table binary image
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Sreekanth Reddy <skadapal@in.ibm.com>
+// *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#pragma once
+#include <ody_cmdtable_interpreter.H>
+#include <poz_perv_common_params.H>
+#include <poz_cmdtable_interpreter.H>
 
-#include <fapi2.H>
+using namespace fapi2;
 
-fapi2::Target<fapi2::TARGET_TYPE_PERV> get_tp_chiplet_target(const fapi2::Target<fapi2::TARGET_TYPE_CHIPS> i_chip);
+ReturnCode ody_cmdtable_interpreter(
+    const Target<TARGET_TYPE_OCMB_CHIP>& i_target,
+    const void* i_main_table, const size_t i_main_table_size,
+    const void* i_cust_table, const size_t i_cust_table_size)
+{
+    FAPI_INF("Entering ...");
+    FAPI_TRY(poz_cmdtable_interpreter(
+                 i_target,
+                 i_main_table, i_main_table_size,
+                 i_cust_table, i_cust_table_size));
 
-
-/// @brief Determine (and init) multicast group for hotplug operations
-///
-/// Depending on whether or not we want to hotplug we may need to use different
-/// sets of targets. This either returns a matching static group or initializes
-/// the required dynamic group and returns the group ID.
-///
-/// @param[in]   i_target                  Chip to operate on
-/// @param[out]  o_mcgroup                 Resulting MC group to use for further operations
-///
-fapi2::ReturnCode get_hotplug_mc_group(
-    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    fapi2::MulticastGroup& o_mcgroup);
+fapi_try_exit:
+    FAPI_INF("Exiting ...");
+    return current_err;
+}

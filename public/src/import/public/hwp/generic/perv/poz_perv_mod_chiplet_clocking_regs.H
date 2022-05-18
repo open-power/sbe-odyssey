@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/generic/perv/poz_perv_utils.H $  */
+/* $Source: public/src/import/public/hwp/generic/perv/poz_perv_mod_chiplet_clocking_regs.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,29 +23,29 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  poz_perv_utils.H
-/// @brief Utility function support for pervasive HWP code
+/// @file  poz_perv_mod_chiplet_clocking_regs.H
+/// @brief Registers referenced by poz_perv_mod_chiplet_clocking module
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Sreekanth Reddy <skadapal@in.ibm.com>
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
 #pragma once
 
-#include <fapi2.H>
+#include <p11_scom_perv.H>
 
-fapi2::Target<fapi2::TARGET_TYPE_PERV> get_tp_chiplet_target(const fapi2::Target<fapi2::TARGET_TYPE_CHIPS> i_chip);
+using namespace scomt::perv;
 
-
-/// @brief Determine (and init) multicast group for hotplug operations
-///
-/// Depending on whether or not we want to hotplug we may need to use different
-/// sets of targets. This either returns a matching static group or initializes
-/// the required dynamic group and returns the group ID.
-///
-/// @param[in]   i_target                  Chip to operate on
-/// @param[out]  o_mcgroup                 Resulting MC group to use for further operations
-///
-fapi2::ReturnCode get_hotplug_mc_group(
-    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    fapi2::MulticastGroup& o_mcgroup);
+SCOMT_PERV_USE_BIST;
+SCOMT_PERV_USE_CLK_REGION;
+SCOMT_PERV_USE_CPLT_CTRL0;
+SCOMT_PERV_USE_CPLT_CTRL4;
+SCOMT_PERV_USE_CPLT_CTRL1;
+SCOMT_PERV_USE_OPCG_REG0;
+SCOMT_PERV_USE_OPCG_REG1;
+SCOMT_PERV_USE_CPLT_STAT0;
+SCOMT_PERV_USE_SCAN_REGION_TYPE;
+SCOMT_PERV_USE_CLOCK_STAT_SL;
+SCOMT_PERV_USE_CLOCK_STAT_NSL;
+SCOMT_PERV_USE_CLOCK_STAT_ARY;
+SCOMT_PERV_USE_SYNC_CONFIG;

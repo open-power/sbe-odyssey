@@ -23,13 +23,11 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file poz_chiplet_dts_init.H
-///
+/// @file  poz_chiplet_dts_init.H
 /// @brief Start KVREF calibration and check for calibration done
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
 #pragma once
@@ -38,8 +36,10 @@
 
 typedef fapi2::ReturnCode (*poz_chiplet_dts_init_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&);
 
-/// @brief       Start KVREF calibration and check for calibration done
-/// @param[in]   i_target     Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @brief Start KVREF calibration and check for calibration done
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
+///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {

@@ -28,7 +28,7 @@
 <hwpErrors>
    <!-- ******************************************************************** -->
    <hwpError>
-      <rc>RC_OPCG_DONE_NOT_SET_ERR</rc>
+      <rc>RC_POZ_OPCG_DONE_NOT_SET_ERR</rc>
       <description>OPCG_DONE not set </description>
       <ffdc>PERV_CPLT_STAT0</ffdc>
       <ffdc>POLL_COUNT</ffdc>
@@ -37,16 +37,16 @@
    </hwpError>
    <!-- ******************************************************************** -->
    <hwpError>
-      <rc>RC_SRAM_ABIST_DONE_BIT_ERR</rc>
+      <rc>RC_POZ_SRAM_ABIST_DONE_BIT_ERR</rc>
       <description>SRAM abist done bit is not set</description>
       <ffdc>PERV_CPLT_STAT</ffdc>
       <ffdc>SELECT_SRAM</ffdc>
       <ffdc>PROC_TARGET</ffdc>
    </hwpError>
-   <!-- ******************************************************************** --> 
+   <!-- ******************************************************************** -->
    <hwpError>
-      <rc>RC_THOLD_ERR</rc>
-      <description>thold status not matching the expected value 
+      <rc>RC_POZ_THOLD_ERR</rc>
+      <description>thold status not matching the expected value
 	in clock start stop sequence</description>
       <ffdc>CLOCK_CMD</ffdc>
       <ffdc>CLOCK_TYPE</ffdc>
@@ -56,14 +56,14 @@
    </hwpError>
    <!-- ******************************************************************** -->
    <hwpError>
-      <rc>RC_INVALID_CLOCK_TYPE</rc>
+      <rc>RC_POZ_INVALID_CLOCK_TYPE</rc>
       <description>Invalid clock_type passed to check_clock_status function</description>
       <ffdc>CLOCK_TYPE_VALUE</ffdc>
       <ffdc>PROC_TARGET</ffdc>
    </hwpError>
    <!-- ******************************************************************** -->
    <hwpError>
-      <rc>RC_CPLT_NOT_ALIGNED_ERR</rc>
+      <rc>RC_POZ_CPLT_NOT_ALIGNED_ERR</rc>
       <description>Chiplet not aligned</description>
       <ffdc>PERV_CPLT_STAT0</ffdc>
       <ffdc>LOOP_COUNT</ffdc>

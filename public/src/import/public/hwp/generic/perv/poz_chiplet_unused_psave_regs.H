@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_chiplet_dts_init.C $ */
+/* $Source: public/src/import/public/hwp/generic/perv/poz_chiplet_unused_psave_regs.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,34 +23,17 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file ody_chiplet_dts_init.C
-///
-/// @brief Start KVREF calibration and check for calibration done
+/// @file  poz_chiplet_unused_psave_regs.H
+/// @brief Registers referenced by poz_chiplet_unused_psave module
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
-#include "ody_chiplet_dts_init.H"
-#include "poz_chiplet_dts_init.H"
-#include "poz_perv_common_params.H"
+#pragma once
 
+#include <p11_scom_perv.H>
 
-using namespace fapi2;
+using namespace scomt::perv;
 
-enum ODY_CHIPLET_DTS_INIT_Private_Constants
-{
-};
-
-ReturnCode ody_chiplet_dts_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
-{
-
-    FAPI_INF("Entering ...");
-
-    //FAPI_TRY(poz_chiplet_dts_init(i_target));
-
-fapi_try_exit:
-    FAPI_INF("Exiting ...");
-    return current_err;
-}
+SCOMT_PERV_USE_NET_CTRL0;

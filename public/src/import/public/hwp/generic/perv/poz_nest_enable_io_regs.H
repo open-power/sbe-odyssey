@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_chiplet_dts_init.H $ */
+/* $Source: public/src/import/public/hwp/generic/perv/poz_nest_enable_io_regs.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,25 +23,20 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file ody_chiplet_dts_init.H
-///
-/// @brief chiplet_dts_init procedure for P11 TAP chip
+/// @file  poz_nest_enable_io_regs.H
+/// @brief Registers referenced by poz_nest_enable_io module
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
 #pragma once
 
-#include <fapi2.H>
+#include <p11_scom_perv.H>
 
-typedef fapi2::ReturnCode (*ody_chiplet_dts_init_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
+using namespace scomt::perv;
 
-/// @brief       Start KVREF calibration and check for calibration done
-/// @param[in]   i_target          Reference to TARGET_TYPE_OCMB_CHIP
-/// @return  FAPI2_RC_SUCCESS if success, else error code.
-extern "C"
-{
-    fapi2::ReturnCode ody_chiplet_dts_init(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
-}
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL1;
+SCOMT_PERV_USE_NET_CTRL0;
+
+typedef FSXCOMP_FSXLOG_ROOT_CTRL1_t ROOT_CTRL1_t;

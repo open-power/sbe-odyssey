@@ -24,28 +24,20 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  poz_chiplet_reset.C
-///
-/// @brief  Enable and reset chiplets, setup clock controllers & OPCG delays
-///         do SCAN0 on all regions, transfer PGOOD attr into CPLT_CTRL[2,3]
+/// @brief Enable and reset chiplets
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
-#include "poz_chiplet_reset.H"
-#include "poz_perv_common_params.H"
-#include "poz_perv_mod_misc.H"
-#include "poz_perv_mod_chiplet_clocking.H"
-#include "poz_perv_utils.H"
-#include <p11_scom_perv.H>
-
-SCOMT_PERV_USE_NET_CTRL0;
-SCOMT_PERV_USE_SYNC_CONFIG;
-SCOMT_PERV_USE_OPCG_ALIGN;
+#include <poz_chiplet_reset.H>
+#include <poz_chiplet_reset_regs.H>
+#include <poz_perv_common_params.H>
+#include <poz_perv_mod_misc.H>
+#include <poz_perv_mod_chiplet_clocking.H>
+#include <poz_perv_utils.H>
 
 using namespace fapi2;
-using namespace scomt::perv;
 
 enum POZ_CHIPLET_RESET_Private_Constants
 {
@@ -59,6 +51,8 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, c
     NET_CTRL0_t NET_CTRL0;
     SYNC_CONFIG_t SYNC_CONFIG;
     OPCG_ALIGN_t OPCG_ALIGN;
+    CPLT_CTRL2_t CPLT_CTRL2;
+    CPLT_CTRL3_t CPLT_CTRL3;
     buffer<uint32_t> l_attr_pg;
     buffer<uint64_t> l_data64;
     MulticastGroup l_mc_group;
@@ -112,8 +106,10 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, c
             l_attr_pg.invert();
             l_data64.flush<0>();
             l_data64.insert< PGOOD_REGIONS_STARTBIT, PGOOD_REGIONS_LENGTH, PGOOD_REGIONS_OFFSET >(l_attr_pg);
-            FAPI_TRY(putScom(targ, CPLT_CTRL2_RW, l_data64));
-            FAPI_TRY(putScom(targ, CPLT_CTRL3_RW, l_data64));
+            CPLT_CTRL2 = l_data64();
+            FAPI_TRY(CPLT_CTRL2.putScom(targ));
+            CPLT_CTRL3 = l_data64();
+            FAPI_TRY(CPLT_CTRL3.putScom(targ));
         }
     }
 

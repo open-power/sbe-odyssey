@@ -23,15 +23,15 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  poz_stopclocks.C
+/// @brief Stopclocks module
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : Cronus only, NOT part of IPL
 //------------------------------------------------------------------------------
 
-#include "poz_stopclocks.H"
-#include "poz_perv_common_params.H"
+#include <poz_stopclocks.H>
+#include <poz_perv_common_params.H>
 
 
 using namespace fapi2;

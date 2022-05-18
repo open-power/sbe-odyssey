@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_ioppe_load.C $  */
+/* $Source: public/src/import/public/hwp/generic/perv/poz_perv_mod_misc_regs.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,27 +23,44 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  poz_perv_mod_misc_regs.H
+/// @brief Registers referenced by poz_perv_mod_misc module
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : SPPE
 //------------------------------------------------------------------------------
 
-#include "ody_ioppe_load.H"
-#include "poz_perv_common_params.H"
+#pragma once
 
+#include <p11_scom_perv.H>
+#include <p11_scom_pc.H>
 
-using namespace fapi2;
+using namespace scomt::perv;
+using namespace scomt::pc;
 
-enum ODY_IOPPE_LOAD_Private_Constants
-{
-};
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL0;
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL0_COPY;
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_CBS_CS;
+SCOMT_PC_USE_TP_CFAM_FSI_W_SBE_FIFO_FSB_DOWNFIFO_RESET;
+SCOMT_PC_USE_TP_CFAM_FSI_W_FSI2PIB_STATUS;
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_SB_MSG;
+SCOMT_PERV_USE_HANG_PULSE_0_REG;
+SCOMT_PERV_USE_PRE_COUNTER_REG;
+SCOMT_PERV_USE_PCBCTL_COMP_INTR_HOST_MASK_REG;
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_PERV_CTRL0;
+SCOMT_PERV_USE_CPLT_CTRL0;
+SCOMT_PERV_USE_CPLT_CTRL2;
+SCOMT_PERV_USE_XSTOP1;
+SCOMT_PERV_USE_EPS_CLKSTOP_ON_XSTOP_MASK1;
 
-ReturnCode ody_ioppe_load(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
-{
-
-
-fapi_try_exit:
-    return current_err;
-}
+typedef FSXCOMP_FSXLOG_ROOT_CTRL0_t ROOT_CTRL0_t;
+typedef FSXCOMP_FSXLOG_ROOT_CTRL0_COPY_t ROOT_CTRL0_COPY_t;
+typedef FSXCOMP_FSXLOG_CBS_CS_t CBS_CS_t;
+typedef TP_CFAM_FSI_W_SBE_FIFO_FSB_DOWNFIFO_RESET_t SBE_FIFO_FSB_DOWNFIFO_RESET_t;
+typedef TP_CFAM_FSI_W_FSI2PIB_STATUS_t FSI2PIB_STATUS_t;
+typedef FSXCOMP_FSXLOG_SB_MSG_t SB_MSG_t;
+typedef HANG_PULSE_0_REG_t HANG_PULSE_0_t;
+typedef PRE_COUNTER_REG_t PRE_COUNTER_t;
+typedef PCBCTL_COMP_INTR_HOST_MASK_REG_t INTR_HOST_MASK_t;
+typedef FSXCOMP_FSXLOG_PERV_CTRL0_t PERV_CTRL0_t;
+typedef EPS_CLKSTOP_ON_XSTOP_MASK1_t CLKSTOP_ON_XSTOP_MASK1_t;
