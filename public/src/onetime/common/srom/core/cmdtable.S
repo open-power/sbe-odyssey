@@ -156,6 +156,11 @@ __system_reset_handler:
 ################################################################################
 oos_load_spi_clk_cnfg:
         lis    %r5, 0x5                         # Load r5 with 0x50000
+        lvd    %d2, 0x09(r5)                    # loads data from 0x50009 to d2
+        rlwinm %r2, %r2, 0x0, 0x0, 0x19         # Clear off the bits 26:27:28:29:30:31
+        clrlwi %r2, %r2, 1                      # clear bit 0 of 0x50009 (SBE Booted flag)
+        stvd   %d2, 0x9(r5)                     # store data back into 0x50009
+
         lvd    %d2, 0x187(r5)                   # loads scratch_16 .
         bb0wi  %r2, 5, spi_clk_cnfg_not_valid   # checks If valid Bit5 is Set
         lvd    %d2, 0x3D(r5)                    # Valid. Load the clock divider
