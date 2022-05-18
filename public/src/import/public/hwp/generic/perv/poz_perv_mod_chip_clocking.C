@@ -45,7 +45,6 @@ enum POZ_PERV_MOD_CHIP_CLOCKING_Private_Constants
     PLL_LOCK_DELAY_NS = 100000,
 };
 
-
 static ReturnCode _mod_poll_pll_lock(
     const Target < TARGET_TYPE_ANY_POZ_CHIP | TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > &i_target,
     uint32_t i_reg_addr,

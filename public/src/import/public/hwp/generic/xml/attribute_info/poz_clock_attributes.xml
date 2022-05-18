@@ -35,4 +35,83 @@
   <initToZero/>
 </attribute>
 <!-- ********************************************************************** -->
+<attribute>
+  <id>ATTR_CP_REFCLOCK_SELECT</id>
+  <targetType>TARGET_TYPE_HUB_CHIP, TARGET_TYPE_PROC_CHIP</targetType>
+  <description>
+    Osc refclock configurations:
+    OSCx - Set up single oscillator
+    BOTH_OSCx - Set up for redundant oscillators, OSCx as primary, both must be good
+    BOTH_OSCx_NORED - Same but without redundancy: Set up for redundant oscillators, OSCx as primary, secondary osc may be bad
+  </description>
+  <valueType>uint8</valueType>
+  <enum>OSC0 = 0x0, OSC1 = 0x1, BOTH_OSC0 = 0x2, BOTH_OSC1 = 0x3, BOTH_OSC0_NORED = 0x4, BOTH_OSC1_NORED = 0x5</enum>
+  <platInit/>
+  <writeable/>
+  <persistRuntime/>
+</attribute>
+<!-- ************************************************************************-->
+<attribute>
+  <id>ATTR_CLOCK_RCS_OUTPUT_MUX20</id>
+  <targetType>TARGET_TYPE_HUB_CHIP, TARGET_TYPE_PROC_CHIP</targetType>
+  <description>
+   Select RCS output to be forwarded to filter PLLs
+   0: BYPASS: Bypass RCS altogether, use ref 0
+   1: SYNC  : RCS sync output
+   2: ASYNC : RCS async output
+  </description>
+  <valueType>uint8</valueType>
+  <enum>BYPASS = 0, SYNC = 1, ASYNC = 2</enum>
+  <platInit>mrw</platInit>
+  <initToZero/>
+</attribute>
+<!-- ********************************************************************** -->
+<attribute>
+  <id>ATTR_SYS0_REFCLOCK_RCVR_TERM</id>
+  <targetType>TARGET_TYPE_SYSTEM</targetType>
+  <description>
+    Defines system specific value of SYS0 refclock receiver termination
+  </description>
+  <enum>NONE = 3, FIFTY_OHM = 2, ONE_HUNDRED_OHM = 0</enum>
+  <valueType>uint8</valueType>
+  <default>NONE</default>
+  <platInit>mrw</platInit>
+</attribute>
+<!-- ********************************************************************** -->
+<attribute>
+  <id>ATTR_SYS1_REFCLOCK_RCVR_TERM</id>
+  <targetType>TARGET_TYPE_SYSTEM</targetType>
+  <description>
+    Defines system specific value of SYS1 refclock receiver termination
+  </description>
+  <enum>NONE = 3, FIFTY_OHM = 2, ONE_HUNDRED_OHM = 0</enum>
+  <valueType>uint8</valueType>
+  <default>NONE</default>
+  <platInit>mrw</platInit>
+</attribute>
+<!-- ********************************************************************** -->
+<attribute>
+  <id>ATTR_PCI0_REFCLOCK_RCVR_TERM</id>
+  <targetType>TARGET_TYPE_SYSTEM</targetType>
+  <description>
+    Defines system specific value of PCI0 refclock receiver termination
+  </description>
+  <enum>NONE = 3, FIFTY_OHM = 2, ONE_HUNDRED_OHM = 0</enum>
+  <valueType>uint8</valueType>
+  <default>NONE</default>
+  <platInit>mrw</platInit>
+</attribute>
+<!-- ********************************************************************** -->
+<attribute>
+  <id>ATTR_PCI1_REFCLOCK_RCVR_TERM</id>
+  <targetType>TARGET_TYPE_SYSTEM</targetType>
+  <description>
+    Defines system specific value of PCI1 refclock receiver termination
+  </description>
+  <enum>NONE = 3, FIFTY_OHM = 2, ONE_HUNDRED_OHM = 0</enum>
+  <valueType>uint8</valueType>
+  <default>NONE</default>
+  <platInit>mrw</platInit>
+</attribute>
+<!-- ********************************************************************** -->
 </attributes>
