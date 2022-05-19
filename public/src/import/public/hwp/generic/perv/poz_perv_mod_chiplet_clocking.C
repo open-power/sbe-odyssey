@@ -25,8 +25,9 @@
 //------------------------------------------------------------------------------
 /// @file  poz_perv_mod_chiplet_clocking.C
 ///
-/// @brief  contains definitions for modules abist_start/poll/cleanup, scan0
-///                                          start_stop_clocks, align_regions
+/// @brief  contains definitions for modules abist_setup/start/poll/cleanup,
+///                                          opcg_go, scan0 start_stop_clocks,
+///                                          align_regions
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
@@ -105,7 +106,7 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode mod_abist_start(
+ReturnCode mod_abist_setup(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
     uint16_t i_clock_regions,
     uint32_t i_runn_cycles,
@@ -154,10 +155,43 @@ ReturnCode mod_abist_start(
     FAPI_INF("Configure loop count and start OPCG.");
     OPCG_REG0 = 0;
     OPCG_REG0.set_RUNN_MODE(1);
-    OPCG_REG0.set_OPCG_GO(1);
     OPCG_REG0.set_OPCG_STARTS_BIST(1);
     OPCG_REG0.set_LOOP_COUNT(i_runn_cycles);
     FAPI_TRY(OPCG_REG0.putScom(i_target));
+
+fapi_try_exit:
+    FAPI_INF("Exiting ...");
+    return current_err;
+}
+
+
+ReturnCode mod_opcg_go(
+    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target)
+{
+    OPCG_REG0_t OPCG_REG0;
+    FAPI_TRY(OPCG_REG0.getScom(i_target));
+    OPCG_REG0.set_OPCG_GO(1);
+    FAPI_TRY(OPCG_REG0.putScom(i_target));
+
+fapi_try_exit:
+    FAPI_INF("Exiting ...");
+    return current_err;
+}
+
+
+ReturnCode mod_abist_start(
+    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
+    uint16_t i_clock_regions,
+    uint32_t i_runn_cycles,
+    uint64_t i_abist_start_at,
+    uint32_t i_abist_start_stagger)
+{
+    FAPI_TRY(mod_abist_setup(i_target,
+                             i_clock_regions,
+                             i_runn_cycles,
+                             i_abist_start_at,
+                             i_abist_start_stagger));
+    FAPI_TRY(mod_opcg_go(i_target));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");

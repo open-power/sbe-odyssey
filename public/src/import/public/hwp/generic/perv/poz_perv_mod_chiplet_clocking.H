@@ -39,11 +39,37 @@
 
 using namespace cc;
 
-/// @brief ABIST start module.
+/// @brief ABIST setup module.
 /// --Switch dual clocked arrays to ABIST clock domain
 /// --Setup BIST regions, clocking.
 /// --Configure idle count in OPCG_REG1
-/// --Configure loop count in OPCG_REG0 and start OPCG.
+/// --Configure loop count in OPCG_REG0
+///
+/// @param[in]   i_target          Reference to TARGET_TYPE_PERV
+/// @param[in]   i_clock_regions   select clock regions
+/// @param[in]   i_runn_cycles     loop count value to set OPCG run-N mode
+/// @param[in]   i_abist_start_at  idle count value to set in OPCG_REG1
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode mod_abist_setup(
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
+    uint16_t i_clock_regions,
+    uint32_t i_runn_cycles = 0x42FFF,
+    uint64_t i_abist_start_at = 0xF0,
+    uint32_t i_abist_start_stagger = 0);
+
+/// @brief OPCG GO module.
+/// --RMW OPCG GO bit in OPCG_REG0
+///
+/// @param[in]   i_target          Reference to TARGET_TYPE_PERV
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode mod_opcg_go(
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target);
+
+/// @brief ABIST start module.
+/// --Run mod_abist_setup
+/// --Run mod_opcg_go
 ///
 /// @param[in]   i_target          Reference to TARGET_TYPE_PERV
 /// @param[in]   i_clock_regions   select clock regions
@@ -57,7 +83,6 @@ fapi2::ReturnCode mod_abist_start(
     uint32_t i_runn_cycles = 0x42FFF,
     uint64_t i_abist_start_at = 0xF0,
     uint32_t i_abist_start_stagger = 0);
-
 
 /// @brief   Poll OPCG done bit to check for run-N completeness.
 /// @param[in]   i_target          Reference to TARGET_TYPE_PERV

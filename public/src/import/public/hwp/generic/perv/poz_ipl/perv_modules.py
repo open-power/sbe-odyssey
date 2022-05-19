@@ -78,7 +78,7 @@ def mod_rcs_setup(target<HUB_CHIP|PROC_CHIP>):
 
 ISTEP(99, 99, "poz_perv_mod_chiplet_clocking", "")
 
-def mod_abist_start(target<PERV|MC>, uint16_t i_clock_regions, uint32_t i_runn_cycles=0x42FFF, uint32_t i_abist_start_at=0xF0, uint32_t i_abist_start_stagger=0):
+def mod_abist_setup(target<PERV|MC>, uint16_t i_clock_regions, uint32_t i_runn_cycles=0x42FFF, uint32_t i_abist_start_at=0xF0, uint32_t i_abist_start_stagger=0):
     # Switch dual-clocked arrays to ABIST clock domain
     CPLT_CTRL0.CTRL_CC_ABSTCLK_MUXSEL_DC = 1
 
@@ -103,9 +103,19 @@ def mod_abist_start(target<PERV|MC>, uint16_t i_clock_regions, uint32_t i_runn_c
     # Configure loop count and start OPCG
     OPCG_REG0 = 0
     OPCG_REG0.RUNN_MODE = 1
-    OPCG_REG0.OPCG_GO = 1
     OPCG_REG0.OPCG_STARTS_BIST = 1
     OPCG_REG0.LOOP_COUNT = i_runn_cycles
+
+def mod_opcg_go(target<PERV|MC>):
+    OPCG_REG0.OPCG_GO = 1
+
+def mod_abist_start(target<PERV|MC>, uint16_t i_clock_regions, uint32_t i_runn_cycles=0x42FFF, uint32_t i_abist_start_at=0xF0, uint32_t i_abist_start_stagger=0):
+    mod_abist_setup(i_target,
+                    i_clock_regions,
+                    i_runn_cycles,
+                    i_abist_start_at,
+                    i_abist_start_stagger)
+    mod_opcg_go(i_target)
 
 def mod_abist_poll(target<PERV|MC, MCAST_AND>):
     poll_opcg_done(i_target, 200us, 1120kcyc, 400)
