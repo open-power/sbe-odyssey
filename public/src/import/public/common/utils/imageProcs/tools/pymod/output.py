@@ -106,10 +106,10 @@ class LogLevels(Enum):
 
     # Function to help with printing and comparision
     def __repr__(self):
-        return str(self)
+        return str(self).lower()
 
     def __str__(self):
-        return self.name
+        return self.name.lower()
 
     def __int__(self):
         return self.value
@@ -129,7 +129,7 @@ class LogLevels(Enum):
     # Need to make choices in argparse work
     def argparse(self):
         try:
-            return LogLevels[self]
+            return LogLevels[self.upper()]
         except KeyError:
             return self
 
@@ -175,9 +175,44 @@ class ConsoleFormatter(logging.Formatter):
         formatter = logging.Formatter("%(message)s")
         return formatter.format(lrecord)
 
-class out:
-    def __init__(self, name="out"):
-        self.name = name
+class output(object):
+    '''
+    Purpose: To provide a common output facility across a program
+
+    output is built on the python logger to enable both console and file
+    capture of any output
+
+    It is derived as a singleton so it can be setup once and then accessed
+    anywhere.  A default `out` instance is created at the end of the module
+
+    New instances can be created by providing a unique 'name' parameter
+    '''
+    # Store all instances of the output singletons available by name
+    _instances = dict()
+
+    def __new__(cls, **kwargs):
+        # If name is not given, give the default of 'out'
+        name = kwargs.get('name', 'out')
+
+        # If an output of instance `name` exists, return that
+        # Otherwise, create a new instance and store by `name`
+        if name not in cls._instances:
+            cls._instances[name] = super().__new__(cls)
+            # After creation but before __init__, do 2 things
+            # 1) Set the output object name to make it available
+            # 2) Set the object as not initialized
+            cls._instances[name].name = name
+            cls._instances[name].initialized = False
+        return cls._instances[name]
+
+    def __init__(self, **kwargs):
+        # We only want to initialize this object once
+        # A user may get the object via out = output() multiple times
+        # But only the first time do we want to setup the object
+        # Othewise you end up with duplicate output, etc..
+        if (self.initialized): return
+        self.initialized = True
+
         # Bring the enum levels into the class for local reference
         self.levels = LogLevels
         self.consoleLevel = self.levels.BASE
@@ -196,8 +231,7 @@ class out:
         # But may not do anything if handler(s) are not active
         self.log = logging.getLogger(self.name + "-log")
         self.log.setLevel(self.logLevel.value)
-        # Disable until the user specifies a file to log to
-        self.log.disabled = True
+        self.log.disabled = True # Disable until the user specifies a file to log to
         self.console = logging.getLogger(self.name + "-console")
         self.console.setLevel(self.consoleLevel.value)
         # There are three types of output handled here
@@ -552,3 +586,9 @@ class out:
             msgs.append(line)
 
         return (rc, msgs, hitException)
+
+# Create a default instance of the output object
+# Any module can then `from output import out` to get access to the shared output class
+# New unique instances can be instantiated by passing in a unique name, such as:
+# cmdout = output(name="cmd")
+out = output()

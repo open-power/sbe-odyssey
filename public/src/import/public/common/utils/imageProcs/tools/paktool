@@ -16,12 +16,7 @@ def tree(): return defaultdict(tree)
 
 # Add program modules to the path
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "pymod"))
-# Import and init output first
-# All other modules will use the `out` variable created here
-import output
-import pakconstants
-pakconstants.out = output.out()
-from pakconstants import out
+from output import out
 import pakcore as pak
 import pakutils
 
@@ -84,12 +79,43 @@ def cmd_list(args):
     List the contents of an archive and the pak header information
     '''
     # Create and load the archive
-    archive = pak.Archive(args.archive)
-    archive.load()
+    result = pak.Archive(args.archive)
+    result.load()
+
+    # If selected, find any embedded paks and expand them
+    # The search for paks is based on the file name ending in .pak
+    # This could be expanded to byte-peep each file and look for pak headers,
+    # but that is a more complicated implementation.  Let's hope .pak sanity prevails
+    if (args.expand):
+        # We can have paks in paks in paks, so this needs to be a recursive find until we run out
+        while True:
+            try:
+                paksInPaks = result.find("*.pak")
+            except:
+                # An exception is raised when no match is found
+                # That means we are out of paks and done
+                break
+
+            # The search worked and we have the list of the paks embedded within this archive
+            for embedFile in paksInPaks:
+                # For each one, create a new archive and load it
+                # This will let us get to the contents of the pak for expansion
+                embedArchive = pak.Archive()
+                # Send in the decompressed data, which is the full contents of the embedded pak
+                embedArchive.load(image=embedFile.ddata)
+                for file in embedArchive:
+                    # For each file in the archive, update the name relative to the original pak
+                    file.name = embedFile.name + "/" + file.name
+                    # Insert that file into the original pak at the location found in original pak
+                    result.insert(result.index(embedFile), file)
+                # Remove the original embedded pak, all its contents is now in the original pak for display
+                result.remove(embedFile)
 
     # Filter the list
-    result = archive.find(args.file)
-    # Rebuild the image in case anything was filtered out
+    # Do the input find filters after the optional expansion
+    result = result.find(args.file)
+
+    # Rebuild the image after the filtering and expanding
     result.build()
 
     if (args.details):
@@ -285,6 +311,7 @@ sub = subparsers.add_parser("list", description="List files in an archive",
 sub.add_argument("archive", help="Archive file")
 sub.add_argument("file", nargs="*", help="List of files to list; if none are given, all files will be listed")
 sub.add_argument("-d", "--details", action='store_true', help="Print details")
+sub.add_argument("-e", "--expand", action="store_true", help="Expand out any embedded paks")
 sub.epilog = textwrap.dedent('''
 
 examples:
