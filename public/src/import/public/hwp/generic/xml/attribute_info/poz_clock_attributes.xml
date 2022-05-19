@@ -25,7 +25,7 @@
 <attributes>
 <!-- ********************************************************************** -->
 <attribute>
-  <id>ATTR_IO_PLL_BYPASS</id>
+  <id>ATTR_IO_TANK_PLL_BYPASS</id>
   <targetType>TARGET_TYPE_COMPUTE_CHIP, TARGET_TYPE_HUB_CHIP, TARGET_TYPE_OCMB_CHIP, TARGET_TYPE_PROC_CHIP</targetType>
   <description>
     Skip locking sequence and check for lock of IO PLL
@@ -33,6 +33,7 @@
   <valueType>uint8</valueType>
   <enum>BYPASS = 0x1, NO_BYPASS = 0x0</enum>
   <initToZero/>
+  <writeable/>
 </attribute>
 <!-- ********************************************************************** -->
 <attribute>

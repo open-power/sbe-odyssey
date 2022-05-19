@@ -44,7 +44,7 @@ enum POZ_CHIPLET_PLL_SETUP_Private_Constants
 
 ReturnCode poz_chiplet_pll_setup(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
 {
-    buffer<uint8_t> l_attr_io_pll_bypass;
+    ATTR_IO_TANK_PLL_BYPASS_Type l_attr_io_tank_pll_bypass;
     CPLT_CTRL1_t CPLT_CTRL1;
     NET_CTRL0_t NET_CTRL0;
     PCB_RESPONDER_CONFIG_t PCB_RESPONDER_CONFIG;
@@ -53,9 +53,9 @@ ReturnCode poz_chiplet_pll_setup(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targe
 
     FAPI_INF("Entering ...");
 
-    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_IO_PLL_BYPASS, i_target, l_attr_io_pll_bypass));
+    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_IO_TANK_PLL_BYPASS, i_target, l_attr_io_tank_pll_bypass));
 
-    if (!l_attr_io_pll_bypass)
+    if (!l_attr_io_tank_pll_bypass)
     {
 
         FAPI_INF("Drop PLL region fences");

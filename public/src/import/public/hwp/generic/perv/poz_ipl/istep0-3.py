@@ -1140,7 +1140,7 @@ def zme_chiplet_pll_setup():
     poz_chiplet_pll_setup()
 
 def poz_chiplet_pll_setup():
-    if ATTR_IO_PLL_BYPASS:
+    if ATTR_IO_TANK_PLL_BYPASS:
         return
 
     CPLT_CTRL1.REGION13_FENCE = 0    # Drop PLL region fences
