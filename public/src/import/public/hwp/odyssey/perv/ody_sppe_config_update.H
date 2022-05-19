@@ -36,7 +36,7 @@
 
 typedef fapi2::ReturnCode (*ody_sppe_config_update_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
 
-//// @brief Configure mailbox registers prior to SPPE start
+/// @brief Configure Odyssey mailbox registers prior to SPPE start
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
 ///

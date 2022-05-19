@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_sppe_config_update.C $ */
+/* $Source: public/src/import/public/hwp/odyssey/perv/ody_scratch_regs_utils.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,25 +23,26 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  ody_sppe_config_update.C
-/// @brief Configure mailbox registers prior to SPPE start
+/// @file  ody_scratch_regs_utils.H
+/// @brief Project specific utility functions to support Odyssey scratch
+///        register setup
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#include <ody_sppe_config_update.H>
-#include <ody_scratch_regs.H>
+#pragma once
 
-using namespace fapi2;
+#include <fapi2.H>
 
-ReturnCode ody_sppe_config_update(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
-{
-    FAPI_DBG("Start");
-    // configure mailbox scratch registers
-    FAPI_TRY(ody_scratch_regs_update(i_target, true, false));
-
-fapi_try_exit:
-    FAPI_DBG("End");
-    return current_err;
-}
+///
+/// @brief Read attribute/platform state to determine desired OCMB PLL bucket
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
+/// @param[out]  o_pll_bucket              Target PLL bucket setting
+///
+/// @return fapi::ReturnCode  FAPI2_RC_SUCCESS if success, else error code.
+///
+fapi2::ReturnCode ody_scratch_regs_get_pll_bucket(
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+    fapi2::ATTR_OCMB_PLL_BUCKET_Type& o_pll_bucket);
