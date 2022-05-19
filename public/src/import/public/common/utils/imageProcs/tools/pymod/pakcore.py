@@ -33,11 +33,10 @@ import sys
 import struct
 from collections import UserList
 from enum import IntEnum
-from pakconstants import out
+from output import out
 import ast
 import fnmatch
 import copy
-import re
 import hashlib
 
 ############################################################
@@ -323,7 +322,7 @@ class ArchiveEntry(object):
 
     def packPayload(self):
         '''
-        Handle compression of the data and then create 
+        Handle compression of the data and then create
         the bytearray payload data that can be written
         '''
         # Set the level of zlib compression based on the method
@@ -494,7 +493,7 @@ class ArchiveEntry(object):
             out.print("  size: %6d, flags: 0x%02X, hesize: %2d, nsize: %2d, method: %9s, crc: %08X, csize: %6d: dsize: %6d: ratio: %5.1fx, psize: %6d, offset: %s" %
                      (self.isize, self.flags, self.hesize, self.nsize, self.method, self.crc, self.csize, self.dsize, ratio, self.psize, offset))
         elif (self.magic == PAK_PAD):
-            out.print("|<pad>|")
+            out.print(self.name + "|<pad>|")
             out.print("  size: %d, offset: %s" % (self.padsize, offset))
         else:
             raise ArchiveError("Unknown magic '%s' in display!" % self.magic.to_bytes(4, 'big').decode())
@@ -640,20 +639,17 @@ class Archive(UserList):
         if type(patterns) == str:
             patterns = [patterns]
 
-        # Local function to assist in our search below
-        def _match_files(archive, pattern):
-            pattern = re.compile(re.escape(pattern).replace("\*", ".*").replace("\?", "."))
-            for entry in archive:
-                if ((entry.magic == PAK_FILE) and (pattern.match(entry.name))):
-                    yield entry
-
         # Search for it
         result = Archive()
-        for fname in patterns:
-            matches = list(_match_files(self, fname)) + list(_match_files(self, fname+"/*"))
-            if not matches:
-                raise ArchiveError("No files matching '%s' found in archive" % fname)
-            result.extend(matches)
+        all_names = [e.name for e in self]
+        for pattern in patterns:
+            # Load all the names into a list for fnfilter to search
+            found_names = set(fnmatch.filter(all_names, pattern) + fnmatch.filter(all_names, pattern + "/*"))
+            # If we found nothing, raise an error, otherwise add to the returned result
+            if not found_names:
+                raise ArchiveError("No files matching '%s' found in archive" % pattern)
+            else:
+                result.extend([e for e in self if e.name in found_names])
 
         return result
 
@@ -686,29 +682,40 @@ class Archive(UserList):
 
         return contents
 
-    def load(self, filename=None):
+    def load(self, filename=None, image=None):
         '''
         Load the given archive and process it into the ArchiveEntry classes
+
+        The given archive can be either a filename to open or an already loaded archive image
         '''
 
-        # If the filename was given at load time, set the internal variable
+        # If the filename was given at load call, set the internal variable
         if (filename):
             self.filename = filename
 
-        # See if the input archive already exists as a file
-        # If it doesn't, throw an error.. maybe make that supressable
-        if not os.path.isfile(self.filename):
-            out.error("The given archive file \'%s\' does not exist!" % self.filename)
-            return None
+        # Make sure both weren't given
+        if (self.filename and image):
+            raise ArchiveError("Both filename and image can't be given for load!")
+
+        # No conflict, load the right one into the local image
+        if image:
+            # Real simple - assign the passed in image to the internal archive image for processing
+            self.image = image
+        else:
+            # See if the input archive already exists as a file
+            # If it doesn't, throw an error.. maybe make that supressable
+            if not os.path.isfile(self.filename):
+                out.error("The given archive file \'%s\' does not exist!" % self.filename)
+                return None
+
+            # Read the entire file into the image for reference
+            with open(self.filename, "rb") as f:
+                self.image = f.read()
 
         # Assume a load of an existing archive will not have the end marker
         # If it does, we will catch that in the processing and set the indicator
         # This will preserve that value across archive operations
         self.end_marker = False
-
-        # Read the entire file into the image for reference
-        with open(self.filename, "rb") as f:
-            self.image = f.read()
 
         # Loop through bytearray image in memory and pull out the data
         offset = 0

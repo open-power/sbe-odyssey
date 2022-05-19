@@ -35,12 +35,7 @@ import random
  
 # Add program modules to the path
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "pymod"))
-# Import and init output first
-# All other modules will use the `out` variable created here
-import output
-import pakconstants
-pakconstants.out = output.out()
-from pakconstants import out
+from output import out
 import pakcore as pak
 
 ############################################################
@@ -65,7 +60,7 @@ At least the use of tempfile could make cleanup automatic
 
 # Some globals related to tempfiles
 # Useful to leave the files after the run for debug
-tempFileDelete = False
+tempFileDelete = True
 tempFilePath = '/tmp/'
 tempFilePrefix = 'pakr_'
 banner = "\n########"
