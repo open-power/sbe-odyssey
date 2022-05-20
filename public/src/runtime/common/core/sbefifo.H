@@ -23,10 +23,13 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 /*
- * @file: ppe/sbe/sbefw/sbefifo.H
+ * @file: public/src/runtime/common/core/sbefifo.H
  *
  * @brief This file contains basic SBE FIFO hardware specific
- *        definitions and operations.
+ *        definitions and operations. Some of the data structures and
+ *        methods to enque / deque / reset are reused for SBE PIPEs as
+ *        most of the hardware registers (addresses & bit definitions)
+ *        are consistent from the base offsets
  *
  */
 
@@ -38,22 +41,24 @@
 #include "sbe_sp_intf.H"
 #include "sbeSpMsg.H"
 #include "ppe42_scom.h"
+#include "sbepipe.H" // Abstract application code from fifo vs pipe
+
+// global array for base addresses of fifo and pipes
+extern const uint64_t g_Fifo_baseAddresses[];
+
+// Macro for dynamically determining a FIFO base address from its type as
+// defined by "sbeFifoType"
+#define FIFO_BASE_ADDR(SBE_FIFO_TYPE) g_Fifo_baseAddresses[SBE_FIFO_TYPE]
+
+#define FIFO_DS_TYPE(TYPE) ((TYPE==SBE_FIFO) ? (TYPE):(TYPE+1))
+
+//Base address for SBE FIFOs
+const uint64_t SBE_FIFO_BASE                     =  0x000B0000;
+const uint64_t SBE_HB_FIFO_BASE                  =  0x000B0020;
 
 /**
-  * @brief SBE FIFO Access addresses
-  *
-  */
-//TODO: P11SBE Porting
-//Base address for SBE FIFO
-const uint32_t SBE_FIFO_BASE                     =  0x000B0000;
-//Base address for HB FIFO
-const uint32_t SBE_HB_FIFO_BASE                  =  0x000B0020;
-
-/**
-  * Macro for dynamically determining the base address
-  */
-#define FIFO_BASE_ADDR(FIFO)  ( (FIFO == SBE_HB_FIFO) ? SBE_HB_FIFO_BASE : SBE_FIFO_BASE )
-
+ * @brief SBE FIFO Access addresses
+ */
 const uint32_t SBE_UPSTREAM_FIFO_DEQ_ADD         = 0x0000;
 const uint32_t SBE_UPSTREAM_FIFO_STATUS          = 0x0001;
 const uint32_t SBE_UPSTREAM_FIFO_SIGNAL_EOT      = 0x0002;
@@ -68,7 +73,6 @@ const uint32_t SBE_DOWNSTREAM_FIFO_REQ_RESET     = 0x0013;
 const uint32_t SBE_DOWNSTREAM_FIFO_PERFORM_RESET = 0x0014;
 const uint32_t SBE_DOWNSTREAM_FIFO_ACK_EOT       = 0x0015;
 
-
 // Write this data to send EOT to DS FIFO. The register to send EOT
 // is 32 bit only. But our scom operations are 64 bit. So set a bit
 // in higher word to trigger EOT.
@@ -76,19 +80,21 @@ static const uint64_t DOWNSTREAM_EOT_DATA = 0x100000000ull;
 
 /**
  * @brief Enum of SBE Fifo type.
+ * @note  Base addresses in g_Fifo_baseAddresses use this enum for indexing
  */
 enum sbeFifoType
 {
-   SBE_FIFO,
-   SBE_HB_FIFO = 1,
-   SBE_PIPE1   = 2,
-   SBE_PIPE2   = 3,
-   SBE_PIPE3   = 4,
-   SBE_PIPE4   = 5,
-   SBE_PIPE5   = 6,
-   SBE_PIPE6   = 7,
-   SBE_PIPE7   = 8,
-   SBE_PIPE8   = 9,
+    SBE_FIFO    = 0,
+    SBE_HB_FIFO = 1,
+    SBE_PIPE1   = 2,
+    SBE_PIPE2   = 3,
+    SBE_PIPE3   = 4,
+    SBE_PIPE4   = 5,
+    SBE_PIPE5   = 6,
+    SBE_PIPE6   = 7,
+    SBE_PIPE7   = 8,
+    SBE_PIPE8   = 9,
+    SBE_FIFO_UNKNOWN = 0xF
 };
 
 /**
@@ -187,6 +193,23 @@ typedef struct
 /*****************************************************************/
 
 /**
+  * @brief sbeUpFifoGetStatus : Read status from upstream FIFO
+  *
+  * @param[out] 64-Bit Read status from upstream FIFO
+  *            Bit 0-31  : Data
+  *            Bit 32-63 : Unused
+  *
+  * @param sbeFifoType: i_type
+  *
+  * @return    Rc from the underlying scom utility
+  */
+extern inline uint32_t sbeUpFifoGetStatus (uint64_t *o_data,
+                                           const sbeFifoType i_type = SBE_FIFO)
+{
+    return getscom_abs(SBE_UPSTREAM_FIFO_STATUS+FIFO_BASE_ADDR(i_type), o_data);
+}
+
+/**
   * @brief sbeUpFifoDeq : Read entry and status from Upstream FIFO
   *
   * @param[out] 64-Bit Data read from Upstream FIFO
@@ -196,7 +219,8 @@ typedef struct
   * @return     Rc from the underlying scom utility
   *
   */
-extern inline uint32_t sbeUpFifoDeq (uint64_t *o_data, const sbeFifoType i_type = SBE_FIFO)
+extern inline uint32_t sbeUpFifoDeq (uint64_t *o_data,
+                                     const sbeFifoType i_type = SBE_FIFO)
 {
     /* For SBE FIFO (PIB) access, chiplet ID should be passed as 0 */
     return getscom_abs(SBE_UPSTREAM_FIFO_DEQ_ADD + FIFO_BASE_ADDR(i_type), o_data);
@@ -211,10 +235,29 @@ extern inline uint32_t sbeUpFifoDeq (uint64_t *o_data, const sbeFifoType i_type 
   * @return     Rc from the underlying scom utility
   *
   */
-extern inline uint32_t sbeUpFifoPerformReset (const sbeFifoType i_type = SBE_FIFO)
+extern inline uint32_t sbeUpFifoPerformReset (
+                                const sbeFifoType i_type = SBE_FIFO)
 {
+    uint32_t rc = 0;
     SBE_INFO("sbeUpFifoPerformReset");
-    return putscom_abs(SBE_UPSTREAM_FIFO_PERFORM_RESET + FIFO_BASE_ADDR(i_type), ((uint64_t)0x1)<<32);
+
+// @TODO via PFSBE-206:
+//        This logic changes once PIPE Pairs get fixed per HWFW interlock.
+//        Request reset on downstream pipe, but dont wait for completion
+// For FIFOs, HW handles reset on fixed downstream FIFO automatically
+// For Pipes, need to do this in FW dynamically based on designated downstream
+    if (i_type != SBE_FIFO)
+    {
+        rc = putscom_abs (SBE_DOWNSTREAM_FIFO_REQ_RESET +
+                          FIFO_BASE_ADDR(FIFO_DS_TYPE(i_type)),
+                          ((uint64_t)0x1)<<32);
+        if (rc)
+        {
+            SBE_ERROR ("Error resetting the downstream pipe %d", i_type+1);
+        }
+    }
+    return putscom_abs(SBE_UPSTREAM_FIFO_PERFORM_RESET + FIFO_BASE_ADDR(i_type),
+                         ((uint64_t)0x1)<<32);
 }
 
 
@@ -229,7 +272,8 @@ extern inline uint32_t sbeUpFifoPerformReset (const sbeFifoType i_type = SBE_FIF
 extern inline uint32_t sbeUpFifoAckEot (const sbeFifoType i_type = SBE_FIFO)
 {
     SBE_INFO("sbeUpFifoAckEot");
-    return putscom_abs(SBE_UPSTREAM_FIFO_ACK_EOT + FIFO_BASE_ADDR(i_type), ((uint64_t)0x1)<<32);
+    return putscom_abs(SBE_UPSTREAM_FIFO_ACK_EOT + FIFO_BASE_ADDR(i_type),
+                       ((uint64_t)0x1)<<32);
 }
 
 
@@ -248,13 +292,16 @@ extern inline uint32_t sbeUpFifoAckEot (const sbeFifoType i_type = SBE_FIFO)
   *
   * @return    Rc from the underlying scom utility
   */
-extern inline uint32_t sbeDownFifoEnq (const uint64_t i_data, const sbeFifoType i_type = SBE_FIFO)
+extern inline uint32_t sbeDownFifoEnq (const uint64_t i_data,
+                                       const sbeFifoType i_type = SBE_FIFO)
 {
 #ifndef DFT
-	// This particular message is overly verbose for DFT; it can fill an entire pk tracebuffer!
+    // This particular message is overly verbose for DFT; it can fill an entire
+    // pk tracebuffer!
     SBE_DEBUG(">sbeDownFifoEnq");
 #endif
-    return putscom_abs(SBE_DOWNSTREAM_FIFO_ENQ_ADD + FIFO_BASE_ADDR(i_type), i_data);
+    return putscom_abs(SBE_DOWNSTREAM_FIFO_ENQ_ADD +
+                       FIFO_BASE_ADDR(FIFO_DS_TYPE(i_type)), i_data);
 }
 
 
@@ -271,7 +318,8 @@ extern inline uint32_t sbeDownFifoEnq (const uint64_t i_data, const sbeFifoType 
   */
 extern inline uint32_t sbeDownFifoGetStatus (uint64_t *o_data, const sbeFifoType i_type = SBE_FIFO)
 {
-    return getscom_abs(SBE_DOWNSTREAM_FIFO_STATUS + FIFO_BASE_ADDR(i_type), o_data);
+    return getscom_abs(SBE_DOWNSTREAM_FIFO_STATUS +
+                       FIFO_BASE_ADDR(FIFO_DS_TYPE(i_type)), o_data);
 }
 
 /**
@@ -284,7 +332,8 @@ extern inline uint32_t sbeDownFifoGetStatus (uint64_t *o_data, const sbeFifoType
   */
 extern inline uint32_t sbeDownFifoWriteEot ( const sbeFifoType i_type = SBE_FIFO )
 {
-    return putscom_abs(SBE_DOWNSTREAM_FIFO_SIGNAL_EOT + FIFO_BASE_ADDR(i_type), DOWNSTREAM_EOT_DATA);
+    return putscom_abs(SBE_DOWNSTREAM_FIFO_SIGNAL_EOT +
+                   FIFO_BASE_ADDR(FIFO_DS_TYPE(i_type)), DOWNSTREAM_EOT_DATA);
 }
 
 #endif // __SBEFW_SBEFIFO_H

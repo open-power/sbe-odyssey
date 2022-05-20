@@ -142,8 +142,7 @@ extern inline uint32_t sbeBuildRespHeaderStatusWordLocal (
   *             FIFO.
   */
 uint32_t sbeDownFifoSignalEot ( sbeFifoType i_type = SBE_FIFO);
-//namespace fapi2
-//{
+
 /**
  * @brief sbeDsSendRespHdr : Send response header to DS FIFO
  *           - This also sends the FFDC if exist.
@@ -159,7 +158,7 @@ uint32_t sbeDownFifoSignalEot ( sbeFifoType i_type = SBE_FIFO);
 uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
                           sbeResponseFfdc_t *i_ffdc=NULL,
                           sbeFifoType i_type = SBE_FIFO );
-//}
+
 /**
  * @brief sbeFifoGetSource : Find where the request originated from
  *
@@ -178,4 +177,29 @@ sbeFifoType sbeFifoGetSource (bool reset);
  * @return                    SBE interface source.
  */
 sbeInterfaceSrc_t sbeFifoGetInstSource (sbeFifoType upFifoType, bool reset);
+
+
+/**
+ * @brief sbePipeGetSource: Find which pipe the request originated from
+ * @return                  PIPE type
+ */
+sbeFifoType sbePipeGetSource (void);
+
+/**
+ * @brief sbeHandleDsPipeCnfg: Check and update the downstream pipe config
+ *        based on the upstream pipe
+ *
+ * @param[in]    i_usPipe  Upstream pipe
+ *
+ * @return                 Return code. 0 on success
+ * @note
+ * Contract (pre-RIT) until product Pipe Pair Assignments are frozen:
+ * 1. Chip-Op command will not be accepted on the last Pipe 8
+ * 2. Chip-Op response will be sent on command(upstream) pipe+1 (next pipe)
+ * 3. Caller of the chip-op is expected to set up access ctrl and ctlr id regs
+ * 4. SBE will set up downstream (response) pipe if #3 above was not done,
+ *    provided it was interrupted (upstream was set up correctly)
+ */
+uint32_t sbeHandleDsPipeCnfg (const sbeFifoType  i_usPipe);
+
 #endif // __SBEFW_SBEFIFOMSGUTILS_H

@@ -44,6 +44,7 @@ class SBEGlobalsSingleton
         sbeCmdRespHdr_t sbeCmdRespHdr;
 
         sbeIntrHandle_t sbeIntrSource;
+
         ////////////////////////////////////////////////////////////////
         //// @brief Global semaphores
         /////////////////////////////////////////////////////////////////
@@ -84,6 +85,8 @@ class SBEGlobalsSingleton
         static uint16_t failedSeqId;
         static uint8_t  failedCmdClass;
         static uint8_t  failedCmd;
+        static uint32_t activeUsFifo;
+        static uint32_t activeInterface;
 
         ////////////////////////////////////////////////////////////////
         //// @brief PkThread structure for SBE Command Receiver thread

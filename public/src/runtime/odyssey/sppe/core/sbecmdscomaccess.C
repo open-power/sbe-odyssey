@@ -54,7 +54,6 @@ uint32_t sbeGetScom (uint8_t *i_pArg)
         chipOpParam_t* configStr = (struct chipOpParam*)i_pArg;
         type = static_cast<sbeFifoType>(configStr->fifoType);
         SBE_DEBUG(SBE_FUNC "Fifo Type is:[%02X]",type);
-
         // Will attempt to dequeue two entries for the scom addresses plus
         // the expected EOT entry at the end
         uint32_t len2dequeue  = sizeof(msg)/sizeof(uint32_t);
@@ -72,7 +71,7 @@ uint32_t sbeGetScom (uint8_t *i_pArg)
 
         uint64_t addr = ( (uint64_t)msg.hiAddr << 32) | msg.lowAddr;
         uint64_t scomData = 0;
-        SBE_DEBUG(SBE_FUNC "sbeGetScom scomAddr[0x%08X%08X]",
+        SBE_INFO(SBE_FUNC "sbeGetScom scomAddr[0x%08X%08X]",
             msg.hiAddr, msg.lowAddr);
 
         checkIndirectAndDoScom(true, addr, scomData, &hdr, &ffdc, type);
@@ -94,6 +93,7 @@ uint32_t sbeGetScom (uint8_t *i_pArg)
 
             // Push the data into downstream FIFO
             len2enqueue = 2;
+
             l_rc = sbeDownFifoEnq_mult (len2enqueue, &downFifoRespBuf[0], type);
             if (l_rc)
             {
@@ -101,16 +101,14 @@ uint32_t sbeGetScom (uint8_t *i_pArg)
                 break;
             }
         } // end successful scom
-
     } while(false);
 
     if(l_rc == SBE_SEC_OPERATION_SUCCESSFUL)
     {
         // Build the response header packet
         l_rc = sbeDsSendRespHdr(hdr, &ffdc, type);
-       // will let command processor routine handle the failure
+        // will let command processor routine handle the failure
     }
-
     SBE_EXIT(SBE_FUNC);
     return l_rc;
     #undef SBE_FUNC

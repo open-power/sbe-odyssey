@@ -50,10 +50,23 @@ static const uint32_t FIFO_WAIT_SLEEP_TIME = 1;
 
 extern fapi2::SbeFfdcData_t g_FfdcData;
 
-//TODO: P11SBE Porting
-#if 1
+// Contents of below array are indexed based on sbeFifoType
+const uint64_t g_Fifo_baseAddresses[] =
+{
+               SBE_FIFO_BASE,
+               SBE_HB_FIFO_BASE,
+               SBE_PIPE1_BASE,
+               SBE_PIPE2_BASE,
+               SBE_PIPE3_BASE,
+               SBE_PIPE4_BASE,
+               SBE_PIPE5_BASE,
+               SBE_PIPE6_BASE,
+               SBE_PIPE7_BASE,
+               SBE_PIPE8_BASE
+};
+
 using namespace fapi2;
-#endif
+
 inline uint32_t sbeBuildRespHeaderStatusWordGlobal (void)
 {
     return ( (((uint32_t)SBE_GLOBAL->sbeCmdRespHdr.prim_status)<<16) |
@@ -101,7 +114,6 @@ uint32_t sbeUpFifoDeq_mult (uint32_t    &io_len,
         //    1  : 1   -> Not used
 
         l_rc = sbeUpFifoDeq ( reinterpret_cast<uint64_t*>(&l_data), i_type);
-
         if (l_rc)
         {
             // Error while dequeueing from upstream FIFO
@@ -425,44 +437,51 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
 ////////////////////////////////////////////////////////
 sbeFifoType sbeFifoGetSource (bool reset)
 {
-    // TODO: reset case handling
-    // Time to figure out where the request originated from
-    // Priority: SBE FIFO > 2nd SBE FIFO > PIPE1 >  ... > PIPE8
-    // SBE FIFO:         0x000B0001 (11 - empty)
-    // SBE HFIFO:        0x000B0021 (11 - empty)
-    // SBE PIPE1:        0x000B0101 (11 - empty)
-    // SBE PIPE2:        0x000B0201 (11 - empty)
-    // SBE PIPE3:        0x000B0301 (11 - empty)
-    // SBE PIPE4:        0x000B0401 (11 - empty)
-    // SBE PIPE5:        0x000B0501 (11 - empty)
-    // SBE PIPE6:        0x000B0601 (11 - empty)
-    // SBE PIPE7:        0x000B0701 (11 - empty)
-    // SBE PIPE8:        0x000B0801 (11 - empty)
-    // SBE PIPE STATUS:  0x000B0120 (i*8:i*8+7: Status)
-    // SBE PIPE MST_ID:  0x000B0123 (i*8:i*8+7: Master IDs)
-    //uint64_t pipe_status;
-    //uint64_t pipe_mst_id;
-    //uint64_t ppe_mst_id = 0x2;
-    //ppe_mst_id = 0xD;
-    uint64_t l_data;
-    uint32_t l_pibRc = 0;
-    l_pibRc = l_pibRc; // Silence unused errors when SBE Tracing is lowered
-    l_pibRc = getscom_abs(SBE_UPSTREAM_FIFO_STATUS + FIFO_BASE_ADDR(SBE_FIFO), &l_data);
-    SBE_INFO("getScom(%08X): pibRc: 0x%08X, 0x%08X%08X", SBE_UPSTREAM_FIFO_STATUS + FIFO_BASE_ADDR(SBE_FIFO), l_pibRc, (l_data >> 32), static_cast<uint32_t>(l_data & 0xFFFFFFFF));
-    if (!reset && !(l_data & 0x0010000000000000ULL))
+    #define SBE_FUNC "sbeFifoGetSource"
+    uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    sbeFifoType type = SBE_FIFO_UNKNOWN;
+
+    do
     {
-        return SBE_FIFO;
-    }
-    if ( reset &&  (l_data & 0x0200000000000000ULL))
-    {
-        return SBE_FIFO;
-    }
-    return SBE_FIFO;
+        // First check on FIFO, from status register
+        sbeUpFifoStatusReg_t status = {0};
+        rc = sbeUpFifoGetStatus (reinterpret_cast<uint64_t *>(&status),
+                                 SBE_FIFO);
+        if (rc)
+        {
+            SBE_ERROR (SBE_FUNC "Reading fifo status, rc: 0x%08X", rc);
+            //rc = SBE_SEC_FIFO_ACCESS_FAILURE;
+            // This is a fatal error
+            pk_halt ();
+            break;
+        }
+
+        if ((!reset && !(status.upfifo_status.fifo_empty)) ||
+            (reset && status.upfifo_status.req_upfifo_reset))
+        {
+            type = SBE_FIFO;
+            SBE_INFO (SBE_FUNC "0x%04X on FIFO %d",
+                      (reset)? 0xDEAD:0xDA7A, type);
+            break;
+        }
+
+        // SBE_HB_FIFO: // @TODO ignore this for Ody for now
+
+        // Check pending interrupt on Pipes
+        type = sbePipeGetSource ();
+
+        // Fatal error is no interrupt source was found
+        assert(type != SBE_FIFO_UNKNOWN);
+    }   while (0);
+
+    SBE_EXIT(SBE_FUNC " FIFO Type - %d", type);
+    return type;
+    #undef SBE_FUNC
 }
 
-sbeInterfaceSrc_t sbeFifoGetInstSource (sbeFifoType upFifoType, bool reset) 
+sbeInterfaceSrc_t sbeFifoGetInstSource (sbeFifoType upFifoType, bool reset)
 {
-    if (!reset) 
+    if (!reset)
     {
         switch(upFifoType)
         {
@@ -476,11 +495,12 @@ sbeInterfaceSrc_t sbeFifoGetInstSource (sbeFifoType upFifoType, bool reset)
             case SBE_PIPE6:    return SBE_INTERFACE_PIPE6;
             case SBE_PIPE7:    return SBE_INTERFACE_PIPE7;
             case SBE_PIPE8:    return SBE_INTERFACE_PIPE8;
+            case SBE_FIFO_UNKNOWN:    return SBE_INTERFACE_UNKNOWN;
        }
     }
     else
     {
-        switch(upFifoType) 
+        switch(upFifoType)
         {
             case SBE_FIFO:     return SBE_INTERFACE_FIFO_RESET;
             case SBE_HB_FIFO:  return SBE_INTERFACE_HFIFO_RESET;
@@ -492,8 +512,184 @@ sbeInterfaceSrc_t sbeFifoGetInstSource (sbeFifoType upFifoType, bool reset)
             case SBE_PIPE6:    return SBE_INTERFACE_PIPE6_RESET;
             case SBE_PIPE7:    return SBE_INTERFACE_PIPE7_RESET;
             case SBE_PIPE8:    return SBE_INTERFACE_PIPE8_RESET;
+            case SBE_FIFO_UNKNOWN:    return SBE_INTERFACE_UNKNOWN;
        }
     }
-    /// BAAAAAD CASE
-    return SBE_INTERFACE_FIFO;
+
+    return SBE_INTERFACE_UNKNOWN;
+}
+
+sbeFifoType sbePipeGetSource (void)
+{
+    #define SBE_FUNC "sbePipeGetSource "
+    uint64_t accessCtrlCfg = 0;
+    sbeFifoType type = SBE_FIFO_UNKNOWN;
+
+    uint32_t rc = getscom_abs(SBE_PIPE_REG_ACCESS_CTRL, &accessCtrlCfg);
+    if (rc)
+    {
+        SBE_ERROR (SBE_FUNC "Error reading Pipe Access Ctrl: 0x08X", rc);
+        // rc = SBE_SEC_FIFO_ACCESS_FAILURE;
+        // This is a fatal error
+        pk_halt ();
+    }
+    else
+    {
+        rc = SBE_SEC_GENERIC_FAILURE_IN_EXECUTION;
+
+        for (uint8_t i=SBE_PIPE1; i<= SBE_PIPE8; i++)
+        {   // For Pipes, look at access control reg to find the source
+            sbePipeAccessFlags_t cfg = {0};
+            cfg.flags = (SBE_PIPE_GET_CFG_BYTE (i, accessCtrlCfg));
+
+            // ctrlID field of read end determines intr routing if RIE is set,
+            // independent of RUID setting. So,below flag being set implies SBE
+            // got either the new data available or reset request interrupt
+            if (cfg.rd_intr_pending)
+            {
+                rc = SBE_SEC_OPERATION_SUCCESSFUL;
+                type = static_cast<sbeFifoType> (i);
+                SBE_INFO (SBE_FUNC "Intr received on PIPE# %d", i);
+                break;
+            }
+        }
+
+        if (rc != SBE_SEC_OPERATION_SUCCESSFUL)
+        {   // Note: The ctrlID field of read end determines interrupt routing
+            // if interrupt enable (RIE) is set, independent of use ctrlID(RUID)
+            // setting. Since we got an interrupt (which is not from FIFO, this
+            // is an unexpected HW bug .. catch it as soon as detected
+            SBE_ERROR (SBE_FUNC "No interrupts pending on any pipe!");
+            pk_halt ();
+        }
+    }
+
+    return type;
+    #undef SBE_FUNC
+}
+
+uint32_t sbeHandleDsPipeCnfg (const sbeFifoType  i_usPipe)
+{
+    #define SBE_FUNC " sbeHandleDsPipeCnfg "
+
+    uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    uint64_t accessCtrl = 0;
+    uint64_t ctlrId = 0;
+
+    do
+    {
+        if ((i_usPipe < SBE_PIPE1) || (i_usPipe > SBE_PIPE7))
+        {
+            rc = SBE_SEC_INVALID_PIPE;
+            SBE_ERROR (SBE_FUNC "Invalid Upstream Pipe %d", i_usPipe);
+            break;
+        }
+
+        uint8_t usPipe = i_usPipe;
+        // Respond on the next (consecutive pipe)
+        uint8_t dsPipe = usPipe+1;
+
+        rc = getscom_abs (SBE_PIPE_REG_ACCESS_CTRL, &accessCtrl);
+        if (rc)
+        {
+            SBE_ERROR (SBE_FUNC "Error reading Pipe Access Ctrl: 0x08X", rc);
+            rc = SBE_SEC_FIFO_ACCESS_FAILURE;
+            pk_halt (); // fatal error
+            break;
+        }
+
+        rc = getscom_abs (SBE_PIPE_REG_CTLR_ID, &ctlrId);
+        if (rc)
+        {
+            SBE_ERROR (SBE_FUNC "Error reading Pipe CtlrId: 0x08X", rc);
+            rc = SBE_SEC_FIFO_ACCESS_FAILURE;
+            pk_halt (); // fatal error
+            break;
+        }
+
+        // The fact that SBE got an interrupt implies upstream pipe setup is ok
+        // Check the downstream pipe setup and config it if not done by caller
+        sbePipeAccessFlags_t dsPipeAccess = {0};
+        dsPipeAccess.flags = SBE_PIPE_GET_CFG_BYTE(dsPipe, accessCtrl);
+
+        SBE_INFO (SBE_FUNC "Pipe Access Ctrl: 0x%08X%08X",
+            SHIFT_RIGHT(accessCtrl, 32), MASK_ZERO_H32B_UINT64(accessCtrl));
+
+        sbePipeCtlrId_t dsPipeCtlrId = {0}; // downstream
+        sbePipeCtlrId_t usPipeCtlrId = {0}; // upstream
+        bool updateDsConfig = false;
+
+        dsPipeCtlrId.byte = SBE_PIPE_GET_CFG_BYTE(dsPipe, ctlrId);
+        usPipeCtlrId.byte = SBE_PIPE_GET_CFG_BYTE(i_usPipe, ctlrId);
+
+        SBE_INFO (SBE_FUNC "Pipe Ctlr IDs: 0x%08X%08X",
+                  SHIFT_RIGHT(ctlrId, 32), MASK_ZERO_H32B_UINT64(ctlrId));
+
+        // Check and config downstream pipe WRITE config if not done
+        if ( !( (dsPipeAccess.wr_open) &&
+                  ( !dsPipeAccess.wr_use_ctlr_id ||
+                    (dsPipeAccess.wr_use_ctlr_id  &&
+                      (dsPipeCtlrId.writeend == PIB_CTLR_SPPE)
+                    )
+                  )
+              )
+          )
+        {
+            updateDsConfig = true;
+            dsPipeAccess.wr_open = 1;
+            dsPipeAccess.wr_use_ctlr_id = 1;
+            dsPipeCtlrId.writeend = PIB_CTLR_SPPE;
+        }
+        // Check and config downstream pipe READ config if not done
+        if ( !( (dsPipeAccess.rd_open) &&
+                  ( !dsPipeAccess.rd_use_ctlr_id ||
+                    (dsPipeAccess.rd_use_ctlr_id  &&
+                      (dsPipeCtlrId.readend == usPipeCtlrId.writeend)
+                    )
+                  )
+              )
+          )
+        {
+            updateDsConfig = true;
+            dsPipeAccess.rd_open = 1;
+            dsPipeAccess.rd_use_ctlr_id = 1;
+            dsPipeCtlrId.readend = usPipeCtlrId.writeend;
+            // no interrupt routing for non-SBE PIB controllers, they poll
+            // for P11 SPPE-SBE this could be enabled
+        }
+
+        if (updateDsConfig)
+        {
+            uint64_t data64 = SBE_PIPE_SET_CFG_BYTE (dsPipe,
+                                                        dsPipeAccess.flags );
+            SBE_INFO (SBE_FUNC "Updating DS pipe %d access flags: 0x%08X%08X",
+                      dsPipe,
+                      SHIFT_RIGHT(data64, 32), MASK_ZERO_H32B_UINT64(data64));
+            rc = putscom_abs (SBE_PIPE_REG_ACCESS_CTRL_SET, data64);
+            if (rc)
+            {
+                SBE_ERROR (SBE_FUNC "Err writing Ctlr Id Reg: 0x08X", rc);
+                rc = SBE_SEC_FIFO_ACCESS_FAILURE;
+                pk_halt (); // this is a fatal error
+                break;
+            }
+
+            data64 = SBE_PIPE_SET_CFG_BYTE ( dsPipe,
+                                                dsPipeCtlrId.byte);
+            SBE_INFO (SBE_FUNC "Updating DS pipe %d ctlr id: 0x%08X%08X",
+                      dsPipe,
+                      SHIFT_RIGHT(data64, 32), MASK_ZERO_H32B_UINT64(data64));
+            rc = putscom_abs (SBE_PIPE_REG_CTLR_ID_SET, data64);
+            if (rc)
+            {
+                SBE_ERROR (SBE_FUNC "Err writing Access Ctrl Reg: 0x08X", rc);
+                rc = SBE_SEC_FIFO_ACCESS_FAILURE;
+                pk_halt (); // this is fatal error
+                break;
+            }
+        }
+    }   while (0);
+
+    return rc;
+    #undef SBE_FUNC
 }

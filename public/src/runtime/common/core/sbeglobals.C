@@ -23,6 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 #include "sbeglobals.H"
+#include "sbefifo.H"
 
 ////////////////////////////////////////////////////////////////
 //// @brief Stacks for Non-critical Interrupts and Threads
@@ -41,3 +42,5 @@ uint16_t SBEGlobalsSingleton::failedSecStatus  = SBE_SEC_OPERATION_SUCCESSFUL;
 uint16_t SBEGlobalsSingleton::failedSeqId      = 0;
 uint8_t  SBEGlobalsSingleton::failedCmdClass   = 0;
 uint8_t  SBEGlobalsSingleton::failedCmd        = 0;
+uint32_t SBEGlobalsSingleton::activeUsFifo = SBE_FIFO_UNKNOWN;
+uint32_t SBEGlobalsSingleton::activeInterface = SBE_INTERFACE_UNKNOWN;

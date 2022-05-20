@@ -36,13 +36,12 @@
 #include "assert.h"
 #include "sbeirqregistersave.H"
 #include "ppe42_scom.h"
+#include "sbeFifoMsgUtils.H"
 
 ////////////////////////////////////////////////////////////////
 // @brief:     SBE control loop ISR:
-//               - FIFO new data available
 //               - FIFO reset request
-//               - S0 Interrupt
-//               - S1 Interrupt
+//               - FIFO new data available
 //
 // @param[in]  i_pArg - Unused
 // @param[in]  i_irq  - IRQ number as defined in sbeirq.h
@@ -54,23 +53,28 @@ void sbe_interrupt_handler (void *i_pArg, PkIrqId i_irq)
     SBE_INFO(SBE_FUNC"i_irq=[0x%02X]",i_irq);
 
     int l_rc = 0;
-
+    sbeInterfaceSrc_t curInterface = SBE_INTERFACE_UNKNOWN;
+    sbeFifoType fifoType = SBE_FIFO_UNKNOWN;
     switch (i_irq)
     {
         case SBE_IRQ_SBEFIFO_RESET:
-
-            // Read the FIFO / PIPE registers to route it to correct interrupt.
+            fifoType = sbeFifoGetSource(true);
+            curInterface = sbeFifoGetInstSource(fifoType, true);
             SBE_GLOBAL->sbeIntrSource.setIntrSource(SBE_INTERRUPT_ROUTINE,
-                                            SBE_INTERFACE_FIFO_RESET);
-            pk_irq_disable(SBE_IRQ_SBEFIFO_RESET);
+                                                    curInterface);
+            SBE_INFO(SBE_FUNC "reset irq fifotype=0x%08x, curInterface=0x%08x",
+                     fifoType, curInterface);
+            pk_irq_disable(SBE_IRQ_SBEFIFO_DATA);
             break;
 
         case SBE_IRQ_SBEFIFO_DATA:
-
-            // Read the FIFO / PIPE registers it to correct interrupt.
+            fifoType = sbeFifoGetSource(false);
+            curInterface = sbeFifoGetInstSource(fifoType, false);
             SBE_GLOBAL->sbeIntrSource.setIntrSource(SBE_INTERRUPT_ROUTINE,
-                                            SBE_INTERFACE_FIFO);
-            pk_irq_disable(SBE_IRQ_SBEFIFO_DATA);
+                                                    curInterface);
+            SBE_INFO(SBE_FUNC "data irq fifotype=0x%08x, curInterface=0x%08x",
+                     fifoType, curInterface);
+            pk_irq_disable(SBE_IRQ_SBEFIFO_RESET);
             break;
 
         default:
@@ -78,18 +82,27 @@ void sbe_interrupt_handler (void *i_pArg, PkIrqId i_irq)
             assert(0);
             break;
     }
-    // Mask the interrupt
-    pk_irq_disable(i_irq);
 
-    // Unblock the command receiver thread
-    l_rc = pk_semaphore_post(&SBE_GLOBAL->sbeSemCmdRecv);
-    if (l_rc)
+    if (fifoType != SBE_FIFO_UNKNOWN)
     {
-        // If we received an error while posting the semaphore,
-        // unmask the interrupt back and assert
-        SBE_ERROR(SBE_FUNC"pk_semaphore_post failed, rc=[%d]", l_rc);
-        pk_irq_enable(i_irq);
-        assert(!l_rc);
+        // Mask the interrupt
+        pk_irq_disable(i_irq);
+
+        // @TODO via PFSBE-169: This is safe for now, but can break as code
+        //       supports more types of interrupts
+        SBE_GLOBAL->activeUsFifo = fifoType;
+        SBE_GLOBAL->activeInterface = curInterface;
+
+        // Unblock the command receiver thread
+        l_rc = pk_semaphore_post(&SBE_GLOBAL->sbeSemCmdRecv);
+        if (l_rc)
+        {
+            // If we received an error while posting the semaphore,
+            // unmask the interrupt back and assert
+            SBE_ERROR(SBE_FUNC"pk_semaphore_post failed, rc=[%d]", l_rc);
+            pk_irq_enable(i_irq);
+            assert(!l_rc);
+        }
     }
     #undef SBE_FUNC
 }
