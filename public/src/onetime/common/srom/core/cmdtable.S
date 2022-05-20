@@ -33,8 +33,8 @@ r4   scratch
 r5   scratch
 r6   mask
 r7   mask
-r8   data (pre-masked)
-r9   data (pre-masked)
+r8   data
+r9   data
 r10   cust code start
 r13   other big limit
 r28   this code location \
@@ -535,7 +535,7 @@ value_overrun:
         lwz     param, 0(param)
 
         // handle NOP, CALL and RETURN now since they don't have address or data
-        extrwi. scr0, insn, 4, 0        // extract opcode
+        extrwi. scr0, insn, 3, 1        // extract opcode
         beq     main_loop               // 0 == NOP -- do nothing
         cmpwibge scr0, 3, scom_op       // 3 or above are SCOM ops
         cmpwibeq scr0, 2, return_op     // 2 == RETURN
@@ -596,7 +596,7 @@ scom_op:
         lvd     mask, 0(mask0)
 
         // PUTSCOM is the last opcode below 4 left to check so we can look at bits
-        bb1wi   insn, 0, test_ops
+        bb1wi   insn, 1, test_ops
 
 putscom_op:
         cmpwi   mask0, -1
@@ -631,14 +631,14 @@ poll_loop:
         xor     scr1, scr1, data1
         or      scr1, scr1, scr0    // scr1 is now zero only if the values match
 
-        bb1wi   insn, 1, cmpbxx_op  // 0b11x == CMPBxx
+        bb1wi   insn, 2, cmpbxx_op  // 0b11x == CMPBxx
 
         // Here we're at opcode 0b10x, so either POLL or TEST.
         // Both complete the instruction if the comparison matches
         bwz     scr1, main_loop
 
         // On TEST, we fail on mismatch
-        bb0wi   insn, 2, _panic     // 0b100 == TEST
+        bb0wi   insn, 3, _panic     // 0b100 == TEST
 
         // On POLL, we decrement the timeout, fail on zero or wait and repeat
         subwibz timeout, 1, _panic
@@ -659,7 +659,7 @@ invalid_branch:
         panic   BOOT_RC_INVALID_BRANCH
 
 valid_branch:
-        bb1wi   insn, 2, cmpbne_op      // 0b111 == CMPBNE
+        bb1wi   insn, 3, cmpbne_op      // 0b111 == CMPBNE
 
         // 0b110 == CMPBEQ
         bwz     scr1, take_branch
