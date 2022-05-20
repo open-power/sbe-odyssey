@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -27,7 +28,6 @@
  * @brief This file contains the SBE Command Receiver Thread Routine
  *
  */
-
 
 #include "sbeexeintf.H"
 #include "sbefifo.H"
@@ -53,10 +53,7 @@ void sbeCommandReceiver_routine(void *i_pArg)
 
     do
     {
-        // @TODO via RTC: 128944
-        //       Read Scratchpad
-        // Wait for new data in FIFO or FIFO reset interrupt or PSU interrupt or
-        // s0/s1 interrupt
+        // Wait on intr handler to hand-off a FIFO New Data/Reset request
         int l_rcPk = pk_semaphore_pend (&SBE_GLOBAL->sbeSemCmdRecv, PK_WAIT_FOREVER);
 
         do
@@ -70,60 +67,64 @@ void sbeCommandReceiver_routine(void *i_pArg)
                 break;
             }
 
-            SBE_DEBUG(SBE_FUNC"Receiver unblocked");
+            SBE_INFO(SBE_FUNC"Receiver unblocked");
+
+            fifoType = static_cast<sbeFifoType>(SBE_GLOBAL->activeUsFifo);
+            curInterface = static_cast<sbeInterfaceSrc_t>(SBE_GLOBAL->activeInterface);
+
+            if (fifoType != SBE_FIFO)
+            {   // for Pipes, setup the downstream pipe
+                // Based on how pipe reset will be handled, the downstream pipe
+                // needs to be known and setup upfront
+                l_rc = sbeHandleDsPipeCnfg(fifoType);
+
+                if (l_rc)
+                {
+                    SBE_ERROR(SBE_FUNC "Failed setting DS pipe for fifoType %d",
+                              fifoType);
+                    break;
+                }
+            }
 
             // The responsibility of this thread is limited to reading off
-            // the FIFO or PSU interfaces to be able to decode the command
+            // the FIFO or PIPE interfaces to be able to decode the command
             // class and the command opcode parameters.
 
-            // Received FIFO Reset interrupt
-            if (  SBE_GLOBAL->sbeIntrSource.isSet(SBE_INTERRUPT_ROUTINE,
-                                         SBE_INTERFACE_FIFO_RESET) )
+            // Received Reset Interrupt on FIFO/PIPE interface
+            if ( SBE_GLOBAL->sbeIntrSource.isSet(SBE_INTERRUPT_ROUTINE,
+                       (sbeInterfaceSrc_t) ( SBE_INTERFACE_MASK_RESET_ALL )))
             {
-                SBE_INFO(SBE_FUNC"SBE FIFO reset received");
+                SBE_INFO(SBE_FUNC "FIFO/PIPE Reset received");
                 l_rc = SBE_FIFO_RESET_RECEIVED;
-                fifoType = sbeFifoGetSource(true);
-                curInterface = sbeFifoGetInstSource(fifoType, true);
                 break;
             }
+
             // Received FIFO New Data interrupt
             if ( SBE_GLOBAL->sbeIntrSource.isSet(SBE_INTERRUPT_ROUTINE,
-                                             SBE_INTERFACE_FIFO) )
+                     (sbeInterfaceSrc_t)   ( SBE_INTERFACE_MASK_DATA_ALL )))
             {
+                SBE_INFO(SBE_FUNC" Data on curInterface=0x%08x,fifoType=0x%08x",
+                                   curInterface, fifoType);
                 //Clear the Interrupt Source bit for FIFO
                 SBE_GLOBAL->sbeIntrSource.clearIntrSource(SBE_INTERRUPT_ROUTINE,
-                                                SBE_INTERFACE_FIFO);
-                fifoType = sbeFifoGetSource(false);
-                curInterface = sbeFifoGetInstSource(fifoType, false);
-
-                // This thread will attempt to unblock the command processor
-                // thread on the following scenarios:
-                //  - Normal scenarios where SBE would need to respond to FSP
-                //    via downstream FIFO. This includes SUCCESS cases as well
-                //    as the cases for Invalid Data sequence or Command
-                //    validation failure.
-                //  - if there is a need to handle FIFO reset
-
-                // Accordingly, this will update SBE_GLOBAL->sbeCmdRespHdr.prim_status
-                // and SBE_GLOBAL->sbeCmdRespHdr.sec_status for command processor thread
-                // to handle them later in the sequence.
-
+                                                          curInterface);
                 SBE_GLOBAL->sbeFifoCmdHdr.cmdClass = SBE_CMD_CLASS_UNKNOWN;
                 SBE_GLOBAL->sbeCmdRespHdr.init();
                 uint32_t len = sizeof(SBE_GLOBAL->sbeFifoCmdHdr)/sizeof(uint32_t);
-                l_rc = sbeUpFifoDeq_mult ( len, (uint32_t *)&SBE_GLOBAL->sbeFifoCmdHdr,
-                        false); // EOT is not expected, Don't flush, SBE_FIFO type
-
+                l_rc = sbeUpFifoDeq_mult ( len,
+                (uint32_t *)&SBE_GLOBAL->sbeFifoCmdHdr, false, false, fifoType);
+                // EOT is not expected, Don't flush, SBE_FIFO type
                 // If FIFO reset is requested,
                 if (l_rc == SBE_FIFO_RESET_RECEIVED)
                 {
-                    SBE_ERROR(SBE_FUNC"SBE FIFO reset received");
+                    SBE_ERROR(SBE_FUNC "SBE Interface = 0x%08x reset received",
+                                       curInterface);
                     break;
                 }
 
                 // If we received EOT out-of-sequence
                 if ( (l_rc == SBE_SEC_UNEXPECTED_EOT_INSUFFICIENT_DATA)  ||
-                        (l_rc == SBE_SEC_UNEXPECTED_EOT_EXCESS_DATA) )
+                     (l_rc == SBE_SEC_UNEXPECTED_EOT_EXCESS_DATA) )
                 {
                     SBE_ERROR(SBE_FUNC"sbeUpFifoDeq_mult failure with SBE FIFO,"
                         " l_rc=[0x%08X]", l_rc);
@@ -136,24 +137,24 @@ void sbeCommandReceiver_routine(void *i_pArg)
                 }
                 l_cmdClass  = SBE_GLOBAL->sbeFifoCmdHdr.cmdClass;
                 l_command   = SBE_GLOBAL->sbeFifoCmdHdr.command;
-            } // end else if loop for FIFO interface chipOp handling
+                SBE_INFO(SBE_FUNC" cmdclass = 0x%08x, command = 0x%08x",
+                                 l_cmdClass, l_command);
+            }// end else if loop for FIFO interface chipOp handling
             // Any other FIFO access issue
             if ( l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
             {
+                SBE_INFO(SBE_FUNC" some fifo access issue 0x%08x",l_rc);
                 break;
             }
-
             // validate the command class and sub-class opcodes
-            l_rc = sbeValidateCmdClass (l_cmdClass, l_command) ;
+            l_rc = sbeValidateCmdClass (l_cmdClass, l_command);
 
             if (l_rc)
             {
                 // Command Validation failed;
                 SBE_ERROR(SBE_FUNC"Command validation failed");
-                if ( SBE_INTERFACE_FIFO == curInterface )
-                {
-                    SBE_GLOBAL->sbeCmdRespHdr.setStatus(SBE_PRI_INVALID_COMMAND, l_rc);
-                }
+                SBE_GLOBAL->sbeCmdRespHdr.setStatus(SBE_PRI_INVALID_COMMAND, l_rc);
+
                 // Reassign l_rc to Success to Unblock command processor
                 // thread and let that take the necessary action.
                 l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
@@ -165,11 +166,8 @@ void sbeCommandReceiver_routine(void *i_pArg)
             sbeChipOpRc_t cmdAllowedStatus = sbeIsCmdAllowed(l_cmdClass, l_command);
             if( !cmdAllowedStatus.success() )
             {
-                if ( SBE_INTERFACE_FIFO == curInterface )
-                {
-                    SBE_GLOBAL->sbeCmdRespHdr.setStatus(cmdAllowedStatus.primStatus,
-                                cmdAllowedStatus.secStatus);
-                }
+                SBE_GLOBAL->sbeCmdRespHdr.setStatus(cmdAllowedStatus.primStatus,
+                            cmdAllowedStatus.secStatus);
                 l_rc = cmdAllowedStatus.secStatus;
                 break;
             }
@@ -190,18 +188,13 @@ void sbeCommandReceiver_routine(void *i_pArg)
                 // Collect FFDC?
             }
 
-            if ( SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_FIFO) )
-            {
-                SBE_GLOBAL->sbeIntrSource.clearIntrSource(SBE_ALL_HANDLER,
-                                                 SBE_INTERFACE_FIFO);
-            }
+            SBE_INFO(SBE_FUNC "clearing all interrupt sources ..");
+            SBE_GLOBAL->sbeIntrSource.clearIntrSource(SBE_ALL_HANDLER,
+                       (sbeInterfaceSrc_t) ( SBE_INTERFACE_MASK_RESET_ALL |
+                                             SBE_INTERFACE_MASK_DATA_ALL ));
 
-            if ( SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE,
-                                        SBE_INTERFACE_FIFO_RESET) )
-            {
-                SBE_GLOBAL->sbeIntrSource.clearIntrSource(SBE_ALL_HANDLER,
-                                                 SBE_INTERFACE_FIFO_RESET);
-            }
+            SBE_GLOBAL->activeUsFifo = SBE_FIFO_UNKNOWN;
+            SBE_GLOBAL->activeInterface = SBE_INTERFACE_UNKNOWN;
 
             pk_irq_enable(SBE_IRQ_SBEFIFO_DATA);
             pk_irq_enable(SBE_IRQ_SBEFIFO_RESET);
@@ -232,14 +225,15 @@ void sbeCommandReceiver_routine(void *i_pArg)
                     l_rcPk, SBE_GLOBAL->sbeSemCmdProcess.count, l_rc);
                 pk_halt();
             }
-            if ( SBE_INTERFACE_FIFO == curInterface )
-            {
-                sbeHandleFifoResponse(l_rc, SBE_FIFO);
-                SBE_GLOBAL->sbeIntrSource.clearIntrSource(SBE_ALL_HANDLER,
-                                                 SBE_INTERFACE_FIFO);
-                pk_irq_enable(SBE_IRQ_SBEFIFO_DATA);
-                pk_irq_enable(SBE_IRQ_SBEFIFO_RESET);
-            }
+
+            sbeHandleFifoResponse(l_rc, fifoType);
+            SBE_GLOBAL->sbeIntrSource.clearIntrSource(SBE_ALL_HANDLER,
+                                                curInterface);
+            SBE_GLOBAL->activeUsFifo = SBE_FIFO_UNKNOWN;
+            SBE_GLOBAL->activeInterface = SBE_INTERFACE_UNKNOWN;
+
+            pk_irq_enable(SBE_IRQ_SBEFIFO_DATA);
+            pk_irq_enable(SBE_IRQ_SBEFIFO_RESET);
             continue;
         }
 

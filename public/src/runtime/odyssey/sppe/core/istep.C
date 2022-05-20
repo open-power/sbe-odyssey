@@ -24,6 +24,7 @@
 /* IBM_PROLOG_END_TAG                                                     */
 #include <stdint.h>
 
+#include "chipop_struct.H"
 #include "sbefifo.H"
 #include "sbetrace.H"
 #include "sbe_sp_intf.H"
@@ -168,6 +169,9 @@ uint32_t sbeHandleIstep (uint8_t *i_pArg)
     respHdr.init();
     sbeResponseFfdc_t ffdc;
 
+    chipOpParam_t* configStr = (struct chipOpParam*)i_pArg;
+    sbeFifoType type = static_cast<sbeFifoType>(configStr->fifoType);
+
     // NOTE: In this function we will have two loops
     // First loop will deque data and prepare the response
     // Second loop will enque the data on DS FIFO
@@ -175,7 +179,7 @@ uint32_t sbeHandleIstep (uint8_t *i_pArg)
     do
     {
         len = sizeof( req )/sizeof(uint32_t);
-        rc = sbeUpFifoDeq_mult ( len, (uint32_t *)&req);
+        rc = sbeUpFifoDeq_mult ( len, (uint32_t *)&req, true, false, type);
         if (rc != SBE_SEC_OPERATION_SUCCESSFUL) //FIFO access issue
         {
             SBE_ERROR(SBE_FUNC"FIFO dequeue failed, rc[0x%X]", rc);
@@ -230,7 +234,7 @@ uint32_t sbeHandleIstep (uint8_t *i_pArg)
             break;
         }
 
-        rc = sbeDsSendRespHdr(respHdr, &ffdc);
+        rc = sbeDsSendRespHdr(respHdr, &ffdc, type);
     }while(0);
 
     if( rc )

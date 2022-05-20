@@ -108,6 +108,26 @@ typedef enum
     SBE_INTERFACE_PIPE7_RESET        = 0x00020000,
     SBE_INTERFACE_PIPE8              = 0x00040000,
     SBE_INTERFACE_PIPE8_RESET        = 0x00080000,
+    SBE_INTERFACE_MASK_DATA_ALL      = (SBE_INTERFACE_FIFO  |
+                                        SBE_INTERFACE_HFIFO |
+                                        SBE_INTERFACE_PIPE1 |
+                                        SBE_INTERFACE_PIPE2 |
+                                        SBE_INTERFACE_PIPE3 |
+                                        SBE_INTERFACE_PIPE4 |
+                                        SBE_INTERFACE_PIPE5 |
+                                        SBE_INTERFACE_PIPE6 |
+                                        SBE_INTERFACE_PIPE7 |
+                                        SBE_INTERFACE_PIPE8),
+    SBE_INTERFACE_MASK_RESET_ALL    = (SBE_INTERFACE_FIFO_RESET |
+                                       SBE_INTERFACE_HFIFO_RESET|
+                                       SBE_INTERFACE_PIPE1_RESET|
+                                       SBE_INTERFACE_PIPE2_RESET|
+                                       SBE_INTERFACE_PIPE3_RESET|
+                                       SBE_INTERFACE_PIPE4_RESET|
+                                       SBE_INTERFACE_PIPE5_RESET|
+                                       SBE_INTERFACE_PIPE6_RESET|
+                                       SBE_INTERFACE_PIPE7_RESET|
+                                       SBE_INTERFACE_PIPE8_RESET),
 } sbeInterfaceSrc_t;
 
 /*
@@ -128,9 +148,9 @@ typedef enum
  */
 typedef struct
 {
-    uint8_t intrSource;
-    uint8_t rxThrIntrSource;
-    uint8_t procThrIntrSource;
+    uint32_t intrSource;
+    uint32_t rxThrIntrSource;
+    uint32_t procThrIntrSource;
 
     void setIntrSource(const sbeHandler_t i_handler,
                        const sbeInterfaceSrc_t i_val)

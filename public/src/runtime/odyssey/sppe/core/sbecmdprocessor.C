@@ -147,7 +147,6 @@ void sbeHandleFifoResponse (const uint32_t i_rc, sbeFifoType i_type)
                 break;
         }
     } while (false);
-
     #undef SBE_FUNC
 }
 
@@ -174,6 +173,7 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
     do
     {
         uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+        sbeInterfaceSrc_t curInterface = SBE_INTERFACE_UNKNOWN;
 
         // Wait for new command processing
         int l_rcPk = pk_semaphore_pend (
@@ -195,37 +195,23 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
             // chipOpParam_t configStr = { SBE_FIFO, 0x00, (uint8_t*)i_pArg };
             // configStr.pkThreadRoutine_param = reinterpret_cast<uint8_t*>(i_pArg);
             if ( SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE,(sbeInterfaceSrc_t)(
-                                             SBE_INTERFACE_FIFO
-                                           | SBE_INTERFACE_HFIFO
-                                           | SBE_INTERFACE_PIPE1
-                                           | SBE_INTERFACE_PIPE2
-                                           | SBE_INTERFACE_PIPE3
-                                           | SBE_INTERFACE_PIPE4
-                                           | SBE_INTERFACE_PIPE5
-                                           | SBE_INTERFACE_PIPE6
-                                           | SBE_INTERFACE_PIPE7
-                                           | SBE_INTERFACE_PIPE8)) )
+                                             SBE_INTERFACE_MASK_DATA_ALL)) )
             {
                 l_rc         = SBE_GLOBAL->sbeCmdRespHdr.sec_status;
                 l_cmdClass   = SBE_GLOBAL->sbeFifoCmdHdr.cmdClass;
                 l_cmdOpCode  = SBE_GLOBAL->sbeFifoCmdHdr.command;
-                if      (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_FIFO))  configStr.fifoType = SBE_FIFO;
-                else if (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_HFIFO)) configStr.fifoType = SBE_HB_FIFO;
-                else if (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_PIPE1)) configStr.fifoType = SBE_PIPE1;
-                else if (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_PIPE2)) configStr.fifoType = SBE_PIPE2;
-                else if (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_PIPE3)) configStr.fifoType = SBE_PIPE3;
-                else if (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_PIPE4)) configStr.fifoType = SBE_PIPE4;
-                else if (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_PIPE5)) configStr.fifoType = SBE_PIPE5;
-                else if (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_PIPE6)) configStr.fifoType = SBE_PIPE5;
-                else if (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_PIPE7)) configStr.fifoType = SBE_PIPE7;
-                else if (SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE, SBE_INTERFACE_PIPE8)) configStr.fifoType = SBE_PIPE8;
+
+                configStr.fifoType = SBE_GLOBAL->activeUsFifo;
+                curInterface = static_cast<sbeInterfaceSrc_t>(SBE_GLOBAL->activeInterface);
+
                 SBE_INFO(SBE_FUNC"Processing command from client :0x%01X",
                             (uint32_t)(SBE_GLOBAL->sbeFifoCmdHdr.clientId));
                 // Set this here, so that during response handling we know which
                 // interrupt we are processing, need not check for
                 // SBE_GLOBAL->sbeIntrSource again
                 SBE_GLOBAL->sbeIntrSource.setIntrSource(SBE_PROC_ROUTINE,
-                                               SBE_INTERFACE_FIFO);
+                                                        curInterface);
+
             }
             else // SBE_INTERFACE_FIFO_RESET or SBE_INTERFACE_UNKNOWN
             {
@@ -254,7 +240,6 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
                 break;
             }
 
-            // Get the command function
             sbeCmdFunc_t l_pFuncP = sbeFindCmdFunc (l_cmdClass, l_cmdOpCode);
             assert( l_pFuncP )
 
@@ -263,36 +248,20 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
 
         } while(false); // Inner do..while loop ends here
 
-        SBE_INFO (SBE_FUNC"Command processesed. l_rc=[0x%04X]", l_rc );
+        SBE_INFO (SBE_FUNC"Command processed. l_rc=[0x%04X]", l_rc );
         if ( SBE_GLOBAL->sbeIntrSource.isSet(SBE_PROC_ROUTINE, (sbeInterfaceSrc_t)(
-                                             SBE_INTERFACE_FIFO
-                                           | SBE_INTERFACE_HFIFO
-                                           | SBE_INTERFACE_PIPE1
-                                           | SBE_INTERFACE_PIPE2
-                                           | SBE_INTERFACE_PIPE3
-                                           | SBE_INTERFACE_PIPE4
-                                           | SBE_INTERFACE_PIPE5
-                                           | SBE_INTERFACE_PIPE6
-                                           | SBE_INTERFACE_PIPE7
-                                           | SBE_INTERFACE_PIPE8)))
+                                             SBE_INTERFACE_MASK_DATA_ALL)))
         {
             sbeHandleFifoResponse (l_rc, (sbeFifoType)configStr.fifoType);
 
+            SBE_GLOBAL->sbeIntrSource.clearIntrSource (SBE_ALL_HANDLER,
+                                                       curInterface);
+            SBE_GLOBAL->activeUsFifo = SBE_FIFO_UNKNOWN;
+            SBE_GLOBAL->activeInterface = SBE_INTERFACE_UNKNOWN;
+
             // Enable the new data available interrupt
-            SBE_GLOBAL->sbeIntrSource.clearIntrSource(SBE_ALL_HANDLER, (sbeInterfaceSrc_t)(
-                                             SBE_INTERFACE_FIFO
-                                           | SBE_INTERFACE_HFIFO
-                                           | SBE_INTERFACE_PIPE1
-                                           | SBE_INTERFACE_PIPE2
-                                           | SBE_INTERFACE_PIPE3
-                                           | SBE_INTERFACE_PIPE4
-                                           | SBE_INTERFACE_PIPE5
-                                           | SBE_INTERFACE_PIPE6
-                                           | SBE_INTERFACE_PIPE7
-                                           | SBE_INTERFACE_PIPE8));
             pk_irq_enable(SBE_IRQ_SBEFIFO_DATA);
             pk_irq_enable(SBE_IRQ_SBEFIFO_RESET);
-            SBE_GLOBAL->sbeIntrSource.clearIntrSource(SBE_ALL_HANDLER,SBE_INTERFACE_FIFO);
         }
     } while(true); // Thread always exists
     SBE_EXIT(SBE_FUNC);
