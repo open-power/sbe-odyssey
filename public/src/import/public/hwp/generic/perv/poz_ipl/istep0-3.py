@@ -90,7 +90,7 @@ def p11_shutdown():
     # CONTROL_WRITE_PROTECT_DISABLE = 0x4453FFFF
     GPWRP = CONTROL_WRITE_PROTECT_DISABLE         # Disable Write Protection for Root/Perv Control registers (in case the chip has just been reset)
 
-    ROOT_CTRL1.TPFSI_TP_GLB_PERST_OVR_DC = 0      # Assert all PERST# outputs
+    ROOT_CTRL1.TPFSI_TP_GLB_PERST_OVR_DC = 1      # Assert all PERST# outputs
     ROOT_CTRL0.TPFSI_IO_OCMB_RESET_EN = 1         # Assert OCMB reset
     delay(100ms, 0cyc)                            # Don't wait in sim, but do wait on real HW to give PCI devices time to reset
 
@@ -99,8 +99,8 @@ def p11_shutdown():
     ROOT_CTRL0.CFAM_PROTECTION_0_DC = 1           # Raise CFAM protections
     ROOT_CTRL0[bits 8:15] = 0xFF                  # Raise CFAM protections
     ROOT_CTRL0.GLOBAL_EP_RESET_DC = 1             # Assert global endpoint reset to reset all chiplets
-    ROOT_CTRL7[bits 0:23] = 0                     # Turn off all outgoing refclocks
-    ROOT_CTRL1[4 bits starting at TP_RI_DC_B] = 0 # Disable TP drivers and receivers
+    ROOT_CTRL7 = 0                                # Turn off all outgoing refclocks
+    ROOT_CTRL1[5 bits starting at TP_RI_DC_B] = 0 # Disable TP drivers and receivers
     ROOT_CTRL0.TPFSI_TPI2C_BUS_FENCE_DC = 0       # Clear FSI I2C fence to allow access from FSP side
 
 def zme_shutdown():
@@ -142,8 +142,8 @@ def poz_setup_ref_clock():
     ROOT_CTRL5.TPFSI_RCS_BYPASS_DC = 1
     ROOT_CTRL5.TPFSI_RCS_FORCE_CLKSEL_DC = 1 if ATTR_CP_REFCLOCK_SELECT is *OSC1* else 0
     ROOT_CTRL5.TPFSI_RCS_CLK_TEST_IN_DC = 0
-    ROOT_CTRL5.EN_REFCLK = ATTR_CLOCK_PLL_MUX20 == SYNC_OUT
-    ROOT_CTRL5.EN_ASYNC_OUT = ATTR_CLOCK_PLL_MUX20 == ASYNC_OUT
+    ROOT_CTRL5.EN_REFCLK = ATTR_CLOCK_RCS_OUTPUT_MUX20 == SYNC
+    ROOT_CTRL5.EN_ASYNC_OUT = ATTR_CLOCK_RCS_OUTPUT_MUX20 == ASYNC
 
     ROOT_CTRL5_COPY = ROOT_CTRL5      # Update copy register to match
 
@@ -165,7 +165,20 @@ def p11_setup_ref_clock():
 
     ## Set up refclock transmitter termination
     ROOT_CTRL7 = 0
-    # TBD
+    ROOT_CTRL7.TAP_TERM_EN     = ATTR_TAP_TERM_EN          # uint8, DISABLE = 0, ENABLE = 1
+    ROOT_CTRL7.OMI_TERM_EN     = ATTR_OMI_TERM_EN          # uint8, DISABLE = 0, ENABLE = 1
+    ROOT_CTRL7.E0_TERM_EN      = ATTR_PCI_TERM_EN          # uint8, DISABLE = 0, ENABLE = 1
+    ROOT_CTRL7.E8OP_TERM_EN    = ATTR_PCI8OP_TERM_EN       # uint8, DISABLE = 0, ENABLE = 1
+    ROOT_CTRL7.E9OP_TERM_EN    = ATTR_PCI9OP_TERM_EN       # uint8, DISABLE = 0, ENABLE = 1
+    ROOT_CTRL7.E10OP_TERM_EN   = ATTR_PCI10OP_TERM_EN      # uint8, DISABLE = 0, ENABLE = 1
+    ROOT_CTRL7.E11OP_TERM_EN   = ATTR_PCI11OP_TERM_EN      # uint8, DISABLE = 0, ENABLE = 1
+    ROOT_CTRL7.TAP_2X_CUR_EN   = ATTR_TAP_DRV_STRENGTH     # uint8, NORMAL = 0, DOUBLE = 1
+    ROOT_CTRL7.OMI_2X_CUR_EN   = ATTR_OMI_DRV_STRENGTH     # uint8, NORMAL = 0, DOUBLE = 1
+    ROOT_CTRL7.E0_2X_CUR_EN    = ATTR_PCI_DRV_STRENGTH     # uint8, NORMAL = 0, DOUBLE = 1
+    ROOT_CTRL7.E8OP_2X_CUR_EN  = ATTR_PCI8OP_DRV_STRENGTH  # uint8, NORMAL = 0, DOUBLE = 1
+    ROOT_CTRL7.E9OP_2X_CUR_EN  = ATTR_PCI9OP_DRV_STRENGTH  # uint8, NORMAL = 0, DOUBLE = 1
+    ROOT_CTRL7.E10OP_2X_CUR_EN = ATTR_PCI10OP_DRV_STRENGTH # uint8, NORMAL = 0, DOUBLE = 1
+    ROOT_CTRL7.E11OP_2X_CUR_EN = ATTR_PCI11OP_DRV_STRENGTH # uint8, NORMAL = 0, DOUBLE = 1
 
     ROOT_CTRL7_COPY = ROOT_CTRL7      # Update copy register to match
 
@@ -181,6 +194,7 @@ def p11_setup_ref_clock():
     ROOT_CTRL4.TP_AN_REFCLK_CLKMUX25_SEL_DC = ATTR_CLOCK_133M_MC_REFCLK_MUX25       # uint8, MUX23 = 0, FPLL3 = 1, FPLL4 = 2
     ROOT_CTRL4.TP_AN_REFCLK_CLKMUX26_SEL_DC = ATTR_CLOCK_133M_PAXO_REFCLK_MUX26     # uint8, MUX23 = 0, FPLL3 = 1, FPLL4 = 2
     ROOT_CTRL4.TP_AN_REFCLK_CLKMUX27_SEL_DC = ATTR_CLOCK_100M_PAXO_REFCLK_MUX27     # uint8, FPLL2 = 0, FPLL3 = 1, FPLL4 = 2
+    ROOT_CTRL4.TP_AN_REFCLK_CLKMUX28_SEL_DC = ATTR_CLOCK_100M_PAXO_REFCLK_MUX28     # uint8, MUX23 = 0, FPLL3 = 1, FPLL4 = 2
     ROOT_CTRL4.TP_AN_CLKGLM_NEST_ASYNC_RESET_DC = 0
     ROOT_CTRL4.TP_AN_NEST_DIV2_ASYNC_RESET_DC = 0
     ROOT_CTRL4.TP_PLL_FORCE_OUT_EN_DC = 1
@@ -985,7 +999,7 @@ def ody_chiplet_reset():
     poz_chiplet_reset(i_target, ody_chiplet_delay_table)
 
 def zme_chiplet_reset():
-    poz_chiplet_reset(i_target, ody_chiplet_delay_table)
+    poz_chiplet_reset(i_target, zme_chiplet_delay_table)
 
     with Nest chiplet:
         ## Force Nest chiplet out of flush unconditionally
@@ -1091,8 +1105,7 @@ def p11t_chiplet_pll_setup():
 def p11s_chiplet_pll_setup():
     poz_chiplet_pll_setup()
 
-def ody_chiplet_pll_setup():
-    poz_chiplet_pll_setup()
+# No ody_chiplet_pll_setup - The single PLL is started in step 1 by the command table
 
 def zme_chiplet_pll_setup():
     with all enabled PCI chiplets via multicast:
@@ -1176,6 +1189,12 @@ def ody_abist():
 
     poz_bist({"cpl_abst_setup", "cpl_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup+scan0_rest+arrayinit, regions=all})
 
+def zme_abist():
+    if not ATTR_ENABLE_ABIST:
+        return
+
+    poz_bist({"cpl_abst_setup", "cpl_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup+scan0_rest+arrayinit, regions=all})
+
 ISTEP(3, 10, "proc_lbist", "SSBE, TSBE")
 
 def p11s_lbist():
@@ -1191,6 +1210,12 @@ def p11t_lbist():
     poz_bist({"t_lbst_setup", "t_lbst_cmp", chiplets=all, lbist+setup+run+compare+cleanup+scan0_gtr+scan0_rest, regions=all})
 
 def ody_lbist():
+    if not ATTR_ENABLE_LBIST:
+        return
+
+    poz_bist({"cpl_lbst_setup", "cpl_lbst_cmp", chiplets=all, lbist+setup+run+compare+cleanup+scan0_gtr+scan0_rest, regions=all})
+
+def zme_lbist():
     if not ATTR_ENABLE_LBIST:
         return
 
@@ -1250,15 +1275,12 @@ def p11t_chiplet_undo_force_on():
 ISTEP(3, 14, "proc_chiplet_initf", "SSBE, TSBE")
 
 def p11s_chiplet_initf():
-    poz_chiplet_initf()
+    putRing( chiplet_initf = everything under the sun that has not been scanned yet )
 
 def p11t_chiplet_initf():
-    poz_chiplet_initf()
+    putRing( chiplet_initf = everything under the sun that has not been scanned yet )
 
 def ody_chiplet_initf():
-    poz_chiplet_initf()
-
-def poz_chiplet_initf():
     putRing( chiplet_initf = everything under the sun that has not been scanned yet )
 
 ISTEP(3, 15, "proc_chiplet_init", "SSBE, TSBE")
@@ -1275,7 +1297,9 @@ def p11t_chiplet_init():
     CPLT_CONF0.TC_OCTANT_ID_DC     = ATTR_POS
 
 def ody_chiplet_init():
-    "TODO: What to do here"
+    ## Program DDR PHY Nto1 clock division ratios
+    with MC chiplet:
+        CPLT_CONF1[24:29] = all 1s
 
 def zme_chiplet_init():
     if not ATTR_HOTPLUG:
@@ -1553,19 +1577,12 @@ ISTEP(3, 32, "proc_tbus_setup", "SSBE, TSBE")
 # TODO Chris: put your steps here
 
 ISTEP(3, 40, "proc_fabricinit", "SSBE, TSBE")
-# run on Spinal only, except if we're on a Tap-only sim mode, then run on Tap
 
 def p11s_fabricinit():
-    p11_fabricinit(i_target)
+    pass # Leaving the implementation details to the Nest team
 
 def p11t_fabricinit():
-    p11_fabricinit(i_target)
-
-def p11_fabricinit():
-    if on TSBE and ATTR_IPL_MODE != TAP_ONLY_SIMULATION:
-        return
-
-    # do the thing
+    pass # Leaving the implementation details to the Nest team
 
 ISTEP(3, 41, "proc_bmc_pci_init", "SSBE")
 # TODO Chris: put your steps here
