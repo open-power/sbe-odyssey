@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_lbist.C $       */
+/* $Source: public/src/import/public/hwp/generic/perv/poz_bist.H $        */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -26,27 +26,20 @@
 /// @brief
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
-// *HWP FW Maintainer   : Mike Hamilton (mikehami@us.ibm.com)
+// *HWP FW Maintainer   : Andrew Singer (andrew.singer@ibm.com)
 // *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
-#include "ody_lbist.H"
-#include "poz_perv_common_params.H"
-#include "poz_bist.H"
+#pragma once
 
+#include <fapi2.H>
 
-using namespace fapi2;
+typedef fapi2::ReturnCode (*poz_bist_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&);
 
-enum ODY_LBIST_Private_Constants
+/// @brief
+/// @param[in]   i_target
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+extern "C"
 {
-};
-
-ReturnCode ody_lbist(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
-{
-    // bist_params i_params = TODO add me once bist_params is enabled
-    // FAPI_TRY(poz_bist(i_target /*, i_params*/));
-    FAPI_DBG("ody_lbist not yet implemented; check back later");
-
-fapi_try_exit:
-    return current_err;
+    fapi2::ReturnCode poz_bist(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target /*, bist_params &i_params*/);
 }

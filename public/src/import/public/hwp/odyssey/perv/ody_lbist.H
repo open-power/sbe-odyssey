@@ -26,7 +26,7 @@
 /// @brief
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
-// *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
+// *HWP FW Maintainer   : Mike Hamilton (mikehami@us.ibm.com)
 // *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 

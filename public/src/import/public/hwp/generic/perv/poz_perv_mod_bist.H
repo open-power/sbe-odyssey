@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_lbist.C $       */
+/* $Source: public/src/import/public/hwp/generic/perv/poz_perv_mod_bist.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,30 +23,37 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  poz_perv_mod_bist.H
+///
+/// @brief  prototype declarations for modules bist_poll and bist_reg_cleanup
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
-// *HWP FW Maintainer   : Mike Hamilton (mikehami@us.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
+// *HWP FW Maintainer   : Andrew Singer (andrew.singer@ibm.com)
 //------------------------------------------------------------------------------
 
-#include "ody_lbist.H"
+#pragma once
+
+#include <fapi2.H>
 #include "poz_perv_common_params.H"
-#include "poz_bist.H"
 
+using namespace cc;
 
-using namespace fapi2;
+/// @brief Poll OPCG done bit to check for run-N completeness.
+/// @param[in]   i_target          Reference to TARGET_TYPE_PERV
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode mod_bist_poll(
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST, fapi2::MULTICAST_AND > & i_target);
 
-enum ODY_LBIST_Private_Constants
-{
-};
-
-ReturnCode ody_lbist(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
-{
-    // bist_params i_params = TODO add me once bist_params is enabled
-    // FAPI_TRY(poz_bist(i_target /*, i_params*/));
-    FAPI_DBG("ody_lbist not yet implemented; check back later");
-
-fapi_try_exit:
-    return current_err;
-}
+/// @brief BIST SCOM reg cleanup module.
+/// --Clear OPCG_REG0, CLK_REGION, CPLT_CTRL0 & BIST registers
+/// --Clear ABSTCLK_MUXSEL_DC
+/// --Clear TC_SRAM_ABIST_MODE_DC
+///
+/// @param[in]   i_target                   Reference to TARGET_TYPE_PERV
+/// @param[in]   i_clear_sram_abist_mode    clear SRAM ABIST mode
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode mod_bist_reg_cleanup(
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
+    bool i_clear_sram_abist_mode = true);

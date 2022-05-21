@@ -26,12 +26,13 @@
 /// @brief
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
-// *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
+// *HWP FW Maintainer   : Andrew Singer (andrew.singer@ibm.com)
 // *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
 #include "ody_abist.H"
 #include "poz_perv_common_params.H"
+#include "poz_bist.H"
 
 
 using namespace fapi2;
@@ -42,7 +43,8 @@ enum ODY_ABIST_Private_Constants
 
 ReturnCode ody_abist(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
-
+    // bist_params i_params = TODO add me once bist_params is enabled
+    FAPI_TRY(poz_bist(i_target /*, i_params*/));
 
 fapi_try_exit:
     return current_err;
