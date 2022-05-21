@@ -1159,15 +1159,18 @@ def zme_bist_repr_initf():
 ISTEP(3, 9, "proc_abist", "SSBE, TSBE")
 
 def p11s_abist():
-    poz_abist()
+    if not ATTR_ENABLE_ABIST:
+        return
+
+    poz_bist({"s_abst_setup", "s_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup+scan0_rest+arrayinit, regions=all})
 
 def p11t_abist():
-    poz_abist()
+    if not ATTR_ENABLE_ABIST:
+        return
+
+    poz_bist({"t_abst_setup", "t_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup+scan0_rest+arrayinit, regions=all})
 
 def ody_abist():
-    poz_abist()
-
-def poz_abist():
     if not ATTR_ENABLE_ABIST:
         return
 
@@ -1176,15 +1179,18 @@ def poz_abist():
 ISTEP(3, 10, "proc_lbist", "SSBE, TSBE")
 
 def p11s_lbist():
-    poz_abist()
+    if not ATTR_ENABLE_LBIST:
+        return
+
+    poz_bist({"s_lbst_setup", "s_lbst_cmp", chiplets=all, lbist+setup+run+compare+cleanup+scan0_gtr+scan0_rest, regions=all})
 
 def p11t_lbist():
-    poz_abist()
+    if not ATTR_ENABLE_LBIST:
+        return
+
+    poz_bist({"t_lbst_setup", "t_lbst_cmp", chiplets=all, lbist+setup+run+compare+cleanup+scan0_gtr+scan0_rest, regions=all})
 
 def ody_lbist():
-    poz_abist()
-
-def poz_lbist():
     if not ATTR_ENABLE_LBIST:
         return
 

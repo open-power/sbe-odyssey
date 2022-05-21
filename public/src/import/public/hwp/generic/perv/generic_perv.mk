@@ -30,6 +30,7 @@ define __GENERIC_PERV_PROCEDURE
 PROCEDURE=$(1)
 $$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_perv_mod_misc.o)
 $$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_perv_mod_chiplet_clocking.o)
+$$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_perv_mod_bist.o)
 $$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_perv_utils.o)
 $$(call BUILD_PROCEDURE)
 endef
@@ -39,7 +40,7 @@ GENERIC_PERV_PROCEDURE = $(eval $(call __GENERIC_PERV_PROCEDURE,$1))
 # And now the actual HWP definitions
 #
 $(call GENERIC_PERV_PROCEDURE,poz_cmdtable_interpreter)
-$(call GENERIC_PERV_PROCEDURE,poz_abist)
+$(call GENERIC_PERV_PROCEDURE,poz_bist)
 $(call GENERIC_PERV_PROCEDURE,poz_bist_repr_initf)
 $(call GENERIC_PERV_PROCEDURE,poz_chiplet_arrayinit)
 $(call GENERIC_PERV_PROCEDURE,poz_chiplet_clk_config)
@@ -50,6 +51,5 @@ $(call GENERIC_PERV_PROCEDURE,poz_chiplet_repr_initf)
 $(call GENERIC_PERV_PROCEDURE,poz_chiplet_reset)
 $(call GENERIC_PERV_PROCEDURE,poz_chiplet_startclocks)
 $(call GENERIC_PERV_PROCEDURE,poz_chiplet_unused_psave)
-$(call GENERIC_PERV_PROCEDURE,poz_lbist)
 $(call GENERIC_PERV_PROCEDURE,poz_nest_enable_io)
 $(call GENERIC_PERV_PROCEDURE,poz_stopclocks)

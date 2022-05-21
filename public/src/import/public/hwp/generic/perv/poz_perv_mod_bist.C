@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_lbist.C $       */
+/* $Source: public/src/import/public/hwp/generic/perv/poz_perv_mod_bist.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,30 +23,58 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  poz_perv_mod_bist.C
+///
+/// @brief  contains definitions for modules bist_poll and bist_reg_cleanup
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
-// *HWP FW Maintainer   : Mike Hamilton (mikehami@us.ibm.com)
-// *HWP Consumed by     : SSBE, TSBE
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
+// *HWP FW Maintainer   : Andrew Singer (andrew.singer@ibm.com)
 //------------------------------------------------------------------------------
 
-#include "ody_lbist.H"
-#include "poz_perv_common_params.H"
-#include "poz_bist.H"
+#include "poz_perv_mod_bist.H"
+#include "poz_perv_mod_chiplet_clocking.H"
+#include <p11_scom_perv.H>
 
+SCOMT_PERV_USE_BIST;
+SCOMT_PERV_USE_CLK_REGION;
+SCOMT_PERV_USE_CPLT_CTRL0;
+SCOMT_PERV_USE_CPLT_CTRL4;
+SCOMT_PERV_USE_CPLT_CTRL1;
+SCOMT_PERV_USE_OPCG_REG0;
+SCOMT_PERV_USE_OPCG_REG1;
+SCOMT_PERV_USE_CPLT_STAT0;
+SCOMT_PERV_USE_SCAN_REGION_TYPE;
+SCOMT_PERV_USE_CLOCK_STAT_SL;
+SCOMT_PERV_USE_CLOCK_STAT_NSL;
+SCOMT_PERV_USE_CLOCK_STAT_ARY;
+SCOMT_PERV_USE_SYNC_CONFIG;
 
 using namespace fapi2;
+using namespace scomt::perv;
 
-enum ODY_LBIST_Private_Constants
+
+enum POZ_PERV_MOD_BIST_Private_Constants
 {
 };
 
-ReturnCode ody_lbist(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
+
+ReturnCode mod_bist_poll(const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > &i_target)
 {
-    // bist_params i_params = TODO add me once bist_params is enabled
-    // FAPI_TRY(poz_bist(i_target /*, i_params*/));
-    FAPI_DBG("ody_lbist not yet implemented; check back later");
+    FAPI_TRY(mod_abist_poll(i_target));
 
 fapi_try_exit:
+    FAPI_INF("Exiting ...");
+    return current_err;
+}
+
+
+ReturnCode mod_bist_reg_cleanup(
+    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
+    bool i_clear_sram_abist_mode)
+{
+    FAPI_TRY(mod_abist_cleanup(i_target, i_clear_sram_abist_mode));
+
+fapi_try_exit:
+    FAPI_INF("Exiting ...");
     return current_err;
 }
