@@ -45,15 +45,17 @@ namespace fapi2
          */
         sbe_target_service()
         {
-            iv_targetCnt = getTargetCount(); 
+            iv_targetTypesCnt = getTargetTypesCount();
         }
+
         std::vector<fapi2::plat_target_sbe_handle> iv_targets;
         ///
         /// @brief Function to print the G_targets vector
         ///
         void plat_PrintTargets()
         {
-            for(uint32_t i = 0; i < iv_targetCnt; i++)
+            uint32_t targetCnt = plat_getTargeCount();
+            for(uint32_t i = 0; i < targetCnt; i++)
             {
                 SBE_INFO("sbe_target_service 0x%08X", iv_targets[i].iv_value());
             }
@@ -69,7 +71,7 @@ namespace fapi2
             SBE_INFO("sbe_target_service plat_TargetsInit()");
 
             targetInfo_t * targetMap = getTargetMap();
-            for(uint32_t i = 0; i < iv_targetCnt; i++)
+            for(uint32_t i = 0; i < iv_targetTypesCnt; i++)
             {
                 SBE_DEBUG("target count is 0x%08X", (uint32_t)targetMap[i].targetCnt);
                 for(uint32_t j = 0; j < targetMap[i].targetCnt; j++)
@@ -88,20 +90,21 @@ namespace fapi2
         }
 
         ///
-        /// @brief Fuction to set the target count.
-        ///
-        void plat_setTargeCount(uint32_t count)
-        {
-            iv_targetCnt = count;
-        }
-
-        ///
         /// @brief Fuction to get the target count.
         ///
         /// @return number of target.
         uint32_t plat_getTargeCount()
         {
-            return iv_targetCnt;
+            uint32_t targetCnt = 0;
+            targetInfo_t * targetMap = getTargetMap();
+            for(uint32_t i = 0; i < iv_targetTypesCnt; i++)
+            {
+                for(uint32_t j = 0; j < targetMap[i].targetCnt; j++)
+                {
+                    ++targetCnt;
+                }
+            }
+            return targetCnt;
         }
 
         ///
@@ -122,7 +125,7 @@ namespace fapi2
             }
             else
             {
-                 for (uint32_t i = 1; i < iv_targetCnt; i++)
+                 for (uint32_t i = 1; i < iv_targetTypesCnt; i++)
                  {
                      plat_target_sbe_handle l_target = iv_targets[i];
                      if ((l_target.getTargetType() == i_child_type) &&
@@ -212,7 +215,7 @@ namespace fapi2
         {
             const fapi2::buffer<__underlying_type(TargetFilter)> l_filter = i_filter;
             targetInfo_t * targetMap = getTargetMap();
-            for(uint32_t i = 0; i < iv_targetCnt; i++)
+            for(uint32_t i = 0; i < iv_targetTypesCnt; i++)
             {
                 if(targetMap[i].isPervType)
                 {
@@ -230,7 +233,7 @@ namespace fapi2
             }
 
         }
-        uint32_t iv_targetCnt;
+        uint32_t iv_targetTypesCnt;
     };
 }
 #endif
