@@ -48,14 +48,15 @@ namespace fapi2
     }targetInfo_t;
 
     targetInfo_t * getTargetMap();
-    uint32_t getTargetCount();
+    uint32_t getTargetTypesCount();
     typedef enum plat_target_type
     {
         PPE_TARGET_TYPE_NONE           = 0x00,
         PPE_TARGET_TYPE_PROC_CHIP      = 0x01,
         PPE_TARGET_TYPE_PERV           = 0x06,
-        PPE_TARGET_TYPE_MC             = 0x0B,
+        PPE_TARGET_TYPE_MEMPORT        = 0x07,
         PPE_TARGET_TYPE_SYSTEM         = 0x08,
+        PPE_TARGET_TYPE_MC             = 0x0B,
     } plat_target_type_t;
 
     // TODO: Merge _PLAT_TARGET_TYPE_TRAITS with struct plat_target_type.
@@ -159,9 +160,6 @@ namespace fapi2
                 return static_cast<uint8_t>(iv_value.getBits<0,8>());
             }
 
-        uint8_t getTargetInstance() const
-            { return 0; }
-
             ///
             /// @brief Get the plat target type
             /// @param[in] i_value for target number to set
@@ -185,7 +183,7 @@ namespace fapi2
                 uint8_t chipletNum = getChipletNumber();
 
                 // Get the target Count.
-                uint32_t targetCount = getTargetCount();
+                uint32_t targetCount = getTargetTypesCount();
 
                 // Get the chiplet offset based on target type from target Map.
                 targetInfo_t * targetMap = getTargetMap();

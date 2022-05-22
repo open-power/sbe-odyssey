@@ -40,17 +40,18 @@ namespace fapi2
      {
          {0x0, PPE_TARGET_TYPE_PROC_CHIP, 0, 1},
          {0x1, PPE_TARGET_TYPE_PERV, 1, 1},
-         {0xC, PPE_TARGET_TYPE_MC, 1, 1}
+         {0xC, PPE_TARGET_TYPE_MC, 1, 1},
+         {0xD, PPE_TARGET_TYPE_MEMPORT, 0, 2}
      };
 
      targetInfo_t * getTargetMap()
      {
          return odyTargetMap;
      }
-     uint32_t targetCount = sizeof(odyTargetMap) / sizeof(odyTargetMap[0]);
+     uint32_t targetTypesCount = sizeof(odyTargetMap) / sizeof(odyTargetMap[0]);
 
-     uint32_t getTargetCount()
+     uint32_t getTargetTypesCount()
      {
-         return targetCount;
+         return targetTypesCount;
      }
 }

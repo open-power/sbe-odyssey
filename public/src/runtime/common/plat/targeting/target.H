@@ -59,6 +59,12 @@ namespace fapi2
         return PPE_TARGET_TYPE_PERV;
     }
 
+    template<>
+    constexpr plat_target_type_t fapiTargetTypeToPlatTargetType<TARGET_TYPE_MEM_PORT>()
+    {
+        return PPE_TARGET_TYPE_MEMPORT;
+    }
+
     template<TargetType K, MulticastType M, typename V>
     static constexpr void plat_apply_target_limits(void)
     {}
