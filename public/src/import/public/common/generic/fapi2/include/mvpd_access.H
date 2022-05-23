@@ -60,7 +60,7 @@ namespace fapi2
 ///
 ReturnCode getMvpdField(const MvpdRecord i_record,
                         const MvpdKeyword i_keyword,
-                        const Target<TARGET_TYPE_PROC_CHIP>& i_target,
+                        const Target<TARGET_TYPE_COMPUTE_CHIP>& i_target,
                         uint8_t* const i_pBuffer,
                         uint32_t& io_fieldSize);
 
