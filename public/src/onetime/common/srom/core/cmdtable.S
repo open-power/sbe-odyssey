@@ -85,8 +85,9 @@ edr   other big data
 #define COMMAND_TABLE_EXEC  2
 
 // Pak structure related macros
-#define PAK_MAGIC_START         0x50414B21
-#define PAK_MAGIC_END           0x2F50414B
+#define PAK_MAGIC_START         0x50414B21  // PAK!
+#define PAK_MAGIC_PAD           0x50414B50  // PAKP
+#define PAK_MAGIC_END           0x2F50414B  // /PAK
 #define PAK_CORE_HE_SIZE_OFFSET 0x06
 #define PAK_EXT_METHOD_OFFSET   0x09
 #define PAK_EXT_N_SIZE_OFFSET   0x0A
@@ -247,10 +248,19 @@ return_empty_file:
         blr
 1:
         _liw    %r6, PAK_MAGIC_START    # Load start magic value
-        cmpwbeq %r5, %r6, 1f
-        panic   BOOT_RC_INVALID_PAK_MAGIC
+        cmpwbeq %r5, %r6, process_file_entry
 
-1:
+        _liw    %r6, PAK_MAGIC_PAD      # Not a file, check for padding
+        cmpwbeq %r5, %r6, skip_padding
+        panic   BOOT_RC_INVALID_PAK_MAGIC  # None of the above - panic
+
+skip_padding:
+        lwz     %r5, 4(r4)              # Load amount of bytes to skip and advance the read pointer
+        addi    %r4, %r4, 8
+        add     %r4, %r4, %r5
+        b       check_magic
+
+process_file_entry:
         lhz     %r5, PAK_CORE_HE_SIZE_OFFSET(%r4)
         lwz     %r6, PAK_EXT_P_SIZE_OFFSET(%r4)
         lhz     %r7, PAK_EXT_N_SIZE_OFFSET(%r4)
