@@ -31,6 +31,7 @@
 
 
 static const uint32_t PAK_START = 0x50414B21; // PAK!
+static const uint32_t PAK_PAD = 0x50414B50; // PAKP
 static const uint32_t PAK_END = 0x2F50414B; // /PAK
 static const uint16_t PAK_VERSION = 1;
 static const uint8_t PAK_METHOD_STORE = 1;
@@ -56,6 +57,10 @@ struct PakFileHeaderCore
             uint16_t iv_version; //4
             uint16_t iv_hesize;  //6   Size of extended header
         };
+
+        // If it's a padding header the next 4 bytes indicate the amount of bytes to
+        // skip after the core header.
+        uint32_t iv_padsize;  // Size of padding (not including core header)
     };
 } __attribute__((packed));
 static_assert(sizeof(PakFileHeaderCore) == 8, "PakFileHeaderCore defined incorrectly, must be 8 bytes");
@@ -273,6 +278,12 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
                 o_ptr = ptr + 8;
                 return ARC_OPERATION_SUCCESSFUL;
             }
+        }
+
+        if (hdrc.h.iv_magic == PAK_PAD)
+        {
+            ptr += hdrc.h.iv_padsize + 8;
+            continue;
         }
 
         if (hdrc.h.iv_magic != PAK_START)
