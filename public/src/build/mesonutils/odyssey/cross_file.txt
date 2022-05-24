@@ -28,6 +28,7 @@ odyssey_runtime_inc_paths = [
         ]
 
 odyssey_hwp_inc_paths = [
+    '/hwp/odyssey/perv'
         ]
 
 odyssey_srom_inc_paths = [

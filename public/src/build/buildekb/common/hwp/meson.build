@@ -24,7 +24,11 @@
 # IBM_PROLOG_END_TAG
 import_generic_dir_path = pub_import_dir_path + '/hwp/generic/perv/'
 
-generic_infile_c = []
+generic_infile_c = [
+                    'poz_perv_utils.C',
+                    'poz_perv_mod_chiplet_clocking.C',
+                    'poz_perv_mod_misc.C',
+                    ]
 
 #Create abs path for input files before creating .o
 abs_generic_infiles_c_path = []
@@ -37,28 +41,24 @@ endforeach
 
 lib_ekb_cmn_file_name = 'ekbcmnhwp'
 
-#TODO: This if condition is temporary to go ahead with the build process
-# when no hwp files are mentioned
-if ( abs_generic_infiles_c_path.length() != 0 )
-    generic_hwp_obj_file_c = obj_gen_cpp_hwp.process(abs_generic_infiles_c_path,
-                                            extra_args:[
-                                                        odyssey_runtime_abs_inc_paths,
-                                                        runtime_cmn_abs_inc_paths,
-                                                        odyssey_cmn_abs_inc_paths,
-                                                        ekb_hwp_abs_inc_paths])
-    infile  = [generic_hwp_obj_file_c]
+generic_hwp_obj_file_c = obj_gen_cpp_hwp.process(abs_generic_infiles_c_path,
+                                        extra_args:[
+                                                    odyssey_runtime_abs_inc_paths,
+                                                    runtime_cmn_abs_inc_paths,
+                                                    odyssey_cmn_abs_inc_paths,
+                                                    ekb_hwp_abs_inc_paths])
+infile  = [generic_hwp_obj_file_c]
 
-    libekbcmnhwp = custom_target( lib_ekb_cmn_file_name,
-                                     output : 'lib' + lib_ekb_cmn_file_name,
-                                     input : infile,
-                                     command : [ ar,
-                                                 'crs',
-                                                 '@OUTPUT@'+'.a',
-                                                 '@INPUT@'],
-                                     build_by_default: true,
-                                 )
+libekbcmnhwp = custom_target( lib_ekb_cmn_file_name,
+                                    output : 'lib' + lib_ekb_cmn_file_name,
+                                    input : infile,
+                                    command : [ ar,
+                                                'crs',
+                                                '@OUTPUT@'+'.a',
+                                                '@INPUT@'],
+                                    build_by_default: true,
+                                )
 
-    ekb_cmn_hwp_libs = '-l' + lib_ekb_cmn_file_name
-    ekb_cmn_hwp_lib_paths = '-L' + meson.current_build_dir()
-    ekb_cmn_hwp_dep_libs = libekbcmnhwp
-endif
+ekb_cmn_hwp_libs = '-l' + lib_ekb_cmn_file_name
+ekb_cmn_hwp_lib_paths = '-L' + meson.current_build_dir()
+ekb_cmn_hwp_dep_libs = libekbcmnhwp

@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +24,10 @@
 # IBM_PROLOG_END_TAG
 import_generic_xml_dir_base_path = pub_import_dir_path + '/hwp/generic/xml/error_info/'
 
-common_error_xml_files = []
+common_error_xml_files = [
+                          'poz_perv_mod_chiplet_clocking_errors.xml',
+                          'poz_perv_mod_misc_errors.xml',
+                        ]
 
 #Create abs path for input xml files
 common_abs_error_xml_files = []
