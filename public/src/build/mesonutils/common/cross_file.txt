@@ -93,6 +93,7 @@ ekb_cmn_inc_path = [
     '/common/generic/ppe/include/std',
     '/common/generic/fapi2/include',
     '/common/generic/fapi2/include/plat',
+    '/common/odyssey/fapi2/include',
     '/common/utils/imageProcs',
     '/emb/p11/kernels/ppe/baselib',
     '/emb/p11/kernels/ppe/boltonlib',
