@@ -138,13 +138,14 @@ namespace fapi2
     /// children
     /// @warning The children are returned in order, ex child[0] is
     /// std::vector[0]
-    template<TargetType TARGET_TYPE_PROC_CHIP, MulticastType M, typename V> // Parent target type
+    template<TargetType K, MulticastType M, typename V> // Parent target type
     template<TargetType T>          // Child target type
     std::vector<Target<T, M, V>>
-    Target<TARGET_TYPE_PROC_CHIP, M, V>::getChildren(const TargetState i_state) const
+    Target<K, M, V>::getChildren(const TargetState i_state) const
     {
-        SBE_INFO("getChildren without filter");
+        constexpr TargetType K_NO_MCAST = K & ~TARGET_TYPE_MULTICAST;
         constexpr plat_target_type_t P = fapiTargetTypeToPlatTargetType<T>();
+
         const bool l_include_nonfunctional = i_state == TARGET_STATE_PRESENT;
 
         check_getChildren<T>();
@@ -155,9 +156,19 @@ namespace fapi2
         // Using the same kind of "dispatcher" approach as getParent()
         std::vector<Target<T, M, V> > l_children;
         auto &l_cast_children = reinterpret_cast<std::vector<plat_target_sbe_handle>&>(l_children);
+
+        if ((K & TARGET_TYPE_MULTICAST) && (T == K_NO_MCAST))
+        {
+            plat_target_sbe_handle parent = *this;
+            g_platTarget->getMulticastChildren(parent, l_include_nonfunctional, l_cast_children);
+            return l_children;
+        }
+
+        // TODO: check whether K == Proc and T == supported proc children
         g_platTarget->getProcChildren(P, l_include_nonfunctional, l_cast_children);
         return l_children;
     }
+
     /// @brief Specialization of getChildren, filtered for the chip target
     /// @tparam K The type of parent
     /// @tparam V The plat target handle type

@@ -29,6 +29,7 @@
 #include <return_code.H>
 #include <plat_target_sbe.H>
 #include <target_filters.H>
+#include <hw_access.H>
 // TODO: Need to remove dependency on odyssey files in common space.
 //       Same fix need in cross_file.txt also.
 #include <ody_target_filters.H>
@@ -159,6 +160,66 @@ namespace fapi2
             // target vector (indexed by chiplet number)
             getPervChildren(i_filter, i_include_nonfunctional, o_children);
         }
+
+        ///
+        /// @brief Break a multicast target up into unicast targets
+        ///
+        /// @param [in] i_include_nonfunctional Return also targets that are not functional
+        /// @param [out] o_children             A vector of child target handles
+        ///
+
+        //template <plat_target_type_t K>
+        void getMulticastChildren(const plat_target_sbe_handle i_parent,
+                                  const bool i_include_nonfunctional,
+                                  std::vector<plat_target_sbe_handle> &o_children)
+        {
+            if (!i_parent.getIsMulticast())
+            {
+                // Trivial case where we're already a unicast target of the requested type - return just this target
+                o_children.push_back(i_parent);
+            }
+
+            // TODO: Test this path
+            // If a real multicast target, loop over all targets in the chip
+            // but filter for multicast group members.
+            fapi2::buffer<uint64_t> l_enabledTargets;
+            //uint64_t l_enabledTargets;
+            Target<TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_BITX> l_tmpTarget(i_parent);
+            //getscom_abs(((i_parent & 0x7F00FFC0) | (0xF0001 & 0x00FFFFFF) ), &l_enabledTargets);
+            getScom(l_tmpTarget, 0xF0001, l_enabledTargets);
+
+            if ((i_parent.getTargetType() == PPE_TARGET_TYPE_PERV) || (i_parent.getTargetType() == PPE_TARGET_TYPE_MC) )
+            {
+                // Non-core (i.e. chiplet) target -> loop over all PERV targets, match chiplet ID
+                loopTargetsByChiplet(l_enabledTargets, i_include_nonfunctional, o_children);
+            }
+            return;
+        }
+
+        // TODO - Add Brief
+        void loopTargetsByChiplet(const buffer<uint64_t> &i_enabled,
+                                         const bool i_include_nonfunctional,
+                                         std::vector<plat_target_sbe_handle> &o_children)
+        {
+            targetInfo_t * targetMap = getTargetMap();
+            for(uint32_t i = 0; i < iv_targetTypesCnt; i++)
+            {
+                if(targetMap[i].isPervType)
+                {
+                    for(uint32_t j = 0; j < targetMap[i].targetCnt; j++)
+                    {
+                        plat_target_sbe_handle l_target = iv_targets[i + j];
+                        uint8_t chipletId = l_target.getChipletNumber();
+                        if((i_enabled.getBit(chipletId)) &&
+                           (i_include_nonfunctional || l_target.getFunctional()))
+                        {
+                            o_children.push_back(l_target);
+                        }
+                    }
+                }
+            }
+        }
+
 
         ///
         /// @brief Function to get the proc chip target initialize the G_targets vector
