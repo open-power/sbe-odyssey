@@ -64,7 +64,7 @@ mkdir -p ${SPPE_MESON_IMAGE_DIR_PATH}/rt
 $PAK_TOOL_PATH hash ${SPPE_MESON_IMAGE_DIR_PATH}/${SPPE_BASE_IMAGE_NAME}.pak ${SPPE_MESON_IMAGE_DIR_PATH}/rt/hash.list
 
 #Sign the Hash List
-$SBE_SIGN_TOOL -s ${SPPE_MESON_IMAGE_DIR_PATH}/scratch -i ${SPPE_MESON_IMAGE_DIR_PATH}/rt/hash.list -o ${SPPE_MESON_IMAGE_DIR_PATH}/rt/secure.hdr -c BOOT_LDR
+$SBE_SIGN_TOOL -s ${SPPE_MESON_IMAGE_DIR_PATH}/scratch -i ${SPPE_MESON_IMAGE_DIR_PATH}/rt/hash.list -o ${SPPE_MESON_IMAGE_DIR_PATH}/rt/ -c RUN_TIME
 
 #Change dir into meson image dir path(builddir where output images are stored)
 #and then add the files into pak so that we dont endup adding the complete file

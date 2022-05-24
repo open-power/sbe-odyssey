@@ -251,19 +251,32 @@ mkdir -p ${SCRATCH_DIR}
 
 printf "\nSign Hash List\n"
 
-#TODO:Add --validate flag once v2 signing server is ready
 # Sign the Hash List
 CMD="$SIGNING_DIR/crtSignedContainer.sh --scratchDir ${SCRATCH_DIR} $SIGNTOOL_ARGS \
     --sign-project-FW-token ${COMPONENT_ID} --protectedPayload ${HASH_LIST} \
-    --contrHdrOut $SECURE_HDR_PATH \
-    --security-version $SV -V 2"
+    --contrHdrOut ${SECURE_HDR_PATH}/secure.hdr \
+    --security-version $SV --validate -V 2"
 echo "Sign Hash List : $CMD"
 $CMD
 
-#Lets delete the scratch dir
-rm -rf $SCRATCH_DIR
-
 echo "Hash List Signed Successfully"
 echo " "
+
+#Generate Runtime image HW keys hash and MSV
+if [ "$COMPONENT_ID" = "RUN_TIME" ]; then
+    #Hash of the HW keys. Fetch the value from any of the secure container which is created.
+    #We need to filter out the HW keys from the print container output and convert the output to .bin format
+    echo "Fetch Hash of HW keys A and D..."
+    print-container -w0 --imagefile ${SECURE_HDR_PATH}/secure.hdr | grep -A1 "HW keys hash" | grep "           " | head -1 | tr -d " " | tr -d "\n" | xxd -r -p > ${SECURE_HDR_PATH}/hwkeyshash.bin
+
+    echo "Appending Runtime Image MSV into hwkeyshash.bin ..."
+    echo " "
+    SB_SV=`printf %02x $SV`
+    SB_SV="\x${SB_SV}"
+    echo -n -e $SB_SV >> ${SECURE_HDR_PATH}/hwkeyshash.bin
+fi
+
+#Lets delete the scratch dir
+rm -rf $SCRATCH_DIR
 
 exit 0
