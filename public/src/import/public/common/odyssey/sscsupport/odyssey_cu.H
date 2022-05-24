@@ -41,6 +41,14 @@
 extern "C"
 {
 
+// DEBUG_PRINT flag can be enabled in odyssey_scom/scan_xlate.mk
+// to enable debug print for odyssey's clock, scom, scan code.
+#if DEBUG_PRINT
+#define dbg_print printf
+#else
+#define dbg_print(...) /**/
+#endif
+
     /// ODYSSEY chip unit type enumeration
     typedef enum
     {

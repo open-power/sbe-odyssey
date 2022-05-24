@@ -22,16 +22,14 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-///
-/// @file odyssey_clockcntl.H
+//------------------------------------------------------------------------------
+/// @file  odyssey_clockcntl.H
 /// @brief Clock control procedure used by Cronus, used in the product
 ///        code and Flex, also user defined dll
-///
-/// HWP HW Maintainer: Thi Tran <thi@us.ibm.com>
-/// HWP FW Maintainer:
-/// HWP Consumed by: CRONUS
-///
-
+//------------------------------------------------------------------------------
+// *HWP HW Maintainer   : Thi Tran (thi@us.ibm.com)
+// *HWP FW Maintainer   : n/a
+//------------------------------------------------------------------------------
 #ifndef ODYSSEY_CLOCKCNTL_H
 #define ODYSSEY_CLOCKCNTL_H
 
@@ -42,8 +40,86 @@
 #include <ClockDomains.H>
 #include <OdysseyClockDomains.H>
 #include <odyssey_cu.H>
+#include <odyssey_scom_addr.H>
 
 extern "C" {
+
+    /// Constants
+    const uint32_t NUM_CHIPLET_IDS      =    9;  // Num of chiplet IDs
+    const uint8_t  ALL_GOOD_ID          = 0xFF;  // RingID that marks default clock domains
+
+    // #################################################################
+    // Chiplet vital domain array
+    // Each entry defines the Vital clock domain name for the Chiplet ID index
+    // For non-existing Chiplet ID, entry is ODYSSEY_FAKE_DOMAIN
+    // #################################################################
+    const CLOCK_DOMAIN ChipletVitalDomainTable[NUM_CHIPLET_IDS] =
+    {
+        ODYSSEY_STANDBY_DOMAIN,           // Chiplet 0, Standby/CFAM
+        ODYSSEY_TPVITL_DOMAIN,            // Chiplet 1, TP
+        ODYSSEY_FAKE_DOMAIN,              // Chiplet 2, invalid
+        ODYSSEY_FAKE_DOMAIN,              // Chiplet 3, invalid
+        ODYSSEY_FAKE_DOMAIN,              // Chiplet 4, invalid
+        ODYSSEY_FAKE_DOMAIN,              // Chiplet 5, invalid
+        ODYSSEY_FAKE_DOMAIN,              // Chiplet 6, invalid
+        ODYSSEY_FAKE_DOMAIN,              // Chiplet 7, invalid
+        ODYSSEY_MEMVITL_DOMAIN,           // Chiplet 8, MC
+    };
+
+    // #################################################################
+    // Chiplet SCOM ring clock domain table
+    // Clock domain look up table for all chiplets
+    // ALL_GOOD_ID is the 'common' region for the chiplet if specific
+    // region is not found.
+    // #################################################################
+    struct ChipletRingClockDomain_t
+    {
+        const uint8_t       chipletId; // ChipletId
+        const uint8_t       ringId;    // RingId
+        const CLOCK_DOMAIN  domain;    // Domain
+    };
+
+    const ChipletRingClockDomain_t ChipletRingClockDomainTable[] =
+    {
+        //      Chiplet            RingID                 Clock domain
+        //      -------        --------------       -----------------------------
+        {  PIB_CHIPLET_ID,     ALL_GOOD_ID,         ODYSSEY_STANDBY_DOMAIN            }, // Standby/CFAM
+
+        {  PERV_CHIPLET_ID,    PSCOM_RING_ID,       ODYSSEY_TPVITL_DOMAIN             }, // TP
+        {  PERV_CHIPLET_ID,    ALL_GOOD_ID,         ODYSSEY_TPSBEPIBNET_DOMAIN        }, // TP
+
+        {  MEM_CHIPLET_ID,     ALL_GOOD_ID,         ODYSSEY_MEMNONVITL_DOMAIN         }, // MEM
+    };
+
+    // #################################################################
+    // Clock domain string/enum/address/mask table
+    // Look up table for Clock domain enum to determine:
+    //     - Clock enum string
+    //     - Clock enum access address
+    //     - Clock enum mask value.
+    // #################################################################
+    struct ClockDomainStrAddrMask_t
+    {
+        const char*          domainStr;        // Clock domain string
+        const CLOCK_DOMAIN   domainEnum;       // Clock domain enum
+        const uint64_t       clockAddr;        // Clock address
+        const uint64_t       clockMask;        // Clock mask
+        const uint8_t        inMulticastGroup; // Affected by multicast group [0-7]
+    };
+
+    const ClockDomainStrAddrMask_t ClockDomainStrAddrMaskTable[] =
+    {
+        { "FAKE",                 ODYSSEY_FAKE_DOMAIN,               0x0000281A, 0x0000800000000000ULL, 0x00 }, // vitl thold
+
+        { "STANDBY",              ODYSSEY_STANDBY_DOMAIN,            0x0000281A, 0x0000800000000000ULL, 0x00 },
+
+        { "TPVITL",               ODYSSEY_TPVITL_DOMAIN,             0x0000281A, 0x0000800000000000ULL, 0x00 }, // TP vitl thold
+        { "TPSBEPIBNET",          ODYSSEY_TPSBEPIBNET_DOMAIN,        0x01030008, 0x0F00000000000000ULL, 0x81 }, // TP perv/sbe/pib/net regions
+        { "TPPLLMC",              ODYSSEY_TPPLLMC_DOMAIN,            0x01030008, 0x0002000000000000ULL, 0x81 }, // TP pllmc region
+
+        { "MEMVITL",              ODYSSEY_MEMVITL_DOMAIN,            0x080F0040, 0x0000800000000000ULL, 0x00 }, // MC vitl thold
+        { "MEMNONVITL",           ODYSSEY_MEMNONVITL_DOMAIN,         0x08030008, 0x0FE0600000000000ULL, 0xC5 }, // MC perv/io/core/cfg/dfi/pub/prim regions
+    };
 
     /// @brief Determines the CLOCK_DOMAIN for a given scom address
     /// @param[in]  i_odysseyCU Enumeration of the chip unit type
