@@ -24,7 +24,13 @@
 # IBM_PROLOG_END_TAG
 import_dir_path = pub_import_dir_path + '/hwp/odyssey/perv/'
 
-infile_c = []
+infile_c = [
+            'ody_tp_arrayinit.C',
+            'ody_tp_arrayinit_cleanup.C',
+            'ody_tp_initf.C',
+            'ody_tp_startclocks.C',
+            'ody_tp_init.C',
+            ]
 
 #Create abs path for input files before creating .o
 abs_infiles_c_path = []
@@ -37,29 +43,25 @@ endforeach
 
 lib_file_name = 'odysseyhwp'
 
-#TODO: This if condition is temporary to go ahead with the build process
-# when no hwp files are mentioned
-if ( abs_infiles_c_path.length() != 0 )
-    odyssey_hwp_obj_file_c = obj_gen_cpp_hwp.process(abs_infiles_c_path,
-                                            extra_args:[
-                                                        odyssey_runtime_abs_inc_paths,
-                                                        runtime_cmn_abs_inc_paths,
-                                                        odyssey_cmn_abs_inc_paths,
-                                                        odyssey_hwp_abs_inc_paths,
-                                                        ekb_hwp_abs_inc_paths])
-    infile  = [odyssey_hwp_obj_file_c]
+odyssey_hwp_obj_file_c = obj_gen_cpp_hwp.process(abs_infiles_c_path,
+                                        extra_args:[
+                                                    odyssey_runtime_abs_inc_paths,
+                                                    runtime_cmn_abs_inc_paths,
+                                                    odyssey_cmn_abs_inc_paths,
+                                                    odyssey_hwp_abs_inc_paths,
+                                                    ekb_hwp_abs_inc_paths])
+infile  = [odyssey_hwp_obj_file_c]
 
-    libodysseyhwp = custom_target( lib_file_name,
-                                     output : 'lib' + lib_file_name,
-                                     input : infile,
-                                     command : [ ar,
-                                                 'crs',
-                                                 '@OUTPUT@'+'.a',
-                                                 '@INPUT@'],
-                                     build_by_default: true,
-                                 )
+libodysseyhwp = custom_target( lib_file_name,
+                                    output : 'lib' + lib_file_name,
+                                    input : infile,
+                                    command : [ ar,
+                                                'crs',
+                                                '@OUTPUT@'+'.a',
+                                                '@INPUT@'],
+                                    build_by_default: true,
+                                )
 
-    odyssey_hwp_libs = '-l' + lib_file_name
-    odyssey_hwp_lib_paths = '-L' + meson.current_build_dir()
-    odyssey_hwp_dep_libs = libodysseyhwp
-endif
+odyssey_hwp_libs = '-l' + lib_file_name
+odyssey_hwp_lib_paths = '-L' + meson.current_build_dir()
+odyssey_hwp_dep_libs = libodysseyhwp
