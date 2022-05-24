@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/common/odyssey/sscsupport/OdysseyClockDomains.H $ */
+/* $Source: public/src/import/public/common/odyssey/sscsupport/CronusData.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -22,31 +22,13 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-///
-/// @file OdysseyClockDomains.H
-/// @brief Clock domain definitions
-///
-/// HWP HW Maintainer: Thi Tran <thi@us.ibm.com>
-/// HWP FW Maintainer: n/a
-///
-
-#ifndef _ODYSSEYCLOCKDOMAINS_H
-#define _ODYSSEYCLOCKDOMAINS_H
-
-// Due to Cronus legacy, we need to start at CLOCK_DOMAIN_32
-#define ODYSSEY_FAKE_DOMAIN                      CLOCK_DOMAIN_32  // Fake domain placeholder
-#define ODYSSEY_FAKE_DOMAIN_MASK                 0x00000000
-
-// Standby
-#define ODYSSEY_STANDBY_DOMAIN                   CLOCK_DOMAIN_33  // Standby/CFAM
-
-// TP chiplet
-#define ODYSSEY_TPVITL_DOMAIN                    CLOCK_DOMAIN_34  // TP VITL
-#define ODYSSEY_TPSBEPIBNET_DOMAIN               CLOCK_DOMAIN_35  // TP PERV + SBE + PIB + NET
-#define ODYSSEY_TPPLLMC_DOMAIN                   CLOCK_DOMAIN_36  // TP PLL
-
-// MEM chiplet
-#define ODYSSEY_MEMVITL_DOMAIN                   CLOCK_DOMAIN_37  // MC VITL
-#define ODYSSEY_MEMNONVITL_DOMAIN                CLOCK_DOMAIN_38  // MC PERV + IO + CORE + CFG + DFI + PUB[01] + PRIM[01]
-
-#endif
+//------------------------------------------------------------------------------
+/// @file CronusData.H
+/// @brief Empty file created in order to be able to build Clock control
+///        code in EKB for testing with Cronus
+///        <chip>_clockcntl.C includes this file, which has meaning
+///        on the Cronus platform
+//------------------------------------------------------------------------------
+// *HWP HW Maintainer   : Thi Tran (thi@us.ibm.com)
+// *HWP FW Maintainer   : n/a
+//------------------------------------------------------------------------------

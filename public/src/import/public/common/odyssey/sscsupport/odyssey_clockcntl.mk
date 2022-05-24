@@ -23,4 +23,6 @@
 #
 # IBM_PROLOG_END_TAG
 PROCEDURE=odyssey_clockcntl
+# To enable debug print
+#lib$(PROCEDURE)_COMMONFLAGS += -DDEBUG_PRINT
 $(call BUILD_PROCEDURE)
