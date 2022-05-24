@@ -180,11 +180,10 @@ namespace fapi2
 
         static_assert(sizeof(Target<T, M, V>) == sizeof(plat_target_sbe_handle),
                   "Sizes of plat target and FAPI target must match");
-#if 0
-        static_assert(K == TARGET_TYPE_PROC_CHIP,
-                  "Parent target must be the proc chip");
-#endif
-        static_assert((T & ~TARGET_TYPE_PROC_CHILDREN) == 0,
+        static_assert((K & TARGET_TYPE_CHIPS) != 0,
+                  "Parent target must be the chip");
+        // TODO: we have to put SBE-Image specific chiplet list
+        static_assert((T & ~TARGET_TYPE_CHIPLETS) == 0,
                   "Child target type must be a pervasive chiplet");
 
         std::vector<Target<T, M, V> > l_children;

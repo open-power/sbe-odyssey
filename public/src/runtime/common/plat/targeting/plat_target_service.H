@@ -29,6 +29,9 @@
 #include <return_code.H>
 #include <plat_target_sbe.H>
 #include <target_filters.H>
+// TODO: Need to remove dependency on odyssey files in common space.
+//       Same fix need in cross_file.txt also.
+#include <ody_target_filters.H>
 
 namespace fapi2
 {
@@ -214,6 +217,17 @@ namespace fapi2
                              bool i_include_isFilter = false) const
         {
             const fapi2::buffer<__underlying_type(TargetFilter)> l_filter = i_filter;
+
+            uint64_t l_chiplet_mask = 0;
+            for (auto def : ody::TARGET_FILTERS)
+            {
+                if (l_filter & def.filter)
+                {
+                    l_chiplet_mask |= def.chiplets;
+                }
+            }
+
+            const fapi2::buffer<__underlying_type(TargetFilter)> filter = l_chiplet_mask;
             targetInfo_t * targetMap = getTargetMap();
             for(uint32_t i = 0; i < iv_targetTypesCnt; i++)
             {
@@ -222,9 +236,9 @@ namespace fapi2
                     for(uint32_t j = 0; j < targetMap[i].targetCnt; j++)
                     {
                         plat_target_sbe_handle l_target = iv_targets[i + j];
-                        SBE_INFO("sbe_target_service Target is 0x%08X", uint32_t(l_target));
-                        if(((i_include_isFilter || l_filter.getBit(i)) &&
-                             i_include_nonfunctional) || l_target.getFunctional())
+                        uint8_t chipletId = l_target.getChipletNumber();
+                        if((i_include_isFilter || filter.getBit(chipletId)) &&
+                           (i_include_nonfunctional || l_target.getFunctional()))
                         {
                             o_children.push_back(l_target);
                         }
