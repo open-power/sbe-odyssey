@@ -45,4 +45,16 @@
     <name>ATTR_CHIP_UNIT_POS</name>
     <virtual/>
   </entry>
+  <entry>
+    <name>ATTR_HOTPLUG</name>
+    <value>0x0</value>
+  </entry>
+  <entry>
+    <name>ATTR_PG</name>
+    <value>0xFFFFFFFF</value>
+  </entry>
+  <entry>
+    <name>ATTR_CLOCKSTOP_ON_XSTOP</name>
+    <value>0x00</value>
+  </entry>
 </entries>

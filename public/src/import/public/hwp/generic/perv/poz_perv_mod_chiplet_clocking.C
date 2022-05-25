@@ -321,8 +321,12 @@ static ReturnCode check_clock_status(
         clock_stat_expect = clock_regions64;
     }
 
-    FAPI_DBG("CLOCK_STAT expect : %#018lX", clock_stat_expect);
-    FAPI_DBG("CLOCK_STAT getscom value : %#018lX", clock_stat_getscom_value);
+    FAPI_DBG("CLOCK_STAT expect : 0x%08X%08X",
+             (clock_stat_expect >> 32) & 0xFFFFFFFF,
+             clock_stat_expect & 0xFFFFFFFF);
+    FAPI_DBG("CLOCK_STAT getscom value : 0x%08X%08X",
+             (clock_stat_getscom_value >> 32) & 0xFFFFFFFF,
+             clock_stat_getscom_value & 0xFFFFFFFF);
 
     FAPI_ASSERT(((clock_regions64 & clock_stat_getscom_value) == clock_stat_expect),
                 fapi2::THOLD_ERR()
@@ -415,9 +419,10 @@ ReturnCode mod_start_stop_clocks(
     FAPI_TRY(poll_opcg_done(i_target, NS_DELAY, SIM_CYCLE_DELAY, CPLT_OPCG_DONE_DC_POLL_COUNT));
 
     for(auto check_type :
-        {
-            CLOCK_TYPE_SL, CLOCK_TYPE_NSL, CLOCK_TYPE_ARY
-        } )
+        (uint32_t[])
+{
+    CLOCK_TYPE_SL, CLOCK_TYPE_NSL, CLOCK_TYPE_ARY
+})
     {
         FAPI_TRY(check_clock_status(i_target, i_clock_regions, i_clock_types & check_type, i_start_not_stop));
     }

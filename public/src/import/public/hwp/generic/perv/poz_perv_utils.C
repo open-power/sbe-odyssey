@@ -52,8 +52,9 @@ ReturnCode get_hotplug_mc_group(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     MulticastGroup& o_mcgroup)
 {
+    Target<TARGET_TYPE_SYSTEM> l_system_target;
     buffer<uint8_t> l_attr_hotplug;
-    FAPI_TRY(FAPI_ATTR_GET(ATTR_HOTPLUG, i_target, l_attr_hotplug),
+    FAPI_TRY(FAPI_ATTR_GET(ATTR_HOTPLUG, l_system_target, l_attr_hotplug),
              "Error from FAPI_ATTR_GET (ATTR_HOTPLUG)");
 
     if (l_attr_hotplug)
