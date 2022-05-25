@@ -31,7 +31,7 @@
 set -e
 
 TOOL_VERSION=1
-BASE_CMD="meson"
+BASE_CMD="$HOME/.local/bin/meson"
 MESON_BUILD_DIR="$SBEROOT/builddir"
 MESON_INSTALL_DIR="$SBEROOT/images"
 CMN_MESON_CROSS_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/common/cross_file.txt"
