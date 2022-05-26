@@ -30,7 +30,7 @@ enum pll_lock_bits
 {
     ALL_PLLS            = 0xFF,
 
-    P11T_PERV_DPLLNEST  = 0x80,
+    P11T_PERV_DPLLNEST  = 0x20,
 
     P11S_PERV_PLLCLKSW1 = 0x80,
     P11S_PERV_PLLCLKSW2 = 0x40,
