@@ -36,7 +36,6 @@ ReturnCode istepNoOp( voidfuncptr_t i_hwp)
     return FAPI2_RC_SUCCESS ;
 }
 
-
 static istepMap_t g_istep1PtrTbl[] =
          {
              ISTEP_MAP( NULL, NULL ),

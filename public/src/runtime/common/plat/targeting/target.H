@@ -37,14 +37,14 @@ namespace fapi2
     template<TargetType T>
     constexpr plat_target_type_t fapiTargetTypeToPlatTargetType()
     {
-        static_assert(T == TARGET_TYPE_PROC_CHIP, "Invalid or composite target type");
+        static_assert(T == SBE_ROOT_CHIP_TYPE, "Invalid or composite target type");
         return PPE_TARGET_TYPE_NONE;
     }
 
     template<>
-    constexpr plat_target_type_t fapiTargetTypeToPlatTargetType<TARGET_TYPE_PROC_CHIP>()
+    constexpr plat_target_type_t fapiTargetTypeToPlatTargetType<SBE_ROOT_CHIP_TYPE>()
     {
-        return PPE_TARGET_TYPE_PROC_CHIP;
+        return PPE_TARGET_TYPE_CHIP;
     }
 
     template<>
@@ -103,7 +103,7 @@ namespace fapi2
         check_getParent<T>();
 
         // Anything to PROC_CHIP
-        if (T == TARGET_TYPE_PROC_CHIP)
+        if (T == SBE_ROOT_CHIP_TYPE)
         {
             return g_platTarget->plat_getChipTarget();
         }

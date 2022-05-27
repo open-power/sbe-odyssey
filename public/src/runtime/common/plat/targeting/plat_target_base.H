@@ -52,12 +52,15 @@ namespace fapi2
     typedef enum plat_target_type
     {
         PPE_TARGET_TYPE_NONE           = 0x00,
-        PPE_TARGET_TYPE_PROC_CHIP      = 0x01,
+        PPE_TARGET_TYPE_CHIP           = 0x01,
         PPE_TARGET_TYPE_PERV           = 0x06,
         PPE_TARGET_TYPE_MEMPORT        = 0x07,
         PPE_TARGET_TYPE_SYSTEM         = 0x08,
         PPE_TARGET_TYPE_MC             = 0x0B,
     } plat_target_type_t;
+
+    // TODO: Move this to IMAGE-specific folder for odyssey
+    #define SBE_ROOT_CHIP_TYPE TARGET_TYPE_OCMB_CHIP
 
     // TODO: Merge _PLAT_TARGET_TYPE_TRAITS with struct plat_target_type.
     constexpr struct {
@@ -65,7 +68,7 @@ namespace fapi2
         unsigned int first_chiplet;
     } _PLAT_TARGET_TYPE_TRAITS[] = {
         { false, 0                   }, // PPE_TARGET_TYPE_NONE
-        { false, 0                   }, // PPE_TARGET_TYPE_PROC_CHIP
+        { false, 0                   }, // PPE_TARGET_TYPE_CHIP
         { false, 0                   }, // PPE_TARGET_TYPE_PAU
         { false, 0                   }, // PPE_TARGET_TYPE_CORE
         { true,  0x20                }, // PPE_TARGET_TYPE_EQ
@@ -264,8 +267,8 @@ namespace fapi2
                 TargetType l_targetType = TARGET_TYPE_NONE;
                 switch(getTargetType())
                 {
-                    case PPE_TARGET_TYPE_PROC_CHIP:
-                        l_targetType = TARGET_TYPE_PROC_CHIP;
+                    case PPE_TARGET_TYPE_CHIP:
+                        l_targetType = SBE_ROOT_CHIP_TYPE;
                         break;
                     case PPE_TARGET_TYPE_NONE:
                     default:

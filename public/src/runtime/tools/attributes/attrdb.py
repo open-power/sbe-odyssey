@@ -7,6 +7,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2021,2022
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,22 +34,10 @@ TargetTypeInfo = namedtuple("TargetTypeInfo", "ntargets")
 # TODO: Move this data into a file in image specific folder,
 #   and load into this tool, by passing file path as an argument.
 TARGET_TYPES = {
-    "TARGET_TYPE_PROC_CHIP": TargetTypeInfo(1),
+    "TARGET_TYPE_OCMB_CHIP": TargetTypeInfo(1),
     "TARGET_TYPE_SYSTEM": TargetTypeInfo(1),
-    "TARGET_TYPE_CORE": TargetTypeInfo(32),
-    "TARGET_TYPE_PAU": TargetTypeInfo(1),
-    "TARGET_TYPE_PERV": TargetTypeInfo(64),
-    "TARGET_TYPE_EQ": TargetTypeInfo(8),
-    "TARGET_TYPE_NMMU": TargetTypeInfo(1),
-    "TARGET_TYPE_PHB": TargetTypeInfo(1),
-    "TARGET_TYPE_PEC": TargetTypeInfo(1),
+    "TARGET_TYPE_PERV": TargetTypeInfo(2),
     "TARGET_TYPE_MC": TargetTypeInfo(1),
-    "TARGET_TYPE_MI": TargetTypeInfo(1),
-    "TARGET_TYPE_PAUC": TargetTypeInfo(1),
-    "TARGET_TYPE_IOHS": TargetTypeInfo(1),
-    "TARGET_TYPE_OCMB_CHIP": TargetTypeInfo(16),
-    "TARGET_TYPE_PMIC": TargetTypeInfo(64),
-    "TARGET_TYPE_GENERICI2CSLAVE": TargetTypeInfo(64),
 }
 
 class ParseError(Exception):

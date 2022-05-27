@@ -38,7 +38,7 @@ namespace fapi2
 
      targetInfo_t odyTargetMap[] =
      {
-         {0x0, PPE_TARGET_TYPE_PROC_CHIP, 0, 1},
+         {0x0, PPE_TARGET_TYPE_CHIP, 0, 1},
          {0x1, PPE_TARGET_TYPE_PERV, 1, 1},
          {0xC, PPE_TARGET_TYPE_MC, 1, 1},
          {0xD, PPE_TARGET_TYPE_MEMPORT, 0, 2}

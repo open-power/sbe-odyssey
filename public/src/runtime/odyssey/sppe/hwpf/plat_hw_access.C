@@ -45,7 +45,7 @@ static uint32_t getEffectiveAddress(const uint32_t *i_target, const uint32_t i_a
             reinterpret_cast<const plat_target_base_handle*>(i_target);
     switch(l_targetBase->getTargetType())
     {
-        case PPE_TARGET_TYPE_PROC_CHIP:
+        case PPE_TARGET_TYPE_CHIP:
             translatedAddr = (l_targetBase->getPIBAddress() | i_addr);
             break;
         default: //For all the chiplet types
