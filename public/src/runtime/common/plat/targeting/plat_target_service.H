@@ -161,9 +161,9 @@ namespace fapi2
         /// @brief Function to get the proc chip target initialize the G_targets vector
         /// @return proc target
         ///
-        Target<TARGET_TYPE_PROC_CHIP> plat_getChipTarget()
+        Target<SBE_ROOT_CHIP_TYPE> plat_getChipTarget()
         {
-            return ((fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP>)
+            return ((fapi2::Target<fapi2::SBE_ROOT_CHIP_TYPE>)
                                     iv_targets[0]);
         }
 

@@ -34,12 +34,12 @@ namespace fapi2
 {
 
 ReturnCode queryChipEcAndName(
-                    const Target<fapi2::TARGET_TYPE_PROC_CHIP>& i_target,
+                    const Target<fapi2::SBE_ROOT_CHIP_TYPE>& i_target,
                     fapi2::ATTR_NAME_Type& , fapi2::ATTR_EC_Type & );
 
 template<int T>
 AttributeRC queryChipEcFeature(int2Type<T> id,
-                    const Target<fapi2::TARGET_TYPE_PROC_CHIP>& i_target,
+                    const Target<fapi2::SBE_ROOT_CHIP_TYPE>& i_target,
                     uint8_t & o_hasFeature)
 {
     fapi2::ATTR_NAME_Type l_chipName;
