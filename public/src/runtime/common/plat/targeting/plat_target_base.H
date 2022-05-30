@@ -236,7 +236,7 @@ namespace fapi2
             /// @brief Get the target instance number.
             /// @return uint8 of target instance number
             ///
-            uint32_t getTargetInstance()
+            uint8_t getTargetInstance() const
             {
                 // Get the target type.
                 plat_target_type targetType = getTargetType();
