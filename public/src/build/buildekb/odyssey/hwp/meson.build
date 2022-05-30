@@ -30,6 +30,21 @@ infile_c = [
             'ody_tp_initf.C',
             'ody_tp_startclocks.C',
             'ody_tp_init.C',
+            'ody_chiplet_clk_config.C',
+            'ody_chiplet_reset.C',
+            'ody_chiplet_unused_psave.C',
+            'ody_chiplet_pll_setup.C',
+            'ody_bist_repr_initf.C',
+            'ody_abist.C',
+            'ody_lbist.C',
+            'ody_chiplet_repr_initf.C',
+            'ody_chiplet_arrayinit.C',
+            'ody_chiplet_initf.C',
+            'ody_chiplet_startclocks.C',
+            'ody_chiplet_fir_init.C',
+            'ody_chiplet_dts_init.C',
+            'ody_nest_enable_io.C',
+            'ody_ioppe_load.C',
             ]
 
 #Create abs path for input files before creating .o

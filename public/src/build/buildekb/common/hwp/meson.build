@@ -28,6 +28,13 @@ generic_infile_c = [
                     'poz_perv_utils.C',
                     'poz_perv_mod_chiplet_clocking.C',
                     'poz_perv_mod_misc.C',
+                    'poz_chiplet_clk_config.C',
+                    'poz_bist.C',
+                    'poz_chiplet_reset.C',
+                    'poz_perv_mod_bist.C',
+                    'poz_chiplet_unused_psave.C',
+                    'poz_chiplet_startclocks.C',
+                    'poz_chiplet_arrayinit.C',
                     ]
 
 #Create abs path for input files before creating .o
