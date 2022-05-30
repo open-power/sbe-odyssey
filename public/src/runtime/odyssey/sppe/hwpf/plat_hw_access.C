@@ -33,16 +33,27 @@
 #include "error_info_defs.H"
 #include "ffdc.H"
 #include <error_info.H>
+#include "plat_target_base.H"
 
 namespace fapi2
 {
 
 static uint32_t getEffectiveAddress(const uint32_t *i_target, const uint32_t i_addr)
 {
-
-    uint32_t translatedAddr = i_addr;
-    // TODO: P11SBE Porting
-    // Need target support
+    uint32_t translatedAddr = 0;
+    const plat_target_base_handle* l_targetBase =
+            reinterpret_cast<const plat_target_base_handle*>(i_target);
+    switch(l_targetBase->getTargetType())
+    {
+        case PPE_TARGET_TYPE_PROC_CHIP:
+            translatedAddr = (l_targetBase->getPIBAddress() | i_addr);
+            break;
+        default: //For all the chiplet types
+            {
+                translatedAddr = l_targetBase->getPIBAddress() | (i_addr & 0x00FFFFFF);
+                break;
+            }
+    }
 
     return translatedAddr;
 }
@@ -82,6 +93,7 @@ fapi2::ReturnCode pibRcToFapiRc(const uint32_t i_pibRc)
 
 fapi2::ReturnCode handle_scom_error(const uint32_t i_addr, uint8_t i_pibRc)
 {
+    SBE_ERROR("handle_scom_error : pibrc=0x%X, i_addr=0x%8X", i_pibRc, i_addr);
     PLAT_FAPI_ASSERT( false,
                       SBE_SCOM_FAILURE().
                       set_address(i_addr).
