@@ -274,6 +274,16 @@ namespace fapi2
                 }
                 return l_targetType;
             }
+
+            ///
+            /// @brief Return the target value with all internal bits masked away
+            /// @return return the chiplet ID which can be used to find effective scom address
+            ///
+            uint32_t getPIBAddress() const
+            {
+                return iv_value & 0x7F00FFC0;
+            }
+
             ///
             /// @brief Gets the plat target handle as a uint32
             /// @return Plat target handle as a uint32_t
