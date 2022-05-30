@@ -107,7 +107,7 @@ bool isSpiParityError()
 ReturnCode sbeExecuteIstep (const uint8_t i_major, const uint8_t i_minor)
 {
     #define SBE_FUNC "sbeExecuteIstep "
-    SBE_INFO(SBE_FUNC"Major number:0x%x minor number:0x%x",
+    SBE_INFO(SBE_FUNC"Major number:%d minor number:%d",
                        i_major, i_minor );
 
     ReturnCode rc = FAPI2_RC_SUCCESS;

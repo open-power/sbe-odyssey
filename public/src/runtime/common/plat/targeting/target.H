@@ -247,5 +247,16 @@ namespace fapi2
 
         return l_platTarget;
     }
+
+    ///
+    /// @brief Is the target functional?
+    /// @return true if target is functional, false if non-functional
+    ///
+    template<TargetType K, MulticastType M, typename V>
+    inline bool
+    Target<K, M, V>::isFunctional(void) const
+    {
+        return iv_handle.getFunctional();
+    }
 }
 #endif
