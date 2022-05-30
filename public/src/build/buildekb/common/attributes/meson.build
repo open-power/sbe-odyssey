@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,9 +43,11 @@ foreach infile : common_attr_xml
 
 endforeach
 
-import_hwp_dir_path = pub_import_dir_path + 'hwp/odyssey/xml/attribute_info/'
+import_hwp_dir_path = pub_import_dir_path + 'hwp/generic/xml/attribute_info/'
 infile_attr_xml = [
-        ]
+            'poz_pervasive_attributes.xml',
+            'poz_chiplet_attributes.xml',
+            ]
 
 foreach infile : infile_attr_xml
 
