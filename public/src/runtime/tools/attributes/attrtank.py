@@ -92,6 +92,7 @@ class AttrFieldInfo(object):
                  name: str,
                  hash: int,
                  target: str,
+                 target_type:list,
                  value_type: str,
                  enum_values: str = None,
                  writeable: bool = False,
@@ -100,6 +101,7 @@ class AttrFieldInfo(object):
         self.name = name
         self._hash = hash
         self.target = target
+        self.target_type = " | ".join(target_type)
         self.value_type = value_type + '_t'
         self.writeable = writeable
         self.platinit = platinit
@@ -150,6 +152,7 @@ class RealAttrFieldInfo(AttrFieldInfo):
                  name: str,
                  hash: int,
                  target: str,
+                 target_type:list,
                  value_type: str,
                  enum_values: str,
                  writeable: bool,
@@ -159,7 +162,7 @@ class RealAttrFieldInfo(AttrFieldInfo):
                  array_dims: list = []) -> None:
 
         super(RealAttrFieldInfo, self).__init__(
-            name, hash, target, value_type, enum_values, writeable, platinit)
+            name, hash, target, target_type, value_type, enum_values, writeable, platinit)
 
         self.values = values
         self.num_targ_inst = num_targ_inst
@@ -233,9 +236,10 @@ class VirtualAttrFieldInfo(AttrFieldInfo):
                  name: str,
                  hash: int,
                  target: str,
+                 target_type:list,
                  value_type: str,
                  enum_values: str) -> None:
-        super().__init__(name, hash, target, value_type, enum_values)
+        super().__init__(name, hash, target, target_type, value_type, enum_values)
 
     def set(self, image, image_base, value):
         raise NotImplementedError("Cannot modify a virtual attribute")
@@ -255,12 +259,13 @@ class EcAttrFieldInfo(AttrFieldInfo):
                  name: str,
                  hash: int,
                  target: str,
+                 target_type:list,
                  value_type: str,
                  chip_name: str,
                  ec_value: str,
                  ec_test: str) -> None:
 
-        super().__init__(name, hash, target, value_type)
+        super().__init__(name, hash, target, target_type, value_type)
         self.chip_name = chip_name
         self.ec_value = ec_value
         self.ec_test = ec_test
@@ -301,31 +306,32 @@ class AttributeStructure(object):
                 self.field_list.append(EcAttrFieldInfo(
                     attr.name,
                     attr_hash28bit,
-                    attr._target_type[0],
+                    attr.sbe_target_type[0],
+                    attr.sbe_target_type,
                     attr.value_type,
                     attr.chip_name,
                     attr.ec_value,
                     attr.ec_test))
             elif attr.sbe_entry.virtual:
-                target_type = " | ".join(attr._target_type)
-
                 self.field_list.append(VirtualAttrFieldInfo(
                     attr.name,
                     attr_hash28bit,
-                    target_type,
+                    attr.sbe_target_type[0],
+                    attr.ekb_target_type,
                     attr.value_type,
                     attr.enum_values))
             else:
                 self.field_list.append(RealAttrFieldInfo(
                     attr.name,
                     attr_hash28bit,
-                    attr._target_type[0],
+                    attr.sbe_target_type[0],
+                    attr.ekb_target_type,
                     attr.value_type,
                     attr.enum_values,
                     attr.writeable,
                     attr.platinit,
                     attr.sbe_entry.values,
-                    TARGET_TYPES[attr._target_type[0]].ntargets,
+                    TARGET_TYPES[attr.sbe_target_type[0]].ntargets,
                     attr.array_dims))
 
 

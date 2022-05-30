@@ -66,13 +66,17 @@ class RealAttribute(object):
         self.value_type = value_type.text
 
         target_type_str_list = [targ.strip().upper() for targ in self.target_type.split(',')]
-        self._target_type:list[TargetTypeInfo] = []
+        self.sbe_target_type:list[TargetTypeInfo] = []
+        # workaround to support POZ_ANY_CHIP attributes
+        self.ekb_target_type:list[str] = []
+
         for targ in target_type_str_list:
             targ_type = TARGET_TYPES.get(targ, None)
             if targ_type != None:
-                self._target_type.append(targ)
+                self.sbe_target_type.append(targ)
+            self.ekb_target_type.append(targ)
 
-        if len(self._target_type) == 0:
+        if len(self.sbe_target_type) == 0:
             self.unsupported_attribute = True
             return
 
@@ -106,7 +110,7 @@ class RealAttribute(object):
                 raise ParseError(self.name + " have no supported targets")
 
             if sbe_value.virtual == False:
-                if len(self._target_type) > 1:
+                if len(self.sbe_target_type) > 1:
                     raise ParseError(self.name + " have multiple supported targets")
             else:
                 if(self.writeable == True):
@@ -143,13 +147,13 @@ class ECAttribute(object):
         self.target_type = target_type.text
 
         target_type_str_list = [targ.strip().upper() for targ in self.target_type.split(',')]
-        self._target_type:list[TargetTypeInfo] = []
+        self.sbe_target_type:list[TargetTypeInfo] = []
         for targ in target_type_str_list:
             targ_type = TARGET_TYPES.get(targ, None)
             if targ_type != None:
-                self._target_type.append(targ)
+                self.sbe_target_type.append(targ)
 
-        if len(self._target_type) == 0:
+        if len(self.sbe_target_type) == 0:
             self.unsupported_attribute = True
             return
 
