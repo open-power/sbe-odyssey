@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -46,10 +47,10 @@ __attribute__ ((always_inline)) inline void attr_macro_dummy(){}
 #define {{attr.name}}_PLAT_INIT(ID, TARGET, VAL){% if attr.platinit %} {{attr.name}}_SETMACRO_HELPER(ID, TARGET, VAL){% endif +%}
 
 #define {{attr.name}}_GETMACRO_HELPER(ID, TARGET, VAL) \
-    attr_macro_dummy(), {{attr.getter}}
+    attr_macro_dummy(), {{attr.getter}}, fapi2::FAPI2_RC_SUCCESS
 {% if attr.writeable or attr.platinit %}
 #define {{attr.name}}_SETMACRO_HELPER(ID, TARGET, VAL) \
-    attr_macro_dummy(), {{attr.setter}}
+    attr_macro_dummy(), {{attr.setter}}, fapi2::FAPI2_RC_SUCCESS
 {% endif %}
 
 {% endfor %}

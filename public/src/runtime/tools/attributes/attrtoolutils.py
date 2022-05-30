@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,11 +22,23 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-global g_verbose
-g_verbose = False
-def vprint(*args):
-    if g_verbose:
-        print(*args)
+
+class vprint:
+    '''
+    Class to support verbose logging based verbose flag
+    '''
+    cv_verbose:bool = False
+
+    def set_verbose(verbose:bool):
+        vprint.cv_verbose = verbose
+
+    # log API is implemented inside the constructor to support simpe function
+    # like API without any object.
+    # eg;- vprint("message to be logged")
+    def __init__(self, *args) -> None:
+        if(vprint.cv_verbose):
+            print(*args)
+
 
 def hexint(arg):
     return int(arg, 16)
