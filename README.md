@@ -15,7 +15,7 @@ To Setup Environment:
         ./sb workon odyssey pnor
 
 Note: If platform option is not provided, it defaults to "all".
-      If image option is not provided, it defaults to "sppe".
+      If image option is not provided, it defaults to "pnor".
       In this case all images will be built for all supported platforms in the
       repo unless user manually over-rides using mesonwrap option's.
 
