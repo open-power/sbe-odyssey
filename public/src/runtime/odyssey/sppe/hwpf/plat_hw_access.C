@@ -115,6 +115,11 @@ fapi2::ReturnCode getscom_abs_wrap(const void *i_target,
     l_addr = getEffectiveAddress((uint32_t *)i_target, i_addr);
     l_pibRc = getscom_abs(l_addr, o_data);
 
+    SBE_DEBUG("SCOMOUT  %08X %08X%08X",
+                    l_addr,
+                    *((uint32_t*)o_data),
+                    *(((uint32_t*)o_data) + 1));
+
     return (l_pibRc == PIB_NO_ERROR) ? fapi2::ReturnCode(FAPI2_RC_SUCCESS) :
                  handle_scom_error(l_addr, l_pibRc);
 }
@@ -125,6 +130,12 @@ fapi2::ReturnCode putscom_abs_wrap(const void *i_target,
     uint32_t l_pibRc = 0;
     uint32_t l_addr = i_addr;
     l_addr = getEffectiveAddress((uint32_t *)i_target, i_addr);
+
+    SBE_DEBUG("SCOMIN   %08X %08X%08X",
+                    l_addr,
+                    *((uint32_t*)&i_data),
+                    *(((uint32_t*)&i_data) + 1));
+
     l_pibRc = putscom_abs(l_addr, i_data);
     return (l_pibRc == PIB_NO_ERROR) ? fapi2::ReturnCode(FAPI2_RC_SUCCESS) :
                  handle_scom_error(l_addr, l_pibRc);
