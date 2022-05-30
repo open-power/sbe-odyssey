@@ -39,6 +39,7 @@
 #include "pakwrapper.H"
 #include "errorcodes.H"
 #include "otpromfusemap.H"
+#include "p11_scom_perv_cfam.H"
 
 //We are assuming hash list can never go more than 2k
 uint8_t hashList[HASH_LIST_SIZE] __attribute__((section (".hash_list"))) = {0x00};

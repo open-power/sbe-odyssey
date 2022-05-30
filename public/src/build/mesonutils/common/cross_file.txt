@@ -72,7 +72,6 @@ link_cmd_args = [
             ]
 
 gcc_defs_cmn = [
-        '-DSBE_TRACE_LEVEL=2',
         '-DIMAGE_NAME=SBE_TRACE',
         '-DPK_TIMER_SUPPORT=1',
         '-DPK_THREAD_SUPPORT=1',
@@ -84,9 +83,17 @@ gcc_defs_cmn = [
         '-D__PPE__=1',
         '-DMINIMUM_FFDC=1',
         '-DPLAT_NO_THREAD_LOCAL_STORAGE=1',
+        ]
+
+gcc_defs_cmn_sbe = [
+        '-DSBE_TRACE_LEVEL=2',
         '-DPERIODIC_IO_TOGGLE_SUPPORTED=1',
         '-DSBE_CONSOLE_SUPPORT',
-        '-DSCOMT_OMIT_FIELD_ACCESSORS'
+        '-DSCOMT_OMIT_FIELD_ACCESSORS',
+        ]
+
+gcc_defs_cmn_hwp = [
+        '-DFAPI_TRACE_LEVEL=4',
         ]
 
 ekb_cmn_inc_path = [

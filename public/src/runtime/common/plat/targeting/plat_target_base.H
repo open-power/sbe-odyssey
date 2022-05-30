@@ -52,7 +52,7 @@ namespace fapi2
     typedef enum plat_target_type
     {
         PPE_TARGET_TYPE_NONE           = 0x00,
-        PPE_TARGET_TYPE_CHIP           = 0x01,
+        PPE_TARGET_TYPE_CHIP           = 0x01, // Indicate SBE_ROOT_CHIP
         PPE_TARGET_TYPE_PERV           = 0x06,
         PPE_TARGET_TYPE_MEMPORT        = 0x07,
         PPE_TARGET_TYPE_SYSTEM         = 0x08,
@@ -329,8 +329,18 @@ namespace fapi2
                     case PPE_TARGET_TYPE_CHIP:
                         l_targetType = SBE_ROOT_CHIP_TYPE;
                         break;
+                    case PPE_TARGET_TYPE_PERV:
+                        l_targetType = TARGET_TYPE_PERV;
+                        break;
+                    case PPE_TARGET_TYPE_MC:
+                        l_targetType = TARGET_TYPE_MC;
+                        break;
+                    case PPE_TARGET_TYPE_SYSTEM:
+                        l_targetType = TARGET_TYPE_SYSTEM;
+                        break;
                     case PPE_TARGET_TYPE_NONE:
                     default:
+                        SBE_ERROR("getFapiTargetType() called for PPE_TYPE 0x%X", getTargetType());
                         assert(false);
                         break;
                 }

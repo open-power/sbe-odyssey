@@ -84,6 +84,42 @@ namespace fapi2
         return l_rc;
     }
 
+    ///
+    /// @brief Platform-level implementation called by getCfamRegister()
+    /// Hardware procedures writers will not call this function.
+    /// @tparam K template parameter, passed in target.
+    /// @param[in]  i_target   HW target to operate on.
+    /// @param[in]  i_address  CFAM address to read from.
+    /// @param[out] o_data     32-bit buffer that holds data read from HW target.
+    /// @return fapi::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
+    ///
+    template< TargetType K, MulticastType M, typename V >
+    inline ReturnCode getCfamRegister(const Target<K, M, V>& i_target,
+                                    const uint32_t i_address,
+                                    buffer<uint32_t>& o_data)
+    {
+        FAPI_ERR("GET-CFAM ACCESS via SBE is NOOP!");
+        return FAPI2_RC_FALSE;
+    }
+
+    ///
+    /// @brief Platform-level implementation of putCfamRegister()
+    /// Hardware procedures writers will not call this function.
+    /// @tparam K template parameter, passed in target.
+    /// @param[in]  i_target   HW target to operate on.
+    /// @param[in]  i_address  CFAM address to write to.
+    /// @param[out] i_data     32-bit buffer that holds data to write into address.
+    /// @return fapi::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
+    ///
+    template< TargetType K, MulticastType M, typename V >
+    inline ReturnCode putCfamRegister(const Target<K, M, V>& i_target,
+                                    const uint32_t i_address,
+                                    const buffer<uint32_t> i_data)
+    {
+        FAPI_ERR("PUT-CFAM ACCESS via SBE is NOOP!");
+        return FAPI2_RC_FALSE;
+    }
+
 };
 
 #endif // _FAPI2_HWACCESS_H_
