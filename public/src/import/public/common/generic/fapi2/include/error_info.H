@@ -67,8 +67,14 @@ inline uint64_t convertType( const fapi2::Target<T, M>& i_value)
     //see any HWP attempting to callect the FFDC on the multicasted target. HWSV
     //is not even expecting the multicast bit to be present.
 
+    //TODO: Bug-fix. actual size of FAPI target is 64 bit. but we are sending only
+    // lower 48-bits. Needs to change the interface to fix this.
+
     //setting multicast bit at MSB of target type
-    ret_value = (ret_value | static_cast<uint64_t>(i_value.get().fields.is_multicast) << 47);
+    if(plat_target_base_handle(i_value.get()).getIsMulticast())
+    {
+        ret_value = ret_value | TARGET_TYPE_MULTICAST;
+    }
 
     ret_value = ret_value << 16;
 
