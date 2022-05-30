@@ -41,12 +41,34 @@ namespace fapi2
 static uint32_t getEffectiveAddress(const uint32_t *i_target, const uint32_t i_addr)
 {
     uint32_t translatedAddr = 0;
-    const plat_target_base_handle* l_targetBase =
-            reinterpret_cast<const plat_target_base_handle*>(i_target);
+    const plat_target_sbe_handle* l_targetBase =
+            reinterpret_cast<const plat_target_sbe_handle*>(i_target);
+    uint8_t targetInstance = 0;
+    uint32_t BITSHIFT = 0;
     switch(l_targetBase->getTargetType())
     {
         case PPE_TARGET_TYPE_CHIP:
             translatedAddr = (l_targetBase->getPIBAddress() | i_addr);
+            break;
+        case PPE_TARGET_TYPE_MEMPORT:
+            // Get the target instance.
+            targetInstance = l_targetBase->getTargetInstance();
+            // Check for Indirect scom.
+            if(i_addr & 0x8000000000000000) // Left most bit is set for indirect scom address.
+            {
+                // Base Addr  0x800070550801303F
+                // Trans Addr 0x800070550801303F ---> Mem port 0
+                // Trans Addr 0x800070550801343F ---> Mem port 1
+                BITSHIFT = 10;
+            }
+            else
+            {
+                //Base Addr  0x08011810
+                //Trans Addr 0x08011810 ---> Mem port 0
+                //Trans Addr 0x08012810 ---> Mem port 1
+                BITSHIFT = 13;
+            }
+            translatedAddr = targetInstance ? i_addr | ( 1 << BITSHIFT ) : i_addr;
             break;
         default: //For all the chiplet types
             {
