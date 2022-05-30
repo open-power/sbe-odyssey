@@ -234,7 +234,7 @@ extern "C" void __sbe_register_saveoff()
     "# Read Spi1 Clock Config Register into r4 and r5\n"
     "lvd %d4, 0x23(%r6)\n"
     "stw %r4, __g_register_ffdc+52@sda21(0)\n"
-    
+
     "# Read Spi2 Status Register into r4 and r5\n"
     "lis %r6, 0xc\n"
     "lvd %d4, 0x68(%r6)\n"
@@ -319,6 +319,7 @@ extern "C" void __sbe_machine_check_handler()
         "blt __scom_error\n"
         "# Else, save-off and halt the SBE\n"
         "# Save-off Register FFDC and Halt\n"
+        "b pk_halt\n"
 
         "__scom_error:\n"
         "# The srr0 contains the address of the instruction that caused the machine\n"

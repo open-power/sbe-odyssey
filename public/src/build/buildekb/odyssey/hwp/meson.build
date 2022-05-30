@@ -40,7 +40,13 @@ lib_file_name = 'odysseyhwp'
 #TODO: This if condition is temporary to go ahead with the build process
 # when no hwp files are mentioned
 if ( abs_infiles_c_path.length() != 0 )
-    odyssey_hwp_obj_file_c = obj_gen_cpp.process(abs_infiles_c_path)
+    odyssey_hwp_obj_file_c = obj_gen_cpp_hwp.process(abs_infiles_c_path,
+                                            extra_args:[
+                                                        odyssey_runtime_abs_inc_paths,
+                                                        runtime_cmn_abs_inc_paths,
+                                                        odyssey_cmn_abs_inc_paths,
+                                                        odyssey_hwp_abs_inc_paths,
+                                                        ekb_hwp_abs_inc_paths])
     infile  = [odyssey_hwp_obj_file_c]
 
     libodysseyhwp = custom_target( lib_file_name,

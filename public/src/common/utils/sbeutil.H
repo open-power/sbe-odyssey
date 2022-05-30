@@ -32,10 +32,6 @@ extern "C" {
 #include "pk.h"
 #include "pk_api.h"
 #include "ppe42_scom.h"
-//TODO: For compiling p11_scom_perv_cfam.H we are currently adding
-//-DSCOMT_OMIT_FIELD_ACCESSORS in cross_file.txt. Once fapi support is enabled
-//we need to remove that.
-#include "p11_scom_perv_cfam.H"
 #include "sha3.H"
 
 #ifdef __cplusplus
@@ -253,11 +249,7 @@ namespace SBE
         return dest;
     }
 
-    inline void updateProgressCode(uint64_t data, uint8_t value)
-    {
-        data = ((data & (~(SBE_MESSAGE_REG_PROGRESS_CODE_BIT_MASK))) | (uint64_t)(value)<<32);
-        putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, data);
-    }
+    void updateProgressCode(uint64_t data, uint8_t value);
 
 } // namespace SBE
 

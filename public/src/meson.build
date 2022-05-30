@@ -83,6 +83,8 @@ runtime_cmn_abs_inc_paths = []
 onetime_cmn_abs_inc_paths = []
 odyssey_cmn_abs_inc_paths = []
 odyssey_runtime_abs_inc_paths = []
+ekb_hwp_abs_inc_paths  = []
+odyssey_hwp_abs_inc_paths = []
 
 foreach inc_path : meson.get_external_property('cmn_inc_paths')
 
@@ -95,6 +97,13 @@ foreach inc_path : meson.get_external_property('ekb_cmn_inc_path')
 
   abs_inc_path = '-I' + pub_import_dir_path + inc_path
   ekb_cmn_abs_inc_paths += abs_inc_path
+
+endforeach
+
+foreach inc_path : meson.get_external_property('ekb_hwp_inc_path')
+
+  abs_inc_path = '-I' + pub_import_dir_path + inc_path
+  ekb_hwp_abs_inc_paths += abs_inc_path
 
 endforeach
 
@@ -124,6 +133,13 @@ if platform == 'odyssey' or platform == 'all'
 
     abs_inc_path = '-I' + meson.global_source_root() + inc_path
     odyssey_runtime_abs_inc_paths += abs_inc_path
+
+  endforeach
+
+  foreach inc_path : meson.get_external_property('odyssey_hwp_inc_paths')
+
+    abs_inc_path = '-I' + pub_import_dir_path + inc_path
+    odyssey_hwp_abs_inc_paths += abs_inc_path
 
   endforeach
 
@@ -157,6 +173,21 @@ obj_gen_cpp = generator(ppetraceapp,
                                  cmn_abs_inc_paths, ekb_cmn_abs_inc_paths,
                                  meson.get_external_property('obj_args_cpp'),
                                  meson.get_external_property('gcc_defs_cmn'),
+                                 meson.get_external_property('gcc_defs_cmn_sbe'),
+                                 '-o','@OUTPUT@','@INPUT@'],
+                    depfile : '@BASENAME@.d'
+                    )
+
+obj_gen_cpp_hwp = generator(ppetraceapp,
+                    output  : '@BASENAME@.o',
+                    arguments : [
+                                 meson.get_external_property('powerpc_eabi_gcc'),
+                                 '@EXTRA_ARGS@',
+                                 meson.get_external_property('cc_flags_cmn'),
+                                 cmn_abs_inc_paths, ekb_cmn_abs_inc_paths,
+                                 meson.get_external_property('obj_args_cpp'),
+                                 meson.get_external_property('gcc_defs_cmn'),
+                                 meson.get_external_property('gcc_defs_cmn_hwp'),
                                  '-o','@OUTPUT@','@INPUT@'],
                     depfile : '@BASENAME@.d'
                     )
