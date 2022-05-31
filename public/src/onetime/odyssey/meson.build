@@ -27,9 +27,7 @@ if get_option('otprom').enabled()
   subdir('otprom')
 endif
 
-if get_option('srom').enabled() and get_option('otprom').disabled()
-    error('Enable otprom for executing srom image')
-  else
+if get_option('srom').enabled()
     subdir('srom')
 endif
 
