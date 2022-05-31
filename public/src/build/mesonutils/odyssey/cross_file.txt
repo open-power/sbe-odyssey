@@ -32,10 +32,9 @@ odyssey_hwp_inc_paths = [
         ]
 
 odyssey_srom_inc_paths = [
-        '/genfiles/onetime/odyssey/srom'
+        '/genfiles/onetime/odyssey/common'
         ]
 
 odyssey_bldr_inc_paths = [
-        '/genfiles/onetime/odyssey/bldr',
-        '/genfiles/onetime/odyssey/srom'
+        '/genfiles/onetime/odyssey/common'
         ]

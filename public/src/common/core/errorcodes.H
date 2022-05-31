@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/onetime/common/srom/core/errorcodes.H $            */
+/* $Source: public/src/common/core/errorcodes.H $                         */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2022                        */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -73,7 +72,9 @@
 // 0x10 to 0x1f are used for SROM Initial Boot Checks
 #define BOOT_RC_INVALID_ECDSA_FUSE_CHECK_CNFG 0x310
 #define BOOT_RC_INVALID_DILITHIUM_FUSE_CHECK_CNFG 0x311
-#define BOOT_RC_SROM_COMPLETE_BIT_NOT_SET 0x312
+#define BOOT_RC_SROM_COMPLETE_BIT_NOT_SET_IN_BLDR 0x312
+#define BOOT_RC_SROM_COMPLETE_BIT_NOT_SET_IN_RUNTIME 0x313
+#define BOOT_RC_BLDR_COMPLETE_BIT_NOT_SET_IN_RUNTIME 0x314
 
 //Area 0x4 --> Secure Header Verification Fails
 // 0x00 to 0xf (These are not error codes)

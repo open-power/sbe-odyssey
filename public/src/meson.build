@@ -146,9 +146,10 @@ if platform == 'odyssey' or platform == 'all'
   #Odyssey genfiles dir path
   odyssey_srom_genfiles_dir_path = onetime_genfiles_dir_path + '/odyssey/srom/'
   odyssey_bldr_genfiles_dir_path = onetime_genfiles_dir_path + '/odyssey/bldr/'
+  odyssey_cmn_genfiles_dir_path  = onetime_genfiles_dir_path + '/odyssey/common/'
   odyssey_sppe_genfiles_dir_path = runtime_genfiles_dir_path + '/odyssey/sppe/'
   run_command('mkdir','-p', odyssey_srom_genfiles_dir_path, odyssey_bldr_genfiles_dir_path,
-      odyssey_sppe_genfiles_dir_path)
+      odyssey_sppe_genfiles_dir_path, odyssey_cmn_genfiles_dir_path)
 endif
 
 #Object file generation generator's (api's)
