@@ -243,6 +243,7 @@ fapi2::ReturnCode fir_or_pll_fail( const fapi2::Target<T>& i_target,
 
 #endif
 
+#ifndef __PPE__
 ///
 /// @brief Checks conditional passes and implements traces & exits if it fails
 /// @tparam T fapi2 target type
@@ -280,7 +281,6 @@ fapi_try_exit:
 
 } // invalid_value
 
-#ifndef __PPE__
 ///
 /// @brief Checks conditional passes and implements traces & exits if it fails
 /// @tparam OT data type we want to check safe conversion against (explicit)
@@ -318,7 +318,6 @@ fapi_try_exit:
     return fapi2::current_err;
 
 } // invalid_type_conversion
-#endif
 
 ///
 /// @brief Checks conditional passes and implements traces & exits if it fails
@@ -356,6 +355,7 @@ fapi_try_exit:
 
 } // invalid_type_conversion
 
+#endif
 } // check
 }// mss
 
