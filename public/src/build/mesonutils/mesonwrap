@@ -92,6 +92,34 @@ exc_cmd()
     exit $rc
 }
 
+#Disable parts of image build based on user setup(during workon)
+#By default all images are enabled.
+#We need enabled images var incase of resync
+#TODO: Below enabled and disabled macros are consedering that golden pnor image is available.
+DISABLED_IMAGES=
+ENABLED_IMAGES=
+if [ "$SBE_PLATFORM" == "odyssey" ]; then
+    if [[ "$SBE_IMAGE" == "sppe" || "$SBE_IMAGE" == "bldr" ]]; then
+        DISABLED_IMAGES=" -Dotprom=disabled -Dsrom=disabled -Dbldr=disabled "
+        ENABLED_IMAGES=" -Dsppe=enabled"
+    fi
+    if [ "$SBE_IMAGE" == "otprom" ]; then
+        DISABLED_IMAGES=" -Dsppe=disabled -Dsrom=disabled -Dbldr=disabled "
+        ENABLED_IMAGES=" -Dotprom=enabled"
+    fi
+    if [ "$SBE_IMAGE" == "pnor" ]; then
+        ENABLED_IMAGES=" -Dotprom=enabled -Dsppe=enabled -Dsrom=enabled -Dbldr=enabled "
+    fi
+    if [ "$SBE_IMAGE" == "srom" ]; then
+        DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled "
+        ENABLED_IMAGES=" -Dotprom=enabled -Dsrom=enabled "
+    fi
+    if [ "$SBE_IMAGE" == "bldr" ]; then
+        DISABLED_IMAGES=" -Dsppe=disabled -Dsrom=disabled "
+        ENABLED_IMAGES=" -Dotprom=enabled -Dbldr=enabled "
+    fi
+fi
+
 if [ "$1" == "setup" ]; then
     cat > $SBEROOT/.user_cross_file.txt <<EOF
 [constants]
@@ -99,9 +127,14 @@ ppetools_path = '$PPETOOLS'
 EOF
 
     #Pass all cross files ir-respective of platform used.
-    CROSS_FILES=" --cross-file $CMN_MESON_CROSS_FILE_PATH --cross-file $ODYSSEY_MESON_CROSS_FILE_PATH --cross-file $P11_MESON_CROSS_FILE_PATH --cross-file $SBEROOT/.user_cross_file.txt"
+    CROSS_FILES=" --cross-file $CMN_MESON_CROSS_FILE_PATH
+                  --cross-file $ODYSSEY_MESON_CROSS_FILE_PATH
+                  --cross-file $P11_MESON_CROSS_FILE_PATH
+                  --cross-file $SBEROOT/.user_cross_file.txt"
 
-    CMD="$BASE_CMD $1 $MESON_BUILD_DIR -Dplatform=$SBE_PLATFORM $CROSS_FILES --native-file $CMN_MESON_NATIVE_FILE_PATH --prefix $INSTALL_DIR ${@:2}"
+    CMD="$BASE_CMD $1 $MESON_BUILD_DIR -Dplatform=$SBE_PLATFORM $DISABLED_IMAGES $ENABLED_IMAGES
+        $CROSS_FILES --native-file $CMN_MESON_NATIVE_FILE_PATH
+        --prefix $INSTALL_DIR ${@:2}"
     exc_cmd "$CMD"
 fi
 
@@ -125,6 +158,9 @@ if [ "$1" == "clean" ]; then
     CMD="rm -rf $MESON_INSTALL_DIR"
     echo $CMD
     $CMD || exit -1
+    CMD="rm -rf $SBE_ROOT/genfiles"
+    echo $CMD
+    $CMD || exit -1
     echo "Cleaning up builddir...."
     CMD="$BASE_CMD compile --clean -C $MESON_BUILD_DIR"
     exc_cmd "$CMD"
@@ -136,7 +172,8 @@ if [ "$1" == "configure" ]; then
 fi
 
 if [ "$1" == "sync" ]; then
-    CMD="$BASE_CMD configure $MESON_BUILD_DIR -Dplatform=$SBE_PLATFORM"
+    CMD="$BASE_CMD configure $MESON_BUILD_DIR -Dplatform=$SBE_PLATFORM
+        $DISABLED_IMAGES $ENABLED_IMAGES"
     exc_cmd "$CMD"
 fi
 
