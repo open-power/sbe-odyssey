@@ -51,24 +51,21 @@ odyssey_bldr_libs += [ekb_cmn_libs,
                       cmn_utils_libs,
                       cmn_core_libs,
                       ekb_cmn_pak_libs,
-                      cmn_pak_wrapper_libs,
-                      cmn_algo_libs
+                      cmn_pak_wrapper_libs
                      ]
 
 odyssey_bldr_lib_paths += [ekb_cmn_lib_paths,
                            cmn_utils_lib_paths,
                            cmn_core_lib_paths,
                            ekb_cmn_pak_lib_paths,
-                           cmn_pak_wrapper_lib_paths,
-                           cmn_algo_lib_paths
+                           cmn_pak_wrapper_lib_paths
                           ]
 
 odyssey_bldr_dep_libs += [ekb_cmn_dep_libs,
                           cmn_utils_dep_libs,
                           cmn_core_dep_libs,
                           ekb_cmn_pak_dep_libs,
-                          cmn_pak_wrapper_dep_libs,
-                          cmn_algo_dep_libs
+                          cmn_pak_wrapper_dep_libs
                          ]
 
 #Odyssey Boot Loader install path

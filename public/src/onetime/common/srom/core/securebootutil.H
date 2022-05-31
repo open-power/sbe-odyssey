@@ -30,12 +30,6 @@
 #include "ppe42_scom.h"
 #include "securehdrv2.H"
 
-#define UPDATE_ERROR_CODE_AND_HALT(value) \
-    secureBootFailStatus.iv_secureHeaderFailStatusCode = value; \
-    putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW,secureBootFailStatus.iv_mbx13); \
-    SBE_INFO(SBE_FUNC "Halting PPE..."); \
-    pk_halt(); \
-
 #define SHA3_TRUNCATED_SIZE 48
 
 typedef uint8_t sha3truncated_t[SHA3_TRUNCATED_SIZE];
@@ -158,55 +152,6 @@ typedef union ecid
         getscom_abs(regAddr2, &ecidOtpromRead.ecid[1]);
     }
 }ecid_t;
-
-/**
- * @brief Union defining Secure Boot Control settings etc that will be written into Mesaurement Regs
- *        SROM and Boot loader will both use same union
- *        Only SROM will read contents from OTPROM, Boot loader will have to read the Secure Boot settings
- *        used by SROM from measurement reg and use it.
- *
- */
-typedef union sbCtrlMeasurement
-{
-    uint32_t secureBootControl = 0x00;
-    struct
-    {
-        uint32_t secureBootVerificationEnforcement : 1;
-        uint32_t ecdsaSigCheckEnable : 1;
-        uint32_t dilithiumSigCheckEnable : 1;
-        uint32_t ecidCheckEnable : 1;
-        uint32_t hwKeyHashVerificationEnable : 1;
-        uint32_t secureModeEnable : 1;
-        uint32_t enforceMatchingMSV : 1;
-        uint32_t bootComplete : 1;                             //SROM or BLDR boot complete
-        uint32_t reserved2 : 4;
-        uint32_t msv : 8;
-        uint32_t reserved3 : 12;
-    };
-
-    /**
-     * @brief Write the Secure Boot control data into measurement register
-     *
-     * @param measurementRegAddr Measurement Register Address
-     */
-    void putSbCtrlData(uint32_t measurementRegAddr)
-    {
-        putscom_abs(measurementRegAddr, ((uint64_t)secureBootControl << 32));
-    }
-
-    /**
-     * @brief Read the Secure Boot control data from measurement register
-     *
-     * @param measurementRegAddr Measurement Register Address
-     */
-    void getSbCtrlData(uint32_t measurementRegAddr)
-    {
-        uint64_t data = 0x00;
-        getscom_abs(measurementRegAddr, &data);
-        secureBootControl = data >> 32;
-    }
-
-}sbCtrlMeasurement_t;
 
 enum signaturAlgoCheck
 {

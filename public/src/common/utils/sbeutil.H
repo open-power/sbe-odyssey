@@ -186,6 +186,15 @@ namespace SBE
         return (uint32_t)(SHIFT_RIGHT(MASK_ZERO_L32B_UINT64(i_lWord), 32));
     }
 
+    /*@brief - In  case of any secure boot failures,SROM or Boot loader boot
+     * failures update error code in scratch reg and halt ppe
+     *
+     * @param[in] - i_errorCode - Error that needs to be updated in scratch reg
+     *
+     * @return - none
+     */
+    void updateErrorCodeAndHalt(uint16_t i_errorCode);
+
     /*@brief - Get lower 32bit number from uint64
      *
      * @param[in] - i_lWord - 64bit long word
@@ -250,6 +259,21 @@ namespace SBE
     }
 
     void updateProgressCode(uint64_t data, uint8_t value);
+
+    /**
+     * @brief compute a sha3 hash (md) of given byte length from "i_data"
+     *
+     * @param i_data Data on which sha3 needs to be calculated
+     * @param i_size Length of data
+     * @param o_hash sha3 result store location ptr
+     */
+    inline void hash_block(const void* i_data, uint32_t i_size, sha3_t* o_hash)
+    {
+        sha3_ctx_t ctx;
+        sha3_init(&ctx);
+        sha3_update(&ctx, i_data, i_size);
+        sha3_final(o_hash, &ctx);
+    }
 
 } // namespace SBE
 

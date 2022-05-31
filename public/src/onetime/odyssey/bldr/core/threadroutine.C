@@ -40,16 +40,12 @@
 #include "errorcodes.H"
 #include "otpromfusemap.H"
 #include "p11_scom_perv_cfam.H"
+#include "odysseyfilenames.H"
+
+#define RUN_TIME_SH_COMPONENT_ID 0x52554E5F54494D45ull  //RUN_TIME
 
 //We are assuming hash list can never go more than 2k
 uint8_t hashList[HASH_LIST_SIZE] __attribute__((section (".hash_list"))) = {0x00};
-
-static const char hash_list_fname[] =  "rt/hash.list";
-static const char secure_hdr_fname[] = "rt/secure.hdr";
-static const char sppe_bin_fname[] =   "rt/sppe.bin";
-static const char hw_keys_hash_fname[] = "rt/hwkeyshash.bin";
-static const char sppe_pak_fname[] =   "rt/sppe.pak";
-static const char vpd_pak_fname[] =    "vpd/sppe.pak";
 
 enum load_image_flags {
     LIF_IS_PAK = 1,
@@ -86,15 +82,15 @@ void load_image(PakWrapper &i_pak, const char *i_fname, uint32_t &io_load_offset
     }
     if (pakRc != ARC_OPERATION_SUCCESSFUL)
     {
-        SBE_INFO(SBE_FUNC "Failed to read payload");
-        UPDATE_ERROR_CODE_AND_HALT(FILE_RC_PAYLOAD_FILE_READ_BASE_ERROR + pakRc);
+        SBE_ERROR(SBE_FUNC "Failed to read payload");
+        SBE::updateErrorCodeAndHalt(FILE_RC_PAYLOAD_FILE_READ_BASE_ERROR + pakRc);
     }
 
     auto hashListRc = SBE::check_file_hash(i_fname, digest, hashList);
     if(hashListRc != SBE::HASH_COMPARE_PASS)
     {
-        SBE_INFO(SBE_FUNC "Failed to verify payload hash");
-        UPDATE_ERROR_CODE_AND_HALT(FILE_RC_PAYLOAD_HASH_VERIFICATION + hashListRc);
+        SBE_ERROR(SBE_FUNC "Failed to verify payload hash");
+        SBE::updateErrorCodeAndHalt(FILE_RC_PAYLOAD_HASH_VERIFICATION + hashListRc);
     }
 
     io_load_offset += size;
@@ -130,14 +126,15 @@ void bldrthreadroutine(void *i_pArg)
 
         // The entire NOR looks like a single pak so we can point to its beginning
         // instead of looking for a specific partition.
+        // TODO: Partition start offset needs to be read from scratch reg
         PakWrapper pak((void *)NOR_PARTITION_0_OFFSET);
 
         //Load the secure container into pibmem
         pakRc = pak.read_file(secure_hdr_fname, secureContainer, SECURE_HEADER_SIZE, NULL, &shvReq.containerSize);
         if(pakRc != ARC_OPERATION_SUCCESSFUL)
         {
-            SBE_INFO(SBE_FUNC "Failed to read secure header");
-            UPDATE_ERROR_CODE_AND_HALT(FILE_RC_SECURE_HEADER_FILE_READ_BASE_ERROR + pakRc);
+            SBE_ERROR(SBE_FUNC "Failed to read secure header");
+            SBE::updateErrorCodeAndHalt(FILE_RC_SECURE_HEADER_FILE_READ_BASE_ERROR + pakRc);
         }
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_LOADING_SECURE_HEADER_INTO_PIB);
@@ -146,8 +143,8 @@ void bldrthreadroutine(void *i_pArg)
         pakRc = pak.read_file(hash_list_fname, hashList, HASH_LIST_SIZE, &digest, &shvReq.hashListSize);
         if(pakRc != ARC_OPERATION_SUCCESSFUL)
         {
-            SBE_INFO(SBE_FUNC "Failed to read hash list");
-            UPDATE_ERROR_CODE_AND_HALT(FILE_RC_HASH_LIST_FILE_READ_BASE_ERROR + pakRc);
+            SBE_ERROR(SBE_FUNC "Failed to read hash list");
+            SBE::updateErrorCodeAndHalt(FILE_RC_HASH_LIST_FILE_READ_BASE_ERROR + pakRc);
         }
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_LOADING_HASH_LIST_INTO_PIB);
@@ -156,8 +153,8 @@ void bldrthreadroutine(void *i_pArg)
         pakRc = pak.read_file(hw_keys_hash_fname, hwKeysHashMsv.hwKeysHashMsv, sizeof(hwKeysHashMsv.hwKeysHashMsv), NULL, &hwKeysHashMsvFileSize);
         if(pakRc != ARC_OPERATION_SUCCESSFUL)
         {
-            SBE_INFO(SBE_FUNC "Failed to read HW Keys Hash and MSV");
-            UPDATE_ERROR_CODE_AND_HALT(FILE_RC_HW_KEYS_HASH_MSV_FILE_READ_BASE_ERROR + pakRc);
+            SBE_ERROR(SBE_FUNC "Failed to read HW Keys Hash and MSV");
+            SBE::updateErrorCodeAndHalt(FILE_RC_HW_KEYS_HASH_MSV_FILE_READ_BASE_ERROR + pakRc);
         }
         shvReq.pubKeyHashSet1 = &hwKeysHashMsv.hwKeyHash;
 
@@ -184,8 +181,7 @@ void bldrthreadroutine(void *i_pArg)
         if(bldrSbCtrlMeasurement.bootComplete != 0x01)
         {
             SBE_INFO(SBE_FUNC "SROM Boot complete bit 0x%01x", (uint8_t)bldrSbCtrlMeasurement.bootComplete);
-            SBE_INFO(SBE_FUNC "Halting PPE...");
-            UPDATE_ERROR_CODE_AND_HALT(BOOT_RC_SROM_COMPLETE_BIT_NOT_SET);
+            SBE::updateErrorCodeAndHalt(BOOT_RC_SROM_COMPLETE_BIT_NOT_SET_IN_BLDR);
         }
 
         //Clear out the boot loader boot complete bit.
@@ -254,7 +250,7 @@ void bldrthreadroutine(void *i_pArg)
         {
             // calculate sha3-512 (hash of boot loader hw keys | hash of boot loader fw keys | hash boot loader hash list)
             sha3_t digest;
-            sha3_Hash(shvRsp.sha3.data, sizeof(shvRsp.sha3.data), &digest);
+            SBE::hash_block(shvRsp.sha3.data, sizeof(shvRsp.sha3.data), &digest);
             memcpy(measurememtHash.sha3TruncatedHash, digest, SHA3_TRUNCATED_SIZE);
         }
 
@@ -290,7 +286,7 @@ void bldrthreadroutine(void *i_pArg)
         if(shvReq.controlData.secureBootVerificationEnforcement &&
                 shvRsp.statusCode != NO_ERROR && shvRsp.statusCode != SB_ENFORCEMENT_DISABLED)
         {
-            SBE_INFO(SBE_FUNC "Enforcement Enabled Halting PPE..." );
+            SBE_ERROR(SBE_FUNC "Enforcement Enabled Halting PPE..." );
             pk_halt();
         }
 

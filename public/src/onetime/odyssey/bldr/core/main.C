@@ -68,6 +68,8 @@ extern uint64_t _bss_end __attribute__ ((section (".bss")));
 
 void __eabi()
 {
+    //Clear out old progress code
+    UPDATE_BLDR_SBE_PROGRESS_CODE(0x00)
     UPDATE_BLDR_SBE_PROGRESS_CODE(EABI_ENTER);
 
     do
@@ -104,8 +106,6 @@ int  main(int argc, char **argv)
 
     do
     {
-        //Clear out old progress code
-        UPDATE_BLDR_SBE_PROGRESS_CODE(0x00)
         UPDATE_BLDR_SBE_PROGRESS_CODE(ENTERED_BLDR_MAIN);
 
         rc = pk_initialize((PkAddress)bldr_Kernel_NC_Int_stack,

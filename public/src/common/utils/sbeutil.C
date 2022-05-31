@@ -27,6 +27,7 @@
 #include "ppe42_string.h"
 #include "sbetrace.H"
 #include "p11_scom_perv_cfam.H"
+#include "mbxscratch.H"
 
 namespace SBE
 {
@@ -74,6 +75,16 @@ namespace SBE
 
             i_hash_list = (const uint8_t *)(filehash + 1);
         }
+    }
+
+    void updateErrorCodeAndHalt(uint16_t i_errorCode)
+    {
+        secureBootFailStatus_t secureBootFailStatus;
+        getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, &secureBootFailStatus.iv_mbx13);
+        secureBootFailStatus.iv_secureHeaderFailStatusCode = i_errorCode;
+        putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, secureBootFailStatus.iv_mbx13);
+        SBE_ERROR(SBE_FUNC "Halting PPE...");
+        pk_halt();
     }
 
     void memcpy_byte(void* vdest, const void* vsrc, size_t len)

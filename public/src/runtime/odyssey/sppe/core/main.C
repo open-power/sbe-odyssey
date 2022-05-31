@@ -36,6 +36,8 @@
 #include "target.H"
 #include "p11_scom_perv_cfam.H"
 #include "fapi2_attribute_service.H"
+#include "errorcodes.H"
+#include "measurementregs.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -109,7 +111,29 @@ int  main(int argc, char **argv)
     getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG,&loadValue);
     SBE::updateProgressCode(loadValue,CODE_REACHED_RUNTIME);
 
-    // Initialize SBEGlobals instance.
+    //Read the SROM measurement control register and validate if boot complete bit is set
+    sbCtrlMeasurement_t sromSbCtrlMeasurement;
+    sromSbCtrlMeasurement.getSbCtrlData(MEASUREMENT_REG_24);
+    SBE_INFO(SBE_FUNC "SROM Secure Boot Control Measurement Reg Value: 0x%08x",
+                 sromSbCtrlMeasurement.secureBootControl);
+    if(sromSbCtrlMeasurement.bootComplete != 0x1)
+    {
+        SBE_ERROR(SBE_FUNC "SROM Boot Complete bit not set.");
+        SBE::updateErrorCodeAndHalt(BOOT_RC_SROM_COMPLETE_BIT_NOT_SET_IN_RUNTIME);
+    }
+
+    //Read the Boot Loader measurement control register and validate if boot complete bit is set
+    sbCtrlMeasurement_t bldrSbCtrlMeasurement;
+    bldrSbCtrlMeasurement.getSbCtrlData(MEASUREMENT_REG_25);
+    SBE_INFO(SBE_FUNC "BLDR Secure Boot Control Measurement Reg Value: 0x%08x",
+                 bldrSbCtrlMeasurement.secureBootControl);
+    if(bldrSbCtrlMeasurement.bootComplete != 0x1)
+    {
+        SBE_ERROR(SBE_FUNC "BLDR Boot Complete bit not set.");
+        SBE::updateErrorCodeAndHalt(BOOT_RC_BLDR_COMPLETE_BIT_NOT_SET_IN_RUNTIME);
+    }
+
+    // Initialize SBE Globals instance.
     sbeGlobal = &SBEGlobalsSingleton::getInstance();
 
     int rc = 0;
