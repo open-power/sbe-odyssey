@@ -56,5 +56,5 @@ if [ -e ${SBEROOT}/customrc ]; then
 fi
 
 if [ -z $SBE_CI_ENV_SETUP ]; then
-    source public/src/tools/utils/sb/sb_complete
+    source public/src/tools/utils/sbe/sbe_complete
 fi

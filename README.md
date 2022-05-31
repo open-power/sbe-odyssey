@@ -5,14 +5,14 @@ This project is SBE repository for P & Z Processor.
 Before workon:
     * Create a file in ~/.sbe/customrc for any personal rc settings. This will be applied during workon
 
-    * To enable bash complete for sb script:
-        source public/src/tools/utils/sb/sb_complete
+    * To enable bash complete for sbe script:
+        source public/src/tools/utils/sb/sbe_complete
 
 To Setup Environment:
-    ./sb workon [<platform>] [<imageType>]
-    ./sb workon [<p11 metis p11_dft metis_dft odyssey all>][<sppe bldr srom pnor>]
-    Ex: ./sb workon odyssey sppe
-        ./sb workon odyssey pnor
+    ./sbe workon [<platform>] [<imageType>]
+    ./sbe workon [<p11 metis p11_dft metis_dft odyssey all>][<sppe bldr srom pnor>]
+    Ex: ./sbe workon odyssey sppe
+        ./sbe workon odyssey pnor
 
 Note: If platform option is not provided, it defaults to "all".
       If image option is not provided, it defaults to "pnor".
@@ -20,7 +20,7 @@ Note: If platform option is not provided, it defaults to "all".
       repo unless user manually over-rides using mesonwrap option's.
 
 To install required packages to build images:
-    ./sb install
+    ./sbe install
 
 To sync platform env variable with existing meson build dir:
     mesonwrap sync
@@ -44,9 +44,9 @@ Note: After build, all images are available in images dir.
 
 To Run simics:
     After building image run following steps.
-        ./sb prime
+        ./sbe prime
 
-        ./sb runsimics
+        ./sbe runsimics
 
     In simics console run this.
         simics> start-cbs 0

@@ -1,0 +1,229 @@
+#!/bin/sh
+# IBM_PROLOG_BEGIN_TAG
+# This is an automatically generated prolog.
+#
+# $Source: sbe $
+#
+# OpenPOWER sbe Project
+#
+# Contributors Listed Below - COPYRIGHT 2016,2022
+#
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+# IBM_PROLOG_END_TAG
+
+SUPPORTED_PLATFORM=("p11" "metis" "p11_dft" "metis_dft" "odyssey" "all")
+SUPPORTED_IMAGES=("sppe" "bldr" "srom" "pnor")
+SUPPORTED_COMMAND=("workon" "prime" "install" "citest" "runsimics")
+
+sb_helptext()
+{
+    echo "SBE Utility Script"
+
+    echo $1
+
+    case $1 in
+    ${SUPPORTED_COMMAND[0]})
+        echo "  Topic 'workon'"
+        echo
+        echo "  Usage:"
+        echo "      sbe workon [<${SUPPORTED_PLATFORM[*]}>]"
+        echo
+        echo "  Sources necessary environment files for building sbe"
+        echo "  and begins a new shell.  The workon may be left via 'exit'."
+        ;;
+    ${SUPPORTED_COMMAND[1]})
+        echo "  Topic 'Compile the PPE files on fips Sandbox'"
+        echo
+        echo "  Usage:"
+        echo "      Refer : $PWD/${SBE_TOOLS_PATH}/sbePrime.py -h"
+        ;;
+    ${SUPPORTED_COMMAND[2]})
+        echo "  Topic 'Install required packages at user level to build and use sbe repo'"
+        echo
+        echo "  Usage:"
+        echo "     sbe install"
+        ;;
+    ${SUPPORTED_COMMAND[3]})
+        echo "  Topic 'Run SBE CI'"
+        echo
+        echo "  Usage:"
+        echo "      sbe citest"
+        ;;
+    ${SUPPORTED_COMMAND[4]})
+        echo "  Run the simics"
+        echo
+        echo "  Usage:"
+        echo "      sbe runsimics"
+        ;;
+    *)
+        echo "  Usage:"
+        echo "      sbe <cmd>"
+        echo "      sbe help [<cmd>|<topic>]"
+        echo ""
+        echo "  Available Commands:"
+        echo "      workon [<${SUPPORTED_PLATFORM[*]}>]"
+        echo ""
+        echo "      install"
+        echo ""
+        echo "      prime"
+        echo ""
+        echo "      citest"
+        echo
+    esac
+}
+
+sb_workon()
+{
+    if [ -n "${SBE_INSIDE_WORKON}" ]; then
+        echo "Already in a workon."
+        exit -1
+    else
+        export SBE_INSIDE_WORKON=1
+
+        for PLATFORM in ${SUPPORTED_PLATFORM[@]}; do
+            if [ "$PLATFORM" == "$1" ]; then
+                export SBE_PLATFORM=$1
+                echo "***INFO | Platform is $SBE_PLATFORM"
+                break
+            fi
+        done
+
+        for IMAGE in ${SUPPORTED_IMAGES[@]}; do
+           if [ "$IMAGE" == "$2" ]; then
+                export SBE_IMAGE=$2
+                echo "***INFO | Image type is $SBE_IMAGE"
+                break
+            fi
+        done
+
+        if [ -z "$SBE_PLATFORM" ]; then
+            echo "***INFO | Un-Supported platform type $1"
+            echo "***INFO | Supported Platforms : [<${SUPPORTED_PLATFORM[*]}>]"
+            echo "***INFO | Defaulting to  platform type : all"
+            export SBE_PLATFORM=all
+        fi
+
+        if [ -z "$SBE_IMAGE" ]; then
+            echo "***INFO | Un-Supported image type $2"
+            echo "***INFO | Supported Images : [<${SUPPORTED_IMAGES[*]}>]"
+            echo "***INFO | Defaulting to  image type : pnor"
+            export SBE_IMAGE=pnor
+        fi
+
+        PYTHON_VERSION=$(python -V 2>&1 | grep -Po '(?<=Python )(.)')
+        #For machines which have python2 as default(mostly all CI machines)
+        #execute scl command.Do nothing if python3 is default.
+        if [ "$PYTHON_VERSION" == "3" ]; then
+            echo "***INFO | Machine has Python3 as default"
+            echo "Spawning new shell (/bin/bash)..."
+            bash --rcfile ./env.bash
+        else
+            echo "***INFO | Machine has Python2 as default"
+            # we need to pass "bash --rcfile ./env.bash" as single argument to scl command
+            CMD_ARR=("scl" "enable" "rh-python36" "bash --rcfile ./env.bash")
+            echo "Spawning new shell : ${CMD_ARR[@]}"
+            "${CMD_ARR[@]}"
+        fi
+    fi
+}
+
+sb_install()
+{
+    if [ -n "${SBE_INSIDE_WORKON}" ]; then
+        echo "Already in a workon.. Continuing"
+        echo "Installing packages as per $SBEROOT_PUB/src/tools/install/requirements.txt"
+        echo " "
+        CMD="pip install -r $SBEROOT_PUB/src/tools/install/requirements.txt --user"
+        echo $CMD
+        $CMD
+    else
+        echo "Please do workon and re launch..."
+    fi
+
+}
+
+sb_prime()
+{
+    if [ -n "${SBE_INSIDE_WORKON}" ]; then
+        echo "Already in a workon.. Continuing"
+        ${SBE_TOOLS_PATH}/sbePrime.py $*
+    else
+        echo "Please do workon and re launch..."
+    fi
+
+}
+
+sb_citest()
+{
+    if [ -n "${SBE_INSIDE_WORKON}" ]; then
+        echo "Already in a workon.. Continuing"
+        ${SBE_CITEST_PATH}/ci_script $*
+    else
+        echo "Please do workon and re launch..."
+    fi
+
+}
+
+sb_run_simics()
+{
+    if [ -n "${SBE_INSIDE_WORKON}" ]; then
+        echo "Already in a workon.. Continuing"
+        if [ -d "simics" ]; then
+            cd simics
+            $SBEROOT/internal/src/tools/simics/runsimicscmd.sh -p $SBE_PLATFORM -i $SBE_IMAGE
+        else
+            echo "Please do prime before runsimics"
+        fi
+    else
+        echo "Please do workon and re launch..."
+    fi
+
+}
+
+# This is for enabling bash completion
+generate_list()
+{
+    mkdir -p ${HOME}/.sbe
+    echo ${SUPPORTED_COMMAND[*]} > ${HOME}/.sbe/cmd_list.dat
+    echo ${SUPPORTED_PLATFORM[*]} > ${HOME}/.sbe/plat_list.dat
+}
+
+FIRST_PARAM=$1
+shift
+
+case ${FIRST_PARAM} in
+${SUPPORTED_COMMAND[0]})
+    sb_workon $*
+    ;;
+${SUPPORTED_COMMAND[2]})
+    sb_install $*
+    ;;
+${SUPPORTED_COMMAND[1]})
+    sb_prime $*
+    ;;
+${SUPPORTED_COMMAND[3]})
+    sb_citest $*
+    ;;
+${SUPPORTED_COMMAND[4]})
+    sb_run_simics $*
+    ;;
+# This is not to be printed in completion, so no need to add in SUPPORTED_COMMAND
+gen_list)
+    generate_list $*
+    ;;
+*)
+    sb_helptext $*
+    ;;
+esac
