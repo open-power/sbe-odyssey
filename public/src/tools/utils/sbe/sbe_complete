@@ -2,12 +2,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/tools/utils/sb/sb_complete $
+# $Source: public/src/tools/utils/sbe/sbe_complete $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,20 +23,20 @@
 #
 # IBM_PROLOG_END_TAG
 
-./sb gen_list
+./sbe gen_list
 
-sb_complete(){
+sbe_complete(){
     local cur prev opts opts_workon
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    # sb script will output these files always
+    # sbe script will output these files always
     opts_help="$(cat ${HOME}/.sbe/cmd_list.dat)"
     opts_cmd="${opts_help} help"
     opts_workon="$(cat ${HOME}/.sbe/plat_list.dat)"
 
-    if [[ ${prev} == ./sb ]] ; then
+    if [[ ${prev} == ./sbe ]] ; then
         COMPREPLY=( $(compgen -W "${opts_cmd}" -- ${cur}) )
         return 0
     fi
@@ -53,6 +52,6 @@ sb_complete(){
     fi
 }
 
-complete -F sb_complete sb
+complete -F sbe_complete sbe
 
 echo "enabled auto complete"
