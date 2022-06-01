@@ -35,92 +35,110 @@
 #include "ipl.H"
 #include "istep.H"
 
-static const uint8_t SLAVE_LAST_MINOR_ISTEP = 22;
-
 using namespace fapi2;
 //----------------------------------------------------------------------------
-bool validateIstep (const uint8_t i_major, const uint8_t i_minor)
+static void findNextIstep(uint8_t& o_nextMajor, uint8_t& o_nextMinor)
 {
-    #define SBE_FUNC "validateIstep "
-    bool valid = false;
+    #define SBE_FUNC "findNextIstep "
+    uint8_t prevMajorNumber =
+                SbeRegAccess::theSbeRegAccess().getSbeMajorIstepNumber();
+    uint8_t prevMinorNumber =
+                SbeRegAccess::theSbeRegAccess().getSbeMinorIstepNumber();
+    SBE_INFO(SBE_FUNC"prevMajorNumber:%u prevMinorNumber:%u ",
+                        prevMajorNumber, prevMinorNumber );
+    if( 0 == prevMajorNumber )
+    {
+        prevMajorNumber = 1;
+        prevMinorNumber = 12;
+    }
+
+    o_nextMajor = prevMajorNumber;
+    o_nextMinor = prevMinorNumber + 1;
+
+    for(size_t entry = 0; entry < istepTable.len; entry++)
+    {
+        auto istepTableEntry = &istepTable.istepMajorArr[entry];
+        if( istepTableEntry->istepMajorNum == prevMajorNumber)
+        {
+            if( prevMinorNumber == istepTableEntry->len )
+            {
+                o_nextMajor = prevMajorNumber + 1;
+                o_nextMinor =  1;
+            }
+            break;
+        }
+    }
+    #undef SBE_FUNC
+}
+
+static bool validateIstepRange(const uint8_t i_major, const uint8_t i_minor)
+{
+    bool inRange = false;
     do
     {
         if( 0 == i_minor )
         {
             break;
         }
-#if 0
-        // istep 2.1 loads image to PIBMEM
-        // So SBE control loop can not execute istep 2.1.
-        //TODO : P11 SBE porting
-        if(( i_major == 2 ) && ( i_minor == 1) )
-        {
-            break;
-        }
-
-        if( SBE_ROLE_SLAVE == g_sbeRole )
-        {
-            if(( i_major == 3 && i_minor > SLAVE_LAST_MINOR_ISTEP ) ||
-               ( i_major > 3 ))
-            {
-                break;
-            }
-        }
-#endif
-
-        uint32_t prevMajorNumber =
-                    SbeRegAccess::theSbeRegAccess().getSbeMajorIstepNumber();
-        uint32_t prevMinorNumber =
-                    SbeRegAccess::theSbeRegAccess().getSbeMinorIstepNumber();
-        SBE_INFO(SBE_FUNC"prevMajorNumber:%u prevMinorNumber:%u ",
-                         prevMajorNumber, prevMinorNumber );
-        if( 0 == prevMajorNumber )
-        {
-            prevMajorNumber = 1;
-            prevMinorNumber = 12;
-        }
-
-        uint32_t nextMajorIstep = prevMajorNumber;
-        uint32_t nextMinorIstep = prevMinorNumber + 1;
-
         for(size_t entry = 0; entry < istepTable.len; entry++)
         {
             auto istepTableEntry = &istepTable.istepMajorArr[entry];
-            if( istepTableEntry->istepMajorNum == prevMajorNumber)
-            {
-                if( prevMinorNumber == istepTableEntry->len )
-                {
-                    nextMajorIstep = prevMajorNumber + 1;
-                    nextMinorIstep =  1;
-                }
-            }
             if( i_major == istepTableEntry->istepMajorNum )
             {
-                if( i_minor > istepTableEntry->len )
+                if( i_minor <= istepTableEntry->len )
                 {
-                    break;
+                    inRange = true;
                 }
-// TODO: P11SBE Porting
-#if 0
-                // If secuirty is not enabled, no further chacks asre required
-                if( !SBE_GLOBAL->sbeFWSecurityEnabled)
-                {
-                    valid = true;
-                    break;
-                }
-#endif
-                if( ( i_major != nextMajorIstep) ||
-                    ( i_minor != nextMinorIstep) )
-                {
-                    SBE_ERROR("Secuity validation failed for executing istep "
-                           "Skipping istep or MPIPL via istep not allowed "
-                           "in secure mode. nextMajorIstep:%u "
-                           "nextMinorIstep:%u", nextMajorIstep, nextMinorIstep);
-                    break;
-                }
-                valid = true;
                 break;
             }
+        }
+    }
+    while(0);
+
+    return inRange;
+}
+
+bool validateIstep (const uint8_t i_major, const uint8_t i_minor)
+{
+    #define SBE_FUNC "validateIstep "
+    bool valid = false;
+    do
+    {
+        if(false == validateIstepRange(i_major, i_minor))
+        {
+            SBE_ERROR(SBE_FUNC" Invalid Istep range. major:0x%08x minor:0x%08x",
+                        i_major, i_minor);
+            break;
+        }
+// TODO: P11SBE Porting
+#if 0
+        // If secuirty is not enabled, no further chacks asre required
+        if(!SBE_GLOBAL->sbeFWSecurityEnabled)
+        {
+            SBE_INFO(SBE_FUNC" Security is disabled. Skipping istep order check");
+            valid = true;
+            break;
+        }
+#endif
+
+        uint8_t nextMajorIstep = 0;
+        uint8_t nextMinorIstep = 0;
+        findNextIstep(nextMajorIstep, nextMinorIstep);
+
+        if( ( i_major != nextMajorIstep) ||
+            ( i_minor != nextMinorIstep) )
+        {
+            SBE_ERROR("Secuity validation failed for executing istep "
+                    "Skipping istep not allowed "
+                    "in secure mode. nextMajorIstep:%u "
+                    "nextMinorIstep:%u", nextMajorIstep, nextMinorIstep);
+            // TODO: remove this workaround after odyssey rit
+            valid = true;
+            break;
+        }
+        else
+        {
+            valid = true;
         }
     } while(0);
 
@@ -157,9 +175,9 @@ uint32_t sbeHandleIstep (uint8_t *i_pArg)
 
         if( false == validateIstep( req.major, req.minor ) )
         {
-            SBE_ERROR(SBE_FUNC" Invalid Istep. major:0x%08x"
-                      " minor:0x%08x",
-                      (uint32_t)req.major, (uint32_t)req.minor);
+            SBE_ERROR(SBE_FUNC" Invalid Istep. major:%u"
+                      " %u",
+                      req.major, req.minor);
             // @TODO via RTC 132295.
             // Need to change code asper better error handling.
             respHdr.setStatus( SBE_PRI_INVALID_DATA,
@@ -175,8 +193,8 @@ uint32_t sbeHandleIstep (uint8_t *i_pArg)
         if( fapiRc != FAPI2_RC_SUCCESS )
         //if(( fapiRc != FAPI2_RC_SUCCESS ) || (checkstop))
         {
-            SBE_ERROR(SBE_FUNC" sbeExecuteIstep() Failed. major:0x%08x"
-                " minor:0x%08x", (uint32_t)req.major, (uint32_t)req.minor);
+            SBE_ERROR(SBE_FUNC" sbeExecuteIstep() Failed. major:%u"
+                " minor:%u", req.major, req.minor);
             //if(checkstop)
             //{
             //    respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
