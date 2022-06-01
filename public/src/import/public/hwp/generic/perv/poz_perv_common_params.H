@@ -49,6 +49,13 @@ enum pll_lock_bits
     P11S_PERV_PLLNEST   = 0x02,
 
     ODY_PERV_PLLMC      = 0x02,
+
+    ZME_PERV_PLLCLKSW0  = 0x80,
+    ZME_PERV_PLLCLKSW1  = 0x40,
+    ZME_PERV_PLLABFLT   = 0x20,
+    ZME_PERV_PLLXBFLT   = 0x10,
+    ZME_PERV_PLLMCFLT   = 0x08,
+    ZME_PERV_PLLNEST    = 0x04,
 };
 };
 
