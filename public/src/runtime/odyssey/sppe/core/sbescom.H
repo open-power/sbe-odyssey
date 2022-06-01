@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,9 +23,13 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
+#ifndef __SBESCOM_H
+#define __SBESCOM_H
+
 #include "sbeSpMsg.H"
 #include "sbeutil.H"
 #include "sbefifo.H"
+#include "fapi2.H"
 
 /**
   * @brief check if scom address is Indirect scom and perform scom
@@ -39,9 +44,10 @@
   *
   */
 void checkIndirectAndDoScom( const bool i_isRead,
-                                 const uint64_t i_addr,
-                                 uint64_t & io_data,
-                                 sbeRespGenHdr_t *const o_hdr,
-                                 sbeResponseFfdc_t *const o_ffdc,
-                                 sbeFifoType i_fifoType = SBE_FIFO,
-                                 uint64_t i_mask = 0xffffffffffffffffull);
+                                    const uint64_t i_addr,
+                                    uint64_t & io_data,
+                                    sbeRespGenHdr_t *const o_hdr,
+                                    sbeResponseFfdc_t *const o_ffdc,
+                                    sbeFifoType i_fifoType = SBE_FIFO,
+                                    uint64_t i_mask = 0xffffffffffffffffull);
+#endif

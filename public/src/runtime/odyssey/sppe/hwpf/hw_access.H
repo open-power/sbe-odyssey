@@ -55,11 +55,12 @@ namespace fapi2
         inline ReturnCode  getScom(const Target<K, M, V>& i_target, const uint64_t i_address,
                 buffer<uint64_t>& o_data)
         {
+            uint64_t & io_data = o_data;
             ReturnCode l_rc;
             PLAT_GETSCOM(l_rc,
                     i_target,
                     i_address,
-                    &(o_data()));
+                    io_data);
 
             return l_rc;
         }
@@ -75,11 +76,12 @@ namespace fapi2
     inline ReturnCode  putScom(const Target<K, M, V>& i_target, const uint64_t i_address,
                        const buffer<uint64_t> i_data)
     {
+        uint64_t io_data = i_data;
         ReturnCode l_rc;
         PLAT_PUTSCOM(l_rc,
                     i_target,
                     i_address,
-                    i_data());
+                    io_data);
 
         return l_rc;
     }
