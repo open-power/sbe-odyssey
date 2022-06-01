@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -114,8 +115,9 @@ typedef union sbCtrlMeasurement
         uint32_t hwKeyHashVerificationEnable : 1;
         uint32_t secureModeEnable : 1;
         uint32_t enforceMatchingMSV : 1;
+        uint32_t fileHashCalculationEnable : 1;
         uint32_t bootComplete : 1;                             //SROM or BLDR boot complete
-        uint32_t reserved2 : 4;
+        uint32_t reserved2 : 3;
         uint32_t msv : 8;
         uint32_t reserved3 : 12;
     };

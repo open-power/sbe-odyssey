@@ -395,52 +395,52 @@
             "description": "This register holds all control data pertaining to secure header verification"
         },
         {
-            "field": "secureModeEnable",
-            "field_size": 1,
-            "value": "0x1",
-            "description": "Bit 0 : Enable secure mode. FSI2PIB and i2c-direct disabled. All scan/scom must be through S-PPE FIFO"
-        },
-        {
             "field": "hwKeyHashVerificationEnable",
             "field_size": 1,
-            "value": "0x1",
-            "description": "Bit 1 : Enable verification of Hardware Public Key Hash. Calculate and compare the public key hash against the one stored in the OTPROM"
+            "value": "0x0",
+            "description": "Bit 0 : Enable verification of Hardware Public Key Hash. Calculate and compare the public key hash against the one stored in the OTPROM"
         },
         {
             "field": "ecdsaSigCheckEnable",
             "field_size": 1,
             "value": "0x0",
-            "description": "Bit 2 : Enable ECDSA Signature checks"
+            "description": "Bit 1 : Enable ECDSA Signature checks"
         },
         {
             "field": "ecdsaSigCheckDisable",
             "field_size": 1,
             "value": "0x0",
-            "description": "Bit 3 : Disable ECDSA Signature checks"
+            "description": "Bit 2 : Disable ECDSA Signature checks"
         },
         {
             "field": "dilithiumSigCheckEnable",
             "field_size": 1,
             "value": "0x0",
-            "description": "Bit 4 : Enable Dilithium Signature checks"
+            "description": "Bit 3 : Enable Dilithium Signature checks"
         },
         {
             "field": "dilithiumSigCheckDisable",
             "field_size": 1,
             "value": "0x0",
-            "description": "Bit 5 : Disable Dilithium Signature checks"
+            "description": "Bit 4 : Disable Dilithium Signature checks"
         },
         {
             "field": "ecidCheckEnable",
             "field_size": 1,
             "value": "0x0",
-            "description": "Bit 6 : Enable ECID check.Denotes that this part can only boot FW with matching ECIDs"
+            "description": "Bit 5 : Enable ECID check.Denotes that this part can only boot FW with matching ECIDs"
         },
         {
             "field": "matchingSecurityVersionEnforcement",
             "field_size": 1,
-            "value": "0x1",
-            "description": "Bit 7 : Check for matching MSV in Secure Header"
+            "value": "0x0",
+            "description": "Bit 6 : Check for matching MSV in Secure Header"
+        },
+        {
+            "field": "fileHashCalculationEnable",
+            "field_size": 1,
+            "value": "0x0",
+            "description": "Bit 7 : Enable calculation of file hash while reading the file from PAK"
         },
         {
             "field": "reserved",

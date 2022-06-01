@@ -44,11 +44,11 @@ typedef union
         uint64_t iv_mpiplMode : 1;                        //bit 2: p11
         uint64_t iv_mbx11DontCare1 : 2;                   //bit 3..4: p11
         uint64_t iv_sendFFDC : 1;                         //bit 5: p11, odyssey
-        uint64_t iv_disableSecurity : 1;                  //bit 6: p11, odyssey
+        uint64_t iv_disableSecurity : 1;                  //bit 6: p11
         uint64_t iv_allowAttrOverride : 1;                //bit 7: p11, odyssey
-        uint64_t iv_fwSmtOverride : 2;                    //bit 8..9: p11, odyssey
+        uint64_t iv_fwSmtOverride : 2;                    //bit 8..9: p11
         uint64_t iv_dontCheckStopForDMT : 1;              //bit 10: p11
-        uint64_t iv_disableScomFiltering : 1;             //bit 11: p11
+        uint64_t iv_disableScomFiltering : 1;             //bit 11: p11, odyssey
         uint64_t iv_disableInvalidScomAddrCheck : 1;      //bit 12: p11, odyssey
         uint64_t iv_mfgMode : 1;                          //bit 13: p11, odyssey
         uint64_t iv_enableSuart : 1;                      //bit 14: p11
@@ -57,8 +57,10 @@ typedef union
         uint64_t iv_enableDilithium : 1;                  //bit 17: p11, odyssey
         uint64_t iv_enableEcidVerification : 1;           //bit 18: p11, odyssey
         uint64_t iv_enableHwKeyHashVerification : 1;      //bit 19: p11, odyssey
-        uint64_t iv_enforceMatchingSecurity  : 1;         //bit 20: p11, odyssey
-        uint64_t iv_mbx11DontCare2 : 11;                  //bit 21..31: p11
+        uint64_t iv_fileHashCalculationEnable : 1;        //bit 20: p11, odyssey
+        uint64_t iv_enforceMatchingSecurity  : 1;         //bit 21: p11, odyssey
+        uint64_t iv_secureBootValidityVerification :1;    //bit 22: p11, odyssey
+        uint64_t iv_mbx11DontCare2 : 9;                   //bit 23..31: p11
         uint64_t iv_mbx11Unused : 32;
     };
     uint64_t iv_mbx11;
