@@ -131,7 +131,7 @@ def sim_poweron_sequence():
 
 ISTEP(0, 6, "setup_ref_clock", "BMC")
 
-def poz_setup_ref_clock():
+def poz_setup_ref_clock(target<PROC_CHIP | HUB_CHIP>):
     ## Disable Write Protection for Root/Perv Control registers
     # CONTROL_WRITE_PROTECT_DISABLE = 0x4453FFFF
     GPWRP = CONTROL_WRITE_PROTECT_DISABLE
@@ -295,7 +295,7 @@ def p11s_tp_chiplet_reset():
     ROOT_CTRL1.TP_TPM_DI1_DC_B = 0b1   # Enable TPM SPI port
 
     CPLT_CONF1.TP_AN_NEST_PROGDLY_SETTING_DC = 7   # Set up static progdelay for the nest mesh
-    PERV_CTRL1.TP_CPLT_CLK_NEST_PDLY_BYPASS_DC = 0 # Drop nest PDLY/DCC bypass
+    PERV_CTRL1.TP_CPLT_CLK_NEST_PDLY_BYPASS_DC = 0 # Drop nest PDLY bypass
 
 def ody_tp_chiplet_reset():
     ROOT_CTRL0.PCB_RESET_DC = 0       # Drop PCB interface reset to enable access into TP chiplet
@@ -327,7 +327,7 @@ ISTEP(1, 4, "ph_tp_pll_setup", "SPPE")
 def p11s_tp_pll_setup():
     CPLT_CTRL1.TC_REGION13_FENCE_DC = 0   # Drop PLL region fence
 
-    if not ATTR_FILTER_PLL_BYPASS:
+    if not ATTR_CP_PLLFLT_BYPASS:
         ## Start chip filter PLLs
         ROOT_CTRL3.TP_PLLFLT1_TEST_EN_DC = 0
         ROOT_CTRL3.TP_PLLFLT1_RESET_DC = 0
@@ -345,7 +345,7 @@ def p11s_tp_pll_setup():
         ROOT_CTRL3.TP_PLLFLT3_BYPASS_DC = 0
         ROOT_CTRL3.TP_PLLFLT4_BYPASS_DC = 0
 
-    if not ATTR_NEST_PLL_BYPASS:
+    if not ATTR_CP_PLLNEST_BYPASS:
         ## Attempt to lock Nest PLL
         ROOT_CTRL3.TP_PLLNEST_TEST_EN_DC = 0    # not available in headers yet - bit 24
         ROOT_CTRL3.TP_PLLNEST_RESET_DC = 0      # not available in headers yet - bit 25
@@ -422,11 +422,11 @@ def zme_pib_arrayinit():
 
 """
 PIB/SBE LBIST flow:
- 1. mod_start_cbs(no scan0+clockstart, no sbe start)
+ 1. mod_start_cbs(i_sbe_start=false, i_scan0_clockstart=false)
  2. mod_switch_pcbmux(mux::FSI2PCB)
  3. run command table up to this point using FAPI or Python interpreter
-    remember to translate mailbox scoms into cfams
- 4. LBIST your ass off
+    remember to translate mailbox scoms into cfams (use cmdtable.py run --cfam)
+ 4. run LBIST
 """
 
 ISTEP(1, 9, "ph_pib_startclocks", "SPPE")
@@ -584,6 +584,13 @@ def p11s_tp_init():
     ## Set up constant hang pulses
     mod_constant_hangpulse_setup(i_target, TP_TPCHIP_PIB_PSU_HANG_PULSE_CONFIG_REG, {{37, 1, 0}, {153, 27, 0}, {0, 0, 0}, {0, 0, 0}})
 
+    ## Unmask TP PLL unlock reporting
+    if not ATTR_FILTER_PLL_BYPASS:
+        PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS &= ~(P11S_PERV_FPLL1 | P11S_PERV_FPLL2 | P11S_PERV_FPLL3 | P11S_PERV_FPLL4)
+
+    if not ATTR_NEST_PLL_BYPASS:
+        PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS &= ~(P11S_PERV_PLLNEST)
+
     ## Miscellaneous TP setup
     mod_poz_tp_init_common(i_target)
 
@@ -600,7 +607,11 @@ def ody_tp_init():
     mod_multicast_setup(i_target, MCGROUP_GOOD_NO_TP, 0x3FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL)
 
     ## Set up chiplet hang pulses
-    mod_hangpulse_setup(MCGROUP_GOOD, 1, {{0, 16, 0}, {1, 1, 0}, {5, 6, 0}, {6, 7, 0, 1}})
+    mod_hangpulse_setup(MCGROUP_GOOD, 1, {{0, 16, 0}, {1, 1, 0}, {2, 1, 0}, {5, 6, 0}, {6, 7, 0, 1}})
+
+    ## Unmask TP PLL unlock reporting
+    if not ATTR_PLL_BYPASS:
+        PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS &= ~(ODY_PERV_PLLMC)
 
     ## Miscellaneous TP setup
     mod_poz_tp_init_common(i_target)
@@ -620,6 +631,13 @@ def zme_tp_init():
     ## Set up chiplet hang pulses
     uint8_t pre_divider = bla;
     mod_hangpulse_setup(MCGROUP_GOOD, pre_divider, {{0, 16, 0}, {1, 1, 0}, {5, 6, 0}, {6, 7, 0, 1}})
+
+    ## Unmask TP PLL unlock reporting
+    if not ATTR_FILTER_PLL_BYPASS:
+        PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS &= ~(ZME_PERV_PLLABFLT | ZME_PERV_PLLXBFLT | ZME_PERV_PLLMCFLT)
+
+    if not ATTR_NEST_PLL_BYPASS:
+        PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS &= ~(ZME_PERV_PLLNEST)
 
     ## Miscellaneous TP setup
     mod_poz_tp_init_common(i_target)
@@ -815,7 +833,7 @@ def p11t_pll_initf():
 ISTEP(2, 18, "pc_pll_setup", "TSBE")
 
 def p11t_pll_setup():
-    if ATTR_DPLL_BYPASS:
+    if ATTR_TAP_DPLL_BYPASS:
         return
 
     ## Write sector buffer strength
@@ -854,9 +872,6 @@ def p11t_pll_setup():
     ROOT_CTRL3.TP_DPLL_BYPASS = 0
 
     DPLL_CTRL.FF_BYPASS = 0
-
-    ## Unmask PLL unlock reporting
-    SLAVE_CONFIG_REG.CFG_MASK_PLL_ERRS[0] = 0
 
 ISTEP(2, 19, "pc_tp_initf", "TSBE")
 
@@ -897,6 +912,10 @@ def p11t_tp_init():
         # EQ_NET_CTRL1_INIT_VALUE = 0x00FF_FFFF_0000_0000
         NET_CTRL1 = EQ_NET_CTRL1_INIT_VALUE
 
+    ## Unmask TP PLL unlock reporting
+    if not ATTR_DPLL_BYPASS:
+        PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS &= ~(P11T_PERV_DPLLNEST)
+
     ## Miscellaneous TP setup
     mod_poz_tp_init_common(i_target)
 
@@ -908,8 +927,7 @@ ISTEP(3, 1, "proc_chiplet_force_on", "SSBE, TSBE")
 # NOT executed as part of hotplug
 
 def p11s_chiplet_force_on():
-    ## Enable all spinal power gates
-    CPLT_CONF1[bits 0:15] = 0xFFFF
+    pass  # No power gated regions on Spinal
 
 def p11t_chiplet_force_on():
     pass
@@ -1145,7 +1163,7 @@ def poz_chiplet_pll_setup():
     ## Enable PLL unlock error reporting
     for chiplet in all chiplets except TP:
         # gotta do this via RMW because there's no write-clear address
-        SLAVE_CONFIG_REG.CFG_MASK_PLL_ERRS = 0
+        PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS = 0
 
 """
 ---------- IF user elects to skip BIST, skip from here -----------------------------------------------------------------
@@ -1175,25 +1193,29 @@ def p11s_abist():
     if not ATTR_ENABLE_ABIST:
         return
 
-    poz_bist({"s_abst_setup", "s_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup+scan0_rest+arrayinit, regions=all})
+    poz_bist({"s_abst_setup", "s_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup, regions=all})
+    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
 def p11t_abist():
     if not ATTR_ENABLE_ABIST:
         return
 
-    poz_bist({"t_abst_setup", "t_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup+scan0_rest+arrayinit, regions=all})
+    poz_bist({"t_abst_setup", "t_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup, regions=all})
+    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
 def ody_abist():
     if not ATTR_ENABLE_ABIST:
         return
 
-    poz_bist({"cpl_abst_setup", "cpl_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup+scan0_rest+arrayinit, regions=all})
+    poz_bist({"cpl_abst_setup", "cpl_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup, regions=all})
+    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
 def zme_abist():
     if not ATTR_ENABLE_ABIST:
         return
 
-    poz_bist({"cpl_abst_setup", "cpl_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup+scan0_rest+arrayinit, regions=all})
+    poz_bist({"cpl_abst_setup", "cpl_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup, regions=all})
+    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
 ISTEP(3, 10, "proc_lbist", "SSBE, TSBE")
 
@@ -1201,25 +1223,33 @@ def p11s_lbist():
     if not ATTR_ENABLE_LBIST:
         return
 
-    poz_bist({"s_lbst_setup", "s_lbst_cmp", chiplets=all, lbist+setup+run+compare+cleanup+scan0_gtr+scan0_rest, regions=all})
+    poz_bist({"s_lbst_setup", "s_lbst_cmp", chiplets=all, lbist+arrayinit+setup+run+compare+cleanup, regions=all})
+    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_RTG)
+    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
 def p11t_lbist():
     if not ATTR_ENABLE_LBIST:
         return
 
-    poz_bist({"t_lbst_setup", "t_lbst_cmp", chiplets=all, lbist+setup+run+compare+cleanup+scan0_gtr+scan0_rest, regions=all})
+    poz_bist({"t_lbst_setup", "t_lbst_cmp", chiplets=all, lbist+arrayinit+setup+run+compare+cleanup, regions=all})
+    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_RTG)
+    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
 def ody_lbist():
     if not ATTR_ENABLE_LBIST:
         return
 
-    poz_bist({"cpl_lbst_setup", "cpl_lbst_cmp", chiplets=all, lbist+setup+run+compare+cleanup+scan0_gtr+scan0_rest, regions=all})
+    poz_bist({"cpl_lbst_setup", "cpl_lbst_cmp", chiplets=all, lbist+arrayinit+setup+run+compare+cleanup, regions=all})
+    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_RTG)
+    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
 def zme_lbist():
     if not ATTR_ENABLE_LBIST:
         return
 
-    poz_bist({"cpl_lbst_setup", "cpl_lbst_cmp", chiplets=all, lbist+setup+run+compare+cleanup+scan0_gtr+scan0_rest, regions=all})
+    poz_bist({"cpl_lbst_setup", "cpl_lbst_cmp", chiplets=all, lbist+arrayinit+setup+run+compare+cleanup, regions=all})
+    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_RTG)
+    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
 """
 ---------- IF user elects to skip BIST, skip until here -----------------------------------------------------------------
@@ -1263,11 +1293,7 @@ ISTEP(3, 13, "proc_chiplet_undo_force_on", "SSBE, TSBE")
 # NOT executed as part of hotplug
 
 def p11s_chiplet_undo_force_on():
-    ## Set up static power gating based on partial good info
-    CPLT_CONF1[bits 0:15] = TBD
-    # Verify static power gating PFET states
-    if MISC_PFET != TBD:
-        ASSERT(STATIC_POWER_GATING_PFET_CNFG_ERR)
+    pass
 
 def p11t_chiplet_undo_force_on():
     p11_hcd_ex_manual_poweroff(all good cores)
@@ -1356,7 +1382,7 @@ def ody_chiplet_startclocks():
     PERV_CTRL0.TC_PERV_CHIPLET_FENCE_DC = 0    # new field - bit 17
 
     ## Start chiplet clocks
-    poz_chiplet_startclocks(MCGROUP_GOOD_NO_TP)
+    poz_chiplet_startclocks(MCGROUP_GOOD_NO_TP, REGION_ALL)
 
 def zme_chiplet_startclocks():
     ## Drop TP chiplet fence
@@ -1416,7 +1442,7 @@ def p11t_chiplet_dts_init():
     poz_chiplet_dts_init()
 
 def ody_chiplet_dts_init():
-    poz_chiplet_dts_init()
+    pass
 
 def zme_chiplet_dts_init():
     poz_chiplet_dts_init()
@@ -1457,12 +1483,12 @@ def p11t_chiplet_skewadj_setup():
         SKEW_WRAP_SKEWADJ_SET_IGNORE_CNT.IGNORE_CNT_VALUE = SKEWADJ_IGNORE_CNT # 2
         # Set up core PDLY override
         SKEW_WRAP_SKEWADJ_CORE_OVERRIDE = 0
-        SKEW_WRAP_SKEWADJ_CORE_OVERRIDE.CORE_OVR_ENABLE = ATTR_SKEWADJ_CORE_PDLY_OVERRIDE[0]
-        SKEW_WRAP_SKEWADJ_CORE_OVERRIDE.CORE_OVR_VALUE  = ATTR_SKEWADJ_CORE_PDLY_OVERRIDE[12:15]
+        SKEW_WRAP_SKEWADJ_CORE_OVERRIDE.CORE_OVR_ENABLE = ATTR_EQ_SKEWADJ_CORE_PDLY_OVERRIDE[0]
+        SKEW_WRAP_SKEWADJ_CORE_OVERRIDE.CORE_OVR_VALUE  = ATTR_EQ_SKEWADJ_CORE_PDLY_OVERRIDE[12:15]
         # Set up cache PDLY override
         SKEW_WRAP_SKEWADJ_CACHE_OVERRIDE = 0
-        SKEW_WRAP_SKEWADJ_CACHE_OVERRIDE.CACHE_OVR_ENABLE = ATTR_SKEWADJ_CACHE_PDLY_OVERRIDE[0]
-        SKEW_WRAP_SKEWADJ_CACHE_OVERRIDE.CACHE_OVR_VALUE  = ATTR_SKEWADJ_CACHE_PDLY_OVERRIDE[12:15]
+        SKEW_WRAP_SKEWADJ_CACHE_OVERRIDE.CACHE_OVR_ENABLE = ATTR_EQ_SKEWADJ_CACHE_PDLY_OVERRIDE[0]
+        SKEW_WRAP_SKEWADJ_CACHE_OVERRIDE.CACHE_OVR_VALUE  = ATTR_EQ_SKEWADJ_CACHE_PDLY_OVERRIDE[12:15]
 
         ## Initialize DC Adjust
         # Put DCAdj into INIT state
@@ -1483,26 +1509,26 @@ def p11t_chiplet_skewadj_setup():
         DCADJ_WRAP_SET_COMP_DLY.COMP_DELAY_VALUE = DCADJ_COMP_DELAY              # 64
         # Set up DCC override
         DCADJ_WRAP_DCC_OVERRIDE = 0
-        DCADJ_WRAP_DCC_OVERRIDE.OVR_ENABLE = ATTR_DCADJ_DCC_OVERRIDE[0]
-        DCADJ_WRAP_DCC_OVERRIDE.OVR_VALUE  = ATTR_DCADJ_DCC_OVERRIDE[8:15]
+        DCADJ_WRAP_DCC_OVERRIDE.OVR_ENABLE = ATTR_EQ_DCADJ_DCC_OVERRIDE[0]
+        DCADJ_WRAP_DCC_OVERRIDE.OVR_VALUE  = ATTR_EQ_DCADJ_DCC_OVERRIDE[8:15]
         # Set up duty cycle target
-        const int8_t target_override = ATTR_DCADJ_TARGET_OVERRIDE[0] ? ATTR_DCADJ_TARGET_OVERRIDE[8:15] : 0;
+        const int8_t target_override = ATTR_EQ_DCADJ_TARGET_OVERRIDE[0] ? ATTR_EQ_DCADJ_TARGET_OVERRIDE[8:15] : 0;
         DCADJ_WRAP_SET_DCC_TARGET = 0
         DCADJ_WRAP_SET_DCC_TARGET.TARGET_VALUE = DCADJ_DEFAULT_TARGET + target_override   # DCADJ_DEFAULT_TARGET = 64
 
     ## Start adjusting
     # Drop SkewAdj and DCAdj bypass
     with all EQs via multicast:
-        if ATTR_DCADJ_BYPASS == 0:
+        if ATTR_EQ_DCADJ_BYPASS == 0:
             NET_CTRL1[0:7] = 0
-        if ATTR_SKEWADJ_BYPASS == 0:
+        if ATTR_EQ_SKEWADJ_BYPASS == 0:
             NET_CTRL1[8:15] = 0
 
     # Start Adjust logic
     with all cores on all EQs via multicast:
-        if ATTR_DCADJ_BYPASS == 0 and not ATTR_DCADJ_DCC_OVERRIDE[0]:
+        if ATTR_EQ_DCADJ_BYPASS == 0 and not ATTR_EQ_DCADJ_DCC_OVERRIDE[0]:
             DCADJ_WRAP_SET_ADJUST_MODE = 0
-        if ATTR_SKEWADJ_BYPASS == 0 and not ATTR_SKEWADJ_CORE_PDLY_OVERRIDE[0]:
+        if ATTR_EQ_SKEWADJ_BYPASS == 0 and not ATTR_EQ_SKEWADJ_CORE_PDLY_OVERRIDE[0]:
             SKEW_WRAP_SKEWADJ_SET_ADJUST_MODE = 0
 
 ISTEP(3, 24, "proc_nest_enable_io", "SSBE, TSBE")
@@ -1517,6 +1543,11 @@ def ody_nest_enable_io():
     ROOT_CTRL1.TP_RI_DC_B  = 1
     ROOT_CTRL1.TP_DI1_DC_B = 1
     ROOT_CTRL1.TP_DI2_DC_B = 1
+
+    for chiplet in TARGET_FILTER_MC:
+        NET_CTRL0.CPLT_DCTRL = 1
+        NET_CTRL0.CPLT_RCTRL = 1
+        NET_CTRL0.CPLT_RCTRL2 = 1
 
 def zme_nest_enable_io():
     poz_nest_enable_io()
@@ -1607,4 +1638,8 @@ def poz_stopclocks():
     # 2. Stop chiplets (including TBUS)
     # 3. Stop Pervasive (perv, net, occ) - switch to PIB2PCB path
     # 4. Stop SBE (pib, sbe) - switch to FSI2PCB path
+
+    if not CBS_ENVSTAT.CBS_ENVSTAT_C4_TEST_ENABLE:
+        Close down all drivers/receivers to prevent chip IOs from toggling during scan
+
     pass

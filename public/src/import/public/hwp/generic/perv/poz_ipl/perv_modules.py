@@ -25,7 +25,7 @@
 
 ISTEP(99, 99, "poz_perv_mod_chip_clocking", "")
 
-def mod_clock_test(target<ANY_POZ_CHIP>, bool i_use_cfam_path):
+def mod_clock_test(target<PROC_CHIP | HUB_CHIP>, bool i_use_cfam_path):
     # Copy the main loop of p10_clock_test here ("for(int i = 0; i < POLL_COUNT; i++)")
     # and adapt it so that it will do either CFAM or SCOM accesses based on the value of the i_use_cfam_path parameter
     for loop in 1..10:
@@ -233,7 +233,7 @@ def mod_start_stop_clocks(target<PERV|MC>, uint16_t i_clock_regions, uint16_t i_
 
 ISTEP(99, 99, "poz_perv_mod_misc", "")
 
-def mod_cbs_start(target<ANY_POZ_CHIP>, bool start_sbe=true):
+def mod_cbs_start(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_clockstart=false):
     # This module uses CFAM accesses for everything
     # You can pretty much copy the code of p10_start_cbs but be aware that I moved a few steps around and removed some others
 
@@ -248,10 +248,15 @@ def mod_cbs_start(target<ANY_POZ_CHIP>, bool start_sbe=true):
     SB_MSG = 0                        # Clear Selfboot Message Register
     FSB_DOWNFIFO_RESET = 0x80000000   # Reset SBE FIFO
 
+    if CBS_ENVSTAT.CBS_ENVSTAT_C4_TEST_ENABLE:
+        ## Test mode, enable TP drivers/receivers for GSD scan out
+        ROOT_CTRL1.TP_RI_DC_B = 1
+        ROOT_CTRL1.TP_DI2_DC_B = 1
+
     # Prepare for CBS start
     CBS_CS.START_BOOT_SEQUENCER = 0
-    CBS_CS.OPTION_SKIP_SCAN0_CLOCKSTART = 0
-    CBS_CS.OPTION_PREVENT_SBE_START = not start_sbe
+    CBS_CS.OPTION_SKIP_SCAN0_CLOCKSTART = not i_scan0_clockstart
+    CBS_CS.OPTION_PREVENT_SBE_START = not i_start_sbe
     # write CBS_CS
 
     CBS_CS.START_BOOT_SEQUENCER = 1   # Start CBS
