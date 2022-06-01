@@ -62,19 +62,23 @@ secureBootFailStatus_t secureBootFailStatus = {0};
 /// It will halt with an error code on any unmasked error,
 /// so there is no return value.
 ///
-/// @param[in]    i_pak           PakWrapper targeted to PNOR
-/// @param[in]    i_fname         Name of file to load
-/// @param[inout] io_load_offset  Address to load file to; will be advanced
-///                               to the end of the file after loading
-/// @param[in]    i_flags         Flags to control operation details
+/// @param[in]    i_pak                       PakWrapper targeted to PNOR
+/// @param[in]    i_fname                     Name of file to load
+/// @param[inout] io_load_offset              Address to load file to; will be advanced
+///                                           to the end of the file after loading
+/// @param[in]    i_fileHashCalculationEnable If true file hash is calculated
+//                                            and compared with the hash list
+//                                            value else skipped
+/// @param[in]    i_flags                     Flags to control operation details
 void load_image(PakWrapper &i_pak, const char *i_fname, uint32_t &io_load_offset,
-                uint32_t i_flags = 0)
+        bool i_fileHashCalculationEnable = 1 , uint32_t i_flags = 0)
 {
     sha3_t digest;
     uint32_t size = 0;
     uint32_t size_available = BOOTLOADER_ORIGIN - io_load_offset;
 
-    ARC_RET_t pakRc = i_pak.read_file(i_fname, (void *)io_load_offset, size_available, &digest, &size);
+    ARC_RET_t pakRc = i_pak.read_file(i_fname, (void *)io_load_offset, size_available,
+                                        (i_fileHashCalculationEnable ? &digest : NULL), &size);
     if (pakRc == ARC_FILE_NOT_FOUND && (i_flags & LIF_ALLOW_ABSENT))
     {
         SBE_INFO(SBE_FUNC "Optional payload not found - skipping");
@@ -86,11 +90,14 @@ void load_image(PakWrapper &i_pak, const char *i_fname, uint32_t &io_load_offset
         SBE::updateErrorCodeAndHalt(FILE_RC_PAYLOAD_FILE_READ_BASE_ERROR + pakRc);
     }
 
-    auto hashListRc = SBE::check_file_hash(i_fname, digest, hashList);
-    if(hashListRc != SBE::HASH_COMPARE_PASS)
+    if(i_fileHashCalculationEnable)
     {
-        SBE_ERROR(SBE_FUNC "Failed to verify payload hash");
-        SBE::updateErrorCodeAndHalt(FILE_RC_PAYLOAD_HASH_VERIFICATION + hashListRc);
+        auto hashListRc = SBE::check_file_hash(i_fname, digest, hashList);
+        if(hashListRc != SBE::HASH_COMPARE_PASS)
+        {
+            SBE_ERROR(SBE_FUNC "Failed to verify payload hash");
+            SBE::updateErrorCodeAndHalt(FILE_RC_PAYLOAD_HASH_VERIFICATION + hashListRc);
+        }
     }
 
     io_load_offset += size;
@@ -248,7 +255,7 @@ void bldrthreadroutine(void *i_pArg)
         }
         else if(shvRsp.statusCode == NO_ERROR || shvRsp.statusCode == SB_ENFORCEMENT_DISABLED)
         {
-            // calculate sha3-512 (hash of boot loader hw keys | hash of boot loader fw keys | hash boot loader hash list)
+            // calculate sha3-512 (hash of runtime hw keys | hash of runtime fw keys | hash runtime hash list)
             sha3_t digest;
             SBE::hash_block(shvRsp.sha3.data, sizeof(shvRsp.sha3.data), &digest);
             memcpy(measurememtHash.sha3TruncatedHash, digest, SHA3_TRUNCATED_SIZE);
@@ -292,17 +299,20 @@ void bldrthreadroutine(void *i_pArg)
 
         SBE_INFO("Loading SPPE main binary");
         uint32_t load_offset = SRAM_ORIGIN;
-        load_image(pak, sppe_bin_fname, load_offset);
+        load_image(pak, sppe_bin_fname, load_offset,
+                    bldrSbCtrlMeasurement.fileHashCalculationEnable);
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_SPPE_BINARY_LOAD);
 
         SBE_INFO("Loading SPPE embedded archive");
-        load_image(pak, sppe_pak_fname, load_offset, LIF_IS_PAK);
+        load_image(pak, sppe_pak_fname, load_offset,
+                    bldrSbCtrlMeasurement.fileHashCalculationEnable, LIF_IS_PAK);
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_SPPE_PAK_LOAD);
 
         SBE_INFO("Loading optional VPD archive");
-        load_image(pak, vpd_pak_fname, load_offset, LIF_IS_PAK | LIF_ALLOW_ABSENT);
+        load_image(pak, vpd_pak_fname, load_offset,
+                    bldrSbCtrlMeasurement.fileHashCalculationEnable, LIF_IS_PAK | LIF_ALLOW_ABSENT);
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_VPD_PAK_LOAD);
 

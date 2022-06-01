@@ -158,7 +158,7 @@ if [ "$1" == "clean" ]; then
     CMD="rm -rf $MESON_INSTALL_DIR"
     echo $CMD
     $CMD || exit -1
-    CMD="rm -rf $SBE_ROOT/genfiles"
+    CMD="rm -rf $SBEROOT/genfiles"
     echo $CMD
     $CMD || exit -1
     echo "Cleaning up builddir...."

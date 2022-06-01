@@ -259,8 +259,11 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_PREFIX_HDR_SIZE_CHECK);
 
     //Calculate Hash of prefix header
-    SBE::memcpy_byte(hashDataBuff, prefix, PREFIX_HEADER_SIZE(prefix));
-    sha3_Hash(hashDataBuff, PREFIX_HEADER_SIZE(prefix), &digest);
+    if(shvReq->controlData.ecdsaCheck || shvReq->controlData.dilithiumCheck)
+    {
+        SBE::memcpy_byte(hashDataBuff, prefix, PREFIX_HEADER_SIZE(prefix));
+        sha3_Hash(hashDataBuff, PREFIX_HEADER_SIZE(prefix), &digest);
+    }
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_PREFIX_HDR_HASH_CALCULATION);
 
@@ -410,8 +413,11 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     sw_sig = (ROM_sw_sig_raw*) (header->reserved1 + 7);
 
     //Calculate Hash of SW/FW header
-    SBE::memcpy_byte(hashDataBuff, header, SW_HEADER_SIZE(header));
-    sha3_Hash(hashDataBuff, SW_HEADER_SIZE(header), &digest);
+    if(shvReq->controlData.ecdsaCheck || shvReq->controlData.dilithiumCheck)
+    {
+        SBE::memcpy_byte(hashDataBuff, header, SW_HEADER_SIZE(header));
+        sha3_Hash(hashDataBuff, SW_HEADER_SIZE(header), &digest);
+    }
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_SW_HDR_HASH_CALCULATION);
 
