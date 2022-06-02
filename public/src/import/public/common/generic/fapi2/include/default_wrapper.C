@@ -177,18 +177,18 @@ int main(int argc, char* argv[])
         GLOBAL_VERIF_MODE = true;
     }
 
+    // parse_extra_args is a weak symbol and will be NULL if nobody bothered to implement it
+    if (parse_extra_args)
+    {
+        TRY_NOMSG(parse_extra_args(&argc, &argv));
+    }
+
     //
     // -------------------------------------------------------------------------------------------------
     // Parse out common eCMD args like -p0, -c0, -coe, etc..
     // Any found args will be removed from arg list upon return
     // -------------------------------------------------------------------------------------------------
     TRY(ecmdCommandArgs(&argc, &argv), "Error calling ecmdCommandArgs.");
-
-    // parse_extra_args is a weak symbol and will be NULL if nobody bothered to implement it
-    if (parse_extra_args)
-    {
-        TRY_NOMSG(parse_extra_args(&argc, &argv));
-    }
 
     // unsupported arguments left over?
     if (argc != 1)

@@ -43,8 +43,13 @@ enum ODY_LBIST_Private_Constants
 
 ReturnCode ody_lbist(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
-    // bist_params i_params = TODO add me once bist_params is enabled
+    // bist_params i_params; // TODO update me once bist_params is enabled
     // FAPI_TRY(poz_bist(i_target /*, i_params*/));
+
+    // Post-BIST scan0 for IML with BIST
+    // auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
+    // FAPI_TRY(mod_scan0(l_chiplets_mc, i_clock_regions));
+
     FAPI_DBG("ody_lbist not yet implemented; check back later");
 
 fapi_try_exit:
