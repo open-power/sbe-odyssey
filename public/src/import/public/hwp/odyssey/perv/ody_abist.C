@@ -43,8 +43,8 @@ enum ODY_ABIST_Private_Constants
 
 ReturnCode ody_abist(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
-    // bist_params i_params = TODO add me once bist_params is enabled
-    FAPI_TRY(poz_bist(i_target /*, i_params*/));
+    bist_params i_params; // TODO update me once bist_params is enabled
+    FAPI_TRY(poz_bist(i_target, i_params));
 
 fapi_try_exit:
     return current_err;

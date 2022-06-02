@@ -203,6 +203,7 @@ enum scan_type
     SCAN_TYPE_ALL  = 0xFFF,
     SCAN_TYPE_RTG  = 0x230,  // repr+time+gptr
     SCAN_TYPE_NOT_RTG = 0xDCF,
+    SCAN_TYPE_NOT_REPR = 0xFDF,
 };
 };
 
@@ -261,35 +262,36 @@ struct constant_hang_pulse_t
 
 struct bist_params
 {
-    char setup_image[16];                   ///< Name of setup ring image
-    char compare_image[16];                 ///< Name of compare ring image
-    uint64_t chiplets;                      ///< Mask of chiplets to test
+    char program[16];                    ///< Name of program for image selection
+    char ring_patch[16];                 ///< Name of patch ring image
+    uint64_t chiplets;                   ///< Mask of chiplets to test
 
     /// Option flags
     enum bist_flags : uint32_t
     {
         ABIST_NOT_LBIST   = 0x80000000,
-        DO_PRE_SCAN0_GTR  = 0x40000000,
-        DO_PRE_SCAN0_REST = 0x20000000,
-        DO_SETUP          = 0x10000000,
-        DO_RUN            = 0x08000000,
-        DO_COMPARE        = 0x04000000,
-        DO_CLEANUP        = 0x02000000,
-        DO_SCAN0_GTR      = 0x01000000,
-        DO_SCAN0_REST     = 0x00800000,
-        DO_ARRAYINIT      = 0x00400000,
-        SKIP_FIRST_CLOCK  = 0x00200000,
-        SKIP_LAST_CLOCK   = 0x00100000,
-        UNICAST_GO        = 0x00080000,  ///< Trigger OPCG_GO via unicast as opposed to multicast
-        POLL_ABIST_DONE   = 0x00040000,  ///< Poll on ABIST_DONE in addition to OPCG_DONE and external abort scratch register
+        DO_SCAN0          = 0x40000000,
+        DO_ARRAYINIT      = 0x20000000,
+        DO_RING_SETUP     = 0x10000000,
+        DO_RING_PATCH     = 0x08000000,
+        DO_REG_SETUP      = 0x04000000,
+        DO_GO             = 0x02000000,
+        DO_POLL           = 0x01000000,
+        DO_REG_CLEANUP    = 0x00800000,
+        DO_COMPARE        = 0x00400000,
+        SCAN0_REPR        = 0x00200000,
+        SKIP_FIRST_CLOCK  = 0x00100000,
+        SKIP_LAST_CLOCK   = 0x00080000,
+        UNICAST_GO        = 0x00040000,  ///< Trigger OPCG_GO via unicast as opposed to multicast
+        POLL_ABIST_DONE   = 0x00020000,  ///< Poll on ABIST_DONE in addition to OPCG_DONE and external abort scratch register
     } flags;
 
-    uint32_t opcg_count;                    ///< Amount of total RUNN cycles to clock - 0 means infinite / until ABIST_DONE
-    uint32_t idle_count;                    ///< Base idle RUNN cycles before BIST starts on any chiplet
+    uint64_t opcg_count;                    ///< Amount of total RUNN cycles to clock - 0 means infinite / until ABIST_DONE
+    uint64_t idle_count;                    ///< Base idle RUNN cycles before BIST starts on any chiplet
+    uint64_t linear_stagger;                ///< Increase idle count by this much for each successive chiplet
+    uint64_t zigzag_stagger;                ///< Increase idle count by this much on any odd chiplet
     uint32_t timeout;                       ///< Polling timeout in microseconds; not guaranteed to be exact!
-    uint16_t linear_stagger;                ///< Increase idle count by this much for each successive chiplet
-    uint16_t zigzag_stagger;                ///< Increase idle count by this much on any odd chiplet
-    uint16_t regions;                       ///< Mask of clock regions to test
+    uint16_t regions;                       ///< Mask of clock regions to test (TODO make this a 26-index array (one per pervasive address))
 
 
     //    final_idle_count = idle_count + (linear_stagger * target_number) + (zigzag_stagger * (target_number & 1));

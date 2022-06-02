@@ -109,9 +109,9 @@ fapi_try_exit:
 ReturnCode mod_abist_setup(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
     uint16_t i_clock_regions,
-    uint32_t i_runn_cycles,
+    uint64_t i_runn_cycles,
     uint64_t i_abist_start_at,
-    uint32_t i_abist_start_stagger)
+    uint64_t i_abist_start_stagger)
 {
     CPLT_CTRL0_t CPLT_CTRL0;
     BIST_t BIST;
@@ -168,9 +168,9 @@ fapi_try_exit:
 ReturnCode mod_lbist_setup(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
     uint16_t i_clock_regions,
-    uint32_t i_runn_cycles,
+    uint64_t i_runn_cycles,
     uint64_t i_lbist_start_at,
-    uint32_t i_lbist_start_stagger)
+    uint64_t i_lbist_start_stagger)
 {
     FAPI_DBG("mod_lbist_setup not yet implemented; check back later");
 
@@ -181,7 +181,7 @@ fapi_try_exit:
 
 
 ReturnCode mod_opcg_go(
-    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target)
+    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > &i_target)
 {
     OPCG_REG0_t OPCG_REG0;
     FAPI_TRY(OPCG_REG0.getScom(i_target));
@@ -197,9 +197,9 @@ fapi_try_exit:
 ReturnCode mod_abist_start(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
     uint16_t i_clock_regions,
-    uint32_t i_runn_cycles,
+    uint64_t i_runn_cycles,
     uint64_t i_abist_start_at,
-    uint32_t i_abist_start_stagger)
+    uint64_t i_abist_start_stagger)
 {
     FAPI_TRY(mod_abist_setup(i_target,
                              i_clock_regions,

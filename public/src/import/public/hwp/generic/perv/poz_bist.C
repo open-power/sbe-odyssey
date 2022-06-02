@@ -31,10 +31,10 @@
 //------------------------------------------------------------------------------
 
 #include "poz_bist.H"
-#include "poz_perv_common_params.H"
 #include "poz_perv_mod_misc.H"
 #include "poz_perv_mod_chiplet_clocking.H"
 #include "poz_perv_mod_bist.H"
+#include "poz_chiplet_arrayinit.H"
 #include <target_filters.H>
 
 
@@ -44,49 +44,163 @@ enum POZ_BIST_Private_Constants
 {
 };
 
-ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target /*, bist_params &i_params*/)
+void print_bist_params(const bist_params& i_params)
+{
+    FAPI_DBG("program = %s", i_params.program);
+    FAPI_DBG("ring_patch = %s", i_params.ring_patch);
+    FAPI_DBG("chiplets = 0x%x", i_params.chiplets);
+    FAPI_DBG("flags = 0x%x", i_params.flags);
+    FAPI_DBG("opcg_count = 0x%x", i_params.opcg_count);
+    FAPI_DBG("idle_count = 0x%x", i_params.idle_count);
+    FAPI_DBG("timeout = 0x%x", i_params.timeout);
+    FAPI_DBG("linear_stagger = 0x%x", i_params.linear_stagger);
+    FAPI_DBG("zigzag_stagger = 0x%x", i_params.zigzag_stagger);
+    FAPI_DBG("regions = 0x%x", i_params.regions);
+}
+
+ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist_params& i_params)
 {
     FAPI_INF("Entering ...");
 
-    FAPI_DBG("Setup multicast group 6");
-    FAPI_DBG("BIST multicast setup not yet implemented; check back later");
-    // FAPI_TRY(mod_multicast_setup(i_target, 6, i_params.chiplets, TARGET_STATE_FUNCTIONAL));
-    // TODO once above code is supported, use the line below to get group 6
     auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
 
-    FAPI_DBG("Scan0 all regions");
-    FAPI_TRY(mod_scan0(l_chiplets_mc, REGION_ALL));
+    FAPI_DBG("Printing bist_params");
+    print_bist_params(i_params);
 
-    FAPI_DBG("Scan load BIST programming");
-    // TODO add in scan code once supported
-    // FAPI_TRY(putRing(i_params.setup_image));
-    FAPI_DBG("BIST ring setup not yet implemented; check back later");
-
-    FAPI_DBG("Apply scan patches if needed");
-    // TODO add in scan code once supported
-    // FAPI_TRY(putRing(i_params.patch_image));
-    FAPI_DBG("BIST ring patch not yet implemented; check back later");
-
-    FAPI_DBG("Setup all SCOM registers");
-
-    // TODO update me once ABIST/LBIST mode param is supported
-    if (/* i_params.action == ABIST */ true)
+    if (i_params.chiplets)
     {
-        FAPI_TRY(mod_abist_setup(l_chiplets_mc, REGION_ALL));
-    }
-    else
-    {
-        FAPI_TRY(mod_lbist_setup(l_chiplets_mc, REGION_ALL));
+        FAPI_DBG("Setup multicast group 6");
+        FAPI_TRY(mod_multicast_setup(i_target, MCGROUP_6, i_params.chiplets, TARGET_STATE_FUNCTIONAL));
+        l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_6);
     }
 
-    FAPI_DBG("Start BIST with OPCG GO");
-    FAPI_TRY(mod_opcg_go(l_chiplets_mc));
+    if (i_params.flags & i_params.bist_flags::DO_SCAN0)
+    {
+        if (i_params.flags & i_params.bist_flags::SCAN0_REPR)
+        {
+            FAPI_DBG("Scan0 all regions");
+            FAPI_TRY(mod_scan0(l_chiplets_mc, REGION_ALL, SCAN_TYPE_ALL));
+        }
+        else
+        {
+            FAPI_DBG("Scan0 all regions minus repr");
+            FAPI_TRY(mod_scan0(l_chiplets_mc, REGION_ALL, SCAN_TYPE_NOT_REPR));
+        }
+    }
 
-    FAPI_DBG("Poll for DONE (BIST, OPCG, or halt)");
-    FAPI_TRY(mod_bist_poll(l_chiplets_mc));
+    if (i_params.flags & i_params.bist_flags::DO_ARRAYINIT)
+    {
+        FAPI_DBG("Do an arrayinit");
+        FAPI_TRY(poz_chiplet_arrayinit(i_target));
+    }
 
-    FAPI_DBG("Cleanup all SCOM registers");
-    FAPI_TRY(mod_bist_reg_cleanup(l_chiplets_mc));
+    if (i_params.flags & i_params.bist_flags::DO_RING_SETUP)
+    {
+        FAPI_DBG("Scan load BIST programming");
+        // TODO add in scan code once supported
+        // FAPI_TRY(putRing(i_params.program.load));
+        FAPI_DBG("BIST ring setup not yet implemented; check back later");
+    }
+
+    if (i_params.flags & i_params.bist_flags::DO_RING_PATCH)
+    {
+        FAPI_DBG("Apply scan patches if needed");
+        // TODO add in scan code once supported
+        // FAPI_TRY(putRing(i_params.patch_image));
+        FAPI_DBG("BIST ring patch not yet implemented; check back later");
+    }
+
+    if (i_params.flags & i_params.bist_flags::DO_REG_SETUP)
+    {
+        FAPI_DBG("Setup all SCOM registers");
+
+        // TODO pass in SKIP_FIRST_CLOCK to setup functions once supported
+        if (i_params.flags & i_params.bist_flags::SKIP_FIRST_CLOCK)
+        {
+            FAPI_DBG("SKIP_FIRST_CLOCK not yet implemented; check back later");
+        }
+
+        // TODO pass in SKIP_LAST_CLOCK to setup functions once supported
+        if (i_params.flags & i_params.bist_flags::SKIP_LAST_CLOCK)
+        {
+            FAPI_DBG("SKIP_LAST_CLOCK not yet implemented; check back later");
+        }
+
+        // TODO pass in zigzag_stagger to setup functions once supported
+        if (i_params.zigzag_stagger)
+        {
+            FAPI_DBG("zigzag_stagger not yet implemented; check back later");
+        }
+
+        if (i_params.flags & i_params.bist_flags::ABIST_NOT_LBIST)
+        {
+            FAPI_TRY(mod_abist_setup(l_chiplets_mc,
+                                     i_params.regions,
+                                     i_params.opcg_count,
+                                     i_params.idle_count,
+                                     i_params.linear_stagger));
+        }
+        else
+        {
+            FAPI_TRY(mod_lbist_setup(l_chiplets_mc,
+                                     i_params.regions,
+                                     i_params.opcg_count,
+                                     i_params.idle_count,
+                                     i_params.linear_stagger));
+        }
+    }
+
+    if (i_params.flags & i_params.bist_flags::DO_GO)
+    {
+        // TODO pass in UNICAST_GO to go function once supported
+        if (i_params.flags & i_params.bist_flags::UNICAST_GO)
+        {
+            FAPI_DBG("UNICAST_GO not yet implemented; check back later");
+        }
+
+        FAPI_DBG("Start BIST with OPCG GO");
+        FAPI_TRY(mod_opcg_go(l_chiplets_mc));
+    }
+
+    if (i_params.flags & i_params.bist_flags::DO_POLL)
+    {
+        // TODO pass in timeout to poll functions once supported
+        if (i_params.timeout)
+        {
+            FAPI_DBG("timeout not yet implemented; check back later");
+        }
+
+        if (i_params.flags & i_params.bist_flags::POLL_ABIST_DONE)
+        {
+            FAPI_DBG("Poll for DONE (ABIST, OPCG, and HALT)");
+            // TODO pass in POLL_ABIST_DONE flag once supported
+            FAPI_DBG("ABIST_DONE polling not yet implemented; check back later");
+            // TODO delete this message once BIST_HALT is supported
+            FAPI_DBG("BIST_HALT polling not yet implemented; check back later");
+            FAPI_TRY(mod_bist_poll(l_chiplets_mc));
+        }
+        else
+        {
+            FAPI_DBG("Poll for DONE (OPCG and HALT)");
+            // TODO delete this message once BIST_HALT is supported
+            FAPI_DBG("BIST_HALT polling not yet implemented; check back later");
+            FAPI_TRY(mod_bist_poll(l_chiplets_mc));
+        }
+    }
+
+    if (i_params.flags & i_params.bist_flags::DO_REG_CLEANUP)
+    {
+        FAPI_DBG("Cleanup all SCOM registers");
+        FAPI_TRY(mod_bist_reg_cleanup(l_chiplets_mc));
+    }
+
+    if (i_params.flags & i_params.bist_flags::DO_COMPARE)
+    {
+        FAPI_DBG("Compare scan chains against expects");
+        // TODO add in scan code once supported
+        // FAPI_TRY(getRing(i_params.program.hash));
+        FAPI_DBG("BIST compare not yet implemented; check back later");
+    }
 
 
 fapi_try_exit:
