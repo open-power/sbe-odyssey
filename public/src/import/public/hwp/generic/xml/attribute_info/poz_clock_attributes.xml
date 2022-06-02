@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -44,6 +44,12 @@
     OSCx - Set up single oscillator
     BOTH_OSCx - Set up for redundant oscillators, OSCx as primary, both must be good
     BOTH_OSCx_NORED - Same but without redundancy: Set up for redundant oscillators, OSCx as primary, secondary osc may be bad
+     •0b000 –OSC0 –use only OSC0
+     •0b001 –OSC1 –Use only OSC1
+     •0b010 –BOTH_OSC0 –Both OSC0 and OSC1 must be good, set up redundant clocks, OSC0 primary
+     •0b011 –BOTH_OSC1 –Similar to BOTH_OSC0 but use OSC1 as primary
+     •0b100 –BOTH_OSC0_NORED –Try to set up redundant clocking with OSC0 as primary, but don’t fail if OSC1 fails
+     •0b101 –BOTH_OSC1_NORED–Try to set up redundant clocking with OSC1 as primary, but don’t fail if OSC0 fails
   </description>
   <valueType>uint8</valueType>
   <enum>OSC0 = 0x0, OSC1 = 0x1, BOTH_OSC0 = 0x2, BOTH_OSC1 = 0x3, BOTH_OSC0_NORED = 0x4, BOTH_OSC1_NORED = 0x5</enum>

@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2021,2023                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2021,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -237,6 +237,20 @@
     </enum>
     <writeable/>
   </attribute>
-
   <!-- ********************************************************************* -->
+  <attribute>
+    <id>ATTR_SECURE_SETTINGS</id>
+    <targetType>TARGET_TYPE_SYSTEM</targetType>
+    <description>Byte collecting Security Overrides
+                 bits 0:3 - reserved
+                 bit 4 - Security Enabled
+                 bit 5 - Allow Attribute Overrides in Securemode
+                 bit 6 - Override Security Setting
+                 bit 7 - Secure Access Bit
+    </description>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <initToZero/>
+  </attribute>
+<!-- ********************************************************************* -->
 </attributes>
