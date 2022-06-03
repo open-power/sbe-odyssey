@@ -108,18 +108,18 @@ typedef union sbCtrlMeasurement
     uint32_t secureBootControl = 0x00;
     struct
     {
-        uint32_t secureBootVerificationEnforcement : 1;
-        uint32_t ecdsaSigCheckEnable : 1;
-        uint32_t dilithiumSigCheckEnable : 1;
-        uint32_t ecidCheckEnable : 1;
-        uint32_t hwKeyHashVerificationEnable : 1;
-        uint32_t secureModeEnable : 1;
-        uint32_t enforceMatchingMSV : 1;
-        uint32_t fileHashCalculationEnable : 1;
-        uint32_t bootComplete : 1;                             //SROM or BLDR boot complete
-        uint32_t reserved2 : 3;
-        uint32_t msv : 8;
-        uint32_t reserved3 : 12;
+        uint32_t secureBootVerificationEnforcement : 1;   //Bit 0
+        uint32_t ecdsaSigCheckEnable : 1;                 //Bit 1
+        uint32_t dilithiumSigCheckEnable : 1;             //Bit 2
+        uint32_t ecidCheckEnable : 1;                     //Bit 3
+        uint32_t hwKeyHashVerificationEnable : 1;         //Bit 4
+        uint32_t secureModeEnable : 1;                    //Bit 5
+        uint32_t enforceMatchingMSV : 1;                  //Bit 6
+        uint32_t fileHashCalculationEnable : 1;           //Bit 7
+        uint32_t bootComplete : 1;                        //Bit  8       //SROM or BLDR boot complete
+        uint32_t reserved2 : 3;                           //Bit 9..11
+        uint32_t msv : 8;                                 //Bit 12..19
+        uint32_t reserved3 : 12;                          //Bit 20..31
     };
 
     /**

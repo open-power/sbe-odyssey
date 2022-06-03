@@ -205,7 +205,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
         VERIFY_FAILED(SHV_RC_CONTAINER_SIZE_TEST);
     }
 
-    UPDATE_SBE_PROGRESS_CODE(COMPLETED_CONTAINER_SIZE_CHECK);
+    UPDATE_SBE_PROGRESS_CODE(COMPLETED_SH_CONTAINER_SIZE_CHECK);
 
     //Process HW Keys and verify HW keys Hash
     if(shvReq->controlData.hwKeyHashCheck)
@@ -389,7 +389,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_FW_SECURE_VERSION_CHECK);
 
     // test for valid header version, hash & signature algorithms (sanity check)
-    hdrStatusChecks = valid_ver_alg(&prefix->ver_alg, SW_HDR);
+    hdrStatusChecks = valid_ver_alg(&header->ver_alg, SW_HDR);
     if(hdrStatusChecks)
     {
         SBE_ERROR(SBE_FUNC "FAILED : bad sw header version or hash/sign algo's");
