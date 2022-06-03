@@ -62,18 +62,6 @@ lock_pll:
          putscom       OPCG_ALIGN, OPCG_ALIGN__SCAN_RATIO(ALL), OPCG_ALIGN__SCAN_RATIO(0b00011)
 
 
-        // Update the SPI bit rate divisor for 5MHz operation.
-        // SPI freq = PLL freq / 4 / ($divider+1) / 2
-        // ==> $divider + 1 = PLL freq / (4 * 2 * 5)
-        // PLL freq = 2400 ==> $divider = 2400 / 40 - 1 = 59
-            //for addr in C0003:                     //probably not: C0023, C0043, C0063, 70003, 70032, 70043, 70063:
-            //CLOCK_CONFIG = getScom(addr)
-    // TODO: Determine correct values for Odyssey frequency buckets
-            //CLOCK_CONFIG.set_SCK_CLOCK_DIVIDER(59);
-            //CLOCK_CONFIG.set_SCK_RECEIVE_DELAY(0x80 >> 1);
-            //FAPI_TRY(putScom(addr, SPI_CLOCK_CONFIG_REG));
-        //putscom        CLK_CONFIG, 0xlFFFFF, CLK_CONFIG__SCK_CLOCK_DIVIDER(59) | CLK_CONFIG__SCK_RECEIVE_DELAY(0x80 >> 1)
-
         //FAPI_INF("Take PLL out of bypass");
         //ROOT_CTRL3.set_TP_MCPLL_BYPASS_DC(0);  // not available in headers yet - bit 26
         putscom        ROOT_CTRL3_CLEAR, ALL, ROOT_CTRL3__TP_MCPLL_BYPASS_DC

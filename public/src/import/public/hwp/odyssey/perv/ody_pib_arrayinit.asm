@@ -38,11 +38,6 @@
 ody_pib_arrayinit:
 
 mod_abist_start:
-
-         //Disable PIB region fencing - TODO remove
-         // putscom       CPLT_CTRL1_CLEAR, ALL, CPLT_CTRL1__REGIONS(I_CLOCK_REGIONS)
-
-
          // Switch dual-clocked arrays to ABIST clock domain
          putscom     CPLT_CTRL0_WO_OR, ALL, CPLT_CTRL0__CTRL_CC_ABSTCLK_MUXSEL_DC         //CPLT_CTRL0.set_CTRL_CC_ABSTCLK_MUXSEL_DC(1);
 
@@ -79,4 +74,4 @@ mod_abist_poll:
          // Check that ABIST_DONE is set
          //if not CPLT_STAT0.ABIST_DONE_DC:
            //FAPI_TRY(ASSERT(SRAM_ABIST_DONE_BIT_ERR));
-         poll     CPLT_STAT, ABIST_DONE, ABIST_DONE, ERR_ABIST_TIMEOUT   //TODO uncomment once fencing issue is resolved
+         poll     CPLT_STAT, ABIST_DONE, ABIST_DONE, ERR_ABIST_TIMEOUT
