@@ -23,18 +23,23 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file ody_nest_enable_io.C
+///
+/// @brief NEST Enable IO procedure for ODY chip
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 // *HWP Consumed by     : SSBE, TSBE
 //------------------------------------------------------------------------------
 
 #include "ody_nest_enable_io.H"
 #include "poz_perv_common_params.H"
+#include <p11_scom_perv.H>
 
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL1;
 
 using namespace fapi2;
+using namespace scomt::perv;
 
 enum ODY_NEST_ENABLE_IO_Private_Constants
 {
@@ -42,8 +47,17 @@ enum ODY_NEST_ENABLE_IO_Private_Constants
 
 ReturnCode ody_nest_enable_io(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
+    FSXCOMP_FSXLOG_ROOT_CTRL1_t ROOT_CTRL1;
 
+    FAPI_INF("Entering ...");
+
+    FAPI_TRY(ROOT_CTRL1.getScom(i_target));
+    ROOT_CTRL1.set_TP_RI_DC_B(1);
+    ROOT_CTRL1.set_TP_DI1_DC_B(1);
+    ROOT_CTRL1.set_TP_DI2_DC_B(1);
+    FAPI_TRY(ROOT_CTRL1.putScom(i_target));
 
 fapi_try_exit:
+    FAPI_INF("Exiting ...");
     return current_err;
 }
