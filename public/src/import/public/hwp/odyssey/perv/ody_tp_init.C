@@ -49,7 +49,7 @@ enum ODY_TP_INIT_Private_Constants
 ReturnCode ody_tp_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     auto l_mc_allgood = i_target.getMulticast<fapi2::TARGET_TYPE_PERV>(fapi2::MCGROUP_GOOD);
-    static const hang_pulse_t SETUP_HANG_COUNTERS_PERV[] = {{0, 16, 0}, {5, 6, 0}, {6, 7, 0, 1}} ;
+    static const hang_pulse_t SETUP_HANG_COUNTERS_PERV[] = {{0, 16, 0}, {1, 1, 0}, {2, 1, 0}, {5, 6, 0}, {6, 7, 0, 1}} ;
     FSXCOMP_FSXLOG_ROOT_CTRL0_t ROOT_CTRL0;
 
     // TODO : Set up TOD error routing, error mask via scan inits
