@@ -50,7 +50,7 @@ enum ODY_CHIPLET_STARTCLOCKS_Private_Constants
 ReturnCode ody_chiplet_startclocks(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     FSXCOMP_FSXLOG_PERV_CTRL0_t PERV_CTRL0;
-    auto l_mc_NO_TP = i_target.getMulticast<fapi2::TARGET_TYPE_PERV>(fapi2::MCGROUP_2);
+    auto l_mc_NO_TP = i_target.getMulticast<fapi2::TARGET_TYPE_PERV>(fapi2::MCGROUP_GOOD_NO_TP);
 
     FAPI_INF("Entering ...");
 
@@ -61,7 +61,7 @@ ReturnCode ody_chiplet_startclocks(const Target<TARGET_TYPE_OCMB_CHIP>& i_target
     FAPI_TRY(PERV_CTRL0.putScom_CLEAR(i_target));
 
     FAPI_INF("Starting chiplet clocks");
-    FAPI_TRY(poz_chiplet_startclocks(l_mc_NO_TP));
+    FAPI_TRY(poz_chiplet_startclocks(l_mc_NO_TP, REGION_ALL));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
