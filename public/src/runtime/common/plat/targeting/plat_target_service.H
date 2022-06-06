@@ -129,16 +129,22 @@ namespace fapi2
             }
             else
             {
-                 for (uint32_t i = 1; i < iv_targetTypesCnt; i++)
-                 {
-                     plat_target_sbe_handle l_target = iv_targets[i];
-                     if ((l_target.getTargetType() == i_child_type) &&
-                         (i_include_nonfunctional || l_target.getFunctional()) &&
-                         (l_target.getPresent()))
-                     {
-                         o_children.push_back(l_target);
-                     }
-                 }
+                targetInfo_t * targetMap = getTargetMap();
+                for(uint32_t i = 0; i < iv_targetTypesCnt; i++)
+                {
+                    if(targetMap[i].targetType == i_child_type)
+                    {
+                        for(uint32_t j = 0; j < targetMap[i].targetCnt; j++)
+                        {
+                            plat_target_sbe_handle l_target = iv_targets[i + j];
+                            if((i_include_nonfunctional || l_target.getFunctional()) &&
+                               (l_target.getPresent()))
+                            {
+                                o_children.push_back(l_target);
+                            }
+                        }
+                    }
+                }
             }
          }
         ///
