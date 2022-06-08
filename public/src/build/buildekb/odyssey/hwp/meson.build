@@ -48,7 +48,21 @@ infile_c = [
             ]
 
 #Create abs path for input files before creating .o
-abs_infiles_c_path = []
+foreach infile : infile_c
+
+abs_infile_c_path = import_dir_path + infile
+abs_infiles_c_path += abs_infile_c_path
+
+endforeach
+
+import_dir_path = pub_import_dir_path + '/memory/odyssey/hwp/'
+
+infile_c = ['ody_ddrphyinit.C',
+            '/lib/phy/ody_ddrphy_phyinit_config.C',
+            '/lib/phy/ody_phy_utils.C',
+           ]
+
+#Create abs path for input files before creating .o
 foreach infile : infile_c
 
 abs_infile_c_path = import_dir_path + infile
