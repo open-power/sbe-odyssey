@@ -31,6 +31,7 @@
 #include <ody_tp_initf.H>
 #include <ody_tp_startclocks.H>
 #include <ody_tp_init.H>
+#include <ody_ddrphyinit.H>
 #include <ody_chiplet_clk_config.H>
 #include <ody_chiplet_reset.H>
 #include <ody_chiplet_unused_psave.H>
