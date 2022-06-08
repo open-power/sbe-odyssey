@@ -175,39 +175,39 @@ void bldrthreadroutine(void *i_pArg)
         shvReq.payloadHash = &digest;
 
         //Read the SROM secure boot control mesaurement register values into boot loader struct
-        sbCtrlMeasurement_t bldrSbCtrlMeasurement;
-        bldrSbCtrlMeasurement.getSbCtrlData(MEASUREMENT_REG_24);
+        secureBootCtrlSettings_t bldrSecureBootCtrlSettings;
+        bldrSecureBootCtrlSettings.getSecureBootCtrlSettings(MEASUREMENT_REG_24);
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_READING_SROM_SETTINGS_FROM_MEASUREMENT);
 
         //We need to keep all settings same as SROM except for MSV
         //Lets update MSV thats read from PNOR
-        bldrSbCtrlMeasurement.msv = hwKeysHashMsv.msv;
+        bldrSecureBootCtrlSettings.msv = hwKeysHashMsv.msv;
 
         //Check if SROM boot complete bit is set. If not halt
-        if(bldrSbCtrlMeasurement.bootComplete != 0x01)
+        if(bldrSecureBootCtrlSettings.bootComplete != 0x01)
         {
-            SBE_INFO(SBE_FUNC "SROM Boot complete bit 0x%01x", (uint8_t)bldrSbCtrlMeasurement.bootComplete);
+            SBE_INFO(SBE_FUNC "SROM Boot complete bit 0x%01x", (uint8_t)bldrSecureBootCtrlSettings.bootComplete);
             SBE::updateErrorCodeAndHalt(BOOT_RC_SROM_COMPLETE_BIT_NOT_SET_IN_BLDR);
         }
 
         //Clear out the boot loader boot complete bit.
         //It will be set once measurement regs are updated with result
-        bldrSbCtrlMeasurement.bootComplete = 0x0;
+        bldrSecureBootCtrlSettings.bootComplete = 0x0;
 
         SBE_INFO(SBE_FUNC "Boot Loader Secure Boot Control Measurement Reg Value: 0x%08x",
-                 bldrSbCtrlMeasurement.secureBootControl);
+                 bldrSecureBootCtrlSettings.secureBootControl);
 
         //Fill in the secure header request control data
-        shvReq.controlData.secureBootVerificationEnforcement = bldrSbCtrlMeasurement.secureBootVerificationEnforcement;
-        shvReq.controlData.ecdsaCheck = bldrSbCtrlMeasurement.ecdsaSigCheckEnable;
-        shvReq.controlData.dilithiumCheck = bldrSbCtrlMeasurement.dilithiumSigCheckEnable;
-        shvReq.controlData.hwKeyHashCheck = bldrSbCtrlMeasurement.hwKeyHashVerificationEnable;
-        shvReq.controlData.ecidCheck = bldrSbCtrlMeasurement.ecidCheckEnable;
-        shvReq.controlData.matchingMSVCheck = bldrSbCtrlMeasurement.enforceMatchingMSV;
-        shvReq.msv = bldrSbCtrlMeasurement.msv;
+        shvReq.controlData.secureBootVerificationEnforcement = bldrSecureBootCtrlSettings.secureBootVerificationEnforcement;
+        shvReq.controlData.ecdsaCheck = bldrSecureBootCtrlSettings.ecdsaSigCheckEnable;
+        shvReq.controlData.dilithiumCheck = bldrSecureBootCtrlSettings.dilithiumSigCheckEnable;
+        shvReq.controlData.hwKeyHashCheck = bldrSecureBootCtrlSettings.hwKeyHashVerificationEnable;
+        shvReq.controlData.ecidCheck = bldrSecureBootCtrlSettings.ecidCheckEnable;
+        shvReq.controlData.matchingMSVCheck = bldrSecureBootCtrlSettings.enforceMatchingMSV;
+        shvReq.msv = bldrSecureBootCtrlSettings.msv;
         //TODO: Check why needed
-        bldrSbCtrlMeasurement.secureModeEnable = 0;
+        bldrSecureBootCtrlSettings.secureModeEnable = 0;
 
         SBE_INFO(SBE_FUNC "Secure Boot Verification Enforcement 0x%01x",
                             shvReq.controlData.secureBootVerificationEnforcement);
@@ -282,11 +282,11 @@ void bldrthreadroutine(void *i_pArg)
 
         //Set the boot complete bit to indicate bldr measurements have be written
         //into measurement regs
-        bldrSbCtrlMeasurement.bootComplete = 0x1;
+        bldrSecureBootCtrlSettings.bootComplete = 0x1;
 
         SBE_INFO(SBE_FUNC "BLDR Secure Boot Control Measurement Reg Value: 0x%08x",
-                 bldrSbCtrlMeasurement.secureBootControl);
-        bldrSbCtrlMeasurement.putSbCtrlData(MEASUREMENT_REG_25);
+                 bldrSecureBootCtrlSettings.secureBootControl);
+        bldrSecureBootCtrlSettings.putSecureBootCtrlSettings(MEASUREMENT_REG_25);
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_WRITING_SECURE_BOOT_SETTINGS);
 
@@ -300,19 +300,19 @@ void bldrthreadroutine(void *i_pArg)
         SBE_INFO("Loading SPPE main binary");
         uint32_t load_offset = SRAM_ORIGIN;
         load_image(pak, sppe_bin_fname, load_offset,
-                    bldrSbCtrlMeasurement.fileHashCalculationEnable);
+                    bldrSecureBootCtrlSettings.fileHashCalculationEnable);
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_SPPE_BINARY_LOAD);
 
         SBE_INFO("Loading SPPE embedded archive");
         load_image(pak, sppe_pak_fname, load_offset,
-                    bldrSbCtrlMeasurement.fileHashCalculationEnable, LIF_IS_PAK);
+                    bldrSecureBootCtrlSettings.fileHashCalculationEnable, LIF_IS_PAK);
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_SPPE_PAK_LOAD);
 
         SBE_INFO("Loading optional VPD archive");
         load_image(pak, vpd_pak_fname, load_offset,
-                    bldrSbCtrlMeasurement.fileHashCalculationEnable, LIF_IS_PAK | LIF_ALLOW_ABSENT);
+                    bldrSecureBootCtrlSettings.fileHashCalculationEnable, LIF_IS_PAK | LIF_ALLOW_ABSENT);
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_VPD_PAK_LOAD);
 
