@@ -32,6 +32,7 @@
 
 #include <poz_perv_utils.H>
 #include <poz_perv_mod_misc.H>
+#include <poz_ring_ids.H>
 #include <target_filters.H>
 #include <assert.h>
 
@@ -71,4 +72,27 @@ ReturnCode get_hotplug_mc_group(
 
 fapi_try_exit:
     return current_err;
+}
+
+static char hex[] = "0123456789abcdef";
+
+void strhex(char* o_str, uint64_t i_value, int i_width)
+{
+    while (i_width)
+    {
+        i_width--;
+        o_str[i_width] = hex[i_value & 0xF];
+        i_value >>= 4;
+    }
+}
+
+ReturnCode putRingBucket(const Target<TARGET_TYPE_ALL_MC>& i_target,
+                         const char* i_ring_id,
+                         int i_bucket)
+{
+    char ring_id[RING_ID_MAXLEN];
+    int len = strlen(i_ring_id);
+    memcpy(ring_id, i_ring_id, len + 1);
+    strhex(ring_id + len - 2, i_bucket, 2);
+    return FAPI2_RC_SUCCESS; //putRing(i_target, ring_id); TODO enable when SBE platform supports putRing
 }

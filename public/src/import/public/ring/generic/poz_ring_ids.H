@@ -27,16 +27,17 @@
 namespace ring_id
 {
 
-#define RING_ID(id) const char id[] = #id
+#define RING_ID_MAXLEN 32
+#define RING_ID(id) const char id[] = #id; static_assert(sizeof(id) <= RING_ID_MAXLEN, "Ring ID " #id " exceeds maximum length")
 
 // Regenerate using:
 // cat composite_ring_sorting.txt | sed 's/#.*$//;/^[ \t]*$/ d;' | cut -d' ' -f1 | grep -v FAIL | sed 's/.*/    RING_ID(\0);/'
 
 RING_ID(pc_pll);
-RING_ID(paxo_pll_X);
-RING_ID(pci_pll_X);
-RING_ID(mc_pll_X);
-RING_ID(tbus_pll_X);
+RING_ID(paxo_pll_XX);
+RING_ID(pci_pll_XX);
+RING_ID(mc_pll_XX);
+RING_ID(tbus_pll_XX);
 RING_ID(pc_pib_rtg);
 RING_ID(perv_rtg);
 RING_ID(perv_initf);
