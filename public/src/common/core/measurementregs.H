@@ -103,7 +103,7 @@
  *        used by SROM from measurement reg and use it.
  *
  */
-typedef union sbCtrlMeasurement
+typedef union secureBootCtrlSettings
 {
     uint32_t secureBootControl = 0x00;
     struct
@@ -117,9 +117,9 @@ typedef union sbCtrlMeasurement
         uint32_t enforceMatchingMSV : 1;                  //Bit 6
         uint32_t fileHashCalculationEnable : 1;           //Bit 7
         uint32_t bootComplete : 1;                        //Bit  8       //SROM or BLDR boot complete
-        uint32_t reserved2 : 3;                           //Bit 9..11
+        uint32_t reserved1 : 3;                           //Bit 9..11
         uint32_t msv : 8;                                 //Bit 12..19
-        uint32_t reserved3 : 12;                          //Bit 20..31
+        uint32_t reserved2 : 12;                          //Bit 20..31
     };
 
     /**
@@ -127,7 +127,7 @@ typedef union sbCtrlMeasurement
      *
      * @param measurementRegAddr Measurement Register Address
      */
-    void putSbCtrlData(uint32_t measurementRegAddr)
+    void putSecureBootCtrlSettings(uint32_t measurementRegAddr)
     {
         putscom_abs(measurementRegAddr, ((uint64_t)secureBootControl << 32));
     }
@@ -137,13 +137,13 @@ typedef union sbCtrlMeasurement
      *
      * @param measurementRegAddr Measurement Register Address
      */
-    void getSbCtrlData(uint32_t measurementRegAddr)
+    void getSecureBootCtrlSettings(uint32_t measurementRegAddr)
     {
         uint64_t data = 0x00;
         getscom_abs(measurementRegAddr, &data);
         secureBootControl = data >> 32;
     }
 
-}sbCtrlMeasurement_t;
+}secureBootCtrlSettings_t;
 
 #endif /* _MEASUREMENTREGS_H_ */
