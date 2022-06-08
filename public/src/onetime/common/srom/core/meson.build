@@ -38,8 +38,6 @@ fsm_pre_process = custom_target(
                     input : infile_s,
                     command : [ cc,
                                 meson.get_external_property('pre_processing_args'),
-                                meson.get_external_property('gcc_defs_cmn'),
-                                meson.get_external_property('pre_processing_args'),
                                 ekb_cmn_abs_inc_paths, cmn_abs_inc_paths,
                                 onetime_cmn_abs_inc_paths,
                                 '-o','@OUTPUT@','@INPUT@'],

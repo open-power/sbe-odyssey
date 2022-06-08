@@ -379,7 +379,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     }
     else
     {
-        if(SBE::get8(&header->fw_secure_version) >= shvReq->msv)
+        if(SBE::get8(&header->fw_secure_version) < shvReq->msv)
         {
             SBE_ERROR(SBE_FUNC "FAILED : bad container fw secure version");
             VERIFY_FAILED(SHV_RC_SECURE_VERSION_TEST);

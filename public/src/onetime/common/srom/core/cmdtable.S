@@ -50,6 +50,7 @@ edr   other big data
 
 #include <ppe42_asm.h>
 #include <errorcodes.H>
+#include <odysseylink.H>
 
         // rename registers for more intuitive code
 #define timeout      %r0
@@ -154,6 +155,7 @@ __system_reset_handler:
 # Mask the value read and write to all the
 # SPI engines
 ################################################################################
+#TODO: Where is the partition selection logic during HRESET
 oos_load_spi_clk_cnfg:
         lis    %r5, 0x5                         # Load r5 with 0x50000
         lvd    %d2, 0x09(r5)                    # loads data from 0x50009 to d2
@@ -219,9 +221,36 @@ spi_init:
         li      %r3, 0
         stvd    %d2, SB_MSG(%r1)
 
-        # TODO: read scratch register and set the Partition offste in r3.
-        _liw    %r3, 0xFE000000
-        b       run_cmd_tables
+        # Read 2808 bit 17,18 to decide from which partition to boot from
+        # Update bit 17,18 result into LFR reg bit 12,13
+        lis      %r5, 0x5                                                # Load r5 with 0x50000
+        lis      %r4, 0xC000                                             # load r4 with 0xC0000000
+        lvd      %d2, 0x08(r5)                                           # loads data from 0x50008 to d2
+        li       %r5, 0x6000                                             # Load r5 with mask for bit 17,18
+        and      %r2, %r2, %r5                                           # Clear out everything except bit 17,18
+        li       %r5, 0xD                                                # Right shift (13)
+        srw      %r3, %r2, %r5                                           # Right shift the value by 17
+        li       %r5, 0x12                                               # Left shift (18)
+        slw      %r6, %r3, %r5                                           # Value to be written into LFR bit 12,13
+        lvd      %d1, 0x2040(r4)                                         # Read LFR Reg
+        or       %r1, %r1, %r6                                           # OR the read value to update result
+        stvd     %d1, 0x2040(r4)                                         # Update the result into LFR
+        cmpwibeq %r3, PARTITION_0_INDEX, partition_0_offset              # If 0x0 Partition 0 offset
+        cmpwibeq %r3, PARTITION_1_INDEX, partition_1_offset              # If 0x1 Partition 1 offset
+        cmpwibeq %r3, GOLDEN_PARTITION_INDEX, partition_2_offset         # If 0x2 Partition 2 offset(Golden Parttion)
+        panic   BOOT_RC_INVALID_PARTITION_SELECT                         # If 0x3 . Invalid state halt
+
+partition_0_offset:
+        _liw   %r3, NOR_PARTITION_0_START_ADDR
+        b      run_cmd_tables
+
+partition_1_offset:
+        _liw   %r3, NOR_PARTITION_1_START_ADDR
+        b      run_cmd_tables
+
+partition_2_offset:
+        _liw   %r3, NOR_GOLDEN_PARTITION_START_ADDR
+        b      run_cmd_tables
 
 ////////////////////////////////////////////////////////////////////////////////
 // Locate file in seeprom

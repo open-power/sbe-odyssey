@@ -41,6 +41,8 @@
 #include "otpromfusemap.H"
 #include "p11_scom_perv_cfam.H"
 #include "odysseyfilenames.H"
+#include "p11_ppe_pc.H"
+#include "cmnglobals.H"
 
 #define RUN_TIME_SH_COMPONENT_ID 0x52554E5F54494D45ull  //RUN_TIME
 
@@ -131,10 +133,18 @@ void bldrthreadroutine(void *i_pArg)
         // Rc for pak
         ARC_RET_t pakRc = ARC_INVALID_PARAMS;
 
-        // The entire NOR looks like a single pak so we can point to its beginning
-        // instead of looking for a specific partition.
-        // TODO: Partition start offset needs to be read from scratch reg
-        PakWrapper pak((void *)NOR_PARTITION_0_OFFSET);
+        //LFR Reg
+        sbe_local_LFR lfrReg;
+
+        //Read LFR Reg
+        PPE_LVD(scomt::ppe_pc::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW, lfrReg);
+
+        // Get the partition start offset
+        uint32_t partitionStartAddress = getAbsPartitionAddr(lfrReg.boot_selection);
+        SBE_INFO(SBE_FUNC "Partition start Address is : 0x%08x, Partition selected is : 0x%02x",
+                    partitionStartAddress,(uint8_t)lfrReg.boot_selection);
+
+        PakWrapper pak((void *)partitionStartAddress);
 
         //Load the secure container into pibmem
         pakRc = pak.read_file(secure_hdr_fname, secureContainer, SECURE_HEADER_SIZE, NULL, &shvReq.containerSize);
@@ -206,8 +216,6 @@ void bldrthreadroutine(void *i_pArg)
         shvReq.controlData.ecidCheck = bldrSecureBootCtrlSettings.ecidCheckEnable;
         shvReq.controlData.matchingMSVCheck = bldrSecureBootCtrlSettings.enforceMatchingMSV;
         shvReq.msv = bldrSecureBootCtrlSettings.msv;
-        //TODO: Check why needed
-        bldrSecureBootCtrlSettings.secureModeEnable = 0;
 
         SBE_INFO(SBE_FUNC "Secure Boot Verification Enforcement 0x%01x",
                             shvReq.controlData.secureBootVerificationEnforcement);
