@@ -28,7 +28,10 @@ odyssey_runtime_inc_paths = [
         ]
 
 odyssey_hwp_inc_paths = [
-    '/hwp/odyssey/perv'
+    '/memory',
+    '/hwp/odyssey/perv',
+    '/memory/odyssey/hwp',
+    '/memory/odyssey/hwp/lib/phy',
         ]
 
 odyssey_srom_inc_paths = [
