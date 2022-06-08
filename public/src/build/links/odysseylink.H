@@ -71,6 +71,36 @@
 // NOTE: We will always keep hash list at end of sram
 #define HASH_LIST_START_OFFSET          (SRAM_END - HASH_LIST_SIZE)
 
-#define NOR_PARTITION_0_OFFSET          0xFE000000
+// Lets keep each partition size as 4mb
+#define NOR_PARTITION_SIZE              0x00400000
+#define NOR_PARTITION_0_START_ADDR      0xFE000000
+#define NOR_PARTITION_1_START_ADDR      (NOR_PARTITION_0_START_ADDR + NOR_PARTITION_SIZE)
+#define NOR_GOLDEN_PARTITION_START_ADDR (NOR_PARTITION_1_START_ADDR + NOR_PARTITION_SIZE)
+
+// Partition index based on bit 17,18 in FSXCOMP_FSXLOG_SB_CS
+#define PARTITION_0_INDEX 0
+#define PARTITION_1_INDEX 1
+#define GOLDEN_PARTITION_INDEX 2
+
+// This is done so that during linker compilation does not fail.
+// The below macro is not defined for linker compilation
+#ifdef __SBE__
+
+    inline uint32_t getAbsPartitionAddr(uint8_t partitionSelect)
+    {
+        switch(partitionSelect)
+        {
+            case PARTITION_0_INDEX:
+                return NOR_PARTITION_0_START_ADDR;
+            case PARTITION_1_INDEX:
+                return NOR_PARTITION_1_START_ADDR;
+            case GOLDEN_PARTITION_INDEX:
+                return NOR_GOLDEN_PARTITION_START_ADDR;
+            default:
+                return 0;
+        }
+    }
+
+#endif
 
 #endif  // __ODYSSEY_LINK_H

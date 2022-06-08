@@ -71,29 +71,15 @@ bool isSystemCheckstop()
 #define SECONDARY_BOOT_SPI_STATUS_REG  0xC0028
 bool isSpiParityError()
 {
-    sbe_local_LFR lfrReg;
     uint32_t spiBaseAddr = 0;
     uint64_t data = 0;
-    // Directly Load the LFR here
-// TODO: P11SBE Porting
-#if 0
-    PPE_LVD(0xc0002040, lfrReg);
-#endif
-    if(lfrReg.sec_boot_seeprom)
-    {
-        spiBaseAddr = SECONDARY_BOOT_SPI_STATUS_REG;
-    }
-    else
-    {
-        spiBaseAddr = PRIMARY_BOOT_SPI_STATUS_REG;
-    }
+
+    //TODO: Use right odyssey macro once available
+    spiBaseAddr = PRIMARY_BOOT_SPI_STATUS_REG;
+
     // Load the SPI Status Register Here
-// TODO: P11SBE Porting
-#if 0
     PPE_LVD(spiBaseAddr, data);
-#else
-    spiBaseAddr++;
-#endif
+
     if(data & SPI_PARITY_CHECK_MASK) // Check bit32 to 42 for set
     {
         return true;
