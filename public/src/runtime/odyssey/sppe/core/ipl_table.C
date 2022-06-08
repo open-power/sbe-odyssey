@@ -163,9 +163,19 @@ static istepMap_t g_istep3PtrTbl[] =
              ISTEP_MAP( NULL, NULL ),                               // 3.30
          };
 
+static istepMap_t g_istep13PtrTbl[] =
+         {
+             // @TODO: istep-13 procedures are actually not part of SBE ipl tabel.
+             // This is workaround to pick and unit test istep-13 procedures.
+             // This need to converted to separate chipop
+             ISTEP_MAP( istepWithOcmb, ody_ddrphyinit ),
+             ISTEP_MAP( NULL, NULL ),
+         };
+
 istepTableEntry_t istepTableEntries[] = {
     ISTEP_ENTRY(  1, g_istep1PtrTbl),
     ISTEP_ENTRY(  3, g_istep3PtrTbl),
+    ISTEP_ENTRY(  13, g_istep13PtrTbl),
 };
 
 REGISTER_ISTEP_TABLE(istepTableEntries)
