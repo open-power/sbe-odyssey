@@ -26,13 +26,13 @@
 /// @file  poz_chiplet_repr_initf.C
 /// @brief Load chiplet repair rings
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Pretty Mariam Jacob (prettymjacob@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
 #include <poz_chiplet_repr_initf.H>
 #include <poz_perv_common_params.H>
-
+#include <poz_ring_ids.H>
 
 using namespace fapi2;
 
@@ -42,8 +42,10 @@ enum POZ_CHIPLET_REPR_INITF_Private_Constants
 
 ReturnCode poz_chiplet_repr_initf(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
 {
-
+    FAPI_INF("Entering ...");
+    FAPI_TRY(putRing(i_target, ring_id::chiplet_rtg));
 
 fapi_try_exit:
+    FAPI_INF("Exiting...");
     return current_err;
 }
