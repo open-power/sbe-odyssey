@@ -35,6 +35,7 @@ odyssey_hwp_inc_paths = [
     '/common/odyssey/registers',
     '/hwp/generic/perv',
     '/common/generic/scomt',
+    '/memory/odyssey/initfiles',
         ]
 
 odyssey_srom_inc_paths = [
