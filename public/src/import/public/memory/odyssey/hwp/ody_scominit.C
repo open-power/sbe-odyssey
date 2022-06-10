@@ -34,9 +34,13 @@
 // *HWP Consumed by: Memory
 
 #include <fapi2.H>
-#include <generic/memory/lib/utils/c_str.H>
+
+#ifndef __PPE__
+    #include <generic/memory/lib/utils/c_str.H>
+    #include <generic/memory/mss_git_data_helper.H>
+#endif
+
 #include <generic/memory/lib/utils/mss_generic_check.H>
-#include <generic/memory/mss_git_data_helper.H>
 #include <odyssey_scom.H>
 #include <ody_scominit.H>
 
@@ -49,7 +53,9 @@ extern "C"
     ///
     fapi2::ReturnCode ody_scominit( const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
     {
+#ifndef __PPE__
         mss::display_git_commit_info("ody_scominit");
+#endif
 
         fapi2::ReturnCode l_rc = fapi2::FAPI2_RC_SUCCESS;
         FAPI_INF( TARGTIDFORMAT " running odyssey.scom.initfile", TARGTID);
