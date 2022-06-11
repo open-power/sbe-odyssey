@@ -19,7 +19,7 @@ Note: If platform option is not provided, it defaults to "all".
       In this case all images will be built for all supported platforms in the
       repo unless user manually over-rides using mesonwrap option's.
 
-To install required packages to build images:
+To install required packages to build images (this will be done while doing workon):
     ./sbe install
 
 To sync platform env variable with existing meson build dir:
@@ -30,10 +30,18 @@ To re run setup phase:
 (This is required when there is a change in any of the genfile scripts that can't be tracked by meson and that needs to be re run)
 
 To build a image:
+    ./sbe build
+
+    OR
+
     mesonwrap setup
     mesonwrap build
 
 To Clean:
+    ./sbe clean
+
+    OR
+
     mesonwrap clean
 
 For more available build options check:
@@ -43,8 +51,9 @@ Note: After build, all images are available in images dir.
       All .o, .s, .a etc are available in builddir.
 
 To Run simics:
+    Option-1
+    ----------------------------------------------------------------------------
     After building image run following steps.
-        ./sbe prime
 
         ./sbe runsimics
 
@@ -54,3 +63,17 @@ To Run simics:
 
     To get the trace run:
         simics> sbe-trace 0
+
+    Option-2
+    ----------------------------------------------------------------------------
+    After building image run following steps.
+
+        ./sbe runsimics till_boot     // if 'till_boot' option used, simics will run-till sbe-ready state
+
+    To get the trace run:
+        simics> sbe-trace 0
+
+    Option-3
+    ----------------------------------------------------------------------------
+    Build and run using single command
+        ./sbe execute [till_boot]     // if 'till_boot' option used, simics will run-till sbe-ready state

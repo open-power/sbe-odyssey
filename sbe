@@ -26,9 +26,10 @@
 
 SUPPORTED_PLATFORM=("p11" "metis" "p11_dft" "metis_dft" "odyssey" "all")
 SUPPORTED_IMAGES=("sppe" "bldr" "srom" "otprom" "pnor")
-SUPPORTED_COMMAND=("workon" "prime" "install" "citest" "runsimics")
+SUPPORTED_COMMAND=("workon" "prime" "install" "citest" "runsimics" "build" \
+                    "clean" "execute" "printenv")
 
-sb_helptext()
+sbe_helptext()
 {
     echo "SBE Utility Script"
 
@@ -66,7 +67,31 @@ sb_helptext()
         echo "  Run the simics"
         echo
         echo "  Usage:"
-        echo "      sbe runsimics"
+        echo "      sbe runsimics [till_boot]"
+        ;;
+    ${SUPPORTED_COMMAND[5]})
+        echo "  build the project worked on"
+        echo
+        echo "  Usage:"
+        echo "      sbe build"
+        ;;
+    ${SUPPORTED_COMMAND[6]})
+        echo "  Clean the compiled files"
+        echo
+        echo "  Usage:"
+        echo "      sbe clean"
+        ;;
+    ${SUPPORTED_COMMAND[7]})
+        echo "  Build the project, setup the simics and run the simics"
+        echo
+        echo "  Usage:"
+        echo "      sbe execute [till_boot]"
+        ;;
+    ${SUPPORTED_COMMAND[8]})
+        echo "  print the settings of current workon"
+        echo
+        echo "  Usage:"
+        echo "      sbe printenv"
         ;;
     *)
         echo "  Usage:"
@@ -85,7 +110,7 @@ sb_helptext()
     esac
 }
 
-sb_workon()
+sbe_workon()
 {
     if [ -n "${SBE_INSIDE_WORKON}" ]; then
         echo "Already in a workon."
@@ -140,7 +165,7 @@ sb_workon()
     fi
 }
 
-sb_install()
+sbe_install()
 {
     if [ -n "${SBE_INSIDE_WORKON}" ]; then
         echo "Already in a workon.. Continuing"
@@ -155,18 +180,18 @@ sb_install()
 
 }
 
-sb_prime()
+sbe_prime()
 {
     if [ -n "${SBE_INSIDE_WORKON}" ]; then
         echo "Already in a workon.. Continuing"
-        ${SBE_TOOLS_PATH}/sbePrime.py $*
+        ${SBE_TOOLS_PATH}/sbePrime.py $* || exit -1
     else
         echo "Please do workon and re launch..."
     fi
 
 }
 
-sb_citest()
+sbe_citest()
 {
     if [ -n "${SBE_INSIDE_WORKON}" ]; then
         echo "Already in a workon.. Continuing"
@@ -177,20 +202,78 @@ sb_citest()
 
 }
 
-sb_run_simics()
+sbe_run_simics()
 {
     if [ -n "${SBE_INSIDE_WORKON}" ]; then
         echo "Already in a workon.. Continuing"
-        if [ -d "simics" ]; then
-            cd simics
-            $SBEROOT/internal/src/tools/simics/runsimicscmd.sh -p $SBE_PLATFORM -i $SBE_IMAGE
+
+        sbe_prime || exit -1
+
+        cd simics
+
+        if [[ "till_boot" == $1 ]]; then
+            TILL_BOOT="TRUE"
         else
-            echo "Please do prime before runsimics"
+            TILL_BOOT="FALSE"
         fi
+        $SBEROOT/internal/src/tools/simics/runsimicscmd.sh -p $SBE_PLATFORM \
+                -i $SBE_IMAGE -r $TILL_BOOT
     else
         echo "Please do workon and re launch..."
     fi
 
+}
+
+sbe_build()
+{
+    if [ -n "${SBE_INSIDE_WORKON}" ]; then
+        echo "Already in a workon.. Continuing"
+        if [ ! -f "builddir/build.ninja" ]; then
+            mesonwrap setup || exit -1
+        else
+            # Sync with current workon settings
+            mesonwrap sync || exit -1
+        fi
+
+        mesonwrap build || exit -1
+    else
+        echo "Please do workon and re launch..."
+    fi
+}
+
+sbe_clean()
+{
+    if [ -n "${SBE_INSIDE_WORKON}" ]; then
+        echo "Already in a workon.. Continuing"
+        mesonwrap clean
+    else
+        echo "Please do workon and re launch..."
+    fi
+}
+
+sbe_execute()
+{
+    if [ -n "${SBE_INSIDE_WORKON}" ]; then
+        echo "Already in a workon.. Continuing"
+        sbe_build || exit -1
+        sbe_prime || exit -1
+        sbe_run_simics $1
+    else
+        echo "Please do workon and re launch..."
+    fi
+}
+
+sbe_print_env()
+{
+    if [ -n "${SBE_INSIDE_WORKON}" ]; then
+        echo "Already in a workon.. Continuing"
+        echo "SBEROOT                   = $SBEROOT"
+        echo "SBE_PLATFORM              = $SBE_PLATFORM"
+        echo "SBE_IMAGE                 = $SBE_IMAGE"
+        echo "PYTHON_USER_PACKAGE_PATH  = $PYTHON_USER_PACKAGE_PATH"
+    else
+        echo "Please do workon and re launch..."
+    fi
 }
 
 # This is for enabling bash completion
@@ -206,25 +289,37 @@ shift
 
 case ${FIRST_PARAM} in
 ${SUPPORTED_COMMAND[0]})
-    sb_workon $*
+    sbe_workon $*
     ;;
 ${SUPPORTED_COMMAND[2]})
-    sb_install $*
+    sbe_install $*
     ;;
 ${SUPPORTED_COMMAND[1]})
-    sb_prime $*
+    sbe_prime $*
     ;;
 ${SUPPORTED_COMMAND[3]})
-    sb_citest $*
+    sbe_citest $*
     ;;
 ${SUPPORTED_COMMAND[4]})
-    sb_run_simics $*
+    sbe_run_simics $*
+    ;;
+${SUPPORTED_COMMAND[5]})
+    sbe_build $*
+    ;;
+${SUPPORTED_COMMAND[6]})
+    sbe_clean $*
+    ;;
+${SUPPORTED_COMMAND[7]})
+    sbe_execute $*
+    ;;
+${SUPPORTED_COMMAND[8]})
+    sbe_print_env $*
     ;;
 # This is not to be printed in completion, so no need to add in SUPPORTED_COMMAND
 gen_list)
     generate_list $*
     ;;
 *)
-    sb_helptext $*
+    sbe_helptext $*
     ;;
 esac

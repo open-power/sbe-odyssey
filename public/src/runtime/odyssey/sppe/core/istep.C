@@ -35,6 +35,8 @@
 #include "ipl.H"
 #include "istep.H"
 
+#define ISTEP_START_MINOR_NUMBER 13
+
 using namespace fapi2;
 //----------------------------------------------------------------------------
 static void findNextIstep(uint8_t& o_nextMajor, uint8_t& o_nextMinor)
@@ -48,12 +50,9 @@ static void findNextIstep(uint8_t& o_nextMajor, uint8_t& o_nextMinor)
                         prevMajorNumber, prevMinorNumber );
     if( 0 == prevMajorNumber )
     {
-        prevMajorNumber = 1;
-        prevMinorNumber = 12;
+        prevMajorNumber = istepTable.istepMajorArr[0].istepMajorNum;
+        prevMinorNumber = ISTEP_START_MINOR_NUMBER - 1;
     }
-
-    o_nextMajor = prevMajorNumber;
-    o_nextMinor = prevMinorNumber + 1;
 
     for(size_t entry = 0; entry < istepTable.len; entry++)
     {
@@ -64,6 +63,11 @@ static void findNextIstep(uint8_t& o_nextMajor, uint8_t& o_nextMinor)
             {
                 o_nextMajor = prevMajorNumber + 1;
                 o_nextMinor =  1;
+            }
+            else
+            {
+                o_nextMajor = prevMajorNumber;
+                o_nextMinor = prevMinorNumber + 1;
             }
             break;
         }
@@ -77,6 +81,11 @@ static bool validateIstepRange(const uint8_t i_major, const uint8_t i_minor)
     do
     {
         if( 0 == i_minor )
+        {
+            break;
+        }
+        if((istepTable.istepMajorArr[0].istepMajorNum == i_major) &&
+            (i_minor < ISTEP_START_MINOR_NUMBER))
         {
             break;
         }
@@ -106,7 +115,7 @@ bool validateIstep (const uint8_t i_major, const uint8_t i_minor)
     {
         if(false == validateIstepRange(i_major, i_minor))
         {
-            SBE_ERROR(SBE_FUNC" Invalid Istep range. major:0x%08x minor:0x%08x",
+            SBE_ERROR(SBE_FUNC" Invalid Istep range. major:%u minor:%u",
                         i_major, i_minor);
             break;
         }
@@ -176,7 +185,7 @@ uint32_t sbeHandleIstep (uint8_t *i_pArg)
         if( false == validateIstep( req.major, req.minor ) )
         {
             SBE_ERROR(SBE_FUNC" Invalid Istep. major:%u"
-                      " %u",
+                      " minor:%u",
                       req.major, req.minor);
             // @TODO via RTC 132295.
             // Need to change code asper better error handling.

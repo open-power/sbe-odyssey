@@ -58,3 +58,7 @@ fi
 if [ -z $SBE_CI_ENV_SETUP ]; then
     source public/src/tools/utils/sbe/sbe_complete
 fi
+
+CMD="pip install -r $SBEROOT_PUB/src/tools/install/requirements.txt --user"
+echo $CMD
+$CMD || exit -1

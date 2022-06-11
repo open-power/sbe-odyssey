@@ -7,6 +7,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,6 +44,16 @@ sbe_complete(){
 
     if [[ ${prev} == workon ]] ; then
         COMPREPLY=( $(compgen -W "${opts_workon}" -- ${cur}) )
+        return 0
+    fi
+
+    if [[ ${prev} == runsimics ]] ; then
+        COMPREPLY=( $(compgen -W "till_boot" -- ${cur}) )
+        return 0
+    fi
+
+    if [[ ${prev} == execute ]] ; then
+        COMPREPLY=( $(compgen -W "till_boot" -- ${cur}) )
         return 0
     fi
 
