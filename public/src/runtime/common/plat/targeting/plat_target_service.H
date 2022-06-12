@@ -183,6 +183,7 @@ namespace fapi2
             {
                 // Trivial case where we're already a unicast target of the requested type - return just this target
                 o_children.push_back(i_parent);
+                return;
             }
 
             // TODO: Test this path
