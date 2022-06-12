@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_pib_startclocks.asm $ */
+/* $Source: public/src/import/public/hwp/generic/perv/poz_pib_startclocks.asm $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,19 +23,48 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief Start clocks for PIB region
+/// @brief Shared command table code to handle start clocks
+/// @param I_CLOCK_REGIONS  Clock regions to run startclocks on
+/// @param I_CLOCK_TYPES    Clock types to run startclocks on; default ALL=0xE
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 // *HWP Consumed by     : SPPE
 //------------------------------------------------------------------------------
 
 #include "defines.inc"
 #include "registers.inc"
-#include "settings.inc"
 #include "cmdtable_hwp_errors.H"
 
-ody_pib_startclocks:
-        // Call the poz_pib_startclocks module with correct parameters
-        #define I_CLOCK_REGIONS PIB_CLOCK_REGION
-        #include "poz_pib_startclocks.asm"
+// Check parameters
+#ifndef I_CLOCK_REGIONS
+#error I_CLOCK_REGIONS is not defined
+#endif
+
+#ifndef I_CLOCK_TYPES
+#define I_CLOCK_TYPES 0xE
+#endif
+
+poz_pib_startclocks:
+         // Clear SCAN_REGION_TYPE register
+         putscom  SCAN_REGION_TYPE, ALL, 0xl0
+
+         // Drop fences before starting clocks
+         putscom  CPLT_CTRL1_CLEAR, ALL, CPLT_CTRL1__REGIONS(I_CLOCK_REGIONS)
+
+         // Issue clock start command selecting required clock_regions and clock_types
+         putscom  CLK_REGION, ALL, CLK_REGION__CLK_CMD(CLOCK_START_CMD) | CLK_REGION__REGIONS(I_CLOCK_REGIONS) | CLK_REGION__TYPES(I_CLOCK_TYPES)
+
+         // Wait for command to be done
+         poll     CPLT_STAT, CPLT_STAT__OPCG_DONE,  CPLT_STAT__OPCG_DONE,  ERR_OPCG_TIMEOUT_ABIST
+
+         // Check that the clock status is as expected
+         //for check_type in (CLOCK_TYPE_SL, CLOCK_TYPE_NSL, CLOCK_TYPE_ARY):
+         //FAPI_TRY(check_clock_status(i_target, i_clock_regions, i_clock_types & check_type, i_start_not_stop));
+         test     CLOCK_STAT_SL,  CLOCK_STAT_SL__REGIONS(I_CLOCK_REGIONS), 0, ERR_CLOCK_STAT_SL
+         test     CLOCK_STAT_NSL, CLOCK_STAT_SL__REGIONS(I_CLOCK_REGIONS), 0, ERR_CLOCK_STAT_NSL
+         test     CLOCK_STAT_ARY, CLOCK_STAT_SL__REGIONS(I_CLOCK_REGIONS), 0, ERR_CLOCK_STAT_ARY
+
+// Clear parameters to free up the #define namespace for the next module
+#undef I_CLOCK_REGIONS
+#undef I_CLOCK_TYPES
