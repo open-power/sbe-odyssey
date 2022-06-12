@@ -19,13 +19,16 @@
 #define BIST__REGIONS(value) BITVALUE (4, 18, value)
 
 #define CLK_REGION 0x01030006
+#define CLOCK_START_CMD 0b01
 #define CLK_REGION__CLK_CMD(value) BITVALUE(0, 1, value)
 #define CLK_REGION__REGIONS(value) BITVALUE(4, 18, value)
+#define CLK_REGION__TYPES(value) BITVALUE(48, 51, value)
 #define CLK_REGION__SEL_THOLD_SL BIT(48)
 #define CLK_REGION__SEL_THOLD_NSL BIT(49)
 #define CLK_REGION__SEL_THOLD_ARY BIT(50)
 
 #define OPCG_REG1 0x01030003
+#define OPCG_REG1__START_BIST(value) BITVALUE(0, 35, value)
 
 #define OPCG_REG0 0x01030002
 #define OPCG_REG0__RUNN_MODE BIT(0)
@@ -35,6 +38,8 @@
 #define OPCG_REG0__RUN_SCAN0 BIT(2)
 
 #define CPLT_STAT 0x01000100
+#define CPLT_STAT__OPCG_DONE  BIT(8)
+#define CPLT_STAT__ABIST_DONE BIT(0)
 
 #define CPLT_CTRL1 0x01000001
 #define CPLT_CTRL1_WO_OR 0x01000011
@@ -90,3 +95,13 @@
 
 #define SB_CS_REG 0x50008
 #define HRESET_SET BIT(13)
+
+//added below fields by Sreekanth to support P11
+#define ROOT_CTRL1_SET 0x50121
+#define ROOT_CTRL1__TP_TPM_DI1_DC_B BIT(22)
+
+#define CPLT_CONF1 0x01000009
+#define CPLT_CONF1__NEST_PROGDLY(value) BITVALUE(16, 20, value)
+
+#define PERV_CTRL1_CLEAR 0x5013B
+#define PERV_CTRL1__TP_CHIPLET_CLK_PDLY_BYPASS_EN_DC BIT(2)
