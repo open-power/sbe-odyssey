@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/common/algorithms/pqalgs.h $                       */
+/* $Source: public/src/onetime/common/algorithms/dilithium/pqalgs.h $     */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */

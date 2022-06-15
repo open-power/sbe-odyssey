@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/onetime/common/srom/core/meson.build $
+# $Source: public/src/onetime/common/algorithms/ecdsa/meson.build $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,18 +21,17 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-infile_c = ['shv.C',
-            'securebootutil.C'
+
+infile_c = ['ecdsa.C'
             ]
 
-lib_file_name = 'cmnsromcore'
+lib_file_name = 'ecdsaalgo'
 
-cmn_srom_obj_file_cpp = obj_gen_cpp.process(infile_c,
-                                            extra_args:[onetime_cmn_abs_inc_paths])
+ecdsa_algo_obj_file_cpp = obj_gen_cpp.process(infile_c)
 
-infile  = [cmn_srom_obj_file_cpp]
+infile  = [ecdsa_algo_obj_file_cpp]
 
-libcmnsromcore = custom_target( lib_file_name,
+libecdsaalgo = custom_target( lib_file_name,
                                  output : 'lib' + lib_file_name,
                                  input : infile,
                                  command : [ ar,
@@ -43,6 +41,6 @@ libcmnsromcore = custom_target( lib_file_name,
                                  build_by_default: true,
                              )
 
-cmn_srom_core_libs = '-l' + lib_file_name
-cmn_srom_core_lib_paths = '-L' + meson.current_build_dir()
-cmn_srom_core_dep_libs = libcmnsromcore
+ecdsa_algo_libs = '-l' + lib_file_name
+ecdsa_algo_lib_paths = '-L' + meson.current_build_dir()
+ecdsa_algo_dep_libs = libecdsaalgo

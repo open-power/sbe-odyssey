@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/common/algorithms/dilithium.H $                    */
+/* $Source: public/src/onetime/common/algorithms/dilithium/dilithium.H $  */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */

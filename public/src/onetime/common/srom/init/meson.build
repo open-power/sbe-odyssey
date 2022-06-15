@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/onetime/common/srom/core/meson.build $
+# $Source: public/src/onetime/common/srom/init/meson.build $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,18 +21,29 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-infile_c = ['shv.C',
-            'securebootutil.C'
+
+infile_s = ['cmdtable.S',
             ]
 
-lib_file_name = 'cmnsromcore'
+lib_file_name = 'cmnsrominit'
 
-cmn_srom_obj_file_cpp = obj_gen_cpp.process(infile_c,
-                                            extra_args:[onetime_cmn_abs_inc_paths])
+fsm_pre_process = custom_target(
+                    output : '@BASENAME@.s',
+                    input : infile_s,
+                    command : [ cc,
+                                meson.get_external_property('pre_processing_args'),
+                                ekb_cmn_abs_inc_paths, cmn_abs_inc_paths,
+                                onetime_cmn_abs_inc_paths,
+                                '-o','@OUTPUT@','@INPUT@'],
+                    build_by_default: true,
+                    depfile : '@BASENAME@.d'
+                             )
 
-infile  = [cmn_srom_obj_file_cpp]
+fsm_obj_file_s = obj_gen_s.process(fsm_pre_process)
 
-libcmnsromcore = custom_target( lib_file_name,
+infile  = [fsm_obj_file_s]
+
+libcmnsrominit = custom_target( lib_file_name,
                                  output : 'lib' + lib_file_name,
                                  input : infile,
                                  command : [ ar,
@@ -43,6 +53,6 @@ libcmnsromcore = custom_target( lib_file_name,
                                  build_by_default: true,
                              )
 
-cmn_srom_core_libs = '-l' + lib_file_name
-cmn_srom_core_lib_paths = '-L' + meson.current_build_dir()
-cmn_srom_core_dep_libs = libcmnsromcore
+cmn_srom_init_libs = '-l' + lib_file_name
+cmn_srom_init_lib_paths = '-L' + meson.current_build_dir()
+cmn_srom_init_dep_libs = libcmnsrominit

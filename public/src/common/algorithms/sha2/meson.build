@@ -1,7 +1,7 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/common/algorithms/meson.build $
+# $Source: public/src/common/algorithms/sha2/meson.build $
 #
 # OpenPOWER sbe Project
 #
@@ -23,8 +23,26 @@
 #
 # IBM_PROLOG_END_TAG
 
-subdir('sha3')
-
 # Currently sha2-512 is not used. This is redundant p10 code
-# If sha2-512 is required uncomment below line
-#subdir('sha2')
+infile_c = ['sha512.C'
+            ]
+
+lib_file_name = 'sha2algo'
+
+sha2_algo_obj_file_cpp = obj_gen_cpp.process(infile_c)
+
+infile  = [sha2_algo_obj_file_cpp]
+
+libsha2algo = custom_target( lib_file_name,
+                             output : 'lib' + lib_file_name,
+                             input : infile,
+                             command : [ ar,
+                                         'crs',
+                                         '@OUTPUT@'+'.a',
+                                         '@INPUT@'],
+                             build_by_default: true,
+                             )
+
+sha2_algo_libs = '-l' + lib_file_name
+sha2_algo_lib_paths = '-L' + meson.current_build_dir()
+sha2_algo_dep_libs = libsha2algo
