@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/common/algorithms/meson.build $
+# $Source: public/src/onetime/common/algorithms/meson.build $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,9 +21,5 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-
-subdir('sha3')
-
-# Currently sha2-512 is not used. This is redundant p10 code
-# If sha2-512 is required uncomment below line
-#subdir('sha2')
+subdir('ecdsa')
+subdir('dilithium')

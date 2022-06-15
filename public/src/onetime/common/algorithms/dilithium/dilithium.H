@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/common/algorithms/sha512.H $                       */
+/* $Source: public/src/onetime/common/algorithms/dilithium/dilithium.H $  */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2022                             */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -21,39 +21,52 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef SHA512_H
-#define SHA512_H
 
-#define SHA512_BLOCK_LENGTH 128
-#define SHA512_DIGEST_LENGTH 64
+#ifndef _DILITHIUM_H
+#define _DILITHIUM_H
 
-#ifndef __PPE__
-#include <stdlib.h>
-#else
-#include <stddef.h>
-#endif
+#define DILITHIUM_PUB_KEY_SIZE 2336
+#define DILITHIUM_SIG_SIZE 4668
 
-typedef uint8_t SHA512_t[SHA512_DIGEST_LENGTH];
+#define DIL_N ((unsigned int)256)
+#define DIL_VECT_MAX ((unsigned int)8) /* MAX(K, L) for any config */
 
-typedef uint8_t  sha2_byte;     /* Exactly 1 byte */
-typedef uint32_t sha2_word32;   /* Exactly 4 bytes */
-typedef uint64_t sha2_word64;   /* Exactly 8 bytes */
+typedef uint8_t dilithium_key_t[DILITHIUM_PUB_KEY_SIZE];
+typedef uint8_t dilithium_signature_t[DILITHIUM_SIG_SIZE];
 
-typedef struct _SHA512_CTX
+typedef struct
 {
-    uint64_t state[8];
-    uint64_t bitcount[2];
-    uint8_t buffer[SHA512_BLOCK_LENGTH];
-} SHA512_CTX;
+    uint32_t coeffs[DIL_N];
+} poly;
 
+/**
+ * @brief the largest polyvecl, polyveck possible safe to cast to any valid, smaller size
+ *
+ */
+typedef struct
+{
+    poly vec[DIL_VECT_MAX];
+} polyvec_max;
 
-extern "C"
-void SHA512_Init(SHA512_CTX* context);
-extern "C"
-void SHA512_Update(SHA512_CTX* context, const sha2_byte *data, size_t len);
-extern "C"
-void SHA512_Final(SHA512_CTX* context, SHA512_t *result);
-extern "C"
-void SHA512_Hash(const sha2_byte *data, size_t len, SHA512_t *result);
+/**
+ * @brief Verifies dilithium signature
+ *
+ * @param *m: pointer to input signature
+ *
+ * @param siglen: length of signature
+ *
+ * @param *m: pointer to message
+ *
+ * @param mlen: length of message
+ *
+ * @return >0 if signature could be verified correctly and 0 otherwise
+ */
+int __attribute__((noinline)) ref_verify2(const uint8_t *sig,
+                                          size_t siglen,
+                                          const uint8_t *m,
+                                          size_t mlen,
+                                          const uint8_t *pk,
+                                          size_t pkbytes, polyvec_max *w1, polyvec_max *mat01, polyvec_max *mat234, polyvec_max *mat567,
+                                          polyvec_max *z, polyvec_max *h);
 
-#endif
+#endif //----------_DILITHIUM_H-------

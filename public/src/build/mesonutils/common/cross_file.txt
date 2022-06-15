@@ -122,7 +122,7 @@ cmn_inc_paths = [
     '/public/src/common/hwpf',
     '/public/src/common/core',
     '/public/src/common/utils',
-    '/public/src/common/algorithms',
+    '/public/src/common/algorithms/sha3',
     '/public/src/build/links',
     '/public/src/common/pakwrapper',
         ]
@@ -136,5 +136,7 @@ runtime_cmn_inc_paths = [
         ]
 
 onetime_cmn_inc_paths = [
-    '/public/src/onetime/common/srom/core'
+    '/public/src/onetime/common/srom/core',
+    '/public/src/onetime/common/algorithms/ecdsa',
+    '/public/src/onetime/common/algorithms/dilithium'
         ]

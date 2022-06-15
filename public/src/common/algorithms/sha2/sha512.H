@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/common/algorithms/sha3.H $                         */
+/* $Source: public/src/common/algorithms/sha2/sha512.H $                  */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,57 +21,39 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef SHA3_H
-#define SHA3_H
+#ifndef SHA512_H
+#define SHA512_H
 
+#define SHA512_BLOCK_LENGTH 128
+#define SHA512_DIGEST_LENGTH 64
+
+#ifndef __PPE__
+#include <stdlib.h>
+#else
 #include <stddef.h>
-#include <stdint.h>
-
-#ifndef KECCAKF_ROUNDS
-#define KECCAKF_ROUNDS 24
 #endif
 
-#ifndef ROTL64
-#define ROTL64(x, y) (((x) << (y)) | ((x) >> (64 - (y))))
-#endif
+typedef uint8_t SHA512_t[SHA512_DIGEST_LENGTH];
 
-#define SHA3_DIGEST_LENGTH 64
+typedef uint8_t  sha2_byte;     /* Exactly 1 byte */
+typedef uint32_t sha2_word32;   /* Exactly 4 bytes */
+typedef uint64_t sha2_word64;   /* Exactly 8 bytes */
 
-typedef uint8_t sha3_t[SHA3_DIGEST_LENGTH];
+typedef struct _SHA512_CTX
+{
+    uint64_t state[8];
+    uint64_t bitcount[2];
+    uint8_t buffer[SHA512_BLOCK_LENGTH];
+} SHA512_CTX;
 
-// state context
-typedef struct {
-    union {                                 // state:
-        uint8_t b[200];                     // 8-bit bytes
-        uint64_t q[25];                     // 64-bit words
-    } st;
-    int pt, rsiz, mdlen;                    // these don't overflow
-} sha3_ctx_t;
 
-typedef uint8_t  sha3_byte;     /* Exactly 1 byte */
-typedef uint32_t sha3_word32;   /* Exactly 4 bytes */
-typedef uint64_t sha3_word64;   /* Exactly 8 bytes */
-
-// Compression function.
-void sha3_keccakf(uint64_t st[25]);
-
-// OpenSSL - like interfece
-int sha3_init(sha3_ctx_t *c);    // mdlen = hash output in bytes
-int sha3_update(sha3_ctx_t *c, const void *data, size_t len);
-int sha3_final(sha3_t *md, sha3_ctx_t *c);    // digest goes to md
-
-/**
- * @brief compute a sha3 hash (md) of given byte length from "data"
- *
- * @param data Data on which sha3 needs to be calculated
- * @param len Length of data
- * @param result sha3 result store location ptr
- */
-void sha3_Hash(const sha3_byte *data, size_t len, sha3_t *result);
-
-uint32_t make32Bit(uint8_t *ptr);
-
-//Print SHA3-512 result
-void SHA3_dump(sha3_t *result);
+extern "C"
+void SHA512_Init(SHA512_CTX* context);
+extern "C"
+void SHA512_Update(SHA512_CTX* context, const sha2_byte *data, size_t len);
+extern "C"
+void SHA512_Final(SHA512_CTX* context, SHA512_t *result);
+extern "C"
+void SHA512_Hash(const sha2_byte *data, size_t len, SHA512_t *result);
 
 #endif

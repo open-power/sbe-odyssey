@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,4 +25,5 @@
 
 if get_option('srom').enabled()
   subdir('srom')
+  subdir('algorithms')
 endif
