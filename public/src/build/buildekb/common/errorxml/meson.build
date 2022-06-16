@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -28,7 +28,8 @@ common_error_xml_files = [
                           'poz_perv_mod_chiplet_clocking_errors.xml',
                           'poz_perv_mod_misc_errors.xml',
                           'poz_bist_errors.xml',
-                          'poz_sbe_plat_errors.xml'
+                          'poz_sbe_plat_errors.xml',
+                          'poz_sbe_spi_cmd_errors.xml',
                         ]
 
 #Create abs path for input xml files

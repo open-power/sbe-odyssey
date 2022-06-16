@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -35,6 +35,7 @@ generic_infile_c = [
                     'poz_chiplet_unused_psave.C',
                     'poz_chiplet_startclocks.C',
                     'poz_chiplet_arrayinit.C',
+                    'poz_sbe_spi_cmd.C',
                     ]
 
 #Create abs path for input files before creating .o

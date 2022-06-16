@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -45,3 +45,4 @@ GENERIC_PERV_PROCEDURE = $(eval $(call __GENERIC_PERV_PROCEDURE,$1,$2))
 $(call GENERIC_PERV_PROCEDURE,poz_cmdtable_interpreter)
 $(call GENERIC_PERV_PROCEDURE,poz_bist,poz_chiplet_arrayinit)
 $(call GENERIC_PERV_PROCEDURE,poz_stopclocks)
+$(call GENERIC_PERV_PROCEDURE,poz_sbe_spi_cmd)
