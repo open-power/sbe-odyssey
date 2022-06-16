@@ -132,11 +132,10 @@ __system_reset_handler:
         mtdbcr  %r5
 
 ################################################################################
-# TODO: Need to update latest scratch register definitionm
 # Read scratch register and set SPI clock configuration register
 # --------------------------------------------------------------
 # R5 --> 0x50000
-# Check valid bit is set in scratch_8 (5003F) for clock divider & round trip
+# Check valid bit is set in scratch_16 (0x50187) for clock divider & round trip
 #   - If yes load that value from 5003D to LFR/SPIm Clock Divider
 #       The clock divider value is in the MSB 12 bits of 5003D
 #       The round trip delay is the bit 12-15 of 5003D
@@ -157,15 +156,15 @@ __system_reset_handler:
 ################################################################################
 oos_load_spi_clk_cnfg:
         lis    %r5, 0x5                         # Load r5 with 0x50000
-        lvd    %d2, 0x3D(r5)                    # loads scratch_8 .
-        bb0wi  %r2, 3, spi_clk_cnfg_not_valid   # checks If valid Bit3 is Set
-        lvd    %d2, 0x3B(r5)                    # Valid. Load the clock divider
+        lvd    %d2, 0x187(r5)                   # loads scratch_16 .
+        bb0wi  %r2, 5, spi_clk_cnfg_not_valid   # checks If valid Bit5 is Set
+        lvd    %d2, 0x3D(r5)                    # Valid. Load the clock divider
         rlwinm %r2, %r2, 0x0, 0x0, 0xF          # Pick the MSB 16 bits (12 + 4 bits).
         b save_spi_cnfg
 
 spi_clk_cnfg_not_valid:
         # Config not valid, load default value of 0x008 in the top 12 bits and let
-        # round trip delay be 4 clock cycle in next 4bits (Enum for 1 clock delay)
+        # round trip delay be 1 clock cycle in next 4bits (Enum for 1 clock delay)
         lis %r2, 0x0081       # 12bits clock divider + 4bits round trip delay
                               # round trip delay enum is 1 which is 0x40
 
