@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -23,7 +24,7 @@
 /* IBM_PROLOG_END_TAG                                                     */
 
 #include "sha3.H"
-#include "sbetrace.H"
+//#include "sbetrace.H"
 
 // update the state with given number of rounds
 void sha3_keccakf(uint64_t st[25])
