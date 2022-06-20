@@ -197,8 +197,8 @@ void bn_mul (bn_t *r, const bn_t *a, const bn_t *b)
     {
         for (i=0; i<NWORDS; ++i)
         {
-            ph = bn_dmul(a[i], b[j]);
-            pl = a[i] * b[j];
+            asm("mullw %0,%1,%2" : "=r" (pl) : "r" (a[i]), "r" (b[j]));
+            asm("mulhwu %0,%1,%2" : "=r" (ph) : "r" (a[i]), "r" (b[j]));
 
 #ifdef EC_POWER64_ASM
             asm("addc    %0,%2,%4\n"

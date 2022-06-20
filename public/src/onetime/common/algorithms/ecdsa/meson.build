@@ -5,7 +5,8 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +28,7 @@ infile_c = ['ecdsa.C'
 
 lib_file_name = 'ecdsaalgo'
 
-ecdsa_algo_obj_file_cpp = obj_gen_cpp.process(infile_c)
+ecdsa_algo_obj_file_cpp = obj_gen_cpp.process(infile_c, extra_args : ['-mmulhw'])
 
 infile  = [ecdsa_algo_obj_file_cpp]
 

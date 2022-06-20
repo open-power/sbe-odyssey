@@ -6,7 +6,7 @@ cpu        = 'ppe42'
 endian     = 'big'
 
 [constants]
-ppetools_path = '/afs/awd/projects/cte/tools/ppetools/prod'
+ppetools_path = '/afs/apd/projects/cte/tools/ppetools/prod'
 cc_base_path = ppetools_path / 'bin'
 cc_tools_base_path = ppetools_path / 'powerpc-eabi/bin'
 
