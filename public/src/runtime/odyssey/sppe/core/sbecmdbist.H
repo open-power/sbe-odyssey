@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/chipop_table.H $         */
+/* $Source: public/src/runtime/odyssey/sppe/core/sbecmdbist.H $           */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -22,40 +22,28 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __CHIPOP_TABLE_H
-#define __CHIPOP_TABLE_H
+#ifndef __SBECMDBIST_H
+#define __SBECMDBIST_H
+
+#include <stdint.h>
+#include <poz_perv_common_params.H>
 
 /**
-  * @brief enums for SBE Istep Control command class
+  * @brief structure for PutScom Chipop (0xA202) contents.
   *
   */
-enum sbeIplControlCommands
+typedef struct
 {
-    SBE_CMD_EXECUTE_ISTEP      = 0x01, /* Execute istep */
-};
+    bist_params params;
+}sbeBistReqMsg_t;
 
 /**
-  * @brief enums for SCOM Access Messages
-  *
-  */
-enum sbeScomAccessCommands
-{
-    SBE_CMD_GETSCOM          = 0x01, /* Get SCOM */
-    SBE_CMD_PUTSCOM          = 0x02, /* Put SCOM */
-    SBE_CMD_MODIFYSCOM       = 0x03, /* Modify SCOM */
-    SBE_CMD_PUTSCOM_MASK     = 0x04, /* Put SCOM under mask */
-    SBE_CMD_MULTISCOM        = 0x05, /* Execute Multi SCOM */
-};
+ * @brief sbeDownFifoGetStatus : Write data into Downstream FIFO
+ *
+ * @param[in] i_pArg Buffer to be passed to the function (not used as of now)
+ *
+ * @return    Rc from the FIFO access utility
+ */
+uint32_t sbeBist (uint8_t *i_pArg);
 
-enum sbeRingAccessCommands
-{
-    SBE_CMD_GETRING          = 0x01, /* Get Ring */
-    SBE_CMD_PUTRING          = 0x02, /* Put Ring */
-};
-
-enum sbeTestCommands
-{
-    SBE_CMD_BIST             = 0x01, /* BIST chipop */
-};
-
-#endif
+#endif /* __SBEFW_SBECMDSCOMACCESS_H */

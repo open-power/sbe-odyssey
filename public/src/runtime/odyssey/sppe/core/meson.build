@@ -35,6 +35,7 @@ infile_c = ['main.C',
             'sbecmdscomaccess.C',
             'sbescom.C',
             'sbecmdringaccess.C',
+            'sbecmdbist.C',
            ]
 
 lib_file_name = 'odysseysppe'
@@ -46,7 +47,8 @@ odyssey_sppe_obj_file_cpp = obj_gen_cpp.process(infile_c,
                                         odyssey_runtime_abs_inc_paths,
                                         odyssey_cmn_abs_inc_paths,
                                         runtime_cmn_abs_inc_paths,
-                                        odyssey_hwp_abs_inc_paths])
+                                        odyssey_hwp_abs_inc_paths,
+                                        ekb_hwp_abs_inc_paths])
 
 infile  = [odyssey_sppe_obj_file_cpp]
 
