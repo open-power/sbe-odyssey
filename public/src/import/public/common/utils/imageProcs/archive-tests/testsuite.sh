@@ -26,8 +26,9 @@
 
 #set -x
 
-echo "### Building test program"
-g++ -g -O0 -DARCHIVE_TEST_FIXTURE -I. -I.. -I../../../generic/fapi2/include -I../../../generic/fapi2/include/plat -iquote . -o test archive-test.C ../archive.C ../tinflate.C ../sha3.C
+echo "### Building test programs"
+g++ -g -O0 -DARCHIVE_TEST_FIXTURE -I. -I.. -I../../../generic/fapi2/include -I../../../generic/fapi2/include/plat -iquote . -o test archive-test.C util.C ../archive.C ../tinflate.C ../sha3.C
+g++ -g -O0 -DARCHIVE_TEST_FIXTURE -I. -I.. -I../../../generic/fapi2/include -I../../../generic/fapi2/include/plat -iquote . -o append append-test.C util.C ../archive.C ../tinflate.C ../sha3.C
 
 PAKTOOL=../tools/paktool
 
@@ -45,7 +46,9 @@ dd if=pibmem.bin of=stored.bin bs=66001 count=1          # test uncompressed fil
 $PAKTOOL add test.pak stored.bin --method store
 cp pibmem.bin ppc.bin                                    # large file - test for PPC instruction filter
 $PAKTOOL add test.pak ppc.bin --method zlib_ppc
-./make_nastypak.py                                       # specially crafted zip with stored block crossing wrap boundary - to test streaming
+$PAKTOOL add base.pak pibmem.bin 32ktest.bin             # test paks for append operations
+$PAKTOOL add update.pak facontrol.bin 32kplus.bin
+./make_nastypak.py                                       # specially crafted pak with stored block crossing wrap boundary - to test streaming
 echo
 
 for flags in 0 1 2 3; do
@@ -65,4 +68,9 @@ for flags in 0 1 2 3; do
     ./test hashblockbndy.pak hashblockbndy.bin $flags
     echo
 done
+
+echo "### Testing append functions"
+
+./append base.pak update.pak 128ktest.bin pibmem.bin 32kplus.bin 32ktest.bin facontrol.bin 128ktest.bin
+
 echo '### All tests passed!'

@@ -22,84 +22,7 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#include <stdio.h>
-#include <errno.h>
-#include <error.h>
-#include <string>
-#include <string.h>
-#include "archive.H"
-
-using std::string;
-
-void* loadFile(string fname, size_t* size = NULL)
-{
-    FILE* f = fopen(fname.c_str(), "rb");
-
-    if (!f)
-    {
-        error(1, errno, "Failed to open %s", fname.c_str());
-    }
-
-    fseek(f, 0, SEEK_END);
-    size_t filesize = ftell(f);
-    fseek(f, 0, SEEK_SET);
-
-    if (size)
-    {
-        *size = filesize;
-    }
-
-    void* data = malloc(filesize);
-    fread(data, filesize, 1, f);
-    fclose(f);
-
-    return data;
-}
-
-void saveFile(void* data, size_t size, string fname)
-{
-    FILE* f = fopen(fname.c_str(), "wb");
-
-    if (!f)
-    {
-        error(1, errno, "Failed to open %s", fname.c_str());
-    }
-
-    fwrite(data, size, 1, f);
-    fclose(f);
-}
-
-void checkFile(string fname, void* unpacked, FileArchive::Entry& entry, sha3_t* hash)
-{
-    size_t expect_size, size = entry.get_size();
-    void* expect = loadFile(fname, &expect_size);
-
-    if (expect_size != size)
-    {
-        error(1, 0, "File size mismatch: exp %d, got %d", expect_size, size);
-    }
-
-    if (memcmp(expect, unpacked, size))
-    {
-        saveFile(unpacked, size, fname + ".bad");
-        error(1, 0, "File content mismatch, unpacked contents saved to %s.bad", fname.c_str());
-    }
-
-    if (hash)
-    {
-        sha3_ctx_t ctx;
-        sha3_t expect_hash;
-
-        sha3_init(&ctx);
-        sha3_update(&ctx, entry.iv_compressedData, entry.iv_compressedSize);
-        sha3_final(&expect_hash, &ctx);
-
-        if (memcmp(hash, expect_hash, sizeof(expect_hash)))
-        {
-            error(1, 0, "Hash mismatch");
-        }
-    }
-}
+#include "util.H"
 
 #define FLAG_STREAM 1
 #define FLAG_HASH   2
@@ -182,56 +105,6 @@ int main(int argc, char* argv[])
     }
 
     checkFile(argv[2], unpacked, entry, phash);
-
-    // Test store-append into new archive
-    const int testArchiveSize = 2 * entry.get_size() + 1024;
-    void* testArchive = malloc(testArchiveSize);
-
-    FileArchive arc2(testArchive);
-    arc2.initialize();
-
-    void* end_of_archive = arc2.archive_end();
-
-    rc = arc2.append("TestFile",
-                     unpacked,
-                     entry.get_size(),
-                     testArchiveSize,
-                     end_of_archive);
-
-    if (!rc)
-    {
-        // append the real one
-
-        rc = arc2.append(fileName,
-                         unpacked,
-                         entry.get_size(),
-                         testArchiveSize,
-                         end_of_archive);
-    }
-
-    //saveFile(testArchive, testArchiveSize, std::string(argv[2]) + ".archive");
-    if(rc)
-    {
-        error(1, 0, "%s:%s: append() failed: 0x%X", argv[1], argv[2], rc);
-    }
-
-    rc = arc2.locate_file(argv[2], entry);
-
-    if (rc)
-    {
-        error(1, 0, "%s:%s: append() then locateFile() failed: 0x%X", argv[1], argv[2], rc);
-    }
-
-    rc = entry.decompress(unpacked, entry.get_size(), phash);
-
-    if (rc)
-    {
-        error(1, 0, "%s:%s: append then decompress() failed: 0x%X", argv[1], argv[2], rc);
-    }
-
-
-    checkFile(argv[2], unpacked, entry, phash);
-
 
     printf("%s:%s OK\n", argv[1], argv[2]);
     return 0;
