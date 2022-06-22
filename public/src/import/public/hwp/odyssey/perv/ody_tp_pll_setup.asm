@@ -54,7 +54,7 @@ lock_pll:
          putscom       ROOT_CTRL3_CLEAR, ALL, ROOT_CTRL3__TP_MCPLL_TEST_EN_DC | ROOT_CTRL3__TP_MCPLL_RESET_DC
 
          //FAPI_TRY(mod_poll_pll_lock_fsi2pib(i_target, ODY_PERV_MCPLL));// ODY_PERV_MCPLL = 0x02
-         poll     PLL_LOCK_REG_FSI2PIB, ODY_PERV_MCPLL, ODY_PERV_MCPLL, ERR_ROTATE_TIMEOUT
+         poll     PLL_LOCK_REG_FSI2PIB, ODY_PERV_MCPLL, ODY_PERV_MCPLL, ERR_LOCK_PLL_TIMEOUT
 
 
          //FAPI_INF("Prepare chip for at-speed operation");

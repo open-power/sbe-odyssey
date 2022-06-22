@@ -54,14 +54,14 @@ ody_pib_startclocks:
 
         // Wait for command to be done
         // FAPI_TRY(poll_opcg_done(i_target, 10us, 1kcyc, 10));
-        poll          CPLT_STAT, OPCG_DONE, OPCG_DONE, ERR_ROTATE_TIMEOUT
+        poll          CPLT_STAT, OPCG_DONE, OPCG_DONE, ERR_OPCG_TIMEOUT_START_CLK
 
         // Check that the clock status is as expected
         //for check_type in (CLOCK_TYPE_SL, CLOCK_TYPE_NSL, CLOCK_TYPE_ARY):
         //FAPI_TRY(check_clock_status(i_target, i_clock_regions, i_clock_types & check_type, i_start_not_stop));
-        test          CLOCK_STAT_SL, REGIONS_MASK, CLOCK_STAT_SL__REGIONS(I_CLOCK_REGIONS_TEST), ERR_CLOCK_STAT
-        test          CLOCK_STAT_NSL, REGIONS_MASK, CLOCK_STAT_NSL__REGIONS(I_CLOCK_REGIONS_TEST), ERR_CLOCK_STAT
-        test          CLOCK_STAT_ARY, REGIONS_MASK, CLOCK_STAT_ARY__REGIONS(I_CLOCK_REGIONS_TEST), ERR_CLOCK_STAT
+        test          CLOCK_STAT_SL, REGIONS_MASK, CLOCK_STAT_SL__REGIONS(I_CLOCK_REGIONS_TEST), ERR_CLOCK_STAT_SL
+        test          CLOCK_STAT_NSL, REGIONS_MASK, CLOCK_STAT_NSL__REGIONS(I_CLOCK_REGIONS_TEST), ERR_CLOCK_STAT_NSL
+        test          CLOCK_STAT_ARY, REGIONS_MASK, CLOCK_STAT_ARY__REGIONS(I_CLOCK_REGIONS_TEST), ERR_CLOCK_STAT_ARY
 
 
         // Raise fences after clocks are stopped

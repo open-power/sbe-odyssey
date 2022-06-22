@@ -73,7 +73,7 @@ mod_scan0:  //regions=[perv, pib, occ, net])
 
          // Wait for scan0 to complete
          //FAPI_TRY(poll_opcg_done(i_target, 16us, 800kcyc, 200));
-         poll          CPLT_STAT, OPCG_DONE, OPCG_DONE, ERR_ROTATE_TIMEOUT
+         poll          CPLT_STAT, OPCG_DONE, OPCG_DONE, ERR_OPCG_TIMEOUT_SCAN0
 
          // Clean up
          //CLK_REGION = 0
