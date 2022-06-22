@@ -74,9 +74,9 @@ mod_abist_start:
 
 mod_abist_poll:
          //FAPI_TRY(poll_opcg_done(i_target, 200us, 1120kcyc, 400));
-         poll     CPLT_STAT, OPCG_DONE, OPCG_DONE, ERR_ROTATE_TIMEOUT
+         poll     CPLT_STAT, OPCG_DONE, OPCG_DONE, ERR_OPCG_TIMEOUT_ABIST
 
          // Check that ABIST_DONE is set
          //if not CPLT_STAT0.ABIST_DONE_DC:
            //FAPI_TRY(ASSERT(SRAM_ABIST_DONE_BIT_ERR));
-         poll     CPLT_STAT, ABIST_DONE, ABIST_DONE, ERR_ROTATE_TIMEOUT   //TODO uncomment once fencing issue is resolved
+         poll     CPLT_STAT, ABIST_DONE, ABIST_DONE, ERR_ABIST_TIMEOUT   //TODO uncomment once fencing issue is resolved
