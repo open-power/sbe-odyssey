@@ -23,47 +23,16 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 #include "archive.H"
-#include <endian.h>
 
 #ifdef __USE_COMPRESSION__
     #include "tinflate.H"
 #endif
 
 
-static const uint32_t PAK_START = 0x50414B21; // PAK!
-static const uint32_t PAK_PAD = 0x50414B50; // PAKP
-static const uint32_t PAK_END = 0x2F50414B; // /PAK
-static const uint16_t PAK_VERSION = 1;
 static const uint8_t PAK_METHOD_STORE = 1;
 static const uint8_t PAK_METHOD_ZLIB = 2;
 static const uint8_t PAK_METHOD_ZLIB_FAST = 3;
 static const uint8_t PAK_METHOD_ZLIB_PPC = 4;
-
-// The header is comprised of two parts, the core and extended
-// Must read the core first to check magic and get extended header size
-struct PakFileHeaderCore
-{
-    uint32_t iv_magic;   //0
-    union
-    {
-        // Depending on the magic value this is either a file header or an end marker.
-        // If it's an end marker the next 4 bytes denote the total size of the archive.
-        uint32_t iv_asize;  // total archive length
-
-        // If it's a file header the next four bytes indicate format version and
-        // the size of the extended header that follows.
-        struct
-        {
-            uint16_t iv_version; //4
-            uint16_t iv_hesize;  //6   Size of extended header
-        };
-
-        // If it's a padding header the next 4 bytes indicate the amount of bytes to
-        // skip after the core header.
-        uint32_t iv_padsize;  // Size of padding (not including core header)
-    };
-} __attribute__((packed));
-static_assert(sizeof(PakFileHeaderCore) == 8, "PakFileHeaderCore defined incorrectly, must be 8 bytes");
 
 struct PakFileHeaderExtended
 {
@@ -397,9 +366,44 @@ ARC_RET_t FileArchive::initialize(void)
     return rc;
 }
 
+ARC_RET_t FileArchive::_append_find_end(void*& io_end, size_t i_archiveMaxSize)
+{
+    if(io_end == iv_firstFile)
+    {
+        // uninitialized archive, point behind end marker
+        io_end = static_cast<uint8_t*>(io_end) + sizeof(PakFileHeaderCore);
+        return ARC_OPERATION_SUCCESSFUL;
+    }
+    else if(io_end == NULL)
+    {
+        // locate the end
+        ARC_RET_t rc = _locate_file(NULL, NULL, io_end);
+
+        if(rc != ARC_OPERATION_SUCCESSFUL)
+        {
+            return rc;
+        }
+
+        if(static_cast<uint8_t*>(io_end) == iv_firstFile)
+        {
+            return ARC_FILE_CORRUPTED;
+        }
+    }
+    else
+    {
+        if(io_end < iv_firstFile ||
+           io_end > (static_cast<uint8_t*>(iv_firstFile) + i_archiveMaxSize))
+        {
+            ARC_ERROR("FileArchive::append: io_end is not within archive");
+            return ARC_INVALID_PARAMS;
+        }
+    }
+
+    return ARC_OPERATION_SUCCESSFUL;
+}
 
 /**
- * append - store an uncompressed image(file) at the end of the archive
+ * append_file - store an uncompressed image(file) at the end of the archive
  * @param[in] Image filename
  * @param[in] Image pointer
  * @param[in] Image size in bytes
@@ -408,14 +412,13 @@ ARC_RET_t FileArchive::initialize(void)
  * @returns error code
  */
 
-ARC_RET_t FileArchive::append(const char* i_fname,
-                              const void* i_data,
-                              uint32_t i_dataSize,
-                              size_t i_archiveMaxSize,
-                              void*& io_end)
+ARC_RET_t FileArchive::append_file(const char* i_fname,
+                                   const void* i_data,
+                                   uint32_t i_dataSize,
+                                   size_t i_archiveMaxSize,
+                                   void*& io_end)
 {
     ARC_RET_t rc = ARC_OPERATION_SUCCESSFUL;
-    uint8_t* next_entry = NULL;
     uint32_t name_len = strlen(i_fname);
 
     if(i_fname == NULL || name_len == 0 || i_data == NULL || i_dataSize == 0)
@@ -424,47 +427,19 @@ ARC_RET_t FileArchive::append(const char* i_fname,
         // where two of "%p" in sequence causes a problem, but putting
         // something between them (like %x) resolves it.
         // So the order is here deliberate.
-        ARC_ERROR("append: Invalid parms. i_data: %p i_dataSize: %x i_fname: %p",
+        ARC_ERROR("append_file: Invalid parms. i_data: %p i_dataSize: %x i_fname: %p",
                   i_data, i_dataSize, i_fname);
         return ARC_INVALID_PARAMS;
     }
 
-    if(io_end == iv_firstFile)
+    rc = _append_find_end(io_end, i_archiveMaxSize);
+
+    if (rc != ARC_OPERATION_SUCCESSFUL)
     {
-        // uninitialized archive
-        next_entry = static_cast<uint8_t*>(iv_firstFile);
+        return rc;
     }
-    else if(io_end == NULL)
-    {
-        // locate the end
-        void* end;
-        rc = _locate_file(NULL, NULL, end);
 
-        if(rc != ARC_OPERATION_SUCCESSFUL)
-        {
-            return rc;
-        }
-
-        if(static_cast<uint8_t*>(end) == iv_firstFile)
-        {
-            return ARC_FILE_CORRUPTED;
-        }
-
-        // point to end marker
-        next_entry = static_cast<uint8_t*>(end) - sizeof(PakFileHeaderCore);
-    }
-    else
-    {
-        // point to end marker
-        next_entry = static_cast<uint8_t*>(io_end) - sizeof(PakFileHeaderCore);
-
-        if(next_entry < iv_firstFile ||
-           next_entry > (static_cast<uint8_t*>(iv_firstFile) + i_archiveMaxSize))
-        {
-            ARC_ERROR("FileArchive::append: io_end is not within archive");
-            return ARC_INVALID_PARAMS;
-        }
-    }
+    uint8_t* next_entry = static_cast<uint8_t*>(io_end) - sizeof(PakFileHeaderCore);
 
     // Get sizes
     uint32_t paySize = (i_dataSize + 7) & ~(0x7); // payload size must by multiple of 8
@@ -476,7 +451,7 @@ ARC_RET_t FileArchive::append(const char* i_fname,
     // Check for overflow
     if(((next_entry - static_cast<uint8_t*>(iv_firstFile)) + entry_size + sizeof(PakFileHeaderCore) ) > i_archiveMaxSize)
     {
-        ARC_ERROR("FileArchive::append: Append would overflow archive");
+        ARC_ERROR("FileArchive::append_file: Append would overflow archive");
         return ARC_INPUT_BUFFER_OVERFLOW;
     }
 
@@ -510,4 +485,24 @@ ARC_RET_t FileArchive::append(const char* i_fname,
     hdrc->iv_asize = (uint32_t)(reinterpret_cast<uint8_t*>(io_end) - reinterpret_cast<uint8_t*>(iv_firstFile));
 
     return rc;
+}
+
+ARC_RET_t FileArchive::append_archive(void* i_archive, size_t i_archiveSize,
+                                      size_t i_archiveMaxSize, void*& io_end)
+{
+    ARC_RET_t rc = _append_find_end(io_end, i_archiveMaxSize);
+
+    if (rc != ARC_OPERATION_SUCCESSFUL)
+    {
+        return rc;
+    }
+
+    // Check for overflow
+    if(((static_cast<uint8_t*>(io_end) - static_cast<uint8_t*>(iv_firstFile)) + i_archiveSize) > i_archiveMaxSize)
+    {
+        ARC_ERROR("FileArchive::append_archive: Append would overflow archive");
+        return ARC_INPUT_BUFFER_OVERFLOW;
+    }
+
+    return ::append_archive(io_end, i_archive, i_archiveSize);
 }
