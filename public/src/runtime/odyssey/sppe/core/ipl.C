@@ -67,18 +67,16 @@ bool isSystemCheckstop()
 // Check for Parity Error in the respective Boot SPI
 //--------------------------------------------------------------------------
 #define SPI_PARITY_CHECK_MASK          0xFFE00000
-#define PRIMARY_BOOT_SPI_STATUS_REG    0xC0008
-#define SECONDARY_BOOT_SPI_STATUS_REG  0xC0028
+#define PRIMARY_BOOT_SPI_STATUS_REG    0x70008
 bool isSpiParityError()
 {
-    uint32_t spiBaseAddr = 0;
+    uint32_t spiStatAddr = 0;
     uint64_t data = 0;
 
-    //TODO: Use right odyssey macro once available
-    spiBaseAddr = PRIMARY_BOOT_SPI_STATUS_REG;
+    spiStatAddr = PRIMARY_BOOT_SPI_STATUS_REG;
 
     // Load the SPI Status Register Here
-    PPE_LVD(spiBaseAddr, data);
+    PPE_LVD(spiStatAddr, data);
 
     if(data & SPI_PARITY_CHECK_MASK) // Check bit32 to 42 for set
     {
