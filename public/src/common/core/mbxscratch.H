@@ -109,6 +109,32 @@ typedef union
     uint64_t iv_mbx8;
 }mbx8_t;
 
+typedef union
+{
+    struct
+    {
+        uint64_t iv_mbx1Valid : 1;
+        uint64_t iv_mbx2Valid : 1;
+        uint64_t iv_mbx3Valid : 1;
+        uint64_t iv_mbx4Valid : 1;
+        uint64_t iv_mbx5Valid : 1;
+        uint64_t iv_mbx6Valid : 1;
+        uint64_t iv_mbx7Valid : 1;
+        uint64_t iv_mbx8Valid : 1;
+        uint64_t iv_mbx9Valid : 1;
+        uint64_t iv_mbx10Valid : 1;
+        uint64_t iv_mbx11Valid : 1;
+        uint64_t iv_mbx12Valid : 1;
+        uint64_t iv_mbx13Valid : 1;
+        uint64_t iv_mbx14Valid : 1;
+        uint64_t iv_mbx15Valid : 1;
+        uint64_t iv_mbx16Valid : 1;
+        uint64_t iv_mbx16reserved : 16;
+        uint64_t iv_mbx16Unused : 32;
+    };
+    uint64_t iv_mbx16;
+}mbx16_t;
+
 typedef union secureBootFailStatus
 {
     struct
