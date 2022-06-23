@@ -69,13 +69,20 @@ constexpr uint16_t REGION(const int number)
 enum clock_region
 {
 
+    // Regions shared across all chiplets
     REGION_PERV = REGION(0),
-    REGION_PLL  = REGION(13),
+    REGION_PLL  = REGION(13),   // Filter/Tank PLLs; DPLLs have their own separate regions
 
+    // Regions shared across chips
+    REGION_PERV_SBE = REGION(1),
+    REGION_PERV_PIB = REGION(2),
+
+    // Common combined regions
     REGION_ALL  = 0xFFFE,
     REGION_ALL_BUT_PLL = REGION_ALL & ~REGION_PLL,
     REGION_ALL_BUT_PERV_PLL = REGION_ALL & ~REGION_PERV & ~REGION_PLL,
 
+    // P11-Tap regions
     P11T_PERV_PERV = REGION(0),
     P11T_PERV_SBE = REGION(1),
     P11T_PERV_PIB = REGION(2),
@@ -107,6 +114,7 @@ enum clock_region
     P11T_EQ_MMA2 = REGION(13),
     P11T_EQ_MMA3 = REGION(14),
 
+    // P11-Spinal regions
     P11S_PERV_PERV = REGION(0),
     P11S_PERV_SBE = REGION(1),
     P11S_PERV_PIB = REGION(2),
@@ -176,6 +184,7 @@ enum clock_region
     P11S_PAXO_IOPPE = REGION(12),
     P11S_PAXO_PLLIOO = REGION(13),
 
+    // Odyssey regions
     ODY_PERV_PERV = REGION(0),
     ODY_PERV_SBE = REGION(1),
     ODY_PERV_PIB = REGION(2),
