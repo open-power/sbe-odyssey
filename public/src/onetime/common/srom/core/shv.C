@@ -562,14 +562,6 @@ ROM_response verifySecureHdr(shvReq_t *shvReq, shvRsp_t *shvRsp)
     //Verify the Secure Header
     status = ROM_verify(shvReq, shvRsp);
 
-    if(!shvReq->controlData.secureBootVerificationEnforcement)
-    {
-        // If secure Boot Enforcement is disabled update status code with 0xff
-        // This is not a failure status code. Its just to find easily that
-        // Secure Boot enforcement was disabled
-        shvRsp->statusCode = SB_ENFORCEMENT_DISABLED;
-    }
-
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_SECURE_HDR_VERIFICATION);
 
     SBE_EXIT(SBE_FUNC);
