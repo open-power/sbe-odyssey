@@ -29,6 +29,7 @@
 #include "stdint.h"
 #include "ppe42_scom.h"
 #include "securehdrv2.H"
+#include "ppe42_string.h"
 
 #define SHA3_TRUNCATED_SIZE 48
 
@@ -49,7 +50,7 @@ typedef union truncatedHashMeasurement
     struct
     {
         uint32_t hash[SHA3_TRUNCATED_SIZE/sizeof(uint32_t)];
-    }hashValMeasurementWrite;
+    };
 
     /**
      * @brief Write the SHA3 Truncated Hash value into Measurement register's
@@ -74,18 +75,81 @@ typedef union truncatedHashMeasurement
                               uint32_t regAddr9,uint32_t regAddr10,
                               uint32_t regAddr11,uint32_t regAddr12)
     {
-        putscom_abs(regAddr1, ((uint64_t)hashValMeasurementWrite.hash[0] << 32));
-        putscom_abs(regAddr2, ((uint64_t)hashValMeasurementWrite.hash[1] << 32));
-        putscom_abs(regAddr3, ((uint64_t)hashValMeasurementWrite.hash[2] << 32));
-        putscom_abs(regAddr4, ((uint64_t)hashValMeasurementWrite.hash[3] << 32));
-        putscom_abs(regAddr5, ((uint64_t)hashValMeasurementWrite.hash[4] << 32));
-        putscom_abs(regAddr6, ((uint64_t)hashValMeasurementWrite.hash[5] << 32));
-        putscom_abs(regAddr7, ((uint64_t)hashValMeasurementWrite.hash[6] << 32));
-        putscom_abs(regAddr8, ((uint64_t)hashValMeasurementWrite.hash[7] << 32));
-        putscom_abs(regAddr9, ((uint64_t)hashValMeasurementWrite.hash[8] << 32));
-        putscom_abs(regAddr10, ((uint64_t)hashValMeasurementWrite.hash[9] << 32));
-        putscom_abs(regAddr11, ((uint64_t)hashValMeasurementWrite.hash[10] << 32));
-        putscom_abs(regAddr12, ((uint64_t)hashValMeasurementWrite.hash[11] << 32));
+        putscom_abs(regAddr1, ((uint64_t)hash[0] << 32));
+        putscom_abs(regAddr2, ((uint64_t)hash[1] << 32));
+        putscom_abs(regAddr3, ((uint64_t)hash[2] << 32));
+        putscom_abs(regAddr4, ((uint64_t)hash[3] << 32));
+        putscom_abs(regAddr5, ((uint64_t)hash[4] << 32));
+        putscom_abs(regAddr6, ((uint64_t)hash[5] << 32));
+        putscom_abs(regAddr7, ((uint64_t)hash[6] << 32));
+        putscom_abs(regAddr8, ((uint64_t)hash[7] << 32));
+        putscom_abs(regAddr9, ((uint64_t)hash[8] << 32));
+        putscom_abs(regAddr10, ((uint64_t)hash[9] << 32));
+        putscom_abs(regAddr11, ((uint64_t)hash[10] << 32));
+        putscom_abs(regAddr12, ((uint64_t)hash[11] << 32));
+    }
+
+    /**
+     * @brief Get the SHA3 Truncated Hash value from Measurement register's
+     *
+     * @param regAddr1 Register address to read truncated hash[0-3]
+     * @param regAddr2 Register address to read truncated hash[4-7]
+     * @param regAddr3 Register address to read truncated hash[8-11]
+     * @param regAddr4 Register address to read truncated hash[12-15]
+     * @param regAddr5 Register address to read truncated hash[16-19]
+     * @param regAddr6 Register address to read truncated hash[20-23]
+     * @param regAddr7 Register address to read truncated hash[24-27]
+     * @param regAddr8 Register address to read truncated hash[28-31]
+     * @param regAddr9 Register address to read truncated hash[32-35]
+     * @param regAddr10 Register address to read truncated hash[36-39]
+     * @param regAddr11 Register address to read truncated hash[40-43]
+     * @param regAddr12 Register address to read truncated hash[44-47]
+     */
+
+    void getSha3TruncatedHash(uint32_t regAddr1,uint32_t regAddr2,
+                              uint32_t regAddr3,uint32_t regAddr4,
+                              uint32_t regAddr5,uint32_t regAddr6,
+                              uint32_t regAddr7,uint32_t regAddr8,
+                              uint32_t regAddr9,uint32_t regAddr10,
+                              uint32_t regAddr11,uint32_t regAddr12)
+    {
+        uint64_t data;
+        getscom_abs(regAddr1, &data);
+        hash[0] = data >> 32;
+        getscom_abs(regAddr2, &data);
+        hash[1] = data >> 32;
+        getscom_abs(regAddr3, &data);
+        hash[2] = data >> 32;
+        getscom_abs(regAddr4, &data);
+        hash[3] = data >> 32;
+        getscom_abs(regAddr5, &data);
+        hash[4] = data >> 32;
+        getscom_abs(regAddr6, &data);
+        hash[5] = data >> 32;
+        getscom_abs(regAddr7, &data);
+        hash[6] = data >> 32;
+        getscom_abs(regAddr8, &data);
+        hash[7] = data >> 32;
+        getscom_abs(regAddr9, &data);
+        hash[8] = data >> 32;
+        getscom_abs(regAddr10,&data);
+        hash[9] = data >> 32;
+        getscom_abs(regAddr11,&data);
+        hash[10] = data >> 32;
+        getscom_abs(regAddr12,&data);
+        hash[11] = data >> 32;
+    }
+
+    /**
+     * @brief Compare two truncated hash values
+     *
+     * @param sha3PreviousTruncatedHash SHA3 truncated hash read from measurement reg
+     *
+     * @return zero if comparision pass else non zero
+     */
+    int compareTruncatedHash(sha3truncated_t sha3PreviousTruncatedHash)
+    {
+        return (memcmp(sha3PreviousTruncatedHash,sha3TruncatedHash,SHA3_TRUNCATED_SIZE));
     }
 }truncatedHashMeasurement_t;
 

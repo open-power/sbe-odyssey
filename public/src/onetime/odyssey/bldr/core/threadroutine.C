@@ -54,9 +54,6 @@ enum load_image_flags {
     LIF_ALLOW_ABSENT = 2,
 };
 
-// MBX fail status code
-secureBootFailStatus_t secureBootFailStatus = {0};
-
 /// @brief Wrapper that loads an image from PNOR into SRAM and checks its hash
 ///
 /// This function will make sure that the bootloader does not get overwritten
@@ -117,8 +114,6 @@ void bldrthreadroutine(void *i_pArg)
     #define SBE_FUNC " bldrthreadroutine "
     SBE_ENTER(SBE_FUNC);
 
-    SBE_INFO( SBE_FUNC "Inside Boot Loader thread");
-
     do{
         sha3_t digest;
         hwKeysHashMsv_t hwKeysHashMsv;
@@ -136,8 +131,13 @@ void bldrthreadroutine(void *i_pArg)
         //LFR Reg
         sbe_local_LFR lfrReg;
 
+        // BLDR secure boot control settings
+        secureBootCtrlSettings_t bldrSecureBootCtrlSettings;
+
         //Read LFR Reg
         PPE_LVD(scomt::ppe_pc::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW, lfrReg);
+
+        UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_LFR_READ);
 
         // Get the partition start offset
         uint32_t partitionStartAddress = getAbsPartitionAddr(lfrReg.boot_selection);
@@ -185,25 +185,42 @@ void bldrthreadroutine(void *i_pArg)
         shvReq.payloadHash = &digest;
 
         //Read the SROM secure boot control mesaurement register values into boot loader struct
-        secureBootCtrlSettings_t bldrSecureBootCtrlSettings;
-        bldrSecureBootCtrlSettings.getSecureBootCtrlSettings(MEASUREMENT_REG_24);
-
-        UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_READING_SROM_SETTINGS_FROM_MEASUREMENT);
-
-        //We need to keep all settings same as SROM except for MSV
-        //Lets update MSV thats read from PNOR
-        bldrSecureBootCtrlSettings.msv = hwKeysHashMsv.msv;
-
-        //Check if SROM boot complete bit is set. If not halt
-        if(bldrSecureBootCtrlSettings.bootComplete != 0x01)
+        // If HRESET read previous measurement's for secure boot control settings
+        if(!(SBE::isHreset()))
         {
-            SBE_INFO(SBE_FUNC "SROM Boot complete bit 0x%01x", (uint8_t)bldrSecureBootCtrlSettings.bootComplete);
-            SBE::updateErrorCodeAndHalt(BOOT_RC_SROM_COMPLETE_BIT_NOT_SET_IN_BLDR);
-        }
+            bldrSecureBootCtrlSettings.getSecureBootCtrlSettings(MEASUREMENT_REG_24);
 
-        //Clear out the boot loader boot complete bit.
-        //It will be set once measurement regs are updated with result
-        bldrSecureBootCtrlSettings.bootComplete = 0x0;
+            UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_READING_SROM_SETTINGS_FROM_MEASUREMENT);
+
+            //We need to keep all settings same as SROM except for MSV
+            //Lets update MSV thats read from PNOR
+            bldrSecureBootCtrlSettings.msv = hwKeysHashMsv.msv;
+
+            //Check if SROM boot complete bit is set. If not halt
+            if(bldrSecureBootCtrlSettings.bootComplete != 0x01)
+            {
+                SBE_ERROR(SBE_FUNC "SROM Boot complete bit 0x%01x", (uint8_t)bldrSecureBootCtrlSettings.bootComplete);
+                SBE::updateErrorCodeAndHalt(BOOT_RC_SROM_COMPLETE_BIT_NOT_SET_IN_BLDR);
+            }
+
+            //Clear out the boot loader boot complete bit.
+            //It will be set once measurement regs are updated with result
+            bldrSecureBootCtrlSettings.bootComplete = 0x0;
+        }
+        else
+        {
+            bldrSecureBootCtrlSettings.getSecureBootCtrlSettings(MEASUREMENT_REG_25);
+
+            UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_READING_BLDR_SETTINGS_FROM_MEAS_HRESET);
+
+            //Check if BLDR boot complete bit is set in HRESET path. If not halt
+            if(bldrSecureBootCtrlSettings.bootComplete != 0x01)
+            {
+                SBE_ERROR(SBE_FUNC "Boot Loader Boot complete bit 0x%01x",
+                                    (bool)bldrSecureBootCtrlSettings.bootComplete);
+                SBE::updateErrorCodeAndHalt(BOOT_RC_BLDR_COMPLETE_BIT_NOT_SET_IN_HRESET);
+            }
+        }
 
         SBE_INFO(SBE_FUNC "Boot Loader Secure Boot Control Measurement Reg Value: 0x%08x",
                  bldrSecureBootCtrlSettings.secureBootControl);
@@ -243,7 +260,6 @@ void bldrthreadroutine(void *i_pArg)
 
         (*gl_srom_fn_verifySecureHdr)(&shvReq, &shvRsp);
 
-        // Update the above result into Measurement reg's
         // In case of HW Key hash/ FW key hash/ Payload hash failure we will
         // write the failing hash value into measurement reg for debug.
         // In case of Successful Secure header verification or if Secure boot
@@ -261,7 +277,7 @@ void bldrthreadroutine(void *i_pArg)
         {
             memcpy(measurememtHash.sha3TruncatedHash, shvRsp.sha3.payloadHash, SHA3_TRUNCATED_SIZE);
         }
-        else if(shvRsp.statusCode == NO_ERROR || shvRsp.statusCode == SB_ENFORCEMENT_DISABLED)
+        else if(shvRsp.statusCode == NO_ERROR || !(shvReq.controlData.secureBootVerificationEnforcement))
         {
             // calculate sha3-512 (hash of runtime hw keys | hash of runtime fw keys | hash runtime hash list)
             sha3_t digest;
@@ -271,42 +287,69 @@ void bldrthreadroutine(void *i_pArg)
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_HASH_CALCULATION_OF_FINAL_RESULT);
 
-        measurememtHash.putSha3TruncatedHash(MEASUREMENT_REG_12,MEASUREMENT_REG_13,
-                                                MEASUREMENT_REG_14,MEASUREMENT_REG_15,
-                                                MEASUREMENT_REG_16,MEASUREMENT_REG_17,
-                                                MEASUREMENT_REG_18,MEASUREMENT_REG_19,
-                                                MEASUREMENT_REG_20,MEASUREMENT_REG_21,
-                                                MEASUREMENT_REG_22,MEASUREMENT_REG_23);
+        // Update the above result into Measurement reg's
+        // Incase of HRESET dont update results into measurement instead compare the results
+        // with previous measurements
+        int hresetMeasurementResult = 0x0;
+        if(!(SBE::isHreset()))
+        {
+            measurememtHash.putSha3TruncatedHash(MEASUREMENT_REG_12,MEASUREMENT_REG_13,
+                                                 MEASUREMENT_REG_14,MEASUREMENT_REG_15,
+                                                 MEASUREMENT_REG_16,MEASUREMENT_REG_17,
+                                                 MEASUREMENT_REG_18,MEASUREMENT_REG_19,
+                                                 MEASUREMENT_REG_20,MEASUREMENT_REG_21,
+                                                 MEASUREMENT_REG_22,MEASUREMENT_REG_23);
+        }
+        else
+        {
+            // Read the previous measurement reg's and compare result, if mismatch halt ppe
+            truncatedHashMeasurement_t previousMeasurementHash;
+            previousMeasurementHash.getSha3TruncatedHash(MEASUREMENT_REG_12,MEASUREMENT_REG_13,
+                                                         MEASUREMENT_REG_14,MEASUREMENT_REG_15,
+                                                         MEASUREMENT_REG_16,MEASUREMENT_REG_17,
+                                                         MEASUREMENT_REG_18,MEASUREMENT_REG_19,
+                                                         MEASUREMENT_REG_20,MEASUREMENT_REG_21,
+                                                         MEASUREMENT_REG_22,MEASUREMENT_REG_23);
 
-        UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_HASH_WRITE_INTO_MEASUREMENT_REG);
+            hresetMeasurementResult =
+                previousMeasurementHash.compareTruncatedHash(measurememtHash.sha3TruncatedHash);
+        }
 
-        // Write Status code into scratch and halt incase of failure if enforcement is enabled
-        // if enforcement is disabled we write 0xff but dont halt
-        SBE_INFO(SBE_FUNC "Secure Header Verification status code is [0x%02X]", shvRsp.statusCode);
-        secureBootFailStatus.iv_secureHeaderFailStatusCode = shvRsp.statusCode;
-        putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW,secureBootFailStatus.iv_mbx13);
-
-        UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_STATUS_CODE_WRITE_INTO_SCRATCH);
+        UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_HASH_WRITE_OR_READ_INTO_MEASUREMENT_REG);
 
         //Set the boot complete bit to indicate bldr measurements have be written
         //into measurement regs
-        bldrSecureBootCtrlSettings.bootComplete = 0x1;
-
-        SBE_INFO(SBE_FUNC "BLDR Secure Boot Control Measurement Reg Value: 0x%08x",
-                 bldrSecureBootCtrlSettings.secureBootControl);
-        bldrSecureBootCtrlSettings.putSecureBootCtrlSettings(MEASUREMENT_REG_25);
-
-        UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_WRITING_SECURE_BOOT_SETTINGS);
-
-        if(shvReq.controlData.secureBootVerificationEnforcement &&
-                shvRsp.statusCode != NO_ERROR && shvRsp.statusCode != SB_ENFORCEMENT_DISABLED)
+        if(!(SBE::isHreset()))
         {
-            SBE_ERROR(SBE_FUNC "Enforcement Enabled Halting PPE..." );
-            pk_halt();
+            bldrSecureBootCtrlSettings.bootComplete = 0x1;
+
+            SBE_INFO(SBE_FUNC "BLDR Secure Boot Control Measurement Reg Value: 0x%08x",
+                    bldrSecureBootCtrlSettings.secureBootControl);
+            bldrSecureBootCtrlSettings.putSecureBootCtrlSettings(MEASUREMENT_REG_25);
+
+            UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_WRITING_SECURE_BOOT_SETTINGS);
+        }
+
+        // Write Status code into scratch and halt incase of failure if enforcement is enabled
+        // if enforcement is disabled dont halt
+        SBE_INFO(SBE_FUNC "Secure Header Verification status code is [0x%02X]", shvRsp.statusCode);
+        if(shvReq.controlData.secureBootVerificationEnforcement && shvRsp.statusCode != NO_ERROR)
+        {
+            SBE_INFO(SBE_FUNC "Enforcement Enabled." );
+            SBE::updateErrorCodeAndHalt(shvRsp.statusCode);
+        }
+
+        UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_STATUS_CODE_WRITE_INTO_SCRATCH);
+
+        if(shvReq.controlData.secureBootVerificationEnforcement && hresetMeasurementResult != 0x0)
+        {
+            SBE_INFO(SBE_FUNC "Enforcement Enabled. HRESET Path.." );
+            SBE_ERROR(SBE_FUNC "Previous measurement results dont match with current results" );
+            SBE::updateErrorCodeAndHalt(BOOT_RC_SPPE_MEASUREMENT_MISMATCH_IN_HRESET);
         }
 
         // Check for hash list version.
-        // 1st byte of hash list is vesion
+        // 1st byte of hash list is version
         if(*(hashList) != SROM_HASH_LIST_SUPPORTED_VERSION)
         {
             SBE_ERROR(SBE_FUNC "Unsupported hash list version 0x%02x", *hashList);

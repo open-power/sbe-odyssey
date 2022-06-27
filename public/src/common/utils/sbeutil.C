@@ -117,7 +117,7 @@ namespace SBE
         bool isHreset = false;
         sbe_local_LFR lfrReg;
         PPE_LVD(0xc0002040, lfrReg);
-        isHreset = lfrReg.runtime_reset;
+        isHreset = lfrReg.hreset;
         return (isHreset);
         #undef SBE_FUNC
     }

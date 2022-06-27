@@ -37,6 +37,8 @@
 #ifndef STATUS_CODES_H
 #define STATUS_CODES_H
 
+#define NO_ERROR 0x000
+
 // 4bits --> Fail Area Indicator
 // 8bits --> Error code
 
@@ -74,16 +76,27 @@
 // 0x10 to 0x1f are used for SROM Initial Boot Checks
 #define BOOT_RC_INVALID_ECDSA_FUSE_CHECK_CNFG 0x310
 #define BOOT_RC_INVALID_DILITHIUM_FUSE_CHECK_CNFG 0x311
-#define BOOT_RC_INVALID_HASH_LIST_VERSION 0x312
-#define BOOT_RC_INVALID_HASH_LIST_HASH_ALGO 0x313
-#define BOOT_RC_SROM_COMPLETE_BIT_NOT_SET_IN_BLDR 0x314
-#define BOOT_RC_SROM_COMPLETE_BIT_NOT_SET_IN_RUNTIME 0x315
-#define BOOT_RC_BLDR_COMPLETE_BIT_NOT_SET_IN_RUNTIME 0x316
+
+// 0x20 to 0x2f are used for BLDR Initial Boot Checks
+#define BOOT_RC_SROM_COMPLETE_BIT_NOT_SET_IN_BLDR 0x320
+
+// 0x30 to 0x3f are used for SROM HRESET Boot Checks
+#define BOOT_RC_SROM_COMPLETE_BIT_NOT_SET_IN_HRESET 0x330
+#define BOOT_RC_BLDR_MEASUREMENT_MISMATCH_IN_HRESET 0x331
+
+// 0x40 to 0x4f are used for BLDR HRESET Boot Checks
+#define BOOT_RC_BLDR_COMPLETE_BIT_NOT_SET_IN_HRESET 0x340
+#define BOOT_RC_SPPE_MEASUREMENT_MISMATCH_IN_HRESET 0x341
+
+// 0x50 to 0x5f are used for SPPE checks
+#define BOOT_RC_SROM_COMPLETE_BIT_NOT_SET_IN_RUNTIME 0x350
+#define BOOT_RC_BLDR_COMPLETE_BIT_NOT_SET_IN_RUNTIME 0x351
+
+// 0x60 to 0x6f are used for hash list checks (Common for SROM and BLDR)
+#define BOOT_RC_INVALID_HASH_LIST_VERSION 0x360
+#define BOOT_RC_INVALID_HASH_LIST_HASH_ALGO 0x361
 
 //Area 0x4 --> Secure Header Verification Fails
-// 0x00 to 0xf (These are not error codes)
-#define NO_ERROR 0x400
-#define SB_ENFORCEMENT_DISABLED 0x40f   // This is set to indicate Enforcement was disabled
 
 // 0x10 to 0x1f are used for Secure Header Verification: Sanity Checks
 #define SHV_RC_CONTAINER_SIZE_CHECK 0x410

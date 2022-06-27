@@ -155,14 +155,27 @@ __system_reset_handler:
 # Mask the value read and write to all the
 # SPI engines
 ################################################################################
-#TODO: Where is the partition selection logic during HRESET
-oos_load_spi_clk_cnfg:
+.set g_hreset_path, 31             # r31 will be used as global variable
+        li g_hreset_path, 1        # Init the global variable to
+
+reset_register:
         lis    %r5, 0x5                         # Load r5 with 0x50000
         lvd    %d2, 0x09(r5)                    # loads data from 0x50009 to d2
         rlwinm %r2, %r2, 0x0, 0x0, 0x19         # Clear off the bits 26:27:28:29:30:31
         clrlwi %r2, %r2, 1                      # clear bit 0 of 0x50009 (SBE Booted flag)
         stvd   %d2, 0x9(r5)                     # store data back into 0x50009
 
+        li    %r1, 0
+        li    %r2, 0
+        stvd  %d1, 0x184(r5)                   # clear scratch 13
+
+        # Check for HRESET trigger from 50008:bit13 (HARDWARE Trigger)
+        lvd   %d2, 0x8(r5)
+
+        bb1wi %r2, 13, partition_selection       # Jump to partition selection directly if HRESET Path
+        li    g_hreset_path, 0                   # Not HRESET path. Unset the global variable
+
+oos_load_spi_clk_cnfg:
         lvd    %d2, 0x187(r5)                   # loads scratch_16 .
         bb0wi  %r2, 4, spi_clk_cnfg_not_valid   # checks If valid Bit4 is Set
         lvd    %d2, 0x3C(r5)                    # Valid. Load the clock divider
@@ -221,6 +234,7 @@ spi_init:
         li      %r3, 0
         stvd    %d2, SB_MSG(%r1)
 
+partition_selection:
         # Read 2808 bit 17,18 to decide from which partition to boot from
         # Update bit 17,18 result into LFR reg bit 12,13
         lis      %r5, 0x5                                                # Load r5 with 0x50000
@@ -235,6 +249,10 @@ spi_init:
         lvd      %d1, 0x2040(r4)                                         # Read LFR Reg
         or       %r1, %r1, %r6                                           # OR the read value to update result
         stvd     %d1, 0x2040(r4)                                         # Update the result into LFR
+
+        #Check if we are in hreset path. If true jump hreset_lfr
+        bb1wi  g_hreset_path, 31, hreset_lfr
+
         cmpwibeq %r3, PARTITION_0_INDEX, partition_0_offset              # If 0x0 Partition 0 offset
         cmpwibeq %r3, PARTITION_1_INDEX, partition_1_offset              # If 0x1 Partition 1 offset
         cmpwibeq %r3, GOLDEN_PARTITION_INDEX, partition_2_offset         # If 0x2 Partition 2 offset(Golden Parttion)
@@ -668,6 +686,26 @@ valid_branch:
 cmpbne_op:
         bwnz    scr1, take_branch
         b       main_loop
+
+hreset_lfr:
+        lis   %r4, 0xC000                # load r4 with 0xC0000000
+        lvd   %d2, 0x2040(%r4)           # Read LFR
+
+        # Set bit 16 in LFR, to indicate Vector1 reset triggered in FW
+        li    %r8, 0x0
+        ori   %r8, %r8, 0x8000
+        li    %r9, 0x0           # d8 is 0000_8000_0000_0000
+        stvd  %d8, 0x2050(%r4)   # Write the mask to set the 16th bit with W_OR
+
+        # Unset Bit15 (IPL Reset) Bit14 (MPIPL) Bit17 (HReset Done) Bit18 (MPIPL Done)
+        # to clear off previous triggers, in order to keep only the current trigger
+        lis   %r8, 0x3           # Set the mask to reset the bit 14/15
+        ori   %r8, %r8, 0x6000   # Set the mask to reset the bit 17/18
+        li    %r9, 0x0           # d8 is 0x0003_6000_0000_0000
+        stvd  %d8, 0x2058(r4)    # write to WO_CLR Register
+
+        # Jump to SROM main
+        b       __pk_boot
 
 take_branch:
         mr      code, scr0
