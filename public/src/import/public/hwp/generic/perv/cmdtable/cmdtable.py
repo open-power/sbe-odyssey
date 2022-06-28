@@ -56,8 +56,7 @@ class Command(object):
         self.data    = data    & 0xFFFFFFFFFFFFFFFF
 
     def __str__(self):
-        param = ("%07X" % (self.param & 0x0FFFFFFF)) if self.op in (Opcode.CMPBEQ, Opcode.CMPBNE, Opcode.TEST, Opcode.POLL) else "-------"
-        return "|%-7s|%s|%08X|%016X|%016X|" % (self.op.name, param, self.address, self.mask, self.data)
+        return "|%-7s|%07X|%08X|%016X|%016X|" % (self.op.name, self.param & 0x0FFFFFFF, self.address, self.mask, self.data)
 
     LINE_PAT = re.compile(r'\|([A-Za-z0-9\_\s]+)\|([A-Fa-f0-9\-]+)\|([A-Fa-f0-9\-]+)\|([A-Fa-f0-9\-]+)\|([A-Fa-f0-9\-]+)\|$')
 
@@ -74,7 +73,7 @@ class Command(object):
         else:
             raise ValueError("Command %s is not recognized" % entry.group(1))
 
-        param   = int("0x" + entry.group(2), 16) if entry.group(2) != "-------" else 0
+        param   = int("0x" + entry.group(2), 16)
         address = int("0x" + entry.group(3), 16)
         mask    = int("0x" + entry.group(4), 16)
         data    = int("0x" + entry.group(5), 16)
@@ -84,9 +83,9 @@ class Command(object):
 def no_args(op, args):
     return Command(op, 0, 0, 0, 0)
 
-def a_args(op, args):
-    addr = args[0]
-    return Command(op, 0, addr, 0, 0)
+def p_args(op, args):
+    param = args[0]
+    return Command(op, param, 0, 0, 0)
 
 def add_args(op, args):
     addr, mask, data = args
@@ -111,7 +110,7 @@ SCRIPT_COMMANDS = {
     "POLL":     ScriptCommand(Opcode.POLL,    "addc", addx_args),
     "CMPBEQ":   ScriptCommand(Opcode.CMPBEQ,  "addl", addx_args),
     "CMPBNE":   ScriptCommand(Opcode.CMPBNE,  "addl", addx_args),
-    "CALL":     ScriptCommand(Opcode.CALL,    "a",    a_args),
+    "CALL":     ScriptCommand(Opcode.CALL,    "a",    p_args),
     # Alias instructions that map to basic instructions
     "B":        ScriptCommand(Opcode.CMPBNE,  "l",    always_fail_alias),
     "FAIL":     ScriptCommand(Opcode.TEST,    "c",    always_fail_alias),
