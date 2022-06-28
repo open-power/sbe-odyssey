@@ -298,11 +298,11 @@ def cmd_link(args):
         # If header + commands + small data would leave big data unaligned, add a dummy value
         small_data.append(0)
 
-    check(len(params) < 2**6, "Too many distinct param values")
-    check(len(small_data) < 2**7, "Too many distinct addresses")
-    check(len(masks) < 2**6, "Too many distinct mask values")
-    check(len(big_data) < 2**9, "Too many distinct data values")
-    check(len(commands) < 2**16, "Too many commands")
+    check(len(params) <= 2**6, "Too many distinct param values")
+    check(len(small_data) <= 2**7, "Too many distinct addresses")
+    check(len(masks) <= 2**6, "Too many distinct mask values")
+    check(len(big_data) <= 2**9, "Too many distinct data values")
+    check(len(commands) <= 2**16, "Too many commands")
 
     with open(args.outfile, "wb") as f:
         write32(f, FORMAT_MAGIC)
@@ -418,6 +418,26 @@ class FakeTarget(object):
     def delay(self, cycles, ms):
         time.sleep(ms * 0.001)
 
+class CFAMTranslatorTarget(object):
+    def __init__(self, real_target):
+        from bitstring import BitArray
+        self._target = real_target
+        self._pad = BitArray(32)
+
+    def getScom(self, address):
+        if address & 0xF0000 == 0x50000:
+            cfam_address = address & 0x1FF | 0x2800
+            return self._target.getCfamRegister(cfam_address) + self._pad
+        else:
+            return self._target.getScom(address)
+
+    def putScom(self, address, data):
+        if address & 0xF0000 == 0x50000:
+            cfam_address = address & 0x1FF | 0x2800
+            self._target.putCfamRegister(cfam_address, data >> 32)
+        else:
+            self._target.putScom(address, data)
+
 def cmd_run(args):
     main = load_commands(args.main)
     cust = load_commands(args.cust) if args.cust else []
@@ -429,6 +449,8 @@ def cmd_run(args):
         with pyecmd.Ecmd(args=args.ecmd_args):
             for target in pyecmd.loopTargets(args.chip, pyecmd.ECMD_SELECTED_TARGETS_LOOP_DEFALL):
                 print(target)
+                if args.cfam:
+                    target = CFAMTranslatorTarget(target)
                 target.delay = pyecmd.delay
                 run_commands(main, cust, target)
 
@@ -463,6 +485,7 @@ if __name__ == "__main__":
     sub.add_argument("main", help="Main command file; type will be autodetected")
     sub.add_argument("cust", nargs="?", default=None, help="Optional custom table file for CALL operations")
     sub.add_argument("--dry", action="store_true", help="Dry run - use fake target and don't use ecmd")
+    sub.add_argument("--cfam", action="store_true", help="Use CFAM access for FSI mailbox registers")
     sub.set_defaults(func=cmd_run)
 
     args = parser.parse_args()
