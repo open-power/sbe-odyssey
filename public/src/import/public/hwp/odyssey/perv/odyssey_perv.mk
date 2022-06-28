@@ -33,13 +33,14 @@
 CMDTABLE_HWPS += ody_tp_chiplet_reset
 #CMDTABLE_HWPS += ody_tp_pll_initf
 CMDTABLE_HWPS += ody_tp_pll_setup
-#CMDTABLE_HWPS += ody_pib_repr_initf
+CMDTABLE_HWPS += ody_pib_repr_initf
 CMDTABLE_HWPS += ody_pib_arrayinit
 CMDTABLE_HWPS += ody_pib_arrayinit_cleanup
 #CMDTABLE_HWPS += ody_pib_initf
 CMDTABLE_HWPS += ody_pib_startclocks
 $(call BUILD_CMDTABLE,odyssey,10,main,$(CMDTABLE_HWPS))
 
+$(call BUILD_CMDTABLE,odyssey,10,cust,cust)
 
 
 #

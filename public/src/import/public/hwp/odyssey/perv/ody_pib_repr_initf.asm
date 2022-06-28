@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/generic/perv/cmdtable/cmdtable_hwp_errors.H $ */
+/* $Source: public/src/import/public/hwp/odyssey/perv/ody_pib_repr_initf.asm $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -22,21 +22,6 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#pragma once
+#include "cust_api.inc"
 
-//Errors
-#define ERR_ABIST_TIMEOUT           0x201
-#define ERR_OPCG_TIMEOUT_ABIST      0x202
-#define ERR_OPCG_TIMEOUT_SCAN0      0x203
-#define ERR_OPCG_TIMEOUT_START_CLK  0x204
-#define ERR_LOCK_PLL_TIMEOUT        0x205
-#define ERR_CLOCK_STAT_SL           0x206
-#define ERR_CLOCK_STAT_NSL          0x207
-#define ERR_CLOCK_STAT_ARY          0x208
-#define ERR_UNSUPPORTED_CUST_API_1  0x209
-#define ERR_UNSUPPORTED_CUST_API_2  0x20A
-#define ERR_UNSUPPORTED_CUST_API_3  0x20B
-#define ERR_UNSUPPORTED_CUST_API_4  0x20C
-#define ERR_UNSUPPORTED_CUST_API_5  0x20D
-#define ERR_UNSUPPORTED_CUST_API_6  0x20E
-#define ERR_UNSUPPORTED_CUST_API_7  0x20F
+         call CUST_SCAN_PIB_REPR
