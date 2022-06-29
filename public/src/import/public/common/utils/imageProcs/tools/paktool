@@ -10,7 +10,6 @@ import datetime
 import sys
 import os
 import textwrap
-import hashlib
 # For doing a tree listing of archive contents
 from collections import defaultdict
 def tree(): return defaultdict(tree)
@@ -25,7 +24,6 @@ pakconstants.out = output.out()
 from pakconstants import out
 import pakcore as pak
 import pakutils
-import operator
 
 ############################################################
 # Functions - Functions - Functions - Functions - Functions
@@ -168,18 +166,19 @@ def cmd_hash(args):
     # Filter the list
     result = archive.find(args.file)
 
+    # Create all the hashes for the selected files
+    out.print("Creating hashes")
+    out.moreIndent()
+    for entry in result:
+        out.print(entry.name)
+        entry.hash(i_algorithm=args.algorithm)
+    out.lessIndent()
+
+    # Now write out the file
     with open(args.hashfile, "wb") as f:
         out.print("Writing hash", args.hashfile)
-        out.moreIndent()
-        for entry in sorted(result, key=operator.attrgetter('name')):
-            out.print(entry.name)
-            hasher = hashlib.new(args.algorithm)
-            hasher.update(entry.cdata)
-            f.write(bytes([len(entry.name)]))
-            f.write(entry.name.encode())
-            f.write(hasher.digest())
-        out.lessIndent()
-        f.write(b'\0')
+        contents = result.createHashList(i_algorithm=args.algorithm)
+        f.write(contents)
 
     return
 
@@ -247,7 +246,7 @@ parser = argparse.ArgumentParser(description="Work with hardware .pak files")
 
 # Add optional args shared across all commands
 parser.add_argument('-c', '--console-level', default=out.levels.WARN, type=out.levels.argparse, choices=list(out.levels),
-                      help="The output level to send to send to the console.  BASE is the default")
+                      help="The output level to send to send to the console.  WARN is the default")
 
 # Create the sub parser that we'll add each of our sub commands
 subparsers = parser.add_subparsers()
