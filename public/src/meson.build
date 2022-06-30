@@ -38,6 +38,7 @@ cmdTableTool = find_program('import/public/hwp/generic/perv/cmdtable/cmdtable.py
 signHashList = find_program('build/utils/signHashList')
 tracehash = find_program('tools/trace/tracehash.pl')
 buildInfo = find_program('build/utils/buildInfo.py')
+generateImageHash = find_program('build/utils/genImgHash.sh')
 
 # we are using multiple tools for generating source code and using run_command
 #   for invoking these tools. So, whenever these tools or files passed to tool is
