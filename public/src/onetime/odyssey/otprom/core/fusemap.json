@@ -239,7 +239,7 @@
             "description": "Hardware Public Key Hash Set 1. (48..55)"
         },
         {
-            "field": "hwPubKeyHashSet1_6",
+            "field": "hwPubKeyHashSet1_7",
             "field_size": 64,
             "value": "0x6ebb91660af3aff7",
             "description": "Hardware Public Key Hash Set 1. (48..55)"
@@ -251,7 +251,7 @@
             "description": "Hardware Public Key Hash Set 1. (56..63)"
         },
         {
-            "field": "hwPubKeyHashSet1_6",
+            "field": "hwPubKeyHashSet1_8",
             "field_size": 64,
             "value": "0xaeb7813e1add1e3d",
             "description": "Hardware Public Key Hash Set 1. (56..63)"
@@ -335,7 +335,7 @@
             "description": "Hardware Public Key Hash Set 2. (48..55)"
         },
         {
-            "field": "hwPubKeyHashSet2_6",
+            "field": "hwPubKeyHashSet2_7",
             "field_size": 64,
             "value": "0xDEADC0DE",
             "description": "Hardware Public Key Hash Set 2. (48..55)"
@@ -347,7 +347,7 @@
             "description": "Hardware Public Key Hash Set 2. (56..63)"
         },
         {
-            "field": "hwPubKeyHashSet2_6",
+            "field": "hwPubKeyHashSet2_8",
             "field_size": 64,
             "value": "0xDEADC0DE",
             "description": "Hardware Public Key Hash Set 2. (56..63)"
@@ -371,7 +371,7 @@
             "description": "Minimum Secure Version Fuse Bank 1"
         },
         {
-            "field": "msvFuseBank0",
+            "field": "msvFuseBank1",
             "field_size": 64,
             "value": "0x0",
             "description": "Minimum Secure Version Fuse Bank 1"
@@ -383,7 +383,7 @@
             "description": "Minimum Secure Version Fuse Bank 2"
         },
         {
-            "field": "msvFuseBank0",
+            "field": "msvFuseBank2",
             "field_size": 64,
             "value": "0x0",
             "description": "Minimum Secure Version Fuse Bank 2"
