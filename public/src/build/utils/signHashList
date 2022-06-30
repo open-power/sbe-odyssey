@@ -267,7 +267,8 @@ if [ "$COMPONENT_ID" = "RUN_TIME" ]; then
     #Hash of the HW keys. Fetch the value from any of the secure container which is created.
     #We need to filter out the HW keys from the print container output and convert the output to .bin format
     echo "Fetch Hash of HW keys A and D..."
-    print-container -w0 --imagefile ${SECURE_HDR_PATH}/secure.hdr | grep -A1 "HW keys hash" | grep "           " | head -1 | tr -d " " | tr -d "\n" | xxd -r -p > ${SECURE_HDR_PATH}/hwkeyshash.bin
+    print-container -w0 --imagefile ${SECURE_HDR_PATH}/secure.hdr | grep -A1 "HW keys hash" | \
+    tail -1 | awk '{print $1}' | xxd -r -p > ${SECURE_HDR_PATH}/hwkeyshash.bin
 
     echo "Appending Runtime Image MSV into hwkeyshash.bin ..."
     echo " "

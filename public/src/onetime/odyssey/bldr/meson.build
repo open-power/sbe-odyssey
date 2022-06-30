@@ -207,3 +207,20 @@ obldr_package_img = custom_target( 'obldr_package_img',
                                            odyssey_main_fsm_path],
                                build_by_default : true,
                               )
+
+# Run script to generate hash file of image
+# This is required for verification of hash written into measurements
+outfile = odyssey_bldr_img_name + '.hash'
+
+obldr_gen_img_hash = custom_target( 'obldr_gen_img_hash',
+                               output : outfile,
+                               depends : [ obldr_package_img ],
+                               command : [ generateImageHash,
+                                          '-i', meson.current_build_dir() + '/boot/secure.hdr',
+                                          '-o', meson.current_build_dir(),
+                                          '-f', odyssey_bldr_img_name
+                                          ],
+                               build_by_default : true,
+                               install : true,
+                               install_dir : odyssey_bldr_install_path
+                              )

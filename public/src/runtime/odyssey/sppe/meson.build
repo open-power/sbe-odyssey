@@ -223,3 +223,20 @@ osppe_package_img = custom_target( 'osppe_package_img',
                                            pakBuildTool, signHashList],
                                build_by_default : true,
                               )
+
+# Run script to generate hash file of image
+# This is required for verification of hash written into measurements
+outfile = odyssey_sppe_img_name + '.hash'
+
+osppe_gen_img_hash = custom_target( 'osppe_gen_img_hash',
+                               output : outfile,
+                               depends : [ osppe_package_img ],
+                               command : [ generateImageHash,
+                                          '-i', meson.current_build_dir() + '/rt/secure.hdr',
+                                          '-o', meson.current_build_dir(),
+                                          '-f', odyssey_sppe_img_name
+                                          ],
+                               build_by_default : true,
+                               install : true,
+                               install_dir : odyssey_sppe_install_path
+                              )
