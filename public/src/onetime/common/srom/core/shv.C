@@ -59,14 +59,14 @@
  *
  * @param ver_alg pointer to version algo details
  * @param hdr_type Prefix or SW/FW Header
- * @return int Status code in case of failure, 0 in case of success
+ * @return Status code in case of failure, 0 in case of success
  */
-static int valid_ver_alg(ROM_version_raw* ver_alg, uint8_t hdr_type)
+static uint32_t valid_ver_alg(ROM_version_raw* ver_alg, uint8_t hdr_type)
 {
     #define SBE_FUNC " valid_ver_alg "
     SBE_ENTER(SBE_FUNC);
 
-    uint8_t status;
+    uint32_t status;
 
     //Validate header version
     SBE_INFO("Hdr: Version : %d", SBE::get16(&ver_alg->version));
@@ -173,7 +173,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     const uint32_t hashDataBuffSize = sizeof(uint64_t) * 309;
     uint8_t hashDataBuff[hashDataBuffSize]  __attribute__ ((aligned(8))) = {0x00};
     uint64_t size;
-    uint8_t hdrStatusChecks = 0;
+    uint32_t hdrStatusChecks = 0;
 
     /**************************************** Trivial Checks ***************************************/
 
