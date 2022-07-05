@@ -49,9 +49,19 @@ namespace SBE
     HASH_LIST_RET_t check_file_hash(const char *i_fname, const sha3_t &i_hash, const uint8_t *i_hash_list)
     {
         const int in_fnlen = strlen(i_fname);
+
+        // First Byte in hash list is version and 2nd byte is hash algorithm used.
+        //We need to skip these two fields and start searching for file
+        i_hash_list += 2;
+
         while (true)
         {
+            //1Byte is reserved
+            i_hash_list += 1;
+
+            //1Byte is file name length
             const uint8_t fnlen = *i_hash_list++;
+
             if (!fnlen)
             {
                 SBE_ERROR_BIN("File not found in hash list", i_fname, in_fnlen);
