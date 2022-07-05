@@ -32,6 +32,9 @@
 
 #define SHA3_TRUNCATED_SIZE 48
 
+#define SROM_HASH_LIST_SUPPORTED_VERSION   0x1
+#define SROM_HASH_LIST_SUPPORTED_HASH_ALGO 0x1 // SHA3_512
+
 typedef uint8_t sha3truncated_t[SHA3_TRUNCATED_SIZE];
 
 /**

@@ -305,6 +305,22 @@ void bldrthreadroutine(void *i_pArg)
             pk_halt();
         }
 
+        // Check for hash list version.
+        // 1st byte of hash list is vesion
+        if(*(hashList) != SROM_HASH_LIST_SUPPORTED_VERSION)
+        {
+            SBE_ERROR(SBE_FUNC "Unsupported hash list version 0x%02x", *hashList);
+            SBE::updateErrorCodeAndHalt(BOOT_RC_INVALID_HASH_LIST_VERSION);
+        }
+
+        // Check for hash list hash algo.
+        // 2nd byte of hash list is hash algo
+        if(*(hashList + 1) != SROM_HASH_LIST_SUPPORTED_HASH_ALGO)
+        {
+            SBE_ERROR(SBE_FUNC "Unsupported hash list hash algorithm 0x%02x", *(hashList + 1));
+            SBE::updateErrorCodeAndHalt(BOOT_RC_INVALID_HASH_LIST_HASH_ALGO);
+        }
+
         SBE_INFO("Loading SPPE main binary");
         uint32_t load_offset = SRAM_ORIGIN;
         load_image(pak, sppe_bin_fname, load_offset,
