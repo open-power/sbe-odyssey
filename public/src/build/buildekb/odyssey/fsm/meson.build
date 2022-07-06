@@ -35,8 +35,33 @@ odyssey_fsm_path = meson.current_build_dir()
 
 ############################ main.fsm #######################################
 
+outfile_tbl_list = []
+infile_asm1 = ['ody_tp_chiplet_reset.asm']
+
+foreach infile1 : infile_asm1
+  abs_infile_asm_path1 = import_dir_path + infile1
+
+  outfile_tbl1 = meson.current_build_dir()+ '/' + infile1 + '.tbl'
+  outfile_tbl_list += outfile_tbl1
+
+  run_result = run_command(cmdTableTool,'assemble',import_dir_path_inc_paths,
+      abs_infile_asm_path1, outfile_tbl1)
+  if (run_result.returncode() != 0)
+    error(run_result.stderr())
+    message(run_result.stdout())
+  endif
+endforeach
+
+src = import_dir_path + '/ody_tp_pll_initf.tbl'
+dest = odyssey_fsm_path + '/ody_tp_pll_initf.asm.tbl'
+run_result = run_command('cp', src, dest)
+if (run_result.returncode() != 0)
+  error(run_result.stderr())
+  message(run_result.stdout())
+endif
+outfile_tbl_list += dest
+
 infile_asm = [
-    'ody_tp_chiplet_reset.asm',
     'ody_tp_pll_setup.asm',
     'ody_pib_repr_initf.asm',
     'ody_pib_arrayinit.asm',
@@ -44,7 +69,6 @@ infile_asm = [
     'ody_pib_startclocks.asm'
     ]
 
-outfile_tbl_list = []
 
 #Create abs path for input files and generate .tbl file for every .asm file
 foreach infile : infile_asm

@@ -265,6 +265,23 @@ namespace SBE
 
     void updateProgressCode(uint8_t value);
 
+    /*
+     * This function call only for Runtime image main function
+     *
+     * @brief - Read local register 0xC0002040 with frequency value
+     */
+    void updateSbeGlobalFreqFromLFR(void);
+
+    /*
+     *  This function call only for bootloader main function
+     *
+     *  @brief - By using Mailbox scratch 6(CFAM 283D, SCOM 0x5003D)
+     *  command table writes value based on bucket selection (bits 0:3 above)
+     *  mbox scratch 6 and Bytes 2,3 from scratch 6 update Odyssey Nest freq
+     *  (in MHz) from platform
+     */
+    void setSbeGlobalFreqFromScratchOrLFR(void);
+
     /**
      * @brief compute a sha3 hash (md) of given byte length from "i_data"
      *

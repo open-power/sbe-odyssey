@@ -37,13 +37,11 @@
 #include "sbe_build_info.H"
 #include "ppe42_string.h"
 #include "metadata.H"
+#include "cmnglobals.H"
 
 extern "C" {
 #include "pk_api.h"
 }
-
-// SBE Frequency to be used to initialise PK
-uint32_t g_odysseyfrequency = SBE_REF_BASE_FREQ_HZ;
 
 uint8_t bldr_Kernel_NC_Int_stack[BLDR_NONCRITICAL_STACK_SIZE];
 uint8_t bldrSecureBoot_stack[BLDR_THREAD_SECURE_BOOT_STACK_SIZE];
@@ -130,10 +128,13 @@ int  main(int argc, char **argv)
 
     do
     {
+        /// Update CMN_GLOBAL->sbefreq using Scratch Reg
+        SBE::setSbeGlobalFreqFromScratchOrLFR();
+
         rc = pk_initialize((PkAddress)bldr_Kernel_NC_Int_stack,
                 BLDR_NONCRITICAL_STACK_SIZE,
                 INITIAL_PK_TIMEBASE, // initial_timebase
-                g_odysseyfrequency,
+                CMN_GLOBAL->sbefreq,
                 BLDR_TRACE_START_OFFSET,
                 BLDR_PK_TRACE_SIZE);
 
