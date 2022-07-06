@@ -68,13 +68,21 @@ void pk_trace_binary(uint32_t i_hash_and_size, const void* bufp)
     pk_critical_section_enter(&ctx);
 
     //load in the offset in the cb for the entry we are adding
+#ifdef APP_DEFINED_TRACE_BUFFER
+    cb_offset = G_PK_TRACE_BUF->state.offset;
+#else
     cb_offset = g_pk_trace_buf.state.offset;
+#endif
 
     //Find the offset for the footer (at the end of the entry)
     footer_offset = cb_offset + data_size;
 
     //calculate the address of the footer
+#ifdef APP_DEFINED_TRACE_BUFFER
+    ptr64 = (uint64_t*)&G_PK_TRACE_BUF->cb[footer_offset & PK_TRACE_CB_MASK];
+#else
     ptr64 = (uint64_t*)&g_pk_trace_buf.cb[footer_offset & PK_TRACE_CB_MASK];
+#endif
 
     //calculate the offset for the next entry in the cb
     state.offset = footer_offset + sizeof(PkTraceBinary);
@@ -91,7 +99,11 @@ void pk_trace_binary(uint32_t i_hash_and_size, const void* bufp)
 #endif
 
     //update the cb state (tbu and offset)
+#ifdef APP_DEFINED_TRACE_BUFFER
+    G_PK_TRACE_BUF->state.word64 = state.word64;
+#else
     g_pk_trace_buf.state.word64 = state.word64;
+#endif
 
     //write the footer data to the circular buffer including the
     //timesamp, string hash and data size
@@ -105,7 +117,11 @@ void pk_trace_binary(uint32_t i_hash_and_size, const void* bufp)
         index < data_size;
         index++)
     {
+#ifdef APP_DEFINED_TRACE_BUFFER
+        dest = &G_PK_TRACE_BUF->cb[(cb_offset + index) & PK_TRACE_CB_MASK];
+#else
         dest = &g_pk_trace_buf.cb[(cb_offset + index) & PK_TRACE_CB_MASK];
+#endif
         *dest = *(src++);
     }
 

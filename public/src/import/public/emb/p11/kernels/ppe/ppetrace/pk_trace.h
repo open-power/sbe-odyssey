@@ -74,9 +74,13 @@
     #error "PK_OP_TRACE_SZ must be at least 64 bytes!!!"
 #endif
 
-
 //Mask for calculating offsets into the trace circular buffer
-#define PK_TRACE_CB_MASK (PK_TRACE_SZ - 1)
+#ifdef APP_DEFINED_TRACE_BUFFER
+    #define PK_TRACE_CB_MASK ((G_PK_TRACE_BUF->size) - 1)
+#else
+    #define PK_TRACE_CB_MASK (PK_TRACE_SZ - 1)
+#endif
+
 #define PK_OP_TRACE_CB_MASK (PK_OP_TRACE_SZ - 1)
 
 #define STRINGIFY_HELPER(x) #x
@@ -405,8 +409,12 @@ typedef struct
     uint8_t             cb[PK_OP_TRACE_SZ];
 } PkOpTraceBuffer; //pk_trace_buffer_t;
 
+#ifdef APP_DEFINED_TRACE_BUFFER
+    #define G_PK_TRACE_BUF ((PkTraceBuffer*)G_TRACE_BUF_PTR)
+#else
+    extern PkTraceBuffer g_pk_trace_buf __attribute__((section (".sdata")));
+#endif
 
-extern PkTraceBuffer g_pk_trace_buf __attribute__((section (".sdata")));
 #if (PK_OP_TRACE_SUPPORT)
     extern PkOpTraceBuffer g_pk_op_trace_buf __attribute__((section (".sdata")));
 #endif

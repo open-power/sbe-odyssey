@@ -37,7 +37,11 @@
 extern PkTimebase  ppe42_64bit_timebase;
 
 #if PK_TRACE_SUPPORT
-    extern PkTraceBuffer g_pk_trace_buf;
+
+    #ifndef APP_DEFINED_TRACE_BUFFER
+        extern PkTraceBuffer g_pk_trace_buf __attribute__((section (".sdata")));
+    #endif
+
 #endif
 
 pk_debug_ptrs_t pk_debug_ptrs SECTION_ATTRIBUTE(".debug_ptrs") =
@@ -46,8 +50,14 @@ pk_debug_ptrs_t pk_debug_ptrs SECTION_ATTRIBUTE(".debug_ptrs") =
     .debug_ptrs_version         = PK_DEBUG_PTRS_VERSION,
 
 #if PK_TRACE_SUPPORT
+#ifdef APP_DEFINED_TRACE_BUFFER
+    /* Initialized here but actual value updated in _pk_initialize() */
+    .debug_trace_ptr            = 0,
+    .debug_trace_size           = 0,
+#else
     .debug_trace_ptr            = &g_pk_trace_buf,
     .debug_trace_size           = sizeof(g_pk_trace_buf),
+#endif
 #else
     .debug_trace_ptr            = 0,
     .debug_trace_size           = 0,

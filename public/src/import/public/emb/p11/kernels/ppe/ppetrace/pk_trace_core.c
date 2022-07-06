@@ -52,6 +52,7 @@ PkTimer g_pk_trace_timer __attribute__ ((section (".sdata"))) =
 #endif
 
 //Static initialization of the pk trace buffer
+#ifndef APP_DEFINED_TRACE_BUFFER
 PkTraceBuffer g_pk_trace_buf __attribute__ ((section (".sdata"))) =
 {
     .version            = PK_TRACE_VERSION,
@@ -66,9 +67,7 @@ PkTraceBuffer g_pk_trace_buf __attribute__ ((section (".sdata"))) =
     .state.word64       = 0,
     .cb                 = {0}
 };
-
-//Needed for buffer extraction in simics for now
-PkTraceBuffer* g_pk_trace_buf_ptr = &g_pk_trace_buf;
+#endif
 
 #if (PK_OP_TRACE_SUPPORT)
 //Static initialization of the pk op trace buffer
@@ -122,10 +121,18 @@ void pk_trace_tiny(uint32_t i_parm)
 
     //load the current byte count and calculate the address for this
     //entry in the cb
+#ifdef APP_DEFINED_TRACE_BUFFER
+    ptr64 = (uint64_t*)&G_PK_TRACE_BUF->cb[G_PK_TRACE_BUF->state.offset & PK_TRACE_CB_MASK];
+#else
     ptr64 = (uint64_t*)&g_pk_trace_buf.cb[g_pk_trace_buf.state.offset & PK_TRACE_CB_MASK];
+#endif
 
     //calculate the offset for the next entry in the cb
+#ifdef APP_DEFINED_TRACE_BUFFER
+    state.offset = G_PK_TRACE_BUF->state.offset + sizeof(PkTraceTiny);
+#else
     state.offset = g_pk_trace_buf.state.offset + sizeof(PkTraceTiny);
+#endif
 
 #ifdef PK_TRACE_BUFFER_WRAP_MARKER
 
@@ -139,7 +146,11 @@ void pk_trace_tiny(uint32_t i_parm)
 #endif
 
     //update the cb state (tbu and offset)
+#ifdef APP_DEFINED_TRACE_BUFFER
+    G_PK_TRACE_BUF->state.word64 = state.word64;
+#else
     g_pk_trace_buf.state.word64 = state.word64;
+#endif
 
     //write the data to the circular buffer including the
     //timesamp, string hash, and 16bit parameter
@@ -175,11 +186,19 @@ void pk_trace_timer_callback(void* arg)
 // timebase to 0 will cause previous traces to have very large timestamps.
 void pk_trace_set_timebase(PkTimebase timebase)
 {
+#ifdef APP_DEFINED_TRACE_BUFFER
+    G_PK_TRACE_BUF->time_adj64 = timebase - pk_timebase_get();
+#else
     g_pk_trace_buf.time_adj64 = timebase - pk_timebase_get();
+#endif
 }
 
 void pk_trace_set_freq(uint32_t i_frequency)
 {
+#ifdef APP_DEFINED_TRACE_BUFFER
+    G_PK_TRACE_BUF->hz = i_frequency;
+#else
     g_pk_trace_buf.hz = i_frequency;
+#endif
 }
 #endif  // PK_TRACE_SUPPORT

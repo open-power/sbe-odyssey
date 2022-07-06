@@ -68,13 +68,21 @@ void pk_trace_big(uint32_t i_hash_and_count,
     pk_critical_section_enter(&ctx);
 
     //load in the offset in the cb for the entry we are adding
+#ifdef APP_DEFINED_TRACE_BUFFER
+    cur_offset = G_PK_TRACE_BUF->state.offset;
+#else
     cur_offset = g_pk_trace_buf.state.offset;
+#endif
 
     //Find the offset for the footer (at the end of the entry)
     footer_offset = cur_offset + parm_size;
 
     //calculate the address of the footer
+#ifdef APP_DEFINED_TRACE_BUFFER
+    ptr64 = (uint64_t*)&G_PK_TRACE_BUF->cb[footer_offset & PK_TRACE_CB_MASK];
+#else
     ptr64 = (uint64_t*)&g_pk_trace_buf.cb[footer_offset & PK_TRACE_CB_MASK];
+#endif
 
     //calculate the offset for the next entry in the cb
     state.offset = footer_offset + sizeof(PkTraceBig);
@@ -91,7 +99,11 @@ void pk_trace_big(uint32_t i_hash_and_count,
 #endif
 
     //update the cb state (tbu and offset)
+#ifdef APP_DEFINED_TRACE_BUFFER
+    G_PK_TRACE_BUF->state.word64 = state.word64;
+#else
     g_pk_trace_buf.state.word64 = state.word64;
+#endif
 
     //write the data to the circular buffer including the
     //timesamp, string hash, and 16bit parameter
@@ -103,12 +115,20 @@ void pk_trace_big(uint32_t i_hash_and_count,
 
     //write parm values to the circular buffer
     footer_ptr = (PkTraceBig*)ptr64;
+#ifdef APP_DEFINED_TRACE_BUFFER
+    ptr64 = (uint64_t*)&G_PK_TRACE_BUF->cb[cur_offset & PK_TRACE_CB_MASK];
+#else
     ptr64 = (uint64_t*)&g_pk_trace_buf.cb[cur_offset & PK_TRACE_CB_MASK];
+#endif
     *ptr64 = i_parm1;
 
     if(parm_size > 8)
     {
+#ifdef APP_DEFINED_TRACE_BUFFER
+        ptr64 = (uint64_t*)&G_PK_TRACE_BUF->cb[(cur_offset + 8) & PK_TRACE_CB_MASK];
+#else
         ptr64 = (uint64_t*)&g_pk_trace_buf.cb[(cur_offset + 8) & PK_TRACE_CB_MASK];
+#endif
         *ptr64 = i_parm2;
     }
 

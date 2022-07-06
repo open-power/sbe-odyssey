@@ -32,6 +32,7 @@
 
 #include "pk.h"
 #include "pk_trace.h"
+#include "ppe42_string.h"
 
 uint32_t __pk_timebase_frequency_hz;
 
@@ -116,10 +117,14 @@ void pk_set_timebase_rshift(uint32_t timebase_freq_hz)
 #endif
 
 int
-pk_initialize(PkAddress     kernel_stack,
-              size_t       kernel_stack_size,
-              PkTimebase   initial_timebase,
-              uint32_t     timebase_frequency_hz)
+_pk_initialize(PkAddress     kernel_stack,
+               size_t       kernel_stack_size,
+               PkTimebase   initial_timebase,
+               uint32_t     timebase_frequency_hz
+#ifdef APP_DEFINED_TRACE_BUFFER
+    , uint32_t    pk_trace_size
+#endif
+              )
 {
     int rc;
 
@@ -163,8 +168,36 @@ pk_initialize(PkAddress     kernel_stack,
 #endif  /* PK_TIMER_SUPPORT (timed callback)*/
 
 #if PK_TRACE_SUPPORT
+
+#ifdef APP_DEFINED_TRACE_BUFFER
+    G_PK_TRACE_BUF->instance_id = (uint16_t)(mfspr(SPRN_PIR) & PIR_PPE_INSTANCE_MASK);
+
+    G_PK_TRACE_BUF->version            = PK_TRACE_VERSION;
+    memcpy(G_PK_TRACE_BUF->image_str, PPE_IMG_STRING, PK_TRACE_IMG_STR_SZ);
+    G_PK_TRACE_BUF->hash_prefix        = PK_TRACE_HASH_PREFIX;
+    G_PK_TRACE_BUF->partial_trace_hash =
+        trace_ppe_hash("PARTIAL TRACE ENTRY. HASH_ID = %d", PK_TRACE_HASH_PREFIX);
+
+    if(pk_trace_size)
+    {
+        G_PK_TRACE_BUF->size = pk_trace_size;
+    }
+    else
+    {
+        G_PK_TRACE_BUF->size = PK_TRACE_SZ;
+    }
+
+    G_PK_TRACE_BUF->max_time_change    = PK_TRACE_MTBT;
+    G_PK_TRACE_BUF->hz                 = timebase_frequency_hz;
+    G_PK_TRACE_BUF->time_adj64         = 0;
+    G_PK_TRACE_BUF->state.word64       = 0;
+
+    pk_debug_ptrs.debug_trace_ptr      = G_PK_TRACE_BUF;
+    pk_debug_ptrs.debug_trace_size     = G_PK_TRACE_BUF->size;
+#else
     //set the trace timebase HZ
     pk_trace_set_freq(timebase_frequency_hz);
+#endif
 
     if(initial_timebase != PK_TIMEBASE_CONTINUES)
     {
@@ -203,7 +236,6 @@ pk_initialize(PkAddress     kernel_stack,
 
     return PK_OK;
 }
-
 
 // Set the timebase frequency.
 int

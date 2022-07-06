@@ -79,10 +79,15 @@ __ppe42_system_setup()
 
 #if PK_TIMER_SUPPORT
 #if PK_TRACE_SUPPORT
+
+#ifndef APP_DEFINED_TRACE_BUFFER
     extern PkTraceBuffer g_pk_trace_buf;
     //set the ppe instance id
     g_pk_trace_buf.instance_id = (uint16_t)(mfspr(SPRN_PIR) & PIR_PPE_INSTANCE_MASK);
+#endif
+
 #endif  /* PK_TRACE_SUPPORT */
+
 #if PK_OP_TRACE_SUPPORT
     extern PkOpTraceBuffer g_pk_op_trace_buf;
     //set the ppe instance id
