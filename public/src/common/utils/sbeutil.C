@@ -27,6 +27,7 @@
 #include "ppe42_string.h"
 #include "sbetrace.H"
 #include "p11_scom_perv_cfam.H"
+#include "p11_ppe_pc.H"
 #include "mbxscratch.H"
 
 namespace SBE
@@ -103,6 +104,54 @@ namespace SBE
         getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, &secureBootFailStatus.iv_mbx13);
         secureBootFailStatus.iv_secureHeaderFailStatusCode = i_errorCode;
         putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, secureBootFailStatus.iv_mbx13);
+    }
+
+    void updateSbeGlobalFreqFromLFR(void)
+    {
+        // Read local register 0xC0002040 with frequency value
+        sbe_local_LFR lfrReg;
+        PPE_LVD(scomt::ppe_pc::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW, lfrReg);
+        // convert a Mhz frequency value to an equivalent SBE frequency value by
+        // calculating the uint32_t number range.
+        // ((pau_freq_in_mhz * 1000 * 1000)/4) for SBE Freq value
+        CMN_GLOBAL->sbefreq = (lfrReg.pau_freq_in_mhz * 1000 * 250 );
+        SBE_INFO(SBE_FUNC "sbe global frequency[0x%08X]", CMN_GLOBAL->sbefreq);
+    }
+
+    void setSbeGlobalFreqFromScratchOrLFR(void)
+    {
+        // Mailbox scratch 6(CFAM 283D, SCOM 0x5003D)
+        // Command table writes value based on bucket selection (bits 0:3 above)
+        // mbox scratch 6 and Bytes 2,3 from scratch 6 update Odyssey Nest freq
+        // (in MHz) from platform
+
+        // In HReset state, should not read Frequency from scratch 6 and Odyssey
+        // Frequency read from only from LFR reg data
+        if(!isHreset())
+        {
+            // Read odyssey mbx6 scratch for frequency
+            mbx6_t odysseymbx6;
+            getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_6_RW,
+                       &odysseymbx6.iv_mbx6);
+            SBE_INFO(SBE_FUNC "ODYSSEY MBX6  [0x%08X 0x%08X] ",
+                     SBE::higher32BWord(odysseymbx6.iv_mbx6), SBE::lower32BWord(odysseymbx6.iv_mbx6));
+            uint16_t odyFreqInMHZ = odysseymbx6.iv_mbx6freqInmhz;
+            if(!odyFreqInMHZ)
+            {
+                SBE_ERROR(SBE_FUNC "Not valid Mbx6 value, Halting PPE...");
+                pk_halt();
+            }
+            // Update local register 0xC0002040 with frequency value
+            sbe_local_LFR lfrReg;
+            PPE_LVD(scomt::ppe_pc::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW,
+                    lfrReg);
+            lfrReg.pau_freq_in_mhz = odyFreqInMHZ;
+            PPE_STVD(scomt::ppe_pc::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW,
+                     lfrReg);
+            SBE_INFO(SBE_FUNC "Odyssey pau freq in mhz[0x%08X] ", odyFreqInMHZ);
+        }
+        // Read Freq value from LFR and update CMN_GLOBAL->sbe_freq
+        updateSbeGlobalFreqFromLFR();
     }
 
     bool isHreset(void)

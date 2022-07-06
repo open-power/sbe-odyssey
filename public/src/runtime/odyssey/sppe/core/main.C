@@ -128,13 +128,14 @@ int  main(int argc, char **argv)
 
     do
     {
+        // Update sbefreq using LFR value
+        SBE::updateSbeGlobalFreqFromLFR();
         rc = pk_initialize((PkAddress)sppe_Kernel_NC_Int_stack,
                 SPPE_NONCRITICAL_STACK_SIZE,
                 INITIAL_PK_TIMEBASE, // initial_timebase
-                g_odysseyfrequency,
+                CMN_GLOBAL->sbefreq,
                 SPPE_TRACE_START_OFFSET,
                 SPPE_PK_TRACE_SIZE);
-
         if (rc)
         {
             SBE_ERROR(SBE_FUNC "PK Initialization failed for SPPE image");

@@ -179,16 +179,6 @@ class SbeRegAccess
         {
             return !mbx11.iv_dontCheckStopForDMT;
         }
-        /**
-         * @brief Check if SBE is master
-         *
-         * @return true if SBE is Master, true if master
-         *
-         */
-        inline bool isSbeMaster() const
-        {
-            return mbx6.iv_isMaster;
-        }
 
         /**
          * @brief Get the SBE current State

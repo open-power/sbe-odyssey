@@ -70,13 +70,13 @@ typedef union
 {
     struct
     {
-        uint64_t iv_mbx6DontCare : 24;
-        uint64_t iv_isMaster : 1;
-        uint64_t iv_mbx6DontCare2 : 7;
-        uint64_t iv_mbx6Unused : 32;
+        uint64_t iv_mbx6PLLSelect : 4;   // bit 0..3: Odyssey PLL ring select
+        uint64_t iv_mbx6reserved  : 12;  // reserved
+        uint64_t iv_mbx6freqInmhz : 16;  // Bytes 2,3 Odyssey Nest freq (in MHz)
+        uint64_t iv_mbx6Unused    : 32;
     };
     uint64_t iv_mbx6;
-}mbx6_t;
+} mbx6_t;
 
 typedef union
 {
