@@ -699,10 +699,38 @@ typedef struct
 // Initialization APIs
 
 int
-pk_initialize(PkAddress  kernel_stack,
-              size_t      kernel_stack_size,
-              PkTimebase initial_timebase,
-              uint32_t    timebase_frequency_hz);
+_pk_initialize(PkAddress  kernel_stack,
+               size_t     kernel_stack_size,
+               PkTimebase initial_timebase,
+               uint32_t   timebase_frequency_hz
+#ifdef APP_DEFINED_TRACE_BUFFER
+    , uint32_t    pk_trace_size
+#endif
+              );
+
+static inline int
+pk_initialize(PkAddress     kernel_stack,
+              size_t       kernel_stack_size,
+              PkTimebase   initial_timebase,
+              uint32_t     timebase_frequency_hz
+#ifdef APP_DEFINED_TRACE_BUFFER
+    , uint32_t    pk_trace_size
+#endif
+             )
+{
+#ifdef APP_DEFINED_TRACE_BUFFER
+    // This assertion is to check for trace size is power-of-two
+    PK_STATIC_ASSERT((pk_trace_size & (pk_trace_size - 1)) == 0);
+#endif
+    return(_pk_initialize(kernel_stack,
+                          kernel_stack_size,
+                          initial_timebase,
+                          timebase_frequency_hz
+#ifdef APP_DEFINED_TRACE_BUFFER
+                          , pk_trace_size
+#endif
+                         ));
+}
 
 /**
  * Set the timebase frequency.

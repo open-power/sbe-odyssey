@@ -317,7 +317,11 @@ void ppe_trace_pk(uint32_t i_mark,
     pk_critical_section_enter(&ctx);
 
     // get offset in the cb for the footer we are adding
+#ifdef APP_DEFINED_TRACE_BUFFER
+    cur_offset = G_PK_TRACE_BUF->state.offset;
+#else
     cur_offset = g_pk_trace_buf.state.offset;
+#endif
     state.offset = cur_offset + trace_size;
 
     // If there is a timestamp then the footer contains part of it,
@@ -325,18 +329,30 @@ void ppe_trace_pk(uint32_t i_mark,
     if(mark.fields.timestamp)
     {
         // update header tbu and offset
+#ifdef APP_DEFINED_TRACE_BUFFER
+        G_PK_TRACE_BUF->state.word64 = state.word64;
+#else
         g_pk_trace_buf.state.word64 = state.word64;
+#endif
     }
     else
     {
         //update the cb state offset
+#ifdef APP_DEFINED_TRACE_BUFFER
+        G_PK_TRACE_BUF->state.offset = state.offset;
+#else
         g_pk_trace_buf.state.offset = state.offset;
+#endif
     }
 
     footer_offset = state.offset - sizeof(footer);
 
     //calculate the address of the footer
+#ifdef APP_DEFINED_TRACE_BUFFER
+    ptr32 = (uint32_t*)&G_PK_TRACE_BUF->cb[footer_offset & PK_TRACE_CB_MASK];
+#else
     ptr32 = (uint32_t*)&g_pk_trace_buf.cb[footer_offset & PK_TRACE_CB_MASK];
+#endif
 
     //write the footer to the circular buffer
     *ptr32 = footer.word32;
@@ -344,7 +360,11 @@ void ppe_trace_pk(uint32_t i_mark,
     if(footer2)
     {
         footer_offset -= sizeof(footer2);
+#ifdef APP_DEFINED_TRACE_BUFFER
+        ptr32 = (uint32_t*)&G_PK_TRACE_BUF->cb[footer_offset & PK_TRACE_CB_MASK];
+#else
         ptr32 = (uint32_t*)&g_pk_trace_buf.cb[footer_offset & PK_TRACE_CB_MASK];
+#endif
         *ptr32 = footer2;
     }
 
@@ -352,7 +372,11 @@ void ppe_trace_pk(uint32_t i_mark,
 
     for(i = 0; i < payload_size; i += 4)
     {
+#ifdef APP_DEFINED_TRACE_BUFFER
+        ptr32 = (uint32_t*)&G_PK_TRACE_BUF->cb[(cur_offset + i) & PK_TRACE_CB_MASK];
+#else
         ptr32 = (uint32_t*)&g_pk_trace_buf.cb[(cur_offset + i) & PK_TRACE_CB_MASK];
+#endif
         *ptr32 = *i_payload++;
     }
 
