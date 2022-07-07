@@ -79,9 +79,9 @@ typedef struct sbe_local_LFR {
     uint32_t boot_selection : 2;          //Bit 12-13 : odyssey,p11 : select if primary or seconday or golden
                                           //            (golden supported only for odyssey)
     uint32_t mpipl : 1;                   //Bit 14 : p11 : Set if mpipl is triggered
-    uint32_t ipl_reset : 1;               //Bit 15 : odyssey,p11 :  Set if SBE is reset via 50008:bit12
+    uint32_t ipl_reset : 1;               //Bit 15 : p11 :  Set if SBE is reset via 50008:bit12
     uint32_t hreset : 1;                  //Bit 16 : odyssey,p11 :  Set if SBE is reset via 50008:bit13(HRESET)
-    uint32_t hreset_done : 1;             //Bit 17 : odyssey,p11 :  Set if HReset flow is done in FW
+    uint32_t reserved : 1;                //Bit 17 : reserved
     uint32_t mpipl_reset_done : 1;        //Bit 18 : p11 : Set if Mpipl flow is done in FW
     uint32_t secure_mode : 1;             //Bit 19  : odyssey,p11 :  Secure mode bit indication
     uint32_t round_trip_delay : 4;        //Bit 20-23 : p11 : round trip delay
@@ -97,7 +97,7 @@ typedef struct sbe_local_LFR {
         mpipl = 0;
         ipl_reset = 0;
         hreset = 0;
-        hreset_done = 0;
+        reserved = 0;
         mpipl_reset_done = 0;
         round_trip_delay = 0;
         secure_mode = 0;
