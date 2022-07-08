@@ -44,7 +44,8 @@
 #include "p11_scom_perv_cfam.H"
 #include "ppe42_scom.h"
 
-#define VERIFY_FAILED(_c) { shvRsp->statusCode=(_c); \
+#define VERIFY_FAILED(_c) { if(shvRsp->statusCode == NO_ERROR) \
+                                shvRsp->statusCode=(_c); \
                             if(shvReq->controlData.secureBootVerificationEnforcement) \
                                 return ROM_FAILED; } \
 
@@ -501,7 +502,6 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     /**************************************************************************************************/
 
     SBE_INFO("Secure HDR Verified");
-    shvRsp->statusCode = NO_ERROR;
 
     SBE_EXIT(SBE_FUNC);
     return ROM_DONE;
