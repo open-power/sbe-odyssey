@@ -40,7 +40,8 @@ odyssey_hwp_inc_paths = [
 odyssey_srom_inc_paths = [
         '/genfiles/onetime/odyssey/common',
         '/public/src/onetime/odyssey/srom/bldrloader',
-        '/public/src/onetime/odyssey/srom/core'
+        '/public/src/onetime/odyssey/srom/core',
+        '/public/src/onetime/odyssey/srom/shvsettings',
         ]
 
 odyssey_bldr_inc_paths = [
