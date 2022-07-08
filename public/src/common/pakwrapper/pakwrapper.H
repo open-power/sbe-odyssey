@@ -23,6 +23,9 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
+#ifndef _PAKWRAPPER_H_
+#define _PAKWRAPPER_H_
+
 #include "archive.H"
 /**
  * @brief Wrapper class for one time and stream decompression and hash
@@ -112,3 +115,5 @@ class PakStreamReceiver : public FileArchive::StreamReceiver
         size_t iv_decompressedSize;
 };
 #endif
+
+#endif /* _PAKWRAPPER_H_ */
