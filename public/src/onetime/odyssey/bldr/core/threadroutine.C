@@ -333,10 +333,12 @@ void bldrthreadroutine(void *i_pArg)
         // Write Status code into scratch and halt incase of failure if enforcement is enabled
         // if enforcement is disabled dont halt
         SBE_INFO(SBE_FUNC "Secure Header Verification status code is [0x%02X]", shvRsp.statusCode);
+        SBE::updateErrorCode(shvRsp.statusCode);
         if(shvReq.controlData.secureBootVerificationEnforcement && shvRsp.statusCode != NO_ERROR)
         {
             SBE_INFO(SBE_FUNC "Enforcement Enabled." );
-            SBE::updateErrorCodeAndHalt(shvRsp.statusCode);
+            SBE_ERROR(SBE_FUNC "Halting PPE...");
+            pk_halt();
         }
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_STATUS_CODE_WRITE_INTO_SCRATCH);

@@ -97,6 +97,14 @@ namespace SBE
         pk_halt();
     }
 
+    void updateErrorCode(uint16_t i_errorCode)
+    {
+        secureBootFailStatus_t secureBootFailStatus;
+        getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, &secureBootFailStatus.iv_mbx13);
+        secureBootFailStatus.iv_secureHeaderFailStatusCode = i_errorCode;
+        putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, secureBootFailStatus.iv_mbx13);
+    }
+
     void memcpy_byte(void* vdest, const void* vsrc, size_t len)
     {
 

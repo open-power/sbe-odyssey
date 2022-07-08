@@ -195,6 +195,16 @@ namespace SBE
      */
     void updateErrorCodeAndHalt(uint16_t i_errorCode);
 
+    /*@brief - In  case of any secure boot failures,SROM or Boot loader boot
+     * failures update error code in scratch reg.
+     * This is used when enforcement is disabled where we dont want to halt
+     *
+     * @param[in] - i_errorCode - Error that needs to be updated in scratch reg
+     *
+     * @return - none
+     */
+    void updateErrorCode(uint16_t i_errorCode);
+
     /*@brief - Get lower 32bit number from uint64
      *
      * @param[in] - i_lWord - 64bit long word
