@@ -7,6 +7,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -169,7 +170,7 @@ cat $TEMP_SCRATCH_PATH/odyssey_nor_DD1.img.part0 \
 
 # Inject ecc into the image
 echo "***INFO | SBE | buildnor : Inserting ECC..."
-$ECC_TOOL_PATH --inject $TEMP_SCRATCH_PATH/odyssey_nor_DD1.img --output $OUTPUT_IMAGE_PATH/odyssey_nor_DD1.img.ecc
+$ECC_TOOL_PATH --inject $TEMP_SCRATCH_PATH/odyssey_nor_DD1.img --output $OUTPUT_IMAGE_PATH/odyssey_nor_DD1.img.ecc --p8
 
 # Remove the scratch dir
 rm -rf $TEMP_SCRATCH_PATH
