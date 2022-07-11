@@ -38,7 +38,6 @@
 #include <poz_chiplet_arrayinit.H>
 #include <target_filters.H>
 
-
 using namespace fapi2;
 
 enum POZ_BIST_Private_Constants
@@ -47,6 +46,7 @@ enum POZ_BIST_Private_Constants
 
 void print_bist_params(const bist_params& i_params)
 {
+    FAPI_DBG("version = %d", i_params.BIST_PARAMS_VERSION);
     FAPI_DBG("program = %s", i_params.program);
     FAPI_DBG("ring_patch = %s", i_params.ring_patch);
     FAPI_DBG("chiplets = 0x%x", i_params.chiplets);
@@ -63,7 +63,17 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
 {
     FAPI_INF("Entering ...");
 
+    // TODO once MultiCast Setup is Supported, replace this with it.
     auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
+
+    //Check to see if structure BIST_PARAMS is the expected version.
+    //if(i_params.BIST_PARAMS_VERSION != BIST_PARAMS_CURRENT_VERSION)
+    FAPI_ASSERT(i_params.BIST_PARAMS_VERSION == BIST_PARAMS_CURRENT_VERSION,
+                fapi2::BAD_BIST_PARAMS_FORMAT().
+                set_BIST_PARAMS(i_params.BIST_PARAMS_VERSION),
+                "Expect Version = %d, got Version = %d instead for bist_params structure,",
+                BIST_PARAMS_CURRENT_VERSION, i_params.BIST_PARAMS_VERSION)
+    FAPI_DBG("Received Structure Version = %d, Check Passed.", i_params.BIST_PARAMS_VERSION);
 
     FAPI_DBG("Printing bist_params");
     print_bist_params(i_params);
