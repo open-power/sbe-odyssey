@@ -54,6 +54,35 @@ ARC_RET_t PakWrapper::read_file(const char* i_fileName, void* i_destinationAddr,
     return rc;
 }
 
+uint8_t* PakWrapper::get_image_start_ptr(const char* i_fileName)
+{
+    ARC_RET_t rc = ARC_INVALID_PARAMS;
+    uint8_t* startOffset = NULL;
+
+    if(i_fileName != nullptr)
+    {
+        rc = iv_fileArchive.locate_file(i_fileName, fileArchiveEntry);
+        if (rc != ARC_OPERATION_SUCCESSFUL)
+        {
+            ARC_ERROR(" Pak Read for metadata Failed. Rc: %x ", rc);
+        }
+        else
+        {
+            const void* ptr;
+            rc = get_stored_data_ptr(ptr);
+            if (rc != ARC_OPERATION_SUCCESSFUL)
+            {
+                ARC_ERROR(" Pak Read for metadata Failed. Rc: %x ", rc);
+            }
+            else
+            {
+                startOffset = (uint8_t*)ptr;
+            }
+        }
+    }
+    return startOffset;
+}
+
 #ifndef __SROM_IMAGE__
 uint32_t PakWrapper::stream_file(const char* i_fileName,
             void* i_destinationAddr, uint32_t i_destinationBufferSize, void* o_hash)

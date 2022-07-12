@@ -168,4 +168,9 @@
 // public/src/common/utils/sbeutil.H (HASH_LIST_RETURN_CODES)
 #define FILE_RC_PAYLOAD_HASH_VERIFICATION 0x550
 
+// 0x60 to 0x6f are used for payload image metadata changes
+// Error when image start pointer couldn't be located in nor
+#define FILE_RC_PAYLOAD_GET_IMAGE_START_PTR_ERROR 0x560
+// Error when image metadata start pointer couldn't be located
+#define FILE_RC_PAYLOAD_GET_IMAGE_METADATA_PTR_ERROR 0x561
 #endif

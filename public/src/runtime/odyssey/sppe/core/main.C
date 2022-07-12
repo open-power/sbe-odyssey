@@ -38,6 +38,10 @@
 #include "fapi2_attribute_service.H"
 #include "errorcodes.H"
 #include "measurementregs.H"
+#include "sbeutil.H"
+#include "sbe_build_info.H"
+#include "ppe42_string.h"
+#include "metadata.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -99,6 +103,14 @@ void __eabi()
 
 } // end extern "C"
 
+// Invoke all metadata for an image inside a constant struct to keep the
+// values together.
+const struct PACKED metadata_t {
+    METADATA(IMG, { IMAGES::RUNTIME });
+    METADATA(GIT, { SBE_COMMIT_ID });
+    ImageMetadataHeader end = {0, 0};
+} image_metadata __attribute__ ((section (".sppe_metadata")));
+
 ////////////////////////////////////////////////////////////////
 // @brief - main : ODYSSEY SPPE Application main
 ////////////////////////////////////////////////////////////////
@@ -109,6 +121,7 @@ int  main(int argc, char **argv)
 
     uint64_t loadValue;
     SBE::updateProgressCode(CODE_REACHED_RUNTIME);
+
     //Read the SROM measurement control register and validate if boot complete bit is set
     secureBootCtrlSettings_t sromSecureBootCtrlSettings;
     sromSecureBootCtrlSettings.getSecureBootCtrlSettings(MEASUREMENT_REG_24);

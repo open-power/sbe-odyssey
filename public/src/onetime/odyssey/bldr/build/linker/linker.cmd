@@ -46,6 +46,11 @@ SECTIONS {
         KEEP(*(.vectors));
     }
 
+    . = BOOTLOADER_ORIGIN + VECTOR_SIZE;
+    .bldr_metadata . : {
+        KEEP(*(.bldr_metadata));
+    }
+
     /* Text section */
    .text . : {
         *(.text)
