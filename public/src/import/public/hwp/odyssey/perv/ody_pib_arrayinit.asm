@@ -72,6 +72,6 @@ mod_abist_poll:
          poll     CPLT_STAT, OPCG_DONE, OPCG_DONE, ERR_OPCG_TIMEOUT_ABIST
 
          // Check that ABIST_DONE is set
-         //if not CPLT_STAT0.ABIST_DONE_DC:
+         //if not CPLT_STAT0.ABIST_DONE:
            //FAPI_TRY(ASSERT(SRAM_ABIST_DONE_BIT_ERR));
          poll     CPLT_STAT, ABIST_DONE, ABIST_DONE, ERR_ABIST_TIMEOUT

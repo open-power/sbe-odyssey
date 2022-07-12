@@ -69,7 +69,6 @@ class portTraits< mss::mc_type::ODYSSEY >
         static constexpr uint64_t FARB5Q_REG = scomt::ody::ODC_SRQ_MBA_FARB5Q;
         static constexpr uint64_t FARB6Q_REG = scomt::ody::ODC_SRQ_MBA_FARB6Q;
         static constexpr uint64_t FARB9Q_REG = scomt::ody::ODC_SRQ_MBA_FARB9Q;
-        static constexpr uint64_t PMU8Q_REG = scomt::ody::ODC_SRQ_MBA_PMU8Q;
         static constexpr uint64_t REFRESH_REG = scomt::ody::ODC_SRQ_MBAREF0Q;
         static constexpr uint64_t STR0Q_REG = scomt::ody::ODC_SRQ_MBASTR0Q;
         static constexpr uint64_t ECC_REG = scomt::ody::ODC_WDF_REGS_RECR;
@@ -112,7 +111,8 @@ class portTraits< mss::mc_type::ODYSSEY >
         static constexpr uint64_t  HW_STEERING_DELAY = (250 * mss::DELAY_1MS);
         static constexpr uint64_t  SIM_STEERING_DELAY = (2 * mss::DELAY_100US);
 
-        static constexpr uint8_t MAX_MRANK_PER_PORT = mss::ody::MAX_MRANK_PER_PORT;
+        // Odyssey has 2 maximum ranks in HW
+        static constexpr uint8_t MAX_MRANK_PER_PORT = mss::ody::HW_MAX_MRANK_PER_PORT;
         static constexpr uint8_t MAX_SYMBOLS_PER_PORT = mss::ody::MAX_SYMBOLS_PER_PORT;
 
         // scom register field definition

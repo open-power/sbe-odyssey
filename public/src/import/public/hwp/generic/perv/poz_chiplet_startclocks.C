@@ -69,9 +69,7 @@ ReturnCode poz_chiplet_startclocks(
     // Drop fences before starting clocks because fences are DC and might glitch
     NET_CTRL0 = 0;
     NET_CTRL0.set_FENCE_EN(1);
-    FAPI_TRY(fapi2::putScom(i_target, 0xF0041, NET_CTRL0));
-    //TODO: update Odyssey FigTree
-    //FAPI_TRY(NET_CTRL0.putScom_CLEAR(i_target));
+    FAPI_TRY(NET_CTRL0.putScom_CLEAR(i_target));
 
     FAPI_INF("Start chiplet clocks");
     FAPI_TRY(mod_start_stop_clocks(i_target, i_clock_regions));

@@ -51,9 +51,9 @@ ReturnCode ody_nest_enable_io(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
     FAPI_INF("Entering ...");
 
     FAPI_TRY(ROOT_CTRL1.getScom(i_target));
-    ROOT_CTRL1.set_TP_RI_DC_B(1);
-    ROOT_CTRL1.set_TP_DI1_DC_B(1);
-    ROOT_CTRL1.set_TP_DI2_DC_B(1);
+    ROOT_CTRL1.set_TP_RI_DC_N(1);
+    ROOT_CTRL1.set_TP_DI1_DC_N(1);
+    ROOT_CTRL1.set_TP_DI2_DC_N(1);
     FAPI_TRY(ROOT_CTRL1.putScom(i_target));
 
 fapi_try_exit:

@@ -53,7 +53,12 @@ ReturnCode ody_chiplet_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 
     FAPI_INF("Program DDR PHY Nto1 clock division ratios");
     CPLT_CONF1 = 0;
-    CPLT_CONF1.insertFromRight<24, 6>(0b111111);  //TODO update when register headers are updated
+    CPLT_CONF1.set_24H(1);
+    CPLT_CONF1.set_25H(1);
+    CPLT_CONF1.set_26H(1);
+    CPLT_CONF1.set_27H(1);
+    CPLT_CONF1.set_28H(1);
+    CPLT_CONF1.set_29H(1);
     FAPI_TRY(CPLT_CONF1.putScom_SET(l_mc_chiplets));
 
 fapi_try_exit:

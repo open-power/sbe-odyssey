@@ -55,8 +55,7 @@ ReturnCode ody_chiplet_startclocks(const Target<TARGET_TYPE_OCMB_CHIP>& i_target
 
     FAPI_INF("Drop TP chiplet fence");
     PERV_CTRL0 = 0;
-    PERV_CTRL0.setBit<17>(); // temporary - when headers catch up, remove this and uncomment below
-    //PERV_CTRL0.set_TC_PERV_CHIPLET_FENCE_DC(1);
+    PERV_CTRL0.set_PERV_CHIPLET_FENCE(1);
     FAPI_TRY(PERV_CTRL0.putScom_CLEAR(i_target));
 
     FAPI_INF("Starting chiplet clocks");

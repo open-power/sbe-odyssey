@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -62,7 +63,7 @@ ReturnCode mod_clock_test(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB
         for(int test_value = 0 ; test_value < 2 ; test_value++)
         {
             ROOT_CTRL5.flush<0>();
-            ROOT_CTRL5.set_TCFSI_AN_CLKTOP_RCS_CLK_TEST_IN_DC(1);
+            ROOT_CTRL5.set_RCS_CLK_TEST_IN(1);
 
             if (i_use_cfam_path)
             {

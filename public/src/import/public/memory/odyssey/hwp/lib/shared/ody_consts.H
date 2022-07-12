@@ -80,6 +80,7 @@ enum sizes
     MAX_DQ_BITS_PER_PORT = 80,
     MAX_SYMBOLS_PER_PORT = 72,
     MAX_MRANK_PER_PORT = MAX_DIMM_PER_PORT * MAX_RANK_PER_DIMM,
+    HW_MAX_MRANK_PER_PORT = HW_MAX_DIMM_PER_PORT * HW_MAX_RANK_PER_DIMM,
     MAX_BYTES_PER_PORT = MAX_DQ_BITS_PER_PORT / BITS_PER_BYTE,
     MAX_NIBBLES_PER_PORT = MAX_DQ_BITS_PER_PORT / BITS_PER_NIBBLE,
 
@@ -217,6 +218,16 @@ enum generic_consts
     // Byte where the spare DRAM(s) are located
     SPARE_DQ_BYTE = 5,
 };
+
+///
+/// @brief phy mem_types
+///
+enum phy_mem_types
+{
+    DMEM = 0,
+    IMEM = 1,
+};
+
 
 } // namespace ody
 

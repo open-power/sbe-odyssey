@@ -71,7 +71,7 @@ ReturnCode mod_cbs_start(
 
     FAPI_INF("Drop CFAM protection 0 to ungate VDN_PRESENT");
     FAPI_TRY(ROOT_CTRL0.getCfam(i_target));
-    ROOT_CTRL0.set_CFAM_PROTECTION_0_DC(0);
+    ROOT_CTRL0.set_CFAM_PROTECTION_0(0);
     FAPI_TRY(ROOT_CTRL0.putCfam(i_target));
     // not using putCfam_CLEAR scope here since the same value needs to be written into COPY
 
@@ -153,9 +153,9 @@ ReturnCode mod_switch_pcbmux(
     ROOT_CTRL0.set_OOB_MUX(1);
     FAPI_TRY(ROOT_CTRL0.putScom_SET(i_target));
 
-    FAPI_DBG("Set PCB_RESET_DC bit in ROOT_CTRL0 register.");
+    FAPI_DBG("Set PCB_RESET bit in ROOT_CTRL0 register.");
     ROOT_CTRL0 = 0;
-    ROOT_CTRL0.set_PCB_RESET_DC(1);
+    ROOT_CTRL0.set_PCB_RESET(1);
     FAPI_TRY(ROOT_CTRL0.putScom_SET(i_target));
 
     FAPI_DBG("Enable the new path first to prevent glitches.");
@@ -165,15 +165,15 @@ ReturnCode mod_switch_pcbmux(
 
     FAPI_DBG("Disable the old path.");
     ROOT_CTRL0 = 0;
-    ROOT_CTRL0.set_FSI2PCB_DC(1);
-    ROOT_CTRL0.set_PIB2PCB_DC(1);
-    ROOT_CTRL0.set_PCB2PCB_DC(1);
+    ROOT_CTRL0.set_FSI2PCB(1);
+    ROOT_CTRL0.set_PIB2PCB(1);
+    ROOT_CTRL0.set_PCB2PCB(1);
     FAPI_TRY(ROOT_CTRL0.clearBit(i_path));
     FAPI_TRY(ROOT_CTRL0.putScom_CLEAR(i_target));
 
-    FAPI_DBG("Clear PCB_RESET_DC.");
+    FAPI_DBG("Clear PCB_RESET.");
     ROOT_CTRL0 = 0;
-    ROOT_CTRL0.set_PCB_RESET_DC(1);
+    ROOT_CTRL0.set_PCB_RESET(1);
     FAPI_TRY(ROOT_CTRL0.putScom_CLEAR(i_target));
 
     FAPI_DBG("Drop OOB Mux.");
@@ -325,28 +325,24 @@ ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
     l_data64.flush<0>();
     l_data64.insert< PGOOD_REGIONS_STARTBIT, PGOOD_REGIONS_LENGTH, PGOOD_REGIONS_OFFSET >(l_attr_pg);
     CPLT_CTRL2 = l_data64();
-    FAPI_TRY(CPLT_CTRL2.putScom(get_tp_chiplet_target(i_target)));
+    FAPI_TRY(CPLT_CTRL2.putScom(l_tpchiplet));
 
     FAPI_DBG("Enable PERV vital clock gating");
     PERV_CTRL0 = 0;
-    PERV_CTRL0.set_TP_TCPERV_VITL_CG_DIS(1);
+    PERV_CTRL0.set_VITL_CG_DIS(1);
     FAPI_TRY(PERV_CTRL0.putScom_CLEAR(i_target));
 
     FAPI_DBG("Disable alignment pulse");
     CPLT_CTRL0.flush<0>();
     CPLT_CTRL0.set_CTRL_CC_FORCE_ALIGN(1);
-    //TODO: fixme
-    //FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
-    FAPI_TRY(fapi2::putScom(i_target, 0x01000020, CPLT_CTRL0()));
+    FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(l_tpchiplet));
 
     FAPI_TRY(delay(DELAY_10us, SIM_CYCLE_DELAY));
 
     FAPI_DBG("Allow chiplet PLATs to enter flush");
     CPLT_CTRL0.flush<0>();
     CPLT_CTRL0.set_CTRL_CC_FLUSHMODE_INH(1);
-    //TODO: fixme
-    //FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
-    FAPI_TRY(fapi2::putScom(i_target, 0x01000020, CPLT_CTRL0()));
+    FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(l_tpchiplet));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");

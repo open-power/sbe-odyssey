@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -87,17 +88,17 @@ ReturnCode poz_setup_ref_clock(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYP
 
     FAPI_INF("Set RCS control signals to CFAM reset values, apply basic configuration for output clock enables and forced input clock.");
     ROOT_CTRL5 = 0;
-    ROOT_CTRL5.set_TCFSI_AN_CLKTOP_RCS_RESET_DC(1);
-    ROOT_CTRL5.set_TCFSI_AN_CLKTOP_RCS_BYPASS_DC(1);
+    ROOT_CTRL5.set_RCS_RESET(1);
+    ROOT_CTRL5.set_RCS_BYPASS(1);
 
     if ((l_cp_refclock_select == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1) ||
         (l_cp_refclock_select == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_BOTH_OSC1) ||
         (l_cp_refclock_select == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_BOTH_OSC1_NORED))
     {
-        ROOT_CTRL5.set_TCFSI_AN_CLKTOP_RCS_FORCE_CLKSEL_DC(1);
+        ROOT_CTRL5.set_RCS_FORCE_CLKSEL(1);
     }
 
-    ROOT_CTRL5.set_TCFSI_AN_CLKTOP_RCS_CLK_TEST_IN_DC(0);
+    ROOT_CTRL5.set_RCS_CLK_TEST_IN(0);
     ROOT_CTRL5.set_EN_REFCLK(l_clock_rcs_output_mux20 == fapi2::ENUM_ATTR_CLOCK_RCS_OUTPUT_MUX20_SYNC);
     ROOT_CTRL5.set_EN_ASYNC_OUT(l_clock_rcs_output_mux20 == fapi2::ENUM_ATTR_CLOCK_RCS_OUTPUT_MUX20_ASYNC);
     FAPI_TRY(ROOT_CTRL5.putCfam(i_target));
@@ -107,10 +108,8 @@ ReturnCode poz_setup_ref_clock(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYP
 
     FAPI_INF("Set up refclock receiver termination");
     ROOT_CTRL6 = 0;
-    ROOT_CTRL6.set_CP_RX_REFCLK_TERM(l_sys0_term);   //TODO adapt when headers are updated
-    ROOT_CTRL6.insertFromRight<2, 2>(l_sys1_term);   //TODO
-    ROOT_CTRL6.set_TP_AN_PCI0_RX_REFCLK_TERM(l_pci0_term);
-    ROOT_CTRL6.set_TP_AN_PCI1_RX_REFCLK_TERM(l_pci1_term);
+    ROOT_CTRL6.set_TC_AN_SYS0_RX_REFCLK_TERM(l_sys0_term);
+    ROOT_CTRL6.set_TC_AN_SYS1_RX_REFCLK_TERM(l_sys1_term);
     FAPI_TRY(ROOT_CTRL6.putCfam(i_target));
 
     ROOT_CTRL6_COPY = ROOT_CTRL6;
