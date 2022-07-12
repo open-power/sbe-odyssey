@@ -203,8 +203,7 @@ obldr_package_img = custom_target( 'obldr_package_img',
                                            obldr_dis_file, obldr_part_tbl_gen ],
                                command : [ packaging, meson.current_build_dir(),
                                            odyssey_bldr_img_name, pakTool,
-                                           pakBuildTool, signHashList,
-                                           odyssey_main_fsm_path],
+                                           pakBuildTool, signHashList],
                                build_by_default : true,
                               )
 
