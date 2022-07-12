@@ -56,9 +56,9 @@ ReturnCode ody_tp_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
     // TODO : Set up perv LFIR, XSTOP_MASK, RECOV_MASK via scan inits
 
     FAPI_INF("Entering ...");
-    FAPI_DBG("Drop GLOBAL_EP_RESET_DC.");
+    FAPI_DBG("Drop GLOBAL_EP_RESET.");
     ROOT_CTRL0 = 0;
-    ROOT_CTRL0.set_GLOBAL_EP_RESET_DC(1);
+    ROOT_CTRL0.set_GLOBAL_EP_RESET(1);
     FAPI_TRY(ROOT_CTRL0.putScom_CLEAR(i_target));
 
     FAPI_INF("Start using PCB network");

@@ -80,7 +80,7 @@ ISTEP(99, 99, "poz_perv_mod_chiplet_clocking", "")
 
 def mod_abist_setup(target<PERV|MC>, uint16_t i_clock_regions, uint32_t i_runn_cycles=0x42FFF, uint32_t i_abist_start_at=0xF0, uint32_t i_abist_start_stagger=0):
     # Switch dual-clocked arrays to ABIST clock domain
-    CPLT_CTRL0.CTRL_CC_ABSTCLK_MUXSEL_DC = 1
+    CPLT_CTRL0.ABSTCLK_MUXSEL = 1
 
     # Set up BISTed regions
     BIST = 0
@@ -121,19 +121,19 @@ def mod_abist_poll(target<PERV|MC, MCAST_AND>):
     poll_opcg_done(i_target, 200us, 1120kcyc, 400)
 
     # Check that ABIST_DONE is set
-    if not CPLT_STAT0.ABIST_DONE_DC:
+    if not CPLT_STAT0.ABIST_DONE:
         ASSERT(SRAM_ABIST_DONE_BIT_ERR)
 
 def mod_abist_cleanup(target<PERV|MC>, bool i_clear_sram_abist_mode=true):
     OPCG_REG0 = 0
     CLK_REGION = 0
-    CPLT_CTRL0.CTRL_CC_ABSTCLK_MUXSEL_DC = 0
+    CPLT_CTRL0.ABSTCLK_MUXSEL = 0
     BIST = 0
     BIST.TC_SRAM_ABIST_MODE_DC = !i_clear_sram_abist_mode
 
 def poll_opcg_done(target<PERV|MC, MCAST_AND>, uint32_t i_hw_delay, uint32_t i_sim_delay, uint32_t i_poll_count):
     for i in 1..i_poll_count:
-        if CPLT_STAT.CC_CTRL_OPCG_DONE_DC:
+        if CPLT_STAT.OPCG_DONE:
             return SUCCESS
         delay(i_hw_delay, i_sim_delay)
 
@@ -173,7 +173,7 @@ def mod_align_regions(target<PERV|MC>, uint16_t i_clock_regions):
     ## Wait for chiplets to be aligned
     try 10 times:
         with i_target using MCAST_AND:
-            if CPLT_STAT0.CC_CTRL_CHIPLET_IS_ALIGNED_DC:
+            if CPLT_STAT0.CHIPLET_IS_ALIGNED:
                 break
         delay(100us, 1000cyc)
     else:
@@ -238,8 +238,8 @@ def mod_cbs_start(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_cloc
     # You can pretty much copy the code of p10_start_cbs but be aware that I moved a few steps around and removed some others
 
     # Drop CFAM protection 0 to ungate VDN_PRESENT
-    ROOT_CTRL0.CFAM_PROTECTION_0_DC = 0
-    ROOT_CTRL0_COPY.CFAM_PROTECTION_0_DC = 0
+    ROOT_CTRL0.CFAM_PROTECTION_0 = 0
+    ROOT_CTRL0_COPY.CFAM_PROTECTION_0 = 0
 
     # check for PGOOD
     if not FSI2PIB_STATUS.VDN_PRESENT:
@@ -272,13 +272,13 @@ def mod_switch_pcbmux(target<ANY_POZ_CHIP>, mux_type i_path):
 
     ROOT_CTRL0.OOB_MUX = 1
     # write ROOT_CTRL0
-    ROOT_CTRL0.PCB_RESET_DC = 1
+    ROOT_CTRL0.PCB_RESET = 1
     # write ROOT_CTRL0
     ROOT_CTRL0[bit i_path] = 1               # Enable the new path first to prevent glitches
     # write ROOT_CTRL0
     ROOT_CTRL0[16+18+19 except i_path] = 0   # Then disable the old path
     # write ROOT_CTRL0
-    ROOT_CTRL0.PCB_RESET_DC = 0
+    ROOT_CTRL0.PCB_RESET = 0
     # write ROOT_CTRL0
     ROOT_CTRL0.OOB_MUX = 0
 
@@ -359,7 +359,7 @@ def mod_poz_tp_init_common(target<ANY_POZ_CHIP>):
     # IPOLL_MASK_INIT = 0xFC00_0000_0000_0000
     HOST_MASK_REG = IPOLL_MASK_INIT          # Set up IPOLL mask
     CPLT_CTRL2 = ATTR_PG(PERV)               # Transfer PERV partial good attribute into region good register
-    PERV_CTRL0.TP_TCPERV_VITL_CG_DIS = 0     # Enabe PERV vital clock gating
+    PERV_CTRL0.VITL_CG_DIS = 0     # Enabe PERV vital clock gating
     CPLT_CTRL0.CTRL_CC_FORCE_ALIGN_DC = 0    # Disable alignment pulse
     delay(10us, 1000cyc)
     CPLT_CTRL0.CTRL_CC_FLUSHMODE_INH_DC = 0  # Allow chiplet PLATs to enter flush

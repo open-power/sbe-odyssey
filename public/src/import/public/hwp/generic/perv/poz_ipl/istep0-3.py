@@ -90,18 +90,18 @@ def p11_shutdown():
     # CONTROL_WRITE_PROTECT_DISABLE = 0x4453FFFF
     GPWRP = CONTROL_WRITE_PROTECT_DISABLE         # Disable Write Protection for Root/Perv Control registers (in case the chip has just been reset)
 
-    ROOT_CTRL1.TPFSI_TP_GLB_PERST_OVR_DC = 1      # Assert all PERST# outputs
-    ROOT_CTRL0.TPFSI_IO_OCMB_RESET_EN = 1         # Assert OCMB reset
+    ROOT_CTRL1.GLOBAL_PERST_OVERRIDE = 1      # Assert all PERST# outputs
+    ROOT_CTRL0.OCMB_RESET = 1         # Assert OCMB reset
     delay(100ms, 0cyc)                            # Don't wait in sim, but do wait on real HW to give PCI devices time to reset
 
-    PERV_CTRL0.TP_TCPERV_PCB_EP_RESET_DC = 1      # Raise PERV EP reset to raise all PERV region fences
-    PERV_CTRL0.TP_FENCE_EN_DC = 1                 # Raise Pervasive chiplet fence to protect FSI
-    ROOT_CTRL0.CFAM_PROTECTION_0_DC = 1           # Raise CFAM protections
+    PERV_CTRL0.PCB_EP_RESET = 1      # Raise PERV EP reset to raise all PERV region fences
+    PERV_CTRL0.PERV2FSI_CHIPLET_FENCE = 1                 # Raise Pervasive chiplet fence to protect FSI
+    ROOT_CTRL0.CFAM_PROTECTION_0 = 1           # Raise CFAM protections
     ROOT_CTRL0[bits 8:15] = 0xFF                  # Raise CFAM protections
-    ROOT_CTRL0.GLOBAL_EP_RESET_DC = 1             # Assert global endpoint reset to reset all chiplets
+    ROOT_CTRL0.GLOBAL_EP_RESET = 1             # Assert global endpoint reset to reset all chiplets
     ROOT_CTRL7 = 0                                # Turn off all outgoing refclocks
     ROOT_CTRL1[5 bits starting at TP_RI_DC_B] = 0 # Disable TP drivers and receivers
-    ROOT_CTRL0.TPFSI_TPI2C_BUS_FENCE_DC = 0       # Clear FSI I2C fence to allow access from FSP side
+    ROOT_CTRL0.TP_I2C_BUS_FENCE = 0       # Clear FSI I2C fence to allow access from FSP side
 
 def zme_shutdown():
     p11_shutdown()
@@ -151,14 +151,12 @@ def poz_setup_ref_clock(target<PROC_CHIP | HUB_CHIP>):
     ROOT_CTRL6 = 0
     ROOT_CTRL6.TP_AN_SYS0_RX_REFCLK_TERM = ATTR_SYS0_REFCLOCK_RCVR_TERM
     ROOT_CTRL6.TP_AN_SYS1_RX_REFCLK_TERM = ATTR_SYS1_REFCLOCK_RCVR_TERM
-    ROOT_CTRL6.TP_AN_PCI0_RX_REFCLK_TERM = ATTR_PCI0_REFCLOCK_RCVR_TERM
-    ROOT_CTRL6.TP_AN_PCI1_RX_REFCLK_TERM = ATTR_PCI1_REFCLOCK_RCVR_TERM
 
     ROOT_CTRL6_COPY = ROOT_CTRL6      # Update copy register to match
 
     ## Unprotect inputs to RCS sense register
-    ROOT_CTRL0.CFAM_PROTECTION_0_DC = 0
-    ROOT_CTRL0_COPY.CFAM_PROTECTION_0_DC = 0
+    ROOT_CTRL0.CFAM_PROTECTION_0 = 0
+    ROOT_CTRL0_COPY.CFAM_PROTECTION_0 = 0
 
 def p11_setup_ref_clock():
     poz_setup_ref_clock()
@@ -184,20 +182,18 @@ def p11_setup_ref_clock():
 
     ## Set up clock muxing, application dependent
     ROOT_CTRL4 = 0
-    ROOT_CTRL4.TP_AN_REFCLK_CLKMUX0_SEL_DC  = ATTR_CLOCK_TOD_INPUT_MUX0             # uint8, FPLL1 = 0, FPLL2 = 1
-    ROOT_CTRL4.TP_AN_REFCLK_CLKMUX1_SEL_DC  = ATTR_CLOCK_NEST_TCK_MUX1              # uint8, NEST_PLL = 0, TCK = 1
-    ROOT_CTRL4.TP_AN_REFCLK_CLKMUX20_SEL_DC = ATTR_CLOCK_RCS_OUTPUT_MUX20           # uint8, BYPASS = 0, SYNC = 1, ASYNC = 2
-    ROOT_CTRL4.TP_AN_REFCLK_CLKMUX21_SEL_DC = ATTR_CLOCK_FPLL2_INPUT_MUX21          # uint8, FPLL1 = 0, MUX20 = 1
-    ROOT_CTRL4.TP_AN_REFCLK_CLKMUX22_SEL_DC = ATTR_CLOCK_FPLL34_INPUT_MUX22         # uint8, FPLL2 = 0, MUX21 = 1
-    ROOT_CTRL4.TP_AN_REFCLK_CLKMUX23_SEL_DC = ATTR_CLOCK_133M_FPLL12_MUX23          # uint8, FPLL1 = 0, FPLL2 = 1
-    ROOT_CTRL4.TP_AN_REFCLK_CLKMUX24_SEL_DC = ATTR_CLOCK_133M_NEST_REFCLK_MUX24     # uint8, MUX23 = 0, FPLL3 = 1, FPLL4 = 2
-    ROOT_CTRL4.TP_AN_REFCLK_CLKMUX25_SEL_DC = ATTR_CLOCK_133M_MC_REFCLK_MUX25       # uint8, MUX23 = 0, FPLL3 = 1, FPLL4 = 2
-    ROOT_CTRL4.TP_AN_REFCLK_CLKMUX26_SEL_DC = ATTR_CLOCK_133M_PAXO_REFCLK_MUX26     # uint8, MUX23 = 0, FPLL3 = 1, FPLL4 = 2
-    ROOT_CTRL4.TP_AN_REFCLK_CLKMUX27_SEL_DC = ATTR_CLOCK_100M_PAXO_REFCLK_MUX27     # uint8, FPLL2 = 0, FPLL3 = 1, FPLL4 = 2
-    ROOT_CTRL4.TP_AN_REFCLK_CLKMUX28_SEL_DC = ATTR_CLOCK_100M_PAXO_REFCLK_MUX28     # uint8, MUX23 = 0, FPLL3 = 1, FPLL4 = 2
-    ROOT_CTRL4.TP_AN_CLKGLM_NEST_ASYNC_RESET_DC = 0
-    ROOT_CTRL4.TP_AN_NEST_DIV2_ASYNC_RESET_DC = 0
-    ROOT_CTRL4.TP_PLL_FORCE_OUT_EN_DC = 1
+    ROOT_CTRL4.CLKMUX0_SEL  = ATTR_CLOCK_TOD_INPUT_MUX0             # uint8, FPLL1 = 0, FPLL2 = 1
+    ROOT_CTRL4.TEST_TCK_SEL = ATTR_CLOCK_NEST_TCK_MUX1              # uint8, NEST_PLL = 0, TCK = 1
+    ROOT_CTRL4.CLKMUX20_SEL = ATTR_CLOCK_RCS_OUTPUT_MUX20           # uint8, BYPASS = 0, SYNC = 1, ASYNC = 2
+    ROOT_CTRL4.CLKMUX21_SEL = ATTR_CLOCK_FPLL2_INPUT_MUX21          # uint8, FPLL1 = 0, MUX20 = 1
+    ROOT_CTRL4.CLKMUX22_SEL = ATTR_CLOCK_FPLL34_INPUT_MUX22         # uint8, FPLL2 = 0, MUX21 = 1
+    ROOT_CTRL4.CLKMUX23_SEL = ATTR_CLOCK_133M_FPLL12_MUX23          # uint8, FPLL1 = 0, FPLL2 = 1
+    ROOT_CTRL4.CLKMUX24_SEL = ATTR_CLOCK_133M_NEST_REFCLK_MUX24     # uint8, MUX23 = 0, FPLL3 = 1, FPLL4 = 2
+    ROOT_CTRL4.CLKMUX25_SEL = ATTR_CLOCK_133M_MC_REFCLK_MUX25       # uint8, MUX23 = 0, FPLL3 = 1, FPLL4 = 2
+    ROOT_CTRL4.CLKMUX26_SEL = ATTR_CLOCK_133M_PAXO_REFCLK_MUX26     # uint8, MUX23 = 0, FPLL3 = 1, FPLL4 = 2
+    ROOT_CTRL4.CLKMUX27_SEL = ATTR_CLOCK_100M_PAXO_REFCLK_MUX27     # uint8, FPLL2 = 0, FPLL3 = 1, FPLL4 = 2
+    ROOT_CTRL4.CLKMUX28_SEL = ATTR_CLOCK_100M_PAXO_REFCLK_MUX28     # uint8, MUX23 = 0, FPLL3 = 1, FPLL4 = 2
+    ROOT_CTRL4.NEST_GLM_ASYNC_RESET = 0
 
     ROOT_CTRL4_COPY = ROOT_CTRL4      # Update copy register to match
 
@@ -213,9 +209,9 @@ def zme_setup_ref_clock():
     ## Set up clock muxing, application dependent
     ROOT_CTRL4 = 0
     # TODO:  Set up zMe refclock muxing
-    ROOT_CTRL4.TP_AN_CLKGLM_NEST_ASYNC_RESET_DC = 0
-    ROOT_CTRL4.TP_AN_NEST_DIV2_ASYNC_RESET_DC = 0
-    ROOT_CTRL4.TP_PLL_FORCE_OUT_EN_DC = 1
+    ROOT_CTRL4.NEST_GLM_ASYNC_RESET = 0
+    ROOT_CTRL4.NEST_DIV2_ASYNC_RESET = 0
+    ROOT_CTRL4.PLL_FORCE_OUT_EN = 1
 
     ROOT_CTRL4_COPY = ROOT_CTRL4      # Update copy register to match
 
@@ -290,21 +286,21 @@ ISTEP(1, 2, "ph_tp_chiplet_reset", "SPPE")
 # executes from ROM driven by command table
 
 def p11s_tp_chiplet_reset():
-    ROOT_CTRL0.PCB_RESET_DC = 0       # Drop PCB interface reset to enable access into TP chiplet
+    ROOT_CTRL0.PCB_RESET = 0       # Drop PCB interface reset to enable access into TP chiplet
 
     ROOT_CTRL1.TP_TPM_DI1_DC_B = 0b1   # Enable TPM SPI port
 
-    CPLT_CONF1.TP_AN_NEST_PROGDLY_SETTING_DC = 7   # Set up static progdelay for the nest mesh
-    PERV_CTRL1.TP_CPLT_CLK_NEST_PDLY_BYPASS_DC = 0 # Drop nest PDLY bypass
+    CPLT_CONF1.NEST_PDLY = 7                       # Set up static progdelay for the nest mesh
+    PERV_CTRL1.TP_CPLT_CLK_NEST_PDLY_BYPASS_DC = 0 # Drop nest PDLY/DCC bypass
 
 def ody_tp_chiplet_reset():
-    ROOT_CTRL0.PCB_RESET_DC = 0       # Drop PCB interface reset to enable access into TP chiplet
+    ROOT_CTRL0.PCB_RESET = 0       # Drop PCB interface reset to enable access into TP chiplet
 
 def zme_tp_chiplet_reset():
-    ROOT_CTRL0.PCB_RESET_DC = 0       # Drop PCB interface reset to enable access into TP chiplet
+    ROOT_CTRL0.PCB_RESET = 0       # Drop PCB interface reset to enable access into TP chiplet
 
     if ATTR_BURNIN:
-        ROOT_CTRL1.TP_TEST_BURNIN_MODE_DC = 1
+        ROOT_CTRL1.BURNIN_MODE = 1
 
     PERV_CTRL0.SRAM_ENABLE_DC = 1
 
@@ -325,7 +321,7 @@ ISTEP(1, 4, "ph_tp_pll_setup", "SPPE")
 # executes from ROM driven by command table
 
 def p11s_tp_pll_setup():
-    CPLT_CTRL1.TC_REGION13_FENCE_DC = 0   # Drop PLL region fence
+    CPLT_CTRL1.REGION13_FENCE = 0   # Drop PLL region fence
 
     if not ATTR_CP_PLLFLT_BYPASS:
         ## Start chip filter PLLs
@@ -357,7 +353,7 @@ def p11s_tp_pll_setup():
         ROOT_CTRL3.TP_PLLNEST_BYPASS_DC = 0
 
 def ody_tp_pll_setup():
-    CPLT_CTRL1.TC_REGION13_FENCE_DC = 0   # Drop PLL region fence
+    CPLT_CTRL1.REGION13_FENCE = 0   # Drop PLL region fence
 
     if not ATTR_PLL_BYPASS:
         ## Attempt to lock PLL
@@ -565,7 +561,7 @@ def p11s_tp_init():
     # TODO : Set up perv LFIR, XSTOP_MASK, RECOV_MASK via scan inits
 
     ## Start using PCB network
-    ROOT_CTRL0.GLOBAL_EP_RESET_DC = 0        # Drop Global Endpoint reset
+    ROOT_CTRL0.GLOBAL_EP_RESET = 0        # Drop Global Endpoint reset
     mod_switch_pcbmux(i_target, mux::PCB2PCB)
 
     ## Set up static multicast groups
@@ -599,7 +595,7 @@ def ody_tp_init():
     # TODO : Set up perv LFIR, XSTOP_MASK, RECOV_MASK via scan inits
 
     ## Start using PCB network
-    ROOT_CTRL0.GLOBAL_EP_RESET_DC = 0        # Drop Global Endpoint reset
+    ROOT_CTRL0.GLOBAL_EP_RESET = 0        # Drop Global Endpoint reset
     mod_switch_pcbmux(i_target, mux::PCB2PCB)
 
     ## Set up static multicast groups
@@ -621,7 +617,7 @@ def zme_tp_init():
     # TODO : Set up perv LFIR, XSTOP_MASK, RECOV_MASK via scan inits
 
     ## Start using PCB network
-    ROOT_CTRL0.GLOBAL_EP_RESET_DC = 0        # Drop Global Endpoint reset
+    ROOT_CTRL0.GLOBAL_EP_RESET = 0        # Drop Global Endpoint reset
     mod_switch_pcbmux(i_target, mux::PCB2PCB)
 
     ## Set up static multicast groups
@@ -689,11 +685,9 @@ def p11t_fsi_config():
 
     ## Set up Tap clock muxing
     ROOT_CTRL4 = 0 (reset value)
-    ROOT_CTRL4.TP_AN_REFCLK_CLKMUX0_SEL_DC = ATTR_CLOCK_MUX0
-    ROOT_CTRL4.TP_AN_REFCLK_CLKMUX1_SEL_DC = ATTR_CLOCK_MUX1
-    ROOT_CTRL4.TP_AN_CLKGLM_NEST_ASYNC_RESET_DC = 0
-    ROOT_CTRL4.TP_AN_NEST_DIV2_ASYNC_RESET_DC = 0
-    ROOT_CTRL4.TP_PLL_FORCE_OUT_EN_DC = 1
+    ROOT_CTRL4.TEST_TCK_SEL = ATTR_CLOCK_MUX1
+    ROOT_CTRL4.NEST_GLM_ASYNC_RESET = 0
+    ROOT_CTRL4.NEST_DIV2_ASYNC_RESET = 0
 
     ROOT_CTRL4_COPY = ROOT_CTRL4      # Update copy register to match
 
@@ -705,7 +699,7 @@ def p11t_cbs_start():
 ISTEP(2, 4, "pc_tp_chiplet_reset", "SPPE")
 
 def p11t_tp_chiplet_reset():
-    ROOT_CTRL0.PCB_RESET_DC = 0       # Drop PCB interface reset to enable access into TP chiplet
+    ROOT_CTRL0.PCB_RESET = 0       # Drop PCB interface reset to enable access into TP chiplet
 
     # No scan0 needed since the CBS just took care of that
 
@@ -837,7 +831,7 @@ def p11t_pll_setup():
         return
 
     ## Write sector buffer strength
-    PERV_CTRL1.TP_SEC_BUF_DRV_STRENGTH_DC = ATTR_SECTOR_BUFFER_STRENGTH
+    PERV_CTRL1.SEC_BUF_STRENGTH = ATTR_SECTOR_BUFFER_STRENGTH
 
     ## Initialize DPLL to mode1, write frequency settings
     DPLL_CTRL = 0
@@ -890,7 +884,7 @@ def p11t_tp_init():
     # TODO : Set up perv LFIR, XSTOP_MASK, RECOV_MASK via scan inits
 
     ## Start using PCB network
-    ROOT_CTRL0.GLOBAL_EP_RESET_DC = 0        # Drop Global Endpoint reset
+    ROOT_CTRL0.GLOBAL_EP_RESET = 0        # Drop Global Endpoint reset
     mod_switch_pcbmux(i_target, mux::PCB2PCB)
 
     ## Set up static multicast groups
@@ -1026,7 +1020,7 @@ def zme_chiplet_reset():
         # ABIST/arrayinit them in the Hotplug case we must ensure that Nest
         # is out of flush.
         CPLT_CTRL0.CTRL_CC_FLUSHMODE_INH_DC = 1
-        CPLT_CONF0.CTRL_CC_SDIS_DC_N = 1
+        CPLT_CONF0.SDIS_N = 1
 
 def poz_chiplet_reset(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64]):
     if ATTR_HOTPLUG:
@@ -1039,7 +1033,7 @@ def poz_chiplet_reset(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64]):
         NET_CTRL0.PCB_EP_RESET = 1
         # write NET_CTRL0
         NET_CTRL0.PCB_EP_RESET = 0
-        NET_CTRL0.CHIPLET_ENABLE = 1
+        NET_CTRL0.CHIPLET_EN = 1
 
         ## Set up clock controllers
         SYNC_CONFIG = 0
@@ -1145,7 +1139,7 @@ def poz_chiplet_pll_setup():
     if ATTR_IO_PLL_BYPASS:
         return
 
-    CPLT_CTRL1.TC_REGION13_FENCE_DC = 0    # Drop PLL region fences
+    CPLT_CTRL1.REGION13_FENCE = 0    # Drop PLL region fences
 
     with all chiplets except TP via multicast:
         ## Start chiplet PLLs
@@ -1313,13 +1307,13 @@ ISTEP(3, 15, "proc_chiplet_init", "SSBE, TSBE")
 
 def p11s_chiplet_init():
     ## Set up topology ID
-    CPLT_CONF0.TC_TOPOLOGY_MODE_DC = ATTR_FABRIC_TOPOLOGY_MODE
-    CPLT_CONF0.TC_TOPOLOGY_ID_DC   = ATTR_FABRIC_TOPOLOGY_ID
+    CPLT_CONF0.TOPOLOGY_MODE = ATTR_FABRIC_TOPOLOGY_MODE
+    CPLT_CONF0.TOPOLOGY_ID   = ATTR_FABRIC_TOPOLOGY_ID
 
 def p11t_chiplet_init():
     ## Set up topology and octant ID
-    CPLT_CONF0.TC_TOPOLOGY_MODE_DC = ATTR_FABRIC_TOPOLOGY_MODE
-    CPLT_CONF0.TC_TOPOLOGY_ID_DC   = ATTR_FABRIC_TOPOLOGY_ID
+    CPLT_CONF0.TOPOLOGY_MODE = ATTR_FABRIC_TOPOLOGY_MODE
+    CPLT_CONF0.TOPOLOGY_ID   = ATTR_FABRIC_TOPOLOGY_ID
     CPLT_CONF0.TC_OCTANT_ID_DC     = ATTR_POS
 
 def ody_chiplet_init():
@@ -1395,12 +1389,12 @@ def zme_chiplet_startclocks():
         ## Put Nest chiplet back into flush
         # Undo the hack from chiplet_reset
         CPLT_CTRL0.CTRL_CC_FLUSHMODE_INH_DC = 0
-        CPLT_CONF0.CTRL_CC_SDIS_DC_N = 0
+        CPLT_CONF0.SDIS_N = 0
 
 def poz_chiplet_startclocks(target<PERV|MC>, uint16_t i_clock_regions=cc::REGION_ALL_BUT_PLL):
     ## Switch ABIST and sync clock muxes to functional state
-    CPLT_CTRL0.CTRL_CC_ABSTCLK_MUXSEL_DC = 0
-    CPLT_CTRL0.TC_UNIT_SYNCCLK_MUXSEL_DC = 0
+    CPLT_CTRL0.ABSTCLK_MUXSEL = 0
+    CPLT_CTRL0.SYNCCLK_MUXSEL = 0
 
     ## Disable listen to sync
     # Use read-compare here to make sure all clock controllers are set up the same coming in
@@ -1411,7 +1405,7 @@ def poz_chiplet_startclocks(target<PERV|MC>, uint16_t i_clock_regions=cc::REGION
 
     ## Drop chiplet fence
     # Drop fences before starting clocks because fences are DC and might glitch
-    NET_CTRL0.TP_FENCE_EN_DC = 0
+    NET_CTRL0.PERV2FSI_CHIPLET_FENCE = 0
 
     ## Start chiplet clocks
     mod_start_stop_clocks(i_target, i_clock_regions)
@@ -1553,15 +1547,15 @@ def zme_nest_enable_io():
     poz_nest_enable_io()
 
 def poz_nest_enable_io():
-    ROOT_CTRL1.TPFSI_TP_GLB_PERST_OVR_DC = 0
+    ROOT_CTRL1.GLOBAL_PERST_OVERRIDE = 0
     ROOT_CTRL1.TP_RI_DC_B  = 1
     ROOT_CTRL1.TP_DI1_DC_B = 1
     ROOT_CTRL1.TP_DI2_DC_B = 1
 
     for chiplet in TARGET_FILTER_NEST:
-        NET_CTRL0.CPLT_DCTRL = 1
-        NET_CTRL0.CPLT_RCTRL = 1
-        NET_CTRL0.CPLT_RCTRL2 = 1
+        NET_CTRL0.DCTRL = 1
+        NET_CTRL0.RCTRL = 1
+        NET_CTRL0.RCTRL2 = 1
 
 ISTEP(3, 25, "proc_chiplet_scominit", "SSBE, TSBE")
 

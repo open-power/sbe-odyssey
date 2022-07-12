@@ -71,9 +71,7 @@ ReturnCode poz_chiplet_clk_config(
         NET_CTRL0 = 0;
         NET_CTRL0.set_CLK_ASYNC_RESET(1);
         NET_CTRL0.set_LVLTRANS_FENCE(1);
-        FAPI_TRY(fapi2::putScom(l_chiplets_mc, 0xF0041, NET_CTRL0));
-        //TODO: update Odyssey FigTree
-        //FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
+        FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
 
         NET_CTRL0 = 0;
         NET_CTRL0.set_PLLFORCE_OUT_EN(1);

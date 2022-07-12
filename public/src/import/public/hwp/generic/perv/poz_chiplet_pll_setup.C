@@ -67,15 +67,11 @@ ReturnCode poz_chiplet_pll_setup(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targe
         FAPI_INF("Start chiplet PLLs");
         NET_CTRL0 = 0;
         NET_CTRL0.set_PLL_TEST_EN(1);
-        FAPI_TRY(fapi2::putScom(l_chiplets_mc, 0xF0041, NET_CTRL0));
-        //TODO: update Odyssey FigTree
-        //FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
+        FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
 
         NET_CTRL0 = 0;
         NET_CTRL0.set_PLL_RESET(1);
-        FAPI_TRY(fapi2::putScom(l_chiplets_mc, 0xF0041, NET_CTRL0));
-        //TODO: update Odyssey FigTree
-        //FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
+        FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
 
         FAPI_INF("Check for PLL lock");
         FAPI_TRY(mod_poll_pll_lock(l_chiplets_mc, pll::ALL_PLLS));
@@ -83,9 +79,7 @@ ReturnCode poz_chiplet_pll_setup(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targe
         FAPI_INF("Release PLL bypass");
         NET_CTRL0 = 0;
         NET_CTRL0.set_PLL_BYPASS(1);
-        FAPI_TRY(fapi2::putScom(l_chiplets_mc, 0xF0041, NET_CTRL0));
-        //TODO: update Odyssey FigTree
-        //FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
+        FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
 
         FAPI_INF("Enable PLL unlock error reporting");
 
