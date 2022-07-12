@@ -192,9 +192,12 @@ void bldrthreadroutine(void *i_pArg)
 
             UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_READING_SROM_SETTINGS_FROM_MEASUREMENT);
 
-            //We need to keep all settings same as SROM except for MSV
+            //We need to keep all settings same as SROM except for MSV and matching MSV check
             //Lets update MSV thats read from PNOR
             bldrSecureBootCtrlSettings.msv = hwKeysHashMsv.msv;
+
+            // Matching MSV check does not apply for Runtime secure hdr
+            bldrSecureBootCtrlSettings.enforceMatchingMSV = 0x0;
 
             //Check if SROM boot complete bit is set. If not halt
             if(bldrSecureBootCtrlSettings.bootComplete != 0x01)
