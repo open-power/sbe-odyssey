@@ -23,7 +23,8 @@
 #
 # IBM_PROLOG_END_TAG
 
-infile_c = ['sbeutil.C'
+infile_c = ['sbeutil.C',
+            'metadata_base.C'
             ]
 
 lib_file_name = 'cmnutils'

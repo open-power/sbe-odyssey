@@ -125,6 +125,7 @@ cmn_inc_paths = [
     '/public/src/common/algorithms/sha3',
     '/public/src/build/links',
     '/public/src/common/pakwrapper',
+    '/genfiles/common',
         ]
 
 runtime_cmn_inc_paths = [

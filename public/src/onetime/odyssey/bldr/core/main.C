@@ -33,6 +33,10 @@
 #include "progresscode.H"
 #include "sbeutil.H"
 #include "p11_scom_perv_cfam.H"
+#include "odysseylink.H"
+#include "sbe_build_info.H"
+#include "ppe42_string.h"
+#include "metadata.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -98,6 +102,15 @@ void __eabi()
 
 } // end extern "C"
 
+// Invoke all metadata for an image inside a constant struct to keep the
+// values together.
+const struct PACKED metadata_t {
+    METADATA(IMG, { IMAGES::BOOTLOADER });
+    METADATA(GIT, { SBE_COMMIT_ID });
+    METADATA(LDA, { BOOTLOADER_ORIGIN } );
+    ImageMetadataHeader end = {0, 0};
+} image_metadata __attribute__ ((section (".bldr_metadata")));
+
 ////////////////////////////////////////////////////////////////
 // @brief - main : ODYSSEY Boot Loader Application main
 ////////////////////////////////////////////////////////////////
@@ -107,10 +120,13 @@ int  main(int argc, char **argv)
 
     int rc = 0;
 
+    UPDATE_BLDR_SBE_PROGRESS_CODE(ENTERED_BLDR_MAIN);
+
+    // Update metadata
+    memcpy((void *)METADATA_START, &image_metadata, sizeof(metadata_t));
+
     do
     {
-        UPDATE_BLDR_SBE_PROGRESS_CODE(ENTERED_BLDR_MAIN);
-
         rc = pk_initialize((PkAddress)bldr_Kernel_NC_Int_stack,
                 BLDR_NONCRITICAL_STACK_SIZE,
                 INITIAL_PK_TIMEBASE, // initial_timebase

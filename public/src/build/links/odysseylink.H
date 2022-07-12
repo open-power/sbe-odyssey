@@ -37,10 +37,17 @@
 #define SRAM_SIZE                       0x80000
 #define SRAM_END                        (SRAM_ORIGIN + SRAM_SIZE - LAST_BYTE)
 
+#define METADATA_START                  (SRAM_ORIGIN + VECTOR_SIZE)
+
 // SROM IMAGE
 #define SROM_ORIGIN                     0xFFF70000
 #define SROM_SIZE                       0x10000
 #define SROM_DATA_SIZE                  0x7800
+
+// Vector for SROM image will remain part of SROM area as its not moved to SRAM.
+// We are keeping 0x200 bytes allocated and empty at the top of SRAM to keep
+// metadata offset common for all images.
+#define SROM_SRAM_START                 METADATA_START
 
 // Common scratch used by SROM and Boot Loader code for dilithium
 #define SROM_BOOTLOADER_SCRATCH_START   (SRAM_ORIGIN + SROM_DATA_SIZE)

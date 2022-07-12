@@ -45,6 +45,13 @@ extern "C" {
 
 #define SBE_MESSAGE_REG_PROGRESS_CODE_BIT_MASK 0x3F00000000
 
+typedef enum
+{
+    SROM = 1,
+    BOOTLOADER,
+    RUNTIME
+}IMAGES;
+
 // To handle unused variables compilation error
 static inline void UNUSED(int dummy, ...) {}
 

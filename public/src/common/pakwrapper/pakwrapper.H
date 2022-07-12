@@ -56,6 +56,13 @@ class PakWrapper
          */
         ARC_RET_t read_file(const char* i_fileName, void* i_destinationAddr, uint32_t i_destinationBufferSize, sha3_t* o_hash, uint32_t *o_uncompressedSize);
 
+        /**
+         * @brief Get image start offset in nor
+         *
+         * @param[in] i_fileName pointer to file name to look for.
+         * @param[out] pointer to image start offset
+         * */
+        uint8_t* get_image_start_ptr(const char* i_fileName);
 
         __attribute__((always_inline))
         uint32_t get_size()

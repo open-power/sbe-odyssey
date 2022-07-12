@@ -46,6 +46,11 @@ SECTIONS {
         KEEP(*(.vectors));
     }
 
+    . = SPPE_ORIGIN + 0x200;
+    .sppe_metadata . : {
+        KEEP(*(.sppe_metadata));
+    }
+
     /* Text section */
    .text . : {
         *(.text)
