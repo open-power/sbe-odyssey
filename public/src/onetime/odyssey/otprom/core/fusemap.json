@@ -265,7 +265,7 @@
         {
             "field": "hwPubKeyHashSet2_1",
             "field_size": 64,
-            "value": "0xDEADC0DE",
+            "value": "0xf525ce11cc941c79",
             "description": "Hardware Public Key Hash Set 2. (0..7)"
         }
     ],
@@ -277,7 +277,7 @@
         {
             "field": "hwPubKeyHashSet2_2",
             "field_size": 64,
-            "value": "0xDEADC0DE",
+            "value": "0x5aac53ddefc3b037",
             "description": "Hardware Public Key Hash Set 2. (8..15)"
         }
     ],
@@ -289,7 +289,7 @@
         {
             "field": "hwPubKeyHashSet2_3",
             "field_size": 64,
-            "value": "0xDEADC0DE",
+            "value": "0x46698eee16e5f4a8",
             "description": "Hardware Public Key Hash Set 2. (16..23)"
         }
     ],
@@ -301,7 +301,7 @@
         {
             "field": "hwPubKeyHashSet2_4",
             "field_size": 64,
-            "value": "0xDEADC0DE",
+            "value": "0xc5338ab58a400b8d",
             "description": "Hardware Public Key Hash Set 2. (24..31)"
         }
     ],
@@ -313,7 +313,7 @@
         {
             "field": "hwPubKeyHashSet2_5",
             "field_size": 64,
-            "value": "0xDEADC0DE",
+            "value": "0x78e56061e8991ee6",
             "description": "Hardware Public Key Hash Set 2. (32..39)"
         }
     ],
@@ -325,7 +325,7 @@
         {
             "field": "hwPubKeyHashSet2_6",
             "field_size": 64,
-            "value": "0xDEADC0DE",
+            "value": "0xa764295239ec0ea0",
             "description": "Hardware Public Key Hash Set 2. (40..47)"
         }
     ],
@@ -337,7 +337,7 @@
         {
             "field": "hwPubKeyHashSet2_7",
             "field_size": 64,
-            "value": "0xDEADC0DE",
+            "value": "0x6ebb91660af3aff7",
             "description": "Hardware Public Key Hash Set 2. (48..55)"
         }
     ],
@@ -349,7 +349,7 @@
         {
             "field": "hwPubKeyHashSet2_8",
             "field_size": 64,
-            "value": "0xDEADC0DE",
+            "value": "0xaeb7813e1add1e3d",
             "description": "Hardware Public Key Hash Set 2. (56..63)"
         }
     ],
