@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,9 +31,14 @@ import_dir_path_inc_paths = [
         '-I' + pub_import_dir_path + '/hwp/generic/perv',
     ]
 
+odyssey_fsm_path = meson.current_build_dir()
+
+############################ main.fsm #######################################
+
 infile_asm = [
     'ody_tp_chiplet_reset.asm',
     'ody_tp_pll_setup.asm',
+    'ody_pib_repr_initf.asm',
     'ody_pib_arrayinit.asm',
     'ody_pib_arrayinit_cleanup.asm',
     'ody_pib_startclocks.asm'
@@ -59,8 +65,40 @@ foreach infile : infile_asm
 endforeach
 
 #Link all generated tables and generat main.fsm
-odyssey_main_fsm_path = meson.current_build_dir()
-run_result = run_command(cmdTableTool, 'link', '-q', '-o', odyssey_main_fsm_path + '/main.fsm', outfile_tbl_list)
+run_result = run_command(cmdTableTool, 'link', '-q', '-o', odyssey_fsm_path + '/main.fsm', outfile_tbl_list)
+if (run_result.returncode() != 0)
+  error(run_result.stderr())
+  message(run_result.stdout())
+endif
+
+############################ cust.fsm #######################################
+
+infile_asm = [
+    'cust.asm',
+    ]
+
+outfile_tbl_list = []
+
+#Create abs path for input files and generate .tbl file for every .asm file
+foreach infile : infile_asm
+
+  abs_infile_asm_path = import_dir_path + infile
+
+  outfile_tbl = meson.current_build_dir()+ '/' + infile + '.tbl'
+  outfile_tbl_list += outfile_tbl
+
+  run_result = run_command(cmdTableTool,'assemble',import_dir_path_inc_paths,
+      abs_infile_asm_path, outfile_tbl)
+
+  if (run_result.returncode() != 0)
+    error(run_result.stderr())
+    message(run_result.stdout())
+  endif
+
+endforeach
+
+#Link all generated tables and generat cust.fsm
+run_result = run_command(cmdTableTool, 'link', '-q', '-o', odyssey_fsm_path + '/cust.fsm', outfile_tbl_list)
 if (run_result.returncode() != 0)
   error(run_result.stderr())
   message(run_result.stdout())

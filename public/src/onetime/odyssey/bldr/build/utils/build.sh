@@ -43,9 +43,6 @@ PAK_TOOL_PATH=$3
 PAK_BUILD_TOOL_PATH=$4
 SBE_SIGN_TOOL=$5
 
-#Files
-ODYSSEY_MAIN_FSM_PATH=$6
-
 #Boot Loader manifest file path
 BLDR_MANIFEST_PATH=$SBEROOT/public/src/onetime/odyssey/bldr/build/utils/manifest
 

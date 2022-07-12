@@ -33,6 +33,9 @@
         "main.fsm": {
             "file": "public/src/build/buildekb/odyssey/fsm/main.fsm",
         },
+        "cust.fsm": {
+            "file": "public/src/build/buildekb/odyssey/fsm/cust.fsm",
+        },
         "part.tbl": {
             "file": "public/src/onetime/odyssey/bldr/part.tbl",
         },
