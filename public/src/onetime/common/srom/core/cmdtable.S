@@ -132,6 +132,39 @@ __system_reset_handler:
         lis     %r5, 0x100
         mtdbcr  %r5
 
+reset_register:
+        lis    %r5, 0x5                         # Load r5 with 0x50000
+        lvd    %d2, 0x09(r5)                    # loads data from 0x50009 to d2
+        rlwinm %r2, %r2, 0x0, 0x0, 0x19         # Clear off the bits 26:27:28:29:30:31
+        clrlwi %r2, %r2, 1                      # clear bit 0 of 0x50009 (SBE Booted flag)
+        stvd   %d2, 0x9(r5)                     # store data back into 0x50009
+
+        li    %r1, 0
+        li    %r2, 0
+        stvd  %d1, 0x184(r5)                   # clear scratch 13
+
+        # Check for HRESET trigger from 50008:bit13 (HARDWARE Trigger)
+        lvd   %d2, 0x8(r5)
+        bb0wi %r2, 13, oos_load_spi_clk_cnfg   # skip HRESET Path if bit-13 is not set
+
+hreset_path:
+        # Set bit 16 in LFR (hreset)
+        _liw  %r4, 0xC0002000                  # load r4 with 0xC0002000 (LFR base)
+        li    %r8, 0x0
+        ori   %r8, %r8, 0x8000
+        li    %r9, 0x0                         # d8 is 0000_8000_0000_0000
+        stvd  %d8, 0x50(r4)                    # Write the mask to set the 16th bit with W_OR
+
+        # load SPI clock configuration from LFR
+        lvd   %d9, 0x40(r4)   # Load the latched value value from local regsiter
+
+        # moving delay to r3-LSB and divider to r2-LSB as per the expectation of "decode_round_trip_delay"
+        andis.  %r2, %r9, 0xfff0            # clearing other than divider
+        rlwinm  %r3, %r9, 0x18, 0x1C, 0x1F  # Move bit 20-23 to LSB, round trip delay bits
+
+        # skip loading spi clock config from scratch
+        b     decode_round_trip_delay
+
 ################################################################################
 # Read scratch register and set SPI clock configuration register
 # --------------------------------------------------------------
@@ -155,26 +188,6 @@ __system_reset_handler:
 # Mask the value read and write to all the
 # SPI engines
 ################################################################################
-.set g_hreset_path, 31             # r31 will be used as global variable
-        li g_hreset_path, 1        # Init the global variable to
-
-reset_register:
-        lis    %r5, 0x5                         # Load r5 with 0x50000
-        lvd    %d2, 0x09(r5)                    # loads data from 0x50009 to d2
-        rlwinm %r2, %r2, 0x0, 0x0, 0x19         # Clear off the bits 26:27:28:29:30:31
-        clrlwi %r2, %r2, 1                      # clear bit 0 of 0x50009 (SBE Booted flag)
-        stvd   %d2, 0x9(r5)                     # store data back into 0x50009
-
-        li    %r1, 0
-        li    %r2, 0
-        stvd  %d1, 0x184(r5)                   # clear scratch 13
-
-        # Check for HRESET trigger from 50008:bit13 (HARDWARE Trigger)
-        lvd   %d2, 0x8(r5)
-
-        bb1wi %r2, 13, partition_selection       # Jump to partition selection directly if HRESET Path
-        li    g_hreset_path, 0                   # Not HRESET path. Unset the global variable
-
 oos_load_spi_clk_cnfg:
         lvd    %d2, 0x187(r5)                   # loads scratch_16 .
         bb0wi  %r2, 4, spi_clk_cnfg_not_valid   # checks If valid Bit4 is Set
@@ -204,12 +217,15 @@ save_spi_cnfg:
         srawi  %r6, %r6, 0x8    # shift the content by 8bits towards right
         stvd   %d6, 0x50(r4)    # Write the round trip delay into the OR reg c0002050
 
-        # Now decode round trip delay into actual value
-decode_round_trip_delay:
+        # moving delay to r3-LSB and divider to r2-MSB as per the expectation of "decode_round_trip_delay"
         rlwinm  %r3, %r2, 0x10, 0x1C, 0x1F      # Move bit 12-15 to LSB, round trip delay bits
         andis.  %r2, %r2, 0xfff0                # Clear the encoded round trip value
-        li      %r10,0x80                       # this is the value to be updated for zero round
-                                                        # trip delay
+
+        # Now decode round trip delay into actual value
+        #  we can reach here in two path hreset and normal.
+        #  both case we should have r2 (MSB) contain the clock divider and r3 (LSB) contain encoded delay
+decode_round_trip_delay:
+        li      %r10,0x80                       # this is the value to be updated for zero round trip delay
         sraw    %r3, %r10, %r3                  # shift right 0x80 by number defined in r3
         slwi    %r3, %r3, 0xC                   # We need round trip delay in 12..19th bits
         or      %r2, %r2, %r3                   # append the actual round trip delay, along with clock divider
@@ -249,9 +265,6 @@ partition_selection:
         lvd      %d1, 0x2040(r4)                                         # Read LFR Reg
         or       %r1, %r1, %r6                                           # OR the read value to update result
         stvd     %d1, 0x2040(r4)                                         # Update the result into LFR
-
-        #Check if we are in hreset path. If true jump hreset_lfr
-        bb1wi  g_hreset_path, 31, hreset_lfr
 
         cmpwibeq %r3, PARTITION_0_INDEX, partition_0_offset              # If 0x0 Partition 0 offset
         cmpwibeq %r3, PARTITION_1_INDEX, partition_1_offset              # If 0x1 Partition 1 offset
@@ -686,26 +699,6 @@ valid_branch:
 cmpbne_op:
         bwnz    scr1, take_branch
         b       main_loop
-
-hreset_lfr:
-        lis   %r4, 0xC000                # load r4 with 0xC0000000
-        lvd   %d2, 0x2040(%r4)           # Read LFR
-
-        # Set bit 16 in LFR, to indicate Vector1 reset triggered in FW
-        li    %r8, 0x0
-        ori   %r8, %r8, 0x8000
-        li    %r9, 0x0           # d8 is 0000_8000_0000_0000
-        stvd  %d8, 0x2050(%r4)   # Write the mask to set the 16th bit with W_OR
-
-        # Unset Bit15 (IPL Reset) Bit14 (MPIPL) Bit17 (HReset Done) Bit18 (MPIPL Done)
-        # to clear off previous triggers, in order to keep only the current trigger
-        lis   %r8, 0x3           # Set the mask to reset the bit 14/15
-        ori   %r8, %r8, 0x6000   # Set the mask to reset the bit 17/18
-        li    %r9, 0x0           # d8 is 0x0003_6000_0000_0000
-        stvd  %d8, 0x2058(r4)    # write to WO_CLR Register
-
-        # Jump to SROM main
-        b       __pk_boot
 
 take_branch:
         mr      code, scr0
