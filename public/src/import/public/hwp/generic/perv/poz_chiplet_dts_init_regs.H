@@ -33,6 +33,7 @@
 #pragma once
 
 #include <p11_scom_pc_an.H>
+#include <p11_scom_pc_an_fields.H>
 
 using namespace scomt::pc;
 
