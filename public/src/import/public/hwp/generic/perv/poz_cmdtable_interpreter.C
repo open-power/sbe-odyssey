@@ -168,8 +168,9 @@ ReturnCode Executor::run(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, int i
                        _mask = (insn >> 9) & 0x3F,
                        _data = insn & 0x1FF;
 
-        FAPI_DBG("insn: %08X, opcode: %d, param idx: %d, addr idx: %d, mask idx: %d, data idx: %d",
-                 insn, opcode, _param, _address, _mask, _data);
+        FAPI_DBG("insn: %08X, opcode: %d, param idx: %d, addr idx: %d",
+                 insn, opcode, _param, _address);
+        FAPI_DBG("mask idx: %d, data idx: %d", _mask, _data);
 
         // Check value bounds
         if (opcode > ARRAY_SIZE(opcode_names))
@@ -180,9 +181,10 @@ ReturnCode Executor::run(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, int i
 
         if (_param > iv_nsmall || _address > iv_nsmall || _mask > iv_nbig || _data > iv_nbig)
         {
-            FAPI_ERR("%s:%04d: Index exceeds table size! "
-                     "param=%d address=%d nsmall=%d   mask=%d data=%d nbig=%d",
-                     iv_type, ip, _param, _address, iv_nsmall, _mask, _data, iv_nbig);
+            FAPI_ERR("%s:%04d: Index exceeds table size! param=%d address=%d",
+                     iv_type, ip, _param, _address);
+            FAPI_ERR("nsmall=%d mask=%d data=%d nbig=%d",
+                     iv_nsmall, _mask, _data, iv_nbig);
             return FAPI2_RC_FALSE;
         }
 
@@ -193,9 +195,9 @@ ReturnCode Executor::run(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, int i
                        data = be64toh(iv_big[_data]);
 
         // Output instruction
-        FAPI_DBG("%s:%04d|%-7s|%07X|%08X|%016lX|%016lX|",
-                 iv_type, ip, opcode_names[opcode],
-                 param, address, mask, data);
+        FAPI_DBG("%s:%04d|%-7s|%07X|",
+                 iv_type, ip, opcode_names[opcode], param);
+        FAPI_DBG("%08X|%016lX|%016lX|", address, mask, data);
 
         // Execute
         switch (opcode)
@@ -252,9 +254,10 @@ ReturnCode Executor::run(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, int i
                             case TEST:
                                 if (!match)
                                 {
-                                    FAPI_ERR("%s:%d: TEST instruction failed: "
-                                             "got(masked)=0x%016X(0x%016X) expected=0x%016X",
-                                             iv_type, ip, buf, buf & mask, data);
+                                    FAPI_ERR("%s:%d: TEST instruction failed: ",
+                                             iv_type, ip);
+                                    FAPI_ERR("got(masked)=0x%016X(0x%016X) expected=0x%016X",
+                                             buf, buf & mask, data);
                                     FAPI_TRY(putScom(i_target, SB_MSG, param));
                                     return FAPI2_RC_FALSE;
                                 }
