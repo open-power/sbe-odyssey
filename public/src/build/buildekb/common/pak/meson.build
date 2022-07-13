@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,9 +26,10 @@
 import_dir_path = pub_import_dir_path + '/common/utils/imageProcs/'
 
 infile_c = ['archive.C',
-            'tinflate.C',
             'sha3.C',
            ]
+
+tinflate_c = [ 'tinflate.C' ]
 
 #Create abs path for input files before creating .o
 abs_infiles_c_path = []
@@ -39,11 +41,24 @@ foreach infile : infile_c
 
 endforeach
 
+abs_tinflate_c_path = []
+foreach infile : tinflate_c
+  abs_tinflate_c_path += import_dir_path + infile
+endforeach
+
 ekb_cmn_pak_obj_file_cpp = obj_gen_cpp.process(abs_infiles_c_path)
+
+# tinflate.C must be compiled with -O2 -falign-loops=32 for significantly improved decompression performance
+#   -O2 enables a few additional speed optimizations
+#   -falign-loops=32 is _crucial_ to performance since the hottest loop in decompression is
+#      tiny enough to fit within the PPE's 32-byte instruction buffer, so if we align the loop the PPE
+#      can execute it without fetching instructions from PIBMEM, creating a massive speedup.
+#      (we're talking a factor of 1.5 to 2 here!)
+ekb_cmn_pak_obj_file_tinflate = obj_gen_cpp.process(abs_tinflate_c_path, extra_args: '-O2 -falign-loops=32')
 
 lib_file_name = 'ekbcmnpak'
 
-infile  = [ekb_cmn_pak_obj_file_cpp]
+infile  = [ekb_cmn_pak_obj_file_cpp, ekb_cmn_pak_obj_file_tinflate]
 
 libekbcmnpak = custom_target( lib_file_name,
                                  output : 'lib' + lib_file_name,
