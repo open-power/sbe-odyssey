@@ -114,6 +114,7 @@ ekb_cmn_inc_path = [
 
 ekb_hwp_inc_path = [
     '/hwp/generic/perv',
+    '/ring/generic',
     '/common/generic/scomt/'
         ]
 
