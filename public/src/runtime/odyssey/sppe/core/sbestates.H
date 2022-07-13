@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -47,9 +48,10 @@ enum sbeState
     SBE_STATE_FAILURE = 0x7, // Internal SBE failure
     SBE_STATE_QUIESCE = 0x8, // This state quiesces any seeprom access
     SBE_STATE_HALT    = 0x9, // SBE halted via chip-op driven from Hostboot.Needs SBE reset to get out
+    SBE_STATE_HRESET  = 0xA, // SBE HRESET State. 50008 bit 13
 
     // Max States, Always keep it at the last of the enum and sequential
-    SBE_MAX_STATE     = 0xA,
+    SBE_MAX_STATE     = 0xB,
     // Don't count this in the state, just to intialize the state variables
     SBE_INVALID_STATE = 0xF,
 };

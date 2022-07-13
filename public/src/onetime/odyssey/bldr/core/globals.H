@@ -35,7 +35,7 @@
 #define SBE_PAU_DPLL_BASE_FREQ_HZ ((1968 * 1000 * 1000)/4)
 
 //Lets set BLDR image bit as well while updating progress code
-#define UPDATE_BLDR_SBE_PROGRESS_CODE(value) SBE::updateProgressCode(0x1000000000000000, value);
+#define UPDATE_BLDR_SBE_PROGRESS_CODE(value) SBE::updateProgressCode(value);
 
 ////////////////////////////////////////////////////////////////
 //// @brief Stacks for Non-critical Interrupts ( timebase, timers )

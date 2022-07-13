@@ -130,10 +130,12 @@ namespace SBE
         #undef SBE_FUNC
     }
 
-    void updateProgressCode(uint64_t data, uint8_t value)
+    void updateProgressCode(uint8_t value)
     {
-        data = ((data & (~(SBE_MESSAGE_REG_PROGRESS_CODE_BIT_MASK))) | (uint64_t)(value)<<32);
-        putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, data);
+        messagingReg_t messagingReg;
+        getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, &messagingReg.iv_messagingReg);
+        messagingReg.iv_progressCode = value;
+        putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
     }
 }
 

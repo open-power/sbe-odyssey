@@ -32,6 +32,7 @@
 #include "ppe42_scom.h"
 #include "progresscode.H"
 #include "sbeutil.H"
+#include "p11_scom_perv_cfam.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -68,9 +69,11 @@ extern uint64_t _bss_end __attribute__ ((section (".bss")));
 
 void __eabi()
 {
-    //Clear out old progress code
-    UPDATE_BLDR_SBE_PROGRESS_CODE(0x00)
-    UPDATE_BLDR_SBE_PROGRESS_CODE(EABI_ENTER);
+    messagingReg_t messagingReg;
+    getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, &messagingReg.iv_messagingReg);
+    messagingReg.iv_progressCode = EABI_ENTER;
+    messagingReg.iv_currImage = 0x1;
+    putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
 
     do
     {

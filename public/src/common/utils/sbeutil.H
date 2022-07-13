@@ -268,7 +268,7 @@ namespace SBE
         return dest;
     }
 
-    void updateProgressCode(uint64_t data, uint8_t value);
+    void updateProgressCode(uint8_t value);
 
     /**
      * @brief compute a sha3 hash (md) of given byte length from "i_data"

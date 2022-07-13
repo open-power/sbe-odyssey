@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -50,6 +51,7 @@ enum sbeEvent
     SBE_FAILURE_EVENT          = 0x8, // From Any State
     SBE_QUIESCE_EVENT          = 0x9, // From Any State
     SBE_HALT_VIA_HOST_EVENT    = 0xA, // From Runtime State
+    SBE_HRESET_EVENT           = 0xB, // From Any State
 };
 
 // Maximum number of Events per State
@@ -65,6 +67,7 @@ enum maxEventPerState
     SBE_STATE_FAILURE_MAX_EVENT = 0,
     SBE_STATE_QUIESCE_MAX_EVENT = 0,
     SBE_STATE_HALT_MAX_EVENT    = 0,
+    SBE_STATE_HRESET_MAX_EVENT  = 0,
 
     // Total number of State Transition Events, Addition of all the above
     SBE_MAX_TRANSITIONS = 23,
@@ -87,6 +90,7 @@ enum entryToStateMap
     SBE_STATE_FAILURE_ENTRY_TO_MAP = SBE_STATE_DUMP_ENTRY_TO_MAP + SBE_STATE_DUMP_MAX_EVENT, //23
     SBE_STATE_QUIESCE_ENTRY_TO_MAP = SBE_STATE_FAILURE_ENTRY_TO_MAP + SBE_STATE_FAILURE_MAX_EVENT, //23
     SBE_STATE_HALT_ENTRY_TO_MAP    = SBE_STATE_QUIESCE_ENTRY_TO_MAP + SBE_STATE_QUIESCE_MAX_EVENT, //23
+    SBE_STATE_HRESET_ENTRY_TO_MAP  = SBE_STATE_HALT_ENTRY_TO_MAP + SBE_STATE_HRESET_MAX_EVENT, //23
 };
 
 #endif //__SBEFW_SBEEVENTS_H

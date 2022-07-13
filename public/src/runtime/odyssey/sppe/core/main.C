@@ -108,9 +108,7 @@ int  main(int argc, char **argv)
     SBE_ENTER(SBE_FUNC);
 
     uint64_t loadValue;
-    getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG,&loadValue);
-    SBE::updateProgressCode(loadValue,CODE_REACHED_RUNTIME);
-
+    SBE::updateProgressCode(CODE_REACHED_RUNTIME);
     //Read the SROM measurement control register and validate if boot complete bit is set
     secureBootCtrlSettings_t sromSecureBootCtrlSettings;
     sromSecureBootCtrlSettings.getSecureBootCtrlSettings(MEASUREMENT_REG_24);
