@@ -69,11 +69,14 @@ static const stateEventRangeStr_t eventRangePerState[SBE_MAX_STATE] =
     {SBE_STATE_FAILURE_ENTRY_TO_MAP, SBE_STATE_FAILURE_MAX_EVENT},
     {SBE_STATE_QUIESCE_ENTRY_TO_MAP, SBE_STATE_QUIESCE_MAX_EVENT},
     {SBE_STATE_HALT_ENTRY_TO_MAP, SBE_STATE_HALT_MAX_EVENT},
+    {SBE_STATE_HRESET_ENTRY_TO_MAP, SBE_STATE_HRESET_MAX_EVENT},
 };
 
 // Map to connect the current State with an event along with the final state
 // transition. It is sequenced according to the sbeState enums, Don't change the
 // sequence of states.
+//TODO: Complete state transition Map needs to be reworked for odyssey.
+//We need to accmodate HRESET State and clean up p10 states which are not used
 static const stateTransitionStr_t stateTransMap[SBE_MAX_TRANSITIONS] = {
     {SBE_STATE_UNKNOWN, SBE_FAILURE_EVENT, SBE_STATE_FAILURE},
     {SBE_STATE_UNKNOWN, SBE_RUNTIME_EVENT, SBE_STATE_RUNTIME},

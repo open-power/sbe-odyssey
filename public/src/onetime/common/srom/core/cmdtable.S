@@ -82,8 +82,8 @@ edr   other big data
 #define POLL_DELAY   0x10000
 
 // Progress codes that must match progresscode.H
-#define COMPLETED_SPI_SETUP 1
-#define COMMAND_TABLE_EXEC  2
+#define COMPLETED_SPI_SETUP 0x1
+#define COMMAND_TABLE_EXEC  0x2
 
 // Pak structure related macros
 #define PAK_MAGIC_START         0x50414B21  // PAK!
@@ -136,7 +136,7 @@ reset_register:
         lis    %r5, 0x5                         # Load r5 with 0x50000
         lvd    %d2, 0x09(r5)                    # loads data from 0x50009 to d2
         rlwinm %r2, %r2, 0x0, 0x0, 0x19         # Clear off the bits 26:27:28:29:30:31
-        clrlwi %r2, %r2, 1                      # clear bit 0 of 0x50009 (SBE Booted flag)
+        clrlwi %r2, %r2, 4                      # clear bit 0:1:2:3 of 0x50009
         stvd   %d2, 0x9(r5)                     # store data back into 0x50009
 
         li    %r1, 0
@@ -148,6 +148,13 @@ reset_register:
         bb0wi %r2, 13, oos_load_spi_clk_cnfg   # skip HRESET Path if bit-13 is not set
 
 hreset_path:
+
+        #Set current state to HRESET
+        lvd    %d2, 0x09(r5)                    # loads data from 0x50009 to d2
+        rlwinm %r2, %r2, 0x4, 0x4, 0x7          # Clear everyting except current state and move it to previous state
+        oris   %r2, %r2, 0xA0                   # Update current state with HRESET(0xA). Refer sbestates.H
+        stvd   %d2, 0x9(r5)                     # store data back into 0x50009
+
         # Set bit 16 in LFR (hreset)
         _liw  %r4, 0xC0002000                  # load r4 with 0xC0002000 (LFR base)
         li    %r8, 0x0
@@ -244,9 +251,10 @@ spi_init:
         or      %r3, %r3, %r2           # put clock divider and round trip delay
         stvd    %d3, 3(r6)              # write to clock config register
 
-        # write status report to SB_MSG
+        # write progress code to SB_MSG, we are clearing old progress code as part of reset_reg
         lis     %r1, MBX_BASE
-        li      %r2, COMPLETED_SPI_SETUP
+        lvd     %d2, SB_MSG(%r1)
+        ori     %r2, %r2, COMPLETED_SPI_SETUP
         li      %r3, 0
         stvd    %d2, SB_MSG(%r1)
 
@@ -531,11 +539,12 @@ load_main_fsm:
         li      %r3, BOOT_RC_INVALID_MAIN_FSM
         bl      load_fsm
 
-        // write status report to SB_MSG
+        // write progress code to SB_MSG
         // use aliased register names so we know we're not clobbering anything important
         lis     insn, MBX_BASE
-        li      scr0, COMMAND_TABLE_EXEC
-        li      scr1, 0
+        lvd     scr, SB_MSG(insn)
+        rlwinm  scr0, scr0, 0x0, 0x0, 0x19         # Clear off the bits 26:27:28:29:30:31 (Old progress code)
+        ori     scr0, scr0, COMMAND_TABLE_EXEC
         stvd    scr, SB_MSG(insn)
 
         // Ready to execute, lets-a go!

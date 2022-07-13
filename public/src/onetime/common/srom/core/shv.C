@@ -51,7 +51,7 @@
 
 //Lets add the progress code start offset before we write into messaging register
 #define UPDATE_SBE_PROGRESS_CODE(value) \
-        SBE::updateProgressCode(shvReq->sbeMsgRegValue, (value + shvReq->shvProgressCodeStartOffset)); \
+        SBE::updateProgressCode((value + shvReq->shvProgressCodeStartOffset)); \
 
 #define MINIMUM_DILITHIUM_SCRATCH_SIZE (150 * 1024)
 
