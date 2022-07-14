@@ -33,6 +33,13 @@
 #include "defines.inc"
 #include "registers.inc"
 
+hreset_check:
+         // Check whether we are in hreset path or not
+         cmpbne SB_CS_REG, HRESET_SET, HRESET_SET, ody_tp_chiplet_reset
+
+         // return if it is hreset path
+         return
+
 ody_tp_chiplet_reset:
 
          // Drop PCB interface reset to enable access into TP chiplet
