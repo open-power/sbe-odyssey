@@ -42,7 +42,6 @@ infile_c = [
             'ody_chiplet_initf.C',
             'ody_chiplet_startclocks.C',
             'ody_chiplet_fir_init.C',
-            'ody_cmdtable_interpreter.C',
             'ody_nest_enable_io.C',
             ]
 
@@ -59,19 +58,6 @@ import_dir_path = pub_import_dir_path + '/memory/odyssey/hwp/'
 infile_c = ['ody_ddrphyinit.C',
             '/lib/phy/ody_ddrphy_phyinit_config.C',
             '/lib/phy/ody_phy_utils.C',
-           ]
-
-#Create abs path for input files before creating .o
-foreach infile : infile_c
-
-abs_infile_c_path = import_dir_path + infile
-abs_infiles_c_path += abs_infile_c_path
-
-endforeach
-
-import_dir_path = pub_import_dir_path + 'hwp/generic/perv/'
-
-infile_c = ['poz_cmdtable_interpreter.C',
            ]
 
 #Create abs path for input files before creating .o
