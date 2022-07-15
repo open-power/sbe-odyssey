@@ -73,7 +73,7 @@ class Command(object):
         else:
             raise ValueError("Command %s is not recognized" % entry.group(1))
 
-        param   = int("0x" + entry.group(2), 16)
+        param   = 0 if "--" in entry.group(2) else int("0x" + entry.group(2), 16)
         address = int("0x" + entry.group(3), 16)
         mask    = int("0x" + entry.group(4), 16)
         data    = int("0x" + entry.group(5), 16)

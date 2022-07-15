@@ -31,7 +31,7 @@
 # determine the order in the command table!
 #
 CMDTABLE_HWPS += ody_tp_chiplet_reset
-#CMDTABLE_HWPS += ody_tp_pll_initf
+CMDTABLE_HWPS += ody_tp_pll_initf.tbl
 CMDTABLE_HWPS += ody_tp_pll_setup
 CMDTABLE_HWPS += ody_pib_repr_initf
 CMDTABLE_HWPS += ody_pib_arrayinit
