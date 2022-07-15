@@ -44,7 +44,11 @@ ody_tp_pll_setup:
          // if bypass scratch register is not valid, default to locking the PLL
          cmpbne SCRATCH_REGISTER_16, ATTR_PLL_BYPASS_VALID, ATTR_PLL_BYPASS_VALID, lock_pll
          // if bypass scratch register is valid, check and potentially bypass
-         cmpbeq ATTR_PLL_BYPASS_REG, ATTR_PLL_BYPASS_BIT, ATTR_PLL_BYPASS_BIT, bypass_pll
+         cmpbne ATTR_PLL_BYPASS_REG, ATTR_PLL_BYPASS_BIT, ATTR_PLL_BYPASS_BIT, lock_pll
+
+bypass_pll:
+         putscom       ATTR_NEST_FREQ_MHZ_REG, ATTR_NEST_FREQ_MHZ(ALL), ATTR_NEST_FREQ_MHZ(REF_CLOCK_FREQ_MHZ)
+         b             pll_setup_done
 
 lock_pll:
      // lock PLL
@@ -65,5 +69,5 @@ lock_pll:
         //FAPI_INF("Take PLL out of bypass");
         //ROOT_CTRL3.set_TP_MCPLL_BYPASS_DC(0);  // not available in headers yet - bit 26
         putscom        ROOT_CTRL3_CLEAR, ALL, ROOT_CTRL3__TP_MCPLL_BYPASS_DC
-bypass_pll:
-     //do nothing
+
+pll_setup_done:
