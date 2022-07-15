@@ -26,7 +26,7 @@
 #define __SBECMDBIST_H
 
 #include <stdint.h>
-#include <poz_perv_common_params.H>
+#include <poz_bist.H>
 
 /**
   * @brief structure for PutScom Chipop (0xA202) contents.

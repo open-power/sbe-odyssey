@@ -34,7 +34,6 @@
 #include "ffdc.H"
 #include "sbeglobals.H"
 #include "chipop_struct.H"
-#include <poz_bist.H>
 #include <stdint.h>
 
 using namespace fapi2;
