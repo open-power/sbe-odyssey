@@ -54,9 +54,12 @@
 #define COMPLETED_HASH_WRITE_OR_READ_INTO_MEASUREMENT_REG     0x2F
 #define COMPLETED_BLDR_WRITING_SECURE_BOOT_SETTINGS           0x30
 #define COMPLETED_STATUS_CODE_WRITE_INTO_SCRATCH              0x31
-#define COMPLETED_SPPE_BINARY_LOAD                            0x32
-#define COMPLETED_SPPE_PAK_LOAD                               0x33
-#define COMPLETED_VPD_PAK_LOAD                                0x34
+#define COMPLETED_BLDR_MBX16_REG_READ                         0x32
+#define COMPLETED_BLDR_MBX11_REG_READ                         0x33
+#define COMPLETED_BLDR_LFR_WRITE                              0x34
+#define COMPLETED_SPPE_BINARY_LOAD                            0x35
+#define COMPLETED_SPPE_PAK_LOAD                               0x36
+#define COMPLETED_VPD_PAK_LOAD                                0x37
 #define COMPLETED_BLDR                                        0x3E
 
 #endif /* _PROGRESSCODE_H_ */

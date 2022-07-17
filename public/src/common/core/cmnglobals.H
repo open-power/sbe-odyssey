@@ -87,7 +87,9 @@ typedef struct sbe_local_LFR {
     uint32_t round_trip_delay : 4;        //Bit 20-23 : p11 : round trip delay
     uint32_t tpm_spi_clock_freq_Mhz : 8;  //Bit 24-31 : p11 : TPM Spi clock frequency in MHz
     uint32_t tpm_spi_clock_delay : 4;     //Bit 32-35 : p11 : TPM Spi clock delay encoded
-    uint32_t bitsreserved : 12;           //Bit 36-47 Reserved
+    uint32_t disable_scom_filtering : 1;   //Bit 36 : odyssey,p11 : Set if scom filtering needs to be disabled
+    uint32_t disable_invalid_scom_addr_check : 1 ; //Bit 37 : odyssey,p11 : Set if invalid address check needs to be disabled
+    uint32_t bitsreserved : 10;           //Bit 38-47 Reserved
     uint32_t pau_freq_in_mhz : 16;        //Bit 48-63 : odyssey,p11 :  PAU system frequency in MHz
 
     sbe_local_LFR()
@@ -104,6 +106,8 @@ typedef struct sbe_local_LFR {
         pau_freq_in_mhz = 0;
         tpm_spi_clock_freq_Mhz = 0;
         tpm_spi_clock_delay = 0;
+        disable_scom_filtering = 0;
+        disable_invalid_scom_addr_check = 0;
         // This is required else these gets initialised with dummy data
         bitsreserved = 0;
     }

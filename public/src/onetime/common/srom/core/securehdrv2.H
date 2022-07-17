@@ -191,14 +191,14 @@ const size_t   MINIMUM_SECURE_HEADER_PAYLOAD_SIZE = 65;
  */
 enum HW_SB_FLAGS
 {
-    PWR_OPENPWR          = 0x80000000,
-    PWR_ENTERPRISE       = 0x40000000,
-    PWR_IBM_FCODE        = 0x20000000,
-    PWR_AIX              = 0x10000000,
-    Z                    = 0x08000000,
-    PWR_VENDOR_FCODE     = 0x00100000,
-    SBE_SB_DISABLE_CHECK = 0x00080000,
-    PWR_KEY_TRANSITION   = 0x00000001
+    PWR_OPENPWR         = 0x80000000,
+    PWR_ENTERPRISE      = 0x40000000,
+    PWR_IBM_FCODE       = 0x20000000,
+    PWR_AIX             = 0x10000000,
+    Z                   = 0x08000000,
+    PWR_VENDOR_FCODE    = 0x00100000,
+    IMPRINT_MODE        = 0x00080000,
+    PWR_KEY_TRANSITION  = 0x00000001
 
 };
 

@@ -261,7 +261,11 @@ void bldrthreadroutine(void *i_pArg)
         // Resopnse from secure header verification
         shvRsp_t shvRsp;
 
+        // Verify the Secure Header
+        SBE_INFO(SBE_FUNC "Verifying Secure Header....");
         (*gl_srom_fn_verifySecureHdr)(&shvReq, &shvRsp);
+
+        SBE_INFO(SBE_FUNC "Prefix Hdr Flags 0x%08x",  shvRsp.flag);
 
         // In case of HW Key hash/ FW key hash/ Payload hash failure we will
         // write the failing hash value into measurement reg for debug.
@@ -352,6 +356,57 @@ void bldrthreadroutine(void *i_pArg)
             SBE_ERROR(SBE_FUNC "Previous measurement results dont match with current results" );
             SBE::updateErrorCodeAndHalt(BOOT_RC_SPPE_MEASUREMENT_MISMATCH_IN_HRESET);
         }
+
+        //Check if scom filtering and invalid addr check need's to be enabled or disabled
+        //based on imprint mode/production mode and scratch settings
+        do{
+            if((shvRsp.flag & IMPRINT_MODE) && (!(SBE::isHreset())))
+            {
+                // Read mbx16 to check if mbx11 is valid
+                mbx16_t mbx16 = {0};
+                getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_16_RW, &mbx16.iv_mbx16);
+                SBE_INFO(SBE_FUNC "MBX16  [0x%08X 0x%08X] ", SBE::higher32BWord(mbx16.iv_mbx16),
+                            SBE::lower32BWord(mbx16.iv_mbx16));
+
+                UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_MBX16_REG_READ);
+
+                // Read mbx11 scratch
+                mbx11_t mbx11 = {0};
+                if(mbx16.iv_mbx11Valid != 0x1)
+                {
+                    SBE_INFO(SBE_FUNC "Scratch valid bit not set for MBX11 .Defaulting mbx11 to 0x00");
+                    break;
+                }
+                else
+                {
+                    getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_11_RW, &mbx11.iv_mbx11);
+                    SBE_INFO(SBE_FUNC "MBX11  [0x%08X 0x%08X] ", SBE::higher32BWord(mbx11.iv_mbx11),
+                                SBE::lower32BWord(mbx11.iv_mbx11));
+                }
+
+                UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_MBX11_REG_READ);
+
+                //LFR Reg
+                sbe_local_LFR lfrReg;
+
+                if(mbx11.iv_disableScomFiltering)
+                {
+                    SBE_INFO(SBE_FUNC "Disabling SCOM Filtering in Imprint/Lab Mode" );
+                    lfrReg.disable_scom_filtering = 0x1;
+                }
+
+                if(mbx11.iv_disableInvalidScomAddrCheck)
+                {
+                    SBE_INFO(SBE_FUNC "Disabling Imvlid Scom Address Check in Imprint/Lab Mode" );
+                    lfrReg.disable_invalid_scom_addr_check = 0x1;
+                }
+
+                //Update LFR Reg. Update LFR W_OR
+                PPE_STVD(scomt::ppe_pc::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_PPE1, lfrReg);
+
+                UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_LFR_WRITE);
+            }
+        }while(false);
 
         // Check for hash list version.
         // 1st byte of hash list is version
