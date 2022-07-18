@@ -1,7 +1,7 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/import/public/memory/odyssey/hwp/ody_check_for_ready.mk $
+# $Source: public/src/import/public/memory/odyssey/hwp/ody_getidec.mk $
 #
 # OpenPOWER sbe Project
 #
@@ -24,7 +24,6 @@
 # IBM_PROLOG_END_TAG
 # Include the macros and things for MSS ODY procedures
 -include 00ody_common.mk
-
-PROCEDURE=ody_check_for_ready
+PROCEDURE=ody_getidec
 $(call ADD_MODULE_INCDIR,$(PROCEDURE),$(MSS_ODY_INCLUDES))
 $(call BUILD_PROCEDURE)
