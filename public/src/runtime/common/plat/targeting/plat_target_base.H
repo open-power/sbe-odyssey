@@ -353,7 +353,7 @@ namespace fapi2
             ///
             uint32_t getPIBAddress() const
             {
-                return iv_value & 0x7F00FFC0;
+                return iv_value & 0x7F000000;
             }
 
             ///

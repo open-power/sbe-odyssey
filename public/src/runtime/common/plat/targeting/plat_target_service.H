@@ -186,13 +186,10 @@ namespace fapi2
                 return;
             }
 
-            // TODO: Test this path
             // If a real multicast target, loop over all targets in the chip
             // but filter for multicast group members.
             fapi2::buffer<uint64_t> l_enabledTargets;
-            //uint64_t l_enabledTargets;
             Target<TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_BITX> l_tmpTarget(i_parent);
-            //getscom_abs(((i_parent & 0x7F00FFC0) | (0xF0001 & 0x00FFFFFF) ), &l_enabledTargets);
             getScom(l_tmpTarget, 0xF0001, l_enabledTargets);
 
             if ((i_parent.getTargetType() == PPE_TARGET_TYPE_PERV) || (i_parent.getTargetType() == PPE_TARGET_TYPE_MC) )
