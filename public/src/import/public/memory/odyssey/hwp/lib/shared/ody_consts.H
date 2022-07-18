@@ -189,14 +189,14 @@ enum ecid_consts
 ///
 enum idec_consts
 {
-    ODY_CHIP_INFO_REG = 0x2134,
-    LOCATION_BIT_START = 44,
-    LOCATION_BIT_LENGTH = 4,
-    CHIPID_BIT_START = 56,
-    CHIPID_BIT_LENGTH = 8,
-
-    REVISION_BIT_START  = 50,
-    REVISION_BIT_LENGTH = 4,
+    MAJOR_EC_BIT_START         = 0,
+    MAJOR_EC_BIT_LENGTH        = 4,
+    LOCATION_CODE_BIT_START    = 4,
+    LOCATION_CODE_BIT_LENGTH   = 4,
+    MINOR_EC_BIT_START         = 8,
+    MINOR_EC_BIT_LENGTH        = 4,
+    CHIPID_BIT_START           = 12,
+    CHIPID_BIT_LENGTH          = 8
 };
 
 
