@@ -144,6 +144,26 @@ typedef union secureBootCtrlSettings
         secureBootControl = data >> 32;
     }
 
+    /**
+     * @brief Compare calculated Secure Boot settings with measurement reg value
+     *
+     * @param measurementRegVal Measurement reg value from initial run
+     *
+     * @return True if value matches with previous measurement else false
+     */
+    bool cmpSecureBootSettingsVal(uint32_t measurementRegVal)
+    {
+        bool status = true;
+
+        // From previous run value clear out boot complete bit
+        measurementRegVal &= ~(0x00800000);
+
+        if(measurementRegVal != secureBootControl)
+            status =  false;
+
+        return status;
+    }
+
 }secureBootCtrlSettings_t;
 
 #endif /* _MEASUREMENTREGS_H_ */
