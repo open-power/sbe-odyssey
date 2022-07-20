@@ -76,8 +76,13 @@ edr   other big data
 #define SCAN_REGION_TYPE   0x01030005
 #define BLOCKED_SCAN_TYPES 0x8820       // FUNC, LBIST, CMSK
 
-#define POLL_COUNT   100
-#define POLL_DELAY   0x10000
+// Poll count and delay together should take about 100 ms
+// For fast response, let's pick a 100 microsecond delay loop, requiring 1k loops for 100 ms
+#define POLL_COUNT 1000
+// Assuming an operating frequency of 600 MHz (worst case) we need to spend 60000 cycles for 100 microseconds.
+// The delay loop below is written to consume three cycles per iteration, so we need 20000 iterations.
+// At refclock speed (133 MHz / 4) the timeout will take 1.8 seconds.
+#define POLL_DELAY 20000
 
 // Pak structure related macros
 #define PAK_MAGIC_START         0x50414B21  // PAK!
@@ -494,12 +499,20 @@ poll_loop:
         bb0wi   insn, 3, _panic     // 0b100 == TEST
 
         // On POLL, we decrement the timeout, fail on zero or wait and repeat
+        // Skip the timeout check if param (error code) is zero
+        bwz     param, no_timeout
         subwibz timeout, 1, _panic
 
+no_timeout:
         _liw    scr0, POLL_DELAY
+
+        // The delay loop is a single instruction so that it won't incur any
+        // PIBMEM reads and have a deterministic number of cycles per iteration
+        // (three according to the PPE42 workbook).
 poll_delay:
-        subwibz scr0, 1, poll_loop
-        b       poll_delay
+        subwibnz scr0, 1, poll_delay
+
+        b       poll_loop
 
 cmpbxx_op:
         // calculate branch target and check that it's within range
