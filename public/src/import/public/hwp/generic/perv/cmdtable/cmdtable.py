@@ -386,24 +386,27 @@ def run_commands(main, cust, target):
                 target.putScom(cmd.address, cmd.data)
 
         elif cmd.op in (Opcode.TEST, Opcode.POLL, Opcode.CMPBEQ, Opcode.CMPBNE):
-            for _ in range(1000):
+            timeout = 1000
+            while True:
                 value = target.getScom(cmd.address).uint
                 match = value & cmd.mask == cmd.data
                 print("  %016X -> %016X %s %016X" % (value, value & cmd.mask, "==" if match else "!=", cmd.data))
                 if cmd.op == Opcode.POLL:
                     if match:
                         break
+                    if cmd.param:
+                        timeout -= 1
+                        if not timeout:
+                            print("Polling timed out without match, error code 0x%X" % cmd.param)
+                            return cmd.param
                 else:
                     if cmd.op == Opcode.TEST and not match:
                         print("Test failed, error code 0x%X" % cmd.param)
                         return cmd.param
-                    elif cmd.op == Opcode.CMPBEQ and match or cmd.op == Opcode.CMPBNE and not match:
+                    elif (cmd.op == Opcode.CMPBEQ and match) or (cmd.op == Opcode.CMPBNE and not match):
                         ips[level] += cmd.param
 
                     break
-            else:
-                print("Polling timed out without match, error code 0x%X" % cmd.param)
-                return cmd.param
 
 class FakeTarget(object):
     uint = 0
