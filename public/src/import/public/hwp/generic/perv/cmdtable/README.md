@@ -33,8 +33,9 @@ Either command table supports these instructions:
  * `poll address, mask, data, errcode` - Poll `address` for data under mask.
    Repeatedly read from `address` until the read value matches `data` with the
    same masking as for the `test` instruction. Proceed only when the value
-   matches. If the value doesn't match after a hardcoded timeout, abort the
-   command table and return `errcode`.
+   matches. If the value doesn't match after a hardcoded timeout (about 1s),
+   abort the command table and return `errcode`.
+   *Special case:* If `errcode` is zero, poll indefinitely, without timeout.
  * `cmpbeq address, mask, data, label` - Compare and Branch if Equal. Read
    `address` and compare to `data` under `mask` as in the `test` instruction.
    If the value matches, jump forward to `label`. If not, continue with the

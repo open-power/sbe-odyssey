@@ -265,8 +265,13 @@ ReturnCode Executor::run(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, int i
                                 break;
 
                             case POLL:
+
                                 // We exit the loop below if we match, only check for timeout
-                                timeout--;
+                                // If param == 0, poll indefinitely
+                                if (param)
+                                {
+                                    timeout--;
+                                }
 
                                 if (!timeout)
                                 {
