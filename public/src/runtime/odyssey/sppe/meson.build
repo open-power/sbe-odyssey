@@ -215,7 +215,7 @@ outfile = odyssey_sppe_img_name + '.pak'
 osppe_package_img = custom_target( 'osppe_package_img',
                                output : outfile,
                                depends : [ osppe_string_file_gen, osppe_symbol_file_gen,
-                                           osppe_dis_file, osppe_attr_tank,
+                                           osppe_dis_file, osppe_attr_tank, osppe_bin_gen
                                          ],
                                command : [ packaging,
                                            meson.current_build_dir(), odyssey_sppe_img_name,
