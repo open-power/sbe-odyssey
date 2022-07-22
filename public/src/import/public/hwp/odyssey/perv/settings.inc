@@ -1,10 +1,15 @@
 //Variables
 #define REGIONS_MASK 0xl0FFFE
 #define PERV_ABIST_START_AT 0xF00000000
-//#define ATTR_PLL_BYPASS 0  //0 = pll mode 1 = pll bypass
-#define ATTR_PLL_BYPASS_VALID  BIT(7)
-#define ATTR_PLL_BYPASS_REG    SCRATCH_REGISTER_8
-#define ATTR_PLL_BYPASS_BIT    BIT(0)
+
+#define ATTR_PLL_BYPASS_VALID     BIT(7)
+#define ATTR_PLL_BYPASS_REG       SCRATCH_REGISTER_8
+#define ATTR_PLL_BYPASS_BIT       BIT(0)
+#define ATTR_NEST_FREQ_MHZ_REG    SCRATCH_REGISTER_6
+#define ATTR_NEST_FREQ_MHZ(value) BITVALUE(16, 31, value)
+#define REF_CLOCK_FREQ_MHZ        133
+
+
 #define OPCG_DONE 0xl008
 #define ABIST_DONE 0xl8
 #define I_CLOCK_REGIONS 0b001000000000000      //perv regions: 0-3, 13
