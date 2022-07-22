@@ -345,9 +345,7 @@ def p11s_tp_pll_setup():
         ROOT_CTRL3.TP_PLLFLT3_BYPASS_DC = 0
         ROOT_CTRL3.TP_PLLFLT4_BYPASS_DC = 0
 
-    if ATTR_CP_PLLNEST_BYPASS:
-        SCRATCH_REGISTER_6[16:31] = 100         # store refclock frequency in nest frequency field of scratch reg
-    else:
+    if not ATTR_CP_PLLNEST_BYPASS:
         ## Attempt to lock Nest PLL
         ROOT_CTRL3.TP_PLLNEST_TEST_EN_DC = 0    # not available in headers yet - bit 24
         ROOT_CTRL3.TP_PLLNEST_RESET_DC = 0      # not available in headers yet - bit 25
@@ -361,9 +359,7 @@ def p11s_tp_pll_setup():
 def ody_tp_pll_setup():
     CPLT_CTRL1.TC_REGION13_FENCE_DC = 0   # Drop PLL region fence
 
-    if ATTR_PLL_BYPASS:
-        SCRATCH_REGISTER_6[16:31] = 133       # store refclock frequency in nest frequency field of scratch reg
-    else:
+    if not ATTR_PLL_BYPASS:
         ## Attempt to lock PLL
         ROOT_CTRL3.TP_MCPLL_TEST_EN_DC = 0    # not available in headers yet - bit 24
         ROOT_CTRL3.TP_MCPLL_RESET_DC = 0      # not available in headers yet - bit 25
