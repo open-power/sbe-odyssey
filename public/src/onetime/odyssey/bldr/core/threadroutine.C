@@ -123,7 +123,7 @@ void bldrthreadroutine(void *i_pArg)
         shvReq_t shvReq;
 
         //Secure Container
-        uint8_t *secureContainer = (uint8_t *)BOOTLOADER_SCRATCH_START;
+        uint8_t *secureContainer = (uint8_t *)SROM_BLDR_PAK_SCRATCH_START;
 
         // Rc for pak
         ARC_RET_t pakRc = ARC_INVALID_PARAMS;
@@ -420,7 +420,7 @@ void bldrthreadroutine(void *i_pArg)
         // 2nd byte of hash list is hash algo
         if(*(hashList + 1) != SROM_HASH_LIST_SUPPORTED_HASH_ALGO)
         {
-            SBE_ERROR(SBE_FUNC "Unsupported hash list hash algorithm 0x%02x", *(hashList + 1));
+            SBE_ERROR(SBE_FUNC "Unsupported hash list hash algorithm 0x%02x", *(uint8_t *)(hashList + 1));
             SBE::updateErrorCodeAndHalt(BOOT_RC_INVALID_HASH_LIST_HASH_ALGO);
         }
 
