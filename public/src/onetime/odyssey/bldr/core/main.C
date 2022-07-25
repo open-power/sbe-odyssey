@@ -134,13 +134,14 @@ int  main(int argc, char **argv)
 
         SBE_ENTER(SBE_FUNC);
 
-        UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_PK_INIT)
-
         if (rc)
         {
             SBE_ERROR(SBE_FUNC "PK Initialization failed for Boot Loader image");
             break;
         }
+ 
+        UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_PK_INIT)
+
         SBE_INFO(SBE_FUNC "Completed PK initialization for Boot Loader Image");
 
         //Initialize Boot Loader Thread
@@ -163,6 +164,9 @@ int  main(int argc, char **argv)
         pk_start_threads();
 
     }while(false);
+
+    // Halt if exited from the loop incase of error
+    pk_halt();
 
     SBE_EXIT(SBE_FUNC);
     return 0;

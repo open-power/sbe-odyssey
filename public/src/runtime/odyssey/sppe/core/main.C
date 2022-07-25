@@ -216,7 +216,8 @@ int  main(int argc, char **argv)
 
     }while(false);
 
-    while(1);
+    // Halt if exited from the loop incase of error
+    pk_halt();
 
     SBE_EXIT(SBE_FUNC);
     return 0;
