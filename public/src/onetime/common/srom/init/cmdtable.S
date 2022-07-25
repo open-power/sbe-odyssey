@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -270,6 +271,7 @@ partition_selection:
         li       %r5, 0x12                                               # Left shift (18)
         slw      %r6, %r3, %r5                                           # Value to be written into LFR bit 12,13
         lvd      %d1, 0x2040(r4)                                         # Read LFR Reg
+        rlwinm   %r1, %r1, 0, 14, 11                                     # Clear bit 12,13 in LFR and retain all other values
         or       %r1, %r1, %r6                                           # OR the read value to update result
         stvd     %d1, 0x2040(r4)                                         # Update the result into LFR
 
