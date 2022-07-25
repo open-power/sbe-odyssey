@@ -138,6 +138,7 @@ runtime_cmn_inc_paths = [
         ]
 
 onetime_cmn_inc_paths = [
+    '/public/src/onetime/common/srom/init',
     '/public/src/onetime/common/srom/core',
     '/public/src/onetime/common/algorithms/ecdsa',
     '/public/src/onetime/common/algorithms/dilithium'
