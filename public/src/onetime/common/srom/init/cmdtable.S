@@ -50,8 +50,7 @@ edr   other big data
 
 #include <ppe42_asm.h>
 #include <errorcodes.H>
-#include <odysseylink.H>
-
+#include <initcommonconst.H>
         // rename registers for more intuitive code
 #define timeout      %r0
 #define insn         %r1
@@ -72,7 +71,6 @@ edr   other big data
 #define big          %r30
 #define limit        %r31
 #define other_limit  %r13
-
 #define FORMAT_MAGIC 0x434d5461    // 'CMTa'
 
 #define SCAN_REGION_TYPE   0x01030005
@@ -80,10 +78,6 @@ edr   other big data
 
 #define POLL_COUNT   100
 #define POLL_DELAY   0x10000
-
-// Progress codes that must match progresscode.H
-#define COMPLETED_SPI_SETUP 0x1
-#define COMMAND_TABLE_EXEC  0x2
 
 // Pak structure related macros
 #define PAK_MAGIC_START         0x50414B21  // PAK!
@@ -96,16 +90,13 @@ edr   other big data
 #define PAK_EXT_P_SIZE_OFFSET   0x18
 #define PAK_EXT_NAME_OFFSET     0x1C
 
-#define MBX_BASE           0x5         // we're using lis for this below
-#define SB_MSG             0x0009
-#define ERROR_REG          0x0184      // SCRATCH_REGISTER_13
-
         // Trap with an error code in EDR and ERROR_REG
         .macro panic errorcode
         li      %r2, \errorcode
         b       _panic
         .endm
 
+        .align 3
 main_fsm_fname:
         .ascii "main.fsm"
         .set .Lmain_fsm_fname_len, $-main_fsm_fname
@@ -113,184 +104,6 @@ main_fsm_fname:
 cust_fsm_fname:
         .ascii "cust.fsm"
         .set .Lcust_fsm_fname_len, $-cust_fsm_fname
-
-////////////////////////////////////////////////////////////////////////////////
-// system reset handler
-//      This will be called instead of __pk_boot simply because it's defined.
-//      See ppe42_exceptions.S for the calling mechanics
-////////////////////////////////////////////////////////////////////////////////
-
-        .global __system_reset_handler
-__system_reset_handler:
-
-################################################################################
-## Set DBCR bit7, this will enable trap instruction to halt the processor and
-## not cause a program exception. Ultimately program exception will also halt
-## the processor but there will be jump, with DBCR bit7 set, there is no jump
-## to the program exception vector.
-################################################################################
-        lis     %r5, 0x100
-        mtdbcr  %r5
-
-reset_register:
-        lis    %r5, 0x5                         # Load r5 with 0x50000
-        lvd    %d2, 0x09(r5)                    # loads data from 0x50009 to d2
-        rlwinm %r2, %r2, 0x0, 0x0, 0x19         # Clear off the bits 26:27:28:29:30:31
-        clrlwi %r2, %r2, 4                      # clear bit 0:1:2:3 of 0x50009
-        stvd   %d2, 0x9(r5)                     # store data back into 0x50009
-
-        li    %r1, 0
-        li    %r2, 0
-        stvd  %d1, 0x184(r5)                   # clear scratch 13
-
-        # Check for HRESET trigger from 50008:bit13 (HARDWARE Trigger)
-        lvd   %d2, 0x8(r5)
-        bb0wi %r2, 13, oos_load_spi_clk_cnfg   # skip HRESET Path if bit-13 is not set
-
-hreset_path:
-
-        #Set current state to HRESET
-        lvd    %d2, 0x09(r5)                    # loads data from 0x50009 to d2
-        rlwinm %r2, %r2, 0x4, 0x4, 0x7          # Clear everyting except current state and move it to previous state
-        oris   %r2, %r2, 0xA0                   # Update current state with HRESET(0xA). Refer sbestates.H
-        stvd   %d2, 0x9(r5)                     # store data back into 0x50009
-
-        # Set bit 16 in LFR (hreset)
-        _liw  %r4, 0xC0002000                  # load r4 with 0xC0002000 (LFR base)
-        li    %r8, 0x0
-        ori   %r8, %r8, 0x8000
-        li    %r9, 0x0                         # d8 is 0000_8000_0000_0000
-        stvd  %d8, 0x50(r4)                    # Write the mask to set the 16th bit with W_OR
-
-        # load SPI clock configuration from LFR
-        lvd   %d9, 0x40(r4)   # Load the latched value value from local regsiter
-
-        # moving delay to r3-LSB and divider to r2-LSB as per the expectation of "decode_round_trip_delay"
-        andis.  %r2, %r9, 0xfff0            # clearing other than divider
-        rlwinm  %r3, %r9, 0x18, 0x1C, 0x1F  # Move bit 20-23 to LSB, round trip delay bits
-
-        # skip loading spi clock config from scratch
-        b     decode_round_trip_delay
-
-################################################################################
-# Read scratch register and set SPI clock configuration register
-# --------------------------------------------------------------
-# R5 --> 0x50000
-# Check valid bit is set in scratch_16 (0x50187) for clock divider & round trip
-#   - If yes load that value from 5003C to LFR/SPIm Clock Divider
-#       The clock divider value is in the MSB 12 bits of 5003D
-#       The round trip delay is the bit 12-15 of 5003D
-#   - If no then let the default value stay
-# SCK_clock_divider is 12bits (0-11 bits). Round trip delay is the next
-# 4bits (12-15) in the register. Round trip delay is an enum from user
-#       b0000 -> 0x80 - No Delay
-#       b0001 -> 0x40 - 1 clock cycle delay
-#       b0010 -> 0x20 - 2 clock cycle delay
-#       b0011 -> 0x10 - 3 clock cycle delay
-#       b0100 -> 0x08 - 4 clock cycle delay
-#       b0101 -> 0x04 - 5 clock cycle delay
-#       b0110 -> 0x02 - 6 clock cycle delay
-#       b0111 -> 0x01 - 7 clock cycle delay
-#       b1XXX -> 0x00 - receiving clocking disabled
-# Mask the value read and write to all the
-# SPI engines
-################################################################################
-oos_load_spi_clk_cnfg:
-        lvd    %d2, 0x187(r5)                   # loads scratch_16 .
-        bb0wi  %r2, 4, spi_clk_cnfg_not_valid   # checks If valid Bit4 is Set
-        lvd    %d2, 0x3C(r5)                    # Valid. Load the clock divider
-        rlwinm %r2, %r2, 0x0, 0x0, 0xF          # Pick the MSB 16 bits (12 + 4 bits).
-        b save_spi_cnfg
-
-spi_clk_cnfg_not_valid:
-        # Config not valid, load default value of 0x008 in the top 12 bits and let
-        # round trip delay be 1 clock cycle in next 4bits (Enum for 1 clock delay)
-        lis %r2, 0x0081       # 12bits clock divider + 4bits round trip delay
-                              # round trip delay enum is 1 which is 0x40
-
-        #Save the clock divider in the local regsiter 0xc0002040
-        #Use the clear reg 0xC0002058 and OR reg at 0xC0002050 to set 0xC0002040
-        #Layout of this local register is struct sbe_local_regX
-save_spi_cnfg:
-        _liw   %r4, 0xC0002000  # load r4 with 0xC0002000
-        lis    %r8, 0xfff0      # Set the mask to reset the top 12bits (clock divider)
-        ori    %r8, %r8, 0x0f00 # Set mask to reset bit20-23 (round trip delay)
-        li     %r9, 0x0         # d8 is fff0_0f00_0000_0000
-        stvd   %d8, 0x58(r4)    # Write the mask to clear the top 12bits + bit20-23
-        andis. %r6, %r2, 0xfff0 # fetch the first 12bits from r2 and write to LFR
-        li     %r7, 0
-        stvd   %d6, 0x50(r4)    # Write the divider value into the OR reg c0002050
-        andis. %r6, %r2, 0x000f # fetch the bits 12-15 from r2
-        srawi  %r6, %r6, 0x8    # shift the content by 8bits towards right
-        stvd   %d6, 0x50(r4)    # Write the round trip delay into the OR reg c0002050
-
-        # moving delay to r3-LSB and divider to r2-MSB as per the expectation of "decode_round_trip_delay"
-        rlwinm  %r3, %r2, 0x10, 0x1C, 0x1F      # Move bit 12-15 to LSB, round trip delay bits
-        andis.  %r2, %r2, 0xfff0                # Clear the encoded round trip value
-
-        # Now decode round trip delay into actual value
-        #  we can reach here in two path hreset and normal.
-        #  both case we should have r2 (MSB) contain the clock divider and r3 (LSB) contain encoded delay
-decode_round_trip_delay:
-        li      %r10,0x80                       # this is the value to be updated for zero round trip delay
-        sraw    %r3, %r10, %r3                  # shift right 0x80 by number defined in r3
-        slwi    %r3, %r3, 0xC                   # We need round trip delay in 12..19th bits
-        or      %r2, %r2, %r3                   # append the actual round trip delay, along with clock divider
-
-spi_init:
-        # SPI Engine reset
-        lis     %r6, 0x00C0             # Load MS-Word to do engine reset
-                                        # Bit-8 & Bit-9 set for Eng-1 and Eng-2
-        li      %r7, 0                  # Load LS-Word
-        stvd    %d6, 0x10(r4)           # Assert the reset
-        stvd    %d6, 0x18(r4)           # Release the reset
-        # Write clock configuration value, which is in r2
-        lis     %r6, 0x7                # SPI base address 0x70000
-        lvd     %d3, 3(r6)              # Load clock config register
-        rlwinm  %r3, %r3, 0x0, 0x14, 0x1F      # Zero the first 20bits (12 + 8)
-        or      %r3, %r3, %r2           # put clock divider and round trip delay
-        stvd    %d3, 3(r6)              # write to clock config register
-
-        # write progress code to SB_MSG, we are clearing old progress code as part of reset_reg
-        lis     %r1, MBX_BASE
-        lvd     %d2, SB_MSG(%r1)
-        ori     %r2, %r2, COMPLETED_SPI_SETUP
-        li      %r3, 0
-        stvd    %d2, SB_MSG(%r1)
-
-partition_selection:
-        # Read 2808 bit 17,18 to decide from which partition to boot from
-        # Update bit 17,18 result into LFR reg bit 12,13
-        lis      %r5, 0x5                                                # Load r5 with 0x50000
-        lis      %r4, 0xC000                                             # load r4 with 0xC0000000
-        lvd      %d2, 0x08(r5)                                           # loads data from 0x50008 to d2
-        li       %r5, 0x6000                                             # Load r5 with mask for bit 17,18
-        and      %r2, %r2, %r5                                           # Clear out everything except bit 17,18
-        li       %r5, 0xD                                                # Right shift (13)
-        srw      %r3, %r2, %r5                                           # Right shift the value by 17
-        li       %r5, 0x12                                               # Left shift (18)
-        slw      %r6, %r3, %r5                                           # Value to be written into LFR bit 12,13
-        lvd      %d1, 0x2040(r4)                                         # Read LFR Reg
-        rlwinm   %r1, %r1, 0, 14, 11                                     # Clear bit 12,13 in LFR and retain all other values
-        or       %r1, %r1, %r6                                           # OR the read value to update result
-        stvd     %d1, 0x2040(r4)                                         # Update the result into LFR
-
-        cmpwibeq %r3, PARTITION_0_INDEX, partition_0_offset              # If 0x0 Partition 0 offset
-        cmpwibeq %r3, PARTITION_1_INDEX, partition_1_offset              # If 0x1 Partition 1 offset
-        cmpwibeq %r3, GOLDEN_PARTITION_INDEX, partition_2_offset         # If 0x2 Partition 2 offset(Golden Parttion)
-        panic   BOOT_RC_INVALID_PARTITION_SELECT                         # If 0x3 . Invalid state halt
-
-partition_0_offset:
-        _liw   %r3, NOR_PARTITION_0_START_ADDR
-        b      run_cmd_tables
-
-partition_1_offset:
-        _liw   %r3, NOR_PARTITION_1_START_ADDR
-        b      run_cmd_tables
-
-partition_2_offset:
-        _liw   %r3, NOR_GOLDEN_PARTITION_START_ADDR
-        b      run_cmd_tables
 
 ////////////////////////////////////////////////////////////////////////////////
 // Locate file in seeprom
@@ -605,7 +418,6 @@ invalid_call:
 return_op:
         // are we returning from the cust table?
         bb1wi   limit, 31, return_from_cust
-
         // if we're returning from the main table, we're officially done
         b       __pk_boot
 
