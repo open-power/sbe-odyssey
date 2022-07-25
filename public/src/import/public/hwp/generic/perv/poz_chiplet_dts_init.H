@@ -34,14 +34,16 @@
 
 #include <fapi2.H>
 
-typedef fapi2::ReturnCode (*poz_chiplet_dts_init_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&);
+typedef fapi2::ReturnCode (*poz_chiplet_dts_init_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&, uint64_t);
 
 /// @brief Start KVREF calibration and check for calibration done
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_start_cal_address       KVREF_START_CAL register address
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {
-    fapi2::ReturnCode poz_chiplet_dts_init(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target);
+    fapi2::ReturnCode poz_chiplet_dts_init(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+                                           uint64_t i_start_cal_address);
 }

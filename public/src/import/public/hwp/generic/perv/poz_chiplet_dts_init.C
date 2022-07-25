@@ -31,7 +31,6 @@
 //------------------------------------------------------------------------------
 
 #include <poz_chiplet_dts_init.H>
-#include <poz_chiplet_dts_init_regs.H>
 #include <poz_perv_common_params.H>
 
 using namespace fapi2;
@@ -41,13 +40,14 @@ enum POZ_CHIPLET_DTS_INIT_Private_Constants
     DELAY_10us = 10000, // unit is nano seconds
     DELAY_100us = 100000, // unit is nano seconds
     SIM_CYCLE_DELAY = 1000, // unit is sim cycles
-    POLL_COUNT = 100
+    POLL_COUNT = 100,
+    KVREF_START_CAL00 = 0,
+    KVREF_CAL_DONE00 = 0
 };
 
-ReturnCode poz_chiplet_dts_init(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
+ReturnCode poz_chiplet_dts_init(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, uint64_t i_start_cal_address)
 {
-    KVREF_START_CAL_t KVREF_START_CAL;
-    KVREF_CAL_DONE_t KVREF_CAL_DONE;
+    buffer<uint64_t> l_data64;
     int l_timeout = 0;
 
     FAPI_INF("Entering ...");
@@ -55,9 +55,9 @@ ReturnCode poz_chiplet_dts_init(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target
     // DTS calibration is scanned in via the repr ring, but we can use this to calibrate KVREF
     FAPI_INF("Calibrating voltage reference");
 
-    KVREF_START_CAL = 0;
-    KVREF_START_CAL.set_KVREF_START_CAL00(1);
-    FAPI_TRY(KVREF_START_CAL.putScom(i_target));
+    l_data64.flush<0>();
+    l_data64.setBit<KVREF_START_CAL00>();
+    FAPI_TRY(fapi2::putScom(i_target, i_start_cal_address, l_data64));
 
     FAPI_TRY(delay(DELAY_10us, SIM_CYCLE_DELAY));
 
@@ -68,9 +68,11 @@ ReturnCode poz_chiplet_dts_init(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target
     while (l_timeout != 0)
     {
 
-        FAPI_TRY(KVREF_CAL_DONE.getScom(i_target));
+        l_data64.flush<0>();
+        FAPI_TRY(fapi2::getScom(i_target, i_start_cal_address + 4,
+                                l_data64)); // start_cal_address+4 is equal to cal_done address
 
-        if (KVREF_CAL_DONE.get_KVREF_CAL_DONE00() == 1)
+        if (l_data64.getBit<KVREF_CAL_DONE00>() == 1)
         {
             break;
         }
@@ -84,13 +86,13 @@ ReturnCode poz_chiplet_dts_init(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target
 
     FAPI_ASSERT(l_timeout > 0,
                 fapi2::POZ_KVREF_CAL_NOT_DONE_ERR()
-                .set_KVREF_CAL_DONE(KVREF_CAL_DONE)
+                .set_KVREF_CAL_DONE(l_data64)
                 .set_LOOP_COUNT(POLL_COUNT)
                 .set_HW_DELAY(DELAY_100us),
                 "ERROR: Calibration not done");
 
-    KVREF_START_CAL = 0;
-    FAPI_TRY(KVREF_START_CAL.putScom(i_target));
+    l_data64.flush<0>();
+    FAPI_TRY(fapi2::putScom(i_target, i_start_cal_address, l_data64));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");

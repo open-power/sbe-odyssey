@@ -44,7 +44,6 @@
 #include <ody_chiplet_startclocks.H>
 #include <ody_chiplet_fir_init.H>
 #include <ody_nest_enable_io.H>
-#include <poz_chiplet_dts_init_regs.H>
 #include <ody_cmdtable_interpreter.H>
 #include <poz_cmdtable_interpreter.H>
 
