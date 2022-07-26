@@ -125,10 +125,18 @@ typedef union
 #define TSR_DIS        0x08000000 /* Decrementer Interrupt Status */
 #define TSR_FIS        0x04000000 /* FIT Interrupt Status */
 
-/* PIR - Processor Identification Register */
-#define PIR_PPE_TYPE_MASK       0x000000E0
-#define PIR_PPE_TYPE_GPE        0x00000020
-#define PIR_PPE_TYPE_CME        0x00000040
+/* PIR - PPE Processor Identification Register */
+#define PIR_TAP_INSTANCE_MASK   0x00007000
+
+#define PIR_TPLGY_INSTANCE_MASK 0x00000F00
+
+#define PIR_PPE_TYPE_MASK       0x000000E0 // The "Instance ID" field in PIR. Rename to "Type ID"?
+#define PIR_PPE_TYPE_SBE        0x00000000
+#define PIR_PPE_TYPE_IO         0x00000080
+#define PIR_PPE_TYPE_CE         0x000000A0
+#define PIR_PPE_TYPE_QME        0x000000C0
+#define PIR_PPE_TYPE_GPE        0x000000E0
+
 #define PIR_PPE_INSTANCE_MASK   0x0000001F
 
 #ifndef __ASSEMBLER__
