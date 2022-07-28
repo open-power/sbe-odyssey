@@ -298,6 +298,7 @@ void bldrthreadroutine(void *i_pArg)
         // Incase of HRESET dont update results into measurement instead compare the results
         // with previous measurements
         int hresetMeasurementResult = 0x0;
+        truncatedHashMeasurement_t measurementWriteCheckHash;
         if(!(SBE::isHreset()))
         {
             measurememtHash.putSha3TruncatedHash(MEASUREMENT_REG_12,MEASUREMENT_REG_13,
@@ -306,6 +307,18 @@ void bldrthreadroutine(void *i_pArg)
                                                  MEASUREMENT_REG_18,MEASUREMENT_REG_19,
                                                  MEASUREMENT_REG_20,MEASUREMENT_REG_21,
                                                  MEASUREMENT_REG_22,MEASUREMENT_REG_23);
+
+            measurementWriteCheckHash.getSha3TruncatedHash(MEASUREMENT_REG_12,MEASUREMENT_REG_13,
+                                                 MEASUREMENT_REG_14,MEASUREMENT_REG_15,
+                                                 MEASUREMENT_REG_16,MEASUREMENT_REG_17,
+                                                 MEASUREMENT_REG_18,MEASUREMENT_REG_19,
+                                                 MEASUREMENT_REG_20,MEASUREMENT_REG_21,
+                                                 MEASUREMENT_REG_22,MEASUREMENT_REG_23);
+            if( measurementWriteCheckHash.compareTruncatedHash(measurememtHash.sha3TruncatedHash) != 0x0 )
+            {
+                SBE_ERROR(SBE_FUNC "Failed writing HASH into measurement reg." );
+                SBE::updateErrorCodeAndHalt(BOOT_RC_BLDR_MEASUREMENT_HASH_WRITE_FAIL);
+            }
         }
         else
         {
@@ -333,6 +346,14 @@ void bldrthreadroutine(void *i_pArg)
             SBE_INFO(SBE_FUNC "BLDR Secure Boot Control Measurement Reg Value: 0x%08x",
                     bldrSecureBootCtrlSettings.secureBootControl);
             bldrSecureBootCtrlSettings.putSecureBootCtrlSettings(MEASUREMENT_REG_25);
+            secureBootCtrlSettings_t bldrSecureBootCtrlSettingsWriteCheck;
+            bldrSecureBootCtrlSettingsWriteCheck.getSecureBootCtrlSettings(MEASUREMENT_REG_25);
+            if(bldrSecureBootCtrlSettingsWriteCheck.secureBootControl !=
+               bldrSecureBootCtrlSettings.secureBootControl)
+            {
+               SBE_INFO(SBE_FUNC "BLDR Secure boot settings measurement write fail." );
+               SBE::updateErrorCodeAndHalt(BOOT_RC_BLDR_SB_SETTINGS_MEASUREMENT_WRITE_FAIL);
+            }
 
             UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_WRITING_SECURE_BOOT_SETTINGS);
         }
