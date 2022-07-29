@@ -187,7 +187,7 @@ void Trex::print(const PpeTraceEntry& i_entry)
 
         if(i_entry.isBinary())
         {
-            iv_out << "                  |";
+            iv_out << "                  |                  |";
 
             for(int i = 0; i < parmCount; ++i)
             {
@@ -196,7 +196,7 @@ void Trex::print(const PpeTraceEntry& i_entry)
 
                 if(i % 4 == 3)
                 {
-                    iv_out << endl << "                  |";
+                    iv_out << endl << "                  |                  |";
                 }
             }
 

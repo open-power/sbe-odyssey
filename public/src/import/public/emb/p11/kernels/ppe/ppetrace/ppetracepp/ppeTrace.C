@@ -430,7 +430,11 @@ void PpeTrace::parseEntries()
 
             int format = PK_GET_TRACE_FORMAT(footer);
 
-            if(format == PK_TRACE_FORMAT_TINY)
+            if(format == PK_TRACE_FORMAT_EMPTY)
+            {
+                std::cout << "Warning - PK_TRACE_FORMAT_EMPTY!" << std::endl;
+            }
+            else if(format == PK_TRACE_FORMAT_TINY)
             {
                 PkTraceTinyParms tiny;
                 tiny.word32 = footer1;
@@ -443,22 +447,32 @@ void PpeTrace::parseEntries()
                 if(format == PK_TRACE_FORMAT_BINARY)
                 {
                     //Round up and convert to word count
-                    parmCount = ((parmCount + 3) & 0x3ll) / 4;
+                    parmCount = (parmCount + 3) / 4;
                     pte.setBinary();
-                }
 
-                // v2 entrees are 8 byte aligned so for odd num parms
-                // back up one more word.
-                if(parmCount % 2)
-                {
-                    --index;
+                    for(int i = 0; i < parmCount; ++i)
+                    {
+                        --index;
+                        getWord(index, word);
+                        // Binary written by byte, not word
+                        pte.pushFrontParm(word);
+                    }
                 }
-
-                for(int i = 0; i < parmCount; ++i)
+                else // big
                 {
-                    --index;
-                    getWord(index, word);
-                    pte.pushFrontParm(ntohl(word));
+                    // v2 entrees are 8 byte aligned so for odd num parms
+                    // back up one more word.
+                    if(parmCount % 2)
+                    {
+                        --index;
+                    }
+
+                    for(int i = 0; i < parmCount; ++i)
+                    {
+                        --index;
+                        getWord(index, word);
+                        pte.pushFrontParm(ntohl(word));
+                    }
                 }
             }
 
@@ -631,6 +645,7 @@ void PpeTrace::trexIt()
 
     for(list<PpeTraceEntry>::iterator i = iv_entries.begin(); i != iv_entries.end(); ++i)
     {
+        //i->print(std::cout);
         iv_trex.print(*i);//     i->getHash(),i->parmCount(),i->parms());
     }
 }
