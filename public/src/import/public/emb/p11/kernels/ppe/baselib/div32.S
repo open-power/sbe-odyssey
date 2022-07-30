@@ -22,7 +22,7 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#if (!defined(__PPE_QME) && !defined(APPCFG_OCC_INSTANCE_ID))
+#if (!defined(__PPE_QME) && !defined(APPCFG_PM_INSTANCE_ID))
     .nolist
 #include "ppe42_asm.h"
     .list

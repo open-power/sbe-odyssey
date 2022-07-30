@@ -195,18 +195,6 @@
 #define TCCHW_IRQ_TARGET_ID_GPE2            6
 #define TCCHW_IRQ_TARGET_ID_GPE3            7
 
-// Note: All standard-product IPI uses are declared here to avoid conflicts
-// Validation- and lab-only IPI uses are documented in validation.h
-
-/// The deferred callback queue interrupt
-/// (OCC side only, but keeping here for future reference.)
-///
-/// This IPI is reserved for use by the async deferred callback mechanism.
-/// It is used by both critical and noncritical async handlers to
-/// activate the deferred callback mechanism.
-//#define OCCHW_IRQ_ASYNC_IPI OCCHW_IRQ_IPI4_LO_PRIORITY
-
-
 #ifndef __ASSEMBLER__
 
 /// This is a 64-bit mask, with big-endian bit 'irq' set.

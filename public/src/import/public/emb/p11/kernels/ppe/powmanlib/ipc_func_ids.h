@@ -23,8 +23,8 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#ifndef __P9_IPC_FUNC_IDS_H__
-#define __P9_IPC_FUNC_IDS_H__
+#ifndef __IPC_FUNC_IDS_H__
+#define __IPC_FUNC_IDS_H__
 
 /// \file ipc_func_ids.h
 /// \brief This file contains the definition of function ID used for
@@ -47,17 +47,17 @@ IPC_FUNCIDS_MT_END
 
 //Functions that are only supported by GPE0 should be defined here
 //These function ID's can only be sent to GPE0
-IPC_FUNCIDS_ST_START(OCCHW_INST_ID_GPE0)
-IPC_FUNCIDS_ST_END(OCCHW_INST_ID_GPE0)
+IPC_FUNCIDS_ST_START(PMHW_INST_ID_GPE0)
+IPC_FUNCIDS_ST_END(PMHW_INST_ID_GPE0)
 
 //Functions that are only supported by GPE1 should be defined here
 //These function ID's can only be sent to GPE1
-IPC_FUNCIDS_ST_START(OCCHW_INST_ID_GPE1)
-IPC_FUNCIDS_ST_END(OCCHW_INST_ID_GPE1)
+IPC_FUNCIDS_ST_START(PMHW_INST_ID_GPE1)
+IPC_FUNCIDS_ST_END(PMHW_INST_ID_GPE1)
 
 //Functions that are only supported by GPE2 should be defined here
 //These function ID's can only be sent to GPE2
-IPC_FUNCIDS_ST_START(OCCHW_INST_ID_GPE2)
+IPC_FUNCIDS_ST_START(PMHW_INST_ID_GPE2)
 IPC_FUNC_ID(IPC_MSGID_405_INVALID)
 IPC_FUNC_ID(IPC_MSGID_405_START_SUSPEND)
 IPC_FUNC_ID(IPC_MSGID_405_CLIPS)
@@ -67,21 +67,21 @@ IPC_FUNC_ID(IPC_MSGID_405_WOF_VFRT)
 IPC_FUNC_ID(IPC_MSGID_405_RESERVED_1)
 IPC_FUNC_ID(IPC_MSGID_405_RESERVED_2)
 IPC_FUNC_ID(IPC_MSGID_XGPE_PGPE_BEACON_STOP)
-IPC_FUNCIDS_ST_END(OCCHW_INST_ID_GPE2)
+IPC_FUNCIDS_ST_END(PMHW_INST_ID_GPE2)
 
 //Functions that are only supported by GPE3 should be defined here
 //These function ID's can only be sent to GPE3
-IPC_FUNCIDS_ST_START(OCCHW_INST_ID_GPE3)
+IPC_FUNCIDS_ST_START(PMHW_INST_ID_GPE3)
 IPC_FUNC_ID(IPC_MSGID_PGPE_XGPE_VRET_UPDT)
-IPC_FUNCIDS_ST_END(OCCHW_INST_ID_GPE3)
+IPC_FUNCIDS_ST_END(PMHW_INST_ID_GPE3)
 
 //Functions that are only supported by PPC should be defined here
 //These function ID's can only be sent to the PPC
 #if defined(__OCC_PLAT)
-    IPC_FUNCIDS_ST_START(OCCHW_INST_ID_PPC)
-    IPC_FUNCIDS_ST_END(OCCHW_INST_ID_PPC)
+    IPC_FUNCIDS_ST_START(PMHW_INST_ID_PPC)
+    IPC_FUNCIDS_ST_END(PMHW_INST_ID_PPC)
 #endif
 
 IPC_FUNCIDS_TABLE_END
 
-#endif /*__P9_IPC_FUNC_IDS_H__*/
+#endif /*__IPC_FUNC_IDS_H__*/

@@ -230,7 +230,7 @@
 
             .if ( \irq_route == 8 )
                 //do nothing, this irq is not owned by any TCC processor
-            .elseif ( \irq_route == (TCCHW_IRQ_TARGET_ID_GPE0 + APPCFG_OCC_INSTANCE_ID))
+            .elseif ( \irq_route == (TCCHW_IRQ_TARGET_ID_GPE0 + APPCFG_PM_INSTANCE_ID))
                 .ext_irqs_owned = .ext_irqs_owned | .irq_mask
             .endif
 

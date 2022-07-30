@@ -67,7 +67,7 @@
         blrl            // On return, d5 contains task prty irq vec.
         mfsprg      r3, 0 // In case r3 is modified by unified handler, restore to sprg0
 #else
-        _lwzi       %r5, %r5, GPE_GISR0(APPCFG_OCC_INSTANCE_ID)
+        _lwzi       %r5, %r5, GPE_GISR0(APPCFG_PM_INSTANCE_ID)
 #endif
         cntlzw      %r4, %r5
         cmpwible    %r4, 31, call_external_irq_handler   #branch if irq is lt or eq to 31
@@ -76,7 +76,7 @@
         ## Note: irq # will be 64 (EXTERNAL_IRQS) if no bits were set in either register
 
 #ifndef UNIFIED_IRQ_HANDLER_GPE
-        _lwzi       %r6, %r6, GPE_GISR1(APPCFG_OCC_INSTANCE_ID)
+        _lwzi       %r6, %r6, GPE_GISR1(APPCFG_PM_INSTANCE_ID)
 #endif
         cntlzw      %r4, %r6
         addi        %r4, %r4, 32

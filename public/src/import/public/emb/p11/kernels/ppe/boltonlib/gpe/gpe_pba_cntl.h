@@ -48,7 +48,7 @@ void gpe_pba_reset();
  * Setup PBA slave
  *
  * @note global PBASLVCTLN selects which slave (0-3) default is 0
- * @param[in] i_gpeInstanceId OCCHW_INST_ID_GPE0 to OCCHW_INST_ID_GPE3
+ * @param[in] i_gpeInstanceId PMHW_INST_ID_GPE0 to PMHW_INST_ID_GPE3
  * @param[in] i_write_ttype One of:
  *                  PBA_WRITE_TTYPE_DMA_PR_WR
  *                  PBA_WRITE_TTYPE_ATOMIC_RMW
@@ -71,7 +71,7 @@ void gpe_pba_reset();
  *                  [PBA_BUF_W | PBA_BUF_A | PBA_BUF_B | PBA_BUF_C]
  *
  * example:
- *  gpe_pba_slave_setup(OCCHW_INST_ID_GPE0,
+ *  gpe_pba_slave_setup(PMHW_INST_ID_GPE0,
  *                      PBA_WRITE_TTYPE_DMA_PR_WR,
  *                      PBA_WRITE_TSIZE_DC,
  *                      PBA_READ_TTYPE_CL_RD_NC,
