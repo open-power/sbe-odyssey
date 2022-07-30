@@ -55,10 +55,10 @@ __hwmacro_setup(void)
     uint64_t oirrC = 0;
 
     //verify that this code is running on the correct GPE instance (one time check)
-    if((mfspr(SPRN_PIR) & PIR_PPE_INSTANCE_MASK) != APPCFG_OCC_INSTANCE_ID)
+    if((mfspr(SPRN_PIR) & PIR_PPE_INSTANCE_MASK) != APPCFG_PM_INSTANCE_ID)
     {
-        //APPCFG_OCC_INSTANCE_ID does not match actual instance ID!
-        APPCFG_PANIC(OCCHW_INSTANCE_MISMATCH);
+        //APPCFG_PM_INSTANCE_ID does not match actual instance ID!
+        APPCFG_PANIC(PMHW_INSTANCE_MISMATCH);
     }
 
     // If two engines are ever started at about the same time there could be
@@ -97,14 +97,14 @@ __hwmacro_setup(void)
     owned_actual = oirrA;
 
     //wittle it down by bits in the routeB register
-#if APPCFG_OCC_INSTANCE_ID & 0x2
+#if APPCFG_PM_INSTANCE_ID & 0x2
     owned_actual &= oirrB;
 #else
     owned_actual &= ~oirrB;
 #endif
 
     //wittle it down further by bits in the routeC register
-#if APPCFG_OCC_INSTANCE_ID & 0x1
+#if APPCFG_PM_INSTANCE_ID & 0x1
     owned_actual &= oirrC;
 #else
     owned_actual &= ~oirrC;
@@ -117,10 +117,10 @@ __hwmacro_setup(void)
     uint64_t oirrC = 0;
 
     //verify that this code is running on the correct GPE instance (one time check)
-    if((mfspr(SPRN_PIR) & PIR_PPE_INSTANCE_MASK) != APPCFG_OCC_INSTANCE_ID)
+    if((mfspr(SPRN_PIR) & PIR_PPE_INSTANCE_MASK) != APPCFG_PM_INSTANCE_ID)
     {
-        //APPCFG_OCC_INSTANCE_ID does not match actual instance ID!
-        APPCFG_PANIC(OCCHW_INSTANCE_MISMATCH);
+        //APPCFG_PM_INSTANCE_ID does not match actual instance ID!
+        APPCFG_PANIC(PMHW_INSTANCE_MISMATCH);
     }
 
     // If two engines are ever started at about the same time there could be
@@ -151,13 +151,13 @@ __hwmacro_setup(void)
     oirrC = ((uint64_t)in32(OCB_OIRR0C)) << 32;
     oirrC |= in32(OCB_OIRR1C);
 
-#if   (APPCFG_OCC_INSTANCE_ID == 0x0)
+#if   (APPCFG_PM_INSTANCE_ID == 0x0)
     owned_actual = ~oirrB & ~oirrC;
-#elif (APPCFG_OCC_INSTANCE_ID == 0x1)
+#elif (APPCFG_PM_INSTANCE_ID == 0x1)
     owned_actual = ~oirrB &  oirrC;
-#elif (APPCFG_OCC_INSTANCE_ID == 0x2)
+#elif (APPCFG_PM_INSTANCE_ID == 0x2)
     owned_actual =  oirrB & ~oirrC;
-#elif (APPCFG_OCC_INSTANCE_ID == 0x3)
+#elif (APPCFG_PM_INSTANCE_ID == 0x3)
     owned_actual =  oirrB &  oirrC;
 #endif
 
@@ -168,7 +168,7 @@ __hwmacro_setup(void)
     if((owned_actual & g_ext_irqs_owned) != g_ext_irqs_owned)
     {
         //IRQ's were not routed to us correctly.
-        APPCFG_PANIC(OCCHW_IRQ_ROUTING_ERROR);
+        APPCFG_PANIC(PMHW_IRQ_ROUTING_ERROR);
     }
 
     //Mask all external interrupts owned by this instance

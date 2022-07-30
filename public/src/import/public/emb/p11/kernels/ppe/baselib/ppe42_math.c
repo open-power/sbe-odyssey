@@ -31,10 +31,10 @@
     #define OCB_DERP QME_DERP
     #define OCB_DORP QME_DORP
 
-#elif defined(APPCFG_OCC_INSTANCE_ID)
+#elif defined(APPCFG_PM_INSTANCE_ID)
     #include "ocb_register_addresses.h"
-    #define OCB_DERP OCB_DERPN(APPCFG_OCC_INSTANCE_ID)
-    #define OCB_DORP OCB_DORPN(APPCFG_OCC_INSTANCE_ID)
+    #define OCB_DERP OCB_DERPN(APPCFG_PM_INSTANCE_ID)
+    #define OCB_DORP OCB_DORPN(APPCFG_PM_INSTANCE_ID)
 
 #else
     #define _DERPDORP_NOT_AVAILABLE 1

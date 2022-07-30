@@ -135,10 +135,10 @@ typedef enum
     SYNC_BARRIER_INVARIANT              = 0x0505,
     SYNC_SHARED_UNDERFLOW               = 0x0506,
 
-    OCCHW_INSTANCE_MISMATCH             = 0x0507,
-    OCCHW_IRQ_ROUTING_ERROR             = 0x0508,
-    OCCHW_XIR_INVALID_POINTER           = 0x0509,
-    OCCHW_XIR_INVALID_GPE               = 0x050a,
+    PMHW_INSTANCE_MISMATCH             = 0x0507,
+    PMHW_IRQ_ROUTING_ERROR             = 0x0508,
+    PMHW_XIR_INVALID_POINTER           = 0x0509,
+    PMHW_XIR_INVALID_GPE               = 0x050a,
 
     PK_UNUSED_050d                      = 0x050d,
     PK_UNUSED_051c                      = 0x051c,

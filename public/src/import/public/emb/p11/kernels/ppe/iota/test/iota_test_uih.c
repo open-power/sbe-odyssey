@@ -45,8 +45,8 @@ uint32_t __ext_irq_handler(void)
     uint64_t  ext_irq_vector_pk;
 
     // 1. Identify the priority level of the interrupt.
-    ext_irq_vector_pk = ((uint64_t)in32(OCB_G0ISR0 + APPCFG_OCC_INSTANCE_ID * 8)) << 32 |
-                        (uint64_t)in32(OCB_G0ISR1 + APPCFG_OCC_INSTANCE_ID * 8);
+    ext_irq_vector_pk = ((uint64_t)in32(OCB_G0ISR0 + APPCFG_PM_INSTANCE_ID * 8)) << 32 |
+                        (uint64_t)in32(OCB_G0ISR1 + APPCFG_PM_INSTANCE_ID * 8);
     //CMO-swap above lines comments when we've defined the HI PRTY interrupts correctly, i.e.
     //    right now they fire all the time because by default they are defined as LEVEL
     //    SENSITIVE and ACTIVE LOW.

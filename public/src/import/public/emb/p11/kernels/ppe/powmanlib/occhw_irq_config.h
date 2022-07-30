@@ -230,9 +230,9 @@
 
             .if ( \irq_route == 8 )
                 //do nothing, this irq is not owned by any OCC processor
-            .elseif (( \irq_route < 4 ) && ( APPCFG_OCC_INSTANCE_ID == 4 ))
+            .elseif (( \irq_route < 4 ) && ( APPCFG_PM_INSTANCE_ID == 4 ))
                 .ext_irqs_owned = .ext_irqs_owned | .irq_mask
-            .elseif ( \irq_route == (OCCHW_IRQ_TARGET_ID_GPE0 + APPCFG_OCC_INSTANCE_ID))
+            .elseif ( \irq_route == (OCCHW_IRQ_TARGET_ID_GPE0 + APPCFG_PM_INSTANCE_ID))
                 .ext_irqs_owned = .ext_irqs_owned | .irq_mask
             .endif
 

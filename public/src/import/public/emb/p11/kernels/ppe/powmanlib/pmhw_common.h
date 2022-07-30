@@ -71,13 +71,6 @@
 // Configuration
 ////////////////////////////////////////////////////////////////////////////
 
-#define OCCHW_NCORES            16
-#define OCCHW_NCORE_PARTITIONS   4
-#define OCCHW_NMCS               8
-#define OCCHW_NCENTAUR           8
-#define OCCHW_NTHREADS           8
-#define OCCHW_NDTSCPM            4
-
 #ifndef SIMICS_ENVIRONMENT
     #define SIMICS_ENVIRONMENT 0
 #endif
@@ -90,27 +83,27 @@
 /// OCC or TCC instance ID's that can be read from the PPE42 PIR and used in IPC operations.
 /// NOTE: The PPC instance ID is not associated with a register and was assigned to be
 ///       four as it was most convenient to do so in the code.
-#define OCCHW_INST_ID_GPE0 0
-#define OCCHW_INST_ID_GPE1 1
-#define OCCHW_INST_ID_GPE2 2
-#define OCCHW_INST_ID_GPE3 3
-#define OCCHW_INST_ID_MAX_GPE 3
+#define PMHW_INST_ID_GPE0 0
+#define PMHW_INST_ID_GPE1 1
+#define PMHW_INST_ID_GPE2 2
+#define PMHW_INST_ID_GPE3 3
+#define PMHW_INST_ID_MAX_GPE 3
 #if defined(__OCC_PLAT)
-    #define OCCHW_INST_ID_PPC  4
-    #define OCCHW_INST_ID_MAX  4
+    #define PMHW_INST_ID_PPC  4
+    #define PMHW_INST_ID_MAX  4
 #elif defined(__TCC_PLAT)
-    #define OCCHW_INST_ID_MAX  3
+    #define PMHW_INST_ID_MAX  3
 #endif
 
-/// Fail to compile if APPCFG_OCC_INSTANCE_ID is not defined somewhere or is out of range
-#ifndef APPCFG_OCC_INSTANCE_ID
-    #error "APPCFG_OCC_INSTANCE_ID must be defined by the application"
+/// Fail to compile if APPCFG_PM_INSTANCE_ID is not defined somewhere or is out of range
+#ifndef APPCFG_PM_INSTANCE_ID
+    #error "APPCFG_PM_INSTANCE_ID must be defined by the application"
 #else
-    #if ((APPCFG_OCC_INSTANCE_ID > OCCHW_INST_ID_MAX) || (APPCFG_OCC_INSTANCE_ID < 0))
-        #warning "APPCFG_OCC_INSTANCE_ID is out of range"
+    #if ((APPCFG_PM_INSTANCE_ID > PMHW_INST_ID_MAX) || (APPCFG_PM_INSTANCE_ID < 0))
+        #warning "APPCFG_PM_INSTANCE_ID is out of range"
     #endif
 #endif
-#define OCCHW_INST_ID_SELF APPCFG_OCC_INSTANCE_ID
+#define PMHW_INST_ID_SELF APPCFG_PM_INSTANCE_ID
 
 /// This is a 32-bit mask, with big-endian bit (irq % 32) set.
 #define PMHW_IRQ_MASK32(irq) (0x80000000 >> ((irq) % 32))
@@ -615,12 +608,12 @@
 #define DIMM_SENSOR_STATUS_VALID_NEW 3
 
 /// OCCHW SSX panic codes
-/// For PK panic codes, see pk_panic_codes.h
+/// For PK and IOTA panic codes, see {pk,iota}_panic_codes.h
 #ifdef __SSX__
-    #define OCCHW_INSTANCE_MISMATCH     0x00622400
-    #define OCCHW_IRQ_ROUTING_ERROR     0x00622401
-    #define OCCHW_XIR_INVALID_POINTER   0x00622402
-    #define OCCHW_XIR_INVALID_GPE       0x00622403
+    #define PMHW_INSTANCE_MISMATCH     0x00622400
+    #define PMHW_IRQ_ROUTING_ERROR     0x00622401
+    #define PMHW_XIR_INVALID_POINTER   0x00622402
+    #define PMHW_XIR_INVALID_GPE       0x00622403
 #endif
 
 #endif  /* __OCCHW_COMMON_H__ */
