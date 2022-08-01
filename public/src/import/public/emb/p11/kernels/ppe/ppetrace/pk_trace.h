@@ -410,7 +410,7 @@ typedef struct
 } PkOpTraceBuffer; //pk_trace_buffer_t;
 
 #ifdef APP_DEFINED_TRACE_BUFFER
-    #define G_PK_TRACE_BUF ((PkTraceBuffer*)G_TRACE_BUF_PTR)
+    extern PkTraceBuffer* G_PK_TRACE_BUF __attribute__((section (".g_pk_trace_buf")));
 #else
     extern PkTraceBuffer g_pk_trace_buf __attribute__((section (".sdata")));
 #endif

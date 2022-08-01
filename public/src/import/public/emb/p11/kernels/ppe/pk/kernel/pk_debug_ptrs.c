@@ -44,7 +44,7 @@ extern PkTimebase  ppe42_64bit_timebase;
 
 #endif
 
-pk_debug_ptrs_t pk_debug_ptrs SECTION_ATTRIBUTE(".debug_ptrs") =
+pk_debug_ptrs_t pk_debug_ptrs =
 {
     .debug_ptrs_size            = sizeof(pk_debug_ptrs),
     .debug_ptrs_version         = PK_DEBUG_PTRS_VERSION,

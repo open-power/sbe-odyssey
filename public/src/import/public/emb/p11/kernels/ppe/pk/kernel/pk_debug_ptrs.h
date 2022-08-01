@@ -55,4 +55,6 @@ typedef struct
 
 } pk_debug_ptrs_t;
 
+extern pk_debug_ptrs_t pk_debug_ptrs;
+
 #endif /*__PK_DEBUG_PTRS_H__*/
