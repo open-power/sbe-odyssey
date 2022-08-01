@@ -83,6 +83,7 @@ gcc_defs_cmn = [
         '-D__PPE__=1',
         '-DMINIMUM_FFDC=1',
         '-DPLAT_NO_THREAD_LOCAL_STORAGE=1',
+        '-DAPP_DEFINED_TRACE_BUFFER=1',
         ]
 
 gcc_defs_cmn_sbe = [

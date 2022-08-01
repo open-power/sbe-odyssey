@@ -43,7 +43,7 @@ extern "C" {
 }
 
 // SBE Frequency to be used to initialise PK
-uint32_t g_odysseyfreqency = SBE_REF_BASE_FREQ_HZ;
+uint32_t g_odysseyfrequency = SBE_REF_BASE_FREQ_HZ;
 
 uint8_t bldr_Kernel_NC_Int_stack[BLDR_NONCRITICAL_STACK_SIZE];
 uint8_t bldrSecureBoot_stack[BLDR_THREAD_SECURE_BOOT_STACK_SIZE];
@@ -107,9 +107,12 @@ void __eabi()
 const struct PACKED metadata_t {
     METADATA(IMG, { IMAGES::BOOTLOADER });
     METADATA(GIT, { SBE_COMMIT_ID });
-    METADATA(LDA, { BOOTLOADER_ORIGIN } );
+    METADATA(LDA, { BOOTLOADER_ORIGIN });
+    METADATA(TRA, { BLDR_TRACE_START_OFFSET, BLDR_PK_TRACE_SIZE_WITH_HEADER });
     ImageMetadataHeader end = {0, 0};
-} image_metadata __attribute__ ((section (".bldr_metadata")));
+} g_image_metadata __attribute__ ((section (".bldr_metadata")));
+
+uint32_t g_metadata_ptr SECTION(".g_metadata_ptr");
 
 ////////////////////////////////////////////////////////////////
 // @brief - main : ODYSSEY Boot Loader Application main
@@ -123,14 +126,16 @@ int  main(int argc, char **argv)
     UPDATE_BLDR_SBE_PROGRESS_CODE(ENTERED_BLDR_MAIN);
 
     // Update metadata
-    memcpy((void *)METADATA_START, &image_metadata, sizeof(metadata_t));
+    g_metadata_ptr = (uint32_t)&g_image_metadata;
 
     do
     {
         rc = pk_initialize((PkAddress)bldr_Kernel_NC_Int_stack,
                 BLDR_NONCRITICAL_STACK_SIZE,
                 INITIAL_PK_TIMEBASE, // initial_timebase
-                g_odysseyfreqency );
+                g_odysseyfrequency,
+                BLDR_TRACE_START_OFFSET,
+                BLDR_PK_TRACE_SIZE);
 
         SBE_ENTER(SBE_FUNC);
 

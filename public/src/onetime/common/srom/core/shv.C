@@ -28,9 +28,6 @@
  *
  **/
 
-// Disable any trace code in this files, since this will be called by bootloader
-#undef PK_TRACE_SUPPORT
-
 #include "shv.H"
 #include "sbetrace.H"
 #include "ecdsa.H"

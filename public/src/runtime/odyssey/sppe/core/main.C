@@ -54,7 +54,7 @@ extern "C" {
 #define SPPE_NONCRITICAL_STACK_SIZE 512
 
 // SBE Frequency to be used to initialise PK
-uint32_t g_odysseyfreqency = SBE_REF_BASE_FREQ_HZ;
+uint32_t g_odysseyfrequency = SBE_REF_BASE_FREQ_HZ;
 
 uint8_t sppe_Kernel_NC_Int_stack[SPPE_NONCRITICAL_STACK_SIZE];
 
@@ -108,58 +108,32 @@ void __eabi()
 const struct PACKED metadata_t {
     METADATA(IMG, { IMAGES::RUNTIME });
     METADATA(GIT, { SBE_COMMIT_ID });
+    METADATA(TRA, { SPPE_TRACE_START_OFFSET, SPPE_PK_TRACE_SIZE_WITH_HEADER });
     ImageMetadataHeader end = {0, 0};
-} image_metadata __attribute__ ((section (".sppe_metadata")));
+} g_image_metadata __attribute__ ((section (".sppe_metadata")));
+
+uint32_t g_metadata_ptr SECTION(".g_metadata_ptr");
 
 ////////////////////////////////////////////////////////////////
 // @brief - main : ODYSSEY SPPE Application main
 ////////////////////////////////////////////////////////////////
 int  main(int argc, char **argv)
 {
-    #define SBE_FUNC " OSPPE_main "
-    SBE_ENTER(SBE_FUNC);
-
+    int rc = 0;
     uint64_t loadValue;
     SBE::updateProgressCode(CODE_REACHED_RUNTIME);
 
-    //Read the SROM measurement control register and validate if boot complete bit is set
-    secureBootCtrlSettings_t sromSecureBootCtrlSettings;
-    sromSecureBootCtrlSettings.getSecureBootCtrlSettings(MEASUREMENT_REG_24);
-    SBE_INFO(SBE_FUNC "SROM Secure Boot Control Measurement Reg Value: 0x%08x",
-                 sromSecureBootCtrlSettings.secureBootControl);
-    if(sromSecureBootCtrlSettings.bootComplete != 0x1)
-    {
-        SBE_ERROR(SBE_FUNC "SROM Boot Complete bit not set.");
-        SBE::updateErrorCodeAndHalt(BOOT_RC_SROM_COMPLETE_BIT_NOT_SET_IN_RUNTIME);
-    }
-
-    //Read the Boot Loader measurement control register and validate if boot complete bit is set
-    secureBootCtrlSettings_t bldrSecureBootCtrlSettings;
-    bldrSecureBootCtrlSettings.getSecureBootCtrlSettings(MEASUREMENT_REG_25);
-    SBE_INFO(SBE_FUNC "BLDR Secure Boot Control Measurement Reg Value: 0x%08x",
-                 bldrSecureBootCtrlSettings.secureBootControl);
-    if(bldrSecureBootCtrlSettings.bootComplete != 0x1)
-    {
-        SBE_ERROR(SBE_FUNC "BLDR Boot Complete bit not set.");
-        SBE::updateErrorCodeAndHalt(BOOT_RC_BLDR_COMPLETE_BIT_NOT_SET_IN_RUNTIME);
-    }
-
-    // Initialize SBE Globals instance.
-    sbeGlobal = &SBEGlobalsSingleton::getInstance();
-
-    int rc = 0;
-
-    const uint32_t i_target = 0;
-    rc = fapi2::getscom_abs_wrap(&i_target, 0x50009, &loadValue);
-    SBE_INFO("SBE Messaging Register : 0x%08X 0x%08X",
-                (loadValue >> 32) & 0xFFFFFFFF, (loadValue & 0xFFFFFFFF));
+    // Update metadata
+    g_metadata_ptr = (uint32_t)&g_image_metadata;
 
     do
     {
         rc = pk_initialize((PkAddress)sppe_Kernel_NC_Int_stack,
                 SPPE_NONCRITICAL_STACK_SIZE,
                 INITIAL_PK_TIMEBASE, // initial_timebase
-                g_odysseyfreqency );
+                g_odysseyfrequency,
+                SPPE_TRACE_START_OFFSET,
+                SPPE_PK_TRACE_SIZE);
 
         if (rc)
         {
@@ -167,6 +141,36 @@ int  main(int argc, char **argv)
             break;
         }
         SBE_INFO(SBE_FUNC "Completed PK initialization for SPPE Image");
+
+        //Read the SROM measurement control register and validate if boot complete bit is set
+        secureBootCtrlSettings_t sromSecureBootCtrlSettings;
+        sromSecureBootCtrlSettings.getSecureBootCtrlSettings(MEASUREMENT_REG_24);
+        SBE_INFO(SBE_FUNC "SROM Secure Boot Control Measurement Reg Value: 0x%08x",
+                sromSecureBootCtrlSettings.secureBootControl);
+        if(sromSecureBootCtrlSettings.bootComplete != 0x1)
+        {
+            SBE_ERROR(SBE_FUNC "SROM Boot Complete bit not set.");
+            SBE::updateErrorCodeAndHalt(BOOT_RC_SROM_COMPLETE_BIT_NOT_SET_IN_RUNTIME);
+        }
+
+        //Read the Boot Loader measurement control register and validate if boot complete bit is set
+        secureBootCtrlSettings_t bldrSecureBootCtrlSettings;
+        bldrSecureBootCtrlSettings.getSecureBootCtrlSettings(MEASUREMENT_REG_25);
+        SBE_INFO(SBE_FUNC "BLDR Secure Boot Control Measurement Reg Value: 0x%08x",
+                bldrSecureBootCtrlSettings.secureBootControl);
+        if(bldrSecureBootCtrlSettings.bootComplete != 0x1)
+        {
+            SBE_ERROR(SBE_FUNC "BLDR Boot Complete bit not set.");
+            SBE::updateErrorCodeAndHalt(BOOT_RC_BLDR_COMPLETE_BIT_NOT_SET_IN_RUNTIME);
+        }
+
+        // Initialize SBE Globals instance.
+        sbeGlobal = &SBEGlobalsSingleton::getInstance();
+
+        const uint32_t i_target = 0;
+        rc = fapi2::getscom_abs_wrap(&i_target, 0x50009, &loadValue);
+        SBE_INFO("SBE Messaging Register : 0x%08X 0x%08X",
+                (loadValue >> 32) & 0xFFFFFFFF, (loadValue & 0xFFFFFFFF));
 
         // Initialize the semaphores.
         rc = sbeInitSems();

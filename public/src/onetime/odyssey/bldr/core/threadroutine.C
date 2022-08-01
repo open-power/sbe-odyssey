@@ -123,7 +123,7 @@ void bldrthreadroutine(void *i_pArg)
         shvReq_t shvReq;
 
         //Secure Container
-        uint8_t *secureContainer = (uint8_t *)SROM_BLDR_PAK_SCRATCH_START;
+        uint8_t *secureContainer = (uint8_t *)SROM_BLDR_CMN_SH_FILE_SCRATCH_START;
 
         // Rc for pak
         ARC_RET_t pakRc = ARC_INVALID_PARAMS;
@@ -179,8 +179,8 @@ void bldrthreadroutine(void *i_pArg)
 
         shvReq.containerStartOffset = (uint32_t *)secureContainer;
         shvReq.componentId = RUN_TIME_SH_COMPONENT_ID;
-        shvReq.scratchStart = SROM_BOOTLOADER_SCRATCH_START;
-        shvReq.scratchSize = SROM_BOOTLOADER_SCRATCH_SIZE;
+        shvReq.scratchStart = SROM_BLDR_CMN_DILITHIUM_SCRATCH_START;
+        shvReq.scratchSize = SROM_BLDR_CMN_DILITHIUM_SCRATCH_SIZE;
         shvReq.shvProgressCodeStartOffset = SHV_PROGRESS_CODE_START_OFFSET;
         shvReq.payloadHash = &digest;
 
