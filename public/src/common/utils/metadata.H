@@ -54,7 +54,8 @@ DECLARE_METADATA(IMG, 0x494D47) {
 
 // Trace buffer information
 DECLARE_METADATA(TRA, 0x545241) {
-    uint32_t addr;
+    uint32_t traceAddr; // Address of the trace buffer
+    uint32_t traceSize; // Size of the trace buffer
 };
 
 // Intended load address for the image
@@ -70,4 +71,4 @@ DECLARE_METADATA(GIT, 0x474954) {
 // String metadata needs no field declaration
 DECLARE_METADATA_STR(BLD, 0x424c44);
 
-extern const struct metadata_t image_metadata;
+extern const struct metadata_t g_image_metadata;

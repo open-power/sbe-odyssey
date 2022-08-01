@@ -46,7 +46,7 @@ SECTIONS {
         KEEP(*(.vectors));
     }
 
-    . = SPPE_ORIGIN + 0x200;
+    . = SPPE_ORIGIN + VECTOR_SIZE;
     .sppe_metadata . : {
         KEEP(*(.sppe_metadata));
     }
@@ -171,5 +171,10 @@ SECTIONS {
         _PK_INITIAL_STACK_LIMIT = .;
         . = . + _stack_size;
         _PK_INITIAL_STACK = . - 1;
+    }
+
+    .g_cross_image_data TRACE_BUF_PTR_OFFSET : {
+        *(.g_pk_trace_buf)
+        *(.g_metadata_ptr)
     }
 }

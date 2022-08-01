@@ -172,4 +172,9 @@ SECTIONS {
     .hashlist . : {
         KEEP(*(.hash_list));
     }
+
+    .g_cross_image_data TRACE_BUF_PTR_OFFSET : {
+        *(.g_pk_trace_buf)
+        *(.g_metadata_ptr)
+    }
 }
