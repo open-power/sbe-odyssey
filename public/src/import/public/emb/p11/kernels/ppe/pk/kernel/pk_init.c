@@ -33,6 +33,7 @@
 #include "pk.h"
 #include "pk_trace.h"
 #include "ppe42_string.h"
+#include "pk_debug_ptrs.h"
 
 uint32_t __pk_timebase_frequency_hz;
 
@@ -122,6 +123,7 @@ _pk_initialize(PkAddress     kernel_stack,
                PkTimebase   initial_timebase,
                uint32_t     timebase_frequency_hz
 #ifdef APP_DEFINED_TRACE_BUFFER
+    , uint32_t    pk_trace_buffer
     , uint32_t    pk_trace_size
 #endif
               )
@@ -170,6 +172,7 @@ _pk_initialize(PkAddress     kernel_stack,
 #if PK_TRACE_SUPPORT
 
 #ifdef APP_DEFINED_TRACE_BUFFER
+    G_PK_TRACE_BUF = (PkTraceBuffer*)pk_trace_buffer;
     G_PK_TRACE_BUF->instance_id = (uint16_t)(mfspr(SPRN_PIR) & PIR_PPE_INSTANCE_MASK);
 
     G_PK_TRACE_BUF->version            = PK_TRACE_VERSION;
@@ -178,15 +181,7 @@ _pk_initialize(PkAddress     kernel_stack,
     G_PK_TRACE_BUF->partial_trace_hash =
         trace_ppe_hash("PARTIAL TRACE ENTRY. HASH_ID = %d", PK_TRACE_HASH_PREFIX);
 
-    if(pk_trace_size)
-    {
-        G_PK_TRACE_BUF->size = pk_trace_size;
-    }
-    else
-    {
-        G_PK_TRACE_BUF->size = PK_TRACE_SZ;
-    }
-
+    G_PK_TRACE_BUF->size               = pk_trace_size;
     G_PK_TRACE_BUF->max_time_change    = PK_TRACE_MTBT;
     G_PK_TRACE_BUF->hz                 = timebase_frequency_hz;
     G_PK_TRACE_BUF->time_adj64         = 0;

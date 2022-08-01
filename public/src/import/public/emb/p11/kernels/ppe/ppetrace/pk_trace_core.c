@@ -67,6 +67,8 @@ PkTraceBuffer g_pk_trace_buf __attribute__ ((section (".sdata"))) =
     .state.word64       = 0,
     .cb                 = {0}
 };
+#else
+PkTraceBuffer* G_PK_TRACE_BUF __attribute__((section (".g_pk_trace_buf")));
 #endif
 
 #if (PK_OP_TRACE_SUPPORT)

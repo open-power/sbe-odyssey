@@ -565,7 +565,6 @@ typedef struct
 #endif //PK_TRACE_SUPPORT
 
 
-
 /// A generic doubly-linked list object
 ///
 /// This object functions both as a sentinel mode for a deque as well as a
@@ -704,6 +703,7 @@ _pk_initialize(PkAddress  kernel_stack,
                PkTimebase initial_timebase,
                uint32_t   timebase_frequency_hz
 #ifdef APP_DEFINED_TRACE_BUFFER
+    , uint32_t    pk_trace_buffer
     , uint32_t    pk_trace_size
 #endif
               );
@@ -714,19 +714,29 @@ pk_initialize(PkAddress     kernel_stack,
               PkTimebase   initial_timebase,
               uint32_t     timebase_frequency_hz
 #ifdef APP_DEFINED_TRACE_BUFFER
+    , uint32_t    pk_trace_buffer
     , uint32_t    pk_trace_size
 #endif
              )
 {
 #ifdef APP_DEFINED_TRACE_BUFFER
-    // This assertion is to check for trace size is power-of-two
-    PK_STATIC_ASSERT((pk_trace_size & (pk_trace_size - 1)) == 0);
+
+    // This assertion is to check for trace size is power-of-two and not zero
+    if (!pk_trace_size || ((pk_trace_size & (pk_trace_size - 1)) != 0))
+    {
+        // Declare a (never used) function that will cause the compile to fail if called.
+        // If the assertion passes, the call to e() will be optimized out, avoiding the error message.
+        extern void e() __attribute__((error("Invalid trace size! Must be nonzero and power of two.")));
+        e();
+    }
+
 #endif
     return(_pk_initialize(kernel_stack,
                           kernel_stack_size,
                           initial_timebase,
                           timebase_frequency_hz
 #ifdef APP_DEFINED_TRACE_BUFFER
+                          , pk_trace_buffer
                           , pk_trace_size
 #endif
                          ));
