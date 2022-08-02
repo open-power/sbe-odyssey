@@ -45,29 +45,44 @@ uint8_t getSignatureAlgoCheck(bool signatureEnableScratchVal,
         return (signatureEnableFuseVal ? INVALID_SIGNATURE_CNFG : DISABLE_SIGNATURE_ALGO);
 }
 
-uint8_t getMSV(uint64_t msvFuseBank0, uint64_t msvFuseBank1,
-               uint64_t msvFuseBank2)
+uint8_t getMSV (uint64_t msvFuseBank)
 {
-    // Calculated FW minimum secure version
+    /* Calculated FW minimum secure version */
     uint8_t minSecVer = 0;
 
-    for (uint8_t bit = 0; bit < 64; bit ++)
+    /* MSV check fuse bank, msv max is 21 */
+    for (uint8_t i = 0; i < 21; i++)
     {
-        uint8_t numSet = 0;
-        numSet += (msvFuseBank0 >> bit) & 1U;
-        numSet += (msvFuseBank1 >> bit) & 1U;
-        numSet += (msvFuseBank2 >> bit) & 1U;
-        if (numSet >= 2)
+        /* 63rd bit is resevered, +1 for reserved bit  */
+        if (applyTripleModularRedundancyVoting((msvFuseBank >> (1 + (i * 3))) & 0x07))
         {
-            minSecVer = bit + 1;
-        }
-        else
-        {
-            break; // stop counting on first non-set fuse bit
+            minSecVer = 21 - i;
+            break;
         }
     }
 
     return minSecVer;
+}
+
+uint8_t applyTripleModularRedundancyVoting(uint8_t data)
+{
+    uint8_t resultantValue = 0x0;
+
+    /********************************************************
+     * The expected length of the data is 3-bits.
+     * If more than one bit is set, then return 0x1.
+     *                              otherwise, return 0x0.
+     * Ex. 000 - 0  001 - 0
+     *     010 - 0  011 - 1
+     *     100 - 0  101 - 1
+     *     110 - 1  111 - 1
+     ********************************************************/
+    if ((data == 0x3)  || (data == 0x5) || (data == 0x6) || (data == 0x7))
+    {
+      resultantValue = 0x1;
+    }
+
+    return resultantValue;
 }
 
 //NOTE: make32Bit() is just used for convertinf uint8_t array to uint32_t.
