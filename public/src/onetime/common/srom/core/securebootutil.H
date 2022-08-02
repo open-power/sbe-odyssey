@@ -243,13 +243,10 @@ uint8_t getSignatureAlgoCheck(bool signatureEnableScratchVal,
 /**
  * @brief Function to get the Minimum secure version basis OTPROM Fuse bits
  *
- * @param msvFuseBank0 Minimum Secure Version OTPROM Fuse Bank 0
- * @param msvFuseBank1 Minimum Secure Version OTPROM Fuse Bank 1
- * @param msvFuseBank2 Minimum Secure Version OTPROM Fuse Bank 2
+ * @param msvFuseBank Minimum Secure Version OTPROM Fuse Bank
  * @return uint8_t Minimum Secure Version
  */
-uint8_t getMSV(uint64_t msvFuseBank0, uint64_t msvFuseBank1,
-               uint64_t msvFuseBank2);
+uint8_t getMSV(uint64_t msvFuseBank);
 
 /**
  * @brief Print SHA3 result of truncated value(48B)
@@ -257,5 +254,15 @@ uint8_t getMSV(uint64_t msvFuseBank0, uint64_t msvFuseBank1,
  * @param result Pointer to SHA3 Truncated Result
  */
 void SHA3TruncatedDump(sha3truncated_t *result);
+
+/**
+ * @brief Function to get the actual value after applying the triple
+ *        modular redundancy voting.
+ *
+ * @param data Data as read from the hardware
+ * @return 0x1 if two or more bits are set else return 0x0
+ *
+ */
+uint8_t applyTripleModularRedundancyVoting(uint8_t data);
 
 #endif /***** __SECURE_BOOT_UTIL_H *********/
