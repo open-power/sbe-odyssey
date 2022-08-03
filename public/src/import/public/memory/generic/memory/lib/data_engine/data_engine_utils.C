@@ -85,7 +85,17 @@ fapi2::ReturnCode get_supported_cas_latencies(
         // Buffers used for bit manipulation
         // Combine Bytes to create bitmap - right aligned
         fapi2::buffer<uint64_t> l_buffer;
+
+// FIXME - GCC version > 10  can no longer make template right_aligned_insert(...) params into constexpr
+#if __GNUC__ < 10
         right_aligned_insert(l_buffer, l_fourth_raw_byte, l_third_raw_byte, l_sec_raw_byte, l_first_raw_byte);
+#else
+        // work-around
+        l_buffer.template insertFromRight < 64 - 32, 8 > (l_fourth_raw_byte);
+        l_buffer.template insertFromRight < 64 - 24, 8 > (l_third_raw_byte);
+        l_buffer.template insertFromRight < 64 - 16, 8 > (l_sec_raw_byte);
+        l_buffer.template insertFromRight < 64 - 8, 8 > (l_first_raw_byte);
+#endif
 
         // According to the JEDEC spec:
         // Byte 22 (Bits 7~0) and Byte 23 are reserved in the base revision SPD general section
@@ -164,12 +174,23 @@ fapi2::ReturnCode get_supported_cas_latencies(
         // Buffers used for bit manipulation
         // Combine Bytes to create bitmap - right aligned
         fapi2::buffer<uint64_t> l_buffer;
+
+// FIXME - GCC version > 10  can no longer make template right_aligned_insert(...) params into constexpr
+#if __GNUC__ < 10
         right_aligned_insert(l_buffer,
                              l_fifth_raw_byte,
                              l_fourth_raw_byte,
                              l_third_raw_byte,
                              l_sec_raw_byte,
                              l_first_raw_byte);
+#else
+        // work-around
+        l_buffer.template insertFromRight < 64 - 40, 8 > (l_fifth_raw_byte);
+        l_buffer.template insertFromRight < 64 - 32, 8 > (l_fourth_raw_byte);
+        l_buffer.template insertFromRight < 64 - 24, 8 > (l_third_raw_byte);
+        l_buffer.template insertFromRight < 64 - 16, 8 > (l_sec_raw_byte);
+        l_buffer.template insertFromRight < 64 - 8, 8 > (l_first_raw_byte);
+#endif
 
         // For DDR5 all bits are valid in the CAS latencies supported bytes
         // so no range checking is needed

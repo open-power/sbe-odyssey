@@ -81,10 +81,17 @@ fapi2::ReturnCode get_timing(
         fapi2::buffer<uint16_t> l_buffer;
         const uint8_t l_lsb = i_spd[i_start_byte];
         const uint8_t l_msb = i_spd[l_last_byte];
+// FIXME - GCC version > 10  can't make template right_aligned_insert(...) params into a constexpr
+#if __GNUC__ < 10
 
         // Inserts the data for this timing into the buffer
         mss::right_aligned_insert(l_buffer, l_msb, l_lsb);
+#else
+        // workaround
+        l_buffer.template insertFromRight < 16 - 16, 8 > (l_msb);
+        l_buffer.template insertFromRight < 16 - 8,  8 > (l_lsb);
 
+#endif
         // SPD notes that a timing of 0 is reserved
         FAPI_ASSERT(l_buffer != 0,
                     fapi2::MSS_INVALID_TIMING_VALUE().
