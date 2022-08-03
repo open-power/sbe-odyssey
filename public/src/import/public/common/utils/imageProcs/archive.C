@@ -226,8 +226,6 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
 
         // The pak layout is big endian
         hdrc.h.iv_magic = be32toh(hdrc.h.iv_magic);
-        hdrc.h.iv_version = be16toh(hdrc.h.iv_version);
-        hdrc.h.iv_hesize = be16toh(hdrc.h.iv_hesize);
 
         // Check the magic to make sure we are at the start of an entry
         if (hdrc.h.iv_magic == PAK_END)
@@ -251,6 +249,7 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
 
         if (hdrc.h.iv_magic == PAK_PAD)
         {
+            hdrc.h.iv_padsize = be32toh(hdrc.h.iv_padsize);
             ptr += hdrc.h.iv_padsize + 8;
             continue;
         }
@@ -261,6 +260,9 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
             o_ptr = ptr;
             return ARC_FILE_CORRUPTED;
         }
+
+        hdrc.h.iv_version = be16toh(hdrc.h.iv_version);
+        hdrc.h.iv_hesize = be16toh(hdrc.h.iv_hesize);
 
         // The header core checked out, advance to the extended data
         ptr += 8;
