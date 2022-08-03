@@ -91,7 +91,8 @@ def p11_shutdown():
     GPWRP = CONTROL_WRITE_PROTECT_DISABLE         # Disable Write Protection for Root/Perv Control registers (in case the chip has just been reset)
 
     ROOT_CTRL1.GLOBAL_PERST_OVERRIDE = 1      # Assert all PERST# outputs
-    ROOT_CTRL0.OCMB_RESET = 1         # Assert OCMB reset
+    ROOT_CTRL0.OCMB0_RESET = 1         # Assert OCMB reset
+    ROOT_CTRL0.OCMB1_RESET = 1         # Assert OCMB reset
     delay(100ms, 0cyc)                            # Don't wait in sim, but do wait on real HW to give PCI devices time to reset
 
     PERV_CTRL0.PCB_EP_RESET = 1      # Raise PERV EP reset to raise all PERV region fences
@@ -112,6 +113,10 @@ ISTEP(0, 2, "cfam_reset", "BMC")
 def sim_p11s_cfam_reset():
     # Do not toggle Tap reset, this is done by Spinal later
     Toggle Spinal CFAM_RESET
+
+    # Sim workaround for X states in efuse that can't be cleaned out any other way (EWM 284776)
+    wait for 24k cycles
+    set OTPROM.SINGLE_OTP_ROM.OTPROM.EFUSE.FIRST_CSB to 1
 
 ISTEP(0, 3, "poweron", "BMC")
 # if power is already on, this is a no-op
@@ -211,7 +216,6 @@ def zme_setup_ref_clock():
     # TODO:  Set up zMe refclock muxing
     ROOT_CTRL4.NEST_GLM_ASYNC_RESET = 0
     ROOT_CTRL4.NEST_DIV2_ASYNC_RESET = 0
-    ROOT_CTRL4.PLL_FORCE_OUT_EN = 1
 
     ROOT_CTRL4_COPY = ROOT_CTRL4      # Update copy register to match
 
@@ -244,6 +248,64 @@ def ody_cbs_start(target<OCMB_CHIP>, bool i_start_sbe=true):
 
 def zme_cbs_start(target<PROC_CHIP>, bool i_start_sbe=true):
     mod_cbs_start(i_target, i_start_sbe)
+
+# You can use this HWP instead of cbs_start if you want to
+# emulate the behavior of the CBS via explicit CFAM accesses
+def poz_cbs_emulate(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_clockstart=false):
+    # This module uses CFAM accesses for everything
+
+    mod_cbs_start_prep(i_target, i_start_sbe, i_scan0_clockstart)
+
+    # CBS state 1: load_gp_regs
+    for i in 0..11:
+        putCfam(ROOT_CTRL0 + i, getCfam(ROOT_CTRL0_COPY + i))
+
+    # CBS state 2: set_ep_reset
+    ROOT_CTRL0.VDD2VIO_LVL_FENCE = 0
+    PERV_CTRL0.PCB_EP_RESET = 1
+    PERV_CTRL0.GLM_TCK_ASYNC_RESET = 0
+
+    # CBS state 3: clear_ep_reset
+    ROOT_CTRL0.CFAM_PROTECTION_1 = 0
+    PERV_CTRL0.PCB_EP_RESET = 0
+
+    if i_scan0_clockstart:
+        # CBS state 4: set_cc_cmd
+        ROOT_CTRL0.FSI_CC_CBS_CMD = 0b111
+
+        # CBS state 5: set_cc_req
+        ROOT_CTRL0.FSI_CC_CBS_REQ = 1
+
+        # CBS state 6: wait for cc_ack
+        timeout = 100
+        while not CBS_STAT.CBS_STAT_DBG_TP_TPFSI_CBS_ACK:
+            timeout -= 1
+            if timeout == 0:
+                ASSERT(CBS_NOT_IN_IDLE_STATE)
+
+        # CBS state 7: clear_cc_req
+        ROOT_CTRL0.FSI_CC_CBS_REQ = 0
+
+        # CBS state 8: wait for scan0 done
+        timeout = 1000
+        while CBS_STAT.CBS_STAT_DBG_TP_TPFSI_CBS_ACK:
+            timeout -= 1
+            if timeout == 0:
+                ASSERT(CBS_NOT_IN_IDLE_STATE)
+
+    # CBS state 9: clear_fences
+    ROOT_CTRL0[bits 9:13] = 0
+    ROOT_CTRL0.FSI2PCB = 0
+    ROOT_CTRL1.TC_PERV_RI_DC_N = 1
+    ROOT_CTRL1.TC_PERV_DI1_DC_N = 1
+    PERV_CTRL0.CHIPLET_EN = 1
+    PERV_CTRL0.PERV2FSI_CHIPLET_FENCE = 0
+
+    # CBS state 10 and 11 no longer exist
+
+    # CBS state 12: set_sppe_start
+    if i_start_sbe:
+        SB_CS.SB_CS_START_RESTART_VECTOR0 = 1
 
 def poz_prep_chip_for_tp_lbist():
     Kick CBS without scan0/clockstart/SBE
@@ -402,10 +464,10 @@ def p11s_pib_arrayinit():
     mod_abist_poll()
 
 def ody_pib_arrayinit():
-    p11s_pib_arrayinit()
+    same as p11s_pib_arrayinit()
 
 def zme_pib_arrayinit():
-    p11s_pib_arrayinit()
+    same as p11s_pib_arrayinit()
 
 ISTEP(1, 7, "ph_pib_arrayinit_cleanup", "SPPE")
 # executes from ROM driven by command table
@@ -414,11 +476,11 @@ def p11s_pib_arrayinit_cleanup():
     mod_abist_cleanup()
     mod_scan0(regions=[pib])
 
-def ody_pib_arrayinit():
-    p11s_pib_arrayinit_cleanup()
+def ody_pib_arrayinit_cleanup():
+    same as p11s_pib_arrayinit_cleanup()
 
-def zme_pib_arrayinit():
-    p11s_pib_arrayinit_cleanup()
+def zme_pib_arrayinit_cleanup():
+    same as p11s_pib_arrayinit_cleanup()
 
 """
 PIB/SBE LBIST flow:
@@ -436,10 +498,10 @@ def p11s_pib_startclocks():
     mod_start_stop_clocks(regions=[pib])
 
 def ody_pib_startclocks():
-    p11s_pib_startclocks()
+    same as p11s_pib_startclocks()
 
 def zme_pib_startclocks():
-    p11s_pib_startclocks()
+    same as p11s_pib_startclocks()
 
 ISTEP(1, 10, "ph_sppe_measure", "SPPE")
 # executes from ROM
@@ -659,6 +721,10 @@ ISTEP(2, 1, "proc_fsi_init", "SPPE")
 def sim_p11t_fsi_init():
     # Run this only on tap-only models
     Toggle Tap CFAM_RESET
+
+    # Sim workaround for X states in efuse that can't be cleaned out any other way (EWM 284776)
+    wait for 24k cycles
+    set OTPROM.SINGLE_OTP_ROM.OTPROM.EFUSE.FIRST_CSB to 1
 
 def p11_fsi_init():
     # start with list of functional Taps based on PG+deconfig (expected to be provided by FAPI platform code)
@@ -1094,17 +1160,36 @@ ISTEP(3, 6, "proc_chiplet_pll_initf", "SSBE, TSBE")
 
 def p11s_chiplet_pll_initf():
     putRing( chiplet_pll_common = all static PLL settings if any )
+
     # Load bucketed rings based on bucket attrs
     # Default to max freq during boot to catch errors early
-    putRing( paxo_pll_n )
-    putRing( pci_pll_n )
-    putRing( mc_pll_n )
+
+    for all PAX:
+        putRingBucket(pax_pll_XX, ATTR_PAXO_PLL_BUCKET[i])
+
+    for all PAXO:
+        putRingBucket(paxo_pll_XX, ATTR_PAXO_PLL_BUCKET[i+8])
+
+    for all PEC2P:
+        putRingBucket(pec2p_pll_XX, ATTR_TBD) # TODO Joachim
+
+    for all PEC6P:
+        putRingBucket(pec6p_pll_XX, ATTR_TBD) # TODO Joachim
+
+    for all MC:
+        putRingBucket(mc_pll_XX, ATTR_OMI_PLL_BUCKET[i])
+
+    # Single setting for all TBUS, can be scanned via the chip
+    # NEST_LCPLL_BUCKET is correct here, we use that same setting for the TBUS buckets
+    putRingBucket(tbus_pll_XX, ATTR_NEST_LCPLL_BUCKET)
 
 def p11t_chiplet_pll_initf():
     putRing( chiplet_pll_common = all static PLL settings if any )
+
     # Load bucketed rings based on bucket attrs
     # Default to max freq during boot to catch errors early
-    putRing( tbus_pll_n )
+    # NEST_LCPLL_BUCKET is correct here, we use that same setting for the TBUS buckets
+    putRingBucket(tbus_pll_XX, ATTR_NEST_LCPLL_BUCKET)
 
 def zme_chiplet_pll_initf():
     putRing( chiplet_pll_common = all static PLL settings if any )
@@ -1434,25 +1519,25 @@ def zme_chiplet_fir_init():
 ISTEP(3, 22, "proc_chiplet_dts_init", "SSBE, TSBE")
 
 def p11s_chiplet_dts_init():
-    poz_chiplet_dts_init()
+    poz_chiplet_dts_init(target, AN_CHIP_VOLTAGE_WRAP_SCOMSAT_KVREF_START_CAL)
 
 def p11t_chiplet_dts_init():
-    poz_chiplet_dts_init()
+    poz_chiplet_dts_init(target, ANALOG_SHIM_VOLTAGE_WRAP_SCOMSAT_KVREF_START_CAL)
 
 def ody_chiplet_dts_init():
     pass
 
 def zme_chiplet_dts_init():
-    poz_chiplet_dts_init()
+    poz_chiplet_dts_init(target, ???)   # TODO tbd
 
-def poz_chiplet_dts_init():
+def poz_chiplet_dts_init(target<ANY_POZ_CHIP> i_target, uint32_t i_start_cal_address):
     # DTS calibration is scanned in via the repr ring, but we can use this to calibrate KVREF
     ## Calibrating voltage reference
-    KVREF_START_CAL = 1ULL << 63
+    KVREF_START_CAL = 1ULL << 63   # use getScom(i_start_cal_address) here
     delay(10us, 1000cyc)   # Give KVREF some time to get the message and drop CAL_DONE
 
     try 100 times:
-        if KVREF_CAL_DONE:
+        if KVREF_CAL_DONE:   # use getScom(i_start_cal_address + 4) here
             break
         delay(100us, 1000cyc)
     else:

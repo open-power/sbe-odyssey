@@ -117,8 +117,8 @@ def mod_abist_start(target<PERV|MC>, uint16_t i_clock_regions, uint32_t i_runn_c
                     i_abist_start_stagger)
     mod_opcg_go(i_target)
 
-def mod_abist_poll(target<PERV|MC, MCAST_AND>):
-    poll_opcg_done(i_target, 200us, 1120kcyc, 400)
+def mod_abist_poll(target<PERV|MC, MCAST_AND>, bool i_poll_abist_done=False):
+    poll_opcg_done(i_target, 200us, 1120kcyc, 400, i_poll_abist_done)
 
     # Check that ABIST_DONE is set
     if not CPLT_STAT0.ABIST_DONE:
@@ -131,10 +131,11 @@ def mod_abist_cleanup(target<PERV|MC>, bool i_clear_sram_abist_mode=true):
     BIST = 0
     BIST.TC_SRAM_ABIST_MODE_DC = !i_clear_sram_abist_mode
 
-def poll_opcg_done(target<PERV|MC, MCAST_AND>, uint32_t i_hw_delay, uint32_t i_sim_delay, uint32_t i_poll_count):
+def poll_opcg_done(target<PERV|MC, MCAST_AND>, uint32_t i_hw_delay, uint32_t i_sim_delay, uint32_t i_poll_count, bool i_poll_abist_done=False):
     for i in 1..i_poll_count:
-        if CPLT_STAT.OPCG_DONE:
+        if CPLT_STAT.OPCG_DONE or (i_poll_abist_done and CPLT_STAT.ABIST_DONE):
             return SUCCESS
+
         delay(i_hw_delay, i_sim_delay)
 
     ASSERT(CPLT_OPCG_DONE_NOT_SET_ERR)
@@ -233,9 +234,8 @@ def mod_start_stop_clocks(target<PERV|MC>, uint16_t i_clock_regions, uint16_t i_
 
 ISTEP(99, 99, "poz_perv_mod_misc", "")
 
-def mod_cbs_start(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_clockstart=false):
+def mod_cbs_start_prep(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_clockstart=false):
     # This module uses CFAM accesses for everything
-    # You can pretty much copy the code of p10_start_cbs but be aware that I moved a few steps around and removed some others
 
     # Drop CFAM protection 0 to ungate VDN_PRESENT
     ROOT_CTRL0.CFAM_PROTECTION_0 = 0
@@ -258,6 +258,11 @@ def mod_cbs_start(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_cloc
     CBS_CS.OPTION_SKIP_SCAN0_CLOCKSTART = not i_scan0_clockstart
     CBS_CS.OPTION_PREVENT_SBE_START = not i_start_sbe
     # write CBS_CS
+
+def mod_cbs_start(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_clockstart=false):
+    # This module uses CFAM accesses for everything
+
+    mod_cbs_start_prep(i_target, i_start_sbe, i_scan0_clockstart)
 
     CBS_CS.START_BOOT_SEQUENCER = 1   # Start CBS
     # Leave START_BOOT_SEQUENCER at 1 to prevent accidental restarts
