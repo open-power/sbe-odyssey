@@ -34,8 +34,10 @@ namespace ring_id
 // cat composite_ring_sorting.txt | sed 's/#.*$//;/^[ \t]*$/ d;' | cut -d' ' -f1 | grep -v FAIL | sed 's/.*/    RING_ID(\0);/'
 
 RING_ID(pc_pll);
+RING_ID(pax_pll_XX);
 RING_ID(paxo_pll_XX);
-RING_ID(pci_pll_XX);
+RING_ID(pec2p_pll_XX);
+RING_ID(pec6p_pll_XX);
 RING_ID(mc_pll_XX);
 RING_ID(tbus_pll_XX);
 RING_ID(pc_pib_rtg);

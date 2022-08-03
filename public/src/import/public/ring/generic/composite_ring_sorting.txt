@@ -18,8 +18,10 @@
 pc_pll        pc:perv_pll_bndy perv_pll_cfg
 
 # PAXO, PCI, MC, TBUS are bucketed PLL rings
+pax_pll_XX    pax_pll_bndy
 paxo_pll_XX   paxo_pll_bndy
-pci_pll_XX    pci_pll_bndy
+pec2p_pll_XX  pec2p_pll_bndy
+pec6p_pll_XX  pec6p_pll_bndy
 mc_pll_XX     mc_pll_bndy
 tbus_pll_XX   tbus_pll_bndy
 
