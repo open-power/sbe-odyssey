@@ -411,7 +411,7 @@ void PpeTrace::parseEntries()
         PkTraceBinaryParms bParms;
         bParms.word32 = footer1;
 
-        //iv_info << "footer " << hex << footer << " " << footer1 << endl;
+        //iv_info << "footer " << hex << setfill('0') << setw(8) << footer << " " << setfill('0') << setw(8) << footer1 << endl;
         //iv_info << "stringid " << bParms.string_id << " size " << (int)bParms.num_bytes << endl;
 
         if(iv_version == 2)
@@ -444,11 +444,20 @@ void PpeTrace::parseEntries()
             {
                 parmCount = bParms.num_bytes; // byte or word count;
 
+                //std::cout << "num_bytes " << parmCount << std::endl;
+
                 if(format == PK_TRACE_FORMAT_BINARY)
                 {
                     //Round up and convert to word count
                     parmCount = (parmCount + 3) / 4;
                     pte.setBinary();
+
+                    // v2 entrees are 8 byte aligned so for odd num words
+                    //   backup one more word
+                    if(parmCount % 2)
+                    {
+                        --index;
+                    }
 
                     for(int i = 0; i < parmCount; ++i)
                     {
