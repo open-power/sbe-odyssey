@@ -195,7 +195,7 @@ ReturnCode mod_multicast_setup(
     fapi2::buffer<uint64_t> l_eligible_chiplets = 0;
     fapi2::buffer<uint64_t> l_required_group_members;
     fapi2::buffer<uint64_t> l_current_group_members;
-    auto l_func = i_target.getChildren<fapi2::TARGET_TYPE_PERV>( i_pgood_policy);
+    auto l_func = i_target.getChildren<fapi2::TARGET_TYPE_PERV>(i_pgood_policy);
 
     FAPI_INF("Entering ...");
     FAPI_ASSERT(!(i_group_id > 6),
@@ -240,6 +240,35 @@ ReturnCode mod_multicast_setup(
         FAPI_TRY(fapi2::putScom(i_target, (PCB_RESPONDER_MCAST_GROUP_1 + i_group_id) | (i << 24),
                                 (new_group << 58) | (prev_group << 42)));
     }
+
+fapi_try_exit:
+    FAPI_INF("Exiting ...");
+    return current_err;
+}
+
+ReturnCode mod_get_chiplet_by_number(
+    const Target < TARGET_TYPE_PERV | TARGET_TYPE_ANY_POZ_CHIP > & i_target,
+    uint8_t i_chiplet_number,
+    Target < TARGET_TYPE_PERV >& o_target)
+{
+    auto l_chiplets = i_target.getChildren<fapi2::TARGET_TYPE_PERV>();
+
+    FAPI_INF("Entering ...");
+
+    for (auto& chiplet : l_chiplets)
+    {
+        if (chiplet.getChipletNumber() == i_chiplet_number)
+        {
+            o_target = chiplet;
+            return fapi2::FAPI2_RC_SUCCESS;
+        }
+    }
+
+    FAPI_ASSERT(false,
+                fapi2::POZ_CHIPLET_NOT_FOUND()
+                .set_CHIPLET_NUMBER(i_chiplet_number)
+                .set_PROC_TARGET(i_target),
+                "ERROR: Provided chiplet number does not match anything in provided target.");
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");

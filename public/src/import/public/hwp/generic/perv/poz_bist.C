@@ -44,30 +44,59 @@ enum POZ_BIST_Private_Constants
 {
 };
 
+// Determine if we only have one chiplet and can unicast BIST
+bool can_unicast(uint64_t i_chiplets)
+{
+    // Currently, only one bit is set means only one chiplet
+    return (i_chiplets != 0 && (i_chiplets & (i_chiplets - 1)) == 0);
+}
+
+// Given a 64-bit mask, return the index of the first set bit
+uint8_t get_set_bit_index(uint64_t i_mask)
+{
+    uint8_t l_index = 0;
+    uint64_t l_mask_scanner = 0x8000000000000000;
+
+    while (l_mask_scanner && !(l_mask_scanner & i_mask))
+    {
+        l_mask_scanner >>= 1;
+        l_index++;
+    }
+
+    return l_index;
+}
+
 void print_bist_params(const bist_params& i_params)
 {
     FAPI_DBG("version = %d", i_params.BIST_PARAMS_VERSION);
     FAPI_DBG("program = %s", i_params.program);
     FAPI_DBG("ring_patch = %s", i_params.ring_patch);
-    FAPI_DBG("chiplets = 0x%x", i_params.chiplets);
-    FAPI_DBG("flags = 0x%x", i_params.flags);
-    FAPI_DBG("opcg_count = 0x%x", i_params.opcg_count);
-    FAPI_DBG("idle_count = 0x%x", i_params.idle_count);
-    FAPI_DBG("timeout = 0x%x", i_params.timeout);
-    FAPI_DBG("linear_stagger = 0x%x", i_params.linear_stagger);
-    FAPI_DBG("zigzag_stagger = 0x%x", i_params.zigzag_stagger);
-    FAPI_DBG("regions = 0x%x", i_params.regions);
+    FAPI_DBG("chiplets = %#018lx", i_params.chiplets);
+    FAPI_DBG("flags = %#010x", i_params.flags);
+    FAPI_DBG("opcg_count = %#018lx", i_params.opcg_count);
+    FAPI_DBG("idle_count = %#018lx", i_params.idle_count);
+    FAPI_DBG("timeout = %#010x", i_params.timeout);
+    FAPI_DBG("linear_stagger = %#018lx", i_params.linear_stagger);
+    FAPI_DBG("zigzag_stagger = %#018lx", i_params.zigzag_stagger);
+    FAPI_DBG("regions = %#06x", i_params.regions);
 }
 
 ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist_params& i_params)
 {
     FAPI_INF("Entering ...");
 
-    // TODO once MultiCast Setup is Supported, replace this with it.
-    auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
+    // Our pervasive target (can be multicast or unicast)
+    Target<TARGET_TYPE_PERV> l_chiplets_uc;
+    Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > l_chiplets_target;
 
-    //Check to see if structure BIST_PARAMS is the expected version.
-    //if(i_params.BIST_PARAMS_VERSION != BIST_PARAMS_CURRENT_VERSION)
+    // Needed for unicast condition
+    uint8_t l_chiplet_number = 0;
+
+    // Scan0 regions are different for TP BIST
+    clock_region l_scan0_region = REGION_ALL;
+
+    // Check to see if structure BIST_PARAMS is the expected version.
+    // if(i_params.BIST_PARAMS_VERSION != BIST_PARAMS_CURRENT_VERSION)
     FAPI_ASSERT(i_params.BIST_PARAMS_VERSION == BIST_PARAMS_CURRENT_VERSION,
                 fapi2::BAD_BIST_PARAMS_FORMAT().
                 set_BIST_PARAMS(i_params.BIST_PARAMS_VERSION),
@@ -78,11 +107,33 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
     FAPI_DBG("Printing bist_params");
     print_bist_params(i_params);
 
+    // Configure our target (unicast OR multicast)
     if (i_params.chiplets)
     {
-        FAPI_DBG("Setup multicast group 6");
-        FAPI_TRY(mod_multicast_setup(i_target, MCGROUP_6, i_params.chiplets, TARGET_STATE_FUNCTIONAL));
-        l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_6);
+        if (can_unicast(i_params.chiplets))
+        {
+            FAPI_DBG("Only one chiplet requested; using unicast");
+            l_chiplet_number = get_set_bit_index(i_params.chiplets);
+            FAPI_TRY(mod_get_chiplet_by_number(i_target, l_chiplet_number, l_chiplets_uc));
+            l_chiplets_target = l_chiplets_uc;
+
+            // If TP BIST, don't scan0 SBE region
+            if (l_chiplet_number == 1)
+            {
+                l_scan0_region = REGION_ALL_BUT_PERV_SBE;
+            }
+        }
+        else
+        {
+            FAPI_DBG("Setup and use multicast group 6");
+            FAPI_TRY(mod_multicast_setup(i_target, MCGROUP_6, i_params.chiplets, TARGET_STATE_FUNCTIONAL));
+            l_chiplets_target = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_6);
+        }
+    }
+    else
+    {
+        FAPI_DBG("No chiplet mask provided; opting for all good, no TP group");
+        l_chiplets_target = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
     }
 
     if (i_params.flags & i_params.bist_flags::DO_SCAN0)
@@ -90,12 +141,12 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
         if (i_params.flags & i_params.bist_flags::SCAN0_REPR)
         {
             FAPI_DBG("Scan0 all regions");
-            FAPI_TRY(mod_scan0(l_chiplets_mc, REGION_ALL, SCAN_TYPE_ALL));
+            FAPI_TRY(mod_scan0(l_chiplets_target, l_scan0_region, SCAN_TYPE_ALL));
         }
         else
         {
             FAPI_DBG("Scan0 all regions minus repr");
-            FAPI_TRY(mod_scan0(l_chiplets_mc, REGION_ALL, SCAN_TYPE_NOT_REPR));
+            FAPI_TRY(mod_scan0(l_chiplets_target, l_scan0_region, SCAN_TYPE_NOT_REPR));
         }
     }
 
@@ -145,7 +196,7 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
 
         if (i_params.flags & i_params.bist_flags::ABIST_NOT_LBIST)
         {
-            FAPI_TRY(mod_abist_setup(l_chiplets_mc,
+            FAPI_TRY(mod_abist_setup(l_chiplets_target,
                                      i_params.regions,
                                      i_params.opcg_count,
                                      i_params.idle_count,
@@ -153,7 +204,7 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
         }
         else
         {
-            FAPI_TRY(mod_lbist_setup(l_chiplets_mc,
+            FAPI_TRY(mod_lbist_setup(l_chiplets_target,
                                      i_params.regions,
                                      i_params.opcg_count,
                                      i_params.idle_count,
@@ -170,7 +221,7 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
         }
 
         FAPI_DBG("Start BIST with OPCG GO");
-        FAPI_TRY(mod_opcg_go(l_chiplets_mc));
+        FAPI_TRY(mod_opcg_go(l_chiplets_target));
     }
 
     if (i_params.flags & i_params.bist_flags::DO_POLL)
@@ -184,7 +235,7 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
         FAPI_DBG("Poll for DONE or HALT");
         // TODO pass in poll count and delay arguments once supported
         // TODO put ASSERT_ABIST_DONE in bist_params and turn off if ABIST infinite or LBIST
-        FAPI_TRY(mod_bist_poll(l_chiplets_mc,
+        FAPI_TRY(mod_bist_poll(l_chiplets_target,
                                i_params.flags & i_params.bist_flags::POLL_ABIST_DONE,
                                i_params.flags & i_params.bist_flags::ABIST_NOT_LBIST));
     }
@@ -192,7 +243,7 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
     if (i_params.flags & i_params.bist_flags::DO_REG_CLEANUP)
     {
         FAPI_DBG("Cleanup all SCOM registers");
-        FAPI_TRY(mod_bist_reg_cleanup(l_chiplets_mc));
+        FAPI_TRY(mod_bist_reg_cleanup(l_chiplets_target));
     }
 
     if (i_params.flags & i_params.bist_flags::DO_COMPARE)
