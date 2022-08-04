@@ -37,13 +37,23 @@
 
 using namespace cc;
 
-/// @brief Poll OPCG done bit to check for run-N completeness.
+/// @brief Poll for and exit upon OPCG_DONE, BIST_HALT, or (optionally) ABIST_DONE.
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
+/// @param[in]   i_poll_abist_done         Inspect ABIST_DONE alongside the other bits
+/// @param[in]   i_assert_abist_done       Assert ABIST_DONE is set at the end of the procedure
+/// @param[in]   i_poll_count              Maximum number of times to poll before giving up
+/// @param[in]   i_hw_delay                Delay of ns between polls on hardware
+/// @param[in]   i_sim_delay               Delay of simcycles between polls on sim
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_bist_poll(
-    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST, fapi2::MULTICAST_AND > & i_target);
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST, fapi2::MULTICAST_AND > & i_target,
+    bool i_poll_abist_done = true,
+    bool i_assert_abist_done = true,
+    uint32_t i_poll_count = 400,
+    uint32_t i_hw_delay = 200000,
+    uint32_t i_sim_delay = 1120000);
 
 /// @brief BIST SCOM reg cleanup module.
 /// --Clear OPCG_REG0, CLK_REGION, CPLT_CTRL0 & BIST registers

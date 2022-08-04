@@ -181,22 +181,12 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
             FAPI_DBG("timeout not yet implemented; check back later");
         }
 
-        if (i_params.flags & i_params.bist_flags::POLL_ABIST_DONE)
-        {
-            FAPI_DBG("Poll for DONE (ABIST, OPCG, and HALT)");
-            // TODO pass in POLL_ABIST_DONE flag once supported
-            FAPI_DBG("ABIST_DONE polling not yet implemented; check back later");
-            // TODO delete this message once BIST_HALT is supported
-            FAPI_DBG("BIST_HALT polling not yet implemented; check back later");
-            FAPI_TRY(mod_bist_poll(l_chiplets_mc));
-        }
-        else
-        {
-            FAPI_DBG("Poll for DONE (OPCG and HALT)");
-            // TODO delete this message once BIST_HALT is supported
-            FAPI_DBG("BIST_HALT polling not yet implemented; check back later");
-            FAPI_TRY(mod_bist_poll(l_chiplets_mc));
-        }
+        FAPI_DBG("Poll for DONE or HALT");
+        // TODO pass in poll count and delay arguments once supported
+        // TODO put ASSERT_ABIST_DONE in bist_params and turn off if ABIST infinite or LBIST
+        FAPI_TRY(mod_bist_poll(l_chiplets_mc,
+                               i_params.flags & i_params.bist_flags::POLL_ABIST_DONE,
+                               i_params.flags & i_params.bist_flags::ABIST_NOT_LBIST));
     }
 
     if (i_params.flags & i_params.bist_flags::DO_REG_CLEANUP)
