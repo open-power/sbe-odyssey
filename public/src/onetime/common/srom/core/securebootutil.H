@@ -196,6 +196,35 @@ typedef union sha3HashOtprom
 }sha3HashOtprom_t;
 
 /**
+ * @brief Union to keep hash of hash sets
+ */
+typedef union sha3HashOfHash
+{
+    uint8_t hashSet1nSet2[SHA3_DIGEST_LENGTH * 2];
+    struct
+    {
+        sha3_t hashSet1;
+        sha3_t hashSet2;
+    };
+    /**
+     * @brief Verify hash of hash sets
+     * @param hashOfHashOtprom sha3_t*
+     *
+     */
+    bool verifyHashOfHash(sha3_t* hashOfHashOtprom)
+    {
+        bool status = false;
+        sha3_t digest;
+        sha3_Hash(hashSet1nSet2, sizeof(hashSet1nSet2), &digest);
+        if(memcmp(digest, hashOfHashOtprom, SHA3_DIGEST_LENGTH) == 0)
+        {
+            status = true;
+        }
+        return status;
+    }
+}sha3HashOfHash_t;
+
+/**
  * @brief Union to read the stored ECID from OTPROM Reg's
  *
  */
