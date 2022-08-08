@@ -32,8 +32,10 @@ infile_s = ['div64.S',
 infile_c = ['ppe42_gcc.c',
             'ppe42_scom.c',
             'eabi.c',
-            'ppe42_math.c',
-            'ppe42_string.c'
+            'ppe42_math.c'
+            ]
+
+strfile_c = ['ppe42_string.c'
             ]
 
 lib_file_name = 'pkbase'
@@ -55,6 +57,17 @@ foreach infile : infile_s
   abs_infiles_s_path += abs_infile_s_path
 
 endforeach
+
+abs_strfile_c_path = []
+foreach infile : strfile_c
+
+  abs_strfile_c_path += import_dir_path + infile
+
+endforeach
+
+# ppe42_string.c must be compiled with -falign-loops=32 for significantly improved
+# peformance. -O2 enables few speed optimizations
+ppe_baselib_obj_file_str = obj_gen_c.process(abs_strfile_c_path, extra_args: '-O2 -falign-loops=32')
 
 ppe_baselib_pre_process_file_list = []
 
@@ -79,7 +92,8 @@ ppe_baselib_obj_file_c = obj_gen_c.process(abs_infiles_c_path)
 
 
 infile  = [ppe_baselib_obj_file_s,
-           ppe_baselib_obj_file_c
+           ppe_baselib_obj_file_c,
+           ppe_baselib_obj_file_str
            ]
 
 pkbaselib = custom_target( lib_file_name,

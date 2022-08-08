@@ -105,20 +105,6 @@ namespace SBE
         putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, secureBootFailStatus.iv_mbx13);
     }
 
-    void memcpy_byte(void* vdest, const void* vsrc, size_t len)
-    {
-
-        // Loop, copying 1 byte
-        uint8_t* cdest = (uint8_t *)vdest;
-        const uint8_t* csrc = (const uint8_t *)vsrc;
-        size_t i = 0;
-
-        for (; i < len; ++i)
-        {
-            cdest[i] = csrc[i];
-        }
-    }
-
     bool isHreset(void)
     {
         #define SBE_FUNC "IS_HRESET"
