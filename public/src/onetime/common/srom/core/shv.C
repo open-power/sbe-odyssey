@@ -208,7 +208,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     //Process HW Keys and verify HW keys Hash
     if(shvReq->controlData.hwKeyHashCheck)
     {
-        SBE::memcpy_byte(hashDataBuff, &container->hw_pkey_a, (sizeof(ecc_key_t) + sizeof(dilithium_key_t)));
+        memcpy(hashDataBuff, &container->hw_pkey_a, (sizeof(ecc_key_t) + sizeof(dilithium_key_t)));
         sha3_Hash(hashDataBuff, (sizeof(ecc_key_t) + sizeof(dilithium_key_t)), &digest);
         //Return the calculated SHA3-512 HW Key Hash.
         memcpy(shvRsp->sha3.hwKeyHash,digest,SHA3_DIGEST_LENGTH);
@@ -259,7 +259,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     //Calculate Hash of prefix header
     if(shvReq->controlData.ecdsaCheck || shvReq->controlData.dilithiumCheck)
     {
-        SBE::memcpy_byte(hashDataBuff, prefix, PREFIX_HEADER_SIZE(prefix));
+        memcpy(hashDataBuff, prefix, PREFIX_HEADER_SIZE(prefix));
         sha3_Hash(hashDataBuff, PREFIX_HEADER_SIZE(prefix), &digest);
     }
 
@@ -322,11 +322,11 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_PREFIX_PAYLD_SZ_CHECK);
 
-    SBE::memcpy_byte(hashDataBuff, &hw_data->sw_pkey_p, size);
+    memcpy(hashDataBuff, &hw_data->sw_pkey_p, size);
     sha3_Hash(hashDataBuff, size, &digest);
     //Return the calculated SHA3-512 FW/SW Key Hash.
     memcpy(shvRsp->sha3.fwKeyHash,digest,SHA3_DIGEST_LENGTH);
-    SBE::memcpy_byte(hashDataBuff, &prefix->payload_hash, SHA3_DIGEST_LENGTH);
+    memcpy(hashDataBuff, &prefix->payload_hash, SHA3_DIGEST_LENGTH);
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_PREFIX_PAYLOAD_HASH_CALCULATION);
 
@@ -413,7 +413,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     //Calculate Hash of SW/FW header
     if(shvReq->controlData.ecdsaCheck || shvReq->controlData.dilithiumCheck)
     {
-        SBE::memcpy_byte(hashDataBuff, header, SW_HEADER_SIZE(header));
+        memcpy(hashDataBuff, header, SW_HEADER_SIZE(header));
         sha3_Hash(hashDataBuff, SW_HEADER_SIZE(header), &digest);
     }
 
@@ -487,7 +487,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
 
     UPDATE_SBE_PROGRESS_CODE(COMPLETED_PAYLOAD_HASH_CALCULATION);
 
-    SBE::memcpy_byte(hashDataBuff, &header->payload_hash_protected, SHA3_DIGEST_LENGTH);
+    memcpy(hashDataBuff, &header->payload_hash_protected, SHA3_DIGEST_LENGTH);
     if(memcmp(&hashDataBuff, shvReq->payloadHash, SHA3_DIGEST_LENGTH))
     {
         SBE_ERROR(SBE_FUNC "FAILED : invalid sw payload hash");

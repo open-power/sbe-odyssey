@@ -32,6 +32,7 @@ extern "C" {
 #include "pk.h"
 #include "pk_api.h"
 #include "ppe42_scom.h"
+#include "ppe42_string.h"
 #include "sha3.H"
 
 #ifdef __cplusplus
@@ -169,19 +170,6 @@ namespace SBE
      */
      HASH_LIST_RET_t check_file_hash(const char *i_fname, const sha3_t &i_hash, const uint8_t *i_hash_list);
 
-    /*@brief - Copy memory from an unaligned address byte by byte into
-     * destination address
-     *
-     * @param[in] - vdest - Destination Address
-     *
-     * @param[in] - vsrc - Source Address
-     *
-     * @param[in] - len - Length of the data to be copied from vsrc to vdest
-     *
-     * @return - None
-     */
-    void memcpy_byte(void* vdest, const void* vsrc, size_t len);
-
     /*@brief - Get higher 32bit number from uint64
      *
      * @param[in] - i_lWord - 64bit long word
@@ -232,7 +220,7 @@ namespace SBE
     inline uint64_t get64(void* src)
     {
         uint64_t dest;
-        memcpy_byte(&dest, src,sizeof(uint64_t));
+        memcpy(&dest, src,sizeof(uint64_t));
         return dest;
     }
 
@@ -245,7 +233,7 @@ namespace SBE
     inline uint32_t get32(void* src)
     {
         uint32_t dest;
-        memcpy_byte(&dest, src,sizeof(uint32_t));
+        memcpy(&dest, src,sizeof(uint32_t));
         return dest;
     }
 
@@ -258,7 +246,7 @@ namespace SBE
     inline uint16_t get16(void* src)
     {
         uint16_t dest;
-        memcpy_byte(&dest, src,sizeof(uint16_t));
+        memcpy(&dest, src,sizeof(uint16_t));
         return dest;
     }
 
@@ -271,7 +259,7 @@ namespace SBE
     inline uint8_t get8(void* src)
     {
         uint8_t dest;
-        memcpy_byte(&dest, src,sizeof(uint8_t));
+        memcpy(&dest, src,sizeof(uint8_t));
         return dest;
     }
 

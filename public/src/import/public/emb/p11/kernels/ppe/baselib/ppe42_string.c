@@ -29,6 +29,7 @@
 #ifdef __PPE42__
 
 #include <ppe42_string.h>
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -73,28 +74,71 @@ void* memset(void* vdest, int ch, size_t len)
 }
 
 
-void* memcpy(void* vdest, const void* vsrc, size_t len)
+static inline void* _memcpy(void* vdest, const void* vsrc, size_t len)
 {
+    uint32_t alignDest = ((uint32_t)vdest) & 0x7;
+    uint32_t alignSrc = ((uint32_t)vsrc) & 0x7;
+    size_t i = 0;
+    char* cdest = (char*)vdest;
+    const char* csrc = (const char*)vsrc;
 
-    // Loop, copying 4 bytes
-    long* ldest = (long*)vdest;
-    const long* lsrc = (const long*)vsrc;
-
-    while (len >= sizeof(long))
+    if(alignDest == alignSrc) //align and do fast copy
     {
-        *ldest++ = *lsrc++;
-        len -= sizeof(long);
+
+        if(alignDest != 0)
+        {
+            alignDest = 8 - alignDest;
+        }
+
+        if(len > alignDest) //else fall back to 1 byte copy
+        {
+
+            for (; i < alignDest; ++i)
+            {
+                cdest[i] = csrc[i];
+                len--;
+            }
+
+            uint64_t* lldest = (uint64_t*)&cdest[alignDest];
+            const uint64_t* llsrc = (const uint64_t*)&csrc[alignDest];
+
+            while (len >= sizeof(uint64_t))
+            {
+                *lldest++ = *llsrc++;
+                len -= sizeof(uint64_t);
+            }
+
+            cdest = (char*)lldest;
+            csrc = (char*)llsrc;
+
+        }
     }
 
     // Loop, copying 1 byte
-    char* cdest = (char*)ldest;
-    const char* csrc = (const char*)lsrc;
-    size_t i = 0;
+    i = 0;
 
     for (; i < len; ++i)
     {
         cdest[i] = csrc[i];
     }
+
+    return vdest;
+
+}
+
+void* memcpy(void* vdest, const void* vsrc, size_t len)
+{
+    if((vdest > vsrc) && ((vsrc + len) > vdest))
+    {
+        asm volatile ( "trap" );
+    }
+
+    if((vsrc > vdest) && ((vdest + len) > vsrc))
+    {
+        asm volatile ( "trap" );
+    }
+
+    _memcpy(vdest, vsrc, len);
 
     return vdest;
 }
@@ -104,7 +148,7 @@ void* memmove(void* vdest, const void* vsrc, size_t len)
     // Copy first-to-last
     if (vdest <= vsrc)
     {
-        return memcpy(vdest, vsrc, len);
+        return _memcpy(vdest, vsrc, len);
     }
 
     // Copy last-to-first (TO_DO: optimize)
