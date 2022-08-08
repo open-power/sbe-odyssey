@@ -216,15 +216,9 @@
         },
         {
             "field": "msvFuseBank",
-            "field_size": 63,
+            "field_size": 64,
             "value": "0x0",
-            "description": "Bit 0..62 : Minimum Secure Version Fuse Bank"
-        },
-        {
-            "field": "reserved",
-            "field_size": 1,
-            "value": null,
-            "description": "Bit 63 : Unused"
+            "description": "Bit 0..62 : Minimum Secure Version Fuse Bank. Bit 63 is reserved"
         }
     ],
     "0x18007": [
