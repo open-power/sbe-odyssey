@@ -399,7 +399,7 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     // test for machine specific matching ecid
     if(shvReq->controlData.ecidCheck)
     {
-        if(memcmp(prefix->ecid,shvReq->swEcid,ECID_SIZE))
+        if(memcmp(header->ecid,shvReq->swEcid,ECID_SIZE))
         {
             SBE_ERROR(SBE_FUNC "FAILED : unauthorized SW ecid");
             VERIFY_FAILED(SHV_RC_SW_ECID_TEST);
