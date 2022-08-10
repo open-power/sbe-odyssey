@@ -251,7 +251,7 @@ def zme_cbs_start(target<PROC_CHIP>, bool i_start_sbe=true):
 
 # You can use this HWP instead of cbs_start if you want to
 # emulate the behavior of the CBS via explicit CFAM accesses
-def poz_cbs_emulate(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_clockstart=false):
+def poz_cbs_emulate(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_clockstart=true):
     # This module uses CFAM accesses for everything
 
     mod_cbs_start_prep(i_target, i_start_sbe, i_scan0_clockstart)
@@ -306,6 +306,8 @@ def poz_cbs_emulate(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_cl
     # CBS state 12: set_sppe_start
     if i_start_sbe:
         SB_CS.SB_CS_START_RESTART_VECTOR0 = 1
+
+    mod_cbs_cleanup(i_target)
 
 def poz_prep_chip_for_tp_lbist():
     Kick CBS without scan0/clockstart/SBE
@@ -388,12 +390,13 @@ def p11s_tp_pll_setup():
     if not ATTR_CP_PLLFLT_BYPASS:
         ## Start chip filter PLLs
         ROOT_CTRL3.TP_PLLFLT1_TEST_EN_DC = 0
-        ROOT_CTRL3.TP_PLLFLT1_RESET_DC = 0
         ROOT_CTRL3.TP_PLLFLT2_TEST_EN_DC = 0
-        ROOT_CTRL3.TP_PLLFLT2_RESET_DC = 0
         ROOT_CTRL3.TP_PLLFLT3_TEST_EN_DC = 0
-        ROOT_CTRL3.TP_PLLFLT3_RESET_DC = 0
         ROOT_CTRL3.TP_PLLFLT4_TEST_EN_DC = 0
+        # write ROOT_CTRL3
+        ROOT_CTRL3.TP_PLLFLT1_RESET_DC = 0
+        ROOT_CTRL3.TP_PLLFLT2_RESET_DC = 0
+        ROOT_CTRL3.TP_PLLFLT3_RESET_DC = 0
         ROOT_CTRL3.TP_PLLFLT4_RESET_DC = 0
         mod_poll_pll_lock_fsi2pib(i_target, P11S_PERV_FPLL1 | P11S_PERV_FPLL2 | P11S_PERV_FPLL3 | P11S_PERV_FPLL4)
 
@@ -408,6 +411,7 @@ def p11s_tp_pll_setup():
     else:
         ## Attempt to lock Nest PLL
         ROOT_CTRL3.TP_PLLNEST_TEST_EN_DC = 0    # not available in headers yet - bit 24
+        # write ROOT_CTRL3
         ROOT_CTRL3.TP_PLLNEST_RESET_DC = 0      # not available in headers yet - bit 25
 
         ## Prepare chip for at-speed operation
@@ -647,10 +651,10 @@ def p11s_tp_init():
     mod_constant_hangpulse_setup(i_target, TP_TPCHIP_PIB_PSU_HANG_PULSE_CONFIG_REG, {{37, 1, 0}, {153, 27, 0}, {0, 0, 0}, {0, 0, 0}})
 
     ## Unmask TP PLL unlock reporting
-    if not ATTR_FILTER_PLL_BYPASS:
+    if not ATTR_CP_PLLFLT_BYPASS:
         PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS &= ~(P11S_PERV_FPLL1 | P11S_PERV_FPLL2 | P11S_PERV_FPLL3 | P11S_PERV_FPLL4)
 
-    if not ATTR_NEST_PLL_BYPASS:
+    if not ATTR_CP_PLLNEST_BYPASS:
         PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS &= ~(P11S_PERV_PLLNEST)
 
     ## Miscellaneous TP setup
@@ -728,22 +732,27 @@ def sim_p11t_fsi_init():
 
 def p11_fsi_init():
     # start with list of functional Taps based on PG+deconfig (expected to be provided by FAPI platform code)
-    # G2P = 1, default HW value of SPINAL chip 8-bit value of a root control register
-    Enable all functional Tap refclock drivers                    # NOTE functional <=> partial good
-    Write root control to drop all functional Tap resets at once
-    Initialize PIB FSI controller
-    for tap in taps:
-        try:
-            detect FSI link presence
-            enable FSI link
-            Wait 1us   # actually 20 fsi clock cycles, ~250ns at 83 MHz, round up
-            set up TAP CFAM for access
-            perform test access (read 1007 or whatevs)
-        except any error:
-            deconfigure tap
-            "put that CFAM back into reset??"
-            log error
-            continue
+    buffer<uint8_t> l_expected_taps = 0;
+    for all functional Tap targets:
+        l_expected_taps[i] = 1
+
+    ## Enable Tap reference clocks
+    ROOT_CTRL7.TAP_REFCLK_EN = l_expected_taps
+
+    delay(1ms, 1kcyc)
+
+    ## Drop Tap CFAM_RESETs
+    ROOT_CTRL6.TAP_CFAM_RESET = ~l_expected_taps
+
+    call fsi_driver_init(i_expected_taps=l_taps, o_detected_taps=l_detected_taps)
+
+    ## Disable failed Taps
+    ROOT_CTRL6.TAP_CFAM_RESET = ~l_detected_taps
+    delay(1ms, 1kcyc)
+    ROOT_CTRL7.TAP_REFCLK_EN = l_detected_taps
+
+    if l_detected_taps != l_expected_taps:
+        ASSERT(TAP_FSI_INIT_FAILURE, l_expected_taps, l_detected_taps)
 
 ISTEP(2, 2, "pc_fsi_config", "SPPE")
 # Configure Tap root controls and scratch
@@ -814,25 +823,11 @@ def p11t_pib_startclocks():
 ISTEP(2, 11, "proc_g2p_init", "SPPE")
 
 def p11_g2p_init():
-    Set up G2P repairs on Spinal via PIB
-    Set up G2P repairs on TAPs via FSI
-    """
-    Question: How do we get G2P repairs into the procedure?
-    Answer: We need to put them in via SCOM on TAP, so use SCOM everywhere
-            Get repair data via customized attribute
-    """
-    Enable G2P interface
-
-    # Check G2P interface
-    for tap in taps:
-        for data in (all 1s, all 0s, checkerboard):
-            write data to tap scratch reg via FSI, read via G2P, compare
-            write data to tap scratch reg via G2P, read via FSI, compare
+    pass   # G2P acceleration has been dropped from the plan
 
 ISTEP(2, 12, "proc_sbe_load", "SPPE")
 
 def p11_sbe_load():
-    # Uses G2P interface
     # SPPE loads SPINAL & TAP SBE common image (FW code, common data)
     # Performs a signature check on the entire block.
     # Loads block into SPINAL SBE PIBMEM
@@ -847,7 +842,6 @@ QUESTION: How do we construct SEEPROM / HW images
 """
 
 def p11_sbe_customize():
-    # Uses G2P interface
     # Same as above but no signature check
     # Data is Tap unique
     MODULE( load PPE image( Spinal SBE via PIB, Spinal cust image ) )
@@ -862,19 +856,24 @@ def p11_sbe_config_update():
 
 ISTEP(2, 15, "proc_sbe_start", "SPPE")
 
-def p11_sbe_start():
+def p11_sbe_start(vector<Target<COMPUTE_CHIP | HUB_CHIP> & i_targets>):
     ## Boot SBEs on both Spinal and Tap
-    for chip in (Spinal, all functional Taps):
-        SB_CS.SB_CS_START_RESTART_VECTOR0 = 0
-        SB_CS.SB_CS_START_RESTART_VECTOR0 = 1
-        SB_CS.SB_CS_START_RESTART_VECTOR0 = 0
+    for chip in i_targets:
+        # Use TP_TPCHIP_PIB_SBE_SBEPM_SBEPPE_PPE_XIXCR_t for SBE_PPE_XIXCR
+        SBE_PPE_XIXCR = 0
+        # Hard reset SBE
+        SBE_PPE_XIXCR.PPE_XIXCR_XCR = XCR_HARD_RESET   # XCR_HARD_RESET = 6
+        # write XIXCR
+
+        # Start SBE instructions
+        SBE_PPE_XIXCR.PPE_XIXCR_XCR = XCR_START        # XCR_START = 2
 
     ## Wait for all SBEs to complete boot
     bool all_done = false
     for loop in 1..100:
         delay(1ms, 10kcyc)
         all_done = true
-        for chip in (Spinal, all functional Taps):
+        for chip in i_targets:
             all_done = all_done and SB_MSG2[0]     # SB_MSG2 not defined in headers yet, it's at 5000A
         if all_done:
             break
@@ -977,7 +976,7 @@ def p11t_tp_init():
         NET_CTRL1 = EQ_NET_CTRL1_INIT_VALUE
 
     ## Unmask TP PLL unlock reporting
-    if not ATTR_DPLL_BYPASS:
+    if not ATTR_TAP_DPLL_BYPASS:
         PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS &= ~(P11T_PERV_DPLLNEST)
 
     ## Miscellaneous TP setup
@@ -1159,7 +1158,7 @@ def poz_chiplet_unused_psave():
 ISTEP(3, 6, "proc_chiplet_pll_initf", "SSBE, TSBE")
 
 def p11s_chiplet_pll_initf():
-    putRing( chiplet_pll_common = all static PLL settings if any )
+    putRing( chiplet_pll = all static PLL settings if any )
 
     # Load bucketed rings based on bucket attrs
     # Default to max freq during boot to catch errors early
@@ -1661,7 +1660,6 @@ def zme_mbus_calib():
     pass  # TODO Daniel
 
 ISTEP(3, 30, "proc_ioppe_load", "SPPE")
-# Uses G2P interface
 # SPPE fetches IOPPE code & verify
 #  Sub-step 1: load all PAXO IOPPEs (SPINAL only)
 #  Sub-step 2: load TBUS IOPPEs
@@ -1682,10 +1680,10 @@ def zme_ioppe_load():
 ISTEP(3, 31, "proc_g2p_disable", "SSBE, TSBE")
 
 def p11s_g2p_disable():
-    # TODO: where do we have the controls (SPINAL/TAP) ?
+    pass   # G2P acceleration has been dropped from the plan
 
 def p11t_g2p_disable():
-    # TODO: where do we have the controls (SPINAL/TAP) ?
+    pass   # G2P acceleration has been dropped from the plan
 
 ISTEP(3, 32, "proc_tbus_setup", "SSBE, TSBE")
 # TODO Chris: put your steps here

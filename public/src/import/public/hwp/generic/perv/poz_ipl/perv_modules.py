@@ -234,7 +234,7 @@ def mod_start_stop_clocks(target<PERV|MC>, uint16_t i_clock_regions, uint16_t i_
 
 ISTEP(99, 99, "poz_perv_mod_misc", "")
 
-def mod_cbs_start_prep(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_clockstart=false):
+def mod_cbs_start_prep(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_clockstart=true):
     # This module uses CFAM accesses for everything
 
     # Drop CFAM protection 0 to ungate VDN_PRESENT
@@ -259,7 +259,12 @@ def mod_cbs_start_prep(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0
     CBS_CS.OPTION_PREVENT_SBE_START = not i_start_sbe
     # write CBS_CS
 
-def mod_cbs_start(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_clockstart=false):
+def mod_cbs_cleanup(target<ANY_POZ_CHIP>):
+    # Cleanup steps not performed by the CBS
+    ROOT_CTRL0.FSI_CC_CBS_CMD = 0          # Clear CBS command to enable clock gating inside clock controller
+    SB_CS.SB_CS_START_RESTART_VECTOR0 = 0  # Clear SBE start bit to facilitate restarts later
+
+def mod_cbs_start(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_clockstart=true):
     # This module uses CFAM accesses for everything
 
     mod_cbs_start_prep(i_target, i_start_sbe, i_scan0_clockstart)
@@ -271,6 +276,8 @@ def mod_cbs_start(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_cloc
     wait until CBS_CS.INTERNAL_STATE_VECTOR == CBS_STATE_IDLE, time out after 200 x delay(640us, 750kcyc)
     if timed out:
         ASSERT(CBS_NOT_IN_IDLE_STATE)
+
+    mod_cbs_cleanup(i_target)
 
 def mod_switch_pcbmux(target<ANY_POZ_CHIP>, mux_type i_path):
     # You can reuse p10_perv_sbe_cmn_switch_mux_scom here
