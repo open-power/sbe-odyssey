@@ -29,7 +29,7 @@
 
         .nolist
 #include "pk.h"
-#include "occhw_shared_data.h"
+#include <pmhw_shared_data.h>
         .list
 
         ## This function handles requests from the ppc405 to perform a getscom
