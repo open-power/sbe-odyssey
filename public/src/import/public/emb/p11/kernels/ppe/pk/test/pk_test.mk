@@ -83,6 +83,10 @@ OBJS += $(LIBCOMMON_OBJECTS)
 $(call ADD_PPEIMAGE_SRCDIR,$(IMAGE),$(OCC_SRCDIR)/commonlib)
 
 ## PM complex IPC support
+include $(PMLIB_SRCDIR)/ipc/libipcfiles.mk
+OBJS += $(LIBIPC_OBJECTS)
+$(call ADD_PPEIMAGE_SRCDIR,$(IMAGE),$(PMLIB_SRCDIR)/ipc)
+
 include $(OCC_SRCDIR)/occlib/liboccfiles.mk
 OBJS += $(LIBOCC_OBJECTS)
 $(call ADD_PPEIMAGE_SRCDIR,$(IMAGE),$(OCC_SRCDIR)/occlib)
@@ -110,12 +114,7 @@ $(IMAGE)_COMMONFLAGS+= -D__OCC_PLAT
 # add include paths
 $(call ADD_PPEIMAGE_INCDIR,$(IMAGE),\
 	$(PK_SRCDIR)/test \
-	$(PK_SRCDIR)/kernel \
-	$(PK_SRCDIR)/ppe42 \
-	$(PPETRACE_SRCDIR) \
-	$(BOLTONLIB_SRCDIR)/$(_PPE_TYPE) \
 	$(PMLIB_INCDIR)/registers \
-	$(OCC_SRCDIR)/occlib \
 	$(POWMANLIB_SRCDIR) \
 	$(PMLIB_INCDIR)/registers \
 	$(BOLTONLIB_SRCDIR)/$(_PPE_TYPE)\

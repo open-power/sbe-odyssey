@@ -24,10 +24,8 @@
 /* IBM_PROLOG_END_TAG                                                     */
 #include "pk.h"
 
-// Include OCC IPC support
+// Include IPC support
 #include "ipc_async_cmd.h"
-//#include "ipc_func_ids.h"
-#include "ipc_structs.h"
 
 
 #define KERNEL_STACK_SIZE   512
