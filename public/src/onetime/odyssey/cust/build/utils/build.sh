@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/onetime/odyssey/meson.build $
+# $Source: public/src/onetime/odyssey/cust/build/utils/build.sh $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,17 +21,17 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
+set -e
 
-if get_option('otprom').enabled()
-  subdir('otprom')
-endif
+CUST_MESON_IMAGE_DIR_PATH=$1
+CUST_BASE_IMAGE_NAME=$2
 
-if get_option('srom').enabled()
-    subdir('srom')
-endif
+#Tools
+PAK_TOOL_PATH=$3
+PAK_BUILD_TOOL_PATH=$4
 
-subdir('cust')
+#Cust manifest file path
+CUST_MANIFEST_PATH=$SBEROOT/public/src/onetime/odyssey/cust/build/utils/manifest
 
-if get_option('bldr').enabled()
-  subdir('bldr')
-endif
+# Create the pak based on vpd manifest file
+$PAK_BUILD_TOOL_PATH $CUST_MANIFEST_PATH -o ${CUST_MESON_IMAGE_DIR_PATH} -n ${CUST_BASE_IMAGE_NAME}
