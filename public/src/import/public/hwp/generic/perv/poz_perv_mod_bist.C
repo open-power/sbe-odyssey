@@ -54,8 +54,14 @@ ReturnCode mod_bist_poll(
     // BH_SCRATCH_REG_t BH_SCRATCH_REG;
     CPLT_STAT0_t CPLT_STAT0;
     PCB_OPCG_STOP_t PCB_OPCG_STOP;
+    OPCG_REG0_t OPCG_REG0;
 
-    uint32_t l_polls_remaining = i_poll_count;
+    uint32_t l_total_polls = 0;
+    // Infinite polling if negative signed (or massive unsigned) number
+    const bool l_infinite_polling = i_poll_count > 0x7FFFFFFF;
+
+    // Get chiplet container for OPCG count diagnostic readout
+    auto l_chiplets = i_target.getChildren<fapi2::TARGET_TYPE_PERV>();
 
     if (i_poll_abist_done)
     {
@@ -68,7 +74,12 @@ ReturnCode mod_bist_poll(
 
     FAPI_DBG("BIST_HALT not yet implemented; check back later");
 
-    while (l_polls_remaining != 0)
+    if (l_infinite_polling)
+    {
+        FAPI_DBG("Poll count value triggers infinite polling");
+    }
+
+    while ((l_total_polls < i_poll_count) || l_infinite_polling)
     {
         // TODO add BIST_HALT functionality once supported
         /*
@@ -82,8 +93,20 @@ ReturnCode mod_bist_poll(
 
         FAPI_TRY(CPLT_STAT0.getScom(i_target));
 
-        --l_polls_remaining;
-        FAPI_DBG("Polls remaining: %d", l_polls_remaining);
+        ++l_total_polls;
+
+        // Only print once every 4 polls to reduce logging volume
+        if ((l_total_polls & 3) == 0)
+        {
+            if (l_infinite_polling)
+            {
+                FAPI_DBG("Polls elapsed: %d", l_total_polls);
+            }
+            else
+            {
+                FAPI_DBG("Polls remaining: %d", i_poll_count - l_total_polls);
+            }
+        }
 
         if (i_poll_abist_done && CPLT_STAT0.get_ABIST_DONE_DC() == 1)
         {
@@ -100,7 +123,7 @@ ReturnCode mod_bist_poll(
         FAPI_TRY(fapi2::delay(i_hw_delay, i_sim_delay));
     }
 
-    FAPI_DBG("Total poll count: %d", i_poll_count - l_polls_remaining);
+    FAPI_DBG("Total poll count: %d", l_total_polls);
 
     if (CPLT_STAT0.get_CC_CTRL_OPCG_DONE_DC() == 0)
     {
@@ -110,23 +133,29 @@ ReturnCode mod_bist_poll(
         FAPI_TRY(PCB_OPCG_STOP.putScom(i_target));
     }
 
-    FAPI_ASSERT(l_polls_remaining > 0,
-                fapi2::POZ_OPCG_DONE_NOT_SET_ERR()
-                .set_PERV_CPLT_STAT0(CPLT_STAT0)
-                .set_POLL_COUNT(i_poll_count - l_polls_remaining)
-                .set_HW_DELAY(i_hw_delay)
-                .set_PROC_TARGET(i_target),
-                "ERROR: OPCG DID NOT FINISH IN TIME");
-
-    if (i_assert_abist_done)
+    for (auto& chiplet : l_chiplets)
     {
-        FAPI_ASSERT(CPLT_STAT0.get_ABIST_DONE_DC() == 1,
-                    fapi2::POZ_SRAM_ABIST_DONE_BIT_ERR()
-                    .set_PERV_CPLT_STAT(CPLT_STAT0)
-                    .set_SELECT_SRAM(true)
-                    .set_PROC_TARGET(i_target),
-                    "ERROR: ABIST_DONE NOT SET");
+        FAPI_TRY(OPCG_REG0.getScom(chiplet));
+        FAPI_DBG("OPCG cycles elapsed for chiplet %d: %lu",
+                 chiplet.getChipletNumber(),
+                 OPCG_REG0.get_LOOP_COUNT());
     }
+
+    FAPI_ASSERT((l_total_polls < i_poll_count) || l_infinite_polling,
+                fapi2::DONE_HALT_NOT_SET()
+                .set_PERV_CPLT_STAT0(CPLT_STAT0)
+                .set_POLL_COUNT(l_total_polls)
+                .set_HW_DELAY(i_hw_delay)
+                .set_SIM_DELAY(i_sim_delay)
+                .set_PROC_TARGET(i_target),
+                "ERROR: DONE / HALT DID NOT OCCUR IN TIME");
+
+    FAPI_ASSERT(CPLT_STAT0.get_ABIST_DONE_DC() || !i_assert_abist_done,
+                fapi2::POZ_SRAM_ABIST_DONE_BIT_ERR()
+                .set_PERV_CPLT_STAT0(CPLT_STAT0)
+                .set_SELECT_SRAM(true)
+                .set_PROC_TARGET(i_target),
+                "ERROR: ABIST_DONE NOT SET");
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");

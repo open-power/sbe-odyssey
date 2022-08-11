@@ -60,20 +60,21 @@ struct bist_params
         SKIP_FIRST_CLOCK  = 0x00100000,
         SKIP_LAST_CLOCK   = 0x00080000,
         UNICAST_GO        = 0x00040000,  ///< Trigger OPCG_GO via unicast as opposed to multicast
-        POLL_ABIST_DONE   = 0x00020000,  ///< Poll on ABIST_DONE in addition to OPCG_DONE and external abort scratch register
+        POLL_ABIST_DONE   = 0x00020000,  ///< Poll on ABIST_DONE in addition to OPCG_DONE and BIST_HALT
+        ASSERT_ABIST_DONE = 0x00010000,  ///< Assert ABIST_DONE at end of polling
     } flags;
 
-    uint64_t opcg_count;                    ///< Amount of total RUNN cycles to clock - 0 means infinite / until ABIST_DONE
-    uint64_t idle_count;                    ///< Base idle RUNN cycles before BIST starts on any chiplet
-    uint32_t timeout;                       ///< Polling timeout in microseconds; not guaranteed to be exact!
-    uint64_t linear_stagger;                ///< Increase idle count by this much for each successive chiplet
-    uint64_t zigzag_stagger;                ///< Increase idle count by this much on any odd chiplet
-    uint16_t regions;                       ///< Mask of clock regions to test (TODO make this a 26-index array (one per perv
+    uint64_t opcg_count;      ///< Amount of total RUNN cycles to clock (>0x7FFFFFFFFFF for infinite)
+    uint64_t idle_count;      ///< Base idle RUNN cycles before BIST starts on any chiplet
+    uint32_t timeout;         ///< Max amount of DONE / HALT polls to issue (>0x7FFFFFFF for infinite)
+    uint64_t linear_stagger;  ///< Increase idle count by this much for each successive chiplet
+    uint64_t zigzag_stagger;  ///< Increase idle count by this much on any odd chiplet
+    uint16_t regions;         ///< Mask of clock regions to test (TODO make this a 26-index array (one per pervasive endpoint))
 
-    //    final_idle_count = idle_count + (linear_stagger * target_number) + (zigzag_stagger * (target_number & 1));
+    // final_idle_count = idle_count + (linear_stagger * target_number) + (zigzag_stagger * (target_number & 1));
 
-    //  no burnin type, that is handled by providing different setup and check image names
-    //  no DTS mode, that shall be handled by outside code
+    // no burnin type, that is handled by providing different setup and check image names
+    // no DTS mode, that shall be handled by outside code
 
     // TODO: Add LBIST parameters
 };

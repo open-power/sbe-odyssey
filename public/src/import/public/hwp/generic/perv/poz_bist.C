@@ -73,11 +73,11 @@ void print_bist_params(const bist_params& i_params)
     FAPI_DBG("ring_patch = %s", i_params.ring_patch);
     FAPI_DBG("chiplets = %#018lx", i_params.chiplets);
     FAPI_DBG("flags = %#010x", i_params.flags);
-    FAPI_DBG("opcg_count = %#018lx", i_params.opcg_count);
-    FAPI_DBG("idle_count = %#018lx", i_params.idle_count);
-    FAPI_DBG("timeout = %#010x", i_params.timeout);
-    FAPI_DBG("linear_stagger = %#018lx", i_params.linear_stagger);
-    FAPI_DBG("zigzag_stagger = %#018lx", i_params.zigzag_stagger);
+    FAPI_DBG("opcg_count = %lu", i_params.opcg_count);
+    FAPI_DBG("idle_count = %lu", i_params.idle_count);
+    FAPI_DBG("timeout = %u", i_params.timeout);
+    FAPI_DBG("linear_stagger = %lu", i_params.linear_stagger);
+    FAPI_DBG("zigzag_stagger = %lu", i_params.zigzag_stagger);
     FAPI_DBG("regions = %#06x", i_params.regions);
 }
 
@@ -226,18 +226,13 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
 
     if (i_params.flags & i_params.bist_flags::DO_POLL)
     {
-        // TODO pass in timeout to poll functions once supported
-        if (i_params.timeout)
-        {
-            FAPI_DBG("timeout not yet implemented; check back later");
-        }
-
         FAPI_DBG("Poll for DONE or HALT");
         // TODO pass in poll count and delay arguments once supported
         // TODO put ASSERT_ABIST_DONE in bist_params and turn off if ABIST infinite or LBIST
         FAPI_TRY(mod_bist_poll(l_chiplets_target,
                                i_params.flags & i_params.bist_flags::POLL_ABIST_DONE,
-                               i_params.flags & i_params.bist_flags::ABIST_NOT_LBIST));
+                               i_params.flags & i_params.bist_flags::ASSERT_ABIST_DONE,
+                               i_params.timeout));
     }
 
     if (i_params.flags & i_params.bist_flags::DO_REG_CLEANUP)

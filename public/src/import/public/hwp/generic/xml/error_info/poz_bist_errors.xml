@@ -32,5 +32,14 @@
       <description>bist_params does not have correct format</description>
       <ffdc>BIST_PARAMS</ffdc>
     </hwpError>
+    <hwpError>
+      <rc>RC_DONE_HALT_NOT_SET</rc>
+      <description>DONE / HALT not measured by end of polling</description>
+      <ffdc>PERV_CPLT_STAT0</ffdc>
+      <ffdc>POLL_COUNT</ffdc>
+      <ffdc>HW_DELAY</ffdc>
+      <ffdc>SIM_DELAY</ffdc>
+      <ffdc>PROC_TARGET</ffdc>
+    </hwpError>
   <!-- ******************************************************************** -->
 </hwpErrors>

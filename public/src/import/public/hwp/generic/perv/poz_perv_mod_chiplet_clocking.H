@@ -45,7 +45,7 @@ using namespace cc;
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
 /// @param[in]   i_clock_regions           Select clock regions
-/// @param[in]   i_runn_cycles             Loop count value to set OPCG run-N mode
+/// @param[in]   i_runn_cycles             Loop count value to set OPCG run-N mode (>0x7FFFFFFFFFF for infinite)
 /// @param[in]   i_abist_start_at          Idle count value to set in OPCG_REG1
 /// @param[in]   i_abist_start_stagger     Per target OPCG_REG1 stagger value
 ///
@@ -62,7 +62,7 @@ fapi2::ReturnCode mod_abist_setup(
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
 /// @param[in]   i_clock_regions           Select clock regions
-/// @param[in]   i_runn_cycles             Loop count value to set OPCG run-N mode
+/// @param[in]   i_runn_cycles             Loop count value to set OPCG run-N mode (>0x7FFFFFFFFFF for infinite)
 /// @param[in]   i_abist_start_at          Idle count value to set in OPCG_REG1
 /// @param[in]   i_abist_start_stagger     Per target OPCG_REG1 stagger value
 ///
@@ -89,7 +89,7 @@ fapi2::ReturnCode mod_opcg_go(
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
 /// @param[in]   i_clock_regions           Select clock regions
-/// @param[in]   i_runn_cycles             Loop count value to set OPCG run-N mode
+/// @param[in]   i_runn_cycles             Loop count value to set OPCG run-N mode (>0x7FFFFFFFFFF for infinite)
 /// @param[in]   i_abist_start_at          Idle count value to set in OPCG_REG1
 /// @param[in]   i_abist_start_stagger     Per target OPCG_REG1 stagger value
 ///
