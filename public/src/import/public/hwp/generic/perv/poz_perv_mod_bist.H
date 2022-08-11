@@ -42,7 +42,7 @@ using namespace cc;
 /// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
 /// @param[in]   i_poll_abist_done         Inspect ABIST_DONE alongside the other bits
 /// @param[in]   i_assert_abist_done       Assert ABIST_DONE is set at the end of the procedure
-/// @param[in]   i_poll_count              Maximum number of times to poll before giving up
+/// @param[in]   i_poll_count              Max number of polls to issue (>0x7FFFFFFF for infinite)
 /// @param[in]   i_hw_delay                Delay of ns between polls on hardware
 /// @param[in]   i_sim_delay               Delay of simcycles between polls on sim
 ///
