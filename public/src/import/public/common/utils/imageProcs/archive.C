@@ -421,9 +421,8 @@ ARC_RET_t FileArchive::append_file(const char* i_fname,
                                    void*& io_end)
 {
     ARC_RET_t rc = ARC_OPERATION_SUCCESSFUL;
-    uint32_t name_len = strlen(i_fname);
 
-    if(i_fname == NULL || name_len == 0 || i_data == NULL || i_dataSize == 0)
+    if(i_fname == NULL || i_data == NULL || i_dataSize == 0)
     {
         // Note: There seems to be a weird bug in PPE trace macro expansion,
         // where two of "%p" in sequence causes a problem, but putting
@@ -431,6 +430,14 @@ ARC_RET_t FileArchive::append_file(const char* i_fname,
         // So the order is here deliberate.
         ARC_ERROR("append_file: Invalid parms. i_data: %p i_dataSize: %x i_fname: %p",
                   i_data, i_dataSize, i_fname);
+        return ARC_INVALID_PARAMS;
+    }
+
+    uint32_t name_len = strlen(i_fname);
+
+    if(name_len == 0)
+    {
+        ARC_ERROR("append_file: file name length is zero");
         return ARC_INVALID_PARAMS;
     }
 
