@@ -115,18 +115,19 @@ static int dilithium_wrap(const unsigned char *sig,
     // Prepare the Dilithium stack
     polyvec_max *scratch = (polyvec_max *)sbeScratch.scratch_alloc(sizeof(polyvec_max) * 11);
     polyvec_max *w1      = scratch;
+
+    if (w1 == NULL) {
+      SBE_ERROR("Couldn't reserve enough stack space!!!!");
+      return -1;
+    } else {
+      SBE_INFO("No problemo with stack!!!");
+    }
+
     polyvec_max *mat01   = w1 + 1;
     polyvec_max *mat234  = mat01 + 2;
     polyvec_max *mat567  = mat234 + 3;
     polyvec_max *z       = mat567 + 3;
     polyvec_max *h       = z + 1;
-
-    if (w1 == NULL || mat01 == NULL || mat234 == NULL || mat567 == NULL || z == NULL || h == NULL) {
-      SBE_INFO("Couldn't reserve enough stack space!!!!");
-      return -1;
-    } else {
-      SBE_INFO("No problemo with stack!!!");
-    }
 
     // Run the signature verification
     int retval = ref_verify2(sig, DILITHIUM_SIG_SIZE,
