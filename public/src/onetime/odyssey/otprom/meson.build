@@ -47,3 +47,15 @@ odyssey_otprom_bin_gen = custom_target( 'odyssey_otprom_bin_gen',
                                  install_dir : odyssey_otprom_install_path
                              )
 
+##################################################### Genfiles #####################################
+
+#Generate the fuse map header file basis JSON
+#Lets keep the output in common as Boot Loader image also uses it
+result_fusemapgen = run_command(fusemapgen, '-i', odyssey_otprom_fuse_map_json[0], 'hdrgenerator',
+    '-o', odyssey_cmn_genfiles_dir_path + 'otpromfusemap.H')
+
+if not (result_fusemapgen.returncode() == 0)
+    message(result_fusemapgen.stdout())
+    error(result_fusemapgen.stderr())
+endif
+

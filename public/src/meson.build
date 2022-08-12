@@ -215,3 +215,9 @@ subdir('packaging')
 
 # Dummy call to create dependency on the files invoked by different tools
 run_command('ls', meson_setup_extra_dependencies)
+
+# If SROM build for ODYSSEY Platform is disabled pick up the frozen DD1 RIT images from repo
+if get_option('srom').disabled() and  get_option('platform') == 'odyssey'
+    install_subdir(meson.global_source_root() + '/public/src/onetime/odyssey/srom/build/images/',
+                      install_dir : 'odyssey/onetime/srom',strip_directory : true)
+endif

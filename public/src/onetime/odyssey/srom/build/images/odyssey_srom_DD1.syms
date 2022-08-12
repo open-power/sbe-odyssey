@@ -1,0 +1,630 @@
+fff70b28 t addr_blocked
+fff70b00 t addr_ok
+fff700c0 t __alignment_exception
+fff86670 B _bss_end
+fff80348 G _bss_start
+fff7aadc t call_external_irq_handler
+fff70bf4 t call_op
+fff7ab28 t check_for_bh
+fff7ab58 t check_for_ctx_switch
+fff7ab08 t check_for_ext_interrupt
+fff7ab6c t check_for_idle_thread
+fff7ab1c t check_interrupted_bh
+fff709a0 t check_magic
+fff7ab54 t check_thread_mode
+fff8036c 00000004 S cmnGlobal
+fff70cfc t cmpbne_op
+fff70cd8 t cmpbxx_op
+fff7d980 D _code_end
+0000d980 a _code_size
+fff7cb00 0000000c t CSWTCH.12
+fff77790 00000004 t CSWTCH.70
+fff77794 00000008 t CSWTCH.74
+fff7d980 R ctor_end_address
+fff7d978 R ctor_start_address
+fff7aa40 t ctx_check_discard
+fff7aa74 t ctx_interrupt_check
+fff7ab7c t ctx_pop
+fff7ab74 t ctx_pop_with_sprg0
+fff7aaac t ctx_push_complete
+fff7aa4c T __ctx_switch
+fff70988 t cust_fsm_fname
+0000000a a d10
+0000000a a d10
+0000000a a d10
+0000000a a d10
+0000000a a d10
+0000000a a d10
+0000000a a d10
+0000001c a d28
+0000001c a d28
+0000001c a d28
+0000001c a d28
+0000001c a d28
+0000001c a d28
+0000001c a d28
+0000001d a d29
+0000001d a d29
+0000001d a d29
+0000001d a d29
+0000001d a d29
+0000001d a d29
+0000001d a d29
+00000003 a d3
+00000003 a d3
+00000003 a d3
+00000003 a d3
+00000003 a d3
+00000003 a d3
+00000003 a d3
+0000001e a d30
+0000001e a d30
+0000001e a d30
+0000001e a d30
+0000001e a d30
+0000001e a d30
+0000001e a d30
+0000001f a d31
+0000001f a d31
+0000001f a d31
+0000001f a d31
+0000001f a d31
+0000001f a d31
+0000001f a d31
+00000004 a d4
+00000004 a d4
+00000004 a d4
+00000004 a d4
+00000004 a d4
+00000004 a d4
+00000004 a d4
+00000005 a d5
+00000005 a d5
+00000005 a d5
+00000005 a d5
+00000005 a d5
+00000005 a d5
+00000005 a d5
+00000006 a d6
+00000006 a d6
+00000006 a d6
+00000006 a d6
+00000006 a d6
+00000006 a d6
+00000006 a d6
+00000007 a d7
+00000007 a d7
+00000007 a d7
+00000007 a d7
+00000007 a d7
+00000007 a d7
+00000007 a d7
+00000008 a d8
+00000008 a d8
+00000008 a d8
+00000008 a d8
+00000008 a d8
+00000008 a d8
+00000008 a d8
+00000009 a d9
+00000009 a d9
+00000009 a d9
+00000009 a d9
+00000009 a d9
+00000009 a d9
+00000009 a d9
+00000030 a _data_size
+fff80000 d _data_start
+fff70060 t __data_storage
+fff7a990 t dec_handler
+fff70100 t __dec_interrupt
+fff704b8 t decode_round_trip_delay
+fff7bea0 000000a8 T __eabi
+fff700a0 t __external_interrupt_vector
+00000000 a .ext_irqs_defd
+00000000 a .ext_irqs_enable
+00000000 a .ext_irqs_polarity
+00000000 a .ext_irqs_type
+00000000 a .ext_irqs_valid
+fff70ad8 t filter_address
+fff7a9d4 t fit_handler
+fff70120 t __fit_interrupt
+fff70200 T __function_table
+fff7aab0 t __get_ext_irq
+fff7a22c 00000014 T getscom_abs
+fff80040 G g_ext_irqs_enable
+fff80030 G g_ext_irqs_polarity
+fff80038 G g_ext_irqs_type
+fff70164 00000020 R g_image_metadata
+fff782cc 00000024 t _GLOBAL__sub_I_cmnGlobal
+fff7cae4 0000000c t _GLOBAL__sub_I_hashList
+fffffffc 00000004 D g_metadata_ptr
+fffffff8 00000004 D G_PK_TRACE_BUF
+fff80250 00000018 G g_pk_trace_timer
+fffff7f8 00000800 D hashList
+fff70430 t hreset_path
+fff7b180 00000048 T __hwmacro_setup
+fff70080 t __instruction_storage
+fff70ce8 t invalid_branch
+fff70c14 t invalid_call
+fff70a98 t invalid_fsm
+00000000 a .irq_mask
+fff7d068 00000028 T jump2BootLoaderImage
+fff70a2c t jump_to_next_file
+fff7aaa0 t kernel_stack_check
+fff70a84 t load_fsm
+fff70b94 t load_main_fsm
+fff70990 T locate_seeprom_file
+         U LOG_CACHE_LINE_SIZE
+fff865b0 000000c0 B lookup
+fff70020 t __machine_check
+fff7bf48 000000d4 T main
+fff70980 t main_fsm_fname
+fff70bb8 t main_loop
+fff7a444 00000040 W memcmp
+fff7a3b8 00000054 T memcpy
+fff7a240 000000a4 t _memcpy
+fff7a40c 00000038 W memmove
+fff7a2e4 000000d4 T memset
+00000010 a _msr_ee_bit
+00000010 a _msr_ee_bit
+00000010 a _msr_ee_bit
+00000010 a _msr_ee_bit
+fff7a4a0 00000038 T __muldi3
+fff70b20 t no_chiplet
+fff70cc8 t no_timeout
+fff70468 t oos_load_spi_clk_cnfg
+fff70a3c t _panic
+fff70558 t partition_0_offset
+fff70564 t partition_1_offset
+fff70570 t partition_2_offset
+fff70500 t partition_selection
+fff8032c 00000008 G _pk_bh_queue
+fff7a8e8 00000068 T __pk_boot
+fff7b798 00000040 T pk_complete
+00000000 a PK_CTX_BACK_CHAIN
+00000000 a PK_CTX_BACK_CHAIN
+00000000 a PK_CTX_BACK_CHAIN
+00000000 a PK_CTX_BACK_CHAIN
+00000008 a PK_CTX_CR
+00000008 a PK_CTX_CR
+00000008 a PK_CTX_CR
+00000008 a PK_CTX_CR
+0000003c a PK_CTX_CTR
+0000003c a PK_CTX_CTR
+0000003c a PK_CTX_CTR
+0000003c a PK_CTX_CTR
+00000010 a PK_CTX_GPR0
+00000010 a PK_CTX_GPR0
+00000010 a PK_CTX_GPR0
+00000010 a PK_CTX_GPR0
+00000014 a PK_CTX_GPR1
+00000014 a PK_CTX_GPR1
+00000014 a PK_CTX_GPR1
+00000014 a PK_CTX_GPR1
+00000034 a PK_CTX_GPR10
+00000034 a PK_CTX_GPR10
+00000034 a PK_CTX_GPR10
+00000034 a PK_CTX_GPR10
+00000048 a PK_CTX_GPR28
+00000048 a PK_CTX_GPR28
+00000048 a PK_CTX_GPR28
+00000048 a PK_CTX_GPR28
+0000004c a PK_CTX_GPR29
+0000004c a PK_CTX_GPR29
+0000004c a PK_CTX_GPR29
+0000004c a PK_CTX_GPR29
+00000018 a PK_CTX_GPR3
+00000018 a PK_CTX_GPR3
+00000018 a PK_CTX_GPR3
+00000018 a PK_CTX_GPR3
+00000050 a PK_CTX_GPR30
+00000050 a PK_CTX_GPR30
+00000050 a PK_CTX_GPR30
+00000050 a PK_CTX_GPR30
+00000054 a PK_CTX_GPR31
+00000054 a PK_CTX_GPR31
+00000054 a PK_CTX_GPR31
+00000054 a PK_CTX_GPR31
+0000001c a PK_CTX_GPR4
+0000001c a PK_CTX_GPR4
+0000001c a PK_CTX_GPR4
+0000001c a PK_CTX_GPR4
+00000020 a PK_CTX_GPR5
+00000020 a PK_CTX_GPR5
+00000020 a PK_CTX_GPR5
+00000020 a PK_CTX_GPR5
+00000024 a PK_CTX_GPR6
+00000024 a PK_CTX_GPR6
+00000024 a PK_CTX_GPR6
+00000024 a PK_CTX_GPR6
+00000028 a PK_CTX_GPR7
+00000028 a PK_CTX_GPR7
+00000028 a PK_CTX_GPR7
+00000028 a PK_CTX_GPR7
+0000002c a PK_CTX_GPR8
+0000002c a PK_CTX_GPR8
+0000002c a PK_CTX_GPR8
+0000002c a PK_CTX_GPR8
+00000030 a PK_CTX_GPR9
+00000030 a PK_CTX_GPR9
+00000030 a PK_CTX_GPR9
+00000030 a PK_CTX_GPR9
+0000000c a PK_CTX_KERNEL_CTX
+0000000c a PK_CTX_KERNEL_CTX
+0000000c a PK_CTX_KERNEL_CTX
+0000000c a PK_CTX_KERNEL_CTX
+00000004 a PK_CTX_LINKAGE
+00000004 a PK_CTX_LINKAGE
+00000004 a PK_CTX_LINKAGE
+00000004 a PK_CTX_LINKAGE
+0000005c a PK_CTX_LR
+0000005c a PK_CTX_LR
+0000005c a PK_CTX_LR
+0000005c a PK_CTX_LR
+00000058 a PK_CTX_PREV_FRAME
+00000058 a PK_CTX_PREV_FRAME
+00000058 a PK_CTX_PREV_FRAME
+00000058 a PK_CTX_PREV_FRAME
+00000058 a PK_CTX_SIZE
+00000058 a PK_CTX_SIZE
+00000058 a PK_CTX_SIZE
+00000058 a PK_CTX_SIZE
+00000040 a PK_CTX_SRR0
+00000040 a PK_CTX_SRR0
+00000040 a PK_CTX_SRR0
+00000040 a PK_CTX_SRR0
+00000044 a PK_CTX_SRR1
+00000044 a PK_CTX_SRR1
+00000044 a PK_CTX_SRR1
+00000044 a PK_CTX_SRR1
+00000038 a PK_CTX_XER
+00000038 a PK_CTX_XER
+00000038 a PK_CTX_XER
+00000038 a PK_CTX_XER
+fff80314 00000004 G __pk_current_thread
+fff80008 00000024 D pk_debug_ptrs
+fff80318 00000004 G __pk_delayed_switch
+fff7ac08 0000001c T pk_deque_element_create
+fff7abec 0000001c T pk_deque_sentinel_create
+fff7a984 T pk_halt
+fff7a960 T __pk_idle_thread
+fff7a974 T __pk_idle_thread_from_bootloader
+fff7ac84 000001c0 T _pk_initialize
+fff877ff D _PK_INITIAL_STACK
+fff86670 D _PK_INITIAL_STACK_LIMIT
+fff80324 00000004 G __pk_kernel_stack
+fff80320 00000004 G __pk_kernel_stack_limit
+fff80304 00000004 G __pk_kernel_stack_size
+fff7ae44 00000004 T __pk_main
+fff8030c 00000001 G __pk_next_priority
+fff80310 00000004 G __pk_next_thread
+fff7a9b0 T __pk_next_thread_resume
+fff80280 00000084 G __pk_priority_map
+fff7aec0 00000058 T _pk_process_bh
+fff8031c 00000004 G __pk_run_queue
+fff80328 00000004 G __pk_saved_sp
+fff7b55c 00000064 T __pk_schedule
+fff7b2e4 000000a8 T __pk_schedule_hardware_timeout
+fff7ac24 00000060 T pk_set_timebase_rshift
+fff7ae54 0000006c T __pk_stack_init
+fff7b458 00000024 T __pk_start_threads
+fff7b6d4 00000038 T pk_start_threads
+fff7b9ac 000000a8 T __pk_thread_context_initialize
+fff7b38c 000000cc T pk_thread_create
+fff7b5c0 0000007c T __pk_thread_delete
+fff80308 00000004 G __pk_thread_machine_context_default
+fff7b47c 0000006c T __pk_thread_map
+fff7b70c 0000008c T pk_thread_resume
+fff7b63c 00000098 T __pk_thread_timeout
+fff7b4e8 00000074 T __pk_thread_unmap
+fff7b2a0 T pk_timebase32_get
+fff80004 00000004 D __pk_timebase_frequency_hz
+fff7b2c0 T pk_timebase_get
+fff80000 00000001 D __pk_timebase_rshift
+fff80268 00000018 G __pk_time_queue
+fff80334 00000010 G pk_timer_bh
+fff7af18 0000012c t __pk_timer_bh_handler
+fff7b044 00000040 T __pk_timer_cancel
+fff7ba54 0000005c T pk_timer_create
+fff7b0dc 00000028 T __pk_timer_handler
+fff7b084 00000058 T __pk_timer_schedule
+fff7b104 0000007c T pk_timer_schedule
+fff7b7d8 000000f4 T pk_trace_big
+fff7b8cc 000000e0 T pk_trace_binary
+fff7b250 0000004c T pk_trace_set_timebase
+fff7b1c8 00000014 T pk_trace_timer_callback
+fff7b1dc 00000074 T pk_trace_tiny
+fff70cd0 t poll_delay
+fff70c9c t poll_loop
+fff80360 00000008 S ppe42_64bit_timebase
+fff7abdc 00000008 T __ppe42_default_irq_handler
+fff80348 00000004 S __ppe42_fit_arg
+fff80354 00000004 S __ppe42_fit_routine
+fff80048 00000208 G __ppe42_irq_handlers
+fff7abe4 00000008 T __ppe42_phantom_irq_handler
+fff7ab84 00000058 T __ppe42_system_setup
+fff80358 00000008 S ppe42_tb_data
+fff8034c 00000004 S __ppe42_watchdog_arg
+fff80350 00000004 S __ppe42_watchdog_routine
+fff7ab34 t process_bottom_halves
+fff709e8 t process_file_entry
+fff700e0 t __program_exception
+fff7a21c 00000010 T putscom_abs
+fff70c64 t putscom_op
+fff70c7c t putscom_with_mask
+00000000 a r0
+00000000 a r0
+00000000 a r0
+00000000 a r0
+00000000 a r0
+00000000 a r0
+00000000 a r0
+00000001 a r1
+00000001 a r1
+00000001 a r1
+00000001 a r1
+00000001 a r1
+00000001 a r1
+00000001 a r1
+0000000a a r10
+0000000a a r10
+0000000a a r10
+0000000a a r10
+0000000a a r10
+0000000a a r10
+0000000a a r10
+0000001c a r28
+0000001c a r28
+0000001c a r28
+0000001c a r28
+0000001c a r28
+0000001c a r28
+0000001c a r28
+0000001d a r29
+0000001d a r29
+0000001d a r29
+0000001d a r29
+0000001d a r29
+0000001d a r29
+0000001d a r29
+00000003 a r3
+00000003 a r3
+00000003 a r3
+00000003 a r3
+00000003 a r3
+00000003 a r3
+00000003 a r3
+0000001e a r30
+0000001e a r30
+0000001e a r30
+0000001e a r30
+0000001e a r30
+0000001e a r30
+0000001e a r30
+0000001f a r31
+0000001f a r31
+0000001f a r31
+0000001f a r31
+0000001f a r31
+0000001f a r31
+0000001f a r31
+00000004 a r4
+00000004 a r4
+00000004 a r4
+00000004 a r4
+00000004 a r4
+00000004 a r4
+00000004 a r4
+00000005 a r5
+00000005 a r5
+00000005 a r5
+00000005 a r5
+00000005 a r5
+00000005 a r5
+00000005 a r5
+00000006 a r6
+00000006 a r6
+00000006 a r6
+00000006 a r6
+00000006 a r6
+00000006 a r6
+00000006 a r6
+00000007 a r7
+00000007 a r7
+00000007 a r7
+00000007 a r7
+00000007 a r7
+00000007 a r7
+00000007 a r7
+00000008 a r8
+00000008 a r8
+00000008 a r8
+00000008 a r8
+00000008 a r8
+00000008 a r8
+00000008 a r8
+00000009 a r9
+00000009 a r9
+00000009 a r9
+00000009 a r9
+00000009 a r9
+00000009 a r9
+00000009 a r9
+fff869f0 B _ram_consumed
+fff70408 t reset_register
+         U __reset_trap
+fff7a9c0 t restore_and_update_sprg0
+fff7ab50 t restore_interrupted_sp
+fff709b0 t return_empty_file
+fff70a0c t return_file_pointer
+fff70c24 t return_from_cust
+fff70c1c t return_op
+fff70b30 T run_cmd_tables
+fff70480 t save_spi_cnfg
+0000dcc8 a _sbe_image_size
+fff7cb24 00000008 T __sbe_machine_check_handler
+fff7cb1c 00000008 T __sbe_register_saveoff
+fff80000 d _sbss2_start
+fff70b04 t scan_addr
+fff70c2c t scom_op
+fff80000 a _SDA2_BASE_
+fff801d8 a _SDA_BASE_
+fff80030 d _sda_start
+00000000 a _sdata2_size
+fff80000 d _sdata2_start
+00000318 a _sdata_size
+fff70010 T __set_msr
+fff709d8 t skip_padding
+00000001 a sp
+00000001 a sp
+00000001 a sp
+00000001 a sp
+00000001 a sp
+00000001 a sp
+00000001 a sp
+fff7047c t spi_clk_cnfg_not_valid
+fff704c8 t spi_init
+fff80000 D _sram_start
+fff863b0 00000200 B srom_Kernel_NC_Int_stack
+fff80368 00000004 S sromSecureBootCtrlSettings
+fff80380 00006000 B sromSecureBoot_stack
+fff86380 00000030 B srom_thread
+fff7aa94 t stack_good
+00080e10 A _stack_size
+fff70400 t __start
+fff7a484 0000001c W strlen
+fff70a50 t swap_fsm
+fff7aa94 t switch_to_kernel_stack
+         U symbol
+fff70040 T __system_reset
+fff70400 T __system_reset_handler
+fff70d04 t take_branch
+fff70c98 t test_ops
+fff7a1c0 t udivmodsi4_loop
+fff7a208 T __umodsi3
+0000000d a UNUSED_GPR13
+0000000d a UNUSED_GPR13
+0000000d a UNUSED_GPR13
+0000000d a UNUSED_GPR13
+00000002 a UNUSED_GPR2
+00000002 a UNUSED_GPR2
+00000002 a UNUSED_GPR2
+00000002 a UNUSED_GPR2
+fff70cf0 t valid_branch
+fff70bd8 t value_overrun
+fff70000 T __vectors
+fff793b0 000001d0 T verifySecureHdr
+fff70160 T __virtual_exception
+fff7aa00 t watchdog_handler
+fff70140 t __watchdog_interrupt
+fff71e64 00000038 T _Z10bn_is_zeroPKmj
+fff72610 00000008 T _Z10bn_read_ptPmPKh
+fff715cc 0000007c T _Z10sha3_finalPA64_hP10sha3_ctx_t
+fff72a84 000001d4 T _Z11ec_multiplyPmS_S_PKmS1_
+fff76ed8 000003f8 T _Z11ref_verify2PKhjS0_jS0_jP11polyvec_maxS2_S2_S2_S2_S2_
+fff71550 0000007c T _Z11sha3_updateP10sha3_ctx_tPKvj
+fff7d5f0 00000384 T _Z11shvSettingsv
+fff72618 00000008 T _Z12bn_read_hashPmPKh
+fff76c7c 0000025c T _Z12dil_wire2sigP11polyvec_maxS0_P4polyjPKhj
+fff71110 00000404 T _Z12sha3_keccakfPy
+fff77dec 0000004c T _Z13_get_metadataPKvm
+fff71f5c 000000d0 T _Z14bn_modred_p521PmS_
+fff7214c 00000044 T _Z15bn_modmul_orderPmPKm
+fff7202c 00000044 T _Z15bn_modmul_primePmPKm
+fff7d090 00000150 T _Z15loadAndJumpBldrP10PakWrapperb
+fff7c2ac 00000838 T _Z17sromthreadroutinePv
+fff72070 000000dc T _Z20bn_modred_p521_orderPmPKm
+fff72620 00000058 T _Z20ec_projective2affinePmS_PKm
+fff79580 00000020 T _Z21getSignatureAlgoCheckbbb
+fff78238 00000068 T _Z27createAndResumeThreadHelperP8PkThreadPFvPvES1_mj19sbeThreadPriorities
+fff795a0 00000028 T _Z34applyTripleModularRedundancyVotingh
+fff71e9c 0000005c T _Z6bn_addPmPKm
+fff71e24 00000040 T _Z6bn_cmpPKmS0_
+fff71ce0 00000144 T _Z6bn_mulPmPKmS1_
+fff71c48 00000034 T _Z6bn_shlPmm
+fff71ef8 00000064 T _Z6bn_subPmPKm
+fff7281c 00000268 T _Z6ec_addPmS_S_PKmS1_S1_
+fff795c8 0000006c T _Z6getMSVy
+fff722fc 0000004c T _Z7bn_bitsPKm
+fff71c28 00000020 T _Z7BN_COPYPmPKm
+fff71c7c 00000064 T _Z7bn_dmulmm
+fff72540 000000d0 T _Z7bn_readPmPKhj
+fff72240 000000bc T _Z8bn_shl_nPmjj
+fff72190 00000060 T _Z9bn_modaddPmPKm
+fff72348 000001f8 T _Z9bn_modinvPmPKmS1_
+fff721f0 00000050 T _Z9bn_modsubPmPKm
+fff72678 000001a4 T _Z9ec_doublePmS_S_
+fff72c58 00000700 T _Z9ec_verifyPKhS0_S0_
+fff71648 0000005c T _Z9sha3_HashPKhjPA64_h
+fff71514 0000003c T _Z9sha3_initP10sha3_ctx_t
+fff80378 00000008 s _ZGVZN19CMNGlobalsSingleton11getInstanceEvE11iv_instance
+fff79a38 0000005c t _ZL10hash_blockPKvmPA64_h
+fff7627c 0000003c t _ZL10poly_csubqP4poly
+fff789fc 000009b4 t _ZL10ROM_verifyP6shvReqP6shvRsp
+fff74f50 00000028 t _ZL11keccak_initP12Keccak_state
+fff76330 00000004 t _ZL11poly_ntt256P4poly
+fff76240 0000003c t _ZL11poly_reduceP4poly
+fff76310 00000020 t _ZL11poly_shiftlP4poly
+fff76434 0000006c t _ZL11rej_uniformPmjPKhj
+fff763f4 00000040 t _ZL12poly_chknormPK4polym
+fff76b98 000000e4 t _ZL12poly_uniformP4polyPKht
+fff76578 000000a4 t _ZL12polyz_unpackP4polyPKh
+fff76958 000001b4 t _ZL13dil_challengeP4polyPKhPK11polyvec_maxj.constprop.2
+fff74f78 0000028c t _ZL13keccak_absorbPyjjPKhj
+fff764a0 000000d8 t _ZL13polyt1_unpackP4polyPKh
+fff7639c 00000058 t _ZL13poly_use_hintP4polyPKS_S2_
+fff78924 000000d8 t _ZL13valid_ver_algP15ROM_version_rawh
+fff7d1e0 0000000e t _ZL14bldr_file_name
+fff786f0 00000174 t _ZL14dilithium_wrapPKhS0_S0_mm
+fff766b0 00000200 t _ZL14keccak_squeezePhjPyjj.constprop.7
+fff768b0 0000006c t _ZL15keccak_finalizePyjjh.constprop.8
+fff75294 00000040 t _ZL15shake256_absorbP12Keccak_statePKhj
+fff75474 00000d18 t _ZL16invntt_tomont256Pm
+fff752d4 00000058 t _ZL17montgomery_reducey
+fff7691c 0000003c t _ZL17shake256_finalizeP12Keccak_state
+fff76334 00000004 t _ZL18poly_invntt_tomontP4poly
+fff7661c 00000028 t _ZL19dil_signature_bytesj
+fff7caf0 0000000f t _ZL19hash_list_file_name
+fff75204 00000090 t _ZL20keccak_squeezeblocksPhjPyj
+fff7cb0c 00000010 t _ZL20secure_hdr_file_name
+fff76b0c 0000008c t _ZL20shake128_stream_initP12Keccak_statePKht
+fff739b0 000015a0 t _ZL24KeccakF1600_StatePermutePy
+fff76338 00000064 t _ZL25poly_pointwise_montgomeryP4polyPKS_S2_
+fff76644 0000006c t _ZL33polyvec7_pointwise_acc_montgomeryP4polyPK8polyvec7S3_
+fff75344 00000020 t _ZL5csubqm
+fff73358 000001dc t _ZL6consts
+fff73938 0000004c t _ZL6load64PKh
+fff75364 00000110 t _ZL6ntt256Pm
+fff73984 0000002c t _ZL7store64Phy
+fff762b8 00000028 t _ZL8poly_addP4polyPKS_S2_
+fff762e0 00000030 t _ZL8poly_subP4polyPKS_S2_
+fff7532c 00000018 t _ZL8reduce32m
+fff761e8 00000058 t _ZL8use_hintmj
+fff7618c 0000005c t _ZL9decomposemPm
+fff7cbe8 0000007c T _ZN10PakWrapper19get_image_start_ptrEPKc
+fff7cb2c 000000bc T _ZN10PakWrapper9read_fileEPKcPvmPA64_hPm
+fff79d9c 00000024 T _ZN11FileArchive11locate_fileEPKcRNS_5EntryE
+fff79b94 00000208 T _ZN11FileArchive12_locate_fileEPKcPNS_5EntryERPv
+fff79a94 000000c0 T _ZN11FileArchive5Entry10decompressEPvmPA64_h
+fff79b54 00000040 T _ZN11FileArchive5Entry19get_stored_data_ptrERPKv
+fff77ba0 00000034 W _ZN13sbe_local_LFRC1Ev
+fff77ba0 00000034 W _ZN13sbe_local_LFRC2Ev
+fff7c160 000000b0 W _ZN14sha3HashOtprom11getSha3HashEmmmmmmmm
+fff7c25c 00000028 W _ZN14sha3HashOtpromC1Ev
+fff7c25c 00000028 W _ZN14sha3HashOtpromC2Ev
+fff782a0 0000002c T _ZN19CMNGlobalsSingleton11getInstanceEv
+fff7c210 0000004c W _ZN22secureBootCtrlSettings25getSecureBootCtrlSettingsEm
+fff7c01c 00000144 W _ZN24truncatedHashMeasurement20getSha3TruncatedHashEmmmmmmmmmmmm
+fff7c284 00000028 W _ZN24truncatedHashMeasurementC1Ev
+fff7c284 00000028 W _ZN24truncatedHashMeasurementC2Ev
+fff77bd4 000000e8 T _ZN3SBE15check_file_hashEPKcRA64_KhPS2_
+fff77d08 00000054 T _ZN3SBE15updateErrorCodeEt
+fff77d98 00000054 T _ZN3SBE18updateProgressCodeEh
+fff77cbc 0000004c T _ZN3SBE22updateErrorCodeAndHaltEt
+fff788f4 00000030 W _ZN3SBE4get8EPv
+fff788c4 00000030 W _ZN3SBE5get16EPv
+fff78894 00000030 W _ZN3SBE5get32EPv
+fff78864 00000030 W _ZN3SBE5get64EPv
+fff77d5c 0000003c T _ZN3SBE8isHresetEv
+fff80370 00000008 s _ZZN19CMNGlobalsSingleton11getInstanceEvE11iv_instance
