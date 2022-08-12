@@ -172,6 +172,19 @@ void extra_help() __attribute__((weak));
 #endif
 
 /**
+ * @brief Implement this function if you'd like to perform tasks after
+ *        the target loop (e.g. clean up memory).
+ *        If this function is defined, it will get called by main after
+ *        the target loop is done.
+ *
+ * @param[in]  void function
+ *
+ * @return ECMD_SUCCESS if no error, anything else to
+ *         abort the wrapper.
+ */
+uint64_t post_loop_cleanup(void) __attribute__((weak));
+
+/**
  * @brief Implement this function if you need to customize the way your
  *        procedure is being called, including FAPI target creation and
  *        return code handling. This will replace the default implementation
