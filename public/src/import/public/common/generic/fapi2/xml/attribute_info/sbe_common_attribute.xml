@@ -57,4 +57,12 @@
     <name>ATTR_CLOCKSTOP_ON_XSTOP</name>
     <value>0x00</value>
   </entry>
+  <entry>
+    <name>ATTR_ENABLE_LBIST</name>
+    <value>0x00</value>
+  </entry>
+  <entry>
+    <name>ATTR_ENABLE_ABIST</name>
+    <value>0x00</value>
+  </entry>
 </entries>
