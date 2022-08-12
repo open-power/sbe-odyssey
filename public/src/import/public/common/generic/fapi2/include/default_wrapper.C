@@ -245,6 +245,13 @@ int main(int argc, char* argv[])
     }
 
     TRY(!target_found, "No targets found, procedure did not run!");
+
+    // post_loop_cleanup is a weak symbol and will be NULL if nobody bothered to implement it
+    if (post_loop_cleanup)
+    {
+        TRY_NOMSG(post_loop_cleanup());
+    }
+
     output(PROCEDURE_NAME_STR " is done");
 
 out:
