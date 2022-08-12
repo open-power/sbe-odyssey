@@ -1,0 +1,1662 @@
+Archive member included because of file (symbol)
+
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/init/libodysseysrominit.a(init.o)
+                              (__system_reset_handler)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/init/libcmnsrominit.a(cmdtable.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/init/libodysseysrominit.a(init.o) (run_cmd_tables)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_boot.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/init/libcmnsrominit.a(cmdtable.o) (__pk_boot)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_exceptions.o)
+                              (__system_reset)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_init.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_boot.o) (__ppe42_system_setup)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_init.o) (__ppe42_default_irq_handler)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_exceptions.o) (__pk_current_thread)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_boot.o) (__pk_main)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_stack_init.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o) (__pk_stack_init)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_bh_core.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_exceptions.o) (_pk_process_bh)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_debug_ptrs.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o) (pk_debug_ptrs)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_exceptions.o) (__pk_timer_handler)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(std_init.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_init.o) (__hwmacro_setup)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o) (g_pk_trace_timer)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_timebase.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o) (pk_timebase_get)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o) (__pk_schedule_hardware_timeout)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o) (main)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o) (sromthreadroutine(void*))
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(irq.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_exceptions.o) (__sbe_register_saveoff)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(exportedfunctions.o)
+                              (__function_table)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(pakwrapper.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o) (PakWrapper::read_file(char const*, void*, unsigned long, unsigned char (*) [64], unsigned long*))
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o) (loadAndJumpBldr(PakWrapper*, bool))
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/shvsettings/libodysseyshvsettings.a(shvsettings.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o) (shvSettings())
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o) (sha3_Hash(unsigned char const*, unsigned int, unsigned char (*) [64]))
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(exportedfunctions.o) (ec_verify(unsigned char const*, unsigned char const*, unsigned char const*))
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o) (SBE::check_file_hash(char const*, unsigned char const (&) [64], unsigned char const*))
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(metadata_base.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o) (_get_metadata(void const*, unsigned long))
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(threadutil.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o) (createAndResumeThreadHelper(PkThread*, void (*)(void*), void*, unsigned long, unsigned int, sbeThreadPriorities))
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o) (cmnGlobal)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o) (verifySecureHdr)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/shvsettings/libodysseyshvsettings.a(shvsettings.o) (getSignatureAlgoCheck(bool, bool, bool))
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(pakwrapper.o) (FileArchive::Entry::decompress(void*, unsigned long, unsigned char (*) [64]))
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(div32.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o) (__umodsi3)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o) (putscom_abs)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o) (memset)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(threadutil.o) (pk_thread_create)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o) (__pk_thread_timeout)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_big.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o) (pk_trace_big)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_binary.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o) (pk_trace_binary)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_thread_init.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o) (__pk_thread_context_initialize)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_init.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o) (pk_timer_create)
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o) (ref_verify2(unsigned char const*, unsigned int, unsigned char const*, unsigned int, unsigned char const*, unsigned int, polyvec_max*, polyvec_max*, polyvec_max*, polyvec_max*, polyvec_max*, polyvec_max*))
+/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_math.o)
+                              /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o) (__muldi3)
+
+Discarded input sections
+
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/init/libodysseysrominit.a(init.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/init/libodysseysrominit.a(init.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/init/libcmnsrominit.a(cmdtable.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/init/libcmnsrominit.a(cmdtable.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_boot.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_boot.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_exceptions.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_exceptions.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_init.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_init.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_init.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .text.pk_irq_enable
+                0x0000000000000000       0x1c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .text.pk_irq_vec_enable
+                0x0000000000000000       0x10 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .text.pk_irq_disable
+                0x0000000000000000       0x1c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .text.pk_irq_vec_disable
+                0x0000000000000000       0x10 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .text.pk_irq_status_clear
+                0x0000000000000000       0x1c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .text.pk_irq_vec_status_clear
+                0x0000000000000000       0x10 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .text.pk_irq_status_get
+                0x0000000000000000       0x38 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .text.pk_irq_status_set
+                0x0000000000000000       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .sbss.__ppe42_phantom_irq
+                0x0000000000000000        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .sbss.__ppe42_debug_arg
+                0x0000000000000000        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .sbss.__ppe42_debug_routine
+                0x0000000000000000        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+ .text.pk_current
+                0x0000000000000000        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+ .text.pk_timebase_freq_set
+                0x0000000000000000       0x40 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_stack_init.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_stack_init.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_stack_init.o)
+ .text.__pk_stack_check
+                0x0000000000000000       0x14 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_stack_init.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_bh_core.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_bh_core.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_bh_core.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_debug_ptrs.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_debug_ptrs.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_debug_ptrs.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+ .text.pk_timer_cancel
+                0x0000000000000000       0x40 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+ .text.pk_timer_info_get
+                0x0000000000000000       0x44 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(std_init.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(std_init.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(std_init.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+ .text.pk_trace_set_freq
+                0x0000000000000000       0x10 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_timebase.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_timebase.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+ .text.pk_interrupt_disable
+                0x0000000000000000       0x14 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+ .text.pk_machine_context_set
+                0x0000000000000000       0x1c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+ .text.pk_machine_context_get
+                0x0000000000000000       0x1c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+ .group         0x0000000000000000        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .group         0x0000000000000000        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .group         0x0000000000000000        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .group         0x0000000000000000        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .group         0x0000000000000000        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(irq.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(irq.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(irq.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(exportedfunctions.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(exportedfunctions.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(exportedfunctions.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(pakwrapper.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(pakwrapper.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(pakwrapper.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/shvsettings/libodysseyshvsettings.a(shvsettings.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/shvsettings/libodysseyshvsettings.a(shvsettings.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/shvsettings/libodysseyshvsettings.a(shvsettings.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+ .text._Z9make32BitPh
+                0x0000000000000000       0x24 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+ .text._Z9SHA3_dumpPA64_h
+                0x0000000000000000        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+ .group         0x0000000000000000        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .text.__isSimicsRunning
+                0x0000000000000000        0xc /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .text._ZN3SBE15isSimicsRunningEv
+                0x0000000000000000       0x44 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .text._ZN3SBE26updateSbeGlobalFreqFromLFREv
+                0x0000000000000000       0x64 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .text._ZN3SBE32setSbeGlobalFreqFromScratchOrLFREv
+                0x0000000000000000       0x9c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .sbss._ZZN3SBE15isSimicsRunningEvE6simics
+                0x0000000000000000        0x1 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .sbss._ZGVZN3SBE15isSimicsRunningEvE6simics
+                0x0000000000000000        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(metadata_base.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(metadata_base.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(metadata_base.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(threadutil.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(threadutil.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(threadutil.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+ .sbss._ZN19CMNGlobalsSingleton8isHresetE
+                0x0000000000000000        0x1 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+ .group         0x0000000000000000        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .group         0x0000000000000000        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .group         0x0000000000000000        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .group         0x0000000000000000        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+ .text._Z17SHA3TruncatedDumpPA48_h
+                0x0000000000000000        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .text._ZN11FileArchive5Entry29stream_uncompressed_with_hashERNS_14StreamReceiverEPvPA64_h
+                0x0000000000000000       0xcc /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .text._ZN11FileArchive5Entry17stream_decompressERNS_14StreamReceiverEPvPA64_h
+                0x0000000000000000       0x38 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .text._ZN11FileArchive11archive_endEv
+                0x0000000000000000       0x30 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .text._ZN11FileArchive10initializeEv
+                0x0000000000000000       0x60 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .text._ZN11FileArchive16_append_find_endERPvj
+                0x0000000000000000       0xa4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .text._ZN11FileArchive11append_fileEPKcPKvmjRPv
+                0x0000000000000000      0x1e0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .text._ZN11FileArchive14append_archiveEPvjjRS0_
+                0x0000000000000000       0xdc /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(div32.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(div32.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(div32.o)
+ .text.__udivsi3
+                0x0000000000000000       0x14 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(div32.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+ .text._putscom
+                0x0000000000000000       0x10 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+ .text._getscom
+                0x0000000000000000       0x18 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .text.memmem   0x0000000000000000       0x58 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .text.strcpy   0x0000000000000000       0x1c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .text.strncpy  0x0000000000000000       0x68 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .text.strcmp   0x0000000000000000       0x58 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .text.strnlen  0x0000000000000000       0x2c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .text.strcat   0x0000000000000000       0x38 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .text.strncat  0x0000000000000000       0x48 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .text.strchr   0x0000000000000000       0x34 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+ .text.pk_thread_suspend
+                0x0000000000000000       0x6c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+ .text.pk_thread_delete
+                0x0000000000000000       0x34 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+ .text.pk_sleep
+                0x0000000000000000       0xc4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_big.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_big.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_big.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_binary.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_binary.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_binary.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_thread_init.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_thread_init.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_init.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_init.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_init.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL10polyz_packPhPK4poly
+                0x0000000000000000       0x7c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL14dil_asn_bitstrPhjj
+                0x0000000000000000       0x6c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL16dil_asn_sequencePhjj
+                0x0000000000000000       0x5c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL12dil_asn_nullPhj
+                0x0000000000000000       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL12dil_oid2wirePhjj
+                0x0000000000000000      0x10c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL12dil_pub2wirePhjPKhjS1_j.isra.0
+                0x0000000000000000      0x168 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL12dil_oid2typePKhj
+                0x0000000000000000      0x100 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL12dil_wire2pubPhjPjPKhjS2_j.isra.1
+                0x0000000000000000      0x208 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._Z12dil_sig2wirePhjPK11polyvec_maxS2_PK4polyj
+                0x0000000000000000      0x1e8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL16ref_verify_help3PKhjS0_jS0_jP11polyvec_maxS2_S2_S2_
+                0x0000000000000000       0x40 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL16ref_verify_help2PKhjS0_jS0_jP11polyvec_maxS2_S2_
+                0x0000000000000000       0x30 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL16ref_verify_help1PKhjS0_jS0_jP11polyvec_maxS2_
+                0x0000000000000000       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL10ref_verifyPKhjS0_jS0_j
+                0x0000000000000000       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._Z11pqca_verifyPKhjS0_jS0_jS0_j
+                0x0000000000000000       0x2c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._Z13pqca_key2wirePhjPKhjS1_j
+                0x0000000000000000        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._Z13pqca_wire2keyPhjPKhjS1_j
+                0x0000000000000000       0x30 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .rodata._ZL13dil_spkis_der
+                0x0000000000000000       0x78 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .rodata.str1.1
+                0x0000000000000000       0x7b /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .rodata._ZL11dil_oidstub
+                0x0000000000000000        0xa /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_math.o)
+ .data          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_math.o)
+ .bss           0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_math.o)
+ .text.__divsi3
+                0x0000000000000000       0x80 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_math.o)
+ .text.__modsi3
+                0x0000000000000000       0x80 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_math.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+rom              0x00000000fff70000 0x0000000000010000 xr
+sram             0x00000000fff80000 0x0000000000007800 rw
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+                0x0000000000000001                ASSERT (0x1, Scratch space overlap with bootloader origin)
+                0x0000000000000001                ASSERT (0x1, Total size exceeds SRAM size)
+                0x00000000fff70000                . = 0xfff70000
+
+.pk_vectors     0x00000000fff70000      0x164
+ *(.vectors)
+ .vectors       0x00000000fff70000      0x164 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_exceptions.o)
+                0x00000000fff70000                __vectors
+                0x00000000fff70010                __set_msr
+                0x00000000fff70040                __system_reset
+                0x00000000fff70160                __virtual_exception
+
+.srom_metadata  0x00000000fff70164       0x20
+ *(.srom_metadata)
+ .srom_metadata
+                0x00000000fff70164       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+                0x00000000fff70164                g_image_metadata
+                0x00000000fff70200                . = 0xfff70200
+
+.function_table
+                0x00000000fff70200        0x8
+ *(.function_address)
+ .function_address
+                0x00000000fff70200        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(exportedfunctions.o)
+                0x00000000fff70200                __function_table
+                0x00000000fff70240                . = 0xfff70240
+                0x00000000fff70400                . = 0xfff70400
+
+.odysseysrominit
+                0x00000000fff70400      0x17c
+ *\libodysseysrominit.a:*(.text .text* .dtors .dtors.* .rodata*)
+ .text          0x00000000fff70400      0x17c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/init/libodysseysrominit.a(init.o)
+                0x00000000fff70400                __system_reset_handler
+                0x00000000fff70980                . = 0xfff70980
+
+.cmnsrominit    0x00000000fff70980      0x38c
+ *\libcmnsrominit.a:*(.text .text* .dtors .dtors.* .rodata*)
+ .text          0x00000000fff70980      0x38c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/init/libcmnsrominit.a(cmdtable.o)
+                0x00000000fff70990                locate_seeprom_file
+                0x00000000fff70b30                run_cmd_tables
+                0x00000000fff71110                . = 0xfff71110
+
+.sha3algo       0x00000000fff71110      0x718
+ *\libsha3algo.a:*(.text .text* .dtors .dtors.* .rodata*)
+ .text._Z12sha3_keccakfPy
+                0x00000000fff71110      0x404 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+                0x00000000fff71110                sha3_keccakf(unsigned long long*)
+ .text._Z9sha3_initP10sha3_ctx_t
+                0x00000000fff71514       0x3c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+                0x00000000fff71514                sha3_init(sha3_ctx_t*)
+ .text._Z11sha3_updateP10sha3_ctx_tPKvj
+                0x00000000fff71550       0x7c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+                0x00000000fff71550                sha3_update(sha3_ctx_t*, void const*, unsigned int)
+ .text._Z10sha3_finalPA64_hP10sha3_ctx_t
+                0x00000000fff715cc       0x7c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+                0x00000000fff715cc                sha3_final(unsigned char (*) [64], sha3_ctx_t*)
+ .text._Z9sha3_HashPKhjPA64_h
+                0x00000000fff71648       0x5c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+                0x00000000fff71648                sha3_Hash(unsigned char const*, unsigned int, unsigned char (*) [64])
+ *fill*         0x00000000fff716a4        0x4 
+ .rodata        0x00000000fff716a8      0x180 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+                0x00000000fff71c28                . = 0xfff71c28
+
+.ecdsaalgo      0x00000000fff71c28     0x190c
+ *\libecdsaalgo.a:*(.text .text* .dtors .dtors.* .rodata*)
+ .text._Z7BN_COPYPmPKm
+                0x00000000fff71c28       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff71c28                BN_COPY(unsigned long*, unsigned long const*)
+ .text._Z6bn_shlPmm
+                0x00000000fff71c48       0x34 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff71c48                bn_shl(unsigned long*, unsigned long)
+ .text._Z7bn_dmulmm
+                0x00000000fff71c7c       0x64 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff71c7c                bn_dmul(unsigned long, unsigned long)
+ .text._Z6bn_mulPmPKmS1_
+                0x00000000fff71ce0      0x144 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff71ce0                bn_mul(unsigned long*, unsigned long const*, unsigned long const*)
+ .text._Z6bn_cmpPKmS0_
+                0x00000000fff71e24       0x40 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff71e24                bn_cmp(unsigned long const*, unsigned long const*)
+ .text._Z10bn_is_zeroPKmj
+                0x00000000fff71e64       0x38 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff71e64                bn_is_zero(unsigned long const*, unsigned int)
+ .text._Z6bn_addPmPKm
+                0x00000000fff71e9c       0x5c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff71e9c                bn_add(unsigned long*, unsigned long const*)
+ .text._Z6bn_subPmPKm
+                0x00000000fff71ef8       0x64 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff71ef8                bn_sub(unsigned long*, unsigned long const*)
+ .text._Z14bn_modred_p521PmS_
+                0x00000000fff71f5c       0xd0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff71f5c                bn_modred_p521(unsigned long*, unsigned long*)
+ .text._Z15bn_modmul_primePmPKm
+                0x00000000fff7202c       0x44 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff7202c                bn_modmul_prime(unsigned long*, unsigned long const*)
+ .text._Z20bn_modred_p521_orderPmPKm
+                0x00000000fff72070       0xdc /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff72070                bn_modred_p521_order(unsigned long*, unsigned long const*)
+ .text._Z15bn_modmul_orderPmPKm
+                0x00000000fff7214c       0x44 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff7214c                bn_modmul_order(unsigned long*, unsigned long const*)
+ .text._Z9bn_modaddPmPKm
+                0x00000000fff72190       0x60 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff72190                bn_modadd(unsigned long*, unsigned long const*)
+ .text._Z9bn_modsubPmPKm
+                0x00000000fff721f0       0x50 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff721f0                bn_modsub(unsigned long*, unsigned long const*)
+ .text._Z8bn_shl_nPmjj
+                0x00000000fff72240       0xbc /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff72240                bn_shl_n(unsigned long*, unsigned int, unsigned int)
+ .text._Z7bn_bitsPKm
+                0x00000000fff722fc       0x4c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff722fc                bn_bits(unsigned long const*)
+ .text._Z9bn_modinvPmPKmS1_
+                0x00000000fff72348      0x1f8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff72348                bn_modinv(unsigned long*, unsigned long const*, unsigned long const*)
+ .text._Z7bn_readPmPKhj
+                0x00000000fff72540       0xd0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff72540                bn_read(unsigned long*, unsigned char const*, unsigned int)
+ .text._Z10bn_read_ptPmPKh
+                0x00000000fff72610        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff72610                bn_read_pt(unsigned long*, unsigned char const*)
+ .text._Z12bn_read_hashPmPKh
+                0x00000000fff72618        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff72618                bn_read_hash(unsigned long*, unsigned char const*)
+ .text._Z20ec_projective2affinePmS_PKm
+                0x00000000fff72620       0x58 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff72620                ec_projective2affine(unsigned long*, unsigned long*, unsigned long const*)
+ .text._Z9ec_doublePmS_S_
+                0x00000000fff72678      0x1a4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff72678                ec_double(unsigned long*, unsigned long*, unsigned long*)
+ .text._Z6ec_addPmS_S_PKmS1_S1_
+                0x00000000fff7281c      0x268 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff7281c                ec_add(unsigned long*, unsigned long*, unsigned long*, unsigned long const*, unsigned long const*, unsigned long const*)
+ .text._Z11ec_multiplyPmS_S_PKmS1_
+                0x00000000fff72a84      0x1d4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff72a84                ec_multiply(unsigned long*, unsigned long*, unsigned long*, unsigned long const*, unsigned long const*)
+ .text._Z9ec_verifyPKhS0_S0_
+                0x00000000fff72c58      0x700 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff72c58                ec_verify(unsigned char const*, unsigned char const*, unsigned char const*)
+ .rodata._ZL6consts
+                0x00000000fff73358      0x1dc /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff73938                . = 0xfff73938
+
+.dilithiumalgo  0x00000000fff73938     0x3e64
+ *\libdilithiumalgo.a:*(.text .text* .dtors .dtors.* .rodata*)
+ .text._ZL6load64PKh
+                0x00000000fff73938       0x4c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL7store64Phy
+                0x00000000fff73984       0x2c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL24KeccakF1600_StatePermutePy
+                0x00000000fff739b0     0x15a0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL11keccak_initP12Keccak_state
+                0x00000000fff74f50       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL13keccak_absorbPyjjPKhj
+                0x00000000fff74f78      0x28c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL20keccak_squeezeblocksPhjPyj
+                0x00000000fff75204       0x90 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL15shake256_absorbP12Keccak_statePKhj
+                0x00000000fff75294       0x40 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL17montgomery_reducey
+                0x00000000fff752d4       0x58 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL8reduce32m
+                0x00000000fff7532c       0x18 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL5csubqm
+                0x00000000fff75344       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL6ntt256Pm
+                0x00000000fff75364      0x110 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL16invntt_tomont256Pm
+                0x00000000fff75474      0xd18 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL9decomposemPm
+                0x00000000fff7618c       0x5c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL8use_hintmj
+                0x00000000fff761e8       0x58 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL11poly_reduceP4poly
+                0x00000000fff76240       0x3c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL10poly_csubqP4poly
+                0x00000000fff7627c       0x3c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL8poly_addP4polyPKS_S2_
+                0x00000000fff762b8       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL8poly_subP4polyPKS_S2_
+                0x00000000fff762e0       0x30 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL11poly_shiftlP4poly
+                0x00000000fff76310       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL11poly_ntt256P4poly
+                0x00000000fff76330        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL18poly_invntt_tomontP4poly
+                0x00000000fff76334        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL25poly_pointwise_montgomeryP4polyPKS_S2_
+                0x00000000fff76338       0x64 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL13poly_use_hintP4polyPKS_S2_
+                0x00000000fff7639c       0x58 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL12poly_chknormPK4polym
+                0x00000000fff763f4       0x40 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL11rej_uniformPmjPKhj
+                0x00000000fff76434       0x6c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL13polyt1_unpackP4polyPKh
+                0x00000000fff764a0       0xd8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL12polyz_unpackP4polyPKh
+                0x00000000fff76578       0xa4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL19dil_signature_bytesj
+                0x00000000fff7661c       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL33polyvec7_pointwise_acc_montgomeryP4polyPK8polyvec7S3_
+                0x00000000fff76644       0x6c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL14keccak_squeezePhjPyjj.constprop.7
+                0x00000000fff766b0      0x200 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL15keccak_finalizePyjjh.constprop.8
+                0x00000000fff768b0       0x6c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL17shake256_finalizeP12Keccak_state
+                0x00000000fff7691c       0x3c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL13dil_challengeP4polyPKhPK11polyvec_maxj.constprop.2
+                0x00000000fff76958      0x1b4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL20shake128_stream_initP12Keccak_statePKht
+                0x00000000fff76b0c       0x8c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._ZL12poly_uniformP4polyPKht
+                0x00000000fff76b98       0xe4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .text._Z12dil_wire2sigP11polyvec_maxS0_P4polyjPKhj
+                0x00000000fff76c7c      0x25c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+                0x00000000fff76c7c                dil_wire2sig(polyvec_max*, polyvec_max*, poly*, unsigned int, unsigned char const*, unsigned int)
+ .text._Z11ref_verify2PKhjS0_jS0_jP11polyvec_maxS2_S2_S2_S2_S2_
+                0x00000000fff76ed8      0x3f8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+                0x00000000fff76ed8                ref_verify2(unsigned char const*, unsigned int, unsigned char const*, unsigned int, unsigned char const*, unsigned int, polyvec_max*, polyvec_max*, polyvec_max*, polyvec_max*, polyvec_max*, polyvec_max*)
+ .rodata        0x00000000fff772d0      0x4c0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .rodata.CSWTCH.70
+                0x00000000fff77790        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .rodata.CSWTCH.74
+                0x00000000fff77794        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+                0x00000000fff77ba0                . = 0xfff77ba0
+
+.cmnutils       0x00000000fff77ba0      0x298
+ *\libcmnutils.a:*(.text .text* .dtors .dtors.* .rodata*)
+ .text._ZN13sbe_local_LFRC2Ev
+                0x00000000fff77ba0       0x34 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+                0x00000000fff77ba0                sbe_local_LFR::sbe_local_LFR()
+                0x00000000fff77ba0                sbe_local_LFR::sbe_local_LFR()
+ .text._ZN3SBE15check_file_hashEPKcRA64_KhPS2_
+                0x00000000fff77bd4       0xe8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+                0x00000000fff77bd4                SBE::check_file_hash(char const*, unsigned char const (&) [64], unsigned char const*)
+ .text._ZN3SBE22updateErrorCodeAndHaltEt
+                0x00000000fff77cbc       0x4c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+                0x00000000fff77cbc                SBE::updateErrorCodeAndHalt(unsigned short)
+ .text._ZN3SBE15updateErrorCodeEt
+                0x00000000fff77d08       0x54 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+                0x00000000fff77d08                SBE::updateErrorCode(unsigned short)
+ .text._ZN3SBE8isHresetEv
+                0x00000000fff77d5c       0x3c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+                0x00000000fff77d5c                SBE::isHreset()
+ .text._ZN3SBE18updateProgressCodeEh
+                0x00000000fff77d98       0x54 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+                0x00000000fff77d98                SBE::updateProgressCode(unsigned char)
+ .text._Z13_get_metadataPKvm
+                0x00000000fff77dec       0x4c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(metadata_base.o)
+                0x00000000fff77dec                _get_metadata(void const*, unsigned long)
+                0x00000000fff78238                . = 0xfff78238
+
+.cmncore        0x00000000fff78238       0xb8
+ *\libcmncore.a:*(.text .text* .dtors .dtors.* .rodata*)
+ .text._Z27createAndResumeThreadHelperP8PkThreadPFvPvES1_mj19sbeThreadPriorities
+                0x00000000fff78238       0x68 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(threadutil.o)
+                0x00000000fff78238                createAndResumeThreadHelper(PkThread*, void (*)(void*), void*, unsigned long, unsigned int, sbeThreadPriorities)
+ .text._ZN19CMNGlobalsSingleton11getInstanceEv
+                0x00000000fff782a0       0x2c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+                0x00000000fff782a0                CMNGlobalsSingleton::getInstance()
+ .text.startup._GLOBAL__sub_I_cmnGlobal
+                0x00000000fff782cc       0x24 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+                0x00000000fff786f0                . = 0xfff786f0
+
+.cmnsromcore    0x00000000fff786f0      0xf44
+ *\libcmnsromcore.a:*(.text .text* .dtors .dtors.* .rodata*)
+ .text._ZL14dilithium_wrapPKhS0_S0_mm
+                0x00000000fff786f0      0x174 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .text._ZN3SBE5get64EPv
+                0x00000000fff78864       0x30 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+                0x00000000fff78864                SBE::get64(void*)
+ .text._ZN3SBE5get32EPv
+                0x00000000fff78894       0x30 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+                0x00000000fff78894                SBE::get32(void*)
+ .text._ZN3SBE5get16EPv
+                0x00000000fff788c4       0x30 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+                0x00000000fff788c4                SBE::get16(void*)
+ .text._ZN3SBE4get8EPv
+                0x00000000fff788f4       0x30 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+                0x00000000fff788f4                SBE::get8(void*)
+ .text._ZL13valid_ver_algP15ROM_version_rawh
+                0x00000000fff78924       0xd8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .text._ZL10ROM_verifyP6shvReqP6shvRsp
+                0x00000000fff789fc      0x9b4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .text.verifySecureHdr
+                0x00000000fff793b0      0x1d0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+                0x00000000fff793b0                verifySecureHdr
+ .text._Z21getSignatureAlgoCheckbbb
+                0x00000000fff79580       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+                0x00000000fff79580                getSignatureAlgoCheck(bool, bool, bool)
+ .text._Z34applyTripleModularRedundancyVotingh
+                0x00000000fff795a0       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+                0x00000000fff795a0                applyTripleModularRedundancyVoting(unsigned char)
+ .text._Z6getMSVy
+                0x00000000fff795c8       0x6c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+                0x00000000fff795c8                getMSV(unsigned long long)
+                0x00000000fff79a38                . = 0xfff79a38
+
+.ekbcmnsrompak  0x00000000fff79a38      0x388
+ *\libekbcmnsrompak.a:*(.text .text* .dtors .dtors.* .rodata*)
+ .text._ZL10hash_blockPKvmPA64_h
+                0x00000000fff79a38       0x5c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .text._ZN11FileArchive5Entry10decompressEPvmPA64_h
+                0x00000000fff79a94       0xc0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+                0x00000000fff79a94                FileArchive::Entry::decompress(void*, unsigned long, unsigned char (*) [64])
+ .text._ZN11FileArchive5Entry19get_stored_data_ptrERPKv
+                0x00000000fff79b54       0x40 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+                0x00000000fff79b54                FileArchive::Entry::get_stored_data_ptr(void const*&)
+ .text._ZN11FileArchive12_locate_fileEPKcPNS_5EntryERPv
+                0x00000000fff79b94      0x208 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+                0x00000000fff79b94                FileArchive::_locate_file(char const*, FileArchive::Entry*, void*&)
+ .text._ZN11FileArchive11locate_fileEPKcRNS_5EntryE
+                0x00000000fff79d9c       0x24 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+                0x00000000fff79d9c                FileArchive::locate_file(char const*, FileArchive::Entry&)
+                0x00000000fff7a1c0                . = 0xfff7a1c0
+
+.pkbase         0x00000000fff7a1c0      0x318
+ *\libpkbase.a:*(.text .text* .dtors .dtors.* .rodata*)
+ .text.divide   0x00000000fff7a1c0       0x48 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(div32.o)
+ .text.__umodsi3
+                0x00000000fff7a208       0x14 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(div32.o)
+                0x00000000fff7a208                __umodsi3
+ .text.putscom_abs
+                0x00000000fff7a21c       0x10 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+                0x00000000fff7a21c                putscom_abs
+ .text.getscom_abs
+                0x00000000fff7a22c       0x14 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+                0x00000000fff7a22c                getscom_abs
+ .text._memcpy  0x00000000fff7a240       0xa4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .text.memset   0x00000000fff7a2e4       0xd4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+                0x00000000fff7a2e4                memset
+ .text.memcpy   0x00000000fff7a3b8       0x54 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+                0x00000000fff7a3b8                memcpy
+ .text.memmove  0x00000000fff7a40c       0x38 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+                0x00000000fff7a40c                memmove
+ .text.memcmp   0x00000000fff7a444       0x40 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+                0x00000000fff7a444                memcmp
+ .text.strlen   0x00000000fff7a484       0x1c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+                0x00000000fff7a484                strlen
+ .text.__muldi3
+                0x00000000fff7a4a0       0x38 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_math.o)
+                0x00000000fff7a4a0                __muldi3
+                0x00000000fff7a8e8                . = 0xfff7a8e8
+
+.pk             0x00000000fff7a8e8     0x11c8
+ *\libpk.a:*(.text .text* .dtors .dtors.* .rodata*)
+ .text          0x00000000fff7a8e8       0x68 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_boot.o)
+                0x00000000fff7a8e8                __pk_boot
+ *fill*         0x00000000fff7a950       0x10 
+ .text          0x00000000fff7a960      0x224 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_exceptions.o)
+                0x00000000fff7a960                __pk_idle_thread
+                0x00000000fff7a974                __pk_idle_thread_from_bootloader
+                0x00000000fff7a984                pk_halt
+                0x00000000fff7a9b0                __pk_next_thread_resume
+                0x00000000fff7aa4c                __ctx_switch
+ .text.__ppe42_system_setup
+                0x00000000fff7ab84       0x58 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_init.o)
+                0x00000000fff7ab84                __ppe42_system_setup
+ .text.__ppe42_default_irq_handler
+                0x00000000fff7abdc        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+                0x00000000fff7abdc                __ppe42_default_irq_handler
+ .text.__ppe42_phantom_irq_handler
+                0x00000000fff7abe4        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+                0x00000000fff7abe4                __ppe42_phantom_irq_handler
+ .text.pk_deque_sentinel_create
+                0x00000000fff7abec       0x1c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+                0x00000000fff7abec                pk_deque_sentinel_create
+ .text.pk_deque_element_create
+                0x00000000fff7ac08       0x1c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+                0x00000000fff7ac08                pk_deque_element_create
+ .text.pk_set_timebase_rshift
+                0x00000000fff7ac24       0x60 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+                0x00000000fff7ac24                pk_set_timebase_rshift
+ .text._pk_initialize
+                0x00000000fff7ac84      0x1c0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+                0x00000000fff7ac84                _pk_initialize
+ .text.__pk_main
+                0x00000000fff7ae44        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+                0x00000000fff7ae44                __pk_main
+ .rodata.str1.1
+                0x00000000fff7ae48        0xa /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+ *fill*         0x00000000fff7ae52        0x2 
+ .text.__pk_stack_init
+                0x00000000fff7ae54       0x6c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_stack_init.o)
+                0x00000000fff7ae54                __pk_stack_init
+ .text._pk_process_bh
+                0x00000000fff7aec0       0x58 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_bh_core.o)
+                0x00000000fff7aec0                _pk_process_bh
+ .text.__pk_timer_bh_handler
+                0x00000000fff7af18      0x12c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+ .text.__pk_timer_cancel
+                0x00000000fff7b044       0x40 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+                0x00000000fff7b044                __pk_timer_cancel
+ .text.__pk_timer_schedule
+                0x00000000fff7b084       0x58 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+                0x00000000fff7b084                __pk_timer_schedule
+ .text.__pk_timer_handler
+                0x00000000fff7b0dc       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+                0x00000000fff7b0dc                __pk_timer_handler
+ .text.pk_timer_schedule
+                0x00000000fff7b104       0x7c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+                0x00000000fff7b104                pk_timer_schedule
+ .text.__hwmacro_setup
+                0x00000000fff7b180       0x48 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(std_init.o)
+                0x00000000fff7b180                __hwmacro_setup
+ .text.pk_trace_timer_callback
+                0x00000000fff7b1c8       0x14 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+                0x00000000fff7b1c8                pk_trace_timer_callback
+ .text.pk_trace_tiny
+                0x00000000fff7b1dc       0x74 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+                0x00000000fff7b1dc                pk_trace_tiny
+ .text.pk_trace_set_timebase
+                0x00000000fff7b250       0x4c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+                0x00000000fff7b250                pk_trace_set_timebase
+ *fill*         0x00000000fff7b29c        0x4 
+ .text          0x00000000fff7b2a0       0x44 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_timebase.o)
+                0x00000000fff7b2a0                pk_timebase32_get
+                0x00000000fff7b2c0                pk_timebase_get
+ .text.__pk_schedule_hardware_timeout
+                0x00000000fff7b2e4       0xa8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+                0x00000000fff7b2e4                __pk_schedule_hardware_timeout
+ .text.pk_thread_create
+                0x00000000fff7b38c       0xcc /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o)
+                0x00000000fff7b38c                pk_thread_create
+ .text.__pk_start_threads
+                0x00000000fff7b458       0x24 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+                0x00000000fff7b458                __pk_start_threads
+ .text.__pk_thread_map
+                0x00000000fff7b47c       0x6c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+                0x00000000fff7b47c                __pk_thread_map
+ .text.__pk_thread_unmap
+                0x00000000fff7b4e8       0x74 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+                0x00000000fff7b4e8                __pk_thread_unmap
+ .text.__pk_schedule
+                0x00000000fff7b55c       0x64 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+                0x00000000fff7b55c                __pk_schedule
+ .text.__pk_thread_delete
+                0x00000000fff7b5c0       0x7c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+                0x00000000fff7b5c0                __pk_thread_delete
+ .text.__pk_thread_timeout
+                0x00000000fff7b63c       0x98 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+                0x00000000fff7b63c                __pk_thread_timeout
+ .text.pk_start_threads
+                0x00000000fff7b6d4       0x38 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+                0x00000000fff7b6d4                pk_start_threads
+ .text.pk_thread_resume
+                0x00000000fff7b70c       0x8c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+                0x00000000fff7b70c                pk_thread_resume
+ .text.pk_complete
+                0x00000000fff7b798       0x40 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+                0x00000000fff7b798                pk_complete
+ .text.pk_trace_big
+                0x00000000fff7b7d8       0xf4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_big.o)
+                0x00000000fff7b7d8                pk_trace_big
+ .text.pk_trace_binary
+                0x00000000fff7b8cc       0xe0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_binary.o)
+                0x00000000fff7b8cc                pk_trace_binary
+ .text          0x00000000fff7b9ac       0xa8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_thread_init.o)
+                0x00000000fff7b9ac                __pk_thread_context_initialize
+ .text.pk_timer_create
+                0x00000000fff7ba54       0x5c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_init.o)
+                0x00000000fff7ba54                pk_timer_create
+                0x00000000fff7bea0                . = 0xfff7bea0
+
+.odysseysrom    0x00000000fff7bea0      0xdc4
+ *\libodysseysrom.a:*(.text .text* .dtors .dtors.* .rodata*)
+ .text.__eabi   0x00000000fff7bea0       0xa8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+                0x00000000fff7bea0                __eabi
+ .text.startup.main
+                0x00000000fff7bf48       0xd4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+                0x00000000fff7bf48                main
+ .text._ZN24truncatedHashMeasurement20getSha3TruncatedHashEmmmmmmmmmmmm
+                0x00000000fff7c01c      0x144 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+                0x00000000fff7c01c                truncatedHashMeasurement::getSha3TruncatedHash(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)
+ .text._ZN14sha3HashOtprom11getSha3HashEmmmmmmmm
+                0x00000000fff7c160       0xb0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+                0x00000000fff7c160                sha3HashOtprom::getSha3Hash(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)
+ .text._ZN22secureBootCtrlSettings25getSecureBootCtrlSettingsEm
+                0x00000000fff7c210       0x4c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+                0x00000000fff7c210                secureBootCtrlSettings::getSecureBootCtrlSettings(unsigned long)
+ .text._ZN14sha3HashOtpromC2Ev
+                0x00000000fff7c25c       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+                0x00000000fff7c25c                sha3HashOtprom::sha3HashOtprom()
+                0x00000000fff7c25c                sha3HashOtprom::sha3HashOtprom()
+ .text._ZN24truncatedHashMeasurementC2Ev
+                0x00000000fff7c284       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+                0x00000000fff7c284                truncatedHashMeasurement::truncatedHashMeasurement()
+                0x00000000fff7c284                truncatedHashMeasurement::truncatedHashMeasurement()
+ .text._Z17sromthreadroutinePv
+                0x00000000fff7c2ac      0x838 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+                0x00000000fff7c2ac                sromthreadroutine(void*)
+ .text.startup._GLOBAL__sub_I_hashList
+                0x00000000fff7cae4        0xc /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .rodata._ZL19hash_list_file_name
+                0x00000000fff7caf0        0xf /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ *fill*         0x00000000fff7caff        0x1 
+ .rodata.CSWTCH.12
+                0x00000000fff7cb00        0xc /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .rodata._ZL20secure_hdr_file_name
+                0x00000000fff7cb0c       0x10 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .text.__sbe_register_saveoff
+                0x00000000fff7cb1c        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(irq.o)
+                0x00000000fff7cb1c                __sbe_register_saveoff
+ .text.__sbe_machine_check_handler
+                0x00000000fff7cb24        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(irq.o)
+                0x00000000fff7cb24                __sbe_machine_check_handler
+ .text._ZN10PakWrapper9read_fileEPKcPvmPA64_hPm
+                0x00000000fff7cb2c       0xbc /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(pakwrapper.o)
+                0x00000000fff7cb2c                PakWrapper::read_file(char const*, void*, unsigned long, unsigned char (*) [64], unsigned long*)
+ .text._ZN10PakWrapper19get_image_start_ptrEPKc
+                0x00000000fff7cbe8       0x7c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(pakwrapper.o)
+                0x00000000fff7cbe8                PakWrapper::get_image_start_ptr(char const*)
+                0x00000000fff7d068                . = 0xfff7d068
+
+.odysseybldrloader
+                0x00000000fff7d068      0x186
+ *\libodysseybldrloader.a:*(.text .text* .dtors .dtors.* .rodata*)
+ .text.jump2BootLoaderImage
+                0x00000000fff7d068       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o)
+                0x00000000fff7d068                jump2BootLoaderImage
+ .text._Z15loadAndJumpBldrP10PakWrapperb
+                0x00000000fff7d090      0x150 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o)
+                0x00000000fff7d090                loadAndJumpBldr(PakWrapper*, bool)
+ .rodata._ZL14bldr_file_name
+                0x00000000fff7d1e0        0xe /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o)
+                0x00000000fff7d5f0                . = 0xfff7d5f0
+
+.odysseyshvsettings
+                0x00000000fff7d5f0      0x384
+ *\libodysseyshvsettings.a:*(.text .text* .dtors .dtors.* .rodata*)
+ .text._Z11shvSettingsv
+                0x00000000fff7d5f0      0x384 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/shvsettings/libodysseyshvsettings.a(shvsettings.o)
+                0x00000000fff7d5f0                shvSettings()
+
+.glink          0x00000000fff70000        0x0
+ .glink         0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/init/libodysseysrominit.a(init.o)
+                0x00000000fff70000                . = ALIGN (0x8)
+
+.rodata         0x00000000fff7d978        0x8
+                0x00000000fff7d978                ctor_start_address = .
+ *(.ctors)
+ .ctors         0x00000000fff7d978        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .ctors         0x00000000fff7d97c        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+ *(.ctors.*)
+                0x00000000fff7d980                ctor_end_address = .
+
+.eh_frame       0x00000000fff70000        0x0
+ .eh_frame      0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/init/libodysseysrominit.a(init.o)
+
+.rela.dyn       0x00000000fff70000        0x0
+ .rela.iplt     0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/init/libodysseysrominit.a(init.o)
+ .rela.text     0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/init/libodysseysrominit.a(init.o)
+ .rela.text.__ppe42_system_setup
+                0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/init/libodysseysrominit.a(init.o)
+ .rela.text._pk_initialize
+                0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/init/libodysseysrominit.a(init.o)
+ .rela.data.pk_debug_ptrs
+                0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/init/libodysseysrominit.a(init.o)
+ .rela.text.__eabi
+                0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/init/libodysseysrominit.a(init.o)
+ .rela.text.startup.main
+                0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/init/libodysseysrominit.a(init.o)
+ .rela.text.pk_thread_create
+                0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/init/libodysseysrominit.a(init.o)
+                0x00000000fff70000                . = ALIGN (0x8)
+
+.orphan         0x00000000fff7d980        0x0
+ *(.text)
+ *(.text*)
+ *(.dtors)
+ *(.dtors.*)
+ *(.rodata*)
+                0x00000000fff7d980                _code_end = .
+                0x000000000000d980                _code_size = (. - 0xfff70000)
+                0x00000000fff80000                . = 0xfff80000
+                0x00000000fff80000                _sram_start = .
+                0x00000000fff80000                _sdata2_start = .
+
+.sdata2         0x00000000fff80000        0x0 load address 0x00000000fff7d980
+ *(.srom_metadata)
+ *(.sdata2)
+ *(.sdata2.*)
+                0x00000000fff80000                . = ALIGN (0x8)
+                0x0000000000000000                _sdata2_size = (. - _sdata2_start)
+                0x00000000fff80000                _sbss2_start = .
+
+.sbss2          0x00000000fff80000        0x0
+ *(.sbss2)
+ *(.sbss2.*)
+                0x0000000000000001                ASSERT ((_sbss2_start == .), Error: Small data area 2 containing         uninitialized data.)
+                0x00000000fff80000                . = ALIGN (0x8)
+                0x00000000fff80000                _SDA2_BASE_ = (_sdata2_start + ((. - _sdata2_start) / 0x2))
+                0x00000000fff80000                _data_start = .
+
+.data           0x00000000fff80000       0x30 load address 0x00000000fff7d980
+ *(.data)
+ .data          0x00000000fff80000        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+                0x00000000fff80000                __pk_timebase_rshift
+                0x00000000fff80004                __pk_timebase_frequency_hz
+ *(.data.*)
+ .data.pk_debug_ptrs
+                0x00000000fff80008       0x24 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_debug_ptrs.o)
+                0x00000000fff80008                pk_debug_ptrs
+                0x00000000fff80030                . = ALIGN (0x8)
+ *fill*         0x00000000fff8002c        0x4 
+                0x0000000000000030                _data_size = (. - _data_start)
+                0x00000000fff80030                _sda_start = .
+
+.sdata          0x00000000fff80030      0x318 load address 0x00000000fff7d9b0
+ *(.sdata)
+ .sdata         0x00000000fff80030       0x18 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_exceptions.o)
+                0x00000000fff80030                g_ext_irqs_polarity
+                0x00000000fff80038                g_ext_irqs_type
+                0x00000000fff80040                g_ext_irqs_enable
+ .sdata         0x00000000fff80048      0x208 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+                0x00000000fff80048                __ppe42_irq_handlers
+ .sdata         0x00000000fff80250       0x18 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+                0x00000000fff80250                g_pk_trace_timer
+ *(.sdata.*)
+ .sdata.pk      0x00000000fff80268       0xc4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+                0x00000000fff80268                __pk_time_queue
+                0x00000000fff80280                __pk_priority_map
+                0x00000000fff80304                __pk_kernel_stack_size
+                0x00000000fff80308                __pk_thread_machine_context_default
+                0x00000000fff8030c                __pk_next_priority
+                0x00000000fff80310                __pk_next_thread
+                0x00000000fff80314                __pk_current_thread
+                0x00000000fff80318                __pk_delayed_switch
+                0x00000000fff8031c                __pk_run_queue
+                0x00000000fff80320                __pk_kernel_stack_limit
+                0x00000000fff80324                __pk_kernel_stack
+                0x00000000fff80328                __pk_saved_sp
+ .sdata.pk      0x00000000fff8032c        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_bh_core.o)
+                0x00000000fff8032c                _pk_bh_queue
+ .sdata.pk      0x00000000fff80334       0x10 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+                0x00000000fff80334                pk_timer_bh
+                0x00000000fff80348                . = ALIGN (0x8)
+ *fill*         0x00000000fff80344        0x4 
+                0x0000000000000318                _sdata_size = (. - _sda_start)
+                0x00000000fff80348                _bss_start = .
+
+.sbss           0x00000000fff80348       0x38 load address 0x00000000fff7dcc8
+ *(.sbss)
+ *(.sbss.*)
+ .sbss.__ppe42_fit_arg
+                0x00000000fff80348        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+                0x00000000fff80348                __ppe42_fit_arg
+ .sbss.__ppe42_watchdog_arg
+                0x00000000fff8034c        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+                0x00000000fff8034c                __ppe42_watchdog_arg
+ .sbss.__ppe42_watchdog_routine
+                0x00000000fff80350        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+                0x00000000fff80350                __ppe42_watchdog_routine
+ .sbss.__ppe42_fit_routine
+                0x00000000fff80354        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+                0x00000000fff80354                __ppe42_fit_routine
+ .sbss.ppe42_tb_data
+                0x00000000fff80358        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+                0x00000000fff80358                ppe42_tb_data
+ .sbss.ppe42_64bit_timebase
+                0x00000000fff80360        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+                0x00000000fff80360                ppe42_64bit_timebase
+ .sbss.sromSecureBootCtrlSettings
+                0x00000000fff80368        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+                0x00000000fff80368                sromSecureBootCtrlSettings
+ .sbss.cmnGlobal
+                0x00000000fff8036c        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+                0x00000000fff8036c                cmnGlobal
+ .sbss._ZZN19CMNGlobalsSingleton11getInstanceEvE11iv_instance
+                0x00000000fff80370        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+ .sbss._ZGVZN19CMNGlobalsSingleton11getInstanceEvE11iv_instance
+                0x00000000fff80378        0x8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+                0x00000000fff80380                . = ALIGN (0x8)
+                0x00000000fff801d8                _SDA_BASE_ = (_sda_start + ((. - _sda_start) / 0x2))
+
+.bss            0x00000000fff80380     0x62f0 load address 0x00000000fff7dd00
+ *(.bss)
+ *(.bss.*)
+ .bss.sromSecureBoot_stack
+                0x00000000fff80380     0x6000 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+                0x00000000fff80380                sromSecureBoot_stack
+ .bss.srom_thread
+                0x00000000fff86380       0x30 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+                0x00000000fff86380                srom_thread
+ .bss.srom_Kernel_NC_Int_stack
+                0x00000000fff863b0      0x200 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+                0x00000000fff863b0                srom_Kernel_NC_Int_stack
+ .bss.lookup    0x00000000fff865b0       0xc0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                0x00000000fff865b0                lookup
+                0x00000000fff86670                . = ALIGN (0x8)
+                0x00000000fff86670                _bss_end = .
+                0x0000000000006670                _ram_consumed = (. - _sram_start)
+                0x0000000000000001                ASSERT ((_ram_consumed < 0x7800), Error: Not enough RAM         space.)
+                0x000000000000dcc8                _sbe_image_size = (((_code_size + _data_size) + _sdata_size) + _sdata2_size)
+                0xffffffff00080e10                PROVIDE (_stack_size, (0x7800 - _ram_consumed))
+
+.iplt           0x00000000fff80000        0x0
+ .iplt          0x0000000000000000        0x0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/init/libodysseysrominit.a(init.o)
+
+.stack          0x00000000fff86670     0x1190 load address 0x00000000fff83ff0
+                0x0000000000000001                ASSERT ((_stack_size > 0x100), Error: Not enough stack         space.)
+                0x00000000fff86670                . = ALIGN (0x8)
+                0x00000000fff86670                _PK_INITIAL_STACK_LIMIT = .
+                0x0000000000007480                . = (. + _stack_size)
+ *fill*         0x00000000fff86670     0x1190 
+                0x00000000fff877ff                _PK_INITIAL_STACK = (. - 0x1)
+                0x00000000fffff7f8                . = 0xfffff7f8
+
+.hashlist       0x00000000fffff7f8      0x800 load address 0x00000000ffffd178
+ *(.hash_list)
+ .hash_list     0x00000000fffff7f8      0x800 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+                0x00000000fffff7f8                hashList
+
+.g_cross_image_data
+                0x00000000fffffff8        0x8 load address 0x00000000ffffd978
+ *(.g_pk_trace_buf)
+ .g_pk_trace_buf
+                0x00000000fffffff8        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+                0x00000000fffffff8                G_PK_TRACE_BUF
+ *(.g_metadata_ptr)
+ .g_metadata_ptr
+                0x00000000fffffffc        0x4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+                0x00000000fffffffc                g_metadata_ptr
+                0x0000000000000001                ASSERT ((SIZEOF (.orphan) == 0x0), Error: Orphan section not equal to zero/empty matches, Please add the missing lib files)
+                0x0000000000000001                ASSERT ((_sbe_image_size < 0x10000), Error: Odyssey SROM Binary file size exceed 64KB)
+START GROUP
+LOAD /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/init/libodysseysrominit.a
+LOAD /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a
+LOAD /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a
+LOAD /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a
+LOAD /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a
+LOAD /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a
+LOAD /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a
+LOAD /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/init/libcmnsrominit.a
+LOAD /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a
+LOAD /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a
+LOAD /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a
+LOAD /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a
+LOAD /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a
+LOAD /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/shvsettings/libodysseyshvsettings.a
+END GROUP
+OUTPUT(public/src/onetime/odyssey/srom/odyssey_srom_DD1.out elf32-powerpc)
+
+.debug_info     0x0000000000000000    0x3fe02
+ .debug_info    0x0000000000000000      0x3aa /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_init.o)
+ .debug_info    0x00000000000003aa      0xc1a /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .debug_info    0x0000000000000fc4      0x96e /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+ .debug_info    0x0000000000001932      0xdfb /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+ .debug_info    0x000000000000272d      0x8c7 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_stack_init.o)
+ .debug_info    0x0000000000002ff4      0x385 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_bh_core.o)
+ .debug_info    0x0000000000003379      0x34c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_debug_ptrs.o)
+ .debug_info    0x00000000000036c5      0xe3d /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+ .debug_info    0x0000000000004502      0x387 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(std_init.o)
+ .debug_info    0x0000000000004889      0xc21 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+ .debug_info    0x00000000000054aa      0x988 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+ .debug_info    0x0000000000005e32      0x979 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+ .debug_info    0x00000000000067ab     0xc111 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .debug_info    0x00000000000128bc       0x4d /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(irq.o)
+ .debug_info    0x0000000000012909       0x92 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(exportedfunctions.o)
+ .debug_info    0x000000000001299b      0x7af /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(pakwrapper.o)
+ .debug_info    0x000000000001314a      0xf48 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o)
+ .debug_info    0x0000000000014092     0x9b87 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/shvsettings/libodysseyshvsettings.a(shvsettings.o)
+ .debug_info    0x000000000001dc19      0x59c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+ .debug_info    0x000000000001e1b5     0x280b /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+ .debug_info    0x00000000000209c0     0xa3de /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .debug_info    0x000000000002ad9e      0x120 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(metadata_base.o)
+ .debug_info    0x000000000002aebe      0x464 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(threadutil.o)
+ .debug_info    0x000000000002b322      0x4bd /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+ .debug_info    0x000000000002b7df     0xad29 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .debug_info    0x0000000000036508      0x744 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+ .debug_info    0x0000000000036c4c     0x1239 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .debug_info    0x0000000000037e85      0x440 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+ .debug_info    0x00000000000382c5      0x690 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .debug_info    0x0000000000038955      0x908 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o)
+ .debug_info    0x000000000003925d     0x12cd /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+ .debug_info    0x000000000003a52a      0xbbf /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_big.o)
+ .debug_info    0x000000000003b0e9      0xbf5 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_binary.o)
+ .debug_info    0x000000000003bcde      0x825 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_init.o)
+ .debug_info    0x000000000003c503     0x36fe /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .debug_info    0x000000000003fc01      0x201 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_math.o)
+
+.debug_abbrev   0x0000000000000000     0x596e
+ .debug_abbrev  0x0000000000000000      0x17b /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_init.o)
+ .debug_abbrev  0x000000000000017b      0x1f3 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .debug_abbrev  0x000000000000036e      0x153 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+ .debug_abbrev  0x00000000000004c1      0x2e8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+ .debug_abbrev  0x00000000000007a9      0x1bc /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_stack_init.o)
+ .debug_abbrev  0x0000000000000965      0x155 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_bh_core.o)
+ .debug_abbrev  0x0000000000000aba      0x103 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_debug_ptrs.o)
+ .debug_abbrev  0x0000000000000bbd      0x37b /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+ .debug_abbrev  0x0000000000000f38      0x114 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(std_init.o)
+ .debug_abbrev  0x000000000000104c      0x2b3 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+ .debug_abbrev  0x00000000000012ff      0x1f0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+ .debug_abbrev  0x00000000000014ef      0x37c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+ .debug_abbrev  0x000000000000186b      0x74f /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .debug_abbrev  0x0000000000001fba       0x2d /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(irq.o)
+ .debug_abbrev  0x0000000000001fe7       0x14 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(exportedfunctions.o)
+ .debug_abbrev  0x0000000000001ffb      0x2fe /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(pakwrapper.o)
+ .debug_abbrev  0x00000000000022f9      0x42f /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o)
+ .debug_abbrev  0x0000000000002728      0x3be /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/shvsettings/libodysseyshvsettings.a(shvsettings.o)
+ .debug_abbrev  0x0000000000002ae6      0x206 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+ .debug_abbrev  0x0000000000002cec      0x273 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+ .debug_abbrev  0x0000000000002f5f      0x4b3 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .debug_abbrev  0x0000000000003412       0xc6 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(metadata_base.o)
+ .debug_abbrev  0x00000000000034d8      0x173 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(threadutil.o)
+ .debug_abbrev  0x000000000000364b      0x2cb /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+ .debug_abbrev  0x0000000000003916      0x5c5 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .debug_abbrev  0x0000000000003edb      0x245 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+ .debug_abbrev  0x0000000000004120      0x4c6 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .debug_abbrev  0x00000000000045e6      0x132 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+ .debug_abbrev  0x0000000000004718      0x1c1 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .debug_abbrev  0x00000000000048d9      0x188 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o)
+ .debug_abbrev  0x0000000000004a61      0x401 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+ .debug_abbrev  0x0000000000004e62      0x246 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_big.o)
+ .debug_abbrev  0x00000000000050a8      0x252 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_binary.o)
+ .debug_abbrev  0x00000000000052fa      0x144 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_init.o)
+ .debug_abbrev  0x000000000000543e      0x473 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .debug_abbrev  0x00000000000058b1       0xbd /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_math.o)
+
+.debug_loc      0x0000000000000000     0xae07
+ .debug_loc     0x0000000000000000       0x14 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_init.o)
+ .debug_loc     0x0000000000000014       0x51 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .debug_loc     0x0000000000000065       0x74 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+ .debug_loc     0x00000000000000d9      0x288 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+ .debug_loc     0x0000000000000361       0x94 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_stack_init.o)
+ .debug_loc     0x00000000000003f5       0x13 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_bh_core.o)
+ .debug_loc     0x0000000000000408      0x369 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+ .debug_loc     0x0000000000000771       0x8b /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+ .debug_loc     0x00000000000007fc      0x12c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+ .debug_loc     0x0000000000000928       0xc0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+ .debug_loc     0x00000000000009e8      0xb49 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .debug_loc     0x0000000000001531      0x252 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(pakwrapper.o)
+ .debug_loc     0x0000000000001783      0x15a /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o)
+ .debug_loc     0x00000000000018dd       0x34 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/shvsettings/libodysseyshvsettings.a(shvsettings.o)
+ .debug_loc     0x0000000000001911      0x47b /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+ .debug_loc     0x0000000000001d8c     0x16a8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+ .debug_loc     0x0000000000003434      0x1ce /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .debug_loc     0x0000000000003602       0x8d /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(metadata_base.o)
+ .debug_loc     0x000000000000368f      0x11c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(threadutil.o)
+ .debug_loc     0x00000000000037ab       0x18 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+ .debug_loc     0x00000000000037c3      0x615 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .debug_loc     0x0000000000003dd8      0x13a /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+ .debug_loc     0x0000000000003f12      0xd2a /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .debug_loc     0x0000000000004c3c      0x1bd /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+ .debug_loc     0x0000000000004df9      0x828 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .debug_loc     0x0000000000005621      0x124 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o)
+ .debug_loc     0x0000000000005745      0x59f /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+ .debug_loc     0x0000000000005ce4      0x144 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_big.o)
+ .debug_loc     0x0000000000005e28      0x15f /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_binary.o)
+ .debug_loc     0x0000000000005f87       0xb0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_init.o)
+ .debug_loc     0x0000000000006037     0x4b18 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .debug_loc     0x000000000000ab4f      0x2b8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_math.o)
+
+.debug_pubnames
+                0x0000000000000000    0x78d9f
+ .debug_pubnames
+                0x0000000000000000       0x3f /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_init.o)
+ .debug_pubnames
+                0x000000000000003f     0x1373 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .debug_pubnames
+                0x00000000000013b2     0x1326 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+ .debug_pubnames
+                0x00000000000026d8     0x12fb /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+ .debug_pubnames
+                0x00000000000039d3     0x120b /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_stack_init.o)
+ .debug_pubnames
+                0x0000000000004bde       0x63 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_bh_core.o)
+ .debug_pubnames
+                0x0000000000004c41       0x24 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_debug_ptrs.o)
+ .debug_pubnames
+                0x0000000000004c65     0x133e /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+ .debug_pubnames
+                0x0000000000005fa3       0x26 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(std_init.o)
+ .debug_pubnames
+                0x0000000000005fc9     0x134e /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+ .debug_pubnames
+                0x0000000000007317     0x126f /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+ .debug_pubnames
+                0x0000000000008586      0x1ca /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+ .debug_pubnames
+                0x0000000000008750    0x1b7a1 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .debug_pubnames
+                0x0000000000023ef1       0x4d /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(irq.o)
+ .debug_pubnames
+                0x0000000000023f3e      0x180 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(pakwrapper.o)
+ .debug_pubnames
+                0x00000000000240be      0x3d8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o)
+ .debug_pubnames
+                0x0000000000024496    0x1926a /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/shvsettings/libodysseyshvsettings.a(shvsettings.o)
+ .debug_pubnames
+                0x000000000003d700       0x85 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+ .debug_pubnames
+                0x000000000003d785      0x1d3 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+ .debug_pubnames
+                0x000000000003d958    0x1b48d /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .debug_pubnames
+                0x0000000000058de5       0x24 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(metadata_base.o)
+ .debug_pubnames
+                0x0000000000058e09       0x6d /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(threadutil.o)
+ .debug_pubnames
+                0x0000000000058e76      0x129 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+ .debug_pubnames
+                0x0000000000058f9f    0x193ca /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .debug_pubnames
+                0x0000000000072369      0x1ae /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+ .debug_pubnames
+                0x0000000000072517      0x389 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .debug_pubnames
+                0x00000000000728a0       0x4c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+ .debug_pubnames
+                0x00000000000728ec       0xb1 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .debug_pubnames
+                0x000000000007299d     0x121e /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o)
+ .debug_pubnames
+                0x0000000000073bbb     0x1416 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+ .debug_pubnames
+                0x0000000000074fd1     0x12c3 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_big.o)
+ .debug_pubnames
+                0x0000000000076294     0x12c6 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_binary.o)
+ .debug_pubnames
+                0x000000000007755a     0x11ee /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_init.o)
+ .debug_pubnames
+                0x0000000000078748      0x602 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .debug_pubnames
+                0x0000000000078d4a       0x55 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_math.o)
+
+.debug_pubtypes
+                0x0000000000000000     0x4717
+ .debug_pubtypes
+                0x0000000000000000      0x20d /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_init.o)
+ .debug_pubtypes
+                0x000000000000020d      0x204 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .debug_pubtypes
+                0x0000000000000411      0x203 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+ .debug_pubtypes
+                0x0000000000000614      0x25f /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+ .debug_pubtypes
+                0x0000000000000873      0x1de /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_stack_init.o)
+ .debug_pubtypes
+                0x0000000000000a51      0x1f4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_bh_core.o)
+ .debug_pubtypes
+                0x0000000000000c45      0x1f0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_debug_ptrs.o)
+ .debug_pubtypes
+                0x0000000000000e35      0x228 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+ .debug_pubtypes
+                0x000000000000105d      0x1d3 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(std_init.o)
+ .debug_pubtypes
+                0x0000000000001230      0x275 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+ .debug_pubtypes
+                0x00000000000014a5      0x202 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+ .debug_pubtypes
+                0x00000000000016a7      0x29e /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+ .debug_pubtypes
+                0x0000000000001945      0x3dd /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .debug_pubtypes
+                0x0000000000001d22       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(irq.o)
+ .debug_pubtypes
+                0x0000000000001d34      0x1a2 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(pakwrapper.o)
+ .debug_pubtypes
+                0x0000000000001ed6      0x2c6 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o)
+ .debug_pubtypes
+                0x000000000000219c      0x2b5 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/shvsettings/libodysseyshvsettings.a(shvsettings.o)
+ .debug_pubtypes
+                0x0000000000002451      0x159 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+ .debug_pubtypes
+                0x00000000000025aa      0x143 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+ .debug_pubtypes
+                0x00000000000026ed      0x2f3 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .debug_pubtypes
+                0x00000000000029e0       0xe7 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(metadata_base.o)
+ .debug_pubtypes
+                0x0000000000002ac7      0x23f /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(threadutil.o)
+ .debug_pubtypes
+                0x0000000000002d06      0x210 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+ .debug_pubtypes
+                0x0000000000002f16      0x3f7 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .debug_pubtypes
+                0x000000000000330d      0x244 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+ .debug_pubtypes
+                0x0000000000003551      0x1e0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .debug_pubtypes
+                0x0000000000003731      0x1d3 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+ .debug_pubtypes
+                0x0000000000003904      0x105 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .debug_pubtypes
+                0x0000000000003a09      0x1f2 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o)
+ .debug_pubtypes
+                0x0000000000003bfb      0x20d /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+ .debug_pubtypes
+                0x0000000000003e08      0x264 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_big.o)
+ .debug_pubtypes
+                0x000000000000406c      0x26a /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_binary.o)
+ .debug_pubtypes
+                0x00000000000042d6      0x1d3 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_init.o)
+ .debug_pubtypes
+                0x00000000000044a9      0x1ac /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .debug_pubtypes
+                0x0000000000004655       0xc2 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_math.o)
+
+.debug_aranges  0x0000000000000000      0xa10
+ .debug_aranges
+                0x0000000000000000       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_init.o)
+ .debug_aranges
+                0x0000000000000020       0x68 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .debug_aranges
+                0x0000000000000088       0x30 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+ .debug_aranges
+                0x00000000000000b8       0x38 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+ .debug_aranges
+                0x00000000000000f0       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_stack_init.o)
+ .debug_aranges
+                0x0000000000000118       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_bh_core.o)
+ .debug_aranges
+                0x0000000000000138       0x18 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_debug_ptrs.o)
+ .debug_aranges
+                0x0000000000000150       0x50 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+ .debug_aranges
+                0x00000000000001a0       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(std_init.o)
+ .debug_aranges
+                0x00000000000001c0       0x38 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+ .debug_aranges
+                0x00000000000001f8       0x38 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+ .debug_aranges
+                0x0000000000000230       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+ .debug_aranges
+                0x0000000000000258       0x50 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .debug_aranges
+                0x00000000000002a8       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(irq.o)
+ .debug_aranges
+                0x00000000000002d0       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(exportedfunctions.o)
+ .debug_aranges
+                0x00000000000002f0       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(pakwrapper.o)
+ .debug_aranges
+                0x0000000000000318       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o)
+ .debug_aranges
+                0x0000000000000340       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/shvsettings/libodysseyshvsettings.a(shvsettings.o)
+ .debug_aranges
+                0x0000000000000360       0x50 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+ .debug_aranges
+                0x00000000000003b0       0xe0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+ .debug_aranges
+                0x0000000000000490       0x68 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .debug_aranges
+                0x00000000000004f8       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(metadata_base.o)
+ .debug_aranges
+                0x0000000000000518       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(threadutil.o)
+ .debug_aranges
+                0x0000000000000538       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+ .debug_aranges
+                0x0000000000000560       0x58 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .debug_aranges
+                0x00000000000005b8       0x38 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+ .debug_aranges
+                0x00000000000005f0       0x78 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .debug_aranges
+                0x0000000000000668       0x38 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+ .debug_aranges
+                0x00000000000006a0       0x88 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .debug_aranges
+                0x0000000000000728       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o)
+ .debug_aranges
+                0x0000000000000748       0x78 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+ .debug_aranges
+                0x00000000000007c0       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_big.o)
+ .debug_aranges
+                0x00000000000007e0       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_binary.o)
+ .debug_aranges
+                0x0000000000000800       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_init.o)
+ .debug_aranges
+                0x0000000000000820      0x1c0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .debug_aranges
+                0x00000000000009e0       0x30 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_math.o)
+
+.debug_ranges   0x0000000000000000     0x11b8
+ .debug_ranges  0x0000000000000000       0x10 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_init.o)
+ .debug_ranges  0x0000000000000010       0x70 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .debug_ranges  0x0000000000000080       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+ .debug_ranges  0x00000000000000a0       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+ .debug_ranges  0x00000000000000c8       0x30 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_stack_init.o)
+ .debug_ranges  0x00000000000000f8       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_bh_core.o)
+ .debug_ranges  0x0000000000000120       0x40 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+ .debug_ranges  0x0000000000000160       0x10 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(std_init.o)
+ .debug_ranges  0x0000000000000170       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+ .debug_ranges  0x0000000000000198       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+ .debug_ranges  0x00000000000001c0       0x48 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+ .debug_ranges  0x0000000000000208      0x130 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .debug_ranges  0x0000000000000338       0x18 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(irq.o)
+ .debug_ranges  0x0000000000000350       0x50 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(pakwrapper.o)
+ .debug_ranges  0x00000000000003a0       0x38 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o)
+ .debug_ranges  0x00000000000003d8       0x30 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/shvsettings/libodysseyshvsettings.a(shvsettings.o)
+ .debug_ranges  0x0000000000000408       0xc8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+ .debug_ranges  0x00000000000004d0      0x260 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+ .debug_ranges  0x0000000000000730      0x108 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .debug_ranges  0x0000000000000838       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(metadata_base.o)
+ .debug_ranges  0x0000000000000860       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(threadutil.o)
+ .debug_ranges  0x0000000000000888       0x30 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+ .debug_ranges  0x00000000000008b8      0x140 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .debug_ranges  0x00000000000009f8       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+ .debug_ranges  0x0000000000000a20      0x118 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .debug_ranges  0x0000000000000b38       0x28 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+ .debug_ranges  0x0000000000000b60       0xc8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .debug_ranges  0x0000000000000c28       0x10 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o)
+ .debug_ranges  0x0000000000000c38       0xf8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+ .debug_ranges  0x0000000000000d30       0x10 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_big.o)
+ .debug_ranges  0x0000000000000d40       0x10 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_binary.o)
+ .debug_ranges  0x0000000000000d50       0x10 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_init.o)
+ .debug_ranges  0x0000000000000d60      0x438 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .debug_ranges  0x0000000000001198       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_math.o)
+
+.debug_line     0x0000000000000000     0x833f
+ .debug_line    0x0000000000000000      0x1c7 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_init.o)
+ .debug_line    0x00000000000001c7      0x2d3 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .debug_line    0x000000000000049a      0x1f3 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+ .debug_line    0x000000000000068d      0x35f /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+ .debug_line    0x00000000000009ec      0x21b /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_stack_init.o)
+ .debug_line    0x0000000000000c07      0x1bb /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_bh_core.o)
+ .debug_line    0x0000000000000dc2      0x1a2 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_debug_ptrs.o)
+ .debug_line    0x0000000000000f64      0x30e /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+ .debug_line    0x0000000000001272      0x218 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(std_init.o)
+ .debug_line    0x000000000000148a      0x28b /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+ .debug_line    0x0000000000001715      0x20f /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+ .debug_line    0x0000000000001924      0x367 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+ .debug_line    0x0000000000001c8b      0x965 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .debug_line    0x00000000000025f0       0x6e /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(irq.o)
+ .debug_line    0x000000000000265e       0x6c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(exportedfunctions.o)
+ .debug_line    0x00000000000026ca      0x330 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(pakwrapper.o)
+ .debug_line    0x00000000000029fa      0x54e /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o)
+ .debug_line    0x0000000000002f48      0x65c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/shvsettings/libodysseyshvsettings.a(shvsettings.o)
+ .debug_line    0x00000000000035a4      0x371 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+ .debug_line    0x0000000000003915      0x641 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+ .debug_line    0x0000000000003f56      0x4f4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .debug_line    0x000000000000444a       0xe9 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(metadata_base.o)
+ .debug_line    0x0000000000004533      0x261 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(threadutil.o)
+ .debug_line    0x0000000000004794      0x234 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+ .debug_line    0x00000000000049c8      0x7f2 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .debug_line    0x00000000000051ba      0x300 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+ .debug_line    0x00000000000054ba      0x569 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .debug_line    0x0000000000005a23      0x236 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+ .debug_line    0x0000000000005c59      0x2e8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .debug_line    0x0000000000005f41      0x1e1 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o)
+ .debug_line    0x0000000000006122      0x423 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+ .debug_line    0x0000000000006545      0x26b /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_big.o)
+ .debug_line    0x00000000000067b0      0x268 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_binary.o)
+ .debug_line    0x0000000000006a18      0x1bf /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_init.o)
+ .debug_line    0x0000000000006bd7     0x1670 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .debug_line    0x0000000000008247       0xf8 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_math.o)
+
+.debug_str      0x0000000000000000    0x18e2a
+ .debug_str     0x0000000000000000      0x34d /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_init.o)
+                                        0x3e7 (size before relaxing)
+ .debug_str     0x000000000000034d      0xfc3 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+                                       0x137e (size before relaxing)
+ .debug_str     0x0000000000001310      0x158 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+                                       0x132f (size before relaxing)
+ .debug_str     0x0000000000001468      0x2a5 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+                                       0x15fc (size before relaxing)
+ .debug_str     0x000000000000170d       0x43 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_stack_init.o)
+                                       0x123b (size before relaxing)
+ .debug_str     0x0000000000001750       0x52 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_bh_core.o)
+                                        0x37e (size before relaxing)
+ .debug_str     0x00000000000017a2       0x15 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_debug_ptrs.o)
+                                        0x441 (size before relaxing)
+ .debug_str     0x00000000000017b7      0x149 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+                                       0x13d6 (size before relaxing)
+ .debug_str     0x0000000000001900       0x36 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(std_init.o)
+                                        0x367 (size before relaxing)
+ .debug_str     0x0000000000001936      0x137 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+                                       0x1482 (size before relaxing)
+ .debug_str     0x0000000000001a6d       0x5c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+                                       0x12ca (size before relaxing)
+ .debug_str     0x0000000000001ac9      0x4b0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+                                        0x7ee (size before relaxing)
+ .debug_str     0x0000000000001f79    0x148a2 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+                                      0x14d7d (size before relaxing)
+ .debug_str     0x000000000001681b       0x33 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(irq.o)
+                                        0x1a5 (size before relaxing)
+ .debug_str     0x000000000001684e       0x64 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(pakwrapper.o)
+                                        0x837 (size before relaxing)
+ .debug_str     0x00000000000168b2      0x12a /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o)
+                                        0xced (size before relaxing)
+ .debug_str     0x00000000000169dc      0x4ad /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/shvsettings/libodysseyshvsettings.a(shvsettings.o)
+                                      0x12c8a (size before relaxing)
+ .debug_str     0x0000000000016e89      0x114 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+                                        0x3d8 (size before relaxing)
+ .debug_str     0x0000000000016f9d      0x488 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+                                        0x744 (size before relaxing)
+ .debug_str     0x0000000000017425      0x37a /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+                                      0x14188 (size before relaxing)
+ .debug_str     0x0000000000000000      0x23d /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(metadata_base.o)
+ .debug_str     0x000000000001779f       0x66 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(threadutil.o)
+                                        0x58b (size before relaxing)
+ .debug_str     0x0000000000017805       0x48 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+                                        0x531 (size before relaxing)
+ .debug_str     0x000000000001784d      0x56c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+                                      0x12de1 (size before relaxing)
+ .debug_str     0x0000000000017db9       0x90 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+                                        0x665 (size before relaxing)
+ .debug_str     0x0000000000017e49      0x25f /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+                                        0xa5d (size before relaxing)
+ .debug_str     0x00000000000180a8       0x2b /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+                                        0x37b (size before relaxing)
+ .debug_str     0x00000000000180d3      0x1c3 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+                                        0x2e7 (size before relaxing)
+ .debug_str     0x0000000000018296       0x2f /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o)
+                                       0x125f (size before relaxing)
+ .debug_str     0x00000000000182c5      0x1d6 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+                                       0x151e (size before relaxing)
+ .debug_str     0x000000000001849b       0x74 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_big.o)
+                                       0x1452 (size before relaxing)
+ .debug_str     0x000000000001850f       0x54 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_binary.o)
+                                       0x1459 (size before relaxing)
+ .debug_str     0x0000000000000000     0x11f9 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_init.o)
+ .debug_str     0x0000000000018563      0x898 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+                                        0xad8 (size before relaxing)
+ .debug_str     0x0000000000018dfb       0x2f /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_math.o)
+                                        0x1e1 (size before relaxing)
+
+.comment        0x0000000000000000       0x11
+ .comment       0x0000000000000000       0x11 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_init.o)
+                                         0x12 (size before relaxing)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_stack_init.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_bh_core.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_debug_ptrs.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(std_init.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(irq.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(pakwrapper.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/shvsettings/libodysseyshvsettings.a(shvsettings.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(metadata_base.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(threadutil.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_big.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_binary.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_init.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .comment       0x0000000000000000       0x12 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_math.o)
+
+.debug_frame    0x0000000000000000     0x1afc
+ .debug_frame   0x0000000000000000       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_init.o)
+ .debug_frame   0x0000000000000020       0xb0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_irq_core.o)
+ .debug_frame   0x00000000000000d0       0x40 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_core.o)
+ .debug_frame   0x0000000000000110       0x84 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_init.o)
+ .debug_frame   0x0000000000000194       0x30 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_stack_init.o)
+ .debug_frame   0x00000000000001c4       0x34 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_bh_core.o)
+ .debug_frame   0x00000000000001f8       0xd0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_core.o)
+ .debug_frame   0x00000000000002c8       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(std_init.o)
+ .debug_frame   0x00000000000002e8       0x7c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_core.o)
+ .debug_frame   0x0000000000000364       0x64 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(ppe42_core.o)
+ .debug_frame   0x00000000000003c8       0x4c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(main.o)
+ .debug_frame   0x0000000000000414      0x118 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(threadroutine.o)
+ .debug_frame   0x000000000000052c       0x30 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(irq.o)
+ .debug_frame   0x000000000000055c       0x74 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/core/libodysseysrom.a(pakwrapper.o)
+ .debug_frame   0x00000000000005d0       0x50 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/bldrloader/libodysseybldrloader.a(loadbldr.o)
+ .debug_frame   0x0000000000000620       0x34 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/odyssey/srom/shvsettings/libodysseyshvsettings.a(shvsettings.o)
+ .debug_frame   0x0000000000000654       0xf0 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/algorithms/sha3/libsha3algo.a(sha3.o)
+ .debug_frame   0x0000000000000744      0x370 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/ecdsa/libecdsaalgo.a(ecdsa.o)
+ .debug_frame   0x0000000000000ab4      0x150 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(sbeutil.o)
+ .debug_frame   0x0000000000000c04       0x20 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/utils/libcmnutils.a(metadata_base.o)
+ .debug_frame   0x0000000000000c24       0x34 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(threadutil.o)
+ .debug_frame   0x0000000000000c58       0x40 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/common/core/libcmncore.a(cmnglobals.o)
+ .debug_frame   0x0000000000000c98      0x13c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(shv.o)
+ .debug_frame   0x0000000000000dd4       0x6c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/core/libcmnsromcore.a(securebootutil.o)
+ .debug_frame   0x0000000000000e40      0x1d4 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/paksrom/libekbcmnsrompak.a(archive.o)
+ .debug_frame   0x0000000000001014       0x50 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_scom.o)
+ .debug_frame   0x0000000000001064      0x118 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_string.o)
+ .debug_frame   0x000000000000117c       0x3c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_init.o)
+ .debug_frame   0x00000000000011b8      0x194 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_thread_core.o)
+ .debug_frame   0x000000000000134c       0x3c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_big.o)
+ .debug_frame   0x0000000000001388       0x3c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_trace_binary.o)
+ .debug_frame   0x00000000000013c4       0x38 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppe42/libpk.a(pk_timer_init.o)
+ .debug_frame   0x00000000000013fc      0x688 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/algorithms/dilithium/libdilithiumalgo.a(dilithium.o)
+ .debug_frame   0x0000000000001a84       0x78 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/build/buildekb/common/ppebaselib/libpkbase.a(ppe42_math.o)

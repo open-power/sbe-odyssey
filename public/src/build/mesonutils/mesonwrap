@@ -108,11 +108,11 @@ if [ "$SBE_PLATFORM" == "odyssey" ]; then
         ENABLED_IMAGES=" -Dotprom=enabled"
     fi
     if [ "$SBE_IMAGE" == "pnor" ]; then
-        ENABLED_IMAGES=" -Dotprom=enabled -Dsppe=enabled -Dsrom=enabled -Dbldr=enabled "
+        ENABLED_IMAGES=" -Dotprom=enabled -Dsppe=enabled -Dsrom=disabled -Dbldr=enabled "
     fi
     if [ "$SBE_IMAGE" == "srom" ]; then
         DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled "
-        ENABLED_IMAGES=" -Dotprom=enabled -Dsrom=enabled "
+        ENABLED_IMAGES=" -Dotprom=enabled -Dsrom=disabled "
     fi
     if [ "$SBE_IMAGE" == "bldr" ]; then
         DISABLED_IMAGES=" -Dsppe=disabled -Dsrom=disabled "
