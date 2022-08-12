@@ -52,6 +52,57 @@ ReturnCode istepWithOcmb( voidfuncptr_t i_hwp)
     return rc;
 }
 
+ReturnCode istepBistWithOcmb( voidfuncptr_t i_hwp)
+{
+    SBE_INFO("[DBG] : istepBistWithOcmb : starting");
+    ReturnCode rc = FAPI2_RC_SUCCESS;
+    Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
+    assert( NULL != i_hwp );
+    if(fapi2::ATTR::ATTR_ENABLE_ABIST || fapi2::ATTR::ATTR_ENABLE_LBIST)
+    {
+        SBE_EXEC_HWP(rc, reinterpret_cast<sbeIstepHwpOcmb_t>( i_hwp ), l_ocmb_chip);
+    }
+    else
+    {
+        SBE_INFO("Skipping istep since ATTR_ENABLE_ABIST nor ATTR_ENABLE_LBIST not set");
+    }
+    return rc;
+}
+
+ReturnCode istepAbistWithOcmb( voidfuncptr_t i_hwp)
+{
+    SBE_INFO("[DBG] : istepAbistWithOcmb : starting");
+    ReturnCode rc = FAPI2_RC_SUCCESS;
+    Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
+    assert( NULL != i_hwp );
+    if(fapi2::ATTR::ATTR_ENABLE_ABIST)
+    {
+        SBE_EXEC_HWP(rc, reinterpret_cast<sbeIstepHwpOcmb_t>( i_hwp ), l_ocmb_chip);
+    }
+    else
+    {
+        SBE_INFO("Skipping istep since ATTR_ENABLE_ABIST not set");
+    }
+    return rc;
+}
+
+ReturnCode istepLbistWithOcmb( voidfuncptr_t i_hwp)
+{
+    SBE_INFO("[DBG] : istepLbistWithOcmb : starting");
+    ReturnCode rc = FAPI2_RC_SUCCESS;
+    Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
+    assert( NULL != i_hwp );
+    if(fapi2::ATTR::ATTR_ENABLE_LBIST)
+    {
+        SBE_EXEC_HWP(rc, reinterpret_cast<sbeIstepHwpOcmb_t>( i_hwp ), l_ocmb_chip);
+    }
+    else
+    {
+        SBE_INFO("Skipping istep since ATTR_ENABLE_LBIST not set");
+    }
+    return rc;
+}
+
 static istepMap_t g_istep1PtrTbl[] =
          {
              ISTEP_MAP( NULL, NULL ),                               // 1.01
@@ -65,7 +116,7 @@ static istepMap_t g_istep1PtrTbl[] =
              ISTEP_MAP( NULL, NULL ),                               // 1.09
              ISTEP_MAP( NULL, NULL ),                               // 1.10
              ISTEP_MAP( NULL, NULL ),                               // 1.11
-             ISTEP_MAP( NULL, NULL ),                               // 1.12b
+             ISTEP_MAP( NULL, NULL ),                               // 1.12
              ISTEP_MAP( istepWithOcmb, ody_sppe_attr_setup ),       // 1.13
              ISTEP_MAP( NULL, NULL ),                               // 1.14
              ISTEP_MAP( NULL, NULL ),                               // 1.15
@@ -86,10 +137,10 @@ static istepMap_t g_istep3PtrTbl[] =
              ISTEP_MAP( istepWithOcmb, ody_chiplet_reset ),         // 3.04
              ISTEP_MAP( istepWithOcmb, ody_chiplet_unused_psave ),  // 3.05
              ISTEP_MAP( NULL, NULL ),                               // 3.06
-             ISTEP_MAP( istepWithOcmb, ody_chiplet_pll_setup ),     // 3.07
-             ISTEP_MAP( istepWithOcmb, ody_bist_repr_initf ),       // 3.08
-             ISTEP_MAP( istepWithOcmb, ody_abist ),                 // 3.09
-             ISTEP_MAP( istepWithOcmb, ody_lbist ),                 // 3.10
+             ISTEP_MAP( NULL, NULL ),                               // 3.07
+             ISTEP_MAP( istepBistWithOcmb,  ody_bist_repr_initf ),  // 3.08
+             ISTEP_MAP( istepAbistWithOcmb, ody_abist ),            // 3.09
+             ISTEP_MAP( istepLbistWithOcmb, ody_lbist ),            // 3.10
              ISTEP_MAP( istepWithOcmb, ody_chiplet_repr_initf ),    // 3.11
              ISTEP_MAP( istepWithOcmb, ody_chiplet_arrayinit ),     // 3.12
              ISTEP_MAP( NULL, NULL ),                               // 3.13
