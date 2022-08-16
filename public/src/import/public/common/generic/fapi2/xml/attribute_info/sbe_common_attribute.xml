@@ -65,4 +65,8 @@
     <name>ATTR_ENABLE_ABIST</name>
     <value>0x00</value>
   </entry>
+  <entry>
+    <name>ATTR_SIM_CHIPLET_MASK</name>
+    <value>0xFFFFFFFFFFFFFFFF</value>
+  </entry>
 </entries>

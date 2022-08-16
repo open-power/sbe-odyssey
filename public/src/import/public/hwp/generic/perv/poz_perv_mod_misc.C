@@ -55,19 +55,19 @@ enum POZ_PERV_MOD_MISC_Private_Constants
     PGOOD_REGIONS_OFFSET = 12,
 };
 
-ReturnCode mod_cbs_start(
+ReturnCode mod_cbs_start_prep(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    bool start_sbe)
+    bool i_start_sbe,
+    bool i_scan0_clockstart)
 {
     ROOT_CTRL0_t ROOT_CTRL0;
+    ROOT_CTRL1_t ROOT_CTRL1;
+    CBS_ENVSTAT_t CBS_ENVSTAT;
     ROOT_CTRL0_COPY_t ROOT_CTRL0_COPY;
     CBS_CS_t CBS_CS;
     SBE_FIFO_FSB_DOWNFIFO_RESET_t FSB_DOWNFIFO_RESET;
     FSI2PIB_STATUS_t FSI2PIB_STATUS;
     SB_MSG_t SB_MSG;
-    int l_timeout = 0;
-
-    FAPI_INF("Entering ...");
 
     FAPI_INF("Drop CFAM protection 0 to ungate VDN_PRESENT");
     FAPI_TRY(ROOT_CTRL0.getCfam(i_target));
@@ -90,15 +90,61 @@ ReturnCode mod_cbs_start(
     FAPI_INF("Clear Selfboot Message Register, Reset SBE FIFO.");
     SB_MSG = 0;
     FAPI_TRY(SB_MSG.putCfam(i_target));
+
     FSB_DOWNFIFO_RESET = 0x80000000;
     FAPI_TRY(FSB_DOWNFIFO_RESET.putCfam(i_target));
+
+    FAPI_TRY(CBS_ENVSTAT.getCfam(i_target));
+
+    if (CBS_ENVSTAT.get_CBS_ENVSTAT_C4_TEST_ENABLE())
+    {
+        FAPI_INF("Test mode, enable TP drivers/receivers for GSD scan out");
+        ROOT_CTRL1.set_TP_RI_DC_N(1);
+        ROOT_CTRL1.set_TP_DI2_DC_N(1);
+        FAPI_TRY(ROOT_CTRL1.putCfam(i_target));
+    }
 
     FAPI_INF("Prepare for CBS start.");
     FAPI_TRY(CBS_CS.getCfam(i_target));
     CBS_CS.set_START_BOOT_SEQUENCER(0);
-    CBS_CS.set_OPTION_SKIP_SCAN0_CLOCKSTART(0);
-    CBS_CS.set_OPTION_PREVENT_SBE_START(not start_sbe);
+    CBS_CS.set_OPTION_SKIP_SCAN0_CLOCKSTART(not i_scan0_clockstart);
+    CBS_CS.set_OPTION_PREVENT_SBE_START(not i_start_sbe);
     FAPI_TRY(CBS_CS.putCfam(i_target));
+
+fapi_try_exit:
+    return current_err;
+}
+
+ReturnCode mod_cbs_cleanup(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
+{
+    ROOT_CTRL0_t ROOT_CTRL0;
+    SB_CS_t SB_CS;
+
+    FAPI_INF("Clear CBS command to enable clock gating inside clock controller");
+    FAPI_TRY(ROOT_CTRL0.getScom(i_target));
+    ROOT_CTRL0.set_FSI_CC_CBS_CMD(0);
+    FAPI_TRY(ROOT_CTRL0.putScom(i_target));
+
+    FAPI_INF("Clear SBE start bit to facilitate restarts later");
+    FAPI_TRY(SB_CS.getScom(i_target));
+    SB_CS.set_START_RESTART_VECTOR0(0);
+    FAPI_TRY(SB_CS.putScom(i_target));
+
+fapi_try_exit:
+    return current_err;
+}
+
+ReturnCode mod_cbs_start(
+    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    bool i_start_sbe,
+    bool i_scan0_clockstart)
+{
+    CBS_CS_t CBS_CS;
+    int l_timeout = 0;
+
+    FAPI_INF("Entering ...");
+
+    FAPI_TRY(mod_cbs_start_prep(i_target, i_start_sbe, i_scan0_clockstart));
 
     FAPI_INF("Start CBS.");
     CBS_CS.set_START_BOOT_SEQUENCER(1);
@@ -135,6 +181,8 @@ ReturnCode mod_cbs_start(
                 .set_PROC_TARGET(i_target),
                 //.set_CLOCK_POS(l_callout_clock),
                 "ERROR: CBS HAS NOT REACHED IDLE STATE VALUE 0x002 ");
+
+    FAPI_TRY(mod_cbs_cleanup(i_target));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
@@ -195,7 +243,7 @@ ReturnCode mod_multicast_setup(
     fapi2::buffer<uint64_t> l_eligible_chiplets = 0;
     fapi2::buffer<uint64_t> l_required_group_members;
     fapi2::buffer<uint64_t> l_current_group_members;
-    auto l_func = i_target.getChildren<fapi2::TARGET_TYPE_PERV>(i_pgood_policy);
+    auto l_all_chiplets = i_target.getChildren<fapi2::TARGET_TYPE_PERV>(i_pgood_policy);
 
     FAPI_INF("Entering ...");
     FAPI_ASSERT(!(i_group_id > 6),
@@ -206,7 +254,7 @@ ReturnCode mod_multicast_setup(
 
     FAPI_INF("Determine required group members.");
 
-    for (auto& targ : l_func)
+    for (auto& targ : l_all_chiplets)
     {
         l_eligible_chiplets.setBit(targ.getChipletNumber());
     }

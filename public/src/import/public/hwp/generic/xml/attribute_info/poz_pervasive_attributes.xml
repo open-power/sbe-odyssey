@@ -97,4 +97,16 @@
   <default>0x0041</default>
 </attribute>
 <!-- ********************************************************************** -->
+<attribute>
+  <id>ATTR_SIM_CHIPLET_MASK</id>
+  <targetType>TARGET_TYPE_HUB_CHIP, TARGET_TYPE_COMPUTE_CHIP, TARGET_TYPE_PROC_CHIP, TARGET_TYPE_OCMB_CHIP</targetType>
+  <description>
+    Simulation attribute to enable the chiplets actually exist in model.
+    To mark chiplet as present set corresponding chiplet ID bit position to 1 in 64 bit mask value.
+  </description>
+  <valueType>uint64</valueType>
+  <default>0xFFFFFFFFFFFFFFFF</default>
+  <writeable/>
+</attribute>
+<!-- ********************************************************************** -->
 </attributes>
