@@ -38,16 +38,18 @@
 using namespace mux;
 
 /// @brief CBS start module
-/// -- Assert for VDN power ON, start CBS.
-/// -- Monitor CBS_CS INTERNAL_STATE_VECTOR, assert for CBS IDLE state.
+/// -- Prepare for CBS start
+/// -- Start CBS and check CBS_CS INTERNAL_STATE_VECTOR for IDLE state.
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
 /// @param[in]   i_start_sbe               Option to prevent SBE start
+/// @param[in]   i_scan0_clockstart        Option to skip scan0 and clockstart command
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_cbs_start(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    bool i_start_sbe = true);
+    bool i_start_sbe = true,
+    bool i_scan0_clockstart = true);
 
 /// @brief Switch pcbmux module
 /// -- enable the new path first and disable the old path.

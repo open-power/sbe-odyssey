@@ -52,11 +52,12 @@ enum POZ_PERV_MOD_CHIPLET_CLOCKING_Private_Constants
     OPCG_DONE_ARRAYINIT_SIM_CYCLE_DELAY = 1120000, // unit is cycles,to match the poll count change ( 280000 * 4 )
 };
 
-static ReturnCode poll_opcg_done(
+ReturnCode poll_opcg_done(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > & i_target,
     uint32_t i_hw_delay,
     uint32_t i_sim_delay,
-    uint32_t i_poll_count)
+    uint32_t i_poll_count,
+    bool i_poll_abist_done)
 {
     CPLT_STAT0_t CPLT_STAT0;
 
@@ -65,7 +66,7 @@ static ReturnCode poll_opcg_done(
         FAPI_INF("Getting CPLT_STAT0 register value");
         FAPI_TRY(CPLT_STAT0.getScom(i_target));
 
-        if (CPLT_STAT0.get_CC_CTRL_OPCG_DONE_DC() == 1)
+        if (CPLT_STAT0.get_CC_CTRL_OPCG_DONE_DC() || (i_poll_abist_done && CPLT_STAT0.get_ABIST_DONE_DC()))
         {
             break;
         }
@@ -208,7 +209,6 @@ fapi_try_exit:
     return current_err;
 }
 
-
 ReturnCode mod_abist_start(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
     uint16_t i_regions,
@@ -221,6 +221,7 @@ ReturnCode mod_abist_start(
                              i_runn_cycles,
                              i_abist_start_at,
                              i_abist_start_stagger));
+
     FAPI_TRY(mod_opcg_go(i_target));
 
 fapi_try_exit:
@@ -229,13 +230,15 @@ fapi_try_exit:
 }
 
 
-ReturnCode mod_abist_poll(const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > &i_target)
+ReturnCode mod_abist_poll(
+    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > &i_target,
+    bool i_poll_abist_done)
 {
     CPLT_STAT0_t CPLT_STAT0;
     FAPI_INF("Entering ...");
     FAPI_DBG("Poll OPCG done bit to check for run-N completeness.");
     FAPI_TRY(poll_opcg_done(i_target, OPCG_DONE_ARRAYINIT_HW_NS_DELAY, OPCG_DONE_ARRAYINIT_SIM_CYCLE_DELAY,
-                            OPCG_DONE_ARRAYINIT_POLL_COUNT));
+                            OPCG_DONE_ARRAYINIT_POLL_COUNT, i_poll_abist_done));
 
     FAPI_TRY(CPLT_STAT0.getScom(i_target));
     FAPI_DBG("Checking sram abist done.");

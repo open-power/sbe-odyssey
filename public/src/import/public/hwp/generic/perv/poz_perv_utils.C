@@ -56,8 +56,11 @@ ReturnCode get_hotplug_mc_group(
 {
     Target<TARGET_TYPE_SYSTEM> l_system_target;
     buffer<uint8_t> l_attr_hotplug;
+    buffer<uint64_t> l_attr_sim_chiplet_mask;
     FAPI_TRY(FAPI_ATTR_GET(ATTR_HOTPLUG, l_system_target, l_attr_hotplug),
              "Error from FAPI_ATTR_GET (ATTR_HOTPLUG)");
+    FAPI_TRY(FAPI_ATTR_GET(ATTR_SIM_CHIPLET_MASK, i_target, l_attr_sim_chiplet_mask),
+             "Error from FAPI_ATTR_GET (ATTR_SIM_CHIPLET_MASK)");
 
     if (l_attr_hotplug)
     {
@@ -65,9 +68,9 @@ ReturnCode get_hotplug_mc_group(
     }
     else
     {
-        FAPI_INF("Configure all PRESENT chiplets except TP as part of multicast group 4");
-        FAPI_TRY(mod_multicast_setup(i_target, MCGROUP_4, 0x3FFFFFFFFFFFFFFF, TARGET_STATE_PRESENT));
-        o_mcgroup = MCGROUP_4;
+        FAPI_INF("Configure all PRESENT chiplets except TP as part of multicast group 5");
+        FAPI_TRY(mod_multicast_setup(i_target, MCGROUP_5, l_attr_sim_chiplet_mask & 0x3FFFFFFFFFFFFFFF, TARGET_STATE_PRESENT));
+        o_mcgroup = MCGROUP_5;
     }
 
 fapi_try_exit:

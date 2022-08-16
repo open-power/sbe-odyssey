@@ -60,6 +60,39 @@ fapi2::ReturnCode mod_abist_setup(
     uint64_t i_abist_start_stagger = 0,
     const uint16_t* i_chiplets_regions = NULL);
 
+/// @brief LBIST setup module.
+/// --TODO update me once functionality has been built out
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
+/// @param[in]   i_clock_regions           Select clock regions
+/// @param[in]   i_runn_cycles             Loop count value to set OPCG run-N mode (>0x7FFFFFFFFFF for infinite)
+/// @param[in]   i_abist_start_at          Idle count value to set in OPCG_REG1
+/// @param[in]   i_abist_start_stagger     Per target OPCG_REG1 stagger value
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode mod_lbist_setup(
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
+    uint16_t i_clock_regions,
+    uint64_t i_runn_cycles = 0x42FFF,
+    uint64_t i_lbist_start_at = 0xF0,
+    uint64_t i_lbist_start_stagger = 0);
+
+/// @brief Poll for OPCG DONE.
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
+/// @param[in]   i_hw_delay                Hardware delay (unit in nano seconds)
+/// @param[in]   i_sim_delay               Simulation delay (unit in sim cycles)
+/// @param[in]   i_poll_count              Poll count to wait for OPCG DONE
+/// @param[in]   i_poll_abist_done         Whether to poll for ABIST DONE or not (default value false)
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode poll_opcg_done(
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST, fapi2::MULTICAST_AND > & i_target,
+    uint32_t i_hw_delay,
+    uint32_t i_sim_delay,
+    uint32_t i_poll_count,
+    bool i_poll_abist_done = false);
+
 /// @brief OPCG GO module.
 /// --RMW OPCG GO bit in OPCG_REG0
 ///
@@ -90,10 +123,12 @@ fapi2::ReturnCode mod_abist_start(
 /// @brief Poll OPCG done bit to check for run-N completeness.
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
+/// @param[in]   i_poll_abist_done         Whether to poll for ABIST DONE or not (default value false)
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_abist_poll(
-    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST, fapi2::MULTICAST_AND > & i_target);
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST, fapi2::MULTICAST_AND > & i_target,
+    bool i_poll_abist_done = false);
 
 /// @brief ABIST cleanup module
 /// --Clear OPCG_REG0, CLK_REGION, CPLT_CTRL0 & BIST registers
