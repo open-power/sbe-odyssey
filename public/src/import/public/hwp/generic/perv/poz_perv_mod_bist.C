@@ -45,7 +45,7 @@ ReturnCode mod_bist_poll(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > & i_target,
     bool i_poll_abist_done,
     bool i_assert_abist_done,
-    uint32_t i_poll_count,
+    uint32_t i_max_polls,
     uint32_t i_hw_delay,
     uint32_t i_sim_delay)
 {
@@ -58,7 +58,7 @@ ReturnCode mod_bist_poll(
 
     uint32_t l_total_polls = 0;
     // Infinite polling if negative signed (or massive unsigned) number
-    const bool l_infinite_polling = i_poll_count > 0x7FFFFFFF;
+    const bool l_infinite_polling = i_max_polls > 0x7FFFFFFF;
 
     // Get chiplet container for OPCG count diagnostic readout
     auto l_chiplets = i_target.getChildren<fapi2::TARGET_TYPE_PERV>();
@@ -79,7 +79,7 @@ ReturnCode mod_bist_poll(
         FAPI_DBG("Poll count value triggers infinite polling");
     }
 
-    while ((l_total_polls < i_poll_count) || l_infinite_polling)
+    while ((l_total_polls < i_max_polls) || l_infinite_polling)
     {
         // TODO add BIST_HALT functionality once supported
         /*
@@ -104,7 +104,7 @@ ReturnCode mod_bist_poll(
             }
             else
             {
-                FAPI_DBG("Polls remaining: %d", i_poll_count - l_total_polls);
+                FAPI_DBG("Polls remaining: %d", i_max_polls - l_total_polls);
             }
         }
 
@@ -141,7 +141,7 @@ ReturnCode mod_bist_poll(
                  OPCG_REG0.get_LOOP_COUNT());
     }
 
-    FAPI_ASSERT((l_total_polls < i_poll_count) || l_infinite_polling,
+    FAPI_ASSERT((l_total_polls < i_max_polls) || l_infinite_polling,
                 fapi2::DONE_HALT_NOT_SET()
                 .set_PERV_CPLT_STAT0(CPLT_STAT0)
                 .set_POLL_COUNT(l_total_polls)
@@ -168,6 +168,23 @@ ReturnCode mod_bist_reg_cleanup(
     bool i_clear_sram_abist_mode)
 {
     FAPI_TRY(mod_abist_cleanup(i_target, i_clear_sram_abist_mode));
+
+fapi_try_exit:
+    FAPI_INF("Exiting ...");
+    return current_err;
+}
+
+
+ReturnCode mod_lbist_setup(
+    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
+    uint16_t i_clock_regions,
+    uint64_t i_runn_cycles,
+    uint64_t i_lbist_start_at,
+    uint64_t i_lbist_start_stagger,
+    uint16_t i_lbist_sequence,
+    uint16_t i_lbist_weight)
+{
+    FAPI_DBG("mod_lbist_setup not yet implemented; check back later");
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");

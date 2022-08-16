@@ -34,7 +34,7 @@
 
 #include <fapi2.H>
 
-static const uint16_t BIST_PARAMS_CURRENT_VERSION = 1;
+static const uint16_t BIST_PARAMS_CURRENT_VERSION = 2;
 
 struct bist_params
 {
@@ -66,10 +66,13 @@ struct bist_params
 
     uint64_t opcg_count;      ///< Amount of total RUNN cycles to clock (>0x7FFFFFFFFFF for infinite)
     uint64_t idle_count;      ///< Base idle RUNN cycles before BIST starts on any chiplet
-    uint32_t timeout;         ///< Max amount of DONE / HALT polls to issue (>0x7FFFFFFF for infinite)
     uint64_t linear_stagger;  ///< Increase idle count by this much for each successive chiplet
     uint64_t zigzag_stagger;  ///< Increase idle count by this much on any odd chiplet
-    uint16_t regions;         ///< Mask of clock regions to test (TODO make this a 26-index array (one per pervasive endpoint))
+    uint32_t max_polls;       ///< Max amount of DONE / HALT polls to issue (>0x7FFFFFFF for infinite)
+    uint32_t poll_delay;      ///< Amount of delay per polling loop (both hw and sim)
+    uint16_t regions;         ///< Mask of clock regions to test (TODO make this a 26-index array (one per pervasive endpoint) and remove chiplets mask)
+    uint16_t outer_loop_mask; ///< Mask of outer loop BIST iterations to run
+    uint16_t inner_loop_mask; ///< Mask of inner loop BIST iterations to run
 
     // final_idle_count = idle_count + (linear_stagger * target_number) + (zigzag_stagger * (target_number & 1));
 
