@@ -37,33 +37,33 @@ using namespace fapi2;
 
 static const bist_params ody_abist_params =
 {
-    BIST_PARAMS_CURRENT_VERSION,     /// BIST_PARAMS_VERSION
-    "-program-string",       /// Program
-    "--ring-patch",           /// ring_patch
-    0x3fffffffffffffff,              /// chiplets
+    BIST_PARAMS_CURRENT_VERSION,        /// BIST_PARAMS_VERSION
+    "mfgfullSF_def",                    /// program
+    "none",                             /// ring_patch
+    0x0080000000000000,                 /// chiplets
 
-    bist_params::ABIST_NOT_LBIST  |     /// 0x80000000
-    bist_params::DO_SCAN0         |     /// 0x40000000
-    bist_params::DO_ARRAYINIT     |     /// 0x20000000
-    bist_params::DO_RING_SETUP    |     /// 0x10000000
-    bist_params::DO_RING_PATCH    |     /// 0x08000000
-    bist_params::DO_REG_SETUP     |     /// 0x04000000
-    bist_params::DO_GO            |     /// 0x02000000
-    bist_params::DO_POLL          |     /// 0x01000000
-    bist_params::DO_REG_CLEANUP   |     /// 0x00800000
-    bist_params::DO_COMPARE       |     /// 0x00400000
-    bist_params::SCAN0_REPR       |     /// 0x00200000
-    bist_params::SKIP_FIRST_CLOCK |     /// 0x00100000
-    bist_params::SKIP_LAST_CLOCK  |     /// 0x00080000
-    bist_params::UNICAST_GO       |     /// 0x00040000
-    bist_params::POLL_ABIST_DONE,       /// 0x00020000
+    bist_params::ABIST_NOT_LBIST    |   /// 0x80000000
+    bist_params::DO_SCAN0           |   /// 0x40000000
+    bist_params::DO_RING_SETUP      |   /// 0x10000000
+    bist_params::DO_RING_PATCH      |   /// 0x08000000
+    bist_params::DO_REG_SETUP       |   /// 0x04000000
+    bist_params::DO_GO              |   /// 0x02000000
+    bist_params::DO_POLL            |   /// 0x01000000
+    bist_params::DO_REG_CLEANUP     |   /// 0x00800000
+    bist_params::DO_COMPARE         |   /// 0x00400000
+    bist_params::SCAN0_REPR         |   /// 0x00200000
+    bist_params::POLL_ABIST_DONE    |   /// 0x00020000
+    bist_params::ASSERT_ABIST_DONE,     /// 0x00010000
 
-    0,                                ///  opcg_count
-    1000,                             ///  idle_count
-    10000,                            ///  timeout
-    0,                                ///  linear_stagger
-    0,                                ///  zigzag_stagger
-    0x1234,                           ///  regions
+    135000000,                          ///  opcg_count
+    0x20000,                            ///  idle_count
+    0,                                  ///  linear_stagger
+    0,                                  ///  zigzag_stagger
+    10000,                              ///  max_polls
+    100000000,                          ///  poll_delay
+    0xFFFE,                             ///  regions
+    0x8000,                             ///  outer_loop_mask
+    0x8000,                             ///  inner_loop_mask
 };
 
 enum ODY_ABIST_Private_Constants
@@ -72,14 +72,10 @@ enum ODY_ABIST_Private_Constants
 
 ReturnCode ody_abist(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
-    FAPI_DBG("Entering ody_abist Function to Set Up the "
-             "BIST_PARAMS Structure.");
-
-    FAPI_DBG("Calling poz_bist with Chip Target and "
-             "BIST_PARAMS Structure.");
-
+    FAPI_INF("Entering ...");
     FAPI_TRY(poz_bist(i_target, ody_abist_params));
 
 fapi_try_exit:
+    FAPI_INF("Exiting ...");
     return current_err;
 }

@@ -168,20 +168,6 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode mod_lbist_setup(
-    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
-    uint16_t i_clock_regions,
-    uint64_t i_runn_cycles,
-    uint64_t i_lbist_start_at,
-    uint64_t i_lbist_start_stagger)
-{
-    FAPI_DBG("mod_lbist_setup not yet implemented; check back later");
-
-fapi_try_exit:
-    FAPI_INF("Exiting ...");
-    return current_err;
-}
-
 
 ReturnCode mod_opcg_go(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > &i_target)
