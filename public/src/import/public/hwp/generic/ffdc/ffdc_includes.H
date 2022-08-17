@@ -30,6 +30,8 @@
 #ifndef __FFDC_INCLUDES_H
 #define __FFDC_INCLUDES_H
 
+#include <../../p11/ffdc/fsi_collect_reg_ffdc.H>
+
 // Add any other FFDC procedures with #include
 
 #endif
