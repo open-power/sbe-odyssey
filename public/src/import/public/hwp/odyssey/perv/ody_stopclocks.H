@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/generic/perv/poz_stopclocks.C $  */
+/* $Source: public/src/import/public/hwp/odyssey/perv/ody_stopclocks.H $  */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,27 +23,34 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  poz_stopclocks.C
-/// @brief Stopclocks module
+/// @file  ody_stopclocks.H
+/// @brief To stop chiplet clocks for Odyssey chip
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
+// *HWP Consumed by     : FSP:SBE:HB
 //------------------------------------------------------------------------------
 
-#include <poz_stopclocks.H>
-#include <poz_perv_common_params.H>
+#ifndef _ODY_STOPCLOCKS_H_
+#define _ODY_STOPCLOCKS_H_
 
+#include <fapi2.H>
+#include <poz_common_stopclocks.H>
 
-using namespace fapi2;
+typedef fapi2::ReturnCode (*ody_stopclocks_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
+        const StopClocksFlags);
 
-enum POZ_STOPCLOCKS_Private_Constants
+/// @brief To stop chiplet clocks for Odyssey chip
+///
+/// @param[in]   i_target            Reference to TARGET_TYPE_OCMB_CHIP
+/// @param[in]   i_stopclocks_flags  Stop clocks flags
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+
+extern "C"
 {
-};
-
-ReturnCode poz_stopclocks(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
-{
-
-
-fapi_try_exit:
-    return current_err;
+    fapi2::ReturnCode ody_stopclocks(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+                                     const StopClocksFlags i_stopclocks_flags);
 }
+
+#endif

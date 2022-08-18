@@ -99,6 +99,7 @@ $(call ODYSSEY_PERV_PROCEDURE,ody_chiplet_init)
 $(call ODYSSEY_PERV_PROCEDURE,ody_chiplet_startclocks,poz_chiplet_startclocks)
 $(call ODYSSEY_PERV_PROCEDURE,ody_chiplet_fir_init)
 $(call ODYSSEY_PERV_PROCEDURE,ody_nest_enable_io)
+$(call ODYSSEY_PERV_PROCEDURE,ody_stopclocks,poz_common_stopclocks poz_tp_stopclocks)
 
 # Outside of isteps
 $(call ODYSSEY_PERV_PROCEDURE,ody_dts_read)

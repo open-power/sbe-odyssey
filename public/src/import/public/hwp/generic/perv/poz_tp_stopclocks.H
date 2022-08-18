@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/generic/perv/poz_stopclocks.H $  */
+/* $Source: public/src/import/public/hwp/generic/perv/poz_tp_stopclocks.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,25 +23,40 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  poz_stopclocks.H
-/// @brief Stopclocks module
+/// @file  poz_tp_stopclocks.H
+/// @brief Stop clocks for TP chiplet
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
+// *HWP Consumed by     : FSP
 //------------------------------------------------------------------------------
 
 #pragma once
 
 #include <fapi2.H>
+#include <poz_common_stopclocks.H>
 
-typedef fapi2::ReturnCode (*poz_stopclocks_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&);
-
-/// @brief Stopclocks module
+/// @brief Stop clocks for TP chiplet
 ///
-/// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
-///
+/// @param[in]     i_target            Reference to TARGET_TYPE_ANY_POZ_CHIP target
+/// @param[in]     i_stopclocks_flags  Stop clocks flags
+/// @param[in]     i_pcb_accessible    True if PCB can be accessed
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-extern "C"
-{
-    fapi2::ReturnCode poz_stopclocks(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target);
-}
+fapi2::ReturnCode poz_tp_stopclocks(
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const StopClocksFlags i_stopclocks_flags,
+    bool i_pcb_accessible);
+
+/// @brief Stopclocks for all regions of TP chiplet except sbe
+///
+/// @param[in]     i_target       Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode poz_tp_stopclocks_all_regions_except_sbe(
+    const  fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target);
+
+/// @brief Stopclocks for sbe region
+///
+/// @param[in]     i_target       Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode poz_sbe_region_stopclocks(
+    const  fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target);
