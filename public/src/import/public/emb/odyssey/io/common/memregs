@@ -1,0 +1,401 @@
+#!/usr/bin/perl
+# IBM_PROLOG_BEGIN_TAG
+# This is an automatically generated prolog.
+#
+# $Source: public/src/import/public/emb/odyssey/io/common/memregs $
+#
+# OpenPOWER sbe Project
+#
+# Contributors Listed Below - COPYRIGHT 2022
+# [+] International Business Machines Corp.
+#
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+# IBM_PROLOG_END_TAG
+use warnings;
+use warnings FATAL => 'uninitialized';
+use strict;
+use Getopt::Long;
+
+my $mem_regs_output_bin = undef;
+my $image_type = undef;
+GetOptions(
+  "output-image=s" => \$mem_regs_output_bin,
+  "image-type=s" => \$image_type
+);
+
+my $num_args = $#ARGV + 1;
+if (($num_args < 4) || (!defined($mem_regs_output_bin) || (!defined($image_type))))
+{
+  print("Usage: gen_mem_regs_image --output-dir=<output dir> <generic_reg_attr_file> <ppe_reg_attr_file> <fw_reg_attr_file> <img_reg_attr_file>\n");
+  printf(" output image: $mem_regs_output_bin\n");
+  printf(" image type: $image_type\n");
+  printf(" number of arguments: ${num_args}\n");
+  print("  This perl script will generate the IO PPE memregs binary image\n");
+  exit(1);
+}
+
+my $generic_reg_attr_file = $ARGV[0];
+my $ppe_reg_attr_file = $ARGV[1];
+my $fw_reg_attr_file = $ARGV[2];
+my $img_reg_attr_file = $ARGV[3];
+
+open(INFILE, $generic_reg_attr_file) || die "\n\nERROR: Could not open $generic_reg_attr_file.\n$!\n\n";
+my @generic_reg_lines = <INFILE>;
+close(INFILE);
+
+open(INFILE, $ppe_reg_attr_file) || die "\n\nERROR: Could not open $ppe_reg_attr_file.\n$!\n\n";
+my @ppe_reg_lines = <INFILE>;
+close(INFILE);
+
+open(INFILE, $fw_reg_attr_file) || die "\n\nERROR: Could not open $fw_reg_attr_file.\n$!\n\n";
+my @fw_reg_lines = <INFILE>;
+close(INFILE);
+
+open(INFILE, $img_reg_attr_file) || die "\n\nERROR: Could not open $img_reg_attr_file.\n$!\n\n";
+my @img_reg_lines = <INFILE>;
+close(INFILE);
+
+my %generic_addr = ();
+my %generic_start = ();
+my %generic_width = ();
+my %generic_regs = ();
+my %generic_resetval = ();
+my %generic_type = ();
+
+my %ppe_addr = ();
+my %ppe_start = ();
+my %ppe_width = ();
+my %ppe_regs = ();
+my %ppe_resetval = ();
+my %ppe_alias = ();
+
+my %fw_addr = ();
+my %fw_start = ();
+my %fw_width = ();
+my %fw_regs = ();
+my %fw_resetval = ();
+
+my %img_addr = ();
+my %img_start = ();
+my %img_width = ();
+my %img_regs = ();
+my %img_resetval = ();
+
+
+# Hash tables for binary image overrides
+my %obus24_override_val = ();
+
+my @common_fields = ();
+my @ppe_fields = ();
+
+# HASH table for generic (com)
+foreach (@generic_reg_lines)
+{
+  if ($_ =~ /^com/i)
+  {
+    my @line = split(/ +/,$_);
+    my $field_name = $line[4];
+    my $addr = $line[6];
+    my $start = $line[8];
+    my $width = $line[9];
+    my $reg_name = $line[3];
+    my $reset_val = $line[14];
+    my $type = $line[5]; #format: gcr or scom
+
+    # Check for duplicates
+    if (exists $generic_addr{$field_name})
+    {
+      print "\n\nERROR: Duplicate hardware register detected: $field_name.\n\n";
+      exit 1;
+    }
+
+    $generic_addr{$field_name} = $addr;
+    $generic_start{$field_name} = $start;
+    $generic_width{$field_name} = $width;
+    $generic_resetval{$field_name} = $reset_val;
+    $generic_type{$field_name} = $type;
+    $generic_regs{$reg_name} = $addr;
+  }
+}
+
+# HASH table for PPE mem_regs
+foreach (@ppe_reg_lines)
+{
+  if ($_ =~ /^ppe/i)
+  {
+    my @line = split(/ +/,$_);
+    my $field_name = $line[4];
+    my $addr = $line[6];
+    my $start = $line[8];
+    my $width = $line[9];
+    my $reg_name = $line[3];
+    my $reset_val = $line[14];
+    my $design = $line[0];
+    my $mode = $line[7];
+
+    # Check for duplicates
+    if (exists $ppe_addr{$field_name})
+    {
+      print "\n\nERROR: Duplicate mem_reg detected: $field_name.\n\n";
+      exit 1;
+    }
+
+    # Track what are aliases and what are actual fields; this is so we don't apply alias defaults to the mem_regs image.
+    if ($design eq "ppe_alias")
+    {
+      $ppe_alias{$field_name} = 1;
+    }
+    else
+    {
+      $ppe_alias{$field_name} = 0;
+    }
+
+    $ppe_addr{$field_name} = $addr;
+    $ppe_start{$field_name} = $start;
+    $ppe_width{$field_name} = $width;
+    $ppe_resetval{$field_name} = $reset_val;
+    $ppe_regs{$reg_name} = $addr;
+
+    # Report an error if a per-lane mem_reg has a non-0 default/reset value
+    my $addr_int = oct("0b".$addr); # convert from binary string to an integer
+    my $reset_val_int = oct("0b".$reset_val); # convert from binary string to an integer
+    if (($addr_int <= 0x00F) && ($reset_val_int != 0))
+    {
+      # per-lane mem_regs are addresses 0x000 - 0x00F in RegDef
+      print "\n\nERROR: per-lane mem_regs must have a default value of 0: $field_name = $reset_val.\n\n";
+      exit 1;
+    }
+
+    # Report an error if a per-lane mem_reg is writable (by software) instead of read-only
+    if (($addr_int <= 0x00F) && ($mode ne "ROX"))
+    {
+      # per-lane mem_regs are addresses 0x000 - 0x00F in RegDef
+      print "\n\nERROR: per-lane mem_regs must be ROX (no RW or WO mode/controls from the perspective of software): $field_name = $mode.\n\n";
+      exit 1;
+    }
+  }
+}
+
+# HASH table for PPE fw_regs
+foreach (@fw_reg_lines)
+{
+  if ($_ =~ /^fw/i)
+  {
+    my @line = split(/ +/,$_);
+    my $field_name = $line[4];
+    my $addr = $line[6];
+    my $start = $line[8];
+    my $width = $line[9];
+    my $reg_name = $line[3];
+    my $reset_val = $line[14];
+
+    # Check for duplicates
+    if (exists $fw_addr{$field_name})
+    {
+      print "\n\nERROR: Duplicate fw_reg detected: $field_name.\n\n";
+      exit 1;
+    }
+
+    $fw_addr{$field_name} = $addr;
+    $fw_start{$field_name} = $start;
+    $fw_width{$field_name} = $width;
+    $fw_resetval{$field_name} = $reset_val;
+    $fw_regs{$reg_name} = $addr;
+
+    # Report an error if a fw_reg has a non-0 default/reset value
+    my $reset_val_int = oct("0b".$reset_val); # convert from binary string to an integer
+    if ($reset_val_int != 0)
+    {
+      print "\n\nERROR: fw_regs must have a default value of 0: $field_name = $reset_val.\n\n";
+      exit 1;
+    }
+  }
+}
+
+# HASH table for PPE img_regs
+foreach (@img_reg_lines)
+{
+  if($_ =~ /^img/i)
+  {
+    my @line = split(/ +/,$_);
+    my $field_name = $line[4];
+    my $addr = $line[6];
+    my $start = $line[8];
+    my $width = $line[9];
+    my $reg_name = $line[3];
+    my $reset_val = $line[14];
+
+    # Check for duplicates
+    if (exists $img_addr{$field_name})
+    {
+      print "\n\nERROR: Duplicate img_reg detected: $field_name.\n\n";
+      exit 1;
+    }
+
+    $img_addr{$field_name} = $addr;
+    $img_start{$field_name} = $start;
+    $img_width{$field_name} = $width;
+    $img_resetval{$field_name} = $reset_val;
+    $img_regs{$reg_name} = $addr;
+
+    # Report an error if a img_reg has a non-0 default/reset value
+    my $reset_val_int = oct("0b".$reset_val); # convert from binary string to an integer
+    if ($reset_val_int != 0)
+    {
+      print "\n\nERROR: img_regs must have a default value of 0: $field_name = $reset_val.\n\n";
+      exit 1;
+    }
+  }
+}
+
+# Make sure that we don't have duplicate field names in the PPE header file.
+foreach (sort keys %generic_addr)
+{
+  push(@common_fields,$_);
+}
+
+foreach (sort keys %ppe_addr)
+{
+  if (!exists $generic_addr{$_})
+  {
+    push(@ppe_fields,$_);
+  }
+  else
+  {
+    print "\n\nERROR: Duplicate field: $_.\n\n";
+    exit 1;
+  }
+}
+
+# Build PPE mem_regs default images from default values
+# Initialize all 512 fields to 0x0000
+my @mem_reg_array = ();
+for (my $i=0; $i < 512; $i++)
+{
+  push(@mem_reg_array, 0);
+}
+
+# Apply the PPE field defaults
+PatchMemRegs(\@mem_reg_array, "ppe", \@ppe_fields);
+
+# Write binary files
+WriteBinFile($mem_regs_output_bin, \@mem_reg_array);
+
+# Exit with no error
+exit 0;
+
+
+
+###############################################
+# Parse fields into the reg_array
+sub PatchMemRegs
+{
+  my ($reg_array, $override, $reg_fields)=@_;
+
+  my $addr_bin = "";
+  my $start = 0;
+  my $width = 0;
+  my $val_bin = "";
+  foreach (@{$reg_fields})
+  {
+    if ($ppe_alias{$_})
+    {
+      # Don't apply alias defaults since it could be from any bus
+      $addr_bin = "10000000000"; #0x400 is outside the valid range and thus should be ignored
+      $start = 0;
+      $width = 1;
+      $val_bin = "0";
+    }
+    else
+    {
+      # Apply overrides from a source
+      $addr_bin = $ppe_addr{$_};
+      $start = $ppe_start{$_};
+      $width = $ppe_width{$_};
+      if ($override eq "obus24")
+      {
+        $val_bin = $obus24_override_val{$_};
+        #print "Patch: $_ = $val_bin\n";
+      }
+      elsif ($override eq "ppe")
+      {
+        $val_bin = $ppe_resetval{$_};
+        #print "Patch: $_ = $val_bin\n";
+      }
+      else
+      {
+        print "\n\nERROR: Invalid override source: $override.\n\n";
+        exit 1;
+      }
+    }
+    my $addr = oct("0b".$addr_bin); # convert from binary string to an integer
+    my $end = $start + $width - 1;
+    my $shift = 15 - $end;
+    my $mask = ((2**$width) - 1) << $shift;
+    # Apply the field if it is within the valid address range
+    if (($addr >= 0x000 && $addr < 0x200))
+    {
+      my $val = oct("0b".$val_bin); # convert from binary string to an integer
+      for (my $i=0; $i < 24; $i++)
+      {
+        #loop 24 times since could be a per-lane address (24 lanes max)
+        my $index = 0;
+        if ($addr >= 0x180)
+        {
+          $index = pg_addr($addr);
+        }
+        else
+        {
+          $index = pl_addr($addr, $i);
+        }
+        my $old_val = ${$reg_array}[$index];
+        my $new_val = ($old_val & ~$mask) | ($val << $shift);
+        ${$reg_array}[$index] = $new_val;
+      }
+    }
+  } #foreach
+} #PatchMemRegs
+
+# Address to ppe mem_reg address translation (assumes thread/group 0)
+sub pg_addr
+{
+  my ($addr)=@_;
+  # RX Per-Group Regs: 0x180 - 0x1FF (last 128 registers, no translation)
+  my $addr_out = $addr;
+  return $addr_out;
+}
+
+sub pl_addr
+{
+    my ($addr, $lane)=@_;
+    # RX Per-Lane Regs 0x000 - 0x00F: 0byyyyyxxxx (y = 5-bit lane #, x = 4-bit address per-lane)
+    my $addr_out = $addr | ($lane << 4);
+    return $addr_out;
+}
+
+# Write the binary images
+sub WriteBinFile
+{
+  my ($output_file, $reg_array)=@_;
+
+  # Open binary file and then loop through writting shorts (u16) as big-endian
+  open(my $outfile, '>:raw', $output_file) || die "\n\nERROR: Unable to open $output_file.\n$!\n\n";
+  #print "   Generating $output_file\n";
+  foreach (@{$reg_array})
+  {
+    print $outfile pack('s>', $_) ; #'s'=short, '>'=big-endian
+  }
+  close($outfile);
+} #WriteBinFile
