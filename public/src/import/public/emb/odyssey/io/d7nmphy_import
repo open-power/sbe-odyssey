@@ -1,0 +1,182 @@
+#!/bin/bash -e
+# IBM_PROLOG_BEGIN_TAG
+# This is an automatically generated prolog.
+#
+# $Source: public/src/import/public/emb/odyssey/io/d7nmphy_import $
+#
+# OpenPOWER sbe Project
+#
+# Contributors Listed Below - COPYRIGHT 2022
+# [+] International Business Machines Corp.
+#
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+# IBM_PROLOG_END_TAG
+
+D7NMPHY_ROOT=$1
+D7NMPHY_COMMON_SRC_PATH="ppe/images/ppe_common"
+D7NMPHY_IOO_SRC_PATH="ppe/images/ppe_ioo"
+D7NMPHY_IOT_SRC_PATH="ppe/images/ppe_iot"
+
+D7NMPHY_REG_PATH="logic/createregs"
+
+EKB_ROOT=${PROJECT_ROOT}
+EKB_PPE_COMMON_DST_PATH="public/emb/odyssey/io/common"
+EKB_PPE_IOO_DST_PATH="public/emb/odyssey/io/ioo"
+EKB_PPE_IOO_MEMREGS_DST_PATH="public/emb/odyssey/io/ioo_memregs"
+
+echo ""
+echo "D7NMPHY source root: $D7NMPHY_ROOT"
+echo "EKB destitation root: ${EKB_ROOT}"
+echo ""
+
+#
+# IOPPE source files (c/h) to import from D7NMPHY
+#
+
+# common files
+common_src_files+=("eo_main.h")
+common_src_files+=("eo_wrappers.c" "eo_wrappers.h")
+common_src_files+=("io_ext_cmd.c" "io_ext_cmd.h")
+common_src_files+=("iohw_interrupts.h")
+common_src_files+=("io_init_and_reset.c" "io_init_and_reset.h")
+common_src_files+=("io_irq_handlers.c" "io_irq_handlers.h")
+common_src_files+=("io_lab_code.c" "io_lab_code.h")
+common_src_files+=("io_lib.c" "io_lib.h")
+common_src_files+=("io_logger.c" "io_logger.h")
+common_src_files+=("io_main.c")
+common_src_files+=("pk_app_cfg.h")
+common_src_files+=("pk_app_irq_table.c")
+common_src_files+=("servo_ops.h")
+common_src_files+=("supervisor_thread.c" "supervisor_thread.h")
+common_src_files+=("tx_dcc_main.c" "tx_dcc_main.h")
+common_src_files+=("tx_dcc_main_servo.c" "tx_dcc_main_servo.h")
+common_src_files+=("tx_dcc_tune_constants.h")
+common_src_files+=("ppe_com_reg_const_pkg.h")
+common_src_files+=("ppe_fw_reg_const_pkg.h")
+common_src_files+=("ppe_img_reg_const_pkg.h")
+common_src_files+=("ppe_mem_reg_const_pkg.h")
+
+ioo_src_files+=("eo_bist_init_ovride.c" "eo_bist_init_ovride.h")
+ioo_src_files+=("eo_ctle.c" "eo_ctle.h")
+ioo_src_files+=("eo_dac_test.c" "eo_dac_test.h")
+ioo_src_files+=("eo_ddc.c" "eo_ddc.h")
+ioo_src_files+=("eo_dfe.c" "eo_dfe.h")
+ioo_src_files+=("eo_eoff_1_lat.c" "eo_eoff_1_lat.h")
+ioo_src_files+=("eo_eoff.c" "eo_eoff.h")
+ioo_src_files+=("eo_llbist.c" "eo_llbist.h")
+ioo_src_files+=("eo_loff.c" "eo_loff.h")
+ioo_src_files+=("eo_lte.c" "eo_lte.h")
+ioo_src_files+=("eo_main.c")
+ioo_src_files+=("eo_main_ioo.h")
+ioo_src_files+=("eo_qpa.c" "eo_qpa.h")
+ioo_src_files+=("eo_rxbist_ber.c" "eo_rxbist_ber.h")
+ioo_src_files+=("eo_rxbist_epoff_final.c" "eo_rxbist_epoff_final.h")
+ioo_src_files+=("eo_vclq_checks.c" "eo_vclq_checks.h")
+ioo_src_files+=("eo_vga.c" "eo_vga.h")
+ioo_src_files+=("eo_vga_pathoffset.c" "eo_vga_pathoffset.h")
+ioo_src_files+=("io_config.h")
+ioo_src_files+=("ioo_axo_dl_ifc.c" "ioo_axo_dl_ifc.h")
+ioo_src_files+=("ioo_common.c" "ioo_common.h")
+ioo_src_files+=("ioo_ext_cmd_handlers.c" "ioo_ext_cmd_handlers.h")
+ioo_src_files+=("ioo_init_and_reset.c" "ioo_init_and_reset.h")
+ioo_src_files+=("ioo_pipe_ifc.c" "ioo_pipe_ifc.h")
+ioo_src_files+=("ioo_thread.c" "ioo_thread.h")
+ioo_src_files+=("rx_sigdetbist_test.c" "rx_sigdetbist_test.h")
+ioo_src_files+=("txbist_main.c" "txbist_main.h")
+ioo_src_files+=("tx_ffe.c" "tx_ffe.h")
+ioo_src_files+=("tx_seg_test.c" "tx_seg_test.h")
+ioo_src_files+=("tx_txdetrx_bist.c" "tx_txdetrx_bist.h")
+ioo_src_files+=("tx_txidle_bist.c" "tx_txidle_bist.h")
+ioo_src_files+=("tx_zcal_tdr.c" "tx_zcal_tdr.h")
+ioo_src_files+=("ppe_com_reg_const_pkg_ioo.h")
+ioo_src_files+=("ppe_fw_reg_const_pkg_ioo.h")
+ioo_src_files+=("ppe_img_reg_const_pkg_ioo.h")
+ioo_src_files+=("ppe_mem_reg_const_pkg_ioo.h")
+
+#
+# MEMREGS files to import from D7NMPHY_REG_PATH
+#
+
+# MEMREGS image files
+ioo_reg_files+=("fw_reg_attribute_ioo.txt")
+ioo_reg_files+=("generic_reg_attribute_ioo.txt")
+ioo_reg_files+=("img_reg_attribute_ioo.txt")
+ioo_reg_files+=("ppe_reg_attribute_ioo.txt")
+
+#
+# image link script to import from D7NMPHY_SRC_PATH
+#
+
+lnk_files+=("link.cmd")
+
+
+#
+# copy IOPPE source files
+#
+
+for i in "${common_src_files[@]}"; do
+  echo "Importing ${D7NMPHY_COMMON_SRC_PATH}/$i"
+  cp "${D7NMPHY_ROOT}/${D7NMPHY_COMMON_SRC_PATH}/$i" "${EKB_ROOT}/${EKB_PPE_COMMON_DST_PATH}/$i"
+  beautify_file_list+=("${EKB_PPE_COMMON_DST_PATH}/$i")
+done
+
+for i in "${ioo_src_files[@]}"; do
+  echo "Importing ${D7NMPHY_IOO_SRC_PATH}/$i"
+  cp "${D7NMPHY_ROOT}/${D7NMPHY_IOO_SRC_PATH}/$i" "${EKB_ROOT}/${EKB_PPE_IOO_DST_PATH}/$i"
+  beautify_file_list+=("${EKB_PPE_IOO_DST_PATH}/$i")
+done
+
+
+#
+# copy MEMREGS files
+#
+
+for i in "${ioo_reg_files[@]}"; do
+  echo "Importing ${D7NMPHY_REG_PATH}/$i"
+  cp "${D7NMPHY_ROOT}/${D7NMPHY_REG_PATH}/$i" "${EKB_ROOT}/${EKB_PPE_IOO_MEMREGS_DST_PATH}/$i"
+  beautify_file_list+=("${EKB_PPE_IOO_MEMREGS_DST_PATH}/$i")
+done
+
+
+#
+# copy link files
+#
+
+for i in "${lnk_files[@]}"; do
+  echo "Importing ${D7NMPHY_SRC_PATH}/$i"
+  cp "${D7NMPHY_ROOT}/${D7NMPHY_COMMON_SRC_PATH}/$i" "${EKB_ROOT}/${EKB_PPE_IOO_DST_PATH}/odyssey_ioo_$i"
+  beautify_file_list+=("${EKB_PPE_IOO_DST_PATH}/odyssey_ioo_$i")
+done
+
+
+#
+# generate register access macros
+#
+
+echo ""
+echo "Generate register access macros"
+echo ""
+${PROJECT_ROOT}/internal/vbu/generic/tools/generate_io_ppe_regs.pl $D7NMPHY_ROOT ioo > ${PROJECT_ROOT}/public/hwp/odyssey/io/ody_io_ppe_regs.H
+beautify_file_list+=("public/hwp/odyssey/io/ody_io_ppe_regs.H")
+
+
+#
+# run code-beautfier and add copyright header to all copied/generated files
+#
+
+echo ""
+echo "Running EKB pre-commit-actions"
+echo ""
+cd ${PROJECT_ROOT} && ${PROJECT_ROOT}/internal/common/tools/hooks/tools/pre-commit-actions ${beautify_file_list[*]}
