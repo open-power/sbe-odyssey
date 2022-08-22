@@ -40,6 +40,7 @@ infile_c = [
             'ody_chiplet_repr_initf.C',
             'ody_chiplet_arrayinit.C',
             'ody_chiplet_initf.C',
+            'ody_chiplet_init.C',
             'ody_chiplet_startclocks.C',
             'ody_chiplet_fir_init.C',
             'ody_nest_enable_io.C',
