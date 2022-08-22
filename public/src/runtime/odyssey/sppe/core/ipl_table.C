@@ -94,7 +94,7 @@ static istepMap_t g_istep3PtrTbl[] =
              ISTEP_MAP( istepWithOcmb, ody_chiplet_arrayinit ),     // 3.12
              ISTEP_MAP( NULL, NULL ),                               // 3.13
              ISTEP_MAP( istepWithOcmb, ody_chiplet_initf ),         // 3.14
-             ISTEP_MAP( NULL, NULL ),                               // 3.15
+             ISTEP_MAP( istepWithOcmb, ody_chiplet_init ),          // 3.15
              ISTEP_MAP( NULL, NULL ),                               // 3.16
              ISTEP_MAP( NULL, NULL ),                               // 3.17
              ISTEP_MAP( NULL, NULL ),                               // 3.18

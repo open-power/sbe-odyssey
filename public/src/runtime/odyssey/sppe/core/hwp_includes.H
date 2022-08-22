@@ -41,6 +41,7 @@
 #include <ody_chiplet_repr_initf.H>
 #include <ody_chiplet_arrayinit.H>
 #include <ody_chiplet_initf.H>
+#include <ody_chiplet_init.H>
 #include <ody_chiplet_startclocks.H>
 #include <ody_chiplet_fir_init.H>
 #include <ody_nest_enable_io.H>
