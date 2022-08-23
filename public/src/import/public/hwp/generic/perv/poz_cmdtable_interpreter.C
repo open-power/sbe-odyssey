@@ -226,7 +226,7 @@ ReturnCode Executor::run(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, int i
                 else
                 {
                     FAPI_TRY(getScom(i_target, address, buf));
-                    buf = (buf & ~mask) | (data & mask);
+                    buf = (buf & ~mask) | data;
                     FAPI_TRY(putScom(i_target, address, buf));
                 }
 

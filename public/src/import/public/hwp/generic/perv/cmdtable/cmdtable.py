@@ -153,8 +153,8 @@ def parse_command_args(cmd, argtypes, args):
                     arg = eval(arg, {__builtins__: {}})
                 except Exception as e:
                     raise ParseError("invalid %s (%s): %s" % (COMMAND_ARGTYPES[argtype], e.args[0], arg))
-                if argtype == "c" and arg & 0xFFFFFF00 != 0x200:
-                    raise ParseError("TEST/POLL error code must be 0x2xx")
+                if argtype == "c" and arg and arg & 0xFFFFFF00 != 0x200:
+                    raise ParseError("TEST/POLL error code must be 0x2xx or 0")
             elif argtype in "sl":
                 if has_whitespace(arg):
                     raise ParseError("%s must not contain whitespace: %s" % (COMMAND_ARGTYPES[argtype], arg))
@@ -379,7 +379,7 @@ def run_commands(main, cust, target):
         elif cmd.op == Opcode.PUTSCOM:
             if cmd.mask < 0xFFFFFFFFFFFFFFFF:
                 value = target.getScom(cmd.address).uint
-                new_value = (value & ~cmd.mask) | (cmd.data & cmd.mask)
+                new_value = (value & ~cmd.mask) | cmd.data
                 print("  %016X -> %016X" % (value, new_value))
                 target.putScom(cmd.address, new_value)
             else:
