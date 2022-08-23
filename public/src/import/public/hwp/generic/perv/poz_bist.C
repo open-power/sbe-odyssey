@@ -78,14 +78,24 @@ void print_bist_params(const bist_params& i_params)
     FAPI_DBG("max_polls = %u", i_params.max_polls);
     FAPI_DBG("linear_stagger = %lu", i_params.linear_stagger);
     FAPI_DBG("zigzag_stagger = %lu", i_params.zigzag_stagger);
-    FAPI_DBG("regions = %#06x", i_params.regions);
+    FAPI_DBG("base_regions = %#06x", i_params.base_regions);
+
+    for (uint8_t chiplet_id = 0; chiplet_id < 64; chiplet_id++)
+    {
+        if (i_params.chiplets_regions[chiplet_id])
+        {
+            FAPI_DBG("chiplets_regions[%d] = %#06x",
+                     chiplet_id, i_params.chiplets_regions[chiplet_id]);
+        }
+    }
+
     FAPI_DBG("outer_loop_mask = %#06x", i_params.outer_loop_mask);
     FAPI_DBG("inner_loop_mask = %#06x", i_params.inner_loop_mask);
 }
 
-ReturnCode poz_bist_execute(const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST,
-                            MULTICAST_AND > & i_chiplets_target,
-                            const bist_params& i_params, const uint16_t i_enum_condition_a, const uint16_t i_enum_condition_b)
+ReturnCode poz_bist_execute(
+    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > & i_chiplets_target,
+    const bist_params& i_params, const uint16_t i_enum_condition_a, const uint16_t i_enum_condition_b)
 {
     ////////////////////////////////////////////////////////////////
     // STAGE: REG_SETUP
@@ -118,19 +128,21 @@ ReturnCode poz_bist_execute(const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTIC
         if (i_params.flags & i_params.bist_flags::ABIST_NOT_LBIST)
         {
             FAPI_TRY(mod_abist_setup(i_chiplets_target,
-                                     i_params.regions,
+                                     i_params.base_regions,
                                      i_params.opcg_count,
                                      i_params.idle_count,
-                                     i_params.linear_stagger));
+                                     i_params.linear_stagger,
+                                     i_params.chiplets_regions));
         }
         else
         {
             // TODO create sequence / weight enums for condition_a / condition_b
             FAPI_TRY(mod_lbist_setup(i_chiplets_target,
-                                     i_params.regions,
+                                     i_params.base_regions,
                                      i_params.opcg_count,
                                      i_params.idle_count,
                                      i_params.linear_stagger,
+                                     i_params.chiplets_regions,
                                      i_enum_condition_a,
                                      i_enum_condition_b));
         }

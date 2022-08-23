@@ -72,19 +72,22 @@ fapi2::ReturnCode mod_bist_reg_cleanup(
 /// --TODO update me once functionality has been built out
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
-/// @param[in]   i_clock_regions           Select clock regions
+/// @param[in]   i_regions                 Select base clock / BIST regions
 /// @param[in]   i_runn_cycles             Loop count value to set OPCG run-N mode (>0x7FFFFFFFFFF for infinite)
 /// @param[in]   i_lbist_start_at          Idle count value to set in OPCG_REG1
 /// @param[in]   i_lbist_start_stagger     Per target OPCG_REG1 stagger value
+/// @param[in]   i_chiplets_regions        Array of custom regions per chiplet in i_target indexed by chiplet ID
+///                                        If zero for an index, pass; else, overwrite i_regions on that chiplet
 /// @param[in]   i_lbist_sequence          Enumerated value of single sequence to configure
 /// @param[in]   i_lbist_weight            Enumerated value of single weight to configure
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_lbist_setup(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
-    uint16_t i_clock_regions,
+    uint16_t i_regions,
     uint64_t i_runn_cycles = 0x42FFF,
     uint64_t i_lbist_start_at = 0xF0,
     uint64_t i_lbist_start_stagger = 0,
+    const uint16_t* i_chiplets_regions = NULL,
     uint16_t i_lbist_sequence = 0x8000,
     uint16_t i_lbist_weight = 0x8000);

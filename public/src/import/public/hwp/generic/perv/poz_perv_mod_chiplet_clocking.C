@@ -90,10 +90,11 @@ fapi_try_exit:
 
 ReturnCode mod_abist_setup(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
-    uint16_t i_clock_regions,
+    uint16_t i_regions,
     uint64_t i_runn_cycles,
     uint64_t i_abist_start_at,
-    uint64_t i_abist_start_stagger)
+    uint64_t i_abist_start_stagger,
+    const uint16_t* i_chiplets_regions)
 {
     CPLT_CTRL0_t CPLT_CTRL0;
     BIST_t BIST;
@@ -105,6 +106,7 @@ ReturnCode mod_abist_setup(
     const bool l_opcg_infinite_mode = i_runn_cycles > 0x7FFFFFFFFFF;
     uint64_t l_idle_count = i_abist_start_at;
     auto l_chiplets_uc = i_target.getChildren<TARGET_TYPE_PERV>();
+    uint16_t l_chiplet_regions;
 
     FAPI_INF("Entering ...");
     FAPI_INF("Switch dual-clocked arrays to ABIST clock domain.");
@@ -115,17 +117,41 @@ ReturnCode mod_abist_setup(
     FAPI_INF("Set up BISTed regions.");
     BIST = 0;
     BIST.set_TC_SRAM_ABIST_MODE_DC(1);
-    BIST.insertFromRight<BIST_REGION_PERV, 16>(i_clock_regions);
+    BIST.insertFromRight<BIST_REGION_PERV, 16>(i_regions);
+    FAPI_DBG("BIST buffer value (i_regions) : %#018lX", BIST);
     FAPI_TRY(BIST.putScom(i_target));
 
     FAPI_INF("Set up clocking.");
     CLK_REGION = 0;
-    CLK_REGION.insertFromRight<CLK_REGION_CLOCK_REGION_PERV, 16>(i_clock_regions);
     CLK_REGION.set_SEL_THOLD_SL(1);
     CLK_REGION.set_SEL_THOLD_NSL(1);
     CLK_REGION.set_SEL_THOLD_ARY(1);
-    FAPI_DBG("CLK_REGION buffer value (i_clock_regions) : %#018lX", CLK_REGION);
+    CLK_REGION.insertFromRight<CLK_REGION_CLOCK_REGION_PERV, 16>(i_regions);
+    FAPI_DBG("CLK_REGION buffer value (i_regions) : %#018lX", CLK_REGION);
     FAPI_TRY(CLK_REGION.putScom(i_target));
+
+    // If we know there are custom regions by chiplet, unicast them
+    if (i_chiplets_regions != NULL)
+    {
+        for (auto& targ : l_chiplets_uc)
+        {
+            l_chiplet_regions = i_chiplets_regions[targ.getChipletNumber()];
+
+            // Any regions mask of zero will opt to the default one
+            if (l_chiplet_regions)
+            {
+                BIST.insertFromRight<BIST_REGION_PERV, 16>(l_chiplet_regions);
+                FAPI_DBG("Custom BIST buffer value for chiplet %d : %#018lX",
+                         targ.getChipletNumber(), BIST);
+                FAPI_TRY(BIST.putScom(targ));
+
+                CLK_REGION.insertFromRight<CLK_REGION_CLOCK_REGION_PERV, 16>(l_chiplet_regions);
+                FAPI_DBG("Custom CLK_REGION buffer value for chiplet %d : %#018lX",
+                         targ.getChipletNumber(), CLK_REGION);
+                FAPI_TRY(CLK_REGION.putScom(targ));
+            }
+        }
+    }
 
     FAPI_INF("Configure idle count in OPCG_REG1.");
     OPCG_REG1 = 0;
@@ -185,13 +211,13 @@ fapi_try_exit:
 
 ReturnCode mod_abist_start(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
-    uint16_t i_clock_regions,
+    uint16_t i_regions,
     uint64_t i_runn_cycles,
     uint64_t i_abist_start_at,
     uint64_t i_abist_start_stagger)
 {
     FAPI_TRY(mod_abist_setup(i_target,
-                             i_clock_regions,
+                             i_regions,
                              i_runn_cycles,
                              i_abist_start_at,
                              i_abist_start_stagger));

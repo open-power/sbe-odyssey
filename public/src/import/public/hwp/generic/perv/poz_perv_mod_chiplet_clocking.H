@@ -44,18 +44,21 @@ using namespace cc;
 /// --Configure loop count in OPCG_REG0
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
-/// @param[in]   i_clock_regions           Select clock regions
+/// @param[in]   i_regions                 Select base clock / BIST regions
 /// @param[in]   i_runn_cycles             Loop count value to set OPCG run-N mode (>0x7FFFFFFFFFF for infinite)
 /// @param[in]   i_abist_start_at          Idle count value to set in OPCG_REG1
 /// @param[in]   i_abist_start_stagger     Per target OPCG_REG1 stagger value
+/// @param[in]   i_chiplets_regions        Array of custom regions per chiplet in i_target indexed by chiplet ID
+///                                        If zero for an index, pass; else, overwrite i_regions on that chiplet
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_abist_setup(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
-    uint16_t i_clock_regions,
+    uint16_t i_regions,
     uint64_t i_runn_cycles = 0x42FFF,
     uint64_t i_abist_start_at = 0xF0,
-    uint64_t i_abist_start_stagger = 0);
+    uint64_t i_abist_start_stagger = 0,
+    const uint16_t* i_chiplets_regions = NULL);
 
 /// @brief OPCG GO module.
 /// --RMW OPCG GO bit in OPCG_REG0
@@ -71,7 +74,7 @@ fapi2::ReturnCode mod_opcg_go(
 /// --Run mod_opcg_go
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
-/// @param[in]   i_clock_regions           Select clock regions
+/// @param[in]   i_regions                 Select clock / BIST regions
 /// @param[in]   i_runn_cycles             Loop count value to set OPCG run-N mode (>0x7FFFFFFFFFF for infinite)
 /// @param[in]   i_abist_start_at          Idle count value to set in OPCG_REG1
 /// @param[in]   i_abist_start_stagger     Per target OPCG_REG1 stagger value
@@ -79,7 +82,7 @@ fapi2::ReturnCode mod_opcg_go(
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_abist_start(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
-    uint16_t i_clock_regions,
+    uint16_t i_regions,
     uint64_t i_runn_cycles = 0x42FFF,
     uint64_t i_abist_start_at = 0xF0,
     uint64_t i_abist_start_stagger = 0);
