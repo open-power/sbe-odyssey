@@ -469,6 +469,8 @@ putscom_op:
 putscom_with_mask:
         // read-modify-write
         lvd     scr, 0(addr)
+        not     mask0, mask0
+        not     mask1, mask1
         and     scr0, scr0, mask0
         and     scr1, scr1, mask1
         or      scr0, scr0, data0
@@ -518,7 +520,7 @@ cmpbxx_op:
         // calculate branch target and check that it's within range
         slwi    param, param, 2
         add     scr0, code, param
-        cmpwbge scr0, limit, invalid_branch
+        cmpwbge scr0, small, invalid_branch
         cmpwbge scr0, code, valid_branch
 
 invalid_branch:
