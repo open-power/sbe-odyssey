@@ -177,10 +177,11 @@ fapi_try_exit:
 
 ReturnCode mod_lbist_setup(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
-    uint16_t i_clock_regions,
+    uint16_t i_regions,
     uint64_t i_runn_cycles,
     uint64_t i_lbist_start_at,
     uint64_t i_lbist_start_stagger,
+    const uint16_t* i_chiplets_regions,
     uint16_t i_lbist_sequence,
     uint16_t i_lbist_weight)
 {

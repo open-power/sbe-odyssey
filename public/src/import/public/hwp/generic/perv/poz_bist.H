@@ -34,7 +34,7 @@
 
 #include <fapi2.H>
 
-static const uint16_t BIST_PARAMS_CURRENT_VERSION = 2;
+static const uint16_t BIST_PARAMS_CURRENT_VERSION = 3;
 
 struct bist_params
 {
@@ -64,15 +64,21 @@ struct bist_params
         ASSERT_ABIST_DONE = 0x00010000,  ///< Assert ABIST_DONE at end of polling
     } flags;
 
-    uint64_t opcg_count;      ///< Amount of total RUNN cycles to clock (>0x7FFFFFFFFFF for infinite)
-    uint64_t idle_count;      ///< Base idle RUNN cycles before BIST starts on any chiplet
-    uint64_t linear_stagger;  ///< Increase idle count by this much for each successive chiplet
-    uint64_t zigzag_stagger;  ///< Increase idle count by this much on any odd chiplet
-    uint32_t max_polls;       ///< Max amount of DONE / HALT polls to issue (>0x7FFFFFFF for infinite)
-    uint32_t poll_delay;      ///< Amount of delay per polling loop (both hw and sim)
-    uint16_t regions;         ///< Mask of clock regions to test (TODO make this a 26-index array (one per pervasive endpoint) and remove chiplets mask)
-    uint16_t outer_loop_mask; ///< Mask of outer loop BIST iterations to run
-    uint16_t inner_loop_mask; ///< Mask of inner loop BIST iterations to run
+    uint64_t opcg_count;           ///< Amount of total RUNN cycles to clock (>0x7FFFFFFFFFF for infinite)
+    uint64_t idle_count;           ///< Base idle RUNN cycles before BIST starts on any chiplet
+    uint64_t linear_stagger;       ///< Increase idle count by this much for each successive chiplet
+    uint64_t zigzag_stagger;       ///< Increase idle count by this much on any odd chiplet
+    uint32_t max_polls;            ///< Max amount of DONE / HALT polls to issue (>0x7FFFFFFF for infinite)
+    uint32_t poll_delay;           ///< Amount of delay per polling loop (both hw and sim)
+
+    /// First, multicast write base_regions to everything in chiplets
+    /// Next, for each chiplet in chiplets, inspect the entry in chiplets_regions indexed by chiplet ID
+    /// If the entry is zero, pass; else, overwrite base_regions with the entry for that respective chiplet
+    uint16_t base_regions;         ///< Select base clock / BIST regions
+    uint16_t chiplets_regions[64]; ///< Array of custom regions per chiplet in chiplets indexed by chiplet ID
+
+    uint16_t outer_loop_mask;      ///< Mask of outer loop BIST iterations to run
+    uint16_t inner_loop_mask;      ///< Mask of inner loop BIST iterations to run
 
     // final_idle_count = idle_count + (linear_stagger * target_number) + (zigzag_stagger * (target_number & 1));
 
