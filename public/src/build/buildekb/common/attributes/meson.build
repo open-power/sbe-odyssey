@@ -34,6 +34,7 @@ common_attr_xml = [
         'system_attributes.xml',
         'unit_attributes.xml',
         'chip_attributes.xml',
+        'common_attributes.xml',
         ]
 
 foreach infile : common_attr_xml
@@ -47,6 +48,7 @@ import_hwp_dir_path = pub_import_dir_path + 'hwp/generic/xml/attribute_info/'
 infile_attr_xml = [
             'poz_pervasive_attributes.xml',
             'poz_chiplet_attributes.xml',
+            'poz_clock_attributes.xml',
             ]
 
 foreach infile : infile_attr_xml

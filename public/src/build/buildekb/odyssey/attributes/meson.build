@@ -26,6 +26,7 @@
 import_hwp_dir_path = pub_import_dir_path + 'hwp/odyssey/xml/attribute_info/'
 
 infile_attr_xml = [
+    'ody_perv_attributes.xml',
     ]
 
 odyssey_attr_xml_paths = []
