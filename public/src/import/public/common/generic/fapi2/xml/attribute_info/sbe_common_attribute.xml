@@ -51,7 +51,15 @@
   </entry>
   <entry>
     <name>ATTR_PG</name>
-    <value>0xFFFFFFFF</value>
+    <value>0xFFFFFFFF</value>          <!--  0 Unused -->
+    <value>0xFFFFFFFF</value>          <!--  1 PERV   -->
+    <value>0xFFFFFFFF</value>          <!--  2 Unused -->
+    <value>0xFFFFFFFF</value>          <!--  3 Unused -->
+    <value>0xFFFFFFFF</value>          <!--  4 Unused -->
+    <value>0xFFFFFFFF</value>          <!--  5 Unused -->
+    <value>0xFFFFFFFF</value>          <!--  6 Unused -->
+    <value>0xFFFFFFFF</value>          <!--  7 Unused -->
+    <value>0xFFFFFFFF</value>          <!--  8 MC     -->
   </entry>
   <entry>
     <name>ATTR_CLOCKSTOP_ON_XSTOP</name>
@@ -64,6 +72,22 @@
   <entry>
     <name>ATTR_ENABLE_ABIST</name>
     <value>0x00</value>
+  </entry>
+  <entry>
+    <name>ATTR_SPI_BUS_DIV_REF</name>
+    <value>0x0041</value>
+  </entry>
+  <entry>
+    <name>ATTR_OCMB_PLL_BUCKET</name>
+    <value>0x00</value>
+  </entry>
+  <entry>
+    <name>ATTR_IO_TANK_PLL_BYPASS</name>
+    <value>0x00</value>
+  </entry>
+  <entry>
+    <name>ATTR_BUS_POS</name>
+    <value>0xFF</value>
   </entry>
   <entry>
     <name>ATTR_SIM_CHIPLET_MASK</name>
