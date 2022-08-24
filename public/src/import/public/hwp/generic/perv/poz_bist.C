@@ -104,20 +104,6 @@ ReturnCode poz_bist_execute(
     {
         FAPI_INF("Setup all SCOM registers");
 
-        // TODO pass in SKIP_FIRST_CLOCK to setup functions once supported
-        if (i_params.flags & i_params.bist_flags::SKIP_FIRST_CLOCK)
-        {
-            FAPI_DBG("SKIP_FIRST_CLOCK not yet implemented; check back later");
-            return FAPI2_RC_FALSE;
-        }
-
-        // TODO pass in SKIP_LAST_CLOCK to setup functions once supported
-        if (i_params.flags & i_params.bist_flags::SKIP_LAST_CLOCK)
-        {
-            FAPI_DBG("SKIP_LAST_CLOCK not yet implemented; check back later");
-            return FAPI2_RC_FALSE;
-        }
-
         // TODO pass in zigzag_stagger to setup functions once supported
         if (i_params.zigzag_stagger)
         {
@@ -132,7 +118,9 @@ ReturnCode poz_bist_execute(
                                      i_params.opcg_count,
                                      i_params.idle_count,
                                      i_params.linear_stagger,
-                                     i_params.chiplets_regions));
+                                     i_params.chiplets_regions,
+                                     i_params.flags & i_params.bist_flags::SKIP_FIRST_CLOCK,
+                                     i_params.flags & i_params.bist_flags::SKIP_LAST_CLOCK));
         }
         else
         {
