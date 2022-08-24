@@ -95,7 +95,9 @@ ReturnCode mod_abist_setup(
     uint64_t i_runn_cycles,
     uint64_t i_abist_start_at,
     uint64_t i_abist_start_stagger,
-    const uint16_t* i_chiplets_regions)
+    const uint16_t* i_chiplets_regions,
+    const bool i_skip_first_clock,
+    const bool i_skip_last_clock)
 {
     CPLT_CTRL0_t CPLT_CTRL0;
     BIST_t BIST;
@@ -127,6 +129,8 @@ ReturnCode mod_abist_setup(
     CLK_REGION.set_SEL_THOLD_SL(1);
     CLK_REGION.set_SEL_THOLD_NSL(1);
     CLK_REGION.set_SEL_THOLD_ARY(1);
+    CLK_REGION.set_SUPPRESS_FIRST_EVEN_CLK(i_skip_first_clock);
+    CLK_REGION.set_SUPPRESS_LAST_ODD_CLK(i_skip_last_clock);
     CLK_REGION.insertFromRight<CLK_REGION_CLOCK_REGION_PERV, 16>(i_regions);
     FAPI_DBG("CLK_REGION buffer value (i_regions) : %#018lX", CLK_REGION);
     FAPI_TRY(CLK_REGION.putScom(i_target));
