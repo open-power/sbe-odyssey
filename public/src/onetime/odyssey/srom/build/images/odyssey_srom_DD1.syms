@@ -13,8 +13,8 @@ fff7ab1c t check_interrupted_bh
 fff709a0 t check_magic
 fff7ab54 t check_thread_mode
 fff8036c 00000004 S cmnGlobal
-fff70cfc t cmpbne_op
-fff70cd8 t cmpbxx_op
+fff70d04 t cmpbne_op
+fff70ce0 t cmpbxx_op
 fff7d980 D _code_end
 0000d980 a _code_size
 fff7cb00 0000000c t CSWTCH.12
@@ -145,7 +145,7 @@ fffff7f8 00000800 D hashList
 fff70430 t hreset_path
 fff7b180 00000048 T __hwmacro_setup
 fff70080 t __instruction_storage
-fff70ce8 t invalid_branch
+fff70cf0 t invalid_branch
 fff70c14 t invalid_call
 fff70a98 t invalid_fsm
 00000000 a .irq_mask
@@ -172,7 +172,7 @@ fff7a2e4 000000d4 T memset
 00000010 a _msr_ee_bit
 fff7a4a0 00000038 T __muldi3
 fff70b20 t no_chiplet
-fff70cc8 t no_timeout
+fff70cd0 t no_timeout
 fff70468 t oos_load_spi_clk_cnfg
 fff70a3c t _panic
 fff70558 t partition_0_offset
@@ -335,8 +335,8 @@ fff7b8cc 000000e0 T pk_trace_binary
 fff7b250 0000004c T pk_trace_set_timebase
 fff7b1c8 00000014 T pk_trace_timer_callback
 fff7b1dc 00000074 T pk_trace_tiny
-fff70cd0 t poll_delay
-fff70c9c t poll_loop
+fff70cd8 t poll_delay
+fff70ca4 t poll_loop
 fff80360 00000008 S ppe42_64bit_timebase
 fff7abdc 00000008 T __ppe42_default_irq_handler
 fff80348 00000004 S __ppe42_fit_arg
@@ -499,8 +499,8 @@ fff7aa94 t switch_to_kernel_stack
          U symbol
 fff70040 T __system_reset
 fff70400 T __system_reset_handler
-fff70d04 t take_branch
-fff70c98 t test_ops
+fff70d0c t take_branch
+fff70ca0 t test_ops
 fff7a1c0 t udivmodsi4_loop
 fff7a208 T __umodsi3
 0000000d a UNUSED_GPR13
@@ -511,7 +511,7 @@ fff7a208 T __umodsi3
 00000002 a UNUSED_GPR2
 00000002 a UNUSED_GPR2
 00000002 a UNUSED_GPR2
-fff70cf0 t valid_branch
+fff70cf8 t valid_branch
 fff70bd8 t value_overrun
 fff70000 T __vectors
 fff793b0 000001d0 T verifySecureHdr

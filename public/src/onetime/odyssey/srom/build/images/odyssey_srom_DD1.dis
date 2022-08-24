@@ -453,7 +453,7 @@ fff70c50:	54 26 d5 f8 	rlwinm  r6,r1,26,23,28
 fff70c54:	7c c6 f2 14 	add     r6,r6,r30
 fff70c58:	04 06 ff c0 	cmpwbge r6,r31,fff70bd8 <value_overrun>
 fff70c5c:	14 c6 00 00 	lvd     d6,0(r6)
-fff70c60:	07 01 08 1c 	bb1wi   r1,1,fff70c98 <test_ops>
+fff70c60:	07 01 08 20 	bb1wi   r1,1,fff70ca0 <test_ops>
 
 fff70c64 <putscom_op>:
 fff70c64:	2c 06 ff ff 	cmpwi   r6,-1
@@ -465,59 +465,61 @@ fff70c78:	4b ff ff 40 	b       fff70bb8 <main_loop>
 
 fff70c7c <putscom_with_mask>:
 fff70c7c:	14 83 00 00 	lvd     d4,0(r3)
-fff70c80:	7c 84 30 38 	and     r4,r4,r6
-fff70c84:	7c a5 38 38 	and     r5,r5,r7
-fff70c88:	7c 84 43 78 	or      r4,r4,r8
-fff70c8c:	7c a5 4b 78 	or      r5,r5,r9
-fff70c90:	18 83 00 00 	stvd    d4,0(r3)
-fff70c94:	4b ff ff 24 	b       fff70bb8 <main_loop>
+fff70c80:	7c c6 30 f8 	not     r6,r6
+fff70c84:	7c e7 38 f8 	not     r7,r7
+fff70c88:	7c 84 30 38 	and     r4,r4,r6
+fff70c8c:	7c a5 38 38 	and     r5,r5,r7
+fff70c90:	7c 84 43 78 	or      r4,r4,r8
+fff70c94:	7c a5 4b 78 	or      r5,r5,r9
+fff70c98:	18 83 00 00 	stvd    d4,0(r3)
+fff70c9c:	4b ff ff 1c 	b       fff70bb8 <main_loop>
 
-fff70c98 <test_ops>:
-fff70c98:	38 00 03 e8 	li      r0,1000
+fff70ca0 <test_ops>:
+fff70ca0:	38 00 03 e8 	li      r0,1000
 
-fff70c9c <poll_loop>:
-fff70c9c:	14 83 00 00 	lvd     d4,0(r3)
-fff70ca0:	7c 84 30 38 	and     r4,r4,r6
-fff70ca4:	7c a5 38 38 	and     r5,r5,r7
-fff70ca8:	7c 84 42 78 	xor     r4,r4,r8
-fff70cac:	7c a5 4a 78 	xor     r5,r5,r9
-fff70cb0:	7c a5 23 78 	or      r5,r5,r4
-fff70cb4:	07 01 10 12 	bb1wi   r1,2,fff70cd8 <cmpbxx_op>
-fff70cb8:	06 c5 07 80 	bwz     r5,fff70bb8 <main_loop>
-fff70cbc:	07 81 1e c0 	bb0wi   r1,3,fff70a3c <_panic>
-fff70cc0:	06 c2 00 04 	bwz     r2,fff70cc8 <no_timeout>
-fff70cc4:	06 e0 0e bc 	subwibz r0,1,fff70a3c <_panic>
+fff70ca4 <poll_loop>:
+fff70ca4:	14 83 00 00 	lvd     d4,0(r3)
+fff70ca8:	7c 84 30 38 	and     r4,r4,r6
+fff70cac:	7c a5 38 38 	and     r5,r5,r7
+fff70cb0:	7c 84 42 78 	xor     r4,r4,r8
+fff70cb4:	7c a5 4a 78 	xor     r5,r5,r9
+fff70cb8:	7c a5 23 78 	or      r5,r5,r4
+fff70cbc:	07 01 10 12 	bb1wi   r1,2,fff70ce0 <cmpbxx_op>
+fff70cc0:	06 c5 07 7c 	bwz     r5,fff70bb8 <main_loop>
+fff70cc4:	07 81 1e bc 	bb0wi   r1,3,fff70a3c <_panic>
+fff70cc8:	06 c2 00 04 	bwz     r2,fff70cd0 <no_timeout>
+fff70ccc:	06 e0 0e b8 	subwibz r0,1,fff70a3c <_panic>
 
-fff70cc8 <no_timeout>:
-fff70cc8:	3c 80 00 00 	lis     r4,0
-fff70ccc:	60 84 4e 20 	ori     r4,r4,20000
+fff70cd0 <no_timeout>:
+fff70cd0:	3c 80 00 00 	lis     r4,0
+fff70cd4:	60 84 4e 20 	ori     r4,r4,20000
 
-fff70cd0 <poll_delay>:
-fff70cd0:	06 64 08 00 	subwibnz r4,1,fff70cd0 <poll_delay>
-fff70cd4:	4b ff ff c8 	b       fff70c9c <poll_loop>
+fff70cd8 <poll_delay>:
+fff70cd8:	06 64 08 00 	subwibnz r4,1,fff70cd8 <poll_delay>
+fff70cdc:	4b ff ff c8 	b       fff70ca4 <poll_loop>
 
-fff70cd8 <cmpbxx_op>:
-fff70cd8:	54 42 10 3a 	rlwinm  r2,r2,2,0,29
-fff70cdc:	7c 9c 12 14 	add     r4,r28,r2
-fff70ce0:	04 04 f8 04 	cmpwbge r4,r31,fff70ce8 <invalid_branch>
-fff70ce4:	04 04 e0 06 	cmpwbge r4,r28,fff70cf0 <valid_branch>
+fff70ce0 <cmpbxx_op>:
+fff70ce0:	54 42 10 3a 	rlwinm  r2,r2,2,0,29
+fff70ce4:	7c 9c 12 14 	add     r4,r28,r2
+fff70ce8:	04 04 e8 04 	cmpwbge r4,r29,fff70cf0 <invalid_branch>
+fff70cec:	04 04 e0 06 	cmpwbge r4,r28,fff70cf8 <valid_branch>
 
-fff70ce8 <invalid_branch>:
-fff70ce8:	38 40 01 13 	li      r2,275
-fff70cec:	4b ff fd 50 	b       fff70a3c <_panic>
+fff70cf0 <invalid_branch>:
+fff70cf0:	38 40 01 13 	li      r2,275
+fff70cf4:	4b ff fd 48 	b       fff70a3c <_panic>
 
-fff70cf0 <valid_branch>:
-fff70cf0:	07 01 18 06 	bb1wi   r1,3,fff70cfc <cmpbne_op>
-fff70cf4:	06 c5 00 08 	bwz     r5,fff70d04 <take_branch>
-fff70cf8:	4b ff fe c0 	b       fff70bb8 <main_loop>
-
-fff70cfc <cmpbne_op>:
-fff70cfc:	06 45 00 04 	bwnz    r5,fff70d04 <take_branch>
+fff70cf8 <valid_branch>:
+fff70cf8:	07 01 18 06 	bb1wi   r1,3,fff70d04 <cmpbne_op>
+fff70cfc:	06 c5 00 08 	bwz     r5,fff70d0c <take_branch>
 fff70d00:	4b ff fe b8 	b       fff70bb8 <main_loop>
 
-fff70d04 <take_branch>:
-fff70d04:	7c 9c 23 78 	mr      r28,r4
+fff70d04 <cmpbne_op>:
+fff70d04:	06 45 00 04 	bwnz    r5,fff70d0c <take_branch>
 fff70d08:	4b ff fe b0 	b       fff70bb8 <main_loop>
+
+fff70d0c <take_branch>:
+fff70d0c:	7c 9c 23 78 	mr      r28,r4
+fff70d10:	4b ff fe a8 	b       fff70bb8 <main_loop>
 
 Disassembly of section .sha3algo:
 
