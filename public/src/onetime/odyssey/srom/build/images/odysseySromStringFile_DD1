@@ -1,4 +1,4 @@
-#FSP_TRACE_v2|||Fri Aug 12 08:50:42 CDT 2022|||BUILD:/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/
+#FSP_TRACE_v2|||Wed Aug 24 07:08:09 CDT 2022|||BUILD:/esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/
 548766194||%s||tiny_syslogd.c
 940769369||I>findNextIstep prevMajorNumber:%u prevMinorNumber:%u||../public/src/runtime/odyssey/sppe/core/istep.C
 940769453||0x%08X //// [phyinit_C_initPhyConfig] Programming PptCtlStatic::DOCByteSelTg0 (dbyte=%d) to 0x%x||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//memory/odyssey/hwp//lib/phy/ody_ddrphy_phyinit_config.C
@@ -50,7 +50,7 @@
 940773259||0x%08X // [phyinit_C_initPhyConfig] Programming VrefDAC1 to 0x%x for all DBYTEs and lanes||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//memory/odyssey/hwp//lib/phy/ody_ddrphy_phyinit_config.C
 940773374||E>SbeRegAccess::updateSbeStep Failed to update SBE step to messaging register. RC: 0x%08X||../public/src/runtime/odyssey/sppe/core/sberegaccess.C
 940773414||E>sbeHandleIstep Failed. rc[0x%X]||../public/src/runtime/odyssey/sppe/core/istep.C
-940773459||E>assertion failed: max_size() > size()||../public/src/runtime/odyssey/sppe/plat/targeting/target_service.C
+940773459||E>assertion failed: max_size() > size()||/esw/user/nfs/akhis777/myworkspace/sbe/genfiles//runtime//odyssey/sppe//attribute.C
 940773485||I> sromthreadroutine Current Calculated Secure Boot value 0x%08x||../public/src/onetime/odyssey/srom/core/threadroutine.C
 940773646||Reading CLOCK_STAT_NSL register||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//hwp/generic/perv/poz_perv_mod_chiplet_clocking.C
 940773799||insertFromRight(): Len > input buffer||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//hwp/odyssey/perv/ody_lbist.C
@@ -101,7 +101,7 @@
 940779393||Programming PllCtrl2::PllFreqSel to 0x%x based on DfiClk frequency = %d.||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//memory/odyssey/hwp//lib/phy/ody_ddrphy_phyinit_config.C
 940779500||I> sromthreadroutine SROM Secure Boot Control Measurement Reg Value: 0x%08x||../public/src/onetime/odyssey/srom/core/threadroutine.C
 940779505||E>Archive is compressed, but compression support is not enabled||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//common/utils/imageProcs/archive.C
-940779947||E>assertion failed: false||../public/src/runtime/odyssey/sppe/plat/targeting/target_service.C
+940779947||E>assertion failed: false||/esw/user/nfs/akhis777/myworkspace/sbe/genfiles//runtime//odyssey/sppe//attribute.C
 940780082||E>scratch_free: Block header corrupted, halting! ptr=%p header=0x%08X%08X||../public/src/onetime/common/srom/core/shv.C
 940780084||0x%08X //// [phyinit_C_initPhyConfig] Pstate=%d, Programming DqDqsRcvCntrl Byte=%d||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//memory/odyssey/hwp//lib/phy/ody_ddrphy_phyinit_config.C
 940780577||ERROR:OPCG DONE BIT NOT SET||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//hwp/generic/perv/poz_perv_mod_chiplet_clocking.C
@@ -166,6 +166,7 @@
 940785922||E>sbefifo_hwp_data_ostream::put(): 1 word PBA write failed in accessWithBuffer||../public/src/runtime/odyssey/sppe/hwpf/plat_hwp_data_stream.C
 940786075||Drop chiplet fence||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//hwp/generic/perv/poz_chiplet_startclocks.C
 940786112||//// - DfiClk PVT variations||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//memory/odyssey/hwp//lib/phy/ody_ddrphy_phyinit_config.C
+940786286||I> sbeGetRingWrap Ring Address 0x%08X User Ring Mode 0x%04X Length in Bits 0x%08X||../public/src/runtime/odyssey/sppe/core/sbecmdringaccess.C
 940786313||Calling mod_abist_cleanup ...||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//hwp/odyssey/perv/ody_tp_arrayinit_cleanup.C
 940786317||0x%08X //// [phyinit_C_initPhyConfig] Pstate=%d, Memclk=%dMHz, Programming CalUclkInfo::CalUClkTicksPer1uS to 0x%x||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//memory/odyssey/hwp//lib/phy/ody_ddrphy_phyinit_config.C
 940786415||I>Prefix Hdr: flags : %X||../public/src/onetime/common/srom/core/shv.C
@@ -219,7 +220,7 @@
 940790981||Cleanup all SCOM registers||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//hwp/generic/perv/poz_bist.C
 940791052||0x%08X //// [phyinit_C_initPhyConfig] Pstate=%d,  Memclk=%dMHz, Programming D5ACSM0RxValPulse to %d||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//memory/odyssey/hwp//lib/phy/ody_ddrphy_phyinit_config.C
 940791661||0x%08X //// [phyinit_C_initPhyConfig] Pstate=%d, Memclk=%dMHz, Programming DqPreamblePatternU1::EnTxDqPreamblePatternU1 to 0x%x||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//memory/odyssey/hwp//lib/phy/ody_ddrphy_phyinit_config.C
-940791682||E>getFapiTargetType() called for PPE_TYPE 0x%X||../public/src/runtime/odyssey/sppe/plat/targeting/target_service.C
+940791682||E>getFapiTargetType() called for PPE_TYPE 0x%X||/esw/user/nfs/akhis777/myworkspace/sbe/genfiles//runtime//odyssey/sppe//attribute.C
 940791683||E> checkIndirectAndDoScom pib error reading status register||../public/src/runtime/odyssey/sppe/hwpf/plat_hw_access.C
 940791862||I> sbeSyncCommandProcessor_routine Processing command from client :0x%01X||../public/src/runtime/odyssey/sppe/core/sbecmdprocessor.C
 940792072||E>sbeDsSendRespHdr  FAPI RC:0x%08X||../public/src/runtime/common/core/sbeFifoMsgUtils.C
@@ -253,7 +254,7 @@
 940794192||E> sromthreadroutine Halting PPE...||../public/src/onetime/odyssey/srom/core/threadroutine.C
 940794331||I>No problemo with stack!!!||../public/src/onetime/common/srom/core/shv.C
 940794340||0x%08X //// [phyinit_C_initPhyConfig] Pstate=%d, Memclk=%dMHz, Programming ATxImpedance::ADrvStrenN to 0x%x||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//memory/odyssey/hwp//lib/phy/ody_ddrphy_phyinit_config.C
-940794354||E>assertion failed: index < size()||../public/src/runtime/odyssey/sppe/plat/targeting/target_service.C
+940794354||E>assertion failed: index < size()||/esw/user/nfs/akhis777/myworkspace/sbe/genfiles//runtime//odyssey/sppe//attribute.C
 940794611||E>sbeHandleIstep  Invalid Istep. major:%u minor:%u||../public/src/runtime/odyssey/sppe/core/istep.C
 940794674||0x%08X //// [phyinit_C_initPhyConfig] Pstate=%d, Memclk=%dMHz, Programming DqsPreambleControl::PositionDfeInit to 0x%x||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//memory/odyssey/hwp//lib/phy/ody_ddrphy_phyinit_config.C
 940794877||0x%08X //// [phyinit_C_initPhyConfig] Enabling DBYTE %d RxPadSandby to save power.||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//memory/odyssey/hwp//lib/phy/ody_ddrphy_phyinit_config.C
@@ -291,7 +292,7 @@
 940798440||CLK_REGION buffer value (i_clock_regions) : %#018lX||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//hwp/generic/perv/poz_perv_mod_chiplet_clocking.C
 940798509||0x%08X //// [phyinit_C_initPhyConfig] Pstate=%d, Memclk=%dMHz, Programming ATxImpedance::ATxCalBaseN to 0x%x||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//memory/odyssey/hwp//lib/phy/ody_ddrphy_phyinit_config.C
 940798547||E>append_file: Invalid parms. i_data: %p i_dataSize: %x i_fname: %p||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//common/utils/imageProcs/archive.C
-940798672||E>assertion failed: n < max_size()||../public/src/runtime/odyssey/sppe/plat/targeting/target_service.C
+940798672||E>assertion failed: n < max_size()||/esw/user/nfs/akhis777/myworkspace/sbe/genfiles//runtime//odyssey/sppe//attribute.C
 940798864||E> valid_ver_alg FAILED: bad signature algorithm version||../public/src/onetime/common/srom/core/shv.C
 940798932||E> SROM SBE_main PK Initialization failed for SROM image||../public/src/onetime/odyssey/srom/core/main.C
 940799241||E>assertion failed: NULL != o_pData||../public/src/runtime/common/core/sbeFifoMsgUtils.C
@@ -381,6 +382,7 @@
 940807688||Wait for clock start/stop command to be done. Polling for OPCG_DONE||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//hwp/generic/perv/poz_perv_mod_chiplet_clocking.C
 940807933||////     For MemClk frequency < 933MHz, the valid range of ARdPtrInitVal_p0[3:0] is: 1-5||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//memory/odyssey/hwp//lib/phy/ody_ddrphy_phyinit_config.C
 940808064||GET-CFAM ACCESS via SBE is NOOP!||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//hwp/odyssey/perv/ody_lbist.C
+940808286||I> sbeGetRing  hwp streams created||../public/src/runtime/odyssey/sppe/core/sbecmdringaccess.C
 940808439||Reading CLOCK_STAT_ARY register||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//hwp/generic/perv/poz_perv_mod_chiplet_clocking.C
 940808575||E>scratch_free: Attempted to free a scratch block that is not at the bottom, halting! ptr=%p bottom=0x%X||../public/src/onetime/common/srom/core/shv.C
 940808662||E>assertion failed: num >= 0 && num <= 16||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//common/utils/imageProcs/tinflate.C
@@ -440,7 +442,7 @@
 940815084||//// - DfiClk skew||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//memory/odyssey/hwp//lib/phy/ody_ddrphy_phyinit_config.C
 940815174||E> Pak get image start pointer Failed||../public/src/onetime/odyssey/srom/bldrloader/loadbldr.C
 940815269||I>sbe_target_service getChildren with filter||../public/src/runtime/odyssey/sppe/plat/targeting/target_service.C
-940815270||E>assertion failed: n < size()||../public/src/runtime/odyssey/sppe/plat/targeting/target_service.C
+940815270||E>assertion failed: n < size()||/esw/user/nfs/akhis777/myworkspace/sbe/genfiles//runtime//odyssey/sppe//attribute.C
 940815344||Prepare for CBS start.||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//hwp/generic/perv/poz_perv_mod_misc.C
 940815427||opcg_count = %#018lx||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//hwp/generic/perv/poz_bist.C
 940815446||E>initialize: Unaligned file header: %p||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//common/utils/imageProcs/archive.C
@@ -544,6 +546,7 @@
 940825456||E>Attempting to get stored data pointer for compressed file||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//common/utils/imageProcs/archive.C
 940825680||I>sbeUpFifoPerformReset||../public/src/runtime/odyssey/sppe/hwpf/plat_hwp_data_stream.C
 940825710||0x%08X //// [phyinit_C_initPhyConfig] Start of dwc_ddrphy_phyinit_C_initPhyConfig()||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//memory/odyssey/hwp//lib/phy/ody_ddrphy_phyinit_config.C
+940825770||E> sbeGetScom sbeGetScom failed, scomAddr[0x%08X%08X]||../public/src/runtime/odyssey/sppe/core/sbecmdscomaccess.C
 940825800||I> verifySecureHdr Sanity Check: Invalid Container size||../public/src/onetime/common/srom/core/shv.C
 940825868||E> ROM_verify FAILED : unauthorized SW ecid||../public/src/onetime/common/srom/core/shv.C
 940825970||0x%08X //// [phyinit_C_initPhyConfig] Programming ATxOdtDrvStren of ANIB_%d to 0x%x||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//memory/odyssey/hwp//lib/phy/ody_ddrphy_phyinit_config.C
@@ -581,7 +584,7 @@
 940828860||E> Pak Read for metadata Failed. Rc: %x||../public/src/common/pakwrapper/pakwrapper.C
 940828943||Programming PllTestModeHi to 0x%x based on DfiClk frequency = %d.||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//memory/odyssey/hwp//lib/phy/ody_ddrphy_phyinit_config.C
 940829094||I> bldrthreadroutine Enforcement Enabled.||../public/src/onetime/odyssey/bldr/core/threadroutine.C
-940829252||E>assertion failed: NULL != iv_poolPtr||../public/src/runtime/odyssey/sppe/plat/targeting/target_service.C
+940829252||E>assertion failed: NULL != iv_poolPtr||/esw/user/nfs/akhis777/myworkspace/sbe/genfiles//runtime//odyssey/sppe//attribute.C
 940829313||I> bldrthreadroutine Scratch valid bit not set for MBX11 .Defaulting mbx11 to 0x00||../public/src/onetime/odyssey/bldr/core/threadroutine.C
 940829652||E> sromthreadroutine HRESET Path: Previous Measurement regs value dont match with current calculated value||../public/src/onetime/odyssey/srom/core/threadroutine.C
 940829772||SKIP_LAST_CLOCK not yet implemented; check back later||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//hwp/generic/perv/poz_bist.C
@@ -609,6 +612,7 @@
 940831647||Poll for DONE or HALT||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//hwp/generic/perv/poz_bist.C
 940831678||E> sbeUpFifoDeq_mult sbeUpFifoAckEot failed,l_rc=[0x%08X], Fifo Type is:[%02X]||../public/src/runtime/common/core/sbeFifoMsgUtils.C
 940831721||I> bldrthreadroutine Prefix Hdr Flags 0x%08x||../public/src/onetime/odyssey/bldr/core/threadroutine.C
+940831858||E> sbePutScom sbePutScom failure data, scomAddr[0x%08X%08X], scomData[0x%08X%08X]||../public/src/runtime/odyssey/sppe/core/sbecmdscomaccess.C
 940832002||OPCG_DONE observed||/esw/user/nfs/akhis777/myworkspace/sbe/public/src/import/public//hwp/generic/perv/poz_perv_mod_bist.C
 940832072||I> bldrthreadroutine Disabling SCOM Filtering in Imprint/Lab Mode||../public/src/onetime/odyssey/bldr/core/threadroutine.C
 940832113||E> sbeCommandReceiver_routine SBE FIFO reset received||../public/src/runtime/odyssey/sppe/core/sbecmdreceiver.C

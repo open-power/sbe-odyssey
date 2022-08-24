@@ -402,9 +402,9 @@ Linker script and memory map
                 0x00000000fff70400                __system_reset_handler
                 0x00000000fff70980                . = 0xfff70980
 
-.cmnsrominit    0x00000000fff70980      0x38c
+.cmnsrominit    0x00000000fff70980      0x394
  *\libcmnsrominit.a:*(.text .text* .dtors .dtors.* .rodata*)
- .text          0x00000000fff70980      0x38c /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/init/libcmnsrominit.a(cmdtable.o)
+ .text          0x00000000fff70980      0x394 /esw/user/nfs/akhis777/myworkspace/sbe/builddir/public/src/onetime/common/srom/init/libcmnsrominit.a(cmdtable.o)
                 0x00000000fff70990                locate_seeprom_file
                 0x00000000fff70b30                run_cmd_tables
                 0x00000000fff71110                . = 0xfff71110
