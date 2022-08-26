@@ -72,12 +72,15 @@ void print_bist_params(const bist_params& i_params)
     FAPI_DBG("program = %s", i_params.program);
     FAPI_DBG("ring_patch = %s", i_params.ring_patch);
     FAPI_DBG("chiplets = %#018lx", i_params.chiplets);
+    FAPI_DBG("uc_go_chiplets = %#018lx", i_params.uc_go_chiplets);
     FAPI_DBG("flags = %#010x", i_params.flags);
     FAPI_DBG("opcg_count = %lu", i_params.opcg_count);
     FAPI_DBG("idle_count = %lu", i_params.idle_count);
-    FAPI_DBG("max_polls = %u", i_params.max_polls);
     FAPI_DBG("linear_stagger = %lu", i_params.linear_stagger);
     FAPI_DBG("zigzag_stagger = %lu", i_params.zigzag_stagger);
+    FAPI_DBG("max_polls = %u", i_params.max_polls);
+    FAPI_DBG("poll_delay = %u", i_params.poll_delay);
+    FAPI_DBG("scan0_types = %#06x", i_params.scan0_types);
     FAPI_DBG("base_regions = %#06x", i_params.base_regions);
 
     for (uint8_t chiplet_id = 0; chiplet_id < 64; chiplet_id++)
@@ -97,6 +100,12 @@ ReturnCode poz_bist_execute(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > & i_chiplets_target,
     const bist_params& i_params, const uint16_t i_enum_condition_a, const uint16_t i_enum_condition_b)
 {
+    // Helper buffers produced from bist_params constituents
+    const buffer<uint64_t> l_uc_go_chiplets_buffer = i_params.uc_go_chiplets;
+
+    // Middleman variable to translate unicast chiplets into control chiplets
+    uint64_t l_ctrl_chiplets = 0;
+
     ////////////////////////////////////////////////////////////////
     // STAGE: REG_SETUP
     ////////////////////////////////////////////////////////////////
@@ -124,6 +133,13 @@ ReturnCode poz_bist_execute(
         }
         else
         {
+            // If uc_go_chiplets is equal to main chiplets mask, leave control chiplets as 0
+            // Else, plug uc_go_chiplets into control chiplets
+            if (i_params.uc_go_chiplets != i_params.chiplets)
+            {
+                l_ctrl_chiplets = i_params.uc_go_chiplets;
+            }
+
             // TODO create sequence / weight enums for condition_a / condition_b
             FAPI_TRY(mod_lbist_setup(i_chiplets_target,
                                      i_params.base_regions,
@@ -131,6 +147,7 @@ ReturnCode poz_bist_execute(
                                      i_params.idle_count,
                                      i_params.linear_stagger,
                                      i_params.chiplets_regions,
+                                     l_ctrl_chiplets,
                                      i_enum_condition_a,
                                      i_enum_condition_b));
         }
@@ -141,15 +158,24 @@ ReturnCode poz_bist_execute(
     ////////////////////////////////////////////////////////////////
     if (i_params.flags & i_params.bist_flags::DO_GO)
     {
-        // TODO pass in UNICAST_GO to go function once supported
-        if (i_params.flags & i_params.bist_flags::UNICAST_GO)
-        {
-            FAPI_DBG("UNICAST_GO not yet implemented; check back later");
-            return FAPI2_RC_FALSE;
-        }
-
         FAPI_INF("Start BIST with OPCG GO");
-        FAPI_TRY(mod_opcg_go(i_chiplets_target));
+
+        if (i_params.uc_go_chiplets)
+        {
+            FAPI_INF("Enforcing OPCG_GO by chiplet via unicast");
+
+            for (auto& chiplet : i_chiplets_target.getChildren<TARGET_TYPE_PERV>())
+            {
+                if (l_uc_go_chiplets_buffer.getBit(chiplet.getChipletNumber()))
+                {
+                    FAPI_TRY(mod_opcg_go(chiplet));
+                }
+            }
+        }
+        else
+        {
+            FAPI_TRY(mod_opcg_go(i_chiplets_target));
+        }
     }
 
     ////////////////////////////////////////////////////////////////
@@ -176,7 +202,7 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
     FAPI_INF("Entering ...");
 
     // Our pervasive target (can be multicast or unicast)
-    Target<TARGET_TYPE_PERV> l_chiplets_uc;
+    Target<TARGET_TYPE_PERV> l_chiplet;
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > l_chiplets_target;
 
     // Needed for unicast condition
@@ -210,8 +236,8 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
         {
             FAPI_DBG("Only one chiplet requested; using unicast");
             l_chiplet_number = get_set_bit_index(i_params.chiplets);
-            FAPI_TRY(mod_get_chiplet_by_number(i_target, l_chiplet_number, l_chiplets_uc));
-            l_chiplets_target = l_chiplets_uc;
+            FAPI_TRY(mod_get_chiplet_by_number(i_target, l_chiplet_number, l_chiplet));
+            l_chiplets_target = l_chiplet;
 
             // If TP BIST, don't scan0 SBE region
             if (l_chiplet_number == 1)
@@ -237,16 +263,8 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
     ////////////////////////////////////////////////////////////////
     if (i_params.flags & i_params.bist_flags::DO_SCAN0)
     {
-        if (i_params.flags & i_params.bist_flags::SCAN0_REPR)
-        {
-            FAPI_INF("Scan0 all regions");
-            FAPI_TRY(mod_scan0(l_chiplets_target, l_scan0_region, SCAN_TYPE_ALL));
-        }
-        else
-        {
-            FAPI_INF("Scan0 all regions minus repr");
-            FAPI_TRY(mod_scan0(l_chiplets_target, l_scan0_region, SCAN_TYPE_NOT_REPR));
-        }
+        FAPI_INF("Do a scan0");
+        FAPI_TRY(mod_scan0(l_chiplets_target, l_scan0_region, i_params.scan0_types));
     }
 
     ////////////////////////////////////////////////////////////////
