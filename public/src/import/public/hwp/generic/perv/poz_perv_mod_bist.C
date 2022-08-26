@@ -182,8 +182,9 @@ ReturnCode mod_lbist_setup(
     uint64_t i_lbist_start_at,
     uint64_t i_lbist_start_stagger,
     const uint16_t* i_chiplets_regions,
-    uint16_t i_lbist_sequence,
-    uint16_t i_lbist_weight)
+    const uint64_t i_ctrl_chiplets,
+    const uint16_t i_lbist_sequence,
+    const uint16_t i_lbist_weight)
 {
     FAPI_DBG("mod_lbist_setup not yet implemented; check back later");
 

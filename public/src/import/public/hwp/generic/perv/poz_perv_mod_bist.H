@@ -78,6 +78,8 @@ fapi2::ReturnCode mod_bist_reg_cleanup(
 /// @param[in]   i_lbist_start_stagger     Per target OPCG_REG1 stagger value
 /// @param[in]   i_chiplets_regions        Array of custom regions per chiplet in i_target indexed by chiplet ID
 ///                                        If zero for an index, pass; else, overwrite i_regions on that chiplet
+/// @param[in]   i_ctrl_chiplets           Mask of chiplets to set up for control mode (if 0, don't configure)
+///                                        Chiplets in i_target but not in here will be set up for receiver mode
 /// @param[in]   i_lbist_sequence          Enumerated value of single sequence to configure
 /// @param[in]   i_lbist_weight            Enumerated value of single weight to configure
 ///
@@ -89,5 +91,6 @@ fapi2::ReturnCode mod_lbist_setup(
     uint64_t i_lbist_start_at = 0xF0,
     uint64_t i_lbist_start_stagger = 0,
     const uint16_t* i_chiplets_regions = NULL,
-    uint16_t i_lbist_sequence = 0x8000,
-    uint16_t i_lbist_weight = 0x8000);
+    const uint64_t i_ctrl_chiplets = 0,
+    const uint16_t i_lbist_sequence = 0x8000,
+    const uint16_t i_lbist_weight = 0x8000);

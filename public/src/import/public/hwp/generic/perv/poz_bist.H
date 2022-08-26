@@ -34,7 +34,7 @@
 
 #include <fapi2.H>
 
-static const uint16_t BIST_PARAMS_CURRENT_VERSION = 3;
+static const uint16_t BIST_PARAMS_CURRENT_VERSION = 4;
 
 struct bist_params
 {
@@ -42,6 +42,13 @@ struct bist_params
     char program[16];                    ///< Name of program for image selection
     char ring_patch[16];                 ///< Name of patch ring image
     uint64_t chiplets;                   ///< Mask of chiplets to test
+
+    /// Mask of chiplets to configure for control mode and issue unicast OPCG_GO to.
+    /// Chiplets not in the mask but in the chiplets mask will be configured for receiver mode.
+    /// Since ABIST doesn't use control/recevier, this will just be the unicast OPCG_GO mechanic.
+    /// To do a simple unicast OPCG_GO, this variable should be equal to chiplets mask.
+    /// To instead use multicast OPCG_GO, this mask should be assigned to 0x0.
+    uint64_t uc_go_chiplets;
 
     /// Option flags
     enum bist_flags : uint32_t
@@ -56,12 +63,10 @@ struct bist_params
         DO_POLL           = 0x01000000,
         DO_REG_CLEANUP    = 0x00800000,
         DO_COMPARE        = 0x00400000,
-        SCAN0_REPR        = 0x00200000,
-        SKIP_FIRST_CLOCK  = 0x00100000,
-        SKIP_LAST_CLOCK   = 0x00080000,
-        UNICAST_GO        = 0x00040000,  ///< Trigger OPCG_GO via unicast as opposed to multicast
-        POLL_ABIST_DONE   = 0x00020000,  ///< Poll on ABIST_DONE in addition to OPCG_DONE and BIST_HALT
-        ASSERT_ABIST_DONE = 0x00010000,  ///< Assert ABIST_DONE at end of polling
+        SKIP_FIRST_CLOCK  = 0x00200000,
+        SKIP_LAST_CLOCK   = 0x00100000,
+        POLL_ABIST_DONE   = 0x00080000,  ///< Poll on ABIST_DONE in addition to OPCG_DONE and BIST_HALT
+        ASSERT_ABIST_DONE = 0x00040000,  ///< Assert ABIST_DONE at end of polling
     } flags;
 
     uint64_t opcg_count;           ///< Amount of total RUNN cycles to clock (>0x7FFFFFFFFFF for infinite)
@@ -70,12 +75,13 @@ struct bist_params
     uint64_t zigzag_stagger;       ///< Increase idle count by this much on any odd chiplet
     uint32_t max_polls;            ///< Max amount of DONE / HALT polls to issue (>0x7FFFFFFF for infinite)
     uint32_t poll_delay;           ///< Amount of delay per polling loop (both hw and sim)
+    uint16_t scan0_types;          ///< Mask of ring scan types to dictate what we will scan0
 
-    /// First, multicast write base_regions to everything in chiplets
-    /// Next, for each chiplet in chiplets, inspect the entry in chiplets_regions indexed by chiplet ID
-    /// If the entry is zero, pass; else, overwrite base_regions with the entry for that respective chiplet
-    uint16_t base_regions;         ///< Select base clock / BIST regions
-    uint16_t chiplets_regions[64]; ///< Array of custom regions per chiplet in chiplets indexed by chiplet ID
+    /// First, multicast write base_regions as clock / BIST regions to everything in chiplets.
+    /// Next, for each chiplet in chiplets, inspect the entry in chiplets_regions indexed by chiplet ID.
+    /// If the entry is zero, pass; else, overwrite base_regions with the entry for that respective chiplet.
+    uint16_t base_regions;
+    uint16_t chiplets_regions[64];
 
     uint16_t outer_loop_mask;      ///< Mask of outer loop BIST iterations to run
     uint16_t inner_loop_mask;      ///< Mask of inner loop BIST iterations to run
