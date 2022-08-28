@@ -81,8 +81,8 @@ __program_exception:
 .global __dec_interrupt
 .org    __vectors + 0x0100
 __dec_interrupt:
-/*    _pk_panic IOTA_DEC_NOT_SUPPORTED */
     __m_iota_interrupt_and_exception_handler _IOTA_SCHEDULE_REASON_DEC
+/*    _pk_panic IOTA_DEC_NOT_SUPPORTED */
 
 .global __fit_interrupt
 .org    __vectors + 0x0120
@@ -92,8 +92,8 @@ __fit_interrupt:
 .global __watchdog_interrupt
 .org    __vectors + 0x0140
 __watchdog_interrupt:
-/*   b __watchdog_interrupt  */
-    _pk_panic IOTA_WATCHDOG_NOT_SUPPORTED
+    __m_iota_interrupt_and_exception_handler _IOTA_SCHEDULE_REASON_WDG
+/*   _pk_panic IOTA_WATCHDOG_NOT_SUPPORTED */
 
 .global __virtual_exception
 .org    __vectors + 0x0160

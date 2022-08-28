@@ -137,6 +137,9 @@ void iota_run()  __attribute__((noreturn));
 #define IOTA_FIT_HANDLER(function) g_iota_fit_handler \
         = IOTA_TIMER_HANDLER(function);
 
+#define IOTA_WATCHDOG_HANDLER(function) g_iota_watchdog_handler \
+        = IOTA_TIMER_HANDLER(function);
+
 //========== IOTA INIT TASKS ===================
 #if IOTA_INIT_TASKS_ENABLE
 
@@ -272,6 +275,7 @@ extern void __iota_halt() __attribute__((noreturn));
 extern iotaTimerFuncPtr g_iota_machine_check_handler;
 extern iotaTimerFuncPtr g_iota_dec_handler;
 extern iotaTimerFuncPtr g_iota_fit_handler;
+extern iotaTimerFuncPtr g_iota_watchdog_handler;
 extern void __hwmacro_setup(void);
 
 extern uint32_t __ext_irq_handler(void);

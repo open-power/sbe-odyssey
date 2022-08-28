@@ -49,6 +49,7 @@ uint64_t g_iota_execution_stack_end __attribute__((section(".data.g_iota_executi
 // Plugin default functions
 iotaTimerFuncPtr g_iota_dec_handler = IOTA_TIMER_HANDLER(__iota_halt);
 iotaTimerFuncPtr g_iota_fit_handler = IOTA_TIMER_HANDLER(__iota_halt);
+iotaTimerFuncPtr g_iota_watchdog_handler = IOTA_TIMER_HANDLER(__iota_halt);
 iotaTimerFuncPtr g_iota_machine_check_handler = IOTA_TIMER_HANDLER(__iota_halt);
 
 extern uint32_t G_LOCAL_TIMEBASE_REGISTER __attribute__((section(".sdata")));
@@ -220,6 +221,14 @@ void _iota_schedule(uint32_t schedule_reason)
         case _IOTA_SCHEDULE_REASON_FIT:
             mtspr(SPRN_TSR, TSR_FIS); // write 1 to clear
             g_iota_fit_handler();
+            break;
+#endif
+
+#if ENABLE_WATCHDOG_TIMER
+
+        case _IOTA_SCHEDULE_REASON_WDG:
+            mtspr(SPRN_TSR, TSR_WIS); // write 1 to clear
+            g_iota_watchdog_handler();
             break;
 #endif
 
