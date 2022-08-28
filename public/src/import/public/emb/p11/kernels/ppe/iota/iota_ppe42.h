@@ -70,6 +70,7 @@
 #define _IOTA_SCHEDULE_REASON_FIT 0x0f
 #define _IOTA_SCHEDULE_REASON_DEC 0x0d
 #define _IOTA_SCHEDULE_REASON_EXT 0x0e
+#define _IOTA_SCHEDULE_REASON_WDG 0x0c
 
 #if !defined(__PPE42X__)
 
