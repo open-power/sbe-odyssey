@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -69,14 +69,7 @@ static const uint32_t MAX_INDSCOM_TIMEOUT_NS = 100000; //0.1 ns
 
 static const uint64_t DIRECT_SCOM_ADDR_MASK = 0x8000000000000000;
 static const uint64_t INDIRECT_SCOM_NEW_ADDR_MASK = 0x9000000000000000;
-// Allowed Address first 3 bits
-// 0b000 - Allowed
-// 0b10X - Not Allowed
-// 0b110 - Allowed
-// 0b111 - Allowed
-static const uint64_t SCOM_SBE_ADDR_MASK = 0xE0000000; // 0x01, 0x11, 0x00 is allowed
-static const uint64_t SCOM_MASTER_ID_MASK = 0x00F00000;
-static const uint64_t PIBMEM_SCOM_MASK = 0xFFF80000;
+
 
 // Scom types
 enum sbeScomType
@@ -219,10 +212,11 @@ fapi2::ReturnCode putscom_abs_wrap(const void *i_target,
                  handle_scom_error(l_addr, l_pibRc);
 }
 
-static ReturnCode doIndirectScom(const bool i_isRead,
-                                 const void *i_target,
-                                 const uint64_t i_addr,
-                                 uint64_t & io_data)
+
+static ReturnCode doIndirectScom (const bool i_isRead,
+                                  const void *i_target,
+                                  const uint64_t i_addr,
+                                  uint64_t & io_data)
 {
     #define SBE_FUNC " doIndirectScom "
     ReturnCode fapiRc = FAPI2_RC_SUCCESS;
@@ -232,15 +226,14 @@ static ReturnCode doIndirectScom(const bool i_isRead,
         // Zero out the indirect address location.. leave the 16bits of data
         // Get the 31-bits indirect scom address
         // OR in the 31-bits indirect address
-        uint64_t tempBuffer = ( io_data & 0x000000000000FFFF) |
-            ( i_addr & 0x7FFFFFFF00000000 );
+        uint64_t tempBuffer = ( io_data & 0x000000000000FFFF) | ( i_addr & 0x7FFFFFFF00000000 );
 
         // zero out the indirect address from the buffer..
         // bit 0-31 - indirect area..
         // bit 32 - always 0
         // bit 33-47 - bcast/chipletID/port
         // bit 48-63 - local addr
-        uint32_t tempAddr = i_addr & 0x7FFFFFFF;
+        uint32_t tempAddr = (uint32_t) ( i_addr & 0x7FFFFFFF );
 
         // If we are doing a read. We need to do a write first..
         if( i_isRead)
