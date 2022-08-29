@@ -23,7 +23,7 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-import re
+import re, time
 import sys, os, subprocess
 from util import *
 from collections import namedtuple
@@ -395,6 +395,7 @@ def run_commands(main, cust, target):
                     if match:
                         break
                     if cmd.param:
+                        target.delay(2000, 100)
                         timeout -= 1
                         if not timeout:
                             print("Polling timed out without match, error code 0x%X" % cmd.param)
@@ -414,6 +415,8 @@ class FakeTarget(object):
         return self
     def putScom(self, address, data):
         pass
+    def delay(self, cycles, ms):
+        time.sleep(ms * 0.001)
 
 def cmd_run(args):
     main = load_commands(args.main)
@@ -426,6 +429,7 @@ def cmd_run(args):
         with pyecmd.Ecmd(args=args.ecmd_args):
             for target in pyecmd.loopTargets(args.chip, pyecmd.ECMD_SELECTED_TARGETS_LOOP_DEFALL):
                 print(target)
+                target.delay = pyecmd.delay
                 run_commands(main, cust, target)
 
 def cmd_reverse(args):
