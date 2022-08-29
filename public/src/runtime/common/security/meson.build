@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022,2024
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,5 +24,7 @@
 # IBM_PROLOG_END_TAG
 
 
-abs_runtime_cmn_security_c_path = files('securityutils.C',
-                                        )
+abs_runtime_cmn_security_utils_c_path = files('securityutils.C')
+
+abs_runtime_cmn_scom_filtering_c_path = files('sbesecurity.C',
+                                            'securityalgo.C')

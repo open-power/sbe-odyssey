@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -40,6 +40,7 @@ signHashList = find_program('build/utils/signHashList')
 tracehashwrap = find_program('tools/trace/tracehashwrap.py')
 genMeasuredHash = find_program('build/utils/genMeasuredHash.sh')
 chipoptablegen = find_program('runtime/tools/chipoptable.py')
+securityRegListGen = find_program('runtime/tools/security/securityreglistgen.py')
 
 # we are using multiple tools for generating source code and using run_command
 #   for invoking these tools. So, whenever these tools or files passed to tool is
