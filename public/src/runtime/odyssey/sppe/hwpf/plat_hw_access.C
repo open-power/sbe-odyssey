@@ -77,8 +77,6 @@ static const uint64_t PIBMEM_SCOM_MASK = 0xFFF80000;
 enum sbeScomType
 {
     SBE_SCOM_TYPE_DIRECT = 0,      // Direct scom
-    SBE_SCOM_TYPE_INDIRECT1 = 1,  // Indirect scom. Old form
-    SBE_SCOM_TYPE_INDIRECT_2 = 2,  // Indirect scom. New form
 };
 
 static uint32_t getEffectiveAddress(const uint32_t *i_target, const uint32_t i_addr, bool isIndirectScom = false)
@@ -218,7 +216,6 @@ uint32_t platcheckIndirectAndDoScom( const bool i_isRead,
     #define SBE_FUNC " checkIndirectAndDoScom "
     uint32_t elapsedIndScomTimeNs = 0;
     uint64_t tempBuffer = io_data;
-    sbeScomType scomType = SBE_SCOM_TYPE_DIRECT;
     io_fapiRc = FAPI2_RC_SUCCESS;
     uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
     do
@@ -239,35 +236,15 @@ uint32_t platcheckIndirectAndDoScom( const bool i_isRead,
             }
             break;
         }
-        // We are performing an indirect scom.
-        if( ( i_addr & INDIRECT_SCOM_NEW_ADDR_MASK ) ==
-                                        INDIRECT_SCOM_NEW_ADDR_MASK )
-        {
-            scomType = SBE_SCOM_TYPE_INDIRECT_2;
-            if( i_isRead )
-            {
-                // Not allowed read on new format.
-                SBE_ERROR(SBE_FUNC "Read not allowed on new format");
-                rc = SBE_SEC_INVALID_ADDRESS_PASSED;
-                break;
-            }
-            // Zero out the indirect address location.. leave the 52bits of data
-            // Get the 12bit indirect scom address
-            // OR in the 20bit indirect address
-            tempBuffer = ( tempBuffer & 0x000FFFFFFFFFFFFF ) |
-                                    ( ( i_addr & 0x00000FFF00000000) << 20 );
-        }
-        else
-        {
-            scomType = SBE_SCOM_TYPE_INDIRECT1;
-            // Zero out the indirect address location.. leave the 16bits of data
-            // Get the 20bit indirect scom address
-            // OR in the 20bit indirect address
-            tempBuffer = ( tempBuffer & 0x000000000000FFFF) |
-                                    ( i_addr & 0x000FFFFF00000000 );
-        }
 
-        SBE_INFO(SBE_FUNC "Performing Indirect scom. Type :%u", scomType);
+        // We are performing an indirect scom.
+        // Zero out the indirect address location.. leave the 16bits of data
+        // Get the 31-bits indirect scom address
+        // OR in the 31-bits indirect address
+        tempBuffer = ( tempBuffer & 0x000000000000FFFF) |
+                     ( i_addr & 0x7FFFFFFF00000000 );
+
+        SBE_INFO(SBE_FUNC "Performing Indirect scom");
 
         // zero out the indirect address from the buffer..
         // bit 0-31 - indirect area..
@@ -292,8 +269,7 @@ uint32_t platcheckIndirectAndDoScom( const bool i_isRead,
         // IO_buffer with the imbedded indirect scom addr.
         io_fapiRc = putscom_abs_wrap (i_target, tempAddr, tempBuffer, true);
 
-        if( ( io_fapiRc != FAPI2_RC_SUCCESS ) ||
-                ( scomType == SBE_SCOM_TYPE_INDIRECT_2 ))
+        if( io_fapiRc != FAPI2_RC_SUCCESS )
         {
             break;
         }
