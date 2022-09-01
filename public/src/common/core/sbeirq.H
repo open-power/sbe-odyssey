@@ -40,15 +40,15 @@
 #define SBE_IRQ_START1          1   /* SBE Start Vector 1 */
 #define SBE_IRQ_INTR0           2   /* SBE Interrupt S0 */
 #define SBE_IRQ_INTR1           3   /* SBE Interrupt S1 */
-#define SBE_IRQ_DRTM_REQ        4   /* DRTM late launch request */
 #define SBE_IRQ_SBEFIFO_RESET   5   /* FIFO - Reset request from SE */
 #define SBE_IRQ_SBEFIFO_DATA    6   /* FIFO - Incoming Data Available */
-#define SBE_IRQ_HOST_PSU_INTR   7   /* PSU  - Incoming Data Available */
-#define SBE_IRQ_SBEHFIFO_RESET  10  /* Host FIFO - SBE HFIFO RESET*/
-#define SBE_IRQ_SBEHFIFO_DATA   11  /* Host FIFO - SBE HFIFO DATA*/
 
+#define SBE_IRQ_RESERVED_4   4
+#define SBE_IRQ_RESERVED_7   7
 #define SBE_IRQ_RESERVED_8   8
 #define SBE_IRQ_RESERVED_9   9
+#define SBE_IRQ_RESERVED_10 10
+#define SBE_IRQ_RESERVED_11 11
 #define SBE_IRQ_RESERVED_12 12
 #define SBE_IRQ_RESERVED_13 13
 #define SBE_IRQ_RESERVED_14 14
