@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -43,13 +44,8 @@
     SBE_IRQ_START1              STD_IRQ_TYPE_EDGE    STD_IRQ_POLARITY_RISING    STD_IRQ_MASKED \
     SBE_IRQ_INTR0               STD_IRQ_TYPE_LEVEL   STD_IRQ_POLARITY_RISING    STD_IRQ_MASKED \
     SBE_IRQ_INTR1               STD_IRQ_TYPE_LEVEL   STD_IRQ_POLARITY_RISING    STD_IRQ_MASKED \
-    SBE_IRQ_DRTM_REQ            STD_IRQ_TYPE_LEVEL   STD_IRQ_POLARITY_RISING    STD_IRQ_MASKED \
     SBE_IRQ_SBEFIFO_RESET       STD_IRQ_TYPE_LEVEL   STD_IRQ_POLARITY_RISING    STD_IRQ_MASKED \
     SBE_IRQ_SBEFIFO_DATA        STD_IRQ_TYPE_LEVEL   STD_IRQ_POLARITY_RISING    STD_IRQ_MASKED \
-    SBE_IRQ_HOST_PSU_INTR       STD_IRQ_TYPE_LEVEL   STD_IRQ_POLARITY_RISING    STD_IRQ_MASKED \
-    SBE_IRQ_SBEHFIFO_RESET      STD_IRQ_TYPE_LEVEL   STD_IRQ_POLARITY_RISING    STD_IRQ_MASKED \
-    SBE_IRQ_SBEHFIFO_DATA       STD_IRQ_TYPE_LEVEL   STD_IRQ_POLARITY_RISING    STD_IRQ_MASKED \
-
 
 /*
  * @brief This 64 bit mask specifies which of the interrupts are not to be used.
@@ -57,8 +53,12 @@
  */
 #define APPCFG_IRQ_INVALID_MASK \
 (\
+   STD_IRQ_MASK64(SBE_IRQ_RESERVED_4) | \
+   STD_IRQ_MASK64(SBE_IRQ_RESERVED_7) | \
    STD_IRQ_MASK64(SBE_IRQ_RESERVED_8) | \
    STD_IRQ_MASK64(SBE_IRQ_RESERVED_9) |  \
+   STD_IRQ_MASK64(SBE_IRQ_RESERVED_10) |  \
+   STD_IRQ_MASK64(SBE_IRQ_RESERVED_11) |  \
    STD_IRQ_MASK64(SBE_IRQ_RESERVED_12) |  \
    STD_IRQ_MASK64(SBE_IRQ_RESERVED_13) |  \
    STD_IRQ_MASK64(SBE_IRQ_RESERVED_14) |  \

@@ -73,12 +73,6 @@ void sbe_interrupt_handler (void *i_pArg, PkIrqId i_irq)
             pk_irq_disable(SBE_IRQ_SBEFIFO_DATA);
             break;
 
-#ifdef _S0_
-        case SBE_IRQ_INTR0:
-            SBE_GLOBAL->sbeIntrSource.setIntrSource(SBE_INTERRUPT_ROUTINE,
-                                            SBE_INTERFACE_S0);
-            break;
-#endif
         default:
             SBE_ERROR(SBE_FUNC"Unknown IRQ, assert");
             assert(0);
@@ -104,9 +98,6 @@ void sbe_interrupt_handler (void *i_pArg, PkIrqId i_irq)
 static uint32_t G_supported_irqs[] = {
                                         SBE_IRQ_SBEFIFO_DATA,
                                         SBE_IRQ_SBEFIFO_RESET,
-#ifdef _S0_
-                                        SBE_IRQ_INTR0,
-#endif
                                      };
 
 // Create the Vector mask for all the interrupts in SBE,
