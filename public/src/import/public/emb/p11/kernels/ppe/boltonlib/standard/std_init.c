@@ -44,6 +44,8 @@
 void
 __hwmacro_setup(void)
 {
+#ifndef __SBE__
+
     //mask all interrupts to prevent spurious pulse to PPE
     out64(STD_LCL_EIMR, 0xffffffffffffffffull);
 
@@ -62,4 +64,21 @@ __hwmacro_setup(void)
     //wait for the last operation to complete
     sync();
 
+#else
+
+    // Below piece of code does nothing in case of SBE.
+    // This is just added so as to not discard global variables
+    asm(
+        "blr \n"
+        "nop \n"
+        "nop \n"
+        "nop \n"
+        "nop \n"
+    );
+
+    g_ext_irqs_enable = 0xdead;
+    g_ext_irqs_type = 0xc0de;
+    g_ext_irqs_polarity = 0xffdc;
+
+#endif
 }
