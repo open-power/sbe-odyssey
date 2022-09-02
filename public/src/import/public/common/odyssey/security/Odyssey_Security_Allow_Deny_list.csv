@@ -1,0 +1,2 @@
+Version,Chiplet,Base Address,Chiplet Id - range,Bit Mask,User,Register name,Description/Usage,Type
+,TP,00F001A,0x00,,HWSV,PCBCTL_INTERRUPT_TYPE_REG,,write_allowlist
