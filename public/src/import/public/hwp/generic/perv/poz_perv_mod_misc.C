@@ -147,6 +147,7 @@ ReturnCode mod_cbs_start(
     FAPI_TRY(mod_cbs_start_prep(i_target, i_start_sbe, i_scan0_clockstart));
 
     FAPI_INF("Start CBS.");
+    FAPI_TRY(CBS_CS.getCfam(i_target));
     CBS_CS.set_START_BOOT_SEQUENCER(1);
     FAPI_TRY(CBS_CS.putCfam(i_target));
     // Leave START_BOOT_SEQUENCER at 1 to prevent accidental restarts
