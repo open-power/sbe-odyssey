@@ -74,7 +74,7 @@ ReturnCode poz_chiplet_clk_config(
         FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
 
         NET_CTRL0 = 0;
-        NET_CTRL0.set_PLLFORCE_OUT_EN(1);
+        NET_CTRL0.set_PLL_FORCE_OUT_EN(1);
         FAPI_TRY(NET_CTRL0.putScom_SET(l_chiplets_mc));
     }
 

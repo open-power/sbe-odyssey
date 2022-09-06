@@ -60,7 +60,7 @@ ReturnCode poz_chiplet_pll_setup(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targe
 
         FAPI_INF("Drop PLL region fences");
         CPLT_CTRL1 = 0;
-        CPLT_CTRL1.set_TC_REGION13_FENCE_DC(1);
+        CPLT_CTRL1.set_REGION13_FENCE(1);
         FAPI_TRY(CPLT_CTRL1.putScom_CLEAR(l_chiplets_mc));
 
         //with all chiplets except TP via multicast:

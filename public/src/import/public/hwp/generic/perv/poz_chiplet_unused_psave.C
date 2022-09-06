@@ -54,12 +54,12 @@ ReturnCode poz_chiplet_unused_psave(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_ta
         if (!targ.isFunctional())
         {
             FAPI_TRY(NET_CTRL0.getScom(targ));
-            NET_CTRL0.set_CHIPLET_ENABLE(0);
+            NET_CTRL0.set_CHIPLET_EN(0);
             NET_CTRL0.set_PCB_EP_RESET(1);
-            NET_CTRL0.set_TP_FENCE_PCB(1);
+            NET_CTRL0.set_FENCE_EN(1);
             FAPI_TRY(NET_CTRL0.putScom(targ));
 
-            NET_CTRL0.set_PLLFORCE_OUT_EN(0);
+            NET_CTRL0.set_PLL_FORCE_OUT_EN(0);
             NET_CTRL0.set_CLK_ASYNC_RESET(1);
             NET_CTRL0.set_LVLTRANS_FENCE(1);
             FAPI_TRY(NET_CTRL0.putScom(targ));

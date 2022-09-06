@@ -66,7 +66,7 @@ ReturnCode poll_opcg_done(
         FAPI_INF("Getting CPLT_STAT0 register value");
         FAPI_TRY(CPLT_STAT0.getScom(i_target));
 
-        if (CPLT_STAT0.get_CC_CTRL_OPCG_DONE_DC() || (i_poll_abist_done && CPLT_STAT0.get_ABIST_DONE_DC()))
+        if (CPLT_STAT0.get_OPCG_DONE() || (i_poll_abist_done && CPLT_STAT0.get_ABIST_DONE()))
         {
             break;
         }
@@ -114,7 +114,7 @@ ReturnCode mod_abist_setup(
     FAPI_INF("Entering ...");
     FAPI_INF("Switch dual-clocked arrays to ABIST clock domain.");
     CPLT_CTRL0.flush<0>();
-    CPLT_CTRL0.set_CTRL_CC_ABSTCLK_MUXSEL_DC(1);
+    CPLT_CTRL0.set_ABSTCLK_MUXSEL(1);
     FAPI_TRY(CPLT_CTRL0.putScom_SET(i_target));
 
     FAPI_INF("Set up BISTed regions.");
@@ -247,7 +247,7 @@ ReturnCode mod_abist_poll(
 
     FAPI_TRY(CPLT_STAT0.getScom(i_target));
     FAPI_DBG("Checking sram abist done.");
-    FAPI_ASSERT(CPLT_STAT0.get_ABIST_DONE_DC() == 1,
+    FAPI_ASSERT(CPLT_STAT0.get_ABIST_DONE() == 1,
                 fapi2::POZ_SRAM_ABIST_DONE_BIT_ERR()
                 .set_PERV_CPLT_STAT0(CPLT_STAT0)
                 .set_SELECT_SRAM(true)
@@ -279,7 +279,7 @@ ReturnCode mod_abist_cleanup(
 
     FAPI_INF("Clear CPLT_CTRL0 register.");
     CPLT_CTRL0.flush<0>();
-    CPLT_CTRL0.set_CTRL_CC_ABSTCLK_MUXSEL_DC(1);
+    CPLT_CTRL0.set_ABSTCLK_MUXSEL(1);
     FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
 
     FAPI_INF("Clear BIST register.");
@@ -421,7 +421,7 @@ ReturnCode mod_start_stop_clocks(
     SCAN_REGION_TYPE_t SCAN_REGION_TYPE;
     CPLT_CTRL1_t CPLT_CTRL1;
     CPLT_CTRL1 = 0;
-    CPLT_CTRL1.insertFromRight<CPLT_CTRL1_TC_REGION0_FENCE_DC, 16>(i_clock_regions);
+    CPLT_CTRL1.insertFromRight<CPLT_CTRL1_REGION0_FENCE, 16>(i_clock_regions);
 
     FAPI_INF("Entering ...");
     FAPI_INF("Clear SCAN_REGION_TYPE register");
@@ -486,7 +486,7 @@ ReturnCode mod_align_regions(
 
     FAPI_INF("Enable alignment");
     CPLT_CTRL0 = 0;
-    CPLT_CTRL0.set_CTRL_CC_FORCE_ALIGN(1);
+    CPLT_CTRL0.set_FORCE_ALIGN(1);
     FAPI_TRY(CPLT_CTRL0.putScom_SET(i_target));
 
     FAPI_INF("Clear 'chiplet is aligned' indication");
@@ -508,7 +508,7 @@ ReturnCode mod_align_regions(
         FAPI_INF("Getting CPLT_STAT0 register value");
         FAPI_TRY(CPLT_STAT0.getScom(l_mcast_and_target));
 
-        if (CPLT_STAT0.get_CC_CTRL_CHIPLET_IS_ALIGNED_DC() == 1)
+        if (CPLT_STAT0.get_CHIPLET_IS_ALIGNED() == 1)
         {
             break;
         }
@@ -529,7 +529,7 @@ ReturnCode mod_align_regions(
 
     FAPI_INF("Disable alignment");
     CPLT_CTRL0 = 0;
-    CPLT_CTRL0.set_CTRL_CC_FORCE_ALIGN(1);
+    CPLT_CTRL0.set_FORCE_ALIGN(1);
     FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
 
     FAPI_TRY(fapi2::delay(DELAY_10us, SIM_CYCLE_DELAY));

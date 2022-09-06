@@ -72,7 +72,7 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, c
 
         FAPI_TRY(NET_CTRL0.getScom(l_chiplets_mc));
         NET_CTRL0.set_PCB_EP_RESET(0);
-        NET_CTRL0.set_CHIPLET_ENABLE(1);
+        NET_CTRL0.set_CHIPLET_EN(1);
         FAPI_TRY(NET_CTRL0.putScom(l_chiplets_mc));
 
         FAPI_INF("Set up clock controllers (decimal 9 -> 10 cycles) ");

@@ -412,14 +412,14 @@ ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
 
     FAPI_DBG("Disable alignment pulse");
     CPLT_CTRL0.flush<0>();
-    CPLT_CTRL0.set_CTRL_CC_FORCE_ALIGN(1);
+    CPLT_CTRL0.set_FORCE_ALIGN(1);
     FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(l_tpchiplet));
 
     FAPI_TRY(delay(DELAY_10us, SIM_CYCLE_DELAY));
 
     FAPI_DBG("Allow chiplet PLATs to enter flush");
     CPLT_CTRL0.flush<0>();
-    CPLT_CTRL0.set_CTRL_CC_FLUSHMODE_INH(1);
+    CPLT_CTRL0.set_FLUSHMODE_INH(1);
     FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(l_tpchiplet));
 
 fapi_try_exit:
