@@ -93,4 +93,8 @@
     <name>ATTR_SIM_CHIPLET_MASK</name>
     <value>0xFFFFFFFFFFFFFFFF</value>
   </entry>
+  <entry>
+    <name>ATTR_SCAN0_SCAN_RATIO</name>
+    <value>0x0</value>
+  </entry>
 </entries>

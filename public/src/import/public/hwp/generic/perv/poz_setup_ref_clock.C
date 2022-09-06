@@ -110,6 +110,7 @@ ReturnCode poz_setup_ref_clock(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYP
     ROOT_CTRL6 = 0;
     ROOT_CTRL6.set_TC_AN_SYS0_RX_REFCLK_TERM(l_sys0_term);
     ROOT_CTRL6.set_TC_AN_SYS1_RX_REFCLK_TERM(l_sys1_term);
+    ROOT_CTRL6.set_TAP_CFAM_RESET_DC(-1);
     FAPI_TRY(ROOT_CTRL6.putCfam(i_target));
 
     ROOT_CTRL6_COPY = ROOT_CTRL6;

@@ -49,7 +49,7 @@ enum ODY_TP_INIT_Private_Constants
 ReturnCode ody_tp_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     auto l_mc_allgood = i_target.getMulticast<fapi2::TARGET_TYPE_PERV>(fapi2::MCGROUP_GOOD);
-    static const hang_pulse_t SETUP_HANG_COUNTERS_PERV[] = {{0, 16, 0}, {1, 1, 0}, {2, 1, 0}, {5, 6, 0}, {6, 7, 0, 1}} ;
+    static const hang_pulse_t HANG_COUNTERS_ALL[] = {{0, 14, 0}, {1, 1, 0}, {2, 1, 0}, {5, 4, 0}, {6, 5, 0, 1}} ;
     CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_ROOT_CTRL0_t ROOT_CTRL0;
 
     // TODO : Set up TOD error routing, error mask via scan inits
@@ -69,7 +69,7 @@ ReturnCode ody_tp_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
     FAPI_TRY(mod_multicast_setup(i_target, MCGROUP_GOOD_NO_TP, 0x3FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL));
 
     FAPI_INF("Set up chiplet hang pulses");
-    FAPI_TRY(mod_hangpulse_setup(l_mc_allgood, 1, SETUP_HANG_COUNTERS_PERV));
+    FAPI_TRY(mod_hangpulse_setup(l_mc_allgood, 9, HANG_COUNTERS_ALL));
 
     FAPI_INF("Miscellaneous TP setup");
     FAPI_TRY(mod_poz_tp_init_common(i_target));

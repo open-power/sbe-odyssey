@@ -109,4 +109,16 @@
   <writeable/>
 </attribute>
 <!-- ********************************************************************** -->
+<attribute>
+  <id>ATTR_SCAN0_SCAN_RATIO</id>
+  <targetType>TARGET_TYPE_HUB_CHIP, TARGET_TYPE_COMPUTE_CHIP, TARGET_TYPE_PROC_CHIP, TARGET_TYPE_OCMB_CHIP</targetType>
+  <description>
+    If non-zero, override the scan ratio value for all SCAN0 operations to this value
+    If zero, do not change the scan ratio for SCAN0
+  </description>
+  <valueType>uint8</valueType>
+  <platInit>mrw</platInit>
+  <default>0x0</default>
+</attribute>
+<!-- ********************************************************************** -->
 </attributes>
