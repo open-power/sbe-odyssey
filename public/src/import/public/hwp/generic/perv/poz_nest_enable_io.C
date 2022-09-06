@@ -61,9 +61,9 @@ ReturnCode poz_nest_enable_io(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
     for (auto& chiplet : i_target.getChildren<TARGET_TYPE_PERV>(TARGET_FILTER_NEST, TARGET_STATE_FUNCTIONAL))
     {
         NET_CTRL0 = 0;
-        NET_CTRL0.set_CPLT_DCTRL(1);
-        NET_CTRL0.set_CPLT_RCTRL(1);
-        NET_CTRL0.set_CPLT_RCTRL2(1);
+        NET_CTRL0.set_DCTRL(1);
+        NET_CTRL0.set_RCTRL(1);
+        NET_CTRL0.set_RCTRL2(1);
         FAPI_TRY(NET_CTRL0.putScom_SET(chiplet));
     }
 

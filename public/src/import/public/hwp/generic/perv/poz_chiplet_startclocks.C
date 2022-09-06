@@ -53,8 +53,8 @@ ReturnCode poz_chiplet_startclocks(
 
     FAPI_INF("Switch ABIST and sync clock muxes to functional state");
     CPLT_CTRL0 = 0;
-    CPLT_CTRL0.set_CTRL_CC_ABSTCLK_MUXSEL_DC(1);
-    CPLT_CTRL0.set_TC_UNIT_SYNCCLK_MUXSEL_DC(1);
+    CPLT_CTRL0.set_ABSTCLK_MUXSEL(1);
+    CPLT_CTRL0.set_SYNCCLK_MUXSEL(1);
     FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
 
     FAPI_DBG("Disable listen to sync");
@@ -76,7 +76,7 @@ ReturnCode poz_chiplet_startclocks(
 
     FAPI_INF("Put PLATs into flush mode");
     CPLT_CTRL0 = 0;
-    CPLT_CTRL0.set_CTRL_CC_FLUSHMODE_INH(1);
+    CPLT_CTRL0.set_FLUSHMODE_INH(1);
     FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
 
 fapi_try_exit:

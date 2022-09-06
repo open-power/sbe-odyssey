@@ -108,13 +108,13 @@ ReturnCode mod_bist_poll(
             }
         }
 
-        if (i_poll_abist_done && CPLT_STAT0.get_ABIST_DONE_DC() == 1)
+        if (i_poll_abist_done && CPLT_STAT0.get_ABIST_DONE() == 1)
         {
             FAPI_INF("ABIST_DONE observed");
             break;
         }
 
-        if (CPLT_STAT0.get_CC_CTRL_OPCG_DONE_DC() == 1)
+        if (CPLT_STAT0.get_OPCG_DONE() == 1)
         {
             FAPI_INF("OPCG_DONE observed");
             break;
@@ -125,7 +125,7 @@ ReturnCode mod_bist_poll(
 
     FAPI_DBG("Total poll count: %d", l_total_polls);
 
-    if (CPLT_STAT0.get_CC_CTRL_OPCG_DONE_DC() == 0)
+    if (CPLT_STAT0.get_OPCG_DONE() == 0)
     {
         FAPI_INF("Forcibly stopping OPCG");
         PCB_OPCG_STOP = 0;
@@ -150,7 +150,7 @@ ReturnCode mod_bist_poll(
                 .set_PROC_TARGET(i_target),
                 "ERROR: DONE / HALT DID NOT OCCUR IN TIME");
 
-    FAPI_ASSERT(CPLT_STAT0.get_ABIST_DONE_DC() || !i_assert_abist_done,
+    FAPI_ASSERT(CPLT_STAT0.get_ABIST_DONE() || !i_assert_abist_done,
                 fapi2::POZ_SRAM_ABIST_DONE_BIT_ERR()
                 .set_PERV_CPLT_STAT0(CPLT_STAT0)
                 .set_SELECT_SRAM(true)
