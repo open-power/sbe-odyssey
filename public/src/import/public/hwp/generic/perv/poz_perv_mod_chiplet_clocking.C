@@ -376,8 +376,29 @@ ReturnCode mod_scan0(
     CLK_REGION_t CLK_REGION;
     OPCG_REG0_t OPCG_REG0;
     SCAN_REGION_TYPE_t SCAN_REGION_TYPE;
+    OPCG_ALIGN_t OPCG_ALIGN;
+    OPCG_ALIGN_t opcg_align_save[64];
+    uint8_t l_attr_scan0_scan_ratio;
+    std::vector<Target<TARGET_TYPE_PERV>> l_chiplets_uc;
+    auto l_chip_target = i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>();
 
     FAPI_INF("Entering ...");
+    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_SCAN0_SCAN_RATIO, l_chip_target, l_attr_scan0_scan_ratio),
+             "Error from FAPI_ATTR_GET (ATTR_SCAN0_SCAN_RATIO)");
+
+    if (l_attr_scan0_scan_ratio != 0)
+    {
+        l_chiplets_uc = i_target.getChildren<TARGET_TYPE_PERV>();
+
+        for (auto& cplt : l_chiplets_uc)
+        {
+            FAPI_TRY(OPCG_ALIGN.getScom(cplt));
+            opcg_align_save[cplt.getChipletNumber()] = OPCG_ALIGN;
+            OPCG_ALIGN.set_SCAN_RATIO(l_attr_scan0_scan_ratio);
+            FAPI_TRY(OPCG_ALIGN.putScom(cplt));
+        }
+    }
+
     FAPI_INF("Set up clock regions for NSL fill.")
     CLK_REGION = 0;
     CLK_REGION.insertFromRight<CLK_REGION_CLOCK_REGION_PERV, 16>(i_clock_regions)
@@ -405,6 +426,17 @@ ReturnCode mod_scan0(
     FAPI_TRY(CLK_REGION.putScom(i_target));
     SCAN_REGION_TYPE = 0;
     FAPI_TRY(SCAN_REGION_TYPE.putScom(i_target));
+
+    FAPI_INF("Restore scan ratios.")
+
+    if (l_attr_scan0_scan_ratio != 0)
+    {
+        for (auto& cplt : l_chiplets_uc)
+        {
+            OPCG_ALIGN = opcg_align_save[cplt.getChipletNumber()];
+            FAPI_TRY(OPCG_ALIGN.putScom(cplt));
+        }
+    }
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");

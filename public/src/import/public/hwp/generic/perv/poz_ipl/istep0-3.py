@@ -156,6 +156,7 @@ def poz_setup_ref_clock(target<PROC_CHIP | HUB_CHIP>):
     ROOT_CTRL6 = 0
     ROOT_CTRL6.TP_AN_SYS0_RX_REFCLK_TERM = ATTR_SYS0_REFCLOCK_RCVR_TERM
     ROOT_CTRL6.TP_AN_SYS1_RX_REFCLK_TERM = ATTR_SYS1_REFCLOCK_RCVR_TERM
+    ROOT_CTRL6.TAP_CFAM_RESET = -1    # bits 8:15, will be reflected in future register header udpate
 
     ROOT_CTRL6_COPY = ROOT_CTRL6      # Update copy register to match
 
@@ -639,16 +640,14 @@ def p11s_tp_init():
     mod_multicast_setup(i_target, MCGROUP_GOOD_NO_TP, 0x3FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL)
 
     ## Set up chiplet hang pulses
-    mod_hangpulse_setup(MCGROUP_GOOD, 1, {{0, 16, 0}, {5, 6, 0}, {6, 7, 0, 1}})
-    mod_hangpulse_setup(N0 chiplet, 1, {{1, 24, 1}, {3, 15, 1, 1}})
-    mod_hangpulse_setup(N1 chiplet, 1, {{1, 24, 1}, {3, 15, 1}, {4, 17, 1, 1}})
-    mod_hangpulse_setup(N2 chiplet, 1, {{1, 22, 1}, {2, 16, 1}, {3, 20, 1, 1}})
-    mod_hangpulse_setup(all good PAXO, 1, {{1, 3, 0, 1}})
-    mod_hangpulse_setup(all good TBUS, 1, {{1, 3, 0, 1}})
-    mod_hangpulse_setup(all good MC, 1, {{1, 3, 0, 1}})
-
-    ## Set up constant hang pulses
-    mod_constant_hangpulse_setup(i_target, TP_TPCHIP_PIB_PSU_HANG_PULSE_CONFIG_REG, {{37, 1, 0}, {153, 27, 0}, {0, 0, 0}, {0, 0, 0}})
+    mod_hangpulse_setup(MCGROUP_GOOD, 9, {{0, 14, 0}, {5, 4, 0}, {6, 5, 0, 1}})
+    mod_hangpulse_setup(TP chiplet, 9, {{1, 1, 0, 1}})
+    mod_hangpulse_setup(N0 chiplet, 9, {{1, 22, 1}, {2, 29, 1}, {3, 13, 1, 1}})
+    mod_hangpulse_setup(N1 chiplet, 9, {{1, 22, 1}, {2, 29, 1}, {3, 13, 1}, {4, 15, 1, 1}})
+    mod_hangpulse_setup(N2 chiplet, 9, {{1, 20, 1}, {2, 14, 1}, {3, 18, 1}, {4, 2, 1, 1}})
+    mod_hangpulse_setup(all good PAXO, 9, {{2, 1, 0, 1}})
+    mod_hangpulse_setup(all good TBUS, 9, {{2, 1, 0, 1}})
+    mod_hangpulse_setup(all good MC,   9, {{2, 1, 0, 1}})
 
     ## Unmask TP PLL unlock reporting
     if not ATTR_CP_PLLFLT_BYPASS:
@@ -673,7 +672,7 @@ def ody_tp_init():
     mod_multicast_setup(i_target, MCGROUP_GOOD_NO_TP, 0x3FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL)
 
     ## Set up chiplet hang pulses
-    mod_hangpulse_setup(MCGROUP_GOOD, 1, {{0, 16, 0}, {1, 1, 0}, {2, 1, 0}, {5, 6, 0}, {6, 7, 0, 1}})
+    mod_hangpulse_setup(MCGROUP_GOOD, 9, {{0, 14, 0}, {1, 1, 0}, {2, 1, 0}, {5, 4, 0}, {6, 5, 0, 1}})
 
     ## Unmask TP PLL unlock reporting
     if not ATTR_PLL_BYPASS:
@@ -963,8 +962,9 @@ def p11t_tp_init():
     mod_multicast_setup(i_target, MCGROUP_EQ, 0x00000000FFFF0000, TARGET_STATE_FUNCTIONAL)
 
     ## Set up chiplet hang pulses
-    mod_hangpulse_setup(MCGROUP_GOOD, 1, {{0, 16, 0}, {5, 6, 0}, {6, 7, 0, 1}})
-    mod_hangpulse_setup(N0 chiplet, 1, {{4, 17, 1, 1}})
+    mod_hangpulse_setup(MCGROUP_GOOD, 9, {{0, 16, 0}, {5, 6, 0}, {6, 7, 0, 1}})
+    mod_hangpulse_setup(N0 chiplet,   9, {{4, 17, 1, 1}})
+    mod_hangpulse_setup(MGCGROUP_EQ,  9, {{1, 33, 0, 1}})
 
     # We cannot set up constant hang pulses here yet since the generation
     # logic is in the TBUS chiplet. The constant hang pulse setup for Tap
@@ -1457,7 +1457,17 @@ def p11t_chiplet_startclocks():
     poz_chiplet_startclocks(MCGROUP_EQ, cc::P11T_EQ_PERV | cc::P11T_EQ_QME | cc::P11T_EQ_CLKADJ)
 
     ## Set up constant hang pulses
-    mod_constant_hangpulse_setup(i_target, scomt::tbusl::HANGP_HANG_PULSE_CONFIG_REG, {{37, 1, 0}, {0, 0, 0}, {9, 1, 0}, {0, 0, 0}})
+    # Formula:
+    #   final period = (1 / mesh freq) * (pre divider + 1) * 2^(hang pulse value - 1) * post divider configured on c_hang_pulse_edge_detect
+    # Values:
+    #   Mesh at 2400 MHz
+    #   HP0 at 33.33ns
+    #   HP2 at 4ns / 250 MHz
+    # Calculation (assuming hang pulse value == 1):
+    #   pre divider = (period in ns * 2.4 / post divider) - 1
+    #   HP0 -> (33.33 * 2.4 / 2) - 1 = 39 (or pre-div 9 and hp value 3 as on the other chips)
+    #   HP2 -> (4 * 2.4 / 1) - 1 = 8.6, round up to 9, yielding 4.16667 ns or 240 MHz
+    mod_constant_hangpulse_setup(i_target, scomt::tbusl::HANGP_HANG_PULSE_CONFIG_REG, {{9, 3, 0}, {0, 0, 0}, {9, 1, 0}, {0, 0, 0}})
 
 def ody_chiplet_startclocks():
     ## Drop TP chiplet fence

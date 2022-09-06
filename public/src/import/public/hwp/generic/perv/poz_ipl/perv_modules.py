@@ -186,6 +186,13 @@ def mod_align_regions(target<PERV|MC>, uint16_t i_clock_regions):
     CPLT_CTRL4 = 0
 
 def mod_scan0(target<PERV|MC>, uint16_t i_clock_regions, uint16_t i_scan_types=SCAN_TYPE_NOT_GTR):
+    OPCG_ALIGN_t opcg_align_save[64];
+
+    if ATTR_SCAN0_SCAN_RATIO != 0:    # uint8_t, targets all chips, default 0, provided by MRW
+        for cplt in unicast children of i_target:
+            opcg_align_save[cplt.getChipletNumber()] = OPCG_ALIGN
+            OPCG_ALIGN.SCAN_RATIO = ATTR_SCAN0_SCAN_RATIO
+
     # Set up clock regions for NSL fill
     CLK_REGION = 0
     CLK_REGION[16 bits starting at CLOCK_REGION_PERV] = i_clock_regions
@@ -207,6 +214,11 @@ def mod_scan0(target<PERV|MC>, uint16_t i_clock_regions, uint16_t i_scan_types=S
     # Clean up
     CLK_REGION = 0
     SCAN_REGION_TYPE = 0
+
+    # Restore scan ratios
+    if ATTR_SCAN0_SCAN_RATIO != 0:
+        for cplt in unicast children of i_target:
+            OPCG_ALIGN = opcg_align_save[cplt.getChipletNumber()]
 
 def mod_start_stop_clocks(target<PERV|MC>, uint16_t i_clock_regions, uint16_t i_clock_types=CLOCK_TYPE_ALL, bool i_start_not_stop=true):
     SCAN_REGION_TYPE = 0
