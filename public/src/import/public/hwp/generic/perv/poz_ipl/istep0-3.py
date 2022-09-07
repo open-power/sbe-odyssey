@@ -85,27 +85,27 @@ def sim_model_to_standby():
 
 ISTEP(0, 1, "pre_cfam_reset", "BMC")
 
-def p11_shutdown():
+def p11s_shutdown():
     # This HWP is called both prior to power off as well as prior to pulling CFAM reset during IPL
     # CONTROL_WRITE_PROTECT_DISABLE = 0x4453FFFF
     GPWRP = CONTROL_WRITE_PROTECT_DISABLE         # Disable Write Protection for Root/Perv Control registers (in case the chip has just been reset)
 
-    ROOT_CTRL1.GLOBAL_PERST_OVERRIDE = 1      # Assert all PERST# outputs
-    ROOT_CTRL0.OCMB0_RESET = 1         # Assert OCMB reset
-    ROOT_CTRL0.OCMB1_RESET = 1         # Assert OCMB reset
+    ROOT_CTRL1.GLOBAL_PERST_OVERRIDE = 1          # Assert all PERST# outputs
+    ROOT_CTRL0.OCMB0_RESET = 1                    # Assert OCMB reset
+    ROOT_CTRL0.OCMB1_RESET = 1                    # Assert OCMB reset
     delay(100ms, 0cyc)                            # Don't wait in sim, but do wait on real HW to give PCI devices time to reset
 
-    PERV_CTRL0.PCB_EP_RESET = 1      # Raise PERV EP reset to raise all PERV region fences
-    PERV_CTRL0.PERV2FSI_CHIPLET_FENCE = 1                 # Raise Pervasive chiplet fence to protect FSI
-    ROOT_CTRL0.CFAM_PROTECTION_0 = 1           # Raise CFAM protections
+    PERV_CTRL0.PCB_EP_RESET = 1                   # Raise PERV EP reset to raise all PERV region fences
+    PERV_CTRL0.PERV2FSI_CHIPLET_FENCE = 1         # Raise Pervasive chiplet fence to protect FSI
+    ROOT_CTRL0.CFAM_PROTECTION_0 = 1              # Raise CFAM protections
     ROOT_CTRL0[bits 8:15] = 0xFF                  # Raise CFAM protections
-    ROOT_CTRL0.GLOBAL_EP_RESET = 1             # Assert global endpoint reset to reset all chiplets
+    ROOT_CTRL0.GLOBAL_EP_RESET = 1                # Assert global endpoint reset to reset all chiplets
     ROOT_CTRL7 = 0                                # Turn off all outgoing refclocks
     ROOT_CTRL1[5 bits starting at TP_RI_DC_B] = 0 # Disable TP drivers and receivers
-    ROOT_CTRL0.TP_I2C_BUS_FENCE = 0       # Clear FSI I2C fence to allow access from FSP side
+    ROOT_CTRL0.TP_I2C_BUS_FENCE = 0               # Clear FSI I2C fence to allow access from FSP side
 
 def zme_shutdown():
-    p11_shutdown()
+    p11s_shutdown()
 
 ISTEP(0, 2, "cfam_reset", "BMC")
 
@@ -121,7 +121,7 @@ def sim_p11s_cfam_reset():
 ISTEP(0, 3, "poweron", "BMC")
 # if power is already on, this is a no-op
 
-def p11_pre_poweron():
+def p11s_pre_poweron():
     # placeholder for lab workarounds
 
 # BMC executes voltage power on sequence
@@ -164,7 +164,7 @@ def poz_setup_ref_clock(target<PROC_CHIP | HUB_CHIP>):
     ROOT_CTRL0.CFAM_PROTECTION_0 = 0
     ROOT_CTRL0_COPY.CFAM_PROTECTION_0 = 0
 
-def p11_setup_ref_clock():
+def p11s_setup_ref_clock():
     poz_setup_ref_clock()
 
     ## Set up refclock transmitter termination
@@ -220,21 +220,21 @@ def zme_setup_ref_clock():
 
     ROOT_CTRL4_COPY = ROOT_CTRL4      # Update copy register to match
 
-ISTEP(0, 7, "proc_clock_test", "BMC")
+ISTEP(0, 7, "ph_clock_test", "BMC")
 
-def p11_clock_test():
+def p11s_clock_test():
     mod_clock_test(path=CFAM)
 
 def zme_clock_test():
     mod_clock_test(path=CFAM)
 
-ISTEP(0, 13, "proc_sppe_config_update", "BMC")
+ISTEP(0, 13, "ph_sppe_config_update", "BMC")
 
-def p11_sppe_config_update():
-    # TBD
+def p11s_sppe_config_update():
+    # provided by VBU team
 
 def ody_sppe_config_update():
-    # TBD
+    # provided by VBU team
 
 def zme_sppe_config_update():
     # TBD
@@ -719,7 +719,7 @@ ISTEP(1, 33, "zme_mbus_deskew_fast", "SBE")
 Step 2: SBE load, Tap TP init
 """
 
-ISTEP(2, 1, "proc_fsi_init", "SPPE")
+ISTEP(2, 1, "ph_fsi_init", "SPPE")
 
 def sim_p11t_fsi_init():
     # Run this only on tap-only models
@@ -729,7 +729,7 @@ def sim_p11t_fsi_init():
     wait for 24k cycles
     set OTPROM.SINGLE_OTP_ROM.OTPROM.EFUSE.FIRST_CSB to 1
 
-def p11_fsi_init():
+def p11s_fsi_init():
     # start with list of functional Taps based on PG+deconfig (expected to be provided by FAPI platform code)
     buffer<uint8_t> l_expected_taps = 0;
     for all functional Tap targets:
@@ -819,14 +819,11 @@ ISTEP(2, 10, "pc_pib_startclocks", "SPPE")
 def p11t_pib_startclocks():
     mod_start_stop_clocks(regions=pib)
 
-ISTEP(2, 11, "proc_g2p_init", "SPPE")
-
-def p11_g2p_init():
-    pass   # G2P acceleration has been dropped from the plan
+# 2.11 used to be ph_g2p_init but we dropped G2P acceleration from the plan
 
 ISTEP(2, 12, "proc_sbe_load", "SPPE")
 
-def p11_sbe_load():
+def p11s_sbe_load():
     # SPPE loads SPINAL & TAP SBE common image (FW code, common data)
     # Performs a signature check on the entire block.
     # Loads block into SPINAL SBE PIBMEM
@@ -836,11 +833,7 @@ def p11_sbe_load():
 
 ISTEP(2, 13, "proc_sbe_customize", "SPPE")
 
-"""
-QUESTION: How do we construct SEEPROM / HW images
-"""
-
-def p11_sbe_customize():
+def p11s_sbe_customize():
     # Same as above but no signature check
     # Data is Tap unique
     MODULE( load PPE image( Spinal SBE via PIB, Spinal cust image ) )
@@ -849,8 +842,8 @@ def p11_sbe_customize():
 
 ISTEP(2, 14, "proc_sbe_config_update", "SPPE")
 
-def p11_sbe_config_update():
-    # Set up Tap SBE scratch regs
+def p11s_sbe_config_update():
+    # Set up Tap SBE scratch regs by copying from Spinal scratch regs
     # Optional: Set up Spinal SBE scratch regs - assumption is that SBE scratch is subset of SPPE scratch so no need to modify
 
 ISTEP(2, 15, "proc_sbe_start", "SPPE")
@@ -882,10 +875,10 @@ def p11_sbe_start(vector<Target<COMPUTE_CHIP | HUB_CHIP> & i_targets>):
 ISTEP(2, 16, "proc_sbe_attr_setup", "SSBE, TSBE")
 
 def p11s_sbe_attr_setup():
-    pass
+    pass # provided by Thi
 
 def p11t_sbe_attr_setup():
-    pass
+    pass # provided by Thi
 
 ISTEP(2, 17, "pc_pll_initf", "TSBE")
 
@@ -1072,9 +1065,9 @@ def p11t_chiplet_reset():
     poz_chiplet_reset(i_target, p11t_chiplet_delay_table)
 
     if not ATTR_HOTPLUG:
-        p11_hcd_ex_manual_poweron(all good cores)
-        p11_hcd_cache_reset(all good cores)
-        p11_hcd_core_reset(all good cores)
+        p11t_hcd_ex_manual_poweron(all good cores)
+        p11t_hcd_cache_reset(all good cores)
+        p11t_hcd_core_reset(all good cores)
 
 def ody_chiplet_reset():
     poz_chiplet_reset(i_target, ody_chiplet_delay_table)
@@ -1378,7 +1371,7 @@ def p11s_chiplet_undo_force_on():
     pass
 
 def p11t_chiplet_undo_force_on():
-    p11_hcd_ex_manual_poweroff(all good cores)
+    p11t_hcd_ex_manual_poweroff(all good cores)
 
 ISTEP(3, 14, "proc_chiplet_initf", "SSBE, TSBE")
 
@@ -1686,14 +1679,6 @@ def zme_ioppe_load():
     pass
 
 ### ZME AUTOBOOT IS DONE HERE, hand off to SE
-
-ISTEP(3, 31, "proc_g2p_disable", "SSBE, TSBE")
-
-def p11s_g2p_disable():
-    pass   # G2P acceleration has been dropped from the plan
-
-def p11t_g2p_disable():
-    pass   # G2P acceleration has been dropped from the plan
 
 ISTEP(3, 32, "proc_tbus_setup", "SSBE, TSBE")
 # TODO Chris: put your steps here
