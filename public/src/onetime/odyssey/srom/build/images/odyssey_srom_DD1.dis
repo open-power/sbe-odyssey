@@ -18084,43 +18084,36 @@ fff7b17c:	4e 80 00 20 	blr
 
 fff7b180 <__hwmacro_setup>:
 
-void
-__hwmacro_setup(void)
-{
-    //mask all interrupts to prevent spurious pulse to PPE
-    out64(STD_LCL_EIMR, 0xffffffffffffffffull);
-fff7b180:	3d 40 c0 00 	lis     r10,-16384
-fff7b184:	39 00 ff ff 	li      r8,-1
-fff7b188:	39 20 ff ff 	li      r9,-1
-fff7b18c:	61 4a 00 20 	ori     r10,r10,32
-fff7b190:	19 0a 00 00 	stvd    d8,0(r10)
+#else
 
-    //set up the configured polarity
-    out64(STD_LCL_EIPR, g_ext_irqs_polarity);
-fff7b194:	15 0d fe 58 	lvd     d8,-424(r13)
-fff7b198:	39 4a 00 20 	addi    r10,r10,32
-fff7b19c:	19 0a 00 00 	stvd    d8,0(r10)
+    // Below piece of code does nothing in case of SBE.
+    // This is just added so as to not discard global variables
+    asm(
+fff7b180:	4e 80 00 20 	blr
+fff7b184:	60 00 00 00 	nop
+fff7b188:	60 00 00 00 	nop
+fff7b18c:	60 00 00 00 	nop
+fff7b190:	60 00 00 00 	nop
+        "nop \n"
+        "nop \n"
+        "nop \n"
+    );
 
-    //set up the configured type
-    out64(STD_LCL_EITR, g_ext_irqs_type);
-fff7b1a0:	15 0d fe 60 	lvd     d8,-416(r13)
-fff7b1a4:	39 4a 00 20 	addi    r10,r10,32
-fff7b1a8:	19 0a 00 00 	stvd    d8,0(r10)
-
-    //clear the status of all edge interrupts
-    out64(STD_LCL_EISR_CLR, g_ext_irqs_type);
-fff7b1ac:	15 0d fe 60 	lvd     d8,-416(r13)
-fff7b1b0:	39 4a ff b8 	addi    r10,r10,-72
-fff7b1b4:	19 0a 00 00 	stvd    d8,0(r10)
-
-    //unmask the interrupts that are to be enabled by default
-    out64(STD_LCL_EIMR_CLR, g_ext_irqs_enable);
-fff7b1b8:	15 0d fe 68 	lvd     d8,-408(r13)
-fff7b1bc:	19 0a 00 20 	stvd    d8,32(r10)
-
-    //wait for the last operation to complete
-    sync();
-fff7b1c0:	7c 00 04 ac 	sync    
+    g_ext_irqs_enable = 0xdead;
+fff7b194:	39 20 00 00 	li      r9,0
+fff7b198:	39 00 00 00 	li      r8,0
+fff7b19c:	61 29 de ad 	ori     r9,r9,57005
+fff7b1a0:	19 0d fe 68 	stvd    d8,-408(r13)
+    g_ext_irqs_type = 0xc0de;
+fff7b1a4:	39 20 00 00 	li      r9,0
+fff7b1a8:	39 00 00 00 	li      r8,0
+fff7b1ac:	61 29 c0 de 	ori     r9,r9,49374
+fff7b1b0:	19 0d fe 60 	stvd    d8,-416(r13)
+    g_ext_irqs_polarity = 0xffdc;
+fff7b1b4:	39 20 00 00 	li      r9,0
+fff7b1b8:	39 00 00 00 	li      r8,0
+fff7b1bc:	61 29 ff dc 	ori     r9,r9,65500
+fff7b1c0:	19 0d fe 58 	stvd    d8,-424(r13)
 fff7b1c4:	4e 80 00 20 	blr
 
 fff7b1c8 <pk_trace_timer_callback>:
