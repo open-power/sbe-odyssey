@@ -24,9 +24,9 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  ody_tp_repr_initf.H
-/// @brief Install TP chiplet repair scan overrides
+/// @brief Scan init of perv_rtg ring (repr, time & gptr)
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
@@ -36,7 +36,7 @@
 
 typedef fapi2::ReturnCode (*ody_tp_repr_initf_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
 
-/// @brief Install TP chiplet repair scan overrides
+/// @brief Scan init of perv_rtg ring (repr, time & gptr)
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
 ///

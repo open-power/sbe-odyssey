@@ -24,14 +24,16 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  ody_tp_initf.C
-/// @brief Install TP chiplet scan overrides
+/// @brief Scan init of perv_initf ring
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
 #include <ody_tp_initf.H>
 #include <poz_perv_common_params.H>
+#include <poz_ring_ids.H>
+#include <poz_perv_utils.H>
 
 using namespace fapi2;
 
@@ -41,8 +43,11 @@ enum ODY_TP_INITF_Private_Constants
 
 ReturnCode ody_tp_initf(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
+    FAPI_INF("Entering ...");
+    FAPI_TRY(putRing(get_tp_chiplet_target(i_target), ring_id::perv_initf));
 
 
 fapi_try_exit:
+    FAPI_INF("Exiting ...");
     return current_err;
 }

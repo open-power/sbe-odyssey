@@ -560,13 +560,13 @@ def zme_rcs_setup():
 ISTEP(1, 17, "ph_tp_repr_initf", "SPPE")
 
 def p11s_tp_repr_initf():
-    putRing( perv_rtg = {perv,net,occ}_{gptr,time,repr}(+*_abst as needed))} )
+    putRing( TP chiplet, perv_rtg = {perv,net,occ}_{gptr,time,repr}(+*_abst as needed))} )
 
 def ody_tp_repr_initf():
-    putRing( perv_rtg = {perv,net}_{gptr,time,repr}(+*_abst as needed))} )
+    putRing( TP chiplet, perv_rtg = {perv,net}_{gptr,time,repr}(+*_abst as needed))} )
 
 def zme_tp_repr_initf():
-    putRing( perv_rtg = {perv,net,ana,mbio}_{gptr,time,repr}(+*_abst as needed))} )
+    putRing( TP chiplet, perv_rtg = {perv,net,ana,mbio}_{gptr,time,repr}(+*_abst as needed))} )
 
 ISTEP(1, 18, "ph_tp_arrayinit", "SPPE")
 
@@ -606,13 +606,13 @@ LBIST: DFT can wedge in LBIST for perv, net, occ in here
 ISTEP(1, 20, "ph_tp_initf", "SPPE")
 
 def p11s_tp_initf():
-    putRing( perv_initf = {perv,net,occ}_func )
+    putRing( TP chiplet, perv_initf = {perv,net,occ}_func )
 
 def ody_tp_initf():
-    putRing( perv_initf = {perv,net}_func )
+    putRing( TP chiplet, perv_initf = {perv,net}_func )
 
 def zme_tp_initf():
-    putRing( perv_initf = {perv,net,ana,mbio}_func )
+    putRing( TP chiplet, perv_initf = {perv,net,ana,mbio}_func )
 
 ISTEP(1, 21, "ph_tp_startclocks", "SPPE")
 
@@ -937,7 +937,7 @@ def p11t_pll_setup():
 ISTEP(2, 19, "pc_tp_initf", "TSBE")
 
 def p11t_tp_initf():
-    putRing( perv_initf = perv_func+net_func )
+    putRing( TP chiplet, perv_initf = perv_func+net_func )
 
 ISTEP(2, 20, "pc_tp_startclocks", "TSBE")
 
