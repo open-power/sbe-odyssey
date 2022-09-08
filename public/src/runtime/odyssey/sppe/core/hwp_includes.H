@@ -47,5 +47,6 @@
 #include <ody_nest_enable_io.H>
 #include <ody_cmdtable_interpreter.H>
 #include <poz_cmdtable_interpreter.H>
+#include <ody_sppe_attr_setup.H>
 
 #endif

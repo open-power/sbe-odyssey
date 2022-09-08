@@ -28,6 +28,7 @@ common_error_xml_files = [
                           'poz_perv_mod_chiplet_clocking_errors.xml',
                           'poz_perv_mod_misc_errors.xml',
                           'poz_bist_errors.xml',
+                          'poz_sbe_plat_errors.xml'
                         ]
 
 #Create abs path for input xml files

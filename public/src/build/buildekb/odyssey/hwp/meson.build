@@ -44,6 +44,8 @@ infile_c = [
             'ody_chiplet_startclocks.C',
             'ody_chiplet_fir_init.C',
             'ody_nest_enable_io.C',
+            'ody_sppe_attr_setup.C',
+            'ody_scratch_regs.C'
             ]
 
 #Create abs path for input files before creating .o
