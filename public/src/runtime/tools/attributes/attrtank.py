@@ -178,6 +178,8 @@ class RealAttrFieldInfo(AttrFieldInfo):
 
         for dim in reversed(self.array_dims):
             self._type = _ArrayValueType(self._type, dim)
+        if(self.num_targ_inst > 1):
+            self._type = _ArrayValueType(self._type, self.num_targ_inst)
 
         self.tot_size = self._type.size
 
@@ -212,7 +214,9 @@ class RealAttrFieldInfo(AttrFieldInfo):
 
     def var_name(self):
         var_name = "fapi2::ATTR::" + self.name
-        if self.num_targ_inst > 1:
+        if(self.target == 'TARGET_TYPE_PERV'):
+            var_name += "[TARGET.get().getChipletNumber()]"
+        elif self.num_targ_inst > 1:
             var_name += "[TARGET.get().getTargetInstance()]"
         return var_name
 

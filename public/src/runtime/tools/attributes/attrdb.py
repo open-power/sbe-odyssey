@@ -36,7 +36,7 @@ TargetTypeInfo = namedtuple("TargetTypeInfo", "ntargets")
 TARGET_TYPES = {
     "TARGET_TYPE_OCMB_CHIP": TargetTypeInfo(1),
     "TARGET_TYPE_SYSTEM": TargetTypeInfo(1),
-    "TARGET_TYPE_PERV": TargetTypeInfo(2),
+    "TARGET_TYPE_PERV": TargetTypeInfo(9),
     "TARGET_TYPE_MC": TargetTypeInfo(1),
 }
 
