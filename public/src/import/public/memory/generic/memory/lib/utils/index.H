@@ -62,7 +62,7 @@ inline size_t index(const fapi2::Target<T>& i_target)
     uint8_t l_pos = 0;
 
 #ifdef __PPE__
-    STATIC_CHECK(T == fapi2::TARGET_TYPE_GENERICI2CSLAVE,
+    STATIC_CHECK(T == fapi2::TARGET_TYPE_GENERICI2CRESPONDER,
                  "index() called for Invalid target type");
     l_pos = i_target.get().fields.chiplet_num % GI2C_PER_OCMB;
 #else
