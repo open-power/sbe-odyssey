@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -28,6 +29,7 @@
 #include <attribute_ids.H>
 #include <return_code.H>
 #include "fapi2_target.H"
+#include "target.H"
 
 namespace fapi2
 {
@@ -67,6 +69,15 @@ AttributeRC _getAttrChipUnitPos(const Target<K>& i_target,
         ATTR_CHIP_UNIT_POS_Type& o_val)
 {
     o_val = i_target.get().getTargetInstance();
+    return FAPI2_RC_SUCCESS;
+}
+
+template<>
+inline
+AttributeRC _getAttrChipUnitPos(const Target<TARGET_TYPE_PERV>& i_target,
+                                ATTR_CHIP_UNIT_POS_Type& o_val)
+{
+    o_val = i_target.getChipletNumber();
     return FAPI2_RC_SUCCESS;
 }
 }
