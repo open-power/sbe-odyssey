@@ -48,7 +48,10 @@
 #include <ody_nest_enable_io.H>
 #include <ody_cmdtable_interpreter.H>
 #include <ody_scominit.H>
+#include <ody_omi_setup.H>
+#include <ody_omi_train.H>
 #include <ody_sppe_draminit.H>
+#include <ody_thermal_init.H>
 #include <poz_cmdtable_interpreter.H>
 #include <ody_sppe_attr_setup.H>
 

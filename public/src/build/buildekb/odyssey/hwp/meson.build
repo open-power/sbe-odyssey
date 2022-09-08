@@ -22,65 +22,44 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-import_dir_path = pub_import_dir_path + '/hwp/odyssey/perv/'
 
 infile_c = [
-            'ody_tp_arrayinit.C',
-            'ody_tp_arrayinit_cleanup.C',
-            'ody_tp_initf.C',
-            'ody_tp_startclocks.C',
-            'ody_tp_init.C',
-            'ody_chiplet_clk_config.C',
-            'ody_chiplet_reset.C',
-            'ody_chiplet_unused_psave.C',
-            'ody_chiplet_pll_setup.C',
-            'ody_bist_repr_initf.C',
-            'ody_abist.C',
-            'ody_lbist.C',
-            'ody_chiplet_repr_initf.C',
-            'ody_chiplet_arrayinit.C',
-            'ody_chiplet_initf.C',
-            'ody_chiplet_init.C',
-            'ody_chiplet_startclocks.C',
-            'ody_chiplet_fir_init.C',
-            'ody_nest_enable_io.C',
-            'ody_sppe_attr_setup.C',
-            'ody_scratch_regs.C'
+            '/hwp/odyssey/perv/ody_tp_arrayinit.C',
+            '/hwp/odyssey/perv/ody_tp_arrayinit_cleanup.C',
+            '/hwp/odyssey/perv/ody_tp_initf.C',
+            '/hwp/odyssey/perv/ody_tp_startclocks.C',
+            '/hwp/odyssey/perv/ody_tp_init.C',
+            '/hwp/odyssey/perv/ody_chiplet_clk_config.C',
+            '/hwp/odyssey/perv/ody_chiplet_reset.C',
+            '/hwp/odyssey/perv/ody_chiplet_unused_psave.C',
+            '/hwp/odyssey/perv/ody_chiplet_pll_setup.C',
+            '/hwp/odyssey/perv/ody_bist_repr_initf.C',
+            '/hwp/odyssey/perv/ody_abist.C',
+            '/hwp/odyssey/perv/ody_lbist.C',
+            '/hwp/odyssey/perv/ody_chiplet_repr_initf.C',
+            '/hwp/odyssey/perv/ody_chiplet_arrayinit.C',
+            '/hwp/odyssey/perv/ody_chiplet_initf.C',
+            '/hwp/odyssey/perv/ody_chiplet_init.C',
+            '/hwp/odyssey/perv/ody_chiplet_startclocks.C',
+            '/hwp/odyssey/perv/ody_chiplet_fir_init.C',
+            '/hwp/odyssey/perv/ody_nest_enable_io.C',
+            '/hwp/odyssey/perv/ody_sppe_attr_setup.C',
+            '/hwp/odyssey/perv/ody_scratch_regs.C',
+            '/hwp/odyssey/io/ody_omi_setup.C',
+            '/hwp/odyssey/io/ody_omi_train.C',
+            '/memory/odyssey/hwp/ody_ddrphyinit.C',
+            '/memory/odyssey/hwp/ody_scominit.C',
+            '/memory/odyssey/hwp/ody_sppe_draminit.C',
+            '/memory/odyssey/hwp/ody_thermal_init.C',
+            '/memory/odyssey/hwp/lib/phy/ody_ddrphy_phyinit_config.C',
+            '/memory/odyssey/hwp//lib/phy/ody_phy_utils.C',
+            '/memory/odyssey/initfiles/odyssey_scom.C',
             ]
 
 #Create abs path for input files before creating .o
 foreach infile : infile_c
 
-abs_infile_c_path = import_dir_path + infile
-abs_infiles_c_path += abs_infile_c_path
-
-endforeach
-
-import_dir_path = pub_import_dir_path + '/memory/odyssey/hwp/'
-
-infile_c = ['ody_ddrphyinit.C',
-            'ody_scominit.C',
-            'ody_sppe_draminit.C',
-            '/lib/phy/ody_ddrphy_phyinit_config.C',
-            '/lib/phy/ody_phy_utils.C',
-           ]
-
-#Create abs path for input files before creating .o
-foreach infile : infile_c
-
-abs_infile_c_path = import_dir_path + infile
-abs_infiles_c_path += abs_infile_c_path
-
-endforeach
-
-import_dir_path = pub_import_dir_path + '/memory/odyssey/initfiles/'
-
-infile_c = ['odyssey_scom.C',
-           ]
-#Create abs path for input files before creating .o
-foreach infile : infile_c
-
-abs_infile_c_path = import_dir_path + infile
+abs_infile_c_path = pub_import_dir_path + infile
 abs_infiles_c_path += abs_infile_c_path
 
 endforeach
