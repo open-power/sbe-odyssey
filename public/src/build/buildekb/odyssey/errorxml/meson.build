@@ -23,8 +23,10 @@
 #
 # IBM_PROLOG_END_TAG
 ############## Build Required Runtime Genfiles ###############################
-import_xml_dir_base_path = pub_import_dir_path + '/hwp/generic/xml/error_info/'
-odyssey_error_xml_files = ['poz_sbe_plat_errors.xml']
+import_xml_dir_base_path = pub_import_dir_path + '/hwp/odyssey/xml/error_info/'
+odyssey_error_xml_files = [
+    'ody_scratch_regs_errors.xml',
+    ]
 
 #Create abs path for input xml files
 odyssey_abs_error_xml_files = []

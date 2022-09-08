@@ -65,8 +65,8 @@ static istepMap_t g_istep1PtrTbl[] =
              ISTEP_MAP( NULL, NULL ),                               // 1.09
              ISTEP_MAP( NULL, NULL ),                               // 1.10
              ISTEP_MAP( NULL, NULL ),                               // 1.11
-             ISTEP_MAP( NULL, NULL ),                               // 1.12
-             ISTEP_MAP( istepNoOp, NULL ),                          // 1.13
+             ISTEP_MAP( NULL, NULL ),                               // 1.12b
+             ISTEP_MAP( istepWithOcmb, ody_sppe_attr_setup ),       // 1.13
              ISTEP_MAP( NULL, NULL ),                               // 1.14
              ISTEP_MAP( NULL, NULL ),                               // 1.15
              ISTEP_MAP( NULL, NULL ),                               // 1.16
