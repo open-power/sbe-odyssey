@@ -57,6 +57,7 @@ fapi2::ReturnCode poz_writesram(const fapi2::Target <
                                 fapi2::TARGET_TYPE_TBUSC |
                                 fapi2::TARGET_TYPE_IOHS |
                                 fapi2::TARGET_TYPE_MC |
+                                fapi2::TARGET_TYPE_PERV |
                                 fapi2::TARGET_TYPE_MULTICAST > & i_target,
                                 const uint32_t i_controlReg,
                                 const uint32_t i_dataReg,
