@@ -79,7 +79,8 @@ void print_bist_params(const bist_params& i_params)
     FAPI_DBG("linear_stagger = %lu", i_params.linear_stagger);
     FAPI_DBG("zigzag_stagger = %lu", i_params.zigzag_stagger);
     FAPI_DBG("max_polls = %u", i_params.max_polls);
-    FAPI_DBG("poll_delay = %u", i_params.poll_delay);
+    FAPI_DBG("poll_delay_hw = %u", i_params.poll_delay_hw);
+    FAPI_DBG("poll_delay_sim = %u", i_params.poll_delay_sim);
     FAPI_DBG("scan0_types = %#06x", i_params.scan0_types);
     FAPI_DBG("base_regions = %#06x", i_params.base_regions);
 
@@ -189,7 +190,9 @@ ReturnCode poz_bist_execute(
         FAPI_TRY(mod_bist_poll(i_chiplets_target,
                                i_params.flags & i_params.bist_flags::POLL_ABIST_DONE,
                                i_params.flags & i_params.bist_flags::ASSERT_ABIST_DONE,
-                               i_params.max_polls));
+                               i_params.max_polls,
+                               i_params.poll_delay_hw,
+                               i_params.poll_delay_sim));
     }
 
 

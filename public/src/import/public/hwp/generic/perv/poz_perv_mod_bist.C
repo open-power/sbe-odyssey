@@ -46,8 +46,8 @@ ReturnCode mod_bist_poll(
     bool i_poll_abist_done,
     bool i_assert_abist_done,
     uint32_t i_max_polls,
-    uint32_t i_hw_delay,
-    uint32_t i_sim_delay)
+    uint32_t i_poll_delay_hw,
+    uint32_t i_poll_delay_sim)
 {
     FAPI_INF("Entering ...");
 
@@ -120,7 +120,7 @@ ReturnCode mod_bist_poll(
             break;
         }
 
-        FAPI_TRY(fapi2::delay(i_hw_delay, i_sim_delay));
+        FAPI_TRY(fapi2::delay(i_poll_delay_hw, i_poll_delay_sim));
     }
 
     FAPI_DBG("Total poll count: %d", l_total_polls);
@@ -145,8 +145,8 @@ ReturnCode mod_bist_poll(
                 fapi2::DONE_HALT_NOT_SET()
                 .set_PERV_CPLT_STAT0(CPLT_STAT0)
                 .set_POLL_COUNT(l_total_polls)
-                .set_HW_DELAY(i_hw_delay)
-                .set_SIM_DELAY(i_sim_delay)
+                .set_POLL_DELAY_HW(i_poll_delay_hw)
+                .set_POLL_DELAY_SIM(i_poll_delay_sim)
                 .set_PROC_TARGET(i_target),
                 "ERROR: DONE / HALT DID NOT OCCUR IN TIME");
 

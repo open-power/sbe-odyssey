@@ -43,8 +43,8 @@ using namespace cc;
 /// @param[in]   i_poll_abist_done         Inspect ABIST_DONE alongside the other bits
 /// @param[in]   i_assert_abist_done       Assert ABIST_DONE is set at the end of the procedure
 /// @param[in]   i_max_polls               Max number of polls to issue (>0x7FFFFFFF for infinite)
-/// @param[in]   i_hw_delay                Delay of ns between polls on hardware
-/// @param[in]   i_sim_delay               Delay of simcycles between polls on sim
+/// @param[in]   i_poll_delay_hw           Delay in terms of nS between polls on hardware environment
+/// @param[in]   i_poll_delay_sim          Delay in terms of simcycles between polls on simulation environment
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_bist_poll(
@@ -52,8 +52,8 @@ fapi2::ReturnCode mod_bist_poll(
     bool i_poll_abist_done = true,
     bool i_assert_abist_done = true,
     uint32_t i_max_polls = 400,
-    uint32_t i_hw_delay = 200000,
-    uint32_t i_sim_delay = 1120000);
+    uint32_t i_poll_delay_hw = 200000,
+    uint32_t i_poll_delay_sim = 1120000);
 
 /// @brief BIST SCOM reg cleanup module.
 /// --Clear OPCG_REG0, CLK_REGION, CPLT_CTRL0 & BIST registers
