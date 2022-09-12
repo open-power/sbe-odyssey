@@ -38,11 +38,15 @@
 #define HCODE_DEBUG_PTRS (0x200)
 #define OCCGPE_DEBUG_PTRS (0x180)
 
-#define PGPE_BASE_SRAM  (0xfff20000)
-#define XGPE_BASE_SRAM  (0xfff30000)
-#define QME_BASE_SRAM   (0xffff0000)
+#define PGPE_BASE_SRAM  (0xFFE60000)
+#define XGPE_BASE_SRAM  (0xFFE70000)
+#define QME_BASE_SRAM   (0xFFFE0000)
 #define GPE1_BASE_SRAM  (0xfff10000)
 #define GPE0_BASE_SRAM  (0xfff01000)
+#define PCE_BASE_SRAM   (0xFFFE0000)
+#define XCE_BASE_SRAM   (0xFFFF0000)
+#define DCE_BASE_SRAM   (0xFFFC5000)
+#define OCE_BASE_SRAM   (0xFFFD0000)
 
 using namespace std;
 
