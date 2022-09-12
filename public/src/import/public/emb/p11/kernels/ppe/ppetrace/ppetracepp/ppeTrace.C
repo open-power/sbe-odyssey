@@ -120,6 +120,22 @@ bool PpeTrace::loadFile(const char* filepath)
             {
                 offset = traceBufAddr - PGPE_BASE_SRAM;
             }
+            else if ( offset == PCE_BASE_SRAM )
+            {
+                offset = traceBufAddr - PCE_BASE_SRAM;
+            }
+            else if ( offset == XCE_BASE_SRAM )
+            {
+                offset = traceBufAddr - XCE_BASE_SRAM;
+            }
+            else if ( offset == DCE_BASE_SRAM )
+            {
+                offset = traceBufAddr - DCE_BASE_SRAM;
+            }
+            else if ( offset == OCE_BASE_SRAM )
+            {
+                offset = traceBufAddr - OCE_BASE_SRAM;
+            }
             else
             {
                 debugPtrs = reinterpret_cast<uint32_t*>(iv_alloc + OCCGPE_DEBUG_PTRS);
