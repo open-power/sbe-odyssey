@@ -61,7 +61,8 @@ static const bist_params ody_abist_params =
     0,                                  ///< linear_stagger
     0,                                  ///< zigzag_stagger
     10000,                              ///< max_polls
-    100000000,                          ///< poll_delay
+    200000,                             ///  poll_delay_hw
+    1120000,                            ///  poll_delay_sim
     cc::SCAN_TYPE_ALL,                  ///< scan0_types
     cc::REGION_ALL,                     ///< base_regions
     NULL,                               ///< chiplets_regions

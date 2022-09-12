@@ -37,8 +37,8 @@
       <description>DONE / HALT not measured by end of polling</description>
       <ffdc>PERV_CPLT_STAT0</ffdc>
       <ffdc>POLL_COUNT</ffdc>
-      <ffdc>HW_DELAY</ffdc>
-      <ffdc>SIM_DELAY</ffdc>
+      <ffdc>POLL_DELAY_HW</ffdc>
+      <ffdc>POLL_DELAY_SIM</ffdc>
       <ffdc>PROC_TARGET</ffdc>
     </hwpError>
   <!-- ******************************************************************** -->

@@ -34,7 +34,7 @@
 
 #include <fapi2.H>
 
-static const uint16_t BIST_PARAMS_CURRENT_VERSION = 4;
+static const uint16_t BIST_PARAMS_CURRENT_VERSION = 5;
 
 struct bist_params
 {
@@ -74,7 +74,8 @@ struct bist_params
     uint64_t linear_stagger;       ///< Increase idle count by this much for each successive chiplet
     uint64_t zigzag_stagger;       ///< Increase idle count by this much on any odd chiplet
     uint32_t max_polls;            ///< Max amount of DONE / HALT polls to issue (>0x7FFFFFFF for infinite)
-    uint32_t poll_delay;           ///< Amount of delay per polling loop (both hw and sim)
+    uint32_t poll_delay_hw;        ///< Amount of delay (in terms of nS) per polling loop for hardware environment
+    uint32_t poll_delay_sim;       ///< Amount of delay (in terms of number of cycles) per polling loop simulation environment
     uint16_t scan0_types;          ///< Mask of ring scan types to dictate what we will scan0
 
     /// First, multicast write base_regions as clock / BIST regions to everything in chiplets.
