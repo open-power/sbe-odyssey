@@ -41,9 +41,12 @@
 typedef enum
 {
     ERRL_SOURCE_405     = 0x00,
-    ERRL_SOURCE_PGPE    = 0x10,
-    ERRL_SOURCE_XGPE    = 0x20,
-    ERRL_SOURCE_QME     = 0x40,
+    ERRL_SOURCE_PGPE    = 0x01,
+    ERRL_SOURCE_XGPE    = 0x02,
+    ERRL_SOURCE_QME     = 0x04,
+    ERRL_SOURCE_PCE     = 0x08,
+    ERRL_SOURCE_XCE     = 0x10,
+    ERRL_SOURCE_DCE     = 0x20,
     ERRL_SOURCE_INVALID = 0xFF,
 } ERRL_SOURCE;
 
