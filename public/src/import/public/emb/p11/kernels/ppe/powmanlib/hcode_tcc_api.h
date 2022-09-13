@@ -35,7 +35,7 @@
 #ifndef __HCODE_TCC_API_H__
 #define __HCODE_TCC_API_H__
 
-#include <p11_gppb.H>
+#include <p11_ppb_global.H>
 #include <hcode_errl_table.h>
 
 #ifdef __cplusplus

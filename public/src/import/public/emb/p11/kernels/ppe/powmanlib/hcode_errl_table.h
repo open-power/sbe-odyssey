@@ -41,16 +41,20 @@
 // Support 1 unrecoverable & 1 informational elog per PPE
 #define MAX_ELOG_SLOTS_PER_PPE 2
 
+
+//TBD: Need to revisit the entry number below. for now added 20 to avoid
+//compilation error in errl.c
+
 // Maximum number of error log entries in error log table
 #ifdef __PPE_QME
     // QME local table in QME SRAM
-    #define MAX_ELOG_ENTRIES 2
+    #define MAX_ELOG_ENTRIES 20
 #elif __PPE_CE
     // TCC global table in TCC SRAM .. (DCE+OCE+PCE+XCE) * 2
-    #define MAX_ELOG_ENTRIES 8
+    #define MAX_ELOG_ENTRIES 20
 #else
     // OCC global table in OCC SRAM .. (NGPE+PGPE+XGPE) * 2
-    #define MAX_ELOG_ENTRIES 6
+    #define MAX_ELOG_ENTRIES 20
 #endif
 
 // Structure of an individual error log entry in the table
