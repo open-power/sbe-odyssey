@@ -41,6 +41,9 @@ class _AttrIntValueType(object):
     def get(self, image:bytearray, offset:int) -> int:
         return struct.unpack_from(self._type, image, offset)[0]
 
+    def valuestr(self, image:bytearray, offset:int) -> str:
+        return "0x%x" % struct.unpack_from(self._type, image, offset)[0]
+
     def set(self, image:bytearray, offset:int, value:list):
         struct.pack_into(self._type, image, offset, value[0])
 
@@ -61,6 +64,9 @@ class _EnumValueType(object):
         except KeyError:
             return value
 
+    def valuestr(self, image:bytearray, offset:int) -> str:
+        return self.get(image, offset)+"("+str(self._base.get(image, offset))+")"
+
     def set(self, image:bytearray, offset:int, value:list):
         if isinstance(value, str):
             self._base.set_element(image, offset, self._values[value[0]])
@@ -78,6 +84,9 @@ class _ArrayValueType(object):
 
     def get(self, image:bytearray, offset:int) -> list:
         return [self._base.get(image, offset + self._base.size * i) for i in range(self._dim)]
+
+    def valuestr(self, image:bytearray, offset:int) -> list:
+        return [self._base.valuestr(image, offset + self._base.size * i) for i in range(self._dim)]
 
     def set_element(self, image:bytearray, offset:int, value:int):
         self._base.set_element(image, offset, value)
@@ -145,6 +154,9 @@ class AttrFieldInfo(object):
                     raise ParseError("Attribute %s: Invalid enum value '%s' for %s" % (self.name, value, name))
         else:
             self.enum_values = None
+
+    def createDumpRecord(self, attr_list, image, image_base):
+        raise NotImplementedError("Dumping this level attribute is not implemented")
 
     @property
     def hash(self) -> str:
@@ -231,6 +243,33 @@ class RealAttrFieldInfo(AttrFieldInfo):
             vprint("value=" + str(value))
             vprint("index= ", str(index))
             raise e
+
+    def typestr(self):
+        """
+        # Function to get the attribute type in human readable format
+        # TODO: Need to support enums also. (Not tested this yet)
+        """
+        return self.value_type + "".join("[%d]" % dim for dim in self.array_dims)
+
+    def createDumpRecord(self, attr_list, image, image_base):
+        attr_name = self.name
+        target_name = self.target
+        values = self._type.valuestr(image, self.sbe_address - image_base)
+        if not isinstance(values, list):
+            my_attr_fields = [attr_name, target_name, self.typestr(), values]
+            attr_list.append(my_attr_fields)
+        elif(self.num_targ_inst>1):
+            for i in range(0, self.num_targ_inst):
+                target_name_index = target_name +'['+str(i)+']'
+                my_attr_fields = [attr_name, target_name_index, self.typestr(), values[i]]
+                attr_list.append(my_attr_fields)
+        elif(self._type._dim >1):
+            #TODO: Need support for multi dimesional attributes
+            for i in range(0, self._type._dim):
+                attr_name_index = attr_name+'['+str(i)+']'
+                my_attr_fields = [attr_name_index, target_name, self.value_type, values[i]]
+                attr_list.append(my_attr_fields)
+        return attr_list
 
     def get(self, image, image_base):
         return self._type.get(image, self.sbe_address - image_base)
