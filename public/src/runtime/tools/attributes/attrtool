@@ -4,6 +4,7 @@ from attrtank import *
 from attrtoolutils import *
 from argparse import ArgumentParser
 from contextlib import suppress
+from tabulate import tabulate
 import pickle, jinja2, sys, os
 
 def cmd_parse(args):
@@ -63,21 +64,6 @@ def cmd_compile(args):
     vprint("Storing attribute database to " + args.opdbfile)
     pickle.dump(sbe_attr_tank, open(args.opdbfile, "wb"))
 
-# Function to convert the attribute value into human readable format
-# TODO: Need to support enums also. (Not tested this yet)
-def valuestr(value) -> str:
-    if isinstance(value, int):
-        return "0x%x" % value
-    elif isinstance(value, list):
-        return "[" + ",".join(valuestr(v) for v in value) + "]"
-    else:
-        return value
-
-# Function to get the attribute type in human readable format
-# TODO: Need to support enums also. (Not tested this yet)
-def typestr(attr) -> str:
-    return attr.value_type + "".join("[%d]" % dim for dim in attr.array_dims)
-
 def cmd_setfixed(args):
     sbe_attr_tank : AttributeStructure = pickle.load(open(args.dbfile, "rb"))
 
@@ -121,20 +107,20 @@ def cmd_getattr(args):
         raise ArgumentError("Unknown attribute: " + args.attr)
 
     image = open(args.image, "rb").read()
-    value = attr.get(image)
-    print("%s(%s) = %s" % (attr.name, typestr(attr), valuestr(value)))
+    print("%s(%s) = %s" % (attr.name, attr.typestr(), attr._type.valuestr()))
 
 def cmd_dumpattr(args):
-    db = pickle.load(open(args.dbfile, "rb"))
-    if args.base is not None:
-        db.image_base = args.base
-
+    sbe_attr_tank : AttributeStructure = pickle.load(open(args.dbfile, "rb"))
     image = open(args.image, "rb").read()
-    for attr in db.attributes.values():
-        if not attr.sbe_address:
-            continue
-        value = attr.get(image)
-        print("%s(%s) = %s" % (attr.name, typestr(attr), valuestr(value)))
+    image_base = sbe_attr_tank.image_base
+    attr_list = []
+    headers=["Attribute Name", "Target", "Value Type", "Value"]
+    for attr in sbe_attr_tank.field_list:
+        #TODO we should not check this here imo
+        #class implementation should handle this gracefully
+        if isinstance(attr, RealAttrFieldInfo):
+            attr.createDumpRecord(attr_list, image, image_base)
+    print(tabulate(attr_list, headers, tablefmt="pretty", stralign="left" ))
 
 def img_standard_parms(parser):
     #parser.add_argument("-b", "--base", type=hexint, default=None, help="Base address (hex) of the image file, defaults to an autodetected value")
