@@ -29,6 +29,7 @@
 #include "p11_scom_perv_cfam.H"
 #include "p11_ppe_pc.H"
 #include "mbxscratch.H"
+#include "errorcodes.H"
 
 namespace SBE
 {
@@ -106,6 +107,13 @@ namespace SBE
         putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, secureBootFailStatus.iv_mbx13);
     }
 
+   /**************************************************************************
+    *
+    * Note: This function will be called before pk_init(). Hence, don't add
+    *       SBE_INFO or SBE_ERROR. In case of error, update the error code 
+    *       in the error register.
+    *
+    * *************************************************************************/
     void updateSbeGlobalFreqFromLFR(void)
     {
         // Read local register 0xC0002040 with frequency value
@@ -115,10 +123,20 @@ namespace SBE
         // calculating the uint32_t number range.
         // ((pau_freq_in_mhz * 1000 * 1000)/4) for SBE Freq value
         CMN_GLOBAL->sbefreq = (lfrReg.pau_freq_in_mhz * 1000 * 250 );
-        SBE_INFO(SBE_FUNC "sbe global frequency[0x%08X]", CMN_GLOBAL->sbefreq);
+        if(!CMN_GLOBAL->sbefreq)
+        {
+            updateErrorCodeAndHalt(BOOT_RC_SPPE_MBX6_FREQUENCY_INVALID);
+        }
     }
 
-    void setSbeGlobalFreqFromScratchOrLFR(void)
+   /**************************************************************************
+    *
+    * Note: This function will be called before pk_init(). Hence, don't add
+    *       SBE_INFO or SBE_ERROR. In case of error, update the error code 
+    *       in the error register.
+    *
+    * *************************************************************************/
+    void setSbeGlobalFreqFromScratchOrLFR(caller_id_t i_caller)
     {
         // Mailbox scratch 6(CFAM 283D, SCOM 0x5003D)
         // Command table writes value based on bucket selection (bits 0:3 above)
@@ -133,13 +151,12 @@ namespace SBE
             mbx6_t odysseymbx6;
             getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_6_RW,
                        &odysseymbx6.iv_mbx6);
-            SBE_INFO(SBE_FUNC "ODYSSEY MBX6  [0x%08X 0x%08X] ",
-                     SBE::higher32BWord(odysseymbx6.iv_mbx6), SBE::lower32BWord(odysseymbx6.iv_mbx6));
             uint16_t odyFreqInMHZ = odysseymbx6.iv_mbx6freqInmhz;
             if(!odyFreqInMHZ)
             {
-                SBE_ERROR(SBE_FUNC "Not valid Mbx6 value, Halting PPE...");
-                pk_halt();
+                updateErrorCodeAndHalt(
+                    (i_caller == CALLER_BOOTLOADER) ? BOOT_RC_BLDR_MBX6_FREQUENCY_INVALID
+                                                    : BOOT_RC_SPPE_MBX6_FREQUENCY_INVALID);
             }
             // Update local register 0xC0002040 with frequency value
             sbe_local_LFR lfrReg;
@@ -148,7 +165,6 @@ namespace SBE
             lfrReg.pau_freq_in_mhz = odyFreqInMHZ;
             PPE_STVD(scomt::ppe_pc::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW,
                      lfrReg);
-            SBE_INFO(SBE_FUNC "Odyssey pau freq in mhz[0x%08X] ", odyFreqInMHZ);
         }
         // Read Freq value from LFR and update CMN_GLOBAL->sbe_freq
         updateSbeGlobalFreqFromLFR();

@@ -38,6 +38,7 @@
 #include "ppe42_string.h"
 #include "metadata.H"
 #include "cmnglobals.H"
+#include "errorcodes.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -129,7 +130,7 @@ int  main(int argc, char **argv)
     do
     {
         /// Update CMN_GLOBAL->sbefreq using Scratch Reg
-        SBE::setSbeGlobalFreqFromScratchOrLFR();
+        SBE::setSbeGlobalFreqFromScratchOrLFR(CALLER_BOOTLOADER);
 
         rc = pk_initialize((PkAddress)bldr_Kernel_NC_Int_stack,
                 BLDR_NONCRITICAL_STACK_SIZE,
@@ -142,8 +143,7 @@ int  main(int argc, char **argv)
 
         if (rc)
         {
-            SBE_ERROR(SBE_FUNC "PK Initialization failed for Boot Loader image");
-            break;
+            SBE::updateErrorCodeAndHalt(BOOT_RC_BLDR_PK_INIT_FAILED);
         }
  
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_PK_INIT)
