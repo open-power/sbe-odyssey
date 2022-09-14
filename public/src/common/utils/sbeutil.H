@@ -53,6 +53,15 @@ typedef enum
     RUNTIME
 }IMAGES;
 
+/*
+ * @brief Enum for Caller, calling a function
+ */
+typedef enum caller_id
+{
+    CALLER_BOOTLOADER=1,
+    CALLER_RUNTIME
+}caller_id_t;
+
 // To handle unused variables compilation error
 static inline void UNUSED(int dummy, ...) {}
 
@@ -273,14 +282,16 @@ namespace SBE
     void updateSbeGlobalFreqFromLFR(void);
 
     /*
-     *  This function call only for bootloader main function
+     *  This function call for bootloader and runtime main function
      *
      *  @brief - By using Mailbox scratch 6(CFAM 283D, SCOM 0x5003D)
      *  command table writes value based on bucket selection (bits 0:3 above)
      *  mbox scratch 6 and Bytes 2,3 from scratch 6 update Odyssey Nest freq
      *  (in MHz) from platform
+     *  @param i_caller To identify whether this function is called by bootloader or
+     *                  runtime
      */
-    void setSbeGlobalFreqFromScratchOrLFR(void);
+    void setSbeGlobalFreqFromScratchOrLFR(caller_id_t i_caller);
 
     /**
      * @brief compute a sha3 hash (md) of given byte length from "i_data"

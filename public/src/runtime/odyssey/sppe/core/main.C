@@ -128,8 +128,18 @@ int  main(int argc, char **argv)
 
     do
     {
-        // Update sbefreq using LFR value
-        SBE::updateSbeGlobalFreqFromLFR();
+        // In case of pibmem only image, set the sbe frequency
+        // on scratch 6. 
+#if defined(RUNTIME_PIBMEM_ONLY_IMG)
+            mbx6_t odysseymbx6 = {0};
+            odysseymbx6.iv_mbx6freqInmhz = SBE_ODYSSEY_DEF_NEST_FREQ_MHZ;
+            putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_6_RW,
+                odysseymbx6.iv_mbx6);
+            SBE::setSbeGlobalFreqFromScratchOrLFR(CALLER_RUNTIME);
+#else
+            // Update sbefreq using LFR value
+            SBE::updateSbeGlobalFreqFromLFR();
+#endif
         rc = pk_initialize((PkAddress)sppe_Kernel_NC_Int_stack,
                 SPPE_NONCRITICAL_STACK_SIZE,
                 INITIAL_PK_TIMEBASE, // initial_timebase
@@ -138,11 +148,11 @@ int  main(int argc, char **argv)
                 SPPE_PK_TRACE_SIZE);
         if (rc)
         {
-            SBE_ERROR(SBE_FUNC "PK Initialization failed for SPPE image");
-            break;
+            SBE::updateErrorCodeAndHalt(BOOT_RC_SPPE_PK_INIT_FAILED);
         }
         SBE_INFO(SBE_FUNC "Completed PK initialization for SPPE Image");
 
+#ifndef RUNTIME_PIBMEM_ONLY_IMG
         //Read the SROM measurement control register and validate if boot complete bit is set
         secureBootCtrlSettings_t sromSecureBootCtrlSettings;
         sromSecureBootCtrlSettings.getSecureBootCtrlSettings(MEASUREMENT_REG_24);
@@ -164,7 +174,7 @@ int  main(int argc, char **argv)
             SBE_ERROR(SBE_FUNC "BLDR Boot Complete bit not set.");
             SBE::updateErrorCodeAndHalt(BOOT_RC_BLDR_COMPLETE_BIT_NOT_SET_IN_RUNTIME);
         }
-
+#endif
         // Initialize SBE Globals instance.
         sbeGlobal = &SBEGlobalsSingleton::getInstance();
 
