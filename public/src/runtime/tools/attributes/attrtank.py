@@ -28,6 +28,11 @@ from collections import namedtuple
 import struct
 from attrdb import *
 
+class ArgumentError(Exception):
+    def __init__(self, message="Argument Exception occured"):
+        self.message = "Argument Error :\n"+message
+        super().__init__(self.message)
+
 class _AttrIntValueType(object):
     def __init__(self, typestr:str):
         self._type = typestr
@@ -76,6 +81,24 @@ class _ArrayValueType(object):
 
     def set_element(self, image:bytearray, offset:int, value:int):
         self._base.set_element(image, offset, value)
+
+    def set_element_by_index(
+        self, image:bytearray, base_offset:int, value:int, index:list, cur_dim:int=0):
+
+        if(len(index) == 0):
+            raise ArgumentError("Expected index")
+        if(index[0] > self._dim):
+            vprint("index (%d) at dimension %d, is out of range (%d)"
+                    %(index[0], cur_dim, self._dim))
+            raise ArgumentError("Index out of range")
+        base_offset = base_offset + index[0] * self._base.size
+        if(isinstance(self._base, _ArrayValueType)):
+            return self._base.set_element_by_index(
+                image, base_offset, value, index[1:], cur_dim + 1)
+        else:
+            # this the 0th dimension
+            assert (len(index) == 1), "more dimension than expected"
+            return self.set_element(image, base_offset, value)
 
     def set(self, image:bytearray, offset:int, value:list):
         if len(value) != self._dim:
@@ -136,7 +159,6 @@ class AttrFieldInfo(object):
 
 class RealAttrFieldInfo(AttrFieldInfo):
     has_storage = True
-
     _VALUE_TYPES = {
         "int8":   _AttrIntValueType(">b"),
         "uint8":  _AttrIntValueType(">B"),
@@ -180,7 +202,6 @@ class RealAttrFieldInfo(AttrFieldInfo):
             self._type = _ArrayValueType(self._type, dim)
         if(self.num_targ_inst > 1):
             self._type = _ArrayValueType(self._type, self.num_targ_inst)
-
         self.tot_size = self._type.size
 
     def set(self, image, image_base, value):
@@ -191,6 +212,24 @@ class RealAttrFieldInfo(AttrFieldInfo):
             vprint("value=" + str(value))
             vprint("typeofvalue=", type(value))
             vprint("dimension="+ str(self.array_dims))
+            raise e
+
+    def set_value(self, image, image_base, value, target, index):
+
+        if target != self.target:
+            raise ArgumentError("Target mismatch: \nActual: " + target +" - Expected : "+self.target)
+
+        offset = self.sbe_address - image_base
+
+        try:
+            if isinstance(self._type, _ArrayValueType):
+                self._type.set_element_by_index(image, offset, value, [int(i) for i in index])
+            else:
+                self._type.set_element(image, offset, value)
+        except Exception as e:
+            vprint("failed set " + self.name)
+            vprint("value=" + str(value))
+            vprint("index= ", str(index))
             raise e
 
     def get(self, image, image_base):
@@ -248,6 +287,9 @@ class VirtualAttrFieldInfo(AttrFieldInfo):
     def set(self, image, image_base, value):
         raise NotImplementedError("Cannot modify a virtual attribute")
 
+    def set_value(self, image, image_base, value, target, index=0):
+        raise NotImplementedError("Cannot modify value for virtual attribute")
+
     def get(self, image, image_base):
         raise NotImplementedError("Querying virtual attributes is not implemented")
 
@@ -279,6 +321,9 @@ class EcAttrFieldInfo(AttrFieldInfo):
 
     def get(self, image, image_base):
         raise NotImplementedError("Querying EC level attributes is not implemented")
+
+    def set_value(self, image, image_base, value, target, index=0):
+        raise NotImplementedError("Cannot modify value for EC level attribute")
 
     @property
     def getter(self):
@@ -337,7 +382,6 @@ class AttributeStructure(object):
                     attr.sbe_entry.values,
                     TARGET_TYPES[attr.sbe_target_type[0]].ntargets,
                     attr.array_dims))
-
 
 class SymbolTable(object):
     Symbol = namedtuple("Symbol", "name type offset size")

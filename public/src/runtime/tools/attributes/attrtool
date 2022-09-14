@@ -6,11 +6,6 @@ from argparse import ArgumentParser
 from contextlib import suppress
 import pickle, jinja2, sys, os
 
-
-class ArgumentError(Exception):
-    pass
-
-
 def cmd_parse(args):
     db = AttributeDB()
     for xml in args.attr_xml:
@@ -95,23 +90,24 @@ def cmd_setfixed(args):
     open(args.image, "wb").write(image)
 
 def cmd_setattr(args):
-    db = pickle.load(open(args.dbfile, "rb"))
-    if args.base is not None:
-        db.image_base = args.base
+    sbe_attr_tank : AttributeStructure = pickle.load(open(args.dbfile, "rb"))
+    is_attr_present = False
+    attr_to_set = None
+    for attr in sbe_attr_tank.field_list:
+        if attr.name == args.attr.upper():
+            is_attr_present = True
+            attr_to_set = attr
+            break
 
-    try:
-        attr = db.attributes[args.attr.upper()]
-    except KeyError:
+    if not is_attr_present :
         raise ArgumentError("Unknown attribute: " + args.attr)
 
     image = bytearray(open(args.image, "rb").read())
+    image_base = sbe_attr_tank.image_base
 
-    value = args.value.split(",")
-    for i in range(len(value)):
-        with suppress(ValueError):
-            value[i] = int(value[i], 0)
-
-    attr.set(image, value)
+    if not isinstance(attr_to_set, RealAttrFieldInfo):
+        raise ArgumentError(args.attr.upper()+ " is not a Real Attribute")
+    attr_to_set.set_value(image, image_base, args.value, args.target, args.index)
     open(args.image, "wb").write(image)
 
 def cmd_getattr(args):
@@ -182,7 +178,10 @@ if __name__ == "__main__":
     sub = subparsers.add_parser("setattr", help="Set an attribute value in a PPE image")
     img_standard_parms(sub)
     sub.add_argument("attr", help="Name of the attribute, with optional index for array attributes")
-    sub.add_argument("value", help="New value for the attribute; may be an integer value (prefix hex with 0x), an ENUM name, or a comma-separated list thereof")
+    #TODO - need support for enum type
+    sub.add_argument("value", help="New value for the attribute; may be an integer value (prefix hex with 0x), an ENUM name, or a comma-separated list thereof", type = int)
+    sub.add_argument("target", help="Target for the attribute;")
+    sub.add_argument("--index", help="Index for the value in attribute values;",nargs="+" ,default = [])
     sub.set_defaults(func=cmd_setattr)
 
     sub = subparsers.add_parser("dumpattr", help="Dump all attributes from a PPE image")
