@@ -187,6 +187,9 @@ _pk_initialize(PkAddress     kernel_stack,
     G_PK_TRACE_BUF->time_adj64         = 0;
     G_PK_TRACE_BUF->state.word64       = 0;
 
+    //Initilize the trace buffer to zero
+    memset(G_PK_TRACE_BUF->cb, 0x00, G_PK_TRACE_BUF->size);
+
     pk_debug_ptrs.debug_trace_ptr      = G_PK_TRACE_BUF;
     pk_debug_ptrs.debug_trace_size     = G_PK_TRACE_BUF->size;
 #else
