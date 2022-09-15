@@ -39,10 +39,7 @@ using namespace fapi2;
 static const bist_params ody_abist_params =
 {
     BIST_PARAMS_CURRENT_VERSION,        ///< BIST_PARAMS_VERSION
-    "mfgfullSF_def",                    ///< program
-    "none",                             ///< ring_patch
-    0x0080000000000000,                 ///< chiplets
-    0x0000000000000000,                 ///< uc_go_chiplets
+    0,                                  ///< padding_a
 
     bist_params::ABIST_NOT_LBIST    |   ///< 0x80000000
     bist_params::DO_SCAN0           |   ///< 0x40000000
@@ -56,18 +53,22 @@ static const bist_params ody_abist_params =
     bist_params::POLL_ABIST_DONE    |   ///< 0x00040000
     bist_params::ASSERT_ABIST_DONE,     ///< 0x00020000
 
+    0x0080000000000000,                 ///< chiplets
+    0x0000000000000000,                 ///< uc_go_chiplets
     135000000,                          ///< opcg_count
     0x20000,                            ///< idle_count
     0,                                  ///< linear_stagger
     0,                                  ///< zigzag_stagger
     10000,                              ///< max_polls
-    200000,                             ///  poll_delay_hw
-    1120000,                            ///  poll_delay_sim
+    200000,                             ///< poll_delay_hw
+    1120000,                            ///< poll_delay_sim
     cc::SCAN_TYPE_ALL,                  ///< scan0_types
     cc::REGION_ALL,                     ///< base_regions
-    NULL,                               ///< chiplets_regions
+    {0},                                ///< chiplets_regions
     0x8000,                             ///< outer_loop_mask
     0x8000,                             ///< inner_loop_mask
+    "mfgfullSF_def",                    ///< program
+    "none",                             ///< ring_patch
 };
 
 enum ODY_ABIST_Private_Constants

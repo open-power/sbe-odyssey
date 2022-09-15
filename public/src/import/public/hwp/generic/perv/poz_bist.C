@@ -37,6 +37,7 @@
 #include <poz_perv_mod_bist.H>
 #include <poz_chiplet_arrayinit.H>
 #include <target_filters.H>
+#include <endian.h>
 
 using namespace fapi2;
 
@@ -69,32 +70,52 @@ uint8_t get_set_bit_index(uint64_t i_mask)
 void print_bist_params(const bist_params& i_params)
 {
     FAPI_DBG("BIST_PARAMS_VERSION = %d", i_params.BIST_PARAMS_VERSION);
-    FAPI_DBG("program = %s", i_params.program);
-    FAPI_DBG("ring_patch = %s", i_params.ring_patch);
-    FAPI_DBG("chiplets = %#018lx", i_params.chiplets);
-    FAPI_DBG("uc_go_chiplets = %#018lx", i_params.uc_go_chiplets);
-    FAPI_DBG("flags = %#010x", i_params.flags);
-    FAPI_DBG("opcg_count = %lu", i_params.opcg_count);
-    FAPI_DBG("idle_count = %lu", i_params.idle_count);
-    FAPI_DBG("linear_stagger = %lu", i_params.linear_stagger);
-    FAPI_DBG("zigzag_stagger = %lu", i_params.zigzag_stagger);
+    FAPI_DBG("flags = 0x%08x", i_params.flags);
+    FAPI_DBG("chiplets = 0x%08x%08x",
+             i_params.chiplets >> 32,
+             i_params.chiplets & 0xFFFFFFFF);
+    FAPI_DBG("uc_go_chiplets = 0x%08x%08x",
+             i_params.uc_go_chiplets >> 32,
+             i_params.uc_go_chiplets & 0xFFFFFFFF);
+    FAPI_DBG("opcg_count = 0x%08x%08x",
+             i_params.opcg_count >> 32,
+             i_params.opcg_count & 0xFFFFFFFF);
+    FAPI_DBG("idle_count = 0x%08x%08x",
+             i_params.idle_count >> 32,
+             i_params.idle_count & 0xFFFFFFFF);
+    FAPI_DBG("linear_stagger = 0x%08x%08x",
+             i_params.linear_stagger >> 32,
+             i_params.linear_stagger & 0xFFFFFFFF);
+    FAPI_DBG("zigzag_stagger = 0x%08x%08x",
+             i_params.zigzag_stagger >> 32,
+             i_params.zigzag_stagger & 0xFFFFFFFF);
     FAPI_DBG("max_polls = %u", i_params.max_polls);
     FAPI_DBG("poll_delay_hw = %u", i_params.poll_delay_hw);
     FAPI_DBG("poll_delay_sim = %u", i_params.poll_delay_sim);
-    FAPI_DBG("scan0_types = %#06x", i_params.scan0_types);
-    FAPI_DBG("base_regions = %#06x", i_params.base_regions);
+    FAPI_DBG("scan0_types = 0x%04x", i_params.scan0_types);
+    FAPI_DBG("base_regions = 0x%04x", i_params.base_regions);
 
     for (uint8_t chiplet_id = 0; chiplet_id < 64; chiplet_id++)
     {
         if (i_params.chiplets_regions[chiplet_id])
         {
-            FAPI_DBG("chiplets_regions[%d] = %#06x",
+            FAPI_DBG("chiplets_regions[%d] = 0x%04x",
                      chiplet_id, i_params.chiplets_regions[chiplet_id]);
         }
     }
 
-    FAPI_DBG("outer_loop_mask = %#06x", i_params.outer_loop_mask);
-    FAPI_DBG("inner_loop_mask = %#06x", i_params.inner_loop_mask);
+    FAPI_DBG("outer_loop_mask = 0x%04x", i_params.outer_loop_mask);
+    FAPI_DBG("inner_loop_mask = 0x%04x", i_params.inner_loop_mask);
+    FAPI_DBG("program (ASCII) = 0x%08x%08x%08x%08x",
+             be32toh(((uint32_t*)i_params.program)[0]),
+             be32toh(((uint32_t*)i_params.program)[1]),
+             be32toh(((uint32_t*)i_params.program)[2]),
+             be32toh(((uint32_t*)i_params.program)[3]));
+    FAPI_DBG("ring_patch (ASCII) = 0x%08x%08x%08x%08x",
+             be32toh(((uint32_t*)i_params.ring_patch)[0]),
+             be32toh(((uint32_t*)i_params.ring_patch)[1]),
+             be32toh(((uint32_t*)i_params.ring_patch)[2]),
+             be32toh(((uint32_t*)i_params.ring_patch)[3]));
 }
 
 ReturnCode poz_bist_execute(
@@ -211,21 +232,22 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
     // Needed for unicast condition
     uint8_t l_chiplet_number = 0;
 
-    // Scan0 regions are different for TP BIST
-    clock_region l_scan0_region = REGION_ALL;
+    // Regions are handled a little differently for TP BIST
+    clock_region l_scan0_regions = REGION_ALL;
+    uint16_t l_tp_regions = i_params.base_regions;
 
     // Helper buffers produced from bist_params constituents
+    const buffer<uint64_t> l_chiplets_mask = i_params.chiplets;
     const buffer<uint16_t> l_outer_loop_mask = i_params.outer_loop_mask;
     const buffer<uint16_t> l_inner_loop_mask = i_params.inner_loop_mask;
 
-    // Check to see if structure BIST_PARAMS is the expected version.
-    // if(i_params.BIST_PARAMS_VERSION != BIST_PARAMS_CURRENT_VERSION)
+    // Assert the provided bist_params struct is the expected version
     FAPI_ASSERT(i_params.BIST_PARAMS_VERSION == BIST_PARAMS_CURRENT_VERSION,
                 fapi2::BAD_BIST_PARAMS_FORMAT().
                 set_BIST_PARAMS(i_params.BIST_PARAMS_VERSION),
-                "Expect Version = %d, got Version = %d instead for bist_params structure,",
-                BIST_PARAMS_CURRENT_VERSION, i_params.BIST_PARAMS_VERSION)
-    FAPI_DBG("Received Structure Version = %d, Check Passed.", i_params.BIST_PARAMS_VERSION);
+                "BIST_PARAMS_VERSION mismatch (expected = %d, got = %d)",
+                BIST_PARAMS_CURRENT_VERSION, i_params.BIST_PARAMS_VERSION);
+    FAPI_DBG("Received bist_params version = %d; check passed", i_params.BIST_PARAMS_VERSION);
 
     // Print all BIST parameters for debug
     print_bist_params(i_params);
@@ -242,14 +264,24 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
             FAPI_TRY(mod_get_chiplet_by_number(i_target, l_chiplet_number, l_chiplet));
             l_chiplets_target = l_chiplet;
 
-            // If TP BIST, don't scan0 SBE region
+            // Safe scan0 for TP depends on PCB mux; just default to regions requested for BIST
             if (l_chiplet_number == 1)
             {
-                l_scan0_region = REGION_ALL_BUT_PERV_SBE;
+                if (i_params.chiplets_regions[1])
+                {
+                    l_tp_regions = i_params.chiplets_regions[1];
+                }
+
+                l_scan0_regions = (clock_region)l_tp_regions;
             }
         }
         else
         {
+            FAPI_ASSERT(!l_chiplets_mask.getBit(1),
+                        fapi2::MIXED_TP_CHIPLET_BIST_REQUESTED().
+                        set_CHIPLETS(i_params.chiplets),
+                        "Cannot currently run BIST on a combination of TP and non-TP chiplets");
+
             FAPI_DBG("Setup and use multicast group 6");
             FAPI_TRY(mod_multicast_setup(i_target, MCGROUP_6, i_params.chiplets, TARGET_STATE_FUNCTIONAL));
             l_chiplets_target = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_6);
@@ -261,13 +293,36 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
         l_chiplets_target = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
     }
 
+    // Calculate PCB mux path
+    switch (i_params.flags & i_params.bist_flags::PCB_MUX_MASK)
+    {
+        case i_params.bist_flags::PCB_MUX_UNCHANGED:
+            FAPI_DBG("Leaving PCB mux unchanged");
+            break;
+
+        case i_params.bist_flags::PCB_MUX_FSI2PCB:
+            FAPI_INF("Configuring PCB mux for FSI2PCB");
+            FAPI_TRY(mod_switch_pcbmux(i_target, FSI2PCB));
+            break;
+
+        case i_params.bist_flags::PCB_MUX_PIB2PCB:
+            FAPI_INF("Configuring PCB mux for PIB2PCB");
+            FAPI_TRY(mod_switch_pcbmux(i_target, PIB2PCB));
+            break;
+
+        case i_params.bist_flags::PCB_MUX_PCB2PCB:
+            FAPI_INF("Configuring PCB mux for PCB2PCB");
+            FAPI_TRY(mod_switch_pcbmux(i_target, PCB2PCB));
+            break;
+    }
+
     ////////////////////////////////////////////////////////////////
     // STAGE: SCAN0
     ////////////////////////////////////////////////////////////////
     if (i_params.flags & i_params.bist_flags::DO_SCAN0)
     {
         FAPI_INF("Do a scan0");
-        FAPI_TRY(mod_scan0(l_chiplets_target, l_scan0_region, i_params.scan0_types));
+        FAPI_TRY(mod_scan0(l_chiplets_target, l_scan0_regions, i_params.scan0_types));
     }
 
     ////////////////////////////////////////////////////////////////
