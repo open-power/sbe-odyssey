@@ -220,11 +220,11 @@ def mod_scan0(target<PERV|MC>, uint16_t i_clock_regions, uint16_t i_scan_types=S
         for cplt in unicast children of i_target:
             OPCG_ALIGN = opcg_align_save[cplt.getChipletNumber()]
 
-def mod_start_stop_clocks(target<PERV|MC>, uint16_t i_clock_regions, uint16_t i_clock_types=CLOCK_TYPE_ALL, bool i_start_not_stop=true):
+def mod_start_stop_clocks(target<PERV|MC>, uint16_t i_clock_regions, uint16_t i_clock_types=CLOCK_TYPE_ALL, bool i_start_not_stop=true, bool i_manage_fences=true):
     SCAN_REGION_TYPE = 0
 
     # Drop fences before starting clocks
-    if i_start_not_stop:
+    if i_start_not_stop and i_manage_fences:
         CPLT_CTRL1_WO_CLEAR = i_clock_regions << 44
 
     # Issue clock start/stop command
@@ -241,7 +241,7 @@ def mod_start_stop_clocks(target<PERV|MC>, uint16_t i_clock_regions, uint16_t i_
         check_clock_status(i_target, i_clock_regions, i_clock_types & check_type, i_start_not_stop)
 
     # Raise fences after clocks are stopped
-    if not i_start_not_stop:
+    if not i_start_not_stop and i_manage_fences:
         CPLT_CTRL1_WO_OR = i_clock_regions << 44
 
 ISTEP(99, 99, "poz_perv_mod_misc", "")
@@ -292,8 +292,7 @@ def mod_cbs_start(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_cloc
     mod_cbs_cleanup(i_target)
 
 def mod_switch_pcbmux(target<ANY_POZ_CHIP>, mux_type i_path):
-    # You can reuse p10_perv_sbe_cmn_switch_mux_scom here
-
+    uint8_t l_oob_mux_save = ROOT_CTRL0.OOB_MUX
     ROOT_CTRL0.OOB_MUX = 1
     # write ROOT_CTRL0
     ROOT_CTRL0.PCB_RESET = 1
@@ -304,7 +303,7 @@ def mod_switch_pcbmux(target<ANY_POZ_CHIP>, mux_type i_path):
     # write ROOT_CTRL0
     ROOT_CTRL0.PCB_RESET = 0
     # write ROOT_CTRL0
-    ROOT_CTRL0.OOB_MUX = 0
+    ROOT_CTRL0.OOB_MUX = l_oob_mux_save
 
 def mod_setup_clockstop_on_xstop(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64]):
     if not ATTR_CLOCKSTOP_ON_XSTOP:

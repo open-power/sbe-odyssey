@@ -156,7 +156,6 @@ def poz_setup_ref_clock(target<PROC_CHIP | HUB_CHIP>):
     ROOT_CTRL6 = 0
     ROOT_CTRL6.TP_AN_SYS0_RX_REFCLK_TERM = ATTR_SYS0_REFCLOCK_RCVR_TERM
     ROOT_CTRL6.TP_AN_SYS1_RX_REFCLK_TERM = ATTR_SYS1_REFCLOCK_RCVR_TERM
-    ROOT_CTRL6.TAP_CFAM_RESET = -1    # bits 8:15, will be reflected in future register header udpate
 
     ROOT_CTRL6_COPY = ROOT_CTRL6      # Update copy register to match
 
@@ -220,7 +219,7 @@ def zme_setup_ref_clock():
 
     ROOT_CTRL4_COPY = ROOT_CTRL4      # Update copy register to match
 
-ISTEP(0, 7, "ph_clock_test", "BMC")
+ISTEP(0, 7, "clock_test", "BMC")
 
 def p11s_clock_test():
     mod_clock_test(path=CFAM)
@@ -490,10 +489,11 @@ def zme_pib_arrayinit_cleanup():
 """
 PIB/SBE LBIST flow:
  1. mod_start_cbs(i_sbe_start=false, i_scan0_clockstart=false)
- 2. mod_switch_pcbmux(mux::FSI2PCB)
+ 2. mod_switch_pcbmux(mux::FSI2PCB on P/Z or mux::I2C2PCB on Odyssey)
  3. run command table up to this point using FAPI or Python interpreter
     remember to translate mailbox scoms into cfams (use cmdtable.py run --cfam)
- 4. run LBIST
+ 4. mod_start_stop_clocks(regions=[sbe], start_not_stop=false)
+ 5. run LBIST
 """
 
 ISTEP(1, 9, "ph_pib_startclocks", "SPPE")
@@ -634,6 +634,7 @@ def p11s_tp_init():
     ## Start using PCB network
     ROOT_CTRL0.GLOBAL_EP_RESET = 0        # Drop Global Endpoint reset
     mod_switch_pcbmux(i_target, mux::PCB2PCB)
+    ROOT_CTRL0.OOB_MUX = 0
 
     ## Set up static multicast groups
     mod_multicast_setup(i_target, MCGROUP_GOOD, 0x7FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL)
@@ -666,6 +667,7 @@ def ody_tp_init():
     ## Start using PCB network
     ROOT_CTRL0.GLOBAL_EP_RESET = 0        # Drop Global Endpoint reset
     mod_switch_pcbmux(i_target, mux::PCB2PCB)
+    ROOT_CTRL0.OOB_MUX = 0
 
     ## Set up static multicast groups
     mod_multicast_setup(i_target, MCGROUP_GOOD, 0x7FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL)
@@ -688,6 +690,7 @@ def zme_tp_init():
     ## Start using PCB network
     ROOT_CTRL0.GLOBAL_EP_RESET = 0        # Drop Global Endpoint reset
     mod_switch_pcbmux(i_target, mux::PCB2PCB)
+    ROOT_CTRL0.OOB_MUX = 0
 
     ## Set up static multicast groups
     mod_multicast_setup(i_target, MCGROUP_GOOD, 0x7FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL)
@@ -741,12 +744,12 @@ def p11s_fsi_init():
     delay(1ms, 1kcyc)
 
     ## Drop Tap CFAM_RESETs
-    ROOT_CTRL6.TAP_CFAM_RESET = ~l_expected_taps
+    ROOT_CTRL6.TAP_CFAM_RESET_N = l_expected_taps
 
     call fsi_driver_init(i_expected_taps=l_taps, o_detected_taps=l_detected_taps)
 
     ## Disable failed Taps
-    ROOT_CTRL6.TAP_CFAM_RESET = ~l_detected_taps
+    ROOT_CTRL6.TAP_CFAM_RESET_N = l_detected_taps
     delay(1ms, 1kcyc)
     ROOT_CTRL7.TAP_REFCLK_EN = l_detected_taps
 
@@ -947,6 +950,7 @@ def p11t_tp_init():
     ## Start using PCB network
     ROOT_CTRL0.GLOBAL_EP_RESET = 0        # Drop Global Endpoint reset
     mod_switch_pcbmux(i_target, mux::PCB2PCB)
+    ROOT_CTRL0.OOB_MUX = 0
 
     ## Set up static multicast groups
     mod_multicast_setup(i_target, MCGROUP_GOOD, 0x7FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL)
@@ -1070,7 +1074,16 @@ def p11t_chiplet_reset():
         p11t_hcd_core_reset(all good cores)
 
 def ody_chiplet_reset():
-    poz_chiplet_reset(i_target, ody_chiplet_delay_table)
+    poz_chiplet_reset(i_target, ody_chiplet_delay_table, PRE_SCAN0)
+
+    with MC chiplet:
+        # Assert ATPGMODE_PUBMAC while we might scan to work around
+        # a problem where a latch controlling async resets is on the scan chain.
+        # Setting this mux to 1 will disconnect the async resets from that latch
+        # so we can scan without issue.
+        CPLT_CONF1.DDR01_ATPGMODE_PUBMAC = 1
+
+    poz_chiplet_reset(i_target, ody_chiplet_delay_table, SCAN0_AND_UP)
 
 def zme_chiplet_reset():
     poz_chiplet_reset(i_target, zme_chiplet_delay_table)
@@ -1084,42 +1097,50 @@ def zme_chiplet_reset():
         CPLT_CTRL0.CTRL_CC_FLUSHMODE_INH_DC = 1
         CPLT_CONF0.SDIS_N = 1
 
-def poz_chiplet_reset(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64]):
+enum poz_chiplet_reset_phases : uint8_t {
+    PRE_SCAN0 = 0x80,
+    SCAN0_AND_UP = 0x40,
+    ALL = 0xFF,
+};
+
+def poz_chiplet_reset(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64], const poz_chiplet_reset_phases i_phases = ALL):
     if ATTR_HOTPLUG:
         chiplets = All functional chiplets except TP
     else:
         chiplets = All PRESENT chiplets regardless of functional or not except TP
 
-    with chiplets via multicast:
-        ## Enable and reset chiplets
-        NET_CTRL0.PCB_EP_RESET = 1
-        # write NET_CTRL0
-        NET_CTRL0.PCB_EP_RESET = 0
-        NET_CTRL0.CHIPLET_EN = 1
+    if i_phases & PRE_SCAN0:
+        with chiplets via multicast:
+            ## Enable and reset chiplets
+            NET_CTRL0.PCB_EP_RESET = 1
+            # write NET_CTRL0
+            NET_CTRL0.PCB_EP_RESET = 0
+            NET_CTRL0.CHIPLET_EN = 1
 
-        ## Set up clock controllers
-        SYNC_CONFIG = 0
-        SYNC_CONFIG.SYNC_PULSE_DELAY = 0b1001    # decimal 9 -> 10 cycles
+            ## Set up clock controllers
+            SYNC_CONFIG = 0
+            SYNC_CONFIG.SYNC_PULSE_DELAY = 0b1001    # decimal 9 -> 10 cycles
 
-    ## Set up per-chiplet OPCG delays
-    for chiplet in chiplets:
-        OPCG_ALIGN = 0
-        OPCG_ALIGN.INOP_ALIGN = 7     # 16:1 INOP align
-        OPCG_ALIGN.INOP_WAIT  = 0
-        OPCG_ALIGN.SCAN_RATIO = 3     # 4:1 scan ratio
-        OPCG_ALIGN.OPCG_WAIT_CYCLES = 0x30 - 4 * i_chiplet_delays[chiplet.getChipletNumber()]
+        ## Set up per-chiplet OPCG delays
+        for chiplet in chiplets:
+            OPCG_ALIGN = 0
+            OPCG_ALIGN.INOP_ALIGN = 7     # 16:1 INOP align
+            OPCG_ALIGN.INOP_WAIT  = 0
+            OPCG_ALIGN.SCAN_RATIO = 3     # 4:1 scan ratio
+            OPCG_ALIGN.OPCG_WAIT_CYCLES = 0x30 - 4 * i_chiplet_delays[chiplet.getChipletNumber()]
 
-    ## Scan-zero
-    # NOTE ignore errors on non-functional chiplets
-    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_RTG)
-    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
+    if i_phases & SCAN0_AND_UP:
+        ## Scan-zero
+        # NOTE ignore errors on non-functional chiplets
+        mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_RTG)
+        mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
-    ## Transfer partial good attributes into region PGOOD and PSCOM enable registers
-    for chiplet in chiplets:
-        CPLT_CTRL2 = 0
-        CPLT_CTRL2[bits 4:18] = ~ATTR_PG[bits 4:18]
+        ## Transfer partial good attributes into region PGOOD and PSCOM enable registers
+        for chiplet in chiplets:
+            CPLT_CTRL2 = 0
+            CPLT_CTRL2[bits 4:18] = ~ATTR_PG[bits 4:18]
 
-        CPLT_CTRL3 = CPLT_CTRL2
+            CPLT_CTRL3 = CPLT_CTRL2
 
 ISTEP(3, 5, "proc_chiplet_unused_psave", "SSBE, TSBE")
 # NOT executed as part of hotplug
@@ -1398,9 +1419,12 @@ def p11t_chiplet_init():
     CPLT_CONF0.TC_OCTANT_ID_DC     = ATTR_POS
 
 def ody_chiplet_init():
-    ## Program DDR PHY Nto1 clock division ratios
     with MC chiplet:
+        ## Program DDR PHY Nto1 clock division ratios
         CPLT_CONF1[24:29] = all 1s
+
+        ## Force MC ATPG regions disabled despite ATTR_PG settings
+        CPLT_CTRL2[bit 11..16] = 0
 
 def zme_chiplet_init():
     if not ATTR_HOTPLUG:
@@ -1466,8 +1490,47 @@ def ody_chiplet_startclocks():
     ## Drop TP chiplet fence
     PERV_CTRL0.TC_PERV_CHIPLET_FENCE_DC = 0    # new field - bit 17
 
-    ## Start chiplet clocks
-    poz_chiplet_startclocks(MCGROUP_GOOD_NO_TP, REGION_ALL)
+    with MC chiplet:
+        # Deassert ATPGMODE_PUBMAC (asserted in chiplet_reset)
+        # before we go through the DDR PHY reset.
+        CPLT_CONF1.DDR01_ATPGMODE_PUBMAC = 0
+
+        ## Reset DDR PHY
+        # Assert DDR PHY resets
+        CPLT_CONF1.DDR0_PWROKIN = 0
+        CPLT_CONF1.DDR1_PWROKIN = 0
+        CPLT_CONF1.DDR0_RESET = 1
+        CPLT_CONF1.DDR1_RESET = 1
+        CPLT_CONF1.DDR0_DFICLKRESET = 1
+        CPLT_CONF1.DDR1_DFICLKRESET = 1
+        CPLT_CONF1.DDR0_APBRESETN = 0
+        CPLT_CONF1.DDR1_APBRESETN = 0
+
+        # Drop fences between hard and soft macro
+        # Synopsys specs likely did not anticipate a fence running through the middle of
+        # their PHY so we should drop the fence before taking the PHY through reset.
+        CPLT_CTRL1.REGION13_FENCE = 0
+        CPLT_CTRL1.REGION14_FENCE = 0
+
+        # Align chiplet since we're about to start some clocks
+        SYNC_CONFIG.LISTEN_TO_SYNC_DIS = 1
+        mod_align_regions(MC chiplet, REGION_ALL)
+
+        # Start PHY clocks to make the functional reset propagate.
+        # The PHY won't be fully cleaned up at this point so we don't drop fences just yet.
+        mod_start_stop_clocks(MC chiplet, [pub0, pub1, prim0, prim1], i_manage_fences=false)
+
+        # Assert DDR PHY PWROKIN to complete PHY reset sequence
+        CPLT_CONF1.DDR0_PWROKIN = 1   # bit 6
+        CPLT_CONF1.DDR1_PWROKIN = 1   # bit 7
+
+        # Give the PHY some time to reset - 64 clock cycles ain't much but let's be safe
+        delay(1us, 1kcyc)
+
+        # At this point the DDR PHY is in reset state; leave it to the memory code to take it out of there
+
+    ## Start remaining clocks (and drop region fences)
+    poz_chiplet_startclocks(MC chiplet, [perv, io, core, cfg, dfi, pub0, pub1, prim0, prim1])
 
 def zme_chiplet_startclocks():
     ## Drop TP chiplet fence
@@ -1718,4 +1781,10 @@ def poz_stopclocks():
     if not CBS_ENVSTAT.CBS_ENVSTAT_C4_TEST_ENABLE:
         Close down all drivers/receivers to prevent chip IOs from toggling during scan
 
-    pass
+    if Odyssey:
+        with MC chiplet:
+            # Assert ATPGMODE_PUBMAC while we might scan to work around
+            # a problem where a latch controlling async resets is on the scan chain.
+            # Setting this mux to 1 will disconnect the async resets from that latch
+            # so we can scan without issue.
+            CPLT_CONF1.DDR01_ATPGMODE_PUBMAC = 1

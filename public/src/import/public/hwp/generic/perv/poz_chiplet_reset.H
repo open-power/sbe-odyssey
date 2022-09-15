@@ -34,8 +34,16 @@
 
 #include <fapi2.H>
 
+enum poz_chiplet_reset_phases : uint8_t
+{
+    PRE_SCAN0 = 0x80,
+    SCAN0_AND_UP = 0x40,
+    ALL = 0xFF,
+};
+
 typedef fapi2::ReturnCode (*poz_chiplet_reset_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&,
-        const uint8_t i_chiplet_delays[64]);
+        const uint8_t i_chiplet_delays[64],
+        const poz_chiplet_reset_phases i_phases);
 
 /// @brief Enable and reset chiplets
 /// -- Enable and reset chiplets, setup clock controllers & OPCG delays
@@ -48,5 +56,6 @@ typedef fapi2::ReturnCode (*poz_chiplet_reset_FP_t)(const fapi2::Target<fapi2::T
 extern "C"
 {
     fapi2::ReturnCode poz_chiplet_reset(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-                                        const uint8_t i_chiplet_delays[64]);
+                                        const uint8_t i_chiplet_delays[64],
+                                        const poz_chiplet_reset_phases i_phases = ALL);
 }

@@ -64,6 +64,11 @@ ReturnCode ody_tp_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
     FAPI_INF("Start using PCB network");
     FAPI_TRY(mod_switch_pcbmux(i_target, mux::PCB2PCB));
 
+    FAPI_DBG("Drop OOB Mux.");
+    ROOT_CTRL0 = 0;
+    ROOT_CTRL0.set_OOB_MUX(1);
+    FAPI_TRY(ROOT_CTRL0.putScom_CLEAR(i_target));
+
     FAPI_INF("Set up static multicast groups");
     FAPI_TRY(mod_multicast_setup(i_target, MCGROUP_GOOD, 0x7FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL));
     FAPI_TRY(mod_multicast_setup(i_target, MCGROUP_GOOD_NO_TP, 0x3FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL));

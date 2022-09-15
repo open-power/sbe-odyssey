@@ -195,12 +195,15 @@ ReturnCode mod_switch_pcbmux(
     mux_type i_path)
 {
     ROOT_CTRL0_t ROOT_CTRL0;
+    uint8_t l_oob_mux_save;
 
     FAPI_INF("Entering ...");
-    FAPI_DBG("Raise OOB Mux.");
-    ROOT_CTRL0 = 0;
+    FAPI_TRY(ROOT_CTRL0.getScom(i_target));
+    l_oob_mux_save = ROOT_CTRL0.get_OOB_MUX();
+
     ROOT_CTRL0.set_OOB_MUX(1);
-    FAPI_TRY(ROOT_CTRL0.putScom_SET(i_target));
+    FAPI_DBG("Raise OOB Mux.");
+    FAPI_TRY(ROOT_CTRL0.putScom(i_target));
 
     FAPI_DBG("Set PCB_RESET bit in ROOT_CTRL0 register.");
     ROOT_CTRL0 = 0;
@@ -226,9 +229,9 @@ ReturnCode mod_switch_pcbmux(
     FAPI_TRY(ROOT_CTRL0.putScom_CLEAR(i_target));
 
     FAPI_DBG("Drop OOB Mux.");
-    ROOT_CTRL0 = 0;
-    ROOT_CTRL0.set_OOB_MUX(1);
-    FAPI_TRY(ROOT_CTRL0.putScom_CLEAR(i_target));
+    FAPI_TRY(ROOT_CTRL0.getScom(i_target));
+    ROOT_CTRL0.set_OOB_MUX(l_oob_mux_save);
+    FAPI_TRY(ROOT_CTRL0.putScom(i_target));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
