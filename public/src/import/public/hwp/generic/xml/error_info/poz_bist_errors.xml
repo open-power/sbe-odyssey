@@ -41,5 +41,15 @@
       <ffdc>POLL_DELAY_SIM</ffdc>
       <ffdc>PROC_TARGET</ffdc>
     </hwpError>
+    <hwpError>
+      <rc>RC_INVALID_TP_REGIONS</rc>
+      <description>Invalid permutation of regions for TP BIST</description>
+      <ffdc>TP_REGIONS</ffdc>
+    </hwpError>
+    <hwpError>
+      <rc>RC_MIXED_TP_CHIPLET_BIST_REQUESTED</rc>
+      <description>Attempted BIST with TP and non-TP chiplet(s)</description>
+      <ffdc>CHIPLETS</ffdc>
+    </hwpError>
   <!-- ******************************************************************** -->
 </hwpErrors>
