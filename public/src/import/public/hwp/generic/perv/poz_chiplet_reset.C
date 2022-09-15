@@ -46,7 +46,9 @@ enum POZ_CHIPLET_RESET_Private_Constants
     PGOOD_REGIONS_OFFSET = 12,
 };
 
-ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const uint8_t i_chiplet_delays[64])
+ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+                             const uint8_t i_chiplet_delays[64],
+                             const poz_chiplet_reset_phases i_phases)
 {
     NET_CTRL0_t NET_CTRL0;
     SYNC_CONFIG_t SYNC_CONFIG;
@@ -65,51 +67,57 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, c
         auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(l_mc_group);
         auto l_chiplets_uc = l_chiplets_mc.getChildren<TARGET_TYPE_PERV>();
 
-        FAPI_INF("Enable and reset chiplets");
-        NET_CTRL0 = 0;
-        NET_CTRL0.set_PCB_EP_RESET(1);
-        FAPI_TRY(NET_CTRL0.putScom_SET(l_chiplets_mc));
-
-        FAPI_TRY(NET_CTRL0.getScom(l_chiplets_mc));
-        NET_CTRL0.set_PCB_EP_RESET(0);
-        NET_CTRL0.set_CHIPLET_EN(1);
-        FAPI_TRY(NET_CTRL0.putScom(l_chiplets_mc));
-
-        FAPI_INF("Set up clock controllers (decimal 9 -> 10 cycles) ");
-        SYNC_CONFIG = 0;
-        SYNC_CONFIG.set_SYNC_PULSE_DELAY(0b1001);
-        FAPI_TRY(SYNC_CONFIG.putScom(l_chiplets_mc));
-
-        FAPI_INF("Set up per-chiplet OPCG delays");
-
-        for (auto& targ : l_chiplets_uc)
+        if (i_phases & PRE_SCAN0)
         {
-            OPCG_ALIGN = 0;
-            OPCG_ALIGN.set_INOP_ALIGN(7);
-            OPCG_ALIGN.set_INOP_WAIT(0);
-            OPCG_ALIGN.set_SCAN_RATIO(3);
-            OPCG_ALIGN.set_OPCG_WAIT_CYCLES(0x30 - 4 * i_chiplet_delays[targ.getChipletNumber()]);
-            FAPI_TRY(OPCG_ALIGN.putScom(targ));
+            FAPI_INF("Enable and reset chiplets");
+            NET_CTRL0 = 0;
+            NET_CTRL0.set_PCB_EP_RESET(1);
+            FAPI_TRY(NET_CTRL0.putScom_SET(l_chiplets_mc));
+
+            FAPI_TRY(NET_CTRL0.getScom(l_chiplets_mc));
+            NET_CTRL0.set_PCB_EP_RESET(0);
+            NET_CTRL0.set_CHIPLET_EN(1);
+            FAPI_TRY(NET_CTRL0.putScom(l_chiplets_mc));
+
+            FAPI_INF("Set up clock controllers (decimal 9 -> 10 cycles) ");
+            SYNC_CONFIG = 0;
+            SYNC_CONFIG.set_SYNC_PULSE_DELAY(0b1001);
+            FAPI_TRY(SYNC_CONFIG.putScom(l_chiplets_mc));
+
+            FAPI_INF("Set up per-chiplet OPCG delays");
+
+            for (auto& targ : l_chiplets_uc)
+            {
+                OPCG_ALIGN = 0;
+                OPCG_ALIGN.set_INOP_ALIGN(7);
+                OPCG_ALIGN.set_INOP_WAIT(0);
+                OPCG_ALIGN.set_SCAN_RATIO(3);
+                OPCG_ALIGN.set_OPCG_WAIT_CYCLES(0x30 - 4 * i_chiplet_delays[targ.getChipletNumber()]);
+                FAPI_TRY(OPCG_ALIGN.putScom(targ));
+            }
         }
 
-        FAPI_DBG("scan0 all clock regions, scan types GPTR, TIME, REPR");
-        FAPI_TRY(mod_scan0(l_chiplets_mc, cc::REGION_ALL, cc::SCAN_TYPE_RTG));
-
-        FAPI_DBG("scan0 all clock regions, scan types except GPTR, TIME, REPR");
-        FAPI_TRY(mod_scan0(l_chiplets_mc, cc::REGION_ALL, cc::SCAN_TYPE_NOT_RTG));
-
-        FAPI_INF("Transfer partial good attributes into region PGOOD and PSCOM enable registers");
-
-        for (auto& targ : l_chiplets_uc)
+        if (i_phases & SCAN0_AND_UP)
         {
-            FAPI_TRY(FAPI_ATTR_GET(ATTR_PG, targ, l_attr_pg));
-            l_attr_pg.invert();
-            l_data64.flush<0>();
-            l_data64.insert< PGOOD_REGIONS_STARTBIT, PGOOD_REGIONS_LENGTH, PGOOD_REGIONS_OFFSET >(l_attr_pg);
-            CPLT_CTRL2 = l_data64();
-            FAPI_TRY(CPLT_CTRL2.putScom(targ));
-            CPLT_CTRL3 = l_data64();
-            FAPI_TRY(CPLT_CTRL3.putScom(targ));
+            FAPI_DBG("scan0 all clock regions, scan types GPTR, TIME, REPR");
+            FAPI_TRY(mod_scan0(l_chiplets_mc, cc::REGION_ALL, cc::SCAN_TYPE_RTG));
+
+            FAPI_DBG("scan0 all clock regions, scan types except GPTR, TIME, REPR");
+            FAPI_TRY(mod_scan0(l_chiplets_mc, cc::REGION_ALL, cc::SCAN_TYPE_NOT_RTG));
+
+            FAPI_INF("Transfer partial good attributes into region PGOOD and PSCOM enable registers");
+
+            for (auto& targ : l_chiplets_uc)
+            {
+                FAPI_TRY(FAPI_ATTR_GET(ATTR_PG, targ, l_attr_pg));
+                l_attr_pg.invert();
+                l_data64.flush<0>();
+                l_data64.insert< PGOOD_REGIONS_STARTBIT, PGOOD_REGIONS_LENGTH, PGOOD_REGIONS_OFFSET >(l_attr_pg);
+                CPLT_CTRL2 = l_data64();
+                FAPI_TRY(CPLT_CTRL2.putScom(targ));
+                CPLT_CTRL3 = l_data64();
+                FAPI_TRY(CPLT_CTRL3.putScom(targ));
+            }
         }
     }
 

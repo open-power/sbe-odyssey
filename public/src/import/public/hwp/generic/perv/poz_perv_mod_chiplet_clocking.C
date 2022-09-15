@@ -378,7 +378,7 @@ ReturnCode mod_scan0(
     SCAN_REGION_TYPE_t SCAN_REGION_TYPE;
     OPCG_ALIGN_t OPCG_ALIGN;
     OPCG_ALIGN_t opcg_align_save[64];
-    uint8_t l_attr_scan0_scan_ratio;
+    uint8_t l_attr_scan0_scan_ratio = 0;
     std::vector<Target<TARGET_TYPE_PERV>> l_chiplets_uc;
     auto l_chip_target = i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>();
 
@@ -447,7 +447,8 @@ ReturnCode mod_start_stop_clocks(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_OR > & i_target,
     uint16_t i_clock_regions,
     uint16_t i_clock_types,
-    bool i_start_not_stop)
+    bool i_start_not_stop,
+    bool i_manage_fences)
 {
     CLK_REGION_t CLK_REGION;
     SCAN_REGION_TYPE_t SCAN_REGION_TYPE;
@@ -460,7 +461,7 @@ ReturnCode mod_start_stop_clocks(
     SCAN_REGION_TYPE = 0;
     FAPI_TRY(SCAN_REGION_TYPE.putScom(i_target));
 
-    if(i_start_not_stop)
+    if(i_start_not_stop and i_manage_fences)
     {
         FAPI_INF("Drop fences before starting clocks.");
         FAPI_TRY(CPLT_CTRL1.putScom_CLEAR(i_target));
@@ -486,7 +487,7 @@ ReturnCode mod_start_stop_clocks(
         FAPI_TRY(check_clock_status(i_target, i_clock_regions, i_clock_types & check_type, i_start_not_stop));
     }
 
-    if( !i_start_not_stop )
+    if( !i_start_not_stop and i_manage_fences)
     {
         FAPI_INF("Raise fences after clocks are stopped.")
         FAPI_TRY(CPLT_CTRL1.putScom_SET(i_target));

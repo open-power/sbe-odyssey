@@ -33,8 +33,14 @@
 #include <ody_chiplet_reset.H>
 #include <poz_perv_common_params.H>
 #include <poz_chiplet_reset.H>
+#include <ody_scom_perv.H>
+#include <target_filters.H>
 
 using namespace fapi2;
+using namespace scomt::perv;
+
+SCOMT_PERV_USE_TPCHIP_TPC_CPLT_CONF1;
+typedef TPCHIP_TPC_CPLT_CONF1_t CPLT_CONF1_t;
 
 enum ODY_CHIPLET_RESET_Private_Constants
 {
@@ -42,8 +48,21 @@ enum ODY_CHIPLET_RESET_Private_Constants
 
 ReturnCode ody_chiplet_reset(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
+    CPLT_CONF1_t CPLT_CONF1;
+    auto l_target_MC = i_target.getChildren<fapi2::TARGET_TYPE_PERV>(fapi2::TARGET_FILTER_MC, TARGET_STATE_PRESENT)[0];
+
     FAPI_INF("Entering ...");
-    FAPI_TRY(poz_chiplet_reset(i_target, ody_chiplet_delay_table));
+    FAPI_TRY(poz_chiplet_reset(i_target, ody_chiplet_delay_table, PRE_SCAN0));
+
+    //Assert ATPGMODE_PUBMAC while we might scan to work around
+    //a problem where a latch controlling async resets is on the scan chain.
+    //Setting this mux to 1 will disconnect the async resets from that latch
+    //so we can scan without issue.
+    CPLT_CONF1 = 0;
+    CPLT_CONF1.setBit<16>();
+    FAPI_TRY(CPLT_CONF1.putScom_SET(l_target_MC));
+
+    FAPI_TRY(poz_chiplet_reset(i_target, ody_chiplet_delay_table, SCAN0_AND_UP));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");

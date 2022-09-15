@@ -171,7 +171,8 @@ fapi2::ReturnCode mod_start_stop_clocks(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST, fapi2::MULTICAST_OR > & i_target,
     uint16_t i_clock_regions,
     uint16_t i_clock_types = CLOCK_TYPE_ALL,
-    bool i_start_not_stop = true);
+    bool i_start_not_stop = true,
+    bool i_manage_fences = true);
 
 /// @brief Align clock regions
 /// -- Enable alignment, wait for chiplets to be aligned (Poll OPCG), Disable alignment
