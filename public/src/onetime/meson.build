@@ -33,7 +33,7 @@ if platform == 'odyssey' or platform == 'all'
 endif
 
 if platform == 'p11' or platform == 'all'
-  #subdir('p11')
+  subdir('p11')
 endif
 
 if platform == 'metis' or platform == 'all'

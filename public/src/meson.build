@@ -153,6 +153,17 @@ if platform == 'odyssey' or platform == 'all'
       odyssey_sppe_genfiles_dir_path, odyssey_cmn_genfiles_dir_path)
 endif
 
+if platform == 'p11' or platform == 'all'
+
+  #P11 genfiles dir path
+  p11_cmn_genfiles_dir_path  = onetime_genfiles_dir_path + '/p11/common/'
+  p11_bldr_genfiles_dir_path = onetime_genfiles_dir_path + '/p11/bldr/'
+  p11_srom_genfiles_dir_path  = onetime_genfiles_dir_path + '/p11/srom/'
+  p11_sppe_genfiles_dir_path = runtime_genfiles_dir_path + '/p11/sppe/'
+  run_command('mkdir','-p', p11_srom_genfiles_dir_path, p11_bldr_genfiles_dir_path,
+      p11_sppe_genfiles_dir_path, p11_cmn_genfiles_dir_path)
+endif
+
 #Object file generation generator's (api's)
 obj_gen_c = generator(ppetraceapp,
                     output  : '@BASENAME@.o',
