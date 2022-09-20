@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_phy_ppe_start.C $ */
+/* $Source: public/src/import/public/hwp/generic/io/io_ppe_cache.H $      */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -22,38 +22,23 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-///------------------------------------------------------------------------------
-/// @file ody_omi_phy_ppe_start.C
-/// @brief Odyssey PHY PPE start HWP
-///
-/// *HWP HW Maintainer : Chris Steffen (cwsteffen@us.ibm.com)
-/// *HWP FW Maintainer :
-/// *HWP Consumed by: HB, Cronus, SBE
-///------------------------------------------------------------------------------
+#pragma once
 
-//------------------------------------------------------------------------------
-// Includes
-//------------------------------------------------------------------------------
-#include <ody_scom_omi.H>
-#include <ody_omi_phy_ppe_start.H>
-#include <ody_io_ppe_common.H>
+#define IO_PPE_MAX_CACHE_SIZE 128
 
-//------------------------------------------------------------------------------
-// Function definitions
-//------------------------------------------------------------------------------
-fapi2::ReturnCode ody_omi_phy_ppe_start(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
+class io_ppe_cache
 {
-    FAPI_DBG("Start");
+    private:
+        int iv_size;
+        int iv_head;
+        uint64_t iv_address[IO_PPE_MAX_CACHE_SIZE];
+        uint64_t iv_data[IO_PPE_MAX_CACHE_SIZE];
+        uint8_t iv_modified[IO_PPE_MAX_CACHE_SIZE];
 
-    io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(scomt::omi::PHY_PPE_WRAP0_ARB_CSAR,
-            scomt::omi::PHY_PPE_WRAP0_ARB_CSDR,
-            scomt::omi::PHY_PPE_WRAP0_XIXCR);
-
-    ody_io::io_ppe_common<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_common(&l_ppe_regs);
-
-    FAPI_TRY(l_ppe_common.ppe_start(i_target));
-
-fapi_try_exit:
-    FAPI_DBG("End");
-    return fapi2::current_err;
-}
+    public:
+        io_ppe_cache();
+        bool hasAddress(uint64_t i_addr);
+        uint64_t getData(uint64_t i_addr);
+        bool add(uint64_t i_addr, uint64_t i_data, uint8_t i_modified);
+        bool pop(uint64_t& o_addr, uint64_t& o_data, uint8_t& o_modified);
+};

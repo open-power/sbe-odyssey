@@ -34,7 +34,9 @@
 //------------------------------------------------------------------------------
 // Includes
 //------------------------------------------------------------------------------
+#include <ody_scom_omi.H>
 #include <ody_omi_phy_dccal_poll.H>
+#include <ody_io_ppe_common.H>
 
 //------------------------------------------------------------------------------
 // Function definitions
@@ -42,6 +44,39 @@
 fapi2::ReturnCode ody_omi_phy_dccal_poll(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     FAPI_DBG("Start");
+    fapi2::buffer<uint64_t> l_data = 0;
+
+    io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(scomt::omi::PHY_PPE_WRAP0_ARB_CSAR,
+            scomt::omi::PHY_PPE_WRAP0_ARB_CSDR,
+            scomt::omi::PHY_PPE_WRAP0_XIXCR);
+
+    ody_io::io_ppe_common<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_common(&l_ppe_regs);
+
+    const fapi2::buffer<uint64_t> l_rx_lanes = 0xFF000000;
+    const fapi2::buffer<uint64_t> l_tx_lanes = 0xFF000000;
+    const fapi2::buffer<uint64_t> l_num_threads = 1;
+    fapi2::buffer<uint8_t> l_done = 0;
+    int l_trys = ody_io::IO_PPE_DCCAL_DONE_POLL_TRYS;
+
+    while (!l_done && l_trys > 0)
+    {
+        l_ppe_regs.flushCache(i_target);
+        FAPI_TRY(l_ppe_common.dccal_start_done(i_target, l_num_threads,
+                                               l_rx_lanes, l_tx_lanes, 1, l_done));
+
+        if (!l_done)
+        {
+            fapi2::delay(ody_io::IO_PPE_DCCAL_DONE_POLL_DELAY_NS, ody_io::IO_PPE_DCCAL_DONE_POLL_DELAY_SIM_CYCLES);
+        }
+
+        l_trys--;
+    }
+
+    FAPI_ASSERT(l_done,
+                fapi2::IO_PPE_DONE_POLL_FAILED()
+                .set_TARGET(i_target),
+                "IO PPE done poll time-out" );
+
 
 fapi_try_exit:
     FAPI_DBG("End");

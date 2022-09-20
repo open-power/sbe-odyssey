@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_phy_ppe_start.C $ */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_io_ppe_common.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -22,38 +22,16 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-///------------------------------------------------------------------------------
-/// @file ody_omi_phy_ppe_start.C
-/// @brief Odyssey PHY PPE start HWP
-///
-/// *HWP HW Maintainer : Chris Steffen (cwsteffen@us.ibm.com)
-/// *HWP FW Maintainer :
-/// *HWP Consumed by: HB, Cronus, SBE
-///------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-// Includes
-//------------------------------------------------------------------------------
-#include <ody_scom_omi.H>
-#include <ody_omi_phy_ppe_start.H>
-#include <ody_io_ppe_common.H>
 
-//------------------------------------------------------------------------------
-// Function definitions
-//------------------------------------------------------------------------------
-fapi2::ReturnCode ody_omi_phy_ppe_start(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
+#pragma once
+
+#include <fapi2.H>
+
+#include <ody_io_ppe_regs.H>
+#include <io_ppe_lib.H>
+
+namespace ody_io
 {
-    FAPI_DBG("Start");
-
-    io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(scomt::omi::PHY_PPE_WRAP0_ARB_CSAR,
-            scomt::omi::PHY_PPE_WRAP0_ARB_CSDR,
-            scomt::omi::PHY_PPE_WRAP0_XIXCR);
-
-    ody_io::io_ppe_common<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_common(&l_ppe_regs);
-
-    FAPI_TRY(l_ppe_common.ppe_start(i_target));
-
-fapi_try_exit:
-    FAPI_DBG("End");
-    return fapi2::current_err;
+#include <io_ppe_common.H>
 }
