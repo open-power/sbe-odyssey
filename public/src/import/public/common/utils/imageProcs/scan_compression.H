@@ -41,8 +41,8 @@
     #endif
 #endif
 
-namespace rs4
-{
+#include <string>
+
 /// Compressed Scan Chain Data Structure Format
 ///
 /// The compressed scan ring data structure must be 8-byte aligned in
@@ -61,37 +61,73 @@ namespace rs4
 /// that we would have that many versions of CompressedScanData, it is
 /// strongly suggested to simply skip 0x34 as version number.
 ///
+
+#include <base_utils.H>
+#include <target_types.H>
+
+using namespace fapi2;
+
+namespace rs4
+{
+
+enum ChipType_t
+{
+    ANY,
+    P11S,
+    P11T,
+    ODY,
+    ZME,
+};
+
+struct ringTargetType_t
+{
+    // Data
+    std::string     iv_ringNamePrefix;
+    fapi2::LogTargetType iv_targetType;
+
+    // Methods
+    static int findType(const std::string& i_ringName,
+                        fapi2::LogTargetType& logTarget);
+};
+
+struct targetTypeInstanceTraits_t
+{
+    fapi2::LogTargetType iv_targetType;
+    ChipType_t      iv_chipType;
+    uint16_t        iv_instanceTraits;
+
+    static int getTraits(ChipType_t i_chipType,
+                         fapi2::LogTargetType i_targetType,
+                         uint16_t& o_traits);
+};
+
+// rs4 header
 struct CompressedScanData
 {
-    uint16_t      iv_magic;
-    uint8_t       iv_version;
-    uint8_t       iv_type;      // Common/Instance | see RS4_IV_TYPE_...
-    uint32_t      iv_scanAddr;
-    uint16_t      iv_size;
-    uint8_t       iv_instanceNum; // Intance number when iv_type is instance
-    uint8_t       iv_reserved1;
-    uint32_t      iv_reserved2;
+    uint16be_t      iv_magic;
+    uint8be_t       iv_version;
+    uint8be_t       iv_type;        // Common/Instance | see RS4_TYPE_...
+    uint32be_t      iv_scanAddr;
+    uint16be_t      iv_size;
+    uint8be_t       iv_instanceNum; // Instance number when iv_type is instance
+    uint8be_t       iv_targetType;  // log2(fapi2::TargetType) - Used for target checking and instance mapping
+    uint16be_t      iv_instanceTraits;
+    uint16be_t      iv_reserved;
 };
 static_assert(sizeof(CompressedScanData) == 16, "rs4 header must be 16 bytes");
 
+/// Pack the iv_instanceTraits bit fields
+static inline uint16_t rs4_pack_instanceTraits(
+    uint16_t i_chiplets_in_group,
+    uint16_t i_instances_per_chiplet,
+    uint16_t i_scan_region_shift)
+{
+    return (((i_scan_region_shift - 1) & 7) << 8)
+           | (((i_instances_per_chiplet - 1) & 7) << 5)
+           | ((i_chiplets_in_group - 1) & 0x1F);
+}
+
 #define RS4_MIN_RING_SIZE   20 // Min value of iv_size, e.g. flush size of short ring.
-
-/// Endian-translate a CompressedScanData structure
-///
-/// \param o_data A pointer to a CompressedScanData structure to receive the
-/// endian-translated form of \a i_data.
-///
-/// \param i_data A pointer to the original CompressedScanData structure.
-///
-/// This API performs an endian-converting copy of a CompressedScanData
-/// structure. This copy is guaranteed to be done in such a way that \a i_data
-/// and \a o_data may be the same pointer for in-place conversion.  Due to the
-/// symmetry of reverse, translating a structure twice is always guaranteed to
-/// return the origial structure to its original byte order.
-void
-compressed_scan_data_translate( CompressedScanData* o_data,
-                                CompressedScanData* i_data );
-
 
 /// Compress a scan string using the RS4 compression algorithm
 ///
@@ -140,7 +176,9 @@ _rs4_compress( CompressedScanData* io_rs4,
                const uint32_t      i_length,
                const uint32_t      i_scanAddr,
                const uint8_t       i_type,
-               const uint8_t       i_instance = 0 );
+               const uint16_t      i_targetType,  // \see ring_target_type
+               const uint16_t      i_instanceTraits, // \see target_type_instance_traits
+               const uint8_t       i_instance);
 
 
 /// Compress a scan string using the RS4 compression algorithm
@@ -167,7 +205,14 @@ _rs4_compress( CompressedScanData* io_rs4,
 /// \param[in] i_type A vector specifying ring type: CMSK, override,
 /// type (see details for iv_type elsewhere in this header file)
 ///
-// \param[in] i_instance is the instance number when i_type is an instance ring
+/// Use either:
+///     \param[in] i_targetType @see fapi2::LogTargetType above
+///     \param[in] i_instanceTraits bit fields  @see  targetTypeInstanceTraits_t
+/// or
+///     \param[in] i_chipType  (e.g. rs4::ODY) @see ChipType_t above
+///     \param[in] i_ringName  name of the ring (e.g. mc_core_repr)
+///
+/// \param[in] i_instance is the instance number when i_type is an instance ring
 ///
 /// \returns See \ref scan_compression_codes
 int
@@ -177,7 +222,22 @@ rs4_compress( CompressedScanData** o_rs4,
               const uint32_t       i_length,
               const uint32_t       i_scanAddr,
               const uint8_t        i_type,
+              const uint16_t       i_targetType = 0,
+              const uint16_t       i_instanceTraits = 0,
               const uint8_t        i_instance = 0 );
+
+int
+rs4_compress( CompressedScanData** o_rs4,
+              const uint8_t*       i_data_str,
+              const uint8_t*       i_care_str,
+              const uint32_t       i_length,
+              const uint32_t       i_scanAddr,
+              const uint8_t        i_type,
+              const ChipType_t     i_chipType,
+              const std::string&   i_ringName,
+              const uint8_t        i_instance = 0 );
+
+
 
 
 /// Decompress a scan string compressed using the RS4 compression algorithm
@@ -267,15 +327,6 @@ int
 rs4_redundant( const CompressedScanData* i_data, bool& o_redundant );
 
 
-/// Check for Override or Flush ring in RS4
-///
-/// \param[in] i_rs4 A pointer to the RS4 CompressedScanData [header + data]
-///
-/// \returns  true if Ovrd ring, false if Flush ring and UNDEFINED_BOOLEAN if any other type
-bool
-rs4_is_ovrd(const CompressedScanData* i_rs4);
-
-
 // API for overlaying one RS4 ring onto another RS4 ring (without decompression)
 //
 // API arguments:
@@ -330,27 +381,28 @@ rs4_overlay( CompressedScanData* o_rs4Final,
 /// #define RS4_VERSION 3  // Reduced header size to 12 bytes
 /// #define RS4_VERSION 4  // iv_type chg: Added SEL
 /// #define RS4_VERSION 5  // iv_type chg: Remvd CMSK, movd/renmd OVRD->SCAN, expnded/renmd SEL->ORIG
-#define RS4_VERSION 6   // Modified header to remove ringId, and add ringFlags
+/// #define RS4_VERSION 6  // Modified header to remove ringId, and add ringFlags
+#define RS4_VERSION 7   // Restructured iv_type bits, added iv_targetType
 
 /// @}
 
 
 /// Scan, Origination and Instance ring types (used for encoding RS4 header's iv_type)
 ///
-// Scan type: Flush or Override (Governs scan controller setup)
-#define RS4_IV_TYPE_SCAN_MASK       (uint8_t)0b00000011
-#define RS4_IV_TYPE_SCAN_FLUSH      (uint8_t)0b00000001
-#define RS4_IV_TYPE_SCAN_OVRD       (uint8_t)0b00000010
-#define RS4_IV_TYPE_SCAN_CTX        (uint8_t)0b00000011
-// Origination of ring content: Base,  (For debug aid)
-#define RS4_IV_TYPE_ORIG_MASK       (uint8_t)0b01111100
-#define RS4_IV_TYPE_ORIG_BASE       (uint8_t)0b00000100 // Base
-#define RS4_IV_TYPE_ORIG_BMC        (uint8_t)0b00001000 // BMC override
-#define RS4_IV_TYPE_ORIG_HB         (uint8_t)0b00010000 // Hostboot override
-#define RS4_IV_TYPE_ORIG_CUST       (uint8_t)0b00100000 // Customized
-#define RS4_IV_TYPE_ORIG_OTHER      (uint8_t)0b01000000 // Other source
+// Scan type: Flush(0) or Override(1) (for debugging only)
+#define RS4_TYPE_OVERRIDE        (uint8_t)0b00000001
+
 // Instance ring type (or Common if==0)
-#define RS4_IV_TYPE_INSTANCE        (uint8_t)0b10000000
+#define RS4_TYPE_INSTANCE        (uint8_t)0b00000010
+
+// Origination of ring content: Base,  (For debug aid)
+#define RS4_TYPE_ORIG_MASK       (uint8_t)0b00011100
+#define RS4_TYPE_ORIG_BASE       (uint8_t)0b00000000 // Base
+#define RS4_TYPE_ORIG_BMC        (uint8_t)0b00000100 // BMC override
+#define RS4_TYPE_ORIG_HB         (uint8_t)0b00001000 // Hostboot override
+#define RS4_TYPE_ORIG_CUST       (uint8_t)0b00001100 // Chip customization
+#define RS4_TYPE_ORIG_OVR        (uint8_t)0b00010000 // Lab override
+#define RS4_TYPE_ORIG_DYN        (uint8_t)0b00010100 // Dynamic init
 
 #define UNDEFINED_RS4_SELECTOR  0xffff
 #define MAX_RS4_SELECTOR        0x00ff // Practical upper limit of 255
@@ -396,7 +448,7 @@ enum OVERLAY_MODE
 #define SCAN_COMPRESSION_VERSION_ERROR (uint8_t)7
 
 /// Invalid iv_type value
-#define SCAN_COMPRESSION_IV_TYPE_ERROR (uint8_t)8
+#define SCAN_COMPRESSION_TYPE_ERROR (uint8_t)8
 
 /// Generic Raw4 compression error
 #define SCAN_COMPRESSION_RAW4_ERROR (uint8_t)9
@@ -412,6 +464,12 @@ enum OVERLAY_MODE
 
 /// Overlay bit conflict
 #define SCAN_COMPRESSION_STOP_DECODE_ERROR (uint8_t)13
+
+/// No target type for ring
+#define SCAN_COMPRESSION_NO_TARGET_TYPE_DEFINED (uint8_t)14
+
+/// No instance traits for chip and target type
+#define SCAN_COMPRESSION_NO_INSTANCE_TRAITS_DEFINED (uint8_t)15
 /// @}
 
 
@@ -420,9 +478,9 @@ enum OVERLAY_MODE
 /// Check if RS4 ring is of INSTANCE or COMMON type and return true or false, respectively
 //bool
 //rs4_ring_type_is_instance( CompressedScanData* i_rs4Ring)
-static inline const bool rs4_ring_type_is_instance( CompressedScanData* i_rs4Ring)
+static inline const bool rs4_ring_type_is_instance(CompressedScanData* i_rs4Ring)
 {
-    return ( (i_rs4Ring->iv_type & RS4_IV_TYPE_INSTANCE) ? true : false );
+    return i_rs4Ring->iv_type.get() & RS4_TYPE_INSTANCE;
 }
 
 #endif

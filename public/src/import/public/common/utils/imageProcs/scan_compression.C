@@ -150,6 +150,7 @@
 ///
 /// \endcode
 
+
 // TODO EWM 309664  -- Remove unused function.
 #include <stdlib.h>
 #include <stdio.h>
@@ -186,20 +187,113 @@ const uint32_t  RS4_RING_BUF_SIZE   = 64 * 1024;
 
 #endif  // DEBUG_SCAN_COMPRESSION
 
-#if RS4_VERSION != 6
-    #error This code assumes CompressedScanData structure version 4 layout
-#endif
-
-void
-rs4::compressed_scan_data_translate(rs4::CompressedScanData* o_rs4,
-                                    rs4::CompressedScanData* i_rs4)
+// using namespace rs4;
+rs4::targetTypeInstanceTraits_t targetTypeInstanceTraits[] =
 {
-    o_rs4->iv_magic    = htobe16(i_rs4->iv_magic);
-    o_rs4->iv_version  =         i_rs4->iv_version;
-    o_rs4->iv_type     =         i_rs4->iv_type;
-    o_rs4->iv_instanceNum =      i_rs4->iv_instanceNum;
-    o_rs4->iv_size     = htobe16(i_rs4->iv_size);
-    o_rs4->iv_scanAddr = htobe32(i_rs4->iv_scanAddr);
+    { fapi2::LOG_TARGET_TYPE_PERV,    rs4::ANY,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_EX,      rs4::ZME,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_XBUS,    rs4::ZME,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_ABUS,    rs4::ZME,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_PEC,     rs4::ZME,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_CORE,    rs4::ZME,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_L4,      rs4::ZME,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_L3CACHE, rs4::ZME,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_MCC,     rs4::ODY,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_EQ,      rs4::P11T, rs4::rs4_pack_instanceTraits(2, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_CORE,    rs4::P11T, rs4::rs4_pack_instanceTraits(8, 4, 1) },
+    { fapi2::LOG_TARGET_TYPE_TBUSL,   rs4::P11T, rs4::rs4_pack_instanceTraits(1, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_MCC,     rs4::P11S, rs4::rs4_pack_instanceTraits(4, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_TBUSC,   rs4::P11S, rs4::rs4_pack_instanceTraits(4, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_PAX,     rs4::P11S, rs4::rs4_pack_instanceTraits(8, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_PAXO,    rs4::P11S, rs4::rs4_pack_instanceTraits(4, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_PEC6P,   rs4::P11S, rs4::rs4_pack_instanceTraits(4, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_PEC2P,   rs4::P11S, rs4::rs4_pack_instanceTraits(2, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_PAU,     rs4::P11S, rs4::rs4_pack_instanceTraits(2, 4, 1) },
+    { fapi2::LOG_TARGET_TYPE_TBUSL,   rs4::P11S, rs4::rs4_pack_instanceTraits(4, 2, 2) },
+    { fapi2::LOG_TARGET_TYPE_INT,     rs4::P11S, rs4::rs4_pack_instanceTraits(1, 2, 1) },
+    { fapi2::LOG_TARGET_TYPE_NX,      rs4::P11S, rs4::rs4_pack_instanceTraits(2, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_PHB16X,  rs4::P11S, rs4::rs4_pack_instanceTraits(2, 3, 1) },
+};
+
+rs4::ringTargetType_t ringTargets[] =
+{
+    { "sbe_",          fapi2::LOG_TARGET_TYPE_PERV },
+    { "net_",          fapi2::LOG_TARGET_TYPE_PERV },
+    { "perv_",         fapi2::LOG_TARGET_TYPE_PERV },
+    { "pib_",          fapi2::LOG_TARGET_TYPE_PERV },
+    { "mc_",           fapi2::LOG_TARGET_TYPE_MCC },
+    { "n0_",           fapi2::LOG_TARGET_TYPE_PERV },
+    { "n1_",           fapi2::LOG_TARGET_TYPE_PERV },
+    { "paunx_",        fapi2::LOG_TARGET_TYPE_NX },
+    { "pauwc_",        fapi2::LOG_TARGET_TYPE_PAU },
+    { "n2_int_",       fapi2::LOG_TARGET_TYPE_INT },
+    { "n2_",           fapi2::LOG_TARGET_TYPE_PERV },
+    { "pax_",          fapi2::LOG_TARGET_TYPE_PAX },
+    { "paxo_",         fapi2::LOG_TARGET_TYPE_PAXO },
+    { "pec2p_phb16x_", fapi2::LOG_TARGET_TYPE_PHB16X },
+    { "pec2p_",        fapi2::LOG_TARGET_TYPE_PEC2P },
+    { "pec6p_",        fapi2::LOG_TARGET_TYPE_PEC6P },
+    { "tbus_",         fapi2::LOG_TARGET_TYPE_TBUSC },
+    { "tbusl_",        fapi2::LOG_TARGET_TYPE_TBUSL },
+    { "ec_",           fapi2::LOG_TARGET_TYPE_CORE },
+    { "eq_",           fapi2::LOG_TARGET_TYPE_EQ },
+    { "od_mc_",        fapi2::LOG_TARGET_TYPE_MCC },
+    { "od_perv_",      fapi2::LOG_TARGET_TYPE_PERV },
+    { "ex_",           fapi2::LOG_TARGET_TYPE_EX },
+};
+
+
+
+
+
+int rs4::ringTargetType_t::findType(const std::string& i_ringName,
+                                    fapi2::LogTargetType& logTarget)
+{
+    int rc = -1;
+
+    for(uint i = 0; i < sizeof(ringTargets) / sizeof(ringTargetType_t); ++i)
+    {
+        if (i_ringName.rfind(ringTargets[i].iv_ringNamePrefix, 0) == 0)
+        {
+            rc = 0;
+            logTarget =  ringTargets[i].iv_targetType;
+            break;
+        }
+    }
+
+    if( rc )
+    {
+        MY_ERR("Ring name %s does not have a rs4 target type defined.\n",)
+    }
+
+    return rc;
+}
+
+int rs4::targetTypeInstanceTraits_t::getTraits(ChipType_t i_chipType,
+        fapi2::LogTargetType i_targetType,
+        uint16_t& o_traits)
+{
+    int rc = -1;
+    uint16_t traits = 0;
+
+    for(uint i = 0;
+        i < sizeof(targetTypeInstanceTraits) / sizeof(targetTypeInstanceTraits_t);
+        ++i)
+    {
+        if(i_targetType == targetTypeInstanceTraits[i].iv_targetType)
+        {
+            if(i_chipType == targetTypeInstanceTraits[i].iv_chipType ||
+               rs4::ANY == targetTypeInstanceTraits[i].iv_chipType)
+            {
+                traits = targetTypeInstanceTraits[i].iv_instanceTraits;
+                rc = 0;
+                break;
+            }
+        }
+    }
+
+    o_traits = traits;
+    return rc;
 }
 
 
@@ -634,9 +728,11 @@ rs4::_rs4_compress(rs4::CompressedScanData* io_rs4,
                    const uint32_t i_length,
                    const uint32_t i_scanAddr,
                    const uint8_t  i_type,
+                   const uint16_t i_targetType,
+                   const uint16_t i_instanceTraits,
                    const uint8_t  i_instance)
 {
-    int rc;
+    int rc = 0;
     uint32_t nibbles = rs4_max_compressed_nibbles(i_length);
     uint32_t bytes   = rs4_max_compressed_bytes(nibbles);
     uint8_t* rs4_str = (uint8_t*)io_rs4 + sizeof(rs4::CompressedScanData);
@@ -654,41 +750,15 @@ rs4::_rs4_compress(rs4::CompressedScanData* io_rs4,
     {
         bytes = rs4_max_compressed_bytes(nibbles);
 
-        io_rs4->iv_magic    = htobe16(RS4_MAGIC);
-        io_rs4->iv_version  = RS4_VERSION;
+        io_rs4->iv_magic.set(RS4_MAGIC);
+        io_rs4->iv_version.set(RS4_VERSION);
         //io_rs4->iv_type is set below after sanity checking i_type
-        io_rs4->iv_size     = htobe16(bytes);
-        io_rs4->iv_scanAddr = htobe32(i_scanAddr);
-
-        // Check for valid iv_type
-
-        // flush/override - any non-zero will do
-        if ( i_type & RS4_IV_TYPE_SCAN_MASK )
-        {
-            // Valid flush/override settings.
-        }
-        else
-        {
-            return BUGX(SCAN_COMPRESSION_IV_TYPE_ERROR,
-                        "_rs4_compress: Invalid iv_type(=0x%02x) value for flush/ovrd settings\n",
-                        i_type);
-        }
-
-        // origination - any non-zero will do
-        if ( i_type & RS4_IV_TYPE_ORIG_MASK )
-        {
-            // Valid ring origination settings.
-        }
-        else
-        {
-            return BUGX(SCAN_COMPRESSION_IV_TYPE_ERROR,
-                        "_rs4_compress: Invalid iv_type(=0x%02x) value for ring origination"
-                        " settings\n",
-                        i_type);
-        }
-
-        io_rs4->iv_type     = i_type;
-        io_rs4->iv_instanceNum = i_instance;
+        io_rs4->iv_size.set(bytes);
+        io_rs4->iv_scanAddr.set(i_scanAddr);
+        io_rs4->iv_type.set(i_type);
+        io_rs4->iv_instanceNum.set(i_instance);
+        io_rs4->iv_targetType.set(i_targetType);
+        io_rs4->iv_instanceTraits.set(i_instanceTraits);
     }
 
     return rc;
@@ -709,6 +779,8 @@ rs4::rs4_compress(rs4::CompressedScanData** o_rs4,
                   const uint32_t i_length,
                   const uint32_t i_scanAddr,
                   const uint8_t  i_type,
+                  const uint16_t i_targetType,
+                  const uint16_t i_instanceTraits,
                   const uint8_t  i_instance)
 {
     uint32_t nibbles = rs4_max_compressed_nibbles(i_length);
@@ -728,9 +800,66 @@ rs4::rs4_compress(rs4::CompressedScanData** o_rs4,
                          i_length,
                          i_scanAddr,
                          i_type,
+                         i_targetType,
+                         i_instanceTraits,
                          i_instance);
 }
 
+int
+rs4::rs4_compress( rs4::CompressedScanData** o_rs4,
+                   const uint8_t*       i_data_str,
+                   const uint8_t*       i_care_str,
+                   const uint32_t       i_length,
+                   const uint32_t       i_scanAddr,
+                   const uint8_t        i_type,
+                   const rs4::ChipType_t     i_chipType,
+                   const std::string&   i_ringName,
+                   const uint8_t        i_instance)
+{
+    uint32_t nibbles = rs4_max_compressed_nibbles(i_length);
+    uint32_t bytes   = rs4_max_compressed_bytes(nibbles);
+
+    *o_rs4  = (rs4::CompressedScanData*)(operator new(bytes));
+
+    if (*o_rs4 == 0)
+    {
+        return BUG(SCAN_COMPRESSION_NO_MEMORY);
+    }
+
+    // get targetType
+    fapi2::LogTargetType targetType;
+    int rc = rs4::ringTargetType_t::findType(i_ringName, targetType);
+
+    if( rc )
+    {
+        return BUG(SCAN_COMPRESSION_NO_TARGET_TYPE_DEFINED);
+    }
+
+    uint16_t instanceTraits = 0;
+    rc = rs4::targetTypeInstanceTraits_t::getTraits(i_chipType,
+            targetType,
+            instanceTraits);
+
+    if( rc )
+    {
+        MY_ERR("ERROR: Could not find instance traits for ring %s on rs4ChipType %u",
+               i_ringName.c_str(),
+               (uint)i_chipType);
+
+        return BUG(SCAN_COMPRESSION_NO_INSTANCE_TRAITS_DEFINED);
+    }
+
+    return _rs4_compress(*o_rs4,
+                         bytes,
+                         i_data_str,
+                         i_care_str,
+                         i_length,
+                         i_scanAddr,
+                         i_type,
+                         (uint16_t)targetType,
+                         instanceTraits,
+                         i_instance);
+}
 
 // Decompress an RS4-encoded string into a output string whose length must be
 // exactly i_length bits.
@@ -898,12 +1027,12 @@ rs4::_rs4_decompress(uint8_t* o_data_str,
 {
     uint8_t* rs4_str = (uint8_t*)i_rs4 + sizeof(rs4::CompressedScanData);
 
-    if (be16toh(i_rs4->iv_magic) != RS4_MAGIC)
+    if (i_rs4->iv_magic.get() != RS4_MAGIC)
     {
         return BUG(SCAN_COMPRESSION_MAGIC_ERROR);
     }
 
-    if (i_rs4->iv_version != RS4_VERSION)
+    if (i_rs4->iv_version.get() != RS4_VERSION)
     {
         return BUG(SCAN_COMPRESSION_VERSION_ERROR);
     }
@@ -1036,11 +1165,11 @@ rs4::rs4_get_raw_bit_length( uint32_t& o_length,
     }
 
     // Sanity check that the RS4 nibble count, i, is <= RS4 string length from header x 2
-    if (i > 2 * (be16toh(i_rs4->iv_size) - sizeof(rs4::CompressedScanData)))
+    if (i > 2 * (i_rs4->iv_size.get() - sizeof(rs4::CompressedScanData)))
     {
         MY_ERR("ERROR: rs4_get_raw_bit_length: The decoded number of  RS4 nibbles, i=%u, is"
                " inconsistent with the RS4 string length indicated in the header, iv_size=%u\n",
-               i, be16toh(i_rs4->iv_size));
+               i, i_rs4->iv_size.get());
         return SCAN_COMPRESSION_RS4_SIZE_ERROR;
     }
 
@@ -1060,7 +1189,7 @@ rs4::rs4_redundant(const rs4::CompressedScanData* i_data, bool& o_redundant)
 
     o_redundant = false;
 
-    if (htobe16(i_data->iv_magic) != RS4_MAGIC)
+    if (i_data->iv_magic.get() != RS4_MAGIC)
     {
         return BUG(SCAN_COMPRESSION_MAGIC_ERROR);
     }
@@ -1096,36 +1225,6 @@ rs4::rs4_redundant(const rs4::CompressedScanData* i_data, bool& o_redundant)
 
     return SCAN_COMPRESSION_OK;
 }
-
-
-// Check if RS4 container contains a ring intended to be scanned onto
-// a scan chain that's been previously scanned (ie, Override scan mode)
-// or a scan chain in flush state (ie, Flush scan mode)
-bool
-rs4::rs4_is_ovrd(const rs4::CompressedScanData* i_rs4)
-{
-    switch (i_rs4->iv_type & RS4_IV_TYPE_SCAN_MASK)
-    {
-        case RS4_IV_TYPE_SCAN_OVRD:
-            return true;
-
-        case RS4_IV_TYPE_SCAN_FLUSH:
-            return false;
-
-        default:
-            return false;
-    }
-
-    return false;
-}
-
-// Check if RS4 ring is of INSTANCE or COMMON type and return true or false, respectively
-//bool rs4_ring_type_is_instance( rs4::CompressedScanData* i_rs4Ring)
-//{
-//    return ( (i_rs4Ring->iv_type & RS4_IV_TYPE_INSTANCE) ? true : false );
-//}
-
-
 
 
 // ************************************************************************* //
@@ -1550,12 +1649,12 @@ _rs4_compress_from_raw4( rs4::CompressedScanData* o_rs4,
             return SCAN_COMPRESSION_BUFFER_OVERFLOW;
         }
 
-        o_rs4->iv_magic     = htobe16(RS4_MAGIC);
-        o_rs4->iv_version   = RS4_VERSION;
-        o_rs4->iv_type      = i_ivType;
-        o_rs4->iv_instanceNum = i_instance;
-        o_rs4->iv_size      = htobe16(rs4Size);
-        o_rs4->iv_scanAddr  = htobe32(i_scanAddr);
+        o_rs4->iv_magic.set(RS4_MAGIC);
+        o_rs4->iv_version.set(RS4_VERSION);
+        o_rs4->iv_type.set(i_ivType);
+        o_rs4->iv_instanceNum.set(i_instance);
+        o_rs4->iv_size.set(rs4Size);
+        o_rs4->iv_scanAddr.set(i_scanAddr);
     }
 
     return rc;
@@ -2112,27 +2211,27 @@ rs4::rs4_overlay( rs4::CompressedScanData* o_rs4Final,    // Holds rs4Final + ra
     }
 
     // Basic RS4 header checks
-    if ( be16toh(i_rs4Tgt->iv_magic) != RS4_MAGIC  ||
-         be16toh(i_rs4Ovly->iv_magic) != RS4_MAGIC)
+    if ( i_rs4Tgt->iv_magic.get() != RS4_MAGIC  ||
+         i_rs4Ovly->iv_magic.get() != RS4_MAGIC)
     {
         return BUGX(SCAN_COMPRESSION_MAGIC_ERROR,
                     "ERROR: rs4_overlay: Rings are not RS4 rings\n");
     }
 
-    if ( i_rs4Tgt->iv_version != RS4_VERSION  ||
-         i_rs4Ovly->iv_version != RS4_VERSION )
+    if ( i_rs4Tgt->iv_version.get() != RS4_VERSION  ||
+         i_rs4Ovly->iv_version.get() != RS4_VERSION )
     {
         return BUGX(SCAN_COMPRESSION_VERSION_ERROR,
                     "ERROR: rs4_overlay: Rings' RS4 version do not match code level's version\n");
     }
 
     // Verify that rs4Tgt and rs4Ovly input rings' headers satisfy assumptions
-    if ( i_rs4Tgt->iv_scanAddr != i_rs4Ovly->iv_scanAddr )
+    if ( i_rs4Tgt->iv_scanAddr.get() != i_rs4Ovly->iv_scanAddr.get() )
     {
         MY_ERR("ERROR: rs4_overlay: Mismatched RS4 headers as follows:\n"
                " scanAddrTgt =0x%08x\n"
                " scanAddrOvly=0x%08x\n",
-               be32toh(i_rs4Tgt->iv_scanAddr), be32toh(i_rs4Ovly->iv_scanAddr));
+               i_rs4Tgt->iv_scanAddr.get(), i_rs4Ovly->iv_scanAddr.get());
         return SCAN_COMPRESSION_HEADERS_DONT_MATCH;
     }
 
@@ -2163,7 +2262,7 @@ rs4::rs4_overlay( rs4::CompressedScanData* o_rs4Final,    // Holds rs4Final + ra
         return rc;
     }
 
-    uint32_t scanAddrTemp = be32toh(i_rs4Tgt->iv_scanAddr);
+    uint32_t scanAddrTemp = i_rs4Tgt->iv_scanAddr.get();
 
     memset(o_rs4Final,  0, i_workBufSize / 4);
 
@@ -2181,7 +2280,7 @@ rs4::rs4_overlay( rs4::CompressedScanData* o_rs4Final,    // Holds rs4Final + ra
                                 raw4Tgt,
                                 raw4Ovly,
                                 i_ovlyMode,
-                                (i_ivType & RS4_IV_TYPE_SCAN_OVRD) ? true : false,
+                                i_ivType & RS4_TYPE_OVERRIDE,
                                 i_dbgl );
 
             if (rc)
