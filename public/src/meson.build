@@ -84,11 +84,14 @@ runtime_cmn_abs_inc_paths = []
 onetime_cmn_abs_inc_paths = []
 odyssey_cmn_abs_inc_paths = []
 odyssey_runtime_abs_inc_paths = []
+p11_cmn_abs_inc_paths = []
+p11_runtime_abs_inc_paths = []
 ekb_hwp_abs_inc_paths  = []
 odyssey_hwp_abs_inc_paths = []
 p11_sppe_cmn_abs_inc_paths = []
 p11_tsbe_cmn_abs_inc_paths = []
 p11_hsbe_cmn_abs_inc_paths = []
+p11_hwp_abs_inc_paths = []
 
 foreach inc_path : meson.get_external_property('cmn_inc_paths')
 
@@ -157,14 +160,35 @@ if platform == 'odyssey' or platform == 'all'
 endif
 
 if platform == 'p11' or platform == 'all'
+  foreach inc_path : meson.get_external_property('p11_cmn_inc_paths')
+
+    abs_inc_path = '-I' + meson.global_source_root() + inc_path
+    p11_cmn_abs_inc_paths += abs_inc_path
+
+  endforeach
+
+  foreach inc_path : meson.get_external_property('p11_cmn_runtime_inc_paths')
+
+    abs_inc_path = '-I' + meson.global_source_root() + inc_path
+    p11_runtime_abs_inc_paths += abs_inc_path
+
+  endforeach
+
+  foreach inc_path : meson.get_external_property('p11_cmn_hwp_inc_paths')
+
+    abs_inc_path = '-I' + pub_import_dir_path + inc_path
+    p11_hwp_abs_inc_paths += abs_inc_path
+
+  endforeach
 
   #P11 genfiles dir path
   p11_cmn_genfiles_dir_path  = onetime_genfiles_dir_path + '/p11/common/'
   p11_bldr_genfiles_dir_path = onetime_genfiles_dir_path + '/p11/bldr/'
   p11_srom_genfiles_dir_path  = onetime_genfiles_dir_path + '/p11/srom/'
   p11_sppe_genfiles_dir_path = runtime_genfiles_dir_path + '/p11/sppe/'
+  p11_tsbe_genfiles_dir_path = runtime_genfiles_dir_path + '/p11/tsbe/'
   run_command('mkdir','-p', p11_srom_genfiles_dir_path, p11_bldr_genfiles_dir_path,
-      p11_sppe_genfiles_dir_path, p11_cmn_genfiles_dir_path)
+    p11_sppe_genfiles_dir_path, p11_tsbe_genfiles_dir_path, p11_cmn_genfiles_dir_path)
 
   foreach inc_path : meson.get_external_property('p11_sppe_cmn_inc_paths')
 
