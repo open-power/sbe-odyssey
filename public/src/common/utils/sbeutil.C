@@ -95,7 +95,6 @@ namespace SBE
         getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, &secureBootFailStatus.iv_mbx13);
         secureBootFailStatus.iv_secureHeaderFailStatusCode = i_errorCode;
         putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, secureBootFailStatus.iv_mbx13);
-        SBE_ERROR(SBE_FUNC "Halting PPE...");
         pk_halt();
     }
 
