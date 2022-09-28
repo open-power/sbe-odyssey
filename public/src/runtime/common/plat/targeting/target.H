@@ -108,7 +108,7 @@ namespace fapi2
         check_getParent<T>();
 
         // Anything to PROC_CHIP
-        if (T == SBE_ROOT_CHIP_TYPE)
+        if ((T == SBE_ROOT_CHIP_TYPE) || (T == TARGET_TYPE_ANY_POZ_CHIP))
         {
             return g_platTarget->plat_getChipTarget();
         }
