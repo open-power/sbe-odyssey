@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -32,6 +32,7 @@
 
 #include <ody_chiplet_initf.H>
 #include <poz_perv_common_params.H>
+#include <poz_ring_ids.H>
 
 using namespace fapi2;
 
@@ -41,8 +42,10 @@ enum ODY_CHIPLET_INITF_Private_Constants
 
 ReturnCode ody_chiplet_initf(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
-
+    FAPI_INF("Entering...");
+    FAPI_TRY(putRing(i_target, ring_id::chiplet_initf));
 
 fapi_try_exit:
+    FAPI_INF("Exiting...");
     return current_err;
 }

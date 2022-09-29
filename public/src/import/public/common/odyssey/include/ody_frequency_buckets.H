@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_scratch_regs_utils.H $ */
+/* $Source: public/src/import/public/common/odyssey/include/ody_frequency_buckets.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,37 +23,56 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  ody_scratch_regs_utils.H
-/// @brief Project specific utility functions to support Odyssey scratch
-///        register setup
+/// @file  ody_frequency_buckets.H
+/// @brief Odyssey PLL/frequency bucket information
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Joe McGill (jmcgill@us.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#pragma once
+#ifndef _ODY_FREQUENCY_BUCKETS_H_
+#define _ODY_FREQUENCY_BUCKETS_H_
 
-#include <fapi2.H>
 
-#ifndef __PPE__
+//
+// REFCLOCKS
+//
+
+// internal/external reference clock frequencies
+// values represented in KHz
+enum ody_refclock_freq_t
+{
+    REFCLOCK_FREQ_133 = 133333,
+};
+
+
 ///
-/// @brief Read attribute/platform state to determine desired OCMB PLL bucket
+/// Odyssey
 ///
-/// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
-/// @param[out]  o_pll_bucket              Target PLL bucket setting
-///
-/// @return fapi::ReturnCode  FAPI2_RC_SUCCESS if success, else error code.
-///
-fapi2::ReturnCode ody_scratch_regs_get_pll_bucket(
-    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
-    fapi2::ATTR_OCMB_PLL_BUCKET_Type& o_pll_bucket);
+
+// constants defining number of PLL frequency options ('buckets')
+// documented in bucket descriptor structure (currently used/max)
+const uint8_t ODY_NUM_PLL_BUCKETS = 3;
+const uint8_t ODY_MAX_PLL_BUCKETS = 16;
+
+// PLL bucket descriptor, defines bucket properties in terms of:
+// - required input reference clock freqeuncy (KHz)
+// - resultant output grid frequency (MHz)
+// - resultant output link frequency (MHz)
+struct ody_pll_bucket_descriptor_t
+{
+    ody_refclock_freq_t refclock_freq_khz;  // PLL input frequency (KHz)
+    uint32_t            freq_grid_mhz;      // chip grid frequency (MHz)
+    uint32_t            freq_link_mhz;      // OMI link frequency (MHz)
+};
+
+// array of bucket descriptors, index is bucket number
+const ody_pll_bucket_descriptor_t ODY_PLL_BUCKETS[ODY_NUM_PLL_BUCKETS] =
+{
+    { REFCLOCK_FREQ_133, 1600, 25600 }, // bucket 0 DDR5-3200
+    { REFCLOCK_FREQ_133, 2000, 32000 }, // bucket 1 DDR5-4000
+    { REFCLOCK_FREQ_133, 2400, 38400 }, // bucket 2 DDR5-4800
+};
+
+
 #endif
-
-/// @brief Set platform specific multicast setup attributes
-///
-/// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
-///
-/// @return fapi::ReturnCode  FAPI2_RC_SUCCESS if success, else error code.
-///
-fapi2::ReturnCode ody_scratch_regs_setup_plat_multicast_attrs(
-    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);

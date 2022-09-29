@@ -190,13 +190,9 @@ ReturnCode mod_lbist_setup(
 
     auto l_chiplets_uc = i_target.getChildren<TARGET_TYPE_PERV>();
     buffer<uint64_t> l_ctrl_chiplets = i_ctrl_chiplets;
-    uint8_t l_chip_type;
     const bool l_trigger_mode = (i_ctrl_chiplets != 0);
     const struct STUMPSWeightSettings stumpsWeightSetting = stumpsWeightSettings[i_lbist_weight];  //grab weights enum
     const struct OPCGCaptureSettings opcgCaptureSetting = opcgCaptureSettings[i_lbist_sequence];   //grab capture enum
-
-    // Get chip type
-    FAPI_TRY(FAPI_ATTR_GET_PRIVILEGED(fapi2::ATTR_NAME, i_target, l_chip_type));
 
     // NET_CTRL0
     FAPI_TRY(NET_CTRL0.getScom(i_target));
@@ -220,18 +216,8 @@ ReturnCode mod_lbist_setup(
     FAPI_TRY(CPLT_CTRL0.putScom(i_target));
 
     // CPLT_CTRL1
-    switch (l_chip_type)
-    {
-        case ENUM_ATTR_NAME_ZMETIS:
-            CPLT_CTRL1.flush<1>();
-            break;
-
-        default:
-            CPLT_CTRL1.setBit<0, 20>();
-            break;
-    }
-
     FAPI_INF("LBIST: Writing CPLT_CTRL1 ...");
+    CPLT_CTRL1.setBit<0, 19>();
     FAPI_TRY(CPLT_CTRL1.putScom(i_target));
 
     // SCAN_REGION_TYPE & CLK_REGION REGS
