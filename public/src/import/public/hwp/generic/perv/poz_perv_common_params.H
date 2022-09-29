@@ -239,6 +239,7 @@ enum mux_type : int
     FSI2PCB = 16,
     PIB2PCB = 18,
     PCB2PCB = 19,
+    I2C2PCB = 24,
 };
 };
 
