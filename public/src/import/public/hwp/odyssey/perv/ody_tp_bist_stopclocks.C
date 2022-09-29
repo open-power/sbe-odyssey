@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_cbs_start.H $   */
+/* $Source: public/src/import/public/hwp/odyssey/perv/ody_tp_bist_stopclocks.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,27 +23,43 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  ody_cbs_start.H
-/// @brief Start CFAM boot sequencer
+/// @file  ody_tp_bist_stopclocks.C
+/// @brief Switch the mux and stop the SBE clocks for IML BIST
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#pragma once
+#include <ody_tp_bist_stopclocks.H>
+#include <poz_perv_common_params.H>
+#include <poz_perv_mod_chiplet_clocking.H>
+#include <poz_perv_mod_misc.H>
+#include <target_filters.H>
+#include <poz_perv_utils.H>
 
-#include <fapi2.H>
+using namespace fapi2;
+using namespace cc;
 
-typedef fapi2::ReturnCode (*ody_cbs_start_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&, bool);
-
-/// @brief Start CFAM boot sequencer
-///
-/// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
-/// @param[in]   i_start_sbe               Optionally start SBE (default=true)
-///
-/// @return  FAPI2_RC_SUCCESS if success, else error code.
-extern "C"
+enum ODY_TP_BIST_STOPCLOCKS_Private_Constants
 {
-    fapi2::ReturnCode ody_cbs_start(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target, bool i_start_sbe = true,
-                                    bool i_scan0_clockstart = true);
+};
+
+ReturnCode ody_tp_bist_stopclocks(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
+{
+    FAPI_INF("Entering ...");
+
+    fapi2::Target<fapi2::TARGET_TYPE_PERV> l_tpchiplet = get_tp_chiplet_target(i_target);
+
+
+    FAPI_INF("Start using I2C2PCB network");
+    FAPI_TRY(mod_switch_pcbmux(i_target, mux::I2C2PCB))
+
+
+    FAPI_INF("Calling mod_start_stop_clocks for SBE regions ...");
+    FAPI_TRY(mod_start_stop_clocks(l_tpchiplet, ODY_PERV_SBE, CLOCK_TYPE_ALL, false));
+
+
+fapi_try_exit:
+    FAPI_INF("Exiting ...");
+    return current_err;
 }

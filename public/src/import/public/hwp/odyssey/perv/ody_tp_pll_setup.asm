@@ -55,7 +55,8 @@ lock_pll:
          //FAPI_INF("Attempt to lock PLL");
          //ROOT_CTRL3.set_TP_MCPLL_TEST_EN_DC(0); // not available in headers yet - bit 24
          //ROOT_CTRL3.set_TP_MCPLL_RESET_DC(0);   // not available in headers yet - bit 25
-         putscom       ROOT_CTRL3_CLEAR, ALL, ROOT_CTRL3__TP_MCPLL_TEST_EN_DC | ROOT_CTRL3__TP_MCPLL_RESET_DC
+         putscom       ROOT_CTRL3_CLEAR, ALL, ROOT_CTRL3__TP_MCPLL_TEST_EN_DC
+         putscom       ROOT_CTRL3_CLEAR, ALL, ROOT_CTRL3__TP_MCPLL_RESET_DC
 
          //FAPI_TRY(mod_poll_pll_lock_fsi2pib(i_target, ODY_PERV_MCPLL));// ODY_PERV_MCPLL = 0x02
          poll     PLL_LOCK_REG_FSI2PIB, ODY_PERV_MCPLL, ODY_PERV_MCPLL, ERR_LOCK_PLL_TIMEOUT

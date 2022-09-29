@@ -84,6 +84,7 @@ $(call ODYSSEY_PERV_PROCEDURE,ody_tp_arrayinit_cleanup)
 $(call ODYSSEY_PERV_PROCEDURE,ody_tp_initf)
 $(call ODYSSEY_PERV_PROCEDURE,ody_tp_startclocks)
 $(call ODYSSEY_PERV_PROCEDURE,ody_tp_init)
+$(call ODYSSEY_PERV_PROCEDURE,ody_tp_bist_stopclocks)
 # istep 2
 
 # istep 3

@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_cbs_start.H $   */
+/* $Source: public/src/import/public/hwp/odyssey/perv/ody_tp_bist_stopclocks.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,10 +23,10 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  ody_cbs_start.H
-/// @brief Start CFAM boot sequencer
+/// @file  ody_tp_bist_stopclocks.H
+/// @brief Switch the mux and stop the SBE clocks for IML BIST
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
@@ -34,16 +34,14 @@
 
 #include <fapi2.H>
 
-typedef fapi2::ReturnCode (*ody_cbs_start_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&, bool);
+typedef fapi2::ReturnCode (*ody_tp_bist_stopclocks_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
 
-/// @brief Start CFAM boot sequencer
+/// @brief  Switch the mux and stop the SBE clocks for IML BIST
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
-/// @param[in]   i_start_sbe               Optionally start SBE (default=true)
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {
-    fapi2::ReturnCode ody_cbs_start(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target, bool i_start_sbe = true,
-                                    bool i_scan0_clockstart = true);
+    fapi2::ReturnCode ody_tp_bist_stopclocks(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
 }
