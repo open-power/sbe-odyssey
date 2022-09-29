@@ -23,26 +23,14 @@
 #
 # IBM_PROLOG_END_TAG
 
+cmn_utils_dir_path = meson.global_source_root() + '/public/src/common/utils/'
+
 infile_c = ['sbeutil.C',
             'metadata_base.C'
             ]
 
-lib_file_name = 'cmnutils'
+abs_cmn_utils_c_path = []
 
-cmn_utils_obj_file_cpp = obj_gen_cpp.process(infile_c)
-
-infile  = [cmn_utils_obj_file_cpp]
-
-libcmnutils = custom_target( lib_file_name,
-                                 output : 'lib' + lib_file_name,
-                                 input : infile,
-                                 command : [ ar,
-                                             'crs',
-                                             '@OUTPUT@'+'.a',
-                                             '@INPUT@'],
-                                 build_by_default: true,
-                             )
-
-cmn_utils_libs = '-l' + lib_file_name
-cmn_utils_lib_paths = '-L' + meson.current_build_dir()
-cmn_utils_dep_libs = libcmnutils
+foreach infile : infile_c
+  abs_cmn_utils_c_path += cmn_utils_dir_path + infile
+endforeach

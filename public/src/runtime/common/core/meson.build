@@ -23,34 +23,16 @@
 #
 # IBM_PROLOG_END_TAG
 
+runtime_cmn_core_dir_path = meson.global_source_root() + '/public/src/runtime/common/core/'
+
 infile_c = ['sbeSpMsg.C',
             'sbeirq.C',
             'sbeFifoMsgUtils.C',
             'sbeglobals.C',
            ]
 
-lib_file_name = 'runtimecmncore'
+abs_runtime_cmn_core_c_path = []
 
-runtime_cmn_core_obj_file_cpp = obj_gen_cpp.process(
-                                    infile_c,
-                                    extra_args : [
-                                                  odyssey_runtime_abs_inc_paths,
-                                                  odyssey_cmn_abs_inc_paths,
-                                                  runtime_cmn_abs_inc_paths
-                                                 ])
-
-infile  = [runtime_cmn_core_obj_file_cpp]
-
-libruntimecmncore = custom_target( lib_file_name,
-                                   output : 'lib' + lib_file_name,
-                                   input : infile,
-                                   command : [ ar,
-                                               'crs',
-                                               '@OUTPUT@'+'.a',
-                                               '@INPUT@'],
-                                   build_by_default: true,
-                               )
-
-runtime_cmn_core_libs = '-l' + lib_file_name
-runtime_cmn_core_lib_paths = '-L' + meson.current_build_dir()
-runtime_cmn_core_dep_libs = libruntimecmncore
+foreach infile : infile_c
+  abs_runtime_cmn_core_c_path += runtime_cmn_core_dir_path + infile
+endforeach

@@ -38,34 +38,11 @@ generic_infile_c = [
                     ]
 
 #Create abs path for input files before creating .o
-abs_generic_infiles_c_path = []
+ekb_generic_hwp_c_path = []
+
 foreach generic_infile : generic_infile_c
 
 abs_generic_infile_c_path = import_generic_dir_path + generic_infile
-abs_generic_infiles_c_path += abs_generic_infile_c_path
+ekb_generic_hwp_c_path += abs_generic_infile_c_path
 
 endforeach
-
-lib_ekb_cmn_file_name = 'ekbcmnhwp'
-
-generic_hwp_obj_file_c = obj_gen_cpp_hwp.process(abs_generic_infiles_c_path,
-                                        extra_args:[
-                                                    odyssey_runtime_abs_inc_paths,
-                                                    runtime_cmn_abs_inc_paths,
-                                                    odyssey_cmn_abs_inc_paths,
-                                                    ekb_hwp_abs_inc_paths])
-infile  = [generic_hwp_obj_file_c]
-
-libekbcmnhwp = custom_target( lib_ekb_cmn_file_name,
-                                    output : 'lib' + lib_ekb_cmn_file_name,
-                                    input : infile,
-                                    command : [ ar,
-                                                'crs',
-                                                '@OUTPUT@'+'.a',
-                                                '@INPUT@'],
-                                    build_by_default: true,
-                                )
-
-ekb_cmn_hwp_libs = '-l' + lib_ekb_cmn_file_name
-ekb_cmn_hwp_lib_paths = '-L' + meson.current_build_dir()
-ekb_cmn_hwp_dep_libs = libekbcmnhwp
