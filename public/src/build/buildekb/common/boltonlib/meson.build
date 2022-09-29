@@ -30,13 +30,11 @@ infile_c = ['std_init.c',
            ]
 
 #Create abs path for input files before creating .o
-abs_infiles_c_path = []
+boltonlib_abs_infiles_c_path = []
 
 foreach infile : infile_c
 
   abs_infile_c_path = import_dir_path + infile
-  abs_infiles_c_path += abs_infile_c_path
+  boltonlib_abs_infiles_c_path += abs_infile_c_path
 
 endforeach
-
-boltonlib_std_obj_file_c = obj_gen_c.process(abs_infiles_c_path)

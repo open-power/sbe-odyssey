@@ -57,6 +57,8 @@ infile_c = [
             ]
 
 #Create abs path for input files before creating .o
+abs_infiles_c_path = []
+
 foreach infile : infile_c
 
 abs_infile_c_path = pub_import_dir_path + infile

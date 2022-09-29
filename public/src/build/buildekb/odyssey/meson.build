@@ -23,6 +23,8 @@
 #
 # IBM_PROLOG_END_TAG
 
+subdir('pk')
+
 if get_option('sppe').enabled()
     parseErrorInfo = find_program('../../../import/public/common/generic/fapi2/tools/parseErrorInfo.pl')
     attrTool = find_program('../../../runtime/tools/attributes/attrtool')

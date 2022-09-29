@@ -23,32 +23,13 @@
 #
 # IBM_PROLOG_END_TAG
 
+runtime_cmn_ffdc_dir_path = meson.global_source_root() + '/public/src/runtime/common/plat/ffdc/'
+
 infile_c = ['ffdc.C'
            ]
 
-lib_file_name = 'runtimecmnffdc'
+abs_runtime_cmn_ffdc_c_path = []
 
-runtime_cmn_ffdc_obj_file_cpp = obj_gen_cpp.process(
-                                    infile_c,
-                                    extra_args : [
-                                                  odyssey_runtime_abs_inc_paths,
-                                                  odyssey_cmn_abs_inc_paths,
-                                                  runtime_cmn_abs_inc_paths
-                                                 ])
-
-infile  = [runtime_cmn_ffdc_obj_file_cpp]
-
-libruntimecmnffdc = custom_target( lib_file_name,
-                                   output : 'lib' + lib_file_name,
-                                   input : infile,
-                                   command : [ ar,
-                                               'crs',
-                                               '@OUTPUT@'+'.a',
-                                               '@INPUT@'],
-                                   build_by_default: true,
-                               )
-
-runtime_cmn_ffdc_libs = '-l' + lib_file_name
-runtime_cmn_ffdc_lib_paths = '-L' + meson.current_build_dir()
-runtime_cmn_ffdc_dep_libs = libruntimecmnffdc
-
+foreach infile : infile_c
+  abs_runtime_cmn_ffdc_c_path += runtime_cmn_ffdc_dir_path + infile
+endforeach

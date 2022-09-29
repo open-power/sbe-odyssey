@@ -243,8 +243,13 @@ subdir('tools')
 subdir('build/buildekb')
 subdir('common')
 
-subdir('onetime')
-subdir('runtime')
+if get_option('srom').enabled() or get_option('bldr').enabled() or get_option('otprom').enabled()
+  subdir('onetime')
+endif
+
+if get_option('sppe').enabled() or get_option('tsbe').enabled() or get_option('hsbe').enabled()
+  subdir('runtime')
+endif
 
 #After all images are built lets call packaging
 subdir('packaging')
