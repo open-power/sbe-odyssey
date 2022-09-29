@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2021,2022
+# Contributors Listed Below - COPYRIGHT 2021,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -29,6 +29,7 @@ $(call ADD_MODULE_INCDIR,$(MODULE),$(FAPI2_PLAT_INCLUDE))
 $(call ADD_MODULE_INCDIR,$(MODULE),$(ROOTPATH)/public/common/generic/scomt/)
 $(call ADD_MODULE_INCDIR,$(MODULE),$(ROOTPATH)/public/common/p11/registers/)
 $(call ADD_MODULE_INCDIR,$(MODULE),$(ROOTPATH)/public/common/odyssey/registers/)
+$(call ADD_MODULE_INCDIR,$(MODULE),$(ROOTPATH)/public/common/odyssey/include/)
 $(call ADD_MODULE_INCDIR,$(MODULE),$(ROOTPATH)/public/common/explorer/registers/)
 $(call ADD_MODULE_OBJ,$(MODULE),fapi2_utils.o)
 $(call ADD_MODULE_OBJ,$(MODULE),fapi2_attribute_service.o)

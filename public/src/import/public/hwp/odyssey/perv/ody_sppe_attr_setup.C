@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -32,11 +32,12 @@
 
 #include <ody_sppe_attr_setup.H>
 #include <ody_scratch_regs.H>
+#include <ody_scratch_regs_utils.H>
 
 using namespace fapi2;
 
 constexpr uint32_t ODY_TP_ATTR_PG = 0xFFE0FFBF;
-constexpr uint32_t ODY_MC_ATTR_PG = 0xFFE01F9F;
+constexpr uint32_t ODY_MC_ATTR_PG = 0xFFE0001F;
 
 ReturnCode ody_sppe_attr_setup(const Target<TARGET_TYPE_OCMB_CHIP>& i_target_chip)
 {
@@ -173,6 +174,9 @@ ReturnCode ody_sppe_attr_setup(const Target<TARGET_TYPE_OCMB_CHIP>& i_target_chi
                  l_chip_unit_pos, l_pg);
         FAPI_TRY(FAPI_ATTR_SET(fapi2::ATTR_PG, l_perv, l_pg));
     }
+
+    // set platform attributes needed for basic multicast setup used in following HWPs
+    FAPI_TRY(ody_scratch_regs_setup_plat_multicast_attrs(i_target_chip));
 
 fapi_try_exit:
     FAPI_DBG("End");
