@@ -112,7 +112,10 @@ def cmd_getattr(args):
 def cmd_dumpattr(args):
     sbe_attr_tank : AttributeStructure = pickle.load(open(args.dbfile, "rb"))
     image = open(args.image, "rb").read()
-    image_base = sbe_attr_tank.image_base
+    if args.raw =='True':
+        image_base = sbe_attr_tank.start_address
+    else:
+        image_base = sbe_attr_tank.image_base
     attr_list = []
     headers=["Attribute Name", "Target", "Value Type", "Value"]
     for attr in sbe_attr_tank.field_list:
@@ -173,6 +176,7 @@ if __name__ == "__main__":
 
     sub = subparsers.add_parser("dumpattr", help="Dump all attributes from a PPE image")
     img_standard_parms(sub)
+    sub.add_argument('--raw', choices=('True','False'), help = "Raw attribute binary")
     sub.set_defaults(func=cmd_dumpattr)
 
     sub = subparsers.add_parser("setfixed", help="Set an image's attribute values based on the values in the SBE attribute file")

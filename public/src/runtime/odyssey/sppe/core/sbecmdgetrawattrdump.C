@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/chipop_table.C $         */
+/* $Source: public/src/runtime/odyssey/sppe/core/sbecmdgetrawattrdump.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -22,77 +22,54 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-
-#include "sbecmdscomaccess.H"
-#include "istep.H"
-#include "sbetrace.H"
-#include "sbe_sp_intf.H"
-#include "chipop_handler.H"
-#include "chipop_table.H"
-#include "sbecmdringaccess.H"
+#include "sbeutil.H"
+#include "sbeFifoMsgUtils.H"
+#include "chipop_struct.H"
 #include "sbecmdgetrawattrdump.H"
-#include "sbecmdbist.H"
+#include "sbe_sp_intf.H"
 
-static const uint16_t HARDWARE_FENCED_STATE =
-     SBE_FENCE_AT_CONTINUOUS_IPL|SBE_FENCE_AT_DMT;
+// align address to next 8 byte boundary
+#define ALIGN_8_BYTES(address) (address+0x7)&(~0x7)
+extern uint32_t _attrs_start_ __attribute__ ((section (".attr")));
+extern uint32_t _attrs_end_ __attribute__((section(".attr")));
 
-static const uint16_t PUT_HARDWARE_FENCED_STATE =
-     HARDWARE_FENCED_STATE;
+uint32_t sbeGetRawAttrDump (uint8_t *i_pArg)
+{
+    #define SBE_FUNC " sbeGetRawAttrDump "
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    uint32_t len = 0;
+    sbeRespGenHdr_t respHdr;
+    respHdr.init();
+    sbeFifoType type;
 
-////////////////////////////////////////////////////////////////
-// @brief g_sbeIplControlCmdArray
-//
-////////////////////////////////////////////////////////////////
-CMD_ARR(
-   A1,
-   {sbeHandleIstep,
-    SBE_CMD_EXECUTE_ISTEP,
-    HARDWARE_FENCED_STATE|SBE_FENCE_AT_DUMPING,
-   },
-)
-
-CMD_ARR(
-    A2,
-    {sbeGetScom,
-     SBE_CMD_GETSCOM,
-     HARDWARE_FENCED_STATE,
-    },
-    {sbePutScom,
-     SBE_CMD_PUTSCOM,
-     HARDWARE_FENCED_STATE,
-    }
-)
-
-CMD_ARR(
-    A3,
-    {sbeGetRing,
-     SBE_CMD_GETRING,
-     SBE_FENCE_AT_CONTINUOUS_IPL|SBE_FENCE_AT_QUIESCE,
-    },
-
-    {sbePutRing,
-     SBE_CMD_PUTRING,
-     HARDWARE_FENCED_STATE|SBE_FENCE_AT_QUIESCE,
-    }
-)
-
-CMD_ARR(
-    A8,
+    uint32_t *startAddr = &_attrs_start_;
+    uint32_t *endAddr = &_attrs_end_;
+    do
     {
-        sbeGetRawAttrDump,
-        SBE_CMD_GETATTRDUMP,
-        SBE_NO_FENCE,
+        chipOpParam_t* configStr = (struct chipOpParam*)i_pArg;
+        type = static_cast<sbeFifoType>(configStr->fifoType);
+        SBE_DEBUG(SBE_FUNC "Fifo Type is:[%02X]",type);
+
+        l_rc = sbeUpFifoDeq_mult (len, NULL, true, false, type);
+        // If FIFO access failure
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+        // Attributes can be not aligned to 8
+        // and we expect data to be 8 bytes aligned in order to read
+        len = ALIGN_8_BYTES(endAddr-startAddr);
+        SBE_DEBUG(SBE_FUNC "Length is 0x%08x", len);
+        l_rc = sbeDownFifoEnq_mult( len,
+                    (uint32_t *)startAddr, type );
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+    }while(false);
+
+    if(l_rc != SBE_SEC_OPERATION_SUCCESSFUL){
+        respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                           SBE_SEC_GETATTRDUMP_FAILURE );
     }
+    l_rc = sbeDsSendRespHdr(respHdr, NULL, type);
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
 
-)
-
-CMD_ARR(
-    F1,
-    {sbeBist,
-     SBE_CMD_BIST,
-     HARDWARE_FENCED_STATE|SBE_FENCE_AT_QUIESCE,
-    }
-)
-
-// Mandatory macro inclusion
-CMD_CLASS_DEFAULT_INTIALISATION
+}

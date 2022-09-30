@@ -160,6 +160,7 @@ enum sbeSecondaryResponse
     SBE_SEC_INVALID_I2C_TARGET_SUPPORT        = 0x4A,
     SBE_SEC_LPC_ERROR                         = 0x4B,
     SBE_SEC_NOT_ALLOWED_VIA_FIFO_1            = 0x4C,
+    SBE_SEC_GETATTRDUMP_FAILURE               = 0x4D,
 };
 
 /**

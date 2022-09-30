@@ -53,6 +53,11 @@ enum sbeRingAccessCommands
     SBE_CMD_PUTRING          = 0x02, /* Put Ring */
 };
 
+enum sbeGenericMessageCommands
+{
+    SBE_CMD_GETATTRDUMP             = 0x04, /* Get Attribute dump */
+};
+
 enum sbeTestCommands
 {
     SBE_CMD_BIST             = 0x01, /* BIST chipop */
