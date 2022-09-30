@@ -41,7 +41,6 @@ using namespace cc;
 
 enum ODY_TP_ARRAYINIT_Private_Constants
 {
-    ODY_PERV_NET_PERV = ODY_PERV_NET | ODY_PERV_PERV,
 };
 
 ReturnCode ody_tp_arrayinit(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
@@ -50,8 +49,8 @@ ReturnCode ody_tp_arrayinit(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
     FAPI_INF("Entering ...");
     fapi2::Target<fapi2::TARGET_TYPE_PERV> l_tpchiplet = get_tp_chiplet_target(i_target);
 
-    FAPI_INF("Calling mod_abist_start for PERV & NET regions ...");
-    FAPI_TRY(mod_abist_start(l_tpchiplet, ODY_PERV_NET_PERV));
+    FAPI_INF("Calling mod_abist_start for PERV region ...");
+    FAPI_TRY(mod_abist_start(l_tpchiplet, ODY_PERV_PERV));
 
     FAPI_INF("Calling mod_abist_poll ...");
     FAPI_TRY(mod_abist_poll(l_tpchiplet))

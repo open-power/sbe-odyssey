@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_tp_arrayinit_cleanup.C $ */
+/* $Source: public/src/import/public/hwp/odyssey/perv/ody_tp_bist_mux_switch.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,36 +23,33 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  ody_tp_arrayinit_cleanup.C
-/// @brief Cleanup after TP chiplet arrayinit
+/// @file  ody_tp_bist_mux_switch.C
+/// @brief Switch the mux for IML BIST
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
-// *HWP FW Maintainer   : Kevin Duffy (kjduffy@us.ibm.com)
+// *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#include <ody_tp_arrayinit_cleanup.H>
+#include <ody_tp_bist_mux_switch.H>
 #include <poz_perv_common_params.H>
-#include <poz_perv_mod_chiplet_clocking.H>
-#include <poz_perv_utils.H>
+#include <poz_perv_mod_misc.H>
 #include <target_filters.H>
+#include <poz_perv_utils.H>
 
 using namespace fapi2;
 using namespace cc;
 
-enum ODY_TP_ARRAYINIT_CLEANUP_Private_Constants
+enum ODY_TP_BIST_MUX_SWITCH_Private_Constants
 {
 };
 
-ReturnCode ody_tp_arrayinit_cleanup(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
+ReturnCode ody_tp_bist_mux_switch(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     FAPI_INF("Entering ...");
-    fapi2::Target<fapi2::TARGET_TYPE_PERV> l_tpchiplet = get_tp_chiplet_target(i_target);
 
-    FAPI_INF("Calling mod_abist_cleanup ...");
-    FAPI_TRY(mod_abist_cleanup(l_tpchiplet));
+    FAPI_INF("Start using I2C2PCB network");
+    FAPI_TRY(mod_switch_pcbmux_cfam(i_target, mux::I2C2PCB))
 
-    FAPI_INF("Calling mod_scan0 for PERV region ...");
-    FAPI_TRY(mod_scan0(l_tpchiplet, ODY_PERV_PERV));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
