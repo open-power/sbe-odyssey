@@ -45,7 +45,11 @@ extern "C" {
 #define SHIFT_LEFT(x, bits)         ((x) << bits)
 
 #define SBE_MESSAGE_REG_PROGRESS_CODE_BIT_MASK 0x3F00000000
-
+#define CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc) \
+if ((l_rc) != SBE_SEC_OPERATION_SUCCESSFUL) \
+{ \
+    break; \
+}
 typedef enum
 {
     SROM = 1,

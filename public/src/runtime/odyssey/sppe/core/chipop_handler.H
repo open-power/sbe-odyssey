@@ -152,13 +152,18 @@ struct cmdStructP_t
 
 // Keep this hash updated with the cmdClassArr
 
-#define HASH_KEY(key) (key < 0xF1 ? (key-0xA1) : (key-0xF1+0x03))
+#define HASH_KEY(key) (key < 0xF1 ? (key-0xA1) : (key-0xF1+0x08))
 
 #define CMD_CLASS_DEFAULT_INTIALISATION \
 constexpr cmdClass_t cmdClassArr[] = { \
     CMD_CLASS(A1), \
     CMD_CLASS(A2), \
     CMD_CLASS(A3), \
+    CMD_CLASS(A4), \
+    CMD_CLASS(A5), \
+    CMD_CLASS(A6), \
+    CMD_CLASS(A7), \
+    CMD_CLASS(A8), \
     CMD_CLASS(F1), \
 }; \
 \
