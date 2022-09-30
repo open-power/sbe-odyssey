@@ -121,14 +121,14 @@ ReturnCode mod_cbs_cleanup(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
     SB_CS_t SB_CS;
 
     FAPI_INF("Clear CBS command to enable clock gating inside clock controller");
-    FAPI_TRY(ROOT_CTRL0.getScom(i_target));
+    FAPI_TRY(ROOT_CTRL0.getCfam(i_target));
     ROOT_CTRL0.set_FSI_CC_CBS_CMD(0);
-    FAPI_TRY(ROOT_CTRL0.putScom(i_target));
+    FAPI_TRY(ROOT_CTRL0.putCfam(i_target));
 
     FAPI_INF("Clear SBE start bit to facilitate restarts later");
-    FAPI_TRY(SB_CS.getScom(i_target));
+    FAPI_TRY(SB_CS.getCfam(i_target));
     SB_CS.set_START_RESTART_VECTOR0(0);
-    FAPI_TRY(SB_CS.putScom(i_target));
+    FAPI_TRY(SB_CS.putCfam(i_target));
 
 fapi_try_exit:
     return current_err;
@@ -195,15 +195,17 @@ ReturnCode mod_switch_pcbmux(
     mux_type i_path)
 {
     ROOT_CTRL0_t ROOT_CTRL0;
-    uint8_t l_oob_mux_save;
+    uint8_t l_oob_mux_save = 0;
 
     FAPI_INF("Entering ...");
+    FAPI_DBG("Save OOB Mux setting.");
     FAPI_TRY(ROOT_CTRL0.getScom(i_target));
     l_oob_mux_save = ROOT_CTRL0.get_OOB_MUX();
 
-    ROOT_CTRL0.set_OOB_MUX(1);
     FAPI_DBG("Raise OOB Mux.");
-    FAPI_TRY(ROOT_CTRL0.putScom(i_target));
+    ROOT_CTRL0 = 0;
+    ROOT_CTRL0.set_OOB_MUX(1);
+    FAPI_TRY(ROOT_CTRL0.putScom_SET(i_target));
 
     FAPI_DBG("Set PCB_RESET bit in ROOT_CTRL0 register.");
     ROOT_CTRL0 = 0;
@@ -228,10 +230,68 @@ ReturnCode mod_switch_pcbmux(
     ROOT_CTRL0.set_PCB_RESET(1);
     FAPI_TRY(ROOT_CTRL0.putScom_CLEAR(i_target));
 
-    FAPI_DBG("Drop OOB Mux.");
-    FAPI_TRY(ROOT_CTRL0.getScom(i_target));
-    ROOT_CTRL0.set_OOB_MUX(l_oob_mux_save);
-    FAPI_TRY(ROOT_CTRL0.putScom(i_target));
+    FAPI_DBG("Restore OOB Mux setting.");
+
+    if (l_oob_mux_save == 0)
+    {
+        ROOT_CTRL0 = 0;
+        ROOT_CTRL0.set_OOB_MUX(1);
+        FAPI_TRY(ROOT_CTRL0.putScom_CLEAR(i_target));
+    }
+
+fapi_try_exit:
+    FAPI_INF("Exiting ...");
+    return current_err;
+}
+
+ReturnCode mod_switch_pcbmux_cfam(
+    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    mux_type i_path)
+{
+    ROOT_CTRL0_t ROOT_CTRL0;
+    uint8_t l_oob_mux_save = 0;
+
+    FAPI_INF("Entering ...");
+    FAPI_DBG("Save OOB Mux setting.");
+    FAPI_TRY(ROOT_CTRL0.getCfam(i_target));
+    l_oob_mux_save = ROOT_CTRL0.get_OOB_MUX();
+
+    FAPI_DBG("Raise OOB Mux.");
+    ROOT_CTRL0 = 0;
+    ROOT_CTRL0.set_OOB_MUX(1);
+    FAPI_TRY(ROOT_CTRL0.putCfam_SET(i_target));
+
+    FAPI_DBG("Set PCB_RESET bit in ROOT_CTRL0 register.");
+    ROOT_CTRL0 = 0;
+    ROOT_CTRL0.set_PCB_RESET(1);
+    FAPI_TRY(ROOT_CTRL0.putCfam_SET(i_target));
+
+    FAPI_DBG("Enable the new path first to prevent glitches.");
+    ROOT_CTRL0 = 0;
+    FAPI_TRY(ROOT_CTRL0.setBit(i_path));
+    FAPI_TRY(ROOT_CTRL0.putCfam_SET(i_target));
+
+    FAPI_DBG("Disable the old path.");
+    ROOT_CTRL0 = 0;
+    ROOT_CTRL0.set_FSI2PCB(1);
+    ROOT_CTRL0.set_PIB2PCB(1);
+    ROOT_CTRL0.set_PCB2PCB(1);
+    FAPI_TRY(ROOT_CTRL0.clearBit(i_path));
+    FAPI_TRY(ROOT_CTRL0.putCfam_CLEAR(i_target));
+
+    FAPI_DBG("Clear PCB_RESET.");
+    ROOT_CTRL0 = 0;
+    ROOT_CTRL0.set_PCB_RESET(1);
+    FAPI_TRY(ROOT_CTRL0.putCfam_CLEAR(i_target));
+
+    FAPI_DBG("Restore OOB Mux setting.");
+
+    if (l_oob_mux_save == 0)
+    {
+        ROOT_CTRL0 = 0;
+        ROOT_CTRL0.set_OOB_MUX(1);
+        FAPI_TRY(ROOT_CTRL0.putCfam_CLEAR(i_target));
+    }
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
