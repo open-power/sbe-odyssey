@@ -73,3 +73,7 @@ cd ${SPPE_MESON_IMAGE_DIR_PATH}
 
 #Add the hash list and secure header into the pak
 $PAK_TOOL_PATH add ${SPPE_BASE_IMAGE_NAME}.pak rt --method zlib
+#we need to store the hash.list in uncompressed method, since we will store
+#   the hash of uncompressed file in secure.hdr, and code will be matching these two
+#   And current archive library is returning hash of data before compression.
+$PAK_TOOL_PATH add ${SPPE_BASE_IMAGE_NAME}.pak rt/hash.list --method store
