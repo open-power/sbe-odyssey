@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2012,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2012,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -33,7 +33,7 @@
 #define FAPI2_HWACCESS_H_
 
 #include <plat_hw_access.H>
-#include "plat_ring_utils.H"
+#include <hw_access_def.H>
 #include <stdint.h>
 #include <return_code.H>
 #include <plat_trace.H>

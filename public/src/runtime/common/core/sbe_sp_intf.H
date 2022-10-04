@@ -164,7 +164,9 @@ enum sbeSecondaryResponse
     SBE_SEC_INVALID_PIPE                      = 0x4E,
     SBE_SEC_HEAP_SPACE_FULL_FAILURE           = 0x4F,
     SBE_SEC_GENERIC_BAD_PAK                   = 0x50,
-    SBE_SEC_POP_UNAVAILABE_PAKS               = 0x50,
+    SBE_SEC_POP_UNAVAILABE_PAKS               = 0x51,
+    SBE_SEC_GETRING_SETUP_FAILED              = 0x52,
+    SBE_SEC_GETRING_VERIFY_CLEANUP            = 0x53,
 };
 
 /**
@@ -176,6 +178,25 @@ enum sbeCmdRespTimeout
     SBE_CMD_TIMEOUT_SHORT_IN_MSEC = 100,
     SBE_CMD_TIMEOUT_LONG_IN_MSEC  = 30000,
 };
+
+/*
+ * @brief enums for access modes used in ring access chip op
+ */
+typedef enum
+{
+    SBE_RING_MODE_NO_HEADER_CHECK           = 0x0001, ///< Don't check header
+    SBE_RING_MODE_SET_PULSE_NO_OPCG_COND    = 0x0002, ///< Set pulse with
+                                                     ///  no OPCG conditioning
+    SBE_RING_MODE_SET_PULSE_NSL             = 0x0004, ///< Set pulse with NSL
+                                                    ///  pulse
+    SBE_RING_MODE_SET_PULSE_SL              = 0x0008, ///< Set pulse with SL
+                                                    ///  pulse
+    SBE_RING_MODE_SET_PULSE_ALL             = 0x0010, ///< Set pulse with pulse
+                                                    ///  to all hold types
+    SBE_RING_MODE_FASTARRAY                 = 0x0020, //Fast array mode
+
+    SBE_RING_MODE_APPLY_OVERRIDE            = 0x0040, //override mode
+} sbeRingAccessModes_t;
 
 #ifdef __cplusplus
 }
