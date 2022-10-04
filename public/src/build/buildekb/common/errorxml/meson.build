@@ -30,6 +30,7 @@ common_error_xml_files = [
                           'poz_bist_errors.xml',
                           'poz_sbe_plat_errors.xml',
                           'poz_sbe_spi_cmd_errors.xml',
+                          'poz_putRingUtils_errors.xml'
                         ]
 
 #Create abs path for input xml files

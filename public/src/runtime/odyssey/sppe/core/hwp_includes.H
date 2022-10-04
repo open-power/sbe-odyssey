@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -54,5 +54,7 @@
 #include <ody_thermal_init.H>
 #include <poz_cmdtable_interpreter.H>
 #include <ody_sppe_attr_setup.H>
+#include <poz_putRingUtils.H>
+#include <poz_ring_ids.H>
 
 #endif

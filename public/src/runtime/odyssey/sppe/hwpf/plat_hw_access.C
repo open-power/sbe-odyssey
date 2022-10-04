@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -35,6 +35,7 @@
 #include <error_info.H>
 #include "plat_target_base.H"
 #include "sbe_sp_intf.H"
+#include "poz_putRingUtils.H"
 
 namespace fapi2
 {
@@ -79,6 +80,75 @@ enum sbeScomType
     SBE_SCOM_TYPE_DIRECT = 0,      // Direct scom
 };
 
+
+#define FASTINIT_SUPPORT 0x00080000
+struct restoreOpcgRegisters g_opcgData;
+
+
+ReturnCode getRing_setup(const uint32_t i_ringAddress,
+                             const RingMode i_ringMode)
+{
+    fapi2::ReturnCode l_rc = FAPI2_RC_SUCCESS;
+
+    uint64_t l_scanRegion = 0;
+    Target<SBE_ROOT_CHIP_TYPE> l_target =  g_platTarget->plat_getChipTarget();
+    auto l_hndl = l_target.getChildren<fapi2::TARGET_TYPE_PERV>(fapi2::TARGET_FILTER_MC, TARGET_STATE_FUNCTIONAL)[0];
+    do
+    {
+        l_scanRegion = decodeScanRegionData(l_hndl, i_ringAddress, i_ringMode);
+        // Prep clock controller for ring scan with modified type
+        l_rc =  setupClockController( l_hndl, i_ringMode,
+                                      l_scanRegion, g_opcgData);
+        if(l_rc != fapi2::FAPI2_RC_SUCCESS)
+        {
+            FAPI_ERR("setupClockController failed. Rc:0x%08X", l_rc);
+            break;
+        }
+
+        // Write a 64 bit value for header.
+        const uint64_t l_header = 0xa5a5a5a5a5a5a5a5ull;
+        uint32_t l_scomAddress = 0x0003E000 |  (i_ringAddress & 0xFF000000);
+        l_rc = fapi2::putScom(l_hndl, l_scomAddress, l_header);
+
+        if(l_rc != fapi2::FAPI2_RC_SUCCESS)
+        {
+            break;
+        }
+    } while(0);
+
+    return l_rc;
+}
+
+ReturnCode getRing_verifyAndcleanup(const uint32_t i_ringAddress,
+                                    const RingMode i_ringMode)
+{
+    fapi2::ReturnCode l_rc = FAPI2_RC_SUCCESS;
+
+    Target<SBE_ROOT_CHIP_TYPE> l_target =  g_platTarget->plat_getChipTarget();
+    auto l_hndl = l_target.getChildren<fapi2::TARGET_TYPE_PERV>(fapi2::TARGET_FILTER_MC, TARGET_STATE_FUNCTIONAL)[0];
+    do
+    {
+        uint64_t l_scanRegion = 0;
+        l_scanRegion = decodeScanRegionData(l_hndl, i_ringAddress, i_ringMode);
+        // Verify header
+        l_rc = verifyHeader( l_hndl, l_scanRegion, 0) ;
+        if(l_rc != fapi2::FAPI2_RC_SUCCESS)
+        {
+            FAPI_ERR("verifyHeader failed. Rc:0x%08X", l_rc);
+            break;
+        }
+        l_rc =cleanupClockController( l_hndl,
+                                      i_ringMode, l_scanRegion, g_opcgData);
+        if(l_rc != fapi2::FAPI2_RC_SUCCESS)
+        {
+            FAPI_ERR("cleanupClockController failed. Rc:0x%08X", l_rc);
+            break;
+        }
+
+    }while(0);
+    return l_rc;
+}
+
 static uint32_t getEffectiveAddress(const uint32_t *i_target, const uint32_t i_addr, bool isIndirectScom = false)
 {
     uint32_t translatedAddr = 0;
@@ -117,7 +187,7 @@ static uint32_t getEffectiveAddress(const uint32_t *i_target, const uint32_t i_a
                 break;
             }
     }
-    SBE_INFO("getEffectiveAddress Target is 0x%08X, i_addr is 0x%08X, translatedAddr is 0x%08X", uint32_t(*l_targetBase), i_addr, translatedAddr);
+    SBE_DEBUG("getEffectiveAddress Target is 0x%08X, i_addr is 0x%08X, translatedAddr is 0x%08X", uint32_t(*l_targetBase), i_addr, translatedAddr);
     return translatedAddr;
 }
 
@@ -309,7 +379,6 @@ uint32_t platcheckIndirectAndDoScom( const bool i_isRead,
             rc = SBE_SEC_HW_OP_TIMEOUT;
             break;
         }
-
     }while(0);
     #undef SBE_FUNC
     return rc;

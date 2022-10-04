@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -32,6 +32,7 @@
 #define PLATHWACCESS_H_
 
 #include <return_code.H>
+#include <hw_access_def.H>
 
 // PIB errors
 enum PCB_ERRORS
@@ -56,6 +57,22 @@ enum PCB_ERRORS
 
 namespace fapi2
 {
+    // This function loads the scan region data for the given ring address and
+    // updates the check word data
+    // @param[in] : ring addtress
+    // @param[in]:  ring mode
+    // @return fapi::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
+    fapi2::ReturnCode getRing_setup(const uint32_t i_ringAddress,
+                             const RingMode i_ringMode);
+
+    // This function verify the check word data is matching or not and will
+    // clean up the scan region data
+    // @param[in] i_ringAddress - absolute ring address
+    // @param[in] i_ringMode - Ring mode value
+    // @return fapi::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
+    fapi2::ReturnCode getRing_verifyAndcleanup(const uint32_t i_ringAddress,
+                                        const RingMode i_ringMode);
+
     ///
     /// @brief Platform wrapper over PK getscom_abs
     ///

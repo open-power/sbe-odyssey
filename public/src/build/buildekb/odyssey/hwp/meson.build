@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -53,7 +53,7 @@ infile_c = [
             '/memory/odyssey/hwp/ody_thermal_init.C',
 #            '/memory/odyssey/hwp//lib/phy/ody_phy_utils.C',
             '/memory/odyssey/initfiles/odyssey_scom.C',
-            ]
+          ]
 
 #Create abs path for input files before creating .o
 abs_infiles_c_path = []
