@@ -35,9 +35,11 @@
 #define PIG_INTR_FIELD_MASK         0x7000000000000000
 #define PIG_INTR_GRANTED_MASK       0x0000000080000000
 
-// PIR defines
-#define PIR_INSTANCE_EVEN_ODD_MASK  (uint32_t)(0x00000001)
-#define PIR_INSTANCE_NUM_MASK       (uint32_t)(0x0000000F)
+#if 0
+    // PIR defines
+    #define PIR_INSTANCE_EVEN_ODD_MASK  (uint32_t)(0x00000001)
+    #define PIR_INSTANCE_NUM_MASK       (uint32_t)(0x0000000F)
+#endif
 
 //Bit0 WR: 0
 //Bit1 Multicast: 1
