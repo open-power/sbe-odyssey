@@ -738,6 +738,9 @@ def p11s_fsi_init():
     for all functional Tap targets:
         l_expected_taps[i] = 1
 
+    ## Take PIB FSI controller out of reset
+    PERV_CTRL0.PIB_FSICTL_RESET = 0    # bit 26
+
     ## Enable Tap reference clocks
     ROOT_CTRL7.TAP_REFCLK_EN = l_expected_taps
 
@@ -1459,6 +1462,8 @@ ISTEP(3, 20, "proc_chiplet_startclocks", "SSBE, TSBE")
 def p11s_chiplet_startclocks():
     ## Drop TP chiplet fence
     PERV_CTRL0.TC_PERV_CHIPLET_FENCE_DC = 0    # new field - bit 17
+    with MCGROUP_GOOD_NO_TP:
+        NET_CTRL0.PERV2CHIPLET_CHIPLET_FENCE = 0    # bit 11
 
     ## Start chiplet clocks
     poz_chiplet_startclocks(MCGROUP_GOOD_NO_TP)
@@ -1466,6 +1471,8 @@ def p11s_chiplet_startclocks():
 def p11t_chiplet_startclocks():
     ## Dropping TP chiplet fence
     PERV_CTRL0.TC_PERV_CHIPLET_FENCE_DC = 0    # new field - bit 17
+    with MCGROUP_GOOD_NO_TP:
+        NET_CTRL0.PERV2CHIPLET_CHIPLET_FENCE = 0    # bit 11
 
     ## Starting chiplet clocks (except EQ)
     poz_chiplet_startclocks(MCGROUP_GOOD_NO_TPEQ)
@@ -1489,6 +1496,8 @@ def p11t_chiplet_startclocks():
 def ody_chiplet_startclocks():
     ## Drop TP chiplet fence
     PERV_CTRL0.TC_PERV_CHIPLET_FENCE_DC = 0    # new field - bit 17
+    with MCGROUP_GOOD_NO_TP:
+        NET_CTRL0.PERV2CHIPLET_CHIPLET_FENCE = 0    # bit 11
 
     with MC chiplet:
         # Deassert ATPGMODE_PUBMAC (asserted in chiplet_reset)
@@ -1535,6 +1544,8 @@ def ody_chiplet_startclocks():
 def zme_chiplet_startclocks():
     ## Drop TP chiplet fence
     PERV_CTRL0.TC_PERV_CHIPLET_FENCE_DC = 0    # new field - bit 17
+    with MCGROUP_GOOD_NO_TP:
+        NET_CTRL0.PERV2CHIPLET_CHIPLET_FENCE = 0    # bit 11
 
     ## Start chiplet clocks
     poz_chiplet_startclocks(MCGROUP_GOOD_NO_TP)
