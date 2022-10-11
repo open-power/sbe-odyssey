@@ -32,9 +32,12 @@ $$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_perv_mod_misc.o)
 $$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_perv_mod_chiplet_clocking.o)
 $$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_perv_mod_bist.o)
 $$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_perv_utils.o)
+ifneq ($(2),)
+$(foreach DEP,$(2),$$(call ADD_MODULE_OBJ,$$(PROCEDURE),$(DEP).o))
+endif
 $$(call BUILD_PROCEDURE)
 endef
-GENERIC_PERV_PROCEDURE = $(eval $(call __GENERIC_PERV_PROCEDURE,$1))
+GENERIC_PERV_PROCEDURE = $(eval $(call __GENERIC_PERV_PROCEDURE,$1,$2))
 
 #
 # And now the actual HWP definitions
