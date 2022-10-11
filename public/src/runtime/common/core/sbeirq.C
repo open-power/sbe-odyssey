@@ -301,6 +301,21 @@ extern "C" void __sbe_machine_check_handler()
         "mflr %r0\n"
         "stw  %r0, 8(%r1)\n"
 
+        "# need to check whether the machine check caused by a scom error or not\n"
+        "#   if it is scom error, we have to continue the sbe firmware, other wise halt\n"
+
+        "# Check the MCS bits (ISR[29:31]) in the ISR to determine the cause for the machine check\n"
+        "# For a data machine (which will happen in case of scom error) check, the MCS should be 0x001 to 0x011\n"
+        "# 0x01 -> Data Load MC\n"
+        "# 0x02 -> Data Store MC\n"
+        "# 0x03 -> Imprecise Data Store MC\n"
+        "mfisr %r4\n"
+        "andi. %r4, %r4, 0x0007\n"
+
+        "# halt if MCS not in between 0b01 and 0b11"
+        "bwz %r4, __jump_to_halt\n"
+        "cmpwibgt %r4, 0x0003, __jump_to_halt\n"
+
         "# This is the Data_MC path, EDR contains the Data Addr causing the MC\n"
         "mfedr %r4\n"
         "srawi %r4, %r4, 16\n"
@@ -308,8 +323,11 @@ extern "C" void __sbe_machine_check_handler()
         "# failed scom and jump to __scom_error\n"
         "cmplwi %r4, 0x8000\n"
         "blt __scom_error\n"
-        "# Else, save-off and halt the SBE\n"
-        "# Save-off Register FFDC and Halt\n"
+
+        "# Else, halt the SBE\n"
+        "# relative jump to pk_halt from this code is not possible since address\n"
+        "#   difference is more than supported.\n"
+        "__jump_to_halt:\n"
         "b pk_halt\n"
 
         "__scom_error:\n"

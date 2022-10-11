@@ -129,7 +129,7 @@ int  main(int argc, char **argv)
     do
     {
         // In case of pibmem only image, set the sbe frequency
-        // on scratch 6. 
+        // on scratch 6.
 #if defined(RUNTIME_PIBMEM_ONLY_IMG)
             mbx6_t odysseymbx6 = {0};
             odysseymbx6.iv_mbx6freqInmhz = SBE_ODYSSEY_DEF_NEST_FREQ_MHZ;
@@ -150,7 +150,9 @@ int  main(int argc, char **argv)
         {
             SBE::updateErrorCodeAndHalt(BOOT_RC_SPPE_PK_INIT_FAILED);
         }
-        SBE_INFO(SBE_FUNC "Completed PK initialization for SPPE Image");
+        // printing the freq value here, since from here onward tracing is supported
+        SBE_INFO(SBE_FUNC "Completed PK initialization for SPPE Image with freq: %d",
+                            CMN_GLOBAL->sbefreq);
 
 #ifndef RUNTIME_PIBMEM_ONLY_IMG
         //Read the SROM measurement control register and validate if boot complete bit is set
