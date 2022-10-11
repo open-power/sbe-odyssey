@@ -58,14 +58,11 @@ $$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_perv_mod_chiplet_clocking.o)
 $$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_perv_mod_chip_clocking.o)
 $$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_perv_mod_bist.o)
 ifneq ($(2),)
-$$(call ADD_MODULE_OBJ,$$(PROCEDURE),$(2).o)
-endif
-ifneq ($(3),)
-$$(call ADD_MODULE_OBJ,$$(PROCEDURE),$(3).o)
+$(foreach DEP,$(2),$$(call ADD_MODULE_OBJ,$$(PROCEDURE),$(DEP).o))
 endif
 $$(call BUILD_PROCEDURE)
 endef
-ODYSSEY_PERV_PROCEDURE = $(eval $(call __ODYSSEY_PERV_PROCEDURE,$1,$2,$3))
+ODYSSEY_PERV_PROCEDURE = $(eval $(call __ODYSSEY_PERV_PROCEDURE,$1,$2))
 
 #
 # And now the actual HWP definitions
@@ -73,11 +70,11 @@ ODYSSEY_PERV_PROCEDURE = $(eval $(call __ODYSSEY_PERV_PROCEDURE,$1,$2,$3))
 
 # istep 0
 $(call ODYSSEY_PERV_PROCEDURE,ody_cbs_start)
-$(call ODYSSEY_PERV_PROCEDURE,ody_sppe_config_update,ody_scratch_regs,ody_scratch_regs_utils)
+$(call ODYSSEY_PERV_PROCEDURE,ody_sppe_config_update,ody_scratch_regs ody_scratch_regs_utils)
 # istep 1
 $(call ODYSSEY_PERV_PROCEDURE,ody_cmdtable_interpreter,poz_cmdtable_interpreter)
 $(call ODYSSEY_PERV_PROCEDURE,ody_sppe_boot_check)
-$(call ODYSSEY_PERV_PROCEDURE,ody_sppe_attr_setup,ody_scratch_regs,ody_scratch_regs_utils)
+$(call ODYSSEY_PERV_PROCEDURE,ody_sppe_attr_setup,ody_scratch_regs ody_scratch_regs_utils)
 $(call ODYSSEY_PERV_PROCEDURE,ody_tp_repr_initf)
 $(call ODYSSEY_PERV_PROCEDURE,ody_tp_arrayinit)
 $(call ODYSSEY_PERV_PROCEDURE,ody_tp_arrayinit_cleanup)
