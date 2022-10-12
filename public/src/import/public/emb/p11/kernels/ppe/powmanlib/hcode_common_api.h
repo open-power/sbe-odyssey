@@ -25,7 +25,7 @@
 /// @file  hcode_common_api.h
 /// @brief Common structures used for IPC communication
 ///
-// *HWP HW Owner        : Rahul Batra <rbatra@us.ibm.com>
+// *HWP HW Owner        : Prasad Bg Ranganath <prasadbgr@in.ibm.com>
 // *HWP HW Owner        : Greg Still <stillgs@us.ibm.com>
 // *HWP Team            : PM
 // *HWP Level           : 1
@@ -45,7 +45,6 @@ extern "C" {
 //
 enum IPC_MESSAGE_RCS
 {
-    IPC_RC_SUCCESS                  = 0x00000001,
     IPC_RC_ERRLOG_FAILED            = 0x00000100,
     IPC_RC_ERRLOG_NULL_POINTER      = 0x00000110,
     IPC_RC_DOPT_OFLD_FAILED         = 0x00000200,

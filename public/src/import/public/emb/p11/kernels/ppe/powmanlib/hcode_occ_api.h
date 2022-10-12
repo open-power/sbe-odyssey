@@ -22,10 +22,10 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-/// @file  pstates_pgpe_occ_api.h
+/// @file  hcode_occ_api.h
 /// @brief Structures used between PGPE HCode and OCC Firmware
 ///
-// *HWP HW Owner        : Rahul Batra <rbatra@us.ibm.com>
+// *HWP HW Owner        : Prasad Bg Ranganath <prasadbgr@in.ibm.com>
 // *HWP HW Owner        : Greg Still <stillgs@us.ibm.com>
 // *HWP Team            : PM
 // *HWP Level           : 1
@@ -96,7 +96,6 @@ typedef struct ipcmsg_start_stop
     uint32_t         action;
     PMCR_OWNER      pmcr_owner;
 } ipcmsg_start_stop_t;
-
 
 typedef struct ipcmsg_clip_update
 {
