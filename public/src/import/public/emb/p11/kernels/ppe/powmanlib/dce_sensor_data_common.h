@@ -189,9 +189,9 @@ typedef struct
 {
     CoreData_t  core_data[CORES_PER_TCC];  // 8 x 88B
     QuadData_t  quad_data[QUADS_PER_TCC];  // 2 x 2B
-    uint32_t    tbr_beacon_period;         // 4B - Most recent beacon period (DB or FIT)
-    uint32_t    tbr_beacon_rcvd;           // 4B - Most recent beacon reception time (DB or FIT)
-    uint32_t    tbr_data_collect_duration; // 4B - Data collection duration (since beacon_rcvd)
+    uint32_t    tbr_notif_period;          // 4B - Most recent notification period (DB or FIT)
+    uint32_t    tbr_notif_rcvd;            // 4B - Most recent notif reception time (DB or FIT)
+    uint32_t    tbr_data_collect_duration; // 4B - Data collection duration (since notif_rcvd)
     uint32_t    tod_data_rcvd;             // 4B - For optional use by 405 using local 2MHz TOD
     uint16_t    dce_status_flag;           // 2B - Status vector. See DCE_STATUS_FLAGS enum below.
     uint16_t    undefined;                 // 2B - Pad to 4B
@@ -210,7 +210,7 @@ extern DCESensorData_t*  G_dce_sensor_data; //Big "G_" because it's shared acros
 enum DCE_STATUS_FLAGS
 {
     DCE_STATUS_RESET              = 0b0000000000000000, //Reset init value
-    DCE_STATUS_BEACON_VIOLATION   = 0b0000000000000001, //DB rcvd before prev data collected.
+    DCE_STATUS_DB_VIOLATION       = 0b0000000000000001, //DB rcvd before prev data collected.
     DCE_STATUS_OCE_IS_CALCULATING = 0b0000000000000010, //OCE is still calculating IDDQ
     DCE_STATUS_OCE_NOT_RESPONDING = 0b0000000000000100, //OCE did not even use the prev data
     DCE_STATUS_AUTO_MODE          = 0b0000000000001000, //DCE is in AUTO lab mode
