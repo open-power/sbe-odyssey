@@ -6,7 +6,7 @@ Before workon:
     * Create a file in ~/.sbe/customrc for any personal rc settings. This will be applied during workon
 
     * To enable bash complete for sbe script:
-        source public/src/tools/utils/sb/sbe_complete
+        source public/src/tools/utils/sbe/sbe_complete
 
 To Setup Environment:
     ./sbe workon [<platform>] [<imageType>]
