@@ -22,6 +22,9 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+#ifndef __PMINIT_COMMON_H__
+#define __PMINIT_COMMON_H__
+
 #include <stdint.h>
 #include <iota_trace.h>
 #include <ppe42_spr.h>
@@ -70,3 +73,5 @@ inline void verify_ppe_image(uint32_t i_this_img_ppe_type, uint32_t i_this_img_p
         APPCFG_PANIC(PMHW_PPE_INST_MISMATCH);
     }
 }
+
+#endif /* __PMINIT_COMMON_H__ */
