@@ -34,7 +34,7 @@
 
 #include <fapi2.H>
 
-static const uint16_t BIST_PARAMS_CURRENT_VERSION = 6;
+static const uint16_t BIST_PARAMS_CURRENT_VERSION = 7;
 
 struct bist_params
 {
@@ -43,25 +43,30 @@ struct bist_params
     ////////////////////////////////////////////////////////////////
     /// BIST_PARAMS_VERSION must never change size nor location
     uint16_t BIST_PARAMS_VERSION;
-    uint16_t padding_a;            /// To maintain memory alignment (can house extra flags if needed)
+    // Stages of BIST to perform
+    enum bist_stages : uint16_t
+    {
+        SCAN0          = 0x0200,
+        ARRAYINIT      = 0x0100,
+        RING_SETUP     = 0x0080,
+        RING_PATCH     = 0x0040,
+        REG_SETUP      = 0x0020,
+        GO             = 0x0010,
+        POLL           = 0x0008,
+        REG_CLEANUP    = 0x0004,
+        COMPARE        = 0x0002,
+        UNLOAD         = 0x0001,
+    } stages;
     /// Option flags
     enum bist_flags : uint32_t
     {
         /// Single bit flags
         ABIST_NOT_LBIST   = 0x80000000,
-        DO_SCAN0          = 0x40000000,
-        DO_ARRAYINIT      = 0x20000000,
-        DO_RING_SETUP     = 0x10000000,
-        DO_RING_PATCH     = 0x08000000,
-        DO_REG_SETUP      = 0x04000000,
-        DO_GO             = 0x02000000,
-        DO_POLL           = 0x01000000,
-        DO_REG_CLEANUP    = 0x00800000,
-        DO_COMPARE        = 0x00400000,
-        SKIP_FIRST_CLOCK  = 0x00200000,
-        SKIP_LAST_CLOCK   = 0x00100000,
-        POLL_ABIST_DONE   = 0x00080000,
-        ASSERT_ABIST_DONE = 0x00040000,
+        FAST_DIAGNOSTICS  = 0x40000000,
+        SKIP_FIRST_CLOCK  = 0x20000000,
+        SKIP_LAST_CLOCK   = 0x10000000,
+        POLL_ABIST_DONE   = 0x08000000,
+        ASSERT_ABIST_DONE = 0x04000000,
 
         /// Multi bit flags
         /// PCB mux switching
@@ -120,20 +125,57 @@ struct bist_params
     // TODO: Add LBIST parameters
 };
 
+constexpr bist_params::bist_stages operator~(const bist_params::bist_stages a)
+{
+    return static_cast<bist_params::bist_stages>(~static_cast<uint16_t>(a));
+}
+
+constexpr bist_params::bist_stages operator&(const bist_params::bist_stages a, const bist_params::bist_stages b)
+{
+    return static_cast<bist_params::bist_stages>(static_cast<uint16_t>(a) & static_cast<uint16_t>(b));
+}
+
+constexpr bist_params::bist_stages operator|(const bist_params::bist_stages a, const bist_params::bist_stages b)
+{
+    return static_cast<bist_params::bist_stages>(static_cast<uint16_t>(a) | static_cast<uint16_t>(b));
+}
+
+static inline bist_params::bist_stages& operator&=(bist_params::bist_stages& a, const bist_params::bist_stages b)
+{
+    a = a & b;
+    return a;
+}
+
+static inline bist_params::bist_stages& operator|=(bist_params::bist_stages& a, const bist_params::bist_stages b)
+{
+    a = a | b;
+    return a;
+}
+
 constexpr bist_params::bist_flags operator|(const bist_params::bist_flags a, const bist_params::bist_flags b)
 {
     return static_cast<bist_params::bist_flags>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
 }
 
-typedef fapi2::ReturnCode (*poz_bist_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&, const bist_params&);
+struct bist_return
+{
+    uint64_t opcg_counts[64];
+    uint16_t pass_counter;
+    bist_params::bist_stages completed_stages;
+};
+
+typedef fapi2::ReturnCode (*poz_bist_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&,
+        const bist_params&, bist_return&);
 
 /// @brief Common module for ABIST/LBIST
 ///
 /// @param[in]   i_target   Chip to operate on
 /// @param[in]   i_params   Parameter block to select operation type, mode, parameters...
+/// @param[out]  o_return   All relevant fail/diagnostic return data
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {
-    fapi2::ReturnCode poz_bist(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist_params& i_params);
+    fapi2::ReturnCode poz_bist(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+                               const bist_params& i_params, bist_return& o_return);
 }

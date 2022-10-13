@@ -39,19 +39,20 @@ using namespace fapi2;
 static const bist_params ody_abist_params =
 {
     BIST_PARAMS_CURRENT_VERSION,        ///< BIST_PARAMS_VERSION
-    0,                                  ///< padding_a
+
+    bist_params::SCAN0              |   ///< 0x0200
+    bist_params::RING_SETUP         |   ///< 0x0080
+    bist_params::RING_PATCH         |   ///< 0x0040
+    bist_params::REG_SETUP          |   ///< 0x0020
+    bist_params::GO                 |   ///< 0x0010
+    bist_params::POLL               |   ///< 0x0008
+    bist_params::REG_CLEANUP        |   ///< 0x0004
+    bist_params::COMPARE,               ///< 0x0002
 
     bist_params::ABIST_NOT_LBIST    |   ///< 0x80000000
-    bist_params::DO_SCAN0           |   ///< 0x40000000
-    bist_params::DO_RING_SETUP      |   ///< 0x10000000
-    bist_params::DO_RING_PATCH      |   ///< 0x08000000
-    bist_params::DO_REG_SETUP       |   ///< 0x04000000
-    bist_params::DO_GO              |   ///< 0x02000000
-    bist_params::DO_POLL            |   ///< 0x01000000
-    bist_params::DO_REG_CLEANUP     |   ///< 0x00800000
-    bist_params::DO_COMPARE         |   ///< 0x00400000
-    bist_params::POLL_ABIST_DONE    |   ///< 0x00040000
-    bist_params::ASSERT_ABIST_DONE,     ///< 0x00020000
+    bist_params::FAST_DIAGNOSTICS   |   ///< 0x40000000
+    bist_params::POLL_ABIST_DONE    |   ///< 0x08000000
+    bist_params::ASSERT_ABIST_DONE,     ///< 0x04000000
 
     0x0080000000000000,                 ///< chiplets
     0x0000000000000000,                 ///< uc_go_chiplets
@@ -78,7 +79,10 @@ enum ODY_ABIST_Private_Constants
 ReturnCode ody_abist(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     FAPI_INF("Entering ...");
-    FAPI_TRY(poz_bist(i_target, ody_abist_params));
+
+    bist_return ody_abist_return;
+
+    FAPI_TRY(poz_bist(i_target, ody_abist_params, ody_abist_return));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
