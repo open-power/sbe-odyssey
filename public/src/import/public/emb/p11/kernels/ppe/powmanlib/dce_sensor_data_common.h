@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -133,30 +133,23 @@ typedef union
 } DdsData_t;
 
 
+//-------------------------------------------------------------------------------------------------
+// Common notes to CoreData_t, QuadData_t and DCESensorData_t structure definitions:
 //
-// The instance of this CoreData_t data object must be 8 byte aligned and size must be a
-// muliple of 8. We will use this assumption when initializing the data content in
-// core_get_data().
-// Notes (in view of the P10 implementation of the CoreData struct):
-// - The dts result for dragstrip is unnecessarily measured and repeated four time (per quad) and
-//   should ideally be in a quad-level struct in a higher level struct, eg TapData_t.
-// - The tod is unnecessarily calculated and repeated eight times (per tap) and should ideally be
-//   in a single shared data point in a higher level struct, eg TapData_t.
-// - The following CoreData_t struct reflects the above corrections for better and more
-//   efficient data organization.
+// - The following points explain why the final DCESensorData structure is different from p10:
+//   - The p10 high-level sensor data struct was named CoreData. But also contained non-core
+//     quad level only data. It is listed below for reference to be compared against the p11
+//     high-level sensor data struct, DCESensorData_t.
+//   - The DTS result for dragstrip was unnecessarily measured and repeated four time (per quad)
+//     in p10. It's been put into it's own function call now in get_quad_data() and has its own
+//     data struct as well, QuadData_t. (See further below.)
+//   - The TOD was unnecessarily calculated and repeated eight times in p10. In p11 we have moved
+//     timestamp snapshot to the common calling function, dce_get_data(). (Note that we don't
+//     have a TOD on the Tap in p11. Instead we take a TBR snapshot.)
+//-------------------------------------------------------------------------------------------------
+
 //
-typedef struct
-{
-    CoreDataEmpath_t           empath;          //32
-    CoreDataThrottle_t         throttle;        //20
-    CoreDataDroop_t            droop;           //12
-    CoreDataDts_t              dts;             // 8
-    uint32_t                   empath_valid;    // 4
-    uint32_t                   stop_state_hist; // 4
-    DdsData_t                  dds;             // 8
-} CoreData_t;
-//
-// P10 version (for reference)
+// P10's CoreData listed here for reference (Compare with P11's DCESensorData_t)
 //
 //typedef struct
 //{
@@ -170,17 +163,39 @@ typedef struct
 //    DdsData                    dds;             // 8
 //} CoreData;
 
+//
+// CoreData_t : Core level data struct containing Empath counts and DTS reads
+//
+// Notes:
+// - The CoreData_t object must be 8 byte aligned and the size must be a muliple of 8. This
+//   assumption will be used when initializing the data content in get_core_data().
+//
+typedef struct
+{
+    CoreDataEmpath_t           empath;          //32
+    CoreDataThrottle_t         throttle;        //20
+    CoreDataDroop_t            droop;           //12
+    CoreDataDts_t              dts;             // 8
+    uint32_t                   empath_valid;    // 4
+    uint32_t                   stop_state_hist; // 4
+    DdsData_t                  dds;             // 8
+} CoreData_t;
+
+//
+// QuadData_t : Quad level data struct containing DTS reads
+//
+// Notes: See previous notes to CoreData_t.
+//
 typedef struct
 {
     QuadDataDts_t              dts;             // 2
 } QuadData_t;
 
 //
-// High-level DCE sensor data struct for DCE, OCC(405) and OCE
+// DCESensorData_t : High-level DCE sensor data struct for DCE, OCC(405) and OCE
 //
 // Notes:
-// - The underlying assumption here is that the DCE data is *live* and can only be updated
-//   by the DCE after both the OCE *and* the 405 have used the data.
+// - See previous notes to CoreData_t.
 // - Compared to the P10 implementation approach, which would have consumed a total of
 //   8 x 96B = 768B, the below struct reduces this to 8 x 88B + 24B = 728B.
 // - The data block is managed in link.ld to guarantee 8-byte alignment.
@@ -194,10 +209,11 @@ typedef struct
     uint32_t    tbr_data_collect_duration; // 4B - Data collection duration (since notif_rcvd)
     uint32_t    tod_data_rcvd;             // 4B - For optional use by 405 using local 2MHz TOD
     uint16_t    dce_status_flag;           // 2B - Status vector. See DCE_STATUS_FLAGS enum below.
-    uint16_t    undefined;                 // 2B - Pad to 4B
+    uint16_t    undefined;                 // 2B - Pad to 4B (Doesn't VC push demand 8B size?)
 } DCESensorData_t;
 
 extern DCESensorData_t*  G_dce_sensor_data; //Big "G_" because it's shared across CEs.
+
 
 //
 // Enum of DCE status flags (used by DCESensorData_t.dce_status_flags)
@@ -242,10 +258,10 @@ extern DCESensorDataUsage_t*  G_dce_sensor_data_usage;
 //
 enum DCE_DATA_USAGE_STATUS
 {
-    DCE_DATA_USAGE_STATUS_UNDEFINED = 0,
-    DCE_DATA_USAGE_STATUS_NEW       = 1, // New data for OCE (set by DCE, cleared by OCE)
-    DCE_DATA_USAGE_STATUS_USING     = 2, // Data is being used by OCE (set by OCE, cleared by DCE)
-    DCE_DATA_USAGE_STATUS_USED      = 3, // Data has been used by OCE (set by OCE, cleared by DCE)
+    DCE_DATA_USAGE_STATUS_UNDEFINED = 0xff,
+    DCE_DATA_USAGE_STATUS_NEW       = 0x01, // New data for OCE (set by DCE, cleared by OCE)
+    DCE_DATA_USAGE_STATUS_USING     = 0x02, // Data is in use by OCE (set by OCE, cleared by DCE)
+    DCE_DATA_USAGE_STATUS_USED      = 0x03, // Data was used by OCE (set by OCE, cleared by DCE)
 };
 
 #endif /* __DCE_SENSOR_DATA_COMMON_H__ */
