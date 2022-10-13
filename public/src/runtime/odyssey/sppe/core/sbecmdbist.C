@@ -46,13 +46,14 @@ uint32_t sbeBist (uint8_t *i_pArg)
     SBE_ENTER(SBE_FUNC);
 
     uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
-    sbeBistReqMsg_t msg;
+    bist_params i_params = {0};
+    bist_return o_return = {0};
     sbeRespGenHdr_t hdr;
     hdr.init();
     sbeResponseFfdc_t ffdc;
     sbeFifoType type;
 
-    Target<SBE_ROOT_CHIP_TYPE> tgt =  g_platTarget->plat_getChipTarget();
+    Target<SBE_ROOT_CHIP_TYPE> tgt = g_platTarget->plat_getChipTarget();
 
     do
     {
@@ -60,8 +61,9 @@ uint32_t sbeBist (uint8_t *i_pArg)
         type = static_cast<sbeFifoType>(configStr->fifoType);
         SBE_DEBUG(SBE_FUNC "Fifo Type is:[%02X]",type);
 
-        uint32_t  len2dequeue  = sizeof(msg)/sizeof(uint32_t);
-        l_rc = sbeUpFifoDeq_mult (len2dequeue, (uint32_t *)&msg, true, false, type);
+        // Dequeue BIST parameters
+        uint32_t len2dequeue = sizeof(i_params)/sizeof(uint32_t);
+        l_rc = sbeUpFifoDeq_mult(len2dequeue, (uint32_t *)&i_params, true, false, type);
 
         // If FIFO access failure
         if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
@@ -70,10 +72,18 @@ uint32_t sbeBist (uint8_t *i_pArg)
             break;
         }
 
-        fapi2::ReturnCode fapi_rc = poz_bist(tgt, msg.params);
+        fapi2::ReturnCode fapi_rc = poz_bist(tgt, i_params, o_return);
         if (fapi_rc != fapi2::FAPI2_RC_SUCCESS)
         {
             l_rc = SBE_SEC_HWP_FAILURE;
+            break;
+        }
+
+        if (!(i_params.flags & i_params.bist_flags::FAST_DIAGNOSTICS))
+        {
+            // Enqueue BIST return data
+            uint32_t len2enqueue = sizeof(o_return)/sizeof(uint32_t);
+            l_rc = sbeDownFifoEnq_mult(len2enqueue, (uint32_t*)&o_return, type);
         }
 
     } while(false);

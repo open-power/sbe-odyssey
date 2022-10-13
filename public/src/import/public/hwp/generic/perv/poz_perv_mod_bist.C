@@ -60,9 +60,6 @@ ReturnCode mod_bist_poll(
     // Infinite polling if negative signed (or massive unsigned) number
     const bool l_infinite_polling = i_max_polls > 0x7FFFFFFF;
 
-    // Get chiplet container for OPCG count diagnostic readout
-    auto l_chiplets = i_target.getChildren<fapi2::TARGET_TYPE_PERV>();
-
     if (i_poll_abist_done)
     {
         FAPI_INF("Watching OPCG_DONE, ABIST_DONE, and BIST_HALT");
@@ -131,14 +128,6 @@ ReturnCode mod_bist_poll(
         PCB_OPCG_STOP = 0;
         PCB_OPCG_STOP.set_PCB_OPCGSTOP(1);
         FAPI_TRY(PCB_OPCG_STOP.putScom(i_target));
-    }
-
-    for (auto& chiplet : l_chiplets)
-    {
-        FAPI_TRY(OPCG_REG0.getScom(chiplet));
-        FAPI_DBG("OPCG cycles elapsed for chiplet %d: %lu",
-                 chiplet.getChipletNumber(),
-                 OPCG_REG0.get_LOOP_COUNT());
     }
 
     FAPI_ASSERT((l_total_polls < i_max_polls) || l_infinite_polling,

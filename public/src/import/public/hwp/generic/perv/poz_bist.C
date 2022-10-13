@@ -34,6 +34,7 @@
 #include <poz_perv_common_params.H>
 #include <poz_perv_mod_misc.H>
 #include <poz_perv_mod_chiplet_clocking.H>
+#include <poz_perv_mod_chiplet_clocking_regs.H>
 #include <poz_perv_mod_bist.H>
 #include <poz_chiplet_arrayinit.H>
 #include <target_filters.H>
@@ -120,7 +121,8 @@ void print_bist_params(const bist_params& i_params)
 
 ReturnCode poz_bist_execute(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > & i_chiplets_target,
-    const bist_params& i_params, const uint16_t i_enum_condition_a, const uint16_t i_enum_condition_b)
+    const bist_params& i_params, const uint16_t i_enum_condition_a, const uint16_t i_enum_condition_b,
+    bist_return& o_return)
 {
     // Helper buffers produced from bist_params constituents
     const buffer<uint64_t> l_uc_go_chiplets_buffer = i_params.uc_go_chiplets;
@@ -128,10 +130,19 @@ ReturnCode poz_bist_execute(
     // Middleman variable to translate unicast chiplets into control chiplets
     uint64_t l_ctrl_chiplets = 0;
 
+    // Needed for OPCG count diagnostic readout
+    OPCG_REG0_t OPCG_REG0;
+
+    // Clear out completed stages from potential previous iterations
+    o_return.completed_stages &= ~(i_params.bist_stages::REG_SETUP |
+                                   i_params.bist_stages::GO |
+                                   i_params.bist_stages::POLL);
+
+
     ////////////////////////////////////////////////////////////////
     // STAGE: REG_SETUP
     ////////////////////////////////////////////////////////////////
-    if (i_params.flags & i_params.bist_flags::DO_REG_SETUP)
+    if (i_params.stages & i_params.bist_stages::REG_SETUP)
     {
         FAPI_INF("Setup all SCOM registers");
 
@@ -173,12 +184,14 @@ ReturnCode poz_bist_execute(
                                      i_enum_condition_a,
                                      i_enum_condition_b));
         }
+
+        o_return.completed_stages |= i_params.bist_stages::REG_SETUP;
     }
 
     ////////////////////////////////////////////////////////////////
     // STAGE: GO
     ////////////////////////////////////////////////////////////////
-    if (i_params.flags & i_params.bist_flags::DO_GO)
+    if (i_params.stages & i_params.bist_stages::GO)
     {
         FAPI_INF("Start BIST with OPCG GO");
 
@@ -198,12 +211,14 @@ ReturnCode poz_bist_execute(
         {
             FAPI_TRY(mod_opcg_go(i_chiplets_target));
         }
+
+        o_return.completed_stages |= i_params.bist_stages::GO;
     }
 
     ////////////////////////////////////////////////////////////////
     // STAGE: POLL
     ////////////////////////////////////////////////////////////////
-    if (i_params.flags & i_params.bist_flags::DO_POLL)
+    if (i_params.stages & i_params.bist_stages::POLL)
     {
         FAPI_INF("Poll for DONE or HALT");
         // TODO pass in poll count and delay arguments once supported
@@ -214,6 +229,20 @@ ReturnCode poz_bist_execute(
                                i_params.max_polls,
                                i_params.poll_delay_hw,
                                i_params.poll_delay_sim));
+        o_return.completed_stages |= i_params.bist_stages::POLL;
+        o_return.pass_counter++;
+
+        if (!(i_params.flags & i_params.bist_flags::FAST_DIAGNOSTICS))
+        {
+            for (auto& chiplet : i_chiplets_target.getChildren<fapi2::TARGET_TYPE_PERV>())
+            {
+                FAPI_TRY(OPCG_REG0.getScom(chiplet));
+                FAPI_DBG("OPCG cycles elapsed for chiplet %d: %lu",
+                         chiplet.getChipletNumber(),
+                         OPCG_REG0.get_LOOP_COUNT());
+                o_return.opcg_counts[chiplet.getChipletNumber()] = OPCG_REG0.get_LOOP_COUNT();
+            }
+        }
     }
 
 
@@ -221,7 +250,8 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist_params& i_params)
+ReturnCode poz_bist(
+    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist_params& i_params, bist_return& o_return)
 {
     FAPI_INF("Entering ...");
 
@@ -319,41 +349,45 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
     ////////////////////////////////////////////////////////////////
     // STAGE: SCAN0
     ////////////////////////////////////////////////////////////////
-    if (i_params.flags & i_params.bist_flags::DO_SCAN0)
+    if (i_params.stages & i_params.bist_stages::SCAN0)
     {
         FAPI_INF("Do a scan0");
         FAPI_TRY(mod_scan0(l_chiplets_target, l_scan0_regions, i_params.scan0_types));
+        o_return.completed_stages |= i_params.bist_stages::SCAN0;
     }
 
     ////////////////////////////////////////////////////////////////
     // STAGE: ARRAYINIT
     ////////////////////////////////////////////////////////////////
-    if (i_params.flags & i_params.bist_flags::DO_ARRAYINIT)
+    if (i_params.stages & i_params.bist_stages::ARRAYINIT)
     {
         FAPI_INF("Do an arrayinit");
         FAPI_TRY(poz_chiplet_arrayinit(i_target));
+        o_return.completed_stages |= i_params.bist_stages::ARRAYINIT;
     }
 
     ////////////////////////////////////////////////////////////////
     // STAGE: RING_SETUP
     ////////////////////////////////////////////////////////////////
-    if (i_params.flags & i_params.bist_flags::DO_RING_SETUP)
+    if (i_params.stages & i_params.bist_stages::RING_SETUP)
     {
         FAPI_INF("Scan load BIST programming");
         // TODO add in scan code once supported
         // FAPI_TRY(putRing(i_params.program.load));
         FAPI_DBG("BIST ring setup not yet implemented; check back later");
+        o_return.completed_stages |= i_params.bist_stages::RING_SETUP;
     }
 
     ////////////////////////////////////////////////////////////////
     // STAGE: RING_PATCH
     ////////////////////////////////////////////////////////////////
-    if (i_params.flags & i_params.bist_flags::DO_RING_PATCH)
+    if (i_params.stages & i_params.bist_stages::RING_PATCH)
     {
         FAPI_INF("Apply scan patches if needed");
         // TODO add in scan code once supported
         // FAPI_TRY(putRing(i_params.patch_image));
         FAPI_DBG("BIST ring patch not yet implemented; check back later");
+        o_return.completed_stages |= i_params.bist_stages::RING_PATCH;
     }
 
     ////////////////////////////////////////////////////////////////
@@ -371,7 +405,7 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
                 {
                     FAPI_DBG("Bit %d present in inner loop mask; proceeding ...", inner_index);
 
-                    FAPI_TRY(poz_bist_execute(l_chiplets_target, i_params, outer_index, inner_index));
+                    FAPI_TRY(poz_bist_execute(l_chiplets_target, i_params, outer_index, inner_index, o_return));
                 }
             }
         }
@@ -380,24 +414,24 @@ ReturnCode poz_bist(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist
     ////////////////////////////////////////////////////////////////
     // STAGE: REG_CLEANUP
     ////////////////////////////////////////////////////////////////
-    if (i_params.flags & i_params.bist_flags::DO_REG_CLEANUP)
+    if (i_params.stages & i_params.bist_stages::REG_CLEANUP)
     {
         FAPI_INF("Cleanup all SCOM registers");
         FAPI_TRY(mod_bist_reg_cleanup(l_chiplets_target));
+        o_return.completed_stages |= i_params.bist_stages::REG_CLEANUP;
     }
 
     ////////////////////////////////////////////////////////////////
     // STAGE: COMPARE
     ////////////////////////////////////////////////////////////////
-    if (i_params.flags & i_params.bist_flags::DO_COMPARE)
+    if (i_params.stages & i_params.bist_stages::COMPARE)
     {
         FAPI_INF("Compare scan chains against expects");
         // TODO add in scan code once supported
         // FAPI_TRY(getRing(i_params.program.hash));
         FAPI_DBG("BIST compare not yet implemented; check back later");
+        o_return.completed_stages |= i_params.bist_stages::COMPARE;
     }
-
-    // TODO return a PG fail mask once supported
 
 
 fapi_try_exit:

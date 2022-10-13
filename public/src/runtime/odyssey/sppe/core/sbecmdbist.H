@@ -29,21 +29,12 @@
 #include <poz_bist.H>
 
 /**
-  * @brief structure for PutScom Chipop (0xA202) contents.
-  *
-  */
-typedef struct
-{
-    bist_params params;
-}sbeBistReqMsg_t;
-
-/**
- * @brief sbeDownFifoGetStatus : Write data into Downstream FIFO
+ * @brief sbeBist : Dequeue params, call poz_bist, enqueue return data
  *
- * @param[in] i_pArg Buffer to be passed to the function (not used as of now)
+ * @param[in] i_pArg Buffer to be passed to the function
  *
- * @return    Rc from the FIFO access utility
+ * @return    RC from the FIFO access utility
  */
 uint32_t sbeBist (uint8_t *i_pArg);
 
-#endif /* __SBEFW_SBECMDSCOMACCESS_H */
+#endif
