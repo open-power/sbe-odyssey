@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -54,7 +54,7 @@
 
 /// Default interrupt routing table
 
-#ifdef WDC_ACTING_OCC
+#ifdef PGPE_ACTING_OCC
 
 #ifndef OCCHW_IRQ_ROUTES
 #define OCCHW_IRQ_ROUTES \
@@ -119,9 +119,9 @@
     OCCHW_IRQ_PSPI_INTR_PENDING_GRP2        OCCHW_IRQ_TARGET_ID_GPE2 \
     OCCHW_IRQ_PSPI_INTR_PENDING_GRP3        OCCHW_IRQ_TARGET_ID_GPE3 \
     OCCHW_IRQ_IPI3_LO_PRIORITY              OCCHW_IRQ_TARGET_ID_GPE3 \
-    OCCHW_IRQ_VC1_PUSH_RECEIVE_COMPLETE     OCCHW_IRQ_TARGET_ID_GPE0 \
+    OCCHW_IRQ_VC1_PUSH_RECEIVE_COMPLETE     OCCHW_IRQ_TARGET_ID_GPE2 \
     OCCHW_IRQ_VC2_PUSH_RECEIVE_COMPLETE     OCCHW_IRQ_TARGET_ID_405_NONCRIT \
-    OCCHW_IRQ_VC3_PUSH_RECEIVE_COMPLETE     OCCHW_IRQ_TARGET_ID_GPE0 \
+    OCCHW_IRQ_VC3_PUSH_RECEIVE_COMPLETE     OCCHW_IRQ_TARGET_ID_GPE2 \
 
 #endif
 
