@@ -32,6 +32,7 @@
 
 #include <ody_tp_bist_mux_switch.H>
 #include <poz_perv_common_params.H>
+#include <poz_perv_mod_chiplet_clocking.H>
 #include <poz_perv_mod_misc.H>
 #include <target_filters.H>
 #include <poz_perv_utils.H>
@@ -47,9 +48,13 @@ ReturnCode ody_tp_bist_mux_switch(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     FAPI_INF("Entering ...");
 
+    fapi2::Target<fapi2::TARGET_TYPE_PERV> l_tpchiplet = get_tp_chiplet_target(i_target);
+
     FAPI_INF("Start using I2C2PCB network");
     FAPI_TRY(mod_switch_pcbmux_cfam(i_target, mux::I2C2PCB))
 
+    FAPI_INF("Calling mod_start_stop_clocks for SBE regions ...");
+    FAPI_TRY(mod_start_stop_clocks(l_tpchiplet, ODY_PERV_SBE, CLOCK_TYPE_ALL, false))
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
