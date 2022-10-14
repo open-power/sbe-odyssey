@@ -44,6 +44,7 @@ using namespace scomt::perv;
 SCOMT_PERV_USE_CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_PERV_CTRL0;
 typedef CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_PERV_CTRL0_t PERV_CTRL0_t;
 
+SCOMT_PERV_USE_TCMC_CPLT_CTRL1;
 SCOMT_PERV_USE_TCMC_CPLT_CONF1;
 SCOMT_PERV_USE_TCMC_SYNC_CONFIG;
 
@@ -58,6 +59,7 @@ enum ODY_CHIPLET_STARTCLOCKS_Private_Constants
 ReturnCode ody_chiplet_startclocks(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     PERV_CTRL0_t PERV_CTRL0;
+    TCMC_CPLT_CTRL1_t  CPLT_CTRL1;
     TCMC_CPLT_CONF1_t  CPLT_CONF1;
     TCMC_SYNC_CONFIG_t SYNC_CONFIG;
     auto l_mc_NO_TP = i_target.getMulticast<fapi2::TARGET_TYPE_PERV>(fapi2::MCGROUP_GOOD_NO_TP);
@@ -86,6 +88,14 @@ ReturnCode ody_chiplet_startclocks(const Target<TARGET_TYPE_OCMB_CHIP>& i_target
     CPLT_CONF1.clearBit<15>();
     FAPI_TRY(CPLT_CONF1.putScom(l_mc_NO_TP));
 
+    FAPI_INF("Drop fences between hard and soft macro");
+    // Synopsys specs likely did not anticipate a fence running through the middle of
+    // their PHY so we should drop the fence before taking the PHY through reset.
+    CPLT_CTRL1 = 0;
+    CPLT_CTRL1.set_TC_REGION13_FENCE_DC(1);
+    CPLT_CTRL1.set_TC_REGION14_FENCE_DC(1);
+    FAPI_TRY(CPLT_CTRL1.putScom_CLEAR(l_mc_NO_TP));
+
     FAPI_INF("Align chiplet since we're about to start some clocks");
     FAPI_TRY(SYNC_CONFIG.getScom(l_mc_NO_TP));
     SYNC_CONFIG.set_SYNC_PULSE_INPUT_DIS(1);
@@ -94,7 +104,7 @@ ReturnCode ody_chiplet_startclocks(const Target<TARGET_TYPE_OCMB_CHIP>& i_target
     FAPI_TRY(mod_align_regions(l_mc_NO_TP, REGION_ALL));
 
     FAPI_INF("Start PHY clocks to make the functional reset propagate.");
-    FAPI_INF("The PHY won't be fully cleaned up at this point so we don't drop fences just yet.");
+    // The PHY won't be fully cleaned up at this point so we don't drop fences just yet
     FAPI_TRY(mod_start_stop_clocks(l_mc_NO_TP, ODY_MC_PUB_PRIM, CLOCK_TYPE_ALL, true, false));
 
     FAPI_INF("Assert DDR PHY PWROKIN to complete PHY reset sequence");
@@ -103,7 +113,7 @@ ReturnCode ody_chiplet_startclocks(const Target<TARGET_TYPE_OCMB_CHIP>& i_target
     CPLT_CONF1.setBit<7>();
     FAPI_TRY(CPLT_CONF1.putScom_SET(l_mc_NO_TP));
 
-    FAPI_INF("Give the PHY some time to reset - 64 clock cycles ain't much but let's be safe");
+    FAPI_INF("Give the PHY some time to reset");
     FAPI_TRY(delay(DELAY_1us, SIM_CYCLE_DELAY));
 
     // At this point the DDR PHY is in reset state; leave it to the memory code to take it out of there
