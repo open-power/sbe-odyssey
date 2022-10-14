@@ -47,7 +47,6 @@ typedef CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_PERV_CTRL0_t PERV_CTRL0_t;
 SCOMT_PERV_USE_TCMC_CPLT_CTRL1;
 SCOMT_PERV_USE_TCMC_CPLT_CONF1;
 SCOMT_PERV_USE_TCMC_SYNC_CONFIG;
-SCOMT_PERV_USE_TPCHIP_NET_PCBRSPPERV_CTRL0;
 
 enum ODY_CHIPLET_STARTCLOCKS_Private_Constants
 {
@@ -63,7 +62,6 @@ ReturnCode ody_chiplet_startclocks(const Target<TARGET_TYPE_OCMB_CHIP>& i_target
     TCMC_CPLT_CTRL1_t  CPLT_CTRL1;
     TCMC_CPLT_CONF1_t  CPLT_CONF1;
     TCMC_SYNC_CONFIG_t SYNC_CONFIG;
-    TPCHIP_NET_PCBRSPPERV_CTRL0_t NET_CTRL0;
     auto l_mc_NO_TP = i_target.getMulticast<fapi2::TARGET_TYPE_PERV>(fapi2::MCGROUP_GOOD_NO_TP);
 
     FAPI_INF("Entering ...");
@@ -72,10 +70,6 @@ ReturnCode ody_chiplet_startclocks(const Target<TARGET_TYPE_OCMB_CHIP>& i_target
     PERV_CTRL0 = 0;
     PERV_CTRL0.set_PERV_CHIPLET_FENCE(1);
     FAPI_TRY(PERV_CTRL0.putScom_CLEAR(i_target));
-
-    NET_CTRL0 = 0;
-    NET_CTRL0.setBit<11>();
-    FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_mc_NO_TP));
 
     FAPI_INF("Deassert ATPGMODE_PUBMAC (asserted in chiplet_reset)");
     CPLT_CONF1 = 0;
