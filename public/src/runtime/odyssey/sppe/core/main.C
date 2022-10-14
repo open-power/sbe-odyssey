@@ -113,6 +113,7 @@ constexpr struct PACKED metadata_t {
     METADATA(DAT, { SBE_BUILD_TIME });
     METADATA(TRA, { SPPE_TRACE_START_OFFSET, SPPE_PK_TRACE_SIZE_WITH_HEADER });
     METADATA(HEA, { (uint32_t)&_heap_space_start_, (uint32_t)&_heap_space_size_});
+    METADATA(ATR, { (uint32_t)&_attrs_start_, (uint32_t)&_attrs_size_ });
     ImageMetadataHeader end = {0, 0};
 } g_image_metadata __attribute__ ((section (".sppe_metadata")));
 

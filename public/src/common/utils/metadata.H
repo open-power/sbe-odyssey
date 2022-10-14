@@ -58,6 +58,12 @@ DECLARE_METADATA(TRA, 0x545241) {
     uint32_t traceSize; // Size of the trace buffer
 };
 
+// Attribute tank information
+DECLARE_METADATA(ATR, 0x415452) {
+    uint32_t addr; // Address of the attribute tank
+    uint32_t size; // Size of the attribute tank
+};
+
 // Intended load address for the image
 DECLARE_METADATA(LDA, 0x4c4441) {
     uint32_t loadAddr;

@@ -88,6 +88,7 @@ SECTIONS {
         KEEP(*(.attrs.*))
         // Used for dumping attributes
         _attrs_end_ = .;
+        _attrs_size_ = . - _attrs_start_;
 
         *(.sdata2)
         *(.sdata2.*)
