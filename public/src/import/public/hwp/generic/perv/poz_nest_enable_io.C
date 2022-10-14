@@ -48,13 +48,10 @@ ReturnCode poz_nest_enable_io(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
 
     FAPI_INF("Entering ...");
 
-    FAPI_DBG("Allow PHB control. Enable receiver & drivers [1,2].");
-    FAPI_TRY(ROOT_CTRL1.getScom(i_target));
-    ROOT_CTRL1.set_GLOBAL_PERST_OVERRIDE(0);
-    ROOT_CTRL1.set_TP_RI_DC_N(1);
-    ROOT_CTRL1.set_TP_DI1_DC_N(1);
-    ROOT_CTRL1.set_TP_DI2_DC_N(1);
-    FAPI_TRY(ROOT_CTRL1.putScom(i_target));
+    FAPI_DBG("Allow PHB control");
+    ROOT_CTRL1 = 0;
+    ROOT_CTRL1.set_GLOBAL_PERST_OVERRIDE(1);
+    FAPI_TRY(ROOT_CTRL1.putScom_CLEAR(i_target));
 
     FAPI_DBG("Chiplet receiver enable, Chiplet driver enable.");
 

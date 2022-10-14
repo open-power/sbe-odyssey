@@ -1469,7 +1469,7 @@ def p11s_chiplet_startclocks():
     poz_chiplet_startclocks(MCGROUP_GOOD_NO_TP)
 
 def p11t_chiplet_startclocks():
-    ## Dropping TP chiplet fence
+    ## Drop TP chiplet fence
     PERV_CTRL0.TC_PERV_CHIPLET_FENCE_DC = 0    # new field - bit 17
     with MCGROUP_GOOD_NO_TP:
         NET_CTRL0.PERV2CHIPLET_CHIPLET_FENCE = 0    # bit 11
@@ -1496,8 +1496,6 @@ def p11t_chiplet_startclocks():
 def ody_chiplet_startclocks():
     ## Drop TP chiplet fence
     PERV_CTRL0.TC_PERV_CHIPLET_FENCE_DC = 0    # new field - bit 17
-    with MCGROUP_GOOD_NO_TP:
-        NET_CTRL0.PERV2CHIPLET_CHIPLET_FENCE = 0    # bit 11
 
     with MC chiplet:
         # Deassert ATPGMODE_PUBMAC (asserted in chiplet_reset)
@@ -1699,10 +1697,6 @@ def p11t_nest_enable_io():
     poz_nest_enable_io()
 
 def ody_nest_enable_io():
-    ROOT_CTRL1.TP_RI_DC_B  = 1
-    ROOT_CTRL1.TP_DI1_DC_B = 1
-    ROOT_CTRL1.TP_DI2_DC_B = 1
-
     for chiplet in TARGET_FILTER_MC:
         NET_CTRL0.CPLT_DCTRL = 1
         NET_CTRL0.CPLT_RCTRL = 1
@@ -1713,9 +1707,6 @@ def zme_nest_enable_io():
 
 def poz_nest_enable_io():
     ROOT_CTRL1.GLOBAL_PERST_OVERRIDE = 0
-    ROOT_CTRL1.TP_RI_DC_B  = 1
-    ROOT_CTRL1.TP_DI1_DC_B = 1
-    ROOT_CTRL1.TP_DI2_DC_B = 1
 
     for chiplet in TARGET_FILTER_NEST:
         NET_CTRL0.DCTRL = 1

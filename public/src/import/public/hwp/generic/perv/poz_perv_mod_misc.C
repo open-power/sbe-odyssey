@@ -99,9 +99,10 @@ ReturnCode mod_cbs_start_prep(
     if (CBS_ENVSTAT.get_CBS_ENVSTAT_C4_TEST_ENABLE())
     {
         FAPI_INF("Test mode, enable TP drivers/receivers for GSD scan out");
+        ROOT_CTRL1 = 0;
         ROOT_CTRL1.set_TP_RI_DC_N(1);
         ROOT_CTRL1.set_TP_DI2_DC_N(1);
-        FAPI_TRY(ROOT_CTRL1.putCfam(i_target));
+        FAPI_TRY(ROOT_CTRL1.putCfam_SET(i_target));
     }
 
     FAPI_INF("Prepare for CBS start.");
@@ -450,6 +451,7 @@ ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
     PERV_CTRL0_t PERV_CTRL0;
     CPLT_CTRL0_t CPLT_CTRL0;
     CPLT_CTRL2_t CPLT_CTRL2;
+    ROOT_CTRL1_t ROOT_CTRL1;
     fapi2::buffer<uint32_t> l_attr_pg;
     fapi2::buffer<uint64_t> l_data64;
 
@@ -484,6 +486,13 @@ ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
     CPLT_CTRL0.flush<0>();
     CPLT_CTRL0.set_FLUSHMODE_INH(1);
     FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(l_tpchiplet));
+
+    FAPI_DBG("Enable Pervasive drivers/receivers");
+    ROOT_CTRL1 = 0;
+    ROOT_CTRL1.set_TP_RI_DC_N(1);
+    ROOT_CTRL1.set_TP_DI1_DC_N(1);
+    ROOT_CTRL1.set_TP_DI2_DC_N(1);
+    FAPI_TRY(ROOT_CTRL1.putScom_SET(i_target));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
