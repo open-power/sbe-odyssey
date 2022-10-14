@@ -532,5 +532,53 @@
             "value": "0x64b7e96fa6d8bc1e",
             "description": "Hash of hardware public keys set 1 and set 2. (56..63)"
         }
+    ],
+    "0x18020": [
+        {
+            "scom_reg_name": "ODY_DTS_CALIB_COEFFS",
+            "description": "Calibration coefficients (P, M, B) for Odyssey DTS"
+        },
+        {
+            "field": "padding0",
+            "field_size": 2,
+            "value": "0x0",
+            "description": "Dummy to align bits nicely"
+        },
+        {
+            "field": "p_coeff",
+            "field_size": 6,
+            "value": "0x0",
+            "description": "P - coefficient for square term"
+        },
+        {
+            "field": "padding1",
+            "field_size": 1,
+            "value": "0x0",
+            "description": "Dummy to align bits nicely"
+        },
+        {
+            "field": "m_coeff",
+            "field_size": 7,
+            "value": "0x0",
+            "description": "M - coefficient for scalar term"
+        },
+        {
+            "field": "padding2",
+            "field_size": 7,
+            "value": "0x0",
+            "description": "Dummy to align bits nicely"
+        },
+        {
+            "field": "b_coeff",
+            "field_size": 9,
+            "value": "0x0",
+            "description": "B - signed(!) offset"
+        },
+        {
+            "field": "padding3",
+            "field_size": 32,
+            "value": "0x0",
+            "description": "Dummy to align bits nicely"
+        }
     ]
 }
