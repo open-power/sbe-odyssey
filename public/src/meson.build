@@ -64,7 +64,7 @@ ppetraceapp = executable('ppetraceapp',
 
 #Output Path for common genfiles
 cmn_genfiles_dir_path = genfiles_dir_path + '/common/'
-run_command('mkdir', cmn_genfiles_dir_path)
+run_command('mkdir', '-p', cmn_genfiles_dir_path)
 
 #Lets define all genfiles paths that can be used elsewhere in the project
 onetime_genfiles_dir_path = genfiles_dir_path + '/onetime/'

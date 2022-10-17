@@ -48,10 +48,10 @@ strip   = find_program('strip')
 #Output path for install files.
 #Fetch the path from --prefix arg
 output_dir_path = get_option('prefix')
-run_command('mkdir', output_dir_path)
+run_command('mkdir', '-p', output_dir_path)
 
 #Outpath for genfiles
 genfiles_dir_path = meson.global_source_root() + '/genfiles/'
-run_command('mkdir', genfiles_dir_path)
+run_command('mkdir', '-p', genfiles_dir_path)
 
 subdir('public/src')
