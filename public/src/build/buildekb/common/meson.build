@@ -44,14 +44,16 @@ if (get_option('srom').enabled())
     subdir('paksrom')
 endif
 
-if (get_option('sppe').enabled()) or (get_option('tsbe').enabled()) or
-                            (get_option('hsbe').enabled() or bldr.enabled())
+if (get_option('sppe').enabled() or get_option('tsbe').enabled() or
+    get_option('hsbe').enabled() or get_option('bldr').enabled())
     subdir('pak')
 endif
 
-if (get_option('sppe').enabled()) or (get_option('tsbe').enabled()) or
-                                     (get_option('hsbe').enabled())
+if (get_option('sppe').enabled() or get_option('tsbe').enabled() or
+    get_option('hsbe').enabled())
     subdir('errorxml')
     subdir('hwp')
     subdir('attributes')
 endif
+
+

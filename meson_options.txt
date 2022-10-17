@@ -1,29 +1,24 @@
 #Build Platform
-option('platform',type : 'combo', value : 'all', choices : ['p11', 'metis', 'p11_dft', 'metis_dft', 'odyssey', 'all'], description : 'Build Platform Type [p11,z,dft]')
+option('platform',type : 'combo', value : 'all', choices : ['p11', 'metis', 'odyssey', 'p11_dft', 'metis_dft', 'odyssey_dft', 'all'],
+                description : 'Build Platform Type [p11,metis,odyssey]')
 
 #Build Level/DD Level
 option('ddlevel',type : 'combo', value : 'DD1', choices : ['DD1'], description : 'DD Level. Currently supporting DD1 ')
 
 #otprom build enabled by def
-option('otprom', type : 'feature', value : 'enabled', description : 'Enable/Disable otprom image build')
+option('otprom', type : 'feature', value : 'enabled', description : 'Enable/Disable otprom image build for a platform')
 
 #srom build enabled by def
-option('srom', type : 'feature', value : 'enabled', description :'Enable/Disable secure rom image build')
-
-#shv build enabled by def
-option('shv', type : 'feature', value : 'enabled', description :'Enable/Disable secure header verification image build')
-
-#crt build enabled by def
-option('crt', type : 'feature', value : 'enabled', description :'Enable/Disable core root of trust / measurement image build')
+option('srom', type : 'feature', value : 'enabled', description :'Enable/Disable secure rom image build for a platform')
 
 #bldr build enabled by def
-option('bldr', type : 'feature', value : 'enabled', description :'Enable/Disable Boot Loader image.(shv + crt)')
+option('bldr', type : 'feature', value : 'enabled', description :'Enable/Disable Boot Loader image for a platform')
 
 #tsbe build enabled by def
-option('tsbe', type : 'feature', value : 'enabled', description :'Enable/Disable Tap SBE image build')
+option('tsbe', type : 'feature', value : 'enabled', description :'Enable/Disable Tap SBE runtime image build for a platform')
 
 #hsbe build enabled by def
-option('hsbe', type : 'feature', value : 'enabled', description :'Enable/Disable Hub SBE image build')
+option('hsbe', type : 'feature', value : 'enabled', description :'Enable/Disable Hub SBE runtime image build for a platform')
 
 #sppe build enabled by def
-option('sppe', type : 'feature', value : 'enabled', description :'Enable/Disable SPPE image build')
+option('sppe', type : 'feature', value : 'enabled', description :'Enable/Disable SPPE runtime image build for a platform')
