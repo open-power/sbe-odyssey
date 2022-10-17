@@ -26,8 +26,8 @@
 
 source public/src/tools/utils/sbe/detect-python
 
-SUPPORTED_PLATFORM=("p11" "metis" "p11_dft" "metis_dft" "odyssey" "all")
-SUPPORTED_IMAGES=("sppe" "bldr" "srom" "otprom" "pnor")
+SUPPORTED_PLATFORM=("p11" "metis" "odyssey" "p11_dft" "metis_dft" "odyssey_dft" "all")
+SUPPORTED_IMAGES=("sppe" "bldr" "srom" "otprom" "pnor" "tsbe" "hsbe" "seeprom")
 SUPPORTED_COMMAND=("workon" "prime" "install" "citest" "runsimics" "build" \
                     "clean" "execute" "printenv")
 

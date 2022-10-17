@@ -98,25 +98,44 @@ exc_cmd()
 #TODO: Below enabled and disabled macros are consedering that golden pnor image is available.
 DISABLED_IMAGES=
 ENABLED_IMAGES=
-if [ "$SBE_PLATFORM" == "odyssey" ]; then
-    if [[ "$SBE_IMAGE" == "sppe" || "$SBE_IMAGE" == "bldr" ]]; then
-        DISABLED_IMAGES=" -Dotprom=disabled -Dsrom=disabled -Dbldr=disabled "
+if [[ "$SBE_PLATFORM" == "odyssey" || "$SBE_PLATFORM" == "p11" || "$SBE_PLATFORM" == "metis" ]]; then
+    if [ "$SBE_IMAGE" == "sppe" ]; then
+        DISABLED_IMAGES=" -Dotprom=disabled -Dsrom=disabled -Dbldr=disabled -Dhsbe=disabled -Dtsbe=disabled"
         ENABLED_IMAGES=" -Dsppe=enabled"
-    fi
-    if [ "$SBE_IMAGE" == "otprom" ]; then
-        DISABLED_IMAGES=" -Dsppe=disabled -Dsrom=disabled -Dbldr=disabled "
+
+    elif [ "$SBE_IMAGE" == "otprom" ]; then
+        DISABLED_IMAGES=" -Dsppe=disabled -Dsrom=disabled -Dbldr=disabled -Dhsbe=disabled -Dtsbe=disabled"
         ENABLED_IMAGES=" -Dotprom=enabled"
-    fi
-    if [ "$SBE_IMAGE" == "pnor" ]; then
-        ENABLED_IMAGES=" -Dotprom=enabled -Dsppe=enabled -Dsrom=disabled -Dbldr=enabled "
-    fi
-    if [ "$SBE_IMAGE" == "srom" ]; then
-        DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled "
-        ENABLED_IMAGES=" -Dotprom=enabled -Dsrom=disabled "
-    fi
-    if [ "$SBE_IMAGE" == "bldr" ]; then
-        DISABLED_IMAGES=" -Dsppe=disabled -Dsrom=disabled "
+
+    elif [ "$SBE_IMAGE" == "pnor" ]; then
+    # SROM image build is disabled because its frozen. SROM image will not be required to release to build.
+    # For simics it will be picked from "public/src/ontime/odyssey/srom/build/images/"
+        DISABLED_IMAGES=" -Dsrom=disabled"
+        ENABLED_IMAGES=" -Dotprom=enabled -Dsppe=enabled -Dbldr=enabled"
+
+    elif [ "$SBE_IMAGE" == "srom" ]; then
+        DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dhsbe=disabled -Dtsbe=disabled"
+        ENABLED_IMAGES=" -Dotprom=enabled -Dsrom=enabled "
+
+    elif [ "$SBE_IMAGE" == "bldr" ]; then
+        DISABLED_IMAGES=" -Dsppe=disabled -Dsrom=disabled -Dhsbe=disabled -Dtsbe=disabled"
         ENABLED_IMAGES=" -Dotprom=enabled -Dbldr=enabled "
+
+    elif [ "$SBE_IMAGE" == "tsbe" ]; then
+        DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dotprom=disabled -Dhsbe=disabled -Dsrom=disabled"
+        ENABLED_IMAGES=" -Dtsbe=enabled"
+
+    elif [ "$SBE_IMAGE" == "hsbe" ]; then
+        DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dotprom=disabled -Dtsbe=disabled -Dsrom=disabled"
+        ENABLED_IMAGES=" -Dhsbe=enabled"
+
+    elif [ "$SBE_IMAGE" == "seeprom" ]; then
+        ENABLED_IMAGES=" -Dbldr=enabled -Dotprom=enabled -Dsppe=enabled -Dhsbe=enabled -Dtsbe=enabled -Dsrom=enabled"
+
+    else
+        echo "Unsupported SBE_IMAGE type $SBE_IMAGE"
+        exit -1
+
     fi
 fi
 
