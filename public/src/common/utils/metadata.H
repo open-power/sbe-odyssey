@@ -68,6 +68,11 @@ DECLARE_METADATA(GIT, 0x474954) {
     uint32_t commitId;
 };
 
+// Git build timestamp MMDDYYYY for the image
+DECLARE_METADATA(DAT, 0x444154) {
+    uint32_t timeStamp;
+};
+
 // String metadata needs no field declaration
 DECLARE_METADATA_STR(BLD, 0x424c44);
 
