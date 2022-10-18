@@ -106,6 +106,7 @@ void __eabi()
 const struct PACKED metadata_t {
     METADATA(IMG, { IMAGES::BOOTLOADER });
     METADATA(GIT, { SBE_COMMIT_ID });
+    METADATA(DAT, { SBE_BUILD_TIME });
     METADATA(LDA, { BOOTLOADER_ORIGIN });
     METADATA(TRA, { BLDR_TRACE_START_OFFSET, BLDR_PK_TRACE_SIZE_WITH_HEADER });
     ImageMetadataHeader end = {0, 0};

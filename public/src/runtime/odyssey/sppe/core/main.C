@@ -108,6 +108,7 @@ void __eabi()
 const struct PACKED metadata_t {
     METADATA(IMG, { IMAGES::RUNTIME });
     METADATA(GIT, { SBE_COMMIT_ID });
+    METADATA(DAT, { SBE_BUILD_TIME });
     METADATA(TRA, { SPPE_TRACE_START_OFFSET, SPPE_PK_TRACE_SIZE_WITH_HEADER });
     ImageMetadataHeader end = {0, 0};
 } g_image_metadata __attribute__ ((section (".sppe_metadata")));

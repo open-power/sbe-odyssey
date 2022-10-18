@@ -7,6 +7,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2016,2022
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,6 +28,7 @@
 # buld information required by SBE code.
 import os
 import sys
+import datetime
 
 def buildInfo():
     buildInfoFileName = sys.argv[1]+"/sbe_build_info.H"
@@ -35,6 +37,9 @@ def buildInfo():
 #define SBE_BUILD_INFO_H  \n\n"
 
     footer = "\n#endif  // SBE_BUILD_INFO_H"
+
+    buildTime = "0x" + datetime.datetime.now().strftime('%Y%m%d')
+    hexTime   = int(buildTime, 16)
 
     if 'SBE_COMMIT_ID' in os.environ:
         commitStr = os.environ['SBE_COMMIT_ID'][:8]
@@ -51,6 +56,8 @@ def buildInfo():
     f.write(header)
     f.write("//Define SBE Commit ID \n")
     f.write("#define SBE_COMMIT_ID " + hex(commitInt) + "\n")
+    f.write("//Define SBE BUILD_TIME \n")
+    f.write("#define SBE_BUILD_TIME " + hex(hexTime) + "\n")
     f.write(footer)
     f.close()
 
