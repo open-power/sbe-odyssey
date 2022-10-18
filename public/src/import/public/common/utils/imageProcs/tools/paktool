@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+
 ############################################################
 # Imports - Imports - Imports - Imports - Imports - Imports
 ############################################################
@@ -109,7 +110,7 @@ def cmd_list(args):
                 embedArchive.load(image=embedFile.ddata)
                 for file in embedArchive:
                     # For each file in the archive, update the name relative to the original pak
-                    file.name = embedFile.name + "/" + file.name
+                    file.name = embedFile.name + ">/" + file.name
                     # Insert that file into the original pak at the location found in original pak
                     result.insert(result.index(embedFile), file)
                 # Remove the original embedded pak, all its contents is now in the original pak for display
@@ -211,6 +212,26 @@ def cmd_hash(args):
         f.write(contents)
 
     return
+
+def cmd_merge(args):
+    '''
+    Merge archives. If there are duplicate entrees in the archive, the last one is used
+    '''
+    # if target exist then load it.
+    target = pak.Archive(args.archive)
+    if os.path.isfile(args.archive):
+        target.load()
+
+    for afile in args.file:
+        if os.path.isfile(afile):
+            arc = pak.Archive(afile)
+            arc.load()
+            for file in arc:
+                target.append(file)
+        else:
+            raise pak.ArchiveError("File not found: " + afile)
+
+    return target.save()
 
 # Support functions for cmd_* functions
 def print_tree(branch, root=None, prefix=''):
@@ -330,6 +351,19 @@ sub = subparsers.add_parser("remove", description="Remove files from an archive"
 sub.add_argument("archive", help="Archive file")
 sub.add_argument("file", nargs="*", help="List of files to remove; if none are given, all files will be removed")
 sub.set_defaults(func=cmd_remove)
+
+# merge sub command
+sub = subparsers.add_parser("merge", description='''
+        Merge archives. If target archive exists, it's loaded first.
+        If duplicate entree names exist between archives then only the last will be included.''')
+sub.add_argument("archive", help="Target archive file")
+sub.add_argument("file", nargs="*",help="List of archive files to merge into archive")
+sub.epilog = textwrap.dedent('''
+examples:
+    > paktool merge target_archive  archive1 archive2
+''')
+sub.set_defaults(func=cmd_merge)
+
 
 # cmdline loaded up, now parse for it and handle what is found
 args = parser.parse_args()

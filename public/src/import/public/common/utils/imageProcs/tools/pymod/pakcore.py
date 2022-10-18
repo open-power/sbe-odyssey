@@ -762,6 +762,7 @@ class Archive(UserList):
                 self.end_marker = True
                 break
             else:
+                print('%x' % int.from_bytes(self.image[offset:(offset + 4)], 'big'))
                 raise ArchiveError("Unknown magic block found at offset: %d" % offset)
 
             # The entry is created without error, add it to the list
