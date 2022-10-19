@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// gap22100300 |gap     | Fix bug in main alloc that limited bound ranges, add logging when using bound
 // gap22020509 |gap     | Add 5nm post, follow 5nm constraints
 // mbs22021000 |mbs     | Updates to reduce code size
 // bja22012500 |bja     | Support 5nm and 7nm segments
@@ -75,7 +76,7 @@
 //   2r segment is not available for the phase that wants more segments. This limits the
 //   enabled segments to the total 2r equivalent minus the 2r segments from the ffe banks.
 //   for 7nm, this is 67 total - 2 from ffe banks = 65 2R equivalents. For 5nm, this is
-//   68 total - 3 from ffe banks = 65 2R equivalents. So the mas upper bound is 65 in both
+//   68 total - 3 from ffe banks = 65 2R equivalents. So the max upper bound is 65 in both
 //   scenarios.
 #define tx_ffe_zcal_bound_max_2r_c     65 /* zcal result will be clipped to this maximum              */
 
@@ -109,14 +110,17 @@ typedef struct TX_FFE_CNTL_STRUCT
 
 void     tx_ffe(t_gcr_addr* gcr_addr_i);
 uint32_t tx_ffe_get_zcal(t_gcr_addr* gcr_addr_i,  bool is_nseg_i, bool is_5nm);
-void     tx_ffe_calc_ffe(uint32_t pre2_coef_x128_i, uint32_t pre1_coef_x128_i, uint32_t post_coef_x128_i,
+void     tx_ffe_calc_ffe(t_gcr_addr* gcr_addr_i, uint32_t pre2_coef_x128_i, uint32_t pre1_coef_x128_i,
+                         uint32_t post_coef_x128_i,
                          uint32_t zcal_result_nseg_i, uint32_t zcal_result_pseg_i, bool is_5nm_i, t_tx_ffe_cntl* seg_values_o);
 void     tx_ffe_write_ffe(t_gcr_addr* gcr_addr_i, bool is_5nm, t_tx_ffe_cntl* seg_values_i);
-void     tx_ffe_bound_zcal(uint32_t* zcal_2r_l);
+void     tx_ffe_bound_zcal(t_gcr_addr* gcr_addr_i, uint32_t* zcal_2r_l);
 uint32_t tx_ffe_calc_sel(uint32_t zcal_i, uint32_t ffe_coef_x128_i) ;
 void     tx_ffe_alloc_main(uint32_t* nseg_remain, uint32_t* pseg_remain, uint32_t nseg_ffe_i, uint32_t pseg_ffe_i,
                            uint32_t* nseg_main,
                            uint32_t* pseg_main, uint32_t bank_max_2r_i);
+void     tx_ffe_alloc_main_phase(uint32_t* seg_remain, uint32_t* seg_main, uint32_t bank_max_2r_i,
+                                 uint32_t used_for_ffe_2r_i);
 void     tx_ffe_write_main_en(t_gcr_addr* gcr_addr_i, uint32_t num_2r_equiv_i, bool is_nseg_i, bool is_5nm_i);
 void     tx_ffe_write_ffe_en_sel(t_gcr_addr* gcr_addr_i, uint32_t num_2r_equiv_nseg_main_en_i,
                                  uint32_t num_2r_equiv_nseg_ffe_en_i,

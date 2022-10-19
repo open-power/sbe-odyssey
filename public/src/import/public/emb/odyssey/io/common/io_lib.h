@@ -186,6 +186,7 @@ int set_fir(uint32_t fir_code);
 #define warning_code        rc_warning   //0x02
 #define abort_error_code    0x04         //0x04
 #define abort_clean_code    0x08         //0x08
+#define abort_code          (abort_error_code | abort_clean_code)
 
 
 ///////////////////////////////////////////////////////////////////////////////////////

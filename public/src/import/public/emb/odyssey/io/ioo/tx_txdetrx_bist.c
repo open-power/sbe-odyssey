@@ -42,6 +42,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
 // gap22052300 |gap     | change set_debug to save a few bytes
 // vbr22061500 |vbr     | Added returning of fail status for ext commands
 // gap22042700 |gap     | change tx_rxdet_enable to tx_pcie_rxdet_en_dc
@@ -110,6 +111,7 @@ int tx_txdetrx_bist(t_gcr_addr* gcr_addr, int tx_bist_enable_ls, int tx_bist_ena
 
     //Need this since tx_bist_en_alias in override set this high
     //can not be high for this test, we will reset to 1 at end
+    // PSL tx_bist_enable_ls
     if (tx_bist_enable_ls == 1 )
     {
         sticky_ls = 1;
@@ -118,6 +120,7 @@ int tx_txdetrx_bist(t_gcr_addr* gcr_addr, int tx_bist_enable_ls, int tx_bist_ena
 
     //Need this since tx_bist_en_alias in override set this high
     //can not be high for this test, we will reset to 1 at end
+    // PSL tx_bist_enable_hs
     if (tx_bist_enable_hs == 1)
     {
         sticky_hs = 1;
@@ -147,6 +150,7 @@ int tx_txdetrx_bist(t_gcr_addr* gcr_addr, int tx_bist_enable_ls, int tx_bist_ena
     tx_detrx_p_comp_int = get_ptr_field(gcr_addr, tx_detrx_p_comp); //pl
 
     //Record fail for test 1 expecting 1
+    // PSL fail_test1
     if ((tx_detrx_n_comp_int == 0) || ( tx_detrx_p_comp_int == 0))
     {
         sticky_fail_test1 = 1;
@@ -165,10 +169,12 @@ int tx_txdetrx_bist(t_gcr_addr* gcr_addr, int tx_bist_enable_ls, int tx_bist_ena
     tx_detrx_p_comp_int = get_ptr_field(gcr_addr, tx_detrx_p_comp); //pl
 
     //Record fail for test 2 expecting 0 and updating logger for fail
+    // PSL fail_test2_or_sticky_fail_test1
     if ((tx_detrx_n_comp_int == 1) || (tx_detrx_p_comp_int == 1) || (sticky_fail_test1 == 1))
     {
         txbist_main_set_bist_fail(gcr_addr);
         put_ptr_field(gcr_addr, tx_bist_txdetrx_fail, 0b1, read_modify_write); //pl
+        // PSL set_fir_bad_lane_warning_and_dft_error
         set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
         ADD_LOG(DEBUG_BIST_TXDETRX_FAIL, gcr_addr, 0x0);
         status = error_code;
@@ -177,12 +183,14 @@ int tx_txdetrx_bist(t_gcr_addr* gcr_addr, int tx_bist_enable_ls, int tx_bist_ena
     set_debug_state(0x0122, DBG_LVL); // DEBUG : End test2 and error setting of txdetrx bist
 
     //Reseting hs and ls to 1 if they were set to 1.
+    // PSL sticky_ls_eq_1
     if (sticky_ls == 1)
     {
         put_ptr_field(gcr_addr, tx_bist_ls_en, 0b1, read_modify_write);
     }
 
     //Reseting hs and ls to 1 if they were set to 1.
+    // PSL sticky_hs_eq_1
     if (sticky_hs == 1)
     {
         put_ptr_field(gcr_addr, tx_bist_hs_en, 0b1, read_modify_write);

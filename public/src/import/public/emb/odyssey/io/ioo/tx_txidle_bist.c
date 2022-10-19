@@ -42,6 +42,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
 // gap22052300 |gap     | Change set_debug_state to save a few bytes
 // vbr22061500 |vbr     | Added returning of fail status for ext commands
 // mwh22032400 |mwh     | Initial Code
@@ -122,6 +123,7 @@ uint16_t tx_idle_tests(t_gcr_addr* gcr_addr, uint16_t tx_tdr_cntl_alias_in, uint
     tx_tdr_capt_val_int = get_ptr_field(gcr_addr, tx_tdr_capt_val); //pl
 
     //Record fail
+    // PSL set_fail
     if (tx_tdr_capt_val_int != expect )
     {
         fail = fail_mask ;
@@ -152,6 +154,7 @@ int tx_txidle_bist(t_gcr_addr* gcr_addr, int tx_bist_enable_ls, int tx_bist_enab
 
     //Need this since tx_bist_en_alias in override set this high
     //can not be high for this test, we will reset to 1 at end
+    // PSL enable_ls_eq_1
     if (tx_bist_enable_ls == 1 )
     {
         sticky_ls = 1;
@@ -160,6 +163,7 @@ int tx_txidle_bist(t_gcr_addr* gcr_addr, int tx_bist_enable_ls, int tx_bist_enab
 
     //Need this since tx_bist_en_alias in override set this high
     //can not be high for this test, we will reset to 1 at end
+    // PSL enable_hs_eq_1
     if (tx_bist_enable_hs == 1)
     {
         sticky_hs = 1;
@@ -217,21 +221,25 @@ int tx_txidle_bist(t_gcr_addr* gcr_addr, int tx_bist_enable_ls, int tx_bist_enab
                     tx_idle_mode_ovr_alias_1110, t8_n_pad_fail_exp_0);
 
     //Record fail  updating logger for fail
+    // PSL over_all_fail
     if (over_all_fail)
     {
         txbist_main_set_bist_fail(gcr_addr);
         put_ptr_field(gcr_addr, tx_bist_txidle_fail, over_all_fail, read_modify_write); //pl
+        // PSL set_fir_bad_lane_warning_and_dft_fir
         set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
         ADD_LOG(DEBUG_BIST_TXIDLE_FAIL, gcr_addr, 0x0);
     }
 
     //Reseting hs and ls to 1 if they were set to 1.
+    // PSL sticky_ls_eq_1
     if (sticky_ls == 1)
     {
         put_ptr_field(gcr_addr, tx_bist_ls_en, 0b1, read_modify_write);
     }
 
     //Reseting hs and ls to 1 if they were set to 1.
+    // PSL sticky_hs_eq_1
     if (sticky_hs == 1)
     {
         put_ptr_field(gcr_addr, tx_bist_hs_en, 0b1, read_modify_write);

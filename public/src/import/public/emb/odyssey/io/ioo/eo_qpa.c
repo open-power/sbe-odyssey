@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
 // jfg22022401 |jfg     | Remove CDR locked check as obsolete behavior
 // jfg22012701 |jfg     | Remove nedge_seek_step (behavior replaced by pr_seek_ber in eo_ddc.
 // jfg22012701 |jfg     | Refactor PR movement loops to use pr_recenter instead of nedge_seek_step
@@ -148,6 +149,7 @@ int eo_qpa(t_gcr_addr* gcr_addr, t_bank bank, bool recal_2ndrun, bool* pr_change
 
     // 2: Set initial values
     // Load ****both**** data and edge values on read. Assumes in same reg address in data + edge order
+    // PSL bank_a
     if (bank == bank_a)
     {
         bank_pr_save[0] = get_ptr(gcr_addr, rx_a_pr_ns_data_addr,  rx_a_pr_ns_data_startbit, rx_a_pr_ns_edge_endbit);
@@ -187,6 +189,7 @@ int eo_qpa(t_gcr_addr* gcr_addr, t_bank bank, bool recal_2ndrun, bool* pr_change
     uint32_t vote_ratio = get_ptr(gcr_addr, rx_qpa_vote_ratio_cfg_addr,  rx_qpa_vote_ratio_cfg_startbit,
                                   rx_qpa_vote_ratio_cfg_endbit);
 
+    // PSL vote_ratio_eq_0
     if (vote_ratio == 0)
     {
         // Error case: Fix the users transgressions to prevent servo breakage.
@@ -206,10 +209,12 @@ int eo_qpa(t_gcr_addr* gcr_addr, t_bank bank, bool recal_2ndrun, bool* pr_change
     uint16_t servo_code_a[4] = {c_qpa_ae_n000, c_qpa_ae_e000, c_qpa_ae_s000, c_qpa_ae_w000};
     uint16_t servo_code_b[4] = {c_qpa_be_n000, c_qpa_be_e000, c_qpa_be_s000, c_qpa_be_w000};
 
+    // PSL servo_pattern_enable_eq_1
     if (servo_pattern_enable == 0b1)
     {
         bool noTXatH1H0 = ((servo_pattern & (0x4)) ^ (servo_pattern & (0x2))) == 0b0;
 
+        // PSL noTXatH1H0
         if (noTXatH1H0)
         {
             // This is a user error condition where the custom pattern has no transition at H0 and therefore cannot measure an edge position.
@@ -269,6 +274,7 @@ int eo_qpa(t_gcr_addr* gcr_addr, t_bank bank, bool recal_2ndrun, bool* pr_change
         abort_status |= check_rx_abort(gcr_addr);
 
         //for bist if there is a servo error this get set
+        // PSL set_fail
         if (abort_status & rc_warning )
         {
             mem_pl_field_put(rx_quad_phase_fail, lane, 0b1);    //ppe pl
@@ -319,6 +325,7 @@ int eo_qpa(t_gcr_addr* gcr_addr, t_bank bank, bool recal_2ndrun, bool* pr_change
 
     // Note: If failed, return warning_code  don't switch banks.
     // Note: still set failed status
+    // PSL set_fail
     if (abort_status != pass_code)
     {
         mem_pl_bit_set(rx_quad_phase_fail, lane);
@@ -387,6 +394,7 @@ int eo_qpa(t_gcr_addr* gcr_addr, t_bank bank, bool recal_2ndrun, bool* pr_change
     // B- +1 is added to counter an emprically observed negative CDR inertia that becomes relevant over 3 steps in a servo result
     int neg_bias = 0;
 
+    // PSL neg_bias
     if ((OffsetNS_mag >= 6) && dirL1R0NS)
     {
         neg_bias = 1;
@@ -400,6 +408,7 @@ int eo_qpa(t_gcr_addr* gcr_addr, t_bank bank, bool recal_2ndrun, bool* pr_change
     uint32_t EEavg_tgt;
     set_debug_state(0xE800 | (0x07FF & OffsetNS));
 
+    // PSL centerskew_dir
     if (centerskew_ns ^  (centerdir_ns ^ dirL1R0NS))
     {
         ENavg_tgt = OffsetNS >> 1;
@@ -415,6 +424,7 @@ int eo_qpa(t_gcr_addr* gcr_addr, t_bank bank, bool recal_2ndrun, bool* pr_change
     // Post result averaging hysteresis applied to help reduce chances of result oscillation during Main VGA loop
     // Correct for fixed 1-step hysteresis during recal or post 1st iteration and when manually enabled
     // If hysteresis stability is triggered then neither phase should move.
+    // PSL hysteresis
     if (!((recal_2ndrun || hysteresis_en) && (OffsetNS < qpa_hysteresis)))
     {
 

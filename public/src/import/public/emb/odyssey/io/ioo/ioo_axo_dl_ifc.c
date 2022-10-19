@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
 // vbr21092200 |vbr     | Use wo pulse for psave_req_alt
 // vbr21081800 |vbr     | Story 237887: Check for psave_req=1 and run_lane=0 to power off alt. Issue 244463: Sleep more often when checking DL signals.
 // vbr21061000 |vbr     | Moved clearing of recal_abort_sticky to eo_wrappers
@@ -88,21 +89,25 @@ void dl_init_req(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
 
         if (l_dl_init_req && !l_init_done)
         {
+            // PSL_EN_NEXT
             run_initial_training(io_gcr_addr, l_lane);  //sleeps at end
             put_ptr_field(io_gcr_addr, rx_phy_dl_init_done_set, 0b1, fast_write);
         }
         else if (!l_dl_init_req && l_init_done && !mem_pl_field_get(rx_cmd_init_done, l_lane))
         {
+            // PSL put_init_done
             put_ptr_field(io_gcr_addr, rx_phy_dl_init_done_clr, 0b1, fast_write);
             mem_pl_bit_clr(rx_init_done, l_lane);
         }
 
         // Lane is unused (run_lane==0)
+        //PSL unused_lane
         if (!l_dl_init_req)
         {
             set_recal_or_unused(l_lane, 0x1);
 
             // Power down ALT bank if DL is requesting DL power save
+            //PSL unused_lane_psave_req
             if ((0x80000000 >> l_lane) & l_rx_psave_req_mask)
             {
                 put_ptr_field(io_gcr_addr, rx_psave_req_alt_set, 0b1, fast_write);
@@ -165,6 +170,7 @@ void dl_recal_req(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes, const uin
             }
             else if (!l_any_init_req_or_reset)   // Prioritize INIT
             {
+                // PSL_EN_NEXT
                 run_recalibration(io_gcr_addr, l_lane); //sleeps at end
                 //l_any_init_req_or_reset = get_ptr_field(io_gcr_addr, rx_any_init_req_or_reset); //Check again for INIT on another lane
                 send_recal_done = true;

@@ -39,6 +39,14 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// jjb22092800 |jjb     | Issue 290210: Fixed txdetectrx check for Gen1 and P1 state
+// jjb22092700 |jjb     | Issue 290210: Added pipe_state_txdetectrx_status_set/clear
+// jjb22092600 |jjb     | Issue 290210: Updated code to remove RMW hazards with pipe interface logic updates
+// mbs22082601 |mbs     | Updated with PSL comments
+// jjb22081900 |jjb     | Issue 287283: set pipe_state_rxelecidle_en high at end of resetn_inactive to allow exit of EI detection to occur after reset, disable pipe_state_rxelecidle_en at completion of rxelecidle_inactive
+// jjb22080400 |jjb     | Issue 284576: Disable tx segment update for gen1 and gen2 initial MAC based txdeemph updates as these are not actual coeffs
+// vbr22071900 |vbr     | Issue 284981: Shuffled sleeps around pipe_preset_rx for RX EQ Eval and Rate Change
+// jjb22071500 |jjb     | Added io_wait prior to P2M PMB FOM WRC to meet 1.6us rx data valid prior to FOM WRC requirement
 // jjb22071300 |jjb     | Removed unnecessary group address changes in rx_eq_eval
 // jjb22071100 |jjb     | Gated rx dl clock and rx data during rx eq eval calibrations
 // jjb22071200 |jjb     | Reduced code size for rx margining by 1056 bytes using common sub functions
@@ -209,6 +217,7 @@ static void rxmargin_bank_enable(t_gcr_addr*
     t_bank cal_bank = (bank_sel_a == 0) ? bank_a :
                       bank_b;                                                                                                 //  determine cal_bank
 
+    // PSL bank_a
     if (cal_bank ==
         bank_a)                                                                                                                                //  psave logic sets PR bit lock done on disabled bank so must clear on present cal bank
     {
@@ -269,6 +278,7 @@ static void rxmargin_sample_count_update(t_gcr_addr* gcr_addr,
     for (i = 0; i < 16;
          i++)                                                                                                                               //  for loop to count bits set in l_rx_berpl_pcie_sample
     {
+        // PSL rx_berpl_pcie_sample
         if (l_rx_berpl_pcie_sample &
             l_rx_berpl_pcie_sample_mask)                                                                                             //   if bit is set
         {
@@ -305,6 +315,7 @@ static inline bool rxmargin_loffad_check(t_gcr_addr* gcr_addr, int lane, uint32_
         new_loff = LatchDacToInt(get_ptr(gcr_addr, l_dac_addr, rx_ad_latch_dac_n000_startbit,
                                          rx_ad_latch_dac_n000_endbit)) + check_offset;                    //   calculate new_loff as original loff + offset
 
+        // PSL loff_oob
         if ((new_loff > 127)
             || (new_loff <
                 -127))                                                                                                             //   if new_loff is larger than 127 or less than -127
@@ -334,6 +345,7 @@ static inline bool rxmargin_minipr_check(t_gcr_addr* gcr_addr,
     uint32_t l_rx_a_pr_ew_edge = get_ptr_field(gcr_addr,
                                  rx_a_pr_ew_edge);                                                                                  //  get bank a ew edge mini pr offset
 
+// PSL minipr_oob
     if (((l_rx_a_pr_ns_data + check_offset / 2) > 31)
         ||                                                                                                      //  if bank a ns data + offset/2 > 31 OR
         ((l_rx_a_pr_ns_data + check_offset / 2) <  0)
@@ -366,6 +378,7 @@ void rx_margin_remove_timing_offset(t_gcr_addr* gcr_addr,
     int l_rx_margin_timing_offset_int = mem_pl_field_get(rx_margin_timing_offset,
                                         l_lane);                                                                 //  get timing margin offset
 
+    // PSL margin_timing_offset_ne_0
     if (l_rx_margin_timing_offset_int !=
         0)                                                                                                                //  if timing offset is not zero the remove timing offset from PRs
     {
@@ -384,12 +397,14 @@ void rx_margin_remove_timing_offset(t_gcr_addr* gcr_addr,
         int l_rx_mini_pr_step_a_done =
             0;                                                                                                                     //   initialize l_rx_mini_pr_step_a_done  to 0
 
+        // PSL step_not_done_or_reset
         while((l_rx_mini_pr_step_a_done == 0) & (l_pipe_state_resetn_active ==
                 0))                                                                            //   while l_rx_mini_pr_step_a_done is 0 and  pipe_state_resetn_active is 0
         {
             int l_rx_mini_pr_step_a_done_alias = get_ptr_field(gcr_addr,
                                                  rx_mini_pr_step_a_done_alias);                                                          //    read rx_mini_pr_step_a_done_alias
 
+            // PSL mini_pr_step_done
             if (l_rx_mini_pr_step_a_done_alias ==
                 15)                                                                                                            //    if all bank a data and edge mini pr stepping are complete
             {
@@ -431,12 +446,14 @@ void rx_margin_apply_timing_offset(t_gcr_addr* gcr_addr, int l_lane,
     int l_rx_mini_pr_step_a_done =
         0;                                                                                                                      //  initialize l_rx_mini_pr_step_a_done  to 0
 
+    // PSL step_not_done_or_reset
     while((l_rx_mini_pr_step_a_done == 0) & (l_pipe_state_resetn_active ==
             0))                                                                             //  while l_rx_mini_pr_step_a_done is 0 and  pipe_state_resetn_active is 0
     {
         int l_rx_mini_pr_step_a_done_alias = get_ptr_field(gcr_addr,
                                              rx_mini_pr_step_a_done_alias);                                                           //   read rx_mini_pr_step_a_done_alias
 
+        // PSL mini_pr_step_done
         if (l_rx_mini_pr_step_a_done_alias ==
             15)                                                                                                             //   if all bank a data and edge mini pr stepping are complete
         {
@@ -462,12 +479,13 @@ void rx_margin_clr_samplecount_errorcount_offsetupdated(t_gcr_addr*
 {
     set_gcr_addr_reg_id(gcr_addr,
                         tx_group);                                                                                                               //  set gcr addr to tx group
-    put_ptr_field(gcr_addr, pipe_state_rxmargin_sample_count_reset, 0,
-                  read_modify_write);                                                                 //  clear rxmargin_sample_count_reset
-    put_ptr_field(gcr_addr, pipe_state_rxmargin_error_count_reset, 0,
-                  read_modify_write);                                                                  //  clear rxmargin_error_count_reset
-    put_ptr_field(gcr_addr, pipe_state_rxmargin_offset_updated, 0,
-                  read_modify_write);                                                                     //  clear rxmargin_offset_updated
+    put_ptr_field(gcr_addr, pipe_state_cntl4_pl_0_15_alias,
+                  (pipe_state_rxmargin_sample_count_reset_clear_mask
+                   |                                           //  clear rxmargin_sample_count_reset
+                   pipe_state_rxmargin_error_count_reset_clear_mask
+                   |                                           //  clear rxmargin_error_count_reset
+                   pipe_state_rxmargin_offset_updated_clear_mask) ,
+                  fast_write);                                 //  clear rxmargin_offset_updated
 } // rx_margin_clr_samplecount_errorcount_offsetupdated                                                                                                  // end function
 
 ////////////////////////////////////
@@ -499,6 +517,7 @@ void pipe_put(t_gcr_addr* gcr_addr, uint32_t reg_sel, uint32_t reg_addr, uint32_
     // Poll until PIPE is not busy
     int busy = 1;
 
+    // PSL busy
     while (busy)
     {
         busy = get_ptr_field(gcr_addr, pipe_reg_acc_busy);
@@ -525,6 +544,7 @@ void pipe_put_blk(t_gcr_addr* gcr_addr, uint32_t reg_sel, uint32_t reg_addr, uin
     // Poll until PIPE is not busy
     int busy = 1;
 
+    // PSL busy
     while (busy)
     {
         busy = get_ptr_field(gcr_addr, pipe_reg_acc_busy);
@@ -540,6 +560,7 @@ uint32_t pipe_get(t_gcr_addr* gcr_addr, uint32_t reg_sel, uint32_t reg_addr)
     // Poll until PIPE is not busy
     int busy = 1;
 
+    // PSL busy
     while (busy)
     {
         busy = get_ptr_field(gcr_addr, pipe_reg_acc_busy);
@@ -555,6 +576,7 @@ uint32_t pipe_get(t_gcr_addr* gcr_addr, uint32_t reg_sel, uint32_t reg_addr)
     // Poll for Data
     uint32_t rd_data;
 
+    // PSL busy_read
     do
     {
         rd_data = get_ptr_field(gcr_addr, pipe_reg_acc_busy_rddata_alias);
@@ -585,6 +607,7 @@ void pipe_preset_rx(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode)
 
     // Preset Peak/LTE
     preset_rx_peak_lte_values(gcr_addr, cal_mode);
+    io_sleep(l_thread);
 
     // Restore Bank A
     restore_rx_data_latch_dac_values(gcr_addr, bank_a);
@@ -626,6 +649,7 @@ void run_pipe_commands(t_gcr_addr* gcr_addr, uint32_t num_lanes)
                            16; //count leading zeros ignoring the top u16 since pipe_state_0_15 is only 16b
 
         // Skip if no request set
+        // PSL cmd_sel_ge_max
         if (cmd_sel >= MAX_NUM_PIPE_CMD)
         {
             continue;
@@ -652,6 +676,7 @@ void pipe_cmd_nop(t_gcr_addr* gcr_addr)
 {
     set_debug_state(0xFCAA, 1); //ERROR - pipe_cmd_nop
     ADD_LOG(DEBUG_BAD_PIPE_CMD, gcr_addr, 0x0);
+    // PSL set_fir_fatal_error
     set_fir(fir_code_fatal_error);
 } //pipe_nop
 
@@ -803,6 +828,7 @@ void pipe_cmd_resetn_inactive(t_gcr_addr* gcr_addr)
     uint32_t l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);
     uint32_t l_pipe_state_resetn_active = l_pipe_state & pipe_state_resetn_active_mask;
 
+    // PSL resetn_active
     if (l_pipe_state_resetn_active == 0)   // no pending resetn_active request, clear reset_inactive
     {
         uint32_t l_register_data = pipe_state_resetn_inactive_clear_mask |
@@ -819,8 +845,8 @@ void pipe_cmd_resetn_inactive(t_gcr_addr* gcr_addr)
                                    pipe_state_rxmargincontrol_clear_mask |
                                    pipe_state_txdeemph_updated_clear_mask;
         put_ptr_field(gcr_addr, pipe_state_0_15_clear_alias, l_register_data, fast_write);
-        put_ptr_field(gcr_addr, pipe_state_phystatus_clear, 0b1,
-                      read_modify_write); // RMW PHY pipe_state_phystatus_clear bit to 1
+        put_ptr_field(gcr_addr, pipe_state_phystatus_clear, 0b1, fast_write); // PHY pipe_state_phystatus_clear bit to 1
+        put_ptr_field(gcr_addr, pipe_state_rxelecidle_en_set, 0b1, fast_write); // set rxelecidle_en
     }
     else     // pending resetn_active request, do not clear resetn_inactive and do not clear phystatus
     {
@@ -849,17 +875,14 @@ void pipe_cmd_resetn_inactive(t_gcr_addr* gcr_addr)
 void pipe_cmd_rxstandby_active(t_gcr_addr* gcr_addr)
 {
     set_debug_state(0xFC03, PIPE_IFC_DBG_LVL);
-    // 1.) set rxdatavalid low
-    put_ptr_field(gcr_addr, pipe_state_rxdatavalid, 0b0, read_modify_write);
-    // 2.) clear rxactive state
-    put_ptr_field(gcr_addr, pipe_state_rxactive, 0b0, read_modify_write);
-    // 3.) set rxelecidle_en
-    put_ptr_field(gcr_addr, pipe_state_rxelecidle_en, 0b1, read_modify_write);
-    // 4.) clear rxstandby_active and rxelecidle status
-    uint32_t l_register_data = pipe_state_rxstandby_active_clear_mask |
-                               pipe_state_rxelecidle_active_clear_mask |
-                               pipe_state_rxelecidle_inactive_clear_mask;
-    put_ptr_field(gcr_addr, pipe_state_0_15_clear_alias, l_register_data, fast_write);
+    // 1.) clear rxdatavalid, clear rxactive, set rxelecidle_en
+    put_ptr_field(gcr_addr, pipe_state_cntl1_pl_full_reg,
+                  (pipe_state_rxdatavalid_clear_mask | pipe_state_rxactive_clear_mask | pipe_state_rxelecidle_en_set_mask), fast_write);
+
+    // 2.) clear rxstandby_active and rxelecidle status
+    put_ptr_field(gcr_addr, pipe_state_0_15_clear_alias,
+                  (pipe_state_rxstandby_active_clear_mask | pipe_state_rxelecidle_active_clear_mask |
+                   pipe_state_rxelecidle_inactive_clear_mask), fast_write);
     return;
 } //pipe_cmd_rxstandby_active
 
@@ -880,50 +903,49 @@ void pipe_cmd_rate_updated(t_gcr_addr* gcr_addr)
 {
     set_debug_state(0xFC06, PIPE_IFC_DBG_LVL);
 
-    // 1.) RWM PHY pipe_state_cntl1_pl_full_reg to clear pipe_state_rxdatavalid bit to zero
-    put_ptr(gcr_addr, pipe_state_cntl1_pl_addr, pipe_state_cntl1_pl_full_reg_startbit, pipe_state_cntl1_pl_full_reg_endbit,
-            0x0000, fast_write);
-
-    // 2.) RMW pipe_state_rxactive to 0
-    put_ptr_field(gcr_addr, pipe_state_rxactive, 0b0, read_modify_write);
-
-    // 3.) RMW pipe_state_rxelecidle_en to 0
-    put_ptr_field(gcr_addr, pipe_state_rxelecidle_en, 0b0, read_modify_write);
-
-    // 4.) Get present pipe rate value
+    // 1.) clear rxdatavalid, clear pipe_state_rxactive, clear rxelecidle_en
+    put_ptr_field(gcr_addr, pipe_state_cntl1_pl_full_reg, (pipe_state_rxdatavalid_clear_mask |
+                  pipe_state_rxactive_clear_mask |
+                  pipe_state_rxelecidle_en_clear_mask), fast_write);
+    // 2.) Get present pipe rate value
     uint32_t l_rate = get_ptr_field(gcr_addr, pipe_state_rate); // gen1=0, gen2=1, gen3=2, gen4=3, gen5=4
     uint32_t l_rate_one_hot = (1 <<
                                l_rate);                    // gen1=00001, gen2=00010, gen3=00100, gen4=01000, gen5=10000
 
-    // 5.) Clear txdeemph_updated state bit to ready for MAC to update txdeemph
+    // 3.) Clear txdeemph_updated state bit to ready for MAC to update txdeemph
     put_ptr_field(gcr_addr, pipe_state_txdeemph_updated_clear, 0b1, fast_write);
 
-    // 6.) Disable idle_loz and idle_mode hardware; idle_mode_ovr and idle_loz_ovr val are 1 and 0, respectively
+    // 4.) Disable idle_loz and idle_mode hardware; idle_mode_ovr and idle_loz_ovr val are 1 and 0, respectively
     put_ptr_field(gcr_addr, tx_idle_ovr_alias, 0b1111, read_modify_write);
 
-    // 7.) Update idle_del_sel, loz_del_sel, and l2u_dly values based on gen
+    // 5.) Update idle_del_sel, loz_del_sel, and l2u_dly values based on gen
     uint32_t l_idle_del_sel;
     uint32_t l_loz_del_sel;
 
+    // PSL rate_gen5
     if (l_rate_one_hot == 0b10000)   // gen5
     {
         l_idle_del_sel = mem_pg_field_get(tx_pcie_idle_del_sel_5);
         l_loz_del_sel  = mem_pg_field_get(tx_pcie_loz_del_sel_5);
+        // PSL rate_gen4
     }
     else if (l_rate_one_hot == 0b01000)     // gen4
     {
         l_idle_del_sel = mem_pg_field_get(tx_pcie_idle_del_sel_4);
         l_loz_del_sel  = mem_pg_field_get(tx_pcie_loz_del_sel_4);
+        // PSL rate_gen3
     }
     else if (l_rate_one_hot == 0b00100)     // gen3
     {
         l_idle_del_sel = mem_pg_field_get(tx_pcie_idle_del_sel_3);
         l_loz_del_sel  = mem_pg_field_get(tx_pcie_loz_del_sel_3);
+        // PSL rate_gen2
     }
     else if (l_rate_one_hot == 0b00010)     // gen2
     {
         l_idle_del_sel = mem_pg_field_get(tx_pcie_idle_del_sel_2);
         l_loz_del_sel  = mem_pg_field_get(tx_pcie_loz_del_sel_2);
+        // PSL rate_gen1
     }
     else     // default to gen1
     {
@@ -934,14 +956,22 @@ void pipe_cmd_rate_updated(t_gcr_addr* gcr_addr)
     put_ptr_field(gcr_addr, tx_pcie_idle_del_sel, l_idle_del_sel, read_modify_write);
     put_ptr_field(gcr_addr, tx_pcie_loz_del_sel,  l_loz_del_sel,  read_modify_write);
 
-    // 8.) RMW pipe_state_cntl1_pl and set pipe_state_pclkchangeok_pulse to 1
-    put_ptr_field(gcr_addr, pipe_state_pclkchangeok_pulse, 0b1, read_modify_write);
+    // Disable tx_pcie_eq_calc_enable if in Gen1 or Gen2 since txdeemph value update is not actual FFE coeffs
+    // PSL rate_gen1or2
+    if (l_rate < 2)   // GEN 1 or GEN 2
+    {
+        put_ptr_field(gcr_addr, tx_pcie_eq_calc_enable, 0b0, read_modify_write);
+    }
 
-    // 9.) Wait for pipe_state_pclkchangeack to be 1, abort wait if pipe_resetn is active
+    // 6.) fast write pipe_state_cntl1_pl and set pipe_state_pclkchangeok_pulse to 1
+    put_ptr_field(gcr_addr, pipe_state_pclkchangeok_pulse, 0b1, fast_write);
+
+    // 7.) Wait for pipe_state_pclkchangeack to be 1, abort wait if pipe_resetn is active
     uint32_t l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);
     uint32_t l_pipe_state_resetn_active = l_pipe_state & pipe_state_resetn_active_mask;
     uint32_t l_pipe_state_pclkchangeack = l_pipe_state & pipe_state_pclkchangeack_mask;
 
+    // PSL not_pclkchangeack_and_not_resetn_active
     while (!l_pipe_state_pclkchangeack & !l_pipe_state_resetn_active)
     {
         l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);
@@ -949,27 +979,25 @@ void pipe_cmd_rate_updated(t_gcr_addr* gcr_addr)
         l_pipe_state_pclkchangeack = l_pipe_state & pipe_state_pclkchangeack_mask;
     }
 
-    // 10.) Change RX and TX Clocks; set d2_en
+    // 8.) Change RX and TX Clocks; set d2_en
     pipe_clock_change(gcr_addr, l_rate_one_hot);
 
-    // 11.) Initialize TX FIFO at new data rate
+    // 9.) Initialize TX FIFO at new data rate
     tx_fifo_init(gcr_addr);
     put_ptr_field(gcr_addr, tx_bank_controls_d2_en_b_alias, l_rate_one_hot > 2 ? 0b0 : 0b1,
                   read_modify_write); // update based on speed
 
-    // 12.) Enable idle_loz and idle_mode hardware
+    // 10.) Enable idle_loz and idle_mode hardware
     put_ptr_field(gcr_addr, tx_idle_ovr_alias, 0b0000, read_modify_write);
     io_sleep(get_gcr_addr_thread(gcr_addr)); //   wait to allow CDRs to settle
 
-    // 13.) Load TX DCC Results for requested gen rate
+    // 11.) Load TX DCC Results for requested gen rate
     restore_tx_dcc_tune_values(gcr_addr, l_rate);
 
-    io_sleep(get_gcr_addr_thread(gcr_addr)); // required to resolve ppe thread timeout
-
-    // 14.) Restore RX Latch Offsets, reset DFE, and preset Peak/LTE for the requested gen rate  (function sets and restores reg_id as needed)
+    // 12.) Restore RX Latch Offsets, reset DFE, and preset Peak/LTE for the requested gen rate  (function sets and restores reg_id as needed)
     pipe_preset_rx(gcr_addr, l_rate);
 
-    // 15.) If Gen1 or Gen 2 Check that txdeemph_updated is set, if not set FIR.
+    // 13.) If Gen1 or Gen 2 Check that txdeemph_updated is set, if not set FIR.
     //      If set then check precursor for value of 0 (P0), 1 (P1), otherwise no EQ (P4).
     //      Update txdeemph as per presets.
     uint32_t l_pipe_state_txdeemph_updated;
@@ -986,20 +1014,24 @@ void pipe_cmd_rate_updated(t_gcr_addr* gcr_addr)
         if ((l_pipe_state_txdeemph_updated != 1) & (l_pipe_state_resetn_active ==
                 0))   // Dont set FIR if pipe_reset cleared txdeemph_updated
         {
+            // PSL set_fir_fatal_error
             set_fir(fir_code_fatal_error);
         }
 
         l_pipe_preset_pre = pipe_get(gcr_addr, pipe_phy_reg_tx_control_2_reg_sel, pipe_phy_reg_tx_control_2_addr);
 
+        // PSL preset_0
         if (l_pipe_preset_pre == 0)   // Preset 0
         {
             l_pipe_preset_pre  = get_ptr_field(gcr_addr, pipe_preset0_pre);
             l_pipe_preset_post = get_ptr_field(gcr_addr, pipe_preset0_post);
+            // PSL preset_1
         }
         else if (l_pipe_preset_pre == 1)     // Preset 1
         {
             l_pipe_preset_pre  = get_ptr_field(gcr_addr, pipe_preset1_pre);
             l_pipe_preset_post = get_ptr_field(gcr_addr, pipe_preset1_post);
+            // PSL preset_4
         }
         else     // Preset 4 : No preemphasis and no deemphasis
         {
@@ -1008,6 +1040,8 @@ void pipe_cmd_rate_updated(t_gcr_addr* gcr_addr)
         }
 
         l_pipe_preset_main = 32 - l_pipe_preset_pre - l_pipe_preset_post;
+        // Enable TX Segment Calculation Update
+        put_ptr_field(gcr_addr, tx_pcie_eq_calc_enable, 0b1, read_modify_write);
         // Write txdeemph PHY registers
         pipe_put(gcr_addr, pipe_phy_reg_tx_control_2_reg_sel, pipe_phy_reg_tx_control_2_addr, pipe_reg_cmd_wr_u,
                  l_pipe_preset_pre);
@@ -1017,7 +1051,7 @@ void pipe_cmd_rate_updated(t_gcr_addr* gcr_addr)
                  l_pipe_preset_post);
     }
 
-    // 16.) Clear pending pipe requests for service prior to pulsing phystatus except resetn active and reset inactive
+    // 14.) Clear pending pipe requests for service prior to pulsing phystatus except resetn active and reset inactive
     uint32_t l_register_data = pipe_state_rxstandby_active_clear_mask |
                                pipe_state_pclkchangeack_clear_mask |
                                pipe_state_rate_updated_clear_mask |
@@ -1032,24 +1066,28 @@ void pipe_cmd_rate_updated(t_gcr_addr* gcr_addr)
                                pipe_state_txdeemph_updated_clear_mask;
     put_ptr_field(gcr_addr, pipe_state_0_15_clear_alias, l_register_data, fast_write);
 
-    // 17.) RMW pipe_state_cntl1_pl pipe_state_phystatus_pulse to 1 and pipe_state_pclkchangeack_clr_apsp to 1 if pipe_resetn_active is low
+    // 15.) fast write pipe_state_cntl1_pl pipe_state_phystatus_pulse to 1 and pipe_state_pclkchangeack_clr_apsp to 1 if pipe_resetn_active is low
     l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);
     l_pipe_state_resetn_active = l_pipe_state & pipe_state_resetn_active_mask;
 
+    // PSL resetn_active
     if (!l_pipe_state_resetn_active)
     {
-        put_ptr_field(gcr_addr, pipe_state_cntl1_pl_full_reg, 0x0C00, read_modify_write);
+        put_ptr_field(gcr_addr, pipe_state_cntl1_pl_full_reg,
+                      (pipe_state_phystatus_pulse_mask | pipe_state_pclkchangeack_clr_apsp_mask), fast_write);
     }
 
-    // 18.) If rate is GEN3/4/5 then Poll on TXDEEMP_UPDATED to wait for MAC to update TX EQ Coeffs
+    // 16.) If rate is GEN3/4/5 then Poll on TXDEEMP_UPDATED to wait for MAC to update TX EQ Coeffs
     //      Mac will write "real" txdeemph values so no need for preset lookup.
     //      Abort polling if pipe_resetn_active is high
+    // PSL rate_gt_1
     if (l_rate > 1)   // GEN 3 or GEN 4 or GEN5
     {
         l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);
         l_pipe_state_resetn_active = l_pipe_state & pipe_state_resetn_active_mask;
         uint32_t l_pipe_state_txdeemph_updated = l_pipe_state & pipe_state_txdeemph_updated_mask;
 
+        // PSL not_txdeemph_updated_and_not_resetn_active
         while (!l_pipe_state_txdeemph_updated & !l_pipe_state_resetn_active)
         {
             l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);
@@ -1058,8 +1096,8 @@ void pipe_cmd_rate_updated(t_gcr_addr* gcr_addr)
         }
     }
 
-    // 19.) RMW pipe_state_rxelecidle_en to 1
-    put_ptr_field(gcr_addr, pipe_state_rxelecidle_en, 0b1, read_modify_write);
+    // 17.) set pipe_state_rxelecidle_en to 1
+    put_ptr_field(gcr_addr, pipe_state_rxelecidle_en_set, 0b1, fast_write);
 
     return;
 } //pipe_cmd_rate_updated
@@ -1077,12 +1115,12 @@ void pipe_cmd_powerdown_updated(t_gcr_addr* gcr_addr)
     // PCIe powerdown=10 : P1  : Mid  latency powerdown state. No power savings taken on P11. Immediate phystatus pulsed
     // PCIe powerdown=11 : P2  : High latency powerdown state. Maximum power savings taken on P11. PSAVE lane then phystatus pulsed. Requires reset to exit for P11.
     //
-    put_ptr_field(gcr_addr, pipe_state_rxdatavalid, 0b0,
-                  read_modify_write);             // RWM PHY pipe_state_rxdatavalid bit to 0
-    put_ptr_field(gcr_addr, pipe_state_rxactive, 0b0,
-                  read_modify_write);                // RWM PHY pipe_state_rxactive bit to 0
-    put_ptr_field(gcr_addr, pipe_state_rxelecidle_en, 0b0,
-                  read_modify_write);           // RWM PHY pipe_state_rxelecidle_en bit to 0
+
+    // clear pipe_state_rxdatavalid, clear pipe_state_rxactive, clear pipe_state_rxelecidle_en
+    put_ptr_field(gcr_addr, pipe_state_cntl1_pl_full_reg, (pipe_state_rxdatavalid_clear_mask |
+                  pipe_state_rxactive_clear_mask |
+                  pipe_state_rxelecidle_en_clear_mask), fast_write);
+
     uint32_t l_register_data = pipe_state_rxstandby_active_clear_mask
                                |                  // Clear pending rxstandy requests for PPE service
                                pipe_state_pclkchangeack_clear_mask |                     // Clear pending pclkchangeack requests for PPE service
@@ -1098,31 +1136,36 @@ void pipe_cmd_powerdown_updated(t_gcr_addr* gcr_addr)
                                pipe_state_txdeemph_updated_clear_mask;                   // Clear pending txdeemph requests for PPE service
     uint32_t l_pipe_state_powerdown = get_ptr_field(gcr_addr, pipe_state_powerdown);     // Get pipe_state_powerdown value
 
+    // PSL powerdown_eq_0
     if (l_pipe_state_powerdown == 0)                                                     // Change to P0 power state
     {
         put_ptr_field(gcr_addr, pipe_state_0_15_clear_alias, l_register_data,
                       fast_write);  // Clear selected pending PIPE requests for PPE service
-        put_ptr_field(gcr_addr, pipe_state_rxelecidle_en, 0b1,
-                      read_modify_write);           // RWM PHY pipe_state_rxelecidle_en bit to 1
+        put_ptr_field(gcr_addr, pipe_state_rxelecidle_en_set, 0b1, fast_write);              // Set pipe_state_rxelecidle_en
+        // PSL powerdown_eq_1
     }
     else if (l_pipe_state_powerdown == 1)                                                // Change to P0s power state
     {
-        put_ptr_field(gcr_addr, pipe_state_rxactive, 0b0, read_modify_write);               // Set pipe_state_rxactive to 0
-        put_ptr_field(gcr_addr, pipe_state_rxdatavalid, 0b0, read_modify_write);            // Set rxdatavalid to 0
+        put_ptr_field(gcr_addr, pipe_state_cntl1_pl_full_reg,
+                      (pipe_state_rxactive_clear_mask | pipe_state_rxdatavalid_clear_mask),
+                      fast_write); // Clear pipe_state_rxactive, Clear pipe_state_rxdatavalid
         put_ptr_field(gcr_addr, pipe_state_0_15_clear_alias, l_register_data,
                       fast_write);  // Clear selected pending PIPE requests for PPE service
+        // PSL powerdown_eq_2
     }
     else if (l_pipe_state_powerdown == 2)                                                // Change to P1 power state
     {
-        put_ptr_field(gcr_addr, pipe_state_rxactive, 0b0, read_modify_write);               // Set pipe_state_rxactive to 0
-        put_ptr_field(gcr_addr, pipe_state_rxdatavalid, 0b0, read_modify_write);            // Set rxdatavalid to 0
+        put_ptr_field(gcr_addr, pipe_state_cntl1_pl_full_reg,
+                      (pipe_state_rxactive_clear_mask | pipe_state_rxdatavalid_clear_mask),
+                      fast_write); // Clear pipe_state_rxactive, Clear pipe_state_rxdatavalid
         put_ptr_field(gcr_addr, pipe_state_0_15_clear_alias, l_register_data,
                       fast_write);  // Clear selected pending PIPE requests for PPE service
     }
     else                                                                                 // Change to P2 power state
     {
-        put_ptr_field(gcr_addr, pipe_state_rxactive, 0b0, read_modify_write);               // Set pipe_state_rxactive to 0
-        put_ptr_field(gcr_addr, pipe_state_rxdatavalid, 0b0, read_modify_write);            // Set rxdatavalid to 0
+        put_ptr_field(gcr_addr, pipe_state_cntl1_pl_full_reg,
+                      (pipe_state_rxactive_clear_mask | pipe_state_rxdatavalid_clear_mask),
+                      fast_write); // Clear pipe_state_rxactive, Clear pipe_state_rxdatavalid
         io_lane_power_off_tx(gcr_addr);                                                     // Power off TX lane
         io_lane_power_off_rx(gcr_addr, both_banks);                                         // Power off RX lane
         set_gcr_addr_reg_id(gcr_addr,
@@ -1134,9 +1177,10 @@ void pipe_cmd_powerdown_updated(t_gcr_addr* gcr_addr)
     uint32_t l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);              // get pipe_state
     uint32_t l_pipe_state_resetn_active = l_pipe_state & pipe_state_resetn_active_mask;  // get pipe_resetn_active
 
+    // PSL resetn_active
     if (!l_pipe_state_resetn_active)                                                     // only pulse phystatus if pipe_resetn_active is low
     {
-        put_ptr_field(gcr_addr, pipe_state_phystatus_pulse, 0b1, read_modify_write);        // Pulse phystatus
+        put_ptr_field(gcr_addr, pipe_state_phystatus_pulse, 0b1, fast_write);               // Pulse phystatus
     }                                                                                    // end if
 
     return;                                                                              // return
@@ -1156,18 +1200,16 @@ void pipe_cmd_rxeqeval(t_gcr_addr* gcr_addr)
     pipe_preset_rx(gcr_addr, l_rate);
 
     // Run Training (run_initial_training sets and restores reg_id as needed)
-
     set_gcr_addr_reg_id(gcr_addr, tx_group);
-    put_ptr_field(gcr_addr, pipe_state_rxdatavalid, 0b0, read_modify_write);             // RWM Disable pipe_rxdatavalid
+    put_ptr_field(gcr_addr, pipe_state_rxdatavalid_clear, 0b1, fast_write);              // Disable pipe_rxdatavalid
     set_gcr_addr_reg_id(gcr_addr, rx_group);
     put_ptr_field(gcr_addr, rx_dl_clk_en, 0b0, read_modify_write);                       // RMW Disable rx_dl_clk
 
-    io_sleep(get_gcr_addr_thread(gcr_addr));                                             // Sleep to fix thread timeout
     run_initial_training(gcr_addr, l_lane);                                              // Run Initial Training
 
     put_ptr_field(gcr_addr, rx_dl_clk_en, 0b1, read_modify_write);                       // RMW Enable rx_dl_clk
     set_gcr_addr_reg_id(gcr_addr, tx_group);
-    put_ptr_field(gcr_addr, pipe_state_rxdatavalid, 0b1, read_modify_write);             // RWM Enable pipe_rxdatavalid
+    put_ptr_field(gcr_addr, pipe_state_rxdatavalid_set, 0b1, fast_write);                // Enable pipe_rxdatavalid
 
     // Calculate the FOM
     // TODO VBR210331 Are these the correct status fields to use?  Seem like the correct ones (unsure about DDC).
@@ -1181,6 +1223,7 @@ void pipe_cmd_rxeqeval(t_gcr_addr* gcr_addr)
     // Apply DFE H1 penalty
     int l_dfe_h1 = TwosCompToInt(mem_pl_field_get(rx_dfe_coef_h1, l_lane), rx_dfe_coef_h1_width);
 
+    // PSL h1_lt_0
     if (l_dfe_h1 < 0)
     {
         l_fom = l_fom - abs(l_dfe_h1);
@@ -1191,6 +1234,10 @@ void pipe_cmd_rxeqeval(t_gcr_addr* gcr_addr)
 
     // Save last FOM value for debug
     put_ptr_field(gcr_addr, pipe_state_last_fom, l_fom, fast_write);
+
+    // Need to ensure that at least 1.6us of valid rx data is returned to PCS/MAC prior to conducting P2M PMB FOM WRC
+    // Wait an additional 1 us to meet this timing requirement
+    io_wait_us(get_gcr_addr_thread(gcr_addr), 1);
 
     // Clear selected pending PIPE requests for PPE service (clear prior pipe request prior to PMB WRC to avoid erroniously clear back to back rxeqeval requests)
     put_ptr_field(gcr_addr, pipe_state_0_15_clear_alias, pipe_state_rxeqeval_clear_mask,
@@ -1213,14 +1260,16 @@ void pipe_cmd_txdetectrx(t_gcr_addr* gcr_addr)
     // Loopback occurs when txdetectrx is high and txelecidle is low. Lane can be in any rate.
     uint32_t l_pipe_state_status2_pl_full_reg = get_ptr_field(gcr_addr, pipe_state_status2_pl_full_reg);
     uint32_t l_txdetectrx_ok = (((pipe_state_rate_mask | pipe_state_powerdown_mask) & l_pipe_state_status2_pl_full_reg) ==
-                                0x0008);
+                                0x0400);
     uint32_t l_detectrx_val;
 
+    // PSL txdetectrx_ok
     if (l_txdetectrx_ok)   //  Check that powerdown is P1 and rate is 2.5Gbps else error
     {
         int l_lane = get_gcr_addr_lane(gcr_addr);
         uint32_t l_detectrx_ovr_en;
 
+        // PSL lane_lt_16
         if (l_lane < 16)
         {
             l_detectrx_ovr_en = (mem_pg_field_get(tx_detectrx_ovr_en_0_15) & (0b1 << (15 - l_lane))) >> (15 - l_lane);
@@ -1230,8 +1279,10 @@ void pipe_cmd_txdetectrx(t_gcr_addr* gcr_addr)
             l_detectrx_ovr_en = (mem_pg_field_get(tx_detectrx_ovr_en_16_23) & (0b1 << (23 - l_lane))) >> (23 - l_lane);
         }
 
+        // PSL detectrx_ovr_en
         if (l_detectrx_ovr_en == 1)
         {
+            // PSL detectrx_ovr_en_lane_lt_16
             if (l_lane < 16)
             {
                 l_detectrx_val = (mem_pg_field_get(tx_detectrx_ovr_val_0_15) & (0b1 << (15 - l_lane))) >> (15 - l_lane);
@@ -1245,11 +1296,13 @@ void pipe_cmd_txdetectrx(t_gcr_addr* gcr_addr)
         {
             put_ptr_field(gcr_addr, tx_detrx_start, 0b1, read_modify_write);
 
+            // PSL tx_detrx_done
             while(get_ptr_field(gcr_addr, tx_detrx_done) == 0)
             {
                 io_sleep(get_gcr_addr_thread(gcr_addr));
             }
 
+            // PSL tx_detrx_comp_eq_0
             if (get_ptr_field(gcr_addr, tx_detrx_p_comp) + get_ptr_field(gcr_addr, tx_detrx_n_comp) == 0)
             {
                 l_detectrx_val = 1;
@@ -1264,17 +1317,28 @@ void pipe_cmd_txdetectrx(t_gcr_addr* gcr_addr)
 
         io_wait_us(get_gcr_addr_thread(gcr_addr),
                    120); // Must wait 120 us to allow TX to restore EI prior to returning txdetectrx results
-        put_ptr_field(gcr_addr, pipe_state_txdetectrx_status, l_detectrx_val, read_modify_write);
 
-        // Only assert phystatus_pulse if pipe_resetn_active is set
+        if (l_detectrx_val)
+        {
+            put_ptr_field(gcr_addr, pipe_state_cntl1_pl_full_reg, pipe_state_txdetectrx_status_set_mask, fast_write);
+        }
+        else
+        {
+            put_ptr_field(gcr_addr, pipe_state_cntl1_pl_full_reg, pipe_state_txdetectrx_status_clear_mask, fast_write);
+        }
+
+        // Only assert phystatus_pulse if pipe_resetn_active is not set
+        // Clear txdetectrx_status after phystatus pulse
         uint32_t l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);
         uint32_t l_pipe_state_resetn_active = l_pipe_state & pipe_state_resetn_active_mask;
 
+        // PSL resetn_active
         if (!l_pipe_state_resetn_active)
         {
-            put_ptr_field(gcr_addr, pipe_state_phystatus_pulse, 0b1, read_modify_write);
+            put_ptr_field(gcr_addr, pipe_state_phystatus_pulse, 0b1, fast_write);
         }
 
+        put_ptr_field(gcr_addr, pipe_state_cntl1_pl_full_reg, pipe_state_txdetectrx_status_clear_mask, fast_write);
         put_ptr_field(gcr_addr, pipe_state_txdetectrx_clear, 0b1, fast_write); // all bits in this reg are self clearing
     }
     else   // error set FIR if pipe_reset active is not pending
@@ -1285,6 +1349,7 @@ void pipe_cmd_txdetectrx(t_gcr_addr* gcr_addr)
 
         if (!l_pipe_state_resetn_active)
         {
+            // PSL set_fir_fatal_error
             set_fir(fir_code_fatal_error);
         }
     }
@@ -1313,6 +1378,7 @@ void pipe_cmd_rxelecidle_inactive(t_gcr_addr* gcr_addr)
     uint32_t l_pipe_state_rxactive = get_ptr_field(gcr_addr, pipe_state_rxactive);   // get pipe_state_rxactive
     uint32_t l_pipe_state_powerdown = get_ptr_field(gcr_addr, pipe_state_powerdown); // get pipe_state_powerdown
 
+    // PSL not_rxactive_and_powerdown_eq_0
     if ((!l_pipe_state_rxactive) && (l_pipe_state_powerdown == 0))                   // if rxactive=0 and powerdown=P0
     {
         // Switch Bank A to the cal bank at this time so it is in correct state for training
@@ -1342,11 +1408,12 @@ void pipe_cmd_rxelecidle_inactive(t_gcr_addr* gcr_addr)
         put_ptr_field(gcr_addr, rx_psave_req_alt_set, 0b1, fast_write);                 //  Power Alt bank (A bank) back down
         put_ptr_field(gcr_addr, rx_dl_clk_en, 0b1, read_modify_write);                  //  Enable RX DL Clock
         set_gcr_addr_reg_id(gcr_addr, tx_group);                                        //  select tx_group addressing
-        put_ptr_field(gcr_addr, pipe_state_rxactive, 0b1, read_modify_write);           //  set pipe_state_rxactive to 1
-        put_ptr_field(gcr_addr, pipe_state_rxdatavalid, 0b1, read_modify_write);        //  set pipe_state_rxdatavalid to 1
+        put_ptr_field(gcr_addr, pipe_state_cntl1_pl_full_reg, (pipe_state_rxactive_set_mask | pipe_state_rxdatavalid_set_mask),
+                      fast_write); //  set pipe_state_rxactive, set pipe_state_rxdatavalid
     }                                                                                // end if
 
     set_gcr_addr_reg_id(gcr_addr, tx_group);                                         // select tx_group addressing
+    put_ptr_field(gcr_addr, pipe_state_rxelecidle_en_clear, 0b1, fast_write);        // disable rxelecidle enable
     put_ptr_field(gcr_addr, pipe_state_rxelecidle_inactive_clear, 0b1, fast_write);  // clear pipe_state_rxelecidle_inactive
     return;                                                                          // return
 } //pipe_cmd_rxelecidle_inactive
@@ -1400,6 +1467,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
     //  Start RX Margining
     //////////////////////////////////
 
+    // PSL rxmargin_start
     if (l_pipe_state_rxmargin_start !=
         0)                                                                                                                   // if rx margining start
     {
@@ -1410,6 +1478,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
         uint32_t l_rate = get_ptr_field(gcr_addr,
                                         pipe_state_rate);                                                                                            //  get pcie rate : gen1=0, gen2=1, gen3=2, gen4=3, gen5=4
 
+        // PSL rate_eq_four
         if (l_rate ==
             4)                                                                                                                                       //  if rate is gen5 then
         {
@@ -1452,6 +1521,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
         uint32_t l_rx_margin_control_0 = pipe_get(gcr_addr, pipe_phy_reg_rx_margin_control_0_reg_sel,
                                          pipe_phy_reg_rx_margin_control_0_addr);                  //  read rx_margin_control0 PIPE PHY register
 
+        // PSL sample_count_reset
         if (l_pipe_state_rxmargin_sample_count_reset !=
             0)                                                                                                     //  if rx_margin_control0.sample_count_reset was set
         {
@@ -1461,6 +1531,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
                 gcr_addr);                                                                                                                 //   clear sample counter
         }                                                                                                                                                      //  end if
 
+        // PSL error_count_reset
         if (l_pipe_state_rxmargin_error_count_reset !=
             0)                                                                                                      //  if rx_margin_control0.error_count_reset was set
         {
@@ -1490,6 +1561,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
                                       rx_ad_latch_dac_w000_addr,
                                       l_rx_margin_offset_int);   //  check voltage offset to ensure it does not overflow any bank A data LOFF DAC
 
+        // PSL v_or_t_eq_0_and_voffset_ok
         if ((l_rx_margining_v_or_t == 0)
             && l_rx_margin_voffset_ok)                                                                                            //  if voltage margining and offset is within DAC range
         {
@@ -1511,8 +1583,8 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
                 gcr_addr);                                                                                        //   clear rx margin sample_count error_count and offset_updated
             l_pipe_state_rxmargin_start =
                 0;                                                                                                                     //   clear l_pipe_state_rxmargin_start , get ready for next command prior to WRC
-            put_ptr_field(gcr_addr, pipe_state_rxmargin_start, 0,
-                          read_modify_write);                                                                            //   clear pipe_state_rxmargin_start   , get ready for next command prior to WRC
+            put_ptr_field(gcr_addr, pipe_state_rxmargin_start_clear, 0b1,
+                          fast_write);                                                                           //   clear pipe_state_rxmargin_start   , get ready for next command prior to WRC
 //   put_ptr_field(gcr_addr, pipe_state_rxmargincontrol_clear, 0b1, fast_write);  // Dont clear rxmargincontrol to allow rx margining timeout polling     //   clear pipe_state_rxmargingcontrol , get ready for next command prior to WRC
             pipe_put_blk(gcr_addr, pipe_mac_reg_rx_margin_status_0_reg_sel, pipe_mac_reg_rx_margin_status_0_addr, pipe_reg_cmd_wr_c,
                          0x00000001);                //   WRC MAC RxMarginStatus0.MarginStatus to 1 (bit 0)
@@ -1520,6 +1592,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
                                 rx_group);                                                                                                             //   set gcr addr to rx group
             put_ptr_field(gcr_addr, rx_berpl_pcie_rx_margin_start, 0b1,
                           read_modify_write);                                                                      //   Start Margining
+            // PSL v_or_t_eq_1_and_minipr_check
         }
         else if ((l_rx_margining_v_or_t == 1)
                  && rxmargin_minipr_check(gcr_addr,
@@ -1537,8 +1610,8 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
                 gcr_addr);                                                                                        //   clear rx margin sample_count error_count and offset_updated
             l_pipe_state_rxmargin_start =
                 0;                                                                                                                     //   clear l_pipe_state_rxmargin_start , get ready for next command prior to WRC
-            put_ptr_field(gcr_addr, pipe_state_rxmargin_start, 0,
-                          read_modify_write);                                                                            //   clear pipe_state_rxmargin_start   , get ready for next command prior to WRC
+            put_ptr_field(gcr_addr, pipe_state_rxmargin_start_clear, 0b1,
+                          fast_write);                                                                           //   clear pipe_state_rxmargin_start   , get ready for next command prior to WRC
 //   put_ptr_field(gcr_addr, pipe_state_rxmargincontrol_clear, 0b1, fast_write); // Dont clear rxmargincontrol to allow rx margining timeout polling      //   clear pipe_state_rxmargingcontrol , get ready for next command prior to WRC
             pipe_put_blk(gcr_addr, pipe_mac_reg_rx_margin_status_0_reg_sel, pipe_mac_reg_rx_margin_status_0_addr, pipe_reg_cmd_wr_c,
                          0x00000001);                //   WRC MAC RxMarginStatus0.MarginStatus to 1 (bit 0)
@@ -1559,8 +1632,8 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
                 gcr_addr);                                                                                        //   clear rx margin sample_count error_count and offset_updated
             l_pipe_state_rxmargin_start =
                 0;                                                                                                                     //   clear l_pipe_state_rxmargin_start , get ready for next command prior to WRC
-            put_ptr_field(gcr_addr, pipe_state_rxmargin_start, 0,
-                          read_modify_write);                                                                            //   clear pipe_state_rxmargin_start   , get ready for next command prior to WRC
+            put_ptr_field(gcr_addr, pipe_state_rxmargin_start_clear, 0b1,
+                          fast_write);                                                                           //   clear pipe_state_rxmargin_start   , get ready for next command prior to WRC
             put_ptr_field(gcr_addr, pipe_state_rxmargincontrol_clear, 0b1,
                           fast_write);                                                                          //   clear pipe_state_rxmargingcontrol , get ready for next command prior to WRC
             set_gcr_addr_reg_id(gcr_addr,
@@ -1578,6 +1651,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
     // Stop RX Margining
     //////////////////////////////////
 
+    // PSL rxmargin_stop
     if (l_pipe_state_rxmargin_stop !=
         0)                                                                                                                    // if rx margining stop
     {
@@ -1588,6 +1662,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
         uint32_t l_rx_berpl_pcie_sample = get_ptr_field(gcr_addr,
                                           rx_berpl_pcie_sample);                                                                       //  Read raw sample count
 
+        // PSL pcie_sample_eq_0
         if (l_rx_berpl_pcie_sample ==
             0)                                                                                                                       //  Check to see if sample count is zero
         {
@@ -1600,6 +1675,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
         int l_rx_margin_voltage_offset_int = mem_pl_field_get(rx_margin_voltage_offset,
                                              l_lane);                                                               //  get voltage margin offset
 
+        // PSL pcie_voltage_offset
         if (l_rx_margin_voltage_offset_int !=
             0)                                                                                                               //  if voltage margin is not zero then remove voltage marginging from DACs
         {
@@ -1641,8 +1717,8 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
             gcr_addr);                                                                                          //  clear rx margin sample_count error_count and offset_updated
         l_pipe_state_rxmargin_stop =
             0;                                                                                                                        //  clear l_pipe_state_rxmargin_stop  , get ready for next command prior to WRC
-        put_ptr_field(gcr_addr, pipe_state_rxmargin_stop, 0,
-                      read_modify_write);                                                                               //  clear pipe_state_rxmargin_stop    , get ready for next command prior to WRC
+        put_ptr_field(gcr_addr, pipe_state_rxmargin_stop_clear, 0b1,
+                      fast_write);                                                                              //  clear pipe_state_rxmargin_stop    , get ready for next command prior to WRC
         put_ptr_field(gcr_addr, pipe_state_rxmargincontrol_clear, 0b1,
                       fast_write);                                                                            //  clear pipe_state_rxmargingcontrol , get ready for next command prior to WRC
         int l_orig_lane = get_gcr_addr_lane(
@@ -1652,6 +1728,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
         uint32_t l_rx_berpl_count_en_any = get_ptr_field(gcr_addr,
                                            rx_berpl_count_en);                                                                         //  get OR of rx_berpl_count_en for all lanes in group
 
+        // PSL rx_berpl_count_en_any
         if (l_rx_berpl_count_en_any ==
             0)                                                                                                                      //  if any lane had rx_berpl_count_en set then
         {
@@ -1675,6 +1752,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
     // RX Margining Offset Updated
     //////////////////////////////////
 
+    // PSL rxmargin_offset_updated
     if (l_pipe_state_rxmargin_offset_updated !=
         0)                                                                                                          // if rx margin offset updated
     {
@@ -1685,6 +1763,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
         put_ptr_field(gcr_addr, rx_berpl_pcie_rx_margin_start, 0b0,
                       read_modify_write);                                                                        //  stop sample and error counters
 
+        // PSL offset_updated_sample_count_reset
         if (l_pipe_state_rxmargin_sample_count_reset !=
             0)                                                                                                     //  if rx margin sample count reset is also requested
         {
@@ -1692,6 +1771,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
                           fast_write);                                                                                 //   Clear PHY sample count MSBs
         }                                                                                                                                                      //  end if
 
+        // PSL offset_updated_error_count_reset
         if (l_pipe_state_rxmargin_error_count_reset !=
             0)                                                                                                      //  if rx margin error count reset is also requested
         {
@@ -1702,6 +1782,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
         uint32_t l_rx_berpl_pcie_sample = get_ptr_field(gcr_addr,
                                           rx_berpl_pcie_sample);                                                                       //  Read raw sample count
 
+        // PSL offset_updated_set_sample
         if ((l_rx_berpl_pcie_sample = 0) & (l_pipe_state_rxmargin_sample_count_reset =
                                                 0))                                                                     //  Check to see if sample count is zero and sample was not reset
         {
@@ -1734,6 +1815,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
         set_gcr_addr_reg_id(gcr_addr,
                             rx_group);                                                                                                               //  set gcr addr to rx group
 
+        // PSL offset_updated_v_or_t
         if (l_rx_margining_v_or_t ==
             0)                                                                                                                        //  if voltage margining first remove any prior voltage offset
         {
@@ -1757,6 +1839,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
                                           rx_ad_latch_dac_w000_addr,
                                           l_rx_margin_offset_int);  //   check voltage offset to ensure it does not overflow any bank A data LOFF DAC
 
+            // PSL offset_updated_ok
             if (l_rx_margin_voffset_ok)                                                                                                                           //   if voltage margin offset is within DAC range
             {
                 mem_pl_field_put(rx_margin_voltage_offset, l_lane,
@@ -1822,6 +1905,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
             wait_for_cdr_lock(gcr_addr,
                               set_fir_on_error);                                                                                                        //   wait for cdr lock
 
+            // PSL minipr_check
             if (rxmargin_minipr_check(gcr_addr,
                                       l_rx_margin_offset_int))                                                                                          //   if timing offset is within mini PR range, then apply timing offset and WRC
             {
@@ -1856,6 +1940,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
                 int l_rx_margin_voltage_offset = mem_pl_field_get(rx_margin_voltage_offset,
                                                  l_lane);                                                                 //    get voltage margin offset
 
+                // PSL voltage_offset_ne_0
                 if (l_rx_margin_voltage_offset !=
                     0)                                                                                                                 //    if voltage margin is not zero then remove voltage marginging from DACs
                 {
@@ -1897,6 +1982,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
     // Reset RX Margining Sample Count Only
     ///////////////////////////////////
 
+    // PSL sample_reset
     if ((l_pipe_state_rxmargin_sample_count_reset != 0) && (l_pipe_state_rxmargin_error_count_reset == 0)
         && (l_pipe_state_rxmargin_offset_updated ==
             0))   // if sample count reset is active and error count reset is inactive and offset_updated is inactive
@@ -1911,8 +1997,8 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
             gcr_addr);                                                                                                                  //  clear sample count
         l_pipe_state_rxmargin_sample_count_reset  =
             0;                                                                                                         //  clear l_pipe_state_rxmargin_sample_count_reset
-        put_ptr_field(gcr_addr, pipe_state_rxmargin_sample_count_reset, 0,
-                      read_modify_write);                                                                 //  clear rxmargin_sample_count_reset
+        put_ptr_field(gcr_addr, pipe_state_rxmargin_sample_count_reset_clear, 0b1,
+                      fast_write);                                                                //  clear rxmargin_sample_count_reset
         pipe_put_blk(gcr_addr, pipe_mac_reg_rx_margin_status_2_reg_sel, pipe_mac_reg_rx_margin_status_2_addr, pipe_reg_cmd_wr_c,
                      l_rx_berpl_pcie_error);       //  WRC MAC RxMarginStatus2.ErrorCount with error
     }                                                                                                                                                       // end if
@@ -1921,6 +2007,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
     // Reset RX Margining Error Count Only
     ///////////////////////////////////
 
+    // PSL error_reset
     if ((l_pipe_state_rxmargin_sample_count_reset == 0) && (l_pipe_state_rxmargin_error_count_reset != 0)
         && (l_pipe_state_rxmargin_offset_updated ==
             0))   // if sample count reset is inactive and error count reset is active and offset_updated is inactive
@@ -1937,8 +2024,8 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
                                      l_rx_berpl_pcie_sample);                                                                                        //  update sample count
         l_pipe_state_rxmargin_error_count_reset =
             0;                                                                                                           //  clear l_pipe_state_rxmargin_error_count_reset
-        put_ptr_field(gcr_addr, pipe_state_rxmargin_error_count_reset, 0,
-                      read_modify_write);                                                                  //  clear rxmargin_error_count_reset
+        put_ptr_field(gcr_addr, pipe_state_rxmargin_error_count_reset_clear, 0b1,
+                      fast_write);                                                                 //  clear rxmargin_error_count_reset
         pipe_put_blk(gcr_addr, pipe_mac_reg_rx_margin_status_2_reg_sel, pipe_mac_reg_rx_margin_status_2_addr, pipe_reg_cmd_wr_c,
                      0);                           //  WRC MAC RxMarginStatus2.ErrorCount with zero
     }                                                                                                                                                       // end if
@@ -1947,6 +2034,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
     // Reset RX Margining Sample and Error Counts
     ///////////////////////////////////
 
+    // PSL sample_and_error_reset
     if ((l_pipe_state_rxmargin_sample_count_reset != 0) && (l_pipe_state_rxmargin_error_count_reset != 0)
         && (l_pipe_state_rxmargin_offset_updated ==
             0))   // if sample count reset is active and error count reset is active and offset_updated is inactive
@@ -1961,10 +2049,9 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
             0;                                                                                                          //  clear l_pipe_state_rxmargin_sample_count_reset
         l_pipe_state_rxmargin_error_count_reset =
             0;                                                                                                           //  clear l_pipe_state_rxmargin_error_count_reset
-        put_ptr_field(gcr_addr, pipe_state_rxmargin_sample_count_reset, 0,
-                      read_modify_write);                                                                 //  clear rxmargin_sample_count_reset
-        put_ptr_field(gcr_addr, pipe_state_rxmargin_error_count_reset, 0,
-                      read_modify_write);                                                                  //  clear rxmargin_error_count_reset
+        put_ptr_field(gcr_addr, pipe_state_cntl4_pl_0_15_alias,
+                      (pipe_state_rxmargin_sample_count_reset_clear_mask | pipe_state_rxmargin_error_count_reset_clear_mask),
+                      fast_write); //  clear rxmargin_sample_count_reset, clear rxmargin_error_count_reset
         pipe_put_blk(gcr_addr, pipe_mac_reg_rx_margin_status_2_reg_sel, pipe_mac_reg_rx_margin_status_2_addr, pipe_reg_cmd_wr_c,
                      0);                           //  WRC MAC RxMarginStatus2.ErrorCount with zero
     }                                                                                                                                                       // end if
@@ -1982,6 +2069,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
     uint32_t l_rx_berpl_pcie_samp_err_timeout = rx_berpl_pcie_samp_err_timeout_mask &
             l_rx_berpl_pcie_full_reg;                                             // get rx_berpl_pcie_samp_err_timeout
 
+    // PSL samp_err_timeout
     if (l_rx_berpl_pcie_samp_err_timeout !=
         0)                                                                                                              // if rx_berpl_pcie_samp_err_timeout is non zero then
     {
@@ -1990,6 +2078,7 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
         uint32_t l_rx_berpl_pcie_sample = get_ptr_field(gcr_addr,
                                           rx_berpl_pcie_sample);                                                                       //  Read raw sample count
 
+        // PSL samp_err_timeout_set_sample
         if (l_rx_berpl_pcie_sample ==
             0)                                                                                                                       //  Check to see if sample count is zero
         {

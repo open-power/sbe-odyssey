@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
 // vbr22061500 |vbr     | Added returning of fail status
 // vbr21101200 |vbr     | Added saving of data latch dac values in pcie mode
 // vbr21092200 |vbr     | Use write only pulse for live edge mode bit
@@ -165,6 +166,7 @@ int eo_loff_fenced(t_gcr_addr* gcr_addr, t_bank bank)
     put_ptr_field(gcr_addr, rx_loff_livedge_mode_clr, 0b1, fast_write);
 
     //setting fence for latch offset(data and edge done by same commmand) and alt and main
+    // PSL bank_a
     if (bank == bank_a )
     {
         //bank A is alt B is main
@@ -198,6 +200,7 @@ int eo_loff_fenced(t_gcr_addr* gcr_addr, t_bank bank)
     // In PCIe mode, save the data latch dac values
     int pcie_mode = fw_field_get(fw_pcie_mode);
 
+    // PSL pcie_mode
     if (pcie_mode)
     {
         set_debug_state(0x4003); // DEBUG - Save Data Latch DAC values
@@ -220,6 +223,7 @@ int eo_loff_fenced(t_gcr_addr* gcr_addr, t_bank bank)
         int check_latchoff_min =  TwosCompToInt(mem_pg_field_get(rx_latchoff_min_check), rx_latchoff_min_check_width); //ppe pg
         int check_latchoff_max =  TwosCompToInt(mem_pg_field_get(rx_latchoff_max_check), rx_latchoff_max_check_width); //ppe pg
 
+        // PSL check_en_bank_a
         if (bank == bank_a) //begin
         {
             l_dac_addr_e =  rx_ae_latch_dac_n_addr;

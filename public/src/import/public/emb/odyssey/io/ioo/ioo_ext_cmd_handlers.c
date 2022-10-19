@@ -39,6 +39,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
+// mwh22082900 |mwh     | Issue 286972 gate llbist so does not run during pcie
+// mwh22083000 |mwh     | Issue 286972 gating for llbist when in PCIE mode
 // vbr22061500 |vbr     | Add external command fail reporting
 // vbr22060200 |vbr     | Add lab commands to table
 // vbr21120300 |vbr     | Use functions for number of lanes
@@ -104,6 +107,7 @@ int cmd_tx_ffe_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const 
         }
 
         set_gcr_addr_lane(io_gcr_addr, l_lane);
+        // PSL tx_ffe
         tx_ffe(io_gcr_addr);
         io_sleep(get_gcr_addr_thread(io_gcr_addr));
     }
@@ -137,6 +141,7 @@ int cmd_tx_zcal_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const
         }
 
         set_gcr_addr_lane(io_gcr_addr, l_lane);
+        // PSL tx_zcal_tdr
         tx_zcal_tdr(io_gcr_addr);
         io_sleep(get_gcr_addr_thread(io_gcr_addr));
     }
@@ -186,6 +191,7 @@ int cmd_tx_bist_tests_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx,
         }
 
         set_gcr_addr_lane(io_gcr_addr, l_lane);
+        // PSL txbist_main
         status |= txbist_main(io_gcr_addr);
 
         if (l_tx_seg_test_en == 1)
@@ -236,20 +242,28 @@ int cmd_bist_final(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const
     set_debug_state(0xFD0E, EXT_CMD_DBG_LVL);
     int status = rc_no_error;
 
-    // TEST LINK LAYER
-    // TODO - CWS Should we run this on both banks?
-    if (get_ptr_field(io_gcr_addr, rx_link_layer_check_en))
+    // Run RX SIGDET BIST if enabled
+    int pcie_mode = fw_field_get(fw_pcie_mode);
+
+    if (!pcie_mode)  //only run for non pcie
     {
-        status |= eo_llbist(io_gcr_addr);
+        // TEST LINK LAYER
+        // TODO - CWS Should we run this on both banks?
+        if (get_ptr_field(io_gcr_addr, rx_link_layer_check_en))
+        {
+            status |= eo_llbist(io_gcr_addr);
+        }
     }
 
     // TEST PHASE ROTATOR (BER)
     if (get_ptr_field(io_gcr_addr, rx_pr_ber_check_en))
     {
         // Test Bank A
+        // PSL eo_rxbist_ber_bank_a
         status |= eo_rxbist_ber(io_gcr_addr, i_lane_mask_rx, bank_a);
 
         // Test Bank B
+        // PSL eo_rxbist_ber_bank_b
         status |= eo_rxbist_ber(io_gcr_addr, i_lane_mask_rx, bank_b);
     }
 

@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mbs22083000 |mbs     | PSL comment updates
 // vbr22061401 |vbr     | Issue 255514: Reduce fast/slow eol toggle from 12/24 hours to 100 ms
 // vbr22061400 |vbr     | Add disable for recal not run check
 // vbr21120300 |vbr     | Use functions for number of lanes
@@ -177,6 +178,7 @@ void supervisor_thread(void* arg)
         int stop_thread = fw_field_get(fw_stop_thread);
         fw_field_put(fw_thread_stopped, stop_thread);
 
+        // PSL stop_thread
         if (stop_thread)
         {
             set_debug_state(0xF0FF); // DEBUG - Thread Stopped
@@ -199,6 +201,7 @@ void supervisor_thread(void* arg)
                 set_debug_state(0xF0AA); // DEBUG - Timebase Error 0/1
                 uint16_t error_type = (prev_time == current_time) ? 0x00 : 0x01; // 0x00 = stuck, 0x01 = rollover
                 ADD_LOG(DEBUG_TIMEBASE_ERROR, error_type);
+                // PSL set_fir_fatal_error
                 set_fir(fir_code_fatal_error);
             }
             else
@@ -209,6 +212,7 @@ void supervisor_thread(void* arg)
                 {
                     set_debug_state(0xF0AB); // DEBUG - Timebase Error 2
                     ADD_LOG(DEBUG_TIMEBASE_ERROR, 0x02); // 0x02 = unexpected large change (random value?)
+                    // PSL set_fir_fatal_error
                     set_fir(fir_code_fatal_error);
                 }
             }
@@ -232,6 +236,7 @@ void supervisor_thread(void* arg)
                     // Skip this check if BIST is enabled on the thread
                     int bist_en = fw_regs_u16_base_get(fw_base_addr(fw_bist_en_addr, thread), fw_bist_en_mask, fw_bist_en_shift);
 
+                    // PSL bist_en
                     if (bist_en)
                     {
                         continue;
@@ -253,6 +258,7 @@ void supervisor_thread(void* arg)
                                 ppe_debug_state_shift));
 #endif
                         // Actually set the FIR and see if ppe_error was previously set
+                        // PSL set_fir_thread_locked
                         int ppe_error_already_set = set_fir(fir_code_thread_locked);
 
                         // Overwrite error info with the thread that had the error if a ppe_error was not previsouly set
@@ -343,6 +349,7 @@ void supervisor_thread(void* arg)
 
 #endif
                         // Set the FIR and see if ppe_error was previously set
+                        // PSL set_fir_recal_not_run
                         int ppe_error_already_set = set_fir(fir_code_recal_not_run);
 
                         // Overwrite error info with the thread that had the error if a ppe_error was not previsouly set
@@ -358,6 +365,7 @@ void supervisor_thread(void* arg)
             ////////////////////////////////
             // Toggle fast EOL register
             ////////////////////////////////
+            // PSL fast_eol_toggle
             if (current_time > fast_eol_toggle_time )
             {
                 set_debug_state(0xF00B); // DEBUG - toggle fast EOL register
@@ -379,6 +387,7 @@ void supervisor_thread(void* arg)
             ////////////////////////////////
             // Toggle slow EOL register
             ////////////////////////////////
+            // PSL slow_eol_toggle
             if (current_time > slow_eol_toggle_time )
             {
                 set_debug_state(0xF00C); // DEBUG - toggle slow EOL register

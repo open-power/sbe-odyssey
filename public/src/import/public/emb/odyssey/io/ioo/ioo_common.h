@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr22100401 |vbr     | Issue 291616: Functions to change pipe_abort sources for dccal/init vs recal
 // dmb22062100 |dmb     | HW282905 Changed PPE_INIT_CAL_TIME_US_BUDGET_AXO_1th to 433
 // mwh22060600 |mwh     | Changed PPE_INIT_CAL_TIME_US_BUDGET_AXO_1th to 410 add code
 // dmb22032900 |dmb     | Changed PPE_INIT_CAL_TIME_US_BUDGET_AXO_1th to 400 for PR1538
@@ -222,6 +223,16 @@ int wait_for_cdr_lock(t_gcr_addr* gcr_addr, bool set_fir_on_error);
 
 // Eyeopt abort check/handling. Call this a lot and does enough that inline is not the right option.
 int check_rx_abort(t_gcr_addr* gcr_addr);
+
+
+// Function for setting the PIPE Abort source depending on recal or dccal/init.
+typedef enum
+{
+    PIPE_ABORT_CFG_DCCAL   = 2,
+    PIPE_ABORT_CFG_INITCAL = 1,
+    PIPE_ABORT_CFG_RECAL   = 0
+} t_pipe_abort_cfg;
+void pipe_abort_config(t_gcr_addr* gcr_addr, t_pipe_abort_cfg pipe_abort_cfg);
 
 
 // Take ALT bank out of psave and wait for it to finish powering up

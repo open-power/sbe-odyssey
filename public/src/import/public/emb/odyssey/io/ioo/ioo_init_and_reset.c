@@ -39,6 +39,16 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// gap22101300 |gap     | If IOO and not 3to1, set to narrower track and hold pulse for subsequent TDR
+// vbr22101200 |vbr     | Updated CDR settings based on ssc and bus rate / PCIe gen
+// mbs22100400 |mbs     | Removed rx_16to1 bit
+// vbr22100300 |vbr     | Issue 237742: revert peak invalid lock thresh settings from Issue 280618
+// mbs22082601 |mbs     | Updated with PSL comments
+// vbr22083100 |vbr     | Issue 288864: set clkgen cmlmux irctrl based on rate
+// vbr22082900 |vbr     | Updated for new circuit (regs and fix for issue 286507)
+// vbr22081800 |vbr     | Issue 286969: iref_vset_dac is different reg for Odyssey vs P/Z
+// jjb22081200 |jjb     | Issue 287068: fixed tx_eol_mode_disable masking in clock_change_tx function
+// mbs22080200 |mbs     | Issue 286507: Setting rx_clkgen_en_abank_outbuf to work around circuit bug - remove when bug is fixed
 // gap22062200 |gap     | Add tx to PCIe rate dependent analog controls EWM258016
 // vbr22061500 |vbr     | Add external command fail reporting
 // jjb22061500 |jjb     | Issue 282881: set tx_pcie_eq_calc_enable in write_tx_pl_overrides when in pcie mode
@@ -179,13 +189,22 @@
 #include "ioo_common.h"
 
 
+// CDR KP Settings
+#define c_phase_step_125     0x10
+#define c_phase_step_250     0x20
+#define c_phase_step_296875  0x26
+#define c_phase_step_375     0x30
+#define c_phase_step_500     0x40
+
+
 // Struct and Constants for data rate dependent settigs.
-// See this spreadsheet for the documented settings:  https://ibm.box.com/v/p10-speed-settings
+// See this spreadsheet for the documented settings:  https://ibm.ent.box.com/file/947833398988
 // The ordering, bit sizes, and fills of this struct are very important for proper execution and optimal code size.
 PK_STATIC_ASSERT(rx_freq_adjust_width == 9);
 PK_STATIC_ASSERT(rx_bist_atten_dc_sel_dc_width == 3);
 PK_STATIC_ASSERT(rx_bist_atten_ac_sel_dc_width == 3);
 PK_STATIC_ASSERT(rx_ctle_peak2_h_sel_width == 2);
+PK_STATIC_ASSERT(rx_pr_phase_step_width == 7);
 PK_STATIC_ASSERT(rx_bist_freq_adjust_dc_width == 2);
 PK_STATIC_ASSERT(tx_d2_ctrl_width == 2);
 PK_STATIC_ASSERT(tx_d2_div_ctrl_width == 2);
@@ -195,6 +214,7 @@ PK_STATIC_ASSERT(rx_dfe_selftimed_phase_adj_width == 2);
 PK_STATIC_ASSERT(rx_pcie_clkgen_div_ictrl_width == 2);
 PK_STATIC_ASSERT(rx_pcie_clkgen_div_rctrl_width == 2);
 PK_STATIC_ASSERT(rx_dpr_vbn_cal_width == 2);
+PK_STATIC_ASSERT(rx_clkgen_cmlmux_irctrl_5nm_width == 3);
 PK_STATIC_ASSERT(tx_bank_controls_d2_en_b_alias_width == 1);
 PK_STATIC_ASSERT(tx_pcie_cmux_ictrl_dc_width == 2);
 PK_STATIC_ASSERT(tx_pcie_cmux_rctrl_dc_width == 2);
@@ -231,6 +251,11 @@ typedef struct struct_data_rate_settings
     uint8_t  rx_pcie_clkgen_div_rctrl     : 2;
     uint8_t  tx_d2_en_dc                  : 1;
     uint16_t rx_freq_adjust               : 9;
+
+    // bytes 6-7
+    uint8_t  rx_clkgen_cmlmux_irctrl       : 3;
+    uint8_t  fill_data1                    : 6; // Fill space for alignment
+    uint8_t  rx_pr_phase_step              : 7;
 } __attribute__((packed, aligned(2))) t_data_rate_settings;
 
 // 2.5 Gbps
@@ -238,12 +263,14 @@ const t_data_rate_settings c_data_rate_settings_2g =
 {
     .rx_freq_adjust               = 0x0030,
     .rx_ctle_peak2_h_sel          = 0, // H2
+    .rx_pr_phase_step             = c_phase_step_296875,
     .rx_bist_freq_adjust_8xx      = 0,
     .rx_bist_freq_adjust_9xx      = 0,
     .rx_bist_atten_dc_sel_dc      = 0,
     .rx_bist_atten_ac_sel_dc      = 0,
     .rx_pcie_clkgen_div_ictrl     = 0,
     .rx_pcie_clkgen_div_rctrl     = 0,
+    .rx_clkgen_cmlmux_irctrl      = 0,
     .rx_clk_phase_select          = 3,
     .rx_dl_clk_phase_select       = 0,
     .rx_dfe_selftimed_phase_adj   = 0,
@@ -262,12 +289,14 @@ const t_data_rate_settings c_data_rate_settings_5g =
 {
     .rx_freq_adjust               = 0x0072,
     .rx_ctle_peak2_h_sel          = 0, // H2
+    .rx_pr_phase_step             = c_phase_step_500,
     .rx_bist_freq_adjust_8xx      = 0,
     .rx_bist_freq_adjust_9xx      = 0,
     .rx_bist_atten_dc_sel_dc      = 0,
     .rx_bist_atten_ac_sel_dc      = 0,
     .rx_pcie_clkgen_div_ictrl     = 0,
     .rx_pcie_clkgen_div_rctrl     = 0,
+    .rx_clkgen_cmlmux_irctrl      = 0,
     .rx_clk_phase_select          = 3,
     .rx_dl_clk_phase_select       = 0,
     .rx_dfe_selftimed_phase_adj   = 0,
@@ -286,12 +315,14 @@ const t_data_rate_settings c_data_rate_settings_8g =
 {
     .rx_freq_adjust               = 0x00B4,
     .rx_ctle_peak2_h_sel          = 0, // H2
+    .rx_pr_phase_step             = c_phase_step_500,
     .rx_bist_freq_adjust_8xx      = 0,
     .rx_bist_freq_adjust_9xx      = 0,
     .rx_bist_atten_dc_sel_dc      = 0,
     .rx_bist_atten_ac_sel_dc      = 0,
     .rx_pcie_clkgen_div_ictrl     = 2,
     .rx_pcie_clkgen_div_rctrl     = 2,
+    .rx_clkgen_cmlmux_irctrl      = 1,
     .rx_clk_phase_select          = 3,
     .rx_dl_clk_phase_select       = 0,
     .rx_dfe_selftimed_phase_adj   = 0,
@@ -310,12 +341,14 @@ const t_data_rate_settings c_data_rate_settings_16g =
 {
     .rx_freq_adjust               = 0x00E7,
     .rx_ctle_peak2_h_sel          = 0, // H2
+    .rx_pr_phase_step             = c_phase_step_296875,
     .rx_bist_freq_adjust_8xx      = 0,
     .rx_bist_freq_adjust_9xx      = 0,
     .rx_bist_atten_dc_sel_dc      = 0,
     .rx_bist_atten_ac_sel_dc      = 0,
     .rx_pcie_clkgen_div_ictrl     = 2,
     .rx_pcie_clkgen_div_rctrl     = 2,
+    .rx_clkgen_cmlmux_irctrl      = 3,
     .rx_clk_phase_select          = 3,
     .rx_dl_clk_phase_select       = 0,
     .rx_dfe_selftimed_phase_adj   = 0,
@@ -334,12 +367,14 @@ const t_data_rate_settings c_data_rate_settings_21g =
 {
     .rx_freq_adjust               = 0x016A,
     .rx_ctle_peak2_h_sel          = 0, // H2
+    .rx_pr_phase_step             = c_phase_step_296875,
     .rx_bist_freq_adjust_8xx      = 2,
     .rx_bist_freq_adjust_9xx      = 0,
     .rx_bist_atten_dc_sel_dc      = 0,
     .rx_bist_atten_ac_sel_dc      = 0,
     .rx_pcie_clkgen_div_ictrl     = 0,
     .rx_pcie_clkgen_div_rctrl     = 0,
+    .rx_clkgen_cmlmux_irctrl      = 5,
     .rx_clk_phase_select          = 3,
     .rx_dl_clk_phase_select       = 0,
     .rx_dfe_selftimed_phase_adj   = 0,
@@ -358,12 +393,14 @@ const t_data_rate_settings c_data_rate_settings_25g =
 {
     .rx_freq_adjust               = 0x016A,
     .rx_ctle_peak2_h_sel          = 0, // H2
+    .rx_pr_phase_step             = c_phase_step_296875,
     .rx_bist_freq_adjust_8xx      = 3,
     .rx_bist_freq_adjust_9xx      = 1,
     .rx_bist_atten_dc_sel_dc      = 0,
     .rx_bist_atten_ac_sel_dc      = 0,
     .rx_pcie_clkgen_div_ictrl     = 0,
     .rx_pcie_clkgen_div_rctrl     = 0,
+    .rx_clkgen_cmlmux_irctrl      = 5,
     .rx_clk_phase_select          = 3,
     .rx_dl_clk_phase_select       = 0,
     .rx_dfe_selftimed_phase_adj   = 0,
@@ -382,12 +419,14 @@ const t_data_rate_settings c_data_rate_settings_32g =
 {
     .rx_freq_adjust               = 0x01AC,
     .rx_ctle_peak2_h_sel          = 1, // H3
+    .rx_pr_phase_step             = c_phase_step_296875,
     .rx_bist_freq_adjust_8xx      = 3,
     .rx_bist_freq_adjust_9xx      = 1,
     .rx_bist_atten_dc_sel_dc      = 0,
     .rx_bist_atten_ac_sel_dc      = 0,
     .rx_pcie_clkgen_div_ictrl     = 0,
     .rx_pcie_clkgen_div_rctrl     = 0,
+    .rx_clkgen_cmlmux_irctrl      = 6,
     .rx_clk_phase_select          = 3,
     .rx_dl_clk_phase_select       = 0,
     .rx_dfe_selftimed_phase_adj   = 0,
@@ -406,12 +445,14 @@ const t_data_rate_settings c_data_rate_settings_38g =
 {
     .rx_freq_adjust               = 0x01EE,
     .rx_ctle_peak2_h_sel          = 1, // H3
+    .rx_pr_phase_step             = c_phase_step_296875,
     .rx_bist_freq_adjust_8xx      = 3,
     .rx_bist_freq_adjust_9xx      = 1,
     .rx_bist_atten_dc_sel_dc      = 0,
     .rx_bist_atten_ac_sel_dc      = 0,
     .rx_pcie_clkgen_div_ictrl     = 0,
     .rx_pcie_clkgen_div_rctrl     = 0,
+    .rx_clkgen_cmlmux_irctrl      = 6,
     .rx_clk_phase_select          = 3,
     .rx_dl_clk_phase_select       = 0,
     .rx_dfe_selftimed_phase_adj   = 0,
@@ -447,14 +488,6 @@ static const t_data_rate_settings* get_data_rate_settings(int i_data_rate)
 } //get_data_rate_settings
 
 
-// CDR Settings: rx_pr_phase_step (KP) = 0.296875; rx_pr_fw_inertia_amt (KI) = 4
-//#define CDR_KP_RESET_VALUE 0b0100110
-//#define CDR_KI_RESET_VALUE 0b0100
-
-// CDR Lock Detector Settings: rx_pr_lock_ratio = 456
-//#define CDR_LOCK_RATIO_RESET_VALUE 456
-
-
 // Assumptions
 PK_STATIC_ASSERT(tx_bank_controls_width == 6);
 PK_STATIC_ASSERT(rx_a_bank_controls_width == 6);
@@ -472,7 +505,6 @@ PK_STATIC_ASSERT(rx_dac_cntl8_pl_full_reg_addr == rx_dl_clk_phase_select_addr);
 PK_STATIC_ASSERT(rx_dac_cntl8_pl_full_reg_addr == rx_dpr_vbn_cal_addr);
 PK_STATIC_ASSERT(rx_dac_cntl11_pl_full_reg_width == 16);
 PK_STATIC_ASSERT(rx_dac_cntl11_pl_full_reg_addr == rx_term_pd_addr);
-PK_STATIC_ASSERT(rx_dac_cntl11_pl_full_reg_addr == rx_clkgen_cmlmux_irctrl_addr);
 PK_STATIC_ASSERT(rx_dac_cntl11_pl_full_reg_addr == rx_freq_adjust_addr);
 PK_STATIC_ASSERT(rx_dac_cntl11_pl_full_reg_addr == rx_dfe_selftimed_phase_adj_addr);
 PK_STATIC_ASSERT(rx_dac_cntl11_pl_full_reg_addr == rx_pcie_clkgen_div_ictrl_addr);
@@ -494,6 +526,7 @@ int determine_data_rate(t_gcr_addr* io_gcr_addr, uint32_t ovr_rate_one_hot)
     int l_data_rate;
     int l_pcie_mode = fw_field_get(fw_pcie_mode);
 
+    // PSL pcie_mode
     if (l_pcie_mode == 1)   // Update ppe_data_rate to reflect PCIe pipe_state_rate
     {
         uint32_t l_pipe_state_rate = (ovr_rate_one_hot > 0) ? (31 - __builtin_clz(ovr_rate_one_hot)) : get_ptr_field(
@@ -565,18 +598,17 @@ void clock_change_tx(t_gcr_addr* gcr_addr,
     // Update TX analog clock generator and divider to support requested data rate                                                                         //  Manage TX Clocks
     set_gcr_addr_reg_id(gcr_addr,
                         tx_group);                                                                                                               //  Change addressing to TX group
+    // PSL d2_en_val
     uint32_t l_d2_en_val = (rate_one_hot < 4) ? 0b1 : 0b0;
     uint32_t l_tx_eol_mode_disable = get_ptr_field(gcr_addr,
                                      tx_eol_mode_disable);                                                                         //  Get tx_eol_mode_disable value
-    uint32_t l_tx_eol_mode_disable_updated = l_tx_eol_mode_disable |
-            tx_eol_mode_disable_mask;                                                             //  Set tx_eol_mode_disable to 1
     uint32_t l_tx_bank_controls = (get_ptr_field(gcr_addr,
                                    tx_bank_controls) & 0x37) | l_d2_en_val <<
                                   3;                                                       //  Get tx_bank_controls and set d2_en to proper value
     uint32_t l_tx_bank_controls_updated = l_tx_bank_controls |
                                           0x04;                                                                                       //  Set tx_fifo_pdwn to 1
-    put_ptr_field(gcr_addr, tx_eol_mode_disable, l_tx_eol_mode_disable_updated,
-                  read_modify_write);                                                        //  Update tx_eol_mode_disable
+    put_ptr_field(gcr_addr, tx_eol_mode_disable, 0b1,
+                  read_modify_write);                                                                                  //  Set tx_eol_mode_disable
     put_ptr_field(gcr_addr, tx_bank_controls, l_tx_bank_controls_updated,
                   read_modify_write);                                                              //  Update tx_bank_controls
     put_ptr_field(gcr_addr, tx_pcie_clk_sel, rate_one_hot,
@@ -594,6 +626,7 @@ void write_tx_pl_overrides(t_gcr_addr* gcr_addr)
     // AXO Mode, Fence off all PIPE signals to an inactive state
     int l_pcie_mode = fw_field_get(fw_pcie_mode);
 
+    // PSL pcie_mode
     if (l_pcie_mode == 0)
     {
         put_ptr_fast(gcr_addr, pipe_fence_cntl3_pl_addr,   15, 0x8000); // PIPE Fence Input Values
@@ -615,6 +648,17 @@ void write_tx_pl_overrides(t_gcr_addr* gcr_addr)
         (1 << (tx_psave_fifo_init_timer_double_mode_shift - tx_psave_fifo_init_timer_cfg_alias_shift));
     put_ptr_field(gcr_addr, tx_psave_fifo_init_timer_cfg_alias, l_psave_fifo_init_timer_cfg_val, read_modify_write); //pl
 
+    // if IOO and not 3to1, set to narrower track and hold pulse for subsequent TDR
+#ifdef IOO
+    bool l_is_3to1 = is_zm_abus() || is_zm_xbus();
+
+    if (!l_is_3to1)
+    {
+        put_ptr_field(gcr_addr, tx_tdr_th_pw_sel, 0b10, read_modify_write); // set to narrower pulse for TDR when not a 3to1 bus
+    }
+
+#endif
+
     update_tx_rate_dependent_analog_ctrl_pl_regs(gcr_addr, 0x0);
 } //write_tx_pl_overrides
 
@@ -624,15 +668,19 @@ void update_rx_rate_dependent_analog_ctrl_pl_regs(t_gcr_addr* gcr_addr)
     int l_vio_volt  = img_field_get(ppe_vio_volts);
     const t_data_rate_settings* l_data_rate_settings = determine_data_rate_and_get_settings(gcr_addr, 0x0);
 
-    // RX_FREQ_ADJUST / RX_DFE_SELFTIMED_PHASE_ADJ / RX PCIE_CLKGEN_DIV Controls
+    // CDR Phase Step (KP)
+    put_ptr_field(gcr_addr, rx_pr_phase_step, l_data_rate_settings->rx_pr_phase_step, read_modify_write); //pl
+
+    // RX_FREQ_ADJUST / RX_DFE_SELFTIMED_PHASE_ADJ / RX PCIE_CLKGEN_DIV / RX CLKGEN_CMLCMUX Controls
     //put_ptr_field(gcr_addr, rx_freq_adjust, l_data_rate_settings->rx_freq_adjust, read_modify_write); //pl
     //put_ptr_field(gcr_addr, rx_dfe_selftimed_phase_adj, l_data_rate_settings->rx_dfe_selftimed_phase_adj, read_modify_write); //pl
     //put_ptr_field(gcr_addr, rx_pcie_clkgen_div_ictrl, l_data_rate_settings->rx_pcie_clkgen_div_ictrl, read_modify_write); //pl
     put_ptr_field(gcr_addr, rx_pcie_clkgen_div_rctrl, l_data_rate_settings->rx_pcie_clkgen_div_rctrl,
                   read_modify_write); //pl
+    put_ptr_field(gcr_addr, rx_clkgen_cmlmux_irctrl_5nm, l_data_rate_settings->rx_clkgen_cmlmux_irctrl,
+                  read_modify_write); //pl
     int dac_cntl11_reg_val =
         (0  << rx_term_pd_shift) |
-        (0  << rx_clkgen_cmlmux_irctrl_shift) |
         (l_data_rate_settings->rx_freq_adjust              << rx_freq_adjust_shift) |
         (l_data_rate_settings->rx_dfe_selftimed_phase_adj  << rx_dfe_selftimed_phase_adj_shift) |
         (l_data_rate_settings->rx_pcie_clkgen_div_ictrl    << rx_pcie_clkgen_div_ictrl_shift);
@@ -641,6 +689,7 @@ void update_rx_rate_dependent_analog_ctrl_pl_regs(t_gcr_addr* gcr_addr)
     // RX BIST FREQUENCY ADJUST / RX BIST ATTENUATION Controls
     int bist_freq_adjust;
 
+    // PSL vio_volt_lt_2
     if (l_vio_volt < 2)   // 00 = 950mV, 01 = 900mV
     {
         bist_freq_adjust = l_data_rate_settings->rx_bist_freq_adjust_9xx;
@@ -686,11 +735,15 @@ void write_rx_pl_overrides(t_gcr_addr* gcr_addr)
     // Different settings when Spread Spectrum Clocking (SSC) is disabled
     int spread_en = fw_field_get(fw_spread_en);
 
+    // PSL spread_en
     if ( ! spread_en )
     {
         // HW532326: Set rx_pr_fw_range_sel=1 (by setting rx_pr_fw_inertia_amt_coarse=15) when when spread is disabled.
         // This reduces the max flywheel correction and increases the Bump UI step size.
         put_ptr_field(gcr_addr, rx_pr_fw_inertia_amt_coarse, 15, read_modify_write); //pl
+
+        // Lower fw_inertia (KI) when no spread
+        put_ptr_field(gcr_addr, rx_pr_fw_inertia_amt, 1, read_modify_write); //pl
     }
 
     // Psave returns after powering the bank (do not wait for CDR lock)
@@ -800,6 +853,7 @@ void sequence_rx_bank_controls(t_gcr_addr* gcr_addr, t_bank i_bank, t_power_dire
 
         for (i = 0; i < c_rx_sequence_size; i++)
         {
+            // PSL bank_a
             if (i_bank == bank_a)
             {
                 put_ptr_field(gcr_addr, rx_a_bank_controls, l_sequence[i], read_modify_write);
@@ -830,11 +884,21 @@ void io_hw_reg_init(t_gcr_addr* gcr_addr)
     /////////////////////////////////////////////////////////////////
     set_gcr_addr_reg_id(gcr_addr, tx_group);
 
-    put_ptr_field(gcr_addr, tx_iref_vset_dac, l_vio_volt, read_modify_write); //pg
+    bool l_is_odyssey = is_odyssey();
+
+    if (l_is_odyssey)
+    {
+        put_ptr_field(gcr_addr, tx_iref_vset_dac, l_vio_volt, read_modify_write); //pg
+    }
+    else
+    {
+        put_ptr_field(gcr_addr, tx_iref_vset_dac_mg, l_vio_volt, read_modify_write); //mg
+    }
 
     // Shadow fw_pcie_mode to pipe_phy_mode.
     int l_pcie_mode = fw_field_get(fw_pcie_mode);
 
+    // PSL pcie_mode
     if(l_pcie_mode)   // PCIe Mode
     {
         put_ptr_field(gcr_addr, pipe_config_pg_alias, pipe_phy_mode_mask,
@@ -863,27 +927,23 @@ void io_hw_reg_init(t_gcr_addr* gcr_addr)
     put_ptr_field(gcr_addr, rx_servo_reverse_latch_dac, 0b1, read_modify_write); //pg
 #endif
 
-    // Update Settings for SerDes 8:1 (RX Group)
-    int serdes_16_to_1_mode = fw_field_get(fw_serdes_16_to_1_mode);
-
-    if (!serdes_16_to_1_mode)   // 8:1 (to the DL only)
-    {
-        put_ptr_field(gcr_addr, rx_16to1,         0b0, read_modify_write); //pg
-    }
-
     // HW544450/HW532468: Select the Peak2 servo correlation bit based on the bus rate (AXO)
     put_ptr_field(gcr_addr, rx_ctle_peak2_h_sel, l_data_rate_settings->rx_ctle_peak2_h_sel, read_modify_write);
 
     // Allow invalid lock voting on peak2. Enable is set by default for peak1.
-    // TODO VBR220608: The thresh settings are a temp workaround for PCIe Gen3/4 until sim implements pre-sets.
-    int ctle_peak_invalid_lock_thresh_val = (14 << rx_ctle_peak1_invalid_lock_thresh_inc_shift) |
-                                            (15 << rx_ctle_peak1_invalid_lock_thresh_dec_shift) |
-                                            (14 << rx_ctle_peak2_invalid_lock_thresh_inc_shift) | (15 << rx_ctle_peak2_invalid_lock_thresh_dec_shift);
-    put_ptr_field(gcr_addr, rx_ctle_peak_invalid_lock_thresh_alias, ctle_peak_invalid_lock_thresh_val,
-                  fast_write); //pg, full register
     put_ptr_field(gcr_addr, rx_ctle_peak2_invalid_lock_en, 0b1, read_modify_write); //pg
+    //int ctle_peak_invalid_lock_thresh_val = (14 << rx_ctle_peak1_invalid_lock_thresh_inc_shift) | (15 << rx_ctle_peak1_invalid_lock_thresh_dec_shift) |
+    //                                        (14 << rx_ctle_peak2_invalid_lock_thresh_inc_shift) | (15 << rx_ctle_peak2_invalid_lock_thresh_dec_shift);
+    //put_ptr_field(gcr_addr, rx_ctle_peak_invalid_lock_thresh_alias, ctle_peak_invalid_lock_thresh_val, fast_write); //pg, full register
 
-    put_ptr_field(gcr_addr, rx_iref_vset_dac, l_vio_volt, read_modify_write); //pg
+    if (l_is_odyssey)
+    {
+        put_ptr_field(gcr_addr, rx_iref_vset_dac, l_vio_volt, read_modify_write); //pg
+    }
+    else
+    {
+        put_ptr_field(gcr_addr, rx_iref_vset_dac_mg, l_vio_volt, read_modify_write); //mg
+    }
 
     // HW544036: Flywheel snapshot does not work correctly for OpenCAPI / OMI.  Those applications happen to becommon oscillator
     // HW546921: Always set this bit to begin with.  After training when lane reversal data is read from the DL, this can be lowered.
@@ -945,6 +1005,7 @@ void io_hw_reg_init(t_gcr_addr* gcr_addr)
     /////////////////////////////////////////////////////////////////
     // BIST Override Registers
     // Do this LAST
+    // PSL bist_en
     if (fw_field_get(fw_bist_en))
     {
         eo_bist_init_ovride(gcr_addr);
@@ -1074,6 +1135,7 @@ void io_group_power_off_rx(t_gcr_addr* gcr_addr)
 // Decode banks_sel for use by RX power off/on functions
 void decode_banks_sel(t_gcr_addr* gcr_addr, t_power_banks_sel banks_sel, int* en_bank_a, int* en_bank_b)
 {
+    // PSL both_banks
     if (banks_sel == both_banks)
     {
         *en_bank_a = 1;
@@ -1101,6 +1163,7 @@ int io_lane_power_on_tx(t_gcr_addr* gcr_addr)
     int status = check_for_txpsave_req_sts(gcr_addr);
 
     // Sequence the bank_controls to the on state
+    // PSL sequence_tx_bank_controls
     sequence_tx_bank_controls(gcr_addr, power_on);
 
     // reset tx io domain - HW504112
@@ -1126,6 +1189,7 @@ int io_lane_power_on_rx(t_gcr_addr* gcr_addr, t_power_banks_sel banks_sel, bool 
     alt_bank_psave_clear_and_wait(gcr_addr);
 
     // Return if just powering up ALT (assume already went through this to power up main)
+    // PSL bank_alt_only
     if (banks_sel == alt_only)
     {
         return rc_no_error;
@@ -1143,7 +1207,9 @@ int io_lane_power_on_rx(t_gcr_addr* gcr_addr, t_power_banks_sel banks_sel, bool 
     int status = check_for_rxpsave_req_sts(gcr_addr);
 
     // Sequence the bank_controls to the on state for both banks
+    // PSL sequence_rx_bank_controls_bank_b
     sequence_rx_bank_controls(gcr_addr, bank_b, power_on);
+    // PSL sequence_rx_bank_controls_bank_a
     sequence_rx_bank_controls(gcr_addr, bank_a, power_on);
 
     put_ptr_field(gcr_addr, rx_hold_div_clks_ab_alias,  0b00,
@@ -1165,6 +1231,7 @@ int io_lane_power_on_rx(t_gcr_addr* gcr_addr, t_power_banks_sel banks_sel, bool 
         put_ptr_field(gcr_addr, rx_pr_phase_force_cmd_a_alias, phase_force_cmd, fast_write);
     }
 
+    // PSL enable_dl_clk
     if ( enable_dl_clk )
     {
         put_ptr_field(gcr_addr, rx_dl_clk_en,             0b1,
@@ -1181,6 +1248,7 @@ int io_lane_power_on_rx(t_gcr_addr* gcr_addr, t_power_banks_sel banks_sel, bool 
     put_ptr_field(gcr_addr, rx_pr_psave_val_ena_ab_alias        , 0b00    , read_modify_write);//pl
 
     // Turn off ALT bank if were meant to turn on main bank only
+    // PSL bank_main_only
     if (banks_sel == main_only)
     {
         put_ptr_field(gcr_addr, rx_psave_req_alt_set, 0b1, fast_write);
@@ -1200,6 +1268,7 @@ int io_lane_power_off_tx(t_gcr_addr* gcr_addr)
     int status = check_for_txpsave_req_sts(gcr_addr);
 
     // Sequence the bank_controls to the off state
+    // PSL sequence_tx_bank_controls
     sequence_tx_bank_controls(gcr_addr, power_off);
 
     set_gcr_addr_reg_id(gcr_addr, rx_group);
@@ -1212,6 +1281,7 @@ int io_lane_power_off_tx(t_gcr_addr* gcr_addr)
 int io_lane_power_off_rx(t_gcr_addr* gcr_addr, t_power_banks_sel banks_sel)
 {
     // Turn off alt bank and return if that is the request
+    // PSL bank_alt_only
     if (banks_sel == alt_only)
     {
         put_ptr_field(gcr_addr, rx_psave_req_alt_set, 0b1, fast_write);
@@ -1251,7 +1321,9 @@ int io_lane_power_off_rx(t_gcr_addr* gcr_addr, t_power_banks_sel banks_sel)
     io_sleep(get_gcr_addr_thread(gcr_addr));
 
     // Sequence the bank_controls to the off state
+    // PSL sequence_rx_bank_controls_bank_b
     sequence_rx_bank_controls(gcr_addr, bank_b, power_off);
+    // PSL sequence_rx_bank_controls_bank_a
     sequence_rx_bank_controls(gcr_addr, bank_a, power_off);
 
     io_sleep(get_gcr_addr_thread(gcr_addr));

@@ -42,6 +42,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
 // mwh21008160 |mwh     | initial -- replaced code that was in eoff.c and bring out for all 3 types
 //------------------------------------------------------------------------------
 
@@ -68,6 +69,7 @@ void eo_rxbist_epoff_final(t_gcr_addr* gcr_addr, t_bank bank)
     int rx_eoff_fail_int = 0;//pl
 
 
+    // PSL bank_a
     if (bank == bank_a )  //abank values
     {
         edge_after_n = LatchDacToInt(get_ptr(gcr_addr, rx_ae_latch_dac_n_addr, rx_ae_latch_dac_n_startbit,
@@ -118,6 +120,7 @@ void eo_rxbist_epoff_final(t_gcr_addr* gcr_addr, t_bank bank)
     if (rx_eoff_fail_int == 1) //being if
     {
         mem_pl_field_put(rx_eoff_fail, lane, rx_eoff_fail_int);
+        // PSL set_fir_bad_lane_warning_and_dft_error
         set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
         ADD_LOG(DEBUG_RX_EOFF_EOFF_FAIL, gcr_addr, 0x0);
     }//end if (this is pl)

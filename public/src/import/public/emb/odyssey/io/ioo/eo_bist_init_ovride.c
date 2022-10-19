@@ -41,6 +41,10 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
+// vbr22072100 |vbr     | Moved thread_active_time disable from mem_regs to img_regs
+// mwh22072100 |mwh     | Change 1 to 0b1 for active thread and bist in progress
+// mwh22071800 |mwh     | Add in rx_enable_auto_recal_0_15=0x0 disable auto-recal for bist
 // mwh22040800 |mwh     | add in tx_bist_txdetidle_en_alias idle bist and txdet bist and rx_sigdet_test_en
 // jjb21011200 |jjb     | replaced *bank_sync* with *sigdet*
 // mwh22011900 |mwh     |- removed logic related to tc_iobist_start_test_0 and iobist_mode_dc
@@ -97,10 +101,10 @@ void eo_bist_init_ovride(t_gcr_addr* gcr_addr)
     //start eo_rxbist_init_or_override.c
 
     //assume manu and system do a scan flush reset
-    mem_pg_field_put(bist_in_progress, 1);
+    mem_pg_field_put(bist_in_progress, 0b1);
 
     // Don't care about thread active times in BIST
-    mem_pg_field_put(ppe_disable_thread_active_time_check, 1);
+    img_field_put(ppe_disable_thread_active_time_check, 0b1);
 
     int lane = 0;//for the "for loop" used on pl registers
     int bist_num_lanes_rx = get_num_rx_lane_slices();//getting max number of lanes per theard
@@ -145,6 +149,10 @@ void eo_bist_init_ovride(t_gcr_addr* gcr_addr)
     // Set rx_dfe_full_mode=0 so that DFE Full runs on all quadrants in each recal for BIST
     mem_pg_field_put(rx_dfe_full_mode, 0b0);
 
+    //Disabling auto recal since using the recal command
+    mem_pg_field_put(rx_enable_auto_recal_0_15, 0x0000);
+
+
     for (lane = 0; lane <  bist_num_lanes_rx; lane++)
     {
         //begin for
@@ -180,6 +188,7 @@ void eo_bist_init_ovride(t_gcr_addr* gcr_addr)
     //while loop for syncclk mux -- must be set 0 -- system should fly through this
     int rx_syncclk_muxsel_dc_int = get_ptr_field(gcr_addr, rx_syncclk_muxsel_dc); //pg rox
 
+    // PSL syncclk_muxsel
     while (rx_syncclk_muxsel_dc_int == 1)
     {
         //begin while
@@ -202,6 +211,7 @@ void eo_bist_init_ovride(t_gcr_addr* gcr_addr)
     int tc_bist_code_go_int = 0;
     int l_run_bist = 0;
 
+    // PSL run_bist_loop
     do
     {
         io_sleep(get_gcr_addr_thread(gcr_addr));

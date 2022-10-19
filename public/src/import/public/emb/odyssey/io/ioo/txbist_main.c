@@ -39,6 +39,8 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// jjb22101100 |jjb     | TX HS BIST updated to run all 4 patterns
+// mbs22082601 |mbs     | Updated with PSL comments
 // jjb22070700 |jjb     | tx_pattern_enable must be set high prior to tx_pattern_sel for gear ratio sync to operate properly
 // gap22060100 |gap     | Add 1us wait between changing select and reading result EWM256180
 // vbr22061500 |vbr     | Added returning of fail status for ext commands
@@ -94,29 +96,34 @@ int txbist_main (t_gcr_addr* gcr_addr_i)
     int l_pcie_mode = fw_field_get(fw_pcie_mode);
     int l_rate = get_ptr_field(gcr_addr_i, pipe_state_rate);// Gen1=0...Gen5=4
 
+    // PSL txdetrx_and_pcie_and_rate0
     if ((l_tx_bist_txdetrx_en == 1) && (l_pcie_mode == 1) && (l_rate == 0))
     {
         status |= tx_txdetrx_bist(gcr_addr_i, tx_bist_enable_ls, tx_bist_enable_hs);
     }
 
+    // PSL txidlepulse_and_pcie_and_rate0
     if ((l_tx_bist_txidle_pulse_mask == 1) && (l_pcie_mode == 1) && (l_rate == 0))
     {
         status |= tx_txidle_bist(gcr_addr_i, tx_bist_enable_ls, tx_bist_enable_hs);
     }
 
 
+    // PSL enable_dcc
     if (tx_bist_enable_dcc)
     {
         status |= txbist_main_dcc(gcr_addr_i);
     }
 
     // Cal Step: TX BIST low speed
+    // PSL enable_ls
     if (tx_bist_enable_ls)
     {
         status |= txbist_main_ls(gcr_addr_i);
     }
 
     // Cal Step: TX BIST high speed
+    // PSL enable_hs
     if (tx_bist_enable_hs)
     {
         status |= txbist_main_hs(gcr_addr_i);
@@ -150,6 +157,7 @@ int txbist_main_dcc(t_gcr_addr* gcr_addr_i)
     int32_t dcc_iq_tune_l = GrayToIntOffset(get_ptr_field(gcr_addr_i, tx_dcc_iq_tune), tx_dcc_iq_tune_width_const,
                                             tx_dcc_iq_tune_offset_const)   ;
 
+    // PSL itune_lt_imin
     if(dcc_i_tune_l < bist_dcc_i_min_l)
     {
         txbist_main_set_bist_fail(gcr_addr_i);
@@ -160,6 +168,7 @@ int txbist_main_dcc(t_gcr_addr* gcr_addr_i)
         status = error_code;
     }
 
+    // PSL itune_gt_imax
     if(dcc_i_tune_l > bist_dcc_i_max_l)
     {
         txbist_main_set_bist_fail(gcr_addr_i);
@@ -170,6 +179,7 @@ int txbist_main_dcc(t_gcr_addr* gcr_addr_i)
         status = error_code;
     }
 
+    // PSL qtune_lt_imin
     if(dcc_q_tune_l < bist_dcc_q_min_l)
     {
         txbist_main_set_bist_fail(gcr_addr_i);
@@ -180,6 +190,7 @@ int txbist_main_dcc(t_gcr_addr* gcr_addr_i)
         status = error_code;
     }
 
+    // PSL qtune_gt_imax
     if(dcc_q_tune_l > bist_dcc_q_max_l)
     {
         txbist_main_set_bist_fail(gcr_addr_i);
@@ -190,6 +201,7 @@ int txbist_main_dcc(t_gcr_addr* gcr_addr_i)
         status = error_code;
     }
 
+    // PSL iqtune_lt_iqmin
     if(dcc_iq_tune_l < bist_dcc_iq_min_l)
     {
         txbist_main_set_bist_fail(gcr_addr_i);
@@ -200,6 +212,7 @@ int txbist_main_dcc(t_gcr_addr* gcr_addr_i)
         status = error_code;
     }
 
+    // PSL iqtune_gt_iqmax
     if(dcc_iq_tune_l > bist_dcc_iq_max_l)
     {
         txbist_main_set_bist_fail(gcr_addr_i);
@@ -228,11 +241,13 @@ int txbist_main_ls(t_gcr_addr* gcr_addr_i)
     put_ptr_field(gcr_addr_i, tx_bist_prbs_clear,  0b1,    read_modify_write);
     put_ptr_field(gcr_addr_i, tx_bist_prbs_clear,  0b0,    read_modify_write);
 
+    // PSL prbs_stat
     if(get_ptr_field(gcr_addr_i, tx_bist_prbs_stat_alias) != 1)
     {
         set_debug_state(0x0131); // txbist_main_ls fail
         txbist_main_set_bist_fail(gcr_addr_i);
         put_ptr_field(gcr_addr_i, tx_bist_ls_fail, 0b1, read_modify_write);
+        // PSL set_fir_bad_lane_warning_and_dft_error
         set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
         ADD_LOG(DEBUG_BIST_TX_LS_FAIL, gcr_addr_i, 0x0);
         status = error_code;
@@ -261,6 +276,8 @@ int txbist_main_hs(t_gcr_addr* gcr_addr_i)
 
     status |= txbist_main_hs_pat(gcr_addr_i, 0b0011);
     status |= txbist_main_hs_pat(gcr_addr_i, 0b1100);
+    status |= txbist_main_hs_pat(gcr_addr_i, 0b0110);
+    status |= txbist_main_hs_pat(gcr_addr_i, 0b1001);
     // two failing cases for testing
 //   txbist_main_hs_pat(gcr_addr_i, 0b1110);
 //   txbist_main_hs_pat(gcr_addr_i, 0b0001);
@@ -309,6 +326,7 @@ int txbist_main_hs_pat_sel(t_gcr_addr* gcr_addr_i, uint8_t clk_pattern_i, uint8_
 
     put_ptr_field(gcr_addr_i, tx_tdr_dac_cntl,    dac_thresh_max_l,  read_modify_write);
 
+    // PSL tdr_capt_ne_0
     if(get_ptr_field(gcr_addr_i, tx_tdr_capt_val) != 0)
     {
         txbist_main_set_bist_fail(gcr_addr_i);
@@ -321,6 +339,7 @@ int txbist_main_hs_pat_sel(t_gcr_addr* gcr_addr_i, uint8_t clk_pattern_i, uint8_
 
     put_ptr_field(gcr_addr_i, tx_tdr_dac_cntl,    dac_thresh_min_l,  read_modify_write);
 
+    // PSL tdr_capt_ne_1
     if(get_ptr_field(gcr_addr_i, tx_tdr_capt_val) != 1)
     {
         txbist_main_set_bist_fail(gcr_addr_i);
@@ -339,6 +358,7 @@ void txbist_main_set_bist_fail(t_gcr_addr* gcr_addr_i)
     uint32_t new_lane_bad;
     uint8_t lane = get_gcr_addr_lane(gcr_addr_i);
 
+    // PSL lane_lt_16
     if (lane < 16)
     {
         new_lane_bad = mem_pg_field_get(tx_bist_fail_0_15) | (0b1 << (15 - lane));

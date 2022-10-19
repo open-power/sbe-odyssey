@@ -40,6 +40,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
 // vbr21092200 |vbr     | Use shared functions for setting servo status error enable.
 // vbr21011901 |vbr     | Removed or changed to level 3 debug states that do not seem to be useful
 // vbr21011900 |vbr     | Commented out all writes to rx_vga_debug
@@ -140,6 +141,7 @@ void write_a_copy_b (t_gcr_addr* gcr_addr, int gain, t_bank bank,
                      int copy_gain_to_b )                                                //
 {
     //
+    // PSL bank_a
     if (bank == bank_a)                                                                                                   //
     {
         //
@@ -153,6 +155,7 @@ void write_a_copy_b (t_gcr_addr* gcr_addr, int gain, t_bank bank,
         //set_debug_state(0x5041);                                                                                          //
     }                                                                                                                   //
 
+    // PSL copy_gain_to_b
     if (copy_gain_to_b)                                                                                                   //
     {
         //
@@ -169,9 +172,11 @@ void write_a_copy_b (t_gcr_addr* gcr_addr, int gain, t_bank bank,
 //////////////////////////
 int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_poff, bool* gain_changed, bool recal,
            bool copy_gain_to_b, bool copy_gain_to_b_loop, bool first_loop_iteration)
+
 {
     //begin eo_vga_gain
     set_debug_state(0x5000);
+
     int lane = get_gcr_addr_lane(gcr_addr);
     // Set up Apxxxxx and Anxxxxx servos with biased filters to find Amax.
     // This has the advantage of being bank independent and more peaking independent.
@@ -186,6 +191,7 @@ int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_p
     // Step 0 reading Gain value in Regdef register
     int gain;
 
+    // PSL bank_a
     if (bank == bank_a)
     {
         gain = get_ptr(gcr_addr, rx_a_ctle_gain_addr, rx_a_ctle_gain_startbit, rx_a_ctle_gain_endbit);
@@ -246,6 +252,7 @@ int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_p
         int32_t results[2];
 
         // Disable servo status for result at min/max fpr first loop only
+        // PSL first_loop_iteration
         if(first_loop_iteration) // Disable servo status for result at min/max
         {
             servo_errors_disable_only_result_at_min_or_max(gcr_addr);
@@ -260,6 +267,7 @@ int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_p
         servo_errors_enable_all(gcr_addr);
 
         // Servo error will set rx_eoff_fail now rc_warning=2 is what is used  to mask on servo error
+        // PSL set_fail
         if (status & rc_warning )
         {
             mem_pl_field_put(rx_ctle_gain_fail, lane, 0b1);    //ppe pl
@@ -285,6 +293,7 @@ int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_p
         //mem_regs_u16_put(pg_addr(rx_vga_debug_addr), rx_vga_debug_mask, rx_vga_debug_shift,results[1]);
         set_debug_state(0x5006, 3);
 
+        // PSL init
         if(!recal)
         {
             //begin1
@@ -293,11 +302,13 @@ int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_p
             jump_table_used = mem_pl_field_get(jump_table_used, lane);
 
             //mem_regs_u16_put(pg_addr(rx_vga_debug_addr), rx_vga_debug_mask, rx_vga_debug_shift,jump_table_used);
+            // PSL amax_gt_target
             if((Amax >= Amax_target))//decreasing
             {
                 //begin2
                 set_debug_state(0x5008, 3);
 
+                // PSL gain_eq_min
                 if (gain == min_gain)
                 {
                     //begin3
@@ -313,6 +324,7 @@ int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_p
                     //mem_regs_u16_put(pg_addr(rx_vga_debug_addr), rx_vga_debug_mask, rx_vga_debug_shift,last_Amax);
                     //mem_regs_u16_put(pg_addr(rx_vga_debug_addr), rx_vga_debug_mask, rx_vga_debug_shift,gain);
                     //mem_regs_u16_put(pg_addr(rx_vga_debug_addr), rx_vga_debug_mask, rx_vga_debug_shift,last_gain);
+                    // PSL dec_amax_last_lt_curr_ge_target_inc1
                     if((last_Amax < Amax_target) && (Amax >= Amax_target) && (gain == (last_gain + 1)))
                     {
                         //begin5
@@ -321,6 +333,7 @@ int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_p
                         mem_regs_u16_put(pl_addr(rx_vga_converged_addr, lane), rx_vga_converged_mask, rx_vga_converged_shift, 1);
                         converged = true;
                     }//end5
+                    // PSL amax_last_ge_curr_le_target_dec1
                     else if((last_Amax >= Amax_target) && (Amax <= Amax_target) && (gain + 1 == last_gain))
                     {
                         //begin6
@@ -342,11 +355,13 @@ int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_p
                     }//end7
                 }//end4
             }//end2
+            // PSL gain_ge_max_gain
             else if( gain >= max_gain)
             {
                 set_debug_state(0x5014);
                 break;
             }
+            // PSL jump_table
             else if(jump_table_used == 0)//increasing
             {
                 //begin8
@@ -365,6 +380,7 @@ int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_p
                     //begin9
                     set_debug_state(0x5016, 3);
 
+                    // PSL amax_ratio_le_target
                     if(Amax_ratio <= ratio_target)
                     {
                         set_debug_state(0x5017, 3);
@@ -384,6 +400,7 @@ int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_p
                 //mem_regs_u16_put(pg_addr(rx_vga_debug_addr), rx_vga_debug_mask, rx_vga_debug_shift,Amax_target);
                 //mem_regs_u16_put(pg_addr(rx_vga_debug_addr), rx_vga_debug_mask, rx_vga_debug_shift,gain);
                 //mem_regs_u16_put(pg_addr(rx_vga_debug_addr), rx_vga_debug_mask, rx_vga_debug_shift,last_gain);
+                // PSL gain_gt_max
                 if(gain > max_gain)
                 {
                     //begin10
@@ -392,6 +409,7 @@ int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_p
                     write_a_copy_b (gcr_addr, gain, bank, copy_gain_to_b );
                 }//end10
 
+                // PSL jump_amax_last_lt_curr_ge_target_inc1
                 if((last_Amax < Amax_target) && (Amax >= Amax_target) && (gain == (last_gain + 1)))
                 {
                     //begin12
@@ -421,6 +439,7 @@ int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_p
                 //mem_regs_u16_put(pg_addr(rx_vga_debug_addr), rx_vga_debug_mask, rx_vga_debug_shift,Amax_target);
                 //mem_regs_u16_put(pg_addr(rx_vga_debug_addr), rx_vga_debug_mask, rx_vga_debug_shift,gain);
                 //mem_regs_u16_put(pg_addr(rx_vga_debug_addr), rx_vga_debug_mask, rx_vga_debug_shift,last_gain);
+                // PSL inc_amax_last_lt_curr_ge_target_inc1
                 if((last_Amax < Amax_target) && (Amax >= Amax_target) && (gain == (last_gain + 1)))
                 {
                     //begin18
@@ -429,6 +448,7 @@ int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_p
                     converged = true;
                     set_debug_state(0x5026, 3);
                 }//end18
+                // PSL inc_amax_last_ge_curr_le_target_dec1
                 else if((last_Amax >= Amax_target) && (Amax <= Amax_target) && (gain + 1 == last_gain))
                 {
                     //begin19
@@ -451,11 +471,13 @@ int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_p
             }//end15
         }//end1
         //recal path
+        // PSL recal_amax_gt_max
         else if (Amax > max_range)
         {
             //begin21
             set_debug_state(0x5080, 3);
 
+            // PSL recal_gain_ne_min
             if (gain != min_gain)
             {
                 //begin22
@@ -466,11 +488,13 @@ int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_p
                 set_debug_state(0x5081, 3);
             }//end22
         }//end21
+        // PSL recal_amax_lt_min
         else if (Amax < min_range)
         {
             //begin23
             set_debug_state(0x5082, 3);
 
+            // PSL recal_gain_ne_max
             if (gain != max_gain)
             {
                 //begin24
@@ -494,10 +518,12 @@ int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_p
     } //end while
 
     // Return Success gain change or not
+    // PSL first_loop_or_recal
     if ((first_loop_iteration) || (recal))
     {
         set_debug_state(0x5036, 3);
 
+        // PSL first_loop_or_recal_gain_changed
         if (start_gain == gain)
         {
             *gain_changed = false;
@@ -511,6 +537,7 @@ int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_p
     {
         set_debug_state(0x5037, 3);
 
+        // PSL init_loop_gain_changed
         if ((start_gain == gain + 1) || (start_gain == gain - 1) || (start_gain == gain ))
         {
             *gain_changed = false;

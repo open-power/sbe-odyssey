@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ---------------------|------------------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
 // vbr22061500 |vbr     | Added returning of fail status for ext commands
 // mwh22021600 |mwh     | rx_dactt_bo_timer_mask no longer need fixed issue 228077
 // vbr21120300 |vbr     | Use functions for number of lanes
@@ -351,12 +352,14 @@ int eo_dac_test(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask)
         rx_dactt_fail_banka_int = get_ptr_field(io_gcr_addr, rx_dactt_fail_banka);
         rx_dactt_fail_bankb_int = get_ptr_field(io_gcr_addr, rx_dactt_fail_bankb);
 
+        // PSL dac_bist_fail_bank_a
         if (rx_dactt_fail_banka_int == 0b1)
         {
             set_rxbist_fail_lane(io_gcr_addr);
             status = error_code;
         }
 
+        // PSL dac_bist_fail_bank_b
         if (rx_dactt_fail_bankb_int == 0b1)
         {
             set_rxbist_fail_lane(io_gcr_addr);

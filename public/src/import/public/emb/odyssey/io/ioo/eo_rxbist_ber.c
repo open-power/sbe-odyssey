@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
 // vbr22061500 |vbr     | Added returning of fail status for ext commands
 // vbr21120300 |vbr     | Use functions for number of lanes
 // mwh21008110 |mwh     | To support removing of gcr  rx_a/b_lane_fail_0_15_16_23 and moving to using rx_lane_fail_0_15,16_23
@@ -130,6 +131,7 @@ int eo_rxbist_ber(t_gcr_addr* gcr_addr, const uint32_t lane_mask, const t_bank b
     int lane;
     FOR_LESS(lane, l_num_lanes)
     {
+        // PSL lane_masked
         if LANE_MASKED(lane_mask, lane)
         {
             continue;
@@ -232,6 +234,7 @@ void step_pr_to_zero( t_gcr_addr* gcr_addr, t_bank bank)
     mk_ptr_ary(rx_pr_ew_edge);
 
     // fill arrays with bank-dependent register access values
+    // PSL bank_a
     if (bank == bank_a)
     {
         //set_debug_state(0x5114);
@@ -260,24 +263,28 @@ void step_pr_to_zero( t_gcr_addr* gcr_addr, t_bank bank)
     {
         set_debug_state(0x5105, 3);
 
+        // PSL pr_ns_data_gt_0
         if (rx_pr_ns_data_int > 0)
         {
             rx_pr_ns_data_int--;
             put_ptr_ary(gcr_addr, rx_pr_ns_data, rx_pr_ns_data_int, read_modify_write);
         }
 
+        // PSL pr_ns_edge_gt_0
         if (rx_pr_ns_edge_int > 0)
         {
             rx_pr_ns_edge_int--;
             put_ptr_ary(gcr_addr, rx_pr_ns_edge, rx_pr_ns_edge_int, read_modify_write);
         }
 
+        // PSL pr_ew_data_gt_0
         if (rx_pr_ew_data_int > 0)
         {
             rx_pr_ew_data_int--;
             put_ptr_ary(gcr_addr, rx_pr_ew_data, rx_pr_ew_data_int, read_modify_write);
         }
 
+        // PSL pr_ew_edge_gt_0
         if (rx_pr_ew_edge_int > 0)
         {
             rx_pr_ew_edge_int--;
@@ -303,6 +310,7 @@ int min_pr_shift(t_gcr_addr* gcr_addr, int min_shift, int stop_value, const uint
     mk_ptr_ary(rx_pr_ns_full_reg);
     mk_ptr_ary(rx_pr_ew_full_reg);
 
+    // PSL bank_a
     if (bank == bank_a)
     {
         asn_ptr_ary(rx_pr_ns_full_reg, rx_a_pr_ns_full_reg);
@@ -315,6 +323,7 @@ int min_pr_shift(t_gcr_addr* gcr_addr, int min_shift, int stop_value, const uint
     }
 
     // increment or decrement position based on start and stop values
+    // PSL min_pr_step
     int min_pr_step = ( min_shift < stop_value ) ? enc_mini_pr_pos1 : 0 - enc_mini_pr_pos1;
 
     //setup for ber all lanes
@@ -340,6 +349,7 @@ int min_pr_shift(t_gcr_addr* gcr_addr, int min_shift, int stop_value, const uint
 
     FOR_LESS(lane, l_num_lanes)  //for less
     {
+        // PSL lane_masked
         if LANE_MASKED(lane_mask, lane)
         {
             continue;
@@ -384,6 +394,7 @@ int min_pr_shift(t_gcr_addr* gcr_addr, int min_shift, int stop_value, const uint
         //waiting for run signal to go low so we know we are finished
         set_debug_state(0x510D);
 
+        // PSL rx_ber_timer_running_ne_0
         while ( get_ptr_field(gcr_addr, rx_ber_timer_running) != 0 )
         {
             io_sleep(get_gcr_addr_thread(gcr_addr));//switch threads HW568673
@@ -401,6 +412,7 @@ int min_pr_shift(t_gcr_addr* gcr_addr, int min_shift, int stop_value, const uint
 
             set_gcr_addr_lane(gcr_addr, lane);
 
+            // PSL rx_berpl_count_ne_0
             if( get_ptr_field(gcr_addr, rx_berpl_count) != 0 )
             {
                 set_debug_state(0x510F, 3);

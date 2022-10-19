@@ -54,6 +54,14 @@
 #define ppe_debug_log_num_mask                     0x1fc
 
 
+#define ppe_disable_thread_active_time_check_addr   0b000000001
+#define ppe_disable_thread_active_time_check_startbit   1
+#define ppe_disable_thread_active_time_check_width   1
+#define ppe_disable_thread_active_time_check_endbit   1
+#define ppe_disable_thread_active_time_check_shift   14
+#define ppe_disable_thread_active_time_check_mask   0x4000
+
+
 #define ppe_num_threads_addr                       0b000000000
 #define ppe_num_threads_startbit                   0
 #define ppe_num_threads_width                      4

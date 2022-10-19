@@ -39,6 +39,7 @@
 // -----------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// vbr22100700 |jjb     | Added new log type for IOT TX BIST DCC MIN/MAX fails
 // vbr22032800 |vbr     | Added new log types for IOT
 // mwh22032500 |mwh     | Added log type DEBUG_BIST_TXIDLE_FAIL
 // jfg22031400 |jfg     | Add DEBUG_PPE_INIT_OVER_LIMIT
@@ -147,6 +148,8 @@
 #define DEBUG_PRBS_TIMEOUT_ERROR                0x48
 #define DEBUG_RECAL_SETUP_ERROR                 0x49
 #define DEBUG_FUNC_DATA_TIMEOUT_ERROR           0x4A
+#define DEBUG_BIST_TX_DCC_MIN_FAIL              0x4B
+#define DEBUG_BIST_TX_DCC_MAX_FAIL              0x4C
 
 /// DEBUG LOG TYPES END
 
