@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
 // vbr22012801 |vbr     | Use common functions for DAC accelerator
 // mwh21101900 |mwh     | Updated code to keep the path offset value found poff_avg
 // vbr21092200 |vbr     | Use write only pulse for live edge mode bit
@@ -137,6 +138,7 @@ int eo_eoff_1_lat(t_gcr_addr* gcr_addr,  bool recal,  t_bank bank, bool vote_sel
 
         // transition0 and  edge = 0  just edge = 1
         //rx_eloff_alias_live_data_vote rx_loff_livedge_mode_set, rx_eoff_data_src, rx_eoff_vote_sel
+        // PSL vote_sel
         if (vote_sel == 1)
         {
             put_ptr_field(gcr_addr, rx_eloff_alias_live_data_vote , 0b111, fast_write);
@@ -148,6 +150,7 @@ int eo_eoff_1_lat(t_gcr_addr* gcr_addr,  bool recal,  t_bank bank, bool vote_sel
 
 
 
+        // PSL bank_a
         if (bank == bank_a )
         {
             //bank A is alt B is main
@@ -188,6 +191,7 @@ int eo_eoff_1_lat(t_gcr_addr* gcr_addr,  bool recal,  t_bank bank, bool vote_sel
     //this code is updating the Data Dac's with path offset. Either bank A or Bank B Dacs
     //no copy of a to b allowed
     //Do not updated edge latch since poff is already in it
+    // PSL recal
     if (!recal)
     {
         //bank
@@ -227,6 +231,7 @@ int eo_eoff_1_lat(t_gcr_addr* gcr_addr,  bool recal,  t_bank bank, bool vote_sel
     set_debug_state(0xA014); // DEBUG
 
     //for bist if there is a servo error this get set -- help with debug
+    // PSL set_fail
     if (status & rc_warning )
     {
         mem_pl_field_put(rx_eoff_fail, lane, 0b1);    //ppe pl

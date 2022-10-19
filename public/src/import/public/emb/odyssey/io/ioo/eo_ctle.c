@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
 // vbr22032300 |vbr     | Issue 273572: Allow disabling of starting servo ops from 0 to aid in debugging
 // vbr22022500 |vbr     | Revamped peak hysteresis to used stored bit.
 // vbr21100600 |vbr     | Added averaging of peak results in recal.
@@ -137,17 +138,22 @@ void ctle_hysteresis(int i_hyst_delta_mode, int i_hyst_limit, int i_old_val, int
     // Calculate the new hysteresis counter
     int l_delta = l_new_val - i_old_val;
 
+    // PSL delta_eq_0
     if (l_delta == 0)
     {
         // Count towards zero if no change in value
+        // PSL delta_eq_0_hyst_cnt_lt_0
         if (l_hyst_cnt < 0)
         {
             l_hyst_cnt = l_hyst_cnt + 1;
+            // PSL delta_eq_0_hyst_cnt_gt_0
         }
         else if(l_hyst_cnt > 0)
         {
             l_hyst_cnt = l_hyst_cnt - 1;
         }
+
+        // PSL hyst_delta_mode
     }
     else if (i_hyst_delta_mode || (abs(l_delta) > 1))
     {
@@ -158,10 +164,12 @@ void ctle_hysteresis(int i_hyst_delta_mode, int i_hyst_limit, int i_old_val, int
     }
 
     // Adjust the value and reset the hysteresis counter if the counter rolled over
+    // PSL hyst_cnt_gt_hyst_limit
     if (l_hyst_cnt > i_hyst_limit)
     {
         l_hyst_cnt = 0;
         l_new_val  = i_old_val + 1;
+        // PSL hyst_cnt_lt_neg_hyst_limit
     }
     else if (l_hyst_cnt < -i_hyst_limit)
     {
@@ -192,8 +200,10 @@ int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, boo
     int lane = get_gcr_addr_lane(gcr_addr);
 
     // Use H2 for corelation bit at Gen3/4, use H3 for Gen 5, use pre-configured (hw_reg_init) for AXO
+    // PSL pcie_cal_mode
     if(cal_mode != C_AXO_CAL)
     {
+        // PSL pcie_gen5_cal_mode
         if (cal_mode == C_PCIE_GEN5_CAL)
         {
             put_ptr_field(gcr_addr, rx_ctle_peak2_h_sel, 1, read_modify_write); // Gen5: H3
@@ -227,6 +237,7 @@ int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, boo
     // Select the correct servo ops
     uint16_t* servo_ops;
 
+    // PSL bank_a
     if (cal_bank == bank_a)
     {
         servo_ops = servo_ops_ctle_a;
@@ -242,8 +253,10 @@ int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, boo
     // Read the initial register value for the cases where it is needed
     int initial_gain_peak_regval = 0;
 
+    // PSL start0_or_recal_or_hyst
     if (start_servos_at_zero || recal || hysteresis_en)
     {
+        // PSL start0_or_recal_or_hyst_bank_a
         if (cal_bank == bank_a)
         {
             initial_gain_peak_regval = get_ptr_field(gcr_addr, rx_a_ctle_gain_peak_full_reg_alias);
@@ -258,6 +271,7 @@ int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, boo
     // Main concerns are TXEQ on PCIe (and any equivalent for AXO) and PCIe speed changes.
     // Don't want to try running ZFE from high settings left over from a previous TXEQ or speed.
     // Initial training is re-run in both of those cases so only need to start from 0 on first pass of peaking in INIT.
+    // PSL start0
     if (start_servos_at_zero)
     {
         // Only clear for the enabled controls since the others may be preset
@@ -273,6 +287,7 @@ int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, boo
             gain_peak_regval = gain_peak_regval & ~rx_a_ctle_peak2_mask;
         }
 
+        // PSL start0_bank_a
         if (cal_bank == bank_a)
         {
             put_ptr_field(gcr_addr, rx_a_ctle_gain_peak_full_reg_alias, gain_peak_regval, fast_write);
@@ -299,6 +314,7 @@ int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, boo
     // A recal abort (only checked in recal by check_rx_abort) causes a restore
     bool restore = false;
 
+    // PSL recal_abort
     if (status & (abort_error_code | abort_clean_code))
     {
         set_debug_state(0x6080); //DEBUG - CTLE Recal Abort Condition
@@ -306,6 +322,7 @@ int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, boo
     }
 
     // Servo error sets rx_ctle_peak1/2_fail. In recal, it also causes a restore; in init, we keep the result.
+    // PSL bad_lane_warning
     if (status & rc_warning )
     {
         set_debug_state(0x60DD); // DEBUG - CTLE Servo Error
@@ -343,10 +360,12 @@ int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, boo
         *peak_changed = (new_peak1 != old_peak1) || (new_peak2 != old_peak2);
 
         // Apply hysteresis to peak1 and peak2 individually
+        // PSL hyst_en
         if (hysteresis_en)
         {
             int peak1_peak2_hyst;
 
+            // PSL hyst_en_bank_a
             if (cal_bank == bank_a)
             {
                 peak1_peak2_hyst = mem_pl_field_get(rx_a_ctle_peak1_peak2_hyst_alias, lane);
@@ -387,6 +406,7 @@ int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, boo
             }
 
             // Process the final results
+            // PSL hyst_peak1_peak2_equal
             if ( (new_peak1 == old_peak1) && (new_peak2 == old_peak2) )
             {
                 // If neither peak1 nor peak2 changed after applying hysteresis, restore the previous results
@@ -401,6 +421,7 @@ int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, boo
                 peak1_peak2_regval = (new_peak1 << (rx_a_ctle_peak1_shift - rx_a_ctle_peak1_peak2_alias_shift)) |
                                      (new_peak2 << (rx_a_ctle_peak2_shift - rx_a_ctle_peak1_peak2_alias_shift));
 
+                // PSL hyst_peak1_peak2_ne_bank_a
                 if (cal_bank == bank_a)
                 {
                     put_ptr_field(gcr_addr, rx_a_ctle_peak1_peak2_alias, peak1_peak2_regval, read_modify_write);
@@ -414,6 +435,7 @@ int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, boo
         else     //!hysteresis_en
         {
             // Clear hysteresis bits when hysteresis is not enabled
+            // PSL nohyst_bank_a
             if (cal_bank == bank_a)
             {
                 mem_pl_field_put(rx_a_ctle_peak1_peak2_hyst_alias, lane, 0);
@@ -427,6 +449,7 @@ int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, boo
         // Only copy to main if not restoring
         if (!restore && copy_to_main)
         {
+            // PSL copy_main_bank_a
             if (cal_bank == bank_a)
             {
                 put_ptr_field(gcr_addr, rx_b_ctle_peak1_peak2_alias, peak1_peak2_regval, read_modify_write);
@@ -439,10 +462,12 @@ int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, boo
     }//if (!restore)
 
     // Restore the original results if required
+    // PSL restore
     if (restore)
     {
         set_debug_state(0x60AA, EO_CTLE_DBG_LVL); // DEBUG - CTLE Restore
 
+        // PSL restore_bank_a
         if (cal_bank == bank_a)
         {
             put_ptr_field(gcr_addr, rx_a_ctle_gain_peak_full_reg_alias, initial_gain_peak_regval, fast_write);
@@ -457,6 +482,7 @@ int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, boo
     }
 
     // Set BIST done bits
+    // PSL set_done_bank_a
     if (cal_bank == bank_a)
     {
         mem_pl_bit_set(rx_a_ctle_peak1_done, lane);

@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mbs22083000 |mbs     | PSL comment updates
 // vbr22061500 |vbr     | Add external command fail reporting
 // vbr22060200 |vbr     | Add lab commands, support more than 16 commands
 // vbr22060100 |vbr     | Check ext_cmd_power_banks_sel in rx lane power_off/on
@@ -176,6 +177,7 @@ void track_and_adjust_group_power(t_gcr_addr* io_gcr_addr, const uint32_t i_lane
     // Adjustments based on new state
     bool state_changed = false;
 
+    // PSL new_power_state
     if (new_power_state == 1)
     {
         ////////////////////////
@@ -220,12 +222,14 @@ void track_and_adjust_group_power(t_gcr_addr* io_gcr_addr, const uint32_t i_lane
 
         // Group Power Off If Needed
         // - Check if any lanes are still powered on
+        // PSL group_power_off_tx
         if (l_tx_lanes_power_on == 0x0)
         {
             io_group_power_off_tx(io_gcr_addr);
             state_changed = true;
         }
 
+        // PSL group_power_off_rx
         if (l_rx_lanes_power_on == 0x0)
         {
             io_group_power_off_rx(io_gcr_addr);
@@ -239,6 +243,7 @@ void track_and_adjust_group_power(t_gcr_addr* io_gcr_addr, const uint32_t i_lane
     mem_pg_field_put(rx_lanes_pon_00_15, (l_rx_lanes_power_on >> 16) & 0xFFFF);
     mem_pg_field_put(rx_lanes_pon_16_23, (l_rx_lanes_power_on >>  8) & 0x00FF);
 
+    // PSL state_changed
     if(state_changed)
     {
         io_sleep(get_gcr_addr_thread(io_gcr_addr));
@@ -277,11 +282,13 @@ int cmd_ioreset_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const
         {
             set_gcr_addr_lane(io_gcr_addr, l_lane);
 
+            // PSL io_reset_lane_tx
             if (i_lane_shift_tx & 0x80000000)
             {
                 status |= io_reset_lane_tx(io_gcr_addr);    //sleeps at end
             }
 
+            // PSL io_reset_lane_rx
             if (i_lane_shift_rx & 0x80000000)
             {
                 status |= io_reset_lane_rx(io_gcr_addr);    //sleeps at end
@@ -320,11 +327,13 @@ int cmd_power_on_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, cons
         {
             set_gcr_addr_lane(io_gcr_addr, l_lane);
 
+            // PSL io_lane_power_on_tx
             if ((i_lane_shift_tx & 0x80000000) && !get_tx_lane_bad(l_lane))
             {
                 status |= io_lane_power_on_tx(io_gcr_addr);    //sleeps at end
             }
 
+            // PSL io_lane_power_on_rx
             if ((i_lane_shift_rx & 0x80000000) && !get_rx_lane_bad(l_lane))
             {
                 status |= io_lane_power_on_rx(io_gcr_addr, banks_sel,
@@ -358,11 +367,13 @@ int cmd_power_off_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, con
         {
             set_gcr_addr_lane(io_gcr_addr, l_lane);
 
+            // PSL io_lane_power_off_tx
             if (i_lane_shift_tx & 0x80000000)
             {
                 status |= io_lane_power_off_tx(io_gcr_addr);    //sleeps at end
             }
 
+            // PSL io_lane_power_off_rx
             if (i_lane_shift_rx & 0x80000000)
             {
                 status |= io_lane_power_off_rx(io_gcr_addr, banks_sel);    //sleeps at end
@@ -391,11 +402,13 @@ int cmd_tx_fifo_init_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, 
 
     for (; l_lane < l_num_lanes; ++l_lane, i_lane_shift = i_lane_shift << 1)
     {
+        // PSL tx_lane_masked
         if ((i_lane_shift & 0x80000000) == 0x0)
         {
             continue;
         }
 
+        // PSL tx_lane_bad
         if (get_tx_lane_bad(l_lane))
         {
             continue;
@@ -438,6 +451,7 @@ int cmd_dccal_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const u
 
     for (; l_lane < l_num_lanes; ++l_lane, i_lane_shift_tx = i_lane_shift_tx << 1, i_lane_shift_rx = i_lane_shift_rx << 1)
     {
+        // PSL lane_masked
         if ( ((i_lane_shift_tx | i_lane_shift_rx) & 0x80000000) == 0x0 )
         {
             continue;
@@ -446,6 +460,7 @@ int cmd_dccal_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const u
         set_gcr_addr_lane(io_gcr_addr, l_lane);
         mem_pl_bit_set(rx_lane_busy, l_lane);
 
+        // PSL rx_lane_good
         if ((i_lane_shift_rx & 0x80000000) && !get_rx_lane_bad(l_lane))
         {
             status |= io_lane_power_on_rx(io_gcr_addr, both_banks,
@@ -453,6 +468,7 @@ int cmd_dccal_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const u
             status |= eo_main_dccal_rx(io_gcr_addr);
         }
 
+        // PSL tx_lane_good
         if ((i_lane_shift_tx & 0x80000000) && !get_tx_lane_bad(l_lane))
         {
             status |= io_lane_power_on_tx(io_gcr_addr);  //sleeps at end
@@ -481,11 +497,13 @@ int cmd_train_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const u
 
     for (; l_lane < l_num_lanes; ++l_lane, i_lane_shift = i_lane_shift << 1)
     {
+        // PSL rx_lane_masked
         if ((i_lane_shift & 0x80000000) == 0x0)
         {
             continue;
         }
 
+        // PSL rx_lane_bad
         if (get_rx_lane_bad(l_lane))
         {
             continue;
@@ -511,11 +529,13 @@ int cmd_recal_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const u
 
     for (; l_lane < l_num_lanes; ++l_lane, i_lane_shift = i_lane_shift << 1)
     {
+        // PSL rx_lane_masked
         if ((i_lane_shift & 0x80000000) == 0x0)
         {
             continue;
         }
 
+        // PSL rx_lane_bad
         if (get_rx_lane_bad(l_lane))
         {
             continue;

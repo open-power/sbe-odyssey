@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
 // vbr22071100 |vbr     | Moved eloff_alias_live_data_vote write from eo_main to here
 // vbr22012801 |vbr     | Use common functions for DAC accelerator
 // vbr22012800 |vbr     | Minor code clean up and code size reduction
@@ -170,6 +171,7 @@ int eo_eoff(t_gcr_addr* gcr_addr,  bool recal, bool first_recal, t_bank bank)
 
     int dac_start_addr;
 
+    // PSL bank_a
     if (bank == bank_a )
     {
         //bank A is alt B is main
@@ -246,6 +248,7 @@ int eo_eoff(t_gcr_addr* gcr_addr,  bool recal, bool first_recal, t_bank bank)
     //this code is updating the Data Dac's with path offset. Either bank A or Bank B Dacs
     //no copy of a to b allowed
     //Do not updated edge latch since poff is already in it
+    // PSL apply_dac_offset_init
     if ((!recal) && (!status))
     {
         //bank
@@ -277,9 +280,11 @@ int eo_eoff(t_gcr_addr* gcr_addr,  bool recal, bool first_recal, t_bank bank)
     int weight_avr_s = edge_after_s;
     int weight_avr_w = edge_after_w;  //we do not have hysteresis in first recal
 
+    // PSL recal
     if (recal || first_recal)
     {
         //if recal begin
+        // PSL restore
         if (status)
         {
             restore_n = true;    // Restore  settings on an abort or servo error (status != 0)
@@ -287,6 +292,7 @@ int eo_eoff(t_gcr_addr* gcr_addr,  bool recal, bool first_recal, t_bank bank)
             restore_s = true;
             restore_w = true;
         }
+        // PSL not_first_recal
         else if (!first_recal)
         {
             //if not abort
@@ -457,6 +463,7 @@ int eo_eoff(t_gcr_addr* gcr_addr,  bool recal, bool first_recal, t_bank bank)
     if (delta_fail == 1)
     {
         mem_pl_field_put(rx_eoff_poff_fail, lane, delta_fail);
+        // PSL set_fir_bad_lane_warning_and_dft_error
         set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
         ADD_LOG(DEBUG_RX_EOFF_POFF_FAIL, gcr_addr, 0x0);
     }//ppe pl
@@ -471,6 +478,7 @@ int eo_eoff(t_gcr_addr* gcr_addr,  bool recal, bool first_recal, t_bank bank)
     }
 
     //for bist if there is a servo error this get set -- help with debug
+    // PSL set_fail
     if (status & rc_warning )
     {
         mem_pl_field_put(rx_eoff_fail, lane, 0b1);   //ppe pl

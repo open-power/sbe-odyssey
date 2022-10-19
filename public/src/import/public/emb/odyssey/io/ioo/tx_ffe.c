@@ -86,7 +86,8 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
-// gap22020509 |gap     | Add 5nm post, follow 5nm constraints
+// gap22100300 |gap     | Fix bug in main alloc that limited bound ranges, add logging when using bound
+// gap22020500 |gap     | Add 5nm post, follow 5nm constraints
 // mbs22021000 |mbs     | Updates to reduce code size
 // bja22012500 |bja     | Support 5nm and 7nm segments
 // bja21101800 |bja     | Use newly available PRE1 segs
@@ -109,11 +110,15 @@
 
 #include "ioo_common.h"
 #include "tx_ffe.h"
+#include "io_logger.h"
 
 #include "ppe_fw_reg_const_pkg.h"
 #include "ppe_com_reg_const_pkg.h"
 #include "io_config.h"
 
+// Use this to set debug_state levels for testing (on select debug_states which are not necessary outside initial dev)
+// If this is less than or equal to IO_DEBUG_LEVEL in ppe_common/img_defs.mk, debug states will be written, current
+// value is 2
 #define TX_FFE_DBG_LVL 3
 
 void tx_ffe(t_gcr_addr* gcr_addr_i)
@@ -131,8 +136,8 @@ void tx_ffe(t_gcr_addr* gcr_addr_i)
 
     t_tx_ffe_cntl seg_values_l;
 
-    tx_ffe_calc_ffe(pre2_coef_x128_l, pre1_coef_x128_l, post_coef_x128_l, zcal_result_nseg_l, zcal_result_pseg_l, is_5nm_l,
-                    &seg_values_l);
+    tx_ffe_calc_ffe(gcr_addr_i, pre2_coef_x128_l, pre1_coef_x128_l, post_coef_x128_l, zcal_result_nseg_l,
+                    zcal_result_pseg_l, is_5nm_l, &seg_values_l);
     io_sleep(get_gcr_addr_thread(gcr_addr_i));
     tx_ffe_write_ffe(gcr_addr_i, is_5nm_l, &seg_values_l);
 
@@ -152,10 +157,12 @@ uint32_t tx_ffe_get_zcal(t_gcr_addr* gcr_addr_i, bool is_nseg_i, bool is_5nm_i)
     uint32_t pre1_width_l = is_5nm_i ? tx_pseg_pre1_en_width : tx_pseg_pre1_hs_en_width ;
 
     // using if rather than case to save space
+    // PSL nseg
     if (is_nseg_i)
     {
         set_debug_state(0xC211, TX_FFE_DBG_LVL); // get en nseg
 
+        // PSL nseg_5nm
         if (is_5nm_i)   //unused bits not guaranteed to be 0, thus cannot read entire reg
         {
             main_high_l = get_ptr_field(gcr_addr_i, tx_nseg_main_en);
@@ -182,6 +189,7 @@ uint32_t tx_ffe_get_zcal(t_gcr_addr* gcr_addr_i, bool is_nseg_i, bool is_5nm_i)
     {
         set_debug_state(0xC212, TX_FFE_DBG_LVL); // get en pseg
 
+        // PSL pseg_5nm
         if (is_5nm_i)   //unused bits not guaranteed to be 0, thus cannot read entire reg
         {
             main_high_l = get_ptr_field(gcr_addr_i, tx_pseg_main_en);
@@ -213,21 +221,27 @@ uint32_t tx_ffe_get_zcal(t_gcr_addr* gcr_addr_i, bool is_nseg_i, bool is_5nm_i)
 /* compute number of 2R-equivalent pre1, pre2, and post segments used for ffe and main, and number of 2R equivalent
  * main bank segments to enable using zcal results and pre-cursor coefficients
  */
-void tx_ffe_calc_ffe(uint32_t pre2_coef_x128_i, uint32_t pre1_coef_x128_i, uint32_t post_coef_x128_i,
+void tx_ffe_calc_ffe(t_gcr_addr* gcr_addr_i, uint32_t pre2_coef_x128_i, uint32_t pre1_coef_x128_i,
+                     uint32_t post_coef_x128_i,
                      uint32_t zcal_result_nseg_i, uint32_t zcal_result_pseg_i, bool is_5nm_i, t_tx_ffe_cntl* seg_values_o)
 {
     // constants in this routine
     uint32_t pre2_max_2r_l = tx_nseg_pre2_en_width * 2 - 1 ;
     uint32_t pre1_max_2r_l = (is_5nm_i ? tx_pseg_pre1_en_width : tx_pseg_pre1_hs_en_width) * 2 - 1 ;
     uint32_t post_max_2r_l = is_5nm_i ? tx_nseg_post_en_width * 2 - 1 : 0;
+    set_tx_dcc_debug_tx_ffe(0xC250, pre2_max_2r_l );
+    set_tx_dcc_debug_tx_ffe(0xC251, pre1_max_2r_l );
+    set_tx_dcc_debug_tx_ffe(0xC252, post_max_2r_l );
 
     // ----------------------------------------
     // adjust zcal results
     //  (1) change a too-low value to the default
     //  (2) bound extreme min and max to the expected range
     // ----------------------------------------
-    tx_ffe_bound_zcal(&zcal_result_nseg_i);
-    tx_ffe_bound_zcal(&zcal_result_pseg_i);
+    tx_ffe_bound_zcal(gcr_addr_i, &zcal_result_nseg_i);
+    tx_ffe_bound_zcal(gcr_addr_i, &zcal_result_pseg_i);
+    set_tx_dcc_debug_tx_ffe(0xC253, zcal_result_nseg_i );
+    set_tx_dcc_debug_tx_ffe(0xC254, zcal_result_pseg_i );
 
     // ----------------------------------------
     // set total enabled segments needed
@@ -254,6 +268,15 @@ void tx_ffe_calc_ffe(uint32_t pre2_coef_x128_i, uint32_t pre1_coef_x128_i, uint3
     seg_values_o->nseg.main -= (seg_values_o->nseg.pre2.ffe + seg_values_o->nseg.pre1.ffe + seg_values_o->nseg.post.ffe) ;
     seg_values_o->pseg.main -= (seg_values_o->pseg.pre2.ffe + seg_values_o->pseg.pre1.ffe + seg_values_o->pseg.post.ffe) ;
 
+    set_tx_dcc_debug_tx_ffe(0xC255, seg_values_o->nseg.pre2.ffe);
+    set_tx_dcc_debug_tx_ffe(0xC256, seg_values_o->pseg.pre2.ffe);
+    set_tx_dcc_debug_tx_ffe(0xC257, seg_values_o->nseg.pre1.ffe);
+    set_tx_dcc_debug_tx_ffe(0xC258, seg_values_o->pseg.pre1.ffe);
+    set_tx_dcc_debug_tx_ffe(0xC259, seg_values_o->nseg.post.ffe);
+    set_tx_dcc_debug_tx_ffe(0xC25A, seg_values_o->pseg.post.ffe);
+    set_tx_dcc_debug_tx_ffe(0xC25B, seg_values_o->nseg.main);
+    set_tx_dcc_debug_tx_ffe(0xC25C, seg_values_o->pseg.main);
+
     // use in opposite order of tx_zcal_tdr; tx_zcal_tdr disables main, then post, then pre2, then pre1
     tx_ffe_alloc_main(&seg_values_o->nseg.main, &seg_values_o->pseg.main, seg_values_o->nseg.pre1.ffe,
                       seg_values_o->pseg.pre1.ffe,
@@ -264,6 +287,16 @@ void tx_ffe_calc_ffe(uint32_t pre2_coef_x128_i, uint32_t pre1_coef_x128_i, uint3
     tx_ffe_alloc_main(&seg_values_o->nseg.main, &seg_values_o->pseg.main, seg_values_o->nseg.post.ffe,
                       seg_values_o->pseg.post.ffe,
                       &seg_values_o->nseg.post.main, &seg_values_o->pseg.post.main, post_max_2r_l) ;
+
+    set_tx_dcc_debug_tx_ffe(0xC25D, seg_values_o->nseg.pre2.main);
+    set_tx_dcc_debug_tx_ffe(0xC25E, seg_values_o->pseg.pre2.main);
+    set_tx_dcc_debug_tx_ffe(0xC25F, seg_values_o->nseg.pre1.main);
+    set_tx_dcc_debug_tx_ffe(0xC260, seg_values_o->pseg.pre1.main);
+    set_tx_dcc_debug_tx_ffe(0xC261, seg_values_o->nseg.post.main);
+    set_tx_dcc_debug_tx_ffe(0xC262, seg_values_o->pseg.post.main);
+    set_tx_dcc_debug_tx_ffe(0xC263, seg_values_o->nseg.main);
+    set_tx_dcc_debug_tx_ffe(0xC264, seg_values_o->pseg.main);
+
 } // tx_ffe_calc_ffe
 
 
@@ -281,6 +314,7 @@ void tx_ffe_write_ffe(t_gcr_addr* gcr_addr_i, bool is_5nm_i, t_tx_ffe_cntl* seg_
                             seg_values_i->pseg.pre1.main,
                             seg_values_i->pseg.pre1.ffe, TX_FFE_BANKTYPE_PRE1, is_5nm_i) ;
 
+    // PSL 5nm
     if (is_5nm_i)
     {
         tx_ffe_write_ffe_en_sel(gcr_addr_i, seg_values_i->nseg.post.main, seg_values_i->nseg.post.ffe,
@@ -292,25 +326,31 @@ void tx_ffe_write_ffe(t_gcr_addr* gcr_addr_i, bool is_5nm_i, t_tx_ffe_cntl* seg_
 
 /* adjust the zcal result if below valid range or outside of bounds
 */
-void tx_ffe_bound_zcal(uint32_t* zcal_2r_io)
+void tx_ffe_bound_zcal(t_gcr_addr* gcr_addr_i, uint32_t* zcal_2r_io)
 {
     set_debug_state(0xC220, TX_FFE_DBG_LVL); // tx_ffe_bound_zcal begin
 
+    // PSL 2r_lt_valid_min
     if (*zcal_2r_io < tx_ffe_zcal_valid_min_2r_c)
     {
         set_debug_state(0xC221, TX_FFE_DBG_LVL); // tx_ffe_bound_zcal at or below valid minimum
+        ADD_LOG(DEBUG_TX_ZCAL_LIMIT, gcr_addr_i, *zcal_2r_io);
         *zcal_2r_io = tx_ffe_zcal_default_2r_c ;
     }
 
+    // PSL 2r_lt_bound_min
     if (*zcal_2r_io < tx_ffe_zcal_bound_min_2r_c)
     {
         set_debug_state(0xC222, TX_FFE_DBG_LVL); // tx_ffe_bound_zcal below min bound
+        ADD_LOG(DEBUG_TX_ZCAL_LIMIT, gcr_addr_i, *zcal_2r_io);
         *zcal_2r_io = tx_ffe_zcal_bound_min_2r_c;
     }
 
+    // PSL 2r_gt_bound_max
     if (*zcal_2r_io > tx_ffe_zcal_bound_max_2r_c)
     {
         set_debug_state(0xC223, TX_FFE_DBG_LVL); // tx_ffe_bound_zcal above max bound
+        ADD_LOG(DEBUG_TX_ZCAL_LIMIT, gcr_addr_i, *zcal_2r_io);
         *zcal_2r_io = tx_ffe_zcal_bound_max_2r_c;
     }
 
@@ -345,23 +385,28 @@ void tx_ffe_alloc_main(uint32_t* nseg_remain, uint32_t* pseg_remain, uint32_t ns
     // when the maximum is even; thus, we can 'or' in the segment when needed rather
     // than doing an addition operation.
     uint32_t used_for_ffe_2r_l = max(nseg_ffe_i, pseg_ffe_i) | (nseg_ffe_i & 0x1) | (pseg_ffe_i & 0x1) ;
+    // 2) allocate remaining segments to main and subtract main segments needed
+    tx_ffe_alloc_main_phase(nseg_remain, nseg_main, bank_max_2r_i, used_for_ffe_2r_l);
+    tx_ffe_alloc_main_phase(pseg_remain, pseg_main, bank_max_2r_i, used_for_ffe_2r_l);
+} // tx_ffe_alloc_main
 
-    // ----------------------------------------
-    // 2) segments not allocated for ffe are used for main
-    // ----------------------------------------
-    *nseg_main = min(min(*nseg_remain, *pseg_remain), bank_max_2r_i - used_for_ffe_2r_l) ;
+/* calculate ffe bank segments used for main for one phase
+ */
+void tx_ffe_alloc_main_phase(uint32_t* seg_remain, uint32_t* seg_main, uint32_t bank_max_2r_i,
+                             uint32_t used_for_ffe_2r_i)
+{
+    // segments not allocated for ffe are used for main up to amount needed
+    *seg_main = min(*seg_remain, bank_max_2r_i - used_for_ffe_2r_i) ;
 
     // the main segments and ffe segments cannot both be odd
-    if ((used_for_ffe_2r_l & 0x1) == 1)
+    // PSL used_for_ffe_2r
+    if ((used_for_ffe_2r_i & 0x1) == 1)
     {
-        *nseg_main &= 0xFFFE;
+        *seg_main &= 0xFFFE;
     }
 
-    *pseg_main = *nseg_main;
-
-    *nseg_remain -= *nseg_main;
-    *pseg_remain -= *pseg_main;
-} // tx_ffe_alloc_main
+    *seg_remain -= *seg_main;
+} // tx_ffe_alloc_main_phase
 
 
 /* write the main-bank enable after converting a number of 2R-equivalent segments to therm code and splitting between
@@ -383,10 +428,12 @@ void tx_ffe_write_main_en(t_gcr_addr* gcr_addr_i, uint32_t num_2r_equiv_i, bool 
     high_bits_l = full_therm_l >> (tx_nseg_main_16_24_hs_en_width);
     low_bits_l = full_therm_l & ((0x1 << tx_nseg_main_16_24_hs_en_width) - 1); // for 5nm will always be 0
 
+    // PSL nseg
     if (is_nseg_i)
     {
         set_debug_state(0xC231, TX_FFE_DBG_LVL); // write main_nseg
 
+        // PSL nseg_5nm
         if (!is_5nm_i)
         {
             put_ptr_field_fast(gcr_addr_i, tx_nseg_main_16_24_hs_en, low_bits_l );
@@ -398,6 +445,7 @@ void tx_ffe_write_main_en(t_gcr_addr* gcr_addr_i, uint32_t num_2r_equiv_i, bool 
     {
         set_debug_state(0xC232, TX_FFE_DBG_LVL); // write main_pseg
 
+        // PSL nseg_5nm
         if (!is_5nm_i)
         {
             put_ptr_field_fast(gcr_addr_i, tx_pseg_main_16_24_hs_en, low_bits_l );
@@ -427,10 +475,12 @@ void tx_ffe_write_ffe_en_sel(t_gcr_addr* gcr_addr_i, uint32_t num_2r_equiv_nseg_
     uint32_t pseg_en_l;
 
     // using if/else rather than case to save space
+    // PSL banktype_pre2
     if (banktype_i == TX_FFE_BANKTYPE_PRE2)
     {
         bank_width = tx_pre2_sel_width;
     }
+    // PSL banktype_pre1
     else if (banktype_i == TX_FFE_BANKTYPE_PRE1)
     {
         bank_width = is_5nm_i ? tx_pseg_pre1_en_width : tx_pseg_pre1_hs_en_width ;
@@ -449,10 +499,12 @@ void tx_ffe_write_ffe_en_sel(t_gcr_addr* gcr_addr_i, uint32_t num_2r_equiv_nseg_
     pseg_en_l = pseg_sel_l | tx_ffe_toThermWithHalfRev(num_2r_equiv_pseg_main_en_i, bank_width);
 
     // write the results after adjusting for 5nm, 7nm reg differences
+    // PSL banktype_pre2
     if (banktype_i == TX_FFE_BANKTYPE_PRE2)   // pre2 en is the same for 5nm and 7nm
     {
         set_debug_state(0xC241, TX_FFE_DBG_LVL); // write pre2 en and sel
 
+        // PSL pre2_5nm
         if ( is_5nm_i )
         {
             put_ptr_field_fast(gcr_addr_i, tx_pre2_sel, nseg_sel_l | pseg_sel_l);
@@ -467,11 +519,13 @@ void tx_ffe_write_ffe_en_sel(t_gcr_addr* gcr_addr_i, uint32_t num_2r_equiv_nseg_
         put_ptr_field_fast(gcr_addr_i, tx_nseg_pre2_en, nseg_en_l);
         put_ptr_field_fast(gcr_addr_i, tx_pseg_pre2_en, pseg_en_l);
     }
+    // PSL banktype_pre1
     else if (banktype_i == TX_FFE_BANKTYPE_PRE1)
     {
         set_debug_state(0xC242, TX_FFE_DBG_LVL); // write pre1 en and sel
 
         // sel must be written before enable to avoid main and ffe enabled and selected on same segment
+        // PSL pre1_5nm
         if ( is_5nm_i )   // for 5nm we select, but don't enable unused segments
         {
             put_ptr_field_fast(gcr_addr_i, tx_pre1_sel, nseg_sel_l | pseg_sel_l);

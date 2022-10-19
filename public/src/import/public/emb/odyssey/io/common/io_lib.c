@@ -39,9 +39,12 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr22100400 |vbr     | Issue 291616: Check for pipe abort during servo ops in pcie dccal/init
+// mbs22083000 |mbs     | PSL comment updates
 // gap22062200 |gap     | Moved per-gen fifo l2u settings to tx_fifo_init
 // jjb22062700 |jjb     | Removed 5nm qualifiers from tx patgen code
 // jjb22062100 |jjb     | Added 80 bit repeating pattern support for tx_write_4_bit_pat
+// vbr22072100 |vbr     | Moved thread_active_time disable from mem_regs to img_regs
 // vbr22050900 |vbr     | Issue 278561: Updated the set_all_cal_lane_sel function to not use a broadcast
 // mbs22041300 |mbs     | Issue 259276,259278: Added special tx_fifo_l2u_dly settings for zm_abus
 // mbs22022500 |mbs     | Removed scom_ppe_fir mapping (logic no longer exists)
@@ -212,7 +215,7 @@ PkTimebase last_io_sleep_call_time;
 // Record and Check the amount of time that the current (going to sleep) thread was active
 static inline void check_thread_active_time()
 {
-    if (mem_pg_field_get(ppe_disable_thread_active_time_check))
+    if (img_field_get(ppe_disable_thread_active_time_check))
     {
         return;
     }
@@ -437,9 +440,11 @@ int run_servo_ops_base(t_gcr_addr* gcr_addr, unsigned int queue, unsigned int nu
     unsigned int servo_op_queue_addr = (queue == c_servo_queue_general) ? rx_servo_op_queue0_addr : rx_servo_op_queue1_addr;
 
     int recal = mem_pg_field_get(rx_running_recal);
+    int recal_or_pcie_mode = recal;
 #ifdef IOO
     // Different Aborts for PCIe and AXO
     int pcie_mode = fw_field_get(fw_pcie_mode);
+    recal_or_pcie_mode |= pcie_mode;
     const uint32_t abort_mask       = pcie_mode ? rx_pipe_ifc_recal_abort_mask : (rx_dl_phy_cal_lane_recal_abort_sticky_mask
                                       | rx_dl_phy_cal_lane_bump_recal_abort_sticky_mask);
     const uint32_t abort_error_mask = pcie_mode ? 0 : rx_dl_phy_cal_lane_recal_abort_sticky_mask;
@@ -448,11 +453,11 @@ int run_servo_ops_base(t_gcr_addr* gcr_addr, unsigned int queue, unsigned int nu
     const uint32_t abort_error_mask = 0;
 #endif
 
-    // In recal, need to initially read the status to get abort status.
-    // In init, don't care about the abort and can assume the queues are empty with a depths of 8.
+    // In recal (or pcie dccal/init), need to initially read the status to get abort status.
+    // In dccal/init (non-pcie), don't care about the abort and can assume the queues are empty with a depths of 8.
     uint32_t servo_queue_status_full_reg;
 
-    if(recal)
+    if(recal_or_pcie_mode)
     {
         servo_queue_status_full_reg = get_ptr_field(gcr_addr, rx_servo_queue_status_full_reg_alias);
     }
@@ -467,8 +472,8 @@ int run_servo_ops_base(t_gcr_addr* gcr_addr, unsigned int queue, unsigned int nu
 
     do   //while (ops_done < num_ops);
     {
-        // In recal, check for recal abort
-        if (recal)
+        // In recal (or pcie init), check for abort
+        if (recal_or_pcie_mode)
         {
             uint32_t recal_abort = servo_queue_status_full_reg & abort_mask;
 
@@ -482,7 +487,7 @@ int run_servo_ops_base(t_gcr_addr* gcr_addr, unsigned int queue, unsigned int nu
                 int ret_val = (servo_queue_status_full_reg & abort_error_mask) ? abort_error_code : abort_clean_code;
                 return ret_val;
             } //if(abort)
-        } //if(recal)
+        } //if(recal_or_pcie_mode)
 
         // Read results when available in the result queue (if enabled); skip this the first loop iteration since haven't submitted anything as yet.
         if (read_results)
@@ -621,6 +626,7 @@ int check_servo_queues_empty(t_gcr_addr* gcr_addr, const uint16_t error_state, c
     if (!servo_queues_empty)
     {
         set_debug_state(error_state); // Debug - Servo Queue Empty Error
+        // PSL set_fir_fatal_error
         set_fir(fir_code_fatal_error);
         ADD_LOG(error_log_type, gcr_addr, 0x0);
         status = rc_error;
@@ -705,6 +711,7 @@ void set_rx_lane_fail(unsigned int lane)
 {
     uint32_t lane_mask = 0x80000000 >> lane;
 
+    // PSL lane_lt_16
     if (lane < 16)
     {
         mem_regs_u16_bit_set(pg_addr(rx_lane_fail_0_15_addr), (lane_mask >> 16));
@@ -721,6 +728,7 @@ void clr_rx_lane_fail(unsigned int lane)
 {
     uint32_t lane_mask = 0x80000000 >> lane;
 
+    // PSL lane_lt_16
     if (lane < 16)
     {
         mem_regs_u16_bit_clr(pg_addr(rx_lane_fail_0_15_addr), (lane_mask >> 16));
@@ -737,6 +745,7 @@ void clr_rx_lane_fail(unsigned int lane)
 // Set/Clear the mem_reg bit for tracking the lanes that are powered on
 void set_rx_lanes_pon_0_23(unsigned int lane)
 {
+    // PSL lane_lt_16
     if (lane < 16)
     {
         int mask = (0x8000 >> lane);
@@ -755,6 +764,7 @@ void set_rx_lanes_pon_0_23(unsigned int lane)
 
 void clr_rx_lanes_pon_0_23(unsigned int lane)
 {
+    // PSL lane_lt_16
     if (lane < 16)
     {
         int mask = (0x8000 >> lane);
@@ -773,6 +783,7 @@ void clr_rx_lanes_pon_0_23(unsigned int lane)
 
 void set_tx_lanes_pon_0_23(unsigned int lane)
 {
+    // PSL lane_lt_16
     if (lane < 16)
     {
         int mask = (0x8000 >> lane);
@@ -791,6 +802,7 @@ void set_tx_lanes_pon_0_23(unsigned int lane)
 
 void clr_tx_lanes_pon_0_23(unsigned int lane)
 {
+    // PSL lane_lt_16
     if (lane < 16)
     {
         int mask = (0x8000 >> lane);
@@ -814,6 +826,7 @@ void tx_fifo_init(t_gcr_addr* gcr_addr)
 #ifdef IOO
     int pcie_mode = fw_field_get(fw_pcie_mode);
 
+    // PSL pcie_mode
     if (pcie_mode)
     {
         //uint32_t l_rate = get_ptr_field(gcr_addr, pipe_state_rate); // gen1=0, gen2=1, gen3=2, gen4=3, gen5=4
@@ -821,6 +834,7 @@ void tx_fifo_init(t_gcr_addr* gcr_addr)
                                                 tx_pcie_clk_sel); // gen1=0b00001, gen2=0b00010, gen3=0b00100, gen4=0b01000, gen5=0b10000
         uint32_t l_rate = 31 - __builtin_clz(l_rate_one_hot); // gen1=0, gen2=1, gen3=2, gen4=3, gen5=4
 
+        // PSL pcie_rate_lt_two
         if (l_rate < 2)   // GEN 1 and GEN 2
         {
             put_ptr_field(gcr_addr, tx_fifo_l2u_dly, 0b010, read_modify_write);
@@ -836,6 +850,7 @@ void tx_fifo_init(t_gcr_addr* gcr_addr)
     }
 
     // TX FIFO L2U settings for zMetis Abus
+    // PSL is_zm_abus
     if ( is_zm_abus() )
     {
         // l2u_dly=3, max_load_cnt=7, max_unload_cnt=7
@@ -844,9 +859,31 @@ void tx_fifo_init(t_gcr_addr* gcr_addr)
 
 #endif
 
+#ifdef IOT
+    int clock_lane = get_tx_clock_lane();
+    int lane = get_gcr_addr_lane(gcr_addr);
+
+    // PSL clock_lane
+    if (clock_lane == lane)
+    {
+        put_ptr_field(gcr_addr, tx_clk_run_cnt_disable, 0b0, read_modify_write);
+    }
+
+#endif
+
     put_ptr_field_fast(gcr_addr, tx_clr_unload_clk_disable,   0b1);
     put_ptr_field_fast(gcr_addr, tx_fifo_init,   0b1);
     put_ptr_field_fast(gcr_addr, tx_set_unload_clk_disable,   0b1);
+
+#ifdef IOT
+
+    if (clock_lane == lane)
+    {
+        put_ptr_field(gcr_addr, tx_clk_run_cnt_disable, 0b1, read_modify_write);
+    }
+
+#endif
+
     return;
 }
 
@@ -871,6 +908,7 @@ void tx_write_4_bit_pat(t_gcr_addr* gcr_addr, unsigned int pat_4)
     // this copies the 4-bits to the even bits of an 8-bit word,
     // considering msb as 0
     // two steps to move to odd; then, shift 1 to move to even
+    // PSL tx_half_width_mode
     if (in_tx_half_width_mode())
     {
         pat_8 = ((pat_4 << 2) | pat_4) & 0x33; // move 2 msb over 2; odd bits are in correct relative place now

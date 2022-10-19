@@ -406,14 +406,6 @@
 #define ppe_debug_stopwatch_time_us_mask           0xffff
 
 
-#define ppe_disable_thread_active_time_check_addr   0b110000011
-#define ppe_disable_thread_active_time_check_startbit   13
-#define ppe_disable_thread_active_time_check_width   1
-#define ppe_disable_thread_active_time_check_endbit   13
-#define ppe_disable_thread_active_time_check_shift   2
-#define ppe_disable_thread_active_time_check_mask   0x4
-
-
 #define ppe_eoff_edge_hysteresis_addr              0b110001011
 #define ppe_eoff_edge_hysteresis_startbit          3
 #define ppe_eoff_edge_hysteresis_width             3
@@ -604,6 +596,14 @@
 #define ppe_thread_loop_count_endbit               15
 #define ppe_thread_loop_count_shift                0
 #define ppe_thread_loop_count_mask                 0xffff
+
+
+#define ppe_thread_time_stress_mode_addr           0b110000100
+#define ppe_thread_time_stress_mode_startbit       8
+#define ppe_thread_time_stress_mode_width          1
+#define ppe_thread_time_stress_mode_endbit         8
+#define ppe_thread_time_stress_mode_shift          7
+#define ppe_thread_time_stress_mode_mask           0x80
 
 
 #define rx_a_bad_dfe_conv_addr                     0b000000000
@@ -942,12 +942,12 @@
 #define rx_b_quad_phase_done_mask                  0x1000
 
 
-#define rx_b_sigdet_done_addr                      0b000000011
-#define rx_b_sigdet_done_startbit                  8
-#define rx_b_sigdet_done_width                     1
-#define rx_b_sigdet_done_endbit                    8
-#define rx_b_sigdet_done_shift                     7
-#define rx_b_sigdet_done_mask                      0x80
+#define rx_b_reserved_addr                         0b000000011
+#define rx_b_reserved_startbit                     8
+#define rx_b_reserved_width                        1
+#define rx_b_reserved_endbit                       8
+#define rx_b_reserved_shift                        7
+#define rx_b_reserved_mask                         0x80
 
 
 #define rx_b_step_done_alias_addr                  0b000000011
@@ -1350,12 +1350,20 @@
 #define rx_dfe_full_h1_adj_mask                    0x1c00
 
 
-#define rx_dfe_full_mode_addr                      0b110000100
-#define rx_dfe_full_mode_startbit                  8
+#define rx_dfe_full_max_error_disable_addr         0b110000110
+#define rx_dfe_full_max_error_disable_startbit     7
+#define rx_dfe_full_max_error_disable_width        1
+#define rx_dfe_full_max_error_disable_endbit       7
+#define rx_dfe_full_max_error_disable_shift        8
+#define rx_dfe_full_max_error_disable_mask         0x100
+
+
+#define rx_dfe_full_mode_addr                      0b110000110
+#define rx_dfe_full_mode_startbit                  6
 #define rx_dfe_full_mode_width                     1
-#define rx_dfe_full_mode_endbit                    8
-#define rx_dfe_full_mode_shift                     7
-#define rx_dfe_full_mode_mask                      0x80
+#define rx_dfe_full_mode_endbit                    6
+#define rx_dfe_full_mode_shift                     9
+#define rx_dfe_full_mode_mask                      0x200
 
 
 #define rx_dfe_full_quad_addr                      0b000000000

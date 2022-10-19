@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
 // vbr22061500 |vbr     | Added returning of fail status for ext commands
 // mwh21051700 |mwh     | Removed nv form reset
 // vbr21011901 |vbr     | Removed or changed to level 3 debug states that do not seem to be useful
@@ -93,6 +94,7 @@ int eo_llbist(t_gcr_addr* gcr_addr)
 
     if ( error )
     {
+        // PSL set_fir_bad_lane_warning_and_dft_error
         set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
         ADD_LOG(DEBUG_RX_BIST_LL_TEST_FAIL, gcr_addr, 0);
         status = error_code;

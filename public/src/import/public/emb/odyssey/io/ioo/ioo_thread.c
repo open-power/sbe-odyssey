@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr22082300 |vbr     | Add thread time stress mode for testing PCIe
 // vbr22031500 |vbr     | Issue 265958: move reading of some config into main loop
 // vbr21120300 |vbr     | Use functions for number of lanes
 // vbr21033100 |vbr     | Added PIPE command processing
@@ -151,6 +152,13 @@ void ioo_thread(void* arg)
         if (l_stop_thread)
         {
             set_debug_state(0x00FF); // DEBUG - Thread Stopped
+
+            if (mem_pg_field_get(ppe_thread_time_stress_mode))
+            {
+                // Stress threading inactive time by forcing wait in stopped threads.
+                // 14.4+ us thread active time = 12us busy wait + 2.4us thread switch
+                io_spin_us(12);
+            }
         }
         else     //!fw_stop_thread
         {

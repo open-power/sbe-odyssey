@@ -78,6 +78,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// gap22101300 |gap     | If IOO, set to wide track and hold pulse during zcal
+// mbs22082601 |mbs     | Updated with PSL comments
+// gap22071800 |gap     | Remove test PSL_* controls
 // gap22052300 |gap     | Minor changes to reduce code size
 // gap22030100 |gap     | Update to restore odyssey function
 // mbs22021000 |mbs     | Updates to reduce code size
@@ -112,29 +115,28 @@
 #define DBG_LVL 3 // debug on each branch
 #define DEEP_DBG_LVL 3 // debug on each write
 
-//PSLNAMEZ
 void tx_zcal_tdr (t_gcr_addr* gcr_addr_i)
 {
-    PSL_START
     set_debug_state(0xC100); // tx_zcal_tdr begin
     int thread_l = 0;
     bool is_5nm_l = !is_odyssey();
-    PSL_STOP
     thread_l = get_gcr_addr_thread(gcr_addr_i);
 
-    PSL_EN_NEXT //PSL in_hw
     // setup tdr; offset reg value is a function of what is being called half_width_mode
     uint32_t tdr_offset_l = 16 * tx_zcal_tdr_sample_position_c;
 
-    PSL_START
+    // if IOO, save tx_tdr_th_pw_sel and overwrite to widest width
+#ifdef IOO
+    uint32_t tx_tdr_th_pw_sel_save_l = get_ptr_field(gcr_addr_i, tx_tdr_th_pw_sel);
+    put_ptr_field(gcr_addr_i, tx_tdr_th_pw_sel, 0b00, read_modify_write); // set to wider pulse for zcal
+#endif
+
     set_debug_state(0xC160, DBG_LVL); // tx_tdr_pulse_offset
     put_ptr_field(gcr_addr_i, tx_tdr_pulse_offset, tdr_offset_l, read_modify_write);
-    PSL_DIS_NEXT
     set_debug_state(0xC161, DEEP_DBG_LVL); // tx_tdr_pulse_width
     put_ptr_field(gcr_addr_i, tx_tdr_pulse_width, tx_zcal_tdr_pulse_width_c , read_modify_write);
     set_debug_state(0xC162, DEEP_DBG_LVL); // tx_tdr_enable
     put_ptr_field(gcr_addr_i, tx_tdr_enable, 0b1, read_modify_write);
-    PSL_STOP
 
     // *!   chart of aliases, partial aliases for selects:
     // *!     odyssey            5nm
@@ -160,6 +162,7 @@ void tx_zcal_tdr (t_gcr_addr* gcr_addr_i)
     uint32_t current_pseg_pre1_l = tx_pseg_pre1_hs_en_width * 2 - 1 ;
     uint32_t current_pseg_main_l = (tx_pseg_main_0_15_hs_en_width * 2 - 1) + (tx_pseg_main_16_24_hs_en_width * 2);
 
+    // PSL 5nm
     if (is_5nm_l)
     {
         current_pseg_main_l -= 7 ; // 5nm is 3 1r bits shorter for main and post's first segment is 2r
@@ -212,9 +215,11 @@ void tx_zcal_tdr (t_gcr_addr* gcr_addr_i)
 
         do
         {
+            // PSL pulled_too_high
             if (tx_zcal_tdr_capt_match_mult_rds(gcr_addr_i, 1,
                                                 tx_zcal_tdr_matches_needed_c))   // pulled too high; need to reduce pullups
             {
+                // PSL pullup_dec_success
                 if (tx_zcal_tdr_decrement_bank(gcr_addr_i, SEGTYPE_MAIN_PSEG, is_5nm_l, &current_pseg_pre2_l, &current_pseg_pre1_l,
                                                &current_pseg_main_l))
                 {
@@ -256,9 +261,11 @@ void tx_zcal_tdr (t_gcr_addr* gcr_addr_i)
 
         do
         {
+            // PSL pulled_too_low
             if (tx_zcal_tdr_capt_match_mult_rds(gcr_addr_i, 0,
                                                 tx_zcal_tdr_matches_needed_c))   // pulled too low; need to decrease pulldowns
             {
+                // PSL pulldown_dec_success
                 if (tx_zcal_tdr_decrement_bank(gcr_addr_i, SEGTYPE_MAIN_NSEG, is_5nm_l, &current_nseg_pre2_l, &current_nseg_pre1_l,
                                                &current_nseg_main_l))
                 {
@@ -292,6 +299,11 @@ void tx_zcal_tdr (t_gcr_addr* gcr_addr_i)
     set_debug_state(0xC16D, DEEP_DBG_LVL); //   tx_tdr_pulse_offset
     put_ptr_field(gcr_addr_i, tx_tdr_pulse_offset, 0, read_modify_write);
 
+    // if IOO, restore tx_tdr_th_pw_sel
+#ifdef IOO
+    put_ptr_field(gcr_addr_i, tx_tdr_th_pw_sel, tx_tdr_th_pw_sel_save_l, read_modify_write);
+#endif
+
     set_debug_state(0xC1FF); // tx_zcal_tdr end
 } // tx_zcal_tdr
 
@@ -299,18 +311,17 @@ void tx_zcal_tdr (t_gcr_addr* gcr_addr_i)
 // In general, the enables are written here
 // Also, in general, we are always either setting all segments or decreasing the
 // number of segments; we can take advantage of this to save some writes
-//PSLNAMEA
 void tx_zcal_tdr_write_en (t_gcr_addr* gcr_addr_i, uint32_t num_2r_equiv_i, t_segtype segtype_i, bool is_5nm_i)
 {
     uint32_t high_bits_l = 0;
     uint32_t low_bits_l = 0;
-    PSL_EN_NEXT
 
     switch(segtype_i)
     {
         case SEGTYPE_MAIN_PSEG:
             set_debug_state(0xC141, DBG_LVL); // write main_pseg
 
+            // PSL segtype_main_pseg_16_24
             if (tx_zcal_tdr_split_main_therm (num_2r_equiv_i, tx_pseg_main_0_15_hs_en_width, tx_pseg_main_16_24_hs_en_width,
                                               is_5nm_i, &high_bits_l, &low_bits_l))  // write 16_24
             {
@@ -325,6 +336,7 @@ void tx_zcal_tdr_write_en (t_gcr_addr* gcr_addr_i, uint32_t num_2r_equiv_i, t_se
         case SEGTYPE_MAIN_NSEG:
             set_debug_state(0xC143, DBG_LVL); // write main_nseg
 
+            // PSL segtype_main_nseg_16_24
             if (tx_zcal_tdr_split_main_therm (num_2r_equiv_i, tx_nseg_main_0_15_hs_en_width, tx_nseg_main_16_24_hs_en_width,
                                               is_5nm_i, &high_bits_l, &low_bits_l))  // write 16_24
             {
@@ -337,11 +349,13 @@ void tx_zcal_tdr_write_en (t_gcr_addr* gcr_addr_i, uint32_t num_2r_equiv_i, t_se
             break;
 
         case SEGTYPE_PRE2_PSEG:
+            // PSL segtype_pre2_pseg_break
             set_debug_state(0xC149, DBG_LVL); // write pre2 pseg
             put_ptr_field_fast(gcr_addr_i, tx_pseg_pre2_hs_en, tx_ffe_toThermWithHalf(num_2r_equiv_i, tx_pseg_pre2_en_width));
             break;
 
         case SEGTYPE_PRE2_NSEG:
+            // PSL segtype_pre2_nseg_break
             set_debug_state(0xC14A, DBG_LVL); // write pre2 nseg
             put_ptr_field_fast(gcr_addr_i, tx_nseg_pre2_hs_en, tx_ffe_toThermWithHalf(num_2r_equiv_i, tx_nseg_pre2_en_width));
             break;
@@ -349,6 +363,7 @@ void tx_zcal_tdr_write_en (t_gcr_addr* gcr_addr_i, uint32_t num_2r_equiv_i, t_se
         case SEGTYPE_PRE1_PSEG:
             set_debug_state(0xC14B, DBG_LVL); // write pre1 pseg
 
+            // PSL segtype_pre1_pseg_5nm
             if (is_5nm_i)   // pre1 5nm and odyssey have different widths
             {
                 set_debug_state(0xC170, DEEP_DBG_LVL); //                 tx_pseg_pre1_en
@@ -365,6 +380,7 @@ void tx_zcal_tdr_write_en (t_gcr_addr* gcr_addr_i, uint32_t num_2r_equiv_i, t_se
         case SEGTYPE_PRE1_NSEG:
             set_debug_state(0xC14C, DBG_LVL); // write pre1 nseg
 
+            // PSL segtype_pre1_nseg_5nm
             if (is_5nm_i)   // pre1 5nm and odyssey have different widths
             {
                 set_debug_state(0xC172, DEEP_DBG_LVL); //                 tx_nseg_pre1_en
@@ -382,13 +398,12 @@ void tx_zcal_tdr_write_en (t_gcr_addr* gcr_addr_i, uint32_t num_2r_equiv_i, t_se
 
 // P or N is passed in as SEGTYPE_MAIN_PSEG or  SEGTYPE_MAIN_NSEG
 // remove main, then pre2, then pre1
-//PSLNAMEB
 bool tx_zcal_tdr_decrement_bank(t_gcr_addr* gcr_addr_i, t_segtype segtype_i, bool is_5nm_i, uint32_t* current_pre2_io,
                                 uint32_t* current_pre1_io, uint32_t* current_main_io)
 {
-    PSL_EN_NEXT
     bool value_updated_l = false ;
 
+    // PSL main_gt_0
     if (*current_main_io > 0)
     {
         set_debug_state(0xC151, DBG_LVL); // decrement main bank
@@ -396,6 +411,7 @@ bool tx_zcal_tdr_decrement_bank(t_gcr_addr* gcr_addr_i, t_segtype segtype_i, boo
         tx_zcal_tdr_write_en(gcr_addr_i, *current_main_io, segtype_i, is_5nm_i);
         value_updated_l = true ;
     }
+    // PSL pre2_gt_0
     else if (*current_pre2_io > 0)
     {
         set_debug_state(0xC152, DBG_LVL); // decrement pre2 bank
@@ -404,6 +420,7 @@ bool tx_zcal_tdr_decrement_bank(t_gcr_addr* gcr_addr_i, t_segtype segtype_i, boo
                              (segtype_i == SEGTYPE_MAIN_PSEG) ? SEGTYPE_PRE2_PSEG : SEGTYPE_PRE2_NSEG, is_5nm_i);
         value_updated_l = true ;
     }
+    // PSL pre1_gt_0
     else if (*current_pre1_io > 0)
     {
         set_debug_state(0xC153, DBG_LVL); // decrement pre1 bank
@@ -421,10 +438,8 @@ bool tx_zcal_tdr_decrement_bank(t_gcr_addr* gcr_addr_i, t_segtype segtype_i, boo
     return value_updated_l;
 } // tx_zcal_tdr_decrement_bank
 
-//PSLNAMEC
 bool tx_zcal_tdr_capt_match_mult_rds(t_gcr_addr* gcr_addr_i, uint32_t match_value_i, uint32_t times_i)   //PSL NAMEX
 {
-    PSL_EN_NEXT
     bool value_matched_l = true ;
     uint32_t times_matched_l = 0;
 
@@ -433,6 +448,7 @@ bool tx_zcal_tdr_capt_match_mult_rds(t_gcr_addr* gcr_addr_i, uint32_t match_valu
         set_debug_state(0xC1C0, DBG_LVL); // get  tx_tdr_capt_val
         value_matched_l = (get_ptr_field(gcr_addr_i, tx_tdr_capt_val) == match_value_i);
 
+        // PSL value_matched
         if (!value_matched_l)   // doing explicit conditional to allow coverage testing
         {
             // sim model generally does not include noise, so, unless we are lucky, we will see consistent
@@ -479,7 +495,6 @@ bool tx_zcal_tdr_capt_match_mult_rds(t_gcr_addr* gcr_addr_i, uint32_t match_valu
 bool tx_zcal_tdr_split_main_therm (const uint32_t num_2r_equiv_i, uint32_t high_width_i, uint32_t low_width_i,
                                    bool is_5nm_i, uint32_t* high_bits_io, uint32_t* low_bits_io)
 {
-    PSL_EN_NEXT
     bool write_low_bits_l;
     set_tx_dcc_debug_tx_zcal_tdr(0xC1C7, num_2r_equiv_i) ; // num_2r_equiv_i
     set_tx_dcc_debug_tx_zcal_tdr(0xC1C8, high_width_i) ;   // high_width_i
@@ -487,6 +502,7 @@ bool tx_zcal_tdr_split_main_therm (const uint32_t num_2r_equiv_i, uint32_t high_
     set_tx_dcc_debug_tx_zcal_tdr(0xC1CA, is_5nm_i) ;       // is_5nm_i
     set_tx_dcc_debug_tx_zcal_tdr(0xC1CB, high_width_i) ;   // high_width_i
 
+    // PSL 5nm
     if (is_5nm_i)
     {
         uint32_t low_val_l = min(low_width_i * 2 - 1, num_2r_equiv_i);
@@ -494,6 +510,7 @@ bool tx_zcal_tdr_split_main_therm (const uint32_t num_2r_equiv_i, uint32_t high_
         set_tx_dcc_debug_tx_zcal_tdr(0xC1CC, low_val_l) ;   // low_val_l
         set_tx_dcc_debug_tx_zcal_tdr(0xC1CD, high_val_l) ;  // high_val_l
 
+        // PSL 5nm_high_val_gt_0
         if (high_val_l > 0)
         {
             high_val_l += 6; // this is equivalent to shifting 3 1's in from the right if the original value is non-zero

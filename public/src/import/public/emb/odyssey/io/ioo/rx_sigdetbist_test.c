@@ -42,6 +42,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
+// jjb22081200 |jjb     | Issue 287309 : increased rx_sigdet_test_stat_alias to 16 bits
+// jjb22080200 |jjb     | removed rx_b_sigdet_done
 // vbr22061500 |vbr     | Added returning of fail status, only set FIRs on fail
 // jjb22011000 |jjb     | Initial Code
 //------------------------------------------------------------------------------
@@ -71,11 +74,13 @@ static uint32_t rx_sigdetbist_test1(t_gcr_addr* gcr_addr, uint32_t cntl, uint32_
     io_spin(150);
     uint32_t l_rx_sigdet_test_stat_alias = get_ptr_field(gcr_addr, rx_sigdet_test_stat_alias);
 
+    // PSL not_test_stat
     if (!(l_rx_sigdet_test_stat_alias & rx_sigdet_test_start_mask))   // set test1 done bit if start is zero
     {
         result = test; // set 5th LSB
     }
 
+    // PSL test_stat
     if (l_rx_sigdet_test_stat_alias & rx_sigdet_test_fail_mask)   // set test1 fail bit
     {
         result = result | (test >> 4); // set 1st LSB
@@ -105,19 +110,19 @@ int rx_sigdetbist_test(t_gcr_addr* gcr_addr)
 
     // Test 1 : Static Low Amplitude Test
     set_debug_state(0x51F1, 3); // DEBUG : Starting RXSIGDET BIST Test 1
-    result = rx_sigdetbist_test1(gcr_addr, 0b110001000000000, 0b11110000, 0x0080);
+    result = rx_sigdetbist_test1(gcr_addr, 0b110001000000000, 0b1111000000000000, 0x0080);
 
     // Test 2 : Static High Amplitude Test
     set_debug_state(0x51F2, 3); // DEBUG : Starting RXSIGDET BIST Test 2
-    result = result | rx_sigdetbist_test1(gcr_addr, 0b110000000000000, 0b10010000, 0x0040);
+    result = result | rx_sigdetbist_test1(gcr_addr, 0b110000000000000, 0b1001000000000000, 0x0040);
 
     // Test 3 : Dynamic Low to High Amplitude Test
     set_debug_state(0x51F3, 3); // DEBUG : Starting RXSIGDET BIST Test 3
-    result = result | rx_sigdetbist_test1(gcr_addr, 0b110000111110000, 0b11010000, 0x0020);
+    result = result | rx_sigdetbist_test1(gcr_addr, 0b110000111110000, 0b1101000000000000, 0x0020);
 
     // Test 4 : Dynamic High to Low Amplitude Test
     set_debug_state(0x51F4, 3); // DEBUG : Starting RXSIGDET BIST Test 4
-    result = result | rx_sigdetbist_test1(gcr_addr, 0b110001111110000, 0b10110000, 0x0010);
+    result = result | rx_sigdetbist_test1(gcr_addr, 0b110001111110000, 0b1011000000000000, 0x0010);
 
     // Turn off RX Sigdet Test Enable
     set_debug_state(0x51F5, 3); // DEBUG : Turn Off RXSIGDET Test Enable
@@ -126,11 +131,13 @@ int rx_sigdetbist_test(t_gcr_addr* gcr_addr)
     // Report Results
     set_debug_state(0x51F6, 3); // DEBUG : Reporting RXSIGDET BIST Results
 
+    // PSL fail_result
     if (result & 0x000F)   // 1st LSB nibble of result are per test fail bits. Set fail_result if any tests fail.
     {
         fail_result = 1;
     }
 
+    // PSL done_result
     if ((result & 0x00F0) ==
         0x00F0)   // 2nd LSB nibble of result are per test done bits. Set done_result only if all test are done.
     {
@@ -141,11 +148,10 @@ int rx_sigdetbist_test(t_gcr_addr* gcr_addr)
     mem_pl_field_put(rx_sigdet_fail, lane, fail_result);
     mem_pl_field_put(rx_a_sigdet_done, lane,
                      done_result); // update bank a done bit even though there is only a single sigdet
-    mem_pl_field_put(rx_b_sigdet_done, lane,
-                     done_result); // update bank b done bit even though there is only a single sigdet
 
     if (fail_result)
     {
+        // PSL set_fir_bad_lane_warning_and_dft_error
         set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
         ADD_LOG(DEBUG_RX_SIGDET_FAIL, gcr_addr, result);
     }

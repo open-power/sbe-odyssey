@@ -27,9 +27,16 @@
 
 #include "ppe_com_reg_const_pkg.h"
 
-#define TX_DCC_I_TUNE_WIDTH_5NM  tx_dcc_i_tune_width
-#define TX_DCC_Q_TUNE_WIDTH_5NM  tx_dcc_q_tune_width
-#define TX_DCC_IQ_TUNE_WIDTH_5NM tx_dcc_iq_tune_width
+#ifdef IOO
+    #define TX_DCC_I_TUNE_WIDTH_5NM  tx_dcc_i_tune_width
+    #define TX_DCC_Q_TUNE_WIDTH_5NM  tx_dcc_q_tune_width
+    #define TX_DCC_IQ_TUNE_WIDTH_5NM tx_dcc_iq_tune_width
+#endif
+
+#ifdef IOT
+    #define TX_DCC_TUNE_WIDTH_5NM  tx_dcc_tune_width
+#endif
+
 #define TX_DCC_I_TUNE_WIDTH_7NM  6
 #define TX_DCC_Q_TUNE_WIDTH_7NM  6
 #define TX_DCC_IQ_TUNE_WIDTH_7NM 5
@@ -41,9 +48,14 @@
 #define TX_DCC_I_TUNE_OFFSET_7NM    0
 #define TX_DCC_Q_TUNE_OFFSET_7NM    0
 #define TX_DCC_IQ_TUNE_OFFSET_5NM  31
-#define TX_DCC_I_TUNE_OFFSET_5NM  128
+
+#ifdef IOO
+    #define TX_DCC_I_TUNE_OFFSET_5NM  128
+#endif
+
 #define TX_DCC_Q_TUNE_OFFSET_5NM  128
 
+#ifdef IOO
 #define SET_TX_TUNE_CONSTANTS \
     unsigned int tx_dcc_i_tune_width_const; \
     unsigned int tx_dcc_q_tune_width_const; \
@@ -67,6 +79,16 @@
         tx_dcc_iq_tune_offset_const = TX_DCC_IQ_TUNE_OFFSET_5NM; \
     } \
 
+#endif
+
+
+#ifdef IOT
+#define SET_TX_TUNE_CONSTANTS \
+    unsigned int tx_dcc_tune_width_iot; \
+    tx_dcc_tune_width_iot = TX_DCC_TUNE_WIDTH_5NM; \
+
+#endif
+
 #define tx_dcc_main_max_i_7nm   31
 #define tx_dcc_main_min_i_7nm  -32
 #define tx_dcc_main_max_q_7nm   31
@@ -80,6 +102,10 @@
 #define tx_dcc_main_min_q_5nm  -128
 #define tx_dcc_main_max_iq_5nm   32
 #define tx_dcc_main_min_iq_5nm  -31
+
+#define tx_dcc_main_max_i_iot    63
+#define tx_dcc_main_min_i_iot   -64
+#define tx_dcc_tune_offset_iot   64
 
 #define SET_TUNE_LIMITS \
     int tx_dcc_main_max_i_c;\

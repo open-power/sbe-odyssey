@@ -39,6 +39,10 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// gap22090800 |gap     | Updated range of tune bits for iot
+// mbs22083000 |mbs     | PSL comment updates
+// gap22080300 |gap     | EWM285666 io_sleep added to fix thread_active_timeout on back-to-back calls
+// gap22071800 |gap     | EWM284157 change reg read to determine tx speed
 // jjb22062700 |jjb     | Removed 5nm qualifiers from tx patgen code
 // jjb22062100 |jjb     | Updated tx pattern generator pcie controls
 // vbr22011800 |vbr     | Added a status return that needs to be updated with pass/fail
@@ -92,7 +96,8 @@ int tx_dcc_main_init(t_gcr_addr* gcr_addr_i)
     uint32_t tx_dcc_main_min_samples_int = mem_pg_field_get(tx_dcc_main_min_samples);
 
 #ifdef IOT
-    put_ptr_field(gcr_addr_i, tx_dcc_tune,     IntToGray(0, tx_dcc_tune_width), read_modify_write);
+    put_ptr_field(gcr_addr_i, tx_dcc_tune,     IntToGrayOffset(0, tx_dcc_tune_width, tx_dcc_tune_offset_iot),
+                  read_modify_write);
 #endif
 
 #ifdef IOO
@@ -110,15 +115,15 @@ int tx_dcc_main_init(t_gcr_addr* gcr_addr_i)
 
 #ifdef IOO
     put_ptr_field(gcr_addr_i, tx_tdr_enable,      0b0,     read_modify_write);
-//    bool is_5nm_l = !is_odyssey();
-//    if (is_5nm_l) {
     int l_pcie_mode = fw_field_get(fw_pcie_mode);
 
+    // PSL pcie_mode
     if (l_pcie_mode == 1)   // Update ppe_data_rate to reflect PCIe pipe_state_rate
     {
-        uint32_t l_pipe_state_rate = get_ptr_field(gcr_addr_i, pipe_state_rate);
+        uint32_t l_tx_pcie_clk_sel = get_ptr_field(gcr_addr_i, tx_pcie_clk_sel); // 1 hot; bits 27-31 --> gen5-gen1
 
-        if (l_pipe_state_rate < 2)   // GEN1/2
+        // PSL pcie_gen1or2
+        if (l_tx_pcie_clk_sel < 3)   // GEN1/2
         {
             put_ptr_field(gcr_addr_i, tx_pattern_bus_width_sel, 0b1 , read_modify_write);  // 40 bit mode
         }
@@ -127,10 +132,9 @@ int tx_dcc_main_init(t_gcr_addr* gcr_addr_i)
             put_ptr_field(gcr_addr_i, tx_pattern_bus_width_sel, 0b0 , read_modify_write);  // 32 bit mode
         }
 
-        uint32_t l_tx_pattern_gear_ratio = 15 >>
-                                           l_pipe_state_rate; // Shift 15 to right by pipe_state_rate to convert to gear ratio
+        uint32_t l_tx_pattern_gear_ratio = 15 >> (31 - __builtin_clz(l_tx_pcie_clk_sel))
+                                           ; // uint32 0x10, 0x08, 0x04, 0x02, 0x01--> 0, 1, 3, 7, 15
         put_ptr_field(gcr_addr_i, tx_pattern_gear_ratio, l_tx_pattern_gear_ratio , read_modify_write);
-//      }
     }
 
 #endif
@@ -139,8 +143,8 @@ int tx_dcc_main_init(t_gcr_addr* gcr_addr_i)
     put_ptr_field(gcr_addr_i, tx_pattern_sel,     0b001,   read_modify_write);
 
 #ifdef IOT
-    tx_dcc_main_servo(gcr_addr_i, tx_dcc_main_max_step_i_c,  tx_dcc_main_dir_i_c,  SERVOOP_I, tx_dcc_main_min_i_5nm,
-                      tx_dcc_main_max_i_5nm,  tx_dcc_main_min_samples_int, tx_dcc_main_ratio_thresh_c);
+    tx_dcc_main_servo(gcr_addr_i, tx_dcc_main_max_step_i_c,  tx_dcc_main_dir_i_c,  SERVOOP_I, tx_dcc_main_min_i_iot,
+                      tx_dcc_main_max_i_iot,  tx_dcc_main_min_samples_int, tx_dcc_main_ratio_thresh_c);
 #endif
 
 #ifdef IOO
@@ -160,5 +164,6 @@ int tx_dcc_main_init(t_gcr_addr* gcr_addr_i)
     put_ptr_field(gcr_addr_i, tx_bank_controls_dcc_alias,  0b1, read_modify_write); //pl power-on, active low
 
     set_debug_state(0xD01F); // init end
+    io_sleep(get_gcr_addr_thread(gcr_addr_i)); // sleep to fix thread_active_timeout on back-to-back calls
     return pass_code; // Per Issue 267096 - there is no fail condition for TX DCC
 } //tx_dcc_main_init

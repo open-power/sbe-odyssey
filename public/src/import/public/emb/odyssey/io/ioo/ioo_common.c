@@ -39,6 +39,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr22100401 |vbr     | Issue 291616: Check for pipe abort in dccal/init; functions to change pipe_abort sources for dccal/init vs recal
+// vbr22100400 |vbr     | Issue 290234: exit wait_for_cdr_lock() on a pcie pipe reset
+// mbs22082601 |mbs     | Updated with PSL comments
 // vbr22062800 |vbr     | Common function for taking alt bank out of psave
 // vbr22061500 |vbr     | Add external command fail reporting
 // vbr22060200 |vbr     | Added attribute to ensure proper data alignment of packed struct
@@ -147,11 +150,15 @@ int wait_for_cdr_lock(t_gcr_addr* gcr_addr, bool set_fir_on_error)
     // This is to prevent advancing on the false lock that may occur when the flywheel is far from the correct value.
     // Since this function is called both right after enabling the CDR and again at the end of cal before switching banks,
     // this minimum wait will be incurred twice in each calibration.
+    //
+
+    // PSL fw_spread_en
     if (fw_field_get(fw_spread_en))
     {
         io_wait_us(get_gcr_addr_thread(gcr_addr), 5); // sleep until 5us has elapsed
     }
 
+    int pcie_mode = fw_field_get(fw_pcie_mode);
     int loop_count = 0;
 
     while ( true )
@@ -160,9 +167,22 @@ int wait_for_cdr_lock(t_gcr_addr* gcr_addr, bool set_fir_on_error)
         // Check CDR status
         int locked_ab = get_ptr_field(gcr_addr, rx_pr_locked_ab_alias);
 
+        // PSL locked_ab
         if (locked_ab == 0b11)
         {
             return pass_code; // Exit when locked
+        }
+        else if (pcie_mode)
+        {
+            set_gcr_addr_reg_id(gcr_addr, tx_group);
+            int pipe_reset = get_ptr_field(gcr_addr, pipe_state_resetn_active); //pl
+            set_gcr_addr_reg_id(gcr_addr, rx_group);
+
+            // PSL pipe_reset
+            if (pipe_reset)
+            {
+                return pass_code;  // Exit on a PCIe PIPE Reset (Issue 290234)
+            }
         }
         else
         {
@@ -174,8 +194,9 @@ int wait_for_cdr_lock(t_gcr_addr* gcr_addr, bool set_fir_on_error)
             {
                 if(set_fir_on_error)
                 {
-                    set_fir(fir_code_bad_lane_warning);    // Set FIR on a timeout.
-                }
+                    // PSL set_fir_bad_lane_warning
+                    set_fir(fir_code_bad_lane_warning);
+                } // Set FIR on a timeout.
 
                 ADD_LOG(DEBUG_RX_CDR_LOCK_TIMEOUT, gcr_addr, locked_ab);
                 return warning_code; // Exit when timeout
@@ -201,9 +222,26 @@ int check_rx_abort(t_gcr_addr* gcr_addr)
 {
     int ret_val = pass_code;
 
+    // PCIe always checks for a pipe abort
+    int pcie_mode = fw_field_get(fw_pcie_mode);
+
+    // PSL pcie_mode
+    if (pcie_mode)
+    {
+        // Check for any PIPE command as a clean abort
+        int pipe_ifc_recal_abort = get_ptr_field(gcr_addr, rx_pipe_ifc_recal_abort);
+
+        // PSL pcie_recal_abort
+        if (pipe_ifc_recal_abort)
+        {
+            ret_val |= abort_clean_code;
+        }
+    }
+
     // Only perform when running in recal.
     int recal = mem_pg_field_get(rx_running_recal);
 
+    // PSL recal_running
     if (recal)
     {
         // Check the recal_abort mem_reg
@@ -213,22 +251,11 @@ int check_rx_abort(t_gcr_addr* gcr_addr)
 
         if (abort_val0)
         {
-            ret_val = abort_error_code;
+            ret_val |= abort_error_code;
         }
 
-        int pcie_mode = fw_field_get(fw_pcie_mode);
-
-        if (pcie_mode)
-        {
-            // Check for any PIPE command as a clean abort
-            int pipe_ifc_recal_abort = get_ptr_field(gcr_addr, rx_pipe_ifc_recal_abort);
-
-            if (pipe_ifc_recal_abort)
-            {
-                ret_val |= abort_clean_code;
-            }
-        }
-        else     //!pcie_mode
+        // PSL axo_mode
+        if (!pcie_mode)
         {
             // Check the DL sticky abort and DL sticky bump abort signals when AXO mode
             int rx_dl_phy_ro_full_reg = get_ptr_field(gcr_addr, rx_dl_phy_ro_full_reg_alias);
@@ -240,11 +267,13 @@ int check_rx_abort(t_gcr_addr* gcr_addr)
             int psave_req = get_ptr_field(gcr_addr, rx_psave_req_dl);
             recal_abort_error |= psave_req;
 
+            // PSL axo_recal_abort_error
             if (recal_abort_error)
             {
                 ret_val |= abort_error_code;
             }
 
+            // PSL axo_recal_abort_clean
             if (recal_abort_clean)
             {
                 ret_val |= abort_clean_code;
@@ -254,6 +283,7 @@ int check_rx_abort(t_gcr_addr* gcr_addr)
         if (ret_val & abort_error_code)
         {
             // Set FIR on an abort_error
+            // PSL set_fir_recal_abort
             set_fir(fir_code_recal_abort);
             ADD_LOG(DEBUG_RECAL_ABORT, gcr_addr, 0x0);
         }
@@ -261,6 +291,34 @@ int check_rx_abort(t_gcr_addr* gcr_addr)
 
     return ret_val;
 } //check_rx_abort
+
+
+// Function for setting the PIPE Abort source depending on recal or dccal/init.
+// Only needed for PCIe mode, but doesn't hurt to call in AXO mode
+PK_STATIC_ASSERT(pipe_recal_abort_mask_0_15_alias_width == 16);
+void pipe_abort_config(t_gcr_addr* gcr_addr, t_pipe_abort_cfg pipe_abort_cfg)
+{
+
+    // In recal want all abort sources selected (mask==0) on all lanes.
+    // In dccal/init want all abort sources unselected (mask==1) on all lanes with later exceptions on current lane.
+    int mask_val = (pipe_abort_cfg == PIPE_ABORT_CFG_RECAL) ? 0x0000 : 0xFFFF;
+
+    // Write desired mask to all lanes
+    int lane = get_gcr_addr_lane(gcr_addr);
+    set_gcr_addr_reg_id_lane(gcr_addr, tx_group, bcast_all_lanes);
+    put_ptr_field_fast(gcr_addr, pipe_recal_abort_mask_0_15_alias, mask_val);
+
+    // Enable the pipe_reset on the current lane as an abort during dccal and init
+    // PSL not_recal_config
+    if (pipe_abort_cfg != PIPE_ABORT_CFG_RECAL)   // PIPE_ABORT_CFG_DCCAL || PIPE_ABORT_CFG_INITCAL
+    {
+        set_gcr_addr_lane(gcr_addr, lane);
+        int reg_val = 0xFFFF & ~pipe_recal_abort_mask_resetn_active_mask;
+        put_ptr_field_fast(gcr_addr, pipe_recal_abort_mask_0_15_alias, reg_val);
+    }
+
+    set_gcr_addr_reg_id_lane(gcr_addr, rx_group, lane);
+} //pipe_abort_config
 
 
 // The ordering of this struct is very important. It must match the regdef bitfield definitions.
@@ -373,14 +431,17 @@ void rx_eo_amp_servo_setup(t_gcr_addr* i_tgt, const t_amp_servo_setup i_servo_se
     switch(i_servo_setup)
     {
         case SERVO_SETUP_VGA:
+            // PSL vga_break
             selected_settings = (uint16_t*)(&c_vga_settings);
             break;
 
         case SERVO_SETUP_DFE_FULL:
+            // PSL dfe_full_break
             selected_settings = (uint16_t*)(&c_dfe_full_settings);
             break;
 
         case SERVO_SETUP_DFE_FAST:
+            // PSL dfe_fast_break
             selected_settings = (uint16_t*)(&c_dfe_fast_settings);
             break;
     }
@@ -565,6 +626,8 @@ int check_for_txpsave_req_sts(t_gcr_addr* gcr_addr)  //start void
         {
             io_sleep(get_gcr_addr_thread(gcr_addr));
         }
+
+        // PSL tx_psave_sts_ne_req
     }
     while (phy_dl_tx_psave_sts ^ phy_dl_tx_psave_req);   // bit xoring
 
@@ -575,6 +638,7 @@ int check_for_txpsave_req_sts(t_gcr_addr* gcr_addr)  //start void
 
     if (phy_dl_tx_psave_req)
     {
+        // PSL set_fir_fatal_error
         set_debug_state(0x0303);
         set_fir(fir_code_fatal_error);
         status = rc_error;
@@ -623,6 +687,8 @@ int check_for_rxpsave_req_sts(t_gcr_addr* gcr_addr)  //begin void
         {
             io_sleep(get_gcr_addr_thread(gcr_addr));
         }
+
+        // PSL rx_psave_sts_ne_req
     }
     while ( (rx_psave_sts_alt_int ^ rx_psave_req_alt_int) | (rx_psave_sts_phy_int ^ rx_psave_req_dl_int) );
 
@@ -633,6 +699,7 @@ int check_for_rxpsave_req_sts(t_gcr_addr* gcr_addr)  //begin void
 
     if (rx_psave_req_alt_int | rx_psave_req_dl_int)
     {
+        // PSL set_fir_fatal_error
         set_debug_state(0x0313);
         set_fir(fir_code_fatal_error);
         status = rc_error;
@@ -650,6 +717,7 @@ void eo_update_poff_avg ( t_gcr_addr* gcr_addr, int poff_value, t_bank bank, int
     //for getting rel path offset need add previous value or if enough runs go 0
     int poff_avg_before = 0;
 
+    // PSL bank_a
     if (bank == bank_a )
     {
         //bank A is alt B is main
@@ -697,6 +765,7 @@ void apply_rx_dac_offset(t_gcr_addr* gcr_addr, t_data_edge_dac_sel dac_sel, t_ba
 
     // Run on selected DACs for a single bank
     // Register contains only rx_apply_*_run/done. OK to overwrite other bits to 0.
+    // PSL bank_a
     uint32_t run_done_wr_val = (bank == bank_a) ? dac_sel << 4 :
                                dac_sel; // bits[0:7]: ae_run, ad_run, ae_done, ad_done, be_run, bd_run, be_done, bd_done
     put_ptr_field(gcr_addr, rx_apply_poff_ab_run_done_alias, run_done_wr_val, fast_write);
@@ -705,6 +774,7 @@ void apply_rx_dac_offset(t_gcr_addr* gcr_addr, t_data_edge_dac_sel dac_sel, t_ba
     uint32_t done_mask = run_done_wr_val >> 2;
     uint32_t apply_done;
 
+    // PSL apply_done
     do
     {
         apply_done = done_mask & get_ptr_field(gcr_addr, rx_apply_poff_ab_run_done_alias);
@@ -735,6 +805,7 @@ PK_STATIC_ASSERT(rx_ad_latch_dac_n000_width == 8);
 void save_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank)
 {
     int lane = get_gcr_addr_lane(gcr_addr);
+    // PSL save_bank_a
     int dac_addr = (target_bank == bank_a) ? rx_ad_latch_dac_n000_addr : rx_bd_latch_dac_n000_addr;
     int mem_addr = (target_bank == bank_a) ? saved_rx_ad_loff_addr : saved_rx_bd_loff_addr;
 
@@ -742,6 +813,7 @@ void save_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank)
     if (lane > 4)
     {
         set_debug_state(0x400A); // Illegal parameters for save_rx_data_latch_dac_values()
+        // PSL set_fir_fatal_error
         set_fir(fir_code_fatal_error);
         return;
     }
@@ -776,6 +848,9 @@ PK_STATIC_ASSERT(rx_mini_pr_step_b_ew_data_run_startbit == 9);
 void restore_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank)
 {
     int lane = get_gcr_addr_lane(gcr_addr);
+
+
+    // PSL restore_bank_a
     int dac_addr = (target_bank == bank_a) ? rx_ad_latch_dac_n000_addr : rx_bd_latch_dac_n000_addr;
     int mem_addr = (target_bank == bank_a) ? saved_rx_ad_loff_addr : saved_rx_bd_loff_addr;
 
@@ -783,11 +858,13 @@ void restore_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank)
     if (lane > 4)
     {
         set_debug_state(0x400B); // Illegal parameters for restore_rx_data_latch_dac_values()
+        // PSL set_fir_fatal_error
         set_fir(fir_code_fatal_error);
         return;
     }
 
     // Read the saved path offset and convert to 2s complement
+    // PSL path_offset_bank_a
     int path_offset = (target_bank == bank_a) ? mem_pl_field_get(poff_avg_a, lane) : mem_pl_field_get(poff_avg_b, lane);
     path_offset = TwosCompToInt(path_offset, poff_avg_a_width);
 
@@ -822,6 +899,8 @@ void restore_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank)
     int clk_adj;
     int run_done_wr_val;
 
+
+    // PSL dfe_bank_a
     if (target_bank == bank_a)
     {
         // Clear the mem_regs holding the coefficients and latch offset
@@ -874,6 +953,7 @@ void save_tx_dcc_tune_values(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode)
     if ( (lane > 4) || (cal_mode < C_PCIE_GEN3_CAL) || (cal_mode == C_AXO_CAL) )
     {
         set_debug_state(0xD01A); // Illegal parameters for save_tx_dcc_tune_values()
+        // PSL set_fir_fatal_error
         set_fir(fir_code_fatal_error);
         return;
     }
@@ -897,6 +977,7 @@ void restore_tx_dcc_tune_values(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode)
     if ( (lane > 4) || (cal_mode == C_AXO_CAL) )
     {
         set_debug_state(0xD01B); // Illegal parameters for restore_tx_dcc_tune_values()
+        // PSL set_fir_fatal_error
         set_fir(fir_code_fatal_error);
         return;
     }
@@ -950,6 +1031,7 @@ void preset_rx_peak_lte_values(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode)
     if ( (lane > 4) || (cal_mode == C_AXO_CAL) )
     {
         set_debug_state(0x6033); // Illegal parameters for preset_rx_peak_lte_values()
+        // PSL set_fir_fatal_error
         set_fir(fir_code_fatal_error);
         return;
     }

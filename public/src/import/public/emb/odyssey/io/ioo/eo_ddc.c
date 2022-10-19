@@ -40,6 +40,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
+// jfg22072200 |jfg     | EWM278876: Relegate the pr_recenter debug_state to Level 3
+// jfg22062102 |jfg     | EWM265038: Remove all ddc_fail and set_fir actions outside of the rx_ddc_check_en conditional.
 // jfg22032300 |jfg     | EWM275896: in ddc_seek_loop, st 0x8020, reduce edge preset in direction of edge QPA (previously ignored)
 // jfg22031401 |jfg     | Change pr_recenter debug state to 0xF8yy
 // jfg22030800 |jfg     | repair rx_ddc_measure_limited in main seek.
@@ -279,11 +282,13 @@ int pr_seek_ber (t_gcr_addr* gcr_addr, t_bank bank, unsigned int Dstep, unsigned
     int Estep_val = Estep;
 
     // Disable NS Phase (0) move or EW Phase (1) move
+    // PSL seek_edge_noseekNS
     if (seek_edge == noseekNS)
     {
         pr_sel_both = pr_sel_both ^ 0b01;
     }
 
+    // PSL seek_edge_noseekEW
     if (seek_edge == noseekEW)
     {
         pr_sel_both = pr_sel_both ^ 0b10;
@@ -305,6 +310,7 @@ int pr_seek_ber (t_gcr_addr* gcr_addr, t_bank bank, unsigned int Dstep, unsigned
     set_debug_state(0x800A | (Dstep_val << 4)); // DEBUG - DDC Setup pr_seek_br
 #endif
 
+    // PSL dirL
     if (dirL)
     {
         // if dir LEFT
@@ -340,10 +346,12 @@ int pr_seek_ber (t_gcr_addr* gcr_addr, t_bank bank, unsigned int Dstep, unsigned
     put_ptr_fast(gcr_addr, rx_berpl_seq_pr_sel_addr, rx_berpl_seq_pr_sel_endbit, pr_sel_both);
     uint32_t Dstep_2c = IntToTwosComp(Dstep_val, rx_mini_pr_step_data_adj_width);
 
+    // PSL noBER
     if (!noBER)
     {
         uint32_t ber_status;
 
+        // PSL seek_edge
         if (((seek_edge == doseek) || (seek_edge == noseek)) && (Estep > 0))
         {
             // During doseek or noseek, it is assumed that this is DDC and edges are already aligned. Make sure that alignment does not change
@@ -364,6 +372,7 @@ int pr_seek_ber (t_gcr_addr* gcr_addr, t_bank bank, unsigned int Dstep, unsigned
                          adj_val);
             uint32_t runid = (rx_mini_pr_step_a_ns_edge_run_mask | rx_mini_pr_step_a_ew_edge_run_mask);
 
+            // PSL seek_edge_bank_a
             if (bank != bank_a)
             {
                 runid = (rx_mini_pr_step_b_ns_edge_run_mask | rx_mini_pr_step_b_ew_edge_run_mask);
@@ -391,6 +400,7 @@ int pr_seek_ber (t_gcr_addr* gcr_addr, t_bank bank, unsigned int Dstep, unsigned
 
         do
         {
+            // PSL single_sleep
             if (single_sleep )
             {
                 io_sleep(get_gcr_addr_thread(gcr_addr));
@@ -421,12 +431,14 @@ int pr_seek_ber (t_gcr_addr* gcr_addr, t_bank bank, unsigned int Dstep, unsigned
 
         ber_count = get_ptr(gcr_addr, rx_berpl_count_addr, rx_berpl_count_startbit, rx_berpl_count_endbit);
 
+        // PSL max_eye
         if (  (abs(pr_adj) >= (abs(Dstep_val))) && (Dstep != 0) && (ber_count == 0))
         {
             // Traversed requested range and no error reversal detected
             ber_count = max_eye;
         }
 
+        // PSL ber_seek_error
         if ((pr_adj == 0) && (ber_count != 0))
         {
             // The BER Sequencer algorithm will only return 0 when no other position will satisfy the BER Error Threshold
@@ -504,9 +516,7 @@ int  pr_recenter(t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, uint32_t* Esav
         pr_vals[Didx] += Dleft[i];
         uint32_t Eleft_2c = IntToTwosComp(Eleft[i], rx_mini_pr_step_edge_adj_width);
         uint32_t Dleft_2c = IntToTwosComp(Dleft[i], rx_mini_pr_step_data_adj_width);
-#if IO_DEBUG_LEVEL > 1
-        set_debug_state(0xF800 | ((Dleft[i] & 0xF) << 4 | (Eleft[i] & 0xF))); // DEBUG - pr_recenter step target
-#endif
+        set_debug_state(0xF800 | ((Dleft[i] & 0xF) << 4 | (Eleft[i] & 0xF)), 3); // DEBUG - pr_recenter step target
         adj_val[i] = Dleft_2c << rx_mini_pr_step_data_adj_shift | Eleft_2c;
     }
 
@@ -515,12 +525,14 @@ int  pr_recenter(t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, uint32_t* Esav
     runid = (rx_mini_pr_step_a_ns_data_run_mask | rx_mini_pr_step_a_ns_edge_run_mask) |
             (rx_mini_pr_step_a_ew_data_run_mask | rx_mini_pr_step_a_ew_edge_run_mask) ;
 
+    // PSL bank_a
     if (bank != bank_a)
     {
         runid = (rx_mini_pr_step_b_ns_data_run_mask | rx_mini_pr_step_b_ns_edge_run_mask) |
                 (rx_mini_pr_step_b_ew_data_run_mask | rx_mini_pr_step_b_ew_edge_run_mask) ;
     }
 
+    // PSL adj_val_compare
     if (adj_val[0] == adj_val[1])
     {
         passes = 1;
@@ -531,10 +543,12 @@ int  pr_recenter(t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, uint32_t* Esav
         put_ptr_fast(gcr_addr, rx_mini_pr_step_data_edge_adj_full_reg_addr, rx_mini_pr_step_data_edge_adj_full_reg_endbit,
                      adj_val[i]);
 
+        // PSL passes_gt_1
         if (passes > 1)
         {
             runid = (rx_mini_pr_step_a_ns_data_run_mask | rx_mini_pr_step_a_ns_edge_run_mask) >> i;
 
+            // PSL passes_gt_1_bank_a
             if (bank != bank_a)
             {
                 runid = (rx_mini_pr_step_b_ns_data_run_mask | rx_mini_pr_step_b_ns_edge_run_mask) >> i;
@@ -546,12 +560,14 @@ int  pr_recenter(t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, uint32_t* Esav
         uint32_t longest = max(abs(Eleft[i]), abs(Dleft[i]));
         bool single_sleep = (G_io_threads < 2);
 
+        // PSL pr_stepper_start_cyc_compare
         if ( C_PR_STEPPER_START_CYC < (longest << 1) )
         {
             uint32_t donestat;
             uint32_t donemask = rx_mini_pr_step_a_done_alias_mask | rx_mini_pr_step_b_done_alias_mask;
             uint32_t loop_count = 0;
 
+            // PSL pr_stepper_start_cyc_i_eq_1
             if (i == 1)
             {
                 //sleep on 2nd pass only
@@ -561,6 +577,7 @@ int  pr_recenter(t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, uint32_t* Esav
                 }
             }
 
+            // PSL donestat
             do
             {
                 donestat = get_ptr(gcr_addr, rx_mini_pr_step_run_done_full_reg_addr, rx_mini_pr_step_run_done_full_reg_startbit,
@@ -578,7 +595,7 @@ int  pr_recenter(t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, uint32_t* Esav
 void set_ddc_err (t_gcr_addr* gcr_addr, t_bank bank, int lane, int* pr_vals, uint32_t* Esave, uint32_t* Dsave)
 {
     mem_pl_bit_set(rx_bad_eye_opt_width, lane);
-    mem_pl_bit_set(rx_ddc_fail, lane);
+    //EWM265038: This fail is for rx_bist not abort or ddc internal error: mem_pl_bit_set(rx_ddc_fail, lane);
     //Disable BER
     put_ptr(gcr_addr, rx_ber_en_addr, rx_ber_en_startbit, rx_ber_en_endbit, 0, read_modify_write);
     // Disable the per-lane counter
@@ -594,6 +611,8 @@ void set_ddc_err (t_gcr_addr* gcr_addr, t_bank bank, int lane, int* pr_vals, uin
     /* // make 1 data step */
     /* ber_reported = pr_seek_ber(gcr_addr, bank, ds, es, false, false, noseek, pr_active, ber_count); */
     int offsets[2] = {0, 0};
+
+    // PSL pr_recenter
     pr_recenter(gcr_addr, bank, pr_vals, Esave, Dsave, offsets, 0);
     // Run this twice in case D/E get out of whack and need to restore in opposite directions
     pr_recenter(gcr_addr, bank, pr_vals, Esave, Dsave, offsets, 0);
@@ -669,6 +688,7 @@ int ddc_seek_loop (t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, bool seekdir
     lim_chkN -= lim_max;
     int overage = abs(lim_chkN);
 
+    // PSL es_overage
     if (es >= overage)
     {
         es = overage;
@@ -681,6 +701,7 @@ int ddc_seek_loop (t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, bool seekdir
     //Calculate Approximate margin for data steps, used later.
     int ds_max = ds - es;
     //Now set directional edge and data Pre-position values
+    // PSL es_seekdir
     es = (seekdir == dirRseek) ?  0 - es : es;
     int noffset[3] = {es, es, es};
     pr_recenter(gcr_addr, bank, pr_vals, Esave, Dsave, noffset, noffset[2]);
@@ -688,8 +709,9 @@ int ddc_seek_loop (t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, bool seekdir
     G_SLEEP_MIN = C_BER_SEEK_SLEEP_CNT;
     //  do {
     *ber_reported = pr_seek_ber(gcr_addr, bank, ds, 0, seekdir, false, doseek, pr_vals);
-
     // If MAX EYE is reached while < ber_count it means that quad phase balancing is not possible nor required due to huge eye or other error.
+
+    // PSL max_eye
     if ((*ber_reported == max_eye) )
     {
         mem_pl_field_put(rx_ddc_measure_limited, lane, 1);
@@ -702,6 +724,7 @@ int ddc_seek_loop (t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, bool seekdir
     set_debug_state(0x1000 | ((*ber_reported & 0xFF) << 4 | (seek_status & 0xF))); // DEBUG - DDC pr_seek status
 #endif
 
+    // PSL recal
     if (recal)   // Recal mode Conditional - Skip Quad Phase until after init
     {
 
@@ -717,6 +740,7 @@ int ddc_seek_loop (t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, bool seekdir
         //  int ds_max = abs(pr_vals[prDns_i] - Dsave[0]) + abs(pr_vals[prEns_i] - Esave[0]);// DS-Dsave is always 0 here
         es = 0;
 
+        // PSL ds_max_gt_five
         if ((ds_max > 5))
         {
             ds = 4;//+es;
@@ -726,6 +750,7 @@ int ddc_seek_loop (t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, bool seekdir
             ds = 2;//+es;
         }
 
+        // PSL ds_seekdir
         ds = (seekdir == dirLseek) ?  ds : 0 - ds;
         //es = (seekdir == dirLseek)?  es : 0-es;
         uint32_t Dint[2];
@@ -796,6 +821,7 @@ int ddc_seek_loop (t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, bool seekdir
             *ber_reported = pr_seek_ber(gcr_addr, bank, ds, es, revSeekDir, false, seek_quad[i], pr_vals);
 
             // If MAX EYE is reached while < ber_count it means that quad phase balancing is not possible nor required due to huge eye or other error.
+            // PSL max_eye
             if ((*ber_reported == max_eye) )
             {
                 mem_pl_field_put(rx_ddc_measure_limited, lane, 1);
@@ -856,6 +882,7 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed
 
     // 2: Set initial values
     // Load ****both**** data and edge values on read. Assumes in same reg address in data + edge order
+    // PSL bank_a
     if (bank == bank_a)
     {
         bank_pr_save[0] = get_ptr(gcr_addr, rx_a_pr_ns_data_addr,  rx_a_pr_ns_data_startbit, rx_a_pr_ns_edge_endbit);
@@ -892,6 +919,7 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed
     // The official edge point: When used in conjuction with the ber_sel_short it saturates the count at a rate of 9x10^-3 errors
     int ber_sel_modifier = 0;
 
+    // PSL ddc_ber_period_sel
     if (ddc_ber_period_sel == 1)
     {
         ber_sel_modifier = 1;
@@ -905,6 +933,7 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed
     G_ber_sel_final = ber_sel_loBE_final + ber_sel_modifier;
     G_SLEEP_QUAD = C_BER_LO_SLEEP_CNT;
 
+    // PSL ddc_min_err_lim
     switch (ddc_min_err_lim)
     {
         case 0:
@@ -990,9 +1019,10 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed
 
     if ((ber_reported == max_eye) && (abort_status != pass_code))
     {
+        // PSL set_ddc_err
         set_ddc_err (gcr_addr, bank, lane, pr_active, Esave, Dsave);
         set_debug_state(0x8087); // DEBUG: Algorithm error. Lane broke during measure
-        set_fir(fir_code_bad_lane_warning);
+        //EWM265038: This fail is for rx_bist not abort or ddc internal error: set_fir(fir_code_bad_lane_warning);
         return warning_code;
     }
 
@@ -1023,6 +1053,7 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed
         // The left seek continually gets fooled by marginal error rates lower than 10^5 that sneak in
         // prior to advancing far enough from the right edge to avoid corrupting the error read
         int offsets[2] = {0, 0};
+        // PSL pr_recenter_left_first_error
         pr_recenter(gcr_addr, bank, pr_active, Esave, Dsave, offsets, 0);
     }
 
@@ -1031,9 +1062,10 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed
     if ((ber_reported == seek_error) && (abort_status != pass_code))
     {
         // abort_status of rc_error on either side coupled with a seek_error on the left indicates undetectable eye.
+        // PSL set_ddc_err
         set_ddc_err (gcr_addr, bank, lane, pr_active, Esave, Dsave);
         set_debug_state(0x8088); // DEBUG: Algorithm error. Lane broke during measure
-        set_fir(fir_code_bad_lane_warning);
+        //EWM265038: This fail is for rx_bist not abort or ddc internal error: set_fir(fir_code_bad_lane_warning);
         return warning_code;
     }
 
@@ -1063,22 +1095,26 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed
     ddc_offset_w_hyst[0] = (last_right_edge[0] - last_left_edge[0]) >> 1;
     ddc_offset_w_hyst[1] = (last_right_edge[1] - last_left_edge[1]) >> 1;
 
+    // PSL left_edge_ge_max_pr_val
     if (last_left_edge_reg >= max_PR_val)
     {
         last_left_edge_reg = max_PR_val - 1;
     }
 
+    // PSL right_edge_ge_max_pr_val
     if (last_right_edge_reg >= max_PR_val)
     {
         last_right_edge_reg = max_PR_val - 1;
     }
 
     // These registers can't have a negative value so 0 is best alternative for status reporting.
+    // PSL left_edge_lt_0
     if (last_left_edge_reg < 0)
     {
         last_left_edge_reg = 0;
     }
 
+    // PSL right_edge_lt_0
     if (last_right_edge_reg < 0 )
     {
         last_right_edge_reg = 0;
@@ -1093,12 +1129,14 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed
     ddc_hyst_val += (width >> 4);
 
     // If the difference between the left and right edges exceeds the hysteresis then shift the offset and save the new measurements.
+    // PSL hysteresis
     if (((((abs(ddc_offset_w_hyst[0]) > ddc_hyst_val) || (abs(ddc_offset_w_hyst[1]) > ddc_hyst_val)
            || (abs(old_offset + new_offset) > (ddc_hyst_val << 1)))
           || recal_dac_changed)
          || !recal) &&
         (abort_status == pass_code))
     {
+        // PSL bank_a
         if (bank == bank_a)
         {
             mem_pl_field_put(rx_a_ddc_hyst_left_edge, lane, last_left_edge_reg);
@@ -1125,6 +1163,7 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed
 
     // Note: If failed, return warning_code to skip result_check and ber_test and don't switch banks.
     // Note: Do the same thing if aborted, but return abort_code instead; still set ddc_failed_status so eo_main does not switch back to the DDC clock.
+    // PSL abort_ne_pass
     if (abort_status != pass_code)
     {
         //Disable BER
@@ -1134,7 +1173,7 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed
         // Reset BER compare A/B data banks to PRBS
         //Replaced with FAST: put_ptr(gcr_addr, rx_berpl_exp_data_sel_addr, rx_berpl_exp_data_sel_startbit, rx_berpl_exp_data_sel_endbit, 0, read_modify_write);
         put_ptr_fast(gcr_addr, rx_berpl_cnt_en_exp_sel_alias_addr, rx_berpl_cnt_en_exp_sel_alias_endbit, 0);
-        mem_pl_bit_set(rx_ddc_fail, lane);
+        //EWM265038: This fail is for rx_bist not abort or ddc internal error: mem_pl_bit_set(rx_ddc_fail, lane);
         set_debug_state(0x8080); //DEBUG: Main RX abort
         return abort_status;
     }
@@ -1143,9 +1182,10 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed
 
     if (cdr_status != pass_code)
     {
+        // PSL set_ddc_error
         set_ddc_err (gcr_addr, bank, lane, pr_active, Esave, Dsave);
         set_debug_state(0x8083); // DEBUG: Algorithm error. Final lock error
-        set_fir(fir_code_bad_lane_warning);
+        //EWM265038: This fail is for rx_bist not abort or ddc internal error: set_fir(fir_code_bad_lane_warning);
         return warning_code;
     }
 
@@ -1169,7 +1209,7 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed
     */
 
     // ddc passed
-    mem_pl_bit_clr(rx_ddc_fail, lane);
+    //EWM265038: This fail is for rx_bist not abort or ddc internal error: mem_pl_bit_clr(rx_ddc_fail, lane);
     //Disable BER
     // Disable the per-lane counter
     //Replaced with FAST: put_ptr(gcr_addr, rx_berpl_count_en_addr, rx_berpl_count_en_startbit, rx_berpl_count_en_endbit, 0, read_modify_write);
@@ -1181,6 +1221,7 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed
     // Log historical width when clear is not asserted
     int clr_eye_height_width  = mem_pg_field_get(rx_clr_eye_height_width);
 
+    // PSL clr_eye_height_width
     if (!clr_eye_height_width)
     {
 
@@ -1241,6 +1282,7 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed
     int rx_ddc_check_en_int =  get_ptr(gcr_addr, rx_ddc_check_en_addr , rx_ddc_check_en_startbit  ,
                                        rx_ddc_check_en_endbit); //pg
 
+    // PSL rx_ddc_check_en
     if (rx_ddc_check_en_int)
     {
         //begin 1

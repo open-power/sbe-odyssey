@@ -74,6 +74,7 @@
 #define pipe_state_cntl1_pl_addr                   0b010110011
 #define pipe_state_cntl2_pl_addr                   0b010110100
 #define pipe_state_cntl3_pl_addr                   0b010011111
+#define pipe_state_cntl4_pl_addr                   0b010011011
 #define pipe_state_status1_pl_addr                 0b010110000
 #define pipe_state_status2_pl_addr                 0b010110001
 #define pipe_state_status3_pl_addr                 0b010110010
@@ -131,6 +132,7 @@
 #define rx_cplt_cnt32_pg_addr                      0b101010000
 #define rx_cplt_cnt33_pg_addr                      0b101010001
 #define rx_cplt_cntl1_pl_addr                      0b001111011
+#define rx_cplt_cntl4_pg_addr                      0b100110100
 #define rx_cplt_cntl5_pg_addr                      0b100110101
 #define rx_cplt_cntl6_pg_addr                      0b100110110
 #define rx_cplt_cntl7_pg_addr                      0b100110111
@@ -358,6 +360,7 @@
 #define tx_cplt_cntl12_pg_addr                     0b110100011
 #define tx_cplt_cntl13_pg_addr                     0b110100100
 #define tx_cplt_cntl14_pg_addr                     0b110100101
+#define tx_cplt_cntl15_pg_addr                     0b110100110
 #define tx_cplt_cntl1_pg_addr                      0b110011000
 #define tx_cplt_cntl2_pg_addr                      0b110011001
 #define tx_cplt_cntl3_pg_addr                      0b110011010
@@ -1445,10 +1448,10 @@
 
 #define pipe_recal_abort_mask_addr                 0b010011111
 #define pipe_recal_abort_mask_startbit             0
-#define pipe_recal_abort_mask_width                14
-#define pipe_recal_abort_mask_endbit               13
-#define pipe_recal_abort_mask_shift                2
-#define pipe_recal_abort_mask_mask                 0xfffc
+#define pipe_recal_abort_mask_width                10
+#define pipe_recal_abort_mask_endbit               9
+#define pipe_recal_abort_mask_shift                6
+#define pipe_recal_abort_mask_mask                 0xffc0
 
 
 #define pipe_recal_abort_mask_0_15_alias_addr      0b010011111
@@ -1499,20 +1502,12 @@
 #define pipe_recal_abort_mask_resetn_inactive_mask   0x4000
 
 
-#define pipe_recal_abort_mask_rxelecidle_active_addr   0b010011111
-#define pipe_recal_abort_mask_rxelecidle_active_startbit   8
-#define pipe_recal_abort_mask_rxelecidle_active_width   1
-#define pipe_recal_abort_mask_rxelecidle_active_endbit   8
-#define pipe_recal_abort_mask_rxelecidle_active_shift   7
-#define pipe_recal_abort_mask_rxelecidle_active_mask   0x80
-
-
-#define pipe_recal_abort_mask_rxelecidle_inactive_addr   0b010011111
-#define pipe_recal_abort_mask_rxelecidle_inactive_startbit   9
-#define pipe_recal_abort_mask_rxelecidle_inactive_width   1
-#define pipe_recal_abort_mask_rxelecidle_inactive_endbit   9
-#define pipe_recal_abort_mask_rxelecidle_inactive_shift   6
-#define pipe_recal_abort_mask_rxelecidle_inactive_mask   0x40
+#define pipe_recal_abort_mask_rxactive_addr        0b010011111
+#define pipe_recal_abort_mask_rxactive_startbit    8
+#define pipe_recal_abort_mask_rxactive_width       1
+#define pipe_recal_abort_mask_rxactive_endbit      8
+#define pipe_recal_abort_mask_rxactive_shift       7
+#define pipe_recal_abort_mask_rxactive_mask        0x80
 
 
 #define pipe_recal_abort_mask_rxeqeval_addr        0b010011111
@@ -1524,11 +1519,11 @@
 
 
 #define pipe_recal_abort_mask_rxmargincontrol_addr   0b010011111
-#define pipe_recal_abort_mask_rxmargincontrol_startbit   12
+#define pipe_recal_abort_mask_rxmargincontrol_startbit   9
 #define pipe_recal_abort_mask_rxmargincontrol_width   1
-#define pipe_recal_abort_mask_rxmargincontrol_endbit   12
-#define pipe_recal_abort_mask_rxmargincontrol_shift   3
-#define pipe_recal_abort_mask_rxmargincontrol_mask   0x8
+#define pipe_recal_abort_mask_rxmargincontrol_endbit   9
+#define pipe_recal_abort_mask_rxmargincontrol_shift   6
+#define pipe_recal_abort_mask_rxmargincontrol_mask   0x40
 
 
 #define pipe_recal_abort_mask_rxstandby_active_addr   0b010011111
@@ -1539,36 +1534,12 @@
 #define pipe_recal_abort_mask_rxstandby_active_mask   0x2000
 
 
-#define pipe_recal_abort_mask_txdeemph_update_addr   0b010011111
-#define pipe_recal_abort_mask_txdeemph_update_startbit   13
-#define pipe_recal_abort_mask_txdeemph_update_width   1
-#define pipe_recal_abort_mask_txdeemph_update_endbit   13
-#define pipe_recal_abort_mask_txdeemph_update_shift   2
-#define pipe_recal_abort_mask_txdeemph_update_mask   0x4
-
-
 #define pipe_recal_abort_mask_txdetectrx_addr      0b010011111
 #define pipe_recal_abort_mask_txdetectrx_startbit   7
 #define pipe_recal_abort_mask_txdetectrx_width     1
 #define pipe_recal_abort_mask_txdetectrx_endbit    7
 #define pipe_recal_abort_mask_txdetectrx_shift     8
 #define pipe_recal_abort_mask_txdetectrx_mask      0x100
-
-
-#define pipe_recal_abort_mask_txelecidle_active_addr   0b010011111
-#define pipe_recal_abort_mask_txelecidle_active_startbit   10
-#define pipe_recal_abort_mask_txelecidle_active_width   1
-#define pipe_recal_abort_mask_txelecidle_active_endbit   10
-#define pipe_recal_abort_mask_txelecidle_active_shift   5
-#define pipe_recal_abort_mask_txelecidle_active_mask   0x20
-
-
-#define pipe_recal_abort_mask_txelecidle_inactive_addr   0b010011111
-#define pipe_recal_abort_mask_txelecidle_inactive_startbit   11
-#define pipe_recal_abort_mask_txelecidle_inactive_width   1
-#define pipe_recal_abort_mask_txelecidle_inactive_endbit   11
-#define pipe_recal_abort_mask_txelecidle_inactive_shift   4
-#define pipe_recal_abort_mask_txelecidle_inactive_mask   0x10
 
 
 #define pipe_reg_acc_address_addr                  0b010101101
@@ -1675,6 +1646,14 @@
 #define pipe_state_cntl1_pl_full_reg_mask          0xffff
 
 
+#define pipe_state_cntl4_pl_0_15_alias_addr        0b010011011
+#define pipe_state_cntl4_pl_0_15_alias_startbit    0
+#define pipe_state_cntl4_pl_0_15_alias_width       16
+#define pipe_state_cntl4_pl_0_15_alias_endbit      15
+#define pipe_state_cntl4_pl_0_15_alias_shift       0
+#define pipe_state_cntl4_pl_0_15_alias_mask        0xffff
+
+
 #define pipe_state_last_fom_addr                   0b010011110
 #define pipe_state_last_fom_startbit               0
 #define pipe_state_last_fom_width                  8
@@ -1700,43 +1679,43 @@
 
 
 #define pipe_state_pclkchangeack_clr_apsp_addr     0b010110011
-#define pipe_state_pclkchangeack_clr_apsp_startbit   5
+#define pipe_state_pclkchangeack_clr_apsp_startbit   3
 #define pipe_state_pclkchangeack_clr_apsp_width    1
-#define pipe_state_pclkchangeack_clr_apsp_endbit   5
-#define pipe_state_pclkchangeack_clr_apsp_shift    10
-#define pipe_state_pclkchangeack_clr_apsp_mask     0x400
+#define pipe_state_pclkchangeack_clr_apsp_endbit   3
+#define pipe_state_pclkchangeack_clr_apsp_shift    12
+#define pipe_state_pclkchangeack_clr_apsp_mask     0x1000
 
 
 #define pipe_state_pclkchangeok_pulse_addr         0b010110011
-#define pipe_state_pclkchangeok_pulse_startbit     1
+#define pipe_state_pclkchangeok_pulse_startbit     0
 #define pipe_state_pclkchangeok_pulse_width        1
-#define pipe_state_pclkchangeok_pulse_endbit       1
-#define pipe_state_pclkchangeok_pulse_shift        14
-#define pipe_state_pclkchangeok_pulse_mask         0x4000
+#define pipe_state_pclkchangeok_pulse_endbit       0
+#define pipe_state_pclkchangeok_pulse_shift        15
+#define pipe_state_pclkchangeok_pulse_mask         0x8000
 
 
 #define pipe_state_phystatus_clear_addr            0b010110011
-#define pipe_state_phystatus_clear_startbit        3
+#define pipe_state_phystatus_clear_startbit        1
 #define pipe_state_phystatus_clear_width           1
-#define pipe_state_phystatus_clear_endbit          3
-#define pipe_state_phystatus_clear_shift           12
-#define pipe_state_phystatus_clear_mask            0x1000
+#define pipe_state_phystatus_clear_endbit          1
+#define pipe_state_phystatus_clear_shift           14
+#define pipe_state_phystatus_clear_mask            0x4000
 
 
 #define pipe_state_phystatus_pulse_addr            0b010110011
-#define pipe_state_phystatus_pulse_startbit        4
+#define pipe_state_phystatus_pulse_startbit        2
 #define pipe_state_phystatus_pulse_width           1
-#define pipe_state_phystatus_pulse_endbit          4
-#define pipe_state_phystatus_pulse_shift           11
-#define pipe_state_phystatus_pulse_mask            0x800
+#define pipe_state_phystatus_pulse_endbit          2
+#define pipe_state_phystatus_pulse_shift           13
+#define pipe_state_phystatus_pulse_mask            0x2000
 
 
 #define pipe_state_powerdown_addr                  0b010110001
-#define pipe_state_powerdown_startbit              12
+#define pipe_state_powerdown_startbit              5
 #define pipe_state_powerdown_width                 2
-#define pipe_state_powerdown_endbit                13
-#define pipe_state_powerdown_shift                 2
-#define pipe_state_powerdown_mask                  0xc
+#define pipe_state_powerdown_endbit                6
+#define pipe_state_powerdown_shift                 9
+#define pipe_state_powerdown_mask                  0x600
 
 
 #define pipe_state_powerdown_updated_addr          0b010110000
@@ -1756,11 +1735,11 @@
 
 
 #define pipe_state_rate_addr                       0b010110001
-#define pipe_state_rate_startbit                   8
+#define pipe_state_rate_startbit                   2
 #define pipe_state_rate_width                      3
-#define pipe_state_rate_endbit                     10
-#define pipe_state_rate_shift                      5
-#define pipe_state_rate_mask                       0xe0
+#define pipe_state_rate_endbit                     4
+#define pipe_state_rate_shift                      11
+#define pipe_state_rate_mask                       0x3800
 
 
 #define pipe_state_rate_updated_addr               0b010110000
@@ -1812,19 +1791,51 @@
 
 
 #define pipe_state_rxactive_addr                   0b010110001
-#define pipe_state_rxactive_startbit               14
+#define pipe_state_rxactive_startbit               7
 #define pipe_state_rxactive_width                  1
-#define pipe_state_rxactive_endbit                 14
-#define pipe_state_rxactive_shift                  1
-#define pipe_state_rxactive_mask                   0x2
+#define pipe_state_rxactive_endbit                 7
+#define pipe_state_rxactive_shift                  8
+#define pipe_state_rxactive_mask                   0x100
 
 
-#define pipe_state_rxdatavalid_addr                0b010110011
-#define pipe_state_rxdatavalid_startbit            2
+#define pipe_state_rxactive_clear_addr             0b010110011
+#define pipe_state_rxactive_clear_startbit         5
+#define pipe_state_rxactive_clear_width            1
+#define pipe_state_rxactive_clear_endbit           5
+#define pipe_state_rxactive_clear_shift            10
+#define pipe_state_rxactive_clear_mask             0x400
+
+
+#define pipe_state_rxactive_set_addr               0b010110011
+#define pipe_state_rxactive_set_startbit           4
+#define pipe_state_rxactive_set_width              1
+#define pipe_state_rxactive_set_endbit             4
+#define pipe_state_rxactive_set_shift              11
+#define pipe_state_rxactive_set_mask               0x800
+
+
+#define pipe_state_rxdatavalid_addr                0b010110001
+#define pipe_state_rxdatavalid_startbit            0
 #define pipe_state_rxdatavalid_width               1
-#define pipe_state_rxdatavalid_endbit              2
-#define pipe_state_rxdatavalid_shift               13
-#define pipe_state_rxdatavalid_mask                0x2000
+#define pipe_state_rxdatavalid_endbit              0
+#define pipe_state_rxdatavalid_shift               15
+#define pipe_state_rxdatavalid_mask                0x8000
+
+
+#define pipe_state_rxdatavalid_clear_addr          0b010110011
+#define pipe_state_rxdatavalid_clear_startbit      9
+#define pipe_state_rxdatavalid_clear_width         1
+#define pipe_state_rxdatavalid_clear_endbit        9
+#define pipe_state_rxdatavalid_clear_shift         6
+#define pipe_state_rxdatavalid_clear_mask          0x40
+
+
+#define pipe_state_rxdatavalid_set_addr            0b010110011
+#define pipe_state_rxdatavalid_set_startbit        8
+#define pipe_state_rxdatavalid_set_width           1
+#define pipe_state_rxdatavalid_set_endbit          8
+#define pipe_state_rxdatavalid_set_shift           7
+#define pipe_state_rxdatavalid_set_mask            0x80
 
 
 #define pipe_state_rxelecidle_active_addr          0b010110000
@@ -1844,11 +1855,27 @@
 
 
 #define pipe_state_rxelecidle_en_addr              0b010110001
-#define pipe_state_rxelecidle_en_startbit          15
+#define pipe_state_rxelecidle_en_startbit          8
 #define pipe_state_rxelecidle_en_width             1
-#define pipe_state_rxelecidle_en_endbit            15
-#define pipe_state_rxelecidle_en_shift             0
-#define pipe_state_rxelecidle_en_mask              0x1
+#define pipe_state_rxelecidle_en_endbit            8
+#define pipe_state_rxelecidle_en_shift             7
+#define pipe_state_rxelecidle_en_mask              0x80
+
+
+#define pipe_state_rxelecidle_en_clear_addr        0b010110011
+#define pipe_state_rxelecidle_en_clear_startbit    7
+#define pipe_state_rxelecidle_en_clear_width       1
+#define pipe_state_rxelecidle_en_clear_endbit      7
+#define pipe_state_rxelecidle_en_clear_shift       8
+#define pipe_state_rxelecidle_en_clear_mask        0x100
+
+
+#define pipe_state_rxelecidle_en_set_addr          0b010110011
+#define pipe_state_rxelecidle_en_set_startbit      6
+#define pipe_state_rxelecidle_en_set_width         1
+#define pipe_state_rxelecidle_en_set_endbit        6
+#define pipe_state_rxelecidle_en_set_shift         9
+#define pipe_state_rxelecidle_en_set_mask          0x200
 
 
 #define pipe_state_rxelecidle_inactive_addr        0b010110000
@@ -1899,6 +1926,22 @@
 #define pipe_state_rxmargin_error_count_reset_mask   0x4000
 
 
+#define pipe_state_rxmargin_error_count_reset_clear_addr   0b010011011
+#define pipe_state_rxmargin_error_count_reset_clear_startbit   7
+#define pipe_state_rxmargin_error_count_reset_clear_width   1
+#define pipe_state_rxmargin_error_count_reset_clear_endbit   7
+#define pipe_state_rxmargin_error_count_reset_clear_shift   8
+#define pipe_state_rxmargin_error_count_reset_clear_mask   0x100
+
+
+#define pipe_state_rxmargin_error_count_reset_set_addr   0b010011011
+#define pipe_state_rxmargin_error_count_reset_set_startbit   6
+#define pipe_state_rxmargin_error_count_reset_set_width   1
+#define pipe_state_rxmargin_error_count_reset_set_endbit   6
+#define pipe_state_rxmargin_error_count_reset_set_shift   9
+#define pipe_state_rxmargin_error_count_reset_set_mask   0x200
+
+
 #define pipe_state_rxmargin_full_reg_addr          0b010110010
 #define pipe_state_rxmargin_full_reg_startbit      0
 #define pipe_state_rxmargin_full_reg_width         16
@@ -1915,12 +1958,44 @@
 #define pipe_state_rxmargin_offset_updated_mask    0x800
 
 
+#define pipe_state_rxmargin_offset_updated_clear_addr   0b010011011
+#define pipe_state_rxmargin_offset_updated_clear_startbit   9
+#define pipe_state_rxmargin_offset_updated_clear_width   1
+#define pipe_state_rxmargin_offset_updated_clear_endbit   9
+#define pipe_state_rxmargin_offset_updated_clear_shift   6
+#define pipe_state_rxmargin_offset_updated_clear_mask   0x40
+
+
+#define pipe_state_rxmargin_offset_updated_set_addr   0b010011011
+#define pipe_state_rxmargin_offset_updated_set_startbit   8
+#define pipe_state_rxmargin_offset_updated_set_width   1
+#define pipe_state_rxmargin_offset_updated_set_endbit   8
+#define pipe_state_rxmargin_offset_updated_set_shift   7
+#define pipe_state_rxmargin_offset_updated_set_mask   0x80
+
+
 #define pipe_state_rxmargin_sample_count_reset_addr   0b010110010
 #define pipe_state_rxmargin_sample_count_reset_startbit   0
 #define pipe_state_rxmargin_sample_count_reset_width   1
 #define pipe_state_rxmargin_sample_count_reset_endbit   0
 #define pipe_state_rxmargin_sample_count_reset_shift   15
 #define pipe_state_rxmargin_sample_count_reset_mask   0x8000
+
+
+#define pipe_state_rxmargin_sample_count_reset_clear_addr   0b010011011
+#define pipe_state_rxmargin_sample_count_reset_clear_startbit   5
+#define pipe_state_rxmargin_sample_count_reset_clear_width   1
+#define pipe_state_rxmargin_sample_count_reset_clear_endbit   5
+#define pipe_state_rxmargin_sample_count_reset_clear_shift   10
+#define pipe_state_rxmargin_sample_count_reset_clear_mask   0x400
+
+
+#define pipe_state_rxmargin_sample_count_reset_set_addr   0b010011011
+#define pipe_state_rxmargin_sample_count_reset_set_startbit   4
+#define pipe_state_rxmargin_sample_count_reset_set_width   1
+#define pipe_state_rxmargin_sample_count_reset_set_endbit   4
+#define pipe_state_rxmargin_sample_count_reset_set_shift   11
+#define pipe_state_rxmargin_sample_count_reset_set_mask   0x800
 
 
 #define pipe_state_rxmargin_start_addr             0b010110010
@@ -1931,12 +2006,44 @@
 #define pipe_state_rxmargin_start_mask             0x2000
 
 
+#define pipe_state_rxmargin_start_clear_addr       0b010011011
+#define pipe_state_rxmargin_start_clear_startbit   1
+#define pipe_state_rxmargin_start_clear_width      1
+#define pipe_state_rxmargin_start_clear_endbit     1
+#define pipe_state_rxmargin_start_clear_shift      14
+#define pipe_state_rxmargin_start_clear_mask       0x4000
+
+
+#define pipe_state_rxmargin_start_set_addr         0b010011011
+#define pipe_state_rxmargin_start_set_startbit     0
+#define pipe_state_rxmargin_start_set_width        1
+#define pipe_state_rxmargin_start_set_endbit       0
+#define pipe_state_rxmargin_start_set_shift        15
+#define pipe_state_rxmargin_start_set_mask         0x8000
+
+
 #define pipe_state_rxmargin_stop_addr              0b010110010
 #define pipe_state_rxmargin_stop_startbit          3
 #define pipe_state_rxmargin_stop_width             1
 #define pipe_state_rxmargin_stop_endbit            3
 #define pipe_state_rxmargin_stop_shift             12
 #define pipe_state_rxmargin_stop_mask              0x1000
+
+
+#define pipe_state_rxmargin_stop_clear_addr        0b010011011
+#define pipe_state_rxmargin_stop_clear_startbit    3
+#define pipe_state_rxmargin_stop_clear_width       1
+#define pipe_state_rxmargin_stop_clear_endbit      3
+#define pipe_state_rxmargin_stop_clear_shift       12
+#define pipe_state_rxmargin_stop_clear_mask        0x1000
+
+
+#define pipe_state_rxmargin_stop_set_addr          0b010011011
+#define pipe_state_rxmargin_stop_set_startbit      2
+#define pipe_state_rxmargin_stop_set_width         1
+#define pipe_state_rxmargin_stop_set_endbit        2
+#define pipe_state_rxmargin_stop_set_shift         13
+#define pipe_state_rxmargin_stop_set_mask          0x2000
 
 
 #define pipe_state_rxmargincontrol_addr            0b010110000
@@ -2019,12 +2126,28 @@
 #define pipe_state_txdetectrx_clear_mask           0x100
 
 
-#define pipe_state_txdetectrx_status_addr          0b010110011
-#define pipe_state_txdetectrx_status_startbit      0
+#define pipe_state_txdetectrx_status_addr          0b010110001
+#define pipe_state_txdetectrx_status_startbit      1
 #define pipe_state_txdetectrx_status_width         1
-#define pipe_state_txdetectrx_status_endbit        0
-#define pipe_state_txdetectrx_status_shift         15
-#define pipe_state_txdetectrx_status_mask          0x8000
+#define pipe_state_txdetectrx_status_endbit        1
+#define pipe_state_txdetectrx_status_shift         14
+#define pipe_state_txdetectrx_status_mask          0x4000
+
+
+#define pipe_state_txdetectrx_status_clear_addr    0b010110011
+#define pipe_state_txdetectrx_status_clear_startbit   11
+#define pipe_state_txdetectrx_status_clear_width   1
+#define pipe_state_txdetectrx_status_clear_endbit   11
+#define pipe_state_txdetectrx_status_clear_shift   4
+#define pipe_state_txdetectrx_status_clear_mask    0x10
+
+
+#define pipe_state_txdetectrx_status_set_addr      0b010110011
+#define pipe_state_txdetectrx_status_set_startbit   10
+#define pipe_state_txdetectrx_status_set_width     1
+#define pipe_state_txdetectrx_status_set_endbit    10
+#define pipe_state_txdetectrx_status_set_shift     5
+#define pipe_state_txdetectrx_status_set_mask      0x20
 
 
 #define pipe_state_txelecidle_active_addr          0b010110000
@@ -2097,14 +2220,6 @@
 #define ppe_sourced_hang_pulse_en_endbit           11
 #define ppe_sourced_hang_pulse_en_shift            52
 #define ppe_sourced_hang_pulse_en_mask             0x10000000000000
-
-
-#define rx_16to1_addr                              0b100000001
-#define rx_16to1_startbit                          3
-#define rx_16to1_width                             1
-#define rx_16to1_endbit                            3
-#define rx_16to1_shift                             12
-#define rx_16to1_mask                              0x1000
 
 
 #define rx_a_bank_controls_addr                    0b000000001
@@ -2273,6 +2388,14 @@
 #define rx_a_spec_mux_sel_endbit                   6
 #define rx_a_spec_mux_sel_shift                    9
 #define rx_a_spec_mux_sel_mask                     0xfe00
+
+
+#define rx_a_test_fence_en_leg_addr                0b000001010
+#define rx_a_test_fence_en_leg_startbit            9
+#define rx_a_test_fence_en_leg_width               2
+#define rx_a_test_fence_en_leg_endbit              10
+#define rx_a_test_fence_en_leg_shift               5
+#define rx_a_test_fence_en_leg_mask                0x60
 
 
 #define rx_a_tiny_pr_ew_data_addr                  0b000000010
@@ -3195,6 +3318,14 @@
 #define rx_b_spec_mux_sel_mask                     0x1fc
 
 
+#define rx_b_test_fence_en_leg_addr                0b000001010
+#define rx_b_test_fence_en_leg_startbit            11
+#define rx_b_test_fence_en_leg_width               2
+#define rx_b_test_fence_en_leg_endbit              12
+#define rx_b_test_fence_en_leg_shift               3
+#define rx_b_test_fence_en_leg_mask                0x18
+
+
 #define rx_b_tiny_pr_ew_data_addr                  0b000000101
 #define rx_b_tiny_pr_ew_data_startbit              4
 #define rx_b_tiny_pr_ew_data_width                 4
@@ -3995,12 +4126,28 @@
 #define rx_clkdist_pdwn_mask                       0x8000
 
 
+#define rx_clkgen_cm_loop_en_addr                  0b000001010
+#define rx_clkgen_cm_loop_en_startbit              8
+#define rx_clkgen_cm_loop_en_width                 1
+#define rx_clkgen_cm_loop_en_endbit                8
+#define rx_clkgen_cm_loop_en_shift                 7
+#define rx_clkgen_cm_loop_en_mask                  0x80
+
+
 #define rx_clkgen_cmlmux_irctrl_addr               0b000001011
 #define rx_clkgen_cmlmux_irctrl_startbit           12
 #define rx_clkgen_cmlmux_irctrl_width              2
 #define rx_clkgen_cmlmux_irctrl_endbit             13
 #define rx_clkgen_cmlmux_irctrl_shift              2
 #define rx_clkgen_cmlmux_irctrl_mask               0xc
+
+
+#define rx_clkgen_cmlmux_irctrl_5nm_addr           0b000001100
+#define rx_clkgen_cmlmux_irctrl_5nm_startbit       13
+#define rx_clkgen_cmlmux_irctrl_5nm_width          3
+#define rx_clkgen_cmlmux_irctrl_5nm_endbit         15
+#define rx_clkgen_cmlmux_irctrl_5nm_shift          0
+#define rx_clkgen_cmlmux_irctrl_5nm_mask           0x7
 
 
 #define rx_clkgen_en_abank_outbuf_addr             0b011010001
@@ -5139,6 +5286,14 @@
 #define rx_iref_bypass_mask                        0x80
 
 
+#define rx_iref_bypass_mg_addr                     0b100110100
+#define rx_iref_bypass_mg_startbit                 8
+#define rx_iref_bypass_mg_width                    1
+#define rx_iref_bypass_mg_endbit                   8
+#define rx_iref_bypass_mg_shift                    7
+#define rx_iref_bypass_mg_mask                     0x80
+
+
 #define rx_iref_clock_dac_addr                     0b100001100
 #define rx_iref_clock_dac_startbit                 0
 #define rx_iref_clock_dac_width                    3
@@ -5147,12 +5302,28 @@
 #define rx_iref_clock_dac_mask                     0xe000
 
 
+#define rx_iref_clock_dac_mg_addr                  0b100110100
+#define rx_iref_clock_dac_mg_startbit              0
+#define rx_iref_clock_dac_mg_width                 3
+#define rx_iref_clock_dac_mg_endbit                2
+#define rx_iref_clock_dac_mg_shift                 13
+#define rx_iref_clock_dac_mg_mask                  0xe000
+
+
 #define rx_iref_data_dac_addr                      0b100001100
 #define rx_iref_data_dac_startbit                  3
 #define rx_iref_data_dac_width                     3
 #define rx_iref_data_dac_endbit                    5
 #define rx_iref_data_dac_shift                     10
 #define rx_iref_data_dac_mask                      0x1c00
+
+
+#define rx_iref_data_dac_mg_addr                   0b100110100
+#define rx_iref_data_dac_mg_startbit               3
+#define rx_iref_data_dac_mg_width                  3
+#define rx_iref_data_dac_mg_endbit                 5
+#define rx_iref_data_dac_mg_shift                  10
+#define rx_iref_data_dac_mg_mask                   0x1c00
 
 
 #define rx_iref_paritychk_clock_addr               0b101011110
@@ -5185,6 +5356,14 @@
 #define rx_iref_vset_dac_endbit                    7
 #define rx_iref_vset_dac_shift                     8
 #define rx_iref_vset_dac_mask                      0x300
+
+
+#define rx_iref_vset_dac_mg_addr                   0b100110100
+#define rx_iref_vset_dac_mg_startbit               6
+#define rx_iref_vset_dac_mg_width                  2
+#define rx_iref_vset_dac_mg_endbit                 7
+#define rx_iref_vset_dac_mg_shift                  8
+#define rx_iref_vset_dac_mg_mask                   0x300
 
 
 #define rx_latchoff_check_en_addr                  0b101000110
@@ -8357,10 +8536,10 @@
 
 #define rx_sigdet_test_stat_alias_addr             0b011010011
 #define rx_sigdet_test_stat_alias_startbit         0
-#define rx_sigdet_test_stat_alias_width            8
-#define rx_sigdet_test_stat_alias_endbit           7
-#define rx_sigdet_test_stat_alias_shift            8
-#define rx_sigdet_test_stat_alias_mask             0xff00
+#define rx_sigdet_test_stat_alias_width            16
+#define rx_sigdet_test_stat_alias_endbit           15
+#define rx_sigdet_test_stat_alias_shift            0
+#define rx_sigdet_test_stat_alias_mask             0xffff
 
 
 #define rx_sigdet_test_trans_addr                  0b011010010
@@ -9643,12 +9822,28 @@
 #define tx_iref_bypass_mask                        0x2
 
 
+#define tx_iref_bypass_mg_addr                     0b110100110
+#define tx_iref_bypass_mg_startbit                 14
+#define tx_iref_bypass_mg_width                    1
+#define tx_iref_bypass_mg_endbit                   14
+#define tx_iref_bypass_mg_shift                    1
+#define tx_iref_bypass_mg_mask                     0x2
+
+
 #define tx_iref_clock_dac_addr                     0b110000001
 #define tx_iref_clock_dac_startbit                 9
 #define tx_iref_clock_dac_width                    3
 #define tx_iref_clock_dac_endbit                   11
 #define tx_iref_clock_dac_shift                    4
 #define tx_iref_clock_dac_mask                     0x70
+
+
+#define tx_iref_clock_dac_mg_addr                  0b110100110
+#define tx_iref_clock_dac_mg_startbit              9
+#define tx_iref_clock_dac_mg_width                 3
+#define tx_iref_clock_dac_mg_endbit                11
+#define tx_iref_clock_dac_mg_shift                 4
+#define tx_iref_clock_dac_mg_mask                  0x70
 
 
 #define tx_iref_paritychk_clock_addr               0b110101101
@@ -9675,6 +9870,14 @@
 #define tx_iref_vset_dac_mask                      0xc
 
 
+#define tx_iref_vset_dac_mg_addr                   0b110100110
+#define tx_iref_vset_dac_mg_startbit               12
+#define tx_iref_vset_dac_mg_width                  2
+#define tx_iref_vset_dac_mg_endbit                 13
+#define tx_iref_vset_dac_mg_shift                  2
+#define tx_iref_vset_dac_mg_mask                   0xc
+
+
 #define tx_lane_invert_addr                        0b010000011
 #define tx_lane_invert_startbit                    0
 #define tx_lane_invert_width                       1
@@ -9689,6 +9892,22 @@
 #define tx_lane_quiesce_endbit                     2
 #define tx_lane_quiesce_shift                      13
 #define tx_lane_quiesce_mask                       0x6000
+
+
+#define tx_lane_quiesce_n_addr                     0b010000011
+#define tx_lane_quiesce_n_startbit                 9
+#define tx_lane_quiesce_n_width                    1
+#define tx_lane_quiesce_n_endbit                   9
+#define tx_lane_quiesce_n_shift                    6
+#define tx_lane_quiesce_n_mask                     0x40
+
+
+#define tx_lane_quiesce_p_addr                     0b010000011
+#define tx_lane_quiesce_p_startbit                 8
+#define tx_lane_quiesce_p_width                    1
+#define tx_lane_quiesce_p_endbit                   8
+#define tx_lane_quiesce_p_shift                    7
+#define tx_lane_quiesce_p_mask                     0x80
 
 
 #define tx_main_pkg_en_addr                        0b010000011
@@ -9939,12 +10158,12 @@
 #define tx_pcie_cmux_rctrl_dc_mask                 0x18
 
 
-#define tx_pcie_eq_calc_dly_addr                   0b010010011
-#define tx_pcie_eq_calc_dly_startbit               10
-#define tx_pcie_eq_calc_dly_width                  2
-#define tx_pcie_eq_calc_dly_endbit                 11
-#define tx_pcie_eq_calc_dly_shift                  4
-#define tx_pcie_eq_calc_dly_mask                   0x30
+#define tx_pcie_eq_calc_dly_alias_addr             0b010010011
+#define tx_pcie_eq_calc_dly_alias_startbit         10
+#define tx_pcie_eq_calc_dly_alias_width            2
+#define tx_pcie_eq_calc_dly_alias_endbit           11
+#define tx_pcie_eq_calc_dly_alias_shift            4
+#define tx_pcie_eq_calc_dly_alias_mask             0x30
 
 
 #define tx_pcie_eq_calc_enable_addr                0b010010011
@@ -9977,6 +10196,14 @@
 #define tx_pcie_loz_del_sel_endbit                 7
 #define tx_pcie_loz_del_sel_shift                  8
 #define tx_pcie_loz_del_sel_mask                   0xf00
+
+
+#define tx_pcie_pk_vcm_ctrl_en_dc_addr             0b010010011
+#define tx_pcie_pk_vcm_ctrl_en_dc_startbit         13
+#define tx_pcie_pk_vcm_ctrl_en_dc_width            1
+#define tx_pcie_pk_vcm_ctrl_en_dc_endbit           13
+#define tx_pcie_pk_vcm_ctrl_en_dc_shift            2
+#define tx_pcie_pk_vcm_ctrl_en_dc_mask             0x4
 
 
 #define tx_pcie_rxdet_en_dc_addr                   0b010100011

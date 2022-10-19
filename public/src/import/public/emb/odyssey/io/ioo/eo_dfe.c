@@ -39,6 +39,8 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr22092700 |vbr     | Issue 290398: Add ppe config to disable servo min/max errors for DFE Full
+// mbs22082601 |mbs     | Updated with PSL comments
 // vbr22060900 |vbr     | Always increment the DFE Full quad after bank B regardless of run_all_quads
 // vbr22051700 |vbr     | Issue 280487: Limit DFE Fast ClkAdj to 12
 // vbr21022300 |vbr     | Added H1 adjust to DFE Fast. Other improvements.
@@ -297,6 +299,7 @@ static uint32_t rx_eo_dfe_check_dac_limits(t_gcr_addr* i_tgt, const int32_t i_ne
     {
         uint32_t l_lane = get_gcr_addr_lane(i_tgt);
         mem_pl_bit_set(rx_dfe_fail, l_lane);
+        // PSL set_fir_dft_error_and_bad_lane_warning
         set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
         ADD_LOG(DEBUG_RX_DFE_DAC_LIMIT, i_tgt, i_new_val);
         return warning_code;
@@ -352,10 +355,12 @@ static inline uint32_t  rx_eo_dfe_calc_clk_adj(t_gcr_addr* i_tgt, int32_t i_h1, 
     if (l_ap <= 0)
     {
         set_debug_state(0x7030);
+        // PSL set_fir_bad_lane_warning_div_by_zero
         set_fir(fir_code_bad_lane_warning);
         ADD_LOG(DEBUG_RX_DFE_AP_ZERO_FAIL, i_tgt, i_ap1);
         l_rc = warning_code;
     }
+    // PSL h1_gt_0
     else if ( i_h1 > 0 )
     {
         // Only allow the clock adjust to grow.
@@ -363,11 +368,13 @@ static inline uint32_t  rx_eo_dfe_calc_clk_adj(t_gcr_addr* i_tgt, int32_t i_h1, 
         // - Cap the clock adjust at 12
         l_new_clk_adj = div_uint32(K * i_h1, l_ap); // (K * i_h1) / l_ap
 
+        // PSL new_clk_adj_gt_12
         if (l_new_clk_adj > 12)
         {
             l_new_clk_adj = 12;
         }
 
+        // PSL new_clk_adj_gt_prev
         if (l_new_clk_adj > *io_clk_adj)
         {
             *io_clk_adj = l_new_clk_adj;
@@ -392,6 +399,7 @@ static inline void rx_eo_dfe_set_clock_adj(t_gcr_addr* i_tgt, int32_t i_prev_clk
         const t_bank i_bank)
 {
     // Only apply new clock adjust if it has increased (never go smaller to prevent oscillations)
+    // PSL new_clk_adj_gt_prev
     if (i_new_clk_adj > i_prev_clk_adj)
     {
         // Step by 1 from old to new clock adjust.
@@ -403,6 +411,7 @@ static inline void rx_eo_dfe_set_clock_adj(t_gcr_addr* i_tgt, int32_t i_prev_clk
         // Only touch bank A or bank B according to the parameter (HW525009)
         // The stepper is fast enough that don't need to wait for done.
         //int l_step_done;
+        // PSL put_mini_pr_step_done_bank_a
         if ( i_bank == bank_a )
         {
             put_ptr_field(i_tgt, rx_mini_pr_step_a_run_done_alias, 0b11000000,
@@ -479,6 +488,7 @@ static uint32_t rx_eo_dfe_fast_servo(t_gcr_addr* i_tgt, int32_t i_loff, int32_t 
                l_servo_ops,
                l_servo_results);
 
+    // PSL servo_error
     if (l_rc)
     {
         goto function_exit;
@@ -498,6 +508,7 @@ static uint32_t rx_eo_dfe_fast_servo(t_gcr_addr* i_tgt, int32_t i_loff, int32_t 
     int l_coef_7_0, l_coef_1_6, l_coef_5_2, l_coef_3_4;
     int l_h1      = eo_dfe_round(l_servo_results[AP10110] - l_servo_results[AP10010]);
 
+    // PSL h1_only
     if (i_h1_only)
     {
         l_coef_7_0  = dfe_fast_h1_adj + l_h1;
@@ -554,6 +565,7 @@ static int32_t rx_eo_dfe_check_hvals(t_gcr_addr* i_tgt)
     if ( (l_h1 < rx_dfe_h1_min_check) || (l_h1 > rx_dfe_h1_max_check) )
     {
         set_debug_state(0x7060);
+        // PSL set_fir_bad_lane_warning_and_dft_error
         set_fir(l_fir_code);
         ADD_LOG(DEBUG_RX_DFE_H1_LIMIT, i_tgt, l_h1);
 
@@ -592,10 +604,12 @@ static inline int32_t rx_eo_dfe_hysteresis(const int32_t i_new, const int32_t i_
 
     int32_t result  = i_new;
 
+    // PSL hyst_en
     if ( i_hyst_en )
     {
         int32_t delta = abs(i_new - i_prev);
 
+        // PSL hyst_result
         result = (delta <= UNCERTAINTY_HYST) ? i_prev :    // no change
                  (delta <= UNCERTAINTY_AVG ) ? eo_dfe_round(i_new + i_prev) :  // small change
                  i_new; // large change
@@ -619,6 +633,7 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
                         bool i_enable_min_eye_height)
 {
     // l_bank - enumerated to index and for servo ops + safe if t_bank ever changes
+    // PSL bank_a
     const uint32_t l_bank      = (i_bank == bank_a) ? BANK_A : BANK_B;
     uint16_t l_servo_ops_full[16];                     // Servo Ops Fully Qualified
     uint16_t* l_ap_servo_ops   = &l_servo_ops_full[0]; // AP Servo Ops
@@ -640,6 +655,13 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
     rx_eo_amp_servo_setup(i_tgt, SERVO_SETUP_DFE_FULL);
     int rx_dfe_check_en_int = get_ptr(i_tgt, rx_dfe_check_en_addr  , rx_dfe_check_en_startbit  ,
                                       rx_dfe_check_en_endbit); //ppe pl
+    int l_servo_min_max_error_dis = mem_pg_field_get(rx_dfe_full_max_error_disable);
+
+    if (l_servo_min_max_error_dis)
+    {
+        // Disable servo status for result at min/max
+        servo_errors_disable_only_result_at_min_or_max(i_tgt);
+    }
 
     // Initialize Min Eye Height tracking before quadrant loop
     int32_t  l_min_height = 127;
@@ -653,6 +675,7 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
     uint32_t l_dfe_full_quad = mem_pl_field_get(rx_dfe_full_quad, l_lane); // x00, x01, x02, or x03
     uint32_t l_dfe_full_mode = mem_pg_field_get(rx_dfe_full_mode);
 
+    // PSL dfe_full_mode_one_quad
     if ( l_dfe_full_mode && !i_run_all_quads )
     {
         l_quad = (l_dfe_full_quad << 3); // x00, x08, x10, or x18
@@ -690,6 +713,7 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
                    l_servo_ops_full,
                    l_ax_results);
 
+        // PSL servo_error
         if (l_rc)
         {
             goto function_exit;
@@ -698,6 +722,7 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
         // Check for recal abort
         l_rc = check_rx_abort(i_tgt);
 
+        // PSL recal_abort
         if (l_rc)
         {
             SET_DFE_DEBUG(0x710F); // DFE Recal Abort
@@ -719,6 +744,7 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
             // Calculate the eye height for this latch and save the relevant info if it is the new minimum eye height for this DFE run
             int32_t l_height  = (l_ap_results[l_latch] - l_an_results[l_latch]) / 2; // truncated (round-down)
 
+            // PSL height_lt_min_height
             if (l_height < l_min_height)
             {
                 l_min_height = l_height;
@@ -745,6 +771,7 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
             {
                 l_rc = rx_eo_dfe_check_dac_limits(i_tgt, l_new_val);
 
+                // PSL rx_bist_dac_limit_fail
                 if (l_rc)
                 {
                     //SET_DFE_DEBUG(0x710F); // DFE DAC Limit Fail
@@ -752,6 +779,7 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
                 }
             } //rx_dfe_check_en
 
+            // PSL new_val_ne_prev_val
             if (l_new_val != l_prev_val)
             {
                 // Convert to dac format
@@ -775,11 +803,13 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
     // Check and log the min eye height as needed
     int l_clr_eye_height_width  = mem_pg_field_get(rx_clr_eye_height_width);
 
+    // PSL enable_min_eye_height
     if (i_enable_min_eye_height && !l_clr_eye_height_width)
     {
         SET_DFE_DEBUG(0x710B); // Min Eye Height Checks
 
         // Check if new min eye height for this lane (valid not set or is < old_min_height)
+        // PSL new_lane_hist_min_eye_height
         if ( !mem_pl_field_get(rx_lane_hist_min_eye_height_valid, l_lane)
              || (l_min_height < mem_pl_field_get(rx_lane_hist_min_eye_height, l_lane)) )
         {
@@ -791,6 +821,7 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
         }
 
         // Check if new min eye height for group (valid not set or is < old_min_height)
+        // PSL new_group_hist_min_eye_height
         if ( !mem_pg_field_get(rx_hist_min_eye_height_valid) || (l_min_height < mem_pg_field_get(rx_hist_min_eye_height)) )
         {
             mem_pg_field_put(rx_hist_min_eye_height, l_min_height);
@@ -804,6 +835,7 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
             mem_pl_bit_set(rx_bad_eye_opt_height, l_lane);
             uint32_t l_fir_code = rx_dfe_check_en_int ? (fir_code_dft_error | fir_code_bad_lane_warning) :
                                   fir_code_bad_lane_warning;
+            // PSL set_fir_bad_lane_warning_and_dft_error
             set_fir(l_fir_code);
             ADD_LOG(DEBUG_RX_EYE_HEIGHT_FAIL, i_tgt, l_min_height);
             l_rc = warning_code;
@@ -817,6 +849,12 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
     //}
 
 function_exit:
+
+    if (l_servo_min_max_error_dis)
+    {
+        // Re-enable servo status for result at min/max
+        servo_errors_enable_all(i_tgt);
+    }
 
     if (i_bank == bank_a)
     {
@@ -887,6 +925,7 @@ uint32_t rx_eo_dfe_fast(t_gcr_addr* i_tgt, t_init_cal_mode i_cal_mode)
     // Read LOFF of latch that servos are run on
     int32_t l_loff;
 
+    // PSL saved_loff_valid
     if (mem_pl_field_get(rx_loff_ad_n000_valid, l_lane))
     {
         // Use the saved latch offset when it is valid
@@ -907,6 +946,7 @@ uint32_t rx_eo_dfe_fast(t_gcr_addr* i_tgt, t_init_cal_mode i_cal_mode)
         l_clk_adj_a[1] = l_clk_adj_a[0];
         l_rc = rx_eo_dfe_fast_servo(i_tgt, l_loff, l_coefs, &l_clk_adj_a[0], l_h1_only);
 
+        // PSL servo_error
         if (l_rc)
         {
             goto function_exit;
@@ -929,6 +969,7 @@ uint32_t rx_eo_dfe_fast(t_gcr_addr* i_tgt, t_init_cal_mode i_cal_mode)
     // Only check and apply Coef adjustment after last iteration
     l_rc = rx_eo_dfe_check_hvals(i_tgt);
 
+    // PSL check_hvals_error
     if (l_rc)
     {
         goto function_exit;
@@ -1003,6 +1044,7 @@ uint32_t rx_eo_dfe_fast(t_gcr_addr* i_tgt, t_init_cal_mode i_cal_mode)
 
 function_exit:
 
+    // PSL error_restore_dfe_coeff
     if (l_rc)
     {
         // On an error, restore the DFE coefficients since the new ones were not applied. Leave ClkAdj where it is.

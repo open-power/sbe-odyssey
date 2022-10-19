@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
 // mwh21008110 |mwh     | To support removing of gcr  rx_a/b_lane_fail_0_15_16_23 and moving to using rx_lane_fail_0_15,16_23
 // vbr21011901 |vbr     | Removed or changed to level 3 debug states that do not seem to be useful
 // mbs21041200 |mbs     | Renamed rx_lane_bad vector to rx_lane_fail, removed per-lane version, and added rx_lane_fail_cnt
@@ -117,6 +118,7 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
         mk_ptr_ary(rx_quad_ph_adj_ewe);
 
         // fill arrays with bank-dependent register values
+        // PSL bist_checks_bank_a
         if (bank == bank_a)
         {
             //set_debug_state(0x5150); // bank a
@@ -145,6 +147,7 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
         }
 
         //Check ctle gain (vga) is not to low or to high
+        // PSL bist_gain_check
         if( rx_ctle_gain_check_en)
         {
             //set_debug_state(0x5152); // checking ctle gain
@@ -154,12 +157,14 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
 
             //evaluate consecutively to reduce memory accesses, but increases coverage
             //can handle min/max cases separately (e.g. fail bits or debug state)
+            // PSL bist_gain_check_lt_min
             if ( rx_ctle_gain_int < mem_pg_field_get(rx_ctle_gain_min_check) )
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_VGA_GAIN_FAIL, gcr_addr, rx_ctle_gain_int);
                 set_debug_state(0x5153, 3);
             }
+            // PSL bist_gain_check_gt_max
             else if ( rx_ctle_gain_int > mem_pg_field_get(rx_ctle_gain_max_check) )
             {
                 fail = 1;
@@ -178,18 +183,21 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
 
 
         //Check ctle peak is not to low or to high
+        // PSL bist_peak1_check
         if(rx_ctle_peak1_check_en)
         {
             //set_debug_state(0x5156); // checking peak1
 
             int rx_ctle_peak1_int = get_ptr_ary(gcr_addr, rx_ctle_peak1);
 
+            // PSL bist_peak1_check_lt_min
             if ( rx_ctle_peak1_int < mem_pg_field_get(rx_ctle_peak1_min_check) )
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_CTLE_PEAK1_FAIL, gcr_addr, rx_ctle_peak1_int);
                 set_debug_state(0x5157, 3);
             }
+            // PSL bist_peak1_check_gt_max
             else if ( rx_ctle_peak1_int >  mem_pg_field_get(rx_ctle_peak1_max_check) )
             {
                 fail = 1;
@@ -207,18 +215,21 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
         }
 
         //Check ctle peak is not to low or to high
+        // PSL bist_peak2_check
         if(rx_ctle_peak2_check_en)
         {
             //set_debug_state(0x515A); // checking peak1
 
             int rx_ctle_peak2_int = get_ptr_ary(gcr_addr, rx_ctle_peak2);
 
+            // PSL bist_peak2_check_lt_min
             if ( rx_ctle_peak2_int < mem_pg_field_get(rx_ctle_peak2_min_check) )
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_CTLE_PEAK2_FAIL, gcr_addr, rx_ctle_peak2_int);
                 set_debug_state(0x515B, 3);
             }
+            // PSL bist_peak2_check_gt_max
             else if ( rx_ctle_peak2_int >  mem_pg_field_get(rx_ctle_peak2_max_check) )
             {
                 fail = 1;
@@ -236,18 +247,21 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
         }
 
         //Check lte gain is not to low or to high
+        // PSL bist_lte_gain_check
         if( rx_lte_gain_check_en)
         {
             //set_debug_state(0x515E); // checking lte gain
 
             int rx_lte_gain_int = get_ptr_ary(gcr_addr, rx_lte_gain);
 
+            // PSL bist_lte_gain_check_lt_min
             if ( rx_lte_gain_int < mem_pg_field_get(rx_lte_gain_min_check) )
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_LTE_GAIN_FAIL, gcr_addr, rx_lte_gain_int);
                 set_debug_state(0x516F, 3);
             }
+            // PSL bist_lte_gain_check_gt_max
             else if ( rx_lte_gain_int >  mem_pg_field_get(rx_lte_gain_max_check) )
             {
                 fail = 1;
@@ -265,17 +279,20 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
         }
 
         //check rx_lte_zero values start
+        // PSL bist_lte_zero_check
         if(rx_lte_zero_check_en)
         {
             //set_debug_state(0x5162); // checking lte gain
             int rx_lte_zero_int = get_ptr_ary(gcr_addr, rx_lte_zero);
 
+            // PSL bist_lte_zero_check_lt_min
             if ( rx_lte_zero_int  < mem_pg_field_get(rx_lte_zero_min_check) )
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_LTE_ZERO_FAIL, gcr_addr, rx_lte_zero_int);
                 set_debug_state(0x5163, 3);
             }
+            // PSL bist_lte_zero_check_gt_max
             else if ( rx_lte_zero_int >  mem_pg_field_get(rx_lte_zero_max_check) )
             {
                 fail = 1;
@@ -293,6 +310,7 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
         }
 
         //check quad phase adj is not to low or to high start
+        // PSL bist_quad_phase_check
         if(rx_quad_phase_check_en)
         {
             //set_debug_state(0x5166); // checking qpa
@@ -312,12 +330,14 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
             //    fail = 1;
             //    set_debug_state(0x5168);
             //}
+            // PSL bist_quad_phase_check_nse_lt_min
             if ( rx_quad_ph_adj_nse_int <  check_quad_ph_adj_min )
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_QPA_FAIL, gcr_addr, 0x0);
                 set_debug_state(0x5169, 3);
             }
+            // PSL bist_quad_phase_check_nse_gt_max
             else if ( rx_quad_ph_adj_nse_int >  check_quad_ph_adj_max )
             {
                 fail = 1;
@@ -332,12 +352,14 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
             //    fail = 1;
             //    set_debug_state(0x516C);
             //}
+            // PSL bist_quad_phase_check_ewe_lt_min
             else if ( rx_quad_ph_adj_ewe_int <  check_quad_ph_adj_min )
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_QPA_FAIL, gcr_addr, 0x0);
                 set_debug_state(0x516D, 3);
             }
+            // PSL bist_quad_phase_check_ewe_gt_max
             else if ( rx_quad_ph_adj_ewe_int >  check_quad_ph_adj_max )
             {
                 fail = 1;
@@ -365,6 +387,7 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
         uint8_t lane_bit_offset;
 
         // set register access values according to bank and lane number
+        // PSL lane_lt_16
         if (lane < 16)
         {
             lane_bit_offset = 15;
@@ -423,5 +446,6 @@ void set_rxbist_fail_lane( t_gcr_addr* gcr_addr)
     int lane = get_gcr_addr_lane(gcr_addr);
     set_rx_lane_fail(lane);//sets rx_lane_fail_0_15 or rx_lane_fail_16_23
     mem_pg_field_put(rx_fail_flag, 1);
+    // PSL set_fir_bad_lane_warning_and_dft_error
     set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
 }

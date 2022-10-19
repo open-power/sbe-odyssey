@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mbs22082601 |mbs     | Updated with PSL comments
 // mwh22070622 |mwh     | fixed issue 284226 done bit not being set.
 // mwh22060700 |mwh     | fixed issue 281498 now A020 to A022
 // vbr22012801 |vbr     | Use common functions for DAC accelerator
@@ -75,6 +76,7 @@ int eo_vga_pathoffset(t_gcr_addr* gcr_addr, t_bank bank, int saved_Amax_poff , b
     int lane = get_gcr_addr_lane(gcr_addr);
 
 //-------------------------------------------------------------------------------
+    // PSL bank_a
     if (bank == bank_a )
     {
         //bank A is alt B is main
@@ -82,6 +84,7 @@ int eo_vga_pathoffset(t_gcr_addr* gcr_addr, t_bank bank, int saved_Amax_poff , b
         data_n_dac = (get_ptr(gcr_addr, rx_ad_latch_dac_n000_addr, rx_ad_latch_dac_n000_startbit,
                               rx_ad_latch_dac_n000_endbit));//pl
 
+        // PSL bank_a_gen1to3
         if (pcie_gen1_cal || pcie_gen2_cal || (pcie_gen3_cal && !recal))//init for Gen1,2,3 and only Gen1 and Gen2 in recal
         {
             mem_pl_field_put(rx_a_before_loff_n000, lane, (data_n_dac));   //ppe pl
@@ -95,6 +98,7 @@ int eo_vga_pathoffset(t_gcr_addr* gcr_addr, t_bank bank, int saved_Amax_poff , b
         data_n_dac = (get_ptr(gcr_addr, rx_bd_latch_dac_n000_addr, rx_bd_latch_dac_n000_startbit,
                               rx_bd_latch_dac_n000_endbit));//pl
 
+        // PSL bank_b_gen1to3
         if (pcie_gen1_cal || pcie_gen2_cal || (pcie_gen3_cal && !recal))//init for Gen1,2,3 and only Gen1 and Gen2 in recal
         {
             mem_pl_field_put(rx_b_before_loff_n000, lane, (data_n_dac));   //ppe pl
@@ -122,6 +126,7 @@ int eo_vga_pathoffset(t_gcr_addr* gcr_addr, t_bank bank, int saved_Amax_poff , b
 
     bool restore = false;
 
+    // PSL recal
     if (recal)
     {
         //begin if recal
@@ -143,8 +148,10 @@ int eo_vga_pathoffset(t_gcr_addr* gcr_addr, t_bank bank, int saved_Amax_poff , b
         eo_update_poff_avg( gcr_addr, Amax_poff, bank, lane);
     }
 
+    // PSL restore
     if (!restore)  //update registers init and recal
     {
+        // PSL restore_gen1to3
         if (((first_recal) && (pcie_gen3_cal)) || (pcie_gen1_cal) || (pcie_gen2_cal))
         {
             //first gen3 and first/recal for gen1 and gen2

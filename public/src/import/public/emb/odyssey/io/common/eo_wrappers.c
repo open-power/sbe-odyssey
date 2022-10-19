@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mbs22083000 |mbs     | PSL comment updates
 // vbr22061500 |vbr     | Add external command fail reporting
 // vbr22033000 |vbr     | Removed unneeded IOT recal code
 // vbr22020900 |vbr     | Issue 254482: no longer call eo_main_recal 3 consecutive times on first recal
@@ -124,6 +125,7 @@ int run_initial_training(t_gcr_addr* io_gcr_addr, const uint32_t i_lane)
     set_recal_or_unused(i_lane, 0x1);
 
     // Restore original reg_id (if not RX since already set to rx_group)
+    // PSL reg_id_not_rx
     if (l_saved_reg_id != rx_group)
     {
         set_gcr_addr_reg_id(io_gcr_addr, l_saved_reg_id);
@@ -174,6 +176,7 @@ void auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
     int l_clr_eye_height_width  = mem_pg_field_get(rx_clr_eye_height_width);
 
     // Clear group historical hieght/width valid when requested
+    // PSL clr_eye_height_width
     if (l_clr_eye_height_width)
     {
         mem_pg_bit_clr(rx_hist_min_eye_height_valid);
@@ -192,6 +195,7 @@ void auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
     // For AXO, check the DL recal abort (for OpenCAPI degraded mode)
     int l_axo_dl_recal_abort_0_23 = 0;
 
+    // PSL pcie_mode
     if (!pcie_mode)
     {
         l_axo_dl_recal_abort_0_23 = (get_ptr_field(io_gcr_addr, rx_recal_abort_0_15)  << 16) |
@@ -207,18 +211,21 @@ void auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
     {
         set_gcr_addr_lane(io_gcr_addr, l_lane);
 
+        // PSL lane_mod_six_eq_five
         if ( (l_lane % 6) == 5)
         {
             io_sleep(get_gcr_addr_thread(io_gcr_addr));
         }
 
         // Clear recal counter when requested
+        // PSL clr_recal_cnt
         if (l_clr_recal_cnt)
         {
             mem_pl_field_put(rx_lane_recal_cnt, l_lane, 0);
         }
 
         // Clear lane historical eye height/width valid when requested
+        // PSL clr_eye_height_width
         if (l_clr_eye_height_width)
         {
             mem_pl_bit_clr(rx_lane_hist_min_eye_height_valid, l_lane);
@@ -228,6 +235,7 @@ void auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
 #ifdef IOT
 
         // IOT: Mark the lane as unused if it is a bad lane (spared out) or unused spare (never recalibrated)
+        // PSL lane_bad_or_unused
         if ( mem_pl_field_get(rx_lane_bad, l_lane) || ((mem_pg_field_get(rx_spare_lane_code) >= 1)
                 && (mem_pg_field_get(rx_spare_lane1) == l_lane)) )
         {
@@ -240,15 +248,18 @@ void auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
         // IOO: Mark the lane as unused if init has not been run on it (PCIe)
         int init_done = mem_pl_field_get(rx_init_done, l_lane);
 
+        // PSL init_done
         if (!init_done)
         {
             set_recal_or_unused(l_lane, 0x1);
         }
 
         // IOO: Run Simple Auto Recalibration if necessary and initial training has been run
+        // PSL auto_recal
         if (init_done && ((0x80000000 >> l_lane) & l_auto_recal_0_23))
         {
             // Skip running a long recal if need to handle a PIPE command
+            // PSL recal_abort
             if (l_pipe_ifc_recal_abort)
             {
                 continue;
@@ -261,9 +272,11 @@ void auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
             }
 
             // PCIe: Do not run recal under these conditions
+            // PSL recal_pcie_mode
             if (pcie_mode)
             {
                 // Do not run recalibration if RX margining is enabled
+                // PSL recal_pcie_rxmargin
                 if (get_ptr_field(io_gcr_addr, rx_berpl_pcie_rx_margin_start))
                 {
                     continue;
