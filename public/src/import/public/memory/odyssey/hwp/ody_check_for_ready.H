@@ -22,15 +22,16 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+
 ///
 /// @file ody_check_for_ready.H
 /// @brief FW polls I2C slave interface to determine when it is ready
 ///
-/// *HWP HWP Owner: Thi Tran thi@us.ibm.com
-/// *HWP HWP Backup: <none>
-/// *HWP Team: VBU
-/// *HWP Level: 2
-/// *HWP Consumed by: Hostboot / Cronus
+// *HWP HWP Owner: Louis Stermole <stermole@us.ibm.com>
+// *HWP HWP Backup: Stephen Glancy <sglancy@us.ibm.com>
+// *HWP Team: Memory
+// *HWP Level: 2
+// *HWP Consumed by: FSP:HB
 
 #ifndef _ODY_CHECK_FOR_READY_
 #define _ODY_CHECK_FOR_READY_

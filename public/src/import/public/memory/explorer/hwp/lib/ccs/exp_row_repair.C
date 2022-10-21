@@ -42,9 +42,12 @@
 #include <lib/mcbist/exp_mcbist_traits.H>
 #include <lib/dimm/exp_mrs_traits.H>
 #include <lib/ccs/exp_row_repair.H>
+#include <generic/memory/lib/ccs/ccs_ddr4_commands.H>
 #include <lib/mcbist/exp_mcbist_traits.H>
 #include <lib/dimm/exp_rank.H>
 #include <lib/dimm/exp_kind.H>
+#include <lib/workarounds/exp_ccs_row_repair_workarounds.H>
+#include <lib/workarounds/exp_byte_swizzle_workarounds.H>
 
 #include <generic/memory/lib/dimm/ddr4/mrs_load_ddr4.H>
 #include <generic/memory/lib/utils/fir/gen_mss_unmask.H>
@@ -52,6 +55,7 @@
 #include <mss_explorer_attribute_getters.H>
 #include <mss_generic_system_attribute_getters.H>
 
+#include <generic/memory/lib/utils/mcbist/gen_mss_memdiags.H>
 #include <generic/memory/lib/utils/c_str.H>
 #include <generic/memory/lib/utils/find.H>
 #include <generic/memory/lib/utils/mss_buffer_utils.H>
@@ -202,7 +206,7 @@ fapi2::ReturnCode add_sppr_guardkey( const mss::rank::info<mss::mc_type::EXPLORE
     mss::ccs::instruction_t<mss::mc_type::EXPLORER> l_inst_b_side;
 
     // Initialize Instructions
-    l_inst_a_side = mss::ccs::mrs_command<mss::mc_type::EXPLORER>(l_port_rank, MRS00);
+    l_inst_a_side = mss::ccs::ddr4::mrs_command<mss::mc_type::EXPLORER>(l_port_rank, MRS00);
 
     FAPI_TRY(mss::dimm::has_rcd<mss::mc_type::EXPLORER>(l_dimm, l_has_rcd),
              "Failed to check has_rcd on %s",
@@ -231,10 +235,8 @@ fapi2::ReturnCode add_sppr_guardkey( const mss::rank::info<mss::mc_type::EXPLORE
 
     // Insert the delay into arr1 (control reg)
     // setting to 10 in order to space each side command by 20 which give plenty of time for tMOD
-    l_inst_a_side.arr1.template insertFromRight<EXPLR_MCBIST_CCS_INST_ARR1_00_IDLES,
-                                EXPLR_MCBIST_CCS_INST_ARR1_00_IDLES_LEN>(i_delay_in_cycles);
-    l_inst_b_side.arr1.template insertFromRight<EXPLR_MCBIST_CCS_INST_ARR1_00_IDLES,
-                                EXPLR_MCBIST_CCS_INST_ARR1_00_IDLES_LEN>(i_delay_in_cycles);
+    l_inst_a_side.iv_idles = i_delay_in_cycles;
+    l_inst_b_side.iv_idles = i_delay_in_cycles;
 
     // Trace printout
     FAPI_INF("Instruction Value: 0x%016llx:0x%016llx rank %d a-side on dimm %s",
@@ -314,37 +316,71 @@ fapi2::ReturnCode build_row_repair_table(const fapi2::Target<fapi2::TARGET_TYPE_
         {
             const uint64_t MAX_ROW = 1 << l_kind.iv_rows;
             const uint64_t MAX_SRANK = 1 << l_num_subrank;
+
+            // srank, BG, BA, and row address are used bit-reversed in the row repair commands,
+            // so need to reverse them to print and do boundary checking
+            fapi2::buffer<uint32_t> l_logical_data;
+            fapi2::buffer<uint32_t> l_original_data(l_entry.iv_bg);
+            mss::swizzle < 32 - ROW_REPAIR_BANK_GROUP_LEN,
+                ROW_REPAIR_BANK_GROUP_LEN,
+                31 > (l_original_data, l_logical_data);
+            const uint64_t l_logical_bg = l_logical_data;
+
+            l_original_data.flush<0>();
+            l_logical_data.flush<0>();
+            l_original_data = l_entry.iv_bank;
+            mss::swizzle < 32 - ROW_REPAIR_BANK_LEN,
+                ROW_REPAIR_BANK_LEN,
+                31 > (l_original_data, l_logical_data);
+            const uint64_t l_logical_bank = l_logical_data;
+
+            l_original_data.flush<0>();
+            l_logical_data.flush<0>();
+            l_original_data = l_entry.iv_row;
+            mss::swizzle < 32 - ROW_REPAIR_ROW_ADDR_LEN,
+                ROW_REPAIR_ROW_ADDR_LEN,
+                31 > (l_original_data, l_logical_data);
+            const uint64_t l_logical_row = l_logical_data;
+
+            l_original_data.flush<0>();
+            l_logical_data.flush<0>();
+            l_original_data = l_entry.iv_srank;
+            mss::swizzle < 32 - ROW_REPAIR_SRANK_LEN,
+                ROW_REPAIR_SRANK_LEN,
+                31 > (l_original_data, l_logical_data);
+            const uint64_t l_logical_srank = l_logical_data;
+
             FAPI_INF("Found valid row repair request in VPD for DIMM %s, DRAM %d, mrank %d, srank %d, bg %d, bank %d, row 0x%05x",
-                     mss::spd::c_str(i_target), l_entry.iv_dram, l_entry.iv_dimm_rank, l_entry.iv_srank, l_entry.iv_bg, l_entry.iv_bank,
-                     l_entry.iv_row);
+                     mss::spd::c_str(i_target), l_entry.iv_dram, l_entry.iv_dimm_rank, l_logical_srank,
+                     l_logical_bg, l_logical_bank, l_logical_row);
 
             FAPI_INF("Maxes for dimm %s: DRAM %d, mrank %d, srank %d, bg %d, bank %d, row 0x%05x",
-                     mss::spd::c_str(i_target), l_num_dram, l_kind.iv_master_ranks, l_num_subrank, MAX_BANK_GROUP, MAX_BANKS,
-                     l_kind.iv_rows);
+                     mss::spd::c_str(i_target), l_num_dram, l_kind.iv_master_ranks, l_num_subrank,
+                     MAX_BANK_GROUP, MAX_BANKS, MAX_ROW);
 
             // Do some sanity checking here
             FAPI_ASSERT((l_entry.iv_dram < l_num_dram) &&
-                        (l_entry.iv_srank < MAX_SRANK) &&
-                        (l_entry.iv_bg < MAX_BANK_GROUP) &&
-                        (l_entry.iv_bank < MAX_BANKS) &&
-                        (l_entry.iv_row < MAX_ROW),
+                        (l_logical_srank < MAX_SRANK) &&
+                        (l_logical_bg < MAX_BANK_GROUP) &&
+                        (l_logical_bank < MAX_BANKS) &&
+                        (l_logical_row < MAX_ROW),
                         fapi2::EXP_ROW_REPAIR_ENTRY_OUT_OF_BOUNDS().
                         set_DIMM_TARGET(i_target).
                         set_DRAM(l_entry.iv_dram).
                         set_DRAM_MAX(l_num_dram).
                         set_MRANK(l_dimm_rank).
-                        set_SRANK(l_entry.iv_srank).
+                        set_SRANK(l_logical_srank).
                         set_SRANK_MAX(MAX_SRANK).
-                        set_BANK_GROUP(l_entry.iv_bg).
+                        set_BANK_GROUP(l_logical_bg).
                         set_BANK_GROUP_MAX(MAX_BANK_GROUP).
-                        set_BANK(l_entry.iv_bank).
+                        set_BANK(l_logical_bank).
                         set_BANK_MAX(MAX_BANKS).
-                        set_ROW(l_entry.iv_row).
+                        set_ROW(l_logical_row).
                         set_ROW_MAX(MAX_ROW),
                         "%s SPD contained out of bounds row repair entry: DRAM: %d MAX: %d mrank %d srank %d MAX: %d"
                         "bg %d MAX: %d bank %d MAX: %d row 0x%05x MAX: 0x%05x",
-                        mss::spd::c_str(i_target), l_entry.iv_dram, l_num_dram, l_dimm_rank, l_entry.iv_srank, MAX_SRANK,
-                        l_entry.iv_bg, MAX_BANK_GROUP, l_entry.iv_bank, MAX_BANKS, l_entry.iv_row, MAX_ROW);
+                        mss::spd::c_str(i_target), l_entry.iv_dram, l_num_dram, l_dimm_rank, l_logical_srank, MAX_SRANK,
+                        l_logical_bg, MAX_BANK_GROUP, l_logical_bank, MAX_BANKS, l_logical_row, MAX_ROW);
             // Insert row repair request into list
             o_repairs_per_dimm.push_back(l_entry);
         }
@@ -446,7 +482,8 @@ fapi2::ReturnCode setup_sppr( const mss::rank::info<mss::mc_type::EXPLORER>& i_r
 
     // Get ODT bits for ccs
     FAPI_TRY( mss::attr::get_si_odt_wr(l_dimm_target, l_odt_attr) );
-    FAPI_TRY( mss::ccs::convert_odt_attr_to_ccs<mss::mc_type::EXPLORER>(l_odt_attr[l_dimm_rank], l_port_target, l_odt_bits),
+    FAPI_TRY( mss::ccs::ddr4::convert_odt_attr_to_ccs<mss::mc_type::EXPLORER>(l_odt_attr[l_dimm_rank], l_port_target,
+              l_odt_bits),
               "Failed odt to ccs conversion on port rank %d on port %s",
               l_port_rank, mss::c_str(l_port_target));
 
@@ -455,12 +492,12 @@ fapi2::ReturnCode setup_sppr( const mss::rank::info<mss::mc_type::EXPLORER>& i_r
     //-------------------------------
 
     // 0. Add des command for Self Time Refresh
-    l_inst = mss::ccs::des_command<mss::mc_type::EXPLORER>();
-    FAPI_TRY( mss::ccs::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tMOD, l_inst, io_program.iv_instructions) );
+    l_inst = mss::ccs::ddr4::des_command<mss::mc_type::EXPLORER>();
+    FAPI_TRY( mss::ccs::ddr4::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tMOD, l_inst, io_program.iv_instructions) );
 
     // 1. Precharge_all(): Create instruction for precharge and add it to the instruction array.
-    l_inst = mss::ccs::init_pre_load<mss::mc_type::EXPLORER>(i_rank_info, i_repair.iv_srank);
-    FAPI_TRY( mss::ccs::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tRCD, l_inst, io_program.iv_instructions) );
+    l_inst = mss::ccs::ddr4::init_pre_load<mss::mc_type::EXPLORER>(i_rank_info, i_repair.iv_srank);
+    FAPI_TRY( mss::ccs::ddr4::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tRCD, l_inst, io_program.iv_instructions) );
 
     FAPI_MFG( "Running srank fix on dimm %s with srank %d", mss::c_str(l_dimm_target), i_repair.iv_srank );
 
@@ -489,30 +526,33 @@ fapi2::ReturnCode setup_sppr( const mss::rank::info<mss::mc_type::EXPLORER>& i_r
               l_dimm_rank, mss::c_str(l_dimm_target) );
 
     // 4. ACT to failed bank/address
-    l_inst = mss::ccs::act_load<mss::mc_type::EXPLORER>(i_rank_info, i_repair.iv_bank, i_repair.iv_bg,
+    l_inst = mss::ccs::ddr4::act_load<mss::mc_type::EXPLORER>(i_rank_info, i_repair.iv_bank, i_repair.iv_bg,
              i_repair.iv_row, i_repair.iv_srank, tRCD);
-    FAPI_TRY( mss::ccs::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tRCD, l_inst, io_program.iv_instructions) );
+    FAPI_TRY( mss::ccs::ddr4::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tRCD, l_inst, io_program.iv_instructions) );
 
     // 5. WR Command with dq bits low:
-    l_inst = mss::ccs::wr_load<mss::mc_type::EXPLORER>(i_rank_info, i_repair.iv_bank, i_repair.iv_bg, i_repair.iv_srank,
+    l_inst = mss::ccs::ddr4::wr_load<mss::mc_type::EXPLORER>(i_rank_info, i_repair.iv_bank, i_repair.iv_bg,
+             i_repair.iv_srank,
              NO_DELAY);
     // Check for data inversion and invert data if on
     FAPI_TRY( mss::exp::ccs::process_inversion(l_port_target, l_invert) );
     mss::exp::ccs::set_write_data(i_dram_bitmap, l_invert, l_inst);
     // Set ODT Bits on WR command
-    mss::ccs::set_odt_bits<mss::mc_type::EXPLORER>(l_odt_bits, l_inst);
-    FAPI_TRY( mss::ccs::process_inst<mss::mc_type::EXPLORER>(i_rank_info, NO_DELAY, l_inst, io_program.iv_instructions) );
+    mss::ccs::ddr4::set_odt_bits<mss::mc_type::EXPLORER>(l_odt_bits, l_inst);
+    FAPI_TRY( mss::ccs::ddr4::process_inst<mss::mc_type::EXPLORER>(i_rank_info, NO_DELAY, l_inst,
+              io_program.iv_instructions) );
 
     // 6. Add odt command
-    l_inst = mss::ccs::odt_command<mss::mc_type::EXPLORER>(l_odt_bits);
+    l_inst = mss::ccs::ddr4::odt_command<mss::mc_type::EXPLORER>(l_odt_bits);
     mss::ccs::set_wr_repeats<mss::mc_type::EXPLORER>(ODT_REPEAT, l_inst);
-    FAPI_TRY( mss::ccs::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tWR, l_inst, io_program.iv_instructions) );
+    FAPI_TRY( mss::ccs::ddr4::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tWR, l_inst, io_program.iv_instructions) );
 
     // 7. PRE to Bank (and wait at least 20ns to register)
     // Currently waiting tWR for debug
-    l_inst = mss::ccs::pre_load<mss::mc_type::EXPLORER>(i_rank_info, i_repair.iv_bank, i_repair.iv_bg, i_repair.iv_srank,
+    l_inst = mss::ccs::ddr4::pre_load<mss::mc_type::EXPLORER>(i_rank_info, i_repair.iv_bank, i_repair.iv_bg,
+             i_repair.iv_srank,
              PRE_DELAY);
-    FAPI_TRY( mss::ccs::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tWR, l_inst, io_program.iv_instructions) );
+    FAPI_TRY( mss::ccs::ddr4::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tWR, l_inst, io_program.iv_instructions) );
 
     // 8. Set MR4 bit "A5=0" to exit sPPR
     l_data4.iv_soft_ppr = 0;
@@ -521,8 +561,8 @@ fapi2::ReturnCode setup_sppr( const mss::rank::info<mss::mc_type::EXPLORER>& i_r
               l_dimm_rank, mss::c_str(l_dimm_target) );
 
     // Add des command
-    l_inst = mss::ccs::des_command<mss::mc_type::EXPLORER>();
-    FAPI_TRY( mss::ccs::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tMOD, l_inst, io_program.iv_instructions) );
+    l_inst = mss::ccs::ddr4::des_command<mss::mc_type::EXPLORER>();
+    FAPI_TRY( mss::ccs::ddr4::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tMOD, l_inst, io_program.iv_instructions) );
 
 fapi_try_exit:
     return fapi2::current_err;
@@ -580,7 +620,8 @@ fapi2::ReturnCode setup_hppr_pre_delay( const mss::rank::info<mss::mc_type::EXPL
 
     // Get ODT bits for ccs
     FAPI_TRY( mss::attr::get_si_odt_wr(l_dimm_target, l_odt_attr) );
-    FAPI_TRY( mss::ccs::convert_odt_attr_to_ccs<mss::mc_type::EXPLORER>(l_odt_attr[l_dimm_rank], l_port_target, l_odt_bits),
+    FAPI_TRY( mss::ccs::ddr4::convert_odt_attr_to_ccs<mss::mc_type::EXPLORER>(l_odt_attr[l_dimm_rank], l_port_target,
+              l_odt_bits),
               "Failed odt to ccs conversion on port rank %d on port %s",
               l_port_rank, mss::c_str(l_port_target));
 
@@ -589,12 +630,12 @@ fapi2::ReturnCode setup_hppr_pre_delay( const mss::rank::info<mss::mc_type::EXPL
     //-------------------------------
 
     // 0. Add des command for Self Time Refresh
-    l_inst = mss::ccs::des_command<mss::mc_type::EXPLORER>();
-    FAPI_TRY( mss::ccs::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tMOD, l_inst, io_program.iv_instructions) );
+    l_inst = mss::ccs::ddr4::des_command<mss::mc_type::EXPLORER>();
+    FAPI_TRY( mss::ccs::ddr4::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tMOD, l_inst, io_program.iv_instructions) );
 
     // 1. Precharge_all(): Create instruction for precharge and add it to the instruction array.
-    l_inst = mss::ccs::init_pre_load<mss::mc_type::EXPLORER>(i_rank_info, i_repair.iv_srank);
-    FAPI_TRY( mss::ccs::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tRCD, l_inst, io_program.iv_instructions) );
+    l_inst = mss::ccs::ddr4::init_pre_load<mss::mc_type::EXPLORER>(i_rank_info, i_repair.iv_srank);
+    FAPI_TRY( mss::ccs::ddr4::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tRCD, l_inst, io_program.iv_instructions) );
 
     FAPI_MFG( "Running srank fix on dimm %s with srank %d", mss::c_str(l_dimm_target), i_repair.iv_srank );
 
@@ -623,24 +664,26 @@ fapi2::ReturnCode setup_hppr_pre_delay( const mss::rank::info<mss::mc_type::EXPL
               l_dimm_rank, mss::c_str(l_dimm_target) );
 
     // 4. ACT to failed bank/address
-    l_inst = mss::ccs::act_load<mss::mc_type::EXPLORER>(i_rank_info, i_repair.iv_bank, i_repair.iv_bg,
+    l_inst = mss::ccs::ddr4::act_load<mss::mc_type::EXPLORER>(i_rank_info, i_repair.iv_bank, i_repair.iv_bg,
              i_repair.iv_row, i_repair.iv_srank, tRCD);
-    FAPI_TRY( mss::ccs::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tRCD, l_inst, io_program.iv_instructions) );
+    FAPI_TRY( mss::ccs::ddr4::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tRCD, l_inst, io_program.iv_instructions) );
 
     // 5. WR Command with dq bits low:
-    l_inst = mss::ccs::wr_load<mss::mc_type::EXPLORER>(i_rank_info, i_repair.iv_bank, i_repair.iv_bg, i_repair.iv_srank,
+    l_inst = mss::ccs::ddr4::wr_load<mss::mc_type::EXPLORER>(i_rank_info, i_repair.iv_bank, i_repair.iv_bg,
+             i_repair.iv_srank,
              NO_DELAY);
     // Check for data inversion and invert data if on
     FAPI_TRY( mss::exp::ccs::process_inversion(l_port_target, l_invert) );
     mss::exp::ccs::set_write_data(i_dram_bitmap, l_invert, l_inst);
     // Set ODT Bits on WR command
-    mss::ccs::set_odt_bits<mss::mc_type::EXPLORER>(l_odt_bits, l_inst);
-    FAPI_TRY( mss::ccs::process_inst<mss::mc_type::EXPLORER>(i_rank_info, NO_DELAY, l_inst, io_program.iv_instructions) );
+    mss::ccs::ddr4::set_odt_bits<mss::mc_type::EXPLORER>(l_odt_bits, l_inst);
+    FAPI_TRY( mss::ccs::ddr4::process_inst<mss::mc_type::EXPLORER>(i_rank_info, NO_DELAY, l_inst,
+              io_program.iv_instructions) );
 
     // 6. Add odt command
-    l_inst = mss::ccs::odt_command<mss::mc_type::EXPLORER>(l_odt_bits);
+    l_inst = mss::ccs::ddr4::odt_command<mss::mc_type::EXPLORER>(l_odt_bits);
     mss::ccs::set_wr_repeats<mss::mc_type::EXPLORER>(ODT_REPEAT, l_inst);
-    FAPI_TRY( mss::ccs::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tWR, l_inst, io_program.iv_instructions) );
+    FAPI_TRY( mss::ccs::ddr4::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tWR, l_inst, io_program.iv_instructions) );
 
 fapi_try_exit:
     return fapi2::current_err;
@@ -696,9 +739,10 @@ fapi2::ReturnCode setup_hppr_post_delay( const mss::rank::info<mss::mc_type::EXP
 
     // 7. PRE to Bank (and wait at least 20ns to register)
     // Currently waiting tWR for debug
-    l_inst = mss::ccs::pre_load<mss::mc_type::EXPLORER>(i_rank_info, i_repair.iv_bank, i_repair.iv_bg, i_repair.iv_srank,
+    l_inst = mss::ccs::ddr4::pre_load<mss::mc_type::EXPLORER>(i_rank_info, i_repair.iv_bank, i_repair.iv_bg,
+             i_repair.iv_srank,
              PRE_DELAY);
-    FAPI_TRY( mss::ccs::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tWR, l_inst, io_program.iv_instructions) );
+    FAPI_TRY( mss::ccs::ddr4::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tWR, l_inst, io_program.iv_instructions) );
 
     // 8. Set MR4 bit "A13=0" to exit sPPR
     l_data4.iv_ppr = 0;
@@ -707,16 +751,16 @@ fapi2::ReturnCode setup_hppr_post_delay( const mss::rank::info<mss::mc_type::EXP
               l_dimm_rank, mss::c_str(l_dimm_target) );
 
     // Add 2 64k cycle idles to prevent the controller from sending any other commands before hPPR is done
-    l_inst = mss::ccs::des_command<mss::mc_type::EXPLORER>();
-    FAPI_TRY( mss::ccs::process_inst<mss::mc_type::EXPLORER>(i_rank_info, FINAL_DELAY, l_inst,
+    l_inst = mss::ccs::ddr4::des_command<mss::mc_type::EXPLORER>();
+    FAPI_TRY( mss::ccs::ddr4::process_inst<mss::mc_type::EXPLORER>(i_rank_info, FINAL_DELAY, l_inst,
               io_program.iv_instructions) );
-    l_inst = mss::ccs::des_command<mss::mc_type::EXPLORER>();
-    FAPI_TRY( mss::ccs::process_inst<mss::mc_type::EXPLORER>(i_rank_info, FINAL_DELAY, l_inst,
+    l_inst = mss::ccs::ddr4::des_command<mss::mc_type::EXPLORER>();
+    FAPI_TRY( mss::ccs::ddr4::process_inst<mss::mc_type::EXPLORER>(i_rank_info, FINAL_DELAY, l_inst,
               io_program.iv_instructions) );
 
     // Add des command
-    l_inst = mss::ccs::des_command<mss::mc_type::EXPLORER>();
-    FAPI_TRY( mss::ccs::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tMOD, l_inst, io_program.iv_instructions) );
+    l_inst = mss::ccs::ddr4::des_command<mss::mc_type::EXPLORER>();
+    FAPI_TRY( mss::ccs::ddr4::process_inst<mss::mc_type::EXPLORER>(i_rank_info, tMOD, l_inst, io_program.iv_instructions) );
 
 fapi_try_exit:
     return fapi2::current_err;
@@ -835,7 +879,7 @@ void disable_power_down_helper(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>&
 
     io_program.iv_instructions.clear();
 
-    io_program.iv_instructions.push_back(mss::ccs::des_command<mss::mc_type::EXPLORER>(POWER_DOWN_EXIT_DELAY));
+    io_program.iv_instructions.push_back(mss::ccs::ddr4::des_command<mss::mc_type::EXPLORER>(POWER_DOWN_EXIT_DELAY));
 }
 
 ///
@@ -856,6 +900,7 @@ fapi2::ReturnCode dynamic_row_repair( const mss::rank::info<mss::mc_type::EXPLOR
     fapi2::buffer<uint64_t> l_modeq_reg;
     fapi2::buffer<uint64_t> l_mcbist_status;
     fapi2::buffer<uint64_t> l_ccs_status;
+    fapi2::buffer<uint64_t> l_reg_data;
     bool l_poll_result = false;
 
     // Get port rank and target
@@ -922,8 +967,14 @@ fapi2::ReturnCode dynamic_row_repair( const mss::rank::info<mss::mc_type::EXPLOR
     // Configure CCS regs for execution
     FAPI_TRY( mss::row_repair::config_ccs_regs<mss::mc_type::EXPLORER>(l_ocmb_target, l_port_target, l_modeq_reg ) );
 
+    // Disable zq cal before Concurrent CCS
+    FAPI_TRY( mss::exp::workarounds::disable_zq_cal(l_ocmb_target, l_reg_data));
+
     // Run CCS via MCBIST for Concurrent CCS
     FAPI_TRY( mss::ccs::execute_via_mcbist<mss::mc_type::EXPLORER>(l_ocmb_target, l_program, l_port_target) );
+
+    // Reload reg data for zq cal after Concurrent CCS
+    mss::putScom(l_ocmb_target, EXPLR_SRQ_MBA_FARB9Q, l_reg_data);
 
     // Revert CCS regs after execution
     // NOTE: May require MCBIST restoration for exp_background_scrub
@@ -1037,9 +1088,7 @@ fapi2::ReturnCode get_num_bad_bits(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>&
     uint8_t l_dram_width = 0;
     FAPI_TRY( mss::attr::get_dram_width(i_target, l_dram_width) );
 
-    // The DRAM index in ATTR_ROW_REPAIR_DATA is relative to the logical perspective.
-    // The bad_bits attribute is also logical perspective according to PRD
-    // using the DRAM index
+    // Grabs the numeric DRAM instance and ensures that the DRAM is inbounds
     // TODO: Move to helper function Zen#646
     l_byte = (l_dram_width == fapi2::ENUM_ATTR_EFF_DRAM_WIDTH_X8) ?
              l_dram :
@@ -1058,6 +1107,12 @@ fapi2::ReturnCode get_num_bad_bits(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>&
                 set_INDEX(l_dram),
                 "DRAM index %d supplied to get_num_bad_bits is out of bounds on %s",
                 l_dram, mss::spd::c_str(i_target));
+
+    // The DRAM index in ATTR_ROW_REPAIR_DATA is relative to the logical perspective.
+    // The bad_bits attribute is in the DFI perspective (unfortunately)
+    // Grab the byte, then swizzle it from the DFI perspective to the logical perspective
+    // The indexing was checked above. The conversion function should keep us in bounds
+    l_byte = mss::exp::workarounds::mcbist_to_dfi_byte_swizzle(l_byte);
 
     {
         const uint8_t l_bad_bits_on_dram = i_bad_bits[l_byte] & l_mask;

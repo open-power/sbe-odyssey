@@ -39,8 +39,10 @@
 
 #include <fapi2.H>
 #include <mss_generic_system_attribute_getters.H>
+#include <mss_generic_attribute_getters.H>
 #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
 #include <generic/memory/lib/utils/mcbist/gen_mss_mcbist.H>
+#include <generic/memory/lib/utils/mcbist/gen_mss_mcbist_traits.H>
 #include <generic/memory/lib/utils/mcbist/gen_mss_mcbist_address.H>
 #include <generic/memory/lib/utils/mcbist/gen_mss_mcbist_patterns.H>
 #include <generic/memory/lib/utils/mcbist/gen_mss_mcbist_settings.H>
@@ -57,20 +59,21 @@ namespace mss
 
 ///
 /// @brief Determine if a thing is functional
+/// @tparam MC mss::mc_type memory controller type
 /// @tparam I, the type of the item we want to check for
 /// @tparam P, the type of the parent which holds the things of interest
 /// @param[in] i_target the parent containing the thing we're looking for
 /// @param[in] i_rel_pos the relative position of the item of interest.
 /// @return bool true iff the thing at i_rel_pos is noted as functional
 ///
-template< fapi2::TargetType I, fapi2::TargetType P >
+template< mss::mc_type MC, fapi2::TargetType I, fapi2::TargetType P >
 inline bool is_functional( const fapi2::Target<P>& i_target, const uint64_t i_rel_pos )
 {
     // Not sure of a good way to do this ... we get all the functional
     // children of the parent and look for our relative position ...
     for (const auto& i : i_target.template getChildren<I>(fapi2::TARGET_STATE_FUNCTIONAL))
     {
-        if (mss::template relative_pos<P>(i) == i_rel_pos)
+        if (relative_pos<MC, P>(i) == i_rel_pos)
         {
             return true;
         }
@@ -152,7 +155,7 @@ fapi2::ReturnCode sf_init( const fapi2::Target<T>& i_target, const uint64_t i_pa
                 mss::mcbist::subtest_t<MC> l_fw_subtest =
                     mss::mcbist::write_subtest<MC>();
 
-                l_fw_subtest.enable_port(mss::relative_pos<T>(p));
+                l_fw_subtest.enable_port(mss::relative_pos<MC, T>(p));
                 l_fw_subtest.change_addr_sel(l_rank_address_pair);
                 l_fw_subtest.enable_dimm(mss::rank::get_dimm_from_rank<MC>(*r));
                 l_program.iv_subtests.push_back(l_fw_subtest);
@@ -167,7 +170,7 @@ fapi2::ReturnCode sf_init( const fapi2::Target<T>& i_target, const uint64_t i_pa
                 mss::mcbist::subtest_t<MC> l_fr_subtest =
                     mss::mcbist::read_subtest<MC>();
 
-                l_fr_subtest.enable_port(mss::relative_pos<T>(p));
+                l_fr_subtest.enable_port(mss::relative_pos<MC, T>(p));
                 l_fr_subtest.change_addr_sel(l_rank_address_pair);
                 l_fr_subtest.enable_dimm(mss::rank::get_dimm_from_rank<MC>(*r));
                 l_program.iv_subtests.push_back(l_fr_subtest);
@@ -190,7 +193,7 @@ fapi2::ReturnCode sf_init( const fapi2::Target<T>& i_target, const uint64_t i_pa
         // Just one port for now. Per Shelton we need to set this in maint address mode
         // even tho we specify the port/dimm in the subtest.
         fapi2::buffer<uint8_t> l_port;
-        l_port.setBit(mss::relative_pos<T>(p));
+        l_port.setBit(mss::relative_pos<MC, T>(p));
         l_program.select_ports(l_port >> 4);
 
         // Kick it off, wait for a result
@@ -250,8 +253,23 @@ using mss::mcbist::NO_PATTERN;
 /// @param[in] i_target the memory controller target
 /// @return FAPI2_RC_SUCCESS iff ok
 ///
-template< mss::mc_type MC, fapi2::TargetType T, typename TT = portTraits<MC> >
-fapi2::ReturnCode pre_maint_read_settings( const fapi2::Target<T>& i_target );
+template< mss::mc_type MC, fapi2::TargetType T, typename TT = mss::portTraits<MC> >
+fapi2::ReturnCode pre_maint_read_settings( const fapi2::Target<T>&
+        i_target )
+{
+    fapi2::buffer<uint64_t> l_data;
+
+    // Set up
+    FAPI_TRY( mss::getScom(i_target, TT::ECC_REG, l_data) );
+
+    l_data.setBit<TT::RECR_MBSECCQ_MAINT_NO_RETRY_UE>();
+    l_data.setBit<TT::RECR_MBSECCQ_MAINT_NO_RETRY_MPE>();
+
+    FAPI_TRY( mss::putScom(i_target, TT::ECC_REG, l_data) );
+
+fapi_try_exit:
+    return fapi2::current_err;
+}
 
 ///
 /// @brief Set up memory controller specific settings for pre-scrub
@@ -261,25 +279,41 @@ fapi2::ReturnCode pre_maint_read_settings( const fapi2::Target<T>& i_target );
 /// @param[in] i_target the memory controller target
 /// @return FAPI2_RC_SUCCESS iff ok
 ///
-template< mss::mc_type MC, fapi2::TargetType T, typename TT = portTraits<MC> >
-fapi2::ReturnCode pre_scrub_settings( const fapi2::Target<T>& i_target );
+template< mss::mc_type MC, fapi2::TargetType T, typename TT = mss::portTraits<MC> >
+fapi2::ReturnCode pre_scrub_settings( const fapi2::Target<T>&
+                                      i_target )
+{
+    fapi2::buffer<uint64_t> l_data;
+
+    // Set up
+    FAPI_TRY( mss::getScom(i_target, TT::ECC_REG, l_data) );
+
+    l_data.clearBit<TT::RECR_MBSECCQ_MAINT_NO_RETRY_UE>();
+    l_data.clearBit<TT::RECR_MBSECCQ_MAINT_NO_RETRY_MPE>();
+
+    FAPI_TRY( mss::putScom(i_target, TT::ECC_REG, l_data) );
+
+fapi_try_exit:
+    return fapi2::current_err;
+}
 
 ///
 /// @brief Mask MCBISTFIRQ[MCBIST_PROGRAM_COMPLETE] and return the original mask value
 /// @tparam MC the mc type of the T
-/// @tparam T the fapi2::TargetType of the target
+/// @tparam T fapi2::TargetType of the MCBIST engine
 /// @param[in] i_target the target
 /// @param[out] o_fir_mask_save the original mask value to be restored later
 /// @return FAPI2_RC_SUCCESS iff ok
 ///
 template< mss::mc_type MC, fapi2::TargetType T >
-fapi2::ReturnCode mask_program_complete( const fapi2::Target<T>& i_target,
-        fapi2::buffer<uint64_t>& o_fir_mask_save);
+fapi2::ReturnCode mask_program_complete(
+    const fapi2::Target<T>& i_target,
+    fapi2::buffer<uint64_t>& o_fir_mask_save );
 
 ///
 /// @brief Restore MCBISTFIRQ[MCBIST_PROGRAM_COMPLETE] mask value and clear the FIR
 /// @tparam MC the mc type of the T
-/// @tparam T the fapi2::TargetType of the target
+/// @tparam T fapi2::TargetType of the MCBIST engine
 /// @param[in] i_target the target
 /// @param[in] i_fir_mask_save the original mask value to be restored
 /// @return FAPI2_RC_SUCCESS iff ok
@@ -427,7 +461,10 @@ class operation
         /// in subclassed constructores more easily.
         /// @return FAPI2_RC_SUCCESS iff everything ok
         ///
-        fapi2::ReturnCode multi_port_init_internal();
+        fapi2::ReturnCode multi_port_init_internal()
+        {
+            return single_port_init();
+        }
 
 
         ///
@@ -537,13 +574,13 @@ inline fapi2::ReturnCode operation<MC, T, TT>::single_port_init()
     const uint64_t l_dimm_number = iv_const.iv_start_address.get_dimm();
 
     // Make sure the specificed port is functional
-    FAPI_ASSERT( mss::is_functional<TT::PORT_TYPE>(iv_target, l_relative_port_number),
-                 ET::memdiags_port_not_functional()
-                 .set_RELATIVE_PORT_POSITION(l_relative_port_number)
-                 .set_ADDRESS( uint64_t(iv_const.iv_start_address) )
-                 .set_MC_TARGET(iv_target),
-                 "Port with relative postion %d is not functional for %s",
-                 l_relative_port_number, mss::c_str(iv_target));
+    FAPI_ASSERT(( mss::is_functional<MC, TT::PORT_TYPE>(iv_target, l_relative_port_number)),
+                ET::memdiags_port_not_functional()
+                .set_RELATIVE_PORT_POSITION(l_relative_port_number)
+                .set_ADDRESS( uint64_t(iv_const.iv_start_address) )
+                .set_MC_TARGET(iv_target),
+                "Port with relative postion %d is not functional for %s",
+                l_relative_port_number, mss::c_str(iv_target));
 
     // No broadcast mode for this one
     // Push on a read subtest
@@ -790,7 +827,7 @@ continuous_scrub_operation<MC, T, TT>::continuous_scrub_operation(
             // Don't destroy the subtest passed in, copy it
             auto l_subtest = operation<MC>::iv_subtest;
 
-            l_subtest.enable_port(mss::relative_pos<T>(p));
+            l_subtest.enable_port(mss::relative_pos<MC, T>(p));
             l_subtest.enable_dimm(mss::index(d));
             operation<MC>::iv_program.iv_subtests.push_back(l_subtest);
             FAPI_INF("adding scrub subtest for %s (dimm %d) ( 0x%04x)", mss::c_str(d), mss::index(d), l_subtest);
@@ -1397,6 +1434,70 @@ fapi_try_exit:
     return fapi2::current_err;
 }
 
+///
+/// @brief Process the result from the mcbist sf_read subtest after memdiags
+/// @tparam MC the mc type of the T
+/// @tparam T fapi2::TargetType of the MCBIST engine
+/// @param[in] i_target OCMB target for traces
+/// @param[in] l_fail_behavior_attr
+/// @param[in,out] io_rc ReturnCode from sf_read
+/// @return fapi2::ReturnCode
+///
+template< mss::mc_type MC, fapi2::TargetType T >
+fapi2::ReturnCode process_subtest_result(const fapi2::Target<T>& i_target,
+        const uint8_t l_fail_behavior_attr,
+        fapi2::ReturnCode& io_rc)
+{
+    // Check RC
+    if ((l_fail_behavior_attr == fapi2::ENUM_ATTR_MSS_POST_MEMDIAGS_READ_SUBTEST_FAIL_BEHAVIOR_TRACE)
+        && (io_rc != fapi2::FAPI2_RC_SUCCESS))
+    {
+        // Trace + Bad RC: Log as recovered, return success, set io_rc back to success
+        FAPI_ERR("%s Error code 0x%08lx from post-memdiags mcbist read subtest", mss::c_str(i_target), uint32_t(io_rc));
+        fapi2::logError(io_rc, fapi2::FAPI2_ERRL_SEV_RECOVERED);
+
+        io_rc = fapi2::FAPI2_RC_SUCCESS;
+
+        return fapi2::FAPI2_RC_SUCCESS;
+    }
+
+    // Else, we will just try the RC as-is
+    FAPI_TRY(io_rc, "%s Error from post-memdiags mcbist read subtest", mss::c_str(i_target));
+
+fapi_try_exit:
+    return fapi2::current_err;
+}
+
+///
+/// @brief Perform a read only mcbist subtest at the end of memdiags
+/// @tparam MC the mc type of the T
+/// @tparam T fapi2::TargetType of the MCBIST engine
+/// @param[in] i_target OCMB Chip
+/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS iff success, else error
+///
+template< mss::mc_type MC, fapi2::TargetType T >
+fapi2::ReturnCode perform_read_only_subtest(const fapi2::Target<T>& i_target)
+{
+    fapi2::ReturnCode l_rc = fapi2::FAPI2_RC_SUCCESS;
+    uint8_t l_fail_behavior = 0;
+
+    auto l_stop_conditions = mss::mcbist::stop_conditions<MC>();
+
+    // Pause on unrecoverable error
+    l_stop_conditions.set_pause_on_ue(mss::ON);
+
+    // sf_read will run, poll for completion and return result ReturnCode
+    l_rc = mss::memdiags::sf_read<MC>(i_target, l_stop_conditions);
+
+    // Get fail behavior attr and process the result
+    FAPI_TRY(mss::attr::get_post_memdiags_read_subtest(i_target, l_fail_behavior));
+    FAPI_TRY(mss::memdiags::process_subtest_result<MC>(i_target, l_fail_behavior, l_rc));
+
+    return fapi2::FAPI2_RC_SUCCESS;
+
+fapi_try_exit:
+    return fapi2::current_err;
+}
 
 } // namespace memdiags
 

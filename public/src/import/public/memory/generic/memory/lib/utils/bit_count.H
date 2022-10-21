@@ -61,6 +61,36 @@ inline uint64_t bit_count(const T& i_value)
 }
 
 ///
+/// @brief Count the bits in a subset of a fapi2::buffer
+/// @tparam S the starting bit location in the buffer
+/// @tparam T an integral type. e.g., uint64_t, uint8_t
+/// @param[in] i_buffer, the buffer from which to count bits
+/// @return uint64_t the number of bits set in the input
+///
+template< uint64_t S, typename T >
+inline uint64_t bit_count(const fapi2::buffer<T>& i_buffer)
+{
+    // If the bit is set, return 1, otherwise 0
+    return i_buffer.template getBit<S>() ? 1 : 0;
+}
+
+///
+/// @brief Count the bits in a subset of a fapi2::buffer
+/// @tparam S the starting bit location in the buffer
+/// @tparam L the length of the bits to check in the buffer
+/// @tparam T an integral type. e.g., uint64_t, uint8_t
+/// @param[in] i_buffer, the buffer from which to count bits
+/// @return uint64_t the number of bits set in the input
+///
+template< uint64_t S, uint64_t L, typename T >
+inline uint64_t bit_count(const fapi2::buffer<T>& i_buffer)
+{
+    T l_temp = 0;
+    i_buffer. template extractToRight<S, L>(l_temp);
+    return bit_count(l_temp);
+}
+
+///
 /// @brief Return the bit position of the first bit set, from the left
 /// @tparam T, an integral type. e.g., uint64_t, uint8_t
 /// @param[in] i_value the value to check

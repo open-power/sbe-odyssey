@@ -27,7 +27,7 @@
 /// @file exp_mss_memdiag.C
 /// @brief HW Procedure pattern testing
 ///
-// *HWP HWP Owner: Matthew Hickman <Matthew.Hickman@ibm.com>
+// *HWP HWP Owner: Sneha Kadam <sneha.kadam1@ibm.com>
 // *HWP HWP Backup: Louis Stermole <stermole@us.ibm.com>
 // *HWP Team: Memory
 // *HWP Level: 3
@@ -36,7 +36,6 @@
 #include <fapi2.H>
 #include <exp_mss_memdiag.H>
 #include <lib/dimm/exp_rank.H>
-#include <lib/mcbist/exp_memdiags.H>
 #include <lib/mcbist/exp_mcbist_traits.H>
 #include <lib/exp_attribute_accessors_manual.H>
 #include <mss_generic_attribute_getters.H>
@@ -45,6 +44,7 @@
 #include <mss_explorer_attribute_getters.H>
 #include <lib/mc/exp_port_traits.H>
 #include <lib/shared/exp_consts.H>
+#include <generic/memory/lib/utils/mcbist/gen_mss_memdiags.H>
 #include <generic/memory/lib/utils/mc/gen_mss_port.H>
 #include <generic/memory/lib/utils/mc/gen_mss_restore_repairs.H>
 #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
@@ -69,7 +69,7 @@ extern "C"
         // Perform subtest if attribute is set to
         if (l_post_memdiags_subtest == fapi2::ENUM_ATTR_MSS_POST_MEMDIAGS_READ_SUBTEST_ENABLE)
         {
-            FAPI_TRY(mss::exp::memdiags::perform_read_only_subtest(i_target));
+            FAPI_TRY(mss::memdiags::perform_read_only_subtest<mss::mc_type::EXPLORER>(i_target));
 
             // Polls for completion here to avoid issues in future isteps
             FAPI_TRY(mss::memdiags::mss_async_polling_loop<mss::mc_type::EXPLORER>(i_target));

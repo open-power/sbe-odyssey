@@ -40,6 +40,8 @@
 
 #include <lib/phy/ody_draminit_utils.H>
 #include <lib/phy/ody_phy_utils.H>
+#include <mss_odyssey_attribute_getters.H>
+#include <lib/phy/ody_draminit_procedure.H>
 
 namespace mss
 {
@@ -54,26 +56,38 @@ namespace ody
 ///
 fapi2::ReturnCode draminit(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target)
 {
-    // 1. Loads the IMEM Memory (instructions)
-    // TODO:ZEN:MST-1561 Create code to load IMEM, DMEM, and message block onto Synopsys PHY
 
-    // 2. Loads the DMEM Memory (data)
-    // TODO:ZEN:MST-1561 Create code to load IMEM, DMEM, and message block onto Synopsys PHY
+    // Create the stucture to configure
+    PMU_SMB_DDR5U_1D_t l_msg_block;
 
-    // 3. Configures and loads the message block
-    // TODO:ZEN:MST-1561 Create code to load IMEM, DMEM, and message block onto Synopsys PHY
+    fapi2::ATTR_DRAMINIT_TRAINING_TIMEOUT_Type l_poll_count;
+    FAPI_TRY(mss::attr::get_draminit_training_timeout(i_target , l_poll_count));
 
-    // 4. Starts training
+    // 1. Loads the IMEM Memory (instructions) onto Synopsys PHY
+    // It is being done in ody_load_imem.C
+
+    // 2. Loads the DMEM Memory (data) onto Synopsys PHY
+    // It is being done in ody_load_dmem.C
+
+    // 3. Configures and loads the message block onto Synopsys PHY
+    FAPI_TRY(mss::ody::phy::configure_and_load_dram_train_message_block(i_target, l_msg_block));
+
+    // 4. Initialize mailbox protocol and start training
+    FAPI_TRY(mss::ody::phy::init_mailbox_protocol(i_target));
     FAPI_TRY(mss::ody::phy::start_training(i_target));
 
     // 5. Processes and handles training messages (aka poll for completion)
-    // TODO:ZEN:MST-1542 Add base code and control for Synopsys mailbox interaction
+    FAPI_TRY (mss::ody::phy::poll_for_completion(i_target, l_poll_count));
 
     // 6. Cleans up after training
     FAPI_TRY(mss::ody::phy::cleanup_training(i_target));
 
-    // 7. Read the data structure and set attributes
-    // TODO:ZEN:MST-1567 Create code to process data from the Synopsys message block
+    // 7a. Read the data from the message block structure
+    FAPI_TRY(mss::ody::phy::read_msg_block(i_target, l_msg_block));
+    mss::ody::phy::display_msg_block(i_target, l_msg_block);
+
+    // 7b. Load attibutes with the message block contents
+    FAPI_TRY(mss::ody::phy::set_attributes(i_target, l_msg_block));
 
     // 8. Error handling
     // TODO:ZEN:MST-1568 Add Odyssey draminit error processing

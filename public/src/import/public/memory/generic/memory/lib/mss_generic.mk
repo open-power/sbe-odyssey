@@ -37,7 +37,6 @@ MSS_GENERIC_SOURCE_DIRS := $(shell find $(MSS_GENERIC_PATH) -type d)
 # Define common source and include paths.
 define MSS_GENERIC_MODULE_INCLUDES
 $(foreach dir, $(MSS_GENERIC_SOURCE_DIRS), $(call ADD_MODULE_SRCDIR,$(1),$(dir)))
-$(call ADD_MODULE_INCDIR,$(1),$(ROOTPATH))
 $(call ADD_MODULE_INCDIR,$(1),$(MSS_PATH))
 $(call ADD_MODULE_INCDIR,$(1),$(FAPI2_PATH)/include)
 $(call ADD_MODULE_INCDIR,$(1),$(GENPATH))

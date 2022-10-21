@@ -39,19 +39,39 @@
 #include <fapi2.H>
 
 #ifdef __PPE__
-    //Macro -- PPE doesn't want to include generic_consts.H
-    // so we'll define it here directly
-    #define TARGTIDFORMAT "0x%08X"
-    #define TARGTID i_target.get()
+
+//Macro -- PPE doesn't want to include generic_consts.H
+// so we'll define it here directly
+#define TARGTIDFORMAT "0x%08X"
+#define TARGTID i_target.get()
+
+#define GENTARGTIDFORMAT "0x%08X"
+#define GENTARGTID(_tgt_) _tgt_.get()
+
+// Macro for printing 64-bit values on PPE - use this instead of %016LX
+// Note that the PPE version of the formatter requires two VARGS in the trace
+#define UINT64FORMAT "0x%08X%08X"
+#define UINT64_VALUE(_val_) \
+    static_cast<uint32_t>((_val_ & 0xFFFFFFFF00000000) >> 32), static_cast<uint32_t>(_val_ & 0x00000000FFFFFFFF)
 
 #else
-    #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
-    #include <generic/memory/lib/utils/scom.H>
-    #include <generic/memory/lib/utils/c_str.H>
-    //Macro -- PPE doesn't want to include generic_consts.H
-    // so we'll define it here directly
-    #define TARGTIDFORMAT "%s"
-    #define TARGTID mss::spd::c_str(i_target)
+
+#include <generic/memory/lib/utils/shared/mss_generic_consts.H>
+#include <generic/memory/lib/utils/scom.H>
+#include <generic/memory/lib/utils/c_str.H>
+//Macro -- PPE doesn't want to include generic_consts.H
+// so we'll define it here directly
+#define TARGTIDFORMAT "%s"
+#define TARGTID mss::spd::c_str(i_target)
+
+#define GENTARGTIDFORMAT "%s"
+#define GENTARGTID(_tgt_) mss::spd::c_str(_tgt_)
+
+// Macro for printing 64-bit values on PPE (Cronus mode) - use this instead of %016LX
+#define UINT64FORMAT "0x%016LX"
+#define UINT64_VALUE(_val_) \
+    _val_
+
 #endif
 
 namespace mss
@@ -240,10 +260,8 @@ fapi2::ReturnCode fir_or_pll_fail( const fapi2::Target<T>& i_target,
     return io_rc;
 #endif
 }
-
 #endif
 
-#ifndef __PPE__
 ///
 /// @brief Checks conditional passes and implements traces & exits if it fails
 /// @tparam T fapi2 target type
@@ -265,6 +283,8 @@ inline fapi2::ReturnCode invalid_value(const fapi2::Target<T>& i_target,
                                        const FFDC i_ffdc_codes,
                                        const char* i_err_str = "")
 {
+#ifndef __PPE__
+/// @TODO: remove once ffdc enabled in sbe
     FAPI_ASSERT(i_conditional,
                 fapi2::MSS_FAILED_DATA_INTEGRITY_CHECK().
                 set_VALUE(i_data).
@@ -273,7 +293,7 @@ inline fapi2::ReturnCode invalid_value(const fapi2::Target<T>& i_target,
                 set_FFDC_CODE(i_ffdc_codes),
                 "%s. Byte %d, Data returned: %d for " TARGTIDFORMAT,
                 i_err_str, i_byte_index, i_data, TARGTID );
-
+#endif
     return fapi2::FAPI2_RC_SUCCESS;
 
 fapi_try_exit:
@@ -302,7 +322,8 @@ inline fapi2::ReturnCode invalid_type_conversion(const fapi2::Target<T>& i_targe
         const char* i_err_str = "")
 {
     OT l_temp = static_cast<OT>(i_data);
-
+#ifndef __PPE__
+/// @TODO: remove once ffdc enabled in sbe
     FAPI_ASSERT( i_data == l_temp,
                  fapi2::MSS_CONVERSION_ERROR()
                  .set_ORIGINAL_VAL(i_data)
@@ -311,7 +332,7 @@ inline fapi2::ReturnCode invalid_type_conversion(const fapi2::Target<T>& i_targe
                  .set_FUNCTION(i_ffdc_codes),
                  "%s. Conversion error between original %d to converted %d value for " TARGTIDFORMAT,
                  i_err_str, i_data, l_temp, TARGTID );
-
+#endif
     return fapi2::FAPI2_RC_SUCCESS;
 
 fapi_try_exit:
@@ -339,6 +360,8 @@ fapi2::ReturnCode index_within_bounds(const fapi2::Target<T>& i_target,
                                       const FFDC i_ffdc_codes,
                                       const char* i_err_str = "")
 {
+#ifndef __PPE__
+/// @TODO: remove once ffdc enabled in sbe
     FAPI_ASSERT( i_index < i_size,
                  fapi2::MSS_OUT_OF_BOUNDS_INDEXING()
                  .set_INDEX(i_index)
@@ -347,7 +370,7 @@ fapi2::ReturnCode index_within_bounds(const fapi2::Target<T>& i_target,
                  .set_TARGET(i_target),
                  "%s. Out of bounds indexing (with %d) on a list of size %d for " TARGTIDFORMAT,
                  i_err_str, i_index, i_size, TARGTID );
-
+#endif
     return fapi2::FAPI2_RC_SUCCESS;
 
 fapi_try_exit:
@@ -355,7 +378,6 @@ fapi_try_exit:
 
 } // invalid_type_conversion
 
-#endif
 } // check
 }// mss
 

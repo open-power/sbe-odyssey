@@ -45,6 +45,7 @@
 #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
 #include <generic/memory/lib/ccs/ccs_traits.H>
 #include <generic/memory/lib/ccs/ccs.H>
+#include <generic/memory/lib/ccs/ccs_ddr4_commands.H>
 
 namespace mss
 {
@@ -241,7 +242,7 @@ fapi2::ReturnCode mrs_engine( const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_ta
                               const uint64_t i_delay_in_cycles,
                               std::vector< ccs::instruction_t<MC> >& io_inst )
 {
-    ccs::instruction_t<MC> l_inst_a_side = ccs::mrs_command<MC>(i_port_rank, i_data.iv_mrs);
+    ccs::instruction_t<MC> l_inst_a_side = mss::ccs::ddr4::mrs_command<MC>(i_port_rank, i_data.iv_mrs);
     ccs::instruction_t<MC> l_inst_b_side;
     bool l_is_a17 = false;
     bool l_has_rcd = false;
@@ -252,6 +253,11 @@ fapi2::ReturnCode mrs_engine( const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_ta
     FAPI_TRY( make_ccs_helper(i_target, i_data, i_port_rank, l_inst_a_side),
               "Failed to make CCS instruction for MR%d on %s",
               i_data.iv_mrs, mss::c_str(i_target) );
+
+    // Dump out the 'decoded' MRS and trace the CCS instructions.
+    FAPI_TRY(decode_helper(i_data, i_port_rank, l_inst_a_side),
+             "Failed to decode information for MR%d on %s",
+             i_data.iv_mrs, mss::c_str(i_target) );
 
     // Call traits mirroring to determine if necessary
     FAPI_TRY( mss::address_mirror<MC>(i_target, i_port_rank, l_inst_a_side),
@@ -265,15 +271,9 @@ fapi2::ReturnCode mrs_engine( const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_ta
     // Not sure if we can get tricky here and only delay after the b-side MR. The question is whether the delay
     // is needed/assumed by the register or is purely a DRAM mandated delay. We know we can't go wrong having
     // both delays but if we can ever confirm that we only need one we can fix this. BRS
-    l_inst_a_side.arr1.template insertFromRight<TT::ARR1_IDLES,
-                                TT::ARR1_IDLES_LEN>(i_delay_in_cycles);
-    l_inst_b_side.arr1.template insertFromRight<TT::ARR1_IDLES,
-                                TT::ARR1_IDLES_LEN>(i_delay_in_cycles);
+    l_inst_a_side.iv_idles = i_delay_in_cycles;
+    l_inst_b_side.iv_idles = i_delay_in_cycles;
 
-    // Dump out the 'decoded' MRS and trace the CCS instructions.
-    FAPI_TRY(decode_helper(i_data, i_port_rank, l_inst_a_side),
-             "Failed to decode information for MR%d on %s",
-             i_data.iv_mrs, mss::c_str(i_target) );
 
     FAPI_INF("MRS%02d (%d) 0x%016llx:0x%016llx %s:rank %d a-side", uint8_t(i_data.iv_mrs), i_delay_in_cycles,
              l_inst_a_side.arr0, l_inst_a_side.arr1, mss::c_str(i_target), i_port_rank);
@@ -1480,7 +1480,7 @@ inline fapi2::ReturnCode mpr_read( const fapi2::Target<fapi2::TARGET_TYPE_DIMM>&
     // Right now we only have support for RD and RDA
     // Unclear if we want the API select the type of read command right now
     // Note the auto precharge is ignored with MPR mode on so we just do a read cmd
-    ccs::instruction_t<MC> l_inst = ccs::rd_command<MC> (i_port_rank, i_mpr_loc);
+    ccs::instruction_t<MC> l_inst = mss::ccs::ddr4::rd_command<MC> (i_port_rank, i_mpr_loc);
 
     // In MPR Mode:
     // Reads (back-to-back) from Page 0 may use tCCD_S or tCCD_L timing between read commands
@@ -1499,9 +1499,7 @@ inline fapi2::ReturnCode mpr_read( const fapi2::Target<fapi2::TARGET_TYPE_DIMM>&
         FAPI_TRY(MRS::dram_tccd_l(i_target, l_delay), "Failed to invoke accessor for tCCD_L");
     }
 
-    // Input type needs to be greater than IDLES_LEN, hence the cast
-    l_inst.arr1.template insertFromRight<TT::ARR1_IDLES,
-                         TT::ARR1_IDLES_LEN>(static_cast<uint64_t>(l_delay));
+    l_inst.iv_idles = l_delay;
 
     FAPI_INF("MPR Read CCS inst 0x%016llx:0x%016llx %s:rank %d, MPR location:%d, delay (in cycles) %d",
              uint64_t(l_inst.arr0), uint64_t(l_inst.arr1), mss::c_str(i_target), i_port_rank, i_mpr_loc, l_delay);
@@ -1527,15 +1525,13 @@ inline fapi2::ReturnCode precharge_all( const fapi2::Target<fapi2::TARGET_TYPE_D
                                         const uint64_t i_port_rank,
                                         std::vector< ccs::instruction_t<MC> >& io_inst )
 {
-    ccs::instruction_t<MC> l_inst = ccs::precharge_all_command<MC> (i_port_rank);
+    ccs::instruction_t<MC> l_inst = mss::ccs::ddr4::precharge_all_command<MC> (i_port_rank);
 
     // From the DDR4 Spec tRP is the precharge command period
     uint8_t l_delay = 0;
     FAPI_TRY( MRS::dram_trp(i_target, l_delay) );
 
-    // Input type needs to be greater than IDLES_LEN, hence the cast
-    l_inst.arr1.template insertFromRight<TT::ARR1_IDLES,
-                         TT::ARR1_IDLES_LEN>( static_cast<uint64_t>(l_delay));
+    l_inst.iv_idles = l_delay;
 
     FAPI_INF("precharge_all CCS inst 0x%016llx:0x%016llx %s:rank %d, delay (in cycles) %d",
              uint64_t(l_inst.arr0), uint64_t(l_inst.arr1), mss::c_str(i_target), i_port_rank, l_delay);

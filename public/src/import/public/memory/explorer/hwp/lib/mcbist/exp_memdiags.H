@@ -43,37 +43,35 @@
 #include <lib/mcbist/exp_mcbist.H>
 #include <generic/memory/lib/utils/mcbist/gen_mss_memdiags.H>
 
-// This file is still necessary to put traits and generic code together
-
 namespace mss
 {
-namespace exp
-{
+
 namespace memdiags
 {
 
 ///
-/// @brief Process the result from the mcbist sf_read subtest after memdiags
+/// @brief Mask MCBISTFIRQ[MCBIST_PROGRAM_COMPLETE] and return the original mask value - specialization for Explorer
+/// @param[in] i_target the target
+/// @param[out] o_fir_mask_save the original mask value to be restored later
+/// @return FAPI2_RC_SUCCESS iff ok
 ///
-/// @param[in] i_target OCMB target for traces
-/// @param[in] l_fail_behavior_attr
-/// @param[in, out] i_rc ReturnCode from sf_read
-/// @return fapi2::ReturnCode
-///
-fapi2::ReturnCode process_subtest_result(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
-        const uint8_t l_fail_behavior_attr,
-        fapi2::ReturnCode& io_rc);
+template<>
+fapi2::ReturnCode mask_program_complete<mss::mc_type::EXPLORER>(
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+    fapi2::buffer<uint64_t>& o_fir_mask_save );
 
 ///
-/// @brief Perform a read only mcbist subtest at the end of memdiags
+/// @brief Restore MCBISTFIRQ[MCBIST_PROGRAM_COMPLETE] mask value and clear the FIR - specialization for Explorer
+/// @param[in] i_target the target
+/// @param[in] i_fir_mask_save the original mask value to be restored
+/// @return FAPI2_RC_SUCCESS iff ok
 ///
-/// @param[in] i_target OCMB Chip
-/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS iff success, else error
-///
-fapi2::ReturnCode perform_read_only_subtest(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
+template<>
+fapi2::ReturnCode clear_and_restore_program_complete<mss::mc_type::EXPLORER>(
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+    const fapi2::buffer<uint64_t>& i_fir_mask_save );
 
 } // memdiags
-} // exp
 } // mss
 
 #endif

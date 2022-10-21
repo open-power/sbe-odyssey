@@ -22,6 +22,7 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+
 ///
 /// @file ody_check_for_ready.C
 /// @brief FW polls I2C slave interface to determine when it is ready

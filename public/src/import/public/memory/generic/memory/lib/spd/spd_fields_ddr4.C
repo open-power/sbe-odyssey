@@ -265,5 +265,15 @@ constexpr mss::field_t<mss::endian::LITTLE> fields<DDR4, DDIMM_MODULE>::MODULE_M
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR4, DDIMM_MODULE>::DRAM_MFR_ID_CODE_LSB;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR4, DDIMM_MODULE>::DRAM_MFR_ID_CODE_MSB;
 
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR4, RDIMM_MODULE>::ADDR_MAP_REG_TO_DRAM;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR4, RDIMM_MODULE>::CONTINUATION_CODES;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR4, RDIMM_MODULE>::LAST_NON_ZERO_BYTE;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR4, RDIMM_MODULE>::CKE_DRIVER;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR4, RDIMM_MODULE>::ODT_DRIVER;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR4, RDIMM_MODULE>::CA_DRIVER;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR4, RDIMM_MODULE>::CS_DRIVER;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR4, RDIMM_MODULE>::YO_Y2_DRIVER;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR4, RDIMM_MODULE>::Y1_Y3_DRIVER;
+
 }// spd
 }// mss

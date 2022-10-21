@@ -39,6 +39,7 @@
 
 #include <fapi2.H>
 #include <ody_scom_ody.H>
+#include <generic/memory/lib/utils/find.H>
 #include <generic/memory/lib/utils/mc/gen_mss_port_traits.H>
 #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
 #include <lib/shared/ody_consts.H>
@@ -56,6 +57,27 @@ template<>
 class portTraits< mss::mc_type::ODYSSEY >
 {
     public:
+
+        ///
+        /// @brief Gets the correct target for the FARB registers off of a MEM_PORT target
+        /// @return Returns the OCMB_CHIP target
+        ///
+        static fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP> get_farb_target(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>&
+                i_target)
+        {
+            return mss::find_target<fapi2::TARGET_TYPE_OCMB_CHIP>(i_target);
+        }
+
+        ///
+        /// @brief Gets the correct target for the read reorder queue registers off of a MEM_PORT target
+        /// @return Returns the OCMB_CHIP target
+        ///
+        static fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP> get_rrq_target(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>&
+                i_target)
+        {
+            return mss::find_target<fapi2::TARGET_TYPE_OCMB_CHIP>(i_target);
+        }
+
         // MC_TYPE
         static constexpr fapi2::TargetType MC_TARGET_TYPE = fapi2::TARGET_TYPE_OCMB_CHIP;
 
@@ -162,6 +184,9 @@ class portTraits< mss::mc_type::ODYSSEY >
             RECR_CFG_MAINT_USE_TIMERS = scomt::ody::ODC_WDF_REGS_RECR_CFG_MAINT_USE_TIMERS,
             RECR_MBSECCQ_MAINT_NO_RETRY_UE = scomt::ody::ODC_WDF_REGS_RECR_MBSECCQ_MAINT_NO_RETRY_UE,
             RECR_MBSECCQ_MAINT_NO_RETRY_MPE = scomt::ody::ODC_WDF_REGS_RECR_MBSECCQ_MAINT_NO_RETRY_MPE,
+
+            DFI_INIT_COMPLETE0 = scomt::ody::ODC_SRQ_MBA_FARB6Q_CFG_INIT_COMPLETE_SIDE0,
+            DFI_INIT_COMPLETE1 = scomt::ody::ODC_SRQ_MBA_FARB6Q_CFG_INIT_COMPLETE_SIDE1,
 
             CFG_CTRLUPD_AFTER_ERR = scomt::ody::ODC_SRQ_MBA_FARB9Q_CTRLUPD_AFTER_ERR,
             CFG_MC_PER_CAL_ENABLE = scomt::ody::ODC_SRQ_MBA_FARB9Q_MC_PER_CAL_ENABLE,

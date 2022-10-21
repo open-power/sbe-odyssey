@@ -29,7 +29,6 @@
 
 # Add common and generated parts to object list.
 
-MSS_PATH := $(ROOTPATH)/public/memory/
 MSS_EXP_PATH := $(MSS_PATH)/explorer/hwp/lib
 
 MSS_EXP_SOURCE := $(shell find $(MSS_EXP_PATH) -name '*.C' -exec basename {} \;)
@@ -41,11 +40,10 @@ MSS_EXP_SOURCE_DIRS := $(shell find $(MSS_EXP_PATH) -type d)
 # Define common source and include paths.
 define MSS_EXP_MODULE_INCLUDES
 $(foreach dir, $(MSS_EXP_SOURCE_DIRS), $(call ADD_MODULE_SRCDIR,$(1),$(dir)))
-$(call ADD_MODULE_INCDIR,$(1),$(MSS_PATH)/explorer/hwp)
-$(call ADD_MODULE_INCDIR,$(1),$(MSS_PATH)/explorer/hwp/lib)
-#$(call ADD_MODULE_INCDIR,$(1),$(ROOTPATH)/chips/p10/procedures/hwp/memory/lib)
-$(call ADD_MODULE_INCDIR,$(1),$(ROOTPATH)/public/common/generic/scomt)
-$(call ADD_MODULE_INCDIR,$(1),$(MSS_PATH)/generic/memory/lib)
+$(call ADD_MODULE_INCDIR,$(1),$(ROOTPATH)/public/memory/explorer/hwp)
+$(call ADD_MODULE_INCDIR,$(1),$(ROOTPATH)/public/memory/explorer/hwp/lib)
+#$(call ADD_MODULE_INCDIR,$(1),$(ROOTPATH)/chips/common/utils/scomt)
+$(call ADD_MODULE_INCDIR,$(1),$(ROOTPATH)/public/memory/generic/memory/lib)
 $(call ADD_MODULE_INCDIR,$(1),$(FAPI2_PATH)/include)
 $(call ADD_MODULE_INCDIR,$(1),$(GENPATH))
 $(call ADD_MODULE_INCDIR,$(1),$(FAPI2_PLAT_INCLUDE))

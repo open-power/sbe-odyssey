@@ -22,6 +22,7 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+
 ///
 /// @file ody_getidec.C
 /// @brief Contains function to lookup Chip ID and EC values of Odyssey Chip

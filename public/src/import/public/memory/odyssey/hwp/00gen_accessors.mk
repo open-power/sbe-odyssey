@@ -25,7 +25,7 @@
 
 # Makefile to run MSS gen_accessors script.
 
--include 00ody_common.mk
+-include $(ROOTPATH)/public/memory/generic/memory/00generic.mk
 
 GENERATED = gen_ody_accessors
 COMMAND = gen_accessors.pl

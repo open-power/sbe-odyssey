@@ -39,6 +39,7 @@
 #include <explorer_scom_addresses.H>
 #include <explorer_scom_addresses_fld.H>
 #include <lib/fir/exp_fir_traits.H>
+#include <lib/fir/exp_unmask.H>
 #include <generic/memory/lib/utils/fir/gen_mss_unmask.H>
 #include <mss_generic_attribute_getters.H>
 #include <mss_generic_system_attribute_getters.H>
@@ -47,9 +48,97 @@
 #include <lib/phy/exp_phy_utils.H>
 #include <generic/memory/lib/generic_attribute_accessors_manual.H>
 #include <lib/exp_attribute_accessors_manual.H>
+#include <lib/mc/exp_port.H>
 
 namespace mss
 {
+
+namespace exp
+{
+
+namespace unmask
+{
+
+///
+/// @brief Helper for setting up the SRQ RCD parity error
+/// @param[in] i_is_planar true if this is a planar system
+/// @param[in] i_has_rcd true if this Explorer has an RCD
+/// @param[in,out] io_srq_fir SRQ fir class
+///
+void srq_rcd_parity_helper(const uint8_t i_is_planar, const bool i_has_rcd,
+                           mss::fir::reg<EXPLR_SRQ_SRQFIRQ>& io_srq_fir)
+{
+    // RCD parity errors are only valid in planar systems on Explorer
+    if (i_has_rcd && i_is_planar == fapi2::ENUM_ATTR_MEM_MRW_IS_PLANAR_TRUE)
+    {
+        io_srq_fir.recoverable_error<EXPLR_SRQ_SRQFIRQ_RCD_PARITY_ERROR>();
+    }
+}
+
+///
+/// @brief Helper for setting the  SRQFIRQ_PORT_FAIL bit
+/// @param[in] i_target the fapi2::Target
+/// @param[in] i_is_planar true if this is a planar system
+/// @param[in] i_has_rcd true if this Explorer has an RCD
+/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS iff ok
+///
+fapi2::ReturnCode  setup_srq_port_fail_helper(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+        const uint8_t i_is_planar,
+        const bool i_has_rcd)
+{
+    // SRQFIRQ_PORT_FAIL should be configured ONLY if the system has an rcd and is_planar
+    if (i_has_rcd && i_is_planar == fapi2::ENUM_ATTR_MEM_MRW_IS_PLANAR_TRUE)
+    {
+        fapi2::ReturnCode l_rc = fapi2::FAPI2_RC_SUCCESS;
+        mss::fir::reg<EXPLR_SRQ_SRQFIRQ> l_exp_srq_srqfirq_reg(i_target, l_rc);
+
+        FAPI_TRY(l_rc, "unable to create fir::reg for EXPLR_SRQ_SRQFIRQ 0x%08X for %s", EXPLR_SRQ_SRQFIRQ,
+                 mss::c_str(i_target));
+
+        // Write SRQ FIR mask per Explorer unmask spec
+        FAPI_TRY(l_exp_srq_srqfirq_reg.checkstop<EXPLR_SRQ_SRQFIRQ_PORT_FAIL>().write());
+
+    }
+
+    return fapi2::FAPI2_RC_SUCCESS;
+fapi_try_exit:
+    return fapi2::current_err;
+}
+
+///
+/// @brief Helper for setting up the FARB0Q bits related to RCD parity
+/// @param[in] i_target the fapi2::Target
+/// @param[in] i_is_planar true if this is a planar system
+/// @param[in] i_has_rcd true if this Explorer has an RCD
+/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS iff ok
+///
+fapi2::ReturnCode setup_farb_rcd_bits_helper(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+        const uint8_t i_is_planar, const bool i_has_rcd)
+{
+    // RCD parity errors are only valid in planar systems on Explorer
+    if (i_has_rcd && i_is_planar == fapi2::ENUM_ATTR_MEM_MRW_IS_PLANAR_TRUE)
+    {
+        fapi2::buffer<uint64_t> l_reg_data;
+
+        // Configure FARB0Q_RCD_PROTECTION_TIME
+        FAPI_TRY(mss::config_exp_rcd_protect_time(i_target));
+
+        // Clear FARB0 54/57 bits for RCD recovery and port fail
+        FAPI_TRY(fapi2::getScom(i_target, EXPLR_SRQ_MBA_FARB0Q, l_reg_data));
+
+        l_reg_data.clearBit<EXPLR_SRQ_MBA_FARB0Q_CFG_DISABLE_RCD_RECOVERY>()
+        .clearBit<EXPLR_SRQ_MBA_FARB0Q_CFG_PORT_FAIL_DISABLE>();
+
+        FAPI_TRY(fapi2::putScom(i_target, EXPLR_SRQ_MBA_FARB0Q, l_reg_data));
+    }
+
+    return fapi2::FAPI2_RC_SUCCESS;
+fapi_try_exit:
+    return fapi2::current_err;
+}
+
+} // end unmask ns
+} // end exp ns
 
 namespace unmask
 {
@@ -68,6 +157,8 @@ fapi2::ReturnCode after_draminit_mc<mss::mc_type::EXPLORER>( const fapi2::Target
     fapi2::ReturnCode l_rc2 = fapi2::FAPI2_RC_SUCCESS;
     fapi2::ReturnCode l_rc3 = fapi2::FAPI2_RC_SUCCESS;
     fapi2::buffer<uint64_t> l_reg_data;
+    bool l_has_rcd = false;
+    uint8_t l_is_planar = 0;
 
     // Create registers and check success for MCBISTFIR and SRQFIR and RDFFIR
     mss::fir::reg<EXPLR_MCBIST_MCBISTFIRQ> l_exp_mcbist_reg(i_target, l_rc1);
@@ -77,6 +168,9 @@ fapi2::ReturnCode after_draminit_mc<mss::mc_type::EXPLORER>( const fapi2::Target
     FAPI_TRY(l_rc1, "unable to create fir::reg for EXPLR_MCBIST_MCBISTFIRQ 0x%08X", EXPLR_MCBIST_MCBISTFIRQ);
     FAPI_TRY(l_rc2, "unable to create fir::reg for EXPLR_SRQ_SRQFIRQ 0x%08X", EXPLR_SRQ_SRQFIRQ);
     FAPI_TRY(l_rc3, "unable to create fir::reg for EXPLR_RDF_FIR 0x%08X", EXPLR_RDF_FIR);
+
+    FAPI_TRY(mss::dimm::has_rcd<mss::mc_type::EXPLORER>(i_target, l_has_rcd));
+    FAPI_TRY(mss::attr::get_mem_mrw_is_planar(i_target, l_is_planar));
 
     // Set this to mask off missing dfi_rddata_valid from triggering EXPLR_RDF_FIR_RDDATA_VALID_ERROR
     FAPI_TRY(fapi2::getScom(i_target, EXPLR_RDF_MASK1, l_reg_data));
@@ -124,15 +218,17 @@ fapi2::ReturnCode after_draminit_training<mss::mc_type::EXPLORER>( const fapi2::
 {
     fapi2::ReturnCode l_rc1 = fapi2::FAPI2_RC_SUCCESS;
     fapi2::ReturnCode l_rc2 = fapi2::FAPI2_RC_SUCCESS;
+    uint8_t l_is_planar = 0;
 
     // Create registers and check success for MCBISTFIR and SRQFIR
     mss::fir::reg<EXPLR_MCBIST_MCBISTFIRQ> l_exp_mcbist_reg(i_target, l_rc1);
     mss::fir::reg<EXPLR_SRQ_SRQFIRQ> l_exp_srq_reg(i_target, l_rc2);
+    FAPI_TRY(mss::attr::get_mem_mrw_is_planar(i_target, l_is_planar));
 
     // Post-draminit: disable alert N bit on MASTER0_MEMALERTCONTROL
     for (const auto& l_port : mss::find_targets<fapi2::TARGET_TYPE_MEM_PORT>(i_target))
     {
-        FAPI_TRY(mss::exp::phy::disable_alert_n(l_port));
+        FAPI_TRY(mss::exp::phy::disable_alert_n(l_port, l_is_planar));
     }
 
     FAPI_TRY(l_rc1, "unable to create fir::reg for EXPLR_MCBIST_MCBISTFIRQ 0x%08X", EXPLR_MCBIST_MCBISTFIRQ);
@@ -314,6 +410,8 @@ fapi2::ReturnCode after_scominit<mss::mc_type::EXPLORER>( const fapi2::Target<fa
     fapi2::ReturnCode l_rc1 = fapi2::FAPI2_RC_SUCCESS;
     fapi2::ReturnCode l_rc2 = fapi2::FAPI2_RC_SUCCESS;
     fapi2::buffer<uint64_t> l_reg_data;
+    bool l_has_rcd = false;
+    uint8_t l_is_planar = 0;
 
     mss::fir::reg<EXPLR_SRQ_SRQFIRQ> l_exp_srqfir_reg(i_target, l_rc1);
     mss::fir::reg<EXPLR_TP_MB_UNIT_TOP_LOCAL_FIR> l_exp_local_fir_reg(i_target, l_rc2);
@@ -322,6 +420,12 @@ fapi2::ReturnCode after_scominit<mss::mc_type::EXPLORER>( const fapi2::Target<fa
              mss::c_str(i_target), EXPLR_SRQ_SRQFIRQ);
     FAPI_TRY(l_rc2, "for target %s unable to create fir::reg for EXPLR_TP_MB_UNIT_TOP_LOCAL_FIR 0x%0x",
              mss::c_str(i_target), EXPLR_TP_MB_UNIT_TOP_LOCAL_FIR);
+
+    FAPI_TRY(mss::dimm::has_rcd<mss::mc_type::EXPLORER>(i_target, l_has_rcd));
+    FAPI_TRY(mss::attr::get_mem_mrw_is_planar(i_target, l_is_planar));
+
+    // Check if dimm is an ISDIMM with RCD
+    mss::exp::unmask::srq_rcd_parity_helper(l_is_planar, l_has_rcd, l_exp_srqfir_reg);
 
     // Unmask SRQFIR bits specified by PRD spec
     FAPI_TRY(l_exp_srqfir_reg.recoverable_error<EXPLR_SRQ_SRQFIRQ_MBA_RECOVERABLE_ERROR>()
@@ -524,16 +628,15 @@ fapi_try_exit:
 template<>
 fapi2::ReturnCode after_memdiags<mss::mc_type::EXPLORER>( const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target )
 {
-    fapi2::ReturnCode l_rc1 = fapi2::FAPI2_RC_SUCCESS;
-    fapi2::ReturnCode l_rc2 = fapi2::FAPI2_RC_SUCCESS;
+    fapi2::ReturnCode l_rc = fapi2::FAPI2_RC_SUCCESS;
     fapi2::buffer<uint64_t> l_reg_data;
     bool l_mfg_thresholds = false;
+    bool l_has_rcd = false;
+    uint8_t l_is_planar = 0;
 
-    mss::fir::reg<EXPLR_RDF_FIR> l_exp_rdf_fir_reg(i_target, l_rc1);
-    mss::fir::reg<EXPLR_SRQ_SRQFIRQ> l_exp_srq_srqfirq_reg(i_target, l_rc2);
+    mss::fir::reg<EXPLR_RDF_FIR> l_exp_rdf_fir_reg(i_target, l_rc);
 
-    FAPI_TRY(l_rc1, "unable to create fir::reg for EXPLR_RDF_FIR 0x%08X", EXPLR_RDF_FIR);
-    FAPI_TRY(l_rc2, "unable to create fir::reg for EXPLR_SRQ_SRQFIRQ 0x%08X", EXPLR_SRQ_SRQFIRQ);
+    FAPI_TRY(l_rc, "unable to create fir::reg for EXPLR_RDF_FIR 0x%08X for %s", EXPLR_RDF_FIR, mss::c_str(i_target));
 
     // Check MNFG THRESHOLDS Policy flag
     FAPI_TRY(mss::check_mfg_flag(fapi2::ENUM_ATTR_MFG_FLAGS_MNFG_THRESHOLDS, l_mfg_thresholds));
@@ -543,6 +646,11 @@ fapi2::ReturnCode after_memdiags<mss::mc_type::EXPLORER>( const fapi2::Target<fa
         // Unmask FIR_MAINTENANCE_IUE to recoverable if Threshold not set
         l_exp_rdf_fir_reg.recoverable_error<EXPLR_RDF_FIR_MAINTENANCE_IUE>();
     }
+
+    // Determine if dimm is a DIMM with RCD
+    // If so set RCD fir to recoverable
+    FAPI_TRY(mss::dimm::has_rcd<mss::mc_type::EXPLORER>(i_target, l_has_rcd));
+    FAPI_TRY(mss::attr::get_mem_mrw_is_planar(i_target, l_is_planar));
 
     // Write remainder of RDF FIR mask per Explorer unmask spec
     FAPI_TRY(l_exp_rdf_fir_reg.checkstop<EXPLR_RDF_FIR_MAINLINE_AUE>()
@@ -556,7 +664,10 @@ fapi2::ReturnCode after_memdiags<mss::mc_type::EXPLORER>( const fapi2::Target<fa
              .write(), "Failed to write RDF FIR mask and action regs for %s", mss::c_str(i_target));
 
     // Write SRQ FIR mask per Explorer unmask spec
-    FAPI_TRY(l_exp_srq_srqfirq_reg.checkstop<EXPLR_SRQ_SRQFIRQ_PORT_FAIL>().write());
+    FAPI_TRY(mss::exp::unmask::setup_srq_port_fail_helper(i_target, l_is_planar, l_has_rcd));
+
+    // Configure FARB0Q bits based upon if there is an RCD and planar configuration
+    FAPI_TRY(mss::exp::unmask::setup_farb_rcd_bits_helper(i_target, l_is_planar, l_has_rcd));
 
 fapi_try_exit:
     return fapi2::current_err;

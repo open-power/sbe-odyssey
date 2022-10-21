@@ -58,9 +58,11 @@ fapi2::ReturnCode configure_phy_access(const fapi2::Target<fapi2::TARGET_TYPE_ME
 /// @brief Disable the ALERT_N bit in MCHP PHY
 ///
 /// @param[in] i_target MEM_PORT target
+/// @param[in] i_is_planar true if this is a planar system
 /// @return fapi2::FAPI2_RC_SUCCESS iff successful
 ///
-fapi2::ReturnCode disable_alert_n(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target);
+fapi2::ReturnCode disable_alert_n(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
+                                  const uint8_t i_is_planar);
 
 } // phy
 } // exp

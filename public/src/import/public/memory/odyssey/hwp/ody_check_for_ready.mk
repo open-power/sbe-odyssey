@@ -22,6 +22,7 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
+
 # Include the macros and things for MSS ODY procedures
 -include 00ody_common.mk
 

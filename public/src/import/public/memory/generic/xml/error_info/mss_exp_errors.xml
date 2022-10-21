@@ -1,0 +1,117 @@
+<!-- IBM_PROLOG_BEGIN_TAG                                                   -->
+<!-- This is an automatically generated prolog.                             -->
+<!--                                                                        -->
+<!-- $Source: public/src/import/public/memory/generic/xml/error_info/mss_exp_errors.xml $ -->
+<!--                                                                        -->
+<!-- OpenPOWER sbe Project                                                  -->
+<!--                                                                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022                             -->
+<!-- [+] International Business Machines Corp.                              -->
+<!--                                                                        -->
+<!--                                                                        -->
+<!-- Licensed under the Apache License, Version 2.0 (the "License");        -->
+<!-- you may not use this file except in compliance with the License.       -->
+<!-- You may obtain a copy of the License at                                -->
+<!--                                                                        -->
+<!--     http://www.apache.org/licenses/LICENSE-2.0                         -->
+<!--                                                                        -->
+<!-- Unless required by applicable law or agreed to in writing, software    -->
+<!-- distributed under the License is distributed on an "AS IS" BASIS,      -->
+<!-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or        -->
+<!-- implied. See the License for the specific language governing           -->
+<!-- permissions and limitations under the License.                         -->
+<!--                                                                        -->
+<!-- IBM_PROLOG_END_TAG                                                     -->
+<!-- EKB-Mirror-To: hw/ppe                                                  -->
+
+<!-- TODO: Zen-1554: Remove EXP_* error codes                               -->
+
+<hwpErrors>
+
+  <hwpError>
+    <rc>RC_EXP_MAINT_SYMBOL_NOT_FOUND</rc>
+    <description>
+       The requested symbol does not match a steer index.
+    </description>
+    <ffdc>SYMBOL</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_EXP_MAINT_BAD_RANK_INPUT</rc>
+    <description>
+       The rank passed into a steer function was invalid.
+    </description>
+    <ffdc>PORT_TARGET</ffdc>
+    <ffdc>RANK</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_EXP_MAINT_BAD_SPARE_INDEX</rc>
+    <description>
+       A spare index returned from symbol translation was invalid.
+    </description>
+    <ffdc>PORT_TARGET</ffdc>
+    <ffdc>SPARE0_INDEX</ffdc>
+    <ffdc>SPARE1_INDEX</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_EXP_MAINT_BAD_STEER_MUX_TYPE</rc>
+    <description>
+       The steer mux type passed into a steer function was invalid.
+    </description>
+    <ffdc>PORT_TARGET</ffdc>
+    <ffdc>STEER_TYPE</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_EXP_MAINT_INVALID_SYMBOL</rc>
+    <description>
+       The symbol passed into a steer function was invalid.
+    </description>
+    <ffdc>PORT_TARGET</ffdc>
+    <ffdc>SYMBOL</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_EXP_MAINT_DO_STEER_ALL_SPARES_DEPLOYED</rc>
+    <description>
+       All spares are already deployed when do_steer called.
+    </description>
+    <ffdc>PORT_TARGET</ffdc>
+    <ffdc>RANK</ffdc>
+    <ffdc>SYMBOL</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>PORT_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfig>
+      <target>PORT_TARGET</target>
+    </deconfig>
+  </hwpError>
+
+</hwpErrors>

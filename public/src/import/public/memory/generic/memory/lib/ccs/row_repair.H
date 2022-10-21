@@ -48,6 +48,7 @@
 #include <generic/memory/lib/utils/mc/gen_mss_port_traits.H>
 #include <generic/memory/lib/utils/mss_rank.H>
 #include <mss_generic_system_attribute_getters.H>
+#include <generic/memory/lib/ccs/ccs_ddr4_commands.H>
 
 namespace mss
 {
@@ -56,6 +57,10 @@ namespace mss
 // Uses mrs and ccs api so here to utilize both
 namespace ccs
 {
+
+namespace ddr4
+{
+
 
 ///
 /// @brief Adds a delay to the ccs instruction, performing necessary mirroring/swizzling
@@ -74,8 +79,7 @@ fapi2::ReturnCode process_inst(const mss::rank::info<MC>& i_rank_info,
                                std::vector< mss::ccs::instruction_t<MC> >& io_inst)
 {
     // Insert the delay into arr1 (conroll reg)
-    io_instruction.arr1.template insertFromRight < TT::ARR1_IDLES,
-                                 TT::ARR1_IDLES_LEN>(i_delay_in_cycles);
+    io_instruction.iv_idles = i_delay_in_cycles;
 
     // Add both to the CCS program
     io_inst.push_back(io_instruction);
@@ -177,22 +181,6 @@ void set_srank_addr( const fapi2::buffer<uint64_t>& i_srank_addr,
 }
 
 ///
-/// @brief Set number of repeats in INST_ARR1 for a ccs write command
-/// @tparam MC the memory controller type which executes the CCS instruction
-/// @tparam TT the CCS traits of the chiplet which executes the CCS instruction
-/// @param[in] i_rep number of repeats
-/// @param[in, out] io_inst The ccs instruction to add to
-///
-template< mss::mc_type MC, typename TT = ccsTraits<MC> >
-void set_wr_repeats( const uint64_t i_rep,
-                     mss::ccs::instruction_t<MC>& io_inst )
-{
-    // set data
-    io_inst.arr1.template insertFromRight<TT::ARR1_REPEAT_CMD_CNT,
-                          TT::ARR1_REPEAT_CMD_CNT_LEN>(i_rep);
-}
-
-///
 /// @brief Set odt bits in INST_ARR0 for a ccs write command
 /// @tparam MC the memory controller type which executes the CCS instruction
 /// @tparam TT the CCS traits of the chiplet which executes the CCS instruction
@@ -227,7 +215,7 @@ mss::ccs::instruction_t<MC> act_load( const mss::rank::info<MC>& i_rank_info,
                                       const uint64_t i_delay_in_cycles )
 {
     // Create Activate command
-    mss::ccs::instruction_t<MC> l_inst = act_command<MC>(i_rank_info.get_port_rank());
+    mss::ccs::instruction_t<MC> l_inst = mss::ccs::ddr4::act_command<MC>(i_rank_info.get_port_rank());
 
     // Set Sub-rank address
     set_srank_addr<MC>(i_srank_addr, l_inst);
@@ -259,8 +247,18 @@ mss::ccs::instruction_t<MC> wr_load( const mss::rank::info<MC>& i_rank_info,
                                      const fapi2::buffer<uint64_t>& i_srank_addr,
                                      const uint64_t i_delay_in_cycles)
 {
+    // Need to shift the bank address because it comes in as BA[0:2] and the wr_command function expects BA[0:1]
+    constexpr uint64_t BA0 = 61;
+    constexpr uint64_t CORRECTED_BA0 = 62;
+
+    fapi2::buffer<uint64_t> l_corrected_bank_addr;
+    l_corrected_bank_addr.template insert<CORRECTED_BA0,
+                                   TT::ARR0_DDR_BANK_0_1_LEN, BA0>(i_bank_addr);
+
     // Create Write command
-    mss::ccs::instruction_t<MC> l_inst = wr_command<MC>(i_rank_info.get_port_rank(), i_bank_addr, i_bank_group_addr);
+    mss::ccs::instruction_t<MC> l_inst = mss::ccs::ddr4::wr_command<MC>(i_rank_info.get_port_rank(),
+                                         l_corrected_bank_addr,
+                                         i_bank_group_addr);
 
     // Set Sub-rank address
     set_srank_addr<MC>(i_srank_addr, l_inst);
@@ -292,7 +290,8 @@ mss::ccs::instruction_t<MC> pre_load( const mss::rank::info<MC>& i_rank_info,
                                       const uint64_t i_delay_in_cycles)
 {
     // Create Precharge command
-    mss::ccs::instruction_t<MC> l_inst = precharge_all_command<MC>(i_rank_info.get_port_rank(), i_delay_in_cycles);
+    mss::ccs::instruction_t<MC> l_inst = mss::ccs::ddr4::precharge_all_command<MC>(i_rank_info.get_port_rank(),
+                                         i_delay_in_cycles);
 
     // Set Sub-rank address
     set_srank_addr<MC>(i_srank_addr, l_inst);
@@ -319,12 +318,29 @@ mss::ccs::instruction_t<MC> init_pre_load( const mss::rank::info<MC>& i_rank_inf
         const fapi2::buffer<uint64_t>& i_srank_addr)
 {
     // Create Precharge command
-    mss::ccs::instruction_t<MC> l_inst = precharge_all_command<MC>(i_rank_info.get_port_rank());
+    mss::ccs::instruction_t<MC> l_inst = mss::ccs::ddr4::precharge_all_command<MC>(i_rank_info.get_port_rank());
 
     // Set Sub-rank address
     set_srank_addr<MC>(i_srank_addr, l_inst);
 
     return l_inst;
+}
+
+}// namespace ddr4
+
+///
+/// @brief Set number of repeats in INST_ARR1 for a ccs write command
+/// @tparam MC the memory controller type which executes the CCS instruction
+/// @tparam TT the CCS traits of the chiplet which executes the CCS instruction
+/// @param[in] i_rep number of repeats
+/// @param[in, out] io_inst The ccs instruction to add to
+///
+template< mss::mc_type MC, typename TT = ccsTraits<MC> >
+void set_wr_repeats( const uint64_t i_rep,
+                     mss::ccs::instruction_t<MC>& io_inst )
+{
+    // set data
+    io_inst.iv_repeats = i_rep;
 }
 
 }// namespace ccs
@@ -362,12 +378,33 @@ struct repair_entry
     repair_entry( const fapi2::buffer<uint32_t>& i_buffer, const uint8_t i_dimm_rank):
         iv_valid(i_buffer.getBit<ROW_REPAIR_VALID>())
     {
+        fapi2::buffer<uint32_t> l_data;
         iv_dimm_rank = i_dimm_rank;
         i_buffer.extractToRight<ROW_REPAIR_DRAM_POS, ROW_REPAIR_DRAM_POS_LEN>(iv_dram);
-        i_buffer.extractToRight<ROW_REPAIR_SRANK, ROW_REPAIR_SRANK_LEN>(iv_srank);
-        i_buffer.extractToRight<ROW_REPAIR_BANK_GROUP, ROW_REPAIR_BANK_GROUP_LEN>(iv_bg);
-        i_buffer.extractToRight<ROW_REPAIR_BANK, ROW_REPAIR_BANK_LEN>(iv_bank);
-        i_buffer.extractToRight<ROW_REPAIR_ROW_ADDR, ROW_REPAIR_ROW_ADDR_LEN>(iv_row);
+
+        // srank, BG, BA, and row address are stored in reverse bit order in the VPD, so need to swizzle these values
+        mss::swizzle < 32 - ROW_REPAIR_SRANK_LEN,
+            ROW_REPAIR_SRANK_LEN,
+            ROW_REPAIR_SRANK + ROW_REPAIR_SRANK_LEN - 1 > (i_buffer, l_data);
+        iv_srank = l_data;
+
+        l_data.flush<0>();
+        mss::swizzle < 32 - ROW_REPAIR_BANK_GROUP_LEN,
+            ROW_REPAIR_BANK_GROUP_LEN,
+            ROW_REPAIR_BANK_GROUP + ROW_REPAIR_BANK_GROUP_LEN - 1 > (i_buffer, l_data);
+        iv_bg = l_data;
+
+        l_data.flush<0>();
+        mss::swizzle < 32 - ROW_REPAIR_BANK_LEN,
+            ROW_REPAIR_BANK_LEN,
+            ROW_REPAIR_BANK + ROW_REPAIR_BANK_LEN - 1 > (i_buffer, l_data);
+        iv_bank = l_data;
+
+        l_data.flush<0>();
+        mss::swizzle < 32 - ROW_REPAIR_ROW_ADDR_LEN,
+            ROW_REPAIR_ROW_ADDR_LEN,
+            ROW_REPAIR_ROW_ADDR + ROW_REPAIR_ROW_ADDR_LEN - 1 > (i_buffer, l_data);
+        iv_row = l_data;
     }
 
     ///

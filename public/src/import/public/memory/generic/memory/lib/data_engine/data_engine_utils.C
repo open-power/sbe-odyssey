@@ -85,17 +85,7 @@ fapi2::ReturnCode get_supported_cas_latencies(
         // Buffers used for bit manipulation
         // Combine Bytes to create bitmap - right aligned
         fapi2::buffer<uint64_t> l_buffer;
-
-// FIXME - GCC version > 10  can no longer make template right_aligned_insert(...) params into constexpr
-#if __GNUC__ < 10
         right_aligned_insert(l_buffer, l_fourth_raw_byte, l_third_raw_byte, l_sec_raw_byte, l_first_raw_byte);
-#else
-        // work-around
-        l_buffer.template insertFromRight < 64 - 32, 8 > (l_fourth_raw_byte);
-        l_buffer.template insertFromRight < 64 - 24, 8 > (l_third_raw_byte);
-        l_buffer.template insertFromRight < 64 - 16, 8 > (l_sec_raw_byte);
-        l_buffer.template insertFromRight < 64 - 8, 8 > (l_first_raw_byte);
-#endif
 
         // According to the JEDEC spec:
         // Byte 22 (Bits 7~0) and Byte 23 are reserved in the base revision SPD general section
@@ -174,23 +164,12 @@ fapi2::ReturnCode get_supported_cas_latencies(
         // Buffers used for bit manipulation
         // Combine Bytes to create bitmap - right aligned
         fapi2::buffer<uint64_t> l_buffer;
-
-// FIXME - GCC version > 10  can no longer make template right_aligned_insert(...) params into constexpr
-#if __GNUC__ < 10
         right_aligned_insert(l_buffer,
                              l_fifth_raw_byte,
                              l_fourth_raw_byte,
                              l_third_raw_byte,
                              l_sec_raw_byte,
                              l_first_raw_byte);
-#else
-        // work-around
-        l_buffer.template insertFromRight < 64 - 40, 8 > (l_fifth_raw_byte);
-        l_buffer.template insertFromRight < 64 - 32, 8 > (l_fourth_raw_byte);
-        l_buffer.template insertFromRight < 64 - 24, 8 > (l_third_raw_byte);
-        l_buffer.template insertFromRight < 64 - 16, 8 > (l_sec_raw_byte);
-        l_buffer.template insertFromRight < 64 - 8, 8 > (l_first_raw_byte);
-#endif
 
         // For DDR5 all bits are valid in the CAS latencies supported bytes
         // so no range checking is needed
@@ -286,6 +265,9 @@ void combine_planar_spd(
     constexpr uint64_t BASE_CONFIG_NUM_BYTES = 128;
     constexpr uint64_t MODULE_CONFIG_NUM_BYTES = 64;
     constexpr uint64_t BASE_PLUS_MODULE_NUM_BYTES = BASE_CONFIG_NUM_BYTES + MODULE_CONFIG_NUM_BYTES;
+    constexpr uint64_t MODULE_SUPPLIER_DATA_START = 320;
+    constexpr uint64_t MODULE_SUPPLIER_DATA_LEN = 64;
+    constexpr uint64_t MODULE_SUPPLIER_DATA_END = MODULE_SUPPLIER_DATA_START + MODULE_SUPPLIER_DATA_LEN;
 
     o_spd.clear();
     o_spd.resize(i_planar_spd.size());
@@ -304,6 +286,11 @@ void combine_planar_spd(
     std::copy(i_planar_spd.begin() + BASE_PLUS_MODULE_NUM_BYTES,
               i_planar_spd.end(),
               o_spd.begin() + BASE_PLUS_MODULE_NUM_BYTES);
+
+    // Copy ISDIMM module supplier data
+    std::copy(i_isdimm_spd.begin() + MODULE_SUPPLIER_DATA_START,
+              i_isdimm_spd.begin() + MODULE_SUPPLIER_DATA_END,
+              o_spd.begin() + MODULE_SUPPLIER_DATA_START);
 }
 
 ///

@@ -255,7 +255,7 @@ fapi2::ReturnCode bad_fir_bits<mss::mc_type::EXPLORER, firChecklist::DRAMINIT>(
     fapi2::ReturnCode& io_rc,
     bool& o_fir_error)
 {
-    // For draminit case, we want to check SRQFIR[4] and LOCAL_FIR[20,36] only, so unmask checkbits
+    // For draminit case, we want to check SRQFIR[4] and LOCAL_FIR[20,32,36] only, so unmask checkbits
     // NOTE: if you change DRAMINIT_FIR_REGS, you need to update these indices
     const auto l_srqfir = EXPLORER_DRAMINIT_FIR_REGS.at(0);
     const auto l_localfir = EXPLORER_DRAMINIT_FIR_REGS.at(1);
@@ -268,10 +268,11 @@ fapi2::ReturnCode bad_fir_bits<mss::mc_type::EXPLORER, firChecklist::DRAMINIT>(
     l_check_mask.clearBit<EXPLR_SRQ_SRQFIRQ_RCD_PARITY_ERROR>();
     FAPI_TRY(bad_fir_bits_helper_with_mask(i_target, l_srqfir, l_check_mask, io_rc, o_fir_error));
 
-    // Mask all, then unmask bits 20,36
+    // Mask all, then unmask bits 20,32,36
     if (o_fir_error != true)
     {
         l_check_mask.flush<1>().clearBit<EXPLR_TP_MB_UNIT_TOP_LOCAL_FIR_PCS_GPBC_IRQ_106>()
+        .clearBit<EXPLR_TP_MB_UNIT_TOP_LOCAL_FIR_OCMB_DOORBELL_INT_2>()
         .clearBit<EXPLR_TP_MB_UNIT_TOP_LOCAL_FIR_DDR4_PHY__FATAL>();
 
         FAPI_TRY(bad_fir_bits_helper_with_mask(i_target, l_localfir, l_check_mask, io_rc, o_fir_error));
@@ -341,30 +342,5 @@ fapi2::ReturnCode bad_fir_bits<mss::mc_type::EXPLORER, firChecklist::GENERIC>( c
     //       GENERIC case required for bad_fir_bits call in mss_bad_bits.H -- update if GENERIC check needed
     return bad_fir_bits<mss::mc_type::EXPLORER, firChecklist::DRAMINIT>(i_target, io_rc, o_fir_error);
 }
-
-///
-/// @brief Check the MFIR_ACTAG_PASID_CFG_ERR field
-/// @param[in] i_target OCMB target
-/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS iff success, else error code
-///
-fapi2::ReturnCode check_mfir_actag_pasid_cfg(
-    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
-{
-    fapi2::buffer<uint64_t> l_reg_data = 0;
-    fapi2::ReturnCode l_rc = fapi2::FAPI2_RC_SUCCESS;
-
-    // Reading from the register into l_reg_data
-    FAPI_TRY(mss::getScom(i_target, EXPLR_MMIO_MFIR, l_reg_data));
-
-    FAPI_ASSERT(!l_reg_data.getBit<EXPLR_MMIO_MFIR_ACTAG_PASID_CFG_ERR>(),
-                fapi2::ACTAG_PASID_CONFIG_INVALID()
-                .set_OCMB_TARGET(i_target),
-                "MFIR_ACTAG_PASID_CFG_ERR has been lit due to unsupported configuration in number of acTAGs and PASIDs");
-    return l_rc;
-
-fapi_try_exit:
-    return fapi2::current_err;
-}
-
 } // end check ns
 } // end mss ns

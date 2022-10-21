@@ -34,11 +34,9 @@
 // *HWP Consumed by: FSP:HB
 
 #include <fapi2.H>
-
-#include <generic/memory/lib/utils/shared/mss_generic_consts.H>
-
+#include <generic/memory/lib/utils/mss_generic_check.H>
 #include <lib/phy/ody_phy_utils.H>
-// TODO:ZEN:MST-1571 Update Odyssey PHY registers when the official values are merged into the EKB
+#include <ody_scom_mp_apbonly0.H>
 
 namespace mss
 {
@@ -56,18 +54,11 @@ namespace phy
 fapi2::ReturnCode configure_phy_scom_access(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
         const mss::states i_state)
 {
-    // TODO:ZEN:MST-1571 Update Odyssey PHY registers when the official values are merged into the EKB
-    // For now using the Synopsys register location documentation
-    constexpr uint64_t MICROCONTMUXSEL = 0x000d0000;
-    const uint64_t MICROCONTMUXSEL_IBM = convert_synopsys_to_ibm_reg_addr(MICROCONTMUXSEL);
-    constexpr uint64_t MICROCONTMUXSEL_MICROCONTMUXSEL = 63;
-
     fapi2::buffer<uint64_t> l_data;
-    FAPI_TRY(fapi2::getScom(i_target, MICROCONTMUXSEL_IBM, l_data));
+    FAPI_TRY(fapi2::getScom(i_target, scomt::mp::DWC_DDRPHYA_APBONLY0_MICROCONTMUXSEL, l_data));
 
-    l_data.writeBit<MICROCONTMUXSEL_MICROCONTMUXSEL>(i_state);
-
-    FAPI_TRY(fapi2::putScom(i_target, MICROCONTMUXSEL_IBM, l_data));
+    l_data.writeBit<scomt::mp::DWC_DDRPHYA_APBONLY0_MICROCONTMUXSEL_MICROCONTMUXSEL>(i_state);
+    FAPI_TRY(fapi2::putScom(i_target, scomt::mp::DWC_DDRPHYA_APBONLY0_MICROCONTMUXSEL, l_data));
 
 fapi_try_exit:
     return fapi2::current_err;
@@ -81,6 +72,131 @@ fapi_try_exit:
 uint64_t convert_synopsys_to_ibm_reg_addr( const uint64_t i_synopsys_addr)
 {
     return static_cast<uint64_t>((i_synopsys_addr << 32) | 0x800000000801303f);
+}
+
+///
+/// @brief Loads two contiguous 8-bit fields into the DMEM register format
+/// @param[in] i_even_field field at the even byte offset
+/// @param[in] i_odd_field field at the odd byte offset
+/// @param[in,out] io_data the register data
+///
+void load_dmem_8bit_fields( const uint8_t i_even_field, const uint8_t i_odd_field, fapi2::buffer<uint64_t>& io_data)
+{
+    constexpr uint64_t ODD_DATA = 48;
+    constexpr uint64_t EVEN_DATA = 56;
+    io_data.insertFromRight<ODD_DATA, BITS_PER_BYTE>(i_odd_field)
+    .insertFromRight<EVEN_DATA, BITS_PER_BYTE>(i_even_field);
+}
+
+///
+/// @brief Reads two contiguous 8-bit fields from the DMEM
+/// @param[in] i_target the target on which to operate
+/// @param[in] i_addr the starting address to read from
+/// @param[out] o_even_field field at the even byte offset
+/// @param[out] o_odd_field field at the odd byte offset
+/// @return fapi2::FAPI2_RC_SUCCESS iff successful
+///
+fapi2::ReturnCode read_dmem_field( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target, const uint64_t i_addr,
+                                   uint8_t& o_even_field, uint8_t& o_odd_field)
+{
+    constexpr uint64_t ODD_DATA = 48;
+    constexpr uint64_t EVEN_DATA = 56;
+    o_even_field = 0;
+    o_odd_field = 0;
+
+    fapi2::buffer<uint64_t> l_data;
+    FAPI_TRY(fapi2::getScom(i_target, i_addr, l_data));
+
+    l_data.extractToRight<ODD_DATA, BITS_PER_BYTE>(o_odd_field)
+    .extractToRight<EVEN_DATA, BITS_PER_BYTE>(o_even_field);
+
+fapi_try_exit:
+    return fapi2::current_err;
+}
+
+///
+/// @brief Reads a 16-bit field from the DMEM
+/// @param[in] i_target the target on which to operate
+/// @param[in] i_addr the starting address to read from
+/// @param[out] o_field the 16-bit field
+/// @return fapi2::FAPI2_RC_SUCCESS iff successful
+///
+fapi2::ReturnCode read_dmem_field( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target, const uint64_t i_addr,
+                                   uint16_t& o_field)
+{
+    constexpr uint64_t SYNOPSYS_DATA = 48;
+    constexpr uint64_t DATA_16B_LEN = 16;
+    o_field = 0;
+
+    fapi2::buffer<uint64_t> l_data;
+    FAPI_TRY(fapi2::getScom(i_target, i_addr, l_data));
+
+    l_data.extractToRight<SYNOPSYS_DATA, DATA_16B_LEN>(o_field);
+
+fapi_try_exit:
+    return fapi2::current_err;
+}
+
+///
+/// @brief Reads a 32-bit field from the DMEM
+/// @param[in] i_target the target on which to operate
+/// @param[in] i_addr the starting address to read from
+/// @param[out] o_field the 32-bit field, read in from two registers
+/// @return fapi2::FAPI2_RC_SUCCESS iff successful
+///
+fapi2::ReturnCode read_dmem_field( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target, const uint64_t i_addr,
+                                   uint32_t& o_field)
+{
+    constexpr uint64_t SYNOPSYS_ADDR_INCREMENT = 0x0000000100000000;
+    constexpr uint64_t SYNOPSYS_DATA = 48;
+    constexpr uint64_t DATA_16B_LEN = 16;
+    o_field = 0;
+
+    fapi2::buffer<uint64_t> l_data;
+    FAPI_TRY(fapi2::getScom(i_target, i_addr, l_data));
+    l_data.extractToRight<SYNOPSYS_DATA, DATA_16B_LEN>(o_field);
+    o_field <<= DATA_16B_LEN;
+
+    FAPI_TRY(fapi2::getScom(i_target, i_addr + SYNOPSYS_ADDR_INCREMENT, l_data));
+    l_data.extractToRight<SYNOPSYS_DATA, DATA_16B_LEN>(o_field);
+
+fapi_try_exit:
+    return fapi2::current_err;
+}
+
+///
+/// @brief Reads a 64-bit field from the DMEM
+/// @param[in] i_target the target on which to operate
+/// @param[in] i_addr the starting address to read from
+/// @param[out] o_field the 64-bit field, read in from four registers
+/// @return fapi2::FAPI2_RC_SUCCESS iff successful
+///
+fapi2::ReturnCode read_dmem_field( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target, const uint64_t i_addr,
+                                   uint64_t& o_field)
+{
+    constexpr uint64_t SYNOPSYS_ADDR_INCREMENT = 0x0000000100000000;
+    constexpr uint64_t SYNOPSYS_DATA = 48;
+    constexpr uint64_t DATA_16B_LEN = 16;
+    o_field = 0;
+
+    fapi2::buffer<uint64_t> l_data;
+    FAPI_TRY(fapi2::getScom(i_target, i_addr, l_data));
+    l_data.extractToRight<SYNOPSYS_DATA, DATA_16B_LEN>(o_field);
+    o_field <<= DATA_16B_LEN;
+
+    FAPI_TRY(fapi2::getScom(i_target, i_addr + SYNOPSYS_ADDR_INCREMENT, l_data));
+    l_data.extractToRight<SYNOPSYS_DATA, DATA_16B_LEN>(o_field);
+    o_field <<= DATA_16B_LEN;
+
+    FAPI_TRY(fapi2::getScom(i_target, i_addr + 2 * SYNOPSYS_ADDR_INCREMENT, l_data));
+    l_data.extractToRight<SYNOPSYS_DATA, DATA_16B_LEN>(o_field);
+    o_field <<= DATA_16B_LEN;
+
+    FAPI_TRY(fapi2::getScom(i_target, i_addr + 3 * SYNOPSYS_ADDR_INCREMENT, l_data));
+    l_data.extractToRight<SYNOPSYS_DATA, DATA_16B_LEN>(o_field);
+
+fapi_try_exit:
+    return fapi2::current_err;
 }
 
 } // namespace phy

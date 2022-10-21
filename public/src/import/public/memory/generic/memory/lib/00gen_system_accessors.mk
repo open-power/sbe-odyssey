@@ -35,7 +35,6 @@ OUTPATH = $(MSS_PATH)/generic/memory/lib
 FILE_PREFIX = mss_generic_system
 
 SOURCES += $(ROOTPATH)/public/common/generic/fapi2/xml/attribute_info/system_attributes.xml
-#SOURCES += $(ROOTPATH)/chips/p9/procedures/xml/attribute_info/freq_attributes.xml
 SOURCES += $(MSS_PATH)/generic/xml/attribute_info/generic_memory_mrw_attributes.xml
 
 TARGETS += mss_generic_system_attribute_getters.H
