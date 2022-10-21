@@ -1,0 +1,1450 @@
+<!-- IBM_PROLOG_BEGIN_TAG                                                   -->
+<!-- This is an automatically generated prolog.                             -->
+<!--                                                                        -->
+<!-- $Source: public/src/import/public/memory/explorer/xml/attribute_info/exp_attributes.xml $ -->
+<!--                                                                        -->
+<!-- OpenPOWER sbe Project                                                  -->
+<!--                                                                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022                             -->
+<!-- [+] International Business Machines Corp.                              -->
+<!--                                                                        -->
+<!--                                                                        -->
+<!-- Licensed under the Apache License, Version 2.0 (the "License");        -->
+<!-- you may not use this file except in compliance with the License.       -->
+<!-- You may obtain a copy of the License at                                -->
+<!--                                                                        -->
+<!--     http://www.apache.org/licenses/LICENSE-2.0                         -->
+<!--                                                                        -->
+<!-- Unless required by applicable law or agreed to in writing, software    -->
+<!-- distributed under the License is distributed on an "AS IS" BASIS,      -->
+<!-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or        -->
+<!-- implied. See the License for the specific language governing           -->
+<!-- permissions and limitations under the License.                         -->
+<!--                                                                        -->
+<!-- IBM_PROLOG_END_TAG                                                     -->
+
+<!-- -->
+<!-- @file exp_attributes.xml -->
+<!-- @brief Attribute xml for explorer attributes -->
+<!-- -->
+<!-- *HWP HWP Owner: Louis Stermole <stermole@us.ibm.com> -->
+<!-- *HWP HWP Backup: Stephen Glancy <sglancy@us.ibm.com> -->
+<!-- *HWP Team: Memory -->
+<!-- *HWP Level: 2 -->
+<!-- *HWP Consumed by: FSP:HB -->
+<!-- -->
+
+
+<attributes>
+    <attribute>
+        <id>ATTR_IS_IBM_SIMULATION</id>
+        <targetType>TARGET_TYPE_SYSTEM</targetType>
+        <description>
+            Attribute for IBM cycle simulation with OCMB+
+        </description>
+        <initToZero></initToZero>
+        <valueType>uint8</valueType>
+        <writeable/>
+    </attribute>
+    <attribute>
+        <id>ATTR_MSS_OCMB_ENTERPRISE_MODE</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            Indicates whether the OCMB can support enterprise mode or
+            if it has been fused to only support non-enterprise mode.
+            Note: needs to be setup by the get ECID functionality
+        </description>
+        <initToZero></initToZero>
+        <valueType>uint8</valueType>
+        <enum>
+            NON_ENTERPRISE = 0,
+            ENTERPRISE = 1
+        </enum>
+        <writeable/>
+        <mssAccessorName>ocmb_enterprise_mode</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MSS_OCMB_ENTERPRISE_POLICY</id>
+        <targetType>TARGET_TYPE_SYSTEM</targetType>
+        <description>
+            Indicates whether the OCMB is allowed to run in enterprise
+            mode, commodity mode, or either.
+
+            ALLOW_ENTERPRISE = Most permissive, uses whatever is installed in
+               the way it is intended to be used.
+            REQUIRE_ENTERPRISE = Throws an error for any commodity dimms that
+               are installed.
+            FORCE_NONENTERPRISE = Throws an error for any enterprise dimms that
+               are installed.
+        </description>
+        <valueType>uint8</valueType>
+        <enum>
+            ALLOW_ENTERPRISE = 0,
+            REQUIRE_ENTERPRISE = 1,
+            FORCE_NONENTERPRISE  = 2
+        </enum>
+        <platInit/>
+        <default>ALLOW_ENTERPRISE</default>
+        <mssAccessorName>ocmb_enterprise_policy</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MSS_OCMB_NONENTERPRISE_MODE_OVERRIDE</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            An override to allow an enterprise capable DIMM to be run in non-enterprise mode.
+            Defaults to NO_OVERRIDE
+        </description>
+        <initToZero></initToZero>
+        <valueType>uint8</valueType>
+        <enum>
+            NO_OVERRIDE = 0,
+            OVERRIDE_NON_ENTERPRISE = 1
+        </enum>
+        <writeable/>
+        <mssAccessorName>ocmb_nonenterprise_mode_override</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MSS_OCMB_HALF_DIMM_MODE</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            Indicates whether the OCMB should be run in half DIMM mode or not
+        </description>
+        <initToZero></initToZero>
+        <valueType>uint8</valueType>
+        <enum>
+            FULL_DIMM = 0,
+            HALF_DIMM = 1
+        </enum>
+        <platInit/>
+        <mssAccessorName>ocmb_half_dimm_mode</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MSS_OCMB_HALF_DIMM_MODE_OVERRIDE</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            An override that allows the user to control full or half DIMM mode
+        </description>
+        <initToZero></initToZero>
+        <valueType>uint8</valueType>
+        <enum>
+            NO_OVERRIDE = 0,
+            OVERRIDE_FULL_DIMM = 1,
+            OVERRIDE_HALF_DIMM = 2
+        </enum>
+        <writeable/>
+        <mssAccessorName>ocmb_half_dimm_mode_override</mssAccessorName>
+    </attribute>
+
+    <!-- user_input_msdg attribute overrides start -->
+    <attribute>
+        <id>ATTR_MEM_EXP_INIT_VREF_DQ</id>
+        <targetType>TARGET_TYPE_MEM_PORT</targetType>
+        <description>
+           Initial VrefDQ setting before training
+        </description>
+        <valueType>uint8</valueType>
+        <initToZero></initToZero>
+        <writeable/>
+        <array>2 4</array>
+        <mssAccessorName>exp_init_vref_dq</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MEM_EXP_INIT_PHY_VREF</id>
+        <targetType>TARGET_TYPE_MEM_PORT</targetType>
+        <description>
+           Initial DQ Vref setting of PHY before training
+        </description>
+        <valueType>uint8</valueType>
+        <initToZero></initToZero>
+        <writeable/>
+        <array>2 4</array>
+        <mssAccessorName>exp_init_phy_vref</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MEM_EXP_RCD_DIC</id>
+        <targetType>TARGET_TYPE_MEM_PORT</targetType>
+        <description>
+           CA and CS signal Driver Characteristics from F0RC03, F0RC04, F0RC05
+        </description>
+        <valueType>uint16</valueType>
+        <initToZero></initToZero>
+        <array>2</array>
+        <writeable/>
+        <mssAccessorName>exp_rcd_dic</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MEM_EXP_RCD_VOLTAGE_CTRL</id>
+        <targetType>TARGET_TYPE_MEM_PORT</targetType>
+        <description>
+           RCD operating voltage VDD and VrefCA control from F0RC0B and F0RC1x
+        </description>
+        <valueType>uint16</valueType>
+        <initToZero></initToZero>
+        <array>2</array>
+        <writeable/>
+        <mssAccessorName>exp_rcd_voltage_ctrl</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MEM_EXP_DRAM_ADDRESS_MIRRORING</id>
+        <targetType>TARGET_TYPE_MEM_PORT</targetType>
+        <description>
+            Ranks that have address mirroring.
+            This data is derived from SPD or VPD.
+            Note: This is a bit-wise map and muliple ranks can be mirrored.
+        </description>
+        <initToZero></initToZero>
+        <valueType>uint8</valueType>
+        <array>2</array>
+        <writeable/>
+        <mssAccessorName>exp_dram_address_mirroring</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MEM_EXP_RCD_SLEW_RATE</id>
+        <targetType>TARGET_TYPE_MEM_PORT</targetType>
+        <description>
+            RCD slew rate control from F1RC02,F1RC03,F1RC04,F1RC05
+        </description>
+        <initToZero></initToZero>
+        <valueType>uint16</valueType>
+        <array>2</array>
+        <writeable/>
+        <mssAccessorName>exp_rcd_slew_rate</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MEM_EXP_SPD_CL_SUPPORTED</id>
+        <targetType>TARGET_TYPE_MEM_PORT</targetType>
+        <description>
+            Cas Latency Supported by DRAM
+        </description>
+        <initToZero></initToZero>
+        <valueType>uint32</valueType>
+        <writeable/>
+        <mssAccessorName>exp_spd_cl_supported</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MEM_EXP_SPD_TAA_MIN</id>
+        <targetType>TARGET_TYPE_MEM_PORT</targetType>
+        <description>
+          Minimum Cas Latency Time (tAAmin) in Picosecond (Byte 24)
+        </description>
+        <initToZero></initToZero>
+        <valueType>uint16</valueType>
+        <writeable/>
+        <mssUnits>ps</mssUnits>
+        <mssAccessorName>exp_spd_taa_min</mssAccessorName>
+    </attribute>
+
+  <attribute>
+      <id>ATTR_MSS_EXP_REORDER_QUEUE_SETTING</id>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <description>
+          Contains the settings for write/read reorder queue
+      </description>
+      <writeable/>
+      <enum>REORDER = 0, FIFO = 1</enum>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <writeable/>
+      <mssAccessorName>exp_reorder_queue_setting</mssAccessorName>
+  </attribute>
+
+    <attribute>
+        <id>ATTR_MEM_EXP_FIRMWARE_EMULATION_MODE</id>
+        <targetType>TARGET_TYPE_MEM_PORT</targetType>
+        <description>
+            Enable Special mode for Emulation Support
+        </description>
+        <initToZero></initToZero>
+        <valueType>uint8</valueType>
+        <mssUnits>bool</mssUnits>
+        <enum>NORMAL = 0, EMULATION = 1</enum>
+        <writeable/>
+        <mssAccessorName>exp_firmware_emulation_mode</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MSS_OCMB_EXP_STRUCT_MMIO_ENDIAN_CTRL</id>
+        <targetType>TARGET_TYPE_SYSTEM</targetType>
+        <description>
+          Controls whether or not transaction bytes are
+          swapped before and after mmio accesses to
+          the buffer.
+        </description>
+        <valueType>uint8</valueType>
+        <initToZero></initToZero>
+        <enum>
+            SWAP = 0,
+            NO_SWAP = 1
+        </enum>
+        <platInit/>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MSS_OCMB_EXP_STRUCT_ENDIAN</id>
+        <targetType>TARGET_TYPE_SYSTEM</targetType>
+        <description>
+          Controls whether the structure fields written
+          and read to and from the buffer are big
+          or little endian.
+        </description>
+        <valueType>uint8</valueType>
+        <initToZero></initToZero>
+        <enum>
+            BIG_ENDIAN = 0,
+            LITTLE_ENDIAN = 1
+        </enum>
+        <platInit/>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MSS_OCMB_EXP_STRUCT_MMIO_WORD_SWAP</id>
+        <targetType>TARGET_TYPE_SYSTEM</targetType>
+        <description>
+          Controls whether or not the first and second half of MMIO
+          transactions are swapped before and after mmio accesses to
+          the buffer.
+        </description>
+        <valueType>uint8</valueType>
+        <enum>
+            SWAP = 0,
+            NO_SWAP = 1
+        </enum>
+        <platInit/>
+        <default>NO_SWAP</default>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MSS_OCMB_EXP_OMI_CFG_ENDIAN_CTRL</id>
+        <targetType>TARGET_TYPE_SYSTEM</targetType>
+        <description>
+          Controls whether OMI CFG reg accesses
+          are considered big or little endian.
+        </description>
+        <valueType>uint8</valueType>
+        <enum>
+            LITTLE_ENDIAN = 0,
+            BIG_ENDIAN = 1
+        </enum>
+        <platInit/>
+        <default>LITTLE_ENDIAN</default>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MSS_OCMB_ECID</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            ECID of the chip as determined by the IPL getecid procedure.
+        </description>
+        <initToZero></initToZero>
+        <valueType>uint16</valueType>
+        <array>14</array>
+        <writeable/>
+        <mssAccessorName>ocmb_ecid</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MEM_EXP_DFIMRL_CLK</id>
+        <targetType>TARGET_TYPE_MEM_PORT</targetType>
+        <description>
+            timing parameter for the DFIMRL clock
+        </description>
+        <initToZero></initToZero>
+        <valueType>uint8</valueType>
+        <writeable/>
+        <mssAccessorName>exp_dfimrl_clk</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MEM_EFF_ATXDLY_A</id>
+        <targetType>TARGET_TYPE_MEM_PORT</targetType>
+        <description>
+          ARRAY[ADDRESS INDEX]
+          ATxDly_A/B[0]: ODT[1],ODT[0],CS_N[0],CS_N[1]
+          ATxDly_A/B[1]: ADDR[13],ADDR[5],BG[0],CKE[1]
+          ATxDly_A/B[2]: ADDR[17],ADDR[7],BA[0],ADDR[16]
+          ATxDly_A/B[3]: ADDR[8],BG[1],CID[1],CID[0]
+          ATxDly_A/B[4]: ADDR[1],ADDR[9],ADDR[2],CAPARITY
+          ATxDly_A/B[5]: ADDR[12],ADDR[3],ADDR[4],ADDR[0]
+          ATxDly_A/B[6]: CKE[0],ADDR[15],ACT_N,ADDR[10]
+          ATxDly_A/B[7]: ADDR[11],ADDR[6],BA[1],ADDR[14]
+        </description>
+        <initToZero></initToZero>
+        <valueType>uint8</valueType>
+        <writeable/>
+        <array>8</array>
+        <mssAccessorName>exp_atxdly_a</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MEM_EFF_ATXDLY_B</id>
+        <targetType>TARGET_TYPE_MEM_PORT</targetType>
+        <description>
+          ARRAY[ADDRESS INDEX]
+          ATxDly_A/B[0]: ODT[1],ODT[0],CS_N[0],CS_N[1]
+          ATxDly_A/B[1]: ADDR[13],ADDR[5],BG[0],CKE[1]
+          ATxDly_A/B[2]: ADDR[17],ADDR[7],BA[0],ADDR[16]
+          ATxDly_A/B[3]: ADDR[8],BG[1],CID[1],CID[0]
+          ATxDly_A/B[4]: ADDR[1],ADDR[9],ADDR[2],CAPARITY
+          ATxDly_A/B[5]: ADDR[12],ADDR[3],ADDR[4],ADDR[0]
+          ATxDly_A/B[6]: CKE[0],ADDR[15],ACT_N,ADDR[10]
+          ATxDly_A/B[7]: ADDR[11],ADDR[6],BA[1],ADDR[14]
+        </description>
+        <initToZero></initToZero>
+        <valueType>uint8</valueType>
+        <writeable/>
+        <array>8</array>
+        <mssAccessorName>exp_atxdly_b</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MSS_OCMB_PHY_INIT_MODE</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+          Mode for PHY initialization.
+        </description>
+        <valueType>uint8</valueType>
+        <initToZero></initToZero>
+        <enum>
+            NORMAL = 0,
+            WITH_EYE_CAPTURE = 1
+        </enum>
+        <writeable/>
+        <mssAccessorName>exp_phy_init_mode</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MSS_CHECK_FOR_READY_TIMEOUT</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            Timeout (in msec) for polling for FW_STATUS reply during
+            exp_check_for_ready. Default is 20000msec, from lab experimentation
+        </description>
+        <valueType>uint16</valueType>
+        <default>20000</default>
+        <platInit/>
+        <mrwHide/>
+        <mssAccessorName>check_for_ready_timeout</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MSS_OCMB_DISABLE_THERM_INIT_READ</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            Flag to disable exp_mss_thermal_init interval read command
+        </description>
+        <valueType>uint8</valueType>
+        <enum>
+            ENABLED = 0,
+            DISABLED = 1
+        </enum>
+        <platInit/>
+        <overrideOnly/>
+        <initToZero/>
+        <mssAccessorName>disable_therm_init_read</mssAccessorName>
+    </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_FW_API_VERSION</id>
+    <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    <description>
+      Explorer I2C firmware API version supported. Reflects bits 22:18
+      from FW_STATUS response.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <default>0</default>
+    <writeable/>
+    <mssAccessorName>exp_fw_api_version</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_FW_VERSION_A</id>
+    <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    <description>
+      Explorer firmware version loaded in partition A
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint32</valueType>
+    <default>0</default>
+    <writeable/>
+    <mssAccessorName>exp_fw_version_a</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_FW_VERSION_B</id>
+    <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    <description>
+      Explorer firmware version loaded in partition B
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint32</valueType>
+    <default>0</default>
+    <writeable/>
+    <mssAccessorName>exp_fw_version_b</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_FW_PARTITION_ID</id>
+    <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    <description>
+      ID of Explorer partition that firmware was booted from
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint32</valueType>
+    <default>0</default>
+    <enum>A = 65, B = 66</enum>
+    <writeable/>
+    <mssAccessorName>exp_fw_partition_id</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_FW_FAILED_AUTHENTICATION_A</id>
+    <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    <description>
+      Explorer firmware authentication status for partition A.
+      '1' indicates the partition failed authentication.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <default>0</default>
+    <writeable/>
+    <mssAccessorName>exp_fw_failed_authentication_a</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_FW_FAILED_AUTHENTICATION_B</id>
+    <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    <description>
+      Explorer firmware authentication status for partition B.
+      '1' indicates the partition failed authentication.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <default>0</default>
+    <writeable/>
+    <mssAccessorName>exp_fw_failed_authentication_b</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_COMM_STATE</id>
+    <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    <description>
+      Can be used by general procedure
+      code to determine sideband/inband mode, etc.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <default>0</default>
+    <enum>
+      NO_I2C = 0,
+      I2C_NO_SCOM = 1,
+      I2C_WITH_SCOM = 2,
+      INBAND = 3
+    </enum>
+    <writeable/>
+    <mssAccessorName>exp_comm_state</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_RESP_DDR4_F0RC00</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      F0RC00: Global Features Control Word from the DDR4 RCD Spec.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <array>2</array>
+    <writeable/>
+    <mssAccessorName>exp_resp_ddr4_f0rc00</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_RESP_DDR4_F0RC01</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      F0RC01: Clock Driver Enable Control Word from the DDR4 RCD Spec.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <array>2</array>
+    <writeable/>
+    <mssAccessorName>exp_resp_ddr4_f0rc01</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_RESP_DDR4_F0RC03</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      F0RC03 - CA and CS Signals Driver Characteristics Control Word from the DDR4 RCD Spec.
+      From user_response_rc_msdg_t in draminit..
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <array>2</array>
+    <writeable/>
+    <mssAccessorName>exp_resp_ddr4_f0rc03</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_RESP_DDR4_F0RC04</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      F0RC04 - ODT and CKE Signals Driver Characteristics Control Word from the DDR4 RCD Spec.
+      From user_response_rc_msdg_t in draminit..
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <array>2</array>
+    <writeable/>
+    <mssAccessorName>exp_resp_ddr4_f0rc04</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_RESP_DDR4_F0RC05</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      F0RC05 - Clock Driver Characteristics Control Word from the DDR4 RCD Spec.
+      From user_response_rc_msdg_t in draminit..
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <array>2</array>
+    <writeable/>
+    <mssAccessorName>exp_resp_ddr4_f0rc05</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_RESP_DDR4_F0RC0B</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      Operating Voltage VDD and VrefCA Source Control Word from the DDR4 RCD Spec.
+      From the DDR4 RCD Spec.
+      From user_response_rc_msdg_t in draminit..
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <array>2</array>
+    <writeable/>
+    <mssAccessorName>exp_resp_ddr4_f0rc0b</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_RESP_DDR4_F0RC0E</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      F0RC0E - Parity, NV Mode Enable, and ALERT Configuration Control Word from the DDR4 RCD Spec.
+      From user_response_rc_msdg_t in draminit..
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <array>2</array>
+    <writeable/>
+    <mssAccessorName>exp_resp_ddr4_f0rc0e</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_RESP_DDR4_F0RC0F</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      F0RC0F - Command Latency Adder Control Word from the DDR4 RCD Spec.
+      From user_response_rc_msdg_t in draminit..
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <array>2</array>
+    <writeable/>
+    <mssAccessorName>exp_resp_ddr4_f0rc0f</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_RESP_DDR4_F0RC1X</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      F0RC1x - Internal VrefCA Control Word from the DDR4 RCD Spec;
+      From user_response_rc_msdg_t in draminit..
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <array>2</array>
+    <writeable/>
+    <mssAccessorName>exp_resp_ddr4_f0rc1x</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_RESP_DDR4_F0RC7X</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      F0RC7x: IBT Control Word from the DDR4 RCD Spec;
+      From user_response_rc_msdg_t in draminit..
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <array>2</array>
+    <writeable/>
+    <mssAccessorName>exp_resp_ddr4_f0rc7x</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_RESP_DDR4_F1RC00</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      F1RC00: Data Buffer Interface Driver Characteristics Control Word from the DDR4 RCD Spec.
+      From user_response_rc_msdg_t in draminit..
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <array>2</array>
+    <writeable/>
+    <mssAccessorName>exp_resp_ddr4_f1rc00</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_RESP_DDR4_F1RC02</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      F1RC02 - CA and CS Output Slew Rate Control from the DDR4 RCD Spec.
+      From user_response_rc_msdg_t in draminit..
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <array>2</array>
+    <writeable/>
+    <mssAccessorName>exp_resp_ddr4_f1rc02</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_RESP_DDR4_F1RC03</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      F1RC03 - ODT and CKEn Output Slew Rate Control from the DDR4 RCD Spec.
+      From user_response_rc_msdg_t in draminit..
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <array>2</array>
+    <writeable/>
+    <mssAccessorName>exp_resp_ddr4_f1rc03</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_RESP_DDR4_F1RC04</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      F1RC04 - Clock Driver Output Slew Rate Control from the DDR4 RCD Spec.
+      From user_response_rc_msdg_t in draminit..
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <array>2</array>
+    <writeable/>
+    <mssAccessorName>exp_resp_ddr4_f1rc04</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_MSS_EXP_RESP_DDR4_F1RC05</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      F1RC05 - Data Buffer Interface Output Slew Rate Control from the DDR4 RCD Spec.
+      From user_response_rc_msdg_t in draminit..
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <array>2</array>
+    <writeable/>
+    <mssAccessorName>exp_resp_ddr4_f1rc05</mssAccessorName>
+  </attribute>
+
+  <attribute>
+      <id>ATTR_MSS_EXP_RESP_DRAM_RBT</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Read Burst Type from DDR4 DRAM Spec
+          This is for DDR4 MRS0.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>SEQUENTIAL = 0, INTERLEAVE = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_dram_rbt</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_DRAM_TM</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Test Mode from DDR4 DRAM Spec
+          This is for DDR4 MRS0.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>NORMAL= 0, TEST = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_dram_tm</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_DRAM_DLL_RESET</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          DLL Reset from DDR4 DRAM Spec
+          This is for DDR4 MRS0.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>NO = 0, YES = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_dram_dll_reset</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_DRAM_BURST_LENGTH</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          DLL Reset from DDR4 DRAM Spec
+          This is for DDR4 MRS0.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>FIXED8 = 0, ON_THE_FLY = 1, BC4 = 2, RESERVED = 3</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_dram_burst_length</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_DRAM_DLL_ENABLE</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          DLL Enable from DDR4 DRAM Spec
+          This is for DDR4 MRS1.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>ENABLE = 1, DISABLE = 0</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_dram_dll_enable</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_DRAM_ODIC</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          DRAM output driver impedance control from DDR4 DRAM Spec
+          This is for DDR4 MRS1.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>RZQ5 = 1, RZQ7 = 0</enum>
+      <writeable/>
+      <array>2 4</array>
+      <mssAccessorName>exp_resp_dram_odic</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_DRAM_AL</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Additive Latency from DDR4 DRAM Spec
+          This is for DDR4 MRS1.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>DISABLE = 0, CL_MINUS_1 = 1, CL_MINUS_2 = 2</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_dram_al</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_DRAM_WR_LVL_ENABLE</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Write Level Enable from DDR4 DRAM Spec
+          This is for DDR4 MRS1.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>DISABLE = 0, ENABLE = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_dram_wr_lvl_enable</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_DRAM_RTT_NOM</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          RTT_NOM value read to be programmed from DDR4 DRAM Spec
+          This is for DDR4 MRS1.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <writeable/>
+      <array>2 4</array>
+      <mssAccessorName>exp_resp_dram_rtt_nom</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_DRAM_RTT_PARK</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          RTT_PARK value read to be programmed from DDR4 DRAM Spec
+          This is for DDR4 MRS5.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <writeable/>
+      <array>2 4</array>
+      <mssAccessorName>exp_resp_dram_rtt_park</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_DRAM_TDQS</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          TDQS from DDR4 DRAM Spec
+          This is for DDR4 MRS1.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>DISABLE = 0, ENABLE = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_dram_tdqs</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_DRAM_OUTPUT_BUFFER</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          DRAM Qoff from DDR4 DRAM Spec
+          Enables or disables DRAM output.
+          This is for DDR4 MRS1.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>DISABLE = 1, ENABLE = 0</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_dram_output_buffer</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_DRAM_LPASR</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Low Power Auto Self-Refresh from DDR4 DRAM Spec
+          This is for DDR4 MRS2.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>MANUAL_NORMAL =0, MANUAL_REDUCED = 1, MANUAL_EXTENDED = 2, ASR = 3</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_dram_lpasr</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_DRAM_RTT_WR</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          RTT_WR value from DDR4 DRAM Spec
+          This is for DDR4 MRS2.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>DYNAMIC_ODT_OFF = 0, RZQ2 = 1, RZQ1 = 2, HIZ = 3, RZQ3 = 4</enum>
+      <array>2 4</array>
+      <writeable/>
+      <mssAccessorName>exp_resp_dram_rtt_wr</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_MPR_PAGE</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          MPR Page Selection from DDR4 DRAM Spec.
+          This is for DDR4 MRS3.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>PG0 = 0, PG1 = 1, PG2 = 2, PG3 = 3</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_mpr_page</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_MPR_MODE</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Multi Purpose Register Mode from DDR4 DRAM Spec
+          This is for DDR4 MRS3.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>DISABLE = 0, ENABLE = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_mpr_mode</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_GEARDOWN_MODE</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Gear Down Mode from DDR4 DRAM Spec.
+          This is for DDR4 MRS3.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>HALF =0, QUARTER=1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_geardown_mode</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_PER_DRAM_ACCESS</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Per DRAM accessibility from DDR4 DRAM Spec
+          This is for DDR4 MRS3.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>DISABLE = 0, ENABLE = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_per_dram_access</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_TEMP_READOUT</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Temperature sensor readout from DDR4 DRAM Spec.
+          This is for DDR4 MRS3.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>DISABLE = 0, ENABLE = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_temp_readout</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_CRC_WR_LATENCY</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Write latency for CRC and DM from DDR4 DRAM Spec.
+          This is for DDR4 MRS3.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>4NCK = 4, 5NCK = 5, 6NCK = 6</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_crc_wr_latency</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_MPR_RD_FORMAT</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          MPR READ FORMAT from DDR4 DRAM Spec.
+          This is for DDR4 MRS3.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>SERIAL = 0, PARALLEL = 1, STAGGERED = 2</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_mpr_rd_format</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_MAX_POWERDOWN_MODE</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Max Power down mode from DDR4 DRAM Spec.
+          This is for DDR4 MRS4.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>DISABLE = 0, ENABLE = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_max_powerdown_mode</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_INTERNAL_VREF_MONITOR</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Internal Vref Monitor from DDR4 DRAM Spec.
+          This is for DDR4 MRS4.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>DISABLE = 0, ENABLE = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_internal_vref_monitor</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_SELF_REF_ABORT</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Self Refresh Abort from DDR4 DRAM Spec.
+          This is for DDR4 MRS4.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>DISABLE = 0, ENABLE = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_self_ref_abort</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_RD_PREAMBLE_TRAIN</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Read Pre amble Training Mode from DDR4 DRAM Spec.
+          This is for DDR4 MRS4.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>DISABLE = 0, ENABLE = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_rd_preamble_train</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_RD_PREAMBLE</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Read Pre amble Mode from DDR4 DRAM Spec.
+          This is for DDR4 MRS4.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>1NCLK = 0, 2NCLK = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_rd_preamble</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_WR_PREAMBLE</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Write Pre amble Mode from DDR4 DRAM Spec.
+          This is for DDR4 MRS4.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>1NCLK = 0, 2NCLK = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_wr_preamble</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_CRC_ERROR_CLEAR</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          CRC Error Clear from DDR4 DRAM Spec.
+          This is for DDR4 MRS5.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>CLEAR = 0, ERROR = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_crc_error_clear</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_CA_PARITY_ERROR_STATUS</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          C/A Parity Error Status from DDR4 DRAM Spec.
+          This is for DDR4 MRS5.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>CLEAR = 0, ERROR = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_ca_parity_error_status</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_ODT_INPUT_BUFF</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          ODT Input Buffer during power down from DDR4 DRAM Spec.
+          This is for DDR4 MRS5.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>ACTIVATED = 0, DEACTIVATED = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_odt_input_buff</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_CA_PARITY</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          CA Parity Persistance Error from DDR4 DRAM Spec.
+          This is for DDR4 MRS5.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>DISABLE = 0, ENABLE = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_ca_parity</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_DATA_MASK</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Data Mask from DDR4 DRAM Spec.
+          This is for DDR4 MRS5.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>DISABLE = 0, ENABLE = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_data_mask</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_WRITE_DBI</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Write DBI from DDR4 DRAM Spec.
+          This is for DDR4 MRS5.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>DISABLE = 0, ENABLE = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_write_dbi</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_READ_DBI</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          Read DBI from DDR4 DRAM Spec.
+          This is for DDR4 MRS5.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>DISABLE = 0, ENABLE = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_resp_read_dbi</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_VREF_DQ_TRAIN_VALUE</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          VrefDQ Training Value from DDR4 DRAM Spec.
+          This is for DDR4 MRS6.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <writeable/>
+      <array>2 4 20</array>
+      <mssAccessorName>exp_resp_vref_dq_train_value</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_VREF_DQ_TRAIN_RANGE</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          VrefDQ Training Range from DDR4 DRAM Spec.
+          This is for DDR4 MRS6.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>RANGE1 = 0, RANGE2 = 1</enum>
+      <writeable/>
+      <array>2 4 20</array>
+      <mssAccessorName>exp_resp_vref_dq_train_range</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_RESP_VREF_DQ_TRAIN_ENABLE</id>
+      <targetType>TARGET_TYPE_MEM_PORT</targetType>
+      <description>
+          VrefDQ Training Value from DDR4 DRAM Spec.
+          This is for DDR4 MRS6.
+          From user_response_mrs_msdg_t in draminit.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>DISABLE = 0, ENABLE = 1</enum>
+      <writeable/>
+      <array>2 4 20</array>
+      <mssAccessorName>exp_resp_vref_dq_train_enable</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_CDR_BW_OVERRIDE_ENABLE</id>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <description>
+          This enables the override to the Explroer CDR bandwidth, to
+          the value specified by ATTR_MSS_EXP_CDR_BW_OVERRIDE_VALUE.
+          (Deprecated. Use ATTR_MSS_EXP_OMI_CDR_BW_OVERRIDE instead.)
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>DISABLE = 0, ENABLE = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_cdr_bw_override_enable</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_CDR_BW_OVERRIDE_VALUE</id>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <description>
+          Value for the Explorer CDR Bandwidth when override is enabled via
+          ATTR_MSS_EXP_CDR_BW_OVERRIDE_ENABLE
+          (Deprecated. Use ATTR_MSS_EXP_OMI_CDR_BW_OVERRIDE instead.)
+      </description>
+      <valueType>uint8</valueType>
+      <default>47</default>
+      <writeable/>
+      <mssAccessorName>exp_cdr_bw_override_value</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_OMI_CDR_BW_OVERRIDE</id>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <description>
+          Value for the Explorer CDR Bandwidth to be applied before
+          BOOT_CONFIG0 command.
+      </description>
+      <valueType>uint8</valueType>
+      <enum>DEFAULT = 0</enum>
+      <default>0x00</default>
+      <platInit/>
+      <overrideOnly/>
+      <mssAccessorName>exp_omi_cdr_bw_override</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_OMI_CDR_OFFSET</id>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <description>
+          Value for the Explorer CDR offset to be applied after
+          BOOT_CONFIG0 command. This is a signed two's complement value.
+      </description>
+      <valueType>uint8</valueType>
+      <default>0x00</default>
+      <platInit/>
+      <overrideOnly/>
+      <mssAccessorName>exp_omi_cdr_offset</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_OMI_CDR_OFFSET_LANE_MASK</id>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <description>
+          Lane mask for the Explorer CDR offset specified in
+          ATTR_MSS_EXP_OMI_CDR_OFFSET. Bit 0 is for lane 0, and so on.
+          A '1' in each bit means to apply the offset for that lane.
+          Default is to apply to all lanes (0xFF)
+      </description>
+      <valueType>uint8</valueType>
+      <default>0xFF</default>
+      <platInit/>
+      <overrideOnly/>
+      <mssAccessorName>exp_omi_cdr_offset_lane_mask</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_INTR_MASK_DISABLE</id>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <description>
+          This is a lab override attribute to disable masking Explorer
+          FIR interrupts during OMI training. Disabling this can work
+          around scom fails caused by older FW versions not including
+          the register 0x08040017
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>ENABLE = 0, DISABLE = 1</enum>
+      <writeable/>
+      <mssAccessorName>exp_intr_mask_disable</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_I2C_FW_LOG_DUMP_DISABLE</id>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <description>
+          This is a lab override attribute to disable dumping Explorer
+          firmware logs via i2c in FFDC handling. Dumping out logs using
+          this method is destructive, i.e. the logs get cleared, so they
+          will not be accessible via lab tool after the initial FFDC dump.
+          FFDC may not be able to store the entire log so setting this
+          could be necessary in a lab setting.
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <enum>ENABLE = 0, DISABLE = 1</enum>
+      <writeable/>
+      <overrideOnly/>
+      <mssAccessorName>exp_i2c_fw_log_dump_disable</mssAccessorName>
+    </attribute>
+
+    <attribute>
+      <id>ATTR_MSS_EXP_SERIAL_NUMBER</id>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <description>
+          IBM serial number for this DDIMM
+      </description>
+      <initToZero></initToZero>
+      <valueType>uint8</valueType>
+      <writeable/>
+      <array> 26 </array>
+      <mssAccessorName>exp_serial_number</mssAccessorName>
+    </attribute>
+
+</attributes>

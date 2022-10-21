@@ -924,8 +924,8 @@
   </hwpError>
 
   <hwpError>
-    <rc>RC_MSS_VOLT_DDR_TYPE_REQUIRED_VOLTAGE</rc>
-    <description>One or more DIMMs do not support required voltage for DDR type.</description>
+    <rc>RC_MSS_VOLT_DDR4_TYPE_REQUIRED_VOLTAGE</rc>
+    <description>One or more DIMMs do not support required voltage for DDR4.</description>
     <ffdc>EXPECTED_OPERABLE</ffdc>
     <ffdc>EXPECTED_ENDURANT</ffdc>
     <ffdc>ACTUAL_OPERABLE</ffdc>
@@ -940,6 +940,44 @@
     </callout>
     <deconfigure>
       <target>DIMM_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_VOLT_DDR5_TYPE_REQUIRED_VOLTAGE</rc>
+    <description>One or more DIMMs do not support required voltage for DDR5.</description>
+    <ffdc>EXPECTED_OPERABLE</ffdc>
+    <ffdc>EXPECTED_ENDURANT</ffdc>
+    <ffdc>ACTUAL_VDD_OPERABLE</ffdc>
+    <ffdc>ACTUAL_VDDQ_OPERABLE</ffdc>
+    <ffdc>ACTUAL_VPP_OPERABLE</ffdc>
+    <ffdc>ACTUAL_VDD_ENDURANT</ffdc>
+    <ffdc>ACTUAL_VDDQ_ENDURANT</ffdc>
+    <ffdc>ACTUAL_VPP_ENDURANT</ffdc>
+   <callout>
+      <procedure>MEMORY_PLUGGING_ERROR</procedure>
+      <priority>HIGH</priority>
+    </callout>
+    <callout>
+      <target>DIMM_TARGET</target>
+      <priority>MEDIUM</priority>
+    </callout>
+    <deconfigure>
+      <target>DIMM_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_VOLT_INVALID_DRAM_GEN</rc>
+    <description>Invalid DRAM generation at p10_mss_volt</description>
+    <ffdc>DRAM_GEN</ffdc>
+    <ffdc>PORT_TARGET</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>PORT_TARGET</target>
     </deconfigure>
   </hwpError>
 
@@ -1125,6 +1163,19 @@
     <ffdc>PORT_TARGET</ffdc>
     <ffdc>PORT_DATABUS_UTIL</ffdc>
     <ffdc>DIMM_COUNT</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_NO_SAFEMODE_UTILIZATION</rc>
+    <description>
+      Safemode utilization is zero
+    </description>
+    <ffdc>PORT_TARGET</ffdc>
+    <ffdc>PORT_DATABUS_UTIL</ffdc>
     <callout>
       <procedure>CODE</procedure>
       <priority>HIGH</priority>
@@ -1405,6 +1456,7 @@
     <ffdc>STACK_TYPE</ffdc>
     <ffdc>MFGID</ffdc>
     <ffdc>MODULE_HEIGHT</ffdc>
+    <ffdc>ROUNDED_OFF_DIMM_COUNT</ffdc>
     <callout>
       <procedure>CODE</procedure>
       <priority>HIGH</priority>
@@ -1721,6 +1773,86 @@
     </callout>
     <deconfigure>
       <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_PLUG_RULES_PLANAR_DRAM_GEN</rc>
+    <description>
+        DRAM generation other than DDR4 detected
+    </description>
+    <ffdc>DRAM_GEN</ffdc>
+    <ffdc>DIMM_TARGET</ffdc>
+    <callout>
+      <procedure>MEMORY_PLUGGING_ERROR</procedure>
+      <priority>HIGH</priority>
+    </callout>
+    <callout>
+      <target>DIMM_TARGET</target>
+      <priority>LOW</priority>
+    </callout>
+    <deconfigure>
+      <target>DIMM_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_PLUG_RULES_PLANAR_DRAM_DIMM_TYPE</rc>
+    <description>
+        DRAM type other than UDIMM/RDIMM detected
+    </description>
+    <ffdc>DIMM_TYPE</ffdc>
+    <ffdc>DIMM_TARGET</ffdc>
+    <callout>
+      <procedure>MEMORY_PLUGGING_ERROR</procedure>
+      <priority>HIGH</priority>
+    </callout>
+    <callout>
+      <target>DIMM_TARGET</target>
+      <priority>LOW</priority>
+    </callout>
+    <deconfigure>
+      <target>DIMM_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_PLUG_RULES_PLANAR_DRAM_WIDTH</rc>
+    <description>
+        DRAM width other than X4/X8 detected
+    </description>
+    <ffdc>DRAM_WIDTH</ffdc>
+    <ffdc>DIMM_TARGET</ffdc>
+    <callout>
+      <procedure>MEMORY_PLUGGING_ERROR</procedure>
+      <priority>HIGH</priority>
+    </callout>
+    <callout>
+      <target>DIMM_TARGET</target>
+      <priority>LOW</priority>
+    </callout>
+    <deconfigure>
+      <target>DIMM_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_MSS_PLUG_RULES_PLANAR_DRAM_DENSITY</rc>
+    <description>
+        DRAM density other than 8G/16G detected
+    </description>
+    <ffdc>DRAM_DENSITY</ffdc>
+    <ffdc>DIMM_TARGET</ffdc>
+    <callout>
+      <procedure>MEMORY_PLUGGING_ERROR</procedure>
+      <priority>HIGH</priority>
+    </callout>
+    <callout>
+      <target>DIMM_TARGET</target>
+      <priority>LOW</priority>
+    </callout>
+    <deconfigure>
+      <target>DIMM_TARGET</target>
     </deconfigure>
   </hwpError>
 

@@ -27,7 +27,7 @@
 /// @file hwp_wrappers_exp.C
 /// @brief Main wrapper file for PRD calling Explorer memory procedure code
 ///
-// *HWP HWP Owner: Matthew Hickman <Matthew.Hickman@ibm.com>
+// *HWP HWP Owner: Sneha Kadam <sneha.kadam1@ibm.com>
 // *HWP HWP Backup: Louis Stermole <stermole@us.ibm.com>
 // *HWP Team: Memory
 // *HWP Level: 3
@@ -37,7 +37,6 @@
 #include <lib/ecc/ecc_traits_explorer.H>
 #include <lib/mcbist/exp_mcbist_traits.H>
 #include <lib/dimm/exp_rank.H>
-#include <lib/mcbist/exp_mcbist.H>
 #include <generic/memory/lib/utils/dimm/kind.H>
 #include <generic/memory/lib/utils/mcbist/gen_mss_mcbist.H>
 #include <generic/memory/lib/utils/mcbist/gen_mss_memdiags.H>

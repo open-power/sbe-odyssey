@@ -25,10 +25,14 @@
 -include $(ROOTPATH)/public/memory/generic/memory/00generic.mk
 
 MSS_ODY_INCLUDES := $(GENPATH)
+MSS_ODY_INCLUDES += $(ROOTPATH)
 MSS_ODY_INCLUDES += $(MSS_PATH)
+MSS_ODY_INCLUDES += $(ROOTPATH)/public/common/utils
 MSS_ODY_INCLUDES += $(ROOTPATH)/public/common/odyssey/registers
+MSS_ODY_INCLUDES += $(MSS_PATH)/odyssey/common/include
 MSS_ODY_INCLUDES += $(MSS_PATH)/odyssey/hwp/lib
 MSS_ODY_INCLUDES += $(MSS_PATH)/odyssey/hwp
+MSS_ODY_INCLUDES += $(MSS_PATH)/odyssey/hwp/wrapper
 MSS_ODY_INCLUDES += $(MSS_PATH)/odyssey/initfiles
 #MSS_ODY_INCLUDES += $(MSS_PATH)/p11/hwp
 
@@ -36,7 +40,7 @@ MSS_ODY_INCLUDES += $(MSS_PATH)/odyssey/initfiles
 MSS_ODY_INCLUDES += $(MSS_PATH)/generic/memory/lib
 MSS_ODY_INCLUDES += $(MSS_PATH)/generic/memory/lib/utils
 
-#MSS_ODY_LAB_PATH := $(MSS_INTERNAL)/generic/lab
+MSS_ODY_LAB_PATH := $(MSS_INTERNAL)/memory/generic/lab
 
 CATCH_UNIT_TESTS_INCLUDES := $(ROOTPATH)/public/common/generic/fapi2/test
 

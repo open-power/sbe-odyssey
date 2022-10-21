@@ -40,6 +40,7 @@
 
 #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
 
+
 namespace mss
 {
 namespace ody
@@ -62,6 +63,55 @@ fapi2::ReturnCode configure_phy_scom_access(const fapi2::Target<fapi2::TARGET_TY
 /// @return The IBM register address converted from
 ///
 uint64_t convert_synopsys_to_ibm_reg_addr( const uint64_t i_synopsys_addr);
+
+///
+/// @brief Loads two contiguous 8-bit fields into the DMEM register format
+/// @param[in] i_even_field field at the even byte offset
+/// @param[in] i_odd_field field at the odd byte offset
+/// @param[in,out] io_data the register data
+///
+void load_dmem_8bit_fields( const uint8_t i_even_field, const uint8_t i_odd_field, fapi2::buffer<uint64_t>& io_data);
+
+///
+/// @brief Reads two contiguous 8-bit fields from the DMEM
+/// @param[in] i_target the target on which to operate
+/// @param[in] i_addr the starting address to read from
+/// @param[out] o_even_field field at the even byte offset
+/// @param[out] o_odd_field field at the odd byte offset
+/// @return fapi2::FAPI2_RC_SUCCESS iff successful
+///
+fapi2::ReturnCode read_dmem_field( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target, const uint64_t i_addr,
+                                   uint8_t& o_even_field, uint8_t& o_odd_field);
+
+///
+/// @brief Reads two contiguous 8-bit fields from the DMEM
+/// @param[in] i_target the target on which to operate
+/// @param[in] i_addr the starting address to read from
+/// @param[out] o_field the 16-bit field
+/// @return fapi2::FAPI2_RC_SUCCESS iff successful
+///
+fapi2::ReturnCode read_dmem_field( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target, const uint64_t i_addr,
+                                   uint16_t& o_field);
+
+///
+/// @brief Reads two contiguous 8-bit fields from the DMEM
+/// @param[in] i_target the target on which to operate
+/// @param[in] i_addr the starting address to read from
+/// @param[out] o_field the 32-bit field, read in from two registers
+/// @return fapi2::FAPI2_RC_SUCCESS iff successful
+///
+fapi2::ReturnCode read_dmem_field( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target, const uint64_t i_addr,
+                                   uint32_t& o_field);
+
+///
+/// @brief Reads two contiguous 8-bit fields from the DMEM
+/// @param[in] i_target the target on which to operate
+/// @param[in] i_addr the starting address to read from
+/// @param[out] o_field the 64-bit field, read in from four registers
+/// @return fapi2::FAPI2_RC_SUCCESS iff successful
+///
+fapi2::ReturnCode read_dmem_field( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target, const uint64_t i_addr,
+                                   uint64_t& o_field);
 
 } // namespace phy
 } // namespace ody

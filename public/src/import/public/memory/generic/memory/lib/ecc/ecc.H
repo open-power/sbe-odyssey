@@ -91,6 +91,7 @@ inline fapi2::ReturnCode get_hw_marks( const fapi2::Target<T>& i_target,
         }
     }
 
+
     return fapi2::FAPI2_RC_SUCCESS;
 
 fapi_try_exit:

@@ -28,6 +28,7 @@
 #
 
 # Add common and generated parts to object list.
+
 -include $(ROOTPATH)/public/memory/generic/memory/00generic.mk
 
 MSS_ODY_PATH := $(MSS_PATH)/odyssey/hwp/lib
@@ -42,8 +43,8 @@ MSS_ODY_SOURCE_DIRS := $(shell find $(MSS_ODY_PATH) -type d)
 define MSS_ODY_MODULE_INCLUDES
 $(foreach dir, $(MSS_ODY_SOURCE_DIRS), $(call ADD_MODULE_SRCDIR,$(1),$(dir)))
 $(call ADD_MODULE_INCDIR,$(1),$(MSS_PATH)/odyssey/hwp)
+$(call ADD_MODULE_INCDIR,$(1),$(MSS_INTERNAL)/odyssey/hwp/wrapper)
 $(call ADD_MODULE_INCDIR,$(1),$(MSS_PATH)/odyssey/hwp/lib)
-#$(call ADD_MODULE_INCDIR,$(1),$(ROOTPATH)/chips/p10/procedures/hwp/memory/lib)
 $(call ADD_MODULE_INCDIR,$(1),$(ROOTPATH)/public/common/generic/scomt)
 $(call ADD_MODULE_INCDIR,$(1),$(ROOTPATH)/public/common/odyssey/registers)
 $(call ADD_MODULE_INCDIR,$(1),$(MSS_PATH)/generic/memory/lib)

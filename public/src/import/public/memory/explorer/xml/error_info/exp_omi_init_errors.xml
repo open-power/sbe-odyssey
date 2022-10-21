@@ -1,0 +1,140 @@
+<!-- IBM_PROLOG_BEGIN_TAG                                                   -->
+<!-- This is an automatically generated prolog.                             -->
+<!--                                                                        -->
+<!-- $Source: public/src/import/public/memory/explorer/xml/error_info/exp_omi_init_errors.xml $ -->
+<!--                                                                        -->
+<!-- OpenPOWER sbe Project                                                  -->
+<!--                                                                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022                             -->
+<!-- [+] International Business Machines Corp.                              -->
+<!--                                                                        -->
+<!--                                                                        -->
+<!-- Licensed under the Apache License, Version 2.0 (the "License");        -->
+<!-- you may not use this file except in compliance with the License.       -->
+<!-- You may obtain a copy of the License at                                -->
+<!--                                                                        -->
+<!--     http://www.apache.org/licenses/LICENSE-2.0                         -->
+<!--                                                                        -->
+<!-- Unless required by applicable law or agreed to in writing, software    -->
+<!-- distributed under the License is distributed on an "AS IS" BASIS,      -->
+<!-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or        -->
+<!-- implied. See the License for the specific language governing           -->
+<!-- permissions and limitations under the License.                         -->
+<!--                                                                        -->
+<!-- IBM_PROLOG_END_TAG                                                     -->
+<!-- Error definitions for exp_omi_init HWP -->
+<hwpErrors>
+
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_OCMB_IS_NOT_EXPLORER</rc>
+    <description>
+      Procedure: exp_omi_init.C
+      The Explorer O0DID was not read.
+    </description>
+    <ffdc>ID</ffdc>
+    <ffdc>EXPECTED</ffdc>
+    <ffdc>OCMB_TARGET</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>LOW</priority>
+    </callout>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_PROC_DOES_NOT_SUPPORT_US_B</rc>
+    <description>
+      Procedure: exp_omi_init.C
+      Upstream tempate B was requested, but the
+      connected processor does not support it.
+    </description>
+    <ffdc>PROC_TARGET</ffdc>
+    <ffdc>US_TEMPLATES_0159</ffdc>
+    <ffdc>B</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>LOW</priority>
+    </callout>
+    <callout>
+      <target>PROC_TARGET</target>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_PROC_DOES_NOT_SUPPORT_DS_A</rc>
+    <description>
+      Procedure: exp_omi_init.C
+      Downstream tempate A was requested, but the
+      connected processor does not support it.
+    </description>
+    <ffdc>PROC_TARGET</ffdc>
+    <ffdc>DS_TEMPLATES_0147</ffdc>
+    <ffdc>A</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>LOW</priority>
+    </callout>
+    <callout>
+      <target>PROC_TARGET</target>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_METADATA_ENABLE_REQUIRES_TEMPLATE_5_OR_9</rc>
+    <description>
+      Procedure: exp_omi_init.C
+      Upstream template 5 or 9 need to be enabled for
+      metadata enable.
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>TMPL_5</ffdc>
+    <ffdc>TMPL_9</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>LOW</priority>
+    </callout>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_ACTAG_PASID_CONFIG_INVALID</rc>
+    <description>
+      MFIR_ACTAG_PASID_CFG_ERR has been lit due to unsupported configuration in number of acTAGs and PASIDs
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+  <!-- ******************************************************************** -->
+</hwpErrors>

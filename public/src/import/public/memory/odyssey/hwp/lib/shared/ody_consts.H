@@ -69,6 +69,9 @@ enum sizes
     // Any code that converts DIMM ranks to port ranks should use the rank API
     MAX_RANK_PER_DIMM = 4,
 
+    // The maximum number of ranks in the PHY
+    MAX_RANK_PER_PHY = 4,
+
     // This is the maximum number of main ranks per DIMM supported by the hardware
     HW_MAX_RANK_PER_DIMM = 2,
 
@@ -94,6 +97,9 @@ enum sizes
     SERIAL_RAW_CARD_LEN = 2,
     SERIAL_SERIAL_NUMBER = 14,
     SERIAL_SERIAL_NUMBER_LEN = 12,
+
+    // Synopsys PUB revision version
+    PUB_REV = 0x350,
 };
 
 #endif
@@ -174,7 +180,7 @@ enum ffdc_codes : uint16_t
 
 ///
 /// @brief constants for getecid procedure
-/// TODO: Zen:MST-1414 Update these when we do ody_getecid
+/// TODO: Zen:MST-1414 Update these when we do ody_getidec
 ///
 enum ecid_consts
 {
@@ -184,8 +190,7 @@ enum ecid_consts
 };
 
 ///
-/// @brief constants for getidec procedure
-/// TODO: Zen:MST-1415 Update these when we do ody_getidec
+/// @brief constants for Odyssey getidec procedure
 ///
 enum idec_consts
 {
@@ -198,8 +203,6 @@ enum idec_consts
     CHIPID_BIT_START           = 12,
     CHIPID_BIT_LENGTH          = 8
 };
-
-
 
 ///
 /// @brief generic Odyssey constants

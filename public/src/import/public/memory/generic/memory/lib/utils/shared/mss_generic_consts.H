@@ -217,6 +217,7 @@ enum generic_ffdc_codes : uint16_t
     INIT_RANK_INFO = 0x103B,
     BIAS_PMIC_FROM_SPD = 0x103C,
     PMIC_ENABLE_SPD = 0x103D,
+    SET_CHANNELS_PER_DIMM = 0x103E,
     SET_DRAM_WIDTH = 0x1040,
 
     SET_SI_VREF_DRAM_WR = 0x1041,
@@ -255,6 +256,7 @@ enum generic_ffdc_codes : uint16_t
     POWER_LIMIT = 0x1072,
     SLOPE = 0x1073,
     INTERCEPT = 0x1074,
+    SAFEMODE = 0x1078,
 
     SET_SI_RD_VREF_DQ = 0x1075,
     SET_CAC_DELAY_A = 0x1076,
@@ -1216,6 +1218,27 @@ struct mcTypeTraits<mc_type::ODYSSEY>
         DIMMS_PER_PORT = 2, // Note: not technically true, but I think we need it for our calculations
     };
 };
+
+namespace ddr5
+{
+
+
+///
+/// @brief DDR5 mode register attribute array values
+///
+enum mr
+{
+    ATTR_RANKS = 4,
+    ATTR_DRAM  = 20,
+    ATTR_STRAP = 2,
+
+    // Defined in the DDR5 JEDEC Spec v1.7.1
+    // MR32 OP[6]
+    STRAPA = 0,
+    STRAPB = 1,
+};
+
+}
 
 }// mss
 

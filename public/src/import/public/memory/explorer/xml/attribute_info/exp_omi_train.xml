@@ -1,0 +1,222 @@
+<!-- IBM_PROLOG_BEGIN_TAG                                                   -->
+<!-- This is an automatically generated prolog.                             -->
+<!--                                                                        -->
+<!-- $Source: public/src/import/public/memory/explorer/xml/attribute_info/exp_omi_train.xml $ -->
+<!--                                                                        -->
+<!-- OpenPOWER sbe Project                                                  -->
+<!--                                                                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022                             -->
+<!-- [+] International Business Machines Corp.                              -->
+<!--                                                                        -->
+<!--                                                                        -->
+<!-- Licensed under the Apache License, Version 2.0 (the "License");        -->
+<!-- you may not use this file except in compliance with the License.       -->
+<!-- You may obtain a copy of the License at                                -->
+<!--                                                                        -->
+<!--     http://www.apache.org/licenses/LICENSE-2.0                         -->
+<!--                                                                        -->
+<!-- Unless required by applicable law or agreed to in writing, software    -->
+<!-- distributed under the License is distributed on an "AS IS" BASIS,      -->
+<!-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or        -->
+<!-- implied. See the License for the specific language governing           -->
+<!-- permissions and limitations under the License.                         -->
+<!--                                                                        -->
+<!-- IBM_PROLOG_END_TAG                                                     -->
+<!-- -->
+<!-- @file exp_omi_train.xml -->
+<!-- @brief Attribute xml for exp_omi_train -->
+<!-- -->
+<!-- *HWP HWP Owner: Andre Marin <aamarin@us.ibm.com> -->
+<!-- *HWP HWP Backup: Stephen Glancy <sglancy@us.ibm.com> -->
+<!-- *HWP FW Owner: Daniel Crowell <dcrowell@us.ibm.com> -->
+<!-- *HWP Team: Memory -->
+<!-- *HWP Level: 2 -->
+<!-- *HWP Consumed by: FSP:HB -->
+<!-- -->
+
+<attributes>
+    <attribute>
+        <id>ATTR_MSS_OCMB_EXP_BOOT_CONFIG_FW_MODE</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            Indicates the FW MODE of the OCMB
+        </description>
+        <valueType>uint8</valueType>
+        <enum>
+            NORMAL_MODE = 0,
+            MANUFACTURING_MODE = 1,
+            PRODUCT_QUALIFICATION_MODE = 2
+        </enum>
+        <initToZero/>
+        <platInit/>
+        <overrideOnly/>
+        <mssAccessorName>ocmb_exp_boot_config_fw_mode</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MSS_OCMB_EXP_BOOT_CONFIG_OPENCAPI_LOOPBACK_TEST</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            Indicates wheather to enable the loopback test
+        </description>
+        <valueType>uint8</valueType>
+        <enum>
+            NO_LOOPBACK_TESTING = 0,
+            PERFORM_LOOPBACK_TESTING = 1
+        </enum>
+        <initToZero/>
+        <platInit/>
+        <overrideOnly/>
+        <mssAccessorName>ocmb_exp_boot_config_opencapi_loopback_test</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MSS_OCMB_EXP_BOOT_CONFIG_TRANSPORT_LAYER</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            The transport layer of OCMB
+        </description>
+        <valueType>uint8</valueType>
+        <enum>
+            OPEN_CAPI = 0,
+            I2C = 1,
+            JTAG = 2
+        </enum>
+        <initToZero/>
+        <platInit/>
+        <overrideOnly/>
+        <mssAccessorName>ocmb_exp_boot_config_transport_layer</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MSS_OCMB_EXP_BOOT_CONFIG_DL_LAYER_BOOT_MODE</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            Indicates whether the OpenCAPI DL boots immediately
+            or waits for host command. BOOT_CONFIG0 should use either
+            setting '0' (legacy Explorer FW) or '2' (newer Explorer FW).
+            BOOT_CONFIG1 should use setting '1'
+        </description>
+        <valueType>uint8</valueType>
+        <enum>
+           NON_DL_TRAINING = 0,
+           ONLY_DL_TRAINING = 1,
+           NON_DL_TRAINING_VERSION2 = 2
+        </enum>
+        <platInit/>
+        <initToZero/>
+        <overrideOnly/>
+        <mssAccessorName>ocmb_exp_boot_config_dl_layer_boot_mode</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MSS_OCMB_EXP_BOOT_CONFIG_DFE_DISABLE</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            Set to enable or disable DFE
+        </description>
+        <valueType>uint8</valueType>
+        <enum>
+            DISABLE = 0,
+            ENABLE = 1
+        </enum>
+        <default>ENABLE</default>
+        <platInit/>
+        <overrideOnly/>
+        <mssAccessorName>ocmb_exp_boot_config_dfe_disable</mssAccessorName>
+    </attribute>
+
+     <attribute>
+        <id>ATTR_MSS_OCMB_EXP_BOOT_CONFIG_LANE_MODE</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            The lane width of the OpenCapi channel
+        </description>
+        <valueType>uint8</valueType>
+        <enum>
+            LANE_8= 1,
+            LANE_4= 2
+        </enum>
+        <default>1</default>
+        <platInit/>
+        <mssAccessorName>ocmb_exp_boot_config_lane_mode</mssAccessorName>
+    </attribute>
+
+     <attribute>
+        <id>ATTR_MSS_OCMB_EXP_BOOT_CONFIG_SERDES_FREQUENCY</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            The frequency of the OpenCAPI
+        </description>
+        <valueType>uint8</valueType>
+        <enum>
+           SERDES_21_33GBPS = 1,
+           SERDES_23_46GBPS = 2,
+           SERDES_25_60GBPS = 3
+        </enum>
+        <default>3</default>
+        <platInit/>
+        <mssAccessorName>ocmb_exp_boot_config_serdes_frequency</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_MSS_OCMB_EXP_BOOT_CONFIG_ADAPTATION_MODE</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            Indicates whether to enable adaptation
+        </description>
+        <valueType>uint8</valueType>
+        <enum>
+            DISABLE = 0,
+            ENABLE = 1
+        </enum>
+        <default>ENABLE</default>
+        <platInit/>
+        <mssAccessorName>ocmb_exp_boot_config_adaptation_mode</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_OMI_FFE_SETTINGS_COMMAND</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            Enable execution of FW_TWI_FFE_SETTINGS command
+            on Explorer. Defaults to DISABLE.
+        </description>
+        <valueType>uint8</valueType>
+        <enum>
+            DISABLE = 0,
+            ENABLE = 1
+        </enum>
+        <default>DISABLE</default>
+        <platInit/>
+        <overrideOnly/>
+        <mssAccessorName>omi_ffe_settings_command</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_OMI_FFE_PRE_CURSOR</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            OMI FFE pre-cursor setting. Maximum 32, but cannot be 32 if
+            ATTR_OMI_FFE_POST_CURSOR is also 32. Default 0.
+        </description>
+        <valueType>uint32</valueType>
+        <initToZero/>
+        <writeable/>
+        <mssAccessorName>omi_ffe_pre_cursor</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_OMI_FFE_POST_CURSOR</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            OMI FFE post-cursor setting. Maximum 32, but cannot be 32 if
+            ATTR_OMI_FFE_PRE_CURSOR is also 32. Default 0.
+        </description>
+        <valueType>uint32</valueType>
+        <initToZero/>
+        <writeable/>
+        <mssAccessorName>omi_ffe_post_cursor</mssAccessorName>
+    </attribute>
+
+</attributes>
