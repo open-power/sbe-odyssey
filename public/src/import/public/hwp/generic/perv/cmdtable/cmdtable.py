@@ -386,11 +386,11 @@ def run_commands(main, cust, target):
                 target.putScom(cmd.address, cmd.data)
 
         elif cmd.op in (Opcode.TEST, Opcode.POLL, Opcode.CMPBEQ, Opcode.CMPBNE):
-            timeout = 1000
+            timeout = 10000
             while True:
                 value = target.getScom(cmd.address).uint
                 match = value & cmd.mask == cmd.data
-                print("  %016X -> %016X %s %016X" % (value, value & cmd.mask, "==" if match else "!=", cmd.data))
+                print("  %004d: %016X -> %016X %s %016X" % (10000-timeout, value, value & cmd.mask, "==" if match else "!=", cmd.data))
                 if cmd.op == Opcode.POLL:
                     if match:
                         break

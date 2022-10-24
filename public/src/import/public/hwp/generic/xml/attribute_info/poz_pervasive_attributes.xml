@@ -38,6 +38,32 @@
 </attribute>
 <!-- ********************************************************************** -->
 <attribute>
+  <id>ATTR_CP_PLLFLT_BYPASS</id>
+  <targetType>TARGET_TYPE_HUB_CHIP, TARGET_TYPE_PROC_CHIP</targetType>
+  <description>
+    Keep HUB chip FILTER PLLs in bypass
+  </description>
+  <valueType>uint8</valueType>
+  <enum>BYPASS = 0x1, NON_BYPASS = 0x0</enum>
+  <writeable/>
+  <platInit/>
+  <initToZero/>
+</attribute>
+<!-- ********************************************************************** -->
+<attribute>
+  <id>ATTR_CP_PLLNEST_BYPASS</id>
+  <targetType>TARGET_TYPE_HUB_CHIP, TARGET_TYPE_PROC_CHIP</targetType>
+  <description>
+    Keep HUB NEST PLL in bypass
+  </description>
+  <valueType>uint8</valueType>
+  <enum>BYPASS = 0x1, NON_BYPASS = 0x0</enum>
+  <writeable/>
+  <platInit/>
+  <initToZero/>
+</attribute>
+<!-- ********************************************************************** -->
+<attribute>
   <id>ATTR_CLOCKSTOP_ON_XSTOP</id>
   <targetType>TARGET_TYPE_COMPUTE_CHIP, TARGET_TYPE_HUB_CHIP, TARGET_TYPE_OCMB_CHIP, TARGET_TYPE_PROC_CHIP</targetType>
   <description>
