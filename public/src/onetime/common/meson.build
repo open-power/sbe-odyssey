@@ -23,7 +23,8 @@
 #
 # IBM_PROLOG_END_TAG
 
-if get_option('srom').enabled()
+#TODO: Remove odyssey check after odyssey and p11 srom code is compiled common
+if get_option('srom').enabled() and platform == 'odyssey'
   subdir('srom')
   subdir('algorithms')
 endif
