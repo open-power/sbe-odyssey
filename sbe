@@ -24,7 +24,7 @@
 #
 # IBM_PROLOG_END_TAG
 
-source internal/src/test/framework/detect-python
+source public/src/tools/utils/sbe/detect-python
 
 SUPPORTED_PLATFORM=("p11" "metis" "p11_dft" "metis_dft" "odyssey" "all")
 SUPPORTED_IMAGES=("sppe" "bldr" "srom" "otprom" "pnor")
