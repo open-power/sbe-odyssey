@@ -67,4 +67,16 @@ static inline uint64_t byte_swap(const uint64_t x)
     return bswap_64(x);
 }
 
+/// @brief return true if the input value is nonzero and a power of two, else return false
+constexpr bool is_power_of_two(const uint64_t i_value)
+{
+    return i_value && (!(i_value & (i_value - 1)));
+}
+
+/// @brief return a bit mask with a string of length 1 bits starting at start_bit
+constexpr uint64_t bit_mask(const int start_bit, const int length)
+{
+    return (~0ULL >> (64 - length)) << (64 - start_bit - length);
+}
+
 }
