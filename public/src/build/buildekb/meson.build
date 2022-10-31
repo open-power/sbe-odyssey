@@ -28,3 +28,7 @@ subdir('common')
 if platform == 'odyssey' or platform == 'all'
     subdir('odyssey')
 endif
+
+if platform == 'p11' or platform == 'all'
+    subdir('p11')
+endif
