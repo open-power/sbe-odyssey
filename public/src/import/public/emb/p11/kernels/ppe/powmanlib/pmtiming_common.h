@@ -30,12 +30,13 @@
 
 
 //
-// CETSEL register defines for Watchdog and FIT timers
+// TSEL register defines for PPE Watchdog and FIT timers
 //
-#define CETSEL_WDT_SEL_MASK   0xf0000000  //Mask of WDT bits
-#define CETSEL_FIT_SEL_MASK   0x0f000000  //Mask of FIT bits
-#define CETSEL_FIT_SEL_66US   0x0c000000  //Corresponds to a ~66us @ 2.0G or 218us @ 2.4G 
-#define CETSEL_FIT_SEL_262US  0x0a000000  //Corresponds to a ~262us @ 2.0G or 218us @ 2.4G 
+#define TSEL_WDT_SEL_MASK   0xf0000000  //Mask of WDT bits
+#define TSEL_FIT_SEL_MASK   0x0f000000  //Mask of FIT bits
+#define TSEL_FIT_SEL_66US   0x0c000000  //Corresponds to a ~66us @ 2.0G or 55us @ 2.4G 
+#define TSEL_FIT_SEL_262US  0x0a000000  //Corresponds to a ~262us @ 2.0G or 218us @ 2.4G 
+#define TSEL_FIT_SEL_524US  0x09000000  //Corresponds to a ~524us @ 2.0G or 437us @ 2.4G 
 
 //
 // TBR defines

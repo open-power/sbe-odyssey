@@ -32,8 +32,10 @@
 
 #if defined(__PK__)
     #include "pk.h"
+    #include "pk_api.h"
 #elif defined(__IOTA__)
     #include "iota.h"
+    #include "iota_trace.h"
 #endif
 
 #include "ocb_register_addresses.h"
@@ -168,6 +170,9 @@ __hwmacro_setup(void)
     if((owned_actual & g_ext_irqs_owned) != g_ext_irqs_owned)
     {
         //IRQ's were not routed to us correctly.
+        PK_TRACE_ERR("ERR: Owned actual IRQs (=0x%08x_%08x) != Owned planned IRQs (=0x%08x_%08x)",
+                     (uint32_t)(owned_actual >> 32), (uint32_t)owned_actual,
+                     (uint32_t)(g_ext_irqs_owned >> 32), (uint32_t)g_ext_irqs_owned);
         APPCFG_PANIC(PMHW_IRQ_ROUTING_ERROR);
     }
 
