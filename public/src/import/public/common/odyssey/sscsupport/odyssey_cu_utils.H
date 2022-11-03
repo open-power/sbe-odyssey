@@ -35,12 +35,17 @@
 #define ODYSSEY_CU_UTILS_H
 
 // includes
-#include <string>
+#ifndef __HOSTBOOT_MODULE // HB doesn't support string
+    #include <string>
+#endif
 #include <odyssey_cu.H>
 #include <odyssey_scom_addr.H>
 
 extern "C"
 {
+// HB doesn't support string or use these functions
+#ifndef __HOSTBOOT_MODULE
+
     /// @brief Convert chip unit enumeration to string
     /// @param[in] i_ODYSSEY_CU Enumeration of chip unit type
     /// @param[out] o_chipUnitType String description of chip unit type
@@ -54,6 +59,8 @@ extern "C"
     /// @retval uint32_t Return non-zero for error
     uint32_t odyssey_convertCUString_to_enum(const std::string& i_chipUnitType,
             odysseyChipUnits_t& o_ODYSSEY_CU);
+
+#endif
 
     /// @brief Debug utility that prints out address fields
     /// @param[in] i_addr         Address value

@@ -39,6 +39,9 @@
 extern "C"
 {
 
+// HB doesn't support string or use these functions
+#ifndef __HOSTBOOT_MODULE
+
     //################################################################################
     uint32_t odyssey_convertCUEnum_to_String(const odysseyChipUnits_t i_ODYSSEY_CU,
             std::string& o_chipUnitType)
@@ -83,7 +86,6 @@ extern "C"
         return 1;
     }
 
-
     //################################################################################
     void odyssey_displayAddrFields(uint64_t i_addr,
                                    odysseyChipUnits_t i_chipUnitType,
@@ -112,6 +114,8 @@ extern "C"
         return;
     }
 
+#endif // __HOSTBOOT_MODULE
+
     // See header file for function description
     uint8_t odyssey_validateChipUnitNum(const uint8_t i_chipUnitNum,
                                         const odysseyChipUnits_t i_chipUnitType)
@@ -130,6 +134,10 @@ extern "C"
                 // for this unit type
                 if (i_chipUnitNum > odysseyChipUnitDescriptionTable[l_index].maxChipUnitNum)
                 {
+#ifndef __HOSTBOOT_MODULE
+                    printf("ERROR: Chip Unit num entered (%d) is out of range for Chip Unit type %d\n",
+                           i_chipUnitNum, i_chipUnitType);
+#endif
                     l_rc = 1;
                 }
 
@@ -138,6 +146,9 @@ extern "C"
                 {
                     if (i_chipUnitNum > MAX_ODYSSEY_PERV_CHIPUNIT) //invalid for pervasive target
                     {
+#ifndef __HOSTBOOT_MODULE
+                        printf("ERROR: Pervasive Chip Unit number is invalid: 0x%.8X\n", i_chipUnitNum);
+#endif
                         l_rc = 1;
                     }
                 }
