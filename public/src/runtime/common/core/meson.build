@@ -33,7 +33,9 @@ infile_c = ['sbeSpMsg.C',
             'chipophandlerutils.C',
             'sberegaccess.C',
             'sbestatesutils.C',
-            'sbestates.C'
+            'sbestates.C',
+            'sbecodeupdate.C',
+            'sbecmdgeneric.C',
            ]
 
 abs_runtime_cmn_core_c_path = []

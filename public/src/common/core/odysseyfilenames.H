@@ -47,4 +47,27 @@ static const char hw_keys_hash_fname[] = "rt/hwkeyshash.bin";
 static const char sppe_ram_pak_fname[] =   "rt/sppe.ram.pak";
 static const char vpd_pak_fname[] =    "vpd/sppe.pak";
 
+// CU: Code Update
+namespace CU
+{
+    /*
+     * @brief Enum for image types supported
+     */
+    enum IMAGES : uint16_t
+    {
+        IMG_TYPE_INVALID=0,
+        BOOTLOADER = 1,    // Updatable(Ody)/ Not-updatable(P11)
+        RUNTIME,           // Updatable(both)
+        BMC_OVRD,          // Updatable(both)
+        HB_OVRD,           // Updatable(both)
+        SROM,              // Not-updatable
+        CUST,              // Not-updatable
+        SPPE_RAM,          // Updatable (both) as part of runtime
+        IOPPE_BIN,         // Updatable (both) as part of runtime
+        SYNOPSYS_BIN,      // Updatable (both) as part of runtime
+        ARC_BIN,           // Updatable (both) as part of runtime
+        END_OF_IMG_LIST
+    };
+} // namespace CU
+
 #endif /* _ODYSSEYFILENAMES_H_ */
