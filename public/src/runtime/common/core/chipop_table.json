@@ -29,6 +29,30 @@
         "command":"0x02",
         "function":"sbePutRing",
         "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+    },
+    {
+        "cmdClass":"A8",
+        "command":"0x02",
+        "function":"sbeGetCapability",
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+    },
+    {
+        "cmdClass":"AE",
+        "command":"0x01",
+        "function":"sbeGetCodeLevels",
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+    },
+    {
+        "cmdClass":"AE",
+        "command":"0x02",
+        "function":"sbeUpdateImage",
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+    },
+    {
+        "cmdClass":"AE",
+        "command":"0x03",
+        "function":"sbeSyncPartition",
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
     }
     ]
 }

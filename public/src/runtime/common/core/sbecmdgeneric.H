@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/chipop_headers.H $       */
+/* $Source: public/src/runtime/common/core/sbecmdgeneric.H $              */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,18 +21,28 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __CHIPOP_HEADERS_H__
-#define __CHIPOP_HEADERS_H__
-#include "sbecmdscomaccess.H"
-#include "sbecodeupdate.H"
-#include "sbecmdgeneric.H"
-#include "istep.H"
-#include "sbetrace.H"
-#include "sbe_sp_intf.H"
-#include "sbecmdringaccess.H"
-#include "sbecmdbist.H"
-#include "sbecmdpak.H"
-#include <stdint.h>
-#include <stddef.h>
+#ifndef SBE_CMD_GENERIC_H
+#define SBE_CMD_GENERIC_H
 
+#ifdef __cplusplus
+extern "C" {
 #endif
+
+#include "pk.h"
+#include "pk_api.h"
+#include "ppe42_scom.h"
+#include "ppe42_string.h"
+
+#ifdef __cplusplus
+}
+#endif
+
+/*@brief - sbeGetCapability : Implement SBE Get Capability Chipop (0xA802)
+ *
+ * @param[in] - i_pArg Buffer to be passed to the function
+ *
+ * @return - RC from the FIFO access utility
+ */
+uint32_t sbeGetCapability(uint8_t *i_pArg);
+
+#endif //SBE_CMD_GENERIC_H
