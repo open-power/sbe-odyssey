@@ -80,7 +80,6 @@ ReturnCode mod_cbs_start_prep(
 
     FAPI_INF("Read FSI2PIB_STATUS register and check whether VDN power is on or not(VDD_NEST_OBSERVE).");
     FAPI_TRY(FSI2PIB_STATUS.getCfam(i_target));
-
     FAPI_ASSERT(FSI2PIB_STATUS.get_VDD_NEST_OBSERVE(),
                 fapi2::POZ_VDN_POWER_NOT_ON()
                 .set_FSI2PIB_STATUS_READ(FSI2PIB_STATUS)
@@ -94,6 +93,7 @@ ReturnCode mod_cbs_start_prep(
     FSB_DOWNFIFO_RESET = 0x80000000;
     FAPI_TRY(FSB_DOWNFIFO_RESET.putCfam(i_target));
 
+    FAPI_INF("Read CBS_ENVSTAT register to check the status of TEST_ENABLE C4 pin");
     FAPI_TRY(CBS_ENVSTAT.getCfam(i_target));
 
     if (CBS_ENVSTAT.get_CBS_ENVSTAT_C4_TEST_ENABLE())
@@ -231,10 +231,9 @@ ReturnCode mod_switch_pcbmux(
     ROOT_CTRL0.set_PCB_RESET(1);
     FAPI_TRY(ROOT_CTRL0.putScom_CLEAR(i_target));
 
-    FAPI_DBG("Restore OOB Mux setting.");
-
     if (l_oob_mux_save == 0)
     {
+        FAPI_DBG("Restore OOB Mux setting.");
         ROOT_CTRL0 = 0;
         ROOT_CTRL0.set_OOB_MUX(1);
         FAPI_TRY(ROOT_CTRL0.putScom_CLEAR(i_target));
@@ -402,6 +401,7 @@ ReturnCode mod_hangpulse_setup(const Target < TARGET_TYPE_PERV | TARGET_TYPE_MUL
 
     while(1)
     {
+        FAPI_DBG("Set frequency value for the hang pulse");
         HANG_PULSE_0 = 0;
         HANG_PULSE_0.set_HANG_PULSE_REG_0(i_hangpulse_table->value);
         HANG_PULSE_0.set_SUPPRESS_HANG_0(i_hangpulse_table->stop_on_xstop);
