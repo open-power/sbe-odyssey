@@ -266,6 +266,10 @@ ReturnCode poz_bist(
     clock_region l_scan0_regions = REGION_ALL;
     uint16_t l_tp_regions = i_params.base_regions;
 
+    // char arrays for accessing pak scan data
+    char load_dir[9] = "lbist/l/";
+    char load_path[sizeof(load_dir) + sizeof(i_params.program) - 1];
+
     // Helper buffers produced from bist_params constituents
     const buffer<uint64_t> l_chiplets_mask = i_params.chiplets;
     const buffer<uint16_t> l_outer_loop_mask = i_params.outer_loop_mask;
@@ -372,9 +376,22 @@ ReturnCode poz_bist(
     if (i_params.stages & i_params.bist_stages::RING_SETUP)
     {
         FAPI_INF("Scan load BIST programming");
-        // TODO add in scan code once supported
-        // FAPI_TRY(putRing(i_params.program.load));
-        FAPI_DBG("BIST ring setup not yet implemented; check back later");
+
+        if (i_params.flags & i_params.bist_flags::ABIST_NOT_LBIST)
+        {
+            load_dir[0] = 'a';
+        }
+
+        // Load base image if it exists
+        strcpy(load_path, load_dir);
+        strcat(load_path, "base_image");
+        FAPI_TRY(fapi2::putRing(l_chiplets_target, load_path));
+
+        // Load program image
+        strcpy(load_path, load_dir);
+        strcat(load_path, i_params.program);
+        FAPI_TRY(fapi2::putRing(l_chiplets_target, load_path));
+
         o_return.completed_stages |= i_params.bist_stages::RING_SETUP;
     }
 
@@ -384,9 +401,7 @@ ReturnCode poz_bist(
     if (i_params.stages & i_params.bist_stages::RING_PATCH)
     {
         FAPI_INF("Apply scan patches if needed");
-        // TODO add in scan code once supported
-        // FAPI_TRY(putRing(i_params.patch_image));
-        FAPI_DBG("BIST ring patch not yet implemented; check back later");
+        FAPI_TRY(fapi2::putRing(l_chiplets_target, i_params.ring_patch));
         o_return.completed_stages |= i_params.bist_stages::RING_PATCH;
     }
 
