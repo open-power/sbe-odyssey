@@ -44,3 +44,6 @@ ody_tp_chiplet_reset:
 
          // Drop PCB interface reset to enable access into TP chiplet
          putscom     ROOT_CTRL0_CLEAR, ALL, ROOT_CTRL0__PCB_RESET_DC    //ROOT_CTRL0.set_PCB_RESET_DC(0);
+
+         // Increase OPCG wait cycles to enable scanning
+         putscom     OPCG_ALIGN, OPCG_ALIGN__OPCG_WAIT_CYCLES(ALL), OPCG_ALIGN__OPCG_WAIT_CYCLES(0x020)

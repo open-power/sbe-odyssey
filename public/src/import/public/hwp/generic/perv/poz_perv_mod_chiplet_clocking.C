@@ -63,7 +63,7 @@ ReturnCode poll_opcg_done(
 
     while (i_poll_count != 0)
     {
-        FAPI_INF("Getting CPLT_STAT0 register value");
+        FAPI_INF("Reading CPLT_STAT0 register to check OPCG_DONE");
         FAPI_TRY(CPLT_STAT0.getScom(i_target));
 
         if (CPLT_STAT0.get_OPCG_DONE() || (i_poll_abist_done && CPLT_STAT0.get_ABIST_DONE()))
@@ -121,7 +121,6 @@ ReturnCode mod_abist_setup(
     BIST = 0;
     BIST.set_TC_SRAM_ABIST_MODE_DC(1);
     BIST.insertFromRight<BIST_REGION_PERV, 16>(i_regions);
-    FAPI_DBG("BIST buffer value (i_regions) : %#018lX", BIST);
     FAPI_TRY(BIST.putScom(i_target));
 
     FAPI_INF("Set up clocking.");
@@ -132,7 +131,6 @@ ReturnCode mod_abist_setup(
     CLK_REGION.set_SUPPRESS_FIRST_EVEN_CLK(i_skip_first_clock);
     CLK_REGION.set_SUPPRESS_LAST_ODD_CLK(i_skip_last_clock);
     CLK_REGION.insertFromRight<CLK_REGION_CLOCK_REGION_PERV, 16>(i_regions);
-    FAPI_DBG("CLK_REGION buffer value (i_regions) : %#018lX", CLK_REGION);
     FAPI_TRY(CLK_REGION.putScom(i_target));
 
     // If we know there are custom regions by chiplet, unicast them
@@ -245,8 +243,8 @@ ReturnCode mod_abist_poll(
     FAPI_TRY(poll_opcg_done(i_target, OPCG_DONE_ARRAYINIT_HW_NS_DELAY, OPCG_DONE_ARRAYINIT_SIM_CYCLE_DELAY,
                             OPCG_DONE_ARRAYINIT_POLL_COUNT, i_poll_abist_done));
 
+    FAPI_INF("Reading CPLT_STAT0 register to check SRAM ABIST_DONE");
     FAPI_TRY(CPLT_STAT0.getScom(i_target));
-    FAPI_DBG("Checking sram abist done.");
     FAPI_ASSERT(CPLT_STAT0.get_ABIST_DONE() == 1,
                 fapi2::POZ_SRAM_ABIST_DONE_BIT_ERR()
                 .set_PERV_CPLT_STAT0(CPLT_STAT0)
@@ -335,8 +333,6 @@ static ReturnCode check_clock_status(
                     "ERROR: Invalid clock_type passed to check_clock_status function.");
     }
 
-    FAPI_DBG("CLOCK_STAT SL/NSL/ARY register addr : %#018lX", addr);
-
     if (i_start_stop)
     {
         FAPI_TRY(fapi2::getScom(i_target, addr, clock_stat_getscom_value));
@@ -351,9 +347,6 @@ static ReturnCode check_clock_status(
     FAPI_DBG("CLOCK_STAT expect : 0x%08X%08X",
              (clock_stat_expect >> 32) & 0xFFFFFFFF,
              clock_stat_expect & 0xFFFFFFFF);
-    FAPI_DBG("CLOCK_STAT getscom value : 0x%08X%08X",
-             (clock_stat_getscom_value >> 32) & 0xFFFFFFFF,
-             clock_stat_getscom_value & 0xFFFFFFFF);
 
     FAPI_ASSERT(((clock_regions64 & clock_stat_getscom_value) == clock_stat_expect),
                 fapi2::POZ_THOLD_ERR()
@@ -427,10 +420,10 @@ ReturnCode mod_scan0(
     SCAN_REGION_TYPE = 0;
     FAPI_TRY(SCAN_REGION_TYPE.putScom(i_target));
 
-    FAPI_INF("Restore scan ratios.")
-
     if (l_attr_scan0_scan_ratio != 0)
     {
+        FAPI_INF("Restore scan ratios.")
+
         for (auto& cplt : l_chiplets_uc)
         {
             OPCG_ALIGN = opcg_align_save[cplt.getChipletNumber()];
@@ -472,7 +465,6 @@ ReturnCode mod_start_stop_clocks(
     CLK_REGION.set_CLOCK_CMD(i_start_not_stop ? 1 : 2);
     CLK_REGION.insertFromRight<CLK_REGION_CLOCK_REGION_PERV, 16>(i_clock_regions)
     .insertFromRight<CLK_REGION_SEL_THOLD_SL, 4>(i_clock_types);
-    FAPI_DBG("CLK_REGION buffer value : %#018lX", CLK_REGION);
     FAPI_TRY(CLK_REGION.putScom(i_target));
 
     FAPI_INF("Wait for clock start/stop command to be done. Polling for OPCG_DONE");

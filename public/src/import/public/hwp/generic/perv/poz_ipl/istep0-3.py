@@ -350,7 +350,8 @@ ISTEP(1, 2, "ph_tp_chiplet_reset", "SPPE")
 # executes from ROM driven by command table
 
 def p11s_tp_chiplet_reset():
-    ROOT_CTRL0.PCB_RESET = 0       # Drop PCB interface reset to enable access into TP chiplet
+    ROOT_CTRL0.PCB_RESET = 0           # Drop PCB interface reset to enable access into TP chiplet
+    OPCG_ALIGN.OPCG_WAIT_CYCLES = 0x20 # Increase OPCG wait cycles to enable scanning
 
     ROOT_CTRL1.TP_TPM_DI1_DC_B = 0b1   # Enable TPM SPI port
 
@@ -358,10 +359,12 @@ def p11s_tp_chiplet_reset():
     PERV_CTRL1.TP_CPLT_CLK_NEST_PDLY_BYPASS_DC = 0 # Drop nest PDLY/DCC bypass
 
 def ody_tp_chiplet_reset():
-    ROOT_CTRL0.PCB_RESET = 0       # Drop PCB interface reset to enable access into TP chiplet
+    ROOT_CTRL0.PCB_RESET = 0           # Drop PCB interface reset to enable access into TP chiplet
+    OPCG_ALIGN.OPCG_WAIT_CYCLES = 0x20 # Increase OPCG wait cycles to enable scanning
 
 def zme_tp_chiplet_reset():
-    ROOT_CTRL0.PCB_RESET = 0       # Drop PCB interface reset to enable access into TP chiplet
+    ROOT_CTRL0.PCB_RESET = 0           # Drop PCB interface reset to enable access into TP chiplet
+    OPCG_ALIGN.OPCG_WAIT_CYCLES = 0x20 # Increase OPCG wait cycles to enable scanning
 
     if ATTR_BURNIN:
         ROOT_CTRL1.BURNIN_MODE = 1
@@ -398,6 +401,7 @@ def p11s_tp_pll_setup():
         ROOT_CTRL3.TP_PLLFLT2_RESET_DC = 0
         ROOT_CTRL3.TP_PLLFLT3_RESET_DC = 0
         ROOT_CTRL3.TP_PLLFLT4_RESET_DC = 0
+
         mod_poll_pll_lock_fsi2pib(i_target, P11S_PERV_FPLL1 | P11S_PERV_FPLL2 | P11S_PERV_FPLL3 | P11S_PERV_FPLL4)
 
         ## Take chip filter PLLs out of bypass
@@ -413,6 +417,8 @@ def p11s_tp_pll_setup():
         ROOT_CTRL3.TP_PLLNEST_TEST_EN_DC = 0    # not available in headers yet - bit 24
         # write ROOT_CTRL3
         ROOT_CTRL3.TP_PLLNEST_RESET_DC = 0      # not available in headers yet - bit 25
+
+        mod_poll_pll_lock_fsi2pib(i_target, P11S_PERV_PLLNEST)
 
         ## Prepare chip for at-speed operation
         OPCG_ALIGN.SCAN_RATIO = 3               # Switch scan ratio to 4:1
@@ -783,7 +789,8 @@ def p11t_cbs_start():
 ISTEP(2, 4, "pc_tp_chiplet_reset", "SPPE")
 
 def p11t_tp_chiplet_reset():
-    ROOT_CTRL0.PCB_RESET = 0       # Drop PCB interface reset to enable access into TP chiplet
+    ROOT_CTRL0.PCB_RESET = 0           # Drop PCB interface reset to enable access into TP chiplet
+    OPCG_ALIGN.OPCG_WAIT_CYCLES = 0x20 # Increase OPCG wait cycles to enable scanning
 
     # No scan0 needed since the CBS just took care of that
 
