@@ -389,7 +389,7 @@ rs4_overlay( CompressedScanData* o_rs4Final,
 
 /// Scan, Origination and Instance ring types (used for encoding RS4 header's iv_type)
 ///
-// Scan type: Flush(0) or Override(1) (for debugging only)
+// Scan type: Flush(0) or Override(1)
 #define RS4_TYPE_OVERRIDE        (uint8_t)0b00000001
 
 // Instance ring type (or Common if==0)
