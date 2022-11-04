@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -156,7 +156,8 @@ inline Target<T, M, V> Target<K, M, V>::getParent(void) const
                      (K & TARGET_TYPE_PERV) ) &&
                    ( (T & TARGET_TYPE_EQ)     ||
                      (T & TARGET_TYPE_PERV)   ||
-                     (T == TARGET_TYPE_COMPUTE_CHIP) ),
+                     (T == TARGET_TYPE_COMPUTE_CHIP) ||
+                     (T == TARGET_TYPE_ANY_POZ_CHIP) ),
                    "Invalid parent/child target type passed");
 
     static_assert( ( !(K & TARGET_TYPE_EQ) ) ||
@@ -172,12 +173,20 @@ inline Target<T, M, V> Target<K, M, V>::getParent(void) const
 
     static_assert( ( !(K & TARGET_TYPE_PERV) ) ||
                    (T & TARGET_TYPE_PERV)   ||
-                   (T == TARGET_TYPE_COMPUTE_CHIP),
+                   (T == TARGET_TYPE_COMPUTE_CHIP) ||
+                   (T == TARGET_TYPE_ANY_POZ_CHIP),
                    "Invalid parent for PERV target, must be PERV or COMPUTE_CHIP");
 
     Target<T>* l_temp;
 
-    if( TARGET_TYPE_COMPUTE_CHIP == T ) // EQ/EC/PERV ===> PROC
+    /*
+        if( TARGET_TYPE_ANY_POZ_CHIP == T ) // EQ/EC/PERV ===> PROC
+        {
+            Target<TARGET_TYPE_COMPUTE_CHIP>* l_chip = reinterpret_cast< Target<TARGET_TYPE_COMPUTE_CHIP>* >(&G_vec_targets.at(PPE_CHIP_TARGET_OFFSET));
+            return (*l_chip);
+        }
+    */
+    if( TARGET_TYPE_COMPUTE_CHIP & T ) // EQ/EC/PERV ===> PROC
     {
         l_temp = reinterpret_cast< Target<T>* >(&G_vec_targets.at(PPE_CHIP_TARGET_OFFSET));
     }
@@ -223,7 +232,8 @@ Target<K, M, V>::getChildren(const TargetState i_state) const
                       (K != (T | TARGET_TYPE_MULTICAST) ) ),
                    "improper child of fapi2::TARGET_TYPE_MULTICAST");
 
-    static_assert( (T & TARGET_TYPE_CORE),
+    static_assert( ( (T & TARGET_TYPE_CORE) ||
+                     (T & TARGET_TYPE_PERV) ),
                    "Invalid parent/child passed to getChildren");
 
     std::vector<Target<T> > l_children;
@@ -232,6 +242,13 @@ Target<K, M, V>::getChildren(const TargetState i_state) const
     uint32_t l_childrenPerParent = PPE_CORE_TARGET_COUNT;
     uint32_t l_childTargetOffset = PPE_CORE_TARGET_OFFSET;
     uint32_t l_core_select       = 0;
+
+    if ( K & TARGET_TYPE_PERV )
+    {
+        Target<T> l_perv;
+        l_children.push_back(l_perv);
+        return l_children;
+    }
 
     if ( K & TARGET_TYPE_CORE )
     {

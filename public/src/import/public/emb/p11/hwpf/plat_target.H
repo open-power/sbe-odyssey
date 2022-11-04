@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -58,18 +58,20 @@ enum PlatTargetOffset
     PPE_EQ_TARGET_OFFSET              = 2,
     PPE_CORE_TARGET_OFFSET            = 3,
     PPE_CORE_TARGET_COUNT             = 4,
-    PPE_TOTAL_TARGET_COUNT            = 7
+    PPE_POZ_TARGET_OFFSET             = 7,
+    PPE_TOTAL_TARGET_COUNT            = 8
 };
 
 typedef enum plat_target_type
 {
     PPE_TARGET_TYPE_NONE              = 0x00,
     PPE_TARGET_TYPE_SYSTEM            = 0x01,
-    PPE_TARGET_TYPE_COMPUTE_CHIP         = 0x02,
+    PPE_TARGET_TYPE_COMPUTE_CHIP      = 0x02,
     PPE_TARGET_TYPE_PERV              = 0x04,
     PPE_TARGET_TYPE_EQ                = 0x08,
     PPE_TARGET_TYPE_CORE              = 0x10,
     PPE_TARGET_TYPE_MULTICAST         = 0x20,
+    PPE_TARGET_TYPE_POZ_CHIP          = 0x40,
     PPE_TARGET_TYPE_ALL               = 0x7F
 } plat_target_type_t;
 
@@ -347,6 +349,11 @@ createPlatTargetHandle(const uint32_t i_plat_argument)
     }
 
     l_handle.target_info = 0;
+
+    if( K & TARGET_TYPE_ANY_POZ_CHIP )
+    {
+        l_handle.fields.target_type = PPE_TARGET_TYPE_POZ_CHIP;
+    }
 
     if( K & TARGET_TYPE_COMPUTE_CHIP )
     {
