@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -117,6 +117,11 @@ ReturnCode plat_TargetsInit(uint32_t i_quad_id)
         G_vec_targets.at(PPE_CORE_TARGET_OFFSET + l_core_index) =
             revle32(l_handle);
     }
+
+    // Chip Target is the first one
+    Target<TARGET_TYPE_ANY_POZ_CHIP> poz_target(createPlatTargetHandle<TARGET_TYPE_ANY_POZ_CHIP>(0));
+    G_vec_targets.at(PPE_POZ_TARGET_OFFSET) =
+        revle32((plat_target_handle_t)(poz_target.get()));
 
 fapi_try_exit:
     return FAPI2_RC_SUCCESS;
