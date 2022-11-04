@@ -27,3 +27,9 @@ $(call ADD_MODULE_INCDIR,$(PROCEDURE),$(ROOTPATH)/public/hwp/generic/perv)
 $(call ADD_MODULE_SHARED_OBJ,$(PROCEDURE),poz_perv_mod_misc.o)
 $(call ADD_MODULE_SHARED_OBJ,$(PROCEDURE),poz_perv_utils.o)
 $(call BUILD_PROCEDURE)
+
+PROCEDURE=poz_putRingUtils
+#$(call ADD_MODULE_INCDIR,$(PROCEDURE),$(ROOTPATH)/public/hwp/generic/perv)
+#$(call ADD_MODULE_SHARED_OBJ,$(PROCEDURE),poz_perv_mod_misc.o)
+#$(call ADD_MODULE_SHARED_OBJ,$(PROCEDURE),poz_perv_utils.o)
+$(call BUILD_PROCEDURE)
