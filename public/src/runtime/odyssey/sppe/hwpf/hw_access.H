@@ -33,6 +33,7 @@
 #define FAPI2_HWACCESS_H_
 
 #include <plat_hw_access.H>
+#include "plat_ring_utils.H"
 #include <stdint.h>
 #include <return_code.H>
 #include <plat_trace.H>
@@ -122,6 +123,47 @@ namespace fapi2
         return FAPI2_RC_FALSE;
     }
 
+    /// @brief Platform-level implementation  of putRing()
+    /// Hardware procedures writers will not call this function.
+    /// @tparam K template parameter, passed in target.
+    /// @param[in] i_target   Target to operate on.
+    /// @param[in] i_filePath File Path
+    /// @return fapi::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
+    template< TargetType K, MulticastType M, typename V >
+    inline ReturnCode putRing(  const Target<K, M, V>& i_target,
+                                const char * i_filePath)
+    {
+        ReturnCode l_rc = FAPI2_RC_SUCCESS;
+
+        if( SBE::isSimicsRunning() )
+        {
+            return l_rc;
+        }
+
+        return l_rc;
+    }
+
+    /// @brief Reads a ring from a chip.
+    /// @tparam K template parameter, passed in target.
+    /// @param[in]  i_target   Target to operate on.
+    /// @param[in]  i_address  Ring address to read from.
+    /// @param[out] o_data     Buffer that holds data read from HW target.
+    /// @return fapi::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
+    template< TargetType K, MulticastType M, typename V >
+    inline ReturnCode getRing(const Target<K, M, V>& i_target,
+                       const scanRingId_t i_address,
+                       const char * o_data)
+    {
+#ifndef __PPE__
+        std::cout << std::hex << "   getRing "
+                  << "target: {" << i_target.getType() << ","
+                  << uint64_t(i_target) << "}; "
+                  << "ring address: " << i_address << "; "
+                  << "output data:";
+                  o_data.print();
+#endif
+        return FAPI2_RC_SUCCESS;
+    }
 };
 
 #endif // _FAPI2_HWACCESS_H_
