@@ -43,6 +43,7 @@
 #include "ppe42_string.h"
 #include "metadata.H"
 #include "sbestatesutils.H"
+#include "heap.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -111,6 +112,7 @@ const struct PACKED metadata_t {
     METADATA(GIT, { SBE_COMMIT_ID });
     METADATA(DAT, { SBE_BUILD_TIME });
     METADATA(TRA, { SPPE_TRACE_START_OFFSET, SPPE_PK_TRACE_SIZE_WITH_HEADER });
+    METADATA(PKS, { (uint32_t)&_heap_space_start_, (uint32_t)(&_heap_space_end_) - (uint32_t)&_heap_space_start_ });
     ImageMetadataHeader end = {0, 0};
 } g_image_metadata __attribute__ ((section (".sppe_metadata")));
 
@@ -205,6 +207,9 @@ int  main(int argc, char **argv)
         {
             break;
         }
+
+        // Initialize heap space after bootloader has loaded paks to pibmem
+        Heap::get_instance().initialize();
 
         //if ( (!SBE::isMpiplReset()) && (!SBE_GLOBAL->isHreset) )
         {

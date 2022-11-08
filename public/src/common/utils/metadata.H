@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -71,6 +71,12 @@ DECLARE_METADATA(GIT, 0x474954) {
 // Git build timestamp MMDDYYYY for the image
 DECLARE_METADATA(DAT, 0x444154) {
     uint32_t timeStamp;
+};
+
+// Heap information
+DECLARE_METADATA(PKS, 0x504B53) {
+    uint32_t heapStartAddr; // Address of the heap space
+    uint32_t heapSize; // Size of heap space available
 };
 
 // String metadata needs no field declaration

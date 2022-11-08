@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -162,6 +162,9 @@ enum sbeSecondaryResponse
     SBE_SEC_NOT_ALLOWED_VIA_FIFO_1            = 0x4C,
     SBE_SEC_GETATTRDUMP_FAILURE               = 0x4D,
     SBE_SEC_INVALID_PIPE                      = 0x4E,
+    SBE_SEC_HEAP_SPACE_FULL_FAILURE           = 0x4F,
+    SBE_SEC_GENERIC_BAD_PAK                   = 0x50,
+    SBE_SEC_POP_UNAVAILABE_PAKS               = 0x50,
 };
 
 /**

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -149,12 +149,14 @@ ASSERT((SROM_BLDR_CMN_SH_FILE_SCRATCH_END < BOOTLOADER_ORIGIN), \
 
 /*****************************************************************************/
 /********************** Runtime Image Layout *********************************/
-               /***********************************************/
-               /*           SPPE Image (421 KB)               */
-               /***********************************************/
-               /*           Runtime Emb Pak (40 KB)           */
-               /***********************************************/
-               /*           Pak Scratch (40 KB)               */
+               /***********************************************///-
+               /*              SPPE Image (+.bss)             */// |
+               /*                       +                     */// |
+               /*                   sppe.ram.pak              */// |
+               /*                       +                     */// > Total 504 KB
+               /*              Pak Stack (+Rec-Log)           */// |
+               /*                       +                     */// |
+               /*                  Pak Scratch                *///_
                /***********************************************/
                /* PK Trace buffer (8248B:-8KB circular buffer)*/
                /***********************************************/
@@ -165,24 +167,19 @@ ASSERT((SROM_BLDR_CMN_SH_FILE_SCRATCH_END < BOOTLOADER_ORIGIN), \
                /* Pointer to current image's metadata (4B)    */
                /***********************************************/
 #define SPPE_ORIGIN                     SRAM_ORIGIN
-#define RUNTIME_EMBED_PAK_SIZE          0xA000
-#define SPPE_SCRATCH_SIZE               0xA000
-#define SPPE_SIZE                       (SRAM_SIZE - CROSS_IMAGE_FIXED_AREA_SIZE \
-                                         - SPPE_SCRATCH_SIZE - RUNTIME_EMBED_PAK_SIZE \
-                                         - SPPE_PK_TRACE_SIZE_WITH_HEADER)
-#define SPPE_SCRATCH_START              (SPPE_ORIGIN + SPPE_SIZE + RUNTIME_EMBED_PAK_SIZE)
+#define SPPE_RAM_PAK_MIN_SIZE           0x8000  // 32 KB
+#define SPPE_DECOMPRESSION_AREA_MIN_SIZE 0x8000 // 32 KB
+#define SPPE_MEM_TRAINING_DATA_SIZE     0x10000 // 64 KB
+#define SPPE_RECOVERABLE_LOG_MIN_SIZE   0x4000  // 16 KB
+#define SPPE_HEAP_MIN_SIZE              (SPPE_RAM_PAK_MIN_SIZE + SPPE_DECOMPRESSION_AREA_MIN_SIZE \
+                                         + SPPE_MEM_TRAINING_DATA_SIZE + SPPE_RECOVERABLE_LOG_MIN_SIZE)
+#define SPPE_MAX_SIZE                   (SRAM_SIZE - CROSS_IMAGE_FIXED_AREA_SIZE \
+                                         - SPPE_HEAP_MIN_SIZE - SPPE_PK_TRACE_SIZE_WITH_HEADER)
+
 #define SPPE_PK_TRACE_SIZE              0x2000  // Size: 8KB
 #define SPPE_PK_TRACE_SIZE_WITH_HEADER  (PK_TRACE_STRUCT_SIZE + SPPE_PK_TRACE_SIZE)
 
 #define SPPE_TRACE_START_OFFSET         (HASH_LIST_START_OFFSET - SPPE_PK_TRACE_SIZE_WITH_HEADER)
-
-#ifndef __ASSEMBLER__
-#ifndef __SBE__
-ASSERT(((SPPE_SIZE + CROSS_IMAGE_FIXED_AREA_SIZE + SPPE_SCRATCH_SIZE \
-        + RUNTIME_EMBED_PAK_SIZE + SPPE_PK_TRACE_SIZE_WITH_HEADER) <= SRAM_SIZE),\
-        "Total size exceeds SRAM size");
-#endif
-#endif
 
 /********************** NOR partition Layout *********************************/
 // Lets keep each partition size as 4mb
