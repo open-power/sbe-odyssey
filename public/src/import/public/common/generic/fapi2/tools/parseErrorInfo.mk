@@ -27,11 +27,7 @@
 
 GENERATED = parseErrorInfo
 
-ifeq ($(PROJECT_NAME),p10)
-COMMAND = parseErrorInfo_p10.pl
-else
 COMMAND = parseErrorInfo.pl
-endif
 
 SOURCES += $(FAPI2_ERROR_XML)
 SOURCES += $(GENPATH)/empty_error.xml
