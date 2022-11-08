@@ -5,6 +5,18 @@
         "command":"0x01",
         "function":"sbeBist",
         "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+        },
+        {
+        "cmdClass":"F1",
+        "command":"0x02",
+        "function":"sbePakPush",
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+        },
+        {
+        "cmdClass":"F1",
+        "command":"0x03",
+        "function":"sbePakPop",
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
         }
     ]
 }

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,13 +27,16 @@
 #undef powerpc
 
 #include "odysseylink.H"
-#define MINIMUM_STACK_SIZE 256
+
+#ifndef INITIAL_STACK_SIZE
+#define INITIAL_STACK_SIZE 256
+#endif
 #define DOUBLE_WORD_SIZE   8
 
 OUTPUT_FORMAT(elf32-powerpc);
 
 MEMORY {
-    sram    :   ORIGIN = SPPE_ORIGIN, LENGTH = SPPE_SIZE
+    sram    :   ORIGIN = SPPE_ORIGIN, LENGTH = SPPE_MAX_SIZE
 }
 
 SECTIONS {
@@ -151,27 +154,35 @@ SECTIONS {
         /* Total uninitialised data is .sbss + .bss sections. */
         _bss_end = .;
         _ram_consumed = . - _sppe_start;
-
-        /* Assert if more RAM consumed than allocated. */
-        ASSERT ((_ram_consumed < SPPE_SIZE), "Error: Not enough RAM \
-        space.");
     }
 
     /* Image size will contain code segment and initialised data sections. */
     _sbe_image_size = _code_size + _data_size + _sdata_size + _sdata2_size;
 
     /* Stack segment */
-    PROVIDE (_stack_size = SPPE_SIZE - _ram_consumed);
     .stack . :
     {
-        /* Assert if stack space less than MINIMUM_STACK_SIZE. */
-        ASSERT ((_stack_size > MINIMUM_STACK_SIZE), "Error: Not enough stack \
-        space.");
         . = ALIGN(DOUBLE_WORD_SIZE);
         _PK_INITIAL_STACK_LIMIT = .;
-        . = . + _stack_size;
+        . = . + INITIAL_STACK_SIZE;
         _PK_INITIAL_STACK = . - 1;
     }
+    . = ALIGN(DOUBLE_WORD_SIZE);
+    /*
+     * Pibmem address to the beginning of the heap space
+     * Ultimately separated into two spaces inside of the heap:
+     *     pak stack: the pak stack grows from the bottom upwards (low addr to high addr)
+     *         holds all paks
+     *     scratch: allocations grow from the top downwards (high addr to low addr)
+     *         temporariy holds decompressed images
+     *         also can be used for other FW use-cases like storing the training data from dram/omi
+     * 1. Loader has to put sppe_rt.pak file to the start of this heap space.
+     * 2. When this fw trying to decompress some Image, it can use this scratch area
+     *    for decompressing.
+     * 3. pushpop chipop will push the incoming pak files to the pak stack area.
+     */
+    _heap_space_start_ = .;
+    _heap_space_end_ = SPPE_TRACE_START_OFFSET;
 
     .g_cross_image_data TRACE_BUF_PTR_OFFSET : {
         *(.g_pk_trace_buf)

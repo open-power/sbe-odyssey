@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/chipop_headers.H $       */
+/* $Source: public/src/runtime/odyssey/sppe/core/sbecmdpak.H $            */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,16 +21,45 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __CHIPOP_HEADERS_H__
-#define __CHIPOP_HEADERS_H__
-#include "sbecmdscomaccess.H"
-#include "istep.H"
-#include "sbetrace.H"
-#include "sbe_sp_intf.H"
-#include "sbecmdringaccess.H"
-#include "sbecmdbist.H"
-#include "sbecmdpak.H"
-#include <stdint.h>
-#include <stddef.h>
+/*
+ * @file: ppe/sbe/sbefw/sbecmdscomaccess.H
+ *
+ * @brief This file contains the Interfaces for the SCOM Access chip-ops
+ *
+ */
 
-#endif
+#ifndef __SBEFW_SBECMDPAKLOAD_H
+#define __SBEFW_SBECMDPAKLOAD_H
+
+#include <stdint.h>
+
+/**
+  * @brief sbePakPush : Write data from Upstream FIFO into pakspace of heap shared memory
+  *
+  * @return    Rc from the FIFO access utility
+  */
+
+uint32_t sbePakPush (uint8_t *i_pArg);
+
+typedef struct
+{
+    uint32_t size; // size in bits
+} sbePakPushMsgHdr_t;
+
+/**
+  * @brief sbePakPop : Pop previous pak(s) from the pakstack of heap shared memory
+  *
+  * @return    Rc from the FIFO access utility
+  */
+
+uint32_t sbePakPop (uint8_t *i_pArg);
+
+typedef struct
+{
+    uint16_t reserved1;
+    uint8_t reserved2;
+    uint8_t pop_count; // number of paks to pop
+} sbePakPopMsgHdr_t;
+
+
+#endif /* __SBEFW_SBECMDPAKLOAD_H */

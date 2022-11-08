@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -29,8 +29,14 @@
 #include "sbeSpMsg.H"
 #include "sbeutil.H"
 #include "cmnglobals.H"
+#include "archive.H"
+
 #define SBE_GLOBAL sbeGlobal
 extern sbeRole g_sbeRole;
+
+// To keep track of global constructor pointer functions and bss sections.
+extern uint64_t _heap_space_start_ __attribute__ ((section (".bss")));
+extern uint64_t _heap_space_end_ __attribute__ ((section (".bss")));
 
 class SBEGlobalsSingleton
 {
@@ -102,6 +108,12 @@ class SBEGlobalsSingleton
         //////        processing thread
         //////////////////////////////////////////////////////////////////
         PkThread sbeAsyncCommandProcessor_thread;
+
+        // @brief FileArchive object to keep track of the pak stack in pibmem
+        // Allows access for a global FileArchive object independent of the Heap object
+        // initialized below
+        FileArchive embeddedArchive __attribute__ ((aligned (8)))
+                            { (void*)&_heap_space_start_};
 
         // i2c mode register
         static uint64_t i2cModeRegister;
