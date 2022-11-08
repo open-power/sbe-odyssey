@@ -181,8 +181,8 @@ static istepMap_t g_istep13PtrTbl[] =
          {
              ISTEP_MAP( istepWithOcmb, ody_scominit ),              // 13.1
 // @TODO: Enabled with ekb
-//             ISTEP_MAP( istepWithOcmb, ody_ddrphyinit ),            // 13.2
-//             ISTEP_MAP( istepWithOcmb, ody_sppe_draminit ),         // 13.3
+//             ISTEP_MAP( istepWithOcmb, ody_ddrphyinit ),          // 13.2
+//             ISTEP_MAP( istepWithOcmb, ody_sppe_draminit ),       // 13.3
              ISTEP_MAP( NULL, NULL ),
              ISTEP_MAP( NULL, NULL ),
              ISTEP_MAP( NULL, NULL ),                               // 13.4

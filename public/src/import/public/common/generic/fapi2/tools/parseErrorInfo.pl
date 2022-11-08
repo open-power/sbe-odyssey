@@ -50,6 +50,7 @@ $XML::Simple::PREFERRED_PARSER = 'XML::Parser';
 # Specify perl modules to use
 #------------------------------------------------------------------------------
 use Digest::MD5 qw(md5_hex);
+use File::Basename;
 use XML::Simple;
 my $xml = new XML::Simple( KeyAttr => [] );
 
@@ -59,7 +60,7 @@ use Getopt::Long;
 
 my $sbeTarget                 = undef;
 my @eiObjects                 = ();
-my $target_ffdc_type          = "fapi2::Target<T>";
+my $target_ffdc_type          = "fapi2::Target<T, M>";
 my $buffer_ffdc_type          = "fapi2::buffer";
 my $variable_buffer_ffdc_type = "fapi2::variable_buffer";
 my $ffdc_type                 = "fapi2::ffdc_t";
@@ -357,7 +358,7 @@ sub addFfdcMethod
 
     elsif ( $type eq $target_ffdc_type )
     {
-        $method = "\n    template< TargetType T >\n";
+        $method = "\n    template< TargetType T, MulticastType M >\n";
         $method .= "    inline $class_name& set_$ffdc_uc(const $type& $param)\n";
 
         if ( $sbeTarget == 1 )
@@ -504,10 +505,12 @@ print CRFILE "#include <stdint.h>\n";
 print CRFILE "#include <vector>\n";
 print CRFILE "#include <plat_trace.H>\n";
 print CRFILE "#include <hwp_error_info.H>\n";
-print CRFILE "#include <p11_scom_c.H>\n";
+print CRFILE "#include <p11_scom_c_ex.H>\n";
 print CRFILE "#include <p11_scom_ph_pb.H>\n";
+print CRFILE "#include <p11_scom_ph_tp.H>\n";
 print CRFILE "#include <ody_scom_perv_tcmc.H>\n";
 print CRFILE "#include <ody_scom_ody_odc.H>\n";
+print CRFILE "#include <explorer_scom_addresses.H>\n";
 print CRFILE "namespace fapi2\n";
 print CRFILE "{\n";
 print CRFILE "void getAddressData(const fapi2::HwpFfdcId i_ffdcId,\n";
@@ -577,8 +580,10 @@ print SBFUNFILE "};\n";
 #------------------------------------------------------------------------------
 foreach my $argnum ( 0 .. $#ARGV )
 {
-    my $infile = $ARGV[$argnum];
-    my $count  = 0;
+    my $infile   = $ARGV[$argnum];
+    my $filename = basename($infile);
+    print "    XML        $filename\n";
+    my $count = 0;
 
     #--------------------------------------------------------------------------
     # Read XML file. The ForceArray option ensures that there is an array of
@@ -692,8 +697,9 @@ foreach my $argnum ( 0 .. $#ARGV )
         {
             if ( $count == 0 )
             {
-                #this rc wont be used, except to indicate the FFDC collection failed
-                $collectFfdcStr = "\tfapi2::ReturnCode l_rc; \\\n";
+                # this rc wont be used, except to indicate the FFDC collection failed. It needs to be named something
+                # programmers aren't likely to use to avoid variable shadowing.
+                $collectFfdcStr = "\tfapi2::ReturnCode macro_local_$err->{rc}; \\\n";
                 $collectFfdcStr .= "\tfapi2::ReturnCode tempRc = RC; \\\n";
             }
             $count++;
@@ -744,7 +750,7 @@ foreach my $argnum ( 0 .. $#ARGV )
             # at the end.
             $collectFfdc .= "tempRc";
 
-            $collectFfdcStr .= "\tFAPI_EXEC_HWP(l_rc, $collectFfdc); \\\n";
+            $collectFfdcStr .= "\tFAPI_EXEC_HWP(macro_local_$err->{rc}, $collectFfdc); \\\n";
 
             # assign the tempRc with newly added ffdc back to the passed in RC
             $collectFfdcStr .= "\tRC = tempRc; \\\n";
@@ -1132,6 +1138,13 @@ foreach my $argnum ( 0 .. $#ARGV )
                 }
                 if ( exists $callout->{target} )
                 {
+                    # Catch error when using target for CODE callout (must use procedure)
+                    if ( $callout->{target} eq "CODE" )
+                    {
+                        print("parseErrorInfo.pl ERROR in $err->{rc}. Must use procedure tag for CODE callout.\n");
+                        exit(1);
+                    }
+
                     # Add the Target to cdgTargetHash to be processed with any
                     # deconfigure and GARD requests
                     $cdgTargetHash{ $callout->{target} }{callout} = 1;
@@ -1604,7 +1617,21 @@ foreach my $argnum ( 0 .. $#ARGV )
             if ( $arg_empty_ffdc eq undef )
             {
                 print ECFILE "        {\n";
-                print ECFILE "            FAPI_SET_HWP_ERROR(iv_rc,$err->{rc});\n\n";
+
+                # Need to create a temporary RC if using current_err, since FAPI_SET_HWP_ERROR and
+                # FAPI_ADD_INFO_TO_HWP_ERROR can call a HWP that changes fapi2::current_err. It should be named
+                # something programmers aren't likely to choose to avoid variable shadowing with the various macros
+                # and inline functions that eventually replace FAPI_SET_HWP_ERROR and FAPI_ADD_INFO_TO_HWP_ERROR.
+                print ECFILE "            if (iv_rc == fapi2::current_err)\n";
+                print ECFILE "            {\n";
+                print ECFILE "                fapi2::ReturnCode func_local_$err->{rc} = iv_rc;\n";
+                print ECFILE "                FAPI_SET_HWP_ERROR(func_local_$err->{rc},$err->{rc});\n";
+                print ECFILE "                iv_rc = func_local_$err->{rc};\n";
+                print ECFILE "            }\n";
+                print ECFILE "            else\n";
+                print ECFILE "            {\n";
+                print ECFILE "                FAPI_SET_HWP_ERROR(iv_rc,$err->{rc});\n";
+                print ECFILE "            }\n\n";
                 print ECFILE "            if( commit )\n";
                 print ECFILE "            {\n";
                 print ECFILE "                fapi2::logError(iv_rc, "
