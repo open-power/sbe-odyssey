@@ -38,6 +38,7 @@ CMN_MESON_CROSS_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/common/cross_file.t
 CMN_MESON_NATIVE_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/common/native_file.txt"
 ODYSSEY_MESON_CROSS_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/odyssey/cross_file.txt"
 P11_MESON_CROSS_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/p11/cross_file.txt"
+METIS_MESON_CROSS_FILE_PATH="$SBEROOT_INT/src/build/mesonutils/metis/cross_file.txt"
 INSTALL_DIR="$SBEROOT/images"
 
 # @brief Print the help/usage info to the console
@@ -150,6 +151,11 @@ EOF
                   --cross-file $ODYSSEY_MESON_CROSS_FILE_PATH
                   --cross-file $P11_MESON_CROSS_FILE_PATH
                   --cross-file $SBEROOT/.user_cross_file.txt"
+
+    if [ -e ${SBEROOT_INT} ]; then
+        CROSS_FILES=" --cross-file $METIS_MESON_CROSS_FILE_PATH
+                      ${CROSS_FILES}"
+    fi
 
     CMD="$BASE_CMD $1 $MESON_BUILD_DIR -Dplatform=$SBE_PLATFORM $DISABLED_IMAGES $ENABLED_IMAGES
         $CROSS_FILES --native-file $CMN_MESON_NATIVE_FILE_PATH

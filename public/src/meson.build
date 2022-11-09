@@ -264,7 +264,7 @@ obj_gen_s = generator(as,
                     )
 
 subdir('tools')
-subdir('build/buildekb')
+subdir('build')
 subdir('common')
 
 if get_option('srom').enabled() or get_option('bldr').enabled() or get_option('otprom').enabled()
