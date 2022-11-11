@@ -35,6 +35,7 @@
 #ifndef _MSS_GIT_DATA_HELPER_
 #define _MSS_GIT_DATA_HELPER_
 
+// TODO Zen:MST-1826 Implement GIT_COMMIT_ID for SPPE procedures
 #if !defined(__HOSTBOOT_MODULE) && !defined(__PPE__)
     #include <generic/memory/mss_git_data.H>
 #endif
@@ -48,6 +49,7 @@ namespace mss
 ///
 inline void display_git_commit_info(const char* i_print)
 {
+// TODO Zen:MST-1826 Implement GIT_COMMIT_ID for SPPE procedures
 #if !defined(__HOSTBOOT_MODULE) && !defined(__PPE__)
     FAPI_INF("%s Git commit ID: %s", i_print, GIT_COMMIT_ID.c_str());
 #endif
