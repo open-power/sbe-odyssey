@@ -169,11 +169,14 @@ obldr_rm_string_file = custom_target( 'obldr_rm_string_file',
                               )
 
 #Generate string file
+#TODO need to add algorith path
+#Removing -L in lib path by convert list to str and Remove '-L' then str to list
+traceshash_lib_path= ' '.join(odyssey_bldr_lib_paths).replace('-L', '').split()
 obldr_string_file_gen = custom_target(output : 'odysseyBldrStringFile_' + ddlvl,
                                       depends : [obldr_out_map_gen,obldr_rm_string_file],
-                                      command : [ tracehash, '-c', '-FC', '-d',
-                                                  meson.global_build_root() + '/public/src/',
-                                                  '-s','@OUTPUT@', ],
+                                      command : [ tracehashwrap, '-l',
+                                                  traceshash_lib_path ,
+                                                  '-o','@OUTPUT@', ],
                                       build_by_default : true,
                                       install : true,
                                       install_dir : odyssey_bldr_install_path

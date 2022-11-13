@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2020,2022                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -99,7 +100,7 @@ ReturnCodes sbefifo_hwp_data_ostream::put(hwp_data_unit i_data)
         rc = sbeDownFifoEnq_mult(len, &i_data, iv_fifoType);
         if (rc)
         {
-            SBE_ERROR(SBE_FUNC " sbeDownFifoEnq_mult failed");
+            SBE_ERROR(SBE_FUNC " sbeDownFifoEnq_mult failed.");
             return FAPI2_RC_PLAT_ERR_SEE_DATA;
         }
     }
@@ -130,7 +131,7 @@ uint32_t sbefifo_hwp_data_ostream::put(uint32_t i_length, uint32_t* i_buffer)
         rc = sbeDownFifoEnq_mult (i_length, i_buffer, iv_fifoType);
         if (rc)
         {
-            SBE_ERROR(SBE_FUNC " sbeDownFifoEnq_mult failed");
+            SBE_ERROR(SBE_FUNC " sbeDownFifoEnq_mult failed.");
             return rc;
         }
     }
