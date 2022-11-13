@@ -36,7 +36,7 @@ pakBuildTool = find_program('import/public/common/utils/imageProcs/tools/pakbuil
 flashBuildTool = find_program('import/public/common/utils/imageProcs/tools/flashbuild')
 cmdTableTool = find_program('import/public/hwp/generic/perv/cmdtable/cmdtable.py')
 signHashList = find_program('build/utils/signHashList')
-tracehash = find_program('tools/trace/tracehash.pl')
+tracehashwrap = find_program('tools/trace/tracehashwrap.py')
 buildInfo = find_program('build/utils/buildInfo.py')
 generateImageHash = find_program('build/utils/genImgHash.sh')
 

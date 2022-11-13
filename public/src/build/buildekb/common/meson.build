@@ -48,5 +48,3 @@ if (get_option('sppe').enabled() or get_option('tsbe').enabled() or
     subdir('hwp')
     subdir('attributes')
 endif
-
-

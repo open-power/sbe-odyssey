@@ -181,11 +181,13 @@ osppe_rm_string_file = custom_target( 'osppe_rm_string_file',
                               )
 
 #Generate string file
+#Removing -L in lib path by convert list to str and Remove '-L' then str to list
+traceshash_lib_path= ' '.join(odyssey_sppe_lib_paths).replace('-L', '').split()
 osppe_string_file_gen = custom_target(output : 'odysseySppeStringFile_' + ddlvl,
                                       depends : [osppe_out_map_gen,osppe_rm_string_file],
-                                      command : [ tracehash, '-c', '-FC', '-d',
-                                                  meson.global_build_root() + '/public/src/',
-                                                  '-s','@OUTPUT@', ],
+                                      command : [ tracehashwrap, '-l',
+                                                  traceshash_lib_path ,
+                                                  '-o','@OUTPUT@'],
                                       build_by_default : true,
                                       install : true,
                                       install_dir : odyssey_sppe_install_path
