@@ -34,7 +34,7 @@
 
 #include <fapi2.H>
 
-static const uint16_t BIST_PARAMS_CURRENT_VERSION = 8;
+static const uint16_t BIST_PARAMS_CURRENT_VERSION = 9;
 
 struct bist_params
 {
@@ -61,20 +61,23 @@ struct bist_params
     enum bist_flags : uint32_t
     {
         /// Single bit flags
-        ABIST_NOT_LBIST   = 0x80000000,
-        FAST_DIAGNOSTICS  = 0x40000000,
-        SKIP_FIRST_CLOCK  = 0x20000000,
-        SKIP_LAST_CLOCK   = 0x10000000,
-        POLL_ABIST_DONE   = 0x08000000,
-        ASSERT_ABIST_DONE = 0x04000000,
+        ABIST_NOT_LBIST      = 0x80000000,
+        FAST_DIAGNOSTICS     = 0x40000000,
+        SKIP_FIRST_CLOCK     = 0x20000000,
+        SKIP_LAST_CLOCK      = 0x10000000,
+        POLL_ABIST_DONE      = 0x08000000,
+        ASSERT_ABIST_DONE    = 0x04000000,
+        CHIPLET_FENCE_ACTIVE = 0x02000000,
+        LBIST_COMBINED       = 0x01000000,
+        INT_MODE             = 0x00800000,
 
         /// Multi bit flags
         /// PCB mux switching
-        PCB_MUX_MASK      = 0x00000003,
-        PCB_MUX_UNCHANGED = 0x00000000,
-        PCB_MUX_FSI2PCB   = 0x00000001,
-        PCB_MUX_PIB2PCB   = 0x00000002,
-        PCB_MUX_PCB2PCB   = 0x00000003,
+        PCB_MUX_MASK        = 0x00000003,
+        PCB_MUX_UNCHANGED   = 0x00000000,
+        PCB_MUX_FSI2PCB     = 0x00000001,
+        PCB_MUX_PIB2PCB     = 0x00000002,
+        PCB_MUX_PCB2PCB     = 0x00000003,
     } flags;
 
     ////////////////////////////////////////////////////////////////
@@ -91,6 +94,16 @@ struct bist_params
     uint64_t idle_count;           ///< Base idle RUNN cycles before BIST starts on any chiplet
     uint64_t linear_stagger;       ///< Increase idle count by this much for each successive chiplet
     uint64_t zigzag_stagger;       ///< Increase idle count by this much on any odd chiplet
+    uint64_t lbist_opcg_align;     ///< OPCG_ALIGN register
+    uint64_t lbist_opcg1;          ///< LBIST setting of OPCG_REG1
+    /// Used to divide opcg_count by either 2, 3, 4. 2-bits are needed to define the following modes:
+    /// 00 - no override, 01 - divide value by 2, 10 - divide value by 3, 11 - divide value by 4
+    /// Each chiplet can be overrided by setting their respective two bits in the mask.
+    /// Format:
+    /// Chiplet #:    0  1 ... 31        32 33 ... 63
+    ///             [00|00|...|00]      [00|00|...|00]
+    /// Entry #:          0                   1
+    uint64_t opcg_count_adjust[2]; ///< Override opcg count cycles
 
     ////////////////////////////////////////////////////////////////
     // 32-bit constituents
@@ -103,6 +116,7 @@ struct bist_params
     // 16-bit constituents
     ////////////////////////////////////////////////////////////////
     uint16_t scan0_types;          ///< Mask of ring scan types to dictate what we will scan0
+    uint16_t lbist_scan_types;     ///< Mask of ring scan types to dictate what we will lbist
     /// First, multicast write base_regions as clock / BIST regions to everything in chiplets.
     /// Next, for each chiplet in chiplets, inspect the entry in chiplets_regions indexed by chiplet ID.
     /// If the entry is zero, pass; else, overwrite base_regions with the entry for that respective chiplet.
@@ -121,8 +135,6 @@ struct bist_params
 
     // no burnin type, that is handled by providing different setup and check image names
     // no DTS mode, that shall be handled by outside code
-
-    // TODO: Add LBIST parameters
 };
 
 constexpr bist_params::bist_stages operator~(const bist_params::bist_stages a)

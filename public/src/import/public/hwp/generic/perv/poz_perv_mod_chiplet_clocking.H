@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -36,6 +36,23 @@
 #include <poz_perv_common_params.H>
 
 using namespace cc;
+
+/// @brief Apply regions to a scom register by chiplet
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
+/// @param[in]   i_scom_buffer             fapi2::buffer for putScom (all non-region bits will be written too)
+/// @param[in]   i_scom_address            Base scom address each chiplet will have written
+/// @param[in]   i_starting_bit            Bit of first region (assumes all 15 regions are contiguous)
+/// @param[in]   i_chiplets_regions        Array of regions per chiplet in i_chiplets_uc indexed by chiplet ID
+///                                        If zero for an index, pass; else, overwrite regions on that chiplet
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode apply_regions_by_chiplet(
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
+    fapi2::buffer<uint64_t> i_scom_buffer,
+    const uint32_t i_scom_address,
+    const uint32_t i_starting_bit,
+    const uint16_t* i_chiplets_regions);
 
 /// @brief ABIST setup module
 /// --Switch dual clocked arrays to ABIST clock domain

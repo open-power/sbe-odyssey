@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -33,6 +33,7 @@
 #include <poz_perv_mod_bist.H>
 #include <poz_perv_mod_chiplet_clocking.H>
 #include <poz_perv_mod_chiplet_clocking_regs.H>
+#include <poz_perv_mod_bist_common.H>
 
 using namespace fapi2;
 
@@ -166,16 +167,166 @@ fapi_try_exit:
 
 ReturnCode mod_lbist_setup(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
-    uint16_t i_regions,
-    uint64_t i_runn_cycles,
-    uint64_t i_lbist_start_at,
-    uint64_t i_lbist_start_stagger,
-    const uint16_t* i_chiplets_regions,
+    const bist_params& i_params,
     const uint64_t i_ctrl_chiplets,
     const uint16_t i_lbist_sequence,
-    const uint16_t i_lbist_weight)
+    const uint16_t i_lbist_weight
+)
 {
-    FAPI_DBG("mod_lbist_setup not yet implemented; check back later");
+    CPLT_CTRL0_t CPLT_CTRL0;
+    CPLT_CTRL1_t CPLT_CTRL1;
+    CPLT_CONF1_t CPLT_CONF1;
+    CLK_REGION_t CLK_REGION;
+    OPCG_REG0_t OPCG_REG0;
+    OPCG_REG0_t OPCG_REG0_STATE;
+    OPCG_REG1_t OPCG_REG1;
+    OPCG_REG2_t OPCG_REG2;
+    OPCG_CAPT1_t OPCG_CAPT1;
+    OPCG_CAPT2_t OPCG_CAPT2;
+    OPCG_CAPT3_t OPCG_CAPT3;
+    SCAN_REGION_TYPE_t SCAN_REGION_TYPE;
+    NET_CTRL0_t NET_CTRL0;
+    OPCG_ALIGN_t OPCG_ALIGN;
+
+    auto l_chiplets_uc = i_target.getChildren<TARGET_TYPE_PERV>();
+    buffer<uint64_t> l_ctrl_chiplets = i_ctrl_chiplets;
+    uint8_t l_chip_type;
+    const bool l_trigger_mode = (i_ctrl_chiplets != 0);
+    const struct STUMPSWeightSettings stumpsWeightSetting = stumpsWeightSettings[i_lbist_weight];  //grab weights enum
+    const struct OPCGCaptureSettings opcgCaptureSetting = opcgCaptureSettings[i_lbist_sequence];   //grab capture enum
+
+    // Get chip type
+    FAPI_TRY(FAPI_ATTR_GET_PRIVILEGED(fapi2::ATTR_NAME, i_target, l_chip_type));
+
+    // NET_CTRL0
+    FAPI_TRY(NET_CTRL0.getScom(i_target));
+    NET_CTRL0.set_CHIPLET_EN(1); // bit0
+    NET_CTRL0.set_FENCE_EN(bool(i_params.flags & i_params.bist_flags::CHIPLET_FENCE_ACTIVE)); // bit18
+    FAPI_INF("LBIST: Writing NET_CTRL0 ...");
+    FAPI_TRY(NET_CTRL0.putScom(i_target));
+
+    // CPLT_CTRL0
+    FAPI_TRY(CPLT_CTRL0.getScom(i_target));
+    CPLT_CTRL0.set_ARY_WRT_THRU(!bool(i_params.flags & i_params.bist_flags::LBIST_COMBINED)); // bit4
+    CPLT_CTRL0.set_BSC_INTMODE(bool(i_params.flags & i_params.bist_flags::INT_MODE)); // bit29
+    CPLT_CTRL0.set_FLUSHMODE_INH(1); // bit2
+    CPLT_CTRL0.set_FORCE_ALIGN(1); // bit3
+    CPLT_CTRL0.set_SYNCCLK_MUXSEL(1); // bit1
+    CPLT_CTRL0.set_VITL_PROTECTION(1); // bit6
+    CPLT_CTRL0.set_DETERMINISTIC_TEST_EN(1); // bit13
+    CPLT_CTRL0.set_CONSTRAIN_SAFESCAN(1); // bit14
+    CPLT_CTRL0.set_RRFA_TEST_EN(1); // bit15
+    FAPI_INF("LBIST: Writing CPLT_CTRL0 ...");
+    FAPI_TRY(CPLT_CTRL0.putScom(i_target));
+
+    // CPLT_CTRL1
+    switch (l_chip_type)
+    {
+        case ENUM_ATTR_NAME_ZMETIS:
+            CPLT_CTRL1.flush<1>();
+            break;
+
+        default:
+            CPLT_CTRL1.setBit<0, 20>();
+            break;
+    }
+
+    FAPI_INF("LBIST: Writing CPLT_CTRL1 ...");
+    FAPI_TRY(CPLT_CTRL1.putScom(i_target));
+
+    // SCAN_REGION_TYPE & CLK_REGION REGS
+    // Multicast base CLK regions and SCAN_TYPE
+    FAPI_TRY(CLK_REGION.getScom(i_target));
+    CLK_REGION.insertFromRight<CLK_REGION_CLOCK_REGION_PERV, 16>(i_params.base_regions);
+    FAPI_DBG("CLK_REGION buffer value: %#018lX", CLK_REGION);
+    FAPI_TRY(CLK_REGION.putScom(i_target));
+
+    FAPI_TRY(SCAN_REGION_TYPE.getScom(i_target));
+    SCAN_REGION_TYPE.insertFromRight<SCAN_REGION_TYPE_SCAN_REGION_PERV, 16>(i_params.base_regions);
+    SCAN_REGION_TYPE.insertFromRight<SCAN_REGION_TYPE_SCAN_TYPE_FUNC, 12>(i_params.lbist_scan_types);
+    FAPI_DBG("SCAN_REGION_TYPE buffer value: %#018lX", SCAN_REGION_TYPE);
+    FAPI_TRY(SCAN_REGION_TYPE.putScom(i_target));
+
+    // If we know there are custom regions by chiplet, unicast them
+    if (i_params.chiplets_regions != NULL)
+    {
+        FAPI_TRY(apply_regions_by_chiplet(i_target, CLK_REGION, CLK_REGION.addr,
+                                          CLK_REGION_CLOCK_REGION_PERV, i_params.chiplets_regions));
+        FAPI_TRY(apply_regions_by_chiplet(i_target, SCAN_REGION_TYPE, SCAN_REGION_TYPE.addr,
+                                          SCAN_REGION_TYPE_SCAN_REGION_PERV, i_params.chiplets_regions));
+    }
+
+    // OPCG_ALIGN
+    OPCG_ALIGN = i_params.lbist_opcg_align;
+    FAPI_INF("LBIST: Writing ALIGN Register ...");
+    FAPI_TRY(OPCG_ALIGN.putScom(i_target));
+
+    // OPCG_REG0
+    // Multicast reciever mode to all chiplets. Control mode will later be assigned via unicast to all control chiplets (if any)
+    if(l_trigger_mode)
+    {
+        OPCG_REG0.set_OPCG_TRIGGER_CTRL_MODE(0);
+        OPCG_REG0.set_OPCG_TRIGGER_RCVR_MODE(1);
+    }
+
+    OPCG_REG0.set_LOOP_COUNT(i_params.opcg_count);
+    FAPI_TRY(OPCG_REG0.putScom(i_target));
+
+    // Save state of OPCG0 register
+    OPCG_REG0_STATE = OPCG_REG0;
+
+    // Trigger and LOOP_COUNT override
+    // Trying to balance out LBIST runtime so that LBIST runs roughly for the same duration in all chiplets
+    // shift_val = (# of bits in array entry) - (# of bits we want to extract) - (bits we care about * (first 5bits of chiplet_number))
+    for (auto& targ : l_chiplets_uc)
+    {
+        const int chiplet_number = targ.getChipletNumber();
+        const int array_index = chiplet_number >> 5;
+        const int shift_val = 64 - 2 - (2 * (chiplet_number & 0x1F));
+        uint8_t targ_opcg_divisor = (i_params.opcg_count_adjust[array_index] >> shift_val) & 0x03;
+
+        // Reapply saved state of OPCG0 in case previous iteration of loop modified OPCG_REG0
+        OPCG_REG0 = OPCG_REG0_STATE;
+
+        // Trigger setting override
+        if (l_ctrl_chiplets.getBit(chiplet_number))
+        {
+            OPCG_REG0.set_OPCG_TRIGGER_CTRL_MODE(1);
+            OPCG_REG0.set_OPCG_TRIGGER_RCVR_MODE(0);
+        }
+
+        // Loop count override
+        OPCG_REG0.set_LOOP_COUNT(i_params.opcg_count / (targ_opcg_divisor + 1));
+
+        // putscom only if we indicated a ctrl chiplet, change in loop count, or both!
+        if(l_ctrl_chiplets.getBit(chiplet_number) || targ_opcg_divisor)
+        {
+            FAPI_TRY(OPCG_REG0.putScom(targ));
+        }
+    }
+
+    // OPCG_REG1
+    OPCG_REG1 = i_params.lbist_opcg1;
+    OPCG_REG1.set_DISABLE_ARY_CLK_DURING_FILL(bool(i_params.flags & i_params.bist_flags::LBIST_COMBINED)); // bit53
+    FAPI_INF("LBIST: Writing OPCG_REG1 Register ...");
+    FAPI_TRY(OPCG_REG1.putScom(i_target));
+
+    // OPCG_REG2
+    // TODO: Add OPCG2 logic as a parameter
+    FAPI_TRY(OPCG_REG2.getScom(i_target));
+    OPCG_REG2.insertFromRight<48, 4>(stumpsWeightSetting.PRIMARY_WEIGHT);
+    OPCG_REG2.insertFromRight<52, 4>(stumpsWeightSetting.SECONDARY_WEIGHT);
+    FAPI_INF("LBIST: Writing OPCG2 Register with STUMPS Weight ...");
+    FAPI_TRY(OPCG_REG2.putScom(i_target));
+
+    //* OPCG_CAPT REGS
+    OPCG_CAPT1.insertFromRight<0, 64>(opcgCaptureSetting.OPCG_CAPT1);
+    OPCG_CAPT2.insertFromRight<0, 64>(opcgCaptureSetting.OPCG_CAPT2);
+    OPCG_CAPT3.insertFromRight<0, 64>(opcgCaptureSetting.OPCG_CAPT3);
+    FAPI_INF("LBIST: Writing OPCG CAPTURE Registers with CLK SEQ ...");
+    FAPI_TRY(OPCG_CAPT1.putScom(i_target));
+    FAPI_TRY(OPCG_CAPT2.putScom(i_target));
+    FAPI_TRY(OPCG_CAPT3.putScom(i_target));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");

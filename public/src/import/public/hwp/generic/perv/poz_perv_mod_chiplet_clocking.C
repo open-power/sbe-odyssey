@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -52,6 +52,7 @@ enum POZ_PERV_MOD_CHIPLET_CLOCKING_Private_Constants
     OPCG_DONE_ARRAYINIT_SIM_CYCLE_DELAY = 1120000, // unit is cycles,to match the poll count change ( 280000 * 4 )
 };
 
+
 ReturnCode poll_opcg_done(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > & i_target,
     uint32_t i_hw_delay,
@@ -89,6 +90,36 @@ fapi_try_exit:
     return current_err;
 }
 
+
+ReturnCode apply_regions_by_chiplet(
+    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
+    fapi2::buffer<uint64_t> i_scom_buffer,
+    const uint32_t i_scom_address,
+    const uint32_t i_starting_bit,
+    const uint16_t* i_chiplets_regions)
+{
+    uint16_t l_chiplet_regions;
+
+    for (auto& targ : i_target.getChildren<TARGET_TYPE_PERV>())
+    {
+        l_chiplet_regions = i_chiplets_regions[targ.getChipletNumber()];
+
+        // Any regions mask of zero will be skipped
+        if (l_chiplet_regions)
+        {
+            i_scom_buffer.insertFromRight(l_chiplet_regions, i_starting_bit, 16);
+            FAPI_DBG("Custom buffer value for chiplet %d : %#018lX",
+                     targ.getChipletNumber(), i_scom_buffer);
+            FAPI_TRY(fapi2::putScom(targ, i_scom_address, i_scom_buffer));
+        }
+    }
+
+fapi_try_exit:
+    FAPI_INF("Exiting ...");
+    return current_err;
+}
+
+
 ReturnCode mod_abist_setup(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
     uint16_t i_regions,
@@ -109,7 +140,6 @@ ReturnCode mod_abist_setup(
     const bool l_opcg_infinite_mode = i_runn_cycles > 0x7FFFFFFFFFF;
     uint64_t l_idle_count = i_abist_start_at;
     auto l_chiplets_uc = i_target.getChildren<TARGET_TYPE_PERV>();
-    uint16_t l_chiplet_regions;
 
     FAPI_INF("Entering ...");
     FAPI_INF("Switch dual-clocked arrays to ABIST clock domain.");
@@ -136,24 +166,10 @@ ReturnCode mod_abist_setup(
     // If we know there are custom regions by chiplet, unicast them
     if (i_chiplets_regions != NULL)
     {
-        for (auto& targ : l_chiplets_uc)
-        {
-            l_chiplet_regions = i_chiplets_regions[targ.getChipletNumber()];
-
-            // Any regions mask of zero will opt to the default one
-            if (l_chiplet_regions)
-            {
-                BIST.insertFromRight<BIST_REGION_PERV, 16>(l_chiplet_regions);
-                FAPI_DBG("Custom BIST buffer value for chiplet %d : %#018lX",
-                         targ.getChipletNumber(), BIST);
-                FAPI_TRY(BIST.putScom(targ));
-
-                CLK_REGION.insertFromRight<CLK_REGION_CLOCK_REGION_PERV, 16>(l_chiplet_regions);
-                FAPI_DBG("Custom CLK_REGION buffer value for chiplet %d : %#018lX",
-                         targ.getChipletNumber(), CLK_REGION);
-                FAPI_TRY(CLK_REGION.putScom(targ));
-            }
-        }
+        FAPI_TRY(apply_regions_by_chiplet(i_target, BIST, BIST.addr,
+                                          BIST_REGION_PERV, i_chiplets_regions));
+        FAPI_TRY(apply_regions_by_chiplet(i_target, CLK_REGION, CLK_REGION.addr,
+                                          CLK_REGION_CLOCK_REGION_PERV, i_chiplets_regions));
     }
 
     FAPI_INF("Configure idle count in OPCG_REG1.");
@@ -211,6 +227,7 @@ fapi_try_exit:
     FAPI_INF("Exiting ...");
     return current_err;
 }
+
 
 ReturnCode mod_abist_start(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
