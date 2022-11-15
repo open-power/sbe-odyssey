@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -60,10 +60,14 @@ static const bist_params ody_abist_params =
     0x20000,                            ///< idle_count
     0,                                  ///< linear_stagger
     0,                                  ///< zigzag_stagger
+    0,                                  ///< opcg_align
+    0,                                  ///< lbist_opcg1
+    {0},                                ///< opcg_count_adjust
     10000,                              ///< max_polls
     200000,                             ///< poll_delay_hw
     1120000,                            ///< poll_delay_sim
     cc::SCAN_TYPE_ALL,                  ///< scan0_types
+    0,                                  ///< lbist_scan_types
     cc::REGION_ALL,                     ///< base_regions
     {0},                                ///< chiplets_regions
     0x8000,                             ///< outer_loop_mask

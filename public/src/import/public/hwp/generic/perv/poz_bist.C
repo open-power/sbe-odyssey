@@ -90,10 +90,29 @@ void print_bist_params(const bist_params& i_params)
     FAPI_DBG("zigzag_stagger = 0x%08x%08x",
              i_params.zigzag_stagger >> 32,
              i_params.zigzag_stagger & 0xFFFFFFFF);
+    FAPI_DBG("lbist_opcg_align = 0x%08x%08x",
+             i_params.lbist_opcg_align >> 32,
+             i_params.lbist_opcg_align & 0xFFFFFFFF);
+    FAPI_DBG("lbist_opcg1 = 0x%08x%08x",
+             i_params.lbist_opcg1 >> 32,
+             i_params.lbist_opcg1 & 0xFFFFFFFF);
+
+    for (uint8_t mask_entry = 0; mask_entry < 2; mask_entry++)
+    {
+        if (i_params.opcg_count_adjust[mask_entry])
+        {
+            FAPI_DBG("opcg_count_adjust[%d] = 0x%08x%08x",
+                     mask_entry,
+                     i_params.opcg_count_adjust[mask_entry] >> 32,
+                     i_params.opcg_count_adjust[mask_entry] & 0xFFFFFFFF);
+        }
+    }
+
     FAPI_DBG("max_polls = %u", i_params.max_polls);
     FAPI_DBG("poll_delay_hw = %u", i_params.poll_delay_hw);
     FAPI_DBG("poll_delay_sim = %u", i_params.poll_delay_sim);
     FAPI_DBG("scan0_types = 0x%04x", i_params.scan0_types);
+    FAPI_DBG("lbist_scan_types = 0x%04x", i_params.lbist_scan_types);
     FAPI_DBG("base_regions = 0x%04x", i_params.base_regions);
 
     for (uint8_t chiplet_id = 0; chiplet_id < 64; chiplet_id++)
@@ -183,13 +202,8 @@ ReturnCode poz_bist_execute(
                 l_ctrl_chiplets = i_params.uc_go_chiplets;
             }
 
-            // TODO create sequence / weight enums for condition_a / condition_b
             FAPI_TRY(mod_lbist_setup(i_chiplets_target,
-                                     i_params.base_regions,
-                                     i_params.opcg_count,
-                                     i_params.idle_count,
-                                     i_params.linear_stagger,
-                                     i_params.chiplets_regions,
+                                     i_params,
                                      l_ctrl_chiplets,
                                      i_enum_condition_a,
                                      i_enum_condition_b));
