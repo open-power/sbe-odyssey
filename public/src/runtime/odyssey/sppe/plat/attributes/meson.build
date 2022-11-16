@@ -23,6 +23,7 @@
 #
 # IBM_PROLOG_END_TAG
 
+###################### Runtime genfiles ########################################
 ODYSSEY_ATTR_DB_FILE_PATH = odyssey_sppe_genfiles_dir_path + '/sbe_attr.db'
 
 run_cmd_result = run_command(attrTool, 'parse', EKB_CMN_ATTR_XMLS, EKB_ODY_ATTR_XMLS,
@@ -46,6 +47,8 @@ if run_cmd_result.returncode() != 0
     message(run_cmd_result.stdout())
     error(run_cmd_result.stderr())
 endif
+
+###########################################################################
 
 infile_c = ['attribute_override_service.C'
            ]
@@ -72,6 +75,6 @@ libodysseysppeattr  = custom_target( lib_file_name,
                                    build_by_default: true,
                                )
 
-odyssey_sppe_libs += '-l' + lib_file_name
-odyssey_sppe_lib_paths += '-L' + meson.current_build_dir()
-odyssey_sppe_dep_libs += libodysseysppeattr
+odyssey_sppe_attr_libs = '-l' + lib_file_name
+odyssey_sppe_attr_lib_paths = '-L' + meson.current_build_dir()
+odyssey_sppe_attr_dep_libs = libodysseysppeattr

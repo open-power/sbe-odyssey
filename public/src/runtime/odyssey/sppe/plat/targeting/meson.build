@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -48,6 +48,6 @@ libodysseytarget = custom_target( lib_file_name,
                                  build_by_default: true,
                              )
 
-odyssey_sppe_libs += '-l' + lib_file_name
-odyssey_sppe_lib_paths += '-L' + meson.current_build_dir()
-odyssey_sppe_dep_libs += libodysseytarget
+odyssey_sppe_tgt_libs = '-l' + lib_file_name
+odyssey_sppe_tgt_lib_paths = '-L' + meson.current_build_dir()
+odyssey_sppe_tgt_dep_libs = libodysseytarget

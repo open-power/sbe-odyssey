@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -29,6 +29,6 @@ if platform == 'p11' or platform == 'all'
   subdir('p11')
 endif
 
-if platform == 'odyssey' or platform == 'all'
+if platform == 'odyssey' or platform == 'odysseylab' or platform == 'all'
   subdir('odyssey')
 endif

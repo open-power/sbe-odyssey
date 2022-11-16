@@ -49,6 +49,6 @@ libodysseyhwpf = custom_target( lib_file_name,
                             build_by_default: true,
                           )
 
-odyssey_sppe_libs += '-l' + lib_file_name
-odyssey_sppe_lib_paths += '-L' + meson.current_build_dir()
-odyssey_sppe_dep_libs += libodysseyhwpf
+odyssey_sppe_hwpf_libs = '-l' + lib_file_name
+odyssey_sppe_hwpf_lib_paths = '-L' + meson.current_build_dir()
+odyssey_sppe_hwpf_dep_libs = libodysseyhwpf
