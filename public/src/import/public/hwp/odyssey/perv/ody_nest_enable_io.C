@@ -40,6 +40,8 @@ using namespace scomt::perv;
 
 SCOMT_PERV_USE_TPCHIP_NET_PCBRSPPERV_CTRL0;
 typedef TPCHIP_NET_PCBRSPPERV_CTRL0_t NET_CTRL0_t;
+SCOMT_PERV_USE_CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_ROOT_CTRL1;
+typedef CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_ROOT_CTRL1_t ROOT_CTRL1_t;
 
 enum ODY_NEST_ENABLE_IO_Private_Constants
 {
@@ -48,8 +50,16 @@ enum ODY_NEST_ENABLE_IO_Private_Constants
 ReturnCode ody_nest_enable_io(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     NET_CTRL0_t NET_CTRL0;
+    ROOT_CTRL1_t ROOT_CTRL1;
 
     FAPI_INF("Entering ...");
+
+    FAPI_DBG("Enable Pervasive drivers/receivers");
+    ROOT_CTRL1 = 0;
+    ROOT_CTRL1.set_TP_RI_DC_N(1);
+    ROOT_CTRL1.set_TP_DI1_DC_N(1);
+    ROOT_CTRL1.set_TP_DI2_DC_N(1);
+    FAPI_TRY(ROOT_CTRL1.putScom_SET(i_target));
 
     FAPI_DBG("Chiplet receiver enable, Chiplet driver enable.");
 
