@@ -23,4 +23,7 @@
 #
 # IBM_PROLOG_END_TAG
 
+ODYSSEY_TARGET_LIST_JSON = files('targetlist.json')
+
+subdir('attributes')
 subdir('targeting')

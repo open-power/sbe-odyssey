@@ -130,7 +130,7 @@ osppe_dis_file = custom_target( 'osppe_dis_gen',
                             )
 
 # include actual offset of the attribute variable in attr db file
-infiles = [odyssey_sbe_attr_db_file_name,
+infiles = [ODYSSEY_ATTR_DB_FILE_PATH,
             osppe_symbol_file_gen]
 outfile = odyssey_sppe_img_name + '.attr.db'
 

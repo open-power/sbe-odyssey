@@ -24,10 +24,10 @@
 # IBM_PROLOG_END_TAG
 
 #List of all attribute xmls
-ekb_cmn_attr_xml_paths = []
+EKB_CMN_ATTR_XMLS = []
 
 #List of sbe attribute xmls
-ekb_cmn_sbe_attr_filter_xml_paths = []
+SBE_CMN_ATTR_FILTER_XML = []
 
 import_generic_dir_path = pub_import_dir_path + 'common/generic/fapi2/xml/attribute_info/'
 common_attr_xml = [
@@ -40,7 +40,7 @@ common_attr_xml = [
 foreach infile : common_attr_xml
 
   abs_infile_xml_path = import_generic_dir_path + infile
-  ekb_cmn_attr_xml_paths += abs_infile_xml_path
+  EKB_CMN_ATTR_XMLS += abs_infile_xml_path
 
 endforeach
 
@@ -54,9 +54,28 @@ infile_attr_xml = [
 foreach infile : infile_attr_xml
 
   abs_infile_xml_path = import_hwp_dir_path + infile
-  ekb_cmn_attr_xml_paths += abs_infile_xml_path
+  EKB_CMN_ATTR_XMLS += abs_infile_xml_path
 
 endforeach
 
 filter_xml_path = import_generic_dir_path + 'sbe_common_attribute.xml'
-ekb_cmn_sbe_attr_filter_xml_paths += filter_xml_path
+SBE_CMN_ATTR_FILTER_XML += filter_xml_path
+
+# Additional dependey files for attrtool
+attrtool_deps = ['attrdb.py',
+                 'attrtank.py',
+                 'attrtoolutils.py',
+                 '/templates/attribute.C.t',
+                 '/templates/attribute.H.t',
+                 '/templates/attribute_ids.H.t',
+                 '/templates/attribute_macros.H.t',
+                 '/templates/attribute_properties.H.t',
+                 '/templates/fapi2_chip_ec_feature.H.t' ]
+attrtool_path = meson.global_source_root() + '/public/src/runtime/tools/attributes/'
+
+foreach depfile : attrtool_deps
+
+  abs_dep_file_path = attrtool_path + depfile
+  MESON_SETUP_EXTRA_DEPENDENCIES += abs_dep_file_path
+
+endforeach
