@@ -51,7 +51,6 @@ infile_c = [
             '/memory/odyssey/hwp/ody_scominit.C',
             '/memory/odyssey/hwp/ody_sppe_draminit.C',
             '/memory/odyssey/hwp/ody_thermal_init.C',
-            '/memory/odyssey/hwp/lib/phy/ody_ddrphy_phyinit_config.C',
             '/memory/odyssey/hwp//lib/phy/ody_phy_utils.C',
             '/memory/odyssey/initfiles/odyssey_scom.C',
             ]
