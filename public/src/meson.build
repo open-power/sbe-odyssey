@@ -47,7 +47,7 @@ generateImageHash = find_program('build/utils/genImgHash.sh')
 #   variable can be used to collect all such dependency file and we will put a work-around
 #   (at the end of this file) to invoke a dummy command, so that any of change in
 #   these files will trigger meson setup again.
-meson_setup_extra_dependencies = []
+MESON_SETUP_EXTRA_DEPENDENCIES = []
 
 #ekb-src public mirror path.(import dir path)
 pub_import_dir_path = meson.global_source_root() + '/public/src/import/public/'
@@ -280,7 +280,7 @@ endif
 subdir('packaging')
 
 # Dummy call to create dependency on the files invoked by different tools
-run_command('ls', meson_setup_extra_dependencies)
+run_command('ls', MESON_SETUP_EXTRA_DEPENDENCIES)
 
 # If SROM build for ODYSSEY Platform is disabled pick up the frozen DD1 RIT images from repo
 if get_option('srom').disabled() and  get_option('platform') == 'odyssey'

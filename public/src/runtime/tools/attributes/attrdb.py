@@ -28,17 +28,14 @@ import xml.etree.ElementTree as etree
 from textwrap import dedent
 from collections import namedtuple
 from attrtoolutils import *
+import json
 
 TargetTypeInfo = namedtuple("TargetTypeInfo", "ntargets")
 
-# TODO: Move this data into a file in image specific folder,
-#   and load into this tool, by passing file path as an argument.
-TARGET_TYPES = {
-    "TARGET_TYPE_OCMB_CHIP": TargetTypeInfo(1),
-    "TARGET_TYPE_SYSTEM": TargetTypeInfo(1),
-    "TARGET_TYPE_PERV": TargetTypeInfo(9),
-    "TARGET_TYPE_MC": TargetTypeInfo(1),
-}
+def targetTypeInfoLoader(**kwarg : dict):
+    if '__targInfo__' in kwarg:
+        return TargetTypeInfo(kwarg['ntargets'])
+    return kwarg
 
 class ParseError(Exception):
     pass
@@ -71,7 +68,7 @@ class RealAttribute(object):
         self.ekb_target_type:list[str] = []
 
         for targ in target_type_str_list:
-            targ_type = TARGET_TYPES.get(targ, None)
+            targ_type = AttributeDB.TARGET_TYPES.get(targ, None)
             if targ_type != None:
                 self.sbe_target_type.append(targ)
             self.ekb_target_type.append(targ)
@@ -149,7 +146,7 @@ class ECAttribute(object):
         target_type_str_list = [targ.strip().upper() for targ in self.target_type.split(',')]
         self.sbe_target_type:list[TargetTypeInfo] = []
         for targ in target_type_str_list:
-            targ_type = TARGET_TYPES.get(targ, None)
+            targ_type = AttributeDB.TARGET_TYPES.get(targ, None)
             if targ_type != None:
                 self.sbe_target_type.append(targ)
 
@@ -190,8 +187,14 @@ class AttributeDB(object):
     An object of this class will represent collection of all attributes in
         attribute xmls from EKB.
     """
-    def __init__(self):
-        self.attributes : dict[str, RealAttribute|ECAttribute] = dict()
+    TARGET_TYPES : 'dict[str, TargetTypeInfo]' = dict()
+
+    def __init__(self, I_target_json_path : str):
+        with open(I_target_json_path, 'r') as fp:
+            AttributeDB.TARGET_TYPES =json.load(
+                    fp, object_hook= lambda d : targetTypeInfoLoader(**d))
+
+        self.attributes : 'dict[str, RealAttribute|ECAttribute]' = dict()
 
     def load_xml(self, fname):
         root = etree.parse(fname).getroot()

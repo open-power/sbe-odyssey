@@ -419,7 +419,7 @@ class AttributeStructure(object):
                     attr.writeable,
                     attr.platinit,
                     attr.sbe_entry.values,
-                    TARGET_TYPES[attr.sbe_target_type[0]].ntargets,
+                    AttributeDB.TARGET_TYPES[attr.sbe_target_type[0]].ntargets,
                     attr.array_dims))
 
 class SymbolTable(object):
