@@ -137,7 +137,7 @@ foreach inc_path : meson.get_external_property('onetime_cmn_inc_paths')
 
 endforeach
 
-if platform == 'odyssey' or platform == 'all'
+if platform == 'odyssey' or platform == 'odysseylab' or platform == 'all'
   foreach inc_path : meson.get_external_property('odyssey_cmn_inc_paths')
 
     abs_inc_path = '-I' + meson.global_source_root() + inc_path

@@ -23,34 +23,8 @@
 #
 # IBM_PROLOG_END_TAG
 
-#List containing all Odyssey SPPE lib paths
-odyssey_sppe_lib_paths = []
-
-#List containing all lib names for odyssey SPPE image
-odyssey_sppe_libs = []
-
-#List of all dependent libs for odyssey image (For custom target depends input)
-#Image generation will not start unless all the libs in below list are built.
-#This list is basically custom target lib generation output object
-odyssey_sppe_dep_libs = []
-
 #Tools
 packaging = find_program('build/utils/build.sh')
-
-odyssey_sppe_lib_paths = [odyssey_ekb_cmn_lib_paths,
-                          cmn_pak_wrapper_lib_paths,
-                          odyssey_hwp_lib_paths,
-                         ]
-
-odyssey_sppe_libs = [odyssey_ekb_cmn_libs,
-                     cmn_pak_wrapper_libs,
-                     odyssey_hwp_libs,
-                    ]
-
-odyssey_sppe_dep_libs = [odyssey_ekb_cmn_dep_libs,
-                         cmn_pak_wrapper_dep_libs,
-                         odyssey_hwp_dep_libs,
-                        ]
 
 #Odyssey SPPE install path
 odyssey_sppe_install_path = 'odyssey/runtime/sppe'
@@ -62,6 +36,45 @@ subdir('hwpf')
 subdir('plat')
 subdir('core')
 subdir('build')
+
+#List containing all Odyssey SPPE lib paths
+odyssey_sppe_lib_paths = [odyssey_ekb_cmn_lib_paths,
+                          cmn_pak_wrapper_lib_paths,
+                          odyssey_hwp_lib_paths,
+                          odyssey_sppe_hwpf_lib_paths,
+                          odyssey_sppe_tgt_lib_paths,
+                          odyssey_sppe_core_lib_paths,
+                          odyssey_sppe_genfiles_lib_paths,
+                          odyssey_sppe_attr_lib_paths,
+                         ]
+
+#List containing all lib names for odyssey SPPE image
+odyssey_sppe_libs = [odyssey_ekb_cmn_libs,
+                     cmn_pak_wrapper_libs,
+                     odyssey_hwp_libs,
+                     odyssey_sppe_hwpf_libs,
+                     odyssey_sppe_tgt_libs,
+                     odyssey_sppe_core_libs,
+                     odyssey_sppe_genfiles_libs,
+                     odyssey_sppe_attr_libs,
+                    ]
+
+#List of all dependent libs for odyssey image (For custom target depends input)
+#Image generation will not start unless all the libs in below list are built.
+#This list is basically custom target lib generation output object
+odyssey_sppe_dep_libs = [odyssey_ekb_cmn_dep_libs,
+                         cmn_pak_wrapper_dep_libs,
+                         odyssey_hwp_dep_libs,
+                         odyssey_sppe_hwpf_dep_libs,
+                         odyssey_sppe_tgt_dep_libs,
+                         odyssey_sppe_core_dep_libs,
+                         odyssey_sppe_genfiles_dep_libs,
+                         odyssey_sppe_attr_dep_libs,
+                        ]
+
+if platform == 'odysseylab'
+  subdir_done()
+endif
 
 ########################################## Build Odyssey SPPE Image ######################################################
 
@@ -184,6 +197,9 @@ osppe_string_file_gen = custom_target(output : 'odysseySppeStringFile_' + ddlvl,
 #Now lets run the post build script to package the image
 outfile = odyssey_sppe_img_name + '.pak'
 
+# SPPE manifest file path
+osppe_manifest_file_path = meson.global_source_root() + '/public/src/runtime/odyssey/sppe/build/utils/manifest'
+
 osppe_package_img = custom_target( 'osppe_package_img',
                                output : outfile,
                                depends : [ osppe_string_file_gen, osppe_symbol_file_gen,
@@ -192,7 +208,8 @@ osppe_package_img = custom_target( 'osppe_package_img',
                                command : [ packaging,
                                            meson.current_build_dir(), odyssey_sppe_img_name,
                                            attrTool, pakTool,
-                                           pakBuildTool, signHashList],
+                                           pakBuildTool, signHashList,
+                                           osppe_manifest_file_path],
                                build_by_default : true,
                                install : true,
                                install_dir : odyssey_sppe_install_path

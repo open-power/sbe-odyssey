@@ -38,6 +38,7 @@ if not (result_chipoptablegen.returncode() == 0)
 endif
 
 #####################################################
+ody_core_dir_path = meson.global_source_root() + '/public/src/runtime/odyssey/sppe/core/'
 
 infile_c = ['main.C',
             'initthreads.C',
@@ -58,15 +59,25 @@ infile_c = ['main.C',
             'sbestreampaktohwp.C',
             'codeupdateutils.C',
             'sbecmdupdateattr.C',
-            abs_pak_c_path,
-            abs_cmn_core_c_path,
-            abs_cmn_utils_c_path,
-            abs_runtime_cmn_core_c_path,
-            abs_runtime_cmn_ffdc_c_path,
-            abs_runtime_cmn_hwpf_c_path,
-            abs_runtime_cmn_utils_c_path,
-            abs_runtime_cmn_code_update_c_path
-           ]
+          ]
+
+osyssey_abs_core_c_file_paths = []
+foreach infile : infile_c
+
+  abs_infile_c_path = ody_core_dir_path + infile
+  osyssey_abs_core_c_file_paths += abs_infile_c_path
+
+endforeach
+
+osyssey_abs_core_c_file_paths += [ abs_pak_c_path,
+                                    abs_cmn_core_c_path,
+                                    abs_cmn_utils_c_path,
+                                    abs_runtime_cmn_core_c_path,
+                                    abs_runtime_cmn_ffdc_c_path,
+                                    abs_runtime_cmn_hwpf_c_path,
+                                    abs_runtime_cmn_utils_c_path,
+                                    abs_runtime_cmn_code_update_c_path
+                                  ]
 
 lib_file_name = 'odysseysppe'
 
@@ -77,7 +88,8 @@ if get_option('sppe').enabled() and get_option('bldr').disabled()
   odyssey_sppe_cc_flags += ['-DRUNTIME_PIBMEM_ONLY_IMG']
 endif
 
-odyssey_sppe_obj_file_cpp = obj_gen_cpp.process(infile_c,
+#TODO: JIRA PFSBE-283: Generator enhancement
+odyssey_sppe_obj_file_cpp = obj_gen_cpp.process(osyssey_abs_core_c_file_paths,
                                         extra_args : [
                                         meson.get_external_property('gcc_defs_cmn_odyssey'),
                                         meson.get_external_property('gcc_defs_odyssey_sppe'),
@@ -121,6 +133,6 @@ libodysseysppe = custom_target( lib_file_name,
                                  build_by_default: true,
                              )
 
-odyssey_sppe_libs += '-l' + lib_file_name
-odyssey_sppe_lib_paths += '-L' + meson.current_build_dir()
-odyssey_sppe_dep_libs += libodysseysppe
+odyssey_sppe_core_libs = '-l' + lib_file_name
+odyssey_sppe_core_lib_paths = '-L' + meson.current_build_dir()
+odyssey_sppe_core_dep_libs = libodysseysppe

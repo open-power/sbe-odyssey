@@ -49,7 +49,7 @@ SBE_SIGN_TOOL=$6
 $ATTR_TOOL setfixed $SPPE_IMAGE_ABS.attr.db $SPPE_IMAGE_ABS.bin
 
 #SPPE manifest file path
-SPPE_MANIFEST_PATH=$SBEROOT/public/src/runtime/odyssey/sppe/build/utils/manifest
+SPPE_MANIFEST_PATH=$7
 
 # Create the pak based on SPPE manifest file
 $PAK_BUILD_TOOL_PATH $SPPE_MANIFEST_PATH -o ${SPPE_MESON_IMAGE_DIR_PATH} -n ${SPPE_BASE_IMAGE_NAME}

@@ -58,6 +58,6 @@ libodysseysppegenfiles = custom_target( lib_file_name,
                                  build_by_default: true,
                              )
 
-odyssey_sppe_libs += '-l' + lib_file_name
-odyssey_sppe_lib_paths += '-L' + meson.current_build_dir()
-odyssey_sppe_dep_libs += libodysseysppegenfiles
+odyssey_sppe_genfiles_libs = '-l' + lib_file_name
+odyssey_sppe_genfiles_lib_paths = '-L' + meson.current_build_dir()
+odyssey_sppe_genfiles_dep_libs = libodysseysppegenfiles
