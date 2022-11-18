@@ -1,0 +1,36 @@
+{
+    "chipoptable":[
+    {
+        "cmdClass":"A1",
+        "command":"0x01",
+        "function":"sbeHandleIstep",
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL", "SBE_FENCE_AT_DUMPING"]
+    },
+    {
+        "cmdClass":"A2",
+        "command":"0x01",
+        "function":"sbeGetScom",
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+    },
+    {
+        "cmdClass":"A2",
+        "command":"0x02",
+        "function":"sbePutScom",
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+    },
+    {
+        "cmdClass":"A3",
+        "command":"0x01",
+        "function":"sbeGetRing",
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+    },
+    {
+        "cmdClass":"A3",
+        "command":"0x02",
+        "function":"sbePutRing",
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+    }
+    ]
+}
+
+
