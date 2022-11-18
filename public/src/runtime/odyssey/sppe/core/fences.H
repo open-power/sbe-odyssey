@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/chipop_table.C $         */
+/* $Source: public/src/runtime/odyssey/sppe/core/fences.H $               */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,77 +22,17 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+#ifndef __FENCES_H__
+#define __FENCES_H__
 
-#include "sbecmdscomaccess.H"
-#include "istep.H"
-#include "sbetrace.H"
-#include "sbe_sp_intf.H"
-#include "chipop_handler.H"
-#include "chipop_table.H"
-#include "sbecmdringaccess.H"
-#include "sbecmdgetrawattrdump.H"
-#include "sbecmdbist.H"
+enum sbe_command_fence_attrs
+{
+    SBE_NO_FENCE                = 0x0000, ///< Allow cmd in all states
+    SBE_FENCE_AT_DUMPING        = 0x0001, ///< Fence off at DUMPING State
+    SBE_FENCE_AT_CONTINUOUS_IPL = 0x0004, ///< Fence off at cont IPL
+    SBE_FENCE_AT_ISTEP          = 0x0008, ///< Fence off at istep state
+    SBE_FENCE_AT_RUNTIME        = 0x0010, ///< Fence off at Runtime state
+    SBE_FENCE_AT_SECURE_MODE    = 0x0020, ///< Fense off in secure mode
+};
 
-static const uint16_t HARDWARE_FENCED_STATE =
-     SBE_FENCE_AT_CONTINUOUS_IPL|SBE_FENCE_AT_DMT;
-
-static const uint16_t PUT_HARDWARE_FENCED_STATE =
-     HARDWARE_FENCED_STATE;
-
-////////////////////////////////////////////////////////////////
-// @brief g_sbeIplControlCmdArray
-//
-////////////////////////////////////////////////////////////////
-CMD_ARR(
-   A1,
-   {sbeHandleIstep,
-    SBE_CMD_EXECUTE_ISTEP,
-    HARDWARE_FENCED_STATE|SBE_FENCE_AT_DUMPING,
-   },
-)
-
-CMD_ARR(
-    A2,
-    {sbeGetScom,
-     SBE_CMD_GETSCOM,
-     HARDWARE_FENCED_STATE,
-    },
-    {sbePutScom,
-     SBE_CMD_PUTSCOM,
-     HARDWARE_FENCED_STATE,
-    }
-)
-
-CMD_ARR(
-    A3,
-    {sbeGetRing,
-     SBE_CMD_GETRING,
-     SBE_FENCE_AT_CONTINUOUS_IPL|SBE_FENCE_AT_QUIESCE,
-    },
-
-    {sbePutRing,
-     SBE_CMD_PUTRING,
-     HARDWARE_FENCED_STATE|SBE_FENCE_AT_QUIESCE,
-    }
-)
-
-CMD_ARR(
-    A8,
-    {
-        sbeGetRawAttrDump,
-        SBE_CMD_GETATTRDUMP,
-        SBE_NO_FENCE,
-    }
-
-)
-
-CMD_ARR(
-    F1,
-    {sbeBist,
-     SBE_CMD_BIST,
-     HARDWARE_FENCED_STATE|SBE_FENCE_AT_QUIESCE,
-    }
-)
-
-// Mandatory macro inclusion
-CMD_CLASS_DEFAULT_INTIALISATION
+#endif

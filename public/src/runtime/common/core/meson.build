@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -23,6 +23,7 @@
 #
 # IBM_PROLOG_END_TAG
 
+COMMON_CHIPOPS_JSON = files('chipop_table.json')[0]
 runtime_cmn_core_dir_path = meson.global_source_root() + '/public/src/runtime/common/core/'
 
 infile_c = ['sbeSpMsg.C',

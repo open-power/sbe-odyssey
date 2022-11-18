@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -95,8 +95,7 @@ osppe_out_map_gen = custom_target('osppe_out_map_gen',
                                          '-Map','@OUTPUT0@',
                                          '-Bstatic','-o','@OUTPUT1@',
                                          odyssey_sppe_lib_paths,
-                                         '--start-group',odyssey_sppe_libs,'--end-group','--gc-sections',
-                                          '--undefined=_ZN5fapi24ATTR18ATTR_IS_SIMULATIONE'],
+                                         '--start-group',odyssey_sppe_libs,'--end-group','--gc-sections'],
                             build_by_default: true,
                             build_always_stale : true,
                             install : true,

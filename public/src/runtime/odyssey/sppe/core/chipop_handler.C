@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,8 +27,9 @@
 #include "sbestates.H"
 #include "sberegaccess.H"
 #include "sbeglobals.H"
+#include "cmd_class_init.H"
 #include "chipop_handler.H"
-
+#include "fences.H"
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 uint8_t sbeGetCmdStructAttr (const uint8_t  i_cmdClass,
@@ -170,20 +171,6 @@ sbeChipOpRc_t sbeIsCmdAllowed (const uint8_t i_cmdClass,
                 {
                     l_ret = ((l_pCmd->cmd_state_fence &
                              SBE_FENCE_AT_DUMPING)? false:true);
-                    break;
-                }
-
-                case SBE_STATE_DMT:
-                {
-                    l_ret = ((l_pCmd->cmd_state_fence &
-                             SBE_FENCE_AT_DMT)? false:true);
-                    break;
-                }
-
-                case SBE_STATE_QUIESCE:
-                {
-                    // fence off all the chip-ops in quiesce state
-                    l_ret = false;
                     break;
                 }
 

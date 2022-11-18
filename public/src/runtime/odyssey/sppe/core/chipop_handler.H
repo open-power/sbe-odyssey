@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -30,22 +30,6 @@
 #include <stddef.h>
 #include "sbe_sp_intf.H"
 #include "chipop_struct.H"
-
-/**
- *  @brief SBE Command Fence attributes
- *
- */
-enum sbe_command_fence_attrs
-{
-    SBE_NO_FENCE                = 0x0000, ///< Allow cmd in all states
-    SBE_FENCE_AT_DUMPING        = 0x0001, ///< Fence off at DUMPING State
-    SBE_FENCE_AT_CONTINUOUS_IPL = 0x0004, ///< Fence off at cont IPL
-    SBE_FENCE_AT_ISTEP          = 0x0008, ///< Fence off at istep state
-    SBE_FENCE_AT_RUNTIME        = 0x0010, ///< Fence off at Runtime state
-    SBE_FENCE_AT_QUIESCE        = 0x0020, ///< Fense off at Quiesce state
-    SBE_FENCE_AT_DMT            = 0x0040, ///< Fense off at DMT state
-    SBE_FENCE_AT_SECURE_MODE    = 0x0080, ///< Fense off in secure mode
-};
 
 /**
   * @brief sbeValidateCmdClass  Validates the command class and opcode
@@ -152,21 +136,8 @@ struct cmdStructP_t
 
 // Keep this hash updated with the cmdClassArr
 
-#define HASH_KEY(key) (key < 0xF1 ? (key-0xA1) : (key-0xF1+0x08))
 
-#define CMD_CLASS_DEFAULT_INTIALISATION \
-constexpr cmdClass_t cmdClassArr[] = { \
-    CMD_CLASS(A1), \
-    CMD_CLASS(A2), \
-    CMD_CLASS(A3), \
-    CMD_CLASS(A4), \
-    CMD_CLASS(A5), \
-    CMD_CLASS(A6), \
-    CMD_CLASS(A7), \
-    CMD_CLASS(A8), \
-    CMD_CLASS(F1), \
-}; \
-\
+#define CMD_CLASS_COMMON \
 cmdClassTable_t cmdClassTable = { \
     const_cast<cmdClass_t*>(cmdClassArr), \
     sizeof(cmdClassArr)/sizeof(cmdClassArr[0]) \
@@ -179,5 +150,4 @@ constexpr bool validateCmdClassHash(uint8_t index) { \
 } \
 \
 static_assert(validateCmdClassHash(0), "Bad chipop_table, check cmdclass hashes");
-
 #endif

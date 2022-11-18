@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -22,13 +22,28 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
+ODYSSEY_CHIPOPS_JSON = files('chipop_table.json')[0]
+
+############### Chip-op table generation ############
+chipop_json_list = [COMMON_CHIPOPS_JSON,
+                   ODYSSEY_CHIPOPS_JSON]
+result_chipoptablegen = run_command(chipoptablegen,
+                        '-d', odyssey_sppe_genfiles_dir_path,
+                        '-c', chipop_json_list)
+
+if not (result_chipoptablegen.returncode() == 0)
+  message(result_chipoptablegen.stdout())
+  error(result_chipoptablegen.stderr())
+endif
+
+#####################################################
+
 infile_c = ['main.C',
             'initthreads.C',
             'sberegaccess.C',
             'chipop_handler.C',
             'sbecmdreceiver.C',
             'sbecmdprocessor.C',
-            'chipop_table.C',
             'ipl.C',
             'ipl_table.C',
             'istep.C',

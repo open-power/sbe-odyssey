@@ -5,7 +5,8 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,23 +23,30 @@
 #
 # IBM_PROLOG_END_TAG
 
-abs_infile_c_path = odyssey_sppe_genfiles_dir_path + '/attribute.C'
-abs_attribute_c_file_paths = []
-abs_attribute_c_file_paths += abs_infile_c_path
+infile_c = ['attribute.C',
+            'chipop_table.C',
+           ]
+abs_genfiles_c_file_paths = []
+foreach infile : infile_c
+
+  abs_infile_c_path = odyssey_sppe_genfiles_dir_path + infile
+  abs_genfiles_c_file_paths += abs_infile_c_path
+
+endforeach
 
 lib_file_name = 'odysseysppegenfiles'
 
-odyssey_sppe_obj_file_cpp = obj_gen_cpp.process(abs_attribute_c_file_paths,
+odyssey_sppe_obj_file_cpp = obj_gen_cpp.process(abs_genfiles_c_file_paths,
                                         extra_args : [
                                             meson.get_external_property('gcc_defs_cmn_odyssey'),
                                             meson.get_external_property('gcc_defs_odyssey_sppe'),
                                             odyssey_runtime_abs_inc_paths,
                                             runtime_cmn_abs_inc_paths,
-                                            odyssey_cmn_abs_inc_paths])
-
+                                            odyssey_cmn_abs_inc_paths,
+                                            odyssey_hwp_abs_inc_paths])
 infile  = [odyssey_sppe_obj_file_cpp]
 
-libodysseyattribute = custom_target( lib_file_name,
+libodysseysppegenfiles = custom_target( lib_file_name,
                                  output : 'lib' + lib_file_name,
                                  input : infile,
                                  command : [ ar,
@@ -50,4 +58,4 @@ libodysseyattribute = custom_target( lib_file_name,
 
 odyssey_sppe_libs += '-l' + lib_file_name
 odyssey_sppe_lib_paths += '-L' + meson.current_build_dir()
-odyssey_sppe_dep_libs += libodysseyattribute
+odyssey_sppe_dep_libs += libodysseysppegenfiles

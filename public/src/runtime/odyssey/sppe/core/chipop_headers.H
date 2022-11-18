@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/chipop_table.H $         */
+/* $Source: public/src/runtime/odyssey/sppe/core/chipop_headers.H $       */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,45 +22,15 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __CHIPOP_TABLE_H
-#define __CHIPOP_TABLE_H
-
-/**
-  * @brief enums for SBE Istep Control command class
-  *
-  */
-enum sbeIplControlCommands
-{
-    SBE_CMD_EXECUTE_ISTEP      = 0x01, /* Execute istep */
-};
-
-/**
-  * @brief enums for SCOM Access Messages
-  *
-  */
-enum sbeScomAccessCommands
-{
-    SBE_CMD_GETSCOM          = 0x01, /* Get SCOM */
-    SBE_CMD_PUTSCOM          = 0x02, /* Put SCOM */
-    SBE_CMD_MODIFYSCOM       = 0x03, /* Modify SCOM */
-    SBE_CMD_PUTSCOM_MASK     = 0x04, /* Put SCOM under mask */
-    SBE_CMD_MULTISCOM        = 0x05, /* Execute Multi SCOM */
-};
-
-enum sbeRingAccessCommands
-{
-    SBE_CMD_GETRING          = 0x01, /* Get Ring */
-    SBE_CMD_PUTRING          = 0x02, /* Put Ring */
-};
-
-enum sbeGenericMessageCommands
-{
-    SBE_CMD_GETATTRDUMP             = 0x04, /* Get Attribute dump */
-};
-
-enum sbeTestCommands
-{
-    SBE_CMD_BIST             = 0x01, /* BIST chipop */
-};
+#ifndef __CHIPOP_HEADERS_H__
+#define __CHIPOP_HEADERS_H__
+#include "sbecmdscomaccess.H"
+#include "istep.H"
+#include "sbetrace.H"
+#include "sbe_sp_intf.H"
+#include "sbecmdringaccess.H"
+#include "sbecmdbist.H"
+#include <stdint.h>
+#include <stddef.h>
 
 #endif
