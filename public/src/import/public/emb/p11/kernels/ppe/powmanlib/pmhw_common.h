@@ -100,7 +100,7 @@
     #error "APPCFG_PM_INSTANCE_ID must be defined by the application"
 #else
     #if ((APPCFG_PM_INSTANCE_ID > PMHW_INST_ID_MAX) || (APPCFG_PM_INSTANCE_ID < 0))
-        #warning "APPCFG_PM_INSTANCE_ID is out of range"
+        #error "APPCFG_PM_INSTANCE_ID is out of range"
     #endif
 #endif
 #define PMHW_INST_ID_SELF APPCFG_PM_INSTANCE_ID

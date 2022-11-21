@@ -86,9 +86,6 @@ $(call ADD_PPEIMAGE_SRCDIR,$(IMAGE),$(OCC_SRCDIR)/commonlib)
 include $(PMLIB_SRCDIR)/ipc/libipcfiles.mk
 OBJS += $(LIBIPC_OBJECTS)
 $(call ADD_PPEIMAGE_SRCDIR,$(IMAGE),$(PMLIB_SRCDIR)/ipc)
-
-include $(OCC_SRCDIR)/occlib/liboccfiles.mk
-OBJS += $(LIBOCC_OBJECTS)
 $(call ADD_PPEIMAGE_SRCDIR,$(IMAGE),$(OCC_SRCDIR)/occlib)
 
 # Include target mk file  last!!

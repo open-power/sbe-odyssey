@@ -48,19 +48,20 @@
         .global __set_msr
 
 __vectors:
-        # Treat any branch to __vectors + 0 as a machine check.
+
+#if defined(__PPE42X__)
         b   __machine_check
 
-        # Idle calls __set_msr, so any PPE engine whos IAR is at __vectors+0x14
-        # is in idle mode
+        # See comment below for set MSR function
         .org __vectors + 0x0010
 __set_msr:
         mtmsr   %r3
         blr
 
         .org __vectors + 0x0020
-
+#endif
         ############################################################
+        # 0x0000 : Machine Check (PPE42A)
         # 0x0020 : Machine Check (PPE42X)
         ############################################################
 
@@ -75,6 +76,23 @@ __machine_check:
         ### from outside, so an work around, FFDC is captured within machine
         ### check handler.
         PPE42_MACHINE_CHECK_HANDLER
+
+#if defined(__PPE42A__)
+        ############################################################
+        # 0x0010 : set MSR function (PPE42X)
+        # 0x0028 : set MSR function (PPE42A)
+        ############################################################
+
+        # If the MSR_WE bit is set, the PPE engine enters WAIT mode (idle)
+        # and this function provides a known address for the idle state.
+
+        ############################################################
+        .global __set_msr
+        .org __vectors + 0x0028
+__set_msr:
+        mtmsr   %r3
+        blr
+#endif
 
         ############################################################
         # 0x0040 : System Reset
@@ -170,10 +188,6 @@ __watchdog_interrupt:
 
         _pk_ctx_push_as_needed  watchdog_handler
 
-.global __virtual_exception
-.org    __vectors + 0x0160
-__virtual_exception:
-        _pk_panic PPE42_VIRTUAL_EXCEPTION
 
 ### ****************************************************************************
 ### The rest of the code in this file doesn't have to be placed anywhere
@@ -417,7 +431,7 @@ __ctx_switch:
         stw     %r3,    PK_CTX_KERNEL_CTX(%r1)
 #else
         ## create stack frame and push all context
-        stcxu  %r1,    -PK_CTX_SIZE(%r1)
+        stcxu   %r1,    -PK_CTX_SIZE(%r1)
 #endif
         ## Set lr to the desired destination
         _liw    %r5     __pk_next_thread_resume

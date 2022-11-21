@@ -39,9 +39,9 @@
 ///   be preferred?
 
 #ifdef __IOTA__
-    #include "iota.h"
+    #include <iota.h>
 #else
-    #include "pk.h"
+    #include <pk.h>
 #endif
 #include "ppe42_scom.h"
 #include "ppe42_msr.h"

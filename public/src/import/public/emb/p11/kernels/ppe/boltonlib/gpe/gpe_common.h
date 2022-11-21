@@ -93,7 +93,7 @@
 #elif defined(__TCC_PLAT)
         .tcchw_irq_cfg_bitmaps
 #else
-#error "Either __OCC_PLAT or __TCC_OPLAT must be defined by the application"
+#error "Either __OCC_PLAT or __TCC_PLAT must be defined by the application"
 #endif
     .endm
 // *INDENT-ON*
