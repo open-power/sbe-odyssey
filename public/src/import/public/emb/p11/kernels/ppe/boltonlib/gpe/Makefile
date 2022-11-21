@@ -71,5 +71,5 @@ clean:
 	rm -fr $(OBJDIR)
 
 ifneq ($(MAKECMDGOALS),clean)
-include $(OBJS:.o=.d)
+-include $(OBJS:.o=.d)
 endif
