@@ -22,27 +22,15 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
+
+cmn_srom_core_dir_path = meson.global_source_root() + '/public/src/onetime/common/srom/core/'
+
 infile_c = ['shv.C',
             'securebootutil.C'
             ]
 
-lib_file_name = 'cmnsromcore'
+abs_srom_core_c_path = []
 
-cmn_srom_obj_file_cpp = obj_gen_cpp.process(infile_c,
-                                            extra_args:[onetime_cmn_abs_inc_paths])
-
-infile  = [cmn_srom_obj_file_cpp]
-
-libcmnsromcore = custom_target( lib_file_name,
-                                 output : 'lib' + lib_file_name,
-                                 input : infile,
-                                 command : [ ar,
-                                             'crs',
-                                             '@OUTPUT@'+'.a',
-                                             '@INPUT@'],
-                                 build_by_default: true,
-                             )
-
-cmn_srom_core_libs = '-l' + lib_file_name
-cmn_srom_core_lib_paths = '-L' + meson.current_build_dir()
-cmn_srom_core_dep_libs = libcmnsromcore
+foreach infile : infile_c
+  abs_srom_core_c_path += cmn_srom_core_dir_path + infile
+endforeach
