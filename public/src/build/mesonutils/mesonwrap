@@ -30,16 +30,18 @@
 # Exit if any command fails
 set -e
 
+if [ -e ${SBEROOT_INT} ]; then
+    . ${SBEROOT_INT}/src/build/mesonutils/mesonutil.sh
+fi
+
 TOOL_VERSION=1
 BASE_CMD="$HOME/.local/bin/meson"
 MESON_BUILD_DIR="$SBEROOT/builddir"
 MESON_INSTALL_DIR="$SBEROOT/images"
 CMN_PUB_MESON_CROSS_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/common/cross_file.txt"
 CMN_MESON_NATIVE_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/common/native_file.txt"
-CMN_INT_MESON_CROSS_FILE_PATH="$SBEROOT_INT/src/build/mesonutils/common/cross_file.txt"
 ODYSSEY_MESON_CROSS_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/odyssey/cross_file.txt"
 P11_MESON_CROSS_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/p11/cross_file.txt"
-METIS_MESON_CROSS_FILE_PATH="$SBEROOT_INT/src/build/mesonutils/metis/cross_file.txt"
 INSTALL_DIR="$SBEROOT/images"
 
 # @brief Print the help/usage info to the console
@@ -100,45 +102,47 @@ exc_cmd()
 #TODO: Below enabled and disabled macros are consedering that golden pnor image is available.
 DISABLED_IMAGES=
 ENABLED_IMAGES=
-if [[ "$SBE_PLATFORM" == "odyssey" || "$SBE_PLATFORM" == "p11" || "$SBE_PLATFORM" == "metis" ]]; then
-    if [ "$SBE_IMAGE" == "sppe" ]; then
-        DISABLED_IMAGES=" -Dotprom=disabled -Dsrom=disabled -Dbldr=disabled -Dhsbe=disabled -Dtsbe=disabled"
-        ENABLED_IMAGES=" -Dsppe=enabled"
 
-    elif [ "$SBE_IMAGE" == "otprom" ]; then
-        DISABLED_IMAGES=" -Dsppe=disabled -Dsrom=disabled -Dbldr=disabled -Dhsbe=disabled -Dtsbe=disabled"
-        ENABLED_IMAGES=" -Dotprom=enabled"
+if [ "$SBE_IMAGE" == "sppe" ]; then
+    DISABLED_IMAGES=" -Dotprom=disabled -Dsrom=disabled -Dbldr=disabled -Dhsbe=disabled -Dtsbe=disabled"
+    ENABLED_IMAGES=" -Dsppe=enabled"
 
-    elif [ "$SBE_IMAGE" == "pnor" ]; then
-    # SROM image build is disabled because its frozen. SROM image will not be required to release to build.
-    # For simics it will be picked from "public/src/ontime/odyssey/srom/build/images/"
-        DISABLED_IMAGES=" -Dsrom=disabled"
-        ENABLED_IMAGES=" -Dotprom=enabled -Dsppe=enabled -Dbldr=enabled"
+elif [ "$SBE_IMAGE" == "otprom" ]; then
+    DISABLED_IMAGES=" -Dsppe=disabled -Dsrom=disabled -Dbldr=disabled -Dhsbe=disabled -Dtsbe=disabled"
+    ENABLED_IMAGES=" -Dotprom=enabled"
 
-    elif [ "$SBE_IMAGE" == "srom" ]; then
-        DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dhsbe=disabled -Dtsbe=disabled"
-        ENABLED_IMAGES=" -Dotprom=enabled -Dsrom=enabled "
+elif [ "$SBE_IMAGE" == "pnor" ]; then
+# SROM image build is disabled because its frozen. SROM image will not be required to release to build.
+# For simics it will be picked from "public/src/ontime/odyssey/srom/build/images/"
+    DISABLED_IMAGES=" -Dsrom=disabled"
+    ENABLED_IMAGES=" -Dotprom=enabled -Dsppe=enabled -Dbldr=enabled"
 
-    elif [ "$SBE_IMAGE" == "bldr" ]; then
-        DISABLED_IMAGES=" -Dsppe=disabled -Dsrom=disabled -Dhsbe=disabled -Dtsbe=disabled"
-        ENABLED_IMAGES=" -Dotprom=enabled -Dbldr=enabled "
+elif [ "$SBE_IMAGE" == "srom" ]; then
+    DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dhsbe=disabled -Dtsbe=disabled"
+    ENABLED_IMAGES=" -Dotprom=enabled -Dsrom=enabled "
 
-    elif [ "$SBE_IMAGE" == "tsbe" ]; then
-        DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dotprom=disabled -Dhsbe=disabled -Dsrom=disabled"
-        ENABLED_IMAGES=" -Dtsbe=enabled"
+elif [ "$SBE_IMAGE" == "bldr" ]; then
+    DISABLED_IMAGES=" -Dsppe=disabled -Dsrom=disabled -Dhsbe=disabled -Dtsbe=disabled"
+    ENABLED_IMAGES=" -Dotprom=enabled -Dbldr=enabled "
 
-    elif [ "$SBE_IMAGE" == "hsbe" ]; then
-        DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dotprom=disabled -Dtsbe=disabled -Dsrom=disabled"
-        ENABLED_IMAGES=" -Dhsbe=enabled"
+elif [ "$SBE_IMAGE" == "tsbe" ]; then
+    DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dotprom=disabled -Dhsbe=disabled -Dsrom=disabled"
+    ENABLED_IMAGES=" -Dtsbe=enabled"
 
-    elif [ "$SBE_IMAGE" == "seeprom" ]; then
-        ENABLED_IMAGES=" -Dbldr=enabled -Dotprom=enabled -Dsppe=enabled -Dhsbe=enabled -Dtsbe=enabled -Dsrom=enabled"
+elif [ "$SBE_IMAGE" == "hsbe" ]; then
+    DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dotprom=disabled -Dtsbe=disabled -Dsrom=disabled"
+    ENABLED_IMAGES=" -Dhsbe=enabled"
 
-    else
-        echo "Unsupported SBE_IMAGE type $SBE_IMAGE"
-        exit -1
+elif [ "$SBE_IMAGE" == "seeprom" ]; then
+    ENABLED_IMAGES=" -Dbldr=enabled -Dotprom=enabled -Dsppe=enabled -Dhsbe=enabled -Dtsbe=enabled -Dsrom=enabled"
 
-    fi
+elif [ "$SBE_IMAGE" == "all" ]; then
+    ENABLED_IMAGES=" -Dbldr=enabled -Dotprom=enabled -Dsppe=enabled -Dhsbe=enabled -Dtsbe=enabled -Dsrom=enabled"
+
+else
+    echo "Unsupported SBE_IMAGE type $SBE_IMAGE"
+    exit -1
+
 fi
 
 if [ "$1" == "setup" ]; then
@@ -153,11 +157,11 @@ EOF
                   --cross-file $P11_MESON_CROSS_FILE_PATH
                   --cross-file $SBEROOT/.user_cross_file.txt"
 
-    if [ -e ${SBEROOT_INT} ]; then
-        CROSS_FILES=" --cross-file $CMN_INT_MESON_CROSS_FILE_PATH
-                      --cross-file $METIS_MESON_CROSS_FILE_PATH
-                      ${CROSS_FILES}"
-    fi
+    #Append internal cross file paths if any
+    for CROSS_FILE_PATH in ${INT_MESON_CROSS_FILE_PATH[@]}; do
+        echo $CROSS_FILE_PATH
+        CROSS_FILES=" ${CROSS_FILES} --cross-file $CROSS_FILE_PATH"
+    done
 
     CMD="$BASE_CMD $1 $MESON_BUILD_DIR -Dplatform=$SBE_PLATFORM $DISABLED_IMAGES $ENABLED_IMAGES
         $CROSS_FILES --native-file $CMN_MESON_NATIVE_FILE_PATH
