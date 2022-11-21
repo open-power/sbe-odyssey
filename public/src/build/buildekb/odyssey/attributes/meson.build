@@ -38,7 +38,7 @@ foreach infile : infile_attr_xml
 
 endforeach
 
-odyssey_sbe_attr_filter_xml_paths = ''
+odyssey_sbe_attr_filter_xml_paths = import_hwp_dir_path + 'sbe_ody_attribute.xml'
 odyssey_sbe_attr_db_file_name = odyssey_sppe_genfiles_dir_path + '/sbe_attr.db'
 
 run_cmd_result = run_command(attrTool, 'parse', ekb_cmn_attr_xml_paths, odyssey_attr_xml_paths,
