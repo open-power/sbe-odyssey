@@ -24,10 +24,17 @@
 #
 # IBM_PROLOG_END_TAG
 
+# Exit if any command fails
+set -e
+
 source public/src/tools/utils/sbe/detect-python
 
-SUPPORTED_PLATFORM=("p11" "metis" "odyssey" "p11_dft" "metis_dft" "odyssey_dft" "all")
-SUPPORTED_IMAGES=("sppe" "bldr" "srom" "otprom" "pnor" "tsbe" "hsbe" "seeprom")
+if [ -e `pwd`/internal ]; then
+    . `pwd`/internal/sbeutils.sh
+fi
+
+SUPPORTED_PLATFORM=("p11" "odyssey" ${INT_SUPPORTED_PLATFORM[*]} "all")
+SUPPORTED_IMAGES=("sppe" "bldr" "srom" "otprom" "tsbe" "hsbe" ${INT_SUPPORTED_IMAGES[*]} "seeprom" "pnor" "all")
 SUPPORTED_COMMAND=("workon" "prime" "install" "citest" "runsimics" "build" \
                     "clean" "execute" "printenv")
 
@@ -42,7 +49,7 @@ sbe_helptext()
         echo "  Topic 'workon'"
         echo
         echo "  Usage:"
-        echo "      sbe workon [<${SUPPORTED_PLATFORM[*]}>]"
+        echo "      sbe workon [<${SUPPORTED_PLATFORM[*]}>] [<${SUPPORTED_IMAGES[*]}>]"
         echo
         echo "  Sources necessary environment files for building sbe"
         echo "  and begins a new shell.  The workon may be left via 'exit'."
@@ -101,13 +108,19 @@ sbe_helptext()
         echo "      sbe help [<cmd>|<topic>]"
         echo ""
         echo "  Available Commands:"
-        echo "      workon [<${SUPPORTED_PLATFORM[*]}>]"
+        echo "      workon [<${SUPPORTED_PLATFORM[*]}>] [<${SUPPORTED_IMAGES[*]}>]"
         echo ""
         echo "      install"
         echo ""
         echo "      prime"
         echo ""
         echo "      citest"
+        echo ""
+        echo "      build"
+        echo ""
+        echo "      clean"
+        echo ""
+        echo "      runsimics"
         echo
     esac
 }
@@ -146,8 +159,8 @@ sbe_workon()
         if [ -z "$SBE_IMAGE" ]; then
             echo "***INFO | Un-Supported image type $2"
             echo "***INFO | Supported Images : [<${SUPPORTED_IMAGES[*]}>]"
-            echo "***INFO | Defaulting to  image type : pnor"
-            export SBE_IMAGE=pnor
+            echo "***INFO | Defaulting to  image type : all"
+            export SBE_IMAGE=all
         fi
 
         PYTHON_VERSION=$(get_python_version)
