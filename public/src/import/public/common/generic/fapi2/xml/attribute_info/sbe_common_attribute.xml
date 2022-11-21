@@ -22,11 +22,15 @@
 <!-- permissions and limitations under the License.                         -->
 <!--                                                                        -->
 <!-- IBM_PROLOG_END_TAG                                                     -->
-<!-- p10_sbe_attributes.xml -->
+<!-- sbe_common_attributes.xml -->
 <!--    This file defines the subset of attributes from the larger pool of  -->
-<!--    defined attributes that will be included in the SBE platform.       -->
-<!--    Additionally, build time initial values can also be optionally      -->
-<!--    defined.                                                            -->
+<!--    defined attributes that will be included in the all image of SBE    -->
+<!--    platform. Additionally, build time initial values can also be       -->
+<!--    optionally defined. This xml along with xmls defined for individual -->
+<!--    images (like Odyssey, P11 SPPE etc) will determine final list of    -->
+<!--    attributes and its initial values                                   -->
+<!-- Path to odyssey specific sbe xml:                                      -->
+<!--    public/hwp/odyssey/xml/attribute_info/sbe_ody_attribute.xml         -->
 <entries>
   <!-- static: chip type and EC -->
   <entry>
@@ -76,10 +80,6 @@
   <entry>
     <name>ATTR_SPI_BUS_DIV_REF</name>
     <value>0x0041</value>
-  </entry>
-  <entry>
-    <name>ATTR_OCMB_PLL_BUCKET</name>
-    <value>0x00</value>
   </entry>
   <entry>
     <name>ATTR_IO_TANK_PLL_BYPASS</name>
