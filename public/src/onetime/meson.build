@@ -35,8 +35,3 @@ endif
 if platform == 'p11' or platform == 'all'
   subdir('p11')
 endif
-
-if platform == 'metis' or platform == 'all'
-  #subdir('metis')
-endif
-
