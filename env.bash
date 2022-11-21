@@ -62,3 +62,8 @@ fi
 CMD="pip install -r $SBEROOT_PUB/src/tools/install/requirements.txt --user"
 echo $CMD
 $CMD || exit -1
+
+if [ -f "builddir/build.ninja" ]; then
+    # Sync with current workon settings
+    mesonwrap sync || exit -1
+fi

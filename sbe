@@ -249,9 +249,6 @@ sbe_build()
         echo "Already in a workon.. Continuing"
         if [ ! -f "builddir/build.ninja" ]; then
             mesonwrap setup || exit -1
-        else
-            # Sync with current workon settings
-            mesonwrap sync || exit -1
         fi
 
         mesonwrap build || exit -1
