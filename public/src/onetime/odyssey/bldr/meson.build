@@ -144,20 +144,6 @@ obldr_dis_file = custom_target( 'obldr_dis_gen',
                                install_dir : odyssey_bldr_install_path
                             )
 
-#Generate a rpt file which has elf header & sections info
-infile  = obldr_out_map_gen
-outfile = odyssey_bldr_img_name + '.rpt'
-
-obldr_elf_rpt_file = custom_target( 'obldr_elf_rpt_gen',
-                               output : outfile,
-                               input : infile,
-                               command : [ 'readelf','-S','-h','@INPUT1@'],
-                               build_by_default : true,
-                               capture : true,
-                               install : true,
-                               install_dir : odyssey_bldr_install_path
-                            )
-
 #Remove previous string file if present.
 obldr_rm_string_file = custom_target( 'obldr_rm_string_file',
                                output : 'obldr_rm_string_file_none',
