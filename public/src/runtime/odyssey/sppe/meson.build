@@ -156,20 +156,6 @@ osppe_bin_gen = custom_target('osppe_bin_gen',
                               install_dir : odyssey_sppe_install_path
                             )
 
-#Generate a rpt file which has elf header & sections info
-infile  = osppe_out_map_gen
-outfile = odyssey_sppe_img_name + '.rpt'
-
-osppe_elf_rpt_file = custom_target( 'osppe_elf_rpt_gen',
-                               output : outfile,
-                               input : infile,
-                               command : [ 'readelf','-S','-h','@INPUT1@'],
-                               build_by_default : true,
-                               capture : true,
-                               install : true,
-                               install_dir : odyssey_sppe_install_path
-                            )
-
 #Remove previous string file if present.
 osppe_rm_string_file = custom_target( 'osppe_rm_string_file',
                                output : 'osppe_rm_string_file_none',
