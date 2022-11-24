@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -100,6 +100,7 @@ typedef struct ipcmsg_start_stop
 typedef struct ipcmsg_clip_update
 {
     ipcmsg_base_t   msg_cb;
+    uint8_t         pad[4];
     uint8_t         ps_val_clip_min[MAX_TAPS];
     uint8_t         ps_val_clip_max[MAX_TAPS];
 } ipcmsg_clip_update_t;
