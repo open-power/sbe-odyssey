@@ -271,7 +271,8 @@ if get_option('srom').enabled() or get_option('bldr').enabled() or get_option('o
   subdir('onetime')
 endif
 
-if get_option('sppe').enabled() or get_option('tsbe').enabled() or get_option('hsbe').enabled()
+if (get_option('sppe').enabled() or get_option('tsbe').enabled() or get_option('hsbe').enabled()
+       or get_option('sbe').enabled() or get_option('pme').enabled())
   subdir('runtime')
 endif
 
