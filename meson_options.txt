@@ -25,3 +25,6 @@ option('sppe', type : 'feature', value : 'enabled', description :'Enable/Disable
 
 #sbe build enabled by def
 option('sbe', type : 'feature', value : 'enabled', description :'Enable/Disable SBE runtime image build for a platform')
+
+#pme build enabled by def
+option('pme', type : 'feature', value : 'enabled', description :'Enable/Disable PME runtime image build for a platform')
