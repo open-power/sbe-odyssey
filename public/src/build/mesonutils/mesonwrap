@@ -117,6 +117,9 @@ elif [ "$SBE_IMAGE" == "pnor" ]; then
     DISABLED_IMAGES=" -Dsrom=disabled"
     ENABLED_IMAGES=" -Dotprom=enabled -Dsppe=enabled -Dbldr=enabled"
 
+elif [ "$SBE_IMAGE" == "zseeprom" ]; then
+    ENABLED_IMAGES=" -Dotprom=enabled -Dsppe=enabled -Dbldr=enabled -Dsbe=enabled -Dsrom=enabled"
+
 elif [ "$SBE_IMAGE" == "srom" ]; then
     DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dhsbe=disabled -Dtsbe=disabled"
     ENABLED_IMAGES=" -Dotprom=enabled -Dsrom=enabled "
@@ -132,6 +135,10 @@ elif [ "$SBE_IMAGE" == "tsbe" ]; then
 elif [ "$SBE_IMAGE" == "hsbe" ]; then
     DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dotprom=disabled -Dtsbe=disabled -Dsrom=disabled"
     ENABLED_IMAGES=" -Dhsbe=enabled"
+
+elif [ "$SBE_IMAGE" == "sbe" ]; then
+    DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dotprom=disabled -Dsrom=disabled"
+    ENABLED_IMAGES=" -Dsbe=enabled"
 
 elif [ "$SBE_IMAGE" == "seeprom" ]; then
     ENABLED_IMAGES=" -Dbldr=enabled -Dotprom=enabled -Dsppe=enabled -Dhsbe=enabled -Dtsbe=enabled -Dsrom=enabled"
