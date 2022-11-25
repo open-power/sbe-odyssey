@@ -104,51 +104,60 @@ DISABLED_IMAGES=
 ENABLED_IMAGES=
 
 if [ "$SBE_IMAGE" == "sppe" ]; then
-    DISABLED_IMAGES=" -Dotprom=disabled -Dsrom=disabled -Dbldr=disabled -Dhsbe=disabled -Dtsbe=disabled"
+    DISABLED_IMAGES=" -Dotprom=disabled -Dsrom=disabled -Dbldr=disabled -Dhsbe=disabled -Dtsbe=disabled
+                      -Dpme=disabled -Dsbe=disabled"
     ENABLED_IMAGES=" -Dsppe=enabled"
 
 elif [ "$SBE_IMAGE" == "otprom" ]; then
-    DISABLED_IMAGES=" -Dsppe=disabled -Dsrom=disabled -Dbldr=disabled -Dhsbe=disabled -Dtsbe=disabled"
+    DISABLED_IMAGES=" -Dsppe=disabled -Dsrom=disabled -Dbldr=disabled -Dhsbe=disabled -Dtsbe=disabled
+                      -Dpme=disabled -Dsbe=disabled"
     ENABLED_IMAGES=" -Dotprom=enabled"
 
 elif [ "$SBE_IMAGE" == "pnor" ]; then
 # SROM image build is disabled because its frozen. SROM image will not be required to release to build.
 # For simics it will be picked from "public/src/ontime/odyssey/srom/build/images/"
-    DISABLED_IMAGES=" -Dsrom=disabled"
+    DISABLED_IMAGES=" -Dsrom=disabled -Dpme=disabled -Dsbe=disabled -Dhsbe=disabled -Dtsbe=disabled"
     ENABLED_IMAGES=" -Dotprom=enabled -Dsppe=enabled -Dbldr=enabled"
 
 elif [ "$SBE_IMAGE" == "zseeprom" ]; then
     ENABLED_IMAGES=" -Dotprom=enabled -Dsppe=enabled -Dbldr=enabled -Dsbe=enabled -Dsrom=enabled -Dpme=enabled"
+    DISABLED_IMAGES=" -Dhsbe=disabled -Dtsbe=disabled"
 
 elif [ "$SBE_IMAGE" == "srom" ]; then
-    DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dhsbe=disabled -Dtsbe=disabled"
+    DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dhsbe=disabled -Dtsbe=disabled -Dpme=disabled -Dsbe=disabled"
     ENABLED_IMAGES=" -Dotprom=enabled -Dsrom=enabled "
 
 elif [ "$SBE_IMAGE" == "bldr" ]; then
-    DISABLED_IMAGES=" -Dsppe=disabled -Dsrom=disabled -Dhsbe=disabled -Dtsbe=disabled"
+    DISABLED_IMAGES=" -Dsppe=disabled -Dsrom=disabled -Dhsbe=disabled -Dtsbe=disabled -Dpme=disabled -Dsbe=disabled"
     ENABLED_IMAGES=" -Dotprom=enabled -Dbldr=enabled "
 
 elif [ "$SBE_IMAGE" == "tsbe" ]; then
-    DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dotprom=disabled -Dhsbe=disabled -Dsrom=disabled"
+    DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dotprom=disabled -Dhsbe=disabled -Dsrom=disabled
+                      -Dpme=disabled -Dsbe=disabled"
     ENABLED_IMAGES=" -Dtsbe=enabled"
 
 elif [ "$SBE_IMAGE" == "hsbe" ]; then
-    DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dotprom=disabled -Dtsbe=disabled -Dsrom=disabled"
+    DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dotprom=disabled -Dtsbe=disabled -Dsrom=disabled
+                      -Dpme=disabled -Dsbe=disabled"
     ENABLED_IMAGES=" -Dhsbe=enabled"
 
 elif [ "$SBE_IMAGE" == "sbe" ]; then
-    DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dotprom=disabled -Dsrom=disabled -Dpme=disabled"
+    DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dotprom=disabled -Dsrom=disabled -Dpme=disabled
+                      -Dhsbe=disabled -Dtsbe=disabled"
     ENABLED_IMAGES=" -Dsbe=enabled"
 
 elif [ "$SBE_IMAGE" == "pme" ]; then
-    DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dotprom=disabled -Dsrom=disabled -Dsbe=disabled"
+    DISABLED_IMAGES=" -Dsppe=disabled -Dbldr=disabled -Dotprom=disabled -Dsrom=disabled -Dsbe=disabled
+                      -Dhsbe=disabled -Dtsbe=disabled"
     ENABLED_IMAGES=" -Dpme=enabled"
 
-elif [ "$SBE_IMAGE" == "seeprom" ]; then
+elif [ "$SBE_IMAGE" == "pseeprom" ]; then
     ENABLED_IMAGES=" -Dbldr=enabled -Dotprom=enabled -Dsppe=enabled -Dhsbe=enabled -Dtsbe=enabled -Dsrom=enabled"
+    DISABLED_IMAGES=" -Dpme=disabled -Dsbe=disabled"
 
 elif [ "$SBE_IMAGE" == "all" ]; then
-    ENABLED_IMAGES=" -Dbldr=enabled -Dotprom=enabled -Dsppe=enabled -Dhsbe=enabled -Dtsbe=enabled -Dsrom=enabled"
+    ENABLED_IMAGES=" -Dbldr=enabled -Dotprom=enabled -Dsppe=enabled -Dhsbe=enabled -Dtsbe=enabled -Dsrom=enabled
+                     -Dpme=enabled -Dsbe=enabled"
 
 else
     echo "Unsupported SBE_IMAGE type $SBE_IMAGE"

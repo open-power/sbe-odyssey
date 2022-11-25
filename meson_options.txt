@@ -1,6 +1,8 @@
 #Build Platform
-option('platform',type : 'combo', value : 'all', choices : ['p11', 'metis', 'odyssey', 'p11_dft', 'metis_dft', 'odyssey_dft', 'all'],
-                description : 'Build Platform Type [p11,metis,odyssey]')
+option('platform', type : 'string', value : 'all',
+                    description : 'Build Platform type.' +
+                                  'For supported platforms:' +
+                                  './sbe help')
 
 #Build Level/DD Level
 option('ddlevel',type : 'combo', value : 'DD1', choices : ['DD1'], description : 'DD Level. Currently supporting DD1 ')
