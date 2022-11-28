@@ -35,9 +35,6 @@
 #include <fapi2.H>
 #include <poz_perv_common_params.H>
 
-typedef fapi2::ReturnCode (*poz_chiplet_startclocks_FP_t)(const fapi2::Target < fapi2::TARGET_TYPE_PERV |
-        fapi2::TARGET_TYPE_MULTICAST > &, uint16_t);
-
 /// @brief Align and start chiplet clocks, drop chiplet fence
 /// -- switch ABIST&SYNC CLK muxes to functional state, Disable listen to sync
 /// -- align chiplets, start chiplet clocks, Put PLATs into flush mode, Drop chiplet fence
@@ -49,6 +46,7 @@ typedef fapi2::ReturnCode (*poz_chiplet_startclocks_FP_t)(const fapi2::Target < 
 extern "C"
 {
     fapi2::ReturnCode poz_chiplet_startclocks(
+        const fapi2::Target < fapi2::TARGET_TYPE_ANY_POZ_CHIP >& i_chip_target,
         const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > &i_target,
         uint16_t i_clock_regions = cc::REGION_ALL_BUT_PLL);
 }

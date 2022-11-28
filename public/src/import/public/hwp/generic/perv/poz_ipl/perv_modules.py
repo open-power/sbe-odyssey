@@ -382,10 +382,8 @@ def mod_poz_tp_init_common(target<ANY_POZ_CHIP>):
     # IPOLL_MASK_INIT = 0xFC00_0000_0000_0000
     HOST_MASK_REG = IPOLL_MASK_INIT          # Set up IPOLL mask
     CPLT_CTRL2 = ATTR_PG(PERV)               # Transfer PERV partial good attribute into region good register
-    PERV_CTRL0.VITL_CG_DIS = 0     # Enabe PERV vital clock gating
+    PERV_CTRL0.VITL_CG_DIS = 0               # Enabe PERV vital clock gating
     CPLT_CTRL0.CTRL_CC_FORCE_ALIGN_DC = 0    # Disable alignment pulse
-    delay(10us, 1000cyc)
-    CPLT_CTRL0.CTRL_CC_FLUSHMODE_INH_DC = 0  # Allow chiplet PLATs to enter flush
 
     ## Enable Pervasive drivers/receivers
     ROOT_CTRL1.TP_RI_DC_B  = 1

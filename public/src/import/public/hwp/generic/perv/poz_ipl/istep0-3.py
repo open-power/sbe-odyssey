@@ -1047,6 +1047,13 @@ def zme_chiplet_clk_config():
 #     const fapi2::buffer<uint64_t> i_chiplet_mask);
 
 def poz_chiplet_clk_config(target<ANY_POZ_CHIP> i_target, chiplet_mux_setup_FP_t i_mux_setup):
+    ## Inhibit PLAT flush on Pervasive chiplet
+    # Some pervasive PLATs are needed to facilitate synchronization
+    # between chiplets, so make sure they're not flushed
+    # (this is important for hotplug and won't hurt in IPL)
+    with TP chiplet:
+        CPLT_CTRL0.CTRL_CC_FLUSHMODE_INH_DC = 1
+
     if ATTR_HOTPLUG:
         chiplets = All functional chiplets except TP
     else:
@@ -1467,20 +1474,10 @@ def zme_chiplet_init():
 ISTEP(3, 20, "proc_chiplet_startclocks", "SSBE, TSBE")
 
 def p11s_chiplet_startclocks():
-    ## Drop TP chiplet fence
-    PERV_CTRL0.TC_PERV_CHIPLET_FENCE_DC = 0    # new field - bit 17
-    with MCGROUP_GOOD_NO_TP:
-        NET_CTRL0.PERV2CHIPLET_CHIPLET_FENCE = 0    # bit 11
-
     ## Start chiplet clocks
     poz_chiplet_startclocks(MCGROUP_GOOD_NO_TP)
 
 def p11t_chiplet_startclocks():
-    ## Drop TP chiplet fence
-    PERV_CTRL0.TC_PERV_CHIPLET_FENCE_DC = 0    # new field - bit 17
-    with MCGROUP_GOOD_NO_TP:
-        NET_CTRL0.PERV2CHIPLET_CHIPLET_FENCE = 0    # bit 11
-
     ## Starting chiplet clocks (except EQ)
     poz_chiplet_startclocks(MCGROUP_GOOD_NO_TPEQ)
 
@@ -1547,11 +1544,6 @@ def ody_chiplet_startclocks():
     poz_chiplet_startclocks(MC chiplet, [perv, io, core, cfg, dfi, pub0, pub1, prim0, prim1])
 
 def zme_chiplet_startclocks():
-    ## Drop TP chiplet fence
-    PERV_CTRL0.TC_PERV_CHIPLET_FENCE_DC = 0    # new field - bit 17
-    with MCGROUP_GOOD_NO_TP:
-        NET_CTRL0.PERV2CHIPLET_CHIPLET_FENCE = 0    # bit 11
-
     ## Start chiplet clocks
     poz_chiplet_startclocks(MCGROUP_GOOD_NO_TP)
 
@@ -1561,7 +1553,12 @@ def zme_chiplet_startclocks():
         CPLT_CTRL0.CTRL_CC_FLUSHMODE_INH_DC = 0
         CPLT_CONF0.SDIS_N = 0
 
-def poz_chiplet_startclocks(target<PERV|MC>, uint16_t i_clock_regions=cc::REGION_ALL_BUT_PLL):
+def poz_chiplet_startclocks(target<ANY_POZ_CHIP>, target<PERV|MC>, uint16_t i_clock_regions=cc::REGION_ALL_BUT_PLL):
+    ## Drop TP chiplet fence
+    PERV_CTRL0.TC_PERV_CHIPLET_FENCE_DC = 0    # new field - bit 17
+
+    NET_CTRL0.PERV2CHIPLET_CHIPLET_FENCE = 0    # bit 11
+
     ## Switch ABIST and sync clock muxes to functional state
     CPLT_CTRL0.ABSTCLK_MUXSEL = 0
     CPLT_CTRL0.SYNCCLK_MUXSEL = 0
@@ -1582,6 +1579,13 @@ def poz_chiplet_startclocks(target<PERV|MC>, uint16_t i_clock_regions=cc::REGION
 
     ## Put PLATs into flush mode
     CPLT_CTRL0.CTRL_CC_FLUSHMODE_INH_DC = 0
+
+    ## Put Pervasive chiplet PLATs into flush mode
+    # We have to inhibit Pervasive flush until now because some Pervasive PLATs
+    # are used for the sync mechanism.
+    with TP chiplet:
+        CPLT_CTRL0.CTRL_CC_FLUSHMODE_INH_DC = 0  # Allow chiplet PLATs to enter flush
+
 
 ISTEP(3, 21, "proc_chiplet_fir_init", "SSBE, TSBE")
 
