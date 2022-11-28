@@ -480,13 +480,6 @@ ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
     CPLT_CTRL0.set_FORCE_ALIGN(1);
     FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(l_tpchiplet));
 
-    FAPI_TRY(delay(DELAY_10us, SIM_CYCLE_DELAY));
-
-    FAPI_DBG("Allow chiplet PLATs to enter flush");
-    CPLT_CTRL0.flush<0>();
-    CPLT_CTRL0.set_FLUSHMODE_INH(1);
-    FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(l_tpchiplet));
-
     FAPI_DBG("Enable Pervasive drivers/receivers");
     ROOT_CTRL1 = 0;
     ROOT_CTRL1.set_TP_RI_DC_N(1);

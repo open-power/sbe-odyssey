@@ -37,3 +37,4 @@
 using namespace scomt::perv;
 
 SCOMT_PERV_USE_NET_CTRL0;
+SCOMT_PERV_USE_CPLT_CTRL0;

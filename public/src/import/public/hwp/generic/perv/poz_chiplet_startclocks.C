@@ -33,6 +33,7 @@
 #include <poz_chiplet_startclocks.H>
 #include <poz_chiplet_startclocks_regs.H>
 #include <poz_perv_mod_chiplet_clocking.H>
+#include <poz_perv_utils.H>
 
 using namespace fapi2;
 
@@ -41,15 +42,26 @@ enum POZ_CHIPLET_STARTCLOCKS_Private_Constants
 };
 
 ReturnCode poz_chiplet_startclocks(
+    const Target < TARGET_TYPE_ANY_POZ_CHIP >& i_chip_target,
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > &i_target,
     uint16_t i_clock_regions)
 {
+    FSXCOMP_FSXLOG_PERV_CTRL0_t PERV_CTRL0;
     CPLT_CTRL0_t CPLT_CTRL0;
     SYNC_CONFIG_t SYNC_CONFIG;
     NET_CTRL0_t NET_CTRL0;
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_COMPARE > l_mcast_cmp_target = i_target;
 
     FAPI_INF("Entering ...");
+
+    FAPI_INF("Drop TP chiplet fence");
+    PERV_CTRL0 = 0;
+    PERV_CTRL0.set_PERV_CHIPLET_FENCE(1);
+    FAPI_TRY(PERV_CTRL0.putScom_CLEAR(i_chip_target));
+
+    NET_CTRL0 = 0;
+    NET_CTRL0.setBit<11>();
+    FAPI_TRY(NET_CTRL0.putScom_CLEAR(i_target));
 
     FAPI_INF("Switch ABIST and sync clock muxes to functional state");
     CPLT_CTRL0 = 0;
@@ -78,6 +90,11 @@ ReturnCode poz_chiplet_startclocks(
     CPLT_CTRL0 = 0;
     CPLT_CTRL0.set_FLUSHMODE_INH(1);
     FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
+
+    // We have to inhibit Pervasive flush until now because some Pervasive PLATs
+    // are used for the sync mechanism.
+    FAPI_DBG("Put Pervasive chiplet PLATs into flush mode");
+    FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(get_tp_chiplet_target(i_chip_target)));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");

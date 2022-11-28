@@ -48,9 +48,19 @@ ReturnCode poz_chiplet_clk_config(
     chiplet_mux_setup_FP_t i_mux_setup)
 {
     NET_CTRL0_t NET_CTRL0;
+    CPLT_CTRL0_t CPLT_CTRL0;
     MulticastGroup l_mc_group;
 
     FAPI_INF("Entering ...");
+
+    FAPI_DBG("Inhibit PLAT flush on Pervasive chiplet");
+    // Some pervasive PLATs are needed to facilitate synchronization
+    // between chiplets, so make sure they're not flushed
+    // (this is important for hotplug and won't hurt in IPL)
+    CPLT_CTRL0 = 0;
+    CPLT_CTRL0.set_FLUSHMODE_INH(1);
+    FAPI_TRY(CPLT_CTRL0.putScom_SET(get_tp_chiplet_target(i_target)));
+
     FAPI_TRY(get_hotplug_mc_group(i_target, l_mc_group));
 
     {

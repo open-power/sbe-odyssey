@@ -118,7 +118,7 @@ ReturnCode ody_chiplet_startclocks(const Target<TARGET_TYPE_OCMB_CHIP>& i_target
 
     // At this point the DDR PHY is in reset state; leave it to the memory code to take it out of there
     FAPI_INF("Start remaining clocks (and drop region fences)");
-    FAPI_TRY(poz_chiplet_startclocks(l_mc_NO_TP, ODY_MC_ALL_BUT_ATPG));
+    FAPI_TRY(poz_chiplet_startclocks(i_target, l_mc_NO_TP, ODY_MC_ALL_BUT_ATPG));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
