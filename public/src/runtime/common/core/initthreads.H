@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -21,8 +22,7 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __SBE_INIT_THREAD__
-#define __SBE_INIT_THREAD__
+#pragma once
 
 #include <stdint.h>
 ////////////////////////////////////////////////////////////////
@@ -31,7 +31,6 @@
 ////
 //// @return  See createAndResumeThreadHelper for more details
 ////////////////////////////////////////////////////////////////
-
 int sbeInitThreads(void);
 
 
@@ -43,6 +42,4 @@ int sbeInitThreads(void);
 ////         PK_INVALID_ARGUMENT_SEMAPHORE  - max_count is non-zero
 ////                               and less than the initial_count
 //////////////////////////////////////////////////////////////////
-
 uint32_t sbeInitSems(void);
-#endif

@@ -40,6 +40,7 @@ infile_c = ['sbeSpMsg.C',
             'sbestreampaktohwp.C',
             'sbecmdgenericffdc.C',
             'sbetimersvc.C',
+            'initthreads.C',
            ]
 
 abs_runtime_cmn_core_c_path = []

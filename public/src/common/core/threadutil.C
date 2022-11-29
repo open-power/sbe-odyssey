@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -25,33 +26,100 @@
 #include "threadutil.H"
 #include "sbetrace.H"
 
-uint32_t createAndResumeThreadHelper(PkThread    *io_pThread,
-                                PkThreadRoutine   i_thread_routine,
-                                void             *io_pArg,
-                                PkAddress         i_stack,
-                                size_t            i_stack_size,
-                                sbeThreadPriorities  i_priority)
+/**
+ * @brief Create the PK thread in the loop
+ */
+uint32_t ThreadsCreate( sThread_t * i_Threads, uint8_t i_NoOfThreads)
 {
-    int rc = PK_OK;
+    #define SBE_FUNC "ThreadsCreate "
+    SBE_ENTER(SBE_FUNC);
+    uint32_t rc = PK_OK;
+    volatile const sThread_t * pthread = i_Threads;
 
-    // Thread creation
-    rc =  pk_thread_create(io_pThread,
-                             i_thread_routine,
-                             io_pArg,
-                             i_stack,
-                             i_stack_size,
-                             (PkThreadPriority)i_priority);
-    if(rc == PK_OK)
+
+    do
     {
-        // resume the thread once created
-        rc = pk_thread_resume(io_pThread);
-    }
+        /* Assert Check */
+        if ( (pthread ==  NULL) || (i_NoOfThreads == 0))
+        {
+            rc = PK_INVALID_ARGUMENT_THREAD1;
+            SBE_ERROR (SBE_FUNC "Invalid arg's");
+            break;
+        }
 
-    // Check for errors creating or resuming the thread
-    if(rc != PK_OK)
-    {
-        SBE_ERROR ("Failure creating/resuming thread, rc=[%d]", rc);
-    }
+        for (uint32_t i = 0; i < i_NoOfThreads; i++)
+        {
+            SBE_INFO(SBE_FUNC "Thread Creating, No:%d, stack size: %d",
+                                                i , pthread[i].i_stack_size);
+            // Thread creation
+            rc =  pk_thread_create( pthread[i].io_pThread,
+                                    pthread[i].i_thread_routine,
+                                    pthread[i].io_pArg,
+                                    (PkAddress) pthread[i].i_stack,
+                                    pthread[i].i_stack_size,
+                                    (PkThreadPriority) pthread[i].i_priority);
 
+            if (rc != PK_OK)
+            {
+                SBE_ERROR (SBE_FUNC "Failure creating thread, "
+                          "Thread Number: [0x%X], rc:[0x%X]", i, rc);
+                break;
+            }
+
+            // resume the thread once created
+            rc = pk_thread_resume(pthread[i].io_pThread);
+
+            // Check for errors creating or resuming the thread
+            if (rc != PK_OK)
+            {
+                SBE_ERROR (SBE_FUNC "Failure resuming thread, rc=[%d]", rc);
+                break;
+            }
+        }
+    } while (0);
+
+    SBE_EXIT(SBE_FUNC);
     return rc;
+    #undef SBE_FUNC
+}
+
+
+uint32_t SemaCreate ( sSema_t * i_SemaData, uint32_t i_NoOfSema)
+{
+    #define SBE_FUNC "SemaCreate "
+    SBE_ENTER(SBE_FUNC);
+    int rc = PK_OK;
+    volatile const sSema_t * pSema = i_SemaData;
+
+    do
+    {
+        /* Assert Check */
+        if ( (pSema == NULL) || (i_NoOfSema ==0) )
+        {
+            rc = PK_INVALID_ARGUMENT_SEMAPHORE;
+            SBE_ERROR (SBE_FUNC "Invalid arg's");
+            break;
+        }
+
+        for (uint32_t i = 0; i < i_NoOfSema; i++)
+        {
+            SBE_INFO( "Semaphore Creating, No:%d, max Count: %d", i, pSema[i].maxCount);
+
+            // Sema creation
+            rc =  pk_semaphore_create ( pSema[i].pSemaHandler,
+                                        pSema[i].initialCount,
+                                        pSema[i].maxCount );
+
+            // Check for errors creating semaphore
+            if (rc != PK_OK)
+            {
+                SBE_ERROR ("Failure creating sema, rc=[%d]", rc);
+                break;
+            }
+        }
+    } while (0);
+
+    SBE_EXIT(SBE_FUNC);
+    return rc;
+    #undef SBE_FUNC
 }
