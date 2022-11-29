@@ -47,6 +47,7 @@
 #include "sbetspolling.H"
 #include "securityutils.H"
 #include "irqutils.H"
+#include "threadutil.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -174,8 +175,8 @@ int  main(int argc, char **argv)
         {
             break;
         }
-        // Initialize SBE control loop threads
-        rc = sbeInitThreads();
+
+        rc = sbeInitThreads( );
         if (rc)
         {
             break;

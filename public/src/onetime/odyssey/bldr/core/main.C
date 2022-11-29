@@ -52,6 +52,7 @@ uint8_t bldrSecureBoot_stack[BLDR_THREAD_SECURE_BOOT_STACK_SIZE];
 ////////////////////////////////////////////////////////////////////
 PkThread bldr_thread;
 
+
 extern "C"
 {
 // These variables are declared in linker script to keep track of
@@ -115,13 +116,13 @@ const struct PACKED metadata_t {
 
 uint32_t g_metadata_ptr SECTION(".g_metadata_ptr");
 
+
 ////////////////////////////////////////////////////////////////
 // @brief - main : ODYSSEY Boot Loader Application main
 ////////////////////////////////////////////////////////////////
 int  main(int argc, char **argv)
 {
     #define SBE_FUNC " Boot Loader SBE_main "
-
     int rc = 0;
 
     UPDATE_BLDR_SBE_PROGRESS_CODE(ENTERED_BLDR_MAIN);
@@ -149,16 +150,22 @@ int  main(int argc, char **argv)
         }
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_PK_INIT)
-
         SBE_INFO(SBE_FUNC "Completed PK initialization for Boot Loader Image");
 
-        //Initialize Boot Loader Thread
-        rc = createAndResumeThreadHelper(&bldr_thread,
-                 bldrthreadroutine,
+        /* Thread create Data */
+        sThread_t sBldrThreadData[ ] =
+        {
+            {
+                &bldr_thread,
+                bldrthreadroutine,
                 (void *)0,
-                (PkAddress)bldrSecureBoot_stack,
+                (PkAddress) bldrSecureBoot_stack,
                 BLDR_THREAD_SECURE_BOOT_STACK_SIZE,
-                THREAD_PRIORITY_5);
+                THREAD_PRIORITY_5
+            }
+        };
+        //Initialize Boot Loader Thread
+        rc = ThreadsCreate (sBldrThreadData, (sizeof(sBldrThreadData)/sizeof(sThread_t)) );
         if (rc)
         {
             SBE_ERROR(SBE_FUNC "Initialize Boot Loader secure boot thread failed with rc 0x%08X", rc);

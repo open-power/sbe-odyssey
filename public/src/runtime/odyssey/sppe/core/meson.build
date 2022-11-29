@@ -26,7 +26,6 @@
 ody_core_dir_path = meson.global_source_root() + '/public/src/runtime/odyssey/sppe/core/'
 
 infile_c = ['main.C',
-            'initthreads.C',
             'chipop_handler.C',
             'sbecmdreceiver.C',
             'sbecmdprocessor.C',
