@@ -42,3 +42,10 @@
 #define ERR_UNSUPPORTED_CUST_API_7  0x20F
 #define ERR_SCAN_TIMEOUT            0x210
 #define ERR_SCAN_HEADER_MISMATCH    0x211
+#define ERR_XBPLL_LOCK_TIMEOUT      0x212
+#define ERR_FPLL1_LOCK_TIMEOUT      0x212 // same as XBPLL on Z
+#define ERR_MCPLL_LOCK_TIMEOUT      0x213
+#define ERR_FPLL2_LOCK_TIMEOUT      0x213 // same as MCPLL on Z
+#define ERR_ABPLL_LOCK_TIMEOUT      0x214
+#define ERR_FPLL3_LOCK_TIMEOUT      0x214 // same as ABPLL on Z
+#define ERR_FPLL4_LOCK_TIMEOUT      0x215
