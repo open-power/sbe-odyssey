@@ -145,7 +145,7 @@ int  main(int argc, char **argv)
         {
             SBE::updateErrorCodeAndHalt(BOOT_RC_BLDR_PK_INIT_FAILED);
         }
- 
+
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_PK_INIT)
 
         SBE_INFO(SBE_FUNC "Completed PK initialization for Boot Loader Image");
