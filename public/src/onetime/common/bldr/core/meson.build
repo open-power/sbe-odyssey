@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/onetime/common/srom/core/meson.build $
+# $Source: public/src/onetime/common/bldr/core/meson.build $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,15 +22,7 @@
 #
 # IBM_PROLOG_END_TAG
 
-cmn_srom_core_dir_path = meson.global_source_root() + '/public/src/onetime/common/srom/core/'
-
-infile_c = ['shv.C',
-            'securebootutil.C',
-            'irq.C'
+abs_bldr_cmn_core_c_path = [files('irq.C')
             ]
 
-abs_srom_core_c_path = []
 
-foreach infile : infile_c
-  abs_srom_core_c_path += cmn_srom_core_dir_path + infile
-endforeach

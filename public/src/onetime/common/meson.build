@@ -27,3 +27,8 @@ if get_option('srom').enabled()
   subdir('srom')
   subdir('algorithms')
 endif
+
+if get_option('bldr').enabled()
+  subdir('bldr')
+endif
+

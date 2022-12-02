@@ -25,8 +25,8 @@
 #
 infile_c = ['main.C',
             'threadroutine.C',
-            'irq.C',
             'functionaddress.C',
+            abs_bldr_cmn_core_c_path,
             abs_pak_c_path,
             abs_cmn_core_c_path,
             abs_cmn_utils_c_path,
