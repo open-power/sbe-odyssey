@@ -45,25 +45,23 @@
 extern "C" {
 
     /// Constants
-    const uint32_t NUM_CHIPLET_IDS      =    9;  // Num of chiplet IDs
+    const uint32_t NUM_CHIPLET_IDS      =    3;  // Num of chiplet IDs
     const uint8_t  ALL_GOOD_ID          = 0xFF;  // RingID that marks default clock domains
 
     // #################################################################
-    // Chiplet vital domain array
-    // Each entry defines the Vital clock domain name for the Chiplet ID index
-    // For non-existing Chiplet ID, entry is ODYSSEY_FAKE_DOMAIN
+    // Chiplet vital domain table
     // #################################################################
-    const CLOCK_DOMAIN ChipletVitalDomainTable[NUM_CHIPLET_IDS] =
+    struct ChipletVitlDomain_t
     {
-        ODYSSEY_STANDBY_DOMAIN,           // Chiplet 0, Standby/CFAM
-        ODYSSEY_TPVITL_DOMAIN,            // Chiplet 1, TP
-        ODYSSEY_FAKE_DOMAIN,              // Chiplet 2, invalid
-        ODYSSEY_FAKE_DOMAIN,              // Chiplet 3, invalid
-        ODYSSEY_FAKE_DOMAIN,              // Chiplet 4, invalid
-        ODYSSEY_FAKE_DOMAIN,              // Chiplet 5, invalid
-        ODYSSEY_FAKE_DOMAIN,              // Chiplet 6, invalid
-        ODYSSEY_FAKE_DOMAIN,              // Chiplet 7, invalid
-        ODYSSEY_MEMVITL_DOMAIN,           // Chiplet 8, MC
+        const uint8_t      chipletId;  // ChipletId
+        const CLOCK_DOMAIN domain;     // Domain
+    };
+
+    const ChipletVitlDomain_t ChipletVitlDomainTable[] =
+    {
+        { PIB_CHIPLET_ID,     ODYSSEY_STANDBY_DOMAIN },
+        { PERV_CHIPLET_ID,    ODYSSEY_TPVITL_DOMAIN  },
+        { MEM_CHIPLET_ID,     ODYSSEY_MEMVITL_DOMAIN },
     };
 
     // #################################################################
