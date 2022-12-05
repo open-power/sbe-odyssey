@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -166,7 +166,7 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
         // Check the destination bit at the start
         SBE_INFO(SBE_FUNC "Destination bit tells us to go to runtime");
         (void)SbeRegAccess::theSbeRegAccess().
-              updateSbeState(SBE_STATE_RUNTIME);
+              updateSbeState(SBE_STATE_CMN_RUNTIME);
     }
 
     chipOpParam_t configStr = { SBE_FIFO, 0x00, (uint8_t*)i_pArg };

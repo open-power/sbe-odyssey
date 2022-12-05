@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -29,6 +29,8 @@
 #include "sbeglobals.H"
 #include "sberegaccess.H"
 #include "sbetrace.H"
+#include "sbestates.H"
+#include "sbestatesutils.H"
 
 using namespace fapi2;
 
@@ -119,8 +121,7 @@ ReturnCode sbeExecuteIstep (const uint8_t i_major, const uint8_t i_minor)
     if(rc != FAPI2_RC_SUCCESS)
     {
         SBE_ERROR( SBE_FUNC" FAPI RC:0x%08X", rc);
-        (void)SbeRegAccess::theSbeRegAccess().stateTransition(
-                                                    SBE_DUMP_FAILURE_EVENT);
+        stateTransition(SBE_EVENT_CMN_DUMP_FAILURE);
     }
     else
     {
@@ -140,8 +141,8 @@ void sbeDoContinuousIpl()
     do
     {
         // Set SBE state as IPLing
-        (void)SbeRegAccess::theSbeRegAccess().stateTransition(
-                                                SBE_PLCK_EVENT);
+        stateTransition(SBE_EVENT_CMN_PLCK);
+
         // Run isteps
         for(size_t entry = 0; entry < istepTable.len; entry++)
         {
@@ -191,7 +192,7 @@ void sbeDoContinuousIpl()
                                     istepTableEntry->istepMajorNum,
                                     step);
                 // Check if we reached runtime
-                if(SBE_STATE_RUNTIME ==
+                if(SBE_STATE_CMN_RUNTIME ==
                                 SbeRegAccess::theSbeRegAccess().getSbeState())
                 {
                     // Exit outer loop as well

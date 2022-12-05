@@ -40,7 +40,6 @@ endif
 
 infile_c = ['main.C',
             'initthreads.C',
-            'sberegaccess.C',
             'chipop_handler.C',
             'sbecmdreceiver.C',
             'sbecmdprocessor.C',
