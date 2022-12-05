@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2019,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2019,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -42,6 +42,7 @@
 #include "sbe_build_info.H"
 #include "ppe42_string.h"
 #include "metadata.H"
+#include "sbestatesutils.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -211,8 +212,7 @@ int  main(int argc, char **argv)
             if( fapiRc != fapi2::FAPI2_RC_SUCCESS )
             {
                 SBE_ERROR(SBE_FUNC"plat_TargetsInit failed");
-                (void)SbeRegAccess::theSbeRegAccess().
-                        stateTransition(SBE_FAILURE_EVENT);
+                stateTransition(SBE_EVENT_CMN_FAILURE);
                 // Hard Reset SBE to recover
                 break;
             }
@@ -222,8 +222,7 @@ int  main(int argc, char **argv)
                 SBE_ERROR(SBE_FUNC"Failed to initialize SbeRegAccess.");
                 // init failure could mean the below will fail too, but attempt it
                 // anyway
-                (void)SbeRegAccess::theSbeRegAccess().stateTransition(
-                                                     SBE_FAILURE_EVENT);
+                stateTransition(SBE_EVENT_CMN_FAILURE);
                 // Hard Reset SBE to recover
                 break;
             }

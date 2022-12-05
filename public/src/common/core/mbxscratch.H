@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -88,26 +88,14 @@ typedef union
         uint64_t iv_currImage : 1; // If 0->SROM , 1->Boot Loader/Runtime
         uint64_t iv_prevState : 4;
         uint64_t iv_currState : 4;
-        uint64_t iv_majorStep : 8; // Max major is 97
-        uint64_t iv_minorStep : 6; // Max minor is 34
+        uint64_t iv_majorStep : 4;
+        uint64_t iv_minorStep : 6;
+        uint64_t iv_reserved2 : 4;
         uint64_t iv_progressCode : 6;
         uint64_t iv_unused : 32;
     };
     uint64_t iv_messagingReg;
 }messagingReg_t;
-
-typedef union
-{
-    struct
-    {
-        uint64_t iv_mbox8Reserve1 : 2;
-        uint64_t iv_mbx5_valid : 1;
-        uint64_t iv_mbox8Reserve2 : 2;
-        uint64_t iv_mbx6_valid : 1;
-        uint64_t iv_mbox8Reserve3 : 58;
-    };
-    uint64_t iv_mbx8;
-}mbx8_t;
 
 typedef union
 {

@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/sberegaccess.H $         */
+/* $Source: public/src/runtime/common/core/sberegaccess.H $               */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -33,20 +33,11 @@
 #define __SBEFW_SBEREGACCESS_H
 
 #include <stdint.h>
-#include "sbestates.H"
-#include "sbeevents.H"
 #include "mbxscratch.H"
-
-//TODO: P11SBE Porting
-#if 0
-#include "fapi2.H"
-#endif
 
 /**
  * @brief Utility singleton that SBEFW can use to read write various scratch
  * registers/FW attributes
- * TODO: via RTC ??????: Need to change the read of scratch registers to FAPI
- * attribute accesses once we have the attributes defined in the HWP code.
  */
 class SbeRegAccess
 {
@@ -89,7 +80,7 @@ class SbeRegAccess
          * @return RC indicating success/failure.
          *
          */
-        uint32_t updateSbeState(const sbeState &i_state);
+        uint32_t updateSbeState(const uint8_t &i_state);
 
         /**
          * @brief Update the SBE IPL steps into the SBE messaging register. The
@@ -202,7 +193,6 @@ class SbeRegAccess
             return messagingReg.iv_prevState;
         }
 
-
         /**
          * @brief Get the SBE major istep number
          *
@@ -224,12 +214,6 @@ class SbeRegAccess
         {
             return messagingReg.iv_minorStep;
         }
-        /**
-         * @brief Update the SBE State as per the transition event
-         *
-         * @param [in] i_event Transition Event
-         */
-        void stateTransition(const sbeEvent &i_event);
 
         /**
          * @brief Update the async bit into the SBE messaging register. The
@@ -261,9 +245,8 @@ class SbeRegAccess
     private:
 
         mbx11_t mbx11 = {0};
-        mbx6_t mbx6 = {0};
+        mbx16_t mbx16 = {0};
         messagingReg_t messagingReg = {0};
-        mbx8_t mbx8 = {0};
 
         /**
         * @brief Constructor
@@ -271,10 +254,6 @@ class SbeRegAccess
         SbeRegAccess()
         {}
 
-        // Bit masks defining bits in the above registers that the SBE is
-        // interested in
-        static const uint64_t SBE_DEV_ID_C4_PIN_MASK = 0x0000000000800000ULL;
-        static const uint64_t SBE_PERV_DEVICE_ID_REG_BIT58_MASK = 0x0000000000000020ULL;
         static SbeRegAccess cv_instance;
 };
 #endif //__SBEFW_SBEREGACCESS_H

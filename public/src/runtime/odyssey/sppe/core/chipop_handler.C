@@ -56,34 +56,34 @@ sbeChipOpRc_t sbeIsCmdAllowed (const uint8_t i_cmdClass,
 
             switch(l_state)
             {
-                case SBE_STATE_UNKNOWN:
-                case SBE_STATE_FAILURE:
+                case SBE_STATE_CMN_UNKNOWN:
+                case SBE_STATE_CMN_FAILURE:
                     // All operations are fenced here, return false
                     // Reset is the only Option available
                     break;
 
-                case SBE_STATE_IPLING:
+                case SBE_STATE_CMN_IPLING:
                 {
                     l_ret = ((l_pCmd->cmd_state_fence &
                              SBE_FENCE_AT_CONTINUOUS_IPL)? false:true);
                     break;
                 }
 
-                case SBE_STATE_ISTEP:
+                case SBE_STATE_CMN_ISTEP:
                 {
                     l_ret = ((l_pCmd->cmd_state_fence &
                              SBE_FENCE_AT_ISTEP)? false:true);
                     break;
                 }
 
-                case SBE_STATE_RUNTIME:
+                case SBE_STATE_CMN_RUNTIME:
                 {
                     l_ret = ((l_pCmd->cmd_state_fence &
                              SBE_FENCE_AT_RUNTIME)? false:true);
                     break;
                 }
 
-                case SBE_STATE_DUMP:
+                case SBE_STATE_CMN_DUMP:
                 {
                     l_ret = ((l_pCmd->cmd_state_fence &
                              SBE_FENCE_AT_DUMPING)? false:true);
