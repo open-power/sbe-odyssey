@@ -30,6 +30,7 @@ infile_c = ['sbeSpMsg.C',
             'sbeirq.C',
             'sbeFifoMsgUtils.C',
             'sbeglobals.C',
+            'chipophandlerutils.C'
            ]
 
 abs_runtime_cmn_core_c_path = []
