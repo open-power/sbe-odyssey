@@ -280,7 +280,10 @@ endif
 subdir('packaging')
 
 # Dummy call to create dependency on the files invoked by different tools
-run_command('ls', MESON_SETUP_EXTRA_DEPENDENCIES)
+#   Call this only if its not internal project. Otherwise call this from internal
+if(INTERNAL_PROJECT == 'False')
+    run_command('ls', MESON_SETUP_EXTRA_DEPENDENCIES)
+endif
 
 # If SROM build for ODYSSEY Platform is disabled pick up the frozen DD1 RIT images from repo
 if get_option('srom').disabled() and  get_option('platform') == 'odyssey'

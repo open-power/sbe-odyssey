@@ -48,6 +48,11 @@ strip   = find_program('strip')
 #Import file system module
 file_system = import('fs')
 
+INTERNAL_PROJECT = 'False'
+if file_system.is_dir('internal')
+  INTERNAL_PROJECT = 'True'
+endif
+
 #Output path for install files.
 #Fetch the path from --prefix arg
 output_dir_path = get_option('prefix')
@@ -59,6 +64,6 @@ run_command('mkdir', '-p', genfiles_dir_path)
 
 subdir('public')
 
-if file_system.is_dir('internal')
+if(INTERNAL_PROJECT == 'True')
   subdir('internal')
 endif
