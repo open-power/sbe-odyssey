@@ -3,6 +3,6 @@
     ("boot",     0x20000),
     ("runtime",  0xC0000),
     ("bmc",      0x8000),
-    ("hostboot", 0x8000),
+    ("host",     0x8000),
     ("cust",      0x10000),
 ]
