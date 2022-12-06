@@ -379,7 +379,7 @@ def mod_multicast_setup(target<ANY_POZ_CHIP>, uint8_t i_group_id, uint64_t i_chi
         putScom(i_target, (PCB_RESPONDER_MULTICAST_GROUP_1 + i_group_id) | (i << 24), (new_group << 58) | (prev_group << 42));
 
 def mod_poz_tp_init_common(target<ANY_POZ_CHIP>):
-    # IPOLL_MASK_INIT = 0xFC00_0000_0000_0000
+    # IPOLL_MASK_INIT = 0xF800_0000_0000_0000
     HOST_MASK_REG = IPOLL_MASK_INIT          # Set up IPOLL mask
     CPLT_CTRL2 = ATTR_PG(PERV)               # Transfer PERV partial good attribute into region good register
     PERV_CTRL0.VITL_CG_DIS = 0               # Enabe PERV vital clock gating

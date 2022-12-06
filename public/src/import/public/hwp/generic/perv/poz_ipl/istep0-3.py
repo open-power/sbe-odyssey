@@ -358,6 +358,8 @@ def p11s_tp_chiplet_reset():
     CPLT_CONF1.NEST_PDLY = 7                       # Set up static progdelay for the nest mesh
     PERV_CTRL1.TP_CPLT_CLK_NEST_PDLY_BYPASS_DC = 0 # Drop nest PDLY/DCC bypass
 
+    PERV_CTRL0.SRAM_ENABLE_DC = 1
+
 def ody_tp_chiplet_reset():
     ROOT_CTRL0.PCB_RESET = 0           # Drop PCB interface reset to enable access into TP chiplet
     OPCG_ALIGN.OPCG_WAIT_CYCLES = 0x20 # Increase OPCG wait cycles to enable scanning
@@ -979,7 +981,7 @@ def p11t_tp_init():
 
     ## Set up special NET_CTRL1 init value for EQs
     with all EQ chiplets via multicast:
-        # EQ_NET_CTRL1_INIT_VALUE = 0x00FF_FFFF_0000_0000
+        # EQ_NET_CTRL1_INIT_VALUE = 0xFFFF_FF00_0000_0000
         NET_CTRL1 = EQ_NET_CTRL1_INIT_VALUE
 
     ## Unmask TP PLL unlock reporting
