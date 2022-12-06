@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -452,8 +452,8 @@ void bldrthreadroutine(void *i_pArg)
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_SPPE_BINARY_LOAD);
 
-        SBE_INFO("Loading SPPE embedded archive");
-        load_image(pak, sppe_pak_fname, load_offset,
+        SBE_INFO("Loading SPPE RAM embedded archive");
+        load_image(pak, sppe_ram_pak_fname, load_offset,
                     bldrSecureBootCtrlSettings.fileHashCalculationEnable, LIF_IS_PAK);
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_SPPE_PAK_LOAD);

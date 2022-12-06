@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -44,7 +44,7 @@ static const char hash_list_fname[]   =  "rt/hash.list";
 static const char secure_hdr_fname[]  = "rt/secure.hdr";
 static const char sppe_bin_fname[]    =   "rt/sppe.bin";
 static const char hw_keys_hash_fname[] = "rt/hwkeyshash.bin";
-static const char sppe_pak_fname[] =   "rt/sppe.pak";
+static const char sppe_ram_pak_fname[] =   "rt/sppe.ram.pak";
 static const char vpd_pak_fname[] =    "vpd/sppe.pak";
 
 #endif /* _ODYSSEYFILENAMES_H_ */
