@@ -52,10 +52,12 @@ enum pll_lock_bits
 
     ZME_PERV_PLLCLKSW0  = 0x80,
     ZME_PERV_PLLCLKSW1  = 0x40,
-    ZME_PERV_PLLABFLT   = 0x20,
-    ZME_PERV_PLLXBFLT   = 0x10,
+    ZME_PERV_PLLXBFLT   = 0x20,
+    ZME_PERV_PLLABFLT   = 0x10,
     ZME_PERV_PLLMCFLT   = 0x08,
     ZME_PERV_PLLNEST    = 0x04,
+
+    ZME_PERV_PLLPCIFLT  = 0x80,
 };
 };
 
@@ -318,6 +320,10 @@ const uint8_t p11t_chiplet_delay_table[64] =
 
 /* Odyssey is super boring since it only has two chiplets and both are at the same level */
 const uint8_t ody_chiplet_delay_table[64] = { 0 };
+
+
+/* zmetis placeholder */
+const uint8_t zme_chiplet_delay_table[64] = { 0 };
 
 /// @brief Describes a hang pulse configuration
 struct hang_pulse_t
