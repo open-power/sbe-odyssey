@@ -48,13 +48,6 @@ SBE_SIGN_TOOL=$6
 
 $ATTR_TOOL setfixed $SPPE_IMAGE_ABS.attr.db $SPPE_IMAGE_ABS.bin -v
 
-# Create fake embedded archive for now. create at image specific directory to
-#    avoid race condition
-TEST_BIN_PATH=$SPPE_MESON_IMAGE_DIR_PATH/test.bin
-echo "test" > $TEST_BIN_PATH
-$PAK_TOOL_PATH add ${SPPE_MESON_IMAGE_DIR_PATH}/embedded_archive.pak $TEST_BIN_PATH
-rm $TEST_BIN_PATH
-
 #SPPE manifest file path
 SPPE_MANIFEST_PATH=$SBEROOT/public/src/runtime/odyssey/sppe/build/utils/manifest
 
