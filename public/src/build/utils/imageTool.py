@@ -314,7 +314,7 @@ class PakList(argparse.Action):
             values, option_string = None):
         setattr(namespace, self.dest, dict())
 
-        pakHashList = ["boot", "rt", "bmc", "cust"]
+        pakHashList = ["boot", "rt", "bmc", "host", "cust"]
 
         for value in values:
             pakName, pakPath = value.split('=')
