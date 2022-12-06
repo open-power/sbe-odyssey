@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -134,12 +134,6 @@ check_path $PARTITION_1_IMAGE_PATH
 check_path $GOLDEN_PARTITION_IMAGE_PATH
 check_path $ECC_TOOL_PATH
 
-# Currently single partition image generated is of size 1Mb.
-# Each partition is of size 4MB.
-# We will have to pad 3Mb zeros for every partition
-# NOTE: This can change as per design in odysseylink.H. Manual changes are required to be done here.
-PAD_BYTES_SIZE=3145728
-
 #Lets create a temprorary scratch dir inside output dir for storing intermediate files.
 TEMP_SCRATCH_PATH=$OUTPUT_IMAGE_PATH/temp_scratch
 mkdir -p $TEMP_SCRATCH_PATH
@@ -148,19 +142,6 @@ mkdir -p $TEMP_SCRATCH_PATH
 cp $PARTITION_0_IMAGE_PATH $TEMP_SCRATCH_PATH/odyssey_nor_DD1.img.part0
 cp $PARTITION_1_IMAGE_PATH $TEMP_SCRATCH_PATH/odyssey_nor_DD1.img.part1
 cp $GOLDEN_PARTITION_IMAGE_PATH $TEMP_SCRATCH_PATH/odyssey_nor_DD1.img.golden
-
-#TODO: Add logic to automatically calculate current size and pad required
-# Pad partition zero with pad bytes
-echo "***INFO | SBE | buildnor : Padding partition zero..."
-head -c $PAD_BYTES_SIZE /dev/zero >> $TEMP_SCRATCH_PATH/odyssey_nor_DD1.img.part0
-
-# Pad partition one with pad bytes
-echo "***INFO | SBE | buildnor : Padding partition one..."
-head -c $PAD_BYTES_SIZE /dev/zero >> $TEMP_SCRATCH_PATH/odyssey_nor_DD1.img.part1
-
-# Pad golden partition with pad bytes
-echo "***INFO | SBE | buildnor : Padding golden partition..."
-head -c $PAD_BYTES_SIZE /dev/zero >> $TEMP_SCRATCH_PATH/odyssey_nor_DD1.img.golden
 
 # Append all images to create a nor image
 echo "***INFO | SBE | buildnor : Creating nor..."
