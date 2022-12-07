@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -28,8 +29,6 @@
 
 /**
  * @brief sbeGetRawAttrDump: GetRawAttrDump chipop handler.
- * This function will send the attribute tank in
- * the pibmem to chipop caller via downstream FIFO
  *
  * @param[in] i_pArg Buffer to be passed to the function
  *

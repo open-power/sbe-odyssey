@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -48,8 +48,15 @@ extern "C" {
 #define CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc) \
 if ((l_rc) != SBE_SEC_OPERATION_SUCCESSFUL) \
 { \
+    SBE_ERROR(__func__ " Rc =0x%08x",l_rc); \
     break; \
-}
+} \
+
+// align address to next 8 byte boundary
+#define ALIGN_8_BYTES(address) (address+0x7)&(~0x7)
+
+extern uint32_t _attrs_start_ __attribute__ ((section (".attr")));
+extern uint32_t _attrs_end_ __attribute__((section(".attr")));
 typedef enum
 {
     SROM = 1,

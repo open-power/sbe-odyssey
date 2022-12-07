@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,11 +27,6 @@
 #include "chipop_struct.H"
 #include "sbecmdgetrawattrdump.H"
 #include "sbe_sp_intf.H"
-
-// align address to next 8 byte boundary
-#define ALIGN_8_BYTES(address) (address+0x7)&(~0x7)
-extern uint32_t _attrs_start_ __attribute__ ((section (".attr")));
-extern uint32_t _attrs_end_ __attribute__((section(".attr")));
 
 uint32_t sbeGetRawAttrDump (uint8_t *i_pArg)
 {
@@ -63,9 +58,10 @@ uint32_t sbeGetRawAttrDump (uint8_t *i_pArg)
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
     }while(false);
 
-    if(l_rc != SBE_SEC_OPERATION_SUCCESSFUL){
+    if(l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+    {
         respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                           SBE_SEC_GETATTRDUMP_FAILURE );
+                           l_rc );
     }
     l_rc = sbeDsSendRespHdr(respHdr, NULL, type);
     SBE_EXIT(SBE_FUNC);
