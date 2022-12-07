@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -106,7 +106,7 @@
 #define TCCHW_IRQ_PCB_INTR_PENDING_GRP1         57 /* 57 */
 #define TCCHW_IRQ_PCB_INTR_PENDING_GRP2         58 /* 58 */
 #define TCCHW_IRQ_PCB_INTR_PENDING_GRP3         59 /* 59 */
-#define TCCHW_IRQ_IPI3_LO_PRIORITY              60 /* 60 */
+#define TCCHW_IRQ_XCE_FUNCTION_TRIGGER          60 /* 60 */
 #define TCCHW_IRQ_VC1_PUSH_RECEIVE_COMPLETE     61 /* 61 */
 #define TCCHW_IRQ_VC2_PUSH_RECEIVE_COMPLETE     62 /* 62 */
 #define TCCHW_IRQ_VC3_PUSH_RECEIVE_COMPLETE     63 /* 63 */
@@ -182,7 +182,7 @@
                                                     "TCCHW_IRQ_PCB_INTR_PENDING_GRP1",          \
                                                     "TCCHW_IRQ_PCB_INTR_PENDING_GRP2",          \
                                                     "TCCHW_IRQ_PCB_INTR_PENDING_GRP3",          \
-                                                    "TCCHW_IRQ_IPI3_LO_PRIORITY",               \
+                                                    "TCCHW_IRQ_XCE_FUNCTION_TRIGGER",           \
                                                     "TCCHW_IRQ_VC1_PUSH_RECEIVE_COMPLETE",      \
                                                     "TCCHW_IRQ_VC2_PUSH_RECEIVE_COMPLETE",      \
                                                     "TCCHW_IRQ_VC3_PUSH_RECEIVE_COMPLETE",      \

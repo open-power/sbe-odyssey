@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -25,25 +25,6 @@
 #ifndef __GPEHW_COMMON_H__
 #define __GPEHW_COMMON_H__
 
-enum GPE_PIG_TYPES
-{
-    GPE_PIG_PSTATE_PHASE1       = 0,
-    GPE_PIG_PSTATE_PHASE2       = 1,
-    GPE_PIG_STOP_STATE_CHANGE   = 2,
-    GPE_PIG_CME_REQUEST         = 3,
-    GPE_PIG_CME_ACK             = 4,
-    GPE_PIG_CME_ERROR           = 5,
-    GPE_PIG_QUAD_PPM_MSG        = 6,
-    GPE_PIG_QUAD_PPM_ERROR      = 7
-};
-
-
-enum GPE_CHIPLET_CONFIGS
-{
-    CORES_PER_QUAD               = 4,
-    MAX_QUADS                    = 8,
-    MAX_CORES                    = 32
-};
 
 #if !defined(GPE_BUFFER)
 #if defined(__PPC405__)
