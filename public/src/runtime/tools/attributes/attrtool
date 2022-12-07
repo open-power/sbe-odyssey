@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 from contextlib import suppress
 from tabulate import tabulate
 import pickle, jinja2, sys, os
-import re
+import attrmodule
 
 def cmd_parse(args):
     db = AttributeDB(args.targetlist)
@@ -74,65 +74,48 @@ def cmd_setfixed(args):
         attr.set(image, sbe_attr_tank.image_base, sbe_attr_tank.TARGET_TYPES)
     open(args.image, "wb").write(image)
 
+def utilOpen(filename:str)->bytes:
+    try:
+        return open(filename, "rb").read()
+    except FileNotFoundError:
+        print("ERR -- '{}' FILE NOT FOUND, \
+\nif in sbe environment clean and  build again".format(filename))
+        sys.exit(1)
+
 def cmd_setattr(args):
-    sbe_attr_tank : AttributeStructure = pickle.load(open(args.dbfile, "rb"))
-    is_attr_present = False
-    attr_to_set = None
-    for attr in sbe_attr_tank.field_list:
-        if attr.name == args.attr.upper():
-            is_attr_present = True
-            attr_to_set = attr
-            break
-
-    if not is_attr_present :
-        raise ArgumentError("Unknown attribute: " + args.attr)
-
-    image = bytearray(open(args.image, "rb").read())
-    image_base = sbe_attr_tank.image_base
-
-    if not isinstance(attr_to_set, RealAttrFieldInfo):
-        raise ArgumentError(args.attr.upper()+ " is not a Real Attribute")
-
-    #Default is to initialize all the instances
-    instance = 0xFF
-    if (args.instance is not None):
-        instance = int(args.instance)
-
+    dbfile = pickle.loads(utilOpen(args.dbfile))
+    image = bytearray(utilOpen(args.image))
     subscript = list()
-    if (args.index is not None):
-        subscript = [int(i) for i in re.split(',| ',args.index)]
-    attr_to_set.set_value(image, image_base, args.target, int(args.value),
-                            instance, subscript, sbe_attr_tank.TARGET_TYPES)
-    open(args.image, "wb").write(image)
+    if (i_index is not None):
+        subscript = [int(i) for i in re.split(',| ',i_index)]
+    try:
+        image = attrmodule.set_attr(dbfile, image, args.attr, args.value, \
+                                    args.target, subscript, args.instance)
+        open(args.image, "wb").write(image)
+    except Exception as e:
+        print(e)
+        sys.exit(1)
 
 def cmd_getattr(args):
-    db = pickle.load(open(args.dbfile, "rb"))
-    if args.base is not None:
-        db.image_base = args.base
-
+    dbfile = pickle.loads(utilOpen(args.dbfile))
+    image = bytearray(utilOpen(args.image))
     try:
-        attr = db.attributes[args.attr.upper()]
-    except KeyError:
-        raise ArgumentError("Unknown attribute: " + args.attr)
-
-    image = open(args.image, "rb").read()
-    print("%s(%s) = %s" % (attr.name, attr.typestr(), attr._type.valuestr()))
+        attribute = attrmodule.get_attr(dbfile, args.attr, image)
+        print(attribute)
+    except Exception as e:
+        print(e)
+        sys.exit(1)
 
 def cmd_dumpattr(args):
-    sbe_attr_tank : AttributeStructure = pickle.load(open(args.dbfile, "rb"))
+    dbfile = pickle.load(open(args.dbfile, "rb"))
     image = open(args.image, "rb").read()
-    if args.raw =='True':
-        image_base = sbe_attr_tank.start_address
-    else:
-        image_base = sbe_attr_tank.image_base
-    attr_list = []
-    headers=["Attribute Name", "Target", "Value Type", "Value"]
-    for attr in sbe_attr_tank.field_list:
-        #TODO we should not check this here imo
-        #class implementation should handle this gracefully
-        if isinstance(attr, RealAttrFieldInfo):
-            attr.createDumpRecord(attr_list, image, image_base, sbe_attr_tank.TARGET_TYPES)
-    print(tabulate(attr_list, headers, tablefmt="pretty", stralign="left" ))
+    try:
+        attr_list = attrmodule.dump_attr(dbfile, image, args.raw)
+        headers=["Attribute Name", "Target", "Value Type", "Value"]
+        print(tabulate(attr_list, headers, tablefmt="pretty", stralign="left"))
+    except Exception as e:
+        print(e)
+        sys.exit(1)
 
 def img_standard_parms(parser):
     #parser.add_argument("-b", "--base", type=hexint, default=None, help="Base address (hex) of the image file, defaults to an autodetected value")

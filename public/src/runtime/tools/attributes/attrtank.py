@@ -76,8 +76,18 @@ class _EnumValueType(object):
         else:
             self._base.set_element(image, offset, value[0])
 
-    def set_element(self, image:bytearray, offset:int, value:int):
-        self._base.set_element(image, offset, value)
+    def set_element(self, image:bytearray, offset:int, value:'int|str'):
+        if isinstance(value, str):
+            if value in self._values:
+                self._base.set_element(image, offset, self._values[value])
+            else:
+                raise ArgumentError('Value is not an enum')
+        else:
+            if value in self._values.values():
+                self._base.set_element(image, offset, value)
+            else:
+                raise ArgumentError('Integer value passed does not map to any\
+ enum')
 
 class _ArrayValueType(object):
     def __init__(self, base_type:_AttrIntValueType, dim:list):
@@ -86,7 +96,8 @@ class _ArrayValueType(object):
         self.size = base_type.size * dim
 
     def get(self, image:bytearray, offset:int) -> list:
-        return [self._base.get(image, offset + self._base.size * i) for i in range(self._dim)]
+        return [self._base.get(image, offset + self._base.size * i) for i in \
+                range(self._dim)]
 
     def valuestr(self, image:bytearray, offset:int) -> list:
         return [self._base.valuestr(image, offset + self._base.size * i) for i in range(self._dim)]
@@ -222,6 +233,9 @@ class RealAttrFieldInfo(AttrFieldInfo):
         array_size = int(np.prod(self.array_dims))
 
         self.attr_size_bytes = (array_size * self._type.size)
+
+    def __str__(self):
+        return self.name +" "+ self.typestr() +" "+", ".join(self.sbe_target_type)
 
     def set(self, image, image_base, TARGET_TYPES):
         #Check if the initializer list is same for each of the supported
