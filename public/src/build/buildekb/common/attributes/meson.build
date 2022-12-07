@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -65,6 +65,7 @@ SBE_CMN_ATTR_FILTER_XML += filter_xml_path
 attrtool_deps = ['attrdb.py',
                  'attrtank.py',
                  'attrtoolutils.py',
+                 'attrmodule.py',
                  '/templates/attribute.C.t',
                  '/templates/attribute.H.t',
                  '/templates/attribute_ids.H.t',
