@@ -80,14 +80,16 @@ inline uint32_t extract_ddlevel( uint32_t i_cfamId )
 
 // Full 32-bit value with empty nibbles for DD level
 constexpr uint32_t P10          = 0x020DA049;
-constexpr uint32_t P11          = 0x020DD049;
+constexpr uint32_t P11T         = 0x020DD049;
+constexpr uint32_t P11S         = 0x020DE049;
 constexpr uint32_t EXPLORER     = 0x060D2000;
 constexpr uint32_t GEMINI       = 0x060DC000;
 constexpr uint32_t ODYSSEY      = 0x060C0049;
 
 // Shorter 16-bit value (drops Major nibble and 049)
 constexpr uint32_t P10_16          = 0x20DA;
-constexpr uint32_t P11_16          = 0x20DD;
+constexpr uint32_t P11T_16         = 0x20DD;
+constexpr uint32_t P11S_16         = 0x20DE;
 constexpr uint32_t EXPLORER_16     = 0x60D2;
 constexpr uint32_t GEMINI_16       = 0x60DC;
 constexpr uint32_t ODYSSEY_16      = 0x60C0;
