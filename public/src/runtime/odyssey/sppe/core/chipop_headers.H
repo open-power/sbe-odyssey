@@ -33,6 +33,7 @@
 #include "sbecmdringaccess.H"
 #include "sbecmdbist.H"
 #include "sbecmdpak.H"
+#include "sbecmdgetrawattrdump.H"
 #include <stdint.h>
 #include <stddef.h>
 

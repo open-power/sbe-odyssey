@@ -53,6 +53,12 @@
         "command":"0x03",
         "function":"sbeSyncPartition",
         "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+    },
+    {
+        "cmdClass":"AD",
+        "command":"0x01",
+        "function":"sbeGetRawAttrDump",
+        "fences":["SBE_NO_FENCE"]
     }
     ]
 }
