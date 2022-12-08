@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -107,16 +107,26 @@ void print_bist_params(const bist_params& i_params)
 
     FAPI_DBG("outer_loop_mask = 0x%04x", i_params.outer_loop_mask);
     FAPI_DBG("inner_loop_mask = 0x%04x", i_params.inner_loop_mask);
-    FAPI_DBG("program (ASCII) = 0x%08x%08x%08x%08x",
+    FAPI_DBG("program_1st_half (ASCII) = 0x%08x%08x%08x%08x",
              be32toh(((uint32_t*)i_params.program)[0]),
              be32toh(((uint32_t*)i_params.program)[1]),
              be32toh(((uint32_t*)i_params.program)[2]),
              be32toh(((uint32_t*)i_params.program)[3]));
-    FAPI_DBG("ring_patch (ASCII) = 0x%08x%08x%08x%08x",
+    FAPI_DBG("program_2nd_half (ASCII) = 0x%08x%08x%08x%08x",
+             be32toh(((uint32_t*)i_params.program)[4]),
+             be32toh(((uint32_t*)i_params.program)[5]),
+             be32toh(((uint32_t*)i_params.program)[6]),
+             be32toh(((uint32_t*)i_params.program)[7]));
+    FAPI_DBG("ring_patch_1st_half (ASCII) = 0x%08x%08x%08x%08x",
              be32toh(((uint32_t*)i_params.ring_patch)[0]),
              be32toh(((uint32_t*)i_params.ring_patch)[1]),
              be32toh(((uint32_t*)i_params.ring_patch)[2]),
              be32toh(((uint32_t*)i_params.ring_patch)[3]));
+    FAPI_DBG("ring_patch_2nd_half (ASCII) = 0x%08x%08x%08x%08x",
+             be32toh(((uint32_t*)i_params.ring_patch)[4]),
+             be32toh(((uint32_t*)i_params.ring_patch)[5]),
+             be32toh(((uint32_t*)i_params.ring_patch)[6]),
+             be32toh(((uint32_t*)i_params.ring_patch)[7]));
 }
 
 ReturnCode poz_bist_execute(

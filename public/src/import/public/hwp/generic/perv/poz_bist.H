@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -34,7 +34,7 @@
 
 #include <fapi2.H>
 
-static const uint16_t BIST_PARAMS_CURRENT_VERSION = 7;
+static const uint16_t BIST_PARAMS_CURRENT_VERSION = 8;
 
 struct bist_params
 {
@@ -114,8 +114,8 @@ struct bist_params
     ////////////////////////////////////////////////////////////////
     // 8-bit constituents
     ////////////////////////////////////////////////////////////////
-    char program[16];              ///< Name of program for image selection
-    char ring_patch[16];           ///< Name of patch ring image
+    char program[32];              ///< Name of program for image selection
+    char ring_patch[32];           ///< Name of patch ring image
 
     // final_idle_count = idle_count + (linear_stagger * target_number) + (zigzag_stagger * (target_number & 1));
 
