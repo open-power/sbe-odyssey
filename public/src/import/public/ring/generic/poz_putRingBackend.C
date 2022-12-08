@@ -164,7 +164,7 @@ static const TargetType TARGET_TYPE_ACTUALLY_PERV = TARGET_TYPE_NONE
         | TARGET_TYPE_EQ
         | TARGET_TYPE_PERV
         | TARGET_TYPE_PEC
-        | TARGET_TYPE_MCC
+        | TARGET_TYPE_MC
         | TARGET_TYPE_IOHS
         | TARGET_TYPE_PAUC
         | TARGET_TYPE_TBUSC
