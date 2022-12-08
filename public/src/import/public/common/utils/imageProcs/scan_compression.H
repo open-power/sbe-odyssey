@@ -73,9 +73,9 @@ namespace rs4
 enum ChipType_t
 {
     ANY,
+    ODY,
     P11S,
     P11T,
-    ODY,
     ZME,
 };
 
