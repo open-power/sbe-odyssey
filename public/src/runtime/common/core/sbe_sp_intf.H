@@ -172,8 +172,19 @@ enum sbeSecondaryResponse
     SBE_SEC_CU_PARTITION_MAP_INVALID_IMG_TYPE = 0x59,
     SBE_SEC_CU_IMG_NOT_FOUND_IN_PARTITION_TBL = 0x5A,
     SBE_SEC_CU_FAILED_TO_READ_PARTITION_TABLE = 0x5B,
-    SBE_SEC_CU_INVALID_PARTITION_ID_PASSED    = 0x5C,
-    SBE_SEC_CU_FAIL_TO_RD_PART_FILE_COMPRESSED= 0x5D,
+    SBE_SEC_CU_INVALID_IMAGE_SIZE             = 0x5C,
+    SBE_SEC_CU_IMAGE_NOT_UPDATABLE            = 0x5D,
+    SBE_SEC_CU_IMAGE_START_POINTER_FAILED     = 0x5E,
+    SBE_SEC_CU_IMAGE_SIZE_MORE_THAN_MAX_SIZE  = 0x5F,
+    SBE_SEC_CU_INVALID_PARTITION_ADDR_RXVD    = 0x60,
+    SBE_SEC_CU_UPDATE_IMAGE_FAILURE           = 0x61,
+    SBE_SEC_CU_IMAGE_SIZE_NOT_8BYTE_ALIGNED   = 0x62,
+    SBE_SEC_CU_INVALID_PARTITION_ID_PASSED    = 0x63,
+    SBE_SEC_CU_PARTITION_TABLE_IS_EMPTY       = 0x64,
+    SBE_SEC_CU_FAILED_TO_READ_COMPRESSED_FILE = 0x65,
+    SBE_SEC_CU_EXCEEDS_MAX_SIDE_IMAGE_SIZE    = 0x66,
+    SBE_SEC_CU_PAK_END_MARKER_NOT_FOUND       = 0x67,
+    SBE_SEC_CU_FILE_SIZE_NOT_MATCHING         = 0x68,
 };
 
 /**
@@ -215,13 +226,6 @@ enum class CU_IMAGES : uint16_t
     RUNTIME,           // Updatable
     BMC_OVRD,          // Updatable
     HOST_OVRD,         // Updatable
-    SROM,              // Not-updatable
-    CUST,              // Not-updatable
-    SPPE_RAM,          // Updatable
-    IOPPE_BIN,         // Updatable
-    SYNOPSYS_BIN,      // Updatable
-    ARC_BIN,           // Updatable
-    RSVD,              // Reserved
     END_OF_IMG_LIST
 };
 

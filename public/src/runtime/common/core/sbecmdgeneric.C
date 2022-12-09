@@ -23,14 +23,6 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 #include "sbecmdgeneric.H"
-#include "cmnglobals.H"
-#include "ppe42_string.h"
-#include "sbetrace.H"
-#include "poz_scom_perv_cfam.H"
-#include "poz_ppe.H"
-#include "mbxscratch.H"
-#include "errorcodes.H"
-#include "sbefifo.H"
 #include "chipop_struct.H"
 #include "sbeFifoMsgUtils.H"
 
