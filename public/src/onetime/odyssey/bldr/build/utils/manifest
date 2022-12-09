@@ -33,8 +33,5 @@
         "boot/bldr.bin": {
             "file": "public/src/onetime/odyssey/bldr/odyssey_bldr_DD1.bin",
         },
-        "main.fsm": {
-            "file": "public/src/build/buildekb/odyssey/fsm/main.fsm",
-        },
     }, # end layout
 } # end dict
