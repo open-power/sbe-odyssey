@@ -160,7 +160,7 @@ namespace CU
     typedef struct
     {
         CU_IMAGES imageNum;
-        char       imageName[PARTITION_TABLE_NAME_MAX_CHAR];
+        char      imageName[PARTITION_TABLE_NAME_MAX_CHAR];
     } imgMap_t;
 
     //TODO:JIRA-PFSBE-302 Remove cust.pak
@@ -168,9 +168,7 @@ namespace CU
         {CU_IMAGES::BOOTLOADER, "boot"},
         {CU_IMAGES::RUNTIME,    "rt"},
         {CU_IMAGES::BMC_OVRD,   "bmc"},
-        {CU_IMAGES::HOST_OVRD,  "host"},
-        {CU_IMAGES::RSVD,       "rsvd"},
-        {CU_IMAGES::CUST,       "cust"}
+        {CU_IMAGES::HOST_OVRD,  "host"}
     };
 
     ///////////////////////////////////////
@@ -185,6 +183,9 @@ namespace CU
     // 16 bytes - Section name
     // 04 bytes - Section offset
     // 04 bytes - Section max size
+    //
+    // Last section entry:
+    // section size = minus 8 bytes to include trace and metadata pointer
     /*
      * @brief Structure for partition entry
      */

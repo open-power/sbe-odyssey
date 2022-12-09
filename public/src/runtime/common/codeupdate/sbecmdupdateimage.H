@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/core/sbecmdgeneric.H $              */
+/* $Source: public/src/runtime/common/codeupdate/sbecmdupdateimage.H $    */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,17 +22,47 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef SBE_CMD_GENERIC_H
-#define SBE_CMD_GENERIC_H
+#ifndef __SBECMDUPDATEIMAGE_H
+#define __SBECMDUPDATEIMAGE_H
 
-#include "stdint.h"
+#include "target.H"
+#include "sbeFifoMsgUtils.H"
 
-/*@brief - sbeGetCapability : Implement SBE Get Capability Chipop (0xA802)
- *
- * @param[in] - i_pArg Buffer to be passed to the function
- *
- * @return - RC from the FIFO access utility
+using namespace fapi2;
+
+#define NOR_PARTITION_SIZE              0x00400000 // 4MB
+#define NOR_FLASH_SECTOR_BOUNDARY_ALIGN 0xFFFFF000
+#define MIN_SPI_WRITE_IN_WORDS          0x100 // 256 Words
+#define WITH_ECC(x)                     (((x)*9)/8)
+#define IN_BYTES(x)                     ((x)*4)
+#define WORD_ALIGNED                    4
+#define WORD_LENGTH                     4
+
+/**
+ * @brief structure for update image chip-op
  */
-uint32_t sbeGetCapability(uint8_t *i_pArg);
+typedef struct __attribute__((__packed__))
+{
+    uint16_t reserved;
+    uint16_t imageType;
+    uint32_t imageSizeInWords;
+}updateImageCmdMsg_t;
 
-#endif //SBE_CMD_GENERIC_H
+/**
+ * @brief updateImage : Get image updated
+ *
+ * @param[in] updateImageCmdMsg_t msg : structure for update image
+ * @param[in] sbeFifoType type : fifo type
+ * @param[out] sbeRespGenHdr_t hdr : response header message
+ * @param[out] uint32_t fifoRc : rc for fifo access failure
+ * @param[out] bool ackEOT : flag for EOT received or not
+ *
+ * @return    fapiRc
+ */
+fapi2::ReturnCode updateImage (const updateImageCmdMsg_t *i_msg,
+                               const sbeFifoType i_type,
+                               sbeRespGenHdr_t *o_hdr,
+                               uint32_t &o_fifoRc,
+                               bool &o_ackEOT);
+
+#endif
