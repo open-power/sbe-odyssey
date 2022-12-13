@@ -185,6 +185,8 @@ obldr_package_img = custom_target( 'obldr_package_img',
                                            odyssey_bldr_img_name, pakTool,
                                            pakBuildTool, signHashList],
                                build_by_default : true,
+                               install : true,
+                               install_dir : odyssey_bldr_install_path
                               )
 
 # Run script to generate hash file of image
