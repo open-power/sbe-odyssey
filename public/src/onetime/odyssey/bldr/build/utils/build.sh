@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -53,13 +53,10 @@ $PAK_BUILD_TOOL_PATH $BLDR_MANIFEST_PATH -o ${BLDR_MESON_IMAGE_DIR_PATH} -n ${BL
 mkdir -p ${BLDR_MESON_IMAGE_DIR_PATH}/boot
 $PAK_TOOL_PATH hash ${BLDR_MESON_IMAGE_DIR_PATH}/${BLDR_BASE_IMAGE_NAME}.pak ${BLDR_MESON_IMAGE_DIR_PATH}/boot/hash.list
 
-#Sign the Hash List
-$SBE_SIGN_TOOL -s ${BLDR_MESON_IMAGE_DIR_PATH}/scratch -i ${BLDR_MESON_IMAGE_DIR_PATH}/boot/hash.list -o ${BLDR_MESON_IMAGE_DIR_PATH}/boot/ -c BOOT_LDR
-
 #Change dir into meson image dir path(builddir where output images are stored)
 #and then add the files into pak so that we dont endup adding the complete file
 #path as file name
 cd ${BLDR_MESON_IMAGE_DIR_PATH}
 
-#Add the hash list and secure header into the pak
-$PAK_TOOL_PATH add ${BLDR_BASE_IMAGE_NAME}.pak boot --method store
+#Add the hash list
+$PAK_TOOL_PATH add ${BLDR_BASE_IMAGE_NAME}.pak boot/hash.list --method store
