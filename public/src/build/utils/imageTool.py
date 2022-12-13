@@ -47,6 +47,21 @@ logLevel = {
     "C" : logging.CRITICAL
 }
 
+# TODO Find better way to get below hardcoded value
+signedCodeContainerMetaData = {
+        # Based on the Signed_Code_Container v2_4
+        "v_2_4" : {
+            "hwSigALen" : 132,
+            "hwSigDLen" : 4668,
+            # Offset defined from first byte
+            "hwSigStartOffset" : 2596,
+            "fwSigPLen" : 132,
+            "fwSigSLen" : 4668,
+            # Offset defined from first byte
+            "fwSigStartOffset" : 9992
+            }
+        }
+
 logger = logging.getLogger('imageTool')
 
 def runCmd(pipeCmd:str, fail:bool=True):
@@ -186,6 +201,83 @@ def signPak(args:argparse.Namespace):
         finally:
             shutil.rmtree(os.path.dirname(signPakWorkDir))
 
+def removeSig(archive, secureHdr:str):
+
+    entries = archive.find(secureHdr)
+    secureHdrData = bytearray(entries[0].ddata)
+    archive.remove(entries[0])
+
+    signCodeContMetaData = signedCodeContainerMetaData.get("v_2_4")
+
+    hwSigTotalLen = signCodeContMetaData.get("hwSigALen") + \
+                    signCodeContMetaData.get("hwSigDLen")
+    fwSigTotalLen = signCodeContMetaData.get("fwSigPLen") + \
+                    signCodeContMetaData.get("fwSigSLen")
+
+    secureHdrData[signCodeContMetaData.get("hwSigStartOffset") : \
+                  hwSigTotalLen] = bytearray(hwSigTotalLen)
+    secureHdrData[signCodeContMetaData.get("fwSigStartOffset") : \
+                  fwSigTotalLen] = bytearray(fwSigTotalLen)
+
+    archive.add(secureHdr, pak.CM.store, secureHdrData)
+    archive.save()
+
+def pakHash(args:argparse.Namespace):
+
+    for pakName, pakFile in args.pakFiles.items():
+        try:
+            logger.info(f"Processing \'{pakName}\' pak file")
+
+            pakHashWorkDir = os.path.join(os.path.abspath(os.path.dirname( \
+                                         pakFile)), "pakHash", pakName)
+            shutil.rmtree(pakHashWorkDir, ignore_errors=True)
+            os.makedirs(pakHashWorkDir)
+
+            archive = pak.Archive(pakFile)
+            archive.load()
+            bkpArchive = pak.Archive(pakFile)
+            bkpArchive.load()
+
+            secureHdr = os.path.join(pakName, "secure.hdr")
+            secureHdrFile = os.path.join(pakHashWorkDir, "secure.hdr")
+            pakHash = os.path.join(pakName, "image.hash")
+            pakHashFile = os.path.join(pakHashWorkDir, "image.hash")
+
+            if exists(archive, secureHdr):
+                removeSig(archive, secureHdr)
+
+            if args.excludeFiles is not None and pakName in args.excludeFiles:
+                logger.debug("Exclude files for image hash")
+                removeFile(archive, args.excludeFiles[pakName])
+
+            logger.debug("Generate image.hash")
+            genImgHash = f"{args.openSSLTool} dgst -sha3-512 {pakFile} | \
+                           awk \'{{print $2}}\' | \
+                           xxd -r -p > {pakHashFile}"
+            runCmd(genImgHash)
+
+            # Save backup archive so that we can get original secure.hdr
+            # signature and excluded files
+            if exists(archive, secureHdr) or \
+               args.excludeFiles is not None and pakName in args.excludeFiles:
+                bkpArchive.save()
+
+            # Go to working "pakName" directory to add file into the respective
+            # pak file because the pak tool not providing a way to pass dest
+            # path to store into the pak file, it creating with the given
+            # file absolute path.
+            os.chdir(os.path.dirname(pakHashWorkDir))
+
+            addImgHash = f"{pakTool} add {pakFile} {pakHash} --method store"
+            runCmd(addImgHash)
+
+            os.chdir(toolDir)
+        except Exception as e:
+            # Exception will be logged in last exception handler
+            raise
+        finally:
+            shutil.rmtree(os.path.dirname(pakHashWorkDir))
+
 class ExcludeFileList(argparse.Action):
 
     def __call__( self , parser, namespace,
@@ -210,6 +302,27 @@ class SignPakList(argparse.Action):
             if pakName not in signPakCompId:
                 err = f"The \'{pakName}\' pak name is not found in defined \
                         component id list \'{signPakCompId.keys()}\' for sign"
+                raise ValueError(err)
+
+            if not os.path.exists(pakPath):
+                raise ValueError(pakPath + " is not exists")
+
+            getattr(namespace, self.dest)[pakName] = pakPath
+
+class PakList(argparse.Action):
+    def __call__( self , parser, namespace,
+            values, option_string = None):
+        setattr(namespace, self.dest, dict())
+
+        pakHashList = ["boot", "rt"]
+
+        for value in values:
+            pakName, pakPath = value.split('=')
+
+            if pakName not in pakHashList:
+                err = f"The \'{pakName}\' pak name is not found in defined \
+                        pak hash list \'{pakHashList}\' \
+                        for pak hash generation"
                 raise ValueError(err)
 
             if not os.path.exists(pakPath):
@@ -248,6 +361,24 @@ subCmd.add_argument("--signMode", choices=['Development', 'Production'],
 subCmd.add_argument("--secureVersion", default='0', help="Security version "
                                        "to sign (default: %(default)s)")
 subCmd.set_defaults(func=signPak)
+
+# Add "pakHash" sub command
+subCmd = subparsers.add_parser("pakHash", description="Generate hash for given "
+            "pak files", formatter_class=argparse.RawDescriptionHelpFormatter)
+
+# Add "pakHash" sub command arguments
+subCmd.add_argument("--pakFiles", nargs="+", action=PakList, required=True,
+                                  metavar="pakName=pakFile",
+                                  help="List of pak files to be hashed")
+subCmd.add_argument("--excludeFiles", nargs="*", action=ExcludeFileList,
+                                      metavar="pakName=excFile1,a/excFile2",
+                                      help="List of files to exclude to " \
+                                      "pak hash")
+subCmd.add_argument("--openSSLTool", default='/gsa/rchgsa/home/c/e/cengel/' \
+                                     'signtool/RHEL7/openssl-1.1.1n/apps/openssl',
+                                     help="Pass OpenSSL tool path for pak hash."
+                                     " (default: %(default)s)")
+subCmd.set_defaults(func=pakHash)
 
 args = parser.parse_args()
 if not hasattr(args, "func"):
