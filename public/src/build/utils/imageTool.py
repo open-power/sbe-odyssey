@@ -75,6 +75,28 @@ def exists(archive, filename:str):
     except:
         return False
 
+def genHashList(archive, excludeFiles:list, \
+                hashListFile:str):
+
+    # Returns all file entries from pak file
+    entries = archive.find("")
+    if excludeFiles is not None:
+        hashEntries = [entry for entry in entries \
+                             if entry.name not in excludeFiles]
+    else:
+        hashEntries = entries
+
+    logger.debug("Creating hashes...")
+    hashAlgorithm="sha3_512"
+    for entry in hashEntries:
+        logger.debug(f"\t{entry.name}")
+        entry.hash(hashAlgorithm)
+
+    with open(hashListFile, "wb") as fd:
+        logger.debug(f"Writing hashes into {hashListFile}")
+        hashes = archive.createHashList(hashAlgorithm)
+        fd.write(hashes)
+
 def extractFile(archive, files:list, pathToStore:str):
 
     entries = archive.find(files)
@@ -107,8 +129,11 @@ def signPak(args:argparse.Namespace):
             if exists(archive, hashList):
                 extractFile(archive, hashList, os.path.dirname(signPakWorkDir))
             else:
-                raise Exception(f"The {hashList} file is not found \
-                                  in {pakFile}")
+                excludeFiles = None
+                if args.excludeFiles is not None and pakName in args.excludeFiles:
+                    excludeFiles = args.excludeFiles[pakName]
+
+                genHashList(archive, excludeFiles, hashListFile)
 
             # Generate secure.hdr by using hash.list
             genSecureHdr = f"{signHashTool} -s {signPakWorkDir}/scratch \
@@ -137,6 +162,18 @@ def signPak(args:argparse.Namespace):
             raise
         finally:
             shutil.rmtree(os.path.dirname(signPakWorkDir))
+
+class ExcludeFileList(argparse.Action):
+
+    def __call__( self , parser, namespace,
+            values, option_string = None):
+        setattr(namespace, self.dest, dict())
+
+        for value in values:
+            pakName, files = value.split('=')
+            fileList = files.split(',')
+
+            getattr(namespace, self.dest)[pakName] = fileList
 
 class SignPakList(argparse.Action):
 
@@ -178,6 +215,10 @@ subCmd = subparsers.add_parser("signPak", description="Sign given pak files",
 subCmd.add_argument("--pakFiles", nargs="+", action=SignPakList, required=True,
                                   metavar="pakName=pakFile",
                                   help="List of pak files to be signed")
+subCmd.add_argument("--excludeFiles", nargs="*", action=ExcludeFileList,
+                                      metavar="pakName=excFile1,a/excFile2",
+                                      help="List of files to exclude to " \
+                                      "generate hash list")
 subCmd.add_argument("--signMode", choices=['Development', 'Production'],
                                   default='Development', help="Signing mode "
                                   "(default: %(default)s)")
