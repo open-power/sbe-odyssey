@@ -1,7 +1,8 @@
+#!/bin/sh
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/build/meson.build $
+# $Source: public/src/build/utils/installTools.sh $
 #
 # OpenPOWER sbe Project
 #
@@ -23,6 +24,12 @@
 #
 # IBM_PROLOG_END_TAG
 
-subdir('buildekb')
+mkdir -p ${MESON_BUILD_ROOT}/sbe_tools
+cp ${MESON_SOURCE_ROOT}/public/src/build/utils/imageTool.py \
+   ${MESON_SOURCE_ROOT}/public/src/build/utils/signHashList \
+   ${MESON_SOURCE_ROOT}/public/src/build/utils/genMeasuredHash.sh \
+   ${MESON_BUILD_ROOT}/sbe_tools/ || exit 1
 
-meson.add_install_script('utils/installTools.sh')
+tar -czvf ${MESON_INSTALL_PREFIX}/sbe_tools.tar.gz \
+    -C ${MESON_BUILD_ROOT} \
+    sbe_tools || exit 1

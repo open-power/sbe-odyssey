@@ -2,12 +2,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/build/utils/genImgHash.sh $
+# $Source: public/src/build/utils/genMeasuredHash.sh $
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2016,2022
-# [+] International Business Machines Corp.
+# Contributors Listed Below - COPYRIGHT 2016,2023
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,6 +26,8 @@
 # Exit if any command fails
 set -e
 
+toolName=$(basename $0)
+
 # @brief Checks whether the file that is the input argument exists on the file
 # system. The function
 #        exits with an error status if the file DNE.
@@ -35,7 +36,7 @@ set -e
 check_path()
 {
     if [ ! -f $1 ]; then
-        echo "***ERROR | SBE | genImgHash : $1 DNE!"
+        echo "***ERROR | SBE | $toolName : $1 DNE!"
         exit -1
     fi
 }
@@ -46,7 +47,7 @@ usage()
     echo "Usage"
     echo "!!!RUN ON A RHEL7 MACHINE!!!"
     echo "Generate Image Hash"
-    echo "genImgHash -i <secure_hdr> -o <img_hash> [-h ]"
+    echo "$toolName -i <secure_hdr> -o <img_hash> [-h ]"
     echo ""
     echo "Reguired Options:"
     echo "  -i: secure header. "
@@ -88,13 +89,13 @@ done
 
 #Check if user has passed all required arguments
 if [ -z $SECURE_HDR ]; then
-    echo "***ERROR | SBE | genImgHash : Secure Header not passed. Please supply the -i option."
+    echo "***ERROR | SBE | $toolName : Secure Header not passed. Please supply the -i option."
     usage
     exit -1
 fi
 
 if [ -z $FILE_NAME ]; then
-    echo "***ERROR | SBE | genImgHash : File name base not passed. Please supply the -f option."
+    echo "***ERROR | SBE | $toolName : File name base not passed. Please supply the -f option."
     usage
     exit -1
 fi
@@ -105,18 +106,18 @@ SIGNTOOL_ARGS=
 
 # Determine if our path setup has been provided by the environment
 if [ ! -z $SIGNING_BASE_DIR ]; then
-    echo "***INFO | SBE | genImgHash : Fetching signing tools from provided environment"
+    echo "***INFO | SBE | $toolName : Fetching signing tools from provided environment"
     RH_DIR=`sed "s/^.*release \([0-9]*\).*$/rh\1/" /etc/redhat-release`
     SIGNING_DIR=$SIGNING_BASE_DIR/$RH_DIR/$SIGNING_UTILS_DIR
 
 elif [ -z $SBE_IMG_DIR_OP ]; then
-    echo "***INFO | SBE | genImgHash : Not OP_build. Fetching keys and signing scripts from /gsa/..."
+    echo "***INFO | SBE | $toolName : Not OP_build. Fetching keys and signing scripts from /gsa/..."
     #RH_DIR=`sed 's/^.*release \([0-9]*\)\..*$/rh\1/' /etc/redhat-release`
     #TODO: Update below paths
     SIGNING_DIR=/gsa/rchgsa/home/c/e/cengel/signtool/RHEL7/bin/
 
 else
-    echo "***INFO | SBE | genImgHash : OP_build. Fetching keys and signing scripts from OP-Build Tree"
+    echo "***INFO | SBE | $toolName : OP_build. Fetching keys and signing scripts from OP-Build Tree"
     SIGNING_DIR=${SBE_IMG_DIR_OP}/../../../host/usr/bin/
 fi
 
@@ -133,10 +134,6 @@ check_path ${SIGNING_DIR}/print-container
 check_path ${OPENSSL_1_1_PATH}
 check_path ${SECURE_HDR}
 
-#Lets store a copy of the container as well in builddir
-echo "***INFO | SBE | genImgHash : Printing Secure Header..."
-print-container -w0 --imagefile ${SECURE_HDR} > ${IMAGE_HASH_PATH}/secureHdr.txt
-
 printf "\nGenerate Image Hash\n"
 
 #Generate Image Hash
@@ -144,21 +141,25 @@ printf "\nGenerate Image Hash\n"
 
 #Hash of the HW keys. Fetch the value from any of the secure container which is created.
 #We need to filter out the HW keys from the print container output and convert the output to .bin format
-echo "***INFO | SBE | genImgHash : Fetch Hash of HW keys A and D..."
+hwFwPayloadhashFile="${IMAGE_HASH_PATH}/hwFwPayloadhash.bin"
+echo "***INFO | SBE | $toolName : Fetch Hash of HW keys A and D..."
 print-container -w0 --imagefile ${SECURE_HDR} | grep -A1 "HW keys hash" | \
-tail -1 | awk '{print $1}' | xxd -r -p > ${IMAGE_HASH_PATH}/hwFwPayloadhash.bin
+tail -1 | awk '{print $1}' | xxd -r -p > $hwFwPayloadhashFile
 
-echo "***INFO | SBE | genImgHash : Fetch Hash of FW keys P and S..."
+echo "***INFO | SBE | $toolName : Fetch Hash of FW keys P and S..."
 print-container -w0 --imagefile ${SECURE_HDR} | grep -A1 "payload_hash" | \
-head -1 | awk '{print $2}' |  xxd -r -p >> ${IMAGE_HASH_PATH}/hwFwPayloadhash.bin
+head -1 | awk '{print $2}' |  xxd -r -p >> $hwFwPayloadhashFile
 
-echo "***INFO | SBE | genImgHash : Fetch the Payload hash..."
+echo "***INFO | SBE | $toolName : Fetch the Payload hash..."
 print-container -w0 --imagefile ${SECURE_HDR} | grep -A1 "unprotected" | \
-tail -1 | awk '{print $2}' |  xxd -r -p >> ${IMAGE_HASH_PATH}/hwFwPayloadhash.bin
+tail -1 | awk '{print $2}' |  xxd -r -p >> $hwFwPayloadhashFile
 
-echo "***INFO | SBE | genImgHash : Calculating Image Hash..."
-${OPENSSL_1_1_PATH} dgst -sha3-512 ${IMAGE_HASH_PATH}/hwFwPayloadhash.bin | \
+echo "***INFO | SBE | $toolName : Calculating Image Hash..."
+${OPENSSL_1_1_PATH} dgst -sha3-512 $hwFwPayloadhashFile | \
 awk '{print $2}' |  xxd -r -p > ${IMAGE_HASH_PATH}/${FILE_NAME}.hash
+
+# Remove created hwFwPayloadhash file that used to store key to measure
+rm -f $hwFwPayloadhashFile
 
 echo ""
 

@@ -38,7 +38,7 @@ cmdTableTool = find_program('import/public/hwp/generic/perv/cmdtable/cmdtable.py
 signHashList = find_program('build/utils/signHashList')
 tracehashwrap = find_program('tools/trace/tracehashwrap.py')
 buildInfo = find_program('build/utils/buildInfo.py')
-generateImageHash = find_program('build/utils/genImgHash.sh')
+genMeasuredHash = find_program('build/utils/genMeasuredHash.sh')
 chipoptablegen = find_program('runtime/tools/chipoptable.py')
 
 # we are using multiple tools for generating source code and using run_command
