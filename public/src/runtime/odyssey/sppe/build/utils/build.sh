@@ -60,15 +60,3 @@ SPPE_MANIFEST_PATH=$SBEROOT/public/src/runtime/odyssey/sppe/build/utils/manifest
 
 # Create the pak based on SPPE manifest file
 $PAK_BUILD_TOOL_PATH $SPPE_MANIFEST_PATH -o ${SPPE_MESON_IMAGE_DIR_PATH} -n ${SPPE_BASE_IMAGE_NAME}
-
-#Lets generate the hash list
-mkdir -p ${SPPE_MESON_IMAGE_DIR_PATH}/rt
-$PAK_TOOL_PATH hash ${SPPE_MESON_IMAGE_DIR_PATH}/${SPPE_BASE_IMAGE_NAME}.pak ${SPPE_MESON_IMAGE_DIR_PATH}/rt/hash.list
-
-#Change dir into meson image dir path(builddir where output images are stored)
-#and then add the files into pak so that we dont endup adding the complete file
-#path as file name
-cd ${SPPE_MESON_IMAGE_DIR_PATH}
-
-# Add hash.list
-$PAK_TOOL_PATH add ${SPPE_BASE_IMAGE_NAME}.pak rt/hash.list --method store
