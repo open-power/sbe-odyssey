@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_sppe_boot_check.C $ */
+/* $Source: public/src/import/public/hwp/odyssey/perv/ody_sppe_check_for_ready.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,26 +23,25 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  ody_sppe_boot_check.C
+/// @file  ody_sppe_check_for_ready.H
 /// @brief Confirm SPPE boot progress
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#include <ody_sppe_boot_check.H>
-#include <poz_perv_common_params.H>
+#pragma once
 
-using namespace fapi2;
+#include <fapi2.H>
 
-enum ODY_SPPE_BOOT_CHECK_Private_Constants
+typedef fapi2::ReturnCode (*ody_sppe_check_for_ready_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
+
+/// @brief Confirm SPPE boot progress
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+extern "C"
 {
-};
-
-ReturnCode ody_sppe_boot_check(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
-{
-
-
-fapi_try_exit:
-    return current_err;
+    fapi2::ReturnCode ody_sppe_check_for_ready(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
 }

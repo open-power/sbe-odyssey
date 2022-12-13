@@ -531,17 +531,19 @@ ISTEP(1, 12, "ph_sppe_boot", "SPPE, BMC")
 # This is the sync point where Cronus intercepts the SPPE if USE_SBE_FIFO == istep
 # After this point the SPPE either continues autoboot or waits for Cronus to request individual isteps
 
-def p11s_sppe_boot_check():
+ISTEP(1, 13, "ph_sppe_check_for_ready", "BMC")
+
+def p11s_sppe_check_for_ready():
     # This runs on the BMC and monitors SPPE boot progress
     # Cronus HWP may wish to output progress updates :)
     # It will wait for SPPE standby, which depending on scratch settings
     # is either _before_ the rest of isteps or _after_ (in case of autoboot)
 
-def ody_sppe_boot_check():
+def ody_sppe_check_for_ready():
     "TODO: need this?"
 
-def zme_sppe_boot_check():
-    p11s_sppe_boot_check()
+def zme_sppe_check_for_ready():
+    p11s_sppe_check_for_ready()
 
 ISTEP(1, 13, "ph_sppe_attr_setup", "SPPE")
 
