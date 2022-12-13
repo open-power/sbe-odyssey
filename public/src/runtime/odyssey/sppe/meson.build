@@ -191,6 +191,8 @@ osppe_package_img = custom_target( 'osppe_package_img',
                                            attrTool, pakTool,
                                            pakBuildTool, signHashList],
                                build_by_default : true,
+                               install : true,
+                               install_dir : odyssey_sppe_install_path
                               )
 
 # Run script to generate hash file of image
