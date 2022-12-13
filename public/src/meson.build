@@ -277,9 +277,6 @@ if (get_option('sppe').enabled() or get_option('tsbe').enabled() or get_option('
   subdir('runtime')
 endif
 
-#After all images are built lets call packaging
-subdir('packaging')
-
 # Dummy call to create dependency on the files invoked by different tools
 #   Call this only if its not internal project. Otherwise call this from internal
 if(INTERNAL_PROJECT == 'False')
