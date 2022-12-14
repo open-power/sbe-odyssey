@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -30,8 +30,6 @@ endif
 if get_option('srom').enabled()
     subdir('srom')
 endif
-
-subdir('cust')
 
 if get_option('bldr').enabled()
   subdir('bldr')
