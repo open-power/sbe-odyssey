@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -348,8 +348,7 @@ ARC_RET_t FileArchive::locate_file(const char* i_fname, Entry& o_entry)
 void* FileArchive::archive_end()
 {
     void* end;
-    _locate_file(NULL, NULL, end);
-    return end;
+    return (_locate_file(NULL, NULL, end) == ARC_OPERATION_SUCCESSFUL) ? end : NULL;
 }
 
 ARC_RET_t FileArchive::initialize(void)
