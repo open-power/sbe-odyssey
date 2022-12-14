@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2021,2022
+# Contributors Listed Below - COPYRIGHT 2021,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -105,6 +105,7 @@ $(call ADD_PPEIMAGE_INCDIR,$(IMAGE), \
 	$(ROOTPATH)/public/common/utils/imageProcs \
 	$(ROOTPATH)/public/common/generic/fapi2/include \
 	$(ROOTPATH)/public/common/generic/fapi2/include/plat \
+	$(HWP_SRCDIR)/lib \
 	)
 
 $(IMAGE)_TRACE_HASH_PREFIX := $(shell echo $(IMAGE) | md5sum | cut -c1-4 \

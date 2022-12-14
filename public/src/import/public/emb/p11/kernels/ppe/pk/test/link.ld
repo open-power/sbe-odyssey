@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -31,8 +31,8 @@
 
 OUTPUT_FORMAT(elf32-powerpc);
 
-// GPE1 is loaded at 0xfff10000
-#define GPE1_SRAM_START 0xfff10000
+// GPE1 is loaded at 0xffe50000
+#define GPE1_SRAM_START 0xffe50000
 #define SRAM_LENGTH 0x10000
 #define PPE_DEBUG_PTRS_OFFSET 0x180
 

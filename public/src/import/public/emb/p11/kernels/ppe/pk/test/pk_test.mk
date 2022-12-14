@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -109,12 +109,13 @@ $(IMAGE)_COMMONFLAGS+= -DAPPCFG_PM_INSTANCE_ID=1
 $(IMAGE)_COMMONFLAGS+= -D__OCC_PLAT
 
 # add include paths
-$(call ADD_PPEIMAGE_INCDIR,$(IMAGE),\
+$(call ADD_PPEIMAGE_INCDIR,$(IMAGE), \
 	$(PK_SRCDIR)/test \
 	$(PMLIB_INCDIR)/registers \
 	$(POWMANLIB_SRCDIR) \
 	$(PMLIB_INCDIR)/registers \
-	$(BOLTONLIB_SRCDIR)/$(_PPE_TYPE)\
+	$(BOLTONLIB_SRCDIR)/$(_PPE_TYPE) \
+	$(HWP_SRCDIR)/lib \
 	)
 
 # linker flags
