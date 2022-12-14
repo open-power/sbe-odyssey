@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -56,5 +56,10 @@ typedef struct
 } pk_debug_ptrs_t;
 
 extern pk_debug_ptrs_t pk_debug_ptrs;
+
+#define PK_TRACE_PTR_OFFSET   (sizeof(pk_debug_ptrs.debug_ptrs_size) + \
+                               sizeof(pk_debug_ptrs.debug_ptrs_version))
+#define PK_TRACE_SIZE_OFFSET  (PK_TRACE_PTR_OFFSET + \
+                               sizeof(pk_debug_ptrs.debug_trace_ptr))
 
 #endif /*__PK_DEBUG_PTRS_H__*/
