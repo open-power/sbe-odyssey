@@ -23,18 +23,16 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 #include "sbecodeupdate.H"
-#include "cmnglobals.H"
-#include "ppe42_string.h"
-#include "mbxscratch.H"
-#include "errorcodes.H"
 #include "chipop_struct.H"
 #include "sbeFifoMsgUtils.H"
 #include "sbe_sp_intf.H"
+#include "codeupdateutils.H"
 #include "pakwrapper.H"
 #include "filenames.H"
-#include "sha3.H"
-#include "codeupdateutils.H"
 #include "sbeutil.H"
+#include "sbe_sp_intf.H"
+
+const char partition_table_magic_word[] = "PTBL";
 
 ////////////////////////////////////////////////////////
 //////// Get Code Levels Chip-op ///////////////////////
@@ -252,14 +250,161 @@ uint32_t getImageHash(const CU_IMAGES i_imageType,
             l_rc = SBE_SEC_CU_FILE_IMAGE_HASH_READ_ERROR;
             SBE_ERROR(SBE_FUNC " ImageType: %d " \
                       "Failed to read image hash Rc:%d",i_imageType,l_pakRC);
+            break;
         }
-        else if (SHA3_DIGEST_LENGTH != l_size)
+
+        if (SHA3_DIGEST_LENGTH != l_size)
         {
             l_rc = SBE_SEC_CU_IMAGE_HASH_SIZE_MISMATCH;
             SBE_ERROR(SBE_FUNC "Failed to read expected hash size of image:%d" \
                                "Expected size: %d,actual size: %d ",
                                 i_imageType,SHA3_DIGEST_LENGTH,l_size);
+            break;
         }
+    }while(false);
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
+uint32_t getPakEntryFromPartitionTable(const uint8_t i_partition,
+                                       const CU_IMAGES i_imageType,
+                                       void *i_pakStartAddr,
+                                       CU::partitionEntry_t *o_pakEntry)
+{
+    #define SBE_FUNC " getPakEntryFromPartitionTable "
+    SBE_ENTER(SBE_FUNC);
+
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    char l_sectionPakName[PARTITION_TABLE_NAME_MAX_CHAR] = {NULL};
+    CU::partitionTable_t *l_partitionTable;
+
+    do
+    {
+        uint32_t l_partitionStartAddress = 0;
+        uint8_t  l_numOfEntries = 0;
+
+        // Get the partition start offset
+        getPartitionAddress(i_partition, l_partitionStartAddress);
+
+        // Check for valid partition start address
+        if (l_partitionStartAddress == 0)
+        {
+            SBE_ERROR("Invalid partition id %d. Returned partition start address is zero",
+                       i_partition);
+            l_rc = SBE_SEC_CU_INVALID_PARTITION_ID_PASSED;
+            break;
+        }
+
+        // Init pakwrapper with either partition start address or
+        // pak file start address. For pak start address valid partition
+        // id to be passed as well
+        PakWrapper pak((void *)(i_pakStartAddr == NULL ? l_partitionStartAddress
+                                                       : (uint32_t)i_pakStartAddr));
+
+        // Get partition table start offset
+        // Note: partition table is uncompressed.
+        // This API returns start ptr only if file is uncompressed
+        ARC_RET_t l_pakRc = ARC_OPERATION_SUCCESSFUL;
+        uint32_t *l_filePtr = NULL;
+        l_pakRc = pak.get_image_start_ptr_and_size(partition_table_file_name, &l_filePtr);
+        if (l_pakRc != ARC_OPERATION_SUCCESSFUL)
+        {
+            // TODO:JIRA-PFSBE-300 - If file is compressed then uncompress to read it
+            if (l_pakRc == ARC_FUNCTIONALITY_NOT_SUPPORTED)
+            {
+                SBE_ERROR(" File is compressed. Expected uncompressed file. RC:[0x%08x] ",
+                           l_pakRc);
+                l_rc = SBE_SEC_CU_FAIL_TO_RD_PART_FILE_COMPRESSED;
+            }
+            else
+            {
+                SBE_ERROR(" Failed to read the partition table start offset. RC:[0x%08x] ",
+                           l_pakRc);
+                l_rc = SBE_SEC_CU_FAILED_TO_READ_PARTITION_TABLE;
+            }
+            break;
+        }
+
+        // Get partition table entry
+        l_partitionTable = (CU::partitionTable_t *)l_filePtr;
+        l_numOfEntries   = l_partitionTable->numOfEntries;
+
+        SBE_DEBUG(SBE_FUNC "Number of entries in partition table:0x%02x",
+                  l_partitionTable->numOfEntries);
+
+        // Check for matching partition magic word in partition table
+        // TODO:JIRA-PFSBE-301 Check for version in partition table
+        if (strcmp(partition_table_magic_word,
+                    l_partitionTable->partitionTitle))
+        {
+            SBE_INFO(SBE_FUNC "Partition magic word mismatch."\
+                     "Expected:[0x%08x] Original:[0x%08x]",
+                     *(uint32_t *)partition_table_magic_word,
+                     *(uint32_t *)l_partitionTable->partitionTitle);
+            l_rc = SBE_SEC_CU_PARTITION_MAGIC_WORD_MISMATCH;
+            break;
+        }
+
+        // Based on imageType, get the equivalent pak file name in partition table
+        // from the mapping structure
+        uint8_t l_id = 0;
+        uint8_t l_maxMapImgNameEntries = sizeof(CU::g_imgMap)/sizeof(CU::g_imgMap[0]);
+        for(l_id=0; l_id < l_maxMapImgNameEntries; l_id++)
+        {
+            // Check for mapping name as per partition table
+            if (CU::g_imgMap[l_id].imageNum == i_imageType)
+            {
+                strcpy(l_sectionPakName,
+                       CU::g_imgMap[l_id].imageName);
+                break;
+            }
+        }
+
+        // Based on imageType, get the equivalent pak file name in partition table
+        if (l_id == l_maxMapImgNameEntries)
+        {
+            SBE_ERROR(SBE_FUNC "Image type:[0x%04x] not found in mapping"\
+                               "to partiton table", i_imageType);
+            l_rc = SBE_SEC_CU_PARTITION_MAP_INVALID_IMG_TYPE;
+            break;
+        }
+
+        SBE_DEBUG(SBE_FUNC "Partition info: Index:%d , ImageNum: 0x%04x",
+                  l_id, CU::g_imgMap[l_id].imageNum);
+
+        for(l_id=0; l_id < l_numOfEntries; l_id++)
+        {
+            // Compare section name with pak file name expected
+            if (!strcmp(l_sectionPakName,
+                        l_partitionTable->partitionEntry[l_id].partitionName))
+            {
+                strcpy(o_pakEntry->partitionName,
+                       l_partitionTable->partitionEntry[l_id].partitionName);
+                // Get absolute address for image start address in NOR
+                o_pakEntry->partitionStartAddr =
+                    l_partitionTable->partitionEntry[l_id].partitionStartAddr +
+                    l_partitionStartAddress;
+                o_pakEntry->partitionSize      =
+                    l_partitionTable->partitionEntry[l_id].partitionSize;
+                break;
+            }
+        }
+
+        if (l_id == l_numOfEntries)
+        {
+            SBE_ERROR(SBE_FUNC "Image type:[0x%04x] entry not found in partition"\
+                               "table. Section pak name:[0x%08x]", i_imageType,
+                               *(uint32_t *)l_sectionPakName);
+            l_rc = SBE_SEC_CU_IMG_NOT_FOUND_IN_PARTITION_TBL;
+            break;
+        }
+
+        SBE_INFO(SBE_FUNC "PSN:[0x%08x] PSA:[0x%08x] PS:[0x%08x]",\
+                 *(uint32_t *)o_pakEntry->partitionName,
+                 o_pakEntry->partitionStartAddr,
+                 o_pakEntry->partitionSize);
     } while(false);
 
     SBE_EXIT(SBE_FUNC);

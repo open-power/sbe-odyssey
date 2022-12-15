@@ -23,7 +23,7 @@
 #
 # IBM_PROLOG_END_TAG
 
-CMN_CODE_UPDATE_CHIPOPS_JSON = files('code_update_chipop_table.json')[0]
+CMN_CODE_UPDATE_CHIPOPS_JSON = files('chipop_table.json')
 
 runtime_cmn_code_update_dir_path = meson.global_source_root() + '/public/src/runtime/common/codeupdate/'
 
