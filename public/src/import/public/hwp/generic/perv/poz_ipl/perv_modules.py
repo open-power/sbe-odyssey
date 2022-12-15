@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -264,6 +264,8 @@ def mod_cbs_start_prep(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0
         ## Test mode, enable TP drivers/receivers for GSD scan out
         ROOT_CTRL1.TP_RI_DC_B = 1
         ROOT_CTRL1.TP_DI2_DC_B = 1
+        ROOT_CTRL1_COPY.TP_RI_DC_B = 1
+        ROOT_CTRL1_COPY.TP_DI2_DC_B = 1
 
     # Prepare for CBS start
     CBS_CS.START_BOOT_SEQUENCER = 0

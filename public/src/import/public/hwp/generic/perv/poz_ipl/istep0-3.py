@@ -684,7 +684,16 @@ def ody_tp_init():
     mod_multicast_setup(i_target, MCGROUP_GOOD_NO_TP, 0x3FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL)
 
     ## Set up chiplet hang pulses
-    mod_hangpulse_setup(MCGROUP_GOOD, 9, {{0, 14, 0}, {1, 1, 0}, {2, 1, 0}, {5, 4, 0}, {6, 5, 0, 1}})
+    # The pre divider settings depend on the PLL bucket. Generally,
+    # base_period = (1 / PLL speed) * 4 * (pre_divider + 1)
+    # We want a base_period close to 16.666ns so that the PPE hang pulses (which have an internal division by 2)
+    # run at 33.3333 ns.
+    #
+    #                    PLL bucket      0     1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
+    #           PLL frequency [MHz]   1600  2000  2400  2400  ????  ????  ????  ????  ????  ????  ????  ????  ????  ????   267  2133
+    #              base period [ns]     30    32  33.3  33.3  ????  ????  ????  ????  ????  ????  ????  ????  ????  ????    30  33.8
+    const uint8_t pre_dividers[16] = {   5,    7,    9,    9,    9,    9,    9,    9,    9,    9,    9,    9,    9,    9,    0,    8 };
+    mod_hangpulse_setup(pre_divider, pre_dividers[ATTR_OCMB_PLL_BUCKET], {{0, 14, 0}, {1, 1, 0}, {2, 1, 0}, {5, 4, 0}, {6, 5, 0, 1}})
 
     ## Unmask TP PLL unlock reporting
     if not ATTR_PLL_BYPASS:
@@ -865,7 +874,7 @@ def p11s_sbe_config_update():
 
 ISTEP(2, 15, "proc_sbe_start", "SPPE")
 
-def p11_sbe_start(vector<Target<COMPUTE_CHIP | HUB_CHIP> & i_targets>):
+def p11_sbe_start(vector<Target<COMPUTE_CHIP | HUB_CHIP>> & i_targets):
     ## Boot SBEs on both Spinal and Tap
     for chip in i_targets:
         # Use TP_TPCHIP_PIB_SBE_SBEPM_SBEPPE_PPE_XIXCR_t for SBE_PPE_XIXCR
