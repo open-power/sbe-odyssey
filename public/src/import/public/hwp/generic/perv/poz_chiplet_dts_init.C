@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -40,7 +40,7 @@ enum POZ_CHIPLET_DTS_INIT_Private_Constants
     DELAY_10us = 10000, // unit is nano seconds
     DELAY_100us = 100000, // unit is nano seconds
     SIM_CYCLE_DELAY = 1000, // unit is sim cycles
-    POLL_COUNT = 100,
+    POLL_COUNT = 10000,
     KVREF_START_CAL00 = 0,
     KVREF_CAL_DONE00 = 0
 };
