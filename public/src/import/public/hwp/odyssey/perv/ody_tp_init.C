@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -48,14 +48,29 @@ enum ODY_TP_INIT_Private_Constants
 
 ReturnCode ody_tp_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
-    auto l_mc_allgood = i_target.getMulticast<fapi2::TARGET_TYPE_PERV>(fapi2::MCGROUP_GOOD);
+    // The pre divider settings depend on the PLL bucket. Generally,
+    // base_period = (1 / PLL speed) * 4 * (pre_divider + 1)
+    // We want a base_period close to 16.666ns so that the PPE hang pulses (which have an internal division by 2)
+    // run at 33.3333 ns.
+    //
+    //           PLL bucket     0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15
+    //  PLL frequency [MHz]  1600 2000 2400 2400 ???? ???? ???? ???? ???? ???? ???? ???? ???? ????  267 2133
+    //          pre_divider     5    7    9    9    9    9    9    9    9    9    9    9    9    9    0    8
+    //     base period [ns]    30   32 33.3 33.3 ???? ???? ???? ???? ???? ???? ???? ???? ???? ????   30 33.8
+    static const uint8_t pre_dividers[16] = { 5, 7, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 8 };
     static const hang_pulse_t HANG_COUNTERS_ALL[] = {{0, 14, 0}, {1, 1, 0}, {2, 1, 0}, {5, 4, 0}, {6, 5, 0, 1}} ;
+
+    auto l_mc_allgood = i_target.getMulticast<fapi2::TARGET_TYPE_PERV>(fapi2::MCGROUP_GOOD);
     CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_ROOT_CTRL0_t ROOT_CTRL0;
+    ATTR_OCMB_PLL_BUCKET_Type l_pll_bucket;
 
     // TODO : Set up TOD error routing, error mask via scan inits
     // TODO : Set up perv LFIR, XSTOP_MASK, RECOV_MASK via scan inits
 
     FAPI_INF("Entering ...");
+
+    FAPI_TRY(FAPI_ATTR_GET(ATTR_OCMB_PLL_BUCKET, i_target, l_pll_bucket));
+
     FAPI_DBG("Drop GLOBAL_EP_RESET.");
     ROOT_CTRL0 = 0;
     ROOT_CTRL0.set_GLOBAL_EP_RESET(1);
@@ -73,8 +88,8 @@ ReturnCode ody_tp_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
     FAPI_TRY(mod_multicast_setup(i_target, MCGROUP_GOOD, 0x7FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL));
     FAPI_TRY(mod_multicast_setup(i_target, MCGROUP_GOOD_NO_TP, 0x3FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL));
 
-    FAPI_INF("Set up chiplet hang pulses");
-    FAPI_TRY(mod_hangpulse_setup(l_mc_allgood, 9, HANG_COUNTERS_ALL));
+    FAPI_INF("Set up chiplet hang pulses (PLL bucket = %d, pre divider = %d)", l_pll_bucket, pre_dividers[l_pll_bucket]);
+    FAPI_TRY(mod_hangpulse_setup(l_mc_allgood, pre_dividers[l_pll_bucket], HANG_COUNTERS_ALL));
 
     FAPI_INF("Miscellaneous TP setup");
     FAPI_TRY(mod_poz_tp_init_common(i_target));
