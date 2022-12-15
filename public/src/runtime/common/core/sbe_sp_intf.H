@@ -34,6 +34,8 @@
 extern "C" {
 #endif
 
+#include "stdint.h"
+
 /**
  * $Version: Conforms to SP-SBE Interface Spec v0.8e
  */
@@ -166,6 +168,12 @@ enum sbeSecondaryResponse
     SBE_SEC_CU_INVALID_IMAGE_TYPE             = 0x55,
     SBE_SEC_CU_IMAGE_HASH_SIZE_MISMATCH       = 0x56,
     SBE_SEC_CU_FILE_IMAGE_HASH_READ_ERROR     = 0x57,
+    SBE_SEC_CU_PARTITION_MAGIC_WORD_MISMATCH  = 0x58,
+    SBE_SEC_CU_PARTITION_MAP_INVALID_IMG_TYPE = 0x59,
+    SBE_SEC_CU_IMG_NOT_FOUND_IN_PARTITION_TBL = 0x5A,
+    SBE_SEC_CU_FAILED_TO_READ_PARTITION_TABLE = 0x5B,
+    SBE_SEC_CU_INVALID_PARTITION_ID_PASSED    = 0x5C,
+    SBE_SEC_CU_FAIL_TO_RD_PART_FILE_COMPRESSED= 0x5D,
 };
 
 /**

@@ -33,10 +33,11 @@
 /*
 * @brief List of all file names in Boot Loader pak(boot)
 */
-static const char hash_list_file_name[]      = "boot/hash.list";
-static const char secure_hdr_file_name[]     = "boot/secure.hdr";
-static const char bldr_file_name[]           = "boot/bldr.bin";
-static const char bldr_image_hash_file_name[]= "boot/image.hash";
+static const char partition_table_file_name[] = "part.tbl";
+static const char hash_list_file_name[]       = "boot/hash.list";
+static const char secure_hdr_file_name[]      = "boot/secure.hdr";
+static const char bldr_file_name[]            = "boot/bldr.bin";
+static const char bldr_image_hash_file_name[] = "boot/image.hash";
 
 /*
 * @brief List of all file names in Runtime Pak(rt)

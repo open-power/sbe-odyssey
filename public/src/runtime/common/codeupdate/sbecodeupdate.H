@@ -25,19 +25,13 @@
 #ifndef SBE_CODE_UPDATE_H
 #define SBE_CODE_UPDATE_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include "pk_api.h"
-#include "filenames.H"
-
-#ifdef __cplusplus
-}
-#endif
 #include "sbe_sp_intf.H"
+#include "sha3.H"
 
-#define NOT_USED 0xFFFFFFFF
+#define MAX_PARTITION_TABLE_ENTRY      6
+#define BUILD_TAG_CHAR_MAX_LENGTH      20
+#define PARTITION_TABLE_NAME_MAX_CHAR  16
+#define PARTITION_TABLE_TITLE_LEN      4
 
 // CU: Code Update
 namespace CU
@@ -49,7 +43,7 @@ namespace CU
     {
         CU_IMAGES imageType;
         // hash of entire pak file (incl header minus image.hash file)
-        uint64_t  imageHashSHA3_512[8];
+        sha3_t   imageHashSHA3;
     }imageUpdate_t;
 
     /*
@@ -60,9 +54,61 @@ namespace CU
         CU_IMAGES  imageType;
         uint32_t   buildTime; // Format- YYYYMMDD
         uint32_t   commidId;
-        char       buildTag[20];
+        char       buildTag[BUILD_TAG_CHAR_MAX_LENGTH];
         uint32_t   reserved[2];
     }imageProperties_t;
+
+    /*
+     * @brief map for image::partition name in partition table
+     */
+    typedef struct
+    {
+        CU_IMAGES imageNum;
+        char       imageName[PARTITION_TABLE_NAME_MAX_CHAR];
+    } imgMap_t;
+
+    //TODO:JIRA-PFSBE-302 Remove cust.pak
+    static const imgMap_t g_imgMap[] = {
+        {CU_IMAGES::BOOTLOADER, "boot"},
+        {CU_IMAGES::RUNTIME,    "rt"},
+        {CU_IMAGES::BMC_OVRD,   "bmc"},
+        {CU_IMAGES::HOST_OVRD,  "host"},
+        {CU_IMAGES::RSVD,       "rsvd"},
+        {CU_IMAGES::CUST,       "cust"}
+    };
+
+    ///////////////////////////////////////
+    /////// Partition table format ////////
+    ///////////////////////////////////////
+    // Header: 8 bytes
+    // 4 bytes - Magic word (PTBL)
+    // 2 bytes - Format version
+    // 2 bytes - Number of entries
+    //
+    // For each section entry: 24 bytes
+    // 16 bytes - Section name
+    // 04 bytes - Section offset
+    // 04 bytes - Section max size
+    /*
+     * @brief Structure for partition entry
+     */
+    typedef struct __attribute__((__packed__))
+    {
+        char     partitionName[PARTITION_TABLE_NAME_MAX_CHAR];
+        uint32_t partitionStartAddr;
+        uint32_t partitionSize;
+    }partitionEntry_t;
+
+    /*
+     * @brief Structure for partition table
+     */
+    typedef struct __attribute__((__packed__))
+    {
+        char     partitionTitle[PARTITION_TABLE_TITLE_LEN];
+        uint16_t partitionVersion;
+        uint16_t numOfEntries;
+        CU::partitionEntry_t partitionEntry[MAX_PARTITION_TABLE_ENTRY];
+    }partitionTable_t;
 
 } // namespace CU
 
@@ -102,4 +148,23 @@ uint32_t getImageHash(const CU_IMAGES i_imageType,
                       const uint8_t i_Partition,
                       uint8_t* o_hashArrayPtr);
 
+/**
+ * @brief getPakEntryFromPartitionTable : Get pak file entry from partition table.
+ *        This info can come either from partition side in nor or from image pak
+ *        file containing partition table. The function returns the absolute
+ *        starting address (incl. partition start address) and size of image pak
+ *        file as per the partition table in nor or passed in pak file.
+ *
+ * @param[in]  uint8_t i_partition    : running/ non-running parition info in nor
+ * @param[in]  CU_IMAGES i_imageType : enum IMAGES
+ * @param[in]  void *i_pakStartAddr   : pointer to image pak start address if pak
+ *                                      file containing partition table is passed
+ * @param[out] partitionEntry_t *o_pakEntry : returns absolute address with size
+ *
+ * @return    RC success/fail
+ */
+uint32_t getPakEntryFromPartitionTable(const uint8_t i_partition,
+                                       const CU_IMAGES i_imageType,
+                                       void *i_pakStartAddr,
+                                       CU::partitionEntry_t *o_pakEntry);
 #endif //SBE_CODE_UPDATE_H

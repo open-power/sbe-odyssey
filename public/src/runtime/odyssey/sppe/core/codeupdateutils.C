@@ -23,9 +23,9 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 #include "cmnglobals.H"
-#include "sbetrace.H"
 #include "odysseylink.H"
 #include "sberegaccess.H"
+#include "sbetrace.H"
 #include "codeupdateutils.H"
 
 void getPartitionInfo(uint8_t &o_runningPartition,
@@ -65,10 +65,9 @@ void getPartitionAddress(const uint8_t i_partition, uint32_t &o_partitionStartAd
 
     // Get the partition start offset
     o_partitionStartAddress = getAbsPartitionAddr(i_partition);
-    SBE_INFO(SBE_FUNC "Partition Start Address:[0x%08x]",
-             o_partitionStartAddress);
+    SBE_INFO(SBE_FUNC "For Partition: [0x%02x] Partition Start Address:[0x%08x]",
+             i_partition, o_partitionStartAddress);
 
     SBE_EXIT(SBE_FUNC);
     #undef SBE_FUNC
 }
-
