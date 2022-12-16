@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -56,8 +56,8 @@ inline fapi2::ReturnCode set_exp_init_vref_dq(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EXP_INIT_VREF_DQ: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EXP_INIT_VREF_DQ: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -80,8 +80,8 @@ inline fapi2::ReturnCode set_exp_init_vref_dq(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EXP_INIT_VREF_DQ: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EXP_INIT_VREF_DQ: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -105,8 +105,8 @@ inline fapi2::ReturnCode set_exp_init_phy_vref(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EXP_INIT_PHY_VREF: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EXP_INIT_PHY_VREF: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -129,8 +129,8 @@ inline fapi2::ReturnCode set_exp_init_phy_vref(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EXP_INIT_PHY_VREF: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EXP_INIT_PHY_VREF: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -153,8 +153,8 @@ inline fapi2::ReturnCode set_exp_rcd_dic(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EXP_RCD_DIC: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EXP_RCD_DIC: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -177,8 +177,8 @@ inline fapi2::ReturnCode set_exp_rcd_dic(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EXP_RCD_DIC: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EXP_RCD_DIC: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -202,8 +202,8 @@ inline fapi2::ReturnCode set_exp_rcd_voltage_ctrl(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EXP_RCD_VOLTAGE_CTRL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EXP_RCD_VOLTAGE_CTRL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -226,8 +226,8 @@ inline fapi2::ReturnCode set_exp_rcd_voltage_ctrl(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EXP_RCD_VOLTAGE_CTRL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EXP_RCD_VOLTAGE_CTRL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -252,8 +252,8 @@ inline fapi2::ReturnCode set_exp_dram_address_mirroring(const fapi2::Target<fapi
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EXP_DRAM_ADDRESS_MIRRORING: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EXP_DRAM_ADDRESS_MIRRORING: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -277,8 +277,8 @@ inline fapi2::ReturnCode set_exp_dram_address_mirroring(const fapi2::Target<fapi
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EXP_DRAM_ADDRESS_MIRRORING: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EXP_DRAM_ADDRESS_MIRRORING: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -301,8 +301,8 @@ inline fapi2::ReturnCode set_exp_rcd_slew_rate(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EXP_RCD_SLEW_RATE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EXP_RCD_SLEW_RATE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -325,8 +325,8 @@ inline fapi2::ReturnCode set_exp_rcd_slew_rate(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EXP_RCD_SLEW_RATE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EXP_RCD_SLEW_RATE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -346,8 +346,8 @@ inline fapi2::ReturnCode set_exp_spd_cl_supported(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EXP_SPD_CL_SUPPORTED: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EXP_SPD_CL_SUPPORTED: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -367,8 +367,8 @@ inline fapi2::ReturnCode set_exp_spd_taa_min(const fapi2::Target<fapi2::TARGET_T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EXP_SPD_TAA_MIN: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EXP_SPD_TAA_MIN: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -388,8 +388,8 @@ inline fapi2::ReturnCode set_exp_firmware_emulation_mode(const fapi2::Target<fap
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EXP_FIRMWARE_EMULATION_MODE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EXP_FIRMWARE_EMULATION_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -408,8 +408,8 @@ inline fapi2::ReturnCode set_exp_dfimrl_clk(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EXP_DFIMRL_CLK: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EXP_DFIMRL_CLK: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -436,8 +436,8 @@ inline fapi2::ReturnCode set_exp_atxdly_a(const fapi2::Target<fapi2::TARGET_TYPE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_ATXDLY_A: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EFF_ATXDLY_A: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -464,8 +464,8 @@ inline fapi2::ReturnCode set_exp_atxdly_a(const fapi2::Target<fapi2::TARGET_TYPE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_ATXDLY_A: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EFF_ATXDLY_A: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -492,8 +492,8 @@ inline fapi2::ReturnCode set_exp_atxdly_b(const fapi2::Target<fapi2::TARGET_TYPE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_ATXDLY_B: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EFF_ATXDLY_B: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -520,8 +520,8 @@ inline fapi2::ReturnCode set_exp_atxdly_b(const fapi2::Target<fapi2::TARGET_TYPE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_ATXDLY_B: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MEM_EFF_ATXDLY_B: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -545,8 +545,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc00(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC00: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC00: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -569,8 +569,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc00(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC00: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC00: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -594,8 +594,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc01(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC01: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC01: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -618,8 +618,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc01(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC01: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC01: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -644,8 +644,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc03(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC03: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC03: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -669,8 +669,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc03(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC03: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC03: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -695,8 +695,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc04(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC04: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC04: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -720,8 +720,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc04(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC04: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC04: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -746,8 +746,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc05(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC05: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC05: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -771,8 +771,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc05(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC05: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC05: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -797,8 +797,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc0b(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC0B: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC0B: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -822,8 +822,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc0b(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC0B: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC0B: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -848,8 +848,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc0e(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC0E: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC0E: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -873,8 +873,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc0e(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC0E: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC0E: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -899,8 +899,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc0f(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC0F: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC0F: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -924,8 +924,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc0f(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC0F: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC0F: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -950,8 +950,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc1x(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC1X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC1X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -975,8 +975,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc1x(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC1X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC1X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1001,8 +1001,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc7x(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC7X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC7X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1026,8 +1026,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f0rc7x(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC7X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F0RC7X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1052,8 +1052,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f1rc00(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC00: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC00: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1077,8 +1077,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f1rc00(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC00: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC00: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1103,8 +1103,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f1rc02(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC02: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC02: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1128,8 +1128,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f1rc02(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC02: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC02: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1154,8 +1154,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f1rc03(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC03: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC03: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1179,8 +1179,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f1rc03(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC03: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC03: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1205,8 +1205,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f1rc04(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC04: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC04: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1230,8 +1230,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f1rc04(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC04: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC04: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1256,8 +1256,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f1rc05(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC05: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC05: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1281,8 +1281,8 @@ inline fapi2::ReturnCode set_exp_resp_ddr4_f1rc05(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC05: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DDR4_F1RC05: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1303,8 +1303,8 @@ inline fapi2::ReturnCode set_exp_resp_dram_rbt(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_RBT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_RBT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1325,8 +1325,8 @@ inline fapi2::ReturnCode set_exp_resp_dram_tm(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_TM: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_TM: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1347,8 +1347,8 @@ inline fapi2::ReturnCode set_exp_resp_dram_dll_reset(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_DLL_RESET: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_DLL_RESET: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1369,8 +1369,8 @@ inline fapi2::ReturnCode set_exp_resp_dram_burst_length(const fapi2::Target<fapi
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_BURST_LENGTH: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_BURST_LENGTH: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1391,8 +1391,8 @@ inline fapi2::ReturnCode set_exp_resp_dram_dll_enable(const fapi2::Target<fapi2:
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_DLL_ENABLE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_DLL_ENABLE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1417,8 +1417,8 @@ inline fapi2::ReturnCode set_exp_resp_dram_odic(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_ODIC: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_ODIC: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1442,8 +1442,8 @@ inline fapi2::ReturnCode set_exp_resp_dram_odic(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_ODIC: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_ODIC: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1464,8 +1464,8 @@ inline fapi2::ReturnCode set_exp_resp_dram_al(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_AL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_AL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1486,8 +1486,8 @@ inline fapi2::ReturnCode set_exp_resp_dram_wr_lvl_enable(const fapi2::Target<fap
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_WR_LVL_ENABLE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_WR_LVL_ENABLE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1512,8 +1512,8 @@ inline fapi2::ReturnCode set_exp_resp_dram_rtt_nom(const fapi2::Target<fapi2::TA
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_RTT_NOM: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_RTT_NOM: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1537,8 +1537,8 @@ inline fapi2::ReturnCode set_exp_resp_dram_rtt_nom(const fapi2::Target<fapi2::TA
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_RTT_NOM: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_RTT_NOM: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1563,8 +1563,8 @@ inline fapi2::ReturnCode set_exp_resp_dram_rtt_park(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_RTT_PARK: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_RTT_PARK: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1588,8 +1588,8 @@ inline fapi2::ReturnCode set_exp_resp_dram_rtt_park(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_RTT_PARK: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_RTT_PARK: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1610,8 +1610,8 @@ inline fapi2::ReturnCode set_exp_resp_dram_tdqs(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_TDQS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_TDQS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1632,8 +1632,8 @@ inline fapi2::ReturnCode set_exp_resp_dram_output_buffer(const fapi2::Target<fap
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_OUTPUT_BUFFER: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_OUTPUT_BUFFER: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1654,8 +1654,8 @@ inline fapi2::ReturnCode set_exp_resp_dram_lpasr(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_LPASR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_LPASR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1680,8 +1680,8 @@ inline fapi2::ReturnCode set_exp_resp_dram_rtt_wr(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_RTT_WR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_RTT_WR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1705,8 +1705,8 @@ inline fapi2::ReturnCode set_exp_resp_dram_rtt_wr(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_RTT_WR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DRAM_RTT_WR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1727,8 +1727,8 @@ inline fapi2::ReturnCode set_exp_resp_mpr_page(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_MPR_PAGE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_MPR_PAGE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1749,8 +1749,8 @@ inline fapi2::ReturnCode set_exp_resp_mpr_mode(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_MPR_MODE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_MPR_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1771,8 +1771,8 @@ inline fapi2::ReturnCode set_exp_resp_geardown_mode(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_GEARDOWN_MODE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_GEARDOWN_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1793,8 +1793,8 @@ inline fapi2::ReturnCode set_exp_resp_per_dram_access(const fapi2::Target<fapi2:
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_PER_DRAM_ACCESS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_PER_DRAM_ACCESS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1815,8 +1815,8 @@ inline fapi2::ReturnCode set_exp_resp_temp_readout(const fapi2::Target<fapi2::TA
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_TEMP_READOUT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_TEMP_READOUT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1837,8 +1837,8 @@ inline fapi2::ReturnCode set_exp_resp_crc_wr_latency(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_CRC_WR_LATENCY: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_CRC_WR_LATENCY: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1859,8 +1859,8 @@ inline fapi2::ReturnCode set_exp_resp_mpr_rd_format(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_MPR_RD_FORMAT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_MPR_RD_FORMAT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1881,8 +1881,8 @@ inline fapi2::ReturnCode set_exp_resp_max_powerdown_mode(const fapi2::Target<fap
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_MAX_POWERDOWN_MODE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_MAX_POWERDOWN_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1903,8 +1903,8 @@ inline fapi2::ReturnCode set_exp_resp_internal_vref_monitor(const fapi2::Target<
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_INTERNAL_VREF_MONITOR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_INTERNAL_VREF_MONITOR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1925,8 +1925,8 @@ inline fapi2::ReturnCode set_exp_resp_self_ref_abort(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_SELF_REF_ABORT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_SELF_REF_ABORT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1947,8 +1947,8 @@ inline fapi2::ReturnCode set_exp_resp_rd_preamble_train(const fapi2::Target<fapi
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_RD_PREAMBLE_TRAIN: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_RD_PREAMBLE_TRAIN: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1969,8 +1969,8 @@ inline fapi2::ReturnCode set_exp_resp_rd_preamble(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_RD_PREAMBLE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_RD_PREAMBLE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1991,8 +1991,8 @@ inline fapi2::ReturnCode set_exp_resp_wr_preamble(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_WR_PREAMBLE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_WR_PREAMBLE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2013,8 +2013,8 @@ inline fapi2::ReturnCode set_exp_resp_crc_error_clear(const fapi2::Target<fapi2:
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_CRC_ERROR_CLEAR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_CRC_ERROR_CLEAR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2035,8 +2035,8 @@ inline fapi2::ReturnCode set_exp_resp_ca_parity_error_status(const fapi2::Target
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_CA_PARITY_ERROR_STATUS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_CA_PARITY_ERROR_STATUS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2057,8 +2057,8 @@ inline fapi2::ReturnCode set_exp_resp_odt_input_buff(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_ODT_INPUT_BUFF: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_ODT_INPUT_BUFF: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2079,8 +2079,8 @@ inline fapi2::ReturnCode set_exp_resp_ca_parity(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_CA_PARITY: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_CA_PARITY: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2101,8 +2101,8 @@ inline fapi2::ReturnCode set_exp_resp_data_mask(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DATA_MASK: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_DATA_MASK: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2123,8 +2123,8 @@ inline fapi2::ReturnCode set_exp_resp_write_dbi(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_WRITE_DBI: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_WRITE_DBI: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2145,8 +2145,8 @@ inline fapi2::ReturnCode set_exp_resp_read_dbi(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_READ_DBI: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_READ_DBI: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2171,8 +2171,8 @@ inline fapi2::ReturnCode set_exp_resp_vref_dq_train_value(const fapi2::Target<fa
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_VREF_DQ_TRAIN_VALUE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_VREF_DQ_TRAIN_VALUE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2196,8 +2196,8 @@ inline fapi2::ReturnCode set_exp_resp_vref_dq_train_value(const fapi2::Target<fa
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_VREF_DQ_TRAIN_VALUE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_VREF_DQ_TRAIN_VALUE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2222,8 +2222,8 @@ inline fapi2::ReturnCode set_exp_resp_vref_dq_train_range(const fapi2::Target<fa
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_VREF_DQ_TRAIN_RANGE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_VREF_DQ_TRAIN_RANGE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2247,8 +2247,8 @@ inline fapi2::ReturnCode set_exp_resp_vref_dq_train_range(const fapi2::Target<fa
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_VREF_DQ_TRAIN_RANGE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_VREF_DQ_TRAIN_RANGE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2273,8 +2273,8 @@ inline fapi2::ReturnCode set_exp_resp_vref_dq_train_enable(const fapi2::Target<f
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_VREF_DQ_TRAIN_ENABLE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_VREF_DQ_TRAIN_ENABLE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2298,8 +2298,305 @@ inline fapi2::ReturnCode set_exp_resp_vref_dq_train_enable(const fapi2::Target<f
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_VREF_DQ_TRAIN_ENABLE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_RESP_VREF_DQ_TRAIN_ENABLE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
+    return fapi2::current_err;
+}
+
+///
+/// @brief ATTR_MEM_EFF_PSTATES setter
+/// @param[in] const ref to the TARGET_TYPE_DIMM
+/// @param[in] uint8_t the value to set
+/// @note Generated by gen_accessors.pl generate_mc_port_params
+/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
+/// @note  ARRAY[DIMM] This byte defines the allowed number of P-States for the DDR4 Differential
+/// Memory Buffer. P-States can be thought of as an available performance profile.
+///
+inline fapi2::ReturnCode set_pstates(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, uint8_t i_value)
+{
+    uint8_t l_value[2] = {};
+    const auto l_port = i_target.getParent<fapi2::TARGET_TYPE_MEM_PORT>();
+
+    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PSTATES, l_port, l_value) );
+    l_value[mss::index(i_target)] = i_value;
+    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_PSTATES, l_port, l_value) );
+    return fapi2::current_err;
+
+fapi_try_exit:
+    FAPI_ERR("failed setting ATTR_MEM_EFF_PSTATES: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
+    return fapi2::current_err;
+}
+
+///
+/// @brief ATTR_MEM_EFF_PSTATES setter
+/// @param[in] const ref to the TARGET_TYPE_MEM_PORT
+/// @param[in] uint8_t&[] ref to array of values to set
+/// @note Generated by gen_accessors.pl generate_mc_port_params
+/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
+/// @note  ARRAY[DIMM] This byte defines the allowed number of P-States for the DDR4 Differential
+/// Memory Buffer. P-States can be thought of as an available performance profile.
+///
+inline fapi2::ReturnCode set_pstates(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target, uint8_t (&i_array)[2])
+{
+    uint8_t l_value[2] = {};
+
+    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PSTATES, i_target, l_value) );
+    memcpy(&l_value, i_array, 2);
+    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_PSTATES, i_target, l_value) );
+    return fapi2::current_err;
+
+fapi_try_exit:
+    FAPI_ERR("failed setting ATTR_MEM_EFF_PSTATES: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
+    return fapi2::current_err;
+}
+
+///
+/// @brief ATTR_MEM_EFF_FOUR_RANK_MODE setter
+/// @param[in] const ref to the TARGET_TYPE_DIMM
+/// @param[in] uint8_t the value to set
+/// @note Generated by gen_accessors.pl generate_mc_port_params
+/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
+/// @note  ARRAY[DIMM] A-Side CA bus drives rank 0/1 and B-Side CA bus drives rank 2/3, DQ/DQS
+/// are shared across the ranks
+///
+inline fapi2::ReturnCode set_four_rank_mode(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, uint8_t i_value)
+{
+    uint8_t l_value[2] = {};
+    const auto l_port = i_target.getParent<fapi2::TARGET_TYPE_MEM_PORT>();
+
+    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_FOUR_RANK_MODE, l_port, l_value) );
+    l_value[mss::index(i_target)] = i_value;
+    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_FOUR_RANK_MODE, l_port, l_value) );
+    return fapi2::current_err;
+
+fapi_try_exit:
+    FAPI_ERR("failed setting ATTR_MEM_EFF_FOUR_RANK_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
+    return fapi2::current_err;
+}
+
+///
+/// @brief ATTR_MEM_EFF_FOUR_RANK_MODE setter
+/// @param[in] const ref to the TARGET_TYPE_MEM_PORT
+/// @param[in] uint8_t&[] ref to array of values to set
+/// @note Generated by gen_accessors.pl generate_mc_port_params
+/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
+/// @note  ARRAY[DIMM] A-Side CA bus drives rank 0/1 and B-Side CA bus drives rank 2/3, DQ/DQS
+/// are shared across the ranks
+///
+inline fapi2::ReturnCode set_four_rank_mode(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
+        uint8_t (&i_array)[2])
+{
+    uint8_t l_value[2] = {};
+
+    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_FOUR_RANK_MODE, i_target, l_value) );
+    memcpy(&l_value, i_array, 2);
+    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_FOUR_RANK_MODE, i_target, l_value) );
+    return fapi2::current_err;
+
+fapi_try_exit:
+    FAPI_ERR("failed setting ATTR_MEM_EFF_FOUR_RANK_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
+    return fapi2::current_err;
+}
+
+///
+/// @brief ATTR_MEM_EFF_MRAM_SUPPORT setter
+/// @param[in] const ref to the TARGET_TYPE_DIMM
+/// @param[in] uint8_t the value to set
+/// @note Generated by gen_accessors.pl generate_mc_port_params
+/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
+/// @note  ARRAY[DIMM] MRAM Support Support timing parameters of Everspin DDR4 MRAM
+///
+inline fapi2::ReturnCode set_mram_support(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, uint8_t i_value)
+{
+    uint8_t l_value[2] = {};
+    const auto l_port = i_target.getParent<fapi2::TARGET_TYPE_MEM_PORT>();
+
+    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_MRAM_SUPPORT, l_port, l_value) );
+    l_value[mss::index(i_target)] = i_value;
+    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_MRAM_SUPPORT, l_port, l_value) );
+    return fapi2::current_err;
+
+fapi_try_exit:
+    FAPI_ERR("failed setting ATTR_MEM_EFF_MRAM_SUPPORT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
+    return fapi2::current_err;
+}
+
+///
+/// @brief ATTR_MEM_EFF_MRAM_SUPPORT setter
+/// @param[in] const ref to the TARGET_TYPE_MEM_PORT
+/// @param[in] uint8_t&[] ref to array of values to set
+/// @note Generated by gen_accessors.pl generate_mc_port_params
+/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
+/// @note  ARRAY[DIMM] MRAM Support Support timing parameters of Everspin DDR4 MRAM
+///
+inline fapi2::ReturnCode set_mram_support(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
+        uint8_t (&i_array)[2])
+{
+    uint8_t l_value[2] = {};
+
+    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_MRAM_SUPPORT, i_target, l_value) );
+    memcpy(&l_value, i_array, 2);
+    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_MRAM_SUPPORT, i_target, l_value) );
+    return fapi2::current_err;
+
+fapi_try_exit:
+    FAPI_ERR("failed setting ATTR_MEM_EFF_MRAM_SUPPORT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
+    return fapi2::current_err;
+}
+
+///
+/// @brief ATTR_MEM_EFF_DDP_COMPATIBILITY setter
+/// @param[in] const ref to the TARGET_TYPE_DIMM
+/// @param[in] uint8_t the value to set
+/// @note Generated by gen_accessors.pl generate_mc_port_params
+/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
+/// @note  ARRAY[DIMM] DDP Compatibility Support 1 rank 3DS Device in DDP board routing. CKE[1],
+/// CSN[1], ODT[1] of PHY are connected to C[0], C[1], C[2] of DRAM
+///
+inline fapi2::ReturnCode set_ddp_compatibility(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, uint8_t i_value)
+{
+    uint8_t l_value[2] = {};
+    const auto l_port = i_target.getParent<fapi2::TARGET_TYPE_MEM_PORT>();
+
+    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DDP_COMPATIBILITY, l_port, l_value) );
+    l_value[mss::index(i_target)] = i_value;
+    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DDP_COMPATIBILITY, l_port, l_value) );
+    return fapi2::current_err;
+
+fapi_try_exit:
+    FAPI_ERR("failed setting ATTR_MEM_EFF_DDP_COMPATIBILITY: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
+    return fapi2::current_err;
+}
+
+///
+/// @brief ATTR_MEM_EFF_DDP_COMPATIBILITY setter
+/// @param[in] const ref to the TARGET_TYPE_MEM_PORT
+/// @param[in] uint8_t&[] ref to array of values to set
+/// @note Generated by gen_accessors.pl generate_mc_port_params
+/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
+/// @note  ARRAY[DIMM] DDP Compatibility Support 1 rank 3DS Device in DDP board routing. CKE[1],
+/// CSN[1], ODT[1] of PHY are connected to C[0], C[1], C[2] of DRAM
+///
+inline fapi2::ReturnCode set_ddp_compatibility(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
+        uint8_t (&i_array)[2])
+{
+    uint8_t l_value[2] = {};
+
+    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DDP_COMPATIBILITY, i_target, l_value) );
+    memcpy(&l_value, i_array, 2);
+    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DDP_COMPATIBILITY, i_target, l_value) );
+    return fapi2::current_err;
+
+fapi_try_exit:
+    FAPI_ERR("failed setting ATTR_MEM_EFF_DDP_COMPATIBILITY: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
+    return fapi2::current_err;
+}
+
+///
+/// @brief ATTR_MEM_EFF_TSV_8H_SUPPORT setter
+/// @param[in] const ref to the TARGET_TYPE_DIMM
+/// @param[in] uint8_t the value to set
+/// @note Generated by gen_accessors.pl generate_mc_port_params
+/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
+/// @note  ARRAY[DIMM] TSV 8H Support Support 8H 3DS routing in board routing when parity check
+/// is disabled
+///
+inline fapi2::ReturnCode set_tsv_8h_support(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, uint8_t i_value)
+{
+    uint8_t l_value[2] = {};
+    const auto l_port = i_target.getParent<fapi2::TARGET_TYPE_MEM_PORT>();
+
+    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_TSV_8H_SUPPORT, l_port, l_value) );
+    l_value[mss::index(i_target)] = i_value;
+    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_TSV_8H_SUPPORT, l_port, l_value) );
+    return fapi2::current_err;
+
+fapi_try_exit:
+    FAPI_ERR("failed setting ATTR_MEM_EFF_TSV_8H_SUPPORT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
+    return fapi2::current_err;
+}
+
+///
+/// @brief ATTR_MEM_EFF_TSV_8H_SUPPORT setter
+/// @param[in] const ref to the TARGET_TYPE_MEM_PORT
+/// @param[in] uint8_t&[] ref to array of values to set
+/// @note Generated by gen_accessors.pl generate_mc_port_params
+/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
+/// @note  ARRAY[DIMM] TSV 8H Support Support 8H 3DS routing in board routing when parity check
+/// is disabled
+///
+inline fapi2::ReturnCode set_tsv_8h_support(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
+        uint8_t (&i_array)[2])
+{
+    uint8_t l_value[2] = {};
+
+    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_TSV_8H_SUPPORT, i_target, l_value) );
+    memcpy(&l_value, i_array, 2);
+    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_TSV_8H_SUPPORT, i_target, l_value) );
+    return fapi2::current_err;
+
+fapi_try_exit:
+    FAPI_ERR("failed setting ATTR_MEM_EFF_TSV_8H_SUPPORT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
+    return fapi2::current_err;
+}
+
+///
+/// @brief ATTR_MEM_EFF_MDS_DDIMM setter
+/// @param[in] const ref to the TARGET_TYPE_DIMM
+/// @param[in] uint8_t the value to set
+/// @note Generated by gen_accessors.pl generate_mc_port_params
+/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
+/// @note  ARRAY[DIMM] MDS DDIMM type derived attribute Will be true if HYBRID_MEMORY_TYPE
+/// is MDS and HYBRID is true
+///
+inline fapi2::ReturnCode set_mds_ddimm(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, uint8_t i_value)
+{
+    uint8_t l_value[2] = {};
+    const auto l_port = i_target.getParent<fapi2::TARGET_TYPE_MEM_PORT>();
+
+    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_MDS_DDIMM, l_port, l_value) );
+    l_value[mss::index(i_target)] = i_value;
+    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_MDS_DDIMM, l_port, l_value) );
+    return fapi2::current_err;
+
+fapi_try_exit:
+    FAPI_ERR("failed setting ATTR_MEM_EFF_MDS_DDIMM: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
+    return fapi2::current_err;
+}
+
+///
+/// @brief ATTR_MEM_EFF_MDS_DDIMM setter
+/// @param[in] const ref to the TARGET_TYPE_MEM_PORT
+/// @param[in] uint8_t&[] ref to array of values to set
+/// @note Generated by gen_accessors.pl generate_mc_port_params
+/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
+/// @note  ARRAY[DIMM] MDS DDIMM type derived attribute Will be true if HYBRID_MEMORY_TYPE
+/// is MDS and HYBRID is true
+///
+inline fapi2::ReturnCode set_mds_ddimm(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
+                                       uint8_t (&i_array)[2])
+{
+    uint8_t l_value[2] = {};
+
+    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_MDS_DDIMM, i_target, l_value) );
+    memcpy(&l_value, i_array, 2);
+    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_MDS_DDIMM, i_target, l_value) );
+    return fapi2::current_err;
+
+fapi_try_exit:
+    FAPI_ERR("failed setting ATTR_MEM_EFF_MDS_DDIMM: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2321,8 +2618,8 @@ inline fapi2::ReturnCode set_ocmb_enterprise_mode(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_OCMB_ENTERPRISE_MODE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_OCMB_ENTERPRISE_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2343,8 +2640,8 @@ inline fapi2::ReturnCode set_ocmb_nonenterprise_mode_override(const fapi2::Targe
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_OCMB_NONENTERPRISE_MODE_OVERRIDE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_OCMB_NONENTERPRISE_MODE_OVERRIDE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2364,8 +2661,8 @@ inline fapi2::ReturnCode set_ocmb_half_dimm_mode_override(const fapi2::Target<fa
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_OCMB_HALF_DIMM_MODE_OVERRIDE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_OCMB_HALF_DIMM_MODE_OVERRIDE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2385,8 +2682,8 @@ inline fapi2::ReturnCode set_exp_reorder_queue_setting(const fapi2::Target<fapi2
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_REORDER_QUEUE_SETTING: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_REORDER_QUEUE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2408,8 +2705,8 @@ inline fapi2::ReturnCode set_ocmb_ecid(const fapi2::Target<fapi2::TARGET_TYPE_ME
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_OCMB_ECID: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_OCMB_ECID: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2432,8 +2729,8 @@ inline fapi2::ReturnCode set_ocmb_ecid(const fapi2::Target<fapi2::TARGET_TYPE_DI
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_OCMB_ECID: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_OCMB_ECID: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2456,8 +2753,8 @@ inline fapi2::ReturnCode set_ocmb_ecid(const fapi2::Target<fapi2::TARGET_TYPE_OC
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_OCMB_ECID: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_OCMB_ECID: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2477,8 +2774,8 @@ inline fapi2::ReturnCode set_exp_phy_init_mode(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_OCMB_PHY_INIT_MODE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_OCMB_PHY_INIT_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2499,8 +2796,8 @@ inline fapi2::ReturnCode set_exp_fw_api_version(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_FW_API_VERSION: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_FW_API_VERSION: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2520,8 +2817,8 @@ inline fapi2::ReturnCode set_exp_fw_version_a(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_FW_VERSION_A: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_FW_VERSION_A: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2541,8 +2838,8 @@ inline fapi2::ReturnCode set_exp_fw_version_b(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_FW_VERSION_B: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_FW_VERSION_B: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2562,8 +2859,8 @@ inline fapi2::ReturnCode set_exp_fw_partition_id(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_FW_PARTITION_ID: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_FW_PARTITION_ID: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2584,8 +2881,8 @@ inline fapi2::ReturnCode set_exp_fw_failed_authentication_a(const fapi2::Target<
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_FW_FAILED_AUTHENTICATION_A: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_FW_FAILED_AUTHENTICATION_A: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2606,8 +2903,8 @@ inline fapi2::ReturnCode set_exp_fw_failed_authentication_b(const fapi2::Target<
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_FW_FAILED_AUTHENTICATION_B: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_FW_FAILED_AUTHENTICATION_B: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2627,8 +2924,8 @@ inline fapi2::ReturnCode set_exp_comm_state(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_COMM_STATE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_COMM_STATE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2650,8 +2947,8 @@ inline fapi2::ReturnCode set_exp_cdr_bw_override_enable(const fapi2::Target<fapi
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_CDR_BW_OVERRIDE_ENABLE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_CDR_BW_OVERRIDE_ENABLE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2672,8 +2969,8 @@ inline fapi2::ReturnCode set_exp_cdr_bw_override_value(const fapi2::Target<fapi2
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_CDR_BW_OVERRIDE_VALUE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_CDR_BW_OVERRIDE_VALUE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2695,8 +2992,8 @@ inline fapi2::ReturnCode set_exp_intr_mask_disable(const fapi2::Target<fapi2::TA
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_INTR_MASK_DISABLE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_INTR_MASK_DISABLE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2720,8 +3017,8 @@ inline fapi2::ReturnCode set_exp_i2c_fw_log_dump_disable(const fapi2::Target<fap
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_I2C_FW_LOG_DUMP_DISABLE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_I2C_FW_LOG_DUMP_DISABLE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2746,8 +3043,8 @@ inline fapi2::ReturnCode set_exp_serial_number(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_SERIAL_NUMBER: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_SERIAL_NUMBER: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2770,8 +3067,8 @@ inline fapi2::ReturnCode set_exp_serial_number(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_SERIAL_NUMBER: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_SERIAL_NUMBER: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2794,406 +3091,8 @@ inline fapi2::ReturnCode set_exp_serial_number(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_EXP_SERIAL_NUMBER: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
-    return fapi2::current_err;
-}
-
-
-///
-/// @brief ATTR_MEM_EFF_PSTATES setter
-/// @param[in] const ref to the TARGET_TYPE_DIMM
-/// @param[in] uint8_t the value to set
-/// @note Generated by gen_accessors.pl generate_mc_port_params
-/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
-/// @note  ARRAY[DIMM] This byte defines the allowed number of P-States for the DDR4 Differential
-/// Memory Buffer. P-States can be thought of as an available performance profile.
-///
-inline fapi2::ReturnCode set_pstates(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, uint8_t i_value)
-{
-    uint8_t l_value[2] = {};
-    const auto l_port = i_target.getParent<fapi2::TARGET_TYPE_MEM_PORT>();
-
-    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PSTATES, l_port, l_value) );
-    l_value[mss::index(i_target)] = i_value;
-    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_PSTATES, l_port, l_value) );
-    return fapi2::current_err;
-
-fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_PSTATES: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
-    return fapi2::current_err;
-}
-
-///
-/// @brief ATTR_MEM_EFF_PSTATES setter
-/// @param[in] const ref to the TARGET_TYPE_MEM_PORT
-/// @param[in] uint8_t&[] ref to array of values to set
-/// @note Generated by gen_accessors.pl generate_mc_port_params
-/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
-/// @note  ARRAY[DIMM] This byte defines the allowed number of P-States for the DDR4 Differential
-/// Memory Buffer. P-States can be thought of as an available performance profile.
-///
-inline fapi2::ReturnCode set_pstates(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target, uint8_t (&i_array)[2])
-{
-    uint8_t l_value[2] = {};
-
-    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PSTATES, i_target, l_value) );
-    memcpy(&l_value, i_array, 2);
-    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_PSTATES, i_target, l_value) );
-    return fapi2::current_err;
-
-fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_PSTATES: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
-    return fapi2::current_err;
-}
-
-///
-/// @brief ATTR_MEM_EFF_BYTE_ENABLES setter
-/// @param[in] const ref to the TARGET_TYPE_DIMM
-/// @param[in] uint16_t the value to set
-/// @note Generated by gen_accessors.pl generate_mc_port_params
-/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
-/// @note  ARRAY[DIMM] These bits are used to activate or deactivate bytes in the DDR interface
-/// of the differential memory buffer chip. Right aligned data.
-///
-inline fapi2::ReturnCode set_byte_enables(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, uint16_t i_value)
-{
-    uint16_t l_value[2] = {};
-    const auto l_port = i_target.getParent<fapi2::TARGET_TYPE_MEM_PORT>();
-
-    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_BYTE_ENABLES, l_port, l_value) );
-    l_value[mss::index(i_target)] = i_value;
-    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_BYTE_ENABLES, l_port, l_value) );
-    return fapi2::current_err;
-
-fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_BYTE_ENABLES: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
-    return fapi2::current_err;
-}
-
-///
-/// @brief ATTR_MEM_EFF_BYTE_ENABLES setter
-/// @param[in] const ref to the TARGET_TYPE_MEM_PORT
-/// @param[in] uint16_t&[] ref to array of values to set
-/// @note Generated by gen_accessors.pl generate_mc_port_params
-/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
-/// @note  ARRAY[DIMM] These bits are used to activate or deactivate bytes in the DDR interface
-/// of the differential memory buffer chip. Right aligned data.
-///
-inline fapi2::ReturnCode set_byte_enables(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
-        uint16_t (&i_array)[2])
-{
-    uint16_t l_value[2] = {};
-
-    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_BYTE_ENABLES, i_target, l_value) );
-    memcpy(&l_value, i_array, 4);
-    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_BYTE_ENABLES, i_target, l_value) );
-    return fapi2::current_err;
-
-fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_BYTE_ENABLES: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
-    return fapi2::current_err;
-}
-
-///
-/// @brief ATTR_MEM_EFF_NIBBLE_ENABLES setter
-/// @param[in] const ref to the TARGET_TYPE_DIMM
-/// @param[in] uint32_t the value to set
-/// @note Generated by gen_accessors.pl generate_mc_port_params
-/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
-/// @note  ARRAY[DIMM] These bits are used to select the active nibbles or DQS on the DDR interface.
-/// Right aligned data.
-///
-inline fapi2::ReturnCode set_nibble_enables(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, uint32_t i_value)
-{
-    uint32_t l_value[2] = {};
-    const auto l_port = i_target.getParent<fapi2::TARGET_TYPE_MEM_PORT>();
-
-    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_NIBBLE_ENABLES, l_port, l_value) );
-    l_value[mss::index(i_target)] = i_value;
-    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_NIBBLE_ENABLES, l_port, l_value) );
-    return fapi2::current_err;
-
-fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_NIBBLE_ENABLES: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
-    return fapi2::current_err;
-}
-
-///
-/// @brief ATTR_MEM_EFF_NIBBLE_ENABLES setter
-/// @param[in] const ref to the TARGET_TYPE_MEM_PORT
-/// @param[in] uint32_t&[] ref to array of values to set
-/// @note Generated by gen_accessors.pl generate_mc_port_params
-/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
-/// @note  ARRAY[DIMM] These bits are used to select the active nibbles or DQS on the DDR interface.
-/// Right aligned data.
-///
-inline fapi2::ReturnCode set_nibble_enables(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
-        uint32_t (&i_array)[2])
-{
-    uint32_t l_value[2] = {};
-
-    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_NIBBLE_ENABLES, i_target, l_value) );
-    memcpy(&l_value, i_array, 8);
-    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_NIBBLE_ENABLES, i_target, l_value) );
-    return fapi2::current_err;
-
-fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_NIBBLE_ENABLES: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
-    return fapi2::current_err;
-}
-
-///
-/// @brief ATTR_MEM_EFF_FOUR_RANK_MODE setter
-/// @param[in] const ref to the TARGET_TYPE_DIMM
-/// @param[in] uint8_t the value to set
-/// @note Generated by gen_accessors.pl generate_mc_port_params
-/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
-/// @note  ARRAY[DIMM] A-Side CA bus drives rank 0/1 and B-Side CA bus drives rank 2/3, DQ/DQS
-/// are shared across the ranks
-///
-inline fapi2::ReturnCode set_four_rank_mode(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, uint8_t i_value)
-{
-    uint8_t l_value[2] = {};
-    const auto l_port = i_target.getParent<fapi2::TARGET_TYPE_MEM_PORT>();
-
-    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_FOUR_RANK_MODE, l_port, l_value) );
-    l_value[mss::index(i_target)] = i_value;
-    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_FOUR_RANK_MODE, l_port, l_value) );
-    return fapi2::current_err;
-
-fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_FOUR_RANK_MODE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
-    return fapi2::current_err;
-}
-
-///
-/// @brief ATTR_MEM_EFF_FOUR_RANK_MODE setter
-/// @param[in] const ref to the TARGET_TYPE_MEM_PORT
-/// @param[in] uint8_t&[] ref to array of values to set
-/// @note Generated by gen_accessors.pl generate_mc_port_params
-/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
-/// @note  ARRAY[DIMM] A-Side CA bus drives rank 0/1 and B-Side CA bus drives rank 2/3, DQ/DQS
-/// are shared across the ranks
-///
-inline fapi2::ReturnCode set_four_rank_mode(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
-        uint8_t (&i_array)[2])
-{
-    uint8_t l_value[2] = {};
-
-    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_FOUR_RANK_MODE, i_target, l_value) );
-    memcpy(&l_value, i_array, 2);
-    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_FOUR_RANK_MODE, i_target, l_value) );
-    return fapi2::current_err;
-
-fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_FOUR_RANK_MODE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
-    return fapi2::current_err;
-}
-
-///
-/// @brief ATTR_MEM_EFF_MDS_DDIMM setter
-/// @param[in] const ref to the TARGET_TYPE_DIMM
-/// @param[in] uint8_t the value to set
-/// @note Generated by gen_accessors.pl generate_mc_port_params
-/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
-/// @note  ARRAY[DIMM] MDS DDIMM type derived attribute Will be true if HYBRID_MEMORY_TYPE
-/// is MDS and HYBRID is true
-///
-inline fapi2::ReturnCode set_mds_ddimm(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, uint8_t i_value)
-{
-    uint8_t l_value[2] = {};
-    const auto l_port = i_target.getParent<fapi2::TARGET_TYPE_MEM_PORT>();
-
-    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_MDS_DDIMM, l_port, l_value) );
-    l_value[mss::index(i_target)] = i_value;
-    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_MDS_DDIMM, l_port, l_value) );
-    return fapi2::current_err;
-
-fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_MDS_DDIMM: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
-    return fapi2::current_err;
-}
-
-///
-/// @brief ATTR_MEM_EFF_MDS_DDIMM setter
-/// @param[in] const ref to the TARGET_TYPE_MEM_PORT
-/// @param[in] uint8_t&[] ref to array of values to set
-/// @note Generated by gen_accessors.pl generate_mc_port_params
-/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
-/// @note  ARRAY[DIMM] MDS DDIMM type derived attribute Will be true if HYBRID_MEMORY_TYPE
-/// is MDS and HYBRID is true
-///
-inline fapi2::ReturnCode set_mds_ddimm(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
-                                       uint8_t (&i_array)[2])
-{
-    uint8_t l_value[2] = {};
-
-    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_MDS_DDIMM, i_target, l_value) );
-    memcpy(&l_value, i_array, 2);
-    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_MDS_DDIMM, i_target, l_value) );
-    return fapi2::current_err;
-
-fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_MDS_DDIMM: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
-    return fapi2::current_err;
-}
-
-///
-/// @brief ATTR_MEM_EFF_MRAM_SUPPORT setter
-/// @param[in] const ref to the TARGET_TYPE_DIMM
-/// @param[in] uint8_t the value to set
-/// @note Generated by gen_accessors.pl generate_mc_port_params
-/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
-/// @note  ARRAY[DIMM] MRAM Support Support timing parameters of Everspin DDR4 MRAM
-///
-inline fapi2::ReturnCode set_mram_support(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, uint8_t i_value)
-{
-    uint8_t l_value[2] = {};
-    const auto l_port = i_target.getParent<fapi2::TARGET_TYPE_MEM_PORT>();
-
-    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_MRAM_SUPPORT, l_port, l_value) );
-    l_value[mss::index(i_target)] = i_value;
-    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_MRAM_SUPPORT, l_port, l_value) );
-    return fapi2::current_err;
-
-fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_MRAM_SUPPORT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
-    return fapi2::current_err;
-}
-
-///
-/// @brief ATTR_MEM_EFF_MRAM_SUPPORT setter
-/// @param[in] const ref to the TARGET_TYPE_MEM_PORT
-/// @param[in] uint8_t&[] ref to array of values to set
-/// @note Generated by gen_accessors.pl generate_mc_port_params
-/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
-/// @note  ARRAY[DIMM] MRAM Support Support timing parameters of Everspin DDR4 MRAM
-///
-inline fapi2::ReturnCode set_mram_support(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
-        uint8_t (&i_array)[2])
-{
-    uint8_t l_value[2] = {};
-
-    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_MRAM_SUPPORT, i_target, l_value) );
-    memcpy(&l_value, i_array, 2);
-    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_MRAM_SUPPORT, i_target, l_value) );
-    return fapi2::current_err;
-
-fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_MRAM_SUPPORT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
-    return fapi2::current_err;
-}
-
-///
-/// @brief ATTR_MEM_EFF_DDP_COMPATIBILITY setter
-/// @param[in] const ref to the TARGET_TYPE_DIMM
-/// @param[in] uint8_t the value to set
-/// @note Generated by gen_accessors.pl generate_mc_port_params
-/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
-/// @note  ARRAY[DIMM] DDP Compatibility Support 1 rank 3DS Device in DDP board routing. CKE[1],
-/// CSN[1], ODT[1] of PHY are connected to C[0], C[1], C[2] of DRAM
-///
-inline fapi2::ReturnCode set_ddp_compatibility(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, uint8_t i_value)
-{
-    uint8_t l_value[2] = {};
-    const auto l_port = i_target.getParent<fapi2::TARGET_TYPE_MEM_PORT>();
-
-    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DDP_COMPATIBILITY, l_port, l_value) );
-    l_value[mss::index(i_target)] = i_value;
-    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DDP_COMPATIBILITY, l_port, l_value) );
-    return fapi2::current_err;
-
-fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DDP_COMPATIBILITY: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
-    return fapi2::current_err;
-}
-
-///
-/// @brief ATTR_MEM_EFF_DDP_COMPATIBILITY setter
-/// @param[in] const ref to the TARGET_TYPE_MEM_PORT
-/// @param[in] uint8_t&[] ref to array of values to set
-/// @note Generated by gen_accessors.pl generate_mc_port_params
-/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
-/// @note  ARRAY[DIMM] DDP Compatibility Support 1 rank 3DS Device in DDP board routing. CKE[1],
-/// CSN[1], ODT[1] of PHY are connected to C[0], C[1], C[2] of DRAM
-///
-inline fapi2::ReturnCode set_ddp_compatibility(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
-        uint8_t (&i_array)[2])
-{
-    uint8_t l_value[2] = {};
-
-    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DDP_COMPATIBILITY, i_target, l_value) );
-    memcpy(&l_value, i_array, 2);
-    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DDP_COMPATIBILITY, i_target, l_value) );
-    return fapi2::current_err;
-
-fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DDP_COMPATIBILITY: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
-    return fapi2::current_err;
-}
-
-///
-/// @brief ATTR_MEM_EFF_TSV_8H_SUPPORT setter
-/// @param[in] const ref to the TARGET_TYPE_DIMM
-/// @param[in] uint8_t the value to set
-/// @note Generated by gen_accessors.pl generate_mc_port_params
-/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
-/// @note  ARRAY[DIMM] TSV 8H Support Support 8H 3DS routing in board routing when parity check
-/// is disabled
-///
-inline fapi2::ReturnCode set_tsv_8h_support(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, uint8_t i_value)
-{
-    uint8_t l_value[2] = {};
-    const auto l_port = i_target.getParent<fapi2::TARGET_TYPE_MEM_PORT>();
-
-    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_TSV_8H_SUPPORT, l_port, l_value) );
-    l_value[mss::index(i_target)] = i_value;
-    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_TSV_8H_SUPPORT, l_port, l_value) );
-    return fapi2::current_err;
-
-fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_TSV_8H_SUPPORT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
-    return fapi2::current_err;
-}
-
-///
-/// @brief ATTR_MEM_EFF_TSV_8H_SUPPORT setter
-/// @param[in] const ref to the TARGET_TYPE_MEM_PORT
-/// @param[in] uint8_t&[] ref to array of values to set
-/// @note Generated by gen_accessors.pl generate_mc_port_params
-/// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
-/// @note  ARRAY[DIMM] TSV 8H Support Support 8H 3DS routing in board routing when parity check
-/// is disabled
-///
-inline fapi2::ReturnCode set_tsv_8h_support(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
-        uint8_t (&i_array)[2])
-{
-    uint8_t l_value[2] = {};
-
-    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_TSV_8H_SUPPORT, i_target, l_value) );
-    memcpy(&l_value, i_array, 2);
-    FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_TSV_8H_SUPPORT, i_target, l_value) );
-    return fapi2::current_err;
-
-fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_TSV_8H_SUPPORT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_MSS_EXP_SERIAL_NUMBER: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3215,8 +3114,8 @@ inline fapi2::ReturnCode set_omi_ffe_pre_cursor(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_OMI_FFE_PRE_CURSOR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_OMI_FFE_PRE_CURSOR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3237,8 +3136,8 @@ inline fapi2::ReturnCode set_omi_ffe_post_cursor(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_OMI_FFE_POST_CURSOR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_OMI_FFE_POST_CURSOR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3259,8 +3158,8 @@ inline fapi2::ReturnCode set_mem_throttled_n_commands_per_port(const fapi2::Targ
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_EXP_MEM_THROTTLED_N_COMMANDS_PER_PORT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_EXP_MEM_THROTTLED_N_COMMANDS_PER_PORT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3280,8 +3179,8 @@ inline fapi2::ReturnCode set_mem_throttled_n_commands_per_slot(const fapi2::Targ
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_EXP_MEM_THROTTLED_N_COMMANDS_PER_SLOT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_EXP_MEM_THROTTLED_N_COMMANDS_PER_SLOT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3301,8 +3200,8 @@ inline fapi2::ReturnCode set_runtime_mem_throttled_n_commands_per_port(const fap
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_EXP_RUNTIME_MEM_THROTTLED_N_COMMANDS_PER_PORT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_EXP_RUNTIME_MEM_THROTTLED_N_COMMANDS_PER_PORT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3322,8 +3221,8 @@ inline fapi2::ReturnCode set_runtime_mem_throttled_n_commands_per_slot(const fap
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_EXP_RUNTIME_MEM_THROTTLED_N_COMMANDS_PER_SLOT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_EXP_RUNTIME_MEM_THROTTLED_N_COMMANDS_PER_SLOT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3347,8 +3246,8 @@ inline fapi2::ReturnCode set_mem_watt_target(const fapi2::Target<fapi2::TARGET_T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_EXP_MEM_WATT_TARGET: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_EXP_MEM_WATT_TARGET: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3372,8 +3271,8 @@ inline fapi2::ReturnCode set_mem_watt_target(const fapi2::Target<fapi2::TARGET_T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_EXP_MEM_WATT_TARGET: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_EXP_MEM_WATT_TARGET: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3396,8 +3295,8 @@ inline fapi2::ReturnCode set_total_pwr_slope(const fapi2::Target<fapi2::TARGET_T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_EXP_TOTAL_PWR_SLOPE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_EXP_TOTAL_PWR_SLOPE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3420,8 +3319,8 @@ inline fapi2::ReturnCode set_total_pwr_slope(const fapi2::Target<fapi2::TARGET_T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_EXP_TOTAL_PWR_SLOPE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_EXP_TOTAL_PWR_SLOPE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3445,8 +3344,8 @@ inline fapi2::ReturnCode set_total_pwr_intercept(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_EXP_TOTAL_PWR_INTERCEPT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_EXP_TOTAL_PWR_INTERCEPT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3469,8 +3368,8 @@ inline fapi2::ReturnCode set_total_pwr_intercept(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_EXP_TOTAL_PWR_INTERCEPT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_EXP_TOTAL_PWR_INTERCEPT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3490,8 +3389,8 @@ inline fapi2::ReturnCode set_databus_util(const fapi2::Target<fapi2::TARGET_TYPE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_EXP_DATABUS_UTIL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_EXP_DATABUS_UTIL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3510,8 +3409,8 @@ inline fapi2::ReturnCode set_port_maxpower(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_EXP_PORT_MAXPOWER: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_EXP_PORT_MAXPOWER: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3535,8 +3434,8 @@ inline fapi2::ReturnCode set_dimm_thermal_limit(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_EXP_DIMM_THERMAL_LIMIT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_EXP_DIMM_THERMAL_LIMIT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3559,8 +3458,8 @@ inline fapi2::ReturnCode set_dimm_thermal_limit(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_EXP_DIMM_THERMAL_LIMIT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed setting ATTR_EXP_DIMM_THERMAL_LIMIT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
