@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -37,9 +37,9 @@ namespace fapi2
 {
 
 /// @brief Determine the number of bits set in a constant value
-constexpr int _bitCount(const uint64_t x)
+constexpr unsigned int _bitCount(const uint64_t x)
 {
-    return x ? (_bitCount(x >> 1) + (x & 1)) : 0;
+    return x ? static_cast<unsigned int>(_bitCount(x >> 1u) + (x & 1u)) : 0u;
 }
 
 /// @brief Template variant of _bitCount() for legacy support
@@ -47,7 +47,7 @@ template<uint64_t V>
 class bitCount
 {
     public:
-        static const uint8_t count = _bitCount(V);
+        static const uint8_t count = static_cast<uint8_t>(_bitCount(V));
 };
 
 /// @brief Unconditional byte swap, type-overloaded for convenience

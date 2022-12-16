@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -89,7 +89,7 @@ void strhex(char* o_str, uint64_t i_value, int i_width)
     }
 }
 
-ReturnCode putRingBucket(const Target<TARGET_TYPE_ALL_MC>& i_target,
+ReturnCode putRingBucket(const Target<TARGET_TYPE_ALL_MC>& /*i_target*/,
                          const char* i_ring_id,
                          int i_bucket)
 {

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -65,7 +65,7 @@ namespace cc
 {
 constexpr uint16_t REGION(const int number)
 {
-    return 0x8000 >> number;
+    return static_cast<uint16_t>(0x8000u >> number);
 };
 
 enum clock_region

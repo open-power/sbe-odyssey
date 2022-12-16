@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -531,7 +531,7 @@ class Target
                           "Parent target must be part of TARGET_TYPE_MULTICAST_CHIP");
             static_assert((T & TARGET_TYPE_MULTICASTABLE) != 0,
                           "Requested target type must be part of TARGET_TYPE_MULTICASTABLE");
-            static_assert(_bitCount(T) == 1,
+            static_assert(_bitCount(T) == 1u,
                           "Requested target type must be a single type, TARGET_TYPE_MULTICAST will be added automatically");
         }
 #endif
