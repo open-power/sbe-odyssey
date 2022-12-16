@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -139,8 +139,8 @@ inline fapi2::ReturnCode get_mem_mrw_is_planar(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_MRW_IS_PLANAR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_MRW_IS_PLANAR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -161,8 +161,8 @@ inline fapi2::ReturnCode get_mrw_ocmb_reset_group(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_OCMB_RESET_GROUP: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MSS_MRW_OCMB_RESET_GROUP: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 

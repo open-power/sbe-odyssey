@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -175,8 +175,8 @@ inline fapi2::ReturnCode get_dram_cwl(const fapi2::Target<fapi2::TARGET_TYPE_MEM
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DRAM_CWL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DRAM_CWL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -196,8 +196,8 @@ inline fapi2::ReturnCode get_dimm_buffer_delay(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_RDIMM_BUFFER_DELAY: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_RDIMM_BUFFER_DELAY: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -220,8 +220,8 @@ inline fapi2::ReturnCode get_mem_vpd_dq_map(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_VPD_DQ_MAP: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_VPD_DQ_MAP: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -245,8 +245,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f0rc0f(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC0F: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC0F: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -270,8 +270,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f0rc0f(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC0F: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC0F: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -294,8 +294,8 @@ inline fapi2::ReturnCode get_cs_cmd_latency(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_CS_CMD_LATENCY: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_CS_CMD_LATENCY: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -318,8 +318,8 @@ inline fapi2::ReturnCode get_cs_cmd_latency(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_CS_CMD_LATENCY: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_CS_CMD_LATENCY: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -342,8 +342,8 @@ inline fapi2::ReturnCode get_ca_parity_latency(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_CA_PARITY_LATENCY: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_CA_PARITY_LATENCY: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -366,8 +366,8 @@ inline fapi2::ReturnCode get_ca_parity_latency(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_CA_PARITY_LATENCY: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_CA_PARITY_LATENCY: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -390,8 +390,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f0rc02(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC02: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC02: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -414,8 +414,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f0rc02(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC02: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC02: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -439,8 +439,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f0rc03(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC03: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC03: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -464,8 +464,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f0rc03(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC03: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC03: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -489,8 +489,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f0rc04(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC04: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC04: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -514,8 +514,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f0rc04(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC04: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC04: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -539,8 +539,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f0rc05(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC05: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC05: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -564,8 +564,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f0rc05(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC05: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC05: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -589,8 +589,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f0rc0b(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC0B: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC0B: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -614,8 +614,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f0rc0b(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC0B: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC0B: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -639,8 +639,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f0rc1x(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC1X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC1X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -664,8 +664,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f0rc1x(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC1X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC1X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -688,8 +688,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f0rc7x(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC7X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC7X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -712,8 +712,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f0rc7x(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC7X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F0RC7X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -737,8 +737,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f1rc00(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC00: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC00: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -762,8 +762,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f1rc00(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC00: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC00: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -787,8 +787,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f1rc02(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC02: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC02: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -812,8 +812,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f1rc02(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC02: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC02: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -837,8 +837,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f1rc03(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC03: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC03: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -862,8 +862,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f1rc03(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC03: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC03: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -887,8 +887,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f1rc04(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC04: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC04: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -912,8 +912,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f1rc04(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC04: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC04: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -937,8 +937,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f1rc05(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC05: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC05: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -962,8 +962,8 @@ inline fapi2::ReturnCode get_dimm_ddr4_f1rc05(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC05: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC05: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -986,8 +986,8 @@ inline fapi2::ReturnCode get_safemode_dram_databus_util(const fapi2::Target<fapi
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_SAFEMODE_DRAM_DATABUS_UTIL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MSS_SAFEMODE_DRAM_DATABUS_UTIL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1008,8 +1008,8 @@ inline fapi2::ReturnCode get_reorder_queue_setting(const fapi2::Target<fapi2::TA
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_REORDER_QUEUE_SETTING: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_REORDER_QUEUE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1030,8 +1030,8 @@ inline fapi2::ReturnCode get_mem_2n_mode(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_2N_MODE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_2N_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1051,8 +1051,8 @@ inline fapi2::ReturnCode get_post_memdiags_read_subtest(const fapi2::Target<fapi
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_POST_MEMDIAGS_READ_SUBTEST: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MSS_POST_MEMDIAGS_READ_SUBTEST: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1074,8 +1074,8 @@ inline fapi2::ReturnCode get_post_memdiags_read_subtest_fail_behavior(const fapi
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_POST_MEMDIAGS_READ_SUBTEST_FAIL_BEHAVIOR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MSS_POST_MEMDIAGS_READ_SUBTEST_FAIL_BEHAVIOR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1362,8 +1362,8 @@ inline fapi2::ReturnCode get_ddr5_tx_slew_rise_dq(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_TX_SLEW_RISE_DQ: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_TX_SLEW_RISE_DQ: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1383,8 +1383,8 @@ inline fapi2::ReturnCode get_ddr5_tx_slew_fall_dq(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_TX_SLEW_FALL_DQ: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_TX_SLEW_FALL_DQ: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1404,8 +1404,8 @@ inline fapi2::ReturnCode get_ddr5_tx_slew_rise_ac(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_TX_SLEW_RISE_AC: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_TX_SLEW_RISE_AC: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1425,8 +1425,8 @@ inline fapi2::ReturnCode get_ddr5_tx_slew_fall_ac(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_TX_SLEW_FALL_AC: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_TX_SLEW_FALL_AC: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1446,8 +1446,8 @@ inline fapi2::ReturnCode get_ddr5_tx_slew_rise_ck(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_TX_SLEW_RISE_CK: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_TX_SLEW_RISE_CK: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1467,8 +1467,8 @@ inline fapi2::ReturnCode get_ddr5_tx_slew_fall_ck(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_TX_SLEW_FALL_CK: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_TX_SLEW_FALL_CK: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1488,8 +1488,8 @@ inline fapi2::ReturnCode get_ddr5_redundant_cs_en(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_REDUNDANT_CS_EN: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_REDUNDANT_CS_EN: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1509,8 +1509,8 @@ inline fapi2::ReturnCode get_ddr5_rxen_adj(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_RXEN_ADJ: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_RXEN_ADJ: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1532,8 +1532,8 @@ inline fapi2::ReturnCode get_ddr5_wl_adj_start(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_WL_ADJ_START: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_WL_ADJ_START: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1554,8 +1554,8 @@ inline fapi2::ReturnCode get_ddr5_wl_adj_end(const fapi2::Target<fapi2::TARGET_T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_WL_ADJ_END: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_WL_ADJ_END: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1577,8 +1577,8 @@ inline fapi2::ReturnCode get_ddr5_phy_vref_rd(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_PHY_VREF_RD: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DDR5_PHY_VREF_RD: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1598,8 +1598,8 @@ inline fapi2::ReturnCode get_ddr5_spd_cl_supported(const fapi2::Target<fapi2::TA
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DDR5_SPD_CL_SUPPORTED: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DDR5_SPD_CL_SUPPORTED: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1620,8 +1620,8 @@ inline fapi2::ReturnCode get_burst_length(const fapi2::Target<fapi2::TARGET_TYPE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_BURST_LENGTH: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_BURST_LENGTH: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1640,8 +1640,8 @@ inline fapi2::ReturnCode get_mpsm(const fapi2::Target<fapi2::TARGET_TYPE_MEM_POR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_MPSM: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_MPSM: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1661,8 +1661,8 @@ inline fapi2::ReturnCode get_cs_assert_in_mpc(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_CS_ASSERT_IN_MPC: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_CS_ASSERT_IN_MPC: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1681,8 +1681,8 @@ inline fapi2::ReturnCode get_device15_mpsm(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DEVICE15_MPSM: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DEVICE15_MPSM: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1702,8 +1702,8 @@ inline fapi2::ReturnCode get_internal_wr_timing_mode(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_INTERNAL_WR_TIMING_MODE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_INTERNAL_WR_TIMING_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1727,8 +1727,8 @@ inline fapi2::ReturnCode get_wl_internal_cycle_alignment(const fapi2::Target<fap
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_WL_INTERNAL_CYCLE_ALIGNMENT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_WL_INTERNAL_CYCLE_ALIGNMENT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1751,8 +1751,8 @@ inline fapi2::ReturnCode get_wl_internal_cycle_alignment(const fapi2::Target<fap
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_WL_INTERNAL_CYCLE_ALIGNMENT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_WL_INTERNAL_CYCLE_ALIGNMENT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1772,8 +1772,8 @@ inline fapi2::ReturnCode get_ref_rate_indic(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_REF_INTERVAL_RATE_INDIC: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_REF_INTERVAL_RATE_INDIC: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1793,8 +1793,8 @@ inline fapi2::ReturnCode get_ddr5_min_ref_rate(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DDR5_MIN_REF_RATE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DDR5_MIN_REF_RATE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1814,8 +1814,8 @@ inline fapi2::ReturnCode get_ddr5_ref_wide_range(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_REF_WIDE_RANGE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_REF_WIDE_RANGE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1834,8 +1834,8 @@ inline fapi2::ReturnCode get_ddr5_ref_tuf(const fapi2::Target<fapi2::TARGET_TYPE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DDR5_REF_TUF: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DDR5_REF_TUF: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1858,8 +1858,8 @@ inline fapi2::ReturnCode get_dram_pu_drv_imp(const fapi2::Target<fapi2::TARGET_T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DRAM_PU_DRV_IMP: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DRAM_PU_DRV_IMP: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1881,8 +1881,8 @@ inline fapi2::ReturnCode get_dram_pu_drv_imp(const fapi2::Target<fapi2::TARGET_T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DRAM_PU_DRV_IMP: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DRAM_PU_DRV_IMP: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1902,8 +1902,8 @@ inline fapi2::ReturnCode get_ddr5_dram_test_mode(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_TEST_MODE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_TEST_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1926,8 +1926,8 @@ inline fapi2::ReturnCode get_dram_pd_drv_imp(const fapi2::Target<fapi2::TARGET_T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DRAM_PD_DRV_IMP: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DRAM_PD_DRV_IMP: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1949,8 +1949,8 @@ inline fapi2::ReturnCode get_dram_pd_drv_imp(const fapi2::Target<fapi2::TARGET_T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DRAM_PD_DRV_IMP: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DRAM_PD_DRV_IMP: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1970,8 +1970,8 @@ inline fapi2::ReturnCode get_ddr5_dram_rd_preamble(const fapi2::Target<fapi2::TA
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_RD_PREAMBLE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_RD_PREAMBLE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1991,8 +1991,8 @@ inline fapi2::ReturnCode get_ddr5_dram_wr_preamble(const fapi2::Target<fapi2::TA
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_WR_PREAMBLE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_WR_PREAMBLE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2012,8 +2012,8 @@ inline fapi2::ReturnCode get_ddr5_dram_rd_postamble(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_RD_POSTAMBLE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_RD_POSTAMBLE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2033,8 +2033,8 @@ inline fapi2::ReturnCode get_ddr5_dram_wr_postamble(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_WR_POSTAMBLE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_WR_POSTAMBLE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2057,8 +2057,8 @@ inline fapi2::ReturnCode get_ddr5_dram_wr_vrefdq(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_WR_VREFDQ: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_WR_VREFDQ: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2080,8 +2080,8 @@ inline fapi2::ReturnCode get_ddr5_dram_wr_vrefdq(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_WR_VREFDQ: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_WR_VREFDQ: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2104,8 +2104,8 @@ inline fapi2::ReturnCode get_ddr5_dram_vrefca(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_VREFCA: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_VREFCA: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2127,8 +2127,8 @@ inline fapi2::ReturnCode get_ddr5_dram_vrefca(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_VREFCA: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_VREFCA: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2151,8 +2151,8 @@ inline fapi2::ReturnCode get_ddr5_dram_vrefcs(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_VREFCS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_VREFCS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2174,8 +2174,8 @@ inline fapi2::ReturnCode get_ddr5_dram_vrefcs(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_VREFCS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_VREFCS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2195,8 +2195,8 @@ inline fapi2::ReturnCode get_ddr5_dram_ecs_mode(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ECS_MODE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ECS_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2216,8 +2216,8 @@ inline fapi2::ReturnCode get_ddr5_dram_ecs_reset_counter(const fapi2::Target<fap
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ECS_RESET_COUNTER: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ECS_RESET_COUNTER: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2237,8 +2237,8 @@ inline fapi2::ReturnCode get_ddr5_dram_ecs_count_mode(const fapi2::Target<fapi2:
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ECS_COUNT_MODE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ECS_COUNT_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2258,8 +2258,8 @@ inline fapi2::ReturnCode get_ddr5_dram_ecs_srank_select(const fapi2::Target<fapi
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ECS_SRANK_SELECT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ECS_SRANK_SELECT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2279,8 +2279,8 @@ inline fapi2::ReturnCode get_ddr5_dram_ecs_threshold_count(const fapi2::Target<f
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ECS_THRESHOLD_COUNT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ECS_THRESHOLD_COUNT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2300,8 +2300,8 @@ inline fapi2::ReturnCode get_ddr5_dram_ecs_in_self_refresh(const fapi2::Target<f
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ECS_IN_SELF_REFRESH: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ECS_IN_SELF_REFRESH: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2321,8 +2321,8 @@ inline fapi2::ReturnCode get_ddr5_dram_ecs_writeback(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ECS_WRITEBACK: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ECS_WRITEBACK: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2342,8 +2342,8 @@ inline fapi2::ReturnCode get_ddr5_dram_ecs_x4_writes(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ECS_X4_WRITES: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ECS_X4_WRITES: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2366,8 +2366,8 @@ inline fapi2::ReturnCode get_ddr5_dram_ck_odt(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_CK_ODT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_CK_ODT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2389,8 +2389,8 @@ inline fapi2::ReturnCode get_ddr5_dram_ck_odt(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_CK_ODT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_CK_ODT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2413,8 +2413,8 @@ inline fapi2::ReturnCode get_ddr5_dram_cs_odt(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_CS_ODT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_CS_ODT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2436,8 +2436,8 @@ inline fapi2::ReturnCode get_ddr5_dram_cs_odt(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_CS_ODT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_CS_ODT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2460,8 +2460,8 @@ inline fapi2::ReturnCode get_ddr5_dram_ca_odt(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_CA_ODT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_CA_ODT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2483,8 +2483,8 @@ inline fapi2::ReturnCode get_ddr5_dram_ca_odt(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_CA_ODT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_CA_ODT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2507,8 +2507,8 @@ inline fapi2::ReturnCode get_ddr5_dram_dqs_rtt_park(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_DQS_RTT_PARK: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_DQS_RTT_PARK: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2530,8 +2530,8 @@ inline fapi2::ReturnCode get_ddr5_dram_dqs_rtt_park(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_DQS_RTT_PARK: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_DQS_RTT_PARK: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2554,8 +2554,8 @@ inline fapi2::ReturnCode get_ddr5_dram_rtt_nom_wr(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_RTT_NOM_WR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_RTT_NOM_WR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2577,8 +2577,8 @@ inline fapi2::ReturnCode get_ddr5_dram_rtt_nom_wr(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_RTT_NOM_WR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_RTT_NOM_WR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2601,8 +2601,8 @@ inline fapi2::ReturnCode get_ddr5_dram_rtt_nom_rd(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_RTT_NOM_RD: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_RTT_NOM_RD: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2624,8 +2624,8 @@ inline fapi2::ReturnCode get_ddr5_dram_rtt_nom_rd(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_RTT_NOM_RD: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_RTT_NOM_RD: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2648,8 +2648,8 @@ inline fapi2::ReturnCode get_ddr5_dram_odtlon_wr(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLON_WR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLON_WR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2671,8 +2671,8 @@ inline fapi2::ReturnCode get_ddr5_dram_odtlon_wr(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLON_WR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLON_WR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2695,8 +2695,8 @@ inline fapi2::ReturnCode get_ddr5_dram_odtloff_wr(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLOFF_WR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLOFF_WR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2718,8 +2718,8 @@ inline fapi2::ReturnCode get_ddr5_dram_odtloff_wr(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLOFF_WR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLOFF_WR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2742,8 +2742,8 @@ inline fapi2::ReturnCode get_ddr5_dram_odtlon_wr_nt(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLON_WR_NT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLON_WR_NT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2765,8 +2765,8 @@ inline fapi2::ReturnCode get_ddr5_dram_odtlon_wr_nt(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLON_WR_NT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLON_WR_NT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2789,8 +2789,8 @@ inline fapi2::ReturnCode get_ddr5_dram_odtloff_wr_nt(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLOFF_WR_NT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLOFF_WR_NT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2812,8 +2812,8 @@ inline fapi2::ReturnCode get_ddr5_dram_odtloff_wr_nt(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLOFF_WR_NT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLOFF_WR_NT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2836,8 +2836,8 @@ inline fapi2::ReturnCode get_ddr5_dram_odtlon_rd_nt(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLON_RD_NT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLON_RD_NT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2859,8 +2859,8 @@ inline fapi2::ReturnCode get_ddr5_dram_odtlon_rd_nt(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLON_RD_NT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLON_RD_NT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2883,8 +2883,8 @@ inline fapi2::ReturnCode get_ddr5_dram_odtloff_rd_nt(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLOFF_RD_NT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLOFF_RD_NT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2906,8 +2906,8 @@ inline fapi2::ReturnCode get_ddr5_dram_odtloff_rd_nt(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLOFF_RD_NT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DDR5_DRAM_ODTLOFF_RD_NT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2927,8 +2927,8 @@ inline fapi2::ReturnCode get_ddr5_wr_crc_err_status(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DDR5_WR_CRC_ERR_STATUS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DDR5_WR_CRC_ERR_STATUS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2948,8 +2948,8 @@ inline fapi2::ReturnCode get_ddr5_wr_crc_autodisable_enable(const fapi2::Target<
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DDR5_WR_CRC_AUTODISABLE_ENABLE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DDR5_WR_CRC_AUTODISABLE_ENABLE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2969,8 +2969,8 @@ inline fapi2::ReturnCode get_ddr5_wr_crc_autodisable_status(const fapi2::Target<
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DDR5_WR_CRC_AUTODISABLE_STATUS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DDR5_WR_CRC_AUTODISABLE_STATUS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2990,8 +2990,8 @@ inline fapi2::ReturnCode get_ddr5_wr_crc_autodisable_threshold(const fapi2::Targ
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DDR5_WR_CRC_AUTODISABLE_THRESHOLD: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DDR5_WR_CRC_AUTODISABLE_THRESHOLD: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3011,8 +3011,8 @@ inline fapi2::ReturnCode get_ddr5_wr_crc_autodisable_window(const fapi2::Target<
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DDR5_WR_CRC_AUTODISABLE_WINDOW: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DDR5_WR_CRC_AUTODISABLE_WINDOW: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3032,8 +3032,8 @@ inline fapi2::ReturnCode get_ddr5_global_dfe_gain(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DDR5_GLOBAL_DFE_GAIN: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DDR5_GLOBAL_DFE_GAIN: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3053,8 +3053,8 @@ inline fapi2::ReturnCode get_ddr5_global_dfe_tap1(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DDR5_GLOBAL_DFE_TAP1: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DDR5_GLOBAL_DFE_TAP1: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3074,8 +3074,8 @@ inline fapi2::ReturnCode get_ddr5_global_dfe_tap2(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DDR5_GLOBAL_DFE_TAP2: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DDR5_GLOBAL_DFE_TAP2: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3095,8 +3095,8 @@ inline fapi2::ReturnCode get_ddr5_global_dfe_tap3(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DDR5_GLOBAL_DFE_TAP3: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DDR5_GLOBAL_DFE_TAP3: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3116,8 +3116,8 @@ inline fapi2::ReturnCode get_ddr5_global_dfe_tap4(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DDR5_GLOBAL_DFE_TAP4: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DDR5_GLOBAL_DFE_TAP4: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3140,8 +3140,8 @@ inline fapi2::ReturnCode get_ddr5_dfe_gain_bias(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DDR5_DFE_GAIN_BIAS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DDR5_DFE_GAIN_BIAS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3163,8 +3163,8 @@ inline fapi2::ReturnCode get_ddr5_dfe_gain_bias(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DDR5_DFE_GAIN_BIAS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DDR5_DFE_GAIN_BIAS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3187,8 +3187,8 @@ inline fapi2::ReturnCode get_ddr5_dfe_sign_bit(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DDR5_DFE_SIGN_BIT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DDR5_DFE_SIGN_BIT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3210,8 +3210,8 @@ inline fapi2::ReturnCode get_ddr5_dfe_sign_bit(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DDR5_DFE_SIGN_BIT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DDR5_DFE_SIGN_BIT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3235,8 +3235,8 @@ inline fapi2::ReturnCode get_dram_gen(const fapi2::Target<fapi2::TARGET_TYPE_DIM
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_GEN: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_GEN: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3258,8 +3258,8 @@ inline fapi2::ReturnCode get_dram_gen(const fapi2::Target<fapi2::TARGET_TYPE_MEM
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_GEN: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_GEN: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3282,8 +3282,8 @@ inline fapi2::ReturnCode get_dimm_type(const fapi2::Target<fapi2::TARGET_TYPE_DI
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DIMM_TYPE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DIMM_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3306,8 +3306,8 @@ inline fapi2::ReturnCode get_dimm_type(const fapi2::Target<fapi2::TARGET_TYPE_ME
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DIMM_TYPE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DIMM_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3330,8 +3330,8 @@ inline fapi2::ReturnCode get_hybrid_memory_type(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_HYBRID_MEMORY_TYPE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_HYBRID_MEMORY_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3353,8 +3353,8 @@ inline fapi2::ReturnCode get_hybrid_memory_type(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_HYBRID_MEMORY_TYPE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_HYBRID_MEMORY_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3376,8 +3376,8 @@ inline fapi2::ReturnCode get_hybrid(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_HYBRID: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_HYBRID: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3398,8 +3398,8 @@ inline fapi2::ReturnCode get_hybrid(const fapi2::Target<fapi2::TARGET_TYPE_MEM_P
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_HYBRID: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_HYBRID: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3422,8 +3422,8 @@ inline fapi2::ReturnCode get_host_to_ddr_speed_ratio(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_HOST_TO_DDR_SPEED_RATIO: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_HOST_TO_DDR_SPEED_RATIO: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3445,8 +3445,8 @@ inline fapi2::ReturnCode get_host_to_ddr_speed_ratio(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_HOST_TO_DDR_SPEED_RATIO: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_HOST_TO_DDR_SPEED_RATIO: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3470,8 +3470,8 @@ inline fapi2::ReturnCode get_dram_density(const fapi2::Target<fapi2::TARGET_TYPE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_DENSITY: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_DENSITY: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3495,8 +3495,8 @@ inline fapi2::ReturnCode get_dram_density(const fapi2::Target<fapi2::TARGET_TYPE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_DENSITY: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_DENSITY: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3519,8 +3519,8 @@ inline fapi2::ReturnCode get_dram_bank_bits(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_BANK_BITS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_BANK_BITS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3543,8 +3543,8 @@ inline fapi2::ReturnCode get_dram_bank_bits(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_BANK_BITS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_BANK_BITS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3569,8 +3569,8 @@ inline fapi2::ReturnCode get_dram_bank_group_bits(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_BANK_GROUP_BITS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_BANK_GROUP_BITS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3594,8 +3594,8 @@ inline fapi2::ReturnCode get_dram_bank_group_bits(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_BANK_GROUP_BITS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_BANK_GROUP_BITS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3618,8 +3618,8 @@ inline fapi2::ReturnCode get_dram_column_bits(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_COLUMN_BITS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_COLUMN_BITS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3642,8 +3642,8 @@ inline fapi2::ReturnCode get_dram_column_bits(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_COLUMN_BITS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_COLUMN_BITS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3666,8 +3666,8 @@ inline fapi2::ReturnCode get_dram_row_bits(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_ROW_BITS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_ROW_BITS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3690,8 +3690,8 @@ inline fapi2::ReturnCode get_dram_row_bits(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_ROW_BITS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_ROW_BITS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3713,8 +3713,8 @@ inline fapi2::ReturnCode get_prim_die_count(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PRIM_DIE_COUNT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_PRIM_DIE_COUNT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3736,8 +3736,8 @@ inline fapi2::ReturnCode get_prim_die_count(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PRIM_DIE_COUNT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_PRIM_DIE_COUNT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3761,8 +3761,8 @@ inline fapi2::ReturnCode get_prim_stack_type(const fapi2::Target<fapi2::TARGET_T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PRIM_STACK_TYPE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_PRIM_STACK_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3786,8 +3786,8 @@ inline fapi2::ReturnCode get_prim_stack_type(const fapi2::Target<fapi2::TARGET_T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PRIM_STACK_TYPE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_PRIM_STACK_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3809,8 +3809,8 @@ inline fapi2::ReturnCode get_prim_bus_width(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PRIM_BUS_WIDTH: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_PRIM_BUS_WIDTH: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3832,8 +3832,8 @@ inline fapi2::ReturnCode get_prim_bus_width(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PRIM_BUS_WIDTH: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_PRIM_BUS_WIDTH: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3855,8 +3855,8 @@ inline fapi2::ReturnCode get_channels_per_dimm(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_CHANNELS_PER_DIMM: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_CHANNELS_PER_DIMM: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3878,8 +3878,8 @@ inline fapi2::ReturnCode get_channels_per_dimm(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_CHANNELS_PER_DIMM: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_CHANNELS_PER_DIMM: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3901,8 +3901,8 @@ inline fapi2::ReturnCode get_dram_ppr(const fapi2::Target<fapi2::TARGET_TYPE_DIM
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_PPR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_PPR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3923,8 +3923,8 @@ inline fapi2::ReturnCode get_dram_ppr(const fapi2::Target<fapi2::TARGET_TYPE_MEM
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_PPR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_PPR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3947,8 +3947,8 @@ inline fapi2::ReturnCode get_dram_soft_ppr(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_SOFT_PPR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_SOFT_PPR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3971,8 +3971,8 @@ inline fapi2::ReturnCode get_dram_soft_ppr(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_SOFT_PPR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_SOFT_PPR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3992,8 +3992,8 @@ inline fapi2::ReturnCode get_dram_trcd(const fapi2::Target<fapi2::TARGET_TYPE_ME
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRCD: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRCD: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4013,8 +4013,8 @@ inline fapi2::ReturnCode get_dram_trp(const fapi2::Target<fapi2::TARGET_TYPE_MEM
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRP: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRP: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4035,8 +4035,8 @@ inline fapi2::ReturnCode get_dram_tras(const fapi2::Target<fapi2::TARGET_TYPE_ME
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRAS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRAS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4057,8 +4057,8 @@ inline fapi2::ReturnCode get_dram_trc(const fapi2::Target<fapi2::TARGET_TYPE_MEM
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRC: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRC: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4083,8 +4083,8 @@ inline fapi2::ReturnCode get_dram_trfc(const fapi2::Target<fapi2::TARGET_TYPE_ME
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRFC: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRFC: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4107,8 +4107,8 @@ inline fapi2::ReturnCode get_dram_tfaw(const fapi2::Target<fapi2::TARGET_TYPE_ME
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TFAW: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TFAW: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4131,8 +4131,8 @@ inline fapi2::ReturnCode get_dram_trrd_s(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRRD_S: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRRD_S: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4155,8 +4155,8 @@ inline fapi2::ReturnCode get_dram_trrd_l(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRRD_L: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRRD_L: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4177,8 +4177,8 @@ inline fapi2::ReturnCode get_dram_trrd_dlr(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRRD_DLR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRRD_DLR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4199,8 +4199,8 @@ inline fapi2::ReturnCode get_dram_tccd_l(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TCCD_L: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TCCD_L: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4220,8 +4220,8 @@ inline fapi2::ReturnCode get_dram_twr(const fapi2::Target<fapi2::TARGET_TYPE_MEM
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TWR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TWR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4242,8 +4242,8 @@ inline fapi2::ReturnCode get_dram_twtr_s(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TWTR_S: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TWTR_S: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4263,8 +4263,8 @@ inline fapi2::ReturnCode get_dram_twtr_l(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TWTR_L: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TWTR_L: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4284,8 +4284,8 @@ inline fapi2::ReturnCode get_dram_tmaw(const fapi2::Target<fapi2::TARGET_TYPE_ME
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TMAW: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TMAW: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4308,8 +4308,8 @@ inline fapi2::ReturnCode get_dram_width(const fapi2::Target<fapi2::TARGET_TYPE_D
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_WIDTH: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_WIDTH: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4332,8 +4332,8 @@ inline fapi2::ReturnCode get_dram_width(const fapi2::Target<fapi2::TARGET_TYPE_M
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_WIDTH: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_WIDTH: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4360,8 +4360,8 @@ inline fapi2::ReturnCode get_logical_ranks_per_dimm(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_LOGICAL_RANKS_PER_DIMM: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_LOGICAL_RANKS_PER_DIMM: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4387,8 +4387,8 @@ inline fapi2::ReturnCode get_logical_ranks_per_dimm(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_LOGICAL_RANKS_PER_DIMM: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_LOGICAL_RANKS_PER_DIMM: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4410,8 +4410,8 @@ inline fapi2::ReturnCode get_3ds_height(const fapi2::Target<fapi2::TARGET_TYPE_D
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_3DS_HEIGHT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_3DS_HEIGHT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4433,8 +4433,8 @@ inline fapi2::ReturnCode get_3ds_height(const fapi2::Target<fapi2::TARGET_TYPE_M
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_3DS_HEIGHT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_3DS_HEIGHT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4456,8 +4456,8 @@ inline fapi2::ReturnCode get_register_type(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_REGISTER_TYPE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_REGISTER_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4479,8 +4479,8 @@ inline fapi2::ReturnCode get_register_type(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_REGISTER_TYPE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_REGISTER_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4503,8 +4503,8 @@ inline fapi2::ReturnCode get_module_mfg_id(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_MODULE_MFG_ID: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_MODULE_MFG_ID: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4527,8 +4527,8 @@ inline fapi2::ReturnCode get_module_mfg_id(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_MODULE_MFG_ID: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_MODULE_MFG_ID: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4551,8 +4551,8 @@ inline fapi2::ReturnCode get_dram_mfg_id(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_MFG_ID: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_MFG_ID: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4575,8 +4575,8 @@ inline fapi2::ReturnCode get_dram_mfg_id(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_MFG_ID: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_MFG_ID: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4599,8 +4599,8 @@ inline fapi2::ReturnCode get_rcd_mfg_id(const fapi2::Target<fapi2::TARGET_TYPE_D
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_RCD_MFG_ID: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_RCD_MFG_ID: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4623,8 +4623,8 @@ inline fapi2::ReturnCode get_rcd_mfg_id(const fapi2::Target<fapi2::TARGET_TYPE_M
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_RCD_MFG_ID: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_RCD_MFG_ID: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4646,8 +4646,8 @@ inline fapi2::ReturnCode get_register_rev(const fapi2::Target<fapi2::TARGET_TYPE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_REGISTER_REV: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_REGISTER_REV: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4669,8 +4669,8 @@ inline fapi2::ReturnCode get_register_rev(const fapi2::Target<fapi2::TARGET_TYPE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_REGISTER_REV: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_REGISTER_REV: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4693,8 +4693,8 @@ inline fapi2::ReturnCode get_package_rank_map(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PACKAGE_RANK_MAP: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_PACKAGE_RANK_MAP: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4716,8 +4716,8 @@ inline fapi2::ReturnCode get_package_rank_map(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PACKAGE_RANK_MAP: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_PACKAGE_RANK_MAP: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4739,8 +4739,8 @@ inline fapi2::ReturnCode get_nibble_map(const fapi2::Target<fapi2::TARGET_TYPE_D
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_NIBBLE_MAP: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_NIBBLE_MAP: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4762,8 +4762,8 @@ inline fapi2::ReturnCode get_nibble_map(const fapi2::Target<fapi2::TARGET_TYPE_M
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_NIBBLE_MAP: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_NIBBLE_MAP: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4785,8 +4785,8 @@ inline fapi2::ReturnCode get_dimm_size(const fapi2::Target<fapi2::TARGET_TYPE_DI
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DIMM_SIZE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DIMM_SIZE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4808,8 +4808,8 @@ inline fapi2::ReturnCode get_dimm_size(const fapi2::Target<fapi2::TARGET_TYPE_ME
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DIMM_SIZE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DIMM_SIZE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4832,8 +4832,8 @@ inline fapi2::ReturnCode get_dimm_spare(const fapi2::Target<fapi2::TARGET_TYPE_D
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DIMM_SPARE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DIMM_SPARE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4856,8 +4856,8 @@ inline fapi2::ReturnCode get_dimm_spare(const fapi2::Target<fapi2::TARGET_TYPE_M
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DIMM_SPARE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DIMM_SPARE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4876,8 +4876,8 @@ inline fapi2::ReturnCode get_dram_cl(const fapi2::Target<fapi2::TARGET_TYPE_MEM_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_CL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_CL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4896,8 +4896,8 @@ inline fapi2::ReturnCode get_dram_mds(const fapi2::Target<fapi2::TARGET_TYPE_MEM
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_MDS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_MDS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4923,8 +4923,8 @@ inline fapi2::ReturnCode get_num_master_ranks_per_dimm(const fapi2::Target<fapi2
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_NUM_MASTER_RANKS_PER_DIMM: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_NUM_MASTER_RANKS_PER_DIMM: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4949,8 +4949,8 @@ inline fapi2::ReturnCode get_num_master_ranks_per_dimm(const fapi2::Target<fapi2
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_NUM_MASTER_RANKS_PER_DIMM: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_NUM_MASTER_RANKS_PER_DIMM: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4974,8 +4974,8 @@ inline fapi2::ReturnCode get_dimm_ranks_configed(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DIMM_RANKS_CONFIGED: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DIMM_RANKS_CONFIGED: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4998,8 +4998,8 @@ inline fapi2::ReturnCode get_dimm_ranks_configed(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DIMM_RANKS_CONFIGED: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DIMM_RANKS_CONFIGED: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5021,8 +5021,8 @@ inline fapi2::ReturnCode get_dram_trefi(const fapi2::Target<fapi2::TARGET_TYPE_M
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TREFI: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TREFI: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5042,8 +5042,8 @@ inline fapi2::ReturnCode get_dram_trtp(const fapi2::Target<fapi2::TARGET_TYPE_ME
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRTP: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRTP: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5066,8 +5066,8 @@ inline fapi2::ReturnCode get_dram_trfc_dlr(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRFC_DLR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_TRFC_DLR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5086,8 +5086,8 @@ inline fapi2::ReturnCode get_freq(const fapi2::Target<fapi2::TARGET_TYPE_MEM_POR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_FREQ: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_FREQ: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5106,8 +5106,8 @@ inline fapi2::ReturnCode get_spd_revision(const fapi2::Target<fapi2::TARGET_TYPE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_SPD_REVISION: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_SPD_REVISION: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5127,8 +5127,8 @@ inline fapi2::ReturnCode get_spd_content_revision(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_SPD_CONTENT_REVISION: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_SPD_CONTENT_REVISION: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5151,8 +5151,8 @@ inline fapi2::ReturnCode get_supported_rcd(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_SUPPORTED_RCD: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_SUPPORTED_RCD: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5175,8 +5175,8 @@ inline fapi2::ReturnCode get_supported_rcd(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_SUPPORTED_RCD: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_SUPPORTED_RCD: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5197,8 +5197,8 @@ inline fapi2::ReturnCode get_dram_module_height(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_MODULE_HEIGHT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_DRAM_MODULE_HEIGHT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5217,8 +5217,8 @@ inline fapi2::ReturnCode get_volt_vddr(const fapi2::Target<fapi2::TARGET_TYPE_OC
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_VOLT_VDDR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_VOLT_VDDR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5237,8 +5237,8 @@ inline fapi2::ReturnCode get_volt_vddq(const fapi2::Target<fapi2::TARGET_TYPE_OC
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_VOLT_VDDQ: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_VOLT_VDDQ: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5257,8 +5257,8 @@ inline fapi2::ReturnCode get_volt_vpp(const fapi2::Target<fapi2::TARGET_TYPE_OCM
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_VOLT_VPP: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_VOLT_VPP: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5280,8 +5280,8 @@ inline fapi2::ReturnCode get_si_signature_hash(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_SIGNATURE_HASH: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_SIGNATURE_HASH: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5305,8 +5305,8 @@ inline fapi2::ReturnCode get_si_dimm_rcd_ibt_ca(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_DIMM_RCD_IBT_CA: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_DIMM_RCD_IBT_CA: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5329,8 +5329,8 @@ inline fapi2::ReturnCode get_si_dimm_rcd_ibt_ca(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_DIMM_RCD_IBT_CA: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_DIMM_RCD_IBT_CA: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5354,8 +5354,8 @@ inline fapi2::ReturnCode get_si_dimm_rcd_ibt_cke(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_DIMM_RCD_IBT_CKE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_DIMM_RCD_IBT_CKE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5378,8 +5378,8 @@ inline fapi2::ReturnCode get_si_dimm_rcd_ibt_cke(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_DIMM_RCD_IBT_CKE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_DIMM_RCD_IBT_CKE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5403,8 +5403,8 @@ inline fapi2::ReturnCode get_si_dimm_rcd_ibt_cs(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_DIMM_RCD_IBT_CS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_DIMM_RCD_IBT_CS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5427,8 +5427,8 @@ inline fapi2::ReturnCode get_si_dimm_rcd_ibt_cs(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_DIMM_RCD_IBT_CS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_DIMM_RCD_IBT_CS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5452,8 +5452,8 @@ inline fapi2::ReturnCode get_si_dimm_rcd_ibt_odt(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_DIMM_RCD_IBT_ODT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_DIMM_RCD_IBT_ODT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5476,8 +5476,8 @@ inline fapi2::ReturnCode get_si_dimm_rcd_ibt_odt(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_DIMM_RCD_IBT_ODT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_DIMM_RCD_IBT_ODT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5500,8 +5500,8 @@ inline fapi2::ReturnCode get_si_dram_drv_imp_dq_dqs(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_DRV_IMP_DQ_DQS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_DRV_IMP_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5523,8 +5523,8 @@ inline fapi2::ReturnCode get_si_dram_drv_imp_dq_dqs(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_DRV_IMP_DQ_DQS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_DRV_IMP_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5551,8 +5551,8 @@ inline fapi2::ReturnCode get_si_dram_preamble(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_PREAMBLE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_PREAMBLE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5578,8 +5578,8 @@ inline fapi2::ReturnCode get_si_dram_preamble(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_PREAMBLE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_PREAMBLE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5602,8 +5602,8 @@ inline fapi2::ReturnCode get_si_dram_rtt_nom(const fapi2::Target<fapi2::TARGET_T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_RTT_NOM: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_RTT_NOM: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5625,8 +5625,8 @@ inline fapi2::ReturnCode get_si_dram_rtt_nom(const fapi2::Target<fapi2::TARGET_T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_RTT_NOM: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_RTT_NOM: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5649,8 +5649,8 @@ inline fapi2::ReturnCode get_si_dram_rtt_park(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_RTT_PARK: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_RTT_PARK: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5672,8 +5672,8 @@ inline fapi2::ReturnCode get_si_dram_rtt_park(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_RTT_PARK: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_RTT_PARK: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5697,8 +5697,8 @@ inline fapi2::ReturnCode get_si_dram_rtt_wr(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_RTT_WR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_RTT_WR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5721,8 +5721,8 @@ inline fapi2::ReturnCode get_si_dram_rtt_wr(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_RTT_WR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_DRAM_RTT_WR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5746,8 +5746,8 @@ inline fapi2::ReturnCode get_si_geardown_mode(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_GEARDOWN_MODE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_GEARDOWN_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5770,8 +5770,8 @@ inline fapi2::ReturnCode get_si_geardown_mode(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_GEARDOWN_MODE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_GEARDOWN_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5794,8 +5794,8 @@ inline fapi2::ReturnCode get_si_mc_drv_dq_dqs(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_DQ_DQS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5817,8 +5817,8 @@ inline fapi2::ReturnCode get_si_mc_drv_dq_dqs(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_DQ_DQS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5843,8 +5843,8 @@ inline fapi2::ReturnCode get_si_mc_rcv_eq_dq_dqs(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_RCV_EQ_DQ_DQS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_RCV_EQ_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5868,8 +5868,8 @@ inline fapi2::ReturnCode get_si_mc_rcv_eq_dq_dqs(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_RCV_EQ_DQ_DQS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_RCV_EQ_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5894,8 +5894,8 @@ inline fapi2::ReturnCode get_si_mc_drv_eq_dq_dqs(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_EQ_DQ_DQS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_EQ_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5919,8 +5919,8 @@ inline fapi2::ReturnCode get_si_mc_drv_eq_dq_dqs(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_EQ_DQ_DQS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_EQ_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5945,8 +5945,8 @@ inline fapi2::ReturnCode get_si_phy_equalization(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_PHY_EQUALIZATION: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_PHY_EQUALIZATION: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5970,8 +5970,8 @@ inline fapi2::ReturnCode get_si_phy_equalization(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_PHY_EQUALIZATION: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_PHY_EQUALIZATION: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5994,8 +5994,8 @@ inline fapi2::ReturnCode get_si_mc_drv_imp_clk(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_CLK: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_CLK: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6017,8 +6017,8 @@ inline fapi2::ReturnCode get_si_mc_drv_imp_clk(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_CLK: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_CLK: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6042,8 +6042,8 @@ inline fapi2::ReturnCode get_si_mc_drv_imp_cmd_addr(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_CMD_ADDR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_CMD_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6066,8 +6066,8 @@ inline fapi2::ReturnCode get_si_mc_drv_imp_cmd_addr(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_CMD_ADDR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_CMD_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6091,8 +6091,8 @@ inline fapi2::ReturnCode get_si_mc_drv_imp_cntl(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_CNTL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_CNTL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6115,8 +6115,8 @@ inline fapi2::ReturnCode get_si_mc_drv_imp_cntl(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_CNTL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_CNTL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6140,8 +6140,8 @@ inline fapi2::ReturnCode get_si_mc_drv_imp_cscid(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_CSCID: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_CSCID: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6164,8 +6164,8 @@ inline fapi2::ReturnCode get_si_mc_drv_imp_cscid(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_CSCID: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_CSCID: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6189,8 +6189,8 @@ inline fapi2::ReturnCode get_si_mc_drv_imp_dq_dqs_pull_down(const fapi2::Target<
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_DOWN: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_DOWN: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6213,8 +6213,8 @@ inline fapi2::ReturnCode get_si_mc_drv_imp_dq_dqs_pull_down(const fapi2::Target<
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_DOWN: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_DOWN: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6238,8 +6238,8 @@ inline fapi2::ReturnCode get_si_mc_drv_imp_dq_dqs_pull_up(const fapi2::Target<fa
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_UP: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_UP: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6262,8 +6262,8 @@ inline fapi2::ReturnCode get_si_mc_drv_imp_dq_dqs_pull_up(const fapi2::Target<fa
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_UP: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_UP: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6286,8 +6286,8 @@ inline fapi2::ReturnCode get_si_mc_drv_slew_rate_clk(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CLK: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CLK: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6309,8 +6309,8 @@ inline fapi2::ReturnCode get_si_mc_drv_slew_rate_clk(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CLK: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CLK: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6334,8 +6334,8 @@ inline fapi2::ReturnCode get_si_mc_drv_slew_rate_cmd_addr(const fapi2::Target<fa
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CMD_ADDR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CMD_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6358,8 +6358,8 @@ inline fapi2::ReturnCode get_si_mc_drv_slew_rate_cmd_addr(const fapi2::Target<fa
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CMD_ADDR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CMD_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6383,8 +6383,8 @@ inline fapi2::ReturnCode get_si_mc_drv_slew_rate_cntl(const fapi2::Target<fapi2:
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CNTL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CNTL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6407,8 +6407,8 @@ inline fapi2::ReturnCode get_si_mc_drv_slew_rate_cntl(const fapi2::Target<fapi2:
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CNTL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CNTL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6432,8 +6432,8 @@ inline fapi2::ReturnCode get_si_mc_drv_slew_rate_cscid(const fapi2::Target<fapi2
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CSCID: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CSCID: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6456,8 +6456,8 @@ inline fapi2::ReturnCode get_si_mc_drv_slew_rate_cscid(const fapi2::Target<fapi2
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CSCID: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CSCID: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6481,8 +6481,8 @@ inline fapi2::ReturnCode get_si_mc_drv_slew_rate_dq_dqs(const fapi2::Target<fapi
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_DQ_DQS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6505,8 +6505,8 @@ inline fapi2::ReturnCode get_si_mc_drv_slew_rate_dq_dqs(const fapi2::Target<fapi
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_DQ_DQS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_DRV_SLEW_RATE_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6529,8 +6529,8 @@ inline fapi2::ReturnCode get_si_mc_rcv_imp_alert_n(const fapi2::Target<fapi2::TA
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_RCV_IMP_ALERT_N: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_RCV_IMP_ALERT_N: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6552,8 +6552,8 @@ inline fapi2::ReturnCode get_si_mc_rcv_imp_alert_n(const fapi2::Target<fapi2::TA
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_RCV_IMP_ALERT_N: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_RCV_IMP_ALERT_N: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6577,8 +6577,8 @@ inline fapi2::ReturnCode get_si_mc_rcv_imp_dq_dqs(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_RCV_IMP_DQ_DQS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_RCV_IMP_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6601,8 +6601,8 @@ inline fapi2::ReturnCode get_si_mc_rcv_imp_dq_dqs(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_MC_RCV_IMP_DQ_DQS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_MC_RCV_IMP_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6627,8 +6627,8 @@ inline fapi2::ReturnCode get_si_odt_rd(const fapi2::Target<fapi2::TARGET_TYPE_DI
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_ODT_RD: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_ODT_RD: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6653,8 +6653,8 @@ inline fapi2::ReturnCode get_si_odt_rd(const fapi2::Target<fapi2::TARGET_TYPE_ME
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_ODT_RD: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_ODT_RD: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6679,8 +6679,8 @@ inline fapi2::ReturnCode get_si_odt_wr(const fapi2::Target<fapi2::TARGET_TYPE_DI
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_ODT_WR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_ODT_WR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6705,8 +6705,8 @@ inline fapi2::ReturnCode get_si_odt_wr(const fapi2::Target<fapi2::TARGET_TYPE_ME
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_ODT_WR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_ODT_WR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6728,8 +6728,8 @@ inline fapi2::ReturnCode get_si_vref_dram_wr(const fapi2::Target<fapi2::TARGET_T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_VREF_DRAM_WR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_VREF_DRAM_WR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6750,8 +6750,8 @@ inline fapi2::ReturnCode get_si_vref_mc_rd(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_VREF_MC_RD: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_VREF_MC_RD: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6773,8 +6773,8 @@ inline fapi2::ReturnCode get_si_windage_rd_ctr(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_SI_WINDAGE_RD_CTR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_SI_WINDAGE_RD_CTR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6796,8 +6796,8 @@ inline fapi2::ReturnCode get_ddr4_f1rc1x(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC1X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC1X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6819,8 +6819,8 @@ inline fapi2::ReturnCode get_ddr4_f1rc1x(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC1X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC1X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6842,8 +6842,8 @@ inline fapi2::ReturnCode get_ddr4_f1rc2x(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC2X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC2X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6865,8 +6865,8 @@ inline fapi2::ReturnCode get_ddr4_f1rc2x(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC2X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC2X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6888,8 +6888,8 @@ inline fapi2::ReturnCode get_ddr4_f1rc3x(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC3X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC3X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6911,8 +6911,8 @@ inline fapi2::ReturnCode get_ddr4_f1rc3x(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC3X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC3X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6934,8 +6934,8 @@ inline fapi2::ReturnCode get_ddr4_f1rc4x(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC4X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC4X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6957,8 +6957,8 @@ inline fapi2::ReturnCode get_ddr4_f1rc4x(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC4X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC4X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6980,8 +6980,8 @@ inline fapi2::ReturnCode get_ddr4_f1rc5x(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC5X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC5X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7003,8 +7003,8 @@ inline fapi2::ReturnCode get_ddr4_f1rc5x(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC5X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC5X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7026,8 +7026,8 @@ inline fapi2::ReturnCode get_ddr4_f1rc6x(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC6X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC6X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7049,8 +7049,8 @@ inline fapi2::ReturnCode get_ddr4_f1rc6x(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC6X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC6X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7072,8 +7072,8 @@ inline fapi2::ReturnCode get_ddr4_f1rc7x(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC7X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC7X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7095,8 +7095,8 @@ inline fapi2::ReturnCode get_ddr4_f1rc7x(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC7X: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_DIMM_DDR4_F1RC7X: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7117,8 +7117,8 @@ inline fapi2::ReturnCode get_module_thermal_sensors(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_MODULE_THERMAL_SENSORS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_MODULE_THERMAL_SENSORS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7138,8 +7138,8 @@ inline fapi2::ReturnCode get_therm_sensor_0_availability(const fapi2::Target<fap
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_0_AVAIL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_0_AVAIL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7159,8 +7159,8 @@ inline fapi2::ReturnCode get_therm_sensor_0_secondary_availability(const fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_0_SECOND_AVAIL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_0_SECOND_AVAIL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7181,8 +7181,8 @@ inline fapi2::ReturnCode get_therm_sensor_0_type(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_0_TYPE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_0_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7203,8 +7203,8 @@ inline fapi2::ReturnCode get_therm_sensor_0_usage(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_0_USAGE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_0_USAGE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7224,8 +7224,8 @@ inline fapi2::ReturnCode get_therm_sensor_0_i2c_addr(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_0_I2C_ADDR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_0_I2C_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7245,8 +7245,8 @@ inline fapi2::ReturnCode get_therm_sensor_1_availability(const fapi2::Target<fap
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_1_AVAIL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_1_AVAIL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7266,8 +7266,8 @@ inline fapi2::ReturnCode get_therm_sensor_1_secondary_availability(const fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_1_SECOND_AVAIL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_1_SECOND_AVAIL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7288,8 +7288,8 @@ inline fapi2::ReturnCode get_therm_sensor_1_type(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_1_TYPE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_1_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7310,8 +7310,8 @@ inline fapi2::ReturnCode get_therm_sensor_1_usage(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_1_USAGE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_1_USAGE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7331,8 +7331,8 @@ inline fapi2::ReturnCode get_therm_sensor_1_i2c_addr(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_1_I2C_ADDR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_1_I2C_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7352,8 +7352,8 @@ inline fapi2::ReturnCode get_therm_sensor_differential_availability(const fapi2:
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_DIFF_AVAIL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_DIFF_AVAIL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7374,8 +7374,8 @@ inline fapi2::ReturnCode get_therm_sensor_differential_type(const fapi2::Target<
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_DIFF_TYPE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_DIFF_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7396,8 +7396,8 @@ inline fapi2::ReturnCode get_therm_sensor_differential_usage(const fapi2::Target
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_DIFF_USAGE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_DIFF_USAGE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7417,8 +7417,8 @@ inline fapi2::ReturnCode get_therm_sensor_differential_i2c_addr(const fapi2::Tar
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_DIFF_I2C_ADDR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_DIFF_I2C_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7438,8 +7438,8 @@ inline fapi2::ReturnCode get_therm_sensor_0_secondary_i2c_addr(const fapi2::Targ
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_0_SECOND_I2C_ADDR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_0_SECOND_I2C_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7459,8 +7459,8 @@ inline fapi2::ReturnCode get_therm_sensor_1_secondary_i2c_addr(const fapi2::Targ
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_1_SECOND_I2C_ADDR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_1_SECOND_I2C_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7480,8 +7480,8 @@ inline fapi2::ReturnCode get_therm_sensor_1_secondary_location(const fapi2::Targ
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_1_SECOND_LOCATION: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_1_SECOND_LOCATION: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7501,8 +7501,8 @@ inline fapi2::ReturnCode get_therm_sensor_0_secondary_location(const fapi2::Targ
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_0_SECOND_LOCATION: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_0_SECOND_LOCATION: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7522,8 +7522,8 @@ inline fapi2::ReturnCode get_therm_sensor_1_location(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_1_LOCATION: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_1_LOCATION: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7543,8 +7543,8 @@ inline fapi2::ReturnCode get_therm_sensor_0_location(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_0_LOCATION: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_THERM_SENSOR_0_LOCATION: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 

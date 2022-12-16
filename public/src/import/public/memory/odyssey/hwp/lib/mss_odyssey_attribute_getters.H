@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -53,8 +53,8 @@ inline fapi2::ReturnCode get_phy_get_mail_timeout(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_PHY_GET_MAIL_TIMEOUT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_PHY_GET_MAIL_TIMEOUT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -74,8 +74,8 @@ inline fapi2::ReturnCode get_draminit_training_timeout(const fapi2::Target<fapi2
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_DRAMINIT_TRAINING_TIMEOUT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_DRAMINIT_TRAINING_TIMEOUT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -95,8 +95,8 @@ inline fapi2::ReturnCode get_ardptrinitval(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_ARDPTRINITVAL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_ARDPTRINITVAL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -116,8 +116,8 @@ inline fapi2::ReturnCode get_ardptrinitvalovr(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_ARDPTRINITVALOVR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_ARDPTRINITVALOVR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -137,8 +137,8 @@ inline fapi2::ReturnCode get_dis_ptrinitclr_txtracking(const fapi2::Target<fapi2
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_DIS_PTRINITCLR_TXTRACKING: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_DIS_PTRINITCLR_TXTRACKING: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -158,8 +158,8 @@ inline fapi2::ReturnCode get_extcalresval(const fapi2::Target<fapi2::TARGET_TYPE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_EXTCALRESVAL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_EXTCALRESVAL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -179,8 +179,8 @@ inline fapi2::ReturnCode get_memalerten(const fapi2::Target<fapi2::TARGET_TYPE_M
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_MEMALERTEN: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_MEM_EFF_MEMALERTEN: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -201,8 +201,8 @@ inline fapi2::ReturnCode get_phy_mstrtrain_interval(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PHY_MSTRTRAIN_INTERVAL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PHY_MSTRTRAIN_INTERVAL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -222,8 +222,8 @@ inline fapi2::ReturnCode get_phy_mstrmaxreqtoack(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PHY_MSTRMAXREQTOACK: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PHY_MSTRMAXREQTOACK: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -243,8 +243,8 @@ inline fapi2::ReturnCode get_phy_mstrctrlmode(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PHY_MSTRCTRLMODE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PHY_MSTRCTRLMODE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -264,8 +264,8 @@ inline fapi2::ReturnCode get_phy_calinterval(const fapi2::Target<fapi2::TARGET_T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PHY_CALINTERVAL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PHY_CALINTERVAL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -286,8 +286,8 @@ inline fapi2::ReturnCode get_phy_calonce(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PHY_CALONCE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PHY_CALONCE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -308,8 +308,8 @@ inline fapi2::ReturnCode get_phy_is_highvdd(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_IS_HIGHVDD: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_IS_HIGHVDD: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -332,8 +332,8 @@ inline fapi2::ReturnCode get_phy_en_tdqs2dq_tracking(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_EN_TDQS2DQ_TRACKING: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_EN_TDQS2DQ_TRACKING: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -355,8 +355,8 @@ inline fapi2::ReturnCode get_phy_en_tdqs2dq_tracking(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_EN_TDQS2DQ_TRACKING: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_EN_TDQS2DQ_TRACKING: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -377,8 +377,8 @@ inline fapi2::ReturnCode get_phy_dqs_osc_runtime_sel(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_DQS_OSC_RUNTIME_SEL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_DQS_OSC_RUNTIME_SEL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -398,8 +398,8 @@ inline fapi2::ReturnCode get_phy_en_rxdqs_tracking(const fapi2::Target<fapi2::TA
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_EN_RXDQS_TRACKING: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_EN_RXDQS_TRACKING: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -419,8 +419,8 @@ inline fapi2::ReturnCode get_phy_disable_pmu_ecc(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_DISABLE_PMU_ECC: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_DISABLE_PMU_ECC: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -440,8 +440,8 @@ inline fapi2::ReturnCode get_phy_enable_malert_async(const fapi2::Target<fapi2::
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_ENABLE_MALERT_ASYNC: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_ENABLE_MALERT_ASYNC: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -461,8 +461,8 @@ inline fapi2::ReturnCode get_phy_alert_recov_enable(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_ALERT_RECOV_ENABLE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_ALERT_RECOV_ENABLE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -483,8 +483,8 @@ inline fapi2::ReturnCode get_phy_rst_rxtrk_state(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_RST_RXTRK_STATE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_RST_RXTRK_STATE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -503,8 +503,8 @@ inline fapi2::ReturnCode get_sim_tdqs2dq(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_SIM_TDQS2DQ: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_SIM_TDQS2DQ: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -523,8 +523,8 @@ inline fapi2::ReturnCode get_sim_tdqsck(const fapi2::Target<fapi2::TARGET_TYPE_M
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_SIM_TDQSCK: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_SIM_TDQSCK: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -543,8 +543,8 @@ inline fapi2::ReturnCode get_sim_tstaoff(const fapi2::Target<fapi2::TARGET_TYPE_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_SIM_TSTAOFF: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_SIM_TSTAOFF: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -563,8 +563,8 @@ inline fapi2::ReturnCode get_sim_tpdm(const fapi2::Target<fapi2::TARGET_TYPE_MEM
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_SIM_TPDM: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_SIM_TPDM: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -584,8 +584,8 @@ inline fapi2::ReturnCode get_sim_tcasl_override(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_SIM_TCASL_OVERRIDE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_SIM_TCASL_OVERRIDE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -608,8 +608,8 @@ inline fapi2::ReturnCode get_sim_tcasl_add(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_SIM_TCASL_ADD: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_SIM_TCASL_ADD: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -632,8 +632,8 @@ inline fapi2::ReturnCode get_sim_tcasl_add(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_SIM_TCASL_ADD: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_SIM_TCASL_ADD: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -654,8 +654,8 @@ inline fapi2::ReturnCode get_phy_adv_train_opt(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_ADV_TRAIN_OPT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_ADV_TRAIN_OPT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -674,8 +674,8 @@ inline fapi2::ReturnCode get_phy_msg_misc(const fapi2::Target<fapi2::TARGET_TYPE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_MSG_MISC: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_MSG_MISC: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -695,8 +695,8 @@ inline fapi2::ReturnCode get_phy_pll_bypass_en(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PLL_BYPASS_EN: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PLL_BYPASS_EN: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -716,8 +716,8 @@ inline fapi2::ReturnCode get_phy_rx2d_dfe_misc(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_RX2D_DFE_MISC: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_RX2D_DFE_MISC: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -736,8 +736,8 @@ inline fapi2::ReturnCode get_phy_d5misc(const fapi2::Target<fapi2::TARGET_TYPE_M
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_D5MISC: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_D5MISC: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -757,8 +757,8 @@ inline fapi2::ReturnCode get_phy_wl_adj(const fapi2::Target<fapi2::TARGET_TYPE_M
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_WL_ADJ: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_WL_ADJ: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -780,8 +780,8 @@ inline fapi2::ReturnCode get_phy_sequence_ctrl(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_SEQUENCE_CTRL: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_SEQUENCE_CTRL: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -800,8 +800,8 @@ inline fapi2::ReturnCode get_phy_cfg(const fapi2::Target<fapi2::TARGET_TYPE_MEM_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PHY_CFG: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PHY_CFG: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -821,8 +821,8 @@ inline fapi2::ReturnCode get_dfimrl_margin(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PHY_DFIMRL_MARGIN: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PHY_DFIMRL_MARGIN: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -843,8 +843,8 @@ inline fapi2::ReturnCode get_phy_use_broadcast_mr(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PHY_USE_BROADCAST_MR: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PHY_USE_BROADCAST_MR: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -866,8 +866,8 @@ inline fapi2::ReturnCode get_disabled_dbyte(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PHY_DISABLED_DBYTE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PHY_DISABLED_DBYTE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -892,8 +892,8 @@ inline fapi2::ReturnCode get_ca_train_options(const fapi2::Target<fapi2::TARGET_
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PHY_CA_TRAIN_OPTIONS: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PHY_CA_TRAIN_OPTIONS: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -915,8 +915,8 @@ inline fapi2::ReturnCode get_tx2d_dfe_misc(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PHY_TX2D_DFE_MISC: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PHY_TX2D_DFE_MISC: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -939,8 +939,8 @@ inline fapi2::ReturnCode get_rx2d_train_opt(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PHY_RX2D_TRAIN_OPT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PHY_RX2D_TRAIN_OPT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -963,8 +963,8 @@ inline fapi2::ReturnCode get_tx2d_train_opt(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PHY_TX2D_TRAIN_OPT: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PHY_TX2D_TRAIN_OPT: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -985,8 +985,8 @@ inline fapi2::ReturnCode get_phy_config_override(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PHY_CONFIG_OVERRIDE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PHY_CONFIG_OVERRIDE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1007,8 +1007,8 @@ inline fapi2::ReturnCode get_phy_enabled_dq_cha(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PHY_ENABLED_DQ_CHA: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PHY_ENABLED_DQ_CHA: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1029,8 +1029,8 @@ inline fapi2::ReturnCode get_phy_enabled_dq_chb(const fapi2::Target<fapi2::TARGE
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PHY_ENABLED_DQ_CHB: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PHY_ENABLED_DQ_CHB: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1050,8 +1050,8 @@ inline fapi2::ReturnCode get_ody_draminit_fw_revision(const fapi2::Target<fapi2:
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_DRAMINIT_FW_REVISION: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_DRAMINIT_FW_REVISION: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1071,8 +1071,8 @@ inline fapi2::ReturnCode get_ody_draminit_internal_fw_revision0(const fapi2::Tar
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_DRAMINIT_INTERNAL_FW_REVISION0: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_DRAMINIT_INTERNAL_FW_REVISION0: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1092,8 +1092,8 @@ inline fapi2::ReturnCode get_ody_draminit_internal_fw_revision1(const fapi2::Tar
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_DRAMINIT_INTERNAL_FW_REVISION1: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_DRAMINIT_INTERNAL_FW_REVISION1: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1113,8 +1113,8 @@ inline fapi2::ReturnCode get_ody_draminit_fw_data_addr_offset(const fapi2::Targe
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_DRAMINIT_FW_DATA_ADDR_OFFSET: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_DRAMINIT_FW_DATA_ADDR_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1136,8 +1136,8 @@ inline fapi2::ReturnCode get_ody_draminit_verbosity(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_DRAMINIT_VERBOSITY: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_DRAMINIT_VERBOSITY: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1158,8 +1158,8 @@ inline fapi2::ReturnCode get_ody_enable_us_tmpl_1(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_ENABLE_US_TMPL_1: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_ENABLE_US_TMPL_1: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1179,8 +1179,8 @@ inline fapi2::ReturnCode get_ody_enable_us_tmpl_5(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_ENABLE_US_TMPL_5: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_ENABLE_US_TMPL_5: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1200,8 +1200,8 @@ inline fapi2::ReturnCode get_ody_enable_us_tmpl_9(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_ENABLE_US_TMPL_9: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_ENABLE_US_TMPL_9: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1221,8 +1221,8 @@ inline fapi2::ReturnCode get_ody_enable_us_tmpl_a(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_ENABLE_US_TMPL_A: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_ENABLE_US_TMPL_A: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1242,8 +1242,8 @@ inline fapi2::ReturnCode get_ody_enable_us_tmpl_b(const fapi2::Target<fapi2::TAR
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_ENABLE_US_TMPL_B: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_ENABLE_US_TMPL_B: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1263,8 +1263,8 @@ inline fapi2::ReturnCode get_ody_tmpl_0_pacing(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_TMPL_0_PACING: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_TMPL_0_PACING: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1284,8 +1284,8 @@ inline fapi2::ReturnCode get_ody_tmpl_1_pacing(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_TMPL_1_PACING: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_TMPL_1_PACING: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1305,8 +1305,8 @@ inline fapi2::ReturnCode get_ody_tmpl_5_pacing(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_TMPL_5_PACING: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_TMPL_5_PACING: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1326,8 +1326,8 @@ inline fapi2::ReturnCode get_ody_tmpl_9_pacing(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_TMPL_9_PACING: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_TMPL_9_PACING: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1347,8 +1347,8 @@ inline fapi2::ReturnCode get_ody_tmpl_b_pacing(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_TMPL_B_PACING: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_TMPL_B_PACING: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1368,8 +1368,8 @@ inline fapi2::ReturnCode get_ody_shrt_backoff_timer(const fapi2::Target<fapi2::T
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_SHRT_BACKOFF_TIMER: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_SHRT_BACKOFF_TIMER: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1389,8 +1389,8 @@ inline fapi2::ReturnCode get_ody_metadata_enable(const fapi2::Target<fapi2::TARG
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_METADATA_ENABLE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_METADATA_ENABLE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1410,8 +1410,8 @@ inline fapi2::ReturnCode get_ody_pasid_base(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PASID_BASE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PASID_BASE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1431,8 +1431,8 @@ inline fapi2::ReturnCode get_ody_actag_base(const fapi2::Target<fapi2::TARGET_TY
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_ACTAG_BASE: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_ACTAG_BASE: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1453,8 +1453,8 @@ inline fapi2::ReturnCode get_ody_afu_actag_len(const fapi2::Target<fapi2::TARGET
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_AFU_ACTAG_LEN: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_AFU_ACTAG_LEN: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1475,8 +1475,8 @@ inline fapi2::ReturnCode get_ody_pasid_len(const fapi2::Target<fapi2::TARGET_TYP
     return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_ODY_PASID_LEN: 0x%lx (target: %s)",
-             uint64_t(fapi2::current_err), mss::c_str(i_target));
+    FAPI_ERR("failed getting ATTR_ODY_PASID_LEN: 0x%lx (target: " TARGTIDFORMAT ")",
+             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
