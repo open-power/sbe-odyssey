@@ -355,6 +355,9 @@ inline fapi2::ffdc_t getFfdcData( sbeFfdc_t& i_sbeFfdc, uint8_t i_proc_instance,
             }
         }
 
+#else
+        // Circumvent unused parameter warning
+        static_cast<void>(i_proc_instance);
 #endif
     }
     else
@@ -372,9 +375,14 @@ inline fapi2::ffdc_t getFfdcData( sbeFfdc_t& i_sbeFfdc, uint8_t i_proc_instance,
                 break;
 
             default:
-                FAPI_ERR("Invalid data size in SBE FFDC buffer, i_sbeFfdc.size = %d",
-                         i_sbeFfdc.size);
-                invalid_data = true;
+                {
+                    // Copy value to work around error:
+                    // error: cannot bind packed field ‘i_sbeFfdc.fapi2::sbeFfdc_t::size’ to ‘unsigned int&’
+                    const auto sbeFfdcSize = i_sbeFfdc.size;
+                    FAPI_ERR("Invalid data size in SBE FFDC buffer, i_sbeFfdc.size = %d",
+                             sbeFfdcSize);
+                    invalid_data = true;
+                }
         }
 
         if(!invalid_data)
@@ -436,8 +444,10 @@ template<>
 inline uint16_t getErrorInfoFfdcSize(const fapi2::variable_buffer& i_thing)
 {
     // Limit a variable buffer to 4kb bytes, and we can memcpy the storage.
-    return std::min(static_cast<uint32_t>(EI_FFDC_MAX_SIZE),
-                    i_thing.getLength<uint8_t>());
+
+    const auto minSize = std::min(static_cast<uint32_t>(EI_FFDC_MAX_SIZE),
+                                  i_thing.getLength<uint8_t>());
+    return static_cast<uint16_t>(minSize);
 }
 #endif
 
