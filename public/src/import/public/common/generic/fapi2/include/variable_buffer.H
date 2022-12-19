@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -203,7 +203,7 @@ class variable_buffer
         ///
         inline variable_buffer(const std::initializer_list<unit_type>& i_value):
             iv_data(i_value),
-            iv_perceived_bit_length(i_value.size() * sizeof(unit_type) * 8)
+            iv_perceived_bit_length(static_cast<bits_type>(i_value.size() * sizeof(unit_type) * 8))
         {
             static_assert(std::is_same<unit_type, uint32_t>::value,
                           "code currently needs unit_type to be a unit32_t");
@@ -952,7 +952,7 @@ class variable_buffer
 
             ReturnCodes rc;
 
-            if ((rc = _insert((container_unit*)&iv_data[0], getBitLength(),
+            if ((rc = _insert(static_cast<const container_unit*>(&iv_data[0]), getBitLength(),
                               &l_data,
                               parameterTraits<uint32_t>::bit_length(),
                               i_start, 0U, i_len)) != FAPI2_RC_SUCCESS)
@@ -1150,7 +1150,7 @@ inline fapi2::ReturnCodes variable_buffer::extract(
 
     ReturnCodes rc;
 
-    if ((rc = _insert((container_unit*)&iv_data[0], getBitLength(),
+    if ((rc = _insert(static_cast<const container_unit*>(&iv_data[0]), getBitLength(),
                       l_data, parameterTraits<uint64_t>::bit_length(),
                       i_start, 0U, i_len)) != FAPI2_RC_SUCCESS)
     {
