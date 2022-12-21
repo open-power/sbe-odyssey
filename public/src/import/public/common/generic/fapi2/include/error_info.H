@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -38,6 +38,10 @@
 #include <vector>
 #include <target.H>
 #include <error_info_defs.H>
+
+#if !defined(FAPI2_NO_FFDC) && !defined(MINIMUM_FFDC)
+    #include <fapi2_assert.H>
+#endif
 
 namespace fapi2
 {
@@ -86,8 +90,6 @@ inline uint64_t convertType( const fapi2::Target<T, M>& i_value)
 #endif
 
 #if !defined(FAPI2_NO_FFDC) && !defined(MINIMUM_FFDC)
-// forward fapi2::Assert()
-extern void Assert(bool);
 
 ///
 /// @class ErrorInfoFfdc

@@ -36,7 +36,8 @@
 #include <target_types.H>
 #include <plat_types.H>
 #include <plat_utils.H>
-
+#include <multicast_defs.H>
+#include <fapi2_assert.H>
 
 namespace fapi2
 {
@@ -200,12 +201,6 @@ void log_related_error(
 ReturnCode delay(uint64_t i_nanoSeconds, uint64_t i_simCycles,
                  bool i_fixed = false);
 
-///
-/// @brief Assert a condition, and halt
-///
-/// @param[in] i_expression a boolean representing the assertion
-///
-void Assert(bool i_expression);
 };
 
 #endif // FAPI2_UTILS_H_
