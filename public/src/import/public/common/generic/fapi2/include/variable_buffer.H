@@ -34,13 +34,10 @@
 #include <buffer_traits.H>
 #include <return_code_defs.H>
 #include <plat_trace.H>
+#include <fapi2_assert.H>
 
 namespace fapi2
 {
-
-// forward fapi2::Assert()
-extern void Assert(bool);
-
 
 /// @brief Get a 32 bit mask quickly
 // This is one of the main reasons we static_assert in the ctor's
