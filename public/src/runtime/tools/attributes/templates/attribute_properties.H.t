@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -32,7 +32,7 @@ namespace fapi2
 
 /* {{attr.name}} */
 typedef {{attr.value_type}} {{attr.name}}_Type{{attr.type_dims}};
-const fapi2::TargetType {{attr.name}}_TargetType = {{attr.target_type}};
+const fapi2::TargetType {{attr.name}}_TargetType = {{attr.ekb_target_type}};
 const bool {{attr.name}}_PlatInit = true;
 const bool {{attr.name}}_InitToZero = false;
 const bool {{attr.name}}_Privileged = false;

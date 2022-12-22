@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022                             -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -30,8 +30,7 @@
 <!--    'public/common/generic/fapi2/xml/attribute_info/sbe_common_attribute.xml' -->
 <!--    and this xml.                                                       -->
 <entries>
-  <entry>
-    <name>ATTR_OCMB_PLL_BUCKET</name>
+  <entry name="ATTR_OCMB_PLL_BUCKET">
     <value>0x00</value>
   </entry>
 </entries>

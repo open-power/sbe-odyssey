@@ -6,6 +6,7 @@ from argparse import ArgumentParser
 from contextlib import suppress
 from tabulate import tabulate
 import pickle, jinja2, sys, os
+import re
 
 def cmd_parse(args):
     db = AttributeDB(args.targetlist)
@@ -29,16 +30,15 @@ def cmd_gensrc(args):
         loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(sys.argv[0]), "templates")),
         trim_blocks=True,
         lstrip_blocks=True,
-        undefined=jinja2.StrictUndefined,
+        undefined=jinja2.StrictUndefined
     )
     env.globals = {
         "toolname": "attrtool",
         "attributes": sbe_attr_tank.field_list,
+        "TARGET_TYPES" : sbe_attr_tank.TARGET_TYPES,
         "virt_header": args.virtual_fn_header,
     }
-    env.filters = {
-        "hex": lambda x: "0x%X" % x,
-    }
+    env.filters["hex"] =  lambda x: "0x%X" % x
 
     def generate(fname):
         with open(os.path.join(args.outdir, fname), "w") as f:
@@ -71,8 +71,7 @@ def cmd_setfixed(args):
     for attr in sbe_attr_tank.field_list:
         if not isinstance(attr, RealAttrFieldInfo):
             continue
-        vprint("%s(%s) = %s" % (attr.name, attr.value_type, str(attr.values)))
-        attr.set(image, sbe_attr_tank.image_base, attr.values)
+        attr.set(image, sbe_attr_tank.image_base, sbe_attr_tank.TARGET_TYPES)
     open(args.image, "wb").write(image)
 
 def cmd_setattr(args):
@@ -93,7 +92,17 @@ def cmd_setattr(args):
 
     if not isinstance(attr_to_set, RealAttrFieldInfo):
         raise ArgumentError(args.attr.upper()+ " is not a Real Attribute")
-    attr_to_set.set_value(image, image_base, args.value, args.target, args.index)
+
+    #Default is to initialize all the instances
+    instance = 0xFF
+    if (args.instance is not None):
+        instance = int(args.instance)
+
+    subscript = list()
+    if (args.index is not None):
+        subscript = [int(i) for i in re.split(',| ',args.index)]
+    attr_to_set.set_value(image, image_base, args.target, int(args.value),
+                            instance, subscript, sbe_attr_tank.TARGET_TYPES)
     open(args.image, "wb").write(image)
 
 def cmd_getattr(args):
@@ -122,7 +131,7 @@ def cmd_dumpattr(args):
         #TODO we should not check this here imo
         #class implementation should handle this gracefully
         if isinstance(attr, RealAttrFieldInfo):
-            attr.createDumpRecord(attr_list, image, image_base)
+            attr.createDumpRecord(attr_list, image, image_base, sbe_attr_tank.TARGET_TYPES)
     print(tabulate(attr_list, headers, tablefmt="pretty", stralign="left" ))
 
 def img_standard_parms(parser):
@@ -171,7 +180,8 @@ if __name__ == "__main__":
     #TODO - need support for enum type
     sub.add_argument("value", help="New value for the attribute; may be an integer value (prefix hex with 0x), an ENUM name, or a comma-separated list thereof", type = int)
     sub.add_argument("target", help="Target for the attribute;")
-    sub.add_argument("--index", help="Index for the value in attribute values;",nargs="+" ,default = [])
+    sub.add_argument("--index", help="Index for the value in attribute values;")
+    sub.add_argument("--instance", help="Instance number of the target",type=int)
     sub.set_defaults(func=cmd_setattr)
 
     sub = subparsers.add_parser("dumpattr", help="Dump all attributes from a PPE image")
