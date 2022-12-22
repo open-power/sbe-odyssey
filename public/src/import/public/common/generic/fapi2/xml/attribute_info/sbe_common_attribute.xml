@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022                             -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -33,68 +33,46 @@
 <!--    public/hwp/odyssey/xml/attribute_info/sbe_ody_attribute.xml         -->
 <entries>
   <!-- static: chip type and EC -->
-  <entry>
-    <name>ATTR_IS_SIMULATION</name>
+  <entry name="ATTR_IS_SIMULATION">
     <value>0x1</value>
   </entry>
-  <entry>
-    <name>ATTR_NAME</name>
+  <entry name="ATTR_NAME">
     <virtual/>
   </entry>
-  <entry>
-    <name>ATTR_EC</name>
+  <entry name="ATTR_EC">
     <virtual/>
   </entry>
-  <entry>
-    <name>ATTR_CHIP_UNIT_POS</name>
+  <entry name="ATTR_CHIP_UNIT_POS">
     <virtual/>
   </entry>
-  <entry>
-    <name>ATTR_HOTPLUG</name>
+  <entry name="ATTR_HOTPLUG">
     <value>0x0</value>
   </entry>
-  <entry>
-    <name>ATTR_PG</name>
-    <value>0xFFFFFFFF</value>          <!--  0 Unused -->
-    <value>0xFFFFFFFF</value>          <!--  1 PERV   -->
-    <value>0xFFFFFFFF</value>          <!--  2 Unused -->
-    <value>0xFFFFFFFF</value>          <!--  3 Unused -->
-    <value>0xFFFFFFFF</value>          <!--  4 Unused -->
-    <value>0xFFFFFFFF</value>          <!--  5 Unused -->
-    <value>0xFFFFFFFF</value>          <!--  6 Unused -->
-    <value>0xFFFFFFFF</value>          <!--  7 Unused -->
-    <value>0xFFFFFFFF</value>          <!--  8 MC     -->
+  <entry name="ATTR_PG">
+    <value>0xFFFFFFFF</value>
   </entry>
-  <entry>
-    <name>ATTR_CLOCKSTOP_ON_XSTOP</name>
+  <entry name="ATTR_CLOCKSTOP_ON_XSTOP">
     <value>0x00</value>
   </entry>
-  <entry>
-    <name>ATTR_ENABLE_LBIST</name>
+  <entry name="ATTR_ENABLE_LBIST">
     <value>0x00</value>
   </entry>
-  <entry>
-    <name>ATTR_ENABLE_ABIST</name>
+  <entry name="ATTR_ENABLE_ABIST">
     <value>0x00</value>
   </entry>
-  <entry>
-    <name>ATTR_SPI_BUS_DIV_REF</name>
+  <entry name="ATTR_SPI_BUS_DIV_REF">
     <value>0x0041</value>
   </entry>
-  <entry>
-    <name>ATTR_IO_TANK_PLL_BYPASS</name>
+  <entry name="ATTR_IO_TANK_PLL_BYPASS">
     <value>0x00</value>
   </entry>
-  <entry>
-    <name>ATTR_BUS_POS</name>
+  <entry name="ATTR_BUS_POS">
     <value>0xFF</value>
   </entry>
-  <entry>
-    <name>ATTR_SIM_CHIPLET_MASK</name>
+  <entry name="ATTR_SIM_CHIPLET_MASK">
     <value>0xFFFFFFFFFFFFFFFF</value>
   </entry>
-  <entry>
-    <name>ATTR_SCAN0_SCAN_RATIO</name>
+  <entry name="ATTR_SCAN0_SCAN_RATIO">
     <value>0x0</value>
   </entry>
 </entries>

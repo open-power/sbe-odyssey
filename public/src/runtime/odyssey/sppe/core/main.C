@@ -227,6 +227,7 @@ int  main(int argc, char **argv)
                 break;
             }
         }
+
         // Start running the highest priority thread.
         // This function never returns
         pk_start_threads();

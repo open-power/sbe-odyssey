@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -31,7 +32,19 @@ namespace fapi2
 namespace ATTR
 {
 {% for attr in attributes if attr.has_storage %}
-extern {{attr.value_type}} {{attr.name}}{{attr.internal_dims}};
+
+{{attr.get_template_definition()}}
+
+{{attr.set_template_definition()}}
+
+    {% for target_type in attr.sbe_target_type %}
+        {% set ntargets = TARGET_TYPES[target_type].ntargets %}
+{{attr.get_var_declaration(target_type,ntargets)}}
+
+{{attr.get_template_specialization(target_type,ntargets)}}
+{{attr.set_template_specialization(target_type,ntargets)}}
+
+    {% endfor %}
 {% endfor %}
 } //ATTR
 

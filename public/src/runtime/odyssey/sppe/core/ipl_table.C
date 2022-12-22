@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -58,7 +58,8 @@ ReturnCode istepBistWithOcmb( voidfuncptr_t i_hwp)
     ReturnCode rc = FAPI2_RC_SUCCESS;
     Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
     assert( NULL != i_hwp );
-    if(fapi2::ATTR::ATTR_ENABLE_ABIST || fapi2::ATTR::ATTR_ENABLE_LBIST)
+    if (fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_ENABLE_ABIST ||
+        fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_ENABLE_LBIST)
     {
         SBE_EXEC_HWP(rc, reinterpret_cast<sbeIstepHwpOcmb_t>( i_hwp ), l_ocmb_chip);
     }
@@ -75,7 +76,7 @@ ReturnCode istepAbistWithOcmb( voidfuncptr_t i_hwp)
     ReturnCode rc = FAPI2_RC_SUCCESS;
     Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
     assert( NULL != i_hwp );
-    if(fapi2::ATTR::ATTR_ENABLE_ABIST)
+    if(fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_ENABLE_ABIST)
     {
         SBE_EXEC_HWP(rc, reinterpret_cast<sbeIstepHwpOcmb_t>( i_hwp ), l_ocmb_chip);
     }
@@ -92,7 +93,7 @@ ReturnCode istepLbistWithOcmb( voidfuncptr_t i_hwp)
     ReturnCode rc = FAPI2_RC_SUCCESS;
     Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
     assert( NULL != i_hwp );
-    if(fapi2::ATTR::ATTR_ENABLE_LBIST)
+    if(fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_ENABLE_LBIST)
     {
         SBE_EXEC_HWP(rc, reinterpret_cast<sbeIstepHwpOcmb_t>( i_hwp ), l_ocmb_chip);
     }

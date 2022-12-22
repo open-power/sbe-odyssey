@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -31,14 +31,6 @@
 #include <{{virt_header}}>
 {% endif %}
 
-namespace fapi2
-{
-// when user calling FAPI_ATTR_GET(fapi2::<ATTR_ID>,...)
-// fapi will convert this to fapi2::<ATTR_ID>_GETMACRO
-// if we add a dummy function call before SET/GET call, 'fapi2::' scope operator will
-// be applied to dummy function
-__attribute__ ((always_inline)) inline void attr_macro_dummy(){}
-} //fapi2
 
 {% for attr in attributes %}
 /*-----------------------------------------*/
@@ -46,11 +38,10 @@ __attribute__ ((always_inline)) inline void attr_macro_dummy(){}
 #define {{attr.name}}_SETMACRO(ID, TARGET, VAL){% if attr.writeable %} {{attr.name}}_SETMACRO_HELPER(ID, TARGET, VAL){% endif +%}
 #define {{attr.name}}_PLAT_INIT(ID, TARGET, VAL){% if attr.platinit %} {{attr.name}}_SETMACRO_HELPER(ID, TARGET, VAL){% endif +%}
 
-#define {{attr.name}}_GETMACRO_HELPER(ID, TARGET, VAL) \
-    attr_macro_dummy(), {{attr.getter}}, fapi2::FAPI2_RC_SUCCESS
+#define {{attr.name}}_GETMACRO_HELPER(ID, TARGET, VAL) {{attr.getter}}
+
 {% if attr.writeable or attr.platinit %}
-#define {{attr.name}}_SETMACRO_HELPER(ID, TARGET, VAL) \
-    attr_macro_dummy(), {{attr.setter}}, fapi2::FAPI2_RC_SUCCESS
+#define {{attr.name}}_SETMACRO_HELPER(ID, TARGET, VAL) {{attr.setter}} 
 {% endif %}
 
 {% endfor %}
