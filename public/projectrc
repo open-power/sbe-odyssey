@@ -28,6 +28,7 @@
 # The following ENV variables are required by the pre/post commit hooks
 export PROJECT_NAME=sbe
 export LICENSE=$SBEROOT/LICENSE_PROLOG # Copyright license file for PPE
+export LICENSE_INT=$SBEROOT/LICENSE_PROLOG_INT # Copyright license file for SBE internal
 export USER_BIN_DIR=$HOME/.local/bin
 export SBE_MESON_WRAP=$SBEROOT_PUB/src/build/mesonutils/
 export PATH=${PATH}:$SBE_MESON_WRAP:$USER_BIN_DIR # Update PATH
