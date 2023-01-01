@@ -108,6 +108,16 @@ def extractFile(archive, files:list, pathToStore:str):
         with open(ename, "wb") as fd:
             fd.write(entry.ddata)
 
+def removeFile(archive, files:list):
+
+    entries = archive.find(files)
+    logger.debug("Removing files...")
+    for entry in entries:
+        logger.debug(f"\t{entry.name}")
+        archive.remove(entry)
+
+    archive.save()
+
 def signPak(args:argparse.Namespace):
 
     for pakName, pakFile in args.pakFiles.items():
@@ -124,11 +134,24 @@ def signPak(args:argparse.Namespace):
 
             hashList = os.path.join(pakName, "hash.list")
             hashListFile = os.path.join(signPakWorkDir, "hash.list")
+            secureHdr = os.path.join(pakName, "secure.hdr")
             secureHdrFile = os.path.join(signPakWorkDir, "secure.hdr")
+            hwKeysHash = os.path.join(pakName, "hwkeyshash.bin")
+            measuredHash = os.path.join(pakName, "measured.hash")
 
-            if exists(archive, hashList):
+            if exists(archive, hashList) and not exists(archive, secureHdr):
                 extractFile(archive, hashList, os.path.dirname(signPakWorkDir))
             else:
+                # Generate hash.list
+                if exists(archive, hashList):
+                    removeFile(archive, hashList)
+                if exists(archive, secureHdr):
+                    removeFile(archive, secureHdr)
+                if exists(archive, hwKeysHash):
+                    removeFile(archive, hwKeysHash)
+                if exists(archive, measuredHash):
+                    removeFile(archive, measuredHash)
+
                 excludeFiles = None
                 if args.excludeFiles is not None and pakName in args.excludeFiles:
                     excludeFiles = args.excludeFiles[pakName]
