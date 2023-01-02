@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -87,12 +87,6 @@ class ffdc_t
     public:
         ffdc_t(void)
         {}
-
-        void operator=(const ffdc_t& i )
-        {
-            iv_value.ptr  = i.ptr();
-            iv_value.size = i.size();
-        }
 
         operator const void* () const
         {
