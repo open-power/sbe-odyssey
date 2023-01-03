@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -32,9 +32,9 @@
 
 #pragma once
 
-#include <p11_scom_perv.H>
+#include <poz_scom_perv.H>
 
-using namespace scomt::perv;
+using namespace scomt::poz;
 
 SCOMT_PERV_USE_BIST;
 SCOMT_PERV_USE_CLK_REGION;

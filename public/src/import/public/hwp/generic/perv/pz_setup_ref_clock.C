@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/generic/perv/poz_setup_ref_clock.C $ */
+/* $Source: public/src/import/public/hwp/generic/perv/pz_setup_ref_clock.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,7 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file poz_setup_ref_clock.C
+/// @file pz_setup_ref_clock.C
 ///
 /// @brief shared code for setup_ref_clock procedure
 /// -- Disable Write Protection for Root/Perv Control registers
@@ -34,35 +34,26 @@
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#include "poz_setup_ref_clock.H"
-#include "poz_perv_common_params.H"
-#include <p11_scom_perv.H>
-
-SCOMT_PERV_USE_FSXCOMP_FSXLOG_GPWRP;
-SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL0;
-SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL0_COPY;
-SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL5;
-SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL5_COPY;
-SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL6;
-SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL6_COPY;
+#include <pz_setup_ref_clock.H>
+#include <pz_setup_ref_clock_regs.H>
+#include <poz_perv_common_params.H>
 
 using namespace fapi2;
-using namespace scomt::perv;
 
-enum POZ_SETUP_REF_CLOCK_Private_Constants
+enum PZ_SETUP_REF_CLOCK_Private_Constants
 {
     CONTROL_WRITE_PROTECT_DISABLE = 0x4453FFFF,
 };
 
-ReturnCode poz_setup_ref_clock(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target)
+ReturnCode pz_setup_ref_clock(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target)
 {
-    FSXCOMP_FSXLOG_GPWRP_t GPWRP;
-    FSXCOMP_FSXLOG_ROOT_CTRL0_t ROOT_CTRL0;
-    FSXCOMP_FSXLOG_ROOT_CTRL0_COPY_t ROOT_CTRL0_COPY;
-    FSXCOMP_FSXLOG_ROOT_CTRL5_t ROOT_CTRL5;
-    FSXCOMP_FSXLOG_ROOT_CTRL5_COPY_t ROOT_CTRL5_COPY;
-    FSXCOMP_FSXLOG_ROOT_CTRL6_t ROOT_CTRL6;
-    FSXCOMP_FSXLOG_ROOT_CTRL6_COPY_t ROOT_CTRL6_COPY;
+    GPWRP_t GPWRP;
+    ROOT_CTRL0_t ROOT_CTRL0;
+    ROOT_CTRL0_COPY_t ROOT_CTRL0_COPY;
+    ROOT_CTRL5_t ROOT_CTRL5;
+    ROOT_CTRL5_COPY_t ROOT_CTRL5_COPY;
+    ROOT_CTRL6_t ROOT_CTRL6;
+    ROOT_CTRL6_COPY_t ROOT_CTRL6_COPY;
     fapi2::ATTR_CLOCK_RCS_OUTPUT_MUX20_Type l_clock_rcs_output_mux20;
     fapi2::Target<fapi2::TARGET_TYPE_SYSTEM> FAPI_SYSTEM;
     uint8_t l_sys0_term, l_sys1_term, l_pci0_term, l_pci1_term, l_cp_refclock_select;

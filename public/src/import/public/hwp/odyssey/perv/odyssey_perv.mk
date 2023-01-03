@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -103,3 +103,4 @@ $(call ODYSSEY_PERV_PROCEDURE,ody_nest_enable_io)
 # Outside of isteps
 $(call ODYSSEY_PERV_PROCEDURE,ody_dts_read)
 $(call ODYSSEY_PERV_PROCEDURE,ody_gettracearray,poz_gettracearray)
+$(call ODYSSEY_PERV_PROCEDURE,ody_tp_bist_stopclocks)
