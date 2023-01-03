@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/generic/perv/poz_chiplet_pll_setup_regs.H $ */
+/* $Source: public/src/import/public/hwp/generic/perv/pz_setup_ref_clock_regs.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,8 +23,8 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  poz_chiplet_pll_setup_regs.H
-/// @brief Registers referenced by poz_chiplet_pll_setup module
+/// @file  pz_setup_ref_clock_regs.H
+/// @brief Registers referenced by pz_setup_ref_clock module
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
@@ -36,8 +36,18 @@
 
 using namespace scomt::poz;
 
-SCOMT_PERV_USE_CPLT_CTRL1;
-SCOMT_PERV_USE_NET_CTRL0;
-SCOMT_PERV_USE_RESPONDER_CONFIG_REG;
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_GPWRP;
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL0;
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL0_COPY;
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL5;
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL5_COPY;
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL6;
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL6_COPY;
 
-typedef RESPONDER_CONFIG_REG_t PCB_RESPONDER_CONFIG_t;
+typedef FSXCOMP_FSXLOG_GPWRP_t           GPWRP_t;
+typedef FSXCOMP_FSXLOG_ROOT_CTRL0_t      ROOT_CTRL0_t;
+typedef FSXCOMP_FSXLOG_ROOT_CTRL0_COPY_t ROOT_CTRL0_COPY_t;
+typedef FSXCOMP_FSXLOG_ROOT_CTRL5_t      ROOT_CTRL5_t;
+typedef FSXCOMP_FSXLOG_ROOT_CTRL5_COPY_t ROOT_CTRL5_COPY_t;
+typedef FSXCOMP_FSXLOG_ROOT_CTRL6_t      ROOT_CTRL6_t;
+typedef FSXCOMP_FSXLOG_ROOT_CTRL6_COPY_t ROOT_CTRL6_COPY_t;

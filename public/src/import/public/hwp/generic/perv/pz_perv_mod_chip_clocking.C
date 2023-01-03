@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -31,14 +31,10 @@
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#include "pz_perv_mod_chip_clocking.H"
-#include <p11_scom_perv.H>
-
-SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL5;
-SCOMT_PERV_USE_FSXCOMP_FSXLOG_SNS1LTH;
+#include <pz_perv_mod_chip_clocking.H>
+#include <pz_perv_mod_chip_clocking_regs.H>
 
 using namespace fapi2;
-using namespace scomt::perv;
 
 enum POZ_PERV_MOD_CHIP_CLOCKING_Private_Constants
 {
@@ -50,8 +46,8 @@ enum POZ_PERV_MOD_CHIP_CLOCKING_Private_Constants
 ReturnCode mod_clock_test(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target,
                           bool i_use_cfam_path)
 {
-    FSXCOMP_FSXLOG_ROOT_CTRL5_t ROOT_CTRL5;
-    FSXCOMP_FSXLOG_SNS1LTH_t SNS1LTH;
+    ROOT_CTRL5_t ROOT_CTRL5;
+    SNS1LTH_t SNS1LTH;
     fapi2::ATTR_CP_REFCLOCK_SELECT_Type l_cp_refclock_select;
 
     FAPI_INF("Entering ...");

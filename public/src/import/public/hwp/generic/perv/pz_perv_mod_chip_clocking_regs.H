@@ -1,11 +1,12 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/generic/perv/poz_setup_ref_clock.H $ */
+/* $Source: public/src/import/public/hwp/generic/perv/pz_perv_mod_chip_clocking_regs.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,9 +23,8 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file poz_setup_ref_clock.H
-///
-/// @brief shared code for setup_ref_clock procedure
+/// @file  pz_perv_mod_chip_clocking_regs.H
+/// @brief Registers referenced by pz_perv_mod_chip_clocking module
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
@@ -32,20 +32,12 @@
 
 #pragma once
 
-#include <fapi2.H>
+#include <poz_scom_perv.H>
 
-typedef fapi2::ReturnCode (*poz_setup_ref_clock_FP_t)(const fapi2::Target < fapi2::TARGET_TYPE_PROC_CHIP |
-        fapi2::TARGET_TYPE_HUB_CHIP > &);
+using namespace scomt::poz;
 
-/// @brief shared code for setup_ref_clock procedure
-/// -- Disable Write Protection for Root/Perv Control registers
-/// -- Set RCS control signals to CFAM reset values
-/// -- Setup refclock receiver termination & Unprotect inputs to RCS sense register
-///
-/// @param[in]   i_target     Reference to TARGET_TYPE_HUB_CHIP or TARGET_TYPE_PROC_CHIP
-/// @return  FAPI2_RC_SUCCESS if success, else error code.
-extern "C"
-{
-    fapi2::ReturnCode poz_setup_ref_clock(const fapi2::Target < fapi2::TARGET_TYPE_PROC_CHIP |
-                                          fapi2::TARGET_TYPE_HUB_CHIP > & i_target);
-}
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL5;
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_SNS1LTH;
+
+typedef FSXCOMP_FSXLOG_ROOT_CTRL5_t ROOT_CTRL5_t;
+typedef FSXCOMP_FSXLOG_SNS1LTH_t SNS1LTH_t;

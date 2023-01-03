@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -32,11 +32,9 @@
 
 #pragma once
 
-#include <p11_scom_perv.H>
-#include <p11_scom_pc.H>
+#include <poz_scom_perv.H>
 
-using namespace scomt::perv;
-using namespace scomt::pc;
+using namespace scomt::poz;
 
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL0;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL1;
@@ -44,8 +42,8 @@ SCOMT_PERV_USE_FSXCOMP_FSXLOG_CBS_ENVSTAT;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL0_COPY;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_CBS_CS;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_SB_CS;
-SCOMT_PC_USE_TP_CFAM_FSI_W_SBE_FIFO_FSB_DOWNFIFO_RESET;
-SCOMT_PC_USE_TP_CFAM_FSI_W_FSI2PIB_STATUS;
+SCOMT_PERV_USE_TP_CFAM_FSI_W_SBE_FIFO_FSB_DOWNFIFO_RESET;
+SCOMT_PERV_USE_TP_CFAM_FSI_W_FSI2PIB_STATUS;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_SB_MSG;
 SCOMT_PERV_USE_HANG_PULSE_0_REG;
 SCOMT_PERV_USE_PRE_COUNTER_REG;

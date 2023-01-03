@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/generic/perv/poz_chiplet_pll_setup_regs.H $ */
+/* $Source: public/src/import/public/common/generic/registers/poz_scom_perv.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,22 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-//------------------------------------------------------------------------------
-/// @file  poz_chiplet_pll_setup_regs.H
-/// @brief Registers referenced by poz_chiplet_pll_setup module
-//------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
-// *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-//------------------------------------------------------------------------------
-
 #pragma once
 
-#include <poz_scom_perv.H>
-
-using namespace scomt::poz;
-
-SCOMT_PERV_USE_CPLT_CTRL1;
-SCOMT_PERV_USE_NET_CTRL0;
-SCOMT_PERV_USE_RESPONDER_CONFIG_REG;
-
-typedef RESPONDER_CONFIG_REG_t PCB_RESPONDER_CONFIG_t;
+#include "poz_scom_perv_cfam.H"
+#include "poz_scom_perv_tpchip.H"
+#include "poz_scom_tp.H"

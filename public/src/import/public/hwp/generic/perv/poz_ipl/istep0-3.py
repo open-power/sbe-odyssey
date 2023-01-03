@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -136,7 +136,7 @@ def sim_poweron_sequence():
 
 ISTEP(0, 6, "setup_ref_clock", "BMC")
 
-def poz_setup_ref_clock(target<PROC_CHIP | HUB_CHIP>):
+def pz_setup_ref_clock(target<PROC_CHIP | HUB_CHIP>):
     ## Disable Write Protection for Root/Perv Control registers
     # CONTROL_WRITE_PROTECT_DISABLE = 0x4453FFFF
     GPWRP = CONTROL_WRITE_PROTECT_DISABLE
@@ -164,7 +164,7 @@ def poz_setup_ref_clock(target<PROC_CHIP | HUB_CHIP>):
     ROOT_CTRL0_COPY.CFAM_PROTECTION_0 = 0
 
 def p11s_setup_ref_clock():
-    poz_setup_ref_clock()
+    pz_setup_ref_clock()
 
     ## Set up refclock transmitter termination
     ROOT_CTRL7 = 0
@@ -203,7 +203,7 @@ def p11s_setup_ref_clock():
     ROOT_CTRL4_COPY = ROOT_CTRL4      # Update copy register to match
 
 def zme_setup_ref_clock():
-    poz_setup_ref_clock()
+    pz_setup_ref_clock()
 
     ## Set up refclock transmitter termination
     ROOT_CTRL7 = 0
