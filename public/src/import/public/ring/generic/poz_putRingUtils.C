@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -83,45 +83,12 @@ enum
     SVS_SHORT_ROTATE_MAX        = 0x380,
 };
 
-static inline bool isRunningInSimics()
-{
-#ifdef __PPE__
-    return SBE::isSimicsRunning();
-#else
-    return false;
-#endif
-}
-
-typedef Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > ScanTarget;
-
 /// @brief Constants for operations performed by putRing function.
 enum opType_t
 {
     ROTATE      =   0,  ///< Indicates a Rotate operation on the ring
     SCAN        =   1   ///< Indicates a Scan operation on the ring
 };
-
-// Constants and Structures
-//
-struct restoreOpcgRegisters
-{
-    fapi2::buffer<uint64_t> l_opcgAlign;
-    fapi2::buffer<uint64_t> l_opcgReg0;
-    fapi2::buffer<uint64_t> l_opcgReg1;
-    fapi2::buffer<uint64_t> l_opcgReg2;
-    fapi2::buffer<uint64_t> l_opcgCapt1;
-    fapi2::buffer<uint64_t> l_opcgCapt2;
-    fapi2::buffer<uint64_t> l_opcgCapt3;
-};
-
-typedef union  __attribute__((__packed__)) rs4_data
-{
-    uint32_t iv_data;
-    struct
-    {
-        uint8_t val[4];
-    } fields;
-} rs4_data_t;
 
 ///
 /// @brief Return a big-endian-indexed nibble from a byte string
@@ -236,7 +203,7 @@ constexpr uint16_t decodeScanType(const uint16_t i_scan_type_encoded)
            scan_type_decoder_ring[i_scan_type_encoded - 12];
 }
 
-static inline uint64_t decodeScanRegionData(
+uint64_t decodeScanRegionData(
     const ScanTarget& i_target,
     const uint32_t i_ringAddress,
     const RingMode i_ringMode)
@@ -310,11 +277,6 @@ static ReturnCode longRotate(const ScanTarget& i_target, uint32_t i_nbits)
 
             FAPI_TRY( getScom( i_target, CPLT_STAT0, l_opcgStatus ),
                       "Failure during OPCG Check" );
-
-            if (isRunningInSimics())
-            {
-                return current_err;
-            }
 
             if( l_opcgStatus.getBit( CPLT_STAT0_CC_CTRL_OPCG_DONE_DC ) )
             {
@@ -390,14 +352,7 @@ ReturnCode verifyHeader(
 
     FAPI_TRY(getScom(i_target_comp, SCAN64CONTSCAN, l_readHeader));
 
-    if (isRunningInSimics())
-    {
-        FAPI_ERR("Total Bits decoded %d", i_bitsDecoded);
-        return  current_err;
-    }
-
     FAPI_INF("Got header - %08x%08x", l_readHeader >> 32, l_readHeader & 0xFFFFFFFF);
-
     FAPI_ASSERT( l_readHeader == SCAN_HEADER_DATA,
                  PUTRING_CHECKWORD_DATA_MISMATCH()
                  .set_TARGET( i_target_comp )
@@ -408,26 +363,6 @@ ReturnCode verifyHeader(
 
     if(( i_scanRegion  >> 32 ) & ENABLE_PARALLEL_SCAN )
     {
-#if defined(__PPE__) && !defined(__PPE_QME__)
-        {
-            Target<TARGET_TYPE_SYSTEM> sys;
-            ATTR_CONTAINED_IPL_TYPE_Type ipl_type;
-            ATTR_CONTAINED_LOAD_PATH_Type load_type;
-            ATTR_SYSTEM_IPL_PHASE_Type ipl_phase;
-
-            FAPI_TRY(FAPI_ATTR_GET(ATTR_CONTAINED_IPL_TYPE, sys, ipl_type));
-            FAPI_TRY(FAPI_ATTR_GET(ATTR_CONTAINED_LOAD_PATH, sys, load_type));
-            FAPI_TRY(FAPI_ATTR_GET(ATTR_SYSTEM_IPL_PHASE, sys, ipl_phase));
-
-            if (load_type == ENUM_ATTR_CONTAINED_LOAD_PATH_L2SQ &&
-            ipl_phase == ENUM_ATTR_SYSTEM_IPL_PHASE_HB_IPL &&
-            ipl_type == ENUM_ATTR_CONTAINED_IPL_TYPE_CACHE)
-            {
-                return current_err;
-            }
-        }
-#endif
-
         Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_OR > l_target_or = i_target_comp;
         FAPI_TRY(getScom(l_target_or, CPLT_STAT0, l_scomData));
         FAPI_ASSERT( not l_scomData.getBit<CPLT_STAT0_CC_CTRL_PARALLEL_SCAN_COMPARE_ERR>(),

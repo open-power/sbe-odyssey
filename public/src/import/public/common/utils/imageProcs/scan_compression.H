@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -41,7 +41,9 @@
     #endif
 #endif
 
-#include <string>
+#ifndef __PPE__
+    #include <string>
+#endif
 
 /// Compressed Scan Chain Data Structure Format
 ///
@@ -79,6 +81,7 @@ enum ChipType_t
     ZME,
 };
 
+#ifndef __PPE__
 struct ringTargetType_t
 {
     // Data
@@ -89,6 +92,7 @@ struct ringTargetType_t
     static int findType(const std::string& i_ringName,
                         fapi2::LogTargetType& logTarget);
 };
+#endif
 
 struct targetTypeInstanceTraits_t
 {
@@ -225,7 +229,7 @@ rs4_compress( CompressedScanData** o_rs4,
               const uint16_t       i_targetType = 0,
               const uint16_t       i_instanceTraits = 0,
               const uint8_t        i_instance = 0 );
-
+#ifndef __PPE__
 int
 rs4_compress( CompressedScanData** o_rs4,
               const uint8_t*       i_data_str,
@@ -236,7 +240,7 @@ rs4_compress( CompressedScanData** o_rs4,
               const ChipType_t     i_chipType,
               const std::string&   i_ringName,
               const uint8_t        i_instance = 0 );
-
+#endif
 
 
 

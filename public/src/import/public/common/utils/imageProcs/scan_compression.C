@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -152,10 +152,14 @@
 
 
 // TODO EWM 309664  -- Remove unused function.
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <endian.h>
+#ifndef __PPE__
+    #include <stdlib.h>
+    #include <stdio.h>
+    #include <string.h>
+    #include <endian.h>
+#else
+    #include "ppe42_string.h"
+#endif
 #include "scan_compression.H"
 
 const uint32_t  MAX_RING_BUF_SIZE_TOOL  = 450000;
@@ -214,6 +218,8 @@ rs4::targetTypeInstanceTraits_t targetTypeInstanceTraits[] =
     { fapi2::LOG_TARGET_TYPE_PHB16X,  rs4::P11S, rs4::rs4_pack_instanceTraits(2, 3, 1) },
 };
 
+#ifndef __PPE__
+
 rs4::ringTargetType_t ringTargets[] =
 {
     { "sbe_",          fapi2::LOG_TARGET_TYPE_PERV },
@@ -239,10 +245,6 @@ rs4::ringTargetType_t ringTargets[] =
     { "ex_",           fapi2::LOG_TARGET_TYPE_EX },
 };
 
-
-
-
-
 int rs4::ringTargetType_t::findType(const std::string& i_ringName,
                                     fapi2::LogTargetType& logTarget)
 {
@@ -265,6 +267,7 @@ int rs4::ringTargetType_t::findType(const std::string& i_ringName,
 
     return rc;
 }
+#endif
 
 int rs4::targetTypeInstanceTraits_t::getTraits(ChipType_t i_chipType,
         fapi2::LogTargetType i_targetType,
@@ -273,7 +276,7 @@ int rs4::targetTypeInstanceTraits_t::getTraits(ChipType_t i_chipType,
     int rc = -1;
     uint16_t traits = 0;
 
-    for(uint i = 0;
+    for(uint32_t i = 0;
         i < sizeof(targetTypeInstanceTraits) / sizeof(targetTypeInstanceTraits_t);
         ++i)
     {
@@ -802,6 +805,7 @@ rs4::rs4_compress(rs4::CompressedScanData** o_rs4,
                          i_instance);
 }
 
+#ifndef __PPE__
 int
 rs4::rs4_compress( rs4::CompressedScanData** o_rs4,
                    const uint8_t*       i_data_str,
@@ -857,6 +861,7 @@ rs4::rs4_compress( rs4::CompressedScanData** o_rs4,
                          instanceTraits,
                          i_instance);
 }
+#endif
 
 // Decompress an RS4-encoded string into a output string whose length must be
 // exactly i_length bits.
