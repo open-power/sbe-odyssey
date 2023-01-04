@@ -1,79 +1,100 @@
-Gerrit Project: hw/sbe
---------------------------
-This project is SBE repository for P & Z Processor.
+# Gerrit Project: hw/sbe
 
-Before workon:
-    * Create a file in ~/.sbe/customrc for any personal rc settings. This will be applied during workon
+This project is SBE repository for P, Odyssey & Z projects.
 
-    * To enable bash complete for sbe script:
-        source public/src/tools/utils/sbe/sbe_complete
+### Before workon:
 
-To Setup Environment:
-    ./sbe workon [<platform>] [<imageType>]
-    ./sbe workon [<p11 metis p11_dft metis_dft odyssey all>][<sppe bldr srom pnor>]
-    Ex: ./sbe workon odyssey sppe
-        ./sbe workon odyssey pnor
+- Create a file `~/.sbe/customrc` for any personal rc settings. This will be applied during `workon`
 
-Note: If platform option is not provided, it defaults to "all".
-      If image option is not provided, it defaults to "pnor".
-      In this case all images will be built for all supported platforms in the
-      repo unless user manually over-rides using mesonwrap option's.
+- To enable bash complete for sbe script:
 
-To install required packages to build images (this will be done while doing workon):
-    ./sbe install
+```
+source public/src/tools/utils/sbe/sbe_complete
+```
 
-To sync platform env variable with existing meson build dir:
-    mesonwrap sync
+### To Setup Environment:
 
-To re run setup phase:
-    mesonwrap reconfigure
-(This is required when there is a change in any of the genfile scripts that can't be tracked by meson and that needs to be re run)
+```
+./sbe workon <project> <imageType>
 
-To build a image:
-    ./sbe build
+For example: ./sbe workon odyssey pnor
+```
 
-    OR
+- To list out available `project` and `imageType`
 
-    mesonwrap setup
-    mesonwrap build
+```
+./sbe --help
+```
+Refer at `workon` command usage.
 
-To Clean:
-    ./sbe clean
+**Note:**
 
-    OR
+- If `project` option is not provided, it defaults to `all`.
+- If `imageType` option is not provided, it defaults to `all`.
 
-    mesonwrap clean
+In this case all images will be built for all supported platforms in the repo unless user manually over-rides using mesonwrap option's.
 
-For more available build options check:
-    mesonwrap help
+### To build SBE vanilla image:
 
-Note: After build, all images are available in images dir.
-      All .o, .s, .a etc are available in builddir.
+```
+./sbe build
+```
 
-To Run simics:
-    Option-1
-    ----------------------------------------------------------------------------
-    After building image run following steps.
+### To Clean:
 
-        ./sbe runsimics
+```
+./sbe clean
+```
 
-    In simics console run this.
-        simics> start-cbs 0
-        simics> run     // This code will start exeuting code form reset vector. Put any breakpoint required before this.
+**Note:**
 
-    To get the trace run:
-        simics> sbe-trace 0
+- After build, all images are available in `images` directory that will be created in sbe root directory during the `build`.
+- All .o, .s, .a etc are available in `builddir` that will be created in sbe root directory during the `build`.
 
-    Option-2
-    ----------------------------------------------------------------------------
-    After building image run following steps.
+### To prepare genesis NOR image:
 
-        ./sbe runsimics till_boot     // if 'till_boot' option used, simics will run-till sbe-ready state
+- Please refer [here](./internal/src/packaging/odyssey/prepareImage.md) to prepare odyssey image.
 
-    To get the trace run:
-        simics> sbe-trace 0
+### To run simics:
 
-    Option-3
-    ----------------------------------------------------------------------------
-    Build and run using single command
-        ./sbe execute [till_boot]     // if 'till_boot' option used, simics will run-till sbe-ready state
+All options will take care to prepare the genesis NOR image to use in the simics.
+
+#### Option-1:
+
+- After building the SBE vanilla image run below command.
+```
+./sbe runsimics
+```
+- In simics console run this.
+```
+simics> start-cbs 0
+simics> run           # This code will start exeuting code form reset vector.
+                      # Put any breakpoint before this if required.
+```
+
+#### Option-2:
+
+- After building the SBE vanilla image run below command.
+```
+./sbe runsimics till_boot     # if 'till_boot' option used, simics will run-till sbe-ready state.
+```
+
+#### Option-3:
+
+- A single command to do the build, prepare nor image, setup simics and runsimics.
+```
+./sbe execute [till_boot]     # if 'till_boot' option used, simics will run-till sbe-ready state.
+```
+
+### To get SBE traces:
+- Run below command at the simics console.
+```
+simics> sbe-trace 0
+```
+
+### To run test-cases:
+
+- A single command to do the build, prepare nor image, setup simics, runsimics and run test cases.
+```
+./sbe citest
+```
