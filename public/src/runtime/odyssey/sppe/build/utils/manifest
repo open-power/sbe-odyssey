@@ -31,9 +31,5 @@
             "file": "public/src/runtime/odyssey/sppe/odyssey_sppe_DD1.bin",
             "method" : "zlib_ppc",
         },
-        "main.fsm": {
-            "file": "public/src/build/buildekb/odyssey/fsm/main.fsm",
-            "method" : "store",
-        },
     }, # end layout
 } # end dict
