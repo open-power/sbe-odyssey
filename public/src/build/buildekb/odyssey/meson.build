@@ -30,5 +30,3 @@ if get_option('sppe').enabled()
     subdir('errorxml')
     subdir('attributes')
 endif
-
-subdir('fsm')
