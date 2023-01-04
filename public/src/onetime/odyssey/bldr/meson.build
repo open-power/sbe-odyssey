@@ -168,19 +168,13 @@ obldr_string_file_gen = custom_target(output : 'odysseyBldrStringFile_' + ddlvl,
                                       install_dir : odyssey_bldr_install_path
                                 )
 
-obldr_part_tbl_gen = custom_target( 'obldr_part_tbl_gen',
-                                    input: 'build/utils/partitions',
-                                    output: 'part.tbl',
-                                    command: [ flashBuildTool, 'compile-ptable', '@INPUT@', '@OUTPUT@' ]
-                                  )
-
 #Now lets run the post build script to package the image
 outfile = odyssey_bldr_img_name + '.pak'
 
 obldr_package_img = custom_target( 'obldr_package_img',
                                output : outfile,
                                depends : [ obldr_string_file_gen, obldr_symbol_file_gen,
-                                           obldr_dis_file, obldr_part_tbl_gen ],
+                                           obldr_dis_file],
                                command : [ packaging, meson.current_build_dir(),
                                            odyssey_bldr_img_name, pakTool,
                                            pakBuildTool, signHashList],

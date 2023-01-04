@@ -27,9 +27,6 @@
         #################
         # All DD1 content
         #################
-        "part.tbl": {
-            "file": "public/src/onetime/odyssey/bldr/part.tbl",
-        },
         "boot/bldr.bin": {
             "file": "public/src/onetime/odyssey/bldr/odyssey_bldr_DD1.bin",
         },
