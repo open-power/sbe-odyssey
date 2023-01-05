@@ -25,30 +25,30 @@
 from attrdb import *
 from attrtank import *
 from attrtoolutils import *
-import re
 
 def set_attr(i_attrDb:AttributeStructure, io_image:bytearray, i_attr:str,\
                 i_value:int, i_target:str, i_index:list, i_instance:int)->bytearray:
     attr_to_set = None
     for attr in i_attrDb.field_list:
-        if attr.name == i_attr.upper():
+        if not isinstance(attr, RealAttrFieldInfo):
+            continue
+        if((attr.name == i_attr.upper()) and (attr.sbe_targ_type == i_target)) :
             attr_to_set = attr
             break
 
     if attr_to_set is None :
-        raise ArgumentError("Unknown attribute: " + i_attr)
+        raise ArgumentError("Unknown attribute: " + i_attr+ "[" + i_target + "]")
 
     #Default is to initialize all the instances
     instance = 0xFF
     if (i_instance is not None):
         instance = int(i_instance)
-
-    if isinstance(attr_to_set, RealAttrFieldInfo):
-        attr_to_set.set_value(io_image, i_attrDb.image_base, i_target, i_value,
-                              instance, i_index, i_attrDb.TARGET_TYPES)
-        return io_image
+    if(instance != 0xFF):
+        attr_to_set.set_value(io_image, i_attrDb.image_base, i_value, instance, i_index)
     else:
-        raise ArgumentError("Can not set attribute, not a RealAttrFieldInfo")
+        for i in range(attr_to_set.num_targ_inst):
+            attr_to_set.set_value(io_image, i_attrDb.image_base, i_value, i, i_index)
+    return io_image
 
 def get_attr(i_attrDb:AttributeStructure, i_attr, i_image:bytearray)->list:
     attr_found = None
@@ -70,7 +70,6 @@ def dump_attr(
     attr_list = []
     for attr in i_attrDb.field_list:
         if isinstance(attr, RealAttrFieldInfo):
-            attr.createDumpRecord(attr_list, i_image, image_base,
-                                  i_attrDb.TARGET_TYPES)
+            attr.createDumpRecord(attr_list, i_image, image_base)
     return attr_list
 

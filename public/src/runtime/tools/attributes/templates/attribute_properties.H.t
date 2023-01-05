@@ -29,7 +29,7 @@
 namespace fapi2
 {
 {% for attr in attributes %}
-
+{% if attr.ekb_target_type != '' %}
 /* {{attr.name}} */
 typedef {{attr.value_type}} {{attr.name}}_Type{{attr.type_dims}};
 const fapi2::TargetType {{attr.name}}_TargetType = {{attr.ekb_target_type}};
@@ -43,6 +43,7 @@ enum {{attr.name}}_Enum
     ENUM_{{attr.name}}_{{enum_name}} = {{enum_value|hex}},
     {% endfor %}
 };
+{% endif %}
 {% endif %}
 {% endfor %}
 

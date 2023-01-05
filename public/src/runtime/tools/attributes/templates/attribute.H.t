@@ -37,14 +37,11 @@ namespace ATTR
 
 {{attr.set_template_definition()}}
 
-    {% for target_type in attr.sbe_target_type %}
-        {% set ntargets = TARGET_TYPES[target_type].ntargets %}
-{{attr.get_var_declaration(target_type,ntargets)}}
+{{attr.get_var_declaration()}}
 
-{{attr.get_template_specialization(target_type,ntargets)}}
-{{attr.set_template_specialization(target_type,ntargets)}}
+{{attr.get_template_specialization()}}
+{{attr.set_template_specialization()}}
 
-    {% endfor %}
 {% endfor %}
 } //ATTR
 
