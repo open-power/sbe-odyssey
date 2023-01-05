@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -44,7 +44,8 @@ namespace fapi2
         uint32_t chipletNum:8;
         uint32_t targetType:6;
         uint32_t isPervType:1;
-        uint32_t targetCnt:17;
+        uint32_t isChipletType:1;
+        uint32_t targetCnt:16;
     }targetInfo_t;
 
     targetInfo_t * getTargetMap();
@@ -57,6 +58,7 @@ namespace fapi2
         PPE_TARGET_TYPE_MEMPORT        = 0x07,
         PPE_TARGET_TYPE_SYSTEM         = 0x08,
         PPE_TARGET_TYPE_MC             = 0x0B,
+        PPE_TARGET_TYPE_DIMM           = 0x15,
     } plat_target_type_t;
 
     // TODO: Move this to IMAGE-specific folder for odyssey
@@ -115,16 +117,11 @@ namespace fapi2
     /*
      * plat_target_base_handle bit layout :
      * BIT VALUES FOR BIT-0 TO BIT-31:
-     *   Chiplet_Num/Multicast_settings : 08 Bits => FAPI target type [ bit00 – bit07 ]
-     *          Multicast_settings:
-     *                  unused          : 01
-     *                  is_multicast    : 01
-     *                  mcast_type      : 03
-     *                  mcast_group     : 03
-     *   Type                           : 06 Bits => PPE target type  [ bit08 – bit13 ]
-     *   Present                        : 01 Bit  => Target present or not [ bit14 ]
-     *   Functional                     : 01 Bit  => Target functional state is on or off [ bit15 ]
-     *   Reserve                        : 16 Bits => Free Bits [ bit16 – bit31 ]
+     *   Chiplet Number                 : 08 Bits => Chiplet Number          [ bit00 – bit7 ]
+     *   Type                           : 06 Bits => PPE target type         [ bit08 – bit13 ]
+     *   Present                        : 01 Bit  => Target present or not   [ bit14 ]
+     *   Functional                     : 01 Bit  => Target functional state [ bit15 ]
+     *   Reserve                        : 16 Bits => Free Bits               [ bit16 – bit31 ]
      */
     class plat_target_base_handle {
 
@@ -238,29 +235,16 @@ namespace fapi2
             ///
             uint8_t getTargetInstance() const
             {
-                // Get the target type.
-                plat_target_type targetType = getTargetType();
+                return static_cast<uint8_t>(iv_value.getBits<16,8>());
+            }
 
-                // Get the chiplet Number
-                uint8_t chipletNum = getChipletNumber();
-
-                // Get the target Count.
-                uint32_t targetCount = getTargetTypesCount();
-
-                // Get the chiplet offset based on target type from target Map.
-                targetInfo_t * targetMap = getTargetMap();
-                uint8_t targetOffset = 0;
-                for(uint32_t i = 0; i < targetCount; i++)
-                {
-                    SBE_DEBUG("target count is 0x%08X", (uint32_t)targetMap[i].targetCnt);
-                    if(targetMap[i].targetType == targetType)
-                    {
-                        targetOffset = targetMap[i].chipletNum;
-                        break;
-                    }
-                }
-
-                return (chipletNum - targetOffset);
+            ///
+            /// @brief Set the target instance number.
+            /// @param[in] i_value target instance number
+            ///
+            void setTargetInstance(const uint8_t i_value)
+            {
+                iv_value.insertFromRight(i_value, 16, 8);
             }
 
             ///
@@ -337,6 +321,12 @@ namespace fapi2
                         break;
                     case PPE_TARGET_TYPE_SYSTEM:
                         l_targetType = TARGET_TYPE_SYSTEM;
+                        break;
+                    case PPE_TARGET_TYPE_MEMPORT:
+                        l_targetType = TARGET_TYPE_MEM_PORT;
+                        break;
+                    case PPE_TARGET_TYPE_DIMM:
+                        l_targetType = TARGET_TYPE_DIMM;
                         break;
                     case PPE_TARGET_TYPE_NONE:
                     default:

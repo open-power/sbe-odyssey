@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -33,6 +33,7 @@ namespace fapi2
     constexpr TargetType TARGET_TYPE_PROC_CHILDREN = TARGET_TYPE_CHIPLETS;
     constexpr TargetType TARGET_TYPE_PERV_CHILDREN = TARGET_TYPE_CHIPLETS;
     constexpr TargetType TARGET_TYPE_MC_CHILDREN = TARGET_TYPE_MI;
+    constexpr TargetType TARGET_TYPE_MEM_PORT_CHILDREN = TARGET_TYPE_DIMM;
 
     template<TargetType T>
     constexpr plat_target_type_t fapiTargetTypeToPlatTargetType()
@@ -63,6 +64,12 @@ namespace fapi2
     constexpr plat_target_type_t fapiTargetTypeToPlatTargetType<TARGET_TYPE_MEM_PORT>()
     {
         return PPE_TARGET_TYPE_MEMPORT;
+    }
+
+    template<>
+    constexpr plat_target_type_t fapiTargetTypeToPlatTargetType<TARGET_TYPE_DIMM>()
+    {
+        return PPE_TARGET_TYPE_DIMM;
     }
 
     template<TargetType K, MulticastType M, typename V>
@@ -110,7 +117,7 @@ namespace fapi2
         // Anything to PROC_CHIP
         if ((T == SBE_ROOT_CHIP_TYPE) || (T == TARGET_TYPE_ANY_POZ_CHIP))
         {
-            return g_platTarget->plat_getChipTarget();
+            return g_platTarget->plat_getChipTargetPlatType();
         }
         else if (T_NO_MCAST == TARGET_TYPE_PERV)
         {
@@ -125,6 +132,13 @@ namespace fapi2
                          "Invalid child target for MC parent");
             plat_target_sbe_handle child = *this;
             return g_platTarget->convertToChiplet<PPE_TARGET_TYPE_MC>(child);
+        }
+        else if (T_NO_MCAST == TARGET_TYPE_MEM_PORT)
+        {
+            STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_MEM_PORT_CHILDREN) == 0,
+                         "Invalid child target for MEM PORT parent");
+            plat_target_sbe_handle child = *this;
+            return g_platTarget->convertToChiplet<PPE_TARGET_TYPE_MEMPORT>(child);
         }
         STATIC_COMPILE_ERROR("Unsupported combination of parent and child for getParent()");
     }
@@ -143,6 +157,7 @@ namespace fapi2
     std::vector<Target<T, M, V>>
     Target<K, M, V>::getChildren(const TargetState i_state) const
     {
+        constexpr TargetType K_NO_CHIP  = K & ~SBE_ROOT_CHIP_TYPE;
         constexpr TargetType K_NO_MCAST = K & ~TARGET_TYPE_MULTICAST;
         constexpr plat_target_type_t P = fapiTargetTypeToPlatTargetType<T>();
 
@@ -161,6 +176,14 @@ namespace fapi2
         {
             plat_target_sbe_handle parent = *this;
             g_platTarget->getMulticastChildren(parent, l_include_nonfunctional, l_cast_children);
+            return l_children;
+        }
+        else if ( K_NO_CHIP == TARGET_TYPE_MEM_PORT)
+        {
+            STATIC_CHECK((T & ~TARGET_TYPE_MEM_PORT_CHILDREN) == 0,
+                           "Invalid child type for MEM PORT target");
+            plat_target_sbe_handle parent = *this;
+            g_platTarget->getChipletChildren(P, parent, l_include_nonfunctional, l_cast_children);
             return l_children;
         }
 

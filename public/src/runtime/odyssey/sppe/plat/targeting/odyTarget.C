@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -38,10 +38,12 @@ namespace fapi2
 
      targetInfo_t odyTargetMap[] =
      {
-         {0x0, PPE_TARGET_TYPE_CHIP, 0, 1},
-         {0x1, PPE_TARGET_TYPE_PERV, 1, 1},
-         {0x8, PPE_TARGET_TYPE_MC, 1, 1},
-         {0xD, PPE_TARGET_TYPE_MEMPORT, 0, 2}
+         {0x0, PPE_TARGET_TYPE_CHIP, 0, 0, 1},
+         {0x1, PPE_TARGET_TYPE_PERV, 1, 1, 1},
+         {0x8, PPE_TARGET_TYPE_MC, 1, 1, 1},
+         {0xD, PPE_TARGET_TYPE_MEMPORT, 0, 1, 2},
+         {0xD, PPE_TARGET_TYPE_DIMM, 0, 0, 2},
+         {0xE, PPE_TARGET_TYPE_DIMM, 0, 0, 2},
      };
 
      targetInfo_t * getTargetMap()

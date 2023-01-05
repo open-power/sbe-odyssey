@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -82,9 +82,19 @@ namespace fapi2
                 {
                     SBE_DEBUG("sbe_target_service target to be inserted is 0x%08X",
                                plat_target_sbe_handle(targetMap[i].chipletNum + j,
-                                                       targetMap[i].targetType));
+                                                      targetMap[i].targetType, 
+                                                       j));
+                    uint32_t chipletNum = 0;
+                    if(targetMap[i].isChipletType)
+                    {
+                        chipletNum = targetMap[i].chipletNum + j;
+                    }
+                    else
+                    {
+                        chipletNum = targetMap[i].chipletNum;
+                    }
                     iv_targets.push_back(plat_target_sbe_handle(
-                            targetMap[i].chipletNum + j, targetMap[i].targetType));
+                            chipletNum, targetMap[i].targetType, j));
                 }
             }
 
@@ -130,13 +140,14 @@ namespace fapi2
             else
             {
                 targetInfo_t * targetMap = getTargetMap();
+                uint32_t targetIndex = 0;
                 for(uint32_t i = 0; i < iv_targetTypesCnt; i++)
                 {
                     if(targetMap[i].targetType == i_child_type)
                     {
                         for(uint32_t j = 0; j < targetMap[i].targetCnt; j++)
                         {
-                            plat_target_sbe_handle l_target = iv_targets[i + j];
+                            plat_target_sbe_handle l_target = iv_targets[targetIndex + j];
                             if((i_include_nonfunctional || l_target.getFunctional()) &&
                                (l_target.getPresent()))
                             {
@@ -144,10 +155,11 @@ namespace fapi2
                             }
                         }
                     }
+                    targetIndex = targetIndex + targetMap[i].targetCnt;
                 }
             }
          }
-        ///
+
         /// @brief Get proc chip target's children - filtered
         ///
         /// @param [in] i_filter     Target filter
@@ -168,8 +180,43 @@ namespace fapi2
         }
 
         ///
+        ///
+        /// @brief Get all the children targets for the chiplet targets
+        ///
+        /// @param [in] i_child_type Children target type
+        /// @param [in] i_parent     Parent target handle
+        /// @param [in] i_include_nonfunctional Return also targets that are not functional
+        /// @param [out] o_children             A vector of child target handles
+        ///
+        void getChipletChildren(const plat_target_type_t i_child_type,
+                                const plat_target_sbe_handle i_parent,
+                                const bool i_include_nonfunctional,
+                                std::vector<plat_target_sbe_handle> &o_children) const
+        {
+            targetInfo_t * targetMap = getTargetMap();
+            uint32_t targetIndex = 0;
+            for(uint32_t i = 0; i < iv_targetTypesCnt; i++)
+            {
+                if( (targetMap[i].targetType == i_child_type) &&
+                    (targetMap[i].chipletNum == i_parent.getChipletNumber()) )
+                {
+                    for(uint32_t j = 0; j < targetMap[i].targetCnt; j++)
+                    {
+                        plat_target_sbe_handle l_target = iv_targets[targetIndex + j];
+                        {
+                            o_children.push_back(l_target);
+                        }
+                    }
+                }
+                targetIndex = targetIndex + targetMap[i].targetCnt;
+            }
+        }
+
+        ///
+        ///
         /// @brief Break a multicast target up into unicast targets
         ///
+        /// @param [in] i_parent     Parent target handle
         /// @param [in] i_include_nonfunctional Return also targets that are not functional
         /// @param [out] o_children             A vector of child target handles
         ///
@@ -200,7 +247,14 @@ namespace fapi2
             return;
         }
 
-        // TODO - Add Brief
+        ///
+        ///
+        /// @brief Return the multicast enabled targets
+        ///
+        /// @param [in] i_enabled               Multicast enabled buffer.
+        /// @param [in] i_include_nonfunctional Return also targets that are not functional
+        /// @param [out] o_children             A vector of child target handles
+        ///
         void loopTargetsByChiplet(const buffer<uint64_t> &i_enabled,
                                          const bool i_include_nonfunctional,
                                          std::vector<plat_target_sbe_handle> &o_children)
@@ -236,6 +290,15 @@ namespace fapi2
         }
 
         ///
+        /// @brief Function to get the proc chip target initialize the G_targets vector
+        /// @return proc target
+        ///
+        plat_target_sbe_handle plat_getChipTargetPlatType()
+        {
+            return iv_targets[0];
+        }
+
+        ///
         /// @brief Convert any target to a chiplet target of specified
         ///        type, stripping any unit specific address bits.
         ///
@@ -254,6 +317,9 @@ namespace fapi2
 
             // type becomes the new type
             copy.setTargetType(K);
+
+            // set the instance number.
+            copy.setTargetInstance(copy.getChipletNumber());
 
             // TODO: P11 SBE PORTING
             // This will work for Odyssey.
