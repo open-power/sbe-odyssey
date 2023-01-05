@@ -7,6 +7,7 @@ from contextlib import suppress
 from tabulate import tabulate
 import pickle, jinja2, sys, os
 import attrmodule
+import re
 
 def cmd_parse(args):
     db = AttributeDB(args.targetlist)
@@ -35,7 +36,6 @@ def cmd_gensrc(args):
     env.globals = {
         "toolname": "attrtool",
         "attributes": sbe_attr_tank.field_list,
-        "TARGET_TYPES" : sbe_attr_tank.TARGET_TYPES,
         "virt_header": args.virtual_fn_header,
     }
     env.filters["hex"] =  lambda x: "0x%X" % x
@@ -71,7 +71,7 @@ def cmd_setfixed(args):
     for attr in sbe_attr_tank.field_list:
         if not isinstance(attr, RealAttrFieldInfo):
             continue
-        attr.set(image, sbe_attr_tank.image_base, sbe_attr_tank.TARGET_TYPES)
+        attr.setfixed(image, sbe_attr_tank.image_base)
     open(args.image, "wb").write(image)
 
 def utilOpen(filename:str)->bytes:
@@ -86,8 +86,8 @@ def cmd_setattr(args):
     dbfile = pickle.loads(utilOpen(args.dbfile))
     image = bytearray(utilOpen(args.image))
     subscript = list()
-    if (i_index is not None):
-        subscript = [int(i) for i in re.split(',| ',i_index)]
+    if (args.index is not None):
+        subscript = [int(i) for i in re.split(',| ',args.index)]
     try:
         image = attrmodule.set_attr(dbfile, image, args.attr, args.value, \
                                     args.target, subscript, args.instance)

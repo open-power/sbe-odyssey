@@ -31,12 +31,9 @@ namespace fapi2
 namespace ATTR
 {
 {% for attr in attributes if attr.has_storage %}
-    {% for target_type in attr.sbe_target_type %}
-        {% set ntargets = TARGET_TYPES[target_type].ntargets %}
 
-{{attr.get_var_definition(target_type,ntargets)}}
+{{attr.get_var_definition()}}
 
-    {% endfor %}
 {% endfor %}
 } //ATTR
 

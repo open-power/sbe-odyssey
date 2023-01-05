@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -34,7 +35,9 @@ namespace fapi2
 enum AttributeId
 {
     {% for attr in attributes %}
+    {% if attr.ekb_target_type != '' %}
     {{attr.name}} = {{attr.hash}},
+    {% endif %}
     {% endfor %}
 };
 } //fapi2
