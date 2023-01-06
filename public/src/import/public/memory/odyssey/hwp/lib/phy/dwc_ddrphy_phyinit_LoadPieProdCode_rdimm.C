@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -48,11 +48,6 @@
 #include <lib/phy/ody_ddrphy_phyinit_structs.H>
 #include <lib/phy/ody_ddrphy_phyinit_config.H>
 #include <lib/phy/ody_ddrphy_csr_defines.H>
-
-// TODO:ZEN:MST-1585 Add in UDIMM vs RDIMM switches into the PHY init code
-// I'd recommend keeping the call to dwc_ddrphy_phyinit_LoadPieProdCode to be the same
-// I'd recommand that UDIMM vs RDIMM would be checked
-//     then separate UDIMM vs RDIMM functions would be called in the wrapper function
 
 ///
 /// @brief Loads the PHY Initialization Engine (PIE) code for RDIMM's

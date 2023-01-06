@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022                             -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -25,10 +25,56 @@
 <hwpErrors>
 
   <hwpError>
-    <rc>RC_ODY_DRAMINIT_TRAINING_FAILURE</rc>
+    <rc>RC_ODY_DRAMINIT_TRAINING_TIMEOUT</rc>
     <description>Ody draminit training poll timed out.</description>
     <ffdc>PORT_TARGET</ffdc>
     <ffdc>mail</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>PORT_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>PORT_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_ODY_DRAMINIT_TRAINING_FAILURE_MAIL</rc>
+    <description>
+        Ody draminit training mailbox message indicated a
+        training failure.
+    </description>
+    <ffdc>PORT_TARGET</ffdc>
+    <ffdc>TRAINING_STATUS</ffdc>
+    <ffdc>EXPECTED_STATUS</ffdc>
+    <ffdc>PMU_REVISION</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>PORT_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>PORT_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_ODY_DRAMINIT_TRAINING_FAILURE_MSG_BLOCK</rc>
+    <description>
+        Ody draminit training message block indicated a
+        training failure.
+    </description>
+    <ffdc>PORT_TARGET</ffdc>
+    <ffdc>ACTUAL_CSTESTFAIL</ffdc>
+    <ffdc>EXPECTED_CSTESTFAIL</ffdc>
+    <ffdc>PMU_REVISION</ffdc>
     <callout>
       <procedure>CODE</procedure>
       <priority>MEDIUM</priority>
@@ -136,6 +182,42 @@
   <hwpError>
     <rc>RC_ODY_DRAMINIT_DFI_INIT_TIMEOUT</rc>
     <description>Ody DFI initialization timed out.</description>
+    <ffdc>PORT_TARGET</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>PORT_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>PORT_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_ODY_DRAMINIT_INVALID_DDR5_DRAM_WR_PREAMBLE</rc>
+    <description>
+       An invalid value was detected in ATTR_DDR5_DRAM_WR_PREAMBLE
+    </description>
+    <ffdc>VALUE</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+    <callout>
+      <target>PORT_TARGET</target>
+      <priority>MEDIUM</priority>
+    </callout>
+    <deconfigure>
+      <target>PORT_TARGET</target>
+    </deconfigure>
+  </hwpError>
+
+  <hwpError>
+    <rc>RC_ODY_DRAMINIT_ZERO_DRAM_WIDTH</rc>
+    <description>Saw a zero value in ATTR_MEM_EFF_DRAM_WIDTH.</description>
     <ffdc>PORT_TARGET</ffdc>
     <callout>
       <procedure>CODE</procedure>

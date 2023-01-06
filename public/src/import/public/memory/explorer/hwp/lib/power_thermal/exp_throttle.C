@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -46,6 +46,56 @@ namespace mss
 {
 namespace power_thermal
 {
+
+///
+/// @brief set the STR register - Explorer specialization
+/// @param[in] i_target the port target
+/// @return fapi2::FAPI2_RC_SUCCESS if ok
+///
+template<>
+fapi2::ReturnCode set_str_reg<mss::mc_type::EXPLORER>(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target)
+{
+    using TT = throttle_traits<mss::mc_type::EXPLORER>;
+    fapi2::ATTR_MSS_MRW_POWER_CONTROL_REQUESTED_Type l_str_enable = 0;
+    fapi2::buffer<uint64_t> l_data;
+
+    FAPI_TRY(mss::attr::get_mrw_power_control_requested(l_str_enable));
+    FAPI_TRY(fapi2::getScom(i_target, TT::STR0Q_REG, l_data));
+
+    //Write bit if STR should be enabled
+    switch (l_str_enable)
+    {
+        case fapi2::ENUM_ATTR_MSS_MRW_POWER_CONTROL_REQUESTED_PD_AND_STR:
+        case fapi2::ENUM_ATTR_MSS_MRW_POWER_CONTROL_REQUESTED_PD_AND_STR_CLK_STOP:
+            FAPI_INF("%s STR requested but STR is not allowed for DDR4 DIMM's. Using Power down mode", mss::c_str(i_target));
+
+        case fapi2::ENUM_ATTR_MSS_MRW_POWER_CONTROL_REQUESTED_POWER_DOWN:
+        case fapi2::ENUM_ATTR_MSS_MRW_POWER_CONTROL_REQUESTED_OFF:
+            l_data.clearBit<TT::CFG_STR_ENABLE>();
+            l_data.clearBit<TT::CFG_DIS_CLK_IN_STR>();
+            break;
+
+        default:
+            FAPI_ASSERT( false,
+                         fapi2::MSS_UNSUPPORTED_MRW_POWER_CONTROL_REQUESTED()
+                         .set_PORT_TARGET(i_target)
+                         .set_FUNCTION(mss::SET_STR_REG)
+                         .set_VALUE(l_str_enable),
+                         "%s ATTR_MSS_MRW_POWER_CONTROL_REQUESTED not set correctly in MRW: %u",
+                         mss::c_str(i_target),
+                         l_str_enable);
+            break;
+    }
+
+    l_data.insertFromRight<TT::CFG_ENTER_STR_TIME, TT::CFG_ENTER_STR_TIME_LEN>(TT::ENTER_STR_TIME);
+
+    FAPI_TRY(fapi2::putScom(i_target, TT::STR0Q_REG, l_data));
+
+    return fapi2::FAPI2_RC_SUCCESS;
+fapi_try_exit:
+    FAPI_ERR("%s Error setting the STR register MBASTR0Q", mss::c_str(i_target));
+    return fapi2::current_err;
+}
 
 ///
 /// @brief Updates the max databus utilization based upon the DIMM type - EXPLORER specialization
@@ -173,7 +223,8 @@ fapi_try_exit:
 /// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff get is OK
 /// @note equalizes the throttles to the lowest of runtime and the lowest slot-throttle value
 ///
-fapi2::ReturnCode equalize_throttles( const std::vector< fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP> >& i_targets,
+fapi2::ReturnCode equalize_throttles( const
+                                      std::vector< fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP> >& i_targets,
                                       const mss::throttle_type i_throttle_type)
 {
     std::vector< fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT> > l_exceeded_power;

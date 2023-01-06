@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -47,7 +47,7 @@
 #include <generic/memory/lib/utils/count_dimm.H>
 #include <mss_generic_attribute_getters.H>
 #include <mss_generic_system_attribute_getters.H>
-#include <lib/plug_rules/exp_plug_rules.H>
+#include <generic/memory/lib/plug_rules/plug_rules.H>
 
 extern "C"
 {
@@ -75,7 +75,7 @@ extern "C"
         {
             // Run eff_config_thermal so that we can run plug rules.
             FAPI_INF("Running enforce_pre_eff_config_thermal on %s", mss::c_str(l_ocmb));
-            FAPI_TRY( mss::exp::plug_rule::enforce_pre_eff_config_thermal(l_ocmb),
+            FAPI_TRY( mss::plug_rule::enforce_pre_eff_config_thermal<mss::mc_type::EXPLORER>(l_ocmb),
                       "Fail encountered in enforce_pre_eff_config_thermal for %s", mss::c_str(l_ocmb));
         }
 
@@ -143,7 +143,7 @@ extern "C"
 
                     // Set the thermal power throttle
                     // Set the PMIC current slope, intercept and limit
-                    FAPI_TRY( mss::power_thermal::get_power_attrs (l_throttle_type,
+                    FAPI_TRY( mss::power_thermal::get_power_attrs<mss::mc_type::EXPLORER> (l_throttle_type,
                               l_port,
                               l_thermal_power_slope_v,
                               l_thermal_power_intecept_v,
@@ -153,7 +153,7 @@ extern "C"
                               l_slope,
                               l_intercept,
                               l_limit,
-                              l_safemode) );
+                              l_safemode));
 
                     FAPI_TRY(mss::attr::set_total_pwr_slope(l_port, l_slope));
                     FAPI_TRY(mss::attr::set_total_pwr_intercept(l_port, l_intercept));

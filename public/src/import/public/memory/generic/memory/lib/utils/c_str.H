@@ -22,7 +22,6 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-// EKB-Mirror-To: hw/ppe
 
 ///
 /// @file c_str.H

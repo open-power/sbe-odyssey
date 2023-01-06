@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -38,8 +38,33 @@
 
 #include <fapi2.H>
 
+#include <lib/mc/exp_port_traits.H>
+#include <generic/memory/lib/utils/mc/gen_mss_port.H>
+
 namespace mss
 {
+
+///
+/// @brief Configures the write reorder queue bit - Explorer specialization
+/// @param[in] i_target the target to effect
+/// @param[in] i_state to set the bit too
+/// @return FAPI2_RC_SUCCSS iff ok
+///
+template< >
+fapi2::ReturnCode configure_wrq<mss::mc_type::EXPLORER>(
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+    const mss::states i_state);
+
+///
+/// @brief Configures the read reorder queue bit - Explorer specialization
+/// @param[in] i_target the target to effect
+/// @param[in] i_state to set the bit too
+/// @return FAPI2_RC_SUCCSS iff ok
+///
+template< >
+fapi2::ReturnCode configure_rrq<mss::mc_type::EXPLORER>(
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+    const mss::states i_state);
 
 ///
 /// @brief Helper for setting rcd protection time to minimum of DSM0Q_WRDONE_DLY & DSM0Q_RDTAG_DLY

@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -42,6 +42,7 @@ MSS_ODY_SOURCE_DIRS := $(shell find $(MSS_ODY_PATH) -type d)
 # Define common source and include paths.
 define MSS_ODY_MODULE_INCLUDES
 $(foreach dir, $(MSS_ODY_SOURCE_DIRS), $(call ADD_MODULE_SRCDIR,$(1),$(dir)))
+$(call ADD_MODULE_INCDIR,$(1),$(ROOTPATH)/public/hwp/odyssey/perv)
 $(call ADD_MODULE_INCDIR,$(1),$(MSS_PATH)/odyssey/hwp)
 $(call ADD_MODULE_INCDIR,$(1),$(MSS_INTERNAL)/odyssey/hwp/wrapper)
 $(call ADD_MODULE_INCDIR,$(1),$(MSS_PATH)/odyssey/hwp/lib)

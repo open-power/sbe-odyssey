@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -3277,6 +3277,49 @@ inline uint8_t generate_eccspare_pattern_helper(const uint64_t& i_data, const bo
 }
 
 ///
+/// @brief Generates the pattern for the ECC and/or spare data for beats 8 to 15
+/// @param[in] i_pattern the pattern on which to operate
+/// @param[in] i_invert true if the pattern should be inverted
+/// @return ECC/spare pattern as needing to be put into the ECC/spare registers
+///
+inline fapi2::buffer<uint64_t> generate_eccspare_pattern_beats8to15(const pattern& i_pattern, const bool i_invert )
+{
+    constexpr uint64_t BYTE0 = BITS_PER_BYTE * 0;
+    constexpr uint64_t BYTE1 = BITS_PER_BYTE * 1;
+    constexpr uint64_t BYTE2 = BITS_PER_BYTE * 2;
+    constexpr uint64_t BYTE3 = BITS_PER_BYTE * 3;
+    constexpr uint64_t BYTE4 = BITS_PER_BYTE * 4;
+    constexpr uint64_t BYTE5 = BITS_PER_BYTE * 5;
+    constexpr uint64_t BYTE6 = BITS_PER_BYTE * 6;
+    constexpr uint64_t BYTE7 = BITS_PER_BYTE * 7;
+
+    fapi2::buffer<uint64_t> l_pattern;
+
+    // Pattern assembly is a tad weird for ECC/spare
+    // The pattern is stored in the same register by byte
+    // So we want to keep the same data as the rest of the data
+    // As such, we want to grab each piece of data on a byte by byte basis, flip as needed, and append it to the pattern
+
+    // Beat 0/1
+    l_pattern.insertFromRight<BYTE0, BITS_PER_BYTE>(generate_eccspare_pattern_helper(i_pattern[4].first, i_invert));
+    l_pattern.insertFromRight<BYTE1, BITS_PER_BYTE>(generate_eccspare_pattern_helper(i_pattern[4].second, i_invert));
+
+    // Beat 2/3
+    l_pattern.insertFromRight<BYTE2, BITS_PER_BYTE>(generate_eccspare_pattern_helper(i_pattern[5].first, i_invert));
+    l_pattern.insertFromRight<BYTE3, BITS_PER_BYTE>(generate_eccspare_pattern_helper(i_pattern[5].second, i_invert));
+
+    // Beat 4/5
+    l_pattern.insertFromRight<BYTE4, BITS_PER_BYTE>(generate_eccspare_pattern_helper(i_pattern[6].first, i_invert));
+    l_pattern.insertFromRight<BYTE5, BITS_PER_BYTE>(generate_eccspare_pattern_helper(i_pattern[6].second, i_invert));
+
+    // Beat 6/7
+    l_pattern.insertFromRight<BYTE6, BITS_PER_BYTE>(generate_eccspare_pattern_helper(i_pattern[7].first, i_invert));
+    l_pattern.insertFromRight<BYTE7, BITS_PER_BYTE>(generate_eccspare_pattern_helper(i_pattern[7].second, i_invert));
+
+    return l_pattern;
+}
+
+///
 /// @brief Generates the pattern for the ECC and/or spare data
 /// @param[in] i_pattern the pattern on which to operate
 /// @param[in] i_invert true if the pattern should be inverted
@@ -3348,13 +3391,15 @@ fapi2::ReturnCode load_eccspare_pattern( const fapi2::Target<T>& i_target, const
 template<  mss::mc_type MC, fapi2::TargetType T, typename TT = mcbistTraits<MC, T> >
 inline fapi2::ReturnCode load_pattern( const fapi2::Target<T>& i_target, const pattern& i_pattern, const bool i_invert )
 {
-    uint64_t l_address = TT::PATTERN0_REG;
+    // Creates iterators to use in the loops below
+    auto l_it = std::begin(TT::PATTERN_REGS);
+    const auto l_it_end = std::end(TT::PATTERN_REGS);
 
     // Checks that the pattern is of the expected length, if not, error out
     // Creates helpers for FAPI_ASSERT
     const auto EXPECTED_SIZE = TT::EXPECTED_PATTERN_SIZE;
     const auto ACTUAL_SIZE = i_pattern.size();
-    FAPI_ASSERT(EXPECTED_SIZE == ACTUAL_SIZE,
+    FAPI_ASSERT(EXPECTED_SIZE <= ACTUAL_SIZE,
                 fapi2::MSS_MCBIST_INCORRECT_PATTERN_LENGTH()
                 .set_TARGET(i_target)
                 .set_EXPECTED(EXPECTED_SIZE)
@@ -3367,12 +3412,21 @@ inline fapi2::ReturnCode load_pattern( const fapi2::Target<T>& i_target, const p
     // to the even register and half to the odd.
     for (const auto& l_cache_line : i_pattern)
     {
+        // If the iterator is out of range, then exit
+        // Note: this is not an error as the patterns can be of different lengths between chips
+        if(!(l_it < l_it_end))
+        {
+            break;
+        }
+
+        const auto l_first_addr = l_it->first;
+        const auto l_second_addr = l_it->second;
         const fapi2::buffer<uint64_t> l_value_first  = i_invert ? ~l_cache_line.first : l_cache_line.first;
         const fapi2::buffer<uint64_t> l_value_second = i_invert ? ~l_cache_line.second : l_cache_line.second;
         FAPI_INF("Loading cache line pattern 0x%016lx 0x%016lx for %s", l_value_first, l_value_second, mss::c_str(i_target));
-        FAPI_TRY( fapi2::putScom(i_target, l_address, l_value_first) );
-        FAPI_TRY( fapi2::putScom(i_target, ++l_address, l_value_second) );
-        ++l_address;
+        FAPI_TRY( fapi2::putScom(i_target, l_first_addr, l_value_first) );
+        FAPI_TRY( fapi2::putScom(i_target, l_second_addr, l_value_second) );
+        ++l_it;
     }
 
     FAPI_TRY(load_eccspare_pattern<MC>( i_target, i_pattern, i_invert ));
@@ -3500,41 +3554,44 @@ fapi2::ReturnCode load_maint_pattern( const fapi2::Target<T>& i_target, const pa
     // This loop will be run twice to write the pattern twice.  Once per 64B write.
     // When MCBIST maint mode is in 64B mode it will only use the first 64B when in 128B mode
     // MCBIST maint will use all 128B (it will perform two consecutive writes)
-    const auto l_ports =  mss::find_targets<TT::PORT_TYPE>(i_target);
-    // Init the port map
+    l_aacr.template insertFromRight<PT::RMW_WRT_ADDRESS, PT::RMW_WRT_ADDRESS_LEN>(PT::MAINT_DATA_INDEX_START);
 
-    for (const auto& p : l_ports)
+    for (auto l_num_writes = 0; l_num_writes < 2; ++l_num_writes)
     {
-        l_aacr.template insertFromRight<PT::RMW_WRT_ADDRESS, PT::RMW_WRT_ADDRESS_LEN>(PT::MAINT_DATA_INDEX_START);
+        FAPI_INF("Setting the array access control register for %s.", mss::c_str(i_target));
+        FAPI_TRY( fapi2::putScom(i_target, PT::RMW_WRT_BUF_CTL_REG, l_aacr) );
+        uint64_t l_pattern_num = 0;
 
-        for (auto l_num_writes = 0; l_num_writes < 2; ++l_num_writes)
+        for (const auto& l_cache_line : i_pattern)
         {
-            FAPI_INF("Setting the array access control register for %s.", mss::c_str(p));
-            FAPI_TRY( fapi2::putScom(p, PT::RMW_WRT_BUF_CTL_REG, l_aacr) );
-
-            for (const auto& l_cache_line : i_pattern)
+            // If the pattern is out of range, exit out of this loop
+            // Note: this is not an error as the patterns can be of different lengths between chips
+            if(l_pattern_num >= TT::EXPECTED_PATTERN_SIZE)
             {
-                fapi2::buffer<uint64_t> l_value_first  = i_invert ? ~l_cache_line.first : l_cache_line.first;
-                fapi2::buffer<uint64_t> l_value_second = i_invert ? ~l_cache_line.second : l_cache_line.second;
-                FAPI_INF("Loading cache line pattern 0x%016lx 0x%016lx for %s", l_value_first, l_value_second, mss::c_str(i_target));
-                FAPI_TRY( fapi2::putScom(p, PT::RMW_WRT_BUF_DATA_REG, l_value_first));
-
-                // In order for the data to actually be written into the RMW buffer, we must issue a putscom to the MCA_AAER register
-                // This register is used for the ECC, we will just write all zero to this register.  The ECC will be auto generated
-                // when the aacr MCA_WREITE_AACR_ECCGEN bit is set
-                FAPI_TRY( fapi2::putScom(p, PT::RMW_WRT_BUF_ECC_REG, 0) );
-
-                // No need to increment the address because the logic does it automatically when MCA_WREITE_AACR_AUTOINC is set
-                FAPI_TRY( fapi2::putScom(p, PT::RMW_WRT_BUF_DATA_REG, l_value_second) );
-
-                // In order for the data to actually be written into the RMW buffer, we must issue a putscom to the MCA_AAER register
-                // This register is used for the ECC, we will just write all zero to this register.  The ECC will be auto generated
-                // when the aacr MCA_WREITE_AACR_ECCGEN bit is set
-                FAPI_TRY( fapi2::putScom(p, PT::RMW_WRT_BUF_ECC_REG, 0) );
+                break;
             }
 
-            l_aacr.template insertFromRight<PT::RMW_WRT_ADDRESS, PT::RMW_WRT_ADDRESS_LEN>(PT::MAINT_DATA_INDEX_END);
+            fapi2::buffer<uint64_t> l_value_first  = i_invert ? ~l_cache_line.first : l_cache_line.first;
+            fapi2::buffer<uint64_t> l_value_second = i_invert ? ~l_cache_line.second : l_cache_line.second;
+            FAPI_INF("Loading cache line pattern:%u 0x%016lx 0x%016lx for %s", l_pattern_num++, l_value_first, l_value_second,
+                     mss::c_str(i_target));
+            FAPI_TRY( fapi2::putScom(i_target, PT::RMW_WRT_BUF_DATA_REG, l_value_first));
+
+            // In order for the data to actually be written into the RMW buffer, we must issue a putscom to the MCA_AAER register
+            // This register is used for the ECC, we will just write all zero to this register.  The ECC will be auto generated
+            // when the aacr MCA_WREITE_AACR_ECCGEN bit is set
+            FAPI_TRY( fapi2::putScom(i_target, PT::RMW_WRT_BUF_ECC_REG, 0) );
+
+            // No need to increment the address because the logic does it automatically when MCA_WREITE_AACR_AUTOINC is set
+            FAPI_TRY( fapi2::putScom(i_target, PT::RMW_WRT_BUF_DATA_REG, l_value_second) );
+
+            // In order for the data to actually be written into the RMW buffer, we must issue a putscom to the MCA_AAER register
+            // This register is used for the ECC, we will just write all zero to this register.  The ECC will be auto generated
+            // when the aacr MCA_WREITE_AACR_ECCGEN bit is set
+            FAPI_TRY( fapi2::putScom(i_target, PT::RMW_WRT_BUF_ECC_REG, 0) );
         }
+
+        l_aacr.template insertFromRight<PT::RMW_WRT_ADDRESS, PT::RMW_WRT_ADDRESS_LEN>(PT::MAINT_DATA_INDEX_END);
     }
 
 fapi_try_exit:
