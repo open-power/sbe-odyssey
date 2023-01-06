@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -137,12 +137,17 @@ class portTraits< mss::mc_type::ODYSSEY >
         static constexpr uint8_t MAX_MRANK_PER_PORT = mss::ody::HW_MAX_MRANK_PER_PORT;
         static constexpr uint8_t MAX_SYMBOLS_PER_PORT = mss::ody::MAX_SYMBOLS_PER_PORT;
 
+        static constexpr uint16_t MIN_DOMAIN_REDUCTION_TIME = 4;
+        static constexpr uint16_t ENTER_STR_TIME = 8;
+
         // scom register field definition
         enum
         {
-            // TODO Zen:MST-1405 Power management settings have changed in Odyssey. Need to update generic function
-            // and traits to accommodate changes
-            // CFG_MIN_MAX_DOMAINS_ENABLE = EXPLR_SRQ_MBARPC0Q_CFG_MIN_MAX_DOMAINS_ENABLE,
+            CFG_MIN_DOMAIN_REDUCTION_ENABLE = scomt::ody::ODC_SRQ_MBARPC0Q_CFG_MIN_DOMAIN_REDUCTION_ENABLE,
+            CFG_MIN_DOMAIN_REDUCTION_TIME = scomt::ody::ODC_SRQ_MBARPC0Q_CFG_MIN_DOMAIN_REDUCTION_TIME,
+            CFG_MIN_DOMAIN_REDUCTION_TIME_LEN = scomt::ody::ODC_SRQ_MBARPC0Q_CFG_MIN_DOMAIN_REDUCTION_TIME_LEN,
+            CFG_LP_CTRL_ENABLE = scomt::ody::ODC_SRQ_MBARPC0Q_CFG_LP_CTRL_ENABLE,
+            CFG_LP_DATA_ENABLE = scomt::ody::ODC_SRQ_MBARPC0Q_CFG_LP_DATA_ENABLE,
 
             CFG_CCS_INST_RESET_ENABLE = scomt::ody::ODC_SRQ_MBA_FARB5Q_CFG_CCS_INST_RESET_ENABLE,
             CFG_DDR_RESETN = scomt::ody::ODC_SRQ_MBA_FARB5Q_CFG_DDR_RESETN,
@@ -157,6 +162,10 @@ class portTraits< mss::mc_type::ODYSSEY >
             REFRESH_ENABLE = scomt::ody::ODC_SRQ_MBAREF0Q_CFG_REFRESH_ENABLE,
 
             CFG_FORCE_STR = scomt::ody::ODC_SRQ_MBASTR0Q_FORCE_STR,
+            CFG_STR_ENABLE = scomt::ody::ODC_SRQ_MBASTR0Q_STR_ENABLE,
+            CFG_DIS_CLK_IN_STR = scomt::ody::ODC_SRQ_MBASTR0Q_DIS_CLK_IN_STR,
+            CFG_ENTER_STR_TIME = scomt::ody::ODC_SRQ_MBASTR0Q_ENTER_STR_TIME,
+            CFG_ENTER_STR_TIME_LEN = scomt::ody::ODC_SRQ_MBASTR0Q_ENTER_STR_TIME_LEN,
 
             ECC_CHECK_DISABLE = scomt::ody::ODC_WDF_REGS_RECR_MBSECCQ_DISABLE_MEMORY_ECC_CHECK_CORRECT,
             ECC_CORRECT_DISABLE = scomt::ody::ODC_WDF_REGS_RECR_MBSECCQ_DISABLE_MEMORY_ECC_CORRECT,
@@ -168,8 +177,6 @@ class portTraits< mss::mc_type::ODYSSEY >
             BW_WINDOW_SIZE = scomt::ody::ODC_SRQ_MBA_FARB0Q_CFG_BW_WINDOW_SIZE,
             BW_WINDOW_SIZE_LEN = scomt::ody::ODC_SRQ_MBA_FARB0Q_CFG_BW_WINDOW_SIZE_LEN,
 
-            // TODO Zen:MST-1405 We now have bandwidth split between side0 and side1, so need to figure out if we want to
-            // read these separately or sum together - function is get_bw_snapshot in gen_mss_port.H
             BW_SNAPSHOT_SIDE0 = scomt::ody::ODC_SRQ_MBA_FARB6Q_CFG_BW_SNAPSHOT_SIDE0,
             BW_SNAPSHOT_SIDE0_LEN = scomt::ody::ODC_SRQ_MBA_FARB6Q_CFG_BW_SNAPSHOT_SIDE0_LEN,
             BW_SNAPSHOT_SIDE1 = scomt::ody::ODC_SRQ_MBA_FARB6Q_CFG_BW_SNAPSHOT_SIDE1,

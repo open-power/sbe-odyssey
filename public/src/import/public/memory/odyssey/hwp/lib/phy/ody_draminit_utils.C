@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -40,6 +40,7 @@
 #include <generic/memory/lib/utils/c_str.H>
 #include <generic/memory/lib/utils/mss_generic_check.H>
 #include <generic/memory/lib/utils/poll.H>
+#include <generic/memory/lib/utils/mss_bad_bits.H>
 #include <ody_scom_mp_apbonly0.H>
 #include <ody_scom_mp_mastr_b0.H>
 #include <ody_scom_mp_drtub0.H>
@@ -219,10 +220,14 @@ fapi_try_exit:
 /// @brief Polls the mail until completion message is received
 /// @param[in] i_target the target on which to operate
 /// @param[in] i_training_poll_count poll count for getting mail.
+/// @param[out] o_status final mail message from training, PASS/FAIL status if it completed
+/// @param[out] o_log_data hwp_data_ostream of streaming log
 /// @return fapi2::FAPI2_RC_SUCCESS iff successful
 ///
 fapi2::ReturnCode poll_for_completion(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
-                                      const uint64_t i_training_poll_count )
+                                      const uint64_t i_training_poll_count,
+                                      uint64_t& o_status,
+                                      fapi2::hwp_data_ostream& o_log_data )
 {
     mss::poll_parameters l_poll_params(DELAY_10NS,
                                        200,
@@ -231,28 +236,25 @@ fapi2::ReturnCode poll_for_completion(const fapi2::Target<fapi2::TARGET_TYPE_MEM
                                        i_training_poll_count);
     fapi2::buffer<uint64_t> l_mail;
     bool l_poll_return ;
+
     fapi2::ATTR_PHY_GET_MAIL_TIMEOUT_Type l_mailbox_poll_count;
     FAPI_TRY(mss::attr::get_phy_get_mail_timeout(i_target , l_mailbox_poll_count));
-    l_poll_return = mss::poll(i_target, l_poll_params, [&i_target, &l_mailbox_poll_count, &l_mail]()->bool
+    l_poll_return = mss::poll(i_target, l_poll_params, [&i_target, &l_mailbox_poll_count, &l_mail, &o_log_data]()->bool
     {
         uint8_t l_mode = MAJOR_MSG_MODE; // 16 bit mode to read major message.
+        bool l_loop_end = false;
         // check the message content.
         FAPI_TRY(mss::ody::phy::get_mail(i_target, l_mode, l_mailbox_poll_count, l_mail));
 
-        if (STREAMING_MSG == l_mail)
+        // Process and decode 'major' messages, and handle SMBus and streaming message protocol if necessary
+        FAPI_TRY(check_for_completion_and_decode(i_target, l_mail, o_log_data, l_loop_end));
+
+        if (l_loop_end)
         {
-            // Decodes and prints streaming messages
-            FAPI_TRY(process_streaming_message(i_target));
-        }
-        else if (SMBUS_MSG == l_mail)
-        {
-            // Processes and handles the SMBus messages including sending out the RCW over i2c
-            FAPI_TRY(process_smbus_message(i_target));
+            return(l_loop_end);
         }
         FAPI_TRY(fapi2::delay(mss::DELAY_1MS, 200));
-        FAPI_INF(TARGTIDFORMAT " got a msg that is neither Stream or SMbus: 0x%016x", TARGTID, l_mail);
-        // return true if mail content is either successful completion or failed completion.
-        return check_for_completion(l_mail);
+
     fapi_try_exit:
         FAPI_ERR("mss::poll() hit an error in mss::getScom");
         return false;
@@ -261,10 +263,12 @@ fapi2::ReturnCode poll_for_completion(const fapi2::Target<fapi2::TARGET_TYPE_MEM
     FAPI_TRY(fapi2::current_err);
 
     FAPI_ASSERT(l_poll_return,
-                fapi2::ODY_DRAMINIT_TRAINING_FAILURE().
+                fapi2::ODY_DRAMINIT_TRAINING_TIMEOUT().
                 set_PORT_TARGET(i_target).
                 set_mail(l_mail),
                 TARGTIDFORMAT " poll for draminit training completion timed out", TARGTID);
+
+    o_status = l_mail;
 
 fapi_try_exit:
     return fapi2::current_err;
@@ -272,22 +276,137 @@ fapi_try_exit:
 }
 
 ///
-/// @brief Checks the completion condition for training
+/// @brief Checks the completion condition for training and decodes respective message
+/// @param[in] i_target the memory port on which to operate
 /// @param[in] i_mail mail content to check for completion
-/// @return True if mail content is same as one of the completion values , false otherwise
+/// @param[out] o_log_data hwp_data_ostream of streaming log
+/// @param[out] o_loop_end flags that completion was detected, ending polling loop and skipping delay.
+/// @return fapi2::FAPI2_RC_SUCCESS iff successful
 ///
-bool check_for_completion(const fapi2::buffer<uint64_t>& i_mail)
+fapi2::ReturnCode check_for_completion_and_decode(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
+        const fapi2::buffer<uint64_t>& i_mail,
+        fapi2::hwp_data_ostream& o_log_data,
+        bool& o_loop_end)
 {
-    return ((SUCCESSFUL_COMPLETION == i_mail) || (FAILED_COMPLETION == i_mail));
+    o_loop_end = false;
+
+    switch(i_mail)
+    {
+        case SUCCESSFUL_COMPLETION:
+            o_loop_end = true;
+            FAPI_INF(TARGTIDFORMAT" Successful completion, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case FAILED_COMPLETION:
+            o_loop_end = true;
+            FAPI_INF(TARGTIDFORMAT" Failed completion, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case END_OF_INITILIAZATION:
+            FAPI_INF(TARGTIDFORMAT" End of initiliazation, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case END_OF_FINE_WRITE_LEVELING:
+            FAPI_INF(TARGTIDFORMAT" End of fine write training, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case END_OF_READ_ENABLE_TRAINING:
+            FAPI_INF(TARGTIDFORMAT" End of read enable training, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case END_OF_RD_DLY_CNTR_OPT:
+            FAPI_INF(TARGTIDFORMAT" End of read delay center optimization, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case END_OF_WR_DLY_CNTR_OPT:
+            FAPI_INF(TARGTIDFORMAT" End of write delay center optimization, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case END_OF_2D_RD_DLY_V_CNTR_OPT:
+            FAPI_INF(TARGTIDFORMAT" End of 2D read delay /voltage center optimization, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case END_OF_2D_WR_DLY_V_CNTR_OPT:
+            FAPI_INF(TARGTIDFORMAT" End of 2D write delay /voltage center optimization, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case END_OF_MAX_RD_LAT_TRAINING:
+            FAPI_INF(TARGTIDFORMAT" End of max read latency training, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case END_OF_RD_DQ_DSKEW_TRAINING:
+            FAPI_INF(TARGTIDFORMAT" End of read DQ deskew training, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case TRAINING_STAGE_RESERVED:
+            FAPI_INF(TARGTIDFORMAT" Reserved, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case END_OF_CS_CA_TRAINING:
+            FAPI_INF(TARGTIDFORMAT" End of CS/CA training, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case END_OF_RCD_QCS_QCA_TRAINING:
+            FAPI_INF(TARGTIDFORMAT" End of RCD QCS/QCA training, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case END_OF_LRDIMM_MREP_TRAINING:
+            FAPI_INF(TARGTIDFORMAT" End of LRDIMM MREP training, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case END_OF_LRDIMM_DWL_TRAINING:
+            FAPI_INF(TARGTIDFORMAT" End of LRDIMM DWL training, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case END_OF_LRDIMM_MRD_TRAINING:
+            FAPI_INF(TARGTIDFORMAT" End of LRDIMM MRD training, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case END_OF_LRDIMM_MWD_TRAINING:
+            FAPI_INF(TARGTIDFORMAT" End of LRDIMM MWD training, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case GEN_WRT_NOISE_SYN:
+            FAPI_INF(TARGTIDFORMAT" Generate write noise synchronization Stage, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case END_OF_MPR_RD_DLY_CNTR_OPT:
+            FAPI_INF(TARGTIDFORMAT" End of MPR read delay center optimization Stage, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case END_OF_WR_LVL_COARSE_DLY:
+            FAPI_INF(TARGTIDFORMAT" End of write level coarse delay Stage, code: 0x%016x", TARGTID, i_mail);
+            break;
+
+        case STREAMING_MSG:
+            // Decodes and prints streaming messages
+            FAPI_TRY(process_streaming_message(i_target, o_log_data));
+            break;
+
+        case SMBUS_MSG:
+            // Processes and handles the SMBus messages including sending out the RCW over i2c
+            FAPI_TRY(process_smbus_message(i_target));
+            break;
+
+        default:
+            FAPI_INF(TARGTIDFORMAT" Unknown major message: 0x%016x", TARGTID, i_mail);
+            break;
+    }
+
+    return fapi2::FAPI2_RC_SUCCESS;
+
+fapi_try_exit:
+    return fapi2::current_err;
 }
 
 ///
-/// @brief Configures the DRAM training message block
+/// @brief Configures the DRAM training message block using sim environment hardcoded values
 /// @param[in] i_target the memory port on which to operate
 /// @param[out] o_struct the message block
 /// @return fapi2::FAPI2_RC_SUCCESS iff successful
 ///
-fapi2::ReturnCode configure_dram_train_message_block(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
+fapi2::ReturnCode configure_dram_train_message_block_hardcodes(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>&
+        i_target,
         PMU_SMB_DDR5U_1D_t& o_struct)
 {
 
@@ -2153,11 +2272,124 @@ fapi2::ReturnCode configure_dram_train_message_block(const fapi2::Target<fapi2::
 }
 
 ///
-/// @brief Processes a streaming message from the mailbox protocol
-/// @param[in] i_target the target on which to operate
+/// @brief Configures the DRAM training message block using attributes
+/// @param[in] i_target the memory port on which to operate
+/// @param[in] i_sim value of ATTR_IS_SIMULATION
+/// @param[out] o_struct the message block
 /// @return fapi2::FAPI2_RC_SUCCESS iff successful
 ///
-fapi2::ReturnCode process_streaming_message(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target)
+fapi2::ReturnCode configure_dram_train_message_block(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
+        const uint8_t i_sim,
+        PMU_SMB_DDR5U_1D_t& o_struct)
+{
+    fapi2::ReturnCode l_rc;
+
+    const msg_block_params l_msg_block_config(i_target, l_rc);
+    FAPI_TRY(l_rc, "Unable to instantiate msg_block_params for target " TARGTIDFORMAT, TARGTID);
+
+    FAPI_TRY(l_msg_block_config.setup_AdvTrainOpt(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MsgMisc(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_Pstate(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_PllBypassEn(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_DRAMFreq(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_RCW05_next(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_RCW06_next(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_RXEN_ADJ(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_RX2D_DFE_Misc(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_PhyVref(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_D5Misc(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_WL_ADJ(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_SequenceCtrl(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_HdtCtrl(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_PhyCfg(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_DFIMRLMargin(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_X16Present(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_UseBroadcastMR(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_D5Quickboot(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_DisabledDbyte(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_CATrainOpt(i_sim, o_struct));
+    FAPI_TRY(l_msg_block_config.setup_TX2D_DFE_Misc(i_sim, o_struct));
+    FAPI_TRY(l_msg_block_config.setup_RX2D_TrainOpt(i_sim, o_struct));
+    FAPI_TRY(l_msg_block_config.setup_TX2D_TrainOpt(i_sim, o_struct));
+    FAPI_TRY(l_msg_block_config.setup_Share2DVrefResult(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MRE_MIN_PULSE(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_DWL_MIN_PULSE(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_PhyConfigOverride(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_EnabledDQsChA(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_CsPresentChA(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_EnabledDQsChB(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_CsPresentChB(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR0(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR2(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR3(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR4(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR5(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR6(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR32_next(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR8(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR32_ORG_next(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR10(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR11(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR12(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR13(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR14(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR15(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR111(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR32(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR33(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR34(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR35(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR32_ORG(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR37(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR38(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR39(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR33_ORG(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR11_next(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR12_next(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR13_next(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR33_ORG_next(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR33_next(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR50(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR51(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR52(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_DFE_GainBias(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_ReservedF6(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_ReservedF7(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_ReservedF8(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_ReservedF9(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_BCW04_next(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_BCW05_next(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_WR_RD_RTT_PARK(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_Reserved1E2(i_sim, o_struct));
+    FAPI_TRY(l_msg_block_config.setup_Reserved1E3(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_Reserved1E4(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_Reserved1E5(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_Reserved1E6(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_Reserved1E7(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_WL_ADJ_START(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_WL_ADJ_END(o_struct));
+    // TODO: Zen:MST-1732 Fill in RCW fields in ody_draminit message block from attributes
+    FAPI_TRY(l_msg_block_config.setup_RCW(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_BCW(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_VrefDq(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_MR3_per_dram(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_VrefCS(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_VrefCA(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_DisabledDB(o_struct));
+    FAPI_TRY(l_msg_block_config.setup_output_fields(o_struct));
+
+fapi_try_exit:
+    return fapi2::current_err;
+}
+
+///
+/// @brief Processes a streaming message from the mailbox protocol
+/// @param[in] i_target the target on which to operate
+/// @param[out] o_log_data hwp_data_ostream of streaming log
+/// @return fapi2::FAPI2_RC_SUCCESS iff successful
+///
+fapi2::ReturnCode process_streaming_message(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
+        fapi2::hwp_data_ostream& o_log_data)
 {
     constexpr uint64_t STRING_INDEX     = 32;
     constexpr uint64_t STRING_INDEX_LEN = 32;
@@ -2184,6 +2416,9 @@ fapi2::ReturnCode process_streaming_message(const fapi2::Target<fapi2::TARGET_TY
     l_mail.extractToRight<STRING_INDEX, STRING_INDEX_LEN>(l_string_index)
     .extractToRight<NUM_DATA, NUM_DATA_LEN>(l_num_data);
 
+    // Put the string index into the output stream
+    FAPI_TRY(o_log_data.put(static_cast<fapi2::hwp_data_unit>(l_string_index)));
+
     // Print out the message's "string index" to use to decode the string
     FAPI_INF(TARGTIDFORMAT " Message string index: 0x%08x has %u more data pieces for decode", TARGTID, l_string_index,
              l_num_data);
@@ -2197,6 +2432,9 @@ fapi2::ReturnCode process_streaming_message(const fapi2::Target<fapi2::TARGET_TY
 
         // Grab the data
         l_mail.extractToRight<DATA, DATA_LEN>(l_data);
+
+        // Put the data piece into the output stream
+        FAPI_TRY(o_log_data.put(static_cast<fapi2::hwp_data_unit>(l_data)));
 
         // Print the data
         // The data can be post processed using the Synopsys .strings file (not including here as it could be size prohibitive)
@@ -2219,8 +2457,21 @@ fapi2::ReturnCode configure_and_load_dram_train_message_block(const fapi2::Targe
         i_target,
         PMU_SMB_DDR5U_1D_t& io_msg_block)
 {
+    uint8_t l_sim = 0;
+    uint8_t l_data_source = 0;
+
+    FAPI_TRY(mss::attr::get_is_simulation(l_sim));
+    FAPI_TRY(mss::attr::get_ody_msg_block_data_source(i_target, l_data_source));
+
     // Configure the message block structure
-    FAPI_TRY(configure_dram_train_message_block(i_target, io_msg_block));
+    if (l_data_source == fapi2::ENUM_ATTR_ODY_MSG_BLOCK_DATA_SOURCE_USE_HARDCODES)
+    {
+        FAPI_TRY(configure_dram_train_message_block_hardcodes(i_target, io_msg_block));
+    }
+    else
+    {
+        FAPI_TRY(configure_dram_train_message_block(i_target, l_sim, io_msg_block));
+    }
 
     // Load the message block on to snps phy
     FAPI_TRY(load_msg_block(i_target, io_msg_block));
@@ -2230,15 +2481,49 @@ fapi_try_exit:
 }
 
 ///
+/// @brief Assembles a single registers worth of data from the buffer
+/// @param[in] i_mem_size size of the dmem/imem istream to be transferred per loop
+/// @param[in,out] io_bytes_copied the number of bytes copied
+/// @param[in] i_current_byte the pointer to the current byte
+/// @param[in,out] io_data the data for this register address
+/// @return The updated pointer to the current byte
+///
+const uint8_t* assemble_mem_bin_data_reg(const uint32_t i_mem_size,
+        uint32_t& io_bytes_copied,
+        const uint8_t* i_current_byte,
+        fapi2::buffer<uint64_t>& io_data)
+{
+    // Copy the last 8(56-63) bits of data
+    if (io_bytes_copied < i_mem_size)
+    {
+        io_data.insertFromRight < 64 - BITS_PER_BYTE, BITS_PER_BYTE > (*i_current_byte);
+        io_bytes_copied++;
+        i_current_byte++;
+    }
+
+    if (io_bytes_copied < i_mem_size)
+    {
+        // Copy the next 8(48-55) bits of data
+        io_data.insertFromRight < 64 - 2 * BITS_PER_BYTE, BITS_PER_BYTE > (*i_current_byte);
+        io_bytes_copied++;
+        i_current_byte++;
+    }
+
+    return i_current_byte;
+}
+
+///
 /// @brief Loads binary into registers
 /// @param[in] i_target the target on which to operate
+/// @param[in] i_is_first_load value noting if this is the first load of the given memory array
 /// @param[in] i_start_addr start address of  imem/dmem binary
 /// @param[in] i_data_start data pointer  of imem/dmem
-/// @param[in] i_mem_size size of the dmem/imem istream to be trasferred per loop
+/// @param[in] i_mem_size size of the dmem/imem istream to be transferred per loop
 /// @param[in] i_mem_total_size total size of the dmem/imem
 /// @return fapi2::FAPI2_RC_SUCCESS iff successful
 ///
 fapi2::ReturnCode load_mem_bin_data(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+                                    const uint8_t i_is_first_load,
                                     const uint32_t i_start_addr,
                                     uint8_t* const i_data_start,
                                     const uint32_t i_mem_size,
@@ -2249,7 +2534,7 @@ fapi2::ReturnCode load_mem_bin_data(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_
 
     uint64_t l_curr_addr = i_start_addr;
     uint32_t l_bytes_copied = 0;
-    uint8_t* l_curr_byte = i_data_start;
+    const uint8_t* l_curr_byte = i_data_start;
 
 #ifndef __PPE__
     constexpr uint64_t SECONDS_PER_MINUTE = 60;
@@ -2265,28 +2550,26 @@ fapi2::ReturnCode load_mem_bin_data(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_
     while(l_bytes_copied < i_mem_size)
     {
         // Local buffer for getting data from registers
-        fapi2::buffer<uint64_t> l_buffer;
+        fapi2::buffer<uint64_t> l_buffer_even;
+        fapi2::buffer<uint64_t> l_buffer_odd;
 
-        // Copy the last 8(56-63) bits of data
-        l_buffer.insertFromRight < 64 - BITS_PER_BYTE, BITS_PER_BYTE > (*l_curr_byte);
-        l_bytes_copied++;
-        l_curr_byte++;
+        l_curr_byte = assemble_mem_bin_data_reg(i_mem_size, l_bytes_copied, l_curr_byte, l_buffer_even);
+        l_curr_byte = assemble_mem_bin_data_reg(i_mem_size, l_bytes_copied, l_curr_byte, l_buffer_odd);
 
-        if (l_bytes_copied < i_mem_size)
-        {
-            // Copy the next 8(48-55) bits of data
-            l_buffer.insertFromRight < 64 - 2 * BITS_PER_BYTE, BITS_PER_BYTE > (*l_curr_byte);
-            l_bytes_copied++;
-            l_curr_byte++;
-        }
-
-        // Write l_buffer to the register
+        // Write l_buffer to the registers
         for(const auto& l_port : l_port_targets)
         {
-            FAPI_TRY(putScom(l_port, mss::ody::phy::convert_synopsys_to_ibm_reg_addr(l_curr_addr), l_buffer));
+            FAPI_TRY(phy_mem_load_helper( l_port,
+                                          i_is_first_load,
+                                          l_curr_addr,
+                                          l_buffer_even,
+                                          l_buffer_odd));
         }
 
-        l_curr_addr += 1;
+        // The registers are written in pairs so we increment by 2
+        // Additionally, we need to write the same data to the same register in each port
+        // Therefore, the address is incremented outside of the port loop
+        l_curr_addr += 2;
 
 #ifndef __PPE__
         {
@@ -2426,15 +2709,19 @@ fapi2::ReturnCode cleanup_training(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PO
 
     // Per the Synopsys documentation, to cleanup after the training:
     // 1. Stop the processor (stall it)
-    // 2. Reset the calibration engines to their initial state (cal Zap!)
+    // 2. Disable the CalZap register
+    // 3. Configure CSR access
     fapi2::buffer<uint64_t> l_data;
 
     // 1. Stop the processor (stall it)
     FAPI_TRY(stall_arc_processor(i_target));
 
-    // 2. Reset the calibration engines to their initial state (cal Zap!)
-    l_data.flush<0>().setBit<scomt::mp::DWC_DDRPHYA_MASTER0_BASE0_CALZAP_CALZAP>();
+    // 2. Disable the CalZap register before reading out the training results
     FAPI_TRY(fapi2::putScom(i_target, scomt::mp::DWC_DDRPHYA_MASTER0_BASE0_CALZAP, l_data));
+
+    // 3. Configure CSR access as well
+    // Note: ON_N refers to scom access -> so this enables scom access
+    FAPI_TRY(configure_phy_scom_access(i_target, mss::states::ON_N));
 
 fapi_try_exit:
     return fapi2::current_err;
@@ -2470,6 +2757,10 @@ fapi2::ReturnCode ody_load_dmem_helper(const fapi2::Target<fapi2::TARGET_TYPE_OC
     constexpr uint64_t DMEM_END_ADDR = 0x60000;
     constexpr size_t MAX_IMAGE_SIZE = 65536;
 
+    // Get all the mem port targets
+    const auto& l_port_targets = mss::find_targets<fapi2::TARGET_TYPE_MEM_PORT>(i_target);
+    uint8_t l_is_first_load = 0;
+
     // Get the end address
     const auto l_end_addr = mss::ody::phy::calculate_image_end_addr(l_start_addr, i_dmem_size);
 
@@ -2496,11 +2787,27 @@ fapi2::ReturnCode ody_load_dmem_helper(const fapi2::Target<fapi2::TARGET_TYPE_OC
                 TARGTIDFORMAT " DMEM start address(0x%08x) or size(0x%04x) puts image out of range in phy.", TARGTID,
                 l_start_addr, i_dmem_size);
 
+    // If there is at least one port configured, use that port to grab the first load attribute
+    // Going to make the assumption that the ports are always loaded together and that errors did not occur setting the attributes on both ports
+    // This seems like a safe assumption as attribute set/get errors are extremely rare
+    if(!l_port_targets.empty())
+    {
+        FAPI_TRY(mss::attr::get_ody_dmem_first_load(l_port_targets[0], l_is_first_load));
+    }
+
     return mss::ody::phy::load_mem_bin_data(i_target,
+                                            l_is_first_load,
                                             l_start_addr,
                                             i_dmem_data,
                                             i_dmem_size,
                                             MAX_IMAGE_SIZE);
+
+    // Note: we specifically do NOT set the first load attributes here
+    // Due to memory size constraints on the SBE, this procedure can be called multiple times
+    // Setting the attributes here could cause speed ups within the helper functions to not be run
+    // for the second or third executions of the memory load
+    // For normal boots, these attributes will be set in the draminit procedure
+
 fapi_try_exit:
     return fapi2::current_err;
 }
@@ -2552,11 +2859,15 @@ fapi2::ReturnCode ody_load_imem_helper(const fapi2::Target<fapi2::TARGET_TYPE_OC
                 TARGTIDFORMAT " IMEM start address(0x%08x) or size(0x%04x) puts image out of range in phy.", TARGTID, l_start_addr,
                 i_imem_size);
 
+    // Note: the IMEM is not guaranteed to be initialized to zeroes, so this load is considered to NOT be the first load
+    // This will skip some efficiency boosts we can use for the DMEM load
     return mss::ody::phy::load_mem_bin_data(i_target,
+                                            fapi2::ENUM_ATTR_ODY_DMEM_FIRST_LOAD_NO,
                                             l_start_addr,
                                             i_imem_data,
                                             i_imem_size,
                                             MAX_IMAGE_SIZE);
+
 fapi_try_exit:
     return fapi2::current_err;
 
@@ -9210,6 +9521,54 @@ void display_msg_block(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_targe
     FAPI_INF("  .PmuInternalRev1      = 0x%04x; // " TARGTIDFORMAT, i_msg_block.PmuInternalRev1, TARGTID);
     FAPI_INF("} // _PMU_SMB_DDR5_1D_t " TARGTIDFORMAT, TARGTID);
 
+}
+
+///
+/// @brief Checks the training status from mail and message block
+/// @param[in] i_target the memory port on which to operate
+/// @param[in] i_status the final mail status from training
+/// @param[in] i_msg_block_response the message block
+/// @return fapi2::FAPI2_RC_SUCCESS iff successful
+///
+fapi2::ReturnCode check_training_result(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
+                                        const uint64_t i_status,
+                                        const _PMU_SMB_DDR5_1D_t& i_msg_block_response)
+{
+    constexpr uint8_t MSG_BLOCK_TRAIN_PASS = 0x00;
+
+    mss::ody::phy::bad_bit_interface l_interface(i_msg_block_response);
+
+    // Check training complete mail message
+    FAPI_ASSERT((i_status == SUCCESSFUL_COMPLETION),
+                fapi2::ODY_DRAMINIT_TRAINING_FAILURE_MAIL()
+                .set_PORT_TARGET(i_target)
+                .set_TRAINING_STATUS(i_status)
+                .set_EXPECTED_STATUS(SUCCESSFUL_COMPLETION)
+                .set_PMU_REVISION(i_msg_block_response.PmuRevision),
+                TARGTIDFORMAT " DRAM training returned a non-success status "
+                "mail message: 0x%02x (expected 0x%02x)",
+                TARGTID, i_status, SUCCESSFUL_COMPLETION);
+
+    // Check message block return code
+    FAPI_ASSERT((i_msg_block_response.CsTestFail == MSG_BLOCK_TRAIN_PASS),
+                fapi2::ODY_DRAMINIT_TRAINING_FAILURE_MSG_BLOCK()
+                .set_PORT_TARGET(i_target)
+                .set_ACTUAL_CSTESTFAIL(i_msg_block_response.CsTestFail)
+                .set_EXPECTED_CSTESTFAIL(MSG_BLOCK_TRAIN_PASS)
+                .set_PMU_REVISION(i_msg_block_response.PmuRevision),
+                TARGTIDFORMAT " DRAM training returned a non-success status "
+                "in the message block: 0x%02x (expected 0x%02x)",
+                TARGTID, i_msg_block_response.CsTestFail, MSG_BLOCK_TRAIN_PASS);
+
+    // Check for FIRs then record the bad bits data into our attribute if there are no FIRs set
+    // Hostboot will consume the bad bits attribute in the host_draminit procedure
+    FAPI_TRY(mss::record_bad_bits<mss::mc_type::ODYSSEY>(i_target, l_interface));
+
+    FAPI_INF(TARGTIDFORMAT " DRAM training returned PASSING status", TARGTID);
+    return fapi2::FAPI2_RC_SUCCESS;
+
+fapi_try_exit:
+    return fapi2::current_err;
 }
 
 } // namespace phy

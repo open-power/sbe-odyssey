@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -60,6 +60,12 @@ const std::vector< std::pair<uint8_t , uint8_t> > throttle_traits<mss::mc_type::
     // MDS is not an attr enum. It is in exp_consts.H. have set this manually according to is_mds()
     {mss::exp::DIMM_TYPE_MDS, 0b100},
     {ANY_TYPE, 0b111}
+};
+
+const std::vector< std::pair<uint8_t , uint8_t> > throttle_traits<mss::mc_type::EXPLORER>::DIMM_ATTACHED_MAP =
+{
+    {1, 0b00},
+    {ANY_ATTACHED, 0b11}
 };
 
 ///
@@ -207,17 +213,18 @@ fapi_try_exit:
 /// @note used to set power curve attributes in calling function
 /// @note decodes the attribute "encoding" to get the power curves and power limits for a dimm
 ///
-fapi2::ReturnCode get_power_attrs (const mss::throttle_type i_throttle_type,
-                                   const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_port,
-                                   const std::vector< uint64_t >& i_slope,
-                                   const std::vector< uint64_t >& i_intercept,
-                                   const std::vector< uint64_t >& i_thermal_power_limit,
-                                   const std::vector< uint64_t >& i_current_curve_with_limit,
-                                   const std::vector< uint64_t >& i_safemode_throttles,
-                                   uint16_t o_slope [throttle_traits<mss::mc_type::EXPLORER>::DIMMS_PER_PORT],
-                                   uint16_t o_intercept [throttle_traits<mss::mc_type::EXPLORER>::DIMMS_PER_PORT],
-                                   uint32_t o_limit [throttle_traits<mss::mc_type::EXPLORER>::DIMMS_PER_PORT],
-                                   uint32_t& o_safemode)
+template<>
+fapi2::ReturnCode get_power_attrs<mss::mc_type::EXPLORER> (const mss::throttle_type i_throttle_type,
+        const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_port,
+        const std::vector< uint64_t >& i_slope,
+        const std::vector< uint64_t >& i_intercept,
+        const std::vector< uint64_t >& i_thermal_power_limit,
+        const std::vector< uint64_t >& i_current_curve_with_limit,
+        const std::vector< uint64_t >& i_safemode_throttles,
+        uint16_t o_slope [throttle_traits<mss::mc_type::EXPLORER>::DIMMS_PER_PORT],
+        uint16_t o_intercept [throttle_traits<mss::mc_type::EXPLORER>::DIMMS_PER_PORT],
+        uint32_t o_limit [throttle_traits<mss::mc_type::EXPLORER>::DIMMS_PER_PORT],
+        uint32_t& o_safemode)
 {
     using TT = throttle_traits<mss::mc_type::EXPLORER>;
 

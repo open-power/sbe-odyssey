@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -45,6 +45,7 @@
 #include <generic/memory/lib/utils/mc/gen_mss_port.H>
 #include <generic/memory/mss_git_data_helper.H>
 #include <generic/memory/lib/utils/fir/gen_mss_unmask.H>
+#include <lib/workarounds/ody_dfi_complete_workarounds.H>
 
 extern "C"
 {
@@ -66,11 +67,10 @@ extern "C"
             return fapi2::FAPI2_RC_SUCCESS;
         }
 
-        // TODO Zen:MST-1405 Power management settings have changed in Odyssey. Need to update generic function
-        // and traits to accommodate changes
         // Enable Power management based off of mrw_power_control_requested
-        // FAPI_TRY( mss::enable_power_management<mss::mc_type::ODYSSEY>(i_target), "%s Failed to enable power management",
-        //           mss::c_str(i_target) );
+        FAPI_TRY( mss::enable_power_management<mss::mc_type::ODYSSEY>(i_target),
+                  TARGTIDFORMAT " Failed to enable power management",
+                  TARGTID );
 
         // TODO Zen:MST-1406 Check with design team if we have an "init complete" indicator in Odyssey.
         // This was assigned to an unused (and unnamed) bit on Explorer PMU8Q.
@@ -83,10 +83,13 @@ extern "C"
                   TARGTIDFORMAT " Failed to change_dfi_init_start",
                   TARGTID );
 
-        // Checks that the DFI init completed successfully
-        FAPI_TRY(mss::ody::poll_for_dfi_init_complete(i_target),
-                 TARGTIDFORMAT " Failed to poll_for_dfi_init_complete",
-                 TARGTID );
+        // Poll the DFI interface for completion
+        FAPI_TRY( mss::ody::workarounds::check_dfi_init( i_target ), TARGTIDFORMAT " Failed to check if DFI init completed",
+                  TARGTID );
+
+        // Deasserts reset_n in certain simulation environments
+        FAPI_TRY( mss::ody::workarounds::deassert_resetn( i_target ), TARGTIDFORMAT " Failed to deassert reset_n",
+                  TARGTID );
 
         // Start the refresh engines by setting MBAREF0Q(0) = 1. Note that the remaining bits in
         // MBAREF0Q should retain their initialization values.

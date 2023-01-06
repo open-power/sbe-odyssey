@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -40,6 +40,10 @@
 
 namespace mss
 {
+
+// Generates linkage
+constexpr std::pair<uint64_t, uint64_t>
+mcbistTraits<mss::mc_type::ODYSSEY, fapi2::TARGET_TYPE_OCMB_CHIP>::PATTERN_REGS[];
 
 ///
 /// @brief Gets the attribute for freq
@@ -129,6 +133,33 @@ namespace mcbist
 {
 
 ///
+/// @brief Get a list of ports involved in the program
+/// Specialization for program<mss::mc_type::ODYSSEY>
+/// @param[in] i_target the target for this program
+/// @return vector of port targets
+///
+template<>
+std::vector<fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>>
+        program<mss::mc_type::ODYSSEY>::get_port_list( const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target ) const
+{
+
+    return mss::find_targets<fapi2::TARGET_TYPE_MEM_PORT>(i_target);
+}
+///
+/// @brief Configures broadcast mode, if it is needed
+/// @param[in] i_target the target to effect
+/// @param[in,out] io_program the mcbist::program
+/// @return FAPI2_RC_SUCCSS iff ok
+///
+template<>
+fapi2::ReturnCode configure_broadcast_mode(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+        mcbist::program<mss::mc_type::ODYSSEY>& io_program)
+{
+    // No broadcast mode for ODYSSEY
+    return fapi2::FAPI2_RC_SUCCESS;
+}
+
+///
 /// @brief Load MCBIST ECC (and?) spare data pattern given a pattern - Odyssey specialization
 /// @param[in] i_target the target to effect
 /// @param[in] i_pattern an mcbist::patterns
@@ -142,10 +173,13 @@ fapi2::ReturnCode load_eccspare_pattern<mss::mc_type::ODYSSEY>(
     const bool i_invert )
 {
     // First up assemble the pattern
-    const auto l_pattern = generate_eccspare_pattern(i_pattern, i_invert);
+    const auto l_pattern_0to7  = generate_eccspare_pattern(i_pattern, i_invert);
+    const auto l_pattern_8to15 = generate_eccspare_pattern_beats8to15(i_pattern, i_invert);
 
-    FAPI_TRY(fapi2::putScom(i_target, scomt::ody::ODC_MCBIST_SCOM_MCBFDQ, l_pattern));
-    FAPI_TRY(fapi2::putScom(i_target, scomt::ody::ODC_MCBIST_SCOM_MCBFDSPQ, l_pattern));
+    FAPI_TRY(fapi2::putScom(i_target, scomt::ody::ODC_MCBIST_SCOM_MCBFDQ, l_pattern_0to7));
+    FAPI_TRY(fapi2::putScom(i_target, scomt::ody::ODC_MCBIST_SCOM_MCBFDSPQ, l_pattern_0to7));
+    FAPI_TRY(fapi2::putScom(i_target, scomt::ody::ODC_MCBIST_SCOM_MCBFD_HQ, l_pattern_8to15));
+    FAPI_TRY(fapi2::putScom(i_target, scomt::ody::ODC_MCBIST_SCOM_MCBFDSP_HQ, l_pattern_8to15));
 
 fapi_try_exit:
     return fapi2::current_err;

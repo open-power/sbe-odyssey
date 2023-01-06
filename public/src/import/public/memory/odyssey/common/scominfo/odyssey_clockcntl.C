@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -140,8 +140,21 @@ extern "C"
             if ( (l_endPoint == CHIPLET_CTRL_ENDPOINT) || // 0x0
                  (l_endPoint == CLOCK_CTRL_ENDPOINT) )    // 0x3
             {
-                dbg_print("\nChipletVitalDomainTable look-up: ChipletId 0x%.2X\n", l_chipletId);
-                o_domain = ChipletVitalDomainTable[l_chipletId];
+                dbg_print("\nChipletVitlDomainTable look-up: ChipletId 0x%.2X\n", l_chipletId);
+
+                o_domain = ODYSSEY_FAKE_DOMAIN;
+
+                // Find matching chiplet ID in vitl domain table
+                for (l_index = 0;
+                     l_index < ( sizeof(ChipletVitlDomainTable) / sizeof(ChipletVitlDomain_t) );
+                     ++l_index)
+                {
+                    if ( (ChipletVitlDomainTable[l_index].chipletId == l_chipletId) )
+                    {
+                        o_domain = ChipletVitlDomainTable[l_index].domain;
+                        break;
+                    }
+                }
 
                 // Check for invalid chiplet ID that results in bad domain
                 if (o_domain == ODYSSEY_FAKE_DOMAIN)

@@ -37,7 +37,13 @@
 #define _MSS_GENERIC_CHECK_H_
 
 #include <fapi2.H>
-#include <generic/memory/lib/utils/c_str.H>
+
+
+#ifdef __PPE__
+    #include <c_str.H>
+#else
+    #include <generic/memory/lib/utils/c_str.H>
+#endif
 
 namespace mss
 {

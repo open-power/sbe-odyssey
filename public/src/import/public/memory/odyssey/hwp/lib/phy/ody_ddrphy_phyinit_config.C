@@ -52,12 +52,14 @@
     #include <stdio.h>
 #endif
 
+#include <mss_generic_system_attribute_getters.H>
 #include <generic/memory/lib/utils/mss_generic_check.H>
 #include <lib/phy/ody_phy_utils.H>
 #include <lib/shared/ody_consts.H>
 #include <lib/phy/ody_ddrphy_csr_defines.H>
 #include <lib/phy/ody_phy_reset.H>
 #include <lib/phy/ody_ddrphy_phyinit_structs.H>
+#include <lib/workarounds/ody_dfi_complete_workarounds.H>
 
 ///
 /// @brief Maps from drive strength in Ohms to the register value
@@ -653,8 +655,8 @@ fapi2::ReturnCode init_phy_config( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PO
                 {
                     ck_anib = 1;
                 }
-                // TODO:ZEN:MST-1585 Add in UDIMM vs RDIMM switches into the PHY init code
-                else if((anib == 7 || anib == 8) && i_user_input_basic.NumAnib == 14)
+                // Note: the following else if is only needed for UDIMM
+                else if((i_user_input_basic.DimmType == UDIMM) && ((anib == 7 || anib == 8) && i_user_input_basic.NumAnib == 14))
                 {
                     ck_anib = 1;
                 }
@@ -1927,6 +1929,7 @@ fapi2::ReturnCode init_phy_config( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PO
     //      DFIPHYUPDRESP
     //
     //##############################################################
+    // IBM note: update init_phy_config_sim if this code changes
     {
         int DFIPHYUPD;
         int DFIPHYUPDCNT;
@@ -1943,7 +1946,7 @@ fapi2::ReturnCode init_phy_config( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PO
         FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming DFIPHYUPD::DFIPHYUPDRESP to 0x%x\n", TARGTID,
                   DFIPHYUPDRESP);
 
-        dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tMASTER | csr_DFIPHYUPD_ADDR), DFIPHYUPD);
+        FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tMASTER | csr_DFIPHYUPD_ADDR), DFIPHYUPD));
     }
 
     //##############################################################
@@ -2501,12 +2504,11 @@ fapi2::ReturnCode init_phy_config( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PO
         int SnoopVal, HwtSnoopEn1, HwtSnoopEn2, HwtSnoopEn3;
         int D5ReadCRCEnable = i_user_input_dram_config.MR50_A0 & 0x1; // MR50:OP[0:0] (Read CRC Enable)
 
-        // TODO:ZEN:MST-1585 Add in UDIMM vs RDIMM switches into the PHY init code
         // UDIMM timing
-        int D52Nmode;
+        int D52Nmode = 0;
 
         // RDIMM timing
-        //int D5RdimmSDRmode;
+        int D5RdimmSDRmode = 0;
 
 
         for (pstate = 0; pstate < i_user_input_basic.NumPStates; pstate++)
@@ -2515,16 +2517,19 @@ fapi2::ReturnCode init_phy_config( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PO
             mr_cl = ( i_user_input_dram_config.MR0_A0 & 0x7c) >> 2;
 
             // TODO:ZEN:MST-1598 Fix ODY PHY init to allow for 80 bit wide UDIMM bus
-            // TODO:ZEN:MST-1585 Add in UDIMM vs RDIMM switches into the PHY init code
             // Note: UDIMM
-            D52Nmode = dwc_ddrphy_phyinit_is2Ttiming(i_user_input_dram_config);
-
+            if(i_user_input_basic.DimmType == UDIMM)
+            {
+                D52Nmode = dwc_ddrphy_phyinit_is2Ttiming(i_user_input_dram_config);
+            }
             // Note: RDIMM
-# if 0
-            D5RdimmSDRmode = (i_user_input_dram_config.RCW00_ChA_D0 & 0x1) ? 0 : 1; // RCW00_ChA_D0[0]
-            // Note: this line I think can be deleted as it is set on 1106
-            //D5ReadCRCEnable = i_user_input_dram_config.MR50_A0 & 0x1; // MR50:OP[0:0] (Read CRC Enable)
-#endif
+            else
+            {
+                D5RdimmSDRmode = (i_user_input_dram_config.RCW00_ChA_D0 & 0x1) ? 0 : 1; // RCW00_ChA_D0[0]
+                // Note: setting the same value as in the above declarations
+                // However, leaving this in for parity with the original code
+                D5ReadCRCEnable = i_user_input_dram_config.MR50_A0 & 0x1; // MR50:OP[0:0] (Read CRC Enable)
+            }
 
             cl = 0;
             cwl = 0;
@@ -2564,8 +2569,8 @@ fapi2::ReturnCode init_phy_config( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PO
                 ReadCRCDly = 2;
             }
 
-            // TODO:ZEN:MST-1585 Add in UDIMM vs RDIMM switches into the PHY init code
             // UDIMM timings
+            if(i_user_input_basic.DimmType == UDIMM)
             {
                 RxEnDelay   = cl - (8 + (4 * RLm13)) + D52Nmode * 2 + ReadCRCDly;
                 RxValDelay  = cl - (8 + (4 * RLm13)) + D52Nmode * 2 + ReadCRCDly;
@@ -2574,17 +2579,16 @@ fapi2::ReturnCode init_phy_config( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PO
                 TxEnDelay   = cwl - (8 + (4 * WLm13)) + 2 * D52Nmode;
                 WrcsDelay   = cwl - (8 + (4 * WLm13)) + 2 * D52Nmode;
             }
-
-            // TODO:ZEN:MST-1585 Add in UDIMM vs RDIMM switches into the PHY init code
             // RDIMM timings
-#if 0
-            RxEnDelay   = cl - (8 + (4 * RLm13) - (2 * D5RdimmSDRmode)) + ReadCRCDly;
-            RxValDelay  = cl - (8 + (4 * RLm13) - (2 * D5RdimmSDRmode)) + ReadCRCDly;
-            RdcsDelay   = cl - (8 + (4 * RLm13) - (2 * D5RdimmSDRmode)) + ReadCRCDly;
-            SnoopDelay  = cl - (8 + (4 * RLm13) - (2 * D5RdimmSDRmode)) + ReadCRCDly;
-            TxEnDelay   = cwl - (8 + (4 * WLm13) - (2 * D5RdimmSDRmode));
-            WrcsDelay   = cwl - (8 + (4 * WLm13) - (2 * D5RdimmSDRmode));
-#endif
+            else
+            {
+                RxEnDelay   = cl - (8 + (4 * RLm13) - (2 * D5RdimmSDRmode)) + ReadCRCDly;
+                RxValDelay  = cl - (8 + (4 * RLm13) - (2 * D5RdimmSDRmode)) + ReadCRCDly;
+                RdcsDelay   = cl - (8 + (4 * RLm13) - (2 * D5RdimmSDRmode)) + ReadCRCDly;
+                SnoopDelay  = cl - (8 + (4 * RLm13) - (2 * D5RdimmSDRmode)) + ReadCRCDly;
+                TxEnDelay   = cwl - (8 + (4 * WLm13) - (2 * D5RdimmSDRmode));
+                WrcsDelay   = cwl - (8 + (4 * WLm13) - (2 * D5RdimmSDRmode));
+            }
 
             RxEnWidth   = 8 + D5ReadCRCEnable;
             RxValWidth  = 8 + D5ReadCRCEnable;
@@ -3006,23 +3010,13 @@ fapi2::ReturnCode init_phy_config( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PO
                     DOCByteSelTg[tg] = 0;
                 }
 
-                // TODO:ZEN:MST-1585 Add in UDIMM vs RDIMM switches into the PHY init code
                 // UDIMM
-                // ECC byte in X4 and X8
-                Nibble_ECC = (i_user_input_advanced.Nibble_ECC & ((0x1 << tg) & 0xf)) ? 1 : 0;
+                if(i_user_input_basic.DimmType == UDIMM)
+                {
+                    // ECC byte in X4 and X8
+                    Nibble_ECC = (i_user_input_advanced.Nibble_ECC & ((0x1 << tg) & 0xf)) ? 1 : 0;
 
-                if ((byte > 7 || (byte == 4 && i_user_input_basic.NumDbyte == 5)) && (Nibble_ECC))
-                {
-                    NoX4onUpperNibbleTg[tg] = 0x1;
-                }
-                else
-                {
-                    NoX4onUpperNibbleTg[tg] = 0x0;
-                }
-
-                if (i_user_input_advanced.NoX4onUpperNibble_Override)
-                {
-                    if (i_user_input_advanced.NoX4onUpperNibbleTg[tg] & ((0x1 << byte) & 0xfff))
+                    if ((byte > 7 || (byte == 4 && i_user_input_basic.NumDbyte == 5)) && (Nibble_ECC))
                     {
                         NoX4onUpperNibbleTg[tg] = 0x1;
                     }
@@ -3031,13 +3025,24 @@ fapi2::ReturnCode init_phy_config( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PO
                         NoX4onUpperNibbleTg[tg] = 0x0;
                     }
 
-                }
+                    if (i_user_input_advanced.NoX4onUpperNibble_Override)
+                    {
+                        if (i_user_input_advanced.NoX4onUpperNibbleTg[tg] & ((0x1 << byte) & 0xfff))
+                        {
+                            NoX4onUpperNibbleTg[tg] = 0x1;
+                        }
+                        else
+                        {
+                            NoX4onUpperNibbleTg[tg] = 0x0;
+                        }
 
-                // TODO:ZEN:MST-1585 Add in UDIMM vs RDIMM switches into the PHY init code
+                    }
+                }
                 // RDIMM
-#if 0
-                NoX4onUpperNibbleTg[tg] = 0x0;
-#endif
+                else
+                {
+                    NoX4onUpperNibbleTg[tg] = 0x0;
+                }
             }
 
             FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming PptCtlStatic::DOCByteSelTg0 (dbyte=%d) to 0x%x",
@@ -3101,23 +3106,17 @@ fapi2::ReturnCode init_phy_config( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PO
             {
                 c_addr = anib << 12;
 
-                // TODO:ZEN:MST-1585 Add in UDIMM vs RDIMM switches into the PHY init code
                 // Udimm condition
-                if ((anib >= 6) && (!(i_user_input_basic.NumAnib == 14 && anib == 7)))
+                if (((anib >= 6) && (!(i_user_input_basic.NumAnib == 14 && anib == 7))) && (i_user_input_basic.DimmType == UDIMM))
                 {
                     Ch1_ANIB = 1 ;
                 }
-
                 // Rdimm condition
-#if 0
-
-                if ((anib >= 6) && (!(pUserInputBasic->NumAnib == 14 && anib == 11)) && (!(pUserInputBasic->NumAnib == 12
-                        && anib == 9)))
+                else if (((anib >= 6) && (!(i_user_input_basic.NumAnib == 14 && anib == 11)) && (!(i_user_input_basic.NumAnib == 12
+                          && anib == 9))) && (i_user_input_basic.DimmType != UDIMM))
                 {
                     Ch1_ANIB = 1 ;
                 }
-
-#endif
                 else
                 {
                     Ch1_ANIB = 0 ;
@@ -3125,7 +3124,8 @@ fapi2::ReturnCode init_phy_config( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PO
 
                 if(Ch1_ANIB == 1)
                 {
-                    dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | c_addr | csr_AcPowerDownStatic_ADDR), AcPowerDownStatic);
+                    FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | c_addr | csr_AcPowerDownStatic_ADDR),
+                             AcPowerDownStatic));
                     FAPI_DBG (TARGTIDFORMAT
                               " //// [phyinit_C_initPhyConfig] Programming AcPowerDownStatic (CH1 ANIB=%d) to 0x%x\n", TARGTID, anib,
                               AcPowerDownStatic);
@@ -3151,8 +3151,8 @@ fapi2::ReturnCode init_phy_config( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PO
     //
     //##############################################################
     {
-        // TODO:ZEN:MST-1585 Add in UDIMM vs RDIMM switches into the PHY init code
         // UDIMM
+        if(i_user_input_basic.DimmType == UDIMM)
         {
             if(i_user_input_basic.NumAnib == 6)
             {
@@ -3200,54 +3200,53 @@ fapi2::ReturnCode init_phy_config( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PO
             }
         }
 
-        // TODO:ZEN:MST-1585 Add in UDIMM vs RDIMM switches into the PHY init code
         // RDIMM
-#if 0
-
-        if(i_user_input_basic.NumAnib == 12)
+        else
         {
-            FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=1) to 0x8", TARGTID);
-            FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=2) to 0xa", TARGTID);
-            FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=3) to 0xa", TARGTID);
-            FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=4) to 0xa", TARGTID);
-            FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=5) to 0xc", TARGTID);
-            FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=6) to 0xc", TARGTID);
-            FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=7) to 0xa", TARGTID);
-            FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=8) to 0xa", TARGTID);
-            FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x1000 | csr_AForceTriCont_ADDR), 0x8));
-            FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x2000 | csr_AForceTriCont_ADDR), 0xa));
-            FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x3000 | csr_AForceTriCont_ADDR), 0xa));
-            FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x4000 | csr_AForceTriCont_ADDR), 0xa));
-            FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x5000 | csr_AForceTriCont_ADDR), 0xc));
-            FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x6000 | csr_AForceTriCont_ADDR), 0xc));
-            FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x7000 | csr_AForceTriCont_ADDR), 0xa));
-            FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x8000 | csr_AForceTriCont_ADDR), 0xa));
-        }
-        else if(i_user_input_basic.NumAnib == 14)
-        {
-            FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=1) to 0x8", TARGTID);
-            FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=2) to 0xa", TARGTID);
-            FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=3) to 0xa", TARGTID);
-            FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=4) to 0xa", TARGTID);
-            FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=5) to 0xc", TARGTID);
-            FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=6) to 0xc", TARGTID);
-            FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=7) to 0xf", TARGTID);
-            FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=8) to 0xf", TARGTID);
-            FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=9) to 0xa", TARGTID);
-            FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=10) to 0xa", TARGTID);
-            FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x1000 | csr_AForceTriCont_ADDR), 0x8));
-            FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x2000 | csr_AForceTriCont_ADDR), 0xa));
-            FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x3000 | csr_AForceTriCont_ADDR), 0xa));
-            FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x4000 | csr_AForceTriCont_ADDR), 0xa));
-            FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x5000 | csr_AForceTriCont_ADDR), 0xc));
-            FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x6000 | csr_AForceTriCont_ADDR), 0xc));
-            FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x7000 | csr_AForceTriCont_ADDR), 0xf));
-            FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x8000 | csr_AForceTriCont_ADDR), 0xf));
-            FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x9000 | csr_AForceTriCont_ADDR), 0xa));
-            FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0xa000 | csr_AForceTriCont_ADDR), 0xa));
+            if(i_user_input_basic.NumAnib == 12)
+            {
+                FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=1) to 0x8", TARGTID);
+                FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=2) to 0xa", TARGTID);
+                FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=3) to 0xa", TARGTID);
+                FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=4) to 0xa", TARGTID);
+                FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=5) to 0xc", TARGTID);
+                FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=6) to 0xc", TARGTID);
+                FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=7) to 0xa", TARGTID);
+                FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=8) to 0xa", TARGTID);
+                FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x1000 | csr_AForceTriCont_ADDR), 0x8));
+                FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x2000 | csr_AForceTriCont_ADDR), 0xa));
+                FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x3000 | csr_AForceTriCont_ADDR), 0xa));
+                FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x4000 | csr_AForceTriCont_ADDR), 0xa));
+                FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x5000 | csr_AForceTriCont_ADDR), 0xc));
+                FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x6000 | csr_AForceTriCont_ADDR), 0xc));
+                FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x7000 | csr_AForceTriCont_ADDR), 0xa));
+                FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x8000 | csr_AForceTriCont_ADDR), 0xa));
+            }
+            else if(i_user_input_basic.NumAnib == 14)
+            {
+                FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=1) to 0x8", TARGTID);
+                FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=2) to 0xa", TARGTID);
+                FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=3) to 0xa", TARGTID);
+                FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=4) to 0xa", TARGTID);
+                FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=5) to 0xc", TARGTID);
+                FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=6) to 0xc", TARGTID);
+                FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=7) to 0xf", TARGTID);
+                FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=8) to 0xf", TARGTID);
+                FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=9) to 0xa", TARGTID);
+                FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming AForceTriCont (anib=10) to 0xa", TARGTID);
+                FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x1000 | csr_AForceTriCont_ADDR), 0x8));
+                FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x2000 | csr_AForceTriCont_ADDR), 0xa));
+                FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x3000 | csr_AForceTriCont_ADDR), 0xa));
+                FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x4000 | csr_AForceTriCont_ADDR), 0xa));
+                FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x5000 | csr_AForceTriCont_ADDR), 0xc));
+                FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x6000 | csr_AForceTriCont_ADDR), 0xc));
+                FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x7000 | csr_AForceTriCont_ADDR), 0xf));
+                FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x8000 | csr_AForceTriCont_ADDR), 0xf));
+                FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0x9000 | csr_AForceTriCont_ADDR), 0xa));
+                FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tANIB | 0xa000 | csr_AForceTriCont_ADDR), 0xa));
+            }
         }
 
-#endif
     }
 
     /*     //##############################################################
@@ -3487,7 +3486,7 @@ fapi2::ReturnCode init_phy_structs( const fapi2::Target<fapi2::TARGET_TYPE_MEM_P
 
         io_user_input_advanced.D5DisableRetraining      = 0x0000;
 
-        io_user_input_advanced.DFIPHYUPDCNT             = 0b0111;
+        io_user_input_advanced.DFIPHYUPDCNT             = 0b0000;
         io_user_input_advanced.DFIPHYUPDRESP            = 0b000;
         io_user_input_advanced.Nibble_ECC               = 0x0; // Setup to be a DDIMM
         io_user_input_advanced.NoX4onUpperNibble_Override = 0; // Do not use
@@ -3515,8 +3514,7 @@ fapi2::ReturnCode init_phy_structs( const fapi2::Target<fapi2::TARGET_TYPE_MEM_P
         // Leaving to a 0 as no DBYTES should be disabled to my knowledge
         io_user_input_dram_config.DisabledDbyte = 0x00;
 
-        // TODO:ZEN:MST-1585 Add in UDIMM vs RDIMM switches into the PHY init code
-        // Note: default value is 0x00 anyways
+        // Note: defaulting to SDR to match the 2N in MR2 above
         io_user_input_dram_config.RCW00_ChA_D0 = 0x00;
 
         io_user_input_dram_config.CsPresentChA        = 0x01; // There's a chip select on channel A
@@ -3536,6 +3534,57 @@ fapi2::ReturnCode init_phy_structs( const fapi2::Target<fapi2::TARGET_TYPE_MEM_P
 }
 
 ///
+/// @brief Configures the PHY to be ready for DRAMINIT for the simulation environment
+/// @param[in] i_target - the memory port on which to operate
+/// @param[in] i_user_input_basic - Synopsys basic user input structure
+/// @param[in] i_user_input_advanced - Synopsys advanced user input structure
+/// @param[in] i_user_input_dram_config - DRAM configuration inputs needed for PHY init (MRS/RCW)
+/// @return fapi2::FAPI2_RC_SUCCESS iff successful
+///
+fapi2::ReturnCode init_phy_config_sim( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
+                                       const user_input_basic_t& i_user_input_basic,
+                                       const user_input_advanced_t& i_user_input_advanced,
+                                       const user_input_dram_config_t& i_user_input_dram_config)
+{
+    // Yes, this is copied and pasted from above
+    // A comment in that code notes that this needs an update if anything above changes
+    //##############################################################
+    //
+    // Program PhyUpdate CSRs based on user input
+    //
+    // CSRs to program:
+    //      DFIPHYUPD:: DFIPHYUPDCNT
+    //               :: DFIPHYUPDRESP
+    //
+    // User input dependencies::
+    //      DFIPHYUPDCNT
+    //      DFIPHYUPDRESP
+    //
+    //##############################################################
+    {
+        int DFIPHYUPD;
+        int DFIPHYUPDCNT;
+        int DFIPHYUPDRESP;
+
+        DFIPHYUPDCNT = i_user_input_advanced.DFIPHYUPDCNT;
+        DFIPHYUPDRESP = i_user_input_advanced.DFIPHYUPDRESP;
+
+
+        DFIPHYUPD = (DFIPHYUPDRESP << csr_DFIPHYUPDRESP_LSB) | (DFIPHYUPDCNT << csr_DFIPHYUPDCNT_LSB);
+
+        FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming DFIPHYUPD::DFIPHYUPDCNT to 0x%x\n", TARGTID,
+                  DFIPHYUPDCNT);
+        FAPI_DBG (TARGTIDFORMAT " //// [phyinit_C_initPhyConfig] Programming DFIPHYUPD::DFIPHYUPDRESP to 0x%x\n", TARGTID,
+                  DFIPHYUPDRESP);
+
+        FAPI_TRY(dwc_ddrphy_phyinit_userCustom_io_write16(i_target, (tMASTER | csr_DFIPHYUPD_ADDR), DFIPHYUPD));
+    }
+
+fapi_try_exit:
+    return fapi2::current_err;
+}
+
+///
 /// @brief Runs PHY init on a specific port
 /// @param[in] i_target - the memory port on which to operate
 /// @return fapi2::FAPI2_RC_SUCCESS iff successful
@@ -3549,17 +3598,34 @@ fapi2::ReturnCode run_phy_init( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>
     user_input_advanced_t l_user_input_advanced;
     user_input_dram_config_t l_user_input_dram_config;
 
+    uint8_t l_is_sim = 0;
+    uint8_t l_is_simics = 0;
+    FAPI_TRY( mss::attr::get_is_simulation(l_is_sim) );
+    FAPI_TRY( mss::attr::get_is_simics(l_is_simics) );
+
     // Configure the structure values
     FAPI_TRY(init_phy_structs(i_target,
                               l_user_input_basic,
                               l_user_input_advanced,
                               l_user_input_dram_config), TARGTIDFORMAT "failed init_phy_structs", TARGTID);
 
-    // Configure the PY based upon the structures
-    FAPI_TRY(init_phy_config(i_target,
-                             l_user_input_basic,
-                             l_user_input_advanced,
-                             l_user_input_dram_config), TARGTIDFORMAT "failed init_phy_config", TARGTID);
+    // Skip running PHY init if this is a simulation that cannot support it
+    if(!mss::ody::workarounds::is_simulation_dfi_init_workaround_needed(l_is_sim, l_is_simics))
+    {
+        // Configure the PHY based upon the structures
+        FAPI_TRY(init_phy_config(i_target,
+                                 l_user_input_basic,
+                                 l_user_input_advanced,
+                                 l_user_input_dram_config), TARGTIDFORMAT "failed init_phy_config", TARGTID);
+    }
+    // Otherwise, run the subset of registers that need to be updated for sim
+    else
+    {
+        FAPI_TRY(init_phy_config_sim(i_target,
+                                     l_user_input_basic,
+                                     l_user_input_advanced,
+                                     l_user_input_dram_config), TARGTIDFORMAT "failed init_phy_config_sim", TARGTID);
+    }
 
 fapi_try_exit:
     return fapi2::current_err;

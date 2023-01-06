@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -589,6 +589,14 @@ class mcbistTraits< mss::mc_type::EXPLORER, fapi2::TARGET_TYPE_OCMB_CHIP>
 
             // Other constants
             NUM_COMPARE_LOG_ENTRIES = 64,
+        };
+
+        static constexpr std::pair<uint64_t, uint64_t> PATTERN_REGS[EXPECTED_PATTERN_SIZE] =
+        {
+            {EXPLR_MCBIST_MCBFD0Q, EXPLR_MCBIST_MCBFD1Q},
+            {EXPLR_MCBIST_MCBFD2Q, EXPLR_MCBIST_MCBFD3Q},
+            {EXPLR_MCBIST_MCBFD4Q, EXPLR_MCBIST_MCBFD5Q},
+            {EXPLR_MCBIST_MCBFD6Q, EXPLR_MCBIST_MCBFD7Q},
         };
 };
 

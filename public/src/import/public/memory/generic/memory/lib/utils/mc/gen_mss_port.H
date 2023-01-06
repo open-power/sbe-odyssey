@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -210,17 +210,14 @@ void get_bw_window( const fapi2::buffer<uint64_t>& i_data, uint64_t& o_bw_window
 /// @tparam MC the memory controller type
 /// @tparam TT the class traits for the port
 /// @param[in] i_data data read from the register
-/// @param[out] o_bw_snapshot
+/// @param[out] o_bw_snapshot_side0 bandwidth for side 0
+/// @param[out] o_bw_snapshot_side1 bandwidth for side 1 (may not apply for all mc_types)
 /// @return FAPI2_RC_SUCCESS if and only if ok
-/// @note Disable Port Fail after recurring RCD errors.
 ///
 template< mss::mc_type MC, typename TT = portTraits<MC> >
-void get_bw_snapshot( const fapi2::buffer<uint64_t>& i_data, uint64_t& o_bw_snapshot )
-{
-    o_bw_snapshot = 0;
-    i_data.extractToRight<TT::BW_SNAPSHOT, TT::BW_SNAPSHOT_LEN>(o_bw_snapshot);
-}
-
+void get_bw_snapshot( const fapi2::buffer<uint64_t>& i_data,
+                      uint64_t& o_bw_snapshot_side0,
+                      uint64_t& o_bw_snapshot_side1 );
 
 ///
 /// @brief ATTR_MSS_MVPD_FWMS getter declare
@@ -243,32 +240,7 @@ fapi2::ReturnCode mvpd_fwms(const fapi2::Target< T>& i_target, uint32_t (&o_arra
 /// @return FAPI2_RC_SUCCESS if and only if ok
 ///
 template< mss::mc_type MC, fapi2::TargetType T, typename TT = portTraits<MC> >
-fapi2::ReturnCode enable_power_management( const fapi2::Target<T>& i_target )
-{
-    //Enable Power management based off of mrw_power_control_requested
-    FAPI_INF("%s Enable Power min max domains", mss::c_str(i_target));
-
-    bool is_pwr_cntrl = true;
-    fapi2::buffer<uint64_t> l_data;
-    uint8_t  l_pwr_cntrl = 0;
-
-    // Get the value from attribute and write it to scom register
-    FAPI_TRY(fapi2::getScom(i_target, TT::MBARPC0Q_REG, l_data));
-    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_POWER_CONTROL_REQUESTED, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
-                           l_pwr_cntrl));
-
-    is_pwr_cntrl = ((l_pwr_cntrl == fapi2::ENUM_ATTR_MSS_MRW_POWER_CONTROL_REQUESTED_POWER_DOWN)
-                    || (l_pwr_cntrl == fapi2::ENUM_ATTR_MSS_MRW_IDLE_POWER_CONTROL_REQUESTED_PD_AND_STR)
-                    || (l_pwr_cntrl == fapi2::ENUM_ATTR_MSS_MRW_IDLE_POWER_CONTROL_REQUESTED_PD_AND_STR_CLK_STOP));
-
-    l_data.writeBit< TT::CFG_MIN_MAX_DOMAINS_ENABLE>(is_pwr_cntrl);
-    FAPI_TRY( fapi2::putScom(i_target, TT::MBARPC0Q_REG, l_data) );
-
-
-fapi_try_exit:
-    return fapi2::current_err;
-}
-
+fapi2::ReturnCode enable_power_management( const fapi2::Target<T>& i_target );
 
 ///
 /// @brief Set the IML init complete bit
@@ -667,30 +639,7 @@ fapi_try_exit:
 /// @return FAPI2_RC_SUCCSS iff ok
 ///
 template< mss::mc_type MC, fapi2::TargetType T, typename TT = portTraits<MC> >
-inline fapi2::ReturnCode configure_wrq(const fapi2::Target<T>& i_target,
-                                       const mss::states i_state)
-{
-    // Loops through all port targets, hitting all the registers
-    for( const auto& l_port : mss::find_targets<TT::PORT_TYPE>(i_target) )
-    {
-        fapi2::buffer<uint64_t> l_data;
-
-        // Gets the reg
-        FAPI_TRY(mss::getScom(l_port, TT::WRQ_REG, l_data), "%s failed to getScom from WRQ0Q", mss::c_str(l_port));
-
-        // Sets the bit
-        l_data.writeBit<TT::WRQ_FIFO_MODE>(i_state == mss::states::ON);
-
-        // Sets the regs
-        FAPI_TRY(mss::putScom(l_port, TT::WRQ_REG, l_data), "%s failed to putScom to WRQ0Q", mss::c_str(l_port));
-    }
-
-    // In case we don't have any port's
-    return fapi2::FAPI2_RC_SUCCESS;
-
-fapi_try_exit:
-    return fapi2::current_err;
-}
+fapi2::ReturnCode configure_wrq(const fapi2::Target<T>& i_target, const mss::states i_state);
 
 ///
 /// @brief Configures the read reorder queue bit
@@ -702,35 +651,7 @@ fapi_try_exit:
 /// @return FAPI2_RC_SUCCSS iff ok
 ///
 template< mss::mc_type MC, fapi2::TargetType T, typename TT = portTraits<MC> >
-inline fapi2::ReturnCode configure_rrq(const fapi2::Target<T>& i_target, const mss::states i_state)
-{
-    // Loops through all port targets, hitting all the registers
-    for( const auto& l_port : mss::find_targets<TT::PORT_TYPE>(i_target) )
-    {
-        fapi2::buffer<uint64_t> l_data;
-
-        // Gets the reg
-        // This register sits on different chiplets depending upon the MC type in question
-        // In some MC's, it sits on the port level
-        // In other MC's, it sits on the chip level
-        // As such, a helper function is used to grab the appropriate target type to run this scom
-        FAPI_TRY(mss::getScom(TT::get_rrq_target(l_port), TT::RRQ_REG, l_data), "%s failed to getScom from RRQ0Q",
-                 mss::c_str(l_port));
-
-        // Sets the bit
-        l_data.writeBit<TT::RRQ_FIFO_MODE>(i_state == mss::states::ON);
-
-        // Sets the regs
-        FAPI_TRY(mss::putScom(TT::get_rrq_target(l_port), TT::RRQ_REG, l_data), "%s failed to putScom to RRQ0Q",
-                 mss::c_str(l_port));
-    }
-
-    // In case we don't have any port's
-    return fapi2::FAPI2_RC_SUCCESS;
-
-fapi_try_exit:
-    return fapi2::current_err;
-}
+fapi2::ReturnCode configure_rrq(const fapi2::Target<T>& i_target, const mss::states i_state);
 
 ///
 /// @brief Resets the write/read reorder queue values - needs to be called after MCBIST execution
