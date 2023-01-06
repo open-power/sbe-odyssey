@@ -47,29 +47,27 @@ uint32_t sbeInitSems(void)
 
     do
     {
-        l_rc = pk_semaphore_create(&SBE_GLOBAL->sbeSemCmdRecv, 0, MAX_SEMAPHORE_COUNT);
+        l_rc = pk_semaphore_create(&SBE_GLOBAL->semphores.sbeSemCmdRecv, 0,
+                                                           MAX_SEMAPHORE_COUNT);
         if (l_rc)
         {
             break;
         }
-        l_rc = pk_semaphore_create(&SBE_GLOBAL->sbeSemCmdProcess, 0, MAX_SEMAPHORE_COUNT);
+
+        l_rc = pk_semaphore_create(&SBE_GLOBAL->semphores.sbeSemCmdProcess, 0,
+                                                           MAX_SEMAPHORE_COUNT);
         if (l_rc)
         {
             break;
         }
-        l_rc = pk_semaphore_create(&SBE_GLOBAL->sbeSemAsyncProcess, 0,
-                                         MAX_PERIODIC_TIMER_SEMAPHORE_COUNT);
+
+        l_rc = pk_semaphore_create(&SBE_GLOBAL->semphores.sbeSemAsyncProcess, 0,
+                                            MAX_PERIODIC_TIMER_SEMAPHORE_COUNT);
         if (l_rc)
         {
             break;
         }
-        #ifdef SBE_CONSOLE_SUPPORT
-        l_rc = pk_semaphore_create(&SBE_GLOBAL->sbeUartBinSem, 1, 1);
-        if (l_rc)
-        {
-            break;
-        }
-        #endif
+
     } while (false);
 
     if (l_rc)
@@ -88,7 +86,8 @@ int sbeInitThreads(void)
     do
     {
         // Initialize Command receiver thread
-        l_rc = createAndResumeThreadHelper(&SBE_GLOBAL->sbeCommandReceiver_thread,
+        l_rc = createAndResumeThreadHelper(
+                            &SBE_GLOBAL->threads.sbeCommandReceiver_thread,
                             sbeCommandReceiver_routine,
                             (void *)0,
                             (PkAddress)sbeCommandReceiver_stack,
@@ -99,28 +98,31 @@ int sbeInitThreads(void)
             break;
         }
         // Initialize Synchronous Command Processor thread
-        l_rc = createAndResumeThreadHelper(&SBE_GLOBAL->sbeSyncCommandProcessor_thread,
-                            sbeSyncCommandProcessor_routine,
-                            (void *)0,
-                            (PkAddress)sbeSyncCommandProcessor_stack,
-                            SBE_THREAD_SYNC_CMD_PROC_STACK_SIZE,
-                            THREAD_PRIORITY_6);
+        l_rc = createAndResumeThreadHelper(
+                        &SBE_GLOBAL->threads.sbeSyncCommandProcessor_thread,
+                        sbeSyncCommandProcessor_routine,
+                        (void *)0,
+                        (PkAddress)sbeSyncCommandProcessor_stack,
+                        SBE_THREAD_SYNC_CMD_PROC_STACK_SIZE,
+                        THREAD_PRIORITY_6);
         if (l_rc)
         {
             break;
         }
 
         // Initialize Asynchronous Command Processor thread
-        l_rc = createAndResumeThreadHelper(&SBE_GLOBAL->sbeAsyncCommandProcessor_thread,
-                            sbeAsyncCommandProcessor_routine,
-                            (void *)0,
-                            (PkAddress)sbeAsyncCommandProcessor_stack,
-                            SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE,
-                            THREAD_PRIORITY_7);
+        l_rc = createAndResumeThreadHelper(
+                        &SBE_GLOBAL->threads.sbeAsyncCommandProcessor_thread,
+                        sbeAsyncCommandProcessor_routine,
+                        (void *)0,
+                        (PkAddress)sbeAsyncCommandProcessor_stack,
+                        SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE,
+                        THREAD_PRIORITY_7);
         if (l_rc)
         {
             break;
         }
+
     } while (false);
 
     // If there are any errors initializing the threads

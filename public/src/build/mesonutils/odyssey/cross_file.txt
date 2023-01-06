@@ -4,7 +4,6 @@ gcc_defs_cmn_odyssey = [
         '-DPLAT_NO_THREAD_LOCAL_STORAGE=1',
         '-DPERIODIC_IO_TOGGLE_SUPPORTED=1',
         '-D_S0_=1',
-        '-DSBE_CONSOLE_SUPPORT',
         '-DFAPI_TRACE_LEVEL=2',
         ]
 

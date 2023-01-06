@@ -223,7 +223,7 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
 
         // Wait for new command processing
         int l_rcPk = pk_semaphore_pend (
-                    &SBE_GLOBAL->sbeSemCmdProcess, PK_WAIT_FOREVER);
+                    &SBE_GLOBAL->semphores.sbeSemCmdProcess, PK_WAIT_FOREVER);
 
         do
         {
@@ -272,8 +272,8 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
             if (l_rcPk != PK_OK)
             {
                 SBE_ERROR(SBE_FUNC"pk_semaphore_pend failed, "
-                          "l_rcPk=%d, SBE_GLOBAL->sbeSemCmdRecv.count=%d",
-                           l_rcPk, SBE_GLOBAL->sbeSemCmdRecv.count);
+                          "l_rcPk=%d, SBE_GLOBAL->semphores.sbeSemCmdRecv.count=%d",
+                           l_rcPk, SBE_GLOBAL->semphores.sbeSemCmdRecv.count);
 
                 // If it's a semphore_pend error then update the same to show
                 // internal failure
@@ -328,7 +328,7 @@ void sbeAsyncCommandProcessor_routine(void *arg)
     {
         SBE_DEBUG(SBE_FUNC " Pend the thread");
         int l_rcPk = pk_semaphore_pend (
-                     &SBE_GLOBAL->sbeSemAsyncProcess,
+                     &SBE_GLOBAL->semphores.sbeSemAsyncProcess,
                      PK_WAIT_FOREVER);
         // pk API failure
         if (l_rcPk != PK_OK)

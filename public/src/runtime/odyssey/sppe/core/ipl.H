@@ -29,7 +29,6 @@
 #include "cmnglobals.H"
 #include "return_code.H"
 
-extern sbeRole g_sbeRole;
 extern fapi2::ReturnCode g_iplFailRc;
 /**
  * @brief Support function to execute specific istep

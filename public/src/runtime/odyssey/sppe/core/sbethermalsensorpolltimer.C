@@ -35,7 +35,7 @@ void sbeasyncthreadPkExpiryCallback(void *)
     SBE_DEBUG( SBE_FUNC "Async thread timer has expired. Async thread will be posted");
 
     // Post the Async thread.
-    uint32_t l_rc = pk_semaphore_post(&SBE_GLOBAL->sbeSemAsyncProcess);
+    uint32_t l_rc = pk_semaphore_post(&SBE_GLOBAL->semphores.sbeSemAsyncProcess);
     if(l_rc)
     {
         SBE_ERROR(SBE_FUNC "Failed to post the thread with rc 0x%08X", l_rc);

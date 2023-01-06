@@ -94,7 +94,7 @@ void sbe_interrupt_handler (void *i_pArg, PkIrqId i_irq)
         SBE_GLOBAL->activeInterface = curInterface;
 
         // Unblock the command receiver thread
-        l_rc = pk_semaphore_post(&SBE_GLOBAL->sbeSemCmdRecv);
+        l_rc = pk_semaphore_post(&SBE_GLOBAL->semphores.sbeSemCmdRecv);
         if (l_rc)
         {
             // If we received an error while posting the semaphore,

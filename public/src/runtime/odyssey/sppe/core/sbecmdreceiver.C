@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -54,7 +54,7 @@ void sbeCommandReceiver_routine(void *i_pArg)
     do
     {
         // Wait on intr handler to hand-off a FIFO New Data/Reset request
-        int l_rcPk = pk_semaphore_pend (&SBE_GLOBAL->sbeSemCmdRecv, PK_WAIT_FOREVER);
+        int l_rcPk = pk_semaphore_pend (&SBE_GLOBAL->semphores.sbeSemCmdRecv, PK_WAIT_FOREVER);
 
         do
         {
@@ -205,7 +205,7 @@ void sbeCommandReceiver_routine(void *i_pArg)
         // if we could dequeue the header successfully,
         if ((l_rcPk == PK_OK) && (l_rc == SBE_SEC_OPERATION_SUCCESSFUL))
         {
-            l_rcPk = pk_semaphore_post(&SBE_GLOBAL->sbeSemCmdProcess);
+            l_rcPk = pk_semaphore_post(&SBE_GLOBAL->semphores.sbeSemCmdProcess);
         }
 
         // Handle Cmd not in a valid state here
@@ -221,8 +221,8 @@ void sbeCommandReceiver_routine(void *i_pArg)
                 // Add Error trace, collect FFDC and
                 // continue wait for the next interrupt
                 SBE_ERROR(SBE_FUNC"Unexpected failure, "
-                    "l_rcPk=[%d], SBE_GLOBAL->sbeSemCmdProcess.count=[%d], l_rc=[%d]",
-                    l_rcPk, SBE_GLOBAL->sbeSemCmdProcess.count, l_rc);
+                    "l_rcPk=[%d], SBE_GLOBAL->semphores.sbeSemCmdProcess.count=[%d], l_rc=[%d]",
+                    l_rcPk, SBE_GLOBAL->semphores.sbeSemCmdProcess.count, l_rc);
                 pk_halt();
             }
 
@@ -237,8 +237,8 @@ void sbeCommandReceiver_routine(void *i_pArg)
             continue;
         }
 
-        SBE_DEBUG(SBE_FUNC"Posted SBE_GLOBAL->sbeSemCmdProcess, "
-               "SBE_GLOBAL->sbeSemCmdProcess.count=[%d]", SBE_GLOBAL->sbeSemCmdProcess.count);
+        SBE_DEBUG(SBE_FUNC"Posted SBE_GLOBAL->semphores.sbeSemCmdProcess, "
+               "SBE_GLOBAL->semphores.sbeSemCmdProcess.count=[%d]", SBE_GLOBAL->semphores.sbeSemCmdProcess.count);
 
     } while (true); // thread always exists
     #undef SBE_FUNC

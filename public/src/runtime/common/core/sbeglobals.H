@@ -32,7 +32,6 @@
 #include "rt_pak.H"
 
 #define SBE_GLOBAL sbeGlobal
-extern sbeRole g_sbeRole;
 
 // To keep track of global constructor pointer functions and bss sections.
 extern uint32_t _attrs_start_ SECTION(".attr");
@@ -41,6 +40,60 @@ extern uint64_t _heap_space_start_ SECTION(".bss");
 extern uint64_t _heap_space_end_ SECTION(".bss");
 extern uint64_t _heap_space_size_ SECTION(".bss");
 extern uint8_t g_hash_list SECTION(".bss");
+
+typedef struct
+{
+    ////////////////////////////////////////////////////////////////
+    //// @brief PkThread structure for SBE Command Receiver thread
+    //////////////////////////////////////////////////////////////////
+    PkThread sbeCommandReceiver_thread;
+
+    ////////////////////////////////////////////////////////////////
+    //// @brief PkThread structure for SBE Synchronous ChipOps
+    ////        processing thread
+    //////////////////////////////////////////////////////////////////
+    PkThread sbeSyncCommandProcessor_thread;
+
+    ////////////////////////////////////////////////////////////////
+    ////// @brief PkThread structure for SBE Asynchronous ChipOps
+    //////        processing thread
+    //////////////////////////////////////////////////////////////////
+    PkThread sbeAsyncCommandProcessor_thread;
+
+}SbeGlobalHandlerThreads_t;
+
+////////////////////////////////////////////////////////////////
+//// @brief Global semaphores
+/////////////////////////////////////////////////////////////////
+typedef struct
+{
+    /**
+     * @brief Global semaphore : SBE_GLOBAL->semphores.sbeSemCmdRecv
+     *
+     *   This is used to synchronize between the ISR and
+     *   the command receiver thread.
+     *
+     */
+    PkSemaphore sbeSemCmdRecv;
+    /**
+     * @brief Global semaphore : SBE_GLOBAL->semphores.sbeSemCmdProcess
+     *
+     *   This is used to synchronize between command receiver thread
+     *   and synchronous command processor thread.
+     *
+     */
+    PkSemaphore sbeSemCmdProcess;
+
+    /**
+     * @brief Global semaphore for async task
+     *
+     *   This is used to send invoke commands on Async process
+     *
+     */
+    PkSemaphore sbeSemAsyncProcess;
+
+}SbeGlobalHandlerSemas_t;
+
 
 class SBEGlobalsSingleton
 {
@@ -52,42 +105,7 @@ class SBEGlobalsSingleton
 
         sbeFifoCmdReqBuf_t sbeFifoCmdHdr;
         sbeCmdRespHdr_t sbeCmdRespHdr;
-
         sbeIntrHandle_t sbeIntrSource;
-
-        ////////////////////////////////////////////////////////////////
-        //// @brief Global semaphores
-        /////////////////////////////////////////////////////////////////
-        /**
-         * @brief Global semaphore : SBE_GLOBAL->sbeSemCmdRecv
-         *
-         *   This is used to synchronize between the ISR and
-         *   the command receiver thread.
-         *
-         */
-        PkSemaphore sbeSemCmdRecv;
-        /**
-         * @brief Global semaphore : SBE_GLOBAL->sbeSemCmdProcess
-         *
-         *   This is used to synchronize between command receiver thread
-         *   and synchronous command processor thread.
-         *
-         */
-        PkSemaphore sbeSemCmdProcess;
-
-        /**
-         * @brief Global semaphore for async task
-         *
-         *   This is used to send invoke commands on Async process
-         *
-         */
-        PkSemaphore sbeSemAsyncProcess;
-
-        #ifdef SBE_CONSOLE_SUPPORT
-        // Binary semaphore to protect uart access
-        PkSemaphore sbeUartBinSem;
-        static bool sbeUartActive;
-        #endif
 
         // Last failed rc's - for SBE internal ffdc
         static uint16_t failedPrimStatus;
@@ -99,19 +117,14 @@ class SBEGlobalsSingleton
         static uint32_t activeInterface;
 
         ////////////////////////////////////////////////////////////////
-        //// @brief PkThread structure for SBE Command Receiver thread
-        //////////////////////////////////////////////////////////////////
-        PkThread sbeCommandReceiver_thread;
+        ////// @brief PK thread structure for runtime
         ////////////////////////////////////////////////////////////////
-        //// @brief PkThread structure for SBE Synchronous ChipOps
-        ////        processing thread
-        //////////////////////////////////////////////////////////////////
-        PkThread sbeSyncCommandProcessor_thread;
+        SbeGlobalHandlerThreads_t threads;
+
         ////////////////////////////////////////////////////////////////
-        ////// @brief PkThread structure for SBE Asynchronous ChipOps
-        //////        processing thread
-        //////////////////////////////////////////////////////////////////
-        PkThread sbeAsyncCommandProcessor_thread;
+        ////// @brief PK Sema structure for runtime
+        ////////////////////////////////////////////////////////////////
+        SbeGlobalHandlerSemas_t semphores;
 
         // @brief FileArchive object to keep track of the pak stack in pibmem
         // Allows access for a global FileArchive object independent of the Heap object
@@ -132,9 +145,7 @@ class SBEGlobalsSingleton
             sbeFifoCmdHdr(),
             sbeCmdRespHdr(),
             sbeIntrSource(),
-            sbeSemCmdRecv(),
-            sbeSemCmdProcess(),
-            sbeSemAsyncProcess()
+            semphores()
             {
             }
 };

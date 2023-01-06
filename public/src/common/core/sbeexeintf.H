@@ -246,13 +246,10 @@ void sbeSyncCommandProcessor_routine(void *i_pArg);
 
 /**
  * @brief sbeAsyncCommandProcessor_routine
- *        @TODO RTC via : 130392
- *               Add infrastructure for host interface
  *
  *  @param[in]  i_pArg - Any buffer needed to be passed to the thread routine
  */
 void sbeAsyncCommandProcessor_routine(void *i_pArg);
-
 
 /* @brief  ISR for all SBE External Interrupts
  *         - FIFO : New data available
@@ -264,13 +261,11 @@ void sbeAsyncCommandProcessor_routine(void *i_pArg);
  */
 void sbe_interrupt_handler(void* i_pArg, PkIrqId i_irq);
 
-
 /* brief : Register SBE interrupt handlers and enable the IRQs
  *
  * @return int   PK_OK - Success (IRQ Setup was successful)
  *               PK_INVALID_ARGUMENT_IRQ_HANDLER - Invalid argument passed
  *                                                 (Code bug)
- *
  */
 int sbeIRQSetup (void);
 

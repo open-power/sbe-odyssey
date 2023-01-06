@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -33,4 +34,3 @@ CMNGlobalsSingleton& CMNGlobalsSingleton::getInstance()
     static CMNGlobalsSingleton iv_instance;
     return iv_instance;
 }
-bool  CMNGlobalsSingleton::isHreset = false;
