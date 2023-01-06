@@ -22,19 +22,12 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __CMN_GLOBALS_H
-#define __CMN_GLOBALS_H
+
+#pragma once
 
 #include "sbeutil.H"
 
 #define CMN_GLOBAL cmnGlobal
-
-enum sbeRole
-{
-    SBE_ROLE_MASTER = 0,
-    SBE_ROLE_SLAVE = 1,
-    SBE_ROLE_ALT_MASTER = 2,
-};
 
 class CMNGlobalsSingleton
 {
@@ -43,36 +36,22 @@ class CMNGlobalsSingleton
     CMNGlobalsSingleton(const CMNGlobalsSingleton&) = delete;
     CMNGlobalsSingleton& operator=(const CMNGlobalsSingleton&) = delete;
     static CMNGlobalsSingleton& getInstance();
-    sbeRole SBERole;
 
     // SBE Frequency.
     uint32_t sbefreq;
 
-    // Hreset flow.
-    static bool isHreset;
-
     private:
     // Constructor
     CMNGlobalsSingleton():
-    SBERole(SBE_ROLE_MASTER),
     sbefreq(( 133 * 1000 * 1000)/SBE::SBE_TO_NEST_FREQ_FACTOR)
     {
     }
 };
 
 extern CMNGlobalsSingleton* cmnGlobal;
-//TODO: P11SBE Porting
-//This will be changed in P11.
 
-//This is a struct defintion for the local register 0xC0002040.
-//This local register will be used to save the SPI clock divider and round trip
-//delay settings
-//MPIPL in progress setting
-//What kind of reset is triggered in 0x50008, since otprom clears the reset bit
-// ipl_reset which is the cbs_start flow
-// hreset which is the runtime reset flow
-// hreset_done bit to indicate SBE finished Hreset flow and back up to receive
-// commands over fifo.
+
+
 typedef struct sbe_local_LFR {
     uint32_t spi_clock_divider: 12;       //Bit0-11 : odyssey,p11 : clock divider bits
     //TODO: For p11 need to map below bits
@@ -114,5 +93,3 @@ typedef struct sbe_local_LFR {
         bitsreserved = 0;
     }
 }sbe_local_LFR;
-
-#endif //__SBE_GLOBALS_H

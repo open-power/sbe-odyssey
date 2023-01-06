@@ -89,7 +89,6 @@ gcc_defs_cmn = [
 gcc_defs_cmn_sbe = [
         '-DSBE_TRACE_LEVEL=2',
         '-DPERIODIC_IO_TOGGLE_SUPPORTED=1',
-        '-DSBE_CONSOLE_SUPPORT',
         '-DSCOMT_OMIT_FIELD_ACCESSORS',
         ]
 
