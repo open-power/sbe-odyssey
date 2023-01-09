@@ -31,16 +31,75 @@ namespace fapi2
 {
 namespace ATTR
 {
+
+/* This template function is only to simplify the jinja template*/
+template<typename T>
+inline void attr_copy(T& dest, T& src)
+{
+    memcpy(&dest, &src, sizeof(T));
+}
+
+template<>
+inline void attr_copy<uint8_t>(uint8_t& dest, uint8_t& src)
+{
+    dest = src;
+}
+
+template<>
+inline void attr_copy<uint16_t>(uint16_t& dest, uint16_t& src)
+{
+    dest = src;
+}
+
+template<>
+inline void attr_copy<uint32_t>(uint32_t& dest, uint32_t& src)
+{
+    dest = src;
+}
+
+template<>
+inline void attr_copy<uint64_t>(uint64_t& dest, uint64_t& src)
+{
+    dest = src;
+}
+
 {% for attr in attributes if attr.has_storage %}
 
-{{attr.get_template_definition()}}
+{% if attr.first_attribute %}
+template <TargetType T>
+fapi2::ReturnCode get_{{attr.name}}(const fapi2::Target<T>& i_target, {{attr.name}}_Type& o_val)
+{
+    return fapi2::FAPI2_RC_SUCCESS;
+}
+template <TargetType T>
+fapi2::ReturnCode set_{{attr.name}}(const fapi2::Target<T>& i_target, {{attr.name}}_Type& o_val)
+{
+    return fapi2::FAPI2_RC_SUCCESS;
+}
+{% endif %}
 
-{{attr.set_template_definition()}}
+namespace {{attr.sbe_targ_type}}
+{
+    extern {{attr.value_type}} {{attr.name}}{{attr.internal_dims}} __attribute__((section(".attrs")));
+}
 
-{{attr.get_var_declaration()}}
+template <>
+inline fapi2::ReturnCode get_{{attr.name}}(
+    const fapi2::Target<fapi2::{{attr.sbe_targ_type}}>& i_target,
+    {{attr.name}}_Type& o_val)
+{
+    attr_copy(o_val, fapi2::ATTR::{{attr.sbe_targ_type}}::{{attr.name}}{{attr.targ_inst('i_target')}});
+    return fapi2::FAPI2_RC_SUCCESS;
+}
 
-{{attr.get_template_specialization()}}
-{{attr.set_template_specialization()}}
+template <>
+inline fapi2::ReturnCode set_{{attr.name}}(
+    const fapi2::Target<fapi2::{{attr.sbe_targ_type}}>& i_target,
+    {{attr.name}}_Type& o_val)
+{
+    attr_copy(fapi2::ATTR::{{attr.sbe_targ_type}}::{{attr.name}}{{attr.targ_inst('i_target')}}, o_val);
+    return fapi2::FAPI2_RC_SUCCESS;
+}
 
 {% endfor %}
 } //ATTR
