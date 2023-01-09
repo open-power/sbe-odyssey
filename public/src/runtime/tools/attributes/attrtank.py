@@ -356,16 +356,19 @@ class RealAttrFieldInfo(AttrFieldInfo):
     def internal_dims(self) -> str:
         retval = self.type_dims
         if self.num_targ_inst > 1:
-            retval += "[%d]" % self.num_targ_inst
+            retval = "[%d]" % self.num_targ_inst + retval
         return retval
 
-    def var_name(self):
-        var_name = "fapi2::ATTR::" + self.name
-        if(self.sbe_targ_type == 'TARGET_TYPE_PERV'):
-            var_name += "[TARGET.get().getChipletNumber()]"
-        elif self.num_targ_inst > 1:
-            var_name += "[TARGET.get().getTargetInstance()]"
-        return var_name
+    def targ_inst(self, targ_var:str):
+        inst_index = ""
+        if self.num_targ_inst > 1:
+            inst_index += "[" + targ_var + ".get()."
+            if(self.sbe_targ_type == 'TARGET_TYPE_PERV'):
+                inst_index += "getChipletNumber()"
+            else:
+                inst_index += "getTargetInstance()"
+            inst_index += "]"
+        return inst_index
 
     @property
     def getter(self):
@@ -375,132 +378,9 @@ class RealAttrFieldInfo(AttrFieldInfo):
     def setter(self):
         return "ATTR::set_" + self.name + "(TARGET,VAL)"
 
-    def get_var_definition(self):
-        retval = "namespace " + self.sbe_targ_type
-        retval += "\n{\n"
-        retval += self.value_type + " " + self.name + self.internal_dims + " "
-        retval += '__attribute__((section(".attrs")));'
-        retval += "\n}"
-        return retval
-
-    def get_var_declaration(self):
-        retval = "namespace " + self.sbe_targ_type
-        retval += "\n{\n"
-        retval += "extern " + self.value_type + " " + self.name + \
-                    self.internal_dims + " "
-        retval += '__attribute__((section(".attrs")));'
-        retval += "\n}"
-        return retval
-
-    def get_template_definition(self):
-        if(self.ekb_target_type == ''):
-            return ""
-        retval = "template <TargetType T>\n"
-        retval += "fapi2::ReturnCode get_" + self.name + \
-                "(const fapi2::Target<T> & i_target, " + self.name + "_Type &o_val)"
-
-        retval += "\n{\n"
-        retval += "return fapi2::FAPI2_RC_SUCCESS;"
-        retval += "\n}"
-        return retval
-
-    def set_template_definition(self):
-        if(self.ekb_target_type == ''):
-            return ""
-        retval = "template <TargetType T>\n"
-        retval += "fapi2::ReturnCode set_" + self.name + \
-              "(const fapi2::Target<T> & i_target, const " + self.name + "_Type o_val)"
-
-        retval += "\n{\n"
-        retval += "return fapi2::FAPI2_RC_SUCCESS;"
-        retval += "\n}"
-        return retval
-
-    def get_template_specialization(self):
-        if (self.num_targ_inst > 1):
-            retval = "template <>\n"
-            retval += "inline fapi2::ReturnCode get_" + self.name + \
-                    "(const fapi2::Target<fapi2::" + self.sbe_targ_type + "> & i_target, " + \
-                        self.name + "_Type & o_val)\n"
-            retval += "{\n"
-            if (len(self.array_dims) == 0):
-                retval += "o_val = \n"
-                retval += "fapi2::ATTR::" + self.sbe_targ_type + "::" + self.name + \
-                          "[i_target.get().getChipletNumber()];\n"
-            else:
-                retval += "memcpy(o_val,fapi2::ATTR::" + self.sbe_targ_type + "::" + self.name + \
-                          "[i_target.get().getChipletNumber()], sizeof(" + self.name + \
-                          "_Type));\n"
-            retval += "return fapi2::FAPI2_RC_SUCCESS;"
-            retval += "}\n"
-        else:
-            if (len(self.array_dims) == 0):
-                retval = "template <>\n"
-                retval += "inline fapi2::ReturnCode get_" + self.name + \
-                        "(const fapi2::Target<fapi2::" + self.sbe_targ_type + "> & i_target, " + \
-                            self.name + "_Type & o_val)\n"
-                retval += "{\n"
-                retval += "o_val = \n"
-                retval += "fapi2::ATTR::" + self.sbe_targ_type + "::" + self.name + ";\n"
-                retval += "return fapi2::FAPI2_RC_SUCCESS;"
-                retval += "}\n"
-            else:
-                retval = "template <>\n"
-                retval += "inline fapi2::ReturnCode get_" + self.name + \
-                        "(const fapi2::Target<fapi2::" + self.sbe_targ_type + "> & i_target, " + \
-                            self.name + "_Type &o_val)\n"
-                retval += "{\n"
-                retval += "memcpy(o_val,fapi2::ATTR::" + self.sbe_targ_type + "::" + self.name + \
-                          ", sizeof(" + self.name + "_Type));\n"
-                retval += "return fapi2::FAPI2_RC_SUCCESS;"
-                retval += "}\n"
-        return retval
-
-    def set_template_specialization(self):
-
-        if (self.num_targ_inst > 1):
-            if (len(self.array_dims) == 0):
-                retval = "template <>\n"
-                retval += "inline fapi2::ReturnCode set_" + self.name + \
-                        "(const fapi2::Target<fapi2::" + self.sbe_targ_type + \
-                        "> & i_target, const " + self.name + "_Type i_val)\n"
-                retval += "{\n"
-                retval += "fapi2::ATTR::" + self.sbe_targ_type + "::" + self.name + \
-                          "[i_target.get().getChipletNumber()] = i_val;\n"
-                retval += "return fapi2::FAPI2_RC_SUCCESS;"
-                retval += "}\n"
-            else:
-                retval = "template <>\n"
-                retval += "inline fapi2::ReturnCode set_" + self.name + \
-                        "(const fapi2::Target<fapi2::" + self.sbe_targ_type + \
-                            "> & i_target, const " + self.name + "_Type  i_val)\n"
-                retval += "{\n"
-                retval += "memcpy(fapi2::ATTR::" + self.sbe_targ_type + "::" + self.name + \
-                          "[i_target.get().getChipletNumber()], i_val, sizeof(" + \
-                           self.name + "_Type));\n"
-                retval += "return fapi2::FAPI2_RC_SUCCESS;"
-                retval += "}\n"
-        else:
-            if (len(self.array_dims) == 0):
-                retval = "template <>\n"
-                retval += "inline fapi2::ReturnCode set_" + self.name + \
-                        "(const fapi2::Target<fapi2::" + self.sbe_targ_type + \
-                            "> & i_target, const " + self.name + "_Type  i_val)\n"
-                retval += "{\n"
-                retval += "fapi2::ATTR::" + self.sbe_targ_type + "::" + self.name + " = i_val;\n"
-                retval += "return fapi2::FAPI2_RC_SUCCESS;"
-                retval += "}\n"
-            else:
-                retval = "template <>\n"
-                retval += "inline fapi2::ReturnCode set_" + self.name + \
-                        "(const fapi2::Target<fapi2::" + self.sbe_targ_type + \
-                        "> & i_target, const " + self.name + "_Type i_val)\n"
-                retval += "{\n"
-                retval += "memcpy(fapi2::ATTR::" + self.sbe_targ_type + "::" + self.name + \
-                          ", i_val, sizeof(" + self.name + "_Type));\n"
-                retval += "return fapi2::FAPI2_RC_SUCCESS;"
-                retval += "}\n"
-        return retval
+    @property
+    def first_attribute(self):
+        return (self.ekb_target_type != '')
 
 class VirtualAttrFieldInfo(AttrFieldInfo):
     VIRTUAL_FUNCTION = {

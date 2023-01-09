@@ -34,14 +34,12 @@
 
 {% for attr in attributes %}
 /*-----------------------------------------*/
-#define {{attr.name}}_GETMACRO(ID, TARGET, VAL) {{attr.name}}_GETMACRO_HELPER(ID, TARGET, VAL)
-#define {{attr.name}}_SETMACRO(ID, TARGET, VAL){% if attr.writeable %} {{attr.name}}_SETMACRO_HELPER(ID, TARGET, VAL){% endif +%}
-#define {{attr.name}}_PLAT_INIT(ID, TARGET, VAL){% if attr.platinit %} {{attr.name}}_SETMACRO_HELPER(ID, TARGET, VAL){% endif +%}
-
-#define {{attr.name}}_GETMACRO_HELPER(ID, TARGET, VAL) {{attr.getter}}
-
-{% if attr.writeable or attr.platinit %}
-#define {{attr.name}}_SETMACRO_HELPER(ID, TARGET, VAL) {{attr.setter}} 
+#define {{attr.name}}_GETMACRO(ID, TARGET, VAL) {{attr.getter}}
+{% if attr.writeable %}
+#define {{attr.name}}_SETMACRO(ID, TARGET, VAL) {{attr.setter}}
+{% endif %}
+{% if attr.platinit %}
+#define {{attr.name}}_PLAT_INIT(ID, TARGET, VAL) {{attr.setter}}
 {% endif %}
 
 {% endfor %}

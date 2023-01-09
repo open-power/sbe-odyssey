@@ -32,7 +32,10 @@ namespace ATTR
 {
 {% for attr in attributes if attr.has_storage %}
 
-{{attr.get_var_definition()}}
+namespace {{attr.sbe_targ_type}}
+{
+    {{attr.value_type}} {{attr.name}}{{attr.internal_dims}} __attribute__((section(".attrs")));
+}
 
 {% endfor %}
 } //ATTR
