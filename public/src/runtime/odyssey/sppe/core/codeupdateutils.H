@@ -37,4 +37,14 @@
 void getPartitionInfo(uint8_t &o_runningPartition,
                       uint8_t &o_nonRunningPartition);
 
+/* @brief : This API is used to get partition start address
+ *
+ * @param[in] : i_partition
+ * @param[out] : o_partitionStartAddress used to pass partition start address
+ *
+ * @return : void
+ */
+void getPartitionAddress(const uint8_t i_partition,
+                         uint32_t &o_partitionStartAddress);
+
 #endif //CODE_UPDATE_UTILS_H

@@ -26,6 +26,7 @@
 #include "sbetrace.H"
 #include "odysseylink.H"
 #include "sberegaccess.H"
+#include "codeupdateutils.H"
 
 void getPartitionInfo(uint8_t &o_runningPartition,
                       uint8_t &o_nonRunningPartition)
@@ -52,6 +53,20 @@ void getPartitionInfo(uint8_t &o_runningPartition,
         // if booting from golden then making non-running is primary
         o_nonRunningPartition = PARTITION_0_INDEX;
     }
+
+    SBE_EXIT(SBE_FUNC);
+    #undef SBE_FUNC
+}
+
+void getPartitionAddress(const uint8_t i_partition, uint32_t &o_partitionStartAddress)
+{
+    #define SBE_FUNC " getPartitionAddress "
+    SBE_ENTER(SBE_FUNC);
+
+    // Get the partition start offset
+    o_partitionStartAddress = getAbsPartitionAddr(i_partition);
+    SBE_INFO(SBE_FUNC "Partition Start Address:[0x%08x]",
+             o_partitionStartAddress);
 
     SBE_EXIT(SBE_FUNC);
     #undef SBE_FUNC
