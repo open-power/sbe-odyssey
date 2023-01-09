@@ -205,6 +205,7 @@ rs4::targetTypeInstanceTraits_t targetTypeInstanceTraits[] =
     { fapi2::LOG_TARGET_TYPE_EQ,      rs4::P11T, rs4::rs4_pack_instanceTraits(2, 1, 1) },
     { fapi2::LOG_TARGET_TYPE_CORE,    rs4::P11T, rs4::rs4_pack_instanceTraits(8, 4, 1) },
     { fapi2::LOG_TARGET_TYPE_TBUSL,   rs4::P11T, rs4::rs4_pack_instanceTraits(1, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_TBUSC,   rs4::P11T, rs4::rs4_pack_instanceTraits(1, 1, 1) },
     { fapi2::LOG_TARGET_TYPE_MC,      rs4::P11S, rs4::rs4_pack_instanceTraits(4, 1, 1) },
     { fapi2::LOG_TARGET_TYPE_TBUSC,   rs4::P11S, rs4::rs4_pack_instanceTraits(4, 1, 1) },
     { fapi2::LOG_TARGET_TYPE_PAX,     rs4::P11S, rs4::rs4_pack_instanceTraits(8, 1, 1) },
@@ -244,6 +245,10 @@ rs4::ringTargetType_t ringTargets[] =
     { "eq_",           fapi2::LOG_TARGET_TYPE_EQ },
     { "ex_",           fapi2::LOG_TARGET_TYPE_EX },
 };
+
+
+
+
 
 int rs4::ringTargetType_t::findType(const std::string& i_ringName,
                                     fapi2::LogTargetType& logTarget)

@@ -666,6 +666,9 @@ ReturnCode poz_fastarray(
 {
     fastarray_header l_header;
     const auto l_perv_target = i_target.getParent<TARGET_TYPE_PERV>();
+    char l_targetStr[fapi2::MAX_ECMD_STRING_LEN];
+    fapi2::toString(i_target, l_targetStr, fapi2::MAX_ECMD_STRING_LEN);
+    FAPI_INF("Entering poz_fastarray, i_target %s", l_targetStr);
 
     while (true)
     {
@@ -703,7 +706,9 @@ ReturnCode poz_fastarray(
 
             for (uint32_t i = 0; i < l_length; i++)
             {
-                FAPI_TRY(i_instructions.get(l_image_name.words[i]));
+                uint32_t input_word;
+                FAPI_TRY(i_instructions.get(input_word));
+                l_image_name.words[i] = htobe32(input_word);
             }
 
             FAPI_INF("Scanning in setup bits");
@@ -734,5 +739,6 @@ ReturnCode poz_fastarray(
     }
 
 fapi_try_exit:
+    FAPI_INF("Exiting poz_fastarray, i_target %s", l_targetStr);
     return current_err;
 }
