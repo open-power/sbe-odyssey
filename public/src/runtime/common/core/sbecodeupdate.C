@@ -30,9 +30,9 @@
 #include "poz_ppe.H"
 #include "mbxscratch.H"
 #include "errorcodes.H"
-#include "sbefifo.H"
 #include "chipop_struct.H"
 #include "sbeFifoMsgUtils.H"
+#include "sbe_sp_intf.H"
 
 ////////////////////////////////////////////////////////
 //////// Get Code Levels Chip-op ///////////////////////
@@ -191,12 +191,3 @@ uint32_t sbeSyncPartition (uint8_t *i_pArg)
     return l_rc;
 #undef SBE_FUNC
 }
-
-////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////
-
-uint8_t getBootedPartition(void)
-{
-    return PARTITION_0_INDEX;
-}
-
