@@ -205,4 +205,3 @@ uint32_t SbeRegAccess::updateAsyncFFDCBit( bool i_on )
     return rc;
     #undef SBE_FUNC
 }
-
