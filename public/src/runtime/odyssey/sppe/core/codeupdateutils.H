@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/core/sbecodeupdate.H $              */
+/* $Source: public/src/runtime/odyssey/sppe/core/codeupdateutils.H $      */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -22,71 +22,19 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef SBE_CODE_UPDATE_H
-#define SBE_CODE_UPDATE_H
+#ifndef CODE_UPDATE_UTILS_H
+#define CODE_UPDATE_UTILS_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include "pk_api.h"
-#include "filenames.H"
-
-#ifdef __cplusplus
-}
-#endif
-
-#define NOT_USED 0xFFFFFFFF
-
-// CU: Code Update
-namespace CU
-{
-    /*
-     * @brief Structure for images that are updatable
-     */
-    typedef struct
-    {
-        CU::IMAGES imageType;
-        // hash of entire pak file (incl header minus image.hash file)
-        uint64_t   imageHashSHA3_512[8];
-    }imageUpdate_t;
-
-    /*
-     * @brief Structure for image properties
-     */
-    typedef struct __attribute__((__packed__))
-    {
-        CU::IMAGES imageType;
-        uint32_t   buildTime; // Format- YYYYMMDD
-        uint32_t   commidId;
-        char       buildTag[20];
-        uint32_t   reserved[2];
-    }imageProperties_t;
-
-} // namespace CU
-
-/*@brief - sbeGetCodeLevels : Implement SBE Get Code Levels Chipop (0xAE01)
+/* @brief : This API is used to find out the running partition
+ *          [Primary , secondary or golden] and Non-running partition
  *
- * @param[in] - i_pArg Buffer to be passed to the function
+ * @param[out] : o_runningPartition used to pass running partition information
+ * @param[out] : o_nonRunningPartition used to pass non-running partition
+ *               information.
  *
- * @return - RC from the FIFO access utility
+ * @return : void
  */
-uint32_t sbeGetCodeLevels(uint8_t *i_pArg);
+void getPartitionInfo(uint8_t &o_runningPartition,
+                      uint8_t &o_nonRunningPartition);
 
-/*@brief - sbeUpdateImage : Implement SBE Update Image Chipop (0xAE02)
- *
- * @param[in] - i_pArg Buffer to be passed to the function
- *
- * @return - RC from the FIFO access utility
- */
-uint32_t sbeUpdateImage(uint8_t *i_pArg);
-
-/*@brief - sbeSyncPartition : Implement SBE Sync Partition Chipop (0xAE03)
- *
- * @param[in] - i_pArg Buffer to be passed to the function
- *
- * @return - RC from the FIFO access utility
- */
-uint32_t sbeSyncPartition(uint8_t *i_pArg);
-
-#endif //SBE_CODE_UPDATE_H
+#endif //CODE_UPDATE_UTILS_H
