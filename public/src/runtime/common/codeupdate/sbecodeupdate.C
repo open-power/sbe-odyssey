@@ -31,6 +31,7 @@
 #include "filenames.H"
 #include "sbeutil.H"
 #include "sbe_sp_intf.H"
+#include "plat_hwp_data_stream.H"
 
 const char partition_table_magic_word[] = "PTBL";
 
@@ -39,49 +40,97 @@ const char partition_table_magic_word[] = "PTBL";
 ////////////////////////////////////////////////////////
 uint32_t sbeGetCodeLevels (uint8_t *i_pArg)
 {
-#define SBE_FUNC " sbeGetCodeLevels "
+    #define SBE_FUNC " sbeGetCodeLevels "
     SBE_ENTER(SBE_FUNC);
 
-    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
-    //TODO:PFSBE163 to be uncommented during implementation
-    //uint32_t fapiRc = fapi2::FAPI2_RC_SUCCESS;
-    //getCodeLevelsRespMsg_t msg;
-    sbeRespGenHdr_t hdr;
-    hdr.init();
-    sbeResponseFfdc_t ffdc;
-    sbeFifoType type;
+    // Use only for FIFO utility API
+    uint32_t l_fifoRc = SBE_SEC_OPERATION_SUCCESSFUL;
 
+    chipOpParam_t* l_configStr((struct chipOpParam*)i_pArg);
+    sbeFifoType l_fifoType(static_cast<sbeFifoType>(l_configStr->fifoType));
+    SBE_DEBUG(SBE_FUNC "Fifo Type is:[%02X]", l_fifoType);
+
+    sbeRespGenHdr_t l_hdr;
+    l_hdr.init();
     do
     {
-        chipOpParam_t* configStr = (struct chipOpParam*)i_pArg;
-        type = static_cast<sbeFifoType>(configStr->fifoType);
-        SBE_DEBUG(SBE_FUNC "Fifo Type is:[%02X]",type);
+        // Don't attempt to read FIFO as no input params expected
+        // for GetCodeLevels chip-op
 
-#if 0   //TODO: to be enabled during implementation
-        //No attempt to read FIFO as no input params expected
-        // call get code levels function
-        fapiRc = getCodeLevels(&msg, type);
-        if (fapiRc != fapi2::FAPI2_RC_SUCCESS)
+        uint8_t l_runningPart;
+        uint8_t l_nonRunningPart; // unused now
+        getPartitionInfo(l_runningPart, l_nonRunningPart);
+
+        // Use only for secondary rc to send in the response header
+        uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+        CU::CodeLevelsRespMsg_t l_codeLevelsRespMsg;
+        for (uint8_t i = 0; i < UPDATABLE_IMG_SECTION_CNT; i++)
         {
-            l_rc = CU_RC_CODE_LEVELS_HWP_FAILURE;
-            hdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                           l_rc );
-            ffdc.setRc(l_rc);
+            l_rc = getImageHash(l_codeLevelsRespMsg.iv_updateableImagesInfo[i].
+                                    iv_imageType,
+                                l_runningPart,
+                                l_codeLevelsRespMsg.iv_updateableImagesInfo[i].
+                                    iv_imageHashSHA3_512);
+            if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+            {
+                SBE_ERROR(SBE_FUNC \
+                          "Failed to get image hash, "
+                          "RC[0x%08x] RunningSide[%d] ImageType[%d]",
+                          l_rc, l_runningPart, l_codeLevelsRespMsg.
+                             iv_updateableImagesInfo[i].iv_imageType);
+                l_hdr.setStatus(SBE_PRI_GENERIC_EXECUTION_FAILURE, l_rc);
+                break;
+            }
+        }
+        if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+        {
             break;
         }
-#endif
+
+        fapi2::sbefifo_hwp_data_ostream ostream(l_fifoType);
+        l_fifoRc = ostream.put((sizeof(l_codeLevelsRespMsg) / sizeof(uint32_t)),
+                               (uint32_t*)&l_codeLevelsRespMsg);
+        if (l_fifoRc != SBE_SEC_OPERATION_SUCCESSFUL)
+        {
+            // Don't set the secondary rc for the FIFO error since we won't
+            // send the response header for the FIFO error.
+            // Refer below at the last in this function to get more details.
+            SBE_ERROR(SBE_FUNC \
+                      "Failed to send GetCodeLevelsRespMsg, RC[0x%08x]",
+                      l_fifoRc);
+            break;
+        }
     } while(false);
 
-    // Build the response header packet
-    l_rc = sbeDsSendRespHdr(hdr, &ffdc, type);
-    if(l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+    /**
+     * @note TODO: JIRA: PFSBE-303
+     *       - Don't send the response header for the FIFO error, just return
+     *         FIFO error code and the command processor will go into infinite
+     *         loop and the caller will hit a timeout and halt the SBE,
+     *         collect SBE dumps, and does the necessary actions (Restart SBE/
+     *         HRESET/ReIPL) to fix the FIFO error.
+     *       - The chip-op backend assume any error from FIFO utils API
+     *         as a FIFO error. Currently, no rules to decide which rc is a FIFO
+     *         error because the logic spreaded across common code infra
+     *         so it need to change to simplify the chip-op backend code
+     *         responsibility.
+     */
+    if (l_fifoRc == SBE_SEC_OPERATION_SUCCESSFUL)
     {
-        SBE_ERROR(SBE_FUNC"Failed. rc[0x%X]",l_rc);
+        // FIXME Currently, No FAPI ffdc in this chip-op implementation.
+        l_fifoRc = sbeDsSendRespHdr(l_hdr, NULL, l_fifoType);
+        if (l_fifoRc != SBE_SEC_OPERATION_SUCCESSFUL)
+        {
+            // Nothing can be done here, just add a trace and return rc.
+            SBE_ERROR(SBE_FUNC \
+                      "Failed to send response header for GetCodeLevels "
+                      "chip-op, RC[0x%08x]", l_fifoRc);
+        }
     }
 
     SBE_EXIT(SBE_FUNC);
-    return l_rc;
-#undef SBE_FUNC
+    #undef SBE_FUNC
+    return l_fifoRc;
 }
 
 ////////////////////////////////////////////////////////

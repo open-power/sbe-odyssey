@@ -33,18 +33,114 @@
 #define PARTITION_TABLE_NAME_MAX_CHAR  16
 #define PARTITION_TABLE_TITLE_LEN      4
 
+/**
+ * @brief - Used to decide no of updatable image section count.
+ *        - If the updatable image section count is changed then,
+ *          we should add appropriate image section type in the
+ *          CodeLevelsRespMsg_t::iv_updateableImagesInfo member,
+ *          refer constructor.
+ */
+#define UPDATABLE_IMG_SECTION_CNT 4
+
 // CU: Code Update
 namespace CU
 {
-    /*
-     * @brief Structure for images that are updatable
+    /**
+     * @brief Structure for GetCodeLevels chip-op response
      */
-    typedef struct
+    struct __attribute__((packed, aligned(8))) CodeLevelsRespMsg_t
     {
-        CU_IMAGES imageType;
-        // hash of entire pak file (incl header minus image.hash file)
-        sha3_t   imageHashSHA3;
-    }imageUpdate_t;
+        /**
+         * @brief Structure for images that are updatable
+         */
+        struct __attribute__((packed, aligned(8))) ImageUpdate_t
+        {
+            /**
+             * @brief 2 bytes is reserved for future needs.
+             *        Also, its helps to align with the FIFO a word (aka 4bytes)
+             */
+            uint16_t iv_reserved1;
+
+            /**
+             * @brief Used to maintain the updatable image section type.
+             */
+            CU_IMAGES iv_imageType;
+
+            /**
+             * @brief 4 bytes is reserved for future needs.
+             *        Also, its helps to align the size of ImageUpdate_t
+             *        in multiple of 8 bytes.
+             */
+            uint32_t iv_reserved2;
+
+            /**
+             * @brief Used to maintain the hash of updatable image section.
+             */
+            sha3_t iv_imageHashSHA3_512;
+
+            /**
+             * @brief Explicit constructor to initialize its members.
+             *
+             * @param[in] i_imgType used to pass the type of updatable image.
+             */
+            explicit ImageUpdate_t(const CU_IMAGES i_imgType) :
+                iv_reserved1(0),
+                iv_imageType(i_imgType),
+                iv_reserved2(0),
+                iv_imageHashSHA3_512()
+            {}
+        };
+
+        /**
+         * @brief - No of chip-ops that supported by the SBE FW.
+         *        - It is used to decide the buffer size to collect
+         *          capabilities details from the GetCapabilities chip-op.
+         */
+        uint16_t iv_noOfCapabilities;
+
+        /**
+         * @brief - No of sub-images that supported by the SBE FW.
+         *        - It is used to decide the buffer size to collect
+         *          sub-images details from the GetCapabilities chip-op.
+         */
+        uint16_t iv_noOfSubImages;
+
+        /**
+         * @brief 4 bytes is reserved for future needs.
+         *        Also, its helps to align the size of ImageUpdate_t
+         *        in multiple of 8 bytes.
+         */
+        uint32_t iv_reserved1;
+
+        /**
+         * @brief Buffer to respond image (aka section i.e bldr, rt, bmc,
+         *        and host) hash and image type respectively.
+         */
+        ImageUpdate_t iv_updateableImagesInfo[UPDATABLE_IMG_SECTION_CNT];
+
+        /**
+         * @brief Used to override default constructor to initialize
+         *        its members with the expected value to frame the response.
+         */
+        CodeLevelsRespMsg_t() :
+            // TODO: JIRA: PFSBE-6
+            // Value must be assign based on no of chip-ops that are supported
+            // by the SBE FW by using chip-op json instead of hard code value.
+            // Note, it should be in words like p10.
+            iv_noOfCapabilities(23),
+            // TODO: JIRA: PFSBE-6
+            // Value must be assign based on no of sub-images that are supported
+            // in the specific SBE FW project.
+            iv_noOfSubImages(10),
+            iv_reserved1(0),
+            // If a new image section type added in below list then,
+            // we should update in UPDATABLE_IMG_SECTION_CNT macro as well.
+            iv_updateableImagesInfo{ImageUpdate_t(CU_IMAGES::BOOTLOADER),
+                ImageUpdate_t(CU_IMAGES::RUNTIME),
+                ImageUpdate_t(CU_IMAGES::BMC_OVRD),
+                ImageUpdate_t(CU_IMAGES::HOST_OVRD)}
+        {}
+    };
 
     /*
      * @brief Structure for image properties
