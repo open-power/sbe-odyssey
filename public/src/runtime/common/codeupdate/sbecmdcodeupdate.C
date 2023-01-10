@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -29,10 +30,9 @@
 #include "filenames.H"
 #include "sbeutil.H"
 #include "plat_hwp_data_stream.H"
+#include "sbesyncside.H"
 
-////////////////////////////////////////////////////////
-//////// Get Code Levels Chip-op ///////////////////////
-////////////////////////////////////////////////////////
+
 uint32_t sbeGetCodeLevels (uint8_t *i_pArg)
 {
     #define SBE_FUNC " sbeGetCodeLevels "
@@ -235,54 +235,68 @@ uint32_t sbeUpdateImage (uint8_t *i_pArg)
     #undef SBE_FUNC
 }
 
-////////////////////////////////////////////////////////
-//////// Sync Partition Chip-op ////////////////////////
-////////////////////////////////////////////////////////
-uint32_t sbeSyncPartition (uint8_t *i_pArg)
+uint32_t sbeSyncSide (uint8_t *i_pArg)
 {
-#define SBE_FUNC " sbeSyncPartition "
+    #define SBE_FUNC " sbeSyncSide "
     SBE_ENTER(SBE_FUNC);
 
-    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
-    //TODO:PFSBE-21 to be uncommented during implementation
-    //uint32_t fapiRc = fapi2::FAPI2_RC_SUCCESS;
-    //syncPartitionRespMsg_t msg;
-    sbeRespGenHdr_t hdr;
-    hdr.init();
-    sbeResponseFfdc_t ffdc;
-    sbeFifoType type;
-
+    uint32_t l_fiforc = SBE_SEC_OPERATION_SUCCESSFUL;
+    ReturnCode l_fapiRc = FAPI2_RC_SUCCESS;
+    sbeSyncReqMsg_t l_msg;
+    sbeRespGenHdr_t l_hdr;
+    l_hdr.init();
+    sbeResponseFfdc_t l_ffdc;
+    sbeFifoType l_type;
     do
     {
-        chipOpParam_t* configStr = (struct chipOpParam*)i_pArg;
-        type = static_cast<sbeFifoType>(configStr->fifoType);
-        SBE_DEBUG(SBE_FUNC "Fifo Type is:[%02X]",type);
+        chipOpParam_t* l_configStr = (struct chipOpParam*)i_pArg;
+        l_type = static_cast<sbeFifoType>(l_configStr->fifoType);
+        SBE_DEBUG(SBE_FUNC "Fifo Type is:[%02X]",l_type);
 
-#if 0   //TODO: to be enabled during implementation
-        //No attempt to read FIFO as no input params expected
-        // call sync partition function
-        fapiRc = syncPartition(&msg, type);
-        if (fapiRc != fapi2::FAPI2_RC_SUCCESS)
+        // Will attempt to dequeue one entry for the sync chip-op
+        uint32_t l_len2dequeue = sizeof(l_msg)/sizeof(uint32_t);
+        l_fiforc = sbeUpFifoDeq_mult (l_len2dequeue, (uint32_t *)&l_msg,
+                                      true, false, l_type);
+
+        // If FIFO access failure
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_fiforc);
+
+        // call sync chip-op function
+        l_fapiRc = syncSide(&l_msg, &l_hdr);
+        if (l_hdr.secondaryStatus() != SBE_SEC_OPERATION_SUCCESSFUL)
         {
-            l_rc = CU_RC_SYNC_PARTITION_HWP_FAILURE;
-            hdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                           l_rc );
-            ffdc.setRc(l_rc);
+            if(l_fapiRc != FAPI2_RC_SUCCESS)
+            {
+                l_ffdc.setRc(l_fapiRc);
+            }
             break;
         }
-#endif
-    } while(false);
+        else if(l_fapiRc != FAPI2_RC_SUCCESS)
+        {
+            l_ffdc.setRc(l_fapiRc);
+            l_hdr.setStatus(SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                            SBE_SEC_CU_SYNC_CHIPOP_FAILURE);
+            break;
+        }
 
-    // Build the response header packet
-    l_rc = sbeDsSendRespHdr(hdr, &ffdc, type);
-    if(l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+    } while(false); // end of do-while
+
+    if (l_fiforc == SBE_SEC_OPERATION_SUCCESSFUL)
     {
-        SBE_ERROR(SBE_FUNC"Failed. rc[0x%X]",l_rc);
+        // Build the response header packet
+        l_fiforc = sbeDsSendRespHdr(l_hdr, &l_ffdc, l_type);
+        if (l_fiforc != SBE_SEC_OPERATION_SUCCESSFUL)
+        {
+            SBE_ERROR(SBE_FUNC \
+                      " Failed to send response header for sync chip-op " \
+                      " RC[0x%08x]", l_fiforc);
+        }
     }
 
     SBE_EXIT(SBE_FUNC);
-    return l_rc;
-#undef SBE_FUNC
+    return l_fiforc;
+    #undef SBE_FUNC
+
 }
 
 uint32_t getImageHash(const CU_IMAGES i_imageType,
@@ -362,6 +376,71 @@ uint32_t getImageHash(const CU_IMAGES i_imageType,
     #undef SBE_FUNC
 }
 
+bool checkImageHashMismatch(codeUpdateCtrlStruct_t &i_syncSideCtrlStruct,
+                            sbeRespGenHdr_t *o_hdr)
+{
+   #define SBE_FUNC " checkImageHashMismatch "
+   SBE_ENTER(SBE_FUNC);
+
+   uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+   bool isImageHashMatch = false;
+
+   do
+   {
+      // declaration of running side image hash
+      uint8_t  l_runSideImgHash[SHA3_DIGEST_LENGTH] = {0};
+
+      // declaration of non-running side image hash
+      uint8_t  l_nonRunSideImgHash[SHA3_DIGEST_LENGTH] = {0};
+
+      // Get running side image hash of an image
+      l_rc = getImageHash((CU_IMAGES)i_syncSideCtrlStruct.imageType,
+                          i_syncSideCtrlStruct.runSideIndex,
+                          i_syncSideCtrlStruct.storageDevStruct.storageDevSideSize,
+                          l_runSideImgHash);
+      // Doing error handling of get image Hash from runSide
+      if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+      {
+         SBE_ERROR(SBE_FUNC \
+                  "Failed to get image hash to image type [%d]" \
+                  "for runSide[%d] RC[0x%08x]",
+                  i_syncSideCtrlStruct.imageType,
+                  i_syncSideCtrlStruct.runSideIndex,l_rc);
+         o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,l_rc);
+         break;
+      }
+
+      // Get non-running side image hash of an image
+      l_rc = getImageHash((CU_IMAGES)i_syncSideCtrlStruct.imageType,
+                          i_syncSideCtrlStruct.nonRunSideIndex,
+                          i_syncSideCtrlStruct.storageDevStruct.storageDevSideSize,
+                          l_nonRunSideImgHash);
+      // Doing error handling of get image Hash from nonRunSide
+      if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+      {
+         SBE_ERROR(SBE_FUNC \
+                  "Failed to get image hash to image type [%d]" \
+                  "for nonRunSide[%d] RC[0x%08x]",
+                  i_syncSideCtrlStruct.imageType,
+                  i_syncSideCtrlStruct.nonRunSideIndex,l_rc);
+         o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,l_rc);
+         break;
+      }
+
+      // comparing image hash of sides (from runSide to nonRunSide)
+      // then return the status of compared image hash
+      if(memcmp(l_runSideImgHash,l_nonRunSideImgHash,SHA3_DIGEST_LENGTH) == 0)
+      {
+         isImageHashMatch = true;
+      }
+
+   } while(false);
+
+   SBE_EXIT(SBE_FUNC);
+   return  isImageHashMatch;
+   #undef SBE_FUNC
+
+}
 
 fapi2::ReturnCode performEraseInDevice(SpiControlHandle& i_handle,
                                        codeUpdateCtrlStruct_t &i_codeUpdateCtrlStruct)
@@ -414,5 +493,20 @@ fapi2::ReturnCode performWriteInDevice(SpiControlHandle& i_handle,
                        i_writeLength,
                        (void *)i_bufferAddr,
                        i_ecc);
+}
+
+fapi2::ReturnCode performReadFromDevice(SpiControlHandle& i_handle,
+                                        const uint32_t i_readAddress,
+                                        const uint32_t i_readLength,
+                                        const SPI_ECC_CONTROL_STATUS i_eccStatus,
+                                        void *o_buffer
+                                       )
+{
+    return deviceRead(i_handle,
+                      i_readAddress,
+                      i_readLength,
+                      i_eccStatus,
+                      (void *)o_buffer
+                      );
 }
 

@@ -17,7 +17,7 @@
     {
         "cmdClass":"AE",
         "command":"0x03",
-        "function":"sbeSyncPartition",
+        "function":"sbeSyncSide",
         "fences":["SBE_FENCE_AT_CONTINUOUS_IPL","SBE_FENCE_AT_DUMPING"],
         "headerFile":"sbecmdcodeupdate.H"
     }

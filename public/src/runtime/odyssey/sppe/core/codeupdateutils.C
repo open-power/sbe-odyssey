@@ -41,7 +41,7 @@ void getSideInfo(uint8_t &o_runningSide,
     SBE_ENTER(SBE_FUNC);
 
     // to get running side
-    o_runningSide=SbeRegAccess::theSbeRegAccess().getBootSelection();
+    o_runningSide = SbeRegAccess::theSbeRegAccess().getBootSelection();
 
     // to get non-running side
     if (o_runningSide == SIDE_0_INDEX)
@@ -138,4 +138,18 @@ fapi2::ReturnCode deviceWrite(SpiControlHandle& i_handle,
                          i_writeLength,
                          (uint8_t *)i_buffer);
     }
+}
+
+fapi2::ReturnCode deviceRead(SpiControlHandle& i_handle,
+                             const uint32_t i_readAddress,
+                             const uint32_t i_readLength,
+                             const SPI_ECC_CONTROL_STATUS i_eccStatus,
+                             void *o_buffer
+                            )
+{
+    return spi_read(i_handle,
+                    i_readAddress,
+                    i_readLength,
+                    i_eccStatus,
+                    (uint8_t *)o_buffer);
 }

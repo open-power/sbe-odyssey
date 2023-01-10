@@ -114,8 +114,9 @@ void getSideInfo(uint8_t &o_runningSide,
 
 /* @brief : This API is used to get side start address in storage device
  *
- * @param[in]  : i_side
- * @param[out] : o_sideStartAddress used to pass side start address
+ * @param[in]  : i_side Used to pass side information to get its start address
+ *
+ * @param[out] : o_sideStartAddress Used to return the given side start address
  *
  * @return : void
  */
@@ -171,5 +172,23 @@ fapi2::ReturnCode deviceWrite(SpiControlHandle& i_handle,
                               uint32_t i_writeLength,
                               void *i_buffer,
                               bool i_ecc);
+
+/* @brief : This API is used to perform read from device
+ *
+ * @param[in] : i_handle : SPI controller handle
+ * @param[in] : i_readAddress : Address to read data from device
+ * @param[in] : i_readLength : Length of data to read from device
+ * @param[in] : i_eccStatus :  ECC byte(RAW_BYTE_ACCESS, STANDARD_ECC_ACCESS,
+ *                                      DISCARD_ECC_ACCESS)
+ * @param[out] : o_buffer : buffer to store the data after read
+ *
+ * @return : fapiRc
+ */
+fapi2::ReturnCode deviceRead(SpiControlHandle& i_handle,
+                             const uint32_t i_readAddress,
+                             const uint32_t i_readLength,
+                             const SPI_ECC_CONTROL_STATUS i_eccStatus,
+                             void *o_buffer
+                            );
 
 #endif //CODE_UPDATE_UTILS_H

@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -27,6 +28,7 @@
 #include "sbe_sp_intf.H"
 #include "sha3.H"
 #include "imagemap.H"
+#include "sbeSpMsg.H"
 
 // CU: Code Update
 namespace CU
@@ -213,13 +215,13 @@ uint32_t sbeGetCodeLevels(uint8_t *i_pArg);
  */
 uint32_t sbeUpdateImage(uint8_t *i_pArg);
 
-/*@brief - sbeSyncPartition : Implement SBE Sync Partition Chipop (0xAE03)
+/*@brief - sbeSyncSide : Implement SBE sync chip-op (0xAE03)
  *
  * @param[in] - i_pArg Buffer to be passed to the function
  *
  * @return - RC from the FIFO access utility
  */
-uint32_t sbeSyncPartition(uint8_t *i_pArg);
+uint32_t sbeSyncSide(uint8_t *i_pArg);
 
 /*@brief - Get image hash for an image in NOR
  *
@@ -231,9 +233,23 @@ uint32_t sbeSyncPartition(uint8_t *i_pArg);
  * @return - success/ fail
  */
 uint32_t getImageHash(const CU_IMAGES i_imageType,
-                      const uint8_t i_Partition,
+                      const uint8_t i_side,
                       const uint32_t i_storageDevSideSize,
                       uint8_t* o_hashArrayPtr);
+
+/**
+ * @brief checkImageHashMismatch : comparing the image hash of an image from
+ *                                 runSide to nonRunSide
+ *
+ * @param[in]  - i_syncSideCtrlStruct struct used to contains various
+ *               parameters needed for sync chip-op
+ * @param[out] - o_hdr: Response header object
+ *
+ * @return:      false - for image hash mismatch
+ *               true - for image match
+ */
+bool checkImageHashMismatch(codeUpdateCtrlStruct_t &i_syncSideCtrlStruct,
+                            sbeRespGenHdr_t *o_hdr);
 
 /*
  * @brief performEraseInDevice : This API can be used to perform erase in device
@@ -267,5 +283,26 @@ fapi2::ReturnCode performWriteInDevice(SpiControlHandle& i_handle,
                                        uint32_t i_writeLength,
                                        void *i_buffAddr,
                                        bool i_ecc);
+
+
+/* @brief performReadFromDevice:  This API can be used to perform read from
+ *                                device by calling the plat specific API
+ *                                underneath
+ *
+ * @param[in] : i_handle : SPI controller handle
+ * @param[in] : i_readAddress : Address to read data from device
+ * @param[in] : i_readLength : length of data to read from device
+ * @param[in] : i_eccStatus :  read data with ECC byte(RAW_BYTE_ACCESS,
+ *                             STANDARD_ECC_ACCESS,DISCARD_ECC_ACCESS)
+ * @param[out] : o_buffer : buffer to store the data after read
+ *
+ * @return : fapiRc
+ */
+fapi2::ReturnCode performReadFromDevice(SpiControlHandle& i_handle,
+                                        const uint32_t i_readAddress,
+                                        const uint32_t i_readLength,
+                                        const SPI_ECC_CONTROL_STATUS i_eccStatus,
+                                        void *o_buffer
+                                       );
 
 #endif //SBE_CMD_CODE_UPDATE_H

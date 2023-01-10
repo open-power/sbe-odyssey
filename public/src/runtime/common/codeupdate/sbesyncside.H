@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/imagemap.H $             */
+/* $Source: public/src/runtime/common/codeupdate/sbesyncside.H $          */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,39 +21,43 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __IMAGE_MAP_H
-#define __IMAGE_MAP_H
 
-#include "codeupdateutils.H"
+#ifndef SBE_SYNC_SIDE_H
+#define SBE_SYNC_SIDE_H
 
-#define MAX_PARTITION_TABLE_ENTRY 6
+#include "target.H"
+
+using namespace fapi2;
 
 /**
- * @brief - Used to decide no of updatable image section count.
- *        - If the updatable image section count is changed then,
- *          we should add appropriate image section type in the
- *          CodeLevelsRespMsg_t::iv_updateableImagesInfo member,
- *          refer constructor.
+ * @brief structure for sync chip-op
  */
-#define UPDATABLE_IMG_SECTION_CNT 4
-
-// CU: Code Update
-namespace CU
+typedef struct __attribute__((__packed__))
 {
-    static const imgMap_t g_imgMap[] = {
-        {CU_IMAGES::BOOTLOADER, "boot"},
-        {CU_IMAGES::RUNTIME,    "rt"},
-        {CU_IMAGES::BMC_OVRD,   "bmc"},
-        {CU_IMAGES::HOST_OVRD,  "host"}
-    };
-} // namespace CU
+    uint32_t reserved  : 31;
+    uint32_t forceSync : 1;
+}sbeSyncReqMsg_t;
 
-constexpr CU_IMAGES g_syncableImgs [] __attribute__ ((aligned (8))) =
-{
-   CU_IMAGES::BOOTLOADER,
-   CU_IMAGES::RUNTIME,
-   CU_IMAGES::BMC_OVRD,
-   CU_IMAGES::HOST_OVRD
-};
+/**
+ * @brief  syncSide : syncSide is used to sync images(BOOTLOADER/RUNTIME,BMC,HOST).
+ *
+ * @param[in]  - i_msg: sync chip-op request parameters
+ * @param[out] - o_hdr: Response header object
+ *
+ * @return     - FAPIRC
+ */
+fapi2::ReturnCode syncSide(const sbeSyncReqMsg_t *i_msg, sbeRespGenHdr_t *o_hdr);
 
-#endif //IMAGE_MAP_H
+/**
+ * @brief syncImage : Syncing the image from runSide to nonRunSide
+ *
+ * @param[in]  - i_syncSideCtrlStruct struct used to contains various
+ *               parameters needed for syn chip-op
+ * @param[out] - o_hdr: Response header object
+ *
+ * @return:      FAPIRC
+ */
+fapi2::ReturnCode syncImage(codeUpdateCtrlStruct_t &i_syncSideCtrlStruct,
+                            sbeRespGenHdr_t *o_hdr);
+
+#endif
