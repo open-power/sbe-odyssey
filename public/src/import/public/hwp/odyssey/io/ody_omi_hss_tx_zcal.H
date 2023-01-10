@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_train_check.C $ */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_hss_tx_zcal.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,63 +23,60 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 ///------------------------------------------------------------------------------
-/// @file ody_omi_train_check.C
-/// @brief Check OMI training
+/// @file ody_omi_hss_tx_zcal.H
+/// @brief Header file for Odyssey HWP that runs TDR on links
 ///
 /// *HWP HW Maintainer : Josh Chica <josh.chica@ibm.com>
 /// *HWP FW Maintainer :
 /// *HWP Consumed by: SBE
 ///------------------------------------------------------------------------------
-#include <ody_omi_train_check.H>
-#include <ody_io_ppe_common.H>
-#include <ody_scom_omi.H>
 
-SCOMT_OMI_USE_D_REG_DL0_STATUS
+#pragma once
+#include <fapi2.H>
 
-enum ody_omi_train_check_consts
+// Structures
+
+// Structure of the arrays:
+// psegPre1
+// psegPre2
+// psegPost
+// psegMain
+uint64_t pSegRegisters[] =
 {
-    ODY_OMI_TRAINING_COMPLETE_STATE = 7,
-    ODY_OMI_TRAINING_CYCLES = 100000000,
-    ODY_OMI_TRAINING_NS = 10000,
-    ODY_OMI_TRAINING_LOOPS = 20,
+    0x08E,
+    0x46C,
+    0x4C4,
+    0x44C
 };
 
-///
-/// @brief Check OMI training
-///
-/// @param[in] i_target Chip target to start
-///
-/// @return fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
-fapi2::ReturnCode ody_omi_train_check(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
+// Structure of the arrays:
+// nsegPre1
+// nsegPre2
+// nsegPost
+// nsegMain
+uint64_t nSegRegisters[] =
 {
-    FAPI_DBG("Starting ody_omi_train_check");
+    0x484,
+    0x47C,
+    0x4CC,
+    0x454
+};
 
-    using namespace scomt::omi;
+uint8_t segLens[] =
+{
+    9,
+    2,
+    9,
+    16
+};
 
-    D_REG_DL0_STATUS_t l_dl0_status = 0;
-    uint8_t l_state_machine = 0;
-    int l_trys = ODY_OMI_TRAINING_LOOPS;
+// Function pointer typedef definition for HWP call support
+typedef fapi2::ReturnCode (*ody_omi_hss_tx_zcal_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
 
-    while (l_trys > 0 && l_state_machine != ODY_OMI_TRAINING_COMPLETE_STATE)
-    {
-        FAPI_TRY(l_dl0_status.getScom(i_target));
-        l_state_machine = l_dl0_status.get_TRAINING_STATE_MACHINE();
-        l_trys--;
-
-        FAPI_DBG("Training state: %x", l_state_machine);
-
-        if (l_state_machine != ODY_OMI_TRAINING_COMPLETE_STATE && l_trys > 0)
-        {
-            FAPI_TRY(fapi2::delay(ODY_OMI_TRAINING_NS, ODY_OMI_TRAINING_CYCLES));
-        }
-    }
-
-    FAPI_ASSERT(l_state_machine == ODY_OMI_TRAINING_COMPLETE_STATE,
-                fapi2::OMI_TRAINING_DONE_POLL_FAILED()
-                .set_TARGET(i_target),
-                "OMI training done poll time-out" );
-
-fapi_try_exit:
-    FAPI_DBG("End ody_omi_train_check");
-    return fapi2::current_err;
+extern "C"
+{
+    /// @brief Initiates TDR run on Odyssey links to check for open/short
+    /// @param[in]  i_target  Reference to TARGET_TYPE_OCMB_CHIP target
+    /// @return  FAPI2_RC_SUCCESS if success, else error code.
+    fapi2::ReturnCode ody_omi_hss_tx_zcal(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
 }

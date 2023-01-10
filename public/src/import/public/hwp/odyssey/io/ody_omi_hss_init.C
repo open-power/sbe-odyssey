@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_train_check.C $ */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_hss_init.C $  */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,63 +23,49 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 ///------------------------------------------------------------------------------
-/// @file ody_omi_train_check.C
-/// @brief Check OMI training
+/// @file ody_omi_hss_init.C
+/// @brief Setup PHY PPE registers and start reg init, dccal, lane power-up and fifo init
 ///
 /// *HWP HW Maintainer : Josh Chica <josh.chica@ibm.com>
 /// *HWP FW Maintainer :
 /// *HWP Consumed by: SBE
 ///------------------------------------------------------------------------------
-#include <ody_omi_train_check.H>
+
+#include <ody_omi_hss_init.H>
 #include <ody_io_ppe_common.H>
 #include <ody_scom_omi.H>
 
-SCOMT_OMI_USE_D_REG_DL0_STATUS
-
-enum ody_omi_train_check_consts
-{
-    ODY_OMI_TRAINING_COMPLETE_STATE = 7,
-    ODY_OMI_TRAINING_CYCLES = 100000000,
-    ODY_OMI_TRAINING_NS = 10000,
-    ODY_OMI_TRAINING_LOOPS = 20,
-};
-
 ///
-/// @brief Check OMI training
+/// @brief Setup PHY PPE registers and start reg init, dccal, lane power-up and fifo init
 ///
 /// @param[in] i_target Chip target to start
 ///
 /// @return fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
-fapi2::ReturnCode ody_omi_train_check(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
+fapi2::ReturnCode ody_omi_hss_init(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
 {
-    FAPI_DBG("Starting ody_omi_train_check");
+    FAPI_DBG("Starting ody_omi_hss_init");
+    fapi2::buffer<uint64_t> l_data = 0;
 
-    using namespace scomt::omi;
+    io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(scomt::omi::PHY_PPE_WRAP0_ARB_CSAR,
+            scomt::omi::PHY_PPE_WRAP0_ARB_CSDR,
+            scomt::omi::PHY_PPE_WRAP0_XIXCR);
 
-    D_REG_DL0_STATUS_t l_dl0_status = 0;
-    uint8_t l_state_machine = 0;
-    int l_trys = ODY_OMI_TRAINING_LOOPS;
+    ody_io::io_ppe_common<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_common(&l_ppe_regs);
 
-    while (l_trys > 0 && l_state_machine != ODY_OMI_TRAINING_COMPLETE_STATE)
-    {
-        FAPI_TRY(l_dl0_status.getScom(i_target));
-        l_state_machine = l_dl0_status.get_TRAINING_STATE_MACHINE();
-        l_trys--;
+    FAPI_DBG("ody_omi_hss_init calling l_ppe.ppe_init");
 
-        FAPI_DBG("Training state: %x", l_state_machine);
-
-        if (l_state_machine != ODY_OMI_TRAINING_COMPLETE_STATE && l_trys > 0)
-        {
-            FAPI_TRY(fapi2::delay(ODY_OMI_TRAINING_NS, ODY_OMI_TRAINING_CYCLES));
-        }
-    }
-
-    FAPI_ASSERT(l_state_machine == ODY_OMI_TRAINING_COMPLETE_STATE,
-                fapi2::OMI_TRAINING_DONE_POLL_FAILED()
-                .set_TARGET(i_target),
-                "OMI training done poll time-out" );
+    const fapi2::buffer<uint64_t> l_gcr_ids[] = { 0 };
+    const fapi2::buffer<uint64_t> l_rx_lanes[] = { 8 };
+    const fapi2::buffer<uint64_t> l_tx_lanes[] = { 8 };
+    FAPI_TRY(l_ppe_common.ppe_init(i_target, 1,
+                                   l_gcr_ids,
+                                   l_rx_lanes,
+                                   l_tx_lanes,
+                                   0, // spread_en
+                                   0, // pcie_mode
+                                   1)); //serdes_16_to_1
 
 fapi_try_exit:
-    FAPI_DBG("End ody_omi_train_check");
+    FAPI_DBG("End ody_omi_hss_init");
     return fapi2::current_err;
 }

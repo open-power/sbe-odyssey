@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_setup.H $     */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_hss_dccal_poll.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,36 +22,63 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#include <fapi2.H>
 ///------------------------------------------------------------------------------
-/// @file ody_omi_setup.H
-/// @brief Setup OMI DL
+/// @file ody_omi_hss_dccal_poll.C
+/// @brief Odyssey hss DCCAL polling HWP
 ///
-/// *HWP HW Maintainer : Josh Chica <josh.chica@ibm.com>
+/// *HWP HW Maintainer : Chris Steffen (cwsteffen@us.ibm.com)
 /// *HWP FW Maintainer :
-/// *HWP Consumed by: SBE
+/// *HWP Consumed by: HB, Cronus, SBE
 ///------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-// Structure definitions
+// Includes
 //------------------------------------------------------------------------------
-typedef fapi2::ReturnCode (*ody_omi_setup_FP_t)(
-    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
+#include <ody_scom_omi.H>
+#include <ody_omi_hss_dccal_poll.H>
+#include <ody_io_ppe_common.H>
 
 //------------------------------------------------------------------------------
-// Function prototypes
+// Function definitions
 //------------------------------------------------------------------------------
-
-extern "C"
+fapi2::ReturnCode ody_omi_hss_dccal_poll(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
 {
+    FAPI_DBG("Start");
+    fapi2::buffer<uint64_t> l_data = 0;
 
-///
-/// @brief Setup OMI DL
-///
-/// @param[in] i_target Chip target to start
-///
-/// @return fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
-    fapi2::ReturnCode ody_omi_setup(
-        const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
+    io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(scomt::omi::PHY_PPE_WRAP0_ARB_CSAR,
+            scomt::omi::PHY_PPE_WRAP0_ARB_CSDR,
+            scomt::omi::PHY_PPE_WRAP0_XIXCR);
 
-} // extern "C"
+    ody_io::io_ppe_common<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_common(&l_ppe_regs);
+
+    const fapi2::buffer<uint64_t> l_rx_lanes = 0xFF000000;
+    const fapi2::buffer<uint64_t> l_tx_lanes = 0xFF000000;
+    const fapi2::buffer<uint64_t> l_num_threads = 1;
+    fapi2::buffer<uint8_t> l_done = 0;
+    int l_trys = ody_io::IO_PPE_DCCAL_DONE_POLL_TRYS;
+
+    while (!l_done && l_trys > 0)
+    {
+        l_ppe_regs.flushCache(i_target);
+        FAPI_TRY(l_ppe_common.dccal_start_done(i_target, l_num_threads,
+                                               l_rx_lanes, l_tx_lanes, 1, l_done));
+
+        if (!l_done)
+        {
+            fapi2::delay(ody_io::IO_PPE_DCCAL_DONE_POLL_DELAY_NS, ody_io::IO_PPE_DCCAL_DONE_POLL_DELAY_SIM_CYCLES);
+        }
+
+        l_trys--;
+    }
+
+    FAPI_ASSERT(l_done,
+                fapi2::IO_PPE_DONE_POLL_FAILED()
+                .set_TARGET(i_target),
+                "IO PPE done poll time-out" );
+
+
+fapi_try_exit:
+    FAPI_DBG("End");
+    return fapi2::current_err;
+}

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,25 +23,35 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 ///------------------------------------------------------------------------------
-/// @file ody_omi_phy_bist.H
-/// @brief Header file for Odyssey OMI train check HWP
+/// @file ody_omi_train_check.H
+/// @brief Check OMI training
 ///
-/// *HWP HW Maintainer : Chris Steffen (cwsteffen@us.ibm.com)
+/// *HWP HW Maintainer : Josh Chica <josh.chica@ibm.com>
 /// *HWP FW Maintainer :
-/// *HWP Consumed by: HB, Cronus, SBE
+/// *HWP Consumed by: SBE
 ///------------------------------------------------------------------------------
-
-#pragma once
 #include <fapi2.H>
 
-// Function pointer typedef definition for HWP call support
-typedef fapi2::ReturnCode (*ody_omi_train_check_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
+//------------------------------------------------------------------------------
+// Structure definitions
+//------------------------------------------------------------------------------
+typedef fapi2::ReturnCode (*ody_omi_train_check_FP_t)(
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
+
+//------------------------------------------------------------------------------
+// Function prototypes
+//------------------------------------------------------------------------------
 
 extern "C"
 {
-    /// @brief Check that the Odyssey's omi state machine is in its expected
-    /// state after OMI training
-    /// @param[in]  i_target  Reference to TARGET_TYPE_OCMB_CHIP target
-    /// @return  FAPI2_RC_SUCCESS if success, else error code.
-    fapi2::ReturnCode ody_omi_train_check(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
-}
+
+///
+/// @brief Check OMI training
+///
+/// @param[in] i_target Chip target to start
+///
+/// @return fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
+    fapi2::ReturnCode ody_omi_train_check(
+        const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
+
+} // extern "C"

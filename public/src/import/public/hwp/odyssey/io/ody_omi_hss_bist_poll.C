@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_phy_dccal_poll.H $ */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_hss_bist_poll.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,26 +22,28 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-
 ///------------------------------------------------------------------------------
-/// @file ody_omi_phy_dccal_poll.H
-/// @brief Header file for Odyssey Phy DCCAL polling HWP
+/// @file ody_omi_hss_bist_poll.C
+/// @brief Odyssey HSS BIST HWP
 ///
-/// *HWP HW Maintainer : Chris Steffen (cwsteffen@us.ibm.com)
+/// *HWP HW Maintainer : Josh Chica <Josh.Chica@ibm.com>
 /// *HWP FW Maintainer :
-/// *HWP Consumed by: HB, Cronus, SBE
+/// *HWP Consumed by: SBE
 ///------------------------------------------------------------------------------
 
-#pragma once
-#include <fapi2.H>
+//------------------------------------------------------------------------------
+// Includes
+//------------------------------------------------------------------------------
+#include <ody_omi_hss_bist_poll.H>
 
-// Function pointer typedef definition for HWP call support
-typedef fapi2::ReturnCode (*ody_omi_phy_dccal_poll_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
-
-extern "C"
+//------------------------------------------------------------------------------
+// Function definitions
+//------------------------------------------------------------------------------
+fapi2::ReturnCode ody_omi_hss_bist_poll(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
 {
-    /// @brief HWP that polls Odyssey Phy Dc Calibration
-    /// @param[in]  i_target  Reference to TARGET_TYPE_OCMB_CHIP target
-    /// @return  FAPI2_RC_SUCCESS if success, else error code.
-    fapi2::ReturnCode ody_omi_phy_dccal_poll(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
+    FAPI_DBG("Start");
+
+fapi_try_exit:
+    FAPI_DBG("End");
+    return fapi2::current_err;
 }

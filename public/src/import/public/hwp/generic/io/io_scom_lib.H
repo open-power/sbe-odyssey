@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_setup.H $     */
+/* $Source: public/src/import/public/hwp/generic/io/io_scom_lib.H $       */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,36 +22,35 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+#pragma once
+
 #include <fapi2.H>
-///------------------------------------------------------------------------------
-/// @file ody_omi_setup.H
-/// @brief Setup OMI DL
-///
-/// *HWP HW Maintainer : Josh Chica <josh.chica@ibm.com>
-/// *HWP FW Maintainer :
-/// *HWP Consumed by: SBE
-///------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-// Structure definitions
-//------------------------------------------------------------------------------
-typedef fapi2::ReturnCode (*ody_omi_setup_FP_t)(
-    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
-
-//------------------------------------------------------------------------------
-// Function prototypes
-//------------------------------------------------------------------------------
-
-extern "C"
+inline uint64_t buildAddr(const uint32_t& i_base_addr,
+                          const uint8_t& i_group,
+                          const uint8_t& i_lane,
+                          const uint16_t& i_reg,
+                          const uint8_t& i_tx = 1)
 {
+    uint64_t r_addr = static_cast<uint64_t>(i_base_addr);
+    r_addr |= static_cast<uint64_t>(0x3F);
+    r_addr |= static_cast<uint64_t>(i_reg & 0x1FF) << 43;   // 63-20=43
+    r_addr |= static_cast<uint64_t>(i_tx & 0x1) << 42;      // 63-21=42
+    r_addr |= static_cast<uint64_t>(i_lane & 0x1F) << 32;   // 63-31=32
+    r_addr |= static_cast<uint64_t>(i_group & 0xF) << 37;   // 63-26=37
+    r_addr |= static_cast<uint64_t>(0x1) << 63;
 
-///
-/// @brief Setup OMI DL
-///
-/// @param[in] i_target Chip target to start
-///
-/// @return fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
-    fapi2::ReturnCode ody_omi_setup(
-        const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
+    return r_addr;
+}
 
-} // extern "C"
+fapi2::ReturnCode rmwIoHardwareReg(const fapi2::Target < fapi2::TARGET_TYPE_OCMB_CHIP | fapi2::TARGET_TYPE_OMI > &,
+                                   const uint64_t&,
+                                   const uint32_t&,
+                                   const uint32_t&,
+                                   const uint32_t&);
+
+fapi2::ReturnCode readIoHardwareReg(const fapi2::Target < fapi2::TARGET_TYPE_OCMB_CHIP | fapi2::TARGET_TYPE_OMI > &,
+                                    const uint64_t&,
+                                    const uint32_t&,
+                                    const uint32_t&,
+                                    uint32_t&);

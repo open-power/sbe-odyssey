@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,6 +27,7 @@
 //
 #include <fapi2.H>
 #include <io_ppe_lib.H>
+#include <io_scom_lib.H>
 
 enum IO_PPE_CONSTS
 {
@@ -96,7 +97,43 @@ class io_ppe_common
                                  const fapi2::buffer<uint64_t> i_pcie_mode,
                                  const fapi2::buffer<uint64_t> i_serdes_16_to_1);
 
+        fapi2::ReturnCode bist_init(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
+                                    const uint32_t&,
+                                    const uint8_t&);
+
+        fapi2::ReturnCode bist_init_rx(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
+                                       const uint64_t&,
+                                       const uint32_t&,
+                                       const uint8_t&,
+                                       const uint8_t&,
+                                       uint8_t);
+
+        fapi2::ReturnCode bist_init_tx(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
+                                       const uint32_t&,
+                                       uint8_t);
+
         fapi2::ReturnCode ppe_start(const fapi2::Target<K, M, V>& i_target);
+
+        fapi2::ReturnCode ppe_init_threads(const fapi2::Target<K, M, V>& i_target,
+                                           const fapi2::buffer<uint64_t> i_num_threads);
+
+        fapi2::ReturnCode ppe_init_thread(const fapi2::Target<K, M, V>& i_target,
+                                          const fapi2::buffer<uint64_t> i_thread,
+                                          const fapi2::buffer<uint64_t> i_gcr_id,
+                                          const fapi2::buffer<uint64_t> i_num_rx_lanes,
+                                          const fapi2::buffer<uint64_t> i_num_tx_lanes,
+                                          const fapi2::buffer<uint64_t> i_spread_en,
+                                          const fapi2::buffer<uint64_t> i_pcie_mode,
+                                          const fapi2::buffer<uint64_t> i_serdes_16_to_1);
+
+        fapi2::ReturnCode ppe_init(const fapi2::Target<K, M, V>& i_target,
+                                   const fapi2::buffer<uint64_t> i_num_threads,
+                                   const fapi2::buffer<uint64_t> i_gcr_ids[],
+                                   const fapi2::buffer<uint64_t> i_rx_lanes[],
+                                   const fapi2::buffer<uint64_t> i_tx_lanes[],
+                                   const fapi2::buffer<uint64_t> i_spread_en,
+                                   const fapi2::buffer<uint64_t> i_pcie_mode,
+                                   const fapi2::buffer<uint64_t> i_serdes_16_to_1);
 
 
         fapi2::ReturnCode clear_ext_cmd_thread(const fapi2::Target<K, M, V>& i_target,
@@ -248,6 +285,116 @@ fapi_try_exit:
 }
 
 // ===============================================================
+// BIST INIT
+// ===============================================================
+
+template<fapi2::TargetType K, fapi2::MulticastType M, typename V>
+fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+        const uint32_t& i_thread,
+        const uint8_t& i_bist_timer_sel)
+{
+    FAPI_DBG("Setting BIST timer sel: %d", i_bist_timer_sel);
+    FAPI_TRY(MEM_REG_RX_BER_TIMER_SEL_BIST_PUT(iv_regs, i_target, i_thread, i_bist_timer_sel));
+
+fapi_try_exit:
+    FAPI_DBG("End");
+    return fapi2::current_err;
+}
+
+template<fapi2::TargetType K, fapi2::MulticastType M, typename V>
+fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init_rx(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+        const uint64_t& i_baseAddr,
+        const uint32_t& i_thread,
+        const uint8_t& i_esdTest,
+        const uint8_t& i_dacTest,
+        uint8_t i_rx_mask)
+{
+    const uint16_t c_reg_rx_datasm_cnt22 = 0x146;
+    const uint16_t c_reg_rx_ctl_cntl5 = 0x124;
+    const uint8_t c_max_lanes = 8;
+
+    const uint8_t c_bit_rx_esd_test = 6;        // rx_datasm_cnt22
+    const uint8_t c_bit_rx_dac_test = 15;       // rx_datasm_cnt22
+    const uint8_t c_bit_rx_perv_capt = 48;      // rx_ctl_cntl5
+    const uint8_t c_bit_tc_bist_shared = 49;    // rx_ctl_cntl5
+    const uint8_t c_bit_tc_bist_code = 51;      // rx_ctl_cntl5
+    const uint8_t c_len_rx = 1;
+
+    fapi2::buffer<uint64_t> l_buffer;
+
+    uint64_t l_addr = 0;
+    uint8_t l_lane = 0;
+
+    for (l_lane = 0; l_lane < c_max_lanes; l_lane++)
+    {
+        if (i_rx_mask & 0x1)
+        {
+            l_addr = buildAddr(i_baseAddr, 0, l_lane, c_reg_rx_datasm_cnt22);
+
+            // Write rx_dac_test_check_en = 0
+            FAPI_DBG("Setting RX DAC test Check enabled");
+            l_buffer.insertFromRight(i_dacTest, c_bit_rx_dac_test, c_len_rx);
+
+            // Write rx_dac_test_check_en = 0
+            FAPI_DBG("Setting RX ESD test Check enabled");
+            l_buffer.insertFromRight(i_esdTest, c_bit_rx_esd_test, c_len_rx);
+
+            FAPI_TRY(putScom(i_target, l_addr, l_buffer),
+                     "Error putscom to address 0x%08X.", l_addr);
+
+            l_buffer = 0;
+
+            l_addr = buildAddr(i_baseAddr, 0, l_lane, c_reg_rx_ctl_cntl5);
+
+            // Write rx_pervasive_capt = 1
+            FAPI_DBG("Setting RX Pervasive Capt enabled");
+            l_buffer.insertFromRight(1, c_bit_rx_perv_capt, c_len_rx);
+
+            // Write tc_bist_shared_ovrd = 1
+            FAPI_DBG("Setting TC BIST shared overload enabled");
+            l_buffer.insertFromRight(1, c_bit_tc_bist_shared, c_len_rx);
+
+            // Write tc_bist_code_go = 1
+            FAPI_DBG("Setting TC BIST code go enabled");
+            l_buffer.insertFromRight(1, c_bit_tc_bist_code, c_len_rx);
+
+            FAPI_TRY(putScom(i_target, l_addr, l_buffer),
+                     "Error putscom to address 0x%08X.", l_addr);
+        }
+
+        i_rx_mask = i_rx_mask >> 1;
+    }
+
+fapi_try_exit:
+    FAPI_DBG("End");
+    return fapi2::current_err;
+}
+
+template<fapi2::TargetType K, fapi2::MulticastType M, typename V>
+fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init_tx(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+        const uint32_t& i_thread,
+        uint8_t i_tx_mask)
+{
+    const uint8_t c_max_lanes = 8;
+    uint8_t l_lane = 0;
+
+    for (l_lane = 0; l_lane < c_max_lanes; l_lane++)
+    {
+        if(i_tx_mask & 0x1)
+        {
+            FAPI_DBG("Setting BIST HS enabled");
+            FAPI_TRY(FW_REG_FW_BIST_EN_PL_PUT(iv_regs, i_target, i_thread, l_lane, 1));
+        }
+
+        i_tx_mask = i_tx_mask >> 1;
+    }
+
+fapi_try_exit:
+    FAPI_DBG("End");
+    return fapi2::current_err;
+}
+
+// ===============================================================
 // phy_ppe_start
 // ===============================================================
 template<fapi2::TargetType K, fapi2::MulticastType M, typename V>
@@ -265,6 +412,85 @@ fapi_try_exit:
     return fapi2::current_err;
 }
 
+// ===============================================================
+// PPE_INIT
+// ===============================================================
+
+template<fapi2::TargetType K, fapi2::MulticastType M, typename V>
+fapi2::ReturnCode io_ppe_common<K, M, V>::ppe_init_threads(const fapi2::Target<K, M, V>& i_target,
+        const fapi2::buffer<uint64_t> i_num_threads)
+{
+    FAPI_TRY(IMG_REG_PPE_NUM_THREADS_PUT(iv_regs, i_target, i_num_threads));
+fapi_try_exit:
+    return fapi2::current_err;
+}
+
+template<fapi2::TargetType K, fapi2::MulticastType M, typename V>
+fapi2::ReturnCode io_ppe_common<K, M, V>::ppe_init_thread(const fapi2::Target<K, M, V>& i_target,
+        const fapi2::buffer<uint64_t> i_thread,
+        const fapi2::buffer<uint64_t> i_gcr_id,
+        const fapi2::buffer<uint64_t> i_num_rx_lanes,
+        const fapi2::buffer<uint64_t> i_num_tx_lanes,
+        const fapi2::buffer<uint64_t> i_spread_en,
+        const fapi2::buffer<uint64_t> i_pcie_mode,
+        const fapi2::buffer<uint64_t> i_serdes_16_to_1)
+{
+    FAPI_DBG("Starting io_ppe_common::ppe_init_thread");
+    FAPI_TRY(FW_REG_FW_GCR_BUS_ID_PUT(iv_regs, i_target, i_thread, i_gcr_id));
+    FAPI_TRY(FW_REG_FW_NUM_LANES_RX_PUT(iv_regs, i_target, i_thread, i_num_rx_lanes));
+    FAPI_TRY(FW_REG_FW_NUM_LANES_TX_PUT(iv_regs, i_target, i_thread, i_num_tx_lanes));
+    FAPI_TRY(FW_REG_FW_SERDES_16_TO_1_MODE_PUT(iv_regs, i_target, i_thread, i_serdes_16_to_1));
+    FAPI_TRY(FW_REG_FW_SPREAD_EN_PUT(iv_regs, i_target, i_thread, i_spread_en));
+    FAPI_TRY(FW_REG_FW_PCIE_MODE_PUT(iv_regs, i_target, i_thread, i_pcie_mode));
+    FAPI_TRY(FW_REG_FW_STOP_THREAD_PUT(iv_regs, i_target, i_thread, 0));
+
+fapi_try_exit:
+    FAPI_DBG("Ending io_ppe_common::ppe_init_thread");
+    return fapi2::current_err;
+}
+
+template<fapi2::TargetType K, fapi2::MulticastType M, typename V>
+fapi2::ReturnCode io_ppe_common<K, M, V>::ppe_init(const fapi2::Target<K, M, V>& i_target,
+        const fapi2::buffer<uint64_t> i_num_threads,
+        const fapi2::buffer<uint64_t> i_gcr_ids[],
+        const fapi2::buffer<uint64_t> i_rx_lanes[],
+        const fapi2::buffer<uint64_t> i_tx_lanes[],
+        const fapi2::buffer<uint64_t> i_spread_en,
+        const fapi2::buffer<uint64_t> i_pcie_mode,
+        const fapi2::buffer<uint64_t> i_serdes_16_to_1)
+{
+    FAPI_DBG("Starting io_ppe_common::ppe_init");
+
+    FAPI_TRY(ppe_init_threads(i_target, i_num_threads));
+
+    for (uint32_t l_thread = 0; l_thread < i_num_threads; l_thread++)
+    {
+        FAPI_TRY(ppe_init_thread(i_target,
+                                 l_thread,
+                                 i_gcr_ids[l_thread],
+                                 i_rx_lanes[l_thread],
+                                 i_tx_lanes[l_thread],
+                                 i_spread_en,
+                                 i_pcie_mode,
+                                 i_serdes_16_to_1));
+    }
+
+    //Turn off unused threads.
+    for (uint32_t l_thread = i_num_threads + 1; l_thread < IO_PPE_MAX_THREADS; l_thread++)
+    {
+        FAPI_TRY(FW_REG_FW_STOP_THREAD_PUT(iv_regs, i_target, l_thread, 1));
+    }
+
+    iv_regs->flushCache(i_target);
+
+    FAPI_TRY(iv_regs->hardReset(i_target));
+    fapi2::delay(50000, 10000000); //ns, sim cycles
+    FAPI_TRY(iv_regs->resume(i_target));
+
+fapi_try_exit:
+    FAPI_DBG("Ending io_ppe_common::ppe_init");
+    return fapi2::current_err;
+}
 
 // ===============================================================
 // CLEAR_EXT_CMD_REQ

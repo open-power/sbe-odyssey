@@ -44,6 +44,7 @@ odyssey_hwp_inc_paths = [
     '/memory/generic/memory/lib/utils/mc/',
     '/memory/generic/memory/lib/utils/',
     '/hwp/odyssey/io/',
+    '/hwp/generic/io/',
         ]
 
 odyssey_srom_inc_paths = [

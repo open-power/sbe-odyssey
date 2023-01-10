@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_phy_dccal_start.C $ */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_hss_dccal_start.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,7 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 ///------------------------------------------------------------------------------
-/// @file ody_omi_phy_dccal_start.C
+/// @file ody_omi_hss_dccal_start.C
 /// @brief Odyssey DCCAL start HWP
 ///
 /// *HWP HW Maintainer : Chris Steffen (cwsteffen@us.ibm.com)
@@ -35,7 +35,7 @@
 // Includes
 //------------------------------------------------------------------------------
 #include <ody_scom_omi.H>
-#include <ody_omi_phy_dccal_start.H>
+#include <ody_omi_hss_dccal_start.H>
 #include <ody_io_ppe_common.H>
 
 //------------------------------------------------------------------------------
@@ -133,7 +133,7 @@ fapi_try_exit:
     return fapi2::current_err;
 }
 
-fapi2::ReturnCode ody_omi_phy_dccal_start(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
+fapi2::ReturnCode ody_omi_hss_dccal_start(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     FAPI_DBG("Start");
 

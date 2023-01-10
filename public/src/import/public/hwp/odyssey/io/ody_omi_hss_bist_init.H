@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_phy_ppe_start.H $ */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_hss_bist_init.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,25 +22,43 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-///------------------------------------------------------------------------------
-/// @file ody_omi_phy_ppe_start.H
-/// @brief Header file for Odyssey PHY PPE start HWP
 ///
-/// *HWP HW Maintainer : Chris Steffen (cwsteffen@us.ibm.com)
-/// *HWP FW Maintainer :
-/// *HWP Consumed by: HB, Cronus, SBE
-///------------------------------------------------------------------------------
+/// @file ody_omi_hss_bist_init.H
+/// @brief Initializes the OMI SerDes for BIST functionality
+///
+/// *HWP HW Maintainer: Josh Chica <josh.chica@ibm.com>
+/// *HWP FW Maintainer:
+/// *HWP Consumed by: SBE
+///
 
 #pragma once
+
+//------------------------------------------------------------------------------
+// Includes
+//------------------------------------------------------------------------------
 #include <fapi2.H>
 
+//------------------------------------------------------------------------------
+// Structure definitions
+//------------------------------------------------------------------------------
 // Function pointer typedef definition for HWP call support
-typedef fapi2::ReturnCode (*ody_omi_phy_ppe_start_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
+typedef fapi2::ReturnCode(*ody_omi_hss_bist_init_FP_t) (
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
 
-extern "C"
-{
-    /// @brief Starts Odyssey's PHY PPE
-    /// @param[in]  i_target  Reference to TARGET_TYPE_OCMB_CHIP target
-    /// @return  FAPI2_RC_SUCCESS if success, else error code.
-    fapi2::ReturnCode ody_omi_phy_ppe_start(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
-}
+//------------------------------------------------------------------------------
+// Function prototype
+//------------------------------------------------------------------------------
+//
+extern "C" {
+
+///
+/// @brief Initializes the OMI SerDes for BIST functionality
+///
+/// @param[in]  i_target            Reference to Odyssey chip target
+///
+/// @return FAPI_RC_SUCCESS if success, else error code
+///
+    fapi2::ReturnCode ody_omi_hss_bist_init(
+        const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
+
+} //extern "C"

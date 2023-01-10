@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_setup.H $     */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_hss_bist_poll.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,36 +22,43 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#include <fapi2.H>
-///------------------------------------------------------------------------------
-/// @file ody_omi_setup.H
-/// @brief Setup OMI DL
 ///
-/// *HWP HW Maintainer : Josh Chica <josh.chica@ibm.com>
-/// *HWP FW Maintainer :
+/// @file ody_omi_hss_bist_poll.H
+/// @brief Odyssey HSS BIST HWP
+///
+/// *HWP HW Maintainer: Josh Chica <josh.chica@ibm.com>
+/// *HWP FW Maintainer:
 /// *HWP Consumed by: SBE
-///------------------------------------------------------------------------------
+///
+
+#pragma once
+
+//------------------------------------------------------------------------------
+// Includes
+//------------------------------------------------------------------------------
+#include <fapi2.H>
 
 //------------------------------------------------------------------------------
 // Structure definitions
 //------------------------------------------------------------------------------
-typedef fapi2::ReturnCode (*ody_omi_setup_FP_t)(
+// Function pointer typedef definition for HWP call support
+typedef fapi2::ReturnCode(*ody_omi_hss_bist_poll_FP_t) (
     const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
 
 //------------------------------------------------------------------------------
-// Function prototypes
+// Function prototype
 //------------------------------------------------------------------------------
+//
+extern "C" {
 
-extern "C"
-{
-
 ///
-/// @brief Setup OMI DL
+/// @brief Odyssey HSS BIST HWP
 ///
-/// @param[in] i_target Chip target to start
+/// @param[in]  i_target            Reference to Odyssey chip target
 ///
-/// @return fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
-    fapi2::ReturnCode ody_omi_setup(
+/// @return FAPI_RC_SUCCESS if success, else error code
+///
+    fapi2::ReturnCode ody_omi_hss_bist_poll(
         const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
 
-} // extern "C"
+} //extern "C"

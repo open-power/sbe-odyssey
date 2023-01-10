@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_phy_config.C $ */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_hss_ppe_start.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,49 +23,24 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 ///------------------------------------------------------------------------------
-/// @file ody_omi_phy_config.C
-/// @brief Odyssey OMI PHY configure HWP
+/// @file ody_omi_hss_ppe_start.H
+/// @brief Header file for Odyssey hss PPE start HWP
 ///
-/// *HWP HW Maintainer : Chris Steffen (cwsteffen@us.ibm.com)
+/// *HWP HW Maintainer : Josh Chica <josh.chica@ibm.com>
 /// *HWP FW Maintainer :
-/// *HWP Consumed by: HB, Cronus, SBE
+/// *HWP Consumed by: SBE
 ///------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-// Includes
-//------------------------------------------------------------------------------
-#include <ody_scom_omi.H>
-#include <ody_omi_phy_config.H>
-#include <ody_io_ppe_common.H>
+#pragma once
+#include <fapi2.H>
 
-//------------------------------------------------------------------------------
-// Function definitions
-//------------------------------------------------------------------------------
-fapi2::ReturnCode ody_omi_phy_config(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
+// Function pointer typedef definition for HWP call support
+typedef fapi2::ReturnCode (*ody_omi_hss_ppe_start_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
+
+extern "C"
 {
-    FAPI_DBG("Start");
-
-    fapi2::buffer<uint64_t> l_data = 0;
-
-    io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(scomt::omi::PHY_PPE_WRAP0_ARB_CSAR,
-            scomt::omi::PHY_PPE_WRAP0_ARB_CSDR,
-            scomt::omi::PHY_PPE_WRAP0_XIXCR);
-
-    ody_io::io_ppe_common<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_common(&l_ppe_regs);
-
-    const fapi2::buffer<uint64_t> l_gcr_ids[] = { 0 };
-    const fapi2::buffer<uint64_t> l_rx_lanes[] = { 4 };
-    const fapi2::buffer<uint64_t> l_tx_lanes[] = { 8 };
-    FAPI_TRY(l_ppe_common.config(i_target,
-                                 1, //num_threads
-                                 l_gcr_ids,
-                                 l_rx_lanes,
-                                 l_tx_lanes,
-                                 0, // spread_en
-                                 0, // pcie_mode
-                                 1)); //serdes_16_to_1
-
-fapi_try_exit:
-    FAPI_DBG("End");
-    return fapi2::current_err;
+    /// @brief Starts Odyssey's HSS PPE
+    /// @param[in]  i_target  Reference to TARGET_TYPE_OCMB_CHIP target
+    /// @return  FAPI2_RC_SUCCESS if success, else error code.
+    fapi2::ReturnCode ody_omi_hss_ppe_start(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
 }

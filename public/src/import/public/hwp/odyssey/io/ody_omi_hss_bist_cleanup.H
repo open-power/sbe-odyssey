@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_phy_bist.H $  */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_hss_bist_cleanup.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,25 +22,43 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-///------------------------------------------------------------------------------
-/// @file ody_omi_phy_bist.H
-/// @brief Header file for Odyssey PHY BIST setup HWP
 ///
-/// *HWP HW Maintainer : Chris Steffen (cwsteffen@us.ibm.com)
-/// *HWP FW Maintainer :
-/// *HWP Consumed by: HB, Cronus, SBE
-///------------------------------------------------------------------------------
+/// @file ody_omi_hss_bist_cleanup.H
+/// @brief Cleans up the BIST operations
+///
+/// *HWP HW Maintainer: Josh Chica <josh.chica@ibm.com>
+/// *HWP FW Maintainer:
+/// *HWP Consumed by: SBE
+///
 
 #pragma once
+
+//------------------------------------------------------------------------------
+// Includes
+//------------------------------------------------------------------------------
 #include <fapi2.H>
 
+//------------------------------------------------------------------------------
+// Structure definitions
+//------------------------------------------------------------------------------
 // Function pointer typedef definition for HWP call support
-typedef fapi2::ReturnCode (*ody_omi_phy_bist_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
+typedef fapi2::ReturnCode(*ody_omi_hss_bist_cleanup_FP_t) (
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
 
-extern "C"
-{
-    /// @brief HWP that setup BIST for Odyssey PHY
-    /// @param[in]  i_target  Reference to TARGET_TYPE_OCMB_CHIP target
-    /// @return  FAPI2_RC_SUCCESS if success, else error code.
-    fapi2::ReturnCode ody_omi_phy_bist(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
-}
+//------------------------------------------------------------------------------
+// Function prototype
+//------------------------------------------------------------------------------
+//
+extern "C" {
+
+///
+/// @brief Cleans up the BIST operations
+///
+/// @param[in]  i_target            Reference to Odyssey chip target
+///
+/// @return FAPI_RC_SUCCESS if success, else error code
+///
+    fapi2::ReturnCode ody_omi_hss_bist_cleanup(
+        const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
+
+} //extern "C"

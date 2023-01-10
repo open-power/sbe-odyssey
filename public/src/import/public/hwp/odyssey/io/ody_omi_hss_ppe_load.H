@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_setup.H $     */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_hss_ppe_load.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,36 +22,54 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#include <fapi2.H>
-///------------------------------------------------------------------------------
-/// @file ody_omi_setup.H
-/// @brief Setup OMI DL
 ///
-/// *HWP HW Maintainer : Josh Chica <josh.chica@ibm.com>
-/// *HWP FW Maintainer :
+/// @file ody_omi_hss_ppe_load.H
+/// @brief Load IO PPE and Memory regs images onto Odyssey SRAM
+///
+/// *HWP HW Maintainer: Thi Tran <thi@us.ibm.com>
+/// *HWP FW Maintainer:
 /// *HWP Consumed by: SBE
-///------------------------------------------------------------------------------
+///
+
+#pragma once
+
+//------------------------------------------------------------------------------
+// Includes
+//------------------------------------------------------------------------------
+#include <fapi2.H>
 
 //------------------------------------------------------------------------------
 // Structure definitions
 //------------------------------------------------------------------------------
-typedef fapi2::ReturnCode (*ody_omi_setup_FP_t)(
-    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
+// Function pointer typedef definition for HWP call support
+typedef fapi2::ReturnCode(*ody_omi_hss_ppe_load_FP_t) (
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
+    uint8_t* const,
+    uint32_t const,
+    uint8_t* const);
 
 //------------------------------------------------------------------------------
-// Function prototypes
+// Function prototype
 //------------------------------------------------------------------------------
-
-extern "C"
-{
+//
+extern "C" {
 
 ///
-/// @brief Setup OMI DL
+/// @brief Load IO PPE and Mem_regs images to Odyssey SRAM
+/// This HWP is called by Hostboot/Cronus platforms to load IO PPE
+/// image onto the Odyssey SRAM.
 ///
-/// @param[in] i_target Chip target to start
+/// @param[in]  i_target            Reference to Odyssey chip target
+/// @param[in]  i_ody_ppe_image     Pointer to image data
+/// @param[in]  i_img_size          The size (in bytes) of the image
+/// @param[in]  i_mem_regs_image    Pointer to mem_regs image (1024-byte)
 ///
-/// @return fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
-    fapi2::ReturnCode ody_omi_setup(
-        const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
+/// @return FAPI_RC_SUCCESS if success, else error code
+///
+    fapi2::ReturnCode ody_omi_hss_ppe_load(
+        const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+        uint8_t* const i_ody_ppe_image,
+        uint32_t const i_img_size,
+        uint8_t* const i_mem_regs_image);
 
-} // extern "C"
+} //extern "C"

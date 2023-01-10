@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_phy_dccal_start.H $ */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_hss_config.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,25 +22,45 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-///------------------------------------------------------------------------------
-/// @file ody_omi_phy_dccal_start.H
-/// @brief Header file for Odyssey DCCAL start HWP
 ///
-/// *HWP HW Maintainer : Chris Steffen (cwsteffen@us.ibm.com)
-/// *HWP FW Maintainer :
-/// *HWP Consumed by: HB, Cronus, SBE
-///------------------------------------------------------------------------------
+/// @file ody_omi_hss_config.H
+/// @brief Configures the OMI SerDes Microcontroller function prior to starting execution.
+///
+/// *HWP HW Maintainer: Josh Chica <josh.chica@ibm.com>
+/// *HWP FW Maintainer:
+/// *HWP Consumed by: SBE
+///
 
 #pragma once
+
+//------------------------------------------------------------------------------
+// Includes
+//------------------------------------------------------------------------------
 #include <fapi2.H>
 
+//------------------------------------------------------------------------------
+// Structure definitions
+//------------------------------------------------------------------------------
 // Function pointer typedef definition for HWP call support
-typedef fapi2::ReturnCode (*ody_omi_phy_dccal_start_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
+typedef fapi2::ReturnCode(*ody_omi_hss_config_FP_t) (
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
 
-extern "C"
-{
-    /// @brief Starts DCCAL for Odyssey PHY
-    /// @param[in]  i_target  Reference to TARGET_TYPE_OCMB_CHIP target
-    /// @return  FAPI2_RC_SUCCESS if success, else error code.
-    fapi2::ReturnCode ody_omi_phy_dccal_start(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
-}
+//------------------------------------------------------------------------------
+// Function prototype
+//------------------------------------------------------------------------------
+//
+extern "C" {
+
+///
+/// @brief Sets up the threads for the IO PPE
+/// This HWP is called by Hostboot/Cronus platforms to load IO PPE
+/// image onto the Odyssey SRAM.
+///
+/// @param[in]  i_target            Reference to Odyssey chip target
+///
+/// @return FAPI_RC_SUCCESS if success, else error code
+///
+    fapi2::ReturnCode ody_omi_hss_config(
+        const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
+
+} //extern "C"
