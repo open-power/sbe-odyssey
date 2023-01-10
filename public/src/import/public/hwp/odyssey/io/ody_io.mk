@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -26,6 +26,10 @@ define __ODYSSEY_IO_PROCEDURE
 PROCEDURE=$(1)
 $$(call ADD_MODULE_INCDIR,$$(PROCEDURE),$$(ROOTPATH)/public/hwp/generic/utils)
 $$(call ADD_MODULE_SRCDIR,$$(PROCEDURE),$$(ROOTPATH)/public/hwp/generic/utils)
+$$(call ADD_MODULE_INCDIR,$$(PROCEDURE),$$(ROOTPATH)/public/hwp/generic/io)
+$$(call ADD_MODULE_SRCDIR,$$(PROCEDURE),$$(ROOTPATH)/public/hwp/generic/io)
+$$(call ADD_MODULE_OBJ,$$(PROCEDURE),io_scom_lib.o)
+$$(call ADD_MODULE_OBJ,$$(PROCEDURE),io_ppe_cache.o)
 # Depending objs should be delimited by spaces after the first one.
 ifneq (($2),)
 $(foreach DEP,$(2),$$(call ADD_MODULE_OBJ,$$(PROCEDURE),$(DEP).o))
@@ -33,17 +37,22 @@ endif
 $$(call BUILD_PROCEDURE)
 endef
 ODYSSEY_IO_PROCEDURE = $(eval $(call __ODYSSEY_IO_PROCEDURE,$1,$2))
-$(call ODYSSEY_IO_PROCEDURE,ody_omi_phy_ppe_load,ody_putsram poz_writesram)
 $(call ODYSSEY_IO_PROCEDURE,ody_putsram,poz_writesram)
 $(call ODYSSEY_IO_PROCEDURE,ody_getsram,poz_readsram)
-$(call ODYSSEY_IO_PROCEDURE,ody_omi_train)
-$(call ODYSSEY_IO_PROCEDURE,ody_omi_phy_config)
-$(call ODYSSEY_IO_PROCEDURE,ody_omi_phy_bist)
-$(call ODYSSEY_IO_PROCEDURE,ody_omi_phy_dccal_poll)
-$(call ODYSSEY_IO_PROCEDURE,ody_omi_phy_tx_tdr)
-$(call ODYSSEY_IO_PROCEDURE,ody_omi_phy_init)
-$(call ODYSSEY_IO_PROCEDURE,ody_omi_train_check)
-$(call ODYSSEY_IO_PROCEDURE,ody_omi_phy_dccal_start)
-$(call ODYSSEY_IO_PROCEDURE,ody_omi_phy_ppe_start)
-$(call ODYSSEY_IO_PROCEDURE,ody_omi_scominit)
+
+$(call ODYSSEY_IO_PROCEDURE,ody_omi_hss_ppe_load,ody_putsram poz_writesram)
+$(call ODYSSEY_IO_PROCEDURE,ody_omi_hss_config)
+$(call ODYSSEY_IO_PROCEDURE,ody_omi_hss_ppe_start)
+$(call ODYSSEY_IO_PROCEDURE,ody_omi_hss_bist_init)
+$(call ODYSSEY_IO_PROCEDURE,ody_omi_hss_bist_start)
+$(call ODYSSEY_IO_PROCEDURE,ody_omi_hss_bist_poll)
+$(call ODYSSEY_IO_PROCEDURE,ody_omi_hss_bist_cleanup)
+$(call ODYSSEY_IO_PROCEDURE,ody_omi_hss_init)
+$(call ODYSSEY_IO_PROCEDURE,ody_omi_hss_dccal_start)
+$(call ODYSSEY_IO_PROCEDURE,ody_omi_hss_dccal_poll)
+$(call ODYSSEY_IO_PROCEDURE,ody_omi_hss_tx_zcal,common_io_omi_tdr common_io_tdr io_scom_lib)
+$(call ODYSSEY_IO_PROCEDURE,ody_omi_pretrain_adv)
 $(call ODYSSEY_IO_PROCEDURE,ody_omi_setup)
+$(call ODYSSEY_IO_PROCEDURE,ody_omi_train)
+$(call ODYSSEY_IO_PROCEDURE,ody_omi_train_check)
+$(call ODYSSEY_IO_PROCEDURE,ody_omi_posttrain_adv)

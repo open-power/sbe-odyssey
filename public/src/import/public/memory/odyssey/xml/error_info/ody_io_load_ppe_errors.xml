@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022                             -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -31,9 +31,7 @@
     Invalid PPE or MEMREGS image passed to HWP
   </description>
   <ffdc>TARGET</ffdc>
-  <ffdc>IO_PPE_IMAGE</ffdc>
   <ffdc>IO_PPE_IMAGE_SIZE</ffdc>
-  <ffdc>MEM_REGS_IMAGE</ffdc>
   <callout>
     <procedure>CODE</procedure>
     <priority>HIGH</priority>

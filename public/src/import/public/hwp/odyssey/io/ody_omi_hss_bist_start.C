@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_phy_init.H $  */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_hss_bist_start.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,24 +23,27 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 ///------------------------------------------------------------------------------
-/// @file ody_omi_phy_init.H
-/// @brief Header file for Odyssey PHY init HWP
+/// @file ody_omi_hss_bist_start.C
+/// @brief Start Odyssey HSS BIST HWP
 ///
-/// *HWP HW Maintainer : Chris Steffen (cwsteffen@us.ibm.com)
+/// *HWP HW Maintainer : Josh Chica <Josh.Chica@ibm.com>
 /// *HWP FW Maintainer :
-/// *HWP Consumed by: HB, Cronus, SBE
+/// *HWP Consumed by: SBE
 ///------------------------------------------------------------------------------
 
-#pragma once
-#include <fapi2.H>
+//------------------------------------------------------------------------------
+// Includes
+//------------------------------------------------------------------------------
+#include <ody_omi_hss_bist_start.H>
 
-// Function pointer typedef definition for HWP call support
-typedef fapi2::ReturnCode (*ody_omi_phy_init_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
-
-extern "C"
+//------------------------------------------------------------------------------
+// Function definitions
+//------------------------------------------------------------------------------
+fapi2::ReturnCode ody_omi_hss_bist_start(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
 {
-    /// @brief HWP that runs PHY init for Odyssey ports
-    /// @param[in]  i_target  Reference to TARGET_TYPE_OCMB_CHIP target
-    /// @return  FAPI2_RC_SUCCESS if success, else error code.
-    fapi2::ReturnCode ody_omi_phy_init(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
+    FAPI_DBG("Start");
+
+fapi_try_exit:
+    FAPI_DBG("End");
+    return fapi2::current_err;
 }

@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_phy_bist.C $  */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_pretrain_adv.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,28 +22,43 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-///------------------------------------------------------------------------------
-/// @file ody_omi_phy_bist.C
-/// @brief Odyssey PHY BIST setup HWP
 ///
-/// *HWP HW Maintainer : Chris Steffen (cwsteffen@us.ibm.com)
-/// *HWP FW Maintainer :
-/// *HWP Consumed by: HB, Cronus, SBE
-///------------------------------------------------------------------------------
+/// @file ody_omi_pretrain_adv.H
+/// @brief Runs final adjustments before training
+///
+/// *HWP HW Maintainer: Josh Chica <josh.chica@ibm.com>
+/// *HWP FW Maintainer:
+/// *HWP Consumed by: SBE
+///
+
+#pragma once
 
 //------------------------------------------------------------------------------
 // Includes
 //------------------------------------------------------------------------------
-#include <ody_omi_phy_bist.H>
+#include <fapi2.H>
 
 //------------------------------------------------------------------------------
-// Function definitions
+// Structure definitions
 //------------------------------------------------------------------------------
-fapi2::ReturnCode ody_omi_phy_bist(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
-{
-    FAPI_DBG("Start");
+// Function pointer typedef definition for HWP call support
+typedef fapi2::ReturnCode(*ody_omi_pretrain_adv_FP_t) (
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
 
-fapi_try_exit:
-    FAPI_DBG("End");
-    return fapi2::current_err;
-}
+//------------------------------------------------------------------------------
+// Function prototype
+//------------------------------------------------------------------------------
+//
+extern "C" {
+
+///
+/// @brief Runs final adjustments before training
+///
+/// @param[in]  i_target            Reference to Odyssey chip target
+///
+/// @return FAPI_RC_SUCCESS if success, else error code
+///
+    fapi2::ReturnCode ody_omi_pretrain_adv(
+        const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
+
+} //extern "C"

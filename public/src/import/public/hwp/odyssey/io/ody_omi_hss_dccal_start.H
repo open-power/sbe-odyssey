@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_phy_tx_tdr.H $ */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_hss_dccal_start.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,8 +23,8 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 ///------------------------------------------------------------------------------
-/// @file ody_omi_phy_tx_tdr.H
-/// @brief Header file for Odyssey HWP that runs TDR on links
+/// @file ody_omi_hss_dccal_start.H
+/// @brief Header file for Odyssey DCCAL start HWP
 ///
 /// *HWP HW Maintainer : Chris Steffen (cwsteffen@us.ibm.com)
 /// *HWP FW Maintainer :
@@ -35,12 +35,12 @@
 #include <fapi2.H>
 
 // Function pointer typedef definition for HWP call support
-typedef fapi2::ReturnCode (*ody_omi_phy_tx_tdr_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
+typedef fapi2::ReturnCode (*ody_omi_hss_dccal_start_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
 
 extern "C"
 {
-    /// @brief Initiates TDR run on Odyssey links to check for open/short
+    /// @brief Starts DCCAL for Odyssey PHY
     /// @param[in]  i_target  Reference to TARGET_TYPE_OCMB_CHIP target
     /// @return  FAPI2_RC_SUCCESS if success, else error code.
-    fapi2::ReturnCode ody_omi_phy_tx_tdr(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
+    fapi2::ReturnCode ody_omi_hss_dccal_start(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
 }

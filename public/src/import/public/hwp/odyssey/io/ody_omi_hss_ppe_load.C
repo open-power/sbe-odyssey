@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_phy_ppe_load.C $ */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_hss_ppe_load.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,18 +23,18 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 ///
-/// @file ody_omi_phy_ppe_load.C
+/// @file ody_omi_hss_ppe_load.C
 /// @brief Load IO PPE and Memory regs images onto Odyssey SRAM
 ///
 /// *HWP HW Maintainer: Thi Tran <thi@us.ibm.com>
 /// *HWP FW Maintainer:
-/// *HWP Consumed by: HB, Cronus
+/// *HWP Consumed by: SBE
 ///
 
 //------------------------------------------------------------------------------
 // Includes
 //------------------------------------------------------------------------------
-#include <ody_omi_phy_ppe_load.H>
+#include <ody_omi_hss_ppe_load.H>
 #include <fapi2_subroutine_executor.H>
 #include <ody_scom_omi_ioo.H>
 #include <ody_putsram.H>
@@ -69,13 +69,12 @@ uint64_t MEM_REG_OFFSETS[NUM_OF_MEM_REGS] =
 //------------------------------------------------------------------------------
 
 /// NOTE: doxygen in header
-fapi2::ReturnCode ody_omi_phy_ppe_load(
+fapi2::ReturnCode ody_omi_hss_ppe_load(
     const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
     uint8_t* const i_ody_ppe_image,
     uint32_t const i_img_size,
     uint8_t* const i_mem_regs_image)
 {
-
     FAPI_DBG("Start");
     PHY_PPE_WRAP0_XIXCR_t WRAP0_XIXCR;
     PHY_PPE_WRAP0_SCOM_CNTL_t WRAP0_SCOM_CNTL;
@@ -84,19 +83,17 @@ fapi2::ReturnCode ody_omi_phy_ppe_load(
     FAPI_ASSERT( (i_ody_ppe_image != NULL) &&
                  (i_img_size != 0) &&
                  (i_mem_regs_image != NULL),
-                 fapi2::LOAD_PPE_IMG_ERROR()
+                 fapi2::ODY_IO_LOAD_PPE_IMG_ERROR()
                  .set_TARGET(i_target)
-                 .set_PPE_IMAGE(i_ody_ppe_image)
-                 .set_PPE_IMAGE_SIZE(i_img_size)
-                 .set_MEM_REGS_IMAGE(i_mem_regs_image),
-                 "Invalid image: PPE image ptr %p, Size 0x%.8X, MEM_REGS image %p",
+                 .set_IO_PPE_IMAGE_SIZE(i_img_size),
+                 "ody_omi_hss_ppe_load: Invalid image: PPE image ptr %p, Size 0x%.8X, MEM_REGS image %p",
                  i_ody_ppe_image, i_img_size, i_mem_regs_image);
 
     FAPI_DBG("IO PPE img: Ptr %p, size %u; MEM_REGS img %p.",
              i_ody_ppe_image, i_img_size, i_mem_regs_image);
 
     // Halt PPE
-    FAPI_DBG("Halt ppe.");
+    FAPI_DBG("Halt PPE.");
     WRAP0_XIXCR.set_PPE_XIXCR_XCR(1); // Write 0b001
     FAPI_TRY(WRAP0_XIXCR.putScom(i_target),
              "Error putscom to PPE_XIXCR_XCR (halt PPE).");
@@ -128,7 +125,7 @@ fapi2::ReturnCode ody_omi_phy_ppe_load(
     }
 
     // Notes:
-    // ody_omi_phy_ppe_load HWP only loads image and memregs into Odyssey' SRAM.
+    // ody_omi_hss_ppe_load HWP only loads image and memregs into Odyssey' SRAM.
     // PPE config and start will be done in other HWPs that follow:
     //    PPE Config (Updates Various Registers)
     //    PPE Start (Issues Hard Reset, Resume, Clearing FIRs)

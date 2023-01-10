@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_phy_tx_tdr.C $ */
+/* $Source: public/src/import/public/hwp/generic/io/common_io_omi_tdr.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,28 +22,45 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-///------------------------------------------------------------------------------
-/// @file ody_omi_phy_tx_tdr.C
-/// @brief Odyssey HWP that runs TDR on links
 ///
-/// *HWP HW Maintainer : Chris Steffen (cwsteffen@us.ibm.com)
-/// *HWP FW Maintainer :
-/// *HWP Consumed by: HB, Cronus, SBE
-///------------------------------------------------------------------------------
+/// @file common_io_omi_tdr.H
+/// @brief OMI TDR procedure
+///
+/// *HWP HW Maintainer: Josh Chica <Josh.Chica@ibm.com>
+/// *HWP FW Maintainer:
+/// *HWP Consumed by: SBE
+///
 
 //------------------------------------------------------------------------------
 // Includes
 //------------------------------------------------------------------------------
-#include <ody_omi_phy_tx_tdr.H>
+#pragma once
+#include <fapi2.H>
 
 //------------------------------------------------------------------------------
-// Function definitions
+// Structure definitions
 //------------------------------------------------------------------------------
-fapi2::ReturnCode ody_omi_phy_tx_tdr(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
+
+/// function pointer typedef definition for HWP call support
+typedef fapi2::ReturnCode (*common_io_omi_tdr_FP_t)(const fapi2::Target < fapi2::TARGET_TYPE_OCMB_CHIP |
+        fapi2::TARGET_TYPE_OMI > &,
+        const uint64_t&);
+
+//------------------------------------------------------------------------------
+// Function prototypes
+//------------------------------------------------------------------------------
+
+extern "C"
 {
-    FAPI_DBG("Start");
 
-fapi_try_exit:
-    FAPI_DBG("End");
-    return fapi2::current_err;
-}
+    ///
+    /// @brief OMI TDR procedure
+    ///
+    /// @param[in] i_target       Reference to TARGET_TYPE_OCMB_CHIP target
+    /// @return fapi::ReturnCode  FAPI2_RC_SUCCESS if success, else error code.
+    ///
+    fapi2::ReturnCode common_io_omi_tdr(const fapi2::Target < fapi2::TARGET_TYPE_OCMB_CHIP | fapi2::TARGET_TYPE_OMI >
+                                        &i_tgt,
+                                        const uint64_t& i_base_addr);
+
+} // extern "C"
