@@ -73,6 +73,7 @@ attrtool_deps = ['attrdb.py',
                  '/templates/attribute_ids.H.t',
                  '/templates/attribute_macros.H.t',
                  '/templates/attribute_properties.H.t',
+                 '/templates/attribute_override.C.t',
                  '/templates/fapi2_chip_ec_feature.H.t' ]
 attrtool_path = meson.global_source_root() + '/public/src/runtime/tools/attributes/'
 

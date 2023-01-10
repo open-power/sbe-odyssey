@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/chipop_headers.H $       */
+/* $Source: public/src/runtime/tools/attributes/templates/attribute_override.C.t $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,21 +21,44 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __CHIPOP_HEADERS_H__
-#define __CHIPOP_HEADERS_H__
-#include "sbecmdscomaccess.H"
-#include "sbecodeupdate.H"
-#include "sbecmdgeneric.H"
-#include "istep.H"
-#include "sbetrace.H"
-#include "sbe_sp_intf.H"
-#include "sbecmdringaccess.H"
-#include "sbecmdbist.H"
-#include "sbecmdpak.H"
-#include "sbecmdgetrawattrdump.H"
-#include "sbecmdexecutehwp.H"
-#include "sbecmdupdateattr.H"
-#include <stdint.h>
-#include <stddef.h>
+#include <attribute.H>
+#include <attribute_override.H>
+#include <target_types.H>
 
-#endif
+namespace fapi2
+{
+
+namespace ATTR
+{
+
+AttributesTable g_attrsTab[] =
+{
+{% for key in target_types.keys() %}
+{% for attr in attributes if attr.has_storage and attr.sbe_targ_type == key %}
+{{attr.gen_attr_table()}}
+{% endfor %}
+{% endfor %}
+}; //End g_attrsTab
+
+
+TargetsTable  g_targetsTab[] =
+{
+{% set start_row=[0] %}
+{% for key in target_types.keys() %}
+{% set row_count=[0] %}
+{% for attr in attributes if attr.has_storage and attr.sbe_targ_type == key %}
+    {# <--- The below if-else statement is the workaround for performing #}
+    {#      row_count = row_count + 1                                    #}
+    {% if row_count.append(row_count.pop()+1)%} {% endif %}
+{% endfor %}
+{ LOG_{{key}},{{target_types[key].ntargets}},{{start_row[0]}},{{row_count[0]}} },
+    {# <--- The below if-else statement is the workaround for performing #}
+    {#      start_row = start_row + row_count                    --->    #}
+{% if start_row.append(start_row.pop()+row_count[0])%} {% endif %}
+{% endfor %}
+}; //End g_attrsTab
+
+uint8_t g_tgts_tab_size = {{target_types.keys()|length}};
+} //ATTR
+
+} //fapi2

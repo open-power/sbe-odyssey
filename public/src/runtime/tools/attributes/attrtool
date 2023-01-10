@@ -36,6 +36,7 @@ def cmd_gensrc(args):
     env.globals = {
         "toolname": "attrtool",
         "attributes": sbe_attr_tank.field_list,
+        "target_types": sbe_attr_tank.target_types,
         "virt_header": args.virtual_fn_header,
     }
     env.filters["hex"] =  lambda x: "0x%X" % x
@@ -51,6 +52,7 @@ def cmd_gensrc(args):
     generate("attribute.H")
     generate("attribute_macros.H")
     generate("fapi2_chip_ec_feature.H")
+    generate("attribute_override.C")
 
 def cmd_compile(args):
     sbe_attr_tank = pickle.load(open(args.ipdbfile, "rb"))
