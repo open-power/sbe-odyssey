@@ -198,6 +198,10 @@ enum sbeSecondaryResponse
     SBE_SEC_CU_SIDE_1_UPDATE_FAILED           = 0x73,
     SBE_SEC_CU_SIDE_0_UPDATE_FAILED           = 0x74,
     SBE_SEC_CHIPLET_ID_NOT_PRESENT_IN_SBE     = 0x75,
+    SBE_SEC_CU_INVALID_PAD_SIZE               = 0X76,
+    SBE_SEC_CU_SYNC_CHIPOP_FAILURE            = 0x77,
+    SBE_SEC_CU_READ_IMAGE_FAILURE             = 0x78,
+
 };
 
 /**

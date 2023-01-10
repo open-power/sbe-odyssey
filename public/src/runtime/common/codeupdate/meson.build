@@ -30,6 +30,7 @@ runtime_cmn_code_update_dir_path = meson.global_source_root() + '/public/src/run
 infile_c = ['sbecmdcodeupdate.C',
             'sbeupdateimage.C',
             'ptbl.C',
+            'sbesyncside.C',
            ]
 
 abs_runtime_cmn_code_update_c_path = []
