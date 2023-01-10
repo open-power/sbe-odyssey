@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -56,11 +56,11 @@ ReturnCode poz_chiplet_startclocks(
 
     FAPI_INF("Drop TP chiplet fence");
     PERV_CTRL0 = 0;
-    PERV_CTRL0.set_PERV_CHIPLET_FENCE(1);
+    PERV_CTRL0.setBit<17>(); // bit 17: PERV_CHIPLET_FENCE required for Odyssey only
     FAPI_TRY(PERV_CTRL0.putScom_CLEAR(i_chip_target));
 
     NET_CTRL0 = 0;
-    NET_CTRL0.setBit<11>();
+    NET_CTRL0.set_PERV2CHIPLET_CHIPLET_FENCE(1); //setBit<11>();
     FAPI_TRY(NET_CTRL0.putScom_CLEAR(i_target));
 
     FAPI_INF("Switch ABIST and sync clock muxes to functional state");

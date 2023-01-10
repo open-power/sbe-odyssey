@@ -523,7 +523,7 @@ ReturnCode mod_align_regions(
 
     FAPI_INF("Write region flush mode inhibit value in CPLT_CTRL4 reg.");
     CPLT_CTRL4 = 0;
-    CPLT_CTRL4.insertFromRight<CPLT_CTRL4_0_FLUSHMODE_INH, 16>(i_clock_regions);
+    CPLT_CTRL4.insertFromRight<CPLT_CTRL4_REGION0_FLUSHMODE_INH, 16>(i_clock_regions);
     FAPI_TRY(CPLT_CTRL4.putScom_SET(i_target));
 
     FAPI_INF("Enable alignment");
