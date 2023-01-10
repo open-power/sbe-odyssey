@@ -46,3 +46,32 @@ if run_cmd_result.returncode() != 0
     message(run_cmd_result.stdout())
     error(run_cmd_result.stderr())
 endif
+
+infile_c = ['attribute_override_service.C'
+           ]
+
+lib_file_name = 'odysseysppeattr'
+
+odyssey_sppe_attr_obj_file_cpp = obj_gen_cpp.process(
+                                    infile_c,
+                                    extra_args : [
+                                                  odyssey_runtime_abs_inc_paths,
+                                                  odyssey_cmn_abs_inc_paths,
+                                                  runtime_cmn_abs_inc_paths
+                                                 ])
+
+infile  = [odyssey_sppe_attr_obj_file_cpp]
+
+libodysseysppeattr  = custom_target( lib_file_name,
+                                   output : 'lib' + lib_file_name,
+                                   input : infile,
+                                   command : [ ar,
+                                               'crs',
+                                               '@OUTPUT@'+'.a',
+                                               '@INPUT@'],
+                                   build_by_default: true,
+                               )
+
+odyssey_sppe_libs += '-l' + lib_file_name
+odyssey_sppe_lib_paths += '-L' + meson.current_build_dir()
+odyssey_sppe_dep_libs += libodysseysppeattr

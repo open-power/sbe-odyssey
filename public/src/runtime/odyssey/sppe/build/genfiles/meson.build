@@ -25,6 +25,7 @@
 
 infile_c = ['attribute.C',
             'chipop_table.C',
+            'attribute_override.C',
            ]
 abs_genfiles_c_file_paths = []
 foreach infile : infile_c

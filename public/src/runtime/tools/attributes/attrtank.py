@@ -413,6 +413,38 @@ class RealAttrFieldInfo(AttrFieldInfo):
 
         return True
 
+    def gen_attr_table(self) -> str:
+        retval = ""
+
+        retval += "{"
+        #AttributeId
+        retval += self.name
+
+        #Not an array attribute
+        if ( len(self.array_dims) == 0 ):
+            retval += ",0,0,0"
+        else:
+            #Array attribute
+            #cooridnates
+            for dim in self.array_dims:
+                retval += "," + str(dim)
+
+            #AttributesTable supports a max of three subscripts
+            #ie. x, y, and z to locate an attribute; If
+            #this attribute requires only 2 subscripts(ie. x and
+            # y), then fill the remaining subscript with 1
+            for i in range(3 - len(self.array_dims)):
+                retval += ",1"
+
+        #size
+        retval += ",sizeof(" + self.value_type + ")"
+
+        #address where the attribute is stored
+        retval += ",&" + self.sbe_targ_type + "::" + self.name
+        retval += "},\n"
+
+        return retval
+
 class VirtualAttrFieldInfo(AttrFieldInfo):
     VIRTUAL_FUNCTION = {
         "ATTR_NAME": "_getAttrName",
@@ -478,7 +510,9 @@ class AttributeStructure(object):
         # Using list, since we need same order while iterating
         self.field_list: list["AttrFieldInfo"] = []
         self.hash_set : set[int] = set()
+        self.target_types : 'dict[str, TargetTypeInfo]' = dict()
 
+        self.target_types = copy.deepcopy(AttributeDB.TARGET_TYPES)
         for attr in db.attributes.values():
             if (not attr.sbe_entry) or (attr.sbe_entry is None):
                 continue

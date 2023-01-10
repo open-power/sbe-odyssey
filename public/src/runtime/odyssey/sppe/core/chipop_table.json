@@ -1,6 +1,12 @@
 {
     "chipoptable":[
         {
+        "cmdClass":"AD",
+        "command":"0x03",
+        "function":"sbeUpdateAttr",
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+        },
+        {
         "cmdClass":"F1",
         "command":"0x01",
         "function":"sbeBist",

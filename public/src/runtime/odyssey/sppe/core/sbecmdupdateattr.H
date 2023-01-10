@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/chipop_headers.H $       */
+/* $Source: public/src/runtime/odyssey/sppe/core/sbecmdupdateattr.H $     */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022,2023                        */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,21 +21,17 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __CHIPOP_HEADERS_H__
-#define __CHIPOP_HEADERS_H__
-#include "sbecmdscomaccess.H"
-#include "sbecodeupdate.H"
-#include "sbecmdgeneric.H"
-#include "istep.H"
-#include "sbetrace.H"
-#include "sbe_sp_intf.H"
-#include "sbecmdringaccess.H"
-#include "sbecmdbist.H"
-#include "sbecmdpak.H"
-#include "sbecmdgetrawattrdump.H"
-#include "sbecmdexecutehwp.H"
-#include "sbecmdupdateattr.H"
-#include <stdint.h>
-#include <stddef.h>
+#ifndef __SBEFW_SBECMDUPDATEATTR_H
+#define __SBEFW_SBECMDUPDATEATTR_H
 
-#endif
+
+/**
+ * @brief Update attribute chipop handler.
+ *
+ * @param[in] i_pArg Buffer to be passed to the function
+ *
+ * @return    Rc from the FIFO access utility
+ */
+uint32_t sbeUpdateAttr(uint8_t *i_pArg);
+
+#endif /* __SBEFW_SBECMDUPDATEATTR_H */
