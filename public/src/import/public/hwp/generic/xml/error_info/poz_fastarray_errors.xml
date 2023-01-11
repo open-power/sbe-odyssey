@@ -1,0 +1,120 @@
+<!-- IBM_PROLOG_BEGIN_TAG                                                   -->
+<!-- This is an automatically generated prolog.                             -->
+<!--                                                                        -->
+<!-- $Source: public/src/import/public/hwp/generic/xml/error_info/poz_fastarray_errors.xml $ -->
+<!--                                                                        -->
+<!-- OpenPOWER sbe Project                                                  -->
+<!--                                                                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2023                             -->
+<!-- [+] International Business Machines Corp.                              -->
+<!--                                                                        -->
+<!--                                                                        -->
+<!-- Licensed under the Apache License, Version 2.0 (the "License");        -->
+<!-- you may not use this file except in compliance with the License.       -->
+<!-- You may obtain a copy of the License at                                -->
+<!--                                                                        -->
+<!--     http://www.apache.org/licenses/LICENSE-2.0                         -->
+<!--                                                                        -->
+<!-- Unless required by applicable law or agreed to in writing, software    -->
+<!-- distributed under the License is distributed on an "AS IS" BASIS,      -->
+<!-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or        -->
+<!-- implied. See the License for the specific language governing           -->
+<!-- permissions and limitations under the License.                         -->
+<!--                                                                        -->
+<!-- IBM_PROLOG_END_TAG                                                     -->
+<hwpErrors>
+  <hwpError>
+    <rc>RC_FASTARRAY_HEADER_CHECK_FAILED</rc>
+    <description>The header check failed after a scan operation</description>
+    <ffdc>TARGET</ffdc>
+    <ffdc>EXPECTED</ffdc>
+    <ffdc>ACTUAL</ffdc>
+    <callout>
+      <target>TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <deconfigure>
+        <target>TARGET</target>
+    </deconfigure>
+  </hwpError>
+  <hwpError>
+    <rc>RC_FASTARRAY_CLOCK_TIMEOUT</rc>
+    <description>An attempt to clock ABIST cycles did not complete within 100ms</description>
+    <ffdc>TARGET</ffdc>
+    <callout>
+      <target>TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <deconfigure>
+        <target>TARGET</target>
+    </deconfigure>
+  </hwpError>
+  <hwpError>
+    <rc>RC_FASTARRAY_CLEANUP_NOT_DONE</rc>
+    <description>ABIST_DONE did not assert within 64K cycles during fastarray cleanup</description>
+    <ffdc>TARGET</ffdc>
+    <callout>
+      <target>TARGET</target>
+      <priority>LOW</priority>
+    </callout>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+    <!-- No deconfigure, this is an unexpected error but the part still might be okay -->
+  </hwpError>
+  <hwpError>
+    <rc>RC_FASTARRAY_CARE_BUFFER_OVERFLOW</rc>
+    <description>Too much carebits data to fit into temporary buffer</description>
+    <ffdc>BUFFER_SIZE_WORDS</ffdc>
+    <ffdc>DATA_SIZE_WORDS</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+  <hwpError>
+    <rc>RC_FASTARRAY_VERSION_MISMATCH</rc>
+    <description>The fastarray control data format does not match the version of the fastarray dump procedure.</description>
+    <ffdc>HEADER_VERSION</ffdc>
+    <ffdc>HWP_VERSION</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+  <hwpError>
+    <rc>RC_FASTARRAY_INVALID_FARR_FLAG</rc>
+    <description>An unknown flag was requested.</description>
+    <ffdc>FLAG</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+  <hwpError>
+    <rc>RC_FASTARRAY_SCAN_ENTRY_OVERSIZE</rc>
+    <description>Control data contained a ring scan entry larger than the maximum allowed size</description>
+    <ffdc>LENGTH</ffdc>
+    <ffdc>MAX_LENGTH</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+<!-- template for copying
+  <hwpError>
+    <rc>RC_FASTARRAY_</rc>
+    <description></description>
+    <ffdc></ffdc>
+  </hwpError>
+-->
+</hwpErrors>

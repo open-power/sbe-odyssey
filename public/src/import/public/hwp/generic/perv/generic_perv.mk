@@ -43,5 +43,7 @@ GENERIC_PERV_PROCEDURE = $(eval $(call __GENERIC_PERV_PROCEDURE,$1,$2))
 # And now the actual HWP definitions
 #
 $(call GENERIC_PERV_PROCEDURE,poz_cmdtable_interpreter)
-$(call GENERIC_PERV_PROCEDURE,poz_bist,poz_chiplet_arrayinit)
+$(call GENERIC_PERV_PROCEDURE,poz_bist)
+$(call GENERIC_PERV_PROCEDURE,poz_fastarray)
+$(call GENERIC_PERV_PROCEDURE,poz_stopclocks)
 $(call GENERIC_PERV_PROCEDURE,poz_sbe_spi_cmd)
