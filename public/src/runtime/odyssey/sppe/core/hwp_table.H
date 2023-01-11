@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/chipop_headers.H $       */
+/* $Source: public/src/runtime/odyssey/sppe/core/hwp_table.H $            */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,20 +21,41 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __CHIPOP_HEADERS_H__
-#define __CHIPOP_HEADERS_H__
-#include "sbecmdscomaccess.H"
-#include "sbecodeupdate.H"
-#include "sbecmdgeneric.H"
-#include "istep.H"
-#include "sbetrace.H"
-#include "sbe_sp_intf.H"
-#include "sbecmdringaccess.H"
-#include "sbecmdbist.H"
-#include "sbecmdpak.H"
-#include "sbecmdgetrawattrdump.H"
-#include "sbecmdexecutehwp.H"
-#include <stdint.h>
-#include <stddef.h>
+#ifndef __HWPTABLE_H
+#define __HWPTABLE_H
+
+using voidfuncptr_t = void (*)(void);
+using hwp_t = fapi2::ReturnCode (*)( voidfuncptr_t );
+
+struct hwpMap_t
+{
+    hwp_t         hwpWrapper;
+    voidfuncptr_t hwp;
+};
+
+struct hwpTableEntry_t
+{
+    uint8_t         hwpClassNum;
+    hwpMap_t*       hwpNum;
+    size_t          len;
+};
+
+struct hwpTable_t
+{
+    hwpTableEntry_t*    hwpClassArr;
+    size_t              len;
+};
+
+#define HWP_MAP(wrapper, hwp) \
+    {wrapper, reinterpret_cast<voidfuncptr_t>(hwp)}
+
+#define HWP_ENTRY(hwpClass, hwpClassTable) \
+    {hwpClass, hwpClassTable, sizeof(hwpClassTable)/sizeof(hwpClassTable[0])}
+
+#define REGISTER_HWP_TABLE(entries) \
+     hwpTable_t hwpTable = { \
+       entries, \
+       sizeof(entries)/sizeof(entries[0]) \
+    };
 
 #endif

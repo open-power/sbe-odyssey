@@ -7,6 +7,12 @@
         "fences":["SBE_FENCE_AT_CONTINUOUS_IPL", "SBE_FENCE_AT_DUMPING"]
     },
     {
+        "cmdClass":"A1",
+        "command":"0x04",
+        "function":"sbeExecuteHWP",
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+    },
+    {
         "cmdClass":"A2",
         "command":"0x01",
         "function":"sbeGetScom",

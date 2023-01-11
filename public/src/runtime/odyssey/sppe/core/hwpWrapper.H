@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/chipop_headers.H $       */
+/* $Source: public/src/runtime/odyssey/sppe/core/hwpWrapper.H $           */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,20 +21,52 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __CHIPOP_HEADERS_H__
-#define __CHIPOP_HEADERS_H__
-#include "sbecmdscomaccess.H"
-#include "sbecodeupdate.H"
-#include "sbecmdgeneric.H"
-#include "istep.H"
-#include "sbetrace.H"
-#include "sbe_sp_intf.H"
-#include "sbecmdringaccess.H"
-#include "sbecmdbist.H"
-#include "sbecmdpak.H"
-#include "sbecmdgetrawattrdump.H"
-#include "sbecmdexecutehwp.H"
-#include <stdint.h>
-#include <stddef.h>
+#ifndef __HWPWRAPPER_H_
+#define __HWPWRAPPER_H_
 
+#include "ipl.H"
+#include "target.H"
+#include "sbecmnhwpwrapper.H"
+
+using namespace fapi2;
+
+//----------------------------------------------------------------------------
+using  sbeIstepHwpOcmb_t = ReturnCode (*)
+                      (const Target<TARGET_TYPE_OCMB_CHIP> & i_target);
+
+/*
+ * @brief Wrapper to call the HWP
+ *
+ * @param[in] i_hwp Function pointer to HWP
+ *
+ * @return FAPI2_RC_SUCCESS on success
+ */
+ReturnCode istepWithOcmb( voidfuncptr_t i_hwp);
+
+/*
+ * @brief Wrapper to call the HWP
+ *
+ * @param[in] i_hwp Function pointer to HWP
+ *
+ * @return FAPI2_RC_SUCCESS on success
+ */
+ReturnCode istepBistWithOcmb( voidfuncptr_t i_hwp);
+
+/*
+ * @brief Wrapper to call the HWP
+ *
+ * @param[in] i_hwp Function pointer to HWP
+ *
+ * @return FAPI2_RC_SUCCESS on success
+ */
+ReturnCode istepAbistWithOcmb( voidfuncptr_t i_hwp);
+
+/*
+ * @brief Wrapper to call the HWP
+ *
+ * @param[in] i_hwp Function pointer to HWP
+ *
+ * @return FAPI2_RC_SUCCESS on success
+ */
+ReturnCode istepLbistWithOcmb( voidfuncptr_t i_hwp);
 #endif

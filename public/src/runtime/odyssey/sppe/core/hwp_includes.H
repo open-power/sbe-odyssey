@@ -26,37 +26,16 @@
 #ifndef __HWP_INCLUDES_H
 #define __HWP_INCLUDES_H
 
-#include <ody_tp_arrayinit.H>
-#include <ody_tp_arrayinit_cleanup.H>
-#include <ody_tp_initf.H>
-#include <ody_tp_startclocks.H>
-#include <ody_tp_init.H>
-#include <ody_ddrphyinit.H>
-#include <ody_chiplet_clk_config.H>
-#include <ody_chiplet_reset.H>
-#include <ody_chiplet_unused_psave.H>
-#include <ody_chiplet_pll_setup.H>
-#include <ody_bist_repr_initf.H>
-#include <ody_abist.H>
-#include <ody_lbist.H>
-#include <ody_chiplet_repr_initf.H>
-#include <ody_chiplet_arrayinit.H>
-#include <ody_chiplet_initf.H>
-#include <ody_chiplet_init.H>
-#include <ody_chiplet_startclocks.H>
-#include <ody_chiplet_fir_init.H>
-#include <ody_nest_enable_io.H>
-#include <ody_cmdtable_interpreter.H>
-#include <ody_scominit.H>
 #include <ody_omi_setup.H>
 #include <ody_omi_train.H>
-#include <ody_sppe_draminit.H>
 #include <ody_thermal_init.H>
 #include <poz_cmdtable_interpreter.H>
 #include <ody_sppe_attr_setup.H>
 #include <poz_putRingUtils.H>
 #include <poz_ring_ids.H>
 #include <ody_enable_ecc.H>
+#include <ody_scominit.H>
+#include <ody_ddrphyinit.H>
 #include <c_str.H>
 
 #endif
