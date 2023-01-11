@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -37,12 +37,27 @@ odyssey_abs_error_xml_files += abs_error_xml_file
 
 endforeach
 
+#Create abs path for generic XML files
+generic_abs_error_xml_files = []
+import_xml_dir_base_path = pub_import_dir_path + '/memory/generic/xml/error_info/'
+generic_error_xml_files = [
+    'generic_error.xml',
+    ]
+
+foreach error_xml_file : generic_error_xml_files
+
+abs_error_xml_file = import_xml_dir_base_path + error_xml_file
+generic_abs_error_xml_files += abs_error_xml_file
+
+endforeach
+
 #TODO: This if condition is temporary to go ahead with the build process
 # when no error xml files are mentioned
 if ( (odyssey_abs_error_xml_files.length() != 0) or
-                                  (common_abs_error_xml_files.length() != 0) )
+                                  (common_abs_error_xml_files.length() != 0) or
+                                  (generic_abs_error_xml_files.length() != 0) )
     run_result = run_command(parseErrorInfo,'--local-ffdc','--output-dir='
-            +odyssey_sppe_genfiles_dir_path,odyssey_abs_error_xml_files,
+            +odyssey_sppe_genfiles_dir_path,odyssey_abs_error_xml_files,generic_abs_error_xml_files,
                                             common_abs_error_xml_files)
     if (run_result.returncode() != 0)
         error(run_result.stderr())

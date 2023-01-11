@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -48,7 +48,7 @@ namespace mss
 
 // Thread local storage for the string we're going to create.
 //TODO RTC:153924 Remove the else case when issue is resolved
-#ifndef PLAT_NO_THREAD_LOCAL_STORAGE
+#if !defined(PLAT_NO_THREAD_LOCAL_STORAGE) && !defined(__PPE__)
     thread_local char c_str_storage[fapi2::MAX_ECMD_STRING_LEN];
 #else
     char c_str_storage[fapi2::MAX_ECMD_STRING_LEN];
