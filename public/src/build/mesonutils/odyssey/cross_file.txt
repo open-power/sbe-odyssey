@@ -32,6 +32,7 @@ odyssey_hwp_inc_paths = [
     '/memory',
     '/hwp/odyssey/perv',
     '/memory/odyssey/hwp',
+    '/memory/odyssey/hwp/lib',
     '/memory/odyssey/hwp/lib/phy',
     '/common/odyssey/registers',
     '/common/odyssey/include',

@@ -90,6 +90,7 @@
 
   <hwpError>
     <rc>RC_ODY_GET_MAIL_FAILURE</rc>
+    <ffdc>PORT_TARGET</ffdc>
     <description>Ody draminit get_mail poll timed out.</description>
     <callout>
       <procedure>CODE</procedure>

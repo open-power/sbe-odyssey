@@ -44,17 +44,44 @@ infile_c = [
             '/hwp/odyssey/perv/ody_chiplet_fir_init.C',
             '/hwp/odyssey/perv/ody_nest_enable_io.C',
             '/hwp/odyssey/perv/ody_sppe_attr_setup.C',
-            '/hwp/odyssey/perv/ody_scratch_regs_utils.C',
             '/hwp/odyssey/perv/ody_scratch_regs.C',
+            '/hwp/odyssey/perv/ody_scratch_regs_utils.C',
             '/hwp/odyssey/io/ody_omi_setup.C',
             '/hwp/odyssey/io/ody_omi_train.C',
-            '/memory/odyssey/hwp/ody_ddrphyinit.C',
             '/memory/odyssey/hwp/ody_scominit.C',
             '/memory/odyssey/hwp/ody_sppe_draminit.C',
             '/memory/odyssey/hwp/ody_thermal_init.C',
-#            '/memory/odyssey/hwp//lib/phy/ody_phy_utils.C',
+            '/memory/generic/memory/lib/utils/c_str.C',
             '/memory/odyssey/initfiles/odyssey_scom.C',
+
+            # Files needed for ody_ddrphyinit
+            '/memory/odyssey/hwp/ody_ddrphyinit.C',
+            '/memory/odyssey/hwp/lib/phy/ody_draminit_utils.C',
+            '/memory/odyssey/hwp/lib/phy/ody_phy_utils.C',
+            '/memory/odyssey/hwp/lib/phy/ody_phy_reset.C',
+            '/memory/odyssey/hwp/lib/phy/ody_ddrphy_phyinit_config.C',
+            '/memory/odyssey/hwp/lib/utils/odyssey_pos.C',
+            'memory/odyssey/hwp/lib/workarounds/ody_dfi_complete_workarounds.C',
+
+            # Files needed for ody_load_imem and ody_load_dmem
+
+
+            # Files needed for ody_sppe_draminit
+
+
+            # Files needed for ody_load_pie
+
+
+            # Files needed for ody_draminit_mc
+
+
+            # Files needed for ody_enable_ecc
             '/memory/odyssey/hwp/ody_enable_ecc.C',
+
+
+            # Files needed for ody_thermal_init
+
+
             ]
 
 #Create abs path for input files before creating .o
