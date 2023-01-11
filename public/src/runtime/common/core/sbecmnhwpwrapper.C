@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/chipop_headers.H $       */
+/* $Source: public/src/runtime/common/core/sbecmnhwpwrapper.C $           */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,20 +21,15 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __CHIPOP_HEADERS_H__
-#define __CHIPOP_HEADERS_H__
-#include "sbecmdscomaccess.H"
-#include "sbecodeupdate.H"
-#include "sbecmdgeneric.H"
-#include "istep.H"
-#include "sbetrace.H"
-#include "sbe_sp_intf.H"
-#include "sbecmdringaccess.H"
-#include "sbecmdbist.H"
-#include "sbecmdpak.H"
-#include "sbecmdgetrawattrdump.H"
-#include "sbecmdexecutehwp.H"
-#include <stdint.h>
-#include <stddef.h>
+#include "sbecmnhwpwrapper.H"
+#include "istep_includes.H"
 
-#endif
+using namespace fapi2;
+
+//----------------------------------------------------------------------------
+
+ReturnCode istepNoOp( voidfuncptr_t i_hwp)
+{
+    SBE_INFO("istepNoOp");
+    return FAPI2_RC_SUCCESS ;
+}

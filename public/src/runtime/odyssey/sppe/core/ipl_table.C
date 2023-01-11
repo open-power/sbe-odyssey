@@ -27,82 +27,13 @@
 #include "sbetrace.H"
 #include "sbeutil.H"
 #include "target.H"
-#include "hwp_includes.H"
+#include "istep_includes.H"
+#include "sbecmnhwpwrapper.H"
+#include "hwpWrapper.H"
 
 using namespace fapi2;
 
 //----------------------------------------------------------------------------
-
-using  sbeIstepHwpOcmb_t = ReturnCode (*)
-                      (const Target<TARGET_TYPE_OCMB_CHIP> & i_target);
-
-ReturnCode istepNoOp( voidfuncptr_t i_hwp)
-{
-    SBE_INFO("istepNoOp");
-    return FAPI2_RC_SUCCESS ;
-}
-
-ReturnCode istepWithOcmb( voidfuncptr_t i_hwp)
-{
-    SBE_INFO("[DBG] : istepWithOcmb : starting");
-    ReturnCode rc = FAPI2_RC_SUCCESS;
-    Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
-    assert( NULL != i_hwp );
-    SBE_EXEC_HWP(rc, reinterpret_cast<sbeIstepHwpOcmb_t>( i_hwp ), l_ocmb_chip);
-    return rc;
-}
-
-ReturnCode istepBistWithOcmb( voidfuncptr_t i_hwp)
-{
-    SBE_INFO("[DBG] : istepBistWithOcmb : starting");
-    ReturnCode rc = FAPI2_RC_SUCCESS;
-    Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
-    assert( NULL != i_hwp );
-    if (fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_ENABLE_ABIST ||
-        fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_ENABLE_LBIST)
-    {
-        SBE_EXEC_HWP(rc, reinterpret_cast<sbeIstepHwpOcmb_t>( i_hwp ), l_ocmb_chip);
-    }
-    else
-    {
-        SBE_INFO("Skipping istep since ATTR_ENABLE_ABIST nor ATTR_ENABLE_LBIST not set");
-    }
-    return rc;
-}
-
-ReturnCode istepAbistWithOcmb( voidfuncptr_t i_hwp)
-{
-    SBE_INFO("[DBG] : istepAbistWithOcmb : starting");
-    ReturnCode rc = FAPI2_RC_SUCCESS;
-    Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
-    assert( NULL != i_hwp );
-    if(fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_ENABLE_ABIST)
-    {
-        SBE_EXEC_HWP(rc, reinterpret_cast<sbeIstepHwpOcmb_t>( i_hwp ), l_ocmb_chip);
-    }
-    else
-    {
-        SBE_INFO("Skipping istep since ATTR_ENABLE_ABIST not set");
-    }
-    return rc;
-}
-
-ReturnCode istepLbistWithOcmb( voidfuncptr_t i_hwp)
-{
-    SBE_INFO("[DBG] : istepLbistWithOcmb : starting");
-    ReturnCode rc = FAPI2_RC_SUCCESS;
-    Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
-    assert( NULL != i_hwp );
-    if(fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_ENABLE_LBIST)
-    {
-        SBE_EXEC_HWP(rc, reinterpret_cast<sbeIstepHwpOcmb_t>( i_hwp ), l_ocmb_chip);
-    }
-    else
-    {
-        SBE_INFO("Skipping istep since ATTR_ENABLE_LBIST not set");
-    }
-    return rc;
-}
 
 static istepMap_t g_istep1PtrTbl[] =
          {

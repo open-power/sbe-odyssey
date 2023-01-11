@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/chipop_headers.H $       */
+/* $Source: public/src/runtime/odyssey/sppe/core/istep_includes.H $       */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,20 +21,40 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __CHIPOP_HEADERS_H__
-#define __CHIPOP_HEADERS_H__
-#include "sbecmdscomaccess.H"
-#include "sbecodeupdate.H"
-#include "sbecmdgeneric.H"
-#include "istep.H"
-#include "sbetrace.H"
-#include "sbe_sp_intf.H"
-#include "sbecmdringaccess.H"
-#include "sbecmdbist.H"
-#include "sbecmdpak.H"
-#include "sbecmdgetrawattrdump.H"
-#include "sbecmdexecutehwp.H"
-#include <stdint.h>
-#include <stddef.h>
+
+#ifndef __ISTEP_INCLUDES_H
+#define __ISTEP_INCLUDES_H
+
+#include <ody_tp_arrayinit.H>
+#include <ody_tp_arrayinit_cleanup.H>
+#include <ody_tp_initf.H>
+#include <ody_tp_startclocks.H>
+#include <ody_tp_init.H>
+#include <ody_ddrphyinit.H>
+#include <ody_chiplet_clk_config.H>
+#include <ody_chiplet_reset.H>
+#include <ody_chiplet_unused_psave.H>
+#include <ody_chiplet_pll_setup.H>
+#include <ody_bist_repr_initf.H>
+#include <ody_abist.H>
+#include <ody_lbist.H>
+#include <ody_chiplet_repr_initf.H>
+#include <ody_chiplet_arrayinit.H>
+#include <ody_chiplet_initf.H>
+#include <ody_chiplet_init.H>
+#include <ody_chiplet_startclocks.H>
+#include <ody_chiplet_fir_init.H>
+#include <ody_nest_enable_io.H>
+#include <ody_cmdtable_interpreter.H>
+#include <ody_scominit.H>
+#include <ody_omi_setup.H>
+#include <ody_omi_train.H>
+#include <ody_sppe_draminit.H>
+#include <ody_thermal_init.H>
+#include <poz_cmdtable_interpreter.H>
+#include <ody_sppe_attr_setup.H>
+#include <poz_putRingUtils.H>
+#include <poz_ring_ids.H>
+#include <ody_enable_ecc.H>
 
 #endif
