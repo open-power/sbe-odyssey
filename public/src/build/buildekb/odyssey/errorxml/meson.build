@@ -26,6 +26,7 @@
 import_xml_dir_base_path = pub_import_dir_path + '/hwp/odyssey/xml/error_info/'
 odyssey_error_xml_files = [
     'ody_scratch_regs_errors.xml',
+    'ody_dts_read_errors.xml',
     ]
 
 #Create abs path for input xml files

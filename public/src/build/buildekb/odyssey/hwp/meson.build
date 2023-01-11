@@ -83,7 +83,8 @@ infile_c = [
 
 
             # Files needed for ody_thermal_init
-
+            '/memory/odyssey/hwp/lib/power_thermal/ody_thermal_init_utils.C',
+            '/hwp/odyssey/perv/ody_dts_read.C',
 
             ]
 
