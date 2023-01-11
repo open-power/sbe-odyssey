@@ -51,9 +51,33 @@ infile_c = [
             '/memory/odyssey/hwp/ody_scominit.C',
             '/memory/odyssey/hwp/ody_sppe_draminit.C',
             '/memory/odyssey/hwp/ody_thermal_init.C',
+            '/memory/generic/memory/lib/utils/c_str.C',
 #            '/memory/odyssey/hwp//lib/phy/ody_phy_utils.C',
             '/memory/odyssey/initfiles/odyssey_scom.C',
-          ]
+
+            # Files needed for ody_ddrphyinit
+
+
+            # Files needed for ody_load_imem and ody_load_dmem
+
+
+            # Files needed for ody_sppe_draminit
+
+
+            # Files needed for ody_load_pie
+
+
+            # Files needed for ody_draminit_mc
+
+
+            # Files needed for ody_enable_ecc
+            '/memory/odyssey/hwp/ody_enable_ecc.C',
+
+
+            # Files needed for ody_thermal_init
+
+
+            ]
 
 #Create abs path for input files before creating .o
 abs_infiles_c_path = []

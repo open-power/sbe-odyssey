@@ -56,5 +56,7 @@
 #include <ody_sppe_attr_setup.H>
 #include <poz_putRingUtils.H>
 #include <poz_ring_ids.H>
+#include <ody_enable_ecc.H>
+#include <c_str.H>
 
 #endif

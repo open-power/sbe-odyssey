@@ -22,14 +22,16 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __TARGET__
-#define __TARGET__
+#ifndef __FAPI2_TARGET__
+#define __FAPI2_TARGET__
 
 #include "plat_utils.H"
 #include "target_service.H"
 
 namespace fapi2
 {
+    static const uint32_t MAX_ECMD_STRING_LEN = 64;
+
     constexpr TargetType TARGET_TYPE_PROC_CHILDREN = TARGET_TYPE_CHIPLETS;
     constexpr TargetType TARGET_TYPE_PERV_CHILDREN = TARGET_TYPE_CHIPLETS;
     constexpr TargetType TARGET_TYPE_MC_CHILDREN = TARGET_TYPE_MI;
@@ -281,5 +283,14 @@ namespace fapi2
     {
         return iv_handle.getFunctional();
     }
+//@TODO
+// Need to enable plat target string
+    template< TargetType T, MulticastType M, typename V >
+    inline void toString(const Target<T, M, V>& i_target, char* i_buffer, size_t i_bsize)
+    {}
+    template< TargetType T, MulticastType M, typename V >
+    inline void toString(const Target<T, M, V>* i_target, char* i_buffer, size_t i_bsize)
+    {}
+//@ END TODO
 }
 #endif

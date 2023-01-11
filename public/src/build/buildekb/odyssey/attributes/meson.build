@@ -39,3 +39,33 @@ foreach infile : infile_attr_xml
 endforeach
 
 SBE_ODY_ATTR_FILTER_XML = import_hwp_dir_path + 'sbe_ody_attribute.xml'
+
+import_memory_hwp_dir_path = pub_import_dir_path + 'memory/generic/xml/attribute_info/'
+
+infile_mem_attr_xml = [
+    'generic_dq_attributes.xml',
+    'generic_memory_attributes.xml',
+    'generic_memory_ddr5_mr_attributes.xml',
+    'generic_memory_ddr5_eff_attributes.xml',
+    'generic_memory_eff_attributes.xml',
+    'generic_memory_mrw_attributes.xml',
+    'generic_memory_si_attributes.xml',
+    'generic_memory_thermal_sensor_attributes.xml',
+    ]
+
+foreach inmemfile : infile_mem_attr_xml
+  abs_in_memfile_xml_path = import_memory_hwp_dir_path + inmemfile
+  EKB_ODY_ATTR_XMLS += abs_in_memfile_xml_path
+endforeach
+
+import_ody_memory_hwp_dir_path = pub_import_dir_path + 'memory/odyssey/xml/attribute_info/'
+
+infile_ody_mem_attr_xml = [
+    'ody_attributes.xml',
+    ]
+
+foreach inodymemfile : infile_ody_mem_attr_xml
+  abs_in_ody_memfile_xml_path = import_ody_memory_hwp_dir_path + inodymemfile
+  EKB_ODY_ATTR_XMLS += abs_in_ody_memfile_xml_path
+endforeach
+
