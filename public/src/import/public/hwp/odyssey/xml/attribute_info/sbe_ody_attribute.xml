@@ -2532,7 +2532,8 @@
   </entry>
   <entry name="ATTR_REL_POS">
     <value>0x00</value>
-  </entry>  <entry name="ATTR_DRAMINIT_TRAINING_TIMEOUT">
+  </entry>
+  <entry name="ATTR_DRAMINIT_TRAINING_TIMEOUT">
     <value>20000</value>
   </entry>
   <entry name="ATTR_MEM_EFF_ARDPTRINITVAL">
