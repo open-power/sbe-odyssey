@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -119,16 +119,7 @@ class mr32_data
 
         // Note the decodes are the same for CK and CS
         // Using the enums for CK for now
-        static constexpr const pair<uint16_t, uint8_t> ODT_TABLE[7] =
-        {
-            {fapi2::ENUM_ATTR_DDR5_DRAM_CK_ODT_DISABLE , 0b000},
-            {fapi2::ENUM_ATTR_DDR5_DRAM_CK_ODT_OHM40   , 0b111},
-            {fapi2::ENUM_ATTR_DDR5_DRAM_CK_ODT_OHM60   , 0b101},
-            {fapi2::ENUM_ATTR_DDR5_DRAM_CK_ODT_OHM80   , 0b100},
-            {fapi2::ENUM_ATTR_DDR5_DRAM_CK_ODT_OHM120  , 0b011},
-            {fapi2::ENUM_ATTR_DDR5_DRAM_CK_ODT_OHM240  , 0b010},
-            {fapi2::ENUM_ATTR_DDR5_DRAM_CK_ODT_OHM480  , 0b001},
-        };
+        static const pair<uint16_t, uint8_t> ODT_TABLE[7];
 
         ///
         /// @brief Checks and converts the attribute CA ODT value to its associated field value
@@ -156,8 +147,13 @@ class mr32_data
                         .set_VALUE(i_value)
                         .set_IS_CS(i_is_cs_odt)
                         .set_STRAP(i_strap),
+#ifdef __PPE__
+                        TARGTIDFORMAT " DDR5 MR32. Bad %u ODT impedance value on DIMM rank %u. Value: %u", TARGTID,
+                        i_is_cs_odt, i_dimm_rank, i_value);
+#else
                         TARGTIDFORMAT " DDR5 MR32. Bad %s ODT impedance value on DIMM rank %u. Value: %u", TARGTID,
                         i_is_cs_odt ? "CS" : "CK", i_dimm_rank, i_value);
+#endif
 
             return fapi2::FAPI2_RC_SUCCESS;
         fapi_try_exit:
@@ -190,8 +186,13 @@ class mr32_data
                         .set_FIELD(i_field)
                         .set_IS_CS(i_is_cs_odt)
                         .set_STRAP(i_strap),
+#ifdef __PPE__
+                        TARGTIDFORMAT " DDR5 MR32. Bad %u ODT impedance field on DIMM rank %u. Field value: %u", TARGTID,
+                        i_is_cs_odt, i_dimm_rank, i_field);
+#else
                         TARGTIDFORMAT " DDR5 MR32. Bad %s ODT impedance field on DIMM rank %u. Field value: %u", TARGTID,
                         i_is_cs_odt ? "CS" : "CK", i_dimm_rank, i_field);
+#endif
 
             return fapi2::FAPI2_RC_SUCCESS;
         fapi_try_exit:
@@ -356,7 +357,16 @@ class mr32_data
 };
 
 template<mss::mc_type MC>
-constexpr const pair<uint16_t, uint8_t> mr32_data<MC>::ODT_TABLE[7];
+const pair<uint16_t, uint8_t> mr32_data<MC>::ODT_TABLE[7] =
+{
+    pair<uint16_t, uint8_t>(fapi2::ENUM_ATTR_DDR5_DRAM_CK_ODT_DISABLE , 0b000),
+    pair<uint16_t, uint8_t>(fapi2::ENUM_ATTR_DDR5_DRAM_CK_ODT_OHM40   , 0b111),
+    pair<uint16_t, uint8_t>(fapi2::ENUM_ATTR_DDR5_DRAM_CK_ODT_OHM60   , 0b101),
+    pair<uint16_t, uint8_t>(fapi2::ENUM_ATTR_DDR5_DRAM_CK_ODT_OHM80   , 0b100),
+    pair<uint16_t, uint8_t>(fapi2::ENUM_ATTR_DDR5_DRAM_CK_ODT_OHM120  , 0b011),
+    pair<uint16_t, uint8_t>(fapi2::ENUM_ATTR_DDR5_DRAM_CK_ODT_OHM240  , 0b010),
+    pair<uint16_t, uint8_t>(fapi2::ENUM_ATTR_DDR5_DRAM_CK_ODT_OHM480  , 0b001),
+};
 
 } // ns ddr5
 

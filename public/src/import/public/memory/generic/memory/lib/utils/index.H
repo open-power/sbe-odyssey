@@ -61,15 +61,6 @@ inline size_t index(const fapi2::Target<T>& i_target)
 {
     uint8_t l_pos = 0;
 
-#ifdef __PPE__
-    STATIC_CHECK(T == fapi2::TARGET_TYPE_GENERICI2CRESPONDER,
-                 "index() called for Invalid target type");
-    l_pos = i_target.get().getTargetInstance();
-#else
-    // Unrolled c_str to avoid a circular include
-    char l_c_str_storage[fapi2::MAX_ECMD_STRING_LEN] = {};
-    fapi2::toString( i_target, l_c_str_storage, fapi2::MAX_ECMD_STRING_LEN );
-
     // Don't use FAPI_TRY as you'll mess up fapi2::current_err which
     // lmits where this can be used.
     if (FAPI_ATTR_GET(fapi2::ATTR_REL_POS, i_target, l_pos) != fapi2::FAPI2_RC_SUCCESS)
@@ -77,13 +68,15 @@ inline size_t index(const fapi2::Target<T>& i_target)
         goto fapi_try_exit;
     }
 
-#endif // __PPE
-
     return l_pos;
 
 fapi_try_exit:
 
 #ifndef __PPE__
+    // Unrolled c_str to avoid a circular include
+    char l_c_str_storage[fapi2::MAX_ECMD_STRING_LEN] = {};
+    fapi2::toString( i_target, l_c_str_storage, fapi2::MAX_ECMD_STRING_LEN );
+
     // If we can't get our relative position, we're in other trouble
     FAPI_ERR("can't get ATTR_REL_POS for %s", l_c_str_storage);
 #endif
@@ -91,6 +84,20 @@ fapi_try_exit:
     fapi2::Assert(false);
     return 0;
 }
+
+#ifdef __PPE__
+///
+/// @brief Return an attribute array index from a fapi2 target
+/// @tparam T the fapi2::TargetType - derived
+/// @param[in] i_target a fapi2 target
+/// @return size_t the attribute array index.
+///
+template<>
+inline size_t index(const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CRESPONDER>& i_target)
+{
+    return i_target.get().getTargetInstance();
+}
+#endif
 
 ///
 /// @brief Return a dimm rank / attribute array index from a port rank number
