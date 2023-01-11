@@ -39,6 +39,7 @@
 #include <return_code.H>
 #include <plat_trace.H>
 #include <buffer.H>
+#include "poz_putRingBackend.H"
 
 namespace fapi2
 {
@@ -124,25 +125,30 @@ namespace fapi2
         return FAPI2_RC_FALSE;
     }
 
-    /// @brief Platform-level implementation  of putRing()
-    /// Hardware procedures writers will not call this function.
-    /// @tparam K template parameter, passed in target.
-    /// @param[in] i_target   Target to operate on.
-    /// @param[in] i_filePath File Path
-    /// @return fapi::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
-    template< TargetType K, MulticastType M, typename V >
-    inline ReturnCode putRing(  const Target<K, M, V>& i_target,
-                                const char * i_filePath)
+/// @brief Platform-level implementation  of putRing()
+/// Hardware procedures writers will not call this function.
+/// @tparam K template parameter, passed in target.
+/// @param[in] i_target   Target to operate on.
+/// @param[in] i_ringID   Ring ID name that will identify the Ring in the image.
+/// @param[in] i_ringMode Ring operation mode.
+/// @return fapi::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
+template< TargetType K, MulticastType M, typename V >
+ReturnCode putRing(const Target<K, M, V>& i_target,
+                   const char* i_ringID,
+                   const RingMode i_ringMode = RING_MODE_HEADER_CHECK)
+{
+    fapi2::ReturnCode l_rc = FAPI2_RC_SUCCESS;
+
+    l_rc = poz_putRingBackend(i_target,
+                              i_ringID, i_ringMode);
+
+    if( l_rc != FAPI2_RC_SUCCESS )
     {
-        ReturnCode l_rc = FAPI2_RC_SUCCESS;
-
-        if( SBE::isSimicsRunning() )
-        {
-            return l_rc;
-        }
-
-        return l_rc;
+        FAPI_ERR("poz_putRingBackend failed with RC[%08X]", l_rc);
     }
+
+    return l_rc;
+}
 
     /// @brief Reads a ring from a chip.
     /// @tparam K template parameter, passed in target.

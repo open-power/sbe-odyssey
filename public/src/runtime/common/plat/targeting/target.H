@@ -342,7 +342,7 @@ namespace fapi2
     inline ReturnCodes Target<K, M, V>::reduceType(Target<T, M, V> &o_target) const
     {
         const TargetType l_type = iv_handle.getFapiTargetType() |
-            (iv_handle.getFunctional() ? TARGET_TYPE_MULTICAST : TARGET_TYPE_NONE);
+            (iv_handle.getIsMulticast() ? TARGET_TYPE_MULTICAST : TARGET_TYPE_NONE);
         if ((l_type & T) != l_type)
         {
             return FAPI2_RC_INVALID_PARAMETER;

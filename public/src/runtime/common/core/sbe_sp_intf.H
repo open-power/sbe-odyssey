@@ -162,7 +162,7 @@ enum sbeSecondaryResponse
     SBE_SEC_POP_UNAVAILABE_PAKS               = 0x51,
     SBE_SEC_GETRING_SETUP_FAILED              = 0x52,
     SBE_SEC_GETRING_VERIFY_CLEANUP            = 0x53,
-    SBE_SEC_SCRATCH_SPACE_FULL                = 0x54,
+    SBE_SEC_PUTRING_FAILED                    = 0x54,
 };
 
 /**

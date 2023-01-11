@@ -269,6 +269,7 @@ uint32_t sbeGetRing(uint8_t *i_pArg)
     return l_rc;
 #undef SBE_FUNC
 }
+
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 uint32_t sbePutRingWrap( fapi2::sbefifo_hwp_data_istream& i_getStream,
@@ -308,7 +309,7 @@ uint32_t sbePutRingWrap( fapi2::sbefifo_hwp_data_istream& i_getStream,
         {
             SBE_ERROR(SBE_FUNC "scratch allocation failed. Not enough scratch area to allocate");
             respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                               SBE_SEC_SCRATCH_SPACE_FULL);
+                               SBE_SEC_HEAP_SPACE_FULL_FAILURE);
 
             // flush the fifo
             rc = i_getStream.get(len, NULL,true, true);
@@ -366,7 +367,7 @@ uint32_t sbePutRingWrap( fapi2::sbefifo_hwp_data_istream& i_getStream,
 //////////////////////////////////////////////////////
 uint32_t sbePutRing(uint8_t *i_pArg)
 {
-    #define SBE_FUNC " sbePutRing "
+#define SBE_FUNC " sbePutRing "
     SBE_ENTER(SBE_FUNC);
 
     uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
@@ -383,5 +384,81 @@ uint32_t sbePutRing(uint8_t *i_pArg)
     return l_rc;
 #undef SBE_FUNC
 }
+
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
+uint32_t sbePutRingFromImgWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
+                               fapi2::sbefifo_hwp_data_ostream& i_putStream)
+{
+#define SBE_FUNC " sbePutRingFromImgWrap "
+    SBE_ENTER(SBE_FUNC);
+
+    uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    sbeRespGenHdr_t respHdr;
+    respHdr.init();
+    sbeResponseFfdc_t ffdc;
+    ReturnCode fapiRc;
+    sbePutRingFromImgCMD_t hdr;
+    uint32_t len = 0;
+
+    do{
+        len = sizeof(sbePutRingFromImgCMD_t)/sizeof(uint32_t);
+        rc = i_getStream.get(len, (uint32_t *)&hdr);
+        // If FIFO access failure
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(rc);
+
+        // Initialize with HEADER CHECK mode
+        uint16_t ringMode = sbeToFapiRingMode(hdr.ringMode);
+
+        Target<SBE_ROOT_CHIP_TYPE> l_hndl = g_platTarget->plat_getChipTarget();
+        auto l_allgood_mc =
+              l_hndl.getMulticast<fapi2::TARGET_TYPE_PERV>(fapi2::MCGROUP_GOOD);
+
+        SBE_EXEC_HWP(fapiRc,
+                     putRing,
+                     l_allgood_mc, hdr.ringIdString,
+                     (fapi2::RingMode)ringMode);
+
+        if( fapiRc != FAPI2_RC_SUCCESS )
+        {
+            SBE_ERROR(SBE_FUNC"  poz_putRingBackend failed."
+                "fapiRc:0x%04x",  fapiRc);
+            respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                               SBE_SEC_PUTRING_FAILED);
+            ffdc.setRc(fapiRc);
+            break;
+        }
+    }while(false);
+
+    // Now build and enqueue response into downstream FIFO
+    // If there was a FIFO error, will skip sending the response,
+    // instead give the control back to the command processor thread
+    if ( SBE_SEC_OPERATION_SUCCESSFUL == rc )
+    {
+        rc = sbeDsSendRespHdr( respHdr, &ffdc, i_getStream.getFifoType());
+    }
+
+    SBE_EXIT(SBE_FUNC);
+    return rc;
+#undef SBE_FUNC
+}
+
+uint32_t sbePutRingFromImg(uint8_t *i_pArg)
+{
+#define SBE_FUNC " sbePutRingFromImg "
+    SBE_ENTER(SBE_FUNC);
+
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    chipOpParam_t* configStr = (struct chipOpParam*)i_pArg;
+    sbeFifoType type = static_cast<sbeFifoType>(configStr->fifoType);
+
+    sbefifo_hwp_data_ostream ostream(type);
+    sbefifo_hwp_data_istream istream(type);
+    SBE_INFO(SBE_FUNC" hwp streams created");
+    l_rc = sbePutRingFromImgWrap( istream, ostream );
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+#undef SBE_FUNC
+}

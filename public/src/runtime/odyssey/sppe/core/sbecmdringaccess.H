@@ -37,11 +37,10 @@
 
 typedef struct
 {
-    uint64_t TargetType:16;
-    uint64_t ChipletID:16;
-    uint64_t RingID:16;
-    uint64_t RingMode:16;
-} sbePSUPutRingCMD_t;
+    uint32_t reserved:16;
+    uint32_t ringMode:16;
+    char ringIdString[32];
+} sbePutRingFromImgCMD_t;
 
 /**
  * @brief Put Ring message header
@@ -81,5 +80,27 @@ uint32_t sbeGetRing(uint8_t *i_pArg);
  * @return    RC from the FIFO access utility
  */
 uint32_t sbePutRing(uint8_t *i_pArg);
+
+/**
+ * @brief Put Ring Command from image
+ *        Search for the ring in sbe.ram.pak and pak stack(DFT) in pibmem and
+ *        apply the ring
+ *
+ * @param[in] i_pArg Buffer to be passed to the function (not used as of now)
+ *
+ * @return    RC from the FIFO access utility
+ */
+uint32_t sbePutRingFromImg(uint8_t *i_pArg);
+
+/**
+  * @brief sbePutRingFromImgWrap : Apply the ring
+  *
+  * @param[in]  i_getStream      fifo down stream interface
+  * @param[in]  i_putStream      fifo up stream interface
+  *
+  * @return    Rc from the FIFO access utility
+  */
+uint32_t sbePutRingFromImgWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
+                               fapi2::sbefifo_hwp_data_ostream& i_putStream);
 
 #endif /* __SBEFW_SBECMDRINGACCESS_H */
