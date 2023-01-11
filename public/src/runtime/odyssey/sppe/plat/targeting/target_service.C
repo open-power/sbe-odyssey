@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -28,8 +28,8 @@
  */
 
 #include "plat_target_base.H"
-#include "target_service.H"
 #include "target.H"
+#include "target_service.H"
 
 fapi2::target_service * g_platTarget = &fapi2::target_service::getInstance();
 fapi2::target_service fapi2::target_service::iv_instance;

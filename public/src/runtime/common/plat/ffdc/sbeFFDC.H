@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -29,7 +29,7 @@
 #include "pk_trace.h"
 #include "sbeFFDCType.H"
 #include "sbeSpMsg.H"
-
+#include "target.H"
 #include "error_info_defs.H"
 extern fapi2::SbeFfdcData_t g_FfdcData;
 //TODO: P11SBE Porting
