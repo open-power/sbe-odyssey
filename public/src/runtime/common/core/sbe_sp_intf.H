@@ -185,6 +185,7 @@ enum sbeSecondaryResponse
     SBE_SEC_CU_EXCEEDS_MAX_SIDE_IMAGE_SIZE    = 0x66,
     SBE_SEC_CU_PAK_END_MARKER_NOT_FOUND       = 0x67,
     SBE_SEC_CU_FILE_SIZE_NOT_MATCHING         = 0x68,
+    SBE_SEC_ODY_DTS_READ_FAILED               = 0x69,
 };
 
 /**

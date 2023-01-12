@@ -44,6 +44,7 @@ infile_c = ['main.C',
             'sbestreampaktohwp.C',
             'codeupdateutils.C',
             'sbecmdupdateattr.C',
+            'sbecmddtsread.C',
           ]
 
 odyssey_abs_core_c_file_paths = []
