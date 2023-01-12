@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -54,11 +54,8 @@ inline fapi2::ReturnCode set_mfg_flags(uint32_t (&i_array)[4])
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MFG_FLAGS, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), l_value) );
     memcpy(&l_value, i_array, 16);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MFG_FLAGS, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MFG_FLAGS: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -76,11 +73,8 @@ inline fapi2::ReturnCode set_port_pos_of_fail_throttle(uint64_t i_value)
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_PORT_POS_OF_FAIL_THROTTLE, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_PORT_POS_OF_FAIL_THROTTLE: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 

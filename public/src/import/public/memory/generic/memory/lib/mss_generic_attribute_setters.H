@@ -55,11 +55,8 @@ inline fapi2::ReturnCode set_bad_dq_bitmap(const fapi2::Target<fapi2::TARGET_TYP
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_BAD_DQ_BITMAP, i_target, l_value) );
     memcpy(&l_value, i_array, 40);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_BAD_DQ_BITMAP, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_BAD_DQ_BITMAP: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -79,11 +76,8 @@ inline fapi2::ReturnCode set_dimm_pos_metadata(const fapi2::Target<fapi2::TARGET
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_POS_METADATA, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_POS_METADATA: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -101,11 +95,8 @@ inline fapi2::ReturnCode set_dram_gen_metadata(const fapi2::Target<fapi2::TARGET
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DRAM_GEN_METADATA, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DRAM_GEN_METADATA: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -124,11 +115,8 @@ inline fapi2::ReturnCode set_dimm_type_metadata(const fapi2::Target<fapi2::TARGE
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_TYPE_METADATA, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_TYPE_METADATA: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -151,11 +139,8 @@ inline fapi2::ReturnCode set_row_repair_data(const fapi2::Target<fapi2::TARGET_T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_ROW_REPAIR_DATA, i_target, l_value) );
     memcpy(&l_value, i_array, 16);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_ROW_REPAIR_DATA, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_ROW_REPAIR_DATA: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -172,11 +157,8 @@ inline fapi2::ReturnCode set_dram_cwl(const fapi2::Target<fapi2::TARGET_TYPE_MEM
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DRAM_CWL, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DRAM_CWL: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -193,11 +175,8 @@ inline fapi2::ReturnCode set_dimm_buffer_delay(const fapi2::Target<fapi2::TARGET
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_RDIMM_BUFFER_DELAY, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_RDIMM_BUFFER_DELAY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -219,11 +198,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f0rc0f(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC0F, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC0F, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F0RC0F: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -245,11 +221,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f0rc0f(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC0F, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC0F, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F0RC0F: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -270,11 +243,8 @@ inline fapi2::ReturnCode set_cs_cmd_latency(const fapi2::Target<fapi2::TARGET_TY
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_CS_CMD_LATENCY, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_CS_CMD_LATENCY, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_CS_CMD_LATENCY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -295,11 +265,8 @@ inline fapi2::ReturnCode set_cs_cmd_latency(const fapi2::Target<fapi2::TARGET_TY
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_CS_CMD_LATENCY, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_CS_CMD_LATENCY, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_CS_CMD_LATENCY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -320,11 +287,8 @@ inline fapi2::ReturnCode set_ca_parity_latency(const fapi2::Target<fapi2::TARGET
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_CA_PARITY_LATENCY, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_CA_PARITY_LATENCY, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_CA_PARITY_LATENCY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -345,11 +309,8 @@ inline fapi2::ReturnCode set_ca_parity_latency(const fapi2::Target<fapi2::TARGET
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_CA_PARITY_LATENCY, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_CA_PARITY_LATENCY, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_CA_PARITY_LATENCY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -370,11 +331,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f0rc02(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC02, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC02, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F0RC02: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -395,11 +353,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f0rc02(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC02, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC02, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F0RC02: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -421,11 +376,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f0rc03(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC03, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC03, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F0RC03: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -447,11 +399,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f0rc03(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC03, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC03, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F0RC03: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -473,11 +422,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f0rc04(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC04, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC04, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F0RC04: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -499,11 +445,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f0rc04(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC04, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC04, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F0RC04: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -525,11 +468,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f0rc05(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC05, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC05, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F0RC05: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -551,11 +491,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f0rc05(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC05, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC05, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F0RC05: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -577,11 +514,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f0rc0b(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC0B, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC0B, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F0RC0B: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -603,11 +537,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f0rc0b(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC0B, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC0B, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F0RC0B: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -629,11 +560,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f0rc1x(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC1X, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC1X, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F0RC1X: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -655,11 +583,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f0rc1x(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC1X, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC1X, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F0RC1X: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -680,11 +605,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f0rc7x(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC7X, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC7X, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F0RC7X: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -705,11 +627,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f0rc7x(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC7X, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F0RC7X, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F0RC7X: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -731,11 +650,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f1rc00(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC00, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC00, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC00: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -757,11 +673,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f1rc00(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC00, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC00, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC00: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -783,11 +696,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f1rc02(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC02, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC02, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC02: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -809,11 +719,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f1rc02(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC02, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC02, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC02: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -835,11 +742,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f1rc03(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC03, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC03, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC03: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -861,11 +765,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f1rc03(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC03, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC03, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC03: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -887,11 +788,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f1rc04(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC04, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC04, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC04: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -913,11 +811,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f1rc04(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC04, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC04, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC04: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -939,11 +834,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f1rc05(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC05, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC05, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC05: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -965,11 +857,8 @@ inline fapi2::ReturnCode set_dimm_ddr4_f1rc05(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC05, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC05, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC05: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -989,11 +878,8 @@ inline fapi2::ReturnCode set_safemode_dram_databus_util(const fapi2::Target<fapi
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MSS_SAFEMODE_DRAM_DATABUS_UTIL, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MSS_SAFEMODE_DRAM_DATABUS_UTIL: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1015,11 +901,8 @@ inline fapi2::ReturnCode set_dram_address_mirroring(const fapi2::Target<fapi2::T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DRAM_ADDRESS_MIRRORING, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DRAM_ADDRESS_MIRRORING, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DRAM_ADDRESS_MIRRORING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1040,11 +923,8 @@ inline fapi2::ReturnCode set_dram_address_mirroring(const fapi2::Target<fapi2::T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DRAM_ADDRESS_MIRRORING, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DRAM_ADDRESS_MIRRORING, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DRAM_ADDRESS_MIRRORING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1062,11 +942,8 @@ inline fapi2::ReturnCode set_reorder_queue_setting(const fapi2::Target<fapi2::TA
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_REORDER_QUEUE_SETTING, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_REORDER_QUEUE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1084,11 +961,8 @@ inline fapi2::ReturnCode set_mem_2n_mode(const fapi2::Target<fapi2::TARGET_TYPE_
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_2N_MODE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_2N_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1105,11 +979,8 @@ inline fapi2::ReturnCode set_ignore_mem_plug_rules(uint8_t i_value)
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_IGNORE_PLUG_RULES, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_IGNORE_PLUG_RULES: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -1126,11 +997,8 @@ inline fapi2::ReturnCode set_ignore_mem_plug_rules_dimm_size_mix(uint8_t i_value
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_IGNORE_PLUG_RULES_DIMM_SIZE_MIX, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_IGNORE_PLUG_RULES_DIMM_SIZE_MIX: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -1147,11 +1015,8 @@ inline fapi2::ReturnCode set_ignore_mem_plug_rules_dimm_height_mix(uint8_t i_val
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_IGNORE_PLUG_RULES_DIMM_HEIGHT_MIX, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_IGNORE_PLUG_RULES_DIMM_HEIGHT_MIX: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -1168,11 +1033,8 @@ inline fapi2::ReturnCode set_omi_x4_degrade_action(uint8_t i_value)
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_OMI_X4_DEGRADE_ACTION, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_OMI_X4_DEGRADE_ACTION: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -1188,11 +1050,8 @@ inline fapi2::ReturnCode set_omi_crc_debug(uint8_t i_value)
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_OMI_CRC_DEBUG, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_OMI_CRC_DEBUG: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -1208,11 +1067,8 @@ inline fapi2::ReturnCode set_enable_fir_unmasking(uint8_t i_value)
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_ENABLE_FIR_UNMASKING, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_ENABLE_FIR_UNMASKING: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -1230,11 +1086,8 @@ inline fapi2::ReturnCode set_ddr5_tx_slew_rise_dq(const fapi2::Target<fapi2::TAR
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DDR5_TX_SLEW_RISE_DQ, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DDR5_TX_SLEW_RISE_DQ: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1251,11 +1104,8 @@ inline fapi2::ReturnCode set_ddr5_tx_slew_fall_dq(const fapi2::Target<fapi2::TAR
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DDR5_TX_SLEW_FALL_DQ, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DDR5_TX_SLEW_FALL_DQ: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1272,11 +1122,8 @@ inline fapi2::ReturnCode set_ddr5_tx_slew_rise_ac(const fapi2::Target<fapi2::TAR
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DDR5_TX_SLEW_RISE_AC, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DDR5_TX_SLEW_RISE_AC: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1293,11 +1140,8 @@ inline fapi2::ReturnCode set_ddr5_tx_slew_fall_ac(const fapi2::Target<fapi2::TAR
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DDR5_TX_SLEW_FALL_AC, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DDR5_TX_SLEW_FALL_AC: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1314,11 +1158,8 @@ inline fapi2::ReturnCode set_ddr5_tx_slew_rise_ck(const fapi2::Target<fapi2::TAR
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DDR5_TX_SLEW_RISE_CK, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DDR5_TX_SLEW_RISE_CK: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1335,11 +1176,8 @@ inline fapi2::ReturnCode set_ddr5_tx_slew_fall_ck(const fapi2::Target<fapi2::TAR
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DDR5_TX_SLEW_FALL_CK, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DDR5_TX_SLEW_FALL_CK: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1361,11 +1199,8 @@ inline fapi2::ReturnCode set_ddr5_redundant_cs_en(const fapi2::Target<fapi2::TAR
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_REDUNDANT_CS_EN, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_REDUNDANT_CS_EN, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_REDUNDANT_CS_EN: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1386,11 +1221,8 @@ inline fapi2::ReturnCode set_ddr5_redundant_cs_en(const fapi2::Target<fapi2::TAR
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_REDUNDANT_CS_EN, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_REDUNDANT_CS_EN, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_REDUNDANT_CS_EN: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1407,11 +1239,8 @@ inline fapi2::ReturnCode set_ddr5_rxen_adj(const fapi2::Target<fapi2::TARGET_TYP
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DDR5_RXEN_ADJ, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DDR5_RXEN_ADJ: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1430,11 +1259,8 @@ inline fapi2::ReturnCode set_ddr5_wl_adj_start(const fapi2::Target<fapi2::TARGET
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DDR5_WL_ADJ_START, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DDR5_WL_ADJ_START: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1452,11 +1278,8 @@ inline fapi2::ReturnCode set_ddr5_wl_adj_end(const fapi2::Target<fapi2::TARGET_T
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DDR5_WL_ADJ_END, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DDR5_WL_ADJ_END: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1475,11 +1298,8 @@ inline fapi2::ReturnCode set_ddr5_phy_vref_rd(const fapi2::Target<fapi2::TARGET_
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DDR5_PHY_VREF_RD, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DDR5_PHY_VREF_RD: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1502,11 +1322,8 @@ inline fapi2::ReturnCode set_ddr5_rtt_park_rd(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DDR5_RTT_PARK_RD, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DDR5_RTT_PARK_RD, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DDR5_RTT_PARK_RD: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1528,11 +1345,8 @@ inline fapi2::ReturnCode set_ddr5_rtt_park_rd(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DDR5_RTT_PARK_RD, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DDR5_RTT_PARK_RD, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DDR5_RTT_PARK_RD: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1555,11 +1369,8 @@ inline fapi2::ReturnCode set_ddr5_rtt_park_wr(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DDR5_RTT_PARK_WR, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DDR5_RTT_PARK_WR, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DDR5_RTT_PARK_WR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1581,11 +1392,8 @@ inline fapi2::ReturnCode set_ddr5_rtt_park_wr(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DDR5_RTT_PARK_WR, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DDR5_RTT_PARK_WR, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DDR5_RTT_PARK_WR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1602,11 +1410,8 @@ inline fapi2::ReturnCode set_ddr5_spd_cl_supported(const fapi2::Target<fapi2::TA
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DDR5_SPD_CL_SUPPORTED, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DDR5_SPD_CL_SUPPORTED: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1624,11 +1429,8 @@ inline fapi2::ReturnCode set_burst_length(const fapi2::Target<fapi2::TARGET_TYPE
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_BURST_LENGTH, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_BURST_LENGTH: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1644,11 +1446,8 @@ inline fapi2::ReturnCode set_mpsm(const fapi2::Target<fapi2::TARGET_TYPE_MEM_POR
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_MPSM, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_MPSM: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1665,11 +1464,8 @@ inline fapi2::ReturnCode set_cs_assert_in_mpc(const fapi2::Target<fapi2::TARGET_
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_CS_ASSERT_IN_MPC, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_CS_ASSERT_IN_MPC: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1685,11 +1481,8 @@ inline fapi2::ReturnCode set_device15_mpsm(const fapi2::Target<fapi2::TARGET_TYP
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DEVICE15_MPSM, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DEVICE15_MPSM: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1706,11 +1499,8 @@ inline fapi2::ReturnCode set_internal_wr_timing_mode(const fapi2::Target<fapi2::
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_INTERNAL_WR_TIMING_MODE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_INTERNAL_WR_TIMING_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1732,11 +1522,8 @@ inline fapi2::ReturnCode set_wl_internal_cycle_alignment(const fapi2::Target<fap
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_WL_INTERNAL_CYCLE_ALIGNMENT, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 80);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_WL_INTERNAL_CYCLE_ALIGNMENT, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_WL_INTERNAL_CYCLE_ALIGNMENT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1757,11 +1544,8 @@ inline fapi2::ReturnCode set_wl_internal_cycle_alignment(const fapi2::Target<fap
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_WL_INTERNAL_CYCLE_ALIGNMENT, i_target, l_value) );
     memcpy(&l_value, i_array, 160);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_WL_INTERNAL_CYCLE_ALIGNMENT, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_WL_INTERNAL_CYCLE_ALIGNMENT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1777,11 +1561,8 @@ inline fapi2::ReturnCode set_ref_rate_indic(const fapi2::Target<fapi2::TARGET_TY
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_REF_INTERVAL_RATE_INDIC, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_REF_INTERVAL_RATE_INDIC: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1798,11 +1579,8 @@ inline fapi2::ReturnCode set_ddr5_min_ref_rate(const fapi2::Target<fapi2::TARGET
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DDR5_MIN_REF_RATE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DDR5_MIN_REF_RATE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1819,11 +1597,8 @@ inline fapi2::ReturnCode set_ddr5_ref_wide_range(const fapi2::Target<fapi2::TARG
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_REF_WIDE_RANGE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_REF_WIDE_RANGE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1839,11 +1614,8 @@ inline fapi2::ReturnCode set_ddr5_ref_tuf(const fapi2::Target<fapi2::TARGET_TYPE
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DDR5_REF_TUF, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DDR5_REF_TUF: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1864,11 +1636,8 @@ inline fapi2::ReturnCode set_dram_pu_drv_imp(const fapi2::Target<fapi2::TARGET_T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DRAM_PU_DRV_IMP, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DRAM_PU_DRV_IMP, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DRAM_PU_DRV_IMP: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1888,11 +1657,8 @@ inline fapi2::ReturnCode set_dram_pu_drv_imp(const fapi2::Target<fapi2::TARGET_T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DRAM_PU_DRV_IMP, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DRAM_PU_DRV_IMP, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DRAM_PU_DRV_IMP: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1909,11 +1675,8 @@ inline fapi2::ReturnCode set_ddr5_dram_test_mode(const fapi2::Target<fapi2::TARG
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_TEST_MODE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_TEST_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1934,11 +1697,8 @@ inline fapi2::ReturnCode set_dram_pd_drv_imp(const fapi2::Target<fapi2::TARGET_T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DRAM_PD_DRV_IMP, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DRAM_PD_DRV_IMP, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DRAM_PD_DRV_IMP: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1958,11 +1718,8 @@ inline fapi2::ReturnCode set_dram_pd_drv_imp(const fapi2::Target<fapi2::TARGET_T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DRAM_PD_DRV_IMP, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DRAM_PD_DRV_IMP, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DRAM_PD_DRV_IMP: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1979,11 +1736,8 @@ inline fapi2::ReturnCode set_ddr5_dram_rd_preamble(const fapi2::Target<fapi2::TA
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_RD_PREAMBLE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_RD_PREAMBLE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2000,11 +1754,8 @@ inline fapi2::ReturnCode set_ddr5_dram_wr_preamble(const fapi2::Target<fapi2::TA
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_WR_PREAMBLE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_WR_PREAMBLE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2021,11 +1772,8 @@ inline fapi2::ReturnCode set_ddr5_dram_rd_postamble(const fapi2::Target<fapi2::T
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_RD_POSTAMBLE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_RD_POSTAMBLE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2042,11 +1790,8 @@ inline fapi2::ReturnCode set_ddr5_dram_wr_postamble(const fapi2::Target<fapi2::T
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_WR_POSTAMBLE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_WR_POSTAMBLE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2067,11 +1812,8 @@ inline fapi2::ReturnCode set_ddr5_dram_wr_vrefdq(const fapi2::Target<fapi2::TARG
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_WR_VREFDQ, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 80);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_WR_VREFDQ, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_WR_VREFDQ: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2091,11 +1833,8 @@ inline fapi2::ReturnCode set_ddr5_dram_wr_vrefdq(const fapi2::Target<fapi2::TARG
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_WR_VREFDQ, i_target, l_value) );
     memcpy(&l_value, i_array, 160);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_WR_VREFDQ, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_WR_VREFDQ: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2116,11 +1855,8 @@ inline fapi2::ReturnCode set_ddr5_dram_vrefca(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_VREFCA, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 80);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_VREFCA, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_VREFCA: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2140,11 +1876,8 @@ inline fapi2::ReturnCode set_ddr5_dram_vrefca(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_VREFCA, i_target, l_value) );
     memcpy(&l_value, i_array, 160);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_VREFCA, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_VREFCA: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2165,11 +1898,8 @@ inline fapi2::ReturnCode set_ddr5_dram_vrefcs(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_VREFCS, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 80);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_VREFCS, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_VREFCS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2189,11 +1919,8 @@ inline fapi2::ReturnCode set_ddr5_dram_vrefcs(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_VREFCS, i_target, l_value) );
     memcpy(&l_value, i_array, 160);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_VREFCS, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_VREFCS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2210,11 +1937,8 @@ inline fapi2::ReturnCode set_ddr5_dram_ecs_mode(const fapi2::Target<fapi2::TARGE
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ECS_MODE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ECS_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2231,11 +1955,8 @@ inline fapi2::ReturnCode set_ddr5_dram_ecs_reset_counter(const fapi2::Target<fap
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ECS_RESET_COUNTER, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ECS_RESET_COUNTER: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2252,11 +1973,8 @@ inline fapi2::ReturnCode set_ddr5_dram_ecs_count_mode(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ECS_COUNT_MODE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ECS_COUNT_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2273,11 +1991,8 @@ inline fapi2::ReturnCode set_ddr5_dram_ecs_srank_select(const fapi2::Target<fapi
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ECS_SRANK_SELECT, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ECS_SRANK_SELECT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2294,11 +2009,8 @@ inline fapi2::ReturnCode set_ddr5_dram_ecs_threshold_count(const fapi2::Target<f
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ECS_THRESHOLD_COUNT, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ECS_THRESHOLD_COUNT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2315,11 +2027,8 @@ inline fapi2::ReturnCode set_ddr5_dram_ecs_in_self_refresh(const fapi2::Target<f
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ECS_IN_SELF_REFRESH, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ECS_IN_SELF_REFRESH: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2336,11 +2045,8 @@ inline fapi2::ReturnCode set_ddr5_dram_ecs_writeback(const fapi2::Target<fapi2::
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ECS_WRITEBACK, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ECS_WRITEBACK: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2357,11 +2063,8 @@ inline fapi2::ReturnCode set_ddr5_dram_ecs_x4_writes(const fapi2::Target<fapi2::
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ECS_X4_WRITES, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ECS_X4_WRITES: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2382,11 +2085,8 @@ inline fapi2::ReturnCode set_ddr5_dram_ck_odt(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_CK_ODT, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 16);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_CK_ODT, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_CK_ODT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2406,11 +2106,8 @@ inline fapi2::ReturnCode set_ddr5_dram_ck_odt(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_CK_ODT, i_target, l_value) );
     memcpy(&l_value, i_array, 32);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_CK_ODT, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_CK_ODT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2431,11 +2128,8 @@ inline fapi2::ReturnCode set_ddr5_dram_cs_odt(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_CS_ODT, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 16);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_CS_ODT, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_CS_ODT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2455,11 +2149,8 @@ inline fapi2::ReturnCode set_ddr5_dram_cs_odt(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_CS_ODT, i_target, l_value) );
     memcpy(&l_value, i_array, 32);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_CS_ODT, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_CS_ODT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2480,11 +2171,8 @@ inline fapi2::ReturnCode set_ddr5_dram_ca_odt(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_CA_ODT, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 16);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_CA_ODT, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_CA_ODT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2504,11 +2192,8 @@ inline fapi2::ReturnCode set_ddr5_dram_ca_odt(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_CA_ODT, i_target, l_value) );
     memcpy(&l_value, i_array, 32);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_CA_ODT, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_CA_ODT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2529,11 +2214,8 @@ inline fapi2::ReturnCode set_ddr5_dram_dqs_rtt_park(const fapi2::Target<fapi2::T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_DQS_RTT_PARK, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_DQS_RTT_PARK, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_DQS_RTT_PARK: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2553,11 +2235,8 @@ inline fapi2::ReturnCode set_ddr5_dram_dqs_rtt_park(const fapi2::Target<fapi2::T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_DQS_RTT_PARK, i_target, l_value) );
     memcpy(&l_value, i_array, 16);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_DQS_RTT_PARK, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_DQS_RTT_PARK: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2578,11 +2257,8 @@ inline fapi2::ReturnCode set_ddr5_dram_rtt_nom_wr(const fapi2::Target<fapi2::TAR
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_RTT_NOM_WR, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_RTT_NOM_WR, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_RTT_NOM_WR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2602,11 +2278,8 @@ inline fapi2::ReturnCode set_ddr5_dram_rtt_nom_wr(const fapi2::Target<fapi2::TAR
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_RTT_NOM_WR, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_RTT_NOM_WR, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_RTT_NOM_WR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2627,11 +2300,8 @@ inline fapi2::ReturnCode set_ddr5_dram_rtt_nom_rd(const fapi2::Target<fapi2::TAR
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_RTT_NOM_RD, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_RTT_NOM_RD, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_RTT_NOM_RD: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2651,11 +2321,8 @@ inline fapi2::ReturnCode set_ddr5_dram_rtt_nom_rd(const fapi2::Target<fapi2::TAR
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_RTT_NOM_RD, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_RTT_NOM_RD, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_RTT_NOM_RD: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2676,11 +2343,8 @@ inline fapi2::ReturnCode set_ddr5_dram_odtlon_wr(const fapi2::Target<fapi2::TARG
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_ODTLON_WR, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ODTLON_WR, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ODTLON_WR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2700,11 +2364,8 @@ inline fapi2::ReturnCode set_ddr5_dram_odtlon_wr(const fapi2::Target<fapi2::TARG
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_ODTLON_WR, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ODTLON_WR, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ODTLON_WR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2725,11 +2386,8 @@ inline fapi2::ReturnCode set_ddr5_dram_odtloff_wr(const fapi2::Target<fapi2::TAR
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_ODTLOFF_WR, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ODTLOFF_WR, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ODTLOFF_WR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2749,11 +2407,8 @@ inline fapi2::ReturnCode set_ddr5_dram_odtloff_wr(const fapi2::Target<fapi2::TAR
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_ODTLOFF_WR, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ODTLOFF_WR, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ODTLOFF_WR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2774,11 +2429,8 @@ inline fapi2::ReturnCode set_ddr5_dram_odtlon_wr_nt(const fapi2::Target<fapi2::T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_ODTLON_WR_NT, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ODTLON_WR_NT, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ODTLON_WR_NT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2798,11 +2450,8 @@ inline fapi2::ReturnCode set_ddr5_dram_odtlon_wr_nt(const fapi2::Target<fapi2::T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_ODTLON_WR_NT, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ODTLON_WR_NT, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ODTLON_WR_NT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2823,11 +2472,8 @@ inline fapi2::ReturnCode set_ddr5_dram_odtloff_wr_nt(const fapi2::Target<fapi2::
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_ODTLOFF_WR_NT, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ODTLOFF_WR_NT, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ODTLOFF_WR_NT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2847,11 +2493,8 @@ inline fapi2::ReturnCode set_ddr5_dram_odtloff_wr_nt(const fapi2::Target<fapi2::
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_ODTLOFF_WR_NT, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ODTLOFF_WR_NT, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ODTLOFF_WR_NT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2872,11 +2515,8 @@ inline fapi2::ReturnCode set_ddr5_dram_odtlon_rd_nt(const fapi2::Target<fapi2::T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_ODTLON_RD_NT, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ODTLON_RD_NT, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ODTLON_RD_NT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2896,11 +2536,8 @@ inline fapi2::ReturnCode set_ddr5_dram_odtlon_rd_nt(const fapi2::Target<fapi2::T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_ODTLON_RD_NT, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ODTLON_RD_NT, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ODTLON_RD_NT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2921,11 +2558,8 @@ inline fapi2::ReturnCode set_ddr5_dram_odtloff_rd_nt(const fapi2::Target<fapi2::
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_ODTLOFF_RD_NT, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ODTLOFF_RD_NT, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ODTLOFF_RD_NT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2945,11 +2579,8 @@ inline fapi2::ReturnCode set_ddr5_dram_odtloff_rd_nt(const fapi2::Target<fapi2::
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_DDR5_DRAM_ODTLOFF_RD_NT, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_DDR5_DRAM_ODTLOFF_RD_NT, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_DDR5_DRAM_ODTLOFF_RD_NT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2966,11 +2597,8 @@ inline fapi2::ReturnCode set_ddr5_wr_crc_err_status(const fapi2::Target<fapi2::T
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DDR5_WR_CRC_ERR_STATUS, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DDR5_WR_CRC_ERR_STATUS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2987,11 +2615,8 @@ inline fapi2::ReturnCode set_ddr5_wr_crc_autodisable_enable(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DDR5_WR_CRC_AUTODISABLE_ENABLE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DDR5_WR_CRC_AUTODISABLE_ENABLE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3008,11 +2633,8 @@ inline fapi2::ReturnCode set_ddr5_wr_crc_autodisable_status(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DDR5_WR_CRC_AUTODISABLE_STATUS, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DDR5_WR_CRC_AUTODISABLE_STATUS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3029,11 +2651,8 @@ inline fapi2::ReturnCode set_ddr5_wr_crc_autodisable_threshold(const fapi2::Targ
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DDR5_WR_CRC_AUTODISABLE_THRESHOLD, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DDR5_WR_CRC_AUTODISABLE_THRESHOLD: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3050,11 +2669,8 @@ inline fapi2::ReturnCode set_ddr5_wr_crc_autodisable_window(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DDR5_WR_CRC_AUTODISABLE_WINDOW, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DDR5_WR_CRC_AUTODISABLE_WINDOW: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3071,11 +2687,8 @@ inline fapi2::ReturnCode set_ddr5_global_dfe_gain(const fapi2::Target<fapi2::TAR
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DDR5_GLOBAL_DFE_GAIN, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DDR5_GLOBAL_DFE_GAIN: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3092,11 +2705,8 @@ inline fapi2::ReturnCode set_ddr5_global_dfe_tap1(const fapi2::Target<fapi2::TAR
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DDR5_GLOBAL_DFE_TAP1, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DDR5_GLOBAL_DFE_TAP1: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3113,11 +2723,8 @@ inline fapi2::ReturnCode set_ddr5_global_dfe_tap2(const fapi2::Target<fapi2::TAR
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DDR5_GLOBAL_DFE_TAP2, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DDR5_GLOBAL_DFE_TAP2: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3134,11 +2741,8 @@ inline fapi2::ReturnCode set_ddr5_global_dfe_tap3(const fapi2::Target<fapi2::TAR
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DDR5_GLOBAL_DFE_TAP3, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DDR5_GLOBAL_DFE_TAP3: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3155,11 +2759,8 @@ inline fapi2::ReturnCode set_ddr5_global_dfe_tap4(const fapi2::Target<fapi2::TAR
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DDR5_GLOBAL_DFE_TAP4, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DDR5_GLOBAL_DFE_TAP4: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3180,11 +2781,8 @@ inline fapi2::ReturnCode set_ddr5_dfe_gain_bias(const fapi2::Target<fapi2::TARGE
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DDR5_DFE_GAIN_BIAS, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DDR5_DFE_GAIN_BIAS, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DDR5_DFE_GAIN_BIAS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3204,11 +2802,8 @@ inline fapi2::ReturnCode set_ddr5_dfe_gain_bias(const fapi2::Target<fapi2::TARGE
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DDR5_DFE_GAIN_BIAS, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DDR5_DFE_GAIN_BIAS, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DDR5_DFE_GAIN_BIAS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3229,11 +2824,8 @@ inline fapi2::ReturnCode set_ddr5_dfe_sign_bit(const fapi2::Target<fapi2::TARGET
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DDR5_DFE_SIGN_BIT, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DDR5_DFE_SIGN_BIT, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DDR5_DFE_SIGN_BIT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3253,11 +2845,8 @@ inline fapi2::ReturnCode set_ddr5_dfe_sign_bit(const fapi2::Target<fapi2::TARGET
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DDR5_DFE_SIGN_BIT, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DDR5_DFE_SIGN_BIT, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DDR5_DFE_SIGN_BIT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3279,11 +2868,8 @@ inline fapi2::ReturnCode set_dram_gen(const fapi2::Target<fapi2::TARGET_TYPE_DIM
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_GEN, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_GEN, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_GEN: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3303,11 +2889,8 @@ inline fapi2::ReturnCode set_dram_gen(const fapi2::Target<fapi2::TARGET_TYPE_MEM
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_GEN, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_GEN, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_GEN: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3328,11 +2911,8 @@ inline fapi2::ReturnCode set_dimm_type(const fapi2::Target<fapi2::TARGET_TYPE_DI
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DIMM_TYPE, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DIMM_TYPE, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DIMM_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3353,11 +2933,8 @@ inline fapi2::ReturnCode set_dimm_type(const fapi2::Target<fapi2::TARGET_TYPE_ME
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DIMM_TYPE, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DIMM_TYPE, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DIMM_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3377,11 +2954,8 @@ inline fapi2::ReturnCode set_hybrid_memory_type(const fapi2::Target<fapi2::TARGE
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_HYBRID_MEMORY_TYPE, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_HYBRID_MEMORY_TYPE, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_HYBRID_MEMORY_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3401,11 +2975,8 @@ inline fapi2::ReturnCode set_hybrid_memory_type(const fapi2::Target<fapi2::TARGE
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_HYBRID_MEMORY_TYPE, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_HYBRID_MEMORY_TYPE, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_HYBRID_MEMORY_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3425,11 +2996,8 @@ inline fapi2::ReturnCode set_hybrid(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_HYBRID, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_HYBRID, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_HYBRID: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3448,11 +3016,8 @@ inline fapi2::ReturnCode set_hybrid(const fapi2::Target<fapi2::TARGET_TYPE_MEM_P
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_HYBRID, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_HYBRID, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_HYBRID: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3473,11 +3038,8 @@ inline fapi2::ReturnCode set_host_to_ddr_speed_ratio(const fapi2::Target<fapi2::
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_HOST_TO_DDR_SPEED_RATIO, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_HOST_TO_DDR_SPEED_RATIO, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_HOST_TO_DDR_SPEED_RATIO: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3497,11 +3059,8 @@ inline fapi2::ReturnCode set_host_to_ddr_speed_ratio(const fapi2::Target<fapi2::
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_HOST_TO_DDR_SPEED_RATIO, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_HOST_TO_DDR_SPEED_RATIO, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_HOST_TO_DDR_SPEED_RATIO: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3523,11 +3082,8 @@ inline fapi2::ReturnCode set_dram_density(const fapi2::Target<fapi2::TARGET_TYPE
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_DENSITY, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_DENSITY, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_DENSITY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3549,11 +3105,8 @@ inline fapi2::ReturnCode set_dram_density(const fapi2::Target<fapi2::TARGET_TYPE
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_DENSITY, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_DENSITY, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_DENSITY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3574,11 +3127,8 @@ inline fapi2::ReturnCode set_dram_bank_bits(const fapi2::Target<fapi2::TARGET_TY
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_BANK_BITS, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_BANK_BITS, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_BANK_BITS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3599,11 +3149,8 @@ inline fapi2::ReturnCode set_dram_bank_bits(const fapi2::Target<fapi2::TARGET_TY
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_BANK_BITS, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_BANK_BITS, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_BANK_BITS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3626,11 +3173,8 @@ inline fapi2::ReturnCode set_dram_bank_group_bits(const fapi2::Target<fapi2::TAR
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_BANK_GROUP_BITS, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_BANK_GROUP_BITS, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_BANK_GROUP_BITS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3652,11 +3196,8 @@ inline fapi2::ReturnCode set_dram_bank_group_bits(const fapi2::Target<fapi2::TAR
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_BANK_GROUP_BITS, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_BANK_GROUP_BITS, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_BANK_GROUP_BITS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3677,11 +3218,8 @@ inline fapi2::ReturnCode set_dram_column_bits(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_COLUMN_BITS, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_COLUMN_BITS, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_COLUMN_BITS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3702,11 +3240,8 @@ inline fapi2::ReturnCode set_dram_column_bits(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_COLUMN_BITS, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_COLUMN_BITS, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_COLUMN_BITS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3727,11 +3262,8 @@ inline fapi2::ReturnCode set_dram_row_bits(const fapi2::Target<fapi2::TARGET_TYP
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_ROW_BITS, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_ROW_BITS, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_ROW_BITS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3752,11 +3284,8 @@ inline fapi2::ReturnCode set_dram_row_bits(const fapi2::Target<fapi2::TARGET_TYP
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_ROW_BITS, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_ROW_BITS, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_ROW_BITS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3776,11 +3305,8 @@ inline fapi2::ReturnCode set_prim_die_count(const fapi2::Target<fapi2::TARGET_TY
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PRIM_DIE_COUNT, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_PRIM_DIE_COUNT, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_PRIM_DIE_COUNT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3800,11 +3326,8 @@ inline fapi2::ReturnCode set_prim_die_count(const fapi2::Target<fapi2::TARGET_TY
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PRIM_DIE_COUNT, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_PRIM_DIE_COUNT, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_PRIM_DIE_COUNT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3826,11 +3349,8 @@ inline fapi2::ReturnCode set_prim_stack_type(const fapi2::Target<fapi2::TARGET_T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PRIM_STACK_TYPE, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_PRIM_STACK_TYPE, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_PRIM_STACK_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3852,11 +3372,8 @@ inline fapi2::ReturnCode set_prim_stack_type(const fapi2::Target<fapi2::TARGET_T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PRIM_STACK_TYPE, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_PRIM_STACK_TYPE, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_PRIM_STACK_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3876,11 +3393,8 @@ inline fapi2::ReturnCode set_prim_bus_width(const fapi2::Target<fapi2::TARGET_TY
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PRIM_BUS_WIDTH, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_PRIM_BUS_WIDTH, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_PRIM_BUS_WIDTH: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3900,11 +3414,8 @@ inline fapi2::ReturnCode set_prim_bus_width(const fapi2::Target<fapi2::TARGET_TY
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PRIM_BUS_WIDTH, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_PRIM_BUS_WIDTH, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_PRIM_BUS_WIDTH: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3924,11 +3435,8 @@ inline fapi2::ReturnCode set_channels_per_dimm(const fapi2::Target<fapi2::TARGET
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_CHANNELS_PER_DIMM, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_CHANNELS_PER_DIMM, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_CHANNELS_PER_DIMM: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3948,11 +3456,8 @@ inline fapi2::ReturnCode set_channels_per_dimm(const fapi2::Target<fapi2::TARGET
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_CHANNELS_PER_DIMM, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_CHANNELS_PER_DIMM, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_CHANNELS_PER_DIMM: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3972,11 +3477,8 @@ inline fapi2::ReturnCode set_dram_ppr(const fapi2::Target<fapi2::TARGET_TYPE_DIM
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_PPR, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_PPR, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_PPR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -3995,11 +3497,8 @@ inline fapi2::ReturnCode set_dram_ppr(const fapi2::Target<fapi2::TARGET_TYPE_MEM
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_PPR, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_PPR, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_PPR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4020,11 +3519,8 @@ inline fapi2::ReturnCode set_dram_soft_ppr(const fapi2::Target<fapi2::TARGET_TYP
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_SOFT_PPR, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_SOFT_PPR, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_SOFT_PPR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4045,11 +3541,8 @@ inline fapi2::ReturnCode set_dram_soft_ppr(const fapi2::Target<fapi2::TARGET_TYP
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_SOFT_PPR, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_SOFT_PPR, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_SOFT_PPR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4066,11 +3559,8 @@ inline fapi2::ReturnCode set_dram_trcd(const fapi2::Target<fapi2::TARGET_TYPE_ME
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_TRCD, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_TRCD: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4087,11 +3577,8 @@ inline fapi2::ReturnCode set_dram_trp(const fapi2::Target<fapi2::TARGET_TYPE_MEM
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_TRP, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_TRP: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4109,11 +3596,8 @@ inline fapi2::ReturnCode set_dram_tras(const fapi2::Target<fapi2::TARGET_TYPE_ME
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_TRAS, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_TRAS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4131,11 +3615,8 @@ inline fapi2::ReturnCode set_dram_trc(const fapi2::Target<fapi2::TARGET_TYPE_MEM
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_TRC, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_TRC: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4157,11 +3638,8 @@ inline fapi2::ReturnCode set_dram_trfc(const fapi2::Target<fapi2::TARGET_TYPE_ME
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_TRFC, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_TRFC: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4181,11 +3659,8 @@ inline fapi2::ReturnCode set_dram_tfaw(const fapi2::Target<fapi2::TARGET_TYPE_ME
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_TFAW, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_TFAW: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4205,11 +3680,8 @@ inline fapi2::ReturnCode set_dram_trrd_s(const fapi2::Target<fapi2::TARGET_TYPE_
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_TRRD_S, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_TRRD_S: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4229,11 +3701,8 @@ inline fapi2::ReturnCode set_dram_trrd_l(const fapi2::Target<fapi2::TARGET_TYPE_
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_TRRD_L, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_TRRD_L: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4251,11 +3720,8 @@ inline fapi2::ReturnCode set_dram_trrd_dlr(const fapi2::Target<fapi2::TARGET_TYP
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_TRRD_DLR, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_TRRD_DLR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4273,11 +3739,8 @@ inline fapi2::ReturnCode set_dram_tccd_l(const fapi2::Target<fapi2::TARGET_TYPE_
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_TCCD_L, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_TCCD_L: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4294,11 +3757,8 @@ inline fapi2::ReturnCode set_dram_twr(const fapi2::Target<fapi2::TARGET_TYPE_MEM
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_TWR, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_TWR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4316,11 +3776,8 @@ inline fapi2::ReturnCode set_dram_twtr_s(const fapi2::Target<fapi2::TARGET_TYPE_
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_TWTR_S, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_TWTR_S: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4337,11 +3794,8 @@ inline fapi2::ReturnCode set_dram_twtr_l(const fapi2::Target<fapi2::TARGET_TYPE_
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_TWTR_L, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_TWTR_L: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4358,11 +3812,8 @@ inline fapi2::ReturnCode set_dram_tmaw(const fapi2::Target<fapi2::TARGET_TYPE_ME
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_TMAW, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_TMAW: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4383,11 +3834,8 @@ inline fapi2::ReturnCode set_dram_width(const fapi2::Target<fapi2::TARGET_TYPE_D
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_WIDTH, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_WIDTH, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_WIDTH: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4408,11 +3856,8 @@ inline fapi2::ReturnCode set_dram_width(const fapi2::Target<fapi2::TARGET_TYPE_M
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_WIDTH, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_WIDTH, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_WIDTH: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4437,11 +3882,8 @@ inline fapi2::ReturnCode set_logical_ranks_per_dimm(const fapi2::Target<fapi2::T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_LOGICAL_RANKS_PER_DIMM, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_LOGICAL_RANKS_PER_DIMM, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_LOGICAL_RANKS_PER_DIMM: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4465,11 +3907,8 @@ inline fapi2::ReturnCode set_logical_ranks_per_dimm(const fapi2::Target<fapi2::T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_LOGICAL_RANKS_PER_DIMM, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_LOGICAL_RANKS_PER_DIMM, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_LOGICAL_RANKS_PER_DIMM: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4489,11 +3928,8 @@ inline fapi2::ReturnCode set_3ds_height(const fapi2::Target<fapi2::TARGET_TYPE_D
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_3DS_HEIGHT, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_3DS_HEIGHT, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_3DS_HEIGHT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4513,11 +3949,8 @@ inline fapi2::ReturnCode set_3ds_height(const fapi2::Target<fapi2::TARGET_TYPE_M
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_3DS_HEIGHT, i_target, l_value) );
     memcpy(&l_value, i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_3DS_HEIGHT, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_3DS_HEIGHT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4537,11 +3970,8 @@ inline fapi2::ReturnCode set_register_type(const fapi2::Target<fapi2::TARGET_TYP
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_REGISTER_TYPE, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_REGISTER_TYPE, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_REGISTER_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4561,11 +3991,8 @@ inline fapi2::ReturnCode set_register_type(const fapi2::Target<fapi2::TARGET_TYP
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_REGISTER_TYPE, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_REGISTER_TYPE, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_REGISTER_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4586,11 +4013,8 @@ inline fapi2::ReturnCode set_module_mfg_id(const fapi2::Target<fapi2::TARGET_TYP
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_MODULE_MFG_ID, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_MODULE_MFG_ID, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_MODULE_MFG_ID: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4611,11 +4035,8 @@ inline fapi2::ReturnCode set_module_mfg_id(const fapi2::Target<fapi2::TARGET_TYP
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_MODULE_MFG_ID, i_target, l_value) );
     memcpy(&l_value, i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_MODULE_MFG_ID, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_MODULE_MFG_ID: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4636,11 +4057,8 @@ inline fapi2::ReturnCode set_dram_mfg_id(const fapi2::Target<fapi2::TARGET_TYPE_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_MFG_ID, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_MFG_ID, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_MFG_ID: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4661,11 +4079,8 @@ inline fapi2::ReturnCode set_dram_mfg_id(const fapi2::Target<fapi2::TARGET_TYPE_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_MFG_ID, i_target, l_value) );
     memcpy(&l_value, i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_MFG_ID, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_MFG_ID: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4686,11 +4101,8 @@ inline fapi2::ReturnCode set_rcd_mfg_id(const fapi2::Target<fapi2::TARGET_TYPE_D
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_RCD_MFG_ID, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_RCD_MFG_ID, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_RCD_MFG_ID: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4711,11 +4123,8 @@ inline fapi2::ReturnCode set_rcd_mfg_id(const fapi2::Target<fapi2::TARGET_TYPE_M
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_RCD_MFG_ID, i_target, l_value) );
     memcpy(&l_value, i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_RCD_MFG_ID, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_RCD_MFG_ID: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4735,11 +4144,8 @@ inline fapi2::ReturnCode set_register_rev(const fapi2::Target<fapi2::TARGET_TYPE
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_REGISTER_REV, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_REGISTER_REV, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_REGISTER_REV: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4759,11 +4165,8 @@ inline fapi2::ReturnCode set_register_rev(const fapi2::Target<fapi2::TARGET_TYPE
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_REGISTER_REV, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_REGISTER_REV, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_REGISTER_REV: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4784,11 +4187,8 @@ inline fapi2::ReturnCode set_package_rank_map(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PACKAGE_RANK_MAP, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 20);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_PACKAGE_RANK_MAP, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_PACKAGE_RANK_MAP: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4808,11 +4208,8 @@ inline fapi2::ReturnCode set_package_rank_map(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PACKAGE_RANK_MAP, i_target, l_value) );
     memcpy(&l_value, i_array, 40);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_PACKAGE_RANK_MAP, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_PACKAGE_RANK_MAP: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4832,11 +4229,8 @@ inline fapi2::ReturnCode set_nibble_map(const fapi2::Target<fapi2::TARGET_TYPE_D
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_NIBBLE_MAP, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 20);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_NIBBLE_MAP, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_NIBBLE_MAP: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4856,11 +4250,8 @@ inline fapi2::ReturnCode set_nibble_map(const fapi2::Target<fapi2::TARGET_TYPE_M
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_NIBBLE_MAP, i_target, l_value) );
     memcpy(&l_value, i_array, 40);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_NIBBLE_MAP, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_NIBBLE_MAP: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4880,11 +4271,8 @@ inline fapi2::ReturnCode set_dimm_size(const fapi2::Target<fapi2::TARGET_TYPE_DI
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DIMM_SIZE, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DIMM_SIZE, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DIMM_SIZE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4904,11 +4292,8 @@ inline fapi2::ReturnCode set_dimm_size(const fapi2::Target<fapi2::TARGET_TYPE_ME
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DIMM_SIZE, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DIMM_SIZE, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DIMM_SIZE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4929,11 +4314,8 @@ inline fapi2::ReturnCode set_dimm_spare(const fapi2::Target<fapi2::TARGET_TYPE_D
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DIMM_SPARE, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DIMM_SPARE, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DIMM_SPARE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4954,11 +4336,8 @@ inline fapi2::ReturnCode set_dimm_spare(const fapi2::Target<fapi2::TARGET_TYPE_M
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DIMM_SPARE, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DIMM_SPARE, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DIMM_SPARE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4974,11 +4353,8 @@ inline fapi2::ReturnCode set_dram_cl(const fapi2::Target<fapi2::TARGET_TYPE_MEM_
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_CL, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_CL: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -4994,11 +4370,8 @@ inline fapi2::ReturnCode set_dram_mds(const fapi2::Target<fapi2::TARGET_TYPE_MEM
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_MDS, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_MDS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5022,11 +4395,8 @@ inline fapi2::ReturnCode set_num_master_ranks_per_dimm(const fapi2::Target<fapi2
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_NUM_MASTER_RANKS_PER_DIMM, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_NUM_MASTER_RANKS_PER_DIMM, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_NUM_MASTER_RANKS_PER_DIMM: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5049,11 +4419,8 @@ inline fapi2::ReturnCode set_num_master_ranks_per_dimm(const fapi2::Target<fapi2
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_NUM_MASTER_RANKS_PER_DIMM, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_NUM_MASTER_RANKS_PER_DIMM, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_NUM_MASTER_RANKS_PER_DIMM: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5075,11 +4442,8 @@ inline fapi2::ReturnCode set_dimm_ranks_configed(const fapi2::Target<fapi2::TARG
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DIMM_RANKS_CONFIGED, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DIMM_RANKS_CONFIGED, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DIMM_RANKS_CONFIGED: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5100,11 +4464,8 @@ inline fapi2::ReturnCode set_dimm_ranks_configed(const fapi2::Target<fapi2::TARG
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DIMM_RANKS_CONFIGED, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DIMM_RANKS_CONFIGED, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DIMM_RANKS_CONFIGED: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5123,11 +4484,8 @@ inline fapi2::ReturnCode set_dram_trefi(const fapi2::Target<fapi2::TARGET_TYPE_M
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_TREFI, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_TREFI: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5144,11 +4502,8 @@ inline fapi2::ReturnCode set_dram_trtp(const fapi2::Target<fapi2::TARGET_TYPE_ME
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_TRTP, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_TRTP: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5167,11 +4522,8 @@ inline fapi2::ReturnCode set_dram_trfc_dlr(const fapi2::Target<fapi2::TARGET_TYP
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_TRFC_DLR, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_TRFC_DLR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5187,11 +4539,8 @@ inline fapi2::ReturnCode set_freq(const fapi2::Target<fapi2::TARGET_TYPE_MEM_POR
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_FREQ, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_FREQ: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5207,11 +4556,8 @@ inline fapi2::ReturnCode set_spd_revision(const fapi2::Target<fapi2::TARGET_TYPE
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_SPD_REVISION, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_SPD_REVISION: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5228,11 +4574,8 @@ inline fapi2::ReturnCode set_spd_content_revision(const fapi2::Target<fapi2::TAR
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_SPD_CONTENT_REVISION, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_SPD_CONTENT_REVISION: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5253,11 +4596,8 @@ inline fapi2::ReturnCode set_supported_rcd(const fapi2::Target<fapi2::TARGET_TYP
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_SUPPORTED_RCD, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_SUPPORTED_RCD, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_SUPPORTED_RCD: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5278,11 +4618,8 @@ inline fapi2::ReturnCode set_supported_rcd(const fapi2::Target<fapi2::TARGET_TYP
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_SUPPORTED_RCD, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_SUPPORTED_RCD, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_SUPPORTED_RCD: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5303,11 +4640,8 @@ inline fapi2::ReturnCode set_byte_enables(const fapi2::Target<fapi2::TARGET_TYPE
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_BYTE_ENABLES, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_BYTE_ENABLES, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_BYTE_ENABLES: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5328,11 +4662,8 @@ inline fapi2::ReturnCode set_byte_enables(const fapi2::Target<fapi2::TARGET_TYPE
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_BYTE_ENABLES, i_target, l_value) );
     memcpy(&l_value, i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_BYTE_ENABLES, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_BYTE_ENABLES: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5353,11 +4684,8 @@ inline fapi2::ReturnCode set_nibble_enables(const fapi2::Target<fapi2::TARGET_TY
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_NIBBLE_ENABLES, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_NIBBLE_ENABLES, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_NIBBLE_ENABLES: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5378,11 +4706,8 @@ inline fapi2::ReturnCode set_nibble_enables(const fapi2::Target<fapi2::TARGET_TY
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_NIBBLE_ENABLES, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_NIBBLE_ENABLES, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_NIBBLE_ENABLES: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5400,11 +4725,8 @@ inline fapi2::ReturnCode set_dram_module_height(const fapi2::Target<fapi2::TARGE
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_DRAM_MODULE_HEIGHT, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_DRAM_MODULE_HEIGHT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5420,11 +4742,8 @@ inline fapi2::ReturnCode set_volt_vddr(const fapi2::Target<fapi2::TARGET_TYPE_OC
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_VOLT_VDDR, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_VOLT_VDDR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5440,11 +4759,8 @@ inline fapi2::ReturnCode set_volt_vddq(const fapi2::Target<fapi2::TARGET_TYPE_OC
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_VOLT_VDDQ, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_VOLT_VDDQ: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5460,11 +4776,8 @@ inline fapi2::ReturnCode set_volt_vpp(const fapi2::Target<fapi2::TARGET_TYPE_OCM
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_VOLT_VPP, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_VOLT_VPP: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5483,11 +4796,8 @@ inline fapi2::ReturnCode set_si_signature_hash(const fapi2::Target<fapi2::TARGET
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_SIGNATURE_HASH, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_SIGNATURE_HASH: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5508,11 +4818,8 @@ inline fapi2::ReturnCode set_si_dimm_rcd_ibt_ca(const fapi2::Target<fapi2::TARGE
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_DIMM_RCD_IBT_CA, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_DIMM_RCD_IBT_CA, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_DIMM_RCD_IBT_CA: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5533,11 +4840,8 @@ inline fapi2::ReturnCode set_si_dimm_rcd_ibt_ca(const fapi2::Target<fapi2::TARGE
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_DIMM_RCD_IBT_CA, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_DIMM_RCD_IBT_CA, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_DIMM_RCD_IBT_CA: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5559,11 +4863,8 @@ inline fapi2::ReturnCode set_si_dimm_rcd_ibt_cke(const fapi2::Target<fapi2::TARG
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_DIMM_RCD_IBT_CKE, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_DIMM_RCD_IBT_CKE, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_DIMM_RCD_IBT_CKE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5584,11 +4885,8 @@ inline fapi2::ReturnCode set_si_dimm_rcd_ibt_cke(const fapi2::Target<fapi2::TARG
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_DIMM_RCD_IBT_CKE, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_DIMM_RCD_IBT_CKE, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_DIMM_RCD_IBT_CKE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5609,11 +4907,8 @@ inline fapi2::ReturnCode set_si_dimm_rcd_ibt_cs(const fapi2::Target<fapi2::TARGE
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_DIMM_RCD_IBT_CS, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_DIMM_RCD_IBT_CS, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_DIMM_RCD_IBT_CS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5634,11 +4929,8 @@ inline fapi2::ReturnCode set_si_dimm_rcd_ibt_cs(const fapi2::Target<fapi2::TARGE
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_DIMM_RCD_IBT_CS, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_DIMM_RCD_IBT_CS, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_DIMM_RCD_IBT_CS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5660,11 +4952,8 @@ inline fapi2::ReturnCode set_si_dimm_rcd_ibt_odt(const fapi2::Target<fapi2::TARG
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_DIMM_RCD_IBT_ODT, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_DIMM_RCD_IBT_ODT, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_DIMM_RCD_IBT_ODT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5685,11 +4974,8 @@ inline fapi2::ReturnCode set_si_dimm_rcd_ibt_odt(const fapi2::Target<fapi2::TARG
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_DIMM_RCD_IBT_ODT, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_DIMM_RCD_IBT_ODT, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_DIMM_RCD_IBT_ODT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5710,11 +4996,8 @@ inline fapi2::ReturnCode set_si_dram_drv_imp_dq_dqs(const fapi2::Target<fapi2::T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_DRAM_DRV_IMP_DQ_DQS, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_DRAM_DRV_IMP_DQ_DQS, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_DRAM_DRV_IMP_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5734,11 +5017,8 @@ inline fapi2::ReturnCode set_si_dram_drv_imp_dq_dqs(const fapi2::Target<fapi2::T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_DRAM_DRV_IMP_DQ_DQS, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_DRAM_DRV_IMP_DQ_DQS, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_DRAM_DRV_IMP_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5763,11 +5043,8 @@ inline fapi2::ReturnCode set_si_dram_preamble(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_DRAM_PREAMBLE, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_DRAM_PREAMBLE, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_DRAM_PREAMBLE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5791,11 +5068,8 @@ inline fapi2::ReturnCode set_si_dram_preamble(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_DRAM_PREAMBLE, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_DRAM_PREAMBLE, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_DRAM_PREAMBLE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5816,11 +5090,8 @@ inline fapi2::ReturnCode set_si_dram_rtt_nom(const fapi2::Target<fapi2::TARGET_T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_DRAM_RTT_NOM, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_DRAM_RTT_NOM, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_DRAM_RTT_NOM: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5840,11 +5111,8 @@ inline fapi2::ReturnCode set_si_dram_rtt_nom(const fapi2::Target<fapi2::TARGET_T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_DRAM_RTT_NOM, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_DRAM_RTT_NOM, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_DRAM_RTT_NOM: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5865,11 +5133,8 @@ inline fapi2::ReturnCode set_si_dram_rtt_park(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_DRAM_RTT_PARK, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_DRAM_RTT_PARK, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_DRAM_RTT_PARK: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5889,11 +5154,8 @@ inline fapi2::ReturnCode set_si_dram_rtt_park(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_DRAM_RTT_PARK, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_DRAM_RTT_PARK, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_DRAM_RTT_PARK: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5915,11 +5177,8 @@ inline fapi2::ReturnCode set_si_dram_rtt_wr(const fapi2::Target<fapi2::TARGET_TY
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_DRAM_RTT_WR, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_DRAM_RTT_WR, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_DRAM_RTT_WR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5940,11 +5199,8 @@ inline fapi2::ReturnCode set_si_dram_rtt_wr(const fapi2::Target<fapi2::TARGET_TY
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_DRAM_RTT_WR, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_DRAM_RTT_WR, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_DRAM_RTT_WR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5966,11 +5222,8 @@ inline fapi2::ReturnCode set_si_geardown_mode(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_GEARDOWN_MODE, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_GEARDOWN_MODE, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_GEARDOWN_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -5991,11 +5244,8 @@ inline fapi2::ReturnCode set_si_geardown_mode(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_GEARDOWN_MODE, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_GEARDOWN_MODE, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_GEARDOWN_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6016,11 +5266,8 @@ inline fapi2::ReturnCode set_si_mc_drv_dq_dqs(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_DQ_DQS, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_DQ_DQS, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6040,11 +5287,8 @@ inline fapi2::ReturnCode set_si_mc_drv_dq_dqs(const fapi2::Target<fapi2::TARGET_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_DQ_DQS, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_DQ_DQS, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6067,11 +5311,8 @@ inline fapi2::ReturnCode set_si_mc_rcv_eq_dq_dqs(const fapi2::Target<fapi2::TARG
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_RCV_EQ_DQ_DQS, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_RCV_EQ_DQ_DQS, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_RCV_EQ_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6093,11 +5334,8 @@ inline fapi2::ReturnCode set_si_mc_rcv_eq_dq_dqs(const fapi2::Target<fapi2::TARG
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_RCV_EQ_DQ_DQS, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_RCV_EQ_DQ_DQS, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_RCV_EQ_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6120,11 +5358,8 @@ inline fapi2::ReturnCode set_si_mc_drv_eq_dq_dqs(const fapi2::Target<fapi2::TARG
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_EQ_DQ_DQS, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_EQ_DQ_DQS, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_EQ_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6146,11 +5381,8 @@ inline fapi2::ReturnCode set_si_mc_drv_eq_dq_dqs(const fapi2::Target<fapi2::TARG
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_EQ_DQ_DQS, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_EQ_DQ_DQS, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_EQ_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6173,11 +5405,8 @@ inline fapi2::ReturnCode set_si_phy_equalization(const fapi2::Target<fapi2::TARG
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_PHY_EQUALIZATION, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_PHY_EQUALIZATION, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_PHY_EQUALIZATION: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6199,11 +5428,8 @@ inline fapi2::ReturnCode set_si_phy_equalization(const fapi2::Target<fapi2::TARG
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_PHY_EQUALIZATION, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_PHY_EQUALIZATION, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_PHY_EQUALIZATION: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6224,11 +5450,8 @@ inline fapi2::ReturnCode set_si_mc_drv_imp_clk(const fapi2::Target<fapi2::TARGET
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_CLK, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_CLK, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_IMP_CLK: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6248,11 +5471,8 @@ inline fapi2::ReturnCode set_si_mc_drv_imp_clk(const fapi2::Target<fapi2::TARGET
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_CLK, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_CLK, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_IMP_CLK: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6274,11 +5494,8 @@ inline fapi2::ReturnCode set_si_mc_drv_imp_cmd_addr(const fapi2::Target<fapi2::T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_CMD_ADDR, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_CMD_ADDR, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_IMP_CMD_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6299,11 +5516,8 @@ inline fapi2::ReturnCode set_si_mc_drv_imp_cmd_addr(const fapi2::Target<fapi2::T
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_CMD_ADDR, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_CMD_ADDR, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_IMP_CMD_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6325,11 +5539,8 @@ inline fapi2::ReturnCode set_si_mc_drv_imp_cntl(const fapi2::Target<fapi2::TARGE
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_CNTL, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_CNTL, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_IMP_CNTL: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6350,11 +5561,8 @@ inline fapi2::ReturnCode set_si_mc_drv_imp_cntl(const fapi2::Target<fapi2::TARGE
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_CNTL, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_CNTL, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_IMP_CNTL: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6376,11 +5584,8 @@ inline fapi2::ReturnCode set_si_mc_drv_imp_cscid(const fapi2::Target<fapi2::TARG
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_CSCID, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_CSCID, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_IMP_CSCID: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6401,11 +5606,8 @@ inline fapi2::ReturnCode set_si_mc_drv_imp_cscid(const fapi2::Target<fapi2::TARG
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_CSCID, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_CSCID, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_IMP_CSCID: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6427,11 +5629,8 @@ inline fapi2::ReturnCode set_si_mc_drv_imp_dq_dqs_pull_down(const fapi2::Target<
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_DOWN, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_DOWN, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_DOWN: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6452,11 +5651,8 @@ inline fapi2::ReturnCode set_si_mc_drv_imp_dq_dqs_pull_down(const fapi2::Target<
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_DOWN, i_target, l_value) );
     memcpy(&l_value, i_array, 16);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_DOWN, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_DOWN: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6478,11 +5674,8 @@ inline fapi2::ReturnCode set_si_mc_drv_imp_dq_dqs_pull_up(const fapi2::Target<fa
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_UP, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_UP, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_UP: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6503,11 +5696,8 @@ inline fapi2::ReturnCode set_si_mc_drv_imp_dq_dqs_pull_up(const fapi2::Target<fa
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_UP, i_target, l_value) );
     memcpy(&l_value, i_array, 16);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_UP, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_UP: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6528,11 +5718,8 @@ inline fapi2::ReturnCode set_si_mc_drv_slew_rate_clk(const fapi2::Target<fapi2::
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_CLK, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_CLK, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CLK: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6552,11 +5739,8 @@ inline fapi2::ReturnCode set_si_mc_drv_slew_rate_clk(const fapi2::Target<fapi2::
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_CLK, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_CLK, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CLK: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6578,11 +5762,8 @@ inline fapi2::ReturnCode set_si_mc_drv_slew_rate_cmd_addr(const fapi2::Target<fa
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_CMD_ADDR, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_CMD_ADDR, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CMD_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6603,11 +5784,8 @@ inline fapi2::ReturnCode set_si_mc_drv_slew_rate_cmd_addr(const fapi2::Target<fa
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_CMD_ADDR, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_CMD_ADDR, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CMD_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6629,11 +5807,8 @@ inline fapi2::ReturnCode set_si_mc_drv_slew_rate_cntl(const fapi2::Target<fapi2:
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_CNTL, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_CNTL, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CNTL: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6654,11 +5829,8 @@ inline fapi2::ReturnCode set_si_mc_drv_slew_rate_cntl(const fapi2::Target<fapi2:
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_CNTL, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_CNTL, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CNTL: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6680,11 +5852,8 @@ inline fapi2::ReturnCode set_si_mc_drv_slew_rate_cscid(const fapi2::Target<fapi2
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_CSCID, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_CSCID, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CSCID: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6705,11 +5874,8 @@ inline fapi2::ReturnCode set_si_mc_drv_slew_rate_cscid(const fapi2::Target<fapi2
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_CSCID, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_CSCID, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_SLEW_RATE_CSCID: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6731,11 +5897,8 @@ inline fapi2::ReturnCode set_si_mc_drv_slew_rate_dq_dqs(const fapi2::Target<fapi
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_DQ_DQS, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_DQ_DQS, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_SLEW_RATE_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6756,11 +5919,8 @@ inline fapi2::ReturnCode set_si_mc_drv_slew_rate_dq_dqs(const fapi2::Target<fapi
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_DQ_DQS, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_DRV_SLEW_RATE_DQ_DQS, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_DRV_SLEW_RATE_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6781,11 +5941,8 @@ inline fapi2::ReturnCode set_si_mc_rcv_imp_alert_n(const fapi2::Target<fapi2::TA
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_RCV_IMP_ALERT_N, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_RCV_IMP_ALERT_N, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_RCV_IMP_ALERT_N: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6805,11 +5962,8 @@ inline fapi2::ReturnCode set_si_mc_rcv_imp_alert_n(const fapi2::Target<fapi2::TA
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_RCV_IMP_ALERT_N, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_RCV_IMP_ALERT_N, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_RCV_IMP_ALERT_N: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6831,11 +5985,8 @@ inline fapi2::ReturnCode set_si_mc_rcv_imp_dq_dqs(const fapi2::Target<fapi2::TAR
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_RCV_IMP_DQ_DQS, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_RCV_IMP_DQ_DQS, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_RCV_IMP_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6856,11 +6007,8 @@ inline fapi2::ReturnCode set_si_mc_rcv_imp_dq_dqs(const fapi2::Target<fapi2::TAR
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_MC_RCV_IMP_DQ_DQS, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_MC_RCV_IMP_DQ_DQS, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_MC_RCV_IMP_DQ_DQS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6883,11 +6031,8 @@ inline fapi2::ReturnCode set_si_odt_rd(const fapi2::Target<fapi2::TARGET_TYPE_DI
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_ODT_RD, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_ODT_RD, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_ODT_RD: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6910,11 +6055,8 @@ inline fapi2::ReturnCode set_si_odt_rd(const fapi2::Target<fapi2::TARGET_TYPE_ME
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_ODT_RD, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_ODT_RD, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_ODT_RD: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6937,11 +6079,8 @@ inline fapi2::ReturnCode set_si_odt_wr(const fapi2::Target<fapi2::TARGET_TYPE_DI
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_ODT_WR, l_port, l_value) );
     memcpy(&(l_value[mss::index(i_target)][0]), i_array, 4);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_ODT_WR, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_ODT_WR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6964,11 +6103,8 @@ inline fapi2::ReturnCode set_si_odt_wr(const fapi2::Target<fapi2::TARGET_TYPE_ME
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_SI_ODT_WR, i_target, l_value) );
     memcpy(&l_value, i_array, 8);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_ODT_WR, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_ODT_WR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -6987,11 +6123,8 @@ inline fapi2::ReturnCode set_si_vref_dram_wr(const fapi2::Target<fapi2::TARGET_T
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_VREF_DRAM_WR, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_VREF_DRAM_WR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7008,11 +6141,8 @@ inline fapi2::ReturnCode set_si_vref_mc_rd(const fapi2::Target<fapi2::TARGET_TYP
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_VREF_MC_RD, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_VREF_MC_RD: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7031,11 +6161,8 @@ inline fapi2::ReturnCode set_si_windage_rd_ctr(const fapi2::Target<fapi2::TARGET
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_SI_WINDAGE_RD_CTR, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_SI_WINDAGE_RD_CTR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7055,11 +6182,8 @@ inline fapi2::ReturnCode set_ddr4_f1rc1x(const fapi2::Target<fapi2::TARGET_TYPE_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC1X, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC1X, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC1X: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7079,11 +6203,8 @@ inline fapi2::ReturnCode set_ddr4_f1rc1x(const fapi2::Target<fapi2::TARGET_TYPE_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC1X, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC1X, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC1X: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7103,11 +6224,8 @@ inline fapi2::ReturnCode set_ddr4_f1rc2x(const fapi2::Target<fapi2::TARGET_TYPE_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC2X, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC2X, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC2X: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7127,11 +6245,8 @@ inline fapi2::ReturnCode set_ddr4_f1rc2x(const fapi2::Target<fapi2::TARGET_TYPE_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC2X, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC2X, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC2X: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7151,11 +6266,8 @@ inline fapi2::ReturnCode set_ddr4_f1rc3x(const fapi2::Target<fapi2::TARGET_TYPE_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC3X, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC3X, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC3X: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7175,11 +6287,8 @@ inline fapi2::ReturnCode set_ddr4_f1rc3x(const fapi2::Target<fapi2::TARGET_TYPE_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC3X, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC3X, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC3X: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7199,11 +6308,8 @@ inline fapi2::ReturnCode set_ddr4_f1rc4x(const fapi2::Target<fapi2::TARGET_TYPE_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC4X, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC4X, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC4X: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7223,11 +6329,8 @@ inline fapi2::ReturnCode set_ddr4_f1rc4x(const fapi2::Target<fapi2::TARGET_TYPE_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC4X, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC4X, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC4X: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7247,11 +6350,8 @@ inline fapi2::ReturnCode set_ddr4_f1rc5x(const fapi2::Target<fapi2::TARGET_TYPE_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC5X, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC5X, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC5X: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7271,11 +6371,8 @@ inline fapi2::ReturnCode set_ddr4_f1rc5x(const fapi2::Target<fapi2::TARGET_TYPE_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC5X, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC5X, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC5X: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7295,11 +6392,8 @@ inline fapi2::ReturnCode set_ddr4_f1rc6x(const fapi2::Target<fapi2::TARGET_TYPE_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC6X, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC6X, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC6X: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7319,11 +6413,8 @@ inline fapi2::ReturnCode set_ddr4_f1rc6x(const fapi2::Target<fapi2::TARGET_TYPE_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC6X, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC6X, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC6X: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7343,11 +6434,8 @@ inline fapi2::ReturnCode set_ddr4_f1rc7x(const fapi2::Target<fapi2::TARGET_TYPE_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC7X, l_port, l_value) );
     l_value[mss::index(i_target)] = i_value;
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC7X, l_port, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC7X: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7367,11 +6455,8 @@ inline fapi2::ReturnCode set_ddr4_f1rc7x(const fapi2::Target<fapi2::TARGET_TYPE_
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC7X, i_target, l_value) );
     memcpy(&l_value, i_array, 2);
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_DIMM_DDR4_F1RC7X, i_target, l_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_DIMM_DDR4_F1RC7X: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7389,11 +6474,8 @@ inline fapi2::ReturnCode set_module_thermal_sensors(const fapi2::Target<fapi2::T
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_MODULE_THERMAL_SENSORS, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_MODULE_THERMAL_SENSORS: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7410,11 +6492,8 @@ inline fapi2::ReturnCode set_therm_sensor_0_availability(const fapi2::Target<fap
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_0_AVAIL, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_0_AVAIL: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7431,11 +6510,8 @@ inline fapi2::ReturnCode set_therm_sensor_0_secondary_availability(const fapi2::
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_0_SECOND_AVAIL, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_0_SECOND_AVAIL: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7453,11 +6529,8 @@ inline fapi2::ReturnCode set_therm_sensor_0_type(const fapi2::Target<fapi2::TARG
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_0_TYPE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_0_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7475,11 +6548,8 @@ inline fapi2::ReturnCode set_therm_sensor_0_usage(const fapi2::Target<fapi2::TAR
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_0_USAGE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_0_USAGE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7496,11 +6566,8 @@ inline fapi2::ReturnCode set_therm_sensor_0_i2c_addr(const fapi2::Target<fapi2::
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_0_I2C_ADDR, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_0_I2C_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7517,11 +6584,8 @@ inline fapi2::ReturnCode set_therm_sensor_1_availability(const fapi2::Target<fap
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_1_AVAIL, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_1_AVAIL: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7538,11 +6602,8 @@ inline fapi2::ReturnCode set_therm_sensor_1_secondary_availability(const fapi2::
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_1_SECOND_AVAIL, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_1_SECOND_AVAIL: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7560,11 +6621,8 @@ inline fapi2::ReturnCode set_therm_sensor_1_type(const fapi2::Target<fapi2::TARG
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_1_TYPE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_1_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7582,11 +6640,8 @@ inline fapi2::ReturnCode set_therm_sensor_1_usage(const fapi2::Target<fapi2::TAR
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_1_USAGE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_1_USAGE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7603,11 +6658,8 @@ inline fapi2::ReturnCode set_therm_sensor_1_i2c_addr(const fapi2::Target<fapi2::
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_1_I2C_ADDR, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_1_I2C_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7624,11 +6676,8 @@ inline fapi2::ReturnCode set_therm_sensor_2_availability(const fapi2::Target<fap
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_2_AVAIL, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_2_AVAIL: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7646,11 +6695,8 @@ inline fapi2::ReturnCode set_therm_sensor_2_type(const fapi2::Target<fapi2::TARG
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_2_TYPE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_2_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7668,11 +6714,8 @@ inline fapi2::ReturnCode set_therm_sensor_2_usage(const fapi2::Target<fapi2::TAR
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_2_USAGE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_2_USAGE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7689,11 +6732,8 @@ inline fapi2::ReturnCode set_therm_sensor_2_i2c_addr(const fapi2::Target<fapi2::
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_2_I2C_ADDR, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_2_I2C_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7710,11 +6750,8 @@ inline fapi2::ReturnCode set_therm_sensor_3_availability(const fapi2::Target<fap
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_3_AVAIL, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_3_AVAIL: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7732,11 +6769,8 @@ inline fapi2::ReturnCode set_therm_sensor_3_type(const fapi2::Target<fapi2::TARG
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_3_TYPE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_3_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7754,11 +6788,8 @@ inline fapi2::ReturnCode set_therm_sensor_3_usage(const fapi2::Target<fapi2::TAR
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_3_USAGE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_3_USAGE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7775,11 +6806,8 @@ inline fapi2::ReturnCode set_therm_sensor_3_i2c_addr(const fapi2::Target<fapi2::
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_3_I2C_ADDR, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_3_I2C_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7796,11 +6824,8 @@ inline fapi2::ReturnCode set_therm_sensor_differential_availability(const fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_DIFF_AVAIL, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_DIFF_AVAIL: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7818,11 +6843,8 @@ inline fapi2::ReturnCode set_therm_sensor_differential_type(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_DIFF_TYPE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_DIFF_TYPE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7840,11 +6862,8 @@ inline fapi2::ReturnCode set_therm_sensor_differential_usage(const fapi2::Target
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_DIFF_USAGE, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_DIFF_USAGE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7861,11 +6880,8 @@ inline fapi2::ReturnCode set_therm_sensor_differential_i2c_addr(const fapi2::Tar
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_DIFF_I2C_ADDR, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_DIFF_I2C_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7882,11 +6898,8 @@ inline fapi2::ReturnCode set_therm_sensor_0_secondary_i2c_addr(const fapi2::Targ
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_0_SECOND_I2C_ADDR, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_0_SECOND_I2C_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7903,11 +6916,8 @@ inline fapi2::ReturnCode set_therm_sensor_1_secondary_i2c_addr(const fapi2::Targ
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_1_SECOND_I2C_ADDR, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_1_SECOND_I2C_ADDR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7924,11 +6934,8 @@ inline fapi2::ReturnCode set_therm_sensor_1_secondary_location(const fapi2::Targ
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_1_SECOND_LOCATION, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_1_SECOND_LOCATION: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7945,11 +6952,8 @@ inline fapi2::ReturnCode set_therm_sensor_0_secondary_location(const fapi2::Targ
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_0_SECOND_LOCATION, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_0_SECOND_LOCATION: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7966,11 +6970,8 @@ inline fapi2::ReturnCode set_therm_sensor_3_location(const fapi2::Target<fapi2::
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_3_LOCATION, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_3_LOCATION: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -7987,11 +6988,8 @@ inline fapi2::ReturnCode set_therm_sensor_2_location(const fapi2::Target<fapi2::
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_2_LOCATION, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_2_LOCATION: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -8008,11 +7006,8 @@ inline fapi2::ReturnCode set_therm_sensor_1_location(const fapi2::Target<fapi2::
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_1_LOCATION, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_1_LOCATION: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -8029,11 +7024,8 @@ inline fapi2::ReturnCode set_therm_sensor_0_location(const fapi2::Target<fapi2::
 {
 
     FAPI_TRY( FAPI_ATTR_SET(fapi2::ATTR_MEM_EFF_THERM_SENSOR_0_LOCATION, i_target, i_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed setting ATTR_MEM_EFF_THERM_SENSOR_0_LOCATION: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 

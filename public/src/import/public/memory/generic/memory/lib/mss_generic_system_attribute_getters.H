@@ -47,11 +47,8 @@ inline fapi2::ReturnCode get_is_simulation(uint8_t& o_value)
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_IS_SIMULATION, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_IS_SIMULATION: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -67,11 +64,8 @@ inline fapi2::ReturnCode get_is_simics(uint8_t& o_value)
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_IS_SIMICS, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_IS_SIMICS: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -92,11 +86,8 @@ inline fapi2::ReturnCode get_mfg_flags(uint32_t (&o_array)[4])
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MFG_FLAGS, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), l_value) );
     memcpy(o_array, &l_value, 16);
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MFG_FLAGS: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -114,11 +105,8 @@ inline fapi2::ReturnCode get_mnfg_flags(uint64_t& o_value)
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MNFG_FLAGS, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MNFG_FLAGS: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -136,11 +124,8 @@ inline fapi2::ReturnCode get_mem_mrw_is_planar(const fapi2::Target<fapi2::TARGET
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_MRW_IS_PLANAR, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_MRW_IS_PLANAR: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -158,11 +143,8 @@ inline fapi2::ReturnCode get_mrw_ocmb_reset_group(const fapi2::Target<fapi2::TAR
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_OCMB_RESET_GROUP, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_OCMB_RESET_GROUP: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -182,11 +164,8 @@ inline fapi2::ReturnCode get_mrw_safemode_mem_throttled_n_commands_per_port(uint
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_SAFEMODE_MEM_THROTTLED_N_COMMANDS_PER_PORT,
                             fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_SAFEMODE_MEM_THROTTLED_N_COMMANDS_PER_PORT: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -208,11 +187,8 @@ inline fapi2::ReturnCode get_mrw_pwr_intercept(uint64_t (&o_array)[100])
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_PWR_INTERCEPT, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), l_value) );
     memcpy(o_array, &l_value, 800);
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_PWR_INTERCEPT: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -234,11 +210,8 @@ inline fapi2::ReturnCode get_mrw_pwr_slope(uint64_t (&o_array)[100])
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_PWR_SLOPE, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), l_value) );
     memcpy(o_array, &l_value, 800);
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_PWR_SLOPE: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -256,11 +229,8 @@ inline fapi2::ReturnCode get_mrw_refresh_rate_request(uint8_t& o_value)
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_REFRESH_RATE_REQUEST, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_REFRESH_RATE_REQUEST: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -277,11 +247,8 @@ inline fapi2::ReturnCode get_mrw_dimm_power_curve_percent_uplift(uint8_t& o_valu
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_DIMM_POWER_CURVE_PERCENT_UPLIFT, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_DIMM_POWER_CURVE_PERCENT_UPLIFT: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -298,11 +265,8 @@ inline fapi2::ReturnCode get_mrw_dimm_power_curve_percent_uplift_idle(uint8_t& o
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_DIMM_POWER_CURVE_PERCENT_UPLIFT_IDLE,
                             fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_DIMM_POWER_CURVE_PERCENT_UPLIFT_IDLE: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -319,11 +283,8 @@ inline fapi2::ReturnCode get_mrw_mem_m_dram_clocks(uint32_t& o_value)
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_MEM_M_DRAM_CLOCKS, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_MEM_M_DRAM_CLOCKS: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -341,11 +302,8 @@ inline fapi2::ReturnCode get_mrw_max_dram_databus_util(uint32_t& o_value)
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_MAX_DRAM_DATABUS_UTIL, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_MAX_DRAM_DATABUS_UTIL: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -362,11 +320,8 @@ inline fapi2::ReturnCode get_mrw_power_control_requested(uint8_t& o_value)
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_POWER_CONTROL_REQUESTED, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_POWER_CONTROL_REQUESTED: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -383,11 +338,8 @@ inline fapi2::ReturnCode get_mrw_idle_power_control_requested(uint8_t& o_value)
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_IDLE_POWER_CONTROL_REQUESTED, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_IDLE_POWER_CONTROL_REQUESTED: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -404,11 +356,8 @@ inline fapi2::ReturnCode get_mrw_vmem_regulator_power_limit_per_dimm_ddr4(uint32
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MRW_VMEM_REGULATOR_MEMORY_POWER_LIMIT_PER_DIMM_DDR4,
                             fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MRW_VMEM_REGULATOR_MEMORY_POWER_LIMIT_PER_DIMM_DDR4: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -426,11 +375,8 @@ inline fapi2::ReturnCode get_mrw_max_number_dimms_possible_per_vmem_regulator(ui
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_MAX_NUMBER_DIMMS_POSSIBLE_PER_VMEM_REGULATOR,
                             fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_MAX_NUMBER_DIMMS_POSSIBLE_PER_VMEM_REGULATOR: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -447,11 +393,8 @@ inline fapi2::ReturnCode get_mrw_fine_refresh_mode(uint8_t& o_value)
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_FINE_REFRESH_MODE, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_FINE_REFRESH_MODE: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -469,11 +412,8 @@ inline fapi2::ReturnCode get_mrw_temp_refresh_range(uint8_t& o_value)
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_TEMP_REFRESH_RANGE, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_TEMP_REFRESH_RANGE: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -490,11 +430,8 @@ inline fapi2::ReturnCode get_mrw_reset_delay_before_cal(uint8_t& o_value)
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_RESET_DELAY_BEFORE_CAL, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_RESET_DELAY_BEFORE_CAL: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -515,11 +452,8 @@ inline fapi2::ReturnCode get_mrw_periodic_memcal_mode_options(uint16_t& o_value)
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_PERIODIC_MEMCAL_MODE_OPTIONS, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_PERIODIC_MEMCAL_MODE_OPTIONS: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -537,11 +471,8 @@ inline fapi2::ReturnCode get_mrw_periodic_zqcal_mode_options(uint16_t& o_value)
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_PERIODIC_ZQCAL_MODE_OPTIONS, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_PERIODIC_ZQCAL_MODE_OPTIONS: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -557,11 +488,8 @@ inline fapi2::ReturnCode get_mrw_dram_2n_mode(uint8_t& o_value)
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_DRAM_2N_MODE, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_DRAM_2N_MODE: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -576,11 +504,8 @@ inline fapi2::ReturnCode get_mrw_dram_write_crc(uint8_t& o_value)
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_DRAM_WRITE_CRC, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_DRAM_WRITE_CRC: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -595,11 +520,8 @@ inline fapi2::ReturnCode get_mrw_ddr5_dram_read_crc(uint8_t& o_value)
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_DDR5_DRAM_READ_CRC, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_DDR5_DRAM_READ_CRC: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -614,11 +536,8 @@ inline fapi2::ReturnCode get_mrw_temp_refresh_mode(uint8_t& o_value)
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_TEMP_REFRESH_MODE, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_TEMP_REFRESH_MODE: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -634,11 +553,8 @@ inline fapi2::ReturnCode get_mrw_force_bcmode_off(uint8_t& o_value)
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_FORCE_BCMODE_OFF, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_FORCE_BCMODE_OFF: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -657,11 +573,8 @@ inline fapi2::ReturnCode get_mrw_nvdimm_plug_rules(uint64_t& o_value)
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_NVDIMM_PLUG_RULES, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_NVDIMM_PLUG_RULES: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -678,11 +591,8 @@ inline fapi2::ReturnCode get_mrw_allow_unsupported_rcw(uint8_t& o_value)
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_ALLOW_UNSUPPORTED_RCW, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_ALLOW_UNSUPPORTED_RCW: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -700,11 +610,8 @@ inline fapi2::ReturnCode get_mrw_supported_dram_width(uint8_t& o_value)
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_SUPPORTED_DRAM_WIDTH, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_SUPPORTED_DRAM_WIDTH: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -728,11 +635,8 @@ inline fapi2::ReturnCode get_mrw_ocmb_thermal_memory_power_limit(uint64_t (&o_ar
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_OCMB_THERMAL_MEMORY_POWER_LIMIT, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             l_value) );
     memcpy(o_array, &l_value, 200);
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_OCMB_THERMAL_MEMORY_POWER_LIMIT: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -754,11 +658,8 @@ inline fapi2::ReturnCode get_mrw_ocmb_pwr_slope(uint64_t (&o_array)[50])
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_OCMB_PWR_SLOPE, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), l_value) );
     memcpy(o_array, &l_value, 400);
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_OCMB_PWR_SLOPE: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -781,11 +682,8 @@ inline fapi2::ReturnCode get_mrw_ocmb_pwr_intercept(uint64_t (&o_array)[50])
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_OCMB_PWR_INTERCEPT, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), l_value) );
     memcpy(o_array, &l_value, 400);
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_OCMB_PWR_INTERCEPT: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -813,11 +711,8 @@ inline fapi2::ReturnCode get_mrw_ocmb_current_curve_with_limit(uint64_t (&o_arra
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_OCMB_CURRENT_CURVE_WITH_LIMIT, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             l_value) );
     memcpy(o_array, &l_value, 200);
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_OCMB_CURRENT_CURVE_WITH_LIMIT: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -838,11 +733,8 @@ inline fapi2::ReturnCode get_mrw_safemode_dram_databus_util(uint32_t& o_value)
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_SAFEMODE_DRAM_DATABUS_UTIL, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_SAFEMODE_DRAM_DATABUS_UTIL: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -858,11 +750,8 @@ inline fapi2::ReturnCode get_mrw_thermal_sensor_polling_period(uint16_t& o_value
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_THERMAL_SENSOR_POLLING_PERIOD, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_THERMAL_SENSOR_POLLING_PERIOD: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -880,11 +769,8 @@ inline fapi2::ReturnCode get_mrw_dimm_slot_airflow(uint8_t& o_value)
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_DIMM_SLOT_AIRFLOW, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_DIMM_SLOT_AIRFLOW: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -901,11 +787,8 @@ inline fapi2::ReturnCode get_port_pos_of_fail_throttle(uint64_t& o_value)
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_PORT_POS_OF_FAIL_THROTTLE, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_PORT_POS_OF_FAIL_THROTTLE: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -921,11 +804,8 @@ inline fapi2::ReturnCode get_mrw_dimm_height_plug_rule(uint8_t& o_value)
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_DIMM_HEIGHT_MIXING_POLICY, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_DIMM_HEIGHT_MIXING_POLICY: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -948,11 +828,8 @@ inline fapi2::ReturnCode get_mrw_thermal_memory_power_limit(uint64_t (&o_array)[
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_THERMAL_MEMORY_POWER_LIMIT, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             l_value) );
     memcpy(o_array, &l_value, 80);
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_THERMAL_MEMORY_POWER_LIMIT: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -970,11 +847,8 @@ inline fapi2::ReturnCode get_mrw_orverride_therm_sensor_usage(uint8_t& o_value)
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_OVERRIDE_THERM_SENSOR_USAGE, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_OVERRIDE_THERM_SENSOR_USAGE: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -998,11 +872,8 @@ inline fapi2::ReturnCode get_mrw_ocmb_safemode_util_array(uint64_t (&o_array)[50
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_OCMB_SAFEMODE_UTIL_ARRAY, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),
                             l_value) );
     memcpy(o_array, &l_value, 400);
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_OCMB_SAFEMODE_UTIL_ARRAY: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
@@ -1017,11 +888,8 @@ inline fapi2::ReturnCode get_mrw_allow_ddr5(uint8_t& o_value)
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MSS_MRW_ALLOW_DDR5, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MSS_MRW_ALLOW_DDR5: 0x%lx",
-             uint64_t(fapi2::current_err));
     return fapi2::current_err;
 }
 
