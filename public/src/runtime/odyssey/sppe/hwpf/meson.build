@@ -27,6 +27,7 @@ infile_c = ['plat_hw_access.C',
             'plat_handle_scom.C',
             'plat_utils.C',
             'plat_hwp_data_stream.C',
+            'plat_ring_utils.C',
            ]
 
 lib_file_name = 'odysseyhwpf'

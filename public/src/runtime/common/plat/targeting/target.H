@@ -82,7 +82,8 @@ namespace fapi2
 
     template<TargetType K, MulticastType M, typename V>
     static constexpr void plat_apply_target_limits(void)
-    {}
+    {
+    }
 
     template<TargetType T, MulticastType M, typename V>
     inline void Target<T, M, V>::mcUpdateHandle()
@@ -289,14 +290,52 @@ namespace fapi2
     {
         return iv_handle.getFunctional();
     }
-//@TODO
-// Need to enable plat target string
+
     template< TargetType T, MulticastType M, typename V >
     inline void toString(const Target<T, M, V>& i_target, char* i_buffer, size_t i_bsize)
     {}
     template< TargetType T, MulticastType M, typename V >
     inline void toString(const Target<T, M, V>* i_target, char* i_buffer, size_t i_bsize)
     {}
-//@ END TODO
+
+    ///
+    /// @brief Platform can return the core select value stored
+    ///        in it's Target handle
+    /// @tparam K The plat target handle typed
+    /// @tparam M The target MulticastType
+    /// @tparam V The type of parent
+    /// @return Target<T, M, V> a core select value
+    ///
+    template<TargetType K, MulticastType M, typename V>
+    inline MulticastCoreSelect
+    Target<K, M, V>::_getCoreSelect(void) const
+    {
+        return (MulticastCoreSelect)(MCCORE_ALL);
+    }
+
+    ///
+    /// @brief Here check that the platform target's type is
+    ///        compatible with T, also taking multicast into account
+    ///        (if the plat target is a real multicast target, T must include
+    ///        TARGET_TYPE_MULTIAST). in it's Target handle
+    /// @tparam K The plat target handle typed
+    /// @tparam M The target MulticastType
+    /// @tparam V The type of parent
+    /// @param[in] A pointer to the Target<T, M, V>
+    /// @return Target<T, M, V> a reduceType of target
+    ///
+    template<TargetType K, MulticastType M, typename V>
+    template<TargetType T>
+    inline ReturnCodes Target<K, M, V>::reduceType(Target<T, M, V> &o_target) const
+    {
+        const TargetType l_type = iv_handle.getFapiTargetType() |
+            (iv_handle.getFunctional() ? TARGET_TYPE_MULTICAST : TARGET_TYPE_NONE);
+        if ((l_type & T) != l_type)
+        {
+            return FAPI2_RC_INVALID_PARAMETER;
+        }
+        o_target = get();
+        return FAPI2_RC_SUCCESS;
+    }
 }
 #endif
