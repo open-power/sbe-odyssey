@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -292,7 +292,8 @@ restore_and_update_sprg0:
 
 #ifdef HWMACRO_GPE
         ## restore PBA slave on GPE if it needed
-        _liw    %r29,  PBA_SLVCTLN(PBASLVCTLN)
+        ## (Note that PBA reg name changed from SLVCTLN to PORTCTLN)
+        _liw    %r29,  PBA_PORTCTLN(PBASLVCTLN)
         lvd     %d3, 0(%r29)
         lvd     %d30, PK_CTX_PBASLVCTLV(%r1)
 
@@ -463,7 +464,8 @@ stack_good:
 
 #ifdef HWMACRO_GPE
         ## Save the context of the PBASLVCTL reg
-        _liw    %r7,  PBA_SLVCTLN(PBASLVCTLN)
+        ## (Note that PBA reg name changed from SLVCTLN to PORTCTLN)
+        _liw    %r7,  PBA_PORTCTLN(PBASLVCTLN)
         lvd     %d7, 0(%r7)
         stvd    %d7, PK_CTX_PBASLVCTLV(%r1)
 #endif
