@@ -41,6 +41,11 @@
 #include "plat_hwp_data_stream.H"
 #include "sbeglobals.H"
 #include "chipop_handler.H"
+#include "scan_compression.H"
+#include "base_utils.H"
+#include "poz_putRingUtils.H"
+#include "plat_ring_utils.H"
+#include "poz_putRingBackend.H"
 
 using namespace fapi2;
 
@@ -265,9 +270,10 @@ uint32_t sbeGetRing(uint8_t *i_pArg)
 }
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
-uint32_t sbePutRing(uint8_t *i_pArg)
+uint32_t sbePutRingWrap( fapi2::sbefifo_hwp_data_istream& i_getStream,
+                         fapi2::sbefifo_hwp_data_ostream& i_putStream )
 {
-#define SBE_FUNC " sbePutRing "
+#define SBE_FUNC " sbePutRingWrap "
     SBE_ENTER(SBE_FUNC);
 
     uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
@@ -276,14 +282,63 @@ uint32_t sbePutRing(uint8_t *i_pArg)
     sbeResponseFfdc_t ffdc;
     ReturnCode fapiRc;
     sbePutRingMsgHdr_t hdr;
+    sbePutRingMsg_t reqMsg;
     uint32_t len = 0;
-    chipOpParam_t* configStr = (struct chipOpParam*)i_pArg;
-    sbeFifoType type = static_cast<sbeFifoType>(configStr->fifoType);
-    sbefifo_hwp_data_istream istream(type);
     do
     {
+
+        // @TODO: JIRA - PFSBE-255
+        // Get the length of payload
+        // Length is not part of chipop. So take length from total length
+        len = SBE_GLOBAL->sbeFifoCmdHdr.len -
+                        sizeof(SBE_GLOBAL->sbeFifoCmdHdr)/sizeof(uint32_t);
+
+        // Get the length for RS4 payload
+        uint32_t rs4FifoEntries = len -
+                        sizeof(sbePutRingMsgHdr_t)/sizeof(uint32_t);
+        SBE_INFO(SBE_FUNC" rs4FifoEntries size: [0x%08X] ", rs4FifoEntries);
+
+        if( rs4FifoEntries  > (SBE_PUT_RING_RS4_MAX_DOUBLE_WORDS * 2) )
+        {
+            SBE_ERROR(SBE_FUNC" RS4 palyload size is wrong."
+                "size(entries):0x%08X",  rs4FifoEntries);
+            respHdr.setStatus( SBE_PRI_INVALID_DATA,
+                               SBE_SEC_GENERIC_FAILURE_IN_EXECUTION);
+            // flush the fifo
+            rc = i_getStream.get(len, NULL,true, true);
+            break;
+        }
+
         len = sizeof(sbePutRingMsgHdr_t)/sizeof(uint32_t);
-        rc = istream.get(len, (uint32_t *)&hdr, false);
+        rc = i_getStream.get(len, (uint32_t *)&hdr, false);
+        // If FIFO access failure
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(rc);
+        // Initialize with HEADER CHECK mode
+        uint16_t ringMode = sbeToFapiRingMode(hdr.ringMode);
+
+        // Get the length of RS4 payload
+        len = rs4FifoEntries;
+        rc = i_getStream.get(len, (uint32_t *)&reqMsg);
+        // If FIFO access failure
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(rc);
+        // Set length of RS4 payload in words
+        rs4FifoEntries = rs4FifoEntries * 4;
+        SBE_INFO(SBE_FUNC" rs4RingLength[0x%08X], ringMode[0x%04X]", rs4FifoEntries, ringMode);
+
+        Target<SBE_ROOT_CHIP_TYPE> l_hndl = g_platTarget->plat_getChipTarget();
+        auto l_allgood_mc =
+              l_hndl.getMulticast<fapi2::TARGET_TYPE_PERV>(fapi2::MCGROUP_GOOD);
+        fapiRc = poz_applyCompositeImage(l_allgood_mc, reqMsg.rs4Payload,
+                                         rs4FifoEntries, (fapi2::RingMode)ringMode);
+        if( fapiRc != FAPI2_RC_SUCCESS )
+        {
+            SBE_ERROR(SBE_FUNC" plat_putringutil failed."
+                "fapiRc:0x%04X",  fapiRc);
+            respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                               SBE_SEC_GENERIC_FAILURE_IN_EXECUTION);
+            ffdc.setRc(fapiRc);
+            break;
+        }
     }while(false);
 
     // Now build and enqueue response into downstream FIFO
@@ -291,9 +346,32 @@ uint32_t sbePutRing(uint8_t *i_pArg)
     // instead give the control back to the command processor thread
     if ( SBE_SEC_OPERATION_SUCCESSFUL == rc )
     {
-        rc = sbeDsSendRespHdr( respHdr, &ffdc, istream.getFifoType());
+        rc = sbeDsSendRespHdr( respHdr, &ffdc, i_getStream.getFifoType());
     }
     SBE_EXIT(SBE_FUNC);
     return rc;
 #undef SBE_FUNC
 }
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+uint32_t sbePutRing(uint8_t *i_pArg)
+{
+    #define SBE_FUNC " sbePutRing "
+    SBE_ENTER(SBE_FUNC);
+
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    chipOpParam_t* configStr = (struct chipOpParam*)i_pArg;
+    sbeFifoType type = static_cast<sbeFifoType>(configStr->fifoType);
+
+    sbefifo_hwp_data_ostream ostream(type);
+    sbefifo_hwp_data_istream istream(type);
+    SBE_INFO(SBE_FUNC" hwp streams created");
+    l_rc = sbePutRingWrap( istream, ostream );
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+#undef SBE_FUNC
+}
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////

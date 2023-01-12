@@ -93,7 +93,8 @@ odyssey_sppe_obj_file_cpp_opt = obj_gen_cpp.process(abs_tinflate_c_path,
                                                     odyssey_cmn_abs_inc_paths])
 
 #compile common HWP
-generic_hwp_obj_file_c = obj_gen_cpp_hwp.process(ekb_generic_hwp_c_path,
+generic_hwp_obj_file_c = obj_gen_cpp_hwp.process([ekb_generic_hwp_c_path,
+                                                  ekb_generic_ring_c_path],
                                         extra_args:[
                                                     odyssey_runtime_abs_inc_paths,
                                                     runtime_cmn_abs_inc_paths,

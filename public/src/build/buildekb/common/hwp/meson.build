@@ -49,15 +49,15 @@ ekb_generic_hwp_c_path += abs_generic_infile_c_path
 
 endforeach
 
-import_ring_generic_dir_path = pub_import_dir_path + '/ring/generic/'
+import_util_generic_dir_path = pub_import_dir_path + '/common/utils/imageProcs/'
 
-ring_generic_infile_c = [
-                        'poz_putRingUtils.C',
+util_generic_infile_c = [
+                        'scan_compression.C',
                         ]
 
-foreach ring_generic_infile : ring_generic_infile_c
+foreach util_generic_infile : util_generic_infile_c
 
-abs_ring_generic_infile_c_path = import_ring_generic_dir_path + ring_generic_infile
-ekb_generic_hwp_c_path += abs_ring_generic_infile_c_path
+abs_util_generic_infile_c_path = import_util_generic_dir_path + util_generic_infile
+ekb_generic_hwp_c_path += abs_util_generic_infile_c_path
 
 endforeach

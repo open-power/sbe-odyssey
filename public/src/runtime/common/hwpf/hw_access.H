@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2012,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -32,6 +33,7 @@
 #define FAPI2_HWACCESS_H_
 
 #include <plat_hw_access.H>
+#include <plat_ring_utils.H>
 #include <hw_access_def.H>
 #include <stdint.h>
 #include <return_code.H>
@@ -162,6 +164,30 @@ namespace fapi2
                   o_data.print();
 #endif
         return FAPI2_RC_SUCCESS;
+    }
+
+    /// @brief Backend platform implementation of putRing
+    /// This applies a single scan image to a given target.
+    /// Hardware procedures will not usually call this function; it is
+    /// supposed to be called by putRingBackend() only.
+    //  @tparam K template parameter, passed in target.
+    /// @param[in] i_target    Target to scan into. May be multicast!
+    /// @param[in] i_scanImage Scan image to apply
+    /// @param[in] i_modifiedRingAddress
+    ///                        Ring address modified to indicate the actual
+    ///                        scan regions targeted by this call
+    /// @param[in] i_ringMode  Ring operation mode.
+    /// @return FAPI2_RC_SUCCESS on success, else error code.
+    template< TargetType K, MulticastType M, typename V >
+    ReturnCode plat_putRingImpl(const Target<K, M, V>& i_target,
+                                const void* i_scanImage,
+                                const uint32_t i_modifiedRingAddress,
+                                const RingMode i_ringMode)
+    {
+        FAPI_INF("PUT-RING: plat_putRingImpl inside SBE plat_putringutil ");
+        ReturnCode l_rc = plat_putringutil( (void*)&i_target, i_scanImage,
+                                            i_modifiedRingAddress, i_ringMode );
+        return l_rc;
     }
 };
 
