@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -86,14 +86,15 @@ void gpe_pba_reset()
     rst_in_progress.value = 0;
     rst_in_progress.fields.in_prog = PBA_SLVRST_IN_PROG(slave);
 
+    // (Note that PBA reg name changed from SLVRST to PORTRST)
     do
     {
         value64 = slvrst.value;
-        PPE_STVD(PBA_SLVRST, value64);
+        PPE_STVD(PBA_PORTRST, value64);
 
 
         val = rst_in_progress.value;
-        PPE_LVD(PBA_SLVRST, value64);
+        PPE_LVD(PBA_PORTRST, value64);
         val &= value64;
     }
     while(val != 0);
@@ -131,11 +132,12 @@ void gpe_pba_slave_setup(uint32_t i_gpeInstanceId,
     // slvctln.fields.extaddr = 0; PowerBus address bits (23:36)
 
     // Only write PBA_SLVCTL  if it needs to change
-    PPE_LVD(PBA_SLVCTLN(slave), current);
+    // (Note that PBA reg name changed from SLVCTLN to PORTCTLN)
+    PPE_LVD(PBA_PORTCTLN(slave), current);
 
     if(slvctln.value != current)
     {
         gpe_pba_reset();
-        PPE_STVD(PBA_SLVCTLN(slave), slvctln.value);
+        PPE_STVD(PBA_PORTCTLN(slave), slvctln.value);
     }
 }

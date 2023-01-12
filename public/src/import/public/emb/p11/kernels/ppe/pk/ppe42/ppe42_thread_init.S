@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -113,7 +113,8 @@ __pk_thread_context_initialize:
 
 #ifdef HWMACRO_GPE
         ## Save the context of the PBASLVCTL reg
-        _liw    %r7,  PBA_SLVCTLN(PBASLVCTLN)
+        ## (Note that PBA reg name changed from SLVCTLN to PORTCTLN)
+        _liw    %r7,  PBA_PORTCTLN(PBASLVCTLN)
         lvd     %d7, 0(%r7)
         stvd    %d7, PK_CTX_PBASLVCTLV(%r6)
 #endif
