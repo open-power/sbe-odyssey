@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/chipop_headers.H $       */
+/* $Source: public/src/runtime/odyssey/sppe/core/sbecmddtsread.H $        */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -22,22 +22,26 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __CHIPOP_HEADERS_H__
-#define __CHIPOP_HEADERS_H__
-#include "sbecmdscomaccess.H"
-#include "sbecodeupdate.H"
-#include "sbecmdgeneric.H"
-#include "istep.H"
-#include "sbetrace.H"
-#include "sbe_sp_intf.H"
-#include "sbecmdringaccess.H"
-#include "sbecmdbist.H"
-#include "sbecmdpak.H"
-#include "sbecmdgetrawattrdump.H"
-#include "sbecmdexecutehwp.H"
-#include "sbecmdupdateattr.H"
-#include "sbecmddtsread.H"
-#include <stdint.h>
-#include <stddef.h>
 
-#endif
+#ifndef __SBECMDDTSREAD_H
+#define __SBECMDDTSREAD_H
+
+#include <stdint.h>
+
+/**
+ * @brief odyDtsRead : Dequeue params, get DTS sensor data, enqueue return data
+ *
+ * @param[in] i_pArg Buffer to be passed to the function
+ *
+ * @return    RC from the FIFO access utility
+ */
+
+uint32_t sbeDtsRead (uint8_t *i_pArg);
+
+typedef struct
+{
+    uint16_t reserved = 0x00; // size in bits
+    int16_t dtsTemp;
+} odyDTSReadRespHdr_t;
+
+#endif /* __SBECMDDTSREAD_H */
