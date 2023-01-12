@@ -49,11 +49,8 @@ inline fapi2::ReturnCode get_pmic0_mfg_id(const fapi2::Target<fapi2::TARGET_TYPE
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_MFG_ID, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_MFG_ID: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -70,11 +67,8 @@ inline fapi2::ReturnCode get_pmic0_swa_voltage_setting(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWA_VOLTAGE_SETTING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWA_VOLTAGE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -91,11 +85,8 @@ inline fapi2::ReturnCode get_pmic0_swa_voltage_range_select(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWA_VOLTAGE_RANGE_SELECT, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWA_VOLTAGE_RANGE_SELECT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -112,11 +103,8 @@ inline fapi2::ReturnCode get_pmic0_swa_voltage_offset(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWA_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWA_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -133,11 +121,8 @@ inline fapi2::ReturnCode get_pmic0_swa_sequence_delay(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWA_SEQUENCE_DELAY, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWA_SEQUENCE_DELAY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -154,11 +139,8 @@ inline fapi2::ReturnCode get_pmic0_swa_sequence_order(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWA_SEQUENCE_ORDER, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWA_SEQUENCE_ORDER: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -175,11 +157,8 @@ inline fapi2::ReturnCode get_pmic0_swb_voltage_setting(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWB_VOLTAGE_SETTING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWB_VOLTAGE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -196,11 +175,8 @@ inline fapi2::ReturnCode get_pmic0_swb_voltage_range_select(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWB_VOLTAGE_RANGE_SELECT, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWB_VOLTAGE_RANGE_SELECT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -217,11 +193,8 @@ inline fapi2::ReturnCode get_pmic0_swb_voltage_offset(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWB_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWB_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -238,11 +211,8 @@ inline fapi2::ReturnCode get_pmic0_swb_sequence_delay(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWB_SEQUENCE_DELAY, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWB_SEQUENCE_DELAY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -259,11 +229,8 @@ inline fapi2::ReturnCode get_pmic0_swb_sequence_order(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWB_SEQUENCE_ORDER, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWB_SEQUENCE_ORDER: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -280,11 +247,8 @@ inline fapi2::ReturnCode get_pmic0_swc_voltage_setting(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWC_VOLTAGE_SETTING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWC_VOLTAGE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -301,11 +265,8 @@ inline fapi2::ReturnCode get_pmic0_swc_voltage_range_select(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWC_VOLTAGE_RANGE_SELECT, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWC_VOLTAGE_RANGE_SELECT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -322,11 +283,8 @@ inline fapi2::ReturnCode get_pmic0_swc_voltage_offset(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWC_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWC_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -343,11 +301,8 @@ inline fapi2::ReturnCode get_pmic0_swc_sequence_delay(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWC_SEQUENCE_DELAY, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWC_SEQUENCE_DELAY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -364,11 +319,8 @@ inline fapi2::ReturnCode get_pmic0_swc_sequence_order(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWC_SEQUENCE_ORDER, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWC_SEQUENCE_ORDER: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -385,11 +337,8 @@ inline fapi2::ReturnCode get_pmic0_swd_voltage_setting(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWD_VOLTAGE_SETTING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWD_VOLTAGE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -406,11 +355,8 @@ inline fapi2::ReturnCode get_pmic0_swd_voltage_range_select(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWD_VOLTAGE_RANGE_SELECT, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWD_VOLTAGE_RANGE_SELECT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -427,11 +373,8 @@ inline fapi2::ReturnCode get_pmic0_swd_voltage_offset(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWD_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWD_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -448,11 +391,8 @@ inline fapi2::ReturnCode get_pmic0_swd_sequence_delay(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWD_SEQUENCE_DELAY, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWD_SEQUENCE_DELAY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -469,11 +409,8 @@ inline fapi2::ReturnCode get_pmic0_swd_sequence_order(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWD_SEQUENCE_ORDER, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWD_SEQUENCE_ORDER: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -490,11 +427,8 @@ inline fapi2::ReturnCode get_pmic1_mfg_id(const fapi2::Target<fapi2::TARGET_TYPE
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_MFG_ID, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_MFG_ID: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -511,11 +445,8 @@ inline fapi2::ReturnCode get_pmic1_swa_voltage_setting(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWA_VOLTAGE_SETTING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWA_VOLTAGE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -532,11 +463,8 @@ inline fapi2::ReturnCode get_pmic1_swa_voltage_range_select(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWA_VOLTAGE_RANGE_SELECT, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWA_VOLTAGE_RANGE_SELECT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -553,11 +481,8 @@ inline fapi2::ReturnCode get_pmic1_swa_voltage_offset(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWA_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWA_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -574,11 +499,8 @@ inline fapi2::ReturnCode get_pmic1_swa_sequence_delay(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWA_SEQUENCE_DELAY, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWA_SEQUENCE_DELAY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -595,11 +517,8 @@ inline fapi2::ReturnCode get_pmic1_swa_sequence_order(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWA_SEQUENCE_ORDER, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWA_SEQUENCE_ORDER: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -616,11 +535,8 @@ inline fapi2::ReturnCode get_pmic1_swb_voltage_setting(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWB_VOLTAGE_SETTING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWB_VOLTAGE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -637,11 +553,8 @@ inline fapi2::ReturnCode get_pmic1_swb_voltage_range_select(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWB_VOLTAGE_RANGE_SELECT, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWB_VOLTAGE_RANGE_SELECT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -658,11 +571,8 @@ inline fapi2::ReturnCode get_pmic1_swb_voltage_offset(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWB_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWB_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -679,11 +589,8 @@ inline fapi2::ReturnCode get_pmic1_swb_sequence_delay(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWB_SEQUENCE_DELAY, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWB_SEQUENCE_DELAY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -700,11 +607,8 @@ inline fapi2::ReturnCode get_pmic1_swb_sequence_order(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWB_SEQUENCE_ORDER, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWB_SEQUENCE_ORDER: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -721,11 +625,8 @@ inline fapi2::ReturnCode get_pmic1_swc_voltage_setting(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWC_VOLTAGE_SETTING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWC_VOLTAGE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -742,11 +643,8 @@ inline fapi2::ReturnCode get_pmic1_swc_voltage_range_select(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWC_VOLTAGE_RANGE_SELECT, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWC_VOLTAGE_RANGE_SELECT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -763,11 +661,8 @@ inline fapi2::ReturnCode get_pmic1_swc_voltage_offset(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWC_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWC_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -784,11 +679,8 @@ inline fapi2::ReturnCode get_pmic1_swc_sequence_delay(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWC_SEQUENCE_DELAY, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWC_SEQUENCE_DELAY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -805,11 +697,8 @@ inline fapi2::ReturnCode get_pmic1_swc_sequence_order(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWC_SEQUENCE_ORDER, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWC_SEQUENCE_ORDER: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -826,11 +715,8 @@ inline fapi2::ReturnCode get_pmic1_swd_voltage_setting(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWD_VOLTAGE_SETTING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWD_VOLTAGE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -847,11 +733,8 @@ inline fapi2::ReturnCode get_pmic1_swd_voltage_range_select(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWD_VOLTAGE_RANGE_SELECT, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWD_VOLTAGE_RANGE_SELECT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -868,11 +751,8 @@ inline fapi2::ReturnCode get_pmic1_swd_voltage_offset(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWD_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWD_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -889,11 +769,8 @@ inline fapi2::ReturnCode get_pmic1_swd_sequence_delay(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWD_SEQUENCE_DELAY, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWD_SEQUENCE_DELAY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -910,11 +787,8 @@ inline fapi2::ReturnCode get_pmic1_swd_sequence_order(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWD_SEQUENCE_ORDER, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWD_SEQUENCE_ORDER: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -931,11 +805,8 @@ inline fapi2::ReturnCode get_pmic2_mfg_id(const fapi2::Target<fapi2::TARGET_TYPE
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_MFG_ID, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_MFG_ID: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -952,11 +823,8 @@ inline fapi2::ReturnCode get_pmic2_swa_voltage_setting(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWA_VOLTAGE_SETTING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWA_VOLTAGE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -973,11 +841,8 @@ inline fapi2::ReturnCode get_pmic2_swa_voltage_range_select(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWA_VOLTAGE_RANGE_SELECT, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWA_VOLTAGE_RANGE_SELECT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -994,11 +859,8 @@ inline fapi2::ReturnCode get_pmic2_swa_voltage_offset(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWA_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWA_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1015,11 +877,8 @@ inline fapi2::ReturnCode get_pmic2_swa_sequence_delay(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWA_SEQUENCE_DELAY, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWA_SEQUENCE_DELAY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1036,11 +895,8 @@ inline fapi2::ReturnCode get_pmic2_swa_sequence_order(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWA_SEQUENCE_ORDER, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWA_SEQUENCE_ORDER: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1057,11 +913,8 @@ inline fapi2::ReturnCode get_pmic2_swb_voltage_setting(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWB_VOLTAGE_SETTING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWB_VOLTAGE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1078,11 +931,8 @@ inline fapi2::ReturnCode get_pmic2_swb_voltage_range_select(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWB_VOLTAGE_RANGE_SELECT, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWB_VOLTAGE_RANGE_SELECT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1099,11 +949,8 @@ inline fapi2::ReturnCode get_pmic2_swb_voltage_offset(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWB_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWB_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1120,11 +967,8 @@ inline fapi2::ReturnCode get_pmic2_swb_sequence_delay(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWB_SEQUENCE_DELAY, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWB_SEQUENCE_DELAY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1141,11 +985,8 @@ inline fapi2::ReturnCode get_pmic2_swb_sequence_order(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWB_SEQUENCE_ORDER, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWB_SEQUENCE_ORDER: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1162,11 +1003,8 @@ inline fapi2::ReturnCode get_pmic2_swc_voltage_setting(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWC_VOLTAGE_SETTING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWC_VOLTAGE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1183,11 +1021,8 @@ inline fapi2::ReturnCode get_pmic2_swc_voltage_range_select(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWC_VOLTAGE_RANGE_SELECT, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWC_VOLTAGE_RANGE_SELECT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1204,11 +1039,8 @@ inline fapi2::ReturnCode get_pmic2_swc_voltage_offset(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWC_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWC_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1225,11 +1057,8 @@ inline fapi2::ReturnCode get_pmic2_swc_sequence_delay(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWC_SEQUENCE_DELAY, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWC_SEQUENCE_DELAY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1246,11 +1075,8 @@ inline fapi2::ReturnCode get_pmic2_swc_sequence_order(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWC_SEQUENCE_ORDER, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWC_SEQUENCE_ORDER: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1267,11 +1093,8 @@ inline fapi2::ReturnCode get_pmic2_swd_voltage_setting(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWD_VOLTAGE_SETTING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWD_VOLTAGE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1288,11 +1111,8 @@ inline fapi2::ReturnCode get_pmic2_swd_voltage_range_select(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWD_VOLTAGE_RANGE_SELECT, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWD_VOLTAGE_RANGE_SELECT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1309,11 +1129,8 @@ inline fapi2::ReturnCode get_pmic2_swd_voltage_offset(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWD_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWD_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1330,11 +1147,8 @@ inline fapi2::ReturnCode get_pmic2_swd_sequence_delay(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWD_SEQUENCE_DELAY, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWD_SEQUENCE_DELAY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1351,11 +1165,8 @@ inline fapi2::ReturnCode get_pmic2_swd_sequence_order(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWD_SEQUENCE_ORDER, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWD_SEQUENCE_ORDER: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1372,11 +1183,8 @@ inline fapi2::ReturnCode get_pmic3_mfg_id(const fapi2::Target<fapi2::TARGET_TYPE
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_MFG_ID, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_MFG_ID: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1393,11 +1201,8 @@ inline fapi2::ReturnCode get_pmic3_swa_voltage_setting(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWA_VOLTAGE_SETTING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWA_VOLTAGE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1414,11 +1219,8 @@ inline fapi2::ReturnCode get_pmic3_swa_voltage_range_select(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWA_VOLTAGE_RANGE_SELECT, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWA_VOLTAGE_RANGE_SELECT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1435,11 +1237,8 @@ inline fapi2::ReturnCode get_pmic3_swa_voltage_offset(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWA_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWA_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1456,11 +1255,8 @@ inline fapi2::ReturnCode get_pmic3_swa_sequence_delay(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWA_SEQUENCE_DELAY, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWA_SEQUENCE_DELAY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1477,11 +1273,8 @@ inline fapi2::ReturnCode get_pmic3_swa_sequence_order(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWA_SEQUENCE_ORDER, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWA_SEQUENCE_ORDER: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1498,11 +1291,8 @@ inline fapi2::ReturnCode get_pmic3_swb_voltage_setting(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWB_VOLTAGE_SETTING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWB_VOLTAGE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1519,11 +1309,8 @@ inline fapi2::ReturnCode get_pmic3_swb_voltage_range_select(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWB_VOLTAGE_RANGE_SELECT, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWB_VOLTAGE_RANGE_SELECT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1540,11 +1327,8 @@ inline fapi2::ReturnCode get_pmic3_swb_voltage_offset(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWB_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWB_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1561,11 +1345,8 @@ inline fapi2::ReturnCode get_pmic3_swb_sequence_delay(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWB_SEQUENCE_DELAY, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWB_SEQUENCE_DELAY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1582,11 +1363,8 @@ inline fapi2::ReturnCode get_pmic3_swb_sequence_order(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWB_SEQUENCE_ORDER, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWB_SEQUENCE_ORDER: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1603,11 +1381,8 @@ inline fapi2::ReturnCode get_pmic3_swc_voltage_setting(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWC_VOLTAGE_SETTING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWC_VOLTAGE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1624,11 +1399,8 @@ inline fapi2::ReturnCode get_pmic3_swc_voltage_range_select(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWC_VOLTAGE_RANGE_SELECT, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWC_VOLTAGE_RANGE_SELECT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1645,11 +1417,8 @@ inline fapi2::ReturnCode get_pmic3_swc_voltage_offset(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWC_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWC_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1666,11 +1435,8 @@ inline fapi2::ReturnCode get_pmic3_swc_sequence_delay(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWC_SEQUENCE_DELAY, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWC_SEQUENCE_DELAY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1687,11 +1453,8 @@ inline fapi2::ReturnCode get_pmic3_swc_sequence_order(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWC_SEQUENCE_ORDER, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWC_SEQUENCE_ORDER: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1708,11 +1471,8 @@ inline fapi2::ReturnCode get_pmic3_swd_voltage_setting(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWD_VOLTAGE_SETTING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWD_VOLTAGE_SETTING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1729,11 +1489,8 @@ inline fapi2::ReturnCode get_pmic3_swd_voltage_range_select(const fapi2::Target<
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWD_VOLTAGE_RANGE_SELECT, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWD_VOLTAGE_RANGE_SELECT: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1750,11 +1507,8 @@ inline fapi2::ReturnCode get_pmic3_swd_voltage_offset(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWD_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWD_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1771,11 +1525,8 @@ inline fapi2::ReturnCode get_pmic3_swd_sequence_delay(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWD_SEQUENCE_DELAY, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWD_SEQUENCE_DELAY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1792,11 +1543,8 @@ inline fapi2::ReturnCode get_pmic3_swd_sequence_order(const fapi2::Target<fapi2:
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWD_SEQUENCE_ORDER, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWD_SEQUENCE_ORDER: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1813,11 +1561,8 @@ inline fapi2::ReturnCode get_pmic0_redundancy(const fapi2::Target<fapi2::TARGET_
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_REDUNDANCY, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_REDUNDANCY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1834,11 +1579,8 @@ inline fapi2::ReturnCode get_pmic0_revision(const fapi2::Target<fapi2::TARGET_TY
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_REVISION, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_REVISION: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1855,11 +1597,8 @@ inline fapi2::ReturnCode get_pmic0_phase_comb(const fapi2::Target<fapi2::TARGET_
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_PHASE_COMB, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_PHASE_COMB: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1876,11 +1615,8 @@ inline fapi2::ReturnCode get_pmic0_sequence(const fapi2::Target<fapi2::TARGET_TY
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SEQUENCE, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SEQUENCE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1897,11 +1633,8 @@ inline fapi2::ReturnCode get_efd_pmic0_swa_voltage_offset(const fapi2::Target<fa
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_EFD_PMIC0_SWA_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_EFD_PMIC0_SWA_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1918,11 +1651,8 @@ inline fapi2::ReturnCode get_efd_pmic0_swb_voltage_offset(const fapi2::Target<fa
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_EFD_PMIC0_SWB_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_EFD_PMIC0_SWB_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1939,11 +1669,8 @@ inline fapi2::ReturnCode get_efd_pmic0_swc_voltage_offset(const fapi2::Target<fa
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_EFD_PMIC0_SWC_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_EFD_PMIC0_SWC_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1960,11 +1687,8 @@ inline fapi2::ReturnCode get_efd_pmic0_swd_voltage_offset(const fapi2::Target<fa
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_EFD_PMIC0_SWD_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_EFD_PMIC0_SWD_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -1982,11 +1706,8 @@ inline fapi2::ReturnCode get_pmic0_swa_current_warning(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWA_CURRENT_WARNING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWA_CURRENT_WARNING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2004,11 +1725,8 @@ inline fapi2::ReturnCode get_pmic0_swb_current_warning(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWB_CURRENT_WARNING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWB_CURRENT_WARNING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2026,11 +1744,8 @@ inline fapi2::ReturnCode get_pmic0_swc_current_warning(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWC_CURRENT_WARNING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWC_CURRENT_WARNING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2048,11 +1763,8 @@ inline fapi2::ReturnCode get_pmic0_swd_current_warning(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC0_SWD_CURRENT_WARNING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC0_SWD_CURRENT_WARNING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2069,11 +1781,8 @@ inline fapi2::ReturnCode get_pmic1_redundancy(const fapi2::Target<fapi2::TARGET_
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_REDUNDANCY, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_REDUNDANCY: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2090,11 +1799,8 @@ inline fapi2::ReturnCode get_pmic1_revision(const fapi2::Target<fapi2::TARGET_TY
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_REVISION, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_REVISION: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2111,11 +1817,8 @@ inline fapi2::ReturnCode get_pmic1_phase_comb(const fapi2::Target<fapi2::TARGET_
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_PHASE_COMB, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_PHASE_COMB: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2132,11 +1835,8 @@ inline fapi2::ReturnCode get_pmic1_sequence(const fapi2::Target<fapi2::TARGET_TY
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SEQUENCE, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SEQUENCE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2153,11 +1853,8 @@ inline fapi2::ReturnCode get_efd_pmic1_swa_voltage_offset(const fapi2::Target<fa
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_EFD_PMIC1_SWA_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_EFD_PMIC1_SWA_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2174,11 +1871,8 @@ inline fapi2::ReturnCode get_efd_pmic1_swb_voltage_offset(const fapi2::Target<fa
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_EFD_PMIC1_SWB_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_EFD_PMIC1_SWB_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2195,11 +1889,8 @@ inline fapi2::ReturnCode get_efd_pmic1_swc_voltage_offset(const fapi2::Target<fa
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_EFD_PMIC1_SWC_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_EFD_PMIC1_SWC_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2216,11 +1907,8 @@ inline fapi2::ReturnCode get_efd_pmic1_swd_voltage_offset(const fapi2::Target<fa
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_EFD_PMIC1_SWD_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_EFD_PMIC1_SWD_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2238,11 +1926,8 @@ inline fapi2::ReturnCode get_pmic1_swa_current_warning(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWA_CURRENT_WARNING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWA_CURRENT_WARNING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2260,11 +1945,8 @@ inline fapi2::ReturnCode get_pmic1_swb_current_warning(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWB_CURRENT_WARNING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWB_CURRENT_WARNING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2282,11 +1964,8 @@ inline fapi2::ReturnCode get_pmic1_swc_current_warning(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWC_CURRENT_WARNING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWC_CURRENT_WARNING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2304,11 +1983,8 @@ inline fapi2::ReturnCode get_pmic1_swd_current_warning(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC1_SWD_CURRENT_WARNING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC1_SWD_CURRENT_WARNING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2325,11 +2001,8 @@ inline fapi2::ReturnCode get_pmic2_revision(const fapi2::Target<fapi2::TARGET_TY
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_REVISION, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_REVISION: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2346,11 +2019,8 @@ inline fapi2::ReturnCode get_pmic2_phase_comb(const fapi2::Target<fapi2::TARGET_
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_PHASE_COMB, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_PHASE_COMB: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2367,11 +2037,8 @@ inline fapi2::ReturnCode get_pmic2_sequence(const fapi2::Target<fapi2::TARGET_TY
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SEQUENCE, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SEQUENCE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2388,11 +2055,8 @@ inline fapi2::ReturnCode get_efd_pmic2_swa_voltage_offset(const fapi2::Target<fa
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_EFD_PMIC2_SWA_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_EFD_PMIC2_SWA_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2409,11 +2073,8 @@ inline fapi2::ReturnCode get_efd_pmic2_swb_voltage_offset(const fapi2::Target<fa
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_EFD_PMIC2_SWB_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_EFD_PMIC2_SWB_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2430,11 +2091,8 @@ inline fapi2::ReturnCode get_efd_pmic2_swc_voltage_offset(const fapi2::Target<fa
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_EFD_PMIC2_SWC_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_EFD_PMIC2_SWC_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2451,11 +2109,8 @@ inline fapi2::ReturnCode get_efd_pmic2_swd_voltage_offset(const fapi2::Target<fa
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_EFD_PMIC2_SWD_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_EFD_PMIC2_SWD_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2473,11 +2128,8 @@ inline fapi2::ReturnCode get_pmic2_swa_current_warning(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWA_CURRENT_WARNING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWA_CURRENT_WARNING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2495,11 +2147,8 @@ inline fapi2::ReturnCode get_pmic2_swb_current_warning(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWB_CURRENT_WARNING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWB_CURRENT_WARNING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2517,11 +2166,8 @@ inline fapi2::ReturnCode get_pmic2_swc_current_warning(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWC_CURRENT_WARNING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWC_CURRENT_WARNING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2539,11 +2185,8 @@ inline fapi2::ReturnCode get_pmic2_swd_current_warning(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC2_SWD_CURRENT_WARNING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC2_SWD_CURRENT_WARNING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2560,11 +2203,8 @@ inline fapi2::ReturnCode get_pmic3_revision(const fapi2::Target<fapi2::TARGET_TY
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_REVISION, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_REVISION: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2581,11 +2221,8 @@ inline fapi2::ReturnCode get_pmic3_phase_comb(const fapi2::Target<fapi2::TARGET_
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_PHASE_COMB, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_PHASE_COMB: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2602,11 +2239,8 @@ inline fapi2::ReturnCode get_pmic3_sequence(const fapi2::Target<fapi2::TARGET_TY
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SEQUENCE, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SEQUENCE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2623,11 +2257,8 @@ inline fapi2::ReturnCode get_efd_pmic3_swa_voltage_offset(const fapi2::Target<fa
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_EFD_PMIC3_SWA_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_EFD_PMIC3_SWA_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2644,11 +2275,8 @@ inline fapi2::ReturnCode get_efd_pmic3_swb_voltage_offset(const fapi2::Target<fa
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_EFD_PMIC3_SWB_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_EFD_PMIC3_SWB_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2665,11 +2293,8 @@ inline fapi2::ReturnCode get_efd_pmic3_swc_voltage_offset(const fapi2::Target<fa
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_EFD_PMIC3_SWC_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_EFD_PMIC3_SWC_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2686,11 +2311,8 @@ inline fapi2::ReturnCode get_efd_pmic3_swd_voltage_offset(const fapi2::Target<fa
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_EFD_PMIC3_SWD_VOLTAGE_OFFSET, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_EFD_PMIC3_SWD_VOLTAGE_OFFSET: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2708,11 +2330,8 @@ inline fapi2::ReturnCode get_pmic3_swa_current_warning(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWA_CURRENT_WARNING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWA_CURRENT_WARNING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2730,11 +2349,8 @@ inline fapi2::ReturnCode get_pmic3_swb_current_warning(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWB_CURRENT_WARNING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWB_CURRENT_WARNING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2752,11 +2368,8 @@ inline fapi2::ReturnCode get_pmic3_swc_current_warning(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWC_CURRENT_WARNING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWC_CURRENT_WARNING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2774,11 +2387,8 @@ inline fapi2::ReturnCode get_pmic3_swd_current_warning(const fapi2::Target<fapi2
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_PMIC3_SWD_CURRENT_WARNING, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_EFF_PMIC3_SWD_CURRENT_WARNING: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2799,11 +2409,8 @@ inline fapi2::ReturnCode get_pmic_n_mode(const fapi2::Target<fapi2::TARGET_TYPE_
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_PMIC_4U_N_MODE, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_PMIC_4U_N_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
@@ -2823,11 +2430,8 @@ inline fapi2::ReturnCode get_pmic_force_n_mode(const fapi2::Target<fapi2::TARGET
 {
 
     FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_PMIC_FORCE_N_MODE, i_target, o_value) );
-    return fapi2::current_err;
 
 fapi_try_exit:
-    FAPI_ERR("failed getting ATTR_MEM_PMIC_FORCE_N_MODE: 0x%lx (target: " TARGTIDFORMAT ")",
-             uint64_t(fapi2::current_err), TARGTID);
     return fapi2::current_err;
 }
 
