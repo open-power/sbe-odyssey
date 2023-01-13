@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -67,52 +67,6 @@ ReturnCode plat_putRingImpl(const Target<K, M, V>& i_target,
               << "ring mode: " << i_ringMode
               << std::endl;
 
-    return FAPI2_RC_SUCCESS;
-}
-inline ReturnCode loadEmbeddedFile(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-                                   const char* i_path,
-                                   void*& o_data, size_t& o_size)
-{
-    std::cout << "   loadEmbeddedFile(" << i_path << ")" << std::endl;
-
-    FILE* f = fopen(i_path, "r");
-
-    if (!f)
-    {
-        std::cout << "      FILE NOT FOUND" << std::endl;
-        o_data = NULL;
-        o_size = 0;
-        return FAPI2_RC_FILE_NOT_FOUND;
-    }
-
-    fseek(f, 0, SEEK_END);
-    o_size = ftell(f);
-    o_data = malloc(o_size);
-
-    if (!o_data)
-    {
-        std::cout << "      OUT OF MEMORY (size: " << o_size << " bytes)" << std::endl;
-        return FAPI2_RC_PLAT_ERR_SEE_DATA;
-    }
-
-    fseek(f, 0, SEEK_SET);
-
-    if (fread(o_data, 1, o_size, f) != o_size)
-    {
-        std::cout << "      READ ERROR (size: " << o_size << " bytes)" << std::endl;
-        return FAPI2_RC_PLAT_ERR_SEE_DATA;
-    }
-
-    std::cout << "      SUCCESS (size: " << o_size << " bytes)" << std::endl;
-    return FAPI2_RC_SUCCESS;
-}
-
-/// @brief Free memory allocated by loadEmbeddedFile()
-/// @param[in] i_data  Pointer to file contents
-/// @return FAPI2_RC_SUCCESS on success, else error code
-inline ReturnCode freeEmbeddedFile(void* i_data)
-{
-    free(i_data);
     return FAPI2_RC_SUCCESS;
 }
 
@@ -360,6 +314,69 @@ struct InstanceTraits
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
+//// TEMPORARY MULTICAST GROUP MANAGEMENT
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @brief Utility class to set up a temporary multicast group, saving/restoring group members if necessary
+ */
+class ChipTarget
+{
+    public:
+        /**
+         * @brief Create a ChipTarget object
+         * @param[in]  i_chip_target   The chip target to encapsulate
+         */
+        ChipTarget(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_chip_target) :
+            iv_chip_target(i_chip_target), iv_mc_saved(false), iv_mc_saved_members(0) {}
+
+        /**
+         * @brief Clean up the target object, potentially restoring saved multicast groups
+         */
+        ~ChipTarget();
+
+        /**
+         * @brief Set up the temporary multicast group, saving its previous set of members
+         */
+        ReturnCode setup_scan_mc_group(uint64_t i_chiplets);
+
+        /**
+         * @brief Return the underlying chip target
+         */
+        inline const Target<TARGET_TYPE_ANY_POZ_CHIP>& operator()(void)
+        {
+            return iv_chip_target;
+        }
+
+    private:
+        const Target<TARGET_TYPE_ANY_POZ_CHIP>& iv_chip_target;
+        bool iv_mc_saved;
+        uint64_t iv_mc_saved_members;
+};
+
+ChipTarget::~ChipTarget()
+{
+    // Restore members of the temporary group iff we saved them off earlier
+    if (iv_mc_saved)
+    {
+        mod_multicast_setup(iv_chip_target, MCGROUP_SCAN_TARGETS, iv_mc_saved_members, TARGET_STATE_PRESENT);
+    }
+}
+
+ReturnCode ChipTarget::setup_scan_mc_group(uint64_t i_chiplets)
+{
+    // Save the members of the temporary group before we set it up for the first time
+    if (not iv_mc_saved)
+    {
+        iv_mc_saved_members = getGroupMembers(iv_chip_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_SCAN_TARGETS));
+        iv_mc_saved = true;
+    }
+
+    return mod_multicast_setup(iv_chip_target, MCGROUP_SCAN_TARGETS, i_chiplets, TARGET_STATE_FUNCTIONAL);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 //// SCAN APPLY ENGINE
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -379,10 +396,12 @@ struct InstanceTraits
 class ScanApplyEngine
 {
     public:
-        ScanApplyEngine(const Target<TARGET_TYPE_ALL_MC>& i_target,
+        ScanApplyEngine(ChipTarget& i_chip_target,
+                        const Target<TARGET_TYPE_ALL_MC>& i_target,
                         const CompressedScanData& i_image,
                         const RingMode i_ringMode) :
-            iv_target(i_target), iv_image(i_image), iv_ringMode(i_ringMode), iv_instanceTraits(i_image)
+            iv_chip_target(i_chip_target), iv_target(i_target), iv_image(i_image),
+            iv_ringMode(i_ringMode), iv_instanceTraits(i_image)
         {
             FAPI_DBG(">> ScanApplyEngine (version=%d type=0x%02x scanAddr=0x%08x size=%d",
                      i_image.iv_version.get(), i_image.iv_type.get(),
@@ -395,8 +414,6 @@ class ScanApplyEngine
                      iv_instanceTraits.instances_per_chiplet, iv_instanceTraits.scan_region_shift);
             FAPI_DBG("                   image_instance_chiplet=0x%02x image_local_instance=%d",
                      iv_instanceTraits.image_instance_chiplet, iv_instanceTraits.image_local_instance);
-
-            std::cout << "  i_target=" << i_target.get() << std::endl;
         }
 
         // The main entry point
@@ -404,6 +421,7 @@ class ScanApplyEngine
 
     private:
         // The constant data we're dragging along through the call chain
+        ChipTarget& iv_chip_target;
         const Target<TARGET_TYPE_ALL_MC>& iv_target;
         const CompressedScanData& iv_image;
         const RingMode iv_ringMode;
@@ -414,8 +432,7 @@ class ScanApplyEngine
 
         // The various code paths depending on the target
         ReturnCode applyToPervMCTarget(
-            const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > &i_perv_mc_target,
-            const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_chip_target);
+            const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > &i_perv_mc_target);
         ReturnCode applyToCoreMCTarget(
             const Target < TARGET_TYPE_CORE | TARGET_TYPE_MULTICAST > &i_target);
         ReturnCode applyToChipUnitTarget(
@@ -469,14 +486,16 @@ ReturnCode ScanApplyEngine::apply()
              * during istep 1.
              */
             auto l_perv_mc_target = l_chip_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD);
-            return applyToPervMCTarget(l_perv_mc_target, l_chip_target);
+
+            // Schlimme Dinge: We're assuming that in this case l_chip_target == iv_chip_target
+            return applyToPervMCTarget(l_perv_mc_target);
         }
     }
 
     /* Special case handling for multicast+multiregion core targets */
     /* Unicast core targets will be handled by the chip unit path below */
     {
-        Target < TARGET_TYPE_MULTICAST > l_core_mc_target;
+        Target < TARGET_TYPE_CORE | TARGET_TYPE_MULTICAST > l_core_mc_target;
 
         if (FAPI2_RC_SUCCESS == iv_target.reduceType(l_core_mc_target)
             && (iv_target.getCoreSelect() != 0))
@@ -502,8 +521,7 @@ ReturnCode ScanApplyEngine::apply()
             auto l_perv_mc_target_narrowed =
                 l_perv_mc_target.getParent < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > ();
 
-            auto l_chip_target = iv_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>();
-            return applyToPervMCTarget(l_perv_mc_target_narrowed, l_chip_target);
+            return applyToPervMCTarget(l_perv_mc_target_narrowed);
         }
     }
 
@@ -533,11 +551,9 @@ fapi_try_exit:
  * @brief Apply the image to a (potentially multicast) perv (i.e. chiplet) target
  *
  * @param[in] i_perv_mc_target The chiplet(s) to consider
- * @param[in] i_chip_target    The parent chip of those target(s)
  */
 ReturnCode ScanApplyEngine::applyToPervMCTarget(
-    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > &i_perv_mc_target,
-    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_chip_target)
+    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > &i_perv_mc_target)
 {
     // Determine the chiplets in the multicast group (or the single targeted chiplet)
     // and of those, the ones that would be covered by the scan image.
@@ -564,14 +580,14 @@ ReturnCode ScanApplyEngine::applyToPervMCTarget(
         // Construct a unicast target for further use.
         const int l_chiplet_id = __builtin_clzll(l_target_chiplets);  // clzll == count leading zeros long long
         FAPI_DBG("single chiplet %d", l_chiplet_id);
-        FAPI_TRY(getChiplet(i_chip_target, l_chiplet_id, l_scan_target));
+        FAPI_TRY(getChiplet(iv_chip_target(), l_chiplet_id, l_scan_target));
     }
     else if (l_target_chiplets != l_group_members)
     {
         // We have multiple chiplets but the incoming MC group has more members
         // than we need. Construct a new group to match our requirements.
-        mod_multicast_setup(i_chip_target, MCGROUP_SCAN_TARGETS, l_target_chiplets, TARGET_STATE_FUNCTIONAL);
-        l_scan_target = i_chip_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_SCAN_TARGETS);
+        FAPI_TRY(iv_chip_target.setup_scan_mc_group(l_target_chiplets));
+        l_scan_target = iv_chip_target().getMulticast<TARGET_TYPE_PERV>(MCGROUP_SCAN_TARGETS);
     }
 
     // We now know our target. Let's figure out the instance(s) within the chiplet(s) next.
@@ -749,10 +765,9 @@ fapi_try_exit:
 
 /**
  * @brief internal implementation of poz_applyCompositeImage
- *
- * This implementation assumes that the temporary MC group has alread been saved.
  */
-static ReturnCode applyCompositeImage(const Target<TARGET_TYPE_ALL_MC>& i_target,
+static ReturnCode applyCompositeImage(ChipTarget& i_chip_target,
+                                      const Target<TARGET_TYPE_ALL_MC>& i_target,
                                       const void* i_image,
                                       const size_t i_size,
                                       const RingMode i_ringMode)
@@ -778,7 +793,7 @@ static ReturnCode applyCompositeImage(const Target<TARGET_TYPE_ALL_MC>& i_target
                     offset, hdr->iv_magic.get(), hdr->iv_version.get(), RS4_VERSION);
 
         // Apply the RS4
-        FAPI_TRY(ScanApplyEngine(i_target, *hdr, i_ringMode).apply());
+        FAPI_TRY(ScanApplyEngine(i_chip_target, i_target, *hdr, i_ringMode).apply());
 
         // Skip to the end of the current RS4
         offset += hdr->iv_size.get();
@@ -788,33 +803,20 @@ fapi_try_exit:
     return current_err;
 }
 
-// For external calls, save off the MC group
 ReturnCode poz_applyCompositeImage(const Target<TARGET_TYPE_ALL_MC>& i_target,
                                    const void* i_image,
                                    const size_t i_size,
                                    const RingMode i_ringMode)
 {
-    // We might end up modifying an MC group that the calling code is already using,
-    // so we better save off its members and restore the group later.
-    const auto chip_target = i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>();
-    const uint64_t saved_scan_mc_members =
-        getGroupMembers(chip_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_SCAN_TARGETS));
-
-    FAPI_TRY(applyCompositeImage(i_target, i_image, i_size, i_ringMode));
-
-fapi_try_exit:
-    // Restore multicast group content.
-    // If we didn't change the group this will be a no-op
-    // (apart from a single SCOM to check that we didn't).
-    mod_multicast_setup(chip_target, MCGROUP_SCAN_TARGETS, saved_scan_mc_members, TARGET_STATE_PRESENT);
-    return current_err;
+    auto chip_target = ChipTarget(i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>());
+    return applyCompositeImage(chip_target, i_target, i_image, i_size, i_ringMode);
 }
 
 /**
  * @brief Try to load a composite scan image by file name and apply it if found
  *
- * @param[in] i_target      Target to apply to
  * @param[in] i_chip_target Parent chip of the scan target
+ * @param[in] i_target      Target to apply to
  * @param[in] i_fname       Full path name of the scan image
  * @param[in] i_ringMode    Scan mode flags
  *
@@ -822,14 +824,14 @@ fapi_try_exit:
  *         FAPI2_RC_SUCCESS also if the image was not found(!!)
  *         something else otherwise
  */
-static ReturnCode tryLoadCompositeImage(const Target<TARGET_TYPE_ALL_MC>& i_target,
-                                        const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_chip_target,
+static ReturnCode tryLoadCompositeImage(ChipTarget& i_chip_target,
+                                        const Target<TARGET_TYPE_ALL_MC>& i_target,
                                         const char* i_fname,
                                         const RingMode i_ringMode)
 {
     void* image;
     size_t image_size;
-    ReturnCode rc = loadEmbeddedFile(i_chip_target, i_fname, image, image_size);
+    ReturnCode rc = loadEmbeddedFile(i_chip_target(), i_fname, image, image_size);
 
     if (rc == FAPI2_RC_FILE_NOT_FOUND)
     {
@@ -844,7 +846,7 @@ static ReturnCode tryLoadCompositeImage(const Target<TARGET_TYPE_ALL_MC>& i_targ
 
     // Hooray, we loaded the image; now do something with it!
     FAPI_DBG("Loaded image %s", i_fname);
-    FAPI_TRY(poz_applyCompositeImage(i_target, image, image_size, i_ringMode));
+    FAPI_TRY(applyCompositeImage(i_chip_target, i_target, image, image_size, i_ringMode));
 
 fapi_try_exit:
     freeEmbeddedFile(image);
@@ -858,15 +860,11 @@ ReturnCode poz_putRingBackend(const Target<TARGET_TYPE_ALL_MC>& i_target,
     char fname[RING_ID_MAXLEN + 16];
     memcpy(fname, ringBaseDir, sizeof(ringBaseDir));
 
-    // We might end up modifying an MC group that the calling code is already using,
-    // so we better save off its members and restore the group later.
-    const auto chip_target = i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>();
-    const uint64_t saved_scan_mc_members =
-        getGroupMembers(chip_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_SCAN_TARGETS));
+    auto chip_target = ChipTarget(i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>());
 
     // Grab the vector of dynamic chip features
     ATTR_DYNAMIC_INIT_FEATURE_VEC_Type dynamic_features;
-    FAPI_TRY(FAPI_ATTR_GET(ATTR_DYNAMIC_INIT_FEATURE_VEC, chip_target, dynamic_features));
+    FAPI_TRY(FAPI_ATTR_GET(ATTR_DYNAMIC_INIT_FEATURE_VEC, chip_target(), dynamic_features));
 
     // Iterate over all possible ring subdirs in order
     for (auto type : ringTypeOrder)
@@ -891,7 +889,7 @@ ReturnCode poz_putRingBackend(const Target<TARGET_TYPE_ALL_MC>& i_target,
                         // and append the image name
                         strhex(ptr - 3, word * 64 + ovid, 2);
                         stpcpy(ptr, i_ring_id);
-                        FAPI_TRY(tryLoadCompositeImage(i_target, chip_target, fname, i_ringMode));
+                        FAPI_TRY(tryLoadCompositeImage(chip_target, i_target, fname, i_ringMode));
                     }
                 }
             }
@@ -900,14 +898,10 @@ ReturnCode poz_putRingBackend(const Target<TARGET_TYPE_ALL_MC>& i_target,
         {
             // On anything other than dynXX we just append the image name and can proceed
             stpcpy(ptr, i_ring_id);
-            FAPI_TRY(tryLoadCompositeImage(i_target, chip_target, fname, i_ringMode));
+            FAPI_TRY(tryLoadCompositeImage(chip_target, i_target, fname, i_ringMode));
         }
     }
 
 fapi_try_exit:
-    // Restore multicast group content.
-    // If we didn't change the group this will be a no-op
-    // (apart from a single SCOM to check that we didn't).
-    mod_multicast_setup(chip_target, MCGROUP_SCAN_TARGETS, saved_scan_mc_members, TARGET_STATE_PRESENT);
     return current_err;
 }
