@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -29,7 +29,7 @@
 
 GENERATED = gen_ody_accessors
 COMMAND = gen_accessors.pl
-$(GENERATED)_COMMAND_PATH = $(MSS_INTERNAL)/generic/tools/
+$(GENERATED)_COMMAND_PATH = $(MSS_INTERNAL)/generic/memory/tools/
 
 OUTPATH = $(MSS_PATH)/odyssey/hwp/lib
 FILE_PREFIX = mss_odyssey
