@@ -36,6 +36,10 @@
 #include <poz_perv_utils.H>
 #include <poz_ring_ids.H>
 
+#ifdef __PPE__
+    #include "ppe42_string.h"
+#endif
+
 #define SCOMT_OMIT_FIELD_ACCESSORS
 #include <p11_scom_perv_tpchip.H>
 
@@ -457,7 +461,14 @@ ReturnCode ScanApplyEngine::checkScanTargetType(const TargetType i_allowedTypes)
                 .set_TARGET(iv_target)
                 .set_VALID_TARGET_TYPES(i_allowedTypes)
                 .set_RS4_TARGET_TYPE(l_targetType)
+#ifndef __PPE__
                 .set_RS4_HEADER(iv_image),
+#else
+                .set_RS4_HEADER((uint64_t)(iv_image.iv_magic.get()) << 48 |
+                                (uint64_t)(iv_image.iv_version.get()) << 40 |
+                                (uint64_t)(iv_image.iv_type.get()) << 32  |
+                                (uint64_t)(iv_image.iv_scanAddr.get()) ) ,
+#endif
                 "Scan image target type (%d) does not fit expected target types (0x%08x%08x) based on target",
                 l_logTargetType, i_allowedTypes >> 32, i_allowedTypes & 0xFFFFFFFF);
 
@@ -658,7 +669,14 @@ ReturnCode ScanApplyEngine::applyToCoreMCTarget(
                 .set_TARGET(i_target)
                 .set_CORE_SELECT(core_select)
                 .set_REGIONS(scan_regions)
+#ifndef __PPE__
                 .set_RS4_HEADER(iv_image),
+#else
+                .set_RS4_HEADER((uint64_t)(iv_image.iv_magic.get()) << 48 |
+                                (uint64_t)(iv_image.iv_version.get()) << 40 |
+                                (uint64_t)(iv_image.iv_type.get()) << 32  |
+                                (uint64_t)(iv_image.iv_scanAddr.get()) ) ,
+#endif
                 "Core multicast scan attempted with empty core selection or "
                 "on regions that don't support parallel scan: "
                 "core_select=%d scan_regions=0x%04x", core_select, scan_regions);
@@ -784,7 +802,14 @@ static ReturnCode applyCompositeImage(ChipTarget& i_chip_target,
         // Check that we didn't veer off course
         FAPI_ASSERT(hdr->iv_magic.get() == RS4_MAGIC && hdr->iv_version.get() == RS4_VERSION,
                     INVALID_RING_IMAGE()
+#ifndef __PPE__
                     .set_RS4_HEADER(*hdr)
+#else
+                    .set_RS4_HEADER((uint64_t)(hdr->iv_magic.get()) << 48 |
+                                    (uint64_t)(hdr->iv_version.get()) << 40 |
+                                    (uint64_t)(hdr->iv_type.get()) << 32  |
+                                    (uint64_t)(hdr->iv_scanAddr.get()) )
+#endif
                     .set_OFFSET(offset)
                     .set_MAGIC(hdr->iv_magic.get())
                     .set_VERSION(hdr->iv_version.get())
@@ -829,7 +854,7 @@ static ReturnCode tryLoadCompositeImage(ChipTarget& i_chip_target,
                                         const char* i_fname,
                                         const RingMode i_ringMode)
 {
-    void* image;
+    void* image = NULL;
     size_t image_size;
     ReturnCode rc = loadEmbeddedFile(i_chip_target(), i_fname, image, image_size);
 
@@ -845,7 +870,9 @@ static ReturnCode tryLoadCompositeImage(ChipTarget& i_chip_target,
     }
 
     // Hooray, we loaded the image; now do something with it!
+#ifndef __PPE__
     FAPI_DBG("Loaded image %s", i_fname);
+#endif
     FAPI_TRY(applyCompositeImage(i_chip_target, i_target, image, image_size, i_ringMode));
 
 fapi_try_exit:

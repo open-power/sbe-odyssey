@@ -75,12 +75,12 @@
   <entry name="ATTR_SCAN0_SCAN_RATIO">
     <value>0x0</value>
   </entry>
-
-
-<!-- @mem HWP : Memory attributes added from here  -->
+  <entry name="ATTR_DYNAMIC_INIT_FEATURE_VEC">
+    <value>0x0</value>
+    <value>0x0</value>
+  </entry>
   <entry name="ATTR_IS_SIMICS">
     <value>0x0</value>
   </entry>
-
 
 </entries>

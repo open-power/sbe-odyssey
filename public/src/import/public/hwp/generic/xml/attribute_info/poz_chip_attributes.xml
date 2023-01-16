@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022                             -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -34,7 +34,7 @@
      Note: multiple features can be selected at once.
     </description>
     <valueType>uint64</valueType>
-    <array>1</array>
+    <array>2</array>
     <initToZero/>
     <writeable/>
     <persistRuntime/>

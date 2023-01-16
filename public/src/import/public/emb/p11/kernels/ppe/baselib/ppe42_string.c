@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -389,6 +389,18 @@ char* strchr(const char* s, int c)
 
     return NULL;
 }
+
+char* stpcpy(char* dest, const char* src)
+{
+    while (*src)
+    {
+        *dest++ = *src++;
+    }
+
+    *dest = *src;
+    return dest;
+}
+
 #ifdef __cplusplus
 };
 #endif
