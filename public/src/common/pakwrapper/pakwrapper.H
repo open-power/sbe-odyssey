@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -52,22 +52,30 @@ class PakWrapper
          * @param[in] i_destinationAddr Destination buffer address.
          * @param[in] i_destinationBufferSize Size of destination buffer.
          * @param[out] o_hash Pointer to sha3_t, if NULL no hash is returned else hash is returned.
-         * @param[out] o_uncompressedSize Pointer to uncompressed file size.
+         * @param[out] o_uncompressedSize Pointer to uncompressed file size in bytes.
          */
         ARC_RET_t read_file(const char* i_fileName, void* i_destinationAddr, uint32_t i_destinationBufferSize, sha3_t* o_hash, uint32_t *o_uncompressedSize);
 
         /**
-         * @brief Get image start offset in nor
+         * @brief Get image start offset and size.
          *
          * @param[in] i_fileName pointer to file name to look for.
-         * @param[out] pointer to image start offset
+         * @param[out] o_imageStartPtr pointer to image start offset
+         * @param[out] o_uncompressedSize Pointer to uncompressed file size in bytes.
+         *
          * */
-        uint8_t* get_image_start_ptr(const char* i_fileName);
+        ARC_RET_t get_image_start_ptr_and_size(const char* i_fileName, uint8_t* o_imageStartPtr = NULL, uint32_t *o_uncompressedSize = NULL);
 
         __attribute__((always_inline))
         uint32_t get_size()
         {
             return fileArchiveEntry.get_size();
+        }
+
+        __attribute__((always_inline))
+        void* archive_end()
+        {
+            return iv_fileArchive.archive_end();
         }
 
         __attribute__((always_inline))
