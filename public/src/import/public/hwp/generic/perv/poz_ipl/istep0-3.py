@@ -919,7 +919,7 @@ def p11_sbe_start(vector<Target<COMPUTE_CHIP | HUB_CHIP>> & i_targets):
         delay(1ms, 10kcyc)
         all_done = true
         for chip in i_targets:
-            all_done = all_done and SB_MSG2[0]     # SB_MSG2 not defined in headers yet, it's at 5000A
+            all_done = all_done and SB2_MSG[0]
         if all_done:
             break
 
