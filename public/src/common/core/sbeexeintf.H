@@ -64,24 +64,6 @@ typedef enum
 } sbeThreadPriorities ;
 
 /**
- * @brief enums for thread stack sizes
- *  - Non-Critical Stack used by non-critical interrupt handlers
- *  - Critical Stack used for critical interrupts
- *  - Stacks for each thread
- *
- * @TODO via RTC : 128657
- *  - Measure the actual thread stack utilization
- *  - This will be a continuous activity
- */
-enum sbeThreadStackSize
-{
-    SBE_NONCRITICAL_STACK_SIZE           = 512,
-    SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE = 6144,  //6K of stack to thermal sensor polling
-    SBE_THREAD_CMD_RECV_STACK_SIZE       = 512,
-    SBE_THREAD_SYNC_CMD_PROC_STACK_SIZE  = 12288, //12K of Stack to handle large rings
-};
-
-/**
  *  @brief SBE Interface source
  *
  */
@@ -108,6 +90,11 @@ typedef enum
     SBE_INTERFACE_PIPE7_RESET        = 0x00020000,
     SBE_INTERFACE_PIPE8              = 0x00040000,
     SBE_INTERFACE_PIPE8_RESET        = 0x00080000,
+    SBE_INTERFACE_PSU                = 0x00100000,
+    SBE_INTERFACE_TAP_XSTOP          = 0x00200000,
+    SBE_INTERFACE_TAP_ATTN           = 0x00400000,
+    SBE_INTERFACE_TAP_FIFO           = 0x00800000,
+    SBE_INTERFACE_TAP_SBE2FSI        = 0x01000000,
     SBE_INTERFACE_MASK_DATA_ALL      = (SBE_INTERFACE_FIFO  |
                                         SBE_INTERFACE_HFIFO |
                                         SBE_INTERFACE_PIPE1 |
@@ -128,6 +115,7 @@ typedef enum
                                        SBE_INTERFACE_PIPE6_RESET|
                                        SBE_INTERFACE_PIPE7_RESET|
                                        SBE_INTERFACE_PIPE8_RESET),
+
 } sbeInterfaceSrc_t;
 
 /*
@@ -250,24 +238,5 @@ void sbeSyncCommandProcessor_routine(void *i_pArg);
  *  @param[in]  i_pArg - Any buffer needed to be passed to the thread routine
  */
 void sbeAsyncCommandProcessor_routine(void *i_pArg);
-
-/* @brief  ISR for all SBE External Interrupts
- *         - FIFO : New data available
- *         - FIFO : Reset Request
- *         - PSU  : New data available
- *
- * @param[in/out]  i_pArg - Any buffer needed to be passed to the handler
- * @param[in]      i_irq  - IRQ number as defined in the SBE PPE spec
- */
-void sbe_interrupt_handler(void* i_pArg, PkIrqId i_irq);
-
-/* brief : Register SBE interrupt handlers and enable the IRQs
- *
- * @return int   PK_OK - Success (IRQ Setup was successful)
- *               PK_INVALID_ARGUMENT_IRQ_HANDLER - Invalid argument passed
- *                                                 (Code bug)
- */
-int sbeIRQSetup (void);
-
 
 #endif /* __SBEFW_SBE_H  */
