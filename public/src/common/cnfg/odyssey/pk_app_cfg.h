@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -47,16 +48,16 @@
     SBE_IRQ_SBEFIFO_DATA        STD_IRQ_TYPE_LEVEL   STD_IRQ_POLARITY_RISING    STD_IRQ_MASKED \
 
 /*
- * @brief This 64 bit mask specifies which of the interrupts are not to be used.
+ * @brief This 64 bit mask specifies which of the interrupts are not to be used or unavailable to this platform.
  *
  */
 #define APPCFG_IRQ_INVALID_MASK \
 (\
    STD_IRQ_MASK64(SBE_IRQ_RESERVED_4) | \
-   STD_IRQ_MASK64(SBE_IRQ_RESERVED_7) | \
-   STD_IRQ_MASK64(SBE_IRQ_RESERVED_8) | \
-   STD_IRQ_MASK64(SBE_IRQ_RESERVED_9) |  \
-   STD_IRQ_MASK64(SBE_IRQ_RESERVED_10) |  \
+   STD_IRQ_MASK64(SBE_IRQ_SBEPSU) | \
+   STD_IRQ_MASK64(SBE_IRQ_SBETRIG) | \
+   STD_IRQ_MASK64(SBE_IRQ_SBEXSTOP) | \
+   STD_IRQ_MASK64(SBE_IRQ_TAP_ATTN) | \
    STD_IRQ_MASK64(SBE_IRQ_RESERVED_11) |  \
    STD_IRQ_MASK64(SBE_IRQ_RESERVED_12) |  \
    STD_IRQ_MASK64(SBE_IRQ_RESERVED_13) |  \
@@ -140,9 +141,36 @@
 #endif
 #define PPE_CAPTURE_INTERRUPT_FFDC SBE_INTERRUPT_REGISTER_SAVEOFF
 
-// Set the trace buffer size
-#ifdef PK_TRACE_SZ
-#undef PK_TRACE_SZ
+/**
+ * @brief enums for thread stack sizes
+ *  - Non-Critical Stack used by non-critical interrupt handlers
+ *  - Critical Stack used for critical interrupts
+ *  - Stacks for each thread
+ */
+#ifdef SBE_NONCRITICAL_STACK_SIZE
+#undef SBE_NONCRITICAL_STACK_SIZE
 #endif
-#define PK_TRACE_SZ 2048
+#define SBE_NONCRITICAL_STACK_SIZE              512
+
+
+#ifdef SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE
+#undef SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE
+#endif
+// 6K of stack to thermal sensor polling
+#define SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE    6144
+
+
+#ifdef SBE_THREAD_CMD_RECV_STACK_SIZE
+#undef SBE_THREAD_CMD_RECV_STACK_SIZE
+#endif
+#define SBE_THREAD_CMD_RECV_STACK_SIZE          512
+
+
+#ifdef SBE_THREAD_SYNC_CMD_PROC_STACK_SIZE
+#undef SBE_THREAD_SYNC_CMD_PROC_STACK_SIZE
+#endif
+//12K of Stack to handle large rings
+#define SBE_THREAD_SYNC_CMD_PROC_STACK_SIZE     12288
+
+
 #endif /*__PK_APP_CFG_H__*/

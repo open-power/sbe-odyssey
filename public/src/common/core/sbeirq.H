@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -42,12 +42,12 @@
 #define SBE_IRQ_INTR1           3   /* SBE Interrupt S1 */
 #define SBE_IRQ_SBEFIFO_RESET   5   /* FIFO - Reset request from SE */
 #define SBE_IRQ_SBEFIFO_DATA    6   /* FIFO - Incoming Data Available */
+#define SBE_IRQ_SBEPSU          7   /* PSU interrupt */
+#define SBE_IRQ_SBETRIG         8   /* SBE Debug trigger */
+#define SBE_IRQ_SBEXSTOP        9   /* SBE xstop interupt */
+#define SBE_IRQ_TAP_ATTN        10  /* SBE SPPE xstop + tap attn */
 
 #define SBE_IRQ_RESERVED_4   4
-#define SBE_IRQ_RESERVED_7   7
-#define SBE_IRQ_RESERVED_8   8
-#define SBE_IRQ_RESERVED_9   9
-#define SBE_IRQ_RESERVED_10 10
 #define SBE_IRQ_RESERVED_11 11
 #define SBE_IRQ_RESERVED_12 12
 #define SBE_IRQ_RESERVED_13 13

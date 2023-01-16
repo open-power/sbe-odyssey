@@ -46,6 +46,7 @@
 #include "sbethermalsensorpolltimer.H"
 #include "sbetspolling.H"
 #include "securityutils.H"
+#include "irqutils.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -179,8 +180,9 @@ int  main(int argc, char **argv)
         {
             break;
         }
+
         // Setup SBE PPE IRQs
-        rc = sbeIRQSetup();
+        rc = sbeIrqSetup( );
         if (rc)
         {
             break;

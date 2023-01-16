@@ -27,7 +27,8 @@ COMMON_CHIPOPS_JSON = files('chipop_table.json')[0]
 runtime_cmn_core_dir_path = meson.global_source_root() + '/public/src/runtime/common/core/'
 
 infile_c = ['sbeSpMsg.C',
-            'sbeirq.C',
+            'irqutils.C',
+            'sbeirqhandler.C',
             'sbeFifoMsgUtils.C',
             'sbeglobals.C',
             'chipophandlerutils.C',

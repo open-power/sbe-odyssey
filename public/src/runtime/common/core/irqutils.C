@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/core/sbeirq.C $                     */
+/* $Source: public/src/runtime/common/core/irqutils.C $                   */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,146 +22,246 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-/*
- * @file: ppe/sbe/sbefw/sbeirq.C
- *
- * @brief This sets up and registers SBE ISRs
- *
- */
 
-#include "sbeexeintf.H"
-#include "sbeirq.H"
-#include "sbetrace.H"
-#include "sbeglobals.H"
+#include "irqutils.H"
 #include "assert.h"
-#include "sbeirqregistersave.H"
 #include "ppe42_scom.h"
+#include "sbeirqhandler.H"
+#include "sbeirqregistersave.H"
+#include "sbeglobals.H"
 #include "sbeFifoMsgUtils.H"
 
-////////////////////////////////////////////////////////////////
-// @brief:     SBE control loop ISR:
-//               - FIFO reset request
-//               - FIFO new data available
-//
-// @param[in]  i_pArg - Unused
-// @param[in]  i_irq  - IRQ number as defined in sbeirq.h
-//
-////////////////////////////////////////////////////////////////
-void sbe_interrupt_handler (void *i_pArg, PkIrqId i_irq)
+
+/**
+ * @brief Common IRQ register data (common across all plat).
+ *        Add here common IRQ handler with callback, This is strut
+ *        array of @ref sIrqRegData_t
+ *
+ * This is COMMON IRQ REGISTER DATA, which is common across all platform
+ * This will be used in plat code for IRQ enable (register).
+ *
+ * Before modify the COMMON IRQ file please read below steps.
+ * NOTE:
+ * 1. Callback function can be declared in plat/common
+ * 2. Given enough flexible to register irq handler and callback,
+ *    so need maintain commonality by following below guideline:
+ *    - Function are common across more than two plat, put it in
+ *      @file irqutils.C be treated as utils functions
+ *    - Given Override option for common callback handler in plat, in case
+ *      callback functionality change specific to plat
+ *    - Sometime irq utils functions can be treated as callback handler
+ * 3. IRQ's which are specific to plat will be declared in plat and registered
+ *    as part of plat
+ * 4. @ref g_IrqRegList can be override in plat code for plat related irq's
+ */
+sIrqRegData_t g_IrqRegList[ ] =
 {
-    #define SBE_FUNC " sbe_interrupt_handler "
-    SBE_INFO(SBE_FUNC"i_irq=[0x%02X]",i_irq);
-
-    int l_rc = 0;
-    sbeInterfaceSrc_t curInterface = SBE_INTERFACE_UNKNOWN;
-    sbeFifoType fifoType = SBE_FIFO_UNKNOWN;
-    switch (i_irq)
     {
-        case SBE_IRQ_SBEFIFO_RESET:
-	  fifoType = sbeFifoGetSource(true, SBE_GLOBAL->pibCtrlId);
-            curInterface = sbeFifoGetInstSource(fifoType, true);
-            SBE_GLOBAL->sbeIntrSource.setIntrSource(SBE_INTERRUPT_ROUTINE,
-                                                    curInterface);
-            SBE_INFO(SBE_FUNC "reset irq fifotype=0x%08x, curInterface=0x%08x",
-                     fifoType, curInterface);
-            pk_irq_disable(SBE_IRQ_SBEFIFO_DATA);
-            break;
-
-        case SBE_IRQ_SBEFIFO_DATA:
-            fifoType = sbeFifoGetSource(false, SBE_GLOBAL->pibCtrlId);
-            curInterface = sbeFifoGetInstSource(fifoType, false);
-            SBE_GLOBAL->sbeIntrSource.setIntrSource(SBE_INTERRUPT_ROUTINE,
-                                                    curInterface);
-            SBE_INFO(SBE_FUNC "data irq fifotype=0x%08x, curInterface=0x%08x",
-                     fifoType, curInterface);
-            pk_irq_disable(SBE_IRQ_SBEFIFO_RESET);
-            break;
-
-        default:
-            SBE_ERROR(SBE_FUNC"Unknown IRQ, assert");
-            assert(0);
-            break;
-    }
-
-    if (fifoType != SBE_FIFO_UNKNOWN)
+        .eSbeIntNo        = SBE_INT_FIFO_RESET,      /// Interrupt Number
+        .IrqHandler       = IrqHandlerFifoReset,     /// IRQ default handler define in @file sbeirqhandler.C
+        .CallbackHandler  = SbeIrqCommonCallbackFifo,/// IRQ callback function
+    },
     {
-        // Mask the interrupt
-        pk_irq_disable(i_irq);
+        .eSbeIntNo        = SBE_INT_FIFO_DATA,       /// Interrupt Number
+        .IrqHandler       = IrqHandlerFifoData,      /// IRQ default handler define in @file sbeirqhandler.C
+        .CallbackHandler  = SbeIrqCommonCallbackFifo,/// IRQ callback function
+    },
+};
 
-        // @TODO via PFSBE-169: This is safe for now, but can break as code
-        //       supports more types of interrupts
-        SBE_GLOBAL->activeUsFifo = fifoType;
-        SBE_GLOBAL->activeInterface = curInterface;
+/********************** Function ****************************/
 
-        // Unblock the command receiver thread
-        l_rc = pk_semaphore_post(&SBE_GLOBAL->semphores.sbeSemCmdRecv);
-        if (l_rc)
-        {
-            // If we received an error while posting the semaphore,
-            // unmask the interrupt back and assert
-            SBE_ERROR(SBE_FUNC"pk_semaphore_post failed, rc=[%d]", l_rc);
-            pk_irq_enable(i_irq);
-            assert(!l_rc);
-        }
-    }
-    #undef SBE_FUNC
+/**
+ * @brief Get global COMMON IRQ register data size
+ */
+uint8_t SbeIrqGetCmnIrqDataSize(void)
+{
+    return (sizeof(g_IrqRegList)/sizeof(sIrqRegData_t));
 }
 
-// Interrupts which are available in SBE, in an array
-static uint32_t G_supported_irqs[] = {
-                                        SBE_IRQ_SBEFIFO_DATA,
-                                        SBE_IRQ_SBEFIFO_RESET,
-                                     };
 
-// Create the Vector mask for all the interrupts in SBE,
-// required to call disable/enable with this vector mask
-constexpr uint64_t getVectorMask ( size_t index )
+/**
+ * @brief Function of enable SBE interrupts
+ */
+eSbeIrqStatus_t SbeIrqEnable (eSbeIntNo_t i_SbeIntNo,
+                                IrqHandlerFunc_t i_pIrqHandler,
+                                IrqCallbackFunc_t i_pCallbackHandler)
 {
-    return (index >= (sizeof(G_supported_irqs)/sizeof(uint32_t))?
-        0:STD_IRQ_MASK64(G_supported_irqs[index])|getVectorMask(index + 1));
-}
-
-////////////////////////////////////////////////////////////////
-// See sbeexeintf.h for more details
-////////////////////////////////////////////////////////////////
-int sbeIRQSetup (void)
-{
-    #define SBE_FUNC " sbeIRQSetup "
+    #define SBE_FUNC "SbeIrqEnable: "
+    eSbeIrqStatus_t status = SBE_IRQ_STATUS_SUCCESS;
     int rc = 0;
-    uint64_t vector_mask = getVectorMask(0);
 
-    // Disable the relevant IRQs while we set them up
-    pk_irq_vec_disable(vector_mask);
-
-    for(uint32_t cnt=0; cnt<sizeof(G_supported_irqs)/sizeof(uint32_t); cnt++)
+    do
     {
-        // Register the IRQ handler with PK
-        SBE_INFO(SBE_FUNC " Registering the interrupt handler for count %d and IRQ %d", cnt, G_supported_irqs[cnt]);
-        rc = pk_irq_handler_set(G_supported_irqs[cnt], sbe_interrupt_handler, NULL);
-        if(rc)
+        /* Check Valid Irq */
+        if ((SBE_IRQ_CHECK_VALID_IRQ(i_SbeIntNo) != true) ||
+            (i_pIrqHandler == NULL))
         {
-            SBE_ERROR (SBE_FUNC "pk_irq_handler_set failed, IRQ=[0x%02X], "
-                "rc=[%d]", G_supported_irqs[cnt], rc);
+            SBE_ERROR (SBE_FUNC "SBE_IRQ_CHECK_VALID_IRQ failed, IRQ=[0x%02X]",
+                                                                    i_SbeIntNo);
+            status = SBE_IRQ_STATUS_ARG_INVALID;
             break;
         }
-    }
 
-    if(!rc)
-    {
+        // Disable the relevant IRQs while we set them up
+        pk_irq_disable(i_SbeIntNo);
+
+        SBE_DEBUG(SBE_FUNC "Registering the interrupt handler IRQ=[0x%02X]", i_SbeIntNo);
+        /* Registering the Handler and callback to PK */
+        rc = pk_irq_handler_set(i_SbeIntNo, (PkIrqHandler) i_pIrqHandler, (void *) i_pCallbackHandler);
+        if (rc != PK_OK)
+        {
+            SBE_ERROR (SBE_FUNC "pk_irq_handler_set failed, IRQ=[0x%02X]"
+                "rc=[%d]", i_SbeIntNo, rc);
+            status = SBE_IRQ_STATUS_ERROR;
+            break;
+        }
+
         // Enable the IRQ
-        pk_irq_vec_enable(vector_mask);
-    }
+        pk_irq_enable(i_SbeIntNo);
+    }while(0);
 
-    return rc;
+    return status;
     #undef SBE_FUNC
 }
 
-#if !defined(__SBEMFW_MEASUREMENT__) && !defined(__SBEVFW_VERIFICATION__)
+
+/**
+ * @brief Function to setup the SBE IRQ for given array
+ */
+eSbeIrqStatus_t SbeIrqEnable(sIrqRegData_t i_irqRegData[], uint32_t i_size)
+{
+    #define SBE_FUNC "SbeIrqEnable: "
+    eSbeIrqStatus_t status = SBE_IRQ_STATUS_SUCCESS;
+
+    do
+    {
+        if ((i_irqRegData == NULL) || i_size == 0)
+        {
+            status = SBE_IRQ_STATUS_ARG_INVALID;
+            break;
+        }
+
+        /* IRQ register */
+        for (uint16_t i = 0; i < i_size; i++)
+        {
+            SBE_INFO (SBE_FUNC "Cmn IRQ Setup No: %d", i_irqRegData[i].eSbeIntNo);
+            status = SbeIrqEnable ( i_irqRegData[i].eSbeIntNo,
+                                    i_irqRegData[i].IrqHandler,
+                                    i_irqRegData[i].CallbackHandler);
+            if (status != SBE_IRQ_STATUS_SUCCESS)
+            {
+                SBE_ERROR(SBE_FUNC "IRQ setup failed,IRQ no: %d, RC: %d",
+                                                i_irqRegData[i].eSbeIntNo, status);
+                status = SBE_IRQ_STATUS_ERROR;
+                break;
+            }
+        }
+    }while(0);
+
+    return status;
+    #undef SBE_FUNC
+}
+
+
+/**
+ * @brief Common IRQ setup function
+ */
+eSbeIrqStatus_t sbeIrqSetup(void)
+{
+    #define SBE_FUNC "sbeIrqSetup: "
+
+    eSbeIrqStatus_t status = SBE_IRQ_STATUS_SUCCESS;
+
+    /* Common data register */
+    status = SbeIrqEnable( g_IrqRegList,
+                          (sizeof(g_IrqRegList)/sizeof(sIrqRegData_t)) );
+
+    return status;
+    #undef SBE_FUNC
+}
+
+/*********************** plat related functions *******************************/
+/**
+ * @brief Platform IRQ setup function
+ */
+eSbeIrqStatus_t sbeIrqSetup( sIrqRegData_t i_irqRegData[ ],
+                             uint32_t i_regDataSize)
+{
+    #define SBE_FUNC "sbeIrqSetup: "
+    eSbeIrqStatus_t status = SBE_IRQ_STATUS_SUCCESS;
+
+    do
+    {
+        status = sbeIrqSetup();
+        if (status != SBE_IRQ_STATUS_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC "Common sbeIrqSetup failure, RC; [0x%08X]",
+                                                                        status);
+            status = SBE_IRQ_STATUS_ERROR;
+            break;
+        }
+
+        status = SbeIrqEnable (i_irqRegData, i_regDataSize);
+        if (status != SBE_IRQ_STATUS_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC "Plat sbeIrqSetup failure, RC; [0x%08X]",
+                                                                        status);
+            status = SBE_IRQ_STATUS_ERROR;
+            break;
+        }
+    }while(false);
+
+    return status;
+    #undef SBE_FUNC
+}
+
+
+
+/***************************** utils functions ************************/
+
+/**
+ * @brief IRQ until function for post sema to receiver task
+ */
+void IrqUtilsPostReceiverSema(uint8_t i_irq)
+{
+    // Mask the interrupt
+    pk_irq_disable(i_irq);
+
+    // Unblock the command receiver thread
+    int l_rc = pk_semaphore_post(&SBE_GLOBAL->semphores.sbeSemCmdRecv);
+    if (l_rc)
+    {
+        // If we received an error while posting the semaphore,
+        // unmask the interrupt back and assert
+        SBE_ERROR("IrqUtils_iPostReceiverSema: pk_semaphore_post failed,"
+                                                            "rc=[%d]", l_rc);
+        pk_irq_enable((PkIrqId) i_irq);
+        assert(!l_rc);
+    }
+}
+
+
+/***************************** Common callback ************************/
+
+/**
+ * @brief SBE FIFO Common specific irq callback function
+ */
+void SbeIrqCommonCallbackFifo(PkIrqId i_irq, void * i_pArg)
+{
+    #define SBE_FUNC "SbeIrqCommonCallbackFifo: "
+
+    SBE_INFO(SBE_FUNC "Common IRQ Callback Func, IRQ no: %d", i_irq);
+    IrqUtilsPostReceiverSema(i_irq);
+
+    #undef SBE_FUNC
+}
+
+
+
 ///////////////////////////////////////////////////////////////////
 // SBE handler to save off specific registers
 ///////////////////////////////////////////////////////////////////
 registersave_t __g_register_ffdc __attribute__((aligned(8), section (".sbss")));
-//registersave_t __g_register_ffdc __attribute__ ((aligned(8)));
 uint64_t __g_address_for_register_ffdc = (uint32_t)&__g_register_ffdc;
 uint32_t __g_isParityError __attribute__((section (".sbss"))) = 0;
 
@@ -361,4 +461,3 @@ extern "C" void __sbe_machine_check_handler()
         "rfi\n"
     );
 }
-#endif
