@@ -249,7 +249,7 @@ fapi2::ReturnCode getscom_abs_wrap(const void *i_target,
     l_addr = getEffectiveAddress((uint32_t *)i_target, i_addr, isIndirectScom);
     l_pibRc = getscom_abs(l_addr, o_data);
 
-    SBE_INFO("SCOMOUT  %08X %08X%08X",
+    SBE_DEBUG("SCOMOUT  %08X %08X%08X",
                     l_addr,
                     *((uint32_t*)o_data),
                     *(((uint32_t*)o_data) + 1));
@@ -266,7 +266,7 @@ fapi2::ReturnCode putscom_abs_wrap(const void *i_target,
     uint32_t l_addr = i_addr;
     l_addr = getEffectiveAddress((uint32_t *)i_target, i_addr, isIndirectScom);
 
-    SBE_INFO("SCOMIN   %08X %08X%08X",
+    SBE_DEBUG("SCOMIN   %08X %08X%08X",
                     l_addr,
                     *((uint32_t*)&i_data),
                     *(((uint32_t*)&i_data) + 1));
@@ -293,7 +293,7 @@ uint32_t platcheckIndirectAndDoScom( const bool i_isRead,
         // If the indirect scom bit is 0, then doing a regular scom
         if( (i_addr & DIRECT_SCOM_ADDR_MASK) == 0)
         {
-            SBE_INFO(SBE_FUNC "Performing Direct scom.");
+            SBE_DEBUG(SBE_FUNC "Performing Direct scom.");
             if( i_isRead )
             {
                 io_fapiRc = getscom_abs_wrap (i_target, (uint32_t)i_addr,
