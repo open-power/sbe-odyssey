@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -54,33 +54,40 @@ ARC_RET_t PakWrapper::read_file(const char* i_fileName, void* i_destinationAddr,
     return rc;
 }
 
-uint8_t* PakWrapper::get_image_start_ptr(const char* i_fileName)
+ARC_RET_t PakWrapper::get_image_start_ptr_and_size(const char* i_fileName, uint8_t* o_imageStartPtr, uint32_t *o_uncompressedSize)
 {
     ARC_RET_t rc = ARC_INVALID_PARAMS;
-    uint8_t* startOffset = NULL;
 
     if(i_fileName != nullptr)
     {
+        //Locate the file
         rc = iv_fileArchive.locate_file(i_fileName, fileArchiveEntry);
         if (rc != ARC_OPERATION_SUCCESSFUL)
         {
-            ARC_ERROR(" Pak Read for metadata Failed. Rc: %x ", rc);
+            ARC_ERROR(" locate_file failed with Rc: %x ", rc);
         }
         else
         {
-            const void* ptr;
-            rc = get_stored_data_ptr(ptr);
-            if (rc != ARC_OPERATION_SUCCESSFUL)
+            if(o_imageStartPtr)
             {
-                ARC_ERROR(" Pak Read for metadata Failed. Rc: %x ", rc);
+                //Get the stored pointer (this will be success only if file is uncompressed)
+                const void* ptr;
+                rc = get_stored_data_ptr(ptr);
+                if (rc != ARC_OPERATION_SUCCESSFUL)
+                {
+                    ARC_ERROR(" get_stored_data_ptr failed with Rc: %x ", rc);
+                }
+                else
+                {
+                    o_imageStartPtr = (uint8_t*)ptr;
+                }
             }
-            else
-            {
-                startOffset = (uint8_t*)ptr;
-            }
+
+            if(o_uncompressedSize)
+                *o_uncompressedSize = fileArchiveEntry.get_size();
         }
     }
-    return startOffset;
+    return rc;
 }
 
 #ifndef __SROM_IMAGE__
