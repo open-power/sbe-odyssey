@@ -453,6 +453,33 @@ fapi_try_exit:
     return current_err;
 }
 
+ReturnCode mod_arrayinit(
+    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
+    const uint16_t i_clock_regions,
+    const bool i_do_scan0)
+{
+    FAPI_INF("Entering ...");
+
+    FAPI_DBG("ABIST start");
+    FAPI_TRY(mod_abist_start(i_target, i_clock_regions));
+
+    FAPI_DBG("ABIST poll");
+    FAPI_TRY(mod_abist_poll(i_target));
+
+    FAPI_DBG("ABIST cleanup");
+    FAPI_TRY(mod_abist_cleanup(i_target));
+
+    if (i_do_scan0)
+    {
+        FAPI_DBG("SCAN0");
+        FAPI_TRY(mod_scan0(i_target, i_clock_regions));
+    }
+
+fapi_try_exit:
+    FAPI_INF("Exiting ...");
+    return current_err;
+}
+
 ReturnCode mod_start_stop_clocks(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_OR > & i_target,
     uint16_t i_clock_regions,

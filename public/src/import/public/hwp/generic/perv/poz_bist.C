@@ -36,7 +36,6 @@
 #include <poz_perv_mod_chiplet_clocking.H>
 #include <poz_perv_mod_chiplet_clocking_regs.H>
 #include <poz_perv_mod_bist.H>
-#include <poz_chiplet_arrayinit.H>
 #include <target_filters.H>
 #include <endian.h>
 
@@ -287,7 +286,7 @@ ReturnCode poz_bist(
     uint8_t l_chiplet_number = 0;
 
     // Regions are handled a little differently for TP BIST
-    clock_region l_scan0_regions = REGION_ALL;
+    clock_region l_all_active_regions = REGION_ALL;
     uint16_t l_tp_regions = i_params.base_regions;
 
     // char arrays for accessing pak scan data
@@ -330,7 +329,7 @@ ReturnCode poz_bist(
                     l_tp_regions = i_params.chiplets_regions[1];
                 }
 
-                l_scan0_regions = (clock_region)l_tp_regions;
+                l_all_active_regions = (clock_region)l_tp_regions;
             }
         }
         else
@@ -380,7 +379,7 @@ ReturnCode poz_bist(
     if (i_params.stages & i_params.bist_stages::SCAN0)
     {
         FAPI_INF("Do a scan0");
-        FAPI_TRY(mod_scan0(l_chiplets_target, l_scan0_regions, i_params.scan0_types));
+        FAPI_TRY(mod_scan0(l_chiplets_target, l_all_active_regions, i_params.scan0_types));
         o_return.completed_stages |= i_params.bist_stages::SCAN0;
     }
 
@@ -390,7 +389,7 @@ ReturnCode poz_bist(
     if (i_params.stages & i_params.bist_stages::ARRAYINIT)
     {
         FAPI_INF("Do an arrayinit");
-        FAPI_TRY(poz_chiplet_arrayinit(i_target));
+        FAPI_TRY(mod_arrayinit(l_chiplets_target, l_all_active_regions, false));
         o_return.completed_stages |= i_params.bist_stages::ARRAYINIT;
     }
 
