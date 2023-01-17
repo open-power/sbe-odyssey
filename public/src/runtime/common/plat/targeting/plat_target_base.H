@@ -59,6 +59,7 @@ namespace fapi2
         PPE_TARGET_TYPE_SYSTEM         = 0x08,
         PPE_TARGET_TYPE_MC             = 0x0B,
         PPE_TARGET_TYPE_DIMM           = 0x15,
+        PPE_TARGET_TYPE_TEMP_SENSOR    = 0x16,
     } plat_target_type_t;
 
     // TODO: Move this to IMAGE-specific folder for odyssey
@@ -327,6 +328,9 @@ namespace fapi2
                         break;
                     case PPE_TARGET_TYPE_DIMM:
                         l_targetType = TARGET_TYPE_DIMM;
+                        break;
+                    case PPE_TARGET_TYPE_TEMP_SENSOR:
+                        l_targetType = TARGET_TYPE_TEMP_SENSOR;
                         break;
                     case PPE_TARGET_TYPE_NONE:
                     default:

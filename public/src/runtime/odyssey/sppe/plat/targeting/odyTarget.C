@@ -44,6 +44,8 @@ namespace fapi2
          {0xD, PPE_TARGET_TYPE_MEMPORT, 0, 1, 2},
          {0xD, PPE_TARGET_TYPE_DIMM, 0, 0, 2},
          {0xE, PPE_TARGET_TYPE_DIMM, 0, 0, 2},
+         {0x0, PPE_TARGET_TYPE_TEMP_SENSOR, 0, 0, 4}, // First byte is port number
+                                                      // for the TEMP SENSOR target.
      };
 
      targetInfo_t * getTargetMap()

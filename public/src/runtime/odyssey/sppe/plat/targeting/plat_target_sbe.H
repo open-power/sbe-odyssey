@@ -49,12 +49,13 @@ namespace fapi2
             /*
             * plat_target_base_handle bit layout :
             * BIT VALUES FOR BIT-0 TO BIT-31:
-            *   Chiplet Number                 : 08 Bits => Chiplet Number          [ bit00 – bit7 ]
-            *   Type                           : 06 Bits => PPE target type         [ bit08 – bit13 ]
-            *   Present                        : 01 Bit  => Target present or not   [ bit14 ]
-            *   Functional                     : 01 Bit  => Target functional state [ bit15 ]
-            *   Instance Number                : 08 Bits => Target Instance Number  [ bit16 – bit23 ]
-            *   Reserve                        : 08 Bits => Free Bits               [ bit24 – bit31 ]
+            *   Chiplet Number                 : 08 Bits => Chiplet Number  or             [ bit00 – bit7 ]
+            *                                               Port Number for I2C targets (TEMP SENSOR)
+            *   Type                           : 06 Bits => PPE target type                [ bit08 – bit13 ]
+            *   Present                        : 01 Bit  => Target present or not          [ bit14 ]
+            *   Functional                     : 01 Bit  => Target functional state        [ bit15 ]
+            *   Instance Number                : 08 Bits => Target Instance Number         [ bit16 – bit23 ]
+            *   Device Addr                    : 08 Bits => Device Address for I2C targets [ bit24 – bit31 ]
             */
 
             ///
@@ -78,6 +79,15 @@ namespace fapi2
                 if(i_type == PPE_TARGET_TYPE_DIMM)
                 {
                     iv_value.insertFromRight(i_instanceNum, 16, 8);
+                }
+                else if(i_type == PPE_TARGET_TYPE_TEMP_SENSOR)
+                {
+                    iv_value.insertFromRight(i_instanceNum, 16, 8);
+                    // TODO: Read the attributes to set the port and device addr.
+                    uint8_t portNum = 0;
+                    uint8_t devAddr = 0xFF;
+                    iv_value.insertFromRight(portNum, 0, 8);
+                    iv_value.insertFromRight(devAddr, 24, 8);
                 }
                 else
                 {

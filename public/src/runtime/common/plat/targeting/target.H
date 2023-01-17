@@ -74,6 +74,12 @@ namespace fapi2
         return PPE_TARGET_TYPE_DIMM;
     }
 
+    template<>
+    constexpr plat_target_type_t fapiTargetTypeToPlatTargetType<TARGET_TYPE_TEMP_SENSOR>()
+    {
+        return PPE_TARGET_TYPE_TEMP_SENSOR;
+    }
+
     template<TargetType K, MulticastType M, typename V>
     static constexpr void plat_apply_target_limits(void)
     {}
