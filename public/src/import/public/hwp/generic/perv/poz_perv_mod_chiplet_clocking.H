@@ -176,6 +176,18 @@ fapi2::ReturnCode mod_scan0(
     uint16_t i_clock_regions,
     uint16_t i_scan_types = SCAN_TYPE_NOT_RTG);
 
+/// @brief Arrayinit module
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
+/// @param[in]   i_clock_regions           Select clock regions
+/// @param[in]   i_do_scan0                Perform scan0 after arrayinit
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode mod_arrayinit(
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
+    const uint16_t i_clock_regions = REGION_ALL,
+    const bool i_do_scan0 = true);
+
 /// @brief Clock start/stop module
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST

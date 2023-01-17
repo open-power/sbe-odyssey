@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -48,17 +48,8 @@ ReturnCode poz_chiplet_arrayinit(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targe
 
     FAPI_INF("Entering ...");
 
-    FAPI_DBG("ABIST start for all chiplets except TP (all regions)");
-    FAPI_TRY(mod_abist_start(l_chiplets_mc, REGION_ALL));
-
-    FAPI_DBG("ABIST poll");
-    FAPI_TRY(mod_abist_poll(l_chiplets_mc));
-
-    FAPI_DBG("ABIST cleanup");
-    FAPI_TRY(mod_abist_cleanup(l_chiplets_mc));
-
-    FAPI_DBG("SCAN0 for all chiplets except TP (all regions)");
-    FAPI_TRY(mod_scan0(l_chiplets_mc, REGION_ALL));
+    FAPI_DBG("Arrayinit then scan0 all regions on all non-TP chiplets");
+    FAPI_TRY(mod_arrayinit(l_chiplets_mc, REGION_ALL, true));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
