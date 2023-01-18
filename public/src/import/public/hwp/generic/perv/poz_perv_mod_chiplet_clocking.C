@@ -92,7 +92,7 @@ fapi_try_exit:
 
 
 ReturnCode apply_regions_by_chiplet(
-    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
+    const std::vector<Target<TARGET_TYPE_PERV>>& i_chiplets_uc,
     fapi2::buffer<uint64_t> i_scom_buffer,
     const uint32_t i_scom_address,
     const uint32_t i_starting_bit,
@@ -100,7 +100,7 @@ ReturnCode apply_regions_by_chiplet(
 {
     uint16_t l_chiplet_regions;
 
-    for (auto& targ : i_target.getChildren<TARGET_TYPE_PERV>())
+    for (auto& targ : i_chiplets_uc)
     {
         l_chiplet_regions = i_chiplets_regions[targ.getChipletNumber()];
 
@@ -166,9 +166,9 @@ ReturnCode mod_abist_setup(
     // If we know there are custom regions by chiplet, unicast them
     if (i_chiplets_regions != NULL)
     {
-        FAPI_TRY(apply_regions_by_chiplet(i_target, BIST, BIST.addr,
+        FAPI_TRY(apply_regions_by_chiplet(l_chiplets_uc, BIST, BIST.addr,
                                           BIST_REGION_PERV, i_chiplets_regions));
-        FAPI_TRY(apply_regions_by_chiplet(i_target, CLK_REGION, CLK_REGION.addr,
+        FAPI_TRY(apply_regions_by_chiplet(l_chiplets_uc, CLK_REGION, CLK_REGION.addr,
                                           CLK_REGION_CLOCK_REGION_PERV, i_chiplets_regions));
     }
 
@@ -279,21 +279,23 @@ ReturnCode mod_abist_cleanup(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
     bool i_clear_sram_abist_mode)
 {
-    CPLT_CTRL0_t CPLT_CTRL0;
     BIST_t BIST;
     CLK_REGION_t CLK_REGION;
+    CPLT_CTRL0_t CPLT_CTRL0;
     OPCG_REG0_t OPCG_REG0;
 
     FAPI_INF("Entering ...");
+
     FAPI_INF("Clear OPCG_REG0.");
     OPCG_REG0 = 0;
     FAPI_TRY(OPCG_REG0.putScom(i_target));
+
     FAPI_INF("Clear CLK_REGION register.");
     CLK_REGION = 0;
     FAPI_TRY(CLK_REGION.putScom(i_target));
 
     FAPI_INF("Clear CPLT_CTRL0 register.");
-    CPLT_CTRL0.flush<0>();
+    CPLT_CTRL0 = 0;
     CPLT_CTRL0.set_ABSTCLK_MUXSEL(1);
     FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
 
@@ -387,7 +389,7 @@ ReturnCode mod_scan0(
     OPCG_REG0_t OPCG_REG0;
     SCAN_REGION_TYPE_t SCAN_REGION_TYPE;
     OPCG_ALIGN_t OPCG_ALIGN;
-    OPCG_ALIGN_t opcg_align_save[64];
+    OPCG_ALIGN_t l_opcg_align_save[64];
     uint8_t l_attr_scan0_scan_ratio = 0;
     std::vector<Target<TARGET_TYPE_PERV>> l_chiplets_uc;
     auto l_chip_target = i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>();
@@ -398,40 +400,45 @@ ReturnCode mod_scan0(
 
     if (l_attr_scan0_scan_ratio != 0)
     {
+        FAPI_INF("Save scan ratios.");
         l_chiplets_uc = i_target.getChildren<TARGET_TYPE_PERV>();
 
         for (auto& cplt : l_chiplets_uc)
         {
             FAPI_TRY(OPCG_ALIGN.getScom(cplt));
-            opcg_align_save[cplt.getChipletNumber()] = OPCG_ALIGN;
-            OPCG_ALIGN.set_SCAN_RATIO(l_attr_scan0_scan_ratio);
-            FAPI_TRY(OPCG_ALIGN.putScom(cplt));
+            l_opcg_align_save[cplt.getChipletNumber()] = OPCG_ALIGN;
         }
+
+        FAPI_INF("Apply scan0 scan ratio.");
+        // Don't need to unicast SCAN_RATIO to maintain register state by chiplet for performance
+        // Just apply new SCAN_RATIO to arbitrary chiplet's buffer and multicast
+        OPCG_ALIGN.set_SCAN_RATIO(l_attr_scan0_scan_ratio);
+        FAPI_TRY(OPCG_ALIGN.putScom(i_target));
     }
 
-    FAPI_INF("Set up clock regions for NSL fill.")
+    FAPI_INF("Set up clock regions for NSL fill.");
     CLK_REGION = 0;
     CLK_REGION.insertFromRight<CLK_REGION_CLOCK_REGION_PERV, 16>(i_clock_regions)
     .setBit<CLK_REGION_SEL_THOLD_NSL>()
     .setBit<CLK_REGION_SEL_THOLD_ARY>();
     FAPI_TRY(CLK_REGION.putScom(i_target));
 
-    FAPI_INF("Set up scan regions for scan0.")
+    FAPI_INF("Set up scan regions for scan0.");
     SCAN_REGION_TYPE = 0;
     SCAN_REGION_TYPE.insertFromRight<SCAN_REGION_TYPE_SCAN_REGION_PERV, 16>(i_clock_regions)
     .insertFromRight<SCAN_REGION_TYPE_SCAN_TYPE_FUNC, 12>(i_scan_types);
     FAPI_TRY(SCAN_REGION_TYPE.putScom(i_target));
 
-    FAPI_INF("Trigger scan0")
+    FAPI_INF("Trigger scan0");
     OPCG_REG0 = 0;
     OPCG_REG0.set_RUN_SCAN0(1);
     FAPI_TRY(OPCG_REG0.putScom(i_target));
 
-    FAPI_INF("Wait for scan0 to complete. Polling for OPCG_DONE.")
+    FAPI_INF("Wait for scan0 to complete. Polling for OPCG_DONE.");
     FAPI_TRY(poll_opcg_done(i_target, OPCG_DONE_SCAN0_HW_NS_DELAY, OPCG_DONE_SCAN0_SIM_CYCLE_DELAY,
                             OPCG_DONE_SCAN0_POLL_COUNT));
 
-    FAPI_INF("Clean up scan0.")
+    FAPI_INF("Clean up scan0.");
     CLK_REGION = 0;
     FAPI_TRY(CLK_REGION.putScom(i_target));
     SCAN_REGION_TYPE = 0;
@@ -439,12 +446,11 @@ ReturnCode mod_scan0(
 
     if (l_attr_scan0_scan_ratio != 0)
     {
-        FAPI_INF("Restore scan ratios.")
+        FAPI_INF("Restore scan ratios.");
 
         for (auto& cplt : l_chiplets_uc)
         {
-            OPCG_ALIGN = opcg_align_save[cplt.getChipletNumber()];
-            FAPI_TRY(OPCG_ALIGN.putScom(cplt));
+            FAPI_TRY(l_opcg_align_save[cplt.getChipletNumber()].putScom(cplt));
         }
     }
 
