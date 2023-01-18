@@ -39,7 +39,7 @@ using namespace cc;
 
 /// @brief Apply regions to a scom register by chiplet
 ///
-/// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
+/// @param[in]   i_chiplets_uc             Reference to the unicast target container
 /// @param[in]   i_scom_buffer             fapi2::buffer for putScom (all non-region bits will be written too)
 /// @param[in]   i_scom_address            Base scom address each chiplet will have written
 /// @param[in]   i_starting_bit            Bit of first region (assumes all 15 regions are contiguous)
@@ -48,7 +48,7 @@ using namespace cc;
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode apply_regions_by_chiplet(
-    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
+    const std::vector<fapi2::Target<fapi2::TARGET_TYPE_PERV>>& i_chiplets_uc,
     fapi2::buffer<uint64_t> i_scom_buffer,
     const uint32_t i_scom_address,
     const uint32_t i_starting_bit,

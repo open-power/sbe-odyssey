@@ -24,7 +24,7 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  poz_perv_mod_bist.H
-/// @brief Prototype declarations for modules bist_poll and bist_reg_cleanup
+/// @brief Prototype declarations for poz_bist module functions
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Andrew Singer (andrew.singer@ibm.com)
@@ -57,17 +57,14 @@ fapi2::ReturnCode mod_bist_poll(
     uint32_t i_poll_delay_sim = 1120000);
 
 /// @brief BIST SCOM reg cleanup module.
-/// --Clear OPCG_REG0, CLK_REGION, CPLT_CTRL0 & BIST registers
-/// --Clear ABSTCLK_MUXSEL_DC
-/// --Clear TC_SRAM_ABIST_MODE_DC
+/// --Zero OPCG_REG0/1/2, SCAN_REGION_TYPE, CLK_REGION, BIST, and OPCG_CAPT1/2/3 registers
+/// --Restore specific bits of CPLT_CTRL0, CPLT_CTRL1, NET_CTRL0, and BH_SCRATCH_REG registers
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
-/// @param[in]   i_clear_sram_abist_mode   Clear SRAM ABIST mode
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_bist_reg_cleanup(
-    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
-    bool i_clear_sram_abist_mode = true);
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target);
 
 /// @brief LBIST setup module.
 ///

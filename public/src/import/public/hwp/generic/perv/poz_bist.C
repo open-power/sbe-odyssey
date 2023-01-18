@@ -149,8 +149,8 @@ void print_bist_params(const bist_params& i_params)
 
 ReturnCode poz_bist_execute(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > & i_chiplets_target,
-    const bist_params& i_params, const uint16_t i_enum_condition_a, const uint16_t i_enum_condition_b,
-    bist_return& o_return)
+    const std::vector<Target<TARGET_TYPE_PERV>>& i_chiplets_uc, const bist_params& i_params,
+    const uint16_t i_enum_condition_a, const uint16_t i_enum_condition_b, bist_return& o_return)
 {
     // Helper buffers produced from bist_params constituents
     const buffer<uint64_t> l_uc_go_chiplets_buffer = i_params.uc_go_chiplets;
@@ -222,7 +222,7 @@ ReturnCode poz_bist_execute(
         {
             FAPI_INF("Enforcing OPCG_GO by chiplet via unicast");
 
-            for (auto& chiplet : i_chiplets_target.getChildren<TARGET_TYPE_PERV>())
+            for (auto& chiplet : i_chiplets_uc)
             {
                 if (l_uc_go_chiplets_buffer.getBit(chiplet.getChipletNumber()))
                 {
@@ -257,7 +257,7 @@ ReturnCode poz_bist_execute(
 
         if (!(i_params.flags & i_params.bist_flags::FAST_DIAGNOSTICS))
         {
-            for (auto& chiplet : i_chiplets_target.getChildren<fapi2::TARGET_TYPE_PERV>())
+            for (auto& chiplet : i_chiplets_uc)
             {
                 FAPI_TRY(OPCG_REG0.getScom(chiplet));
                 FAPI_DBG("OPCG cycles elapsed for chiplet %d: %lu",
@@ -281,6 +281,7 @@ ReturnCode poz_bist(
     // Our pervasive target (can be multicast or unicast)
     Target<TARGET_TYPE_PERV> l_chiplet;
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > l_chiplets_target;
+    auto l_chiplets_uc = i_target.getChildren<TARGET_TYPE_PERV>();
 
     // Needed for unicast condition
     uint8_t l_chiplet_number = 0;
@@ -297,6 +298,16 @@ ReturnCode poz_bist(
     const buffer<uint64_t> l_chiplets_mask = i_params.chiplets;
     const buffer<uint16_t> l_outer_loop_mask = i_params.outer_loop_mask;
     const buffer<uint16_t> l_inner_loop_mask = i_params.inner_loop_mask;
+
+    // Stuff for saving register values to restore after cleanup
+    const bool l_allow_fast_cleanup = i_params.stages & i_params.bist_flags::FAST_DIAGNOSTICS;
+    const bool l_save_uc_reg_values = (i_params.stages & i_params.bist_stages::REG_SETUP) &&
+                                      (i_params.stages & i_params.bist_stages::REG_CLEANUP) &&
+                                      (!(i_params.flags & i_params.bist_flags::ABIST_NOT_LBIST));
+    CPLT_CTRL0_t CPLT_CTRL0;
+    OPCG_ALIGN_t OPCG_ALIGN;
+    CPLT_CTRL0_t l_cplt_ctrl0_save[64];
+    OPCG_ALIGN_t l_opcg_align_save[64];
 
     // Assert the provided bist_params struct is the expected version
     FAPI_ASSERT(i_params.BIST_PARAMS_VERSION == BIST_PARAMS_CURRENT_VERSION,
@@ -431,6 +442,26 @@ ReturnCode poz_bist(
     ////////////////////////////////////////////////////////////////
     // STAGE: REG_SETUP, GO, POLL
     ////////////////////////////////////////////////////////////////
+    if (l_save_uc_reg_values)
+    {
+        // If fast cleanup requested, save just the first chiplet's register values
+        if (l_allow_fast_cleanup)
+        {
+            FAPI_TRY(CPLT_CTRL0.getScom(l_chiplets_uc[0]));
+            FAPI_TRY(OPCG_ALIGN.getScom(l_chiplets_uc[0]));
+        }
+        // Else, save via unicast
+        else
+        {
+            for (auto& cplt : l_chiplets_uc)
+            {
+                auto i = cplt.getChipletNumber();
+                FAPI_TRY(l_cplt_ctrl0_save[i].getScom(cplt));
+                FAPI_TRY(l_opcg_align_save[i].getScom(cplt));
+            }
+        }
+    }
+
     for (uint8_t outer_index = 0; outer_index < 16; outer_index++)
     {
         if (l_outer_loop_mask.getBit(outer_index))
@@ -443,7 +474,12 @@ ReturnCode poz_bist(
                 {
                     FAPI_DBG("Bit %d present in inner loop mask; proceeding ...", inner_index);
 
-                    FAPI_TRY(poz_bist_execute(l_chiplets_target, i_params, outer_index, inner_index, o_return));
+                    FAPI_TRY(poz_bist_execute(l_chiplets_target,
+                                              l_chiplets_uc,
+                                              i_params,
+                                              outer_index,
+                                              inner_index,
+                                              o_return));
                 }
             }
         }
@@ -457,6 +493,26 @@ ReturnCode poz_bist(
         FAPI_INF("Cleanup all SCOM registers");
         FAPI_TRY(mod_bist_reg_cleanup(l_chiplets_target));
         o_return.completed_stages |= i_params.bist_stages::REG_CLEANUP;
+    }
+
+    if (l_save_uc_reg_values)
+    {
+        // If fast cleanup requested, reapply register values via multicast
+        if (l_allow_fast_cleanup)
+        {
+            FAPI_TRY(CPLT_CTRL0.putScom(l_chiplets_target));
+            FAPI_TRY(OPCG_ALIGN.putScom(l_chiplets_target));
+        }
+        // Else, reapply via unicast
+        else
+        {
+            for (auto& cplt : l_chiplets_uc)
+            {
+                auto i = cplt.getChipletNumber();
+                FAPI_TRY(l_cplt_ctrl0_save[i].putScom(cplt));
+                FAPI_TRY(l_opcg_align_save[i].putScom(cplt));
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////

@@ -52,10 +52,10 @@ ReturnCode mod_bist_poll(
 {
     FAPI_INF("Entering ...");
 
-    // BH_SCRATCH_REG_t BH_SCRATCH_REG;
     CPLT_STAT0_t CPLT_STAT0;
     PCB_OPCG_STOP_t PCB_OPCG_STOP;
     OPCG_REG0_t OPCG_REG0;
+    // BH_SCRATCH_REG_t BH_SCRATCH_REG;
 
     uint32_t l_total_polls = 0;
     // Infinite polling if negative signed (or massive unsigned) number
@@ -153,11 +153,41 @@ fapi_try_exit:
 }
 
 
-ReturnCode mod_bist_reg_cleanup(
-    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
-    bool i_clear_sram_abist_mode)
+ReturnCode mod_bist_reg_cleanup(const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target)
 {
-    FAPI_TRY(mod_abist_cleanup(i_target, i_clear_sram_abist_mode));
+    CPLT_CTRL0_t CPLT_CTRL0;                    ///< 0x00000
+    CPLT_CTRL1_t CPLT_CTRL1;                    ///< 0x00001
+    NET_CTRL0_t NET_CTRL0;                      ///< 0xF0040
+    // BH_SCRATCH_REG_t BH_SCRATCH_REG;         ///< 0x?????
+
+    FAPI_INF("Entering ...");
+
+    FAPI_INF("Zeroing out OPCG and region registers.");
+    FAPI_TRY(putScom(i_target, scomt::poz::OPCG_REG0, 0));
+    FAPI_TRY(putScom(i_target, scomt::poz::OPCG_REG1, 0));
+    FAPI_TRY(putScom(i_target, scomt::poz::OPCG_REG2, 0));
+    FAPI_TRY(putScom(i_target, scomt::poz::SCAN_REGION_TYPE, 0));
+    FAPI_TRY(putScom(i_target, scomt::poz::CLK_REGION, 0));
+    FAPI_TRY(putScom(i_target, scomt::poz::BIST, 0));
+    FAPI_TRY(putScom(i_target, scomt::poz::OPCG_CAPT1, 0));
+    FAPI_TRY(putScom(i_target, scomt::poz::OPCG_CAPT2, 0));
+    FAPI_TRY(putScom(i_target, scomt::poz::OPCG_CAPT3, 0));
+
+    FAPI_INF("Restoring CPLT_CTRL0 register settings.");
+    CPLT_CTRL0.set_ABSTCLK_MUXSEL(1);
+    FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
+
+    FAPI_INF("Restoring CPLT_CTRL1 register value.");
+    CPLT_CTRL1.set_MULTICYCLE_TEST_FENCE(1);
+    FAPI_TRY(CPLT_CTRL1.putScom_CLEAR(i_target));
+
+    FAPI_INF("Restoring NET_CTRL0 register settings.");
+    NET_CTRL0.set_FENCE_EN(1);
+    FAPI_TRY(NET_CTRL0.putScom_SET(i_target));
+
+    FAPI_INF("Resetting BIST halt signal.");
+    // TODO reset BIST halt once supported
+    FAPI_DBG("BIST halt not yet implemented; check back later");
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
@@ -170,10 +200,9 @@ ReturnCode mod_lbist_setup(
     const bist_params& i_params,
     const uint64_t i_ctrl_chiplets,
     const uint16_t i_lbist_sequence,
-    const uint16_t i_lbist_weight
-)
+    const uint16_t i_lbist_weight)
 {
-    CPLT_CTRL0_t CPLT_CTRL0;
+    CPLT_CTRL0_t CPLT_CTRL0_set, CPLT_CTRL0_clear;
     CPLT_CTRL1_t CPLT_CTRL1;
     CPLT_CONF1_t CPLT_CONF1;
     CLK_REGION_t CLK_REGION;
@@ -195,30 +224,52 @@ ReturnCode mod_lbist_setup(
     const struct OPCGCaptureSettings opcgCaptureSetting = opcgCaptureSettings[i_lbist_sequence];   //grab capture enum
 
     // NET_CTRL0
-    FAPI_TRY(NET_CTRL0.getScom(i_target));
-    NET_CTRL0.set_CHIPLET_EN(1); // bit0
-    NET_CTRL0.set_FENCE_EN(bool(i_params.flags & i_params.bist_flags::CHIPLET_FENCE_ACTIVE)); // bit18
-    FAPI_INF("LBIST: Writing NET_CTRL0 ...");
-    FAPI_TRY(NET_CTRL0.putScom(i_target));
+    if (!(i_params.flags & i_params.bist_flags::CHIPLET_FENCE_ACTIVE))
+    {
+        NET_CTRL0.set_FENCE_EN(1); // bit18
+        FAPI_INF("LBIST: Writing NET_CTRL0 ...");
+        FAPI_TRY(NET_CTRL0.putScom_CLEAR(i_target));
+    }
 
     // CPLT_CTRL0
-    FAPI_TRY(CPLT_CTRL0.getScom(i_target));
-    CPLT_CTRL0.set_ARY_WRT_THRU(!bool(i_params.flags & i_params.bist_flags::LBIST_COMBINED)); // bit4
-    CPLT_CTRL0.set_BSC_INTMODE(bool(i_params.flags & i_params.bist_flags::INT_MODE)); // bit29
-    CPLT_CTRL0.set_FLUSHMODE_INH(1); // bit2
-    CPLT_CTRL0.set_FORCE_ALIGN(1); // bit3
-    CPLT_CTRL0.set_SYNCCLK_MUXSEL(1); // bit1
-    CPLT_CTRL0.set_VITL_PROTECTION(1); // bit6
-    CPLT_CTRL0.set_DETERMINISTIC_TEST_EN(1); // bit13
-    CPLT_CTRL0.set_CONSTRAIN_SAFESCAN(1); // bit14
-    CPLT_CTRL0.set_RRFA_TEST_EN(1); // bit15
+    CPLT_CTRL0_set.set_SYNCCLK_MUXSEL(1); // bit1
+    CPLT_CTRL0_set.set_FLUSHMODE_INH(1); // bit2
+    CPLT_CTRL0_set.set_FORCE_ALIGN(1); // bit3
+    CPLT_CTRL0_set.set_VITL_PROTECTION(1); // bit6
+    CPLT_CTRL0_set.set_DETERMINISTIC_TEST_EN(1); // bit13
+    CPLT_CTRL0_set.set_CONSTRAIN_SAFESCAN(1); // bit14
+    CPLT_CTRL0_set.set_RRFA_TEST_EN(1); // bit15
+
+    if (i_params.flags & i_params.bist_flags::LBIST_COMBINED)
+    {
+        CPLT_CTRL0_clear.set_ARY_WRT_THRU(1); // bit4
+    }
+    else
+    {
+        CPLT_CTRL0_set.set_ARY_WRT_THRU(1); // bit4
+    }
+
+    if (i_params.flags & i_params.bist_flags::INT_MODE)
+    {
+        CPLT_CTRL0_set.set_BSC_INTMODE(1); // bit29
+    }
+    else
+    {
+        CPLT_CTRL0_clear.set_BSC_INTMODE(1); // bit29
+    }
+
     FAPI_INF("LBIST: Writing CPLT_CTRL0 ...");
-    FAPI_TRY(CPLT_CTRL0.putScom(i_target));
+    FAPI_TRY(CPLT_CTRL0_set.putScom_SET(i_target));
+
+    if (CPLT_CTRL0_clear != 0)
+    {
+        FAPI_TRY(CPLT_CTRL0_clear.putScom_CLEAR(i_target));
+    }
 
     // CPLT_CTRL1
+    CPLT_CTRL1.set_MULTICYCLE_TEST_FENCE(1);
     FAPI_INF("LBIST: Writing CPLT_CTRL1 ...");
-    CPLT_CTRL1.setBit<0, 19>();
-    FAPI_TRY(CPLT_CTRL1.putScom(i_target));
+    FAPI_TRY(CPLT_CTRL1.putScom_SET(i_target));
 
     // SCAN_REGION_TYPE & CLK_REGION REGS
     // Multicast base CLK regions and SCAN_TYPE
@@ -236,9 +287,9 @@ ReturnCode mod_lbist_setup(
     // If we know there are custom regions by chiplet, unicast them
     if (i_params.chiplets_regions != NULL)
     {
-        FAPI_TRY(apply_regions_by_chiplet(i_target, CLK_REGION, CLK_REGION.addr,
+        FAPI_TRY(apply_regions_by_chiplet(l_chiplets_uc, CLK_REGION, CLK_REGION.addr,
                                           CLK_REGION_CLOCK_REGION_PERV, i_params.chiplets_regions));
-        FAPI_TRY(apply_regions_by_chiplet(i_target, SCAN_REGION_TYPE, SCAN_REGION_TYPE.addr,
+        FAPI_TRY(apply_regions_by_chiplet(l_chiplets_uc, SCAN_REGION_TYPE, SCAN_REGION_TYPE.addr,
                                           SCAN_REGION_TYPE_SCAN_REGION_PERV, i_params.chiplets_regions));
     }
 
