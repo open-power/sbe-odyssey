@@ -40,7 +40,7 @@
 #include "errorcodes.H"
 #include "otpromfusemap.H"
 #include "p11_scom_perv_cfam.H"
-#include "odysseyfilenames.H"
+#include "filenames.H"
 #include "p11_ppe_pc.H"
 #include "cmnglobals.H"
 

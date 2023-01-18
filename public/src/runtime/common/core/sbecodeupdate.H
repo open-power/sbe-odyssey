@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -32,7 +33,7 @@ extern "C" {
 #include "pk_api.h"
 #include "ppe42_scom.h"
 #include "ppe42_string.h"
-#include "odysseyfilenames.H"
+#include "filenames.H"
 #include "odysseylink.H"
 
 #ifdef __cplusplus
