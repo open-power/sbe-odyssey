@@ -74,9 +74,9 @@ DECLARE_METADATA(DAT, 0x444154) {
 };
 
 // Heap information
-DECLARE_METADATA(PKS, 0x504B53) {
-    uint32_t heapStartAddr; // Address of the heap space
-    uint32_t heapSize; // Size of heap space available
+DECLARE_METADATA(HEA, 0x484541) {
+    uint32_t heapAddr; // Address of the heap space
+    uint32_t heapSize; // Size of heap space area
 };
 
 // String metadata needs no field declaration

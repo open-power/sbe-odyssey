@@ -35,8 +35,9 @@
 extern sbeRole g_sbeRole;
 
 // To keep track of global constructor pointer functions and bss sections.
-extern uint64_t _heap_space_start_ __attribute__ ((section (".bss")));
-extern uint64_t _heap_space_end_ __attribute__ ((section (".bss")));
+extern uint64_t _heap_space_start_ SECTION(".bss");
+extern uint64_t _heap_space_end_ SECTION(".bss");
+extern uint64_t _heap_space_size_ SECTION(".bss");
 
 class SBEGlobalsSingleton
 {
