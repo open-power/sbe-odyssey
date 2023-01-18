@@ -75,12 +75,4 @@
   <entry name="ATTR_SCAN0_SCAN_RATIO">
     <value>0x0</value>
   </entry>
-
-
-<!-- @mem HWP : Memory attributes added from here  -->
-  <entry name="ATTR_IS_SIMICS">
-    <value>0x0</value>
-  </entry>
-
-
 </entries>
