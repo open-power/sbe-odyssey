@@ -183,6 +183,7 @@ SECTIONS {
      */
     _heap_space_start_ = .;
     _heap_space_end_ = SPPE_TRACE_START_OFFSET;
+    _heap_space_size_ = _heap_space_end_ - _heap_space_start_;
 
     .g_cross_image_data TRACE_BUF_PTR_OFFSET : {
         *(.g_pk_trace_buf)

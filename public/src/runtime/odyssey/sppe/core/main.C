@@ -107,12 +107,12 @@ void __eabi()
 
 // Invoke all metadata for an image inside a constant struct to keep the
 // values together.
-const struct PACKED metadata_t {
+constexpr struct PACKED metadata_t {
     METADATA(IMG, { IMAGES::RUNTIME });
     METADATA(GIT, { SBE_COMMIT_ID });
     METADATA(DAT, { SBE_BUILD_TIME });
     METADATA(TRA, { SPPE_TRACE_START_OFFSET, SPPE_PK_TRACE_SIZE_WITH_HEADER });
-    METADATA(PKS, { (uint32_t)&_heap_space_start_, (uint32_t)(&_heap_space_end_) - (uint32_t)&_heap_space_start_ });
+    METADATA(HEA, { (uint32_t)&_heap_space_start_, (uint32_t)&_heap_space_size_});
     ImageMetadataHeader end = {0, 0};
 } g_image_metadata __attribute__ ((section (".sppe_metadata")));
 
