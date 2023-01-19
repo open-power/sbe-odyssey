@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -120,6 +120,17 @@ static inline ARC_RET_t append_archive(void*& io_end_of_archive,
     // Great Success!  d-(^.^)-b
     return ARC_OPERATION_SUCCESSFUL;
 }
+
+/**
+ * @brief enum of archive flags the caller can specify for different behaviors
+ * @note  should be a one-hot bitfield when new flags are added.
+ */
+enum ArchiveFlags_t : uint32_t
+{
+    ARCHIVE_FLAGS_NONE            = 0x00000000,  //< Default, no flags
+    ARCHIVE_FLAGS_NOT_FOUND_QUIET = 0x00000001,  //< Don't log ARC_ERROR message when ARC_FILE_NOT_FOUND
+};
+
 
 /**
  * @brief Class managing an SBE data archive
@@ -265,13 +276,14 @@ class FileArchive
          *
          * @param[in]  i_fname Name of the file to locate
          * @param[out] o_entry Entry that will receive the file information if found
+         * @param[in]  i_flags [optional] Flags that can change archive behavior - defaults to none
          *
          * @return     ARC_OPERATION_SUCCESSFUL        if the file was found and o_entry is valid
          *             ARC_FILE_NOT_FOUND              if the file could not be found in the archive
          *             ARC_FILE_CORRUPTED              if the archive appears corrupted
          *             ARC_FUNCTIONALITY_NOT_SUPPORTED if the compression method used for the file is not supported
          */
-        ARC_RET_t locate_file(const char* i_fname, Entry& o_entry);
+        ARC_RET_t locate_file(const char* i_fname, Entry& o_entry, uint32_t i_flags = 0);
 
         /**
          * @brief Locate the end of the archive
@@ -328,7 +340,7 @@ class FileArchive
         /**
          * @brief Internal function used for both locate_file and archive_end
          */
-        ARC_RET_t _locate_file(const char* i_fname, Entry* o_entry, void*& o_ptr);
+        ARC_RET_t _locate_file(const char* i_fname, Entry* o_entry, void*& o_ptr, uint32_t i_flags = 0);
 
         /**
          * @brief Internal function used by append_*

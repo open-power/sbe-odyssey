@@ -197,7 +197,7 @@ ARC_RET_t FileArchive::Entry::get_stored_data_stream(fapi2::hwp_array_istream& o
 }
 #endif
 
-ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& o_ptr)
+ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& o_ptr, uint32_t i_flags)
 {
     uint8_t* ptr = static_cast<uint8_t*>(iv_firstFile);
     uint16_t fname_len = i_fname ? strlen(i_fname) : 0;
@@ -232,11 +232,15 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
         {
             if (i_fname)
             {
+                if (!(i_flags & ARCHIVE_FLAGS_NOT_FOUND_QUIET))
+                {
 #if defined(__SBE_PPE__) || defined(__PPE_QME)
-                ARC_ERROR_BIN("File not found:", i_fname, fname_len);
+                    ARC_ERROR_BIN("File not found:", i_fname, fname_len);
 #else
-                ARC_ERROR("File not found: %s", i_fname);
+                    ARC_ERROR("File not found: %s", i_fname);
 #endif
+                }
+
                 return ARC_FILE_NOT_FOUND;
             }
             else
@@ -339,10 +343,10 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
     }
 }
 
-ARC_RET_t FileArchive::locate_file(const char* i_fname, Entry& o_entry)
+ARC_RET_t FileArchive::locate_file(const char* i_fname, Entry& o_entry, uint32_t i_flags)
 {
     void* dummy;
-    return _locate_file(i_fname, &o_entry, dummy);
+    return _locate_file(i_fname, &o_entry, dummy, i_flags);
 }
 
 void* FileArchive::archive_end()
