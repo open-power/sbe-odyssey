@@ -31,7 +31,9 @@
 #define FAPI2_UTILS_H_
 
 #include <stdint.h>
-#include <error_info_defs.H>
+#ifndef FAPI2_NO_FFDC
+    #include <error_info_defs.H>
+#endif
 #include <return_code.H>
 #include <target_types.H>
 #include <plat_types.H>
