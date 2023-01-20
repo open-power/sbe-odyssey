@@ -240,7 +240,6 @@
         <mssAccessorName>ddr5_spd_cl_supported</mssAccessorName>
     </attribute>
 
-
   <attribute>
         <id>ATTR_MEM_EFF_DDR5_CHB_ACTIVE</id>
         <targetType>TARGET_TYPE_MEM_PORT</targetType>
