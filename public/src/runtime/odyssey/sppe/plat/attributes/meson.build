@@ -5,7 +5,8 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,15 +30,18 @@ run_cmd_result = run_command(attrTool, 'parse', EKB_CMN_ATTR_XMLS, EKB_ODY_ATTR_
     '-db', ODYSSEY_ATTR_DB_FILE_PATH,
     '-tl', ODYSSEY_TARGET_LIST_JSON,
     # we can keep -v options to get the backtrace if it failed.
-    '-v')
+    #'-v'
+    )
 if run_cmd_result.returncode() != 0
     message(run_cmd_result.stdout())
     error(run_cmd_result.stderr())
 endif
 
 run_cmd_result = run_command(attrTool, 'gensrc', ODYSSEY_ATTR_DB_FILE_PATH, odyssey_sppe_genfiles_dir_path,
+    '--vfh', 'odyvirtualattrfunctions.H',
     # we can keep -v options to get the backtrace if it failed.
-    '--vfh', 'odyvirtualattrfunctions.H', '-v')
+    #'-v'
+    )
 if run_cmd_result.returncode() != 0
     message(run_cmd_result.stdout())
     error(run_cmd_result.stderr())

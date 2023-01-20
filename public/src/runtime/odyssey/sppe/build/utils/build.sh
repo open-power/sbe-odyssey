@@ -46,7 +46,7 @@ PAK_TOOL_PATH=$4
 PAK_BUILD_TOOL_PATH=$5
 SBE_SIGN_TOOL=$6
 
-$ATTR_TOOL setfixed $SPPE_IMAGE_ABS.attr.db $SPPE_IMAGE_ABS.bin -v
+$ATTR_TOOL setfixed $SPPE_IMAGE_ABS.attr.db $SPPE_IMAGE_ABS.bin
 
 #SPPE manifest file path
 SPPE_MANIFEST_PATH=$SBEROOT/public/src/runtime/odyssey/sppe/build/utils/manifest
