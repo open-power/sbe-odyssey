@@ -64,7 +64,8 @@ infile_c = [
             '/memory/odyssey/hwp/lib/workarounds/ody_dfi_complete_workarounds.C',
 
             # Files needed for ody_load_imem and ody_load_dmem
-
+            '/memory/odyssey/hwp/ody_load_imem.C',
+            '/memory/odyssey/hwp/ody_load_dmem.C',
 
             # Files needed for ody_sppe_draminit
 
