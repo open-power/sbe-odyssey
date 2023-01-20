@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/hwp_includes.H $         */
+/* $Source: public/src/runtime/odyssey/sppe/core/sbestreampaktohwp.H $    */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -23,16 +22,24 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#ifndef __HWP_INCLUDES_H
-#define __HWP_INCLUDES_H
+#ifndef __SBESTREAMPAKTOHWP_H
+#define __SBESTREAMPAKTOHWP_H
 
-#include <ody_ddrphyinit.H>
-#include <ody_load_imem.H>
-#include <ody_load_dmem.H>
-#include <ody_scominit.H>
-#include <ody_omi_setup.H>
-#include <ody_omi_train.H>
-#include <ody_thermal_init.H>
-#include <ody_enable_ecc.H>
+#include "fapi2.H"
+#include "hwp_table.H"
+#include "pakwrapper.H"
+
+using namespace fapi2;
+
+/// @brief Wrapper that loads pak into scratch area in SRAM.
+///
+/// @param[in]    i_pak          Pointer to PakWrapper
+/// @param[in]    i_pakname      Name of pak to load
+/// @param[in]    i_hwp          Function pointer to HWP
+/// @param[in]    i_Image        Image type
+/// @return  FAPI2_RC_SUCCESS on success
+
+ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname,
+                        voidfuncptr_t i_hwp, uint8_t i_Image = 0);
 
 #endif

@@ -44,6 +44,7 @@
 #include "metadata.H"
 #include "sbestatesutils.H"
 #include "heap.H"
+#include "p11_ppe_pc.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -60,6 +61,7 @@ uint32_t g_odysseyfrequency = SBE_REF_BASE_FREQ_HZ;
 
 uint8_t sppe_Kernel_NC_Int_stack[SPPE_NONCRITICAL_STACK_SIZE];
 
+uint32_t g_partitionOffset = 0;
 ///////////////////////////////////////////////////////////////////
 //// @brief PkThread structure for SBE Verification thread .
 ////////////////////////////////////////////////////////////////////
@@ -232,6 +234,15 @@ int  main(int argc, char **argv)
                 // Hard Reset SBE to recover
                 break;
             }
+
+            // Get the partition start offset
+            sbe_local_LFR lfrReg;
+            PPE_LVD(scomt::ppe_pc::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW, lfrReg);
+
+            g_partitionOffset = getAbsPartitionAddr(lfrReg.boot_selection);
+            SBE_INFO(SBE_FUNC "Partition offset is : 0x%08x, "
+                              "Partition selected is : 0x%02x",
+                              g_partitionOffset,(uint8_t)lfrReg.boot_selection);
         }
 
         // Start running the highest priority thread.

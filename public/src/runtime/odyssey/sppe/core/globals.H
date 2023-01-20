@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -38,4 +38,6 @@
 #define SBE_REF_BASE_FREQ_HZ ((133 * 1000 * 1000)/4)
 #define SBE_ODYSSEY_DEF_NEST_FREQ_MHZ 0x855
 
+// PNOR partition offset.
+extern uint32_t g_partitionOffset;
 #endif //__GLOBALS_H
