@@ -137,7 +137,10 @@ osppe_attr_tank = custom_target('ospee_attr_compile',
                             output : outfile,
                             input : infiles,
                             command : [attrTool, 'compile',
-                                        '@INPUT@', '@OUTPUT@', '-v'],
+                                        '@INPUT@', '@OUTPUT@',
+                                        # we can keep -v options to get the backtrace if it failed.
+                                        #'-v'
+                                        ],
                             build_by_default : true,
                             install : true,
                             install_dir : odyssey_sppe_install_path
