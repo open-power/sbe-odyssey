@@ -43,6 +43,8 @@
 #include "filenames.H"
 #include "p11_ppe_pc.H"
 #include "cmnglobals.H"
+#include "metadata_base.H"
+#include "metadata.H"
 
 #define RUN_TIME_SH_COMPONENT_ID 0x52554E5F54494D45ull  //RUN_TIME
 
@@ -453,13 +455,23 @@ void bldrthreadroutine(void *i_pArg)
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_SPPE_BINARY_LOAD);
 
         SBE_INFO("Loading SPPE RAM embedded archive");
+        //Get Heap metadata pointer
+        //At this point decompressed SPPE binary is already loaded into pibmem.
+        auto ptrHEAStruct = _get_metadata((uint32_t*)(SRAM_ORIGIN + VECTOR_SIZE), HEA_ASCII);
+        if (ptrHEAStruct == NULL)
+        {
+            SBE_ERROR(SBE_FUNC "Failed to read heap start address from runtime image metadata");
+            SBE::updateErrorCodeAndHalt(FILE_RC_PAYLOAD_GET_IMAGE_METADATA_PTR_ERROR);
+        }
+        load_offset = *(uint32_t*)ptrHEAStruct;
+
         load_image(pak, sppe_ram_pak_fname, load_offset,
                     bldrSecureBootCtrlSettings.fileHashCalculationEnable, LIF_IS_PAK);
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_SPPE_PAK_LOAD);
 
-        SBE_INFO("Loading optional VPD archive");
-        load_image(pak, vpd_pak_fname, load_offset,
+        SBE_INFO("Loading optional Cust archive");
+        load_image(pak, cust_sppe_pak_fname, load_offset,
                     bldrSecureBootCtrlSettings.fileHashCalculationEnable, LIF_IS_PAK | LIF_ALLOW_ABSENT);
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_VPD_PAK_LOAD);
