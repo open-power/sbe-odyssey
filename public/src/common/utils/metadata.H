@@ -47,13 +47,21 @@
  *    new tag_int value, e.g. DECLARE_METADATA(IMGv2, 0x494D48)
  */
 
+#define IMG_ASCII 0x494D47
+#define TRA_ASCII 0x545241
+#define LDA_ASCII 0x4c4441
+#define GIT_ASCII 0x474954
+#define DAT_ASCII 0x444154
+#define HEA_ASCII 0x484541
+#define BLD_ASCII 0x424c44
+
 // Image type information
-DECLARE_METADATA(IMG, 0x494D47) {
+DECLARE_METADATA(IMG, IMG_ASCII) {
     uint32_t imageType;
 };
 
 // Trace buffer information
-DECLARE_METADATA(TRA, 0x545241) {
+DECLARE_METADATA(TRA, TRA_ASCII) {
     uint32_t traceAddr; // Address of the trace buffer
     uint32_t traceSize; // Size of the trace buffer
 };
@@ -65,27 +73,27 @@ DECLARE_METADATA(ATR, 0x415452) {
 };
 
 // Intended load address for the image
-DECLARE_METADATA(LDA, 0x4c4441) {
+DECLARE_METADATA(LDA, LDA_ASCII) {
     uint32_t loadAddr;
 };
 
 // Git commit id for the image
-DECLARE_METADATA(GIT, 0x474954) {
+DECLARE_METADATA(GIT, GIT_ASCII) {
     uint32_t commitId;
 };
 
 // Git build timestamp MMDDYYYY for the image
-DECLARE_METADATA(DAT, 0x444154) {
+DECLARE_METADATA(DAT, DAT_ASCII) {
     uint32_t timeStamp;
 };
 
 // Heap information
-DECLARE_METADATA(HEA, 0x484541) {
+DECLARE_METADATA(HEA, HEA_ASCII) {
     uint32_t heapAddr; // Address of the heap space
     uint32_t heapSize; // Size of heap space area
 };
 
 // String metadata needs no field declaration
-DECLARE_METADATA_STR(BLD, 0x424c44);
+DECLARE_METADATA_STR(BLD, BLD_ASCII);
 
 extern const struct metadata_t g_image_metadata;
