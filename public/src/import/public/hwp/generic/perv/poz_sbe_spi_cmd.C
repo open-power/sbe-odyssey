@@ -2219,3 +2219,71 @@ fapi2::ReturnCode spi_erase_and_preserve(SpiControlHandle& i_handle,
 fapi_try_exit:
     return fapi2::current_err;
 }
+
+
+//////////////////////////////////////////////
+///////// spi_erase_and_no_preserve //////////
+//////////////////////////////////////////////
+fapi2::ReturnCode spi_erase_and_no_preserve(SpiControlHandle& i_handle,
+        uint32_t i_startAddress, uint32_t i_endAddress)
+{
+    fapi2::current_err = fapi2::FAPI2_RC_SUCCESS;
+    uint32_t startAddr = i_startAddress;
+    uint32_t endAddr   = i_endAddress;
+
+    do
+    {
+        FAPI_INF("spi_erase_no_preserve: SAddr:[0x%08X] EAddr:[0x%08X]",
+                 startAddr, endAddr);
+
+        if (((startAddr   & NOR_FLASH_SECTOR_BOUNDARY_CHECK_MASK) != 0) ||
+            (((endAddr + 1) & NOR_FLASH_SECTOR_BOUNDARY_CHECK_MASK) != 0))
+        {
+            // Address unaligned error
+            FAPI_ERR("Address not aligned to 4K boundary");
+            fapi2::current_err = fapi2::FAPI2_RC_INVALID_PARAMETER;
+            break;
+        }
+
+        if (startAddr > endAddr)
+        {
+            // Address range error
+            FAPI_ERR("Address range error: start address is more than end address");
+            fapi2::current_err = fapi2::FAPI2_RC_INVALID_PARAMETER;
+            break;
+        }
+
+        // Erase sectors to reach next block boundary
+        while (((startAddr % NOR_FLASH_BLOCK_SIZE) != 0) && (startAddr < endAddr))
+        {
+            FAPI_TRY(spi_sector_erase(i_handle, startAddr));
+            startAddr += NOR_FLASH_SECTOR_SIZE;
+        }
+
+        while (startAddr < endAddr)
+        {
+            if ( (endAddr - startAddr) >= NOR_FLASH_BLOCK_SIZE )
+            {
+                // Both start and end address are block size apart
+                FAPI_TRY(spi_block_erase(i_handle, startAddr));
+                startAddr += NOR_FLASH_BLOCK_SIZE;
+            }
+            else
+            {
+                // Both start and end address are sector size apart or
+                // within same sector
+                FAPI_TRY(spi_sector_erase(i_handle, startAddr));
+                startAddr += NOR_FLASH_SECTOR_SIZE;
+            }
+        }
+    }
+    while (0);
+
+    if ( fapi2::current_err == fapi2::FAPI2_RC_SUCCESS )
+    {
+        FAPI_INF("SPI Sector range erase is successfull");
+    }
+
+fapi_try_exit:
+    return fapi2::current_err;
+}

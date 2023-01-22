@@ -50,6 +50,8 @@
 #define SPI_SEC_ERASE_OP  0x2000000000000000ULL
 #define SPI_BLK_ERASE_OP  0x5200000000000000ULL
 
+#define NOR_FLASH_SECTOR_BOUNDARY_CHECK_MASK 0x00000FFF
+
 //The counter reg is 8 bits and with each seq with 8byte transfer.
 //For the purposes of security, we're using 8-byte transfers, since
 //8-byte transfers don't use the restricted 0xEX op code.
@@ -77,8 +79,8 @@ const uint32_t SPIM_RDR                  = 6;
 const uint32_t SPIM_SEQREG               = 7;
 const uint32_t SPIM_STATUSREG            = 8;
 
-const uint32_t NOR_FLASH_SECTOR_SIZE    = 4096;
-const uint32_t NOR_FLASH_BLOCK_SIZE     = 32768;
+const uint32_t NOR_FLASH_SECTOR_SIZE    = 0x1000;
+const uint32_t NOR_FLASH_BLOCK_SIZE     = 0x8000;
 const uint32_t NOR_FLASH_DEVICE_SIZE    = 0x1000000;
 
 // SPI clock control register information and defaults
@@ -375,6 +377,21 @@ extern "C"
 ///         else error code.
 ///
     fapi2::ReturnCode spi_erase_and_preserve(
+        SpiControlHandle& i_handle,
+        uint32_t i_startAddress,
+        uint32_t i_endAddress);
+
+///
+/// @brief  API to erase(sector/block) nor using SPI
+///
+/// @param[in] i_handle        Reference to SPI Control Handle
+/// @param[in] i_startAddress  The start address in nor (must be 4K sector size aligned)
+/// @param[in] i_endAddress    The end address in nor (4K aligned -1)
+///
+/// @return FAPI_RC_SUCCESS if the spi erase completes successfully,
+///         else error code.
+///
+    fapi2::ReturnCode spi_erase_and_no_preserve(
         SpiControlHandle& i_handle,
         uint32_t i_startAddress,
         uint32_t i_endAddress);
