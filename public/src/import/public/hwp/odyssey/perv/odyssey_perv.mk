@@ -76,7 +76,6 @@ $(call ODYSSEY_PERV_PROCEDURE,ody_tp_arrayinit_cleanup)
 $(call ODYSSEY_PERV_PROCEDURE,ody_tp_initf)
 $(call ODYSSEY_PERV_PROCEDURE,ody_tp_startclocks)
 $(call ODYSSEY_PERV_PROCEDURE,ody_tp_init)
-$(call ODYSSEY_PERV_PROCEDURE,ody_tp_bist_mux_switch)
 # istep 2
 
 # istep 3
@@ -99,3 +98,4 @@ $(call ODYSSEY_PERV_PROCEDURE,ody_nest_enable_io)
 $(call ODYSSEY_PERV_PROCEDURE,ody_dts_read)
 $(call ODYSSEY_PERV_PROCEDURE,ody_gettracearray,poz_gettracearray)
 $(call ODYSSEY_PERV_PROCEDURE,ody_tp_bist_stopclocks)
+$(call ODYSSEY_PERV_PROCEDURE,ody_tp_bist_mux_switch)
