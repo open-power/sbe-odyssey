@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2016,2022
+# Contributors Listed Below - COPYRIGHT 2016,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -170,11 +170,11 @@ sbe_workon()
         if [ "$PYTHON_VERSION" == "3" ]; then
             echo "***INFO | Machine has Python3 as default"
             echo "Spawning new shell (/bin/bash)..."
-            bash --rcfile ./env.bash
+            bash --rcfile ./env.bash -i
         elif [ "$PYTHON_VERSION" == "2" ]; then
             echo "***INFO | Machine has Python2 as default"
             # we need to pass "bash --rcfile ./env.bash" as single argument to scl command
-            CMD_ARR=("scl" "enable" "rh-python36" "bash --rcfile ./env.bash")
+            CMD_ARR=("scl" "enable" "rh-python36" "bash --rcfile ./env.bash -i")
             echo "Spawning new shell : ${CMD_ARR[@]}"
             "${CMD_ARR[@]}"
         else
