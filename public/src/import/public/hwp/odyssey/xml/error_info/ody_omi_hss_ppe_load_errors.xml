@@ -1,11 +1,11 @@
 <!-- IBM_PROLOG_BEGIN_TAG                                                   -->
 <!-- This is an automatically generated prolog.                             -->
 <!--                                                                        -->
-<!-- $Source: public/src/import/public/memory/odyssey/xml/error_info/ody_io_load_ppe_errors.xml $ -->
+<!-- $Source: public/src/import/public/hwp/odyssey/xml/error_info/ody_omi_hss_ppe_load_errors.xml $ -->
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2023                             -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -28,10 +28,12 @@
   <sbeError/>
   <rc>RC_ODY_IO_LOAD_PPE_IMG_ERROR</rc>
   <description>
-    Invalid PPE or MEMREGS image passed to HWP
+    Invalid PPE image input parameters passed to HWP
   </description>
   <ffdc>TARGET</ffdc>
-  <ffdc>IO_PPE_IMAGE_SIZE</ffdc>
+  <ffdc>IMAGE_SIZE</ffdc>
+  <ffdc>OFFSET</ffdc>
+  <ffdc>IMAGE_TYPE</ffdc>
   <callout>
     <procedure>CODE</procedure>
     <priority>HIGH</priority>
