@@ -28,6 +28,7 @@ mkdir -p ${MESON_BUILD_ROOT}/sbe_tools
 cp ${MESON_SOURCE_ROOT}/public/src/build/utils/imageTool.py \
    ${MESON_SOURCE_ROOT}/public/src/build/utils/signHashList \
    ${MESON_SOURCE_ROOT}/public/src/build/utils/genMeasuredHash.sh \
+   ${MESON_SOURCE_ROOT}/public/src/build/utils/ecc \
    ${MESON_BUILD_ROOT}/sbe_tools/ || exit 1
 
 tar -czvf ${MESON_INSTALL_PREFIX}/sbe_tools.tar.gz \
