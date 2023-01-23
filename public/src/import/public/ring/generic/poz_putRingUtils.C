@@ -49,14 +49,13 @@ enum
     OPCG_CAPT2_ADDRESS          =   0x00030011,
     OPCG_CAPT3_ADDRESS          =   0x00030012,
     ROTATE_ADDRESS_REG          =   0x00039000,
-    ROTATE_ADDRESS_NSL_REG      =   0x0003A000,
-    ROTATE_ADDRESS_SL_REG       =   0x0003C000,
     SCAN64_ADDRESS              =   0x0003E000,
     SCAN64CONTSCAN              =   0x0003F000,
     CHECK_WORD_REG_ADDRESS      =   0x0003F040,
     NET_CTRL0_WAND              =   0x000F0041,
     NET_CTRL0_WOR               =   0x000F0042,
     MAX_RING_LIST               =   512,
+    OPCG_GO_SINGLE_LOOP         =   0x4000000000000000ull,
     SCAN_HEADER_DATA            =   0xa5a5a5a5a5a5a5a5ull,
     MASK_RESERVE_REGION_BIT     =   0x0FFFFFFFFFFFFFFFull,
     SUPER_CHIPLET_BASE_ID       =   0x20,
@@ -390,33 +389,10 @@ ReturnCode setupClockController(
          (i_ringMode & RING_MODE_SET_PULSE_ALL));
 
     // **************************
-    // Setup OPCG align
-    // **************************
-
-    if ( l_use_setpulse )
-    {
-        buffer<uint64_t> l_opcgAlign;
-        FAPI_TRY( getScom( i_target, OPCG_ALIGN_ADDRESS, o_OPCGData.l_opcgAlign ) );
-
-        // bits: 4:7   SNOP_ALIGN(0:3) 5: 8:1
-        // bits: 20:31 SNOP_WAIT(0:11)
-        //set SNOP Align=8:1 and SNOP Wait=7
-        l_opcgAlign = o_OPCGData.l_opcgAlign;
-        l_opcgAlign.setBit<5>();
-        l_opcgAlign.setBit<7>();
-        l_opcgAlign.setBit<29>();
-        l_opcgAlign.setBit<30>();
-        l_opcgAlign.setBit<31>();
-
-        FAPI_TRY( putScom( i_target, OPCG_ALIGN_ADDRESS, l_opcgAlign ) );
-    }
-
-    // **************************
     // Setup Scan-Type and Region
     // **************************
 
     FAPI_TRY( putScom( i_target, SCAN_REGION_TYPE_ADDRESS, i_scanRegion ) );
-
 
     // ***************************
     // Setup Clock Region & OPCG regs
@@ -427,8 +403,8 @@ ReturnCode setupClockController(
         //First 32 bits tells clock region
         FAPI_TRY( putScom( i_target, CLK_REGION_ADDRESS, (i_scanRegion & 0xFFFFFFFF00000000ULL ) ) );
 
-        // bit 11 -- RUN_OPCG_ON_UPDATE_DR
-        uint64_t l_opcg_reg0 = 0x0010000000000000ULL;
+        buffer<uint64_t> l_opcgAlign;
+        uint64_t l_opcg_reg0 = 0x0ULL;
         uint64_t l_opcg_reg1 = 0x0ULL;
         uint64_t l_opcg_reg2 = 0x0ULL;
         // NSL for slow regions
@@ -461,6 +437,7 @@ ReturnCode setupClockController(
         }
 
         // save register state
+        FAPI_TRY( getScom( i_target, OPCG_ALIGN_ADDRESS, o_OPCGData.l_opcgAlign ) );
         FAPI_TRY( getScom( i_target, OPCG_REG0_ADDRESS,  o_OPCGData.l_opcgReg0  ) );
         FAPI_TRY( getScom( i_target, OPCG_REG1_ADDRESS,  o_OPCGData.l_opcgReg1  ) );
         FAPI_TRY( getScom( i_target, OPCG_REG2_ADDRESS,  o_OPCGData.l_opcgReg2  ) );
@@ -468,7 +445,15 @@ ReturnCode setupClockController(
         FAPI_TRY( getScom( i_target, OPCG_CAPT2_ADDRESS, o_OPCGData.l_opcgCapt2 ) );
         FAPI_TRY( getScom( i_target, OPCG_CAPT3_ADDRESS, o_OPCGData.l_opcgCapt3 ) );
 
+        // bits: 4:7   SNOP_ALIGN(0:3) 5: 8:1
+        // bits: 20:31 SNOP_WAIT(0:11)
+        //set SNOP Align=8:1 and SNOP Wait=7
+        l_opcgAlign = o_OPCGData.l_opcgAlign;
+        l_opcgAlign.insertFromRight<4, 4>(5);
+        l_opcgAlign.insertFromRight<20, 12>(7);
+
         // apply setpulse setup
+        FAPI_TRY( putScom( i_target, OPCG_ALIGN_ADDRESS, l_opcgAlign ) );
         FAPI_TRY( putScom( i_target, OPCG_REG0_ADDRESS,  l_opcg_reg0  ) );
         // Maintain SCAN_CLK_USE_EVEN bit 49
         l_opcg_reg1 = o_OPCGData.l_opcgReg1 & 0x0000000000004000ULL;
@@ -478,10 +463,11 @@ ReturnCode setupClockController(
         FAPI_TRY( putScom( i_target, OPCG_CAPT2_ADDRESS, l_opcg_capt2 ) );
         FAPI_TRY( putScom( i_target, OPCG_CAPT3_ADDRESS, l_opcg_capt3 ) );
 
-        if ( ( i_ringMode & RING_MODE_SET_PULSE_SL  ) ||
+        if ( ( i_ringMode & RING_MODE_SET_PULSE_SL ) ||
              ( i_ringMode & RING_MODE_SET_PULSE_ALL ) )
         {
-            FAPI_TRY( putScom( i_target, ROTATE_ADDRESS_SL_REG, 0x0ULL ) );
+            // SET_PULSE_SL is applied before we start scanning
+            FAPI_TRY( putScom( i_target, OPCG_REG0_ADDRESS, OPCG_GO_SINGLE_LOOP ) );
         }
     }
 
@@ -504,21 +490,15 @@ ReturnCode cleanupClockController(
 
     if ( l_use_setpulse )
     {
-        if ( ( i_ringMode & RING_MODE_SET_PULSE_NSL ) ||
-             ( i_ringMode & RING_MODE_SET_PULSE_ALL ) )
+        if ( i_ringMode & RING_MODE_SET_PULSE_NSL )
         {
-            FAPI_TRY( putScom( i_target, ROTATE_ADDRESS_NSL_REG, 0x0ULL ) );
+            // SET_PULSE_NSL and SET_PULSE_ALL are applied after we're done scanning
+            FAPI_TRY( putScom( i_target, OPCG_REG0_ADDRESS, OPCG_GO_SINGLE_LOOP ) );
         }
 
-        FAPI_TRY( putScom( i_target, OPCG_ALIGN_ADDRESS, i_OPCGData.l_opcgAlign ) );
-    }
-
-    FAPI_TRY( putScom( i_target, SCAN_REGION_TYPE_ADDRESS, 0x0ULL ) );
-
-    if ( l_use_setpulse )
-    {
         FAPI_TRY( putScom( i_target, CLK_REGION_ADDRESS, 0x0ULL ) );
         // restore register state
+        FAPI_TRY( putScom( i_target, OPCG_ALIGN_ADDRESS, i_OPCGData.l_opcgAlign ) );
         FAPI_TRY( putScom( i_target, OPCG_REG0_ADDRESS,  i_OPCGData.l_opcgReg0  ) );
         FAPI_TRY( putScom( i_target, OPCG_REG1_ADDRESS,  i_OPCGData.l_opcgReg1  ) );
         FAPI_TRY( putScom( i_target, OPCG_REG2_ADDRESS,  i_OPCGData.l_opcgReg2  ) );
@@ -526,6 +506,8 @@ ReturnCode cleanupClockController(
         FAPI_TRY( putScom( i_target, OPCG_CAPT2_ADDRESS, i_OPCGData.l_opcgCapt2 ) );
         FAPI_TRY( putScom( i_target, OPCG_CAPT3_ADDRESS, i_OPCGData.l_opcgCapt3 ) );
     }
+
+    FAPI_TRY( putScom( i_target, SCAN_REGION_TYPE_ADDRESS, 0x0ULL ) );
 
 fapi_try_exit:
     return current_err;
