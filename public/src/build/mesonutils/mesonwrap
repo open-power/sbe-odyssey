@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2021,2022
+# Contributors Listed Below - COPYRIGHT 2021,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -35,7 +35,7 @@ if [ -e ${SBEROOT_INT} ]; then
 fi
 
 TOOL_VERSION=1
-BASE_CMD="$HOME/.local/bin/meson"
+BASE_CMD="$SBEROOT_PYTHON_ENV/bin/meson"
 MESON_BUILD_DIR="$SBEROOT/builddir"
 MESON_INSTALL_DIR="$SBEROOT/images"
 CMN_PUB_MESON_CROSS_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/common/cross_file.txt"

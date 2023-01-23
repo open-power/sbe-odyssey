@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -26,6 +26,10 @@
 
 get_python_version()
 {
-    PYTHON_VERSION=$(python -V 2>&1 | grep -Po '(?<=Python )(.)')
+    {
+        PYTHON_VERSION=$(python -V 2>&1 | grep -Po '(?<=Python )(.)')
+    } || {
+        PYTHON_VERSION=$(python3 -V 2>&1 | grep -Po '(?<=Python )(.)')
+    }
     echo $PYTHON_VERSION
 }

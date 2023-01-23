@@ -7,6 +7,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2016,2023
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,7 +46,7 @@ check_path()
 usage()
 {
     echo "Usage"
-    echo "!!!RUN ON A RHEL7 MACHINE!!!"
+    echo "!!!RUN ON A RHEL7 & RHEL8 MACHINE!!!"
     echo "Generate Image Hash"
     echo "$toolName -i <secure_hdr> -o <img_hash> [-h ]"
     echo ""
@@ -114,7 +115,12 @@ elif [ -z $SBE_IMG_DIR_OP ]; then
     echo "***INFO | SBE | $toolName : Not OP_build. Fetching keys and signing scripts from /gsa/..."
     #RH_DIR=`sed 's/^.*release \([0-9]*\)\..*$/rh\1/' /etc/redhat-release`
     #TODO: Update below paths
-    SIGNING_DIR=/gsa/rchgsa/home/c/e/cengel/signtool/RHEL7/bin/
+    if [ -n $SIGNING_RHEL_PATH ]; then
+        SIGNING_DIR=${SIGNING_RHEL_PATH}/bin/
+    else
+        echo "***ERROR | SBE | $toolName : SIGNING_RHEL_PATH env var is not defined"
+        exit -1
+    fi
 
 else
     echo "***INFO | SBE | $toolName : OP_build. Fetching keys and signing scripts from OP-Build Tree"
@@ -125,9 +131,9 @@ fi
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SIGNING_DIR
 PATH=$SIGNING_DIR:$PATH
 
-# Openssl 1.1 path
 #TODO: Change below path once available on GFW machines
-OPENSSL_1_1_PATH=${SIGNING_DIR}/../openssl-1.1.1n/apps/openssl
+# open ssl path default installed in RH8 machine but RH7 machine is quit different
+OPENSSL_1_1_PATH=$OPEN_SSL_PATH
 
 # Do some sanity checks on things we expect the script to consume
 check_path ${SIGNING_DIR}/print-container

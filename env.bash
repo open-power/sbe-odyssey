@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2015,2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -23,6 +23,7 @@
 #
 # IBM_PROLOG_END_TAG
 
+
 # Apply generci bashrc
 
 if [ -z $SBE_CI_ENV_SETUP ]; then
@@ -33,10 +34,13 @@ fi
 
 echo "Setting environment variables..."
 
+source public/src/tools/utils/sbe/venv-python
+
 ROOTDIR=.
 export SBEROOT=`pwd`
 export SBEROOT_PUB="${SBEROOT}/public"
 export SBEROOT_INT="${SBEROOT}/internal"
+export SBEROOT_PYTHON_ENV="${SBEROOT}/venv/"
 
 if [ -e ${SBEROOT_PUB}/projectrc ]; then
     source ${SBEROOT_PUB}/projectrc
@@ -59,9 +63,10 @@ if [ -z $SBE_CI_ENV_SETUP ]; then
     source public/src/tools/utils/sbe/sbe_complete
 fi
 
-CMD="pip install -r $SBEROOT_PUB/src/tools/install/requirements.txt --user"
-echo $CMD
-$CMD || exit -1
+#calling function for activate the virtul python environment
+activatePythonVenv
+#Install required packages
+installRequiredPackages
 
 if [ -f "builddir/build.ninja" ]; then
     # Sync with current workon settings
