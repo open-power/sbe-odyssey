@@ -5,7 +5,8 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,3 +24,7 @@
 # IBM_PROLOG_END_TAG
 
 subdir('genfiles')
+
+if(get_option('bldr').enabled() and get_option('sppe').enabled())
+    meson.add_install_script('utils/installartifacts.sh')
+endif
