@@ -27,7 +27,7 @@
 # Exit if any command fails
 set -e
 
-source public/src/tools/utils/sbe/detect-python
+source public/src/tools/utils/sbe/venv-python
 
 if [ -e `pwd`/internal ]; then
     . `pwd`/internal/sbeutils.sh
@@ -133,54 +133,49 @@ sbe_workon()
     else
         export SBE_INSIDE_WORKON=1
 
-        for PLATFORM in ${SUPPORTED_PLATFORM[@]}; do
-            if [ "$PLATFORM" == "$1" ]; then
-                export SBE_PLATFORM=$1
-                echo "***INFO | Platform is $SBE_PLATFORM"
-                break
-            fi
-        done
+        if [ -z "$1" ]; then
+            echo "***INFO | Platform arg missing. Setting to default all"
+            export SBE_PLATFORM=all
+        else
+            for PLATFORM in ${SUPPORTED_PLATFORM[@]}; do
+                if [ "$PLATFORM" == "$1" ]; then
+                    export SBE_PLATFORM=$1
+                    echo "***INFO | Platform is $SBE_PLATFORM"
+                    break
+                fi
+            done
+        fi
 
-        for IMAGE in ${SUPPORTED_IMAGES[@]}; do
-           if [ "$IMAGE" == "$2" ]; then
-                export SBE_IMAGE=$2
-                echo "***INFO | Image type is $SBE_IMAGE"
-                break
-            fi
-        done
+        if [ -z "$2" ]; then
+            echo "***INFO | Image arg missing. Setting to default all"
+            export SBE_IMAGE=all
+        else
+            for IMAGE in ${SUPPORTED_IMAGES[@]}; do
+            if [ "$IMAGE" == "$2" ]; then
+                    export SBE_IMAGE=$2
+                    echo "***INFO | Image type is $SBE_IMAGE"
+                    break
+                fi
+            done
+        fi
 
         if [ -z "$SBE_PLATFORM" ]; then
-            echo "***INFO | Un-Supported platform type $1"
-            echo "***INFO | Supported Platforms : [<${SUPPORTED_PLATFORM[*]}>]"
-            echo "***INFO | Defaulting to  platform type : all"
-            export SBE_PLATFORM=all
+            echo "***ERROR | Un-Supported platform type $1"
+            echo "***ERROR | Supported Platforms : [<${SUPPORTED_PLATFORM[*]}>]"
+            echo "***ERROR | Exiting...."
+            exit -1
         fi
 
         if [ -z "$SBE_IMAGE" ]; then
-            echo "***INFO | Un-Supported image type $2"
-            echo "***INFO | Supported Images : [<${SUPPORTED_IMAGES[*]}>]"
-            echo "***INFO | Defaulting to  image type : all"
-            export SBE_IMAGE=all
-        fi
-
-        PYTHON_VERSION=$(get_python_version)
-
-        # For machines which have python2 as default(mostly all CI machines)
-        # execute scl command. Do nothing if python3 is default.
-        if [ "$PYTHON_VERSION" == "3" ]; then
-            echo "***INFO | Machine has Python3 as default"
-            echo "Spawning new shell (/bin/bash)..."
-            bash --rcfile ./env.bash -i
-        elif [ "$PYTHON_VERSION" == "2" ]; then
-            echo "***INFO | Machine has Python2 as default"
-            # we need to pass "bash --rcfile ./env.bash" as single argument to scl command
-            CMD_ARR=("scl" "enable" "rh-python36" "bash --rcfile ./env.bash -i")
-            echo "Spawning new shell : ${CMD_ARR[@]}"
-            "${CMD_ARR[@]}"
-        else
-            echo "Error: Cannot detect python2 or python3"
+            echo "***ERROR | Un-Supported image type $2"
+            echo "***ERROR | Supported Images : [<${SUPPORTED_IMAGES[*]}>]"
+            echo "***ERROR | Exiting...."
             exit -1
         fi
+
+        # calling fucntion for swaping new shell
+        swapingNewShell
+
     fi
 }
 

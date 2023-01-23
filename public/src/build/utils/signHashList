@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2016,2022
+# Contributors Listed Below - COPYRIGHT 2016,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -44,7 +44,7 @@ check_path()
 usage()
 {
     echo "Usage"
-    echo "!!!RUN ON A RHEL7 MACHINE!!!"
+    echo "!!!RUN ON A RHEL7 & RHEL8 MACHINE!!!"
     echo "Sign Hash List"
     echo "signHashList -i <Hash List to sign> -s <scratch dir path> -o <secure header output path>[-h ]"
     echo ""
@@ -145,8 +145,13 @@ elif [ -z $SBE_IMG_DIR_OP ]; then
     echo "***INFO | SBE | signHashList : Not OP_build. Fetching keys and signing scripts from /gsa/..."
     #RH_DIR=`sed 's/^.*release \([0-9]*\)\..*$/rh\1/' /etc/redhat-release`
     #TODO: Update below paths
-    DEV_KEY_DIR=/gsa/rchgsa/home/c/e/cengel/signtool/RHEL7/sb-signing-utils/test/v2_keys/
-    SIGNING_DIR=/gsa/rchgsa/home/c/e/cengel/signtool/RHEL7/bin/
+    if [ -n $SIGNING_RHEL_PATH ]; then
+        DEV_KEY_DIR=${SIGNING_RHEL_PATH}/sb-signing-utils/test/v2_keys/
+        SIGNING_DIR=${SIGNING_RHEL_PATH}/bin/
+    else
+        echo "***ERROR | SBE | signHashList : SIGNING_RHEL_PATH env var is not defined"
+        exit -1
+    fi
 
 else
     echo "***INFO | SBE | signHashList : OP_build. Fetching keys and signing scripts from OP-Build Tree"

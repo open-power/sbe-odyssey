@@ -39,6 +39,7 @@ signPakCompId = {
     "boot": "BOOT_LDR",
     "rt":   "RUN_TIME"
 }
+
 logLevel = {
     "D" : logging.DEBUG,
     "I" : logging.INFO,
@@ -63,6 +64,14 @@ signedCodeContainerMetaData = {
         }
 
 logger = logging.getLogger('imageTool')
+
+def getDefaultOpenSslPath():
+    openSslPath=os.environ.get('OPEN_SSL_PATH')
+    if openSslPath is None:
+        err = "ErrorMsg: Default Open SSL path not found"
+        logger.error(err)
+        raise Exception(err)
+    return openSslPath
 
 def runCmd(pipeCmd:str, fail:bool=True):
 
@@ -374,8 +383,7 @@ subCmd.add_argument("--excludeFiles", nargs="*", action=ExcludeFileList,
                                       metavar="pakName=excFile1,a/excFile2",
                                       help="List of files to exclude to " \
                                       "pak hash")
-subCmd.add_argument("--openSSLTool", default='/gsa/rchgsa/home/c/e/cengel/' \
-                                     'signtool/RHEL7/openssl-1.1.1n/apps/openssl',
+subCmd.add_argument("--openSSLTool", default=getDefaultOpenSslPath(),
                                      help="Pass OpenSSL tool path for pak hash."
                                      " (default: %(default)s)")
 subCmd.set_defaults(func=pakHash)

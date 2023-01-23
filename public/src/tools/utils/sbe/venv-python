@@ -1,0 +1,78 @@
+#!/bin/sh
+# IBM_PROLOG_BEGIN_TAG
+# This is an automatically generated prolog.
+#
+# $Source: public/src/tools/utils/sbe/venv-python $
+#
+# OpenPOWER sbe Project
+#
+# Contributors Listed Below - COPYRIGHT 2023
+# [+] International Business Machines Corp.
+#
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+# IBM_PROLOG_END_TAG
+
+# sourcing detect-python file
+source public/src/tools/utils/sbe/detect-python
+
+# Common function for swaping new shell
+swapingNewShell()
+{
+    PYTHON_VERSION=$(get_python_version)
+
+    # For machines which have python2 as default(mostly all CI machines)
+    # execute scl command. Do nothing if python3 is default.
+    if [ "$PYTHON_VERSION" == "3" ]; then
+        export SCL_PYTHON_ENABLED=0
+        echo "***INFO | Machine has Python3 as default"
+        echo "Spawning new shell (/bin/bash)..."
+        bash --rcfile ./env.bash -i
+    elif [ "$PYTHON_VERSION" == "2" ]; then
+        export SCL_PYTHON_ENABLED=1
+        echo "***INFO | Machine has Python2 as default"
+        # we need to pass "bash --rcfile ./env.bash" as single argument to scl command
+        CMD_ARR=("scl" "enable" "rh-python36" "bash --rcfile ./env.bash -i")
+        echo "Spawning new shell : ${CMD_ARR[@]}"
+        "${CMD_ARR[@]}"
+    else
+        echo "Error: $toolName | swapingNewShell | Cannot detect python2 or python3"
+        exit -1
+    fi
+}
+
+# Fucntion to activate the Python virtual environment
+activatePythonVenv()
+{
+    echo "Activating pyton venv..."
+    if [ "$SCL_PYTHON_ENABLED" == 1 ]; then
+        virtualenv $SBEROOT_PYTHON_ENV --prompt="SBE" || SS_1=0
+    elif [ "$SCL_PYTHON_ENABLED" == 0 ]; then
+        python3 -m venv $SBEROOT_PYTHON_ENV --prompt="SBE"
+    else
+        echo "Error: venv-python | activatePythonVenv | SCL_PYTHON_ENABLED is not defined"
+        exit -1
+    fi
+    source $SBEROOT_PYTHON_ENV/bin/activate
+}
+
+# Function for install required packages which is their in requirements.txt
+installRequiredPackages()
+{
+    echo "Installing Required packages..."
+    CMD="pip install -r $SBEROOT_PUB/src/tools/install/requirements.txt"
+    echo $CMD
+    $CMD || exit -1
+}
+

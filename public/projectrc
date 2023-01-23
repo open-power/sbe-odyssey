@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2015,2022
+# Contributors Listed Below - COPYRIGHT 2015,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -29,6 +29,6 @@
 export PROJECT_NAME=sbe
 export LICENSE=$SBEROOT/LICENSE_PROLOG # Copyright license file for PPE
 export LICENSE_INT=$SBEROOT/LICENSE_PROLOG_INT # Copyright license file for SBE internal
-export USER_BIN_DIR=$HOME/.local/bin
+export USER_BIN_DIR=$SBEROOT_PYTHON_ENV/bin
 export SBE_MESON_WRAP=$SBEROOT_PUB/src/build/mesonutils/
 export PATH=${PATH}:$SBE_MESON_WRAP:$USER_BIN_DIR # Update PATH
