@@ -38,8 +38,8 @@ using namespace fapi2;
 // IO HWP Class
 static hwpMap_t hwpClass1PtrTbl[] =
           {
-               //HWP_MAP(istepLoadIOPPEwithOcmb, ody_omi_hss_load_ppe),   // 1.01
-               HWP_MAP( NULL, NULL ),                                     // 1.01
+               HWP_MAP(istepLoadIOPPEwithOcmb, ody_omi_hss_ppe_load),   // 1.01
+               //HWP_MAP( NULL, NULL ),                                     // 1.01
                HWP_MAP( istepWithOcmb, ody_omi_hss_config ),              // 1.02
                HWP_MAP( istepWithOcmb, ody_omi_hss_ppe_start),            // 1.03
                HWP_MAP( istepWithOcmb, ody_omi_hss_bist_init ),           // 1.04
