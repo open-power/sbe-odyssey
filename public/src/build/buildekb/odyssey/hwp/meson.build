@@ -61,7 +61,7 @@ infile_c = [
             '/memory/odyssey/hwp/lib/phy/ody_phy_reset.C',
             '/memory/odyssey/hwp/lib/phy/ody_ddrphy_phyinit_config.C',
             '/memory/odyssey/hwp/lib/utils/odyssey_pos.C',
-            'memory/odyssey/hwp/lib/workarounds/ody_dfi_complete_workarounds.C',
+            '/memory/odyssey/hwp/lib/workarounds/ody_dfi_complete_workarounds.C',
 
             # Files needed for ody_load_imem and ody_load_dmem
 
