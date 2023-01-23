@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/hwpf/plat_hwp_data_stream.H $ */
+/* $Source: public/src/runtime/common/hwpf/plat_hwp_data_stream.H $       */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2020,2022                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2020,2023                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
