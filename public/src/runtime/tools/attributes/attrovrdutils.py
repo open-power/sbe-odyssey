@@ -26,6 +26,16 @@ from abc import ABC,abstractmethod
 from enum import Enum
 from typing import NamedTuple
 import typing
+import os,sys
+import hashlib
+import pickle
+
+class Utils:
+    def _getAttrHash(id):
+        attr_hash16bytes = hashlib.md5(id.encode()).digest()
+        attr_hash32bits = int.from_bytes(attr_hash16bytes[0:4], "big")
+        attr_hash28bits = attr_hash32bits >> 4
+        return attr_hash28bits
 
 
 class Const:
@@ -161,13 +171,37 @@ class AttributeFile(ABC):
 
 
 class AttributeFileGenerator(AttributeFile):
+
+    def __init__(self):
+        self.byte_buffer = bytearray()
+
+    def writeHeader(self,
+                    i_chip_type:Fapi2.ChipType,
+                    file_type:Fapi2.FileType,
+                    number_target_sections:int):
+        self.byte_buffer.extend(Const.FORMAT_MAJOR_VERSION.to_bytes(1, "big"))
+        self.byte_buffer.extend(Const.FORMAT_MINOR_VERSION.to_bytes(1, "big"))
+        self.byte_buffer.extend(i_chip_type.value.to_bytes(1, "big"))
+        self.byte_buffer.extend(self.iv_file_type.value.to_bytes(1, "big"))
+        self.byte_buffer.extend(number_target_sections.to_bytes(4, "big"))
+
+    def writeTarget(self,
+                    fapi_target_type:Fapi2.TargetType,
+                    inst_num:int,
+                    num_attributes:int):
+        l =len(self.byte_buffer)
+        self.byte_buffer.extend(fapi_target_type.value.to_bytes(1, "big"))
+        self.byte_buffer.extend(inst_num.to_bytes(1, "big"))
+        self.byte_buffer.extend(num_attributes.to_bytes(2, "big"))
+        # Reserved 4 bytes
+        self.byte_buffer.extend(int(0).to_bytes(4, "big"))
+
     def generateAttributeFile(
         self,
         i_chip_type : Fapi2.ChipType) -> bytearray :
         '''
         Will generate a pak file containing attr.ovrd or attr.list for the chip_type passed.
         '''
-
         pass
 
 
@@ -178,13 +212,13 @@ class AttributeUpdateFileGenerator(AttributeFileGenerator):
         {
             Target(TARGET_TYPE_SYSTEM, 0):
                 [
-                    AttributeOverride(AttributeInfo(ATTR_IS_SIMULATION, []), 5),
-                    AttributeOverride(AttributeInfo(ATTR_HOTPLUG, []), 2)
+                    AttributeOverride(AttributeInfo(ATTR_IS_SIMULATION, [], 1), 5),
+                    AttributeOverride(AttributeInfo(ATTR_HOTPLUG, [], 1), 2)
                 ],
             Target(TARGET_TYPE_OCMB, 0):
                 [
-                    AttributeOverride(AttributeInfo(ATTR_ENABLE_LBIST, []), 1),
-                    AttributeOverride(AttributeInfo(ATTR_BUS_POS, []), 5)
+                    AttributeOverride(AttributeInfo(ATTR_ENABLE_LBIST, [], 1), 1),
+                    AttributeOverride(AttributeInfo(ATTR_BUS_POS, [], 1), 5)
                 ],
         }
     '''
@@ -192,9 +226,62 @@ class AttributeUpdateFileGenerator(AttributeFileGenerator):
         self,
         i_chip_type : Fapi2.ChipType,
         i_attr_list: typing.Dict[AttributeFile.Target, 'list[AttributeFile.AttributeOverride]']
-        ) -> None:
+        ):
+        self.iv_file_type = Fapi2.FileType.OVERRIDE
+        self.iv_chip_type= i_chip_type
+        self.iv_attr_list = {}
+        super().__init__()
+        for target, attrovrdlist in i_attr_list.items():
+            newAttrOvrd = []
+            for attrovrd in attrovrdlist:
+                attr_hash28bits = Utils._getAttrHash(attrovrd.attr_inf.id)
+                attrovrd = AttributeFile.AttributeOverride(
+                    AttributeFile.AttributeInfo(attr_hash28bits,
+                    attrovrd.attr_inf.index, attrovrd.attr_inf.size), attrovrd.value)
+                newAttrOvrd.append(attrovrd)
+            self.iv_attr_list[target] = newAttrOvrd
 
-        pass
+    def writeAttribute(self,
+                        attr_id:int,
+                        size:int,
+                        index:list,
+                        data:'int|list[int]'):
+        pad = 0
+        l = len(self.byte_buffer)
+        self.byte_buffer.extend(attr_id.to_bytes(4,"big"))
+        self.byte_buffer.extend(size.to_bytes(2, "big"))
+        for elem in index:
+            self.byte_buffer.extend(elem.to_bytes(1,"big"))
+        self.byte_buffer.extend(pad.to_bytes(4-len(index), "big"))
+        if(isinstance(data,list)):
+            for elem in data:
+                self.byte_buffer.extend(elem.to_bytes(1, "big"))
+        else:
+            self.byte_buffer.extend(data.to_bytes(size, "big"))
+        alignment = 8-(len(self.byte_buffer)%8)
+        if(alignment!=8):
+            self.byte_buffer.extend(pad.to_bytes(alignment, "big"))
+
+    def generateAttributeFile(
+        self,
+        i_chip_type : Fapi2.ChipType) -> bytearray :
+        '''
+        Will generate a pak file containing attr.ovrd or attr.list for the chip_type passed.
+        '''
+        num_attributes   = len(self.iv_attr_list.values())
+        chip_type        = self.iv_chip_type
+        num_tgt_sections = len(self.iv_attr_list.items())
+        self.writeHeader(chip_type, self.iv_file_type, num_tgt_sections)
+
+        for target, attrovrdlist in self.iv_attr_list.items():
+            self.writeTarget(target.targ_type,
+                            target.targ_inst, len(attrovrdlist))
+            for attrovrd in attrovrdlist:
+                attr_inf = attrovrd.attr_inf
+                self.writeAttribute(attr_inf.id,
+                                    attr_inf.size, attr_inf.index,
+                attrovrd.value)
+        return self.byte_buffer
 
 
 class AttributeListFileGenerator(AttributeFileGenerator):
@@ -219,13 +306,70 @@ class AttributeListFileGenerator(AttributeFileGenerator):
         i_chip_type : Fapi2.ChipType,
         i_attr_list: typing.Dict[AttributeFile.Target, 'list[AttributeFile.AttributeInfo]']
         ) -> None:
-
         pass
 
 
 class AttributeFileParser(AttributeFile):
     def __init__(self, i_attr_file, i_attr_db)->None:
-        pass
+        self.iv_attr_file = i_attr_file
+        self.iv_offset = 0
+        self.iv_attr_db = attr_db
+        self.iv_AttrId_NameMap = {}
+        dbfile = pickle.loads(self.utilOpen(self.iv_attr_db))
+        for attr in dbfile.field_list:
+            attr_hash28bits = Utils._getAttrHash(attr.name)
+            self.iv_AttrId_NameMap[attr_hash28bits] = attr.name
+
+    def utilOpen(self, filename:str)->bytes:
+        try:
+            return open(filename, "rb").read()
+        except FileNotFoundError:
+            raise Exception("ERR -- '{}' FILE NOT FOUND ".format(filename))
+
+    def getAttrName(self, id)->str:
+        return self.iv_AttrId_NameMap.get(id, 'Not Found Attr id '+ str(hex(id)))
+
+    def _getAttrId(self):
+        return int.from_bytes(self.iv_attr_file[self.iv_offset:self.iv_offset+4],
+                "big", signed="False")&0x0FFFFFFF
+
+    def readHeader(self):
+        offset = self.iv_offset
+        format_major_version = self.iv_attr_file[0]
+        format_minor_version = self.iv_attr_file[1]
+        if(format_major_version!=Const.FORMAT_MAJOR_VERSION):
+            raise Exception("Format major version mismatch")
+        elif(format_minor_version!=Const.FORMAT_MINOR_VERSION):
+            raise Exception("Format minor version mismatch")
+        chip_type = Fapi2.ChipType(self.iv_attr_file[2]).name
+        if(self.iv_file_type != Fapi2.FileType(self.iv_attr_file[3])):
+            raise Exception("File Type Mismatch Expected - \
+            {}\n Got - {}".format(self.iv_file_type,
+            Fapi2.FileType(self.iv_attr_file[3])))
+        number_target_sections = int.from_bytes(self.iv_attr_file[4:8],
+                                                "big",signed="False")
+        self.iv_offset += 8
+        return number_target_sections
+
+    def readTarget(self)-> 'list[int, Fapi2.Target]':
+        offset = self.iv_offset
+        fapi_target_type = Fapi2.TargetType(self.iv_attr_file[offset]).name
+        inst_num = self.iv_attr_file[offset+1]
+        num_attribute_rows = int.from_bytes(self.iv_attr_file[offset+2:offset+4],
+                                            "big", signed="False")
+        self.iv_offset+=8
+        target = AttributeFile.Target(fapi_target_type, inst_num)
+        return num_attribute_rows, target
+
+    def getResponse(self):
+        response={}
+        num_target_sections = self.readHeader()
+        for i in range(num_target_sections):
+            num_attribute_rows, target = self.readTarget()
+            response[target] = list()
+            for j in range(num_attribute_rows):
+                response[target].append(self.readAttribute())
+        return response
 
 
 class AttributeUpdateRespFileParser(AttributeFileParser):
@@ -236,22 +380,62 @@ class AttributeUpdateRespFileParser(AttributeFileParser):
         self,
         i_attr_file : bytearray, # a pak file containing one or more attribute ovrd resp file
         i_attr_db) -> None:
-        pass
+        super().__init__(i_attr_file, i_attr_db)
+        self.iv_file_type = Fapi2.FileType.OVERRIDE
 
-    def getResponse(self) -> 'list[AttributeFile.AttributeOvrdResponse]':
-        pass
+    def _getStatus(self):
+        return (self.iv_attr_file[self.iv_offset])&0xF0
+
+    def _getAttrRc(self):
+        return int.from_bytes(self.iv_attr_file[self.iv_offset+4:self.iv_offset+8],
+                "big", signed="False")
+
+    def readAttribute(self):
+        status = self._getStatus()
+        attr_id = self._getAttrId()
+        attr_name = self.getAttrName(attr_id)
+        index = []
+        size = 4
+        rc = self._getAttrRc()
+        attr_inf = AttributeFile.AttributeInfo(id = attr_name,
+                                               index = index, size=size)
+        attr_ovrd = AttributeFile.AttributeOvrdResponse(attr_inf = attr_inf,
+        rc = AttributeFile.AttributeRc(rc))
+        offset = self.iv_offset+8
+        self.iv_offset = offset
+        if(offset%8!=0):
+            self.iv_offset = offset+ 8-(offset%8)
+        return attr_ovrd
 
 
-class AttributeListRespParser(AttributeFileParser):
-    '''
-    Parse the response recieved from attrRead chipop
-    '''
-    def __init__(
-        self,
-        i_attr_file : bytearray, # a pak file containing one or more attribute read resp file
-        i_attr_db) -> None:
+class AttributeListRespFileParser(AttributeFileParser):
+    def __init__(self, i_attr_file, i_attr_db) -> None:
+        super().__init__(i_attr_file, i_attr_db)
+        self.iv_file_type = Fapi2.FileType.DUMP
 
-        pass
+    def _getSize(self):
+        return int.from_bytes(self.iv_attr_file[self.iv_offset+4:self.iv_offset+6],
+                "big", signed="False")
 
-    def getResponse(self) -> 'list[AttributeFile.AttributeReadResponse]':
-        pass
+    def _getIndex(self):
+        return list(self.iv_attr_file[self.iv_offset+6:self.iv_offset+9])
+
+    def _getData(self, size):
+        return list(self.iv_attr_file[self.iv_offset+10:self.iv_offset+10+size])
+
+    def readAttribute(self):
+        offset = self.iv_offset
+        attr_id = self._getAttrId()
+        attr_name = self.getAttrName(attr_id)
+        size = self._getSize()
+        index = self._getIndex()
+        data = self._getData(size)
+        attr_inf = AttributeFile.AttributeInfo(id = attr_name,
+                                               index = index, size=size)
+        attr_ovrd = AttributeFile.AttributeReadResponse(attr_inf = attr_inf,
+        value = data, rc = AttributeFile.AttributeRc["AttrOverrideRc_SUCCESS"])
+        offset = self.iv_offset+10+size
+        self.iv_offset = offset
+        if(offset%8!=0):
+            self.iv_offset = offset+ 8-(offset%8)
+        return attr_ovrd
