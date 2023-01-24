@@ -57,9 +57,8 @@ typedef enum DimmTypes : int
     RDIMM,
     LRDIMM,
     NODIMM,
-    NVDIMMP
+    NVDIMMP,
 } DimmType_t;
-
 
 typedef struct user_input_basic
 {

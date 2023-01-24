@@ -2751,4 +2751,34 @@
   <entry name="ATTR_FAPI_POS">
     <value>0x00</value>
   </entry>
+  <entry name="ATTR_MEM_EFF_DDR5_CHB_ACTIVE">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_ODY_DFIPHYUPDCNT">
+    <value>7</value>
+  </entry>
+  <entry name="ATTR_ODY_DFIPHYUPDRESP">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_ODY_MRR_ODT_TERM">
+    <value>1</value>
+  </entry>
+  <entry name="ATTR_ODY_TX_IMPEDANCE_CTRL1">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_ODY_TX_IMPEDANCE_CTRL2">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_ODY_UPPERNIBBLE_OVERRIDE">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_ODY_UPPERNIBBLE_TG">
+    <value>0</value>
+    <value>0</value>
+    <value>0</value>
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_MEM_SI_PHY_DRV_IMP_DQ_DQS_PULL_UP">
+    <value>0</value>
+  </entry>
 </entries>
