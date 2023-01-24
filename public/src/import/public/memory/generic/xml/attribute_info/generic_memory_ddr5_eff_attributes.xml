@@ -234,4 +234,19 @@
         <mssAccessorName>ddr5_spd_cl_supported</mssAccessorName>
     </attribute>
 
+
+  <attribute>
+        <id>ATTR_MEM_EFF_DDR5_CHB_ACTIVE</id>
+        <targetType>TARGET_TYPE_MEM_PORT</targetType>
+        <description>
+             Used when the DFI1 channel exists
+                0 not active
+                1 active
+        </description>
+        <initToZero></initToZero>
+        <valueType>uint8</valueType>
+        <writeable/>
+        <mssAccessorName>ddr5_chb_active</mssAccessorName>
+    </attribute>
+
 </attributes>

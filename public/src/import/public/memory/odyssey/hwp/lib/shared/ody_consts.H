@@ -84,6 +84,9 @@ enum sizes
     MAX_BYTES_PER_PORT = MAX_DQ_BITS_PER_PORT / BITS_PER_BYTE,
     MAX_NIBBLES_PER_PORT = MAX_DQ_BITS_PER_PORT / BITS_PER_NIBBLE,
 
+
+    NUM_PSTATES = 4,
+
     // Enumerations for the Odyssey serial number attribute
     // The hostboot team requested that we only use enumerations for attribute values
     // These are attribute positions in an array, so moving them here
@@ -175,6 +178,9 @@ enum ffdc_codes : uint16_t
     SET_THERM_SENSOR_2_LOCATION = 0x107A,
     SET_THERM_SENSOR_3_LOCATION = 0x107B,
 
+    SET_MEM_ALERT_EN = 0x107C,
+
+    DDRPHYINIT_SETUP_BASIC_STRUCT = 0x107D,
 };
 
 ///
