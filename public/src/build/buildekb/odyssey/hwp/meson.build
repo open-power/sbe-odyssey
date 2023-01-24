@@ -68,7 +68,8 @@ infile_c = [
             '/memory/odyssey/hwp/ody_load_dmem.C',
 
             # Files needed for ody_sppe_draminit
-
+            '/memory/odyssey/hwp/lib/phy/ody_draminit_procedure.C',
+            '/memory/odyssey/hwp/lib/fir/ody_fir.C',
 
             # Files needed for ody_load_pie
 

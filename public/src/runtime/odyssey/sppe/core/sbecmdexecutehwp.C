@@ -64,7 +64,7 @@ static hwpMap_t hwpClass2PtrTbl[] =
                HWP_MAP( NULL, NULL ),                               // 2.03
                HWP_MAP( istepLoadIMEMwithOcmb, ody_load_imem ),     // 2.04
                HWP_MAP( istepLoadDMEMwithOcmb, ody_load_dmem ),     // 2.05
-               HWP_MAP( istepDraminitWithOcmb, NULL ),              // 2.06
+               HWP_MAP( istepDraminitWithOcmb, ody_sppe_draminit ), // 2.06
                HWP_MAP( NULL, NULL ),                               // 2.07
                HWP_MAP( NULL, NULL ),                               // 2.08
                HWP_MAP( NULL, NULL ),                               // 2.09

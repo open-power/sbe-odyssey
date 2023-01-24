@@ -34,5 +34,6 @@
 #include <ody_omi_train.H>
 #include <ody_thermal_init.H>
 #include <ody_enable_ecc.H>
+#include <ody_sppe_draminit.H>
 
 #endif

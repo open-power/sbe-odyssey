@@ -38,6 +38,7 @@
 #include <generic/memory/lib/utils/fir/gen_mss_fir.H>
 #include <generic/memory/lib/utils/mss_generic_check.H>
 #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
+#include <generic/memory/lib/utils/pos.H>
 #include <lib/fir/ody_fir.H>
 #include <ody_scom_ody_odc.H>
 
