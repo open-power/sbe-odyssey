@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/generic/perv/poz_tp_stopclocks.H $ */
+/* $Source: public/src/import/public/hwp/generic/perv/poz_common_stopclocks_flags.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,41 +23,36 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  poz_tp_stopclocks.H
-/// @brief Stop clocks for TP chiplet
+/// @file  poz_common_stopclocks_flags.H
+/// @brief Common module for stopclocks
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
-// *HWP Consumed by     : FSP
+// *HWP Consumed by     : FSP:HB
 //------------------------------------------------------------------------------
 
-#pragma once
+#ifndef _POZ_COMMON_STOPCLOCKS_FLAGS_H_
+#define _POZ_COMMON_STOPCLOCKS_FLAGS_H_
 
-#include <fapi2.H>
-#include <poz_common_stopclocks.H>
-#include <poz_common_stopclocks_flags.H>
+enum StopClocksFlags : uint32_t
+{
+    STOP_REGION_NONE    = 0x00000000,
+    STOP_REGION_SBE     = 0x80000000,
+    STOP_REGION_TP      = 0x40000000,
+    STOP_REGION_NEST    = 0x20000000,
+    STOP_REGION_TBUS    = 0x10000000,
+    STOP_REGION_MC      = 0x08000000,
+    STOP_REGION_PAXO    = 0x04000000,
+    STOP_REGION_PCIE    = 0x02000000,
+    STOP_REGION_CACHE   = 0x01000000,
+    STOP_REGION_CORE    = 0x00800000,
+    STOP_REGION_EQ      = 0x00400000,
+    STOP_REGION_VITL    = 0x00200000,
+};
 
-/// @brief Stop clocks for TP chiplet
-///
-/// @param[in]     i_target            Reference to TARGET_TYPE_ANY_POZ_CHIP target
-/// @param[in]     i_stopclocks_flags  Stop clocks flags
-/// @param[in]     i_pcb_accessible    True if PCB can be accessed
-/// @return  FAPI2_RC_SUCCESS if success, else error code.
-fapi2::ReturnCode poz_tp_stopclocks(
-    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    const StopClocksFlags i_stopclocks_flags,
-    bool i_pcb_accessible);
+inline StopClocksFlags operator|(const StopClocksFlags a, const StopClocksFlags b)
+{
+    return static_cast<StopClocksFlags>((uint32_t)a | (uint32_t)b);
+}
 
-/// @brief Stopclocks for all regions of TP chiplet except sbe
-///
-/// @param[in]     i_target       Reference to TARGET_TYPE_ANY_POZ_CHIP
-/// @return  FAPI2_RC_SUCCESS if success, else error code.
-fapi2::ReturnCode poz_tp_stopclocks_all_regions_except_sbe(
-    const  fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target);
-
-/// @brief Stopclocks for sbe region
-///
-/// @param[in]     i_target       Reference to TARGET_TYPE_ANY_POZ_CHIP
-/// @return  FAPI2_RC_SUCCESS if success, else error code.
-fapi2::ReturnCode poz_sbe_region_stopclocks(
-    const  fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target);
+#endif

@@ -30,8 +30,8 @@
   <hwpError>
     <rc>RC_TP_VITL_CLK_OFF_ERR</rc>
     <description>Perv vital clocks are off, stopclocks cant go ahead</description>
+    <ffdc>TARGET_CHIP</ffdc>
     <ffdc>PERV_CTRL0_READ_DATA</ffdc>
-    <ffdc>PROC_TARGET</ffdc>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
@@ -39,7 +39,7 @@
     <description>
       CBS_ACK did not reach expected value within poll time
     </description>
-    <ffdc>PROC_TARGET</ffdc>
+    <ffdc>TARGET_CHIP</ffdc>
     <ffdc>EXPECTED_ACK_VALUE</ffdc>
     <ffdc>CBS_STAT_READ_DATA</ffdc>
     <ffdc>TIMEOUT</ffdc>
@@ -51,7 +51,7 @@
     <description>
       Error occured while stopping clocks for all regions of TP except SBE
     </description>
-    <ffdc>PROC_TARGET</ffdc>
+    <ffdc>TARGET_CHIP</ffdc>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
@@ -59,7 +59,7 @@
     <description>
       Error occured while stopping clocks for SBE
     </description>
-    <ffdc>PROC_TARGET</ffdc>
+    <ffdc>TARGET_CHIP</ffdc>
   </hwpError>
   <!-- ******************************************************************** -->
 </hwpErrors>

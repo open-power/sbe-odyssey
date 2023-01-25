@@ -103,8 +103,8 @@ fapi2::ReturnCode poz_stopclocks_pre_check(
 
     FAPI_ASSERT((!tp_vitl_clk_off),
                 fapi2::TP_VITL_CLK_OFF_ERR()
-                .set_PERV_CTRL0_READ_DATA(PERV_CTRL0)
-                .set_PROC_TARGET(i_target),
+                .set_TARGET_CHIP(i_target)
+                .set_PERV_CTRL0_READ_DATA(PERV_CTRL0),
                 "Perv vital clocks are off, stopclocks cant go ahead");
 
     if(tp_cplt_en && !tp_ep_rst)
@@ -235,7 +235,7 @@ fapi2::ReturnCode poll_for_cbs_ack(
     }
 
     FAPI_ASSERT(l_timeout > 0, fapi2::CBS_ACK_NOT_SEEN_ERR()
-                .set_PROC_TARGET(i_target)
+                .set_TARGET_CHIP(i_target)
                 .set_EXPECTED_ACK_VALUE(poll_data)
                 .set_CBS_STAT_READ_DATA(CBS_STAT)
                 .set_TIMEOUT(CBS_POLL_COUNT)
