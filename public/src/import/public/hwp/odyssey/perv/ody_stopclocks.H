@@ -36,6 +36,7 @@
 
 #include <fapi2.H>
 #include <poz_common_stopclocks.H>
+#include <poz_common_stopclocks_flags.H>
 
 typedef fapi2::ReturnCode (*ody_stopclocks_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
         const StopClocksFlags);
