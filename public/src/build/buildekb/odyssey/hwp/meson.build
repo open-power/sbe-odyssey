@@ -72,7 +72,10 @@ infile_c = [
             '/memory/odyssey/hwp/lib/fir/ody_fir.C',
 
             # Files needed for ody_load_pie
-
+            '/memory/odyssey/hwp/ody_load_pie.C',
+            '/memory/odyssey/hwp/lib/phy/dwc_ddrphy_phyinit_I_loadPIEImage.C',
+            '/memory/odyssey/hwp/lib/phy/dwc_ddrphy_phyinit_LoadPieProdCode.C',
+            '/memory/odyssey/hwp/lib/phy/dwc_ddrphy_phyinit_LoadPieProdCode_rdimm.C',
 
             # Files needed for ody_draminit_mc
             '/memory/odyssey/hwp/ody_draminit_mc.C',
