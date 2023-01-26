@@ -26,6 +26,7 @@
 #define __HWPWRAPPER_H_
 
 #include "sbecmnhwpwrapper.H"
+#include "plat_hwp_data_stream.H"
 
 using namespace fapi2;
 
@@ -47,6 +48,10 @@ using  sbeHwpIOLoadbin_t = ReturnCode (*)
                        const uint32_t i_bin_size,
                        const uint32_t i_bin_offset,
                        uint8_t i_ioppeImage);
+
+using  sbeHwpDraminit_t = ReturnCode (*)
+                      (const Target<TARGET_TYPE_OCMB_CHIP> & i_target,
+                       fapi2::hwp_array_ostream  & ostream);
 
 /*
  * @brief Wrapper to call the HWP
@@ -125,4 +130,14 @@ ReturnCode istepLoadIOPPEwithOcmb( voidfuncptr_t i_hwp);
 ReturnCode sbeexecutehwponpak( voidfuncptr_t i_hwp, uint8_t* const i_bin_data,
                                const uint32_t i_bin_size, const uint32_t i_bin_offset,
                                uint8_t i_ioppeImage);
+
+
+/*
+ * @brief Wrapper to call the HWP
+ *
+ * @param[in] i_hwp Function pointer to HWP
+ *
+ * @return FAPI2_RC_SUCCESS on success
+ */
+ReturnCode istepDraminitWithOcmb( voidfuncptr_t i_hwp);
 #endif

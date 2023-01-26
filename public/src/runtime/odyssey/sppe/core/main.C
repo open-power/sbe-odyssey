@@ -62,6 +62,9 @@ uint32_t g_odysseyfrequency = SBE_REF_BASE_FREQ_HZ;
 uint8_t sppe_Kernel_NC_Int_stack[SPPE_NONCRITICAL_STACK_SIZE];
 
 uint32_t g_partitionOffset = 0;
+// ody draminit offset address
+uint32_t g_draminitOffset = 0;
+
 ///////////////////////////////////////////////////////////////////
 //// @brief PkThread structure for SBE Verification thread .
 ////////////////////////////////////////////////////////////////////

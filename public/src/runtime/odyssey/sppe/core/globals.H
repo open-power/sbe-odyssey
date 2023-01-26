@@ -40,4 +40,6 @@
 
 // PNOR partition offset.
 extern uint32_t g_partitionOffset;
+// DRAM Init Offset
+extern uint32_t g_draminitOffset;
 #endif //__GLOBALS_H
