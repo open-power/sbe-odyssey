@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2021,2022
+# Contributors Listed Below - COPYRIGHT 2021,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -595,7 +595,6 @@ foreach my $argnum ( 0 .. $#ARGV )
                 $val =~ s/\n//;
                 $val =~ s/^\s+//;
                 $val =~ s/\s+$//;
-
                 my @values = split( '=', ${val} );
 
                 # Remove newlines and leading/trailing whitespace
@@ -621,24 +620,27 @@ foreach my $argnum ( 0 .. $#ARGV )
                 push @attrOverrideEnums, "\t{ \"$attr->{id}_$values[0]\", $number },\n";
 
                 # Print the attribute enum to attribute_ids.H
-                print AIFILE "    ENUM_$attr->{id}_${val}";
-
-                # Print the attribute enum to attrEnumInfo.csv
-                my $attrEnumTxt = "$attr->{id}_${val}\n";
-
-                $attrEnumTxt =~ s/ = /,/;
-                print ETFILE $attrEnumTxt;
-
-                if ( $attr->{valueType} eq 'uint64' )
+                if ( $val ne "" )
                 {
-                    print AIFILE "ULL";
-                }
-                elsif ( $attr->{valueType} eq 'int64' )
-                {
-                    print AIFILE "LL";
-                }
+                    print AIFILE "    ENUM_$attr->{id}_${val}";
 
-                print AIFILE ",\n";
+                    # Print the attribute enum to attrEnumInfo.csv
+                    my $attrEnumTxt = "$attr->{id}_${val}\n";
+
+                    $attrEnumTxt =~ s/ = /,/;
+                    print ETFILE $attrEnumTxt;
+
+                    if ( $attr->{valueType} eq 'uint64' )
+                    {
+                        print AIFILE "ULL";
+                    }
+                    elsif ( $attr->{valueType} eq 'int64' )
+                    {
+                        print AIFILE "LL";
+                    }
+
+                    print AIFILE ",\n";
+                }
             }
 
             print AIFILE "};\n";
