@@ -27,6 +27,9 @@
 #include "sbestreampaktohwp.H"
 #include "pakwrapper.H"
 #include "globals.H"
+#include "heap.H"
+
+#define SRAM_SCRATCH_GRANULAR_SIZE 0x10000 // 64 KB
 
 using namespace fapi2;
 
@@ -189,6 +192,45 @@ ReturnCode sbeexecutehwponpak( voidfuncptr_t i_hwp, uint8_t* const i_bin_data,
         SBE_EXEC_HWP(fapiRc, reinterpret_cast<sbeHwpMEMLoadbin_t>( i_hwp ),
                      l_ocmb_chip, (uint8_t *)i_bin_data, i_bin_size, i_bin_offset);
     }
+    return fapiRc;
+    #undef SBE_FUNC
+}
+
+ReturnCode istepDraminitWithOcmb( voidfuncptr_t i_hwp)
+{
+    #define SBE_FUNC " istepDraminitWithOcmb "
+    SBE_ENTER(SBE_FUNC);
+    ReturnCode fapiRc = FAPI2_RC_SUCCESS;
+    uint32_t *scratchArea = NULL;
+    do
+    {
+        if(i_hwp != NULL)
+        {
+            // Allocate the scratch space of 64 KB for log data.
+            scratchArea =
+                    (fapi2::hwp_data_unit*)Heap::get_instance().scratch_alloc(SRAM_SCRATCH_GRANULAR_SIZE);
+
+            if(scratchArea == NULL)
+            {
+                SBE_ERROR(SBE_FUNC "scratch allocation failed.");
+                fapiRc = FAPI2_RC_PLAT_ERR_SEE_DATA;
+                break;
+            }
+
+            // Create the stream class pointing to the scratch space.
+            fapi2::hwp_array_ostream  logStream( scratchArea,
+                                      SRAM_SCRATCH_GRANULAR_SIZE/sizeof(fapi2::hwp_data_unit));
+
+            Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
+            SBE_EXEC_HWP(fapiRc, reinterpret_cast<sbeHwpDraminit_t>( i_hwp ),
+                          l_ocmb_chip, logStream);
+        }
+    }while(0);
+
+    // Update DRAM offset with allocate the scratch space.
+    g_draminitOffset =  (uint32_t)scratchArea;
+
+    SBE_EXIT(SBE_FUNC);
     return fapiRc;
     #undef SBE_FUNC
 }
