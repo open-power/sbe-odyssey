@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -55,6 +55,12 @@ ReturnCode loadEmbeddedFile(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
 /// @brief Free memory allocated by loadEmbeddedFile()
 /// @param[in] i_data  Pointer to file contents
 /// @return FAPI2_RC_SUCCESS on success, else error code
+/// @note freeEmbeddedFile() must be called only if the corresponding call to
+///       loadEmbeddedFile() was successful
+/// @note If more than 1 file is loaded in memory with loadEmbeddedFile(), then
+///       freeEmbeddedFile() must be called in a last-in-first-out (LIFO) order.
+///       Calling freeEmbeddedFile () in a random order can lead to unexpected
+//        behavior
 ReturnCode freeEmbeddedFile(void* i_data);
 
 }
