@@ -114,6 +114,7 @@ void __eabi()
 // values together.
 constexpr struct PACKED metadata_t {
     METADATA(IMG, { IMAGES::RUNTIME });
+    METADATA_STR(IID, "odyssey/sppe");
     METADATA(GIT, { SBE_COMMIT_ID });
     METADATA(DAT, { SBE_BUILD_TIME });
     METADATA(TRA, { SPPE_TRACE_START_OFFSET, SPPE_PK_TRACE_SIZE_WITH_HEADER });

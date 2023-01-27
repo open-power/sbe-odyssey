@@ -105,6 +105,7 @@ void __eabi()
 // values together.
 const struct PACKED metadata_t {
     METADATA(IMG, { IMAGES::BOOTLOADER });
+    METADATA_STR(IID, "odyssey/bldr");
     METADATA(GIT, { SBE_COMMIT_ID });
     METADATA(DAT, { SBE_BUILD_TIME });
     METADATA(LDA, { BOOTLOADER_ORIGIN });
