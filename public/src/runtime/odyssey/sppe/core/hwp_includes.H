@@ -29,13 +29,8 @@
 #include <ody_omi_setup.H>
 #include <ody_omi_train.H>
 #include <ody_thermal_init.H>
-#include <poz_cmdtable_interpreter.H>
-#include <ody_sppe_attr_setup.H>
-#include <poz_putRingUtils.H>
-#include <poz_ring_ids.H>
 #include <ody_enable_ecc.H>
 #include <ody_scominit.H>
 #include <ody_ddrphyinit.H>
-#include <c_str.H>
 
 #endif
