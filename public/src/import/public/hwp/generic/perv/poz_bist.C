@@ -285,6 +285,7 @@ ReturnCode poz_bist(
 
     // Needed for unicast condition
     uint8_t l_chiplet_number = 0;
+    bool l_is_tp_bist = false;
 
     // Regions are handled a little differently for TP BIST
     clock_region l_all_active_regions = REGION_ALL;
@@ -335,6 +336,8 @@ ReturnCode poz_bist(
             // Safe scan0 for TP depends on PCB mux; just default to regions requested for BIST
             if (l_chiplet_number == 1)
             {
+                l_is_tp_bist = true;
+
                 if (i_params.chiplets_regions[1])
                 {
                     l_tp_regions = i_params.chiplets_regions[1];
@@ -491,7 +494,7 @@ ReturnCode poz_bist(
     if (i_params.stages & i_params.bist_stages::REG_CLEANUP)
     {
         FAPI_INF("Cleanup all SCOM registers");
-        FAPI_TRY(mod_bist_reg_cleanup(l_chiplets_target));
+        FAPI_TRY(mod_bist_reg_cleanup(l_chiplets_target, l_is_tp_bist));
         o_return.completed_stages |= i_params.bist_stages::REG_CLEANUP;
     }
 
