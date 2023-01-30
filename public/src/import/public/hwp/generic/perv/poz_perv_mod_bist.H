@@ -61,10 +61,12 @@ fapi2::ReturnCode mod_bist_poll(
 /// --Restore specific bits of CPLT_CTRL0, CPLT_CTRL1, NET_CTRL0, and BH_SCRATCH_REG registers
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
+/// @param[in]   i_skip_net_ctrl0          Skip putScom of NET_CTRL0 (likely must be true if TP)
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_bist_reg_cleanup(
-    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target);
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
+    const bool i_skip_net_ctrl0);
 
 /// @brief LBIST setup module.
 ///

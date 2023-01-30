@@ -153,7 +153,9 @@ fapi_try_exit:
 }
 
 
-ReturnCode mod_bist_reg_cleanup(const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target)
+ReturnCode mod_bist_reg_cleanup(
+    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
+    const bool i_skip_net_ctrl0)
 {
     CPLT_CTRL0_t CPLT_CTRL0;                    ///< 0x00000
     CPLT_CTRL1_t CPLT_CTRL1;                    ///< 0x00001
@@ -181,9 +183,12 @@ ReturnCode mod_bist_reg_cleanup(const Target < TARGET_TYPE_PERV | TARGET_TYPE_MU
     CPLT_CTRL1.set_MULTICYCLE_TEST_FENCE(1);
     FAPI_TRY(CPLT_CTRL1.putScom_CLEAR(i_target));
 
-    FAPI_INF("Restoring NET_CTRL0 register settings.");
-    NET_CTRL0.set_FENCE_EN(1);
-    FAPI_TRY(NET_CTRL0.putScom_SET(i_target));
+    if (!i_skip_net_ctrl0)
+    {
+        FAPI_INF("Restoring NET_CTRL0 register settings.");
+        NET_CTRL0.set_FENCE_EN(1);
+        FAPI_TRY(NET_CTRL0.putScom_SET(i_target));
+    }
 
     FAPI_INF("Resetting BIST halt signal.");
     // TODO reset BIST halt once supported
