@@ -109,6 +109,19 @@ namespace fapi2
     }
 
     ///
+    /// @brief Inquality Comparison Operator
+    /// @param[in] i_right Reference to Target to compare.
+    /// @return bool. True if not equal.
+    /// @note Platforms need to define this so that the physical
+    /// targets are determined to be equivilent rather than just the handles
+    ///
+    template<TargetType K, MulticastType M, typename V>
+    bool Target<K, M, V>::operator!=(const Target& i_right) const
+    {
+        return i_right.iv_handle != iv_handle;
+    }
+
+    ///
     /// @brief Get this target's immediate parent
     /// @tparam T The type of the parent
     /// @return Target<T, M, V> a target representing the parent
