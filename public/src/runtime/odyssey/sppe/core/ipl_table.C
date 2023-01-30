@@ -94,47 +94,12 @@ static istepMap_t g_istep3PtrTbl[] =
              ISTEP_MAP( NULL, NULL ),                               // 3.29
              ISTEP_MAP( NULL, NULL ),                               // 3.30
          };
-// @TODO: Start
-// istep-12, 13 and 14 HWO procedures are actually not part of SBE ipl tabel.
-// This is workaround to pick and unit test istep-13 procedures.
-// This need to converted to separate chipop
-static istepMap_t g_istep12PtrTbl[] =
-         {
-             ISTEP_MAP( NULL, NULL ),                               // 12.1
-             ISTEP_MAP( NULL, NULL ),                               // 12.2
-             ISTEP_MAP( NULL, NULL ),                               // 12.3
-             ISTEP_MAP( NULL, NULL ),                               // 12.4
-             ISTEP_MAP( NULL, NULL ),                               // 12.5
-             ISTEP_MAP( istepWithOcmb, ody_omi_setup ),             // 12.6
-             ISTEP_MAP( istepWithOcmb, ody_omi_train ),             // 12.7
-         };
-
-static istepMap_t g_istep13PtrTbl[] =
-         {
-             ISTEP_MAP( istepWithOcmb, ody_scominit ),              // 13.1
-             ISTEP_MAP( istepWithOcmb, ody_ddrphyinit ),            // 13.2
-//           ISTEP_MAP( istepWithOcmb, ody_load_imem ),             // 13.3
-//           ISTEP_MAP( istepWithOcmb, ody_load_dmem ),             // 13.4
-//           ISTEP_MAP( istepWithOcmb, ody_sppe_draminit ),         // 13.5
-//           ISTEP_MAP( istepWithOcmb, ody_load_pie ),              // 13.6
-//           ISTEP_MAP( istepWithOcmb, ody_draminit_mc ),           // 13.7
-             ISTEP_MAP( istepWithOcmb, ody_enable_ecc ),            // 13.8
-         };
-
-static istepMap_t g_istep14PtrTbl[] =
-         {
-             ISTEP_MAP( NULL, NULL ),                               // 14.1
-             ISTEP_MAP( istepWithOcmb, ody_thermal_init ),          // 14.2
-         };
 
 // @TODO: End
 
 istepTableEntry_t istepTableEntries[] = {
     ISTEP_ENTRY(  1, g_istep1PtrTbl),
     ISTEP_ENTRY(  3, g_istep3PtrTbl),
-    ISTEP_ENTRY(  12, g_istep12PtrTbl), // @TODO: Cleanup iStep12
-    ISTEP_ENTRY(  13, g_istep13PtrTbl), // @TODO: Cleanup iStep13
-    ISTEP_ENTRY(  14, g_istep14PtrTbl), // @TODO: Cleanup iStep14
 };
 
 REGISTER_ISTEP_TABLE(istepTableEntries)

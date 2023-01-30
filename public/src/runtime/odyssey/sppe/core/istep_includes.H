@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2017,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -46,15 +47,7 @@
 #include <ody_chiplet_fir_init.H>
 #include <ody_nest_enable_io.H>
 #include <ody_cmdtable_interpreter.H>
-#include <ody_scominit.H>
-#include <ody_omi_setup.H>
-#include <ody_omi_train.H>
-#include <ody_sppe_draminit.H>
-#include <ody_thermal_init.H>
 #include <poz_cmdtable_interpreter.H>
 #include <ody_sppe_attr_setup.H>
-#include <poz_putRingUtils.H>
-#include <poz_ring_ids.H>
-#include <ody_enable_ecc.H>
 
 #endif
