@@ -41,6 +41,30 @@
 #include <ody_io_ppe_common.H>
 #include <fapi2_subroutine_executor.H>
 
+constexpr uint64_t pSegRegisters[] =
+{
+    0x08E,
+    0x08D,
+    0x098,
+    0x089
+};
+
+constexpr uint64_t nSegRegisters[] =
+{
+    0x090,
+    0x08F,
+    0x099,
+    0x08A
+};
+
+constexpr uint8_t segLens[] =
+{
+    9,
+    5,
+    9,
+    16
+};
+
 inline uint32_t decodeSegs(uint32_t i_segs)
 {
     uint32_t r_numSegs = 0;

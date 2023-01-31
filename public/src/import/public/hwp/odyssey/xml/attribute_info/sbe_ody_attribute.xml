@@ -2782,4 +2782,23 @@
   <entry name="ATTR_MEM_SI_PHY_DRV_IMP_DQ_DQS_PULL_UP">
     <value>0</value>
   </entry>
+  <!-- IO HWP : IO OMI attributes added from here  -->
+  <!--        <entry name="ATTR_OMI_name">   -->
+  <!--          <value>0x0</value>  -->
+  <!--        </entry> -->
+  <entry name="ATTR_OMI_BIST_DAC_TEST">
+    <value>0x00</value>
+  </entry>
+  <entry name="ATTR_OMI_BIST_ESD_TEST">
+    <value>0x00</value>
+  </entry>
+  <entry name="ATTR_OMI_BIST_TIMER">
+    <value>5</value>
+  </entry>
+  <entry name="ATTR_OMI_RX_LANES">
+    <value>0xFF</value>
+  </entry>
+  <entry name="ATTR_OMI_TX_LANES">
+    <value>0xFF</value>
+  </entry>
 </entries>

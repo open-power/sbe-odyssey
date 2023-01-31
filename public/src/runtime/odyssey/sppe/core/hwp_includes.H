@@ -26,16 +26,33 @@
 #ifndef __HWP_INCLUDES_H
 #define __HWP_INCLUDES_H
 
+// MEM HWP Includes
+#include <ody_scominit.H>
 #include <ody_ddrphyinit.H>
 #include <ody_load_imem.H>
 #include <ody_load_dmem.H>
-#include <ody_scominit.H>
-#include <ody_omi_setup.H>
-#include <ody_omi_train.H>
+#include <ody_sppe_draminit.H>
 #include <ody_load_pie.H>
-#include <ody_thermal_init.H>
 #include <ody_draminit_mc.H>
 #include <ody_enable_ecc.H>
-#include <ody_sppe_draminit.H>
+#include <ody_thermal_init.H>
+
+// IO HWP Includes
+#include <ody_omi_hss_ppe_load.H>
+#include <ody_omi_hss_config.H>
+#include <ody_omi_hss_ppe_start.H>
+#include <ody_omi_hss_bist_init.H>
+#include <ody_omi_hss_bist_start.H>
+#include <ody_omi_hss_bist_poll.H>
+#include <ody_omi_hss_bist_cleanup.H>
+#include <ody_omi_hss_init.H>
+#include <ody_omi_hss_dccal_start.H>
+#include <ody_omi_hss_dccal_poll.H>
+#include <ody_omi_hss_tx_zcal.H>
+#include <ody_omi_pretrain_adv.H>
+#include <ody_omi_setup.H>
+#include <ody_omi_train.H>
+#include <ody_omi_train_check.H>
+#include <ody_omi_posttrain_adv.H>
 
 #endif
