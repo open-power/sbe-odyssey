@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -50,15 +51,6 @@ typedef struct
     uint32_t reserved:16;
     uint32_t ringMode:16;
 }sbePutRingMsgHdr_t;
-
-/**
- * @brief Put Ring From Image Command (0xD301)
- *
- * @param[in] i_pArg Buffer to be passed to the function (not used as of now)
- *
- * @return    RC from the PSU access utility
- */
-uint32_t sbePutRingFromImagePSU(uint8_t *i_pArg);
 
 /**
   * @brief sbeGetRing : write the ring data Buffer

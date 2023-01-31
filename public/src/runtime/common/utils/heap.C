@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -228,26 +229,34 @@ void* Heap::scratch_alloc(uint32_t i_size)
 
 void Heap::scratch_free(const void *i_ptr)
 {
-    uint32_t old_bottom = (uintptr_t)i_ptr - 8;
-    if (old_bottom != iv_scratch_bottom)
-    {
-        SBE_ERROR("scratch_free: Attempted to free a scratch block that is not at the bottom. "
-                  "ptr=%p bottom=0x%X", i_ptr, iv_scratch_bottom);
-        PK_PANIC(SBE::PANIC_ASSERT);
-    }
 
-    uint64_t header = *(uint64_t *)old_bottom;
-    if (header >> 32 != CANARY)
+    if(i_ptr != NULL)
     {
-        SBE_ERROR("scratch_free: Block header corrupted, halting. ptr=%p header=0x%08X%08X",
-                  i_ptr, header >> 32, header & 0xFFFFFFFF);
-        PK_PANIC(SBE::PANIC_ASSERT);
-    }
+        uint32_t old_bottom = (uintptr_t)i_ptr - 8;
+        if (old_bottom != iv_scratch_bottom)
+        {
+            SBE_ERROR("scratch_free: Attempted to free a scratch block that is not at the bottom. "
+                    "ptr=%p bottom=0x%X", i_ptr, iv_scratch_bottom);
+            PK_PANIC(SBE::PANIC_ASSERT);
+        }
 
-    uint32_t new_bottom = header & 0xFFFFFFFF;
-    SBE_DEBUG("scratch_free: ptr=%p old_bottom=0x%X new_bottom=0x%X", i_ptr, iv_scratch_bottom,
-            new_bottom);
-    iv_scratch_bottom = new_bottom;
+        uint64_t header = *(uint64_t *)old_bottom;
+        if (header >> 32 != CANARY)
+        {
+            SBE_ERROR("scratch_free: Block header corrupted, halting. ptr=%p header=0x%08X%08X",
+                    i_ptr, header >> 32, header & 0xFFFFFFFF);
+            PK_PANIC(SBE::PANIC_ASSERT);
+        }
+
+        uint32_t new_bottom = header & 0xFFFFFFFF;
+        SBE_DEBUG("scratch_free: ptr=%p old_bottom=0x%X new_bottom=0x%X", i_ptr, iv_scratch_bottom,
+                new_bottom);
+        iv_scratch_bottom = new_bottom;
+    }
+    else
+    {
+        SBE_ERROR("scratch_free : Null pointer passed. Nothing to free...");
+    }
 }
 
 void Heap::scratch_free_all()

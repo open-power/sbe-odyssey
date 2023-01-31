@@ -46,6 +46,7 @@
 #include "poz_putRingUtils.H"
 #include "plat_ring_utils.H"
 #include "poz_putRingBackend.H"
+#include "heap.H"
 
 using namespace fapi2;
 
@@ -282,33 +283,39 @@ uint32_t sbePutRingWrap( fapi2::sbefifo_hwp_data_istream& i_getStream,
     sbeResponseFfdc_t ffdc;
     ReturnCode fapiRc;
     sbePutRingMsgHdr_t hdr;
-    sbePutRingMsg_t reqMsg;
     uint32_t len = 0;
+    uint32_t *rs4ScratchArea = NULL;
     do
     {
-
-        // @TODO: JIRA - PFSBE-255
         // Get the length of payload
         // Length is not part of chipop. So take length from total length
         len = SBE_GLOBAL->sbeFifoCmdHdr.len -
                         sizeof(SBE_GLOBAL->sbeFifoCmdHdr)/sizeof(uint32_t);
 
-        // Get the length for RS4 payload
-        uint32_t rs4FifoEntries = len -
+        // Get the length for RS4 payload in words
+        uint32_t rs4PayloadSize = len -
                         sizeof(sbePutRingMsgHdr_t)/sizeof(uint32_t);
-        SBE_INFO(SBE_FUNC" rs4FifoEntries size: [0x%08X] ", rs4FifoEntries);
 
-        if( rs4FifoEntries  > (SBE_PUT_RING_RS4_MAX_DOUBLE_WORDS * 2) )
+        // Get the length for RS4 payload in bytes
+        uint32_t rs4PayloadSizeBytes = rs4PayloadSize * sizeof(uint32_t);
+        SBE_INFO(SBE_FUNC" rs4PayloadSize in words: [0x%08X] in bytes: [0x%08X]",
+                        rs4PayloadSize, rs4PayloadSizeBytes);
+
+        //Allocoate heap area based on the rs4 payload length in bytes
+        rs4ScratchArea =
+                    (uint32_t*)Heap::get_instance().scratch_alloc(rs4PayloadSizeBytes);
+        if(rs4ScratchArea == NULL)
         {
-            SBE_ERROR(SBE_FUNC" RS4 palyload size is wrong."
-                "size(entries):0x%08X",  rs4FifoEntries);
-            respHdr.setStatus( SBE_PRI_INVALID_DATA,
-                               SBE_SEC_GENERIC_FAILURE_IN_EXECUTION);
+            SBE_ERROR(SBE_FUNC "scratch allocation failed. Not enough scratch area to allocate");
+            respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                               SBE_SEC_SCRATCH_SPACE_FULL);
+
             // flush the fifo
             rc = i_getStream.get(len, NULL,true, true);
             break;
         }
 
+        // Get the message header
         len = sizeof(sbePutRingMsgHdr_t)/sizeof(uint32_t);
         rc = i_getStream.get(len, (uint32_t *)&hdr, false);
         // If FIFO access failure
@@ -316,20 +323,19 @@ uint32_t sbePutRingWrap( fapi2::sbefifo_hwp_data_istream& i_getStream,
         // Initialize with HEADER CHECK mode
         uint16_t ringMode = sbeToFapiRingMode(hdr.ringMode);
 
-        // Get the length of RS4 payload
-        len = rs4FifoEntries;
-        rc = i_getStream.get(len, (uint32_t *)&reqMsg);
+        // Get the rs4 payload
+        rc = i_getStream.get(rs4PayloadSize, rs4ScratchArea);
         // If FIFO access failure
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(rc);
-        // Set length of RS4 payload in words
-        rs4FifoEntries = rs4FifoEntries * 4;
-        SBE_INFO(SBE_FUNC" rs4RingLength[0x%08X], ringMode[0x%04X]", rs4FifoEntries, ringMode);
+
+        SBE_INFO(SBE_FUNC" ringMode: [0x%04X]", ringMode);
 
         Target<SBE_ROOT_CHIP_TYPE> l_hndl = g_platTarget->plat_getChipTarget();
         auto l_allgood_mc =
               l_hndl.getMulticast<fapi2::TARGET_TYPE_PERV>(fapi2::MCGROUP_GOOD);
-        fapiRc = poz_applyCompositeImage(l_allgood_mc, reqMsg.rs4Payload,
-                                         rs4FifoEntries, (fapi2::RingMode)ringMode);
+
+        fapiRc = poz_applyCompositeImage(l_allgood_mc, rs4ScratchArea,
+                                         rs4PayloadSizeBytes, (fapi2::RingMode)ringMode);
         if( fapiRc != FAPI2_RC_SUCCESS )
         {
             SBE_ERROR(SBE_FUNC" plat_putringutil failed."
@@ -340,6 +346,9 @@ uint32_t sbePutRingWrap( fapi2::sbefifo_hwp_data_istream& i_getStream,
             break;
         }
     }while(false);
+
+    //Free the scratch area
+    Heap::get_instance().scratch_free(rs4ScratchArea);
 
     // Now build and enqueue response into downstream FIFO
     // If there was a FIFO error, will skip sending the response,
@@ -352,6 +361,7 @@ uint32_t sbePutRingWrap( fapi2::sbefifo_hwp_data_istream& i_getStream,
     return rc;
 #undef SBE_FUNC
 }
+
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 uint32_t sbePutRing(uint8_t *i_pArg)
