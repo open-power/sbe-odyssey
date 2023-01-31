@@ -309,16 +309,16 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init_rx(const fapi2::Target<fapi2
         const uint8_t& i_dacTest,
         uint8_t i_rx_mask)
 {
-    const uint16_t c_reg_rx_datasm_cnt22 = 0x146;
-    const uint16_t c_reg_rx_ctl_cntl5 = 0x124;
-    const uint8_t c_max_lanes = 8;
+    constexpr uint16_t c_reg_rx_datasm_cnt22 = 0x146;
+    constexpr uint16_t c_reg_rx_ctl_cntl5 = 0x124;
+    constexpr uint8_t c_max_lanes = 8;
 
-    const uint8_t c_bit_rx_esd_test = 6;        // rx_datasm_cnt22
-    const uint8_t c_bit_rx_dac_test = 15;       // rx_datasm_cnt22
-    const uint8_t c_bit_rx_perv_capt = 48;      // rx_ctl_cntl5
-    const uint8_t c_bit_tc_bist_shared = 49;    // rx_ctl_cntl5
-    const uint8_t c_bit_tc_bist_code = 51;      // rx_ctl_cntl5
-    const uint8_t c_len_rx = 1;
+    constexpr uint8_t c_bit_rx_esd_test = 6;        // rx_datasm_cnt22
+    constexpr uint8_t c_bit_rx_dac_test = 15;       // rx_datasm_cnt22
+    constexpr uint8_t c_bit_rx_perv_capt = 48;      // rx_ctl_cntl5
+    constexpr uint8_t c_bit_tc_bist_shared = 49;    // rx_ctl_cntl5
+    constexpr uint8_t c_bit_tc_bist_code = 51;      // rx_ctl_cntl5
+    constexpr uint8_t c_len_rx = 1;
 
     fapi2::buffer<uint64_t> l_buffer;
 
@@ -342,7 +342,7 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init_rx(const fapi2::Target<fapi2
             FAPI_TRY(putScom(i_target, l_addr, l_buffer),
                      "Error putscom to address 0x%08X.", l_addr);
 
-            l_buffer = 0;
+            l_buffer.flush<0>();
 
             l_addr = buildAddr(i_baseAddr, 0, l_lane, c_reg_rx_ctl_cntl5);
 
@@ -360,6 +360,8 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init_rx(const fapi2::Target<fapi2
 
             FAPI_TRY(putScom(i_target, l_addr, l_buffer),
                      "Error putscom to address 0x%08X.", l_addr);
+
+            l_buffer.flush<0>();
         }
 
         i_rx_mask = i_rx_mask >> 1;
