@@ -54,7 +54,7 @@ ARC_RET_t PakWrapper::read_file(const char* i_fileName, void* i_destinationAddr,
     return rc;
 }
 
-ARC_RET_t PakWrapper::get_image_start_ptr_and_size(const char* i_fileName, uint8_t* o_imageStartPtr, uint32_t *o_uncompressedSize)
+ARC_RET_t PakWrapper::get_image_start_ptr_and_size(const char* i_fileName, uint32_t** o_imageStartPtr, uint32_t *o_uncompressedSize)
 {
     ARC_RET_t rc = ARC_INVALID_PARAMS;
 
@@ -79,7 +79,7 @@ ARC_RET_t PakWrapper::get_image_start_ptr_and_size(const char* i_fileName, uint8
                 }
                 else
                 {
-                    o_imageStartPtr = (uint8_t*)ptr;
+                    *o_imageStartPtr = (uint32_t*)ptr;
                 }
             }
 

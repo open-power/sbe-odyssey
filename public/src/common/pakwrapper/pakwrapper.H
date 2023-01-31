@@ -58,13 +58,14 @@ class PakWrapper
 
         /**
          * @brief Get image start offset and size.
+         *        Image start offset is returned only if file is uncompressed.
          *
          * @param[in] i_fileName pointer to file name to look for.
          * @param[out] o_imageStartPtr pointer to image start offset
          * @param[out] o_uncompressedSize Pointer to uncompressed file size in bytes.
          *
          * */
-        ARC_RET_t get_image_start_ptr_and_size(const char* i_fileName, uint8_t* o_imageStartPtr = NULL, uint32_t *o_uncompressedSize = NULL);
+        ARC_RET_t get_image_start_ptr_and_size(const char* i_fileName, uint32_t** o_imageStartPtr = NULL, uint32_t *o_uncompressedSize = NULL);
 
         __attribute__((always_inline))
         uint32_t get_size()
