@@ -103,15 +103,7 @@ ReturnCode plat_freeEmbeddedFile(void* i_data)
 
     ReturnCode l_rc = FAPI2_RC_SUCCESS;
 
-    do
-    {
-        //If HWP has passed a null ptr , dont try to free.
-        if(i_data == NULL)
-            break;
-
-        Heap::get_instance().scratch_free(i_data);
-
-    }while(false);
+    Heap::get_instance().scratch_free(i_data);
 
     return l_rc;
 
