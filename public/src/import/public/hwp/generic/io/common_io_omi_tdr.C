@@ -48,8 +48,7 @@ fapi2::ReturnCode common_io_omi_tdr(
     constexpr uint32_t c_groupb_mask = 0x5A;
     uint32_t l_groupa = 0x0;
     uint32_t l_groupb = 0x0;
-    // Will be an attribute in the future
-    uint32_t l_freq = 32500;
+    uint32_t l_freq = 0;
     // Leave l_sev comments for future development to pass severity to error checking
     // fapi2::errlSeverity_t l_sev;
     fapi2::ATTR_MFG_FLAGS_Type l_mfg_flags = {0};
@@ -60,6 +59,7 @@ fapi2::ReturnCode common_io_omi_tdr(
     fapi2::toString(i_target, l_tgt_str, sizeof(l_tgt_str));
 
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_MFG_FLAGS, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), l_mfg_flags));
+    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_FREQ_OMI, fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>(), l_freq));
 
     for (uint8_t l_lane = 0; l_lane < 8; l_lane++)
     {

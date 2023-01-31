@@ -162,6 +162,14 @@ fapi2::ReturnCode ody_omi_hss_dccal_start(const fapi2::Target<fapi2::TARGET_TYPE
     FAPI_TRY(l_ppe_common.dccal_start(i_target, l_num_threads, l_rx_lanes, l_tx_lanes, 1));
     FAPI_TRY(l_ppe_regs.flushCache(i_target));
 
+    // Run zcal
+    FAPI_TRY(l_ppe_common.issue_ext_cmd_req(i_target,
+                                            l_num_threads,
+                                            l_rx_lanes,
+                                            l_tx_lanes,
+                                            ody_io::TX_ZCAL_PL | ody_io::TX_FFE_PL));
+    FAPI_TRY(l_ppe_regs.flushCache(i_target));
+
 fapi_try_exit:
     FAPI_DBG("End");
     return fapi2::current_err;

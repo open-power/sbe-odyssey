@@ -50,6 +50,7 @@ infile_attr_xml = [
             'poz_chiplet_attributes.xml',
             'poz_clock_attributes.xml',
             'poz_chip_attributes.xml',
+            'poz_freq_attributes.xml',
             ]
 
 foreach infile : infile_attr_xml
