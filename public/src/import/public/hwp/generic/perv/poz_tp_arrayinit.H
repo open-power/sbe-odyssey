@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -24,7 +24,6 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  poz_tp_arrayinit.H
-///
 /// @brief Arrayinit ALL TP chiplet regions of a POZ chip except SBE, PIB & PLL
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
@@ -35,12 +34,15 @@
 
 #include <fapi2.H>
 
-typedef fapi2::ReturnCode (*poz_tp_arrayinit_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&);
+typedef fapi2::ReturnCode (*poz_tp_arrayinit_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&, uint64_t);
 
 /// @brief       Arrayinit ALL TP chiplet regions of a POZ chip except SBE, PIB & PLL
 /// @param[in]   i_target              Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_runn_cycles         Loop count value to set OPCG run-N mode
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {
-    fapi2::ReturnCode poz_tp_arrayinit(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target);
+    fapi2::ReturnCode poz_tp_arrayinit(
+        const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+        uint64_t i_runn_cycles = 0x42FFF);
 }

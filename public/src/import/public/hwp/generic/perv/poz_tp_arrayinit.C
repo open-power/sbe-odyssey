@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -24,16 +24,15 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  poz_tp_arrayinit.C
-///
 /// @brief Arrayinit ALL TP chiplet regions of a POZ chip except SBE, PIB & PLL
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#include "poz_tp_arrayinit.H"
-#include "poz_perv_common_params.H"
-#include "poz_perv_mod_chiplet_clocking.H"
+#include <poz_tp_arrayinit.H>
+#include <poz_perv_common_params.H>
+#include <poz_perv_mod_chiplet_clocking.H>
 #include <poz_perv_utils.H>
 
 using namespace fapi2;
@@ -43,12 +42,12 @@ enum POZ_TP_ARRAYINIT_Private_Constants
     REGIONS_TO_ARRAYINIT = REGION_PERV | REGION(3) | REGION(4),   // PERV+OCC+NET
 };
 
-ReturnCode poz_tp_arrayinit(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
+ReturnCode poz_tp_arrayinit(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, uint64_t i_runn_cycles)
 {
     FAPI_INF("Entering ...");
     fapi2::Target<fapi2::TARGET_TYPE_PERV> l_tpchiplet = get_tp_chiplet_target(i_target);
 
-    FAPI_TRY(mod_abist_start(l_tpchiplet, REGIONS_TO_ARRAYINIT));
+    FAPI_TRY(mod_abist_start(l_tpchiplet, REGIONS_TO_ARRAYINIT, i_runn_cycles));
     FAPI_TRY(mod_abist_poll(l_tpchiplet));
 
     //FAPI_TRY(putRing(i_target, ring_names::perv_abst_check, RING_MODE_COMPARE)); // if perv_abst_check is empty or does not exist, skip check
