@@ -563,4 +563,6 @@ class SymbolTable(object):
             if qual_attr_name in self.symbols:
                 attr.sbe_address = self.symbols[qual_attr_name].offset
             else:
-                raise ParseError("Address is not present in symbol file for " + attr.name + " for the target " + attr.sbe_targ_type)
+                raise ParseError("Address is not present in symbol file for "
+                                    +attr.name + " for the target " +
+                                    attr.sbe_targ_type)
