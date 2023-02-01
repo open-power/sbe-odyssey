@@ -139,7 +139,7 @@ fapi2::ReturnCode poz_stopclocks_pre_check(
                CLOCK_STAT_NSL.getBit<5>() || CLOCK_STAT_NSL.getBit<6>() || CLOCK_STAT_NSL.getBit<8>() ||
                CLOCK_STAT_ARY.getBit<5>() || CLOCK_STAT_ARY.getBit<6>() || CLOCK_STAT_ARY.getBit<8>())
             {
-                FAPI_ERR("At least one of the SBE/PIB/NET clocks NOT running, can't be able to use the PCB fabric to access chiplets.");
+                FAPI_ERR("At least one of the SBE/PIB/NET clocks NOT running, can't use the PCB fabric to access chiplets.");
                 pcb_clks_are_off      = true;
             }
         }
@@ -373,7 +373,7 @@ fapi2::ReturnCode poz_stop_chiplet_clocks_with_multiacst(
 
         if(l_rc == fapi2::FAPI2_RC_SUCCESS)
         {
-            l_chiplets_to_stop |= 1 << (63 - l_chiplet.getChipletNumber());
+            l_chiplets_to_stop |= (uint64_t)1 << (63 - l_chiplet.getChipletNumber());
         }
     }
 
