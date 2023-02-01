@@ -345,8 +345,9 @@ namespace fapi2
         void getPervChildren(const TargetFilter i_filter,
                              const bool i_include_nonfunctional,
                              std::vector<plat_target_sbe_handle>& o_children,
-                             bool i_include_isFilter = false) const
+                             bool i_ignore_filter = false) const
         {
+            SBE_INFO("sbe_target_service getPervChildren with filter");
             const fapi2::buffer<__underlying_type(TargetFilter)> l_filter = i_filter;
 
             uint64_t l_chiplet_mask = 0;
@@ -368,7 +369,7 @@ namespace fapi2
                     {
                         plat_target_sbe_handle l_target = iv_targets[i + j];
                         uint8_t chipletId = l_target.getChipletNumber();
-                        if((i_include_isFilter || filter.getBit(chipletId)) &&
+                        if((i_ignore_filter || filter.getBit(chipletId)) &&
                            (i_include_nonfunctional || l_target.getFunctional()))
                         {
                             o_children.push_back(l_target);

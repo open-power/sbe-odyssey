@@ -95,6 +95,7 @@ gcc_defs_cmn_sbe = [
 
 gcc_defs_cmn_hwp = [
         '-DFAPI_TRACE_LEVEL=4',
+        '-DSBE_TRACE_LEVEL=2',
         ]
 
 ekb_cmn_inc_path = [
