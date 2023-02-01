@@ -108,8 +108,8 @@ ReturnCode apply_regions_by_chiplet(
         if (l_chiplet_regions)
         {
             i_scom_buffer.insertFromRight(l_chiplet_regions, i_starting_bit, 16);
-            FAPI_DBG("Custom buffer value for chiplet %d : %#018lX",
-                     targ.getChipletNumber(), i_scom_buffer);
+            FAPI_DBG("Custom buffer value for chiplet %d : 0x%08X%08X",
+                     targ.getChipletNumber(), i_scom_buffer >> 32, i_scom_buffer & 0xFFFFFFFF);
             FAPI_TRY(fapi2::putScom(targ, i_scom_address, i_scom_buffer));
         }
     }
