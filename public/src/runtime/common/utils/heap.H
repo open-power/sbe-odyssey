@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -138,6 +139,13 @@ public :
      * @brief Free all scratch memory
      */
     void scratch_free_all();
+
+    /**
+     * @brief Function to get the current free heap space in bytes
+     *
+     * @return size_t Currently available free heap space in bytes
+     */
+    size_t getFreeHeapSize();
 
     /**
      * @brief Static method to get the singleton instance

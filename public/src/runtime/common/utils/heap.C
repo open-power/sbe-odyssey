@@ -263,3 +263,20 @@ void Heap::scratch_free_all()
 {
     iv_scratch_bottom = iv_heap_top;
 }
+
+size_t Heap::getFreeHeapSize()
+{
+    size_t freeHeapSpace = iv_scratch_bottom - iv_heap_midline;
+    if(freeHeapSpace > 8)
+    {
+        freeHeapSpace -= 0x8;
+        SBE_DEBUG("Available free heap space is 0x%08x", freeHeapSpace);
+    }
+    else
+    {
+        freeHeapSpace = 0x0;
+        SBE_INFO("No free heap space");
+    }
+
+    return freeHeapSpace;
+}
