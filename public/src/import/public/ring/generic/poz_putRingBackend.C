@@ -41,11 +41,11 @@
 #endif
 
 #define SCOMT_OMIT_FIELD_ACCESSORS
-#include <p11_scom_perv_tpchip.H>
+#include <poz_scom_perv_tpchip.H>
 
 using namespace fapi2;
 using namespace rs4;
-using namespace scomt::perv;
+using namespace scomt::poz;
 
 #ifdef TEST_HARNESS
 //////////////////////////////////////////////////////////////////////////////////////////////////
