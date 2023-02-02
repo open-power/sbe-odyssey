@@ -67,21 +67,40 @@ inline void attr_copy<uint64_t>(uint64_t& dest, uint64_t& src)
 
 {% if attr.first_attribute %}
 template <TargetType T>
-fapi2::ReturnCode get_{{attr.name}}(const fapi2::Target<T>& i_target, {{attr.name}}_Type& o_val)
-{
-    return fapi2::FAPI2_RC_SUCCESS;
-}
+fapi2::ReturnCode get_{{attr.name}}(const fapi2::Target<T>& i_target, {{attr.name}}_Type& o_val);
+
 template <TargetType T>
-fapi2::ReturnCode set_{{attr.name}}(const fapi2::Target<T>& i_target, {{attr.name}}_Type& o_val)
-{
-    return fapi2::FAPI2_RC_SUCCESS;
-}
+fapi2::ReturnCode set_{{attr.name}}(const fapi2::Target<T>& i_target, {{attr.name}}_Type& o_val);
 {% endif %}
 
 namespace {{attr.sbe_targ_type}}
 {
     extern {{attr.value_type}} {{attr.name}}{{attr.internal_dims}} __attribute__((section(".attrs")));
 }
+
+{% if attr.support_composite_target %}
+template <>
+inline fapi2::ReturnCode get_{{attr.name}}(
+    const fapi2::Target<{{attr.ekb_target_with_fapi2}}>& i_target,
+    {{attr.name}}_Type& o_val)
+{
+    // TODO: (JIRA: PFSBE-268)
+    //     call generic function plat_read_attribute(Target<T>, AttributeId), once this function is implemented
+    attr_copy(o_val, fapi2::ATTR::{{attr.sbe_targ_type}}::{{attr.name}}{{attr.targ_inst('i_target')}});
+    return fapi2::FAPI2_RC_SUCCESS;
+}
+
+template <>
+inline fapi2::ReturnCode set_{{attr.name}}(
+    const fapi2::Target<{{attr.ekb_target_with_fapi2}}>& i_target,
+    {{attr.name}}_Type& o_val)
+{
+    // TODO: (JIRA: PFSBE-268)
+    //     call generic function plat_set_attribute(Target<T>, AttributeId), once this function is implemented
+    attr_copy(fapi2::ATTR::{{attr.sbe_targ_type}}::{{attr.name}}{{attr.targ_inst('i_target')}}, o_val);
+    return fapi2::FAPI2_RC_SUCCESS;
+}
+{% endif %}
 
 template <>
 inline fapi2::ReturnCode get_{{attr.name}}(

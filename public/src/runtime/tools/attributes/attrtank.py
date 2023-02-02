@@ -84,7 +84,7 @@ class _EnumValueType(object):
                         image:bytearray, offset:int,
                         partial_row:DumpRecord) -> 'list[DumpRecord]':
 
-        value = self.get(image, offset) + \
+        value = str(self.get(image, offset)) + \
                 "("+str(self._base.get(image, offset))+")"
         return [DumpRecord(partial_row.name, partial_row.targ, value)]
 
@@ -381,6 +381,37 @@ class RealAttrFieldInfo(AttrFieldInfo):
     @property
     def first_attribute(self):
         return (self.ekb_target_type != '')
+
+    @property
+    def support_composite_target(self):
+        if(self.ekb_target_type == ''):
+            return False
+
+        targ_list = self.ekb_target_type.split('|')
+        if(len(targ_list) == 1):
+            return False
+
+        # check whether POZ chip type
+        # TODO: (JIRA: PFSBE-268)
+        #     remove this check, once we have function implemented for any target
+        poz_chip_list = ['TARGET_TYPE_HUB_CHIP',
+                        'TARGET_TYPE_COMPUTE_CHIP',
+                        'TARGET_TYPE_PROC_CHIP',
+                        'TARGET_TYPE_OCMB_CHIP']
+        fapi2_targ = ''
+        self.ekb_target_with_fapi2 = ''
+        for targ in targ_list:
+            if(targ.strip() in poz_chip_list):
+                if(fapi2_targ != ''):
+                    fapi2_targ += ' | '
+                fapi2_targ += "fapi2::" + targ.strip()
+            else:
+                return False
+
+        # this property will be called subsequent, if current function return True
+        self.ekb_target_with_fapi2 = fapi2_targ
+
+        return True
 
 class VirtualAttrFieldInfo(AttrFieldInfo):
     VIRTUAL_FUNCTION = {
