@@ -44,7 +44,7 @@
 #include "metadata.H"
 #include "sbestatesutils.H"
 #include "heap.H"
-#include "p11_ppe_pc.H"
+#include "poz_ppe.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -240,7 +240,7 @@ int  main(int argc, char **argv)
 
             // Get the partition start offset
             sbe_local_LFR lfrReg;
-            PPE_LVD(scomt::ppe_pc::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW, lfrReg);
+            PPE_LVD(scomt::poz_ppe::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW, lfrReg);
 
             g_partitionOffset = getAbsPartitionAddr(lfrReg.boot_selection);
             SBE_INFO(SBE_FUNC "Partition offset is : 0x%08x, "
