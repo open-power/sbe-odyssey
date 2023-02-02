@@ -55,7 +55,7 @@ bool isSystemCheckstop()
     ReturnCode fapiRc = FAPI2_RC_SUCCESS;
     plat_target_handle_t hndl;
     fapiRc = getscom_abs_wrap(&hndl,
-                              scomt::perv::ATTN_INTERRUPT_REG,
+                              scomt::poz::ATTN_INTERRUPT_REG,
                               attnReg.pointer());
     if( fapiRc == FAPI2_RC_SUCCESS )
     {

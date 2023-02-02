@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -38,7 +38,7 @@
 #include "errorcodes.H"
 #include "scratch.H"
 #include "shvprogresscode.H"
-#include "p11_scom_perv_cfam.H"
+#include "poz_scom_perv_cfam.H"
 #include "ppe42_scom.h"
 
 #define VERIFY_FAILED(_c) { if(shvRsp->statusCode == NO_ERROR) \
@@ -514,7 +514,7 @@ ROM_response verifySecureHdr(shvReq_t *shvReq, shvRsp_t *shvRsp)
     ROM_response status = ROM_DONE;
 
     // Get the current SBE Messaging Register value
-    getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, &shvReq->sbeMsgRegValue);
+    getscom_abs(scomt::poz::FSXCOMP_FSXLOG_SB_MSG, &shvReq->sbeMsgRegValue);
     SBE_INFO(SBE_FUNC "SBE Messaging Reg value [0x%08X 0x%08X]" ,SBE::higher32BWord(shvReq->sbeMsgRegValue),
                     SBE::lower32BWord(shvReq->sbeMsgRegValue));
 
