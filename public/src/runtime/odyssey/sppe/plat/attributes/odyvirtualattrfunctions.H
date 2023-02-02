@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -70,7 +71,7 @@ AttributeRC _getAttrEC(const Target<K>& i_target,
     // TODO: Uncomment this after plat code is ready for getscom
     /*
     fapi2::buffer<uint64_t> cbs_envstat_reg = 0;
-    fapi2::getScom(i_target, scomt::perv::FSXCOMP_FSXLOG_CBS_ENVSTAT_RO,
+    fapi2::getScom(i_target, scomt::poz::FSXCOMP_FSXLOG_CBS_ENVSTAT_RO,
                              cbs_envstat_reg);
 
     o_val = ((cbs_envstat_reg >> 32) & 0xFF);

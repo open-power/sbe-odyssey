@@ -34,6 +34,7 @@
 
 #include <stdint.h>
 #include "mbxscratch.H"
+#include "cmnglobals.H"
 
 /**
  * @brief Utility singleton that SBEFW can use to read write various scratch
@@ -216,6 +217,16 @@ class SbeRegAccess
         }
 
         /**
+         * @brief Get the Boot Selection from LFR
+         *
+         * @return uint8_t boot selection
+         */
+        uint8_t getBootSelection()
+        {
+            return lfrReg.boot_selection;
+        }
+
+        /**
          * @brief Update the async bit into the SBE messaging register. The
          * function does a read-modify-write, so any bits other than the async
          * bits are retained.
@@ -247,6 +258,7 @@ class SbeRegAccess
         mbx11_t mbx11 = {0};
         mbx16_t mbx16 = {0};
         messagingReg_t messagingReg = {0};
+        sbe_local_LFR lfrReg;
 
         /**
         * @brief Constructor

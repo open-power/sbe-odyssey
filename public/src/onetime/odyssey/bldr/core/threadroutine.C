@@ -39,9 +39,9 @@
 #include "pakwrapper.H"
 #include "errorcodes.H"
 #include "otpromfusemap.H"
-#include "p11_scom_perv_cfam.H"
+#include "poz_scom_perv_cfam.H"
 #include "filenames.H"
-#include "p11_ppe_pc.H"
+#include "poz_ppe.H"
 #include "cmnglobals.H"
 #include "metadata_base.H"
 #include "metadata.H"
@@ -137,7 +137,7 @@ void bldrthreadroutine(void *i_pArg)
         secureBootCtrlSettings_t bldrSecureBootCtrlSettings;
 
         //Read LFR Reg
-        PPE_LVD(scomt::ppe_pc::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW, lfrReg);
+        PPE_LVD(scomt::poz_ppe::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW, lfrReg);
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_LFR_READ);
 
@@ -387,7 +387,7 @@ void bldrthreadroutine(void *i_pArg)
             {
                 // Read mbx16 to check if mbx11 is valid
                 mbx16_t mbx16 = {0};
-                getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_16_RW, &mbx16.iv_mbx16);
+                getscom_abs(scomt::poz::FSXCOMP_FSXLOG_SCRATCH_REGISTER_16_RW, &mbx16.iv_mbx16);
                 SBE_INFO(SBE_FUNC "MBX16  [0x%08X 0x%08X] ", SBE::higher32BWord(mbx16.iv_mbx16),
                             SBE::lower32BWord(mbx16.iv_mbx16));
 
@@ -402,7 +402,7 @@ void bldrthreadroutine(void *i_pArg)
                 }
                 else
                 {
-                    getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_11_RW, &mbx11.iv_mbx11);
+                    getscom_abs(scomt::poz::FSXCOMP_FSXLOG_SCRATCH_REGISTER_11_RW, &mbx11.iv_mbx11);
                     SBE_INFO(SBE_FUNC "MBX11  [0x%08X 0x%08X] ", SBE::higher32BWord(mbx11.iv_mbx11),
                                 SBE::lower32BWord(mbx11.iv_mbx11));
                 }
@@ -425,7 +425,7 @@ void bldrthreadroutine(void *i_pArg)
                 }
 
                 //Update LFR Reg. Update LFR W_OR
-                PPE_STVD(scomt::ppe_pc::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_PPE1, lfrReg);
+                PPE_STVD(scomt::poz_ppe::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_PPE1, lfrReg);
 
                 UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_LFR_WRITE);
             }

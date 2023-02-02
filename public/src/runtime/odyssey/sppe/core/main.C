@@ -34,7 +34,7 @@
 #include "plat_hw_access.H"
 #include "initthreads.H"
 #include "target.H"
-#include "p11_scom_perv_cfam.H"
+#include "poz_scom_perv_cfam.H"
 #include "fapi2_attribute_service.H"
 #include "errorcodes.H"
 #include "measurementregs.H"
@@ -143,7 +143,7 @@ int  main(int argc, char **argv)
 #if defined(RUNTIME_PIBMEM_ONLY_IMG)
             mbx6_t odysseymbx6 = {0};
             odysseymbx6.iv_mbx6freqInmhz = SBE_ODYSSEY_DEF_NEST_FREQ_MHZ;
-            putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_6_RW,
+            putscom_abs(scomt::poz::FSXCOMP_FSXLOG_SCRATCH_REGISTER_6_RW,
                 odysseymbx6.iv_mbx6);
             SBE::setSbeGlobalFreqFromScratchOrLFR(CALLER_RUNTIME);
 #else

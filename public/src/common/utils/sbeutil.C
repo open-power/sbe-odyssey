@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -26,8 +26,8 @@
 #include "cmnglobals.H"
 #include "ppe42_string.h"
 #include "sbetrace.H"
-#include "p11_scom_perv_cfam.H"
-#include "p11_ppe_pc.H"
+#include "poz_scom_perv_cfam.H"
+#include "poz_ppe.H"
 #include "mbxscratch.H"
 #include "errorcodes.H"
 
@@ -92,24 +92,24 @@ namespace SBE
     void updateErrorCodeAndHalt(uint16_t i_errorCode)
     {
         secureBootFailStatus_t secureBootFailStatus;
-        getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, &secureBootFailStatus.iv_mbx13);
+        getscom_abs(scomt::poz::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, &secureBootFailStatus.iv_mbx13);
         secureBootFailStatus.iv_secureHeaderFailStatusCode = i_errorCode;
-        putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, secureBootFailStatus.iv_mbx13);
+        putscom_abs(scomt::poz::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, secureBootFailStatus.iv_mbx13);
         pk_halt();
     }
 
     void updateErrorCode(uint16_t i_errorCode)
     {
         secureBootFailStatus_t secureBootFailStatus;
-        getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, &secureBootFailStatus.iv_mbx13);
+        getscom_abs(scomt::poz::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, &secureBootFailStatus.iv_mbx13);
         secureBootFailStatus.iv_secureHeaderFailStatusCode = i_errorCode;
-        putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, secureBootFailStatus.iv_mbx13);
+        putscom_abs(scomt::poz::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, secureBootFailStatus.iv_mbx13);
     }
 
    /**************************************************************************
     *
     * Note: This function will be called before pk_init(). Hence, don't add
-    *       SBE_INFO or SBE_ERROR. In case of error, update the error code 
+    *       SBE_INFO or SBE_ERROR. In case of error, update the error code
     *       in the error register.
     *
     * *************************************************************************/
@@ -117,7 +117,7 @@ namespace SBE
     {
         // Read local register 0xC0002040 with frequency value
         sbe_local_LFR lfrReg;
-        PPE_LVD(scomt::ppe_pc::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW, lfrReg);
+        PPE_LVD(scomt::poz_ppe::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW, lfrReg);
         // convert a Mhz frequency value to an equivalent SBE frequency value by
         // calculating the uint32_t number range.
         // ((pau_freq_in_mhz * 1000 * 1000)/4) for SBE Freq value
@@ -131,7 +131,7 @@ namespace SBE
    /**************************************************************************
     *
     * Note: This function will be called before pk_init(). Hence, don't add
-    *       SBE_INFO or SBE_ERROR. In case of error, update the error code 
+    *       SBE_INFO or SBE_ERROR. In case of error, update the error code
     *       in the error register.
     *
     * *************************************************************************/
@@ -148,7 +148,7 @@ namespace SBE
         {
             // Read odyssey mbx6 scratch for frequency
             mbx6_t odysseymbx6;
-            getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_6_RW,
+            getscom_abs(scomt::poz::FSXCOMP_FSXLOG_SCRATCH_REGISTER_6_RW,
                        &odysseymbx6.iv_mbx6);
             uint16_t odyFreqInMHZ = odysseymbx6.iv_mbx6freqInmhz;
             if(!odyFreqInMHZ)
@@ -159,10 +159,10 @@ namespace SBE
             }
             // Update local register 0xC0002040 with frequency value
             sbe_local_LFR lfrReg;
-            PPE_LVD(scomt::ppe_pc::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW,
+            PPE_LVD(scomt::poz_ppe::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW,
                     lfrReg);
             lfrReg.pau_freq_in_mhz = odyFreqInMHZ;
-            PPE_STVD(scomt::ppe_pc::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW,
+            PPE_STVD(scomt::poz_ppe::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW,
                      lfrReg);
         }
         // Read Freq value from LFR and update CMN_GLOBAL->sbe_freq
@@ -183,9 +183,9 @@ namespace SBE
     void updateProgressCode(uint8_t value)
     {
         messagingReg_t messagingReg;
-        getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, &messagingReg.iv_messagingReg);
+        getscom_abs(scomt::poz::FSXCOMP_FSXLOG_SB_MSG, &messagingReg.iv_messagingReg);
         messagingReg.iv_progressCode = value;
-        putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
+        putscom_abs(scomt::poz::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
     }
 }
 

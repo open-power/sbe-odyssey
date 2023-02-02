@@ -33,8 +33,9 @@
 #include "sbetrace.H"
 #include "sbeglobals.H"
 #include "sbeutil.H"
-#include "p11_scom_perv_cfam.H"
+#include "poz_scom_perv_cfam.H"
 #include <ppe42_scom.h>
+#include "poz_ppe.H"
 
 SbeRegAccess SbeRegAccess::cv_instance __attribute__((section (".sbss")));
 
@@ -56,8 +57,11 @@ uint32_t SbeRegAccess::init(bool forced)
             break;
         }
 
+        //Read the LFR reg
+        PPE_LVD(scomt::poz_ppe::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW, lfrReg);
+
         // Read SBE messaging register into iv_messagingReg
-        rc = getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, &messagingReg.iv_messagingReg);
+        rc = getscom_abs(scomt::poz::FSXCOMP_FSXLOG_SB_MSG, &messagingReg.iv_messagingReg);
         if(PCB_ERROR_NONE != rc)
         {
             SBE_ERROR(SBE_FUNC"Failed reading sbe messaging reg., RC: 0x%08X. ",
@@ -66,7 +70,7 @@ uint32_t SbeRegAccess::init(bool forced)
         }
 
         // Read Mailbox register 16
-        rc = getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_16_RW, &mbx16.iv_mbx16);
+        rc = getscom_abs(scomt::poz::FSXCOMP_FSXLOG_SCRATCH_REGISTER_16_RW, &mbx16.iv_mbx16);
         if(PCB_ERROR_NONE != rc)
         {
             SBE_ERROR(SBE_FUNC"Failed reading mailbox reg 16, RC: 0x%08X. ", rc);
@@ -77,7 +81,7 @@ uint32_t SbeRegAccess::init(bool forced)
         if(mbx16.iv_mbx11Valid)
         {
             // Read mbx11
-            rc = getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SCRATCH_REGISTER_11_RW, &mbx11.iv_mbx11);
+            rc = getscom_abs(scomt::poz::FSXCOMP_FSXLOG_SCRATCH_REGISTER_11_RW, &mbx11.iv_mbx11);
             if(PCB_ERROR_NONE != rc)
             {
                 SBE_ERROR(SBE_FUNC"Failed reading mailbox reg 11, RC: 0x%08X. ",
@@ -109,12 +113,12 @@ uint32_t SbeRegAccess::updateSbeState(const uint8_t &i_state)
     #define SBE_FUNC "SbeRegAccess::updateSbeState "
     uint32_t rc = 0;
 
-    getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, &messagingReg.iv_messagingReg);
+    getscom_abs(scomt::poz::FSXCOMP_FSXLOG_SB_MSG, &messagingReg.iv_messagingReg);
 
     messagingReg.iv_prevState = messagingReg.iv_currState;
     messagingReg.iv_currState = i_state;
 
-    rc = putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
+    rc = putscom_abs(scomt::poz::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
     if(PCB_ERROR_NONE != rc)
     {
         SBE_ERROR(SBE_FUNC"Failed to update STATE: 0x%08X to messaging "
@@ -141,12 +145,12 @@ uint32_t SbeRegAccess::updateSbeStep(const uint8_t i_major,
     #define SBE_FUNC "SbeRegAccess::updateSbeStep "
     uint32_t rc = 0;
 
-    getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, &messagingReg.iv_messagingReg);
+    getscom_abs(scomt::poz::FSXCOMP_FSXLOG_SB_MSG, &messagingReg.iv_messagingReg);
 
     messagingReg.iv_majorStep = i_major;
     messagingReg.iv_minorStep = i_minor;
 
-    rc = putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
+    rc = putscom_abs(scomt::poz::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
     if(rc)
     {
         SBE_ERROR(SBE_FUNC"Failed to update SBE step: 0x%08X.0x%08X to messaging "
@@ -170,10 +174,10 @@ uint32_t SbeRegAccess::setSbeReady()
     #define SBE_FUNC "SbeRegAccess::setSbeReady "
     uint32_t rc = 0;
 
-    getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, &messagingReg.iv_messagingReg);
+    getscom_abs(scomt::poz::FSXCOMP_FSXLOG_SB_MSG, &messagingReg.iv_messagingReg);
 
     messagingReg.iv_sbeBooted = true;
-    rc = putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
+    rc = putscom_abs(scomt::poz::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
     if(rc)
     {
         SBE_ERROR(SBE_FUNC"Failed to update SBE ready state to "
@@ -188,11 +192,11 @@ uint32_t SbeRegAccess::updateAsyncFFDCBit( bool i_on )
     #define SBE_FUNC "SbeRegAccess::updateAsyncFFDCBit "
     uint32_t rc = 0;
 
-    getscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, &messagingReg.iv_messagingReg);
+    getscom_abs(scomt::poz::FSXCOMP_FSXLOG_SB_MSG, &messagingReg.iv_messagingReg);
 
     messagingReg.iv_asyncFFDC = i_on;
 
-    rc = putscom_abs(scomt::perv::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
+    rc = putscom_abs(scomt::poz::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
     if(rc)
     {
         SBE_ERROR(SBE_FUNC"Failed to update SBE Aync bit in message "
