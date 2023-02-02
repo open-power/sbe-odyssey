@@ -112,7 +112,6 @@ ekb_cmn_inc_path = [
     '/emb/p11/kernels/ppe/ppetrace/ppetracepp',
     '/emb/p11/kernels/ppe/boltonlib/standard',
     '/common/generic/registers',
-    '/common/p11/registers',
     '/ring/generic',
         ]
 
