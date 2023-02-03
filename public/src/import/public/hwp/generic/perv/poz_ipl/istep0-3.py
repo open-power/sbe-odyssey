@@ -134,7 +134,7 @@ def sim_poweron_sequence():
     # Depending on model wiring the processor might still be holding Ody CFAM_RESET
     # at this point. Let's find out!
 
-ISTEP(0, 6, "setup_ref_clock", "BMC")
+ISTEP(0, 8, "setup_ref_clock", "BMC")
 
 def pz_setup_ref_clock(target<PROC_CHIP | HUB_CHIP>):
     ## Disable Write Protection for Root/Perv Control registers
@@ -219,7 +219,7 @@ def zme_setup_ref_clock():
 
     ROOT_CTRL4_COPY = ROOT_CTRL4      # Update copy register to match
 
-ISTEP(0, 7, "clock_test", "BMC")
+ISTEP(0, 9, "clock_test", "BMC")
 
 def p11s_clock_test():
     mod_clock_test(path=CFAM)
@@ -227,7 +227,7 @@ def p11s_clock_test():
 def zme_clock_test():
     mod_clock_test(path=CFAM)
 
-ISTEP(0, 13, "ph_sppe_config_update", "BMC")
+ISTEP(0, 11, "ph_sppe_config_update", "BMC")
 
 def p11s_sppe_config_update():
     # provided by VBU team
@@ -238,7 +238,7 @@ def ody_sppe_config_update():
 def zme_sppe_config_update():
     # TBD
 
-ISTEP(0, 14, "cbs_start", "BMC")
+ISTEP(0, 12, "cbs_start", "BMC")
 
 def p11s_cbs_start(target<HUB_CHIP>, bool i_start_sbe=true):
     mod_cbs_start(i_target, i_start_sbe)
@@ -309,10 +309,6 @@ def poz_cbs_emulate(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_cl
 
     mod_cbs_cleanup(i_target)
 
-def poz_prep_chip_for_tp_lbist():
-    Kick CBS without scan0/clockstart/SBE
-    Set up PCB mux
-
 """
 Step 1: Spinal TP init, SPPE tries to find its feet
 
@@ -333,18 +329,6 @@ alternate flow:
 
 ISTEP(1, 1, "ph_enable_seeprom", "SPPE")
 # executes from OTPROM, implemented in Assembler by SBE team
-
-def p11s_enable_seeprom():
-    "NOTE set up SPI for at-speed operation already"
-    # delivered by SBE team
-
-def ody_enable_seeprom():
-    "NOTE set up SPI for at-speed operation already"
-    # delivered by SBE team
-
-def zme_enable_seeprom():
-    "NOTE set up SPI for at-speed operation already"
-    # delivered by SBE team
 
 ISTEP(1, 2, "ph_tp_chiplet_reset", "SPPE")
 # executes from ROM driven by command table
@@ -491,14 +475,19 @@ def ody_pib_arrayinit_cleanup():
 def zme_pib_arrayinit_cleanup():
     same as p11s_pib_arrayinit_cleanup()
 
+ISTEP(1, 8, "ph_pib_lbist", "DFT")
+
+def poz_tp_bist_stopclocks():
+    mod_switch_pcbmux_cfam(mux::FSI2PCB on P/Z or mux::I2C2PCB on Odyssey)
+    mod_start_stop_clocks(regions=[sbe], start_not_stop=false)
+
 """
 PIB/SBE LBIST flow:
  1. mod_start_cbs(i_sbe_start=false, i_scan0_clockstart=false)
- 2. mod_switch_pcbmux(mux::FSI2PCB on P/Z or mux::I2C2PCB on Odyssey)
- 3. run command table up to this point using FAPI or Python interpreter
-    remember to translate mailbox scoms into cfams (use cmdtable.py run --cfam)
- 4. mod_start_stop_clocks(regions=[sbe], start_not_stop=false)
- 5. run LBIST
+ 2. run command table up to this point using Python interpreter,
+    translate mailbox scoms into cfams (use cmdtable.py run --cfam)
+ 3. poz_tp_bist_stopclocks()
+ 4. run LBIST
 """
 
 ISTEP(1, 9, "ph_pib_startclocks", "SPPE")
@@ -513,22 +502,9 @@ def ody_pib_startclocks():
 def zme_pib_startclocks():
     same as p11s_pib_startclocks()
 
-ISTEP(1, 10, "ph_sppe_measure", "SPPE")
-# executes from ROM
-# copy SPPE L2 loader code into SPPE RAM
+ISTEP(1, 10, "ph_sppe_boot", "SPPE")
 
-ISTEP(1, 11, "ph_sppe_load", "SPPE")
-# copy SPPE code into SPPE RAM
-# Break up into individual steps?
-# Z: Also load SBE
-
-ISTEP(1, 12, "ph_sppe_boot", "SPPE, BMC")
-# SPPE boots, BMC can monitor progress and time out if boot fails
-# Z: Also boot SBE
-# This is the sync point where Cronus intercepts the SPPE if USE_SBE_FIFO == istep
-# After this point the SPPE either continues autoboot or waits for Cronus to request individual isteps
-
-ISTEP(1, 13, "ph_sppe_check_for_ready", "BMC")
+ISTEP(1, 11, "ph_sppe_check_for_ready", "BMC")
 
 def poz_sppe_check_for_ready():
     if ATTR_BOOT_FLAGS[bits 0:1] in (ATTR_BOOT_FLAGS_AUTOBOOT (0), ATTR_BOOT_FLAGS_BOOT_TO_RUNTIME (2)):
@@ -556,6 +532,8 @@ def ody_sppe_check_for_ready():
 def zme_sppe_check_for_ready():
     poz_sppe_check_for_ready()
 
+ISTEP(1, 12, "ph_sppe_update", "BMC")
+
 ISTEP(1, 13, "ph_sppe_attr_setup", "SPPE")
 
 def p11s_sppe_attr_setup():
@@ -567,7 +545,10 @@ def ody_sppe_attr_setup():
 def zme_sppe_attr_setup():
     pass
 
-ISTEP(1, 15, "ph_rcs_setup", "SPPE")
+ISTEP(1, 14, "ph_sppe_attr_override", "BMC,SPPE")
+# BMC sends attribute overrides into SPPE via chipop
+
+ISTEP(1, 17, "ph_rcs_setup", "SPPE")
 
 def poz_rcs_setup():
     # provided by IO team / Ryan Miller followon
@@ -578,7 +559,7 @@ def p11s_rcs_setup():
 def zme_rcs_setup():
     poz_rcs_setup()
 
-ISTEP(1, 17, "ph_tp_repr_initf", "SPPE")
+ISTEP(1, 18, "ph_tp_repr_initf", "SPPE")
 
 def p11s_tp_repr_initf():
     putRing( TP chiplet, perv_rtg = {perv,net,occ}_{gptr,time,repr}(+*_abst as needed))} )
@@ -589,7 +570,7 @@ def ody_tp_repr_initf():
 def zme_tp_repr_initf():
     putRing( TP chiplet, perv_rtg = {perv,net,ana,mbio}_{gptr,time,repr}(+*_abst as needed))} )
 
-ISTEP(1, 18, "ph_tp_arrayinit", "SPPE")
+ISTEP(1, 19, "ph_tp_arrayinit", "SPPE")
 
 def poz_tp_arrayinit():
     mod_abist_start(regions=[all except sbe/pib/pll])
@@ -605,7 +586,7 @@ def ody_tp_arrayinit():
 def zme_tp_arrayinit():
     poz_tp_arrayinit()
 
-ISTEP(1, 19, "ph_tp_arrayinit_cleanup", "SPPE")
+ISTEP(1, 20, "ph_tp_arrayinit_cleanup", "SPPE")
 
 def poz_tp_arrayinit_cleanup():
     mod_abist_cleanup()
@@ -620,11 +601,7 @@ def ody_tp_arrayinit_cleanup():
 def zme_tp_arrayinit_cleanup():
     poz_tp_arrayinit_cleanup()
 
-"""
-LBIST: DFT can wedge in LBIST for perv, net, occ in here
-"""
-
-ISTEP(1, 20, "ph_tp_initf", "SPPE")
+ISTEP(1, 21, "ph_tp_initf", "SPPE")
 
 def p11s_tp_initf():
     putRing( TP chiplet, perv_initf = {perv,net,occ}_func )
@@ -635,7 +612,7 @@ def ody_tp_initf():
 def zme_tp_initf():
     putRing( TP chiplet, perv_initf = {perv,net,ana,mbio}_func )
 
-ISTEP(1, 21, "ph_tp_startclocks", "SPPE")
+ISTEP(1, 22, "ph_tp_startclocks", "SPPE")
 
 def p11s_tp_startclocks():
     mod_start_stop_clocks(regions=[perv, net, occ])
@@ -646,7 +623,7 @@ def ody_tp_startclocks():
 def zme_tp_startclocks():
     mod_start_stop_clocks(regions=[perv, net, ana, mbio])
 
-ISTEP(1, 22, "ph_tp_init", "SPPE")
+ISTEP(1, 23, "ph_tp_init", "SPPE")
 
 def p11s_tp_init():
     # TODO : Set up TOD error routing, error mask via scan inits
@@ -1767,10 +1744,6 @@ ISTEP(3, 30, "proc_ioppe_load", "SPPE")
 #    multicast/unicast on SPINAL to all used IOPPEs (TBUS)
 # Dynamic reload: only needed for Spinal IOPPEs, which have a fast load path
 # On IO chiplet reboot, IOPPE SRAM will have remaining state from previous run and may have to be overwritten with a fresh image.
-
-def ody_ioppe_load():
-    Load IOPPE and boot it
-    Load ARC but do not boot it
 
 def zme_ioppe_load():
     pass
