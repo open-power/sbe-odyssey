@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_sppe_check_for_ready.C $ */
+/* $Source: public/src/import/public/hwp/generic/perv/poz_sppe_check_for_ready.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,42 +23,29 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  ody_sppe_check_for_ready.C
-/// @brief Confirm SPPE boot progress
+/// @file  poz_sppe_check_for_ready.H
+/// @brief Confirm that SPPE has reached expected state based on reset/boot type
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#include <ody_sppe_check_for_ready.H>
-#include <poz_sppe_check_for_ready.H>
+#pragma once
 
-using namespace fapi2;
+#include <fapi2.H>
 
-enum ODY_SPPE_BOOT_CHECK_Private_Constants
+typedef struct
 {
-    MAX_POLLS = 25,
-    POLL_DELAY_CYCLES = 10000000, // 10m
-    POLL_DELAY_NS = 1000000000,   // 1s
-};
+    uint32_t boot_flags;
+    uint32_t  max_polls;
+    uint64_t poll_delay_cycles;
+    uint64_t poll_delay_ns;
+} poz_sppe_boot_parms;
 
-ReturnCode ody_sppe_check_for_ready(
-    const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
-{
-    poz_sppe_boot_parms l_boot_parms;
-
-    FAPI_DBG("Entering...");
-
-    // fill common boot parms structure
-    FAPI_TRY(FAPI_ATTR_GET(ATTR_OCMB_BOOT_FLAGS, i_target, l_boot_parms.boot_flags));
-    l_boot_parms.max_polls = MAX_POLLS;
-    l_boot_parms.poll_delay_cycles = POLL_DELAY_CYCLES;
-    l_boot_parms.poll_delay_ns = POLL_DELAY_NS;
-
-    // call common HWP
-    FAPI_TRY(poz_sppe_check_for_ready(i_target, l_boot_parms));
-
-fapi_try_exit:
-    FAPI_DBG("Exiting...");
-    return current_err;
-}
+/// @brief       Confirm SPPE has reached expected state based on reset/boot type
+/// @param[in]   i_target         Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_boot_parms     Expected SPPE end state, polling guidance
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode poz_sppe_check_for_ready(
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const poz_sppe_boot_parms i_boot_parms);
