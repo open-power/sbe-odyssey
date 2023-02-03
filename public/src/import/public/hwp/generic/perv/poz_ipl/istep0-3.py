@@ -455,9 +455,6 @@ ISTEP(1, 5, "ph_pib_repr_initf", "SPPE")
 def p11s_pib_repr_initf():
     putRing( pib_rtg = pib_gptr+pib_time+pib_repr(+ optional pib_abst) )
 
-def ody_pib_repr_initf():
-    putRing( pib_rtg = pib_gptr+pib_time+pib_repr(+ optional pib_abst) )
-
 def zme_pib_repr_initf():
     putRing( pib_rtg = pib_gptr+pib_time+pib_repr(+ optional pib_abst) )
 
@@ -1621,9 +1618,6 @@ def p11s_chiplet_dts_init():
 
 def p11t_chiplet_dts_init():
     poz_chiplet_dts_init(target, ANALOG_SHIM_VOLTAGE_WRAP_SCOMSAT_KVREF_START_CAL)
-
-def ody_chiplet_dts_init():
-    pass
 
 def zme_chiplet_dts_init():
     poz_chiplet_dts_init(target, ???)   # TODO tbd
