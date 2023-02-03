@@ -36,4 +36,42 @@
     <initToZero/>
   </attribute>
   <!-- ******************************************************************** -->
+  <attribute>
+    <id>ATTR_OCMB_BOOT_FLAGS</id>
+    <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    <description>
+      Controls boot, platform behavior of OCMB SPPE
+
+      Bits 0-1   : Boot indication
+       - 0b00    : Autoboot
+       - 0b01    : Pause for code update check, then autoboot
+       - 0b10    : Boot to runtime, no code update check, no isteps
+                 :   Command table execution is controlled separately (hreset vs CBS)
+       - 0b11    : Istep mode
+      Bits 2-4   : Reserved
+      Bit 5      : Indicates that the SBE should not send back internal FFDC on any ChipOp failure response
+      Bit 6      : Disable security, if permitted
+      Bit 7      : Allow ATTR overrides in secure system
+      Bits 8-11  : Reserved
+      Bit 12     : Disable Invalid Scom address check
+      Bit 13     : Indicates MFG mode, where extra tests/isteps can be executed
+      Bits 14-15 : Reserved
+      Bit 16     : Enable ECDSA Signature enable (when not fused on)
+      Bit 17     : Enable Dilithium Signature enable (when not fused on)
+      Bit 18     : Enable ECID verification (when not fused on)
+      Bit 19     : Enable HW key hash verification (when not fused on)
+      Bit 20     : Enforce matching security version for boot loader
+      Bit 21     : Disable IOBist
+      Bit 22     : Disable Abist
+      Bit 23     : Disable Lbist
+      Bit 24     : Enable Burn-In mode
+      Bit 25     : Graceful terminate of any istep (via HWP if supported) – only works when in imprint key mode
+      Bits 26-31 : Reserved
+    </description>
+    <valueType>uint32</valueType>
+    <writeable/>
+    <platInit/>
+    <mrwHide/>
+  </attribute>
+  <!-- ******************************************************************** -->
 </attributes>

@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_sppe_check_for_ready.C $ */
+/* $Source: public/src/import/public/hwp/generic/perv/poz_sppe_check_for_ready_regs.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,42 +23,19 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  ody_sppe_check_for_ready.C
-/// @brief Confirm SPPE boot progress
+/// @file  poz_sppe_check_for_ready_regs.H
+/// @brief Registers referenced by poz_sppe_check_for_ready module
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Anusha Reddy (anusrang@in.ibm.com)
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#include <ody_sppe_check_for_ready.H>
-#include <poz_sppe_check_for_ready.H>
+#pragma once
 
-using namespace fapi2;
+#include <poz_scom_perv.H>
 
-enum ODY_SPPE_BOOT_CHECK_Private_Constants
-{
-    MAX_POLLS = 25,
-    POLL_DELAY_CYCLES = 10000000, // 10m
-    POLL_DELAY_NS = 1000000000,   // 1s
-};
+using namespace scomt::poz;
 
-ReturnCode ody_sppe_check_for_ready(
-    const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
-{
-    poz_sppe_boot_parms l_boot_parms;
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_SB_MSG;
 
-    FAPI_DBG("Entering...");
-
-    // fill common boot parms structure
-    FAPI_TRY(FAPI_ATTR_GET(ATTR_OCMB_BOOT_FLAGS, i_target, l_boot_parms.boot_flags));
-    l_boot_parms.max_polls = MAX_POLLS;
-    l_boot_parms.poll_delay_cycles = POLL_DELAY_CYCLES;
-    l_boot_parms.poll_delay_ns = POLL_DELAY_NS;
-
-    // call common HWP
-    FAPI_TRY(poz_sppe_check_for_ready(i_target, l_boot_parms));
-
-fapi_try_exit:
-    FAPI_DBG("Exiting...");
-    return current_err;
-}
+typedef FSXCOMP_FSXLOG_SB_MSG_t SB_MSG_t;
