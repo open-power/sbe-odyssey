@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -25,5 +25,6 @@
 
 ODYSSEY_TARGET_LIST_JSON = files('targetlist.json')
 
+subdir('errorxml')
 subdir('attributes')
 subdir('targeting')

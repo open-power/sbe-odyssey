@@ -22,7 +22,7 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-############## Build Required Runtime Genfiles ###############################
+
 import_xml_dir_base_path = pub_import_dir_path + '/hwp/odyssey/xml/error_info/'
 odyssey_error_xml_files = [
     'ody_scratch_regs_errors.xml',
@@ -73,30 +73,13 @@ endforeach
 #Create abs path for generic IO XML files
 generic_abs_io_error_xml_files = []
 import_io_xml_dir_base_path = pub_import_dir_path + '/hwp/generic/xml/error_info/'
-generic_io_error_xml_files = [ 
+generic_io_error_xml_files = [
     'poz_hss_errors.xml',
     'io_ppe_errors.xml',
     ]
 
-foreach error_xml_file : generic_io_error_xml_files 
+foreach error_xml_file : generic_io_error_xml_files
 abs_io_error_xml_file = import_io_xml_dir_base_path + error_xml_file
 generic_abs_io_error_xml_files += abs_io_error_xml_file
 
 endforeach
-
-#TODO: This if condition is temporary to go ahead with the build process
-# when no error xml files are mentioned
-if ( (odyssey_abs_error_xml_files.length() != 0) or
-                                  (mss_odyssey_abs_error_xml_files.length() != 0) or
-                                  (common_abs_error_xml_files.length() != 0) or
-                                  (generic_abs_io_error_xml_files.length() != 0) or
-                                  (generic_abs_error_xml_files.length() != 0) )
-    run_result = run_command(parseErrorInfo,'--local-ffdc','--output-dir='
-            +odyssey_sppe_genfiles_dir_path,odyssey_abs_error_xml_files,generic_abs_error_xml_files,
-                                            mss_odyssey_abs_error_xml_files,
-                                            common_abs_error_xml_files, generic_abs_io_error_xml_files)
-    if (run_result.returncode() != 0)
-        error(run_result.stderr())
-        message(run_result.stdout())
-    endif
-endif
