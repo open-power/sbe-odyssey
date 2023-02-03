@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -68,6 +68,12 @@ class Executor
         /// @brief Run the command table from i_start_address
         /// @return FAPI2_RC_FALSE if execution aborted, FAPI2_RC_SUCCESS on return, or another FAPI error
         ReturnCode run(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, int i_start_address);
+
+        /// @brief return true if the table is empty/nonexistent
+        bool empty()
+        {
+            return iv_table == NULL;
+        }
 
     private:
         const char* iv_type;
@@ -209,6 +215,12 @@ ReturnCode Executor::run(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, int i
                 if (!iv_cust_executor)
                 {
                     FAPI_ERR("%s:%d: CALL is not allowed from the custom table", iv_type, ip);
+                    return FAPI2_RC_FALSE;
+                }
+
+                if (iv_cust_executor->empty())
+                {
+                    FAPI_ERR("%s:%d: CALL without a custom table", iv_type, ip);
                     return FAPI2_RC_FALSE;
                 }
 
