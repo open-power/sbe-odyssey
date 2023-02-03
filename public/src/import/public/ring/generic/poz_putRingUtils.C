@@ -571,7 +571,8 @@ ReturnCode poz_putRingUtils(
     const uint32_t i_modifiedRingAddress,
     const RingMode i_ringMode)
 {
-    FAPI_INF(">> poz_putRingUtils");
+    FAPI_INF(">> poz_putRingUtils  i_modifiedRingAddress=0x%08X i_ringMode=0x%08x",
+             i_modifiedRingAddress, i_ringMode);
 
     const ScanTarget& l_target          = i_target;
     const CompressedScanData* l_hdr     = (CompressedScanData*) i_rs4;
