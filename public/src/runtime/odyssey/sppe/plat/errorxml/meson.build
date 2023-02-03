@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2023
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,6 +32,12 @@ odyssey_abs_error_xml_files_all = [
                                     mss_odyssey_abs_error_xml_files,
                                     common_abs_error_xml_files
 ]
+
+# If its a odyssey lab image we can break off at this point as odyssey lab image itself
+# would be generating the genfiles
+if platform == 'odysseylab'
+  subdir_done()
+endif
 
 run_result = run_command(parseErrorInfo,'--local-ffdc','--output-dir='
         +odyssey_sppe_genfiles_dir_path, odyssey_abs_error_xml_files_all)

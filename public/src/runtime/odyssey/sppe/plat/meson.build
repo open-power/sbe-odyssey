@@ -25,6 +25,6 @@
 
 ODYSSEY_TARGET_LIST_JSON = files('targetlist.json')
 
+subdir('targeting')
 subdir('errorxml')
 subdir('attributes')
-subdir('targeting')
