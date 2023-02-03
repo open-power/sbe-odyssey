@@ -75,7 +75,13 @@ fapi2::ReturnCode poz_stopclocks_pre_check(
     bool tp_ep_rst            = true;
     bool tp_vitl_clk_off      = true;
 
+    uint8_t perv_net_region_3_not_4;
+    int perv_net_region;
+
     FAPI_INF("Entering ...");
+
+    FAPI_TRY(FAPI_ATTR_GET(ATTR_CHIP_EC_FEATURE_PERV_NET_REGION_3_NOT_4, i_target, perv_net_region_3_not_4));
+    perv_net_region = perv_net_region_3_not_4 ? 3 : 4;
 
     FAPI_DBG("Reading PERV_CTRL0 register to observe CHIPLET_EN, PCB_EP_RESET & VITL_CLKOFF");
 
@@ -135,9 +141,10 @@ fapi2::ReturnCode poz_stopclocks_pre_check(
             FAPI_DBG("Reading CLOCK_STAT_ARY");
             FAPI_TRY(CLOCK_STAT_ARY.getScom(l_target_tp));
 
-            if(CLOCK_STAT_SL.getBit<5>() || CLOCK_STAT_SL.getBit<6>() || CLOCK_STAT_SL.getBit<8>() ||
-               CLOCK_STAT_NSL.getBit<5>() || CLOCK_STAT_NSL.getBit<6>() || CLOCK_STAT_NSL.getBit<8>() ||
-               CLOCK_STAT_ARY.getBit<5>() || CLOCK_STAT_ARY.getBit<6>() || CLOCK_STAT_ARY.getBit<8>())
+            CLOCK_STAT_SL |= CLOCK_STAT_NSL | CLOCK_STAT_ARY;
+
+            if (CLOCK_STAT_SL.getBits<5, 2>() ||    // sbe, pib
+                CLOCK_STAT_SL.getBit(4 + perv_net_region))
             {
                 FAPI_ERR("At least one of the SBE/PIB/NET clocks NOT running, can't use the PCB fabric to access chiplets.");
                 pcb_clks_are_off      = true;
