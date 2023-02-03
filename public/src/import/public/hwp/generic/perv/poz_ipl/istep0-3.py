@@ -530,17 +530,31 @@ ISTEP(1, 12, "ph_sppe_boot", "SPPE, BMC")
 
 ISTEP(1, 13, "ph_sppe_check_for_ready", "BMC")
 
+def poz_sppe_check_for_ready():
+    if ATTR_BOOT_FLAGS[bits 0:1] in (ATTR_BOOT_FLAGS_AUTOBOOT (0), ATTR_BOOT_FLAGS_BOOT_TO_RUNTIME (2)):
+        l_bit_to_check = SB_MSG_RUNTIME    # bit 4
+    else:
+        l_bit_to_check = SB_MSG_BOOTED     # bit 0
+
+    while True:
+        if SB_MSG[l_bit_to_check]:
+            break
+
+        if is_platform<PLAT_CRONUS>() and another second has passed:
+            FAPI_INF("Waiting for SPPE to boot...")
+
+        if timeout after CHECK_FOR_READY_TIMEOUT_SECONDS seconds:
+            FAPI_ASSERT("SPPE failed to boot within %d seconds", CHECK_FOR_READY_TIMEOUT_SECONDS,
+                        ffdc = i_target, CHECK_FOR_READY_TIMEOUT_SECONDS)
+
 def p11s_sppe_check_for_ready():
-    # This runs on the BMC and monitors SPPE boot progress
-    # Cronus HWP may wish to output progress updates :)
-    # It will wait for SPPE standby, which depending on scratch settings
-    # is either _before_ the rest of isteps or _after_ (in case of autoboot)
+    poz_sppe_check_for_ready()
 
 def ody_sppe_check_for_ready():
-    "TODO: need this?"
+    poz_sppe_check_for_ready()
 
 def zme_sppe_check_for_ready():
-    p11s_sppe_check_for_ready()
+    poz_sppe_check_for_ready()
 
 ISTEP(1, 13, "ph_sppe_attr_setup", "SPPE")
 
