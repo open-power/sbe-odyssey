@@ -22,22 +22,7 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-ODYSSEY_CHIPOPS_JSON = files('chipop_table.json')[0]
 
-############### Chip-op table generation ############
-chipop_json_list = [COMMON_CHIPOPS_JSON,
-                    CMN_CODE_UPDATE_CHIPOPS_JSON,
-                    ODYSSEY_CHIPOPS_JSON]
-result_chipoptablegen = run_command(chipoptablegen,
-                        '-d', odyssey_sppe_genfiles_dir_path,
-                        '-c', chipop_json_list)
-
-if not (result_chipoptablegen.returncode() == 0)
-  message(result_chipoptablegen.stdout())
-  error(result_chipoptablegen.stderr())
-endif
-
-#####################################################
 ody_core_dir_path = meson.global_source_root() + '/public/src/runtime/odyssey/sppe/core/'
 
 infile_c = ['main.C',
@@ -61,23 +46,47 @@ infile_c = ['main.C',
             'sbecmdupdateattr.C',
           ]
 
-osyssey_abs_core_c_file_paths = []
+odyssey_abs_core_c_file_paths = []
 foreach infile : infile_c
 
   abs_infile_c_path = ody_core_dir_path + infile
-  osyssey_abs_core_c_file_paths += abs_infile_c_path
+  odyssey_abs_core_c_file_paths += abs_infile_c_path
 
 endforeach
 
-osyssey_abs_core_c_file_paths += [ abs_pak_c_path,
+odyssey_abs_core_c_file_paths += [ abs_pak_c_path,
                                     abs_cmn_core_c_path,
                                     abs_cmn_utils_c_path,
                                     abs_runtime_cmn_core_c_path,
                                     abs_runtime_cmn_ffdc_c_path,
                                     abs_runtime_cmn_hwpf_c_path,
                                     abs_runtime_cmn_utils_c_path,
-                                    abs_runtime_cmn_code_update_c_path
-                                  ]
+                                    abs_runtime_cmn_code_update_c_path,
+                                    odyssey_abs_hwpf_c_file_paths,
+                                    odyssey_abs_tgt_c_file_paths,
+                                    odyssey_abs_attr_c_file_paths
+           ]
+#We can break off at this point if its a lab image as lab would do below stuff in internal
+if platform == 'odysseylab'
+  subdir_done()
+endif
+
+ODYSSEY_CHIPOPS_JSON = files('chipop_table.json')[0]
+
+############### Chip-op table generation ############
+chipop_json_list = [COMMON_CHIPOPS_JSON,
+                    CMN_CODE_UPDATE_CHIPOPS_JSON,
+                    ODYSSEY_CHIPOPS_JSON]
+result_chipoptablegen = run_command(chipoptablegen,
+                        '-d', odyssey_sppe_genfiles_dir_path,
+                        '-c', chipop_json_list)
+
+if not (result_chipoptablegen.returncode() == 0)
+  message(result_chipoptablegen.stdout())
+  error(result_chipoptablegen.stderr())
+endif
+
+#####################################################
 
 lib_file_name = 'odysseysppe'
 
@@ -89,7 +98,11 @@ if get_option('sppe').enabled() and get_option('bldr').disabled()
 endif
 
 #TODO: JIRA PFSBE-283: Generator enhancement
-odyssey_sppe_obj_file_cpp = obj_gen_cpp.process(osyssey_abs_core_c_file_paths,
+#NOTE: Add all genfiles directly below as lab images use different genfils.
+#      Adding genfiles in odyssey_abs_core_c_file_paths will cause lab image fails
+odyssey_sppe_obj_file_cpp = obj_gen_cpp.process([odyssey_abs_core_c_file_paths,
+                                                 odyssey_abs_genfiles_c_file_paths
+                                                ],
                                         extra_args : [
                                         meson.get_external_property('gcc_defs_cmn_odyssey'),
                                         meson.get_external_property('gcc_defs_odyssey_sppe'),
@@ -113,12 +126,14 @@ odyssey_sppe_obj_file_cpp_opt = obj_gen_cpp.process(abs_tinflate_c_path,
 
 #compile common HWP
 generic_hwp_obj_file_c = obj_gen_cpp_hwp.process([ekb_generic_hwp_c_path,
-                                                  ekb_generic_ring_c_path],
+                                                  ekb_generic_ring_c_path,
+                                                  odyssey_hwp_abs_infiles_c_path],
                                         extra_args:[
                                                     odyssey_runtime_abs_inc_paths,
                                                     runtime_cmn_abs_inc_paths,
                                                     odyssey_cmn_abs_inc_paths,
-                                                    ekb_hwp_abs_inc_paths])
+                                                    ekb_hwp_abs_inc_paths,
+                                                    odyssey_hwp_abs_inc_paths])
 
 infile  = [odyssey_sppe_obj_file_cpp, odyssey_sppe_obj_file_cpp_opt,
            generic_hwp_obj_file_c]
@@ -133,6 +148,6 @@ libodysseysppe = custom_target( lib_file_name,
                                  build_by_default: true,
                              )
 
-odyssey_sppe_core_libs = '-l' + lib_file_name
-odyssey_sppe_core_lib_paths = '-L' + meson.current_build_dir()
-odyssey_sppe_core_dep_libs = libodysseysppe
+odyssey_sppe_libs += '-l' + lib_file_name
+odyssey_sppe_lib_paths += '-L' + meson.current_build_dir()
+odyssey_sppe_dep_libs += libodysseysppe

@@ -292,7 +292,8 @@ if(INTERNAL_PROJECT == 'False')
 endif
 
 # If SROM build for ODYSSEY Platform is disabled pick up the frozen DD1 RIT images from repo
-if get_option('srom').disabled() and  get_option('platform') == 'odyssey'
+if (get_option('srom').disabled() and
+      (get_option('platform') == 'odyssey' or get_option('platform') == 'odysseylab'))
     install_subdir(meson.global_source_root() + '/public/src/onetime/odyssey/srom/build/images/',
                       install_dir : 'odyssey/onetime/srom',strip_directory : true)
 endif

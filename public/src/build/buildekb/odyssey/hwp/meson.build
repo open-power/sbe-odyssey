@@ -117,36 +117,11 @@ infile_c = [
             ]
 
 #Create abs path for input files before creating .o
-abs_infiles_c_path = []
+odyssey_hwp_abs_infiles_c_path = []
 
 foreach infile : infile_c
 
 abs_infile_c_path = pub_import_dir_path + infile
-abs_infiles_c_path += abs_infile_c_path
+odyssey_hwp_abs_infiles_c_path += abs_infile_c_path
 
 endforeach
-
-lib_file_name = 'odysseyhwp'
-
-odyssey_hwp_obj_file_c = obj_gen_cpp_hwp.process(abs_infiles_c_path,
-                                        extra_args:[
-                                                    odyssey_runtime_abs_inc_paths,
-                                                    runtime_cmn_abs_inc_paths,
-                                                    odyssey_cmn_abs_inc_paths,
-                                                    odyssey_hwp_abs_inc_paths,
-                                                    ekb_hwp_abs_inc_paths])
-infile  = [odyssey_hwp_obj_file_c]
-
-libodysseyhwp = custom_target( lib_file_name,
-                                    output : 'lib' + lib_file_name,
-                                    input : infile,
-                                    command : [ ar,
-                                                'crs',
-                                                '@OUTPUT@'+'.a',
-                                                '@INPUT@'],
-                                    build_by_default: true,
-                                )
-
-odyssey_hwp_libs = '-l' + lib_file_name
-odyssey_hwp_lib_paths = '-L' + meson.current_build_dir()
-odyssey_hwp_dep_libs = libodysseyhwp
