@@ -271,9 +271,6 @@ typedef struct
 ///
 /// Shared data between OCC, PGPE and XGPE
 
-// "OSS"
-#define HCODE_OCC_SHARED_MAGIC_NUMBER       0x4F5353
-#define HCODE_OCC_SHARED_VERSION            1
 /// Shared SRAM Header
 typedef struct
 {
