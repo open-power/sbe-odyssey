@@ -1,11 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/import/public/hwp/generic/utils/generic_utils.mk $
+# $Source: public/src/import/public/hwp/generic/utils/wrapper/generic_utils_wrap.mk $
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2023
 # [+] International Business Machines Corp.
 #
 #
@@ -22,19 +22,10 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-#
-# A macro to contain all our boilerplate
-#
-define __GENERIC_IO_PROCEDURE
-PROCEDURE=$(1)
-$$(call BUILD_PROCEDURE)
-endef
-GENERIC_IO_PROCEDURE = $(eval $(call __GENERIC_IO_PROCEDURE,$1))
-#
-# And now the actual HWP definitions
-#
-$(call GENERIC_IO_PROCEDURE,poz_writesram)
-$(call GENERIC_IO_PROCEDURE,poz_readsram)
-$(call GENERIC_IO_PROCEDURE,poz_ppe_state)
-$(call GENERIC_IO_PROCEDURE,poz_ppe_other_regs)
-$(call GENERIC_IO_PROCEDURE,poz_mib_state)
+
+WRAPPER=poz_ppe_state_wrap
+$(call ADD_EXE_INCDIR,$(WRAPPER),$(ROOTPATH)/public/hwp/generic/utils)
+$(call ADD_EXE_SRCDIR,$(WRAPPER),$(ROOTPATH)/public/hwp/generic/utils)
+$(call ADD_EXE_SHARED_OBJ,$(WRAPPER),poz_ppe_utils.o)
+$(WRAPPER)_USELIBS += poz_ppe_state poz_mib_state poz_ppe_other_regs
+$(call BUILD_WRAPPER)
