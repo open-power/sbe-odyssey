@@ -48,7 +48,8 @@ namespace SBE
         return simics;
     }
 
-    HASH_LIST_RET_t check_file_hash(const char *i_fname, const sha3_t &i_hash, const uint8_t *i_hash_list)
+    HASH_LIST_RET_t check_file_hash(const char *i_fname, const sha3_t &i_hash,
+                                    const uint8_t *i_hash_list, uint8_t * o_ptrMismatchHash)
     {
         const int in_fnlen = strlen(i_fname);
 
@@ -80,11 +81,14 @@ namespace SBE
                 }
                 else
                 {
+                    if (o_ptrMismatchHash)
+                    {
+                        o_ptrMismatchHash = (uint8_t *)(i_hash_list + fnlen);
+                    }
                     SBE_ERROR_BIN("File hash does not match", i_fname, in_fnlen);
                     return HASH_COMPARE_FAIL;
                 }
             }
-
             i_hash_list = (const uint8_t *)(filehash + 1);
         }
     }
