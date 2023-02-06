@@ -65,6 +65,7 @@ import_ody_memory_hwp_dir_path = pub_import_dir_path + 'memory/odyssey/xml/attri
 infile_ody_mem_attr_xml = [
     'ody_attributes.xml',
     'ody_omi_init.xml',
+    'ody_sppefw_attributes.xml',
     ]
 
 foreach inodymemfile : infile_ody_mem_attr_xml

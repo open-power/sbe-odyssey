@@ -1,9 +1,42 @@
 {
-    "TARGET_TYPE_MEM_PORT": {"__targInfo__": true, "ntargets" : 1},
-    "TARGET_TYPE_OCMB_CHIP": {"__targInfo__": true, "ntargets" : 1},
-    "TARGET_TYPE_SYSTEM": {"__targInfo__": true, "ntargets" : 1},
-    "TARGET_TYPE_PERV": {"__targInfo__": true, "ntargets" : 9},
-    "TARGET_TYPE_MC": {"__targInfo__": true, "ntargets" : 1},
-    "TARGET_TYPE_DIMM": {"__targInfo__": true, "ntargets" : 1},
-    "TARGET_TYPE_OMI": {"__targInfo__": true, "ntargets" : 1}
+    "TARGET_TYPE_SYSTEM" :
+    {
+        "__targInfo__" : true,
+        "ntargets" : 1
+    },
+    "TARGET_TYPE_OCMB_CHIP" :
+    {
+        "__targInfo__" : true,
+        "ntargets" : 1
+    },
+    "TARGET_TYPE_PERV" :
+    {
+        "__targInfo__" : true,
+        "ntargets" : 9
+    },
+    "TARGET_TYPE_MC" :
+    {
+        "__targInfo__" : true,
+        "ntargets" : 1
+    },
+    "TARGET_TYPE_MEM_PORT" :
+    {
+        "__targInfo__" : true,
+        "ntargets" : 2
+    },
+    "TARGET_TYPE_DIMM" :
+    {
+        "__targInfo__" : true,
+        "ntargets" : 4
+    },
+    "TARGET_TYPE_OMI" :
+    {
+        "__targInfo__" : true,
+        "ntargets" : 1
+    },
+    "TARGET_TYPE_TEMP_SENSOR" :
+    {
+        "__targInfo__":true,
+        "ntargets":4
+    }
 }
