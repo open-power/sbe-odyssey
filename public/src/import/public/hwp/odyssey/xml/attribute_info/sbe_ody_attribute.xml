@@ -3544,4 +3544,11 @@
   <entry name="ATTR_OMI_RX_HORIZ_OFFSET">
     <value>0</value>
   </entry>
+  <!-- SPPE FW : SPPE FW attributes added from here  -->
+  <entry name="ATTR_SPPE_TARGET_STATE">
+    <value>0x00</value>
+  </entry>
+  <entry name="ATTR_SPPE_I2C_DEV_ADDR">
+    <value>0x00</value>
+  </entry>
 </entries>
