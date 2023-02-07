@@ -22,7 +22,6 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#include "heap.C"
 #include "sbecmdpak.H"
 #include "sbe_sp_intf.H"
 #include "sbetrace.H"
