@@ -106,7 +106,7 @@ uint32_t sbeGetRingWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
     // loose first 64 bit. But still we should update l_bitSentCnt
     // because we are sending back this data
     uint32_t l_bitSentCnt = 64;
-    const uint32_t LONG_ROTATE_ADDRESS = 0x00039000;
+    const uint32_t LONG_ROTATE_ADDRESS = 0x0003E000;
     do
     {
         // Get the ring access header
