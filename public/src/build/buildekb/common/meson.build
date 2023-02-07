@@ -33,13 +33,15 @@ if (get_option('srom').enabled())
     subdir('paksrom')
 endif
 
-if (get_option('sppe').enabled() or get_option('tsbe').enabled() or
-    get_option('hsbe').enabled() or get_option('bldr').enabled())
+if (get_option('sppe').enabled() or get_option('bldr').enabled() or
+    get_option('hsbe').enabled() or get_option('tsbe').enabled() or
+    get_option('sbe').enabled()  or get_option('pme').enabled())
     subdir('pak')
 endif
 
-if (get_option('sppe').enabled() or get_option('tsbe').enabled() or
-    get_option('hsbe').enabled())
+if (get_option('sppe').enabled() or
+    get_option('tsbe').enabled() or get_option('hsbe').enabled() or
+    get_option('sbe').enabled() or get_option('pme').enabled())
 
     parseErrorInfo = find_program('../../../import/public/common/generic/fapi2/tools/parseErrorInfo.pl')
     attrTool = find_program('../../../runtime/tools/attributes/attrtool')

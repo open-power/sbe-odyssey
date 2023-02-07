@@ -1,7 +1,7 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/common/meson.build $
+# $Source: public/src/runtime/common/utils/meson.build $
 #
 # OpenPOWER sbe Project
 #
@@ -23,7 +23,12 @@
 #
 # IBM_PROLOG_END_TAG
 
-subdir('core')
-subdir('plat')
-subdir('hwpf')
-subdir('utils')
+runtime_cmn_utils_dir_path = meson.global_source_root() + '/public/src/runtime/common/utils/'
+
+infile_c = ['heap.C']
+
+abs_runtime_cmn_utils_c_path = []
+
+foreach infile : infile_c
+  abs_runtime_cmn_utils_c_path += runtime_cmn_utils_dir_path + infile
+endforeach

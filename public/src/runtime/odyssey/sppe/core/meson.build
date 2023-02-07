@@ -61,7 +61,8 @@ infile_c = ['main.C',
             abs_cmn_utils_c_path,
             abs_runtime_cmn_core_c_path,
             abs_runtime_cmn_ffdc_c_path,
-            abs_runtime_cmn_hwpf_c_path
+            abs_runtime_cmn_hwpf_c_path,
+            abs_runtime_cmn_utils_c_path
            ]
 
 lib_file_name = 'odysseysppe'
