@@ -1,0 +1,11 @@
+{
+    "chipoptable":[
+        {
+            "cmdClass":"A6",
+            "command":"0x01",
+            "function":"sbeControlFastArray",
+            "fences":["SBE_NO_FENCE"],
+            "headerFile":"sbecmdfastarray.H"
+        }
+    ]
+}

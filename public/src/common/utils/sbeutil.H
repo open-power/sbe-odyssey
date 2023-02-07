@@ -56,6 +56,22 @@ if ((l_rc) != SBE_SEC_OPERATION_SUCCESSFUL) \
     break; \
 } \
 
+#define SBE_TRY(what) { l_rc = what; CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc); }
+
+#define SBE_ASSERT(condition, flush, pri_rc, sec_rc, msg, args...)     \
+    if (!(condition))                                                  \
+    {                                                                  \
+        SBE_ERROR(SBE_FUNC " " msg, ##args);                           \
+        respHdr.setStatus((pri_rc), (sec_rc));                         \
+        if (flush)                                                     \
+        {                                                              \
+            i_getStream.get(0, NULL, true, true);                      \
+        }                                                              \
+        l_rc = (sec_rc);                                                \
+        break;                                                         \
+    }
+
+
 // align address to next 8 byte boundary
 #define ALIGN_8_BYTES(address) (address+0x7)&(~0x7)
 
