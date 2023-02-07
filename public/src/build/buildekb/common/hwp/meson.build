@@ -44,6 +44,7 @@ generic_infile_c = [
                     'poz_tp_stopclocks.C',
                     'poz_common_stopclocks.C',
                     'poz_gettracearray.C',
+                    'poz_fastarray.C',
                    ]
 
 #Create abs path for input files before creating .o

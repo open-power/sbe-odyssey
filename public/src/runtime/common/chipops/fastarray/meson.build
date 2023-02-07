@@ -1,7 +1,7 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/common/chipops/meson.build $
+# $Source: public/src/runtime/common/chipops/fastarray/meson.build $
 #
 # OpenPOWER sbe Project
 #
@@ -23,6 +23,8 @@
 #
 # IBM_PROLOG_END_TAG
 
-subdir('stopclocks')
-subdir('tracearray')
-subdir('fastarray')
+CMN_FAST_ARRAY_CHIPOPS_JSON = files('chipop_table.json')
+
+abs_runtime_cmn_fastarray_c_path =  [
+                                        files('sbecmdfastarray.C'),
+                                    ]

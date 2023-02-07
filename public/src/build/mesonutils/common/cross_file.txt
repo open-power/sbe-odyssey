@@ -143,6 +143,7 @@ runtime_cmn_inc_paths = [
     '/public/src/runtime/common/hwpf',
     '/public/src/runtime/common/chipops/stopclocks',
     '/public/src/runtime/common/chipops/tracearray',
+    '/public/src/runtime/common/chipops/fastarray',
         ]
 
 runtime_cmn_code_update_inc_paths = [
