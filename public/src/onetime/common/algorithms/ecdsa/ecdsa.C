@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2020,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2020,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -25,7 +26,10 @@
 #include "ecdsa.H"
 #include <ppe42_string.h>
 
-bn_t *lookup[16][3];
+bn_t lookup[16][3][ NWORDS ];
+
+const bn_t bn_zero[NWORDS] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+const bn_t bn_one[NWORDS] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
 
 void __attribute__((noinline)) BN_COPY (bn_t *dst, const bn_t *src)
 {
@@ -1393,7 +1397,142 @@ int ec_multiply (bn_t *x, bn_t *y, bn_t *z, const bn_t *k, const bn_t *k1)
     return 0;
 }
 
+void generate_lookup_2bit(bn_t lookup_2bit[16][3][ NWORDS ], bn_t px[ NWORDS ], bn_t py[ NWORDS ], bn_t qx[ NWORDS ], bn_t qy[ NWORDS ])
+{
+    bn_t temp_x[NWORDS], temp_y[NWORDS], temp_z[NWORDS];
 
+    //0
+    BN_COPY(lookup_2bit[0][0], bn_zero);
+    BN_COPY(lookup_2bit[0][1], bn_zero);
+    BN_COPY(lookup_2bit[0][2], bn_one);
+
+    //P
+    BN_COPY(lookup_2bit[1][0], px);
+    BN_COPY(lookup_2bit[1][1], py);
+    BN_COPY(lookup_2bit[1][2], bn_one);
+
+    //2P
+    BN_COPY(temp_x, lookup_2bit[1][0]);
+    BN_COPY(temp_y, lookup_2bit[1][1]);
+    BN_COPY(temp_z, lookup_2bit[1][2]);
+    ec_double(temp_x, temp_y, temp_z);
+    BN_COPY(lookup_2bit[2][0], temp_x);
+    BN_COPY(lookup_2bit[2][1], temp_y);
+    BN_COPY(lookup_2bit[2][2], temp_z);
+
+    //3P
+    BN_COPY(temp_x, lookup_2bit[1][0]);
+    BN_COPY(temp_y, lookup_2bit[1][1]);
+    BN_COPY(temp_z, lookup_2bit[1][2]);
+    ec_add(temp_x, temp_y, temp_z, lookup_2bit[2][0], lookup_2bit[2][1], lookup_2bit[2][2]);
+    BN_COPY(lookup_2bit[3][0], temp_x);
+    BN_COPY(lookup_2bit[3][1], temp_y);
+    BN_COPY(lookup_2bit[3][2], temp_z);
+
+    //Q
+    BN_COPY(lookup_2bit[4][0], qx);
+    BN_COPY(lookup_2bit[4][1], qy);
+    BN_COPY(lookup_2bit[4][2], bn_one);
+
+    //2Q
+    BN_COPY(temp_x, lookup_2bit[4][0]);
+    BN_COPY(temp_y, lookup_2bit[4][1]);
+    BN_COPY(temp_z, lookup_2bit[4][2]);
+    ec_double(temp_x, temp_y, temp_z);
+    BN_COPY(lookup_2bit[8][0], temp_x);
+    BN_COPY(lookup_2bit[8][1], temp_y);
+    BN_COPY(lookup_2bit[8][2], temp_z);
+
+    //3Q
+    BN_COPY(temp_x, lookup_2bit[4][0]);
+    BN_COPY(temp_y, lookup_2bit[4][1]);
+    BN_COPY(temp_z, lookup_2bit[4][2]);
+    ec_add(temp_x, temp_y, temp_z, lookup_2bit[8][0], lookup_2bit[8][1], lookup_2bit[8][2]);
+    BN_COPY(lookup_2bit[12][0], temp_x);
+    BN_COPY(lookup_2bit[12][1], temp_y);
+    BN_COPY(lookup_2bit[12][2], temp_z);
+
+    //P+Q
+    BN_COPY(temp_x, lookup_2bit[4][0]);
+    BN_COPY(temp_y, lookup_2bit[4][1]);
+    BN_COPY(temp_z, lookup_2bit[4][2]);
+    ec_add(temp_x, temp_y, temp_z, lookup_2bit[1][0], lookup_2bit[1][1], lookup_2bit[1][2]);
+    BN_COPY(lookup_2bit[5][0], temp_x);
+    BN_COPY(lookup_2bit[5][1], temp_y);
+    BN_COPY(lookup_2bit[5][2], temp_z);
+
+    //2P+Q
+    BN_COPY(temp_x, lookup_2bit[4][0]);
+    BN_COPY(temp_y, lookup_2bit[4][1]);
+    BN_COPY(temp_z, lookup_2bit[4][2]);
+    ec_add(temp_x, temp_y, temp_z, lookup_2bit[2][0], lookup_2bit[2][1], lookup_2bit[2][2]);
+    BN_COPY(lookup_2bit[6][0], temp_x);
+    BN_COPY(lookup_2bit[6][1], temp_y);
+    BN_COPY(lookup_2bit[6][2], temp_z);
+
+    //3P+Q
+    BN_COPY(temp_x, lookup_2bit[4][0]);
+    BN_COPY(temp_y, lookup_2bit[4][1]);
+    BN_COPY(temp_z, lookup_2bit[4][2]);
+    ec_add(temp_x, temp_y, temp_z, lookup_2bit[3][0], lookup_2bit[3][1], lookup_2bit[3][2]);
+    BN_COPY(lookup_2bit[7][0], temp_x);
+    BN_COPY(lookup_2bit[7][1], temp_y);
+    BN_COPY(lookup_2bit[7][2], temp_z);
+
+    //P+2Q
+    BN_COPY(temp_x, lookup_2bit[1][0]);
+    BN_COPY(temp_y, lookup_2bit[1][1]);
+    BN_COPY(temp_z, lookup_2bit[1][2]);
+    ec_add(temp_x, temp_y, temp_z, lookup_2bit[8][0], lookup_2bit[8][1], lookup_2bit[8][2]);
+    BN_COPY(lookup_2bit[9][0], temp_x);
+    BN_COPY(lookup_2bit[9][1], temp_y);
+    BN_COPY(lookup_2bit[9][2], temp_z);
+
+    //P+3Q
+    BN_COPY(temp_x, lookup_2bit[1][0]);
+    BN_COPY(temp_y, lookup_2bit[1][1]);
+    BN_COPY(temp_z, lookup_2bit[1][2]);
+    ec_add(temp_x, temp_y, temp_z, lookup_2bit[12][0], lookup_2bit[12][1], lookup_2bit[12][2]);
+    BN_COPY(lookup_2bit[13][0], temp_x);
+    BN_COPY(lookup_2bit[13][1], temp_y);
+    BN_COPY(lookup_2bit[13][2], temp_z);
+
+    //2P+2Q
+    BN_COPY(temp_x, lookup_2bit[2][0]);
+    BN_COPY(temp_y, lookup_2bit[2][1]);
+    BN_COPY(temp_z, lookup_2bit[2][2]);
+    ec_add(temp_x, temp_y, temp_z, lookup_2bit[8][0], lookup_2bit[8][1], lookup_2bit[8][2]);
+    BN_COPY(lookup_2bit[10][0], temp_x);
+    BN_COPY(lookup_2bit[10][1], temp_y);
+    BN_COPY(lookup_2bit[10][2], temp_z);
+
+    //3P+2Q
+    BN_COPY(temp_x, lookup_2bit[3][0]);
+    BN_COPY(temp_y, lookup_2bit[3][1]);
+    BN_COPY(temp_z, lookup_2bit[3][2]);
+    ec_add(temp_x, temp_y, temp_z, lookup_2bit[8][0], lookup_2bit[8][1], lookup_2bit[8][2]);
+    BN_COPY(lookup_2bit[11][0], temp_x);
+    BN_COPY(lookup_2bit[11][1], temp_y);
+    BN_COPY(lookup_2bit[11][2], temp_z);
+
+    //2P+3Q
+    BN_COPY(temp_x, lookup_2bit[2][0]);
+    BN_COPY(temp_y, lookup_2bit[2][1]);
+    BN_COPY(temp_z, lookup_2bit[2][2]);
+    ec_add(temp_x, temp_y, temp_z, lookup_2bit[12][0], lookup_2bit[12][1], lookup_2bit[12][2]);
+    BN_COPY(lookup_2bit[14][0], temp_x);
+    BN_COPY(lookup_2bit[14][1], temp_y);
+    BN_COPY(lookup_2bit[14][2], temp_z);
+
+    //3P+3Q
+    BN_COPY(temp_x, lookup_2bit[3][0]);
+    BN_COPY(temp_y, lookup_2bit[3][1]);
+    BN_COPY(temp_z, lookup_2bit[3][2]);
+    ec_add(temp_x, temp_y, temp_z, lookup_2bit[12][0], lookup_2bit[12][1], lookup_2bit[12][2]);
+    BN_COPY(lookup_2bit[15][0], temp_x);
+    BN_COPY(lookup_2bit[15][1], temp_y);
+    BN_COPY(lookup_2bit[15][2], temp_z);
+}
 
 //=====================================================  public function  ====
 
@@ -1402,15 +1541,8 @@ int ec_verify (const unsigned char *publicpt,    /* 2*EC_COORDBYTES */
                const unsigned char *signature)   /* 2*EC_COORDBYTES */
 {
     bn_t r[ NWORDS ],  s[ NWORDS ],  e[ NWORDS ],
-        px[ NWORDS ], py[ NWORDS ], pz[ NWORDS ],
-        u1[ NWORDS ], u2[ NWORDS ],
-        px_cpy[ NWORDS ], py_cpy[ NWORDS ],
-        px_2[ NWORDS ], py_2[ NWORDS ], pz_2[ NWORDS ],
-        px_3[ NWORDS ], py_3[ NWORDS ], pz_3[ NWORDS ],
-        qx_2[ NWORDS ], qy_2[ NWORDS ], qz_2[ NWORDS ],
-        qx_3[ NWORDS ], qy_3[ NWORDS ], qz_3[ NWORDS ];
-    bn_t bn_zero[NWORDS] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-    bn_t bn_one[NWORDS] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
+         px[ NWORDS ], py[ NWORDS ], pz[ NWORDS ],
+         u1[ NWORDS ], u2[ NWORDS ];
     bn_t res_x[NWORDS], res_y[NWORDS];
 
     if ((NULL == publicpt) || (NULL == signature) || (NULL == hash))
@@ -1423,8 +1555,6 @@ int ec_verify (const unsigned char *publicpt,    /* 2*EC_COORDBYTES */
     bn_read_hash(e,  hash);
     bn_read_pt  (px, publicpt);
     bn_read_pt  (py, publicpt +EC_COORDBYTES);
-    bn_read_pt  (px_cpy, publicpt);
-    bn_read_pt  (py_cpy, publicpt +EC_COORDBYTES);
 
     if (bn_ge_order(r)  || bn_ge_order(s)  ||
         bn_is_zero(s,0) || bn_is_zero(r,0))
@@ -1438,33 +1568,6 @@ int ec_verify (const unsigned char *publicpt,    /* 2*EC_COORDBYTES */
         return -1;               // admin fault; should not happen
     }
 
-    //0
-    lookup[0][0] = lookup[0][1] = bn_zero;
-    lookup[0][2] = bn_one;
-
-    //P
-    lookup[1][0] = px_cpy;
-    lookup[1][1] = py_cpy;
-    lookup[1][2] = bn_one;
-
-    //2P
-    BN_COPY(px_2, lookup[1][0]);
-    BN_COPY(py_2, lookup[1][1]);
-    BN_COPY(pz_2, lookup[1][2]);
-    ec_double(px_2, py_2, pz_2);
-    lookup[2][0] = px_2;
-    lookup[2][1] = py_2;
-    lookup[2][2] = pz_2;
-
-    //3P
-    BN_COPY(px_3, lookup[1][0]);
-    BN_COPY(py_3, lookup[1][1]);
-    BN_COPY(pz_3, lookup[1][2]);
-    ec_add(px_3, py_3, pz_3, px_2, py_2, pz_2);
-    lookup[3][0] = px_3;
-    lookup[3][1] = py_3;
-    lookup[3][2] = pz_3;
-
     bn_modinv(u1, s, consts_p()->ec_order);      // s no longer needed (NLN)
     BN_COPY(u2, r);
     bn_modmul_order(u2, u1);
@@ -1474,119 +1577,7 @@ int ec_verify (const unsigned char *publicpt,    /* 2*EC_COORDBYTES */
     BN_COPY(e, consts_p()->prime_px);            // (e,s) <- (base point)
     BN_COPY(s, consts_p()->prime_py);
 
-    //Q
-    lookup[4][0] = e;
-    lookup[4][1] = s;
-    lookup[4][2] = bn_one;
-
-    //2Q
-    BN_COPY(qx_2, lookup[4][0]);
-    BN_COPY(qy_2, lookup[4][1]);
-    BN_COPY(qz_2, lookup[4][2]);
-    ec_double(qx_2, qy_2, qz_2);
-    lookup[8][0] = qx_2;
-    lookup[8][1] = qy_2;
-    lookup[8][2] = qz_2;
-
-    //3Q
-    BN_COPY(qx_3, lookup[4][0]);
-    BN_COPY(qy_3, lookup[4][1]);
-    BN_COPY(qz_3, lookup[4][2]);
-    ec_add(qx_3, qy_3, qz_3, qx_2, qy_2, qz_2);
-    lookup[12][0] = qx_3;
-    lookup[12][1] = qy_3;
-    lookup[12][2] = qz_3;
-
-    bn_t p_gx[NWORDS], p_gy[NWORDS], p_gz[NWORDS],
-         p2_gx[NWORDS], p2_gy[NWORDS], p2_gz[NWORDS],
-         p3_gx[NWORDS], p3_gy[NWORDS], p3_gz[NWORDS],
-         p_g2x[NWORDS], p_g2y[NWORDS], p_g2z[NWORDS],
-         p_g3x[NWORDS], p_g3y[NWORDS], p_g3z[NWORDS],
-         p2_g2x[NWORDS], p2_g2y[NWORDS], p2_g2z[NWORDS],
-         p2_g3x[NWORDS], p2_g3y[NWORDS], p2_g3z[NWORDS],
-         p3_g2x[NWORDS], p3_g2y[NWORDS], p3_g2z[NWORDS],
-         p3_g3x[NWORDS], p3_g3y[NWORDS], p3_g3z[NWORDS];
-
-    //P+Q
-    BN_COPY(p_gx, lookup[4][0]);
-    BN_COPY(p_gy, lookup[4][1]);
-    BN_COPY(p_gz, lookup[4][2]);
-    ec_add(p_gx, p_gy, p_gz, lookup[1][0], lookup[1][1], lookup[1][2]);
-    lookup[5][0] = p_gx;
-    lookup[5][1] = p_gy;
-    lookup[5][2] = p_gz;
-
-    //2P+Q
-    BN_COPY(p2_gx, lookup[4][0]);
-    BN_COPY(p2_gy, lookup[4][1]);
-    BN_COPY(p2_gz, lookup[4][2]);
-    ec_add(p2_gx, p2_gy, p2_gz, lookup[2][0], lookup[2][1], lookup[2][2]);
-    lookup[6][0] = p2_gx;
-    lookup[6][1] = p2_gy;
-    lookup[6][2] = p2_gz;
-
-    //3P+Q
-    BN_COPY(p3_gx, lookup[4][0]);
-    BN_COPY(p3_gy, lookup[4][1]);
-    BN_COPY(p3_gz, lookup[4][2]);
-    ec_add(p3_gx, p3_gy, p3_gz, lookup[3][0], lookup[3][1], lookup[3][2]);
-    lookup[7][0] = p3_gx;
-    lookup[7][1] = p3_gy;
-    lookup[7][2] = p3_gz;
-
-    //P+2Q
-    BN_COPY(p_g2x, lookup[1][0]);
-    BN_COPY(p_g2y, lookup[1][1]);
-    BN_COPY(p_g2z, lookup[1][2]);
-    ec_add(p_g2x, p_g2y, p_g2z, lookup[8][0], lookup[8][1], lookup[8][2]);
-    lookup[9][0] = p_g2x;
-    lookup[9][1] = p_g2y;
-    lookup[9][2] = p_g2z;
-
-    //P+3Q
-    BN_COPY(p_g3x, lookup[1][0]);
-    BN_COPY(p_g3y, lookup[1][1]);
-    BN_COPY(p_g3z, lookup[1][2]);
-    ec_add(p_g3x, p_g3y, p_g3z, lookup[12][0], lookup[12][1], lookup[12][2]);
-    lookup[13][0] = p_g3x;
-    lookup[13][1] = p_g3y;
-    lookup[13][2] = p_g3z;
-
-    //2P+2Q
-    BN_COPY(p2_g2x, lookup[2][0]);
-    BN_COPY(p2_g2y, lookup[2][1]);
-    BN_COPY(p2_g2z, lookup[2][2]);
-    ec_add(p2_g2x, p2_g2y, p2_g2z, lookup[8][0], lookup[8][1], lookup[8][2]);
-    lookup[10][0] = p2_g2x;
-    lookup[10][1] = p2_g2y;
-    lookup[10][2] = p2_g2z;
-
-    //3P+2Q
-    BN_COPY(p3_g2x, lookup[3][0]);
-    BN_COPY(p3_g2y, lookup[3][1]);
-    BN_COPY(p3_g2z, lookup[3][2]);
-    ec_add(p3_g2x, p3_g2y, p3_g2z, lookup[8][0], lookup[8][1], lookup[8][2]);
-    lookup[11][0] = p3_g2x;
-    lookup[11][1] = p3_g2y;
-    lookup[11][2] = p3_g2z;
-
-    //2P+3Q
-    BN_COPY(p2_g3x, lookup[2][0]);
-    BN_COPY(p2_g3y, lookup[2][1]);
-    BN_COPY(p2_g3z, lookup[2][2]);
-    ec_add(p2_g3x, p2_g3y, p2_g3z, lookup[12][0], lookup[12][1], lookup[12][2]);
-    lookup[14][0] = p2_g3x;
-    lookup[14][1] = p2_g3y;
-    lookup[14][2] = p2_g3z;
-
-    //3P+3Q
-    BN_COPY(p3_g3x, lookup[3][0]);
-    BN_COPY(p3_g3y, lookup[3][1]);
-    BN_COPY(p3_g3z, lookup[3][2]);
-    ec_add(p3_g3x, p3_g3y, p3_g3z, lookup[12][0], lookup[12][1], lookup[12][2]);
-    lookup[15][0] = p3_g3x;
-    lookup[15][1] = p3_g3y;
-    lookup[15][2] = p3_g3z;
+    generate_lookup_2bit(lookup, px, py, e, s);
 
     memcpy(res_x, bn_zero, sizeof(res_x));
     memcpy(res_y, bn_zero, sizeof(res_y));
