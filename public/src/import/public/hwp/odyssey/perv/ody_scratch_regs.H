@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -80,8 +80,10 @@ enum ody_scratch_regs
     // Scratch_reg_10 (RESERVED)
     SCRATCH10_REG_VALID_BIT                         = 9,
 
-    // Scratch_reg_11 (RESERVED)
+    // Scratch_reg_11 (FW Mode flags)
     SCRATCH11_REG_VALID_BIT                         = 10,
+    ATTR_OCMB_BOOT_FLAGS_STARTBIT                   = 0,
+    ATTR_OCMB_BOOT_FLAGS_LENGTH                     = 32,
 
     // Scratch_reg_12 (RESERVED)
     SCRATCH12_REG_VALID_BIT                         = 11,
