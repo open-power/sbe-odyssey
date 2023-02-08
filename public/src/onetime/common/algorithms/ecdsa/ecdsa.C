@@ -1321,7 +1321,9 @@ int ec_double (bn_t *x, bn_t *y, bn_t *z)
 // LIMIT: processes up to EC_PRIMEBITS in coefficient
 // z and k must not overlap
 //
-int ec_multiply (bn_t *x, bn_t *y, bn_t *z, const bn_t *k, const bn_t *k1)
+// This function accepts 2 scalars k, k1 as input and computes k.P + k1.Q.
+// A lookup table with P and Q must be precomputed by calling generate_lookup_2bit_2pt before calling this function
+int ec_multiply_2pt (bn_t *x, bn_t *y, bn_t *z, const bn_t *k, const bn_t *k1)
 {
 
     bn_t px[ NWORDS ], py[ NWORDS ], pz[ NWORDS ];
@@ -1397,7 +1399,116 @@ int ec_multiply (bn_t *x, bn_t *y, bn_t *z, const bn_t *k, const bn_t *k1)
     return 0;
 }
 
-void generate_lookup_2bit(bn_t lookup_2bit[16][3][ NWORDS ], bn_t px[ NWORDS ], bn_t py[ NWORDS ], bn_t qx[ NWORDS ], bn_t qy[ NWORDS ])
+// Single point variant of ec_multiply_2pt
+// Create a lookup with a call to generate_lookup_2bit_1pt and then call this function
+// Computes k.P, where P was used for the lookup
+//
+int ec_multiply_1pt (bn_t *x, bn_t *y, bn_t *z, const bn_t *k)
+{
+
+    bn_t px[ NWORDS ], py[ NWORDS ], pz[ NWORDS ];
+    unsigned int i;
+    bn_t mask;
+
+    EC_ASSERT(NULL != x);
+    EC_ASSERT(NULL != y);
+    EC_ASSERT(NULL != k);
+    EC_ASSERT(!bn_ge_prime(x));
+    EC_ASSERT(!bn_ge_prime(y));
+
+    i=bn_bits(k)+1;
+    int bit = (i-1)%32;
+    if(i%2==0)
+    {
+        bit--;
+    }
+    mask = (3<<bit);
+    int word = (i/32);  // TODO: Corner case handling when i is divisible by 32
+
+
+    BN_COPY(px, x);
+    BN_COPY(py, y);
+    bn_clear(x);
+    bn_clear(y);
+
+    bn_clear(z);
+    BN_LSW(z) = 1;       // (x,y)   -> (x, y, 1)  in projective coordinates
+    BN_COPY(pz, z);      // (px,py) -> (px,py,1)
+
+    BN_DUMP(i,x);
+    BN_DUMP(i,y);
+    BN_DUMP(i,z);
+    BN_DUMP(i,px);
+    BN_DUMP(i,py);
+    BN_DUMP(i,pz);
+
+    while (word>=0)
+    {
+
+        ec_double(x, y, z);
+
+        int index = ((mask & *k)>>bit);
+
+        ec_add(x, y, z, lookup[index][0], lookup[index][1], lookup[index][2]);
+
+        BN_DUMP(i,x);
+        BN_DUMP(i,y);
+        BN_DUMP(i,z);
+        BN_DUMP(i,px);
+        BN_DUMP(i,py);
+        BN_DUMP(i,pz);
+        mask >>= 2;
+        if (!mask)
+        {
+            k += 1;
+            mask = 0xC0000000;
+            bit = 30;
+            word--;
+        }
+        else
+        {
+            bit -= 2;
+        }
+    }
+        BN_EXIT();
+
+    return 0;
+}
+
+void generate_lookup_2bit_1pt(bn_t lookup_2bit[16][3][ NWORDS ], bn_t px[ NWORDS ], bn_t py[ NWORDS ])
+{
+    bn_t temp_x[NWORDS], temp_y[NWORDS], temp_z[NWORDS];
+
+    //0
+    BN_COPY(lookup_2bit[0][0], bn_zero);
+    BN_COPY(lookup_2bit[0][1], bn_zero);
+    BN_COPY(lookup_2bit[0][2], bn_one);
+
+    //P
+    BN_COPY(lookup_2bit[1][0], px);
+    BN_COPY(lookup_2bit[1][1], py);
+    BN_COPY(lookup_2bit[1][2], bn_one);
+
+    //2P
+    BN_COPY(temp_x, lookup_2bit[1][0]);
+    BN_COPY(temp_y, lookup_2bit[1][1]);
+    BN_COPY(temp_z, lookup_2bit[1][2]);
+    ec_double(temp_x, temp_y, temp_z);
+    BN_COPY(lookup_2bit[2][0], temp_x);
+    BN_COPY(lookup_2bit[2][1], temp_y);
+    BN_COPY(lookup_2bit[2][2], temp_z);
+
+    //3P
+    BN_COPY(temp_x, lookup_2bit[1][0]);
+    BN_COPY(temp_y, lookup_2bit[1][1]);
+    BN_COPY(temp_z, lookup_2bit[1][2]);
+    ec_add(temp_x, temp_y, temp_z, lookup_2bit[2][0], lookup_2bit[2][1], lookup_2bit[2][2]);
+    BN_COPY(lookup_2bit[3][0], temp_x);
+    BN_COPY(lookup_2bit[3][1], temp_y);
+    BN_COPY(lookup_2bit[3][2], temp_z);
+}
+
+void generate_lookup_2bit_2pt(bn_t lookup_2bit[16][3][ NWORDS ], bn_t px[ NWORDS ], bn_t py[ NWORDS ], bn_t qx[ NWORDS ], bn_t qy[ NWORDS ])
 {
     bn_t temp_x[NWORDS], temp_y[NWORDS], temp_z[NWORDS];
 
@@ -1577,12 +1688,12 @@ int ec_verify (const unsigned char *publicpt,    /* 2*EC_COORDBYTES */
     BN_COPY(e, consts_p()->prime_px);            // (e,s) <- (base point)
     BN_COPY(s, consts_p()->prime_py);
 
-    generate_lookup_2bit(lookup, px, py, e, s);
+    generate_lookup_2bit_2pt(lookup, px, py, e, s);
 
     memcpy(res_x, bn_zero, sizeof(res_x));
     memcpy(res_y, bn_zero, sizeof(res_y));
 
-    ec_multiply (res_x, res_y, pz, u1, u2);
+    ec_multiply_2pt (res_x, res_y, pz, u1, u2);
 
     ec_projective2affine(res_x, res_y, pz);
 
