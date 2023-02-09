@@ -72,6 +72,9 @@ ReturnCode ody_sppe_attr_setup(const Target<TARGET_TYPE_OCMB_CHIP>& i_target_chi
     {
         fapi2::buffer<uint64_t> l_scratch6_reg = 0;
         fapi2::ATTR_OCMB_PLL_BUCKET_Type l_attr_ocmb_pll_bucket = 0;
+        uint32_t l_freq_grid_exp_mhz = 0;
+        uint32_t l_freq_grid_act_mhz = 0;
+        uint32_t l_freq_link_mhz = 0;
 
         if (l_scratch16_reg.getBit<SCRATCH6_REG_VALID_BIT>())
         {
@@ -81,6 +84,23 @@ ReturnCode ody_sppe_attr_setup(const Target<TARGET_TYPE_OCMB_CHIP>& i_target_chi
             FAPI_DBG("Setting up ATTR_OCMB_PLL_BUCKET");
             l_scratch6_reg.extractToRight<ATTR_OCMB_PLL_BUCKET_STARTBIT, ATTR_OCMB_PLL_BUCKET_LENGTH>(l_attr_ocmb_pll_bucket);
             FAPI_TRY(FAPI_ATTR_SET(fapi2::ATTR_OCMB_PLL_BUCKET, i_target_chip, l_attr_ocmb_pll_bucket));
+
+            // cmdtable execution will have posted PLL frequency feedback into this mailbox
+            // read it and use it to setup value of attribute reflecting OMI link frequency
+            FAPI_DBG("Setting up ATTR_FREQ_OMI_MHZ");
+            l_scratch6_reg.extractToRight<ATTR_OCMB_PLL_FREQ_STARTBIT, ATTR_OCMB_PLL_FREQ_LENGTH>(l_freq_grid_act_mhz);
+            FAPI_TRY(ody_scratch_regs_get_pll_freqs(i_target_chip, l_attr_ocmb_pll_bucket, l_freq_grid_exp_mhz, l_freq_link_mhz));
+
+            FAPI_ASSERT(l_freq_grid_act_mhz == l_freq_grid_exp_mhz,
+                        fapi2::ODY_SPPE_ATTR_SETUP_GRID_FREQ_MISMATCH()
+                        .set_TARGET_CHIP(i_target_chip)
+                        .set_FREQ_GRID_ACT(l_freq_grid_act_mhz)
+                        .set_FREQ_GRID_EXP(l_freq_grid_exp_mhz)
+                        .set_PLL_BUCKET(l_attr_ocmb_pll_bucket),
+                        "Actual grid frequency feedback did not match expected value based on PLL bucket (%d)!",
+                        l_attr_ocmb_pll_bucket);
+
+            FAPI_TRY(FAPI_ATTR_SET(fapi2::ATTR_FREQ_OMI_MHZ, i_target_chip, l_freq_link_mhz));
         }
     }
 

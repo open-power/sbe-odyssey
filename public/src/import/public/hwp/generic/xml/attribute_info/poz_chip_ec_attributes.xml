@@ -35,14 +35,14 @@
         <name>ENUM_ATTR_NAME_ODYSSEY</name>
         <ec>
           <value>0x10</value>
-          <test>GREATER_THAN</test>
+          <test>GREATER_THAN_OR_EQUAL</test>
         </ec>
       </chip>
       <chip>
         <name>ENUM_ATTR_NAME_ZMETIS</name>
         <ec>
           <value>0x10</value>
-          <test>GREATER_THAN</test>
+          <test>GREATER_THAN_OR_EQUAL</test>
         </ec>
       </chip>
     </chipEcFeature>

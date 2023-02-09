@@ -59,7 +59,7 @@ fapi2::ReturnCode common_io_omi_tdr(
     fapi2::toString(i_target, l_tgt_str, sizeof(l_tgt_str));
 
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_MFG_FLAGS, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), l_mfg_flags));
-    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_FREQ_OMI, fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>(), l_freq));
+    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_FREQ_OMI_MHZ, fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>(), l_freq));
 
     for (uint8_t l_lane = 0; l_lane < 8; l_lane++)
     {
