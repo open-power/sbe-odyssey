@@ -25,21 +25,19 @@
 <attributes>
 <!-- ********************************************************************** -->
 <attribute>
-  <id>ATTR_FREQ_OMI</id>
-  <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+  <id>ATTR_FREQ_OMI_MHZ</id>
+  <targetType>TARGET_TYPE_OMI,TARGET_TYPE_OCMB_CHIP</targetType>
   <description>
-    The frequency of a processor's clock, in MHz.
-    This can be set differently on a by-link basis.
+    The frequency of the OMI channel in MHz.
   </description>
   <valueType>uint32</valueType>
   <enum>
-    25781 = 25781,
-    31875 = 31875,
+    25600 = 25600,
     32000 = 32000,
-    32500 = 32500,
+    38400 = 38400
   </enum>
   <platInit/>
-  <default>32500</default>
+  <writeable/>
 </attribute>
 <!-- ********************************************************************** -->
 </attributes>

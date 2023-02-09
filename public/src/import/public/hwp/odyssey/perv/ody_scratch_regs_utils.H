@@ -37,7 +37,7 @@
 
 #ifndef __PPE__
 ///
-/// @brief Read attribute/platform state to determine desired OCMB PLL bucket
+/// @brief Read Host attribute/platform state to determine desired OCMB PLL bucket
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
 /// @param[out]  o_pll_bucket              Target PLL bucket setting
@@ -48,6 +48,22 @@ fapi2::ReturnCode ody_scratch_regs_get_pll_bucket(
     const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
     fapi2::ATTR_OCMB_PLL_BUCKET_Type& o_pll_bucket);
 #endif
+
+///
+/// @brief Lookup frequencies associated with a given PLL bucket
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
+/// @param[in]   i_pll_bucket              PLL bucket setting
+/// @param[out]  o_freq_grid_mhz           Chip grid freqeuncy (MHz)
+/// @param[out]  o_freq_link_mhz           OMI link frequency (MHz)
+///
+/// @return fapi::ReturnCode  FAPI2_RC_SUCCESS if success, else error code.
+///
+fapi2::ReturnCode ody_scratch_regs_get_pll_freqs(
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+    const fapi2::ATTR_OCMB_PLL_BUCKET_Type i_pll_bucket,
+    uint32_t& o_freq_grid_mhz,
+    uint32_t& o_freq_link_mhz);
 
 /// @brief Set platform specific multicast setup attributes
 ///
