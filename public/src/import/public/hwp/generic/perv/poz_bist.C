@@ -220,7 +220,7 @@ ReturnCode poz_bist_execute(
 
         if (i_params.uc_go_chiplets)
         {
-            FAPI_INF("Enforcing OPCG_GO by chiplet via unicast");
+            FAPI_DBG("Enforcing OPCG_GO by chiplet via unicast");
 
             for (auto& chiplet : i_chiplets_uc)
             {
@@ -292,8 +292,8 @@ ReturnCode poz_bist(
     uint16_t l_tp_regions = i_params.base_regions;
 
     // char arrays for accessing pak scan data
-    char load_dir[9] = "lbist/l/";
-    char load_path[sizeof(load_dir) + sizeof(i_params.program) - 1];
+    char l_load_dir[9] = {'l', 'b', 'i', 's', 't', '/', 'l', '/'};
+    char l_load_path[sizeof(l_load_dir) + sizeof(i_params.program) - 1];
 
     // Helper buffers produced from bist_params constituents
     const buffer<uint64_t> l_chiplets_mask = i_params.chiplets;
@@ -372,17 +372,17 @@ ReturnCode poz_bist(
             break;
 
         case i_params.bist_flags::PCB_MUX_FSI2PCB:
-            FAPI_INF("Configuring PCB mux for FSI2PCB");
+            FAPI_DBG("Configuring PCB mux for FSI2PCB");
             FAPI_TRY(mod_switch_pcbmux(i_target, FSI2PCB));
             break;
 
         case i_params.bist_flags::PCB_MUX_PIB2PCB:
-            FAPI_INF("Configuring PCB mux for PIB2PCB");
+            FAPI_DBG("Configuring PCB mux for PIB2PCB");
             FAPI_TRY(mod_switch_pcbmux(i_target, PIB2PCB));
             break;
 
         case i_params.bist_flags::PCB_MUX_PCB2PCB:
-            FAPI_INF("Configuring PCB mux for PCB2PCB");
+            FAPI_DBG("Configuring PCB mux for PCB2PCB");
             FAPI_TRY(mod_switch_pcbmux(i_target, PCB2PCB));
             break;
     }
@@ -392,7 +392,7 @@ ReturnCode poz_bist(
     ////////////////////////////////////////////////////////////////
     if (i_params.stages & i_params.bist_stages::SCAN0)
     {
-        FAPI_INF("Do a scan0");
+        FAPI_DBG("Do a scan0");
         FAPI_TRY(mod_scan0(l_chiplets_target, l_all_active_regions, i_params.scan0_types));
         o_return.completed_stages |= i_params.bist_stages::SCAN0;
     }
@@ -402,7 +402,7 @@ ReturnCode poz_bist(
     ////////////////////////////////////////////////////////////////
     if (i_params.stages & i_params.bist_stages::ARRAYINIT)
     {
-        FAPI_INF("Do an arrayinit");
+        FAPI_DBG("Do an arrayinit");
         FAPI_TRY(mod_arrayinit(l_chiplets_target, l_all_active_regions, false));
         o_return.completed_stages |= i_params.bist_stages::ARRAYINIT;
     }
@@ -416,18 +416,18 @@ ReturnCode poz_bist(
 
         if (i_params.flags & i_params.bist_flags::ABIST_NOT_LBIST)
         {
-            load_dir[0] = 'a';
+            l_load_dir[0] = 'a';
         }
 
         // Load base image if it exists
-        strcpy(load_path, load_dir);
-        strcat(load_path, "base_image");
-        FAPI_TRY(fapi2::putRing(l_chiplets_target, load_path));
+        strcpy(l_load_path, l_load_dir);
+        strcat(l_load_path, "base_image");
+        FAPI_TRY(fapi2::putRing(l_chiplets_target, l_load_path));
 
         // Load program image
-        strcpy(load_path, load_dir);
-        strcat(load_path, i_params.program);
-        FAPI_TRY(fapi2::putRing(l_chiplets_target, load_path));
+        strcpy(l_load_path, l_load_dir);
+        strcat(l_load_path, i_params.program);
+        FAPI_TRY(fapi2::putRing(l_chiplets_target, l_load_path));
 
         o_return.completed_stages |= i_params.bist_stages::RING_SETUP;
     }
