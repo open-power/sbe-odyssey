@@ -34,7 +34,7 @@
 
 #include <fapi2.H>
 
-static const uint16_t BIST_PARAMS_CURRENT_VERSION = 9;
+static const uint16_t BIST_PARAMS_CURRENT_VERSION = 10;
 
 struct bist_params
 {
@@ -121,6 +121,7 @@ struct bist_params
     /// Next, for each chiplet in chiplets, inspect the entry in chiplets_regions indexed by chiplet ID.
     /// If the entry is zero, pass; else, overwrite base_regions with the entry for that respective chiplet.
     uint16_t base_regions;
+    uint16_t padding;              ///< Padding bits to enforce data alignment within struct
     uint16_t chiplets_regions[64];
     uint16_t outer_loop_mask;      ///< Mask of outer loop BIST iterations to run
     uint16_t inner_loop_mask;      ///< Mask of inner loop BIST iterations to run
@@ -128,6 +129,7 @@ struct bist_params
     ////////////////////////////////////////////////////////////////
     // 8-bit constituents
     ////////////////////////////////////////////////////////////////
+    /// Make sure to keep these fields 8-byte aligned for FAPI_DBG prints
     char program[32];              ///< Name of program for image selection
     char ring_patch[32];           ///< Name of patch ring image
 

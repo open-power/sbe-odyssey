@@ -69,10 +69,11 @@ static const bist_params ody_abist_params =
     cc::SCAN_TYPE_ALL,                  ///< scan0_types
     0,                                  ///< lbist_scan_types
     cc::REGION_ALL,                     ///< base_regions
+    0,                                  ///< padding
     {0},                                ///< chiplets_regions
     0x8000,                             ///< outer_loop_mask
     0x8000,                             ///< inner_loop_mask
-    "mfgfullSF_def",                    ///< program
+    "mfgfullPF_def_pre",                ///< program
     "none",                             ///< ring_patch
 };
 
