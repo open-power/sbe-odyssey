@@ -26,6 +26,7 @@
 #pragma once
 #include <attribute_properties.H>
 #include <attribute_macros.H>
+#include <sbetrace.H>
 
 namespace fapi2
 {
@@ -63,8 +64,16 @@ inline void attr_copy<uint64_t>(uint64_t& dest, uint64_t& src)
     dest = src;
 }
 
+{# The forward declaration of all attributes as some of the attributes #}
+{# may be used in the set/get function of composite targets.           #}
 {% for attr in attributes if attr.has_storage %}
+namespace {{attr.sbe_targ_type}}
+{
+    extern {{attr.value_type}} {{attr.name}}{{attr.internal_dims}} __attribute__((section(".attrs")));
+}
+{% endfor %}
 
+{% for attr in attributes if attr.has_storage %}
 {% if attr.first_attribute %}
 template <TargetType T>
 fapi2::ReturnCode get_{{attr.name}}(const fapi2::Target<T>& i_target, {{attr.name}}_Type& o_val);
@@ -73,32 +82,60 @@ template <TargetType T>
 fapi2::ReturnCode set_{{attr.name}}(const fapi2::Target<T>& i_target, {{attr.name}}_Type& o_val);
 {% endif %}
 
-namespace {{attr.sbe_targ_type}}
-{
-    extern {{attr.value_type}} {{attr.name}}{{attr.internal_dims}} __attribute__((section(".attrs")));
-}
-
 {% if attr.support_composite_target %}
-template <>
+template <TargetType T>
 inline fapi2::ReturnCode get_{{attr.name}}(
-    const fapi2::Target<{{attr.ekb_target_with_fapi2}}>& i_target,
+    const fapi2::Target<T>& i_target,
     {{attr.name}}_Type& o_val)
 {
-    // TODO: (JIRA: PFSBE-268)
-    //     call generic function plat_read_attribute(Target<T>, AttributeId), once this function is implemented
-    attr_copy(o_val, fapi2::ATTR::{{attr.sbe_targ_type}}::{{attr.name}}{{attr.targ_inst('i_target')}});
-    return fapi2::FAPI2_RC_SUCCESS;
+    constexpr fapi2::TargetType EKB_FULL_TARGET = {{attr.ekb_full_target}};
+    static_assert(((T & EKB_FULL_TARGET) == T), "Invalid composite target");
+
+    fapi2::TargetType l_type = i_target.get().getFapiTargetType();
+    fapi2::ReturnCode l_rc   = fapi2::FAPI2_RC_SUCCESS;
+
+    switch (l_type)
+    {
+    {% for targ in attr.ekb_target_list if targ in target_types.keys() %}
+    case fapi2::{{targ}}:
+        attr_copy(o_val,
+        fapi2::ATTR::{{targ}}::{{attr.name}}{{attr.inst_index(target_types[targ].ntargets, targ,'i_target')}});
+        break;
+    {% endfor %}
+    default:
+        l_rc = fapi2::FAPI2_RC_FALSE;
+        SBE_ERROR("The target passed (type=0x%08X%08X) is not valid for "
+            "attribute {{attr.name}}", (l_type >> 32), (l_type & 0xFFFFFFFF));
+        break;
+    }
+    return l_rc;
 }
 
-template <>
+template <TargetType T>
 inline fapi2::ReturnCode set_{{attr.name}}(
-    const fapi2::Target<{{attr.ekb_target_with_fapi2}}>& i_target,
+    const fapi2::Target<T>& i_target,
     {{attr.name}}_Type& o_val)
 {
-    // TODO: (JIRA: PFSBE-268)
-    //     call generic function plat_set_attribute(Target<T>, AttributeId), once this function is implemented
-    attr_copy(fapi2::ATTR::{{attr.sbe_targ_type}}::{{attr.name}}{{attr.targ_inst('i_target')}}, o_val);
-    return fapi2::FAPI2_RC_SUCCESS;
+    constexpr fapi2::TargetType EKB_FULL_TARGET = {{attr.ekb_full_target}};
+    static_assert(((T & EKB_FULL_TARGET) == T), "Invalid composite target");
+
+    fapi2::TargetType l_type = i_target.get().getFapiTargetType();
+    fapi2::ReturnCode l_rc   = fapi2::FAPI2_RC_SUCCESS;
+
+    switch (l_type)
+    {
+    {% for targ in attr.ekb_target_list if targ in target_types.keys() %}
+    case fapi2::{{targ}}:
+        attr_copy(fapi2::ATTR::{{targ}}::{{attr.name}}{{attr.inst_index(target_types[targ].ntargets,targ,'i_target')}}, o_val);
+        break;
+    {% endfor %}
+    default:
+        l_rc = fapi2::FAPI2_RC_FALSE;
+        SBE_ERROR("The target passed (type=0x%08X%08X) is not valid for "
+             "attribute {{attr.name}}",(l_type >> 32), (l_type & 0xFFFFFFFF));
+        break;
+    }
+    return l_rc;
 }
 {% endif %}
 
