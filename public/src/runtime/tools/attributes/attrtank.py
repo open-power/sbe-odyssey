@@ -370,6 +370,17 @@ class RealAttrFieldInfo(AttrFieldInfo):
             inst_index += "]"
         return inst_index
 
+    def inst_index(self, num_inst:int, targ_type:str, targ_var:str):
+        inst_index = ""
+        if num_inst > 1:
+            inst_index += "[" + targ_var + ".get()."
+            if(targ_type == 'TARGET_TYPE_PERV'):
+                inst_index += "getChipletNumber()"
+            else:
+                inst_index += "getTargetInstance()"
+            inst_index += "]"
+        return inst_index
+
     @property
     def getter(self):
         return "ATTR::get_" + self.name + "(TARGET,VAL)"
@@ -391,27 +402,33 @@ class RealAttrFieldInfo(AttrFieldInfo):
         if(len(targ_list) == 1):
             return False
 
-        # check whether POZ chip type
-        # TODO: (JIRA: PFSBE-268)
-        #     remove this check, once we have function implemented for any target
-        poz_chip_list = ['TARGET_TYPE_HUB_CHIP',
-                        'TARGET_TYPE_COMPUTE_CHIP',
-                        'TARGET_TYPE_PROC_CHIP',
-                        'TARGET_TYPE_OCMB_CHIP']
-        fapi2_targ = ''
-        self.ekb_target_with_fapi2 = ''
-        for targ in targ_list:
-            if(targ.strip() in poz_chip_list):
-                if(fapi2_targ != ''):
-                    fapi2_targ += ' | '
-                fapi2_targ += "fapi2::" + targ.strip()
-            else:
-                return False
-
-        # this property will be called subsequent, if current function return True
-        self.ekb_target_with_fapi2 = fapi2_targ
-
         return True
+
+    @property
+    def ekb_target_list(self) -> list:
+        ekb_target_list = []
+
+        if(self.ekb_target_type == ''):
+            return ekb_target_list
+
+        targ_list = self.ekb_target_type.split('|')
+
+        for targ in targ_list:
+            ekb_target_list.append(targ.strip())
+
+        return ekb_target_list
+
+    @property
+    def ekb_full_target(self):
+        comp_target = ''
+
+        targ_list = self.ekb_target_type.split('|')
+        for targ in targ_list:
+            if(comp_target != ''):
+                comp_target += ' | '
+            comp_target += "fapi2::" + targ.strip()
+
+        return comp_target
 
     def gen_attr_table(self) -> str:
         retval = ""
