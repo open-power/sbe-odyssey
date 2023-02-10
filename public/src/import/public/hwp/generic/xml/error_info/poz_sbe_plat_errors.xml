@@ -5,7 +5,8 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022                             -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
+<!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
 <!-- Licensed under the Apache License, Version 2.0 (the "License");        -->
@@ -69,5 +70,31 @@
     <platScomFail/>
     <rc>RC_SBE_PIB_TIMEOUT_ERROR</rc>
     <description>SBE SCOM failure - Timeout error</description>
+</hwpError>
+<hwpError>
+    <sbeError/>
+    <rc>RC_SBE_FILE_HASH_MISMATCH</rc>
+    <description>SBE PLAT Error - File hash mismatch</description>
+    <ffdc>GEN_HASH_0</ffdc>
+    <ffdc>GEN_HASH_1</ffdc>
+    <ffdc>GEN_HASH_2</ffdc>
+    <ffdc>GEN_HASH_3</ffdc>
+    <ffdc>GEN_HASH_4</ffdc>
+    <ffdc>GEN_HASH_5</ffdc>
+    <ffdc>GEN_HASH_6</ffdc>
+    <ffdc>GEN_HASH_7</ffdc>
+    <ffdc>CMP_HASH_0</ffdc>
+    <ffdc>CMP_HASH_1</ffdc>
+    <ffdc>CMP_HASH_2</ffdc>
+    <ffdc>CMP_HASH_3</ffdc>
+    <ffdc>CMP_HASH_4</ffdc>
+    <ffdc>CMP_HASH_5</ffdc>
+    <ffdc>CMP_HASH_6</ffdc>
+    <ffdc>CMP_HASH_7</ffdc>
+</hwpError>
+<hwpError>
+    <sbeError/>
+    <rc>RC_SBE_FILE_NOT_FOUND</rc>
+    <description>SBE PLAT Error - File not found</description>
 </hwpError>
 </hwpErrors>
