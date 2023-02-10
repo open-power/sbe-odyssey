@@ -25,17 +25,14 @@
 #include "sbecodeupdate.H"
 #include "cmnglobals.H"
 #include "ppe42_string.h"
+#include "sbetrace.H"
+#include "poz_scom_perv_cfam.H"
+#include "poz_ppe.H"
 #include "mbxscratch.H"
 #include "errorcodes.H"
 #include "chipop_struct.H"
 #include "sbeFifoMsgUtils.H"
 #include "sbe_sp_intf.H"
-#include "pakwrapper.H"
-#include "filenames.H"
-#include "sha3.H"
-#include "codeupdateutils.H"
-#include "sbe_sp_plat_intf.H"
-#include "sbeutil.H"
 
 ////////////////////////////////////////////////////////
 //////// Get Code Levels Chip-op ///////////////////////
@@ -193,79 +190,4 @@ uint32_t sbeSyncPartition (uint8_t *i_pArg)
     SBE_EXIT(SBE_FUNC);
     return l_rc;
 #undef SBE_FUNC
-}
-
-uint32_t getImageHash(const CU_IMAGES i_imageType,
-                      const uint8_t i_Partition,
-                      uint8_t* o_hashArrayPtr)
-{
-    #define SBE_FUNC " getImageHash "
-    SBE_ENTER(SBE_FUNC);
-
-    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
-    ARC_RET_t l_pakRC = ARC_OPERATION_SUCCESSFUL;
-    uint32_t l_size = 0;
-    uint32_t l_partitionStartAddress = 0;
-
-    do
-    {
-        //To get partition start address
-        getPartitionAddress(i_Partition,l_partitionStartAddress);
-        PakWrapper pak((void *)l_partitionStartAddress);
-
-        switch (i_imageType)
-        {
-            case CU_IMAGES::BOOTLOADER:
-                l_pakRC = pak.read_file(bldr_image_hash_file_name,
-                                        o_hashArrayPtr,SHA3_DIGEST_LENGTH,NULL,
-                                        &l_size);
-                break;
-
-            case CU_IMAGES::RUNTIME:
-                l_pakRC = pak.read_file(runtime_image_hash_file_name,
-                                        o_hashArrayPtr,SHA3_DIGEST_LENGTH,NULL,
-                                        &l_size);
-                break;
-
-            case CU_IMAGES::BMC_OVRD:
-                l_pakRC = pak.read_file(bmc_image_hash_file_name,
-                                        o_hashArrayPtr,SHA3_DIGEST_LENGTH,NULL,
-                                        &l_size);
-                break;
-
-            case CU_IMAGES::HOST_OVRD:
-                l_pakRC = pak.read_file(host_image_hash_file_name,
-                                        o_hashArrayPtr,SHA3_DIGEST_LENGTH,NULL,
-                                        &l_size);
-                break;
-
-            default:
-                l_rc = SBE_SEC_CU_INVALID_IMAGE_TYPE;
-                SBE_ERROR(SBE_FUNC " Invalid Image  Passed by caller image: %d ",
-                                     i_imageType);
-                break;
-        }
-
-        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
-
-        if (l_pakRC != ARC_OPERATION_SUCCESSFUL)
-        {
-            l_rc = SBE_SEC_CU_FILE_IMAGE_HASH_READ_ERROR;
-            SBE_ERROR(SBE_FUNC " ImageType: %d " \
-                      "Failed to read image hash Rc:%d",i_imageType,l_pakRC);
-            break;
-        }
-        else if (SHA3_DIGEST_LENGTH != l_size)
-        {
-            l_rc = SBE_SEC_CU_IMAGE_HASH_SIZE_MISMATCH;
-            SBE_ERROR(SBE_FUNC "Failed to read expected hash size of image:%d" \
-                               "Expected size: %d,actual size: %d ",
-                                i_imageType,SHA3_DIGEST_LENGTH,l_size);
-            break;
-        }
-    } while(false);
-
-    SBE_EXIT(SBE_FUNC);
-    return l_rc;
-    #undef SBE_FUNC
 }

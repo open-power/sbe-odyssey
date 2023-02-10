@@ -88,7 +88,7 @@ enum sbePrimResponse
  *   @TODO via RTC: 129763
  *         Discuss on SBE_SEC_INVALID_TARGET_ID_PASSED
  *
- */
+*/
 enum sbeSecondaryResponse
 {
     SBE_SEC_OPERATION_SUCCESSFUL              = 0x00,
@@ -163,9 +163,6 @@ enum sbeSecondaryResponse
     SBE_SEC_GETRING_SETUP_FAILED              = 0x52,
     SBE_SEC_GETRING_VERIFY_CLEANUP            = 0x53,
     SBE_SEC_PUTRING_FAILED                    = 0x54,
-    SBE_SEC_CU_INVALID_IMAGE_TYPE             = 0x55,
-    SBE_SEC_CU_IMAGE_HASH_SIZE_MISMATCH       = 0x56,
-    SBE_SEC_CU_FILE_IMAGE_HASH_READ_ERROR     = 0x57,
 };
 
 /**
