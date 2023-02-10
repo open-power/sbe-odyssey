@@ -43,7 +43,8 @@ odyssey_sppe_obj_file_cpp = obj_gen_cpp.process(abs_genfiles_c_file_paths,
                                             odyssey_runtime_abs_inc_paths,
                                             runtime_cmn_abs_inc_paths,
                                             odyssey_cmn_abs_inc_paths,
-                                            odyssey_hwp_abs_inc_paths])
+                                            odyssey_hwp_abs_inc_paths,
+                                            runtime_cmn_abs_code_update_inc_paths])
 infile  = [odyssey_sppe_obj_file_cpp]
 
 libodysseysppegenfiles = custom_target( lib_file_name,

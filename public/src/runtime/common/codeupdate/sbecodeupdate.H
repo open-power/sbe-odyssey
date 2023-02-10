@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/core/sbecodeupdate.H $              */
+/* $Source: public/src/runtime/common/codeupdate/sbecodeupdate.H $        */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -35,6 +35,7 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+#include "sbe_sp_intf.H"
 
 #define NOT_USED 0xFFFFFFFF
 
@@ -46,9 +47,9 @@ namespace CU
      */
     typedef struct
     {
-        CU::IMAGES imageType;
+        CU_IMAGES imageType;
         // hash of entire pak file (incl header minus image.hash file)
-        uint64_t   imageHashSHA3_512[8];
+        uint64_t  imageHashSHA3_512[8];
     }imageUpdate_t;
 
     /*
@@ -56,7 +57,7 @@ namespace CU
      */
     typedef struct __attribute__((__packed__))
     {
-        CU::IMAGES imageType;
+        CU_IMAGES  imageType;
         uint32_t   buildTime; // Format- YYYYMMDD
         uint32_t   commidId;
         char       buildTag[20];
@@ -88,5 +89,17 @@ uint32_t sbeUpdateImage(uint8_t *i_pArg);
  * @return - RC from the FIFO access utility
  */
 uint32_t sbeSyncPartition(uint8_t *i_pArg);
+
+/*@brief - Get image hash for an image in NOR
+ *
+ * @param[in]  -const CU_IMAGES i_imageType :i_imageType passed to the function
+ * @param[in]  -uint8_t i_Partition : passed to the function
+ * @param[out] -uint8_t* o_hashArrayPtr :64-bytes image hash
+ *
+ * @return - success/ fail
+ */
+uint32_t getImageHash(const CU_IMAGES i_imageType,
+                      const uint8_t i_Partition,
+                      uint8_t* o_hashArrayPtr);
 
 #endif //SBE_CODE_UPDATE_H

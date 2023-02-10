@@ -26,7 +26,8 @@ ODYSSEY_CHIPOPS_JSON = files('chipop_table.json')[0]
 
 ############### Chip-op table generation ############
 chipop_json_list = [COMMON_CHIPOPS_JSON,
-                   ODYSSEY_CHIPOPS_JSON]
+                    CMN_CODE_UPDATE_CHIPOPS_JSON,
+                    ODYSSEY_CHIPOPS_JSON]
 result_chipoptablegen = run_command(chipoptablegen,
                         '-d', odyssey_sppe_genfiles_dir_path,
                         '-c', chipop_json_list)
@@ -62,7 +63,8 @@ infile_c = ['main.C',
             abs_runtime_cmn_core_c_path,
             abs_runtime_cmn_ffdc_c_path,
             abs_runtime_cmn_hwpf_c_path,
-            abs_runtime_cmn_utils_c_path
+            abs_runtime_cmn_utils_c_path,
+            abs_runtime_cmn_code_update_c_path
            ]
 
 lib_file_name = 'odysseysppe'
@@ -83,7 +85,8 @@ odyssey_sppe_obj_file_cpp = obj_gen_cpp.process(infile_c,
                                         odyssey_cmn_abs_inc_paths,
                                         runtime_cmn_abs_inc_paths,
                                         odyssey_hwp_abs_inc_paths,
-                                        ekb_hwp_abs_inc_paths])
+                                        ekb_hwp_abs_inc_paths,
+                                        runtime_cmn_abs_code_update_inc_paths])
 
 # tinflate.C must be compiled with -O2 -falign-loops=32 for significantly improved decompression performance
 #   -O2 enables a few additional speed optimizations

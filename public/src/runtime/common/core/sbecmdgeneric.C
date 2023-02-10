@@ -22,7 +22,6 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#include "sbecodeupdate.H"
 #include "sbecmdgeneric.H"
 #include "cmnglobals.H"
 #include "ppe42_string.h"
