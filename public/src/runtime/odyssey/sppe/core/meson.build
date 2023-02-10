@@ -66,6 +66,20 @@ odyssey_abs_core_c_file_paths += [ abs_pak_c_path,
                                     odyssey_abs_tgt_c_file_paths,
                                     odyssey_abs_attr_c_file_paths
            ]
+
+# List of image specific customize files for PNOR
+cust_image_infile_c = [
+                        'imgcustomize.C',
+]
+
+odyssey_abs_cust_img_c_file_paths = []
+foreach infile : cust_image_infile_c
+
+  abs_infile_c_path = ody_core_dir_path + infile
+  odyssey_abs_cust_img_c_file_paths += abs_infile_c_path
+
+endforeach
+
 #We can break off at this point if its a lab image as lab would do below stuff in internal
 if platform == 'odysseylab'
   subdir_done()
@@ -90,23 +104,18 @@ endif
 
 lib_file_name = 'odysseysppe'
 
-odyssey_sppe_cc_flags = [
-        ]
-
-if get_option('sppe').enabled() and get_option('bldr').disabled()
-  odyssey_sppe_cc_flags += ['-DRUNTIME_PIBMEM_ONLY_IMG']
-endif
-
 #TODO: JIRA PFSBE-283: Generator enhancement
 #NOTE: Add all genfiles directly below as lab images use different genfils.
 #      Adding genfiles in odyssey_abs_core_c_file_paths will cause lab image fails
+#      We need to add odyssey_abs_cust_img_c_file_paths directly in here as lab may use
+#      different set of files for SPPE pibmem image
 odyssey_sppe_obj_file_cpp = obj_gen_cpp.process([odyssey_abs_core_c_file_paths,
-                                                 odyssey_abs_genfiles_c_file_paths
+                                                 odyssey_abs_genfiles_c_file_paths,
+                                                 odyssey_abs_cust_img_c_file_paths
                                                 ],
                                         extra_args : [
                                         meson.get_external_property('gcc_defs_cmn_odyssey'),
                                         meson.get_external_property('gcc_defs_odyssey_sppe'),
-                                        odyssey_sppe_cc_flags,
                                         odyssey_runtime_abs_inc_paths,
                                         odyssey_cmn_abs_inc_paths,
                                         runtime_cmn_abs_inc_paths,
