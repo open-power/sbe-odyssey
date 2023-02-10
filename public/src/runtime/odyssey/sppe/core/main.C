@@ -34,17 +34,15 @@
 #include "plat_hw_access.H"
 #include "initthreads.H"
 #include "target.H"
-#include "poz_scom_perv_cfam.H"
 #include "fapi2_attribute_service.H"
 #include "errorcodes.H"
-#include "measurementregs.H"
 #include "sbeutil.H"
 #include "sbe_build_info.H"
 #include "ppe42_string.h"
 #include "metadata.H"
 #include "sbestatesutils.H"
 #include "heap.H"
-#include "poz_ppe.H"
+#include "imgcustomize.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -139,18 +137,8 @@ int  main(int argc, char **argv)
 
     do
     {
-        // In case of pibmem only image, set the sbe frequency
-        // on scratch 6.
-#if defined(RUNTIME_PIBMEM_ONLY_IMG)
-            mbx6_t odysseymbx6 = {0};
-            odysseymbx6.iv_mbx6freqInmhz = SBE_ODYSSEY_DEF_NEST_FREQ_MHZ;
-            putscom_abs(scomt::poz::FSXCOMP_FSXLOG_SCRATCH_REGISTER_6_RW,
-                odysseymbx6.iv_mbx6);
-            SBE::setSbeGlobalFreqFromScratchOrLFR(CALLER_RUNTIME);
-#else
-            // Update sbefreq using LFR value
-            SBE::updateSbeGlobalFreqFromLFR();
-#endif
+        sbeFreqUpdateWrap();
+
         rc = pk_initialize((PkAddress)sppe_Kernel_NC_Int_stack,
                 SPPE_NONCRITICAL_STACK_SIZE,
                 INITIAL_PK_TIMEBASE, // initial_timebase
@@ -165,29 +153,8 @@ int  main(int argc, char **argv)
         SBE_INFO(SBE_FUNC "Completed PK initialization for SPPE Image with freq: %d",
                             CMN_GLOBAL->sbefreq);
 
-#ifndef RUNTIME_PIBMEM_ONLY_IMG
-        //Read the SROM measurement control register and validate if boot complete bit is set
-        secureBootCtrlSettings_t sromSecureBootCtrlSettings;
-        sromSecureBootCtrlSettings.getSecureBootCtrlSettings(MEASUREMENT_REG_24);
-        SBE_INFO(SBE_FUNC "SROM Secure Boot Control Measurement Reg Value: 0x%08x",
-                sromSecureBootCtrlSettings.secureBootControl);
-        if(sromSecureBootCtrlSettings.bootComplete != 0x1)
-        {
-            SBE_ERROR(SBE_FUNC "SROM Boot Complete bit not set.");
-            SBE::updateErrorCodeAndHalt(BOOT_RC_SROM_COMPLETE_BIT_NOT_SET_IN_RUNTIME);
-        }
+        sbeSecurityCheckWrap();
 
-        //Read the Boot Loader measurement control register and validate if boot complete bit is set
-        secureBootCtrlSettings_t bldrSecureBootCtrlSettings;
-        bldrSecureBootCtrlSettings.getSecureBootCtrlSettings(MEASUREMENT_REG_25);
-        SBE_INFO(SBE_FUNC "BLDR Secure Boot Control Measurement Reg Value: 0x%08x",
-                bldrSecureBootCtrlSettings.secureBootControl);
-        if(bldrSecureBootCtrlSettings.bootComplete != 0x1)
-        {
-            SBE_ERROR(SBE_FUNC "BLDR Boot Complete bit not set.");
-            SBE::updateErrorCodeAndHalt(BOOT_RC_BLDR_COMPLETE_BIT_NOT_SET_IN_RUNTIME);
-        }
-#endif
         // Initialize SBE Globals instance.
         sbeGlobal = &SBEGlobalsSingleton::getInstance();
 
@@ -239,14 +206,7 @@ int  main(int argc, char **argv)
                 break;
             }
 
-            // Get the partition start offset
-            sbe_local_LFR lfrReg;
-            PPE_LVD(scomt::poz_ppe::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW, lfrReg);
-
-            g_partitionOffset = getAbsPartitionAddr(lfrReg.boot_selection);
-            SBE_INFO(SBE_FUNC "Partition offset is : 0x%08x, "
-                              "Partition selected is : 0x%02x",
-                              g_partitionOffset,(uint8_t)lfrReg.boot_selection);
+            sbePakSearchStartOffset();
         }
 
         // Start running the highest priority thread.
