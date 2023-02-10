@@ -33,41 +33,30 @@
 /*
 * @brief List of all file names in Boot Loader pak(boot)
 */
-static const char hash_list_file_name[]  = "boot/hash.list";
-static const char secure_hdr_file_name[] = "boot/secure.hdr";
-static const char bldr_file_name[]       = "boot/bldr.bin";
+static const char hash_list_file_name[]      = "boot/hash.list";
+static const char secure_hdr_file_name[]     = "boot/secure.hdr";
+static const char bldr_file_name[]           = "boot/bldr.bin";
+static const char bldr_image_hash_file_name[]= "boot/image.hash";
 
 /*
 * @brief List of all file names in Runtime Pak(rt)
 */
-static const char hash_list_fname[]     = "rt/hash.list";
-static const char secure_hdr_fname[]    = "rt/secure.hdr";
-static const char sppe_bin_fname[]      = "rt/sppe.bin";
-static const char hw_keys_hash_fname[]  = "rt/hwkeyshash.bin";
-static const char sppe_ram_pak_fname[]  = "rt/sppe.ram.pak";
-static const char cust_sppe_pak_fname[] = "cust/sppe.pak";
+static const char hash_list_fname[]             = "rt/hash.list";
+static const char secure_hdr_fname[]            = "rt/secure.hdr";
+static const char sppe_bin_fname[]              = "rt/sppe.bin";
+static const char hw_keys_hash_fname[]          = "rt/hwkeyshash.bin";
+static const char sppe_ram_pak_fname[]          = "rt/sppe.ram.pak";
+static const char cust_sppe_pak_fname[]         = "cust/sppe.pak";
+static const char runtime_image_hash_file_name[]= "rt/image.hash";
 
-// CU: Code Update
-namespace CU
-{
-    /*
-     * @brief Enum for image types supported
-     */
-    enum IMAGES : uint16_t
-    {
-        IMG_TYPE_INVALID=0,
-        BOOTLOADER = 1,    // Updatable(Ody)/ Not-updatable(P11)
-        RUNTIME,           // Updatable(both)
-        BMC_OVRD,          // Updatable(both)
-        HB_OVRD,           // Updatable(both)
-        SROM,              // Not-updatable
-        CUST,              // Not-updatable
-        SPPE_RAM,          // Updatable (both) as part of runtime
-        IOPPE_BIN,         // Updatable (both) as part of runtime
-        SYNOPSYS_BIN,      // Updatable (both) as part of runtime
-        ARC_BIN,           // Updatable (both) as part of runtime
-        END_OF_IMG_LIST
-    };
-} // namespace CU
+/*
+ * @brief List of all file names in BMC OVERRIDE Pak(BMC_OVRD)
+ */
+static const char bmc_image_hash_file_name[]    = "bmc/image.hash";
+
+/*
+ * @brief List of all file names in HOSTBOOT OVERRIDE Pak(HB_OVRD)
+ */
+static const char host_image_hash_file_name[]   = "host/image.hash";
 
 #endif /* _ODYSSEYFILENAMES_H_ */

@@ -140,6 +140,10 @@ runtime_cmn_inc_paths = [
     '/public/src/runtime/common/hwpf'
         ]
 
+runtime_cmn_code_update_inc_paths = [
+    '/public/src/runtime/common/codeupdate',
+    ]
+
 onetime_cmn_inc_paths = [
     '/public/src/onetime/common/srom/init',
     '/public/src/onetime/common/srom/core',

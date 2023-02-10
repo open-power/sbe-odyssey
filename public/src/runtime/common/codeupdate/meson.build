@@ -1,11 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/common/core/meson.build $
+# $Source: public/src/runtime/common/codeupdate/meson.build $
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2023
 # [+] International Business Machines Corp.
 #
 #
@@ -23,23 +23,15 @@
 #
 # IBM_PROLOG_END_TAG
 
-COMMON_CHIPOPS_JSON = files('chipop_table.json')[0]
-runtime_cmn_core_dir_path = meson.global_source_root() + '/public/src/runtime/common/core/'
+CMN_CODE_UPDATE_CHIPOPS_JSON = files('code_update_chipop_table.json')[0]
 
-infile_c = ['sbeSpMsg.C',
-            'sbeirq.C',
-            'sbeFifoMsgUtils.C',
-            'sbeglobals.C',
-            'chipophandlerutils.C',
-            'sberegaccess.C',
-            'sbestatesutils.C',
-            'sbestates.C',
-            'sbecmdgeneric.C',
-            'sbecmnhwpwrapper.C',
+runtime_cmn_code_update_dir_path = meson.global_source_root() + '/public/src/runtime/common/codeupdate/'
+
+infile_c = ['sbecodeupdate.C',
            ]
 
-abs_runtime_cmn_core_c_path = []
+abs_runtime_cmn_code_update_c_path = []
 
 foreach infile : infile_c
-  abs_runtime_cmn_core_c_path += runtime_cmn_core_dir_path + infile
+  abs_runtime_cmn_code_update_c_path += runtime_cmn_code_update_dir_path + infile
 endforeach
