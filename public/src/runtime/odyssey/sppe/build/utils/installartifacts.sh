@@ -7,6 +7,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2023
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,12 +24,18 @@
 #
 # IBM_PROLOG_END_TAG
 
-mkdir -p ${MESON_BUILD_ROOT}/odyssey_debug_files_tools
-cp ${MESON_BUILD_ROOT}/public/src/runtime/odyssey/sppe/odyssey_sppe_DD1.dis \
-   ${MESON_BUILD_ROOT}/public/src/runtime/odyssey/sppe/odyssey_sppe_DD1.map \
-   ${MESON_BUILD_ROOT}/public/src/runtime/odyssey/sppe/odyssey_sppe_DD1.syms \
-   ${MESON_BUILD_ROOT}/public/src/runtime/odyssey/sppe/odyssey_sppe_DD1.attr.db \
-   ${MESON_BUILD_ROOT}/public/src/runtime/odyssey/sppe/odysseySppeStringFile_DD1 \
+if [ $SBE_PLATFORM == "odyssey" ]; then
+   BASE_PATH="public"
+else
+   BASE_PATH="internal"
+fi
+
+mkdir -p ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools
+cp ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe_DD1.dis \
+   ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe_DD1.map \
+   ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe_DD1.syms \
+   ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe_DD1.attr.db \
+   ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odysseySppeStringFile_DD1 \
    ${MESON_BUILD_ROOT}/public/src/onetime/odyssey/bldr/odyssey_bldr_DD1.dis \
    ${MESON_BUILD_ROOT}/public/src/onetime/odyssey/bldr/odyssey_bldr_DD1.map \
    ${MESON_BUILD_ROOT}/public/src/onetime/odyssey/bldr/odyssey_bldr_DD1.syms \
@@ -37,14 +44,14 @@ cp ${MESON_BUILD_ROOT}/public/src/runtime/odyssey/sppe/odyssey_sppe_DD1.dis \
    ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/srom/build/images/odyssey_srom_DD1.syms \
    ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/srom/build/images/odyssey_srom_DD1.map \
    ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/srom/build/images/odyssey_srom_DD1.dis \
-   ${MESON_BUILD_ROOT}/odyssey_debug_files_tools/ || exit 1
+   ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/ || exit 1
 
 # Copy simics related tools and utils into simics dir (This is required for HB)
-mkdir -p  ${MESON_BUILD_ROOT}/odyssey_debug_files_tools/simics/
+mkdir -p  ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/simics/
 cp ${MESON_SOURCE_ROOT}/internal/src/runtime/odyssey/sppe/test/testcases/testUtil.py \
    ${MESON_SOURCE_ROOT}/internal/src/tools/simics/sbestartupodystandalone.simics \
-   ${MESON_BUILD_ROOT}/odyssey_debug_files_tools/simics/ || exit 1
+   ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/simics/ || exit 1
 
-tar -czvf ${MESON_INSTALL_PREFIX}/odyssey/odyssey_sbe_debug.tar.gz \
+tar -czvf ${MESON_INSTALL_PREFIX}/$SBE_PLATFORM/${SBE_PLATFORM}_sbe_debug.tar.gz \
     -C ${MESON_BUILD_ROOT} \
-    odyssey_debug_files_tools || exit 1
+    ${SBE_PLATFORM}_debug_files_tools || exit 1

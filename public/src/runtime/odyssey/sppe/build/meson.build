@@ -25,6 +25,11 @@
 
 subdir('genfiles')
 
+# Lets break off at this point if its a build all image
+if platform == 'all'
+  subdir_done()
+endif
+
 if(get_option('bldr').enabled() and get_option('sppe').enabled())
     meson.add_install_script('utils/installartifacts.sh')
 endif
