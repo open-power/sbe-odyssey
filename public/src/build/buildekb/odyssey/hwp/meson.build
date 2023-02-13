@@ -26,6 +26,7 @@
 infile_c = [
             '/hwp/odyssey/perv/ody_tp_arrayinit.C',
             '/hwp/odyssey/perv/ody_tp_arrayinit_cleanup.C',
+            '/hwp/odyssey/perv/ody_tp_repr_initf.C',
             '/hwp/odyssey/perv/ody_tp_initf.C',
             '/hwp/odyssey/perv/ody_tp_startclocks.C',
             '/hwp/odyssey/perv/ody_tp_init.C',

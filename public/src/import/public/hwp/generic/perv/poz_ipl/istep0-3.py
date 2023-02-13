@@ -507,13 +507,10 @@ ISTEP(1, 10, "ph_sppe_boot", "SPPE")
 ISTEP(1, 11, "ph_sppe_check_for_ready", "BMC")
 
 def poz_sppe_check_for_ready():
-    if ATTR_BOOT_FLAGS[bits 0:1] in (ATTR_BOOT_FLAGS_AUTOBOOT (0), ATTR_BOOT_FLAGS_BOOT_TO_RUNTIME (2)):
-        l_bit_to_check = SB_MSG_RUNTIME    # bit 4
-    else:
-        l_bit_to_check = SB_MSG_BOOTED     # bit 0
+    bool l_check_for_runtime = ATTR_BOOT_FLAGS[bits 0:1] in (ATTR_BOOT_FLAGS_AUTOBOOT (0), ATTR_BOOT_FLAGS_BOOT_TO_RUNTIME (2))
 
     while True:
-        if SB_MSG[l_bit_to_check]:
+        if (l_check_for_runtime and SB_MSG[8:12] == 3) or (not l_check_for_runtime and SB_MSG[0]):
             break
 
         if is_platform<PLAT_CRONUS>() and another second has passed:
