@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022                             -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -38,7 +38,6 @@
     <ffdc>TARGET_MC</ffdc>
     <ffdc>TIMEOUT</ffdc>
     <ffdc>DATA_REG</ffdc>
-    <ffdc>ERROR_REG</ffdc>
     <collectRegisterFfdc>
       <id>REG_FFDC_DTS_ERROR</id>
       <targetType>TARGET_TYPE_PERV</targetType>
