@@ -2627,7 +2627,7 @@
     <value>0x1</value>
   </entry>
   <entry name="ATTR_ODY_MSG_BLOCK_DATA_SOURCE">
-    <value>1</value>
+    <value>0</value>
   </entry>
   <entry name="ATTR_ODY_MSG_MISC">
     <value>0</value>
