@@ -100,7 +100,8 @@ fapi2::ReturnCode mod_multicast_setup(
 static const MulticastGroup MCGROUP_SCAN_TARGETS = MCGROUP_5;
 
 /// The set of scan regions (in a scan address) for which we support parallel scanning
-static const uint32_t EQ_PARALLEL_SCAN_REGIONS = 0x4410; // cl20, l30, mma0
+/// Note to self, these are scan address regions which include vitl at region 0
+static const uint32_t EQ_PARALLEL_SCAN_REGIONS = 0x2208; // cl20, l30, mma0
 
 /// The list of subdirectories attempted in order when loading a scan image
 const char ringTypeOrder[][8] =
@@ -651,11 +652,11 @@ ReturnCode ScanApplyEngine::applyToCoreMCTarget(
     // Prepare the modified scan address; bitop magic ahead!
 
     // Broadcast the core select across all three possible region ranges:
-    // 0b1234 * 0b0000100010000010 = 0b0123412340012340
-    const uint32_t core_select_expanded = core_select * 0x0882;
+    // 0b1234 * 0b0000010001000001 = 0b0012341234001234
+    const uint32_t core_select_expanded = core_select * (EQ_PARALLEL_SCAN_REGIONS >> 3);
 
     // Broadcast 0b1111 across the actually selected scan regions:
-    // 0b0000C000L000000M0 * 0b1111 = 0b0CCCCLLLL00MMMM0
+    // 0b00000C000L000000M * 0b1111 = 0b00CCCCLLLL00MMMM
     const uint32_t scan_regions_expanded = (scan_regions >> 3) * 0xF;
 
     // Then combine the two to get the actually selected scan regions
