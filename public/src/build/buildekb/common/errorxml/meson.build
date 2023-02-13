@@ -33,6 +33,7 @@ common_error_xml_files = [
                           'poz_putRingUtils_errors.xml',
                           'poz_putRingBackend_errors.xml',
                           'poz_chiplet_reset_errors.xml',
+                          'poz_stopclocks_errors.xml',
                         ]
 
 #Create abs path for input xml files

@@ -45,6 +45,7 @@ infile_c = ['main.C',
             'codeupdateutils.C',
             'sbecmdupdateattr.C',
             'sbecmddtsread.C',
+            'sbecmdstopclockswrapper.C',
           ]
 
 odyssey_abs_core_c_file_paths = []
@@ -64,6 +65,7 @@ odyssey_abs_core_c_file_paths += [ abs_pak_c_path,
                                     abs_runtime_cmn_hwpf_c_path,
                                     abs_runtime_cmn_utils_c_path,
                                     abs_runtime_cmn_code_update_c_path,
+                                    abs_runtime_cmn_stopclock_c_path,
                                     odyssey_abs_hwpf_c_file_paths,
                                     odyssey_abs_tgt_c_file_paths,
                                     odyssey_abs_attr_c_file_paths
@@ -88,6 +90,7 @@ ODYSSEY_CHIPOPS_JSON = files('chipop_table.json')[0]
 
 ody_cmn_chipop_json_list = [
                     COMMON_CHIPOPS_JSON,
+                    CMN_STOP_CLOCK_CHIPOPS_JSON,
                     CMN_CODE_UPDATE_CHIPOPS_JSON]
 
 ody_chipop_json_list = [ody_cmn_chipop_json_list,
@@ -99,7 +102,6 @@ if platform == 'odysseylab'
 endif
 
 ############### Chip-op table generation ############
-
 result_chipoptablegen = run_command(chipoptablegen,
                         '-d', odyssey_sppe_genfiles_dir_path,
                         '-c', ody_chipop_json_list)

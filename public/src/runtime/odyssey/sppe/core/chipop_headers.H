@@ -39,5 +39,6 @@
 #include "sbecmddtsread.H"
 #include <stdint.h>
 #include <stddef.h>
+#include "sbecmdstopclocks.H"
 
 #endif
