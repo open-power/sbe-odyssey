@@ -36,16 +36,16 @@ using namespace fapi2;
 //----------------------------------------------------------------------------
 
 static istepMap_t g_istep1PtrTbl[] =
-         {
-             ISTEP_MAP( NULL, NULL ),                               // 1.01
-             ISTEP_MAP( NULL, NULL ),                               // 1.02
-             ISTEP_MAP( NULL, NULL ),                               // 1.03
-             ISTEP_MAP( NULL, NULL ),                               // 1.04
-             ISTEP_MAP( NULL, NULL ),                               // 1.05
-             ISTEP_MAP( NULL, NULL ),                               // 1.06
-             ISTEP_MAP( NULL, NULL ),                               // 1.07
-             ISTEP_MAP( NULL, NULL ),                               // 1.08
-             ISTEP_MAP( NULL, NULL ),                               // 1.09
+         {                                                          //         Command Table HWPs
+             ISTEP_MAP( NULL, NULL ),                               // 1.01 +
+             ISTEP_MAP( NULL, NULL ),                               // 1.02  | ody_tp_chiplet_reset
+             ISTEP_MAP( NULL, NULL ),                               // 1.03  | ody_tp_pll_initf
+             ISTEP_MAP( NULL, NULL ),                               // 1.04  | ody_tp_pll_setup
+             ISTEP_MAP( NULL, NULL ),                               // 1.05  |
+             ISTEP_MAP( NULL, NULL ),                               // 1.06  | ody_pib_arrayinit
+             ISTEP_MAP( NULL, NULL ),                               // 1.07  | ody_pib_arrayinit_cleanup
+             ISTEP_MAP( NULL, NULL ),                               // 1.08  |
+             ISTEP_MAP( NULL, NULL ),                               // 1.09 +  ody_pib_startclocks
              ISTEP_MAP( NULL, NULL ),                               // 1.10
              ISTEP_MAP( NULL, NULL ),                               // 1.11
              ISTEP_MAP( NULL, NULL ),                               // 1.12
@@ -54,11 +54,12 @@ static istepMap_t g_istep1PtrTbl[] =
              ISTEP_MAP( NULL, NULL ),                               // 1.15
              ISTEP_MAP( NULL, NULL ),                               // 1.16
              ISTEP_MAP( NULL, NULL ),                               // 1.17
-             ISTEP_MAP( istepWithOcmb, ody_tp_arrayinit ),          // 1.18
-             ISTEP_MAP( istepWithOcmb, ody_tp_arrayinit_cleanup ),  // 1.19
-             ISTEP_MAP( istepWithOcmb, ody_tp_initf ),              // 1.20
-             ISTEP_MAP( istepWithOcmb, ody_tp_startclocks ),        // 1.21
-             ISTEP_MAP( istepWithOcmb, ody_tp_init ),               // 1.22
+             ISTEP_MAP( istepWithOcmb, ody_tp_repr_initf ),         // 1.18
+             ISTEP_MAP( istepWithOcmb, ody_tp_arrayinit ),          // 1.19
+             ISTEP_MAP( istepWithOcmb, ody_tp_arrayinit_cleanup ),  // 1.20
+             ISTEP_MAP( istepWithOcmb, ody_tp_initf ),              // 1.21
+             ISTEP_MAP( istepWithOcmb, ody_tp_startclocks ),        // 1.22
+             ISTEP_MAP( istepWithOcmb, ody_tp_init ),               // 1.23
          };
 
 static istepMap_t g_istep3PtrTbl[] =

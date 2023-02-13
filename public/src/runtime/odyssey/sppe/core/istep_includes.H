@@ -29,6 +29,7 @@
 #include <ody_tp_arrayinit.H>
 #include <ody_tp_arrayinit_cleanup.H>
 #include <ody_tp_initf.H>
+#include <ody_tp_repr_initf.H>
 #include <ody_tp_startclocks.H>
 #include <ody_tp_init.H>
 #include <ody_ddrphyinit.H>
