@@ -47,6 +47,8 @@ infile_c = [
             '/hwp/odyssey/perv/ody_sppe_attr_setup.C',
             '/hwp/odyssey/perv/ody_scratch_regs.C',
             '/hwp/odyssey/perv/ody_scratch_regs_utils.C',
+            '/hwp/odyssey/perv/ody_stopclocks.C',
+
             '/memory/odyssey/hwp/ody_sppe_draminit.C',
             '/memory/odyssey/hwp/ody_thermal_init.C',
             '/memory/generic/memory/lib/utils/c_str.C',

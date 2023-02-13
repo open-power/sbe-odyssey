@@ -40,7 +40,9 @@ generic_infile_c = [
                     'poz_chiplet_arrayinit.C',
                     'poz_tp_arrayinit.C',
                     'poz_tp_arrayinit_cleanup.C',
-                    'poz_sbe_spi_cmd.C'
+                    'poz_sbe_spi_cmd.C',
+                    'poz_tp_stopclocks.C',
+                    'poz_common_stopclocks.C',
                    ]
 
 #Create abs path for input files before creating .o

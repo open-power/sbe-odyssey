@@ -1,0 +1,12 @@
+{
+    "chipoptable":[
+        {
+            "cmdClass":"A9",
+            "command":"0x03",
+            "function":"sbeStopClocks",
+            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL", "SBE_FENCE_AT_DUMPING"]
+        }
+    ]
+}
+
+

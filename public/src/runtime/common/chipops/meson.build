@@ -1,11 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/common/meson.build $
+# $Source: public/src/runtime/common/chipops/meson.build $
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2023
 # [+] International Business Machines Corp.
 #
 #
@@ -23,9 +23,4 @@
 #
 # IBM_PROLOG_END_TAG
 
-subdir('core')
-subdir('plat')
-subdir('hwpf')
-subdir('utils')
-subdir('codeupdate')
-subdir('chipops')
+subdir('stopclocks')

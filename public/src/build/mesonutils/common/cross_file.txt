@@ -140,7 +140,8 @@ runtime_cmn_inc_paths = [
     '/public/src/runtime/common/plat/attributes',
     '/public/src/runtime/common/plat',
     '/public/src/runtime/common/utils',
-    '/public/src/runtime/common/hwpf'
+    '/public/src/runtime/common/hwpf',
+    '/public/src/runtime/common/chipops/stopclocks',
         ]
 
 runtime_cmn_code_update_inc_paths = [

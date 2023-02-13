@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/plat/attributes/plat_attribute_service.H $ */
+/* $Source: public/src/runtime/odyssey/sppe/core/sbecmdstopclockswrapper.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,32 +23,38 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-// This file is to just not include target.H file from import
-// Nothing required here.
+#include "sbecmdstopclocks.H"
+#include "sbeFifoMsgUtils.H"
+#include "ody_stopclocks.H"
+#include "poz_common_stopclocks_flags.H"
 
-#pragma once
 
-#include <attribute_properties.H>
-#include <attribute_macros.H>
+using namespace fapi2;
 
-// Work around for EC attributes
-#ifdef ATTR_CHIP_EC_FEATURE_PERV_NET_REGION_3_NOT_4_GETMACRO
-    #undef ATTR_CHIP_EC_FEATURE_PERV_NET_REGION_3_NOT_4_GETMACRO
-    namespace fapi2
+sbeSecondaryResponse sbeStopClocksReqMsgHdr_t::validateParams(void)
+{
+    sbeSecondaryResponse rc = SBE_SEC_INVALID_TARGET_TYPE_PASSED;
+
+    if ((iv_logTargetType == LOG_TARGET_TYPE_OCMB_CHIP) ||
+        (iv_logTargetType == LOG_TARGET_TYPE_MC))
     {
-        namespace ATTR
-        {
-            inline fapi2::ReturnCode get_ATTR_CHIP_EC_FEATURE_PERV_NET_REGION_3_NOT_4(ATTR_CHIP_EC_FEATURE_PERV_NET_REGION_3_NOT_4_Type& o_val)
-            {
-                o_val = 1;
-                return fapi2::FAPI2_RC_SUCCESS;
-            }
-        }
+        plat_target_handle_t tgtHndl;
+        rc = g_platTarget->getSbePlatTargetHandle(iv_logTargetType, iv_instanceId, tgtHndl);
     }
-    #define ATTR_CHIP_EC_FEATURE_PERV_NET_REGION_3_NOT_4_GETMACRO(ID, TARGET, VAL) ATTR::get_ATTR_CHIP_EC_FEATURE_PERV_NET_REGION_3_NOT_4(VAL)
-#endif
+    return rc;
+}
 
-/*
- * @brief - plat_AttrInit : Initiallize attributes based on the platform logic
- */
-void plat_AttrInit();
+
+ReturnCode sbeStopClocksReqMsgHdr_t::executeHwp( void )
+{
+    uint32_t fapiRc = FAPI2_RC_SUCCESS;
+
+    // For OCMB and MC target stop the MC region clock
+    // Sbe can't stopclock the TP, Vital, SBE target.
+    const StopClocksFlags i_stopClockFlag = STOP_REGION_MC;
+
+    /* Execute odyssey HWP */
+    Target<SBE_ROOT_CHIP_TYPE> l_fapiTarget =  g_platTarget->plat_getChipTarget();
+    FAPI_EXEC_HWP(fapiRc, ody_stopclocks, l_fapiTarget, i_stopClockFlag);
+    return fapiRc;
+}
