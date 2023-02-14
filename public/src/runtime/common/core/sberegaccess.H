@@ -58,6 +58,21 @@ class SbeRegAccess
             return cv_instance;
         }
 
+        /*! Enum for supported Boot modes
+         * [ATTR_OCMB_BOOT_FLAGS]: public/src/import/public/hwp/odyssey/xml/attribute_info/ody_perv_attributes.xml
+        */
+        enum BootMode
+        {
+            /** 0- AutoBoot ( b'00 ) */
+            AUTOBOOT=0,
+            /** 1- Pause and Boot (b'01) */
+            PAUSE_AND_BOOT,
+            /** 2- Jump to runtime (b'10) */
+            JUMP_TO_RUNTIME,
+            /** 3- Istep (b'11) */
+            ISTEP
+        };
+
         /**
          * @brief Initializes the class for use
          *
@@ -69,6 +84,25 @@ class SbeRegAccess
          *
          */
         uint32_t init(bool forced=false);
+
+        /* Platform specific functions */
+        /**
+         * @brief Initializes the class for use based on attribute boot flags
+         * if scratch is invalid, internally called from init function
+         */
+        void platInitAttrBootFlags();
+
+        /* plat specific function ends here */
+
+        /**
+         * @brief Update Mbox 11 from the value passed
+         *
+         * @param [in] i_mbx11 value of mbox 11 to update
+         *
+         * @return void
+         *
+        */
+        void updateMbx11(const uint64_t i_mbx11);
 
         /**
          * @brief Update the SBE states into the SBE messaging register. The
@@ -121,14 +155,18 @@ class SbeRegAccess
         uint32_t setMpIplMode(const bool i_set);
 
         /**
-         * @brief Check if we are in ISTEP IPL mode
+         * @brief get Boot Mode
          *
-         * @return true if in istep mode, false otherwise
+         * @return BootMode based on boot flags value
+         * 0 - AUTOBOOT
+         * 1 - PAUSE_AND_BOOT
+         * 2 - JUMP_TO_RUNTIME
+         * 3 - ISTEP
          *
          */
-        inline bool isIstepMode() const
+        inline BootMode getBootMode() const
         {
-            return mbx11.iv_istepMode;
+            return static_cast<BootMode>(mbx11.iv_bootFlags);
         }
 
         /**
@@ -140,19 +178,6 @@ class SbeRegAccess
         inline bool isSkipMpiplDump() const
         {
             return mbx11.iv_skipMpiplDumpCollection;
-        }
-
-        /**
-         *
-         * @brief Check if SBE should directly go to runtime state
-         *
-         * @return true if SBE should go directly to runtime state,
-         * false otherwise
-         *
-         */
-        inline bool isDestBitRuntime() const
-        {
-            return mbx11.iv_sbeDestRuntime;
         }
 
         /**
@@ -170,6 +195,17 @@ class SbeRegAccess
         inline bool isSystemCheckStopForDMTFail() const
         {
             return !mbx11.iv_dontCheckStopForDMT;
+        }
+
+        /**
+         * @brief Check if mbox 11 is valid
+         *
+         * @return true if in mbx11 valid, false otherwise
+         *
+         */
+        inline bool isMbx11Valid() const
+        {
+            return mbx16.iv_mbx11Valid;
         }
 
         /**

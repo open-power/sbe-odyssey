@@ -133,9 +133,9 @@ ReturnCode sbeExecuteIstep (const uint8_t i_major, const uint8_t i_minor)
 }
 
 //----------------------------------------------------------------------------
-void sbeDoContinuousIpl()
+void sbeAutoBoot()
 {
-    #define SBE_FUNC "sbeDoContinuousIpl "
+    #define SBE_FUNC "sbeAutoBoot "
     SBE_ENTER(SBE_FUNC);
     ReturnCode rc = FAPI2_RC_SUCCESS;
     do
@@ -154,15 +154,13 @@ void sbeDoContinuousIpl()
                 {
                     // TODO: P11SBE Porting
                     // Enable SBE Console messaging.
-                    //SBE_MSG_CONSOLE("istep ", istepTableEntry->istepMajorNum, ".", step);
+                    // TODO: PFSBE-316
+                    SBE_INFO("istep %d.%d", istepTableEntry->istepMajorNum, step);
                     rc = istepMap->istepWrapper(istepMap->istepHwp);
+                    (void)SbeRegAccess::theSbeRegAccess()
+                    .updateSbeStep(istepTableEntry->istepMajorNum,
+                                    step);
                 }
-                // TODO - F001A is not available till istep 2.3, which is driven by the
-                // nest clock, so we can enable this only after 2.3, For time being
-                // commenting this out.
-
-                //bool checkstop = isSystemCheckstop();
-                //if((rc != FAPI2_RC_SUCCESS) || checkstop )
 
                 if (isSpiParityError()) // If true call saveoff and halt
                 {
@@ -175,22 +173,19 @@ void sbeDoContinuousIpl()
                             "Major: %d, Minor: %d",
                             istepTableEntry->istepMajorNum, step);
 
-                    // TODO: P11SBE Porting
-#if 0
+                    // TODO: P11SBE Porting - PFSBE-334
+                    #if 0
                     uint32_t secRc = SBE_PRI_GENERIC_EXECUTION_FAILURE;
                     //uint32_t secRc = checkstop ? SBE_SEC_SYSTEM_CHECKSTOP:
                     //                    SBE_SEC_GENERIC_FAILURE_IN_EXECUTION;
 
                     captureAsyncFFDC(SBE_PRI_GENERIC_EXECUTION_FAILURE,
                                      secRc);
-#endif
+                    #endif
                     // exit outer loop as well
                     entry = istepTable.len;
                     break;
                 }
-                (void)SbeRegAccess::theSbeRegAccess().updateSbeStep(
-                                    istepTableEntry->istepMajorNum,
-                                    step);
                 // Check if we reached runtime
                 if(SBE_STATE_CMN_RUNTIME ==
                                 SbeRegAccess::theSbeRegAccess().getSbeState())
@@ -201,6 +196,7 @@ void sbeDoContinuousIpl()
                 }
             }
         }
+
     } while(false);
     // Store l_rc in a global variable that will be a part of the SBE FFDC
     g_iplFailRc = rc;

@@ -39,8 +39,8 @@ typedef union
 {
     struct
     {
-        uint64_t iv_istepMode : 1;                        //bit 0: p11, odyssey
-        uint64_t iv_sbeDestRuntime : 1;                   //bit 1: p11, odyssey
+        // @ref iv_bootFlags - sberegaccess::BootMode enum
+        uint64_t iv_bootFlags : 2;                        //bit 0..1: p11, odyssey
         uint64_t iv_mpiplMode : 1;                        //bit 2: p11
         uint64_t iv_mbx11DontCare1 : 2;                   //bit 3..4: p11
         uint64_t iv_sendFFDC : 1;                         //bit 5: p11, odyssey

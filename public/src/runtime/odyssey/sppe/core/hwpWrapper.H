@@ -27,6 +27,7 @@
 
 #include "sbecmnhwpwrapper.H"
 #include "plat_hwp_data_stream.H"
+#include "sbestates.H"
 
 using namespace fapi2;
 
@@ -53,7 +54,7 @@ using  sbeHwpDraminit_t = ReturnCode (*)
                       (const Target<TARGET_TYPE_OCMB_CHIP> & i_target,
                        fapi2::hwp_array_ostream  & ostream);
 
-/*
+/**
  * @brief Wrapper to call the HWP
  *
  * @param[in] i_hwp Function pointer to HWP
@@ -62,7 +63,7 @@ using  sbeHwpDraminit_t = ReturnCode (*)
  */
 ReturnCode istepWithOcmb( voidfuncptr_t i_hwp);
 
-/*
+/**
  * @brief Wrapper to call the final HWP
  *
  * @param[in] i_hwp Function pointer to HWP
@@ -71,7 +72,8 @@ ReturnCode istepWithOcmb( voidfuncptr_t i_hwp);
  */
 ReturnCode istepWithOcmbAndMoveToRuntime( voidfuncptr_t i_hwp);
 
-/*
+
+/**
  * @brief Wrapper to call the HWP
  *
  * @param[in] i_hwp Function pointer to HWP
@@ -80,7 +82,7 @@ ReturnCode istepWithOcmbAndMoveToRuntime( voidfuncptr_t i_hwp);
  */
 ReturnCode istepBistWithOcmb( voidfuncptr_t i_hwp);
 
-/*
+/**
  * @brief Wrapper to call the HWP
  *
  * @param[in] i_hwp Function pointer to HWP
@@ -89,7 +91,7 @@ ReturnCode istepBistWithOcmb( voidfuncptr_t i_hwp);
  */
 ReturnCode istepAbistWithOcmb( voidfuncptr_t i_hwp);
 
-/*
+/**
  * @brief Wrapper to call the HWP
  *
  * @param[in] i_hwp Function pointer to HWP
@@ -98,7 +100,7 @@ ReturnCode istepAbistWithOcmb( voidfuncptr_t i_hwp);
  */
 ReturnCode istepLbistWithOcmb( voidfuncptr_t i_hwp);
 
-/*
+/**
  * @brief Wrapper to call the HWP
  *
  * @param[in] i_hwp Function pointer to HWP
@@ -107,7 +109,7 @@ ReturnCode istepLbistWithOcmb( voidfuncptr_t i_hwp);
  */
 ReturnCode istepLoadIMEMwithOcmb( voidfuncptr_t i_hwp);
 
-/*
+/**
  * @brief Wrapper to call the HWP
  *
  * @param[in] i_hwp Function pointer to HWP
@@ -116,7 +118,7 @@ ReturnCode istepLoadIMEMwithOcmb( voidfuncptr_t i_hwp);
  */
 ReturnCode istepLoadDMEMwithOcmb( voidfuncptr_t i_hwp);
 
-/*
+/**
  * @brief Wrapper to call the HWP
  *
  * @param[in] i_hwp Function pointer to HWP
@@ -125,7 +127,7 @@ ReturnCode istepLoadDMEMwithOcmb( voidfuncptr_t i_hwp);
  */
 ReturnCode istepLoadIOPPEwithOcmb( voidfuncptr_t i_hwp);
 
-/*
+/**
  * @brief Execute HWP on pak stream
  *
  * @param[in] i_hwp          Function pointer to HWP
@@ -141,7 +143,7 @@ ReturnCode sbeexecutehwponpak( voidfuncptr_t i_hwp, uint8_t* const i_bin_data,
                                uint8_t i_ioppeImage);
 
 
-/*
+/**
  * @brief Wrapper to call the HWP
  *
  * @param[in] i_hwp Function pointer to HWP

@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/ipl.H $                  */
+/* $Source: public/src/runtime/odyssey/sppe/core/sberegaccessplat.C $     */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,73 +22,18 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+#include "sberegaccess.H"
+#include "sbetrace.H"
+#include "fapi2.H"
+#include "sbeutil.H"
 
-#ifndef __IPL_H
-#define __IPL_H
-
-#include "cmnglobals.H"
-#include "return_code.H"
-
-extern sbeRole g_sbeRole;
-extern fapi2::ReturnCode g_iplFailRc;
-/**
- * @brief Support function to execute specific istep
- *
- * @param[in] i_major Major Istep Number
- * @param[in] i_minor Minor Istep Number
- *
- * @return FAPI2_RC_SUCCESS if success, else error code.
- */
-fapi2::ReturnCode sbeExecuteIstep (uint8_t i_major, uint8_t i_minor);
-
-/**
- * @brief Executes IPL steps in auto mode.
- * @par run istep table continuously
- */
-void sbeAutoBoot();
-
-/*
- * @brief Check for the system checkstop based on
- *        P9N2_PERV_ATTN_INTERRUPT_REG bit 3
- *
- * @return if the system is checkstop or not
- */
-bool isSystemCheckstop();
-
-using voidfuncptr_t = void (*)(void);
-using iStep_t = fapi2::ReturnCode (*)( voidfuncptr_t );
-
-struct istepMap_t
+void SbeRegAccess::platInitAttrBootFlags()
 {
-    iStep_t         istepWrapper;
-    voidfuncptr_t   istepHwp;
-};
-
-struct istepTableEntry_t
-{
-    uint8_t         istepMajorNum;
-    istepMap_t*     istepMinorArr;
-    size_t          len;
-};
-
-struct istepTable_t
-{
-    istepTableEntry_t*  istepMajorArr;
-    size_t              len;
-};
-
-#define ISTEP_MAP(wrapper, hwp) \
-    {wrapper, reinterpret_cast<voidfuncptr_t>(hwp)}
-
-#define ISTEP_ENTRY(majornum, entrytable) \
-    {majornum, entrytable, sizeof(entrytable)/sizeof(entrytable[0])}
-
-#define REGISTER_ISTEP_TABLE(entries) \
-    istepTable_t istepTable = { \
-        entries, \
-        sizeof(entries)/sizeof(entries[0]) \
-    };
-
-extern istepTable_t istepTable;
-
-#endif
+    #define SBE_FUNC "SbeRegAccess::platInitAttrBootFlags "
+    uint32_t l_attr = 0;
+    FAPI_ATTR_GET(fapi2::ATTR_OCMB_BOOT_FLAGS,
+                fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),l_attr);
+    SBE_INFO(SBE_FUNC" mbx11 from Attribute, 0x%08x", l_attr);
+    SbeRegAccess::theSbeRegAccess().updateMbx11( (uint64_t)l_attr<<32 );
+    #undef SBE_FUNC
+}

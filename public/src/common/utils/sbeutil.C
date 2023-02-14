@@ -179,13 +179,21 @@ namespace SBE
 
     bool isHreset(void)
     {
-        #define SBE_FUNC "IS_HRESET"
         bool isHreset = false;
         sbe_local_LFR lfrReg;
-        PPE_LVD(0xc0002040, lfrReg);
+        PPE_LVD(scomt::poz_ppe::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW, lfrReg);
         isHreset = lfrReg.hreset;
         return (isHreset);
-        #undef SBE_FUNC
+    }
+
+    void clearHreset(void)
+    {
+        sbe_local_LFR lfrReg;
+        // load lfrReg
+        // Set the hreset bit and write to WO_CLR Reg to clear
+        lfrReg.hreset = 1;
+        // store lfr with updated hreset bit
+        PPE_STVD(scomt::poz_ppe::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_PPE2, lfrReg);
     }
 
     void updateProgressCode(uint8_t value)

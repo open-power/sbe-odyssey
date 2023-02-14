@@ -40,16 +40,15 @@
 SbeRegAccess SbeRegAccess::cv_instance __attribute__((section (".sbss")));
 
 /**
- * @brief Initizlize the class
+ * @brief Initialize the class
  *
  * @return An RC indicating success/failure
  */
 uint32_t SbeRegAccess::init(bool forced)
 {
-    #define SBE_FUNC "SbeRegAccess::SbeRegAccess "
+    #define SBE_FUNC "SbeRegAccess::init "
     static bool l_initDone = false;
     uint32_t rc = 0;
-
     do
     {
         if(l_initDone && !forced)
@@ -90,11 +89,20 @@ uint32_t SbeRegAccess::init(bool forced)
             }
             SBE_INFO(SBE_FUNC "MBX_reg11 from scratch : 0x%08X", (uint32_t)(mbx11.iv_mbx11 >> 32));
         }
-    } while(false);
-
-    l_initDone = true;
+        else
+        {
+           platInitAttrBootFlags();
+        }
+    }while(false);
+    l_initDone =true;
+    SBE_EXIT(SBE_FUNC);
     return rc;
     #undef SBE_FUNC
+}
+
+void SbeRegAccess::updateMbx11(const uint64_t i_mbx11)
+{
+    mbx11.iv_mbx11 = i_mbx11;
 }
 
 /**
