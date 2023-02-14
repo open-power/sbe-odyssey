@@ -59,94 +59,10 @@
             "description": "Bit 0..2"
         },
         {
-            "field": "tp_ex_fuse_vmx_crypto_dis_dc",
-            "field_size": 3,
-            "value": "0x0",
-            "description": "Bit 3..5"
-        },
-        {
-            "field": "tp_nx_allow_crypto_dc_spare",
-            "field_size": 3,
-            "value": "0x1",
-            "description": "Bit 6..8"
-        },
-        {
-            "field": "tp_pb_fuse_topology_2chip",
-            "field_size": 3,
-            "value": "0x0",
-            "description": "Bit 9..11"
-        },
-        {
-            "field": "tp_pb_fuse_topology_group_0",
-            "field_size": 3,
-            "value": "0x0",
-            "description": "Bit 12..14"
-        },
-        {
-            "field": "tp_pb_fuse_topology_group_1",
-            "field_size": 3,
-            "value": "0x0",
-            "description": "Bit 15..17"
-        },
-        {
             "field": "Unused",
-            "field_size": 3,
+            "field_size": 61,
             "value": "0x0",
-            "description": "Bit 18..20"
-        },
-        {
-            "field": "otp_pcbctl_hw_mode_sel_dc",
-            "field_size": 3,
-            "value": "0x0",
-            "description": "Bit 21..23"
-        },
-        {
-            "field": "otp_pcbctl_fused_core_mode_sel0_dc",
-            "field_size": 3,
-            "value": "0x0",
-            "description": "Bit 24..26"
-        },
-        {
-            "field": "otp_pcbctl_fused_core_mode_sel1_dc",
-            "field_size": 3,
-            "value": "0x0",
-            "description": "Bit 27..29"
-        },
-        {
-            "field": "tp_ex_fuse_scom_overwrite_disable_dc",
-            "field_size": 3,
-            "value": "0x0",
-            "description": "Bit 30..32"
-        },
-        {
-            "field": "tp_mc_allow_crypto_dc",
-            "field_size": 3,
-            "value": "0x1",
-            "description": "Bit 33..35"
-        },
-        {
-            "field": "spare",
-            "field_size": 3,
-            "value": "0x0",
-            "description": "Bit 36..38"
-        },
-        {
-            "field": "spare1",
-            "field_size": 18,
-            "value": "0x0",
-            "description": "Bit 39..56"
-        },
-        {
-            "field": "tp_ex_fuse_flop_throttle_en_dc_0_to_1",
-            "field_size": 6,
-            "value": "0x0",
-            "description": "Bit 57..62"
-        },
-        {
-            "field": "unused1",
-            "field_size": 1,
-            "value": "0x0",
-            "description": "Bit 63"
+            "description": "Bit 3..63"
         }
     ],
     "0x18005": [
