@@ -142,6 +142,9 @@ namespace SBE
      */
      bool isHreset(void);
 
+    /* @brief - clear hreset bit in lfr reg
+     */
+    void clearHreset();
 
     // enum for magic instructions
     enum

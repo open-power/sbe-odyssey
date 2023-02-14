@@ -46,6 +46,7 @@ infile_c = ['main.C',
             'sbecmdupdateattr.C',
             'sbecmddtsread.C',
             'sbecmdstopclockswrapper.C',
+            'sberegaccessplat.C',
           ]
 
 odyssey_abs_core_c_file_paths = []

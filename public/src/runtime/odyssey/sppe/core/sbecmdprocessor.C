@@ -43,6 +43,7 @@
 #include "chipop_handler.H"
 #include "sbeFFDC.H"
 #include "sbehandleresponse.H"
+#include "ipl.H"
 
 const uint64_t PERIODIC_TIMER_INTERVAL_SECONDS = 24*60*60; // 24 hours
 
@@ -152,6 +153,42 @@ void sbeHandleFifoResponse (const uint32_t i_rc, sbeFifoType i_type)
 
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
+// TODO - Move this to common utils once metis has
+// sbeAutoBoot implemented
+// JIRA: PFSBE-336
+void setSBEBootState(uint8_t bootMode)
+{
+    switch(bootMode)
+    {
+        case SbeRegAccess::BootMode::AUTOBOOT:
+            SBE_INFO(SBE_FUNC "AutoBoot Mode set... IPLing");
+            (void)SbeRegAccess::theSbeRegAccess().
+                updateSbeState(SBE_STATE_CMN_IPLING);
+            sbeAutoBoot();
+            break;
+        case SbeRegAccess::BootMode::JUMP_TO_RUNTIME:
+            // jumpToRuntime
+            SBE_INFO(SBE_FUNC "Jump To Runtime Mode ...");
+            (void)SbeRegAccess::theSbeRegAccess().
+                updateSbeState(SBE_STATE_CMN_RUNTIME);
+            break;
+        case SbeRegAccess::BootMode::ISTEP:
+            SBE_INFO(SBE_FUNC " Istep Mode ...");
+            (void)SbeRegAccess::theSbeRegAccess().
+                updateSbeState(SBE_STATE_CMN_ISTEP);
+            break;
+        case SbeRegAccess::BootMode::PAUSE_AND_BOOT:
+            // PauseAndBoot
+            // TODO: JIRA: PFSBE-315
+            SBE_ERROR(SBE_FUNC "Unsupported Pause and Boot mode ");
+        default:
+            SBE_ERROR(SBE_FUNC " Not a supported Boot mode 0x%02X", bootMode);
+            (void)SbeRegAccess::theSbeRegAccess().
+                updateSbeState(SBE_STATE_CMN_FAILURE);
+            break;
+    }
+}
+
 void sbeSyncCommandProcessor_routine(void *i_pArg)
 {
     #define SBE_FUNC " sbeSyncCommandProcessor_routine "
@@ -159,16 +196,23 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
 
     // Update SBE msgg reg to indicate that control loop
     // is ready now to receive data on its interfaces
+
     (void)SbeRegAccess::theSbeRegAccess().setSbeReady();
 
-    if(true == SbeRegAccess::theSbeRegAccess().isDestBitRuntime())
+    if(SBE::isHreset())
     {
-        // Check the destination bit at the start
-        SBE_INFO(SBE_FUNC "Destination bit tells us to go to runtime");
+        // clear hreset bit,
+        // bit16 in lfrReg and update sbe state
+        SBE_INFO(SBE_FUNC "Hreset, going to Runtime");
         (void)SbeRegAccess::theSbeRegAccess().
-              updateSbeState(SBE_STATE_CMN_RUNTIME);
+            updateSbeState(SBE_STATE_CMN_RUNTIME);
+        // clear hreset bit
+        SBE::clearHreset();
     }
-
+    else
+    {
+        setSBEBootState(SbeRegAccess::theSbeRegAccess().getBootMode());
+    }
     chipOpParam_t configStr = { SBE_FIFO, 0x00, (uint8_t*)i_pArg };
     do
     {

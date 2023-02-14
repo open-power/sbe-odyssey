@@ -186,31 +186,28 @@ int  main(int argc, char **argv)
         // Initialize heap space after bootloader has loaded paks to pibmem
         Heap::get_instance().initialize();
 
-        //if ( (!SBE::isMpiplReset()) && (!SBE_GLOBAL->isHreset) )
+        fapi2::ReturnCode fapiRc = g_platTarget->plat_TargetsInit();
+        if( fapiRc != fapi2::FAPI2_RC_SUCCESS )
         {
-            fapi2::ReturnCode fapiRc = g_platTarget->plat_TargetsInit();
-            if( fapiRc != fapi2::FAPI2_RC_SUCCESS )
-            {
-                SBE_ERROR(SBE_FUNC"plat_TargetsInit failed");
-                stateTransition(SBE_EVENT_CMN_FAILURE);
-                // Hard Reset SBE to recover
-                break;
-            }
-
-            plat_AttrInit();
-
-            if(SbeRegAccess::theSbeRegAccess().init())
-            {
-                SBE_ERROR(SBE_FUNC"Failed to initialize SbeRegAccess.");
-                // init failure could mean the below will fail too, but attempt it
-                // anyway
-                stateTransition(SBE_EVENT_CMN_FAILURE);
-                // Hard Reset SBE to recover
-                break;
-            }
-
-            sbePakSearchStartOffset();
+            SBE_ERROR(SBE_FUNC"plat_TargetsInit failed  fapiRc 0x%08x",fapiRc);
+            stateTransition(SBE_EVENT_CMN_FAILURE);
+            // Hard Reset SBE to recover
+            break;
         }
+
+        plat_AttrInit();
+
+        if(SbeRegAccess::theSbeRegAccess().init())
+        {
+            SBE_ERROR(SBE_FUNC"Failed to initialize SbeRegAccess.");
+            // init failure could mean the below will fail too, but attempt it
+            // anyway
+            stateTransition(SBE_EVENT_CMN_FAILURE);
+            // Hard Reset SBE to recover
+            break;
+        }
+
+        sbePakSearchStartOffset();
 
         // Start running the highest priority thread.
         // This function never returns
