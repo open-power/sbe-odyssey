@@ -97,8 +97,8 @@ ReturnCode ody_sppe_attr_setup(const Target<TARGET_TYPE_OCMB_CHIP>& i_target_chi
                         .set_FREQ_GRID_ACT(l_freq_grid_act_mhz)
                         .set_FREQ_GRID_EXP(l_freq_grid_exp_mhz)
                         .set_PLL_BUCKET(l_attr_ocmb_pll_bucket),
-                        "Actual grid frequency feedback did not match expected value based on PLL bucket (%d)!",
-                        l_attr_ocmb_pll_bucket);
+                        "Actual grid frequency feedback (%d) did not match expected value (%d) based on PLL bucket (%d)!",
+                        l_freq_grid_act_mhz, l_freq_grid_exp_mhz, l_attr_ocmb_pll_bucket);
 
             FAPI_TRY(FAPI_ATTR_SET(fapi2::ATTR_FREQ_OMI_MHZ, i_target_chip, l_freq_link_mhz));
         }
