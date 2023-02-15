@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -160,7 +160,7 @@ class bufferTraits
         ///
         static inline void* get_address(T& i_buffer)
         {
-            return (void*)&i_buffer;
+            return static_cast< void* >( &i_buffer );
         }
 
         typedef B bits_type;
@@ -215,7 +215,7 @@ class bufferTraits<bits_container, uint32_t>
         ///
         static inline uint32_t bit_length(const bits_container& i_buffer)
         {
-            return i_buffer.size() * sizeof(container_unit) * 8;
+            return static_cast< uint32_t >( i_buffer.size() * sizeof(container_unit) * 8);
         }
 
         ///
@@ -233,7 +233,7 @@ class bufferTraits<bits_container, uint32_t>
         ///
         static inline void set(bits_container& io_buffer)
         {
-            io_buffer.assign(io_buffer.size(), ~0);
+            io_buffer.assign(io_buffer.size(), static_cast<unsigned int>(~0));
         }
 
         ///
@@ -257,7 +257,7 @@ class bufferTraits<bits_container, uint32_t>
         ///
         static inline void* get_address(bits_container& i_buffer)
         {
-            return (void*) & (i_buffer[0]);
+            return static_cast< void* >( & (i_buffer[0]) );
         }
 
         typedef uint32_t bits_type;
