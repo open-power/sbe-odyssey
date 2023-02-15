@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -92,8 +92,8 @@ ReturnCode ody_chiplet_startclocks(const Target<TARGET_TYPE_OCMB_CHIP>& i_target
     // Synopsys specs likely did not anticipate a fence running through the middle of
     // their PHY so we should drop the fence before taking the PHY through reset.
     CPLT_CTRL1 = 0;
-    CPLT_CTRL1.set_TC_REGION13_FENCE_DC(1);
-    CPLT_CTRL1.set_TC_REGION14_FENCE_DC(1);
+    CPLT_CTRL1.set_REGION13_FENCE(1);
+    CPLT_CTRL1.set_REGION14_FENCE(1);
     FAPI_TRY(CPLT_CTRL1.putScom_CLEAR(l_mc_NO_TP));
 
     FAPI_INF("Align chiplet since we're about to start some clocks");

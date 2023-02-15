@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -266,6 +266,7 @@ class eccTraits<mc_type::ODYSSEY, fapi2::TARGET_TYPE_OCMB_CHIP>
         // MCBIST ECC registers - must be 64 bits.
         static constexpr uint64_t READ_ERROR_COUNT_REG0 = scomt::ody::ODC_MCBIST_SCOM_MBSEC0Q;
         static constexpr uint64_t READ_ERROR_COUNT_REG1 = scomt::ody::ODC_MCBIST_SCOM_MBSEC1Q;
+        static constexpr uint64_t READ_ERROR_COUNT_REG2 = scomt::ody::ODC_MCBIST_SCOM_MBSEC2Q;
         static constexpr uint64_t MARK_SYMBOL_COUNT_REG = scomt::ody::ODC_MCBIST_SCOM_MBSMSECQ;
         static constexpr uint64_t MODAL_SYM_COUNT0_REG = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q;
         static constexpr uint64_t MODAL_SYM_COUNT1_REG = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC1Q;
@@ -307,33 +308,36 @@ class eccTraits<mc_type::ODYSSEY, fapi2::TARGET_TYPE_OCMB_CHIP>
             UE_COUNT_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSEC1Q_UE_COUNT_LEN,
             AUE_COUNT = scomt::ody::ODC_MCBIST_SCOM_MBSEC1Q_AUE_COUNT,
             AUE_COUNT_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSEC1Q_AUE_COUNT_LEN,
-            // TODO:MST-1672 find out if RCE is now IUE
-            RCE_COUNT = scomt::ody::ODC_MCBIST_SCOM_MBSEC1Q_IUE_COUNT,
-            RCE_COUNT_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSEC1Q_IUE_COUNT_LEN,
-            SYMBOL0_COUNT = scomt::ody::ODC_MCBIST_SCOM_MBSMSECQ_0_COUNT,
-            SYMBOL0_COUNT_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSMSECQ_0_COUNT_LEN,
-            SYMBOL1_COUNT = scomt::ody::ODC_MCBIST_SCOM_MBSMSECQ_1_COUNT,
-            SYMBOL1_COUNT_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSMSECQ_1_COUNT_LEN,
-            SYMBOL2_COUNT = scomt::ody::ODC_MCBIST_SCOM_MBSMSECQ_2_COUNT,
-            SYMBOL2_COUNT_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSMSECQ_2_COUNT_LEN,
-            SYMBOL3_COUNT = scomt::ody::ODC_MCBIST_SCOM_MBSMSECQ_3_COUNT,
-            SYMBOL3_COUNT_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSMSECQ_3_COUNT_LEN,
-            MODAL_SYMBOL_COUNTER_00 = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_0,
-            MODAL_SYMBOL_COUNTER_00_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_0_LEN,
-            MODAL_SYMBOL_COUNTER_01 = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_1,
-            MODAL_SYMBOL_COUNTER_01_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_1_LEN,
-            MODAL_SYMBOL_COUNTER_02 = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_2,
-            MODAL_SYMBOL_COUNTER_02_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_2_LEN,
-            MODAL_SYMBOL_COUNTER_03 = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_3,
-            MODAL_SYMBOL_COUNTER_03_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_3_LEN,
-            MODAL_SYMBOL_COUNTER_04 = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_4,
-            MODAL_SYMBOL_COUNTER_04_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_4_LEN,
-            MODAL_SYMBOL_COUNTER_05 = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_5,
-            MODAL_SYMBOL_COUNTER_05_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_5_LEN,
-            MODAL_SYMBOL_COUNTER_06 = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_6,
-            MODAL_SYMBOL_COUNTER_06_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_6_LEN,
-            MODAL_SYMBOL_COUNTER_07 = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_7,
-            MODAL_SYMBOL_COUNTER_07_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_7_LEN,
+            IUE_COUNT = scomt::ody::ODC_MCBIST_SCOM_MBSEC1Q_IUE_COUNT,
+            IUE_COUNT_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSEC1Q_IUE_COUNT_LEN,
+            IAUE_COUNT = scomt::ody::ODC_MCBIST_SCOM_MBSEC2Q_IAUE_COUNT,
+            IAUE_COUNT_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSEC2Q_IAUE_COUNT_LEN,
+            IRCD_COUNT = scomt::ody::ODC_MCBIST_SCOM_MBSEC2Q_IRCD_COUNT,
+            IRCD_COUNT_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSEC2Q_IRCD_COUNT_LEN,
+            SYMBOL0_COUNT = scomt::ody::ODC_MCBIST_SCOM_MBSMSECQ_SYMBOL0_COUNT,
+            SYMBOL0_COUNT_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSMSECQ_SYMBOL0_COUNT_LEN,
+            SYMBOL1_COUNT = scomt::ody::ODC_MCBIST_SCOM_MBSMSECQ_SYMBOL1_COUNT,
+            SYMBOL1_COUNT_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSMSECQ_SYMBOL1_COUNT_LEN,
+            SYMBOL2_COUNT = scomt::ody::ODC_MCBIST_SCOM_MBSMSECQ_SYMBOL2_COUNT,
+            SYMBOL2_COUNT_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSMSECQ_SYMBOL2_COUNT_LEN,
+            SYMBOL3_COUNT = scomt::ody::ODC_MCBIST_SCOM_MBSMSECQ_SYMBOL3_COUNT,
+            SYMBOL3_COUNT_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSMSECQ_SYMBOL3_COUNT_LEN,
+            MODAL_SYMBOL_COUNTER_00 = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_00,
+            MODAL_SYMBOL_COUNTER_00_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_00_LEN,
+            MODAL_SYMBOL_COUNTER_01 = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_01,
+            MODAL_SYMBOL_COUNTER_01_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_01_LEN,
+            MODAL_SYMBOL_COUNTER_02 = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_02,
+            MODAL_SYMBOL_COUNTER_02_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_02_LEN,
+            MODAL_SYMBOL_COUNTER_03 = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_03,
+            MODAL_SYMBOL_COUNTER_03_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_03_LEN,
+            MODAL_SYMBOL_COUNTER_04 = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_04,
+            MODAL_SYMBOL_COUNTER_04_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_04_LEN,
+            MODAL_SYMBOL_COUNTER_05 = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_05,
+            MODAL_SYMBOL_COUNTER_05_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_05_LEN,
+            MODAL_SYMBOL_COUNTER_06 = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_06,
+            MODAL_SYMBOL_COUNTER_06_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_06_LEN,
+            MODAL_SYMBOL_COUNTER_07 = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_07,
+            MODAL_SYMBOL_COUNTER_07_LEN = scomt::ody::ODC_MCBIST_SCOM_MBSSYMEC0Q_07_LEN,
 
             // and a couple constants
             NUM_MBSSYM_REGS = 10,

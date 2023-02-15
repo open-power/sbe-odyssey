@@ -1,0 +1,8230 @@
+/* IBM_PROLOG_BEGIN_TAG                                                   */
+/* This is an automatically generated prolog.                             */
+/*                                                                        */
+/* $Source: public/src/import/public/memory/odyssey/common/include/ody_scom_ody_odc.H $ */
+/*                                                                        */
+/* OpenPOWER sbe Project                                                  */
+/*                                                                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
+/*                                                                        */
+/*                                                                        */
+/* Licensed under the Apache License, Version 2.0 (the "License");        */
+/* you may not use this file except in compliance with the License.       */
+/* You may obtain a copy of the License at                                */
+/*                                                                        */
+/*     http://www.apache.org/licenses/LICENSE-2.0                         */
+/*                                                                        */
+/* Unless required by applicable law or agreed to in writing, software    */
+/* distributed under the License is distributed on an "AS IS" BASIS,      */
+/* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or        */
+/* implied. See the License for the specific language governing           */
+/* permissions and limitations under the License.                         */
+/*                                                                        */
+/* IBM_PROLOG_END_TAG                                                     */
+#pragma once
+#include <stdint.h>
+
+#ifndef __PPE_HCODE__
+namespace scomt
+{
+namespace ody
+{
+#endif
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_00 = 0x8011415ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_00_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_01 = 0x8011416ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_01_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_02 = 0x8011417ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_02_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_03 = 0x8011418ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_03_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_04 = 0x8011419ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_04_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_05 = 0x801141Aull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_05_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_06 = 0x801141Bull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_06_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_07 = 0x801141Cull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_07_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_08 = 0x801141Dull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_08_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_09 = 0x801141Eull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_09_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_10 = 0x801141Full;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_10_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_11 = 0x8011420ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_11_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_12 = 0x8011421ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_12_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_13 = 0x8011422ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_13_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_14 = 0x8011423ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_14_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_15 = 0x8011424ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_15_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_16 = 0x8011425ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_16_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_17 = 0x8011426ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_17_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_18 = 0x8011427ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_18_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_19 = 0x8011428ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_19_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_20 = 0x8011429ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_20_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_21 = 0x801142Aull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_21_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_22 = 0x801142Bull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_22_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_23 = 0x801142Cull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_23_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_24 = 0x801142Dull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_24_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_25 = 0x801142Eull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_25_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_26 = 0x801142Full;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_26_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_27 = 0x8011430ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_27_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_28 = 0x8011431ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_28_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_29 = 0x8011432ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_29_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_30 = 0x8011433ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_30_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR0_31 = 0x8011434ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_RESERVED_0 = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD0_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD0_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD0_CSN = 15;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD0_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD0_WRDATA_CSN = 17;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD0_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD0_WRDATA_EN = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD0_PTY = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD0_RESETN = 21;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD0_ADDRESS_OP = 22;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD0_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_NESTED_LOOP_CNT = 24;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_NESTED_LOOP_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD1_VLD = 32;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD1_ADDRESS = 33;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD1_ADDRESS_LEN = 14;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD1_CSN = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD1_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD1_WRDATA_CSN = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD1_WRDATA_CSN_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD1_WRDATA_EN = 51;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD1_PTY = 52;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD1_RESETN = 53;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD1_ADDRESS_OP = 54;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_CMD1_ADDRESS_OP_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_PAUSE_INSTR = 56;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_VAR_SEL = 57;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_VAR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_ADDR_OP_EN_P0 = 59;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_ADDR_OP_EN_P1 = 60;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_VAR_OP = 61;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR0_31_VAR_OP_LEN = 3;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_00 = 0x8011435ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_00_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_00_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_00_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_00_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_00_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_00_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_00_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_00_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_00_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_00_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_00_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_00_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_00_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_00_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_00_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_00_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_00_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_00_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_01 = 0x8011436ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_01_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_01_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_01_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_01_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_01_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_01_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_01_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_01_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_01_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_01_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_01_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_01_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_01_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_01_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_01_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_01_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_01_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_01_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_02 = 0x8011437ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_02_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_02_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_02_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_02_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_02_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_02_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_02_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_02_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_02_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_02_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_02_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_02_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_02_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_02_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_02_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_02_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_02_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_02_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_03 = 0x8011438ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_03_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_03_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_03_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_03_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_03_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_03_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_03_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_03_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_03_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_03_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_03_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_03_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_03_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_03_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_03_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_03_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_03_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_03_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_04 = 0x8011439ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_04_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_04_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_04_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_04_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_04_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_04_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_04_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_04_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_04_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_04_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_04_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_04_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_04_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_04_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_04_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_04_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_04_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_04_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_05 = 0x801143Aull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_05_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_05_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_05_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_05_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_05_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_05_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_05_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_05_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_05_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_05_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_05_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_05_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_05_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_05_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_05_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_05_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_05_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_05_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_06 = 0x801143Bull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_06_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_06_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_06_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_06_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_06_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_06_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_06_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_06_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_06_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_06_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_06_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_06_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_06_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_06_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_06_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_06_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_06_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_06_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_07 = 0x801143Cull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_07_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_07_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_07_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_07_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_07_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_07_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_07_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_07_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_07_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_07_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_07_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_07_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_07_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_07_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_07_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_07_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_07_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_07_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_08 = 0x801143Dull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_08_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_08_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_08_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_08_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_08_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_08_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_08_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_08_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_08_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_08_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_08_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_08_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_08_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_08_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_08_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_08_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_08_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_08_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_09 = 0x801143Eull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_09_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_09_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_09_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_09_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_09_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_09_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_09_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_09_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_09_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_09_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_09_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_09_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_09_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_09_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_09_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_09_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_09_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_09_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_10 = 0x801143Full;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_10_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_10_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_10_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_10_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_10_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_10_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_10_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_10_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_10_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_10_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_10_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_10_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_10_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_10_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_10_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_10_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_10_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_10_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_11 = 0x8011440ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_11_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_11_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_11_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_11_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_11_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_11_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_11_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_11_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_11_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_11_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_11_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_11_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_11_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_11_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_11_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_11_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_11_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_11_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_12 = 0x8011441ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_12_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_12_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_12_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_12_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_12_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_12_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_12_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_12_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_12_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_12_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_12_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_12_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_12_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_12_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_12_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_12_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_12_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_12_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_13 = 0x8011442ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_13_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_13_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_13_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_13_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_13_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_13_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_13_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_13_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_13_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_13_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_13_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_13_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_13_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_13_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_13_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_13_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_13_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_13_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_14 = 0x8011443ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_14_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_14_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_14_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_14_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_14_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_14_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_14_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_14_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_14_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_14_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_14_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_14_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_14_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_14_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_14_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_14_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_14_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_14_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_15 = 0x8011444ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_15_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_15_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_15_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_15_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_15_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_15_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_15_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_15_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_15_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_15_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_15_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_15_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_15_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_15_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_15_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_15_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_15_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_15_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_16 = 0x8011445ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_16_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_16_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_16_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_16_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_16_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_16_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_16_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_16_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_16_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_16_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_16_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_16_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_16_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_16_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_16_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_16_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_16_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_16_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_17 = 0x8011446ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_17_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_17_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_17_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_17_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_17_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_17_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_17_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_17_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_17_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_17_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_17_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_17_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_17_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_17_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_17_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_17_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_17_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_17_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_18 = 0x8011447ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_18_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_18_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_18_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_18_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_18_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_18_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_18_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_18_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_18_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_18_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_18_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_18_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_18_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_18_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_18_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_18_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_18_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_18_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_19 = 0x8011448ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_19_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_19_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_19_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_19_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_19_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_19_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_19_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_19_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_19_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_19_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_19_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_19_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_19_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_19_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_19_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_19_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_19_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_19_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_20 = 0x8011449ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_20_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_20_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_20_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_20_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_20_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_20_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_20_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_20_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_20_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_20_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_20_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_20_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_20_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_20_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_20_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_20_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_20_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_20_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_21 = 0x801144Aull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_21_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_21_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_21_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_21_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_21_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_21_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_21_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_21_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_21_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_21_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_21_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_21_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_21_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_21_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_21_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_21_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_21_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_21_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_22 = 0x801144Bull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_22_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_22_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_22_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_22_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_22_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_22_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_22_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_22_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_22_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_22_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_22_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_22_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_22_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_22_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_22_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_22_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_22_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_22_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_23 = 0x801144Cull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_23_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_23_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_23_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_23_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_23_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_23_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_23_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_23_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_23_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_23_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_23_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_23_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_23_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_23_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_23_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_23_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_23_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_23_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_24 = 0x801144Dull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_24_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_24_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_24_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_24_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_24_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_24_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_24_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_24_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_24_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_24_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_24_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_24_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_24_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_24_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_24_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_24_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_24_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_24_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_25 = 0x801144Eull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_25_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_25_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_25_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_25_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_25_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_25_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_25_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_25_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_25_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_25_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_25_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_25_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_25_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_25_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_25_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_25_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_25_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_25_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_26 = 0x801144Full;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_26_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_26_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_26_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_26_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_26_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_26_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_26_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_26_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_26_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_26_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_26_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_26_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_26_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_26_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_26_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_26_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_26_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_26_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_27 = 0x8011450ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_27_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_27_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_27_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_27_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_27_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_27_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_27_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_27_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_27_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_27_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_27_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_27_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_27_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_27_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_27_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_27_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_27_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_27_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_28 = 0x8011451ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_28_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_28_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_28_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_28_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_28_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_28_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_28_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_28_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_28_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_28_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_28_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_28_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_28_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_28_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_28_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_28_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_28_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_28_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_29 = 0x8011452ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_29_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_29_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_29_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_29_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_29_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_29_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_29_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_29_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_29_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_29_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_29_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_29_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_29_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_29_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_29_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_29_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_29_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_29_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_30 = 0x8011453ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_30_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_30_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_30_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_30_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_30_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_30_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_30_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_30_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_30_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_30_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_30_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_30_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_30_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_30_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_30_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_30_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_30_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_30_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_CCS_INST_ARR1_31 = 0x8011454ull;
+
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_31_IDLE_CNT = 0;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_31_IDLE_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_31_REPEAT_CNT = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_31_REPEAT_CNT_LEN = 8;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_31_PADDING = 16;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_31_PADDING_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_31_READ_CMP = 18;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_31_LAST_CMD = 19;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_31_RW_DATA = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_31_RW_DATA_LEN = 20;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_31_FORCE_DATA = 40;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_31_PDA_WRITE = 41;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_31_GOTO_CMD = 42;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_31_GOTO_CMD_LEN = 5;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_31_BREAK_MODE = 47;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_31_BREAK_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_31_RESERVED_49_63 = 49;
+static const uint32_t ODC_MCBIST_CCS_INST_ARR1_31_RESERVED_49_63_LEN = 15;
+
+
+static const uint64_t ODC_MCBIST_SCOM_CCSARRERRINJQ = 0x80114DEull;
+
+static const uint32_t ODC_MCBIST_SCOM_CCSARRERRINJQ_CCS_ARRAY_CE_ERR_INJ_MODE = 0;
+static const uint32_t ODC_MCBIST_SCOM_CCSARRERRINJQ_CCS_ARRAY_CE_ERR_INJ = 1;
+static const uint32_t ODC_MCBIST_SCOM_CCSARRERRINJQ_CCS_ARRAY_UE_ERR_INJ_MODE = 2;
+static const uint32_t ODC_MCBIST_SCOM_CCSARRERRINJQ_CCS_ARRAY_UE_ERR_INJ = 3;
+static const uint32_t ODC_MCBIST_SCOM_CCSARRERRINJQ_RESERVED_4 = 4;
+static const uint32_t ODC_MCBIST_SCOM_CCSARRERRINJQ_RESERVED_5_14 = 5;
+static const uint32_t ODC_MCBIST_SCOM_CCSARRERRINJQ_RESERVED_5_14_LEN = 10;
+static const uint32_t ODC_MCBIST_SCOM_CCSARRERRINJQ_READ_RESPONSE_DELAY_ENABLE = 15;
+static const uint32_t ODC_MCBIST_SCOM_CCSARRERRINJQ_CCS_LOOP_COUNTER_COMPARE0 = 16;
+static const uint32_t ODC_MCBIST_SCOM_CCSARRERRINJQ_CCS_LOOP_COUNTER_COMPARE0_LEN = 16;
+static const uint32_t ODC_MCBIST_SCOM_CCSARRERRINJQ_CCS_LOOP_COUNTER_COMPARE1 = 32;
+static const uint32_t ODC_MCBIST_SCOM_CCSARRERRINJQ_CCS_LOOP_COUNTER_COMPARE1_LEN = 16;
+static const uint32_t ODC_MCBIST_SCOM_CCSARRERRINJQ_CCS_LOOP_COUNTER_COMPARE2 = 48;
+static const uint32_t ODC_MCBIST_SCOM_CCSARRERRINJQ_CCS_LOOP_COUNTER_COMPARE2_LEN = 16;
+
+
+static const uint64_t ODC_MCBIST_SCOM_CCS_CNTLQ = 0x80114A5ull;
+
+static const uint32_t ODC_MCBIST_SCOM_CCS_CNTLQ_START = 0;
+static const uint32_t ODC_MCBIST_SCOM_CCS_CNTLQ_STOP = 1;
+static const uint32_t ODC_MCBIST_SCOM_CCS_CNTLQ_UNPAUSE = 2;
+
+
+static const uint64_t ODC_MCBIST_SCOM_CCS_FIXED_DATA0Q = 0x80114E5ull;
+
+static const uint32_t ODC_MCBIST_SCOM_CCS_FIXED_DATA0Q_CCS_FIXED_DATA0Q_DATA_0_63 = 0;
+static const uint32_t ODC_MCBIST_SCOM_CCS_FIXED_DATA0Q_CCS_FIXED_DATA0Q_DATA_0_63_LEN = 64;
+
+
+static const uint64_t ODC_MCBIST_SCOM_CCS_FIXED_DATA1Q = 0x80114E6ull;
+
+static const uint32_t ODC_MCBIST_SCOM_CCS_FIXED_DATA1Q_FIXED_DATA_64_79 = 0;
+static const uint32_t ODC_MCBIST_SCOM_CCS_FIXED_DATA1Q_FIXED_DATA_64_79_LEN = 16;
+static const uint32_t ODC_MCBIST_SCOM_CCS_FIXED_DATA1Q_NTTM_READ_DELAY = 16;
+static const uint32_t ODC_MCBIST_SCOM_CCS_FIXED_DATA1Q_NTTM_READ_DELAY_LEN = 16;
+static const uint32_t ODC_MCBIST_SCOM_CCS_FIXED_DATA1Q_WRITE_DATA_DELAY = 32;
+static const uint32_t ODC_MCBIST_SCOM_CCS_FIXED_DATA1Q_WRITE_DATA_DELAY_LEN = 16;
+
+
+static const uint64_t ODC_MCBIST_SCOM_CCS_MODEQ = 0x80114A7ull;
+
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_STOP_ON_ERR = 0;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_UE_DISABLE = 1;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_DATA_COMPARE_BURST_SEL = 2;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_DATA_COMPARE_BURST_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_AUTO_BURST = 4;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_DQBYPASS_LATCH_OVERRIDE = 5;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_TIMER_MODE = 6;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_TRACE_SELECT_DQBYPASS = 7;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_ADDR_INC_P0 = 8;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_ADDR_INC_P0_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_ADDR_INC_P1 = 12;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_ADDR_INC_P1_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_RESERVED_16_24 = 16;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_RESERVED_16_24_LEN = 9;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_NESTED_LOOP_ENABLE = 25;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_RESERVED_26 = 26;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_DISABLE_ECC_ARRAY_CHK = 27;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_DISABLE_ECC_ARRAY_CORRECTION = 28;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CFG_CCS_DGEN_FIXED_MODE = 29;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_RESERVED_30_31 = 30;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_RESERVED_30_31_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_IDLE_PAT_ADDRESS_0_13 = 32;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_IDLE_PAT_ADDRESS_0_13_LEN = 14;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_PORT_SEL = 46;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_PORT_SEL_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_DECODE_BOTH_CSN = 50;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_RESERVED_51_54 = 51;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_RESERVED_51_54_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_NTTM_MODE = 55;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_NTTM_RW_DATA_DLY = 56;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_NTTM_RW_DATA_DLY_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_NTTM_SRQ_ENABLE = 60;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_DDR_PARITY_ENABLE = 61;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_IDLE_PAT_PARITY = 62;
+static const uint32_t ODC_MCBIST_SCOM_CCS_MODEQ_CCS_PAUSE_DISABLE = 63;
+
+
+static const uint64_t ODC_MCBIST_SCOM_CCS_STATQ = 0x80114A6ull;
+
+static const uint32_t ODC_MCBIST_SCOM_CCS_STATQ_CCS_IP = 0;
+static const uint32_t ODC_MCBIST_SCOM_CCS_STATQ_CCS_DONE = 1;
+static const uint32_t ODC_MCBIST_SCOM_CCS_STATQ_CCS_FAIL = 2;
+static const uint32_t ODC_MCBIST_SCOM_CCS_STATQ_CCS_FAIL_TYPE = 3;
+static const uint32_t ODC_MCBIST_SCOM_CCS_STATQ_CCS_FAIL_TYPE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_CCS_STATQ_MCBIST_CCS_SUBTEST_IP = 6;
+static const uint32_t ODC_MCBIST_SCOM_CCS_STATQ_CCS_FAIL_RCD = 7;
+static const uint32_t ODC_MCBIST_SCOM_CCS_STATQ_CCS_PAUSED = 8;
+static const uint32_t ODC_MCBIST_SCOM_CCS_STATQ_CCS_CE = 9;
+static const uint32_t ODC_MCBIST_SCOM_CCS_STATQ_CCS_POSTPONE = 10;
+
+
+static const uint64_t ODC_MCBIST_SCOM_DBGCFG0Q = 0x80114E8ull;
+
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG0Q_CFG_DBG_ENABLE = 0;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG0Q_SCOM_SET_WAT_EXT_TRIGGER = 1;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG0Q_SCOM_SET_WAT_EXT_RESET = 2;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG0Q_SCOM_SET_WAT_EXT_ARM = 3;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG0Q_RESERVED_4_47 = 4;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG0Q_RESERVED_4_47_LEN = 44;
+
+
+static const uint64_t ODC_MCBIST_SCOM_DBGCFG1Q = 0x80114E9ull;
+
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG1Q_CFG_WAT_ENABLE = 0;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG1Q_RESERVED_1_15 = 1;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG1Q_RESERVED_1_15_LEN = 15;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG1Q_CFG_WAT_EXT_TRIGGER_SEL = 16;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG1Q_CFG_WAT_EXT_TRIGGER_SEL_LEN = 16;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG1Q_CFG_WAT_EXT_RESET_SEL = 32;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG1Q_CFG_WAT_EXT_RESET_SEL_LEN = 16;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG1Q_CFG_WAT_EXT_ARM_SEL = 48;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG1Q_CFG_WAT_EXT_ARM_SEL_LEN = 16;
+
+
+static const uint64_t ODC_MCBIST_SCOM_DBGCFG2Q = 0x80114EAull;
+
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG2Q_CFG_WAT_LOC_EVENT0_SEL = 0;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG2Q_CFG_WAT_LOC_EVENT0_SEL_LEN = 20;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG2Q_CFG_WAT_LOC_EVENT1_SEL = 20;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG2Q_CFG_WAT_LOC_EVENT1_SEL_LEN = 20;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG2Q_CFG_WAT_LOC_EVENT2_SEL = 40;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG2Q_CFG_WAT_LOC_EVENT2_SEL_LEN = 20;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG2Q_RESERVED_60_63 = 60;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG2Q_RESERVED_60_63_LEN = 4;
+
+
+static const uint64_t ODC_MCBIST_SCOM_DBGCFG3Q = 0x80114EBull;
+
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG3Q_CFG_WAT_LOC_EVENT3_SEL = 0;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG3Q_CFG_WAT_LOC_EVENT3_SEL_LEN = 20;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG3Q_CFG_WAT_GLOB_EVENT0_SEL = 20;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG3Q_CFG_WAT_GLOB_EVENT1_SEL = 21;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG3Q_CFG_WAT_GLOB_EVENT2_SEL = 22;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG3Q_CFG_WAT_GLOB_EVENT3_SEL = 23;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG3Q_CFG_WAT_ACT_MNT_GO_IDLE_PULSE = 24;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG3Q_CFG_WAT_ACT_MNT_GO_IDLE_PULSE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG3Q_CFG_WAT_ACT_SET_SPATTN_PULSE = 28;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG3Q_CFG_WAT_ACT_SET_SPATTN_PULSE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG3Q_CFG_WAT_ACT_FRC_TB_PULSE = 32;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG3Q_CFG_WAT_ACT_FRC_TB_PULSE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG2Q_RESERVED_36_37 = 36;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG2Q_RESERVED_36_37_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG3Q_CFG_WAT_CNT_VALUE = 38;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG3Q_CFG_WAT_CNT_VALUE_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG3Q_CFG_WAT_TMR_VALUE = 44;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG3Q_CFG_WAT_TMR_VALUE_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG3Q_RESERVED_52_58 = 52;
+static const uint32_t ODC_MCBIST_SCOM_DBGCFG3Q_DBGCFG3Q_RESERVED_52_58_LEN = 7;
+
+
+static const uint64_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ = 0x8011472ull;
+
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE_SEL0_A = 0;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE_SEL0_A_LEN = 5;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE_SEL0_B = 5;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE_SEL0_B_LEN = 5;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE_SEL0_C = 10;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE_SEL0_C_LEN = 5;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE_SEL0_D = 15;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE_SEL0_D_LEN = 5;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE_SEL1_A = 20;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE_SEL1_A_LEN = 5;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE_SEL1_B = 25;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE_SEL1_B_LEN = 5;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE_SEL1_C = 30;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE_SEL1_C_LEN = 5;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE_SEL1_D = 35;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE_SEL1_D_LEN = 5;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_DLX_SHIFT_SEL = 40;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_MCB_SHIFT_SEL = 41;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_MMIO_SHIFT_SEL = 42;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_RDF0_SHIFT_SEL = 43;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_RDF1_SHIFT_SEL = 44;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_SRQ0_SHIFT_SEL = 45;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_SRQ1_SHIFT_SEL = 46;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TLXR_SHIFT_SEL = 47;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TLXT_SHIFT_SEL = 48;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_WDF_SHIFT_SEL = 49;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_ODP0_SHIFT_SEL = 50;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_ODP1_SHIFT_SEL = 51;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE0_TRACE_ERR_SEL = 52;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE0_TRACE_ERR_SEL_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE1_TRACE_ERR_SEL = 56;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_TRACE1_TRACE_ERR_SEL_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_RDF0_SIDE_SEL = 60;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_RDF1_SIDE_SEL = 61;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_DFI_DIMM0_ENABLE = 62;
+static const uint32_t ODC_MCBIST_SCOM_DBG_BUS_CFGQ_DFI_DIMM1_ENABLE = 63;
+
+
+static const uint64_t ODC_MCBIST_SCOM_DFI_DBG_CFGQ = 0x8011475ull;
+
+static const uint32_t ODC_MCBIST_SCOM_DFI_DBG_CFGQ_DFI_SEL_0 = 0;
+static const uint32_t ODC_MCBIST_SCOM_DFI_DBG_CFGQ_DFI_SEL_0_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_DFI_DBG_CFGQ_DFI_SEL_1 = 2;
+static const uint32_t ODC_MCBIST_SCOM_DFI_DBG_CFGQ_DFI_SEL_1_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_DFI_DBG_CFGQ_ERRCNTS_SEL = 4;
+static const uint32_t ODC_MCBIST_SCOM_DFI_DBG_CFGQ_ERRCNTS_SEL_LEN = 2;
+
+
+static const uint64_t ODC_MCBIST_SCOM_ERR_MASK0Q = 0x8011473ull;
+
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBECTLQ_PE = 0;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_CCS_STATQ_PE = 1;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_CCS_MODEQ_PE = 2;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_RCD_LRDIM_CNTL_WORD0_15Q_PE = 3;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_CCSARRERRINJQ_PE = 4;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_CCS_FIXED_DATA0Q_PE = 5;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_CCS_FIXED_DATA1Q_PE = 6;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBAMR0A0Q_PE = 7;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBAMR1A0Q_PE = 8;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBAMR2A0Q_PE = 9;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBAMR3A0Q_PE = 10;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBSA0Q_PE = 11;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBSA1Q_PE = 12;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBEA0Q_PE = 13;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBEA1Q_PE = 14;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBSA2Q_PE = 15;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBSA3Q_PE = 16;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBEA2Q_PE = 17;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBEA3Q_PE = 18;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBLFSRA0Q_PE = 19;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBACQ_PE = 20;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBAGRAQ_PE = 21;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBRDS0Q_PE = 22;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBRDS1Q_PE = 23;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBDRSRQ_PE = 24;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBDRCRQ_PE = 25;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBFD0Q_PE = 26;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBFD1Q_PE = 27;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBFD2Q_PE = 28;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBFD3Q_PE = 29;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBFD4Q_PE = 30;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBFD5Q_PE = 31;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBFD6Q_PE = 32;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBFD7Q_PE = 33;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBFDSPQ_PE = 34;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBFDQ_PE = 35;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBPARMQ_PE = 36;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_RUNTIMECTRQ_PE = 37;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBRCRQ_PE = 38;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCB_CNTLSTATQ_PE = 39;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBCFGQ_PE = 40;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBMCATQ_PE = 41;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBSEC0Q_PE = 42;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBSEC1Q_PE = 43;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBSEC2Q_PE = 44;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBSTRQ_PE = 45;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBSSYMEC0Q_PE = 46;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBSSYMEC1Q_PE = 47;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBSSYMEC2Q_PE = 48;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBSSYMEC3Q_PE = 49;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBSSYMEC4Q_PE = 50;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBSSYMEC5Q_PE = 51;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBSSYMEC6Q_PE = 52;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBSSYMEC7Q_PE = 53;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBSSYMEC8Q_PE = 54;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBSMODESQ_PE = 55;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MCBSTATQ_PE = 56;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBSMSECQ_PE = 57;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBNCER0Q_PE = 58;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBRCER0Q_PE = 59;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBMPER0Q_PE = 60;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBUER0Q_PE = 61;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_MBAUER0Q_PE = 62;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK0Q_DBG_BUS_CFGQ_PE = 63;
+
+
+static const uint64_t ODC_MCBIST_SCOM_ERR_MASK1Q = 0x8011474ull;
+
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_ERR_MASK1Q_PE = 0;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_ERR_MASK0Q_PE = 1;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_DBGCFG0Q_PE = 2;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_DBGCFG1Q_PE = 3;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_DBGCFG2Q_PE = 4;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_DBGCFG3Q_PE = 5;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG0AQ_PE = 6;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG0BQ_PE = 7;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG0CQ_PE = 8;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG0DQ_PE = 9;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG0EQ_PE = 10;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG1AQ_PE = 11;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG1BQ_PE = 12;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG1CQ_PE = 13;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG1DQ_PE = 14;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG1EQ_PE = 15;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG2AQ_PE = 16;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG2BQ_PE = 17;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG2CQ_PE = 18;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG2DQ_PE = 19;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG2EQ_PE = 20;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG3AQ_PE = 21;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG3BQ_PE = 22;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG3CQ_PE = 23;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG3DQ_PE = 24;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_WATCFG3EQ_PE = 25;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCBMR0Q_PE = 26;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCBMR1Q_PE = 27;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCBMR2Q_PE = 28;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCBMR3Q_PE = 29;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCBMR4Q_PE = 30;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCBMR5Q_PE = 31;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCBMR6Q_PE = 32;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCBMR7Q_PE = 33;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCB_FIXLFSRQ_PE = 34;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_RESERVED_35_36 = 35;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_RESERVED_35_36_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_CCS_CNTLQ_PE = 37;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCB_CNTLQ_PE = 38;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCB_FIR_CCS_ERR = 39;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCB_FIR_MCBFSM_ERR = 40;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_CCS_ARRAY_UNCORRECTED_CE_ERR = 41;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_CCS_ARRAY_UE_ERR = 42;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_CCS_ARRAY_SCOM_ECC_ERR = 43;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MBSEVR0Q_PE = 44;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MBSSYMEC9Q_PE = 45;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCBFD8Q_PE = 46;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCBFD9Q_PE = 47;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCBFDAQ_PE = 48;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCBFDBQ_PE = 49;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCBFDCQ_PE = 50;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCBFDDQ_PE = 51;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCBFDEQ_PE = 52;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCBFDFQ_PE = 53;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCBFDSP_HQ_PE = 54;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_MCBFD_HQ_PE = 55;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_RESERVED_56_63 = 56;
+static const uint32_t ODC_MCBIST_SCOM_ERR_MASK1Q_RESERVED_56_63_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBAUER0Q = 0x801146Eull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBAUER0Q_PORT_0_MAINLINE_AUE_ADDR_TRAP = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBAUER0Q_PORT_0_MAINLINE_AUE_ADDR_TRAP_LEN = 38;
+static const uint32_t ODC_MCBIST_SCOM_MBAUER0Q_RESERVED_38_39 = 38;
+static const uint32_t ODC_MCBIST_SCOM_MBAUER0Q_RESERVED_38_39_LEN = 2;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBECTLQ = 0x8011410ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBECTLQ_ATOMIC_ALT_CE_INJ = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBECTLQ_ATOMIC_ALT_CHIP_KILL_INJ = 1;
+static const uint32_t ODC_MCBIST_SCOM_MBECTLQ_ATOMIC_ALT_UE_INJ = 2;
+static const uint32_t ODC_MCBIST_SCOM_MBECTLQ_ATOMIC_ALT_SUE_INJ = 3;
+static const uint32_t ODC_MCBIST_SCOM_MBECTLQ_ATOMIC_ALT_INJ_SYM_SEL = 4;
+static const uint32_t ODC_MCBIST_SCOM_MBECTLQ_ATOMIC_ALT_INJ_SYM_SEL_LEN = 7;
+static const uint32_t ODC_MCBIST_SCOM_MBECTLQ_RESERVE_11 = 11;
+static const uint32_t ODC_MCBIST_SCOM_MBECTLQ_SCOM_CMD_REG_INJ_MODE = 12;
+static const uint32_t ODC_MCBIST_SCOM_MBECTLQ_SCOM_CMD_REG_INJ = 13;
+static const uint32_t ODC_MCBIST_SCOM_MBECTLQ_MCBIST_FSM_INJ_MODE = 14;
+static const uint32_t ODC_MCBIST_SCOM_MBECTLQ_MCBIST_FSM_INJ_REG = 15;
+static const uint32_t ODC_MCBIST_SCOM_MBECTLQ_CCS_FSM_INJ_MODE = 16;
+static const uint32_t ODC_MCBIST_SCOM_MBECTLQ_CCS_FSM_INJ_REG = 17;
+static const uint32_t ODC_MCBIST_SCOM_MBECTLQ_RESERVED_18_31 = 18;
+static const uint32_t ODC_MCBIST_SCOM_MBECTLQ_RESERVED_18_31_LEN = 14;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBMPER0Q = 0x801146Cull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBMPER0Q_PORT_0_MAINLINE_MPE_ADDR_TRAP = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBMPER0Q_PORT_0_MAINLINE_MPE_ADDR_TRAP_LEN = 38;
+static const uint32_t ODC_MCBIST_SCOM_MBMPER0Q_PORT_0_MAINLINE_MPE_ON_RCE = 38;
+static const uint32_t ODC_MCBIST_SCOM_MBMPER0Q_RESERVED_39 = 39;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBNCER0Q = 0x801146Aull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBNCER0Q_ADDR_TRAP = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBNCER0Q_ADDR_TRAP_LEN = 38;
+static const uint32_t ODC_MCBIST_SCOM_MBNCER0Q_ON_RCE = 38;
+static const uint32_t ODC_MCBIST_SCOM_MBNCER0Q_IS_TCE = 39;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBRCER0Q = 0x801146Bull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBRCER0Q_PORT_0_MAINLINE_RCE_ADDR_TRAP = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBRCER0Q_PORT_0_MAINLINE_RCE_ADDR_TRAP_LEN = 38;
+static const uint32_t ODC_MCBIST_SCOM_MBRCER0Q_RESERVED_38_39 = 38;
+static const uint32_t ODC_MCBIST_SCOM_MBRCER0Q_RESERVED_38_39_LEN = 2;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBSEC0Q = 0x8011455ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBSEC0Q_INTERMITTENT_CE_COUNT = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC0Q_INTERMITTENT_CE_COUNT_LEN = 12;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC0Q_SOFT_CE_COUNT = 12;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC0Q_SOFT_CE_COUNT_LEN = 12;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC0Q_HARD_CE_COUNT = 24;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC0Q_HARD_CE_COUNT_LEN = 12;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC0Q_INTERMITTENT_MCE_COUNT = 36;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC0Q_INTERMITTENT_MCE_COUNT_LEN = 12;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC0Q_SOFT_MCE_COUNT = 48;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC0Q_SOFT_MCE_COUNT_LEN = 12;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBSEC1Q = 0x8011456ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBSEC1Q_HARD_MCE_COUNT = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC1Q_HARD_MCE_COUNT_LEN = 12;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC1Q_ICE_COUNT = 12;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC1Q_ICE_COUNT_LEN = 12;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC1Q_UE_COUNT = 24;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC1Q_UE_COUNT_LEN = 12;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC1Q_AUE_COUNT = 36;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC1Q_AUE_COUNT_LEN = 12;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC1Q_IUE_COUNT = 48;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC1Q_IUE_COUNT_LEN = 12;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBSEC2Q = 0x8011463ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBSEC2Q_IAUE_COUNT = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC2Q_IAUE_COUNT_LEN = 12;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC2Q_IRCD_COUNT = 12;
+static const uint32_t ODC_MCBIST_SCOM_MBSEC2Q_IRCD_COUNT_LEN = 12;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBSEVR0Q = 0x801147Eull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBSEVR0Q_0_MAINLINE_NCE_GALOIS_FIELD = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBSEVR0Q_0_MAINLINE_NCE_GALOIS_FIELD_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSEVR0Q_0_MAINLINE_NCE_MAGNITUDE_FIELD = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSEVR0Q_0_MAINLINE_NCE_MAGNITUDE_FIELD_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSEVR0Q_0_MAINLINE_TCE_GALOIS_FIELD = 16;
+static const uint32_t ODC_MCBIST_SCOM_MBSEVR0Q_0_MAINLINE_TCE_GALOIS_FIELD_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSEVR0Q_0_MAINLINE_TCE_MAGNITUDE_FIELD = 24;
+static const uint32_t ODC_MCBIST_SCOM_MBSEVR0Q_0_MAINLINE_TCE_MAGNITUDE_FIELD_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSEVR0Q_1_MAINLINE_NCE_GALOIS_FIELD = 32;
+static const uint32_t ODC_MCBIST_SCOM_MBSEVR0Q_1_MAINLINE_NCE_GALOIS_FIELD_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSEVR0Q_1_MAINLINE_NCE_MAGNITUDE_FIELD = 40;
+static const uint32_t ODC_MCBIST_SCOM_MBSEVR0Q_1_MAINLINE_NCE_MAGNITUDE_FIELD_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSEVR0Q_1_MAINLINE_TCE_GALOIS_FIELD = 48;
+static const uint32_t ODC_MCBIST_SCOM_MBSEVR0Q_1_MAINLINE_TCE_GALOIS_FIELD_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSEVR0Q_1_MAINLINE_TCE_MAGNITUDE_FIELD = 56;
+static const uint32_t ODC_MCBIST_SCOM_MBSEVR0Q_1_MAINLINE_TCE_MAGNITUDE_FIELD_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBSMODESQ = 0x8011462ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBSMODESQ_CFG_DDR4E_BLIND_STEER_MODE = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBSMODESQ_CFG_MCB_NIB_CNT_PORT_AGNOSTIC_MASK_DIS = 1;
+static const uint32_t ODC_MCBIST_SCOM_MBSMODESQ_RESERVE_2_15 = 2;
+static const uint32_t ODC_MCBIST_SCOM_MBSMODESQ_RESERVE_2_15_LEN = 14;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBSMSECQ = 0x8011469ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBSMSECQ_SYMBOL0_COUNT = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBSMSECQ_SYMBOL0_COUNT_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSMSECQ_SYMBOL1_COUNT = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSMSECQ_SYMBOL1_COUNT_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSMSECQ_SYMBOL2_COUNT = 16;
+static const uint32_t ODC_MCBIST_SCOM_MBSMSECQ_SYMBOL2_COUNT_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSMSECQ_SYMBOL3_COUNT = 24;
+static const uint32_t ODC_MCBIST_SCOM_MBSMSECQ_SYMBOL3_COUNT_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBSSYMEC0Q = 0x8011458ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC0Q_00 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC0Q_00_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC0Q_01 = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC0Q_01_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC0Q_02 = 16;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC0Q_02_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC0Q_03 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC0Q_03_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC0Q_04 = 32;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC0Q_04_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC0Q_05 = 40;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC0Q_05_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC0Q_06 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC0Q_06_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC0Q_07 = 56;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC0Q_07_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBSSYMEC1Q = 0x8011459ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC1Q_08 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC1Q_08_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC1Q_09 = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC1Q_09_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC1Q_10 = 16;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC1Q_10_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC1Q_11 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC1Q_11_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC1Q_12 = 32;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC1Q_12_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC1Q_13 = 40;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC1Q_13_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC1Q_14 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC1Q_14_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC1Q_15 = 56;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC1Q_15_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBSSYMEC2Q = 0x801145Aull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC2Q_16 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC2Q_16_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC2Q_17 = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC2Q_17_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC2Q_18 = 16;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC2Q_18_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC2Q_19 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC2Q_19_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC2Q_20 = 32;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC2Q_20_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC2Q_21 = 40;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC2Q_21_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC2Q_22 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC2Q_22_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC2Q_23 = 56;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC2Q_23_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBSSYMEC3Q = 0x801145Bull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC3Q_24 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC3Q_24_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC3Q_25 = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC3Q_25_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC3Q_26 = 16;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC3Q_26_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC3Q_27 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC3Q_27_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC3Q_28 = 32;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC3Q_28_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC3Q_29 = 40;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC3Q_29_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC3Q_30 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC3Q_30_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC3Q_31 = 56;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC3Q_31_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBSSYMEC4Q = 0x801145Cull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC4Q_32 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC4Q_32_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC4Q_33 = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC4Q_33_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC4Q_34 = 16;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC4Q_34_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC4Q_35 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC4Q_35_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC4Q_36 = 32;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC4Q_36_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC4Q_37 = 40;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC4Q_37_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC4Q_38 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC4Q_38_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC4Q_39 = 56;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC4Q_39_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBSSYMEC5Q = 0x801145Dull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC5Q_40 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC5Q_40_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC5Q_41 = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC5Q_41_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC5Q_42 = 16;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC5Q_42_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC5Q_43 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC5Q_43_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC5Q_44 = 32;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC5Q_44_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC5Q_45 = 40;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC5Q_45_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC5Q_46 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC5Q_46_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC5Q_47 = 56;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC5Q_47_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBSSYMEC6Q = 0x801145Eull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC6Q_48 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC6Q_48_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC6Q_49 = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC6Q_49_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC6Q_50 = 16;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC6Q_50_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC6Q_51 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC6Q_51_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC6Q_52 = 32;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC6Q_52_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC6Q_53 = 40;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC6Q_53_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC6Q_54 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC6Q_54_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC6Q_55 = 56;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC6Q_55_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBSSYMEC7Q = 0x801145Full;
+
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC7Q_56 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC7Q_56_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC7Q_57 = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC7Q_57_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC7Q_58 = 16;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC7Q_58_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC7Q_59 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC7Q_59_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC7Q_60 = 32;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC7Q_60_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC7Q_61 = 40;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC7Q_61_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC7Q_62 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC7Q_62_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC7Q_63 = 56;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC7Q_63_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBSSYMEC8Q = 0x8011460ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC8Q_64 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC8Q_64_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC8Q_65 = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC8Q_65_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC8Q_66 = 16;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC8Q_66_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC8Q_67 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC8Q_67_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC8Q_68 = 32;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC8Q_68_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC8Q_69 = 40;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC8Q_69_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC8Q_70 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC8Q_70_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC8Q_71 = 56;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC8Q_71_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBSSYMEC9Q = 0x8011461ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC9Q_72 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC9Q_72_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC9Q_73 = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC9Q_73_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC9Q_74 = 16;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC9Q_74_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC9Q_75 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC9Q_75_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC9Q_76 = 32;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC9Q_76_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC9Q_77 = 40;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC9Q_77_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC9Q_78 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC9Q_78_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC9Q_79 = 56;
+static const uint32_t ODC_MCBIST_SCOM_MBSSYMEC9Q_79_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBSTRQ = 0x8011457ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_NCE_INT = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_NCE_INT_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_NCE_SOFT = 4;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_NCE_SOFT_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_NCE_HARD = 8;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_NCE_HARD_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_IUE = 12;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_IUE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_ICE = 16;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_ICE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_MCE_INT = 20;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_MCE_INT_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_MCE_SOFT = 24;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_MCE_SOFT_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_MCE_HARD = 28;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_MCE_HARD_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_PAUSE_ON_SCE = 32;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_RESERVED_33 = 33;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_PAUSE_ON_MPE = 34;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_PAUSE_ON_UE = 35;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_PAUSE_ON_SUE = 36;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_PAUSE_ON_AUE = 37;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_PAUSE_ON_RCD = 38;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_RESERVED_39 = 39;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_IAUE = 40;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_IAUE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_IRCD = 44;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_THRESH_MAG_IRCD_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_RESERVE_48_52 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_RESERVE_48_52_LEN = 5;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_SYMBOL_COUNTER_MODE = 53;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_SYMBOL_COUNTER_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_NCE_SOFT_SYMBOL_COUNT_ENABLE = 55;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_NCE_INTER_SYMBOL_COUNT_ENABLE = 56;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_NCE_HARD_SYMBOL_COUNT_ENABLE = 57;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_PAUSE_MCB_ERROR = 58;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_PAUSE_MCB_LOG_FULL = 59;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_MAINT_RCE_WITH_CE = 60;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_MCE_SOFT_SYMBOL_COUNT_ENABLE = 61;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_MCE_INTER_SYMBOL_COUNT_ENABLE = 62;
+static const uint32_t ODC_MCBIST_SCOM_MBSTRQ_CFG_MCE_HARD_SYMBOL_COUNT_ENABLE = 63;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MBUER0Q = 0x801146Dull;
+
+static const uint32_t ODC_MCBIST_SCOM_MBUER0Q_PORT_0_MAINLINE_UE_ADDR_TRAP = 0;
+static const uint32_t ODC_MCBIST_SCOM_MBUER0Q_PORT_0_MAINLINE_UE_ADDR_TRAP_LEN = 38;
+static const uint32_t ODC_MCBIST_SCOM_MBUER0Q_RESERVED_38_39 = 38;
+static const uint32_t ODC_MCBIST_SCOM_MBUER0Q_RESERVED_38_39_LEN = 2;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBACQ = 0x80114D5ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBACQ_MCBACQ_CFG_ADDRESS_COUNTER = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBACQ_MCBACQ_CFG_ADDRESS_COUNTER_LEN = 38;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBAGRAQ = 0x80114D6ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBAGRAQ_CFG_FIXED_WIDTH = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBAGRAQ_CFG_FIXED_WIDTH_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAGRAQ_CFG_ADDR_COUNTER_MODE = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAGRAQ_CFG_ADDR_COUNTER_MODE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBAGRAQ_CFG_MAINT_ADDR_MODE_EN = 10;
+static const uint32_t ODC_MCBIST_SCOM_MCBAGRAQ_RESERVED_11 = 11;
+static const uint32_t ODC_MCBIST_SCOM_MCBAGRAQ_CFG_MAINT_DETECT_SRANK_BOUNDARIES = 12;
+static const uint32_t ODC_MCBIST_SCOM_MCBAGRAQ_RESERVED_13_31 = 13;
+static const uint32_t ODC_MCBIST_SCOM_MCBAGRAQ_RESERVED_13_31_LEN = 19;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBAMR0A0Q = 0x80114C8ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR0A0Q_ROQ = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR0A0Q_ROQ_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR0A0Q_HALF = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR0A0Q_HALF_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR0A0Q_MRANK = 12;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR0A0Q_MRANK_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR0A0Q_SRANK0 = 18;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR0A0Q_SRANK0_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR0A0Q_SRANK1 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR0A0Q_SRANK1_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR0A0Q_SRANK2 = 30;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR0A0Q_SRANK2_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR0A0Q_BANK_GROUP2 = 36;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR0A0Q_BANK_GROUP2_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR0A0Q_BANK_GROUP1 = 42;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR0A0Q_BANK_GROUP1_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR0A0Q_BANK_GROUP0 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR0A0Q_BANK_GROUP0_LEN = 6;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBAMR1A0Q = 0x80114C9ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_BANK1 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_BANK1_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_BANK0 = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_BANK0_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_ROW17 = 12;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_ROW17_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_ROW16 = 18;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_ROW16_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_ROW15 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_ROW15_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_ROW14 = 30;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_ROW14_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_ROW13 = 36;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_ROW13_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_ROW12 = 42;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_ROW12_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_ROW11 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_ROW11_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_ROW10 = 54;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR1A0Q_ROW10_LEN = 6;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBAMR2A0Q = 0x80114CAull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW9 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW9_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW8 = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW8_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW7 = 12;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW7_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW6 = 18;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW6_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW5 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW5_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW4 = 30;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW4_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW3 = 36;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW3_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW2 = 42;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW2_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW1 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW1_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW0 = 54;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR2A0Q_ROW0_LEN = 6;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBAMR3A0Q = 0x80114CBull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR3A0Q_COL10 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR3A0Q_COL10_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR3A0Q_COL9 = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR3A0Q_COL9_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR3A0Q_COL8 = 12;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR3A0Q_COL8_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR3A0Q_COL7 = 18;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR3A0Q_COL7_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR3A0Q_COL6 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR3A0Q_COL6_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR3A0Q_COL5 = 30;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR3A0Q_COL5_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR3A0Q_COL4 = 36;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR3A0Q_COL4_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR3A0Q_COL3 = 42;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR3A0Q_COL3_LEN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR3A0Q_COL2 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MCBAMR3A0Q_COL2_LEN = 6;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBCFGQ = 0x80114E0ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_RESERVED_0_7 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_RESERVED_0_7_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_CFG_CMD_TIMEOUT_MODE = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_CFG_CMD_TIMEOUT_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_RESERVED_10 = 10;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_CFG_CURRENT_ADDR_TRAP_UPDATE_DIS = 11;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_CFG_CCS_RETRY_DIS = 12;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_RESERVED_13_33 = 13;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_RESERVED_13_33_LEN = 21;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBIST_CFG_FORCE_PAUSE_AFTER_RANK = 34;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_CFG_RESET_CNTS_START_OF_RANK = 35;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_CFG_LOG_COUNTS_IN_TRACE = 36;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_SKIP_INVALID_ADDR_DIMM_DIS = 37;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_REFRESH_ONLY_SUBTEST_EN = 38;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_REFRESH_ONLY_SUBTEST_TIMEBASE_SEL = 39;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_REFRESH_ONLY_SUBTEST_TIMEBASE_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_RAND_ADDR_ALL_MODE_EN = 41;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBIST_CFG_REF_WAIT_TIME = 42;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBIST_CFG_REF_WAIT_TIME_LEN = 14;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_CFG_MCB_LEN64 = 56;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_CFG_PAUSE_ON_ERROR_MODE = 57;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_CFG_PAUSE_ON_ERROR_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBIST_CFG_PAUSE_AFTER_CCS_SUBTEST = 59;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBIST_CFG_FORCE_PAUSE_AFTER_ADDR = 60;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBIST_CFG_FORCE_PAUSE_AFTER_SUBTEST = 61;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_RESERVED_62_63 = 62;
+static const uint32_t ODC_MCBIST_SCOM_MCBCFGQ_MCBCFGQ_RESERVED_62_63_LEN = 2;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBDRCRQ = 0x80114BDull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBDRCRQ_CFG_DATA_ROT = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBDRCRQ_CFG_DATA_ROT_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBDRCRQ_CFG_DATA_ROT_SEED = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBDRCRQ_CFG_DATA_ROT_SEED_LEN = 16;
+static const uint32_t ODC_MCBIST_SCOM_MCBDRCRQ_RESERVED_20 = 20;
+static const uint32_t ODC_MCBIST_SCOM_MCBDRCRQ_CFG_DATA_SEED_MODE = 21;
+static const uint32_t ODC_MCBIST_SCOM_MCBDRCRQ_CFG_DATA_SEED_MODE_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBDRCRQ_RESERVED_23_63 = 23;
+static const uint32_t ODC_MCBIST_SCOM_MCBDRCRQ_RESERVED_23_63_LEN = 41;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBDRSRQ = 0x80114BCull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBDRSRQ_MCBDRSRQ_CFG_DATA_ROT_SEED = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBDRSRQ_MCBDRSRQ_CFG_DATA_ROT_SEED_LEN = 64;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBEA0Q = 0x80114CEull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBEA0Q_MCBEA0Q_CFG_END_ADDR_0 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBEA0Q_MCBEA0Q_CFG_END_ADDR_0_LEN = 38;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBEA1Q = 0x80114CFull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBEA1Q_MCBEA1Q_CFG_END_ADDR_1 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBEA1Q_MCBEA1Q_CFG_END_ADDR_1_LEN = 38;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBEA2Q = 0x80114D2ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBEA2Q_MCBEA2Q_CFG_END_ADDR_2 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBEA2Q_MCBEA2Q_CFG_END_ADDR_2_LEN = 38;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBEA3Q = 0x80114D3ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBEA3Q_MCBEA3Q_CFG_END_ADDR_3 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBEA3Q_MCBEA3Q_CFG_END_ADDR_3_LEN = 38;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFD0Q = 0x80114BEull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFD0Q_MCBFD0Q_CFG_FIXED_SEED = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD0Q_MCBFD0Q_CFG_FIXED_SEED_LEN = 64;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFD1Q = 0x80114BFull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFD1Q_MCBFD1Q_CFG_FIXED_SEED = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD1Q_MCBFD1Q_CFG_FIXED_SEED_LEN = 64;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFD2Q = 0x80114C0ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFD2Q_MCBFD2Q_CFG_FIXED_SEED = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD2Q_MCBFD2Q_CFG_FIXED_SEED_LEN = 64;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFD3Q = 0x80114C1ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFD3Q_MCBFD3Q_CFG_FIXED_SEED = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD3Q_MCBFD3Q_CFG_FIXED_SEED_LEN = 64;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFD4Q = 0x80114C2ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFD4Q_MCBFD4Q_CFG_FIXED_SEED = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD4Q_MCBFD4Q_CFG_FIXED_SEED_LEN = 64;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFD5Q = 0x80114C3ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFD5Q_MCBFD5Q_CFG_FIXED_SEED = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD5Q_MCBFD5Q_CFG_FIXED_SEED_LEN = 64;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFD6Q = 0x80114C4ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFD6Q_MCBFD6Q_CFG_FIXED_SEED = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD6Q_MCBFD6Q_CFG_FIXED_SEED_LEN = 64;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFD7Q = 0x80114C5ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFD7Q_MCBFD7Q_CFG_FIXED_SEED = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD7Q_MCBFD7Q_CFG_FIXED_SEED_LEN = 64;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFD8Q = 0x80114F8ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFD8Q_MCBFD8Q_CFG_FIXED_SEED = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD8Q_MCBFD8Q_CFG_FIXED_SEED_LEN = 64;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFD9Q = 0x80114F9ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFD9Q_MCBFD9Q_CFG_FIXED_SEED = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD9Q_MCBFD9Q_CFG_FIXED_SEED_LEN = 64;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFDAQ = 0x80114FAull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFDAQ_MCBFDAQ_CFG_FIXED_SEED = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDAQ_MCBFDAQ_CFG_FIXED_SEED_LEN = 64;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFDBQ = 0x80114FBull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFDBQ_MCBFDBQ_CFG_FIXED_SEED = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDBQ_MCBFDBQ_CFG_FIXED_SEED_LEN = 64;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFDCQ = 0x80114FCull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFDCQ_MCBFDCQ_CFG_FIXED_SEED = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDCQ_MCBFDCQ_CFG_FIXED_SEED_LEN = 64;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFDDQ = 0x80114FDull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFDDQ_MCBFDDQ_CFG_FIXED_SEED = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDDQ_MCBFDDQ_CFG_FIXED_SEED_LEN = 64;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFDEQ = 0x80114FEull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFDEQ_MCBFDEQ_CFG_FIXED_SEED = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDEQ_MCBFDEQ_CFG_FIXED_SEED_LEN = 64;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFDFQ = 0x80114FFull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFDFQ_MCBFDFQ_CFG_FIXED_SEED = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDFQ_MCBFDFQ_CFG_FIXED_SEED_LEN = 64;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFDQ = 0x80114C6ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFDQ_SEED1 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDQ_SEED1_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDQ_SEED2 = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDQ_SEED2_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDQ_SEED3 = 16;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDQ_SEED3_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDQ_SEED4 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDQ_SEED4_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDQ_SEED5 = 32;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDQ_SEED5_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDQ_SEED6 = 40;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDQ_SEED6_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDQ_SEED7 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDQ_SEED7_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDQ_SEED8 = 56;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDQ_SEED8_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFDSPQ = 0x80114C7ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSPQ_SEED1 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSPQ_SEED1_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSPQ_SEED2 = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSPQ_SEED2_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSPQ_SEED3 = 16;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSPQ_SEED3_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSPQ_SEED4 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSPQ_SEED4_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSPQ_SEED5 = 32;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSPQ_SEED5_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSPQ_SEED6 = 40;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSPQ_SEED6_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSPQ_SEED7 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSPQ_SEED7_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSPQ_SEED8 = 56;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSPQ_SEED8_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFDSP_HQ = 0x80114F7ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSP_HQ_SEED1 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSP_HQ_SEED1_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSP_HQ_SEED2 = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSP_HQ_SEED2_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSP_HQ_SEED3 = 16;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSP_HQ_SEED3_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSP_HQ_SEED4 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSP_HQ_SEED4_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSP_HQ_SEED5 = 32;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSP_HQ_SEED5_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSP_HQ_SEED6 = 40;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSP_HQ_SEED6_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSP_HQ_SEED7 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSP_HQ_SEED7_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSP_HQ_SEED8 = 56;
+static const uint32_t ODC_MCBIST_SCOM_MCBFDSP_HQ_SEED8_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBFD_HQ = 0x80114F6ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBFD_HQ_SEED1 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD_HQ_SEED1_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD_HQ_SEED2 = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD_HQ_SEED2_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD_HQ_SEED3 = 16;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD_HQ_SEED3_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD_HQ_SEED4 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD_HQ_SEED4_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD_HQ_SEED5 = 32;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD_HQ_SEED5_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD_HQ_SEED6 = 40;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD_HQ_SEED6_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD_HQ_SEED7 = 48;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD_HQ_SEED7_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD_HQ_SEED8 = 56;
+static const uint32_t ODC_MCBIST_SCOM_MCBFD_HQ_SEED8_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBISTCFGLXSTOP = 0x8011407ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBISTCFGLXSTOP_CFG_LXSTOP = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTCFGLXSTOP_CFG_LXSTOP_LEN = 19;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBISTCFGRECOV = 0x8011405ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBISTCFGRECOV_CFG_RECOV = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTCFGRECOV_CFG_RECOV_LEN = 19;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBISTCFGSPATTN = 0x8011406ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBISTCFGSPATTN_CFG_SPATTN = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTCFGSPATTN_CFG_SPATTN_LEN = 19;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBISTCFGXSTOP = 0x8011404ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBISTCFGXSTOP_CFG_XSTOP = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTCFGXSTOP_CFG_XSTOP_LEN = 19;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBISTFIRMASK_WO_OR = 0x8011403ull;
+static const uint64_t ODC_MCBIST_SCOM_MCBISTFIRMASK_RW_WCLEAR = 0x8011402ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRMASK_FIR_MASK = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRMASK_FIR_MASK_LEN = 19;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBISTFIRQ_WO_OR = 0x8011401ull;
+static const uint64_t ODC_MCBIST_SCOM_MCBISTFIRQ_RW_WCLEAR = 0x8011400ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBBISTFIRQ_LFIR_INTPAR = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_INVALID_MAINT_ADDRESS = 1;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_COMMAND_ADDRESS_TIMEOUT = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_INTERNAL_FSM_ERROR = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_CCS_ARRAY_UNCORRECT_CE_OR_UE = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_MCBIST_DATA_ERROR = 5;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_HARD_NCE_ETE_ATTN = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_SOFT_NCE_ETE_ATTN = 7;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_INT_NCE_ETE_ATTN = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_IUE_ETE_ATTN = 9;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_ICE_ETE_ATTN = 10;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_MCBIST_PROGRAM_COMPLETE = 11;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_MCBIST_CCS_SUBTEST_DONE = 12;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_WAT_DEBUG_ATTN = 13;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_SCOM_RECOVERABLE_REG_PE = 14;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_SCOM_FATAL_REG_PE = 15;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_WAT_DEBUG_REG_PE = 16;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_IAUE_ETE_ATTN = 17;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_IRCD_ETE_ATTN = 18;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBISTFIRWOF = 0x8011408ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRWOF_MCBISTFIRWOF_FIR_WOF = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBISTFIRWOF_MCBISTFIRWOF_FIR_WOF_LEN = 19;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBLFSRA0Q = 0x80114D4ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBLFSRA0Q_CFG_LFSR_MASK_A0 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBLFSRA0Q_CFG_LFSR_MASK_A0_LEN = 38;
+static const uint32_t ODC_MCBIST_SCOM_MCBLFSRA0Q_RESERVED_38_63 = 38;
+static const uint32_t ODC_MCBIST_SCOM_MCBLFSRA0Q_RESERVED_38_63_LEN = 26;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBMCATQ = 0x80114D7ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBMCATQ_ADDR_TRAP = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBMCATQ_ADDR_TRAP_LEN = 38;
+static const uint32_t ODC_MCBIST_SCOM_MCBMCATQ_PORT_TRAP = 38;
+static const uint32_t ODC_MCBIST_SCOM_MCBMCATQ_PORT_TRAP_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMCATQ_DIMM_TRAP = 40;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBMR0Q = 0x80114A8ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST00_OP_TYPE = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST00_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST00_COMPL_1ST_CMD = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST00_COMPL_2ND_CMD = 5;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST00_COMPL_3RD_CMD = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST00_ADDR_REV_MODE = 7;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST00_ADDR_RAND_MODE = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST00_DATA_MODE = 9;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST00_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST00_ECC_MODE = 12;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST00_DONE = 13;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST00_ADDR_SEL = 14;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST00_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST01_OP_TYPE = 16;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST01_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST01_COMPL_1ST_CMD = 20;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST01_COMPL_2ND_CMD = 21;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST01_COMPL_3RD_CMD = 22;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST01_ADDR_REV_MODE = 23;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST01_ADDR_RAND_MODE = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST01_DATA_MODE = 25;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST01_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST01_ECC_MODE = 28;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST01_DONE = 29;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST01_ADDR_SEL = 30;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST01_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST02_OP_TYPE = 32;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST02_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST02_COMPL_1ST_CMD = 36;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST02_COMPL_2ND_CMD = 37;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST02_COMPL_3RD_CMD = 38;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST02_ADDR_REV_MODE = 39;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST02_ADDR_RAND_MODE = 40;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST02_DATA_MODE = 41;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST02_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST02_ECC_MODE = 44;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST02_DONE = 45;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST02_ADDR_SEL = 46;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST02_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST03_OP_TYPE = 48;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST03_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST03_COMPL_1ST_CMD = 52;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST03_COMPL_2ND_CMD = 53;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST03_COMPL_3RD_CMD = 54;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST03_ADDR_REV_MODE = 55;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST03_ADDR_RAND_MODE = 56;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST03_DATA_MODE = 57;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST03_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST03_ECC_MODE = 60;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST03_DONE = 61;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST03_ADDR_SEL = 62;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR0Q_TEST03_ADDR_SEL_LEN = 2;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBMR1Q = 0x80114A9ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST04_OP_TYPE = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST04_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST04_COMPL_1ST_CMD = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST04_COMPL_2ND_CMD = 5;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST04_COMPL_3RD_CMD = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST04_ADDR_REV_MODE = 7;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST04_ADDR_RAND_MODE = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST04_DATA_MODE = 9;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST04_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST04_ECC_MODE = 12;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST04_DONE = 13;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST04_ADDR_SEL = 14;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST04_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST05_OP_TYPE = 16;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST05_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST05_COMPL_1ST_CMD = 20;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST05_COMPL_2ND_CMD = 21;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST05_COMPL_3RD_CMD = 22;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST05_ADDR_REV_MODE = 23;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST05_ADDR_RAND_MODE = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST05_DATA_MODE = 25;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST05_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST05_ECC_MODE = 28;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST05_DONE = 29;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST05_ADDR_SEL = 30;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST05_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST06_OP_TYPE = 32;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST06_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST06_COMPL_1ST_CMD = 36;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST06_COMPL_2ND_CMD = 37;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST06_COMPL_3RD_CMD = 38;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST06_ADDR_REV_MODE = 39;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST06_ADDR_RAND_MODE = 40;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST06_DATA_MODE = 41;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST06_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST06_ECC_MODE = 44;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST06_DONE = 45;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST06_ADDR_SEL = 46;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST06_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST07_OP_TYPE = 48;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST07_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST07_COMPL_1ST_CMD = 52;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST07_COMPL_2ND_CMD = 53;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST07_COMPL_3RD_CMD = 54;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST07_ADDR_REV_MODE = 55;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST07_ADDR_RAND_MODE = 56;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST07_DATA_MODE = 57;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST07_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST07_ECC_MODE = 60;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST07_DONE = 61;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST07_ADDR_SEL = 62;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR1Q_TEST07_ADDR_SEL_LEN = 2;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBMR2Q = 0x80114AAull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST08_OP_TYPE = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST08_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST08_COMPL_1ST_CMD = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST08_COMPL_2ND_CMD = 5;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST08_COMPL_3RD_CMD = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST08_ADDR_REV_MODE = 7;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST08_ADDR_RAND_MODE = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST08_DATA_MODE = 9;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST08_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST08_ECC_MODE = 12;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST08_DONE = 13;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST08_ADDR_SEL = 14;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST08_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST09_OP_TYPE = 16;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST09_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST09_COMPL_1ST_CMD = 20;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST09_COMPL_2ND_CMD = 21;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST09_COMPL_3RD_CMD = 22;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST09_ADDR_REV_MODE = 23;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST09_ADDR_RAND_MODE = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST09_DATA_MODE = 25;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST09_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST09_ECC_MODE = 28;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST09_DONE = 29;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST09_ADDR_SEL = 30;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST09_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST10_OP_TYPE = 32;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST10_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST10_COMPL_1ST_CMD = 36;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST10_COMPL_2ND_CMD = 37;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST10_COMPL_3RD_CMD = 38;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST10_ADDR_REV_MODE = 39;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST10_ADDR_RAND_MODE = 40;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST10_DATA_MODE = 41;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST10_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST10_ECC_MODE = 44;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST10_DONE = 45;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST10_ADDR_SEL = 46;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST10_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST11_OP_TYPE = 48;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST11_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST11_COMPL_1ST_CMD = 52;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST11_COMPL_2ND_CMD = 53;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST11_COMPL_3RD_CMD = 54;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST11_ADDR_REV_MODE = 55;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST11_ADDR_RAND_MODE = 56;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST11_DATA_MODE = 57;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST11_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST11_ECC_MODE = 60;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST11_DONE = 61;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST11_ADDR_SEL = 62;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR2Q_TEST11_ADDR_SEL_LEN = 2;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBMR3Q = 0x80114ABull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST12_OP_TYPE = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST12_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST12_COMPL_1ST_CMD = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST12_COMPL_2ND_CMD = 5;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST12_COMPL_3RD_CMD = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST12_ADDR_REV_MODE = 7;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST12_ADDR_RAND_MODE = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST12_DATA_MODE = 9;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST12_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST12_ECC_MODE = 12;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST12_DONE = 13;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST12_ADDR_SEL = 14;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST12_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST13_OP_TYPE = 16;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST13_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST13_COMPL_1ST_CMD = 20;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST13_COMPL_2ND_CMD = 21;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST13_COMPL_3RD_CMD = 22;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST13_ADDR_REV_MODE = 23;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST13_ADDR_RAND_MODE = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST13_DATA_MODE = 25;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST13_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST13_ECC_MODE = 28;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST13_DONE = 29;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST13_ADDR_SEL = 30;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST13_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST14_OP_TYPE = 32;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST14_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST14_COMPL_1ST_CMD = 36;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST14_COMPL_2ND_CMD = 37;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST14_COMPL_3RD_CMD = 38;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST14_ADDR_REV_MODE = 39;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST14_ADDR_RAND_MODE = 40;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST14_DATA_MODE = 41;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST14_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST14_ECC_MODE = 44;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST14_DONE = 45;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST14_ADDR_SEL = 46;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST14_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST15_OP_TYPE = 48;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST15_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST15_COMPL_1ST_CMD = 52;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST15_COMPL_2ND_CMD = 53;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST15_COMPL_3RD_CMD = 54;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST15_ADDR_REV_MODE = 55;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST15_ADDR_RAND_MODE = 56;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST15_DATA_MODE = 57;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST15_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST15_ECC_MODE = 60;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST15_DONE = 61;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST15_ADDR_SEL = 62;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR3Q_TEST15_ADDR_SEL_LEN = 2;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBMR4Q = 0x80114ACull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST16_OP_TYPE = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST16_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST16_COMPL_1ST_CMD = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST16_COMPL_2ND_CMD = 5;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST16_COMPL_3RD_CMD = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST16_ADDR_REV_MODE = 7;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST16_ADDR_RAND_MODE = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST16_DATA_MODE = 9;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST16_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST16_ECC_MODE = 12;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST16_DONE = 13;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST16_ADDR_SEL = 14;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST16_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST17_OP_TYPE = 16;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST17_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST17_COMPL_1ST_CMD = 20;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST17_COMPL_2ND_CMD = 21;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST17_COMPL_3RD_CMD = 22;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST17_ADDR_REV_MODE = 23;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST17_ADDR_RAND_MODE = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST17_DATA_MODE = 25;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST17_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST17_ECC_MODE = 28;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST17_DONE = 29;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST17_ADDR_SEL = 30;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST17_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST18_OP_TYPE = 32;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST18_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST18_COMPL_1ST_CMD = 36;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST18_COMPL_2ND_CMD = 37;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST18_COMPL_3RD_CMD = 38;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST18_ADDR_REV_MODE = 39;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST18_ADDR_RAND_MODE = 40;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST18_DATA_MODE = 41;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST18_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST18_ECC_MODE = 44;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST18_DONE = 45;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST18_ADDR_SEL = 46;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST18_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST19_OP_TYPE = 48;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST19_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST19_COMPL_1ST_CMD = 52;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST19_COMPL_2ND_CMD = 53;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST19_COMPL_3RD_CMD = 54;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST19_ADDR_REV_MODE = 55;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST19_ADDR_RAND_MODE = 56;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST19_DATA_MODE = 57;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST19_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST19_ECC_MODE = 60;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST19_DONE = 61;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST19_ADDR_SEL = 62;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR4Q_TEST19_ADDR_SEL_LEN = 2;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBMR5Q = 0x80114ADull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST20_OP_TYPE = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST20_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST20_COMPL_1ST_CMD = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST20_COMPL_2ND_CMD = 5;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST20_COMPL_3RD_CMD = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST20_ADDR_REV_MODE = 7;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST20_ADDR_RAND_MODE = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST20_DATA_MODE = 9;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST20_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST20_ECC_MODE = 12;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST20_DONE = 13;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST20_ADDR_SEL = 14;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST20_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST21_OP_TYPE = 16;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST21_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST21_COMPL_1ST_CMD = 20;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST21_COMPL_2ND_CMD = 21;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST21_COMPL_3RD_CMD = 22;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST21_ADDR_REV_MODE = 23;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST21_ADDR_RAND_MODE = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST21_DATA_MODE = 25;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST21_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST21_ECC_MODE = 28;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST21_DONE = 29;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST21_ADDR_SEL = 30;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST21_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST22_OP_TYPE = 32;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST22_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST22_COMPL_1ST_CMD = 36;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST22_COMPL_2ND_CMD = 37;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST22_COMPL_3RD_CMD = 38;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST22_ADDR_REV_MODE = 39;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST22_ADDR_RAND_MODE = 40;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST22_DATA_MODE = 41;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST22_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST22_ECC_MODE = 44;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST22_DONE = 45;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST22_ADDR_SEL = 46;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST22_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST23_OP_TYPE = 48;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST23_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST23_COMPL_1ST_CMD = 52;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST23_COMPL_2ND_CMD = 53;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST23_COMPL_3RD_CMD = 54;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST23_ADDR_REV_MODE = 55;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST23_ADDR_RAND_MODE = 56;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST23_DATA_MODE = 57;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST23_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST23_ECC_MODE = 60;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST23_DONE = 61;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST23_ADDR_SEL = 62;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR5Q_TEST23_ADDR_SEL_LEN = 2;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBMR6Q = 0x80114AEull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST24_OP_TYPE = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST24_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST24_COMPL_1ST_CMD = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST24_COMPL_2ND_CMD = 5;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST24_COMPL_3RD_CMD = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST24_ADDR_REV_MODE = 7;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST24_ADDR_RAND_MODE = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST24_DATA_MODE = 9;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST24_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST24_ECC_MODE = 12;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST24_DONE = 13;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST24_ADDR_SEL = 14;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST24_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST25_OP_TYPE = 16;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST25_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST25_COMPL_1ST_CMD = 20;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST25_COMPL_2ND_CMD = 21;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST25_COMPL_3RD_CMD = 22;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST25_ADDR_REV_MODE = 23;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST25_ADDR_RAND_MODE = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST25_DATA_MODE = 25;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST25_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST25_ECC_MODE = 28;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST25_DONE = 29;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST25_ADDR_SEL = 30;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST25_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST26_OP_TYPE = 32;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST26_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST26_COMPL_1ST_CMD = 36;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST26_COMPL_2ND_CMD = 37;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST26_COMPL_3RD_CMD = 38;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST26_ADDR_REV_MODE = 39;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST26_ADDR_RAND_MODE = 40;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST26_DATA_MODE = 41;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST26_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST26_ECC_MODE = 44;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST26_DONE = 45;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST26_ADDR_SEL = 46;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST26_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST27_OP_TYPE = 48;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST27_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST27_COMPL_1ST_CMD = 52;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST27_COMPL_2ND_CMD = 53;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST27_COMPL_3RD_CMD = 54;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST27_ADDR_REV_MODE = 55;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST27_ADDR_RAND_MODE = 56;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST27_DATA_MODE = 57;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST27_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST27_ECC_MODE = 60;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST27_DONE = 61;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST27_ADDR_SEL = 62;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR6Q_TEST27_ADDR_SEL_LEN = 2;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBMR7Q = 0x80114DFull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST28_OP_TYPE = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST28_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST28_COMPL_1ST_CMD = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST28_COMPL_2ND_CMD = 5;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST28_COMPL_3RD_CMD = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST28_ADDR_REV_MODE = 7;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST28_ADDR_RAND_MODE = 8;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST28_DATA_MODE = 9;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST28_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST28_ECC_MODE = 12;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST28_DONE = 13;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST28_ADDR_SEL = 14;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST28_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST29_OP_TYPE = 16;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST29_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST29_COMPL_1ST_CMD = 20;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST29_COMPL_2ND_CMD = 21;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST29_COMPL_3RD_CMD = 22;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST29_ADDR_REV_MODE = 23;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST29_ADDR_RAND_MODE = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST29_DATA_MODE = 25;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST29_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST29_ECC_MODE = 28;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST29_DONE = 29;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST29_ADDR_SEL = 30;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST29_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST30_OP_TYPE = 32;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST30_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST30_COMPL_1ST_CMD = 36;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST30_COMPL_2ND_CMD = 37;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST30_COMPL_3RD_CMD = 38;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST30_ADDR_REV_MODE = 39;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST30_ADDR_RAND_MODE = 40;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST30_DATA_MODE = 41;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST30_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST30_ECC_MODE = 44;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST30_DONE = 45;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST30_ADDR_SEL = 46;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST30_ADDR_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST31_OP_TYPE = 48;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST31_OP_TYPE_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST31_COMPL_1ST_CMD = 52;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST31_COMPL_2ND_CMD = 53;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST31_COMPL_3RD_CMD = 54;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST31_ADDR_REV_MODE = 55;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST31_ADDR_RAND_MODE = 56;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST31_DATA_MODE = 57;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST31_DATA_MODE_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST31_ECC_MODE = 60;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST31_DONE = 61;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST31_ADDR_SEL = 62;
+static const uint32_t ODC_MCBIST_SCOM_MCBMR7Q_TEST31_ADDR_SEL_LEN = 2;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBPARMQ = 0x80114AFull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBPARMQ_CFG_MIN_CMD_GAP = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBPARMQ_CFG_MIN_CMD_GAP_LEN = 12;
+static const uint32_t ODC_MCBIST_SCOM_MCBPARMQ_CFG_MIN_GAP_TIMEBASE = 12;
+static const uint32_t ODC_MCBIST_SCOM_MCBPARMQ_CFG_MIN_CMD_GAP_BLIND_STEER = 13;
+static const uint32_t ODC_MCBIST_SCOM_MCBPARMQ_CFG_MIN_CMD_GAP_BLIND_STEER_LEN = 12;
+static const uint32_t ODC_MCBIST_SCOM_MCBPARMQ_CFG_MIN_GAP_TIMEBASE_BLIND_STEER = 25;
+static const uint32_t ODC_MCBIST_SCOM_MCBPARMQ_RESERVED_26_49 = 26;
+static const uint32_t ODC_MCBIST_SCOM_MCBPARMQ_RESERVED_26_49_LEN = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBPARMQ_CFG_RANDCMD_WGT = 50;
+static const uint32_t ODC_MCBIST_SCOM_MCBPARMQ_CFG_RANDCMD_WGT_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBPARMQ_RESERVED_53_59 = 53;
+static const uint32_t ODC_MCBIST_SCOM_MCBPARMQ_RESERVED_53_59_LEN = 7;
+static const uint32_t ODC_MCBIST_SCOM_MCBPARMQ_CFG_EN_RANDCMD_GAP = 60;
+static const uint32_t ODC_MCBIST_SCOM_MCBPARMQ_CFG_RANDGAP_WGT = 61;
+static const uint32_t ODC_MCBIST_SCOM_MCBPARMQ_CFG_RANDGAP_WGT_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCBPARMQ_CFG_BC4_EN = 63;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBRCRQ = 0x80114B1ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBRCRQ_RESERVED_0_31 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBRCRQ_RESERVED_0_31_LEN = 32;
+static const uint32_t ODC_MCBIST_SCOM_MCBRCRQ_CFG_RUNTIME_MCBALL = 32;
+static const uint32_t ODC_MCBIST_SCOM_MCBRCRQ_CFG_RUNTIME_SUBTEST = 33;
+static const uint32_t ODC_MCBIST_SCOM_MCBRCRQ_CFG_RUNTIME_SUBTEST_LEN = 5;
+static const uint32_t ODC_MCBIST_SCOM_MCBRCRQ_CFG_RUNTIME_OVERHEAD = 38;
+static const uint32_t ODC_MCBIST_SCOM_MCBRCRQ_RESERVED_39 = 39;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBRDS0Q = 0x80114B2ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBRDS0Q_SEED0 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBRDS0Q_SEED0_LEN = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBRDS0Q_SEED1 = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBRDS0Q_SEED1_LEN = 24;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBRDS1Q = 0x80114B3ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBRDS1Q_SEED2 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBRDS1Q_SEED2_LEN = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBRDS1Q_DATA_MAPPING = 24;
+static const uint32_t ODC_MCBIST_SCOM_MCBRDS1Q_DATA_MAPPING_LEN = 40;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBSA0Q = 0x80114CCull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBSA0Q_MCBSA0Q_CFG_START_ADDR_0 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBSA0Q_MCBSA0Q_CFG_START_ADDR_0_LEN = 38;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBSA1Q = 0x80114CDull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBSA1Q_MCBSA1Q_CFG_START_ADDR_1 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBSA1Q_MCBSA1Q_CFG_START_ADDR_1_LEN = 38;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBSA2Q = 0x80114D0ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBSA2Q_MCBSA2Q_CFG_START_ADDR_2 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBSA2Q_MCBSA2Q_CFG_START_ADDR_2_LEN = 38;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBSA3Q = 0x80114D1ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBSA3Q_MCBSA3Q_CFG_START_ADDR_3 = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBSA3Q_MCBSA3Q_CFG_START_ADDR_3_LEN = 38;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCBSTATQ = 0x8011466ull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCBSTATQ_MCBIST_LOGGED_ERROR_ON_PORT_INDICATOR = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCBSTATQ_RESERVED_1_3 = 1;
+static const uint32_t ODC_MCBIST_SCOM_MCBSTATQ_RESERVED_1_3_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCBSTATQ_MCBIST_SUBTEST_NUM_INDICATOR = 4;
+static const uint32_t ODC_MCBIST_SCOM_MCBSTATQ_MCBIST_SUBTEST_NUM_INDICATOR_LEN = 5;
+static const uint32_t ODC_MCBIST_SCOM_MCBSTATQ_RESERVED_9_15 = 9;
+static const uint32_t ODC_MCBIST_SCOM_MCBSTATQ_RESERVED_9_15_LEN = 7;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCB_CNTLQ = 0x80114DBull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCB_CNTLQ_MCB_START = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCB_CNTLQ_MCB_STOP = 1;
+static const uint32_t ODC_MCBIST_SCOM_MCB_CNTLQ_RESERVED_2_4 = 2;
+static const uint32_t ODC_MCBIST_SCOM_MCB_CNTLQ_RESERVED_2_4_LEN = 3;
+static const uint32_t ODC_MCBIST_SCOM_MCB_CNTLQ_FIR_FREEZE_DIS = 5;
+static const uint32_t ODC_MCBIST_SCOM_MCB_CNTLQ_MCB_RESET_TRAP_CNFG = 6;
+static const uint32_t ODC_MCBIST_SCOM_MCB_CNTLQ_MCB_RESET_ERROR_LOGS = 7;
+static const uint32_t ODC_MCBIST_SCOM_MCB_CNTLQ_MCB_RESUME_FROM_PAUSE = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCB_CNTLSTATQ = 0x80114DCull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCB_CNTLSTATQ_IP = 0;
+static const uint32_t ODC_MCBIST_SCOM_MCB_CNTLSTATQ_DONE = 1;
+static const uint32_t ODC_MCBIST_SCOM_MCB_CNTLSTATQ_FAIL = 2;
+
+
+static const uint64_t ODC_MCBIST_SCOM_MCB_FIXLFSRQ = 0x80114DAull;
+
+static const uint32_t ODC_MCBIST_SCOM_MCB_FIXLFSRQ_MCB_FIXLFSRQ_SUBTEST_CFG = 1;
+static const uint32_t ODC_MCBIST_SCOM_MCB_FIXLFSRQ_MCB_FIXLFSRQ_SUBTEST_CFG_LEN = 31;
+
+
+static const uint64_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q = 0x80114DDull;
+
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD0 = 0;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD0_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD1 = 4;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD1_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD2 = 8;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD2_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD3 = 12;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD3_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD4 = 16;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD4_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD5 = 20;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD5_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD6 = 24;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD6_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD7 = 28;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD7_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD8 = 32;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD8_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD9 = 36;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD9_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD10 = 40;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD10_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD11 = 44;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD11_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD12 = 48;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD12_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD13 = 52;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD13_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD14 = 56;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD14_LEN = 4;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD15 = 60;
+static const uint32_t ODC_MCBIST_SCOM_RCD_LRDIM_CNTL_WORD0_15Q_WORD15_LEN = 4;
+
+
+static const uint64_t ODC_MCBIST_SCOM_RUNTIMECTRQ = 0x80114B0ull;
+
+static const uint32_t ODC_MCBIST_SCOM_RUNTIMECTRQ_RUNTIMECTRQ_CFG_RUNTIME_CTR = 0;
+static const uint32_t ODC_MCBIST_SCOM_RUNTIMECTRQ_RUNTIMECTRQ_CFG_RUNTIME_CTR_LEN = 37;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG0AQ = 0x8011480ull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0AQ_ASEL = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0AQ_ASEL_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0AQ_BSEL = 8;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0AQ_BSEL_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0AQ_ABSEL = 16;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0AQ_ABSEL_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0AQ_ETSEL = 24;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0AQ_ETSEL_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0AQ_CMSEL = 32;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0AQ_CMSEL_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0AQ_CYSEL = 40;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0AQ_CYSEL_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG0BQ = 0x8011481ull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_WAT_MSKA = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_WAT_MSKA_LEN = 44;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_WAT_ENABLE = 44;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_INT_ARM_MODE = 45;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_EXT_ARM_MODE = 46;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_TIMER_STATE_MODE = 47;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_SET_LEVEL_ON_PULSE = 48;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_RESET_LEVEL_ON_PULSE = 49;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_ENABLE_EXT_RESET_LEVEL = 50;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_STATE_SET_DOM = 51;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_STATE_FOLLOW_LEVEL = 52;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_NOT_PATA_MODE = 53;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_NOT_PATB_MODE = 54;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_NOT_PATA_MODE2 = 55;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_NOT_PATB_MODE2 = 56;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_SLIDE_TRIG = 57;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_TRIGB_DELAY_SEL = 58;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_TRIGB_DELAY_SEL_LEN = 2;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0BQ_FORCE_TEST_MODE = 60;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG0CQ = 0x8011482ull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0CQ_WATCFG0CQ_CFG_WAT_MSKB = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0CQ_WATCFG0CQ_CFG_WAT_MSKB_LEN = 44;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG0DQ = 0x8011483ull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0DQ_WATCFG0DQ_CFG_WAT_PATA = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0DQ_WATCFG0DQ_CFG_WAT_PATA_LEN = 44;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG0EQ = 0x8011484ull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0EQ_WATCFG0EQ_CFG_WAT_PATB = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG0EQ_WATCFG0EQ_CFG_WAT_PATB_LEN = 44;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG1AQ = 0x8011485ull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1AQ_ASEL = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1AQ_ASEL_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1AQ_BSEL = 8;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1AQ_BSEL_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1AQ_ABSEL = 16;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1AQ_ABSEL_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1AQ_ETSEL = 24;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1AQ_ETSEL_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1AQ_CMSEL = 32;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1AQ_CMSEL_LEN = 8;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1AQ_CYSEL = 40;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1AQ_CYSEL_LEN = 8;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG1BQ = 0x8011486ull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1BQ_MSKA = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1BQ_MSKA_LEN = 44;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1BQ_CNTL = 44;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1BQ_CNTL_LEN = 17;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG1CQ = 0x8011487ull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1CQ_WATCFG1CQ_CFG_WAT_MSKB = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1CQ_WATCFG1CQ_CFG_WAT_MSKB_LEN = 44;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG1DQ = 0x8011488ull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1DQ_WATCFG1DQ_CFG_WAT_PATA = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1DQ_WATCFG1DQ_CFG_WAT_PATA_LEN = 44;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG1EQ = 0x8011489ull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1EQ_WATCFG1EQ_CFG_WAT_PATB = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG1EQ_WATCFG1EQ_CFG_WAT_PATB_LEN = 44;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG2AQ = 0x801148Aull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG2AQ_WATCFG2AQ_CFG_WAT_EVENT_SEL = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG2AQ_WATCFG2AQ_CFG_WAT_EVENT_SEL_LEN = 48;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG2BQ = 0x801148Bull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG2BQ_MSKA = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG2BQ_MSKA_LEN = 44;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG2BQ_CNTL = 44;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG2BQ_CNTL_LEN = 17;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG2CQ = 0x801148Cull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG2CQ_WATCFG2CQ_CFG_WAT_MSKB = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG2CQ_WATCFG2CQ_CFG_WAT_MSKB_LEN = 44;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG2DQ = 0x801148Dull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG2DQ_WATCFG2DQ_CFG_WAT_PATA = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG2DQ_WATCFG2DQ_CFG_WAT_PATA_LEN = 44;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG2EQ = 0x801148Eull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG2EQ_WATCFG2EQ_CFG_WAT_PATB = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG2EQ_WATCFG2EQ_CFG_WAT_PATB_LEN = 44;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG3AQ = 0x801148Full;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG3AQ_WATCFG3AQ_CFG_WAT_EVENT_SEL = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG3AQ_WATCFG3AQ_CFG_WAT_EVENT_SEL_LEN = 48;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG3BQ = 0x8011490ull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG3BQ_MSKA = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG3BQ_MSKA_LEN = 44;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG3BQ_CNTL = 44;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG3BQ_CNTL_LEN = 17;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG3CQ = 0x8011491ull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG3CQ_WATCFG3CQ_CFG_WAT_MSKB = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG3CQ_WATCFG3CQ_CFG_WAT_MSKB_LEN = 44;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG3DQ = 0x8011492ull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG3DQ_WATCFG3DQ_CFG_WAT_PATA = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG3DQ_WATCFG3DQ_CFG_WAT_PATA_LEN = 44;
+
+
+static const uint64_t ODC_MCBIST_SCOM_WATCFG3EQ = 0x8011493ull;
+
+static const uint32_t ODC_MCBIST_SCOM_WATCFG3EQ_WATCFG3EQ_CFG_WAT_PATB = 0;
+static const uint32_t ODC_MCBIST_SCOM_WATCFG3EQ_WATCFG3EQ_CFG_WAT_PATB_LEN = 44;
+
+
+static const uint64_t ODC_MMIO_MCFGERR = 0x80108EDull;
+
+static const uint32_t ODC_MMIO_MCFGERR_RESP_CODE = 16;
+static const uint32_t ODC_MMIO_MCFGERR_RESP_CODE_LEN = 4;
+static const uint32_t ODC_MMIO_MCFGERR_BDI = 20;
+static const uint32_t ODC_MMIO_MCFGERR_ERROR_TYPE = 21;
+static const uint32_t ODC_MMIO_MCFGERR_ERROR_TYPE_LEN = 3;
+static const uint32_t ODC_MMIO_MCFGERR_DEVICE = 24;
+static const uint32_t ODC_MMIO_MCFGERR_DEVICE_LEN = 5;
+static const uint32_t ODC_MMIO_MCFGERR_FUNCTION = 29;
+static const uint32_t ODC_MMIO_MCFGERR_FUNCTION_LEN = 3;
+static const uint32_t ODC_MMIO_MCFGERR_DEV_FUNC_MISMATCH = 32;
+static const uint32_t ODC_MMIO_MCFGERR_DETECT_BAD_OP = 33;
+static const uint32_t ODC_MMIO_MCFGERR_TBIT_IS_1 = 34;
+static const uint32_t ODC_MMIO_MCFGERR_DATA_IS_BAD = 35;
+static const uint32_t ODC_MMIO_MCFGERR_PL_IS_INVALID = 36;
+static const uint32_t ODC_MMIO_MCFGERR_BAD_OP_OR_ALIGN = 37;
+static const uint32_t ODC_MMIO_MCFGERR_ADDR_NO_IMPLEMENTED = 38;
+static const uint32_t ODC_MMIO_MCFGERR_RDATA_VLD = 39;
+static const uint32_t ODC_MMIO_MCFGERR_TBIT = 40;
+static const uint32_t ODC_MMIO_MCFGERR_PLEN = 41;
+static const uint32_t ODC_MMIO_MCFGERR_PLEN_LEN = 3;
+static const uint32_t ODC_MMIO_MCFGERR_PORTNUM = 44;
+static const uint32_t ODC_MMIO_MCFGERR_PORTNUM_LEN = 2;
+static const uint32_t ODC_MMIO_MCFGERR_DL = 46;
+static const uint32_t ODC_MMIO_MCFGERR_DL_LEN = 2;
+static const uint32_t ODC_MMIO_MCFGERR_CAPPTAG = 48;
+static const uint32_t ODC_MMIO_MCFGERR_CAPPTAG_LEN = 16;
+
+
+static const uint64_t ODC_MMIO_MCFGERRA = 0x80108ECull;
+
+static const uint32_t ODC_MMIO_MCFGERRA_MCFGERRA_ADDR = 0;
+static const uint32_t ODC_MMIO_MCFGERRA_MCFGERRA_ADDR_LEN = 64;
+
+
+static const uint64_t ODC_MMIO_MCFGLXSTOP = 0x8010877ull;
+
+static const uint32_t ODC_MMIO_MCFGLXSTOP_CFG_LXSTOP = 0;
+static const uint32_t ODC_MMIO_MCFGLXSTOP_CFG_LXSTOP_LEN = 13;
+
+
+static const uint64_t ODC_MMIO_MCFGRECOV = 0x8010875ull;
+
+static const uint32_t ODC_MMIO_MCFGRECOV_CFG_RECOV = 0;
+static const uint32_t ODC_MMIO_MCFGRECOV_CFG_RECOV_LEN = 13;
+
+
+static const uint64_t ODC_MMIO_MCFGSPATTN = 0x8010876ull;
+
+static const uint32_t ODC_MMIO_MCFGSPATTN_CFG_SPATTN = 0;
+static const uint32_t ODC_MMIO_MCFGSPATTN_CFG_SPATTN_LEN = 13;
+
+
+static const uint64_t ODC_MMIO_MCFGXSTOP = 0x8010874ull;
+
+static const uint32_t ODC_MMIO_MCFGXSTOP_CFG_XSTOP = 0;
+static const uint32_t ODC_MMIO_MCFGXSTOP_CFG_XSTOP_LEN = 13;
+
+
+static const uint64_t ODC_MMIO_MDBELL = 0x80108E6ull;
+
+static const uint32_t ODC_MMIO_MDBELL_MDBELL = 0;
+
+
+static const uint64_t ODC_MMIO_MDBELLC = 0x80108E7ull;
+
+static const uint32_t ODC_MMIO_MDBELLC_MDBELL = 0;
+
+
+static const uint64_t ODC_MMIO_MDEBUG0 = 0x80108EEull;
+
+static const uint32_t ODC_MMIO_MDEBUG0_DBGBUS_64_87 = 0;
+static const uint32_t ODC_MMIO_MDEBUG0_DBGBUS_64_87_LEN = 24;
+static const uint32_t ODC_MMIO_MDEBUG0_SPARE = 24;
+static const uint32_t ODC_MMIO_MDEBUG0_SPARE_LEN = 8;
+static const uint32_t ODC_MMIO_MDEBUG0_DBGSEL7 = 32;
+static const uint32_t ODC_MMIO_MDEBUG0_DBGSEL7_LEN = 4;
+static const uint32_t ODC_MMIO_MDEBUG0_DBGSEL6 = 36;
+static const uint32_t ODC_MMIO_MDEBUG0_DBGSEL6_LEN = 4;
+static const uint32_t ODC_MMIO_MDEBUG0_DBGSEL5 = 40;
+static const uint32_t ODC_MMIO_MDEBUG0_DBGSEL5_LEN = 4;
+static const uint32_t ODC_MMIO_MDEBUG0_DBGSEL4 = 44;
+static const uint32_t ODC_MMIO_MDEBUG0_DBGSEL4_LEN = 4;
+static const uint32_t ODC_MMIO_MDEBUG0_DBGSEL3 = 48;
+static const uint32_t ODC_MMIO_MDEBUG0_DBGSEL3_LEN = 4;
+static const uint32_t ODC_MMIO_MDEBUG0_DBGSEL2 = 52;
+static const uint32_t ODC_MMIO_MDEBUG0_DBGSEL2_LEN = 4;
+static const uint32_t ODC_MMIO_MDEBUG0_DBGSEL1 = 56;
+static const uint32_t ODC_MMIO_MDEBUG0_DBGSEL1_LEN = 4;
+static const uint32_t ODC_MMIO_MDEBUG0_DBGSEL0 = 60;
+static const uint32_t ODC_MMIO_MDEBUG0_DBGSEL0_LEN = 4;
+
+
+static const uint64_t ODC_MMIO_MDEBUG1 = 0x80108EFull;
+
+static const uint32_t ODC_MMIO_MDEBUG1_MDEBUG1_DBGBUS_0_63 = 0;
+static const uint32_t ODC_MMIO_MDEBUG1_MDEBUG1_DBGBUS_0_63_LEN = 64;
+
+
+static const uint64_t ODC_MMIO_MERRCTL = 0x80108EAull;
+
+static const uint32_t ODC_MMIO_MERRCTL_MODE_BITS = 0;
+static const uint32_t ODC_MMIO_MERRCTL_MODE_BITS_LEN = 44;
+static const uint32_t ODC_MMIO_MERRCTL_MODE_BITS_44_45 = 44;
+static const uint32_t ODC_MMIO_MERRCTL_MODE_BITS_44_45_LEN = 2;
+static const uint32_t ODC_MMIO_MERRCTL_ONE_READ = 46;
+static const uint32_t ODC_MMIO_MERRCTL_PASID_CHK_DIS = 47;
+static const uint32_t ODC_MMIO_MERRCTL_ACTAG_CHK_DIS = 48;
+static const uint32_t ODC_MMIO_MERRCTL_MODE_BIT_49 = 49;
+static const uint32_t ODC_MMIO_MERRCTL_FIR_FREEZE_DIS = 50;
+static const uint32_t ODC_MMIO_MERRCTL_HOLD_ACUM = 51;
+static const uint32_t ODC_MMIO_MERRCTL_SNSC_MASTER_ENABLE = 52;
+static const uint32_t ODC_MMIO_MERRCTL_TRAP_CLEAR = 53;
+static const uint32_t ODC_MMIO_MERRCTL_WDATA_P = 54;
+static const uint32_t ODC_MMIO_MERRCTL_RNW = 55;
+static const uint32_t ODC_MMIO_MERRCTL_ADDR = 56;
+static const uint32_t ODC_MMIO_MERRCTL_ADDR_LEN = 8;
+
+
+static const uint64_t ODC_MMIO_MFIR_WO_OR = 0x8010871ull;
+static const uint64_t ODC_MMIO_MFIR_RW_WCLEAR = 0x8010870ull;
+
+static const uint32_t ODC_MMIO_MFIR_LFIR_INTPAR = 0;
+static const uint32_t ODC_MMIO_MFIR_AFU_DESC_UNIMP = 1;
+static const uint32_t ODC_MMIO_MFIR_MMIO_ERR = 2;
+static const uint32_t ODC_MMIO_MFIR_SCOM_ERR = 3;
+static const uint32_t ODC_MMIO_MFIR_FSM_PERR = 4;
+static const uint32_t ODC_MMIO_MFIR_FIFO_OVERFLOW = 5;
+static const uint32_t ODC_MMIO_MFIR_CTL_REG_PERR = 6;
+static const uint32_t ODC_MMIO_MFIR_INFO_REG_PERR = 7;
+static const uint32_t ODC_MMIO_MFIR_SNSC_BOTH_STARTS_ERR = 8;
+static const uint32_t ODC_MMIO_MFIR_SNSC_MULT_SEQ_PERR = 9;
+static const uint32_t ODC_MMIO_MFIR_SNSC_FSM_PERR = 10;
+static const uint32_t ODC_MMIO_MFIR_SNSC_REG_PERR = 11;
+static const uint32_t ODC_MMIO_MFIR_ACTAG_PASID_CFG_ERR = 12;
+
+
+static const uint64_t ODC_MMIO_MFIRMASK_WO_OR = 0x8010873ull;
+static const uint64_t ODC_MMIO_MFIRMASK_RW_WCLEAR = 0x8010872ull;
+
+static const uint32_t ODC_MMIO_MFIRMASK_FIR_MASK = 0;
+static const uint32_t ODC_MMIO_MFIRMASK_FIR_MASK_LEN = 13;
+
+
+static const uint64_t ODC_MMIO_MFIRWOF = 0x8010878ull;
+
+static const uint32_t ODC_MMIO_MFIRWOF_MFIRWOF_FIR_WOF = 0;
+static const uint32_t ODC_MMIO_MFIRWOF_MFIRWOF_FIR_WOF_LEN = 13;
+
+
+static const uint64_t ODC_MMIO_MHOLD0 = 0x801087Cull;
+
+static const uint32_t ODC_MMIO_MHOLD0_O0MBIT_O0DID_PERR = 0;
+static const uint32_t ODC_MMIO_MHOLD0_O0CCD_PERR = 1;
+static const uint32_t ODC_MMIO_MHOLD0_O0BAR0_PERR = 2;
+static const uint32_t ODC_MMIO_MHOLD0_O0BAR1_PERR = 3;
+static const uint32_t ODC_MMIO_MHOLD0_O0BAR2_PERR = 4;
+static const uint32_t ODC_MMIO_MHOLD0_O0SSYSID_PERR = 5;
+static const uint32_t ODC_MMIO_MHOLD0_O0CAPPTR_O0ROMBAR_PERR = 6;
+static const uint32_t ODC_MMIO_MHOLD0_OVPD_PERR = 7;
+static const uint32_t ODC_MMIO_MHOLD0_ODSNLO_ODSNCAP_PERR = 8;
+static const uint32_t ODC_MMIO_MHOLD0_ODSNHI_PERR = 9;
+static const uint32_t ODC_MMIO_MHOLD0_OTLVID_OTLCAP_PERR = 10;
+static const uint32_t ODC_MMIO_MHOLD0_OVERCAP_OTLID_PERR = 11;
+static const uint32_t ODC_MMIO_MHOLD0_OVERCFG_PERR = 12;
+static const uint32_t ODC_MMIO_MHOLD0_ORTCAP_PERR = 13;
+static const uint32_t ODC_MMIO_MHOLD0_OTTCFG_PERR = 14;
+static const uint32_t ODC_MMIO_MHOLD0_ORRCAP10_PERR = 15;
+static const uint32_t ODC_MMIO_MHOLD0_ORRCAP32_PERR = 16;
+static const uint32_t ODC_MMIO_MHOLD0_ORRCAP54_PERR = 17;
+static const uint32_t ODC_MMIO_MHOLD0_ORRCAP76_PERR = 18;
+static const uint32_t ODC_MMIO_MHOLD0_OTRCFG10_PERR = 19;
+static const uint32_t ODC_MMIO_MHOLD0_OTRCFG32_PERR = 20;
+static const uint32_t ODC_MMIO_MHOLD0_OTRCFG54_PERR = 21;
+static const uint32_t ODC_MMIO_MHOLD0_OTRCFG76_PERR = 22;
+static const uint32_t ODC_MMIO_MHOLD0_O0FNVID_O0FNCAP_PERR = 23;
+static const uint32_t ODC_MMIO_MHOLD0_O0ACTAG_O0FNID_PERR = 24;
+static const uint32_t ODC_MMIO_MHOLD0_O0VSVID_O0VSCAP_PERR = 25;
+static const uint32_t ODC_MMIO_MHOLD0_O0VSID_PERR = 26;
+static const uint32_t ODC_MMIO_MHOLD0_O1MBIT_O1DID_PERR = 27;
+static const uint32_t ODC_MMIO_MHOLD0_O1CCD_PERR = 28;
+static const uint32_t ODC_MMIO_MHOLD0_O1BAR0_PERR = 29;
+static const uint32_t ODC_MMIO_MHOLD0_O1BAR1_PERR = 30;
+static const uint32_t ODC_MMIO_MHOLD0_O1BAR2_PERR = 31;
+static const uint32_t ODC_MMIO_MHOLD0_O1SSYSID_PERR = 32;
+static const uint32_t ODC_MMIO_MHOLD0_O1CAPPTR_O1ROMBAR_PERR = 33;
+static const uint32_t ODC_MMIO_MHOLD0_OPASID_PERR = 34;
+static const uint32_t ODC_MMIO_MHOLD0_O1FNVID_O1FNCAP_PERR = 35;
+static const uint32_t ODC_MMIO_MHOLD0_O1ACTAG_O1FNID_PERR = 36;
+static const uint32_t ODC_MMIO_MHOLD0_O1INFVID_O1INFCAP_PERR = 37;
+static const uint32_t ODC_MMIO_MHOLD0_O1INFOFF_O1INFID_PERR = 38;
+static const uint32_t ODC_MMIO_MHOLD0_O1INFDAT_PERR = 39;
+static const uint32_t ODC_MMIO_MHOLD0_OCTRLVID_OCTRLCAP_PERR = 40;
+static const uint32_t ODC_MMIO_MHOLD0_OCTRLENB_OCTRLID_PERR = 41;
+static const uint32_t ODC_MMIO_MHOLD0_OCTRLPID_PERR = 42;
+static const uint32_t ODC_MMIO_MHOLD0_OCTRLTAG_PERR = 43;
+static const uint32_t ODC_MMIO_MHOLD0_O1VSVID_O1VSCAP_PERR = 44;
+static const uint32_t ODC_MMIO_MHOLD0_O1VSID_PERR = 45;
+static const uint32_t ODC_MMIO_MHOLD0_AFU_DESC_UNIMP = 46;
+static const uint32_t ODC_MMIO_MHOLD0_MMIO_ERR = 47;
+static const uint32_t ODC_MMIO_MHOLD0_SCOM_ERR = 48;
+static const uint32_t ODC_MMIO_MHOLD0_SCOM_CCMD_FSMPERR = 49;
+static const uint32_t ODC_MMIO_MHOLD0_SCOM_CRESP_FSMPERR = 50;
+static const uint32_t ODC_MMIO_MHOLD0_CTL_MMIO_FSMPERR = 51;
+static const uint32_t ODC_MMIO_MHOLD0_CTL_CCMD_FSMPERR = 52;
+static const uint32_t ODC_MMIO_MHOLD0_CTL_CRESP_FSMPERR = 53;
+static const uint32_t ODC_MMIO_MHOLD0_PIB_FSMPERR = 54;
+static const uint32_t ODC_MMIO_MHOLD0_CMUX_ARBPERR = 55;
+static const uint32_t ODC_MMIO_MHOLD0_CFG_CMDFIFO_OVRFLOW = 56;
+static const uint32_t ODC_MMIO_MHOLD0_CFG_RESPFIFO_OVRFLOW = 57;
+static const uint32_t ODC_MMIO_MHOLD0_CFGP_FIFO_OVRFLOW = 58;
+static const uint32_t ODC_MMIO_MHOLD0_MERRCTL_PERR = 59;
+static const uint32_t ODC_MMIO_MHOLD0_MHOLD1_PERR = 60;
+static const uint32_t ODC_MMIO_MHOLD0_MMASK1_PERR = 61;
+static const uint32_t ODC_MMIO_MHOLD0_MDBELL_PERR = 62;
+static const uint32_t ODC_MMIO_MHOLD0_RSVD = 63;
+
+
+static const uint64_t ODC_MMIO_MHOLD1 = 0x801087Eull;
+
+static const uint32_t ODC_MMIO_MHOLD1_ONAME0_ODESCTML_PERR = 0;
+static const uint32_t ODC_MMIO_MHOLD1_ONAME21_PERR = 1;
+static const uint32_t ODC_MMIO_MHOLD1_ONAME43_PERR = 2;
+static const uint32_t ODC_MMIO_MHOLD1_OAFUVER_ONAME5_PERR = 3;
+static const uint32_t ODC_MMIO_MHOLD1_OGMMIOOF_PERR = 4;
+static const uint32_t ODC_MMIO_MHOLD1_OGMMIOSZ_PERR = 5;
+static const uint32_t ODC_MMIO_MHOLD1_OPMMIOOOF_PERR = 6;
+static const uint32_t ODC_MMIO_MHOLD1_OPMMIOST_PERR = 7;
+static const uint32_t ODC_MMIO_MHOLD1_OMEMADDR_PERR = 8;
+static const uint32_t ODC_MMIO_MHOLD1_OWWID10_PERR = 9;
+static const uint32_t ODC_MMIO_MHOLD1_OWWID32_PERR = 10;
+static const uint32_t ODC_MMIO_MHOLD1_MHOLD0_PERR = 11;
+static const uint32_t ODC_MMIO_MHOLD1_MMASK0_PERR = 12;
+static const uint32_t ODC_MMIO_MHOLD1_MMIOERR_PERR = 13;
+static const uint32_t ODC_MMIO_MHOLD1_MMIOEWD_PERR = 14;
+static const uint32_t ODC_MMIO_MHOLD1_SCOMEWD_PERR = 15;
+static const uint32_t ODC_MMIO_MHOLD1_MCFGERRA_PERR = 16;
+static const uint32_t ODC_MMIO_MHOLD1_MCFGERRB_PERR = 17;
+static const uint32_t ODC_MMIO_MHOLD1_SNSC_BOTH_STARTS_ERR = 18;
+static const uint32_t ODC_MMIO_MHOLD1_SNSC_MULT_SEQ_PERR = 19;
+static const uint32_t ODC_MMIO_MHOLD1_SNSC_FSM_PERR = 20;
+static const uint32_t ODC_MMIO_MHOLD1_SNSC_OCTHERM_PERR = 21;
+static const uint32_t ODC_MMIO_MHOLD1_SNSC_D0THERM_PERR = 22;
+static const uint32_t ODC_MMIO_MHOLD1_SNSC_D1THERM_PERR = 23;
+static const uint32_t ODC_MMIO_MHOLD1_SNSC_D2THERM_PERR = 24;
+static const uint32_t ODC_MMIO_MHOLD1_SNSC_D3THERM_PERR = 25;
+static const uint32_t ODC_MMIO_MHOLD1_SNSC_RDWR_PERR = 26;
+static const uint32_t ODC_MMIO_MHOLD1_SNSC_ACTPWRUP_PERR = 27;
+static const uint32_t ODC_MMIO_MHOLD1_SNSC_FRAMESR_PERR = 28;
+static const uint32_t ODC_MMIO_MHOLD1_SNSC_HISTOBASELOW_PERR = 29;
+static const uint32_t ODC_MMIO_MHOLD1_SNSC_HISTOBASEHIGH_PERR = 30;
+static const uint32_t ODC_MMIO_MHOLD1_O0VSTLXA_PERR = 31;
+static const uint32_t ODC_MMIO_MHOLD1_O0VSTLXB_PERR = 32;
+static const uint32_t ODC_MMIO_MHOLD1_O0VSDLXA_PERR = 33;
+static const uint32_t ODC_MMIO_MHOLD1_O0VSDLXB_PERR = 34;
+static const uint32_t ODC_MMIO_MHOLD1_O0VSFLSH_PERR = 35;
+static const uint32_t ODC_MMIO_MHOLD1_BAD_FUNC_ACTAG_LEN = 36;
+static const uint32_t ODC_MMIO_MHOLD1_BAD_AFU_ACTAG_LEN = 37;
+static const uint32_t ODC_MMIO_MHOLD1_BAD_FUNC_PASID_LEN = 38;
+static const uint32_t ODC_MMIO_MHOLD1_BAD_AFU_PASID_LEN = 39;
+static const uint32_t ODC_MMIO_MHOLD1_MENTRP_PERR = 40;
+static const uint32_t ODC_MMIO_MHOLD1_OSYSMEML_PERR = 41;
+static const uint32_t ODC_MMIO_MHOLD1_MDEBUG0_PERR = 42;
+static const uint32_t ODC_MMIO_MHOLD1_MDEBUG1_PERR = 43;
+
+
+static const uint64_t ODC_MMIO_MMASK0 = 0x801087Dull;
+
+static const uint32_t ODC_MMIO_MMASK0_MMASK0_MSK = 0;
+static const uint32_t ODC_MMIO_MMASK0_MMASK0_MSK_LEN = 64;
+
+
+static const uint64_t ODC_MMIO_MMASK1 = 0x801087Full;
+
+static const uint32_t ODC_MMIO_MMASK1_MMASK1_MSK = 0;
+static const uint32_t ODC_MMIO_MMASK1_MMASK1_MSK_LEN = 44;
+
+
+static const uint64_t ODC_MMIO_MMIOERR = 0x80108E8ull;
+
+static const uint32_t ODC_MMIO_MMIOERR_WDATA_P = 0;
+static const uint32_t ODC_MMIO_MMIOERR_WDATA_P_LEN = 8;
+static const uint32_t ODC_MMIO_MMIOERR_INFO = 8;
+static const uint32_t ODC_MMIO_MMIOERR_INFO_LEN = 16;
+static const uint32_t ODC_MMIO_MMIOERR_PLEN = 25;
+static const uint32_t ODC_MMIO_MMIOERR_PLEN_LEN = 3;
+static const uint32_t ODC_MMIO_MMIOERR_RNW = 28;
+static const uint32_t ODC_MMIO_MMIOERR_ADDR = 29;
+static const uint32_t ODC_MMIO_MMIOERR_ADDR_LEN = 35;
+
+
+static const uint64_t ODC_MMIO_MMIOEWD = 0x80108E9ull;
+
+static const uint32_t ODC_MMIO_MMIOEWD_MMIOEWD_WDATA = 0;
+static const uint32_t ODC_MMIO_MMIOEWD_MMIOEWD_WDATA_LEN = 64;
+
+
+static const uint64_t ODC_MMIO_MPIBERR0 = 0x80108FCull;
+
+static const uint32_t ODC_MMIO_MPIBERR0_MPIBERR0_ERRINFO = 0;
+static const uint32_t ODC_MMIO_MPIBERR0_MPIBERR0_ERRINFO_LEN = 64;
+
+
+static const uint64_t ODC_MMIO_MPIBERR1 = 0x80108FDull;
+
+static const uint32_t ODC_MMIO_MPIBERR1_MPIBERR1_ERRINFO = 0;
+static const uint32_t ODC_MMIO_MPIBERR1_MPIBERR1_ERRINFO_LEN = 64;
+
+
+static const uint64_t ODC_MMIO_MPIBERR2 = 0x80108FEull;
+
+static const uint32_t ODC_MMIO_MPIBERR2_MPIBERR2_ERRINFO = 0;
+static const uint32_t ODC_MMIO_MPIBERR2_MPIBERR2_ERRINFO_LEN = 64;
+
+
+static const uint64_t ODC_MMIO_MPIBERR3 = 0x80108FFull;
+
+static const uint32_t ODC_MMIO_MPIBERR3_MPIBERR3_ERRINFO = 0;
+static const uint32_t ODC_MMIO_MPIBERR3_MPIBERR3_ERRINFO_LEN = 64;
+
+
+static const uint64_t ODC_MMIO_MXMETA = 0x80108E4ull;
+
+static const uint32_t ODC_MMIO_MXMETA_MXMETA_XMETA_MODE = 1;
+
+
+static const uint64_t ODC_MMIO_O0ACTAG_O0FNID = 0x8010831ull;
+
+static const uint32_t ODC_MMIO_O0ACTAG_O0FNID_ACTAG_BASE = 4;
+static const uint32_t ODC_MMIO_O0ACTAG_O0FNID_ACTAG_BASE_LEN = 12;
+static const uint32_t ODC_MMIO_O0ACTAG_O0FNID_ACTAG_LENGTH = 20;
+static const uint32_t ODC_MMIO_O0ACTAG_O0FNID_ACTAG_LENGTH_LEN = 12;
+static const uint32_t ODC_MMIO_O0ACTAG_O0FNID_AFU_PRESENT = 32;
+static const uint32_t ODC_MMIO_O0ACTAG_O0FNID_MAX_AFU_INDEX = 34;
+static const uint32_t ODC_MMIO_O0ACTAG_O0FNID_MAX_AFU_INDEX_LEN = 6;
+static const uint32_t ODC_MMIO_O0ACTAG_O0FNID_FUNCTION_RESET = 40;
+
+
+static const uint64_t ODC_MMIO_O0BAR0 = 0x8010802ull;
+
+static const uint32_t ODC_MMIO_O0BAR0_BAR_ADDRESS = 0;
+static const uint32_t ODC_MMIO_O0BAR0_BAR_ADDRESS_LEN = 60;
+static const uint32_t ODC_MMIO_O0BAR0_PREFETCHABLE = 60;
+static const uint32_t ODC_MMIO_O0BAR0_TYPE = 61;
+static const uint32_t ODC_MMIO_O0BAR0_TYPE_LEN = 2;
+static const uint32_t ODC_MMIO_O0BAR0_ADDRESS_SPACE = 63;
+
+
+static const uint64_t ODC_MMIO_O0BAR1 = 0x8010803ull;
+
+static const uint32_t ODC_MMIO_O0BAR1_BAR_ADDRESS = 0;
+static const uint32_t ODC_MMIO_O0BAR1_BAR_ADDRESS_LEN = 60;
+static const uint32_t ODC_MMIO_O0BAR1_PREFETCHABLE = 60;
+static const uint32_t ODC_MMIO_O0BAR1_TYPE = 61;
+static const uint32_t ODC_MMIO_O0BAR1_TYPE_LEN = 2;
+static const uint32_t ODC_MMIO_O0BAR1_ADDRESS_SPACE = 63;
+
+
+static const uint64_t ODC_MMIO_O0BAR2 = 0x8010804ull;
+
+static const uint32_t ODC_MMIO_O0BAR2_BAR_ADDRESS = 0;
+static const uint32_t ODC_MMIO_O0BAR2_BAR_ADDRESS_LEN = 60;
+static const uint32_t ODC_MMIO_O0BAR2_PREFETCHABLE = 60;
+static const uint32_t ODC_MMIO_O0BAR2_TYPE = 61;
+static const uint32_t ODC_MMIO_O0BAR2_TYPE_LEN = 2;
+static const uint32_t ODC_MMIO_O0BAR2_ADDRESS_SPACE = 63;
+
+
+static const uint64_t ODC_MMIO_O0CAPPTR_O0ROMBAR = 0x8010806ull;
+
+static const uint32_t ODC_MMIO_O0CAPPTR_O0ROMBAR_BASE = 32;
+static const uint32_t ODC_MMIO_O0CAPPTR_O0ROMBAR_BASE_LEN = 21;
+static const uint32_t ODC_MMIO_O0CAPPTR_O0ROMBAR_ENABLE = 63;
+
+
+static const uint64_t ODC_MMIO_O0CCD = 0x8010801ull;
+
+static const uint32_t ODC_MMIO_O0CCD_MULTI_FUNCTION = 8;
+static const uint32_t ODC_MMIO_O0CCD_CLASS_CODE = 32;
+static const uint32_t ODC_MMIO_O0CCD_CLASS_CODE_LEN = 24;
+static const uint32_t ODC_MMIO_O0CCD_REVISION_ID = 56;
+static const uint32_t ODC_MMIO_O0CCD_REVISION_ID_LEN = 8;
+
+
+static const uint64_t ODC_MMIO_O0FNVID_O0FNCAP = 0x8010830ull;
+
+
+
+static const uint64_t ODC_MMIO_O0MBIT_O0DID = 0x8010800ull;
+
+static const uint32_t ODC_MMIO_O0MBIT_O0DID_MEMORY_SPACE = 30;
+static const uint32_t ODC_MMIO_O0MBIT_O0DID_DEVICE_ID = 32;
+static const uint32_t ODC_MMIO_O0MBIT_O0DID_DEVICE_ID_LEN = 16;
+static const uint32_t ODC_MMIO_O0MBIT_O0DID_VENDOR_ID = 48;
+static const uint32_t ODC_MMIO_O0MBIT_O0DID_VENDOR_ID_LEN = 16;
+
+
+static const uint64_t ODC_MMIO_O0SSYSID = 0x8010805ull;
+
+static const uint32_t ODC_MMIO_O0SSYSID_ID = 0;
+static const uint32_t ODC_MMIO_O0SSYSID_ID_LEN = 16;
+static const uint32_t ODC_MMIO_O0SSYSID_VENDOR_ID = 16;
+static const uint32_t ODC_MMIO_O0SSYSID_VENDOR_ID_LEN = 16;
+
+
+static const uint64_t ODC_MMIO_O0VSDLXA = 0x8010864ull;
+
+static const uint32_t ODC_MMIO_O0VSDLXA_PORT1 = 0;
+static const uint32_t ODC_MMIO_O0VSDLXA_PORT1_LEN = 32;
+static const uint32_t ODC_MMIO_O0VSDLXA_PORT0 = 32;
+static const uint32_t ODC_MMIO_O0VSDLXA_PORT0_LEN = 32;
+
+
+static const uint64_t ODC_MMIO_O0VSDLXB = 0x8010865ull;
+
+static const uint32_t ODC_MMIO_O0VSDLXB_PORT3 = 0;
+static const uint32_t ODC_MMIO_O0VSDLXB_PORT3_LEN = 32;
+static const uint32_t ODC_MMIO_O0VSDLXB_PORT2 = 32;
+static const uint32_t ODC_MMIO_O0VSDLXB_PORT2_LEN = 32;
+
+
+static const uint64_t ODC_MMIO_O0VSFLSH = 0x8010866ull;
+
+static const uint32_t ODC_MMIO_O0VSFLSH_DATA = 0;
+static const uint32_t ODC_MMIO_O0VSFLSH_DATA_LEN = 32;
+static const uint32_t ODC_MMIO_O0VSFLSH_CONTROL = 44;
+static const uint32_t ODC_MMIO_O0VSFLSH_CONTROL_LEN = 20;
+
+
+static const uint64_t ODC_MMIO_O0VSID = 0x8010861ull;
+
+static const uint32_t ODC_MMIO_O0VSID_O0VSID_VENDOR_UNIQUE = 32;
+static const uint32_t ODC_MMIO_O0VSID_O0VSID_VENDOR_UNIQUE_LEN = 16;
+
+
+static const uint64_t ODC_MMIO_O0VSTLXA = 0x8010862ull;
+
+static const uint32_t ODC_MMIO_O0VSTLXA_PORT1 = 0;
+static const uint32_t ODC_MMIO_O0VSTLXA_PORT1_LEN = 32;
+static const uint32_t ODC_MMIO_O0VSTLXA_PORT0 = 32;
+static const uint32_t ODC_MMIO_O0VSTLXA_PORT0_LEN = 32;
+
+
+static const uint64_t ODC_MMIO_O0VSTLXB = 0x8010863ull;
+
+static const uint32_t ODC_MMIO_O0VSTLXB_PORT3 = 0;
+static const uint32_t ODC_MMIO_O0VSTLXB_PORT3_LEN = 32;
+static const uint32_t ODC_MMIO_O0VSTLXB_PORT2 = 32;
+static const uint32_t ODC_MMIO_O0VSTLXB_PORT2_LEN = 32;
+
+
+static const uint64_t ODC_MMIO_O0VSVID_O0VSCAP = 0x8010860ull;
+
+
+
+static const uint64_t ODC_MMIO_O1ACTAG_O1FNID = 0x80108B1ull;
+
+static const uint32_t ODC_MMIO_O1ACTAG_O1FNID_ACTAG_BASE = 4;
+static const uint32_t ODC_MMIO_O1ACTAG_O1FNID_ACTAG_BASE_LEN = 12;
+static const uint32_t ODC_MMIO_O1ACTAG_O1FNID_ACTAG_LENGTH = 20;
+static const uint32_t ODC_MMIO_O1ACTAG_O1FNID_ACTAG_LENGTH_LEN = 12;
+static const uint32_t ODC_MMIO_O1ACTAG_O1FNID_AFU_PRESENT = 32;
+static const uint32_t ODC_MMIO_O1ACTAG_O1FNID_MAX_AFU_INDEX = 34;
+static const uint32_t ODC_MMIO_O1ACTAG_O1FNID_MAX_AFU_INDEX_LEN = 6;
+static const uint32_t ODC_MMIO_O1ACTAG_O1FNID_FUNCTION_RESET = 40;
+
+
+static const uint64_t ODC_MMIO_O1BAR0 = 0x8010882ull;
+
+static const uint32_t ODC_MMIO_O1BAR0_O1BAR0_BAR_ADDRESS = 0;
+static const uint32_t ODC_MMIO_O1BAR0_O1BAR0_BAR_ADDRESS_LEN = 29;
+
+
+static const uint64_t ODC_MMIO_O1BAR1 = 0x8010883ull;
+
+static const uint32_t ODC_MMIO_O1BAR1_BAR_ADDRESS = 0;
+static const uint32_t ODC_MMIO_O1BAR1_BAR_ADDRESS_LEN = 60;
+static const uint32_t ODC_MMIO_O1BAR1_PREFETCHABLE = 60;
+static const uint32_t ODC_MMIO_O1BAR1_TYPE = 61;
+static const uint32_t ODC_MMIO_O1BAR1_TYPE_LEN = 2;
+static const uint32_t ODC_MMIO_O1BAR1_ADDRESS_SPACE = 63;
+
+
+static const uint64_t ODC_MMIO_O1BAR2 = 0x8010884ull;
+
+static const uint32_t ODC_MMIO_O1BAR2_BAR_ADDRESS = 0;
+static const uint32_t ODC_MMIO_O1BAR2_BAR_ADDRESS_LEN = 60;
+static const uint32_t ODC_MMIO_O1BAR2_PREFETCHABLE = 60;
+static const uint32_t ODC_MMIO_O1BAR2_TYPE = 61;
+static const uint32_t ODC_MMIO_O1BAR2_TYPE_LEN = 2;
+static const uint32_t ODC_MMIO_O1BAR2_ADDRESS_SPACE = 63;
+
+
+static const uint64_t ODC_MMIO_O1CAPPTR_O1ROMBAR = 0x8010886ull;
+
+static const uint32_t ODC_MMIO_O1CAPPTR_O1ROMBAR_BASE = 32;
+static const uint32_t ODC_MMIO_O1CAPPTR_O1ROMBAR_BASE_LEN = 21;
+static const uint32_t ODC_MMIO_O1CAPPTR_O1ROMBAR_ENABLE = 63;
+
+
+static const uint64_t ODC_MMIO_O1CCD = 0x8010881ull;
+
+static const uint32_t ODC_MMIO_O1CCD_MULTI_FUNCTION = 8;
+static const uint32_t ODC_MMIO_O1CCD_CLASS_CODE = 32;
+static const uint32_t ODC_MMIO_O1CCD_CLASS_CODE_LEN = 24;
+static const uint32_t ODC_MMIO_O1CCD_REVISION_ID = 56;
+static const uint32_t ODC_MMIO_O1CCD_REVISION_ID_LEN = 8;
+
+
+static const uint64_t ODC_MMIO_O1FNVID_O1FNCAP = 0x80108B0ull;
+
+
+
+static const uint64_t ODC_MMIO_O1INFDAT = 0x80108C2ull;
+
+static const uint32_t ODC_MMIO_O1INFDAT_O1INFDAT_AFU_DESCRIPTOR_DATA = 32;
+static const uint32_t ODC_MMIO_O1INFDAT_O1INFDAT_AFU_DESCRIPTOR_DATA_LEN = 32;
+
+
+static const uint64_t ODC_MMIO_O1INFOFF_O1INFID = 0x80108C1ull;
+
+static const uint32_t ODC_MMIO_O1INFOFF_O1INFID_DATA_VALID = 0;
+static const uint32_t ODC_MMIO_O1INFOFF_O1INFID_AFU_DESCRIPTOR_OFFSET = 1;
+static const uint32_t ODC_MMIO_O1INFOFF_O1INFID_AFU_DESCRIPTOR_OFFSET_LEN = 31;
+static const uint32_t ODC_MMIO_O1INFOFF_O1INFID_AFU_INFO_INDEX = 42;
+static const uint32_t ODC_MMIO_O1INFOFF_O1INFID_AFU_INFO_INDEX_LEN = 6;
+
+
+static const uint64_t ODC_MMIO_O1INFVID_O1INFCAP = 0x80108C0ull;
+
+
+
+static const uint64_t ODC_MMIO_O1MBIT_O1DID = 0x8010880ull;
+
+static const uint32_t ODC_MMIO_O1MBIT_O1DID_MEMORY_SPACE = 30;
+static const uint32_t ODC_MMIO_O1MBIT_O1DID_DEVICE_ID = 32;
+static const uint32_t ODC_MMIO_O1MBIT_O1DID_DEVICE_ID_LEN = 16;
+static const uint32_t ODC_MMIO_O1MBIT_O1DID_VENDOR_ID = 48;
+static const uint32_t ODC_MMIO_O1MBIT_O1DID_VENDOR_ID_LEN = 16;
+
+
+static const uint64_t ODC_MMIO_O1SSYSID = 0x8010885ull;
+
+static const uint32_t ODC_MMIO_O1SSYSID_ID = 0;
+static const uint32_t ODC_MMIO_O1SSYSID_ID_LEN = 16;
+static const uint32_t ODC_MMIO_O1SSYSID_VENDOR_ID = 16;
+static const uint32_t ODC_MMIO_O1SSYSID_VENDOR_ID_LEN = 16;
+
+
+static const uint64_t ODC_MMIO_O1VSID = 0x80108E1ull;
+
+static const uint32_t ODC_MMIO_O1VSID_O1VSID_VENDOR_UNIQUE = 32;
+static const uint32_t ODC_MMIO_O1VSID_O1VSID_VENDOR_UNIQUE_LEN = 16;
+
+
+static const uint64_t ODC_MMIO_O1VSVID_O1VSCAP = 0x80108E0ull;
+
+
+
+static const uint64_t ODC_MMIO_OAFUVER_ONAME5 = 0x80108F3ull;
+
+static const uint32_t ODC_MMIO_OAFUVER_ONAME5_AFU_VERSION_MAJOR = 0;
+static const uint32_t ODC_MMIO_OAFUVER_ONAME5_AFU_VERSION_MAJOR_LEN = 8;
+static const uint32_t ODC_MMIO_OAFUVER_ONAME5_AFU_VERSION_MINOR = 8;
+static const uint32_t ODC_MMIO_OAFUVER_ONAME5_AFU_VERSION_MINOR_LEN = 8;
+static const uint32_t ODC_MMIO_OAFUVER_ONAME5_AFU_C_TYPE = 16;
+static const uint32_t ODC_MMIO_OAFUVER_ONAME5_AFU_C_TYPE_LEN = 3;
+static const uint32_t ODC_MMIO_OAFUVER_ONAME5_AFU_M_TYPE = 19;
+static const uint32_t ODC_MMIO_OAFUVER_ONAME5_AFU_M_TYPE_LEN = 3;
+static const uint32_t ODC_MMIO_OAFUVER_ONAME5_PROFILE = 24;
+static const uint32_t ODC_MMIO_OAFUVER_ONAME5_PROFILE_LEN = 8;
+static const uint32_t ODC_MMIO_OAFUVER_ONAME5_NAME_SPACE_23 = 32;
+static const uint32_t ODC_MMIO_OAFUVER_ONAME5_NAME_SPACE_23_LEN = 8;
+static const uint32_t ODC_MMIO_OAFUVER_ONAME5_NAME_SPACE_22 = 40;
+static const uint32_t ODC_MMIO_OAFUVER_ONAME5_NAME_SPACE_22_LEN = 8;
+static const uint32_t ODC_MMIO_OAFUVER_ONAME5_NAME_SPACE_21 = 48;
+static const uint32_t ODC_MMIO_OAFUVER_ONAME5_NAME_SPACE_21_LEN = 8;
+static const uint32_t ODC_MMIO_OAFUVER_ONAME5_NAME_SPACE_20 = 56;
+static const uint32_t ODC_MMIO_OAFUVER_ONAME5_NAME_SPACE_20_LEN = 8;
+
+
+static const uint64_t ODC_MMIO_OCTRLENB_OCTRLID = 0x80108D1ull;
+
+static const uint32_t ODC_MMIO_OCTRLENB_OCTRLID_AFU_UNIQUE = 0;
+static const uint32_t ODC_MMIO_OCTRLENB_OCTRLID_AFU_UNIQUE_LEN = 4;
+static const uint32_t ODC_MMIO_OCTRLENB_OCTRLID_FENCE_AFU = 6;
+static const uint32_t ODC_MMIO_OCTRLENB_OCTRLID_ENABLE_AFU = 7;
+static const uint32_t ODC_MMIO_OCTRLENB_OCTRLID_RESET_AFU = 8;
+static const uint32_t ODC_MMIO_OCTRLENB_OCTRLID_TERMINATE_VALID = 11;
+static const uint32_t ODC_MMIO_OCTRLENB_OCTRLID_PASID_TERMINATION_VALUE = 12;
+static const uint32_t ODC_MMIO_OCTRLENB_OCTRLID_PASID_TERMINATION_VALUE_LEN = 20;
+static const uint32_t ODC_MMIO_OCTRLENB_OCTRLID_AFU_CONTROL_INDEX = 42;
+static const uint32_t ODC_MMIO_OCTRLENB_OCTRLID_AFU_CONTROL_INDEX_LEN = 6;
+
+
+static const uint64_t ODC_MMIO_OCTRLPID = 0x80108D2ull;
+
+static const uint32_t ODC_MMIO_OCTRLPID_METADATA_SUPPORTED = 0;
+static const uint32_t ODC_MMIO_OCTRLPID_METADATA_ENABLED = 1;
+static const uint32_t ODC_MMIO_OCTRLPID_HTRL = 2;
+static const uint32_t ODC_MMIO_OCTRLPID_HTRL_LEN = 3;
+static const uint32_t ODC_MMIO_OCTRLPID_PASID_BASE = 12;
+static const uint32_t ODC_MMIO_OCTRLPID_PASID_BASE_LEN = 20;
+static const uint32_t ODC_MMIO_OCTRLPID_PASID_LENGTH_ENABLED = 51;
+static const uint32_t ODC_MMIO_OCTRLPID_PASID_LENGTH_ENABLED_LEN = 5;
+static const uint32_t ODC_MMIO_OCTRLPID_PASID_LENGTH_SUPPORTED = 59;
+static const uint32_t ODC_MMIO_OCTRLPID_PASID_LENGTH_SUPPORTED_LEN = 5;
+
+
+static const uint64_t ODC_MMIO_OCTRLTAG = 0x80108D3ull;
+
+static const uint32_t ODC_MMIO_OCTRLTAG_BASE = 20;
+static const uint32_t ODC_MMIO_OCTRLTAG_BASE_LEN = 12;
+static const uint32_t ODC_MMIO_OCTRLTAG_LENGTH_ENABLED = 36;
+static const uint32_t ODC_MMIO_OCTRLTAG_LENGTH_ENABLED_LEN = 12;
+static const uint32_t ODC_MMIO_OCTRLTAG_LENGTH_SUPPORTED = 52;
+static const uint32_t ODC_MMIO_OCTRLTAG_LENGTH_SUPPORTED_LEN = 12;
+
+
+static const uint64_t ODC_MMIO_OCTRLVID_OCTRLCAP = 0x80108D0ull;
+
+
+
+static const uint64_t ODC_MMIO_ODSNHI = 0x8010811ull;
+
+static const uint32_t ODC_MMIO_ODSNHI_ODSNHI_DSN_HIGH = 32;
+static const uint32_t ODC_MMIO_ODSNHI_ODSNHI_DSN_HIGH_LEN = 32;
+
+
+static const uint64_t ODC_MMIO_ODSNLO_ODSNCAP = 0x8010810ull;
+
+static const uint32_t ODC_MMIO_ODSNLO_ODSNCAP_ODSNLO_ODSNCAP_DSN_LOW = 0;
+static const uint32_t ODC_MMIO_ODSNLO_ODSNCAP_ODSNLO_ODSNCAP_DSN_LOW_LEN = 32;
+
+
+static const uint64_t ODC_MMIO_OGMMIOOF = 0x80108F4ull;
+
+static const uint32_t ODC_MMIO_OGMMIOOF_OFFSET = 0;
+static const uint32_t ODC_MMIO_OGMMIOOF_OFFSET_LEN = 48;
+static const uint32_t ODC_MMIO_OGMMIOOF_BAR = 61;
+static const uint32_t ODC_MMIO_OGMMIOOF_BAR_LEN = 3;
+
+
+static const uint64_t ODC_MMIO_OGMMIOSZ = 0x80108F5ull;
+
+static const uint32_t ODC_MMIO_OGMMIOSZ_OGMMIOSZ_SIZE = 32;
+static const uint32_t ODC_MMIO_OGMMIOSZ_OGMMIOSZ_SIZE_LEN = 32;
+
+
+static const uint64_t ODC_MMIO_OMEMADDR = 0x80108F8ull;
+
+static const uint32_t ODC_MMIO_OMEMADDR_OMEMADDR_ADDR = 0;
+static const uint32_t ODC_MMIO_OMEMADDR_OMEMADDR_ADDR_LEN = 64;
+
+
+static const uint64_t ODC_MMIO_ONAME0_ODESCTML = 0x80108F0ull;
+
+static const uint32_t ODC_MMIO_ONAME0_ODESCTML_3 = 0;
+static const uint32_t ODC_MMIO_ONAME0_ODESCTML_3_LEN = 8;
+static const uint32_t ODC_MMIO_ONAME0_ODESCTML_2 = 8;
+static const uint32_t ODC_MMIO_ONAME0_ODESCTML_2_LEN = 8;
+static const uint32_t ODC_MMIO_ONAME0_ODESCTML_1 = 16;
+static const uint32_t ODC_MMIO_ONAME0_ODESCTML_1_LEN = 8;
+static const uint32_t ODC_MMIO_ONAME0_ODESCTML_0 = 24;
+static const uint32_t ODC_MMIO_ONAME0_ODESCTML_0_LEN = 8;
+
+
+static const uint64_t ODC_MMIO_ONAME21 = 0x80108F1ull;
+
+static const uint32_t ODC_MMIO_ONAME21_11 = 0;
+static const uint32_t ODC_MMIO_ONAME21_11_LEN = 8;
+static const uint32_t ODC_MMIO_ONAME21_10 = 8;
+static const uint32_t ODC_MMIO_ONAME21_10_LEN = 8;
+static const uint32_t ODC_MMIO_ONAME21_9 = 16;
+static const uint32_t ODC_MMIO_ONAME21_9_LEN = 8;
+static const uint32_t ODC_MMIO_ONAME21_8 = 24;
+static const uint32_t ODC_MMIO_ONAME21_8_LEN = 8;
+static const uint32_t ODC_MMIO_ONAME21_7 = 32;
+static const uint32_t ODC_MMIO_ONAME21_7_LEN = 8;
+static const uint32_t ODC_MMIO_ONAME21_6 = 40;
+static const uint32_t ODC_MMIO_ONAME21_6_LEN = 8;
+static const uint32_t ODC_MMIO_ONAME21_5 = 48;
+static const uint32_t ODC_MMIO_ONAME21_5_LEN = 8;
+static const uint32_t ODC_MMIO_ONAME21_4 = 56;
+static const uint32_t ODC_MMIO_ONAME21_4_LEN = 8;
+
+
+static const uint64_t ODC_MMIO_ONAME43 = 0x80108F2ull;
+
+static const uint32_t ODC_MMIO_ONAME43_19 = 0;
+static const uint32_t ODC_MMIO_ONAME43_19_LEN = 8;
+static const uint32_t ODC_MMIO_ONAME43_18 = 8;
+static const uint32_t ODC_MMIO_ONAME43_18_LEN = 8;
+static const uint32_t ODC_MMIO_ONAME43_17 = 16;
+static const uint32_t ODC_MMIO_ONAME43_17_LEN = 8;
+static const uint32_t ODC_MMIO_ONAME43_16 = 24;
+static const uint32_t ODC_MMIO_ONAME43_16_LEN = 8;
+static const uint32_t ODC_MMIO_ONAME43_15 = 32;
+static const uint32_t ODC_MMIO_ONAME43_15_LEN = 8;
+static const uint32_t ODC_MMIO_ONAME43_14 = 40;
+static const uint32_t ODC_MMIO_ONAME43_14_LEN = 8;
+static const uint32_t ODC_MMIO_ONAME43_13 = 48;
+static const uint32_t ODC_MMIO_ONAME43_13_LEN = 8;
+static const uint32_t ODC_MMIO_ONAME43_12 = 56;
+static const uint32_t ODC_MMIO_ONAME43_12_LEN = 8;
+
+
+static const uint64_t ODC_MMIO_OPASID = 0x8010890ull;
+
+static const uint32_t ODC_MMIO_OPASID_OPASID_MAX_PASID_WIDTH = 19;
+static const uint32_t ODC_MMIO_OPASID_OPASID_MAX_PASID_WIDTH_LEN = 5;
+
+
+static const uint64_t ODC_MMIO_OPMMIOOF = 0x80108F6ull;
+
+static const uint32_t ODC_MMIO_OPMMIOOF_OFFSET = 0;
+static const uint32_t ODC_MMIO_OPMMIOOF_OFFSET_LEN = 48;
+static const uint32_t ODC_MMIO_OPMMIOOF_BAR = 61;
+static const uint32_t ODC_MMIO_OPMMIOOF_BAR_LEN = 3;
+
+
+static const uint64_t ODC_MMIO_OPMMIOST = 0x80108F7ull;
+
+static const uint32_t ODC_MMIO_OPMMIOST_MEM_SIZE = 24;
+static const uint32_t ODC_MMIO_OPMMIOST_MEM_SIZE_LEN = 8;
+static const uint32_t ODC_MMIO_OPMMIOST_STRIDE = 32;
+static const uint32_t ODC_MMIO_OPMMIOST_STRIDE_LEN = 16;
+
+
+static const uint64_t ODC_MMIO_ORRCAP10 = 0x8010826ull;
+
+static const uint32_t ODC_MMIO_ORRCAP10_55 = 0;
+static const uint32_t ODC_MMIO_ORRCAP10_55_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP10_54 = 4;
+static const uint32_t ODC_MMIO_ORRCAP10_54_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP10_53 = 8;
+static const uint32_t ODC_MMIO_ORRCAP10_53_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP10_52 = 12;
+static const uint32_t ODC_MMIO_ORRCAP10_52_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP10_51 = 16;
+static const uint32_t ODC_MMIO_ORRCAP10_51_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP10_50 = 20;
+static const uint32_t ODC_MMIO_ORRCAP10_50_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP10_49 = 24;
+static const uint32_t ODC_MMIO_ORRCAP10_49_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP10_48 = 28;
+static const uint32_t ODC_MMIO_ORRCAP10_48_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP10_63 = 32;
+static const uint32_t ODC_MMIO_ORRCAP10_63_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP10_62 = 36;
+static const uint32_t ODC_MMIO_ORRCAP10_62_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP10_61 = 40;
+static const uint32_t ODC_MMIO_ORRCAP10_61_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP10_60 = 44;
+static const uint32_t ODC_MMIO_ORRCAP10_60_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP10_59 = 48;
+static const uint32_t ODC_MMIO_ORRCAP10_59_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP10_58 = 52;
+static const uint32_t ODC_MMIO_ORRCAP10_58_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP10_57 = 56;
+static const uint32_t ODC_MMIO_ORRCAP10_57_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP10_56 = 60;
+static const uint32_t ODC_MMIO_ORRCAP10_56_LEN = 4;
+
+
+static const uint64_t ODC_MMIO_ORRCAP32 = 0x8010827ull;
+
+static const uint32_t ODC_MMIO_ORRCAP32_39 = 0;
+static const uint32_t ODC_MMIO_ORRCAP32_39_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP32_38 = 4;
+static const uint32_t ODC_MMIO_ORRCAP32_38_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP32_37 = 8;
+static const uint32_t ODC_MMIO_ORRCAP32_37_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP32_36 = 12;
+static const uint32_t ODC_MMIO_ORRCAP32_36_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP32_35 = 16;
+static const uint32_t ODC_MMIO_ORRCAP32_35_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP32_34 = 20;
+static const uint32_t ODC_MMIO_ORRCAP32_34_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP32_33 = 24;
+static const uint32_t ODC_MMIO_ORRCAP32_33_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP32_32 = 28;
+static const uint32_t ODC_MMIO_ORRCAP32_32_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP32_47 = 32;
+static const uint32_t ODC_MMIO_ORRCAP32_47_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP32_46 = 36;
+static const uint32_t ODC_MMIO_ORRCAP32_46_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP32_45 = 40;
+static const uint32_t ODC_MMIO_ORRCAP32_45_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP32_44 = 44;
+static const uint32_t ODC_MMIO_ORRCAP32_44_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP32_43 = 48;
+static const uint32_t ODC_MMIO_ORRCAP32_43_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP32_42 = 52;
+static const uint32_t ODC_MMIO_ORRCAP32_42_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP32_41 = 56;
+static const uint32_t ODC_MMIO_ORRCAP32_41_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP32_40 = 60;
+static const uint32_t ODC_MMIO_ORRCAP32_40_LEN = 4;
+
+
+static const uint64_t ODC_MMIO_ORRCAP54 = 0x8010828ull;
+
+static const uint32_t ODC_MMIO_ORRCAP54_23 = 0;
+static const uint32_t ODC_MMIO_ORRCAP54_23_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP54_22 = 4;
+static const uint32_t ODC_MMIO_ORRCAP54_22_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP54_21 = 8;
+static const uint32_t ODC_MMIO_ORRCAP54_21_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP54_20 = 12;
+static const uint32_t ODC_MMIO_ORRCAP54_20_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP54_19 = 16;
+static const uint32_t ODC_MMIO_ORRCAP54_19_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP54_18 = 20;
+static const uint32_t ODC_MMIO_ORRCAP54_18_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP54_17 = 24;
+static const uint32_t ODC_MMIO_ORRCAP54_17_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP54_16 = 28;
+static const uint32_t ODC_MMIO_ORRCAP54_16_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP54_31 = 32;
+static const uint32_t ODC_MMIO_ORRCAP54_31_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP54_30 = 36;
+static const uint32_t ODC_MMIO_ORRCAP54_30_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP54_29 = 40;
+static const uint32_t ODC_MMIO_ORRCAP54_29_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP54_28 = 44;
+static const uint32_t ODC_MMIO_ORRCAP54_28_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP54_27 = 48;
+static const uint32_t ODC_MMIO_ORRCAP54_27_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP54_26 = 52;
+static const uint32_t ODC_MMIO_ORRCAP54_26_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP54_25 = 56;
+static const uint32_t ODC_MMIO_ORRCAP54_25_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP54_24 = 60;
+static const uint32_t ODC_MMIO_ORRCAP54_24_LEN = 4;
+
+
+static const uint64_t ODC_MMIO_ORRCAP76 = 0x8010829ull;
+
+static const uint32_t ODC_MMIO_ORRCAP76_7 = 0;
+static const uint32_t ODC_MMIO_ORRCAP76_7_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP76_6 = 4;
+static const uint32_t ODC_MMIO_ORRCAP76_6_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP76_5 = 8;
+static const uint32_t ODC_MMIO_ORRCAP76_5_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP76_4 = 12;
+static const uint32_t ODC_MMIO_ORRCAP76_4_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP76_3 = 16;
+static const uint32_t ODC_MMIO_ORRCAP76_3_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP76_2 = 20;
+static const uint32_t ODC_MMIO_ORRCAP76_2_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP76_1 = 24;
+static const uint32_t ODC_MMIO_ORRCAP76_1_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP76_0 = 28;
+static const uint32_t ODC_MMIO_ORRCAP76_0_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP76_15 = 32;
+static const uint32_t ODC_MMIO_ORRCAP76_15_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP76_14 = 36;
+static const uint32_t ODC_MMIO_ORRCAP76_14_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP76_13 = 40;
+static const uint32_t ODC_MMIO_ORRCAP76_13_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP76_12 = 44;
+static const uint32_t ODC_MMIO_ORRCAP76_12_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP76_11 = 48;
+static const uint32_t ODC_MMIO_ORRCAP76_11_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP76_10 = 52;
+static const uint32_t ODC_MMIO_ORRCAP76_10_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP76_9 = 56;
+static const uint32_t ODC_MMIO_ORRCAP76_9_LEN = 4;
+static const uint32_t ODC_MMIO_ORRCAP76_8 = 60;
+static const uint32_t ODC_MMIO_ORRCAP76_8_LEN = 4;
+
+
+static const uint64_t ODC_MMIO_ORTCAP = 0x8010823ull;
+
+static const uint32_t ODC_MMIO_ORTCAP_31 = 0;
+static const uint32_t ODC_MMIO_ORTCAP_30 = 1;
+static const uint32_t ODC_MMIO_ORTCAP_29 = 2;
+static const uint32_t ODC_MMIO_ORTCAP_28 = 3;
+static const uint32_t ODC_MMIO_ORTCAP_27 = 4;
+static const uint32_t ODC_MMIO_ORTCAP_26 = 5;
+static const uint32_t ODC_MMIO_ORTCAP_25 = 6;
+static const uint32_t ODC_MMIO_ORTCAP_24 = 7;
+static const uint32_t ODC_MMIO_ORTCAP_23 = 8;
+static const uint32_t ODC_MMIO_ORTCAP_22 = 9;
+static const uint32_t ODC_MMIO_ORTCAP_21 = 10;
+static const uint32_t ODC_MMIO_ORTCAP_20 = 11;
+static const uint32_t ODC_MMIO_ORTCAP_19 = 12;
+static const uint32_t ODC_MMIO_ORTCAP_18 = 13;
+static const uint32_t ODC_MMIO_ORTCAP_17 = 14;
+static const uint32_t ODC_MMIO_ORTCAP_16 = 15;
+static const uint32_t ODC_MMIO_ORTCAP_15 = 16;
+static const uint32_t ODC_MMIO_ORTCAP_14 = 17;
+static const uint32_t ODC_MMIO_ORTCAP_13 = 18;
+static const uint32_t ODC_MMIO_ORTCAP_12 = 19;
+static const uint32_t ODC_MMIO_ORTCAP_11 = 20;
+static const uint32_t ODC_MMIO_ORTCAP_10 = 21;
+static const uint32_t ODC_MMIO_ORTCAP_9 = 22;
+static const uint32_t ODC_MMIO_ORTCAP_8 = 23;
+static const uint32_t ODC_MMIO_ORTCAP_7 = 24;
+static const uint32_t ODC_MMIO_ORTCAP_6 = 25;
+static const uint32_t ODC_MMIO_ORTCAP_5 = 26;
+static const uint32_t ODC_MMIO_ORTCAP_4 = 27;
+static const uint32_t ODC_MMIO_ORTCAP_3 = 28;
+static const uint32_t ODC_MMIO_ORTCAP_2 = 29;
+static const uint32_t ODC_MMIO_ORTCAP_1 = 30;
+static const uint32_t ODC_MMIO_ORTCAP_0 = 31;
+static const uint32_t ODC_MMIO_ORTCAP_63 = 32;
+static const uint32_t ODC_MMIO_ORTCAP_62 = 33;
+static const uint32_t ODC_MMIO_ORTCAP_61 = 34;
+static const uint32_t ODC_MMIO_ORTCAP_60 = 35;
+static const uint32_t ODC_MMIO_ORTCAP_59 = 36;
+static const uint32_t ODC_MMIO_ORTCAP_58 = 37;
+static const uint32_t ODC_MMIO_ORTCAP_57 = 38;
+static const uint32_t ODC_MMIO_ORTCAP_56 = 39;
+static const uint32_t ODC_MMIO_ORTCAP_55 = 40;
+static const uint32_t ODC_MMIO_ORTCAP_54 = 41;
+static const uint32_t ODC_MMIO_ORTCAP_53 = 42;
+static const uint32_t ODC_MMIO_ORTCAP_52 = 43;
+static const uint32_t ODC_MMIO_ORTCAP_51 = 44;
+static const uint32_t ODC_MMIO_ORTCAP_50 = 45;
+static const uint32_t ODC_MMIO_ORTCAP_49 = 46;
+static const uint32_t ODC_MMIO_ORTCAP_48 = 47;
+static const uint32_t ODC_MMIO_ORTCAP_47 = 48;
+static const uint32_t ODC_MMIO_ORTCAP_46 = 49;
+static const uint32_t ODC_MMIO_ORTCAP_45 = 50;
+static const uint32_t ODC_MMIO_ORTCAP_44 = 51;
+static const uint32_t ODC_MMIO_ORTCAP_43 = 52;
+static const uint32_t ODC_MMIO_ORTCAP_42 = 53;
+static const uint32_t ODC_MMIO_ORTCAP_41 = 54;
+static const uint32_t ODC_MMIO_ORTCAP_40 = 55;
+static const uint32_t ODC_MMIO_ORTCAP_39 = 56;
+static const uint32_t ODC_MMIO_ORTCAP_38 = 57;
+static const uint32_t ODC_MMIO_ORTCAP_37 = 58;
+static const uint32_t ODC_MMIO_ORTCAP_36 = 59;
+static const uint32_t ODC_MMIO_ORTCAP_35 = 60;
+static const uint32_t ODC_MMIO_ORTCAP_34 = 61;
+static const uint32_t ODC_MMIO_ORTCAP_33 = 62;
+static const uint32_t ODC_MMIO_ORTCAP_32 = 63;
+
+
+static const uint64_t ODC_MMIO_OSYSMEML = 0x80108FBull;
+
+static const uint32_t ODC_MMIO_OSYSMEML_OSYSMEML_SYSLEN = 0;
+static const uint32_t ODC_MMIO_OSYSMEML_OSYSMEML_SYSLEN_LEN = 48;
+
+
+static const uint64_t ODC_MMIO_OTLVID_OTLCAP = 0x8010820ull;
+
+
+
+static const uint64_t ODC_MMIO_OTRCFG10 = 0x801082Aull;
+
+static const uint32_t ODC_MMIO_OTRCFG10_55 = 0;
+static const uint32_t ODC_MMIO_OTRCFG10_55_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG10_54 = 4;
+static const uint32_t ODC_MMIO_OTRCFG10_54_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG10_53 = 8;
+static const uint32_t ODC_MMIO_OTRCFG10_53_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG10_52 = 12;
+static const uint32_t ODC_MMIO_OTRCFG10_52_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG10_51 = 16;
+static const uint32_t ODC_MMIO_OTRCFG10_51_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG10_50 = 20;
+static const uint32_t ODC_MMIO_OTRCFG10_50_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG10_49 = 24;
+static const uint32_t ODC_MMIO_OTRCFG10_49_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG10_48 = 28;
+static const uint32_t ODC_MMIO_OTRCFG10_48_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG10_63 = 32;
+static const uint32_t ODC_MMIO_OTRCFG10_63_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG10_62 = 36;
+static const uint32_t ODC_MMIO_OTRCFG10_62_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG10_61 = 40;
+static const uint32_t ODC_MMIO_OTRCFG10_61_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG10_60 = 44;
+static const uint32_t ODC_MMIO_OTRCFG10_60_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG10_59 = 48;
+static const uint32_t ODC_MMIO_OTRCFG10_59_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG10_58 = 52;
+static const uint32_t ODC_MMIO_OTRCFG10_58_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG10_57 = 56;
+static const uint32_t ODC_MMIO_OTRCFG10_57_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG10_56 = 60;
+static const uint32_t ODC_MMIO_OTRCFG10_56_LEN = 4;
+
+
+static const uint64_t ODC_MMIO_OTRCFG32 = 0x801082Bull;
+
+static const uint32_t ODC_MMIO_OTRCFG32_39 = 0;
+static const uint32_t ODC_MMIO_OTRCFG32_39_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG32_38 = 4;
+static const uint32_t ODC_MMIO_OTRCFG32_38_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG32_37 = 8;
+static const uint32_t ODC_MMIO_OTRCFG32_37_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG32_36 = 12;
+static const uint32_t ODC_MMIO_OTRCFG32_36_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG32_35 = 16;
+static const uint32_t ODC_MMIO_OTRCFG32_35_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG32_34 = 20;
+static const uint32_t ODC_MMIO_OTRCFG32_34_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG32_33 = 24;
+static const uint32_t ODC_MMIO_OTRCFG32_33_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG32_32 = 28;
+static const uint32_t ODC_MMIO_OTRCFG32_32_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG32_47 = 32;
+static const uint32_t ODC_MMIO_OTRCFG32_47_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG32_46 = 36;
+static const uint32_t ODC_MMIO_OTRCFG32_46_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG32_45 = 40;
+static const uint32_t ODC_MMIO_OTRCFG32_45_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG32_44 = 44;
+static const uint32_t ODC_MMIO_OTRCFG32_44_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG32_43 = 48;
+static const uint32_t ODC_MMIO_OTRCFG32_43_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG32_42 = 52;
+static const uint32_t ODC_MMIO_OTRCFG32_42_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG32_41 = 56;
+static const uint32_t ODC_MMIO_OTRCFG32_41_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG32_40 = 60;
+static const uint32_t ODC_MMIO_OTRCFG32_40_LEN = 4;
+
+
+static const uint64_t ODC_MMIO_OTRCFG54 = 0x801082Cull;
+
+static const uint32_t ODC_MMIO_OTRCFG54_23 = 0;
+static const uint32_t ODC_MMIO_OTRCFG54_23_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG54_22 = 4;
+static const uint32_t ODC_MMIO_OTRCFG54_22_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG54_21 = 8;
+static const uint32_t ODC_MMIO_OTRCFG54_21_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG54_20 = 12;
+static const uint32_t ODC_MMIO_OTRCFG54_20_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG54_19 = 16;
+static const uint32_t ODC_MMIO_OTRCFG54_19_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG54_18 = 20;
+static const uint32_t ODC_MMIO_OTRCFG54_18_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG54_17 = 24;
+static const uint32_t ODC_MMIO_OTRCFG54_17_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG54_16 = 28;
+static const uint32_t ODC_MMIO_OTRCFG54_16_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG54_31 = 32;
+static const uint32_t ODC_MMIO_OTRCFG54_31_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG54_30 = 36;
+static const uint32_t ODC_MMIO_OTRCFG54_30_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG54_29 = 40;
+static const uint32_t ODC_MMIO_OTRCFG54_29_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG54_28 = 44;
+static const uint32_t ODC_MMIO_OTRCFG54_28_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG54_27 = 48;
+static const uint32_t ODC_MMIO_OTRCFG54_27_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG54_26 = 52;
+static const uint32_t ODC_MMIO_OTRCFG54_26_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG54_25 = 56;
+static const uint32_t ODC_MMIO_OTRCFG54_25_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG54_24 = 60;
+static const uint32_t ODC_MMIO_OTRCFG54_24_LEN = 4;
+
+
+static const uint64_t ODC_MMIO_OTRCFG76 = 0x801082Dull;
+
+static const uint32_t ODC_MMIO_OTRCFG76_7 = 0;
+static const uint32_t ODC_MMIO_OTRCFG76_7_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG76_6 = 4;
+static const uint32_t ODC_MMIO_OTRCFG76_6_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG76_5 = 8;
+static const uint32_t ODC_MMIO_OTRCFG76_5_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG76_4 = 12;
+static const uint32_t ODC_MMIO_OTRCFG76_4_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG76_3 = 16;
+static const uint32_t ODC_MMIO_OTRCFG76_3_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG76_2 = 20;
+static const uint32_t ODC_MMIO_OTRCFG76_2_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG76_1 = 24;
+static const uint32_t ODC_MMIO_OTRCFG76_1_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG76_0 = 28;
+static const uint32_t ODC_MMIO_OTRCFG76_0_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG76_15 = 32;
+static const uint32_t ODC_MMIO_OTRCFG76_15_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG76_14 = 36;
+static const uint32_t ODC_MMIO_OTRCFG76_14_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG76_13 = 40;
+static const uint32_t ODC_MMIO_OTRCFG76_13_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG76_12 = 44;
+static const uint32_t ODC_MMIO_OTRCFG76_12_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG76_11 = 48;
+static const uint32_t ODC_MMIO_OTRCFG76_11_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG76_10 = 52;
+static const uint32_t ODC_MMIO_OTRCFG76_10_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG76_9 = 56;
+static const uint32_t ODC_MMIO_OTRCFG76_9_LEN = 4;
+static const uint32_t ODC_MMIO_OTRCFG76_8 = 60;
+static const uint32_t ODC_MMIO_OTRCFG76_8_LEN = 4;
+
+
+static const uint64_t ODC_MMIO_OTTCFG = 0x8010824ull;
+
+static const uint32_t ODC_MMIO_OTTCFG_31 = 0;
+static const uint32_t ODC_MMIO_OTTCFG_30 = 1;
+static const uint32_t ODC_MMIO_OTTCFG_29 = 2;
+static const uint32_t ODC_MMIO_OTTCFG_28 = 3;
+static const uint32_t ODC_MMIO_OTTCFG_27 = 4;
+static const uint32_t ODC_MMIO_OTTCFG_26 = 5;
+static const uint32_t ODC_MMIO_OTTCFG_25 = 6;
+static const uint32_t ODC_MMIO_OTTCFG_24 = 7;
+static const uint32_t ODC_MMIO_OTTCFG_23 = 8;
+static const uint32_t ODC_MMIO_OTTCFG_22 = 9;
+static const uint32_t ODC_MMIO_OTTCFG_21 = 10;
+static const uint32_t ODC_MMIO_OTTCFG_20 = 11;
+static const uint32_t ODC_MMIO_OTTCFG_19 = 12;
+static const uint32_t ODC_MMIO_OTTCFG_18 = 13;
+static const uint32_t ODC_MMIO_OTTCFG_17 = 14;
+static const uint32_t ODC_MMIO_OTTCFG_16 = 15;
+static const uint32_t ODC_MMIO_OTTCFG_15 = 16;
+static const uint32_t ODC_MMIO_OTTCFG_14 = 17;
+static const uint32_t ODC_MMIO_OTTCFG_13 = 18;
+static const uint32_t ODC_MMIO_OTTCFG_12 = 19;
+static const uint32_t ODC_MMIO_OTTCFG_11 = 20;
+static const uint32_t ODC_MMIO_OTTCFG_10 = 21;
+static const uint32_t ODC_MMIO_OTTCFG_9 = 22;
+static const uint32_t ODC_MMIO_OTTCFG_8 = 23;
+static const uint32_t ODC_MMIO_OTTCFG_7 = 24;
+static const uint32_t ODC_MMIO_OTTCFG_6 = 25;
+static const uint32_t ODC_MMIO_OTTCFG_5 = 26;
+static const uint32_t ODC_MMIO_OTTCFG_4 = 27;
+static const uint32_t ODC_MMIO_OTTCFG_3 = 28;
+static const uint32_t ODC_MMIO_OTTCFG_2 = 29;
+static const uint32_t ODC_MMIO_OTTCFG_1 = 30;
+static const uint32_t ODC_MMIO_OTTCFG_0 = 31;
+static const uint32_t ODC_MMIO_OTTCFG_63 = 32;
+static const uint32_t ODC_MMIO_OTTCFG_62 = 33;
+static const uint32_t ODC_MMIO_OTTCFG_61 = 34;
+static const uint32_t ODC_MMIO_OTTCFG_60 = 35;
+static const uint32_t ODC_MMIO_OTTCFG_59 = 36;
+static const uint32_t ODC_MMIO_OTTCFG_58 = 37;
+static const uint32_t ODC_MMIO_OTTCFG_57 = 38;
+static const uint32_t ODC_MMIO_OTTCFG_56 = 39;
+static const uint32_t ODC_MMIO_OTTCFG_55 = 40;
+static const uint32_t ODC_MMIO_OTTCFG_54 = 41;
+static const uint32_t ODC_MMIO_OTTCFG_53 = 42;
+static const uint32_t ODC_MMIO_OTTCFG_52 = 43;
+static const uint32_t ODC_MMIO_OTTCFG_51 = 44;
+static const uint32_t ODC_MMIO_OTTCFG_50 = 45;
+static const uint32_t ODC_MMIO_OTTCFG_49 = 46;
+static const uint32_t ODC_MMIO_OTTCFG_48 = 47;
+static const uint32_t ODC_MMIO_OTTCFG_47 = 48;
+static const uint32_t ODC_MMIO_OTTCFG_46 = 49;
+static const uint32_t ODC_MMIO_OTTCFG_45 = 50;
+static const uint32_t ODC_MMIO_OTTCFG_44 = 51;
+static const uint32_t ODC_MMIO_OTTCFG_43 = 52;
+static const uint32_t ODC_MMIO_OTTCFG_42 = 53;
+static const uint32_t ODC_MMIO_OTTCFG_41 = 54;
+static const uint32_t ODC_MMIO_OTTCFG_40 = 55;
+static const uint32_t ODC_MMIO_OTTCFG_39 = 56;
+static const uint32_t ODC_MMIO_OTTCFG_38 = 57;
+static const uint32_t ODC_MMIO_OTTCFG_37 = 58;
+static const uint32_t ODC_MMIO_OTTCFG_36 = 59;
+static const uint32_t ODC_MMIO_OTTCFG_35 = 60;
+static const uint32_t ODC_MMIO_OTTCFG_34 = 61;
+static const uint32_t ODC_MMIO_OTTCFG_33 = 62;
+static const uint32_t ODC_MMIO_OTTCFG_32 = 63;
+
+
+static const uint64_t ODC_MMIO_OVERCAP_OTLID = 0x8010821ull;
+
+static const uint32_t ODC_MMIO_OVERCAP_OTLID_MAJOR_VERSION_CAPABILITY = 0;
+static const uint32_t ODC_MMIO_OVERCAP_OTLID_MAJOR_VERSION_CAPABILITY_LEN = 8;
+static const uint32_t ODC_MMIO_OVERCAP_OTLID_MINOR_VERSION_CAPABILITY = 8;
+static const uint32_t ODC_MMIO_OVERCAP_OTLID_MINOR_VERSION_CAPABILITY_LEN = 8;
+
+
+static const uint64_t ODC_MMIO_OVERCFG = 0x8010822ull;
+
+static const uint32_t ODC_MMIO_OVERCFG_TL_MAJOR_VERSION_CONFIGURATION = 32;
+static const uint32_t ODC_MMIO_OVERCFG_TL_MAJOR_VERSION_CONFIGURATION_LEN = 8;
+static const uint32_t ODC_MMIO_OVERCFG_TL_MINOR_VERSION_CONFIGURATION = 40;
+static const uint32_t ODC_MMIO_OVERCFG_TL_MINOR_VERSION_CONFIGURATION_LEN = 8;
+static const uint32_t ODC_MMIO_OVERCFG_LONG_BACK_OFF_TIMER = 56;
+static const uint32_t ODC_MMIO_OVERCFG_LONG_BACK_OFF_TIMER_LEN = 4;
+static const uint32_t ODC_MMIO_OVERCFG_SHORT_BACK_OFF_TIMER = 60;
+static const uint32_t ODC_MMIO_OVERCFG_SHORT_BACK_OFF_TIMER_LEN = 4;
+
+
+static const uint64_t ODC_MMIO_OVPD = 0x8010808ull;
+
+static const uint32_t ODC_MMIO_OVPD_DATA = 0;
+static const uint32_t ODC_MMIO_OVPD_DATA_LEN = 32;
+static const uint32_t ODC_MMIO_OVPD_FLAG = 32;
+static const uint32_t ODC_MMIO_OVPD_ADDRESS = 33;
+static const uint32_t ODC_MMIO_OVPD_ADDRESS_LEN = 15;
+
+
+static const uint64_t ODC_MMIO_OWWID10 = 0x80108F9ull;
+
+static const uint32_t ODC_MMIO_OWWID10_OWWID10_ID = 0;
+static const uint32_t ODC_MMIO_OWWID10_OWWID10_ID_LEN = 64;
+
+
+static const uint64_t ODC_MMIO_OWWID32 = 0x80108FAull;
+
+static const uint32_t ODC_MMIO_OWWID32_OWWID32_ID = 0;
+static const uint32_t ODC_MMIO_OWWID32_OWWID32_ID_LEN = 64;
+
+
+static const uint64_t ODC_MMIO_SCOMEWD = 0x80108EBull;
+
+static const uint32_t ODC_MMIO_SCOMEWD_SCOMEWD_WDATA = 0;
+static const uint32_t ODC_MMIO_SCOMEWD_SCOMEWD_WDATA_LEN = 64;
+
+
+static const uint64_t ODC_MMIO_SNSC_ACTPWRUP0 = 0x8010855ull;
+
+static const uint32_t ODC_MMIO_SNSC_ACTPWRUP0_ACTSCOUNT = 0;
+static const uint32_t ODC_MMIO_SNSC_ACTPWRUP0_ACTSCOUNT_LEN = 32;
+static const uint32_t ODC_MMIO_SNSC_ACTPWRUP0_POWERUPSCOUNT = 32;
+static const uint32_t ODC_MMIO_SNSC_ACTPWRUP0_POWERUPSCOUNT_LEN = 32;
+
+
+static const uint64_t ODC_MMIO_SNSC_ACTPWRUP1 = 0x8010858ull;
+
+static const uint32_t ODC_MMIO_SNSC_ACTPWRUP1_ACTSCOUNT = 0;
+static const uint32_t ODC_MMIO_SNSC_ACTPWRUP1_ACTSCOUNT_LEN = 32;
+static const uint32_t ODC_MMIO_SNSC_ACTPWRUP1_POWERUPSCOUNT = 32;
+static const uint32_t ODC_MMIO_SNSC_ACTPWRUP1_POWERUPSCOUNT_LEN = 32;
+
+
+static const uint64_t ODC_MMIO_SNSC_D0THERM = 0x8010852ull;
+
+static const uint32_t ODC_MMIO_SNSC_D0THERM_PRESENTBIT = 45;
+static const uint32_t ODC_MMIO_SNSC_D0THERM_VALIDBIT = 46;
+static const uint32_t ODC_MMIO_SNSC_D0THERM_ERRORBIT = 47;
+static const uint32_t ODC_MMIO_SNSC_D0THERM_THERMALDATA = 48;
+static const uint32_t ODC_MMIO_SNSC_D0THERM_THERMALDATA_LEN = 16;
+
+
+static const uint64_t ODC_MMIO_SNSC_D1THERM = 0x8010853ull;
+
+static const uint32_t ODC_MMIO_SNSC_D1THERM_PRESENTBIT = 45;
+static const uint32_t ODC_MMIO_SNSC_D1THERM_VALIDBIT = 46;
+static const uint32_t ODC_MMIO_SNSC_D1THERM_ERRORBIT = 47;
+static const uint32_t ODC_MMIO_SNSC_D1THERM_THERMALDATA = 48;
+static const uint32_t ODC_MMIO_SNSC_D1THERM_THERMALDATA_LEN = 16;
+
+
+static const uint64_t ODC_MMIO_SNSC_D2THERM = 0x8010859ull;
+
+static const uint32_t ODC_MMIO_SNSC_D2THERM_PRESENTBIT = 45;
+static const uint32_t ODC_MMIO_SNSC_D2THERM_VALIDBIT = 46;
+static const uint32_t ODC_MMIO_SNSC_D2THERM_ERRORBIT = 47;
+static const uint32_t ODC_MMIO_SNSC_D2THERM_THERMALDATA = 48;
+static const uint32_t ODC_MMIO_SNSC_D2THERM_THERMALDATA_LEN = 16;
+
+
+static const uint64_t ODC_MMIO_SNSC_D3THERM = 0x801085Aull;
+
+static const uint32_t ODC_MMIO_SNSC_D3THERM_PRESENTBIT = 45;
+static const uint32_t ODC_MMIO_SNSC_D3THERM_VALIDBIT = 46;
+static const uint32_t ODC_MMIO_SNSC_D3THERM_ERRORBIT = 47;
+static const uint32_t ODC_MMIO_SNSC_D3THERM_THERMALDATA = 48;
+static const uint32_t ODC_MMIO_SNSC_D3THERM_THERMALDATA_LEN = 16;
+
+
+static const uint64_t ODC_MMIO_SNSC_OCTHERM = 0x8010851ull;
+
+static const uint32_t ODC_MMIO_SNSC_OCTHERM_PRESENTBIT = 45;
+static const uint32_t ODC_MMIO_SNSC_OCTHERM_VALIDBIT = 46;
+static const uint32_t ODC_MMIO_SNSC_OCTHERM_ERRORBIT = 47;
+static const uint32_t ODC_MMIO_SNSC_OCTHERM_THERMALDATA = 48;
+static const uint32_t ODC_MMIO_SNSC_OCTHERM_THERMALDATA_LEN = 16;
+
+
+static const uint64_t ODC_MMIO_SNSC_RDWR0 = 0x8010854ull;
+
+static const uint32_t ODC_MMIO_SNSC_RDWR0_READSCOUNT = 0;
+static const uint32_t ODC_MMIO_SNSC_RDWR0_READSCOUNT_LEN = 32;
+static const uint32_t ODC_MMIO_SNSC_RDWR0_WRITESCOUNT = 32;
+static const uint32_t ODC_MMIO_SNSC_RDWR0_WRITESCOUNT_LEN = 32;
+
+
+static const uint64_t ODC_MMIO_SNSC_RDWR1 = 0x8010857ull;
+
+static const uint32_t ODC_MMIO_SNSC_RDWR1_READSCOUNT = 0;
+static const uint32_t ODC_MMIO_SNSC_RDWR1_READSCOUNT_LEN = 32;
+static const uint32_t ODC_MMIO_SNSC_RDWR1_WRITESCOUNT = 32;
+static const uint32_t ODC_MMIO_SNSC_RDWR1_WRITESCOUNT_LEN = 32;
+
+
+static const uint64_t ODC_MMIO_SNSC_SR = 0x8010856ull;
+
+static const uint32_t ODC_MMIO_SNSC_SR_SELFREFRESHCOUNT0 = 0;
+static const uint32_t ODC_MMIO_SNSC_SR_SELFREFRESHCOUNT0_LEN = 8;
+static const uint32_t ODC_MMIO_SNSC_SR_SELFREFRESHCOUNT1 = 32;
+static const uint32_t ODC_MMIO_SNSC_SR_SELFREFRESHCOUNT1_LEN = 8;
+
+
+static const uint64_t ODC_MMIO_SNSC_STATEREG = 0x8010850ull;
+
+static const uint32_t ODC_MMIO_SNSC_STATEREG_SNSC_STATEREG_STREGISTER = 0;
+static const uint32_t ODC_MMIO_SNSC_STATEREG_SNSC_STATEREG_STREGISTER_LEN = 22;
+
+
+static const uint64_t ODC_RDF0_CNTL_ELPR = 0x801182Full;
+
+static const uint32_t ODC_RDF0_CNTL_ELPR_FULL = 0;
+static const uint32_t ODC_RDF0_CNTL_ELPR_POINTER = 3;
+static const uint32_t ODC_RDF0_CNTL_ELPR_POINTER_LEN = 6;
+
+
+static const uint64_t ODC_RDF0_SCOM_AACR = 0x8011829ull;
+
+static const uint32_t ODC_RDF0_SCOM_AACR_ARRAYSEL = 0;
+static const uint32_t ODC_RDF0_SCOM_AACR_ADDRESS = 1;
+static const uint32_t ODC_RDF0_SCOM_AACR_ADDRESS_LEN = 9;
+static const uint32_t ODC_RDF0_SCOM_AACR_AUTOINC = 10;
+
+
+static const uint64_t ODC_RDF0_SCOM_AADR = 0x801182Aull;
+
+static const uint32_t ODC_RDF0_SCOM_AADR_AADR_DATA = 0;
+static const uint32_t ODC_RDF0_SCOM_AADR_AADR_DATA_LEN = 64;
+
+
+static const uint64_t ODC_RDF0_SCOM_AAER = 0x801182Bull;
+
+static const uint32_t ODC_RDF0_SCOM_AAER_AAER_DATA = 0;
+static const uint32_t ODC_RDF0_SCOM_AAER_AAER_DATA_LEN = 8;
+
+
+static const uint64_t ODC_RDF0_SCOM_CERR0 = 0x801180Eull;
+
+static const uint32_t ODC_RDF0_SCOM_CERR0_MSR_PE = 12;
+static const uint32_t ODC_RDF0_SCOM_CERR0_EICR_PE = 13;
+static const uint32_t ODC_RDF0_SCOM_CERR0_HWMSX_PE = 16;
+static const uint32_t ODC_RDF0_SCOM_CERR0_HWMSX_PE_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_CERR0_FWMSX_PE = 24;
+static const uint32_t ODC_RDF0_SCOM_CERR0_FWMSX_PE_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_CERR0_RSPAR_PE = 32;
+static const uint32_t ODC_RDF0_SCOM_CERR0_AACR_PE = 41;
+static const uint32_t ODC_RDF0_SCOM_CERR0_DBGR_PE = 46;
+static const uint32_t ODC_RDF0_SCOM_CERR0_MASK0_PE = 48;
+static const uint32_t ODC_RDF0_SCOM_CERR0_MASK1_PE = 49;
+static const uint32_t ODC_RDF0_SCOM_CERR0_CGDR_PE = 50;
+static const uint32_t ODC_RDF0_SCOM_CERR0_MCBCM_PE = 52;
+static const uint32_t ODC_RDF0_SCOM_CERR0_MCBCM2_PE = 53;
+static const uint32_t ODC_RDF0_SCOM_CERR0_DQERRA0M0_PE = 54;
+static const uint32_t ODC_RDF0_SCOM_CERR0_DQERRA0M1_PE = 55;
+static const uint32_t ODC_RDF0_SCOM_CERR0_DQERRB0M0_PE = 56;
+static const uint32_t ODC_RDF0_SCOM_CERR0_DQERRB0M1_PE = 57;
+
+
+static const uint64_t ODC_RDF0_SCOM_CERR1 = 0x801180Full;
+
+static const uint32_t ODC_RDF0_SCOM_CERR1_ECC_CTL_AF_PERR = 0;
+static const uint32_t ODC_RDF0_SCOM_CERR1_ECC_CTL_TCHN_PERR = 1;
+static const uint32_t ODC_RDF0_SCOM_CERR1_ECC_CTL_CMPMODE_ERR = 2;
+static const uint32_t ODC_RDF0_SCOM_CERR1_ECC_PIPE_PCX_PERR = 3;
+static const uint32_t ODC_RDF0_SCOM_CERR1_ECC_PIPE_SYND_PERR = 4;
+static const uint32_t ODC_RDF0_SCOM_CERR1_ECC_PIPE_2SYM_PERR = 5;
+static const uint32_t ODC_RDF0_SCOM_CERR1_ECC_PIPE_CPLX_PERR = 6;
+static const uint32_t ODC_RDF0_SCOM_CERR1_ECC_PIPE_EP2_PERR = 7;
+static const uint32_t ODC_RDF0_SCOM_CERR1_READ_ECC_DATAPATH_PARITY_ERROR = 8;
+static const uint32_t ODC_RDF0_SCOM_CERR1_ECC_PIPE_CMX_PERR = 9;
+static const uint32_t ODC_RDF0_SCOM_CERR1_ECC_PIPE_VP1_PERR = 10;
+static const uint32_t ODC_RDF0_SCOM_CERR1_ECC_PIPE_VP2_PERR = 11;
+static const uint32_t ODC_RDF0_SCOM_CERR1_ECC_PIPE_SYG_PERR = 12;
+static const uint32_t ODC_RDF0_SCOM_CERR1_ECC_PIPE_EF1_PERR = 13;
+static const uint32_t ODC_RDF0_SCOM_CERR1_ECC_PIPE_MK3_PERR = 14;
+static const uint32_t ODC_RDF0_SCOM_CERR1_ECC_PIPE_E1A_PERR = 15;
+static const uint32_t ODC_RDF0_SCOM_CERR1_UNEXPECTED_RDDATA_VALID = 16;
+static const uint32_t ODC_RDF0_SCOM_CERR1_MISSING_RDDATA_VALID = 17;
+static const uint32_t ODC_RDF0_SCOM_CERR1_SUE_01_DETECT = 18;
+static const uint32_t ODC_RDF0_SCOM_CERR1_SUE_10_DETECT = 19;
+static const uint32_t ODC_RDF0_SCOM_CERR1_RBUF_ECC_ERR_CE_DW0 = 20;
+static const uint32_t ODC_RDF0_SCOM_CERR1_RBUF_ECC_ERR_UE_DW0 = 21;
+static const uint32_t ODC_RDF0_SCOM_CERR1_RBUF_ECC_ERR_CE_DW1 = 22;
+static const uint32_t ODC_RDF0_SCOM_CERR1_RBUF_ECC_ERR_UE_DW1 = 23;
+static const uint32_t ODC_RDF0_SCOM_CERR1_RD_BUFF_ECC_ERR_SYNDROME = 24;
+static const uint32_t ODC_RDF0_SCOM_CERR1_RD_BUFF_ECC_ERR_SYNDROME_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_CERR1_PBUF_ECC_ERR_CE_DW0 = 32;
+static const uint32_t ODC_RDF0_SCOM_CERR1_PBUF_ECC_ERR_UE_DW0 = 33;
+static const uint32_t ODC_RDF0_SCOM_CERR1_PBUF_ECC_ERR_CE_DW1 = 34;
+static const uint32_t ODC_RDF0_SCOM_CERR1_PBUF_ECC_ERR_UE_DW1 = 35;
+static const uint32_t ODC_RDF0_SCOM_CERR1_PRE_BUFF_ECC_ERR_SYNDROME = 36;
+static const uint32_t ODC_RDF0_SCOM_CERR1_PRE_BUFF_ECC_ERR_SYNDROME_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_CERR1_PBUF_CRIT_OW_P_ERR = 44;
+
+
+static const uint64_t ODC_RDF0_SCOM_CGDR = 0x8011832ull;
+
+static const uint32_t ODC_RDF0_SCOM_CGDR_CGDIS_PCTL = 0;
+static const uint32_t ODC_RDF0_SCOM_CGDR_CGDIS_RESP = 1;
+static const uint32_t ODC_RDF0_SCOM_CGDR_CGDIS_RMW = 2;
+static const uint32_t ODC_RDF0_SCOM_CGDR_CGDIS_LPTR = 3;
+static const uint32_t ODC_RDF0_SCOM_CGDR_CGDIS_AHASH = 4;
+static const uint32_t ODC_RDF0_SCOM_CGDR_CGDIS_STG = 5;
+static const uint32_t ODC_RDF0_SCOM_CGDR_CGDIS_OUT = 6;
+static const uint32_t ODC_RDF0_SCOM_CGDR_CGDIS_TLM = 7;
+static const uint32_t ODC_RDF0_SCOM_CGDR_CGDIS_BD = 8;
+static const uint32_t ODC_RDF0_SCOM_CGDR_CGDIS_DCMP = 9;
+static const uint32_t ODC_RDF0_SCOM_CGDR_CGDIS_RBCTL = 10;
+static const uint32_t ODC_RDF0_SCOM_CGDR_CGDIS_RBRMW = 11;
+static const uint32_t ODC_RDF0_SCOM_CGDR_CGDIS_RBTRC = 12;
+static const uint32_t ODC_RDF0_SCOM_CGDR_CGDIS_MPE = 13;
+static const uint32_t ODC_RDF0_SCOM_CGDR_CGDIS_CONF = 14;
+static const uint32_t ODC_RDF0_SCOM_CGDR_CGDIS_HWMS = 15;
+static const uint32_t ODC_RDF0_SCOM_CGDR_PSDIS_ZERO_SYND = 16;
+static const uint32_t ODC_RDF0_SCOM_CGDR_PSDIS_SAME_MARKS = 17;
+static const uint32_t ODC_RDF0_SCOM_CGDR_PSDIS_SAME_STEER = 18;
+static const uint32_t ODC_RDF0_SCOM_CGDR_CGDIS_SPARE = 19;
+
+
+static const uint64_t ODC_RDF0_SCOM_DBGR = 0x801182Eull;
+
+static const uint32_t ODC_RDF0_SCOM_DBGR_PRIMARY_SELECT = 0;
+static const uint32_t ODC_RDF0_SCOM_DBGR_PRIMARY_SELECT_LEN = 4;
+static const uint32_t ODC_RDF0_SCOM_DBGR_SECONDARY_SELECT = 4;
+static const uint32_t ODC_RDF0_SCOM_DBGR_SECONDARY_SELECT_LEN = 4;
+static const uint32_t ODC_RDF0_SCOM_DBGR_EPX_CHIP = 8;
+static const uint32_t ODC_RDF0_SCOM_DBGR_EPX_SYMS = 9;
+static const uint32_t ODC_RDF0_SCOM_DBGR_TRACE_ALWAYS = 10;
+static const uint32_t ODC_RDF0_SCOM_DBGR_WAT_ENABLE = 11;
+static const uint32_t ODC_RDF0_SCOM_DBGR_WAT_ACTION_SELECT = 12;
+static const uint32_t ODC_RDF0_SCOM_DBGR_WAT_SOURCE = 13;
+static const uint32_t ODC_RDF0_SCOM_DBGR_WAT_SOURCE_LEN = 2;
+
+
+static const uint64_t ODC_RDF0_SCOM_DQERRA0M0 = 0x8011836ull;
+
+static const uint32_t ODC_RDF0_SCOM_DQERRA0M0_DQERRA0M0_MISCOMPARES = 0;
+static const uint32_t ODC_RDF0_SCOM_DQERRA0M0_DQERRA0M0_MISCOMPARES_LEN = 40;
+
+
+static const uint64_t ODC_RDF0_SCOM_DQERRA0M1 = 0x8011837ull;
+
+static const uint32_t ODC_RDF0_SCOM_DQERRA0M1_DQERRA0M1_MISCOMPARES = 0;
+static const uint32_t ODC_RDF0_SCOM_DQERRA0M1_DQERRA0M1_MISCOMPARES_LEN = 40;
+
+
+static const uint64_t ODC_RDF0_SCOM_DQERRB0M0 = 0x8011838ull;
+
+static const uint32_t ODC_RDF0_SCOM_DQERRB0M0_DQERRB0M0_MISCOMPARES = 0;
+static const uint32_t ODC_RDF0_SCOM_DQERRB0M0_DQERRB0M0_MISCOMPARES_LEN = 40;
+
+
+static const uint64_t ODC_RDF0_SCOM_DQERRB0M1 = 0x8011839ull;
+
+static const uint32_t ODC_RDF0_SCOM_DQERRB0M1_DQERRB0M1_MISCOMPARES = 0;
+static const uint32_t ODC_RDF0_SCOM_DQERRB0M1_DQERRB0M1_MISCOMPARES_LEN = 40;
+
+
+static const uint64_t ODC_RDF0_SCOM_EICR = 0x801180Dull;
+
+static const uint32_t ODC_RDF0_SCOM_EICR_ADDRESS = 0;
+static const uint32_t ODC_RDF0_SCOM_EICR_ADDRESS_LEN = 38;
+static const uint32_t ODC_RDF0_SCOM_EICR_PERSIST = 38;
+static const uint32_t ODC_RDF0_SCOM_EICR_PERSIST_LEN = 2;
+static const uint32_t ODC_RDF0_SCOM_EICR_REGION = 40;
+static const uint32_t ODC_RDF0_SCOM_EICR_REGION_LEN = 3;
+static const uint32_t ODC_RDF0_SCOM_EICR_TYPE = 43;
+static const uint32_t ODC_RDF0_SCOM_EICR_TYPE_LEN = 5;
+static const uint32_t ODC_RDF0_SCOM_EICR_MISC = 48;
+static const uint32_t ODC_RDF0_SCOM_EICR_MISC_LEN = 6;
+static const uint32_t ODC_RDF0_SCOM_EICR_EIGHTBECC = 54;
+
+
+static const uint64_t ODC_RDF0_SCOM_FIR_WO_OR = 0x8011801ull;
+static const uint64_t ODC_RDF0_SCOM_FIR_RW_WCLEAR = 0x8011800ull;
+
+static const uint32_t ODC_RDF0_SCOM_FIR_INTERNAL_SCOM_ERROR = 0;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINLINE_MPE_RANK_0_TO_7 = 1;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINLINE_MPE_RANK_0_TO_7_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINLINE_NCE = 9;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINLINE_TCE = 10;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINLINE_SCE = 11;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINLINE_MCE = 12;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINLINE_SUE = 13;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINLINE_AUE = 14;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINLINE_UE = 15;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINLINE_RCD = 16;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINLINE_IAUE = 17;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINLINE_IUE = 18;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINLINE_IRCD = 19;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINLINE_IMPE = 20;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINTENANCE_MPE_RANK_0_TO_7 = 21;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINTENANCE_MPE_RANK_0_TO_7_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINTENANCE_NCE = 29;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINTENANCE_TCE = 30;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINTENANCE_SCE = 31;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINTENANCE_MCE = 32;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINTENANCE_SUE = 33;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINTENANCE_AUE = 34;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINTENANCE_UE = 35;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINTENANCE_RCD = 36;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINTENANCE_IAUE = 37;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINTENANCE_IUE = 38;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINTENANCE_IRCD = 39;
+static const uint32_t ODC_RDF0_SCOM_FIR_MAINTENANCE_IMPE = 40;
+static const uint32_t ODC_RDF0_SCOM_FIR_RDDATA_VALID_ERROR = 41;
+static const uint32_t ODC_RDF0_SCOM_FIR_SCOM_PARITY_CLASS_STATUS = 42;
+static const uint32_t ODC_RDF0_SCOM_FIR_SCOM_PARITY_CLASS_RECOVERABLE = 43;
+static const uint32_t ODC_RDF0_SCOM_FIR_SCOM_PARITY_CLASS_UNRECOVERABLE = 44;
+static const uint32_t ODC_RDF0_SCOM_FIR_ECC_CORRECTOR_INTERNAL_PARITY_ERROR = 45;
+static const uint32_t ODC_RDF0_SCOM_FIR_ECC_RBUF_CE_DW0 = 46;
+static const uint32_t ODC_RDF0_SCOM_FIR_ECC_RBUF_CE_DW1 = 47;
+static const uint32_t ODC_RDF0_SCOM_FIR_ECC_RBUF_UE_DW0 = 48;
+static const uint32_t ODC_RDF0_SCOM_FIR_ECC_RBUF_UE_DW1 = 49;
+static const uint32_t ODC_RDF0_SCOM_FIR_ECC_PBUF_CE_DW0 = 50;
+static const uint32_t ODC_RDF0_SCOM_FIR_ECC_PBUF_CE_DW1 = 51;
+static const uint32_t ODC_RDF0_SCOM_FIR_ECC_PBUF_UE_DW0 = 52;
+static const uint32_t ODC_RDF0_SCOM_FIR_ECC_PBUF_UE_DW1 = 53;
+static const uint32_t ODC_RDF0_SCOM_FIR_TLXT_RDF_RBUF_PERR = 54;
+static const uint32_t ODC_RDF0_SCOM_FIR_TLXT_RDF_PBUF_PERR = 55;
+static const uint32_t ODC_RDF0_SCOM_FIR_RESERVED_56_60 = 56;
+static const uint32_t ODC_RDF0_SCOM_FIR_RESERVED_56_60_LEN = 5;
+static const uint32_t ODC_RDF0_SCOM_FIR_SCOM_PARITY_DEBUG_WAT = 61;
+static const uint32_t ODC_RDF0_SCOM_FIR_RESERVED = 62;
+
+
+static const uint64_t ODC_RDF0_SCOM_FWMS0 = 0x8011818ull;
+
+static const uint32_t ODC_RDF0_SCOM_FWMS0_MARK = 0;
+static const uint32_t ODC_RDF0_SCOM_FWMS0_MARK_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_FWMS0_TYPE = 8;
+static const uint32_t ODC_RDF0_SCOM_FWMS0_REGION = 9;
+static const uint32_t ODC_RDF0_SCOM_FWMS0_REGION_LEN = 3;
+static const uint32_t ODC_RDF0_SCOM_FWMS0_ADDRESS = 12;
+static const uint32_t ODC_RDF0_SCOM_FWMS0_ADDRESS_LEN = 11;
+static const uint32_t ODC_RDF0_SCOM_FWMS0_EXIT_1 = 23;
+static const uint32_t ODC_RDF0_SCOM_FWMS0_EXIT_2 = 24;
+
+
+static const uint64_t ODC_RDF0_SCOM_FWMS1 = 0x8011819ull;
+
+static const uint32_t ODC_RDF0_SCOM_FWMS1_MARK = 0;
+static const uint32_t ODC_RDF0_SCOM_FWMS1_MARK_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_FWMS1_TYPE = 8;
+static const uint32_t ODC_RDF0_SCOM_FWMS1_REGION = 9;
+static const uint32_t ODC_RDF0_SCOM_FWMS1_REGION_LEN = 3;
+static const uint32_t ODC_RDF0_SCOM_FWMS1_ADDRESS = 12;
+static const uint32_t ODC_RDF0_SCOM_FWMS1_ADDRESS_LEN = 11;
+static const uint32_t ODC_RDF0_SCOM_FWMS1_EXIT_1 = 23;
+static const uint32_t ODC_RDF0_SCOM_FWMS1_EXIT_2 = 24;
+
+
+static const uint64_t ODC_RDF0_SCOM_FWMS2 = 0x801181Aull;
+
+static const uint32_t ODC_RDF0_SCOM_FWMS2_MARK = 0;
+static const uint32_t ODC_RDF0_SCOM_FWMS2_MARK_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_FWMS2_TYPE = 8;
+static const uint32_t ODC_RDF0_SCOM_FWMS2_REGION = 9;
+static const uint32_t ODC_RDF0_SCOM_FWMS2_REGION_LEN = 3;
+static const uint32_t ODC_RDF0_SCOM_FWMS2_ADDRESS = 12;
+static const uint32_t ODC_RDF0_SCOM_FWMS2_ADDRESS_LEN = 11;
+static const uint32_t ODC_RDF0_SCOM_FWMS2_EXIT_1 = 23;
+static const uint32_t ODC_RDF0_SCOM_FWMS2_EXIT_2 = 24;
+
+
+static const uint64_t ODC_RDF0_SCOM_FWMS3 = 0x801181Bull;
+
+static const uint32_t ODC_RDF0_SCOM_FWMS3_MARK = 0;
+static const uint32_t ODC_RDF0_SCOM_FWMS3_MARK_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_FWMS3_TYPE = 8;
+static const uint32_t ODC_RDF0_SCOM_FWMS3_REGION = 9;
+static const uint32_t ODC_RDF0_SCOM_FWMS3_REGION_LEN = 3;
+static const uint32_t ODC_RDF0_SCOM_FWMS3_ADDRESS = 12;
+static const uint32_t ODC_RDF0_SCOM_FWMS3_ADDRESS_LEN = 11;
+static const uint32_t ODC_RDF0_SCOM_FWMS3_EXIT_1 = 23;
+static const uint32_t ODC_RDF0_SCOM_FWMS3_EXIT_2 = 24;
+
+
+static const uint64_t ODC_RDF0_SCOM_FWMS4 = 0x801181Cull;
+
+static const uint32_t ODC_RDF0_SCOM_FWMS4_MARK = 0;
+static const uint32_t ODC_RDF0_SCOM_FWMS4_MARK_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_FWMS4_TYPE = 8;
+static const uint32_t ODC_RDF0_SCOM_FWMS4_REGION = 9;
+static const uint32_t ODC_RDF0_SCOM_FWMS4_REGION_LEN = 3;
+static const uint32_t ODC_RDF0_SCOM_FWMS4_ADDRESS = 12;
+static const uint32_t ODC_RDF0_SCOM_FWMS4_ADDRESS_LEN = 11;
+static const uint32_t ODC_RDF0_SCOM_FWMS4_EXIT_1 = 23;
+static const uint32_t ODC_RDF0_SCOM_FWMS4_EXIT_2 = 24;
+
+
+static const uint64_t ODC_RDF0_SCOM_FWMS5 = 0x801181Dull;
+
+static const uint32_t ODC_RDF0_SCOM_FWMS5_MARK = 0;
+static const uint32_t ODC_RDF0_SCOM_FWMS5_MARK_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_FWMS5_TYPE = 8;
+static const uint32_t ODC_RDF0_SCOM_FWMS5_REGION = 9;
+static const uint32_t ODC_RDF0_SCOM_FWMS5_REGION_LEN = 3;
+static const uint32_t ODC_RDF0_SCOM_FWMS5_ADDRESS = 12;
+static const uint32_t ODC_RDF0_SCOM_FWMS5_ADDRESS_LEN = 11;
+static const uint32_t ODC_RDF0_SCOM_FWMS5_EXIT_1 = 23;
+static const uint32_t ODC_RDF0_SCOM_FWMS5_EXIT_2 = 24;
+
+
+static const uint64_t ODC_RDF0_SCOM_FWMS6 = 0x801181Eull;
+
+static const uint32_t ODC_RDF0_SCOM_FWMS6_MARK = 0;
+static const uint32_t ODC_RDF0_SCOM_FWMS6_MARK_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_FWMS6_TYPE = 8;
+static const uint32_t ODC_RDF0_SCOM_FWMS6_REGION = 9;
+static const uint32_t ODC_RDF0_SCOM_FWMS6_REGION_LEN = 3;
+static const uint32_t ODC_RDF0_SCOM_FWMS6_ADDRESS = 12;
+static const uint32_t ODC_RDF0_SCOM_FWMS6_ADDRESS_LEN = 11;
+static const uint32_t ODC_RDF0_SCOM_FWMS6_EXIT_1 = 23;
+static const uint32_t ODC_RDF0_SCOM_FWMS6_EXIT_2 = 24;
+
+
+static const uint64_t ODC_RDF0_SCOM_FWMS7 = 0x801181Full;
+
+static const uint32_t ODC_RDF0_SCOM_FWMS7_MARK = 0;
+static const uint32_t ODC_RDF0_SCOM_FWMS7_MARK_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_FWMS7_TYPE = 8;
+static const uint32_t ODC_RDF0_SCOM_FWMS7_REGION = 9;
+static const uint32_t ODC_RDF0_SCOM_FWMS7_REGION_LEN = 3;
+static const uint32_t ODC_RDF0_SCOM_FWMS7_ADDRESS = 12;
+static const uint32_t ODC_RDF0_SCOM_FWMS7_ADDRESS_LEN = 11;
+static const uint32_t ODC_RDF0_SCOM_FWMS7_EXIT_1 = 23;
+static const uint32_t ODC_RDF0_SCOM_FWMS7_EXIT_2 = 24;
+
+
+static const uint64_t ODC_RDF0_SCOM_HWMS0 = 0x8011810ull;
+
+static const uint32_t ODC_RDF0_SCOM_HWMS0_CHIPMARK = 0;
+static const uint32_t ODC_RDF0_SCOM_HWMS0_CHIPMARK_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_HWMS0_CONFIRMED = 8;
+static const uint32_t ODC_RDF0_SCOM_HWMS0_EXIT_1 = 9;
+static const uint32_t ODC_RDF0_SCOM_HWMS0_EXIT_2 = 10;
+
+
+static const uint64_t ODC_RDF0_SCOM_HWMS1 = 0x8011811ull;
+
+static const uint32_t ODC_RDF0_SCOM_HWMS1_CHIPMARK = 0;
+static const uint32_t ODC_RDF0_SCOM_HWMS1_CHIPMARK_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_HWMS1_CONFIRMED = 8;
+static const uint32_t ODC_RDF0_SCOM_HWMS1_EXIT_1 = 9;
+static const uint32_t ODC_RDF0_SCOM_HWMS1_EXIT_2 = 10;
+
+
+static const uint64_t ODC_RDF0_SCOM_HWMS2 = 0x8011812ull;
+
+static const uint32_t ODC_RDF0_SCOM_HWMS2_CHIPMARK = 0;
+static const uint32_t ODC_RDF0_SCOM_HWMS2_CHIPMARK_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_HWMS2_CONFIRMED = 8;
+static const uint32_t ODC_RDF0_SCOM_HWMS2_EXIT_1 = 9;
+static const uint32_t ODC_RDF0_SCOM_HWMS2_EXIT_2 = 10;
+
+
+static const uint64_t ODC_RDF0_SCOM_HWMS3 = 0x8011813ull;
+
+static const uint32_t ODC_RDF0_SCOM_HWMS3_CHIPMARK = 0;
+static const uint32_t ODC_RDF0_SCOM_HWMS3_CHIPMARK_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_HWMS3_CONFIRMED = 8;
+static const uint32_t ODC_RDF0_SCOM_HWMS3_EXIT_1 = 9;
+static const uint32_t ODC_RDF0_SCOM_HWMS3_EXIT_2 = 10;
+
+
+static const uint64_t ODC_RDF0_SCOM_HWMS4 = 0x8011814ull;
+
+static const uint32_t ODC_RDF0_SCOM_HWMS4_CHIPMARK = 0;
+static const uint32_t ODC_RDF0_SCOM_HWMS4_CHIPMARK_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_HWMS4_CONFIRMED = 8;
+static const uint32_t ODC_RDF0_SCOM_HWMS4_EXIT_1 = 9;
+static const uint32_t ODC_RDF0_SCOM_HWMS4_EXIT_2 = 10;
+
+
+static const uint64_t ODC_RDF0_SCOM_HWMS5 = 0x8011815ull;
+
+static const uint32_t ODC_RDF0_SCOM_HWMS5_CHIPMARK = 0;
+static const uint32_t ODC_RDF0_SCOM_HWMS5_CHIPMARK_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_HWMS5_CONFIRMED = 8;
+static const uint32_t ODC_RDF0_SCOM_HWMS5_EXIT_1 = 9;
+static const uint32_t ODC_RDF0_SCOM_HWMS5_EXIT_2 = 10;
+
+
+static const uint64_t ODC_RDF0_SCOM_HWMS6 = 0x8011816ull;
+
+static const uint32_t ODC_RDF0_SCOM_HWMS6_CHIPMARK = 0;
+static const uint32_t ODC_RDF0_SCOM_HWMS6_CHIPMARK_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_HWMS6_CONFIRMED = 8;
+static const uint32_t ODC_RDF0_SCOM_HWMS6_EXIT_1 = 9;
+static const uint32_t ODC_RDF0_SCOM_HWMS6_EXIT_2 = 10;
+
+
+static const uint64_t ODC_RDF0_SCOM_HWMS7 = 0x8011817ull;
+
+static const uint32_t ODC_RDF0_SCOM_HWMS7_CHIPMARK = 0;
+static const uint32_t ODC_RDF0_SCOM_HWMS7_CHIPMARK_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_HWMS7_CONFIRMED = 8;
+static const uint32_t ODC_RDF0_SCOM_HWMS7_EXIT_1 = 9;
+static const uint32_t ODC_RDF0_SCOM_HWMS7_EXIT_2 = 10;
+
+
+static const uint64_t ODC_RDF0_SCOM_MASK0 = 0x8011830ull;
+
+static const uint32_t ODC_RDF0_SCOM_MASK0_MSR_PE = 12;
+static const uint32_t ODC_RDF0_SCOM_MASK0_EICR_PE = 13;
+static const uint32_t ODC_RDF0_SCOM_MASK0_HWMSX_PE = 16;
+static const uint32_t ODC_RDF0_SCOM_MASK0_HWMSX_PE_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_MASK0_FWMSX_PE = 24;
+static const uint32_t ODC_RDF0_SCOM_MASK0_FWMSX_PE_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_MASK0_RSPAR_PE = 32;
+static const uint32_t ODC_RDF0_SCOM_MASK0_AACR_PE = 41;
+static const uint32_t ODC_RDF0_SCOM_MASK0_DBGR_PE = 46;
+static const uint32_t ODC_RDF0_SCOM_MASK0_MASK0_PE = 48;
+static const uint32_t ODC_RDF0_SCOM_MASK0_MASK1_PE = 49;
+static const uint32_t ODC_RDF0_SCOM_MASK0_CGDR_PE = 50;
+static const uint32_t ODC_RDF0_SCOM_MASK0_MCBCM_PE = 52;
+static const uint32_t ODC_RDF0_SCOM_MASK0_MCBCM2_PE = 53;
+static const uint32_t ODC_RDF0_SCOM_MASK0_DQERRA0M0_PE = 54;
+static const uint32_t ODC_RDF0_SCOM_MASK0_DQERRA0M1_PE = 55;
+static const uint32_t ODC_RDF0_SCOM_MASK0_DQERRB0M0_PE = 56;
+static const uint32_t ODC_RDF0_SCOM_MASK0_DQERRB0M1_PE = 57;
+
+
+static const uint64_t ODC_RDF0_SCOM_MASK1 = 0x8011831ull;
+
+static const uint32_t ODC_RDF0_SCOM_MASK1_ECC_CTL_AF_PERR = 0;
+static const uint32_t ODC_RDF0_SCOM_MASK1_ECC_CTL_TCHN_PERR = 1;
+static const uint32_t ODC_RDF0_SCOM_MASK1_ECC_CTL_CMPMODE_ERR = 2;
+static const uint32_t ODC_RDF0_SCOM_MASK1_ECC_PIPE_PCX_PERR = 3;
+static const uint32_t ODC_RDF0_SCOM_MASK1_ECC_PIPE_SYND_PERR = 4;
+static const uint32_t ODC_RDF0_SCOM_MASK1_ECC_PIPE_2SYM_PERR = 5;
+static const uint32_t ODC_RDF0_SCOM_MASK1_ECC_PIPE_CPLX_PERR = 6;
+static const uint32_t ODC_RDF0_SCOM_MASK1_ECC_PIPE_EP2_PERR = 7;
+static const uint32_t ODC_RDF0_SCOM_MASK1_READ_ECC_DATAPATH_PARITY_ERROR = 8;
+static const uint32_t ODC_RDF0_SCOM_MASK1_ECC_PIPE_CMX_PERR = 9;
+static const uint32_t ODC_RDF0_SCOM_MASK1_ECC_PIPE_VP1_PERR = 10;
+static const uint32_t ODC_RDF0_SCOM_MASK1_ECC_PIPE_VP2_PERR = 11;
+static const uint32_t ODC_RDF0_SCOM_MASK1_ECC_PIPE_SYG_PERR = 12;
+static const uint32_t ODC_RDF0_SCOM_MASK1_ECC_PIPE_EF1_PERR = 13;
+static const uint32_t ODC_RDF0_SCOM_MASK1_ECC_PIPE_MK3_PERR = 14;
+static const uint32_t ODC_RDF0_SCOM_MASK1_ECC_PIPE_E1A_PERR = 15;
+static const uint32_t ODC_RDF0_SCOM_MASK1_UNEXPECTED_RDDATA_VALID = 16;
+static const uint32_t ODC_RDF0_SCOM_MASK1_MISSING_RDDATA_VALID = 17;
+static const uint32_t ODC_RDF0_SCOM_MASK1_SUE_01_DETECT = 18;
+static const uint32_t ODC_RDF0_SCOM_MASK1_SUE_10_DETECT = 19;
+static const uint32_t ODC_RDF0_SCOM_MASK1_PBUF_CRIT_OW_P_ERR = 20;
+
+
+static const uint64_t ODC_RDF0_SCOM_MCBCM = 0x8011834ull;
+
+static const uint32_t ODC_RDF0_SCOM_MCBCM_HALF_COMPARE_MASK = 0;
+static const uint32_t ODC_RDF0_SCOM_MCBCM_HALF_COMPARE_MASK_LEN = 40;
+static const uint32_t ODC_RDF0_SCOM_MCBCM_MASK_COVERAGE_SELECTOR = 40;
+static const uint32_t ODC_RDF0_SCOM_MCBCM_TRAP_NONSTOP = 41;
+static const uint32_t ODC_RDF0_SCOM_MCBCM_TRAP_CE_ENABLE = 42;
+static const uint32_t ODC_RDF0_SCOM_MCBCM_TRAP_MPE_ENABLE = 43;
+static const uint32_t ODC_RDF0_SCOM_MCBCM_TRAP_UE_ENABLE = 44;
+
+
+static const uint64_t ODC_RDF0_SCOM_MCBCM2 = 0x8011835ull;
+
+static const uint32_t ODC_RDF0_SCOM_MCBCM2_MCBCM2_MCBIST_HALF_COMPARE_MASK = 0;
+static const uint32_t ODC_RDF0_SCOM_MCBCM2_MCBCM2_MCBIST_HALF_COMPARE_MASK_LEN = 40;
+
+
+static const uint64_t ODC_RDF0_SCOM_MSR = 0x801180Cull;
+
+static const uint32_t ODC_RDF0_SCOM_MSR_CHIPMARK = 8;
+static const uint32_t ODC_RDF0_SCOM_MSR_CHIPMARK_LEN = 8;
+static const uint32_t ODC_RDF0_SCOM_MSR_RANK = 16;
+static const uint32_t ODC_RDF0_SCOM_MSR_RANK_LEN = 3;
+
+
+static const uint64_t ODC_RDF0_SCOM_RDFCFGLXSTOP = 0x8011807ull;
+
+static const uint32_t ODC_RDF0_SCOM_RDFCFGLXSTOP_CFG_LXSTOP = 0;
+static const uint32_t ODC_RDF0_SCOM_RDFCFGLXSTOP_CFG_LXSTOP_LEN = 63;
+
+
+static const uint64_t ODC_RDF0_SCOM_RDFCFGRECOV = 0x8011805ull;
+
+static const uint32_t ODC_RDF0_SCOM_RDFCFGRECOV_CFG_RECOV = 0;
+static const uint32_t ODC_RDF0_SCOM_RDFCFGRECOV_CFG_RECOV_LEN = 63;
+
+
+static const uint64_t ODC_RDF0_SCOM_RDFCFGSPATTN = 0x8011806ull;
+
+static const uint32_t ODC_RDF0_SCOM_RDFCFGSPATTN_CFG_SPATTN = 0;
+static const uint32_t ODC_RDF0_SCOM_RDFCFGSPATTN_CFG_SPATTN_LEN = 63;
+
+
+static const uint64_t ODC_RDF0_SCOM_RDFCFGXSTOP = 0x8011804ull;
+
+static const uint32_t ODC_RDF0_SCOM_RDFCFGXSTOP_CFG_XSTOP = 0;
+static const uint32_t ODC_RDF0_SCOM_RDFCFGXSTOP_CFG_XSTOP_LEN = 63;
+
+
+static const uint64_t ODC_RDF0_SCOM_RDFFIRMASK_WO_OR = 0x8011803ull;
+static const uint64_t ODC_RDF0_SCOM_RDFFIRMASK_RW_WCLEAR = 0x8011802ull;
+
+static const uint32_t ODC_RDF0_SCOM_RDFFIRMASK_FIR_MASK = 0;
+static const uint32_t ODC_RDF0_SCOM_RDFFIRMASK_FIR_MASK_LEN = 63;
+
+
+static const uint64_t ODC_RDF0_SCOM_RDFFIRWOF = 0x8011808ull;
+
+static const uint32_t ODC_RDF0_SCOM_RDFFIRWOF_RDFFIRWOF_FIR_WOF = 0;
+static const uint32_t ODC_RDF0_SCOM_RDFFIRWOF_RDFFIRWOF_FIR_WOF_LEN = 63;
+
+
+static const uint64_t ODC_RDF0_SCOM_RSPAR = 0x8011820ull;
+
+static const uint32_t ODC_RDF0_SCOM_RSPAR_R0_LEFT = 0;
+static const uint32_t ODC_RDF0_SCOM_RSPAR_R0_LEFT_LEN = 5;
+static const uint32_t ODC_RDF0_SCOM_RSPAR_R0_RIGHT = 5;
+static const uint32_t ODC_RDF0_SCOM_RSPAR_R0_RIGHT_LEN = 5;
+static const uint32_t ODC_RDF0_SCOM_RSPAR_R1_LEFT = 10;
+static const uint32_t ODC_RDF0_SCOM_RSPAR_R1_LEFT_LEN = 5;
+static const uint32_t ODC_RDF0_SCOM_RSPAR_R1_RIGHT = 15;
+static const uint32_t ODC_RDF0_SCOM_RSPAR_R1_RIGHT_LEN = 5;
+
+
+static const uint64_t ODC_RDF1_CNTL_ELPR = 0x801282Full;
+
+static const uint32_t ODC_RDF1_CNTL_ELPR_FULL = 0;
+static const uint32_t ODC_RDF1_CNTL_ELPR_POINTER = 3;
+static const uint32_t ODC_RDF1_CNTL_ELPR_POINTER_LEN = 6;
+
+
+static const uint64_t ODC_RDF1_SCOM_AACR = 0x8012829ull;
+
+static const uint32_t ODC_RDF1_SCOM_AACR_ARRAYSEL = 0;
+static const uint32_t ODC_RDF1_SCOM_AACR_ADDRESS = 1;
+static const uint32_t ODC_RDF1_SCOM_AACR_ADDRESS_LEN = 9;
+static const uint32_t ODC_RDF1_SCOM_AACR_AUTOINC = 10;
+
+
+static const uint64_t ODC_RDF1_SCOM_AADR = 0x801282Aull;
+
+static const uint32_t ODC_RDF1_SCOM_AADR_AADR_DATA = 0;
+static const uint32_t ODC_RDF1_SCOM_AADR_AADR_DATA_LEN = 64;
+
+
+static const uint64_t ODC_RDF1_SCOM_AAER = 0x801282Bull;
+
+static const uint32_t ODC_RDF1_SCOM_AAER_AAER_DATA = 0;
+static const uint32_t ODC_RDF1_SCOM_AAER_AAER_DATA_LEN = 8;
+
+
+static const uint64_t ODC_RDF1_SCOM_CERR0 = 0x801280Eull;
+
+static const uint32_t ODC_RDF1_SCOM_CERR0_MSR_PE = 12;
+static const uint32_t ODC_RDF1_SCOM_CERR0_EICR_PE = 13;
+static const uint32_t ODC_RDF1_SCOM_CERR0_HWMSX_PE = 16;
+static const uint32_t ODC_RDF1_SCOM_CERR0_HWMSX_PE_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_CERR0_FWMSX_PE = 24;
+static const uint32_t ODC_RDF1_SCOM_CERR0_FWMSX_PE_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_CERR0_RSPAR_PE = 32;
+static const uint32_t ODC_RDF1_SCOM_CERR0_AACR_PE = 41;
+static const uint32_t ODC_RDF1_SCOM_CERR0_DBGR_PE = 46;
+static const uint32_t ODC_RDF1_SCOM_CERR0_MASK0_PE = 48;
+static const uint32_t ODC_RDF1_SCOM_CERR0_MASK1_PE = 49;
+static const uint32_t ODC_RDF1_SCOM_CERR0_CGDR_PE = 50;
+static const uint32_t ODC_RDF1_SCOM_CERR0_MCBCM_PE = 52;
+static const uint32_t ODC_RDF1_SCOM_CERR0_MCBCM2_PE = 53;
+static const uint32_t ODC_RDF1_SCOM_CERR0_DQERRA0M0_PE = 54;
+static const uint32_t ODC_RDF1_SCOM_CERR0_DQERRA0M1_PE = 55;
+static const uint32_t ODC_RDF1_SCOM_CERR0_DQERRB0M0_PE = 56;
+static const uint32_t ODC_RDF1_SCOM_CERR0_DQERRB0M1_PE = 57;
+
+
+static const uint64_t ODC_RDF1_SCOM_CERR1 = 0x801280Full;
+
+static const uint32_t ODC_RDF1_SCOM_CERR1_ECC_CTL_AF_PERR = 0;
+static const uint32_t ODC_RDF1_SCOM_CERR1_ECC_CTL_TCHN_PERR = 1;
+static const uint32_t ODC_RDF1_SCOM_CERR1_ECC_CTL_CMPMODE_ERR = 2;
+static const uint32_t ODC_RDF1_SCOM_CERR1_ECC_PIPE_PCX_PERR = 3;
+static const uint32_t ODC_RDF1_SCOM_CERR1_ECC_PIPE_SYND_PERR = 4;
+static const uint32_t ODC_RDF1_SCOM_CERR1_ECC_PIPE_2SYM_PERR = 5;
+static const uint32_t ODC_RDF1_SCOM_CERR1_ECC_PIPE_CPLX_PERR = 6;
+static const uint32_t ODC_RDF1_SCOM_CERR1_ECC_PIPE_EP2_PERR = 7;
+static const uint32_t ODC_RDF1_SCOM_CERR1_READ_ECC_DATAPATH_PARITY_ERROR = 8;
+static const uint32_t ODC_RDF1_SCOM_CERR1_ECC_PIPE_CMX_PERR = 9;
+static const uint32_t ODC_RDF1_SCOM_CERR1_ECC_PIPE_VP1_PERR = 10;
+static const uint32_t ODC_RDF1_SCOM_CERR1_ECC_PIPE_VP2_PERR = 11;
+static const uint32_t ODC_RDF1_SCOM_CERR1_ECC_PIPE_SYG_PERR = 12;
+static const uint32_t ODC_RDF1_SCOM_CERR1_ECC_PIPE_EF1_PERR = 13;
+static const uint32_t ODC_RDF1_SCOM_CERR1_ECC_PIPE_MK3_PERR = 14;
+static const uint32_t ODC_RDF1_SCOM_CERR1_ECC_PIPE_E1A_PERR = 15;
+static const uint32_t ODC_RDF1_SCOM_CERR1_UNEXPECTED_RDDATA_VALID = 16;
+static const uint32_t ODC_RDF1_SCOM_CERR1_MISSING_RDDATA_VALID = 17;
+static const uint32_t ODC_RDF1_SCOM_CERR1_SUE_01_DETECT = 18;
+static const uint32_t ODC_RDF1_SCOM_CERR1_SUE_10_DETECT = 19;
+static const uint32_t ODC_RDF1_SCOM_CERR1_RBUF_ECC_ERR_CE_DW0 = 20;
+static const uint32_t ODC_RDF1_SCOM_CERR1_RBUF_ECC_ERR_UE_DW0 = 21;
+static const uint32_t ODC_RDF1_SCOM_CERR1_RBUF_ECC_ERR_CE_DW1 = 22;
+static const uint32_t ODC_RDF1_SCOM_CERR1_RBUF_ECC_ERR_UE_DW1 = 23;
+static const uint32_t ODC_RDF1_SCOM_CERR1_RD_BUFF_ECC_ERR_SYNDROME = 24;
+static const uint32_t ODC_RDF1_SCOM_CERR1_RD_BUFF_ECC_ERR_SYNDROME_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_CERR1_PBUF_ECC_ERR_CE_DW0 = 32;
+static const uint32_t ODC_RDF1_SCOM_CERR1_PBUF_ECC_ERR_UE_DW0 = 33;
+static const uint32_t ODC_RDF1_SCOM_CERR1_PBUF_ECC_ERR_CE_DW1 = 34;
+static const uint32_t ODC_RDF1_SCOM_CERR1_PBUF_ECC_ERR_UE_DW1 = 35;
+static const uint32_t ODC_RDF1_SCOM_CERR1_PRE_BUFF_ECC_ERR_SYNDROME = 36;
+static const uint32_t ODC_RDF1_SCOM_CERR1_PRE_BUFF_ECC_ERR_SYNDROME_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_CERR1_PBUF_CRIT_OW_P_ERR = 44;
+
+
+static const uint64_t ODC_RDF1_SCOM_CGDR = 0x8012832ull;
+
+static const uint32_t ODC_RDF1_SCOM_CGDR_CGDIS_PCTL = 0;
+static const uint32_t ODC_RDF1_SCOM_CGDR_CGDIS_RESP = 1;
+static const uint32_t ODC_RDF1_SCOM_CGDR_CGDIS_RMW = 2;
+static const uint32_t ODC_RDF1_SCOM_CGDR_CGDIS_LPTR = 3;
+static const uint32_t ODC_RDF1_SCOM_CGDR_CGDIS_AHASH = 4;
+static const uint32_t ODC_RDF1_SCOM_CGDR_CGDIS_STG = 5;
+static const uint32_t ODC_RDF1_SCOM_CGDR_CGDIS_OUT = 6;
+static const uint32_t ODC_RDF1_SCOM_CGDR_CGDIS_TLM = 7;
+static const uint32_t ODC_RDF1_SCOM_CGDR_CGDIS_BD = 8;
+static const uint32_t ODC_RDF1_SCOM_CGDR_CGDIS_DCMP = 9;
+static const uint32_t ODC_RDF1_SCOM_CGDR_CGDIS_RBCTL = 10;
+static const uint32_t ODC_RDF1_SCOM_CGDR_CGDIS_RBRMW = 11;
+static const uint32_t ODC_RDF1_SCOM_CGDR_CGDIS_RBTRC = 12;
+static const uint32_t ODC_RDF1_SCOM_CGDR_CGDIS_MPE = 13;
+static const uint32_t ODC_RDF1_SCOM_CGDR_CGDIS_CONF = 14;
+static const uint32_t ODC_RDF1_SCOM_CGDR_CGDIS_HWMS = 15;
+static const uint32_t ODC_RDF1_SCOM_CGDR_PSDIS_ZERO_SYND = 16;
+static const uint32_t ODC_RDF1_SCOM_CGDR_PSDIS_SAME_MARKS = 17;
+static const uint32_t ODC_RDF1_SCOM_CGDR_PSDIS_SAME_STEER = 18;
+static const uint32_t ODC_RDF1_SCOM_CGDR_CGDIS_SPARE = 19;
+
+
+static const uint64_t ODC_RDF1_SCOM_DBGR = 0x801282Eull;
+
+static const uint32_t ODC_RDF1_SCOM_DBGR_PRIMARY_SELECT = 0;
+static const uint32_t ODC_RDF1_SCOM_DBGR_PRIMARY_SELECT_LEN = 4;
+static const uint32_t ODC_RDF1_SCOM_DBGR_SECONDARY_SELECT = 4;
+static const uint32_t ODC_RDF1_SCOM_DBGR_SECONDARY_SELECT_LEN = 4;
+static const uint32_t ODC_RDF1_SCOM_DBGR_EPX_CHIP = 8;
+static const uint32_t ODC_RDF1_SCOM_DBGR_EPX_SYMS = 9;
+static const uint32_t ODC_RDF1_SCOM_DBGR_TRACE_ALWAYS = 10;
+static const uint32_t ODC_RDF1_SCOM_DBGR_WAT_ENABLE = 11;
+static const uint32_t ODC_RDF1_SCOM_DBGR_WAT_ACTION_SELECT = 12;
+static const uint32_t ODC_RDF1_SCOM_DBGR_WAT_SOURCE = 13;
+static const uint32_t ODC_RDF1_SCOM_DBGR_WAT_SOURCE_LEN = 2;
+
+
+static const uint64_t ODC_RDF1_SCOM_DQERRA0M0 = 0x8012836ull;
+
+static const uint32_t ODC_RDF1_SCOM_DQERRA0M0_DQERRA0M0_MISCOMPARES = 0;
+static const uint32_t ODC_RDF1_SCOM_DQERRA0M0_DQERRA0M0_MISCOMPARES_LEN = 40;
+
+
+static const uint64_t ODC_RDF1_SCOM_DQERRA0M1 = 0x8012837ull;
+
+static const uint32_t ODC_RDF1_SCOM_DQERRA0M1_DQERRA0M1_MISCOMPARES = 0;
+static const uint32_t ODC_RDF1_SCOM_DQERRA0M1_DQERRA0M1_MISCOMPARES_LEN = 40;
+
+
+static const uint64_t ODC_RDF1_SCOM_DQERRB0M0 = 0x8012838ull;
+
+static const uint32_t ODC_RDF1_SCOM_DQERRB0M0_DQERRB0M0_MISCOMPARES = 0;
+static const uint32_t ODC_RDF1_SCOM_DQERRB0M0_DQERRB0M0_MISCOMPARES_LEN = 40;
+
+
+static const uint64_t ODC_RDF1_SCOM_DQERRB0M1 = 0x8012839ull;
+
+static const uint32_t ODC_RDF1_SCOM_DQERRB0M1_DQERRB0M1_MISCOMPARES = 0;
+static const uint32_t ODC_RDF1_SCOM_DQERRB0M1_DQERRB0M1_MISCOMPARES_LEN = 40;
+
+
+static const uint64_t ODC_RDF1_SCOM_EICR = 0x801280Dull;
+
+static const uint32_t ODC_RDF1_SCOM_EICR_ADDRESS = 0;
+static const uint32_t ODC_RDF1_SCOM_EICR_ADDRESS_LEN = 38;
+static const uint32_t ODC_RDF1_SCOM_EICR_PERSIST = 38;
+static const uint32_t ODC_RDF1_SCOM_EICR_PERSIST_LEN = 2;
+static const uint32_t ODC_RDF1_SCOM_EICR_REGION = 40;
+static const uint32_t ODC_RDF1_SCOM_EICR_REGION_LEN = 3;
+static const uint32_t ODC_RDF1_SCOM_EICR_TYPE = 43;
+static const uint32_t ODC_RDF1_SCOM_EICR_TYPE_LEN = 5;
+static const uint32_t ODC_RDF1_SCOM_EICR_MISC = 48;
+static const uint32_t ODC_RDF1_SCOM_EICR_MISC_LEN = 6;
+static const uint32_t ODC_RDF1_SCOM_EICR_EIGHTBECC = 54;
+
+
+static const uint64_t ODC_RDF1_SCOM_FIR_WO_OR = 0x8012801ull;
+static const uint64_t ODC_RDF1_SCOM_FIR_RW_WCLEAR = 0x8012800ull;
+
+static const uint32_t ODC_RDF1_SCOM_FIR_INTERNAL_SCOM_ERROR = 0;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINLINE_MPE_RANK_0_TO_7 = 1;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINLINE_MPE_RANK_0_TO_7_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINLINE_NCE = 9;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINLINE_TCE = 10;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINLINE_SCE = 11;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINLINE_MCE = 12;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINLINE_SUE = 13;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINLINE_AUE = 14;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINLINE_UE = 15;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINLINE_RCD = 16;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINLINE_IAUE = 17;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINLINE_IUE = 18;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINLINE_IRCD = 19;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINLINE_IMPE = 20;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINTENANCE_MPE_RANK_0_TO_7 = 21;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINTENANCE_MPE_RANK_0_TO_7_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINTENANCE_NCE = 29;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINTENANCE_TCE = 30;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINTENANCE_SCE = 31;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINTENANCE_MCE = 32;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINTENANCE_SUE = 33;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINTENANCE_AUE = 34;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINTENANCE_UE = 35;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINTENANCE_RCD = 36;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINTENANCE_IAUE = 37;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINTENANCE_IUE = 38;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINTENANCE_IRCD = 39;
+static const uint32_t ODC_RDF1_SCOM_FIR_MAINTENANCE_IMPE = 40;
+static const uint32_t ODC_RDF1_SCOM_FIR_RDDATA_VALID_ERROR = 41;
+static const uint32_t ODC_RDF1_SCOM_FIR_SCOM_PARITY_CLASS_STATUS = 42;
+static const uint32_t ODC_RDF1_SCOM_FIR_SCOM_PARITY_CLASS_RECOVERABLE = 43;
+static const uint32_t ODC_RDF1_SCOM_FIR_SCOM_PARITY_CLASS_UNRECOVERABLE = 44;
+static const uint32_t ODC_RDF1_SCOM_FIR_ECC_CORRECTOR_INTERNAL_PARITY_ERROR = 45;
+static const uint32_t ODC_RDF1_SCOM_FIR_ECC_RBUF_CE_DW0 = 46;
+static const uint32_t ODC_RDF1_SCOM_FIR_ECC_RBUF_CE_DW1 = 47;
+static const uint32_t ODC_RDF1_SCOM_FIR_ECC_RBUF_UE_DW0 = 48;
+static const uint32_t ODC_RDF1_SCOM_FIR_ECC_RBUF_UE_DW1 = 49;
+static const uint32_t ODC_RDF1_SCOM_FIR_ECC_PBUF_CE_DW0 = 50;
+static const uint32_t ODC_RDF1_SCOM_FIR_ECC_PBUF_CE_DW1 = 51;
+static const uint32_t ODC_RDF1_SCOM_FIR_ECC_PBUF_UE_DW0 = 52;
+static const uint32_t ODC_RDF1_SCOM_FIR_ECC_PBUF_UE_DW1 = 53;
+static const uint32_t ODC_RDF1_SCOM_FIR_TLXT_RDF_RBUF_PERR = 54;
+static const uint32_t ODC_RDF1_SCOM_FIR_TLXT_RDF_PBUF_PERR = 55;
+static const uint32_t ODC_RDF1_SCOM_FIR_RESERVED_56_60 = 56;
+static const uint32_t ODC_RDF1_SCOM_FIR_RESERVED_56_60_LEN = 5;
+static const uint32_t ODC_RDF1_SCOM_FIR_SCOM_PARITY_DEBUG_WAT = 61;
+static const uint32_t ODC_RDF1_SCOM_FIR_RESERVED = 62;
+
+
+static const uint64_t ODC_RDF1_SCOM_FWMS0 = 0x8012818ull;
+
+static const uint32_t ODC_RDF1_SCOM_FWMS0_MARK = 0;
+static const uint32_t ODC_RDF1_SCOM_FWMS0_MARK_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_FWMS0_TYPE = 8;
+static const uint32_t ODC_RDF1_SCOM_FWMS0_REGION = 9;
+static const uint32_t ODC_RDF1_SCOM_FWMS0_REGION_LEN = 3;
+static const uint32_t ODC_RDF1_SCOM_FWMS0_ADDRESS = 12;
+static const uint32_t ODC_RDF1_SCOM_FWMS0_ADDRESS_LEN = 11;
+static const uint32_t ODC_RDF1_SCOM_FWMS0_EXIT_1 = 23;
+static const uint32_t ODC_RDF1_SCOM_FWMS0_EXIT_2 = 24;
+
+
+static const uint64_t ODC_RDF1_SCOM_FWMS1 = 0x8012819ull;
+
+static const uint32_t ODC_RDF1_SCOM_FWMS1_MARK = 0;
+static const uint32_t ODC_RDF1_SCOM_FWMS1_MARK_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_FWMS1_TYPE = 8;
+static const uint32_t ODC_RDF1_SCOM_FWMS1_REGION = 9;
+static const uint32_t ODC_RDF1_SCOM_FWMS1_REGION_LEN = 3;
+static const uint32_t ODC_RDF1_SCOM_FWMS1_ADDRESS = 12;
+static const uint32_t ODC_RDF1_SCOM_FWMS1_ADDRESS_LEN = 11;
+static const uint32_t ODC_RDF1_SCOM_FWMS1_EXIT_1 = 23;
+static const uint32_t ODC_RDF1_SCOM_FWMS1_EXIT_2 = 24;
+
+
+static const uint64_t ODC_RDF1_SCOM_FWMS2 = 0x801281Aull;
+
+static const uint32_t ODC_RDF1_SCOM_FWMS2_MARK = 0;
+static const uint32_t ODC_RDF1_SCOM_FWMS2_MARK_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_FWMS2_TYPE = 8;
+static const uint32_t ODC_RDF1_SCOM_FWMS2_REGION = 9;
+static const uint32_t ODC_RDF1_SCOM_FWMS2_REGION_LEN = 3;
+static const uint32_t ODC_RDF1_SCOM_FWMS2_ADDRESS = 12;
+static const uint32_t ODC_RDF1_SCOM_FWMS2_ADDRESS_LEN = 11;
+static const uint32_t ODC_RDF1_SCOM_FWMS2_EXIT_1 = 23;
+static const uint32_t ODC_RDF1_SCOM_FWMS2_EXIT_2 = 24;
+
+
+static const uint64_t ODC_RDF1_SCOM_FWMS3 = 0x801281Bull;
+
+static const uint32_t ODC_RDF1_SCOM_FWMS3_MARK = 0;
+static const uint32_t ODC_RDF1_SCOM_FWMS3_MARK_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_FWMS3_TYPE = 8;
+static const uint32_t ODC_RDF1_SCOM_FWMS3_REGION = 9;
+static const uint32_t ODC_RDF1_SCOM_FWMS3_REGION_LEN = 3;
+static const uint32_t ODC_RDF1_SCOM_FWMS3_ADDRESS = 12;
+static const uint32_t ODC_RDF1_SCOM_FWMS3_ADDRESS_LEN = 11;
+static const uint32_t ODC_RDF1_SCOM_FWMS3_EXIT_1 = 23;
+static const uint32_t ODC_RDF1_SCOM_FWMS3_EXIT_2 = 24;
+
+
+static const uint64_t ODC_RDF1_SCOM_FWMS4 = 0x801281Cull;
+
+static const uint32_t ODC_RDF1_SCOM_FWMS4_MARK = 0;
+static const uint32_t ODC_RDF1_SCOM_FWMS4_MARK_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_FWMS4_TYPE = 8;
+static const uint32_t ODC_RDF1_SCOM_FWMS4_REGION = 9;
+static const uint32_t ODC_RDF1_SCOM_FWMS4_REGION_LEN = 3;
+static const uint32_t ODC_RDF1_SCOM_FWMS4_ADDRESS = 12;
+static const uint32_t ODC_RDF1_SCOM_FWMS4_ADDRESS_LEN = 11;
+static const uint32_t ODC_RDF1_SCOM_FWMS4_EXIT_1 = 23;
+static const uint32_t ODC_RDF1_SCOM_FWMS4_EXIT_2 = 24;
+
+
+static const uint64_t ODC_RDF1_SCOM_FWMS5 = 0x801281Dull;
+
+static const uint32_t ODC_RDF1_SCOM_FWMS5_MARK = 0;
+static const uint32_t ODC_RDF1_SCOM_FWMS5_MARK_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_FWMS5_TYPE = 8;
+static const uint32_t ODC_RDF1_SCOM_FWMS5_REGION = 9;
+static const uint32_t ODC_RDF1_SCOM_FWMS5_REGION_LEN = 3;
+static const uint32_t ODC_RDF1_SCOM_FWMS5_ADDRESS = 12;
+static const uint32_t ODC_RDF1_SCOM_FWMS5_ADDRESS_LEN = 11;
+static const uint32_t ODC_RDF1_SCOM_FWMS5_EXIT_1 = 23;
+static const uint32_t ODC_RDF1_SCOM_FWMS5_EXIT_2 = 24;
+
+
+static const uint64_t ODC_RDF1_SCOM_FWMS6 = 0x801281Eull;
+
+static const uint32_t ODC_RDF1_SCOM_FWMS6_MARK = 0;
+static const uint32_t ODC_RDF1_SCOM_FWMS6_MARK_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_FWMS6_TYPE = 8;
+static const uint32_t ODC_RDF1_SCOM_FWMS6_REGION = 9;
+static const uint32_t ODC_RDF1_SCOM_FWMS6_REGION_LEN = 3;
+static const uint32_t ODC_RDF1_SCOM_FWMS6_ADDRESS = 12;
+static const uint32_t ODC_RDF1_SCOM_FWMS6_ADDRESS_LEN = 11;
+static const uint32_t ODC_RDF1_SCOM_FWMS6_EXIT_1 = 23;
+static const uint32_t ODC_RDF1_SCOM_FWMS6_EXIT_2 = 24;
+
+
+static const uint64_t ODC_RDF1_SCOM_FWMS7 = 0x801281Full;
+
+static const uint32_t ODC_RDF1_SCOM_FWMS7_MARK = 0;
+static const uint32_t ODC_RDF1_SCOM_FWMS7_MARK_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_FWMS7_TYPE = 8;
+static const uint32_t ODC_RDF1_SCOM_FWMS7_REGION = 9;
+static const uint32_t ODC_RDF1_SCOM_FWMS7_REGION_LEN = 3;
+static const uint32_t ODC_RDF1_SCOM_FWMS7_ADDRESS = 12;
+static const uint32_t ODC_RDF1_SCOM_FWMS7_ADDRESS_LEN = 11;
+static const uint32_t ODC_RDF1_SCOM_FWMS7_EXIT_1 = 23;
+static const uint32_t ODC_RDF1_SCOM_FWMS7_EXIT_2 = 24;
+
+
+static const uint64_t ODC_RDF1_SCOM_HWMS0 = 0x8012810ull;
+
+static const uint32_t ODC_RDF1_SCOM_HWMS0_CHIPMARK = 0;
+static const uint32_t ODC_RDF1_SCOM_HWMS0_CHIPMARK_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_HWMS0_CONFIRMED = 8;
+static const uint32_t ODC_RDF1_SCOM_HWMS0_EXIT_1 = 9;
+static const uint32_t ODC_RDF1_SCOM_HWMS0_EXIT_2 = 10;
+
+
+static const uint64_t ODC_RDF1_SCOM_HWMS1 = 0x8012811ull;
+
+static const uint32_t ODC_RDF1_SCOM_HWMS1_CHIPMARK = 0;
+static const uint32_t ODC_RDF1_SCOM_HWMS1_CHIPMARK_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_HWMS1_CONFIRMED = 8;
+static const uint32_t ODC_RDF1_SCOM_HWMS1_EXIT_1 = 9;
+static const uint32_t ODC_RDF1_SCOM_HWMS1_EXIT_2 = 10;
+
+
+static const uint64_t ODC_RDF1_SCOM_HWMS2 = 0x8012812ull;
+
+static const uint32_t ODC_RDF1_SCOM_HWMS2_CHIPMARK = 0;
+static const uint32_t ODC_RDF1_SCOM_HWMS2_CHIPMARK_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_HWMS2_CONFIRMED = 8;
+static const uint32_t ODC_RDF1_SCOM_HWMS2_EXIT_1 = 9;
+static const uint32_t ODC_RDF1_SCOM_HWMS2_EXIT_2 = 10;
+
+
+static const uint64_t ODC_RDF1_SCOM_HWMS3 = 0x8012813ull;
+
+static const uint32_t ODC_RDF1_SCOM_HWMS3_CHIPMARK = 0;
+static const uint32_t ODC_RDF1_SCOM_HWMS3_CHIPMARK_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_HWMS3_CONFIRMED = 8;
+static const uint32_t ODC_RDF1_SCOM_HWMS3_EXIT_1 = 9;
+static const uint32_t ODC_RDF1_SCOM_HWMS3_EXIT_2 = 10;
+
+
+static const uint64_t ODC_RDF1_SCOM_HWMS4 = 0x8012814ull;
+
+static const uint32_t ODC_RDF1_SCOM_HWMS4_CHIPMARK = 0;
+static const uint32_t ODC_RDF1_SCOM_HWMS4_CHIPMARK_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_HWMS4_CONFIRMED = 8;
+static const uint32_t ODC_RDF1_SCOM_HWMS4_EXIT_1 = 9;
+static const uint32_t ODC_RDF1_SCOM_HWMS4_EXIT_2 = 10;
+
+
+static const uint64_t ODC_RDF1_SCOM_HWMS5 = 0x8012815ull;
+
+static const uint32_t ODC_RDF1_SCOM_HWMS5_CHIPMARK = 0;
+static const uint32_t ODC_RDF1_SCOM_HWMS5_CHIPMARK_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_HWMS5_CONFIRMED = 8;
+static const uint32_t ODC_RDF1_SCOM_HWMS5_EXIT_1 = 9;
+static const uint32_t ODC_RDF1_SCOM_HWMS5_EXIT_2 = 10;
+
+
+static const uint64_t ODC_RDF1_SCOM_HWMS6 = 0x8012816ull;
+
+static const uint32_t ODC_RDF1_SCOM_HWMS6_CHIPMARK = 0;
+static const uint32_t ODC_RDF1_SCOM_HWMS6_CHIPMARK_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_HWMS6_CONFIRMED = 8;
+static const uint32_t ODC_RDF1_SCOM_HWMS6_EXIT_1 = 9;
+static const uint32_t ODC_RDF1_SCOM_HWMS6_EXIT_2 = 10;
+
+
+static const uint64_t ODC_RDF1_SCOM_HWMS7 = 0x8012817ull;
+
+static const uint32_t ODC_RDF1_SCOM_HWMS7_CHIPMARK = 0;
+static const uint32_t ODC_RDF1_SCOM_HWMS7_CHIPMARK_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_HWMS7_CONFIRMED = 8;
+static const uint32_t ODC_RDF1_SCOM_HWMS7_EXIT_1 = 9;
+static const uint32_t ODC_RDF1_SCOM_HWMS7_EXIT_2 = 10;
+
+
+static const uint64_t ODC_RDF1_SCOM_MASK0 = 0x8012830ull;
+
+static const uint32_t ODC_RDF1_SCOM_MASK0_MSR_PE = 12;
+static const uint32_t ODC_RDF1_SCOM_MASK0_EICR_PE = 13;
+static const uint32_t ODC_RDF1_SCOM_MASK0_HWMSX_PE = 16;
+static const uint32_t ODC_RDF1_SCOM_MASK0_HWMSX_PE_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_MASK0_FWMSX_PE = 24;
+static const uint32_t ODC_RDF1_SCOM_MASK0_FWMSX_PE_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_MASK0_RSPAR_PE = 32;
+static const uint32_t ODC_RDF1_SCOM_MASK0_AACR_PE = 41;
+static const uint32_t ODC_RDF1_SCOM_MASK0_DBGR_PE = 46;
+static const uint32_t ODC_RDF1_SCOM_MASK0_MASK0_PE = 48;
+static const uint32_t ODC_RDF1_SCOM_MASK0_MASK1_PE = 49;
+static const uint32_t ODC_RDF1_SCOM_MASK0_CGDR_PE = 50;
+static const uint32_t ODC_RDF1_SCOM_MASK0_MCBCM_PE = 52;
+static const uint32_t ODC_RDF1_SCOM_MASK0_MCBCM2_PE = 53;
+static const uint32_t ODC_RDF1_SCOM_MASK0_DQERRA0M0_PE = 54;
+static const uint32_t ODC_RDF1_SCOM_MASK0_DQERRA0M1_PE = 55;
+static const uint32_t ODC_RDF1_SCOM_MASK0_DQERRB0M0_PE = 56;
+static const uint32_t ODC_RDF1_SCOM_MASK0_DQERRB0M1_PE = 57;
+
+
+static const uint64_t ODC_RDF1_SCOM_MASK1 = 0x8012831ull;
+
+static const uint32_t ODC_RDF1_SCOM_MASK1_ECC_CTL_AF_PERR = 0;
+static const uint32_t ODC_RDF1_SCOM_MASK1_ECC_CTL_TCHN_PERR = 1;
+static const uint32_t ODC_RDF1_SCOM_MASK1_ECC_CTL_CMPMODE_ERR = 2;
+static const uint32_t ODC_RDF1_SCOM_MASK1_ECC_PIPE_PCX_PERR = 3;
+static const uint32_t ODC_RDF1_SCOM_MASK1_ECC_PIPE_SYND_PERR = 4;
+static const uint32_t ODC_RDF1_SCOM_MASK1_ECC_PIPE_2SYM_PERR = 5;
+static const uint32_t ODC_RDF1_SCOM_MASK1_ECC_PIPE_CPLX_PERR = 6;
+static const uint32_t ODC_RDF1_SCOM_MASK1_ECC_PIPE_EP2_PERR = 7;
+static const uint32_t ODC_RDF1_SCOM_MASK1_READ_ECC_DATAPATH_PARITY_ERROR = 8;
+static const uint32_t ODC_RDF1_SCOM_MASK1_ECC_PIPE_CMX_PERR = 9;
+static const uint32_t ODC_RDF1_SCOM_MASK1_ECC_PIPE_VP1_PERR = 10;
+static const uint32_t ODC_RDF1_SCOM_MASK1_ECC_PIPE_VP2_PERR = 11;
+static const uint32_t ODC_RDF1_SCOM_MASK1_ECC_PIPE_SYG_PERR = 12;
+static const uint32_t ODC_RDF1_SCOM_MASK1_ECC_PIPE_EF1_PERR = 13;
+static const uint32_t ODC_RDF1_SCOM_MASK1_ECC_PIPE_MK3_PERR = 14;
+static const uint32_t ODC_RDF1_SCOM_MASK1_ECC_PIPE_E1A_PERR = 15;
+static const uint32_t ODC_RDF1_SCOM_MASK1_UNEXPECTED_RDDATA_VALID = 16;
+static const uint32_t ODC_RDF1_SCOM_MASK1_MISSING_RDDATA_VALID = 17;
+static const uint32_t ODC_RDF1_SCOM_MASK1_SUE_01_DETECT = 18;
+static const uint32_t ODC_RDF1_SCOM_MASK1_SUE_10_DETECT = 19;
+static const uint32_t ODC_RDF1_SCOM_MASK1_PBUF_CRIT_OW_P_ERR = 20;
+
+
+static const uint64_t ODC_RDF1_SCOM_MCBCM = 0x8012834ull;
+
+static const uint32_t ODC_RDF1_SCOM_MCBCM_HALF_COMPARE_MASK = 0;
+static const uint32_t ODC_RDF1_SCOM_MCBCM_HALF_COMPARE_MASK_LEN = 40;
+static const uint32_t ODC_RDF1_SCOM_MCBCM_MASK_COVERAGE_SELECTOR = 40;
+static const uint32_t ODC_RDF1_SCOM_MCBCM_TRAP_NONSTOP = 41;
+static const uint32_t ODC_RDF1_SCOM_MCBCM_TRAP_CE_ENABLE = 42;
+static const uint32_t ODC_RDF1_SCOM_MCBCM_TRAP_MPE_ENABLE = 43;
+static const uint32_t ODC_RDF1_SCOM_MCBCM_TRAP_UE_ENABLE = 44;
+
+
+static const uint64_t ODC_RDF1_SCOM_MCBCM2 = 0x8012835ull;
+
+static const uint32_t ODC_RDF1_SCOM_MCBCM2_MCBCM2_MCBIST_HALF_COMPARE_MASK = 0;
+static const uint32_t ODC_RDF1_SCOM_MCBCM2_MCBCM2_MCBIST_HALF_COMPARE_MASK_LEN = 40;
+
+
+static const uint64_t ODC_RDF1_SCOM_MSR = 0x801280Cull;
+
+static const uint32_t ODC_RDF1_SCOM_MSR_CHIPMARK = 8;
+static const uint32_t ODC_RDF1_SCOM_MSR_CHIPMARK_LEN = 8;
+static const uint32_t ODC_RDF1_SCOM_MSR_RANK = 16;
+static const uint32_t ODC_RDF1_SCOM_MSR_RANK_LEN = 3;
+
+
+static const uint64_t ODC_RDF1_SCOM_RDFCFGLXSTOP = 0x8012807ull;
+
+static const uint32_t ODC_RDF1_SCOM_RDFCFGLXSTOP_CFG_LXSTOP = 0;
+static const uint32_t ODC_RDF1_SCOM_RDFCFGLXSTOP_CFG_LXSTOP_LEN = 63;
+
+
+static const uint64_t ODC_RDF1_SCOM_RDFCFGRECOV = 0x8012805ull;
+
+static const uint32_t ODC_RDF1_SCOM_RDFCFGRECOV_CFG_RECOV = 0;
+static const uint32_t ODC_RDF1_SCOM_RDFCFGRECOV_CFG_RECOV_LEN = 63;
+
+
+static const uint64_t ODC_RDF1_SCOM_RDFCFGSPATTN = 0x8012806ull;
+
+static const uint32_t ODC_RDF1_SCOM_RDFCFGSPATTN_CFG_SPATTN = 0;
+static const uint32_t ODC_RDF1_SCOM_RDFCFGSPATTN_CFG_SPATTN_LEN = 63;
+
+
+static const uint64_t ODC_RDF1_SCOM_RDFCFGXSTOP = 0x8012804ull;
+
+static const uint32_t ODC_RDF1_SCOM_RDFCFGXSTOP_CFG_XSTOP = 0;
+static const uint32_t ODC_RDF1_SCOM_RDFCFGXSTOP_CFG_XSTOP_LEN = 63;
+
+
+static const uint64_t ODC_RDF1_SCOM_RDFFIRMASK_WO_OR = 0x8012803ull;
+static const uint64_t ODC_RDF1_SCOM_RDFFIRMASK_RW_WCLEAR = 0x8012802ull;
+
+static const uint32_t ODC_RDF1_SCOM_RDFFIRMASK_FIR_MASK = 0;
+static const uint32_t ODC_RDF1_SCOM_RDFFIRMASK_FIR_MASK_LEN = 63;
+
+
+static const uint64_t ODC_RDF1_SCOM_RDFFIRWOF = 0x8012808ull;
+
+static const uint32_t ODC_RDF1_SCOM_RDFFIRWOF_RDFFIRWOF_FIR_WOF = 0;
+static const uint32_t ODC_RDF1_SCOM_RDFFIRWOF_RDFFIRWOF_FIR_WOF_LEN = 63;
+
+
+static const uint64_t ODC_RDF1_SCOM_RSPAR = 0x8012820ull;
+
+static const uint32_t ODC_RDF1_SCOM_RSPAR_R0_LEFT = 0;
+static const uint32_t ODC_RDF1_SCOM_RSPAR_R0_LEFT_LEN = 5;
+static const uint32_t ODC_RDF1_SCOM_RSPAR_R0_RIGHT = 5;
+static const uint32_t ODC_RDF1_SCOM_RSPAR_R0_RIGHT_LEN = 5;
+static const uint32_t ODC_RDF1_SCOM_RSPAR_R1_LEFT = 10;
+static const uint32_t ODC_RDF1_SCOM_RSPAR_R1_LEFT_LEN = 5;
+static const uint32_t ODC_RDF1_SCOM_RSPAR_R1_RIGHT = 15;
+static const uint32_t ODC_RDF1_SCOM_RSPAR_R1_RIGHT_LEN = 5;
+
+
+static const uint64_t ODC_SRQ_CFG_ATTN = 0x8011006ull;
+
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN00 = 0;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN01 = 1;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN02 = 2;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN03 = 3;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN04 = 4;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN05 = 5;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN06 = 6;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN07 = 7;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN08 = 8;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN09 = 9;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN10 = 10;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN11 = 11;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN12 = 12;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN13 = 13;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN14 = 14;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN15 = 15;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN16 = 16;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN17 = 17;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN18 = 18;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN19 = 19;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN20 = 20;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN21 = 21;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN22 = 22;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN23 = 23;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN24 = 24;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN25 = 25;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN26 = 26;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN27 = 27;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN28 = 28;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN29 = 29;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN30 = 30;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN31 = 31;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN32 = 32;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN33 = 33;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN34 = 34;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN35 = 35;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN36 = 36;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN37 = 37;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN38 = 38;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN39 = 39;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN40 = 40;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN41 = 41;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN42 = 42;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN43 = 43;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN44 = 44;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN45 = 45;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN46 = 46;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN47 = 47;
+static const uint32_t ODC_SRQ_CFG_ATTN_ATTN48 = 48;
+
+
+static const uint64_t ODC_SRQ_CFG_LXSTOP = 0x8011007ull;
+
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP00 = 0;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP01 = 1;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP02 = 2;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP03 = 3;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP04 = 4;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP05 = 5;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP06 = 6;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP07 = 7;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP08 = 8;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP09 = 9;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP10 = 10;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP11 = 11;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP12 = 12;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP13 = 13;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP14 = 14;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP15 = 15;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP16 = 16;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP17 = 17;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP18 = 18;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP19 = 19;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP20 = 20;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP21 = 21;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP22 = 22;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP23 = 23;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP24 = 24;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP25 = 25;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP26 = 26;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP27 = 27;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP28 = 28;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP29 = 29;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP30 = 30;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP31 = 31;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP32 = 32;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP33 = 33;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP34 = 34;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP35 = 35;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP36 = 36;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP37 = 37;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP38 = 38;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP39 = 39;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP40 = 40;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP41 = 41;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP42 = 42;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP43 = 43;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP44 = 44;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP45 = 45;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP46 = 46;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP47 = 47;
+static const uint32_t ODC_SRQ_CFG_LXSTOP_LXSTOP48 = 48;
+
+
+static const uint64_t ODC_SRQ_CFG_RECOV = 0x8011005ull;
+
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV00 = 0;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV01 = 1;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV02 = 2;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV03 = 3;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV04 = 4;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV05 = 5;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV06 = 6;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV07 = 7;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV08 = 8;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV09 = 9;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV10 = 10;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV11 = 11;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV12 = 12;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV13 = 13;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV14 = 14;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV15 = 15;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV16 = 16;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV17 = 17;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV18 = 18;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV19 = 19;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV20 = 20;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV21 = 21;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV22 = 22;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV23 = 23;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV24 = 24;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV25 = 25;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV26 = 26;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV27 = 27;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV28 = 28;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV29 = 29;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV30 = 30;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV31 = 31;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV32 = 32;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV33 = 33;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV34 = 34;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV35 = 35;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV36 = 36;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV37 = 37;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV38 = 38;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV39 = 39;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV40 = 40;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV41 = 41;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV42 = 42;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV43 = 43;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV44 = 44;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV45 = 45;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV46 = 46;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV47 = 47;
+static const uint32_t ODC_SRQ_CFG_RECOV_RECOV48 = 48;
+
+
+static const uint64_t ODC_SRQ_CFG_XSTOP = 0x8011004ull;
+
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP00 = 0;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP01 = 1;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP02 = 2;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP03 = 3;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP04 = 4;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP05 = 5;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP06 = 6;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP07 = 7;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP08 = 8;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP09 = 9;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP10 = 10;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP11 = 11;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP12 = 12;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP13 = 13;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP14 = 14;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP15 = 15;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP16 = 16;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP17 = 17;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP18 = 18;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP19 = 19;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP20 = 20;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP21 = 21;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP22 = 22;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP23 = 23;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP24 = 24;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP25 = 25;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP26 = 26;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP27 = 27;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP28 = 28;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP29 = 29;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP30 = 30;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP31 = 31;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP32 = 32;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP33 = 33;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP34 = 34;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP35 = 35;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP36 = 36;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP37 = 37;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP38 = 38;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP39 = 39;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP40 = 40;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP41 = 41;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP42 = 42;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP43 = 43;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP44 = 44;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP45 = 45;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP46 = 46;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP47 = 47;
+static const uint32_t ODC_SRQ_CFG_XSTOP_XSTOP48 = 48;
+
+
+static const uint64_t ODC_SRQ_LFIR_WO_OR = 0x8011001ull;
+static const uint64_t ODC_SRQ_LFIR_RW_WCLEAR = 0x8011000ull;
+
+static const uint32_t ODC_SRQ_LFIR_IN00 = 0;
+static const uint32_t ODC_SRQ_LFIR_IN01 = 1;
+static const uint32_t ODC_SRQ_LFIR_IN02 = 2;
+static const uint32_t ODC_SRQ_LFIR_IN03 = 3;
+static const uint32_t ODC_SRQ_LFIR_IN04 = 4;
+static const uint32_t ODC_SRQ_LFIR_IN05 = 5;
+static const uint32_t ODC_SRQ_LFIR_IN06 = 6;
+static const uint32_t ODC_SRQ_LFIR_IN07 = 7;
+static const uint32_t ODC_SRQ_LFIR_IN08 = 8;
+static const uint32_t ODC_SRQ_LFIR_IN09 = 9;
+static const uint32_t ODC_SRQ_LFIR_IN10 = 10;
+static const uint32_t ODC_SRQ_LFIR_IN11 = 11;
+static const uint32_t ODC_SRQ_LFIR_IN12 = 12;
+static const uint32_t ODC_SRQ_LFIR_IN13 = 13;
+static const uint32_t ODC_SRQ_LFIR_IN14 = 14;
+static const uint32_t ODC_SRQ_LFIR_IN15 = 15;
+static const uint32_t ODC_SRQ_LFIR_IN16 = 16;
+static const uint32_t ODC_SRQ_LFIR_IN17 = 17;
+static const uint32_t ODC_SRQ_LFIR_IN18 = 18;
+static const uint32_t ODC_SRQ_LFIR_IN19 = 19;
+static const uint32_t ODC_SRQ_LFIR_IN20 = 20;
+static const uint32_t ODC_SRQ_LFIR_IN21 = 21;
+static const uint32_t ODC_SRQ_LFIR_IN22 = 22;
+static const uint32_t ODC_SRQ_LFIR_IN23 = 23;
+static const uint32_t ODC_SRQ_LFIR_IN24 = 24;
+static const uint32_t ODC_SRQ_LFIR_IN25 = 25;
+static const uint32_t ODC_SRQ_LFIR_IN26 = 26;
+static const uint32_t ODC_SRQ_LFIR_IN27 = 27;
+static const uint32_t ODC_SRQ_LFIR_IN28 = 28;
+static const uint32_t ODC_SRQ_LFIR_IN29 = 29;
+static const uint32_t ODC_SRQ_LFIR_IN30 = 30;
+static const uint32_t ODC_SRQ_LFIR_IN31 = 31;
+static const uint32_t ODC_SRQ_LFIR_IN32 = 32;
+static const uint32_t ODC_SRQ_LFIR_IN33 = 33;
+static const uint32_t ODC_SRQ_LFIR_IN34 = 34;
+static const uint32_t ODC_SRQ_LFIR_IN35 = 35;
+static const uint32_t ODC_SRQ_LFIR_IN36 = 36;
+static const uint32_t ODC_SRQ_LFIR_IN37 = 37;
+static const uint32_t ODC_SRQ_LFIR_IN38 = 38;
+static const uint32_t ODC_SRQ_LFIR_IN39 = 39;
+static const uint32_t ODC_SRQ_LFIR_IN40 = 40;
+static const uint32_t ODC_SRQ_LFIR_IN41 = 41;
+static const uint32_t ODC_SRQ_LFIR_IN42 = 42;
+static const uint32_t ODC_SRQ_LFIR_IN43 = 43;
+static const uint32_t ODC_SRQ_LFIR_IN44 = 44;
+static const uint32_t ODC_SRQ_LFIR_IN45 = 45;
+static const uint32_t ODC_SRQ_LFIR_IN46 = 46;
+static const uint32_t ODC_SRQ_LFIR_IN47 = 47;
+static const uint32_t ODC_SRQ_LFIR_IN48 = 48;
+
+
+static const uint64_t ODC_SRQ_LFIR_WOF = 0x8011008ull;
+
+static const uint32_t ODC_SRQ_LFIR_WOF_IN00 = 0;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN01 = 1;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN02 = 2;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN03 = 3;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN04 = 4;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN05 = 5;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN06 = 6;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN07 = 7;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN08 = 8;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN09 = 9;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN10 = 10;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN11 = 11;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN12 = 12;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN13 = 13;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN14 = 14;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN15 = 15;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN16 = 16;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN17 = 17;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN18 = 18;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN19 = 19;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN20 = 20;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN21 = 21;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN22 = 22;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN23 = 23;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN24 = 24;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN25 = 25;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN26 = 26;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN27 = 27;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN28 = 28;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN29 = 29;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN30 = 30;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN31 = 31;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN32 = 32;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN33 = 33;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN34 = 34;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN35 = 35;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN36 = 36;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN37 = 37;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN38 = 38;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN39 = 39;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN40 = 40;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN41 = 41;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN42 = 42;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN43 = 43;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN44 = 44;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN45 = 45;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN46 = 46;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN47 = 47;
+static const uint32_t ODC_SRQ_LFIR_WOF_IN48 = 48;
+
+
+static const uint64_t ODC_SRQ_MASK_WO_OR = 0x8011003ull;
+static const uint64_t ODC_SRQ_MASK_RW_WCLEAR = 0x8011002ull;
+
+static const uint32_t ODC_SRQ_MASK_MASK00 = 0;
+static const uint32_t ODC_SRQ_MASK_MASK01 = 1;
+static const uint32_t ODC_SRQ_MASK_MASK02 = 2;
+static const uint32_t ODC_SRQ_MASK_MASK03 = 3;
+static const uint32_t ODC_SRQ_MASK_MASK04 = 4;
+static const uint32_t ODC_SRQ_MASK_MASK05 = 5;
+static const uint32_t ODC_SRQ_MASK_MASK06 = 6;
+static const uint32_t ODC_SRQ_MASK_MASK07 = 7;
+static const uint32_t ODC_SRQ_MASK_MASK08 = 8;
+static const uint32_t ODC_SRQ_MASK_MASK09 = 9;
+static const uint32_t ODC_SRQ_MASK_MASK10 = 10;
+static const uint32_t ODC_SRQ_MASK_MASK11 = 11;
+static const uint32_t ODC_SRQ_MASK_MASK12 = 12;
+static const uint32_t ODC_SRQ_MASK_MASK13 = 13;
+static const uint32_t ODC_SRQ_MASK_MASK14 = 14;
+static const uint32_t ODC_SRQ_MASK_MASK15 = 15;
+static const uint32_t ODC_SRQ_MASK_MASK16 = 16;
+static const uint32_t ODC_SRQ_MASK_MASK17 = 17;
+static const uint32_t ODC_SRQ_MASK_MASK18 = 18;
+static const uint32_t ODC_SRQ_MASK_MASK19 = 19;
+static const uint32_t ODC_SRQ_MASK_MASK20 = 20;
+static const uint32_t ODC_SRQ_MASK_MASK21 = 21;
+static const uint32_t ODC_SRQ_MASK_MASK22 = 22;
+static const uint32_t ODC_SRQ_MASK_MASK23 = 23;
+static const uint32_t ODC_SRQ_MASK_MASK24 = 24;
+static const uint32_t ODC_SRQ_MASK_MASK25 = 25;
+static const uint32_t ODC_SRQ_MASK_MASK26 = 26;
+static const uint32_t ODC_SRQ_MASK_MASK27 = 27;
+static const uint32_t ODC_SRQ_MASK_MASK28 = 28;
+static const uint32_t ODC_SRQ_MASK_MASK29 = 29;
+static const uint32_t ODC_SRQ_MASK_MASK30 = 30;
+static const uint32_t ODC_SRQ_MASK_MASK31 = 31;
+static const uint32_t ODC_SRQ_MASK_MASK32 = 32;
+static const uint32_t ODC_SRQ_MASK_MASK33 = 33;
+static const uint32_t ODC_SRQ_MASK_MASK34 = 34;
+static const uint32_t ODC_SRQ_MASK_MASK35 = 35;
+static const uint32_t ODC_SRQ_MASK_MASK36 = 36;
+static const uint32_t ODC_SRQ_MASK_MASK37 = 37;
+static const uint32_t ODC_SRQ_MASK_MASK38 = 38;
+static const uint32_t ODC_SRQ_MASK_MASK39 = 39;
+static const uint32_t ODC_SRQ_MASK_MASK40 = 40;
+static const uint32_t ODC_SRQ_MASK_MASK41 = 41;
+static const uint32_t ODC_SRQ_MASK_MASK42 = 42;
+static const uint32_t ODC_SRQ_MASK_MASK43 = 43;
+static const uint32_t ODC_SRQ_MASK_MASK44 = 44;
+static const uint32_t ODC_SRQ_MASK_MASK45 = 45;
+static const uint32_t ODC_SRQ_MASK_MASK46 = 46;
+static const uint32_t ODC_SRQ_MASK_MASK47 = 47;
+static const uint32_t ODC_SRQ_MASK_MASK48 = 48;
+
+
+static const uint64_t ODC_SRQ_MBAREF0Q = 0x8011034ull;
+
+static const uint32_t ODC_SRQ_MBAREF0Q_CFG_REFRESH_ENABLE = 0;
+static const uint32_t ODC_SRQ_MBAREF0Q_CFG_REFRESH_INTERVAL_TIMEBASE_SELECT = 1;
+static const uint32_t ODC_SRQ_MBAREF0Q_CFG_REFRESH_INTERVAL_TIMEBASE_SELECT_LEN = 2;
+static const uint32_t ODC_SRQ_MBAREF0Q_CFG_PER_BANK_REFRESH = 3;
+static const uint32_t ODC_SRQ_MBAREF0Q_RESERVED_4 = 4;
+static const uint32_t ODC_SRQ_MBAREF0Q_CFG_REFRESH_PRIORITY_THRESHOLD = 5;
+static const uint32_t ODC_SRQ_MBAREF0Q_CFG_REFRESH_PRIORITY_THRESHOLD_LEN = 3;
+static const uint32_t ODC_SRQ_MBAREF0Q_CFG_REFRESH_INTERVAL = 8;
+static const uint32_t ODC_SRQ_MBAREF0Q_CFG_REFRESH_INTERVAL_LEN = 11;
+static const uint32_t ODC_SRQ_MBAREF0Q_RESERVED_19_29 = 19;
+static const uint32_t ODC_SRQ_MBAREF0Q_RESERVED_19_29_LEN = 11;
+static const uint32_t ODC_SRQ_MBAREF0Q_CFG_TRFC = 30;
+static const uint32_t ODC_SRQ_MBAREF0Q_CFG_TRFC_LEN = 10;
+static const uint32_t ODC_SRQ_MBAREF0Q_CFG_REFR_TSV_STACK = 40;
+static const uint32_t ODC_SRQ_MBAREF0Q_CFG_REFR_TSV_STACK_LEN = 10;
+static const uint32_t ODC_SRQ_MBAREF0Q_CFG_REFR_CHECK_INTERVAL = 50;
+static const uint32_t ODC_SRQ_MBAREF0Q_CFG_REFR_CHECK_INTERVAL_LEN = 11;
+static const uint32_t ODC_SRQ_MBAREF0Q_CFG_TRFC_STACK_GATE_ALL_REF = 61;
+static const uint32_t ODC_SRQ_MBAREF0Q_RESERVED_62_63 = 62;
+static const uint32_t ODC_SRQ_MBAREF0Q_RESERVED_62_63_LEN = 2;
+
+
+static const uint64_t ODC_SRQ_MBAREF1Q = 0x8011035ull;
+
+static const uint32_t ODC_SRQ_MBAREF1Q_CFG_REFRESH_RESET_INTERVAL_SIDE0 = 0;
+static const uint32_t ODC_SRQ_MBAREF1Q_CFG_REFRESH_RESET_INTERVAL_SIDE0_LEN = 11;
+static const uint32_t ODC_SRQ_MBAREF1Q_CFG_REFRESH_RESET_RANK_SIDE0 = 11;
+static const uint32_t ODC_SRQ_MBAREF1Q_CFG_REFRESH_RESET_RANK_SIDE0_LEN = 6;
+static const uint32_t ODC_SRQ_MBAREF1Q_CFG_REFRESH_RESET_INTERVAL_SIDE1 = 17;
+static const uint32_t ODC_SRQ_MBAREF1Q_CFG_REFRESH_RESET_INTERVAL_SIDE1_LEN = 11;
+static const uint32_t ODC_SRQ_MBAREF1Q_CFG_REFRESH_RESET_RANK_SIDE1 = 28;
+static const uint32_t ODC_SRQ_MBAREF1Q_CFG_REFRESH_RESET_RANK_SIDE1_LEN = 6;
+static const uint32_t ODC_SRQ_MBAREF1Q_RESERVED_34_63 = 34;
+static const uint32_t ODC_SRQ_MBAREF1Q_RESERVED_34_63_LEN = 30;
+
+
+static const uint64_t ODC_SRQ_MBAREFAQ = 0x8011038ull;
+
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_STATIC_IDLE_DLY = 0;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_STATIC_IDLE_DLY_LEN = 4;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_LP_SUB_CNT = 4;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_LP_SUB_CNT_LEN = 2;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_REFRESH_STACK_INTLV_ENABLE = 6;
+static const uint32_t ODC_SRQ_MBAREFAQ_RESERVED_7_15 = 7;
+static const uint32_t ODC_SRQ_MBAREFAQ_RESERVED_7_15_LEN = 9;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_TSTAB = 16;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_TSTAB_LEN = 13;
+static const uint32_t ODC_SRQ_MBAREFAQ_RESERVED_29_31 = 29;
+static const uint32_t ODC_SRQ_MBAREFAQ_RESERVED_29_31_LEN = 3;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_REFM_ENABLE = 32;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_REFM_RAAIMT = 33;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_REFM_RAAIMT_LEN = 7;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_REFM_RAADEC = 40;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_REFM_RAADEC_LEN = 7;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_REFM_CG_DIS = 47;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_REFM_ECC_DISABLE = 48;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_REFM_BLKACT_DISABLE = 49;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_REFM_RAAMMT_MASK = 50;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_REFM_RAAMMT_MASK_LEN = 3;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_TREFSBRD_SLR = 53;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_TREFSBRD_SLR_LEN = 6;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_TREFSBRD_DLR = 59;
+static const uint32_t ODC_SRQ_MBAREFAQ_CFG_TREFSBRD_DLR_LEN = 5;
+
+
+static const uint64_t ODC_SRQ_MBARPC0Q = 0x8011036ull;
+
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_LP_CTRL_ENABLE = 0;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_LP_DATA_ENABLE = 1;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_CONC_LP_DATA_DLY = 2;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_CONC_LP_DATA_DLY_LEN = 4;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_PUP_AVAIL = 6;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_PUP_AVAIL_LEN = 5;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_PDN_PUP = 11;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_PDN_PUP_LEN = 5;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_PUP_PDN = 16;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_PUP_PDN_LEN = 5;
+static const uint32_t ODC_SRQ_MBARPC0Q_RESERVED_21 = 21;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_MIN_DOMAIN_REDUCTION_ENABLE = 22;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_MIN_DOMAIN_REDUCTION_TIME = 23;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_MIN_DOMAIN_REDUCTION_TIME_LEN = 10;
+static const uint32_t ODC_SRQ_MBARPC0Q_RESERVED_33_41 = 33;
+static const uint32_t ODC_SRQ_MBARPC0Q_RESERVED_33_41_LEN = 9;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_CONC_LP_DATA_DISABLE = 42;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_MIN_DOMAIN_REDUCTION_CNT_REFR_INT = 43;
+static const uint32_t ODC_SRQ_MBARPC0Q_RESERVED_44_48 = 44;
+static const uint32_t ODC_SRQ_MBARPC0Q_RESERVED_44_48_LEN = 5;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_TLP_RESP = 49;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_TLP_RESP_LEN = 5;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_TLP_WAKEUP = 54;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_TLP_WAKEUP_LEN = 5;
+static const uint32_t ODC_SRQ_MBARPC0Q_CFG_CONC_CCS_STR_EN = 59;
+static const uint32_t ODC_SRQ_MBARPC0Q_RESERVED_60_63 = 60;
+static const uint32_t ODC_SRQ_MBARPC0Q_RESERVED_60_63_LEN = 4;
+
+
+static const uint64_t ODC_SRQ_MBASTR0Q = 0x8011037ull;
+
+static const uint32_t ODC_SRQ_MBASTR0Q_STR_ENABLE = 0;
+static const uint32_t ODC_SRQ_MBASTR0Q_DIS_CLK_IN_STR = 1;
+static const uint32_t ODC_SRQ_MBASTR0Q_ENTER_STR_TIME = 2;
+static const uint32_t ODC_SRQ_MBASTR0Q_ENTER_STR_TIME_LEN = 10;
+static const uint32_t ODC_SRQ_MBASTR0Q_TCPDED = 12;
+static const uint32_t ODC_SRQ_MBASTR0Q_TCPDED_LEN = 5;
+static const uint32_t ODC_SRQ_MBASTR0Q_TCKLCS = 17;
+static const uint32_t ODC_SRQ_MBASTR0Q_TCKLCS_LEN = 5;
+static const uint32_t ODC_SRQ_MBASTR0Q_TCSL = 22;
+static const uint32_t ODC_SRQ_MBASTR0Q_TCSL_LEN = 5;
+static const uint32_t ODC_SRQ_MBASTR0Q_TXSDLL = 27;
+static const uint32_t ODC_SRQ_MBASTR0Q_TXSDLL_LEN = 11;
+static const uint32_t ODC_SRQ_MBASTR0Q_TRFC_COUNTER_DIS = 38;
+static const uint32_t ODC_SRQ_MBASTR0Q_TRFC_COUNTER_DIS_LEN = 8;
+static const uint32_t ODC_SRQ_MBASTR0Q_SAFE_REFRESH_INTERVAL = 46;
+static const uint32_t ODC_SRQ_MBASTR0Q_SAFE_REFRESH_INTERVAL_LEN = 11;
+static const uint32_t ODC_SRQ_MBASTR0Q_OCC_DEADMAN_TIMER_SEL = 57;
+static const uint32_t ODC_SRQ_MBASTR0Q_OCC_DEADMAN_TIMER_SEL_LEN = 4;
+static const uint32_t ODC_SRQ_MBASTR0Q_OCC_DEADMAN_TB_SEL = 61;
+static const uint32_t ODC_SRQ_MBASTR0Q_FORCE_STR = 62;
+static const uint32_t ODC_SRQ_MBASTR0Q_EPOW_DISABLE = 63;
+
+
+static const uint64_t ODC_SRQ_MBA_DBG0Q = 0x801101Eull;
+
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_ENABLE = 0;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SEL0 = 1;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SEL0_LEN = 3;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SEL1 = 4;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SEL1_LEN = 3;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SEL2 = 7;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SEL2_LEN = 3;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SEL3 = 10;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SEL3_LEN = 3;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SEL4 = 13;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SEL4_LEN = 3;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SEL5 = 16;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SEL5_LEN = 3;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SEL6 = 19;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SEL6_LEN = 3;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SEL7 = 22;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SEL7_LEN = 3;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SETUP0_FLIP = 25;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SETUP1_FLIP = 26;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SETUP2_FLIP = 27;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SETUP3_FLIP = 28;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SETUP4_FLIP = 29;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SETUP5_FLIP = 30;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SETUP6_FLIP = 31;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_DBG_SRQ_SETUP7_FLIP = 32;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_RESERVED_33_43 = 33;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_RESERVED_33_43_LEN = 11;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_WAT_FARB_ACT_GT = 44;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_WAT_FARB_ACT_GT_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_WAT_FARB_RD_GT = 48;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_WAT_FARB_RD_GT_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_WAT_FARB_WR_GT = 52;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_WAT_FARB_WR_GT_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_WAT_FARB_REF_GT = 56;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_WAT_FARB_REF_GT_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_WAT_FARB_FAF_GT = 60;
+static const uint32_t ODC_SRQ_MBA_DBG0Q_CFG_WAT_FARB_FAF_GT_LEN = 4;
+
+
+static const uint64_t ODC_SRQ_MBA_DBG1Q = 0x801101Full;
+
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_FORCE_ENTRY0_HP = 0;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_FORCE_ENTRY0_HP_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_FARB_CAL_GT = 4;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_FARB_CAL_GT_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_FP_DIS = 8;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_FP_DIS_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_DIS_PG = 12;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_DIS_PG_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_RESERVED_16_19 = 16;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_RESERVED_16_19_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_PUP_ALL = 20;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_PUP_ALL_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_EXIT_STR = 24;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_EXIT_STR_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_REF_HP = 28;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_REF_HP_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_SYNC = 32;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_SYNC_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_REF_SAFE = 36;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_REF_SAFE_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_RESERVED_40_43 = 40;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_RESERVED_40_43_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_MCBIST_GT = 44;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_MCBIST_GT_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_NCF_RM_INVALID_CMD = 48;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_NCF_RM_INVALID_CMD_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_SET_FIR = 52;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_SET_FIR_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_EMER_TH = 56;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_EMER_TH_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_START_RECOVERY = 60;
+static const uint32_t ODC_SRQ_MBA_DBG1Q_CFG_WAT_START_RECOVERY_LEN = 4;
+
+
+static const uint64_t ODC_SRQ_MBA_DSM0Q = 0x801100Cull;
+
+static const uint32_t ODC_SRQ_MBA_DSM0Q_RDTAG_DLY = 0;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_RDTAG_DLY_LEN = 8;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_RDCSLAT_DLY = 8;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_RDCSLAT_DLY_LEN = 8;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_RDDATA_EN_DLY = 16;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_RDDATA_EN_DLY_LEN = 8;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_RDBUFF_CAPACITY_LIMIT = 24;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_RDBUFF_CAPACITY_LIMIT_LEN = 7;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_RDCSGAP_DLY = 31;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_RDCSGAP_DLY_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_WRCSGAP_DLY = 35;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_WRCSGAP_DLY_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_WRDONE_DLY = 39;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_WRDONE_DLY_LEN = 7;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_WRDATA_DLY = 46;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_WRDATA_DLY_LEN = 6;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_WRCSLAT_DLY = 52;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_WRCSLAT_DLY_LEN = 6;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_WRDATA_EN_DLY = 58;
+static const uint32_t ODC_SRQ_MBA_DSM0Q_WRDATA_EN_DLY_LEN = 6;
+
+
+static const uint64_t ODC_SRQ_MBA_ERR_REPORTQ = 0x801101Cull;
+
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_SRQ0_FSM_1HOT_ERR = 0;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_SRQ1_FSM_1HOT_ERR = 1;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_REFM0_ARY_CE = 2;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_REFM1_ARY_CE = 3;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_ROQ_SCOM_P_ERR = 4;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_PC_SCOM_P_ERR = 5;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_DSM_SCOM_P_ERR = 6;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_TMR_SCOM_P_ERR = 7;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_FARB_SCOM_P_ERR = 8;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_REG_PARITY_ERR = 9;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_XLT_SCOM_P_ERR = 10;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_FARB0_CCS_CMD_PE = 11;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_FARB1_CCS_CMD_PE = 12;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_NCF_IF_ERROR = 13;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_NCF_IF_ERROR_LEN = 11;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_NCF0_FIFO_ERROR = 24;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_NCF0_FIFO_ERROR_LEN = 3;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_ROQ0_ERROR = 27;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_ROQ0_ERROR_LEN = 10;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_ROQ1_ERROR = 37;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_ROQ1_ERROR_LEN = 10;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_DSM0_ERROR = 47;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_DSM0_ERROR_LEN = 3;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_RESERVED_50 = 50;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_RESERVED_51 = 51;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_DFI0_ERROR = 52;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_DFI0_ERROR_LEN = 2;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_DFI1_ERROR = 54;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_DFI1_ERROR_LEN = 2;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_DSM1_ERROR = 56;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_DSM1_ERROR_LEN = 3;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_NCF1_FIFO_ERROR = 59;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_NCF1_FIFO_ERROR_LEN = 3;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_RESERVED_62 = 62;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_RESERVED_63 = 63;
+
+
+static const uint64_t ODC_SRQ_MBA_ERR_REPORTQ_MASK = 0x801102Bull;
+
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_MASK_MBA_ERR_REPORTQ_MASK_ERRMASK = 0;
+static const uint32_t ODC_SRQ_MBA_ERR_REPORTQ_MASK_MBA_ERR_REPORTQ_MASK_ERRMASK_LEN = 64;
+
+
+static const uint64_t ODC_SRQ_MBA_FARB0Q = 0x8011015ull;
+
+static const uint32_t ODC_SRQ_MBA_FARB0Q_RESERVED_0_15 = 0;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_RESERVED_0_15_LEN = 7;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_DFI_FREQ = 7;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_DFI_FREQ_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_DFI_FREQ_FSP = 12;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_DFI_FREQ_FSP_LEN = 2;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_DFI_FREQ_RATIO = 14;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_DFI_FREQ_RATIO_LEN = 2;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_INIT_START = 16;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_2N_CSN_2ND_CYC = 17;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_RCD_CA_SDR_EN = 18;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_INJECT_PARITY_SIDE = 19;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_LP_CTRL_WAKEUP = 20;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_LP_CTRL_WAKEUP_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_LP_DATA_WAKEUP = 25;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_LP_DATA_WAKEUP_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_RESERVED_30_38 = 30;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_RESERVED_30_38_LEN = 9;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_DDIMM_REDUNDANT_CSN_EN = 39;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_INJECT_PARITY_ERR_ADDR5 = 40;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_BW_WINDOW_SIZE = 41;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_BW_WINDOW_SIZE_LEN = 2;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_WR_CNT_SIDE_SWITCH = 43;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_WR_CNT_SIDE_SWITCH_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_RCD_PROTECTION_TIME = 48;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_RCD_PROTECTION_TIME_LEN = 6;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_DISABLE_RCD_RECOVERY = 54;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_WAIT_FOR_INIT_COMPLETE = 55;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_FARB_CLOSE_ALL_PAGES = 56;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_PORT_FAIL_DISABLE = 57;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_RCD_EN = 58;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_INJECT_PARITY_ERR_CONSTANT = 59;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_FINISH_WR_BEFORE_RD = 60;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_RCD_STR_KEEP_CS_HIGH = 61;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_CCS_SRQ_GEN_PARITY_DIS = 62;
+static const uint32_t ODC_SRQ_MBA_FARB0Q_CFG_2N_STR_FIX_DIS = 63;
+
+
+static const uint64_t ODC_SRQ_MBA_FARB1Q = 0x8011016ull;
+
+static const uint32_t ODC_SRQ_MBA_FARB1Q_CFG_TCSH_SREXIT = 0;
+static const uint32_t ODC_SRQ_MBA_FARB1Q_CFG_TCSH_SREXIT_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_FARB1Q_CFG_TCSL_SREXIT = 5;
+static const uint32_t ODC_SRQ_MBA_FARB1Q_CFG_TCSL_SREXIT_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_FARB1Q_RESERVED_10_47 = 10;
+static const uint32_t ODC_SRQ_MBA_FARB1Q_RESERVED_10_47_LEN = 38;
+static const uint32_t ODC_SRQ_MBA_FARB1Q_RESERVED_48 = 48;
+static const uint32_t ODC_SRQ_MBA_FARB1Q_RESERVED_49 = 49;
+static const uint32_t ODC_SRQ_MBA_FARB1Q_CFG_READ_2CYC_PREAMBLE_EN = 50;
+static const uint32_t ODC_SRQ_MBA_FARB1Q_CFG_WRITE_2CYC_PREAMBLE_EN = 51;
+static const uint32_t ODC_SRQ_MBA_FARB1Q_RESERVED_52_63 = 52;
+static const uint32_t ODC_SRQ_MBA_FARB1Q_RESERVED_52_63_LEN = 12;
+
+
+static const uint64_t ODC_SRQ_MBA_FARB2Q = 0x8011017ull;
+
+static const uint32_t ODC_SRQ_MBA_FARB2Q_CFG_RD_NT_ODT_EN = 0;
+static const uint32_t ODC_SRQ_MBA_FARB2Q_CFG_WR_NT_ODT_EN = 1;
+static const uint32_t ODC_SRQ_MBA_FARB2Q_RESERVED_2_27 = 2;
+static const uint32_t ODC_SRQ_MBA_FARB2Q_RESERVED_2_27_LEN = 26;
+static const uint32_t ODC_SRQ_MBA_FARB2Q_CFG_CCS_SNOOP_EN_LSB = 28;
+static const uint32_t ODC_SRQ_MBA_FARB2Q_CFG_CCS_SNOOP_EN_MSB = 29;
+static const uint32_t ODC_SRQ_MBA_FARB2Q_CFG_CCS_RDWR_SET_M0 = 30;
+static const uint32_t ODC_SRQ_MBA_FARB2Q_CFG_CCS_RDWR_SET_M1 = 31;
+static const uint32_t ODC_SRQ_MBA_FARB2Q_RESERVED_32_63 = 32;
+static const uint32_t ODC_SRQ_MBA_FARB2Q_RESERVED_32_63_LEN = 32;
+
+
+static const uint64_t ODC_SRQ_MBA_FARB3Q = 0x8011018ull;
+
+static const uint32_t ODC_SRQ_MBA_FARB3Q_CFG_NM_N_PER_SLOT = 0;
+static const uint32_t ODC_SRQ_MBA_FARB3Q_CFG_NM_N_PER_SLOT_LEN = 15;
+static const uint32_t ODC_SRQ_MBA_FARB3Q_CFG_NM_N_PER_PORT = 15;
+static const uint32_t ODC_SRQ_MBA_FARB3Q_CFG_NM_N_PER_PORT_LEN = 16;
+static const uint32_t ODC_SRQ_MBA_FARB3Q_CFG_NM_M = 31;
+static const uint32_t ODC_SRQ_MBA_FARB3Q_CFG_NM_M_LEN = 14;
+static const uint32_t ODC_SRQ_MBA_FARB3Q_CFG_NM_RAS_WEIGHT = 45;
+static const uint32_t ODC_SRQ_MBA_FARB3Q_CFG_NM_RAS_WEIGHT_LEN = 3;
+static const uint32_t ODC_SRQ_MBA_FARB3Q_CFG_NM_CAS_WEIGHT = 48;
+static const uint32_t ODC_SRQ_MBA_FARB3Q_CFG_NM_CAS_WEIGHT_LEN = 3;
+static const uint32_t ODC_SRQ_MBA_FARB3Q_RESERVED_51 = 51;
+static const uint32_t ODC_SRQ_MBA_FARB3Q_RESERVED_52 = 52;
+static const uint32_t ODC_SRQ_MBA_FARB3Q_CFG_NM_CHANGE_AFTER_SYNC = 53;
+static const uint32_t ODC_SRQ_MBA_FARB3Q_CFG_NM_PAD = 54;
+static const uint32_t ODC_SRQ_MBA_FARB3Q_CFG_NM_PAD_LEN = 3;
+static const uint32_t ODC_SRQ_MBA_FARB3Q_RESERVED_57_63 = 57;
+static const uint32_t ODC_SRQ_MBA_FARB3Q_RESERVED_57_63_LEN = 7;
+
+
+static const uint64_t ODC_SRQ_MBA_FARB4Q = 0x8011019ull;
+
+static const uint32_t ODC_SRQ_MBA_FARB4Q_CFG_NOISE_WAIT_TIME = 0;
+static const uint32_t ODC_SRQ_MBA_FARB4Q_CFG_NOISE_WAIT_TIME_LEN = 16;
+static const uint32_t ODC_SRQ_MBA_FARB4Q_CFG_PRECHARGE_WAIT_TIME = 16;
+static const uint32_t ODC_SRQ_MBA_FARB4Q_CFG_PRECHARGE_WAIT_TIME_LEN = 6;
+static const uint32_t ODC_SRQ_MBA_FARB4Q_CFG_SIM_FAST_NOISE_WINDOW = 22;
+static const uint32_t ODC_SRQ_MBA_FARB4Q_RESERVED_23_26 = 23;
+static const uint32_t ODC_SRQ_MBA_FARB4Q_RESERVED_23_26_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_FARB4Q_EMERGENCY_N = 27;
+static const uint32_t ODC_SRQ_MBA_FARB4Q_EMERGENCY_N_LEN = 15;
+static const uint32_t ODC_SRQ_MBA_FARB4Q_EMERGENCY_M = 42;
+static const uint32_t ODC_SRQ_MBA_FARB4Q_EMERGENCY_M_LEN = 14;
+static const uint32_t ODC_SRQ_MBA_FARB4Q_RESERVED_56_63 = 56;
+static const uint32_t ODC_SRQ_MBA_FARB4Q_RESERVED_56_63_LEN = 8;
+
+
+static const uint64_t ODC_SRQ_MBA_FARB5Q = 0x801101Aull;
+
+static const uint32_t ODC_SRQ_MBA_FARB5Q_RESERVED_0_3 = 0;
+static const uint32_t ODC_SRQ_MBA_FARB5Q_RESERVED_0_3_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_FARB5Q_CFG_DDR_RESETN = 4;
+static const uint32_t ODC_SRQ_MBA_FARB5Q_CFG_CCS_ADDR_MUX_SEL = 5;
+static const uint32_t ODC_SRQ_MBA_FARB5Q_CFG_CCS_INST_RESET_ENABLE = 6;
+static const uint32_t ODC_SRQ_MBA_FARB5Q_CFG_SRQ_WRDATA_FOR_CCS_EN = 7;
+static const uint32_t ODC_SRQ_MBA_FARB5Q_CFG_PHYMSTR_CCS_GATE_ENABLE = 8;
+static const uint32_t ODC_SRQ_MBA_FARB5Q_RESERVED_7_15 = 9;
+static const uint32_t ODC_SRQ_MBA_FARB5Q_RESERVED_7_15_LEN = 7;
+
+
+static const uint64_t ODC_SRQ_MBA_FARB6Q = 0x801101Bull;
+
+static const uint32_t ODC_SRQ_MBA_FARB6Q_CFG_BW_SNAPSHOT_SIDE0 = 0;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_CFG_BW_SNAPSHOT_SIDE0_LEN = 11;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_CFG_CKE_PUP_STATE_SIDE0 = 11;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_CFG_STR_STATE_SIDE0 = 12;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_CFG_ROQ_DEPTH_SIDE0 = 13;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_CFG_ROQ_DEPTH_SIDE0_LEN = 6;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_CFG_INIT_COMPLETE_SIDE0 = 19;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_RESERVED_19_30 = 20;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_RESERVED_19_30_LEN = 11;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_CFG_EVENT = 31;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_CFG_BW_SNAPSHOT_SIDE1 = 32;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_CFG_BW_SNAPSHOT_SIDE1_LEN = 11;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_CFG_CKE_PUP_STATE_SIDE1 = 43;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_CFG_STR_STATE_SIDE1 = 44;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_CFG_ROQ_DEPTH_SIDE1 = 45;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_CFG_ROQ_DEPTH_SIDE1_LEN = 6;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_CFG_INIT_COMPLETE_SIDE1 = 51;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_RESERVED_51_58 = 52;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_RESERVED_51_58_LEN = 7;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_CFG_RCD_PARITY_DLY = 59;
+static const uint32_t ODC_SRQ_MBA_FARB6Q_CFG_RCD_PARITY_DLY_LEN = 5;
+
+
+static const uint64_t ODC_SRQ_MBA_FARB7Q = 0x801101Dull;
+
+static const uint32_t ODC_SRQ_MBA_FARB7Q_MBA_FARB7Q_EMER_THROTTLE_IP = 0;
+
+
+static const uint64_t ODC_SRQ_MBA_FARB8Q = 0x8011020ull;
+
+static const uint32_t ODC_SRQ_MBA_FARB8Q_MBA_FARB8Q_SAFE_REFRESH_MODE = 0;
+
+
+static const uint64_t ODC_SRQ_MBA_FARB9Q = 0x8011011ull;
+
+static const uint32_t ODC_SRQ_MBA_FARB9Q_ZQ_PER_CAL_ENABLE = 0;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_ZQ_PER_CAL_INTERVAL_TB = 1;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_ZQ_PER_CAL_INTERVAL_TB_LEN = 2;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_ZQ_PER_CAL_INTERVAL = 3;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_ZQ_PER_CAL_INTERVAL_LEN = 9;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_ZQ_PER_CAL_RUN_LENGTH = 12;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_ZQ_PER_CAL_RUN_LENGTH_LEN = 8;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_ZQ_PER_CAL_RUN_LENGTH_TB = 20;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_ZQ_PER_CAL_RUN_LENGTH_TB_LEN = 2;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_ZQ_PER_CAL_LATCH_RUN_LENGTH_TB = 22;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_ZQ_PER_CAL_LATCH_RUN_LENGTH = 23;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_ZQ_PER_CAL_LATCH_RUN_LENGTH_LEN = 6;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_CTRLUPD_SINGLE_REQ = 29;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_CTRLUPD_AFTER_PHY_INT = 30;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_CTRLUPD_AFTER_ERR = 31;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_MC_PER_CAL_ENABLE = 32;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_MC_PER_CAL_INTERVAL_TB = 33;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_MC_PER_CAL_INTERVAL_TB_LEN = 2;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_MC_PER_CAL_INTERVAL = 35;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_MC_PER_CAL_INTERVAL_LEN = 9;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_MC_PER_CAL_FIXED_RUN_LENGTH_EN = 44;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_MC_PER_CAL_RUN_LENGTH = 45;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_MC_PER_CAL_RUN_LENGTH_LEN = 10;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_MC_PER_CAL_CTRLUPD_MIN = 55;
+static const uint32_t ODC_SRQ_MBA_FARB9Q_MC_PER_CAL_CTRLUPD_MIN_LEN = 9;
+
+
+static const uint64_t ODC_SRQ_MBA_MPCREGQ = 0x8011029ull;
+
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_OPCODE_VALID = 0;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_SIDE0_PORT_SELECT = 1;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_SIDE0_PORT_SELECT_LEN = 2;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_SIDE1_PORT_SELECT = 3;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_SIDE1_PORT_SELECT_LEN = 2;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_RANK_SELECT = 5;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_RANK_SELECT_LEN = 2;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_MPC_RST = 7;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_OP_CODE = 8;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_OP_CODE_LEN = 8;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_DDP_ID = 16;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_CSN_WIDTH = 17;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_CSN_WIDTH_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_MPC_SETUP = 21;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_MPC_SETUP_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_MPC_HOLD = 25;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_MPC_HOLD_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_RUN_LENGTH_TB = 29;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_RUN_LENGTH_TB_LEN = 2;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_RUN_LENGTH = 31;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_RUN_LENGTH_LEN = 8;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_FORCE_2N = 39;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_FORCE_1N = 40;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_WRDATA_EN = 41;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_RDDATA_EN = 42;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_RESERVED = 43;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_RESERVED_LEN = 14;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_SIDE0_MPC_IP = 57;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_SIDE1_MPC_IP = 58;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_SIDE0_MPC_OP_TAKEN = 59;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_SIDE1_MPC_OP_TAKEN = 60;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_MPC_ERR = 61;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_SIDE0_2N_MODE = 62;
+static const uint32_t ODC_SRQ_MBA_MPCREGQ_SIDE1_2N_MODE = 63;
+
+
+static const uint64_t ODC_SRQ_MBA_ROQ0Q = 0x801100Full;
+
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_RESERVED_0_7 = 0;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_RESERVED_0_7_LEN = 6;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_NCF_SPEC_CMD_HOLD_ENB = 6;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_TLXR_SPEC_CMD_ENB = 7;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_ROQ_ENTRY0_HP_DLY = 8;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_ROQ_ENTRY0_HP_DLY_LEN = 8;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_RQ_HANG_THRESHOLD = 16;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_RQ_HANG_THRESHOLD_LEN = 8;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_READ_CANCEL_DISABLE = 24;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_READ_PROMOTE_DISABLE = 25;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_CAS_PENDING_CANCEL_DISABLE = 26;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_READ_DROPPABLE_DISABLE = 27;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_RD_AGE_CNT_SEL = 28;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_RD_AGE_CNT_SEL_LEN = 2;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_PROMOTE_CANCEL_TAG_MASK_ENB = 30;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_SCRUB_PREFETCH_ENABLE = 31;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_FIFO_MODE = 32;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_SINGLE_THREAD_MODE = 33;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_DISABLE_PG_MODE = 34;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_RD_IDLE_ALLOW_WR = 35;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_RD_IDLE_ALLOW_WR_LEN = 11;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_SRQ_ROQ_DBG_SEL = 46;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_SRQ_ROQ_DBG_SEL_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_ROQ_ACT_NUM_READS_PENDING = 51;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_ROQ_ACT_NUM_READS_PENDING_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_RESERVED_56_61 = 56;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_RESERVED_56_61_LEN = 6;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_DISABLE_FAST_ACT_FIFO = 62;
+static const uint32_t ODC_SRQ_MBA_ROQ0Q_CFG_CRIT_OW_FIRST_EN = 63;
+
+
+static const uint64_t ODC_SRQ_MBA_ROQ1Q = 0x8011010ull;
+
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_WRITE_HW_MARK = 0;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_WRITE_HW_MARK_LEN = 6;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_WRITE_LW_MARK = 6;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_WRITE_LW_MARK_LEN = 6;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_ROQ_ACT_NUM_WRITES_PENDING = 12;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_ROQ_ACT_NUM_WRITES_PENDING_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_RD_HIT_ORDERING_EN = 17;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_XMETA_PREFETCH_ENABLE = 18;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_RETRY_PREFETCH_ENABLE = 19;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_LOW_UTIL_WR_ACT_BURST = 20;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_LOW_UTIL_WR_ACT_BURST_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_HIGH_UTIL_WR_ACT_BURST = 25;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_HIGH_UTIL_WR_ACT_BURST_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_ENABLE_RDBUFF_CRD_RST = 30;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_XMETA_PFQ_CLEAR = 31;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_READ_DROP_VALUE0 = 32;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_READ_DROP_VALUE0_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_READ_DROP_VALUE1 = 37;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_READ_DROP_VALUE1_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_FAST_ACT_FIFO_EN_MP = 42;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_FAST_ACT_FIFO_EN_LP = 43;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_P10_PRI_EN = 44;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_P11_PRI_EN = 45;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_P11_MAKE_MP_HP = 46;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_MAKE_PROMOTED_HP = 47;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_NUM_PREFETCH_BUFPTR = 48;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_NUM_PREFETCH_BUFPTR_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_RD_PMU_THRESHOLD = 52;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_RD_PMU_THRESHOLD_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_WR_PMU_THRESHOLD = 57;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_CFG_WR_PMU_THRESHOLD_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_RESERVED_62_63 = 62;
+static const uint32_t ODC_SRQ_MBA_ROQ1Q_RESERVED_62_63_LEN = 2;
+
+
+static const uint64_t ODC_SRQ_MBA_SYNCCNTLQ = 0x801102Aull;
+
+static const uint32_t ODC_SRQ_MBA_SYNCCNTLQ_SYNC_REF_EN = 0;
+static const uint32_t ODC_SRQ_MBA_SYNCCNTLQ_SYNC_PC_EN = 1;
+static const uint32_t ODC_SRQ_MBA_SYNCCNTLQ_SYNC_TIMEBASE_EN = 2;
+static const uint32_t ODC_SRQ_MBA_SYNCCNTLQ_SYNC_DLX_EN = 3;
+static const uint32_t ODC_SRQ_MBA_SYNCCNTLQ_RESERVED_4_7 = 4;
+static const uint32_t ODC_SRQ_MBA_SYNCCNTLQ_RESERVED_4_7_LEN = 4;
+
+
+static const uint64_t ODC_SRQ_MBA_TMR0Q = 0x801100Dull;
+
+static const uint32_t ODC_SRQ_MBA_TMR0Q_RRDM_DLY = 0;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_RRDM_DLY_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_RRSMSR_DLY = 4;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_RRSMSR_DLY_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_RRSMDR_DLY = 8;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_RRSMDR_DLY_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_RESERVED_12_15 = 12;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_RESERVED_12_15_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_WWDM_DLY = 16;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_WWDM_DLY_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_WWSMSR_DLY = 20;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_WWSMSR_DLY_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_WWSMDR_DLY = 24;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_WWSMDR_DLY_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_WWSBG_DLY = 28;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_WWSBG_DLY_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_RWDM_DLY = 33;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_RWDM_DLY_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_RWSMSR_DLY = 37;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_RWSMSR_DLY_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_RWSMDR_DLY = 42;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_RWSMDR_DLY_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_WRDM_DLY = 47;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_WRDM_DLY_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_WRSMSR_DLY = 51;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_WRSMSR_DLY_LEN = 6;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_WRSMDR_DLY = 57;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_WRSMDR_DLY_LEN = 6;
+static const uint32_t ODC_SRQ_MBA_TMR0Q_RESERVED_63 = 63;
+
+
+static const uint64_t ODC_SRQ_MBA_TMR1Q = 0x801100Eull;
+
+static const uint32_t ODC_SRQ_MBA_TMR1Q_RRSBG_DLY = 0;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_RRSBG_DLY_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_WRSBG_DLY = 4;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_WRSBG_DLY_LEN = 6;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_CFG_TFAW = 10;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_CFG_TFAW_LEN = 6;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_CFG_TRCD = 16;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_CFG_TRCD_LEN = 6;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_CFG_TRP = 22;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_CFG_TRP_LEN = 6;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_CFG_TRAS = 28;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_CFG_TRAS_LEN = 7;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_RESERVED_35 = 35;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_CFG_WR2PRE = 36;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_CFG_WR2PRE_LEN = 8;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_CFG_RD2PRE = 44;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_CFG_RD2PRE_LEN = 8;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_TRRD = 52;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_TRRD_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_TRRD_SBG = 56;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_TRRD_SBG_LEN = 4;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_RESERVED_60_63 = 60;
+static const uint32_t ODC_SRQ_MBA_TMR1Q_RESERVED_60_63_LEN = 4;
+
+
+static const uint64_t ODC_SRQ_MBA_TMR2Q = 0x8011031ull;
+
+static const uint32_t ODC_SRQ_MBA_TMR2Q_CFG_BANK_BUSY_FSM_DIS = 0;
+static const uint32_t ODC_SRQ_MBA_TMR2Q_CFG_BANK_BUSY_FSM_DIS_LEN = 24;
+static const uint32_t ODC_SRQ_MBA_TMR2Q_RESERVED_24_31 = 24;
+static const uint32_t ODC_SRQ_MBA_TMR2Q_RESERVED_24_31_LEN = 8;
+static const uint32_t ODC_SRQ_MBA_TMR2Q_CFG_SRQ_TMR_DBG_SEL = 32;
+static const uint32_t ODC_SRQ_MBA_TMR2Q_CFG_SRQ_TMR_DBG_SEL_LEN = 5;
+static const uint32_t ODC_SRQ_MBA_TMR2Q_RESERVED_37_39 = 37;
+static const uint32_t ODC_SRQ_MBA_TMR2Q_RESERVED_37_39_LEN = 3;
+static const uint32_t ODC_SRQ_MBA_TMR2Q_CFG_READ_WRITE_SWITCH_DLY = 40;
+static const uint32_t ODC_SRQ_MBA_TMR2Q_CFG_READ_WRITE_SWITCH_DLY_LEN = 8;
+static const uint32_t ODC_SRQ_MBA_TMR2Q_CFG_WRITE_READ_SWITCH_DLY = 48;
+static const uint32_t ODC_SRQ_MBA_TMR2Q_CFG_WRITE_READ_SWITCH_DLY_LEN = 8;
+static const uint32_t ODC_SRQ_MBA_TMR2Q_RESERVED_56_63 = 56;
+static const uint32_t ODC_SRQ_MBA_TMR2Q_RESERVED_56_63_LEN = 8;
+
+
+static const uint64_t ODC_SRQ_MBXLT0 = 0x8011012ull;
+
+static const uint32_t ODC_SRQ_MBXLT0_ROQ0_ENABLE = 0;
+static const uint32_t ODC_SRQ_MBXLT0_ROQ1_ENABLE = 1;
+static const uint32_t ODC_SRQ_MBXLT0_ROQ0_D_VALUE = 2;
+static const uint32_t ODC_SRQ_MBXLT0_D_BIT_MAP = 3;
+static const uint32_t ODC_SRQ_MBXLT0_D_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT0_ENAB_ROW_ADDR_HASH = 8;
+static const uint32_t ODC_SRQ_MBXLT0_ENAB_ROW_ADDR_RAND = 9;
+static const uint32_t ODC_SRQ_MBXLT0_RESERVED_10 = 10;
+static const uint32_t ODC_SRQ_MBXLT0_H_BIT_MAP = 11;
+static const uint32_t ODC_SRQ_MBXLT0_H_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT0_RESERVED_16 = 16;
+static const uint32_t ODC_SRQ_MBXLT0_M_ROQ0_ENABLE = 17;
+static const uint32_t ODC_SRQ_MBXLT0_M_ROQ1_ENABLE = 18;
+static const uint32_t ODC_SRQ_MBXLT0_M_BIT_MAP = 19;
+static const uint32_t ODC_SRQ_MBXLT0_M_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT0_ROQ0_24GB_ENABLE = 24;
+static const uint32_t ODC_SRQ_MBXLT0_ROQ0_48GB_ENABLE = 25;
+static const uint32_t ODC_SRQ_MBXLT0_ROQ1_24GB_ENABLE = 26;
+static const uint32_t ODC_SRQ_MBXLT0_ROQ1_48GB_ENABLE = 27;
+static const uint32_t ODC_SRQ_MBXLT0_RESERVED_26_29 = 28;
+static const uint32_t ODC_SRQ_MBXLT0_RESERVED_26_29_LEN = 2;
+static const uint32_t ODC_SRQ_MBXLT0_16H_ROQ0_ENABLE = 30;
+static const uint32_t ODC_SRQ_MBXLT0_16H_ROQ1_ENABLE = 31;
+static const uint32_t ODC_SRQ_MBXLT0_RESERVED_32 = 32;
+static const uint32_t ODC_SRQ_MBXLT0_R17_ROQ0_ENABLE = 33;
+static const uint32_t ODC_SRQ_MBXLT0_R17_ROQ1_ENABLE = 34;
+static const uint32_t ODC_SRQ_MBXLT0_R17_BIT_MAP = 35;
+static const uint32_t ODC_SRQ_MBXLT0_R17_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT0_RESERVED_40 = 40;
+static const uint32_t ODC_SRQ_MBXLT0_R16_ROQ0_ENABLE = 41;
+static const uint32_t ODC_SRQ_MBXLT0_R16_ROQ1_ENABLE = 42;
+static const uint32_t ODC_SRQ_MBXLT0_R16_BIT_MAP = 43;
+static const uint32_t ODC_SRQ_MBXLT0_R16_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT0_RESERVED_48_TO_50 = 48;
+static const uint32_t ODC_SRQ_MBXLT0_RESERVED_48_TO_50_LEN = 3;
+static const uint32_t ODC_SRQ_MBXLT0_R15_BIT_MAP = 51;
+static const uint32_t ODC_SRQ_MBXLT0_R15_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT0_RESERVED_56_63 = 56;
+static const uint32_t ODC_SRQ_MBXLT0_RESERVED_56_63_LEN = 8;
+
+
+static const uint64_t ODC_SRQ_MBXLT1 = 0x8011013ull;
+
+static const uint32_t ODC_SRQ_MBXLT1_RESERVED_0 = 0;
+static const uint32_t ODC_SRQ_MBXLT1_S0_ROQ0_ENABLE = 1;
+static const uint32_t ODC_SRQ_MBXLT1_S0_ROQ1_ENABLE = 2;
+static const uint32_t ODC_SRQ_MBXLT1_S0_BIT_MAP = 3;
+static const uint32_t ODC_SRQ_MBXLT1_S0_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT1_RESERVED_8 = 8;
+static const uint32_t ODC_SRQ_MBXLT1_S1_ROQ0_ENABLE = 9;
+static const uint32_t ODC_SRQ_MBXLT1_S1_ROQ1_ENABLE = 10;
+static const uint32_t ODC_SRQ_MBXLT1_S1_BIT_MAP = 11;
+static const uint32_t ODC_SRQ_MBXLT1_S1_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT1_RESERVED_16 = 16;
+static const uint32_t ODC_SRQ_MBXLT1_S2_ROQ0_ENABLE = 17;
+static const uint32_t ODC_SRQ_MBXLT1_S2_ROQ1_ENABLE = 18;
+static const uint32_t ODC_SRQ_MBXLT1_S2_BIT_MAP = 19;
+static const uint32_t ODC_SRQ_MBXLT1_S2_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT1_RESERVED_24_34 = 24;
+static const uint32_t ODC_SRQ_MBXLT1_RESERVED_24_34_LEN = 11;
+static const uint32_t ODC_SRQ_MBXLT1_COL4_BIT_MAP = 35;
+static const uint32_t ODC_SRQ_MBXLT1_COL4_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT1_RESERVED_40_42 = 40;
+static const uint32_t ODC_SRQ_MBXLT1_RESERVED_40_42_LEN = 3;
+static const uint32_t ODC_SRQ_MBXLT1_COL5_BIT_MAP = 43;
+static const uint32_t ODC_SRQ_MBXLT1_COL5_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT1_RESERVED_48_50 = 48;
+static const uint32_t ODC_SRQ_MBXLT1_RESERVED_48_50_LEN = 3;
+static const uint32_t ODC_SRQ_MBXLT1_COL6_BIT_MAP = 51;
+static const uint32_t ODC_SRQ_MBXLT1_COL6_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT1_RESERVED_56_58 = 56;
+static const uint32_t ODC_SRQ_MBXLT1_RESERVED_56_58_LEN = 3;
+static const uint32_t ODC_SRQ_MBXLT1_COL7_BIT_MAP = 59;
+static const uint32_t ODC_SRQ_MBXLT1_COL7_BIT_MAP_LEN = 5;
+
+
+static const uint64_t ODC_SRQ_MBXLT2 = 0x8011014ull;
+
+static const uint32_t ODC_SRQ_MBXLT2_RESERVED_0_2 = 0;
+static const uint32_t ODC_SRQ_MBXLT2_RESERVED_0_2_LEN = 3;
+static const uint32_t ODC_SRQ_MBXLT2_COL8_BIT_MAP = 3;
+static const uint32_t ODC_SRQ_MBXLT2_COL8_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT2_RESERVED_8_10 = 8;
+static const uint32_t ODC_SRQ_MBXLT2_RESERVED_8_10_LEN = 3;
+static const uint32_t ODC_SRQ_MBXLT2_COL9_BIT_MAP = 11;
+static const uint32_t ODC_SRQ_MBXLT2_COL9_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT2_RESERVED_16 = 16;
+static const uint32_t ODC_SRQ_MBXLT2_COL10_ROQ0_ENABLE = 17;
+static const uint32_t ODC_SRQ_MBXLT2_COL10_ROQ1_ENABLE = 18;
+static const uint32_t ODC_SRQ_MBXLT2_COL10_BIT_MAP = 19;
+static const uint32_t ODC_SRQ_MBXLT2_COL10_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT2_RESERVED_24_26 = 24;
+static const uint32_t ODC_SRQ_MBXLT2_RESERVED_24_26_LEN = 3;
+static const uint32_t ODC_SRQ_MBXLT2_BANK0_BIT_MAP = 27;
+static const uint32_t ODC_SRQ_MBXLT2_BANK0_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT2_RESERVED_32 = 32;
+static const uint32_t ODC_SRQ_MBXLT2_BANK1_ROQ0_ENABLE = 33;
+static const uint32_t ODC_SRQ_MBXLT2_BANK1_ROQ1_ENABLE = 34;
+static const uint32_t ODC_SRQ_MBXLT2_BANK1_BIT_MAP = 35;
+static const uint32_t ODC_SRQ_MBXLT2_BANK1_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT2_RESERVED_40_42 = 40;
+static const uint32_t ODC_SRQ_MBXLT2_RESERVED_40_42_LEN = 3;
+static const uint32_t ODC_SRQ_MBXLT2_BANK_GROUP0_BIT_MAP = 43;
+static const uint32_t ODC_SRQ_MBXLT2_BANK_GROUP0_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT2_RESERVED_48_50 = 48;
+static const uint32_t ODC_SRQ_MBXLT2_RESERVED_48_50_LEN = 3;
+static const uint32_t ODC_SRQ_MBXLT2_BANK_GROUP1_BIT_MAP = 51;
+static const uint32_t ODC_SRQ_MBXLT2_BANK_GROUP1_BIT_MAP_LEN = 5;
+static const uint32_t ODC_SRQ_MBXLT2_RESERVED_56 = 56;
+static const uint32_t ODC_SRQ_MBXLT2_BANK_GROUP2_ROQ0_ENABLE = 57;
+static const uint32_t ODC_SRQ_MBXLT2_BANK_GROUP2_ROQ1_ENABLE = 58;
+static const uint32_t ODC_SRQ_MBXLT2_BANK_GROUP2_BIT_MAP = 59;
+static const uint32_t ODC_SRQ_MBXLT2_BANK_GROUP2_BIT_MAP_LEN = 5;
+
+
+static const uint64_t ODC_SRQ_MBXLT3 = 0x8011021ull;
+
+static const uint32_t ODC_SRQ_MBXLT3_R0_BIT_MAP = 0;
+static const uint32_t ODC_SRQ_MBXLT3_R0_BIT_MAP_LEN = 4;
+static const uint32_t ODC_SRQ_MBXLT3_R1_BIT_MAP = 4;
+static const uint32_t ODC_SRQ_MBXLT3_R1_BIT_MAP_LEN = 4;
+static const uint32_t ODC_SRQ_MBXLT3_R2_BIT_MAP = 8;
+static const uint32_t ODC_SRQ_MBXLT3_R2_BIT_MAP_LEN = 4;
+static const uint32_t ODC_SRQ_MBXLT3_R3_BIT_MAP = 12;
+static const uint32_t ODC_SRQ_MBXLT3_R3_BIT_MAP_LEN = 4;
+static const uint32_t ODC_SRQ_MBXLT3_R4_BIT_MAP = 16;
+static const uint32_t ODC_SRQ_MBXLT3_R4_BIT_MAP_LEN = 4;
+static const uint32_t ODC_SRQ_MBXLT3_R5_BIT_MAP = 20;
+static const uint32_t ODC_SRQ_MBXLT3_R5_BIT_MAP_LEN = 4;
+static const uint32_t ODC_SRQ_MBXLT3_R6_BIT_MAP = 24;
+static const uint32_t ODC_SRQ_MBXLT3_R6_BIT_MAP_LEN = 4;
+static const uint32_t ODC_SRQ_MBXLT3_R7_BIT_MAP = 28;
+static const uint32_t ODC_SRQ_MBXLT3_R7_BIT_MAP_LEN = 4;
+static const uint32_t ODC_SRQ_MBXLT3_R8_BIT_MAP = 32;
+static const uint32_t ODC_SRQ_MBXLT3_R8_BIT_MAP_LEN = 4;
+static const uint32_t ODC_SRQ_MBXLT3_R9_BIT_MAP = 36;
+static const uint32_t ODC_SRQ_MBXLT3_R9_BIT_MAP_LEN = 4;
+static const uint32_t ODC_SRQ_MBXLT3_R10_BIT_MAP = 40;
+static const uint32_t ODC_SRQ_MBXLT3_R10_BIT_MAP_LEN = 4;
+static const uint32_t ODC_SRQ_MBXLT3_R11_BIT_MAP = 44;
+static const uint32_t ODC_SRQ_MBXLT3_R11_BIT_MAP_LEN = 4;
+static const uint32_t ODC_SRQ_MBXLT3_R12_BIT_MAP = 48;
+static const uint32_t ODC_SRQ_MBXLT3_R12_BIT_MAP_LEN = 4;
+static const uint32_t ODC_SRQ_MBXLT3_R13_BIT_MAP = 52;
+static const uint32_t ODC_SRQ_MBXLT3_R13_BIT_MAP_LEN = 4;
+static const uint32_t ODC_SRQ_MBXLT3_R14_BIT_MAP = 56;
+static const uint32_t ODC_SRQ_MBXLT3_R14_BIT_MAP_LEN = 4;
+static const uint32_t ODC_SRQ_MBXLT3_ROW_ADDR_RAND_DONE = 60;
+static const uint32_t ODC_SRQ_MBXLT3_RESERVED_61_63 = 61;
+static const uint32_t ODC_SRQ_MBXLT3_RESERVED_61_63_LEN = 3;
+
+
+static const uint64_t ODC_SRQ_PMU01CFGQ = 0x8011023ull;
+
+static const uint32_t ODC_SRQ_PMU01CFGQ_PMU0_EVENT0_SELECT = 0;
+static const uint32_t ODC_SRQ_PMU01CFGQ_PMU0_EVENT0_SELECT_LEN = 8;
+static const uint32_t ODC_SRQ_PMU01CFGQ_PMU0_EVENT1_SELECT = 8;
+static const uint32_t ODC_SRQ_PMU01CFGQ_PMU0_EVENT1_SELECT_LEN = 8;
+static const uint32_t ODC_SRQ_PMU01CFGQ_PMU0_EVENT2_SELECT = 16;
+static const uint32_t ODC_SRQ_PMU01CFGQ_PMU0_EVENT2_SELECT_LEN = 8;
+static const uint32_t ODC_SRQ_PMU01CFGQ_PMU0_EVENT3_SELECT = 24;
+static const uint32_t ODC_SRQ_PMU01CFGQ_PMU0_EVENT3_SELECT_LEN = 8;
+static const uint32_t ODC_SRQ_PMU01CFGQ_PMU1_EVENT0_SELECT = 32;
+static const uint32_t ODC_SRQ_PMU01CFGQ_PMU1_EVENT0_SELECT_LEN = 8;
+static const uint32_t ODC_SRQ_PMU01CFGQ_PMU1_EVENT1_SELECT = 40;
+static const uint32_t ODC_SRQ_PMU01CFGQ_PMU1_EVENT1_SELECT_LEN = 8;
+static const uint32_t ODC_SRQ_PMU01CFGQ_PMU1_EVENT2_SELECT = 48;
+static const uint32_t ODC_SRQ_PMU01CFGQ_PMU1_EVENT2_SELECT_LEN = 8;
+static const uint32_t ODC_SRQ_PMU01CFGQ_PMU1_EVENT3_SELECT = 56;
+static const uint32_t ODC_SRQ_PMU01CFGQ_PMU1_EVENT3_SELECT_LEN = 8;
+
+
+static const uint64_t ODC_SRQ_PMU0LATQ = 0x8011025ull;
+
+static const uint32_t ODC_SRQ_PMU0LATQ_TAG0 = 0;
+static const uint32_t ODC_SRQ_PMU0LATQ_TAG0_LEN = 16;
+static const uint32_t ODC_SRQ_PMU0LATQ_TAG0_MASK = 16;
+static const uint32_t ODC_SRQ_PMU0LATQ_TAG0_MASK_LEN = 16;
+static const uint32_t ODC_SRQ_PMU0LATQ_TAG1 = 32;
+static const uint32_t ODC_SRQ_PMU0LATQ_TAG1_LEN = 16;
+static const uint32_t ODC_SRQ_PMU0LATQ_TAG1_MASK = 48;
+static const uint32_t ODC_SRQ_PMU0LATQ_TAG1_MASK_LEN = 16;
+
+
+static const uint64_t ODC_SRQ_PMU0Q = 0x8011039ull;
+
+static const uint32_t ODC_SRQ_PMU0Q_EVENT0_COUNTER = 0;
+static const uint32_t ODC_SRQ_PMU0Q_EVENT0_COUNTER_LEN = 16;
+static const uint32_t ODC_SRQ_PMU0Q_EVENT1_COUNTER = 16;
+static const uint32_t ODC_SRQ_PMU0Q_EVENT1_COUNTER_LEN = 16;
+static const uint32_t ODC_SRQ_PMU0Q_EVENT2_COUNTER = 32;
+static const uint32_t ODC_SRQ_PMU0Q_EVENT2_COUNTER_LEN = 16;
+static const uint32_t ODC_SRQ_PMU0Q_EVENT3_COUNTER = 48;
+static const uint32_t ODC_SRQ_PMU0Q_EVENT3_COUNTER_LEN = 16;
+
+
+static const uint64_t ODC_SRQ_PMU1LATQ = 0x8011026ull;
+
+static const uint32_t ODC_SRQ_PMU1LATQ_TAG0 = 0;
+static const uint32_t ODC_SRQ_PMU1LATQ_TAG0_LEN = 16;
+static const uint32_t ODC_SRQ_PMU1LATQ_TAG0_MASK = 16;
+static const uint32_t ODC_SRQ_PMU1LATQ_TAG0_MASK_LEN = 16;
+static const uint32_t ODC_SRQ_PMU1LATQ_TAG1 = 32;
+static const uint32_t ODC_SRQ_PMU1LATQ_TAG1_LEN = 16;
+static const uint32_t ODC_SRQ_PMU1LATQ_TAG1_MASK = 48;
+static const uint32_t ODC_SRQ_PMU1LATQ_TAG1_MASK_LEN = 16;
+
+
+static const uint64_t ODC_SRQ_PMU1Q = 0x801103Aull;
+
+static const uint32_t ODC_SRQ_PMU1Q_EVENT0_COUNTER = 0;
+static const uint32_t ODC_SRQ_PMU1Q_EVENT0_COUNTER_LEN = 16;
+static const uint32_t ODC_SRQ_PMU1Q_EVENT1_COUNTER = 16;
+static const uint32_t ODC_SRQ_PMU1Q_EVENT1_COUNTER_LEN = 16;
+static const uint32_t ODC_SRQ_PMU1Q_EVENT2_COUNTER = 32;
+static const uint32_t ODC_SRQ_PMU1Q_EVENT2_COUNTER_LEN = 16;
+static const uint32_t ODC_SRQ_PMU1Q_EVENT3_COUNTER = 48;
+static const uint32_t ODC_SRQ_PMU1Q_EVENT3_COUNTER_LEN = 16;
+
+
+static const uint64_t ODC_SRQ_PMU23CFGQ = 0x8011024ull;
+
+static const uint32_t ODC_SRQ_PMU23CFGQ_PMU2_EVENT0_SELECT = 0;
+static const uint32_t ODC_SRQ_PMU23CFGQ_PMU2_EVENT0_SELECT_LEN = 8;
+static const uint32_t ODC_SRQ_PMU23CFGQ_PMU2_EVENT1_SELECT = 8;
+static const uint32_t ODC_SRQ_PMU23CFGQ_PMU2_EVENT1_SELECT_LEN = 8;
+static const uint32_t ODC_SRQ_PMU23CFGQ_PMU2_EVENT2_SELECT = 16;
+static const uint32_t ODC_SRQ_PMU23CFGQ_PMU2_EVENT2_SELECT_LEN = 8;
+static const uint32_t ODC_SRQ_PMU23CFGQ_PMU2_EVENT3_SELECT = 24;
+static const uint32_t ODC_SRQ_PMU23CFGQ_PMU2_EVENT3_SELECT_LEN = 8;
+static const uint32_t ODC_SRQ_PMU23CFGQ_PMU3_EVENT0_SELECT = 32;
+static const uint32_t ODC_SRQ_PMU23CFGQ_PMU3_EVENT0_SELECT_LEN = 8;
+static const uint32_t ODC_SRQ_PMU23CFGQ_PMU3_EVENT1_SELECT = 40;
+static const uint32_t ODC_SRQ_PMU23CFGQ_PMU3_EVENT1_SELECT_LEN = 8;
+static const uint32_t ODC_SRQ_PMU23CFGQ_PMU3_EVENT2_SELECT = 48;
+static const uint32_t ODC_SRQ_PMU23CFGQ_PMU3_EVENT2_SELECT_LEN = 8;
+static const uint32_t ODC_SRQ_PMU23CFGQ_PMU3_EVENT3_SELECT = 56;
+static const uint32_t ODC_SRQ_PMU23CFGQ_PMU3_EVENT3_SELECT_LEN = 8;
+
+
+static const uint64_t ODC_SRQ_PMU2LATQ = 0x8011027ull;
+
+static const uint32_t ODC_SRQ_PMU2LATQ_TAG0 = 0;
+static const uint32_t ODC_SRQ_PMU2LATQ_TAG0_LEN = 16;
+static const uint32_t ODC_SRQ_PMU2LATQ_TAG0_MASK = 16;
+static const uint32_t ODC_SRQ_PMU2LATQ_TAG0_MASK_LEN = 16;
+static const uint32_t ODC_SRQ_PMU2LATQ_TAG1 = 32;
+static const uint32_t ODC_SRQ_PMU2LATQ_TAG1_LEN = 16;
+static const uint32_t ODC_SRQ_PMU2LATQ_TAG1_MASK = 48;
+static const uint32_t ODC_SRQ_PMU2LATQ_TAG1_MASK_LEN = 16;
+
+
+static const uint64_t ODC_SRQ_PMU2Q = 0x801103Bull;
+
+static const uint32_t ODC_SRQ_PMU2Q_EVENT0_COUNTER = 0;
+static const uint32_t ODC_SRQ_PMU2Q_EVENT0_COUNTER_LEN = 16;
+static const uint32_t ODC_SRQ_PMU2Q_EVENT1_COUNTER = 16;
+static const uint32_t ODC_SRQ_PMU2Q_EVENT1_COUNTER_LEN = 16;
+static const uint32_t ODC_SRQ_PMU2Q_EVENT2_COUNTER = 32;
+static const uint32_t ODC_SRQ_PMU2Q_EVENT2_COUNTER_LEN = 16;
+static const uint32_t ODC_SRQ_PMU2Q_EVENT3_COUNTER = 48;
+static const uint32_t ODC_SRQ_PMU2Q_EVENT3_COUNTER_LEN = 16;
+
+
+static const uint64_t ODC_SRQ_PMU3LATQ = 0x8011028ull;
+
+static const uint32_t ODC_SRQ_PMU3LATQ_TAG0 = 0;
+static const uint32_t ODC_SRQ_PMU3LATQ_TAG0_LEN = 16;
+static const uint32_t ODC_SRQ_PMU3LATQ_TAG0_MASK = 16;
+static const uint32_t ODC_SRQ_PMU3LATQ_TAG0_MASK_LEN = 16;
+static const uint32_t ODC_SRQ_PMU3LATQ_TAG1 = 32;
+static const uint32_t ODC_SRQ_PMU3LATQ_TAG1_LEN = 16;
+static const uint32_t ODC_SRQ_PMU3LATQ_TAG1_MASK = 48;
+static const uint32_t ODC_SRQ_PMU3LATQ_TAG1_MASK_LEN = 16;
+
+
+static const uint64_t ODC_SRQ_PMU3Q = 0x801103Cull;
+
+static const uint32_t ODC_SRQ_PMU3Q_EVENT0_COUNTER = 0;
+static const uint32_t ODC_SRQ_PMU3Q_EVENT0_COUNTER_LEN = 16;
+static const uint32_t ODC_SRQ_PMU3Q_EVENT1_COUNTER = 16;
+static const uint32_t ODC_SRQ_PMU3Q_EVENT1_COUNTER_LEN = 16;
+static const uint32_t ODC_SRQ_PMU3Q_EVENT2_COUNTER = 32;
+static const uint32_t ODC_SRQ_PMU3Q_EVENT2_COUNTER_LEN = 16;
+static const uint32_t ODC_SRQ_PMU3Q_EVENT3_COUNTER = 48;
+static const uint32_t ODC_SRQ_PMU3Q_EVENT3_COUNTER_LEN = 16;
+
+
+static const uint64_t ODC_SRQ_PMUCFGQ = 0x8011022ull;
+
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_ENABLE = 0;
+static const uint32_t ODC_SRQ_PMUCFGQ_RESERVED_1_15 = 1;
+static const uint32_t ODC_SRQ_PMUCFGQ_RESERVED_1_15_LEN = 15;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_C0 = 16;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_C0_LEN = 2;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_C1 = 18;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_C1_LEN = 2;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_C2 = 20;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_C2_LEN = 2;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_C3 = 22;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_C3_LEN = 2;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_PRESCALER_C0 = 24;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_PRESCALER_C0_LEN = 2;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_PRESCALER_C1 = 26;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_PRESCALER_C1_LEN = 2;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_PRESCALER_C2 = 28;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_PRESCALER_C2_LEN = 2;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_PRESCALER_C3 = 30;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_PRESCALER_C3_LEN = 2;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_CASCADE = 32;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_CASCADE_LEN = 3;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_FREEZE = 35;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_START_RESET = 36;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_START_NO_RESET = 37;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_STOP = 38;
+static const uint32_t ODC_SRQ_PMUCFGQ_CFG_PMU_RESET_WHEN_READ = 39;
+static const uint32_t ODC_SRQ_PMUCFGQ_RESERVED_40_63 = 40;
+static const uint32_t ODC_SRQ_PMUCFGQ_RESERVED_40_63_LEN = 24;
+
+
+static const uint64_t ODC_SRQ_PMULAT0HISTQ = 0x8011032ull;
+
+static const uint32_t ODC_SRQ_PMULAT0HISTQ_HIST0_LOW = 0;
+static const uint32_t ODC_SRQ_PMULAT0HISTQ_HIST0_LOW_LEN = 16;
+static const uint32_t ODC_SRQ_PMULAT0HISTQ_HIST0_HIGH = 16;
+static const uint32_t ODC_SRQ_PMULAT0HISTQ_HIST0_HIGH_LEN = 16;
+static const uint32_t ODC_SRQ_PMULAT0HISTQ_HIST1_LOW = 32;
+static const uint32_t ODC_SRQ_PMULAT0HISTQ_HIST1_LOW_LEN = 16;
+static const uint32_t ODC_SRQ_PMULAT0HISTQ_HIST1_HIGH = 48;
+static const uint32_t ODC_SRQ_PMULAT0HISTQ_HIST1_HIGH_LEN = 16;
+
+
+static const uint64_t ODC_SRQ_PMULAT1HISTQ = 0x8011033ull;
+
+static const uint32_t ODC_SRQ_PMULAT1HISTQ_HIST0_LOW = 0;
+static const uint32_t ODC_SRQ_PMULAT1HISTQ_HIST0_LOW_LEN = 16;
+static const uint32_t ODC_SRQ_PMULAT1HISTQ_HIST0_HIGH = 16;
+static const uint32_t ODC_SRQ_PMULAT1HISTQ_HIST0_HIGH_LEN = 16;
+static const uint32_t ODC_SRQ_PMULAT1HISTQ_HIST1_LOW = 32;
+static const uint32_t ODC_SRQ_PMULAT1HISTQ_HIST1_LOW_LEN = 16;
+static const uint32_t ODC_SRQ_PMULAT1HISTQ_HIST1_HIGH = 48;
+static const uint32_t ODC_SRQ_PMULAT1HISTQ_HIST1_HIGH_LEN = 16;
+
+
+static const uint64_t ODC_SRQ_SRQCFG0 = 0x801102Eull;
+
+static const uint32_t ODC_SRQ_SRQCFG0_MODE_ECC_CHK_DIS = 0;
+static const uint32_t ODC_SRQ_SRQCFG0_MODE_ECC_COR_DIS = 1;
+static const uint32_t ODC_SRQ_SRQCFG0_RESERVED_2_15 = 2;
+static const uint32_t ODC_SRQ_SRQCFG0_RESERVED_2_15_LEN = 14;
+static const uint32_t ODC_SRQ_SRQCFG0_MCB_PAUSE = 16;
+static const uint32_t ODC_SRQ_SRQCFG0_MCB_CREDIT_UPDATE = 17;
+static const uint32_t ODC_SRQ_SRQCFG0_MCB_CRD_INIT = 18;
+static const uint32_t ODC_SRQ_SRQCFG0_MCB_CRD_INIT_LEN = 4;
+static const uint32_t ODC_SRQ_SRQCFG0_TRAP_ENABLE = 22;
+static const uint32_t ODC_SRQ_SRQCFG0_CLEAR = 23;
+static const uint32_t ODC_SRQ_SRQCFG0_UNLOCK_ACUM = 24;
+static const uint32_t ODC_SRQ_SRQCFG0_CFG_FIR_XSTOP_FREEZE_DIS = 25;
+static const uint32_t ODC_SRQ_SRQCFG0_CFG_ERR_ACUM_SE_ENABLE = 26;
+static const uint32_t ODC_SRQ_SRQCFG0_TBD0 = 27;
+static const uint32_t ODC_SRQ_SRQCFG0_NCF_CGT_DIS = 28;
+static const uint32_t ODC_SRQ_SRQCFG0_CFG_XMETA_LP_MATCH_EN = 29;
+static const uint32_t ODC_SRQ_SRQCFG0_CFG_XMETA_SCRUB_MATCH_EN = 30;
+static const uint32_t ODC_SRQ_SRQCFG0_NCF_DRAM_CMD_FLUSH_EN = 31;
+
+
+static const uint64_t ODC_SRQ_SRQCFG1 = 0x801102Full;
+
+static const uint32_t ODC_SRQ_SRQCFG1_LP_MATCH = 0;
+static const uint32_t ODC_SRQ_SRQCFG1_LP_MATCH_LEN = 16;
+static const uint32_t ODC_SRQ_SRQCFG1_LP_MASK = 16;
+static const uint32_t ODC_SRQ_SRQCFG1_LP_MASK_LEN = 16;
+static const uint32_t ODC_SRQ_SRQCFG1_SCRUB_MATCH = 32;
+static const uint32_t ODC_SRQ_SRQCFG1_SCRUB_MATCH_LEN = 16;
+static const uint32_t ODC_SRQ_SRQCFG1_SCRUB_MASK = 48;
+static const uint32_t ODC_SRQ_SRQCFG1_SCRUB_MASK_LEN = 16;
+
+
+static const uint64_t ODC_SRQ_SRQTRAP0 = 0x801102Cull;
+
+static const uint32_t ODC_SRQ_SRQTRAP0_SRQTRAP0_DEBUG_BUS = 0;
+static const uint32_t ODC_SRQ_SRQTRAP0_SRQTRAP0_DEBUG_BUS_LEN = 64;
+
+
+static const uint64_t ODC_SRQ_SRQTRAP1 = 0x801102Dull;
+
+static const uint32_t ODC_SRQ_SRQTRAP1_DEBUG_BUS = 0;
+static const uint32_t ODC_SRQ_SRQTRAP1_DEBUG_BUS_LEN = 24;
+static const uint32_t ODC_SRQ_SRQTRAP1_NCF_SYNDROME = 24;
+static const uint32_t ODC_SRQ_SRQTRAP1_NCF_SYNDROME_LEN = 8;
+static const uint32_t ODC_SRQ_SRQTRAP1_REFBLK_SYNDROME = 32;
+static const uint32_t ODC_SRQ_SRQTRAP1_REFBLK_SYNDROME_LEN = 8;
+static const uint32_t ODC_SRQ_SRQTRAP1_NCF_INVALID_CMD_CODE = 40;
+static const uint32_t ODC_SRQ_SRQTRAP1_NCF_INVALID_CMD_CODE_LEN = 4;
+static const uint32_t ODC_SRQ_SRQTRAP1_REFBLK_INVALID_CMD_CODE = 44;
+static const uint32_t ODC_SRQ_SRQTRAP1_REFBLK_INVALID_CMD_CODE_LEN = 4;
+static const uint32_t ODC_SRQ_SRQTRAP1_MCB_CREDITS = 48;
+static const uint32_t ODC_SRQ_SRQTRAP1_MCB_CREDITS_LEN = 4;
+static const uint32_t ODC_SRQ_SRQTRAP1_NCF_FSM_ENCODE = 52;
+static const uint32_t ODC_SRQ_SRQTRAP1_NCF_FSM_ENCODE_LEN = 4;
+static const uint32_t ODC_SRQ_SRQTRAP1_REFBLK_FSM_ENCODE = 56;
+static const uint32_t ODC_SRQ_SRQTRAP1_REFBLK_FSM_ENCODE_LEN = 3;
+static const uint32_t ODC_SRQ_SRQTRAP1_MCB_STATUS = 59;
+static const uint32_t ODC_SRQ_SRQTRAP1_MCB_STATUS_LEN = 2;
+static const uint32_t ODC_SRQ_SRQTRAP1_XLT = 61;
+static const uint32_t ODC_SRQ_SRQTRAP1_XLT_LEN = 3;
+
+
+static const uint64_t ODC_TLXT_REGS_CFG_ATTN = 0x8012006ull;
+
+static const uint32_t ODC_TLXT_REGS_CFG_ATTN_CFG_ATTN = 0;
+static const uint32_t ODC_TLXT_REGS_CFG_ATTN_CFG_ATTN_LEN = 28;
+
+
+static const uint64_t ODC_TLXT_REGS_CFG_LXSTOP = 0x8012007ull;
+
+static const uint32_t ODC_TLXT_REGS_CFG_LXSTOP_CFG_LXSTOP = 0;
+static const uint32_t ODC_TLXT_REGS_CFG_LXSTOP_CFG_LXSTOP_LEN = 28;
+
+
+static const uint64_t ODC_TLXT_REGS_CFG_RECOV = 0x8012005ull;
+
+static const uint32_t ODC_TLXT_REGS_CFG_RECOV_CFG_RECOV = 0;
+static const uint32_t ODC_TLXT_REGS_CFG_RECOV_CFG_RECOV_LEN = 28;
+
+
+static const uint64_t ODC_TLXT_REGS_CFG_XSTOP = 0x8012004ull;
+
+static const uint32_t ODC_TLXT_REGS_CFG_XSTOP_CFG_XSTOP = 0;
+static const uint32_t ODC_TLXT_REGS_CFG_XSTOP_CFG_XSTOP_LEN = 28;
+
+
+static const uint64_t ODC_TLXT_REGS_LFIR_WOF = 0x8012008ull;
+
+static const uint32_t ODC_TLXT_REGS_LFIR_WOF_LFIR_WOF_FIR = 0;
+static const uint32_t ODC_TLXT_REGS_LFIR_WOF_LFIR_WOF_FIR_LEN = 28;
+
+
+static const uint64_t ODC_TLXT_REGS_TLXCFG0 = 0x801200Cull;
+
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_TRAP_CLEAR = 0;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_EARLY_WDONE_DISABLE = 1;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_RSVD = 2;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_TRAP_ENABLE = 3;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_UNLOCK_ACUM = 4;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_INTRP_REQ_XSTOP_LEVEL_TRIG = 5;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_INTRP_REQ_REC_ATTN_LEVEL_TRIG = 6;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_INTRP_REQ_SP_ATTN_LEVEL_TRIG = 7;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_INTRP_REQ_APPLICATION_LEVEL_TRIG = 8;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_TBD = 9;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_DCP1_RETURN_PAUSE = 10;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_DCP1_CREDIT_UPDATE = 11;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_VC0_RETURN_PAUSE = 12;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_VC0_CREDIT_UPDATE = 13;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_VC1_RETURN_PAUSE = 14;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_VC1_CREDIT_UPDATE = 15;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_DCP1_INIT = 16;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_DCP1_INIT_LEN = 16;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_VC0_INIT = 32;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_VC0_INIT_LEN = 16;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_VC1_INIT = 48;
+static const uint32_t ODC_TLXT_REGS_TLXCFG0_VC1_INIT_LEN = 16;
+
+
+static const uint64_t ODC_TLXT_REGS_TLXCFG1 = 0x801200Dull;
+
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_FIR_TLXR_SHUTDOWN_CONTROLS = 0;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_FIR_TLXR_SHUTDOWN_CONTROLS_LEN = 11;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXR_GLOBAL_SHUTDOWN_DISABLE = 11;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXR_CLOCK_FREQ = 12;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXR_CLOCK_FREQ_LEN = 2;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXR_RESERVED = 14;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXR_IGNORE_A4_ON_PR_RD = 15;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXR_MS_DDR_ADDRBIT = 16;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXR_MS_DDR_ADDRBIT_LEN = 4;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXR_MS_MMIO_ADDRBIT = 20;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXR_MS_MMIO_ADDRBIT_LEN = 4;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXR_DEBSEL_LO = 24;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXR_DEBSEL_LO_LEN = 4;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXR_DEBSEL_HI = 28;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXR_DEBSEL_HI_LEN = 4;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_CDD_THRESHOLD = 32;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_CDD_THRESHOLD_LEN = 3;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_CD4_THRESHOLD = 35;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_CD4_THRESHOLD_LEN = 3;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_CFG_CDD_DIS = 38;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_CFG_CD4_DIS = 39;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_CFG_CD6_DIS = 40;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_LOW_LAT_RD_DIS = 41;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_CLK_GATE_DIS = 42;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_CFEI_ENAB = 43;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_CFEI_PERSIST = 44;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_CFEI_BIT0 = 45;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_CFEI_BIT1 = 46;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_LOW_LAT_DEGRADE_DIS = 47;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXT_INTRP_CMDFLAG_0 = 48;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXT_INTRP_CMDFLAG_0_LEN = 4;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXT_INTRP_CMDFLAG_1 = 52;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXT_INTRP_CMDFLAG_1_LEN = 4;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXT_INTRP_CMDFLAG_2 = 56;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXT_INTRP_CMDFLAG_2_LEN = 4;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXT_INTRP_CMDFLAG_3 = 60;
+static const uint32_t ODC_TLXT_REGS_TLXCFG1_TLXT_INTRP_CMDFLAG_3_LEN = 4;
+
+
+static const uint64_t ODC_TLXT_REGS_TLXCFG2 = 0x801200Eull;
+
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_TLXC_WAT_EN_REG = 0;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_TLXC_WAT_EN_REG_LEN = 24;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_XSTOP_RD_GATE_DIS = 24;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_TLXT_DBG_DIAL = 25;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_TLXT_DBG_DIAL_LEN = 16;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_READ_CANCEL_DIS = 41;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_READ_PROMOTE_DIS = 42;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_READ_DROPPABLE_DIS = 43;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_LP_STARVATION_DIS = 44;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_MP_STARVATION_DIS = 45;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_ENTRY0_HP_DLY = 46;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_ENTRY0_HP_DLY_LEN = 8;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_CFG_TLXT_128B_RESP_EN = 54;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_SYS_XSTOP_IN_DIS = 55;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_CFG_TLXT_ENHANCED_LL_MODE_DIS = 56;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_CFG_TLXT_CD6_THRESHOLD = 57;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_CFG_TLXT_CD6_THRESHOLD_LEN = 3;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_CFG_XMETA_LANE_WIDTH_COMP_DIS = 60;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_TBD = 61;
+static const uint32_t ODC_TLXT_REGS_TLXCFG2_TBD_LEN = 3;
+
+
+static const uint64_t ODC_TLXT_REGS_TLXCFG3 = 0x801200Full;
+
+static const uint32_t ODC_TLXT_REGS_TLXCFG3_CFG_TL_CREDIT_HP_TIMEOUT = 0;
+static const uint32_t ODC_TLXT_REGS_TLXCFG3_CFG_TL_CREDIT_HP_TIMEOUT_LEN = 16;
+static const uint32_t ODC_TLXT_REGS_TLXCFG3_CFG_VC0_CREDIT_HP_THRESHOLD = 16;
+static const uint32_t ODC_TLXT_REGS_TLXCFG3_CFG_VC0_CREDIT_HP_THRESHOLD_LEN = 8;
+static const uint32_t ODC_TLXT_REGS_TLXCFG3_CFG_VC1_CREDIT_HP_THRESHOLD = 24;
+static const uint32_t ODC_TLXT_REGS_TLXCFG3_CFG_VC1_CREDIT_HP_THRESHOLD_LEN = 8;
+static const uint32_t ODC_TLXT_REGS_TLXCFG3_CFG_DCP1_CREDIT_HP_THRESHOLD = 32;
+static const uint32_t ODC_TLXT_REGS_TLXCFG3_CFG_DCP1_CREDIT_HP_THRESHOLD_LEN = 8;
+static const uint32_t ODC_TLXT_REGS_TLXCFG3_CFG_TL_CREDIT_FORCE_HP = 40;
+static const uint32_t ODC_TLXT_REGS_TLXCFG3_CFG_OVERRIDE_TLX_VC0_AVAIL = 41;
+static const uint32_t ODC_TLXT_REGS_TLXCFG3_CFG_OVERRIDE_TLX_DCP0_AVAIL = 42;
+static const uint32_t ODC_TLXT_REGS_TLXCFG3_NFLIT_CRC_FIX_CHKSW = 43;
+static const uint32_t ODC_TLXT_REGS_TLXCFG3_TBD = 44;
+static const uint32_t ODC_TLXT_REGS_TLXCFG3_TBD_LEN = 20;
+
+
+static const uint64_t ODC_TLXT_REGS_TLXTINTHLD0 = 0x8012010ull;
+
+static const uint32_t ODC_TLXT_REGS_TLXTINTHLD0_TLXTINTHLD0_TLXT_INTHLD_0_REG = 0;
+static const uint32_t ODC_TLXT_REGS_TLXTINTHLD0_TLXTINTHLD0_TLXT_INTHLD_0_REG_LEN = 64;
+
+
+static const uint64_t ODC_TLXT_REGS_TLXTINTHLD1 = 0x8012011ull;
+
+static const uint32_t ODC_TLXT_REGS_TLXTINTHLD1_TLXTINTHLD1_TLXT_INTHLD_1_REG = 0;
+static const uint32_t ODC_TLXT_REGS_TLXTINTHLD1_TLXTINTHLD1_TLXT_INTHLD_1_REG_LEN = 64;
+
+
+static const uint64_t ODC_TLXT_REGS_TLXTINTHLD2 = 0x8012012ull;
+
+static const uint32_t ODC_TLXT_REGS_TLXTINTHLD2_TLXTINTHLD2_TLXT_INTHLD_2_REG = 0;
+static const uint32_t ODC_TLXT_REGS_TLXTINTHLD2_TLXTINTHLD2_TLXT_INTHLD_2_REG_LEN = 64;
+
+
+static const uint64_t ODC_TLXT_REGS_TLXTINTHLD3 = 0x8012013ull;
+
+static const uint32_t ODC_TLXT_REGS_TLXTINTHLD3_TLXTINTHLD3_TLXT_INTHLD_3_REG = 0;
+static const uint32_t ODC_TLXT_REGS_TLXTINTHLD3_TLXTINTHLD3_TLXT_INTHLD_3_REG_LEN = 64;
+
+
+static const uint64_t ODC_TLXT_REGS_TLXTRAP0 = 0x8012024ull;
+
+static const uint32_t ODC_TLXT_REGS_TLXTRAP0_TLXTRAP0_DEBUG_BUS = 0;
+static const uint32_t ODC_TLXT_REGS_TLXTRAP0_TLXTRAP0_DEBUG_BUS_LEN = 64;
+
+
+static const uint64_t ODC_TLXT_REGS_TLXTRAP1 = 0x8012025ull;
+
+static const uint32_t ODC_TLXT_REGS_TLXTRAP1_TLXTRAP1_DEBUG_BUS = 0;
+static const uint32_t ODC_TLXT_REGS_TLXTRAP1_TLXTRAP1_DEBUG_BUS_LEN = 64;
+
+
+static const uint64_t ODC_TLXT_REGS_TLXTTRAP2 = 0x8012026ull;
+
+static const uint32_t ODC_TLXT_REGS_TLXTTRAP2_TLXTTRAP2_DEBUG_BUS = 0;
+static const uint32_t ODC_TLXT_REGS_TLXTTRAP2_TLXTTRAP2_DEBUG_BUS_LEN = 64;
+
+
+static const uint64_t ODC_TLXT_REGS_TLXTTRAP3 = 0x8012027ull;
+
+static const uint32_t ODC_TLXT_REGS_TLXTTRAP3_TLXTTRAP3_DEBUG_BUS = 0;
+static const uint32_t ODC_TLXT_REGS_TLXTTRAP3_TLXTTRAP3_DEBUG_BUS_LEN = 64;
+
+
+static const uint64_t ODC_TLXT_REGS_TLXTTRAP4 = 0x8012028ull;
+
+static const uint32_t ODC_TLXT_REGS_TLXTTRAP4_TLXTTRAP4_DEBUG_BUS = 0;
+static const uint32_t ODC_TLXT_REGS_TLXTTRAP4_TLXTTRAP4_DEBUG_BUS_LEN = 64;
+
+
+static const uint64_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ = 0x801201Cull;
+
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_TLXR_SHUTDOWN = 0;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_BAD_TEMPLATE_OPCODE_COMBO = 1;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_BAD_TEMPLATE_0_FORMAT = 2;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_BAD_CREDIT_RETURN_SLOT = 3;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_RESERVED_FIELD_VALUE = 4;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_RESERVED_OPCODE_USED = 5;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_FLIT_PERR = 6;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_BAD_RUNLENGTH = 7;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_BAD_T12_RUNLENGTH = 8;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_D_LIST_UNDERFLOW = 9;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_UNSUPPORTED_TEMPLATE = 10;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_PA_OUT_OF_BOUNDS = 11;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_BAD_INTRP_RESP_TAG = 12;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_SPARE_1 = 13;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_UNSUPPORTED_RD_MEM = 14;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_UNSUPPORTED_WRITE = 15;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_UNSUPPORTED_WR_MEMBE = 16;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_BAD_MEMCTL = 17;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_UNSUPPORTED_PAD_MEM = 18;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_UNSUPPORTED_PR_RD_DDR = 19;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_UNSUPPORTED_PR_WR_DDR = 20;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_SPARE_2 = 21;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_UNSUPPORTED_PR_RD_DDR_LEN = 22;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_UNSUPPORTED_PR_WR_DDR_LEN = 23;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_UNSUPPORTED_READ_LENGTH = 24;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_UNSUPPORTED_WRITE_LENGTH = 25;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_RD_BDY_ERR = 26;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_WR_BDY_ERR = 27;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_SPARE_3 = 28;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_MMIO_BAD_WR_RESP = 29;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_BAR0_PERR = 30;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_BUF_CNTL_PERR = 31;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_D_LIST_UNC = 32;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_BUF_NOS_UNC = 33;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_TAGSTORE_UNC = 34;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_D_LIST_OVERFLOW = 35;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_BUFF_NOS_OVERFLOW = 36;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_BUFF_NOS_UNDERFLOW = 37;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_D_LIST_INSANE = 38;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_D_LIST_PERR = 39;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_MMIO_WD_PERR = 40;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_MMIO_WD_INV = 41;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_SRQ_WD_PERR = 42;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_SRQ_WD_INV = 43;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_BAD_DATA_RXD = 44;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_BAD_TX1A_DATA_RXD = 45;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_SPARE_4 = 46;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_DATAFLOW_PERR = 47;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_METADATA_UNC = 48;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_DECODER_PERR = 49;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_CMDFLOW_PERR = 50;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_BNOPIPEPERR = 51;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_SPARE_6 = 52;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_SPARE_7 = 53;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_SPARE_8 = 54;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_SPARE_9 = 55;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_D_LIST_CORR = 56;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_BUF_NOS_CORR = 57;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_TAGSTORE_CORR = 58;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_METADATA_CORR = 59;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_SPARE_10 = 60;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_RESERVED_FIELD_NZ = 61;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_SPARE_11 = 62;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_TRACE_STOP = 63;
+
+
+static const uint64_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_MASK = 0x8012014ull;
+
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_MASK_TLX_ERR0_REPORTQ_MASK_ERRMASK = 0;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR0_REPORTQ_MASK_TLX_ERR0_REPORTQ_MASK_ERRMASK_LEN = 64;
+
+
+static const uint64_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ = 0x801201Dull;
+
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_VERSION_CFG_PERR = 0;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_TMPL_CONFIG_PERR = 1;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_TMPL_RATE_CONFIG_PERR = 2;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_ENABLE_AFU_PERR = 3;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_ACTAG_BASE_PERR = 4;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_ACTAG_LEN_ENAB_PERR = 5;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_PASID_LEN_ENAB_PERR = 6;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_PASID_BASE_PERR = 7;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_RDF0_BAD_DATA_PERR = 8;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_RDF0_META_PERR = 9;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_RDF1_BAD_DATA_PERR = 10;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_RDF1_META_PERR = 11;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_MMIO_DATA_PERR = 12;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_MMIO_RESP_PERR = 13;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_WRITE_RESP_PERR = 14;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_SRQ0_FAILRESP_PERR = 15;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_SRQ1_FAILRESP_PERR = 16;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_SRQ0_PFCH_PERR = 17;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_SRQ1_PFCH_PERR = 18;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_SRQ0_CANCEL_PERR = 19;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_SRQ1_CANCEL_PERR = 20;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_ROQ0_CANCEL_PERR = 21;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_ROQ1_CANCEL_PERR = 22;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_ROQ0_RD_RESP_PERR = 23;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_ROQ1_RD_RESP_PERR = 24;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_META_DOUT_PERR = 25;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_BDI_OUT_PERR = 26;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_RD_RESP_PERR = 27;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_WR_RESP_PERR = 28;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_MMIO_RESP_STG_PERR = 29;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_RD_CANCEL_PERR = 30;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_FAIL_RESP_PERR = 31;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_PFCH_RESP_PERR = 32;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_FLIT_RESP_CNT_PERR = 33;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_PACKET_COUNT_PERR = 34;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_DFLIT_EN_VEC_PERR = 35;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_DRL_PERR = 36;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_FLIT_PKT_CNT_PERR = 37;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_TMPL_ONEHOT_PERR = 38;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_IDLE_CRD_RET_PERR = 39;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_PCKD_2SL_4SL_PERR = 40;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_RD_RESP_FIFO_OVERFLOW = 41;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_WR_RESP_FIFO_OVERFLOW = 42;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_CANCEL_FIFO_OVERFLOW = 43;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_FAIL_FIFO_OVERFLOW = 44;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_MMIO_STG_OVERFLOW = 45;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_PFCH_STG_OVERFLOW = 46;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_RD_RESP_FIFO_UNDERFLOW = 47;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_WR_RESP_FIFO_UNDERFLOW = 48;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_CANCEL_FIFO_UNDERFLOW = 49;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_FAIL_RESP_FIFO_UNDERFLOW = 50;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_MMIO_STG_UNDERFLOW = 51;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_PFCH_STG_UNDERFLOW = 52;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_RD_RESP_FIFO_PTR_ERR = 53;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_WR_RESP_FIFO_PTR_ERR = 54;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_CANCEL_RESP_FIFO_PTR_ERR = 55;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_FAIL_RESP_PTR_ERR = 56;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_FLIT_CRD_STR_PERR = 57;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_FLIT_BEAT_PERR = 58;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_DATA_MUX_ERR = 59;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_ECCGEN_PERR = 60;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_TLXT_DLX_PERR = 61;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_INVALID_ACTAG_CFG = 62;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_INVALID_META_CFG = 63;
+
+
+static const uint64_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_MASK = 0x8012015ull;
+
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_MASK_TLX_ERR1_REPORTQ_MASK_ERRMASK = 0;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR1_REPORTQ_MASK_TLX_ERR1_REPORTQ_MASK_ERRMASK_LEN = 64;
+
+
+static const uint64_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ = 0x801201Eull;
+
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_TLXC_PERRORS = 0;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_TLXC_PERRORS_LEN = 8;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_TLXC_ERRORS = 8;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_TLXC_ERRORS_LEN = 6;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_INTHLD_PERROR = 14;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_INTHLD_PERROR_LEN = 4;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_FRAMER_CRD_RET_ERR = 18;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_INTRP_REQ_SM_PERRORS = 19;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_INTRP_REQ_SM_PERRORS_LEN = 4;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_GLOBAL_FIR_IN_PERR = 23;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_S0_ROQ_ENTRY_VALID_PERR = 24;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_S0_ROQ_ENTRY_CANCEL_PERR = 25;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_S1_ROQ_ENTRY_VALID_PERR = 26;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_S1_ROQ_ENTRY_CANCEL_PERR = 27;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_S0_ROQ_OVERFLOW_ERR = 28;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_S0_ROQ_UNDERFLOW_ERR = 29;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_S1_ROQ_OVERFLOW_ERR = 30;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_S1_ROQ_UNDERFLOW_ERR = 31;
+
+
+static const uint64_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_MASK = 0x8012016ull;
+
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_MASK_TLX_ERR2_REPORTQ_MASK_ERRMASK = 0;
+static const uint32_t ODC_TLXT_REGS_TLX_ERR2_REPORTQ_MASK_TLX_ERR2_REPORTQ_MASK_ERRMASK_LEN = 32;
+
+
+static const uint64_t ODC_TLXT_REGS_TLX_LFIR_WO_OR = 0x8012001ull;
+static const uint64_t ODC_TLXT_REGS_TLX_LFIR_RW_WCLEAR = 0x8012000ull;
+
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN00 = 0;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN01 = 1;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN02 = 2;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN03 = 3;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN04 = 4;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN05 = 5;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN06 = 6;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN07 = 7;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN08 = 8;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN09 = 9;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN10 = 10;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN11 = 11;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN12 = 12;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN13 = 13;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN14 = 14;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN15 = 15;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN16 = 16;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN17 = 17;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN18 = 18;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN19 = 19;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN20 = 20;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN21 = 21;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN22 = 22;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN23 = 23;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN24 = 24;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN25 = 25;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN26 = 26;
+static const uint32_t ODC_TLXT_REGS_TLX_LFIR_IN27 = 27;
+
+
+static const uint64_t ODC_TLXT_REGS_TLX_MASK_WO_OR = 0x8012003ull;
+static const uint64_t ODC_TLXT_REGS_TLX_MASK_RW_WCLEAR = 0x8012002ull;
+
+static const uint32_t ODC_TLXT_REGS_TLX_MASK_FIR_MASK = 0;
+static const uint32_t ODC_TLXT_REGS_TLX_MASK_FIR_MASK_LEN = 28;
+
+
+static const uint64_t ODC_WDF_REGS_AACR = 0x8011C02ull;
+
+static const uint32_t ODC_WDF_REGS_AACR_BUFFER = 0;
+static const uint32_t ODC_WDF_REGS_AACR_ADDRESS = 1;
+static const uint32_t ODC_WDF_REGS_AACR_ADDRESS_LEN = 9;
+static const uint32_t ODC_WDF_REGS_AACR_AUTOINC = 10;
+static const uint32_t ODC_WDF_REGS_AACR_ECCGEN = 11;
+static const uint32_t ODC_WDF_REGS_AACR_PASSTHRU = 12;
+
+
+static const uint64_t ODC_WDF_REGS_AADR = 0x8011C03ull;
+
+static const uint32_t ODC_WDF_REGS_AADR_AADR_DATA = 0;
+static const uint32_t ODC_WDF_REGS_AADR_AADR_DATA_LEN = 64;
+
+
+static const uint64_t ODC_WDF_REGS_AAER = 0x8011C04ull;
+
+static const uint32_t ODC_WDF_REGS_AAER_AAER_META_ECC_SPARE = 0;
+static const uint32_t ODC_WDF_REGS_AAER_AAER_META_ECC_SPARE_LEN = 16;
+
+
+static const uint64_t ODC_WDF_REGS_CTCR = 0x8011C0Aull;
+
+static const uint32_t ODC_WDF_REGS_CTCR_MPE_TIMER = 0;
+static const uint32_t ODC_WDF_REGS_CTCR_MPE_TIMER_LEN = 6;
+static const uint32_t ODC_WDF_REGS_CTCR_MPE_TIMEBASE = 6;
+static const uint32_t ODC_WDF_REGS_CTCR_MPE_TIMEBASE_LEN = 3;
+static const uint32_t ODC_WDF_REGS_CTCR_UE_TIMER = 9;
+static const uint32_t ODC_WDF_REGS_CTCR_UE_TIMER_LEN = 6;
+static const uint32_t ODC_WDF_REGS_CTCR_UE_TIMEBASE = 15;
+static const uint32_t ODC_WDF_REGS_CTCR_UE_TIMEBASE_LEN = 3;
+static const uint32_t ODC_WDF_REGS_CTCR_UE_LOCKOUT_ENABLE = 18;
+
+
+static const uint64_t ODC_WDF_REGS_DQS0R = 0x8011C00ull;
+
+static const uint32_t ODC_WDF_REGS_DQS0R_BYTE0_SWIZZLE = 0;
+static const uint32_t ODC_WDF_REGS_DQS0R_BYTE0_SWIZZLE_LEN = 10;
+static const uint32_t ODC_WDF_REGS_DQS0R_BYTE1_SWIZZLE = 10;
+static const uint32_t ODC_WDF_REGS_DQS0R_BYTE1_SWIZZLE_LEN = 10;
+static const uint32_t ODC_WDF_REGS_DQS0R_BYTE2_SWIZZLE = 20;
+static const uint32_t ODC_WDF_REGS_DQS0R_BYTE2_SWIZZLE_LEN = 10;
+static const uint32_t ODC_WDF_REGS_DQS0R_BYTE3_SWIZZLE = 30;
+static const uint32_t ODC_WDF_REGS_DQS0R_BYTE3_SWIZZLE_LEN = 10;
+static const uint32_t ODC_WDF_REGS_DQS0R_BYTE4_SWIZZLE = 40;
+static const uint32_t ODC_WDF_REGS_DQS0R_BYTE4_SWIZZLE_LEN = 10;
+
+
+static const uint64_t ODC_WDF_REGS_DQS1R = 0x8011C01ull;
+
+static const uint32_t ODC_WDF_REGS_DQS1R_BYTE5_SWIZZLE = 0;
+static const uint32_t ODC_WDF_REGS_DQS1R_BYTE5_SWIZZLE_LEN = 10;
+static const uint32_t ODC_WDF_REGS_DQS1R_BYTE6_SWIZZLE = 10;
+static const uint32_t ODC_WDF_REGS_DQS1R_BYTE6_SWIZZLE_LEN = 10;
+static const uint32_t ODC_WDF_REGS_DQS1R_BYTE7_SWIZZLE = 20;
+static const uint32_t ODC_WDF_REGS_DQS1R_BYTE7_SWIZZLE_LEN = 10;
+static const uint32_t ODC_WDF_REGS_DQS1R_BYTE8_SWIZZLE = 30;
+static const uint32_t ODC_WDF_REGS_DQS1R_BYTE8_SWIZZLE_LEN = 10;
+static const uint32_t ODC_WDF_REGS_DQS1R_BYTE9_SWIZZLE = 40;
+static const uint32_t ODC_WDF_REGS_DQS1R_BYTE9_SWIZZLE_LEN = 10;
+static const uint32_t ODC_WDF_REGS_DQS1R_ODD_RANK_SWIZZLE_EN = 50;
+
+
+static const uint64_t ODC_WDF_REGS_RECR = 0x8011C0Bull;
+
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_DISABLE_MEMORY_ECC_CHECK_CORRECT = 0;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_DISABLE_MEMORY_ECC_CORRECT = 1;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_DISABLE_MARK_STORE_WRITE = 2;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_DISABLE_UE_RETRY = 3;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_ITAG_METADATA_ENABLE = 4;
+static const uint32_t ODC_WDF_REGS_RECR_RECR_DISABLE_RCD_CHECK = 5;
+static const uint32_t ODC_WDF_REGS_RECR_RECR_DISABLE_RDDATA_VALID_CHECK = 6;
+static const uint32_t ODC_WDF_REGS_RECR_RECR_ENABLE_BAD_DATA_ON_SUE = 7;
+static const uint32_t ODC_WDF_REGS_RECR_PREFETCH_WRITTEN_ON_COLLISION_EN = 8;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_EXIT_OVERRIDE = 9;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_EXIT_OVERRIDE_LEN = 2;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_HWMARK_EXIT1 = 11;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_HWMARK_EXIT2 = 12;
+static const uint32_t ODC_WDF_REGS_RECR_RECR_DISABLE_MPE_CORRECTION = 13;
+static const uint32_t ODC_WDF_REGS_RECR_RECR_CAPPTAG_BYPASS_BIT_ENABLE = 14;
+static const uint32_t ODC_WDF_REGS_RECR_RECR_CAPPTAG_RETRY_BIT_ENABLE = 15;
+static const uint32_t ODC_WDF_REGS_RECR_RECR_CAPPTAG_BIT_1_MODE_EN = 16;
+static const uint32_t ODC_WDF_REGS_RECR_RDF_XSTOP_FREEZE_FIR_DIS = 17;
+static const uint32_t ODC_WDF_REGS_RECR_RECR_DISABLE_EXIT_0_DELAY = 18;
+static const uint32_t ODC_WDF_REGS_RECR_RECR_EXIT_ESCALATION_EN = 19;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_ENABLE_MPE_NOISE_WINDOW = 24;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_DISABLE_MPE_CONFIRM = 25;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_ENABLE_UE_NOISE_WINDOW = 26;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_ENABLE_TCE_CORRECTION = 27;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_ENABLE_CHIPMARKED_SCE_NCE = 28;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_USE_ADDRESS_HASH = 29;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_DATA_INVERSION = 30;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_DATA_INVERSION_LEN = 2;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_DISABLE_PIPE_NOERR_CLOCK_GATING = 32;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_MAINT_NO_RETRY_UE = 33;
+static const uint32_t ODC_WDF_REGS_RECR_MBSECCQ_MAINT_NO_RETRY_MPE = 34;
+static const uint32_t ODC_WDF_REGS_RECR_RECR_RETRY_UNMARKED_ERRORS = 35;
+static const uint32_t ODC_WDF_REGS_RECR_RECR_SPLIT_128B_RESPONSES_EN = 36;
+static const uint32_t ODC_WDF_REGS_RECR_CFG_MAINT_USE_TIMERS = 40;
+static const uint32_t ODC_WDF_REGS_RECR_RECR_HWMS_RANK_SELECT = 41;
+static const uint32_t ODC_WDF_REGS_RECR_RECR_HWMS_RANK_SELECT_LEN = 6;
+
+
+static const uint64_t ODC_WDF_REGS_WECR = 0x8011C05ull;
+
+static const uint32_t ODC_WDF_REGS_WECR_WDF_ECC_CHK_DISABLE = 0;
+static const uint32_t ODC_WDF_REGS_WECR_WDF_ECC_COR_DISABLE = 1;
+static const uint32_t ODC_WDF_REGS_WECR_CRC_MODE_EN = 2;
+static const uint32_t ODC_WDF_REGS_WECR_ECC_X8KILL = 3;
+static const uint32_t ODC_WDF_REGS_WECR_FORCE_DFI_CG_ALWAYS_ON = 4;
+static const uint32_t ODC_WDF_REGS_WECR_WDF_INTEGRITY_CHECK_DISABLE = 5;
+static const uint32_t ODC_WDF_REGS_WECR_WDF_CG_FORCE = 6;
+static const uint32_t ODC_WDF_REGS_WECR_WDF_SPARE7_11 = 7;
+static const uint32_t ODC_WDF_REGS_WECR_WDF_SPARE7_11_LEN = 5;
+static const uint32_t ODC_WDF_REGS_WECR_WDF_TRACE_SEL = 12;
+static const uint32_t ODC_WDF_REGS_WECR_WDF_TRACE_SEL_LEN = 4;
+static const uint32_t ODC_WDF_REGS_WECR_WDF_WAT_EN = 16;
+static const uint32_t ODC_WDF_REGS_WECR_WDF_WAT_EN_LEN = 4;
+
+
+static const uint64_t ODC_WDF_REGS_WERR = 0x8011C07ull;
+
+static const uint32_t ODC_WDF_REGS_WERR_DQS0R_PE = 0;
+static const uint32_t ODC_WDF_REGS_WERR_DQS1R_PE = 1;
+static const uint32_t ODC_WDF_REGS_WERR_AACR_PE = 2;
+static const uint32_t ODC_WDF_REGS_WERR_AADR_PE = 3;
+static const uint32_t ODC_WDF_REGS_WERR_AAER_PE = 4;
+static const uint32_t ODC_WDF_REGS_WERR_WECR_PE = 5;
+static const uint32_t ODC_WDF_REGS_WERR_CTCR_PE = 6;
+static const uint32_t ODC_WDF_REGS_WERR_RECR_PE = 7;
+static const uint32_t ODC_WDF_REGS_WERR_WSPAR_PE = 8;
+static const uint32_t ODC_WDF_REGS_WERR_WMSK_PE = 9;
+static const uint32_t ODC_WDF_REGS_WERR_TLXR_WR_PE = 16;
+static const uint32_t ODC_WDF_REGS_WERR_TLXR_BAD_PE = 17;
+static const uint32_t ODC_WDF_REGS_WERR_SRQ_IF_PE = 19;
+static const uint32_t ODC_WDF_REGS_WERR_RDF_IF_PE = 20;
+static const uint32_t ODC_WDF_REGS_WERR_MMIO_IF_PE = 21;
+static const uint32_t ODC_WDF_REGS_WERR_CONTROL_PE = 22;
+static const uint32_t ODC_WDF_REGS_WERR_ECCGEN_ERR = 23;
+static const uint32_t ODC_WDF_REGS_WERR_WBUF_FUNC_UE = 24;
+static const uint32_t ODC_WDF_REGS_WERR_RMWBUF_FUNC_UE = 25;
+static const uint32_t ODC_WDF_REGS_WERR_INTEGRITY_ERR = 28;
+static const uint32_t ODC_WDF_REGS_WERR_WBUF_MMIO_UE = 29;
+static const uint32_t ODC_WDF_REGS_WERR_SCOM_FSM_PE = 32;
+static const uint32_t ODC_WDF_REGS_WERR_RMWBUF_SCOM_UE = 33;
+static const uint32_t ODC_WDF_REGS_WERR_WBUF_CE = 48;
+static const uint32_t ODC_WDF_REGS_WERR_RMWBUF_CE = 49;
+
+
+static const uint64_t ODC_WDF_REGS_WESR = 0x8011C06ull;
+
+static const uint32_t ODC_WDF_REGS_WESR_SYNDROME = 0;
+static const uint32_t ODC_WDF_REGS_WESR_SYNDROME_LEN = 8;
+static const uint32_t ODC_WDF_REGS_WESR_SEVERITY = 8;
+static const uint32_t ODC_WDF_REGS_WESR_PART = 9;
+static const uint32_t ODC_WDF_REGS_WESR_SOURCE = 10;
+static const uint32_t ODC_WDF_REGS_WESR_SOURCE_LEN = 3;
+
+
+static const uint64_t ODC_WDF_REGS_WMSK = 0x8011C09ull;
+
+static const uint32_t ODC_WDF_REGS_WMSK_DQS0R_PE = 0;
+static const uint32_t ODC_WDF_REGS_WMSK_DQS1R_PE = 1;
+static const uint32_t ODC_WDF_REGS_WMSK_AACR_PE = 2;
+static const uint32_t ODC_WDF_REGS_WMSK_AADR_PE = 3;
+static const uint32_t ODC_WDF_REGS_WMSK_AAER_PE = 4;
+static const uint32_t ODC_WDF_REGS_WMSK_WECR_PE = 5;
+static const uint32_t ODC_WDF_REGS_WMSK_CTCR_PE = 6;
+static const uint32_t ODC_WDF_REGS_WMSK_RECR_PE = 7;
+static const uint32_t ODC_WDF_REGS_WMSK_WSPAR_PE = 8;
+static const uint32_t ODC_WDF_REGS_WMSK_WMSK_PE = 9;
+static const uint32_t ODC_WDF_REGS_WMSK_RDF_BE_PE = 15;
+static const uint32_t ODC_WDF_REGS_WMSK_TLXR_WR_PE = 16;
+static const uint32_t ODC_WDF_REGS_WMSK_TLXR_BAD_PE = 17;
+static const uint32_t ODC_WDF_REGS_WMSK_TLXR_BE_PE = 18;
+static const uint32_t ODC_WDF_REGS_WMSK_SRQ_IF_PE = 19;
+static const uint32_t ODC_WDF_REGS_WMSK_RDF_IF_PE = 20;
+static const uint32_t ODC_WDF_REGS_WMSK_MMIO_IF_PE = 21;
+static const uint32_t ODC_WDF_REGS_WMSK_CONTROL_PE = 22;
+static const uint32_t ODC_WDF_REGS_WMSK_ECCGEN_ERR = 23;
+static const uint32_t ODC_WDF_REGS_WMSK_WBUF_FUNC_UE = 24;
+static const uint32_t ODC_WDF_REGS_WMSK_RMWBUF_FUNC_UE = 25;
+static const uint32_t ODC_WDF_REGS_WMSK_BEBUF_FUNC_UE = 26;
+static const uint32_t ODC_WDF_REGS_WMSK_BE_PE = 27;
+static const uint32_t ODC_WDF_REGS_WMSK_INTEGRITY_ERR = 28;
+static const uint32_t ODC_WDF_REGS_WMSK_WBUF_MMIO_UE = 29;
+static const uint32_t ODC_WDF_REGS_WMSK_SCOM_FSM_PE = 32;
+static const uint32_t ODC_WDF_REGS_WMSK_RMWBUF_SCOM_UE = 33;
+static const uint32_t ODC_WDF_REGS_WMSK_BEBUF_SCOM_UE = 34;
+static const uint32_t ODC_WDF_REGS_WMSK_WBUF_CE = 48;
+static const uint32_t ODC_WDF_REGS_WMSK_RMWBUF_CE = 49;
+static const uint32_t ODC_WDF_REGS_WMSK_BEBUF_CE = 50;
+
+
+static const uint64_t ODC_WDF_REGS_WSPAR = 0x8011C08ull;
+
+static const uint32_t ODC_WDF_REGS_WSPAR_R0_LEFT = 0;
+static const uint32_t ODC_WDF_REGS_WSPAR_R0_LEFT_LEN = 5;
+static const uint32_t ODC_WDF_REGS_WSPAR_R0_RIGHT = 5;
+static const uint32_t ODC_WDF_REGS_WSPAR_R0_RIGHT_LEN = 5;
+static const uint32_t ODC_WDF_REGS_WSPAR_R1_LEFT = 10;
+static const uint32_t ODC_WDF_REGS_WSPAR_R1_LEFT_LEN = 5;
+static const uint32_t ODC_WDF_REGS_WSPAR_R1_RIGHT = 15;
+static const uint32_t ODC_WDF_REGS_WSPAR_R1_RIGHT_LEN = 5;
+static const uint32_t ODC_WDF_REGS_WSPAR_R2_LEFT = 20;
+static const uint32_t ODC_WDF_REGS_WSPAR_R2_LEFT_LEN = 5;
+static const uint32_t ODC_WDF_REGS_WSPAR_R2_RIGHT = 25;
+static const uint32_t ODC_WDF_REGS_WSPAR_R2_RIGHT_LEN = 5;
+static const uint32_t ODC_WDF_REGS_WSPAR_R3_LEFT = 30;
+static const uint32_t ODC_WDF_REGS_WSPAR_R3_LEFT_LEN = 5;
+static const uint32_t ODC_WDF_REGS_WSPAR_R3_RIGHT = 35;
+static const uint32_t ODC_WDF_REGS_WSPAR_R3_RIGHT_LEN = 5;
+
+
+
+#ifndef __PPE_HCODE__
+}
+}
+#endif
+
+#ifndef SCOMT_OMIT_FIELD_ACCESSORS
+    #include "ody_scom_ody_odc_fields.H"
+#endif
