@@ -169,6 +169,10 @@ PATH=$SIGNING_DIR:$PATH
 if [ ! -z $BR2_OPENPOWER_P10_SECUREBOOT_SIGN_MODE ]; then
     SIGNING_MODE=$BR2_OPENPOWER_P10_SECUREBOOT_SIGN_MODE
 
+# To allow for prod signing boot loader with dev runtime can set the following env
+elif [ "$COMPONENT_ID" = "BOOT_LDR" -a ! -z $ODY_BOOT_LDR_SECUREBOOT_SIGN_MODE ]; then
+    SIGNING_MODE=$ODY_BOOT_LDR_SECUREBOOT_SIGN_MODE
+
 #Check if user has passed signing mode
 elif [ -z $SIGNING_MODE ]; then
     SIGNING_MODE="Development"
@@ -201,19 +205,38 @@ if [ "$SIGNING_MODE" = "Development" ]; then
 elif [ "$SIGNING_MODE" = "Production" ] ; then
     echo "***INFO | SBE | signHashList : Production Mode Signing"
 
-    if [ -z $SB_PROJECT_INI ] || [ ! -e $SB_PROJECT_INI ]; then
-        echo "***ERROR | SBE | signHashList : Unable to locate production signing project ini file : $SB_PROJECT_INI"
+    if [ -z $SB_PROJECT_INI_ODY_BOOT ] || [ ! -e $SB_PROJECT_INI_ODY_BOOT ]; then
+        echo "***ERROR | SBE | signHashList : Unable to locate production signing boot loader project ini file : $SB_PROJECT_INI_ODY_BOOT"
         exit -1
     fi
-    if [ -z $SB_ARCHIVE_IN ] || [ ! -e $SB_ARCHIVE_IN ]; then
-        echo "***ERROR | SBE | signHashList : Unable to locate production signing key archive : $SB_ARCHIVE_IN"
+    if [ -z $SB_ARCHIVE_IN_ODY_BOOT ] || [ ! -e $SB_ARCHIVE_IN_ODY_BOOT ]; then
+        echo "***ERROR | SBE | signHashList : Unable to locate production signing boot loader key archive : $SB_ARCHIVE_IN_ODY_BOOT"
         exit -1
     fi
 
-    #TODO: Update dilithium keys for production mode
-    SIGNTOOL_ARGS="$SIGNTOOL_ARGS --mode production --flags 0x40000000 \
-                   --hwKeyA __getkey --swKeyP __get \
-                   --sign-project-config $SB_PROJECT_INI --archiveIn $SB_ARCHIVE_IN"
+    if [ -z $SB_PROJECT_INI_ODY_RUNTIME ] || [ ! -e $SB_PROJECT_INI_ODY_RUNTIME ]; then
+        echo "***ERROR | SBE | signHashList : Unable to locate production signing runtime project ini file : $SB_PROJECT_INI_ODY_RUNTIME"
+        exit -1
+    fi
+    if [ -z $SB_ARCHIVE_IN_ODY_RUNTIME ] || [ ! -e $SB_ARCHIVE_IN_ODY_RUNTIME ]; then
+        echo "***ERROR | SBE | signHashList : Unable to locate production signing runtime key archive : $SB_ARCHIVE_IN_ODY_RUNTIME"
+        exit -1
+    fi
+
+    if [ "$COMPONENT_ID" = "BOOT_LDR" ]; then
+        echo "***INFO | SBE | signHashList : Production Mode Signing."
+        echo "***INFO | SBE | signHashList : Signing Boot Loader Hash List."
+        SIGNTOOL_ARGS="$SIGNTOOL_ARGS --mode production --flags 0x40000000 \
+                   --hwKeyA __getkey --hwKeyD __getkey --swKeyP __get --swKeyS __get \
+                   --sign-project-config $SB_PROJECT_INI_ODY_BOOT --archiveIn $SB_ARCHIVE_IN_ODY_BOOT"
+    fi
+    if [ "$COMPONENT_ID" = "RUN_TIME" ]; then
+        echo "***INFO | SBE | signHashList : Production Mode Signing."
+        echo "***INFO | SBE | signHashList : Signing Run Time Hash List."
+        SIGNTOOL_ARGS="$SIGNTOOL_ARGS --mode production --flags 0x40000000 \
+                   --hwKeyA __getkey --hwKeyD __getkey --swKeyP __get --swKeyS __get \
+                   --sign-project-config $SB_PROJECT_INI_ODY_RUNTIME --archiveIn $SB_ARCHIVE_IN_ODY_RUNTIME"
+    fi
 
     # Need path to SF client to access signing server
     PATH=$SIGNING_DIR/../sb-signing-framework/sb-signing-framework/src/client:$PATH
