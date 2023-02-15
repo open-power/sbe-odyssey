@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -63,9 +63,9 @@ class parameterTraits
         inline static void write_element(void* i_data, T i_value, uint32_t i_offset)
         {
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-            T* ptr = (T*)i_data + (i_offset ^ ((sizeof(U) / sizeof(T)) - 1));
+            T* ptr = static_cast< T* >(i_data) + (i_offset ^ ((sizeof(U) / sizeof(T)) - 1));
 #else
-            T* ptr = (T*)i_data + i_offset;
+            T* ptr = static_cast< T* >( i_data ) + i_offset;
 #endif
             *ptr = i_value;
         }

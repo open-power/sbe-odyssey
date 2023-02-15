@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -151,7 +151,7 @@ class CfamRegister : public fapi2::buffer<uint32_t>
         inline __attribute__((always_inline))
         fapi2::ReturnCode _putScom(const fapi2::Target<K, M, V>& i_target, uint64_t i_address) const
         {
-            fapi2::buffer<uint64_t> l_buf = ((uint64_t) * this) << 32;
+            fapi2::buffer<uint64_t> l_buf = static_cast< uint64_t > (* this) << 32;
             return fapi2::putScom(i_target, i_address, l_buf);
         }
 

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -33,7 +33,7 @@ namespace scomt
 
 uint32_t current_chip;
 
-void forbiddenAccess(const uint32_t forbidden_mask)
+void forbiddenAccess(const uint32_t /* forbidden_mask */)
 {
     assert(0);
 }
