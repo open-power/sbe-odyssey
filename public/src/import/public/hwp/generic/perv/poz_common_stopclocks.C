@@ -61,6 +61,7 @@ fapi2::ReturnCode poz_stopclocks_pre_check(
     bool& stop_chiplet_clocks_possible,
     bool& stop_tp_clocks_possible)
 {
+    fapi2::ReturnCode l_rc;
     FSXCOMP_FSXLOG_ROOT_CTRL0_t ROOT_CTRL0;
     FSXCOMP_FSXLOG_PERV_CTRL0_t PERV_CTRL0;
     CLOCK_STAT_SL_t CLOCK_STAT_SL;
@@ -74,6 +75,7 @@ fapi2::ReturnCode poz_stopclocks_pre_check(
     bool tp_cplt_en           = false;
     bool tp_ep_rst            = true;
     bool tp_vitl_clk_off      = true;
+    bool do_scom_instead      = false;
 
     uint8_t perv_net_region_3_not_4;
     int perv_net_region;
@@ -91,7 +93,13 @@ fapi2::ReturnCode poz_stopclocks_pre_check(
     }
     else
     {
-        FAPI_TRY(PERV_CTRL0.getCfam(i_target));
+        l_rc = PERV_CTRL0.getCfam(i_target);
+
+        if(l_rc != fapi2::FAPI2_RC_SUCCESS) // try SCOM in g2p mode
+        {
+            do_scom_instead = true;
+            FAPI_TRY(PERV_CTRL0.getScom(i_target));
+        }
     }
 
     tp_cplt_en         = PERV_CTRL0.get_CHIPLET_EN();
@@ -111,7 +119,7 @@ fapi2::ReturnCode poz_stopclocks_pre_check(
     {
         FAPI_DBG("Reading ROOT_CTRL0 register to check if the PCB network is being bypassed");
 
-        if (fapi2::is_platform<fapi2::PLAT_SBE>())
+        if (fapi2::is_platform<fapi2::PLAT_SBE>() || do_scom_instead)
         {
             FAPI_TRY(ROOT_CTRL0.getScom(i_target));
         }
