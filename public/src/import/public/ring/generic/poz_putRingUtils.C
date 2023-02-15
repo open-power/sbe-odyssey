@@ -552,7 +552,7 @@ static ReturnCode checkBounds(
     const uint64_t i_nibbleCount,
     const uint64_t i_nibbleIndx)
 {
-    FAPI_ASSERT(i_nibbleIndx < i_nibbleCount,
+    FAPI_ASSERT(i_nibbleIndx <= i_nibbleCount,
                 PUTRING_RS4_STRING_OVERRUN()
                 .set_TARGET(i_target)
                 .set_SCAN_ADDR(i_hdr->iv_scanAddr.get())
