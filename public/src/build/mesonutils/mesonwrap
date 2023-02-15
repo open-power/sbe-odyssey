@@ -96,6 +96,13 @@ exc_cmd()
     exit $rc
 }
 
+# Add some checks to prevent user from building unsupported images for a given platform
+if [[ "$SBE_PLATFORM" == "odyssey" &&  "$SBE_IMAGE" != "pnor" ]]; then
+    echo "***ERROR | SBE | mesonwrap: Unsupported sbe image type: $SBE_IMAGE for platform: $SBE_PLATFORM"
+    echo "***ERROR | SBE | mesonwrap: workon with odyssey pnor"
+    exit -1
+fi
+
 #Disable parts of image build based on user setup(during workon)
 #By default all images are enabled.
 #We need enabled images var incase of resync
@@ -160,7 +167,7 @@ elif [ "$SBE_IMAGE" == "all" ]; then
                      -Dpme=enabled -Dsbe=enabled"
 
 else
-    echo "Unsupported SBE_IMAGE type $SBE_IMAGE"
+    echo "***ERROR | SBE | mesonwrap: Unsupported SBE_IMAGE type $SBE_IMAGE"
     exit -1
 
 fi
