@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -58,17 +58,12 @@ ReturnCode ody_chiplet_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 
     FAPI_INF("Program DDR PHY Nto1 clock division ratios");
     CPLT_CONF1 = 0;
-    CPLT_CONF1.set_24H(1);
-    CPLT_CONF1.set_25H(1);
-    CPLT_CONF1.set_26H(1);
-    CPLT_CONF1.set_27H(1);
-    CPLT_CONF1.set_28H(1);
-    CPLT_CONF1.set_29H(1);
+    CPLT_CONF1.setBit<24, 6>();
     FAPI_TRY(CPLT_CONF1.putScom_SET(l_mc_chiplets));
 
     FAPI_INF("Force MC ATPG regions disabled despite ATTR_PG settings");
     CPLT_CTRL2 = 0;
-    CPLT_CTRL2.writeBit<11, 6>(1);
+    CPLT_CTRL2.setBit<11, 6>();
     FAPI_TRY(CPLT_CTRL2.putScom_CLEAR(l_mc_chiplets));
 
 fapi_try_exit:

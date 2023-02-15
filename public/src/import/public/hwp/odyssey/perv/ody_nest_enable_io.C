@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -32,16 +32,16 @@
 
 #include <ody_nest_enable_io.H>
 #include <poz_perv_common_params.H>
-#include <ody_scom_perv.H>
+#include <poz_scom_perv.H>
 #include <target_filters.H>
 
 using namespace fapi2;
-using namespace scomt::perv;
+using namespace scomt::poz;
 
-SCOMT_PERV_USE_TPCHIP_NET_PCBRSPPERV_CTRL0;
-typedef TPCHIP_NET_PCBRSPPERV_CTRL0_t NET_CTRL0_t;
-SCOMT_PERV_USE_CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_ROOT_CTRL1;
-typedef CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_ROOT_CTRL1_t ROOT_CTRL1_t;
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL1;
+SCOMT_PERV_USE_NET_CTRL0;
+
+typedef FSXCOMP_FSXLOG_ROOT_CTRL1_t ROOT_CTRL1_t;
 
 enum ODY_NEST_ENABLE_IO_Private_Constants
 {
@@ -66,9 +66,9 @@ ReturnCode ody_nest_enable_io(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
     for (auto& chiplet : i_target.getChildren<TARGET_TYPE_PERV>(TARGET_FILTER_MC, TARGET_STATE_FUNCTIONAL))
     {
         NET_CTRL0 = 0;
-        NET_CTRL0.set_CPLT_DCTRL(1);
-        NET_CTRL0.set_CPLT_RCTRL(1);
-        NET_CTRL0.set_CPLT_RCTRL2(1);
+        NET_CTRL0.set_DCTRL(1);
+        NET_CTRL0.set_RCTRL(1);
+        NET_CTRL0.set_RCTRL2(1);
         FAPI_TRY(NET_CTRL0.putScom_SET(chiplet));
     }
 
