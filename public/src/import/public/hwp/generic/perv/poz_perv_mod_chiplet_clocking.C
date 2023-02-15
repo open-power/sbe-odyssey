@@ -61,6 +61,7 @@ ReturnCode poll_opcg_done(
     bool i_poll_abist_done)
 {
     CPLT_STAT0_t CPLT_STAT0;
+    uint32_t original_poll_count = i_poll_count;
 
     while (i_poll_count != 0)
     {
@@ -81,7 +82,7 @@ ReturnCode poll_opcg_done(
     FAPI_ASSERT(i_poll_count > 0,
                 fapi2::POZ_OPCG_DONE_NOT_SET_ERR()
                 .set_PERV_CPLT_STAT0(CPLT_STAT0)
-                .set_POLL_COUNT(i_poll_count)
+                .set_POLL_COUNT(original_poll_count)
                 .set_HW_DELAY(i_hw_delay)
                 .set_PROC_TARGET(i_target),
                 "ERROR:OPCG DONE BIT NOT SET");
@@ -597,7 +598,7 @@ ReturnCode mod_align_regions(
     FAPI_ASSERT(l_timeout > 0,
                 fapi2::POZ_CPLT_NOT_ALIGNED_ERR()
                 .set_PERV_CPLT_STAT0(CPLT_STAT0)
-                .set_LOOP_COUNT(l_timeout)
+                .set_LOOP_COUNT(CPLT_ALIGN_CHECK_POLL_COUNT)
                 .set_HW_DELAY(NS_DELAY)
                 .set_PROC_TARGET(i_target),
                 "ERROR : CHIPLET NOT ALIGNED");
