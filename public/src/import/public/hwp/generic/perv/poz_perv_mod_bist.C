@@ -280,15 +280,11 @@ ReturnCode mod_lbist_setup(
     // Multicast base CLK regions and SCAN_TYPE
     FAPI_TRY(CLK_REGION.getScom(i_target));
     CLK_REGION.insertFromRight<CLK_REGION_CLOCK_REGION_PERV, 16>(i_params.base_regions);
-    FAPI_DBG("CLK_REGION buffer value: 0x%08X%08X",
-             CLK_REGION >> 32, CLK_REGION & 0XFFFFFFFF);
     FAPI_TRY(CLK_REGION.putScom(i_target));
 
     FAPI_TRY(SCAN_REGION_TYPE.getScom(i_target));
     SCAN_REGION_TYPE.insertFromRight<SCAN_REGION_TYPE_SCAN_REGION_PERV, 16>(i_params.base_regions);
     SCAN_REGION_TYPE.insertFromRight<SCAN_REGION_TYPE_SCAN_TYPE_FUNC, 12>(i_params.lbist_scan_types);
-    FAPI_DBG("SCAN_REGION_TYPE buffer value: 0x%08X%08X",
-             SCAN_REGION_TYPE >> 32, SCAN_REGION_TYPE & 0XFFFFFFFF);
     FAPI_TRY(SCAN_REGION_TYPE.putScom(i_target));
 
     // If we know there are custom regions by chiplet, unicast them
