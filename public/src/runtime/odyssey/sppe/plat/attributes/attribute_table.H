@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/tools/attributes/templates/attribute_override.C.t $ */
+/* $Source: public/src/runtime/odyssey/sppe/plat/attributes/attribute_table.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,44 +21,56 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#include <attribute.H>
-#include <attribute_table.H>
-#include <target_types.H>
+#ifndef __ATTRIBUTE_TABLE_H__
+#define __ATTRIBUTE_TABLE_H__
+
+#include <attribute_override.H>
+#include <attribute_list.H>
 
 namespace fapi2
 {
-
 namespace ATTR
 {
 
-AttributesTable g_attrsTab[] =
+struct AttributesTable
 {
-{% for key in target_types.keys() %}
-{% for attr in attributes if attr.has_storage and attr.sbe_targ_type == key %}
-{{attr.gen_attr_table()}}
-{% endfor %}
-{% endfor %}
-}; //End g_attrsTab
+    fapi2::AttributeId      iv_attr_id;
+    uint8_t                 iv_max_row; //Row
+    uint8_t                 iv_max_col; //Column
+    uint8_t                 iv_max_hgt; //Height
+    uint8_t                 iv_size;
+    void                   *iv_ptr;
 
+    AttributeOverrideRc applyOverride(const uint8_t       i_tgt_inst,
+                                      const AttrEntry_t*  i_attrEntry);
 
-TargetsTable  g_targetsTab[] =
+};
+
+struct TargetsTable
 {
-{% set start_row=[0] %}
-{% for key in target_types.keys() %}
-{% set row_count=[0] %}
-{% for attr in attributes if attr.has_storage and attr.sbe_targ_type == key %}
-    {# <--- The below if-else statement is the workaround for performing #}
-    {#      row_count = row_count + 1                                    #}
-    {% if row_count.append(row_count.pop()+1)%} {% endif %}
-{% endfor %}
-{ LOG_{{key}},{{target_types[key].ntargets}},{{start_row[0]}},{{row_count[0]}} },
-    {# <--- The below if-else statement is the workaround for performing #}
-    {#      start_row = start_row + row_count                    --->    #}
-{% if start_row.append(start_row.pop()+row_count[0])%} {% endif %}
-{% endfor %}
-}; //End g_attrsTab
+    fapi2::LogTargetType    iv_log_target_type;
+    uint8_t                 iv_max_inst;
+    uint16_t                iv_attr_row_start;
+    uint16_t                iv_attr_row_size;
 
-uint8_t g_tgts_tab_size = {{target_types.keys()|length}};
+    AttributeOverrideRc applyOverride(const uint8_t           i_targ_inst,
+                                      AttributeUpdateBuffer&  i_buffer);
+
+};
+
+uint32_t    applyOverride(const void *i_buffer,void *o_buffer,
+                          uint32_t & o_resPackSize);
+
+
+
+extern AttributesTable g_attrsTab[];
+
+extern TargetsTable    g_targetsTab[];
+
+extern uint8_t         g_tgts_tab_size;
+
 } //ATTR
 
 } //fapi2
+
+#endif // __ATTRIBUTE_TABLE_H__

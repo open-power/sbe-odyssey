@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/tools/attributes/templates/attribute_override.C.t $ */
+/* $Source: public/src/runtime/odyssey/sppe/plat/attributes/attribute_utils.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,44 +21,55 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#include <attribute.H>
-#include <attribute_table.H>
+#ifndef __ATTRIBUTE_UTILS_H__
+#define __ATTRIBUTE_UTILS_H__
+
+#include <attribute_ids.H>
 #include <target_types.H>
 
 namespace fapi2
 {
-
 namespace ATTR
 {
 
-AttributesTable g_attrsTab[] =
+struct HeaderEntry_t
 {
-{% for key in target_types.keys() %}
-{% for attr in attributes if attr.has_storage and attr.sbe_targ_type == key %}
-{{attr.gen_attr_table()}}
-{% endfor %}
-{% endfor %}
-}; //End g_attrsTab
+    uint8_t    iv_fmtMajor;     //format major version
+    uint8_t    iv_fmtMinor;     //format minor version
+    uint8_t    iv_chipType;     //chip type
+    uint8_t    iv_fileType;     //file type
+    uint32_t   iv_numTargets;   //number of target sections
+};
 
-
-TargetsTable  g_targetsTab[] =
+struct TargetEntry_t
 {
-{% set start_row=[0] %}
-{% for key in target_types.keys() %}
-{% set row_count=[0] %}
-{% for attr in attributes if attr.has_storage and attr.sbe_targ_type == key %}
-    {# <--- The below if-else statement is the workaround for performing #}
-    {#      row_count = row_count + 1                                    #}
-    {% if row_count.append(row_count.pop()+1)%} {% endif %}
-{% endfor %}
-{ LOG_{{key}},{{target_types[key].ntargets}},{{start_row[0]}},{{row_count[0]}} },
-    {# <--- The below if-else statement is the workaround for performing #}
-    {#      start_row = start_row + row_count                    --->    #}
-{% if start_row.append(start_row.pop()+row_count[0])%} {% endif %}
-{% endfor %}
-}; //End g_attrsTab
+    uint8_t    iv_logTgtType;   //LOG_TARGET_TYPE
+    uint8_t    iv_instance;     //instance number; 0xFF - applicable for all instance
+    uint16_t   iv_numAttrs;     //number of attributes for this target type
+    uint32_t   iv_padding;
+};
 
-uint8_t g_tgts_tab_size = {{target_types.keys()|length}};
+struct __attribute__((packed)) AttrEntry_t
+{
+    uint32_t   iv_attrId;       //attribute ID
+    uint16_t   iv_dataSize;     //data size
+    uint8_t    iv_row;          //row number
+    uint8_t    iv_col;          //col number
+    uint8_t    iv_hgt;          //height
+    uint8_t    iv_res;          //1-byte reserved
+    //data is a variable size
+};
+
+enum ENTRY_TYPE
+{
+    HEADER_ENTRY,
+    TARGET_ENTRY,
+    ATTRIBUTE_ENTRY,
+    END_ENTRY
+};
+
 } //ATTR
 
 } //fapi2
+
+#endif // __ATTRIBUTE_UTILS_H__

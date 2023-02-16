@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
@@ -56,63 +57,63 @@ class Fapi2(ABC):
         RAW_DUMP = 5
 
     class TargetType(Enum):
-        TARGET_TYPE_SYSTEM              =  0 #< System type
-        TARGET_TYPE_DIMM                =  1 #< DIMM type
-        TARGET_TYPE_PROC_CHIP           =  2 #< Processor type
-        TARGET_TYPE_MEMBUF_CHIP         =  3 #< Membuf type
-        TARGET_TYPE_EX                  =  4 #< EX - 2x Core, L2, L3 - can be deconfigured
-        TARGET_TYPE_MBA                 =  5 #< MBA type
-        TARGET_TYPE_MCS                 =  6 #< MCS type
-        TARGET_TYPE_XBUS                =  7 #< XBUS type
-        TARGET_TYPE_ABUS                =  8 #< ABUS type
-        TARGET_TYPE_L4                  =  9 #< L4 type
-        TARGET_TYPE_CORE                = 10 #< Core
-        TARGET_TYPE_EQ                  = 11 #< EQ - 4x core, 2x L2, 2x L3 - can be deconfigured
-        TARGET_TYPE_MCA                 = 12 #< MCA type
-        TARGET_TYPE_MCBIST              = 13 #< MCBIST type
-        TARGET_TYPE_MI                  = 14 #< MI Memory Interface (Cumulus)
-        TARGET_TYPE_CAPP                = 15 #< CAPP target
-        TARGET_TYPE_DMI                 = 16 #< DMI type
-        TARGET_TYPE_OBUS                = 17 #< OBUS type
-        TARGET_TYPE_OBUS_BRICK          = 18 #< OBUS BRICK type
-        TARGET_TYPE_SBE                 = 19 #< SBE type
-        TARGET_TYPE_PPE                 = 20 #< PPE type
-        TARGET_TYPE_PERV                = 21 #< Pervasive type
-        TARGET_TYPE_PEC                 = 22 #< PEC type
-        TARGET_TYPE_PHB                 = 23 #< PHB type
-        TARGET_TYPE_MC                  = 24 #< MC type
-        TARGET_TYPE_OMI                 = 25 #< OMI type
-        TARGET_TYPE_OMIC                = 26 #< OMIC type
-        TARGET_TYPE_MCC                 = 27 #< MCC type
-        TARGET_TYPE_OCMB_CHIP           = 28 #< OCMB type
-        TARGET_TYPE_MEM_PORT            = 29 #< MEM_PORT type
-        TARGET_TYPE_NMMU                = 30 #< NEST MMU type
-        TARGET_TYPE_RESERVED            = 31 #< Reserved for Cronus (Z)
-        TARGET_TYPE_PAU                 = 32 #< PAU type
-        TARGET_TYPE_IOHS                = 33 #< IOHS type
-        TARGET_TYPE_FC                  = 34 #< Fused Core type
-        TARGET_TYPE_PMIC                = 35 #< PMIC type
-        TARGET_TYPE_PAUC                = 36 #< PAUC type
-        TARGET_TYPE_GENERICI2CRESPONDER = 37 #< GENERICI2CRESPONDER type
-        TARGET_TYPE_IOLINK              = 38 #< IOLINK type
-        TARGET_TYPE_MDS_CTLR            = 39 #< MDS Media Controller type
-        TARGET_TYPE_COMPUTE_CHIP        = 40 #< Compute chip type
-        TARGET_TYPE_HUB_CHIP            = 41 #< Hub chip type
-        TARGET_TYPE_TBUSC               = 42 #< TBUS chiplet type
-        TARGET_TYPE_TBUSL               = 43 #< TBUS link type
-        TARGET_TYPE_L3CACHE             = 44 #< L3CACHE type
-        TARGET_TYPE_INT                 = 45 #< INT type
-        TARGET_TYPE_NX                  = 46 #< NX type
-        TARGET_TYPE_PAX                 = 47 #< PAX type
-        TARGET_TYPE_PAXO                = 48 #< PAXO type
-        TARGET_TYPE_SMPLINK             = 59 #< SMPLINK type
-        TARGET_TYPE_PEC6P               = 50 #< PEC6P type
-        TARGET_TYPE_PEC2P               = 51 #< PEC2P type
-        TARGET_TYPE_PHB248X             = 52 #< PHB248X type
-        TARGET_TYPE_PHB16X              = 53 #< PHB16X type
-        TARGET_TYPE_POWER_IC            = 54 #< POWER_IC type
-        TARGET_TYPE_TEMP_SENSOR         = 55 #< TEMP_SENSOR type
-        TARGET_TYPE_MULTICAST           = 63 #< MULTICAST type
+        LOG_TARGET_TYPE_SYSTEM              =  0 #< System type
+        LOG_TARGET_TYPE_DIMM                =  1 #< DIMM type
+        LOG_TARGET_TYPE_PROC_CHIP           =  2 #< Processor type
+        LOG_TARGET_TYPE_MEMBUF_CHIP         =  3#< Membuf type
+        LOG_TARGET_TYPE_EX                  =  4 #< EX - 2x Core, L2, L3 - can be deconfigured
+        LOG_TARGET_TYPE_MBA                 =  5 #< MBA type
+        LOG_TARGET_TYPE_MCS                 =  6 #< MCS type
+        LOG_TARGET_TYPE_XBUS                =  7 #< XBUS type
+        LOG_TARGET_TYPE_ABUS                =  8 #< ABUS type
+        LOG_TARGET_TYPE_L4                  =  9 #< L4 type
+        LOG_TARGET_TYPE_CORE                = 10 #< Core
+        LOG_TARGET_TYPE_EQ                  = 11 #< EQ - 4x core, 2x L2, 2x L3 - can be deconfigured
+        LOG_TARGET_TYPE_MCA                 = 12 #< MCA type
+        LOG_TARGET_TYPE_MCBIST              = 13 #< MCBIST type
+        LOG_TARGET_TYPE_MI                  = 14 #< MI Memory Interface (Cumulus)
+        LOG_TARGET_TYPE_CAPP                = 15 #< CAPP target
+        LOG_TARGET_TYPE_DMI                 = 16 #< DMI type
+        LOG_TARGET_TYPE_OBUS                = 17 #< OBUS type
+        LOG_TARGET_TYPE_OBUS_BRICK          = 18 #< OBUS BRICK type
+        LOG_TARGET_TYPE_SBE                 = 19 #< SBE type
+        LOG_TARGET_TYPE_PPE                 = 20 #< PPE type
+        LOG_TARGET_TYPE_PERV                = 21 #< Pervasive type
+        LOG_TARGET_TYPE_PEC                 = 22 #< PEC type
+        LOG_TARGET_TYPE_PHB                 = 23 #< PHB type
+        LOG_TARGET_TYPE_MC                  = 24 #< MC type
+        LOG_TARGET_TYPE_OMI                 = 25 #< OMI type
+        LOG_TARGET_TYPE_OMIC                = 26 #< OMIC type
+        LOG_TARGET_TYPE_MCC                 = 27 #< MCC type
+        LOG_TARGET_TYPE_OCMB_CHIP           = 28 #< OCMB type
+        LOG_TARGET_TYPE_MEM_PORT            = 29 #< MEM_PORT type
+        LOG_TARGET_TYPE_NMMU                = 30 #< NEST MMU type
+        LOG_TARGET_TYPE_RESERVED            = 31 #< Reserved for Cronus (Z)
+        LOG_TARGET_TYPE_PAU                 = 32 #< PAU type
+        LOG_TARGET_TYPE_IOHS                = 33 #< IOHS type
+        LOG_TARGET_TYPE_FC                  = 34 #< Fused Core type
+        LOG_TARGET_TYPE_PMIC                = 35 #< PMIC type
+        LOG_TARGET_TYPE_PAUC                = 36 #< PAUC type
+        LOG_TARGET_TYPE_GENERICI2CRESPONDER = 37 #< GENERICI2CRESPONDER type
+        LOG_TARGET_TYPE_IOLINK              = 38 #< IOLINK type
+        LOG_TARGET_TYPE_MDS_CTLR            = 39 #< MDS Media Controller type
+        LOG_TARGET_TYPE_COMPUTE_CHIP        = 40 #< Compute chip type
+        LOG_TARGET_TYPE_HUB_CHIP            = 41 #< Hub chip type
+        LOG_TARGET_TYPE_TBUSC               = 42 #< TBUS chiplet type
+        LOG_TARGET_TYPE_TBUSL               = 43 #< TBUS link type
+        LOG_TARGET_TYPE_L3CACHE             = 44 #< L3CACHE type
+        LOG_TARGET_TYPE_INT                 = 45 #< INT type
+        LOG_TARGET_TYPE_NX                  = 46 #< NX type
+        LOG_TARGET_TYPE_PAX                 = 47 #< PAX type
+        LOG_TARGET_TYPE_PAXO                = 48 #< PAXO type
+        LOG_TARGET_TYPE_SMPLINK             = 59 #< SMPLINK type
+        LOG_TARGET_TYPE_PEC6P               = 50 #< PEC6P type
+        LOG_TARGET_TYPE_PEC2P               = 51 #< PEC2P type
+        LOG_TARGET_TYPE_PHB248X             = 52 #< PHB248X type
+        LOG_TARGET_TYPE_PHB16X              = 53 #< PHB16X type
+        LOG_TARGET_TYPE_POWER_IC            = 54 #< POWER_IC type
+        LOG_TARGET_TYPE_TEMP_SENSOR         = 55 #< TEMP_SENSOR type
+        LOG_TARGET_TYPE_MULTICAST           = 63 #< MULTICAST type
 
     class ChipType(Enum):
         CHIP_TYPE_ANY        = 0
@@ -210,12 +211,12 @@ class AttributeUpdateFileGenerator(AttributeFileGenerator):
     class which encapsulate all functions for generating an attribute override
     file, from a dict. Example of dict is
         {
-            Target(TARGET_TYPE_SYSTEM, 0):
+            Target(LOG_TARGET_TYPE_SYSTEM, 0):
                 [
                     AttributeOverride(AttributeInfo(ATTR_IS_SIMULATION, [], 1), 5),
                     AttributeOverride(AttributeInfo(ATTR_HOTPLUG, [], 1), 2)
                 ],
-            Target(TARGET_TYPE_OCMB, 0):
+            Target(LOG_TARGET_TYPE_OCMB, 0):
                 [
                     AttributeOverride(AttributeInfo(ATTR_ENABLE_LBIST, [], 1), 1),
                     AttributeOverride(AttributeInfo(ATTR_BUS_POS, [], 1), 5)
@@ -289,12 +290,12 @@ class AttributeListFileGenerator(AttributeFileGenerator):
     class which encapsulate all functions for generating an attribute list
     file, from a dict. Example of dict is
         {
-            Target(TARGET_TYPE_SYSTEM, 0):
+            Target(LOG_TARGET_TYPE_SYSTEM, 0):
                 [
                     AttributeInfo(ATTR_IS_SIMULATION, [], 0),
                     AttributeInfo(ATTR_HOTPLUG, [], 0)
                 ],
-            Target(TARGET_TYPE_OCMB, 0):
+            Target(LOG_TARGET_TYPE_OCMB, 0):
                 [
                     AttributeInfo(ATTR_ENABLE_LBIST, [], 0),
                     AttributeInfo(ATTR_BUS_POS, [], 0)
@@ -313,7 +314,7 @@ class AttributeFileParser(AttributeFile):
     def __init__(self, i_attr_file, i_attr_db)->None:
         self.iv_attr_file = i_attr_file
         self.iv_offset = 0
-        self.iv_attr_db = attr_db
+        self.iv_attr_db = i_attr_db
         self.iv_AttrId_NameMap = {}
         dbfile = pickle.loads(self.utilOpen(self.iv_attr_db))
         for attr in dbfile.field_list:
@@ -331,7 +332,7 @@ class AttributeFileParser(AttributeFile):
 
     def _getAttrId(self):
         return int.from_bytes(self.iv_attr_file[self.iv_offset:self.iv_offset+4],
-                "big", signed="False")&0x0FFFFFFF
+                "big", signed=False)&0xFFFFFFFF
 
     def readHeader(self):
         offset = self.iv_offset
@@ -347,16 +348,18 @@ class AttributeFileParser(AttributeFile):
             {}\n Got - {}".format(self.iv_file_type,
             Fapi2.FileType(self.iv_attr_file[3])))
         number_target_sections = int.from_bytes(self.iv_attr_file[4:8],
-                                                "big",signed="False")
+                                                "big",signed=False)
         self.iv_offset += 8
         return number_target_sections
 
     def readTarget(self)-> 'list[int, Fapi2.Target]':
         offset = self.iv_offset
-        fapi_target_type = Fapi2.TargetType(self.iv_attr_file[offset]).name
-        inst_num = self.iv_attr_file[offset+1]
+        fapi_target_type = Fapi2.TargetType(int.from_bytes(
+            self.iv_attr_file[offset:offset+1], "big", signed=False)).name
+        inst_num = int.from_bytes(self.iv_attr_file[offset+1:offset+2],
+                                "big", signed=False)
         num_attribute_rows = int.from_bytes(self.iv_attr_file[offset+2:offset+4],
-                                            "big", signed="False")
+                                            "big", signed=False)
         self.iv_offset+=8
         target = AttributeFile.Target(fapi_target_type, inst_num)
         return num_attribute_rows, target
@@ -367,7 +370,7 @@ class AttributeFileParser(AttributeFile):
         for i in range(num_target_sections):
             num_attribute_rows, target = self.readTarget()
             response[target] = list()
-            for j in range(num_attribute_rows):
+            for k in range(num_attribute_rows):
                 response[target].append(self.readAttribute())
         return response
 
@@ -388,7 +391,7 @@ class AttributeUpdateRespFileParser(AttributeFileParser):
 
     def _getAttrRc(self):
         return int.from_bytes(self.iv_attr_file[self.iv_offset+4:self.iv_offset+8],
-                "big", signed="False")
+                "big", signed=False)
 
     def readAttribute(self):
         status = self._getStatus()
@@ -411,11 +414,11 @@ class AttributeUpdateRespFileParser(AttributeFileParser):
 class AttributeListRespFileParser(AttributeFileParser):
     def __init__(self, i_attr_file, i_attr_db) -> None:
         super().__init__(i_attr_file, i_attr_db)
-        self.iv_file_type = Fapi2.FileType.DUMP
+        self.iv_file_type = Fapi2.FileType.LIST
 
     def _getSize(self):
         return int.from_bytes(self.iv_attr_file[self.iv_offset+4:self.iv_offset+6],
-                "big", signed="False")
+                "big", signed=False)
 
     def _getIndex(self):
         return list(self.iv_attr_file[self.iv_offset+6:self.iv_offset+9])
