@@ -24,23 +24,17 @@
 /* IBM_PROLOG_END_TAG                                                     */
 ///------------------------------------------------------------------------------
 /// @file ody_omi_hss_dccal_start.C
-/// @brief Odyssey DCCAL start HWP
+/// @brief Starts DC cal
 ///
-/// *HWP HW Maintainer : Chris Steffen (cwsteffen@us.ibm.com)
+/// *HWP HW Maintainer : Josh Chica <josh.chica@ibm.com>
 /// *HWP FW Maintainer :
-/// *HWP Consumed by: HB, Cronus, SBE
+/// *HWP Consumed by: SBE
 ///------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-// Includes
-//------------------------------------------------------------------------------
-#include <ody_scom_omi.H>
 #include <ody_omi_hss_dccal_start.H>
 #include <ody_io_ppe_common.H>
+#include <ody_scom_omi_ioo.H>
 
-//------------------------------------------------------------------------------
-// Function definitions
-//------------------------------------------------------------------------------
 SCOMT_OMI_USE_OMI0_RX_GRP0_CTL_REGS_MODE15_PG
 SCOMT_OMI_USE_OMI0_RX_GRP0_CTL_REGS_MODE16_PG
 SCOMT_OMI_USE_OMI0_RX_GRP0_CTL_REGS_MODE17_PG
@@ -53,7 +47,7 @@ SCOMT_OMI_USE_OMI0_RX_GRP0_CTL_REGS_MODE8_PG
 
 fapi2::ReturnCode ody_omi_sim_fast_mode(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
 {
-    FAPI_DBG("Start");
+    FAPI_DBG("Starting ody_omi_hss_dccal_start");
     using namespace scomt::omi;
 
     OMI0_RX_GRP0_CTL_REGS_MODE15_PG_t l_rx_ctl_mode15_pg;
@@ -129,48 +123,52 @@ fapi2::ReturnCode ody_omi_sim_fast_mode(const fapi2::Target<fapi2::TARGET_TYPE_O
     }
 
 fapi_try_exit:
-    FAPI_DBG("End");
+    FAPI_DBG("End ody_omi_hss_dccal_start");
     return fapi2::current_err;
 }
 
+///
+/// @brief Setup PHY PPE registers and start reg init, dccal, lane power-up and fifo init
+///
+/// @param[in] i_target Chip target to start
+///
+/// @return fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode ody_omi_hss_dccal_start(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
 {
-    FAPI_DBG("Start");
-
+    FAPI_DBG("Starting ody_omi_hss_dccal_start");
     fapi2::buffer<uint64_t> l_data = 0;
     const fapi2::Target<fapi2::TARGET_TYPE_SYSTEM> l_sys;
     uint8_t l_sim = 0;
 
-    io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(scomt::omi::PHY_PPE_WRAP0_ARB_CSAR,
-            scomt::omi::PHY_PPE_WRAP0_ARB_CSDR,
-            scomt::omi::PHY_PPE_WRAP0_XIXCR);
+    io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(PHY_PPE_WRAP0_ARB_CSAR,
+            PHY_PPE_WRAP0_ARB_CSDR,
+            PHY_PPE_WRAP0_XIXCR);
 
     ody_io::io_ppe_common<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_common(&l_ppe_regs);
 
-    const fapi2::buffer<uint64_t> l_rx_lanes = 0xF0000000; // 4 lanes
-    const fapi2::buffer<uint64_t> l_tx_lanes = 0xFF000000; // 8 lanes
+    const uint32_t l_rx_lanes = 0xFF000000;
+    const uint32_t l_tx_lanes = 0xFF000000;
     const fapi2::buffer<uint64_t> l_num_threads = 1;
+
+    //static fapi2::buffer<uint32_t> EXT_CMD = 0x9D80;
+    static fapi2::buffer<uint64_t> l_cmd = ody_io::HW_REG_INIT_PG | ody_io::DCCAL_PL |
+                                           ody_io::TX_ZCAL_PL | ody_io::TX_FFE_PL |
+                                           ody_io::POWER_ON_PL | ody_io::TX_FIFO_INIT_PL;
 
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_IS_SIMULATION, l_sys, l_sim));
 
     if (l_sim)
     {
+        FAPI_DBG("ody_omi_hss_dccal_start calling ody_omi_sim_fast_mode");
         FAPI_TRY(ody_omi_sim_fast_mode(i_target));
         FAPI_TRY(l_ppe_common.fast_mode(i_target, l_num_threads));
     }
 
-    FAPI_TRY(l_ppe_common.dccal_start(i_target, l_num_threads, l_rx_lanes, l_tx_lanes, 1));
-    FAPI_TRY(l_ppe_regs.flushCache(i_target));
-
-    // Run zcal
-    FAPI_TRY(l_ppe_common.issue_ext_cmd_req(i_target,
-                                            l_num_threads,
-                                            l_rx_lanes,
-                                            l_tx_lanes,
-                                            ody_io::TX_ZCAL_PL | ody_io::TX_FFE_PL));
+    FAPI_DBG("ody_omi_hss_dccal_start calling l_ppe.ext_cmd_start");
+    FAPI_TRY(l_ppe_common.ext_cmd_start(i_target, l_num_threads, l_rx_lanes, l_tx_lanes, l_cmd));
     FAPI_TRY(l_ppe_regs.flushCache(i_target));
 
 fapi_try_exit:
-    FAPI_DBG("End");
+    FAPI_DBG("End ody_omi_hss_dccal_start");
     return fapi2::current_err;
 }

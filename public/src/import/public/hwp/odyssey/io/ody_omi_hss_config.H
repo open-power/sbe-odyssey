@@ -24,7 +24,7 @@
 /* IBM_PROLOG_END_TAG                                                     */
 ///
 /// @file ody_omi_hss_config.H
-/// @brief Configures the OMI SerDes Microcontroller function prior to starting execution.
+/// @brief Sets up the threads for the IO PPE
 ///
 /// *HWP HW Maintainer: Josh Chica <josh.chica@ibm.com>
 /// *HWP FW Maintainer:

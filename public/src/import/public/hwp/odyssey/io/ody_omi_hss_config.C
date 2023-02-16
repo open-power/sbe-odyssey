@@ -23,8 +23,8 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 ///
-/// @file ody_omi_hss_config.H
-/// @brief Configures the OMI SerDes Microcontroller function prior to starting execution.
+/// @file ody_omi_hss_config.C
+/// @brief Sets up the threads for the IO PPE
 ///
 /// *HWP HW Maintainer: Josh Chica <josh.chica@ibm.com>
 /// *HWP FW Maintainer:
@@ -37,9 +37,6 @@
 #include <ody_omi_hss_config.H>
 #include <ody_io_ppe_common.H>
 #include <ody_scom_omi.H>
-// #include <ody_io_ppe_regs.H>
-
-using namespace ody_io;
 
 //------------------------------------------------------------------------------
 // Function definitions
@@ -52,10 +49,10 @@ fapi2::ReturnCode ody_omi_hss_config(const fapi2::Target<fapi2::TARGET_TYPE_OCMB
             scomt::omi::PHY_PPE_WRAP0_ARB_CSDR,
             scomt::omi::PHY_PPE_WRAP0_XIXCR);
 
-    io_ppe_common<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_common(&l_ppe_regs);
+    ody_io::io_ppe_common<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_common(&l_ppe_regs);
 
     const fapi2::buffer<uint64_t> l_gcr_ids[] = { 0 };
-    const fapi2::buffer<uint64_t> l_rx_lanes[] = { 4 };
+    const fapi2::buffer<uint64_t> l_rx_lanes[] = { 8 };
     const fapi2::buffer<uint64_t> l_tx_lanes[] = { 8 };
     FAPI_TRY(l_ppe_common.config(i_target,
                                  1, //num_threads

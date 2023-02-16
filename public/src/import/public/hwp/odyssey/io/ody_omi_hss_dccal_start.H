@@ -24,23 +24,35 @@
 /* IBM_PROLOG_END_TAG                                                     */
 ///------------------------------------------------------------------------------
 /// @file ody_omi_hss_dccal_start.H
-/// @brief Header file for Odyssey DCCAL start HWP
+/// @brief Starts DC cal
 ///
-/// *HWP HW Maintainer : Chris Steffen (cwsteffen@us.ibm.com)
+/// *HWP HW Maintainer : Josh Chica <josh.chica@ibm.com>
 /// *HWP FW Maintainer :
-/// *HWP Consumed by: HB, Cronus, SBE
+/// *HWP Consumed by: SBE
 ///------------------------------------------------------------------------------
 
-#pragma once
 #include <fapi2.H>
 
-// Function pointer typedef definition for HWP call support
-typedef fapi2::ReturnCode (*ody_omi_hss_dccal_start_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
+//------------------------------------------------------------------------------
+// Structure definitions
+//------------------------------------------------------------------------------
+typedef fapi2::ReturnCode (*ody_omi_hss_dccal_start_FP_t)(
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
+
+//------------------------------------------------------------------------------
+// Function prototypes
+//------------------------------------------------------------------------------
 
 extern "C"
 {
-    /// @brief Starts DCCAL for Odyssey PHY
-    /// @param[in]  i_target  Reference to TARGET_TYPE_OCMB_CHIP target
-    /// @return  FAPI2_RC_SUCCESS if success, else error code.
-    fapi2::ReturnCode ody_omi_hss_dccal_start(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
-}
+
+///
+/// @brief Starts DC cal
+///
+/// @param[in] i_target Chip target to start
+///
+/// @return fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
+    fapi2::ReturnCode ody_omi_hss_dccal_start(
+        const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
+
+} // extern "C"

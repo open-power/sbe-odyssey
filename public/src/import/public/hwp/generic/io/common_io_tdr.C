@@ -95,10 +95,12 @@ fapi2::ReturnCode common_io_tdr_find_limit(const GENERIC_FAPI_IO_TARGET& i_targe
         int32_t& o_limit);
 
 /// @brief Use TDR to check for net opens and shorts
-/// @param[in] i_target      IOLINK target to get thread id for
-/// @param[in] i_lane              Lanes to run TDR on
-/// @param[out] o_status            Status of the net (Open, Short, Good)
-/// @param[out] o_length_ps         Length from TX to open (in ps)
+/// @param[in] i_target         Target to get thread id for
+/// @param[in] i_group          Group to run TDR on
+/// @param[in] i_lane           Lanes to run TDR on
+/// @param[in] i_freq           Frequency TDR runs at
+/// @param[out] o_status        Status of the net (Open, Short, Good)
+/// @param[out] o_length_ps     Length from TX to open (in ps)
 /// @return FAPI_RC_SUCCESS if arguments are valid
 fapi2::ReturnCode common_io_tdr(
     const GENERIC_FAPI_IO_TARGET& i_target,
@@ -448,7 +450,8 @@ fapi_try_exit:
 }
 
 /// @brief Initialize the phy for TDR
-/// @param[in] i_target             IOHS target to get thread id for
+/// @param[in] i_target             Target to get thread id for
+/// @param[in] i_group              Group to run TDR on
 /// @param[in] i_lane               Lanes to run TDR on
 /// @param[in] i_pw                 TDR pulse width
 /// @param[in] i_phase              phase to select, either N or P
@@ -461,7 +464,6 @@ fapi2::ReturnCode common_io_tdr_initialize(const GENERIC_FAPI_IO_TARGET& i_targe
         const uint32_t i_pw,
         uint32_t i_phase)
 {
-
     const uint8_t c_tdrEnBit = 48;
     const uint8_t c_phaseSelBit = 57;
     const uint8_t c_hsBistEnBit = 56;
@@ -490,13 +492,14 @@ fapi2::ReturnCode common_io_tdr_initialize(const GENERIC_FAPI_IO_TARGET& i_targe
     l_addr = buildAddr(i_baseAddr, i_group, i_lane, TdrRegisters::cntl3);
     FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, l_tdr_enable, c_tdrEnBit, 1),
              "Error on RMW to set TDR Enable to %d at address %d", l_tdr_enable, l_addr);
+
 fapi_try_exit:
     FAPI_DBG("End TDR Initialization");
     return fapi2::current_err;
 }
 
 /// @brief Calculates the total TDR offsets
-/// @param[in] i_target             IOHS target
+/// @param[in] i_target             Target
 /// @param[in] i_pw                 TDR pulse width
 /// @param[out] o_tdr_width         TDR offset width
 /// @return FAPI_RC_SUCCESS if arguments are valid
@@ -514,7 +517,9 @@ fapi2::ReturnCode common_io_tdr_get_tdr_offsets(const GENERIC_FAPI_IO_TARGET& i_
 }
 
 /// @brief Calculates the TDR sample points
-/// @param[in] i_target             IOHS target
+/// @param[in] i_target             Target
+/// @param[in] i_group              Group to run TDR on
+/// @param[in] i_lane               Lanes to run TDR on
 /// @param[in] i_offset             TDR offset to take the measurement
 /// @param[out] o_dac               TDR DAC value at desired offset
 /// @return FAPI_RC_SUCCESS if arguments are valid
@@ -541,6 +546,7 @@ fapi2::ReturnCode common_io_tdr_sample_point(const GENERIC_FAPI_IO_TARGET& i_tar
     int32_t step = 1;
     int32_t prev_dac = 0;
 
+    // set TDR pulse offset
     FAPI_DBG("Start TDR Sample Point");
     FAPI_DBG("setting pulse offset: %d", i_offset);
     FAPI_TRY(common_io_tdr_set_pulse_offset(i_target, i_baseAddr, i_group, i_lane, i_offset));
@@ -621,12 +627,17 @@ fapi_try_exit:
 }
 
 /// @brief Calculates max
-/// @param[in] i_target             IOHS target
-/// @param[in] i_offset             TDR offset to take the measurement
+/// @param[in] i_target             Target
+/// @param[in] i_baseAddr           Base address for register writes/reads
+/// @param[in] i_group              Groups to run TDR on
+/// @param[in] i_lane               Lanes to run TDR on
+/// @param[in] i_offset_start       TDR offset to start taking the measurement
+/// @param[in] i_offset_end         TDR offset to finish taking the measurement
+/// @param[in] i_max_not_min        Check if looking for max or min value
 /// @param[out] o_dac               TDR DAC value at desired offset
 /// @return FAPI_RC_SUCCESS if arguments are valid
-fapi2::ReturnCode common_io_tdr_find_limit(const fapi2::Target < fapi2::TARGET_TYPE_OCMB_CHIP | fapi2::TARGET_TYPE_OMI >
-        &i_target,
+fapi2::ReturnCode common_io_tdr_find_limit(const fapi2::Target < fapi2::TARGET_TYPE_OCMB_CHIP |
+        fapi2::TARGET_TYPE_OMI > &i_target,
         const uint64_t i_baseAddr,
         const uint32_t i_group,
         const uint32_t i_offset_start,
@@ -635,7 +646,6 @@ fapi2::ReturnCode common_io_tdr_find_limit(const fapi2::Target < fapi2::TARGET_T
         bool i_max_not_min,
         int32_t& o_limit)
 {
-
     fapi2::buffer<uint64_t> l_data = 0;
     const int32_t LOOP_MAX = 255; // Loop Max
     const int32_t DAC_MAX = 255;  // The upper limit of the dac
@@ -732,7 +742,7 @@ fapi_try_exit:
 /// @param[in] i_bp2            base point 2
 /// @param[out] o_result        status of the net (OPEN, SHORT, GOOD)
 /// @return FAPI_RC_SUCCESS if arguments are valid
-fapi2::ReturnCode common_io_tdr_diagnose(const uint32_t& i_bp1,
+fapi2::ReturnCode common_io_tdr_diagnose(const uint32_t i_bp1,
         const uint32_t i_bp2,
         uint32_t& o_result)
 {
@@ -775,7 +785,7 @@ fapi2::ReturnCode common_io_tdr_diagnose(const uint32_t& i_bp1,
 }
 
 /// @brief Find where the TDR pulse crosses the specified Dac value
-/// @param[in] i_target             IOHS Target
+/// @param[in] i_target             Target
 /// @param[in] i_phase              TDR phase (N:0, P:1)
 /// @param[in] i_dac                check for crossing at this Dac value
 /// @param[in] i_lane               lane to check
@@ -793,7 +803,6 @@ fapi2::ReturnCode common_io_tdr_find_horizontal_crossing(const GENERIC_FAPI_IO_T
         const uint32_t i_x_max,
         uint32_t& o_offset)
 {
-
     const uint8_t c_phaseSelBit = 57;
     const uint8_t c_dacBit = 48;
     const uint8_t c_dacLen = 8;
@@ -871,7 +880,7 @@ fapi_try_exit:
 }
 
 /// @brief Find where the TDR pulse crosses the specified Dac value
-/// @param[in] i_target             IOHS Target
+/// @param[in] i_target             Target
 /// @param[in] i_phase              TDR phase (N:0, P:1)
 /// @param[in] i_dac                check for crossing at this Dac value
 /// @param[in] i_lane               lane to check
@@ -889,7 +898,6 @@ fapi2::ReturnCode common_io_tdr_find_short_crossing(const GENERIC_FAPI_IO_TARGET
         bool i_direction,
         int32_t& o_offset)
 {
-
     const uint8_t c_phaseSelBit = 57;
     const uint8_t c_dacBit = 48;
     const uint8_t c_dacLen = 8;
@@ -941,7 +949,7 @@ fapi_try_exit:
 }
 
 /// @brief Return the TDR capture value
-/// @param[in] i_target             IOHS Target
+/// @param[in] i_target             Target
 /// @param[in] i_lane               lane to check
 /// @param[out] o_tdr_val           offset where TDR crosses the selected Dac
 /// @return FAPI_RC_SUCCESS if arguments are valid
@@ -951,7 +959,6 @@ fapi2::ReturnCode common_io_tdr_get_capt_val(const GENERIC_FAPI_IO_TARGET& i_tar
         const uint32_t i_lane,
         uint32_t& o_tdr_val)
 {
-
     const uint64_t SCOM_LANE_SHIFT = 32;
     const uint64_t SCOM_LANE_MASK = 0x0000001F00000000;
     const uint32_t TDR_NS_DELAY = 100000; // 100us
@@ -976,7 +983,7 @@ fapi_try_exit:
 }
 
 /// @brief Set the TDR pulse offset value
-/// @param[in] i_target             IOHS Target
+/// @param[in] i_target             Target
 /// @param[in] i_pulse_offset       TDR pulse offset
 /// @return FAPI_RC_SUCCESS if arguments are valid
 fapi2::ReturnCode common_io_tdr_set_pulse_offset(const GENERIC_FAPI_IO_TARGET& i_target,
@@ -985,7 +992,6 @@ fapi2::ReturnCode common_io_tdr_set_pulse_offset(const GENERIC_FAPI_IO_TARGET& i
         const uint32_t i_lane,
         const uint32_t i_pulse_offset)
 {
-
     const uint8_t c_pulseOffsetBit = 48;
     const uint8_t c_pulseOffsetLen = 15;
     fapi2::buffer<uint64_t> l_cntl5_data = 0;

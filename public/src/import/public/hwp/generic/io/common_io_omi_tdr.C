@@ -22,7 +22,6 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-//------------------------------------------------------------------------------
 ///
 /// @file common_io_omi_tdr.C
 /// @brief OMI TDR procedure
@@ -40,7 +39,7 @@
 //------------------------------------------------------------------------------
 
 fapi2::ReturnCode common_io_omi_tdr(
-    const fapi2::Target < fapi2::TARGET_TYPE_OCMB_CHIP | fapi2::TARGET_TYPE_OMI > & i_target,
+    const fapi2::Target < fapi2::TARGET_TYPE_OCMB_CHIP | fapi2::TARGET_TYPE_OMI > &i_target,
     const uint64_t& i_base_addr)
 {
 
