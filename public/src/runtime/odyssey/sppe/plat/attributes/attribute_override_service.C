@@ -22,7 +22,7 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#include <attribute_override.H>
+#include <attribute_table.H>
 #include <sbetrace.H>
 #include "ppe42_string.h"
 

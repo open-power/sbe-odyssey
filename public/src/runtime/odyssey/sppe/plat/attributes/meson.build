@@ -25,6 +25,7 @@
 
 odyssey_abs_attr_c_file_paths = files(
                                 ['attribute_override_service.C',
+                                'attribute_list_service.C'
            ])
 
 if platform == 'odysseylab'
