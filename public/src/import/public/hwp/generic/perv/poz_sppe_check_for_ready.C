@@ -42,11 +42,21 @@ ReturnCode poz_sppe_check_for_ready(
     FAPI_DBG("Entering ...");
 
     SB_MSG_t SB_MSG;
+    CBS_CS_t CBS_CS;
     uint32_t l_poll = 1;
 
     // calculate expected state based on input flag
     // attribute value
     const bool l_check_for_runtime = !(i_boot_parms.boot_flags & 0xC0000000);
+
+    // exit early if SPPE was not started
+    FAPI_TRY(CBS_CS.getCfam(i_target));
+
+    if (CBS_CS.get_OPTION_PREVENT_SBE_START())
+    {
+        FAPI_DBG("Skipping ready check, SBE was not started");
+        goto fapi_try_exit;
+    }
 
     // loop until expected state is reached or we've
     // waited for the prescribed timeout
