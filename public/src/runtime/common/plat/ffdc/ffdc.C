@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,7 +39,7 @@ namespace fapi2
 
 #ifdef MINIMUM_FFDC
     // buffer used to hold ffdc data
-    SbeFfdcData_t g_FfdcData;
+    pozFfdcData_t g_FfdcData;
 #endif
 
 };

@@ -48,7 +48,7 @@
 // ms so that FIFO can be ready.
 static const uint32_t FIFO_WAIT_SLEEP_TIME = 1;
 
-extern fapi2::SbeFfdcData_t g_FfdcData;
+extern fapi2::pozFfdcData_t g_FfdcData;
 
 // Contents of below array are indexed based on sbeFifoType
 const uint64_t g_Fifo_baseAddresses[] =
@@ -391,7 +391,7 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
 
             // Send HWP ffdc data
             rc = sbeDownFifoEnq_mult ( ffdcDataLenInWords,
-                                   ( uint32_t *) &fapi2::g_FfdcData.ffdcData, i_type);
+                                   ( uint32_t *) fapi2::g_FfdcData.ffdcDataPtr, i_type);
             if (rc)
             {
                 break;

@@ -31,7 +31,6 @@
 #include "sbeSpMsg.H"
 #include "target.H"
 #include "error_info_defs.H"
-extern fapi2::SbeFfdcData_t g_FfdcData;
 //TODO: P11SBE Porting
 #if 0
 #include "fapi2.H"

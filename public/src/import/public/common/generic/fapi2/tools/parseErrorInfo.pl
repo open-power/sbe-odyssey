@@ -312,8 +312,8 @@ sub addFfdcMethod
         {
             # need to use the objectNumber here so when we decode the info at the hwsv/hb side we have a reference,
             # they will be copied into/out of the sbe buffer in the correct order
-            $method_body .= "    {\n        fapi2::g_FfdcData.ffdcData[$objectNumber].data= convertType(i_value);\n";
-            $method_body .= "        fapi2::g_FfdcData.ffdcData[$objectNumber].size =";
+            $method_body .= "    {\n        fapi2::g_FfdcData.ffdcDataPtr[$objectNumber].data= convertType(i_value);\n";
+            $method_body .= "        fapi2::g_FfdcData.ffdcDataPtr[$objectNumber].size =";
             $method_body .= " fapi2::getErrorInfoFfdcSize(i_value);\n";
             $method_body .= "        return *this;\n    };\n\n";
 
@@ -403,8 +403,8 @@ sub addFfdcMethod
         {
             # need to use the objectNumber here so when we decode the info at the hwsv/hb side we have a point of
             # reference and they will be copied into/out of the sbe buffer in the correct order
-            $method_body .= "    {\n        fapi2::g_FfdcData.ffdcData[$objectNumber].data= convertType(i_value);\n";
-            $method_body .= "        fapi2::g_FfdcData.ffdcData[$objectNumber].size =";
+            $method_body .= "    {\n        fapi2::g_FfdcData.ffdcDataPtr[$objectNumber].data= convertType(i_value);\n";
+            $method_body .= "        fapi2::g_FfdcData.ffdcDataPtr[$objectNumber].size =";
             $method_body .= " fapi2::getErrorInfoFfdcSize(i_value);\n";
             $method_body .= "        return *this;\n    };\n\n";
 
@@ -465,6 +465,11 @@ print EIFILE "#include <target.H>\n";
 print EIFILE "#include <plat_trace.H>\n";
 print EIFILE "#include <hwp_return_codes.H>\n";
 print EIFILE "#include <ffdc_includes.H>\n";
+print EIFILE "#ifdef __PPE__\n";
+print EIFILE "#include <heap.H>\n";
+print EIFILE "#else\n";
+print EIFILE "#include <stdlib.h>\n";
+print EIFILE "#endif\n";
 print EIFILE "#include <hwp_executor.H>\n";
 print EIFILE "/**\n";
 print EIFILE " * \@brief Error Information macros and HwpFfdcId enumeration\n";
@@ -494,7 +499,7 @@ print ECFILE "namespace fapi2\n{\n";
 
 if ($arg_local_ffdc)
 {
-    print ECFILE "extern SbeFfdcData_t g_FfdcData; \n";
+    print ECFILE "extern pozFfdcData_t g_FfdcData; \n";
 }
 
 #------------------------------------------------------------------------------
@@ -1668,7 +1673,16 @@ foreach my $argnum ( 0 .. $#ARGV )
         }
         else
         {
-            $constructor .= "        fapi2::g_FfdcData.ffdcLength = $count * sizeof(sbeFfdc_t);\n    }\n\n";
+            $constructor .= "#ifdef __PPE__\n";
+            $constructor .= "        fapi2::g_FfdcData.ffdcLength = ( $count * sizeof(sbeFfdc_t));\n ";
+            $constructor .= "        fapi2::g_FfdcData.ffdcDataPtr = (sbeFfdc_t*) Heap::get_instance().\n";
+            $constructor .= "             scratch_alloc( $count * sizeof(sbeFfdc_t));\n";
+            $constructor .= "#else\n";
+            $constructor .= "        if(g_FfdcData.ffdcDataPtr) { free(g_FfdcData.ffdcDataPtr); } \n";
+            $constructor .= "        g_FfdcData.ffdcDataPtr = (sbeFfdc_t*) malloc ( $count * sizeof(sbeFfdc_t));\n ";
+            $constructor .= "#endif\n";
+            $constructor .= "        }\n";
+
             print ECFILE "    void execute()\n";
             print ECFILE "    {\n";
             print ECFILE "$executeStr\n";
@@ -1817,7 +1831,7 @@ print EIFILE "namespace fapi2\n";
 print EIFILE "{\n\n";
 if ($arg_local_ffdc)
 {
-    print EIFILE "  extern SbeFfdcData_t g_FfdcData;\n";
+    print EIFILE "  extern pozFfdcData_t g_FfdcData;\n";
 }
 print EIFILE "/**\n";
 print EIFILE " * \@brief Enumeration of FFDC identifiers\n";

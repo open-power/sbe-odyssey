@@ -35,7 +35,7 @@
 
 Heap& Heap::get_instance()
 {
-    static Heap iv_instance(
+    static Heap __attribute__ ((__aligned__(8)))  iv_instance(
                 reinterpret_cast<uint32_t>(&_heap_space_start_),
                 reinterpret_cast<uint32_t>(&_heap_space_end_) -
                     reinterpret_cast<uint32_t>(&_heap_space_start_));
