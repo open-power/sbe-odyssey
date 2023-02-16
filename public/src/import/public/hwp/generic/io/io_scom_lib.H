@@ -22,6 +22,17 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+
+///
+/// @file io_scom_lib.H
+///
+/// @brief SCOM function lib definition file for IO hwps
+///
+/// *HWP HW Maintainer: Josh Chica <Josh.Chica@ibm.com>
+/// *HWP FW Maintainer:
+/// *HWP Consumed by: SBE
+///
+
 #pragma once
 
 #include <fapi2.H>

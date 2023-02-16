@@ -31,7 +31,7 @@
         <description>
             Specifies the number of Rx lanes.
         </description>
-        <valueType>uint8</valueType>
+        <valueType>uint32</valueType>
         <enum>
             X8 = 0xFF,
             X4 = 0xA5,
@@ -47,7 +47,7 @@
         <description>
             Specifies the number of Tx lanes.
         </description>
-        <valueType>uint8</valueType>
+        <valueType>uint32</valueType>
         <enum>
             X8 = 0xFF,
             X4 = 0xA5,
@@ -99,4 +99,3 @@
     </attribute>
 <!-- ********************************************************************** -->
   </attributes>
-  

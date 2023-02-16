@@ -34,7 +34,7 @@
 
 #include <fapi2.H>
 
-#define GENERIC_FAPI_IO_TARGET fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP | fapi2::TARGET_TYPE_OMI>
+#define GENERIC_FAPI_IO_TARGET fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP|fapi2::TARGET_TYPE_OMI>
 
 //------------------------------------------------------------------------------
 // Structure definitions

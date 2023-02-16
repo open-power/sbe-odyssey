@@ -59,7 +59,8 @@ extern "C"
     /// @param[in] i_target       Reference to TARGET_TYPE_OCMB_CHIP target
     /// @return fapi::ReturnCode  FAPI2_RC_SUCCESS if success, else error code.
     ///
-    fapi2::ReturnCode common_io_omi_tdr(const fapi2::Target < fapi2::TARGET_TYPE_OCMB_CHIP | fapi2::TARGET_TYPE_OMI > &,
+    fapi2::ReturnCode common_io_omi_tdr(const fapi2::Target < fapi2::TARGET_TYPE_OCMB_CHIP | fapi2::TARGET_TYPE_OMI > &
+                                        i_target,
                                         const uint64_t& i_base_addr);
 
 } // extern "C"

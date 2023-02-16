@@ -49,7 +49,7 @@ enum ody_omi_tx_zcal
     ODY_OMI_TX_ZCAL_PRE2 = 1,
     ODY_OMI_TX_ZCAL_POST = 2,
     ODY_OMI_TX_ZCAL_MAIN = 3,
-    ODY_OMI_TX_ZCAL_ALL = 4,
+    ODY_OMI_TX_ZCAL_ALL  = 4,
 };
 
 constexpr uint64_t pSegRegisters[] =
@@ -75,6 +75,7 @@ constexpr uint8_t segLens[] =
     9,
     16
 };
+
 
 inline uint32_t decodeSegs(uint32_t i_segs)
 {
@@ -102,7 +103,7 @@ fapi2::ReturnCode forceZCalToDefault(const fapi2::Target<fapi2::TARGET_TYPE_OCMB
     constexpr uint32_t c_preVal = 0x00F;
     constexpr uint32_t c_postVal = 0x1FF;
     constexpr uint32_t c_mainVal = 0x1FF;
-    constexpr uint8_t c_startBit = 48;
+    constexpr uint32_t c_startBit = 48;
 
     fapi2::buffer<uint64_t> l_buffer;
 
@@ -261,20 +262,28 @@ fapi2::ReturnCode ody_omi_hss_tx_zcal(const fapi2::Target<fapi2::TARGET_TYPE_OCM
         ody_io::io_ppe_common<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_common(&l_ppe_regs);
 
         const fapi2::buffer<uint64_t> l_num_threads = 1;
-        const fapi2::buffer<uint64_t> l_rx_lanes = 0x00000000; // 0 lanes
-        const fapi2::buffer<uint64_t> l_tx_lanes = 0xFF000000; // 8 lanes
+        const uint32_t l_rx_lanes = 0x00000000; // 0 lanes
+        const uint32_t l_tx_lanes = 0xFF000000; // 8 lanes
 
-        fapi2::buffer<uint8_t> l_done = 0;
+        fapi2::buffer<uint64_t> l_done = 0;
+        fapi2::buffer<uint64_t> l_fail = 0;
+
+        // Run zcal
+        FAPI_TRY(l_ppe_common.ext_cmd_start(i_target,
+                                            l_num_threads,
+                                            l_rx_lanes,
+                                            l_tx_lanes,
+                                            ody_io::TX_ZCAL_PL | ody_io::TX_FFE_PL));
+        FAPI_TRY(l_ppe_regs.flushCache(i_target));
 
         // poll zcal ext cmd
         while (!l_done)
         {
-            FAPI_TRY(l_ppe_common.check_ext_cmd_req_done(i_target,
-                     l_num_threads,
-                     l_rx_lanes,
-                     l_tx_lanes,
-                     ody_io::TX_ZCAL_PL | ody_io::TX_FFE_PL,
-                     l_done));
+            FAPI_TRY(l_ppe_common.ext_cmd_poll(i_target,
+                                               l_num_threads,
+                                               ody_io::TX_ZCAL_PL | ody_io::TX_FFE_PL,
+                                               l_done,
+                                               l_fail));
             FAPI_TRY(l_ppe_regs.flushCache(i_target));
         }
 

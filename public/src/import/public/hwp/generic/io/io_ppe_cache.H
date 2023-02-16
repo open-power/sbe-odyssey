@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,6 +22,16 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+
+///
+/// @file io_ppe_cache.H
+/// @brief Cache utility class
+///
+/// *HWP HW Maintainer: Josh Chica <Josh.Chica@ibm.com>
+/// *HWP FW Maintainer:
+/// *HWP Consumed by: SBE
+///
+
 #pragma once
 
 #define IO_PPE_MAX_CACHE_SIZE 128

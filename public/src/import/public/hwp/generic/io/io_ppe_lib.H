@@ -22,6 +22,17 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+
+///
+/// @file io_ppe_lib.H
+///
+/// @brief Function lib definition file for IO hwps
+///
+/// *HWP HW Maintainer: Josh Chica <Josh.Chica@ibm.com>
+/// *HWP FW Maintainer:
+/// *HWP Consumed by: SBE
+///
+
 #pragma once
 
 #include <fapi2.H>
@@ -306,9 +317,8 @@ uint64_t io_ppe_regs<K, M, V>::updateData(const uint64_t i_8b_data,
 
     uint64_t l_data = l_wrt_mask & i_8b_data;
     l_data |= l_update_8b;
-    FAPI_DBG("l_reg16: %llx l_update_8b: %llx l_wrt_mask: %llx i_8b_data: %llx", l_reg16,
-             l_update_8b, l_wrt_mask, i_8b_data);
-    FAPI_DBG("l_data: %llx i_mask: %x", l_data, i_mask);
+    FAPI_DBG("l_reg16: %llx l_update_8b: %llx l_wrt_mask: %llx i_8b_data: %llx l_data: %llx i_mask: %llx", l_reg16,
+             l_update_8b, l_wrt_mask, i_8b_data, l_data, i_mask);
 
     return l_data;
 }

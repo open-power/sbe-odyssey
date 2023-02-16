@@ -22,6 +22,17 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+
+///
+/// @file io_scom_lib.C
+///
+/// @brief SCOM function lib for IO hwps
+///
+/// *HWP HW Maintainer: Josh Chica <Josh.Chica@ibm.com>
+/// *HWP FW Maintainer:
+/// *HWP Consumed by: SBE
+///
+
 #include <fapi2.H>
 #include <io_scom_lib.H>
 
@@ -39,8 +50,6 @@ fapi2::ReturnCode rmwIoHardwareReg(const fapi2::Target < fapi2::TARGET_TYPE_OCMB
     FAPI_TRY(getScom(i_target, i_addr, l_buffer),
              "Error getscom to address 0x%08X.", i_addr);
     l_buffer.insertFromRight(i_data, i_dataBit, i_dataLen);
-    FAPI_TRY(putScom(i_target, i_addr, l_buffer),
-             "Error putscom to address 0x%08X.", i_addr);
     FAPI_TRY(putScom(i_target, i_addr, l_buffer),
              "Error putscom to address 0x%08X.", i_addr);
 

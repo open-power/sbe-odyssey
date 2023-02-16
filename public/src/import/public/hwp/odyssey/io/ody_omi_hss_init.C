@@ -33,7 +33,6 @@
 
 #include <ody_omi_hss_init.H>
 #include <ody_io_ppe_common.H>
-#include <ody_scom_omi.H>
 
 ///
 /// @brief Setup PHY PPE registers and start reg init, dccal, lane power-up and fifo init
@@ -46,9 +45,9 @@ fapi2::ReturnCode ody_omi_hss_init(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_C
     FAPI_DBG("Starting ody_omi_hss_init");
     fapi2::buffer<uint64_t> l_data = 0;
 
-    io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(scomt::omi::PHY_PPE_WRAP0_ARB_CSAR,
-            scomt::omi::PHY_PPE_WRAP0_ARB_CSDR,
-            scomt::omi::PHY_PPE_WRAP0_XIXCR);
+    io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(PHY_PPE_WRAP0_ARB_CSAR,
+            PHY_PPE_WRAP0_ARB_CSDR,
+            PHY_PPE_WRAP0_XIXCR);
 
     ody_io::io_ppe_common<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_common(&l_ppe_regs);
 
