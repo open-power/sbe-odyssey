@@ -28,3 +28,20 @@
 
 #include <attribute_properties.H>
 #include <attribute_macros.H>
+
+// Work around for EC attributes
+#ifdef ATTR_CHIP_EC_FEATURE_PERV_NET_REGION_3_NOT_4_GETMACRO
+    #undef ATTR_CHIP_EC_FEATURE_PERV_NET_REGION_3_NOT_4_GETMACRO
+    namespace fapi2
+    {
+        namespace ATTR
+        {
+            inline fapi2::ReturnCode get_ATTR_CHIP_EC_FEATURE_PERV_NET_REGION_3_NOT_4(ATTR_CHIP_EC_FEATURE_PERV_NET_REGION_3_NOT_4_Type& o_val)
+            {
+                o_val = 0;
+                return fapi2::FAPI2_RC_SUCCESS;
+            }
+        }
+    }
+    #define ATTR_CHIP_EC_FEATURE_PERV_NET_REGION_3_NOT_4_GETMACRO(ID, TARGET, VAL) ATTR::get_ATTR_CHIP_EC_FEATURE_PERV_NET_REGION_3_NOT_4(VAL)
+#endif
