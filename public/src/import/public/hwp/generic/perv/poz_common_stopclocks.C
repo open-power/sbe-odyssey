@@ -166,7 +166,11 @@ fapi2::ReturnCode poz_stopclocks_pre_check(
         stop_tp_clocks_possible = false;
     }
 
+#ifndef __PPE__
     FAPI_DBG("\n\t pcb_is_bypassed = %s \n\tpcb_clks_are_off = %s \t\n ", btos(pcb_is_bypassed), btos(pcb_clks_are_off));
+#else
+    FAPI_DBG("\n\t pcb_is_bypassed = %d \n\tpcb_clks_are_off = %d \t\n ", pcb_is_bypassed, pcb_clks_are_off);
+#endif
     stop_chiplet_clocks_possible =  !pcb_clks_are_off && !pcb_is_bypassed;
 
 fapi_try_exit:
