@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -29,6 +30,7 @@ namespace fapi2
 {
 {% for attr in attributes if attr.has_ec %}
 
+/*
 inline bool hasFeature(int2Type<{{attr.name}}>, fapi2::ATTR_NAME_Type i_name, fapi2::ATTR_EC_Type i_ec)
 {
    uint8_t hasFeature = false;
@@ -39,6 +41,7 @@ inline bool hasFeature(int2Type<{{attr.name}}>, fapi2::ATTR_NAME_Type i_name, fa
     }
     return hasFeature;
 };
+*/
 {% endfor %}
 
 } //fapi2
