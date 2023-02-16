@@ -379,8 +379,8 @@ static ReturnCode check_clock_status(
     }
 
     FAPI_DBG("CLOCK_STAT expect : 0x%08X%08X",
-             (clock_stat_expect >> 32) & 0xFFFFFFFF,
-             clock_stat_expect & 0xFFFFFFFF);
+             ((clock_stat_expect >> 32) & 0xFFFFFFFF),
+             (clock_stat_expect & 0xFFFFFFFF));
 
     FAPI_ASSERT(((clock_regions64 & clock_stat_getscom_value) == clock_stat_expect),
                 fapi2::POZ_THOLD_ERR()
@@ -546,7 +546,7 @@ ReturnCode mod_start_stop_clocks(
 
     if( !i_start_not_stop and i_manage_fences)
     {
-        FAPI_INF("Raise fences after clocks are stopped.")
+        FAPI_INF("Raise fences after clocks are stopped.");
         FAPI_TRY(CPLT_CTRL1.putScom_SET(i_target));
     }
 
