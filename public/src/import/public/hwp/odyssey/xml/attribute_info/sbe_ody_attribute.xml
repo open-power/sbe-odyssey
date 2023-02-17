@@ -693,7 +693,7 @@
     <value>0x0</value>
   </entry>
   <entry name="ATTR_DDR5_DRAM_WR_PREAMBLE">
-    <value>0x0</value>
+    <value>0x1</value>
   </entry>
   <entry name="ATTR_DDR5_DRAM_WR_VREFDQ">
     <value>0x0</value>
@@ -858,24 +858,24 @@
     <value>0x0</value>
   </entry>
   <entry name="ATTR_DRAM_PD_DRV_IMP">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
+    <value>34</value>
+    <value>34</value>
+    <value>34</value>
+    <value>34</value>
+    <value>34</value>
+    <value>34</value>
+    <value>34</value>
+    <value>34</value>
   </entry>
   <entry name="ATTR_DRAM_PU_DRV_IMP">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
+    <value>34</value>
+    <value>34</value>
+    <value>34</value>
+    <value>34</value>
+    <value>34</value>
+    <value>34</value>
+    <value>34</value>
+    <value>34</value>
   </entry>
   <entry name="ATTR_ENABLE_FIR_UNMASKING">
     <value>0x1</value>
@@ -1078,8 +1078,8 @@
     <value>0x0</value>
   </entry>
   <entry name="ATTR_MEM_EFF_DIMM_RANKS_CONFIGED">
-    <value>0x0</value>
-    <value>0x0</value>
+    <value>0x80</value>
+    <value>0x80</value>
   </entry>
   <entry name="ATTR_MEM_EFF_DIMM_SIZE">
     <value>0x0</value>
@@ -1108,7 +1108,7 @@
     <value>0x0</value>
   </entry>
   <entry name="ATTR_MEM_EFF_DRAM_CL">
-    <value>0x0</value>
+    <value>0x1a</value>
   </entry>
   <entry name="ATTR_MEM_EFF_DRAM_COLUMN_BITS">
     <value>0x0</value>
@@ -1145,7 +1145,7 @@
     <value>0x0</value>
   </entry>
   <entry name="ATTR_MEM_EFF_DRAM_TCCD_L">
-    <value>0x0</value>
+    <value>8</value>
   </entry>
   <entry name="ATTR_MEM_EFF_DRAM_TFAW">
     <value>0x0</value>
@@ -1184,10 +1184,10 @@
     <value>0x0</value>
   </entry>
   <entry name="ATTR_MEM_EFF_DRAM_TRTP">
-    <value>0x0</value>
+    <value>12</value>
   </entry>
   <entry name="ATTR_MEM_EFF_DRAM_TWR">
-    <value>0x0</value>
+    <value>48</value>
   </entry>
   <entry name="ATTR_MEM_EFF_DRAM_TWTR_L">
     <value>0x0</value>
@@ -1215,8 +1215,8 @@
     <value>0x0</value>
   </entry>
   <entry name="ATTR_MEM_EFF_LOGICAL_RANKS_PER_DIMM">
-    <value>0x0</value>
-    <value>0x0</value>
+    <value>0x1</value>
+    <value>0x1</value>
   </entry>
   <entry name="ATTR_MEM_EFF_MODULE_MFG_ID">
     <value>0x0</value>
@@ -1268,8 +1268,8 @@
     <value>0x0</value>
   </entry>
   <entry name="ATTR_MEM_EFF_NUM_MASTER_RANKS_PER_DIMM">
-    <value>0x0</value>
-    <value>0x0</value>
+    <value>0x1</value>
+    <value>0x1</value>
   </entry>
   <entry name="ATTR_MEM_EFF_PACKAGE_RANK_MAP">
     <value>0x0</value>
