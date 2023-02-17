@@ -29,7 +29,7 @@
 #include "sbeSpMsg.H"
 #include "sbeutil.H"
 #include "cmnglobals.H"
-#include "pakwrapper.H"
+#include "rt_pak.H"
 
 #define SBE_GLOBAL sbeGlobal
 extern sbeRole g_sbeRole;
@@ -115,7 +115,7 @@ class SBEGlobalsSingleton
         // @brief FileArchive object to keep track of the pak stack in pibmem
         // Allows access for a global FileArchive object independent of the Heap object
         // initialized below
-        PakWrapper embeddedArchive __attribute__ ((aligned (8)))
+        RuntimePakWrapper embeddedArchive __attribute__ ((aligned (8)))
                             { (void*)&_heap_space_start_, (void*)&_heap_space_end_};
 
         // i2c mode register

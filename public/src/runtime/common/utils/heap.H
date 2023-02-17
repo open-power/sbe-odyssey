@@ -133,6 +133,13 @@ public :
      */
     void scratch_free(const void *i_ptr);
 
+    /**
+     * @brief Determine whether or not a pointer has been allocated from scratch memory
+     * @param i_ptr The pointer to query
+     * @return true if the pointer comes from scratch space
+     */
+    bool is_scratch_pointer(const void *i_ptr);
+
     //TODO: Currently unused and not supported.
     //This will be needed for runtime image
     /**

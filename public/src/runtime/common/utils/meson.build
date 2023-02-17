@@ -25,7 +25,10 @@
 
 runtime_cmn_utils_dir_path = meson.global_source_root() + '/public/src/runtime/common/utils/'
 
-infile_c = ['heap.C']
+infile_c = [
+         'heap.C',
+         'rt_pak.C',
+         ]
 
 abs_runtime_cmn_utils_c_path = []
 

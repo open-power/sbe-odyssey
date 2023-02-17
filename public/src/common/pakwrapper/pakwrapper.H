@@ -31,7 +31,7 @@
  * @brief Wrapper class for one time and stream decompression and hash
  * calculation.
  */
-class PakWrapper
+class PakWrapper : public FileArchive
 {
     public:
         /**
@@ -40,13 +40,13 @@ class PakWrapper
          * @param[in] i_partitionAddress Partition address to update from.
          */
         PakWrapper(void* i_partitionAddress, void* i_partitionEnd) :
-                    iv_fileArchive(i_partitionAddress, i_partitionEnd),
+                    FileArchive(i_partitionAddress, i_partitionEnd),
                     fileArchiveEntry()
         {
         };
 
         /**
-         * @brief Constructor for PakWrapper class.
+         * @brief Read a (possibly compressed) file into an existing buffer
          *
          * @param[in] i_fileName Pointer to file name to look for.
          * @param[in] i_destinationAddr Destination buffer address.
@@ -74,12 +74,6 @@ class PakWrapper
         }
 
         __attribute__((always_inline))
-        void* archive_end()
-        {
-            return iv_fileArchive.archive_end();
-        }
-
-        __attribute__((always_inline))
         ARC_RET_t get_stored_data_ptr(const void*& o_buffer)
         {
             return fileArchiveEntry.get_stored_data_ptr(o_buffer);
@@ -99,8 +93,7 @@ class PakWrapper
         uint32_t stream_file(const char* i_fileName, void* i_destinationAddr,
                             uint32_t i_destinationBufferSize, void* o_hash);
 #endif
-    private:
-        FileArchive iv_fileArchive;
+    protected:
         FileArchive::Entry fileArchiveEntry;
 };
 
