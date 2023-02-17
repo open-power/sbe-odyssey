@@ -259,6 +259,11 @@ void Heap::scratch_free(const void *i_ptr)
     }
 }
 
+bool Heap::is_scratch_pointer(const void *i_ptr)
+{
+    return ((uintptr_t)i_ptr >= iv_heap_midline) && ((uintptr_t)i_ptr < iv_heap_top);
+}
+
 void Heap::scratch_free_all()
 {
     iv_scratch_bottom = iv_heap_top;

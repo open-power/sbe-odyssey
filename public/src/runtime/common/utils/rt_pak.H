@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/hwpf/plat_file_access.C $           */
+/* $Source: public/src/runtime/common/utils/rt_pak.H $                    */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -23,46 +22,36 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#include "plat_file_access.H"
-#include "sbeglobals.H"
+#pragma once
 
-namespace fapi2
+#include "pakwrapper.H"
+
+/**
+ * @brief PakWrapper extensions for runtime code
+ */
+class RuntimePakWrapper : public PakWrapper
 {
+public:
+    RuntimePakWrapper(void *i_partitionAddress, void* i_partitionEnd) :
+        PakWrapper(i_partitionAddress, i_partitionEnd) {}
 
-ReturnCode plat_loadEmbeddedFile(const char* i_path,
-                                 void*&o_data, size_t &o_size)
-{
-#define SBE_FUNC " plat_loadEmbeddedFile "
-    SBE_ENTER(SBE_FUNC);
+    /**
+     * @brief Read a (possibly compressed) file and return a pointer to its uncompressed data
+     *
+     * The pointer may be allocated from scratch if the file is compressed, or point
+     * right into the embedded archive if not. It must always be freed via free_file.
+     *
+     * @param[in] i_fileName Pointer to file name to look for.
+     * @param[out] i_fileContents Will point to the loaded file contents on success
+     * @param[out] o_fileSize Size of the loaded file
+     * @param[out] o_hash Pointer to sha3_t, if NULL no hash is returned else hash is returned.
+     */
+    uint32_t load_file(
+        const char* i_fileName, const void* &o_fileContents,
+        uint32_t &o_fileSize, sha3_t* o_hash = NULL);
 
-    uint32_t size;
-    // TODO drop the SUPER ICKY const typecast and make o_data proper const once FAPI2 is updated
-    uint32_t rc = SBE_GLOBAL->embeddedArchive.load_file(i_path, (const void *&)o_data, size);
-    o_size = size;
-    ReturnCode l_rc = FAPI2_RC_SUCCESS;
-    if (rc == ARC_FILE_NOT_FOUND)
-    {
-        l_rc = FAPI2_RC_FILE_NOT_FOUND;
-    }
-    else if (rc != ARC_OPERATION_SUCCESSFUL)
-    {
-        //TODO: JIRA  PFSBE-251: Need to look into error xml data collection
-        l_rc = FAPI2_RC_PLAT_ERR_SEE_DATA;
-    }
-
-    SBE_EXIT(SBE_FUNC);
-    return l_rc;
-#undef SBE_FUNC
-}
-
-ReturnCode plat_freeEmbeddedFile(void* i_data)
-{
-#define SBE_FUNC " plat_freeEmbeddedFile "
-    SBE_ENTER(SBE_FUNC);
-    SBE_GLOBAL->embeddedArchive.free_file(i_data);
-    SBE_EXIT(SBE_FUNC)
-    return FAPI2_RC_SUCCESS;
-#undef SBE_FUNC
-}
-
-}
+    /**
+     * @brief Free a buffer returned by load_file
+     */
+    void free_file(const void *i_fileContents);
+};

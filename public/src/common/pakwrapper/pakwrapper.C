@@ -30,7 +30,7 @@ ARC_RET_t PakWrapper::read_file(const char* i_fileName, void* i_destinationAddr,
     ARC_RET_t rc = ARC_INVALID_PARAMS;
     if((i_fileName != nullptr) || (i_destinationAddr != nullptr))
     {
-        rc = iv_fileArchive.locate_file(i_fileName, fileArchiveEntry);
+        rc = locate_file(i_fileName, fileArchiveEntry);
 
         if (rc != ARC_OPERATION_SUCCESSFUL)
         {
@@ -61,7 +61,7 @@ ARC_RET_t PakWrapper::get_image_start_ptr_and_size(const char* i_fileName, uint3
     if(i_fileName != nullptr)
     {
         //Locate the file
-        rc = iv_fileArchive.locate_file(i_fileName, fileArchiveEntry);
+        rc = locate_file(i_fileName, fileArchiveEntry);
         if (rc != ARC_OPERATION_SUCCESSFUL)
         {
             ARC_ERROR(" locate_file failed with Rc: %x ", rc);
@@ -106,7 +106,7 @@ uint32_t PakWrapper::stream_file(const char* i_fileName,
         else
         {
             FileArchive::Entry fileArchiveEntry;
-            rc = iv_fileArchive.locate_file(i_fileName, fileArchiveEntry);
+            rc = locate_file(i_fileName, fileArchiveEntry);
             if (rc != ARC_OPERATION_SUCCESSFUL)
             {
                 ARC_ERROR(" Pak Read Failed. Rc: %x ", rc);
