@@ -61,7 +61,8 @@ ReturnCode poll_opcg_done(
     bool i_poll_abist_done)
 {
     CPLT_STAT0_t CPLT_STAT0;
-    uint32_t original_poll_count = i_poll_count;
+    // must be marked unused since FAPI_ASSERT might be a noop on some platforms
+    uint32_t original_poll_count __attribute__((unused)) = i_poll_count;
 
     while (i_poll_count != 0)
     {
