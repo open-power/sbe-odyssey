@@ -29,11 +29,6 @@
 #endif
 
 
-static const uint8_t PAK_METHOD_STORE = 1;
-static const uint8_t PAK_METHOD_ZLIB = 2;
-static const uint8_t PAK_METHOD_ZLIB_FAST = 3;
-static const uint8_t PAK_METHOD_ZLIB_PPC = 4;
-
 struct PakFileHeaderExtended
 {
     uint8_t iv_flags;    //0

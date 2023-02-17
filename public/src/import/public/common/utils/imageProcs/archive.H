@@ -131,6 +131,10 @@ enum ArchiveFlags_t : uint32_t
     ARCHIVE_FLAGS_NOT_FOUND_QUIET = 0x00000001,  //< Don't log ARC_ERROR message when ARC_FILE_NOT_FOUND
 };
 
+static const uint8_t PAK_METHOD_STORE = 1;
+static const uint8_t PAK_METHOD_ZLIB = 2;
+static const uint8_t PAK_METHOD_ZLIB_FAST = 3;
+static const uint8_t PAK_METHOD_ZLIB_PPC = 4;
 
 /**
  * @brief Class managing an SBE data archive
@@ -192,6 +196,15 @@ class FileArchive
                 uint32_t get_size()
                 {
                     return iv_uncompressedSize;
+                }
+
+                /**
+                 * @brief Returns true if the file is compressed
+                 */
+                __attribute__((always_inline))
+                bool is_compressed()
+                {
+                    return iv_method != PAK_METHOD_STORE;
                 }
 
                 /**
