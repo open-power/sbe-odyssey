@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/core/sbe_sp_intf.H $                */
+/* $Source: public/src/common/core/sbe_sp_intf.H $                        */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -192,6 +192,8 @@ enum sbeSecondaryResponse
     SBE_SEC_CU_IMG_ADDR_N_SZ_EXCEEDS_SIDE_SZ  = 0x6D,
     SBE_SEC_CU_ERASE_IMAGE_FAILURE            = 0x6E,
     SBE_SEC_CU_WRITE_IMAGE_FAILURE            = 0x6F,
+    SBE_SEC_FILE_CORRUPTED                    = 0x70,
+    SBE_SEC_FILE_NOT_FOUND                    = 0x71,
 };
 
 /**

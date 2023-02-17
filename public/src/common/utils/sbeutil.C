@@ -30,6 +30,7 @@
 #include "poz_ppe.H"
 #include "mbxscratch.H"
 #include "errorcodes.H"
+#include "archive.H"
 
 namespace SBE
 {
@@ -93,12 +94,15 @@ namespace SBE
         }
     }
 
+    void updatePakErrorCodeAndHalt(uint16_t i_baseErrorCode, uint16_t i_pakRc)
+    {
+        updateErrorCode(i_baseErrorCode + compressed_arc_return_code(i_pakRc));
+        pk_halt();
+    }
+
     void updateErrorCodeAndHalt(uint16_t i_errorCode)
     {
-        secureBootFailStatus_t secureBootFailStatus;
-        getscom_abs(scomt::poz::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, &secureBootFailStatus.iv_mbx13);
-        secureBootFailStatus.iv_secureHeaderFailStatusCode = i_errorCode;
-        putscom_abs(scomt::poz::FSXCOMP_FSXLOG_SCRATCH_REGISTER_13_RW, secureBootFailStatus.iv_mbx13);
+        updateErrorCode(i_errorCode);
         pk_halt();
     }
 
@@ -192,4 +196,3 @@ namespace SBE
         putscom_abs(scomt::poz::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
     }
 }
-
