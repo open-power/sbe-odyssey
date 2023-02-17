@@ -36,7 +36,7 @@ fi
 SUPPORTED_PLATFORM=("p11" "odyssey" ${INT_SUPPORTED_PLATFORM[*]} "all")
 SUPPORTED_IMAGES=("sppe" "bldr" "srom" "otprom" "tsbe" "hsbe" ${INT_SUPPORTED_IMAGES[*]} "pseeprom" "pnor" "all")
 SUPPORTED_COMMAND=("workon" "prime" "install" "citest" "runsimics" "build" \
-                    "clean" "execute" "printenv")
+                    "clean" "execute" "printenv" "cronus_devready")
 
 sbe_helptext()
 {
@@ -102,6 +102,12 @@ sbe_helptext()
         echo "  Usage:"
         echo "      sbe printenv"
         ;;
+    ${SUPPORTED_COMMAND[9]})
+        echo "  Tool to allow developers to fetch `Dev-Ready` code in gerrit and create new cronus dev tags"
+        echo
+        echo "  Usage:"
+        echo "      sbe cronus_devready [options] <tool>"
+        ;;
     *)
         echo "  Usage:"
         echo "      sbe <cmd>"
@@ -121,6 +127,8 @@ sbe_helptext()
         echo "      clean"
         echo ""
         echo "      runsimics"
+        echo ""
+        echo "      cronus_devready"
         echo
     esac
 }
@@ -287,6 +295,17 @@ sbe_print_env()
     fi
 }
 
+sbe_cronus_devready()
+{
+    if [ -n "${SBE_INSIDE_WORKON}" ]; then
+        echo "Already in a workon.. Continuing"
+        export PERLMODULES=$SBEROOT_INT/src/tools/perlTools
+        ($PERLMODULES/cronusDevTool $*) || exit -1
+    else
+        echo "Please do workon and re launch..."
+    fi
+}
+
 # This is for enabling bash completion
 generate_list()
 {
@@ -325,6 +344,9 @@ ${SUPPORTED_COMMAND[7]})
     ;;
 ${SUPPORTED_COMMAND[8]})
     sbe_print_env $*
+    ;;
+${SUPPORTED_COMMAND[9]})
+    sbe_cronus_devready $*
     ;;
 # This is not to be printed in completion, so no need to add in SUPPORTED_COMMAND
 gen_list)
