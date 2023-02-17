@@ -204,6 +204,17 @@ namespace SBE
         return (uint32_t)(SHIFT_RIGHT(MASK_ZERO_L32B_UINT64(i_lWord), 32));
     }
 
+    /*@brief - In  case of any pak archive code failures during secure boot,
+     * update error code in scratch reg and halt ppe. This will map the pak
+     * error code into a smaller representation before adding to the base error.
+     *
+     * @param[in] - i_baseErrorCode - Base error code for scratch registers
+     * @param[in] - i_pakRc - Error code returned from archive functions
+     *
+     * @return - none
+     */
+    void updatePakErrorCodeAndHalt(uint16_t i_baseErrorCode, uint16_t i_pakRc);
+
     /*@brief - In  case of any secure boot failures,SROM or Boot loader boot
      * failures update error code in scratch reg and halt ppe
      *

@@ -88,7 +88,7 @@ void load_image(PakWrapper &i_pak, const char *i_fname, uint32_t &io_load_offset
     if (pakRc != ARC_OPERATION_SUCCESSFUL)
     {
         SBE_ERROR(SBE_FUNC "Failed to read payload");
-        SBE::updateErrorCodeAndHalt(FILE_RC_PAYLOAD_FILE_READ_BASE_ERROR + pakRc);
+        SBE::updatePakErrorCodeAndHalt(FILE_RC_PAYLOAD_FILE_READ_BASE_ERROR, pakRc);
     }
 
     if(i_fileHashCalculationEnable)
@@ -153,7 +153,7 @@ void bldrthreadroutine(void *i_pArg)
         if(pakRc != ARC_OPERATION_SUCCESSFUL)
         {
             SBE_ERROR(SBE_FUNC "Failed to read secure header");
-            SBE::updateErrorCodeAndHalt(FILE_RC_SECURE_HEADER_FILE_READ_BASE_ERROR + pakRc);
+            SBE::updatePakErrorCodeAndHalt(FILE_RC_SECURE_HEADER_FILE_READ_BASE_ERROR, pakRc);
         }
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_LOADING_SECURE_HEADER_INTO_PIB);
@@ -163,7 +163,7 @@ void bldrthreadroutine(void *i_pArg)
         if(pakRc != ARC_OPERATION_SUCCESSFUL)
         {
             SBE_ERROR(SBE_FUNC "Failed to read hash list");
-            SBE::updateErrorCodeAndHalt(FILE_RC_HASH_LIST_FILE_READ_BASE_ERROR + pakRc);
+            SBE::updatePakErrorCodeAndHalt(FILE_RC_HASH_LIST_FILE_READ_BASE_ERROR, pakRc);
         }
 
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_LOADING_HASH_LIST_INTO_PIB);
@@ -173,7 +173,7 @@ void bldrthreadroutine(void *i_pArg)
         if(pakRc != ARC_OPERATION_SUCCESSFUL)
         {
             SBE_ERROR(SBE_FUNC "Failed to read HW Keys Hash and MSV");
-            SBE::updateErrorCodeAndHalt(FILE_RC_HW_KEYS_HASH_MSV_FILE_READ_BASE_ERROR + pakRc);
+            SBE::updatePakErrorCodeAndHalt(FILE_RC_HW_KEYS_HASH_MSV_FILE_READ_BASE_ERROR, pakRc);
         }
         shvReq.pubKeyHashSet1 = &hwKeysHashMsv.hwKeyHash;
 

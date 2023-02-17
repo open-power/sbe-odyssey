@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -38,6 +39,7 @@
 #endif
 
 #include "sbetrace.H"
+#include "sbe_sp_intf.H"
 #include "sha3.H"
 
 #define ARC_ERROR(...) SBE_ERROR(__VA_ARGS__)
@@ -47,10 +49,23 @@ typedef int ARC_RET_t;
 
 enum ARCHIVE_RETURN_CODES
 {
-    ARC_OPERATION_SUCCESSFUL = 0x00,
-    ARC_INVALID_PARAMS,
-    ARC_FUNCTIONALITY_NOT_SUPPORTED,
-    ARC_INPUT_BUFFER_OVERFLOW,
-    ARC_FILE_CORRUPTED,
-    ARC_FILE_NOT_FOUND,
+    ARC_OPERATION_SUCCESSFUL = SBE_SEC_OPERATION_SUCCESSFUL,
+    ARC_INVALID_PARAMS = SBE_SEC_INVALID_PARAMS,
+    ARC_FUNCTIONALITY_NOT_SUPPORTED = SBE_SEC_FUNCTIONALITY_NOT_SUPPORTED,
+    ARC_INPUT_BUFFER_OVERFLOW = SBE_SEC_INPUT_BUFFER_OVERFLOW,
+    ARC_FILE_CORRUPTED = SBE_SEC_FILE_CORRUPTED,
+    ARC_FILE_NOT_FOUND = SBE_SEC_FILE_NOT_FOUND,
 };
+
+/// @brief Convert an arc_ret_t into a status code that fits into 4 bits
+constexpr uint8_t compressed_arc_return_code(int i_arc_rc)
+{
+    return
+        (i_arc_rc == ARC_OPERATION_SUCCESSFUL) ? 0 :
+        (i_arc_rc == ARC_INVALID_PARAMS) ? 1 :
+        (i_arc_rc == ARC_FUNCTIONALITY_NOT_SUPPORTED) ? 2 :
+        (i_arc_rc == ARC_INPUT_BUFFER_OVERFLOW) ? 3 :
+        (i_arc_rc == ARC_FILE_CORRUPTED) ? 4 :
+        (i_arc_rc == ARC_FILE_NOT_FOUND) ? 5 :
+        0xF;
+}
