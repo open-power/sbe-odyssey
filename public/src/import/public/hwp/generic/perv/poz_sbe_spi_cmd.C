@@ -1925,8 +1925,6 @@ static uint8_t spi_ecc_gen(const uint8_t* bytes)
         ecc = (ecc << 1) | (scratch2 & 1);
     }
 
-    // Invert the ecc calculated
-    ecc = (uint8_t)(~ecc & 0xFF);
     return ecc;
 }
 
