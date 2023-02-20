@@ -50,16 +50,23 @@ def set_attr(i_attrDb:AttributeStructure, io_image:bytearray, i_attr:str,\
             attr_to_set.set_value(io_image, i_attrDb.image_base, i_value, i, i_index)
     return io_image
 
-def get_attr(i_attrDb:AttributeStructure, i_attr, i_image:bytearray)->list:
+def get_attr(i_attrDb:AttributeStructure, i_attr:str, i_target:str, i_image:bytearray, i_raw:str)->list:
     attr_found = None
     for attr in  i_attrDb.field_list:
-        if attr.name == i_attr.upper():
+        if not isinstance(attr, RealAttrFieldInfo):
+            continue
+        if((attr.name == i_attr.upper()) and (attr.sbe_targ_type == i_target)) :
             attr_found = attr
             break
     if attr_found is None:
-        raise ArgumentError("Attribute {} is not present".format(i_attr))
-    value = attr_found.get(i_image, i_attrDb.image_base)
-    return attr_found
+        raise ArgumentError("Attribute %s for the target %s is not present" % (i_attr,i_target))
+    if i_raw =='True':
+        image_base = i_attrDb.start_address
+    else:
+        image_base = i_attrDb.image_base
+
+    value = attr_found.get(i_image, image_base)
+    return value
 
 def dump_attr(
             i_attrDb:AttributeStructure, i_image:bytearray, i_raw:str)->list:

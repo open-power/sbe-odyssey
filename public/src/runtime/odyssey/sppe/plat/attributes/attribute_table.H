@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -24,8 +25,8 @@
 #ifndef __ATTRIBUTE_TABLE_H__
 #define __ATTRIBUTE_TABLE_H__
 
-#include <attribute_override.H>
-#include <attribute_list.H>
+#include <attribute_ids.H>
+#include <attribute_utils.H>
 
 namespace fapi2
 {
@@ -46,6 +47,9 @@ struct AttributesTable
 
 };
 
+// Forward declaration
+class AttributeUpdateBuffer;
+
 struct TargetsTable
 {
     fapi2::LogTargetType    iv_log_target_type;
@@ -53,12 +57,12 @@ struct TargetsTable
     uint16_t                iv_attr_row_start;
     uint16_t                iv_attr_row_size;
 
-    AttributeOverrideRc applyOverride(const uint8_t           i_targ_inst,
-                                      AttributeUpdateBuffer&  i_buffer);
+    uint32_t applyOverride(const TargetEntry_t *i_targetEntry,
+                           AttributeUpdateBuffer&  i_buffer);
 
 };
 
-uint32_t    applyOverride(const void *i_buffer,void *o_buffer,
+uint32_t    applyOverride(const void *io_buffer, const uint32_t i_bufSize,
                           uint32_t & o_resPackSize);
 
 

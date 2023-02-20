@@ -25,7 +25,7 @@
 #ifndef __ATTRIBUTE_LIST_H__
 #define __ATTRIBUTE_LIST_H__
 
-#include <attribute_override.H>
+#include <attribute_utils.H>
 
 namespace fapi2
 {
@@ -38,7 +38,7 @@ const uint8_t CHIP_TYPE_ODYSSEY_00 = 1;
 
 const uint8_t ATTRLIST_RESP_FILE_TYPE = 3;
 const uint8_t ATTRLIST_MAJOR_VERSION = 0;
-const uint8_t ATTRLIST_MINOR_VERSION = 1;
+const uint8_t ATTRLIST_MINOR_VERSION = 2;
 
 // Attribute List response buffer
 /**

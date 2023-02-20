@@ -37,13 +37,13 @@ uint32_t sbeUpdateAttr(uint8_t *i_pArg)
     #define SBE_FUNC " sbeUpdateAttr "
     SBE_ENTER(SBE_FUNC);
 
-    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL,
+             l_fifoRc = SBE_SEC_OPERATION_SUCCESSFUL;
     uint32_t l_len = 0;
     sbeFifoType type;
     sbeRespGenHdr_t respHdr;
     respHdr.init();
-    void *l_inBuffer = nullptr;
-    void *l_outBuffer = nullptr;
+    void *l_inOutBuffer = nullptr;
     do
     {
         chipOpParam_t* configStr = (struct chipOpParam*)i_pArg;
@@ -56,59 +56,61 @@ uint32_t sbeUpdateAttr(uint8_t *i_pArg)
         l_len = SBE_GLOBAL->sbeFifoCmdHdr.len -
                         sizeof(SBE_GLOBAL->sbeFifoCmdHdr)/sizeof(uint32_t);
 
-        SBE_INFO(SBE_FUNC"Expected length of the payload(in words) : %d", l_len);
+        SBE_INFO(SBE_FUNC"Expected length of the payload(in words) : %d",
+                        l_len);
 
         // The size of the buffer to be allocated in bytes.
         // For that, multiply the number of words by 4.
-        l_inBuffer = Heap::get_instance().scratch_alloc(l_len*4);
-        if (l_inBuffer == nullptr)
+        l_inOutBuffer = Heap::get_instance().scratch_alloc(l_len*4);
+        if (l_inOutBuffer == nullptr)
         {
-            SBE_ERROR(SBE_FUNC"scratch allocation request for [%d] bytes failed.", (l_len*4));
+            SBE_ERROR(SBE_FUNC"scratch allocation request for [%d] bytes "
+                        "failed.", (l_len*4));
             l_rc=SBE_SEC_HEAP_SPACE_FULL_FAILURE;
             break;
         }
 
-        l_rc = sbeUpFifoDeq_mult (l_len, (uint32_t *)l_inBuffer, true, false, type);
-
-        // If FIFO access failure
-        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
-
-        l_outBuffer = Heap::get_instance().scratch_alloc(l_len*4);
-        if (l_outBuffer == nullptr)
-        {
-            SBE_ERROR(SBE_FUNC"scratch allocation request for [%d] bytes failed.", (l_len*4));
-            l_rc=SBE_SEC_HEAP_SPACE_FULL_FAILURE;
-            break;
-        }
+        l_fifoRc = sbeUpFifoDeq_mult (l_len, (uint32_t *)l_inOutBuffer, true,
+                                        false, type);
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_fifoRc);
 
         uint32_t  l_respPackSize = 0;
-        l_rc = fapi2::ATTR::applyOverride(l_inBuffer,l_outBuffer,l_respPackSize);
-        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+        uint32_t  l_bufSizeInBytes = l_len*4;
 
-        uint32_t len2enqueue = l_respPackSize / 4;
-        l_rc = sbeDownFifoEnq_mult (len2enqueue, (uint32_t *)l_outBuffer, type);
+        l_rc = fapi2::ATTR::applyOverride(l_inOutBuffer,l_bufSizeInBytes,l_respPackSize);
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
 
         SBE_INFO("Calling plat_TargetStateUpdateFromAttribute()");
         g_platTarget->plat_TargetStateUpdateFromAttribute();
 
+        uint32_t len2enqueue = l_respPackSize / sizeof(uint32_t);
+
+        l_fifoRc = sbeDownFifoEnq_mult (len2enqueue, (uint32_t *)l_inOutBuffer,
+                                        type);
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_fifoRc);
+
     } while(false);
 
     // scratch_free() will check if the input pointer
     // is nullptr before calling free
-    Heap::get_instance().scratch_free(l_outBuffer);
-
-    Heap::get_instance().scratch_free(l_inBuffer);
+    Heap::get_instance().scratch_free(l_inOutBuffer);
 
 
-    if(l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+    if (l_fifoRc == SBE_SEC_OPERATION_SUCCESSFUL)
     {
-        respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                           l_rc );
+        if(l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+        {
+            respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE, l_rc );
+        }
+        l_fifoRc = sbeDsSendRespHdr(respHdr, NULL, type);
+        if ( l_fifoRc != SBE_SEC_OPERATION_SUCCESSFUL )
+        {
+            SBE_ERROR(SBE_FUNC"Attribute update chip-op send response "
+                        "header failed.RC=0x%08X",l_fifoRc);
+        }
     }
-    l_rc = sbeDsSendRespHdr(respHdr, NULL, type);
 
     SBE_EXIT(SBE_FUNC);
-    return l_rc;
+    return l_fifoRc;
     #undef SBE_FUNC
 }
