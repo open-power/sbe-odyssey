@@ -27,5 +27,5 @@ WRAPPER=poz_ppe_state_wrap
 $(call ADD_EXE_INCDIR,$(WRAPPER),$(ROOTPATH)/public/hwp/generic/utils)
 $(call ADD_EXE_SRCDIR,$(WRAPPER),$(ROOTPATH)/public/hwp/generic/utils)
 $(call ADD_EXE_SHARED_OBJ,$(WRAPPER),poz_ppe_utils.o)
-$(WRAPPER)_USELIBS += poz_ppe_state poz_mib_state poz_ppe_other_regs
+$(call ADD_EXE_OBJ,$(WRAPPER),poz_ppe_state.o poz_ppe_other_regs.o poz_mib_state.o)
 $(call BUILD_WRAPPER)

@@ -66,7 +66,7 @@ void help()
     sprintf(helpstr, "\nThis is the help text for the procedure %s: \n\n",
             procedureName.c_str());
     ecmdOutput("helpstr\n");
-    ecmdOutput("Usage: poz_ppe_state_wrap chip [-sbe] [-gpe <0 ..3> ][-qme <0 ..7> ][-ce <0 ..3> ] [-ioppe <0 ..3> ][-snapshot] [-halt] [-force_halt] [-verbose] [-verbose+]  [-verif]\n");
+    ecmdOutput("Usage: poz_ppe_state_wrap chip [-sbe] [-sppe] [-pme] [-gpe <0 ..3> ][-qme <0 ..7> ][-ce <0 ..3> ] [-ioppe <0 ..3> ][-snapshot] [-halt] [-force_halt] [-verbose] [-verbose+]  [-verif]\n");
     ecmdOutput("  Option flags are:\n");
     ecmdOutput("       chip         Chip type to access. Use -pX to choose which chips.\n");
     ecmdOutput("                      ph   - P11 Spinal Hub chip. Engines: SPPE, SBE, IOPPE, OCC GPEs\n");
@@ -1229,8 +1229,8 @@ int main(int argc,
                     }
                     else
                     {
-                        FAPI_EXEC_HWP(rc_fapi, poz_ppe_state, fapi_target, it.first, it.second, mode,
-                                      v_ppe_gprs_value, v_ppe_sprs_value, v_ppe_xirs_value);
+                        rc_fapi = poz_ppe_state(fapi_target, it.first, it.second, mode,
+                                                v_ppe_gprs_value, v_ppe_sprs_value, v_ppe_xirs_value);
                         rc = uint64_t(rc_fapi);
 
                         if (rc)
@@ -1266,8 +1266,8 @@ int main(int argc,
 
                     if(dump_mib)
                     {
-                        FAPI_EXEC_HWP(rc_fapi, poz_mib_state, fapi_target, it.first, it.second,
-                                      v_mib_regs_value );
+                        rc_fapi = poz_mib_state(fapi_target, it.first, it.second,
+                                                v_mib_regs_value );
                         rc = uint64_t(rc_fapi);
 
                         if (rc)
@@ -1284,8 +1284,8 @@ int main(int argc,
                     //\TODO
                     if(dump_others)
                     {
-                        FAPI_EXEC_HWP(rc_fapi, poz_ppe_other_regs, fapi_target, it.first, it.second,
-                                      v_other_regs_value);
+                        rc_fapi = poz_ppe_other_regs(fapi_target, it.first, it.second,
+                                                     v_other_regs_value);
                         rc = uint64_t(rc_fapi);
 
                         if (rc)
