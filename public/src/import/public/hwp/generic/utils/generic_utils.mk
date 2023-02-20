@@ -25,16 +25,26 @@
 #
 # A macro to contain all our boilerplate
 #
-define __GENERIC_IO_PROCEDURE
+define __GENERIC_UTIL_PROCEDURE
 PROCEDURE=$(1)
 $$(call BUILD_PROCEDURE)
 endef
-GENERIC_IO_PROCEDURE = $(eval $(call __GENERIC_IO_PROCEDURE,$1))
+GENERIC_UTIL_PROCEDURE = $(eval $(call __GENERIC_UTIL_PROCEDURE,$1))
+
+define __GENERIC_PPE_PROCEDURE
+PROCEDURE=$(1)
+$$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_ppe_utils.o)
+$$(call BUILD_PROCEDURE)
+endef
+GENERIC_PPE_PROCEDURE = $(eval $(call __GENERIC_PPE_PROCEDURE,$1))
+
+
 #
 # And now the actual HWP definitions
 #
-$(call GENERIC_IO_PROCEDURE,poz_writesram)
-$(call GENERIC_IO_PROCEDURE,poz_readsram)
-$(call GENERIC_IO_PROCEDURE,poz_ppe_state)
-$(call GENERIC_IO_PROCEDURE,poz_ppe_other_regs)
-$(call GENERIC_IO_PROCEDURE,poz_mib_state)
+$(call GENERIC_UTIL_PROCEDURE,poz_writesram)
+$(call GENERIC_UTIL_PROCEDURE,poz_readsram)
+
+$(call GENERIC_PPE_PROCEDURE,poz_ppe_state)
+$(call GENERIC_PPE_PROCEDURE,poz_ppe_other_regs)
+$(call GENERIC_PPE_PROCEDURE,poz_mib_state)
