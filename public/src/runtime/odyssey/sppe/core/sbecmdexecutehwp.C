@@ -39,17 +39,16 @@ using namespace fapi2;
 static hwpMap_t hwpClass1PtrTbl[] =
           {
                HWP_MAP(istepLoadIOPPEwithOcmb, ody_omi_hss_ppe_load),   // 1.01
-               //HWP_MAP( NULL, NULL ),                                     // 1.01
                HWP_MAP( istepWithOcmb, ody_omi_hss_config ),              // 1.02
                HWP_MAP( istepWithOcmb, ody_omi_hss_ppe_start),            // 1.03
                HWP_MAP( istepWithOcmb, ody_omi_hss_bist_init ),           // 1.04
                HWP_MAP( istepWithOcmb, ody_omi_hss_bist_start ),          // 1.05
-               HWP_MAP( istepWithOcmb, ody_omi_hss_bist_poll ),           // 1.06
+               //HWP_MAP( istepWithOcmb, ody_omi_hss_bist_poll ),         // 1.06
+               HWP_MAP( NULL, NULL ),                                     // 1.06
                HWP_MAP( istepWithOcmb, ody_omi_hss_bist_cleanup),         // 1.07
                HWP_MAP( istepWithOcmb, ody_omi_hss_init ),                // 1.08
                HWP_MAP( istepWithOcmb, ody_omi_hss_dccal_start ),         // 1.09
-               //HWP_MAP( istepWithOcmb, ody_omi_hss_dccal_poll ),        // 1.10
-               HWP_MAP( NULL, NULL ),                                     // 1.10
+               HWP_MAP( istepWithOcmb, ody_omi_hss_dccal_poll ),          // 1.10
                HWP_MAP( istepWithOcmb, ody_omi_hss_tx_zcal ),             // 1.11
                HWP_MAP( istepWithOcmb, ody_omi_pretrain_adv ),            // 1.12
                HWP_MAP( istepWithOcmb, ody_omi_setup ),                   // 1.13
