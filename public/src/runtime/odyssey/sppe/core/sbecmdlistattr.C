@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -27,7 +28,7 @@
 #include "sbe_sp_intf.H"
 #include "sbeglobals.H"
 #include "heap.H"
-#include "attribute_table.H"
+#include "attribute_list.H"
 
 uint32_t sbeCmdListAttr(uint8_t *i_pArg)
 {
@@ -75,13 +76,14 @@ uint32_t sbeCmdListAttr(uint8_t *i_pArg)
     // scratch_free() will check if the input pointer
     // is nullptr before calling free
     Heap::get_instance().scratch_free(l_outBuffer);
-    if(l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
-    {
-        respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                           l_rc );
-    }
     if (l_fifoRc == SBE_SEC_OPERATION_SUCCESSFUL)
     {
+        if(l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+        {
+            respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                            l_rc );
+        }
+
         l_fifoRc = sbeDsSendRespHdr(respHdr, NULL, type);
         if ( l_fifoRc != SBE_SEC_OPERATION_SUCCESSFUL )
         {

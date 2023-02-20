@@ -201,7 +201,9 @@ enum sbeSecondaryResponse
     SBE_SEC_CU_INVALID_PAD_SIZE               = 0X76,
     SBE_SEC_CU_SYNC_CHIPOP_FAILURE            = 0x77,
     SBE_SEC_CU_READ_IMAGE_FAILURE             = 0x78,
-
+    SBE_SEC_ATTR_UPD_FORMAT_ERROR             = 0x79,
+    SBE_SEC_ATTR_UPD_VER_NOT_SUPPORTED        = 0x7A,
+    SBE_SEC_ATTR_UPD_INVALID_FILE_TYPE        = 0x7B
 };
 
 /**

@@ -39,91 +39,248 @@ namespace fapi2
 namespace ATTR
 {
 
-enum AttributeOverrideRc
-{
-    ATTROVERRIDE_RC_SUCCESS,
-    ATTROVERRIDE_RC_TGT_TYPE_NOT_FOUND,
-    ATTROVERRIDE_RC_ATTR_NOT_FOUND,
-    ATTROVERRIDE_RC_SIZE_NOT_MATCHING,
-    ATTROVERRIDE_RC_TARGET_INST_OUT_RANGE,
-    ATTROVERRIDE_RC_ARRAY_INDEX_OUT_RANGE,
-    ATTROVERRIDE_RC_ATTR_NOT_ARRAY,
-    ATTROVERRIDE_RC_OVRD_NOT_ALLOWED
-};
+// Forward declaration
+class ResponseBuffer;
 
-const uint8_t ATTROVERRIDE_MAJOR_VERSION = 0;
-const uint8_t ATTROVERRIDE_MINOR_VERSION = 2;
-const uint8_t ATTROVERRIDE_REQ_FILE_TYPE = 1;
-const uint8_t ATTROVERRIDE_RESP_FILE_TYPE = 2;
-
-// MAGIC WORD is 'T' 'A' 'R' 'G'
-const uint32_t ATTR_FILE_TARGE_MAGIC_WORD = 0x54415247;
-
+/**
+ *  @brief  Utility class for handling incoming attribute update buffer
+ *
+ */
 class AttributeUpdateBuffer
 {
-    public:
+    private:
         HeaderEntry_t   *iv_headerPtr;
+        uint8_t         *iv_bufEnd;
         uint8_t         *iv_currPtr;
-        uint32_t        iv_tgtIter;
-        uint16_t        iv_attrIter;
-        uint16_t        iv_attrEnd;
-        ENTRY_TYPE      iv_nextEntryType;
+        ResponseBuffer *iv_response;
 
+    public:
         AttributeUpdateBuffer() = delete;
         AttributeUpdateBuffer(const AttributeUpdateBuffer& ) = delete;
         AttributeUpdateBuffer&
             operator = (const AttributeUpdateBuffer& ) = delete;
 
-        AttributeUpdateBuffer(const void *i_ptr)
+        /**
+         * @brief  Constructor
+         *
+         * @param[in]   i_buf       Buffer containing attribute update data
+         *
+         * @param[in]   i_bufSize   The size of the buffer
+         */
+        AttributeUpdateBuffer(const void *i_buf, const uint32_t i_bufSize)
         {
-            iv_headerPtr = (HeaderEntry_t *)i_ptr;
-            iv_currPtr   = (uint8_t *)i_ptr + sizeof(HeaderEntry_t);
-            iv_tgtIter   = 0;
-            iv_attrIter  = 0;
-            iv_nextEntryType = TARGET_ENTRY;
+            iv_headerPtr = (HeaderEntry_t *)i_buf;
+            iv_bufEnd    = (uint8_t *)i_buf + i_bufSize;
+            iv_currPtr   = (uint8_t *)i_buf + sizeof(HeaderEntry_t);
+            iv_response  = nullptr;
         }
 
+        /**
+         * @brief  Method to read the header of the attribute update data
+         *
+         * @return Returns a pointer to the header row
+         */
         HeaderEntry_t* getHeader()
         {
             return iv_headerPtr;
         }
 
-        uint32_t getNumTargets()
+        /**
+         * @brief  Checks if the major version is supported
+         *
+         * @return true if the major version is supported
+         */
+        bool majorVerSupported() const
+        {
+            return (iv_headerPtr->iv_fmtMajor == ATTROVERRIDE_MAJOR_VERSION);
+        }
+
+        /**
+         * @brief  Method to get the major version
+         */
+        uint8_t majorVersion() const
+        {
+            return iv_headerPtr->iv_fmtMajor;
+        }
+
+        /**
+         * @brief  Checks if the minor version is supported
+         *
+         * @return true if the minor version is supported
+         */
+        bool minorVerSupported() const
+        {
+            return (iv_headerPtr->iv_fmtMinor == ATTROVERRIDE_MINOR_VERSION);
+        }
+
+        /**
+         * @brief  Method to get the minor version
+         */
+        uint8_t minorVersion() const
+        {
+            return iv_headerPtr->iv_fmtMinor;
+        }
+
+        /**
+         * @brief  Checks if the file type is valid
+         *
+         * @return true if the file type is valid
+         */
+        bool validFileType() const
+        {
+            return (iv_headerPtr->iv_fileType == ATTROVERRIDE_REQ_FILE_TYPE);
+        }
+
+        /**
+         * @brief  Method to get the file type
+         */
+        uint8_t fileType() const
+        {
+            return iv_headerPtr->iv_fileType;
+        }
+
+        /**
+         * @brief  Method to get the number of target sections in the
+         *         attribute updata data
+         *
+         * @return Returns number of target sections
+         */
+        uint32_t getNumTargets() const
         {
             return iv_headerPtr->iv_numTargets;
         }
 
-        TargetEntry_t* getNextTarget();
+        /**
+         * @brief  Method to read the next target section
+         *
+         * @param[out]  o_targetEntry   A pointer to the target section
+         *
+         * @return  ATTROVERRIDE_RC_SUCCESS if successful
+         *          non-zero in case of error
+         */
+        uint32_t getNextTarget(TargetEntry_t *&o_targetEntry);
 
-        AttrEntry_t*   getNextAttr();
+        /**
+         * @brief  Method to read the next attribute entry
+         *
+         * @param[out]  &o_attrEntry    A pointer to an attribute entry
+         *
+         * @return  ATTROVERRIDE_RC_SUCCESS if successful
+         *          non-zero in case of error
+         */
+        uint32_t getNextAttr(AttrEntry_t *&o_attrEntry);
+
+        /**
+         * @brief  Method to read the current position of the buffer pointer
+         *
+         * @return  Returns the current position of the buffer pointer
+         */
+        const uint8_t* getCurrentPtr() const
+        {
+            return iv_currPtr;
+        }
+
+        /**
+         * @brief  Method to set the response buffer object
+         */
+        void setResponseBuf(ResponseBuffer *i_response)
+        {
+            iv_response = i_response;
+        }
+
+        /**
+         * @brief  Method to get the response buffer object
+         *
+         * @return  Returns the response buffer object
+         */
+        ResponseBuffer & getResponseBuf()
+        {
+            return *iv_response;
+        }
+
+        /**
+         * @brief  Method to know the last position of the buffer
+         *
+         * @return  Returns the last position of the buffer
+         */
+        const uint8_t* getBufferEnd() const
+        {
+            return iv_bufEnd;
+        }
 };
 
+/**
+ *  @brief  Utility class for handling attribute update response buffer
+ *
+ */
 class ResponseBuffer
 {
-    public:
-        uint32_t         iv_outputPackSize;
-        HeaderEntry_t   *iv_headerPtr;
-        uint8_t         *iv_currPtr;
-        ENTRY_TYPE      iv_nextEntryType;
+    private:
+        uint8_t                 *iv_currPtr;
+        TargetEntry_t           *iv_lastTargetPtr;
+        uint32_t                 iv_numTargets;
+        AttributeUpdateBuffer&   iv_inputBuffer;
 
+    public:
         ResponseBuffer() = delete;
         ResponseBuffer(const ResponseBuffer& ) = delete;
         ResponseBuffer&
             operator = (const ResponseBuffer& ) = delete;
 
-        ResponseBuffer(void *i_ptr)
+        ResponseBuffer(AttributeUpdateBuffer& i_inputBuffer);
+
+        /**
+         * @brief  Method to add a target section
+         *
+         * @param[in]  i_target    A pointer to the target section
+         */
+        void addTarget(const TargetEntry_t* i_target);
+
+        /**
+         * @brief  Method to add a target section in the response
+         *
+         * @param[in]  i_target    A pointer to the target section
+         *
+         * @param[in]  i_rc        RC to be set
+         *
+         * @return  ATTROVERRIDE_RC_SUCCESS if successful
+         *          non-zero in case of error
+         */
+        uint32_t addTarget(const TargetEntry_t* i_target,
+                           const AttributeOverrideRc i_rc);
+
+        /**
+         * @brief  Method to add an attribute row in the response
+         *
+         * @param[in]  i_target    A pointer to the target section
+         *
+         * @param[in]  i_attrEntry A pointer to the attribute row
+         *
+         * @param[in]  i_rc        RC to be set
+         */
+        void addAttr(const TargetEntry_t* i_target,
+                         const AttrEntry_t*  i_attrEntry,
+                         const AttributeOverrideRc i_rc);
+
+        // Both input and output buffer point to the same header.
+        // So, the number of target sections in the output buffer
+        // will be updated just before sending the response.
+        // Otherwise, the number of target sections in the input
+        // buffer will be overwritten.
+        void updateHeader()
         {
-            iv_currPtr   = (uint8_t *)i_ptr;
-            iv_headerPtr = (HeaderEntry_t *)i_ptr;
-            iv_nextEntryType = HEADER_ENTRY;
-            iv_outputPackSize = 0;
+            iv_inputBuffer.getHeader()->iv_fileType = ATTROVERRIDE_RESP_FILE_TYPE;
+            iv_inputBuffer.getHeader()->iv_numTargets = iv_numTargets;
         }
 
-        void  setHeader(HeaderEntry_t* i_header);
-
-        uint32_t getOutputPackSize()
+        /**
+         * @brief  Method to get the output packet size in bytes
+         *
+         * @return  Number of bytes of the response buffer
+         */
+        uint32_t getOutputPackSize() const
         {
-            return iv_outputPackSize;
+            return (iv_currPtr - (uint8_t *)iv_inputBuffer.getHeader());
         }
 };
 

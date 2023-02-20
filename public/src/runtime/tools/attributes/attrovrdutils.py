@@ -41,7 +41,8 @@ class Utils:
 
 class Const:
     FORMAT_MAJOR_VERSION  = 0
-    FORMAT_MINOR_VERSION  = 1
+    FORMAT_MINOR_VERSION  = 2
+    ATTR_FILE_TARGET_MAGIC_WORD = 0x54415247
 
 
 class Fapi2(ABC):
@@ -148,20 +149,22 @@ class AttributeFile(ABC):
 
     class AttributeOverride(NamedTuple):
         attr_inf : 'AttributeFile.AttributeInfo'
-        value    : int
+        value    : 'int|list[int]'
 
 
     class AttributeRc(Enum):
         AttrOverrideRc_SUCCESS                  = 0
-        AttrOverrideRc_ID_NOT_FOUND             = 1
-        AttrOverrideRc_SIZE_NOT_MATCHING        = 2
-        AttrOverrideRc_TARGET_INST_OUT_RANGE    = 3
-        AttrOverrideRc_ARRAY_INDEX_OUT_RANGE    = 4
-        AttrOverrideRc_OVRD_NOT_ALLOWED         = 5
+        AttrOverrideRc_TGT_TYPE_NOT_FOUND       = 1
+        AttrOverrideRc_ATTR_NOT_FOUND           = 2
+        AttrOverrideRc_SIZE_NOT_MATCHING        = 3
+        AttrOverrideRc_TARGET_INST_OUT_RANGE    = 4
+        AttrOverrideRc_ARRAY_INDEX_OUT_RANGE    = 5
+        AttrOverrideRc_ATTR_NOT_ARRAY           = 6
+        AttrOverrideRc_OVRD_NOT_ALLOWED         = 7
 
 
     class AttributeOvrdResponse(NamedTuple):
-        attr_inf : 'AttributeFile.AttributeInfo'
+        attr_name: str
         rc       : 'AttributeFile.AttributeRc'
 
 
@@ -194,8 +197,8 @@ class AttributeFileGenerator(AttributeFile):
         self.byte_buffer.extend(fapi_target_type.value.to_bytes(1, "big"))
         self.byte_buffer.extend(inst_num.to_bytes(1, "big"))
         self.byte_buffer.extend(num_attributes.to_bytes(2, "big"))
-        # Reserved 4 bytes
-        self.byte_buffer.extend(int(0).to_bytes(4, "big"))
+        # Target magic word
+        self.byte_buffer.extend(Const.ATTR_FILE_TARGET_MAGIC_WORD.to_bytes(4, "big"))
 
     def generateAttributeFile(
         self,
@@ -354,6 +357,10 @@ class AttributeFileParser(AttributeFile):
 
     def readTarget(self)-> 'list[int, Fapi2.Target]':
         offset = self.iv_offset
+        magic_word = int.from_bytes(
+            self.iv_attr_file[offset+4:offset+8], "big", signed=False)
+        assert magic_word == Const.ATTR_FILE_TARGET_MAGIC_WORD, "Input data is corrupted"
+
         fapi_target_type = Fapi2.TargetType(int.from_bytes(
             self.iv_attr_file[offset:offset+1], "big", signed=False)).name
         inst_num = int.from_bytes(self.iv_attr_file[offset+1:offset+2],
@@ -387,7 +394,7 @@ class AttributeUpdateRespFileParser(AttributeFileParser):
         i_attr_file : bytearray, # a pak file containing one or more attribute ovrd resp file
         i_attr_db) -> None:
         super().__init__(i_attr_file, i_attr_db)
-        self.iv_file_type = Fapi2.FileType.OVERRIDE
+        self.iv_file_type = Fapi2.FileType.RESPONSE
 
     def _getStatus(self):
         return (self.iv_attr_file[self.iv_offset])&0xF0
@@ -397,20 +404,15 @@ class AttributeUpdateRespFileParser(AttributeFileParser):
                 "big", signed=False)
 
     def readAttribute(self):
-        status = self._getStatus()
         attr_id = self._getAttrId()
         attr_name = self.getAttrName(attr_id)
-        index = []
-        size = 4
         rc = self._getAttrRc()
-        attr_inf = AttributeFile.AttributeInfo(id = attr_name,
-                                               index = index, size=size)
-        attr_ovrd = AttributeFile.AttributeOvrdResponse(attr_inf = attr_inf,
+        attr_ovrd = AttributeFile.AttributeOvrdResponse(attr_name=attr_name,
         rc = AttributeFile.AttributeRc(rc))
         offset = self.iv_offset+8
         self.iv_offset = offset
         if(offset%8!=0):
-            self.iv_offset = offset+ 8-(offset%8)
+           self.iv_offset = offset+ 8-(offset%8)
         return attr_ovrd
 
 

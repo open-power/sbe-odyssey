@@ -22,9 +22,11 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+#include <attribute_list.H>
 #include <attribute_table.H>
 #include <sbetrace.H>
-#include <attribute_override.C>
+#include <attribute.H>
+#include <target_types.H>
 #include "ppe42_string.h"
 #include <plat_target_service.H>
 
@@ -247,7 +249,7 @@ uint32_t listAttribute(void *o_buffer)
                     .iv_logTgtType = g_targetsTab[l_tgtIdx].iv_log_target_type,
                     .iv_instance = l_inst,
                     .iv_numAttrs = g_targetsTab[l_tgtIdx].iv_attr_row_size,
-                    .iv_padding  = uint32_t(0)
+                    .iv_magicWord = ATTR_FILE_TARGET_MAGIC_WORD
                 };
                 l_respBuffer.setTarget(& target);
                 for(uint32_t i = 0;i<g_targetsTab[l_tgtIdx].iv_attr_row_size; i++)

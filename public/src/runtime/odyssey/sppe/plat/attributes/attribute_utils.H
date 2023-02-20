@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -24,13 +25,32 @@
 #ifndef __ATTRIBUTE_UTILS_H__
 #define __ATTRIBUTE_UTILS_H__
 
-#include <attribute_ids.H>
-#include <target_types.H>
+#include <stdint.h>
 
 namespace fapi2
 {
 namespace ATTR
 {
+
+enum AttributeOverrideRc
+{
+    ATTROVERRIDE_RC_SUCCESS                 = 0,
+    ATTROVERRIDE_RC_TGT_TYPE_NOT_FOUND      = 1,
+    ATTROVERRIDE_RC_ATTR_NOT_FOUND          = 2,
+    ATTROVERRIDE_RC_SIZE_NOT_MATCHING       = 3,
+    ATTROVERRIDE_RC_TARGET_INST_OUT_RANGE   = 4,
+    ATTROVERRIDE_RC_ARRAY_INDEX_OUT_RANGE   = 5,
+    ATTROVERRIDE_RC_ATTR_NOT_ARRAY          = 6,
+    ATTROVERRIDE_RC_OVRD_NOT_ALLOWED        = 7,
+};
+
+const uint8_t ATTROVERRIDE_MAJOR_VERSION = 0;
+const uint8_t ATTROVERRIDE_MINOR_VERSION = 2;
+const uint8_t ATTROVERRIDE_REQ_FILE_TYPE = 1;
+const uint8_t ATTROVERRIDE_RESP_FILE_TYPE = 2;
+
+// MAGIC WORD is 'T' 'A' 'R' 'G'
+const uint32_t ATTR_FILE_TARGET_MAGIC_WORD = 0x54415247;
 
 struct HeaderEntry_t
 {
@@ -46,7 +66,7 @@ struct TargetEntry_t
     uint8_t    iv_logTgtType;   //LOG_TARGET_TYPE
     uint8_t    iv_instance;     //instance number; 0xFF - applicable for all instance
     uint16_t   iv_numAttrs;     //number of attributes for this target type
-    uint32_t   iv_padding;
+    uint32_t   iv_magicWord;    //ASCII characters 'T' 'A' 'R' 'G'
 };
 
 struct __attribute__((packed)) AttrEntry_t
@@ -58,6 +78,12 @@ struct __attribute__((packed)) AttrEntry_t
     uint8_t    iv_hgt;          //height
     uint8_t    iv_res;          //1-byte reserved
     //data is a variable size
+};
+
+struct AttrRespEntry_t
+{
+    uint32_t            iv_attrId; //attribute ID
+    AttributeOverrideRc iv_rc;     //RC code for the failure
 };
 
 enum ENTRY_TYPE
