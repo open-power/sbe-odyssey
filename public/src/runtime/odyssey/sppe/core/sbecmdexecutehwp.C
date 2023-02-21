@@ -31,6 +31,7 @@
 #include "hwp_table.H"
 #include "hwp_includes.H"
 #include "hwpWrapper.H"
+#include "atefw.H"
 
 using namespace fapi2;
 
@@ -38,7 +39,7 @@ using namespace fapi2;
 // IO HWP Class
 static hwpMap_t hwpClass1PtrTbl[] =
           {
-               HWP_MAP(istepLoadIOPPEwithOcmb, ody_omi_hss_ppe_load),   // 1.01
+               HWP_MAP(istepLoadIOPPEwithOcmb, ody_omi_hss_ppe_load),     // 1.01
                HWP_MAP( istepWithOcmb, ody_omi_hss_config ),              // 1.02
                HWP_MAP( istepWithOcmb, ody_omi_hss_ppe_start),            // 1.03
                HWP_MAP( istepWithOcmb, ody_omi_hss_bist_init ),           // 1.04
@@ -61,11 +62,11 @@ static hwpMap_t hwpClass2PtrTbl[] =
           {
                HWP_MAP( istepWithOcmb, ody_scominit ),              // 2.01
                HWP_MAP( istepWithOcmb, ody_ddrphyinit ),            // 2.02
-               HWP_MAP( NULL, NULL ),                               // 2.03
+               HWP_MAP( istepATEPHYReset, NULL ),                   // 2.03 LAB HWPs
                HWP_MAP( istepLoadIMEMwithOcmb, ody_load_imem ),     // 2.04
                HWP_MAP( istepLoadDMEMwithOcmb, ody_load_dmem ),     // 2.05
                HWP_MAP( istepDraminitWithOcmb, ody_sppe_draminit ), // 2.06
-               HWP_MAP( NULL, NULL ),                               // 2.07
+               HWP_MAP( istepATEFW, NULL),                          // 2.07 LAB HWPs
                HWP_MAP( istepWithOcmb, ody_load_pie ),              // 2.08
                HWP_MAP( istepWithOcmb, ody_draminit_mc ),           // 2.09
                HWP_MAP( istepWithOcmb, ody_enable_ecc ),            // 2.10
