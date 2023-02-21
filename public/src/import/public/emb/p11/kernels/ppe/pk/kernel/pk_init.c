@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -175,8 +175,9 @@ _pk_initialize(PkAddress     kernel_stack,
     G_PK_TRACE_BUF = (PkTraceBuffer*)pk_trace_buffer;
     G_PK_TRACE_BUF->instance_id = (uint16_t)(mfspr(SPRN_PIR) & PIR_PPE_INSTANCE_MASK);
 
+    static const char _ppe_img_str[PK_TRACE_IMG_STR_SZ] = PPE_IMG_STRING;
     G_PK_TRACE_BUF->version            = PK_TRACE_VERSION;
-    memcpy(G_PK_TRACE_BUF->image_str, PPE_IMG_STRING, PK_TRACE_IMG_STR_SZ);
+    memcpy(G_PK_TRACE_BUF->image_str, _ppe_img_str, PK_TRACE_IMG_STR_SZ);
     G_PK_TRACE_BUF->hash_prefix        = PK_TRACE_HASH_PREFIX;
     G_PK_TRACE_BUF->partial_trace_hash =
         trace_ppe_hash("PARTIAL TRACE ENTRY. HASH_ID = %d", PK_TRACE_HASH_PREFIX);
