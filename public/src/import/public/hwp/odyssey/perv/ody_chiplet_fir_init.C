@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -44,6 +44,7 @@ ReturnCode ody_chiplet_fir_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     FAPI_INF("Entering ...");
     FAPI_TRY(mod_setup_clockstop_on_xstop(i_target, ody_chiplet_delay_table));
+    FAPI_TRY(mod_unmask_firs(i_target));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");

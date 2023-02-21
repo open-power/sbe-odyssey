@@ -307,6 +307,14 @@ def mod_switch_pcbmux(target<ANY_POZ_CHIP>, mux_type i_path):
     # write ROOT_CTRL0
     ROOT_CTRL0.OOB_MUX = l_oob_mux_save
 
+def mod_unmask_firs(target<ANY_POZ_CHIP>):
+    with all good chiplets except TP via multicast:
+        EPS_MASK = LFIR_MASK_DEFAULT    # 0x80dfffffffffffff
+        XSTOP_MASK = XSTOP_MASK_ANY_ATTN_AND_DBG   # 0x3000000000000000
+        RECOV_MASK = RECOV_MASK_LOCAL_XSTOP        # 0x2000000000000000
+        ATTN_MASK = 0
+        LOCAL_XSTOP_MASK = 0
+
 def mod_setup_clockstop_on_xstop(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64]):
     if not ATTR_CLOCKSTOP_ON_XSTOP:
         return
@@ -386,6 +394,12 @@ def mod_poz_tp_init_common(target<ANY_POZ_CHIP>):
     CPLT_CTRL2 = ATTR_PG(PERV)               # Transfer PERV partial good attribute into region good register
     PERV_CTRL0.VITL_CG_DIS = 0               # Enabe PERV vital clock gating
     CPLT_CTRL0.CTRL_CC_FORCE_ALIGN_DC = 0    # Disable alignment pulse
+
+    EPS_MASK = TP_LFIR_MASK_DEFAULT            # 0x80c1c7fcf3fbffff
+    XSTOP_MASK = XSTOP_MASK_ANY_ATTN_AND_DBG   # 0x3000000000000000
+    RECOV_MASK = RECOV_MASK_LOCAL_XSTOP        # 0x2000000000000000
+    ATTN_MASK = 0
+    LOCAL_XSTOP_MASK = 0
 
     ## Enable Pervasive drivers/receivers
     ROOT_CTRL1.TP_RI_DC_B  = 1

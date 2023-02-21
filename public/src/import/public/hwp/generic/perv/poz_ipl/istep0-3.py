@@ -624,7 +624,6 @@ ISTEP(1, 23, "ph_tp_init", "SPPE")
 
 def p11s_tp_init():
     # TODO : Set up TOD error routing, error mask via scan inits
-    # TODO : Set up perv LFIR, XSTOP_MASK, RECOV_MASK via scan inits
 
     ## Start using PCB network
     ROOT_CTRL0.GLOBAL_EP_RESET = 0        # Drop Global Endpoint reset
@@ -657,7 +656,6 @@ def p11s_tp_init():
 
 def ody_tp_init():
     # TODO : Set up TOD error routing, error mask via scan inits
-    # TODO : Set up perv LFIR, XSTOP_MASK, RECOV_MASK via scan inits
 
     ## Start using PCB network
     ROOT_CTRL0.GLOBAL_EP_RESET = 0        # Drop Global Endpoint reset
@@ -689,7 +687,6 @@ def ody_tp_init():
 
 def zme_tp_init():
     # TODO : Set up TOD error routing, error mask via scan inits
-    # TODO : Set up perv LFIR, XSTOP_MASK, RECOV_MASK via scan inits
 
     ## Start using PCB network
     ROOT_CTRL0.GLOBAL_EP_RESET = 0        # Drop Global Endpoint reset
@@ -953,7 +950,6 @@ ISTEP(2, 21, "pc_tp_init", "TSBE")
 
 def p11t_tp_init():
     # TODO : Set up TOD error routing, error mask via scan inits
-    # TODO : Set up perv LFIR, XSTOP_MASK, RECOV_MASK via scan inits
 
     ## Start using PCB network
     ROOT_CTRL0.GLOBAL_EP_RESET = 0        # Drop Global Endpoint reset
@@ -1589,15 +1585,19 @@ ISTEP(3, 21, "proc_chiplet_fir_init", "SSBE, TSBE")
 
 def p11s_chiplet_fir_init():
     mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, p11s_chiplet_delay_table)
+    mod_unmask_firs(target)
 
 def p11t_chiplet_fir_init():
     mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, p11t_chiplet_delay_table)
+    mod_unmask_firs(target)
 
 def ody_chiplet_fir_init():
     mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, ody_chiplet_delay_table)
+    mod_unmask_firs(target)
 
 def zme_chiplet_fir_init():
     mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, zme_chiplet_delay_table)
+    mod_unmask_firs(target)
 
 ISTEP(3, 22, "proc_chiplet_dts_init", "SSBE, TSBE")
 
