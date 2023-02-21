@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -76,16 +76,4 @@
 // Run Duty cycle initialzation
 int tx_dcc_main_init(t_gcr_addr* gcr_addr_i);
 
-////////////////////////////////////////////////////////////////////////////////////////////
-// DEBUG FUNCTIONS
-// Some functions and macros to help in debugging.
-// These are light weight but the code size and performance hit can add up,
-// so allow for a compiler option to enable/disable based on debug level.
-////////////////////////////////////////////////////////////////////////////////////////////
-#if IO_DEBUG_LEVEL < 3
-    #define set_tx_dcc_debug(marker, value) {}
-#else
-    // This writes a "marker" followed by a value "value" to the mem_regs which can be used for tracking execution value.
-    #define set_tx_dcc_debug(marker, value) { mem_regs_u16[pg_addr(tx_dcc_debug_addr)] = (marker);  mem_regs_u16[pg_addr(tx_dcc_debug_addr)] = (value); }
-#endif //IO_DEBUG_LEVEL
 #endif //_TX_DCC_MAIN_H_

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -41,7 +41,12 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// vbr23011000 |vbr     | Issue 297222: Moved disabling of thread active time to start of hw_reg_init
+// jjb23010400 |jjb     | Removed unnecessary register read when setting bist enables
+// jjb22113000 |jjb     | Updated dac_test_check_en and rx_esd_check_en query code
+// mwh22111100 |mwh     | Updated for ESD
 // mbs22082601 |mbs     | Updated with PSL comments
+// mwh22092140 |mwh     | Change rx_min_recal_cnt to 1 for bist issue_290239
 // vbr22072100 |vbr     | Moved thread_active_time disable from mem_regs to img_regs
 // mwh22072100 |mwh     | Change 1 to 0b1 for active thread and bist in progress
 // mwh22071800 |mwh     | Add in rx_enable_auto_recal_0_15=0x0 disable auto-recal for bist
@@ -104,17 +109,20 @@ void eo_bist_init_ovride(t_gcr_addr* gcr_addr)
     mem_pg_field_put(bist_in_progress, 0b1);
 
     // Don't care about thread active times in BIST
-    img_field_put(ppe_disable_thread_active_time_check, 0b1);
+    // Moved to hw_reg_init: img_field_put(ppe_disable_thread_active_time_check, 0b1);
 
     int lane = 0;//for the "for loop" used on pl registers
     int bist_num_lanes_rx = get_num_rx_lane_slices();//getting max number of lanes per theard
     int bist_num_lanes_tx = get_num_tx_lane_slices();//getting max number of lanes per theard
 
 
-    //enabling all rx bist checks except for dac_test which is enabled/disabled by tester pattern (HW560154)
-    int dac_test_check_en = get_ptr_field(gcr_addr, rx_dac_test_check_en); //pg
-    int bist_check_en = 0xFFFE | dac_test_check_en;
-    put_ptr_field(gcr_addr, rx_check_en_alias, bist_check_en, fast_write); //pg
+    //enabling all rx bist checks except for dac_test and ESD_test which are enabled/disabled by tester pattern (HW560154)
+    int rx_check_en_alias_value = 0xFDFE | get_ptr_field(gcr_addr, rx_check_en_alias);
+    put_ptr_field(gcr_addr, rx_check_en_alias, rx_check_en_alias_value, fast_write); //pg
+
+    //change rx_min_recal_cnt to 1 for bist issue_290239 -- need only 1 recal for bist
+    mem_pg_field_put(rx_min_recal_cnt, 0b0001); //pg ppe register
+
 
     // switch to tx address
     set_gcr_addr_reg_id(gcr_addr, tx_group);

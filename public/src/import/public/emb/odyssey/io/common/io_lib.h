@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mwh23011300 |mwh     | Added void set_rxbist_fail_lane since used by ioo and iot
 // vbr22061400 |vbr     | Made main_only the default for external power on/off commands
 // vbr22050900 |vbr     | Moved get_rx/tx_lane_bad functions from ioo/t_common to here
 // vbr22042100 |vbr     | Make number of tx_lane_slices be large enough to cover the clock lane on IOT; thus it also includes non-configured physical lanes.
@@ -765,9 +766,10 @@ static inline void io_spin_us(unsigned int us)
 
 #if PK_THREAD_SUPPORT
 
-    // Thread active time limits
+    // Thread active time default limits
     #ifdef IOO
-        #define THREAD_ACTIVE_TIME_LIMIT_US 15
+        #define PCIE_THREAD_ACTIVE_TIME_LIMIT_US 12
+        #define AXO_THREAD_ACTIVE_TIME_LIMIT_US  24
     #else //IOT
         #define THREAD_ACTIVE_TIME_LIMIT_US 24
     #endif
@@ -1206,6 +1208,8 @@ static inline int eo_round( const int i_val)
 
 //applied to eo_eoff.c and eo_iot_loff.c
 int eo_get_weight_ave( int i_e_after, int i_e_before);
+
+void set_rxbist_fail_lane( t_gcr_addr* gcr_addr);
 
 // write a repeating 4-bit pattern to the tx pattern register
 void tx_write_4_bit_pat(t_gcr_addr* gcr_addr, unsigned int pat_4);

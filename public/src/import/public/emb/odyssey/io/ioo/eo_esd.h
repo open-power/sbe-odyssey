@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/emb/odyssey/io/ioo/eo_vga_pathoffset.h $ */
+/* $Source: public/src/import/public/emb/odyssey/io/ioo/eo_esd.h $        */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,12 +27,11 @@
 // *! All Rights Reserved -- Property of IBM
 // *! *** IBM Confidential ***
 // *!---------------------------------------------------------------------------
-// *! FILENAME    : eo_vga_pathoffset.h
+// *! FILENAME    : eo_esd.h
 // *! TITLE       :
 // *! DESCRIPTION :
 // *!
-// *! OWNER NAME  : Mike Harper         Email: harperm@us.ibm.com
-// *! BACKUP NAME : Vikram Raj          Email: vbraj@us.ibm.com
+// *! OWNER NAME  : Vikram Raj          Email: vbraj@us.ibm.com
 // *! BACKUP NAME : Mike Spear          Email: mspear@us.ibm.com
 // *!
 // *!---------------------------------------------------------------------------
@@ -40,22 +39,17 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
-// jjb22112200 |jjb     | added pcie_bist_mode parameters
-// mwh21060100 |mwh     | Add recal to inputs for Gen 3 recal
-// mwh21052000 |mwh     | Add first_recal,gen3,2,1
-// mwh21041600 |mwh     | Initial Rev
+// jac22061700 |jac     | Initial Rev
 // -----------------------------------------------------------------------------
 
-#ifndef _EO_VGA_PATHOFFSET_H_
-#define _EO_VGA_PATHOFFSET_H_
+#ifndef _EO_ESD_H_
+#define _EO_ESD_H_
 
 #include <stdbool.h>
 #include "ioo_common.h"
 
-// VGA Gain loop portion of VGA
-int eo_vga_pathoffset(t_gcr_addr* gcr_addr, t_bank bank, int saved_Amax_poff, bool recal, bool first_recal,
-                      bool pcie_gen1_cal, bool pcie_gen2_cal, bool pcie_gen3_cal, bool pcie_bist_mode);
+// ESD Path Offset Test
+int eo_esd_test(t_gcr_addr* gcr_addr, t_bank test_bank);
 
 
-
-#endif //_EO_VGA_PATHOFFSET_H_
+#endif //_EO_ESD_H_

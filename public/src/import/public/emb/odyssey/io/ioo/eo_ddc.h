@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// jfg22111701 |jfg     | Remove PR defines in lieu of common read_active_pr
 // jfg21120100 |jfg     | Add constants and function defs for new eo_ddc.c
 // jfg20090100 |jfg     | HW532333 Move offset changes to eo_main
 // jfg18081000 |jfg     | Modified for new function def
@@ -49,17 +50,6 @@
 #define _EO_DDC_H_
 
 #include "ioo_common.h"
-
-// All four PR positions packed in as: {Data NS, Edge NS, Data EW, Edge EW}
-#define prDns_i 0
-#define prEns_i 1
-#define prDew_i 2
-#define prEew_i 3
-
-#define prmask_Dns(a) ( ((a) & (rx_a_pr_ns_data_mask >> rx_a_pr_ns_edge_shift)) >> (rx_a_pr_ns_data_shift - rx_a_pr_ns_edge_shift) )
-#define prmask_Ens(a) ( ((a) & (rx_a_pr_ns_edge_mask >> rx_a_pr_ns_edge_shift)) )
-#define prmask_Dew(a) ( ((a) & (rx_a_pr_ew_data_mask >> rx_a_pr_ew_edge_shift)) >> (rx_a_pr_ew_data_shift - rx_a_pr_ew_edge_shift) )
-#define prmask_Eew(a) ( ((a) & (rx_a_pr_ew_edge_mask >> rx_a_pr_ew_edge_shift)) )
 
 #define max_eye 0xFFFF
 #define seek_error -1

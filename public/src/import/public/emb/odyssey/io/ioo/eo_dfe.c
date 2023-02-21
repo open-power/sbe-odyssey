@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23010400 |vbr     | Issue 296947: Adjusted latch_dac accesses for different addresses on Odyssey vs P11/ZMetis
 // vbr22092700 |vbr     | Issue 290398: Add ppe config to disable servo min/max errors for DFE Full
 // mbs22082601 |mbs     | Updated with PSL comments
 // vbr22060900 |vbr     | Always increment the DFE Full quad after bank B regardless of run_all_quads
@@ -136,13 +137,7 @@
 //------------------------------------------------------------------------------
 // Constant Definitions
 //------------------------------------------------------------------------------
-//#define DFE_FULL_H1_ADJ   1  // Adjust DFE H1 by this amount after full dfe (ap+an/2)
-
-#define BUILD_DAC_ADDR(__bank__, __quad__, __latch__) (DAC_BASE_ADDR+(__bank__<<5)+(__quad__)+__latch__)
-#define DAC_BASE_ADDR rx_ad_latch_dac_n000_addr // 0x01B
-#define DAC_END_ADDR  rx_bd_latch_dac_w111_addr // 0x05A
-#define DAC_SIZE      ((DAC_END_ADDR - DAC_BASE_ADDR)+1) // ((0x05A - 0x01B) + 1) = 64
-#define DAC_WIDTH     rx_ad_latch_dac_n000_width
+#define DAC_BASE_ADDR get_latch_dac_addr(rx_ad_latch_dac_n000)  // Issue 296947 Workaround
 #define DAC_STARTBIT  rx_ad_latch_dac_n000_startbit
 #define DAC_ENDBIT    rx_ad_latch_dac_n000_endbit
 
@@ -265,25 +260,6 @@ static uint16_t dfe_fast_servo_ops_a[8] =
     SERVO_OP_MASK_ALL | SERVO_OP_FILT_AX011XX | SERVO_OP_AP | (BANK_B << 6) | QUAD_NORTH | L000,
     SERVO_OP_MASK_ALL | SERVO_OP_FILT_AX001XX | SERVO_OP_AP | (BANK_B << 6) | QUAD_NORTH | L000
 };*/
-
-
-PK_STATIC_ASSERT(DAC_SIZE == 64);
-PK_STATIC_ASSERT(BUILD_DAC_ADDR(BANK_A, QUAD_NORTH, L000) == rx_ad_latch_dac_n000_addr);
-PK_STATIC_ASSERT(BUILD_DAC_ADDR(BANK_A, QUAD_NORTH, L111) == rx_ad_latch_dac_n111_addr);
-PK_STATIC_ASSERT(BUILD_DAC_ADDR(BANK_A, QUAD_EAST , L000) == rx_ad_latch_dac_e000_addr);
-PK_STATIC_ASSERT(BUILD_DAC_ADDR(BANK_A, QUAD_EAST , L111) == rx_ad_latch_dac_e111_addr);
-PK_STATIC_ASSERT(BUILD_DAC_ADDR(BANK_A, QUAD_SOUTH, L000) == rx_ad_latch_dac_s000_addr);
-PK_STATIC_ASSERT(BUILD_DAC_ADDR(BANK_A, QUAD_SOUTH, L111) == rx_ad_latch_dac_s111_addr);
-PK_STATIC_ASSERT(BUILD_DAC_ADDR(BANK_A, QUAD_WEST , L000) == rx_ad_latch_dac_w000_addr);
-PK_STATIC_ASSERT(BUILD_DAC_ADDR(BANK_A, QUAD_WEST , L111) == rx_ad_latch_dac_w111_addr);
-PK_STATIC_ASSERT(BUILD_DAC_ADDR(BANK_B, QUAD_NORTH, L000) == rx_bd_latch_dac_n000_addr);
-PK_STATIC_ASSERT(BUILD_DAC_ADDR(BANK_B, QUAD_NORTH, L111) == rx_bd_latch_dac_n111_addr);
-PK_STATIC_ASSERT(BUILD_DAC_ADDR(BANK_B, QUAD_EAST , L000) == rx_bd_latch_dac_e000_addr);
-PK_STATIC_ASSERT(BUILD_DAC_ADDR(BANK_B, QUAD_EAST , L111) == rx_bd_latch_dac_e111_addr);
-PK_STATIC_ASSERT(BUILD_DAC_ADDR(BANK_B, QUAD_SOUTH, L000) == rx_bd_latch_dac_s000_addr);
-PK_STATIC_ASSERT(BUILD_DAC_ADDR(BANK_B, QUAD_SOUTH, L111) == rx_bd_latch_dac_s111_addr);
-PK_STATIC_ASSERT(BUILD_DAC_ADDR(BANK_B, QUAD_WEST , L000) == rx_bd_latch_dac_w000_addr);
-PK_STATIC_ASSERT(BUILD_DAC_ADDR(BANK_B, QUAD_WEST , L111) == rx_bd_latch_dac_w111_addr);
 
 
 //------------------------------------------------------------------------------
@@ -425,27 +401,6 @@ static inline void rx_eo_dfe_set_clock_adj(t_gcr_addr* i_tgt, int32_t i_prev_clk
             //do { l_step_done = get_ptr_field(i_tgt, rx_mini_pr_step_b_done_alias); } while (l_step_done != 0b1100); // bits[0:1] = ns_data_done, ew_data_done
         }
     } //if(i_new_clk_adj > i_prev_clk_adj)
-
-    return;
-}
-
-/**
- * @brief Read latch dacs to store latch offset values
- *
- * @param[in]  i_tgt         Reference to Bus Target
- * @param[out] o_loff_array  Previous DAC values from latch offset
- *
- * @return uint32_t. pass_code if success, else error code.
- */
-static inline void rx_eo_dfe_read_loff(t_gcr_addr* i_tgt, int16_t o_loff_array[DAC_SIZE])
-{
-    uint32_t l_dac_addr = DAC_BASE_ADDR;
-    uint32_t l_index    = 0;
-
-    for (; l_dac_addr <= DAC_END_ADDR; ++l_dac_addr, ++l_index)
-    {
-        o_loff_array[l_index] = LatchDacToInt(get_ptr(i_tgt, l_dac_addr, DAC_STARTBIT, DAC_ENDBIT));
-    }
 
     return;
 }
@@ -690,10 +645,12 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
         mem_pl_field_put(rx_dfe_full_quad, l_lane, l_dfe_full_quad); // Store the next quad value for this lane
     }
 
+    int l_dac_bank_addr = DAC_BASE_ADDR + (l_bank << 5);
+
     for (; l_quad <= l_quad_end; l_quad += 8)
     {
         //SET_DFE_DEBUG(0x7102, l_quad); // Quadrant Loop
-        l_dac_addr = DAC_BASE_ADDR + (l_bank << 5) + l_quad;
+        l_dac_addr = l_dac_bank_addr + l_quad;
 
         // Customize Servo Ops for Specific Quadrant and Bank
         for (l_latch = L000; l_latch <= L111; ++l_latch)
@@ -934,7 +891,8 @@ uint32_t rx_eo_dfe_fast(t_gcr_addr* i_tgt, t_init_cal_mode i_cal_mode)
     else     //!rx_loff_ad_n000_valid
     {
         // Save the latch offset for future use since will be overwriting the latch DAC
-        l_loff = LatchDacToInt(get_ptr_field(i_tgt, rx_ad_latch_dac_n000));
+        uint32_t latch_addr = get_latch_dac_addr(rx_ad_latch_dac_n000); // Issue 296947 Workaround
+        l_loff = LatchDacToInt(get_ptr(i_tgt, latch_addr, rx_ad_latch_dac_n000_startbit, rx_ad_latch_dac_n000_endbit));
         mem_pl_field_put(rx_loff_ad_n000, l_lane, l_loff);
         mem_pl_bit_set(rx_loff_ad_n000_valid, l_lane);
     }

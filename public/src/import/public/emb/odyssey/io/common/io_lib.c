@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,8 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mwh23011300 |mwh     | Added void set_rxbist_fail_lane since used by ioo and iot
+// vbr22111600 |vbr     | Added new config for the thread time check limit
 // vbr22100400 |vbr     | Issue 291616: Check for pipe abort during servo ops in pcie dccal/init
 // mbs22083000 |mbs     | PSL comment updates
 // gap22062200 |gap     | Moved per-gen fifo l2u settings to tx_fifo_init
@@ -227,8 +229,10 @@ static inline void check_thread_active_time()
     mem_regs_u16[pg_addr(ppe_thread_last_active_time_us_addr)] = active_time_us;
     last_io_sleep_call_time = current_time;
 
-    // Check that the active time does not exceed the limit and set a FIR if it does (skip this check if it is disabled for sim or BIST)
-    if (active_time_us > THREAD_ACTIVE_TIME_LIMIT_US)
+    // Check that the active time does not exceed the limit and set a FIR if it does (skip this check if it is disabled for sim, BIST, or an exception)
+    uint32_t active_time_limit_us = mem_pg_field_get(ppe_thread_active_time_us_limit);
+
+    if (active_time_us > active_time_limit_us)
     {
         ADD_LOG(DEBUG_THREAD_ACTIVE_TIME_ERROR, active_time_us);
         set_fir(fir_code_thread_active_time_exceeded);
@@ -472,7 +476,7 @@ int run_servo_ops_base(t_gcr_addr* gcr_addr, unsigned int queue, unsigned int nu
 
     do   //while (ops_done < num_ops);
     {
-        // In recal (or pcie init), check for abort
+        // In recal (or pcie reset/init), check for abort
         if (recal_or_pcie_mode)
         {
             uint32_t recal_abort = servo_queue_status_full_reg & abort_mask;
@@ -482,6 +486,8 @@ int run_servo_ops_base(t_gcr_addr* gcr_addr, unsigned int queue, unsigned int nu
                 // Abort the currently running servo and clear the queue.  Also clear (and ignore) any servo errors.
                 put_ptr_field_fast(gcr_addr, rx_datasm_cntl1_wo_full_reg_alias,
                                    (rx_clear_servo_queues_mask | rx_reset_servo_status_mask)); // strobe bits
+
+                //redundant with handling in callers: io_sleep(get_gcr_addr_thread(gcr_addr));
 
                 // Return abort_error for an AXO DL recal_abort; return abort_clean for any other abort source
                 int ret_val = (servo_queue_status_full_reg & abort_error_mask) ? abort_error_code : abort_clean_code;
@@ -895,6 +901,17 @@ int eo_get_weight_ave( int i_e_after, int i_e_before)
     int eoffn_next = (1 * i_e_after + 3 * i_e_before);
     int weight_average = eo_round(eoffn_next);
     return weight_average;
+}
+
+
+// set the given lane bit of the given bank fail register
+void set_rxbist_fail_lane( t_gcr_addr* gcr_addr)
+{
+    int lane = get_gcr_addr_lane(gcr_addr);
+    set_rx_lane_fail(lane);//sets rx_lane_fail_0_15 or rx_lane_fail_16_23
+    mem_pg_field_put(rx_fail_flag, 1);
+    // PSL set_fir_bad_lane_warning_and_dft_error
+    set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
 }
 
 

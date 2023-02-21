@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -51,6 +51,6 @@
 void set_recal_or_unused(const uint32_t i_lane, const uint32_t i_value);
 int run_initial_training(t_gcr_addr* io_gcr_addr, const uint32_t i_lane);
 int run_recalibration(t_gcr_addr* io_gcr_addr, const uint32_t i_lane);
-void auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes);
+int auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes);
 
 #endif //_EO_WRAPPERS_H__

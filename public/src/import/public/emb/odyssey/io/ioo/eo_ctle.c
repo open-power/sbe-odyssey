@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,8 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// jjb22122000 |jjb     | qualified setting rx_a/b_ctle_peak1/2_done with !peak1/2_disable
+// jjb22102600 |jjb     | Issue 292931: added io_sleep to abort check in 0x6080
 // mbs22082601 |mbs     | Updated with PSL comments
 // vbr22032300 |vbr     | Issue 273572: Allow disabling of starting servo ops from 0 to aid in debugging
 // vbr22022500 |vbr     | Revamped peak hysteresis to used stored bit.
@@ -319,6 +321,7 @@ int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, boo
     {
         set_debug_state(0x6080); //DEBUG - CTLE Recal Abort Condition
         restore = true;
+        io_sleep(get_gcr_addr_thread(gcr_addr)); // added to resolve pcie thread time exceeded
     }
 
     // Servo error sets rx_ctle_peak1/2_fail. In recal, it also causes a restore; in init, we keep the result.
@@ -485,13 +488,27 @@ int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, boo
     // PSL set_done_bank_a
     if (cal_bank == bank_a)
     {
-        mem_pl_bit_set(rx_a_ctle_peak1_done, lane);
-        mem_pl_bit_set(rx_a_ctle_peak2_done, lane);
+        if (!peak1_disable)
+        {
+            mem_pl_bit_set(rx_a_ctle_peak1_done, lane);
+        }
+
+        if (!peak2_disable)
+        {
+            mem_pl_bit_set(rx_a_ctle_peak2_done, lane);
+        }
     }
     else     //bank_b
     {
-        mem_pl_bit_set(rx_b_ctle_peak1_done, lane);
-        mem_pl_bit_set(rx_b_ctle_peak2_done, lane);
+        if (!peak1_disable)
+        {
+            mem_pl_bit_set(rx_b_ctle_peak1_done, lane);
+        }
+
+        if (!peak2_disable)
+        {
+            mem_pl_bit_set(rx_b_ctle_peak2_done, lane);
+        }
     }
 
     // Return Status

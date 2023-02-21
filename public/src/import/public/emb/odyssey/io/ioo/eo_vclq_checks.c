@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -41,6 +41,8 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// mwh23011300 |mwh     | moved to lib.c since used by iot and ioo void set_rxbist_fail_lane
+// mwh22111100 |mwh     | Removed code checking for LTE gain and zero
 // mbs22082601 |mbs     | Updated with PSL comments
 // mwh21008110 |mwh     | To support removing of gcr  rx_a/b_lane_fail_0_15_16_23 and moving to using rx_lane_fail_0_15,16_23
 // vbr21011901 |vbr     | Removed or changed to level 3 debug states that do not seem to be useful
@@ -90,8 +92,8 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
     const uint16_t rx_ctle_gain_check_en  = (bist_check_en & rx_ctle_gain_check_en_mask); //0x8000
     const uint16_t rx_ctle_peak1_check_en = (bist_check_en & rx_ctle_peak1_check_en_mask); //0x0800
     const uint16_t rx_ctle_peak2_check_en = (bist_check_en & rx_ctle_peak2_check_en_mask); //0x0400
-    const uint16_t rx_lte_gain_check_en   = (bist_check_en & rx_lte_gain_check_en_mask); //0x0200
-    const uint16_t rx_lte_zero_check_en   = (bist_check_en & rx_lte_zero_check_en_mask); //0x0100
+    //const uint16_t rx_lte_gain_check_en   =(bist_check_en & rx_lte_gain_check_en_mask);//0x0200
+    //const uint16_t rx_lte_zero_check_en   =(bist_check_en & rx_lte_zero_check_en_mask);//0x0100
     const uint16_t rx_quad_phase_check_en = (bist_check_en & rx_quad_phase_check_en_mask); //0x0040
 
 
@@ -110,8 +112,8 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
         mk_ptr_ary(rx_ctle_gain);
         mk_ptr_ary(rx_ctle_peak1);
         mk_ptr_ary(rx_ctle_peak2);
-        mk_ptr_ary(rx_lte_gain);
-        mk_ptr_ary(rx_lte_zero);
+        //mk_ptr_ary(rx_lte_gain);
+        //mk_ptr_ary(rx_lte_zero);
         //mk_ptr_ary(rx_quad_ph_adj_nsd);
         mk_ptr_ary(rx_quad_ph_adj_nse);
         //mk_ptr_ary(rx_quad_ph_adj_ewd);
@@ -125,8 +127,8 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
             asn_ptr_ary(rx_ctle_gain,       rx_a_ctle_gain);
             asn_ptr_ary(rx_ctle_peak1,      rx_a_ctle_peak1);
             asn_ptr_ary(rx_ctle_peak2,      rx_a_ctle_peak2);
-            asn_ptr_ary(rx_lte_gain,        rx_a_lte_gain);
-            asn_ptr_ary(rx_lte_zero,        rx_a_lte_zero);
+            //asn_ptr_ary(rx_lte_gain,        rx_a_lte_gain);
+            //asn_ptr_ary(rx_lte_zero,        rx_a_lte_zero);
             //asn_ptr_ary(rx_quad_ph_adj_nsd, rx_a_pr_ns_data);
             asn_ptr_ary(rx_quad_ph_adj_nse, rx_a_pr_ns_edge);
             //asn_ptr_ary(rx_quad_ph_adj_ewd, rx_a_pr_ew_data);
@@ -138,8 +140,8 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
             asn_ptr_ary(rx_ctle_gain,       rx_b_ctle_gain);
             asn_ptr_ary(rx_ctle_peak1,      rx_b_ctle_peak1);
             asn_ptr_ary(rx_ctle_peak2,      rx_b_ctle_peak2);
-            asn_ptr_ary(rx_lte_gain,        rx_b_lte_gain);
-            asn_ptr_ary(rx_lte_zero,        rx_b_lte_zero);
+            //asn_ptr_ary(rx_lte_gain,        rx_b_lte_gain);
+            //asn_ptr_ary(rx_lte_zero,        rx_b_lte_zero);
             //asn_ptr_ary(rx_quad_ph_adj_nsd, rx_b_pr_ns_data);
             asn_ptr_ary(rx_quad_ph_adj_nse, rx_b_pr_ns_edge);
             //asn_ptr_ary(rx_quad_ph_adj_ewd, rx_b_pr_ew_data);
@@ -248,66 +250,58 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
 
         //Check lte gain is not to low or to high
         // PSL bist_lte_gain_check
-        if( rx_lte_gain_check_en)
-        {
-            //set_debug_state(0x515E); // checking lte gain
-
-            int rx_lte_gain_int = get_ptr_ary(gcr_addr, rx_lte_gain);
-
-            // PSL bist_lte_gain_check_lt_min
-            if ( rx_lte_gain_int < mem_pg_field_get(rx_lte_gain_min_check) )
-            {
-                fail = 1;
-                ADD_LOG(DEBUG_BIST_LTE_GAIN_FAIL, gcr_addr, rx_lte_gain_int);
-                set_debug_state(0x516F, 3);
-            }
-            // PSL bist_lte_gain_check_gt_max
-            else if ( rx_lte_gain_int >  mem_pg_field_get(rx_lte_gain_max_check) )
-            {
-                fail = 1;
-                ADD_LOG(DEBUG_BIST_LTE_GAIN_FAIL, gcr_addr, rx_lte_gain_int);
-                set_debug_state(0x5160, 3);
-            }
-            else
-            {
-                fail = 0;
-                set_debug_state(0x5161, 3);
-            }
-
-
-            mem_pl_field_put(rx_lte_gain_fail, lane, fail );
-        }
+        //if( rx_lte_gain_check_en) {
+        //    //set_debug_state(0x515E); // checking lte gain
+        //
+        //    int rx_lte_gain_int = get_ptr_ary(gcr_addr, rx_lte_gain);
+        //
+        //    // PSL bist_lte_gain_check_lt_min
+        //    if ( rx_lte_gain_int < mem_pg_field_get(rx_lte_gain_min_check) ) {
+        //        fail = 1;
+        //        ADD_LOG(DEBUG_BIST_LTE_GAIN_FAIL, gcr_addr, rx_lte_gain_int);
+        //        set_debug_state(0x516F, 3);
+        //    }
+        //    // PSL bist_lte_gain_check_gt_max
+        //    else if ( rx_lte_gain_int >  mem_pg_field_get(rx_lte_gain_max_check) ) {
+        //         fail = 1;
+        //        ADD_LOG(DEBUG_BIST_LTE_GAIN_FAIL, gcr_addr, rx_lte_gain_int);
+        //        set_debug_state(0x5160, 3);
+        //    }
+        //    else {
+        //        fail = 0;
+        //        set_debug_state(0x5161, 3);
+        //    }
+        //
+        //
+        //    mem_pl_field_put(rx_lte_gain_fail, lane, fail );
+        // }
 
         //check rx_lte_zero values start
         // PSL bist_lte_zero_check
-        if(rx_lte_zero_check_en)
-        {
-            //set_debug_state(0x5162); // checking lte gain
-            int rx_lte_zero_int = get_ptr_ary(gcr_addr, rx_lte_zero);
-
-            // PSL bist_lte_zero_check_lt_min
-            if ( rx_lte_zero_int  < mem_pg_field_get(rx_lte_zero_min_check) )
-            {
-                fail = 1;
-                ADD_LOG(DEBUG_BIST_LTE_ZERO_FAIL, gcr_addr, rx_lte_zero_int);
-                set_debug_state(0x5163, 3);
-            }
-            // PSL bist_lte_zero_check_gt_max
-            else if ( rx_lte_zero_int >  mem_pg_field_get(rx_lte_zero_max_check) )
-            {
-                fail = 1;
-                ADD_LOG(DEBUG_BIST_LTE_ZERO_FAIL, gcr_addr, rx_lte_zero_int);
-                set_debug_state(0x5164, 3);
-            }
-            else
-            {
-                fail = 0;
-                set_debug_state(0x5165, 3);
-            }
-
-
-            mem_pl_field_put(rx_lte_zero_fail, lane, fail );
-        }
+        //if(rx_lte_zero_check_en) {
+        //    //set_debug_state(0x5162); // checking lte gain
+        //    int rx_lte_zero_int = get_ptr_ary(gcr_addr, rx_lte_zero);
+        //
+        //    // PSL bist_lte_zero_check_lt_min
+        //    if ( rx_lte_zero_int  < mem_pg_field_get(rx_lte_zero_min_check) ) {
+        //        fail = 1;
+        //        ADD_LOG(DEBUG_BIST_LTE_ZERO_FAIL, gcr_addr, rx_lte_zero_int);
+        //        set_debug_state(0x5163, 3);
+        //    }
+        //    // PSL bist_lte_zero_check_gt_max
+        //    else if ( rx_lte_zero_int >  mem_pg_field_get(rx_lte_zero_max_check) ) {
+        //        fail = 1;
+        //        ADD_LOG(DEBUG_BIST_LTE_ZERO_FAIL, gcr_addr, rx_lte_zero_int);
+        //        set_debug_state(0x5164, 3);
+        //    }
+        //    else {
+        //        fail = 0;
+        //        set_debug_state(0x5165, 3);
+        //    }
+        //
+        //
+        //      mem_pl_field_put(rx_lte_zero_fail, lane, fail );
+        // }
 
         //check quad phase adj is not to low or to high start
         // PSL bist_quad_phase_check
@@ -439,13 +433,3 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
 
     set_debug_state(0x5101); // end vclq checks
 }//vclq_checks()
-
-// set the given lane bit of the given bank fail register
-void set_rxbist_fail_lane( t_gcr_addr* gcr_addr)
-{
-    int lane = get_gcr_addr_lane(gcr_addr);
-    set_rx_lane_fail(lane);//sets rx_lane_fail_0_15 or rx_lane_fail_16_23
-    mem_pg_field_put(rx_fail_flag, 1);
-    // PSL set_fir_bad_lane_warning_and_dft_error
-    set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
-}

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23010400 |vbr     | Issue 296947: Adjusted latch_dac accesses for different addresses on Odyssey vs P11/ZMetis
 // mbs22082601 |mbs     | Updated with PSL comments
 // vbr22012801 |vbr     | Use common functions for DAC accelerator
 // mwh21101900 |mwh     | Updated code to keep the path offset value found poff_avg
@@ -129,6 +130,7 @@ int eo_eoff_1_lat(t_gcr_addr* gcr_addr,  bool recal,  t_bank bank, bool vote_sel
 
 
     int status;
+    int dac_addr;
 
     //set_debug_state(0xA001);
     {
@@ -149,23 +151,27 @@ int eo_eoff_1_lat(t_gcr_addr* gcr_addr,  bool recal,  t_bank bank, bool vote_sel
         }
 
 
-
         // PSL bank_a
         if (bank == bank_a )
         {
             //bank A is alt B is main
             mem_pl_field_put(rx_a_eoff_done, lane, 0b0);//ppe pl
-            edge_n_dac = get_ptr(gcr_addr, rx_ae_latch_dac_n_addr, rx_ae_latch_dac_n_startbit, rx_ae_latch_dac_n_endbit);//pl
+            dac_addr = rx_ae_latch_dac_n_alias_addr;
             servo_ops = servo_ops_eoff_a;
         }//bank A is alt B is main
         else
         {
             //bank B is alt A is main
             mem_pl_field_put(rx_b_eoff_done, lane, 0b0);//ppe pl
-            edge_n_dac = get_ptr(gcr_addr, rx_be_latch_dac_n_addr, rx_be_latch_dac_n_startbit, rx_be_latch_dac_n_endbit);//pl
+            dac_addr = rx_be_latch_dac_n_alias_addr;
             servo_ops = servo_ops_eoff_b;
         }//bank B is alt A is main
 
+        // Issue 296947 Workaround
+        int dac_addr_adjust = get_latch_dac_addr_adjust();
+        dac_addr += dac_addr_adjust;
+
+        edge_n_dac = get_ptr(gcr_addr, dac_addr, rx_ae_latch_dac_n_startbit, rx_ae_latch_dac_n_endbit);//pl
         edge_before_n = LatchDacToInt(edge_n_dac);//pl
 
         set_debug_state(0xA00E);// DEBUG - EOFF Run Servo Ops
@@ -196,19 +202,9 @@ int eo_eoff_1_lat(t_gcr_addr* gcr_addr,  bool recal,  t_bank bank, bool vote_sel
     {
         //bank
         set_debug_state(0xA010); // DEBUG - APPLY PATH OFFSET
-
         //This put the edge dac used find pathoffset back to before value
         //so the dac accel can be used write all edge latches
-        if (bank == bank_a )
-        {
-            //bank A is alt B is main
-            put_ptr_field(gcr_addr, rx_ae_latch_dac_n , IntToLatchDac(edge_before_n), fast_write);
-        }
-        else
-        {
-            //bank B is alt A is main
-            put_ptr_field(gcr_addr, rx_be_latch_dac_n , IntToLatchDac(edge_before_n), fast_write);
-        }
+        put_ptr_fast(gcr_addr, dac_addr, rx_ae_latch_dac_n_endbit, edge_n_dac);
 
         apply_rx_data_and_edge_dac_offset(gcr_addr, bank, poff_n);
 

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// jjb22121500 |jjb     | needed to change tx_pattern_sel to non-zero value that is different than desired value to enable fastx2 clocks
+// jjb22110700 |jjb     | moved ioo clk_sel, bus_width_sel, and gear_ratio set up code to reduce code space
+// jjb22101300 |jjb     | Updated hs and ls tx bist support for pcie mode
 // jjb22101100 |jjb     | TX HS BIST updated to run all 4 patterns
 // mbs22082601 |mbs     | Updated with PSL comments
 // jjb22070700 |jjb     | tx_pattern_enable must be set high prior to tx_pattern_sel for gear ratio sync to operate properly
@@ -95,6 +98,30 @@ int txbist_main (t_gcr_addr* gcr_addr_i)
 
     int l_pcie_mode = fw_field_get(fw_pcie_mode);
     int l_rate = get_ptr_field(gcr_addr_i, pipe_state_rate);// Gen1=0...Gen5=4
+
+#ifdef IOO
+
+    // PSL pcie_mode
+    if (l_pcie_mode == 1)   // Update ppe_data_rate to reflect PCIe pipe_state_rate
+    {
+        uint32_t l_tx_pcie_clk_sel = get_ptr_field(gcr_addr_i, tx_pcie_clk_sel); // 1 hot; bits 27-31 --> gen5-gen1
+
+        // PSL pcie_gen1or2
+        if (l_tx_pcie_clk_sel < 3)   // GEN1/2
+        {
+            put_ptr_field(gcr_addr_i, tx_pattern_bus_width_sel, 0b1 , read_modify_write);  // 40 bit mode
+        }
+        else     // GEN3/4/5
+        {
+            put_ptr_field(gcr_addr_i, tx_pattern_bus_width_sel, 0b0 , read_modify_write);  // 32 bit mode
+        }
+
+        uint32_t l_tx_pattern_gear_ratio = 15 >> (31 - __builtin_clz(l_tx_pcie_clk_sel))
+                                           ; // uint32 0x10, 0x08, 0x04, 0x02, 0x01--> 0, 1, 3, 7, 15
+        put_ptr_field(gcr_addr_i, tx_pattern_gear_ratio, l_tx_pattern_gear_ratio , read_modify_write);
+    }
+
+#endif
 
     // PSL txdetrx_and_pcie_and_rate0
     if ((l_tx_bist_txdetrx_en == 1) && (l_pcie_mode == 1) && (l_rate == 0))
@@ -236,6 +263,8 @@ int txbist_main_ls(t_gcr_addr* gcr_addr_i)
     int status = rc_no_error;
 
     put_ptr_field(gcr_addr_i, tx_pattern_enable,   0b1,    read_modify_write);
+    put_ptr_field(gcr_addr_i, tx_pattern_sel,      0b001,
+                  read_modify_write); // needed to induce change in tx_pattern_sel to start clocks
     put_ptr_field(gcr_addr_i, tx_pattern_sel,      0b010,  read_modify_write);
     put_ptr_field(gcr_addr_i, tx_bist_prbs_enable, 0b1,    read_modify_write);
     put_ptr_field(gcr_addr_i, tx_bist_prbs_clear,  0b1,    read_modify_write);
@@ -272,6 +301,8 @@ int txbist_main_hs(t_gcr_addr* gcr_addr_i)
     put_ptr_field(gcr_addr_i, tx_tdr_enable,      0b0,    read_modify_write);
     put_ptr_field(gcr_addr_i, tx_bist_hs_cust_en, 0b1,    read_modify_write);
     put_ptr_field(gcr_addr_i, tx_pattern_enable,  0b1,    read_modify_write);
+    put_ptr_field(gcr_addr_i, tx_pattern_sel,     0b010,
+                  read_modify_write); // needed to induce change in tx_pattern_sel to start clocks
     put_ptr_field(gcr_addr_i, tx_pattern_sel,     0b001,  read_modify_write);
 
     status |= txbist_main_hs_pat(gcr_addr_i, 0b0011);

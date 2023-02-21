@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -23,6 +23,10 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
+
+# in d7nmphy repo, run createregs prior to processing import from EKB side
+#   cd <d7nmphy>/logic/createregs
+#   run cr ioo
 
 D7NMPHY_ROOT=$1
 D7NMPHY_COMMON_SRC_PATH="ppe/images/ppe_common"
@@ -107,6 +111,7 @@ ioo_src_files+=("ppe_img_reg_const_pkg_ioo.h")
 ioo_src_files+=("ppe_mem_reg_const_pkg_ioo.h")
 ioo_src_files+=("txbist_main.c" "txbist_main.h")
 ioo_src_files+=("eo_bist_init_ovride.c" "eo_bist_init_ovride.h")
+ioo_src_files+=("eo_esd.h" "eo_esd.c")
 
 #
 # MEMREGS files to import from D7NMPHY_REG_PATH

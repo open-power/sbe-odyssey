@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,17 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23020300 |vbr     | Issue 298086: new function to remove edge pr offset on PIPE rate change or rx eq eval
+// vbr22120900 |vbr     | Only allow lanes 0-3 for PCIe (instead of 0-4)
+// jjb22112200 |jjb     | reduced if statements in eo_update_poff_avg
+// vbr22120600 |vbr     | Fixed the wait on done in apply_rx_dac_offset()
+// jfg22111800 |jfg     | Remove extra comment code
+// jfg22111701 |jfg     | Add read_active_pr and related defines
+// vbr22111700 |vbr     | Use latch_dac_double_mode for saving/restoring latch dacs
+// vbr22111501 |vbr     | New function to back out the DFE instead of a restore. Do not sleep during psave wait.
+// vbr22111500 |vbr     | Updated pipe_abort configs to only include rxactive in recal
+// vbr22110300 |vbr     | Issue 293889: Can not use bcast for setting the pipe abort masks
+// vbr22110200 |vbr     | Issue 293622: Fixed conditionals in wait for cdr lock and updated pcie exit check
 // vbr22100401 |vbr     | Issue 291616: Check for pipe abort in dccal/init; functions to change pipe_abort sources for dccal/init vs recal
 // vbr22100400 |vbr     | Issue 290234: exit wait_for_cdr_lock() on a pcie pipe reset
 // mbs22082601 |mbs     | Updated with PSL comments
@@ -129,11 +140,7 @@ void alt_bank_psave_clear_and_wait(t_gcr_addr* gcr_addr)
     while (psave_sts)
     {
         psave_sts = get_ptr_field(gcr_addr, rx_psave_sts_alt);
-
-        if (psave_sts)
-        {
-            io_sleep(get_gcr_addr_thread(gcr_addr));
-        }
+        //if (psave_sts) { io_sleep(get_gcr_addr_thread(gcr_addr)); }
     }
 } //alt_bank_psave_clear_and_wait
 
@@ -172,20 +179,20 @@ int wait_for_cdr_lock(t_gcr_addr* gcr_addr, bool set_fir_on_error)
         {
             return pass_code; // Exit when locked
         }
-        else if (pcie_mode)
-        {
-            set_gcr_addr_reg_id(gcr_addr, tx_group);
-            int pipe_reset = get_ptr_field(gcr_addr, pipe_state_resetn_active); //pl
-            set_gcr_addr_reg_id(gcr_addr, rx_group);
-
-            // PSL pipe_reset
-            if (pipe_reset)
-            {
-                return pass_code;  // Exit on a PCIe PIPE Reset (Issue 290234)
-            }
-        }
         else
         {
+            // PCIe check for abort
+            if (pcie_mode)
+            {
+                int pipe_abort = check_rx_abort(gcr_addr);
+
+                // PSL pipe_abort
+                if (pipe_abort)
+                {
+                    return pass_code;  // Exit on a PCIe PIPE Abort (Issue 290234/293622)
+                }
+            } //pcie_mode
+
             // Check timeout if not locked as yet. Check if hit a loop limit (in case timer is broke HW552111).
             bool timeout = (pk_timebase_get() - start_time) > (32 * scaled_microsecond);
             bool escape  = (loop_count >= 32); // 32 loops is much more that 32 us with min thread sleep times
@@ -299,25 +306,48 @@ PK_STATIC_ASSERT(pipe_recal_abort_mask_0_15_alias_width == 16);
 void pipe_abort_config(t_gcr_addr* gcr_addr, t_pipe_abort_cfg pipe_abort_cfg)
 {
 
-    // In recal want all abort sources selected (mask==0) on all lanes.
-    // In dccal/init want all abort sources unselected (mask==1) on all lanes with later exceptions on current lane.
-    int mask_val = (pipe_abort_cfg == PIPE_ABORT_CFG_RECAL) ? 0x0000 : 0xFFFF;
+    // When not training (idle) want all abort sources selected (mask==0) except rxactive on all lanes.
+    // In recal want all abort sources selected (mask==0) except rxactive on all lanes; but include rxactive on the recal lane.
+    // In dccal/init want all abort sources unselected (mask==1) on all lanes except on current lane (enable the pipe_reset only).
+    int all_lane_mask_val, cur_lane_mask_val;
 
-    // Write desired mask to all lanes
-    int lane = get_gcr_addr_lane(gcr_addr);
-    set_gcr_addr_reg_id_lane(gcr_addr, tx_group, bcast_all_lanes);
-    put_ptr_field_fast(gcr_addr, pipe_recal_abort_mask_0_15_alias, mask_val);
+    if (pipe_abort_cfg == PIPE_ABORT_CFG_IDLE)
+    {
+        // Do not need to bypass other things to handle PIPE commands on a lane being inactive.
+        // Enable bypassing for all other PIPE commands on any lane.
+        all_lane_mask_val = pipe_recal_abort_mask_rxactive_mask;
+        cur_lane_mask_val = pipe_recal_abort_mask_rxactive_mask;
+    }
+    else if (pipe_abort_cfg == PIPE_ABORT_CFG_RECAL)
+    {
+        // Need to interrupt recal on the current lane being inactive (none of the other lanes).
+        // Need to interrupt recal on any PIPE command on any lane.
+        all_lane_mask_val = pipe_recal_abort_mask_rxactive_mask;
+        cur_lane_mask_val = 0x0000;
+    }
+    else     // PIPE_ABORT_CFG_DCCAL || PIPE_ABORT_CFG_INITCAL
+    {
+        // Need to interrupt dccal/initial training  if the current lane is reset (none of the other lanes).
+        // Do not interrupt on any other PIPE command on any lane.
+        all_lane_mask_val = 0xFFFF;
+        cur_lane_mask_val = 0xFFFF & ~pipe_recal_abort_mask_resetn_active_mask;
+    }
 
-    // Enable the pipe_reset on the current lane as an abort during dccal and init
-    // PSL not_recal_config
-    if (pipe_abort_cfg != PIPE_ABORT_CFG_RECAL)   // PIPE_ABORT_CFG_DCCAL || PIPE_ABORT_CFG_INITCAL
+    // Write desired mask to all lanes in the group.
+    // Can not use a bcast because that will write to all lanes in the multigroup.
+    int num_lanes = get_num_rx_physical_lanes(); //use rx instead of tx so ignore the extra zcal lane
+    int saved_lane = get_gcr_addr_lane(gcr_addr);
+    set_gcr_addr_reg_id(gcr_addr, tx_group);
+    int lane;
+
+    for (lane = 0; lane < num_lanes; lane++)
     {
         set_gcr_addr_lane(gcr_addr, lane);
-        int reg_val = 0xFFFF & ~pipe_recal_abort_mask_resetn_active_mask;
+        int reg_val =  (lane == saved_lane) ? cur_lane_mask_val : all_lane_mask_val;
         put_ptr_field_fast(gcr_addr, pipe_recal_abort_mask_0_15_alias, reg_val);
     }
 
-    set_gcr_addr_reg_id_lane(gcr_addr, rx_group, lane);
+    set_gcr_addr_reg_id_lane(gcr_addr, rx_group, saved_lane);
 } //pipe_abort_config
 
 
@@ -722,29 +752,19 @@ void eo_update_poff_avg ( t_gcr_addr* gcr_addr, int poff_value, t_bank bank, int
     {
         //bank A is alt B is main
         poff_avg_before = TwosCompToInt(mem_pl_field_get(poff_avg_a, lane), poff_avg_a_width); //pl
-    }
-    else
-    {
-        //bank B is alt A is main
-        poff_avg_before = TwosCompToInt(mem_pl_field_get(poff_avg_b, lane), poff_avg_b_width); //pl
-    }
-
-    if (bank == bank_a )
-    {
-        //bank A is alt B is main
         mem_pl_field_put(poff_avg_a, lane, IntToTwosComp((poff_value + poff_avg_before), poff_avg_a_width)); //pl
     }
     else
     {
         //bank B is alt A is main
+        poff_avg_before = TwosCompToInt(mem_pl_field_get(poff_avg_b, lane), poff_avg_b_width); //pl
         mem_pl_field_put(poff_avg_b, lane, IntToTwosComp((poff_value + poff_avg_before), poff_avg_b_width)); //pl
     }
 
     return;
 }//end eo_update_poff_avg
 
-
-// Use the DAC accelerator to apply an offset to the Data DACs (not Edge) in a Bank
+// Use the DAC accelerator to apply an offset to the Data and/or Edge DACs in a Bank
 // Waits for the SM to complete before returning.
 PK_STATIC_ASSERT(rx_apply_poff_ad_run_startbit  == rx_apply_poff_ae_run_startbit + 1);
 PK_STATIC_ASSERT(rx_apply_poff_ae_done_startbit == rx_apply_poff_ae_run_startbit + 2);
@@ -779,7 +799,7 @@ void apply_rx_dac_offset(t_gcr_addr* gcr_addr, t_data_edge_dac_sel dac_sel, t_ba
     {
         apply_done = done_mask & get_ptr_field(gcr_addr, rx_apply_poff_ab_run_done_alias);
     }
-    while (!apply_done);
+    while (apply_done != done_mask);
 
     // Check for DAC Accelerator errors
     /*if (get_ptr_field(gcr_addr, rx_dac_accel_rollover_sticky)) {
@@ -789,6 +809,33 @@ void apply_rx_dac_offset(t_gcr_addr* gcr_addr, t_data_edge_dac_sel dac_sel, t_ba
     }*/
 } //apply_rx_dac_offset
 
+
+// Common function for reading active PR by bank
+// It relies on common vector definition using prmask_* defines
+void read_active_pr (t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals)
+{
+    uint32_t bank_pr[2];
+
+    // Load ****both**** data and edge values on read. Assumes in same reg address in data + edge order
+    // PSL bank_a
+    if (bank == bank_a)
+    {
+        bank_pr[0] = get_ptr(gcr_addr, rx_a_pr_ns_data_addr,  rx_a_pr_ns_data_startbit, rx_a_pr_ns_edge_endbit);
+        bank_pr[1] = get_ptr(gcr_addr, rx_a_pr_ew_data_addr,  rx_a_pr_ew_data_startbit, rx_a_pr_ew_edge_endbit);
+    }
+    else
+    {
+        bank_pr[0] = get_ptr(gcr_addr, rx_b_pr_ns_data_addr,  rx_b_pr_ns_data_startbit, rx_b_pr_ns_edge_endbit);
+        bank_pr[1] = get_ptr(gcr_addr, rx_b_pr_ew_data_addr,  rx_b_pr_ew_data_startbit, rx_b_pr_ew_edge_endbit);
+    }
+
+    pr_vals[prDns_i] = prmask_Dns(bank_pr[0]);
+    pr_vals[prEns_i] = prmask_Ens(bank_pr[0]);
+    pr_vals[prDew_i] = prmask_Dew(bank_pr[1]);
+    pr_vals[prEew_i] = prmask_Eew(bank_pr[1]);
+
+    return;
+}
 
 
 /////////////////////////
@@ -806,11 +853,12 @@ void save_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank)
 {
     int lane = get_gcr_addr_lane(gcr_addr);
     // PSL save_bank_a
-    int dac_addr = (target_bank == bank_a) ? rx_ad_latch_dac_n000_addr : rx_bd_latch_dac_n000_addr;
+    int dac_addr = (target_bank == bank_a) ? rx_ad_latch_dac_n000_alias_addr :
+                   rx_bd_latch_dac_n000_alias_addr; // PCIe only, so can ignore Issue 296947 (Odyssey address adjust)
     int mem_addr = (target_bank == bank_a) ? saved_rx_ad_loff_addr : saved_rx_bd_loff_addr;
 
-    // Error condition checking: Only support PCIe and lanes 0-4
-    if (lane > 4)
+    // Error condition checking: Only support PCIe and lanes 0-3
+    if (lane > 3)
     {
         set_debug_state(0x400A); // Illegal parameters for save_rx_data_latch_dac_values()
         // PSL set_fir_fatal_error
@@ -824,38 +872,53 @@ void save_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank)
     uint32_t* mem_reg_ptr = (uint32_t*)(&mem_regs_u16[mem_reg_index]);
 
     // Read and store each data latch dac value
+    // Use the rx_latch_dac_double_mode to read consecutive registers in a single read
+    put_ptr_field(gcr_addr, rx_latch_dac_double_mode, 1, fast_write); // fast_write OK, only field in register
     int index;
 
     for (index = 0; index < 8; index++, dac_addr = dac_addr + 4)
     {
+        uint32_t read10, read32;
+        read10 = get_ptr(gcr_addr, dac_addr + 0, 0, 15);
+        read32 = get_ptr(gcr_addr, dac_addr + 2, 0, 15);
+
         uint32_t reg_val;
-        reg_val  = get_ptr(gcr_addr, dac_addr + 0, rx_ad_latch_dac_n000_startbit, rx_ad_latch_dac_n000_endbit) << 24;
-        reg_val |= get_ptr(gcr_addr, dac_addr + 1, rx_ad_latch_dac_n000_startbit, rx_ad_latch_dac_n000_endbit) << 16;
-        reg_val |= get_ptr(gcr_addr, dac_addr + 2, rx_ad_latch_dac_n000_startbit, rx_ad_latch_dac_n000_endbit) << 8;
-        reg_val |= get_ptr(gcr_addr, dac_addr + 3, rx_ad_latch_dac_n000_startbit, rx_ad_latch_dac_n000_endbit) << 0;
+        reg_val  = (read10 & 0x00FF) << 24;
+        reg_val |= (read10 & 0xFF00) << 8;
+        reg_val |= (read32 & 0x00FF) << 8;
+        reg_val |= (read32 & 0xFF00) >> 8;
 
         mem_reg_ptr[index] = reg_val;
     }
+
+    put_ptr_field(gcr_addr, rx_latch_dac_double_mode, 0, fast_write); // fast_write OK, only field in register
 } //save_rx_data_latch_dac_values
 
-// PCIe Only: Write the data latches in a bank with the saved value + the recorded path offset
-// Must set the gcr reg_id to rx_group before calling this
+
 PK_STATIC_ASSERT(rx_mini_pr_step_run_done_full_reg_width == 16);
 PK_STATIC_ASSERT(rx_mini_pr_step_a_ns_data_run_startbit == 0);
 PK_STATIC_ASSERT(rx_mini_pr_step_a_ew_data_run_startbit == 1);
+PK_STATIC_ASSERT(rx_mini_pr_step_a_ns_edge_run_startbit == 2);
+PK_STATIC_ASSERT(rx_mini_pr_step_a_ew_edge_run_startbit == 3);
 PK_STATIC_ASSERT(rx_mini_pr_step_b_ns_data_run_startbit == 8);
 PK_STATIC_ASSERT(rx_mini_pr_step_b_ew_data_run_startbit == 9);
+PK_STATIC_ASSERT(rx_mini_pr_step_b_ns_edge_run_startbit == 10);
+PK_STATIC_ASSERT(rx_mini_pr_step_b_ew_edge_run_startbit == 11);
+
+// PCIe Only: Write the data latches in a bank with the saved value + the recorded path offset
+// MUST set the gcr reg_id to rx_group before calling this
+// ASSUMPTION: Not waiting for mini PR stepper to complete since expect it to be faster (~200ns) than subsequent code that would access the rx_data_dac_*_regs.
 void restore_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank)
 {
     int lane = get_gcr_addr_lane(gcr_addr);
 
-
     // PSL restore_bank_a
-    int dac_addr = (target_bank == bank_a) ? rx_ad_latch_dac_n000_addr : rx_bd_latch_dac_n000_addr;
+    int dac_addr = (target_bank == bank_a) ? rx_ad_latch_dac_n000_alias_addr :
+                   rx_bd_latch_dac_n000_alias_addr; // PCIe only, so can ignore Issue 296947 (Odyssey address adjust)
     int mem_addr = (target_bank == bank_a) ? saved_rx_ad_loff_addr : saved_rx_bd_loff_addr;
 
-    // Error condition checking: Only support PCIe and lanes 0-4
-    if (lane > 4)
+    // Error condition checking: Only support PCIe and lanes 0-3
+    if (lane > 3)
     {
         set_debug_state(0x400B); // Illegal parameters for restore_rx_data_latch_dac_values()
         // PSL set_fir_fatal_error
@@ -874,31 +937,32 @@ void restore_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank)
     uint32_t* mem_reg_ptr = (uint32_t*)(&mem_regs_u16[mem_reg_index]);
 
     // Read each stored data latch dac value, apply the path offset, and write the result to the dac
+    // Use the rx_latch_dac_double_mode to write consecutive registers in a single write
+    put_ptr_field(gcr_addr, rx_latch_dac_double_mode, 1, fast_write); // fast_write OK, only field in register
     int index;
 
     for (index = 0; index < 8; index++, dac_addr = dac_addr + 4)
     {
-        int dac_val;
+        int dac_val0, dac_val1, wr_val;
         uint32_t reg_val = mem_reg_ptr[index];
 
-        dac_val = LatchDacToInt((reg_val & 0xff000000) >> 24) + path_offset;
-        put_ptr_fast(gcr_addr, dac_addr + 0, rx_ad_latch_dac_n000_endbit, IntToLatchDac(dac_val));
+        dac_val0 = IntToLatchDac( LatchDacToInt((reg_val & 0xff000000) >> 24) + path_offset );
+        dac_val1 = IntToLatchDac( LatchDacToInt((reg_val & 0x00ff0000) >> 16) + path_offset );
+        wr_val   = (dac_val1 << 8) | dac_val0;
+        put_ptr_fast(gcr_addr, dac_addr + 0, 15, wr_val);
 
-        dac_val = LatchDacToInt((reg_val & 0x00ff0000) >> 16) + path_offset;
-        put_ptr_fast(gcr_addr, dac_addr + 1, rx_ad_latch_dac_n000_endbit, IntToLatchDac(dac_val));
-
-        dac_val = LatchDacToInt((reg_val & 0x0000ff00) >> 8) + path_offset;
-        put_ptr_fast(gcr_addr, dac_addr + 2, rx_ad_latch_dac_n000_endbit, IntToLatchDac(dac_val));
-
-        dac_val = LatchDacToInt((reg_val & 0x000000ff) >> 0) + path_offset;
-        put_ptr_fast(gcr_addr, dac_addr + 3, rx_ad_latch_dac_n000_endbit, IntToLatchDac(dac_val));
+        dac_val0 = IntToLatchDac( LatchDacToInt((reg_val & 0x0000ff00) >> 8) + path_offset );
+        dac_val1 = IntToLatchDac( LatchDacToInt((reg_val & 0x000000ff) >> 0) + path_offset );
+        wr_val   = (dac_val1 << 8) | dac_val0;
+        put_ptr_fast(gcr_addr, dac_addr + 2, 15, wr_val);
     }
 
+    put_ptr_field(gcr_addr, rx_latch_dac_double_mode, 0, fast_write); // fast_write OK, only field in register
+
     // Reset DFE Fast
-    // ASSUMPTION: Not waiting for mini PR stepper to complete since expect it to be faster than subsequent code that would access the rx_data_dac_*_regs.
+    // ASSUMPTION: Not waiting for mini PR stepper to complete since expect it to be faster (~200ns) than subsequent code that would access the rx_data_dac_*_regs.
     int clk_adj;
     int run_done_wr_val;
-
 
     // PSL dfe_bank_a
     if (target_bank == bank_a)
@@ -931,8 +995,122 @@ void restore_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank)
                   fast_write); // OK to write 0 to rest of register
 
     // Wait for PR stepper to complete
+    // ASSUMPTION: Not waiting for mini PR stepper to complete since expect it to be faster (~200ns) than subsequent code that would access the rx_data_dac_*_regs.
     //do { step_done = get_ptr_field(gcr_addr, rx_mini_pr_step_a/b_done_alias); } while (step_done != 0b1100); // bits[0:1] = ns_data_done, ew_data_done
 } //restore_rx_data_latch_dac_values
+
+
+// Clear the RX DFE from both Banks latches and Mini PRs
+// Must set the gcr reg_id to rx_group before calling this
+// ASSUMPTION: Not waiting for DAC accelerator to complete since expect it to be faster (~800ns) than subsequent code that would access the rx_data_dac_*_regs
+PK_STATIC_ASSERT(rx_mini_pr_step_a_done_alias_width == 4);
+void clear_rx_dfe(t_gcr_addr* gcr_addr)
+{
+    // Read current clock adjust (account for QPA by taking average of NS and EW)
+    int clk_adj_a = 16 - ((get_ptr_field(gcr_addr, rx_a_pr_ns_data) + get_ptr_field(gcr_addr, rx_a_pr_ew_data)) / 2);
+    int clk_adj_b = 16 - ((get_ptr_field(gcr_addr, rx_b_pr_ns_data) + get_ptr_field(gcr_addr, rx_b_pr_ew_data)) / 2);
+
+    // Bank A Step the mini PR back to nominal (16)
+    int clk_adj_regval = IntToTwosComp(clk_adj_a, rx_mini_pr_step_data_adj_width);
+    put_ptr_field(gcr_addr, rx_mini_pr_step_data_adj, clk_adj_regval,
+                  fast_write); // fast_write OK, rx_mini_pr_step_data/edge_adj are only fields in register
+    put_ptr_field(gcr_addr, rx_mini_pr_step_run_done_full_reg,
+                  rx_mini_pr_step_a_ns_data_run_mask | rx_mini_pr_step_a_ew_data_run_mask,
+                  fast_write); // OK to write 0 to rest of register
+
+    // Poll for stepper done before setup and run of bank B
+    int step_done;
+
+    do
+    {
+        step_done = get_ptr_field(gcr_addr, rx_mini_pr_step_a_done_alias);
+    }
+    while (step_done != 0b1100);   // bits[0:1] = ns_data_done, ew_data_done
+
+    // Bank B Step the mini PR back to nominal (16)
+    // ASSUMPTION: Not waiting for Mini PR stepper to complete since expect it to be faster (~200ns) than subsequent code that would access the rx_data_dac_*_regs
+    clk_adj_regval = IntToTwosComp(clk_adj_b, rx_mini_pr_step_data_adj_width);
+    put_ptr_field(gcr_addr, rx_mini_pr_step_data_adj, clk_adj_regval,
+                  fast_write); // fast_write OK, rx_mini_pr_step_data/edge_adj are only fields in register
+    put_ptr_field(gcr_addr, rx_mini_pr_step_run_done_full_reg,
+                  rx_mini_pr_step_b_ns_data_run_mask | rx_mini_pr_step_b_ew_data_run_mask,
+                  fast_write); // OK to write 0 to rest of register
+
+    // Read the DFE coefficients
+    int lane = get_gcr_addr_lane(gcr_addr);
+    int coef_7_0_val = TwosCompToInt(mem_pl_field_get(rx_dfe_coef_7_0, lane), rx_dfe_coef_7_0_width);
+    int coef_1_6_val = TwosCompToInt(mem_pl_field_get(rx_dfe_coef_1_6, lane), rx_dfe_coef_1_6_width);
+    int coef_5_2_val = TwosCompToInt(mem_pl_field_get(rx_dfe_coef_5_2, lane), rx_dfe_coef_5_2_width);
+    int coef_3_4_val = TwosCompToInt(mem_pl_field_get(rx_dfe_coef_3_4, lane), rx_dfe_coef_3_4_width);
+
+    // Invert the coefficients for the adjusment. Mask int32 to correct field width and shift into correct bit positions.
+    int coef_7_0_coef_1_6_adj_regval = ( IntToTwosComp(-coef_7_0_val, rx_coef_7_0_adj_width) << rx_coef_7_0_adj_shift ) |
+                                       ( IntToTwosComp(-coef_1_6_val, rx_coef_1_6_adj_width) << rx_coef_1_6_adj_shift );
+    int coef_5_2_coef_3_4_adj_regval = ( IntToTwosComp(-coef_5_2_val, rx_coef_5_2_adj_width) << rx_coef_5_2_adj_shift ) |
+                                       ( IntToTwosComp(-coef_3_4_val, rx_coef_3_4_adj_width) << rx_coef_3_4_adj_shift );
+
+    // OK to fast_write (no other fields in the adjust registers)
+    put_ptr_field(gcr_addr, rx_coef_7_0_coef_1_6_adj_full_reg, coef_7_0_coef_1_6_adj_regval, fast_write);
+    put_ptr_field(gcr_addr, rx_coef_5_2_coef_3_4_adj_full_reg, coef_5_2_coef_3_4_adj_regval, fast_write);
+
+    // Apply DFE coefficients to both banks
+    put_ptr_field(gcr_addr, rx_apply_dfe_v2_ab_run_done_alias, 0b1010,
+                  fast_write); // bits[0:3]: a_run, a_done, b_run, b_done
+
+    // Clear the mem_regs holding the coefficients and latch offset
+    mem_pl_field_put(rx_dfe_coef_7_0_1_6_alias, lane, 0);
+    mem_pl_field_put(rx_dfe_coef_5_2_3_4_alias, lane, 0);
+    mem_pl_bit_clr(rx_loff_ad_n000_valid, lane);
+
+    // Wait for DAC accelerator to finish
+    // ASSUMPTION: Not waiting for DAC accelerator to complete since expect it to be faster (~800ns) than subsequent code that would access the rx_data_dac_*_regs
+    //do { apply_done = get_ptr_field(gcr, rx_apply_dfe_v2_ab_run_done_alias); } while (apply_done != 0b1111);
+} //clear_rx_dfe
+
+
+// Remove the configured Edge PR Offset from whichever banks have it applied
+// Must set the gcr reg_id to rx_group before calling this
+// ASSUMPTION: Not waiting for Mini PR stepper to complete since expect it to be faster (~400ns) than subsequent code that would access the rx_data_dac_*_regs
+void remove_edge_pr_offset(t_gcr_addr* gcr_addr)
+{
+    int lane = get_gcr_addr_lane(gcr_addr);
+
+    // Exit if a PR offset is not applied to either bank
+    int pr_offset_applied_ab = mem_pl_field_get(ppe_pr_offset_applied_ab_alias, lane);
+
+    if (pr_offset_applied_ab == 0)
+    {
+        return;
+    }
+
+    // Determine which banks to run the mini PR stepepr on and the run command
+    int run_done_wr_val = 0;
+
+    if (pr_offset_applied_ab & 0b10)
+    {
+        run_done_wr_val |= (rx_mini_pr_step_a_ns_edge_run_mask | rx_mini_pr_step_a_ew_edge_run_mask);
+    }
+
+    if (pr_offset_applied_ab & 0b01)
+    {
+        run_done_wr_val |= (rx_mini_pr_step_b_ns_edge_run_mask | rx_mini_pr_step_b_ew_edge_run_mask);
+    }
+
+    // Run the PR stepper to undo the edge PR offset
+    int pr_offset_e = TwosCompToInt(mem_pg_field_get(ppe_pr_offset_e_override), ppe_pr_offset_e_override_width);
+    int step_adj_regval = IntToTwosComp(-pr_offset_e, rx_mini_pr_step_edge_adj_width);
+    put_ptr_field(gcr_addr, rx_mini_pr_step_edge_adj, step_adj_regval,
+                  fast_write); // fast_write OK, rx_mini_pr_step_data/edge_adj are only fields in register
+    put_ptr_field(gcr_addr, rx_mini_pr_step_run_done_full_reg, run_done_wr_val,
+                  fast_write); // OK to write 0 to rest of register
+
+    // Clear pr_offset_applied (assuming the data offset has already been removed)
+    mem_pl_field_put(ppe_pr_offset_applied_ab_alias, lane, 0);
+
+    // Wait for PR stepper to complete
+    // ASSUMPTION: Not waiting for Mini PR stepper to complete since expect it to be faster (~400ns) than subsequent code that would access the rx_data_dac_*_regs
+    //do { step_done = get_ptr_field(gcr_addr, rx_mini_pr_step_a/b_done_alias); } while (step_done != 0b1100); // bits[0:1] = ns_data_done, ew_data_done
+} //remove_edge_pr_offset
 
 
 PK_STATIC_ASSERT(tx_dcc_i_q_tune_full_reg_alias_width == 16);
@@ -949,8 +1127,8 @@ void save_tx_dcc_tune_values(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode)
 {
     int lane = get_gcr_addr_lane(gcr_addr);
 
-    // Error condition checking: Only support PCIe Gen3-5 and lanes 0-4
-    if ( (lane > 4) || (cal_mode < C_PCIE_GEN3_CAL) || (cal_mode == C_AXO_CAL) )
+    // Error condition checking: Only support PCIe Gen3-5 and lanes 0-3
+    if ( (lane > 3) || (cal_mode < C_PCIE_GEN3_CAL) || (cal_mode == C_AXO_CAL) )
     {
         set_debug_state(0xD01A); // Illegal parameters for save_tx_dcc_tune_values()
         // PSL set_fir_fatal_error
@@ -967,14 +1145,15 @@ void save_tx_dcc_tune_values(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode)
     mem_regs_u16[mem_reg_index + 1] = get_ptr_field(gcr_addr, tx_dcc_iq_tune);
 } //save_tx_dcc_tune_values
 
+
 // PCIe Only: Write the TX DCC config with the saved values for the current PCIe GenX
 // Must set the gcr reg_id to tx_group before calling this
 void restore_tx_dcc_tune_values(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode)
 {
     int lane = get_gcr_addr_lane(gcr_addr);
 
-    // Error condition checking: Only support PCIe and lanes 0-4
-    if ( (lane > 4) || (cal_mode == C_AXO_CAL) )
+    // Error condition checking: Only support PCIe and lanes 0-3
+    if ( (lane > 3) || (cal_mode == C_AXO_CAL) )
     {
         set_debug_state(0xD01B); // Illegal parameters for restore_tx_dcc_tune_values()
         // PSL set_fir_fatal_error
@@ -1027,8 +1206,8 @@ void preset_rx_peak_lte_values(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode)
 {
     int lane = get_gcr_addr_lane(gcr_addr);
 
-    // Error condition checking: Only support PCIe and lanes 0-4
-    if ( (lane > 4) || (cal_mode == C_AXO_CAL) )
+    // Error condition checking: Only support PCIe and lanes 0-3
+    if ( (lane > 3) || (cal_mode == C_AXO_CAL) )
     {
         set_debug_state(0x6033); // Illegal parameters for preset_rx_peak_lte_values()
         // PSL set_fir_fatal_error

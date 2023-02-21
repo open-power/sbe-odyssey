@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,9 +39,13 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// jjb22120700 |jjb     | enabled link layer bist for pci
+// mwh22111100 |mwh     | Updated enable with rx register enable for ESD
+// gap22102600 |gap     | EWM293106 update io_sleep to solve tx_ffe thread active time exceeded
 // mbs22082601 |mbs     | Updated with PSL comments
 // mwh22082900 |mwh     | Issue 286972 gate llbist so does not run during pcie
 // mwh22083000 |mwh     | Issue 286972 gating for llbist when in PCIE mode
+// jac22061700 |jac     | Add in ESD test
 // vbr22061500 |vbr     | Add external command fail reporting
 // vbr22060200 |vbr     | Add lab commands to table
 // vbr21120300 |vbr     | Use functions for number of lanes
@@ -68,6 +72,8 @@
 #include "eo_rxbist_ber.h"
 #include "eo_llbist.h"
 #include "eo_dac_test.h"
+#include "eo_esd.h"
+
 
 #include "ppe_fw_reg_const_pkg.h"
 #include "ppe_img_reg_const_pkg.h"
@@ -109,7 +115,6 @@ int cmd_tx_ffe_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const 
         set_gcr_addr_lane(io_gcr_addr, l_lane);
         // PSL tx_ffe
         tx_ffe(io_gcr_addr);
-        io_sleep(get_gcr_addr_thread(io_gcr_addr));
     }
 
     set_gcr_addr_reg_id(io_gcr_addr, rx_group); // set back to rx gcr address
@@ -243,16 +248,11 @@ int cmd_bist_final(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const
     int status = rc_no_error;
 
     // Run RX SIGDET BIST if enabled
-    int pcie_mode = fw_field_get(fw_pcie_mode);
-
-    if (!pcie_mode)  //only run for non pcie
+    // TEST LINK LAYER
+    // TODO - CWS Should we run this on both banks?
+    if (get_ptr_field(io_gcr_addr, rx_link_layer_check_en))
     {
-        // TEST LINK LAYER
-        // TODO - CWS Should we run this on both banks?
-        if (get_ptr_field(io_gcr_addr, rx_link_layer_check_en))
-        {
-            status |= eo_llbist(io_gcr_addr);
-        }
+        status |= eo_llbist(io_gcr_addr);
     }
 
     // TEST PHASE ROTATOR (BER)
@@ -272,6 +272,27 @@ int cmd_bist_final(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const
     if(rx_dac_test_check_en_int)
     {
         status |= eo_dac_test(io_gcr_addr, i_lane_mask_rx);
+    }
+
+    // Run ESD test to look for large non-fenced offsets
+    uint32_t l_lane = 0;
+    uint32_t i_lane_shift = i_lane_mask_rx;
+    uint32_t l_num_lanes = get_num_rx_lane_slices();
+    int rx_esd_check_en_int = get_ptr_field(io_gcr_addr, rx_esd_check_en); //pg
+
+    if(rx_esd_check_en_int)
+    {
+        for (; l_lane < l_num_lanes; ++l_lane, i_lane_shift = i_lane_shift << 1)
+        {
+            if ((i_lane_shift & 0x80000000) == 0x0)
+            {
+                continue;
+            }
+
+            set_gcr_addr_lane(io_gcr_addr, l_lane);
+            status |= eo_esd_test(io_gcr_addr, bank_a);
+            status |= eo_esd_test(io_gcr_addr, bank_b);
+        }
     }
 
     // Bist Reporting Code
@@ -300,9 +321,9 @@ int cmd_bist_final(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const
     //(get_ptr_field(io_gcr_addr, rx_a_lane_fail_16_23) <<  8) |
     //(get_ptr_field(io_gcr_addr, rx_b_lane_fail_16_23) <<  8);
 
-    uint32_t l_lane = 0;
-    uint32_t i_lane_shift = i_lane_mask_rx;
-    uint32_t l_num_lanes = get_num_rx_lane_slices();
+    l_lane = 0;
+    i_lane_shift = i_lane_mask_rx;
+    l_num_lanes = get_num_rx_lane_slices();
 
     for (; l_lane < l_num_lanes; ++l_lane, i_lane_shift = i_lane_shift << 1)
     {

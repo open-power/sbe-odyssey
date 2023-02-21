@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -86,6 +86,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// gap22102600 |gap     | EWM293106 update io_sleep to solve tx_ffe thread active time exceeded
 // gap22100300 |gap     | Fix bug in main alloc that limited bound ranges, add logging when using bound
 // gap22020500 |gap     | Add 5nm post, follow 5nm constraints
 // mbs22021000 |mbs     | Updates to reduce code size
@@ -125,6 +126,7 @@ void tx_ffe(t_gcr_addr* gcr_addr_i)
 {
     set_debug_state(0xC200); // tx_ffe begin
 
+    io_sleep(get_gcr_addr_thread(gcr_addr_i));
     uint32_t pre2_coef_x128_l  = mem_pg_field_get(tx_ffe_pre2_coef);
     uint32_t pre1_coef_x128_l  = mem_pg_field_get(tx_ffe_pre1_coef);
     uint32_t post_coef_x128_l  = mem_pg_field_get(tx_ffe_post_coef);
@@ -135,11 +137,13 @@ void tx_ffe(t_gcr_addr* gcr_addr_i)
     uint32_t zcal_result_pseg_l = tx_ffe_get_zcal(gcr_addr_i, false, is_5nm_l);
 
     t_tx_ffe_cntl seg_values_l;
+    io_sleep(get_gcr_addr_thread(gcr_addr_i));
 
     tx_ffe_calc_ffe(gcr_addr_i, pre2_coef_x128_l, pre1_coef_x128_l, post_coef_x128_l, zcal_result_nseg_l,
                     zcal_result_pseg_l, is_5nm_l, &seg_values_l);
     io_sleep(get_gcr_addr_thread(gcr_addr_i));
     tx_ffe_write_ffe(gcr_addr_i, is_5nm_l, &seg_values_l);
+    io_sleep(get_gcr_addr_thread(gcr_addr_i));
 
     set_debug_state(0xC2FF); // tx_ffe end
 }

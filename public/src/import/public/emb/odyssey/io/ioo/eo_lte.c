@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mwh22111100 |mwh     | Removed fail line since not run
 // vbr21092200 |vbr     | Use shared functions for setting servo status error enable.
 // vbr21060200 |vbr     | Moved servo queue check to once at beginning of training.
 // vbr21011901 |vbr     | Removed or changed to level 3 debug states that do not seem to be useful
@@ -182,12 +183,9 @@ int eo_lte(t_gcr_addr* gcr_addr, t_bank cal_bank, bool copy_to_main, bool recal,
     status |= check_rx_abort(gcr_addr);
 
     //for bist -- if there error in servo we will set the below
-    if (status & rc_warning )
-    {
-        mem_pl_field_put(rx_lte_gain_fail, lane, 0b1);    //ppe pl
-        set_debug_state(0x90DD);
-    }
-
+    //if (status & rc_warning ) {
+    //   mem_pl_field_put(rx_lte_gain_fail, lane, 0b1);set_debug_state(0x90DD);
+    //   ADD_LOG(DEBUG_BIST_LTE_GAIN_FAIL, gcr_addr, rx_lte_gain);}//ppe pl
     // Re-enable servo status for result at min/max
     servo_errors_enable_all(gcr_addr);
 

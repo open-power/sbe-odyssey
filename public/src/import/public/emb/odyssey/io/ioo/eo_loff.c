@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -41,6 +41,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// vbr23010400 |vbr     | Issue 296947: Adjusted latch_dac accesses for different addresses on Odyssey vs P11/ZMetis
+// vbr22120500 |vbr     | Issue 294793: added sleep when there is a pipe_abort
+// vbr22110700 |vbr     | Issue 294028: skip saving dac values on a pipe_abort
 // mbs22082601 |mbs     | Updated with PSL comments
 // vbr22061500 |vbr     | Added returning of fail status
 // vbr21101200 |vbr     | Added saving of data latch dac values in pcie mode
@@ -121,13 +124,14 @@ static uint16_t servo_ops_loff_b[36] = { c_loff_bd_n000,  c_loff_bd_n001, c_loff
 
 
 
-static inline int loff_check(t_gcr_addr* gcr_addr, int lane, uint32_t l_dac_addr, uint32_t end_address,
+static inline int loff_check(t_gcr_addr* gcr_addr, int lane, uint32_t l_dac_addr, uint32_t num_dacs,
                              int check_latchoff_min, int check_latchoff_max)
 {
+    int i;
     int status = pass_code;
     int loff_before;
 
-    for (; l_dac_addr <= end_address; ++l_dac_addr)
+    for (i = 0; i < num_dacs; i++, l_dac_addr++)
     {
         //begin1
         loff_before = LatchDacToInt(get_ptr(gcr_addr, l_dac_addr, rx_ad_latch_dac_n000_startbit, rx_ad_latch_dac_n000_endbit)) ;
@@ -184,7 +188,7 @@ int eo_loff_fenced(t_gcr_addr* gcr_addr, t_bank bank)
     set_debug_state(0x4001);// DEBUG
     num_servo_ops = 36;
 
-    //Run all the servo latch offset ops
+    //Run all the servo latch offset ops (also checks for pipe_abort)
     int status = run_servo_ops_with_results_disabled(gcr_addr, c_servo_queue_general, num_servo_ops, servo_ops);
 
     //Setting fence back to default value after servo ops
@@ -197,14 +201,22 @@ int eo_loff_fenced(t_gcr_addr* gcr_addr, t_bank bank)
         put_ptr_field(gcr_addr, rx_b_fence_en , 0b0, read_modify_write);
     }
 
-    // In PCIe mode, save the data latch dac values
-    int pcie_mode = fw_field_get(fw_pcie_mode);
-
-    // PSL pcie_mode
-    if (pcie_mode)
+    // In PCIe mode, save the data latch dac values (when no pipe_abort)
+    // PSL no_pipe_abort
+    if ((status & abort_code) == 0)
     {
-        set_debug_state(0x4003); // DEBUG - Save Data Latch DAC values
-        save_rx_data_latch_dac_values(gcr_addr, bank);
+        int pcie_mode = fw_field_get(fw_pcie_mode);
+
+        // PSL pcie_mode
+        if (pcie_mode)
+        {
+            set_debug_state(0x4003); // DEBUG - Save Data Latch DAC values
+            save_rx_data_latch_dac_values(gcr_addr, bank);
+            io_sleep(get_gcr_addr_thread(gcr_addr));
+        }
+    }
+    else     //abort_code
+    {
         io_sleep(get_gcr_addr_thread(gcr_addr));
     }
 
@@ -212,10 +224,6 @@ int eo_loff_fenced(t_gcr_addr* gcr_addr, t_bank bank)
     //edge ae=20-22 be=23-26 ad=27-58 bd=59-90
     int rx_latchoff_check_en_int  = get_ptr(gcr_addr, rx_latchoff_check_en_addr, rx_latchoff_check_en_startbit,
                                             rx_latchoff_check_en_endbit);//pg
-    uint32_t l_dac_addr_e;
-    uint32_t end_address_e;
-    uint32_t l_dac_addr_d;
-    uint32_t end_address_d;
 
     if(rx_latchoff_check_en_int)
     {
@@ -223,25 +231,28 @@ int eo_loff_fenced(t_gcr_addr* gcr_addr, t_bank bank)
         int check_latchoff_min =  TwosCompToInt(mem_pg_field_get(rx_latchoff_min_check), rx_latchoff_min_check_width); //ppe pg
         int check_latchoff_max =  TwosCompToInt(mem_pg_field_get(rx_latchoff_max_check), rx_latchoff_max_check_width); //ppe pg
 
+        uint32_t l_dac_addr_e;
+        uint32_t l_dac_addr_d;
+
         // PSL check_en_bank_a
         if (bank == bank_a) //begin
         {
-            l_dac_addr_e =  rx_ae_latch_dac_n_addr;
-            end_address_e = rx_ae_latch_dac_w_addr;
-            l_dac_addr_d =  rx_ad_latch_dac_n000_addr;
-            end_address_d = rx_ad_latch_dac_w000_addr;
-            status |= loff_check(gcr_addr, lane, l_dac_addr_e, end_address_e, check_latchoff_min, check_latchoff_max);
-            status |= loff_check(gcr_addr, lane, l_dac_addr_d, end_address_d, check_latchoff_min, check_latchoff_max);
+            l_dac_addr_e =  rx_ae_latch_dac_n_alias_addr;
+            l_dac_addr_d =  rx_ad_latch_dac_n000_alias_addr;
         }
         else
         {
-            l_dac_addr_e =  rx_be_latch_dac_n_addr;
-            end_address_e = rx_be_latch_dac_w_addr;
-            l_dac_addr_d =  rx_bd_latch_dac_n000_addr;
-            end_address_d = rx_bd_latch_dac_w000_addr;
-            status |= loff_check(gcr_addr, lane, l_dac_addr_e, end_address_e, check_latchoff_min, check_latchoff_max);
-            status |= loff_check(gcr_addr, lane, l_dac_addr_d, end_address_d, check_latchoff_min, check_latchoff_max);
+            l_dac_addr_e =  rx_be_latch_dac_n_alias_addr;
+            l_dac_addr_d =  rx_bd_latch_dac_n000_alias_addr;
         }//end
+
+        // Issue 296947 Workaround
+        int l_dac_addr_adjust = get_latch_dac_addr_adjust();
+        l_dac_addr_e += l_dac_addr_adjust;
+        l_dac_addr_d += l_dac_addr_adjust;
+
+        status |= loff_check(gcr_addr, lane, l_dac_addr_e,  4, check_latchoff_min, check_latchoff_max);
+        status |= loff_check(gcr_addr, lane, l_dac_addr_d, 32, check_latchoff_min, check_latchoff_max);
     }//end0
 
     if (bank == bank_a)

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// gap23012500 |gap     | Issue 293532 log when tune bit hits min or max bound
 // mwh21092300 |mwh     | Moved to common to and removed out of tx_dcc_main.c to support iot and ioo
 // gap20100800 |gap     | Backout repmux for P11
 // gap20082500 |gap     | HW542315 correct repeating pattern when in half-width mode
@@ -57,6 +58,13 @@
 #ifndef _TX_DCC_MAIN_SERVO_H_
 #define _TX_DCC_MAIN_SERVO_H_
 
+// Use this to set debug_state levels for testing to enable deep debug
+// If this is less than or equal to IO_DEBUG_LEVEL in ppe_common/img_defs.mk,
+// deep debug info will be generated; the current value of IO_DEBUG_LEVEL is 2
+// You will may need to decrease $free_space_limit in ppe/obj/analyze_size.pl
+// TX_DCC_MAIN_SERVO_DBG_LVL is a related define in *.c
+#define TX_DCC_MAIN_SERVO_DEEP_DBG_LVL 3
+
 #include <stdbool.h>
 #include "tx_dcc_tune_constants.h"
 
@@ -64,12 +72,12 @@
 
 
 
-// types of servo ops
+// types of servo ops; _I must be first in IOO for consistent logging with IOT
 #ifdef IOO
 typedef enum
 {
-    SERVOOP_Q,
     SERVOOP_I,
+    SERVOOP_Q,
     SERVOOP_IQ
 } t_servoop;
 #endif
@@ -102,12 +110,11 @@ t_comp_result tx_dcc_main_compare_result(t_gcr_addr* gcr_addr_i, uint32_t min_sa
 // These are light weight but the code size and performance hit can add up,
 // so allow for a compiler option to enable/disable based on debug level.
 ////////////////////////////////////////////////////////////////////////////////////////////
-#if IO_DEBUG_LEVEL < 3
+#if TX_DCC_MAIN_SERVO_DEEP_DBG_LVL > IO_DEBUG_LEVEL
     #define set_tx_dcc_debug(marker, value) {}
 #else
     // This writes a "marker" followed by a value "value" to the mem_regs which can be used for tracking execution value.
     #define set_tx_dcc_debug(marker, value) { mem_regs_u16[pg_addr(tx_dcc_debug_addr)] = (marker);  mem_regs_u16[pg_addr(tx_dcc_debug_addr)] = (value); }
-#endif //IO_DEBUG_LEVEL
-
+#endif // TX_DCC_MAIN_SERVO_DEEP_DBG_LVL > IO_DEBUG_LEVEL
 
 #endif //_TX_DCC_MAIN_SERVO_H_

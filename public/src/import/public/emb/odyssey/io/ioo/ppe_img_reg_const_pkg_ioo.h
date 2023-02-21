@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -68,6 +68,14 @@
 #define ppe_num_threads_endbit                     3
 #define ppe_num_threads_shift                      12
 #define ppe_num_threads_mask                       0xf000
+
+
+#define ppe_sim_speedup_addr                       0b000000001
+#define ppe_sim_speedup_startbit                   2
+#define ppe_sim_speedup_width                      1
+#define ppe_sim_speedup_endbit                     2
+#define ppe_sim_speedup_shift                      13
+#define ppe_sim_speedup_mask                       0x2000
 
 
 #define ppe_vio_volts_addr                         0b000000000

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// jjb22121400 |jjb     | Issue 296218 : updated all set_debug_state values to 0x001? to uniquify them
 // mbs22082601 |mbs     | Updated with PSL comments
 // vbr21092200 |vbr     | Use wo pulse for psave_req_alt
 // vbr21081800 |vbr     | Story 237887: Check for psave_req=1 and run_lane=0 to power off alt. Issue 244463: Sleep more often when checking DL signals.
@@ -73,7 +74,7 @@
  */
 void dl_init_req(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
 {
-    //set_debug_state(0x0004);
+    //set_debug_state(0x0010);
     uint32_t l_rx_psave_req_mask = (get_ptr_field(io_gcr_addr, rx_psave_req_dl_0_15_sts)  << 16) |
                                    (get_ptr_field(io_gcr_addr, rx_psave_req_dl_16_23_sts) << (16 - rx_psave_req_dl_16_23_sts_width));
     uint32_t l_run_lane_mask = (get_ptr_field(io_gcr_addr, rx_dl_phy_run_lane_0_15)  << 16) |
@@ -90,6 +91,8 @@ void dl_init_req(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
         if (l_dl_init_req && !l_init_done)
         {
             // PSL_EN_NEXT
+            io_sleep(get_gcr_addr_thread(io_gcr_addr));
+            //mem_pg_field_put(rx_eo_phase_select_0_1, 0b11); // Run both phases (default setting for AXO)
             run_initial_training(io_gcr_addr, l_lane);  //sleeps at end
             put_ptr_field(io_gcr_addr, rx_phy_dl_init_done_set, 0b1, fast_write);
         }
@@ -120,7 +123,7 @@ void dl_init_req(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
         }
     } //for lane
 
-    //set_debug_state(0x0027);
+    //set_debug_state(0x0011);
     return;
 }//dl_init_req
 
@@ -146,7 +149,7 @@ uint32_t get_dl_recal_req_vec(t_gcr_addr* io_gcr_addr)
  */
 void dl_recal_req(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes, const uint32_t i_recal_req_vec)
 {
-    //set_debug_state(0x0026);
+    //set_debug_state(0x0012);
 
     // Check if need to run INIT on another lane
     // HW563765 - Don't check rx_any_init_req_or_reset due to preset bad lane
@@ -180,7 +183,7 @@ void dl_recal_req(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes, const uin
             // This helps flush out reset time issues with the DL recal request signals.
             if ( send_recal_done )
             {
-                set_debug_state(0x0005); // DEBUG - Recal Done Handshake
+                set_debug_state(0x0013); // DEBUG - Recal Done Handshake
                 put_ptr_field(io_gcr_addr, rx_phy_dl_recal_done_set, 0b1, fast_write); // strobe bit
 
                 while ((get_ptr_field(io_gcr_addr, rx_dl_phy_recal_req) ||
@@ -190,7 +193,7 @@ void dl_recal_req(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes, const uin
                     io_sleep(get_gcr_addr_thread(io_gcr_addr));
                 };
 
-                set_debug_state(0x0006); // DEBUG - Recal Done Handshake Complete
+                set_debug_state(0x0014); // DEBUG - Recal Done Handshake Complete
 
                 put_ptr_field(io_gcr_addr, rx_phy_dl_recal_done_clr, 0b1, fast_write); // strobe bit
 
@@ -201,6 +204,6 @@ void dl_recal_req(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes, const uin
         }
     } //for lane
 
-    //set_debug_state(0x0007);
+    //set_debug_state(0x0015);
     return;
 } //dl_recal_req

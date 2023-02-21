@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -78,6 +78,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// jjb23020100 |jjb     | Issue 298467: Made io_waits conditional on ppe_sim_speedup.
 // gap22101300 |gap     | If IOO, set to wide track and hold pulse during zcal
 // mbs22082601 |mbs     | Updated with PSL comments
 // gap22071800 |gap     | Remove test PSL_* controls
@@ -110,6 +111,7 @@
 
 #include "ppe_fw_reg_const_pkg.h"
 #include "ppe_com_reg_const_pkg.h"
+#include "ppe_img_reg_const_pkg.h"
 #include "io_config.h"
 
 #define DBG_LVL 3 // debug on each branch
@@ -210,7 +212,14 @@ void tx_zcal_tdr (t_gcr_addr* gcr_addr_i)
         set_debug_state(0xC168, DEEP_DBG_LVL); //    tx_tdr_dac_cntl
         put_ptr_field(gcr_addr_i, tx_tdr_dac_cntl, tx_zcal_tdr_dac_75percent_vio_c,
                       fast_write); // only other field in reg is tx_ , which we want 0 == P
-        io_wait_us(thread_l, tx_zcal_tdr_sw_wait_us_c);
+        uint32_t l_ppe_sim_speedup = img_field_get(ppe_sim_speedup);
+
+        // PSL ppe_sim_speedup_wait_1
+        if (!l_ppe_sim_speedup)
+        {
+            io_wait_us(thread_l, tx_zcal_tdr_sw_wait_us_c);
+        }
+
         done_l = false;
 
         do
@@ -225,7 +234,12 @@ void tx_zcal_tdr (t_gcr_addr* gcr_addr_i)
                 {
                     set_debug_state(0xC123, DBG_LVL); // pullup decrement successful
                     updated_pu_or_pd_l = true;
-                    io_wait_us(thread_l, tx_zcal_tdr_seg_wait_us_c);
+
+                    // PSL ppe_sim_speedup_wait_2
+                    if (!l_ppe_sim_speedup)
+                    {
+                        io_wait_us(thread_l, tx_zcal_tdr_seg_wait_us_c);
+                    }
                 }
                 else
                 {
@@ -256,7 +270,13 @@ void tx_zcal_tdr (t_gcr_addr* gcr_addr_i)
         put_ptr_field(gcr_addr_i, tx_tdr_phase_sel, 1, read_modify_write);
         set_debug_state(0xC16A, DEEP_DBG_LVL); //    tx_tdr_dac_cntl
         put_ptr_field(gcr_addr_i, tx_tdr_dac_cntl, tx_zcal_tdr_dac_25percent_vio_c, read_modify_write);
-        io_wait_us(thread_l, tx_zcal_tdr_sw_wait_us_c);
+
+        // PSL ppe_sim_speedup_wait_3
+        if (!l_ppe_sim_speedup)
+        {
+            io_wait_us(thread_l, tx_zcal_tdr_sw_wait_us_c);
+        }
+
         done_l = false;
 
         do
@@ -271,7 +291,12 @@ void tx_zcal_tdr (t_gcr_addr* gcr_addr_i)
                 {
                     set_debug_state(0xC133, DBG_LVL); // pulldown decrement successful
                     updated_pu_or_pd_l = true;
-                    io_wait_us(thread_l, tx_zcal_tdr_seg_wait_us_c);
+
+                    // PSL ppe_sim_speedup_wait_4
+                    if (!l_ppe_sim_speedup)
+                    {
+                        io_wait_us(thread_l, tx_zcal_tdr_seg_wait_us_c);
+                    }
                 }
                 else
                 {
