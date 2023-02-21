@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,7 +39,8 @@
 // -----------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
-// vbr22100700 |jjb     | Added new log type for IOT TX BIST DCC MIN/MAX fails
+// mwh22111100 |mwh     | Added and removed some enter ESD add LTE remvoed
+// jfg22100700 |jfg     | Added new log type for IOT TX BIST DCC MIN/MAX fails
 // vbr22032800 |vbr     | Added new log types for IOT
 // mwh22032500 |mwh     | Added log type DEBUG_BIST_TXIDLE_FAIL
 // jfg22031400 |jfg     | Add DEBUG_PPE_INIT_OVER_LIMIT
@@ -89,8 +90,8 @@
 #define DEBUG_BIST_VGA_GAIN_FAIL                0x04
 #define DEBUG_BIST_CTLE_PEAK1_FAIL              0x05
 #define DEBUG_BIST_CTLE_PEAK2_FAIL              0x06
-#define DEBUG_BIST_LTE_GAIN_FAIL                0x07
-#define DEBUG_BIST_LTE_ZERO_FAIL                0x08
+#define DEBUG_BIST_ESD_FAIL                     0x07
+//#define DEBUG_BIST_LTE_GAIN_FAIL                0x08
 #define DEBUG_BIST_QPA_FAIL                     0x09
 #define DEBUG_BIST_TX_DCC_I_FAIL                0x0A
 #define DEBUG_BIST_TX_DCC_Q_FAIL                0x0B

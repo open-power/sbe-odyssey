@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,8 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// jjb22121200 |jjb     | added bool restore to pipe_preset_rx
+// jjb22101400 |jjb     | added pipe_clock_change and pipe_preset_rx
 // jjb21071200 |jjb     | updated MAX_NUM_PIPE_CMD to 16
 // jjb21070600 |jjb     | added pipe_cmd_txdeemph_update
 // jjb21052400 |jjb     | updated pipe write committed to use pipe_put_blk
@@ -53,6 +55,7 @@
 #define _IOO_PIPE_IFC_H_
 
 #include "io_lib.h"
+#include "ioo_common.h"
 
 
 /////////////////////////////////////////////////
@@ -126,6 +129,13 @@
 #define pipe_mac_reg_tx_status_5_reg_sel            pipe_reg_sel_mac
 #define pipe_mac_reg_tx_status_6_reg_sel            pipe_reg_sel_mac
 
+
+/////////////////////////////////////////////////
+// external referenced functions
+/////////////////////////////////////////////////
+void pipe_clock_change(t_gcr_addr* gcr_addr, uint32_t rate_one_hot);
+void pipe_preset_rx(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, bool restore);
+void pipe_put_blk(t_gcr_addr* gcr_addr, uint32_t reg_sel, uint32_t reg_addr, uint32_t cmd, uint32_t data);
 
 /////////////////////////////////////////////////
 // Functions for accessing PIPE registers

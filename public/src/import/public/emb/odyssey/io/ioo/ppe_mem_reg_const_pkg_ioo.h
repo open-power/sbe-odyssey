@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -502,12 +502,52 @@
 #define ppe_lte_zero_disable_mask                  0x2
 
 
+#define ppe_pipe_current_lane_addr                 0b110110110
+#define ppe_pipe_current_lane_startbit             8
+#define ppe_pipe_current_lane_width                2
+#define ppe_pipe_current_lane_endbit               9
+#define ppe_pipe_current_lane_shift                6
+#define ppe_pipe_current_lane_mask                 0xc0
+
+
+#define ppe_pipe_lane_stress_mode_0_3_addr         0b110000110
+#define ppe_pipe_lane_stress_mode_0_3_startbit     8
+#define ppe_pipe_lane_stress_mode_0_3_width        4
+#define ppe_pipe_lane_stress_mode_0_3_endbit       11
+#define ppe_pipe_lane_stress_mode_0_3_shift        4
+#define ppe_pipe_lane_stress_mode_0_3_mask         0xf0
+
+
+#define ppe_pipe_reset_inactive_phase_0_3_addr     0b110110110
+#define ppe_pipe_reset_inactive_phase_0_3_startbit   0
+#define ppe_pipe_reset_inactive_phase_0_3_width    4
+#define ppe_pipe_reset_inactive_phase_0_3_endbit   3
+#define ppe_pipe_reset_inactive_phase_0_3_shift    12
+#define ppe_pipe_reset_inactive_phase_0_3_mask     0xf000
+
+
+#define ppe_pipe_rx_ei_inactive_phase_0_3_addr     0b110110110
+#define ppe_pipe_rx_ei_inactive_phase_0_3_startbit   4
+#define ppe_pipe_rx_ei_inactive_phase_0_3_width    4
+#define ppe_pipe_rx_ei_inactive_phase_0_3_endbit   7
+#define ppe_pipe_rx_ei_inactive_phase_0_3_shift    8
+#define ppe_pipe_rx_ei_inactive_phase_0_3_mask     0xf00
+
+
 #define ppe_pr_offset_applied_a_addr               0b000000101
 #define ppe_pr_offset_applied_a_startbit           2
 #define ppe_pr_offset_applied_a_width              1
 #define ppe_pr_offset_applied_a_endbit             2
 #define ppe_pr_offset_applied_a_shift              13
 #define ppe_pr_offset_applied_a_mask               0x2000
+
+
+#define ppe_pr_offset_applied_ab_alias_addr        0b000000101
+#define ppe_pr_offset_applied_ab_alias_startbit    2
+#define ppe_pr_offset_applied_ab_alias_width       2
+#define ppe_pr_offset_applied_ab_alias_endbit      3
+#define ppe_pr_offset_applied_ab_alias_shift       12
+#define ppe_pr_offset_applied_ab_alias_mask        0x3000
 
 
 #define ppe_pr_offset_applied_b_addr               0b000000101
@@ -572,6 +612,14 @@
 #define ppe_servo_status1_endbit                   15
 #define ppe_servo_status1_shift                    0
 #define ppe_servo_status1_mask                     0xffff
+
+
+#define ppe_thread_active_time_us_limit_addr       0b110110110
+#define ppe_thread_active_time_us_limit_startbit   10
+#define ppe_thread_active_time_us_limit_width      6
+#define ppe_thread_active_time_us_limit_endbit     15
+#define ppe_thread_active_time_us_limit_shift      0
+#define ppe_thread_active_time_us_limit_mask       0x3f
 
 
 #define ppe_thread_last_active_time_us_addr        0b110110101
@@ -1182,6 +1230,30 @@
 #define rx_dc_enable_latch_offset_cal_mask         0x8000
 
 
+#define rx_dc_enable_loff_a_addr                   0b110110100
+#define rx_dc_enable_loff_a_startbit               9
+#define rx_dc_enable_loff_a_width                  1
+#define rx_dc_enable_loff_a_endbit                 9
+#define rx_dc_enable_loff_a_shift                  6
+#define rx_dc_enable_loff_a_mask                   0x40
+
+
+#define rx_dc_enable_loff_ab_alias_addr            0b110110100
+#define rx_dc_enable_loff_ab_alias_startbit        9
+#define rx_dc_enable_loff_ab_alias_width           2
+#define rx_dc_enable_loff_ab_alias_endbit          10
+#define rx_dc_enable_loff_ab_alias_shift           5
+#define rx_dc_enable_loff_ab_alias_mask            0x60
+
+
+#define rx_dc_enable_loff_b_addr                   0b110110100
+#define rx_dc_enable_loff_b_startbit               10
+#define rx_dc_enable_loff_b_width                  1
+#define rx_dc_enable_loff_b_endbit                 10
+#define rx_dc_enable_loff_b_shift                  5
+#define rx_dc_enable_loff_b_mask                   0x20
+
+
 #define rx_dc_step_cntl_opt_alias_addr             0b110001101
 #define rx_dc_step_cntl_opt_alias_startbit         0
 #define rx_dc_step_cntl_opt_alias_width            2
@@ -1534,6 +1606,14 @@
 #define rx_eo_enable_vga_cal_mask                  0x8000
 
 
+#define rx_eo_phase_select_0_1_addr                0b110110100
+#define rx_eo_phase_select_0_1_startbit            11
+#define rx_eo_phase_select_0_1_width               2
+#define rx_eo_phase_select_0_1_endbit              12
+#define rx_eo_phase_select_0_1_shift               3
+#define rx_eo_phase_select_0_1_mask                0x18
+
+
 #define rx_eo_step_cntl_opt_alias_addr             0b110001001
 #define rx_eo_step_cntl_opt_alias_startbit         0
 #define rx_eo_step_cntl_opt_alias_width            8
@@ -1596,6 +1676,30 @@
 #define rx_epoff_min_check_endbit                  15
 #define rx_epoff_min_check_shift                   0
 #define rx_epoff_min_check_mask                    0xff
+
+
+#define rx_esd_abs_val_check_addr                  0b110100101
+#define rx_esd_abs_val_check_startbit              6
+#define rx_esd_abs_val_check_width                 7
+#define rx_esd_abs_val_check_endbit                12
+#define rx_esd_abs_val_check_shift                 3
+#define rx_esd_abs_val_check_mask                  0x3f8
+
+
+#define rx_esd_fail_addr                           0b000000001
+#define rx_esd_fail_startbit                       8
+#define rx_esd_fail_width                          1
+#define rx_esd_fail_endbit                         8
+#define rx_esd_fail_shift                          7
+#define rx_esd_fail_mask                           0x80
+
+
+#define rx_esd_shift_val_check_addr                0b110100101
+#define rx_esd_shift_val_check_startbit            0
+#define rx_esd_shift_val_check_width               6
+#define rx_esd_shift_val_check_endbit              5
+#define rx_esd_shift_val_check_shift               10
+#define rx_esd_shift_val_check_mask                0xfc00
 
 
 #define rx_eye_height_min_check_addr               0b110100000
@@ -1847,51 +1951,11 @@
 
 
 #define rx_lte_gain_fail_addr                      0b000000001
-#define rx_lte_gain_fail_startbit                  8
+#define rx_lte_gain_fail_startbit                  9
 #define rx_lte_gain_fail_width                     1
-#define rx_lte_gain_fail_endbit                    8
-#define rx_lte_gain_fail_shift                     7
-#define rx_lte_gain_fail_mask                      0x80
-
-
-#define rx_lte_gain_max_check_addr                 0b110100100
-#define rx_lte_gain_max_check_startbit             10
-#define rx_lte_gain_max_check_width                5
-#define rx_lte_gain_max_check_endbit               14
-#define rx_lte_gain_max_check_shift                1
-#define rx_lte_gain_max_check_mask                 0x3e
-
-
-#define rx_lte_gain_min_check_addr                 0b110100101
-#define rx_lte_gain_min_check_startbit             0
-#define rx_lte_gain_min_check_width                5
-#define rx_lte_gain_min_check_endbit               4
-#define rx_lte_gain_min_check_shift                11
-#define rx_lte_gain_min_check_mask                 0xf800
-
-
-#define rx_lte_zero_fail_addr                      0b000000001
-#define rx_lte_zero_fail_startbit                  9
-#define rx_lte_zero_fail_width                     1
-#define rx_lte_zero_fail_endbit                    9
-#define rx_lte_zero_fail_shift                     6
-#define rx_lte_zero_fail_mask                      0x40
-
-
-#define rx_lte_zero_max_check_addr                 0b110100101
-#define rx_lte_zero_max_check_startbit             5
-#define rx_lte_zero_max_check_width                5
-#define rx_lte_zero_max_check_endbit               9
-#define rx_lte_zero_max_check_shift                6
-#define rx_lte_zero_max_check_mask                 0x7c0
-
-
-#define rx_lte_zero_min_check_addr                 0b110100101
-#define rx_lte_zero_min_check_startbit             10
-#define rx_lte_zero_min_check_width                5
-#define rx_lte_zero_min_check_endbit               14
-#define rx_lte_zero_min_check_shift                1
-#define rx_lte_zero_min_check_mask                 0x3e
+#define rx_lte_gain_fail_endbit                    9
+#define rx_lte_gain_fail_shift                     6
+#define rx_lte_gain_fail_mask                      0x40
 
 
 #define rx_margin_timing_offset_addr               0b000001111
@@ -2110,6 +2174,14 @@
 #define rx_recal_run_or_unused_16_23_mask          0xff00
 
 
+#define rx_running_eq_eval_addr                    0b110110100
+#define rx_running_eq_eval_startbit                8
+#define rx_running_eq_eval_width                   1
+#define rx_running_eq_eval_endbit                  8
+#define rx_running_eq_eval_shift                   7
+#define rx_running_eq_eval_mask                    0x80
+
+
 #define rx_running_recal_addr                      0b110110100
 #define rx_running_recal_startbit                  0
 #define rx_running_recal_width                     1
@@ -2124,6 +2196,14 @@
 #define rx_sigdet_fail_endbit                      10
 #define rx_sigdet_fail_shift                       5
 #define rx_sigdet_fail_mask                        0x20
+
+
+#define rx_spare_max_check_addr                    0b110100100
+#define rx_spare_max_check_startbit                10
+#define rx_spare_max_check_width                   5
+#define rx_spare_max_check_endbit                  14
+#define rx_spare_max_check_shift                   1
+#define rx_spare_max_check_mask                    0x3e
 
 
 #define rx_step_fail_alias_addr                    0b000000001
@@ -2398,6 +2478,46 @@
 #define tx_pcie_idle_del_sel_5_mask                0xf000
 
 
+#define tx_pcie_idle_loz_del_sel_1_alias_addr      0b110010110
+#define tx_pcie_idle_loz_del_sel_1_alias_startbit   0
+#define tx_pcie_idle_loz_del_sel_1_alias_width     8
+#define tx_pcie_idle_loz_del_sel_1_alias_endbit    7
+#define tx_pcie_idle_loz_del_sel_1_alias_shift     8
+#define tx_pcie_idle_loz_del_sel_1_alias_mask      0xff00
+
+
+#define tx_pcie_idle_loz_del_sel_2_alias_addr      0b110010110
+#define tx_pcie_idle_loz_del_sel_2_alias_startbit   8
+#define tx_pcie_idle_loz_del_sel_2_alias_width     8
+#define tx_pcie_idle_loz_del_sel_2_alias_endbit    15
+#define tx_pcie_idle_loz_del_sel_2_alias_shift     0
+#define tx_pcie_idle_loz_del_sel_2_alias_mask      0xff
+
+
+#define tx_pcie_idle_loz_del_sel_3_alias_addr      0b110010111
+#define tx_pcie_idle_loz_del_sel_3_alias_startbit   0
+#define tx_pcie_idle_loz_del_sel_3_alias_width     8
+#define tx_pcie_idle_loz_del_sel_3_alias_endbit    7
+#define tx_pcie_idle_loz_del_sel_3_alias_shift     8
+#define tx_pcie_idle_loz_del_sel_3_alias_mask      0xff00
+
+
+#define tx_pcie_idle_loz_del_sel_4_alias_addr      0b110010111
+#define tx_pcie_idle_loz_del_sel_4_alias_startbit   8
+#define tx_pcie_idle_loz_del_sel_4_alias_width     8
+#define tx_pcie_idle_loz_del_sel_4_alias_endbit    15
+#define tx_pcie_idle_loz_del_sel_4_alias_shift     0
+#define tx_pcie_idle_loz_del_sel_4_alias_mask      0xff
+
+
+#define tx_pcie_idle_loz_del_sel_5_alias_addr      0b110011000
+#define tx_pcie_idle_loz_del_sel_5_alias_startbit   0
+#define tx_pcie_idle_loz_del_sel_5_alias_width     8
+#define tx_pcie_idle_loz_del_sel_5_alias_endbit    7
+#define tx_pcie_idle_loz_del_sel_5_alias_shift     8
+#define tx_pcie_idle_loz_del_sel_5_alias_mask      0xff00
+
+
 #define tx_pcie_loz_del_sel_1_addr                 0b110010110
 #define tx_pcie_loz_del_sel_1_startbit             4
 #define tx_pcie_loz_del_sel_1_width                4
@@ -2436,6 +2556,14 @@
 #define tx_pcie_loz_del_sel_5_endbit               7
 #define tx_pcie_loz_del_sel_5_shift                8
 #define tx_pcie_loz_del_sel_5_mask                 0xf00
+
+
+#define tx_pipe_txdetectrx_phase_0_3_addr          0b111010101
+#define tx_pipe_txdetectrx_phase_0_3_startbit      0
+#define tx_pipe_txdetectrx_phase_0_3_width         4
+#define tx_pipe_txdetectrx_phase_0_3_endbit        3
+#define tx_pipe_txdetectrx_phase_0_3_shift         12
+#define tx_pipe_txdetectrx_phase_0_3_mask          0xf000
 
 
 #define tx_rc_enable_dcc_addr                      0b110001010

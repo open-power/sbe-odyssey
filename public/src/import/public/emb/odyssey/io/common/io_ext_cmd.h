@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -79,5 +79,9 @@ int cmd_lab_code_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, cons
 
 // Function to check for commands and execute
 void run_external_commands(t_gcr_addr* io_gcr_addr);
+
+// Function for tracking which lanes are powered and if the group needs to be powered
+void track_and_adjust_group_power(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const uint32_t i_lane_mask_tx,
+                                  const int new_power_state);
 
 #endif //_IO_EXT_CMD_H_

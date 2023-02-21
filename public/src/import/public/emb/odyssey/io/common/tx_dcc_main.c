@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// vbr22111700 |vbr     | Added a sleep
 // gap22090800 |gap     | Updated range of tune bits for iot
 // mbs22083000 |mbs     | PSL comment updates
 // gap22080300 |gap     | EWM285666 io_sleep added to fix thread_active_timeout on back-to-back calls
@@ -112,6 +113,8 @@ int tx_dcc_main_init(t_gcr_addr* gcr_addr_i)
 
     // power on dcc
     put_ptr_field(gcr_addr_i, tx_bank_controls_dcc_alias,  0b0, read_modify_write); //pl power-on, active low
+
+    io_sleep(get_gcr_addr_thread(gcr_addr_i));
 
 #ifdef IOO
     put_ptr_field(gcr_addr_i, tx_tdr_enable,      0b0,     read_modify_write);

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr22120600 |vbr     | Add a sleep when exiting the auto_recal loop on an abort
+// vbr22111501 |vbr     | Remove sleep after initial training
+// vbr22110800 |vbr     | Added skips on a recal_abort
 // mbs22083000 |mbs     | PSL comment updates
 // vbr22061500 |vbr     | Add external command fail reporting
 // vbr22033000 |vbr     | Removed unneeded IOT recal code
@@ -72,6 +75,9 @@
 
 #include "eo_main.h"
 
+#ifdef IOO
+    #include "ioo_common.h"
+#endif
 #ifdef IOT
     #include "iot_common.h"
 #endif
@@ -131,7 +137,7 @@ int run_initial_training(t_gcr_addr* io_gcr_addr, const uint32_t i_lane)
         set_gcr_addr_reg_id(io_gcr_addr, l_saved_reg_id);
     }
 
-    io_sleep(get_gcr_addr_thread(io_gcr_addr));
+    //io_sleep(get_gcr_addr_thread(io_gcr_addr));
     return status;
 } //run_initial_training
 
@@ -157,6 +163,7 @@ int run_recalibration(t_gcr_addr* io_gcr_addr, const uint32_t i_lane)
 #endif
 
     int status = eo_main_recal(io_gcr_addr);
+    //if ((status & abort_code) == 0) { io_sleep(get_gcr_addr_thread(io_gcr_addr)); }
     io_sleep(get_gcr_addr_thread(io_gcr_addr));
 
     mem_pg_bit_clr(rx_running_recal);
@@ -169,8 +176,10 @@ int run_recalibration(t_gcr_addr* io_gcr_addr, const uint32_t i_lane)
 
 
 // Auto-Recalibration and EO status housekeeping
-void auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
+int auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
 {
+    set_debug_state(0x0005); // DEBUG - Auto Recal
+
     // Status updates
     int l_clr_recal_cnt         = mem_pg_field_get(rx_clr_lane_recal_cnt);
     int l_clr_eye_height_width  = mem_pg_field_get(rx_clr_eye_height_width);
@@ -188,9 +197,9 @@ void auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
     int l_auto_recal_0_23 = (mem_pg_field_get(rx_enable_auto_recal_0_15)  << 16) |
                             (mem_pg_field_get(rx_enable_auto_recal_16_23) << (16 - rx_enable_auto_recal_16_23_width));
 
-    // For PCIe, check if there is a PIPE commands to run on any lane as a recal abort
+    // For PCIe, check if there is a PIPE commands to run on any lane as a recal abort. Redundant with ioo_thread check.
     int pcie_mode = fw_field_get(fw_pcie_mode);
-    int l_pipe_ifc_recal_abort = pcie_mode ? get_ptr_field(io_gcr_addr, rx_pipe_ifc_recal_abort) : 0;
+    //int l_pipe_ifc_recal_abort = pcie_mode ? get_ptr_field(io_gcr_addr, rx_pipe_ifc_recal_abort) : 0;
 
     // For AXO, check the DL recal abort (for OpenCAPI degraded mode)
     int l_axo_dl_recal_abort_0_23 = 0;
@@ -205,6 +214,8 @@ void auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
 #endif
 
     // Loop through all lanes for recal (IOO) and house keeping (IOO/IOT)
+    int thread = get_gcr_addr_thread(io_gcr_addr);
+    int status = rc_no_error;
     uint32_t l_lane = 0;
 
     for (; l_lane < i_num_lanes; ++l_lane)
@@ -214,7 +225,7 @@ void auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
         // PSL lane_mod_six_eq_five
         if ( (l_lane % 6) == 5)
         {
-            io_sleep(get_gcr_addr_thread(io_gcr_addr));
+            io_sleep(thread);
         }
 
         // Clear recal counter when requested
@@ -258,14 +269,11 @@ void auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
         // PSL auto_recal
         if (init_done && ((0x80000000 >> l_lane) & l_auto_recal_0_23))
         {
-            // Skip running a long recal if need to handle a PIPE command
-            // PSL recal_abort
-            if (l_pipe_ifc_recal_abort)
-            {
-                continue;
-            }
+            // Skip running a long recal if need to handle a PIPE command (redundant)
+            //if (l_pipe_ifc_recal_abort) continue;
 
             // Issue 250867: Do not run recal if dl_phy_rx_recal_abort is asserted (OpenCAPI degraded mode)
+            // PSL axo_abort
             if ((0x80000000 >> l_lane) & l_axo_dl_recal_abort_0_23)
             {
                 continue;
@@ -293,18 +301,22 @@ void auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
                 }
             }
 
-            // Run recal and then check again for a pending PIPE command
-            run_recalibration(io_gcr_addr, l_lane); //sleeps at end
+            // Run recal and exit loop on a PIPE abort
+            io_sleep(thread);
+            status |= run_recalibration(io_gcr_addr, l_lane); //sleeps at end
 
-            if (pcie_mode)
+            if (pcie_mode && (status & abort_code))
             {
-                l_pipe_ifc_recal_abort = get_ptr_field(io_gcr_addr, rx_pipe_ifc_recal_abort);
+                break; // quick escape for pipe_abort
             }
+
+            // Check again for a pending PIPE command (redundant)
+            //if (pcie_mode) { l_pipe_ifc_recal_abort = get_ptr_field(io_gcr_addr, rx_pipe_ifc_recal_abort); }
         } // if init_done && auto_recal
 
 #endif //IOO
 
     } //for lane
 
-    return;
+    return status;
 } //auto_recal

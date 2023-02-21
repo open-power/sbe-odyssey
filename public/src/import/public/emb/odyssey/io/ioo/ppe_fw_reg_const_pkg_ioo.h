@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -511,11 +511,19 @@
 
 
 #define fw_bist_en_addr                            0b000000110
-#define fw_bist_en_startbit                        13
+#define fw_bist_en_startbit                        14
 #define fw_bist_en_width                           1
-#define fw_bist_en_endbit                          13
-#define fw_bist_en_shift                           2
-#define fw_bist_en_mask                            0x4
+#define fw_bist_en_endbit                          14
+#define fw_bist_en_shift                           1
+#define fw_bist_en_mask                            0x2
+
+
+#define fw_bist_pcie_rate_addr                     0b000000110
+#define fw_bist_pcie_rate_startbit                 11
+#define fw_bist_pcie_rate_width                    3
+#define fw_bist_pcie_rate_endbit                   13
+#define fw_bist_pcie_rate_shift                    2
+#define fw_bist_pcie_rate_mask                     0x1c
 
 
 #define fw_debug_addr                              0b000001110
@@ -575,11 +583,11 @@
 
 
 #define fw_stop_thread_addr                        0b000000110
-#define fw_stop_thread_startbit                    14
+#define fw_stop_thread_startbit                    15
 #define fw_stop_thread_width                       1
-#define fw_stop_thread_endbit                      14
-#define fw_stop_thread_shift                       1
-#define fw_stop_thread_mask                        0x2
+#define fw_stop_thread_endbit                      15
+#define fw_stop_thread_shift                       0
+#define fw_stop_thread_mask                        0x1
 
 
 #define fw_thread_stopped_addr                     0b000001111

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr22120300 |vbr     | Shifted some sleeps
 // mbs22083000 |mbs     | PSL comment updates
 // vbr22061500 |vbr     | Add external command fail reporting
 // vbr22060200 |vbr     | Add lab commands, support more than 16 commands
@@ -330,14 +331,14 @@ int cmd_power_on_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, cons
             // PSL io_lane_power_on_tx
             if ((i_lane_shift_tx & 0x80000000) && !get_tx_lane_bad(l_lane))
             {
-                status |= io_lane_power_on_tx(io_gcr_addr);    //sleeps at end
+                status |= io_lane_power_on_tx(io_gcr_addr);  //sleeps at end
             }
 
             // PSL io_lane_power_on_rx
             if ((i_lane_shift_rx & 0x80000000) && !get_rx_lane_bad(l_lane))
             {
-                status |= io_lane_power_on_rx(io_gcr_addr, banks_sel,
-                                              true);    // Power on and set dl_clk_en to 1 (HW508366), sleeps at end
+                status |= io_lane_power_on_rx(io_gcr_addr, banks_sel, true); // Power on and set dl_clk_en to 1 (HW508366)
+                io_sleep(get_gcr_addr_thread(io_gcr_addr));
             }
         }
     } //for
@@ -439,6 +440,10 @@ int cmd_dccal_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const u
 {
     set_debug_state(0xFD06, EXT_CMD_DBG_LVL);
 
+#ifdef IOO
+    mem_pg_field_put(rx_dc_enable_loff_ab_alias, 0b11); // Both banks
+#endif
+
     // Update lanes_pon_* and power on group (if needed)
     track_and_adjust_group_power(io_gcr_addr, i_lane_mask_rx, i_lane_mask_tx, 1); //1 = power_on
 
@@ -463,8 +468,8 @@ int cmd_dccal_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const u
         // PSL rx_lane_good
         if ((i_lane_shift_rx & 0x80000000) && !get_rx_lane_bad(l_lane))
         {
-            status |= io_lane_power_on_rx(io_gcr_addr, both_banks,
-                                          false); // Power on but leave dl_clk_en untouched (HW508366), sleeps at end
+            status |= io_lane_power_on_rx(io_gcr_addr, both_banks, false); // Power on but leave dl_clk_en untouched (HW508366)
+            io_sleep(get_gcr_addr_thread(io_gcr_addr));
             status |= eo_main_dccal_rx(io_gcr_addr);
         }
 
@@ -489,6 +494,10 @@ int cmd_dccal_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const u
 int cmd_train_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const uint32_t i_lane_mask_tx)
 {
     set_debug_state(0xFD07, EXT_CMD_DBG_LVL);
+
+#ifdef IOO
+    mem_pg_field_put(rx_eo_phase_select_0_1, 0b11); // Run both phases
+#endif
 
     int status = rc_no_error;
     uint32_t l_lane = 0;

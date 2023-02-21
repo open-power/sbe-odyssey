@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -48,6 +48,7 @@ ODYSSEY_IOO-C-SOURCES = io_lib.c \
                 eo_vga.c \
                 eo_loff.c \
                 eo_eoff.c \
+                eo_esd.c \
                 eo_qpa.c \
                 eo_vclq_checks.c \
                 tx_zcal_tdr.c \

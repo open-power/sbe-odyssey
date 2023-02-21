@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// vbr22111000 |vbr     | Exposed bank control sequencing functions
 // gap22062200 |gap     | Repartitioned pipe_clock_change moving clock_change_tx here
 // jjb22042000 |jjb     | Added Setup Rate Dependent Analog Controls
 // vbr21030400 |vbr     | Split group power on/off into rx and tx
@@ -51,13 +52,14 @@
 #define _IOO_INIT_AND_RESET_H_
 
 #include "io_lib.h"
+#include "ioo_common.h"
 
 // Initialize HW Regs
 void io_hw_reg_init(t_gcr_addr* gcr_addr);
 
 // Setup Rate Dependent Analog Controls (both RX and TX)
 void update_tx_rate_dependent_analog_ctrl_pl_regs(t_gcr_addr* gcr_addr, uint32_t ovr_rate_one_hot);
-void update_rx_rate_dependent_analog_ctrl_pl_regs(t_gcr_addr* gcr_addr);
+void update_rx_rate_dependent_analog_ctrl_pl_regs(t_gcr_addr* gcr_addr, uint32_t ovr_rate_one_hot);
 void clock_change_tx(t_gcr_addr* gcr_addr, uint32_t rate_one_hot);
 
 // Power up a group (both RX and TX)
@@ -78,5 +80,9 @@ int io_lane_power_on_rx(t_gcr_addr* gcr_addr, t_power_banks_sel banks_sel, bool 
 int io_lane_power_on_tx(t_gcr_addr* gcr_addr);
 int io_lane_power_off_rx(t_gcr_addr* gcr_addr, t_power_banks_sel banks_sel);
 int io_lane_power_off_tx(t_gcr_addr* gcr_addr);
+
+// Sequence bank controls
+void sequence_rx_bank_controls(t_gcr_addr* gcr_addr, t_bank i_bank, t_power_direction i_power_dir);
+void sequence_tx_bank_controls(t_gcr_addr* gcr_addr, t_power_direction i_power_dir);
 
 #endif //_IOO_INIT_AND_RESET_H_

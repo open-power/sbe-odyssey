@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr22110800 |vbr     | Added some skips on a pipe_recal_abort
 // vbr22082300 |vbr     | Add thread time stress mode for testing PCIe
 // vbr22031500 |vbr     | Issue 265958: move reading of some config into main loop
 // vbr21120300 |vbr     | Use functions for number of lanes
@@ -91,6 +92,7 @@
 #include "pk.h"
 
 #include "ioo_thread.h"
+#include "ioo_common.h"
 #include "io_logger.h"
 #include "io_ext_cmd.h"
 #include "eo_wrappers.h"
@@ -141,9 +143,11 @@ void ioo_thread(void* arg)
     set_gcr_addr(&l_gcr_addr, l_thread, l_bus_id, rx_group, 0); // RX lane 0
 
     uint32_t l_stop_thread = 0;
+    bool     l_pcie_mode   = 0;
 
     do
     {
+        int status = rc_no_error;
         // Do not run loop  while fw_stop_thread is set; this may be done when in an error condition and need to reset.
         // Also, mirror the setting as the status/handshake.
         l_stop_thread = fw_field_get(fw_stop_thread);
@@ -156,8 +160,8 @@ void ioo_thread(void* arg)
             if (mem_pg_field_get(ppe_thread_time_stress_mode))
             {
                 // Stress threading inactive time by forcing wait in stopped threads.
-                // 14.4+ us thread active time = 12us busy wait + 2.4us thread switch
-                io_spin_us(12);
+                // 11.4+ us thread active time = 9us busy wait + 2.4us thread switch
+                io_spin_us(9);
             }
         }
         else     //!fw_stop_thread
@@ -165,8 +169,8 @@ void ioo_thread(void* arg)
             set_debug_state(0x0001); // DEBUG - Thread Loop Start
 
             // Read config from fw_regs
-            const uint32_t l_num_lanes_rx  = get_num_rx_physical_lanes();
-            const bool     l_pcie_mode     = fw_field_get(fw_pcie_mode);
+            uint32_t l_num_lanes_rx = get_num_rx_physical_lanes();
+            l_pcie_mode = fw_field_get(fw_pcie_mode);
 
             // Checks if any new command requests need to be run
             run_external_commands(&l_gcr_addr);
@@ -191,11 +195,19 @@ void ioo_thread(void* arg)
                 // Run highest priority PIPE command on each lane
                 set_debug_state(0x0004, IOO_THREAD_DBG_LVL); // DEBUG - Thread PIPE Commands
                 run_pipe_commands(&l_gcr_addr, l_num_lanes_rx);
+
+                if (get_ptr_field(&l_gcr_addr, rx_pipe_ifc_recal_abort))
+                {
+                    status |= abort_clean_code;    //status |= check_rx_abort(&l_gcr_addr);
+                }
             }
 
-            // Auto recal.  Also checks for some status clears.
-            set_debug_state(0x0005, IOO_THREAD_DBG_LVL); // DEBUG - Thread Auto Recal
-            auto_recal(&l_gcr_addr, l_num_lanes_rx);
+            // Auto recal.  Also checks for some status clears.  Skip on PIPE abort.
+            if ((status & abort_code) == 0)
+            {
+                set_debug_state(0x0005, IOO_THREAD_DBG_LVL); // DEBUG - Thread Auto Recal
+                status |= auto_recal(&l_gcr_addr, l_num_lanes_rx);
+            }
 
             set_debug_state(0x000F); // DEBUG - Thread Loop End
         } //!fw_stop_thread
@@ -212,8 +224,11 @@ void ioo_thread(void* arg)
 
         mem_pg_field_put(ppe_thread_loop_count, l_thread_loop_cnt);
 
-        // Yield to other threads at least once per thread loop
-        io_sleep(get_gcr_addr_thread(&l_gcr_addr));
+        // Yield to other threads at least once per thread loop; skip if a pipe_abort in pcie mode.
+        if (!l_pcie_mode || ((status & abort_code) == 0))
+        {
+            io_sleep(get_gcr_addr_thread(&l_gcr_addr));
+        }
     }
     while(1);
 

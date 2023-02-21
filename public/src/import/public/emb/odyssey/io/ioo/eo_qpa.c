@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,8 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// vbr23011800 |vbr     | EWM297475: Added a sleep on an abort to reduce thread active time
+// jfg22111701 |jfg     | EWM293721 Add PR restore in support of servo abort changes
 // mbs22082601 |mbs     | Updated with PSL comments
 // jfg22022401 |jfg     | Remove CDR locked check as obsolete behavior
 // jfg22012701 |jfg     | Remove nedge_seek_step (behavior replaced by pr_seek_ber in eo_ddc.
@@ -117,13 +119,7 @@
 #define edge_max_left -10
 #define edge_max_right 10
 
-#define prmask_Dns(a) ( ((a) & (rx_a_pr_ns_data_mask >> rx_a_pr_ns_edge_shift)) >> (rx_a_pr_ns_data_shift - rx_a_pr_ns_edge_shift) )
-#define prmask_Ens(a) ( ((a) & (rx_a_pr_ns_edge_mask >> rx_a_pr_ns_edge_shift)) )
-#define prmask_Dew(a) ( ((a) & (rx_a_pr_ew_data_mask >> rx_a_pr_ew_edge_shift)) >> (rx_a_pr_ew_data_shift - rx_a_pr_ew_edge_shift) )
-#define prmask_Eew(a) ( ((a) & (rx_a_pr_ew_edge_mask >> rx_a_pr_ew_edge_shift)) )
-
 #define mk_opcode(op,opcode) ( op | ((opcode & ((0b1 << (c_op_code_width-1)) - 1)) << (16-c_op_code_startbit-c_op_code_width)))
-
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -141,46 +137,13 @@ int eo_qpa(t_gcr_addr* gcr_addr, t_bank bank, bool recal_2ndrun, bool* pr_change
 {
     set_debug_state(0xE000); // DEBUG - QPA Start
     int abort_status = pass_code;
-    uint32_t bank_pr_save[2];
     int pr_active[4]; // All four PR positions packed in as: {Data NS, Edge NS, Data EW, Edge EW}
     //uint32_t peak1_restore;
     //uint32_t peak2_restore;
     //bool disable_overpeak = mem_pg_field_get(rx_qpa_overpeak_disable) == 1;
 
     // 2: Set initial values
-    // Load ****both**** data and edge values on read. Assumes in same reg address in data + edge order
-    // PSL bank_a
-    if (bank == bank_a)
-    {
-        bank_pr_save[0] = get_ptr(gcr_addr, rx_a_pr_ns_data_addr,  rx_a_pr_ns_data_startbit, rx_a_pr_ns_edge_endbit);
-        bank_pr_save[1] = get_ptr(gcr_addr, rx_a_pr_ew_data_addr,  rx_a_pr_ew_data_startbit, rx_a_pr_ew_edge_endbit);
-        /*
-        peak1_restore = get_ptr(gcr_addr, rx_a_ctle_peak1_addr,  rx_a_ctle_peak1_startbit, rx_a_ctle_peak1_endbit);
-        peak2_restore = get_ptr(gcr_addr, rx_a_ctle_peak2_addr,  rx_a_ctle_peak2_startbit, rx_a_ctle_peak2_endbit);
-        if (!disable_overpeak) {
-          put_ptr(gcr_addr, rx_a_ctle_peak1_addr,  rx_a_ctle_peak1_startbit, rx_a_ctle_peak1_endbit, (1<<rx_a_ctle_peak1_width)-1, read_modify_write);
-          put_ptr(gcr_addr, rx_a_ctle_peak2_addr,  rx_a_ctle_peak2_startbit, rx_a_ctle_peak2_endbit, (1<<rx_a_ctle_peak2_width)-1, read_modify_write);
-        }
-        */
-    }
-    else
-    {
-        bank_pr_save[0] = get_ptr(gcr_addr, rx_b_pr_ns_data_addr,  rx_b_pr_ns_data_startbit, rx_b_pr_ns_edge_endbit);
-        bank_pr_save[1] = get_ptr(gcr_addr, rx_b_pr_ew_data_addr,  rx_b_pr_ew_data_startbit, rx_b_pr_ew_edge_endbit);
-        /*
-        peak1_restore = get_ptr(gcr_addr, rx_b_ctle_peak1_addr,  rx_b_ctle_peak1_startbit, rx_b_ctle_peak1_endbit);
-        peak2_restore = get_ptr(gcr_addr, rx_b_ctle_peak2_addr,  rx_b_ctle_peak2_startbit, rx_b_ctle_peak2_endbit);;
-        if (!disable_overpeak) {
-          put_ptr(gcr_addr, rx_b_ctle_peak1_addr,  rx_b_ctle_peak1_startbit, rx_b_ctle_peak1_endbit, (1<<rx_b_ctle_peak1_width)-1, read_modify_write);
-          put_ptr(gcr_addr, rx_b_ctle_peak2_addr,  rx_b_ctle_peak2_startbit, rx_b_ctle_peak2_endbit, (1<<rx_b_ctle_peak2_width)-1, read_modify_write);
-        }
-        */
-    }
-
-    pr_active[prDns_i] = prmask_Dns(bank_pr_save[0]);
-    pr_active[prEns_i] = prmask_Ens(bank_pr_save[0]);
-    pr_active[prDew_i] = prmask_Dew(bank_pr_save[1]);
-    pr_active[prEew_i] = prmask_Eew(bank_pr_save[1]);
+    read_active_pr(gcr_addr, bank, pr_active);
 
     // Calculate Center offset
     bool centerskew_ns = abs(16 - pr_active[prEns_i]) < abs(16 - pr_active[prEew_i]);
@@ -273,65 +236,54 @@ int eo_qpa(t_gcr_addr* gcr_addr, t_bank bank, bool recal_2ndrun, bool* pr_change
         abort_status = run_servo_ops_and_get_results(gcr_addr, c_servo_queue_general, 1, servo_ops, &servo_results[quad]);
         abort_status |= check_rx_abort(gcr_addr);
 
-        //for bist if there is a servo error this get set
-        // PSL set_fail
-        if (abort_status & rc_warning )
-        {
-            mem_pl_field_put(rx_quad_phase_fail, lane, 0b1);    //ppe pl
-            set_debug_state(0xE0DD);
-        }
-
-
+        // EWM Issue 293721: replacing all pr tracking code with direct reads
+        read_active_pr(gcr_addr, bank, pr_active);
+        /*
         int pridx;
-
-        //t_seek seek_quad;
-        if ((quad == 2 || quad == 0))
-        {
-            pridx = prEns_i;
-            //seek_quad=noseekNS;
+        if ((quad == 2 || quad == 0)){
+          pridx=prEns_i;
         }
-        else
-        {
-            pridx = prEew_i;
-            //seek_quad=noseekEW;
+        else {
+          pridx=prEew_i;
         }
-
         int Ediff = servo_results[quad];
-        //servo_results[quad] = servo_results[quad]  +  qpa_windage;
 
         // Range checking is not neccessary here because the servo is limited in it's excursions and will only return the amount of change actually applied to the PR
         pr_active[pridx] += Ediff;
-
-        // The undo direction is the opposite of where the servo moved the PRs
-        //bool dirL1R0 = !(Ediff < 0);
-        //Ediff = (dirL1R0)? Ediff : (~Ediff + 1);
-        // NO. Divide wrecks the bias correction: Now divide original Ediff by two as the new PR result.
-        //int Ediff_half = ((Ediff)  >> 1) + (Ediff & 0b1);
-        //servo_results[quad] = dirL1R0?(Ediff_half) : (~Ediff_half + 1);
-
-        //DEBUG set_debug_state(Ediff & 0xFFFF);
-        //int loop_count = 0;
-        //calling nedge_seek_step with L1 move, using noBER, and no seek with step=2 to move Edge/Data back to new center
+        */
         pr_recenter(gcr_addr, bank, pr_active, Esave, Dsave, Doffset, 0);
-        //nedge_seek_step(gcr_addr, bank, 0, 1, dirL1R0, true, seek_quad, pr_active);//, ber_lim
-        //Ediff--;
 
         set_debug_state(0xE020, 3); // DEBUG - QPA Run Servo Op
     }
     while ((quad != 0) && (abort_status == 0));
 
+    if (abort_status)
+    {
+        io_sleep(get_gcr_addr_thread(gcr_addr));    // EWM297475
+    }
+
     // Re-enable servo status for result at min/max
     servo_errors_enable_all(gcr_addr);
 
-    // Note: If failed, return warning_code  don't switch banks.
-    // Note: still set failed status
+    //for bist if there is a servo error this get set
     // PSL set_fail
-    if (abort_status != pass_code)
+    if (abort_status & rc_warning )
     {
+        mem_pl_bit_set(rx_quad_phase_fail, lane);    //ppe pl
+        set_debug_state(0xE0DD);
+        return abort_status;
+    }
+
+    // PSL servo_aborted_error
+    if (abort_status & abort_error_code)
+    {
+        // Note: If failed, return code  don't switch banks.
+        // Note: still set failed status
         mem_pl_bit_set(rx_quad_phase_fail, lane);
         set_debug_state(0xE080); //DEBUG: Main RX abort
         return abort_status;
     }
+
 
 
     // 5: Calculate average of mini-pr offsets

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -40,6 +40,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23011200 |vbr     | Issue 297310: added sleep on an abort/servo error
+// vbr22111700 |vbr     | Adjusted sleeps
+// jjb22103100 |jjb     | Issue 292937 : added io_sleeps within eo_vga and removed io_sleeps after eo_vga call.
 // mbs22082601 |mbs     | Updated with PSL comments
 // vbr21092200 |vbr     | Use shared functions for setting servo status error enable.
 // vbr21011901 |vbr     | Removed or changed to level 3 debug states that do not seem to be useful
@@ -283,6 +286,7 @@ int eo_vga(t_gcr_addr* gcr_addr, t_bank bank, int* saved_Amax, int* saved_Amax_p
         {
             set_debug_state(
                 0x5005);                                                                                                        //Pg1-8,9 Recal Abort
+            io_sleep(get_gcr_addr_thread(gcr_addr)); // Issue 297310: added to resolve pcie thread time exceeded
             return status;
         }
 

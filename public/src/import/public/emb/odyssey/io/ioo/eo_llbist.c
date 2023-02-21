@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// jjb22120700 |jjb     | Added Enabling/Disabling dl_clock
 // mbs22082601 |mbs     | Updated with PSL comments
 // vbr22061500 |vbr     | Added returning of fail status for ext commands
 // mwh21051700 |mwh     | Removed nv form reset
@@ -76,6 +77,9 @@ int eo_llbist(t_gcr_addr* gcr_addr)
     set_debug_state(0x51E0); // DEBUG
     int status = rc_no_error;
 
+    // Make sure IO_DL_CLOCK is enabled, required to run LLBIST
+    put_ptr_field(gcr_addr, rx_dl_clk_en, 0b1, read_modify_write);
+
     //turn on seed mode and turn off rx_berpl_timer_run_slow
     put_ptr_field(gcr_addr, rx_io_pb_iobist_reset, 0b1, read_modify_write);
 
@@ -104,6 +108,9 @@ int eo_llbist(t_gcr_addr* gcr_addr)
     mem_pg_field_put(rx_linklayer_fail, error);//pg
     error |= mem_pg_field_get(rx_fail_flag);
     mem_pg_field_put(rx_fail_flag, error);
+
+    // Disable IO_DL_CLOCK when finished LLBIST
+    put_ptr_field(gcr_addr, rx_dl_clk_en, 0b0, read_modify_write);
 
     set_debug_state(0x51E3); // DEBUG
     return status;

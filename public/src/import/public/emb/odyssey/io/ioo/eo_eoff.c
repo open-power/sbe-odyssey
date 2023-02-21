@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23010400 |vbr     | Issue 296947: Adjusted latch_dac accesses for different addresses on Odyssey vs P11/ZMetis
 // mbs22082601 |mbs     | Updated with PSL comments
 // vbr22071100 |vbr     | Moved eloff_alias_live_data_vote write from eo_main to here
 // vbr22012801 |vbr     | Use common functions for DAC accelerator
@@ -177,15 +178,19 @@ int eo_eoff(t_gcr_addr* gcr_addr,  bool recal, bool first_recal, t_bank bank)
         //bank A is alt B is main
         mem_pl_field_put(rx_a_eoff_done, lane, 0b0);//ppe pl
         servo_ops = servo_ops_eoff_a;
-        dac_start_addr = rx_ae_latch_dac_n_addr;
+        dac_start_addr = rx_ae_latch_dac_n_alias_addr;
     }//bank A is alt B is main
     else
     {
         //bank B is alt A is main
         mem_pl_field_put(rx_b_eoff_done, lane, 0b0);//ppe pl
         servo_ops = servo_ops_eoff_b;
-        dac_start_addr = rx_be_latch_dac_n_addr;
+        dac_start_addr = rx_be_latch_dac_n_alias_addr;
     }//bank B is alt A is main
+
+    // Issue 296947 Workaround
+    int dac_addr_adjust = get_latch_dac_addr_adjust();
+    dac_start_addr += dac_addr_adjust;
 
     // Read initial Edge DAC values
     int edge_dacs[4];
@@ -269,152 +274,81 @@ int eo_eoff(t_gcr_addr* gcr_addr,  bool recal, bool first_recal, t_bank bank)
     //Only for recal
 
     int ppe_eoff_edge_hysteresis_int =  mem_pg_field_get(ppe_eoff_edge_hysteresis);//ppe pg
-    bool restore_n = false;
-    bool restore_e = false;
-    bool restore_s = false;
-    bool restore_w = false;
-
-    //setting to edge_after_n because for first recal we will either restore or just set result of servo op.
-    int weight_avr_n = edge_after_n;
-    int weight_avr_e = edge_after_e;
-    int weight_avr_s = edge_after_s;
-    int weight_avr_w = edge_after_w;  //we do not have hysteresis in first recal
+    bool restore[4];
+    restore[0] = false;
+    restore[1] = false;
+    restore[2] = false;
+    restore[3] = false;
 
     // PSL recal
-    if (recal || first_recal)
+    if (recal || first_recal)   //if recal begin
     {
-        //if recal begin
+        //setting to edge_after_x because for first recal we will either restore or just set result of servo op.
+        int weight_avr[4];
+        weight_avr[0] = edge_after_n;
+        weight_avr[1] = edge_after_e;
+        weight_avr[2] = edge_after_s;
+        weight_avr[3] = edge_after_w;
+
         // PSL restore
         if (status)
         {
-            restore_n = true;    // Restore  settings on an abort or servo error (status != 0)
-            restore_e = true;
-            restore_s = true;
-            restore_w = true;
+            // Restore  settings on an abort or servo error (status != 0)
+            restore[0] = true;
+            restore[1] = true;
+            restore[2] = true;
+            restore[3] = true;
         }
         // PSL not_first_recal
-        else if (!first_recal)
+        else if (!first_recal)    // no error/abort and not first recal; we do not have hysteresis in first recal
         {
-            //if not abort
             set_debug_state(0xA009);//start of recal setting of dac's or restore
-            weight_avr_n = eo_get_weight_ave(edge_after_n, edge_before_n); //getting weighted round average
-            weight_avr_e = eo_get_weight_ave(edge_after_e, edge_before_e); //getting weighted round average
-            weight_avr_s = eo_get_weight_ave(edge_after_s, edge_before_s); //getting weighted round average
-            weight_avr_w = eo_get_weight_ave(edge_after_w, edge_before_w); //getting weighted round average
+            weight_avr[0] = eo_get_weight_ave(edge_after_n, edge_before_n); //getting weighted round average
+            weight_avr[1] = eo_get_weight_ave(edge_after_e, edge_before_e); //getting weighted round average
+            weight_avr[2] = eo_get_weight_ave(edge_after_s, edge_before_s); //getting weighted round average
+            weight_avr[3] = eo_get_weight_ave(edge_after_w, edge_before_w); //getting weighted round average
 
-            poff_n = weight_avr_n - edge_before_n ;//assign poff_n value
-            poff_e = weight_avr_e - edge_before_e ;//assign poff_e value
-            poff_s = weight_avr_s - edge_before_s ;//assign poff_s value
-            poff_w = weight_avr_w - edge_before_w ;//assign poff_w value
+            poff_n = weight_avr[0] - edge_before_n ;//assign poff_n value
+            poff_e = weight_avr[1] - edge_before_e ;//assign poff_e value
+            poff_s = weight_avr[2] - edge_before_s ;//assign poff_s value
+            poff_w = weight_avr[3] - edge_before_w ;//assign poff_w value
 
             //Do not need a if bank A or B because up above selection of what servo to run apply to this
             if ( (abs(poff_n)) <= ppe_eoff_edge_hysteresis_int)
             {
-                restore_n = true;    // Restore setting did not change enough
+                restore[0] = true;    // Restore setting did not change enough
             }
 
             if ( (abs(poff_e)) <= ppe_eoff_edge_hysteresis_int)
             {
-                restore_e = true;    // Restore setting did not change enough
+                restore[1] = true;    // Restore setting did not change enough
             }
 
             if ( (abs(poff_s)) <= ppe_eoff_edge_hysteresis_int)
             {
-                restore_s = true;    // Restore setting did not change enough
+                restore[2] = true;    // Restore setting did not change enough
             }
 
             if ( (abs(poff_w)) <= ppe_eoff_edge_hysteresis_int)
             {
-                restore_w = true;    // Restore setting did not change enough
+                restore[3] = true;    // Restore setting did not change enough
             }
         }//if not abort
 
+        // For each edge DAC, Write the weighted average or restore the original value
+        dac_addr = dac_start_addr;
 
-
-        if (bank == bank_a )
+        for (i = 0; i < 4; i++, dac_addr++)
         {
-            //bank A is alt B is main
-            if (restore_n)
-            {
-                put_ptr_field(gcr_addr, rx_ae_latch_dac_n, edge_n_dac, fast_write);   //pl if restore
-            }
-            else
-            {
-                put_ptr_field(gcr_addr, rx_ae_latch_dac_n, IntToLatchDac(weight_avr_n), fast_write);   //pl if not restore
-            }
-
-            if (restore_e)
-            {
-                put_ptr_field(gcr_addr, rx_ae_latch_dac_e, edge_e_dac, fast_write);   //pl if restore
-            }
-            else
-            {
-                put_ptr_field(gcr_addr, rx_ae_latch_dac_e, IntToLatchDac(weight_avr_e), fast_write);   //pl if not restore
-            }
-
-            if (restore_s)
-            {
-                put_ptr_field(gcr_addr, rx_ae_latch_dac_s, edge_s_dac, fast_write);   //pl if restore
-            }
-            else
-            {
-                put_ptr_field(gcr_addr, rx_ae_latch_dac_s, IntToLatchDac(weight_avr_s), fast_write);   //pl if not restore
-            }
-
-            if (restore_w)
-            {
-                put_ptr_field(gcr_addr, rx_ae_latch_dac_w, edge_w_dac, fast_write);   //pl if restore
-            }
-            else
-            {
-                put_ptr_field(gcr_addr, rx_ae_latch_dac_w, IntToLatchDac(weight_avr_w), fast_write);   //pl if not restore
-            }
-        }//bank A is alt B is main
-        else
-        {
-            //bank B is alt A is main
-            if (restore_n)
-            {
-                put_ptr_field(gcr_addr, rx_be_latch_dac_n, edge_n_dac, fast_write);   //pl if restore
-            }
-            else
-            {
-                put_ptr_field(gcr_addr, rx_be_latch_dac_n, IntToLatchDac(weight_avr_n), fast_write);   //pl if not restore
-            }
-
-            if (restore_e)
-            {
-                put_ptr_field(gcr_addr, rx_be_latch_dac_e, edge_e_dac, fast_write);   //pl if restore
-            }
-            else
-            {
-                put_ptr_field(gcr_addr, rx_be_latch_dac_e, IntToLatchDac(weight_avr_e), fast_write);   //pl if not restore
-            }
-
-            if (restore_s)
-            {
-                put_ptr_field(gcr_addr, rx_be_latch_dac_s, edge_s_dac, fast_write);   //pl if restore
-            }
-            else
-            {
-                put_ptr_field(gcr_addr, rx_be_latch_dac_s, IntToLatchDac(weight_avr_s), fast_write);   //pl if not restore
-            }
-
-            if (restore_w)
-            {
-                put_ptr_field(gcr_addr, rx_be_latch_dac_w, edge_w_dac, fast_write);   //pl if restore
-            }
-            else
-            {
-                put_ptr_field(gcr_addr, rx_be_latch_dac_w, IntToLatchDac(weight_avr_w), fast_write);   //pl if not restore
-            }
-        }//bank B is alt A is main
+            int dac_val = restore[i] ? edge_dacs[i] : IntToLatchDac(weight_avr[i]);
+            put_ptr_fast(gcr_addr, dac_addr, rx_ad_latch_dac_n000_endbit, dac_val);
+        }
 
         set_debug_state(0xA00A);//end of recal setting of dac's or restore
     }//end if recal
 
     //for getting rel path offset need add previous value or if enough runs go 0
-    if (restore_n || restore_e || restore_s || restore_w)
+    if (restore[0] || restore[1] || restore[2] || restore[3] )
     {
         set_debug_state(0xA016);
     }

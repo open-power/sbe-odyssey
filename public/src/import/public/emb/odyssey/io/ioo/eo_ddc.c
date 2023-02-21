@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -40,6 +40,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// vbr23010300 |vbr     | EWM296171: Added sleep at end of ddc_seek_loop (recal only)
+// jfg22111701 |jfg     | Replace PR reads with read_active_pr
+// vbr22111600 |vbr     | Skip sleeps when in RxEqEval
 // mbs22082601 |mbs     | Updated with PSL comments
 // jfg22072200 |jfg     | EWM278876: Relegate the pr_recenter debug_state to Level 3
 // jfg22062102 |jfg     | EWM265038: Remove all ddc_fail and set_fir actions outside of the rx_ddc_check_en conditional.
@@ -403,7 +406,10 @@ int pr_seek_ber (t_gcr_addr* gcr_addr, t_bank bank, unsigned int Dstep, unsigned
             // PSL single_sleep
             if (single_sleep )
             {
-                io_sleep(get_gcr_addr_thread(gcr_addr));
+                if (mem_pg_field_get(rx_running_eq_eval) == 0)
+                {
+                    io_sleep(get_gcr_addr_thread(gcr_addr));
+                }
             }
 
             single_sleep = (G_io_threads < 2);
@@ -573,7 +579,10 @@ int  pr_recenter(t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, uint32_t* Esav
                 //sleep on 2nd pass only
                 if (single_sleep )
                 {
-                    io_sleep(get_gcr_addr_thread(gcr_addr));
+                    if (mem_pg_field_get(rx_running_eq_eval) == 0)
+                    {
+                        io_sleep(get_gcr_addr_thread(gcr_addr));
+                    }
                 }
             }
 
@@ -852,6 +861,7 @@ int ddc_seek_loop (t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, bool seekdir
         put_ptr(gcr_addr, rx_berpl_mask_mode_addr, rx_berpl_mask_mode_startbit, rx_berpl_mask_mode_endbit, 0,
                 read_modify_write);
         put_ptr(gcr_addr, rx_err_trap_mask_addr, rx_err_trap_mask_startbit, rx_err_trap_mask_endbit, 0 , read_modify_write);
+        io_sleep(get_gcr_addr_thread(gcr_addr));
     } // Recal mode Conditional - Skip Quad Phase
 
     return pass_code;
@@ -875,36 +885,19 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed
 {
     set_debug_state(0x8000); // DEBUG - DDC Start
     int abort_status = pass_code;
-    uint32_t bank_pr_save[2];
     int pr_active[4]; // All four PR positions packed in as: {Data NS, Edge NS, Data EW, Edge EW}
     int cdr_status = 1;
     G_io_threads = img_field_get(ppe_num_threads);
 
     // 2: Set initial values
-    // Load ****both**** data and edge values on read. Assumes in same reg address in data + edge order
-    // PSL bank_a
-    if (bank == bank_a)
-    {
-        bank_pr_save[0] = get_ptr(gcr_addr, rx_a_pr_ns_data_addr,  rx_a_pr_ns_data_startbit, rx_a_pr_ns_edge_endbit);
-        bank_pr_save[1] = get_ptr(gcr_addr, rx_a_pr_ew_data_addr,  rx_a_pr_ew_data_startbit, rx_a_pr_ew_edge_endbit);
-    }
-    else
-    {
-        bank_pr_save[0] = get_ptr(gcr_addr, rx_b_pr_ns_data_addr,  rx_b_pr_ns_data_startbit, rx_b_pr_ns_edge_endbit);
-        bank_pr_save[1] = get_ptr(gcr_addr, rx_b_pr_ew_data_addr,  rx_b_pr_ew_data_startbit, rx_b_pr_ew_edge_endbit);
-    }
-
-    pr_active[prDns_i] = prmask_Dns(bank_pr_save[0]);
-    pr_active[prEns_i] = prmask_Ens(bank_pr_save[0]);
-    pr_active[prDew_i] = prmask_Dew(bank_pr_save[1]);
-    pr_active[prEew_i] = prmask_Eew(bank_pr_save[1]);
+    read_active_pr(gcr_addr, bank, pr_active);
 
     uint32_t Dsave[2];
-    Dsave[0] = prmask_Dns(bank_pr_save[0]);
-    Dsave[1] = prmask_Dew(bank_pr_save[1]);
+    Dsave[0] = pr_active[prDns_i];
+    Dsave[1] = pr_active[prDew_i];
     uint32_t Esave[2];
-    Esave[0] = prmask_Ens(bank_pr_save[0]);
-    Esave[1] = prmask_Eew(bank_pr_save[1]);
+    Esave[0] = pr_active[prEns_i];
+    Esave[1] = pr_active[prEew_i];
 
     int lane = get_gcr_addr_lane(gcr_addr);
 

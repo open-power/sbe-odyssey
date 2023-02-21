@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -42,6 +42,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23010400 |vbr     | Issue 296947: Adjusted latch_dac accesses for different addresses on Odyssey vs P11/ZMetis
 // mbs22082601 |mbs     | Updated with PSL comments
 // mwh21008160 |mwh     | initial -- replaced code that was in eoff.c and bring out for all 3 types
 //------------------------------------------------------------------------------
@@ -68,30 +69,35 @@ void eo_rxbist_epoff_final(t_gcr_addr* gcr_addr, t_bank bank)
     //not a stick since fail is only last time it was run (vga loop)
     int rx_eoff_fail_int = 0;//pl
 
+    int dac_start_addr;
 
     // PSL bank_a
     if (bank == bank_a )  //abank values
     {
-        edge_after_n = LatchDacToInt(get_ptr(gcr_addr, rx_ae_latch_dac_n_addr, rx_ae_latch_dac_n_startbit,
-                                             rx_ae_latch_dac_n_endbit));//pl
-        edge_after_e = LatchDacToInt(get_ptr(gcr_addr, rx_ae_latch_dac_e_addr, rx_ae_latch_dac_e_startbit,
-                                             rx_ae_latch_dac_e_endbit));//pl
-        edge_after_s = LatchDacToInt(get_ptr(gcr_addr, rx_ae_latch_dac_s_addr, rx_ae_latch_dac_s_startbit,
-                                             rx_ae_latch_dac_s_endbit));//pl
-        edge_after_w = LatchDacToInt(get_ptr(gcr_addr, rx_ae_latch_dac_w_addr, rx_ae_latch_dac_w_startbit,
-                                             rx_ae_latch_dac_w_endbit));//pl
+        dac_start_addr = rx_ae_latch_dac_n_alias_addr;
     }
     else    //bbank values
     {
-        edge_after_n = LatchDacToInt(get_ptr(gcr_addr, rx_be_latch_dac_n_addr, rx_be_latch_dac_n_startbit,
-                                             rx_be_latch_dac_n_endbit));//pl
-        edge_after_e = LatchDacToInt(get_ptr(gcr_addr, rx_be_latch_dac_e_addr, rx_be_latch_dac_e_startbit,
-                                             rx_be_latch_dac_e_endbit));//pl
-        edge_after_s = LatchDacToInt(get_ptr(gcr_addr, rx_be_latch_dac_s_addr, rx_be_latch_dac_s_startbit,
-                                             rx_be_latch_dac_s_endbit));//pl
-        edge_after_w = LatchDacToInt(get_ptr(gcr_addr, rx_be_latch_dac_w_addr, rx_be_latch_dac_w_startbit,
-                                             rx_be_latch_dac_w_endbit));//pl
+        dac_start_addr = rx_be_latch_dac_n_alias_addr;
     }//end else
+
+    // Issue 296947 Workaround
+    int dac_addr_adjust = get_latch_dac_addr_adjust();
+    dac_start_addr += dac_addr_adjust;
+
+    int edge_after[4];
+    int dac_addr = dac_start_addr;
+    int i;
+
+    for (i = 0; i < 4; i++, dac_addr++)
+    {
+        edge_after[i] = LatchDacToInt(get_ptr(gcr_addr, dac_addr, rx_ae_latch_dac_n_startbit, rx_ae_latch_dac_n_endbit));
+    }
+
+    edge_after_n = edge_after[0];
+    edge_after_e = edge_after[1];
+    edge_after_s = edge_after[2];
+    edge_after_w = edge_after[3];
 
 
     int check_eoff_min           =  TwosCompToInt(mem_pg_field_get(rx_eoff_min_check), rx_eoff_min_check_width); //ppe pg

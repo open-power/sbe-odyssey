@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// vbr22111000 |vbr     | Moved common typedef into here
 // vbr21020500 |vbr     | Initial Rev
 // -----------------------------------------------------------------------------
 
@@ -47,6 +48,12 @@
 
 #include "io_lib.h"
 
+// Typedef for specifying on/off for bank sequencing
+typedef enum
+{
+    power_on  = 0,
+    power_off = 1
+} t_power_direction;
 
 // Reset and Re-initialize per-lane HW Regs. Also clear per-lane mem_regs.
 int io_reset_lane(t_gcr_addr* gcr_addr);

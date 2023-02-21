@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,8 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23010400 |vbr     | Added functions for Issue 296947 (Odyssey latch_dac address shift)
+// jfg22111701 |jfg     | Add read_active_pr and related defines
 // vbr22100401 |vbr     | Issue 291616: Functions to change pipe_abort sources for dccal/init vs recal
 // dmb22062100 |dmb     | HW282905 Changed PPE_INIT_CAL_TIME_US_BUDGET_AXO_1th to 433
 // mwh22060600 |mwh     | Changed PPE_INIT_CAL_TIME_US_BUDGET_AXO_1th to 410 add code
@@ -171,6 +173,18 @@ typedef enum
 #define pr_mini_min 0x00
 #define pr_mini_max 0x1F
 #define pr_mini_cen 0x10
+#define prmask_Dns(a) ( ((a) & (rx_a_pr_ns_data_mask >> rx_a_pr_ns_edge_shift)) >> (rx_a_pr_ns_data_shift - rx_a_pr_ns_edge_shift) )
+#define prmask_Ens(a) ( ((a) & (rx_a_pr_ns_edge_mask >> rx_a_pr_ns_edge_shift)) )
+#define prmask_Dew(a) ( ((a) & (rx_a_pr_ew_data_mask >> rx_a_pr_ew_edge_shift)) >> (rx_a_pr_ew_data_shift - rx_a_pr_ew_edge_shift) )
+#define prmask_Eew(a) ( ((a) & (rx_a_pr_ew_edge_mask >> rx_a_pr_ew_edge_shift)) )
+// Common function for reading active PR by bank
+// It relies on common vector definition using prmask_* defines
+void read_active_pr (t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals);
+// All four PR positions packed in to an array as: {Data NS, Edge NS, Data EW, Edge EW}
+#define prDns_i 0
+#define prEns_i 1
+#define prDew_i 2
+#define prEew_i 3
 
 // TX post-RIT register override constants
 #define TX_DCC_SEL_ALIAS_DEFAULT 0b10
@@ -190,6 +204,12 @@ typedef enum  {noseek, doseek, noseekNS, noseekEW} t_seek;
 // OTHER FUNCTIONS
 // These all get used a fair amount so they should only be inline if they are very simple/short.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Issue 296947: The latch_dac addresses for Odyssey are 1 less relative to P11/ZMetis (which is what the constants are)
+PK_STATIC_ASSERT(rx_ae_latch_dac_n_alias_addr ==
+                 0x14);  // Ensure that the constants are generated with the P11/ZMetis addresses
+#define get_latch_dac_addr_adjust() (is_odyssey() ? -1 : 0)
+#define get_latch_dac_addr(latch_dac) (is_odyssey() ? latch_dac##_alias_addr - 1 : latch_dac##_alias_addr)
 
 // Set the bank to cal (A or B). Controls data and clock selects (DL and RLM).
 static inline void set_cal_bank(t_gcr_addr* gcr_addr, t_bank new_cal_bank)
@@ -228,9 +248,10 @@ int check_rx_abort(t_gcr_addr* gcr_addr);
 // Function for setting the PIPE Abort source depending on recal or dccal/init.
 typedef enum
 {
-    PIPE_ABORT_CFG_DCCAL   = 2,
-    PIPE_ABORT_CFG_INITCAL = 1,
-    PIPE_ABORT_CFG_RECAL   = 0
+    PIPE_ABORT_CFG_IDLE    = 0,
+    PIPE_ABORT_CFG_DCCAL   = 1,
+    PIPE_ABORT_CFG_INITCAL = 2,
+    PIPE_ABORT_CFG_RECAL   = 4
 } t_pipe_abort_cfg;
 void pipe_abort_config(t_gcr_addr* gcr_addr, t_pipe_abort_cfg pipe_abort_cfg);
 
@@ -306,12 +327,20 @@ void apply_rx_dac_offset(t_gcr_addr* gcr_addr, t_data_edge_dac_sel dac_sel, t_ba
 #define preset_rx_ctle_lte_zero_shift      pcie_gen1_lane0_preset_rx_lte_zero_shift  //0
 
 
+// Clear (subtract) the RX DFE from both Banks latches and MiniPR
+// Must set the gcr reg_id to rx_group before calling this
+void clear_rx_dfe(t_gcr_addr* gcr_addr);
+
+// Remove the configured Edge PR Offset from whichever banks have it applied
+// Must set the gcr reg_id to rx_group before calling this
+void remove_edge_pr_offset(t_gcr_addr* gcr_addr);
+
 // PCIe Only: Save to the mem_regs the current data latch dac values for all RX data latches in a bank
 // Must set the gcr reg_id to rx_group before calling this
 void save_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank);
 
 // PCIe Only: Write the RX data latches in a bank with the saved value + the recorded path offset
-// Must set the gcr reg_id to rx_group before calling this
+// MUST set the gcr reg_id to rx_group before calling this.
 void restore_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank);
 
 // PCIe Only: Save to the mem_regs the TX DCC settings for the current PCIe GenX

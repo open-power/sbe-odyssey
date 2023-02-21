@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// gap23012500 |gap     | Issue 293532 log when tune bit hits min or max bound
 // gap22090800 |gap     | Update iot offset
 // mbs22083000 |mbs     | PSL comment updates
 // gap22080300 |gap     | Update debug controls
@@ -80,6 +81,7 @@
 
 #include "tx_dcc_main_servo.h"
 #include "tx_dcc_tune_constants.h"
+#include "io_logger.h"
 
 // Use this to set debug_state levels for testing (on select debug_states which are not necessary outside initial dev)
 // If this is less than or equal to IO_DEBUG_LEVEL in ppe_common/img_defs.mk, debug states will be written, current
@@ -287,7 +289,6 @@ void tx_dcc_main_servo(t_gcr_addr* gcr_addr_i, uint32_t step_size_i, int32_t dir
             {
                 case SERVOOP_I:
                     set_debug_state(0xD03D, TX_DCC_MAIN_SERVO_DBG_LVL); // servo update i
-                    //put_ptr_field(gcr_addr_i, tx_dcc_tune,   IntToGray(dcc_next_tune_l,tx_dcc_tune_width), read_modify_write);
                     put_ptr_field(gcr_addr_i, tx_dcc_tune,   IntToGrayOffset(dcc_next_tune_l, tx_dcc_tune_width, tx_dcc_tune_offset_iot),
                                   read_modify_write);
                     break;
@@ -333,6 +334,35 @@ void tx_dcc_main_servo(t_gcr_addr* gcr_addr_i, uint32_t step_size_i, int32_t dir
         // PSL step_size_gt_0
     }
     while ((step_size_l > 0) & !done);
+
+    // LOG when DCC result is at bounds
+    //log data arg uint16_t; current op_i max 2 bits; current tune max 8 bits
+    // logged word is:  binary SSGGGGG0BBBBBBBB
+    // where SS is 00: SERVOOP_I; 01: SERVOOP_Q; 10: SERVOOP_IQ
+    //       GGGGG    is 1 hot gen 54321; only for IOO
+    //       BBBBBBBB is abs(bound), bound is min or max depending on fail
+    if (dcc_last_tune_l >= max_tune_i)   // should never be > max_tune, but handling just in case
+    {
+        // PSL tune_at_high_bound
+        set_debug_state(0xD042, TX_DCC_MAIN_SERVO_DBG_LVL); // log tune_at_high_bound
+        uint32_t log_val_l = (op_i << 14) | max_tune_i;
+#ifdef IOO
+        log_val_l |= (get_ptr_field(gcr_addr_i, tx_pcie_clk_sel) << 9); // 1 hot; bits 27-31 --> gen5-gen1
+#endif
+        ADD_LOG(DEBUG_BIST_TX_DCC_MAX_FAIL, gcr_addr_i, log_val_l);
+        set_tx_dcc_debug(0xD097, log_val_l);
+    }
+    else if (dcc_last_tune_l <= min_tune_i)   // should never be < min_tune, but handling just in case
+    {
+        // PSL tune_at_low_bound
+        set_debug_state(0xD043, TX_DCC_MAIN_SERVO_DBG_LVL); //  log tune_at_low_bound
+        uint32_t log_val_l = (op_i << 14) | (-1 * min_tune_i);
+#ifdef IOO
+        log_val_l |= (get_ptr_field(gcr_addr_i, tx_pcie_clk_sel) << 9); // 1 hot; bits 27-31 --> gen5-gen1
+#endif
+        ADD_LOG(DEBUG_BIST_TX_DCC_MIN_FAIL, log_val_l);
+        set_tx_dcc_debug(0xD098, log_val_l);
+    }
 
 } //tx_dcc_main_servo
 
