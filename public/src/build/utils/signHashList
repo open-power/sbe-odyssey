@@ -247,6 +247,11 @@ else
     exit -1
 fi
 
+# Do we need to set the device ECID into the FW header
+if [ ! -z $SB_ODY_SECUREBOOT_ECID ]; then
+    SIGNTOOL_ARGS="$SIGNTOOL_ARGS --fw-ecid $SB_ODY_SECUREBOOT_ECID"
+fi
+
 #Determine secure version setting
 if [ -z $SV ]; then
     # Build process can pass in the secure version through the environment
