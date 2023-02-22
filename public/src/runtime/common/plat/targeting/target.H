@@ -92,18 +92,6 @@ namespace fapi2
     }
 
     ///
-    /// @brief Assignment Operator.
-    /// @param[in] i_right Reference to Target to assign from.
-    /// @return Reference to 'this' Target
-    ///
-    template<TargetType K, MulticastType M, typename V>
-    Target<K, M, V>& Target<K, M, V>::operator=(const Target& i_right)
-    {
-        this->iv_handle = i_right.iv_handle;
-        return *this;
-    }
-
-    ///
     /// @brief Inquality Comparison Operator
     /// @param[in] i_right Reference to Target to compare.
     /// @return bool. True if not equal.

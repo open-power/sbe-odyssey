@@ -155,13 +155,6 @@ class Target
         };
 
         ///
-        /// @brief Assignment Operator.
-        /// @param[in] i_right Reference to Target to assign from.
-        /// @return Reference to 'this' Target
-        ///
-        Target& operator=(const Target& i_right);
-
-        ///
         /// @brief Equality Comparison Operator
         /// @param[in] i_right Reference to Target to compare.
         /// @return bool. True if equal.
@@ -560,7 +553,7 @@ class Target
 ///
 inline uint8_t thread_id_n2f(const uint8_t i_ordinal, const uint8_t i_thread_id)
 {
-    return (i_thread_id << 1) | i_ordinal;
+    return static_cast<uint8_t>((i_thread_id << 1) | i_ordinal);
 }
 
 ///
@@ -571,7 +564,7 @@ inline uint8_t thread_id_n2f(const uint8_t i_ordinal, const uint8_t i_thread_id)
 ///
 inline uint8_t thread_id_f2n(const uint8_t i_thread_id)
 {
-    return i_thread_id >> 1;
+    return static_cast<uint8_t>(i_thread_id >> 1);
 }
 
 ///
@@ -594,7 +587,7 @@ inline uint8_t thread_id2bitset(const uint8_t i_thread_id)
     }
 
     // A thread_id is really just bit index.
-    return (1 << (4 - i_thread_id - 1));
+    return static_cast<uint8_t>(1 << (4 - i_thread_id - 1));
 }
 
 ///
@@ -628,7 +621,7 @@ inline uint8_t thread_bitset_n2f(const uint8_t i_ordinal, const uint8_t i_thread
         0b10101010, // b1111
     };
 
-    return core_map[i_threads] >> i_ordinal;
+    return static_cast<uint8_t>(core_map[i_threads] >> i_ordinal);
 }
 
 ///
@@ -651,11 +644,11 @@ inline uint8_t thread_bitset_f2n(const uint8_t i_ordinal, const uint8_t i_thread
         // ... grab the two fused bits which represent it ...
         // ... and mask off the bit in the pair which represents this normal core ...
         // (the << 1 shifts the masks over as we walk the pairs of bits)
-        uint8_t bits = (((3 << (i << 1)) & i_threads) & (pair_mask << (i << 1)));
+        uint8_t bits = static_cast<uint8_t>(((3 << (i << 1)) & i_threads) & (pair_mask << (i << 1)));
 
         // ... if either bit is set, set the corresponding bit in
         // the normal core bitset.
-        normal_set |= (bits != 0) << i;
+        normal_set |= static_cast<uint8_t>( (bits != 0) << i );
     }
 
     return normal_set;
