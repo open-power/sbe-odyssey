@@ -87,18 +87,6 @@ inline void Target<T, M, V>::mcUpdateHandle()
 };
 
 ///
-/// @brief Assignment Operator.
-/// @param[in] i_right Reference to Target to assign from.
-/// @return Reference to 'this' Target
-///
-template<TargetType K, MulticastType M, typename V>
-Target<K, M, V>& Target<K, M, V>::operator=(const Target& i_right)
-{
-    iv_handle = i_right.iv_handle;
-    return *this;
-}
-
-///
 /// @brief Equality Comparison Operator
 /// @param[in] i_right Reference to Target to compare.
 /// @return bool. True if equal.

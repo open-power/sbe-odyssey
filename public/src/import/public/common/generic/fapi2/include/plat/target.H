@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -47,17 +47,6 @@ static constexpr void plat_apply_target_limits(void)
 template<TargetType T, MulticastType M, typename V>
 inline void Target<T, M, V>::mcUpdateHandle() {};
 
-///
-/// @brief Assignment Operator.
-/// @param[in] i_right Reference to Target to assign from.
-/// @return Reference to 'this' Target
-///
-template<TargetType K, MulticastType M, typename V>
-Target<K, M, V>& Target<K, M, V>::operator=(const Target& i_right)
-{
-    iv_handle = i_right.iv_handle;
-    return *this;
-}
 
 ///
 /// @brief Equality Comparison Operator
