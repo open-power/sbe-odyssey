@@ -70,6 +70,7 @@ uint8_t get_set_bit_index(uint64_t i_mask)
 void print_bist_params(const bist_params& i_params)
 {
     FAPI_DBG("BIST_PARAMS_VERSION = %d", i_params.BIST_PARAMS_VERSION);
+    FAPI_DBG("stages = 0x%04x", i_params.stages);
     FAPI_DBG("flags = 0x%08x", i_params.flags);
     FAPI_DBG("chiplets = 0x%08x%08x",
              i_params.chiplets >> 32,
