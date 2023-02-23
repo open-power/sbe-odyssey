@@ -226,6 +226,10 @@ if [ "$1" == "clean" ]; then
     echo $CMD
     $CMD || exit -1
 
+    CMD="rm -rf $SBEROOT/builddir/internal"
+    echo $CMD
+    $CMD || exit -1
+
     CMD="$BASE_CMD compile --clean -C $MESON_BUILD_DIR"
     exc_cmd "$CMD"
 fi
