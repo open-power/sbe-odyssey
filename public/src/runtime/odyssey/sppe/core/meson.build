@@ -80,20 +80,25 @@ foreach infile : cust_image_infile_c
 
 endforeach
 
+ODYSSEY_CHIPOPS_JSON = files('chipop_table.json')[0]
+
+ody_cmn_chipop_json_list = [
+                    COMMON_CHIPOPS_JSON,
+                    CMN_CODE_UPDATE_CHIPOPS_JSON]
+
+ody_chipop_json_list = [ody_cmn_chipop_json_list,
+                        ODYSSEY_CHIPOPS_JSON]
+
 #We can break off at this point if its a lab image as lab would do below stuff in internal
 if platform == 'odysseylab'
   subdir_done()
 endif
 
-ODYSSEY_CHIPOPS_JSON = files('chipop_table.json')[0]
-
 ############### Chip-op table generation ############
-chipop_json_list = [COMMON_CHIPOPS_JSON,
-                    CMN_CODE_UPDATE_CHIPOPS_JSON,
-                    ODYSSEY_CHIPOPS_JSON]
+
 result_chipoptablegen = run_command(chipoptablegen,
                         '-d', odyssey_sppe_genfiles_dir_path,
-                        '-c', chipop_json_list)
+                        '-c', ody_chipop_json_list)
 
 if not (result_chipoptablegen.returncode() == 0)
   message(result_chipoptablegen.stdout())
