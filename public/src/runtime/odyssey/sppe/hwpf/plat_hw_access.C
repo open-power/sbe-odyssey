@@ -89,10 +89,10 @@ static uint32_t getEffectiveAddress(const uint32_t *i_target, const uint32_t i_a
     uint32_t BITSHIFT = 0;
     switch(l_targetBase->getTargetType())
     {
-        case PPE_TARGET_TYPE_CHIP:
+        case LOG_SBE_ROOT_CHIP_TYPE:
             translatedAddr = (l_targetBase->getPIBAddress() | i_addr);
             break;
-        case PPE_TARGET_TYPE_MEMPORT:
+        case LOG_TARGET_TYPE_MEM_PORT:
             // Get the target instance.
             targetInstance = l_targetBase->getTargetInstance();
             // Check for Indirect scom.

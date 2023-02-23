@@ -33,6 +33,7 @@
 // TODO: Need to remove dependency on odyssey files in common space.
 //       Same fix need in cross_file.txt also.
 #include <ody_target_filters.H>
+#include "sbe_sp_intf.H"
 
 namespace fapi2
 {
@@ -40,7 +41,6 @@ namespace fapi2
      * Base class for target services.
      * It will be derived in each object.
      */
-
     class sbe_target_service
     {
         public:
@@ -82,7 +82,7 @@ namespace fapi2
                 {
                     SBE_DEBUG("sbe_target_service target to be inserted is 0x%08X",
                                plat_target_sbe_handle(targetMap[i].chipletNum + j,
-                                                      targetMap[i].targetType, 
+                                                      targetMap[i].targetType,
                                                        j));
                     uint32_t chipletNum = 0;
                     if(targetMap[i].isChipletType)
@@ -124,15 +124,15 @@ namespace fapi2
         ///
         /// @brief Enumerate all targets with a given type regardless of chiplet ID
         ///
-        /// @param [in] i_child_type            Plat target type of requested children
+        /// @param [in] i_child_type            Log target type of requested children
         /// @param [in] i_include_nonfunctional Return also targets that are not functional
         /// @param [out] o_children             A vector of child target handles
-        void getProcChildren( const plat_target_type_t i_child_type,
+        void getProcChildren( const LogTargetType i_child_type,
                               const bool i_include_nonfunctional,
                               std::vector<plat_target_sbe_handle> &o_children) const
         {
             SBE_INFO("sbe_target_service getProcChildren");
-            if(i_child_type == PPE_TARGET_TYPE_PERV)
+            if(i_child_type == LOG_TARGET_TYPE_PERV)
             {
                 const TargetFilter l_filter = TARGET_FILTER_NONE;
                 getPervChildren(l_filter, i_include_nonfunctional, o_children, true);
@@ -188,7 +188,7 @@ namespace fapi2
         /// @param [in] i_include_nonfunctional Return also targets that are not functional
         /// @param [out] o_children             A vector of child target handles
         ///
-        void getChipletChildren(const plat_target_type_t i_child_type,
+        void getChipletChildren(const LogTargetType i_child_type,
                                 const plat_target_sbe_handle i_parent,
                                 const bool i_include_nonfunctional,
                                 std::vector<plat_target_sbe_handle> &o_children) const
@@ -220,8 +220,6 @@ namespace fapi2
         /// @param [in] i_include_nonfunctional Return also targets that are not functional
         /// @param [out] o_children             A vector of child target handles
         ///
-
-        //template <plat_target_type_t K>
         void getMulticastChildren(const plat_target_sbe_handle i_parent,
                                   const bool i_include_nonfunctional,
                                   std::vector<plat_target_sbe_handle> &o_children)
@@ -239,7 +237,7 @@ namespace fapi2
             Target<TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_BITX> l_tmpTarget(i_parent);
             getScom(l_tmpTarget, 0xF0001, l_enabledTargets);
 
-            if ((i_parent.getTargetType() == PPE_TARGET_TYPE_PERV) || (i_parent.getTargetType() == PPE_TARGET_TYPE_MC) )
+            if ((i_parent.getTargetType() == LOG_TARGET_TYPE_PERV) || (i_parent.getTargetType() == LOG_TARGET_TYPE_MC) )
             {
                 // Non-core (i.e. chiplet) target -> loop over all PERV targets, match chiplet ID
                 loopTargetsByChiplet(l_enabledTargets, i_include_nonfunctional, o_children);
@@ -299,6 +297,18 @@ namespace fapi2
         }
 
         ///
+        /// @brief Function to get target is chiplet
+        /// @tparam K log target type (template)
+        /// @return True: Target is chiplet, other wise assert
+        ///
+        template <LogTargetType K>
+        constexpr bool plat_checkTargetIsChiplet( )
+        {
+            static_assert( (TARGET_TYPE_CHIPLETS && GET_FAPI_TARGET_TYPE(K)) , "Error: Destination type is not a chiplet");
+            return true;
+        }
+
+        ///
         /// @brief Convert any target to a chiplet target of specified
         ///        type, stripping any unit specific address bits.
         ///
@@ -307,11 +317,10 @@ namespace fapi2
         /// target that has all unit-level address bits cleared and
         /// type_target_num updated to match the new target type.
         ///
-        template <plat_target_type_t K>
+        template <LogTargetType K>
         plat_target_sbe_handle convertToChiplet(const plat_target_sbe_handle i_child) const
         {
-            static_assert(plat_target_is_chiplet<K>(),
-                          "Destination type is not a chiplet");
+            plat_checkTargetIsChiplet<K>();
 
             plat_target_sbe_handle copy = i_child;
 
@@ -327,6 +336,67 @@ namespace fapi2
 
             return copy;
         }
+
+        ///
+        /// @brief Function to get the plat target handle from log target type
+        /// @param [in] i_logTargetType log target type
+        /// @param [in] i_instanceId instance id
+        /// @param [out] o_tgtHndl fapi plat target handle
+        /// @return sbeSecondaryResponse Secondary RC
+        ///                  SBE_SEC_OPERATION_SUCCESSFUL: Valid i_logTargetType and i_instanceId passed
+        ///                  SBE_SEC_INVALID_TARGET_TYPE_PASSED: Invalid i_logTargetType passed
+        ///                  SBE_SEC_INVALID_INSTANCE_ID_PASSED: Invalid i_instanceId passed
+        ///
+        sbeSecondaryResponse getSbePlatTargetHandle( const uint8_t i_logTargetType,
+                                                  const uint8_t i_instanceId,
+                                                  fapi2::plat_target_handle_t &o_tgtHndl)
+        {
+            #define SBE_FUNC " getSbePlatTargetHandle: "
+            SBE_ENTER(SBE_FUNC);
+
+            // Secondary RC
+            sbeSecondaryResponse rc = SBE_SEC_INVALID_TARGET_TYPE_PASSED;
+
+            SBE_DEBUG(SBE_FUNC "Log target type: 0x%02X, instance ID: 0x%02X",
+                                                i_logTargetType, i_instanceId);
+
+            /* Platform target map pointer */
+            targetInfo_t * targetMap = getTargetMap();
+            /* Target index form global plat target */
+            uint32_t targetIndex = 0;
+
+            /* checking the target types in TARGET MAP */
+            for(uint32_t targetNo = 0; targetNo < iv_targetTypesCnt; targetNo++)
+            {
+                SBE_DEBUG("target count is 0x%08X", (uint32_t)targetMap[targetNo].targetCnt);
+
+                /* target not matched goto next target */
+                if(targetMap[targetNo].targetType != i_logTargetType)
+                {
+                    /* targetIndex depends on target count of target map */
+                    targetIndex = targetIndex + targetMap[targetNo].targetCnt;
+                    continue;
+                }
+
+                if (i_instanceId < targetMap[targetNo].targetCnt)
+                {
+                    /* get target handle from TARGET MAP */
+                    o_tgtHndl = iv_targets[targetIndex + i_instanceId];
+                    rc = SBE_SEC_OPERATION_SUCCESSFUL; // Target and Instance ID found
+                }
+                else
+                {
+                    rc = SBE_SEC_INVALID_INSTANCE_ID_PASSED; // Instance ID not found
+                }
+
+                break;
+            }
+
+            SBE_EXIT(SBE_FUNC);
+            return rc;
+            #undef SBE_FUNC
+        }
+
 
         /*
          * Destructor

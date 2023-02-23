@@ -28,6 +28,7 @@
  */
 
 #include "plat_target_base.H"
+#include "plat_target_sbe.H"
 
 namespace fapi2
 {
@@ -36,26 +37,27 @@ namespace fapi2
      */
      //struct targetInfo odyTargetMap;
 
-     targetInfo_t odyTargetMap[] =
-     {
-         {0x0, PPE_TARGET_TYPE_CHIP, 0, 0, 1},
-         {0x1, PPE_TARGET_TYPE_PERV, 1, 1, 1},
-         {0x8, PPE_TARGET_TYPE_MC, 1, 1, 1},
-         {0xD, PPE_TARGET_TYPE_MEMPORT, 0, 1, 2},
-         {0xD, PPE_TARGET_TYPE_DIMM, 0, 0, 2},
-         {0xE, PPE_TARGET_TYPE_DIMM, 0, 0, 2},
-         {0x0, PPE_TARGET_TYPE_TEMP_SENSOR, 0, 0, 4}, // First byte is port number
-                                                      // for the TEMP SENSOR target.
-     };
+    targetInfo_t odyTargetMap[] =
+    {
+        {0x0, LOG_SBE_ROOT_CHIP_TYPE, 0, 0, 1},
+        {0x1, LOG_TARGET_TYPE_PERV, 1, 1, 1},
+        {0x8, LOG_TARGET_TYPE_MC, 1, 1, 1},
+        {0xD, LOG_TARGET_TYPE_MEM_PORT, 0, 1, 2},
+        {0xD, LOG_TARGET_TYPE_DIMM, 0, 0, 2},
+        {0xE, LOG_TARGET_TYPE_DIMM, 0, 0, 2},
+        {0x0, LOG_TARGET_TYPE_TEMP_SENSOR, 0, 0, 4}, // First byte is port number
+                                                    // for the TEMP SENSOR target.
+    };
 
-     targetInfo_t * getTargetMap()
-     {
-         return odyTargetMap;
-     }
-     uint32_t targetTypesCount = sizeof(odyTargetMap) / sizeof(odyTargetMap[0]);
+    targetInfo_t * getTargetMap()
+    {
+        return odyTargetMap;
+    }
+    uint32_t targetTypesCount = sizeof(odyTargetMap) / sizeof(odyTargetMap[0]);
 
-     uint32_t getTargetTypesCount()
-     {
-         return targetTypesCount;
-     }
+    uint32_t getTargetTypesCount()
+    {
+        return targetTypesCount;
+    }
+
 }

@@ -50,63 +50,9 @@ namespace fapi2
 
     targetInfo_t * getTargetMap();
     uint32_t getTargetTypesCount();
-    typedef enum plat_target_type
-    {
-        PPE_TARGET_TYPE_NONE           = 0x00,
-        PPE_TARGET_TYPE_CHIP           = 0x01, // Indicate SBE_ROOT_CHIP
-        PPE_TARGET_TYPE_PERV           = 0x06,
-        PPE_TARGET_TYPE_MEMPORT        = 0x07,
-        PPE_TARGET_TYPE_SYSTEM         = 0x08,
-        PPE_TARGET_TYPE_MC             = 0x0B,
-        PPE_TARGET_TYPE_DIMM           = 0x15,
-        PPE_TARGET_TYPE_TEMP_SENSOR    = 0x16,
-    } plat_target_type_t;
 
-    // TODO: Move this to IMAGE-specific folder for odyssey
-    #define SBE_ROOT_CHIP_TYPE TARGET_TYPE_OCMB_CHIP
-
-    // TODO: Merge _PLAT_TARGET_TYPE_TRAITS with struct plat_target_type.
-    constexpr struct {
-        bool is_chiplet;
-        unsigned int first_chiplet;
-    } _PLAT_TARGET_TYPE_TRAITS[] = {
-        { false, 0                   }, // PPE_TARGET_TYPE_NONE
-        { false, 0                   }, // PPE_TARGET_TYPE_CHIP
-        { false, 0                   }, // PPE_TARGET_TYPE_PAU
-        { false, 0                   }, // PPE_TARGET_TYPE_CORE
-        { true,  0x20                }, // PPE_TARGET_TYPE_EQ
-        { false, 0                   }, // 0x05
-        { true,  0                   }, // PPE_TARGET_TYPE_PERV
-        { true,  0x08                }, // PPE_TARGET_TYPE_PEC
-        { false, 0                   }, // PPE_TARGET_TYPE_SYSTEM
-        { false, 0                   }, // PPE_TARGET_TYPE_PHB
-        { false, 0                   }, // PPE_TARGET_TYPE_MI
-        { true,  0x0C                }, // PPE_TARGET_TYPE_MC
-        { true,  0x10                }, // PPE_TARGET_TYPE_PAUC
-        { true,  0x18                }, // PPE_TARGET_TYPE_IOHS
-        { false, 0                   }, // PPE_TARGET_TYPE_NMMU
-        { false, 0                   }, // PPE_TARGET_TYPE_OCMB
-        { false, 0                   }, // PPE_TARGET_TYPE_PMIC
-        { false, 0                   }, // PPE_TARGET_TYPE_GENERICI2CSLAVE
-        { false, 0                   }, // PPE_TARGET_TYPE_MCC
-        { false, 0                   }, // PPE_TARGET_TYPE_OMIC
-        { false, 0                   }, // PPE_TARGET_TYPE_OMI
-    };
-
-    template <plat_target_type T>
-    constexpr bool plat_target_is_chiplet()
-    {
-        return _PLAT_TARGET_TYPE_TRAITS[T].is_chiplet;
-    }
-
-    template <plat_target_type T>
-    constexpr unsigned int plat_target_first_chiplet()
-    {
-        static_assert(plat_target_is_chiplet<T>(),
-                      "Destination type is not a chiplet");
-
-        return _PLAT_TARGET_TYPE_TRAITS[T].first_chiplet;
-    }
+    // LOG target type to FAPI target type
+    #define GET_FAPI_TARGET_TYPE(log_target)    (1ull << log_target)
 
     /*
      * The plat_target_base_handle bit layout is designed so that when the bits
@@ -252,9 +198,9 @@ namespace fapi2
             /// @brief Get the plat target type
             /// @return The plat target type as a fapi2::TargetType
             ///
-            plat_target_type getTargetType() const
+            LogTargetType getTargetType() const
             {
-                return static_cast<plat_target_type>(iv_value.getBits<8,6>());
+                return static_cast<LogTargetType>(iv_value.getBits<8,6>());
             }
 
             ///
@@ -309,35 +255,24 @@ namespace fapi2
             TargetType getFapiTargetType() const
             {
                 TargetType l_targetType = TARGET_TYPE_NONE;
+
                 switch(getTargetType())
                 {
-                    case PPE_TARGET_TYPE_CHIP:
-                        l_targetType = SBE_ROOT_CHIP_TYPE;
+                    case LOG_TARGET_TYPE_OCMB_CHIP:
+                    case LOG_TARGET_TYPE_PERV:
+                    case LOG_TARGET_TYPE_MC:
+                    case LOG_TARGET_TYPE_SYSTEM:
+                    case LOG_TARGET_TYPE_MEM_PORT:
+                    case LOG_TARGET_TYPE_DIMM:
+                    case LOG_TARGET_TYPE_TEMP_SENSOR:
+                        l_targetType = (TargetType) GET_FAPI_TARGET_TYPE(getTargetType());
                         break;
-                    case PPE_TARGET_TYPE_PERV:
-                        l_targetType = TARGET_TYPE_PERV;
-                        break;
-                    case PPE_TARGET_TYPE_MC:
-                        l_targetType = TARGET_TYPE_MC;
-                        break;
-                    case PPE_TARGET_TYPE_SYSTEM:
-                        l_targetType = TARGET_TYPE_SYSTEM;
-                        break;
-                    case PPE_TARGET_TYPE_MEMPORT:
-                        l_targetType = TARGET_TYPE_MEM_PORT;
-                        break;
-                    case PPE_TARGET_TYPE_DIMM:
-                        l_targetType = TARGET_TYPE_DIMM;
-                        break;
-                    case PPE_TARGET_TYPE_TEMP_SENSOR:
-                        l_targetType = TARGET_TYPE_TEMP_SENSOR;
-                        break;
-                    case PPE_TARGET_TYPE_NONE:
                     default:
-                        SBE_ERROR("getFapiTargetType() called for PPE_TYPE 0x%X", getTargetType());
+                        SBE_ERROR("getFapiTargetType() called for getTargetType 0x%X", getTargetType());
                         assert(false);
                         break;
                 }
+
                 return l_targetType;
             }
 

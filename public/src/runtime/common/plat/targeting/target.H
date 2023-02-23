@@ -38,46 +38,46 @@ namespace fapi2
     constexpr TargetType TARGET_TYPE_MEM_PORT_CHILDREN = TARGET_TYPE_DIMM;
 
     template<TargetType T>
-    constexpr plat_target_type_t fapiTargetTypeToPlatTargetType()
+    constexpr LogTargetType fapiTargetTypeToPlatTargetType()
     {
         static_assert(T == SBE_ROOT_CHIP_TYPE, "Invalid or composite target type");
-        return PPE_TARGET_TYPE_NONE;
+        return LOG_SBE_ROOT_CHIP_TYPE;
     }
 
     template<>
-    constexpr plat_target_type_t fapiTargetTypeToPlatTargetType<SBE_ROOT_CHIP_TYPE>()
+    constexpr LogTargetType fapiTargetTypeToPlatTargetType<SBE_ROOT_CHIP_TYPE>()
     {
-        return PPE_TARGET_TYPE_CHIP;
+        return LOG_SBE_ROOT_CHIP_TYPE;
     }
 
     template<>
-    constexpr plat_target_type_t fapiTargetTypeToPlatTargetType<TARGET_TYPE_MC>()
+    constexpr LogTargetType fapiTargetTypeToPlatTargetType<TARGET_TYPE_MC>()
     {
-        return PPE_TARGET_TYPE_MC;
+        return LOG_TARGET_TYPE_MC;
     }
 
     template<>
-    constexpr plat_target_type_t fapiTargetTypeToPlatTargetType<TARGET_TYPE_PERV>()
+    constexpr LogTargetType fapiTargetTypeToPlatTargetType<TARGET_TYPE_PERV>()
     {
-        return PPE_TARGET_TYPE_PERV;
+        return LOG_TARGET_TYPE_PERV;
     }
 
     template<>
-    constexpr plat_target_type_t fapiTargetTypeToPlatTargetType<TARGET_TYPE_MEM_PORT>()
+    constexpr LogTargetType fapiTargetTypeToPlatTargetType<TARGET_TYPE_MEM_PORT>()
     {
-        return PPE_TARGET_TYPE_MEMPORT;
+        return LOG_TARGET_TYPE_MEM_PORT;
     }
 
     template<>
-    constexpr plat_target_type_t fapiTargetTypeToPlatTargetType<TARGET_TYPE_DIMM>()
+    constexpr LogTargetType fapiTargetTypeToPlatTargetType<TARGET_TYPE_DIMM>()
     {
-        return PPE_TARGET_TYPE_DIMM;
+        return LOG_TARGET_TYPE_DIMM;
     }
 
     template<>
-    constexpr plat_target_type_t fapiTargetTypeToPlatTargetType<TARGET_TYPE_TEMP_SENSOR>()
+    constexpr LogTargetType fapiTargetTypeToPlatTargetType<TARGET_TYPE_TEMP_SENSOR>()
     {
-        return PPE_TARGET_TYPE_TEMP_SENSOR;
+        return LOG_TARGET_TYPE_TEMP_SENSOR;
     }
 
     template<TargetType K, MulticastType M, typename V>
@@ -146,21 +146,21 @@ namespace fapi2
             STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_PERV_CHILDREN) == 0,
                          "Invalid child target for PERV parent");
             plat_target_sbe_handle child = *this;
-            return g_platTarget->convertToChiplet<PPE_TARGET_TYPE_PERV>(child);
+            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_PERV>(child);
         }
         else if (T_NO_MCAST == TARGET_TYPE_MC)
         {
             STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_MC_CHILDREN) == 0,
                          "Invalid child target for MC parent");
             plat_target_sbe_handle child = *this;
-            return g_platTarget->convertToChiplet<PPE_TARGET_TYPE_MC>(child);
+            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_MC>(child);
         }
         else if (T_NO_MCAST == TARGET_TYPE_MEM_PORT)
         {
             STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_MEM_PORT_CHILDREN) == 0,
                          "Invalid child target for MEM PORT parent");
             plat_target_sbe_handle child = *this;
-            return g_platTarget->convertToChiplet<PPE_TARGET_TYPE_MEMPORT>(child);
+            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_MEM_PORT>(child);
         }
         STATIC_COMPILE_ERROR("Unsupported combination of parent and child for getParent()");
     }
@@ -181,7 +181,7 @@ namespace fapi2
     {
         constexpr TargetType K_NO_CHIP  = K & ~SBE_ROOT_CHIP_TYPE;
         constexpr TargetType K_NO_MCAST = K & ~TARGET_TYPE_MULTICAST;
-        constexpr plat_target_type_t P = fapiTargetTypeToPlatTargetType<T>();
+        constexpr LogTargetType P = fapiTargetTypeToPlatTargetType<T>();
 
         const bool l_include_nonfunctional = i_state == TARGET_STATE_PRESENT;
 
@@ -284,7 +284,7 @@ namespace fapi2
     {
         check_getMulticast<T, O>();
         plat_target_handle_t l_platTarget;
-        constexpr plat_target_type_t l_plat_type = fapiTargetTypeToPlatTargetType<T>();
+        constexpr LogTargetType l_plat_type = fapiTargetTypeToPlatTargetType<T>();
 
         l_platTarget.setIsMulticast(1);
         l_platTarget.setMcastGroup(i_group);
