@@ -30,11 +30,14 @@
 
 namespace fapi2
 {
+    // Declare the SBE_ROOT_CHIP_TYPE at plat level
+    #define SBE_ROOT_CHIP_TYPE      TARGET_TYPE_OCMB_CHIP    // FAPI target type
+    #define LOG_SBE_ROOT_CHIP_TYPE  LOG_TARGET_TYPE_OCMB_CHIP// Log target type
+
     /*
      * Derived class for target handle.
      * It will be derived in each image.
      */
-
     class plat_target_sbe_handle : public plat_target_base_handle{
 
         public:
@@ -76,7 +79,7 @@ namespace fapi2
                                         i_present,
                                         i_functional)
             {
-                if(i_type == PPE_TARGET_TYPE_DIMM)
+                if(i_type == LOG_TARGET_TYPE_DIMM)
                 {
                     // There are two entries for DIMM in the odyTargetMap.
                     // So to calculate the instance number,
@@ -88,7 +91,7 @@ namespace fapi2
                     }
                     iv_value.insertFromRight(instanceNum, 16, 8);
                 }
-                else if(i_type == PPE_TARGET_TYPE_TEMP_SENSOR)
+                else if(i_type == LOG_TARGET_TYPE_TEMP_SENSOR)
                 {
                     iv_value.insertFromRight(i_instanceNum, 16, 8);
                     // TODO: Read the attributes to set the port and device addr.
@@ -111,7 +114,7 @@ namespace fapi2
             {
                 uint8_t parentInstanceNum = 0;
                 // Child target type is memport.
-                if(i_child.getTargetType() == PPE_TARGET_TYPE_DIMM)
+                if(i_child.getTargetType() == LOG_TARGET_TYPE_DIMM)
                 {
                     parentInstanceNum = (i_child.getTargetInstance() / 2);
                 }

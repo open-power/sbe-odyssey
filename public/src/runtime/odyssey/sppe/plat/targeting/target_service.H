@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -28,7 +28,6 @@
 #include "plat_target_service.H"
 namespace fapi2
 {
-  
     /*
      * Derived class for target services.
      * It will be derived in each image.
@@ -52,7 +51,6 @@ namespace fapi2
          {
          }
     };
-
 }
 extern fapi2::target_service *g_platTarget;
 #endif
