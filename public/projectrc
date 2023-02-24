@@ -29,6 +29,14 @@
 export PROJECT_NAME=sbe
 export LICENSE=$SBEROOT/LICENSE_PROLOG # Copyright license file for PPE
 export LICENSE_INT=$SBEROOT/LICENSE_PROLOG_INT # Copyright license file for SBE internal
-export USER_BIN_DIR=$SBEROOT_PYTHON_ENV/bin
+if [ "$SCL_PYTHON_ENABLED" == 1 ]; then
+    # Python 2 machine, pytyonuserbase location change to ~/.local_rh_python36/
+    export USER_BIN_DIR=$HOME/.local_rh_python36/bin
+    export PYTHONUSERBASE=$HOME/.local_rh_python36/
+else
+    # Python 3 machine, default user location
+    export USER_BIN_DIR=$HOME/.local/bin
+    export PYTHONUSERBASE=$HOME/.local/
+fi
 export SBE_MESON_WRAP=$SBEROOT_PUB/src/build/mesonutils/
 export PATH=${PATH}:$SBE_MESON_WRAP:$USER_BIN_DIR # Update PATH

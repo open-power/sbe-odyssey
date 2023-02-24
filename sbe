@@ -27,7 +27,7 @@
 # Exit if any command fails
 set -e
 
-source public/src/tools/utils/sbe/venv-python
+source public/src/tools/utils/sbe/sbe-workon-utils
 
 if [ -e `pwd`/internal ]; then
     . `pwd`/internal/sbeutils.sh
@@ -172,7 +172,7 @@ sbe_workon()
             export SBE_IMAGE=all
         else
             for IMAGE in ${SUPPORTED_IMAGES[@]}; do
-            if [ "$IMAGE" == "$2" ]; then
+                if [ "$IMAGE" == "$2" ]; then
                     export SBE_IMAGE=$2
                     echo "***INFO | Image type is $SBE_IMAGE"
                     break
@@ -204,11 +204,7 @@ sbe_install()
 {
     if [ -n "${SBE_INSIDE_WORKON}" ]; then
         echo "Already in a workon.. Continuing"
-        echo "Installing packages as per $SBEROOT_PUB/src/tools/install/requirements.txt"
-        echo " "
-        CMD="pip install -r $SBEROOT_PUB/src/tools/install/requirements.txt --user"
-        echo $CMD
-        $CMD
+        installRequiredPackages
     else
         echo "Please do workon and re launch..."
     fi

@@ -27,9 +27,9 @@
 get_python_version()
 {
     {
-        PYTHON_VERSION=$(python -V 2>&1 | grep -Po '(?<=Python )(.)')
-    } || {
         PYTHON_VERSION=$(python3 -V 2>&1 | grep -Po '(?<=Python )(.)')
+    } || {
+        PYTHON_VERSION=$(python -V 2>&1 | grep -Po '(?<=Python )(.)')
     }
     echo $PYTHON_VERSION
 }
