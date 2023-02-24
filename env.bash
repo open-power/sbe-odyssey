@@ -23,9 +23,9 @@
 #
 # IBM_PROLOG_END_TAG
 
+# set -e not work in bashrc file, Note: it will exit any cmd failure in bash
 
-# Apply generci bashrc
-
+# Apply generic bashrc
 if [ -z $SBE_CI_ENV_SETUP ]; then
     if [ -e ${HOME}/.bashrc ]; then
         source ${HOME}/.bashrc
@@ -33,14 +33,15 @@ if [ -z $SBE_CI_ENV_SETUP ]; then
 fi
 
 echo "Setting environment variables..."
+source public/src/tools/utils/sbe/sbe-workon-utils
 
-source public/src/tools/utils/sbe/venv-python
+# Adding prompt for SBE workon
+export PS1="(SBE)> $PS1"
 
 ROOTDIR=.
 export SBEROOT=`pwd`
 export SBEROOT_PUB="${SBEROOT}/public"
 export SBEROOT_INT="${SBEROOT}/internal"
-export SBEROOT_PYTHON_ENV="${SBEROOT}/venv/"
 
 if [ -e ${SBEROOT_PUB}/projectrc ]; then
     source ${SBEROOT_PUB}/projectrc
@@ -63,12 +64,17 @@ if [ -z $SBE_CI_ENV_SETUP ]; then
     source public/src/tools/utils/sbe/sbe_complete
 fi
 
-#calling function for activate the virtul python environment
-activatePythonVenv
 #Install required packages
-installRequiredPackages
+installRequiredPackages ||
+{
+    echo "Error: env.bash | installRequiredPackages  | Failure $?. Please do workon again."
+    exit -1
+}
 
 if [ -f "builddir/build.ninja" ]; then
     # Sync with current workon settings
-    mesonwrap sync || exit -1
+    mesonwrap sync || {
+        echo "Error: env.bash | mesonwrap sync       | Failure $?. Please do workon again."
+        exit -1
+    }
 fi

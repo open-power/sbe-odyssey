@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -24,7 +24,7 @@
 #
 # IBM_PROLOG_END_TAG
 
-./sbe gen_list
+./sbe gen_list || exit -1
 
 sbe_complete(){
     local cur prev opts opts_workon
@@ -63,6 +63,6 @@ sbe_complete(){
     fi
 }
 
-complete -F sbe_complete sbe
+complete -F sbe_complete sbe || exit -1
 
 echo "enabled auto complete"
