@@ -78,9 +78,13 @@ extern "C"
         // FAPI_TRY( mss::change_iml_complete<mss::mc_type::ODYSSEY>(i_target, mss::HIGH), "%s Failed to set_ipm_complete",
         //           mss::c_str(i_target));
 
-        // Set DFI init start
+        // Set DFI init start. Toggle OFF then ON just in case we're re-running
+        FAPI_TRY( mss::change_dfi_init_start<mss::mc_type::ODYSSEY>(i_target, mss::OFF ),
+                  TARGTIDFORMAT " Failed to clear dfi_init_start",
+                  TARGTID );
+
         FAPI_TRY( mss::change_dfi_init_start<mss::mc_type::ODYSSEY>(i_target, mss::ON ),
-                  TARGTIDFORMAT " Failed to change_dfi_init_start",
+                  TARGTIDFORMAT " Failed to set dfi_init_start",
                   TARGTID );
 
         // Poll the DFI interface for completion
@@ -108,10 +112,10 @@ extern "C"
         FAPI_TRY( mss::enable_periodic_cal<mss::mc_type::ODYSSEY>(i_target), TARGTIDFORMAT " Failed enable_periodic_cal",
                   TARGTID );
 
-        // TODO Zen:MST-1529 Specialize unmask::after_draminit_mc for Odyssey
         // Unmask registers after draminit_mc
-        // FAPI_TRY(mss::unmask::after_draminit_mc<mss::mc_type::ODYSSEY>(i_target), "%s Failed after_draminit_mc",
-        //          mss::c_str(i_target));
+        FAPI_TRY( mss::unmask::after_draminit_mc<mss::mc_type::ODYSSEY>(i_target),
+                  TARGTIDFORMAT " Failed unmask::after_draminit_mc",
+                  TARGTID);
 
         FAPI_INF( TARGTIDFORMAT " End ody_draminit MC", TARGTID );
         return fapi2::FAPI2_RC_SUCCESS;

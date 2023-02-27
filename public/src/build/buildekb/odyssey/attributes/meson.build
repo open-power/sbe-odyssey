@@ -52,6 +52,7 @@ infile_mem_attr_xml = [
     'generic_memory_mrw_attributes.xml',
     'generic_memory_si_attributes.xml',
     'generic_memory_thermal_sensor_attributes.xml',
+    'ocmb_power_thermal.xml',
     ]
 
 foreach inmemfile : infile_mem_attr_xml

@@ -62,9 +62,9 @@
     <description>
       DRAM Chip Select assertion mode for MPC commands
     </description>
-    <initToZero></initToZero>
     <valueType>uint8</valueType>
     <enum>MULTI_CYCLE = 0, SINGLE_CYCLE = 1</enum>
+    <default>SINGLE_CYCLE</default>
     <writeable/>
     <mssAccessorName>cs_assert_in_mpc</mssAccessorName>
   </attribute>
@@ -88,9 +88,9 @@
     <description>
       DRAM setting to enable or disable internal WR timing offsets
     </description>
-    <initToZero></initToZero>
     <valueType>uint8</valueType>
     <enum>DISABLE = 0, ENABLE = 1</enum>
+    <default>ENABLE</default>
     <writeable/>
     <mssAccessorName>internal_wr_timing_mode</mssAccessorName>
   </attribute>
@@ -119,9 +119,9 @@
     <description>
       Refresh rate indicator
     </description>
-    <initToZero></initToZero>
     <valueType>uint8</valueType>
     <writeable/>
+    <default>1</default>
     <mssAccessorName>ref_rate_indic</mssAccessorName>
   </attribute>
 
@@ -230,10 +230,10 @@
     <description>
       WR Preamble settings
     </description>
-    <default>TCK2</default>
     <valueType>uint8</valueType>
     <writeable/>
     <enum>TCK2 = 1, TCK3 = 2, TCK4 = 3</enum>
+    <default>TCK2</default>
     <mssAccessorName>ddr5_dram_wr_preamble</mssAccessorName>
   </attribute>
 
@@ -447,6 +447,38 @@
     <mssAccessorName>ddr5_dram_cs_odt</mssAccessorName>
   </attribute>
 
+  <attribute>
+    <id>ATTR_DDR5_DRAM_CK_ODT_PER_DRAM</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      DDR5 clock ODT value.
+      ARRAY[DIMM][RANK][DRAM]
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint16</valueType>
+    <writeable/>
+    <array>2 4 20</array>
+    <mssUnits>ohm</mssUnits>
+    <enum>DISABLE = 0, OHM480 = 480, OHM240 = 240, OHM120 = 120, OHM80 = 80, OHM60 = 60, OHM40 = 40</enum>
+    <mssAccessorName>ddr5_dram_ck_odt_per_dram</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_DDR5_DRAM_CS_ODT_PER_DRAM</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      DDR5 chip select ODT value.
+      ARRAY[DIMM][RANK][DRAM]
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint16</valueType>
+    <writeable/>
+    <array>2 4 20</array>
+    <mssUnits>ohm</mssUnits>
+    <enum>DISABLE = 0, OHM480 = 480, OHM240 = 240, OHM120 = 120, OHM80 = 80, OHM60 = 60, OHM40 = 40</enum>
+    <mssAccessorName>ddr5_dram_cs_odt_per_dram</mssAccessorName>
+  </attribute>
+
 <!-- MR33 attributes -->
   <attribute>
     <id>ATTR_DDR5_DRAM_CA_ODT</id>
@@ -478,6 +510,38 @@
     <mssUnits>ohm</mssUnits>
     <mssAccessorName>ddr5_dram_dqs_rtt_park</mssAccessorName>
     <array>2 4 2</array>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_DDR5_DRAM_CA_ODT_PER_DRAM</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      DDR5 clock ODT value.
+      ARRAY[DIMM][RANK][DRAM]
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint16</valueType>
+    <writeable/>
+    <array>2 4 20</array>
+    <mssUnits>ohm</mssUnits>
+    <enum>DISABLE = 0, OHM480 = 480, OHM240 = 240, OHM120 = 120, OHM80 = 80, OHM60 = 60, OHM40 = 40</enum>
+    <mssAccessorName>ddr5_dram_ca_odt_per_dram</mssAccessorName>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_DDR5_DRAM_DQS_RTT_PARK_PER_DRAM</id>
+    <targetType>TARGET_TYPE_MEM_PORT</targetType>
+    <description>
+      DRAM DQS RTT Park Termination Resistance in Ohms.
+      ARRAY[DIMM][RANK][DRAM]
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <enum>DISABLE = 0, OHM34 = 34, OHM40 = 40, OHM48 = 48, OHM60 = 60, OHM80 = 80, OHM120 = 120, OHM240 = 240</enum>
+    <mssUnits>ohm</mssUnits>
+    <mssAccessorName>ddr5_dram_dqs_rtt_park_per_dram</mssAccessorName>
+    <array>2 4 20</array>
   </attribute>
 
 <!-- MR34 attributes -->
@@ -750,6 +814,7 @@
     <initToZero></initToZero>
     <valueType>uint8</valueType>
     <writeable/>
+    <enum>STEP0 = 0, STEP1 = 1, STEP2 = 2, STEP3 = 3</enum>
     <array>2 4</array>
     <mssAccessorName>ddr5_dfe_gain_bias</mssAccessorName>
   </attribute>

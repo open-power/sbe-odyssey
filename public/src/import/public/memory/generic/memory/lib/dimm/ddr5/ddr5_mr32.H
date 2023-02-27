@@ -40,11 +40,13 @@
 #include <fapi2.H>
 
 #include <mss_generic_attribute_getters.H>
+#include <mss_generic_attribute_setters.H>
 #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
 #include <generic/memory/lib/utils/c_str.H>
 #include <generic/memory/lib/utils/mss_rank.H>
 #include <generic/memory/lib/utils/mss_generic_check.H>
 #include <generic/memory/lib/utils/num.H>
+#include <generic/memory/lib/dimm/ddr5/ddr5_mr_base.H>
 
 namespace mss
 {
@@ -57,7 +59,7 @@ namespace ddr5
 /// @tparam MC the memory controller type
 ///
 template<mss::mc_type MC>
-class mr32_data
+class mr32_data : public mr_base_data<MC>
 {
     public:
         // Needed as we need to know what MR for the CCS instruction created by the lab tooling
@@ -68,8 +70,9 @@ class mr32_data
         /// @param[in] a fapi2::TARGET_TYPE_DIMM target
         /// @param[in,out] fapi2::ReturnCode FAPI2_RC_SUCCESS iff ok
         ///
-        mr32_data( const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, fapi2::ReturnCode& io_rc )
+        mr32_data( const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, fapi2::ReturnCode& io_rc ): mr_base_data<MC>(iv_mr)
         {
+
             if (io_rc != fapi2::FAPI2_RC_SUCCESS)
             {
                 return;
@@ -92,7 +95,7 @@ class mr32_data
         /// @brief Default constructor
         /// @note Default constructor is defined to allow for the use of STL data structures
         ///
-        mr32_data() = default;
+        mr32_data(): mr_base_data<MC>(iv_mr) {};
 
         ///
         /// @brief Checks to ensure the strap value is in bounds
@@ -209,7 +212,7 @@ class mr32_data
         ///
         fapi2::ReturnCode assemble_data(const mss::rank::info<MC>& i_rank_info,
                                         uint8_t& o_mr_data,
-                                        const uint8_t i_strap = mr::STRAPA) const
+                                        const uint8_t i_strap = mr::STRAPA) const override
         {
             fapi2::buffer<uint8_t> l_data;
             uint8_t l_ck_field = 0;
@@ -256,7 +259,7 @@ class mr32_data
         /// @return FAPI2_RC_SUCCESS if and only if ok
         /// @note The other MR's use i_strap instead of strap value. That's ok, this should work in the API
         ///
-        fapi2::ReturnCode display(const mss::rank::info<MC>& i_rank_info, const uint8_t i_strap = mr::STRAPA) const
+        fapi2::ReturnCode display(const mss::rank::info<MC>& i_rank_info, const uint8_t i_strap = mr::STRAPA) const override
         {
             FAPI_TRY(check_strap(i_rank_info.get_dimm_target(), i_strap));
             this->display(i_rank_info.get_dimm_target(), i_rank_info.get_dimm_rank(), i_strap);
@@ -277,7 +280,7 @@ class mr32_data
         ///
         fapi2::ReturnCode read_from_data(const mss::rank::info<MC>& i_rank_info,
                                          const uint8_t i_mr_data,
-                                         const uint8_t i_strap = mr::STRAPA)
+                                         const uint8_t i_strap = mr::STRAPA) override
         {
             const fapi2::buffer<uint8_t> l_data(i_mr_data);
             uint8_t l_ck_field = 0;
@@ -311,6 +314,23 @@ class mr32_data
                      iv_cs_odt[l_dimm_rank][l_strap]));
 #pragma GCC diagnostic pop
 
+
+            return fapi2::FAPI2_RC_SUCCESS;
+        fapi_try_exit:
+            return fapi2::current_err;
+        }
+
+        ///
+        /// @brief Sets the attribute for this MR for lab tool
+        /// @param[in] i_rank_info the rank on which to operate
+        /// @return FAPI2_RC_SUCCESS if and only if ok
+        ///
+        fapi2::ReturnCode attr_setter(const mss::rank::info<MC>& i_rank_info) override
+        {
+            FAPI_TRY( mss::attr::set_ddr5_dram_ck_odt(i_rank_info.get_dimm_target(), iv_ck_odt),
+                      "Unable to set attributes for ddr5::mr32_data()" );
+            FAPI_TRY( mss::attr::set_ddr5_dram_cs_odt(i_rank_info.get_dimm_target(), iv_cs_odt),
+                      "Unable to set attributes for ddr5::mr32_data()" );
 
             return fapi2::FAPI2_RC_SUCCESS;
         fapi_try_exit:

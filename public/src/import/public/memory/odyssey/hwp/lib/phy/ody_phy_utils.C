@@ -315,6 +315,7 @@ fapi2::ReturnCode reset_dmem( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& 
 fapi_try_exit:
     return fapi2::current_err;
 }
+
 ///
 /// @brief fapi2::putScom wrapper to help decrease code size on the SBE using the Synopsys address perspective
 /// @param[in] i_target the target on which to operate

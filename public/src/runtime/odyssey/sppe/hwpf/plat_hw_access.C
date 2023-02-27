@@ -102,6 +102,7 @@ static uint32_t getEffectiveAddress(const uint32_t *i_target, const uint32_t i_a
                 // Trans Addr 0x800070550801303F ---> Mem port 0
                 // Trans Addr 0x800070550801343F ---> Mem port 1
                 BITSHIFT = 10;
+                translatedAddr = i_addr;
             }
             else
             {
@@ -112,7 +113,7 @@ static uint32_t getEffectiveAddress(const uint32_t *i_target, const uint32_t i_a
                 // Set bit 12 to 0.
                 translatedAddr = targetInstance ? (i_addr & 0xFFFFEFFF) : i_addr;
             }
-            translatedAddr = targetInstance ? i_addr | ( 1 << BITSHIFT ) : i_addr;
+            translatedAddr = targetInstance ? translatedAddr | ( 1 << BITSHIFT ) : translatedAddr;
             break;
         default: //For all the chiplet types
             {

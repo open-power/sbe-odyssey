@@ -22,13 +22,14 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+// EKB-Mirror-To: hostboot
 
 ///
 /// @file ody_throttle_traits.H
 /// @brief throttle register traits API
 ///
 
-// *HWP HWP Owner: Matt Hickman <Matthew.Hickman@ibm.com>
+// *HWP HWP Owner: Stephen Glancy <sglancy@us.ibm.com>
 // *HWP HWP Backup: Louis Stermole <stermole@us.ibm.com>
 // *HWP Team: Memory
 // *HWP Level: 2
@@ -72,6 +73,8 @@ class throttle_traits<mss::mc_type::ODYSSEY>
         static const uint64_t IDLE_UTIL = 0;
         // Minimum throttle allowed for the port and or slot. If we set to 0, we brick the port
         static const uint64_t  MIN_THROTTLE = 1;
+        // Multiplication factor to convert addr util to data util (BL16/2), BL = burst length
+        static const uint8_t CONVERT_ADDR_UTIL_TO_DATA_UTIL = 8;
 
         enum size_of_attrs : size_t
         {
@@ -186,9 +189,11 @@ class throttle_traits<mss::mc_type::ODYSSEY>
             DIMM_ATTACHED_LEN = 2,
         };
 
+#ifndef __PPE__
         // Definition is in chip folder
         static const std::vector< std::pair<uint8_t , uint8_t> > DIMM_TYPE_MAP;
         static const std::vector< std::pair<uint8_t , uint8_t> > DIMM_ATTACHED_MAP;
+#endif //endif for __PPE__
 
         // Throttle values
         // TODO Zenhub #1509: These values have been transferred from Explorer and

@@ -46,7 +46,7 @@ static const std::vector<uint8_t> DDR4_GPIO_ADC_I2C_ADDR_VECTOR =
     0x70, // 2 = GPIO1
     0x7E, // 3 = GPIO2
 };
-constexpr uint8_t DDR5_ADC_ADDR = 0x20;
+constexpr uint16_t DDR5_SPD_ADC_I2_ADDR = 286;
 
 
 ///
@@ -62,7 +62,7 @@ inline uint8_t get_gpio_adc_i2c_addr(uint8_t const* const i_spd, const uint8_t i
     // The caller is responsible for calling this with a valid ID
     if (i_rel_pos >= DDR4_GPIO_ADC_I2C_ADDR_VECTOR.size())
     {
-        return 0;
+        return DDIMM_SPD::NO_DEVICE;
     }
 
     // Check the SPD to see which type of DIMM this is.
@@ -70,16 +70,15 @@ inline uint8_t get_gpio_adc_i2c_addr(uint8_t const* const i_spd, const uint8_t i
     // DDR5 DDIMM only has a single ADC on the 4U
     if ( (i_spd[DDIMM_SPD::DDR_BYTE] == DDIMM_SPD::MEM_DDR5)
          && (i_spd[DDIMM_SPD::DIMM_TYPE_BYTE] == DDIMM_SPD::MEM_DDIMM)
-         && (i_spd[DDIMM_SPD::DIMM_SIZE_BYTE] == DDIMM_SPD::MEM_4U)
          && (i_rel_pos == 0) )
     {
-        return DDR5_ADC_ADDR;
+        return i_spd[DDR5_SPD_ADC_I2_ADDR];
     }
 
     // GPIO/ADC devices only exist for 4U DDR4 DDIMMs.
     if ( (i_spd[DDIMM_SPD::DDR_BYTE] == DDIMM_SPD::MEM_DDR4)
          && (i_spd[DDIMM_SPD::DIMM_TYPE_BYTE] == DDIMM_SPD::MEM_DDIMM)
-         && (i_spd[DDIMM_SPD::DIMM_SIZE_BYTE] == DDIMM_SPD::MEM_4U) )
+         && (i_spd[DDIMM_SPD::DDR4_DIMM_SIZE_BYTE] == DDIMM_SPD::MEM_4U) )
     {
         return DDR4_GPIO_ADC_I2C_ADDR_VECTOR[i_rel_pos];
     }
