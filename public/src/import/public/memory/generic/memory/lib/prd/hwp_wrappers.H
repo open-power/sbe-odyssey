@@ -276,6 +276,13 @@ fapi2::ReturnCode ody_continue_cmd( const fapi2::Target<fapi2::TARGET_TYPE_OCMB_
                                     const mss::mcbist::speed i_speed = mss::mcbist::speed::SAME_SPEED );
 
 ///
+/// @brief Update bad DQ bits in SPD for Odyssey
+/// @param[in] i_target A target representing an ocmb_chip
+/// @return FAPI2_RC_SUCCESS iff ok
+///
+fapi2::ReturnCode ody_update_bad_bits( const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target );
+
+///
 /// @brief Restore DRAM repairs wrapper for Odyssey
 /// @param[in] i_target A target representing a port
 /// @param[in,out] io_repairs_applied bit mask, where a bit set means a rank had repairs applied (bit0 = rank0, etc)
