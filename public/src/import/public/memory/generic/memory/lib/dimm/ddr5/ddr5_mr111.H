@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -40,11 +40,13 @@
 #include <fapi2.H>
 
 #include <mss_generic_attribute_getters.H>
+#include <mss_generic_attribute_setters.H>
 #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
 #include <generic/memory/lib/utils/c_str.H>
 #include <generic/memory/lib/utils/mss_rank.H>
 #include <generic/memory/lib/utils/mss_generic_check.H>
 #include <generic/memory/lib/utils/num.H>
+#include <generic/memory/lib/dimm/ddr5/ddr5_mr_base.H>
 
 namespace mss
 {
@@ -57,7 +59,7 @@ namespace ddr5
 /// @tparam MC the memory controller type
 ///
 template<mss::mc_type MC>
-class mr111_data
+class mr111_data : public mr_base_data<MC>
 {
     public:
         // Needed as we need to know what MR for the CCS instruction created by the lab tooling
@@ -68,8 +70,9 @@ class mr111_data
         /// @param[in] a fapi2::TARGET_TYPE_DIMM target
         /// @param[in,out] fapi2::ReturnCode FAPI2_RC_SUCCESS iff ok
         ///
-        mr111_data( const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, fapi2::ReturnCode& io_rc )
+        mr111_data( const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, fapi2::ReturnCode& io_rc ) : mr_base_data<MC>(iv_mr)
         {
+
             if (io_rc != fapi2::FAPI2_RC_SUCCESS)
             {
                 return;
@@ -99,7 +102,7 @@ class mr111_data
         /// @brief Default constructor
         /// @note Default constructor is defined to allow for the use of STL data structures
         ///
-        mr111_data() = default;
+        mr111_data(): mr_base_data<MC>(iv_mr) {};
 
         ///
         /// @brief Assembles the MR based upon the passed in rank info and DRAM number
@@ -111,7 +114,7 @@ class mr111_data
         ///
         fapi2::ReturnCode assemble_data(const mss::rank::info<MC>& i_rank_info,
                                         uint8_t& o_mr_data,
-                                        const uint8_t i_dram_number = 0) const
+                                        const uint8_t i_dram_number = 0) const override
         {
             fapi2::buffer<uint8_t> l_data;
             l_data . template writeBit<GAIN>(iv_global_dfe_gain_enable)
@@ -131,7 +134,7 @@ class mr111_data
         /// @param[in] i_dram_number the DRAM on which to operate - not used for MR111 but included to keep the API common
         /// @return FAPI2_RC_SUCCESS if and only if ok
         ///
-        fapi2::ReturnCode display(const mss::rank::info<MC>& i_rank_info, const uint8_t i_dram_number = 0) const
+        fapi2::ReturnCode display(const mss::rank::info<MC>& i_rank_info, const uint8_t i_dram_number = 0) const override
         {
             this->display(i_rank_info.get_dimm_target());
             return fapi2::FAPI2_RC_SUCCESS;
@@ -147,7 +150,7 @@ class mr111_data
         ///
         fapi2::ReturnCode read_from_data(const mss::rank::info<MC>& i_rank_info,
                                          const uint8_t i_mr_data,
-                                         const uint8_t i_dram_number = 0)
+                                         const uint8_t i_dram_number = 0) override
         {
             const fapi2::buffer<uint8_t> l_data(i_mr_data);
             iv_global_dfe_gain_enable = l_data . template getBit<GAIN>();
@@ -157,6 +160,29 @@ class mr111_data
             iv_global_dfe4_enable = l_data . template getBit<TAP4>();
 
             return fapi2::FAPI2_RC_SUCCESS;
+        }
+
+        ///
+        /// @brief Sets the attribute for this MR for lab tool
+        /// @param[in] i_rank_info the rank on which to operate
+        /// @return FAPI2_RC_SUCCESS if and only if ok
+        ///
+        fapi2::ReturnCode attr_setter(const mss::rank::info<MC>& i_rank_info) override
+        {
+            FAPI_TRY( mss::attr::set_ddr5_global_dfe_gain(i_rank_info.get_port_target(), iv_global_dfe_gain_enable),
+                      "Unable to set attributes for ddr5::mr111_data()" );
+            FAPI_TRY( mss::attr::set_ddr5_global_dfe_tap1(i_rank_info.get_port_target(), iv_global_dfe1_enable),
+                      "Unable to set attributes for ddr5::mr111_data()" );
+            FAPI_TRY( mss::attr::set_ddr5_global_dfe_tap2(i_rank_info.get_port_target(), iv_global_dfe2_enable),
+                      "Unable to set attributes for ddr5::mr111_data()" );
+            FAPI_TRY( mss::attr::set_ddr5_global_dfe_tap3(i_rank_info.get_port_target(), iv_global_dfe3_enable),
+                      "Unable to set attributes for ddr5::mr111_data()" );
+            FAPI_TRY( mss::attr::set_ddr5_global_dfe_tap4(i_rank_info.get_port_target(), iv_global_dfe4_enable),
+                      "Unable to set attributes for ddr5::mr111_data()" );
+
+            return fapi2::FAPI2_RC_SUCCESS;
+        fapi_try_exit:
+            return fapi2::current_err;
         }
 
         enum

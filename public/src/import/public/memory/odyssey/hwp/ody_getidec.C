@@ -54,7 +54,7 @@ extern "C"
 
         // Reading CFAM chip id reg
         FAPI_TRY(CHIP_IDEC.getCfam(i_target),
-                 "Error reading CFAM chip IDEC reg for " TARGTIDFORMAT , TARGTID);
+                 "Error reading CFAM chip IDEC reg for " TARGTIDFORMAT, TARGTID);
         CHIP_IDEC.extractToRight<mss::ody::idec_consts::MAJOR_EC_BIT_START,
                                  mss::ody::idec_consts::MAJOR_EC_BIT_LENGTH>(o_chipEc);
         CHIP_IDEC.extractToRight<mss::ody::idec_consts::CHIPID_BIT_START,

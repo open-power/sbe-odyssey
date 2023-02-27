@@ -40,6 +40,7 @@
 #include <fapi2.H>
 
 #include <mss_generic_attribute_getters.H>
+#include <mss_generic_attribute_setters.H>
 #include <mss_generic_system_attribute_getters.H>
 #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
 #include <generic/memory/lib/utils/c_str.H>
@@ -47,6 +48,7 @@
 #include <generic/memory/lib/utils/mss_generic_check.H>
 #include <generic/memory/lib/utils/num.H>
 #include <generic/memory/lib/utils/mss_pair.H>
+#include <generic/memory/lib/dimm/ddr5/ddr5_mr_base.H>
 
 namespace mss
 {
@@ -59,10 +61,9 @@ namespace ddr5
 /// @tparam MC the memory controller type
 ///
 template<mss::mc_type MC>
-class mr5_data
+class mr5_data : public mr_base_data<MC>
 {
     public:
-
         // Needed as we need to know what MR for the CCS instruction created by the lab tooling
         static constexpr uint64_t iv_mr = 5;
 
@@ -71,8 +72,9 @@ class mr5_data
         /// @param[in] a fapi2::TARGET_TYPE_DIMM target
         /// @param[in,out] fapi2::ReturnCode FAPI2_RC_SUCCESS iff ok
         ///
-        mr5_data( const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, fapi2::ReturnCode& io_rc )
+        mr5_data( const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, fapi2::ReturnCode& io_rc ) : mr_base_data<MC>(iv_mr)
         {
+
             if (io_rc != fapi2::FAPI2_RC_SUCCESS)
             {
                 return;
@@ -96,8 +98,7 @@ class mr5_data
         /// @brief Default constructor
         /// @note Default constructor is defined to allow for the use of STL data structures
         ///
-        mr5_data() = default;
-
+        mr5_data(): mr_base_data<MC>(iv_mr) {};
 
         static const pair<uint8_t, uint8_t> DRV_IMP_TABLE[3];
 
@@ -183,7 +184,7 @@ class mr5_data
         ///
         fapi2::ReturnCode assemble_data(const mss::rank::info<MC>& i_rank_info,
                                         uint8_t& o_mr_data,
-                                        const uint8_t i_dram_number = 0) const
+                                        const uint8_t i_dram_number = 0) const override
         {
             fapi2::buffer<uint8_t> l_data;
             uint8_t l_pu_field = 0;
@@ -224,7 +225,7 @@ class mr5_data
         /// @param[in] i_dram_number the DRAM on which to operate - not used for MR5 but included to keep the API common
         /// @return FAPI2_RC_SUCCESS if and only if ok
         ///
-        fapi2::ReturnCode display(const mss::rank::info<MC>& i_rank_info, const uint8_t i_dram_number = 0) const
+        fapi2::ReturnCode display(const mss::rank::info<MC>& i_rank_info, const uint8_t i_dram_number = 0) const override
         {
             display(i_rank_info.get_dimm_target(), i_rank_info.get_dimm_rank());
             return fapi2::FAPI2_RC_SUCCESS;
@@ -239,7 +240,7 @@ class mr5_data
         /// @note This can be used for decoding mode register reads
         ///
         fapi2::ReturnCode read_from_data(const mss::rank::info<MC>& i_rank_info, const uint8_t i_mr_data,
-                                         const uint8_t i_dram_number = 0)
+                                         const uint8_t i_dram_number = 0) override
         {
             const fapi2::buffer<uint8_t> l_data(i_mr_data);
             uint8_t l_pu_field = 0;
@@ -264,6 +265,25 @@ class mr5_data
                      l_pd_field,
                      false,
                      iv_pd_drv_imp[i_rank_info.get_dimm_rank()]));
+
+            return fapi2::FAPI2_RC_SUCCESS;
+        fapi_try_exit:
+            return fapi2::current_err;
+        }
+
+        ///
+        /// @brief Sets the attribute for this MR for lab tool
+        /// @param[in] i_rank_info the rank on which to operate
+        /// @return FAPI2_RC_SUCCESS if and only if ok
+        ///
+        fapi2::ReturnCode attr_setter(const mss::rank::info<MC>& i_rank_info) override
+        {
+            FAPI_TRY( mss::attr::set_dram_pu_drv_imp(i_rank_info.get_dimm_target(), iv_pu_drv_imp),
+                      "Unable to set attribute for ddr5::mr5_data()" );
+            FAPI_TRY( mss::attr::set_ddr5_dram_test_mode(i_rank_info.get_port_target(), iv_drv_test_mode_supported_read_only),
+                      "Unable to set attribute for ddr5::mr5_data()" );
+            FAPI_TRY( mss::attr::set_dram_pd_drv_imp(i_rank_info.get_dimm_target(), iv_pd_drv_imp),
+                      "Unable to set attribute for ddr5::mr5_data()" );
 
             return fapi2::FAPI2_RC_SUCCESS;
         fapi_try_exit:

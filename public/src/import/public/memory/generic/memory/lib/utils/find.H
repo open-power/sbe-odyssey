@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -152,7 +152,6 @@ inline fapi2::Target<M> find_target( const fapi2::Target<T>& i_target)
     return find_target_impl<M>(i_target, std::integral_constant<bool, M == T> {});
 }
 
-#ifndef __PPE__
 ///
 /// @brief find the OCMB_CHIP given a DIMM
 /// @param[in] i_target the fapi2 target DIMM
@@ -192,6 +191,21 @@ inline fapi2::Target<fapi2::TARGET_TYPE_MCC> find_target(const fapi2::Target<fap
            .getParent<fapi2::TARGET_TYPE_MCC>();
 }
 
+///
+/// @brief find the MC given a OCMB_CHIP
+/// @param[in] i_target the fapi2 target OCMB_CHIP
+/// @return a MC target.
+///
+template<>
+inline fapi2::Target<fapi2::TARGET_TYPE_MC> find_target(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&
+        i_target)
+{
+    return i_target.getParent<fapi2::TARGET_TYPE_OMI>()
+           .getParent<fapi2::TARGET_TYPE_MCC>()
+           .getParent<fapi2::TARGET_TYPE_MI>()
+           .getParent<fapi2::TARGET_TYPE_MC>();
+}
+
 /// @brief find the OMIC given a OCMB_CHIP
 /// @param[in] i_target the fapi2 target OCMB_CHIP
 /// @return a OMIC target.
@@ -204,6 +218,18 @@ inline fapi2::Target<fapi2::TARGET_TYPE_OMIC> find_target(const fapi2::Target<fa
            .getParent<fapi2::TARGET_TYPE_OMIC>();
 }
 
+/// @brief find the OMIC given a OCMB_CHIP
+/// @param[in] i_target the fapi2 target OCMB_CHIP
+/// @return a OMIC target.
+///
+template<>
+inline fapi2::Target<fapi2::TARGET_TYPE_OMIC> find_target(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>&
+        i_target)
+{
+    return find_target<fapi2::TARGET_TYPE_OMIC>(i_target.getParent<fapi2::TARGET_TYPE_OCMB_CHIP>());
+}
+
+#ifndef __PPE__
 ///
 /// @brief find all the OCMB_CHIPs connected to a PROC_CHIP
 /// @param[in] i_target a fapi2::Target PROC_CHIP
@@ -227,6 +253,28 @@ find_targets( const fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP>& i_target,
     }
 
     return l_ocmbs;
+}
+
+///
+/// @brief find all the DIMMS connected to an MI
+/// @param[in] i_target a fapi2::Target MI
+/// @param[in] i_state fapi2 target state
+/// @return a vector of fapi2::TARGET_TYPE_DIMM
+///
+template<>
+inline std::vector< fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP> >
+find_targets( const fapi2::Target<fapi2::TARGET_TYPE_OMIC>& i_target,
+              fapi2::TargetState i_state )
+{
+    std::vector< fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP> > l_dimms;
+
+    for (const auto& l_omi : i_target.getChildren<fapi2::TARGET_TYPE_OMI>(i_state))
+    {
+        auto l_these_dimms( l_omi.getChildren<fapi2::TARGET_TYPE_OCMB_CHIP>(i_state) );
+        l_dimms.insert(l_dimms.end(), l_these_dimms.begin(), l_these_dimms.end());
+    }
+
+    return l_dimms;
 }
 
 ///

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -40,11 +40,13 @@
 #include <fapi2.H>
 
 #include <mss_generic_attribute_getters.H>
+#include <mss_generic_attribute_setters.H>
 #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
 #include <generic/memory/lib/utils/c_str.H>
 #include <generic/memory/lib/utils/mss_rank.H>
 #include <generic/memory/lib/utils/mss_generic_check.H>
 #include <generic/memory/lib/utils/num.H>
+#include <generic/memory/lib/dimm/ddr5/ddr5_mr_base.H>
 
 namespace mss
 {
@@ -58,7 +60,7 @@ namespace ddr5
 /// @note This same style of MR data is used for MR112, MR120... and can be repurposed for those MR's
 ///
 template<mss::mc_type MC>
-class mr112_data
+class mr112_data : public mr_base_data<MC>
 {
     public:
         // Needed as we need to know what MR for the CCS instruction created by the lab tooling
@@ -69,8 +71,9 @@ class mr112_data
         /// @param[in] a fapi2::TARGET_TYPE_DIMM target
         /// @param[in,out] fapi2::ReturnCode FAPI2_RC_SUCCESS iff ok
         ///
-        mr112_data( const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, fapi2::ReturnCode& io_rc )
+        mr112_data( const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target, fapi2::ReturnCode& io_rc ) : mr_base_data<MC>(iv_mr)
         {
+
             if (io_rc != fapi2::FAPI2_RC_SUCCESS)
             {
                 return;
@@ -93,7 +96,7 @@ class mr112_data
         /// @brief Default constructor
         /// @note Default constructor is defined to allow for the use of STL data structures
         ///
-        mr112_data() = default;
+        mr112_data(): mr_base_data<MC>(iv_mr) {};
 
         ///
         /// @brief Checks to ensure the DFE gain bias for a specific rank is in bounds
@@ -130,7 +133,7 @@ class mr112_data
         ///
         fapi2::ReturnCode assemble_data(const mss::rank::info<MC>& i_rank_info,
                                         uint8_t& o_mr_data,
-                                        const uint8_t i_dram_number = 0) const
+                                        const uint8_t i_dram_number = 0) const override
         {
             // Note: not checking the rank input as it is already checked by the rank info class
             const auto l_dimm_rank = i_rank_info.get_dimm_rank();
@@ -155,7 +158,7 @@ class mr112_data
         /// @param[in] i_dram_number the DRAM on which to operate - not used for MR112 but included to keep the API common
         /// @return FAPI2_RC_SUCCESS if and only if ok
         ///
-        fapi2::ReturnCode display(const mss::rank::info<MC>& i_rank_info, const uint8_t i_dram_number = 0) const
+        fapi2::ReturnCode display(const mss::rank::info<MC>& i_rank_info, const uint8_t i_dram_number = 0) const override
         {
             // Note: not checking the rank input as it is already checked by the rank info class
             this->display(i_rank_info.get_dimm_target(), i_rank_info.get_dimm_rank());
@@ -172,7 +175,7 @@ class mr112_data
         ///
         fapi2::ReturnCode read_from_data(const mss::rank::info<MC>& i_rank_info,
                                          const uint8_t i_mr_data,
-                                         const uint8_t i_dram_number = 0)
+                                         const uint8_t i_dram_number = 0) override
         {
             // Note: not checking the rank input as it is already checked by the rank info class
             const auto l_dimm_rank = i_rank_info.get_dimm_rank();
@@ -184,6 +187,23 @@ class mr112_data
             // Checks the gain bias
             FAPI_TRY(check_gain_bias(i_rank_info.get_dimm_target(), l_dimm_rank, l_gain_bias_field));
             iv_dfe_gain_bias[l_dimm_rank] = l_gain_bias_field;
+
+            return fapi2::FAPI2_RC_SUCCESS;
+        fapi_try_exit:
+            return fapi2::current_err;
+        }
+
+        ///
+        /// @brief Sets the attribute for this MR for lab tool
+        /// @param[in] i_rank_info the rank on which to operate
+        /// @return FAPI2_RC_SUCCESS if and only if ok
+        ///
+        fapi2::ReturnCode attr_setter(const mss::rank::info<MC>& i_rank_info) override
+        {
+            FAPI_TRY( mss::attr::set_ddr5_dfe_gain_bias(i_rank_info.get_dimm_target(), iv_dfe_gain_bias),
+                      "Unable to set attributes ddr5::mr112_data()" );
+            FAPI_TRY( mss::attr::set_ddr5_dfe_sign_bit(i_rank_info.get_dimm_target(), iv_dfe_sign_bit),
+                      "Unable to set attributes ddr5::mr112_data()" );
 
             return fapi2::FAPI2_RC_SUCCESS;
         fapi_try_exit:

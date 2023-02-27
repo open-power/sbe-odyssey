@@ -278,7 +278,7 @@ fapi2::ReturnCode poll_for_dfi_init_complete( const fapi2::Target<fapi2::TARGET_
                                        200,
                                        mss::DELAY_1MS,
                                        200,
-                                       200);
+                                       2000);
 
     // Poll for getting 1 at the DFI complete bit
     bool l_poll_return = mss::poll(l_ocmb, l_poll_params, [&l_ocmb, &DFI_COMPLETE_BIT]()->bool

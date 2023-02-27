@@ -41,7 +41,7 @@
 #include <lib/shared/ody_consts.H>
 #include <lib/dimm/ody_rank.H>
 #include <lib/phy/ody_snps_dram_train_msg_blk.H>
-#include <lib/dimm/ody_rank.H>
+#include <lib/utils/ody_bad_bits.H>
 #include <hwp_data_stream.H>
 #include <generic/memory/lib/generic_attribute_accessors_manual.H>
 #include <mss_odyssey_attribute_getters.H>
@@ -743,7 +743,6 @@ class msg_block_params
 
             io_msg_block.TX2D_DFE_Misc = l_buffer;
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -780,7 +779,6 @@ class msg_block_params
 
             io_msg_block.RX2D_TrainOpt = l_buffer;
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -817,7 +815,6 @@ class msg_block_params
 
             io_msg_block.TX2D_TrainOpt = l_buffer;
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -830,7 +827,6 @@ class msg_block_params
         {
             io_msg_block.Share2DVrefResult = iv_msg_block_vars.iv_Share2DVrefResult;
 
-        fapi_try_exit:
             return fapi2::FAPI2_RC_SUCCESS;
         }
 
@@ -843,7 +839,6 @@ class msg_block_params
         {
             io_msg_block.MRE_MIN_PULSE = iv_msg_block_vars.iv_MRE_MIN_PULSE;
 
-        fapi_try_exit:
             return fapi2::FAPI2_RC_SUCCESS;
         }
 
@@ -856,7 +851,6 @@ class msg_block_params
         {
             io_msg_block.DWL_MIN_PULSE = iv_msg_block_vars.iv_DWL_MIN_PULSE;
 
-        fapi_try_exit:
             return fapi2::FAPI2_RC_SUCCESS;
         }
 
@@ -869,7 +863,6 @@ class msg_block_params
         {
             io_msg_block.PhyConfigOverride = iv_msg_block_vars.iv_PhyConfigOverride;
 
-        fapi_try_exit:
             return fapi2::FAPI2_RC_SUCCESS;
         }
 
@@ -882,7 +875,6 @@ class msg_block_params
         {
             io_msg_block.EnabledDQsChA = iv_msg_block_vars.iv_EnabledDQsChA;
 
-        fapi_try_exit:
             return fapi2::FAPI2_RC_SUCCESS;
         }
 
@@ -895,7 +887,6 @@ class msg_block_params
         {
             io_msg_block.EnabledDQsChB = iv_msg_block_vars.iv_EnabledDQsChB;
 
-        fapi_try_exit:
             return fapi2::FAPI2_RC_SUCCESS;
         }
 
@@ -912,7 +903,6 @@ class msg_block_params
 
             io_msg_block.CsPresentChA = l_ranks_configed_buf;
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -929,7 +919,6 @@ class msg_block_params
 
             io_msg_block.CsPresentChB = l_ranks_configed_buf;
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -949,7 +938,6 @@ class msg_block_params
             io_msg_block.MR0_B2 = iv_msg_block_vars.iv_MR0[2];
             io_msg_block.MR0_B3 = iv_msg_block_vars.iv_MR0[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -969,7 +957,6 @@ class msg_block_params
             io_msg_block.MR2_B2 = iv_msg_block_vars.iv_MR2[2];
             io_msg_block.MR2_B3 = iv_msg_block_vars.iv_MR2[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -989,7 +976,6 @@ class msg_block_params
             io_msg_block.MR3_B2 = iv_msg_block_vars.iv_MR3[2][0];
             io_msg_block.MR3_B3 = iv_msg_block_vars.iv_MR3[3][0];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1009,7 +995,6 @@ class msg_block_params
             io_msg_block.MR4_B2 = iv_msg_block_vars.iv_MR4[2];
             io_msg_block.MR4_B3 = iv_msg_block_vars.iv_MR4[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1029,7 +1014,6 @@ class msg_block_params
             io_msg_block.MR5_B2 = iv_msg_block_vars.iv_MR5[2];
             io_msg_block.MR5_B3 = iv_msg_block_vars.iv_MR5[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1049,7 +1033,6 @@ class msg_block_params
             io_msg_block.MR6_B2 = iv_msg_block_vars.iv_MR6[2];
             io_msg_block.MR6_B3 = iv_msg_block_vars.iv_MR6[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1070,7 +1053,6 @@ class msg_block_params
             io_msg_block.MR32_B2_next = iv_msg_block_vars.iv_MR32[2];
             io_msg_block.MR32_B3_next = iv_msg_block_vars.iv_MR32[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1090,7 +1072,6 @@ class msg_block_params
             io_msg_block.MR8_B2 = iv_msg_block_vars.iv_MR8[2];
             io_msg_block.MR8_B3 = iv_msg_block_vars.iv_MR8[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1111,7 +1092,6 @@ class msg_block_params
             io_msg_block.MR32_ORG_B2_next = iv_msg_block_vars.iv_MR32_ORG[2];
             io_msg_block.MR32_ORG_B3_next = iv_msg_block_vars.iv_MR32_ORG[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1131,7 +1111,6 @@ class msg_block_params
             io_msg_block.MR10_B2 = iv_msg_block_vars.iv_MR10[2][0];
             io_msg_block.MR10_B3 = iv_msg_block_vars.iv_MR10[3][0];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1151,7 +1130,6 @@ class msg_block_params
             io_msg_block.MR11_B2 = iv_msg_block_vars.iv_MR11[2][0];
             io_msg_block.MR11_B3 = iv_msg_block_vars.iv_MR11[3][0];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1171,7 +1149,6 @@ class msg_block_params
             io_msg_block.MR12_B2 = iv_msg_block_vars.iv_MR12[2][0];
             io_msg_block.MR12_B3 = iv_msg_block_vars.iv_MR12[3][0];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1191,7 +1168,6 @@ class msg_block_params
             io_msg_block.MR13_B2 = iv_msg_block_vars.iv_MR13[2];
             io_msg_block.MR13_B3 = iv_msg_block_vars.iv_MR13[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1211,7 +1187,6 @@ class msg_block_params
             io_msg_block.MR14_B2 = iv_msg_block_vars.iv_MR14[2];
             io_msg_block.MR14_B3 = iv_msg_block_vars.iv_MR14[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1231,7 +1206,6 @@ class msg_block_params
             io_msg_block.MR15_B2 = iv_msg_block_vars.iv_MR15[2];
             io_msg_block.MR15_B3 = iv_msg_block_vars.iv_MR15[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1251,7 +1225,6 @@ class msg_block_params
             io_msg_block.MR111_B2 = iv_msg_block_vars.iv_MR111[2];
             io_msg_block.MR111_B3 = iv_msg_block_vars.iv_MR111[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1271,7 +1244,6 @@ class msg_block_params
             io_msg_block.MR32_B2 = iv_msg_block_vars.iv_MR32[2];
             io_msg_block.MR32_B3 = iv_msg_block_vars.iv_MR32[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1291,7 +1263,6 @@ class msg_block_params
             io_msg_block.MR33_B2 = iv_msg_block_vars.iv_MR33[2];
             io_msg_block.MR33_B3 = iv_msg_block_vars.iv_MR33[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1311,7 +1282,6 @@ class msg_block_params
             io_msg_block.MR34_B2 = iv_msg_block_vars.iv_MR34[2];
             io_msg_block.MR34_B3 = iv_msg_block_vars.iv_MR34[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1331,7 +1301,6 @@ class msg_block_params
             io_msg_block.MR35_B2 = iv_msg_block_vars.iv_MR35[2];
             io_msg_block.MR35_B3 = iv_msg_block_vars.iv_MR35[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1351,7 +1320,6 @@ class msg_block_params
             io_msg_block.MR32_ORG_B2 = iv_msg_block_vars.iv_MR32_ORG[2];
             io_msg_block.MR32_ORG_B3 = iv_msg_block_vars.iv_MR32_ORG[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1371,7 +1339,6 @@ class msg_block_params
             io_msg_block.MR37_B2 = iv_msg_block_vars.iv_MR37[2];
             io_msg_block.MR37_B3 = iv_msg_block_vars.iv_MR37[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1391,7 +1358,6 @@ class msg_block_params
             io_msg_block.MR38_B2 = iv_msg_block_vars.iv_MR38[2];
             io_msg_block.MR38_B3 = iv_msg_block_vars.iv_MR38[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1411,7 +1377,6 @@ class msg_block_params
             io_msg_block.MR39_B2 = iv_msg_block_vars.iv_MR39[2];
             io_msg_block.MR39_B3 = iv_msg_block_vars.iv_MR39[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1431,7 +1396,6 @@ class msg_block_params
             io_msg_block.MR33_ORG_B2 = iv_msg_block_vars.iv_MR33_ORG[2];
             io_msg_block.MR33_ORG_B3 = iv_msg_block_vars.iv_MR33_ORG[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1452,7 +1416,6 @@ class msg_block_params
             io_msg_block.MR11_B2_next = iv_msg_block_vars.iv_MR11[2][0];
             io_msg_block.MR11_B3_next = iv_msg_block_vars.iv_MR11[3][0];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1473,7 +1436,6 @@ class msg_block_params
             io_msg_block.MR12_B2_next = iv_msg_block_vars.iv_MR12[2][0];
             io_msg_block.MR12_B3_next = iv_msg_block_vars.iv_MR12[3][0];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1494,7 +1456,6 @@ class msg_block_params
             io_msg_block.MR13_B2_next = iv_msg_block_vars.iv_MR13[2];
             io_msg_block.MR13_B3_next = iv_msg_block_vars.iv_MR13[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1515,7 +1476,6 @@ class msg_block_params
             io_msg_block.MR33_ORG_B2_next = iv_msg_block_vars.iv_MR33_ORG[2];
             io_msg_block.MR33_ORG_B3_next = iv_msg_block_vars.iv_MR33_ORG[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1536,7 +1496,6 @@ class msg_block_params
             io_msg_block.MR33_B2_next = iv_msg_block_vars.iv_MR33[2];
             io_msg_block.MR33_B3_next = iv_msg_block_vars.iv_MR33[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1556,7 +1515,6 @@ class msg_block_params
             io_msg_block.MR50_B2 = iv_msg_block_vars.iv_MR50[2];
             io_msg_block.MR50_B3 = iv_msg_block_vars.iv_MR50[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1576,7 +1534,6 @@ class msg_block_params
             io_msg_block.MR51_B2 = iv_msg_block_vars.iv_MR51[2];
             io_msg_block.MR51_B3 = iv_msg_block_vars.iv_MR51[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1596,7 +1553,6 @@ class msg_block_params
             io_msg_block.MR52_B2 = iv_msg_block_vars.iv_MR52[2];
             io_msg_block.MR52_B3 = iv_msg_block_vars.iv_MR52[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1616,7 +1572,6 @@ class msg_block_params
             io_msg_block.DFE_GainBias_B2 = iv_msg_block_vars.iv_DFE_GainBias[2];
             io_msg_block.DFE_GainBias_B3 = iv_msg_block_vars.iv_DFE_GainBias[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -1720,7 +1675,6 @@ class msg_block_params
             io_msg_block.WR_RD_RTT_PARK_B3 = (iv_msg_block_vars.iv_RD_RTT_PARK[3] << RD_SHIFT) |
                                              iv_msg_block_vars.iv_WR_RTT_PARK[3];
 
-        fapi_try_exit:
             return fapi2::current_err;
         }
 
@@ -3909,158 +3863,6 @@ void display_msg_block(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_targe
 fapi2::ReturnCode check_training_result(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
                                         const uint64_t i_status,
                                         const _PMU_SMB_DDR5_1D_t& i_msg_block_response);
-
-
-///
-/// @brief Odyssey's bad bit interface class
-///
-class bad_bit_interface
-{
-    public:
-
-        // Data that actually stores all of the bad bit information
-        // We do some processing in the constructor
-        uint8_t iv_bad_bits[BAD_BITS_RANKS][BAD_DQ_BYTE_COUNT];
-
-        // No default constructor
-        bad_bit_interface() = delete;
-
-        ///
-        /// @brief Default destructor
-        ///
-        ~bad_bit_interface() = default;
-
-        ///
-        /// @brief Constructor from PHY response struct
-        /// @param[in] i_response response data from training
-        ///
-        bad_bit_interface(const _PMU_SMB_DDR5_1D_t& i_response )
-        {
-            // Assign the results to the bad bits internal structure
-            // At this point, we want to assign all data
-            iv_bad_bits[0][0] = i_response.DisabledDB0LaneR0;
-            iv_bad_bits[0][1] = i_response.DisabledDB1LaneR0;
-            iv_bad_bits[0][2] = i_response.DisabledDB2LaneR0;
-            iv_bad_bits[0][3] = i_response.DisabledDB3LaneR0;
-            iv_bad_bits[0][4] = i_response.DisabledDB4LaneR0;
-            iv_bad_bits[0][5] = i_response.DisabledDB5LaneR0;
-            iv_bad_bits[0][6] = i_response.DisabledDB6LaneR0;
-            iv_bad_bits[0][7] = i_response.DisabledDB7LaneR0;
-            iv_bad_bits[0][8] = i_response.DisabledDB8LaneR0;
-            iv_bad_bits[0][9] = i_response.DisabledDB9LaneR0;
-
-            iv_bad_bits[1][0] = i_response.DisabledDB0LaneR1;
-            iv_bad_bits[1][1] = i_response.DisabledDB1LaneR1;
-            iv_bad_bits[1][2] = i_response.DisabledDB2LaneR1;
-            iv_bad_bits[1][3] = i_response.DisabledDB3LaneR1;
-            iv_bad_bits[1][4] = i_response.DisabledDB4LaneR1;
-            iv_bad_bits[1][5] = i_response.DisabledDB5LaneR1;
-            iv_bad_bits[1][6] = i_response.DisabledDB6LaneR1;
-            iv_bad_bits[1][7] = i_response.DisabledDB7LaneR1;
-            iv_bad_bits[1][8] = i_response.DisabledDB8LaneR1;
-            iv_bad_bits[1][9] = i_response.DisabledDB9LaneR1;
-
-            iv_bad_bits[2][0] = i_response.DisabledDB0LaneR2;
-            iv_bad_bits[2][1] = i_response.DisabledDB1LaneR2;
-            iv_bad_bits[2][2] = i_response.DisabledDB2LaneR2;
-            iv_bad_bits[2][3] = i_response.DisabledDB3LaneR2;
-            iv_bad_bits[2][4] = i_response.DisabledDB4LaneR2;
-            iv_bad_bits[2][5] = i_response.DisabledDB5LaneR2;
-            iv_bad_bits[2][6] = i_response.DisabledDB6LaneR2;
-            iv_bad_bits[2][7] = i_response.DisabledDB7LaneR2;
-            iv_bad_bits[2][8] = i_response.DisabledDB8LaneR2;
-            iv_bad_bits[2][9] = i_response.DisabledDB9LaneR2;
-
-            iv_bad_bits[3][0] = i_response.DisabledDB0LaneR3;
-            iv_bad_bits[3][1] = i_response.DisabledDB1LaneR3;
-            iv_bad_bits[3][2] = i_response.DisabledDB2LaneR3;
-            iv_bad_bits[3][3] = i_response.DisabledDB3LaneR3;
-            iv_bad_bits[3][4] = i_response.DisabledDB4LaneR3;
-            iv_bad_bits[3][5] = i_response.DisabledDB5LaneR3;
-            iv_bad_bits[3][6] = i_response.DisabledDB6LaneR3;
-            iv_bad_bits[3][7] = i_response.DisabledDB7LaneR3;
-            iv_bad_bits[3][8] = i_response.DisabledDB8LaneR3;
-            iv_bad_bits[3][9] = i_response.DisabledDB9LaneR3;
-        }
-
-        ///
-        /// @brief Swizzle the bad bits to the attribute's perspective
-        /// @param[in] i_target the DIMM to record training results on
-        /// @param[out] o_bad_dq the processed bad bits
-        ///
-        fapi2::ReturnCode record_bad_bits_interface( const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target,
-                uint8_t (&o_bad_dq)[BAD_BITS_RANKS][BAD_DQ_BYTE_COUNT]) const
-        {
-            std::vector<mss::rank::info<mss::mc_type::ODYSSEY>> l_rank_infos;
-            FAPI_TRY(mss::rank::ranks_on_dimm(i_target, l_rank_infos));
-
-            for(const auto& l_rank_info : l_rank_infos)
-            {
-                // Note: we copy from the PHY rank to the DIMM rank
-                // The rank we take in is taken from the PHY structure, which uses PHY rank perspective
-                // Our attributes use the IBM rank perspective
-                // If there is any swizzle, then this will fix it for us
-                std::copy(std::begin(iv_bad_bits[l_rank_info.get_phy_rank()]),
-                          std::end(iv_bad_bits[l_rank_info.get_phy_rank()]),
-                          std::begin(o_bad_dq[l_rank_info.get_dimm_rank()]));
-            }
-
-            return fapi2::FAPI2_RC_SUCCESS;
-
-        fapi_try_exit:
-            return fapi2::current_err;
-        }
-};
-
-///
-/// @brief bad bit interface class for ody_host_draminit (read attr and update SPD)
-///
-class host_bad_bit_interface
-{
-    public:
-
-        // Data that actually stores all of the bad bit information
-        // We do some processing in the constructor
-        uint8_t iv_bad_bits[BAD_BITS_RANKS][BAD_DQ_BYTE_COUNT];
-
-        // No default constructor
-        host_bad_bit_interface() = delete;
-
-        ///
-        /// @brief Default destructor
-        ///
-        ~host_bad_bit_interface() = default;
-
-        ///
-        /// @brief Constructor from DIMM bad bits attribute
-        /// @param[in] i_target the DIMM to record training results on
-        /// @param[out] o_rc the return code from attribute access
-        ///
-        host_bad_bit_interface(const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target,
-                               fapi2::ReturnCode& o_rc)
-        {
-            o_rc = mss::attr::get_bad_dq_bitmap(i_target, iv_bad_bits);
-        }
-
-        ///
-        /// @brief Update the bad bits attribute (and SPD)
-        /// @param[in] i_target the DIMM to record training results on
-        /// @param[out] o_bad_dq the processed bad bits
-        ///
-        fapi2::ReturnCode record_bad_bits_interface( const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target,
-                uint8_t (&o_bad_dq)[BAD_BITS_RANKS][BAD_DQ_BYTE_COUNT]) const
-        {
-            for(uint8_t l_rank = 0; l_rank < BAD_BITS_RANKS; l_rank++)
-            {
-                // Note: any rank swizzle is taken care of in the sppe_draminit procedure
-                std::copy(std::begin(iv_bad_bits[l_rank]),
-                          std::end(iv_bad_bits[l_rank]),
-                          std::begin(o_bad_dq[l_rank]));
-            }
-
-            return fapi2::FAPI2_RC_SUCCESS;
-        }
-};
 
 } // namespace phy
 } // namespace ody

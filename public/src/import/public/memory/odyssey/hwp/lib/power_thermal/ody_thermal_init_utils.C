@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -128,7 +129,6 @@ fapi_try_exit:
 ///
 /// @brief Helper function to conduct the i2c reads
 /// @param[in] i_i2c the i2c responder target
-/// @param[in] i_i2c_addr the address of the i2c register to read
 /// @param[out] o_i2c_data the data read from the i2c register
 /// @return FAPI2_RC_SUCCESS iff okay
 /// @note allows for a shim to be made for unit testing

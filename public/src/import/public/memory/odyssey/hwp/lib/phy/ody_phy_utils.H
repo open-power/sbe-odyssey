@@ -181,6 +181,7 @@ fapi2::ReturnCode getScom_synopsys_addr_wrapper(const fapi2::Target<fapi2::TARGE
         const uint32_t i_addr,
         fapi2::buffer<uint64_t>& o_data);
 
+
 } // namespace phy
 } // namespace ody
 } // namespace mss
