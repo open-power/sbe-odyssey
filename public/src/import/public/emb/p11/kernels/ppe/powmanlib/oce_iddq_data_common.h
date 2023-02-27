@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -26,7 +26,6 @@
 #define __OCE_IDDQ_DATA_COMMON_H__
 
 #include <stdint.h>
-#include <p11_hcd_memmap_tcc_sram.H>
 #include <p11_hcode_image_defines.H>
 
 

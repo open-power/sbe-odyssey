@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -29,8 +29,6 @@
 #define UNDEFINED_MAX_32  (uint32_t)0xffffffff
 #define UNDEFINED_MAX_64  (uint64_t)0xffffffffffffffff
 #define UNDEFINED_ZERO    (uint32_t)0x00000000
-
-#define DB_CMD_UNDEFINED  (uint32_t)0xff
 
 static inline uint16_t endian_swap16( uint16_t i_data)
 {

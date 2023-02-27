@@ -26,14 +26,7 @@
 #define __DCE_SENSOR_DATA_COMMON_H__
 
 #include <stdint.h>
-#include <p11_hcd_memmap_tcc_sram.H>
 #include <p11_hcode_image_defines.H>
-
-
-// Quad and Core defs (CMO-TBD: These must be defined somewhere else. Where?)
-#define QUADS_PER_TCC           (2)  // 2 Quads per TCC
-#define CORES_PER_QUAD          (4)  // 4 Cores per Quad
-#define CORES_PER_TCC           (QUADS_PER_TCC * CORES_PER_QUAD) // Cores per TCC
 
 //
 // DTS structs
@@ -202,8 +195,8 @@ typedef struct
 //
 typedef struct
 {
-    CoreData_t  core_data[CORES_PER_TCC];  // 8 x 88B
-    QuadData_t  quad_data[QUADS_PER_TCC];  // 2 x 2B
+    CoreData_t  core_data[MAX_CORES_PER_TAP];  // 8 x 88B
+    QuadData_t  quad_data[MAX_QUADS_PER_TAP];  // 2 x 2B
     uint32_t    tbr_notif_period;          // 4B - Most recent notification period (DB or FIT)
     uint32_t    tbr_notif_rcvd;            // 4B - Most recent notif reception time (DB or FIT)
     uint32_t    tbr_data_collect_duration; // 4B - Data collection duration (since notif_rcvd)
