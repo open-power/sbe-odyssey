@@ -28,6 +28,8 @@
 #include "pakwrapper.H"
 #include "globals.H"
 #include "heap.H"
+#include "sbestates.H"
+#include "sbestatesutils.H"
 
 #define SRAM_SCRATCH_GRANULAR_SIZE 0x10000 // 64 KB
 
@@ -44,6 +46,21 @@ ReturnCode istepWithOcmb( voidfuncptr_t i_hwp)
     assert( NULL != i_hwp );
     SBE_EXEC_HWP(rc, reinterpret_cast<sbeIstepHwpOcmb_t>( i_hwp ), l_ocmb_chip);
     SBE_EXIT(SBE_FUNC);
+    return rc;
+    #undef SBE_FUNC
+}
+
+ReturnCode istepWithOcmbAndMoveToRuntime( voidfuncptr_t i_hwp)
+{
+    #define SBE_FUNC " istepWithOcmbAndMoveToRuntime "
+    SBE_ENTER(SBE_FUNC);
+    ReturnCode rc = FAPI2_RC_SUCCESS;
+    rc = istepWithOcmb(i_hwp);
+
+    if(rc == FAPI2_RC_SUCCESS)
+    {
+        stateTransition(SBE_EVENT_CMN_RUNTIME);
+    }
     return rc;
     #undef SBE_FUNC
 }
