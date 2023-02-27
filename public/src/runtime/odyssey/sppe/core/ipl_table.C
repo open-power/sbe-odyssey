@@ -64,36 +64,30 @@ static istepMap_t g_istep1PtrTbl[] =
 
 static istepMap_t g_istep3PtrTbl[] =
          {
-             ISTEP_MAP( NULL, NULL ),                               // 3.01
-             ISTEP_MAP( istepWithOcmb, ody_chiplet_clk_config ),    // 3.02
-             ISTEP_MAP( NULL, NULL ),                               // 3.03
-             ISTEP_MAP( istepWithOcmb, ody_chiplet_reset ),         // 3.04
-             ISTEP_MAP( istepWithOcmb, ody_chiplet_unused_psave ),  // 3.05
-             ISTEP_MAP( NULL, NULL ),                               // 3.06
-             ISTEP_MAP( NULL, NULL ),                               // 3.07
-             ISTEP_MAP( istepBistWithOcmb,  ody_bist_repr_initf ),  // 3.08
-             ISTEP_MAP( istepAbistWithOcmb, ody_abist ),            // 3.09
-             ISTEP_MAP( istepLbistWithOcmb, ody_lbist ),            // 3.10
-             ISTEP_MAP( istepWithOcmb, ody_chiplet_repr_initf ),    // 3.11
-             ISTEP_MAP( istepWithOcmb, ody_chiplet_arrayinit ),     // 3.12
-             ISTEP_MAP( NULL, NULL ),                               // 3.13
-             ISTEP_MAP( istepWithOcmb, ody_chiplet_initf ),         // 3.14
-             ISTEP_MAP( istepWithOcmb, ody_chiplet_init ),          // 3.15
-             ISTEP_MAP( NULL, NULL ),                               // 3.16
-             ISTEP_MAP( NULL, NULL ),                               // 3.17
-             ISTEP_MAP( NULL, NULL ),                               // 3.18
-             ISTEP_MAP( NULL, NULL ),                               // 3.19
-             ISTEP_MAP( istepWithOcmb, ody_chiplet_startclocks ),   // 3.20
-             ISTEP_MAP( istepWithOcmb, ody_chiplet_fir_init ),      // 3.21
-             ISTEP_MAP( NULL, NULL ),                               // 3.22
-             ISTEP_MAP( NULL, NULL ),                               // 3.23
-             ISTEP_MAP( istepWithOcmb, ody_nest_enable_io ),        // 3.24
-             ISTEP_MAP( NULL, NULL ),                               // 3.25
-             ISTEP_MAP( NULL, NULL ),                               // 3.26
-             ISTEP_MAP( NULL, NULL ),                               // 3.27
-             ISTEP_MAP( NULL, NULL ),                               // 3.28
-             ISTEP_MAP( NULL, NULL ),                               // 3.29
-             ISTEP_MAP( NULL, NULL ),                               // 3.30
+             ISTEP_MAP( NULL, NULL ),                                       // 3.01
+             ISTEP_MAP( istepWithOcmb, ody_chiplet_clk_config ),            // 3.02
+             ISTEP_MAP( NULL, NULL ),                                       // 3.03
+             ISTEP_MAP( istepWithOcmb, ody_chiplet_reset ),                 // 3.04
+             ISTEP_MAP( istepWithOcmb, ody_chiplet_unused_psave ),          // 3.05
+             ISTEP_MAP( NULL, NULL ),                                       // 3.06
+             ISTEP_MAP( NULL, NULL ),                                       // 3.07
+             ISTEP_MAP( istepBistWithOcmb,  ody_bist_repr_initf ),          // 3.08
+             ISTEP_MAP( istepAbistWithOcmb, ody_abist ),                    // 3.09
+             ISTEP_MAP( istepLbistWithOcmb, ody_lbist ),                    // 3.10
+             ISTEP_MAP( istepWithOcmb, ody_chiplet_repr_initf ),            // 3.11
+             ISTEP_MAP( istepWithOcmb, ody_chiplet_arrayinit ),             // 3.12
+             ISTEP_MAP( NULL, NULL ),                                       // 3.13
+             ISTEP_MAP( istepWithOcmb, ody_chiplet_initf ),                 // 3.14
+             ISTEP_MAP( istepWithOcmb, ody_chiplet_init ),                  // 3.15
+             ISTEP_MAP( NULL, NULL ),                                       // 3.16
+             ISTEP_MAP( NULL, NULL ),                                       // 3.17
+             ISTEP_MAP( NULL, NULL ),                                       // 3.18
+             ISTEP_MAP( NULL, NULL ),                                       // 3.19
+             ISTEP_MAP( istepWithOcmb, ody_chiplet_startclocks ),           // 3.20
+             ISTEP_MAP( istepWithOcmb, ody_chiplet_fir_init ),              // 3.21
+             ISTEP_MAP( NULL, NULL ),                                       // 3.22
+             ISTEP_MAP( NULL, NULL ),                                       // 3.23
+             ISTEP_MAP( istepWithOcmbAndMoveToRuntime, ody_nest_enable_io ), // 3.24
          };
 
 // @TODO: End
