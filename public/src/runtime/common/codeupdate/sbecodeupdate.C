@@ -54,8 +54,21 @@ uint32_t sbeGetCodeLevels (uint8_t *i_pArg)
     l_hdr.init();
     do
     {
-        // Don't attempt to read FIFO as no input params expected
-        // for GetCodeLevels chip-op
+        // Input params are not expected for GetCodeLevels chip-op.
+        // But, we need to read EOT from the upstream fifo to acknowledge
+        // the chip-op. (expect EOT and don't flush)
+        uint32_t l_ipLen = 0;
+        l_fifoRc = sbeUpFifoDeq_mult(l_ipLen, NULL, true, false, l_fifoType);
+        if (l_fifoRc != SBE_SEC_OPERATION_SUCCESSFUL)
+        {
+            // Don't set the secondary rc for the FIFO error since we won't
+            // send the response header for the FIFO error.
+            // Refer below at the last in this function to get more details.
+            SBE_ERROR(SBE_FUNC \
+                      "Failed to ack EOT for GetCodeLevels chip-op, RC[0x%08x]",
+                      l_fifoRc);
+            break;
+        }
 
         uint8_t l_runningPart;
         uint8_t l_nonRunningPart; // unused now
