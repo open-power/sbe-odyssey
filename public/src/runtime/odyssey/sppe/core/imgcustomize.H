@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -31,12 +32,6 @@
  *        is lab only and can be found in internal
  *
  */
-
-/**
- * @brief Wrapper function to update SBE frequency
- *
- */
-void sbeFreqUpdateWrap(void);
 
 /**
  * @brief Wrapper function to perform SBE security boot checks

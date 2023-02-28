@@ -137,7 +137,7 @@ int  main(int argc, char **argv)
 
     do
     {
-        sbeFreqUpdateWrap();
+        SBE::setSbeGlobalFreqFromScratchOrLFR(CALLER_RUNTIME);
 
         rc = pk_initialize((PkAddress)sppe_Kernel_NC_Int_stack,
                 SPPE_NONCRITICAL_STACK_SIZE,
