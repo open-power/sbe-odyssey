@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -31,12 +32,6 @@
 #include "odysseylink.H"
 #include "globals.H"
 #include "sbeglobals.H"
-
-void sbeFreqUpdateWrap(void)
-{
-    // Update sbefreq using LFR value
-    SBE::updateSbeGlobalFreqFromLFR();
-}
 
 void sbeSecurityCheckWrap(void)
 {
