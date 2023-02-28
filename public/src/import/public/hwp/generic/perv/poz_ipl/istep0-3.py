@@ -1307,13 +1307,14 @@ def p11s_abist():
     if not ATTR_ENABLE_ABIST:
         return
 
-    poz_bist({"s_abst_setup", "s_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup, regions=all})
-    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
+    poz_bist({"s_abst_setup", "s_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup, regions=all except PLL})
+    mod_scan0(chiplets via multicast, regions=all except PLL, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
 def p11t_abist():
     if not ATTR_ENABLE_ABIST:
         return
 
+    # We include region 13 on Tap since that contains an MMA on the EQs and there is no PLL on any other non-TP chiplet
     poz_bist({"t_abst_setup", "t_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup, regions=all})
     mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
@@ -1321,15 +1322,15 @@ def ody_abist():
     if not ATTR_ENABLE_ABIST:
         return
 
-    poz_bist({"cpl_abst_setup", "cpl_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup, regions=all})
-    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
+    poz_bist({"cpl_abst_setup", "cpl_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup, regions=all except PLL})
+    mod_scan0(chiplets via multicast, regions=all except PLL, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
 def zme_abist():
     if not ATTR_ENABLE_ABIST:
         return
 
-    poz_bist({"cpl_abst_setup", "cpl_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup, regions=all})
-    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
+    poz_bist({"cpl_abst_setup", "cpl_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup, regions=all except PLL})
+    mod_scan0(chiplets via multicast, regions=all except PLL, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
 ISTEP(3, 10, "proc_lbist", "SSBE, TSBE")
 
@@ -1337,14 +1338,15 @@ def p11s_lbist():
     if not ATTR_ENABLE_LBIST:
         return
 
-    poz_bist({"s_lbst_setup", "s_lbst_cmp", chiplets=all, lbist+arrayinit+setup+run+compare+cleanup, regions=all})
-    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_RTG)
-    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
+    poz_bist({"s_lbst_setup", "s_lbst_cmp", chiplets=all, lbist+arrayinit+setup+run+compare+cleanup, regions=all except PLL})
+    mod_scan0(chiplets via multicast, regions=all except PLL, scan_types=cc::SCAN_TYPE_RTG)
+    mod_scan0(chiplets via multicast, regions=all except PLL, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
 def p11t_lbist():
     if not ATTR_ENABLE_LBIST:
         return
 
+    # We include region 13 on Tap since that contains an MMA on the EQs and there is no PLL on any other non-TP chiplet
     poz_bist({"t_lbst_setup", "t_lbst_cmp", chiplets=all, lbist+arrayinit+setup+run+compare+cleanup, regions=all})
     mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_RTG)
     mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
@@ -1353,17 +1355,17 @@ def ody_lbist():
     if not ATTR_ENABLE_LBIST:
         return
 
-    poz_bist({"cpl_lbst_setup", "cpl_lbst_cmp", chiplets=all, lbist+arrayinit+setup+run+compare+cleanup, regions=all})
-    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_RTG)
-    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
+    poz_bist({"cpl_lbst_setup", "cpl_lbst_cmp", chiplets=all, lbist+arrayinit+setup+run+compare+cleanup, regions=all except PLL})
+    mod_scan0(chiplets via multicast, regions=all except PLL, scan_types=cc::SCAN_TYPE_RTG)
+    mod_scan0(chiplets via multicast, regions=all except PLL, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
 def zme_lbist():
     if not ATTR_ENABLE_LBIST:
         return
 
-    poz_bist({"cpl_lbst_setup", "cpl_lbst_cmp", chiplets=all, lbist+arrayinit+setup+run+compare+cleanup, regions=all})
-    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_RTG)
-    mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
+    poz_bist({"cpl_lbst_setup", "cpl_lbst_cmp", chiplets=all, lbist+arrayinit+setup+run+compare+cleanup, regions=all except PLL})
+    mod_scan0(chiplets via multicast, regions=all except PLL, scan_types=cc::SCAN_TYPE_RTG)
+    mod_scan0(chiplets via multicast, regions=all except PLL, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
 """
 ---------- IF user elects to skip BIST, skip until here -----------------------------------------------------------------
@@ -1389,19 +1391,23 @@ def p11s_chiplet_arrayinit():
     poz_chiplet_arrayinit()
 
 def p11t_chiplet_arrayinit():
-    poz_chiplet_arrayinit()
+    # We include region 13 on Tap since that contains an MMA on the EQs and there is no PLL on any other non-TP chiplet
+    poz_chiplet_arrayinit(regions=all)
 
 def ody_chiplet_arrayinit():
     poz_chiplet_arrayinit()
 
-def poz_chiplet_arrayinit():
+def zme_chiplet_arrayinit():
+    poz_chiplet_arrayinit()
+
+def poz_chiplet_arrayinit(target<ANY_POZ_CHIP>, i_regions=all except PLL):
     # Note that we're including the "PLL" regions in arrayinit too:
     # Clocking them will not cause any damage, and this way we don't
     # have to special-case EQs since they have MMAs on region 13.
-    mod_abist_start(all chiplets except TP, regions=all)
+    mod_abist_start(all chiplets except TP, regions=i_regions)
     mod_abist_poll()
     mod_abist_cleanup()
-    mod_scan0(all chiplets except TP, regions=all)
+    mod_scan0(all chiplets except TP, regions=i_regions)
 
 ISTEP(3, 13, "proc_chiplet_undo_force_on", "SSBE, TSBE")
 # NOT executed as part of hotplug
