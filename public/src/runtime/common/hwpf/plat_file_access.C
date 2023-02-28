@@ -35,7 +35,7 @@ ReturnCode plat_loadEmbeddedFile(const char* i_path,
                                 void*&o_data, size_t &o_size)
 {
 #define SBE_FUNC " plat_loadEmbeddedFile "
-    SBE_ENTER(SBE_FUNC)
+    SBE_ENTER(SBE_FUNC);
 
     ReturnCode l_rc = FAPI2_RC_SUCCESS;
     uint32_t uncompressedFileSize = 0x00;
@@ -91,7 +91,7 @@ ReturnCode plat_loadEmbeddedFile(const char* i_path,
         o_size = uncompressedFileSize;
     }while(false);
 
-    SBE_EXIT(SBE_FUNC)
+    SBE_EXIT(SBE_FUNC);
     return l_rc;
 #undef SBE_FUNC
 }
@@ -99,7 +99,7 @@ ReturnCode plat_loadEmbeddedFile(const char* i_path,
 ReturnCode plat_freeEmbeddedFile(void* i_data)
 {
 #define SBE_FUNC " plat_freeEmbeddedFile "
-    SBE_ENTER(SBE_FUNC)
+    SBE_ENTER(SBE_FUNC);
 
     ReturnCode l_rc = FAPI2_RC_SUCCESS;
 
@@ -107,7 +107,7 @@ ReturnCode plat_freeEmbeddedFile(void* i_data)
 
     return l_rc;
 
-    SBE_EXIT(SBE_FUNC)
+    SBE_EXIT(SBE_FUNC);
 #undef SBE_FUNC
 }
 
