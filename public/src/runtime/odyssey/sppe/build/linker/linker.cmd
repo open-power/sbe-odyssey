@@ -88,12 +88,13 @@ SECTIONS {
         KEEP(*(.attrs.*))
         // Used for dumping attributes
         _attrs_end_ = .;
-        _attrs_size_ = . - _attrs_start_;
 
         *(.sdata2)
         *(.sdata2.*)
         . = ALIGN(DOUBLE_WORD_SIZE);
     }
+    _attrs_size_ = . - _attrs_start_;
+
     /* Size of initialised data section i.e. .sdata2 */
     _sdata2_size = . - _sda2_start;
 
