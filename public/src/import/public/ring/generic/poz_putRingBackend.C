@@ -698,7 +698,7 @@ ReturnCode ScanApplyEngine::applyToCoreMCTarget(
     {
         // On a common image, defer right to the platform impl
         const bool parallel_scan = not is_power_of_two(core_select);
-        const RingMode ringMode = parallel_scan ? iv_ringMode : (iv_ringMode | RING_MODE_PARALLEL_SCAN);
+        const RingMode ringMode = parallel_scan ? (iv_ringMode | RING_MODE_PARALLEL_SCAN) : iv_ringMode;
         return plat_putRingImpl(perv_mc_target, &iv_image, modified_scan_addr, ringMode);
     }
 
