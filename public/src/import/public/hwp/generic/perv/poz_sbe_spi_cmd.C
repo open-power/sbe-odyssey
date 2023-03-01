@@ -1686,7 +1686,7 @@ spi_write(SpiControlHandle& i_handle, uint32_t i_address,
         // Min between above and byte-length left to reach a page
         write_len = ((SEEPROM_PAGE_SIZE - page_offset) < write_len) ? (SEEPROM_PAGE_SIZE - page_offset) : write_len;
 
-        FAPI_INF("spi_write: Address= [0x%08X] CurrBuf=[0x%08X] Len=[0x%08X]", cur_address, cur_buf_byte, write_len);
+        FAPI_DBG("spi_write: Address= [0x%08X] CurrBuf=[0x%08X] Len=[0x%08X]", cur_address, cur_buf_byte, write_len);
 
         rc = spi_write_secure (i_handle, cur_address, &i_buffer[cur_buf_byte], write_len);
 
@@ -1817,6 +1817,12 @@ fapi2::ReturnCode spi_sector_erase(SpiControlHandle& i_handle, uint32_t i_addres
     }
 
     fapi2::delay(1000000000, 10000000); // 1 S
+
+    // Restore the default counter and seq used by the side band path
+    FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_COUNTERREG, 0x0ULL));
+    FAPI_TRY(putScom(i_handle.target_chip,
+                     i_handle.base_addr + SPIM_SEQREG, SPI_DEFAULT_SEQ));
+
 fapi_try_exit:
     FAPI_INF("SPI sector erase: Exiting ...");
     return fapi2::current_err;
@@ -1876,6 +1882,11 @@ fapi2::ReturnCode spi_block_erase(SpiControlHandle& i_handle, uint32_t i_address
     }
 
     fapi2::delay(1000000000, 10000000); // 1 Sec
+
+    // Restore the default counter and seq used by the side band path
+    FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_COUNTERREG, 0x0ULL));
+    FAPI_TRY(putScom(i_handle.target_chip,
+                     i_handle.base_addr + SPIM_SEQREG, SPI_DEFAULT_SEQ));
 
 fapi_try_exit:
     FAPI_INF("SPI block erase: Exiting ...");
