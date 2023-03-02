@@ -1094,7 +1094,14 @@ def ody_chiplet_reset():
         # so we can scan without issue.
         CPLT_CONF1.DDR01_ATPGMODE_PUBMAC = 1
 
+        ## Program DDR PHY Nto1 clock division ratios
+        CPLT_CONF1[24:29] = all 1s
+
     poz_chiplet_reset(i_target, ody_chiplet_delay_table, SCAN0_AND_UP)
+
+    with MC chiplet:
+        ## Force MC ATPG regions disabled despite ATTR_PG settings
+        CPLT_CTRL2[bit 11..16] = 0
 
 def zme_chiplet_reset():
     poz_chiplet_reset(i_target, zme_chiplet_delay_table)
@@ -1430,12 +1437,7 @@ def p11t_chiplet_init():
     CPLT_CONF0.TC_OCTANT_ID_DC     = ATTR_POS
 
 def ody_chiplet_init():
-    with MC chiplet:
-        ## Program DDR PHY Nto1 clock division ratios
-        CPLT_CONF1[24:29] = all 1s
-
-        ## Force MC ATPG regions disabled despite ATTR_PG settings
-        CPLT_CTRL2[bit 11..16] = 0
+    pass
 
 def zme_chiplet_init():
     if not ATTR_HOTPLUG:
