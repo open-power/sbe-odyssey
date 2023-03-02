@@ -68,13 +68,42 @@ ReturnCode ody_sppe_attr_setup(const Target<TARGET_TYPE_OCMB_CHIP>& i_target_chi
         }
     }
 
+    // scratch 8 -- PLL bypass/OCMB position
+    {
+        fapi2::buffer<uint64_t> l_scratch8_reg = 0;
+        fapi2::ATTR_IO_TANK_PLL_BYPASS_Type l_attr_io_tank_pll_bypass = fapi2::ENUM_ATTR_IO_TANK_PLL_BYPASS_NO_BYPASS;
+        fapi2::ATTR_BUS_POS_Type l_attr_bus_pos = 0xFF;
+
+        if (l_scratch16_reg.getBit<SCRATCH8_REG_VALID_BIT>())
+        {
+            FAPI_DBG("Reading Scratch 8 mailbox register");
+            FAPI_TRY(fapi2::getScom(i_target_chip, SCRATCH_REGISTER8.scom_addr, l_scratch8_reg));
+
+            FAPI_DBG("Setting up ATTR_IO_TANK_PLL_BYPASS");
+
+            if (l_scratch8_reg.getBit<ATTR_IO_TANK_PLL_BYPASS_BIT>())
+            {
+                l_attr_io_tank_pll_bypass = fapi2::ENUM_ATTR_IO_TANK_PLL_BYPASS_BYPASS;
+            }
+
+            FAPI_TRY(FAPI_ATTR_SET(fapi2::ATTR_IO_TANK_PLL_BYPASS, i_target_chip, l_attr_io_tank_pll_bypass));
+
+            FAPI_DBG("Setting up ATTR_BUS_POS");
+            l_scratch8_reg.extractToRight<ATTR_BUS_POS_STARTBIT, ATTR_BUS_POS_LENGTH>(l_attr_bus_pos);
+            FAPI_TRY(FAPI_ATTR_SET(fapi2::ATTR_BUS_POS, i_target_chip, l_attr_bus_pos));
+        }
+    }
+
     // scratch 6 -- PLL bucket/frequency selection
     {
         fapi2::buffer<uint64_t> l_scratch6_reg = 0;
         fapi2::ATTR_OCMB_PLL_BUCKET_Type l_attr_ocmb_pll_bucket = 0;
+        fapi2::ATTR_IO_TANK_PLL_BYPASS_Type l_attr_io_tank_pll_bypass = fapi2::ENUM_ATTR_IO_TANK_PLL_BYPASS_NO_BYPASS;
         uint32_t l_freq_grid_exp_mhz = 0;
         uint32_t l_freq_grid_act_mhz = 0;
         uint32_t l_freq_link_mhz = 0;
+
+        FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_IO_TANK_PLL_BYPASS, i_target_chip, l_attr_io_tank_pll_bypass));
 
         if (l_scratch16_reg.getBit<SCRATCH6_REG_VALID_BIT>())
         {
@@ -89,16 +118,25 @@ ReturnCode ody_sppe_attr_setup(const Target<TARGET_TYPE_OCMB_CHIP>& i_target_chi
             // read it and use it to setup value of attribute reflecting OMI link frequency
             FAPI_DBG("Setting up ATTR_FREQ_OMI_MHZ");
             l_scratch6_reg.extractToRight<ATTR_OCMB_PLL_FREQ_STARTBIT, ATTR_OCMB_PLL_FREQ_LENGTH>(l_freq_grid_act_mhz);
-            FAPI_TRY(ody_scratch_regs_get_pll_freqs(i_target_chip, l_attr_ocmb_pll_bucket, l_freq_grid_exp_mhz, l_freq_link_mhz));
 
-            FAPI_ASSERT(l_freq_grid_act_mhz == l_freq_grid_exp_mhz,
-                        fapi2::ODY_SPPE_ATTR_SETUP_GRID_FREQ_MISMATCH()
-                        .set_TARGET_CHIP(i_target_chip)
-                        .set_FREQ_GRID_ACT(l_freq_grid_act_mhz)
-                        .set_FREQ_GRID_EXP(l_freq_grid_exp_mhz)
-                        .set_PLL_BUCKET(l_attr_ocmb_pll_bucket),
-                        "Actual grid frequency feedback (%d) did not match expected value (%d) based on PLL bucket (%d)!",
-                        l_freq_grid_act_mhz, l_freq_grid_exp_mhz, l_attr_ocmb_pll_bucket);
+            // in bypass, just assign the posted grid frequency to the link frequency attribute, and skip the bucket check
+            if (l_attr_io_tank_pll_bypass == fapi2::ENUM_ATTR_IO_TANK_PLL_BYPASS_BYPASS)
+            {
+                l_freq_link_mhz = l_freq_grid_act_mhz;
+            }
+            else
+            {
+                FAPI_TRY(ody_scratch_regs_get_pll_freqs(i_target_chip, l_attr_ocmb_pll_bucket, l_freq_grid_exp_mhz, l_freq_link_mhz));
+
+                FAPI_ASSERT(l_freq_grid_act_mhz == l_freq_grid_exp_mhz,
+                            fapi2::ODY_SPPE_ATTR_SETUP_GRID_FREQ_MISMATCH()
+                            .set_TARGET_CHIP(i_target_chip)
+                            .set_FREQ_GRID_ACT(l_freq_grid_act_mhz)
+                            .set_FREQ_GRID_EXP(l_freq_grid_exp_mhz)
+                            .set_PLL_BUCKET(l_attr_ocmb_pll_bucket),
+                            "Actual grid frequency feedback (%d) did not match expected value (%d) based on PLL bucket (%d)!",
+                            l_freq_grid_act_mhz, l_freq_grid_exp_mhz, l_attr_ocmb_pll_bucket);
+            }
 
             FAPI_TRY(FAPI_ATTR_SET(fapi2::ATTR_FREQ_OMI_MHZ, i_target_chip, l_freq_link_mhz));
         }
@@ -133,32 +171,6 @@ ReturnCode ody_sppe_attr_setup(const Target<TARGET_TYPE_OCMB_CHIP>& i_target_chi
             }
 
             FAPI_TRY(FAPI_ATTR_SET(fapi2::ATTR_CLOCKSTOP_ON_XSTOP, i_target_chip, l_attr_clockstop_on_xstop));
-        }
-    }
-
-    // scratch 8 -- PLL bypass/OCMB position
-    {
-        fapi2::buffer<uint64_t> l_scratch8_reg = 0;
-        fapi2::ATTR_IO_TANK_PLL_BYPASS_Type l_attr_io_tank_pll_bypass = fapi2::ENUM_ATTR_IO_TANK_PLL_BYPASS_NO_BYPASS;
-        fapi2::ATTR_BUS_POS_Type l_attr_bus_pos = 0xFF;
-
-        if (l_scratch16_reg.getBit<SCRATCH8_REG_VALID_BIT>())
-        {
-            FAPI_DBG("Reading Scratch 8 mailbox register");
-            FAPI_TRY(fapi2::getScom(i_target_chip, SCRATCH_REGISTER8.scom_addr, l_scratch8_reg));
-
-            FAPI_DBG("Setting up ATTR_IO_TANK_PLL_BYPASS");
-
-            if (l_scratch8_reg.getBit<ATTR_IO_TANK_PLL_BYPASS_BIT>())
-            {
-                l_attr_io_tank_pll_bypass = fapi2::ENUM_ATTR_IO_TANK_PLL_BYPASS_BYPASS;
-            }
-
-            FAPI_TRY(FAPI_ATTR_SET(fapi2::ATTR_IO_TANK_PLL_BYPASS, i_target_chip, l_attr_io_tank_pll_bypass));
-
-            FAPI_DBG("Setting up ATTR_BUS_POS");
-            l_scratch8_reg.extractToRight<ATTR_BUS_POS_STARTBIT, ATTR_BUS_POS_LENGTH>(l_attr_bus_pos);
-            FAPI_TRY(FAPI_ATTR_SET(fapi2::ATTR_BUS_POS, i_target_chip, l_attr_bus_pos));
         }
     }
 
