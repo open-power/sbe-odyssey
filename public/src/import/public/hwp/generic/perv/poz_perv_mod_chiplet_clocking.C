@@ -133,6 +133,7 @@ ReturnCode mod_abist_setup(
     const bool i_skip_last_clock)
 {
     CPLT_CTRL0_t CPLT_CTRL0;
+    CPLT_CONF0_t CPLT_CONF0;
     BIST_t BIST;
     CLK_REGION_t CLK_REGION;
     OPCG_REG0_t OPCG_REG0;
@@ -144,10 +145,16 @@ ReturnCode mod_abist_setup(
     auto l_chiplets_uc = i_target.getChildren<TARGET_TYPE_PERV>();
 
     FAPI_INF("Entering ...");
+
     FAPI_INF("Switch dual-clocked arrays to ABIST clock domain.");
-    CPLT_CTRL0.flush<0>();
+    CPLT_CTRL0 = 0;
     CPLT_CTRL0.set_ABSTCLK_MUXSEL(1);
     FAPI_TRY(CPLT_CTRL0.putScom_SET(i_target));
+
+    FAPI_INF("Activate SDIS.");
+    CPLT_CONF0 = 0;
+    CPLT_CONF0.set_SDIS_N(1);
+    FAPI_TRY(CPLT_CONF0.putScom_SET(i_target));
 
     FAPI_INF("Set up BISTed regions.");
     BIST = 0;
@@ -283,6 +290,7 @@ ReturnCode mod_abist_cleanup(
 {
     BIST_t BIST;
     CLK_REGION_t CLK_REGION;
+    CPLT_CONF0_t CPLT_CONF0;
     CPLT_CTRL0_t CPLT_CTRL0;
     OPCG_REG0_t OPCG_REG0;
 
@@ -295,6 +303,11 @@ ReturnCode mod_abist_cleanup(
     FAPI_INF("Clear CLK_REGION register.");
     CLK_REGION = 0;
     FAPI_TRY(CLK_REGION.putScom(i_target));
+
+    FAPI_INF("Clear CPLT_CONF0 register.");
+    CPLT_CONF0 = 0;
+    CPLT_CONF0.set_SDIS_N(1);
+    FAPI_TRY(CPLT_CONF0.putScom_CLEAR(i_target));
 
     FAPI_INF("Clear CPLT_CTRL0 register.");
     CPLT_CTRL0 = 0;
