@@ -159,6 +159,7 @@ ReturnCode mod_bist_reg_cleanup(
 {
     CPLT_CTRL0_t CPLT_CTRL0;                    ///< 0x00000
     CPLT_CTRL1_t CPLT_CTRL1;                    ///< 0x00001
+    CPLT_CONF0_t CPLT_CONF0;                    ///< 0x00008
     NET_CTRL0_t NET_CTRL0;                      ///< 0xF0040
     // BH_SCRATCH_REG_t BH_SCRATCH_REG;         ///< 0x?????
 
@@ -179,9 +180,13 @@ ReturnCode mod_bist_reg_cleanup(
     CPLT_CTRL0.set_ABSTCLK_MUXSEL(1);
     FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
 
-    FAPI_INF("Restoring CPLT_CTRL1 register value.");
+    FAPI_INF("Restoring CPLT_CTRL1 register settings.");
     CPLT_CTRL1.set_MULTICYCLE_TEST_FENCE(1);
     FAPI_TRY(CPLT_CTRL1.putScom_CLEAR(i_target));
+
+    FAPI_INF("Restoring CPLT_CONF0 register settings.");
+    CPLT_CONF0.set_SDIS_N(1);
+    FAPI_TRY(CPLT_CONF0.putScom_CLEAR(i_target));
 
     if (!i_skip_net_ctrl0)
     {
