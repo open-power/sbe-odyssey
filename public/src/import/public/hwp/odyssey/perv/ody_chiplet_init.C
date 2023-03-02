@@ -38,35 +38,13 @@
 using namespace fapi2;
 using namespace scomt::perv;
 
-SCOMT_PERV_USE_TPCHIP_TPC_CPLT_CONF1;
-typedef TPCHIP_TPC_CPLT_CONF1_t CPLT_CONF1_t;
-
-SCOMT_PERV_USE_TPCHIP_TPC_CPLT_CTRL2;
-typedef TPCHIP_TPC_CPLT_CTRL2_t CPLT_CTRL2_t;
-
 enum ODY_CHIPLET_INIT_Private_Constants
 {
 };
 
 ReturnCode ody_chiplet_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
-    CPLT_CONF1_t CPLT_CONF1;
-    CPLT_CTRL2_t CPLT_CTRL2;
-    auto l_mc_chiplets   = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
-
     FAPI_INF("Entering ...");
-
-    FAPI_INF("Program DDR PHY Nto1 clock division ratios");
-    CPLT_CONF1 = 0;
-    CPLT_CONF1.setBit<24, 6>();
-    FAPI_TRY(CPLT_CONF1.putScom_SET(l_mc_chiplets));
-
-    FAPI_INF("Force MC ATPG regions disabled despite ATTR_PG settings");
-    CPLT_CTRL2 = 0;
-    CPLT_CTRL2.setBit<11, 6>();
-    FAPI_TRY(CPLT_CTRL2.putScom_CLEAR(l_mc_chiplets));
-
-fapi_try_exit:
     FAPI_INF("Exiting ...");
     return current_err;
 }
