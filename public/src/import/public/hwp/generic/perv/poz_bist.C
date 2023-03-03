@@ -149,7 +149,7 @@ void print_bist_params(const bist_params& i_params)
 }
 
 ReturnCode poz_bist_execute(
-    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > & i_chiplets_target,
+    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_chiplets_target,
     const std::vector<Target<TARGET_TYPE_PERV>>& i_chiplets_uc, const bist_params& i_params,
     const uint16_t i_enum_condition_a, const uint16_t i_enum_condition_b, bist_return& o_return)
 {
@@ -245,8 +245,6 @@ ReturnCode poz_bist_execute(
     if (i_params.stages & i_params.bist_stages::POLL)
     {
         FAPI_INF("Poll for DONE or HALT");
-        // TODO pass in poll count and delay arguments once supported
-        // TODO put ASSERT_ABIST_DONE in bist_params and turn off if ABIST infinite or LBIST
         FAPI_TRY(mod_bist_poll(i_chiplets_target,
                                i_params.flags & i_params.bist_flags::POLL_ABIST_DONE,
                                i_params.flags & i_params.bist_flags::ASSERT_ABIST_DONE,
@@ -279,10 +277,10 @@ ReturnCode poz_bist(
 {
     FAPI_INF("Entering ...");
 
-    // Our pervasive target (can be multicast or unicast)
+    // All required pervasive targets and target containers
     Target<TARGET_TYPE_PERV> l_chiplet;
-    Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > l_chiplets_target;
-    auto l_chiplets_uc = i_target.getChildren<TARGET_TYPE_PERV>();
+    Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_target;
+    std::vector<Target<TARGET_TYPE_PERV>> l_chiplets_uc;
 
     // Needed for unicast condition
     uint8_t l_chiplet_number = 0;
@@ -364,6 +362,9 @@ ReturnCode poz_bist(
         FAPI_DBG("No chiplet mask provided; opting for all good, no TP group");
         l_chiplets_target = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
     }
+
+    // Set up unicast chiplets vector now that parent container is defined
+    l_chiplets_uc = l_chiplets_target.getChildren<TARGET_TYPE_PERV>();
 
     // Calculate PCB mux path
     switch (i_params.flags & i_params.bist_flags::PCB_MUX_MASK)
