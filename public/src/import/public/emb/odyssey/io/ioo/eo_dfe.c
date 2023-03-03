@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23021700 |vbr     | Issue 299509: Added sleep to fix thread active violation between bank sync and dfe full in recal
 // vbr23010400 |vbr     | Issue 296947: Adjusted latch_dac accesses for different addresses on Odyssey vs P11/ZMetis
 // vbr22092700 |vbr     | Issue 290398: Add ppe config to disable servo min/max errors for DFE Full
 // mbs22082601 |mbs     | Updated with PSL comments
@@ -644,6 +645,8 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
         l_dfe_full_quad = (l_dfe_full_quad + 1) & 0x3; // Rotate to next quadrant on the next call to dfe_full
         mem_pl_field_put(rx_dfe_full_quad, l_lane, l_dfe_full_quad); // Store the next quad value for this lane
     }
+
+    io_sleep(get_gcr_addr_thread(i_tgt)); //EWM299509
 
     int l_dac_bank_addr = DAC_BASE_ADDR + (l_bank << 5);
 

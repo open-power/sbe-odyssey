@@ -39,6 +39,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// jjb23021700 |jjb     | Issue 299567: Updates for rate change txdeemph writes
+// jjb23021300 |jjb     | Issue 299292: Added pipe_cmd_pclkchangeack_active
+// jjb23021000 |jjb     | Issue 299113: added io_sleeps to address multi lane link pipe sequence deadlocks
 // vbr23020300 |vbr     | Issue 298086: remove edge pr offset on rate change or rx eq eval
 // jjb23020100 |jjb     | Issue 298467: Made reset_active and txdetect io_waits conditional on ppe_sim_speedup.
 // jjb22013000 |jjb     | Issue 295572: resetn_active update to clear reset_active prior to clearing ppe requests
@@ -175,9 +178,8 @@
 // Ignore pipe_state_rxstandby_active since handled by hardware and cleared in rate_changed and reset
 // Ignore txelecidle_in/active since handled by hardware
 // Ignore rxelecidle_active since handled by pipe_state_rxactive
-// Ignore pclkchangeack since handle within rate_changed
 // Ignore txdeemph_updated since handled within reset_inactive and rate_changed
-#define PIPE_STATE_MASK 0xCF48
+#define PIPE_STATE_MASK 0xDF48
 PK_STATIC_ASSERT(pipe_state_rxstandby_active_startbit == 2);
 PK_STATIC_ASSERT(pipe_state_pclkchangeack_startbit == 3);
 PK_STATIC_ASSERT(pipe_state_rxelecidle_active_startbit == 8);
@@ -1060,131 +1062,53 @@ void pipe_cmd_resetn_inactive(t_gcr_addr* gcr_addr)
 //} //pipe_cmd_rxstandby_active
 
 //////////////////////////////////
-// PCLKCHANGEACK
+// PCLKCHANGEACK_ACTIVE
 //////////////////////////////////
 
-//void pipe_cmd_pclkchangeack(t_gcr_addr *gcr_addr) {
-//  set_debug_state(0xFC05, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_PCLKCHANGEACK Transaction
-//  return;
-//} //pipe_cmd_pclkchangeack
-
-//////////////////////////////////
-// RATE_UDATED
-//////////////////////////////////
-
-void pipe_cmd_rate_updated(t_gcr_addr* gcr_addr)
+void pipe_cmd_pclkchangeack_active(t_gcr_addr* gcr_addr)
 {
-    set_debug_state(0xFC06, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_RATE_UPDATED Transaction
+    set_debug_state(0xFC05, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_PCLKCHANGEACK_ACTIVE Transaction
 
-    // 1.) clear rxdatavalid, clear pipe_state_rxactive, clear rxelecidle_en
-    put_ptr_field(gcr_addr, pipe_state_cntl1_pl_full_reg, (pipe_state_rxdatavalid_clear_mask |
-                  pipe_state_rxactive_clear_mask |
-                  pipe_state_rxelecidle_en_clear_mask), fast_write);
-    // 2.) Get present pipe rate value
+    // 1.) Abort if pipe_resetn is active
+    uint32_t l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);
+    uint32_t l_pipe_state_resetn_active = l_pipe_state & pipe_state_resetn_active_mask;
+
+    // PSL pclkchangeack_resetn_asserted
+    if (l_pipe_state_resetn_active)
+    {
+        return;
+    }
+
+    // 2.) Change RX and TX Clocks; set d2_en
     uint32_t l_rate = get_ptr_field(gcr_addr, pipe_state_rate); // gen1=0, gen2=1, gen3=2, gen4=3, gen5=4
     uint32_t l_rate_one_hot = (1 <<
                                l_rate);                    // gen1=00001, gen2=00010, gen3=00100, gen4=01000, gen5=10000
-
-    // 3.) Clear txdeemph_updated state bit to ready for MAC to update txdeemph
-    put_ptr_field(gcr_addr, pipe_state_txdeemph_updated_clear, 0b1, fast_write);
-
-    // 4.) Disable idle_loz and idle_mode hardware; idle_mode_ovr and idle_loz_ovr val are 1 and 0, respectively
-    put_ptr_field(gcr_addr, tx_idle_ovr_alias, 0b1111, read_modify_write);
-
-    // 5.) Update idle_del_sel, loz_del_sel, and l2u_dly values based on gen
-    uint32_t l_idle_loz_del_sel;
-
-    // PSL rate_gen5
-    if (l_rate_one_hot == 0b10000)   // gen5
-    {
-        l_idle_loz_del_sel = mem_pg_field_get(tx_pcie_idle_loz_del_sel_5_alias);
-        // PSL rate_gen4
-    }
-    else if (l_rate_one_hot == 0b01000)     // gen4
-    {
-        l_idle_loz_del_sel = mem_pg_field_get(tx_pcie_idle_loz_del_sel_4_alias);
-        // PSL rate_gen3
-    }
-    else if (l_rate_one_hot == 0b00100)     // gen3
-    {
-        l_idle_loz_del_sel = mem_pg_field_get(tx_pcie_idle_loz_del_sel_3_alias);
-        // PSL rate_gen2
-    }
-    else if (l_rate_one_hot == 0b00010)     // gen2
-    {
-        l_idle_loz_del_sel = mem_pg_field_get(tx_pcie_idle_loz_del_sel_2_alias);
-        // PSL rate_gen1
-    }
-    else     // default to gen1
-    {
-        l_idle_loz_del_sel = mem_pg_field_get(tx_pcie_idle_loz_del_sel_1_alias);
-    }
-
-    put_ptr_field(gcr_addr, tx_pcie_idle_loz_del_sel_alias, l_idle_loz_del_sel, fast_write); //Only fields in register
-
-    // Disable tx_pcie_eq_calc_enable if in Gen1 or Gen2 since txdeemph value update is not actual FFE coeffs
-    // PSL rate_gen1or2
-    if (l_rate < 2)   // GEN 1 or GEN 2
-    {
-        put_ptr_field(gcr_addr, tx_pcie_eq_calc_enable, 0b0, read_modify_write);
-    }
-
-    // 6.) fast write pipe_state_cntl1_pl and set pipe_state_pclkchangeok_pulse to 1
-    put_ptr_field(gcr_addr, pipe_state_pclkchangeok_pulse, 0b1, fast_write);
-
-    // 7.) Wait for pipe_state_pclkchangeack to be 1, abort wait if pipe_resetn is active
-    uint32_t l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);
-    uint32_t l_pipe_state_resetn_active = l_pipe_state & pipe_state_resetn_active_mask;
-    uint32_t l_pipe_state_pclkchangeack = l_pipe_state & pipe_state_pclkchangeack_mask;
-
-    // PSL not_pclkchangeack_and_not_resetn_active
-    while (!l_pipe_state_pclkchangeack & !l_pipe_state_resetn_active)
-    {
-        l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);
-        l_pipe_state_resetn_active = l_pipe_state & pipe_state_resetn_active_mask;
-        l_pipe_state_pclkchangeack = l_pipe_state & pipe_state_pclkchangeack_mask;
-    }
-
-    // 8.) Change RX and TX Clocks; set d2_en
     pipe_clock_change(gcr_addr, l_rate_one_hot); // has a sleep
 
-    // 9.) Initialize TX FIFO at new data rate
+    // 3.) Initialize TX FIFO at new data rate
     tx_fifo_init(gcr_addr);
     put_ptr_field(gcr_addr, tx_bank_controls_d2_en_b_alias, l_rate_one_hot > 2 ? 0b0 : 0b1,
                   read_modify_write); // update based on speed
 
-    // 10.) Enable idle_loz and idle_mode hardware
+    // 4.) Enable idle_loz and idle_mode hardware
     put_ptr_field(gcr_addr, tx_idle_ovr_alias, 0b0000, read_modify_write);
     io_sleep(get_gcr_addr_thread(gcr_addr)); //   wait to allow CDRs to settle
 
-    // 11.) Load TX DCC Results for requested gen rate
+    // 5.) Load TX DCC Results for requested gen rate
     restore_tx_dcc_tune_values(gcr_addr, l_rate);
 
-    // 12.) Restore RX Latch Offsets, reset DFE, and preset Peak/LTE for the requested gen rate  (function sets and restores reg_id as needed)
+    // 6.) Restore RX Latch Offsets, reset DFE, and preset Peak/LTE for the requested gen rate  (function sets and restores reg_id as needed)
     bool l_restore = true;
     pipe_preset_rx(gcr_addr, l_rate, l_restore);
 
-    // 13.) If Gen1 or Gen 2 Check that txdeemph_updated is set, if not set FIR.
-    //      If set then check precursor for value of 0 (P0), 1 (P1), otherwise no EQ (P4).
-    //      Update txdeemph as per presets.
-    uint32_t l_pipe_state_txdeemph_updated;
+    // 7.) If Gen1 or Gen 2 Check then check precursor for value of 0 (P0), 1 (P1), otherwise no EQ (P4).  Update txdeemph as per presets.
     uint32_t l_pipe_preset_pre;
     uint32_t l_pipe_preset_post;
     uint32_t l_pipe_preset_main;
 
-    if (l_rate < 2)   // GEN 1 or GEN 2
+    if (l_rate <
+        2)   // GEN 1 or GEN 2, mac immediately writes tx_control_2 with preset when pipe_rate changes, must remap presets to coeffs
     {
-        l_pipe_state_txdeemph_updated = get_ptr_field(gcr_addr, pipe_state_txdeemph_updated);
-        l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);
-        l_pipe_state_resetn_active = l_pipe_state & pipe_state_resetn_active_mask;
-
-        if ((l_pipe_state_txdeemph_updated != 1) & (l_pipe_state_resetn_active ==
-                0))   // Dont set FIR if pipe_reset cleared txdeemph_updated
-        {
-            // PSL set_fir_fatal_error
-            set_fir(fir_code_fatal_error);
-        }
-
         l_pipe_preset_pre = pipe_get(gcr_addr, pipe_phy_reg_tx_control_2_reg_sel, pipe_phy_reg_tx_control_2_addr);
 
         // PSL preset_0
@@ -1218,7 +1142,7 @@ void pipe_cmd_rate_updated(t_gcr_addr* gcr_addr)
                  l_pipe_preset_post);
     }
 
-    // 14.) Clear pending pipe requests for service prior to pulsing phystatus except resetn active and reset inactive
+    // 8.) Clear pending pipe requests for service prior to pulsing phystatus except resetn active and reset inactive
     uint32_t l_register_data = pipe_state_rxstandby_active_clear_mask |
                                pipe_state_pclkchangeack_clear_mask |
                                pipe_state_rate_updated_clear_mask |
@@ -1233,7 +1157,7 @@ void pipe_cmd_rate_updated(t_gcr_addr* gcr_addr)
                                pipe_state_txdeemph_updated_clear_mask;
     put_ptr_field(gcr_addr, pipe_state_0_15_clear_alias, l_register_data, fast_write);
 
-    // 15.) fast write pipe_state_cntl1_pl pipe_state_phystatus_pulse to 1 and pipe_state_pclkchangeack_clr_apsp to 1 if pipe_resetn_active is low
+    // 9.) fast write pipe_state_cntl1_pl pipe_state_phystatus_pulse to 1 and pipe_state_pclkchangeack_clr_apsp to 1 if pipe_resetn_active is low
     l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);
     l_pipe_state_resetn_active = l_pipe_state & pipe_state_resetn_active_mask;
 
@@ -1244,7 +1168,7 @@ void pipe_cmd_rate_updated(t_gcr_addr* gcr_addr)
                       (pipe_state_phystatus_pulse_mask | pipe_state_pclkchangeack_clr_apsp_mask), fast_write);
     }
 
-    // 16.) If rate is GEN3/4/5 then Poll on TXDEEMP_UPDATED to wait for MAC to update TX EQ Coeffs
+    // 10.) If rate is GEN3/4/5 then Poll on TXDEEMP_UPDATED to wait for MAC to update TX EQ Coeffs
     //      Mac will write "real" txdeemph values so no need for preset lookup.
     //      Abort polling if pipe_resetn_active is high
     // PSL rate_gt_1
@@ -1255,16 +1179,89 @@ void pipe_cmd_rate_updated(t_gcr_addr* gcr_addr)
         uint32_t l_pipe_state_txdeemph_updated = l_pipe_state & pipe_state_txdeemph_updated_mask;
 
         // PSL not_txdeemph_updated_and_not_resetn_active
-        while (!l_pipe_state_txdeemph_updated & !l_pipe_state_resetn_active)
+        while ((l_pipe_state_txdeemph_updated == 0) & (l_pipe_state_resetn_active == 0))
         {
+            io_sleep(get_gcr_addr_thread(
+                         gcr_addr)); // Move to next thread when waiting for txdeemph to occur, all lanes of link will get txdeemph at same time.
             l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);
             l_pipe_state_resetn_active = l_pipe_state & pipe_state_resetn_active_mask;
             l_pipe_state_txdeemph_updated = l_pipe_state & pipe_state_txdeemph_updated_mask;
         }
     }
 
-    // 17.) set pipe_state_rxelecidle_en to 1
     put_ptr_field(gcr_addr, pipe_state_rxelecidle_en_set, 0b1, fast_write);
+
+    return;
+} //pipe_cmd_pclkchangeack_active
+
+//////////////////////////////////
+// RATE_UDATED
+//////////////////////////////////
+
+void pipe_cmd_rate_updated(t_gcr_addr* gcr_addr)
+{
+    set_debug_state(0xFC06, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_RATE_UPDATED Transaction
+
+    // 1.) clear rxdatavalid, clear pipe_state_rxactive, clear rxelecidle_en
+    put_ptr_field(gcr_addr, pipe_state_cntl1_pl_full_reg, (pipe_state_rxdatavalid_clear_mask |
+                  pipe_state_rxactive_clear_mask |
+                  pipe_state_rxelecidle_en_clear_mask), fast_write);
+    // 2.) Get present pipe rate value
+    uint32_t l_rate = get_ptr_field(gcr_addr, pipe_state_rate); // gen1=0, gen2=1, gen3=2, gen4=3, gen5=4
+    uint32_t l_rate_one_hot = (1 <<
+                               l_rate);                    // gen1=00001, gen2=00010, gen3=00100, gen4=01000, gen5=10000
+
+    // 3.) Disable idle_loz and idle_mode hardware; idle_mode_ovr and idle_loz_ovr val are 1 and 0, respectively
+    put_ptr_field(gcr_addr, tx_idle_ovr_alias, 0b1111, read_modify_write);
+
+    // 4.) Update idle_del_sel, loz_del_sel, and l2u_dly values based on gen
+    uint32_t l_idle_loz_del_sel;
+
+    // PSL rate_gen5
+    if (l_rate_one_hot == 0b10000)   // gen5
+    {
+        l_idle_loz_del_sel = mem_pg_field_get(tx_pcie_idle_loz_del_sel_5_alias);
+        // PSL rate_gen4
+    }
+    else if (l_rate_one_hot == 0b01000)     // gen4
+    {
+        l_idle_loz_del_sel = mem_pg_field_get(tx_pcie_idle_loz_del_sel_4_alias);
+        // PSL rate_gen3
+    }
+    else if (l_rate_one_hot == 0b00100)     // gen3
+    {
+        l_idle_loz_del_sel = mem_pg_field_get(tx_pcie_idle_loz_del_sel_3_alias);
+        // PSL rate_gen2
+    }
+    else if (l_rate_one_hot == 0b00010)     // gen2
+    {
+        l_idle_loz_del_sel = mem_pg_field_get(tx_pcie_idle_loz_del_sel_2_alias);
+        // PSL rate_gen1
+    }
+    else     // default to gen1
+    {
+        l_idle_loz_del_sel = mem_pg_field_get(tx_pcie_idle_loz_del_sel_1_alias);
+    }
+
+    put_ptr_field(gcr_addr, tx_pcie_idle_loz_del_sel_alias, l_idle_loz_del_sel, fast_write); //Only fields in register
+
+    // 5.) Clear pending pipe requests for service prior to waiting for pclkchangeack to be asserted.
+    uint32_t l_register_data = pipe_state_rxstandby_active_clear_mask |
+                               pipe_state_pclkchangeack_clear_mask |
+                               pipe_state_rate_updated_clear_mask |
+                               pipe_state_powerdown_updated_clear_mask |
+                               pipe_state_rxeqeval_clear_mask |
+                               pipe_state_txdetectrx_clear_mask |
+                               pipe_state_rxelecidle_active_clear_mask |
+                               pipe_state_rxelecidle_inactive_clear_mask |
+                               pipe_state_txelecidle_active_clear_mask |
+                               pipe_state_txelecidle_inactive_clear_mask |
+                               pipe_state_rxmargincontrol_clear_mask |
+                               pipe_state_txdeemph_updated_clear_mask;
+    put_ptr_field(gcr_addr, pipe_state_0_15_clear_alias, l_register_data, fast_write);
+
+    // 6.) fast write pipe_state_cntl1_pl and set pipe_state_pclkchangeok_pulse to 1
+    put_ptr_field(gcr_addr, pipe_state_pclkchangeok_pulse, 0b1, fast_write);
 
     return;
 } //pipe_cmd_rate_updated
@@ -2319,8 +2316,7 @@ IOO_PIPE_CMD_TABLE_START
 IOO_PIPE_CMD_HANDLER(pipe_cmd_resetn_active)         // [00]:
 IOO_PIPE_CMD_HANDLER(pipe_cmd_resetn_inactive)       // [01]:
 IOO_PIPE_CMD_HANDLER(pipe_cmd_nop)                   // [02]: Unused. rxstandby handled in hardware.
-IOO_PIPE_CMD_HANDLER(
-    pipe_cmd_nop)                   // [03]: Unused. pclkchangeack processed within pipe_cmd_rate_updated.
+IOO_PIPE_CMD_HANDLER(pipe_cmd_pclkchangeack_active)  // [03]:
 IOO_PIPE_CMD_HANDLER(pipe_cmd_rate_updated)          // [04]:
 IOO_PIPE_CMD_HANDLER(pipe_cmd_powerdown_updated)     // [05]:
 IOO_PIPE_CMD_HANDLER(pipe_cmd_rxeqeval)              // [06]:

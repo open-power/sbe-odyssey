@@ -85,14 +85,14 @@ int eo_llbist(t_gcr_addr* gcr_addr)
 
     //Wait for prbs 15 to sink
     set_debug_state(0x51E1, 3);
-    io_spin_us(2);//2 micro-sec
+    io_spin_us(2000);//2 micro-sec
 
     //turn off seed mode and turn on rx_berpl_timer_run_slow
     put_ptr_field(gcr_addr, rx_io_pb_iobist_reset, 0b0, read_modify_write);
 
     //let comparison run
     set_debug_state(0x51E2, 3);
-    io_spin_us(2);//1 micro-sec
+    io_spin_us(2000);//1 micro-sec
 
     int error = get_ptr_field(gcr_addr, rx_pb_io_iobist_prbs_error);//pg
 

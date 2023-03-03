@@ -164,23 +164,27 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_VGA_GAIN_FAIL, gcr_addr, rx_ctle_gain_int);
-                set_debug_state(0x5153, 3);
+                set_debug_state(0x5153);
             }
             // PSL bist_gain_check_gt_max
             else if ( rx_ctle_gain_int > mem_pg_field_get(rx_ctle_gain_max_check) )
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_VGA_GAIN_FAIL, gcr_addr, rx_ctle_gain_int);
-                set_debug_state(0x5154, 3);
+                set_debug_state(0x5154);
             }
             else
             {
                 fail = 0;
-                set_debug_state(0x5155, 3);
+                set_debug_state(0x5155);
             }
 
             //set the fail to register
-            mem_pl_field_put(rx_ctle_gain_fail, lane, fail);
+            if (fail)
+            {
+                mem_pl_field_put(rx_ctle_gain_fail, lane, fail);
+            }
+
         }
 
 
@@ -197,23 +201,25 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_CTLE_PEAK1_FAIL, gcr_addr, rx_ctle_peak1_int);
-                set_debug_state(0x5157, 3);
+                set_debug_state(0x5157);
             }
             // PSL bist_peak1_check_gt_max
             else if ( rx_ctle_peak1_int >  mem_pg_field_get(rx_ctle_peak1_max_check) )
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_CTLE_PEAK1_FAIL, gcr_addr, rx_ctle_peak1_int);
-                set_debug_state(0x5158, 3);
+                set_debug_state(0x5158);
             }
             else
             {
                 fail = 0;
-                set_debug_state(0x5159, 3);
+                set_debug_state(0x5159);
             }
 
-
-            mem_pl_field_put(rx_ctle_peak1_fail, lane, fail );
+            if (fail)
+            {
+                mem_pl_field_put(rx_ctle_peak1_fail, lane, fail );
+            }
         }
 
         //Check ctle peak is not to low or to high
@@ -229,23 +235,26 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_CTLE_PEAK2_FAIL, gcr_addr, rx_ctle_peak2_int);
-                set_debug_state(0x515B, 3);
+                set_debug_state(0x515B);
             }
             // PSL bist_peak2_check_gt_max
             else if ( rx_ctle_peak2_int >  mem_pg_field_get(rx_ctle_peak2_max_check) )
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_CTLE_PEAK2_FAIL, gcr_addr, rx_ctle_peak2_int);
-                set_debug_state(0x515C, 3);
+                set_debug_state(0x515C);
             }
             else
             {
                 fail = 0;
-                set_debug_state(0x515D, 3);
+                set_debug_state(0x515D);
             }
 
 
-            mem_pl_field_put(rx_ctle_peak2_fail, lane, fail );
+            if (fail)
+            {
+                mem_pl_field_put(rx_ctle_peak2_fail, lane, fail );
+            }
         }
 
         //Check lte gain is not to low or to high
@@ -259,17 +268,17 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
         //    if ( rx_lte_gain_int < mem_pg_field_get(rx_lte_gain_min_check) ) {
         //        fail = 1;
         //        ADD_LOG(DEBUG_BIST_LTE_GAIN_FAIL, gcr_addr, rx_lte_gain_int);
-        //        set_debug_state(0x516F, 3);
+        //        set_debug_state(0x516F);
         //    }
         //    // PSL bist_lte_gain_check_gt_max
         //    else if ( rx_lte_gain_int >  mem_pg_field_get(rx_lte_gain_max_check) ) {
         //         fail = 1;
         //        ADD_LOG(DEBUG_BIST_LTE_GAIN_FAIL, gcr_addr, rx_lte_gain_int);
-        //        set_debug_state(0x5160, 3);
+        //        set_debug_state(0x5160);
         //    }
         //    else {
         //        fail = 0;
-        //        set_debug_state(0x5161, 3);
+        //        set_debug_state(0x5161);
         //    }
         //
         //
@@ -286,17 +295,17 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
         //    if ( rx_lte_zero_int  < mem_pg_field_get(rx_lte_zero_min_check) ) {
         //        fail = 1;
         //        ADD_LOG(DEBUG_BIST_LTE_ZERO_FAIL, gcr_addr, rx_lte_zero_int);
-        //        set_debug_state(0x5163, 3);
+        //        set_debug_state(0x5163);
         //    }
         //    // PSL bist_lte_zero_check_gt_max
         //    else if ( rx_lte_zero_int >  mem_pg_field_get(rx_lte_zero_max_check) ) {
         //        fail = 1;
         //        ADD_LOG(DEBUG_BIST_LTE_ZERO_FAIL, gcr_addr, rx_lte_zero_int);
-        //        set_debug_state(0x5164, 3);
+        //        set_debug_state(0x5164);
         //    }
         //    else {
         //        fail = 0;
-        //        set_debug_state(0x5165, 3);
+        //        set_debug_state(0x5165);
         //    }
         //
         //
@@ -329,14 +338,14 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_QPA_FAIL, gcr_addr, 0x0);
-                set_debug_state(0x5169, 3);
+                set_debug_state(0x5169);
             }
             // PSL bist_quad_phase_check_nse_gt_max
             else if ( rx_quad_ph_adj_nse_int >  check_quad_ph_adj_max )
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_QPA_FAIL, gcr_addr, 0x0);
-                set_debug_state(0x516A, 3);
+                set_debug_state(0x516A);
             }
             //else if ( rx_quad_ph_adj_ewd_int <  check_quad_ph_adj_min ) {
             //    fail = 1;
@@ -351,23 +360,26 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_QPA_FAIL, gcr_addr, 0x0);
-                set_debug_state(0x516D, 3);
+                set_debug_state(0x516D);
             }
             // PSL bist_quad_phase_check_ewe_gt_max
             else if ( rx_quad_ph_adj_ewe_int >  check_quad_ph_adj_max )
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_QPA_FAIL, gcr_addr, 0x0);
-                set_debug_state(0x516E, 3);
+                set_debug_state(0x516E);
             }
             else
             {
                 fail = 0;
-                set_debug_state(0x516F, 3);
+                set_debug_state(0x516F);
             }
 
 
-            mem_pl_field_put(rx_quad_phase_fail, lane, fail);
+            if (fail)
+            {
+                mem_pl_field_put(rx_quad_phase_fail, lane, fail);
+            }
         }
 
     } // end scope limiting - A
@@ -424,7 +436,7 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
         if ( mem_pl_field_get(rx_step_fail_alias, lane) != 0 )
         {
             // setting fail
-            set_debug_state(0x5171, 3);
+            //set_debug_state(0x5171);
             //set_rxbist_fail_lane( gcr_addr, bank );
             set_rxbist_fail_lane( gcr_addr);
         }

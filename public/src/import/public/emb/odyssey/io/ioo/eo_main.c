@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23022200 |vbr     | No longer run Peaking in Gen 3 (init or recal).
 // vbr23020100 |vbr     | Issue 298045: Clear cal lane sel only after safe bank swap (logic clock gating)
 // vbr23012400 |vbr     | Issue 298004: Moved sleep to before update rx rate controls in phase0 dccal to avoid thread active time error.
 // mwh23012300 |mwh     | Issue 297365: Gate rate change in loff for bist
@@ -429,6 +430,7 @@ int eo_main_dccal_rx(t_gcr_addr* gcr_addr)
     // Only needs to be done in Phase 0 (Bank A Loff).
     if (loff_enable_ab & 0b10)
     {
+        io_sleep(get_gcr_addr_thread(gcr_addr));
         put_ptr_field(gcr_addr, rx_dl_clk_en, 0b0, read_modify_write);
     }
 
@@ -458,9 +460,8 @@ int eo_main_dccal_rx(t_gcr_addr* gcr_addr)
                 int rate_one_hot = 0b10000; //gen5
                 put_ptr_field(gcr_addr, rx_hold_div_clks_ab_alias,     0b11,          read_modify_write);
                 put_ptr_field(gcr_addr, rx_pcie_clk_sel,               rate_one_hot,  read_modify_write);
-                io_sleep(get_gcr_addr_thread(gcr_addr));
                 update_rx_rate_dependent_analog_ctrl_pl_regs(gcr_addr, rate_one_hot);
-                put_ptr_field(gcr_addr, rx_hold_div_clks_ab_alias,      0b00,         read_modify_write);
+                put_ptr_field(gcr_addr, rx_hold_div_clks_ab_alias,     0b00,          read_modify_write);
             }//if bist
         }//loff_ab
     } //if(pcie)
@@ -737,8 +738,8 @@ int eo_main_init(t_gcr_addr* gcr_addr)
     // Cal Step: Path Offset (Ap+An/2) - Only run in PCIe Gen1/Gen2 (A/B) or pcie_bist_mode
     int poff_enable = (pcie_gen1_2_cal || pcie_bist_mode) ? mem_pg_field_get(rx_eo_enable_edge_offset_cal) : 0;
 
-    // Cal Step: CTLE (Peaking) - Enabled for AXO (Peak1/2), Gen3 (Peak2), Gen4 (Peak2), Gen5 (Peak1/2) - Bank A only
-    int ctle_enable = (pcie_gen1_2_cal) ? 0 : mem_pg_field_get(rx_eo_enable_ctle_peak_cal);
+    // Cal Step: CTLE (Peaking) - Enabled for AXO (Peak1/2), Gen4 (Peak2), Gen5 (Peak1/2) - Bank A only
+    int ctle_enable = (pcie_gen1_2_cal || pcie_gen3_cal) ? 0 : mem_pg_field_get(rx_eo_enable_ctle_peak_cal);
 
     // Cal Step: Edge/Path Offset (Live Data) - Only run in AXO (A/B) or PCIe Gen4/Gen5 (A)
     int eoff_enable = (pcie_gen1_2_cal || pcie_gen3_cal) ? 0 : mem_pg_field_get(rx_eo_enable_edge_offset_cal);
@@ -1565,11 +1566,10 @@ static int eo_main_recal_rx(t_gcr_addr* gcr_addr)
         }
     }
 
-    // Cal Step: CTLE (Peaking) - Enabled for AXO (Peak1/2), Gen3 First Recal on B (Peak2), Gen4 (Peak2), Gen5 (Peak1/2)
+    // Cal Step: CTLE (Peaking) - Enabled for AXO (Peak1/2), Gen4 (Peak2), Gen5 (Peak1/2)
     // Requires edge tracking (local data mode) but does not require bank alignment
     bool peak_changed = false;
-    int ctle_enable = (pcie_gen1_2_cal || (pcie_gen3_cal
-                                           && !first_recal)) ? 0 : mem_pg_field_get(rx_rc_enable_ctle_peak_cal);
+    int ctle_enable = (pcie_gen1_2_cal || pcie_gen3_cal) ? 0 : mem_pg_field_get(rx_rc_enable_ctle_peak_cal);
 
     if (ctle_enable)   // && (status == rc_no_error)) {
     {

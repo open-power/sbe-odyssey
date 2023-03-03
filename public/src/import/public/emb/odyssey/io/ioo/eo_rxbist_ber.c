@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// jjb22022100 |jjb     | Issue 299011: updated rx_berpl_cnt_en_exp_sel_alias references to match width defined in regdef
 // mbs22082601 |mbs     | Updated with PSL comments
 // vbr22061500 |vbr     | Added returning of fail status for ext commands
 // vbr21120300 |vbr     | Use functions for number of lanes
@@ -142,7 +143,7 @@ int eo_rxbist_ber(t_gcr_addr* gcr_addr, const uint32_t lane_mask, const t_bank b
         set_gcr_addr_lane(gcr_addr, lane);
 
         //rx_berpl_cnt_en_exp_sel_alias  rx_berpl_count_en rx_berpl_exp_data_sel rx_berpl_pattern_sel
-        put_ptr_field(gcr_addr, rx_berpl_cnt_en_exp_sel_alias, 0b11101, read_modify_write); //pl
+        put_ptr_field(gcr_addr, rx_berpl_cnt_en_exp_sel_alias, 0b111010, read_modify_write); //pl
 
         //Turn off external mode and make sure CDR are on
         put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, 0b100100, read_modify_write); //pl
@@ -415,7 +416,7 @@ int min_pr_shift(t_gcr_addr* gcr_addr, int min_shift, int stop_value, const uint
             // PSL rx_berpl_count_ne_0
             if( get_ptr_field(gcr_addr, rx_berpl_count) != 0 )
             {
-                set_debug_state(0x510F, 3);
+                set_debug_state(0x510F);
                 mem_pl_field_put(rx_ber_fail, lane, 0b1);
                 set_rxbist_fail_lane( gcr_addr);
                 status = error_code;
