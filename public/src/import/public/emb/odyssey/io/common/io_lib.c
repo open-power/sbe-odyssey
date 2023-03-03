@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23022300 |vbr     | Issue 299826: Updated io_wait timeout
 // mwh23011300 |mwh     | Added void set_rxbist_fail_lane since used by ioo and iot
 // vbr22111600 |vbr     | Added new config for the thread time check limit
 // vbr22100400 |vbr     | Issue 291616: Check for pipe abort during servo ops in pcie dccal/init
@@ -379,19 +380,23 @@ void io_wait(int thread, PkInterval wait_time)
 {
     PkTimebase end_time = pk_timebase_get() + PK_INTERVAL_SCALE(wait_time);
 
-    // Loop on a spin/sleep until pass the min time or hit a loop limit (in case timer is broke HW552111)
-    int loop_count = 0;
+    // Loop on a spin/sleep until pass the min time or hit a loop limit (in case timer is broke HW552111).
+    // The time to hit the loop limit depends on the number of IO threads and what they are doing.
+    // The thread context switch time and thus the minium thread time is ~2us.
+    // When there is a single IO thread, the supervisor thread is only switched to every C_SUPERVISOR_THREAD_RATE loops.
+    // This means that the minimum time to hit the loop limit is (loop_limit / C_SUPERVISOR_THREAD_RATE) * ~4us.
+    // The loop count is configured to give a minimum ~512us timeout.
+    int32_t loop_limit = (512 / 4) * C_SUPERVISOR_THREAD_RATE;
 
     do
     {
-        loop_count++;
+        loop_limit--;
         io_sleep(thread);
     }
-    while ( (pk_timebase_get() < end_time)
-            && (loop_count < 128) );   // 128 loops is min ~250us but can be much more based on thread sleep times
+    while ( (pk_timebase_get() < end_time) && (loop_limit > 0) );
 
     // Set fir and debug_log if hit max loop count
-    if (loop_count >= 128)
+    if (loop_limit <= 0)
     {
         set_fir(fir_code_fatal_error);
         ADD_LOG(DEBUG_IO_WAIT_ESCAPE, 0x00);

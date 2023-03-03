@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,29 +22,6 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-// *!---------------------------------------------------------------------------
-// *! (C) Copyright International Business Machines Corp. 2019
-// *! All Rights Reserved -- Property of IBM
-// *! *** IBM Confidential ***
-// *!---------------------------------------------------------------------------
-// *! FILENAME    : link_ioo.cmd
-// *! TITLE       :
-// *! DESCRIPTION : Linker command script for IO PPE image
-// *!
-// *! OWNER NAME  : Vikram Raj          Email: vbraj@us.ibm.com
-// *! BACKUP NAME : Mike Spear          Email: mspear@us.ibm.com
-// *!
-// *!---------------------------------------------------------------------------
-// CHANGE HISTORY:
-//------------------------------------------------------------------------------
-// Version ID: |Author: | Comment:
-//-------------|--------|-------------------------------------------------------
-// vbr22040700 |vbr     | Updated for 5->9 threads
-// vbr22021600 |vbr     | Increase SRAM from 80K to 96K
-// vbr21011300 |vbr     | Increased fw_regs to 32B
-// vbr20111700 |vbr     | Added wildcards for the sections as recommended by Doug Gilbert.
-// vbr19072400 |vbr     | Increase SRAM from 64K to 80K and add 1K debug log
-//------------------------------------------------------------------------------
 
 // Need to do this so that elf32-powerpc is not modified!
 #undef powerpc

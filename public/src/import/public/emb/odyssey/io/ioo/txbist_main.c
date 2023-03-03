@@ -270,6 +270,8 @@ int txbist_main_ls(t_gcr_addr* gcr_addr_i)
     put_ptr_field(gcr_addr_i, tx_bist_prbs_clear,  0b1,    read_modify_write);
     put_ptr_field(gcr_addr_i, tx_bist_prbs_clear,  0b0,    read_modify_write);
 
+    io_spin_us(2000); //2ms delay
+
     // PSL prbs_stat
     if(get_ptr_field(gcr_addr_i, tx_bist_prbs_stat_alias) != 1)
     {
