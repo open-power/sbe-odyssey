@@ -225,7 +225,8 @@ enum sbeSecondaryResponse
     SBE_SEC_INFO_TXT_FORMAT_VERSION_MISMATCH  = 0x82,
     SBE_SEC_FILE_SIZE_IS_ZERO                 = 0x83,
     SBE_SEC_BUFFER_SIZE_SMALL                 = 0x84,
-    SBE_SEC_NON_ALPHA_NUMERIC_CHAR_FOUND      = 0x85
+    SBE_SEC_NON_ALPHA_NUMERIC_CHAR_FOUND      = 0x85,
+    SBE_SEC_NO_MEM_TRAIN_DATA                 = 0x86
 };
 
 /**
