@@ -2533,6 +2533,9 @@
   <entry name="ATTR_MSS_MRW_ALLOW_DDR5">
     <value>0</value>
   </entry>
+  <entry name="ATTR_MSS_ODY_PHY_IMAGE_SELECT">
+    <value>0</value>
+  </entry>
   <entry name="ATTR_REL_POS">
     <value>0x00</value>
   </entry>
