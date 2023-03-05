@@ -54,13 +54,12 @@ enum TdrResult
 
 enum TdrRegisters
 {
-    cntl3 = 0x444,
-    cntl4 = 0xC5C,
-    cntl5 = 0xC64,
-    cntl6 = 0xC6C,
-    cntlx1 = 0x360,
-    stat1 = 0x524,
-    mode1 = 0xC0C
+    tx_cntl3_pl = 0x088,
+    tx_ctl_cntl4_pg = 0x18B,
+    tx_ctl_cntl5_pg = 0x18C,
+    tx_ctl_cntl6_pg = 0x18D,
+    tx_stat1_pl = 0x0A4,
+    tx_ctl_mode1_pg = 0x181
 };
 
 struct TdrStruct
@@ -73,10 +72,10 @@ struct TdrStruct
 /// function pointer typedef definition for HWP call support
 typedef fapi2::ReturnCode (*common_io_tdr_FP_t)(
     const GENERIC_FAPI_IO_TARGET&,
-    const uint64_t&,
-    const uint32_t&,
-    const uint32_t&,
-    const uint32_t&,
+    const uint64_t,
+    const uint32_t,
+    const uint32_t,
+    const uint32_t,
     TdrResult&,
     uint32_t&);
 
@@ -93,10 +92,10 @@ extern "C"
     /// @return FAPI_RC_SUCCESS if arguments are valid
     fapi2::ReturnCode common_io_tdr(
         const GENERIC_FAPI_IO_TARGET& i_target,
-        const uint64_t& i_baseAddr,
-        const uint32_t& i_group,
-        const uint32_t& i_lane,
-        const uint32_t& i_freq,
+        const uint64_t i_baseAddr,
+        const uint32_t i_group,
+        const uint32_t i_lane,
+        const uint32_t i_freq,
         TdrResult& o_status,
         uint32_t& o_length_ps);
 
