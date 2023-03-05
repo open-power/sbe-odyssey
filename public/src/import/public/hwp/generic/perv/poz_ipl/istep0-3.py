@@ -354,6 +354,7 @@ def zme_tp_chiplet_reset():
 
     if ATTR_BURNIN:
         ROOT_CTRL1.BURNIN_MODE = 1
+        ROOT_CTRL4.ALTREFCLK_SEL = 1
 
     PERV_CTRL0.SRAM_ENABLE_DC = 1
 
