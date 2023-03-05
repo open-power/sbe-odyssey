@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -31,7 +31,7 @@
 //------------------------------------------------------------------------------
 
 #include <ody_bist_repr_initf.H>
-#include <poz_perv_common_params.H>
+#include <ody_chiplet_repr_initf.H>
 
 using namespace fapi2;
 
@@ -41,8 +41,13 @@ enum ODY_BIST_REPR_INITF_Private_Constants
 
 ReturnCode ody_bist_repr_initf(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
+    ReturnCode l_rc;
+    FAPI_INF("Entering...");
 
+    FAPI_EXEC_HWP(l_rc,
+                  ody_chiplet_repr_initf,
+                  i_target);
 
-fapi_try_exit:
-    return current_err;
+    FAPI_INF("Exiting...");
+    return l_rc;
 }
