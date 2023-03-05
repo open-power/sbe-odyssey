@@ -38,20 +38,21 @@
 
 fapi2::ReturnCode rmwIoHardwareReg(const fapi2::Target < fapi2::TARGET_TYPE_OCMB_CHIP | fapi2::TARGET_TYPE_OMI >
                                    &i_target,
-                                   const uint64_t& i_addr,
-                                   const uint32_t& i_data,
-                                   const uint32_t& i_dataBit,
-                                   const uint32_t& i_dataLen)
+                                   const uint64_t i_addr,
+                                   const uint32_t i_data,
+                                   const uint32_t i_dataBit,
+                                   const uint32_t i_dataLen)
 {
-    FAPI_DBG("Start - RMW register at 0x%08X, bit %d, for %d bits", i_addr, i_dataBit, i_dataLen);
+    FAPI_DBG("Start - RMW register at 0x%08X%08X, bit %d, for %d bits", (i_addr >> 32) & 0xFFFFFFFF, i_addr & 0xFFFFFFFF,
+             i_dataBit, i_dataLen);
 
     fapi2::buffer<uint64_t> l_buffer;
 
     FAPI_TRY(getScom(i_target, i_addr, l_buffer),
-             "Error getscom to address 0x%08X.", i_addr);
+             "Error getscom to address 0x%08X%08X.", (i_addr >> 32) & 0xFFFFFFFF, i_addr & 0xFFFFFFFF);
     l_buffer.insertFromRight(i_data, i_dataBit, i_dataLen);
     FAPI_TRY(putScom(i_target, i_addr, l_buffer),
-             "Error putscom to address 0x%08X.", i_addr);
+             "Error putscom to address 0x%08X%08X.", (i_addr >> 32) & 0xFFFFFFFF, i_addr & 0xFFFFFFFF);
 
 fapi_try_exit:
     FAPI_DBG("End - RMW");
@@ -60,17 +61,18 @@ fapi_try_exit:
 
 fapi2::ReturnCode readIoHardwareReg(const fapi2::Target < fapi2::TARGET_TYPE_OCMB_CHIP | fapi2::TARGET_TYPE_OMI >
                                     &i_target,
-                                    const uint64_t& i_addr,
-                                    const uint32_t& i_dataBit,
-                                    const uint32_t& i_dataLen,
+                                    const uint64_t i_addr,
+                                    const uint32_t i_dataBit,
+                                    const uint32_t i_dataLen,
                                     uint32_t& o_data)
 {
-    FAPI_DBG("Start - Reading register at 0x%08X, bit %d, for %d bits", i_addr, i_dataBit, i_dataLen);
+    FAPI_DBG("Start - Reading register at 0x%08X%08X, bit %d, for %d bits", (i_addr >> 32) & 0xFFFFFFFF,
+             i_addr & 0xFFFFFFFF, i_dataBit, i_dataLen);
 
     fapi2::buffer<uint64_t> l_buffer;
 
     FAPI_TRY(getScom(i_target, i_addr, l_buffer),
-             "Error getscom to address 0x%08X.", i_addr);
+             "Error getscom to address 0x%08X%08X.", (i_addr >> 32) & 0xFFFFFFFF, i_addr & 0xFFFFFFFF);
     FAPI_TRY(l_buffer.extractToRight(o_data, i_dataBit, i_dataLen));
 
 fapi_try_exit:

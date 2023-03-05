@@ -2802,13 +2802,39 @@
     <value>5</value>
   </entry>
   <entry name="ATTR_OMI_RX_LANES">
-    <value>0xFF</value>
+    <value>0xFF000000</value>
   </entry>
   <entry name="ATTR_OMI_TX_LANES">
-    <value>0xFF</value>
+    <value>0xFF000000</value>
   </entry>
   <entry name="ATTR_FREQ_OMI_MHZ">
     <value>25600</value>
   </entry>
-
+  <entry name="ATTR_OMI_CHANNEL_LENGTH">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_OMI_RX_LTEG">
+    <value>-1</value>
+  </entry>
+  <entry name="ATTR_OMI_RX_LTEZ">
+    <value>-1</value>
+  </entry>
+  <entry name="ATTR_OMI_RX_PHASE_STEP">
+    <value>-1</value>
+  </entry>
+  <entry name="ATTR_OMI_TX_PRE1">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_OMI_TX_PRE2">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_OMI_TX_POST">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_OMI_RX_VERT_OFFSET">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_OMI_RX_HORIZ_OFFSET">
+    <value>0</value>
+  </entry>
 </entries>
