@@ -34,7 +34,7 @@
 <entries>
   <!-- static: chip type and EC -->
   <entry name="ATTR_IS_SIMULATION">
-    <value>0x1</value>
+    <value>0x0</value>
   </entry>
   <entry name="ATTR_NAME">
     <virtual/>
