@@ -174,6 +174,25 @@ ReturnCode ody_sppe_attr_setup(const Target<TARGET_TYPE_OCMB_CHIP>& i_target_chi
         }
     }
 
+    // scratch 11 -- FW Mode flags
+    {
+        fapi2::buffer<uint64_t> l_scratch11_reg = 0;
+        fapi2::Target<fapi2::TARGET_TYPE_SYSTEM> FAPI_SYSTEM;
+        fapi2::ATTR_IS_SIMULATION_Type l_attr_is_simulation = 0;
+
+        if (l_scratch16_reg.getBit<SCRATCH11_REG_VALID_BIT>())
+        {
+            FAPI_DBG("Reading Scratch 11 mailbox register");
+            FAPI_TRY(fapi2::getScom(i_target_chip, SCRATCH_REGISTER11.scom_addr, l_scratch11_reg));
+
+            FAPI_DBG("Setting up ATTR_IS_SIMULATION");
+            l_scratch11_reg.extractToRight<ATTR_IS_SIMULATION_STARTBIT, ATTR_IS_SIMULATION_LENGTH>
+            (l_attr_is_simulation);
+
+            FAPI_TRY(FAPI_ATTR_SET(fapi2::ATTR_IS_SIMULATION, FAPI_SYSTEM, l_attr_is_simulation));
+        }
+    }
+
     // set platform attributes for partial good
     // since there are no optional/configurable regions on Odyssey, a functional chip has static partial good attributes
     for (const auto& l_perv : i_target_chip.getChildren<TARGET_TYPE_PERV>(TARGET_STATE_PRESENT))
