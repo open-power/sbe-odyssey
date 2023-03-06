@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -31,9 +31,23 @@
 #define __FAPI2_PLAT_UTILS__
 
 #include <stdint.h>
+#include <plat_types.H>
+#include <fapi2_hw_access.H>
 
 namespace fapi2
 {
+
+ReturnCode plat_putRingUtils( const void* i_target,
+                              const void* i_scanImage,
+                              const uint32_t i_modifiedRingAddress,
+                              const RingMode i_ringMode);
+
+ReturnCode mod_multicast_setup(
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&,
+    uint8_t i_group_id,
+    uint64_t i_chiplets,
+    TargetState);
+
 
 #ifdef __PPE_QME
     static const PlatformType PLATFORM = PLAT_QME;

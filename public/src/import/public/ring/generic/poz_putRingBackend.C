@@ -32,9 +32,12 @@
 #include <poz_putRingBackend.H>
 #include <file_access.H>
 #include <scan_compression.H>
-#include <poz_perv_mod_misc.H>
-#include <poz_perv_utils.H>
 #include <poz_ring_ids.H>
+
+#ifndef __PPE_QME
+    #include <poz_perv_mod_misc.H>
+    #include <poz_perv_utils.H>
+#endif
 
 #ifdef __PPE__
     #include "ppe42_string.h"
@@ -718,6 +721,7 @@ ReturnCode ScanApplyEngine::applyToChipUnitTarget(
 {
     FAPI_DBG(">> applyToChipUnitTarget");
 
+#ifndef __PPE_QME
     // Determine the instance number of the target
     ATTR_CHIP_UNIT_POS_Type target_instance;
     FAPI_TRY(FAPI_ATTR_GET(ATTR_CHIP_UNIT_POS, i_target, target_instance));
@@ -736,6 +740,8 @@ ReturnCode ScanApplyEngine::applyToChipUnitTarget(
 
         FAPI_TRY(applyToSingleInstance(perv_target, local_instance));
     }
+
+#endif
 
 fapi_try_exit:
     return current_err;
@@ -890,9 +896,11 @@ ReturnCode poz_putRingBackend(const Target<TARGET_TYPE_ALL_MC>& i_target,
 
     auto chip_target = ChipTarget(i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>());
 
+#ifndef __PPE_QME
     // Grab the vector of dynamic chip features
     ATTR_DYNAMIC_INIT_FEATURE_VEC_Type dynamic_features;
     FAPI_TRY(FAPI_ATTR_GET(ATTR_DYNAMIC_INIT_FEATURE_VEC, chip_target(), dynamic_features));
+#endif
 
     // Iterate over all possible ring subdirs in order
     for (auto type : ringTypeOrder)
@@ -901,9 +909,12 @@ ReturnCode poz_putRingBackend(const Target<TARGET_TYPE_ALL_MC>& i_target,
         char* ptr = fname + sizeof(ringBaseDir) - 1;
         ptr = stpcpy(ptr, type);
 
+#ifndef __PPE_QME
+
         // Special handling for dynXX
         if (type[3] == 'X')
         {
+
             // be prepared for the dynamic features vector outgrowing the first 64 bits :)
             for (unsigned int word = 0; word < ARRAY_SIZE(dynamic_features); word++)
             {
@@ -921,8 +932,10 @@ ReturnCode poz_putRingBackend(const Target<TARGET_TYPE_ALL_MC>& i_target,
                     }
                 }
             }
+
         }
         else
+#endif
         {
             // On anything other than dynXX we just append the image name and can proceed
             stpcpy(ptr, i_ring_id);
