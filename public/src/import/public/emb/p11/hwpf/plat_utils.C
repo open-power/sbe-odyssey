@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -28,11 +28,87 @@
  */
 
 #include <stdint.h>
+
+//PLAT EXTRA//
+
+/// Byte-reverse a 16-bit integer if on a little-endian machine
+
+uint16_t
+revle16(uint16_t i_x)
+{
+    uint16_t rx;
+
+#ifndef _BIG_ENDIAN
+    uint8_t* pix = (uint8_t*)(&i_x);
+    uint8_t* prx = (uint8_t*)(&rx);
+
+    prx[0] = pix[1];
+    prx[1] = pix[0];
+#else
+    rx = i_x;
+#endif
+
+    return rx;
+}
+
+/// Byte-reverse a 32-bit integer if on a little-endian machine
+
+uint32_t
+revle32(uint32_t i_x)
+{
+    uint32_t rx;
+
+#ifndef _BIG_ENDIAN
+    uint8_t* pix = (uint8_t*)(&i_x);
+    uint8_t* prx = (uint8_t*)(&rx);
+
+    prx[0] = pix[3];
+    prx[1] = pix[2];
+    prx[2] = pix[1];
+    prx[3] = pix[0];
+#else
+    rx = i_x;
+#endif
+
+    return rx;
+}
+
+
+/// Byte-reverse a 64-bit integer if on a little-endian machine
+
+uint64_t
+revle64(const uint64_t i_x)
+{
+    uint64_t rx;
+
+#ifndef _BIG_ENDIAN
+    uint8_t* pix = (uint8_t*)(&i_x);
+    uint8_t* prx = (uint8_t*)(&rx);
+
+    prx[0] = pix[7];
+    prx[1] = pix[6];
+    prx[2] = pix[5];
+    prx[3] = pix[4];
+    prx[4] = pix[3];
+    prx[5] = pix[2];
+    prx[6] = pix[1];
+    prx[7] = pix[0];
+#else
+    rx = i_x;
+#endif
+
+    return rx;
+}
+
 //F2//#include <utils.H>
 //F2//#include <plat_trace.H>
 #include <return_code.H>
+#include <hw_access_def.H>
 //F2//#include <error_info.H>
 //F2//#include <assert.h>
+#include <plat_utils.H>
+#include <poz_putRingUtils.H>
+
 
 namespace fapi2
 {
@@ -161,8 +237,10 @@ namespace fapi2
 ///
 /// @brief Delay this thread.
 ///
-ReturnCode delay(uint64_t i_nanoSeconds, uint64_t i_simCycles, bool i_fixed = false)
+///ReturnCode delay(uint64_t i_nanoSeconds, uint64_t i_simCycles, bool i_fixed = false)
+ReturnCode delay(uint64_t i_nanoSeconds, uint64_t i_simCycles, bool i_fixed)
 {
+
     // void statements to keep the compiler from complaining
     // about unused variables.
     static_cast<void>(i_nanoSeconds);
@@ -286,78 +364,39 @@ ReturnCode delay(uint64_t i_nanoSeconds, uint64_t i_simCycles, bool i_fixed = fa
 //F2//    assert(i_expression);
 //F2//}
 
+ReturnCode plat_putRingUtils( const void* i_target,
+                              const void* i_scanImage,
+                              const uint32_t i_modifiedRingAddress,
+                              const RingMode i_ringMode)
+
+{
+    fapi2::ReturnCode l_rc = FAPI2_RC_SUCCESS;
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST >
+    target(*(plat_target_handle_t*)i_target);
+    FAPI_INF("plat_putRingUtils:  modifiedRingAddress[%08X], ringMode[%08X], "
+             "target[0x%08X]", i_modifiedRingAddress, i_ringMode, target.get());
+
+    l_rc = poz_putRingUtils( target, (uint8_t*)i_scanImage,
+                             i_modifiedRingAddress, i_ringMode);
+
+    if( l_rc != FAPI2_RC_SUCCESS )
+    {
+        FAPI_ERR("poz_putRingUtils failed with RC[%08X]", l_rc);
+    }
+
+    return l_rc;
+}
+
+ReturnCode mod_multicast_setup(
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    uint8_t i_group_id,
+    uint64_t i_chiplets,
+    fapi2::TargetState i_pgood_policy)
+{
+    FAPI_ERR("poz_putRing TBD");
+    return FAPI2_RC_SUCCESS;
+}
+
 } // namespace fapi2
-
-
-//PLAT EXTRA//
-
-/// Byte-reverse a 16-bit integer if on a little-endian machine
-
-uint16_t
-revle16(uint16_t i_x)
-{
-    uint16_t rx;
-
-#ifndef _BIG_ENDIAN
-    uint8_t* pix = (uint8_t*)(&i_x);
-    uint8_t* prx = (uint8_t*)(&rx);
-
-    prx[0] = pix[1];
-    prx[1] = pix[0];
-#else
-    rx = i_x;
-#endif
-
-    return rx;
-}
-
-/// Byte-reverse a 32-bit integer if on a little-endian machine
-
-uint32_t
-revle32(uint32_t i_x)
-{
-    uint32_t rx;
-
-#ifndef _BIG_ENDIAN
-    uint8_t* pix = (uint8_t*)(&i_x);
-    uint8_t* prx = (uint8_t*)(&rx);
-
-    prx[0] = pix[3];
-    prx[1] = pix[2];
-    prx[2] = pix[1];
-    prx[3] = pix[0];
-#else
-    rx = i_x;
-#endif
-
-    return rx;
-}
-
-
-/// Byte-reverse a 64-bit integer if on a little-endian machine
-
-uint64_t
-revle64(const uint64_t i_x)
-{
-    uint64_t rx;
-
-#ifndef _BIG_ENDIAN
-    uint8_t* pix = (uint8_t*)(&i_x);
-    uint8_t* prx = (uint8_t*)(&rx);
-
-    prx[0] = pix[7];
-    prx[1] = pix[6];
-    prx[2] = pix[5];
-    prx[3] = pix[4];
-    prx[4] = pix[3];
-    prx[5] = pix[2];
-    prx[6] = pix[1];
-    prx[7] = pix[0];
-#else
-    rx = i_x;
-#endif
-
-    return rx;
-}
 
 //PLAT END//

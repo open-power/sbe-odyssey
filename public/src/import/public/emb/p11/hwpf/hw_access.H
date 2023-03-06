@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,7 +39,18 @@
 
 #include <plat_hw_access.H>
 #include <fapi2_hw_access.H>
-//#include <p11_qme_ring_traverse.H>
+#include <poz_putRingBackend.H>
+#include "plat_utils.H"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern uint32_t G_IsSimics;
+
+#ifdef __cplusplus
+}
+#endif
 
 namespace fapi2
 {
@@ -395,15 +406,48 @@ inline ReturnCode putScom(const Target<K, M, V>& i_target,
 template< TargetType K, MulticastType M, typename V >
 //__attribute__((always_inline))
 ReturnCode putRing(const Target<K, M, V>& i_target,
-                   const RingId_t i_ringID,
-                   const RingMode i_ringMode)
+                   const char* i_ringID,
+                   const RingMode i_ringMode = RING_MODE_HEADER_CHECK)
 {
-    ReturnCode l_rc = FAPI2_RC_SUCCESS;
+    if (G_IsSimics)
+    {
+        FAPI_INF ("putRingQme: NOP on Simics!!");
+        return FAPI2_RC_SUCCESS;
+    }
 
-    l_rc = putRingQme( i_target, i_ringID, i_ringMode );
+    ReturnCode l_rc = poz_putRingBackend(i_target, i_ringID, i_ringMode);
+
+    if( l_rc != FAPI2_RC_SUCCESS )
+    {
+        FAPI_ERR("poz_putRingBackend failed with RC[%08X]", l_rc);
+    }
 
     return l_rc;
 }
+
+/// @brief Backend platform implementation of putRing
+/// This applies a single scan image to a given target.
+/// Hardware procedures will not usually call this function; it is
+/// supposed to be called by putRingBackend() only.
+//  @tparam K template parameter, passed in target.
+/// @param[in] i_target    Target to scan into. May be multicast!
+/// @param[in] i_scanImage Scan image to apply
+/// @param[in] i_modifiedRingAddress
+///                        Ring address modified to indicate the actual
+///                        scan regions targeted by this call
+/// @param[in] i_ringMode  Ring operation mode.
+/// @return FAPI2_RC_SUCCESS on success, else error code.
+template< TargetType K, MulticastType M, typename V >
+ReturnCode plat_putRingImpl(const Target<K, M, V>& i_target,
+                            const void* i_scanImage,
+                            const uint32_t i_modifiedRingAddress,
+                            const RingMode i_ringMode)
+{
+    ReturnCode l_rc = plat_putRingUtils( (void*)&i_target, i_scanImage,
+                                         i_modifiedRingAddress, i_ringMode );
+    return l_rc;
+}
+
 // variable_buffer isn't supported on PPE
 #ifndef __PPE__
     ///
@@ -703,5 +747,6 @@ ReturnCode putRing(const Target<K, M, V>& i_target,
 #endif // PPE
 
 } // fapi2 namespace
+
 
 #endif // _FAPI2_HWACCESS_H_

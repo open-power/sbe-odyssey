@@ -71,8 +71,10 @@ Target<TARGET_TYPE_COMPUTE_CHIP> plat_getChipTarget();
 template<TargetType K, MulticastType M, typename V>
 static constexpr void plat_apply_target_limits(void)
 {
-    static_assert( !( (K & TARGET_TYPE_MULTICAST) &&
-                      (K & TARGET_TYPE_COMPUTE_CHIP) ),
+    static_assert( (K == TARGET_TYPE_ALL_MC) ||
+                   (!((K & TARGET_TYPE_MULTICAST) &&
+                      ((K & TARGET_TYPE_COMPUTE_CHIP) ||
+                       (K & TARGET_TYPE_ANY_POZ_CHIP))) ),
                    "COMPUTE_CHIP type cannot be multicast");
 }
 
@@ -162,13 +164,15 @@ inline Target<T, M, V> Target<K, M, V>::getParent(void) const
 
     static_assert( ( !(K & TARGET_TYPE_EQ) ) ||
                    (T & TARGET_TYPE_PERV) ||
-                   (T == TARGET_TYPE_COMPUTE_CHIP),
+                   (T == TARGET_TYPE_COMPUTE_CHIP) ||
+                   (T == TARGET_TYPE_ANY_POZ_CHIP),
                    "Invalid parent for EQ target, must be PERV or COMPUTE_CHIP");
 
     static_assert( ( !(K & TARGET_TYPE_CORE) ) ||
                    (T & TARGET_TYPE_EQ)     ||
                    (T & TARGET_TYPE_PERV)   ||
-                   (T == TARGET_TYPE_COMPUTE_CHIP),
+                   (T == TARGET_TYPE_COMPUTE_CHIP) ||
+                   (T == TARGET_TYPE_ANY_POZ_CHIP),
                    "Invalid parent for CORE target, must be EQ/PERV/COMPUTE_CHIP");
 
     static_assert( ( !(K & TARGET_TYPE_PERV) ) ||
@@ -302,21 +306,21 @@ Target<K, M, V>::getChildren(const TargetState i_state) const
 //F2//    return {Target<TARGET_TYPE_PERV>(i_filter), Target<TARGET_TYPE_PERV>(i_filter)};
 //F2//}
 
-//F2//template<TargetType K, MulticastType M, typename V>
-//F2//template< TargetType T, MulticastType O >
-//F2//inline Target < T | TARGET_TYPE_MULTICAST, O, V >
-//F2//Target<K, M, V>::getMulticast(const MulticastGroup i_group) const
-//F2//{
-//F2//    // C++ does not allow partial specialization of class member functions (please prove me wrong!),
-//F2//    // so we need to use this static assertion instead. On the upside, the error message is much clearer ;)
-//F2//    static_assert((K == TARGET_TYPE_COMPUTE_CHIP), "Parent target must be the proc chip");
-//F2//    static_assert((T & TARGET_TYPE_MULTICASTABLE) != 0,
-//F2//                  "Requested target type must be part of TARGET_TYPE_MULTICASTABLE");
-//F2//    static_assert(bitCount<T>::count == 1,
-//F2//                  "Requested target type must be a single type, TARGET_TYPE_MULTICAST will be added automatically");
-//F2//
-//F2//    return Target < T | TARGET_TYPE_MULTICAST, O, V > ();
-//F2//}
+template<TargetType K, MulticastType M, typename V>
+template< TargetType T, MulticastType O >
+inline Target < T | TARGET_TYPE_MULTICAST, O, V >
+Target<K, M, V>::getMulticast(const MulticastGroup i_group) const
+{
+    // C++ does not allow partial specialization of class member functions (please prove me wrong!),
+    // so we need to use this static assertion instead. On the upside, the error message is much clearer ;)
+    static_assert((K == TARGET_TYPE_COMPUTE_CHIP || K == TARGET_TYPE_ANY_POZ_CHIP), "Parent target must be the proc chip");
+    static_assert((T & TARGET_TYPE_MULTICASTABLE) != 0,
+                  "Requested target type must be part of TARGET_TYPE_MULTICASTABLE");
+    static_assert(bitCount<T>::count == 1,
+                  "Requested target type must be a single type, TARGET_TYPE_MULTICAST will be added automatically");
+
+    return Target < T | TARGET_TYPE_MULTICAST, O, V > ();
+}
 
 template<TargetType K, MulticastType M, typename V>
 template< MulticastType O >
@@ -439,6 +443,33 @@ Target<K, M, V>::_getCoreSelect(void) const
 //F2//    // For testing
 //F2//    return Target<T, M, V>(Ordinal);
 //F2//}
+
+///
+/// @brief Here check that the platform target's type is
+///        compatible with T, also taking multicast into account
+///        (if the plat target is a real multicast target, T must include
+///        TARGET_TYPE_MULTIAST). in it's Target handle
+/// @tparam K The plat target handle typed
+/// @tparam M The target MulticastType
+/// @tparam V The type of parent
+/// @param[in] A pointer to the Target<T, M, V>
+/// @return Target<T, M, V> a reduceType of target
+///
+template<TargetType K, MulticastType M, typename V>
+template<TargetType T>
+inline ReturnCodes Target<K, M, V>::reduceType(Target<T, M, V>& o_target) const
+{
+    const TargetType l_type = iv_handle.getFapiTargetType() |
+                              (iv_handle.getFunctional() ? TARGET_TYPE_MULTICAST : TARGET_TYPE_NONE);
+
+    if ((l_type & T) != l_type)
+    {
+        return FAPI2_RC_INVALID_PARAMETER;
+    }
+
+    o_target = get();
+    return FAPI2_RC_SUCCESS;
+}
 
 } // fapi2 namespace
 
