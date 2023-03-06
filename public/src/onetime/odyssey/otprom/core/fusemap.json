@@ -133,7 +133,7 @@
         {
             "field": "msvFuseBank",
             "field_size": 64,
-            "value": "0x0",
+            "value": "0x0000000000000000",
             "description": "Bit 0..62 : Minimum Secure Version Fuse Bank. Bit 63 is reserved"
         }
     ],
@@ -151,7 +151,7 @@
         {
             "field": "minorVersion",
             "field_size": 4,
-            "value": "0x2",
+            "value": "0x4",
             "description": "Bit 4..7 : Minor Version of OTPROM Fuse Binary"
         },
         {
@@ -169,7 +169,7 @@
         {
             "field": "hwPubKeyHashSet1_1",
             "field_size": 64,
-            "value": "0xf525ce11cc941c79",
+            "value": "0xb242ea5c2e4b1e04",
             "description": "Hardware Public Key Hash Set 1. (0..7)"
         }
     ],
@@ -181,7 +181,7 @@
         {
             "field": "hwPubKeyHashSet1_2",
             "field_size": 64,
-            "value": "0x5aac53ddefc3b037",
+            "value": "0x90336e66f61c189b",
             "description": "Hardware Public Key Hash Set 1. (8..15)"
         }
     ],
@@ -193,7 +193,7 @@
         {
             "field": "hwPubKeyHashSet1_3",
             "field_size": 64,
-            "value": "0x46698eee16e5f4a8",
+            "value": "0x4d6127abf488211e",
             "description": "Hardware Public Key Hash Set 1. (16..23)"
         }
     ],
@@ -205,7 +205,7 @@
         {
             "field": "hwPubKeyHashSet1_4",
             "field_size": 64,
-            "value": "0xc5338ab58a400b8d",
+            "value": "0xf97dead695ef1e6e",
             "description": "Hardware Public Key Hash Set 1. (24..31)"
         }
     ],
@@ -217,7 +217,7 @@
         {
             "field": "hwPubKeyHashSet1_5",
             "field_size": 64,
-            "value": "0x78e56061e8991ee6",
+            "value": "0xd208680126a3bff5",
             "description": "Hardware Public Key Hash Set 1. (32..39)"
         }
     ],
@@ -229,7 +229,7 @@
         {
             "field": "hwPubKeyHashSet1_6",
             "field_size": 64,
-            "value": "0xa764295239ec0ea0",
+            "value": "0x4c624684c3fccb56",
             "description": "Hardware Public Key Hash Set 1. (40..47)"
         }
     ],
@@ -241,7 +241,7 @@
         {
             "field": "hwPubKeyHashSet1_7",
             "field_size": 64,
-            "value": "0x6ebb91660af3aff7",
+            "value": "0x679f6c2273743993",
             "description": "Hardware Public Key Hash Set 1. (48..55)"
         }
     ],
@@ -253,7 +253,7 @@
         {
             "field": "hwPubKeyHashSet1_8",
             "field_size": 64,
-            "value": "0xaeb7813e1add1e3d",
+            "value": "0xa0d5e954188385d5",
             "description": "Hardware Public Key Hash Set 1. (56..63)"
         }
     ],
@@ -265,7 +265,7 @@
         {
             "field": "hwPubKeyHashSet2_1",
             "field_size": 64,
-            "value": "0xf525ce11cc941c79",
+            "value": "0xb40a07ba5fbaa755",
             "description": "Hardware Public Key Hash Set 2. (0..7)"
         }
     ],
@@ -277,7 +277,7 @@
         {
             "field": "hwPubKeyHashSet2_2",
             "field_size": 64,
-            "value": "0x5aac53ddefc3b037",
+            "value": "0xbaaf37e5b40a240a",
             "description": "Hardware Public Key Hash Set 2. (8..15)"
         }
     ],
@@ -289,7 +289,7 @@
         {
             "field": "hwPubKeyHashSet2_3",
             "field_size": 64,
-            "value": "0x46698eee16e5f4a8",
+            "value": "0x6e22186d6c6d3d3e",
             "description": "Hardware Public Key Hash Set 2. (16..23)"
         }
     ],
@@ -301,7 +301,7 @@
         {
             "field": "hwPubKeyHashSet2_4",
             "field_size": 64,
-            "value": "0xc5338ab58a400b8d",
+            "value": "0x8ab49dc95fa1632c",
             "description": "Hardware Public Key Hash Set 2. (24..31)"
         }
     ],
@@ -313,7 +313,7 @@
         {
             "field": "hwPubKeyHashSet2_5",
             "field_size": 64,
-            "value": "0x78e56061e8991ee6",
+            "value": "0x061093fa134bfc35",
             "description": "Hardware Public Key Hash Set 2. (32..39)"
         }
     ],
@@ -325,7 +325,7 @@
         {
             "field": "hwPubKeyHashSet2_6",
             "field_size": 64,
-            "value": "0xa764295239ec0ea0",
+            "value": "0x90e0509bb2e29ee3",
             "description": "Hardware Public Key Hash Set 2. (40..47)"
         }
     ],
@@ -337,7 +337,7 @@
         {
             "field": "hwPubKeyHashSet2_7",
             "field_size": 64,
-            "value": "0x6ebb91660af3aff7",
+            "value": "0x067740c85a8b702e",
             "description": "Hardware Public Key Hash Set 2. (48..55)"
         }
     ],
@@ -349,7 +349,7 @@
         {
             "field": "hwPubKeyHashSet2_8",
             "field_size": 64,
-            "value": "0xaeb7813e1add1e3d",
+            "value": "0x5f622b1e461da9c7",
             "description": "Hardware Public Key Hash Set 2. (56..63)"
         }
     ],
@@ -361,7 +361,7 @@
         {
             "field": "hashOfHwPubKeySet1Set2_1",
             "field_size": 64,
-            "value": "0x42826d3c4a9b1ca5",
+            "value": "0x7c4e0b33df19c212",
             "description": "Hash of hardware public keys set 1 and set 2. (0..7)"
         }
     ],
@@ -373,7 +373,7 @@
         {
             "field": "hashOfHwPubKeySet1Set2_2",
             "field_size": 64,
-            "value": "0x9b9919a97e5d63d8",
+            "value": "0x0a9d8a9bbdbf86f1",
             "description": "Hash of hardware public keys set 1 and set 2. (8..15)"
         }
     ],
@@ -385,7 +385,7 @@
         {
             "field": "hashOfHwPubKeySet1Set2_3",
             "field_size": 64,
-            "value": "0xabae411684bae2cb",
+            "value": "0x4485f1f4d697976e",
             "description": "Hash of hardware public keys set 1 and set 2. (16..23)"
         }
     ],
@@ -397,7 +397,7 @@
         {
             "field": "hashOfHwPubKeySet1Set2_4",
             "field_size": 64,
-            "value": "0xa96f7cc99bbf53c8",
+            "value": "0xf39846cb7757ee28",
             "description": "Hash of hardware public keys set 1 and set 2. (24..31)"
         }
     ],
@@ -409,7 +409,7 @@
         {
             "field": "hashOfHwPubKeySet1Set2_5",
             "field_size": 64,
-            "value": "0xfd5f97b7cf37ddeb",
+            "value": "0x98879ca9f446b84d",
             "description": "Hash of hardware public keys set 1 and set 2. (32..39)"
         }
     ],
@@ -421,7 +421,7 @@
         {
             "field": "hashOfHwPubKeySet1Set2_6",
             "field_size": 64,
-            "value": "0x60d2f17080615bfd",
+            "value": "0x291f6a660fdef05c",
             "description": "Hash of hardware public keys set 1 and set 2. (40..47)"
         }
     ],
@@ -433,7 +433,7 @@
         {
             "field": "hashOfHwPubKeySet1Set2_7",
             "field_size": 64,
-            "value": "0xb664c804d113a9fe",
+            "value": "0x6c23da34f3c03aff",
             "description": "Hash of hardware public keys set 1 and set 2. (48..55)"
         }
     ],
@@ -445,7 +445,7 @@
         {
             "field": "hashOfHwPubKeySet1Set2_8",
             "field_size": 64,
-            "value": "0x64b7e96fa6d8bc1e",
+            "value": "0xe55bed6098223c18",
             "description": "Hash of hardware public keys set 1 and set 2. (56..63)"
         }
     ],
