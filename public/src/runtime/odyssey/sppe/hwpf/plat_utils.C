@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -34,6 +34,7 @@
 #include <plat_trace.H>
 #include <target.H>
 #include <sbeutil.H>
+#include "cmnglobals.H"
 
 
 namespace fapi2
@@ -54,10 +55,7 @@ namespace fapi2
     // frequency till istep 2.7
     inline uint64_t delayCycles(uint64_t i_nanoSeconds )
     {
-// TODO: P11 SBE PORTING
-// Populate from SBE Globals.
-        uint32_t sbeFrequency = (133 * 1000 * 1000 )/ 4; 
-        return ( i_nanoSeconds/1000) * ( sbeFrequency /(1000*1000));
+        return ( i_nanoSeconds/1000) * ( CMN_GLOBAL->sbefreq /(1000*1000));
     }
     /// @brief Delay this thread.
     ///
