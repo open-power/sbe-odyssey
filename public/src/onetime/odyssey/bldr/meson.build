@@ -174,7 +174,7 @@ outfile = odyssey_bldr_img_name + '.pak'
 obldr_package_img = custom_target( 'obldr_package_img',
                                output : outfile,
                                depends : [ obldr_string_file_gen, obldr_symbol_file_gen,
-                                           obldr_dis_file],
+                                           obldr_dis_file, obldr_bin_gen],
                                command : [ packaging, meson.current_build_dir(),
                                            odyssey_bldr_img_name, pakTool,
                                            pakBuildTool, signHashList],
