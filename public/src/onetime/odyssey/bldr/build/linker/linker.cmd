@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -123,18 +123,28 @@ SECTIONS {
     /* Size of initialised data section i.e. .sdata */
     _sdata_size = . - _sda_start;
 
+    // Work around for the issue, SROM code is using relative address of
+    //   '.sbss.ppe42_tb_data' & '.sbss.ppe42_64bit_timebase' for tracing.
+    //   in SROM &(.sbss.ppe42_tb_data) = _SDA_BASE_ + 0x180
+    //   Her we should mimic same relative address
+    . = ALIGN(DOUBLE_WORD_SIZE);
+    _SDA_BASE_ = .;
+
     /* Start of sbss section is also the end of data section. */
     _sbss_start = .;
+
+    // move pointer to _SDA_BASE_ + 0x180 (we are wasting 0x180 bytes of memory space),
+    //  but this is safe. With this approach only thing we have to manually make sure is
+    //  libodysseyekbcmn.sbss starts with ppe42_tb_data.
+    . = _SDA_BASE_ + 0x180;
+
     .sbss . : {
+        *\libodysseyekbcmn.a:(.sbss.ppe42_tb_data)
+        *\libodysseyekbcmn.a:(.sbss.ppe42_64bit_timebase)
         *(.sbss)
         *(.sbss.*)
     }
     . = ALIGN(DOUBLE_WORD_SIZE);
-
-    /* _SDA_BASE_ should point to the center of SDA, so that whole SDA
-     * can be addressed with 16-bit signed offsets.
-     */
-    _SDA_BASE_ = _sda_start + ((. - _sda_start) / 2);
 
     /* BSS section. */
     .bss . : {
