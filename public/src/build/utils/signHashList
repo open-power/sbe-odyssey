@@ -205,25 +205,16 @@ if [ "$SIGNING_MODE" = "Development" ]; then
 elif [ "$SIGNING_MODE" = "Production" ] ; then
     echo "***INFO | SBE | signHashList : Production Mode Signing"
 
-    if [ -z $SB_PROJECT_INI_ODY_BOOT ] || [ ! -e $SB_PROJECT_INI_ODY_BOOT ]; then
-        echo "***ERROR | SBE | signHashList : Unable to locate production signing boot loader project ini file : $SB_PROJECT_INI_ODY_BOOT"
-        exit -1
-    fi
-    if [ -z $SB_ARCHIVE_IN_ODY_BOOT ] || [ ! -e $SB_ARCHIVE_IN_ODY_BOOT ]; then
-        echo "***ERROR | SBE | signHashList : Unable to locate production signing boot loader key archive : $SB_ARCHIVE_IN_ODY_BOOT"
-        exit -1
-    fi
-
-    if [ -z $SB_PROJECT_INI_ODY_RUNTIME ] || [ ! -e $SB_PROJECT_INI_ODY_RUNTIME ]; then
-        echo "***ERROR | SBE | signHashList : Unable to locate production signing runtime project ini file : $SB_PROJECT_INI_ODY_RUNTIME"
-        exit -1
-    fi
-    if [ -z $SB_ARCHIVE_IN_ODY_RUNTIME ] || [ ! -e $SB_ARCHIVE_IN_ODY_RUNTIME ]; then
-        echo "***ERROR | SBE | signHashList : Unable to locate production signing runtime key archive : $SB_ARCHIVE_IN_ODY_RUNTIME"
-        exit -1
-    fi
-
     if [ "$COMPONENT_ID" = "BOOT_LDR" ]; then
+        if [ -z $SB_PROJECT_INI_ODY_BOOT ] || [ ! -e $SB_PROJECT_INI_ODY_BOOT ]; then
+            echo "***ERROR | SBE | signHashList : Unable to locate production signing boot loader project ini file : $SB_PROJECT_INI_ODY_BOOT"
+            exit -1
+        fi
+        if [ -z $SB_ARCHIVE_IN_ODY_BOOT ] || [ ! -e $SB_ARCHIVE_IN_ODY_BOOT ]; then
+            echo "***ERROR | SBE | signHashList : Unable to locate production signing boot loader key archive : $SB_ARCHIVE_IN_ODY_BOOT"
+            exit -1
+        fi
+
         echo "***INFO | SBE | signHashList : Production Mode Signing."
         echo "***INFO | SBE | signHashList : Signing Boot Loader Hash List."
         SIGNTOOL_ARGS="$SIGNTOOL_ARGS --mode production --flags 0x40000000 \
@@ -231,6 +222,15 @@ elif [ "$SIGNING_MODE" = "Production" ] ; then
                    --sign-project-config $SB_PROJECT_INI_ODY_BOOT --archiveIn $SB_ARCHIVE_IN_ODY_BOOT"
     fi
     if [ "$COMPONENT_ID" = "RUN_TIME" ]; then
+        if [ -z $SB_PROJECT_INI_ODY_RUNTIME ] || [ ! -e $SB_PROJECT_INI_ODY_RUNTIME ]; then
+            echo "***ERROR | SBE | signHashList : Unable to locate production signing runtime project ini file : $SB_PROJECT_INI_ODY_RUNTIME"
+            exit -1
+        fi
+        if [ -z $SB_ARCHIVE_IN_ODY_RUNTIME ] || [ ! -e $SB_ARCHIVE_IN_ODY_RUNTIME ]; then
+            echo "***ERROR | SBE | signHashList : Unable to locate production signing runtime key archive : $SB_ARCHIVE_IN_ODY_RUNTIME"
+            exit -1
+        fi
+
         echo "***INFO | SBE | signHashList : Production Mode Signing."
         echo "***INFO | SBE | signHashList : Signing Run Time Hash List."
         SIGNTOOL_ARGS="$SIGNTOOL_ARGS --mode production --flags 0x40000000 \
