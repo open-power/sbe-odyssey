@@ -177,6 +177,11 @@ void bldrthreadroutine(void *i_pArg)
         }
         shvReq.pubKeyHashSet1 = &hwKeysHashMsv.hwKeyHash;
 
+        //Since SROM logic checks for pubKeyHashSet2 incase pubKeyHashSet1 fails
+        // we will duplicate same pubKeyHashSet1 key to pubKeyHashSet2 in case of
+        // boot loader as it has only one set of keys.
+        shvReq.pubKeyHashSet2 = &hwKeysHashMsv.hwKeyHash;
+
         UPDATE_BLDR_SBE_PROGRESS_CODE(COMPLETED_BLDR_LOADING_HW_KEYS_HASH_MSV_INTO_PIB);
 
         shvReq.containerStartOffset = (uint32_t *)secureContainer;
