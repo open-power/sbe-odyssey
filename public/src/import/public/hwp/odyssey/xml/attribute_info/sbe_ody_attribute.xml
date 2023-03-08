@@ -2788,9 +2788,6 @@
   <entry name="ATTR_MEM_SI_PHY_DRV_IMP_DQ_DQS_PULL_UP">
     <value>0</value>
   </entry>
-  <entry name="ATTR_MSS_ODY_PHY_IMAGE_SELECT">
-    <value>0</value>
-  </entry>
   <!-- IO HWP : IO OMI attributes added from here  -->
   <!--        <entry name="ATTR_OMI_name">   -->
   <!--          <value>0x0</value>  -->
