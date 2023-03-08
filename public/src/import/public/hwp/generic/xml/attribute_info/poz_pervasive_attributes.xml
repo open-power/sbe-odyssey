@@ -82,6 +82,7 @@
   <writeable/>
   <platInit/>
   <initToZero/>
+  <mrwHide/>
 </attribute>
 <!-- ********************************************************************** -->
 <attribute>
