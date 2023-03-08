@@ -108,8 +108,9 @@
 // Banks, t_cal_bank variable type and values (chosen to minimize code size); macros must match.
 typedef enum
 {
-    bank_a = 0b010,
-    bank_b = 0b101
+    bank_a  = 0b010,
+    bank_b  = 0b101,
+    bank_ab = 0b111
 } t_bank;
 // Macro to convert bank value to the opposite bank value (A->B or B->A)
 #define opposite_bank(input_bank) ((input_bank) ^ 0b111)
@@ -119,6 +120,7 @@ typedef enum
 //   When Cal B: use A for main data, B for alt data. bank_sel_a=1; rlm_clk_sel_a=0; dl_clk_sel_a=1.
 #define cal_bank_to_bank_rlmclk_dlclk_sel_a(cal_bank) ((cal_bank))
 #define cal_bank_to_bank_rlmclk_sel_a(cal_bank) ((cal_bank) >> 1)
+#define bank_to_bitfield_ab_mask(bank) ((bank) & 0b11)
 PK_STATIC_ASSERT(rx_bank_rlmclk_dlclk_sel_a_full_reg_width == 16);
 PK_STATIC_ASSERT(rx_bank_rlmclk_dlclk_sel_a_alias_width == 3);
 PK_STATIC_ASSERT(rx_bank_rlmclk_dlclk_sel_a_alias_startbit == 13);
@@ -238,7 +240,7 @@ static inline t_bank switch_cal_bank(t_gcr_addr* gcr_addr, t_bank current_cal_ba
 // Wait for lock on both banks.
 // Set FIR if not locked after timeout (optional).
 // Lock could take relatively long due to spread spectrum, so use sleep in between checks.
-int wait_for_cdr_lock(t_gcr_addr* gcr_addr, bool set_fir_on_error);
+int wait_for_cdr_lock(t_gcr_addr* gcr_addr, t_bank check_bank, bool set_fir_on_error);
 
 
 // Eyeopt abort check/handling. Call this a lot and does enough that inline is not the right option.

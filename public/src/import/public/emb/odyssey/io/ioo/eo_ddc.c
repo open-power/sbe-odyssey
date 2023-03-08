@@ -40,6 +40,8 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// vbr23030200 |vbr     | Issue 300456: Only check cal bank in wait for cdr lock
+// jjb23030100 |jjb     | Issue 300241: Do not wait for cdr lock when running rxeqeval
 // vbr23010300 |vbr     | EWM296171: Added sleep at end of ddc_seek_loop (recal only)
 // jfg22111701 |jfg     | Replace PR reads with read_active_pr
 // vbr22111600 |vbr     | Skip sleeps when in RxEqEval
@@ -886,7 +888,6 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed
     set_debug_state(0x8000); // DEBUG - DDC Start
     int abort_status = pass_code;
     int pr_active[4]; // All four PR positions packed in as: {Data NS, Edge NS, Data EW, Edge EW}
-    int cdr_status = 1;
     G_io_threads = img_field_get(ppe_num_threads);
 
     // 2: Set initial values
@@ -1171,15 +1172,19 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed
         return abort_status;
     }
 
-    cdr_status = wait_for_cdr_lock(gcr_addr, true);
-
-    if (cdr_status != pass_code)
+    // PSL not_rx_running_eq_eval
+    if (mem_pg_field_get(rx_running_eq_eval) == 0)   // Issue 300241: Only wait for cdr lock when not running rxeqeval
     {
-        // PSL set_ddc_error
-        set_ddc_err (gcr_addr, bank, lane, pr_active, Esave, Dsave);
-        set_debug_state(0x8083); // DEBUG: Algorithm error. Final lock error
-        //EWM265038: This fail is for rx_bist not abort or ddc internal error: set_fir(fir_code_bad_lane_warning);
-        return warning_code;
+        int cdr_status = wait_for_cdr_lock(gcr_addr, bank, true);
+
+        if (cdr_status != pass_code)
+        {
+            // PSL set_ddc_error
+            set_ddc_err (gcr_addr, bank, lane, pr_active, Esave, Dsave);
+            set_debug_state(0x8083); // DEBUG: Algorithm error. Final lock error
+            //EWM265038: This fail is for rx_bist not abort or ddc internal error: set_fir(fir_code_bad_lane_warning);
+            return warning_code;
+        }
     }
 
     /*

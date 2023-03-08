@@ -39,6 +39,15 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23030200 |vbr     | Issue 300456: Only check cal bank in wait for cdr lock that set errors
+// jjb23022800 |jjb     | Issue 300241: removed io_sleep after dfe fast, do not wait for cdr lock if rxeqeval in cleanup
+// jfg23022000 |jfg     | Invert offset margin bank masking on apply (copy error from !apply code)
+// jfg23021700 |jfg     | Reimplement Offset Margin Mode as a state machine
+// jfg23020800 |jfg     | Bugfix for margin_mode_index masking with 0x11 instead of 0x3
+// jfg23020601 |jfg     | A little cleanup from last commit
+// jfg23020600 |jfg     | EWM 290678 Add ppe_offset_margin_index to sequence the margin_mode offsets. Fine tune coding.
+// jfg23012500 |jfg     | EWM 290678 Move PRoffset function into pr_offset_wrap
+// jfg23011500 |jfg     | EWM 290678 Added support for ppe_loff_offset_{d/e}_override and ppe_offset_margin_mode
 // vbr23022200 |vbr     | No longer run Peaking in Gen 3 (init or recal).
 // vbr23020100 |vbr     | Issue 298045: Clear cal lane sel only after safe bank swap (logic clock gating)
 // vbr23012400 |vbr     | Issue 298004: Moved sleep to before update rx rate controls in phase0 dccal to avoid thread active time error.
@@ -274,6 +283,7 @@
 #include "eo_qpa.h"
 #include "eo_rxbist_epoff_final.h"
 #include "rx_sigdetbist_test.h"
+#include "ioo_margin_hv.h"
 
 #include "tx_zcal_tdr.h"
 #include "tx_dcc_main.h"
@@ -614,6 +624,7 @@ int eo_main_dccal_tx(t_gcr_addr* gcr_addr)
 } //eo_main_dccal_tx()
 
 
+
 ////////////////////////////////////////////////////////////////////////////////////
 // INIT CAL
 // Run Initial Cal on both banks of the lane specified in gcr_addr.
@@ -827,7 +838,7 @@ int eo_main_init(t_gcr_addr* gcr_addr)
             if (pcie_gen1_2_cal)
             {
                 //bool set_fir_on_error = false;
-                //wait_for_cdr_lock(gcr_addr, set_fir_on_error);
+                //wait_for_cdr_lock(gcr_addr, bank_ab, set_fir_on_error);
             }
             else
             {
@@ -1089,7 +1100,11 @@ int eo_main_init(t_gcr_addr* gcr_addr)
     {
         // PSL rx_eo_dfe_fast
         status |= rx_eo_dfe_fast(gcr_addr, cal_mode);
-        io_sleep(get_gcr_addr_thread(gcr_addr)); // TODO - can this be removed? Issue 268776
+
+        if (!rx_eq_eval)   // Issue 268776,300241
+        {
+            io_sleep(get_gcr_addr_thread(gcr_addr));
+        }
 
         // PSL dfe_fast_abort
         if (status & abort_code)
@@ -1158,15 +1173,15 @@ CLEANUP:
         io_sleep(get_gcr_addr_thread(gcr_addr));
     }
 
-    // Cal Done: Re-enable CDR local data mode on both banks and double check for lock with invalid lock detection on
+    // Cal Done: Re-enable CDR local data mode on both banks and double check for lock with invalid lock detection on (Bank A only)
     //Moved to before DDC: put_ptr_field(gcr_addr, rx_pr_bit_lock_done_ab_clr_alias, 0b11, fast_write);
     put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_lcl_cdr_b_lcl, fast_write);
 
-    if (status == rc_no_error)
+    if ((status == rc_no_error) && (!rx_eq_eval))   // Issue 300241: do not wait in cdr lock if servicing rxeqeval
     {
         set_debug_state(0x2015); // DEBUG - Init Cal Final Edge Tracking
         bool set_fir_on_error = true;
-        status |= wait_for_cdr_lock(gcr_addr, set_fir_on_error);
+        status |= wait_for_cdr_lock(gcr_addr, bank_a, set_fir_on_error);
     }
 
     // HW532652: Turn off invalid lock detection to help with DL bumping
@@ -1419,58 +1434,9 @@ static int eo_main_recal_rx(t_gcr_addr* gcr_addr)
     put_ptr_field(gcr_addr, rx_cal_lane_pg_phy_gcrmsg, lane, read_modify_write);
 
     // Remove any applied static offset. If this is not set before initial training it could get tied up in hysteresis and act strangely.
-    int offset_applied = (cal_bank == bank_a) ? mem_pl_field_get(ppe_pr_offset_applied_a,
-                         lane) : mem_pl_field_get(ppe_pr_offset_applied_b, lane);
-
-    // PSL offset_applied
-    if ( offset_applied )
-    {
-        // Load ****both**** data and edge values on read. Assumes in same reg address in data + edge order
-        uint32_t bank_pr_save[2];
-        int pr_active[4]; // All four PR positions packed in as: {Data NS, Edge NS, Data EW, Edge EW}
-
-        // PSL offset_applied_bank_a
-        if (cal_bank == bank_a)
-        {
-            bank_pr_save[0] = get_ptr(gcr_addr, rx_a_pr_ns_data_addr,  rx_a_pr_ns_data_startbit, rx_a_pr_ns_edge_endbit);
-            bank_pr_save[1] = get_ptr(gcr_addr, rx_a_pr_ew_data_addr,  rx_a_pr_ew_data_startbit, rx_a_pr_ew_edge_endbit);
-        }
-        else
-        {
-            bank_pr_save[0] = get_ptr(gcr_addr, rx_b_pr_ns_data_addr,  rx_b_pr_ns_data_startbit, rx_b_pr_ns_edge_endbit);
-            bank_pr_save[1] = get_ptr(gcr_addr, rx_b_pr_ew_data_addr,  rx_b_pr_ew_data_startbit, rx_b_pr_ew_edge_endbit);
-        }
-
-        pr_active[prDns_i] = prmask_Dns(bank_pr_save[0]);
-        pr_active[prEns_i] = prmask_Ens(bank_pr_save[0]);
-        pr_active[prDew_i] = prmask_Dew(bank_pr_save[1]);
-        pr_active[prEew_i] = prmask_Eew(bank_pr_save[1]);
-
-        uint32_t prDsave[2];
-        prDsave[0] = prmask_Dns(bank_pr_save[0]);
-        prDsave[1] = prmask_Dew(bank_pr_save[1]);
-        uint32_t prEsave[2];
-        prEsave[0] = prmask_Ens(bank_pr_save[0]);
-        prEsave[1] = prmask_Eew(bank_pr_save[1]);
-
-        int pr_offset_static_d = TwosCompToInt(mem_pg_field_get(ppe_pr_offset_d_override), ppe_pr_offset_d_override_width);
-        int pr_offset_static_e = TwosCompToInt(mem_pg_field_get(ppe_pr_offset_e_override), ppe_pr_offset_e_override_width);
-        int pr_offset_vec_d[2] = {0 - pr_offset_static_d, 0 - pr_offset_static_d};
-        int pr_offset_neg_e = 0 - pr_offset_static_e;
-
-        pr_recenter(gcr_addr, cal_bank, pr_active, prEsave, prDsave, pr_offset_vec_d, pr_offset_neg_e);
-
-        if (cal_bank == bank_a)
-        {
-            mem_pl_bit_clr(ppe_pr_offset_applied_a, lane);
-        }
-        else
-        {
-            mem_pl_bit_clr(ppe_pr_offset_applied_b, lane);
-        }
-
-        io_sleep(get_gcr_addr_thread(gcr_addr));
-    } //remove offset
+    // Both LOff and PR functions sequence the offset via mode controls and status
+    loff_offset_wrap(gcr_addr, cal_bank, false);
+    pr_offset_wrap(gcr_addr, cal_bank, false);
 
     // See if this is the very first recal on un-initialized bank B.
     // Check both recal_cnt and min_recal_cnt_reached in case recal_cnt was cleared (or rolled over).
@@ -1521,14 +1487,14 @@ static int eo_main_recal_rx(t_gcr_addr* gcr_addr)
         }
     }
 
-    // Enable both Bank CDRs in Local Mode and wait for lock on both banks
+    // Enable both Bank CDRs in Local Mode and wait for lock on Alt/Cal bank only (bit_lock_done is set on Main bank)
     if (true)   //(status == rc_no_error) {
     {
         set_debug_state(0x300F); // DEBUG - Recal Enable Edge Tracking
         // PSL put_rx_pr_edge_track_cntl
         put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_lcl_cdr_b_lcl, fast_write);
         bool set_fir_on_error = false;
-        wait_for_cdr_lock(gcr_addr, set_fir_on_error);
+        wait_for_cdr_lock(gcr_addr, cal_bank, set_fir_on_error);
     }
 
     // Cal Step: Edge Offset (Live Data) - Only run in AXO, PCIe Gen4, PCIe Gen5
@@ -1752,62 +1718,16 @@ CLEANUP:
 
         if (min_recal_cnt_reached)
         {
-            // Add PR Offset
-            bool pr_offset_pause = (0 != mem_pg_field_get(ppe_pr_offset_pause));
-
-            // PSL min_recal_cnt_pr_offset_pause
-            if ( !pr_offset_pause )
-            {
-                // Load ****both**** data and edge values on read. Assumes in same reg address in data + edge order
-                uint32_t bank_pr_save[2];
-                int pr_active[4]; // All four PR positions packed in as: {Data NS, Edge NS, Data EW, Edge EW}
-
-                // PSL min_recal_cnt_cal_bank_a
-                if (cal_bank == bank_a)
-                {
-                    bank_pr_save[0] = get_ptr(gcr_addr, rx_a_pr_ns_data_addr,  rx_a_pr_ns_data_startbit, rx_a_pr_ns_edge_endbit);
-                    bank_pr_save[1] = get_ptr(gcr_addr, rx_a_pr_ew_data_addr,  rx_a_pr_ew_data_startbit, rx_a_pr_ew_edge_endbit);
-                }
-                else
-                {
-                    bank_pr_save[0] = get_ptr(gcr_addr, rx_b_pr_ns_data_addr,  rx_b_pr_ns_data_startbit, rx_b_pr_ns_edge_endbit);
-                    bank_pr_save[1] = get_ptr(gcr_addr, rx_b_pr_ew_data_addr,  rx_b_pr_ew_data_startbit, rx_b_pr_ew_edge_endbit);
-                }
-
-                pr_active[prDns_i] = prmask_Dns(bank_pr_save[0]);
-                pr_active[prEns_i] = prmask_Ens(bank_pr_save[0]);
-                pr_active[prDew_i] = prmask_Dew(bank_pr_save[1]);
-                pr_active[prEew_i] = prmask_Eew(bank_pr_save[1]);
-
-                uint32_t prDsave[2];
-                prDsave[0] = prmask_Dns(bank_pr_save[0]);
-                prDsave[1] = prmask_Dew(bank_pr_save[1]);
-                uint32_t prEsave[2];
-                prEsave[0] = prmask_Ens(bank_pr_save[0]);
-                prEsave[1] = prmask_Eew(bank_pr_save[1]);
-
-                int pr_offset_static_d = TwosCompToInt(mem_pg_field_get(ppe_pr_offset_d_override), ppe_pr_offset_d_override_width);
-                int pr_offset_static_e = TwosCompToInt(mem_pg_field_get(ppe_pr_offset_e_override), ppe_pr_offset_e_override_width);
-                int pr_offset_vec_d[2] = {pr_offset_static_d, pr_offset_static_d};
-
-                pr_recenter(gcr_addr, cal_bank, pr_active, prEsave, prDsave, pr_offset_vec_d, pr_offset_static_e);
-
-                if (cal_bank == bank_a)
-                {
-                    mem_pl_bit_set(ppe_pr_offset_applied_a, lane);
-                }
-                else
-                {
-                    mem_pl_bit_set(ppe_pr_offset_applied_b, lane);
-                }
-            }
-
-            // Done: Add PR offset
+            // Both LOff and PR functions sequence the offset via mode controls and status
+            // Add PR Offset - Runs before loff_offset because it leads the margin state machine flow
+            pr_offset_wrap(gcr_addr, cal_bank, true);
+            // Add LOff margin offset
+            loff_offset_wrap(gcr_addr, cal_bank, true);
 
             // Cal Done:  Double check lock
             set_debug_state(0x3015); // DEBUG - Recal Final Edge Tracking and Bank Switch
             bool set_fir_on_error = true;
-            wait_for_cdr_lock(gcr_addr, set_fir_on_error);
+            wait_for_cdr_lock(gcr_addr, cal_bank, set_fir_on_error);
 
             // HW532652: Turn off invalid lock detection to help with DL bumping
             put_ptr_field(gcr_addr, rx_pr_bit_lock_done_ab_set_alias, 0b11, fast_write);

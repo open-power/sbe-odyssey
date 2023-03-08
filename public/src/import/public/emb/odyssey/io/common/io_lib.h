@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mwh23003020 |mwh     | Fix rounding for poff edge off. emw 300342
 // mwh23011300 |mwh     | Added void set_rxbist_fail_lane since used by ioo and iot
 // vbr22061400 |vbr     | Made main_only the default for external power on/off commands
 // vbr22050900 |vbr     | Moved get_rx/tx_lane_bad functions from ioo/t_common to here
@@ -1190,8 +1191,10 @@ void clr_tx_lanes_pon_0_23(unsigned int lane);
 void tx_fifo_init(t_gcr_addr* gcr_addr);
 
 /**
+ * see ewm issue 300342 for xls that has good vs bad only found looking at histogram of data
  * @brief Round to reduce bias
- * If the result is positive then we want  to the round up, if the result is neg then do nothing
+ * If the result is positive then we want  to the round up, if the result is neg we round down
+ * We will add 2 to postive number and add 1 to negative number
  * - This is due to the twos complement of the negative number. in order to reduce bias
  * For example, if the numerator was 6 and you divide by 4, the result is 1.5 which should round up to 2.  (6+1)/4 = 0b0111 >> 2 = 1.  (6+2)/4 = 0b1000 >> 2 = 2.
  * @param[in] i_val average of 4 edge offsets
@@ -1203,7 +1206,7 @@ void tx_fifo_init(t_gcr_addr* gcr_addr);
 static inline int eo_round( const int i_val)
 {
     // Find the rounded value of (i_val / 4)
-    return ((i_val >= 0) ? (i_val + 2) : i_val) >> 2;
+    return ((i_val >= 0) ? (i_val + 2) : i_val + 1) >> 2;
 }
 
 //applied to eo_eoff.c and eo_iot_loff.c

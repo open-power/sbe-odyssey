@@ -112,6 +112,7 @@ ioo_src_files+=("ppe_mem_reg_const_pkg_ioo.h")
 ioo_src_files+=("txbist_main.c" "txbist_main.h")
 ioo_src_files+=("eo_bist_init_ovride.c" "eo_bist_init_ovride.h")
 ioo_src_files+=("eo_esd.h" "eo_esd.c")
+ioo_src_files+=("ioo_margin_hv.c" "ioo_margin_hv.h")
 
 #
 # MEMREGS files to import from D7NMPHY_REG_PATH

@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23030200 |vbr     | Issue 300456: Only check specific banks in wait for cdr lock
 // vbr23020300 |vbr     | Issue 298086: new function to remove edge pr offset on PIPE rate change or rx eq eval
 // vbr22120900 |vbr     | Only allow lanes 0-3 for PCIe (instead of 0-4)
 // jjb22112200 |jjb     | reduced if statements in eo_update_poff_avg
@@ -149,7 +150,7 @@ void alt_bank_psave_clear_and_wait(t_gcr_addr* gcr_addr)
 // Set FIR if not locked after X checks.
 // Lock could take relatively long due to spread spectrum, so use sleep in between checks.
 PK_STATIC_ASSERT(rx_pr_locked_ab_alias_width == 2);
-int wait_for_cdr_lock(t_gcr_addr* gcr_addr, bool set_fir_on_error)
+int wait_for_cdr_lock(t_gcr_addr* gcr_addr, t_bank check_bank, bool set_fir_on_error)
 {
     PkTimebase start_time = pk_timebase_get();
 
@@ -166,6 +167,7 @@ int wait_for_cdr_lock(t_gcr_addr* gcr_addr, bool set_fir_on_error)
     }
 
     int pcie_mode = fw_field_get(fw_pcie_mode);
+    int bank_mask = bank_to_bitfield_ab_mask(check_bank);
     int loop_count = 0;
 
     while ( true )
@@ -175,7 +177,7 @@ int wait_for_cdr_lock(t_gcr_addr* gcr_addr, bool set_fir_on_error)
         int locked_ab = get_ptr_field(gcr_addr, rx_pr_locked_ab_alias);
 
         // PSL locked_ab
-        if (locked_ab == 0b11)
+        if ( (locked_ab & bank_mask) == bank_mask )
         {
             return pass_code; // Exit when locked
         }
