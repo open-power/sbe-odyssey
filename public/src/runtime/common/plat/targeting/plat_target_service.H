@@ -319,7 +319,7 @@ namespace fapi2
             copy.setTargetType(K);
 
             // set the instance number.
-            copy.setTargetInstance(copy.getChipletNumber());
+            copy.setTargetInstance(i_child.getParentTargetInstance(i_child));
 
             // TODO: P11 SBE PORTING
             // This will work for Odyssey.

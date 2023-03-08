@@ -109,6 +109,8 @@ static uint32_t getEffectiveAddress(const uint32_t *i_target, const uint32_t i_a
                 //Trans Addr 0x08011810 ---> Mem port 0
                 //Trans Addr 0x08012810 ---> Mem port 1
                 BITSHIFT = 13;
+                // Set bit 12 to 0.
+                translatedAddr = targetInstance ? (i_addr & 0xFFFFEFFF) : i_addr;
             }
             translatedAddr = targetInstance ? i_addr | ( 1 << BITSHIFT ) : i_addr;
             break;
