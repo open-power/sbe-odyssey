@@ -78,7 +78,15 @@ namespace fapi2
             {
                 if(i_type == PPE_TARGET_TYPE_DIMM)
                 {
-                    iv_value.insertFromRight(i_instanceNum, 16, 8);
+                    // There are two entries for DIMM in the odyTargetMap.
+                    // So to calculate the instance number,
+                    // we will depend on the chiplet number.
+                    uint8_t instanceNum = i_instanceNum;
+                    if(i_chipletNum == 0xE)
+                    {
+                        instanceNum = instanceNum + 2;
+                    }
+                    iv_value.insertFromRight(instanceNum, 16, 8);
                 }
                 else if(i_type == PPE_TARGET_TYPE_TEMP_SENSOR)
                 {
@@ -91,8 +99,23 @@ namespace fapi2
                 }
                 else
                 {
-                    iv_value.insertFromRight(i_chipletNum, 16, 8);
+                    iv_value.insertFromRight(i_instanceNum, 16, 8);
                 }
+            }
+
+            /// @brief Get the parent target instance number, used incase of convertToChiplet
+            /// @praram[in] i_child child target
+            /// @return uint8 of parent target instance number
+            ///
+            uint8_t getParentTargetInstance(const plat_target_sbe_handle i_child) const
+            {
+                uint8_t parentInstanceNum = 0;
+                // Child target type is memport.
+                if(i_child.getTargetType() == PPE_TARGET_TYPE_DIMM)
+                {
+                    parentInstanceNum = (i_child.getTargetInstance() / 2);
+                }
+                return parentInstanceNum;
             }
     };
 }
