@@ -197,6 +197,8 @@ int  main(int argc, char **argv)
                 break;
             }
 
+            plat_AttrInit();
+
             if(SbeRegAccess::theSbeRegAccess().init())
             {
                 SBE_ERROR(SBE_FUNC"Failed to initialize SbeRegAccess.");
