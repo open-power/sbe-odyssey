@@ -470,6 +470,46 @@
 #define ppe_last_cal_time_us_mask                  0xffff
 
 
+#define ppe_loff_offset_applied_a_addr             0b000000101
+#define ppe_loff_offset_applied_a_startbit         4
+#define ppe_loff_offset_applied_a_width            1
+#define ppe_loff_offset_applied_a_endbit           4
+#define ppe_loff_offset_applied_a_shift            11
+#define ppe_loff_offset_applied_a_mask             0x800
+
+
+#define ppe_loff_offset_applied_b_addr             0b000000101
+#define ppe_loff_offset_applied_b_startbit         5
+#define ppe_loff_offset_applied_b_width            1
+#define ppe_loff_offset_applied_b_endbit           5
+#define ppe_loff_offset_applied_b_shift            10
+#define ppe_loff_offset_applied_b_mask             0x400
+
+
+#define ppe_loff_offset_d_override_addr            0b111101111
+#define ppe_loff_offset_d_override_startbit        0
+#define ppe_loff_offset_d_override_width           7
+#define ppe_loff_offset_d_override_endbit          6
+#define ppe_loff_offset_d_override_shift           9
+#define ppe_loff_offset_d_override_mask            0xfe00
+
+
+#define ppe_loff_offset_e_override_addr            0b111101111
+#define ppe_loff_offset_e_override_startbit        8
+#define ppe_loff_offset_e_override_width           7
+#define ppe_loff_offset_e_override_endbit          14
+#define ppe_loff_offset_e_override_shift           1
+#define ppe_loff_offset_e_override_mask            0xfe
+
+
+#define ppe_loff_offset_pause_addr                 0b111101111
+#define ppe_loff_offset_pause_startbit             15
+#define ppe_loff_offset_pause_width                1
+#define ppe_loff_offset_pause_endbit               15
+#define ppe_loff_offset_pause_shift                0
+#define ppe_loff_offset_pause_mask                 0x1
+
+
 #define ppe_lte_gain_disable_addr                  0b110001011
 #define ppe_lte_gain_disable_startbit              13
 #define ppe_lte_gain_disable_width                 1
@@ -500,6 +540,22 @@
 #define ppe_lte_zero_disable_endbit                14
 #define ppe_lte_zero_disable_shift                 1
 #define ppe_lte_zero_disable_mask                  0x2
+
+
+#define ppe_margin_offset_overlay_addr             0b000000101
+#define ppe_margin_offset_overlay_startbit         2
+#define ppe_margin_offset_overlay_width            4
+#define ppe_margin_offset_overlay_endbit           5
+#define ppe_margin_offset_overlay_shift            10
+#define ppe_margin_offset_overlay_mask             0x3c00
+
+
+#define ppe_offset_margin_mode_addr                0b110101010
+#define ppe_offset_margin_mode_startbit            11
+#define ppe_offset_margin_mode_width               2
+#define ppe_offset_margin_mode_endbit              12
+#define ppe_offset_margin_mode_shift               3
+#define ppe_offset_margin_mode_mask                0x18
 
 
 #define ppe_pipe_current_lane_addr                 0b110110110
@@ -1847,11 +1903,11 @@
 
 
 #define rx_lane_hist_min_eye_height_quad_addr      0b000000101
-#define rx_lane_hist_min_eye_height_quad_startbit   4
+#define rx_lane_hist_min_eye_height_quad_startbit   6
 #define rx_lane_hist_min_eye_height_quad_width     2
-#define rx_lane_hist_min_eye_height_quad_endbit    5
-#define rx_lane_hist_min_eye_height_quad_shift     10
-#define rx_lane_hist_min_eye_height_quad_mask      0xc00
+#define rx_lane_hist_min_eye_height_quad_endbit    7
+#define rx_lane_hist_min_eye_height_quad_shift     8
+#define rx_lane_hist_min_eye_height_quad_mask      0x300
 
 
 #define rx_lane_hist_min_eye_height_valid_addr     0b000000101

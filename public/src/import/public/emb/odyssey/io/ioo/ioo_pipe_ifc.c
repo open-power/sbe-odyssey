@@ -39,6 +39,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// jjb23030200 |jjb     | Issue 300481: Remove wait on txdeemph writes on rate changes
+// vbr23030200 |vbr     | Issue 300456: Removed many wait for cdr locks in RxMargining since bit_lock_done is likely set; can only check bank where it is cleared.
+// jjb23030100 |jjb     | Issue 300241: Increased rxeqeval thread timeout to 45us
 // jjb23021700 |jjb     | Issue 299567: Updates for rate change txdeemph writes
 // jjb23021300 |jjb     | Issue 299292: Added pipe_cmd_pclkchangeack_active
 // jjb23021000 |jjb     | Issue 299113: added io_sleeps to address multi lane link pipe sequence deadlocks
@@ -296,20 +299,15 @@ static void rxmargin_bank_enable(t_gcr_addr*
                      gcr_addr));                                                                                                              //   wait to allow CDRs to settle
         set_cal_bank(gcr_addr,
                      bank_a);                                                                                                                       //   set cal bank to bank a
-        put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_ext_cdr_b_lcl,
-                      fast_write);                                                             //   Enable both CDRs, Bank A CDR uses Bank B data, Bank B CDR uses Bank B data
-        bool set_fir_on_error =
-            false;                                                                                                                        //   initialize set_fir_on_error
-        wait_for_cdr_lock(gcr_addr,
-                          set_fir_on_error);                                                                                                        //   wait for cdr lock
     }                                                                                                                                                      //  end if, following done for either cal bank value
 
     put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_ext_cdr_b_lcl,
                   fast_write);                                                              //  Enable both CDRs, Bank A CDR uses Bank B data, Bank B CDR uses Bank B data
     bool set_fir_on_error =
         false;                                                                                                                         //  initialize set_fir_on_error
-    wait_for_cdr_lock(gcr_addr,
-                      set_fir_on_error);                                                                                                         //  wait for cdr lock
+    wait_for_cdr_lock(gcr_addr, cal_bank,
+                      set_fir_on_error);                                                                                               //  wait for cdr lock
+    put_ptr_field(gcr_addr, rx_pr_bit_lock_done_ab_set_alias, 0b11, fast_write);
 } // rxmargin_bank_enable                                                                                                                                // end function
 
 ///////////////////////////////////
@@ -1168,26 +1166,7 @@ void pipe_cmd_pclkchangeack_active(t_gcr_addr* gcr_addr)
                       (pipe_state_phystatus_pulse_mask | pipe_state_pclkchangeack_clr_apsp_mask), fast_write);
     }
 
-    // 10.) If rate is GEN3/4/5 then Poll on TXDEEMP_UPDATED to wait for MAC to update TX EQ Coeffs
-    //      Mac will write "real" txdeemph values so no need for preset lookup.
-    //      Abort polling if pipe_resetn_active is high
-    // PSL rate_gt_1
-    if (l_rate > 1)   // GEN 3 or GEN 4 or GEN5
-    {
-        l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);
-        l_pipe_state_resetn_active = l_pipe_state & pipe_state_resetn_active_mask;
-        uint32_t l_pipe_state_txdeemph_updated = l_pipe_state & pipe_state_txdeemph_updated_mask;
-
-        // PSL not_txdeemph_updated_and_not_resetn_active
-        while ((l_pipe_state_txdeemph_updated == 0) & (l_pipe_state_resetn_active == 0))
-        {
-            io_sleep(get_gcr_addr_thread(
-                         gcr_addr)); // Move to next thread when waiting for txdeemph to occur, all lanes of link will get txdeemph at same time.
-            l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);
-            l_pipe_state_resetn_active = l_pipe_state & pipe_state_resetn_active_mask;
-            l_pipe_state_txdeemph_updated = l_pipe_state & pipe_state_txdeemph_updated_mask;
-        }
-    }
+    // 10.) Do not wait on M2P PBM txdeemph writes. Enable rxelecidle detection.
 
     put_ptr_field(gcr_addr, pipe_state_rxelecidle_en_set, 0b1, fast_write);
 
@@ -1444,7 +1423,7 @@ void pipe_cmd_rxeqeval(t_gcr_addr* gcr_addr)
     put_ptr_field(gcr_addr, rx_dl_clk_en, 0b0, read_modify_write);                       // RMW Disable rx_dl_clk
 
     // Run in rxeqeval mode (both phases, skip some sleeps so higher thread active limit)
-    mem_pg_field_put(ppe_thread_active_time_us_limit, 40);
+    mem_pg_field_put(ppe_thread_active_time_us_limit, 45);
     mem_pg_field_put(rx_eo_phase_select_0_1, 0b11);
     mem_pg_bit_set(rx_running_eq_eval);
     run_initial_training(gcr_addr, l_lane);                                              // Run Initial Training
@@ -1967,10 +1946,8 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
                                          rx_berpl_count);                                                                              //  read error count
         put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_lcl_cdr_b_lcl,
                       fast_write);                                                              //  Enable both CDRs to use local data
-        bool set_fir_on_error =
-            false;                                                                                                                         //  initialize set_fir_on_error
-        wait_for_cdr_lock(gcr_addr,
-                          set_fir_on_error);                                                                                                         //  wait for cdr lock
+        //bool set_fir_on_error = false;                                                                                                                         //  initialize set_fir_on_error
+        //TODO must clear bit_lock_done and only wait for that bank: wait_for_cdr_lock(gcr_addr, set_fir_on_error);                                                                                                         //  wait for cdr lock
         set_gcr_addr_reg_id(gcr_addr,
                             tx_group);                                                                                                               //  set gcr addr to tx group
         pipe_put(gcr_addr, pipe_mac_reg_rx_margin_status_2_reg_sel, pipe_mac_reg_rx_margin_status_2_addr, pipe_reg_cmd_wr_u,
@@ -2089,10 +2066,8 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
                              0);                                                                                                //   update mem reg voltage margin offset integer value to 0
             put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_lcl_cdr_b_lcl,
                           fast_write);                                                             //   Enable both CDRs to use local data
-            bool set_fir_on_error =
-                false;                                                                                                                        //   initialize set_fir_on_error
-            wait_for_cdr_lock(gcr_addr,
-                              set_fir_on_error);                                                                                                        //   wait for cdr lock
+            //bool set_fir_on_error = false;                                                                                                                        //   initialize set_fir_on_error
+            //TODO must clear bit_lock_done and only wait for that bank: wait_for_cdr_lock(gcr_addr, set_fir_on_error);                                                                                                        //   wait for cdr lock
             bool l_rx_margin_voffset_ok = rxmargin_loffad_check(gcr_addr, l_lane, rx_ad_latch_dac_n000_alias_addr,
                                           rx_ad_latch_dac_w111_alias_addr,
                                           l_rx_margin_offset_int);  //   check voltage offset to ensure it does not overflow any bank A data LOFF DAC. PCIe only, so can ignore Issue 296947 (Odyssey address adjust).
@@ -2141,11 +2116,9 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
                              0);                                                                                                 //   update mem reg timing margin offset integer value to 0
             put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_lcl_cdr_b_lcl,
                           fast_write);                                                             //   Enable both CDRs to use local data
-            bool set_fir_on_error =
-                false;                                                                                                                        //   initialize set_fir_on_error
-            wait_for_cdr_lock(gcr_addr,
-                              set_fir_on_error);                                                                                                        //   wait for cdr lock
 
+            //bool set_fir_on_error = false;                                                                                                                        //   initialize set_fir_on_error
+            //TODO must clear bit_lock_done and only wait for that bank: wait_for_cdr_lock(gcr_addr, set_fir_on_error);                                                                                                        //   wait for cdr lock
             // PSL minipr_check
             if (rxmargin_minipr_check(gcr_addr,
                                       l_rx_margin_offset_int))                                                                                          //   if timing offset is within mini PR range, then apply timing offset and WRC
@@ -2156,10 +2129,8 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
                                  0);                                                                                                //    update mem reg timing margin offset integer value to 0
                 put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_lcl_cdr_b_lcl,
                               fast_write);                                                            //    Enable both CDRs to use local data
-                bool set_fir_on_error =
-                    false;                                                                                                                       //    initialize set_fir_on_error
-                wait_for_cdr_lock(gcr_addr,
-                                  set_fir_on_error);                                                                                                       //    wait for cdr lock
+                //bool set_fir_on_error = false;                                                                                                                       //    initialize set_fir_on_error
+                //TODO must clear bit_lock_done and only wait for that bank: wait_for_cdr_lock(gcr_addr, set_fir_on_error);                                                                                                       //    wait for cdr lock
                 l_pipe_state_rxmargin_sample_count_reset =
                     0;                                                                                                        //    clear l_pipe_state_rxmargin_sample_count_reset
                 l_pipe_state_rxmargin_error_count_reset =

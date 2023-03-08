@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23030200 |vbr     | Issue 300178: Increasing invalid lock thresh setting for gen4 peak2 mesa fails.
 // vbr23011000 |vbr     | Issue 297222: Disable thread active time at start of hw_reg_init when bist enabled
 // vbr23012500 |vbr     | EWM298127: Refactored PCIe BIST overrides in hw reg init to avoid various broadcast rmw issues.
 // jjb23012600 |jjb     | Issue 297515: added rx_bist_lfpath_sel_dc to per data rate control, updated rx_bist_freq_adjust_8xx/9xx per rate values
@@ -1072,9 +1073,11 @@ void io_hw_reg_init(t_gcr_addr* gcr_addr)
 
     // Allow invalid lock voting on peak2. Enable is set by default for peak1.
     put_ptr_field(gcr_addr, rx_ctle_peak2_invalid_lock_en, 0b1, read_modify_write); //pg
-    //int ctle_peak_invalid_lock_thresh_val = (14 << rx_ctle_peak1_invalid_lock_thresh_inc_shift) | (15 << rx_ctle_peak1_invalid_lock_thresh_dec_shift) |
-    //                                        (14 << rx_ctle_peak2_invalid_lock_thresh_inc_shift) | (15 << rx_ctle_peak2_invalid_lock_thresh_dec_shift);
-    //put_ptr_field(gcr_addr, rx_ctle_peak_invalid_lock_thresh_alias, ctle_peak_invalid_lock_thresh_val, fast_write); //pg, full register
+    int ctle_peak_invalid_lock_thresh_val = (2 << rx_ctle_peak1_invalid_lock_thresh_inc_shift) |
+                                            (13 << rx_ctle_peak1_invalid_lock_thresh_dec_shift) |
+                                            (6 << rx_ctle_peak2_invalid_lock_thresh_inc_shift) | (13 << rx_ctle_peak2_invalid_lock_thresh_dec_shift);
+    put_ptr_field(gcr_addr, rx_ctle_peak_invalid_lock_thresh_alias, ctle_peak_invalid_lock_thresh_val,
+                  fast_write); //pg, full register
 
     if (l_is_odyssey)
     {
