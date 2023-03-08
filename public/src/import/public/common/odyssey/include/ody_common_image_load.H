@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/istep_includes.H $       */
+/* $Source: public/src/import/public/common/odyssey/include/ody_common_image_load.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,33 +22,26 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+#pragma once
 
-#ifndef __ISTEP_INCLUDES_H
-#define __ISTEP_INCLUDES_H
+#include <type_traits>
+#include <fapi2.H>
 
-#include <ody_tp_arrayinit.H>
-#include <ody_tp_arrayinit_cleanup.H>
-#include <ody_tp_initf.H>
-#include <ody_tp_repr_initf.H>
-#include <ody_tp_startclocks.H>
-#include <ody_tp_init.H>
-#include <ody_ddrphyinit.H>
-#include <ody_chiplet_clk_config.H>
-#include <ody_chiplet_reset.H>
-#include <ody_chiplet_unused_psave.H>
-#include <ody_chiplet_pll_setup.H>
-#include <ody_bist_repr_initf.H>
-#include <ody_abist.H>
-#include <ody_lbist.H>
-#include <ody_chiplet_repr_initf.H>
-#include <ody_chiplet_arrayinit.H>
-#include <ody_chiplet_initf.H>
-#include <ody_chiplet_init.H>
-#include <ody_chiplet_startclocks.H>
-#include <ody_chiplet_fir_init.H>
-#include <ody_nest_enable_io.H>
-#include <poz_cmdtable_interpreter.H>
-#include <ody_sppe_attr_setup.H>
-#include <ody_common_image_load.H>
+enum ody_image_type
+{
+    IOPPE_BASE_IMAGE,
+    IOPPE_MEMREGS_IMAGE,
+    DDR_IMEM_IMAGE,
+    DDR_DMEM_IMAGE,
+};
 
-#endif
+typedef fapi2::ReturnCode(*ody_common_image_load_FP_t) (
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
+    uint8_t* const,
+    uint32_t const,
+    uint32_t const,
+    ody_image_type);
+
+#define ASSERT_ODY_COMMON_IMAGE_LOAD(hwp) \
+    static_assert(std::is_same<decltype(&hwp), ody_common_image_load_FP_t>::value, \
+                  "HWP is not conforming to common Odyssey image load semantics")

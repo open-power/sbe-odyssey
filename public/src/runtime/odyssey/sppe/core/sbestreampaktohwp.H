@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -40,6 +41,6 @@ using namespace fapi2;
 /// @return  FAPI2_RC_SUCCESS on success
 
 ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname,
-                        voidfuncptr_t i_hwp, uint8_t i_Image = 0);
+                        voidfuncptr_t i_hwp, uint8_t i_Image);
 
 #endif

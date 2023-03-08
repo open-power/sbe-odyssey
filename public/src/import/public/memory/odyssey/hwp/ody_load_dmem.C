@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -51,7 +51,8 @@ extern "C"
     fapi2::ReturnCode ody_load_dmem(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
                                     uint8_t* const i_dmem_data,
                                     const uint32_t i_dmem_size,
-                                    const uint32_t i_dmem_offset)
+                                    const uint32_t i_dmem_offset,
+                                    ody_image_type /*unused*/)
     {
         mss::display_git_commit_info("ody_load_dmem");
         FAPI_TRY(mss::ody::phy::ody_load_dmem_helper(i_target, i_dmem_data, i_dmem_size, i_dmem_offset));
