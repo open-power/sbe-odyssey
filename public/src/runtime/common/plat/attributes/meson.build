@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/common/plat/meson.build $
+# $Source: public/src/runtime/common/plat/attributes/meson.build $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022,2023
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +22,5 @@
 #
 # IBM_PROLOG_END_TAG
 
-subdir('ffdc')
-subdir('attributes')
-
+abs_runtime_cmn_attribute_c_path = []
+abs_runtime_cmn_attribute_c_path += files('plat_attribute_service.C')
