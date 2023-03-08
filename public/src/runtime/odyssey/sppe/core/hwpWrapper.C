@@ -134,7 +134,7 @@ ReturnCode istepLoadIMEMwithOcmb( voidfuncptr_t i_hwp)
 
     PakWrapper pak((void *)g_partitionOffset);
     static const char pakname[]   =  "ddr/ddimm/imem.bin";
-    rc = sbestreampaktohwp(&pak, pakname, i_hwp);
+    rc = sbestreampaktohwp(&pak, pakname, i_hwp, DDR_IMEM_IMAGE);
     if (rc)
     {
         SBE_ERROR(SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X", rc);
@@ -152,7 +152,7 @@ ReturnCode istepLoadDMEMwithOcmb( voidfuncptr_t i_hwp)
 
     PakWrapper pak((void *)g_partitionOffset);
     static const char pakname[]   =  "ddr/ddimm/dmem.bin";
-    rc = sbestreampaktohwp(&pak, pakname, i_hwp);
+    rc = sbestreampaktohwp(&pak, pakname, i_hwp, DDR_DMEM_IMAGE);
     if (rc)
     {
         SBE_ERROR(SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X", rc);
@@ -171,7 +171,7 @@ ReturnCode istepLoadIOPPEwithOcmb( voidfuncptr_t i_hwp)
     do{
         PakWrapper pak((void *)g_partitionOffset);
         static const char ioppe[]   =  "ioppe/ioo.bin";
-        rc = sbestreampaktohwp(&pak, ioppe, i_hwp);
+        rc = sbestreampaktohwp(&pak, ioppe, i_hwp, IOPPE_BASE_IMAGE);
         if (rc)
         {
             SBE_ERROR(SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X for ioppe/ioo.bin", rc);
@@ -179,7 +179,7 @@ ReturnCode istepLoadIOPPEwithOcmb( voidfuncptr_t i_hwp)
         }
 
         static const char memregs[]   =  "ioppe/ioo_memregs.bin";
-        rc = sbestreampaktohwp(&pak, memregs, i_hwp);
+        rc = sbestreampaktohwp(&pak, memregs, i_hwp, IOPPE_MEMREGS_IMAGE);
         if (rc)
         {
             SBE_ERROR(SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X for ioppe/ioo_memregs.bin", rc);
@@ -199,16 +199,9 @@ ReturnCode sbeexecutehwponpak( voidfuncptr_t i_hwp, uint8_t* const i_bin_data,
     ReturnCode fapiRc = FAPI2_RC_SUCCESS;
 
     Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
-    if(i_ioppeImage)
-    {
-        SBE_EXEC_HWP(fapiRc, reinterpret_cast<sbeHwpIOLoadbin_t>( i_hwp ),
-                     l_ocmb_chip, (uint8_t *)i_bin_data, i_bin_size, i_bin_offset, i_ioppeImage);
-    }
-    else
-    {
-        SBE_EXEC_HWP(fapiRc, reinterpret_cast<sbeHwpMEMLoadbin_t>( i_hwp ),
-                     l_ocmb_chip, (uint8_t *)i_bin_data, i_bin_size, i_bin_offset);
-    }
+    SBE_EXEC_HWP(fapiRc, reinterpret_cast<ody_common_image_load_FP_t>( i_hwp ),
+                 l_ocmb_chip, (uint8_t *)i_bin_data, i_bin_size, i_bin_offset,
+                 static_cast<ody_image_type>(i_ioppeImage));
     return fapiRc;
     #undef SBE_FUNC
 }
