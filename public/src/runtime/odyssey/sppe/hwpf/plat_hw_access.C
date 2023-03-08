@@ -207,89 +207,60 @@ fapi2::ReturnCode putscom_abs_wrap(const void *i_target,
                  handle_scom_error(l_addr, l_pibRc);
 }
 
-uint32_t platcheckIndirectAndDoScom( const bool i_isRead,
+static ReturnCode doIndirectScom(const bool i_isRead,
                                  const void *i_target,
                                  const uint64_t i_addr,
-                                 uint64_t & io_data,
-                                 ReturnCode & io_fapiRc)
+                                 uint64_t & io_data)
 {
+    #define SBE_FUNC " doIndirectScom "
+    ReturnCode fapiRc = FAPI2_RC_SUCCESS;
 
-    #define SBE_FUNC " checkIndirectAndDoScom "
-    uint32_t elapsedIndScomTimeNs = 0;
-    uint64_t tempBuffer = io_data;
-    io_fapiRc = FAPI2_RC_SUCCESS;
-    uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
-    do
-    {
-        // If the indirect scom bit is 0, then doing a regular scom
-        if( (i_addr & DIRECT_SCOM_ADDR_MASK) == 0)
-        {
-            SBE_DEBUG(SBE_FUNC "Performing Direct scom.");
-            if( i_isRead )
-            {
-                io_fapiRc = getscom_abs_wrap (i_target, (uint32_t)i_addr,
-                                              & io_data);
-            }
-            else
-            {
-                io_fapiRc = putscom_abs_wrap (i_target, (uint32_t)i_addr,
-                                              io_data);
-            }
-            break;
-        }
-
+    do {
         // We are performing an indirect scom.
         // Zero out the indirect address location.. leave the 16bits of data
         // Get the 31-bits indirect scom address
         // OR in the 31-bits indirect address
-        tempBuffer = ( tempBuffer & 0x000000000000FFFF) |
-                     ( i_addr & 0x7FFFFFFF00000000 );
-
-        SBE_INFO(SBE_FUNC "Performing Indirect scom");
+        uint64_t tempBuffer = ( io_data & 0x000000000000FFFF) |
+            ( i_addr & 0x7FFFFFFF00000000 );
 
         // zero out the indirect address from the buffer..
         // bit 0-31 - indirect area..
         // bit 32 - always 0
         // bit 33-47 - bcast/chipletID/port
         // bit 48-63 - local addr
-        uint64_t tempAddr = i_addr & 0x000000007FFFFFFF;
+        uint32_t tempAddr = i_addr & 0x7FFFFFFF;
+
         // If we are doing a read. We need to do a write first..
         if( i_isRead)
         {
             // turn the read bit on.
-            tempBuffer = tempBuffer | 0x8000000000000000;
+            tempBuffer |= 0x8000000000000000;
         }
-        else //write
-        {
-            // Turn the read bit off.
-            tempBuffer = tempBuffer & 0x7FFFFFFFFFFFFFFF;
-
-        } // end of write
 
         // perform write before the read with the new
         // IO_buffer with the imbedded indirect scom addr.
-        io_fapiRc = putscom_abs_wrap (i_target, tempAddr, tempBuffer, true);
-
-        if( io_fapiRc != FAPI2_RC_SUCCESS )
-        {
+        fapiRc = putscom_abs_wrap (i_target, tempAddr, tempBuffer, true);
+        if( fapiRc != FAPI2_RC_SUCCESS )
             break;
-        }
 
         // Need to check loop on read until we see done, error,
         //  or we timeout
         IndirectScom_t scomout;
-        do
+        uint32_t elapsedIndScomTimeNs = 0;
+        while (true)
         {
             // Now perform the op requested using the passed in
             // IO_Buffer to pass the read data back to caller.
-            io_fapiRc = getscom_abs_wrap (i_target, tempAddr, &(scomout.data64), true);
+            fapiRc = getscom_abs_wrap (i_target, tempAddr, &(scomout.data64), true);
+            if( fapiRc != FAPI2_RC_SUCCESS )
+                break;
 
-            if( io_fapiRc != FAPI2_RC_SUCCESS) break;
             // if bit 32 is on indicating a complete bit
             //  or we saw an error, then we're done
             if (scomout.piberr)
             {
-                SBE_ERROR(SBE_FUNC "pib error reading status register");
+                SBE_ERROR(SBE_FUNC "pib error [%d] reading status register", uint32_t(scomout.piberr));
+                fapiRc = pibRcToFapiRc(scomout.piberr);
                 break;
             }
             if (scomout.done )
@@ -297,22 +268,59 @@ uint32_t platcheckIndirectAndDoScom( const bool i_isRead,
                 io_data = scomout.data;
                 break;
             }
+            if (elapsedIndScomTimeNs > MAX_INDSCOM_TIMEOUT_NS)
+            {
+                SBE_ERROR(SBE_FUNC "Indirect scom timeout.");
+                fapiRc = RC_SBE_PIB_TIMEOUT_ERROR;
+                break;
+            }
 
             pk_sleep(PK_NANOSECONDS(SBE_INDIRECT_SCOM_WAIT_TIME_NS));
             elapsedIndScomTimeNs += SBE_INDIRECT_SCOM_WAIT_TIME_NS;
-
-        }while ( elapsedIndScomTimeNs <= MAX_INDSCOM_TIMEOUT_NS);
-
-        if( io_fapiRc != FAPI2_RC_SUCCESS ) break;
-        if( ! scomout.done)
-        {
-            SBE_ERROR(SBE_FUNC "Indirect scom timeout.");
-            rc = SBE_SEC_HW_OP_TIMEOUT;
-            break;
         }
-    }while(0);
+    } while (false);
+
+    return fapiRc;
     #undef SBE_FUNC
-    return rc;
+}
+
+uint32_t platcheckIndirectAndDoScom( const bool i_isRead,
+                                 const void *i_target,
+                                 const uint64_t i_addr,
+                                 uint64_t & io_data,
+                                 ReturnCode & io_fapiRc)
+{
+    #define SBE_FUNC " checkIndirectAndDoScom "
+    io_fapiRc = FAPI2_RC_SUCCESS;
+
+    // If the indirect scom bit is 0, then doing a regular scom
+    if( (i_addr & DIRECT_SCOM_ADDR_MASK) == 0)
+    {
+        SBE_DEBUG(SBE_FUNC "Performing Direct scom.");
+        if( i_isRead )
+        {
+            io_fapiRc = getscom_abs_wrap (i_target, (uint32_t)i_addr,
+                                          & io_data);
+        }
+        else
+        {
+            io_fapiRc = putscom_abs_wrap (i_target, (uint32_t)i_addr,
+                                          io_data);
+        }
+    }
+    else
+    {
+        SBE_DEBUG(SBE_FUNC "Performing Indirect scom");
+        io_fapiRc = doIndirectScom(i_isRead, i_target, i_addr, io_data);
+        if (io_fapiRc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC "Indirect SCOM failed. isRead [%d] addr [0x%08X%08X] data [%08X]",
+                      i_isRead, i_addr, io_data);
+        }
+    }
+    #undef SBE_FUNC
+
+    return (io_fapiRc == FAPI2_RC_SUCCESS) ? SBE_SEC_OPERATION_SUCCESSFUL : SBE_SEC_PCB_PIB_ERR;
 }
 
 };
