@@ -211,7 +211,7 @@ fapi_try_exit:
 template<>
 fapi2::ReturnCode after_mc_omi_init<mss::mc_type::ODYSSEY>(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
 {
-    constexpr uint32_t MNFG_OMI_CRC_EDPL_SCREEN = fapi2::ENUM_ATTR_MFG_FLAGS_MNFG_POLICY_FLAG_AVAIL_05;
+    constexpr uint32_t MNFG_OMI_CRC_EDPL_SCREEN = fapi2::ENUM_ATTR_MFG_FLAGS_MNFG_OMI_CRC_EDPL_SCREEN;
 
     fapi2::buffer<uint64_t> l_reg_data;
 
