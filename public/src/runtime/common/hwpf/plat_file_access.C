@@ -25,43 +25,89 @@
 
 #include "plat_file_access.H"
 #include "sbeglobals.H"
+#include "heap.H"
+#include "archive_config.H"
 
 namespace fapi2
 {
 
 ReturnCode plat_loadEmbeddedFile(const char* i_path,
-                                 void*&o_data, size_t &o_size)
+                                const void*&o_data, size_t &o_size)
 {
 #define SBE_FUNC " plat_loadEmbeddedFile "
     SBE_ENTER(SBE_FUNC);
 
-    uint32_t size;
-    // TODO drop the SUPER ICKY const typecast and make o_data proper const once FAPI2 is updated
-    uint32_t rc = SBE_GLOBAL->embeddedArchive.load_file(i_path, (const void *&)o_data, size);
-    o_size = size;
     ReturnCode l_rc = FAPI2_RC_SUCCESS;
-    if (rc == ARC_FILE_NOT_FOUND)
+    uint32_t uncompressedFileSize = 0x00;
+    ARC_RET_t pakRc = ARC_OPERATION_SUCCESSFUL;
+    o_data = NULL;
+    o_size = 0x0;
+
+    do
     {
-        l_rc = FAPI2_RC_FILE_NOT_FOUND;
-    }
-    else if (rc != ARC_OPERATION_SUCCESSFUL)
-    {
-        //TODO: JIRA  PFSBE-251: Need to look into error xml data collection
-        l_rc = FAPI2_RC_PLAT_ERR_SEE_DATA;
-    }
+        //TODO: JIRA:PFSBE-248 : We could optimize by skipping copying of image if its uncompressed.
+        //      But HWP will always call freeembedded API . But we have not allocoated Heap.
+        //Locate the file in sppe.ram.pak or pak stack area and fetch the uncompressed file size
+        pakRc = SBE_GLOBAL->embeddedArchive.get_image_start_ptr_and_size(
+                                        i_path, NULL, &uncompressedFileSize);
+        if(pakRc ==  ARC_FILE_NOT_FOUND)
+        {
+           l_rc = FAPI2_RC_FILE_NOT_FOUND;
+           break;
+        }
+        else if(pakRc != ARC_OPERATION_SUCCESSFUL)
+        {
+            //TODO: JIRA  PFSBE-251: Need to look into error xml data collection
+           l_rc = FAPI2_RC_PLAT_ERR_SEE_DATA;
+           break;
+        }
+
+        // File size is already returned above .
+        // Use the same for allocoating scratch area
+        uint32_t *decompressionScratchArea =
+                    (uint32_t*)Heap::get_instance().scratch_alloc(uncompressedFileSize);
+        if(decompressionScratchArea == NULL)
+        {
+            FAPI_ERR(SBE_FUNC "scratch allocation failed. Not enough scratch area to allocate");
+            l_rc = FAPI2_RC_PLAT_ERR_SEE_DATA;
+            break;
+        }
+
+        // Uncompresses/copy the file into the scratch area
+        pakRc = SBE_GLOBAL->embeddedArchive.read_file(i_path, decompressionScratchArea,
+                                uncompressedFileSize, NULL, NULL);
+        if( pakRc != ARC_OPERATION_SUCCESSFUL )
+        {
+            FAPI_ERR(SBE_FUNC "File read failed with RC[%08X]", pakRc);
+            l_rc = FAPI2_RC_PLAT_ERR_SEE_DATA;
+
+            //Free the scratch are as we failed.
+            Heap::get_instance().scratch_free(decompressionScratchArea);
+
+            break;
+        }
+
+        o_data = decompressionScratchArea;
+        o_size = uncompressedFileSize;
+    }while(false);
 
     SBE_EXIT(SBE_FUNC);
     return l_rc;
 #undef SBE_FUNC
 }
 
-ReturnCode plat_freeEmbeddedFile(void* i_data)
+ReturnCode plat_freeEmbeddedFile(const void* i_data)
 {
 #define SBE_FUNC " plat_freeEmbeddedFile "
     SBE_ENTER(SBE_FUNC);
-    SBE_GLOBAL->embeddedArchive.free_file(i_data);
-    SBE_EXIT(SBE_FUNC)
-    return FAPI2_RC_SUCCESS;
+
+    ReturnCode l_rc = FAPI2_RC_SUCCESS;
+
+    Heap::get_instance().scratch_free(i_data);
+
+    return l_rc;
+
+    SBE_EXIT(SBE_FUNC);
 #undef SBE_FUNC
 }
 

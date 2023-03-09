@@ -47,7 +47,7 @@ namespace fapi2
 ///         FAPI2_RC_FILE_NOT_FOUND if the file was not found, or another error.
 inline ReturnCode loadEmbeddedFile(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
                                    const char* i_path,
-                                   void*& o_data, size_t& o_size)
+                                   const void*& o_data, size_t& o_size)
 {
     return plat_loadEmbeddedFile(i_path, o_data, o_size);
 }
@@ -55,7 +55,7 @@ inline ReturnCode loadEmbeddedFile(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_tar
 // placeholder variant to prepare for an upcoming fapi2 update
 inline ReturnCode loadEmbeddedFile(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
                                    const char* i_path,
-                                   void*& o_data, size_t& o_size,
+                                   const void*& o_data, size_t& o_size,
                                    uint32_t i_flags)
 {
     return plat_loadEmbeddedFile(i_path, o_data, o_size);
@@ -64,7 +64,7 @@ inline ReturnCode loadEmbeddedFile(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_tar
 /// @brief Free memory allocated by loadEmbeddedFile()
 /// @param[in] i_data  Pointer to file contents
 /// @return FAPI2_RC_SUCCESS on success, else error code
-inline ReturnCode freeEmbeddedFile(void* i_data)
+inline ReturnCode freeEmbeddedFile(const void* i_data)
 {
     return plat_freeEmbeddedFile(i_data);
 }

@@ -96,7 +96,7 @@ typedef struct hdctPakSecDetails
      */
     hdctPakSecDetails()
     {
-        void *image = NULL;
+        const void *image = NULL;
         size_t image_size;
         fapi2::ReturnCode rc = fapi2::plat_loadEmbeddedFile(hdct_binary_fname,
                                                             image, image_size);
