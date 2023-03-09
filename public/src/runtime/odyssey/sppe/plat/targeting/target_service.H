@@ -42,6 +42,13 @@ namespace fapi2
         {
             return iv_instance;
         }
+
+        ///
+        /// @brief Function to apply the target state attributes
+        ///     to corresponding target states in target vector
+        ///
+        void plat_TargetStateUpdateFromAttribute();
+
         private:
         static target_service iv_instance;
         /*

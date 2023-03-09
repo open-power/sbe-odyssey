@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -28,6 +29,7 @@
 #include "sbeglobals.H"
 #include "heap.H"
 #include "attribute_override.H"
+#include "target.H"
 
 uint32_t sbeUpdateAttr(uint8_t *i_pArg)
 {
@@ -85,6 +87,9 @@ uint32_t sbeUpdateAttr(uint8_t *i_pArg)
         uint32_t len2enqueue = l_respPackSize / 4;
         l_rc = sbeDownFifoEnq_mult (len2enqueue, (uint32_t *)l_outBuffer, type);
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+
+        SBE_INFO("Calling plat_TargetStateUpdateFromAttribute()");
+        g_platTarget->plat_TargetStateUpdateFromAttribute();
 
     } while(false);
 
