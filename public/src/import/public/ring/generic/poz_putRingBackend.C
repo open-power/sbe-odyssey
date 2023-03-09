@@ -882,7 +882,7 @@ static ReturnCode tryLoadCompositeImage(ChipTarget& i_chip_target,
                                         const char* i_fname,
                                         const RingMode i_ringMode)
 {
-    void* image = NULL;
+    const void* image = NULL;
     size_t image_size;
     ReturnCode rc = loadEmbeddedFile(i_chip_target(), i_fname, image, image_size);
 

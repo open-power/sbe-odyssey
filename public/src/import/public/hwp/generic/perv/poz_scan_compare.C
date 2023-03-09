@@ -45,10 +45,10 @@ ReturnCode poz_compare(
 {
     FAPI_INF("Entering ...");
 
-    void* l_hash_file_data = NULL;
-    void* l_mask_file_data = NULL;
+    const void* l_hash_file_data = NULL;
+    const void* l_mask_file_data = NULL;
     size_t l_hash_file_size, l_mask_file_size;
-    hash_data* l_hash_data = NULL;
+    const hash_data* l_hash_data = NULL;
 
     char l_fpath[48];
     char* l_fpath_write_ptr = NULL;

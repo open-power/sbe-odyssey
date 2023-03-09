@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -45,13 +45,15 @@ namespace fapi2
 /// @param[in]  i_path   Full path name of the file to look for
 /// @param[out] o_data   Will point to the file data on success
 /// @param[out] o_size   Will receive the file size on success
+/// @param[in]  i_flags  Optional flags to affect the operation
 /// @return FAPI2_RC_SUCCESS on success,
 ///         FAPI2_RC_FILE_NOT_FOUND if the file was not found, or another error.
 inline ReturnCode loadEmbeddedFile(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
                                    const char* i_path,
-                                   void*& o_data, size_t& o_size)
+                                   const void*& o_data, size_t& o_size,
+                                   uint32_t i_flags)
 {
-    std::cout << "   loadEmbeddedFile(" << i_path << ")" << std::endl;
+    std::cout << "   loadEmbeddedFile(" << i_path << ", " << i_flags << ")" << std::endl;
 
     FILE* f = fopen(i_path, "r");
 
@@ -65,9 +67,9 @@ inline ReturnCode loadEmbeddedFile(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_tar
 
     fseek(f, 0, SEEK_END);
     o_size = ftell(f);
-    o_data = malloc(o_size);
+    void* data = malloc(o_size);
 
-    if (!o_data)
+    if (!data)
     {
         std::cout << "      OUT OF MEMORY (size: " << o_size << " bytes)" << std::endl;
         return FAPI2_RC_PLAT_ERR_SEE_DATA;
@@ -75,12 +77,13 @@ inline ReturnCode loadEmbeddedFile(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_tar
 
     fseek(f, 0, SEEK_SET);
 
-    if (fread(o_data, 1, o_size, f) != o_size)
+    if (fread(data, 1, o_size, f) != o_size)
     {
         std::cout << "      READ ERROR (size: " << o_size << " bytes)" << std::endl;
         return FAPI2_RC_PLAT_ERR_SEE_DATA;
     }
 
+    o_data = data;
     std::cout << "      SUCCESS (size: " << o_size << " bytes)" << std::endl;
     return FAPI2_RC_SUCCESS;
 }
@@ -88,9 +91,9 @@ inline ReturnCode loadEmbeddedFile(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_tar
 /// @brief Free memory allocated by loadEmbeddedFile()
 /// @param[in] i_data  Pointer to file contents
 /// @return FAPI2_RC_SUCCESS on success, else error code
-inline ReturnCode freeEmbeddedFile(void* i_data)
+inline ReturnCode freeEmbeddedFile(const void* i_data)
 {
-    free(i_data);
+    free(const_cast<void*>(i_data));
     return FAPI2_RC_SUCCESS;
 }
 

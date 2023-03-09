@@ -42,12 +42,12 @@ namespace fapi2
 /// @return FAPI2_RC_SUCCESS on success,
 ///         FAPI2_RC_FILE_NOT_FOUND if the file was not found, or another error.
 ReturnCode plat_loadEmbeddedFile( const char* i_path,
-                                  void*&o_data, size_t &o_size);
+                                  const void*&o_data, size_t &o_size);
 
 /// @brief Free memory allocated by loadEmbeddedFile()
 /// @param[in] i_data  Pointer to file contents
 /// @return FAPI2_RC_SUCCESS on success, else error code
-ReturnCode plat_freeEmbeddedFile(void* i_data);
+ReturnCode plat_freeEmbeddedFile(const void* i_data);
 
 }
 

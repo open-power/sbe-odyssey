@@ -239,7 +239,7 @@ void* Heap::scratch_alloc(uint32_t i_size, alloc_flags i_flags)
 
 void Heap::scratch_free(const void *i_ptr)
 {
-    if(i_ptr != NULL)
+    if (i_ptr != NULL)
     {
         // Grab the header, which is one word below the allocated block pointer
         uint64_t* const pheader = (uint64_t *)i_ptr - 1;
@@ -269,10 +269,6 @@ void Heap::scratch_free(const void *i_ptr)
 
         // Drop all blocks that became droppable now
         scratch_unwind(false);
-    }
-    else
-    {
-        SBE_ERROR("scratch_free : Null pointer passed. Nothing to free...");
     }
 }
 
