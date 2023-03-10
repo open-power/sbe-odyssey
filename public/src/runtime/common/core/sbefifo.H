@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -50,7 +50,7 @@ extern const uint64_t g_Fifo_baseAddresses[];
 // defined by "sbeFifoType"
 #define FIFO_BASE_ADDR(SBE_FIFO_TYPE) g_Fifo_baseAddresses[SBE_FIFO_TYPE]
 
-#define FIFO_DS_TYPE(TYPE) ((TYPE==SBE_FIFO) ? (TYPE):(TYPE+1))
+#define FIFO_DS_TYPE(TYPE) ((TYPE==SBE_FIFO || TYPE==SBE_HB_FIFO) ? (TYPE):(TYPE+1))
 
 //Base address for SBE FIFOs
 const uint64_t SBE_FIFO_BASE                     =  0x000B0000;
