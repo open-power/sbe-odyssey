@@ -36,7 +36,7 @@ fi
 SUPPORTED_PLATFORM=("p11" "odyssey" ${INT_SUPPORTED_PLATFORM[*]} "all")
 SUPPORTED_IMAGES=("sppe" "bldr" "srom" "otprom" "tsbe" "hsbe" ${INT_SUPPORTED_IMAGES[*]} "pseeprom" "pnor" "all")
 SUPPORTED_COMMAND=("workon" "prime" "install" "citest" "runsimics" "build" \
-                    "clean" "execute" "printenv" "cronus_devready")
+                   "clean" "execute" "printenv" "cronus_devready", "runtest")
 
 sbe_helptext()
 {
@@ -108,6 +108,15 @@ sbe_helptext()
         echo "  Usage:"
         echo "      sbe cronus_devready [options] <tool>"
         ;;
+    ${SUPPORTED_COMMAND[10]})
+        echo "  Run all test cases in the simics"
+        echo
+        echo "  Usage:"
+        echo "      sbe runtest [image_directory]"
+        echo
+        echo "  image_directory - Path to get images to run test cases"
+        echo "                    By default, it will prepare images."
+        ;;
     *)
         echo "  Usage:"
         echo "      sbe <cmd>"
@@ -129,6 +138,10 @@ sbe_helptext()
         echo "      runsimics"
         echo ""
         echo "      cronus_devready"
+        echo
+        # TODO: JIRA: PFSBE-297 : SBE test case framework is internal
+        #                         so this command should be internal specific.
+        echo "      runtest"
         echo
     esac
 }
@@ -314,6 +327,23 @@ generate_list()
     echo ${SUPPORTED_PLATFORM[*]} > ${HOME}/.sbe/plat_list.dat
 }
 
+sbe_runtest()
+{
+    if [ -n "${SBE_INSIDE_WORKON}" ]; then
+        echo "Already in a workon.. Continuing"
+
+        IMAGES_DIR=$1 sbe_prime || exit 1
+
+        cd simics
+
+        $SBEROOT/internal/src/tools/simics/runsimicscmd.sh -p $SBE_PLATFORM \
+                -i $SBE_IMAGE -c true -r FALSE || exit 1
+    else
+        echo "Please do workon and re launch..."
+    fi
+
+}
+
 FIRST_PARAM=$1
 shift
 
@@ -347,6 +377,9 @@ ${SUPPORTED_COMMAND[8]})
     ;;
 ${SUPPORTED_COMMAND[9]})
     sbe_cronus_devready $*
+    ;;
+${SUPPORTED_COMMAND[10]})
+    sbe_runtest "$@"
     ;;
 # This is not to be printed in completion, so no need to add in SUPPORTED_COMMAND
 gen_list)
