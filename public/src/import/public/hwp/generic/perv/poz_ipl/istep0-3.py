@@ -1010,6 +1010,8 @@ def p11s_chiplet_clk_config():
         NET_CTRL1.REFCLK_CLKMUX_SEL[2:3] = ATTR_CLOCK_PLL_INPUT_MUX3031     # uint8, 133M_MUX26 = 0, 100M_MUX27 = 1, 133M_MUX28 = 2
 
     def pci_mux_setup():
+        NET_CTRL1.CLOCK_COARSE_DELAY = PCIE_CLOCK_COARSE_DELAY              # bits 8:10,  const value 0b101
+        NET_CTRL1.CLOCK_FINE_DELAY = PCIE_CLOCK_FINE_DELAY                  # bits 11:15, const value 0b00011
         NET_CTRL1.REFCLK_CLKMUX_SEL[0] = ATTR_CLOCK_PLL_USED_MUX5           # uint8, EVEN_PAXO = 0, ODD_PAXO = 1
         NET_CTRL1.REFCLK_CLKMUX_SEL[1] = ATTR_CLOCK_NEST_SYNC_MUX4          # uint8, PAXO = 0, NEST = 1
 
