@@ -40,6 +40,7 @@ extern uint32_t _attrs_size_  SECTION(".attr");
 extern uint64_t _heap_space_start_ SECTION(".bss");
 extern uint64_t _heap_space_end_ SECTION(".bss");
 extern uint64_t _heap_space_size_ SECTION(".bss");
+extern uint8_t g_hash_list SECTION(".bss");
 
 class SBEGlobalsSingleton
 {

@@ -128,22 +128,6 @@ ReturnCode istepLoadDMEMwithOcmb( voidfuncptr_t i_hwp);
 ReturnCode istepLoadIOPPEwithOcmb( voidfuncptr_t i_hwp);
 
 /**
- * @brief Execute HWP on pak stream
- *
- * @param[in] i_hwp          Function pointer to HWP
- * @param[in] i_bin_data     Pointer to binary data
- * @param[in] i_bin_size     Binary size
- * @param[in] i_bin_offset   Binary offset
- * @param[in] i_ioppeImage   Image type
- *
- * @return FAPI2_RC_SUCCESS on success
- */
-ReturnCode sbeexecutehwponpak( voidfuncptr_t i_hwp, uint8_t* const i_bin_data,
-                               const uint32_t i_bin_size, const uint32_t i_bin_offset,
-                               uint8_t i_ioppeImage);
-
-
-/**
  * @brief Wrapper to call the HWP
  *
  * @param[in] i_hwp Function pointer to HWP

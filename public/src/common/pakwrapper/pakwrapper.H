@@ -27,6 +27,7 @@
 #define _PAKWRAPPER_H_
 
 #include "archive.H"
+
 /**
  * @brief Wrapper class for one time and stream decompression and hash
  * calculation.
@@ -79,50 +80,8 @@ class PakWrapper : public FileArchive
             return fileArchiveEntry.get_stored_data_ptr(o_buffer);
         }
 
-#ifndef __SROM_IMAGE__
-        /**
-         * @brief Wrapper function to stream decompress pak data into
-         *        destination address.
-         *
-         * @param[in] i_fileName Pointer to file name to look for.
-         * @param[in] i_destinationAddr Destination buffer address.
-         * @param[in] i_destinationBufferSize Size of destination buffer.
-         * @param[out] o_hash Pointer to sha3_t, if NULL no hash is returned
-         *             else hash is returned.
-         */
-        uint32_t stream_file(const char* i_fileName, void* i_destinationAddr,
-                            uint32_t i_destinationBufferSize, void* o_hash);
-#endif
     protected:
         FileArchive::Entry fileArchiveEntry;
 };
-
-#ifndef __SROM_IMAGE__
-/**
- * @brief Implementation of StreamReceiver interface class for stream
- *        decompression.
- */
-class PakStreamReceiver : public FileArchive::StreamReceiver
-{
-    public:
-        /**
-         * @brief Constructor for PakStreamReceiver class.
-         *
-         * @param[in] i_destinationDataPtr Pointer to destination buffer.
-         * @param[in] i_decompressedSize Size of decompressed data.
-         */
-        PakStreamReceiver(void* i_destinationDataPtr,
-                                size_t i_decompressedSize) :
-                        iv_destinationDataPtr((uint8_t*)i_destinationDataPtr),
-                        iv_decompressedSize(i_decompressedSize)
-                        {
-                        }
-
-        int consume(const void* i_data, uint32_t i_size);
-    private:
-        uint8_t* iv_destinationDataPtr;
-        size_t iv_decompressedSize;
-};
-#endif
 
 #endif /* _PAKWRAPPER_H_ */

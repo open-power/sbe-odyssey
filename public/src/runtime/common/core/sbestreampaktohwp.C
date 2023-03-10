@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/sbestreampaktohwp.C $    */
+/* $Source: public/src/runtime/common/core/sbestreampaktohwp.C $          */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -26,9 +26,30 @@
 #include "sbestreampaktohwp.H"
 #include "heap.H"
 #include "hwpWrapper.H"
-#include "odysseylink.H"
+#include "globals.H"
+#include "sbeglobals.H"
+#include "archive.H"
 
 using namespace fapi2;
+
+ARC_RET_t PakStreamReceiver::consume(const void* i_data, uint32_t i_size)
+{
+    ReturnCode fapiRc = FAPI2_RC_SUCCESS;
+    SBE_INFO("PakStreamReceiver::consume: i_size is 0x%08X and iv_offset is 0x%08X", i_size, iv_offset);
+
+    // Execute the HWP.
+    if(iv_hwp != NULL)
+    {
+        fapiRc = sbeexecutehwponpak(iv_hwp, (uint8_t *)i_data,
+                                    i_size, iv_offset, iv_image);
+        if(fapiRc)
+        {
+            SBE_ERROR(SBE_FUNC "sbeexecutehwponpak failed with RC[%08X]", fapiRc);
+        }
+    }
+    iv_offset += i_size;
+    return fapiRc;
+}
 
 ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname, voidfuncptr_t i_hwp, uint8_t i_Image)
 {
@@ -40,24 +61,26 @@ ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname, voidfunc
     uint32_t *scratchArea = NULL;
     sha3_t hashData;
 
+    // load the entirety of the stream, build actual hash value
     do
     {
-        uint32_t binSize = 0;
-        uint32_t offset = 0;
-        uint32_t size = 0;
+        sha3_t hashData;
 
-        pakRc = i_pak->get_image_start_ptr_and_size(i_pakname, NULL, &binSize);
+        // Locate the File.
+        FileArchive::Entry entry;
+        pakRc = i_pak->locate_file(i_pakname, entry);
         if (pakRc)
         {
-            SBE_ERROR(SBE_FUNC "get_image_start ptr Failed with pakRc 0x%08X", pakRc);
+            SBE_ERROR(SBE_FUNC "Locate file failed with pakRc 0x%08X", pakRc);
             fapiRc = FAPI2_RC_PLAT_ERR_SEE_DATA;
             break;
         }
-        SBE_INFO(SBE_FUNC "Size of the binary is 0x%08X", binSize);
+
+        SBE_INFO(SBE_FUNC "Size of the binary is 0x%08X", entry.get_size());
 
         // Allocating scratch
         scratchArea =
-                (uint32_t*)Heap::get_instance().scratch_alloc(binSize);
+            (uint32_t*)Heap::get_instance().scratch_alloc(FileArchive::STREAM_SCRATCH_SIZE);
         if(scratchArea == NULL)
         {
             SBE_ERROR(SBE_FUNC "scratch allocation failed.");
@@ -65,26 +88,34 @@ ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname, voidfunc
             break;
         }
 
-        SBE_INFO(SBE_FUNC "fileSize is 0x%08X", binSize);
+        // Create the receiver object.
+        PakStreamReceiver recObj(0, i_hwp, i_Image);
 
-        /// TODO: JIRA: PFSBE-270 pakwrapper utils functions for stream class
-        pakRc = i_pak->read_file(i_pakname, scratchArea, binSize,
-                                        &hashData, &size);
-        if( pakRc )
+        // Call stream_decompress
+        pakRc = entry.stream_decompress(recObj, scratchArea, (sha3_t *)hashData);
+        if(pakRc)
         {
-            SBE_ERROR(SBE_FUNC "read_file failed with RC[%08X]", pakRc);
+            SBE_ERROR(SBE_FUNC "stream_decompress failed with RC[%08X]", pakRc);
             fapiRc = FAPI2_RC_PLAT_ERR_SEE_DATA;
             break;
         }
-
+    } while(false);
+    // exit if we've failed inside the while loop above
+    if (fapiRc != FAPI2_RC_SUCCESS)
+    {
+        goto fapi_try_exit;
+    }
+    // else, validate that hash value is as expected
+    else
+    {
         /* In case hash mismatch from pak img, check_file_hash will return the miss-match hash*/
-        uint32_t mismatchHashAddr;
-        uint64_t * ptrGenHash = (uint64_t *) hashData;
-        uint64_t * ptrMismatchHash = (uint64_t *) mismatchHashAddr;
+        uint64_t *ptrMismatchHash;
+        uint64_t *ptrGenHash = (uint64_t *) hashData;
 
         /* Checking the image hash */
         uint32_t hashListRc = SBE::check_file_hash( i_pakname, hashData,
-                                                    (uint8_t *) HASH_LIST_START_OFFSET, (uint8_t *) &mismatchHashAddr);
+                                                    &g_hash_list,
+                                                    (sha3_t **)&ptrMismatchHash);
         if (hashListRc != SBE::HASH_COMPARE_PASS)
         {
             /* ERROR message */
@@ -117,20 +148,7 @@ ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname, voidfunc
         PLAT_FAPI_ASSERT( !(hashListRc == SBE::FILE_NOT_FOUND),
                     SBE_FILE_NOT_FOUND(),
                     "sbestreampaktohwp: Pak file not found in hash list");
-
-        // Call the HWP
-        if(i_hwp != NULL)
-        {
-            fapiRc = sbeexecutehwponpak(i_hwp, (uint8_t *)scratchArea,
-                                        binSize, offset, i_Image);
-            if(fapiRc)
-            {
-                SBE_ERROR(SBE_FUNC "sbeexecutehwponpak failed with RC[%08X]", fapiRc);
-                break;
-            }
-        }
-
-    }while(0);
+    }
 
 fapi_try_exit:
     // Assign fapiRc for failure case, Assign current_err for PLAT_FAPI_ASSERT

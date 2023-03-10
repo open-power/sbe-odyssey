@@ -214,7 +214,7 @@ namespace SBE
      *                       respective error codes
      */
     HASH_LIST_RET_t check_file_hash(const char *i_fname, const sha3_t &i_hash,
-                                    const uint8_t *i_hash_list, uint8_t * o_ptrMismatchHash = NULL);
+                                    const uint8_t *i_hash_list, sha3_t **o_ptrMismatchHash = NULL);
 
     /*@brief - Get higher 32bit number from uint64
      *
