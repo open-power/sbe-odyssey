@@ -187,6 +187,9 @@ SECTIONS {
     _heap_space_end_ = SPPE_TRACE_START_OFFSET;
     _heap_space_size_ = _heap_space_end_ - _heap_space_start_;
 
+    /* Hash List*/
+    g_hash_list = HASH_LIST_START_OFFSET;
+
     .g_cross_image_data TRACE_BUF_PTR_OFFSET : {
         *(.g_pk_trace_buf)
         *(.g_metadata_ptr)
