@@ -30,8 +30,10 @@
 #include "heap.H"
 #include "sbestates.H"
 #include "sbestatesutils.H"
+#include "mss_odyssey_attribute_getters.H"
 
 #define SRAM_SCRATCH_GRANULAR_SIZE 0x10000 // 64 KB
+#define MEM_PAKNAME_MAX_CHAR  20 // ddr/ddimm/dmem.bin
 
 using namespace fapi2;
 
@@ -131,15 +133,35 @@ ReturnCode istepLoadIMEMwithOcmb( voidfuncptr_t i_hwp)
     #define SBE_FUNC " istepLoadIMEMwithOcmb "
     SBE_INFO(SBE_FUNC);
     ReturnCode rc = FAPI2_RC_SUCCESS;
-
-    PakWrapper pak((void *)g_partitionOffset);
-    static const char pakname[]   =  "ddr/ddimm/imem.bin";
-    rc = sbestreampaktohwp(&pak, pakname, i_hwp, DDR_IMEM_IMAGE);
-    if (rc)
+    do
     {
-        SBE_ERROR(SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X", rc);
-    }
+        PakWrapper pak((void *)g_partitionOffset);
 
+        // Get ATTR_MSS_ODY_PHY_IMAGE_SELECT
+        uint8_t imageType = 0;
+        Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
+        rc = mss::attr::get_ody_phy_image_select(l_ocmb_chip, imageType);
+        if(rc)
+        {
+            SBE_ERROR(SBE_FUNC "get_ody_phy_image_select failed with rc: 0x%08X", rc);
+            break;
+        }
+
+        char pakname[MEM_PAKNAME_MAX_CHAR] = "";
+        if(imageType  == fapi2::ENUM_ATTR_MSS_ODY_PHY_IMAGE_SELECT_ATE_IMAGE)
+        {
+            strcpy(pakname, "ddr/ate/imem.bin");
+        }
+        else
+        {
+            strcpy(pakname, "ddr/ddimm/imem.bin");
+        }
+        rc = sbestreampaktohwp(&pak, pakname, i_hwp, DDR_IMEM_IMAGE);
+        if (rc)
+        {
+            SBE_ERROR(SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X", rc);
+        }
+    }while(0);
     return rc;
     #undef SBE_FUNC
 }
@@ -149,14 +171,34 @@ ReturnCode istepLoadDMEMwithOcmb( voidfuncptr_t i_hwp)
     #define SBE_FUNC " istepLoadDMEMwithOcmb "
     SBE_INFO(SBE_FUNC);
     ReturnCode rc = FAPI2_RC_SUCCESS;
-
-    PakWrapper pak((void *)g_partitionOffset);
-    static const char pakname[]   =  "ddr/ddimm/dmem.bin";
-    rc = sbestreampaktohwp(&pak, pakname, i_hwp, DDR_DMEM_IMAGE);
-    if (rc)
+    do
     {
-        SBE_ERROR(SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X", rc);
-    }
+        PakWrapper pak((void *)g_partitionOffset);
+
+        // Get ATTR_MSS_ODY_PHY_IMAGE_SELECT
+        uint8_t imageType = 0;
+        Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
+        rc = mss::attr::get_ody_phy_image_select(l_ocmb_chip, imageType);
+        if(rc)
+        {
+            SBE_ERROR(SBE_FUNC "get_ody_phy_image_select failed with rc: 0x%08X", rc);
+            break;
+        }
+        char pakname[MEM_PAKNAME_MAX_CHAR] = "";
+        if(imageType == fapi2::ENUM_ATTR_MSS_ODY_PHY_IMAGE_SELECT_ATE_IMAGE)
+        {
+            strcpy(pakname, "ddr/ate/dmem.bin");
+        }
+        else
+        {
+            strcpy(pakname, "ddr/ddimm/dmem.bin");
+        }
+        rc = sbestreampaktohwp(&pak, pakname, i_hwp, DDR_DMEM_IMAGE);
+        if (rc)
+        {
+            SBE_ERROR(SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X", rc);
+        }
+    }while(0);
 
     return rc;
     #undef SBE_FUNC
