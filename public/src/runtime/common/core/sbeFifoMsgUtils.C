@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -465,7 +465,26 @@ sbeFifoType sbeFifoGetSource (bool reset)
             break;
         }
 
-        // SBE_HB_FIFO: // @TODO ignore this for Ody for now
+        // SBE_HB_FIFO:
+	rc = sbeUpFifoGetStatus (reinterpret_cast<uint64_t *>(&status),
+                                 SBE_HB_FIFO);
+        if (rc)
+        {
+            SBE_ERROR (SBE_FUNC "Reading fifo status, rc: 0x%08X", rc);
+            //rc = SBE_SEC_FIFO_ACCESS_FAILURE;
+            // This is a fatal error
+            pk_halt ();
+            break;
+        }
+
+        if ((!reset && !(status.upfifo_status.fifo_empty)) ||
+            (reset && status.upfifo_status.req_upfifo_reset))
+        {
+            type = SBE_HB_FIFO;
+            SBE_INFO (SBE_FUNC "0x%04X on FIFO %d",
+                      (reset)? 0xDEAD:0xDA7A, type);
+            break;
+        }
 
         // Check pending interrupt on Pipes
         type = sbePipeGetSource ();
