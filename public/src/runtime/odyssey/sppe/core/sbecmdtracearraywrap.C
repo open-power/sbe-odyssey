@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/sberegaccessplat.C $     */
+/* $Source: public/src/runtime/odyssey/sppe/core/sbecmdtracearraywrap.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,18 +21,26 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#include "sberegaccess.H"
-#include "sbetrace.H"
-#include "fapi2.H"
-#include "sbeutil.H"
 
-void SbeRegAccess::platInitAttrBootFlags()
+#include "sbecmdtracearray.H"
+#include "ody_gettracearray.H"
+
+using namespace fapi2;
+
+// HWP call support
+ody_gettracearray_FP_t ody_sbe_tracearray_hwp = &ody_gettracearray;
+
+
+ReturnCode sbeControlTraceArrayCmd_t::executeHwp(
+                                    fapi2::sbefifo_hwp_data_ostream& o_stream)
 {
-    #define SBE_FUNC "SbeRegAccess::platInitAttrBootFlags "
-    uint32_t l_attr = 0;
-    FAPI_ATTR_GET(fapi2::ATTR_OCMB_BOOT_FLAGS,
-                fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(),l_attr);
-    SBE_INFO(SBE_FUNC" mbx11 from Attribute, 0x%08x", l_attr);
-    SbeRegAccess::theSbeRegAccess().updateMbx11( (uint64_t)l_attr<<32 );
-    #undef SBE_FUNC
+    uint32_t fapiRc = FAPI2_RC_SUCCESS;
+
+    /* Execute odyssey HWP */
+    Target<SBE_ROOT_CHIP_TYPE>l_fapiTarget = g_platTarget->plat_getChipTarget();
+
+    // Execute Trace Array HWP
+    SBE_EXEC_HWP( fapiRc, ody_sbe_tracearray_hwp,l_fapiTarget,
+                  sbeControlTraceArrayCmd_t::getArg(), o_stream) ;
+    return fapiRc;
 }

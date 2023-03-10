@@ -1,0 +1,11 @@
+{
+    "chipoptable":[
+        {
+            "cmdClass":"A6",
+            "command":"0x02",
+            "function":"sbeControlTraceArray",
+            "fences":["SBE_NO_FENCE"],
+            "headerFile":"sbecmdtracearray.H"
+        }
+    ]
+}

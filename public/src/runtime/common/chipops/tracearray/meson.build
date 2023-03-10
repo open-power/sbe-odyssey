@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/common/meson.build $
+# $Source: public/src/runtime/common/chipops/tracearray/meson.build $
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
-# [+] International Business Machines Corp.
+# Contributors Listed Below - COPYRIGHT 2023
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,9 +22,7 @@
 #
 # IBM_PROLOG_END_TAG
 
-subdir('core')
-subdir('plat')
-subdir('hwpf')
-subdir('utils')
-subdir('codeupdate')
-subdir('chipops')
+CMN_TRACE_ARRAY_CHIPOPS_JSON = files('chipop_table.json')
+
+abs_runtime_cmn_tracearray_c_path = []
+abs_runtime_cmn_tracearray_c_path += files('sbecmdtracearray.C')
