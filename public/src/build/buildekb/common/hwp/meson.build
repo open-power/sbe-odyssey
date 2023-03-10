@@ -43,6 +43,7 @@ generic_infile_c = [
                     'poz_sbe_spi_cmd.C',
                     'poz_tp_stopclocks.C',
                     'poz_common_stopclocks.C',
+                    'poz_gettracearray.C',
                    ]
 
 #Create abs path for input files before creating .o

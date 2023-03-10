@@ -24,3 +24,4 @@
 # IBM_PROLOG_END_TAG
 
 subdir('stopclocks')
+subdir('tracearray')

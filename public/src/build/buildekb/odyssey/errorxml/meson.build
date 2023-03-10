@@ -46,6 +46,7 @@ mss_odyssey_error_xml_files = [
     'ody_draminit_errors.xml',
     'ody_phyinit_errors.xml',
     'ody_omi_train_check_errors.xml',
+    'ody_sbe_tracearray_errors.xml',
     ]
 
 foreach error_xml_file : mss_odyssey_error_xml_files
