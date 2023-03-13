@@ -34,7 +34,7 @@
 #include "sbe_sp_intf.H"
 #include "sbeFifoMsgUtils.H"
 #include "sbeglobals.H"
-#include "sbeFFDC.H"
+#include "sbeffdc.H"
 #include "sbeerrorcodes.H"
 #include "assert.h"
 #include "return_code_defs.H"

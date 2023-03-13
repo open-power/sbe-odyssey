@@ -34,11 +34,7 @@
 #define __SBEFW_SBESP_MSG_H
 
 #include "sbe_sp_intf.H"
-
-//TODO: P11SBE Porting
-#if 0
-using namespace fapi2;
-#endif
+#include "return_code_defs.H"
 
 // @NOTE Make sure all FIFO structures are 32 bit alligned ( the largest
 // member should be atleast 4 byte). It is required as in sbe fifo
@@ -51,14 +47,20 @@ using namespace fapi2;
 //    members of 32 bit each. This is required as compiler pads structure
 //    to largest data member and we do not want extra padding for data
 //    members gretater than 32 bits ( e.g. uint64_t )
+
+/**
+ * @brief Sbe FFDC Magic number
+ */
+#define  SBE_FFDC_MAGIC_BYTES 0xFBAD
+
 /**
   * @brief Command Request Header
   */
 typedef struct
 {
     uint32_t len;
-    uint32_t reserved:12;
-    uint32_t clientId:4;
+    uint32_t reserved:8;
+    uint32_t chipIdentifier:8;
     uint32_t cmdClass:8;
     uint32_t command:8;
 }sbeFifoCmdReqBuf_t;
@@ -114,6 +116,9 @@ typedef struct sbeResponseFfdc
     uint32_t seqId:16;
     uint32_t cmdClass:8;
     uint32_t cmd:8;
+    uint32_t sbeLogId:16;  // SLID - SBE Log Identifier
+    uint32_t severity:8;
+    uint32_t chipId:8;
     uint32_t fapiRc;
 
     /**
@@ -132,6 +137,63 @@ typedef struct sbeResponseFfdc
         seqId = i_seqId;
         cmdClass = i_cmdClass;
         cmd = i_cmd;
+    }
+
+    /**
+      * @brief set SLID - SBE Log Identifier
+      * @param[in] i_sbeLogId
+      * @return
+      */
+    void setSbeLogId(const uint16_t i_sbeLogId)
+    {
+        sbeLogId = i_sbeLogId;
+    }
+
+    /**
+      * @brief get SLID - SBE Log Identifier
+      * @return sbeLogId
+      */
+    uint32_t getSbeLogId() const
+    {
+        return sbeLogId;
+    }
+
+    /**
+      * @brief set severity
+      * @param[in] i_severity
+      * @return
+      */
+    void setSeverity(const uint8_t i_severity)
+    {
+        severity = i_severity;
+    }
+
+    /**
+      * @brief get severity
+      * @return severity
+      */
+    uint32_t getSeverity() const
+    {
+        return severity;
+    }
+
+    /**
+      * @brief set chip Id
+      * @param[in] i_chipId
+      * @return
+      */
+    void setChipId(const uint8_t i_chipId)
+    {
+        chipId = i_chipId;
+    }
+
+    /**
+      * @brief get chip Id
+      * @return chip Id
+      */
+    uint32_t getChipId() const
+    {
+        return chipId;
     }
 
     /**
@@ -165,15 +227,17 @@ typedef struct sbeResponseFfdc
       */
     sbeResponseFfdc()
     {
-        magicBytes = 0xFFDC;
+        magicBytes = SBE_FFDC_MAGIC_BYTES;
         seqId = 0;
         cmdClass = SBE_CMD_CLASS_UNKNOWN;
         cmd = SBE_CMD_UNKNOWN;
+        chipId = 0;  // @TODO JIRA: PFSBE-351
         lenInWords  = ( sizeof(uint32_t )    // For magicBytes + lenInWords
                         + sizeof(uint32_t)   // For SeqId + CmdClass + Cmd
+                        + sizeof(uint32_t)   // For reserved + severity + chipID
                         + sizeof(fapiRc))
                            / sizeof(uint32_t);
-        fapiRc = 0;
+        fapiRc = fapi2::FAPI2_RC_SUCCESS;
     }
 }sbeResponseFfdc_t;
 
