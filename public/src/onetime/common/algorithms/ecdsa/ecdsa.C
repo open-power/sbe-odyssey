@@ -26,8 +26,6 @@
 #include "ecdsa.H"
 #include <ppe42_string.h>
 
-bn_t lookup[16][3][ NWORDS ];
-
 const bn_t bn_zero[NWORDS] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 const bn_t bn_one[NWORDS] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
 
@@ -1323,7 +1321,7 @@ int ec_double (bn_t *x, bn_t *y, bn_t *z)
 //
 // This function accepts 2 scalars k, k1 as input and computes k.P + k1.Q.
 // A lookup table with P and Q must be precomputed by calling generate_lookup_2bit_2pt before calling this function
-int ec_multiply_2pt (bn_t *x, bn_t *y, bn_t *z, const bn_t *k, const bn_t *k1)
+int ec_multiply_2pt (bn_t lookup[16][3][ NWORDS ], bn_t *x, bn_t *y, bn_t *z, const bn_t *k, const bn_t *k1)
 {
 
     bn_t px[ NWORDS ], py[ NWORDS ], pz[ NWORDS ];
@@ -1403,7 +1401,7 @@ int ec_multiply_2pt (bn_t *x, bn_t *y, bn_t *z, const bn_t *k, const bn_t *k1)
 // Create a lookup with a call to generate_lookup_2bit_1pt and then call this function
 // Computes k.P, where P was used for the lookup
 //
-int ec_multiply_1pt (bn_t *x, bn_t *y, bn_t *z, const bn_t *k)
+int ec_multiply_1pt (bn_t lookup[16][3][ NWORDS ], bn_t *x, bn_t *y, bn_t *z, const bn_t *k)
 {
 
     bn_t px[ NWORDS ], py[ NWORDS ], pz[ NWORDS ];
@@ -1655,6 +1653,7 @@ int ec_verify (const unsigned char *publicpt,    /* 2*EC_COORDBYTES */
          px[ NWORDS ], py[ NWORDS ], pz[ NWORDS ],
          u1[ NWORDS ], u2[ NWORDS ];
     bn_t res_x[NWORDS], res_y[NWORDS];
+    bn_t lookup[16][3][ NWORDS ];
 
     if ((NULL == publicpt) || (NULL == signature) || (NULL == hash))
     {
@@ -1693,7 +1692,7 @@ int ec_verify (const unsigned char *publicpt,    /* 2*EC_COORDBYTES */
     memcpy(res_x, bn_zero, sizeof(res_x));
     memcpy(res_y, bn_zero, sizeof(res_y));
 
-    ec_multiply_2pt (res_x, res_y, pz, u1, u2);
+    ec_multiply_2pt (lookup, res_x, res_y, pz, u1, u2);
 
     ec_projective2affine(res_x, res_y, pz);
 
