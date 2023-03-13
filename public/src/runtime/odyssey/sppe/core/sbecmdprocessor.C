@@ -41,7 +41,7 @@
 #include "sbestates.H"
 #include "sbeglobals.H"
 #include "chipop_handler.H"
-#include "sbeFFDC.H"
+#include "sbeffdc.H"
 #include "sbehandleresponse.H"
 #include "ipl.H"
 
@@ -248,8 +248,8 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
                 configStr.fifoType = SBE_GLOBAL->activeUsFifo;
                 curInterface = static_cast<sbeInterfaceSrc_t>(SBE_GLOBAL->activeInterface);
 
-                SBE_INFO(SBE_FUNC"Processing command from client :0x%01X",
-                            (uint32_t)(SBE_GLOBAL->sbeFifoCmdHdr.clientId));
+                SBE_INFO(SBE_FUNC"Processing command from chip Identifier :0x%01X",
+                            (uint32_t)(SBE_GLOBAL->sbeFifoCmdHdr.chipIdentifier));
                 // Set this here, so that during response handling we know which
                 // interrupt we are processing, need not check for
                 // SBE_GLOBAL->sbeIntrSource again

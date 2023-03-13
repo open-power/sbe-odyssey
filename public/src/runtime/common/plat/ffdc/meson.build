@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -23,13 +23,7 @@
 #
 # IBM_PROLOG_END_TAG
 
-runtime_cmn_ffdc_dir_path = meson.global_source_root() + '/public/src/runtime/common/plat/ffdc/'
-
-infile_c = ['ffdc.C'
-           ]
-
-abs_runtime_cmn_ffdc_c_path = []
-
-foreach infile : infile_c
-  abs_runtime_cmn_ffdc_c_path += runtime_cmn_ffdc_dir_path + infile
-endforeach
+abs_runtime_cmn_ffdc_c_path = [
+    files('ffdc.C'),
+    files('sbeffdc.C'),
+    ]
