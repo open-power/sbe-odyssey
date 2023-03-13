@@ -61,7 +61,8 @@
 #define TPM_SECURE_DATA_LEN 8
 
 //Byte-length of data to do secure write or read for SEEPROMs
-#define SEEPROM_SECURE_DATA_LEN 40
+//Note: changed size from 40 to 256 bytes
+#define SEEPROM_SECURE_DATA_LEN 256
 
 //Each page in the seeprom is 256 bytes in size
 #define SEEPROM_PAGE_SIZE 256
@@ -143,10 +144,10 @@ extern "C"
     {
         public:
             SpiControlHandle (
-                //const fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP>& i_target_chip,
+                const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target_chip,
                 const uint8_t i_engine, const uint16_t i_slave = 1,
                 const bool i_pib_access = true):
-                target_chip(fapi2::plat_target_handle_t(0)),//i_target_chip),
+                target_chip(i_target_chip),
                 engine(i_engine),
                 slave(i_slave),
                 base_addr(i_pib_access ?
@@ -156,7 +157,7 @@ extern "C"
 
             {
             }
-            const fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP> target_chip;
+            const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP> target_chip;
             const uint8_t engine;
             const uint16_t slave;
             const uint32_t base_addr;

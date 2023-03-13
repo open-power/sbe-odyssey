@@ -128,7 +128,7 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
         }
 
         // Initialize SPI controller to get PIB SPI base address
-        SpiControlHandle spiHandle(0);
+        SpiControlHandle spiHandle(g_platTarget->plat_getChipTarget(), 0);
 
         // Get max free scratch area for receiving image data
         size_t getMaxBufSize = Heap::get_instance().getFreeHeapSize();
@@ -144,6 +144,8 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
         {
             getMaxBufSize -= (getMaxBufSize % WORD_ALIGNED);
         }
+
+        SBE_INFO(SBE_FUNC "Buffer available(bytes):[0x%zX]",getMaxBufSize);
 
         // Get max spi write data buffer
         maxSpiWriteInWords = (getMaxBufSize/WORD_LENGTH);
@@ -173,7 +175,7 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
             // Will attempt to dequeue entries based on the size passed above plus
             // the expected EOT entry at the end
             // NOTE: Will change to SBE_DEBUG as needed later
-            SBE_INFO(SBE_FUNC " WriteLen(bytes):[0x%08X] withECC(bytes):[0x%08X]",
+            SBE_INFO(SBE_FUNC "Loop: WriteLen(bytes):[0x%08X] withECC(bytes):[0x%08X]",
                      (l_writeWordsLen*sizeof(uint32_t)),WITH_ECC(l_writeWordsLen*sizeof(uint32_t)));
 
             // For next write to fifo to get next set of data
@@ -257,7 +259,7 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
                     break;
                 }
 
-                SBE_INFO(SBE_FUNC "ImageStartAddr:0x%08X Size(max):0x%08X",
+                SBE_INFO(SBE_FUNC "ImageStartAddr(wo ECC):[0x%08X] Size(max wo ECC):[0x%08X]",
                         l_imageStartAddr, l_imageSizeMax);
 
                 // Make sure flag is set
@@ -286,7 +288,7 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
                     l_eraseEndAddr -= 1;
                 }
 
-                SBE_INFO(SBE_FUNC "EraseStartAddr:[0x%08X] EraseEndAddr:[0x%08X]",
+                SBE_INFO(SBE_FUNC "EraseStartAddr(with ECC):[0x%08X] EraseEndAddr(with ECC):[0x%08X]",
                         l_eraseStartAddr, l_eraseEndAddr);
 
                 l_fapiRc = spi_erase_and_no_preserve(spiHandle,
@@ -349,9 +351,12 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
                     *(uint32_t *)(l_checkForPakEndNSize + 4) = l_remainingSpace;
                 }
 
-                SBE_INFO(SBE_FUNC "Pak marker: [0x%08x] Size: [0x%08x] "\
+                SBE_INFO(SBE_FUNC "Pak marker:[0x%08x] Size:[0x%08x] ",\
                          *(uint32_t *)l_checkForPakEndNSize, *(uint32_t *)(l_checkForPakEndNSize + 4));
             }
+
+            SBE_INFO(SBE_FUNC "WriteStartAddr(wo ECC):[0x%08X] WriteWordsLen(wo ECC):[0x%08X]",
+                     l_imageStartAddr, IN_BYTES(l_writeWordsLen));
 
             // Perform SPI write
             l_fapiRc = spi_write_ecc(spiHandle,

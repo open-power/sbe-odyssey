@@ -45,11 +45,12 @@
 #endif
 
 // SPI commands
-#define SPI_SLAVE_WR_CMD  0x0200000000000000ULL
-#define SPI_SLAVE_RD_CMD  0x0300000000000000ULL
-#define SPI_SLAVE_RD_STAT 0x0500000000000000ULL
-#define SPI_SLAVE_WR_EN   0x0600000000000000ULL
-#define SPI_SLAVE_ID_CMD  0x9F00000000000000ULL
+#define SPI_SLAVE_WR_CMD   0x0200000000000000ULL
+#define SPI_SLAVE_RD_CMD   0x0300000000000000ULL
+#define SPI_SLAVE_RD_STAT  0x0500000000000000ULL
+#define SPI_SLAVE_WR_EN    0x0600000000000000ULL
+#define SPI_SLAVE_ID_CMD   0x9F00000000000000ULL
+#define SPI_SLAVE_FLG_STAT 0x7000000000000000ULL
 
 // Timeout values so not stuck in wait loops forever
 #ifdef __PPE__
@@ -417,11 +418,11 @@ fapi_try_exit:
 //              the duration of the read
 //waits for write complete flag of the spi-slave
 static fapi2::ReturnCode
-spi_wait_for_write_complete(SpiControlHandle& i_handle)
+spi_wait_for_write_complete(SpiControlHandle& i_handle, fapi2::buffer<uint64_t>& o_status)
 {
-    fapi2::buffer<uint64_t> data64 = 0;
-    fapi2::ReturnCode rc;
     bool l_ecc = false;
+
+    uint64_t timeout = SPI_TIMEOUT_MAX_WAIT_COUNT;
 
     is_ecc_on(i_handle, l_ecc);
 
@@ -434,46 +435,37 @@ spi_wait_for_write_complete(SpiControlHandle& i_handle)
     SEQ |= ((uint64_t)((i_handle.slave)) << 56);
     FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_SEQREG, SEQ));
 
-    while(1)
+    while(timeout)
     {
-        //Send the read status register command(0x05)
+        //Send the read flag status register command(0x70)
         FAPI_TRY(putScom( i_handle.target_chip,
-                          i_handle.base_addr + SPIM_TDR, SPI_SLAVE_RD_STAT));
+                          i_handle.base_addr + SPIM_TDR, SPI_SLAVE_FLG_STAT));
 
-        rc = spi_wait_for_tdr_empty(i_handle);
+        FAPI_TRY(spi_wait_for_tdr_empty(i_handle));
 
-        if (rc)
+        FAPI_TRY(spi_wait_for_rdr_full(i_handle));  //Wait for response
+
+        FAPI_TRY(getScom(i_handle.target_chip, i_handle.base_addr + SPIM_RDR, o_status));
+
+        if(o_status.getBit<56>())
         {
-            FAPI_ERR("Error in spi_wait_for_tdr_empty ");
-            fapi2::current_err = rc;
-            goto fapi_try_exit;
+            break; //Check for  RDY/BSY bit in the slave flag status register
         }
 
-        rc = spi_wait_for_rdr_full(i_handle);  //Wait for response
+        FAPI_TRY(spi_wait_for_idle(i_handle));
 
-        if (rc)
-        {
-            FAPI_ERR("Error in spi_wait_for_rdr_full ");
-            fapi2::current_err = rc;
-            goto fapi_try_exit;
-        }
-
-        FAPI_TRY(getScom(i_handle.target_chip, i_handle.base_addr + SPIM_RDR, data64));
-
-        if(!(data64.getBit<63>()))
-        {
-            break; //Check for  RDY/BSY bit in the slave status register
-        }
-
-        rc = spi_wait_for_idle(i_handle);
-
-        if (rc)
-        {
-            FAPI_ERR("Multiplexing Error in spi_wait_for_idle ");
-            fapi2::current_err = rc;
-            goto fapi_try_exit;
-        }
+        fapi2::delay(SPI_TIMEOUT_DELAY_NS, SPI_TIMEOUT_DELAY_NS_SIM_CYCLES);
+        timeout--;
     }
+
+    FAPI_ASSERT( timeout != 0,
+                 fapi2::SBE_SPI_HANG_TIMEOUT()
+                 .set_CHIP_TARGET(i_handle.target_chip)
+                 .set_SPI_ENGINE(i_handle.engine)
+                 .set_BASE_ADDRESS(i_handle.base_addr + SPIM_RDR)
+                 .set_STATUS_REGISTER(o_status)
+                 .set_TIMEOUT_MSEC(SPI_TIMEOUT_MAX_WAIT_COUNT),
+                 "spi_wait_for_write_complete timeout");
 
     if(l_ecc)
     {
@@ -493,10 +485,13 @@ static fapi2::ReturnCode
 spi_check_write_enable(SpiControlHandle& i_handle)
 {
     fapi2::buffer<uint64_t> data64 = 0;
-    fapi2::ReturnCode rc = fapi2::FAPI2_RC_SUCCESS;
     uint64_t SEQ = 0x1031411000000000ULL;
     SEQ |= ((uint64_t)((i_handle.slave)) << 56);
     bool l_ecc;
+
+    uint64_t timeout = SPI_TIMEOUT_MAX_WAIT_COUNT;
+
+    FAPI_INF("Enter spi_check_write_enable...");
 
     FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_SEQREG, SEQ));
 
@@ -507,19 +502,13 @@ spi_check_write_enable(SpiControlHandle& i_handle)
         spi_set_ecc_off(i_handle);
     }
 
-    while(1)
+    while(timeout != 0)
     {
         //Send the read status register command
         FAPI_TRY(putScom(i_handle.target_chip,
                          i_handle.base_addr + SPIM_TDR, SPI_SLAVE_RD_STAT));
-        rc = spi_wait_for_rdr_full(i_handle);
 
-        if (rc)
-        {
-            FAPI_ERR("Error in spi_wait_for_rdr_full");
-            fapi2::current_err = rc;
-            goto fapi_try_exit;
-        }
+        FAPI_TRY(spi_wait_for_rdr_full(i_handle));
 
         FAPI_TRY(getScom(i_handle.target_chip, i_handle.base_addr + SPIM_RDR, data64));
 
@@ -528,15 +517,20 @@ spi_check_write_enable(SpiControlHandle& i_handle)
             break; //Check for write enable latch bit
         }
 
-        rc = spi_wait_for_idle(i_handle);
+        FAPI_TRY(spi_wait_for_idle(i_handle));
 
-        if (rc)
-        {
-            FAPI_ERR("Multiplexing Error in spi_wait_for_idle ");
-            fapi2::current_err = rc;
-            goto fapi_try_exit;
-        }
+        fapi2::delay(SPI_TIMEOUT_DELAY_NS, SPI_TIMEOUT_DELAY_NS_SIM_CYCLES);
+        timeout--;
     }
+
+    FAPI_ASSERT( timeout != 0,
+                 fapi2::SBE_SPI_HANG_TIMEOUT()
+                 .set_CHIP_TARGET(i_handle.target_chip)
+                 .set_SPI_ENGINE(i_handle.engine)
+                 .set_BASE_ADDRESS(i_handle.base_addr + SPIM_RDR)
+                 .set_STATUS_REGISTER(data64)
+                 .set_TIMEOUT_MSEC(SPI_TIMEOUT_MAX_WAIT_COUNT),
+                 "spi_check_write_enable timeout");
 
     if(l_ecc)
     {
@@ -555,42 +549,22 @@ fapi_try_exit:
 static fapi2::ReturnCode
 spi_set_write_enable(SpiControlHandle& i_handle)
 {
-    fapi2::ReturnCode rc = fapi2::FAPI2_RC_SUCCESS;
-    uint64_t SEQ = 0x1031000000000000ULL;
+    uint64_t SEQ = 0x1031100000000000ULL;
     SEQ |= (static_cast<uint64_t>((i_handle.slave)) << 56);
     uint64_t TDR = SPI_SLAVE_WR_EN;
     uint64_t CNT = 0x0;
+
+    FAPI_INF("Enter spi_set_write_enable...");
 
     FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_SEQREG, SEQ));
     FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_TDR, TDR));
     FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_COUNTERREG, CNT));
 
-    rc = spi_wait_for_tdr_empty(i_handle);
+    FAPI_TRY(spi_wait_for_tdr_empty(i_handle));
 
-    if (rc)
-    {
-        FAPI_ERR("Error in spi_wait_for_tdr_empty ");
-        fapi2::current_err = rc;
-        goto fapi_try_exit;
-    }
+    FAPI_TRY(spi_wait_for_idle(i_handle));
 
-    rc = spi_wait_for_idle(i_handle);
-
-    if (rc)
-    {
-        FAPI_ERR("Multiplexing Error in spi_wait_for_idle ");
-        fapi2::current_err = rc;
-        goto fapi_try_exit;
-    }
-
-    rc = spi_check_write_enable(i_handle);
-
-    if (rc)
-    {
-        FAPI_ERR("Error in spi_check_write_enable");
-        fapi2::current_err = rc;
-        goto fapi_try_exit;
-    }
+    FAPI_TRY(spi_check_write_enable(i_handle));
 
 fapi_try_exit:
     return fapi2::current_err;
@@ -1242,7 +1216,6 @@ fapi2::ReturnCode spi_read_manufacturer_id(SpiControlHandle& i_handle, uint8_t* 
         goto fapi_try_exit;
     }
 
-
     if (l_ecc)
     {
         spi_set_ecc_on(i_handle);
@@ -1367,28 +1340,14 @@ spi_read_secure(SpiControlHandle& i_handle, uint32_t i_address, uint32_t i_lengt
     if (i_length > 8)
     {
         //one time zeros to trigger read
-        rc = spi_wait_for_tdr_empty(i_handle);
-
-        if (rc)
-        {
-            FAPI_ERR("Error in spi_wait_for_tdr_empty ");
-            fapi2::current_err = rc;
-            goto fapi_try_exit;
-        }
+        FAPI_TRY(spi_wait_for_tdr_empty(i_handle));
 
         FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_TDR, 0x0ULL));
     }
 
     for (uint32_t i = 0; i < i_length; i += 8)
     {
-        rc = spi_wait_for_rdr_full(i_handle);
-
-        if (rc)
-        {
-            FAPI_ERR("Error in spi_wait_for_rdr_full");
-            fapi2::current_err = rc;
-            goto fapi_try_exit;
-        }
+        FAPI_TRY(spi_wait_for_rdr_full(i_handle));
 
         FAPI_TRY(getScom(i_handle.target_chip, i_handle.base_addr + SPIM_RDR, data64));
         FAPI_DBG("spi_read_secure: data64 = [0x%08X%08X]", data64 >> 32, data64 & 0xFFFFFFFF);
@@ -1400,21 +1359,14 @@ spi_read_secure(SpiControlHandle& i_handle, uint32_t i_address, uint32_t i_lengt
         FAPI_DBG("spi_read_secure: o_buffer[4] = [0x%08X]", o_buffer[4]);
     }
 
-    rc = spi_wait_for_idle(i_handle);
+    FAPI_TRY(spi_wait_for_idle(i_handle));
 
-    if (rc)
-    {
-        FAPI_ERR("Multiplexing Error in spi_wait_for_idle ");
-        fapi2::current_err = rc;
-        goto fapi_try_exit;
-    }
+    FAPI_DBG("spi_read_secure: ((uint32_t*)o_buffer)[0] = [0x%08X]", ((uint32_t*)o_buffer)[0]);
 
     // Restore the default counter and seq used by the side band path
     FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_COUNTERREG, 0x0ULL));
     FAPI_TRY(putScom(i_handle.target_chip,
                      i_handle.base_addr + SPIM_SEQREG, SPI_DEFAULT_SEQ));
-
-    FAPI_DBG("spi_read_secure: ((uint32_t*)o_buffer)[0] = [0x%08X]", ((uint32_t*)o_buffer)[0]);
 
 fapi_try_exit:
     return fapi2::current_err;
@@ -1492,52 +1444,36 @@ spi_read( SpiControlHandle& i_handle, uint32_t i_address, uint32_t i_length,
 fapi2::ReturnCode
 spi_write_prep_seq(SpiControlHandle& i_handle, uint64_t i_address, uint32_t i_length)
 {
-    uint32_t rc = fapi2::FAPI2_RC_SUCCESS;
-
     uint64_t SEQ;
     uint64_t CNT;
     uint64_t TDR = SPI_SLAVE_WR_CMD | (((static_cast<uint64_t>(i_address) << 32) & 0x00ffffffffffffffULL));
 
     if (i_length < 8)
     {
-        SEQ = 0x1034300000000000ULL | ((uint64_t)(i_length % 8) << 40);
+        SEQ = 0x1034301000000000ULL | ((uint64_t)(i_length % 8) << 40);
         CNT = 0;
     }
     else if (i_length == 8)
     {
-        SEQ = 0x1034380000000000ULL;
+        SEQ = 0x1034381000000000ULL;
         CNT = 0;
     }
     else if (i_length % 8 != 0)
     {
-        SEQ = 0x103438E230000000ULL | ((uint64_t)(i_length % 8) << 24);
+        SEQ = 0x103438E230100000ULL | ((uint64_t)(i_length % 8) << 24);
         CNT = ((uint64_t)((i_length / 8) - 1) << 32) | ((uint64_t)(0x6) << 12);
     }
     else
     {
-        SEQ = 0x103438E200000000ULL;
+        SEQ = 0x103438E210000000ULL;
         CNT = ((uint64_t)((i_length / 8) - 1) << 32) | ((uint64_t)(0x6) << 12);
     }
 
     SEQ |= (static_cast<uint64_t>(i_handle.slave) << 56);
 
-    rc = spi_set_write_enable(i_handle);
+    FAPI_TRY(spi_set_write_enable(i_handle));
 
-    if (rc)
-    {
-        FAPI_ERR("Error from spi_set_write_enable");
-        fapi2::current_err = rc;
-        goto fapi_try_exit;
-    }
-
-    rc = spi_wait_for_idle(i_handle);
-
-    if (rc)
-    {
-        FAPI_ERR("Multiplexing Error in spi_wait_for_idle");
-        fapi2::current_err = rc;
-        goto fapi_try_exit;
-    }
+    FAPI_TRY(spi_wait_for_idle(i_handle));
 
     FAPI_DBG("spi_write_prep_seq: SEQ = [0x%08X%08X]", SEQ >> 32, SEQ & 0xFFFFFFFF);
     FAPI_DBG("spi_write_prep_seq: CNT = [0x%08X%08X]", CNT >> 32, CNT & 0xFFFFFFFF);
@@ -1548,17 +1484,10 @@ spi_write_prep_seq(SpiControlHandle& i_handle, uint64_t i_address, uint32_t i_le
     FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_COUNTERREG, CNT));
     FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_TDR, TDR));
 
-    rc = spi_wait_for_tdr_empty(i_handle); //Wait for previous TDR to be sent
-
-    if (rc)
-    {
-        FAPI_ERR("Multiplexing Error in spi_wait_for_tdr_empty");
-        fapi2::current_err = rc;
-        goto fapi_try_exit;
-    }
+    FAPI_TRY(spi_wait_for_tdr_empty(i_handle)); //Wait for previous TDR to be sent
 
 fapi_try_exit:
-    return rc;
+    return fapi2::current_err;
 }
 
 
@@ -1568,37 +1497,25 @@ fapi_try_exit:
 fapi2::ReturnCode
 spi_write_post_seq(SpiControlHandle& i_handle)
 {
-    uint32_t rc = fapi2::FAPI2_RC_SUCCESS;
-    rc = spi_wait_for_tdr_empty(i_handle); //Wait for previous TDR to be sent
-
-    if (rc)
-    {
-        FAPI_ERR("Multiplexing Error in spi_wait_for_tdr_empty");
-        fapi2::current_err = rc;
-        goto fapi_try_exit;
-    }
+    fapi2::buffer<uint64_t> data64 = 0;
+    FAPI_TRY(spi_wait_for_tdr_empty(i_handle)); //Wait for previous TDR to be sent
 
     // Wait until machine is no longer executing
-    rc = spi_wait_for_idle(i_handle);
+    FAPI_TRY(spi_wait_for_idle(i_handle));
 
-    if (rc)
-    {
-        FAPI_ERR("Multiplexing Error in spi_wait_for_idle ");
-        fapi2::current_err = rc;
-        goto fapi_try_exit;
-    }
+    FAPI_TRY(spi_wait_for_write_complete(i_handle, data64));
 
-    rc = spi_wait_for_write_complete(i_handle);
-
-    if (rc)
-    {
-        FAPI_ERR("Error in spi_wait_for_write_complete ");
-        fapi2::current_err = rc;
-        goto fapi_try_exit;
-    }
+    // Check for program status bit
+    FAPI_ASSERT( (data64.getBit<59>() == 0),
+                 fapi2::SBE_SPI_OPR_COMPLETION_CHECK_ERROR()
+                 .set_CHIP_TARGET(i_handle.target_chip)
+                 .set_SPI_ENGINE(i_handle.engine)
+                 .set_BASE_ADDRESS(i_handle.base_addr + SPIM_RDR)
+                 .set_STATUS_REGISTER(data64),
+                 "spi_write_post_seq error" );
 
 fapi_try_exit:
-    return rc;
+    return fapi2::current_err;
 }
 
 
@@ -1608,18 +1525,10 @@ fapi_try_exit:
 fapi2::ReturnCode
 spi_write_secure(SpiControlHandle& i_handle, uint32_t i_address, uint8_t* i_data, uint32_t i_length)
 {
-    uint32_t rc = fapi2::FAPI2_RC_SUCCESS;
-
     do
     {
         // Get write prep seq
-        rc = spi_write_prep_seq(i_handle, i_address, i_length);
-
-        if (rc)
-        {
-            FAPI_ERR("Error while preparing for SPI write");
-            goto fapi_try_exit;
-        }
+        FAPI_TRY(spi_write_prep_seq(i_handle, i_address, i_length));
 
         uint64_t l_temp = 0;
         fapi2::buffer<uint64_t> TDR = 0;
@@ -1631,23 +1540,17 @@ spi_write_secure(SpiControlHandle& i_handle, uint32_t i_address, uint8_t* i_data
             TDR = l_temp;
 
             FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_TDR, TDR));
-            spi_wait_for_tdr_empty(i_handle);
+            FAPI_TRY(spi_wait_for_tdr_empty(i_handle));
             l_temp = 0;
         }
 
         // Get write post seq
-        rc = spi_write_post_seq(i_handle);
-
-        if (rc)
-        {
-            FAPI_ERR("Error while executing post write checking");
-            goto fapi_try_exit;
-        }
+        FAPI_TRY(spi_write_post_seq(i_handle));
     }
     while(0);
 
 fapi_try_exit:
-    return rc;
+    return fapi2::current_err;
 }
 
 
@@ -1688,14 +1591,7 @@ spi_write(SpiControlHandle& i_handle, uint32_t i_address,
 
         FAPI_DBG("spi_write: Address= [0x%08X] CurrBuf=[0x%08X] Len=[0x%08X]", cur_address, cur_buf_byte, write_len);
 
-        rc = spi_write_secure (i_handle, cur_address, &i_buffer[cur_buf_byte], write_len);
-
-        if (rc)
-        {
-            FAPI_ERR("Error writing data via SPI");
-            fapi2::current_err = rc;
-            goto fapi_try_exit;
-        }
+        FAPI_TRY(spi_write_secure (i_handle, cur_address, &i_buffer[cur_buf_byte], write_len));
 
         cur_address   += write_len;
         remaining_len -= write_len;
@@ -1703,14 +1599,7 @@ spi_write(SpiControlHandle& i_handle, uint32_t i_address,
     }
     while(remaining_len > 0);
 
-    rc = spi_wait_for_idle(i_handle);
-
-    if (rc)
-    {
-        FAPI_ERR("Multiplexing Error in spi_wait_for_idle ");
-        fapi2::current_err = rc;
-        goto fapi_try_exit;
-    }
+    FAPI_TRY(spi_wait_for_idle(i_handle));
 
     // Restore the default counter and sdeq used by the side band path
     FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_COUNTERREG, 0x0ULL));
@@ -1770,7 +1659,7 @@ fapi_try_exit:
 // Erases 4kb sector in which address is located
 fapi2::ReturnCode spi_sector_erase(SpiControlHandle& i_handle, uint32_t i_address)
 {
-    fapi2::ReturnCode rc  = fapi2::FAPI2_RC_SUCCESS;
+    fapi2::buffer<uint64_t> data64 = 0;
     uint32_t address = i_address;
     uint64_t SEQ;
     uint64_t TDR;
@@ -1783,14 +1672,7 @@ fapi2::ReturnCode spi_sector_erase(SpiControlHandle& i_handle, uint32_t i_addres
         return fapi2::FAPI2_RC_INVALID_PARAMETER;
     }
 
-    rc = spi_set_write_enable(i_handle);
-
-    if (rc)
-    {
-        FAPI_ERR("Error from spi_set_write_enable");
-        fapi2::current_err = rc;
-        goto fapi_try_exit;
-    }
+    FAPI_TRY(spi_set_write_enable(i_handle));
 
     SEQ = SPI_ERASE_SEQ     | ((uint64_t)i_handle.slave << 56);
     TDR = SPI_SEC_ERASE_OP  | (((uint64_t)address << 32) & 0x00ffffffffffffffULL);
@@ -1798,25 +1680,20 @@ fapi2::ReturnCode spi_sector_erase(SpiControlHandle& i_handle, uint32_t i_addres
     FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_SEQREG, SEQ));
     FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_TDR, TDR));
 
-    rc = spi_wait_for_tdr_empty(i_handle);
+    FAPI_TRY(spi_wait_for_tdr_empty(i_handle));
 
-    if (rc)
-    {
-        FAPI_ERR("Error in spi_wait_for_tdr_empty ");
-        fapi2::current_err = rc;
-        goto fapi_try_exit;
-    }
+    FAPI_TRY(spi_wait_for_idle(i_handle));
 
-    rc = spi_wait_for_idle(i_handle);
+    FAPI_TRY(spi_wait_for_write_complete(i_handle, data64));
 
-    if (rc)
-    {
-        FAPI_ERR("Multiplexing Error in spi_wait_for_idle ");
-        fapi2::current_err = rc;
-        goto fapi_try_exit;
-    }
-
-    fapi2::delay(1000000000, 10000000); // 1 S
+    // Check for erase status bit
+    FAPI_ASSERT( (data64.getBit<58>() == 0),
+                 fapi2::SBE_SPI_OPR_COMPLETION_CHECK_ERROR()
+                 .set_CHIP_TARGET(i_handle.target_chip)
+                 .set_SPI_ENGINE(i_handle.engine)
+                 .set_BASE_ADDRESS(i_handle.base_addr + SPIM_RDR)
+                 .set_STATUS_REGISTER(data64),
+                 "spi_sector_erase error" );
 
     // Restore the default counter and seq used by the side band path
     FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_COUNTERREG, 0x0ULL));
@@ -1835,7 +1712,7 @@ fapi_try_exit:
 // Erases 32kb block in which address is located
 fapi2::ReturnCode spi_block_erase(SpiControlHandle& i_handle, uint32_t i_address)
 {
-    fapi2::ReturnCode rc  = fapi2::FAPI2_RC_SUCCESS;
+    fapi2::buffer<uint64_t> data64 = 0;
     uint32_t address = i_address;
     uint64_t SEQ;
     uint64_t TDR;
@@ -1848,14 +1725,7 @@ fapi2::ReturnCode spi_block_erase(SpiControlHandle& i_handle, uint32_t i_address
         return fapi2::FAPI2_RC_INVALID_PARAMETER;
     }
 
-    rc = spi_set_write_enable(i_handle);
-
-    if (rc)
-    {
-        FAPI_ERR("Error from spi_set_write_enable");
-        fapi2::current_err = rc;
-        goto fapi_try_exit;
-    }
+    FAPI_TRY(spi_set_write_enable(i_handle));
 
     SEQ = SPI_ERASE_SEQ     | ((uint64_t)i_handle.slave << 56);
     TDR = SPI_BLK_ERASE_OP  | (((uint64_t)address << 32) & 0x00ffffffffffffffULL);
@@ -1863,25 +1733,20 @@ fapi2::ReturnCode spi_block_erase(SpiControlHandle& i_handle, uint32_t i_address
     FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr +  SPIM_SEQREG, SEQ));
     FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr +  SPIM_TDR, TDR));
 
-    rc = spi_wait_for_tdr_empty(i_handle);
+    FAPI_TRY(spi_wait_for_tdr_empty(i_handle));
 
-    if (rc)
-    {
-        FAPI_ERR("Error in spi_wait_for_tdr_empty ");
-        fapi2::current_err = rc;
-        goto fapi_try_exit;
-    }
+    FAPI_TRY(spi_wait_for_idle(i_handle));
 
-    rc = spi_wait_for_idle(i_handle);
+    FAPI_TRY(spi_wait_for_write_complete(i_handle, data64));
 
-    if (rc)
-    {
-        FAPI_ERR("Multiplexing Error in spi_wait_for_idle ");
-        fapi2::current_err = rc;
-        goto fapi_try_exit;
-    }
-
-    fapi2::delay(1000000000, 10000000); // 1 Sec
+    // Check for erase status bit
+    FAPI_ASSERT( (data64.getBit<58>() == 0),
+                 fapi2::SBE_SPI_OPR_COMPLETION_CHECK_ERROR()
+                 .set_CHIP_TARGET(i_handle.target_chip)
+                 .set_SPI_ENGINE(i_handle.engine)
+                 .set_BASE_ADDRESS(i_handle.base_addr + SPIM_RDR)
+                 .set_STATUS_REGISTER(data64),
+                 "spi_block_erase error" );
 
     // Restore the default counter and seq used by the side band path
     FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_COUNTERREG, 0x0ULL));
