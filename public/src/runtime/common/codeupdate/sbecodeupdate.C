@@ -460,14 +460,14 @@ uint32_t getPakEntryFromPartitionTable(const uint8_t i_partition,
 
         // Check for matching partition magic word in partition table
         // TODO:JIRA-PFSBE-301 Check for version in partition table
-        if (partition_table_magic_word == (uint32_t)l_partitionTable->partitionTitle)
+        if (partition_table_magic_word != *(uint32_t *)(l_partitionTable->partitionTitle))
         {
-            SBE_INFO(SBE_FUNC "Partition magic word mismatch."\
-                     "Expected:[0x%08x] Original:[0x%08x]."\
-                     "Partition table start addr:[0x%08x]",
-                     *(uint32_t *)partition_table_magic_word,
-                     *(uint32_t *)l_partitionTable->partitionTitle,
-                     l_filePtr);
+            SBE_ERROR(SBE_FUNC "Partition magic word mismatch."\
+                      "Expected:[0x%08x] Original:[0x%08x]."\
+                      "Partition table start addr:[0x%08x]",
+                      partition_table_magic_word,
+                      *(uint32_t *)l_partitionTable->partitionTitle,
+                      l_filePtr);
             l_rc = SBE_SEC_CU_PARTITION_MAGIC_WORD_MISMATCH;
             break;
         }

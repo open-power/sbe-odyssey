@@ -78,5 +78,22 @@
         </callout>
     </hwpError>
     <!-- *****************************************************************-->
+    <hwpError>
+        <sbeError/>
+        <rc>RC_SBE_SPI_OPR_COMPLETION_CHECK_ERROR</rc>
+        <description>
+            Procedure: Error calling p10_sbe_spi_cmd HWP
+            Error due to SPI operation failed to complete.
+        </description>
+        <ffdc>CHIP_TARGET</ffdc>
+        <ffdc>SPI_ENGINE</ffdc>
+        <ffdc>BASE_ADDRESS</ffdc>
+        <ffdc>STATUS_REGISTER</ffdc>
+        <callout>
+            <procedure>CODE</procedure>
+            <priority>HIGH</priority>
+        </callout>
+    </hwpError>
+    <!-- *****************************************************************-->
 
 </hwpErrors>
