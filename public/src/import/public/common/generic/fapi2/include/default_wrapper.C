@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -193,7 +193,13 @@ int main(int argc, char* argv[])
     // unsupported arguments left over?
     if (argc != 1)
     {
-        output("Unknown/unsupported arguments specified!");
+        output("Unknown/unsupported arguments specified:");
+
+        for (int i = 1; i < argc; i++)
+        {
+            output("%s", argv[i]);
+        }
+
         help();
         rc = ECMD_INVALID_ARGS;
         goto out;
