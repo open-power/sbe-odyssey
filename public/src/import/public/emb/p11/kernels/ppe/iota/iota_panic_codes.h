@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -140,15 +140,15 @@ typedef enum
     IOTA_UNUSED_0501 = 0x0501,
     IOTA_UNUSED_0502 = 0x0502,
     IOTA_UNUSED_0503 = 0x0503,
-    IOTA_UNUSED_0504 = 0x0504,
+    PMHW_CODE_BUG                      = 0x0504,
     PMHW_PPE_TYPE_MISMATCH             = 0x0505,
     PMHW_PPE_INST_MISMATCH             = 0x0506,
     PMHW_INSTANCE_MISMATCH             = 0x0507,
     PMHW_IRQ_ROUTING_ERROR             = 0x0508,
     PMHW_XIR_INVALID_POINTER           = 0x0509,
     PMHW_XIR_INVALID_GPE               = 0x050a,
-    IOTA_UNUSED_050d = 0x050d,
-    IOTA_UNUSED_051c = 0x051c,
+    PMHW_PSPI_LINK_DISABLED            = 0x050d,
+    PMHW_PSPI_UNSUPPORTED_CHIP_TYPE    = 0x051c,
     IOTA_UNUSED_051d = 0x051d,
     IOTA_UNUSED_051e = 0x051e,
     IOTA_UNUSED_051f = 0x051f,
