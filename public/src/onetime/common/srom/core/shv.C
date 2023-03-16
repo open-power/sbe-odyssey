@@ -304,10 +304,17 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     // test for machine specific matching ecid
     if(shvReq->controlData.ecidCheck)
     {
-        if(memcmp(prefix->ecid,shvReq->hwEcid,ECID_SIZE))
+        uint8_t ecidZeroBlock[ECID_SIZE];
+        memset(ecidZeroBlock, 0x00, ECID_SIZE);
+
+        // Perform ECID check only if ECID value in secure header is non zero
+        if(memcmp(prefix->ecid,ecidZeroBlock,ECID_SIZE))
         {
-            SBE_ERROR(SBE_FUNC "FAILED : unauthorized prefix ecid");
-            VERIFY_FAILED(SHV_RC_PREFIX_ECID_TEST);
+            if(memcmp(prefix->ecid,shvReq->hwEcid,ECID_SIZE))
+            {
+                SBE_ERROR(SBE_FUNC "FAILED : unauthorized prefix ecid");
+                VERIFY_FAILED(SHV_RC_PREFIX_ECID_TEST);
+            }
         }
     }
 
@@ -402,10 +409,17 @@ static ROM_response ROM_verify(shvReq_t *shvReq, shvRsp_t *shvRsp)
     // test for machine specific matching ecid
     if(shvReq->controlData.ecidCheck)
     {
-        if(memcmp(header->ecid,shvReq->swEcid,ECID_SIZE))
+        uint8_t ecidZeroBlock[ECID_SIZE];
+        memset(ecidZeroBlock, 0x00, ECID_SIZE);
+
+        // Perform ECID check only if ECID value in secure header is non zero
+        if(memcmp(header->ecid,ecidZeroBlock,ECID_SIZE))
         {
-            SBE_ERROR(SBE_FUNC "FAILED : unauthorized SW ecid");
-            VERIFY_FAILED(SHV_RC_SW_ECID_TEST);
+            if(memcmp(header->ecid,shvReq->swEcid,ECID_SIZE))
+            {
+                SBE_ERROR(SBE_FUNC "FAILED : unauthorized SW ecid");
+                VERIFY_FAILED(SHV_RC_SW_ECID_TEST);
+            }
         }
     }
 
