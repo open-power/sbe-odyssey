@@ -120,6 +120,13 @@ SECTIONS {
         *(.sdata.*)
         . = ALIGN(DOUBLE_WORD_SIZE);
     }
+
+    .pad . : {
+        // reserve the bldr.bin to 32KB and zero pad
+        BYTE(0)
+        . = ALIGN(BOOTLOADER_ORIGIN + 0x8000);
+    }
+
     /* Size of initialised data section i.e. .sdata */
     _sdata_size = . - _sda_start;
 
