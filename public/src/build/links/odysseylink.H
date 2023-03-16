@@ -129,7 +129,7 @@
                /* Pointer to current image's metadata (4B)    */
                /***********************************************/
 #define ROUND_DOWN(value, grain)        ((value) & ~((grain) - 1))
-#define BOOTLOADER_SIZE                 0xC800 // 50 KB
+#define BOOTLOADER_SIZE                 0x10000 // 64 KB (including both bldr.bin (32K fixed now) and .bss+.sbss (around 25K now))
 #define BLDR_PK_TRACE_SIZE              0x1000  // Size: 4KB
 #define BLDR_PK_TRACE_SIZE_WITH_HEADER  (PK_TRACE_STRUCT_SIZE + BLDR_PK_TRACE_SIZE)
 
