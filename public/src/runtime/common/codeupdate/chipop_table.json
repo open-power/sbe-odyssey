@@ -4,19 +4,22 @@
         "cmdClass":"AE",
         "command":"0x01",
         "function":"sbeGetCodeLevels",
-        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
+        "headerFile":"sbecodeupdate.H"
     },
     {
         "cmdClass":"AE",
         "command":"0x02",
         "function":"sbeUpdateImage",
-        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
+        "headerFile":"sbecodeupdate.H"
     },
     {
         "cmdClass":"AE",
         "command":"0x03",
         "function":"sbeSyncPartition",
-        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
+        "headerFile":"sbecodeupdate.H"
     }
     ]
 }

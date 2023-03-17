@@ -4,31 +4,36 @@
         "cmdClass":"AD",
         "command":"0x03",
         "function":"sbeUpdateAttr",
-        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
+        "headerFile":"sbecmdupdateattr.H"
         },
         {
         "cmdClass":"F1",
         "command":"0x01",
         "function":"sbeBist",
-        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
+        "headerFile":"sbecmdbist.H"
         },
         {
         "cmdClass":"F1",
         "command":"0x02",
         "function":"sbePakPush",
-        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
+        "headerFile":"sbecmdpak.H"
         },
         {
         "cmdClass":"F1",
         "command":"0x03",
         "function":"sbePakPop",
-        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
+        "headerFile":"sbecmdpak.H"
         },
         {
         "cmdClass":"F1",
         "command":"0x04",
         "function":"sbeDtsRead",
-        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"]
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
+        "headerFile":"sbecmddtsread.H"
         }
     ]
 }
