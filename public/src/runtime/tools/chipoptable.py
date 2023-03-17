@@ -71,7 +71,9 @@ chipop_table_template = """
 #include "fences.H"
 #include "cmd_class_init.H"
 #include "chipop_handler.H"
-#include "chipop_headers.H"
+#include <stdint.h>
+#include <stddef.h>$$$@@@ for hdrFile in headers @@@$$$
+#include "$@ hdrFile @$"$$$@@@endfor@@@$$$
 
 $$$@@@ for cmd_cls, cmd_info in command_arr.items() @@@$$$
 CMD_ARR($@cmd_cls@$,
@@ -121,6 +123,7 @@ class ChipopData():
             self.cmdClass = chipop_data["cmdClass"]
             self.command = chipop_data["command"]
             self.function_name = chipop_data.get('function', '')
+            self.headerFile = chipop_data.get('headerFile','')
             self.override = chipop_data.get("override", False)
 
             if("fences" not in chipop_data.keys()):
@@ -161,6 +164,12 @@ class ChipopData():
         Getter for fences attribute (fences)
         """
         return self.fences
+
+    def getHeaderFile(self):
+        """
+        Getter for headerFile (headerFile)
+        """
+        return self.headerFile
 
     ######SETTERS#####
     def setOverride(self, override):
@@ -413,27 +422,15 @@ class FileGeneration():
         return self.file_path
 
     #####FUNCTIONS#####
-    def generateHeaderFile(self, combined_fences:dict)->Exception:
-        """
-        Function to generate chipop header file
-        """
-        if(not FenceConflictHandler(combined_fences).checkFenceConflict()):
-            template = templateUtil.customTemplate(fence_enums_template)
-            items = template.render(combined_fence_jinja = combined_fences)
-            with open(self.getFilePath(),"w") as file_pointer:
-                file_pointer.write(items)
-            print("{} file generated in {}".format(
-                  self.getFileName(), self.getDirPath() ) )
-        else:
-            raise Exception("Check chipops have conflicting fence states")
 
     def generateCFile(self, chipops_data:'list[ChipopData]')->dict:
         """
         Function to generate chipop C file
         """
-        sorted_cmd_classes = set([chipop.getCmdClass() for chipop in chipops_data])
-        sorted_cmd_classes = list(sorted_cmd_classes)
+        sorted_cmd_classes = list({chipop.getCmdClass() for chipop in chipops_data})
         sorted_cmd_classes.sort()
+        headerFiles = list({chipop.getHeaderFile() for chipop in chipops_data })
+        headerFiles.sort()
         my_json_combined = []
         for chipop in chipops_data:
             del chipop.__dict__["override"]
@@ -448,7 +445,7 @@ class FileGeneration():
                  "fences":chipop.getFences()}
             cmd_arr[cmd_class].append(t)
         template_c = templateUtil.customTemplate(chipop_table_template)
-        items = template_c.render(command_arr = cmd_arr)
+        items = template_c.render(command_arr = cmd_arr, headers = headerFiles)
         # write to file
         with open(self.getFilePath(), "w") as file_pointer:
             file_pointer.write(items)
@@ -509,10 +506,10 @@ if __name__ == "__main__":
                         list of json should be in hierarchical order, ie,
                         common json first""",
                         required = True)
+
     args = parser.parse_args()
     platform_genfile_path = args.genfile_dir
     chipop_json_list = args.chipop_list
-
     # json extraction
     chipop_json_object = JsonExtractor(chipop_json_list)
     chipop_json_object.extractJson()
@@ -522,8 +519,8 @@ if __name__ == "__main__":
 
     # generating the files
     # generate chipop_table.C - this class has CMD_ARR's for differenct chipops
-    c_file_gen_object= FileGeneration(platform_genfile_path, '/chipop_table.C')
-    my_json_combined,sorted_cmd_class = c_file_gen_object.generateCFile(chipop_data)
+    file_gen_object= FileGeneration(platform_genfile_path, '/chipop_table.C')
+    my_json_combined,sorted_cmd_class = file_gen_object.generateCFile(chipop_data)
 
     # generate cmd_class_init.H - this class has default initialization for command class
     cmd_class_default_init = FileGeneration(platform_genfile_path, '/cmd_class_init.H')
