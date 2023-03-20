@@ -51,8 +51,12 @@ SECTIONS {
         KEEP(*(.bldr_metadata));
     }
 
+    . = BOOTLOADER_ORIGIN + 0x400;
     /* Text section */
    .text . : {
+        *\libodysseybldr.a:(.text.__sbe_machine_check_handler)
+        *\libodysseybldr.a:(.text.__sbe_register_saveoff)
+        *\libodysseyekbcmn.a:(.text)
         *(.text)
         *(.text.*)
         *(.dtors)
