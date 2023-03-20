@@ -50,7 +50,9 @@
 #define UPDATE_SBE_PROGRESS_CODE(value) \
         SBE::updateProgressCode((value + shvReq->shvProgressCodeStartOffset)); \
 
-#define MINIMUM_DILITHIUM_SCRATCH_SIZE (150 * 1024)
+
+////polyvec_max *scratch = (polyvec_max *)sbeScratch.scratch_alloc(sizeof(polyvec_max) * 11);
+#define MINIMUM_DILITHIUM_SCRATCH_SIZE (sizeof(polyvec_max) * 11)
 
 /**
  * @brief Validate prefix & SW/FW version, hash and signature algo version
@@ -120,7 +122,7 @@ static int dilithium_wrap(const unsigned char *sig,
       SBE_ERROR("Couldn't reserve enough stack space!!!!");
       return -1;
     } else {
-      SBE_INFO("No problemo with stack!!!");
+      SBE_INFO("Stack allocation succeeded!");
     }
 
     polyvec_max *mat01   = w1 + 1;
@@ -139,8 +141,8 @@ static int dilithium_wrap(const unsigned char *sig,
 
     sbeScratch.scratch_free((void *)scratch);
 
-    retval = !!(retval > 0); //..1.. ..1..
-
+    retval = !!(retval > 0);
+    
     return retval;
 }
 
