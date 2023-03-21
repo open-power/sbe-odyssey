@@ -231,6 +231,8 @@ typedef struct sbeResponseFfdc
         seqId = 0;
         cmdClass = SBE_CMD_CLASS_UNKNOWN;
         cmd = SBE_CMD_UNKNOWN;
+        sbeLogId = 0;
+        severity = 0;
         chipId = 0;  // @TODO JIRA: PFSBE-351
         lenInWords  = ( sizeof(uint32_t )    // For magicBytes + lenInWords
                         + sizeof(uint32_t)   // For SeqId + CmdClass + Cmd
