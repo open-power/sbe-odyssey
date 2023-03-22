@@ -259,6 +259,13 @@ if [ -z $SV ]; then
         SV=$BR2_OPENPOWER_SIGNED_SECURITY_VERSION
         echo "***INFO | SBE | signHashList : SV(Secure Version) passed via " \
              "BR2_OPENPOWER_SIGNED_SECURITY_VERSION as $SV"
+
+    # To allow for boot loader signing with a different SV you can set the following env
+    elif [ "$COMPONENT_ID" = "BOOT_LDR" -a ! -z $ODY_BOOT_LDR_SECURITY_VERSION ]; then
+        SV=$ODY_BOOT_LDR_SECURITY_VERSION
+        echo "***INFO | SBE | signHashList : SV(Secure Version) passed via " \
+             "ODY_BOOT_LDR_SECURITY_VERSION as $SV for boot loader"
+
     else
         SV=0
         echo "***INFO | SBE | signHashList : SV(Secure Version) not entered. Defaulting to $SV"

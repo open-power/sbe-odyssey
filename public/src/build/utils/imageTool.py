@@ -186,7 +186,7 @@ def signPak(args:argparse.Namespace):
             genSecureHdr = f"{signHashTool} -s {signPakWorkDir}/scratch \
                             -i {hashListFile} -o {signPakWorkDir} \
                             -c {signPakCompId.get(pakName)} \
-                            -f {args.signMode} -S {args.secureVersion}"
+                            -f {args.signMode} "
             runCmd(genSecureHdr)
 
             # Generate measured.hash file by using generated secure.hdr file
@@ -367,8 +367,6 @@ subCmd.add_argument("--excludeFiles", nargs="*", action=ExcludeFileList,
 subCmd.add_argument("--signMode", choices=['Development', 'Production'],
                                   default='Development', help="Signing mode "
                                   "(default: %(default)s)")
-subCmd.add_argument("--secureVersion", default='0', help="Security version "
-                                       "to sign (default: %(default)s)")
 subCmd.set_defaults(func=signPak)
 
 # Add "pakHash" sub command
