@@ -51,6 +51,9 @@
 #define SPI_SLAVE_WR_EN    0x0600000000000000ULL
 #define SPI_SLAVE_ID_CMD   0x9F00000000000000ULL
 #define SPI_SLAVE_FLG_STAT 0x7000000000000000ULL
+#define SPI_SLAVE_FLG_CLR  0x5000000000000000ULL
+
+#define SECTOR_NUM_CHECK(sector, address) ((address >= (sector * NOR_FLASH_SECTOR_SIZE)) && (address < ((sector + 1) * NOR_FLASH_SECTOR_SIZE)))
 
 // Timeout values so not stuck in wait loops forever
 #ifdef __PPE__
@@ -414,11 +417,134 @@ fapi_try_exit:
 }
 
 
+///////////////////////////////////////////
+/////// spi_read_flag_status //////////////
+///////////////////////////////////////////
+static fapi2::ReturnCode
+spi_read_flag_status(SpiControlHandle& i_handle, fapi2::buffer<uint64_t>& o_status)
+{
+    bool l_ecc = false;
+    uint64_t SEQ = 0x1031411000000000ULL;
+    SEQ |= ((uint64_t)((i_handle.slave)) << 56);
+
+    FAPI_DBG("Enter spi_read_flag_status...");
+
+    is_ecc_on(i_handle, l_ecc);
+
+    if (l_ecc)
+    {
+        spi_set_ecc_off(i_handle);
+    }
+
+    //Send the read flag status register command(0x70)
+    FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_SEQREG, SEQ));
+    FAPI_TRY(putScom( i_handle.target_chip, i_handle.base_addr + SPIM_TDR, SPI_SLAVE_FLG_STAT));
+    FAPI_TRY(spi_wait_for_tdr_empty(i_handle));
+
+    FAPI_TRY(spi_wait_for_rdr_full(i_handle));  //Wait for response
+
+    FAPI_TRY(getScom(i_handle.target_chip, i_handle.base_addr + SPIM_RDR, o_status));
+
+    if(l_ecc)
+    {
+        spi_set_ecc_on(i_handle);
+    }
+
+fapi_try_exit:
+    return fapi2::current_err;
+}
+
+
+///////////////////////////////////////////
+/////// spi_clear_flag_status /////////////
+///////////////////////////////////////////
+static fapi2::ReturnCode
+spi_clear_flag_status(SpiControlHandle& i_handle, fapi2::buffer<uint64_t>& o_status)
+{
+    bool l_ecc = false;
+    uint8_t l_status = 0;
+    o_status = 0;
+    uint64_t SEQ = 0x1031100000000000ULL;
+    SEQ |= (static_cast<uint64_t>((i_handle.slave)) << 56);
+
+    FAPI_DBG("Enter spi_clear_flag_status...");
+
+    is_ecc_on(i_handle, l_ecc);
+
+    if (l_ecc)
+    {
+        spi_set_ecc_off(i_handle);
+    }
+
+    //Send the clear flag status register command(0x50)
+    FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_SEQREG, SEQ));
+    FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_TDR, SPI_SLAVE_FLG_CLR));
+
+    FAPI_TRY(spi_wait_for_tdr_empty(i_handle));
+
+    FAPI_TRY(spi_wait_for_idle(i_handle));
+
+    FAPI_TRY(spi_read_flag_status(i_handle, o_status));
+
+    FAPI_DBG("spi_clear_flag_status: 0x%08X%08X",
+             (uint64_t(o_status) >> 32), static_cast<uint32_t>(uint64_t(o_status) & 0xFFFFFFFF));
+
+    // check for flag status register value is reset for all error bits
+    // bit 7: pgm/erase controller = 0:busy 1:ready
+    // bit 6: erase suspend        = 0:clear 1:suspend
+    // bit 5: erase                = 0:clear 1:failure or protection error
+    // bit 4: program              = 0:clear 1:failure or protection error
+    // bit 3: reserve              = 0
+    // bit 2: program suspend      = 0:clear 1:suspend
+    // bit 1: protection           = 0:clear 1:failure or protection error
+    // bit 0: reserve              = 0
+    o_status.extractToRight(l_status, 56, 8);
+
+    FAPI_ASSERT( (l_status == 0x80),
+                 fapi2::SBE_SPI_OPR_COMPLETION_CHECK_ERROR()
+                 .set_CHIP_TARGET(i_handle.target_chip)
+                 .set_SPI_ENGINE(i_handle.engine)
+                 .set_BASE_ADDRESS(i_handle.base_addr + SPIM_RDR)
+                 .set_STATUS_REGISTER(o_status),
+                 "spi_clear_flag_status" );
+
+    if(l_ecc)
+    {
+        spi_set_ecc_on(i_handle);
+    }
+
+fapi_try_exit:
+    return fapi2::current_err;
+}
+
+
+///////////////////////////////////////////
+/////// spi_check_address_lock_status /////
+///////////////////////////////////////////
+static fapi2::ReturnCode
+spi_check_address_lock_status(SpiControlHandle& i_handle, uint32_t i_address, fapi2::buffer<uint64_t>& io_status)
+{
+    if (SECTOR_NUM_CHECK(0, i_address) || SECTOR_NUM_CHECK(0x48 , i_address))
+    {
+        // check for protection bit in flag status register
+        if(io_status.getBit<62>())
+        {
+            FAPI_TRY(spi_clear_flag_status(i_handle, io_status));
+        }
+    }
+
+fapi_try_exit:
+    return fapi2::current_err;
+}
+
+
 //@nlandi Note: in order for SPI slave status reads to not cause an ECC error, ECC must be turned off for
 //              the duration of the read
 //waits for write complete flag of the spi-slave
 static fapi2::ReturnCode
-spi_wait_for_write_complete(SpiControlHandle& i_handle, fapi2::buffer<uint64_t>& o_status)
+spi_wait_for_write_complete(SpiControlHandle& i_handle,
+                            uint32_t i_address,
+                            fapi2::buffer<uint64_t>& o_status)
 {
     bool l_ecc = false;
 
@@ -467,6 +593,19 @@ spi_wait_for_write_complete(SpiControlHandle& i_handle, fapi2::buffer<uint64_t>&
                  .set_TIMEOUT_MSEC(SPI_TIMEOUT_MAX_WAIT_COUNT),
                  "spi_wait_for_write_complete timeout");
 
+    // Check for input NOR address do not fall in first 64K sector
+    // into any of side-0/1 in NOR as the sector would be locked
+    // Note: check for flag status bits definition in func spi_clear_flag_status
+    // bit 58: erase                = 0:clear 1:failure or protection error
+    // bit 59: program              = 0:clear 1:failure or protection error
+    if ((o_status.getBit<58>() == 1) || (o_status.getBit<59>() == 1))
+    {
+        FAPI_INF("spi_wait_for_write_complete: Erase/Write operation unsuccessful"\
+                 " address:[0x%08X] status:[0x%08X%08X]", i_address,
+                 (uint64_t(o_status) >> 32), static_cast<uint32_t>(uint64_t(o_status) & 0xFFFFFFFF));
+        FAPI_TRY(spi_check_address_lock_status(i_handle, i_address, o_status));
+    }
+
     if(l_ecc)
     {
         spi_set_ecc_on(i_handle);
@@ -491,7 +630,7 @@ spi_check_write_enable(SpiControlHandle& i_handle)
 
     uint64_t timeout = SPI_TIMEOUT_MAX_WAIT_COUNT;
 
-    FAPI_INF("Enter spi_check_write_enable...");
+    FAPI_DBG("Enter spi_check_write_enable...");
 
     FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_SEQREG, SEQ));
 
@@ -552,13 +691,11 @@ spi_set_write_enable(SpiControlHandle& i_handle)
     uint64_t SEQ = 0x1031100000000000ULL;
     SEQ |= (static_cast<uint64_t>((i_handle.slave)) << 56);
     uint64_t TDR = SPI_SLAVE_WR_EN;
-    uint64_t CNT = 0x0;
 
-    FAPI_INF("Enter spi_set_write_enable...");
+    FAPI_DBG("Enter spi_set_write_enable...");
 
     FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_SEQREG, SEQ));
     FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_TDR, TDR));
-    FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_COUNTERREG, CNT));
 
     FAPI_TRY(spi_wait_for_tdr_empty(i_handle));
 
@@ -1495,7 +1632,7 @@ fapi_try_exit:
 /////////// spi_write_post_seq ////////////
 ///////////////////////////////////////////
 fapi2::ReturnCode
-spi_write_post_seq(SpiControlHandle& i_handle)
+spi_write_post_seq(SpiControlHandle& i_handle, uint32_t i_address)
 {
     fapi2::buffer<uint64_t> data64 = 0;
     FAPI_TRY(spi_wait_for_tdr_empty(i_handle)); //Wait for previous TDR to be sent
@@ -1503,7 +1640,7 @@ spi_write_post_seq(SpiControlHandle& i_handle)
     // Wait until machine is no longer executing
     FAPI_TRY(spi_wait_for_idle(i_handle));
 
-    FAPI_TRY(spi_wait_for_write_complete(i_handle, data64));
+    FAPI_TRY(spi_wait_for_write_complete(i_handle, i_address, data64));
 
     // Check for program status bit
     FAPI_ASSERT( (data64.getBit<59>() == 0),
@@ -1545,7 +1682,7 @@ spi_write_secure(SpiControlHandle& i_handle, uint32_t i_address, uint8_t* i_data
         }
 
         // Get write post seq
-        FAPI_TRY(spi_write_post_seq(i_handle));
+        FAPI_TRY(spi_write_post_seq(i_handle, i_address));
     }
     while(0);
 
@@ -1566,6 +1703,7 @@ spi_write(SpiControlHandle& i_handle, uint32_t i_address,
     uint32_t remaining_len = i_length;
     uint32_t page_offset   = 0;
     uint32_t write_len;
+    uint32_t write_max_len  = SEEPROM_SECURE_DATA_LEN_MAX;
     fapi2::ReturnCode rc = fapi2::FAPI2_RC_SUCCESS;
 
     rc = spi_precheck(i_handle);
@@ -1583,8 +1721,17 @@ spi_write(SpiControlHandle& i_handle, uint32_t i_address,
     // The smallest of these three is written
     do
     {
-        // Min between remaining_len and SEEPROM_SECURE_DATA_LEN
-        write_len = (remaining_len > SEEPROM_SECURE_DATA_LEN) ? SEEPROM_SECURE_DATA_LEN : remaining_len;
+        if (SECTOR_NUM_CHECK(0, cur_address) || SECTOR_NUM_CHECK(0x48, cur_address))
+        {
+            write_max_len = SEEPROM_SECURE_DATA_LEN_MIN;
+        }
+        else
+        {
+            write_max_len = SEEPROM_SECURE_DATA_LEN_MAX;
+        }
+
+        // Min between remaining_len and write_max_len
+        write_len = (remaining_len > write_max_len) ? write_max_len : remaining_len;
         page_offset = (cur_address & (SEEPROM_PAGE_SIZE - 1));
         // Min between above and byte-length left to reach a page
         write_len = ((SEEPROM_PAGE_SIZE - page_offset) < write_len) ? (SEEPROM_PAGE_SIZE - page_offset) : write_len;
@@ -1684,7 +1831,7 @@ fapi2::ReturnCode spi_sector_erase(SpiControlHandle& i_handle, uint32_t i_addres
 
     FAPI_TRY(spi_wait_for_idle(i_handle));
 
-    FAPI_TRY(spi_wait_for_write_complete(i_handle, data64));
+    FAPI_TRY(spi_wait_for_write_complete(i_handle, i_address, data64));
 
     // Check for erase status bit
     FAPI_ASSERT( (data64.getBit<58>() == 0),
@@ -1737,7 +1884,7 @@ fapi2::ReturnCode spi_block_erase(SpiControlHandle& i_handle, uint32_t i_address
 
     FAPI_TRY(spi_wait_for_idle(i_handle));
 
-    FAPI_TRY(spi_wait_for_write_complete(i_handle, data64));
+    FAPI_TRY(spi_wait_for_write_complete(i_handle, i_address, data64));
 
     // Check for erase status bit
     FAPI_ASSERT( (data64.getBit<58>() == 0),
@@ -1826,7 +1973,7 @@ spi_write_ecc(SpiControlHandle& i_handle, uint32_t i_address,
         cur_address = (cur_address * 9) / 8;
     }
 
-    FAPI_INF("Device Address 0x%08X", cur_address);
+    FAPI_INF("spi_write_ecc: Device Address (wo ECC):[0x%08X] (with ECC):[0x%08X]", i_address, cur_address);
 
     for (uint32_t i = 0, j = 0, k = cur_address; i < i_length; i++)
     {
@@ -1867,7 +2014,7 @@ fapi_try_exit:
     return fapi2::current_err;
 }
 
-
+#if 0
 ///////////////////////////////////////////
 ///////// spi_erase_and_preserve //////////
 ///////////////////////////////////////////
@@ -2093,7 +2240,7 @@ fapi2::ReturnCode spi_erase_and_preserve(SpiControlHandle& i_handle,
 fapi_try_exit:
     return fapi2::current_err;
 }
-
+#endif
 
 //////////////////////////////////////////////
 ///////// spi_erase_and_no_preserve //////////
@@ -2110,8 +2257,8 @@ fapi2::ReturnCode spi_erase_and_no_preserve(SpiControlHandle& i_handle,
         FAPI_INF("spi_erase_no_preserve: SAddr:[0x%08X] EAddr:[0x%08X]",
                  startAddr, endAddr);
 
-        if (((startAddr   & NOR_FLASH_SECTOR_BOUNDARY_CHECK_MASK) != 0) ||
-            (((endAddr + 1) & NOR_FLASH_SECTOR_BOUNDARY_CHECK_MASK) != 0))
+        if (((startAddr   & NOR_FLASH_SUB_SECTOR_BOUNDARY_CHECK_MASK) != 0) ||
+            (((endAddr + 1) & NOR_FLASH_SUB_SECTOR_BOUNDARY_CHECK_MASK) != 0))
         {
             // Address unaligned error
             FAPI_ERR("Address not aligned to 4K boundary");
@@ -2131,7 +2278,7 @@ fapi2::ReturnCode spi_erase_and_no_preserve(SpiControlHandle& i_handle,
         while (((startAddr % NOR_FLASH_BLOCK_SIZE) != 0) && (startAddr < endAddr))
         {
             FAPI_TRY(spi_sector_erase(i_handle, startAddr));
-            startAddr += NOR_FLASH_SECTOR_SIZE;
+            startAddr += NOR_FLASH_SUB_SECTOR_SIZE;
         }
 
         while (startAddr < endAddr)
@@ -2147,7 +2294,7 @@ fapi2::ReturnCode spi_erase_and_no_preserve(SpiControlHandle& i_handle,
                 // Both start and end address are sector size apart or
                 // within same sector
                 FAPI_TRY(spi_sector_erase(i_handle, startAddr));
-                startAddr += NOR_FLASH_SECTOR_SIZE;
+                startAddr += NOR_FLASH_SUB_SECTOR_SIZE;
             }
         }
     }
