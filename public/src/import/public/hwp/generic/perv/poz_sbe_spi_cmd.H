@@ -50,7 +50,8 @@
 #define SPI_SEC_ERASE_OP  0x2000000000000000ULL
 #define SPI_BLK_ERASE_OP  0x5200000000000000ULL
 
-#define NOR_FLASH_SECTOR_BOUNDARY_CHECK_MASK 0x00000FFF
+#define NOR_FLASH_SUB_SECTOR_BOUNDARY_CHECK_MASK 0x00000FFF
+#define NOR_FLASH_SECTOR_SIZE                    0x10000
 
 //The counter reg is 8 bits and with each seq with 8byte transfer.
 //For the purposes of security, we're using 8-byte transfers, since
@@ -62,7 +63,8 @@
 
 //Byte-length of data to do secure write or read for SEEPROMs
 //Note: changed size from 40 to 256 bytes
-#define SEEPROM_SECURE_DATA_LEN 256
+#define SEEPROM_SECURE_DATA_LEN_MAX 256
+#define SEEPROM_SECURE_DATA_LEN_MIN 8
 
 //Each page in the seeprom is 256 bytes in size
 #define SEEPROM_PAGE_SIZE 256
@@ -80,9 +82,9 @@ const uint32_t SPIM_RDR                  = 6;
 const uint32_t SPIM_SEQREG               = 7;
 const uint32_t SPIM_STATUSREG            = 8;
 
-const uint32_t NOR_FLASH_SECTOR_SIZE    = 0x1000;
-const uint32_t NOR_FLASH_BLOCK_SIZE     = 0x8000;
-const uint32_t NOR_FLASH_DEVICE_SIZE    = 0x1000000;
+const uint32_t NOR_FLASH_SUB_SECTOR_SIZE = 0x1000; // 4K
+const uint32_t NOR_FLASH_BLOCK_SIZE      = 0x8000; // 8K
+const uint32_t NOR_FLASH_DEVICE_SIZE     = 0x1000000;
 
 // SPI clock control register information and defaults
 enum  SPI_CLOCK_CONTROL_REG_INFO : size_t

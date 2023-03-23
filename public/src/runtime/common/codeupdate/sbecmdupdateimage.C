@@ -280,10 +280,10 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
                 uint32_t l_eraseStartAddr = WITH_ECC(l_imageStartAddr) &
                                             NOR_FLASH_SECTOR_BOUNDARY_ALIGN;
                 uint32_t l_eraseEndAddr   = WITH_ECC(l_imageStartAddr + IN_BYTES(i_msg->imageSizeInWords) - 1);
-                if ((l_eraseEndAddr & NOR_FLASH_SECTOR_BOUNDARY_CHECK_MASK) != 0)
+                if ((l_eraseEndAddr & NOR_FLASH_SUB_SECTOR_BOUNDARY_CHECK_MASK) != 0)
                 {
                     l_eraseEndAddr &= NOR_FLASH_SECTOR_BOUNDARY_ALIGN;
-                    l_eraseEndAddr = l_eraseEndAddr + NOR_FLASH_SECTOR_SIZE - 1;
+                    l_eraseEndAddr = l_eraseEndAddr + NOR_FLASH_SUB_SECTOR_SIZE - 1;
                 }
                 else
                 {
