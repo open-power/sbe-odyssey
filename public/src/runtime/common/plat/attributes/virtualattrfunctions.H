@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -78,6 +78,49 @@ AttributeRC _getAttrChipUnitPos(const Target<TARGET_TYPE_PERV>& i_target,
                                 ATTR_CHIP_UNIT_POS_Type& o_val)
 {
     o_val = i_target.getChipletNumber();
+    return FAPI2_RC_SUCCESS;
+}
+
+/**
+  * @brief read the targets relative positions
+  *
+  * Return the relative position of chip unit target passed.
+  *     This function will internally
+  *     use plat_target_handle_t.getTargetInstance()
+  *
+  * @tparam K the target type on which to operate
+  * @param[in]  i_target target where position need to be found
+  * @param[out] o_val    output parameter
+  *
+  * @return   returncode
+  */
+template<TargetType K>
+inline
+AttributeRC _getAttrRelPos(const Target<K>& i_target,
+        ATTR_REL_POS_Type& o_val)
+{
+    o_val = i_target.get().getTargetInstance();
+    return FAPI2_RC_SUCCESS;
+}
+
+/**
+  * @brief read the targets relative positions - specialization for DIMM target type
+  *
+  * Return the relative position of chip unit target passed.
+  *     This function will internally
+  *     use plat_target_handle_t.getTargetInstance()
+  *
+  * @param[in]  i_target target where position need to be found
+  * @param[out] o_val    output parameter
+  *
+  * @return   returncode
+  */
+template<>
+inline
+AttributeRC _getAttrRelPos(const Target<fapi2::TARGET_TYPE_DIMM>& i_target,
+        ATTR_REL_POS_Type& o_val)
+{
+    o_val = i_target.get().getTargetInstance() % 2;
     return FAPI2_RC_SUCCESS;
 }
 }
