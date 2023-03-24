@@ -659,6 +659,19 @@ fapi_try_exit:
     return current_err;
 }
 
+ReturnCode poz_sparse_getring(
+    const Target < TARGET_TYPE_PERV | TARGET_TYPE_CORE > & i_target,
+    const uint32_t                  i_ring_address,
+    hwp_data_istream&               i_care_data,
+    hwp_data_ostream&               o_ring_bits)
+{
+    const auto l_perv_target = i_target.getParent<TARGET_TYPE_PERV>();
+    const uint64_t l_scan_region_type = expand_ring_address(i_target, i_ring_address);
+    hwp_bit_istream l_care_bits(i_care_data);
+    hwp_bit_ostream l_ring_bits(o_ring_bits);
+    return sparse_getring(l_perv_target, l_scan_region_type, l_care_bits, l_ring_bits);
+}
+
 ReturnCode poz_fastarray(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_CORE > & i_target,
     hwp_data_istream&  i_instructions,
