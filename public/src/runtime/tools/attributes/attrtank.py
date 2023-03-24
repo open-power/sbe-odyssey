@@ -466,7 +466,8 @@ class VirtualAttrFieldInfo(AttrFieldInfo):
     VIRTUAL_FUNCTION = {
         "ATTR_NAME": "_getAttrName",
         "ATTR_EC": "_getAttrEC",
-        "ATTR_CHIP_UNIT_POS": "_getAttrChipUnitPos"
+        "ATTR_CHIP_UNIT_POS": "_getAttrChipUnitPos",
+        "ATTR_REL_POS": "_getAttrRelPos"
     }
 
     def __init__(self,

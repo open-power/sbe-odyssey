@@ -45,6 +45,9 @@
   <entry name="ATTR_CHIP_UNIT_POS">
     <virtual/>
   </entry>
+  <entry name="ATTR_REL_POS">
+    <virtual/>
+  </entry>
   <entry name="ATTR_HOTPLUG">
     <value>0x0</value>
   </entry>

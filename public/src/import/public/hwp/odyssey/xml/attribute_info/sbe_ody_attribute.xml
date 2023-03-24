@@ -2536,9 +2536,6 @@
   <entry name="ATTR_MSS_ODY_PHY_IMAGE_SELECT">
     <value>0</value>
   </entry>
-  <entry name="ATTR_REL_POS">
-    <value>0x00</value>
-  </entry>
   <entry name="ATTR_DRAMINIT_TRAINING_TIMEOUT">
     <value>20000</value>
   </entry>
