@@ -244,6 +244,14 @@ rs4::ringTargetType_t ringTargets[] =
     { "ec_",           fapi2::LOG_TARGET_TYPE_CORE },
     { "eq_",           fapi2::LOG_TARGET_TYPE_EQ },
     { "ex_",           fapi2::LOG_TARGET_TYPE_EX },
+    { "ep_ex",         fapi2::LOG_TARGET_TYPE_EX },
+    { "ep_core",       fapi2::LOG_TARGET_TYPE_CORE },
+    { "ep_abus",       fapi2::LOG_TARGET_TYPE_ABUS },
+    { "ep_l3",         fapi2::LOG_TARGET_TYPE_L3CACHE },
+    { "ep_mcs",        fapi2::LOG_TARGET_TYPE_MC },
+    { "ep_xbus",       fapi2::LOG_TARGET_TYPE_XBUS },
+    { "ep_nest",       fapi2::LOG_TARGET_TYPE_CORE },
+    { "ep_",           fapi2::LOG_TARGET_TYPE_PERV },
 };
 
 
