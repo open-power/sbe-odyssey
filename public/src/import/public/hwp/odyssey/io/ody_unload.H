@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_hss_dccal_poll.C $ */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_unload.H $        */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -23,53 +22,40 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 ///------------------------------------------------------------------------------
-/// @file ody_omi_hss_dccal_poll.C
-/// @brief Polls DC cal
+/// @file ody_unload.H
+/// @brief Streams IO Data back in payload for report
 ///
 /// *HWP HW Maintainer : Josh Chica <josh.chica@ibm.com>
 /// *HWP FW Maintainer :
 /// *HWP Consumed by: SBE
 ///------------------------------------------------------------------------------
+#include <fapi2.H>
+#include <common_unload.H>
 
-#include <ody_omi_hss_dccal_poll.H>
-#include <ody_io_ppe_common.H>
+//------------------------------------------------------------------------------
+// Structure definitions
+//------------------------------------------------------------------------------
+typedef fapi2::ReturnCode (*ody_unload_FP_t)(
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
+    const uint64_t,
+    unload_ostream&);
+
+//------------------------------------------------------------------------------
+// Function prototypes
+//------------------------------------------------------------------------------
+
+extern "C"
+{
 
 ///
-/// @brief Polls DC cal
+/// @brief Streams IO Data back in payload for report
 ///
 /// @param[in] i_target Chip target to start
 ///
 /// @return fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
-fapi2::ReturnCode ody_omi_hss_dccal_poll(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
-{
-    FAPI_DBG("Starting ody_omi_hss_dccal_poll");
-    fapi2::buffer<uint64_t> l_data = 0;
+    fapi2::ReturnCode ody_unload(
+        const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+        const uint64_t i_chipunit_mask,
+        unload_ostream& o_ostream);
 
-    io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(PHY_PPE_WRAP0_ARB_CSAR,
-            PHY_PPE_WRAP0_ARB_CSDR,
-            PHY_ODY_OMI_BASE);
-
-    ody_io::io_ppe_common<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_common(&l_ppe_regs);
-
-    static fapi2::buffer<uint64_t> l_cmd = ody_io::HW_REG_INIT_PG | ody_io::DCCAL_PL |
-                                           ody_io::TX_ZCAL_PL | ody_io::TX_FFE_PL |
-                                           ody_io::POWER_ON_PL | ody_io::TX_FIFO_INIT_PL;
-
-    const uint8_t l_thread = 0;
-    uint8_t l_done = 0;
-    uint32_t l_fail = 0;
-
-    l_ppe_regs.flushCache(i_target);
-    FAPI_TRY(l_ppe_common.ext_cmd_poll(i_target, l_thread, l_cmd, l_done, l_fail));
-
-    FAPI_ASSERT(l_done && !l_fail,
-                fapi2::IO_PPE_DONE_DCCAL_FAILED()
-                .set_TARGET(i_target)
-                .set_FAIL(l_fail)
-                .set_DONE(l_done),
-                "IO PPE done DCCAL poll failed");
-
-fapi_try_exit:
-    FAPI_DBG("End ody_omi_hss_dccal_poll");
-    return fapi2::current_err;
-}
+} // extern "C"

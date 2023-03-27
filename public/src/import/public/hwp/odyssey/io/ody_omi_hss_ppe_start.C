@@ -36,127 +36,28 @@
 //------------------------------------------------------------------------------
 #include <ody_omi_hss_ppe_start.H>
 #include <fapi2_subroutine_executor.H>
+#include <ody_io_ppe_common.H>
 #include <ody_scom_omi_ioo.H>
-#include <ody_putsram.H>
-
-// Scomt definitions
-SCOMT_OMI_USE_PHY_PPE_WRAP0_XIXCR
-SCOMT_OMI_USE_PHY_PPE_WRAP0_SCOM_CNTL
-SCOMT_OMI_USE_PHY_PPE_WRAP0_ARB_CSCR
-SCOMT_OMI_USE_PHY_PPE_WRAP0_XIDBGPRO
-SCOMT_OMI_USE_PHY_SCOM_MAC0_LFIR_REG
-SCOMT_OMI_USE_PHY_SCOM_MAC0_LFIR_MASK_REG
-
-
-enum ody_omi_hss_ppe_start
-{
-    ODY_OMI_HSS_PPE_START_DLY_NS = 1000000,
-    ODY_OMI_HSS_PPE_START_DLY_CYCLES = 10000,
-    ODY_OMI_HSS_PPE_START_RESET_IAR = 0xfffe0040 >> 2
-};
-
-using namespace scomt::omi;
 
 //------------------------------------------------------------------------------
 // Function definitions
 //------------------------------------------------------------------------------
 fapi2::ReturnCode ody_omi_hss_ppe_start(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
 {
-    FAPI_DBG("Start");
-    PHY_PPE_WRAP0_XIXCR_t WRAP0_XIXCR;
-    PHY_PPE_WRAP0_SCOM_CNTL_t WRAP0_SCOM_CNTL;
-    PHY_PPE_WRAP0_ARB_CSCR_t WRAP0_ARB_CSCR;
-    PHY_PPE_WRAP0_XIDBGPRO_t WRAP0_XIDBGPRO;
-    PHY_SCOM_MAC0_LFIR_REG_t MAC0_LFIR_REG;
-    PHY_SCOM_MAC0_LFIR_MASK_REG_t MAC0_LFIR_MASK_REG;
+    FAPI_DBG("Start - ODY PPE Start");
 
-    uint32_t l_iar = 0;
+    io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(PHY_PPE_WRAP0_ARB_CSAR,
+            PHY_PPE_WRAP0_ARB_CSDR,
+            PHY_ODY_OMI_BASE);
 
-    // Enable SRAM scrub
-    FAPI_TRY(WRAP0_ARB_CSCR.getScom(i_target),
-             "Error getscom to WRAP0_XIXCR.");
-    WRAP0_ARB_CSCR.set_SRAM_SCRUB_ENABLE(1);
-    FAPI_TRY(WRAP0_ARB_CSCR.putScom(i_target),
-             "Error putscom to WRAP0_XIXCR (Enable SRAM scrub).");
+    ody_io::io_ppe_common<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_common(&l_ppe_regs);
 
-    // Hard reset PPE
-    WRAP0_XIXCR.set_PPE_XIXCR_XCR(6); // Write 0b110
-    FAPI_TRY(WRAP0_XIXCR.putScom(i_target),
-             "Error putscom to PPE_XIXCR_XCR (reset PPE).");
+    FAPI_TRY(l_ppe_common.ppe_start(i_target,
+                                    scomt::omi::PHY_PPE_WRAP0_XIXCR,
+                                    scomt::omi::PHY_PPE_WRAP0_XIDBGPRO,
+                                    scomt::omi::PHY_SCOM_MAC0_LFIR_REG_RW_WCLEAR));
 
-    // Verify IAR @ reset vector loc
-    FAPI_TRY(WRAP0_XIDBGPRO.getScom(i_target),
-             "Error getscom to WRAP0_XIDBGPRO.");
-    l_iar = WRAP0_XIDBGPRO.get_IAR();
-    FAPI_ASSERT(
-        l_iar == ODY_OMI_HSS_PPE_START_RESET_IAR,
-        fapi2::ODY_OMI_PPE_RESET()
-        .set_TARGET_CHIP(i_target)
-        .set_IAR(l_iar),
-        "IAR (0x%8x) did not reset.", l_iar);
-
-    // Resume PPE
-    WRAP0_XIXCR.set_PPE_XIXCR_XCR(2); // Write 0b010
-    FAPI_TRY(WRAP0_XIXCR.putScom(i_target),
-             "Error putscom to PPE_XIXCR_XCR (resume PPE).");
-
-    FAPI_TRY(fapi2::delay(ODY_OMI_HSS_PPE_START_DLY_NS, ODY_OMI_HSS_PPE_START_DLY_CYCLES));
-
-    // Verify IAR is cleared
-    FAPI_TRY(WRAP0_XIDBGPRO.getScom(i_target),
-             "Error getscom to WRAP0_XIDBGPRO.");
-    l_iar = WRAP0_XIDBGPRO.get_IAR();
-    FAPI_ASSERT(
-        l_iar != ODY_OMI_HSS_PPE_START_RESET_IAR,
-        fapi2::ODY_OMI_PPE_RESET()
-        .set_TARGET_CHIP(i_target)
-        .set_IAR(l_iar),
-        "IAR (0x%8x) did not resume.", l_iar);
-
-    // Clear Halted FIR Bit
-    FAPI_TRY(MAC0_LFIR_REG.getScom(i_target),
-             "Error getscom to MAC0_LFIR_REG.");
-    MAC0_LFIR_REG.set_PPE_HALTED(0);
-    FAPI_TRY(MAC0_LFIR_REG.putScom(i_target),
-             "Error putscom to MAC0_LFIR_REG (clear halt).");
-
-    // Unmask other PHY PPE FIRs
-    FAPI_TRY(MAC0_LFIR_MASK_REG.getScom(i_target),
-             "Error getscom to MAC0_LFIR_REG.");
-    MAC0_LFIR_MASK_REG.set_SCOMFIR_PARITY_ERROR_MASK(0);
-    MAC0_LFIR_MASK_REG.set_IO0_RX_INVALID_STATE_OR_PARITY_ERROR_MASK(0);
-    MAC0_LFIR_MASK_REG.set_IO1_RX_INVALID_STATE_OR_PARITY_ERROR_MASK(1);
-    MAC0_LFIR_MASK_REG.set_IOT0_RX0_ECC_UNKNOWN_ERROR_MASK(1);
-    MAC0_LFIR_MASK_REG.set_IOT0_RX1_ECC_UNKNOWN_ERROR_MASK(1);
-    MAC0_LFIR_MASK_REG.set_IO0_TX_INVALID_STATE_OR_PARITY_ERROR_MASK(0);
-    MAC0_LFIR_MASK_REG.set_IO1_TX_INVALID_STATE_OR_PARITY_ERROR_MASK(1);
-    MAC0_LFIR_MASK_REG.set_IOT1_RX0_ECC_UNKNOWN_ERROR_MASK(1);
-    MAC0_LFIR_MASK_REG.set_IOT1_RX1_ECC_UNKNOWN_ERROR_MASK(1);
-    MAC0_LFIR_MASK_REG.set_IOO0_PIPE_INVALID_STATE_OR_PARITY_ERROR_IOT0_RX0_ECC_BAD_LANE_FOUND_MASK(0);
-    MAC0_LFIR_MASK_REG.set_IOT0_RX1_ECC_BAD_LANE_FOUND_MASK(1);
-    MAC0_LFIR_MASK_REG.set_IOO0_PIPE_PMB_ERROR_IOT1_RX0_ECC_BAD_LANE_FOUND_MASK(0);
-    MAC0_LFIR_MASK_REG.set_IOT1_RX1_ECC_BAD_LANE_FOUND_MASK(1);
-    MAC0_LFIR_MASK_REG.set_PPE_INT_HWERROR_MASK(0);
-    MAC0_LFIR_MASK_REG.set_PPE_EXT_HWERROR_MASK(0);
-    MAC0_LFIR_MASK_REG.set_PPE_HALT_WATCHDOG_OR_INTERRUPT_MASK(0);
-    MAC0_LFIR_MASK_REG.set_PPE_HALT_DEBUG_MASK(0);
-    MAC0_LFIR_MASK_REG.set_PPE_HALTED_MASK(0);
-    MAC0_LFIR_MASK_REG.set_PPE_WATCHDOG_TIMEOUT_MASK(0);
-    MAC0_LFIR_MASK_REG.set_PPE_ARB_MISSED_SCRUB_TICK_MASK(0);
-    MAC0_LFIR_MASK_REG.set_PPE_ARB_ARRAY_UNCORRECTABLE_ERROR_MASK(0);
-    MAC0_LFIR_MASK_REG.set_PPE_ARB_ARRAY_CORRECTABLE_ERROR_MASK(0);
-    MAC0_LFIR_MASK_REG.set_PPE_CODE_RECAL_ABORT_MASK(0);
-    MAC0_LFIR_MASK_REG.set_PPE_CODE_FATAL_ERROR_MASK(0);
-    MAC0_LFIR_MASK_REG.set_PPE_CODE_BAD_LANE_WARNING_MASK(1);
-    MAC0_LFIR_MASK_REG.set_PPE_CODE_DFT_ERROR_MASK(1);
-    MAC0_LFIR_MASK_REG.set_PPE_CODE_RECAL_NOT_RUN_MASK(0);
-    MAC0_LFIR_MASK_REG.set_PPE_CODE_THREAD_LOCKED_MASK(0);
-    MAC0_LFIR_MASK_REG.set_PPE_CODE_THREAD_ACTIVE_TIME_EXCEEDED_MASK(0);
-    MAC0_LFIR_MASK_REG.set_PPE_CODE_BAD_LANES_OVER_MAX_MASK(1);
-    FAPI_TRY(MAC0_LFIR_MASK_REG.putScom(i_target),
-             "Error putscom to MAC0_LFIR_REG (unmask PPE FIR).");
-
-fapi_try_exit:
+fapi_try_exit :
     FAPI_DBG("End");
     return fapi2::current_err;
 }
