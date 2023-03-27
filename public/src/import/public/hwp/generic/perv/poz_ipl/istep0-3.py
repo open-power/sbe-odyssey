@@ -1138,6 +1138,13 @@ def poz_chiplet_reset(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64], 
             NET_CTRL0.PCB_EP_RESET = 0
             NET_CTRL0.CHIPLET_EN = 1
 
+            ## Wait for chiplet heartbeat to become active
+            # read HEARTBEAT_REG using MULTICAST_BITX so we can tell which chiplet(s) failed on timeout
+            while HEARTBEAT_REG != 0:
+                poll up to 20x with timeout 10us / 70kcyc
+            else:
+                ASSERT("Chiplet heartbeat missing", poll count, last value of HEARTBEAT_REG via BITX)
+
             ## Set up clock controllers
             SYNC_CONFIG = 0
             SYNC_CONFIG.SYNC_PULSE_DELAY = 0b1001    # decimal 9 -> 10 cycles
