@@ -60,9 +60,6 @@ infile_c = [
             '/hwp/generic/utils/poz_writesram.C',
             '/hwp/generic/utils/poz_readsram.C',
             '/hwp/generic/io/io_ppe_cache.C',
-            '/hwp/generic/io/io_scom_lib.C',
-            '/hwp/generic/io/common_io_tdr.C',
-            '/hwp/generic/io/common_io_omi_tdr.C',
             '/hwp/odyssey/io/ody_putsram.C',
             '/hwp/odyssey/io/ody_getsram.C',
             '/hwp/odyssey/io/ody_omi_hss_ppe_load.C',
@@ -82,6 +79,7 @@ infile_c = [
             '/hwp/odyssey/io/ody_omi_train_check.C',
             '/hwp/odyssey/io/ody_omi_posttrain_adv.C',
             '/memory/odyssey/hwp/ody_scominit.C',
+            '/hwp/odyssey/io/ody_unload.C',
 
             # Files needed for ody_ddrphyinit
             '/memory/odyssey/hwp/ody_ddrphyinit.C',

@@ -3574,10 +3574,10 @@
     <value>0</value>
   </entry>
   <entry name="ATTR_OMI_RX_LTEG">
-    <value>-1</value>
+    <value>7</value>
   </entry>
   <entry name="ATTR_OMI_RX_LTEZ">
-    <value>-1</value>
+    <value>0</value>
   </entry>
   <entry name="ATTR_OMI_RX_PHASE_STEP">
     <value>-1</value>
@@ -3594,7 +3594,10 @@
   <entry name="ATTR_OMI_RX_VERT_OFFSET">
     <value>0</value>
   </entry>
-  <entry name="ATTR_OMI_RX_HORIZ_OFFSET">
+  <entry name="ATTR_OMI_RX_HORIZ_DATA_OFFSET">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_OMI_RX_HORIZ_EDGE_OFFSET">
     <value>0</value>
   </entry>
   <!-- SPPE FW : SPPE FW attributes added from here  -->
