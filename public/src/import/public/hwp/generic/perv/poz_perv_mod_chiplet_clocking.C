@@ -48,7 +48,7 @@ enum POZ_PERV_MOD_CHIPLET_CLOCKING_Private_Constants
     OPCG_DONE_SCAN0_SIM_CYCLE_DELAY = 800000, // unit is cycles, to match the poll count change ( 10000 * 8 )
     OPCG_DONE_ARRAYINIT_HW_NS_DELAY = 200000, // unit is nano seconds [min : 400k/2 = 200k ns = 200 us
     //                       max : 200k /25 = 8000 us = 8 ms]
-    OPCG_DONE_ARRAYINIT_POLL_COUNT = 400, // Arrayinit Poll count
+    OPCG_DONE_ARRAYINIT_POLL_COUNT = 8000, // Arrayinit Poll count
     OPCG_DONE_ARRAYINIT_SIM_CYCLE_DELAY = 1120000, // unit is cycles,to match the poll count change ( 280000 * 4 )
 };
 
