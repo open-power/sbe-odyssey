@@ -1,0 +1,19 @@
+
+{
+    "chipoptable":[
+        {
+            "cmdClass":"A4",
+            "command":"0x03",
+            "function":"sbeGetSram",
+            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL", "SBE_FENCE_AT_DUMPING"],
+            "headerFile":"sbecmdsramaccess.H"
+        },
+        {
+            "cmdClass":"A4",
+            "command":"0x04",
+            "function":"sbePutSram",
+            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL", "SBE_FENCE_AT_DUMPING"],
+            "headerFile":"sbecmdsramaccess.H"
+        }
+    ]
+}

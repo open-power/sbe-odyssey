@@ -200,7 +200,9 @@ enum sbeSecondaryResponse
     SBE_SEC_CU_READ_IMAGE_FAILURE             = 0x78,
     SBE_SEC_ATTR_UPD_FORMAT_ERROR             = 0x79,
     SBE_SEC_ATTR_UPD_VER_NOT_SUPPORTED        = 0x7A,
-    SBE_SEC_ATTR_UPD_INVALID_FILE_TYPE        = 0x7B
+    SBE_SEC_ATTR_UPD_INVALID_FILE_TYPE        = 0x7B,
+    SBE_SEC_UNALIGNED_ADDRESS_PASSED          = 0x7C,
+    SBE_SEC_INVALID_LENGTH_PASSED             = 0x7D,
 };
 
 /**

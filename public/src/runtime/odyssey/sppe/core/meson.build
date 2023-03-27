@@ -48,6 +48,7 @@ infile_c = ['main.C',
             'getcapabilitiesutils.C',
             'sbetspolling.C',
             'sbethermalsensorpolltimer.C',
+            'sbecmdsramaaccesswrap.C',
           ]
 
 odyssey_abs_core_c_file_paths = []
@@ -71,6 +72,7 @@ odyssey_abs_core_c_file_paths += [ abs_pak_c_path,
                                     abs_runtime_cmn_tracearray_c_path,
                                     abs_runtime_cmn_fastarray_c_path,
                                     abs_runtime_cmn_getcapability_c_path,
+                                    abs_runtime_cmn_sramaccess_c_path,
                                     abs_i2c_driver_cmn_c_path,
                                     odyssey_abs_hwpf_c_file_paths,
                                     odyssey_abs_tgt_c_file_paths,
@@ -98,9 +100,10 @@ ody_cmn_chipop_json_list = [
                     COMMON_CHIPOPS_JSON,
                     CMN_CODE_UPDATE_CHIPOPS_JSON,
                     CMN_STOP_CLOCK_CHIPOPS_JSON,
-                    CMN_TRACE_ARRAY_CHIPOPS_JSON,
                     CMN_FAST_ARRAY_CHIPOPS_JSON,
                     CMN_GETCAPABILITY_CHIPOPS_JSON,
+                    CMN_TRACE_ARRAY_CHIPOPS_JSON,
+                    CMN_SRAM_ACCESS_CHIPOPS_JSON,
                 ]
 
 ody_chipop_json_list = [ody_cmn_chipop_json_list,

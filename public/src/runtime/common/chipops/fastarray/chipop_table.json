@@ -4,7 +4,7 @@
             "cmdClass":"A6",
             "command":"0x01",
             "function":"sbeControlFastArray",
-            "fences":["SBE_NO_FENCE"],
+            "fences":["SBE_FENCE_AT_DUMPING"],
             "headerFile":"sbecmdfastarray.H"
         }
     ]

@@ -68,7 +68,7 @@ if ((l_rc) != SBE_SEC_OPERATION_SUCCESSFUL) \
         {                                                              \
             i_getStream.get(0, NULL, true, true);                      \
         }                                                              \
-        l_rc = (sec_rc);                                                \
+        l_rc = (sec_rc);                                               \
         break;                                                         \
     }
 
