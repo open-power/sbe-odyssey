@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -44,6 +44,9 @@ enum POZ_CHIPLET_RESET_Private_Constants
     PGOOD_REGIONS_STARTBIT = 4,
     PGOOD_REGIONS_LENGTH = 15,
     PGOOD_REGIONS_OFFSET = 12,
+    HEARTBEAT_POLL_COUNT = 20,    // count to wait for chiplet heartbeat
+    HEARTBEAT_SIM_CYCLE_DELAY = 70000, // unit is cycles
+    HEARTBEAT_HW_NS_DELAY = 10000, // unit is nano seconds
 };
 
 ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
@@ -55,9 +58,11 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     OPCG_ALIGN_t OPCG_ALIGN;
     CPLT_CTRL2_t CPLT_CTRL2;
     CPLT_CTRL3_t CPLT_CTRL3;
+    HEARTBEAT_REG_t HEARTBEAT_REG;
     buffer<uint32_t> l_attr_pg;
     buffer<uint64_t> l_data64;
     MulticastGroup l_mc_group;
+    uint32_t l_poll_count;
 
     FAPI_INF("Entering ...");
     FAPI_TRY(get_hotplug_mc_group(i_target, l_mc_group));
@@ -66,6 +71,8 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
         // Initializing chiplets inside a new scope to prevent issues with FAPI_TRY
         auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(l_mc_group);
         auto l_chiplets_uc = l_chiplets_mc.getChildren<TARGET_TYPE_PERV>();
+        fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST,
+              fapi2::MULTICAST_BITX > l_chiplets_bitx = l_chiplets_mc;
 
         if (i_phases & PRE_SCAN0)
         {
@@ -78,6 +85,31 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
             NET_CTRL0.set_PCB_EP_RESET(0);
             NET_CTRL0.set_CHIPLET_EN(1);
             FAPI_TRY(NET_CTRL0.putScom(l_chiplets_mc));
+
+            l_poll_count = HEARTBEAT_POLL_COUNT;
+
+            while (l_poll_count != 0)
+            {
+                FAPI_INF("Reading HEARTBEAT_REG register to check HEARTBEAT_DEAD");
+                FAPI_TRY(HEARTBEAT_REG.getScom(l_chiplets_bitx));
+
+                if (!HEARTBEAT_REG)
+                {
+                    break;
+                }
+
+                FAPI_TRY(fapi2::delay(HEARTBEAT_HW_NS_DELAY, HEARTBEAT_SIM_CYCLE_DELAY));
+                --l_poll_count;
+            }
+
+            FAPI_DBG("HEARTBEAT Poll Count : %d", l_poll_count);
+
+            FAPI_ASSERT(l_poll_count > 0,
+                        fapi2::POZ_HEARTBEAT_NOT_SET_ERR()
+                        .set_PERV_HEARTBEAT_REG(HEARTBEAT_REG)
+                        .set_POLL_COUNT(HEARTBEAT_POLL_COUNT)
+                        .set_PROC_TARGET(i_target),
+                        "ERROR:HEARTBEAT NOT RUNNING");
 
             FAPI_INF("Set up clock controllers (decimal 9 -> 10 cycles) ");
             SYNC_CONFIG = 0;
