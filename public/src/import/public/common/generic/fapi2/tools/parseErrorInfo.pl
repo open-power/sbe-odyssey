@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2021,2022
+# Contributors Listed Below - COPYRIGHT 2021,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -464,6 +464,7 @@ print EIFILE "#define FAPI2_HWPERRORINFO_H_\n\n";
 print EIFILE "#include <target.H>\n";
 print EIFILE "#include <plat_trace.H>\n";
 print EIFILE "#include <hwp_return_codes.H>\n";
+print EIFILE "#include <ffdc_includes.H>\n";
 print EIFILE "#include <hwp_executor.H>\n";
 print EIFILE "/**\n";
 print EIFILE " * \@brief Error Information macros and HwpFfdcId enumeration\n";
@@ -505,11 +506,7 @@ print CRFILE "#include <stdint.h>\n";
 print CRFILE "#include <vector>\n";
 print CRFILE "#include <plat_trace.H>\n";
 print CRFILE "#include <hwp_error_info.H>\n";
-print CRFILE "#include <p11_scom_c.H>\n";
-print CRFILE "#include <p11_scom_eq.H>\n";
-print CRFILE "#include <p11_scom_pc.H>\n";
-print CRFILE "#include <p11_scom_ph_pb.H>\n";
-print CRFILE "#include <p11_scom_ph_tp.H>\n";
+print CRFILE "#include <p11_scom_registers.H>\n";
 print CRFILE "#include <ody_scom_perv_tcmc.H>\n";
 print CRFILE "#include <ody_scom_ody_odc.H>\n";
 print CRFILE "#include <explorer_scom_addresses.H>\n";
@@ -1853,15 +1850,19 @@ print SBFILE "    default:\\\n";
 print SBFILE "       invalid_data = true;\\\n";
 print SBFILE "        break;\\\n";
 print SBFILE "}\\\n";
+
+# FIXME - Need to define this error somewhere
 print SBFILE "if(invalid_data)\\\n";
 print SBFILE "{\\\n";
-print SBFILE "  /* create a new rc and capture invalid ffdc buffer */\\\n";
-print SBFILE "  /* FFDC buffer size is 20 sbeFfdc_t entries */\\\n";
-print SBFILE "  /* variable buffer needs size in uint32_t, and the resulting bit count  */\\\n";
-print SBFILE "   const uint32_t size_bytes = (sizeof(fapi2::sbeFfdc_t)*20);\\\n";
-print SBFILE "   fapi2::variable_buffer l_buffer((uint32_t*)FFDC_BUFFER, size_bytes/4, size_bytes*8);\\\n";
-print SBFILE "   fapi2::INVALID_SBE_FFDC_PACKET(fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE,RC).";
-print SBFILE "set_FFDC_BUFFER(l_buffer).set_INVALID_ERRVAL(ERRVAL).execute();\\\n";
+print SBFILE "  FAPI_INF(\"Invalid data packet!!!\")\\\n";
+
+#print SBFILE "  /* create a new rc and capture invalid ffdc buffer */\\\n";
+#print SBFILE "  /* FFDC buffer size is 20 sbeFfdc_t entries */\\\n";
+#print SBFILE "  /* variable buffer needs size in uint32_t, and the resulting bit count  */\\\n";
+#print SBFILE "   const uint32_t size_bytes = (sizeof(fapi2::sbeFfdc_t)*20);\\\n";
+#print SBFILE "   fapi2::variable_buffer l_buffer((uint32_t*)FFDC_BUFFER, size_bytes/4, size_bytes*8);\\\n";
+#print SBFILE "   fapi2::INVALID_SBE_FFDC_PACKET(fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE,RC).";
+#print SBFILE "set_FFDC_BUFFER(l_buffer).set_INVALID_ERRVAL(ERRVAL).execute();\\\n";
 print SBFILE "}\\\n";
 print SBFILE "}\n\n";
 print SBFILE "#endif\n";
