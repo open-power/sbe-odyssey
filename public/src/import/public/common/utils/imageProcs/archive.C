@@ -199,6 +199,14 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
 
     while (true)
     {
+        if((iv_archiveLimit != NULL) && (ptr >= iv_archiveLimit))
+        {
+            ARC_ERROR("Next address (%p) is outside archive limit", ptr);
+            ARC_ERROR("archive limit = %p", iv_archiveLimit);
+            o_ptr = ptr;
+            return ARC_FILE_CORRUPTED;
+        }
+
         if (uintptr_t(ptr) & 7)
         {
             ARC_ERROR("Unaligned file header: %p", ptr);

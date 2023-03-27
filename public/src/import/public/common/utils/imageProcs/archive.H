@@ -281,8 +281,9 @@ class FileArchive
          * @brief Initialize a file archive from a known start address
          *
          * @param[in] i_address Location of the beginning of the archive in addressable memory
+         * @param[in] i_limit   Maximum expected address range for this archive.
          */
-        FileArchive(void* i_address) : iv_firstFile(i_address) {};
+        FileArchive(void* i_address, void* i_limit = NULL) : iv_firstFile(i_address), iv_archiveLimit(i_limit) {};
 
         /**
          * @brief Locate a file inside the archive
@@ -349,6 +350,7 @@ class FileArchive
 
     private:
         void* iv_firstFile;
+        void* iv_archiveLimit;
 
         /**
          * @brief Internal function used for both locate_file and archive_end
