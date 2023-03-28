@@ -256,6 +256,7 @@ uint32_t getImageHash(const CU_IMAGES i_imageType,
  * @param[in]  CU_IMAGES i_imageType : enum IMAGES
  * @param[in]  void *i_pakStartAddr   : pointer to image pak start address if pak
  *                                      file containing partition table is passed
+ * @param[in]  uint32_t i_pakBufSize   : the size of buffer i_pakStartAddr
  * @param[out] partitionEntry_t *o_pakEntry : returns absolute address with size
  *
  * @return    RC success/fail
@@ -263,5 +264,6 @@ uint32_t getImageHash(const CU_IMAGES i_imageType,
 uint32_t getPakEntryFromPartitionTable(const uint8_t i_partition,
                                        const CU_IMAGES i_imageType,
                                        void *i_pakStartAddr,
+                                       uint32_t i_pakBufSize,
                                        CU::partitionEntry_t *o_pakEntry);
 #endif //SBE_CODE_UPDATE_H

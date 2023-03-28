@@ -97,6 +97,7 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
             l_rc = getPakEntryFromPartitionTable(l_nonRunPartIndex,
                                                  (CU_IMAGES)(i_msg->imageType),
                                                  NULL,
+                                                 0,
                                                  &l_partitionEntry);
             if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
             {
@@ -214,6 +215,7 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
                     l_rc = getPakEntryFromPartitionTable(l_nonRunPartIndex,
                                                          (CU_IMAGES)imgId,
                                                          (void *)ImgBufScratchArea,
+                                                         l_writeWordsLen,
                                                          &l_partitionEntry);
 
                     if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)

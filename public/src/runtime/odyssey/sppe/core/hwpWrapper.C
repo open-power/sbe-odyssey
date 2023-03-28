@@ -135,7 +135,7 @@ ReturnCode istepLoadIMEMwithOcmb( voidfuncptr_t i_hwp)
     ReturnCode rc = FAPI2_RC_SUCCESS;
     do
     {
-        PakWrapper pak((void *)g_partitionOffset);
+        PakWrapper pak((void *)g_partitionOffset, (void *)(g_partitionOffset + g_partitionSize));
 
         // Get ATTR_MSS_ODY_PHY_IMAGE_SELECT
         uint8_t imageType = 0;
@@ -173,7 +173,7 @@ ReturnCode istepLoadDMEMwithOcmb( voidfuncptr_t i_hwp)
     ReturnCode rc = FAPI2_RC_SUCCESS;
     do
     {
-        PakWrapper pak((void *)g_partitionOffset);
+        PakWrapper pak((void *)g_partitionOffset, (void *)(g_partitionOffset + g_partitionSize));
 
         // Get ATTR_MSS_ODY_PHY_IMAGE_SELECT
         uint8_t imageType = 0;
@@ -211,7 +211,7 @@ ReturnCode istepLoadIOPPEwithOcmb( voidfuncptr_t i_hwp)
     ReturnCode rc = FAPI2_RC_SUCCESS;
 
     do{
-        PakWrapper pak((void *)g_partitionOffset);
+        PakWrapper pak((void *)g_partitionOffset, (void *)(g_partitionOffset + g_partitionSize));
         static const char ioppe[]   =  "ioppe/ioo.bin";
         rc = sbestreampaktohwp(&pak, ioppe, i_hwp, IOPPE_BASE_IMAGE);
         if (rc)

@@ -116,7 +116,7 @@ class SBEGlobalsSingleton
         // Allows access for a global FileArchive object independent of the Heap object
         // initialized below
         PakWrapper embeddedArchive __attribute__ ((aligned (8)))
-                            { (void*)&_heap_space_start_};
+                            { (void*)&_heap_space_start_, (void*)&_heap_space_end_};
 
         // i2c mode register
         static uint64_t i2cModeRegister;
