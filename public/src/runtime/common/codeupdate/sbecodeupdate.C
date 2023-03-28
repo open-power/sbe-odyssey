@@ -323,7 +323,7 @@ uint32_t getImageHash(const CU_IMAGES i_imageType,
     {
         //To get partition start address
         getPartitionAddress(i_Partition,l_partitionStartAddress);
-        PakWrapper pak((void *)l_partitionStartAddress);
+        PakWrapper pak((void *)l_partitionStartAddress, (void *)(l_partitionStartAddress + NOR_PARTITION_SIZE));
 
         switch (i_imageType)
         {
@@ -386,6 +386,7 @@ uint32_t getImageHash(const CU_IMAGES i_imageType,
 uint32_t getPakEntryFromPartitionTable(const uint8_t i_partition,
                                        const CU_IMAGES i_imageType,
                                        void *i_pakStartAddr,
+                                       uint32_t i_pakBufSize,
                                        CU::partitionEntry_t *o_pakEntry)
 {
     #define SBE_FUNC " getPakEntryFromPartitionTable "
@@ -416,8 +417,9 @@ uint32_t getPakEntryFromPartitionTable(const uint8_t i_partition,
         // Init pakwrapper with either partition start address or
         // pak file start address. For pak start address valid partition
         // id to be passed as well
-        PakWrapper pak((void *)(i_pakStartAddr == NULL ? l_partitionStartAddress
-                                                       : (uint32_t)i_pakStartAddr));
+        uint32_t l_pakStart = (i_pakStartAddr == NULL ? l_partitionStartAddress : (uint32_t)i_pakStartAddr);
+        uint32_t l_pakMaxSize = (i_pakStartAddr == NULL ? NOR_PARTITION_SIZE : (uint32_t)i_pakBufSize);
+        PakWrapper pak((void *)l_pakStart, (void*)(l_pakStart + l_pakMaxSize));
 
         // Get partition table start offset
         // Note: partition table is uncompressed.

@@ -38,8 +38,9 @@
 #define SBE_REF_BASE_FREQ_HZ ((133 * 1000 * 1000)/4)
 #define SBE_ODYSSEY_DEF_NEST_FREQ_MHZ 0x855
 
-// PNOR partition offset.
+// PNOR partition offset and size
 extern uint32_t g_partitionOffset;
+extern uint32_t g_partitionSize;
 // DRAM Init Offset
 extern uint32_t g_draminitOffset;
 #endif //__GLOBALS_H

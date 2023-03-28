@@ -39,8 +39,8 @@ class PakWrapper
          *
          * @param[in] i_partitionAddress Partition address to update from.
          */
-        PakWrapper(void* i_partitionAddress) :
-                    iv_fileArchive(i_partitionAddress),
+        PakWrapper(void* i_partitionAddress, void* i_partitionEnd) :
+                    iv_fileArchive(i_partitionAddress, i_partitionEnd),
                     fileArchiveEntry()
         {
         };
