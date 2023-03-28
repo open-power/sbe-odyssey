@@ -36,7 +36,7 @@ fi
 SUPPORTED_PLATFORM=("p11" "odyssey" ${INT_SUPPORTED_PLATFORM[*]} "all")
 SUPPORTED_IMAGES=("sppe" "bldr" "srom" "otprom" "tsbe" "hsbe" ${INT_SUPPORTED_IMAGES[*]} "pseeprom" "pnor" "all")
 SUPPORTED_COMMAND=("workon" "prime" "install" "citest" "runsimics" "build" \
-                   "clean" "execute" "printenv" "cronus_devready", "runtest")
+                   "clean" "execute" "printenv" "cronus_devready" "runtest")
 
 sbe_helptext()
 {
