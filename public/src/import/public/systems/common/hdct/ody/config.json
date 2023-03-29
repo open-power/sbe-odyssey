@@ -1,0 +1,27 @@
+
+{
+    "eclevel"       : ["0x10"],
+    "hdctfile"      : "$PROJECT_ROOT/public/systems/p11/HDCT.txt",
+    "defaultdump"   : "ebmc",
+
+    "scanfile"      : {
+        "DD10" : "/afs/apd/projects/eclipz/lab/p11/engd/odyssey/10.v0002/odyssey.scandef"
+    },
+
+    "tracearray"    : {
+        "file"                   : "$PROJECT_ROOT/public/hwp/odyssey/perv/ody_gettracearray.H",
+        "enumname"               : "enum ody_tracearray_bus_id",
+        "enumdatamemberstartwith": "ODY_TB"
+    },
+
+    "fastArrayControlSet": {
+        "mc_core": "0x00000001",
+        "mc_pub0": "0x00000002",
+        "mc_pub1": "0x00000003"
+    },
+
+    "stopClocksTgtType": {
+        "all": "0x001C0000",
+        "mc" : "0x001C0000"
+    }
+}
