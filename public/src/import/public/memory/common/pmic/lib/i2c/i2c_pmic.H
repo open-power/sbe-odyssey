@@ -67,7 +67,7 @@ namespace i2c
 /// @param[in] i_opcode opcode to add
 /// @param[in,out] io_command command vector
 ///
-inline void add_adc_opcode(const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CSLAVE>& i_target,
+inline void add_adc_opcode(const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CRESPONDER>& i_target,
                            const mss::adc::i2c::opcode i_opcode,
                            std::vector<uint8_t>& io_command)
 {
@@ -120,7 +120,7 @@ inline void reg_write_helper(const fapi2::Target<fapi2::TARGET_TYPE_PMIC>& i_tar
 /// @return FAPI2_RC_SUCCESS iff okay
 ///
 template<>
-inline void reg_write_helper(const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CSLAVE>& i_target,
+inline void reg_write_helper(const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CRESPONDER>& i_target,
                              const uint8_t i_addr,
                              const fapi2::buffer<uint8_t> i_data_buffer,
                              std::vector<uint8_t>& io_command)
@@ -191,7 +191,7 @@ inline void reg_read_helper(const fapi2::Target<fapi2::TARGET_TYPE_PMIC>& i_targ
 /// @return FAPI2_RC_SUCCESS iff okay
 ///
 template<>
-inline void reg_read_helper(const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CSLAVE>& i_target,
+inline void reg_read_helper(const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CRESPONDER>& i_target,
                             const uint8_t i_addr,
                             std::vector<uint8_t>& io_command)
 {
