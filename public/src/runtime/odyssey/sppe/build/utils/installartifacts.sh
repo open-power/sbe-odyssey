@@ -36,10 +36,10 @@ cp ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe_DD
    ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe_DD1.syms \
    ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe_DD1.attr.db \
    ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odysseySppeStringFile_DD1 \
-   ${MESON_BUILD_ROOT}/public/src/onetime/odyssey/bldr/odyssey_bldr_DD1.dis \
-   ${MESON_BUILD_ROOT}/public/src/onetime/odyssey/bldr/odyssey_bldr_DD1.map \
-   ${MESON_BUILD_ROOT}/public/src/onetime/odyssey/bldr/odyssey_bldr_DD1.syms \
-   ${MESON_BUILD_ROOT}/public/src/onetime/odyssey/bldr/odysseyBldrStringFile_DD1 \
+   ${MESON_INSTALL_PREFIX}/odyssey/onetime/bldr/odyssey_bldr_DD1.dis \
+   ${MESON_INSTALL_PREFIX}/odyssey/onetime/bldr/odyssey_bldr_DD1.map \
+   ${MESON_INSTALL_PREFIX}/odyssey/onetime/bldr/odyssey_bldr_DD1.syms \
+   ${MESON_INSTALL_PREFIX}/odyssey/onetime/bldr/odysseyBldrStringFile_DD1 \
    ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/srom/build/images/odysseySromStringFile_DD1 \
    ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/srom/build/images/odyssey_srom_DD1.syms \
    ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/srom/build/images/odyssey_srom_DD1.map \

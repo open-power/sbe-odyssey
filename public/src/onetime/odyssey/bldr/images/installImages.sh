@@ -1,11 +1,12 @@
+#!/bin/sh
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/onetime/odyssey/meson.build $
+# $Source: public/src/onetime/odyssey/bldr/images/installImages.sh $
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2023
 # [+] International Business Machines Corp.
 #
 #
@@ -23,20 +24,12 @@
 #
 # IBM_PROLOG_END_TAG
 
-if get_option('otprom').enabled()
-  subdir('otprom')
-endif
-
-if get_option('srom').enabled()
-    subdir('srom')
-endif
-
-# Using image_type as priority to use frozen bldr image for odyssey project
-# because the 'bldr' feature will be disabled for the image type 'sppe' and
-# we no need to install `bldr` frozen image.
-if image_type == 'pnor'
-    message('Installing frozen bootloader image...')
-    meson.add_install_script('bldr/images/installImages.sh')
-elif get_option('bldr').enabled()
-  subdir('bldr')
-endif
+echo "Installing production bootloader image..."
+# TODO: JIRA: 325: Untar files only based on the checksum instead of
+#                  checking the file existence
+if [ \( ! -d "${MESON_INSTALL_PREFIX}/odyssey/onetime/bldr" \) ] ;
+then
+    tar -xzvf \
+        ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/bldr/images/bldr.tar.gz \
+        -C ${MESON_INSTALL_PREFIX}/odyssey/onetime/ || exit 1
+fi

@@ -121,10 +121,13 @@ elif [ "$SBE_IMAGE" == "otprom" ]; then
     ENABLED_IMAGES=" -Dotprom=enabled"
 
 elif [ "$SBE_IMAGE" == "pnor" ]; then
-# SROM image build is disabled because its frozen. SROM image will not be required to release to build.
-# For simics it will be picked from "public/src/ontime/odyssey/srom/build/images/"
-    DISABLED_IMAGES=" -Dsrom=disabled -Dpme=disabled -Dsbe=disabled -Dhsbe=disabled -Dtsbe=disabled"
-    ENABLED_IMAGES=" -Dotprom=enabled -Dsppe=enabled -Dbldr=enabled"
+# - SROM image build is disabled because its frozen. SROM image will not be required to release to build.
+#   For simics it will be picked from "public/src/ontime/odyssey/srom/build/images/"
+# - BLDR image build is disabled because its frozen and it will get from
+#   "public/src/ontime/odyssey/bldr/images"
+    DISABLED_IMAGES=" -Dsrom=disabled -Dpme=disabled -Dsbe=disabled -Dhsbe=disabled -Dtsbe=disabled
+                      -Dbldr=disabled"
+    ENABLED_IMAGES=" -Dotprom=enabled -Dsppe=enabled"
 
 elif [ "$SBE_IMAGE" == "zseeprom" ]; then
     ENABLED_IMAGES=" -Dotprom=enabled -Dsppe=enabled -Dbldr=enabled -Dsbe=enabled -Dsrom=enabled -Dpme=enabled"
