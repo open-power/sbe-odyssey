@@ -1137,6 +1137,7 @@ def poz_chiplet_reset(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64], 
             # write NET_CTRL0
             NET_CTRL0.PCB_EP_RESET = 0
             NET_CTRL0.CHIPLET_EN = 1
+            NET_CTRL0.SRAM_ENABLE = 1    # bit 23
 
             ## Wait for chiplet heartbeat to become active
             # read HEARTBEAT_REG using MULTICAST_BITX so we can tell which chiplet(s) failed on timeout
