@@ -25,4 +25,12 @@
 
 subdir('buildekb')
 
+# Install tools thats will expect from the SBE for the external components.
 meson.add_install_script('utils/installTools.sh')
+
+# Install the SBE project specific image if required.
+# For example, golden image (aka, side 2 image) for the odyssey project.
+# FIXME: In future if the SBE project specific scope is increasing to install
+#        some images then, introduce a project specific installation script and
+#        meson target rules for the same.
+meson.add_install_script('utils/installImages.sh')
