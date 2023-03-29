@@ -30,6 +30,7 @@
 
 using namespace fapi2;
 
+#define NOR_BASE_ADDRESS                0xFE000000
 #define NOR_PARTITION_SIZE              0x00400000 // 4MB
 #define NOR_FLASH_SECTOR_BOUNDARY_ALIGN 0xFFFFF000
 #define MIN_SPI_WRITE_IN_WORDS          0x100 // 256 Words
