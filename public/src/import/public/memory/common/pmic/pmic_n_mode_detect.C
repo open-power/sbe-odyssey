@@ -91,7 +91,7 @@ bool is_4u(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_ocmb_target)
 {
     // SBE is expected to provide exactly 4 GI2C targets
     // All 4U DDIMMs have 4 GI2C targets, and all 1U/2U DDIMMs have zero, so checking those is sufficient to say if we have a 4U
-    const auto GI2CS = i_ocmb_target.getChildren<fapi2::TARGET_TYPE_GENERICI2CSLAVE>(fapi2::TARGET_STATE_PRESENT);
+    const auto GI2CS = i_ocmb_target.getChildren<fapi2::TARGET_TYPE_GENERICI2CRESPONDER>(fapi2::TARGET_STATE_PRESENT);
 
     return (GI2CS.size() == mss::generic_i2c_slave::NUM_TOTAL_DEVICES);
 }
@@ -105,7 +105,7 @@ bool is_4u(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_ocmb_target)
 /// @param[in,out] io_failed_pmics Bit map of failed PMICS on a GPIO
 /// @return aggregate_state N mode state according to the status of GPIO and ADC only
 ///
-aggregate_state gpio_check(const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CSLAVE>& i_gpio,
+aggregate_state gpio_check(const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CRESPONDER>& i_gpio,
                            pmic_info& io_pmic1,
                            pmic_info& io_pmic2,
                            fapi2::buffer<uint8_t>& io_failed_pmics)
@@ -162,7 +162,7 @@ aggregate_state gpio_check(const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CSLAV
 ///
 /// @param[in] i_adc ADC target
 ///
-aggregate_state adc_check(const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CSLAVE>& i_adc)
+aggregate_state adc_check(const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CRESPONDER>& i_adc)
 {
     FAPI_INF(TARGTIDFORMAT " Checking ADC for EVENT_FLAG", MSSTARGID(i_adc));
 
@@ -376,8 +376,8 @@ std::vector<pmic_info> get_pmics(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHI
 /// @param[out] o_data telemetry data struct
 ///
 void populate_gpio_data(
-    const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CSLAVE>& i_gpio1,
-    const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CSLAVE>& i_gpio2,
+    const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CRESPONDER>& i_gpio1,
+    const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CRESPONDER>& i_gpio2,
     telemetry_data& o_data)
 {
     fapi2::buffer<uint8_t> l_reg_contents_1;
@@ -612,7 +612,7 @@ uint32_t get_adc_scale_factor(const mss::generic_i2c_slave i_adc_num, const uint
 /// @param[out] o_adc_data data struct
 ///
 void populate_adc_data(
-    const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CSLAVE>& i_adc,
+    const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CRESPONDER>& i_adc,
     const mss::generic_i2c_slave i_adc_num,
     adc_telemetry& o_adc_data)
 {
@@ -752,7 +752,8 @@ fapi2::ReturnCode pmic_n_mode_detect(
     aggregate_state l_state = aggregate_state::N_PLUS_1;
 
     // Expecting to receive 4 GI2C targets and 4 PMICs from PPE platform
-    const auto GI2C_DEVICES = i_ocmb_target.getChildren<fapi2::TARGET_TYPE_GENERICI2CSLAVE>(fapi2::TARGET_STATE_PRESENT);
+    const auto GI2C_DEVICES = i_ocmb_target.getChildren<fapi2::TARGET_TYPE_GENERICI2CRESPONDER>
+                              (fapi2::TARGET_STATE_PRESENT);
     auto PMICS = get_pmics(i_ocmb_target);
 
     if (PMICS.empty())
