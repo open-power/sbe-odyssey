@@ -29,6 +29,9 @@
 #include "sbecmdupdateimage.H"
 #include "heap.H"
 #include "archive.H"
+#include "assert.h"
+
+const uint32_t NOR_BASE_ADDR_MASK=0xFF000000;
 
 /////////////////////////////////////////////////////
 // Update image chip-op flow
@@ -67,7 +70,7 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
     // Set ackEOT to false
     o_ackEOT = false;
     // Variable for running and non-running partition in nor
-    uint8_t l_nonRunPartIndex, l_runPartIndex;
+    uint8_t l_nonRunSideIndex = 0, l_runSideIndex = 0;
     // structure for partition entry
     CU::partitionEntry_t l_partitionEntry;
     // Buffer used to collect data from fifo
@@ -79,13 +82,14 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
     bool l_eraseDone = false;
     uint32_t maxSpiWriteInWords = 0;
 
-    // This is for testing bootloader update image
-    bool l_checkBootUpdateFlag = false;
+    // This flag is used for bootloader update image to check on the incoming
+    // partition table
+    bool l_updateBootCheckPtblFlag = false;
 
     do
     {
         // Get partition info in nor
-        getPartitionInfo(l_runPartIndex, l_nonRunPartIndex);
+        getPartitionInfo(l_runSideIndex, l_nonRunSideIndex);
 
         // From partition table in non-running side get the image start
         // address and size for images other than bootloader as for bootloader
@@ -94,7 +98,7 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
         if (i_msg->imageType != (uint16_t)CU_IMAGES::BOOTLOADER)
         {
             // Get image start addr in nor
-            l_rc = getPakEntryFromPartitionTable(l_nonRunPartIndex,
+            l_rc = getPakEntryFromPartitionTable(l_nonRunSideIndex,
                                                  (CU_IMAGES)(i_msg->imageType),
                                                  NULL,
                                                  0,
@@ -111,7 +115,8 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
             // As nor is 16MB 24-bits used to address it to pass on to the spi
             // driver for various operations - read/write/erase
             // TODO:PFSBE-311 project specific macros
-            l_imageStartAddr &= 0x00FFFFFF;
+            assert(((l_imageStartAddr & NOR_BASE_ADDR_MASK) == NOR_BASE_ADDRESS));
+            l_imageStartAddr -= NOR_BASE_ADDRESS;
 
             // Check for image size received before starting to write into nor
             if (IN_BYTES(i_msg->imageSizeInWords) > l_partitionEntry.partitionSize)
@@ -126,6 +131,11 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
 
             SBE_INFO(SBE_FUNC "ImageStartAddr:0x%08X Size(max):0x%08X",
                     l_imageStartAddr, l_imageSizeMax);
+        }
+        else
+        {
+            // Update bootloader image
+            l_updateBootCheckPtblFlag = true;
         }
 
         // Initialize SPI controller to get PIB SPI base address
@@ -159,7 +169,7 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
             SBE_ERROR(SBE_FUNC "Allocation of buffer size [0x%08x] failed",
                       getMaxBufSize);
             o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                              SBE_SEC_HEAP_SPACE_FULL_FAILURE );
+                              SBE_SEC_HEAP_BUFFER_ALLOC_FAILED );
             break;
         }
 
@@ -204,15 +214,16 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
             // partition table and subsequently verifying the combined size for
             // all image incl. bootloader file before updating the bootloader
             // image into non-running side
-            if (i_msg->imageType == (uint16_t)CU_IMAGES::BOOTLOADER && !l_checkBootUpdateFlag)
+            if (l_updateBootCheckPtblFlag)
             {
                 uint32_t l_sumOfSectionEntriesSize = 0;
+                uint32_t l_partitionStartAddress = 0;
                 // TODO:PFSBE-311 for using END_OF_IMG_LIST
                 for (uint8_t imgId = 1; imgId < (uint8_t)CU_IMAGES::END_OF_IMG_LIST; imgId++)
                 {
                     // Get each image type start address from the partition table
                     // in the incoming pak file
-                    l_rc = getPakEntryFromPartitionTable(l_nonRunPartIndex,
+                    l_rc = getPakEntryFromPartitionTable(l_nonRunSideIndex,
                                                          (CU_IMAGES)imgId,
                                                          (void *)ImgBufScratchArea,
                                                          l_writeWordsLen,
@@ -225,14 +236,57 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
                         break;
                     }
 
+                    // Check for start address higher nibble doesn't match to base address
+                    if(((l_partitionEntry.partitionStartAddr & NOR_BASE_ADDR_MASK) != NOR_BASE_ADDRESS))
+                    {
+                        SBE_ERROR(SBE_FUNC "Image [0x%02x] higher 8-bits nibble address [0x%08x] not matching "\
+                                  "expected address [0x%08x]", imgId, l_partitionEntry.partitionStartAddr,\
+                                  NOR_BASE_ADDRESS);
+                        l_rc = SBE_SEC_CU_IMAGE_HIGH_ORDER_ADDR_MISMATCH;
+                        o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE, l_rc );
+                        break;
+                    }
+
+                    // Check if sum of image start address & its size is greater than (NOR_PARTITION_SIZE-8)
+                    // Note:NOR_PARTITION_SIZE-8 : 8 refers to metadata(4bytes) & trace pointer(4 bytes)
+                    if(((l_partitionEntry.partitionStartAddr - NOR_BASE_ADDRESS) +
+                            l_partitionEntry.partitionSize) > (uint32_t)((NOR_PARTITION_SIZE * (l_nonRunSideIndex + 1))-8))
+                    {
+                        SBE_ERROR(SBE_FUNC "Sum of image [0x%02x] start address [0x%08x] and its size [0x%08x] "\
+                                  "more than 4MB ", imgId, l_partitionEntry.partitionStartAddr,\
+                                  l_partitionEntry.partitionSize);
+                        l_rc = SBE_SEC_CU_IMG_ADDR_N_SZ_EXCEEDS_SIDE_SZ;
+                        o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE, l_rc );
+                        break;
+                    }
+
                     l_sumOfSectionEntriesSize += l_partitionEntry.partitionSize;
 
                     // Get bootloader start addr in nor
                     if (imgId == (uint16_t)CU_IMAGES::BOOTLOADER)
                     {
                         l_imageSizeMax    = l_partitionEntry.partitionSize;
-                        l_imageStartAddr  = (l_partitionEntry.partitionStartAddr & 0x00FFFFFF);
+                        l_imageStartAddr  = l_partitionEntry.partitionStartAddr;
+                        l_imageStartAddr -= NOR_BASE_ADDRESS;
+
+                        // Get boot (start) section address in partition table
+                        l_partitionStartAddress = l_imageStartAddr;
                     }
+
+                    // Check for next section start address
+                    if (l_partitionStartAddress != (l_partitionEntry.partitionStartAddr - NOR_BASE_ADDRESS))
+                    {
+                        SBE_ERROR(SBE_FUNC "Section [0x%02x] start address [0x%08x] not matching "\
+                                  "expected start address [0x%08x]",\
+                                  imgId, l_partitionStartAddress,\
+                                  (l_partitionEntry.partitionStartAddr - NOR_BASE_ADDRESS));
+                        l_rc = SBE_SEC_CU_SECTION_START_ADDR_MISMATCH;
+                        o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE, l_rc );
+                        break;
+                    }
+
+                    // Next section start address = past section start address + past section size
+                    l_partitionStartAddress += l_partitionEntry.partitionSize;
                 }
 
                 if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
@@ -246,7 +300,7 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
                               "[0x%08x]. Sum of sections: [0x%08x]",\
                               NOR_PARTITION_SIZE, l_sumOfSectionEntriesSize);
                     o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                                      SBE_SEC_CU_EXCEEDS_MAX_SIDE_IMAGE_SIZE );
+                                      SBE_SEC_CU_PTBL_TOTAL_IMG_SIZE_INVALID );
                     break;
                 }
 
@@ -265,8 +319,8 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
                         l_imageStartAddr, l_imageSizeMax);
 
                 // Make sure flag is set
-                l_checkBootUpdateFlag = true;
-            }
+                l_updateBootCheckPtblFlag = false;
+            } // end of bootloader image partition table check (l_updateBootCheckPtblFlag)
 
             // Before starting to write into nor, make sure to erase entire
             // requisite number of sectors/blocks as per the image size
@@ -302,7 +356,7 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
                               "Start address:[0x%08x] End address:[0x%08X]. RC[0x%08X]",
                               l_eraseStartAddr, l_eraseEndAddr, l_fapiRc);
                     o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                                      SBE_SEC_CU_UPDATE_IMAGE_FAILURE );
+                                      SBE_SEC_CU_ERASE_IMAGE_FAILURE );
                     break;
                 }
 
@@ -341,7 +395,7 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
                 // if its size matching the nor partition side. If yes, append PAK_END or PAK_PAD towards the
                 // end of the image in nor
                 if ((l_imageStartAddr + IN_BYTES(l_writeWordsLen)) ==
-                        (uint32_t)(NOR_PARTITION_SIZE * (l_nonRunPartIndex + 1)))
+                        (uint32_t)(NOR_PARTITION_SIZE * (l_nonRunSideIndex + 1)))
                 {
                     *(uint32_t *)l_checkForPakEndNSize = PAK_END;
                     *(uint32_t *)(l_checkForPakEndNSize + 4) = NOR_PARTITION_SIZE;
@@ -374,12 +428,15 @@ fapi2::ReturnCode updateImage(const updateImageCmdMsg_t *i_msg,
                           "Error:0x%016llX", WITH_ECC(l_imageStartAddr), IN_BYTES(l_writeWordsLen),\
                           (uint64_t)l_fapiRc);
                 o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                                  SBE_SEC_CU_UPDATE_IMAGE_FAILURE );
+                                  SBE_SEC_CU_WRITE_IMAGE_FAILURE );
                 break;
             }
 
             l_imageStartAddr += IN_BYTES(l_writeWordsLen);
         } //for (uint32_t l_len = i_msg->imageSizeInWords; l_len > 0; l_len -= l_writeWordsLen)
+
+        // If FIFO access failure
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(o_fifoRc);
 
         if ((l_fapiRc == FAPI2_RC_SUCCESS) &&
             (o_hdr->secondaryStatus() == SBE_SEC_OPERATION_SUCCESSFUL))
