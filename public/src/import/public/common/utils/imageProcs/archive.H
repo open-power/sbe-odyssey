@@ -300,6 +300,22 @@ class FileArchive
         ARC_RET_t locate_file(const char* i_fname, Entry& o_entry, uint32_t i_flags = 0);
 
         /**
+         * @brief Find the first occurrence of padding from the beginning of the archive
+         *
+         * This function will scan the archive for padding and return the first padding entry's
+         * location and size. To find subsequent padding, a caller can create a new FileArchive
+         * object that starts scanning behind the padding (i.e. pad location + pad size).
+         *
+         * @param[out] o_padStart  Start of the padding (right after PAK_PAD header)
+         * @param[out] o_padSize   Size of the padding
+         *
+         * @return  ARC_OPERATION_SUCCESSFUL          if the file was found
+         *          ARC_FILE_NOT_FOUND                if no padding entry was found
+         *          ARC_FILE_CORRUPTED                if the archive appears corrupted
+         */
+        ARC_RET_t locate_padding(void*& o_padStart, uint32_t& o_padSize);
+
+        /**
          * @brief Locate the end of the archive
          *
          * @return An 8-byte aligned pointer to the first memory location after the end of the archive
@@ -352,10 +368,21 @@ class FileArchive
         void* iv_firstFile;
         void* iv_archiveLimit;
 
+        enum locate_what
+        {
+            LOCATE_FILE = 1,
+            LOCATE_END = 2,
+            LOCATE_PAD = 3,
+        };
+
         /**
-         * @brief Internal function used for both locate_file and archive_end
+         * @brief Internal function used for locate_file, archive_end and locate_padding
          */
-        ARC_RET_t _locate_file(const char* i_fname, Entry* o_entry, void*& o_ptr, uint32_t i_flags = 0);
+        ARC_RET_t _locate(const locate_what i_what,
+                          const char* i_fname,
+                          Entry* o_entry,
+                          void*& o_ptr,
+                          uint32_t i_flags);
 
         /**
          * @brief Internal function used by append_*

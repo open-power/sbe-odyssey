@@ -192,7 +192,11 @@ ARC_RET_t FileArchive::Entry::get_stored_data_stream(fapi2::hwp_array_istream& o
 }
 #endif
 
-ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& o_ptr, uint32_t i_flags)
+ARC_RET_t FileArchive::_locate(const locate_what i_what,
+                               const char* i_fname,
+                               Entry* o_entry,
+                               void*& o_ptr,
+                               uint32_t i_flags)
 {
     uint8_t* ptr = static_cast<uint8_t*>(iv_firstFile);
     uint16_t fname_len = i_fname ? strlen(i_fname) : 0;
@@ -233,7 +237,13 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
         // Check the magic to make sure we are at the start of an entry
         if (hdrc.h.iv_magic == PAK_END)
         {
-            if (i_fname)
+            if (i_what == LOCATE_END)
+            {
+                // The end magic is 4 bytes + 4 bytes of total size
+                o_ptr = ptr + 8;
+                return ARC_OPERATION_SUCCESSFUL;
+            }
+            else
             {
                 if (!(i_flags & ARCHIVE_FLAGS_NOT_FOUND_QUIET))
                 {
@@ -246,19 +256,21 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
 
                 return ARC_FILE_NOT_FOUND;
             }
-            else
-            {
-                // The end magic is 4 bytes + 4 bytes of total size
-                o_ptr = ptr + 8;
-                return ARC_OPERATION_SUCCESSFUL;
-            }
         }
 
         if (hdrc.h.iv_magic == PAK_PAD)
         {
-            hdrc.h.iv_padsize = be32toh(hdrc.h.iv_padsize);
-            ptr += hdrc.h.iv_padsize + 8;
-            continue;
+            if (i_what == LOCATE_PAD)
+            {
+                o_ptr = ptr;
+                return ARC_OPERATION_SUCCESSFUL;
+            }
+            else
+            {
+                hdrc.h.iv_padsize = be32toh(hdrc.h.iv_padsize);
+                ptr += hdrc.h.iv_padsize + 8;
+                continue;
+            }
         }
 
         if (hdrc.h.iv_magic != PAK_START)
@@ -356,13 +368,34 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
 ARC_RET_t FileArchive::locate_file(const char* i_fname, Entry& o_entry, uint32_t i_flags)
 {
     void* dummy;
-    return _locate_file(i_fname, &o_entry, dummy, i_flags);
+    return _locate(LOCATE_FILE, i_fname, &o_entry, dummy, i_flags);
+}
+
+ARC_RET_t FileArchive::locate_padding(void*& o_padStart, uint32_t& o_padSize)
+{
+    void* hdrc;
+    ARC_RET_t rc = _locate(LOCATE_PAD, NULL, NULL, hdrc, ARCHIVE_FLAGS_NOT_FOUND_QUIET);
+
+    if (rc == ARC_OPERATION_SUCCESSFUL)
+    {
+        o_padStart = (uint8_t*)hdrc + 8;
+        o_padSize = be32toh(((PakFileHeaderCore*)hdrc)->iv_padsize);
+
+        if (iv_archiveLimit && ((uint8_t*)o_padStart + o_padSize >= iv_archiveLimit))
+        {
+            ARC_ERROR("Padding exceeds allowed archive limit: %p + 0x%08x >= %p",
+                      o_padStart, o_padSize, iv_archiveLimit);
+            return ARC_FILE_CORRUPTED;
+        }
+    }
+
+    return rc;
 }
 
 void* FileArchive::archive_end()
 {
     void* end;
-    return (_locate_file(NULL, NULL, end) == ARC_OPERATION_SUCCESSFUL) ? end : NULL;
+    return (_locate(LOCATE_END, NULL, NULL, end, 0) == ARC_OPERATION_SUCCESSFUL) ? end : NULL;
 }
 
 ARC_RET_t FileArchive::initialize(void)
@@ -392,7 +425,7 @@ ARC_RET_t FileArchive::_append_find_end(void*& io_end, size_t i_archiveMaxSize)
     else if(io_end == NULL)
     {
         // locate the end
-        ARC_RET_t rc = _locate_file(NULL, NULL, io_end);
+        ARC_RET_t rc = _locate(LOCATE_END, NULL, NULL, io_end, 0);
 
         if(rc != ARC_OPERATION_SUCCESSFUL)
         {
