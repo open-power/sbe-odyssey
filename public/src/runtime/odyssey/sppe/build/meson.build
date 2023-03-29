@@ -30,6 +30,6 @@ if platform == 'all'
   subdir_done()
 endif
 
-if(get_option('bldr').enabled() and get_option('sppe').enabled())
+if image_type == 'pnor' or image_type == 'all'
     meson.add_install_script('utils/installartifacts.sh')
 endif

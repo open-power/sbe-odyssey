@@ -25,6 +25,7 @@
 
 #Grab the platform type to build parts of image as per user choise
 platform = get_option('platform')
+image_type = get_option('image_type')
 
 #Grab the DD Level as per user choise
 ddlvl = get_option('ddlevel')
