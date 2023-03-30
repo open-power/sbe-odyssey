@@ -331,6 +331,13 @@ ARC_RET_t FileArchive::_locate_file(const char* i_fname, Entry* o_entry, void*& 
                 return ARC_FILE_CORRUPTED;
             }
 
+            if (iv_archiveLimit && (ptr + hdre.iv_csize >= iv_archiveLimit))
+            {
+                ARC_ERROR("Compressed size exceeds allowed archive limit: %p + 0x%08x >= %p",
+                          ptr, hdre.iv_csize, iv_archiveLimit);
+                return ARC_FILE_CORRUPTED;
+            }
+
             // Everything checks out, setup the return data
             o_entry->iv_method = hdre.iv_method;
             o_entry->iv_compressedData = ptr;
