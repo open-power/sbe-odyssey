@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -24,6 +24,8 @@
 # IBM_PROLOG_END_TAG
 
 subdir('sha3')
+subdir('ecdsa')
+subdir('dilithium')
 
 # Currently sha2-512 is not used. This is redundant p10 code
 # If sha2-512 is required uncomment below line

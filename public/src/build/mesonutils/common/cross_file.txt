@@ -126,6 +126,8 @@ cmn_inc_paths = [
     '/public/src/common/core',
     '/public/src/common/utils',
     '/public/src/common/algorithms/sha3',
+    '/public/src/common/algorithms/ecdsa',
+    '/public/src/common/algorithms/dilithium',
     '/public/src/build/links',
     '/public/src/common/pakwrapper',
     '/genfiles/common',
@@ -148,6 +150,4 @@ runtime_cmn_code_update_inc_paths = [
 onetime_cmn_inc_paths = [
     '/public/src/onetime/common/srom/init',
     '/public/src/onetime/common/srom/core',
-    '/public/src/onetime/common/algorithms/ecdsa',
-    '/public/src/onetime/common/algorithms/dilithium'
         ]
