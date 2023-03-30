@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -717,6 +717,14 @@ static TINF_RET_t tinf_inflate_block_data(struct tinf_data* d,
 
             if (source < d->dict)
             {
+                if (!d->receiver)
+                {
+                    // Pointing in front of output buffer is an
+                    // error in the non-streaming case.
+                    return TINF_DATA_ERROR;
+                }
+
+                // In the streaming case the dict is a ring buffer
                 source += DICTIONARY_SIZE;
             }
 

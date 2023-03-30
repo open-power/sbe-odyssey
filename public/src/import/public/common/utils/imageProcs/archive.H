@@ -269,9 +269,9 @@ class FileArchive
 #endif
                 friend class FileArchive;
                 uint16_t iv_method;
+                uint32_t iv_uncompressedSize;
                 void*    iv_compressedData;
                 uint32_t iv_compressedSize;
-                uint32_t iv_uncompressedSize;
 
             private:
                 ARC_RET_t stream_uncompressed_with_hash(StreamReceiver& i_receiver, void* i_scratch, sha3_t* o_hash);
