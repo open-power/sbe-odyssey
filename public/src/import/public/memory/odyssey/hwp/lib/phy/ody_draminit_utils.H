@@ -77,8 +77,39 @@ namespace mss
 {
 namespace ody
 {
+
+///
+/// @brief Check if we've selected to skip a step in a procedure using ATTR_ODY_DRAMINIT_STEP_ENABLE
+/// @param[in] i_hwp_step enum from ATTR_ODY_DRAMINIT_STEP_ENABLE for the bit we're checking
+/// @param[in] i_attr_val value of ATTR_ODY_DRAMINIT_STEP_ENABLE
+/// @return fapi2::FAPI2_RC_SUCCESS iff successful
+///
+inline bool skip_this_step(const uint8_t i_hwp_step,
+                           const uint8_t i_attr_val)
+{
+    // Sanity check that i_hwp_step doesn't overflow (just return false - don't skip)
+    if (i_hwp_step >= BITS_PER_BYTE)
+    {
+        return false;
+    }
+
+    const uint8_t l_step_mask = 0x80 >> i_hwp_step;
+
+    return ((i_attr_val & l_step_mask) == 0x00);
+}
+
 namespace phy
 {
+
+///
+/// @brief SPD to PHY nibble swizzle is implemented in the getBits indexing
+/// @param[in] i_nibble_enables nibble enable attr value
+/// @param[out] o_byte_disables DQ byte disable bits
+/// @return FAPI2_RC_SUCCESS iff okay
+///
+fapi2::ReturnCode nibble_enable_db_disable(const fapi2::buffer<uint32_t>& i_nibble_enables,
+        uint8_t(&o_byte_disables)[10]
+                                          );
 
 constexpr uint8_t NUM_RCW = 0x80;
 
@@ -138,8 +169,8 @@ struct msg_block_vars
     uint8_t iv_MR111[mss::ody::MAX_RANK_PER_DIMM] = {0};
     uint8_t iv_MR33[mss::ody::MAX_RANK_PER_DIMM] = {0};
     uint8_t iv_MR33_ORG[mss::ody::MAX_RANK_PER_DIMM] = {0};
-    uint8_t iv_MR34[mss::ody::MAX_RANK_PER_DIMM] = {0};
-    uint8_t iv_MR35[mss::ody::MAX_RANK_PER_DIMM] = {0};
+    uint8_t iv_MR34[mss::ody::MAX_RANK_PER_DIMM][mss::ddr5::mr::ATTR_NUM_CHANNELS] = {};
+    uint8_t iv_MR35[mss::ody::MAX_RANK_PER_DIMM][mss::ddr5::mr::ATTR_NUM_CHANNELS] = {};
     uint8_t iv_MR37[mss::ody::MAX_RANK_PER_DIMM] = {0};
     uint8_t iv_MR38[mss::ody::MAX_RANK_PER_DIMM] = {0};
     uint8_t iv_MR39[mss::ody::MAX_RANK_PER_DIMM] = {0};
@@ -161,10 +192,10 @@ struct msg_block_vars
     uint8_t iv_Reserved1E5 = 0;
     uint8_t iv_Reserved1E6 = 0;
     uint8_t iv_Reserved1E7 = 0;
-    uint8_t iv_WL_ADJ_START = 0;
-    uint8_t iv_WL_ADJ_END = 0;
+    uint16_t iv_WL_ADJ_START = 0;
+    uint16_t iv_WL_ADJ_END = 0;
     uint8_t iv_RCW[NUM_RCW] = {0};
-    uint8_t iv_DisabledDB[mss::ody::MAX_BYTES_PER_PORT][mss::ody::MAX_RANK_PER_DIMM] = {};
+    uint32_t iv_nibbles_enables[mss::ody::MAX_DIMM_PER_PORT] = {0};
 };
 
 ///
@@ -280,6 +311,7 @@ class msg_block_params
             // D5Quickboot is always zero for Odyssey
             iv_msg_block_vars.iv_D5Quickboot = 0;
             FAPI_TRY(mss::attr::get_disabled_dbyte(i_target, iv_msg_block_vars.iv_DisabledDbyte));
+            FAPI_TRY(mss::attr::get_nibble_enables(i_target, iv_msg_block_vars.iv_nibbles_enables));
             FAPI_TRY(mss::attr::get_ca_train_options(i_target, iv_msg_block_vars.iv_CATrainOpt));
             FAPI_TRY(mss::attr::get_tx2d_dfe_misc(i_target, iv_msg_block_vars.iv_TX2D_DFE_Misc));
             FAPI_TRY(mss::attr::get_rx2d_train_opt(i_target, iv_msg_block_vars.iv_RX2D_TrainOpt));
@@ -293,6 +325,19 @@ class msg_block_params
             FAPI_TRY(mss::attr::get_phy_enabled_dq_chb(i_target, iv_msg_block_vars.iv_EnabledDQsChB));
             FAPI_TRY(mss::attr::get_dimm_ranks_configed(i_target, iv_msg_block_vars.iv_CsPresentChA));
             FAPI_TRY(mss::attr::get_dimm_ranks_configed(i_target, iv_msg_block_vars.iv_CsPresentChB));
+
+            // Update the number of CS present based upon the number of DQ on each channel
+            if(iv_msg_block_vars.iv_EnabledDQsChA == 0)
+            {
+                iv_msg_block_vars.iv_CsPresentChA[0] = 0;
+                iv_msg_block_vars.iv_CsPresentChA[1] = 0;
+            }
+
+            if(iv_msg_block_vars.iv_EnabledDQsChB == 0)
+            {
+                iv_msg_block_vars.iv_CsPresentChB[0] = 0;
+                iv_msg_block_vars.iv_CsPresentChB[1] = 0;
+            }
 
             FAPI_TRY(mss::attr::get_dram_width(i_target, l_dram_width));
             FAPI_ASSERT((l_dram_width != 0),
@@ -321,8 +366,16 @@ class msg_block_params
                 FAPI_TRY(l_mr111.assemble_data(l_rank_info, iv_msg_block_vars.iv_MR111[l_phy_rank]));
                 FAPI_TRY(l_mr33.assemble_data(l_rank_info, iv_msg_block_vars.iv_MR33[l_phy_rank]));
                 FAPI_TRY(l_mr33.assemble_data(l_rank_info, iv_msg_block_vars.iv_MR33_ORG[l_phy_rank], mss::ddr5::mr::STRAPB));
-                FAPI_TRY(l_mr34.assemble_data(l_rank_info, iv_msg_block_vars.iv_MR34[l_phy_rank]));
-                FAPI_TRY(l_mr35.assemble_data(l_rank_info, iv_msg_block_vars.iv_MR35[l_phy_rank]));
+                // Running on DRAM0 for Channel A and DRAM10 for Channel B
+                // Since these are the first DRAMS on each channel
+                FAPI_TRY(l_mr34.assemble_data(l_rank_info, iv_msg_block_vars.iv_MR34[l_phy_rank][mss::ddr5::mr::ATTR_CHANNEL_A],
+                                              mss::ddr5::mr::ATTR_DRAM_CHA_SELECT));
+                FAPI_TRY(l_mr34.assemble_data(l_rank_info, iv_msg_block_vars.iv_MR34[l_phy_rank][mss::ddr5::mr::ATTR_CHANNEL_B],
+                                              mss::ddr5::mr::ATTR_DRAM_CHB_SELECT));
+                // Running on DRAM0 for Channel A and DRAM10 for Channel B
+                // Since these are the first DRAMS on each channel
+                FAPI_TRY(l_mr35.assemble_data(l_rank_info, iv_msg_block_vars.iv_MR35[l_phy_rank][mss::ddr5::mr::ATTR_CHANNEL_A], 0));
+                FAPI_TRY(l_mr35.assemble_data(l_rank_info, iv_msg_block_vars.iv_MR35[l_phy_rank][mss::ddr5::mr::ATTR_CHANNEL_B], 10));
                 FAPI_TRY(l_mr37.assemble_data(l_rank_info, iv_msg_block_vars.iv_MR37[l_phy_rank]));
                 FAPI_TRY(l_mr38.assemble_data(l_rank_info, iv_msg_block_vars.iv_MR38[l_phy_rank]));
                 FAPI_TRY(l_mr39.assemble_data(l_rank_info, iv_msg_block_vars.iv_MR39[l_phy_rank]));
@@ -554,6 +607,11 @@ class msg_block_params
         fapi2::ReturnCode setup_SequenceCtrl(PMU_SMB_DDR5U_1D_t& io_msg_block) const
         {
             constexpr uint8_t RCD_CSCA = 1;
+            constexpr uint8_t LRDIMM_TESTS_START = 2;
+            constexpr uint8_t LRDIMM_TESTS_LEN = 4;
+            // Note: naming fields after Synopsys's structure spec, and they count bits from right to left
+            constexpr uint8_t RFU8 = 7;
+            constexpr uint8_t RFU7 = 8;
 
             fapi2::buffer<uint16_t> l_buffer(iv_msg_block_vars.iv_SequenceCtrl);
             bool l_has_rcd = false;
@@ -564,6 +622,18 @@ class msg_block_params
             {
                 l_buffer.clearBit<RCD_CSCA>();
             }
+
+            // Force LRDIMM tests to be disabled
+            l_buffer.clearBit<LRDIMM_TESTS_START, LRDIMM_TESTS_LEN>();
+
+            // Force RFU tests to be disabled
+            l_buffer.clearBit<RFU8>();
+            l_buffer.clearBit<RFU7>();
+
+#ifndef __PPE__
+            FAPI_INF(TARGTIDFORMAT "Applying overrides to SequenceCtrl before:0x%04x after:0x%04x", GENTARGTID(iv_target),
+                     io_msg_block.SequenceCtrl, l_buffer);
+#endif
 
             io_msg_block.SequenceCtrl = l_buffer;
 
@@ -675,6 +745,7 @@ class msg_block_params
             // Note: naming fields after Synopsys's structure spec, and they count bits from right to left
             constexpr uint8_t RFU6 = 1;
             constexpr uint8_t CS_2D_TRAINING = 2;
+            constexpr uint8_t CA13_TRAIN_SKIP = 3;
             constexpr uint8_t CSCA_TRAINING_STEP_SIZE = 4;
             constexpr uint8_t CSCA_TRAINING_STEP_SIZE_LEN = 2;
             constexpr uint8_t CA_DFE_TRAINING = 6;
@@ -683,8 +754,12 @@ class msg_block_params
             fapi2::buffer<uint8_t> l_buffer(iv_msg_block_vars.iv_CATrainOpt);
 
             bool l_has_rcd = false;
+            uint16_t l_stack_height = 0;
+            uint8_t l_density = 0;
 
             FAPI_TRY(mss::has_rcd(iv_target, l_has_rcd));
+            FAPI_TRY(mss::attr::get_3ds_height(iv_dimm, l_stack_height));
+            FAPI_TRY(mss::attr::get_dram_density(iv_dimm, l_density));
 
             // Make sure RDIMM-only training options are disabled for UDIMM
             if (!l_has_rcd)
@@ -703,7 +778,15 @@ class msg_block_params
             // Disable the reserved bit
             l_buffer.clearBit<RFU6>();
 
-            // TODO Zen:MST-1771 Override bit 3 (Skip CA13 during CA training) if needed
+            // We want to run CA13 training if we're an 8H stack or greater OR if the DRAM density is 64Gb or greater
+            // Skip if we're less than an 8H stack and we're less than a 64Gb
+            l_buffer.writeBit<CA13_TRAIN_SKIP>(l_stack_height < fapi2::ENUM_ATTR_MEM_3DS_HEIGHT_H8
+                                               && l_density < fapi2::ENUM_ATTR_MEM_EFF_DRAM_DENSITY_64G);
+
+#ifndef __PPE__
+            FAPI_INF(TARGTIDFORMAT "Applying overrides to CATrainOpt before:0x%04x after:0x%04x", GENTARGTID(iv_target),
+                     io_msg_block.CATrainOpt, l_buffer);
+#endif
 
             io_msg_block.CATrainOpt = l_buffer;
 
@@ -1273,14 +1356,14 @@ class msg_block_params
         ///
         fapi2::ReturnCode setup_MR34(PMU_SMB_DDR5U_1D_t& io_msg_block) const
         {
-            io_msg_block.MR34_A0 = iv_msg_block_vars.iv_MR34[0];
-            io_msg_block.MR34_A1 = iv_msg_block_vars.iv_MR34[1];
-            io_msg_block.MR34_A2 = iv_msg_block_vars.iv_MR34[2];
-            io_msg_block.MR34_A3 = iv_msg_block_vars.iv_MR34[3];
-            io_msg_block.MR34_B0 = iv_msg_block_vars.iv_MR34[0];
-            io_msg_block.MR34_B1 = iv_msg_block_vars.iv_MR34[1];
-            io_msg_block.MR34_B2 = iv_msg_block_vars.iv_MR34[2];
-            io_msg_block.MR34_B3 = iv_msg_block_vars.iv_MR34[3];
+            io_msg_block.MR34_A0 = iv_msg_block_vars.iv_MR34[0][mss::ddr5::mr::ATTR_CHANNEL_A];
+            io_msg_block.MR34_A1 = iv_msg_block_vars.iv_MR34[1][mss::ddr5::mr::ATTR_CHANNEL_A];
+            io_msg_block.MR34_A2 = iv_msg_block_vars.iv_MR34[2][mss::ddr5::mr::ATTR_CHANNEL_A];
+            io_msg_block.MR34_A3 = iv_msg_block_vars.iv_MR34[3][mss::ddr5::mr::ATTR_CHANNEL_A];
+            io_msg_block.MR34_B0 = iv_msg_block_vars.iv_MR34[0][mss::ddr5::mr::ATTR_CHANNEL_B];
+            io_msg_block.MR34_B1 = iv_msg_block_vars.iv_MR34[1][mss::ddr5::mr::ATTR_CHANNEL_B];
+            io_msg_block.MR34_B2 = iv_msg_block_vars.iv_MR34[2][mss::ddr5::mr::ATTR_CHANNEL_B];
+            io_msg_block.MR34_B3 = iv_msg_block_vars.iv_MR34[3][mss::ddr5::mr::ATTR_CHANNEL_B];
 
             return fapi2::current_err;
         }
@@ -1292,14 +1375,14 @@ class msg_block_params
         ///
         fapi2::ReturnCode setup_MR35(PMU_SMB_DDR5U_1D_t& io_msg_block) const
         {
-            io_msg_block.MR35_A0 = iv_msg_block_vars.iv_MR35[0];
-            io_msg_block.MR35_A1 = iv_msg_block_vars.iv_MR35[1];
-            io_msg_block.MR35_A2 = iv_msg_block_vars.iv_MR35[2];
-            io_msg_block.MR35_A3 = iv_msg_block_vars.iv_MR35[3];
-            io_msg_block.MR35_B0 = iv_msg_block_vars.iv_MR35[0];
-            io_msg_block.MR35_B1 = iv_msg_block_vars.iv_MR35[1];
-            io_msg_block.MR35_B2 = iv_msg_block_vars.iv_MR35[2];
-            io_msg_block.MR35_B3 = iv_msg_block_vars.iv_MR35[3];
+            io_msg_block.MR35_A0 = iv_msg_block_vars.iv_MR35[0][mss::ddr5::mr::ATTR_CHANNEL_A];
+            io_msg_block.MR35_A1 = iv_msg_block_vars.iv_MR35[1][mss::ddr5::mr::ATTR_CHANNEL_A];
+            io_msg_block.MR35_A2 = iv_msg_block_vars.iv_MR35[2][mss::ddr5::mr::ATTR_CHANNEL_A];
+            io_msg_block.MR35_A3 = iv_msg_block_vars.iv_MR35[3][mss::ddr5::mr::ATTR_CHANNEL_A];
+            io_msg_block.MR35_B0 = iv_msg_block_vars.iv_MR35[0][mss::ddr5::mr::ATTR_CHANNEL_B];
+            io_msg_block.MR35_B1 = iv_msg_block_vars.iv_MR35[1][mss::ddr5::mr::ATTR_CHANNEL_B];
+            io_msg_block.MR35_B2 = iv_msg_block_vars.iv_MR35[2][mss::ddr5::mr::ATTR_CHANNEL_B];
+            io_msg_block.MR35_B3 = iv_msg_block_vars.iv_MR35[3][mss::ddr5::mr::ATTR_CHANNEL_B];
 
             return fapi2::current_err;
         }
@@ -3224,48 +3307,63 @@ class msg_block_params
         ///
         fapi2::ReturnCode setup_DisabledDB(PMU_SMB_DDR5U_1D_t& io_msg_block) const
         {
-            io_msg_block.DisabledDB0LaneR0 = iv_msg_block_vars.iv_DisabledDB[0][0];
-            io_msg_block.DisabledDB0LaneR1 = iv_msg_block_vars.iv_DisabledDB[0][1];
-            io_msg_block.DisabledDB0LaneR2 = iv_msg_block_vars.iv_DisabledDB[0][2];
-            io_msg_block.DisabledDB0LaneR3 = iv_msg_block_vars.iv_DisabledDB[0][3];
-            io_msg_block.DisabledDB1LaneR0 = iv_msg_block_vars.iv_DisabledDB[1][0];
-            io_msg_block.DisabledDB1LaneR1 = iv_msg_block_vars.iv_DisabledDB[1][1];
-            io_msg_block.DisabledDB1LaneR2 = iv_msg_block_vars.iv_DisabledDB[1][2];
-            io_msg_block.DisabledDB1LaneR3 = iv_msg_block_vars.iv_DisabledDB[1][3];
-            io_msg_block.DisabledDB2LaneR0 = iv_msg_block_vars.iv_DisabledDB[2][0];
-            io_msg_block.DisabledDB2LaneR1 = iv_msg_block_vars.iv_DisabledDB[2][1];
-            io_msg_block.DisabledDB2LaneR2 = iv_msg_block_vars.iv_DisabledDB[2][2];
-            io_msg_block.DisabledDB2LaneR3 = iv_msg_block_vars.iv_DisabledDB[2][3];
-            io_msg_block.DisabledDB3LaneR0 = iv_msg_block_vars.iv_DisabledDB[3][0];
-            io_msg_block.DisabledDB3LaneR1 = iv_msg_block_vars.iv_DisabledDB[3][1];
-            io_msg_block.DisabledDB3LaneR2 = iv_msg_block_vars.iv_DisabledDB[3][2];
-            io_msg_block.DisabledDB3LaneR3 = iv_msg_block_vars.iv_DisabledDB[3][3];
-            io_msg_block.DisabledDB4LaneR0 = iv_msg_block_vars.iv_DisabledDB[4][0];
-            io_msg_block.DisabledDB4LaneR1 = iv_msg_block_vars.iv_DisabledDB[4][1];
-            io_msg_block.DisabledDB4LaneR2 = iv_msg_block_vars.iv_DisabledDB[4][2];
-            io_msg_block.DisabledDB4LaneR3 = iv_msg_block_vars.iv_DisabledDB[4][3];
-            io_msg_block.DisabledDB5LaneR0 = iv_msg_block_vars.iv_DisabledDB[5][0];
-            io_msg_block.DisabledDB5LaneR1 = iv_msg_block_vars.iv_DisabledDB[5][1];
-            io_msg_block.DisabledDB5LaneR2 = iv_msg_block_vars.iv_DisabledDB[5][2];
-            io_msg_block.DisabledDB5LaneR3 = iv_msg_block_vars.iv_DisabledDB[5][3];
-            io_msg_block.DisabledDB6LaneR0 = iv_msg_block_vars.iv_DisabledDB[6][0];
-            io_msg_block.DisabledDB6LaneR1 = iv_msg_block_vars.iv_DisabledDB[6][1];
-            io_msg_block.DisabledDB6LaneR2 = iv_msg_block_vars.iv_DisabledDB[6][2];
-            io_msg_block.DisabledDB6LaneR3 = iv_msg_block_vars.iv_DisabledDB[6][3];
-            io_msg_block.DisabledDB7LaneR0 = iv_msg_block_vars.iv_DisabledDB[7][0];
-            io_msg_block.DisabledDB7LaneR1 = iv_msg_block_vars.iv_DisabledDB[7][1];
-            io_msg_block.DisabledDB7LaneR2 = iv_msg_block_vars.iv_DisabledDB[7][2];
-            io_msg_block.DisabledDB7LaneR3 = iv_msg_block_vars.iv_DisabledDB[7][3];
-            io_msg_block.DisabledDB8LaneR0 = iv_msg_block_vars.iv_DisabledDB[8][0];
-            io_msg_block.DisabledDB8LaneR1 = iv_msg_block_vars.iv_DisabledDB[8][1];
-            io_msg_block.DisabledDB8LaneR2 = iv_msg_block_vars.iv_DisabledDB[8][2];
-            io_msg_block.DisabledDB8LaneR3 = iv_msg_block_vars.iv_DisabledDB[8][3];
-            io_msg_block.DisabledDB9LaneR0 = iv_msg_block_vars.iv_DisabledDB[9][0];
-            io_msg_block.DisabledDB9LaneR1 = iv_msg_block_vars.iv_DisabledDB[9][1];
-            io_msg_block.DisabledDB9LaneR2 = iv_msg_block_vars.iv_DisabledDB[9][2];
-            io_msg_block.DisabledDB9LaneR3 = iv_msg_block_vars.iv_DisabledDB[9][3];
+            fapi2::buffer<uint32_t> l_nibble_enables = iv_msg_block_vars.iv_nibbles_enables[0];
+            uint8_t l_byte_disables[10] = {};
+            FAPI_TRY(nibble_enable_db_disable(l_nibble_enables, l_byte_disables));
 
-            return fapi2::FAPI2_RC_SUCCESS;
+            // SPD to PHY nibble swizzle is implemented in the getBits indexing
+            io_msg_block.DisabledDB0LaneR0 = l_byte_disables[0];
+            io_msg_block.DisabledDB0LaneR1 = l_byte_disables[0];
+            io_msg_block.DisabledDB0LaneR2 = l_byte_disables[0];
+            io_msg_block.DisabledDB0LaneR3 = l_byte_disables[0];
+
+            io_msg_block.DisabledDB1LaneR0 = l_byte_disables[1];
+            io_msg_block.DisabledDB1LaneR1 = l_byte_disables[1];
+            io_msg_block.DisabledDB1LaneR2 = l_byte_disables[1];
+            io_msg_block.DisabledDB1LaneR3 = l_byte_disables[1];
+
+            io_msg_block.DisabledDB2LaneR0 = l_byte_disables[2];
+            io_msg_block.DisabledDB2LaneR1 = l_byte_disables[2];
+            io_msg_block.DisabledDB2LaneR2 = l_byte_disables[2];
+            io_msg_block.DisabledDB2LaneR3 = l_byte_disables[2];
+
+            io_msg_block.DisabledDB3LaneR0 = l_byte_disables[3];
+            io_msg_block.DisabledDB3LaneR1 = l_byte_disables[3];
+            io_msg_block.DisabledDB3LaneR2 = l_byte_disables[3];
+            io_msg_block.DisabledDB3LaneR3 = l_byte_disables[3];
+
+            io_msg_block.DisabledDB4LaneR0 = l_byte_disables[4];
+            io_msg_block.DisabledDB4LaneR1 = l_byte_disables[4];
+            io_msg_block.DisabledDB4LaneR2 = l_byte_disables[4];
+            io_msg_block.DisabledDB4LaneR3 = l_byte_disables[4];
+
+            io_msg_block.DisabledDB5LaneR0 = l_byte_disables[5];
+            io_msg_block.DisabledDB5LaneR1 = l_byte_disables[5];
+            io_msg_block.DisabledDB5LaneR2 = l_byte_disables[5];
+            io_msg_block.DisabledDB5LaneR3 = l_byte_disables[5];
+
+            io_msg_block.DisabledDB6LaneR0 = l_byte_disables[6];
+            io_msg_block.DisabledDB6LaneR1 = l_byte_disables[6];
+            io_msg_block.DisabledDB6LaneR2 = l_byte_disables[6];
+            io_msg_block.DisabledDB6LaneR3 = l_byte_disables[6];
+
+            io_msg_block.DisabledDB7LaneR0 = l_byte_disables[7];
+            io_msg_block.DisabledDB7LaneR1 = l_byte_disables[7];
+            io_msg_block.DisabledDB7LaneR2 = l_byte_disables[7];
+            io_msg_block.DisabledDB7LaneR3 = l_byte_disables[7];
+
+            io_msg_block.DisabledDB8LaneR0 = l_byte_disables[8];
+            io_msg_block.DisabledDB8LaneR1 = l_byte_disables[8];
+            io_msg_block.DisabledDB8LaneR2 = l_byte_disables[8];
+            io_msg_block.DisabledDB8LaneR3 = l_byte_disables[8];
+
+            io_msg_block.DisabledDB9LaneR0 = l_byte_disables[9];
+            io_msg_block.DisabledDB9LaneR1 = l_byte_disables[9];
+            io_msg_block.DisabledDB9LaneR2 = l_byte_disables[9];
+            io_msg_block.DisabledDB9LaneR3 = l_byte_disables[9];
+
+        fapi_try_exit:
+            return fapi2::current_err;
         }
 
         ///
@@ -3649,6 +3747,16 @@ fapi2::ReturnCode configure_dram_train_message_block_hardcodes(const fapi2::Targ
         i_target,
         PMU_SMB_DDR5U_1D_t& o_struct);
 #endif
+
+///
+/// @brief Configures the msg block on to snps phy
+/// @param[in] i_target the target on which to operate
+/// @param[in,out] io_msg_block the message block to configure and load
+/// @return fapi2::FAPI2_RC_SUCCESS iff successful
+///
+fapi2::ReturnCode configure_dram_train_message_block(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>&
+        i_target,
+        PMU_SMB_DDR5U_1D_t& io_msg_block);
 
 ///
 /// @brief Configure and load the msg block on to snps phy

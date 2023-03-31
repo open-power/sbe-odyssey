@@ -2418,8 +2418,9 @@ fapi_try_exit:
 /// @return fapi2::ReturnCode - FAPI2_RC_SUCCESS iff set is OK
 /// @note  Force one of 4 N-Mode configurations instead of N_PLUS_1 mode. The bits are as follows:
 /// [PMIC0, PMIC1, PMIC2, PMIC3, 0, 0, 0, 0] Set the bits high for the desired PMICs
-/// to run with. A valid configuration to boot with is at least a pair with one each
-/// of [0,2] and [1,3]. This only applies to 4U DDIMMs.
+/// to run with. For DDR4 a valid configuration to boot with is at least a pair with
+/// one each of [0,2] and [1,3]. FOr DDR5 a valid configuration to boot with is at least
+/// 3 PMICs This only applies to 4U DDIMMs.
 ///
 inline fapi2::ReturnCode set_pmic_force_n_mode(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
         uint8_t i_value)

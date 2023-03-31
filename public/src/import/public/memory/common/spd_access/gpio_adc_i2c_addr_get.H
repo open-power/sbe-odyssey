@@ -26,7 +26,7 @@
 /// @file gpio_adc_i2c_addr_get.H
 /// @brief Function to get GPIO/ADC i2c addresses given target REL_POS
 ///
-// *HWP HWP Owner: Mark Pizzutillo <mark.pizzutillo@ibm.com>
+// *HWP HWP Owner: Sneha Kadam <sneha.kadam1@ibm.com>
 // *HWP HWP Owner: Dan Crowell <dcrowell@us.ibm.com>
 // *HWP Team: Memory
 // *HWP Level: 2
@@ -47,7 +47,6 @@ static const std::vector<uint8_t> DDR4_GPIO_ADC_I2C_ADDR_VECTOR =
     0x7E, // 3 = GPIO2
 };
 constexpr uint16_t DDR5_SPD_ADC_I2_ADDR = 286;
-
 
 ///
 /// @brief Get the GPIO/ADC i2c address for the given REL_POS
@@ -72,7 +71,7 @@ inline uint8_t get_gpio_adc_i2c_addr(uint8_t const* const i_spd, const uint8_t i
          && (i_spd[DDIMM_SPD::DIMM_TYPE_BYTE] == DDIMM_SPD::MEM_DDIMM)
          && (i_rel_pos == 0) )
     {
-        return i_spd[DDR5_SPD_ADC_I2_ADDR];
+        return uint8_t(i_spd[DDR5_SPD_ADC_I2_ADDR]);
     }
 
     // GPIO/ADC devices only exist for 4U DDR4 DDIMMs.

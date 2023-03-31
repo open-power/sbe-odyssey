@@ -311,7 +311,7 @@ fapi2::ReturnCode after_mc_omi_init<mss::mc_type::EXPLORER>(const fapi2::Target<
 
     // check for mnfg OMI screen setting
     FAPI_TRY(mss::check_mfg_flag(fapi2::ENUM_ATTR_MFG_FLAGS_MNFG_OMI_CRC_EDPL_SCREEN,
-                                 l_mnfg_screen_test, l_mnfg_screen_test));
+                                 l_mnfg_screen_test));
 
     FAPI_TRY(mss::attr::get_exp_intr_mask_disable(i_target, l_intr_mask_disable));
 

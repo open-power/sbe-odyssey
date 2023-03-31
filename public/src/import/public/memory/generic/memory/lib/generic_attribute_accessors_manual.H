@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -40,6 +40,7 @@
 #include <mss_generic_system_attribute_getters.H>
 #include <mss_generic_attribute_getters.H>
 #include <generic/memory/lib/utils/find.H>
+#include <generic/memory/lib/utils/c_str.H>
 
 namespace mss
 {

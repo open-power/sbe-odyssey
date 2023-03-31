@@ -81,10 +81,34 @@
             USE_ATTRIBUTES = 0x00,
             USE_HARDCODES  = 0x01
         </enum>
-<!-- TODO:Zen:MST-1813 Change this to USE_ATTRIBUTES once initial sim testing is complete -->
-        <default>USE_HARDCODES</default>
+        <default>USE_ATTRIBUTES</default>
         <writeable/>
         <mssAccessorName>ody_msg_block_data_source</mssAccessorName>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_ODY_DRAMINIT_STEP_ENABLE</id>
+        <targetType>TARGET_TYPE_SYSTEM</targetType>
+        <description>
+            Bitmap to control which procedure steps get run during istep mss_draminit.
+            Bits numbered from left to right, set to '1' to enable each step:
+            0 = load_imem
+            1 = load_dmem
+            2 = load training message block
+            3 = run training
+            4 = load and execute PIE (PHY initialization engine)
+        </description>
+        <valueType>uint8</valueType>
+        <enum>
+            LOAD_IMEM = 0,
+            LOAD_DMEM = 1,
+            LOAD_MSG_BLOCK = 2,
+            RUN_TRAINING = 3,
+            LOAD_PIE = 4
+        </enum>
+        <default>0xFF</default>
+        <writeable/>
+        <mssAccessorName>ody_draminit_step_enable</mssAccessorName>
     </attribute>
 
     <attribute>
@@ -104,7 +128,7 @@
             ASSERTION      = 0xC9,
             FW_COMPLETE    = 0xFF
         </enum>
-        <default>DETAILED_DEBUG</default>
+        <default>COARSE_DEBUG</default>
         <writeable/>
         <mssAccessorName>ody_draminit_verbosity</mssAccessorName>
     </attribute>
@@ -342,7 +366,7 @@
             NOT_0P9_VDD = 0,
             0P9_VDD     = 1
         </enum>
-        <default>0P9_VDD</default>
+        <default>NOT_0P9_VDD</default>
         <writeable/>
         <mssAccessorName>phy_is_highvdd</mssAccessorName>
     </attribute>
@@ -637,7 +661,7 @@
             MsgMisc[7:0] in the message block structure.
         </description>
         <valueType>uint8</valueType>
-        <default>0x80</default>
+        <default>0x00</default>
         <writeable/>
         <mssAccessorName>phy_msg_misc</mssAccessorName>
     </attribute>
@@ -706,6 +730,8 @@
             SequenceCtrl in the message block structure.
             Note that RCD_CSCA is only valid for RDIMM and will
             be disabled by the procedures on a UDIMM.
+            Draminit code will disable invalid sequence control settings
+            based upon the DIMM type.
         </description>
         <valueType>uint16</valueType>
         <default>0xFFFF</default>
@@ -721,7 +747,7 @@
             PhyCfg in the message block structure.
         </description>
         <valueType>uint8</valueType>
-        <default>0x2D</default>
+        <default>0x2C</default>
         <writeable/>
         <mssAccessorName>phy_cfg</mssAccessorName>
     </attribute>
@@ -955,9 +981,14 @@
         <description>
             Tx impedance of DQ driver cells when equalization is disabled, per pstate
         </description>
-        <valueType>uint8</valueType>
+        <valueType>uint16</valueType>
         <default>0</default>
         <writeable/>
+        <enum>HIGH_IMP = 0, OHM_25 = 25, OHM_27 = 27, OHM_28 = 28, OHM_30 = 30, OHM_32 = 32,
+              OHM_34 = 34, OHM_36 = 36, OHM_40 = 40, OHM_43 = 43, OHM_48 = 48, OHM_53 = 53,
+              OHM_60 = 60, OHM_68 = 68, OHM_80 = 80, OHM_96 = 96, OHM_120 = 120, OHM_160 = 160,
+              OHM_240 = 240, OHM_480 = 480
+        </enum>
         <mssAccessorName>ody_phy_tx_impedance_ctrl1</mssAccessorName>
     </attribute>
 
@@ -967,9 +998,14 @@
         <description>
             Tx impedance of DQ driver cells when equalization is disabled, per pstate
         </description>
-        <valueType>uint8</valueType>
+        <valueType>uint16</valueType>
         <default>0</default>
         <writeable/>
+        <enum>HIGH_IMP = 0, OHM_25 = 25, OHM_27 = 27, OHM_28 = 28, OHM_30 = 30, OHM_32 = 32,
+              OHM_34 = 34, OHM_36 = 36, OHM_40 = 40, OHM_43 = 43, OHM_48 = 48, OHM_53 = 53,
+              OHM_60 = 60, OHM_68 = 68, OHM_80 = 80, OHM_96 = 96, OHM_120 = 120, OHM_160 = 160,
+              OHM_240 = 240, OHM_480 = 480
+        </enum>
         <mssAccessorName>ody_phy_tx_impedance_ctrl2</mssAccessorName>
     </attribute>
 
