@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -26,7 +27,10 @@
 const void *_get_metadata(const void *start, uint32_t tag)
 {
     uint32_t *ptr = (uint32_t *)start;
-    while (*ptr) {
+    // Limit the search to 32KiB to prevent overruns
+    const uint32_t *limit = ((uint32_t *)start) + 0x2000;
+
+    while (*ptr && ptr < limit) {
         ImageMetadataHeader *hdr = (ImageMetadataHeader *)ptr++;
         if (hdr->tag == tag)
         {
