@@ -446,7 +446,37 @@ enum generic_ffdc_codes : uint16_t
     SET_DRAM_DFE_GAIN_BIAS = 0x1108,
     SET_DRAM_DFE_GAIN_BIAS_SIGN = 0x1109,
 
-    SET_DRAM_TCCD_L_WR = 0x10E3,
+    SET_ODT_CK_GRPA = 0x110A,
+    SET_ODT_CK_GRPB = 0x110B,
+
+    SET_ODT_CS_GRPA = 0x110C,
+    SET_ODT_CS_GRPB = 0x110D,
+
+    SET_CK_ODT_DRAM = 0x110E,
+    SET_CS_ODT_DRAM = 0x110F,
+
+    SET_CA_ODT_GRPA = 0x1200,
+    SET_CA_ODT_GRPB = 0x1201,
+
+    SET_DQS_ODT_GRPA = 0x1202,
+    SET_DQS_ODT_GRPB = 0x1203,
+
+    SET_CA_ODT_DRAM = 0x1204,
+    SET_DQS_ODT_DRAM = 0x1205,
+
+    SET_WR_VREFCA_DQ = 0x1206,
+    SET_WR_VREFCS_DQ = 0x1207,
+
+    SET_DRAM_TCCD_L_WR = 0x1208,
+
+    SET_ALERT_ODT_IMPEDANCE = 0x1209,
+
+    SET_NT_ODT_RD = 0x120A,
+    SET_NT_ODT_WR = 0x120B,
+
+    SET_SI_PHY_DRV_IMP_DQ_DQS_PULL_UP = 0x120C,
+    SET_TX_IMP_CTRL1 = 0x120D,
+    SET_TX_IMP_CTRL2 = 0x120E,
 
 };
 
@@ -1299,12 +1329,21 @@ enum mr
 {
     ATTR_RANKS = 4,
     ATTR_DRAM  = 20,
+    ATTR_DRAM_HALF = 10,
     ATTR_STRAP = 2,
 
     // Defined in the DDR5 JEDEC Spec v1.7.1
     // MR32 OP[6]
     STRAPA = 0,
     STRAPB = 1,
+
+    // Number of Channels
+    ATTR_NUM_CHANNELS = 2,
+    ATTR_CHANNEL_A = 0,
+    ATTR_CHANNEL_B = 1,
+
+    ATTR_DRAM_CHA_SELECT = 0,
+    ATTR_DRAM_CHB_SELECT = 10,
 };
 
 }

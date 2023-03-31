@@ -152,6 +152,7 @@ inline fapi2::Target<M> find_target( const fapi2::Target<T>& i_target)
     return find_target_impl<M>(i_target, std::integral_constant<bool, M == T> {});
 }
 
+#ifndef __PPE__
 ///
 /// @brief find the OCMB_CHIP given a DIMM
 /// @param[in] i_target the fapi2 target DIMM
@@ -229,7 +230,6 @@ inline fapi2::Target<fapi2::TARGET_TYPE_OMIC> find_target(const fapi2::Target<fa
     return find_target<fapi2::TARGET_TYPE_OMIC>(i_target.getParent<fapi2::TARGET_TYPE_OCMB_CHIP>());
 }
 
-#ifndef __PPE__
 ///
 /// @brief find all the OCMB_CHIPs connected to a PROC_CHIP
 /// @param[in] i_target a fapi2::Target PROC_CHIP

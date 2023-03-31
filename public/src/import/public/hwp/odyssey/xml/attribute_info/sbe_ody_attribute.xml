@@ -351,8 +351,60 @@
     <value>0x0</value>
     <value>0x0</value>
     <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
   </entry>
   <entry name="ATTR_DDR5_DRAM_RTT_NOM_WR">
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+  </entry>
+  <entry name="ATTR_DDR5_DRAM_RTT_PARK">
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+  </entry>
+  <entry name="ATTR_DDR5_DRAM_RTT_WR">
+    <value>0x28</value>
+    <value>0x28</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
     <value>0x0</value>
     <value>0x0</value>
     <value>0x0</value>
@@ -2536,6 +2588,9 @@
   <entry name="ATTR_MSS_ODY_PHY_IMAGE_SELECT">
     <value>0</value>
   </entry>
+  <entry name="ATTR_REL_POS">
+    <value>0x00</value>
+  </entry>
   <entry name="ATTR_DRAMINIT_TRAINING_TIMEOUT">
     <value>20000</value>
   </entry>
@@ -3547,5 +3602,17 @@
   </entry>
   <entry name="ATTR_SPPE_I2C_DEV_ADDR">
     <value>0x00</value>
+  </entry>
+  <entry name="ATTR_MEM_EFF_Z_MODE">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_MSS_OCMB_HALF_DIMM_MODE">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_MSS_OCMB_HALF_DIMM_MODE_OVERRIDE">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_ODY_DRAMINIT_STEP_ENABLE">
+    <value>0xFF</value>
   </entry>
 </entries>

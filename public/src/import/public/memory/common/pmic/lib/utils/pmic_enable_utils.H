@@ -1057,6 +1057,19 @@ fapi2::ReturnCode validate_and_return_idt_revisions_helper(
     const uint8_t i_rev_reg);
 
 } // check
+
+namespace ddr4
+{
+///
+/// @brief Enable function for pmic modules
+/// @param[in] i_target ocmb target
+/// @param[in] i_mode enable mode operation
+/// @return FAPI2_RC_SUCCESS iff ok
+///
+fapi2::ReturnCode pmic_enable(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_ocmb_target,
+                              const mss::pmic::enable_mode i_mode);
+
+} // ddr4
 } // pmic
 } // mss
 

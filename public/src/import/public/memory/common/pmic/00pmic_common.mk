@@ -30,6 +30,7 @@ MSS_PMIC_INCLUDES += $(ROOTPATH)/public/memory/common/include
 MSS_PMIC_INCLUDES += $(ROOTPATH)/public/memory/common/pmic
 MSS_PMIC_INCLUDES += $(ROOTPATH)/public/memory/common/pmic/lib
 MSS_PMIC_INCLUDES += $(ROOTPATH)/public/memory/common/pmic/lib/utils
+MSS_PMIC_INCLUDES += $(ROOTPATH)/public/memory/common/pmic_ddr5
 # MSS_PMIC_INCLUDES += $(ROOTPATH)/chips/ocmb/common/procedures/hwp/pmic_ddr5
 
 # For generic attribute accessors
