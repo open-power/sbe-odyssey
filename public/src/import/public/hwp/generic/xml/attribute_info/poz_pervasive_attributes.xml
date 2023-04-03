@@ -148,6 +148,23 @@
   <default>0x0</default>
 </attribute>
 <!-- ********************************************************************** -->
+<attribute>
+  <id>ATTR_SPPE_BOOT_SIDE</id>
+  <targetType>TARGET_TYPE_HUB_CHIP, TARGET_TYPE_COMPUTE_CHIP, TARGET_TYPE_PROC_CHIP, TARGET_TYPE_OCMB_CHIP</targetType>
+  <description>
+    Controls the SBE boot side, written to SB_CS prior to sbe boot
+  </description>
+  <valueType>uint8</valueType>
+  <enum>
+    SIDE0  = 0x0,
+    SIDE1  = 0x1,
+    GOLDEN = 0x2
+  </enum>
+  <platInit/>
+  <initToZero/>
+  <mrwHide/>
+</attribute>
+<!-- ********************************************************************** -->
 <!-- TK/FIXME/TODO: This needs to be made larger to support the entire Explorer ECID. -->
 <attribute>
   <id>ATTR_ECID</id>
