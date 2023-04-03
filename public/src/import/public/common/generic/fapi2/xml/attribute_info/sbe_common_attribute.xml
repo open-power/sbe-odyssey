@@ -88,5 +88,8 @@
   <entry name="ATTR_CHIP_EC_FEATURE_PERV_NET_REGION_3_NOT_4">
     <virtual/>
   </entry>
+  <entry name="ATTR_SPPE_BOOT_SIDE">
+    <value>0x0</value>
+  </entry>
 
 </entries>
