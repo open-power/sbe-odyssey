@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -31,6 +31,13 @@
 #define __FFDC_INCLUDES_H
 
 #include <fsi_collect_reg_ffdc.H>
+
+// These files aren't needed by the SBE
+#ifndef __SBE__
+    #include <exp_collect_explorer_active_log.H>
+    #include <exp_collect_explorer_saved_A_log.H>
+    #include <exp_collect_explorer_saved_B_log.H>
+#endif
 
 // Add any other FFDC procedures with #include
 
