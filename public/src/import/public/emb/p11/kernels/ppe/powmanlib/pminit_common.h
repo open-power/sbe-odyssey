@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -29,6 +29,7 @@
 #include <iota_trace.h>
 #include <ppe42_spr.h>
 
+
 //
 // verify_ppe_image()
 //
@@ -41,7 +42,7 @@
 //   uint32_t i_this_img_ppe_type; // The targeted PPE type. See ppe42_spr.h for PPE_TYPE choices
 //   uint32_t i_this_img_ppe_inst; // The targeted instance ID. (CE/GPE: 0..3, QME: 0..1)
 //
-inline void verify_ppe_image(uint32_t i_this_img_ppe_type, uint32_t i_this_img_ppe_inst)
+static inline void verify_ppe_image(uint32_t i_this_img_ppe_type, uint32_t i_this_img_ppe_inst)
 {
     uint32_t this_ppe_pir  = mfspr(SPRN_PIR);
 

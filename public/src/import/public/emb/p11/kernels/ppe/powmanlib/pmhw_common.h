@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -135,6 +135,13 @@
     #define PMHW_OIRRC_OR(irq)  (((irq) & 0x20) ? OCB_OIRR1C_OR  : OCB_OIRR0C_OR)
     #define PMHW_OIRRC_CLR(irq) (((irq) & 0x20) ? OCB_OIRR1C_CLR : OCB_OIRR0C_CLR)
 #endif  /* __ASSEMBLER__ */
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Useful register masks to determine enabled taps and cores.
+/////////////////////////////////////////////////////////////////////////////
+#define TCSR_TAP_MASK  (0xff000000)
+#define CCSR_CORE_MASK (0xff000000)
 
 
 ////////////////////////////////////////////////////////////////////////////

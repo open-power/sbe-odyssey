@@ -54,7 +54,6 @@ typedef struct
     uint16_t     undefined[1];            // 2B - Pad to 8B (VC push demand)
 } OCEIDDQData_t;
 
-extern OCEIDDQData_t*  G_oce_iddq_data; //Big "G_" because it's shared across CEs.
 
 //
 // Enum of OCE status flags (used by OCEIddqData_t.oce_status_flags)
