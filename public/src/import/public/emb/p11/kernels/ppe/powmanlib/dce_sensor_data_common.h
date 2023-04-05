@@ -184,6 +184,7 @@ typedef struct
     QuadDataDts_t              dts;             // 2
 } QuadData_t;
 
+
 //
 // DCESensorData_t : High-level DCE sensor data struct for DCE, OCC(405) and OCE
 //
@@ -202,10 +203,8 @@ typedef struct
     uint32_t    tbr_data_collect_duration; // 4B - Data collection duration (since notif_rcvd)
     uint32_t    tod_data_rcvd;             // 4B - For optional use by 405 using local 2MHz TOD
     uint16_t    dce_status_flag;           // 2B - Status vector. See DCE_STATUS_FLAGS enum below.
-    uint16_t    undefined;                 // 2B - Pad to 4B (Doesn't VC push demand 8B size?)
+    uint16_t    present_cores;             // 2B - Vector of enabled cores (bit(0) is core 0)
 } DCESensorData_t;
-
-extern DCESensorData_t*  G_dce_sensor_data; //Big "G_" because it's shared across CEs.
 
 
 //
@@ -239,7 +238,6 @@ typedef struct
     uint32_t  status;
 } DCESensorDataUsage_t;
 
-extern DCESensorDataUsage_t*  G_dce_sensor_data_usage;
 
 //
 // Enum indicating the DCE-OCE usage status of the most recently collected DCESensorData data set.
