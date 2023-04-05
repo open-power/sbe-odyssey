@@ -27,28 +27,31 @@
 # Adjustable build flags
 # ----------------------
 #
-# _WDC_ACTING_OCC:
-# - This flag controls the functionality of the Spinal images in that it makes
-#   the WOF Data Collector (WDC), which runs on Spinal's GPE0, behave like the 
-#   OCC(405) wrt sending DB0 to DCE and receiving VC1/3 from DCE/OCE.
-# - The flag ensures that all Spinal images have the same view of the IRQ 
-#   routing table in occhw_irq_config.h. This ensures consistent programming of 
-#   the OIRR regs a image boot time.
-# - Usage:
-#   - To enable the functionality, set the flag :=1
-#   - To disable the functionality, leave the flag undefined.
-#   - For production code, leave the flag undefined.
-#
 # _BOOT_STANDALONE:
-# - This flag controls the programming of some key fields in the CE and PPE 
-#   image headers in the absence of p11_hcode_image_build, ie standalone mode.
+# - In the absence of PM HWP codes, eg p11_hcode_image_build, this flag controls
+#   the programming of some key fields in the PPE image header as well as 
+#   controls the functionality of the PSPI link enable check.
 # - Usage:
 #   - To enable standalone mode, set the flag :=1
 #   - To disable standalone mode, leave the flag undefined.
 #   - For production code, leave the flag undefined.
+#         ==========                      =========
+#
+# _WDC_ACTING_OCC:
+# - This flag controls the functionality of the Spinal images in that it makes
+#   the WOF Data Collector (WDC), which runs on Spinal's GPE0, behave like the 
+#   OCC(405) wrt sending DB0 to DCE and receiving data via VC1/3 from DCE/OCE.
+# - The flag ensures that all Spinal images have the same view of the IRQ 
+#   routing table in occhw_irq_config.h. This ensures consistent programming of 
+#   the OIRR regs at image boot time.
+# - Usage:
+#   - To enable the functionality, set the flag :=1
+#   - To disable the functionality, leave the flag undefined.
+#   - For production code, leave the flag undefined.
+#         ==========                      =========
 ################################################################################
 
-_BOOT_STANDALONE:=1
+_BOOT_STANDALONE:=
 
 _WDC_ACTING_OCC:=
 
