@@ -3,6 +3,10 @@ option('platform', type : 'string', value : 'all',
                     description : 'Build Platform type.' +
                                   'For supported platforms:' +
                                   './sbe help')
+# Image type
+option('image_type', type : 'string', value : 'all',
+       description : 'Used to pass the image type to get image. ' +
+                     'For supported image type, ./sbe help')
 
 #Build Level/DD Level
 option('ddlevel',type : 'combo', value : 'DD1', choices : ['DD1'], description : 'DD Level. Currently supporting DD1 ')
