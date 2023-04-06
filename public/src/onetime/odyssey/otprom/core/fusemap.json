@@ -133,7 +133,7 @@
         {
             "field": "msvFuseBank",
             "field_size": 64,
-            "value": "0x0000000000000000",
+            "value": "0xFC00000000000000",
             "description": "Bit 0..62 : Minimum Secure Version Fuse Bank. Bit 63 is reserved"
         }
     ],
