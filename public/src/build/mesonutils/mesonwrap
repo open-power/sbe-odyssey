@@ -172,6 +172,8 @@ else
 
 fi
 
+MESON_OPT_IMAGE_TYPE="-Dimage_type=${SBE_IMAGE}"
+
 if [ "$1" == "setup" ]; then
     cat > $SBEROOT/.user_cross_file.txt <<EOF
 [constants]
@@ -190,9 +192,10 @@ EOF
         CROSS_FILES=" ${CROSS_FILES} --cross-file $CROSS_FILE_PATH"
     done
 
-    CMD="$BASE_CMD $1 $MESON_BUILD_DIR -Dplatform=$SBE_PLATFORM $DISABLED_IMAGES $ENABLED_IMAGES
-        $CROSS_FILES --native-file $CMN_MESON_NATIVE_FILE_PATH
-        --prefix $INSTALL_DIR ${@:2}"
+    CMD="$BASE_CMD $1 $MESON_BUILD_DIR -Dplatform=$SBE_PLATFORM
+         $MESON_OPT_IMAGE_TYPE $DISABLED_IMAGES $ENABLED_IMAGES
+         $CROSS_FILES --native-file $CMN_MESON_NATIVE_FILE_PATH
+         --prefix $INSTALL_DIR ${@:2}"
     exc_cmd "$CMD"
 fi
 
@@ -241,7 +244,7 @@ fi
 
 if [ "$1" == "sync" ]; then
     CMD="$BASE_CMD configure $MESON_BUILD_DIR -Dplatform=$SBE_PLATFORM
-        $DISABLED_IMAGES $ENABLED_IMAGES"
+         $MESON_OPT_IMAGE_TYPE $DISABLED_IMAGES $ENABLED_IMAGES"
     exc_cmd "$CMD"
 fi
 
