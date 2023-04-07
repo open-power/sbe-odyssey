@@ -32,6 +32,15 @@
 
 #pragma once
 
+
+inline
+fapi2::ReturnCode mod_multicast_setup_plat_remap(const uint8_t i_group_id,
+        uint8_t& o_group_id)
+{
+    o_group_id = i_group_id;
+    return fapi2::current_err;
+}
+
 namespace pll
 {
 enum pll_lock_bits
