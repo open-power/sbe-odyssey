@@ -54,6 +54,8 @@
 #define SPI_SLAVE_FLG_CLR  0x5000000000000000ULL
 
 #define SECTOR_NUM_CHECK(sector, address) ((address >= (sector * NOR_FLASH_SECTOR_SIZE)) && (address < ((sector + 1) * NOR_FLASH_SECTOR_SIZE)))
+#define SECTOR_00 0x00
+#define SECTOR_72 0x48
 
 // Timeout values so not stuck in wait loops forever
 #ifdef __PPE__
@@ -418,6 +420,29 @@ fapi_try_exit:
 
 
 ///////////////////////////////////////////
+/////// spi_restore_ecc_status ////////////
+///////////////////////////////////////////
+static fapi2::ReturnCode
+spi_restore_ecc_status(SpiControlHandle& i_handle, fapi2::ReturnCode i_rc, bool i_ecc)
+{
+    if(i_ecc)
+    {
+        FAPI_TRY(spi_set_ecc_on(i_handle));
+    }
+
+fapi_try_exit:
+
+    if (fapi2::current_err == fapi2::FAPI2_RC_SUCCESS)
+    {
+        // If no new error reported, send out the original error i_rc if any
+        fapi2::current_err = i_rc;
+    }
+
+    return fapi2::current_err;
+}
+
+
+///////////////////////////////////////////
 /////// spi_read_flag_status //////////////
 ///////////////////////////////////////////
 static fapi2::ReturnCode
@@ -445,13 +470,8 @@ spi_read_flag_status(SpiControlHandle& i_handle, fapi2::buffer<uint64_t>& o_stat
 
     FAPI_TRY(getScom(i_handle.target_chip, i_handle.base_addr + SPIM_RDR, o_status));
 
-    if(l_ecc)
-    {
-        spi_set_ecc_on(i_handle);
-    }
-
 fapi_try_exit:
-    return fapi2::current_err;
+    return spi_restore_ecc_status(i_handle, fapi2::current_err, l_ecc);
 }
 
 
@@ -508,29 +528,32 @@ spi_clear_flag_status(SpiControlHandle& i_handle, fapi2::buffer<uint64_t>& o_sta
                  .set_STATUS_REGISTER(o_status),
                  "spi_clear_flag_status" );
 
-    if(l_ecc)
-    {
-        spi_set_ecc_on(i_handle);
-    }
-
 fapi_try_exit:
-    return fapi2::current_err;
+    return spi_restore_ecc_status(i_handle, fapi2::current_err, l_ecc);
 }
 
 
-///////////////////////////////////////////
-/////// spi_check_address_lock_status /////
-///////////////////////////////////////////
+////////////////////////////////////////////////////////////
+/////// spi_chk_addr_n_lock_status_clr_flag_error_bits /////
+////////////////////////////////////////////////////////////
 static fapi2::ReturnCode
-spi_check_address_lock_status(SpiControlHandle& i_handle, uint32_t i_address, fapi2::buffer<uint64_t>& io_status)
+spi_chk_addr_n_lock_status_clr_flag_error_bits(SpiControlHandle& i_handle,
+        uint32_t i_address,
+        fapi2::buffer<uint64_t>& io_status)
 {
-    if (SECTOR_NUM_CHECK(0, i_address) || SECTOR_NUM_CHECK(0x48 , i_address))
+    // check for failing address is in sector 0 for side-0 or sector 72 in side-1
+    // also if the protection bit is set. If set, clear off flag status register
+    if ((SECTOR_NUM_CHECK(SECTOR_00, i_address) || SECTOR_NUM_CHECK(SECTOR_72 , i_address)) && io_status.getBit<62>())
     {
-        // check for protection bit in flag status register
-        if(io_status.getBit<62>())
-        {
-            FAPI_TRY(spi_clear_flag_status(i_handle, io_status));
-        }
+        FAPI_TRY(spi_clear_flag_status(i_handle, io_status));
+    }
+    else
+    {
+        // for all addresses (incl sector 0 & 72 with no protection bit and incl
+        // all other sectors w/wo protection bit) clear off flag status register
+        // but retain and return the original failed status value
+        fapi2::buffer<uint64_t> data64 = 0;
+        FAPI_TRY(spi_clear_flag_status(i_handle, data64));
     }
 
 fapi_try_exit:
@@ -603,15 +626,33 @@ spi_wait_for_write_complete(SpiControlHandle& i_handle,
         FAPI_INF("spi_wait_for_write_complete: Erase/Write operation unsuccessful"\
                  " address:[0x%08X] status:[0x%08X%08X]", i_address,
                  (uint64_t(o_status) >> 32), static_cast<uint32_t>(uint64_t(o_status) & 0xFFFFFFFF));
-        FAPI_TRY(spi_check_address_lock_status(i_handle, i_address, o_status));
-    }
-
-    if(l_ecc)
-    {
-        spi_set_ecc_on(i_handle);
+        FAPI_TRY(spi_chk_addr_n_lock_status_clr_flag_error_bits(i_handle, i_address, o_status));
     }
 
 fapi_try_exit:
+    return spi_restore_ecc_status(i_handle, fapi2::current_err, l_ecc);
+}
+
+
+///////////////////////////////////////////
+/////// spi_restore_mmio_config ///////////
+///////////////////////////////////////////
+static fapi2::ReturnCode
+spi_restore_mmio_config(SpiControlHandle& i_handle, fapi2::ReturnCode i_rc)
+{
+    // Restore the default counter and seq used by the side band path
+    FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_COUNTERREG, 0x0ULL));
+
+    FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_SEQREG, SPI_DEFAULT_SEQ));
+
+fapi_try_exit:
+
+    if (fapi2::current_err == fapi2::FAPI2_RC_SUCCESS)
+    {
+        // If no putscom error reported, send out the original error i_rc
+        fapi2::current_err = i_rc;
+    }
+
     return fapi2::current_err;
 }
 
@@ -671,13 +712,8 @@ spi_check_write_enable(SpiControlHandle& i_handle)
                  .set_TIMEOUT_MSEC(SPI_TIMEOUT_MAX_WAIT_COUNT),
                  "spi_check_write_enable timeout");
 
-    if(l_ecc)
-    {
-        spi_set_ecc_on(i_handle);
-    }
-
 fapi_try_exit:
-    return fapi2::current_err;
+    return spi_restore_ecc_status(i_handle, fapi2::current_err, l_ecc);
 }
 
 
@@ -1353,13 +1389,8 @@ fapi2::ReturnCode spi_read_manufacturer_id(SpiControlHandle& i_handle, uint8_t* 
         goto fapi_try_exit;
     }
 
-    if (l_ecc)
-    {
-        spi_set_ecc_on(i_handle);
-    }
-
 fapi_try_exit:
-    return fapi2::current_err;
+    return spi_restore_ecc_status(i_handle, fapi2::current_err, l_ecc);
 }
 
 
@@ -1652,7 +1683,7 @@ spi_write_post_seq(SpiControlHandle& i_handle, uint32_t i_address)
                  "spi_write_post_seq error" );
 
 fapi_try_exit:
-    return fapi2::current_err;
+    return spi_restore_mmio_config(i_handle, fapi2::current_err);
 }
 
 
@@ -1842,14 +1873,9 @@ fapi2::ReturnCode spi_sector_erase(SpiControlHandle& i_handle, uint32_t i_addres
                  .set_STATUS_REGISTER(data64),
                  "spi_sector_erase error" );
 
-    // Restore the default counter and seq used by the side band path
-    FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_COUNTERREG, 0x0ULL));
-    FAPI_TRY(putScom(i_handle.target_chip,
-                     i_handle.base_addr + SPIM_SEQREG, SPI_DEFAULT_SEQ));
-
 fapi_try_exit:
     FAPI_INF("SPI sector erase: Exiting ...");
-    return fapi2::current_err;
+    return spi_restore_mmio_config(i_handle, fapi2::current_err);
 }
 
 
@@ -1895,14 +1921,9 @@ fapi2::ReturnCode spi_block_erase(SpiControlHandle& i_handle, uint32_t i_address
                  .set_STATUS_REGISTER(data64),
                  "spi_block_erase error" );
 
-    // Restore the default counter and seq used by the side band path
-    FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_COUNTERREG, 0x0ULL));
-    FAPI_TRY(putScom(i_handle.target_chip,
-                     i_handle.base_addr + SPIM_SEQREG, SPI_DEFAULT_SEQ));
-
 fapi_try_exit:
     FAPI_INF("SPI block erase: Exiting ...");
-    return fapi2::current_err;
+    return spi_restore_mmio_config(i_handle, fapi2::current_err);
 }
 
 
