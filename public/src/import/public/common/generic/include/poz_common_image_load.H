@@ -33,6 +33,7 @@ enum poz_image_type
     IOPPE_MEMREGS_IMAGE,
     DDR_IMEM_IMAGE,
     DDR_DMEM_IMAGE,
+    SPPE_IMAGE,
     SBE_IMAGE,
     PME_IMAGE,
 };
