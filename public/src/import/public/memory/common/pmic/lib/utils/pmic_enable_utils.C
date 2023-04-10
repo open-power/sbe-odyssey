@@ -1352,7 +1352,7 @@ fapi2::ReturnCode power_down_sequence_4u(const fapi2::Target<fapi2::TARGET_TYPE_
     // Grab the targets as a struct, if they exist
     target_info_redundancy l_target_info(i_target, l_rc);
 
-    // If platform did not provide a usable (functional) set of targets (4 GENERICI2CSLAVE, at least 2 PMICs),
+    // If platform did not provide a usable (functional) set of targets (4 GENERICI2CRESPONDER, at least 2 PMICs),
     // Then we can't properly disable, the part is as good as dead, since re-enable would fail
     if (l_rc != fapi2::FAPI2_RC_SUCCESS)
     {
@@ -1526,6 +1526,7 @@ fapi_try_exit:
     return fapi2::current_err;
 }
 
+
 ///
 /// @brief Enable PMIC for 1U/2U
 ///
@@ -1544,6 +1545,8 @@ fapi2::ReturnCode enable_1u_2u(
 
     // We're guaranteed to have at least one PMIC here due to the check in pmic_enable
     auto l_current_pmic = l_pmics[0];
+
+    FAPI_TRY(mss::pmic::check_number_pmics_received_2u(i_ocmb_target, l_pmics.size()));
 
     // Now the PMICs are in the right order of DIMM and the right order by their defined SPD sequence within each dimm
     // Let's kick off the enables
@@ -1769,7 +1772,7 @@ fapi2::ReturnCode adc_min_vltg_read(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_
 
     // Grab the targets as a struct, if they exist
     target_info_redundancy l_target_info(i_ocmb_target, l_rc);
-    FAPI_TRY(l_rc, "Unusable PMIC/GENERICI2CSLAVE child target configuration found from %s",
+    FAPI_TRY(l_rc, "Unusable PMIC/GENERICI2CRESPONDER child target configuration found from %s",
              mss::c_str(i_ocmb_target));
 
     // ADC1
@@ -2897,9 +2900,9 @@ fapi2::ReturnCode enable_with_redundancy(const fapi2::Target<fapi2::TARGET_TYPE_
     // Grab the targets as a struct, if they exist
     target_info_redundancy l_target_info(i_ocmb_target, l_rc);
 
-    // If platform did not provide a usable set of targets (4 GENERICI2CSLAVE, at least 2 PMICs),
+    // If platform did not provide a usable set of targets (4 GENERICI2CRESPONDER, at least 2 PMICs),
     // Then we can't properly enable
-    FAPI_TRY(l_rc, "Unusable PMIC/GENERICI2CSLAVE child target configuration found from %s",
+    FAPI_TRY(l_rc, "Unusable PMIC/GENERICI2CRESPONDER child target configuration found from %s",
              mss::c_str(i_ocmb_target));
 
     // Grabs data to see if a workaround needs to be run below

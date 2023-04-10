@@ -63,7 +63,7 @@ namespace i2c
 ///
 /// @brief Add provided opcode if the Target is an ADC
 ///
-/// @param[in] i_target GENERICI2CSLAVE target
+/// @param[in] i_target GENERICI2CRESPONDER target
 /// @param[in] i_opcode opcode to add
 /// @param[in,out] io_command command vector
 ///
@@ -115,7 +115,7 @@ inline void reg_write_helper(const fapi2::Target<fapi2::TARGET_TYPE_PMIC>& i_tar
 
 ///
 /// @brief Set up i2c command buffer for the given target
-/// @param[in] i_target the GENERICI2CSLAVE target
+/// @param[in] i_target the GENERICI2CRESPONDER target
 /// @param[in] i_addr address to read
 /// @param[in] i_data_buffer data buffer
 /// @param[in,out] io_command command buffer
@@ -177,7 +177,7 @@ fapi_try_exit:
 
 ///
 /// @brief Perform a register read operation on the given target
-/// @tparam T target type (PMIC, GENERICI2CSLAVE, etc.)
+/// @tparam T target type (PMIC, GENERICI2CRESPONDER, etc.)
 /// @param[in] i_target the target
 /// @param[in] i_addr address to read
 /// @param[in,out] io_command command buffer
@@ -205,7 +205,7 @@ inline void reg_read_helper(const fapi2::Target<fapi2::TARGET_TYPE_PMIC>& i_targ
 
 ///
 /// @brief Perform a register read operation on the given target
-/// @param[in] i_target the GENERICI2CSLAVE target
+/// @param[in] i_target the GENERICI2CRESPONDER target
 /// @param[in] i_addr address to read
 /// @param[in,out] io_command command buffer
 /// @return FAPI2_RC_SUCCESS iff okay
