@@ -497,6 +497,37 @@ fapi_try_exit:
     return fapi2::current_err;
 }
 
+///
+/// @brief Check number of pmics received for 2U. If < 2, then throw an error
+///
+/// @param[in] i_ocmb_target OCMB target parent of PMICs
+/// @param[in] i_pmics_size number of PMIC received
+/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS iff success, else error code
+///
+fapi2::ReturnCode check_number_pmics_received_2u(
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_ocmb_target,
+    const uint8_t i_pmics_size)
+{
+    using CONSTS = mss::pmic::consts<mss::pmic::product::JEDEC_COMPLIANT>;
+    const auto NUM_PRIMARY_PMICS = CONSTS::NUM_PRIMARY_PMICS;
+
+    FAPI_ASSERT(i_pmics_size == NUM_PRIMARY_PMICS,
+                fapi2::INVALID_2U_PMIC_TARGET_CONFIG()
+                .set_OCMB_TARGET(i_ocmb_target)
+                .set_NUM_PMICS(i_pmics_size)
+                .set_EXPECTED_PMICS(NUM_PRIMARY_PMICS),
+                GENTARGTIDFORMAT " pmic_enable for 2U requires %u PMICs. "
+                "Given %u PMICs",
+                GENTARGTID(i_ocmb_target),
+                NUM_PRIMARY_PMICS,
+                i_pmics_size);
+
+    return fapi2::FAPI2_RC_SUCCESS;
+
+fapi_try_exit:
+    return fapi2::current_err;
+}
+
 namespace status
 {
 

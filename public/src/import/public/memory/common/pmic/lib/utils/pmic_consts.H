@@ -381,7 +381,7 @@ enum sizes
 } // pmic
 
 ///
-/// @brief Constants for GENERICI2CSLAVE devices
+/// @brief Constants for GENERICI2CRESPONDER devices
 ///
 enum generic_i2c_slave
 {
@@ -389,7 +389,7 @@ enum generic_i2c_slave
     NUM_GPIO = 2,
     NUM_ADC = 2,
 
-    // GENERICI2CSLAVE REL_POS orderings
+    // GENERICI2CRESPONDER REL_POS orderings
     ADC1 = 0,
     ADC2 = 1,
     GPIO1 = 2,

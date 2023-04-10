@@ -388,16 +388,16 @@ struct target_info_redundancy
         }
 
         const uint8_t NUM_PMICS = iv_pmic_map.size();
-        const uint8_t NUM_GENERICI2CSLAVE = I2C_DEVICES.size();
+        const uint8_t NUM_GENERICI2CRESPONDER = I2C_DEVICES.size();
         const auto NUM_PRIMARY_PMICS = CONSTS::NUM_PRIMARY_PMICS;
 
         // If we are given a guaranteed failing list of targets (< 2 PMICs or < 4 GI2CS), exit now
         FAPI_ASSERT((NUM_PMICS >= NUM_PRIMARY_PMICS) &&
-                    (NUM_GENERICI2CSLAVE == mss::generic_i2c_slave::NUM_TOTAL_DEVICES),
+                    (NUM_GENERICI2CRESPONDER == mss::generic_i2c_slave::NUM_TOTAL_DEVICES),
                     fapi2::INVALID_PMIC_GI2C_TARGET_CONFIG()
                     .set_OCMB_TARGET(i_ocmb)
                     .set_NUM_PMICS(NUM_PMICS)
-                    .set_NUM_GI2CS(NUM_GENERICI2CSLAVE)
+                    .set_NUM_GI2CS(NUM_GENERICI2CRESPONDER)
                     .set_EXPECTED_MIN_PMICS(NUM_PRIMARY_PMICS)
                     .set_EXPECTED_GI2CS(mss::generic_i2c_slave::NUM_TOTAL_DEVICES),
                     "%s pmic_enable requires at least %u PMICs and exactly %u GI2C targets. "
@@ -406,7 +406,7 @@ struct target_info_redundancy
                     NUM_PRIMARY_PMICS,
                     mss::generic_i2c_slave::NUM_TOTAL_DEVICES,
                     NUM_PMICS,
-                    NUM_GENERICI2CSLAVE);
+                    NUM_GENERICI2CRESPONDER);
 
         // Since we have all 4 and they are sorted, we already know what is where
         iv_adc1 = I2C_DEVICES[mss::generic_i2c_slave::ADC1];
