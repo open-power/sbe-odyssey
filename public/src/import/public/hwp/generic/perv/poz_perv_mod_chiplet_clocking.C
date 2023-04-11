@@ -477,12 +477,13 @@ fapi_try_exit:
 ReturnCode mod_arrayinit(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
     const uint16_t i_clock_regions,
+    const uint64_t i_runn_cycles,
     const bool i_do_scan0)
 {
     FAPI_INF("Entering ...");
 
     FAPI_DBG("ABIST start");
-    FAPI_TRY(mod_abist_start(i_target, i_clock_regions));
+    FAPI_TRY(mod_abist_start(i_target, i_clock_regions, i_runn_cycles));
 
     FAPI_DBG("ABIST poll");
     FAPI_TRY(mod_abist_poll(i_target));
