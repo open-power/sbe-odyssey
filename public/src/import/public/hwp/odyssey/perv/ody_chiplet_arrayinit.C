@@ -38,12 +38,13 @@ using namespace fapi2;
 
 enum ODY_CHIPLET_ARRAYINIT_Private_Constants
 {
+    RUNN_CYCLES = 0x42FFF,
 };
 
 ReturnCode ody_chiplet_arrayinit(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     FAPI_INF("Entering ...");
-    FAPI_TRY(poz_chiplet_arrayinit(i_target, cc::REGION_ALL));
+    FAPI_TRY(poz_chiplet_arrayinit(i_target, cc::REGION_ALL, RUNN_CYCLES));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");

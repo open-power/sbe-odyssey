@@ -81,23 +81,6 @@ fapi2::ReturnCode mod_abist_setup(
     const bool i_skip_first_clock = false,
     const bool i_skip_last_clock = false);
 
-/// @brief LBIST setup module.
-/// --TODO update me once functionality has been built out
-///
-/// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
-/// @param[in]   i_clock_regions           Select clock regions
-/// @param[in]   i_runn_cycles             Loop count value to set OPCG run-N mode (>0x7FFFFFFFFFF for infinite)
-/// @param[in]   i_abist_start_at          Idle count value to set in OPCG_REG1
-/// @param[in]   i_abist_start_stagger     Per target OPCG_REG1 stagger value
-///
-/// @return  FAPI2_RC_SUCCESS if success, else error code.
-fapi2::ReturnCode mod_lbist_setup(
-    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
-    uint16_t i_clock_regions,
-    uint64_t i_runn_cycles = 0x42FFF,
-    uint64_t i_lbist_start_at = 0xF0,
-    uint64_t i_lbist_start_stagger = 0);
-
 /// @brief Poll for OPCG DONE.
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
@@ -180,12 +163,14 @@ fapi2::ReturnCode mod_scan0(
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
 /// @param[in]   i_clock_regions           Select clock regions
+/// @param[in]   i_runn_cycles             Loop count value to set OPCG run-N mode (>0x7FFFFFFFFFF for infinite)
 /// @param[in]   i_do_scan0                Perform scan0 after arrayinit
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_arrayinit(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
     const uint16_t i_clock_regions = REGION_ALL,
+    const uint64_t i_runn_cycles = 0x42FFF,
     const bool i_do_scan0 = true);
 
 /// @brief Clock start/stop module

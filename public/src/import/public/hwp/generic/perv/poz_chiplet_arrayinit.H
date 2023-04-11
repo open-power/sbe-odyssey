@@ -38,11 +38,16 @@
 /// @brief Arrayinit all chiplets except TP
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_clock_regions           Select clock regions
+/// @param[in]   i_runn_cycles             Loop count value to set OPCG run-N mode (>0x7FFFFFFFFFF for infinite)
+/// @param[in]   i_do_scan0                Perform scan0 after arrayinit
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {
     fapi2::ReturnCode poz_chiplet_arrayinit(
         const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-        const cc::clock_region i_regions = cc::REGION_ALL_BUT_PLL);
+        const cc::clock_region i_clock_regions = cc::REGION_ALL_BUT_PLL,
+        const uint64_t i_runn_cycles = 0x42FFF,
+        const bool i_do_scan0 = true);
 }

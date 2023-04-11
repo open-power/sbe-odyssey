@@ -44,14 +44,16 @@ enum POZ_CHIPLET_ARRAYINIT_Private_Constants
 
 ReturnCode poz_chiplet_arrayinit(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    const clock_region i_regions)
+    const clock_region i_clock_regions,
+    const uint64_t i_runn_cycles,
+    const bool i_do_scan0)
 {
-    auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
-
     FAPI_INF("Entering ...");
 
+    auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
+
     FAPI_DBG("Arrayinit then scan0 all regions on all non-TP chiplets");
-    FAPI_TRY(mod_arrayinit(l_chiplets_mc, i_regions, true));
+    FAPI_TRY(mod_arrayinit(l_chiplets_mc, i_clock_regions, i_runn_cycles, i_do_scan0));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
