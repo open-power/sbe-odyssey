@@ -416,7 +416,7 @@ int min_pr_shift(t_gcr_addr* gcr_addr, int min_shift, int stop_value, const uint
             // PSL rx_berpl_count_ne_0
             if( get_ptr_field(gcr_addr, rx_berpl_count) != 0 )
             {
-                set_debug_state(0x510F);
+                set_debug_state(0x510F); // EWM300841: Dont optimize out this debug state
                 mem_pl_field_put(rx_ber_fail, lane, 0b1);
                 set_rxbist_fail_lane( gcr_addr);
                 status = error_code;

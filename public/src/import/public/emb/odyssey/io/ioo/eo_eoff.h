@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -55,7 +55,7 @@
 
 // Live data edge offset
 
-int eo_eoff(t_gcr_addr* gcr_addr, bool recal, bool first_recal, t_bank bank);
+int eo_eoff(t_gcr_addr* gcr_addr, bool first_recal, t_bank bank);
 
 
 

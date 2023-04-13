@@ -348,6 +348,8 @@
 #define tx_cntl1g_pl_addr                          0b010000110
 #define tx_cntl20_pl_addr                          0b010011001
 #define tx_cntl21_pl_addr                          0b010011010
+#define tx_cntl22_pl_addr                          0b010011011
+#define tx_cntl23_pl_addr                          0b010011100
 #define tx_cntl30_pl_addr                          0b010100011
 #define tx_cntl3_pl_addr                           0b010001000
 #define tx_cntl4_pl_addr                           0b010001001
@@ -375,7 +377,6 @@
 #define tx_ctl_cntl10_pg_addr                      0b110000101
 #define tx_ctl_cntl11_pg_addr                      0b110000110
 #define tx_ctl_cntl12_pg_addr                      0b110000111
-#define tx_ctl_cntl13_pg_addr                      0b110010110
 #define tx_ctl_cntl1_pg_addr                       0b110001000
 #define tx_ctl_cntl2_pg_addr                       0b110001001
 #define tx_ctl_cntl3_pg_addr                       0b110001010
@@ -10527,7 +10528,7 @@
 #define tx_detrx_done_mask                         0x8
 
 
-#define tx_detrx_idle_timer_sel_addr               0b110010110
+#define tx_detrx_idle_timer_sel_addr               0b010011011
 #define tx_detrx_idle_timer_sel_startbit           0
 #define tx_detrx_idle_timer_sel_width              3
 #define tx_detrx_idle_timer_sel_endbit             2
@@ -10551,7 +10552,7 @@
 #define tx_detrx_p_comp_mask                       0x2
 
 
-#define tx_detrx_samp_timer_val_addr               0b110010110
+#define tx_detrx_samp_timer_val_addr               0b010011011
 #define tx_detrx_samp_timer_val_startbit           3
 #define tx_detrx_samp_timer_val_width              8
 #define tx_detrx_samp_timer_val_endbit             10
@@ -11167,6 +11168,14 @@
 #define tx_pcie_idle_del_sel_mask                  0xf000
 
 
+#define tx_pcie_idle_del_sel_pl_addr               0b010011100
+#define tx_pcie_idle_del_sel_pl_startbit           0
+#define tx_pcie_idle_del_sel_pl_width              4
+#define tx_pcie_idle_del_sel_pl_endbit             3
+#define tx_pcie_idle_del_sel_pl_shift              12
+#define tx_pcie_idle_del_sel_pl_mask               0xf000
+
+
 #define tx_pcie_idle_loz_del_sel_alias_addr        0b110000110
 #define tx_pcie_idle_loz_del_sel_alias_startbit    0
 #define tx_pcie_idle_loz_del_sel_alias_width       8
@@ -11175,12 +11184,28 @@
 #define tx_pcie_idle_loz_del_sel_alias_mask        0xff00
 
 
+#define tx_pcie_idle_loz_del_sel_pl_alias_addr     0b010011100
+#define tx_pcie_idle_loz_del_sel_pl_alias_startbit   0
+#define tx_pcie_idle_loz_del_sel_pl_alias_width    8
+#define tx_pcie_idle_loz_del_sel_pl_alias_endbit   7
+#define tx_pcie_idle_loz_del_sel_pl_alias_shift    8
+#define tx_pcie_idle_loz_del_sel_pl_alias_mask     0xff00
+
+
 #define tx_pcie_loz_del_sel_addr                   0b110000110
 #define tx_pcie_loz_del_sel_startbit               4
 #define tx_pcie_loz_del_sel_width                  4
 #define tx_pcie_loz_del_sel_endbit                 7
 #define tx_pcie_loz_del_sel_shift                  8
 #define tx_pcie_loz_del_sel_mask                   0xf00
+
+
+#define tx_pcie_loz_del_sel_pl_addr                0b010011100
+#define tx_pcie_loz_del_sel_pl_startbit            4
+#define tx_pcie_loz_del_sel_pl_width               4
+#define tx_pcie_loz_del_sel_pl_endbit              7
+#define tx_pcie_loz_del_sel_pl_shift               8
+#define tx_pcie_loz_del_sel_pl_mask                0xf00
 
 
 #define tx_pcie_pk_vcm_ctrl_en_dc_addr             0b010010011
@@ -12104,11 +12129,11 @@
 
 
 #define tx_tdr_cntl_alias_addr                     0b110001011
-#define tx_tdr_cntl_alias_startbit                 0
-#define tx_tdr_cntl_alias_width                    11
+#define tx_tdr_cntl_alias_startbit                 8
+#define tx_tdr_cntl_alias_width                    3
 #define tx_tdr_cntl_alias_endbit                   10
 #define tx_tdr_cntl_alias_shift                    5
-#define tx_tdr_cntl_alias_mask                     0xffe0
+#define tx_tdr_cntl_alias_mask                     0xe0
 
 
 #define tx_tdr_dac_cntl_addr                       0b110001011
@@ -12117,6 +12142,14 @@
 #define tx_tdr_dac_cntl_endbit                     7
 #define tx_tdr_dac_cntl_shift                      8
 #define tx_tdr_dac_cntl_mask                       0xff00
+
+
+#define tx_tdr_dac_cntl_pl_addr                    0b010010100
+#define tx_tdr_dac_cntl_pl_startbit                8
+#define tx_tdr_dac_cntl_pl_width                   8
+#define tx_tdr_dac_cntl_pl_endbit                  15
+#define tx_tdr_dac_cntl_pl_shift                   0
+#define tx_tdr_dac_cntl_pl_mask                    0xff
 
 
 #define tx_tdr_enable_addr                         0b010001000

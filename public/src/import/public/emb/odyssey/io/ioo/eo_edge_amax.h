@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/emb/odyssey/io/ioo/eo_llbist.h $     */
+/* $Source: public/src/import/public/emb/odyssey/io/ioo/eo_edge_amax.h $  */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,16 +23,15 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 // *!---------------------------------------------------------------------------
-// *! (C) Copyright International Business Machines Corp. 2016
+// *! (C) Copyright International Business Machines Corp. 2023
 // *! All Rights Reserved -- Property of IBM
 // *! *** IBM Confidential ***
 // *!---------------------------------------------------------------------------
-// *! FILENAME    : eo_llbist.h
+// *! FILENAME    : eo_edge_amax.h
 // *! TITLE       :
 // *! DESCRIPTION :
 // *!
-// *! OWNER NAME  : Mike Harper         Email: harperm@us.ibm.com
-// *! BACKUP NAME : Vikram Raj          Email: vbraj@us.ibm.com
+// *! OWNER NAME  : Mike Harper         Email:harperm@us.ibm.com
 // *! BACKUP NAME : Mike Spear          Email: mspear@us.ibm.com
 // *!
 // *!---------------------------------------------------------------------------
@@ -40,18 +39,17 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
-// mwh1903220  |mwh     | Add another input
-// mwh1902190  |mwh     | Initial Rev
+// mwh23030800 |mwh     | Add in _hysteresis
+// mwh23030300 |mwh     | Initial Rev
 // -----------------------------------------------------------------------------
 
-#ifndef _EO_llbist_H_
-#define _EO_llbist_H_
+#ifndef _EO_EDGE_AMAX_H_
+#define _EO_EDGE_AMAX_H_
 
 #include <stdbool.h>
 #include "ioo_common.h"
 
-// vga ctle lte qpa checks
-int eo_llbist(t_gcr_addr* gcr_addr, const uint32_t lane_mask);
+// Edge Offset Using AP/AN measurements
+int eo_edge_amax(t_gcr_addr* gcr_addr, t_bank bank) ;
 
-//int check_value(t_gcr_addr *gcr_addr, t_bank bank, int check_value, char addr_a,char startbit_a,char endbit_a, char addr_b,char startbit_b,char endbit_b);
-#endif //_EO_rxbist_ber_H_
+#endif //_EO_EDGE_AMAX_H_

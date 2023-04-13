@@ -1039,8 +1039,10 @@ void set_gcr_addr_reg_id_lane(t_gcr_addr* gcr_addr, int reg_id, int lane)
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // HW I/O FUNCTIONS
+//
+// The I/O functions are not atomic from interrupts.
+// However, we do not have any external interrupts enabled or any threading switches where this would be a concern.
 ////////////////////////////////////////////////////////////////////////////////////////////
-// !!TODO!! - Assure that the I/O functions are atomic with interrupts
 
 void ll_put(uint32_t addr, uint32_t data)
 {

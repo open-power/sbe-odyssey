@@ -1187,10 +1187,10 @@ PK_STATIC_ASSERT(rx_a_ctle_peak1_startbit < rx_a_ctle_peak2_startbit);
 PK_STATIC_ASSERT(rx_b_ctle_peak1_startbit < rx_b_ctle_peak2_startbit);
 PK_STATIC_ASSERT(rx_a_ctle_peak1_startbit == rx_b_ctle_peak1_startbit);
 PK_STATIC_ASSERT(rx_a_ctle_peak2_startbit == rx_b_ctle_peak2_startbit);
-PK_STATIC_ASSERT(rx_a_ctle_peak1_width == pcie_gen1_lane0_preset_rx_ctle_peak1_width);
-PK_STATIC_ASSERT(rx_a_ctle_peak2_width == pcie_gen1_lane0_preset_rx_ctle_peak2_width);
-PK_STATIC_ASSERT(rx_a_ctle_peak1_peak2_alias_width == pcie_gen1_lane0_preset_rx_ctle_peak1_peak2_width);
-PK_STATIC_ASSERT(pcie_gen1_lane0_preset_rx_ctle_peak1_startbit < pcie_gen1_lane0_preset_rx_ctle_peak2_startbit);
+PK_STATIC_ASSERT(rx_a_ctle_peak1_width == pcie_lane0_gen1_preset_rx_ctle_peak1_width);
+PK_STATIC_ASSERT(rx_a_ctle_peak2_width == pcie_lane0_gen1_preset_rx_ctle_peak2_width);
+PK_STATIC_ASSERT(rx_a_ctle_peak1_peak2_alias_width == pcie_lane0_gen1_preset_rx_ctle_peak1_peak2_width);
+PK_STATIC_ASSERT(pcie_lane0_gen1_preset_rx_ctle_peak1_startbit < pcie_lane0_gen1_preset_rx_ctle_peak2_startbit);
 PK_STATIC_ASSERT(rx_a_lte_gain_zero_full_reg_alias_width == 16);
 PK_STATIC_ASSERT(rx_b_lte_gain_zero_full_reg_alias_width == 16);
 PK_STATIC_ASSERT(rx_a_lte_gain_zero_alias_width == 6);
@@ -1199,8 +1199,8 @@ PK_STATIC_ASSERT(rx_a_lte_gain_startbit < rx_a_lte_zero_startbit);
 PK_STATIC_ASSERT(rx_b_lte_gain_startbit < rx_b_lte_zero_startbit);
 PK_STATIC_ASSERT(rx_a_lte_gain_startbit == rx_b_lte_gain_startbit);
 PK_STATIC_ASSERT(rx_a_lte_zero_startbit == rx_b_lte_zero_startbit);
-PK_STATIC_ASSERT(rx_a_lte_gain_width == pcie_gen1_lane0_preset_rx_lte_gain_width);
-PK_STATIC_ASSERT(rx_a_lte_zero_width == pcie_gen1_lane0_preset_rx_lte_zero_width);
+PK_STATIC_ASSERT(rx_a_lte_gain_width == pcie_lane0_gen1_preset_rx_lte_gain_width);
+PK_STATIC_ASSERT(rx_a_lte_zero_width == pcie_lane0_gen1_preset_rx_lte_zero_width);
 
 // PCIe Only: Write the CTLE Peak1/Peak2 and LTE Gain/Zero registers with the presets for the current PCIe GenX
 // Must set the gcr reg_id to rx_group before calling this
@@ -1269,7 +1269,8 @@ uint32_t tx_ffe_toTherm(const uint32_t i_dec)
 
 /**
  * @brief Converts a decimal value to a thermometer code with reverse bit significance
- * @param[in] i_dec Decimal Value
+ * @param[in] i_dec Decimal Value; must be <= i_width; this is not checked
+ * @param[in] i_width Decimal Value width of therm val
  * @retval    Thermometer Value
  */
 uint32_t tx_ffe_toThermRev(const uint32_t i_dec, const uint32_t i_width)
@@ -1298,7 +1299,8 @@ uint32_t tx_ffe_toThermWithHalf(const uint32_t i_dec, const uint32_t i_width)
 /**
  * @brief Converts a decimal value to a thermometer code with a MSB 1/2 strength bit
  * @brief and the full-strength segments reversed
- * @param[in] i_dec   Decimal Value
+ * @brief i_dec < i_width*2
+ * @param[in] i_dec   Decimal Value; must be < 2*i_width; this is not checked
  * @param[in] i_width Width of Register
  * @retval Thermometer Value
  */

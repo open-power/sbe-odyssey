@@ -39,6 +39,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23031400 |vbr     | EWM 299933: Use filter_depth=9 and bo_time=31 for peak2
+// vbr23031500 |vbr     | Added new peak1/2 cal force enables to allow for lab experimenting.
+// vbr23030800 |vbr     | No longer run peak2 in Gen5 or AXO (>=32Gbps); ignore peak1/2 cal disables.
 // jjb22122000 |jjb     | qualified setting rx_a/b_ctle_peak1/2_done with !peak1/2_disable
 // jjb22102600 |jjb     | Issue 292931: added io_sleep to abort check in 0x6080
 // mbs22082601 |mbs     | Updated with PSL comments
@@ -127,6 +130,7 @@ PK_STATIC_ASSERT(rx_b_ctle_peak1_peak2_hyst_alias_width == 8);
 PK_STATIC_ASSERT(rx_a_ctle_peak2_hyst_startbit == rx_a_ctle_peak1_hyst_startbit + 4);
 PK_STATIC_ASSERT(rx_b_ctle_peak2_hyst_startbit == rx_b_ctle_peak1_hyst_startbit + 4);
 PK_STATIC_ASSERT(rx_ctle_peak_hyst_settings_full_reg_width == 16);
+PK_STATIC_ASSERT(rx_ctle_force_peak1_peak2_cal_enable_width == 3);
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -192,8 +196,8 @@ void ctle_hysteresis(int i_hyst_delta_mode, int i_hyst_limit, int i_old_val, int
 ////////////////////////////////////////////////////////////////////////////
 // IOO CTLE ZFE METHOD
 ////////////////////////////////////////////////////////////////////////////
-static uint16_t servo_ops_ctle_a[4] = { c_ctle_peak1_ae_n000, c_ctle_peak2_ae_n000, c_ctle_peak1_ae_n000, c_ctle_peak2_ae_n000 };
-static uint16_t servo_ops_ctle_b[4] = { c_ctle_peak1_be_n000, c_ctle_peak2_be_n000, c_ctle_peak1_be_n000, c_ctle_peak2_be_n000 };
+static uint16_t servo_ops_ctle_a[2] = { c_ctle_peak1_ae_n000, c_ctle_peak2_ae_n000 };
+static uint16_t servo_ops_ctle_b[2] = { c_ctle_peak1_be_n000, c_ctle_peak2_be_n000 };
 
 int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, bool copy_to_main, bool start_at_zero,
             bool recal, bool hysteresis_en, bool* peak_changed)
@@ -201,40 +205,50 @@ int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, boo
     set_debug_state(0x6000); // DEBUG - CTLE Start (IOO)
     int lane = get_gcr_addr_lane(gcr_addr);
 
-    // Use H2 for corelation bit at Gen3/4, use H3 for Gen 5, use pre-configured (hw_reg_init) for AXO
-    // PSL pcie_cal_mode
-    if(cal_mode != C_AXO_CAL)
+    // Peak1 correlation bit defaults to 0 in the RegDef.
+    // Peak2 correlation bit is set to 0 in hw_reg_init.
+    //put_ptr_field(gcr_addr, rx_ctle_peak2_h_sel, 1, read_modify_write); // Gen5: H3
+    //put_ptr_field(gcr_addr, rx_ctle_peak2_h_sel, 0, read_modify_write); // Gen3, Gen4: H2
+
+    // Determine configuration on which sub-steps are enabled and return if both are disabled for some reason.
+    // Default Config:
+    //  AXO:  Peak1 only at >=32Gbps, Peak2 only at <32Gbps.
+    //  PCIe: Peak1 only at Gen5, Peak2 only at Gen4.
+    // ppe_data_rate: 000: 2.5Gbps; 001: 5.0Gbps; 010: 8.0Gbps; 011: 16.0Gbps; 100: 21.3Gbps; 101: 25.6Gbps; 110: 32.0Gbps; 111: 38.4Gbps"
+    bool peak1_en = ((cal_mode == C_AXO_CAL) && (mem_pg_field_get(ppe_data_rate) >= 6)) || (cal_mode == C_PCIE_GEN5_CAL);
+    bool peak2_en = !peak1_en;
+    int force_peak1_peak2_enable = mem_pg_field_get(rx_ctle_force_peak1_peak2_cal_enable);
+
+    if (force_peak1_peak2_enable == 0b100)
     {
-        // PSL pcie_gen5_cal_mode
-        if (cal_mode == C_PCIE_GEN5_CAL)
-        {
-            put_ptr_field(gcr_addr, rx_ctle_peak2_h_sel, 1, read_modify_write); // Gen5: H3
-        }
-        else     // PCIe Gen 3/4
-        {
-            put_ptr_field(gcr_addr, rx_ctle_peak2_h_sel, 0, read_modify_write); // Gen3, Gen4: H2
-        }
+        return rc_no_error;    // Both Forced Disabled
     }
 
-    // Get configuration on which sub-steps are disabled and return if both are disabled for some reason.
-    bool peak1_en = (cal_mode == C_AXO_CAL) || (cal_mode == C_PCIE_GEN5_CAL);
-    bool peak2_en = true;
-    int peak1_peak2_disable = mem_pg_field_get(rx_ctle_peak1_peak2_cal_disable_alias);
-
-    if (peak1_peak2_disable == 0b11)
+    if (force_peak1_peak2_enable & 0b100)
     {
-        return rc_no_error;
+        peak1_en = (force_peak1_peak2_enable & 0b110);
+        peak2_en = (force_peak1_peak2_enable & 0b101);
     }
 
-    bool peak1_disable = !peak1_en || (peak1_peak2_disable & 0b10);
-    bool peak2_disable = !peak2_en || (peak1_peak2_disable & 0b01);
+    bool peak1_disable = !peak1_en;
+    bool peak2_disable = !peak2_en;
 
     // Start servos at peak2 (index=1) when peak1 is disabled
     int servo_array_start = peak1_disable ? 1 : 0;
 
     // Only need to run 1 of the servo ops if peak1 or peak2 is disabled.
-    // Otherwise run 4 servo ops (peak1/2 double pass) in INIT & First Recal or 2 servo ops (peak1/2 single pass) in subsequent Recals with hysteresis.
-    int num_servo_ops = (peak1_disable || peak2_disable) ? 1 : ((recal && hysteresis_en) ? 2 : 4);
+    // Otherwise run 2 servo ops (peak1/2 single pass).
+    int num_servo_ops = (peak1_disable || peak2_disable) ? 1 : 2;
+
+    // EWM 299933: Use filter_depth=9 and bo_time=31 for peak2 (run in PCIe Gen4, AXO <32Gbps)
+    // Do not update the settings when using the lab debug enable overrides.
+    bool update_servo_settings = peak2_en && ((force_peak1_peak2_enable & 0b100) == 0);
+
+    if (update_servo_settings)
+    {
+        put_ptr_field(gcr_addr, rx_ctle_filter_depth,  9, read_modify_write);
+        put_ptr_field(gcr_addr, rx_bo_time,           31, fast_write); //rx_servo_timer_half_rate=0 only other field in register
+    }
 
     // Select the correct servo ops
     uint16_t* servo_ops;
@@ -312,6 +326,13 @@ int eo_ctle(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, t_bank cal_bank, boo
 
     // Re-enable servo status for result at min/max
     servo_errors_enable_all(gcr_addr);
+
+    // If changed, restore servo settings to defaults (filter_depth=8 and bo_time=14)
+    if (update_servo_settings)
+    {
+        put_ptr_field(gcr_addr, rx_ctle_filter_depth,  8, read_modify_write);
+        put_ptr_field(gcr_addr, rx_bo_time,           14, fast_write); //rx_servo_timer_half_rate=0 only other field in register
+    }
 
     // A recal abort (only checked in recal by check_rx_abort) causes a restore
     bool restore = false;

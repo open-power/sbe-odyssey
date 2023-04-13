@@ -40,6 +40,8 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// vbr23031600 |vbr     | Skip the final CDR check in PCIe initial training to save time
+// vbr23031000 |vbr     | Tied off recal_dac_changed to save some code space
 // vbr23030200 |vbr     | Issue 300456: Only check cal bank in wait for cdr lock
 // jjb23030100 |jjb     | Issue 300241: Do not wait for cdr lock when running rxeqeval
 // vbr23010300 |vbr     | EWM296171: Added sleep at end of ddc_seek_loop (recal only)
@@ -883,9 +885,10 @@ int ddc_seek_loop (t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, bool seekdir
 //   Mini-PR offset positions are applied by shifting via rx_{ab}_pr_{ns/ew}_data.
 //   Historic minimums are written to rx_ddc_hyst_left_edge and rx_ddc_hyst_right_edge.
 //   CDR tracking is left as is.
-int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed)
+int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal)
 {
     set_debug_state(0x8000); // DEBUG - DDC Start
+    const bool recal_dac_changed = false; // potential input to bypass hysteresis on a dac change
     int abort_status = pass_code;
     int pr_active[4]; // All four PR positions packed in as: {Data NS, Edge NS, Data EW, Edge EW}
     G_io_threads = img_field_get(ppe_num_threads);
@@ -1172,8 +1175,9 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed
         return abort_status;
     }
 
-    // PSL not_rx_running_eq_eval
-    if (mem_pg_field_get(rx_running_eq_eval) == 0)   // Issue 300241: Only wait for cdr lock when not running rxeqeval
+    // PSL ddc_wait_for_cdr_lock
+    if (recal || (fw_field_get(fw_pcie_mode) ==
+                  0))   // Issue 300241: Only wait for cdr lock when not in pcie init (rxeqeval or rate_change)
     {
         int cdr_status = wait_for_cdr_lock(gcr_addr, bank, true);
 

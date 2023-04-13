@@ -132,6 +132,8 @@ PK_STATIC_ASSERT(rx_dl_clk_sel_a_startbit  == 15);
 
 // Constants for setting the CDRs into specific modes
 #define cdr_a_dis_cdr_b_dis        0b000000
+#define cdr_a_dis_cdr_b_lcl        0b000100
+#define cdr_a_lcl_cdr_b_dis        0b100000
 #define cdr_a_lcl_cdr_b_lcl        0b100100
 #define cdr_a_lcl_cdr_b_ext        0b100110
 #define cdr_a_ext_cdr_b_lcl        0b110100
@@ -157,19 +159,6 @@ typedef enum
     C_PCIE_GEN5_CAL = 4,
     C_AXO_CAL = 7,
 } t_init_cal_mode;
-
-// PPE Initial Calibration Runtime limits as specified in Workbook 4.5 Calibration Main Loop
-// See eo_main.c
-// Added with 4% margin
-#define PPE_INIT_CAL_TIME_US_BUDGET_PCIE_4TH 360
-#define PPE_INIT_CAL_TIME_US_BUDGET_PCIE_1TH 255
-#define PPE_INIT_CAL_TIME_US_BUDGET_AXO_4TH  645
-//#define PPE_INIT_CAL_TIME_US_BUDGET_AXO_1TH  385 //real 330-382
-
-// ***** Note: As of 6/22/22 (for HW282905) data is showing that the
-//   5-sigma cutoff is ~433 US. If we hit this error again we'll
-//   need to re-evaluate the data and init cal.
-#define PPE_INIT_CAL_TIME_US_BUDGET_AXO_1TH  433
 
 // Phase rotator size constants
 #define pr_mini_min 0x00
@@ -317,16 +306,16 @@ void apply_rx_dac_offset(t_gcr_addr* gcr_addr, t_data_edge_dac_sel dac_sel, t_ba
 #define saved_tx_dcc_lane_offset           8
 #define saved_tx_dcc_genx_offset           2
 
-#define preset_rx_peak_lte_addr            pcie_ppe_preset_rx_peak_lte_lane_0_addr  //0x118
+#define preset_rx_peak_lte_addr            pcie_ppe_preset_rx_peak_lte_lane0_gen1_addr  //0x118
 #define preset_rx_peak_lte_size            8
 #define preset_rx_peak_lte_lane_offset     8
 #define preset_rx_peak_lte_genx_offset     1
-#define preset_rx_ctle_peak1_peak2_mask    pcie_gen1_lane0_preset_rx_ctle_peak1_peak2_mask   //0xff00
-#define preset_rx_ctle_peak1_peak2_shift   pcie_gen1_lane0_preset_rx_ctle_peak1_peak2_shift  //8
-#define preset_rx_ctle_lte_gain_mask       pcie_gen1_lane0_preset_rx_lte_gain_mask   //0x0070
-#define preset_rx_ctle_lte_gain_shift      pcie_gen1_lane0_preset_rx_lte_gain_shift  //4
-#define preset_rx_ctle_lte_zero_mask       pcie_gen1_lane0_preset_rx_lte_zero_mask   //0x0007
-#define preset_rx_ctle_lte_zero_shift      pcie_gen1_lane0_preset_rx_lte_zero_shift  //0
+#define preset_rx_ctle_peak1_peak2_mask    pcie_lane0_gen1_preset_rx_ctle_peak1_peak2_mask   //0xff00
+#define preset_rx_ctle_peak1_peak2_shift   pcie_lane0_gen1_preset_rx_ctle_peak1_peak2_shift  //8
+#define preset_rx_ctle_lte_gain_mask       pcie_lane0_gen1_preset_rx_lte_gain_mask   //0x0070
+#define preset_rx_ctle_lte_gain_shift      pcie_lane0_gen1_preset_rx_lte_gain_shift  //4
+#define preset_rx_ctle_lte_zero_mask       pcie_lane0_gen1_preset_rx_lte_zero_mask   //0x0007
+#define preset_rx_ctle_lte_zero_shift      pcie_lane0_gen1_preset_rx_lte_zero_shift  //0
 
 
 // Clear (subtract) the RX DFE from both Banks latches and MiniPR

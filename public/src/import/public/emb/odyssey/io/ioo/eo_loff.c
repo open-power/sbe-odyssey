@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// mwh23033000 |mwh     | Issue 301484: Need to add set_rxbist_fail_lane, to loff error
 // vbr23010400 |vbr     | Issue 296947: Adjusted latch_dac accesses for different addresses on Odyssey vs P11/ZMetis
 // vbr22120500 |vbr     | Issue 294793: added sleep when there is a pipe_abort
 // vbr22110700 |vbr     | Issue 294028: skip saving dac values on a pipe_abort
@@ -141,7 +142,7 @@ static inline int loff_check(t_gcr_addr* gcr_addr, int lane, uint32_t l_dac_addr
             //begin3
             status = error_code;
             mem_pl_field_put(rx_latch_offset_fail, lane, 0b1);//ppe pl
-            set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
+            set_rxbist_fail_lane(gcr_addr);//add for issue 301484
             ADD_LOG(DEBUG_RX_EOFF_PRE_LOFF_LIMIT, gcr_addr, loff_before);
         }//end3
     }//end1

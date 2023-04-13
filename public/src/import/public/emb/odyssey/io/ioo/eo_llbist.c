@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// mwh23040500 |mwh     | Issue 300849 add in check see if DL clock are on
 // jjb22120700 |jjb     | Added Enabling/Disabling dl_clock
 // mbs22082601 |mbs     | Updated with PSL comments
 // vbr22061500 |vbr     | Added returning of fail status for ext commands
@@ -71,30 +72,64 @@
 #include "io_config.h"
 #include "io_logger.h"
 
-int eo_llbist(t_gcr_addr* gcr_addr)
+// most common for loop shorthand
+#define FOR_LESS(i, stop) for(i = 0; i < stop; ++i)
+// check if mask has the given lane selected. Big endian.
+#define LANE_MASKED(mask, lane) (((mask << lane) & 0x80000000) == 0x0)
+
+int eo_llbist(t_gcr_addr* gcr_addr, const uint32_t lane_mask)
 {
     //start eo_llbist
     set_debug_state(0x51E0); // DEBUG
     int status = rc_no_error;
 
+    const uint32_t l_num_lanes = get_num_rx_lane_slices();
+    int orig_gcr_lane = get_gcr_addr_lane(gcr_addr);
+
     // Make sure IO_DL_CLOCK is enabled, required to run LLBIST
-    put_ptr_field(gcr_addr, rx_dl_clk_en, 0b1, read_modify_write);
+    int lane = 0;
+    FOR_LESS(lane, l_num_lanes)
+    {
+        // PSL lane_masked
+        if LANE_MASKED(lane_mask, lane)
+        {
+            continue;
+        }
+
+        set_gcr_addr_lane(gcr_addr, lane);
+        put_ptr_field(gcr_addr, rx_dl_clk_en, 0b1, read_modify_write);
+    }//end for
+    set_gcr_addr_lane(gcr_addr, orig_gcr_lane);//back to per group
+
+    io_spin_us(2); // 2us
+
+
+    int error = get_ptr_field(gcr_addr, rx_pb_io_iobist_prbs_error);//pg
+
+    //clock in DL or something is not right
+    if (!error )
+    {
+        set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
+        ADD_LOG(DEBUG_RX_BIST_LL_TEST_FAIL, gcr_addr, 0);
+        status = error_code;
+        goto function_exit;
+    }
 
     //turn on seed mode and turn off rx_berpl_timer_run_slow
     put_ptr_field(gcr_addr, rx_io_pb_iobist_reset, 0b1, read_modify_write);
 
     //Wait for prbs 15 to sink
     set_debug_state(0x51E1, 3);
-    io_spin_us(2000);//2 micro-sec
+    io_spin_us(2); // 2us
 
     //turn off seed mode and turn on rx_berpl_timer_run_slow
     put_ptr_field(gcr_addr, rx_io_pb_iobist_reset, 0b0, read_modify_write);
 
     //let comparison run
     set_debug_state(0x51E2, 3);
-    io_spin_us(2000);//1 micro-sec
+    io_spin_us(2000); // EWM300851: Updating to 2ms for longer dwell time
 
-    int error = get_ptr_field(gcr_addr, rx_pb_io_iobist_prbs_error);//pg
+    error = get_ptr_field(gcr_addr, rx_pb_io_iobist_prbs_error);//pg
 
     if ( error )
     {
@@ -104,13 +139,25 @@ int eo_llbist(t_gcr_addr* gcr_addr)
         status = error_code;
     }
 
+function_exit:
     mem_pg_field_put(rx_linklayer_done, 0b1);//pg
     mem_pg_field_put(rx_linklayer_fail, error);//pg
     error |= mem_pg_field_get(rx_fail_flag);
     mem_pg_field_put(rx_fail_flag, error);
 
     // Disable IO_DL_CLOCK when finished LLBIST
-    put_ptr_field(gcr_addr, rx_dl_clk_en, 0b0, read_modify_write);
+    FOR_LESS(lane, l_num_lanes)
+    {
+        // PSL lane_masked
+        if LANE_MASKED(lane_mask, lane)
+        {
+            continue;
+        }
+
+        set_gcr_addr_lane(gcr_addr, lane);
+        put_ptr_field(gcr_addr, rx_dl_clk_en, 0b0, read_modify_write);
+    }//end for
+    set_gcr_addr_lane(gcr_addr, orig_gcr_lane);//back to per group
 
     set_debug_state(0x51E3); // DEBUG
     return status;

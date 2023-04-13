@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// mwh23033000 |mwh     | EWM 300841 put back debug statement to support lab.
 // mwh23011300 |mwh     | moved to lib.c since used by iot and ioo void set_rxbist_fail_lane
 // mwh22111100 |mwh     | Removed code checking for LTE gain and zero
 // mbs22082601 |mbs     | Updated with PSL comments
@@ -164,27 +165,19 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_VGA_GAIN_FAIL, gcr_addr, rx_ctle_gain_int);
-                set_debug_state(0x5153);
+                set_debug_state(0x5153); // EWM300841: Don't  Optimize out the debug state
             }
             // PSL bist_gain_check_gt_max
             else if ( rx_ctle_gain_int > mem_pg_field_get(rx_ctle_gain_max_check) )
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_VGA_GAIN_FAIL, gcr_addr, rx_ctle_gain_int);
-                set_debug_state(0x5154);
-            }
-            else
-            {
-                fail = 0;
-                set_debug_state(0x5155);
+                set_debug_state(0x5154); // EWM300841: Don't  Optimize out the debug state
             }
 
             //set the fail to register
-            if (fail)
-            {
-                mem_pl_field_put(rx_ctle_gain_fail, lane, fail);
-            }
-
+            mem_pl_field_put(rx_ctle_gain_fail, lane, fail);
+            fail = 0;
         }
 
 
@@ -201,25 +194,18 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_CTLE_PEAK1_FAIL, gcr_addr, rx_ctle_peak1_int);
-                set_debug_state(0x5157);
+                set_debug_state(0x5157); // EWM300841: Don't  Optimize out the debug state
             }
             // PSL bist_peak1_check_gt_max
             else if ( rx_ctle_peak1_int >  mem_pg_field_get(rx_ctle_peak1_max_check) )
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_CTLE_PEAK1_FAIL, gcr_addr, rx_ctle_peak1_int);
-                set_debug_state(0x5158);
-            }
-            else
-            {
-                fail = 0;
-                set_debug_state(0x5159);
+                set_debug_state(0x5158); // EWM300841: Don't  Optimize out the debug state
             }
 
-            if (fail)
-            {
-                mem_pl_field_put(rx_ctle_peak1_fail, lane, fail );
-            }
+            mem_pl_field_put(rx_ctle_peak1_fail, lane, fail );
+            fail = 0;
         }
 
         //Check ctle peak is not to low or to high
@@ -235,26 +221,18 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_CTLE_PEAK2_FAIL, gcr_addr, rx_ctle_peak2_int);
-                set_debug_state(0x515B);
+                set_debug_state(0x515B); // EWM300841: Don't  Optimize out the debug state
             }
             // PSL bist_peak2_check_gt_max
             else if ( rx_ctle_peak2_int >  mem_pg_field_get(rx_ctle_peak2_max_check) )
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_CTLE_PEAK2_FAIL, gcr_addr, rx_ctle_peak2_int);
-                set_debug_state(0x515C);
-            }
-            else
-            {
-                fail = 0;
-                set_debug_state(0x515D);
+                set_debug_state(0x515C); // EWM300841: Don't  Optimize out the debug state
             }
 
-
-            if (fail)
-            {
-                mem_pl_field_put(rx_ctle_peak2_fail, lane, fail );
-            }
+            mem_pl_field_put(rx_ctle_peak2_fail, lane, fail );
+            fail = 0;
         }
 
         //Check lte gain is not to low or to high
@@ -338,14 +316,14 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_QPA_FAIL, gcr_addr, 0x0);
-                set_debug_state(0x5169);
+                set_debug_state(0x5169); // EWM300841: Don't  Optimize out the debug state
             }
             // PSL bist_quad_phase_check_nse_gt_max
             else if ( rx_quad_ph_adj_nse_int >  check_quad_ph_adj_max )
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_QPA_FAIL, gcr_addr, 0x0);
-                set_debug_state(0x516A);
+                set_debug_state(0x516A); // EWM300841: Don't  Optimize out the debug state
             }
             //else if ( rx_quad_ph_adj_ewd_int <  check_quad_ph_adj_min ) {
             //    fail = 1;
@@ -360,26 +338,18 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_QPA_FAIL, gcr_addr, 0x0);
-                set_debug_state(0x516D);
+                set_debug_state(0x516D); // EWM300841: Don't  Optimize out the debug state
             }
             // PSL bist_quad_phase_check_ewe_gt_max
             else if ( rx_quad_ph_adj_ewe_int >  check_quad_ph_adj_max )
             {
                 fail = 1;
                 ADD_LOG(DEBUG_BIST_QPA_FAIL, gcr_addr, 0x0);
-                set_debug_state(0x516E);
-            }
-            else
-            {
-                fail = 0;
-                set_debug_state(0x516F);
+                set_debug_state(0x516E); // EWM300841: Don't  Optimize out the debug state
             }
 
-
-            if (fail)
-            {
-                mem_pl_field_put(rx_quad_phase_fail, lane, fail);
-            }
+            mem_pl_field_put(rx_quad_phase_fail, lane, fail);
+            fail = 0;
         }
 
     } // end scope limiting - A
@@ -436,7 +406,7 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
         if ( mem_pl_field_get(rx_step_fail_alias, lane) != 0 )
         {
             // setting fail
-            //set_debug_state(0x5171);
+            set_debug_state(0x5171, 3);
             //set_rxbist_fail_lane( gcr_addr, bank );
             set_rxbist_fail_lane( gcr_addr);
         }
