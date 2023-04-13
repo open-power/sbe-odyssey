@@ -52,7 +52,6 @@ infile_c = [
             '/memory/generic/memory/lib/utils/c_str.C',
             '/memory/odyssey/initfiles/odyssey_scom.C',
             '/memory/odyssey/initfiles/odyssey_mp_scom.C',
-            '/memory/odyssey/hwp/lib/workarounds/ody_scominit_phy_check_workaround.C',
             '/memory/odyssey/hwp/lib/power_thermal/ody_throttle.C',
             '/memory/odyssey/hwp/lib/fir/ody_unmask.C',
 
