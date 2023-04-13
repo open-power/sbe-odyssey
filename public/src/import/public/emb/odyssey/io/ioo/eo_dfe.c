@@ -39,6 +39,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23033000 |vbr     | EWM 302249: Moved sleep in DFE Full latch update loop and added quick abort from loop
+// vbr23031300 |vbr     | Updated sleeps in dfe full for EWM301148.
+// vbr23030100 |vbr     | Allow running DFE Full in PCIe Gen 1/2 recal with no H3-H1 pattern matching
 // vbr23021700 |vbr     | Issue 299509: Added sleep to fix thread active violation between bank sync and dfe full in recal
 // vbr23010400 |vbr     | Issue 296947: Adjusted latch_dac accesses for different addresses on Odyssey vs P11/ZMetis
 // vbr22092700 |vbr     | Issue 290398: Add ppe config to disable servo min/max errors for DFE Full
@@ -61,7 +64,7 @@
 // vbr21040700 |vbr     | Added way to select to run H1 or H1-H3 for DFE fast (re-enabled H2, H3).
 // vbr21012800 |vbr     | Skip eye height checks when clr_eye_height_width is set
 // vbr20121100 |vbr     | Removed P10 dd1 code
-// vbr20111301 |vbr     | DFE clkadj for bank b is more correct now, but still needs work.  Added some more todos
+// vbr20111301 |vbr     | DFE clkadj for bank b is more correct now, but still needs work.  Added some more comments
 // vbr20111300 |vbr     | Removed the error check on max iterations in dfe fast
 // vbr20082600 |vbr     | A lot of changes to speed up dfe_fast: H1 only, 2 loops max, write coeffs at end only, removed polling/error checks.
 // vbr20043000 |vbr     | Switched to common function for servo queues empty check
@@ -175,7 +178,8 @@
 
 // Declare servo op arrays as static globals so they are placed in static memory thus reducing code size and complexity.
 
-#define SERVO_OP_MASK_ALL     0xF000 // Allows H3,H2,H1,H-1 to be used as a mask
+#define SERVO_OP_MASK_ALL     0xF000 // Allows H3,H2,H1,H-1 to be used in pattern matching
+#define SERVO_OP_MASK_H321_X  0x1000 // Allows H-1 to be used in pattern matching while H3,H2,H1 are don't care
 #define SERVO_OP_AP           0x0100 // Sets H0(1) H-1(0)
 #define SERVO_OP_AN           0x0080 // Sets H0(0) H-1(1)
 #define SERVO_OP_FILT_AX000XX 0x0000
@@ -228,14 +232,14 @@ typedef enum
 
 const static uint16_t SERVO_OPS[8] =
 {
-    SERVO_OP_MASK_ALL | SERVO_OP_FILT_AX000XX,
-    SERVO_OP_MASK_ALL | SERVO_OP_FILT_AX001XX,
-    SERVO_OP_MASK_ALL | SERVO_OP_FILT_AX010XX,
-    SERVO_OP_MASK_ALL | SERVO_OP_FILT_AX011XX,
-    SERVO_OP_MASK_ALL | SERVO_OP_FILT_AX100XX,
-    SERVO_OP_MASK_ALL | SERVO_OP_FILT_AX101XX,
-    SERVO_OP_MASK_ALL | SERVO_OP_FILT_AX110XX,
-    SERVO_OP_MASK_ALL | SERVO_OP_FILT_AX111XX
+    SERVO_OP_FILT_AX000XX,
+    SERVO_OP_FILT_AX001XX,
+    SERVO_OP_FILT_AX010XX,
+    SERVO_OP_FILT_AX011XX,
+    SERVO_OP_FILT_AX100XX,
+    SERVO_OP_FILT_AX101XX,
+    SERVO_OP_FILT_AX110XX,
+    SERVO_OP_FILT_AX111XX
 };
 
 static uint16_t dfe_fast_servo_ops_a[8] =
@@ -586,7 +590,7 @@ static inline int32_t rx_eo_dfe_hysteresis(const int32_t i_new, const int32_t i_
  * @return uint32_t. pass_code if success, else error code.
  */
 uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_quads, bool i_hyst_en,
-                        bool i_enable_min_eye_height)
+                        bool i_enable_min_eye_height, bool i_disable_pattern_filter)
 {
     // l_bank - enumerated to index and for servo ops + safe if t_bank ever changes
     // PSL bank_a
@@ -648,6 +652,9 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
 
     io_sleep(get_gcr_addr_thread(i_tgt)); //EWM299509
 
+    // PCIe Gen1 and Gen2 do not match on the H3-H1 pattern since may be sparse with 8b/10b. All other rates pattern match on H3-H1.
+    uint32_t l_servo_op_mask = i_disable_pattern_filter ? SERVO_OP_MASK_H321_X : SERVO_OP_MASK_ALL;
+
     int l_dac_bank_addr = DAC_BASE_ADDR + (l_bank << 5);
 
     for (; l_quad <= l_quad_end; l_quad += 8)
@@ -658,8 +665,8 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
         // Customize Servo Ops for Specific Quadrant and Bank
         for (l_latch = L000; l_latch <= L111; ++l_latch)
         {
-            l_ap_servo_ops[l_latch] = SERVO_OPS[l_latch]      | SERVO_OP_AP | ( l_bank << 6) | l_quad | l_latch;
-            l_an_servo_ops[l_latch] = SERVO_OPS[l_latch]      | SERVO_OP_AN | ( l_bank << 6) | l_quad | l_latch;
+            l_ap_servo_ops[l_latch] = SERVO_OPS[l_latch] | l_servo_op_mask | SERVO_OP_AP | ( l_bank << 6) | l_quad | l_latch;
+            l_an_servo_ops[l_latch] = SERVO_OPS[l_latch] | l_servo_op_mask | SERVO_OP_AN | ( l_bank << 6) | l_quad | l_latch;
 
             l_dac_array[l_latch] = LatchDacToInt(get_ptr(i_tgt, (l_dac_addr + l_latch), DAC_STARTBIT, DAC_ENDBIT));
         }
@@ -695,6 +702,21 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
         for (l_latch = L000; l_latch <= L111; ++l_latch)
         {
             //SET_DFE_DEBUG(0x7104, l_latch); // Latch Loop
+
+            // Thread Sleep and quick exit on abort: See EWM 302249, 301148, 302043
+            if (l_latch == 3)
+            {
+                l_rc = check_rx_abort(i_tgt);
+
+                // PSL recal_abort_calc
+                if (l_rc)
+                {
+                    SET_DFE_DEBUG(0x710E); // DFE Recal Abort 2
+                    goto function_exit;
+                }
+
+                io_sleep(get_gcr_addr_thread(i_tgt));
+            }
 
             // Calculate Results :: DAC Value = (AP???10 + AN???01) / 2
             //SET_DFE_DEBUG(0x7105, l_ap_results[l_latch]); // Calcualte DAC Value
@@ -754,10 +776,6 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
 
         }//end calculate result - for(latch)
 
-        if (l_quad != l_quad_end)
-        {
-            io_sleep(get_gcr_addr_thread(i_tgt));
-        }
     } // for(quad)
 
     // Check and log the min eye height as needed

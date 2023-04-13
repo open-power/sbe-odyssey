@@ -67,6 +67,7 @@ ODYSSEY_IOO-C-SOURCES = io_lib.c \
                 tx_txdetrx_bist.c \
                 tx_txidle_bist.c \
                 io_lab_code.c \
+                eo_edge_amax.c \
 		ioo_margin_hv.c
 
 ODYSSEY_IOO_OBJECTS = $(ODYSSEY_IOO-C-SOURCES:.c=.o) $(ODYSSEY_IOO-CPP-SOURCES:.C=.o)

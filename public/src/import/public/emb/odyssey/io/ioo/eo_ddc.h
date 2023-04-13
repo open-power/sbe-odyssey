@@ -59,6 +59,6 @@ int  pr_recenter(t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, uint32_t* Esav
 int pr_seek_ber (t_gcr_addr* gcr_addr, t_bank bank, unsigned int Dstep, unsigned int Estep, bool dirL1R0, bool noBER,
                  t_seek seek_edge, int* pr_vals);
 // Run DDC on a lane and update historical width
-int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal, bool recal_dac_changed);
+int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal);
 
 #endif //_EO_DDC_H_

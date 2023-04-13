@@ -510,6 +510,14 @@
 #define ext_cmd_req_tx_zcal_pl_mask                0x800
 
 
+#define ext_cmd_status_clear_mode_addr             0b000000111
+#define ext_cmd_status_clear_mode_startbit         15
+#define ext_cmd_status_clear_mode_width            1
+#define ext_cmd_status_clear_mode_endbit           15
+#define ext_cmd_status_clear_mode_shift            0
+#define ext_cmd_status_clear_mode_mask             0x1
+
+
 #define fw_bist_en_addr                            0b000000110
 #define fw_bist_en_startbit                        14
 #define fw_bist_en_width                           1

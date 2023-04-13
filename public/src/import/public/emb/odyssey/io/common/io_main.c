@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23030800 |vbr     | EWM300894: Removed incorrect use of put to img_reg with mem_reg field that caused unexpected stack write.
 // vbr22040700 |vbr     | Updates for 5->9 threads max
 // vbr21093000 |vbr     | Updates for new threading method
 // vbr21082400 |vbr     | Changes to run supervisor thread 1/X loops.
@@ -161,9 +162,6 @@ int main(int argc, char** argv)
 {
     //set_debug_state(0x0099); // DEBUG - Main Start
     int thread;
-
-    // Initialize the error status bit in the img_regs
-    img_bit_clr(ppe_error_valid);
 
     // Clear the current debug log number
     img_field_put(ppe_debug_log_num, 0);

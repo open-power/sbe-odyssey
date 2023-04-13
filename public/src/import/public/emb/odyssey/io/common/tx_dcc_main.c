@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// gap23040400 |gap     | Removed gen1, 2 branch since dcc is not used in pcie gen1 or 2
 // vbr22111700 |vbr     | Added a sleep
 // gap22090800 |gap     | Updated range of tune bits for iot
 // mbs22083000 |mbs     | PSL comment updates
@@ -120,21 +121,13 @@ int tx_dcc_main_init(t_gcr_addr* gcr_addr_i)
     put_ptr_field(gcr_addr_i, tx_tdr_enable,      0b0,     read_modify_write);
     int l_pcie_mode = fw_field_get(fw_pcie_mode);
 
+    // for pcie, dcc only runs in gen3, 4, or 5; so, gen1 and 2 are not enabled or supported
     // PSL pcie_mode
     if (l_pcie_mode == 1)   // Update ppe_data_rate to reflect PCIe pipe_state_rate
     {
+        // writing tx_pattern_bus_width_sel in case bist was last run in gen1 or gen2 mode before running dcc
+        put_ptr_field(gcr_addr_i, tx_pattern_bus_width_sel, 0b0 , read_modify_write);  // 32 bit mode
         uint32_t l_tx_pcie_clk_sel = get_ptr_field(gcr_addr_i, tx_pcie_clk_sel); // 1 hot; bits 27-31 --> gen5-gen1
-
-        // PSL pcie_gen1or2
-        if (l_tx_pcie_clk_sel < 3)   // GEN1/2
-        {
-            put_ptr_field(gcr_addr_i, tx_pattern_bus_width_sel, 0b1 , read_modify_write);  // 40 bit mode
-        }
-        else     // GEN3/4/5
-        {
-            put_ptr_field(gcr_addr_i, tx_pattern_bus_width_sel, 0b0 , read_modify_write);  // 32 bit mode
-        }
-
         uint32_t l_tx_pattern_gear_ratio = 15 >> (31 - __builtin_clz(l_tx_pcie_clk_sel))
                                            ; // uint32 0x10, 0x08, 0x04, 0x02, 0x01--> 0, 1, 3, 7, 15
         put_ptr_field(gcr_addr_i, tx_pattern_gear_ratio, l_tx_pattern_gear_ratio , read_modify_write);

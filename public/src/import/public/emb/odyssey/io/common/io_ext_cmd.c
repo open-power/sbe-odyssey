@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23031601 |vbr     | EWM 301316: Don't clear done/fail when mode bit is set (let FW do it)
 // vbr22120300 |vbr     | Shifted some sleeps
 // mbs22083000 |mbs     | PSL comment updates
 // vbr22061500 |vbr     | Add external command fail reporting
@@ -100,10 +101,14 @@ void run_external_commands(t_gcr_addr* io_gcr_addr)
     // Clear the _done and _fail in response to _req=0
     if (l_cmd_req == 0x0)
     {
-        fw_field_put(ext_cmd_done_00_15, 0);
-        fw_field_put(ext_cmd_done_16_31, 0);
-        fw_field_put(ext_cmd_fail_00_15, 0);
-        fw_field_put(ext_cmd_fail_16_31, 0);
+        // PSL ext_cmd_status_clear_mode
+        if (fw_field_get(ext_cmd_status_clear_mode) == 0)
+        {
+            fw_field_put(ext_cmd_done_00_15, 0);
+            fw_field_put(ext_cmd_done_16_31, 0);
+            fw_field_put(ext_cmd_fail_00_15, 0);
+            fw_field_put(ext_cmd_fail_16_31, 0);
+        }
     }
     else if (l_cmd_req ^ l_cmd_done)
     {
@@ -211,7 +216,11 @@ void track_and_adjust_group_power(t_gcr_addr* io_gcr_addr, const uint32_t i_lane
         ////////////////////////
 
         // Get RX banks select configuration (ignored on IOT)
+#ifdef IOO
         int banks_sel = fw_field_get(ext_cmd_power_banks_sel);
+#else
+        int banks_sel = both_banks;
+#endif
 
         // Update Lane State
         l_tx_lanes_power_on &= ~i_lane_mask_tx;
@@ -310,7 +319,11 @@ int cmd_power_on_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, cons
     set_debug_state(0xFD03, EXT_CMD_DBG_LVL);
 
     // Get RX banks select configuration (ignored on IOT)
+#ifdef IOO
     int banks_sel = fw_field_get(ext_cmd_power_banks_sel);
+#else
+    int banks_sel = both_banks;
+#endif
 
     // Update lanes_pon_* and power on group (if needed)
     track_and_adjust_group_power(io_gcr_addr, i_lane_mask_rx, i_lane_mask_tx, 1); //1 = power_on
@@ -353,7 +366,11 @@ int cmd_power_off_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, con
     set_debug_state(0xFD04, EXT_CMD_DBG_LVL);
 
     // Get RX banks select configuration (ignored on IOT)
+#ifdef IOO
     int banks_sel = fw_field_get(ext_cmd_power_banks_sel);
+#else
+    int banks_sel = both_banks;
+#endif
 
     // Power off specific lanes
     int status = rc_no_error;
@@ -496,7 +513,7 @@ int cmd_train_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const u
     set_debug_state(0xFD07, EXT_CMD_DBG_LVL);
 
 #ifdef IOO
-    mem_pg_field_put(rx_eo_phase_select_0_1, 0b11); // Run both phases
+    mem_pg_field_put(rx_eo_phase_select_0_2, 0b111); // Run all phases
 #endif
 
     int status = rc_no_error;

@@ -92,7 +92,7 @@ void dl_init_req(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
         {
             // PSL_EN_NEXT
             io_sleep(get_gcr_addr_thread(io_gcr_addr));
-            //mem_pg_field_put(rx_eo_phase_select_0_1, 0b11); // Run both phases (default setting for AXO)
+            //mem_pg_field_put(rx_eo_phase_select_0_2, 0b111); // Run all phases (default setting for AXO)
             run_initial_training(io_gcr_addr, l_lane);  //sleeps at end
             put_ptr_field(io_gcr_addr, rx_phy_dl_init_done_set, 0b1, fast_write);
         }

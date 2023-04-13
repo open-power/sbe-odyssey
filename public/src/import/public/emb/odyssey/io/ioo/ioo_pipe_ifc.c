@@ -39,6 +39,16 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23040300 |vbr     | Issue 301953: Split initial training into 3 phases (from 2) on EI exit
+// jjb23040300 |jjb     | Issue 302460: Added timeout loop in PMB busy checking functions
+// jjb23032700 |jjb     | Issue 302010: fixed lane offset multiplier in timer and dac mem reg restore read
+// jjb23032400 |jjb     | Issue 302010: updated to read mem regs for tdr_dac_cntl value during txdetectrx
+// jjb23032300 |jjb     | Issue 301288: updated masking for txdetrx timer mem regs restore
+// jjb23032200 |jjb     | Issue 301288: txdetrx timers now loaded from ppe mem regs
+// vbr23032000 |vbr     | EWM 301548: Move sleep within reset phase1 for active time fail.
+// vbr23031600 |vbr     | EWM 301312: Increased RxEqEval thread active limit from 45us to 52us
+// jjb23031300 |jjb     | Issue 301192: Moved io_sleep earlier in pipe_clock_change to fix thread timeout.
+// gap23030700 |gap     | Issue 300655: change detrx controls from PG to PL for Pll
 // jjb23030200 |jjb     | Issue 300481: Remove wait on txdeemph writes on rate changes
 // vbr23030200 |vbr     | Issue 300456: Removed many wait for cdr locks in RxMargining since bit_lock_done is likely set; can only check bank where it is cleared.
 // jjb23030100 |jjb     | Issue 300241: Increased rxeqeval thread timeout to 45us
@@ -220,11 +230,12 @@ void pipe_clock_change(t_gcr_addr* gcr_addr,
                   read_modify_write);                                                                          //  Assert hold_div_clock to freeze c16 and c32
     put_ptr_field(gcr_addr, rx_pcie_clk_sel, rate_one_hot,
                   read_modify_write);                                                                             //  Change RX clock dividers
-    update_rx_rate_dependent_analog_ctrl_pl_regs(gcr_addr,
-            rate_one_hot);                                                                                  //  Update RX analog controls
 
     io_sleep(get_gcr_addr_thread(
                  gcr_addr));                                                                                                               //  sleep to stop from causing ppe thread timeout
+
+    update_rx_rate_dependent_analog_ctrl_pl_regs(gcr_addr,
+            rate_one_hot);                                                                                  //  Update RX analog controls
 
     put_ptr_field(gcr_addr, rx_hold_div_clks_ab_alias,  0b00,
                   read_modify_write);                                                                          //  Deassert hold_div_clock to enable c16 and c32
@@ -623,14 +634,17 @@ PK_STATIC_ASSERT(pipe_reg_acc_busy_rddata_alias_width == 16);
 // Non-blocking PIPE Write (Write Uncommitted)
 void pipe_put(t_gcr_addr* gcr_addr, uint32_t reg_sel, uint32_t reg_addr, uint32_t cmd, uint32_t data)
 {
-    // Poll until PIPE is not busy
+    // Poll until PIPE is not busy or timeout
     int busy = 1;
+    int timeout = 8; // make longer than PMB fir timeout = 0.5ns*16*64=512ns
 
     // PSL busy
-    while (busy)
+    do
     {
+        timeout--;
         busy = get_ptr_field(gcr_addr, pipe_reg_acc_busy);
     }
+    while (busy && timeout > 0);
 
     // Write the Data (only field in register, so use fast_write)
     put_ptr_field(gcr_addr, pipe_reg_acc_wrdata, data, fast_write);
@@ -650,14 +664,17 @@ void pipe_put_blk(t_gcr_addr* gcr_addr, uint32_t reg_sel, uint32_t reg_addr, uin
 {
     pipe_put(gcr_addr, reg_sel, reg_addr, cmd, data);
     // Return after Write Acknowledge is received and clears reg_acc_busy (blocking)
-    // Poll until PIPE is not busy
+    // Poll until PIPE is not busy or timeout
     int busy = 1;
+    int timeout = 8; // make longer than PMB fir timeout = 0.5ns*16*64=512ns
 
     // PSL busy
-    while (busy)
+    do
     {
+        timeout--;
         busy = get_ptr_field(gcr_addr, pipe_reg_acc_busy);
     }
+    while (busy && timeout > 0);
 
     return;
 } //pipe_put_blk
@@ -668,12 +685,15 @@ uint32_t pipe_get(t_gcr_addr* gcr_addr, uint32_t reg_sel, uint32_t reg_addr)
 {
     // Poll until PIPE is not busy
     int busy = 1;
+    int timeout = 8; // make longer than PMB fir timeout = 0.5ns*16*64=512ns
 
     // PSL busy
-    while (busy)
+    do
     {
+        timeout--;
         busy = get_ptr_field(gcr_addr, pipe_reg_acc_busy);
     }
+    while (busy && timeout > 0);
 
     // Write the Read Command (reset=0)
     uint32_t cmd = pipe_reg_cmd_read;
@@ -684,14 +704,16 @@ uint32_t pipe_get(t_gcr_addr* gcr_addr, uint32_t reg_sel, uint32_t reg_addr)
 
     // Poll for Data
     uint32_t rd_data;
-
     // PSL busy_read
+    timeout = 8; // make longer than PMB fir timeout = 0.5ns*16*64=512ns
+
     do
     {
+        timeout--;
         rd_data = get_ptr_field(gcr_addr, pipe_reg_acc_busy_rddata_alias);
         busy = rd_data & pipe_reg_acc_busy_mask;
     }
-    while (busy);
+    while (busy && timeout > 0);
 
     // Return the Data
     return bitfield_get(rd_data, pipe_reg_acc_rddata_mask, pipe_reg_acc_rddata_shift);
@@ -966,13 +988,13 @@ void pipe_cmd_resetn_inactive(t_gcr_addr* gcr_addr)
     // 5.) Initialize TX FIFO and load TX DCC settings
     set_gcr_addr_reg_id(gcr_addr, tx_group);
     tx_fifo_init(gcr_addr);
+    io_sleep(get_gcr_addr_thread(gcr_addr));
     put_ptr_field(gcr_addr, tx_bank_controls_d2_en_b_alias, 0b1, read_modify_write); // disable d2 for gen1
     restore_tx_dcc_tune_values(gcr_addr, C_PCIE_GEN1_CAL);
-    io_sleep(get_gcr_addr_thread(gcr_addr));
 
     // 6.) Set idle_del_sel, loz_del_sel to gen1 values
     uint32_t l_idle_loz_del_sel = mem_pg_field_get(tx_pcie_idle_loz_del_sel_1_alias);
-    put_ptr_field(gcr_addr, tx_pcie_idle_loz_del_sel_alias, l_idle_loz_del_sel, fast_write); //Only fields in register
+    put_ptr_field(gcr_addr, tx_pcie_idle_loz_del_sel_pl_alias, l_idle_loz_del_sel, fast_write); //Only fields in register
 
     // 7.) Drive idle_mode and idle_loz from FIFO rather than registers.
     //     Switch-over should be glitchless.
@@ -1422,9 +1444,9 @@ void pipe_cmd_rxeqeval(t_gcr_addr* gcr_addr)
     set_gcr_addr_reg_id(gcr_addr, rx_group);
     put_ptr_field(gcr_addr, rx_dl_clk_en, 0b0, read_modify_write);                       // RMW Disable rx_dl_clk
 
-    // Run in rxeqeval mode (both phases, skip some sleeps so higher thread active limit)
-    mem_pg_field_put(ppe_thread_active_time_us_limit, 45);
-    mem_pg_field_put(rx_eo_phase_select_0_1, 0b11);
+    // Run in rxeqeval mode (all phases, skip some sleeps so higher thread active limit)
+    mem_pg_field_put(ppe_thread_active_time_us_limit, 52);
+    mem_pg_field_put(rx_eo_phase_select_0_2, 0b111);
     mem_pg_bit_set(rx_running_eq_eval);
     run_initial_training(gcr_addr, l_lane);                                              // Run Initial Training
     mem_pg_bit_clr(rx_running_eq_eval);
@@ -1501,6 +1523,22 @@ void pipe_cmd_txdetectrx(t_gcr_addr* gcr_addr)
         // Set phase for next call
         l_pipe_txdetectrx_phase_0_3 |= (0x8 >> l_lane);
         mem_pg_field_put(tx_pipe_txdetectrx_phase_0_3, l_pipe_txdetectrx_phase_0_3);
+
+        // Load per lane tx_detrx_idle_timer_sel, tx_detrx_samp_timer_val, tx_tdr_dac_cntl values from firmware initialized mem regs
+
+        uint32_t l_tx_detrx_idle_samp_timer = mem_regs_u16[pcie_ppe_txdetrx_idle_samp_timer_lane_0_addr + 2 *
+                                              l_lane]; // (0:4)=Reserved,(5:7)=idle_timer,(8:15)=samp_timer
+        uint32_t l_tx_tdr_dac_cntl_pl = mem_regs_u16[pcie_ppe_txdetrx_dac_cntl_lane_0_addr + 2 *
+                                        l_lane]; // (0:7)=tx_tdr_dac_cntl(0:7),(8:15)=reserved
+        put_ptr_field(gcr_addr, tx_detrx_idle_timer_sel,
+                      ((l_tx_detrx_idle_samp_timer & pcie_ppe_txdetrx_idle_timer_lane_0_mask) >> pcie_ppe_txdetrx_idle_timer_lane_0_shift),
+                      read_modify_write);
+        put_ptr_field(gcr_addr, tx_detrx_samp_timer_val,
+                      ((l_tx_detrx_idle_samp_timer & pcie_ppe_txdetrx_samp_timer_lane_0_mask) >> pcie_ppe_txdetrx_samp_timer_lane_0_shift),
+                      read_modify_write);
+        put_ptr_field(gcr_addr, tx_tdr_dac_cntl_pl,
+                      ((l_tx_tdr_dac_cntl_pl & pcie_ppe_txdetrx_dac_cntl_lane_0_mask) >> pcie_ppe_txdetrx_dac_cntl_lane_0_shift),
+                      read_modify_write);
 
         // PSL txdetectrx_ok
         if (l_txdetectrx_ok)   //  Check that powerdown is P1 and rate is 2.5Gbps else error
@@ -1633,20 +1671,20 @@ void pipe_cmd_txdetectrx(t_gcr_addr* gcr_addr)
 //////////////////////////////////
 // RXELECIDLE_INACTIVE
 //////////////////////////////////
-PK_STATIC_ASSERT(ppe_pipe_rx_ei_inactive_phase_0_3_width == 4);
+PK_STATIC_ASSERT(ppe_pipe_rx_ei_inactive_phase_0_3_width == 8); // 2 bits per lane
 void pipe_cmd_rxelecidle_inactive(t_gcr_addr* gcr_addr)
 {
     int l_lane = get_gcr_addr_lane(gcr_addr);
 
-    // Determine the phase of this command
+    // Determine the phase of this command (gray coded: 00, 01, 11)
     uint32_t l_pipe_rx_ei_inactive_phase_0_3 = mem_pg_field_get(ppe_pipe_rx_ei_inactive_phase_0_3);
-    uint32_t l_phase = l_pipe_rx_ei_inactive_phase_0_3 & (0x8 >> l_lane);
+    uint32_t l_phase = ( l_pipe_rx_ei_inactive_phase_0_3 >> (2 * (3 - l_lane)) ) & 0x03;
 
     /////////////
     // PHASE 0 //
     /////////////
     // PSL phase_zero
-    if (l_phase == 0)
+    if (l_phase == 0b00)
     {
         set_debug_state(0xFC0B, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_RXELECIDLE_INACTIVE Transaction
 
@@ -1656,8 +1694,8 @@ void pipe_cmd_rxelecidle_inactive(t_gcr_addr* gcr_addr)
         // PSL not_rxactive_and_powerdown_eq_0
         if ((!l_pipe_state_rxactive) && (l_pipe_state_powerdown == 0))                   // if rxactive=0 and powerdown=P0
         {
-            // Set phase for next call
-            l_pipe_rx_ei_inactive_phase_0_3 |= (0x8 >> l_lane);
+            // Set Phase 1 (01) for next call
+            l_pipe_rx_ei_inactive_phase_0_3 |= (0x40 >> (2 * l_lane));
             mem_pg_field_put(ppe_pipe_rx_ei_inactive_phase_0_3, l_pipe_rx_ei_inactive_phase_0_3);
 
             // Switch Bank A to the cal bank at this time so it is in correct state for training
@@ -1686,7 +1724,7 @@ void pipe_cmd_rxelecidle_inactive(t_gcr_addr* gcr_addr)
             io_sleep(get_gcr_addr_thread(gcr_addr));                                        // sleep to fix thread timeout
 
             // Run Phase 0 of training
-            mem_pg_field_put(rx_eo_phase_select_0_1, 0b10);
+            mem_pg_field_put(rx_eo_phase_select_0_2, 0b100);
             run_initial_training(gcr_addr, l_lane);                                         //  Run initial training
 
             // Return so don't do final handshakes when (rxactive=0 and powerdown=P0)
@@ -1698,29 +1736,51 @@ void pipe_cmd_rxelecidle_inactive(t_gcr_addr* gcr_addr)
     // PHASE 1 //
     /////////////
     // PSL phase_one
-    if (l_phase != 0)
+    if (l_phase == 0b01)
     {
         set_debug_state(0xFC1B, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_RXELECIDLE_INACTIVE Phase 1 Processing
 
-        // Clear phase for next call
-        l_pipe_rx_ei_inactive_phase_0_3 &= ~(0x8 >> l_lane);
+        // Set Phase 2 (11) for next call
+        l_pipe_rx_ei_inactive_phase_0_3 |= (0x80 >> (2 * l_lane));
         mem_pg_field_put(ppe_pipe_rx_ei_inactive_phase_0_3, l_pipe_rx_ei_inactive_phase_0_3);
 
         // Run Phase 1 of training
         set_gcr_addr_reg_id(gcr_addr, rx_group);
-        mem_pg_field_put(rx_eo_phase_select_0_1, 0b01);
+        mem_pg_field_put(rx_eo_phase_select_0_2, 0b010);
         run_initial_training(gcr_addr, l_lane);
 
+        // Return so don't do final handshakes
+        return;
+    } //if (phase1)
+
+    /////////////
+    // PHASE 2 //
+    /////////////
+    // PSL phase_two
+    if (l_phase == 0b11)
+    {
+        set_debug_state(0xFC2B, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_RXELECIDLE_INACTIVE Phase 2 Processing
+
+        // Clear phase (Phase 0, 00) for next call
+        l_pipe_rx_ei_inactive_phase_0_3 &= ~(0xC0 >> (2 * l_lane));
+        mem_pg_field_put(ppe_pipe_rx_ei_inactive_phase_0_3, l_pipe_rx_ei_inactive_phase_0_3);
+
+        // Run Phase 2 of training
+        set_gcr_addr_reg_id(gcr_addr, rx_group);
+        mem_pg_field_put(rx_eo_phase_select_0_2, 0b001);
+        run_initial_training(gcr_addr, l_lane);
+
+        // Done with all training phases
         put_ptr_field(gcr_addr, rx_dl_clk_en, 0b1, read_modify_write);                  //  Enable RX DL Clock
         set_gcr_addr_reg_id(gcr_addr, tx_group);                                        //  select tx_group addressing
         put_ptr_field(gcr_addr, pipe_state_cntl1_pl_full_reg, (pipe_state_rxactive_set_mask | pipe_state_rxdatavalid_set_mask),
                       fast_write); //  set pipe_state_rxactive, set pipe_state_rxdatavalid
-    } //if (phase1)
+    } //if (phase2)
 
     ////////////////
     // HANDSHAKES //
     ////////////////
-    // Disable the rxelecidle enable and clear the rxelecidle_inactive state if finished with Phase 1 or if !(rxactive=0 and powerdown=P0)
+    // Disable the rxelecidle enable and clear the rxelecidle_inactive state if finished with Phase 2 or if !(rxactive=0 and powerdown=P0)
     set_gcr_addr_reg_id(gcr_addr, tx_group);                                         // select tx_group addressing
     put_ptr_field(gcr_addr, pipe_state_rxelecidle_en_clear, 0b1, fast_write);        // disable rxelecidle enable
     put_ptr_field(gcr_addr, pipe_state_rxelecidle_inactive_clear, 0b1, fast_write);  // clear pipe_state_rxelecidle_inactive

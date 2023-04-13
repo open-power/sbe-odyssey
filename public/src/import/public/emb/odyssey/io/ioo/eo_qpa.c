@@ -419,7 +419,7 @@ int eo_qpa(t_gcr_addr* gcr_addr, t_bank bank, bool recal_2ndrun, bool* pr_change
     set_debug_state(0xE031, 3); // DEBUG - Phase adjust done
 
     // qpa passed
-    //mem_pl_bit_clr(rx_quad_phase_fail, lane);
+    //mem_pl_bit_clr(rx_quad_phase_fail, lane); // EWM300845: Don't clear step fails
     //Checking done
     if (bank == bank_a)
     {

@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23030600 |vbr     | Turned inputs into constants since this is now only run in PCIe Gen1/2 initial training (not recal, not Gen3).
 // mwh23013000 |mwh     | Issue 298005 Poff_avg going to 0 and than a restore get done with wrong value.
 // mwh23011800 |mwh     | Issue 297375 Change way we grab loff n000 value and add in poffset
 // vbr23011200 |vbr     | Issue 295461: In Gen3, do not read dac value in recal (A/B) OR first_recal (B) since will have DFE applied from init.
@@ -53,7 +54,7 @@
 // mwh21101900 |mwh     | Updated code to keep the path offset value found poff_avg
 // mwh21008160 |mwh     | Removed epoff check and moved to own func - called in eo_main.c
 // mwh21060400 |mwh     | add in hysteresis
-// mwh21060300 |mwh     | add in way todo Gen 3 in recal capture the N000 DC value
+// mwh21060300 |mwh     | add in way to do Gen 3 in recal capture the N000 DC value
 // mwh21051900 |mwh     | Update to have delta path offset
 // mwh21050300 |mwh     | Removing DAC Accelerator errors check since we want speed.(see PR for more detials)
 // mwh21041600 |mwh     | Initial Rev A0yy debug state
@@ -70,11 +71,17 @@
 #include "eo_vga_pathoffset.h"
 
 //eo_vga_pathoffset(gcr_addr, bank_a, &saved_Amax, recal, first_loop_iteration);
-int eo_vga_pathoffset(t_gcr_addr* gcr_addr, t_bank bank, int saved_Amax_poff , bool recal, bool first_recal,
-                      bool pcie_gen1_cal, bool pcie_gen2_cal, bool pcie_gen3_cal, bool pcie_bist_mode)
+int eo_vga_pathoffset(t_gcr_addr* gcr_addr, t_bank bank, int saved_Amax_poff, bool pcie_bist_mode)
 {
     //start eo_vga_pathoffset.c
     set_debug_state(0xA020); // DEBUG - APPLY PATH OFFSET
+
+    // Former inputs that are now constants
+    const bool recal = false;
+    const bool first_recal = false;
+    const bool pcie_gen1_cal = true;
+    const bool pcie_gen2_cal = true;
+    const bool pcie_gen3_cal = false;
 
     int Amax_poff;
     int data_before_n;
@@ -100,9 +107,9 @@ int eo_vga_pathoffset(t_gcr_addr* gcr_addr, t_bank bank, int saved_Amax_poff , b
         dac_addr = rx_bd_latch_dac_n000_alias_addr;
     }//bank B is alt A is main
 
-    // Issue 296947 Workaround
-    int dac_addr_adjust = get_latch_dac_addr_adjust();
-    dac_addr += dac_addr_adjust;
+    // Issue 296947 Workaround (Not really needed since this does not run on Odyssey)
+    //int dac_addr_adjust = get_latch_dac_addr_adjust();
+    //dac_addr += dac_addr_adjust;
 
     // PSL loff_before_gen1to3
     //Change back to capture dac value at all 3 Gen's has 295461 fix

@@ -166,7 +166,7 @@ int cmd_tx_zcal_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const
 int cmd_rx_bist_tests_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const uint32_t i_lane_mask_tx)
 {
     set_debug_state(0xFD0B, EXT_CMD_DBG_LVL);
-    // TODO Write Code
+    // UNUSED FUNCTION
     return rc_error;
 } //cmd_rx_bist_tests_pl
 
@@ -220,6 +220,7 @@ int cmd_tx_rxdetect_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, c
 {
     set_debug_state(0xFD0D, EXT_CMD_DBG_LVL);
 
+    // UNUSED FUNCTION
     /*
     uint32_t l_lane = 0;
     uint32_t i_lane_shift = i_lane_mask_tx;
@@ -227,7 +228,7 @@ int cmd_tx_rxdetect_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, c
     for (; l_lane < l_num_lanes; ++l_lane, i_lane_shift = i_lane_shift << 1) {
       if ((i_lane_shift & 0x80000000) == 0x0) continue;
       set_gcr_addr_lane(io_gcr_addr, l_lane);
-      //TODO Run RxDetect - Where do we store results
+      //Run RxDetect - Where do we store results
     }
     */
 
@@ -249,10 +250,9 @@ int cmd_bist_final(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const
 
     // Run RX SIGDET BIST if enabled
     // TEST LINK LAYER
-    // TODO - CWS Should we run this on both banks?
     if (get_ptr_field(io_gcr_addr, rx_link_layer_check_en))
     {
-        status |= eo_llbist(io_gcr_addr);
+        status |= eo_llbist(io_gcr_addr, i_lane_mask_rx);
     }
 
     // TEST PHASE ROTATOR (BER)

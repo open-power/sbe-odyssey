@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23032100 |vbr     | EWM 301318: Increase recal not run limit from 500ms to 5s due to Odyssey DL recal req rate.
 // mbs22083000 |mbs     | PSL comment updates
 // vbr22061401 |vbr     | Issue 255514: Reduce fast/slow eol toggle from 12/24 hours to 100 ms
 // vbr22061400 |vbr     | Add disable for recal not run check
@@ -96,7 +97,7 @@
 // Time constants for periodic events
 /////////////////////////////////////////////////
 #define THREAD_LOCK_CHECK_PERIOD    PK_MILLISECONDS(200)
-#define RECAL_NOT_RUN_CHECK_PERIOD  PK_MILLISECONDS(500)
+#define RECAL_NOT_RUN_CHECK_PERIOD  PK_MILLISECONDS(5000)
 #define FAST_EOL_TOGGLE_PERIOD      PK_MILLISECONDS(100)
 #define SLOW_EOL_TOGGLE_PERIOD      PK_MILLISECONDS(100)
 
@@ -212,7 +213,7 @@ void supervisor_thread(void* arg)
                 {
                     set_debug_state(0xF0AB); // DEBUG - Timebase Error 2
                     ADD_LOG(DEBUG_TIMEBASE_ERROR, 0x02); // 0x02 = unexpected large change (random value?)
-                    // PSL set_fir_fatal_error
+                    // PSL set_fir_fatal_error_tb2
                     set_fir(fir_code_fatal_error);
                 }
             }

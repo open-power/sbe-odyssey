@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -74,11 +74,12 @@ uint32_t rx_eo_dfe_force(t_gcr_addr* i_gcr_addr);
  * @param[in] i_run_all_quads          True to force running all 4 quadrants; otherwise follow rx_dfe_full_mode
  * @param[in] i_hyst_en                True when hysteresis is being applied
  * @param[in] i_enable_min_eye_height  True when the min eye height checking and logging are enabled
+ * @param[in] i_disable_pattern_filter True to set H3-H1 as don't care in servos, False to match H3-H1 to the latch
  *
  * @return uint32_t. rc_pass if success, else error code.
  *
  */
 uint32_t rx_eo_dfe_full(t_gcr_addr* i_gcr_addr, const t_bank i_bank, bool i_run_all_quads, bool i_hyst_en,
-                        bool i_enable_min_eye_height);
+                        bool i_enable_min_eye_height, bool i_disable_pattern_filter);
 
 #endif // __RX_EO_DFE_H__

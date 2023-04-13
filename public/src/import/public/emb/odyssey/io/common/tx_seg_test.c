@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -219,7 +219,7 @@ void tx_seg_test_setup(t_gcr_addr* gcr_addr_i)
     put_ptr_field(gcr_addr_i, tx_boost_en,               0x0, read_modify_write); //pl
     put_ptr_field(gcr_addr_i, tx_d2_ctrl_div_ctrl_alias, 0x0,
                   read_modify_write); //pl this is the default in regdef; will not restore
-    put_ptr_field(gcr_addr_i, tx_tdr_clamp_disable,      0x1, read_modify_write); //pl
+    put_ptr_field(gcr_addr_i, tx_tdr_clamp_disable,      0x1, read_modify_write); //pg
 #endif
 
     //tx_pdwn is bit 1
@@ -657,7 +657,7 @@ void tx_seg_test_restore(t_gcr_addr* gcr_addr_i)
 
 #ifdef IOO
     put_ptr_field(gcr_addr_i, tx_boost_en,               0x1, read_modify_write); //pl
-    put_ptr_field(gcr_addr_i, tx_tdr_clamp_disable,      0x0, read_modify_write); //pl
+    put_ptr_field(gcr_addr_i, tx_tdr_clamp_disable,      0x0, read_modify_write); //pg
 #endif
 
     //tx_pdwn is bit 1

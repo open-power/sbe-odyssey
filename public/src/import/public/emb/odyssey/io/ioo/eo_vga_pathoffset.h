@@ -53,8 +53,7 @@
 #include "ioo_common.h"
 
 // VGA Gain loop portion of VGA
-int eo_vga_pathoffset(t_gcr_addr* gcr_addr, t_bank bank, int saved_Amax_poff, bool recal, bool first_recal,
-                      bool pcie_gen1_cal, bool pcie_gen2_cal, bool pcie_gen3_cal, bool pcie_bist_mode);
+int eo_vga_pathoffset(t_gcr_addr* gcr_addr, t_bank bank, int saved_Amax_poff, bool pcie_bist_mode);
 
 
 

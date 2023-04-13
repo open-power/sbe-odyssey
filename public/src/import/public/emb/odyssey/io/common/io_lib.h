@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23030800 |vbr     | EWM300894: Added some address/offset bounds checks for fw_regs and img_regs.
 // mwh23003020 |mwh     | Fix rounding for poff edge off. emw 300342
 // mwh23011300 |mwh     | Added void set_rxbist_fail_lane since used by ioo and iot
 // vbr22061400 |vbr     | Made main_only the default for external power on/off commands
@@ -505,10 +506,10 @@ extern uint16_t _img_regs_start __attribute__ ((section ("imgdata")));
 #define fw_regs_u16_base_bit_clr(a, m)   (bit_clr(fw_regs_u16_base[a], m))
 
 #if PK_THREAD_SUPPORT
-    #define fw_base_addr(a, g) ( (a) + ((g) * fw_regs_u16_size) )
+    #define fw_base_addr(a, g) ({ PK_STATIC_ASSERT((a)>=0x00 && (a)<=0x0F); ( (a) + ((g) * fw_regs_u16_size) ); })
     #define fw_addr(a)         fw_base_addr(a, 0)
 #else
-    #define fw_base_addr(a, g) ( (a) )
+    #define fw_base_addr(a, g) ({ PK_STATIC_ASSERT((a)>=0x00 && (a)<=0x0F); ( (a) ); })
     #define fw_addr(a)         fw_base_addr(a, 0)
 #endif
 
@@ -525,7 +526,7 @@ extern uint16_t _img_regs_start __attribute__ ((section ("imgdata")));
 #define img_regs_u16_bit_set(a, m)   (bit_set(img_regs_u16[a], m))
 #define img_regs_u16_bit_clr(a, m)   (bit_clr(img_regs_u16[a], m))
 
-#define img_addr(a) ( (a) )
+#define img_addr(a) ({ PK_STATIC_ASSERT((a)>=0x00 && (a)<=0x0F); ( (a) ); })
 
 // Wrapper functions to simplify the calls a bit.
 // Takes a field name instead of address/mask/shift and incorporates the img_addr() call.  Also takes a value.

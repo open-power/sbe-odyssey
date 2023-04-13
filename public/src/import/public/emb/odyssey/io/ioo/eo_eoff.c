@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23031000 |vbr     | Code update to take advantage of this only running in Recal (not init). Don't updat poff_avg in recal.
 // vbr23010400 |vbr     | Issue 296947: Adjusted latch_dac accesses for different addresses on Odyssey vs P11/ZMetis
 // mbs22082601 |mbs     | Updated with PSL comments
 // vbr22071100 |vbr     | Moved eloff_alias_live_data_vote write from eo_main to here
@@ -142,10 +143,13 @@ static uint16_t servo_ops_eoff_b[num_servo_ops] = { c_loff_be_n000, c_loff_be_e0
 
 
 // Latch Offset (fenced)
-int eo_eoff(t_gcr_addr* gcr_addr,  bool recal, bool first_recal, t_bank bank)
+int eo_eoff(t_gcr_addr* gcr_addr, bool first_recal, t_bank bank)
 {
     //start eo_eoff
     set_debug_state(0xA000); // DEBUG
+
+    // This is only run in Recal. Can make this an input if want to use in init.
+    const bool recal = true;
 
     // Servo op based on bank
     uint16_t* servo_ops;
@@ -352,7 +356,7 @@ int eo_eoff(t_gcr_addr* gcr_addr,  bool recal, bool first_recal, t_bank bank)
     {
         set_debug_state(0xA016);
     }
-    else
+    else if(!recal)
     {
         eo_update_poff_avg( gcr_addr, poff_avg_int, bank, lane);
     }

@@ -134,46 +134,6 @@
 #define loff_setting_ovr_enb_mask                  0x40
 
 
-#define pcie_gen1_lane0_preset_rx_ctle_peak1_addr   0b100011000
-#define pcie_gen1_lane0_preset_rx_ctle_peak1_startbit   0
-#define pcie_gen1_lane0_preset_rx_ctle_peak1_width   4
-#define pcie_gen1_lane0_preset_rx_ctle_peak1_endbit   3
-#define pcie_gen1_lane0_preset_rx_ctle_peak1_shift   12
-#define pcie_gen1_lane0_preset_rx_ctle_peak1_mask   0xf000
-
-
-#define pcie_gen1_lane0_preset_rx_ctle_peak1_peak2_addr   0b100011000
-#define pcie_gen1_lane0_preset_rx_ctle_peak1_peak2_startbit   0
-#define pcie_gen1_lane0_preset_rx_ctle_peak1_peak2_width   8
-#define pcie_gen1_lane0_preset_rx_ctle_peak1_peak2_endbit   7
-#define pcie_gen1_lane0_preset_rx_ctle_peak1_peak2_shift   8
-#define pcie_gen1_lane0_preset_rx_ctle_peak1_peak2_mask   0xff00
-
-
-#define pcie_gen1_lane0_preset_rx_ctle_peak2_addr   0b100011000
-#define pcie_gen1_lane0_preset_rx_ctle_peak2_startbit   4
-#define pcie_gen1_lane0_preset_rx_ctle_peak2_width   4
-#define pcie_gen1_lane0_preset_rx_ctle_peak2_endbit   7
-#define pcie_gen1_lane0_preset_rx_ctle_peak2_shift   8
-#define pcie_gen1_lane0_preset_rx_ctle_peak2_mask   0xf00
-
-
-#define pcie_gen1_lane0_preset_rx_lte_gain_addr    0b100011000
-#define pcie_gen1_lane0_preset_rx_lte_gain_startbit   9
-#define pcie_gen1_lane0_preset_rx_lte_gain_width   3
-#define pcie_gen1_lane0_preset_rx_lte_gain_endbit   11
-#define pcie_gen1_lane0_preset_rx_lte_gain_shift   4
-#define pcie_gen1_lane0_preset_rx_lte_gain_mask    0x70
-
-
-#define pcie_gen1_lane0_preset_rx_lte_zero_addr    0b100011000
-#define pcie_gen1_lane0_preset_rx_lte_zero_startbit   13
-#define pcie_gen1_lane0_preset_rx_lte_zero_width   3
-#define pcie_gen1_lane0_preset_rx_lte_zero_endbit   15
-#define pcie_gen1_lane0_preset_rx_lte_zero_shift   0
-#define pcie_gen1_lane0_preset_rx_lte_zero_mask    0x7
-
-
 #define pcie_gen3_lane0_saved_tx_dcc_i_tune_addr   0b011110000
 #define pcie_gen3_lane0_saved_tx_dcc_i_tune_startbit   0
 #define pcie_gen3_lane0_saved_tx_dcc_i_tune_width   8
@@ -198,44 +158,1204 @@
 #define pcie_gen3_lane0_saved_tx_dcc_q_tune_mask   0xff
 
 
-#define pcie_ppe_preset_rx_peak_lte_lane_0_addr    0b100011000
-#define pcie_ppe_preset_rx_peak_lte_lane_0_startbit   0
-#define pcie_ppe_preset_rx_peak_lte_lane_0_width   16
-#define pcie_ppe_preset_rx_peak_lte_lane_0_endbit   15
-#define pcie_ppe_preset_rx_peak_lte_lane_0_shift   0
-#define pcie_ppe_preset_rx_peak_lte_lane_0_mask    0xffff
+#define pcie_lane0_gen1_preset_rx_ctle_peak1_addr   0b100011000
+#define pcie_lane0_gen1_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane0_gen1_preset_rx_ctle_peak1_width   4
+#define pcie_lane0_gen1_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane0_gen1_preset_rx_ctle_peak1_shift   12
+#define pcie_lane0_gen1_preset_rx_ctle_peak1_mask   0xf000
 
 
-#define pcie_ppe_preset_rx_peak_lte_lane_1_addr    0b100100000
-#define pcie_ppe_preset_rx_peak_lte_lane_1_startbit   0
-#define pcie_ppe_preset_rx_peak_lte_lane_1_width   16
-#define pcie_ppe_preset_rx_peak_lte_lane_1_endbit   15
-#define pcie_ppe_preset_rx_peak_lte_lane_1_shift   0
-#define pcie_ppe_preset_rx_peak_lte_lane_1_mask    0xffff
+#define pcie_lane0_gen1_preset_rx_ctle_peak1_peak2_addr   0b100011000
+#define pcie_lane0_gen1_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane0_gen1_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane0_gen1_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane0_gen1_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane0_gen1_preset_rx_ctle_peak1_peak2_mask   0xff00
 
 
-#define pcie_ppe_preset_rx_peak_lte_lane_2_addr    0b100101000
-#define pcie_ppe_preset_rx_peak_lte_lane_2_startbit   0
-#define pcie_ppe_preset_rx_peak_lte_lane_2_width   16
-#define pcie_ppe_preset_rx_peak_lte_lane_2_endbit   15
-#define pcie_ppe_preset_rx_peak_lte_lane_2_shift   0
-#define pcie_ppe_preset_rx_peak_lte_lane_2_mask    0xffff
+#define pcie_lane0_gen1_preset_rx_ctle_peak2_addr   0b100011000
+#define pcie_lane0_gen1_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane0_gen1_preset_rx_ctle_peak2_width   4
+#define pcie_lane0_gen1_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane0_gen1_preset_rx_ctle_peak2_shift   8
+#define pcie_lane0_gen1_preset_rx_ctle_peak2_mask   0xf00
 
 
-#define pcie_ppe_preset_rx_peak_lte_lane_3_addr    0b100110000
-#define pcie_ppe_preset_rx_peak_lte_lane_3_startbit   0
-#define pcie_ppe_preset_rx_peak_lte_lane_3_width   16
-#define pcie_ppe_preset_rx_peak_lte_lane_3_endbit   15
-#define pcie_ppe_preset_rx_peak_lte_lane_3_shift   0
-#define pcie_ppe_preset_rx_peak_lte_lane_3_mask    0xffff
+#define pcie_lane0_gen1_preset_rx_lte_gain_addr    0b100011000
+#define pcie_lane0_gen1_preset_rx_lte_gain_startbit   9
+#define pcie_lane0_gen1_preset_rx_lte_gain_width   3
+#define pcie_lane0_gen1_preset_rx_lte_gain_endbit   11
+#define pcie_lane0_gen1_preset_rx_lte_gain_shift   4
+#define pcie_lane0_gen1_preset_rx_lte_gain_mask    0x70
 
 
-#define pcie_ppe_preset_rx_peak_lte_lane_4_addr    0b100111000
-#define pcie_ppe_preset_rx_peak_lte_lane_4_startbit   0
-#define pcie_ppe_preset_rx_peak_lte_lane_4_width   16
-#define pcie_ppe_preset_rx_peak_lte_lane_4_endbit   15
-#define pcie_ppe_preset_rx_peak_lte_lane_4_shift   0
-#define pcie_ppe_preset_rx_peak_lte_lane_4_mask    0xffff
+#define pcie_lane0_gen1_preset_rx_lte_zero_addr    0b100011000
+#define pcie_lane0_gen1_preset_rx_lte_zero_startbit   13
+#define pcie_lane0_gen1_preset_rx_lte_zero_width   3
+#define pcie_lane0_gen1_preset_rx_lte_zero_endbit   15
+#define pcie_lane0_gen1_preset_rx_lte_zero_shift   0
+#define pcie_lane0_gen1_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane0_gen2_preset_rx_ctle_peak1_addr   0b100011001
+#define pcie_lane0_gen2_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane0_gen2_preset_rx_ctle_peak1_width   4
+#define pcie_lane0_gen2_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane0_gen2_preset_rx_ctle_peak1_shift   12
+#define pcie_lane0_gen2_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane0_gen2_preset_rx_ctle_peak1_peak2_addr   0b100011001
+#define pcie_lane0_gen2_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane0_gen2_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane0_gen2_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane0_gen2_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane0_gen2_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane0_gen2_preset_rx_ctle_peak2_addr   0b100011001
+#define pcie_lane0_gen2_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane0_gen2_preset_rx_ctle_peak2_width   4
+#define pcie_lane0_gen2_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane0_gen2_preset_rx_ctle_peak2_shift   8
+#define pcie_lane0_gen2_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane0_gen2_preset_rx_lte_gain_addr    0b100011001
+#define pcie_lane0_gen2_preset_rx_lte_gain_startbit   9
+#define pcie_lane0_gen2_preset_rx_lte_gain_width   3
+#define pcie_lane0_gen2_preset_rx_lte_gain_endbit   11
+#define pcie_lane0_gen2_preset_rx_lte_gain_shift   4
+#define pcie_lane0_gen2_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane0_gen2_preset_rx_lte_zero_addr    0b100011001
+#define pcie_lane0_gen2_preset_rx_lte_zero_startbit   13
+#define pcie_lane0_gen2_preset_rx_lte_zero_width   3
+#define pcie_lane0_gen2_preset_rx_lte_zero_endbit   15
+#define pcie_lane0_gen2_preset_rx_lte_zero_shift   0
+#define pcie_lane0_gen2_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane0_gen3_preset_rx_ctle_peak1_addr   0b100011010
+#define pcie_lane0_gen3_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane0_gen3_preset_rx_ctle_peak1_width   4
+#define pcie_lane0_gen3_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane0_gen3_preset_rx_ctle_peak1_shift   12
+#define pcie_lane0_gen3_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane0_gen3_preset_rx_ctle_peak1_peak2_addr   0b100011010
+#define pcie_lane0_gen3_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane0_gen3_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane0_gen3_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane0_gen3_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane0_gen3_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane0_gen3_preset_rx_ctle_peak2_addr   0b100011010
+#define pcie_lane0_gen3_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane0_gen3_preset_rx_ctle_peak2_width   4
+#define pcie_lane0_gen3_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane0_gen3_preset_rx_ctle_peak2_shift   8
+#define pcie_lane0_gen3_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane0_gen3_preset_rx_lte_gain_addr    0b100011010
+#define pcie_lane0_gen3_preset_rx_lte_gain_startbit   9
+#define pcie_lane0_gen3_preset_rx_lte_gain_width   3
+#define pcie_lane0_gen3_preset_rx_lte_gain_endbit   11
+#define pcie_lane0_gen3_preset_rx_lte_gain_shift   4
+#define pcie_lane0_gen3_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane0_gen3_preset_rx_lte_zero_addr    0b100011010
+#define pcie_lane0_gen3_preset_rx_lte_zero_startbit   13
+#define pcie_lane0_gen3_preset_rx_lte_zero_width   3
+#define pcie_lane0_gen3_preset_rx_lte_zero_endbit   15
+#define pcie_lane0_gen3_preset_rx_lte_zero_shift   0
+#define pcie_lane0_gen3_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane0_gen4_preset_rx_ctle_peak1_addr   0b100011011
+#define pcie_lane0_gen4_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane0_gen4_preset_rx_ctle_peak1_width   4
+#define pcie_lane0_gen4_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane0_gen4_preset_rx_ctle_peak1_shift   12
+#define pcie_lane0_gen4_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane0_gen4_preset_rx_ctle_peak1_peak2_addr   0b100011011
+#define pcie_lane0_gen4_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane0_gen4_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane0_gen4_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane0_gen4_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane0_gen4_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane0_gen4_preset_rx_ctle_peak2_addr   0b100011011
+#define pcie_lane0_gen4_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane0_gen4_preset_rx_ctle_peak2_width   4
+#define pcie_lane0_gen4_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane0_gen4_preset_rx_ctle_peak2_shift   8
+#define pcie_lane0_gen4_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane0_gen4_preset_rx_lte_gain_addr    0b100011011
+#define pcie_lane0_gen4_preset_rx_lte_gain_startbit   9
+#define pcie_lane0_gen4_preset_rx_lte_gain_width   3
+#define pcie_lane0_gen4_preset_rx_lte_gain_endbit   11
+#define pcie_lane0_gen4_preset_rx_lte_gain_shift   4
+#define pcie_lane0_gen4_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane0_gen4_preset_rx_lte_zero_addr    0b100011011
+#define pcie_lane0_gen4_preset_rx_lte_zero_startbit   13
+#define pcie_lane0_gen4_preset_rx_lte_zero_width   3
+#define pcie_lane0_gen4_preset_rx_lte_zero_endbit   15
+#define pcie_lane0_gen4_preset_rx_lte_zero_shift   0
+#define pcie_lane0_gen4_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane0_gen5_preset_rx_ctle_peak1_addr   0b100011100
+#define pcie_lane0_gen5_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane0_gen5_preset_rx_ctle_peak1_width   4
+#define pcie_lane0_gen5_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane0_gen5_preset_rx_ctle_peak1_shift   12
+#define pcie_lane0_gen5_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane0_gen5_preset_rx_ctle_peak1_peak2_addr   0b100011100
+#define pcie_lane0_gen5_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane0_gen5_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane0_gen5_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane0_gen5_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane0_gen5_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane0_gen5_preset_rx_ctle_peak2_addr   0b100011100
+#define pcie_lane0_gen5_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane0_gen5_preset_rx_ctle_peak2_width   4
+#define pcie_lane0_gen5_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane0_gen5_preset_rx_ctle_peak2_shift   8
+#define pcie_lane0_gen5_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane0_gen5_preset_rx_lte_gain_addr    0b100011100
+#define pcie_lane0_gen5_preset_rx_lte_gain_startbit   9
+#define pcie_lane0_gen5_preset_rx_lte_gain_width   3
+#define pcie_lane0_gen5_preset_rx_lte_gain_endbit   11
+#define pcie_lane0_gen5_preset_rx_lte_gain_shift   4
+#define pcie_lane0_gen5_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane0_gen5_preset_rx_lte_zero_addr    0b100011100
+#define pcie_lane0_gen5_preset_rx_lte_zero_startbit   13
+#define pcie_lane0_gen5_preset_rx_lte_zero_width   3
+#define pcie_lane0_gen5_preset_rx_lte_zero_endbit   15
+#define pcie_lane0_gen5_preset_rx_lte_zero_shift   0
+#define pcie_lane0_gen5_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane1_gen1_preset_rx_ctle_peak1_addr   0b100100000
+#define pcie_lane1_gen1_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane1_gen1_preset_rx_ctle_peak1_width   4
+#define pcie_lane1_gen1_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane1_gen1_preset_rx_ctle_peak1_shift   12
+#define pcie_lane1_gen1_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane1_gen1_preset_rx_ctle_peak1_peak2_addr   0b100100000
+#define pcie_lane1_gen1_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane1_gen1_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane1_gen1_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane1_gen1_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane1_gen1_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane1_gen1_preset_rx_ctle_peak2_addr   0b100100000
+#define pcie_lane1_gen1_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane1_gen1_preset_rx_ctle_peak2_width   4
+#define pcie_lane1_gen1_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane1_gen1_preset_rx_ctle_peak2_shift   8
+#define pcie_lane1_gen1_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane1_gen1_preset_rx_lte_gain_addr    0b100100000
+#define pcie_lane1_gen1_preset_rx_lte_gain_startbit   9
+#define pcie_lane1_gen1_preset_rx_lte_gain_width   3
+#define pcie_lane1_gen1_preset_rx_lte_gain_endbit   11
+#define pcie_lane1_gen1_preset_rx_lte_gain_shift   4
+#define pcie_lane1_gen1_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane1_gen1_preset_rx_lte_zero_addr    0b100100000
+#define pcie_lane1_gen1_preset_rx_lte_zero_startbit   13
+#define pcie_lane1_gen1_preset_rx_lte_zero_width   3
+#define pcie_lane1_gen1_preset_rx_lte_zero_endbit   15
+#define pcie_lane1_gen1_preset_rx_lte_zero_shift   0
+#define pcie_lane1_gen1_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane1_gen2_preset_rx_ctle_peak1_addr   0b100100001
+#define pcie_lane1_gen2_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane1_gen2_preset_rx_ctle_peak1_width   4
+#define pcie_lane1_gen2_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane1_gen2_preset_rx_ctle_peak1_shift   12
+#define pcie_lane1_gen2_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane1_gen2_preset_rx_ctle_peak1_peak2_addr   0b100100001
+#define pcie_lane1_gen2_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane1_gen2_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane1_gen2_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane1_gen2_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane1_gen2_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane1_gen2_preset_rx_ctle_peak2_addr   0b100100001
+#define pcie_lane1_gen2_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane1_gen2_preset_rx_ctle_peak2_width   4
+#define pcie_lane1_gen2_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane1_gen2_preset_rx_ctle_peak2_shift   8
+#define pcie_lane1_gen2_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane1_gen2_preset_rx_lte_gain_addr    0b100100001
+#define pcie_lane1_gen2_preset_rx_lte_gain_startbit   9
+#define pcie_lane1_gen2_preset_rx_lte_gain_width   3
+#define pcie_lane1_gen2_preset_rx_lte_gain_endbit   11
+#define pcie_lane1_gen2_preset_rx_lte_gain_shift   4
+#define pcie_lane1_gen2_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane1_gen2_preset_rx_lte_zero_addr    0b100100001
+#define pcie_lane1_gen2_preset_rx_lte_zero_startbit   13
+#define pcie_lane1_gen2_preset_rx_lte_zero_width   3
+#define pcie_lane1_gen2_preset_rx_lte_zero_endbit   15
+#define pcie_lane1_gen2_preset_rx_lte_zero_shift   0
+#define pcie_lane1_gen2_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane1_gen3_preset_rx_ctle_peak1_addr   0b100100010
+#define pcie_lane1_gen3_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane1_gen3_preset_rx_ctle_peak1_width   4
+#define pcie_lane1_gen3_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane1_gen3_preset_rx_ctle_peak1_shift   12
+#define pcie_lane1_gen3_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane1_gen3_preset_rx_ctle_peak1_peak2_addr   0b100100010
+#define pcie_lane1_gen3_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane1_gen3_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane1_gen3_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane1_gen3_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane1_gen3_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane1_gen3_preset_rx_ctle_peak2_addr   0b100100010
+#define pcie_lane1_gen3_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane1_gen3_preset_rx_ctle_peak2_width   4
+#define pcie_lane1_gen3_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane1_gen3_preset_rx_ctle_peak2_shift   8
+#define pcie_lane1_gen3_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane1_gen3_preset_rx_lte_gain_addr    0b100100010
+#define pcie_lane1_gen3_preset_rx_lte_gain_startbit   9
+#define pcie_lane1_gen3_preset_rx_lte_gain_width   3
+#define pcie_lane1_gen3_preset_rx_lte_gain_endbit   11
+#define pcie_lane1_gen3_preset_rx_lte_gain_shift   4
+#define pcie_lane1_gen3_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane1_gen3_preset_rx_lte_zero_addr    0b100100010
+#define pcie_lane1_gen3_preset_rx_lte_zero_startbit   13
+#define pcie_lane1_gen3_preset_rx_lte_zero_width   3
+#define pcie_lane1_gen3_preset_rx_lte_zero_endbit   15
+#define pcie_lane1_gen3_preset_rx_lte_zero_shift   0
+#define pcie_lane1_gen3_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane1_gen4_preset_rx_ctle_peak1_addr   0b100100011
+#define pcie_lane1_gen4_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane1_gen4_preset_rx_ctle_peak1_width   4
+#define pcie_lane1_gen4_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane1_gen4_preset_rx_ctle_peak1_shift   12
+#define pcie_lane1_gen4_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane1_gen4_preset_rx_ctle_peak1_peak2_addr   0b100100011
+#define pcie_lane1_gen4_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane1_gen4_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane1_gen4_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane1_gen4_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane1_gen4_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane1_gen4_preset_rx_ctle_peak2_addr   0b100100011
+#define pcie_lane1_gen4_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane1_gen4_preset_rx_ctle_peak2_width   4
+#define pcie_lane1_gen4_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane1_gen4_preset_rx_ctle_peak2_shift   8
+#define pcie_lane1_gen4_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane1_gen4_preset_rx_lte_gain_addr    0b100100011
+#define pcie_lane1_gen4_preset_rx_lte_gain_startbit   9
+#define pcie_lane1_gen4_preset_rx_lte_gain_width   3
+#define pcie_lane1_gen4_preset_rx_lte_gain_endbit   11
+#define pcie_lane1_gen4_preset_rx_lte_gain_shift   4
+#define pcie_lane1_gen4_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane1_gen4_preset_rx_lte_zero_addr    0b100100011
+#define pcie_lane1_gen4_preset_rx_lte_zero_startbit   13
+#define pcie_lane1_gen4_preset_rx_lte_zero_width   3
+#define pcie_lane1_gen4_preset_rx_lte_zero_endbit   15
+#define pcie_lane1_gen4_preset_rx_lte_zero_shift   0
+#define pcie_lane1_gen4_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane1_gen5_preset_rx_ctle_peak1_addr   0b100100100
+#define pcie_lane1_gen5_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane1_gen5_preset_rx_ctle_peak1_width   4
+#define pcie_lane1_gen5_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane1_gen5_preset_rx_ctle_peak1_shift   12
+#define pcie_lane1_gen5_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane1_gen5_preset_rx_ctle_peak1_peak2_addr   0b100100100
+#define pcie_lane1_gen5_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane1_gen5_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane1_gen5_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane1_gen5_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane1_gen5_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane1_gen5_preset_rx_ctle_peak2_addr   0b100100100
+#define pcie_lane1_gen5_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane1_gen5_preset_rx_ctle_peak2_width   4
+#define pcie_lane1_gen5_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane1_gen5_preset_rx_ctle_peak2_shift   8
+#define pcie_lane1_gen5_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane1_gen5_preset_rx_lte_gain_addr    0b100100100
+#define pcie_lane1_gen5_preset_rx_lte_gain_startbit   9
+#define pcie_lane1_gen5_preset_rx_lte_gain_width   3
+#define pcie_lane1_gen5_preset_rx_lte_gain_endbit   11
+#define pcie_lane1_gen5_preset_rx_lte_gain_shift   4
+#define pcie_lane1_gen5_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane1_gen5_preset_rx_lte_zero_addr    0b100100100
+#define pcie_lane1_gen5_preset_rx_lte_zero_startbit   13
+#define pcie_lane1_gen5_preset_rx_lte_zero_width   3
+#define pcie_lane1_gen5_preset_rx_lte_zero_endbit   15
+#define pcie_lane1_gen5_preset_rx_lte_zero_shift   0
+#define pcie_lane1_gen5_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane2_gen1_preset_rx_ctle_peak1_addr   0b100101000
+#define pcie_lane2_gen1_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane2_gen1_preset_rx_ctle_peak1_width   4
+#define pcie_lane2_gen1_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane2_gen1_preset_rx_ctle_peak1_shift   12
+#define pcie_lane2_gen1_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane2_gen1_preset_rx_ctle_peak1_peak2_addr   0b100101000
+#define pcie_lane2_gen1_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane2_gen1_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane2_gen1_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane2_gen1_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane2_gen1_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane2_gen1_preset_rx_ctle_peak2_addr   0b100101000
+#define pcie_lane2_gen1_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane2_gen1_preset_rx_ctle_peak2_width   4
+#define pcie_lane2_gen1_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane2_gen1_preset_rx_ctle_peak2_shift   8
+#define pcie_lane2_gen1_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane2_gen1_preset_rx_lte_gain_addr    0b100101000
+#define pcie_lane2_gen1_preset_rx_lte_gain_startbit   9
+#define pcie_lane2_gen1_preset_rx_lte_gain_width   3
+#define pcie_lane2_gen1_preset_rx_lte_gain_endbit   11
+#define pcie_lane2_gen1_preset_rx_lte_gain_shift   4
+#define pcie_lane2_gen1_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane2_gen1_preset_rx_lte_zero_addr    0b100101000
+#define pcie_lane2_gen1_preset_rx_lte_zero_startbit   13
+#define pcie_lane2_gen1_preset_rx_lte_zero_width   3
+#define pcie_lane2_gen1_preset_rx_lte_zero_endbit   15
+#define pcie_lane2_gen1_preset_rx_lte_zero_shift   0
+#define pcie_lane2_gen1_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane2_gen2_preset_rx_ctle_peak1_addr   0b100101001
+#define pcie_lane2_gen2_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane2_gen2_preset_rx_ctle_peak1_width   4
+#define pcie_lane2_gen2_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane2_gen2_preset_rx_ctle_peak1_shift   12
+#define pcie_lane2_gen2_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane2_gen2_preset_rx_ctle_peak1_peak2_addr   0b100101001
+#define pcie_lane2_gen2_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane2_gen2_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane2_gen2_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane2_gen2_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane2_gen2_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane2_gen2_preset_rx_ctle_peak2_addr   0b100101001
+#define pcie_lane2_gen2_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane2_gen2_preset_rx_ctle_peak2_width   4
+#define pcie_lane2_gen2_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane2_gen2_preset_rx_ctle_peak2_shift   8
+#define pcie_lane2_gen2_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane2_gen2_preset_rx_lte_gain_addr    0b100101001
+#define pcie_lane2_gen2_preset_rx_lte_gain_startbit   9
+#define pcie_lane2_gen2_preset_rx_lte_gain_width   3
+#define pcie_lane2_gen2_preset_rx_lte_gain_endbit   11
+#define pcie_lane2_gen2_preset_rx_lte_gain_shift   4
+#define pcie_lane2_gen2_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane2_gen2_preset_rx_lte_zero_addr    0b100101001
+#define pcie_lane2_gen2_preset_rx_lte_zero_startbit   13
+#define pcie_lane2_gen2_preset_rx_lte_zero_width   3
+#define pcie_lane2_gen2_preset_rx_lte_zero_endbit   15
+#define pcie_lane2_gen2_preset_rx_lte_zero_shift   0
+#define pcie_lane2_gen2_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane2_gen3_preset_rx_ctle_peak1_addr   0b100101010
+#define pcie_lane2_gen3_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane2_gen3_preset_rx_ctle_peak1_width   4
+#define pcie_lane2_gen3_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane2_gen3_preset_rx_ctle_peak1_shift   12
+#define pcie_lane2_gen3_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane2_gen3_preset_rx_ctle_peak1_peak2_addr   0b100101010
+#define pcie_lane2_gen3_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane2_gen3_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane2_gen3_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane2_gen3_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane2_gen3_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane2_gen3_preset_rx_ctle_peak2_addr   0b100101010
+#define pcie_lane2_gen3_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane2_gen3_preset_rx_ctle_peak2_width   4
+#define pcie_lane2_gen3_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane2_gen3_preset_rx_ctle_peak2_shift   8
+#define pcie_lane2_gen3_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane2_gen3_preset_rx_lte_gain_addr    0b100101010
+#define pcie_lane2_gen3_preset_rx_lte_gain_startbit   9
+#define pcie_lane2_gen3_preset_rx_lte_gain_width   3
+#define pcie_lane2_gen3_preset_rx_lte_gain_endbit   11
+#define pcie_lane2_gen3_preset_rx_lte_gain_shift   4
+#define pcie_lane2_gen3_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane2_gen3_preset_rx_lte_zero_addr    0b100101010
+#define pcie_lane2_gen3_preset_rx_lte_zero_startbit   13
+#define pcie_lane2_gen3_preset_rx_lte_zero_width   3
+#define pcie_lane2_gen3_preset_rx_lte_zero_endbit   15
+#define pcie_lane2_gen3_preset_rx_lte_zero_shift   0
+#define pcie_lane2_gen3_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane2_gen4_preset_rx_ctle_peak1_addr   0b100101011
+#define pcie_lane2_gen4_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane2_gen4_preset_rx_ctle_peak1_width   4
+#define pcie_lane2_gen4_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane2_gen4_preset_rx_ctle_peak1_shift   12
+#define pcie_lane2_gen4_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane2_gen4_preset_rx_ctle_peak1_peak2_addr   0b100101011
+#define pcie_lane2_gen4_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane2_gen4_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane2_gen4_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane2_gen4_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane2_gen4_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane2_gen4_preset_rx_ctle_peak2_addr   0b100101011
+#define pcie_lane2_gen4_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane2_gen4_preset_rx_ctle_peak2_width   4
+#define pcie_lane2_gen4_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane2_gen4_preset_rx_ctle_peak2_shift   8
+#define pcie_lane2_gen4_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane2_gen4_preset_rx_lte_gain_addr    0b100101011
+#define pcie_lane2_gen4_preset_rx_lte_gain_startbit   9
+#define pcie_lane2_gen4_preset_rx_lte_gain_width   3
+#define pcie_lane2_gen4_preset_rx_lte_gain_endbit   11
+#define pcie_lane2_gen4_preset_rx_lte_gain_shift   4
+#define pcie_lane2_gen4_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane2_gen4_preset_rx_lte_zero_addr    0b100101011
+#define pcie_lane2_gen4_preset_rx_lte_zero_startbit   13
+#define pcie_lane2_gen4_preset_rx_lte_zero_width   3
+#define pcie_lane2_gen4_preset_rx_lte_zero_endbit   15
+#define pcie_lane2_gen4_preset_rx_lte_zero_shift   0
+#define pcie_lane2_gen4_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane2_gen5_preset_rx_ctle_peak1_addr   0b100101100
+#define pcie_lane2_gen5_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane2_gen5_preset_rx_ctle_peak1_width   4
+#define pcie_lane2_gen5_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane2_gen5_preset_rx_ctle_peak1_shift   12
+#define pcie_lane2_gen5_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane2_gen5_preset_rx_ctle_peak1_peak2_addr   0b100101100
+#define pcie_lane2_gen5_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane2_gen5_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane2_gen5_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane2_gen5_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane2_gen5_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane2_gen5_preset_rx_ctle_peak2_addr   0b100101100
+#define pcie_lane2_gen5_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane2_gen5_preset_rx_ctle_peak2_width   4
+#define pcie_lane2_gen5_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane2_gen5_preset_rx_ctle_peak2_shift   8
+#define pcie_lane2_gen5_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane2_gen5_preset_rx_lte_gain_addr    0b100101100
+#define pcie_lane2_gen5_preset_rx_lte_gain_startbit   9
+#define pcie_lane2_gen5_preset_rx_lte_gain_width   3
+#define pcie_lane2_gen5_preset_rx_lte_gain_endbit   11
+#define pcie_lane2_gen5_preset_rx_lte_gain_shift   4
+#define pcie_lane2_gen5_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane2_gen5_preset_rx_lte_zero_addr    0b100101100
+#define pcie_lane2_gen5_preset_rx_lte_zero_startbit   13
+#define pcie_lane2_gen5_preset_rx_lte_zero_width   3
+#define pcie_lane2_gen5_preset_rx_lte_zero_endbit   15
+#define pcie_lane2_gen5_preset_rx_lte_zero_shift   0
+#define pcie_lane2_gen5_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane3_gen1_preset_rx_ctle_peak1_addr   0b100110000
+#define pcie_lane3_gen1_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane3_gen1_preset_rx_ctle_peak1_width   4
+#define pcie_lane3_gen1_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane3_gen1_preset_rx_ctle_peak1_shift   12
+#define pcie_lane3_gen1_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane3_gen1_preset_rx_ctle_peak1_peak2_addr   0b100110000
+#define pcie_lane3_gen1_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane3_gen1_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane3_gen1_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane3_gen1_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane3_gen1_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane3_gen1_preset_rx_ctle_peak2_addr   0b100110000
+#define pcie_lane3_gen1_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane3_gen1_preset_rx_ctle_peak2_width   4
+#define pcie_lane3_gen1_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane3_gen1_preset_rx_ctle_peak2_shift   8
+#define pcie_lane3_gen1_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane3_gen1_preset_rx_lte_gain_addr    0b100110000
+#define pcie_lane3_gen1_preset_rx_lte_gain_startbit   9
+#define pcie_lane3_gen1_preset_rx_lte_gain_width   3
+#define pcie_lane3_gen1_preset_rx_lte_gain_endbit   11
+#define pcie_lane3_gen1_preset_rx_lte_gain_shift   4
+#define pcie_lane3_gen1_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane3_gen1_preset_rx_lte_zero_addr    0b100110000
+#define pcie_lane3_gen1_preset_rx_lte_zero_startbit   13
+#define pcie_lane3_gen1_preset_rx_lte_zero_width   3
+#define pcie_lane3_gen1_preset_rx_lte_zero_endbit   15
+#define pcie_lane3_gen1_preset_rx_lte_zero_shift   0
+#define pcie_lane3_gen1_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane3_gen2_preset_rx_ctle_peak1_addr   0b100110001
+#define pcie_lane3_gen2_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane3_gen2_preset_rx_ctle_peak1_width   4
+#define pcie_lane3_gen2_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane3_gen2_preset_rx_ctle_peak1_shift   12
+#define pcie_lane3_gen2_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane3_gen2_preset_rx_ctle_peak1_peak2_addr   0b100110001
+#define pcie_lane3_gen2_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane3_gen2_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane3_gen2_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane3_gen2_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane3_gen2_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane3_gen2_preset_rx_ctle_peak2_addr   0b100110001
+#define pcie_lane3_gen2_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane3_gen2_preset_rx_ctle_peak2_width   4
+#define pcie_lane3_gen2_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane3_gen2_preset_rx_ctle_peak2_shift   8
+#define pcie_lane3_gen2_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane3_gen2_preset_rx_lte_gain_addr    0b100110001
+#define pcie_lane3_gen2_preset_rx_lte_gain_startbit   9
+#define pcie_lane3_gen2_preset_rx_lte_gain_width   3
+#define pcie_lane3_gen2_preset_rx_lte_gain_endbit   11
+#define pcie_lane3_gen2_preset_rx_lte_gain_shift   4
+#define pcie_lane3_gen2_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane3_gen2_preset_rx_lte_zero_addr    0b100110001
+#define pcie_lane3_gen2_preset_rx_lte_zero_startbit   13
+#define pcie_lane3_gen2_preset_rx_lte_zero_width   3
+#define pcie_lane3_gen2_preset_rx_lte_zero_endbit   15
+#define pcie_lane3_gen2_preset_rx_lte_zero_shift   0
+#define pcie_lane3_gen2_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane3_gen3_preset_rx_ctle_peak1_addr   0b100110010
+#define pcie_lane3_gen3_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane3_gen3_preset_rx_ctle_peak1_width   4
+#define pcie_lane3_gen3_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane3_gen3_preset_rx_ctle_peak1_shift   12
+#define pcie_lane3_gen3_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane3_gen3_preset_rx_ctle_peak1_peak2_addr   0b100110010
+#define pcie_lane3_gen3_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane3_gen3_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane3_gen3_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane3_gen3_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane3_gen3_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane3_gen3_preset_rx_ctle_peak2_addr   0b100110010
+#define pcie_lane3_gen3_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane3_gen3_preset_rx_ctle_peak2_width   4
+#define pcie_lane3_gen3_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane3_gen3_preset_rx_ctle_peak2_shift   8
+#define pcie_lane3_gen3_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane3_gen3_preset_rx_lte_gain_addr    0b100110010
+#define pcie_lane3_gen3_preset_rx_lte_gain_startbit   9
+#define pcie_lane3_gen3_preset_rx_lte_gain_width   3
+#define pcie_lane3_gen3_preset_rx_lte_gain_endbit   11
+#define pcie_lane3_gen3_preset_rx_lte_gain_shift   4
+#define pcie_lane3_gen3_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane3_gen3_preset_rx_lte_zero_addr    0b100110010
+#define pcie_lane3_gen3_preset_rx_lte_zero_startbit   13
+#define pcie_lane3_gen3_preset_rx_lte_zero_width   3
+#define pcie_lane3_gen3_preset_rx_lte_zero_endbit   15
+#define pcie_lane3_gen3_preset_rx_lte_zero_shift   0
+#define pcie_lane3_gen3_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane3_gen4_preset_rx_ctle_peak1_addr   0b100110011
+#define pcie_lane3_gen4_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane3_gen4_preset_rx_ctle_peak1_width   4
+#define pcie_lane3_gen4_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane3_gen4_preset_rx_ctle_peak1_shift   12
+#define pcie_lane3_gen4_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane3_gen4_preset_rx_ctle_peak1_peak2_addr   0b100110011
+#define pcie_lane3_gen4_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane3_gen4_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane3_gen4_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane3_gen4_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane3_gen4_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane3_gen4_preset_rx_ctle_peak2_addr   0b100110011
+#define pcie_lane3_gen4_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane3_gen4_preset_rx_ctle_peak2_width   4
+#define pcie_lane3_gen4_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane3_gen4_preset_rx_ctle_peak2_shift   8
+#define pcie_lane3_gen4_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane3_gen4_preset_rx_lte_gain_addr    0b100110011
+#define pcie_lane3_gen4_preset_rx_lte_gain_startbit   9
+#define pcie_lane3_gen4_preset_rx_lte_gain_width   3
+#define pcie_lane3_gen4_preset_rx_lte_gain_endbit   11
+#define pcie_lane3_gen4_preset_rx_lte_gain_shift   4
+#define pcie_lane3_gen4_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane3_gen4_preset_rx_lte_zero_addr    0b100110011
+#define pcie_lane3_gen4_preset_rx_lte_zero_startbit   13
+#define pcie_lane3_gen4_preset_rx_lte_zero_width   3
+#define pcie_lane3_gen4_preset_rx_lte_zero_endbit   15
+#define pcie_lane3_gen4_preset_rx_lte_zero_shift   0
+#define pcie_lane3_gen4_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane3_gen5_preset_rx_ctle_peak1_addr   0b100110100
+#define pcie_lane3_gen5_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane3_gen5_preset_rx_ctle_peak1_width   4
+#define pcie_lane3_gen5_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane3_gen5_preset_rx_ctle_peak1_shift   12
+#define pcie_lane3_gen5_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane3_gen5_preset_rx_ctle_peak1_peak2_addr   0b100110100
+#define pcie_lane3_gen5_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane3_gen5_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane3_gen5_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane3_gen5_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane3_gen5_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane3_gen5_preset_rx_ctle_peak2_addr   0b100110100
+#define pcie_lane3_gen5_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane3_gen5_preset_rx_ctle_peak2_width   4
+#define pcie_lane3_gen5_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane3_gen5_preset_rx_ctle_peak2_shift   8
+#define pcie_lane3_gen5_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane3_gen5_preset_rx_lte_gain_addr    0b100110100
+#define pcie_lane3_gen5_preset_rx_lte_gain_startbit   9
+#define pcie_lane3_gen5_preset_rx_lte_gain_width   3
+#define pcie_lane3_gen5_preset_rx_lte_gain_endbit   11
+#define pcie_lane3_gen5_preset_rx_lte_gain_shift   4
+#define pcie_lane3_gen5_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane3_gen5_preset_rx_lte_zero_addr    0b100110100
+#define pcie_lane3_gen5_preset_rx_lte_zero_startbit   13
+#define pcie_lane3_gen5_preset_rx_lte_zero_width   3
+#define pcie_lane3_gen5_preset_rx_lte_zero_endbit   15
+#define pcie_lane3_gen5_preset_rx_lte_zero_shift   0
+#define pcie_lane3_gen5_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane4_gen1_preset_rx_ctle_peak1_addr   0b100111000
+#define pcie_lane4_gen1_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane4_gen1_preset_rx_ctle_peak1_width   4
+#define pcie_lane4_gen1_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane4_gen1_preset_rx_ctle_peak1_shift   12
+#define pcie_lane4_gen1_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane4_gen1_preset_rx_ctle_peak1_peak2_addr   0b100111000
+#define pcie_lane4_gen1_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane4_gen1_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane4_gen1_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane4_gen1_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane4_gen1_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane4_gen1_preset_rx_ctle_peak2_addr   0b100111000
+#define pcie_lane4_gen1_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane4_gen1_preset_rx_ctle_peak2_width   4
+#define pcie_lane4_gen1_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane4_gen1_preset_rx_ctle_peak2_shift   8
+#define pcie_lane4_gen1_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane4_gen1_preset_rx_lte_gain_addr    0b100111000
+#define pcie_lane4_gen1_preset_rx_lte_gain_startbit   9
+#define pcie_lane4_gen1_preset_rx_lte_gain_width   3
+#define pcie_lane4_gen1_preset_rx_lte_gain_endbit   11
+#define pcie_lane4_gen1_preset_rx_lte_gain_shift   4
+#define pcie_lane4_gen1_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane4_gen1_preset_rx_lte_zero_addr    0b100111000
+#define pcie_lane4_gen1_preset_rx_lte_zero_startbit   13
+#define pcie_lane4_gen1_preset_rx_lte_zero_width   3
+#define pcie_lane4_gen1_preset_rx_lte_zero_endbit   15
+#define pcie_lane4_gen1_preset_rx_lte_zero_shift   0
+#define pcie_lane4_gen1_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane4_gen2_preset_rx_ctle_peak1_addr   0b100111001
+#define pcie_lane4_gen2_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane4_gen2_preset_rx_ctle_peak1_width   4
+#define pcie_lane4_gen2_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane4_gen2_preset_rx_ctle_peak1_shift   12
+#define pcie_lane4_gen2_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane4_gen2_preset_rx_ctle_peak1_peak2_addr   0b100111001
+#define pcie_lane4_gen2_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane4_gen2_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane4_gen2_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane4_gen2_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane4_gen2_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane4_gen2_preset_rx_ctle_peak2_addr   0b100111001
+#define pcie_lane4_gen2_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane4_gen2_preset_rx_ctle_peak2_width   4
+#define pcie_lane4_gen2_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane4_gen2_preset_rx_ctle_peak2_shift   8
+#define pcie_lane4_gen2_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane4_gen2_preset_rx_lte_gain_addr    0b100111001
+#define pcie_lane4_gen2_preset_rx_lte_gain_startbit   9
+#define pcie_lane4_gen2_preset_rx_lte_gain_width   3
+#define pcie_lane4_gen2_preset_rx_lte_gain_endbit   11
+#define pcie_lane4_gen2_preset_rx_lte_gain_shift   4
+#define pcie_lane4_gen2_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane4_gen2_preset_rx_lte_zero_addr    0b100111001
+#define pcie_lane4_gen2_preset_rx_lte_zero_startbit   13
+#define pcie_lane4_gen2_preset_rx_lte_zero_width   3
+#define pcie_lane4_gen2_preset_rx_lte_zero_endbit   15
+#define pcie_lane4_gen2_preset_rx_lte_zero_shift   0
+#define pcie_lane4_gen2_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane4_gen3_preset_rx_ctle_peak1_addr   0b100111010
+#define pcie_lane4_gen3_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane4_gen3_preset_rx_ctle_peak1_width   4
+#define pcie_lane4_gen3_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane4_gen3_preset_rx_ctle_peak1_shift   12
+#define pcie_lane4_gen3_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane4_gen3_preset_rx_ctle_peak1_peak2_addr   0b100111010
+#define pcie_lane4_gen3_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane4_gen3_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane4_gen3_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane4_gen3_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane4_gen3_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane4_gen3_preset_rx_ctle_peak2_addr   0b100111010
+#define pcie_lane4_gen3_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane4_gen3_preset_rx_ctle_peak2_width   4
+#define pcie_lane4_gen3_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane4_gen3_preset_rx_ctle_peak2_shift   8
+#define pcie_lane4_gen3_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane4_gen3_preset_rx_lte_gain_addr    0b100111010
+#define pcie_lane4_gen3_preset_rx_lte_gain_startbit   9
+#define pcie_lane4_gen3_preset_rx_lte_gain_width   3
+#define pcie_lane4_gen3_preset_rx_lte_gain_endbit   11
+#define pcie_lane4_gen3_preset_rx_lte_gain_shift   4
+#define pcie_lane4_gen3_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane4_gen3_preset_rx_lte_zero_addr    0b100111010
+#define pcie_lane4_gen3_preset_rx_lte_zero_startbit   13
+#define pcie_lane4_gen3_preset_rx_lte_zero_width   3
+#define pcie_lane4_gen3_preset_rx_lte_zero_endbit   15
+#define pcie_lane4_gen3_preset_rx_lte_zero_shift   0
+#define pcie_lane4_gen3_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane4_gen4_preset_rx_ctle_peak1_addr   0b100111011
+#define pcie_lane4_gen4_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane4_gen4_preset_rx_ctle_peak1_width   4
+#define pcie_lane4_gen4_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane4_gen4_preset_rx_ctle_peak1_shift   12
+#define pcie_lane4_gen4_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane4_gen4_preset_rx_ctle_peak1_peak2_addr   0b100111011
+#define pcie_lane4_gen4_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane4_gen4_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane4_gen4_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane4_gen4_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane4_gen4_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane4_gen4_preset_rx_ctle_peak2_addr   0b100111011
+#define pcie_lane4_gen4_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane4_gen4_preset_rx_ctle_peak2_width   4
+#define pcie_lane4_gen4_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane4_gen4_preset_rx_ctle_peak2_shift   8
+#define pcie_lane4_gen4_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane4_gen4_preset_rx_lte_gain_addr    0b100111011
+#define pcie_lane4_gen4_preset_rx_lte_gain_startbit   9
+#define pcie_lane4_gen4_preset_rx_lte_gain_width   3
+#define pcie_lane4_gen4_preset_rx_lte_gain_endbit   11
+#define pcie_lane4_gen4_preset_rx_lte_gain_shift   4
+#define pcie_lane4_gen4_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane4_gen4_preset_rx_lte_zero_addr    0b100111011
+#define pcie_lane4_gen4_preset_rx_lte_zero_startbit   13
+#define pcie_lane4_gen4_preset_rx_lte_zero_width   3
+#define pcie_lane4_gen4_preset_rx_lte_zero_endbit   15
+#define pcie_lane4_gen4_preset_rx_lte_zero_shift   0
+#define pcie_lane4_gen4_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_lane4_gen5_preset_rx_ctle_peak1_addr   0b100111100
+#define pcie_lane4_gen5_preset_rx_ctle_peak1_startbit   0
+#define pcie_lane4_gen5_preset_rx_ctle_peak1_width   4
+#define pcie_lane4_gen5_preset_rx_ctle_peak1_endbit   3
+#define pcie_lane4_gen5_preset_rx_ctle_peak1_shift   12
+#define pcie_lane4_gen5_preset_rx_ctle_peak1_mask   0xf000
+
+
+#define pcie_lane4_gen5_preset_rx_ctle_peak1_peak2_addr   0b100111100
+#define pcie_lane4_gen5_preset_rx_ctle_peak1_peak2_startbit   0
+#define pcie_lane4_gen5_preset_rx_ctle_peak1_peak2_width   8
+#define pcie_lane4_gen5_preset_rx_ctle_peak1_peak2_endbit   7
+#define pcie_lane4_gen5_preset_rx_ctle_peak1_peak2_shift   8
+#define pcie_lane4_gen5_preset_rx_ctle_peak1_peak2_mask   0xff00
+
+
+#define pcie_lane4_gen5_preset_rx_ctle_peak2_addr   0b100111100
+#define pcie_lane4_gen5_preset_rx_ctle_peak2_startbit   4
+#define pcie_lane4_gen5_preset_rx_ctle_peak2_width   4
+#define pcie_lane4_gen5_preset_rx_ctle_peak2_endbit   7
+#define pcie_lane4_gen5_preset_rx_ctle_peak2_shift   8
+#define pcie_lane4_gen5_preset_rx_ctle_peak2_mask   0xf00
+
+
+#define pcie_lane4_gen5_preset_rx_lte_gain_addr    0b100111100
+#define pcie_lane4_gen5_preset_rx_lte_gain_startbit   9
+#define pcie_lane4_gen5_preset_rx_lte_gain_width   3
+#define pcie_lane4_gen5_preset_rx_lte_gain_endbit   11
+#define pcie_lane4_gen5_preset_rx_lte_gain_shift   4
+#define pcie_lane4_gen5_preset_rx_lte_gain_mask    0x70
+
+
+#define pcie_lane4_gen5_preset_rx_lte_zero_addr    0b100111100
+#define pcie_lane4_gen5_preset_rx_lte_zero_startbit   13
+#define pcie_lane4_gen5_preset_rx_lte_zero_width   3
+#define pcie_lane4_gen5_preset_rx_lte_zero_endbit   15
+#define pcie_lane4_gen5_preset_rx_lte_zero_shift   0
+#define pcie_lane4_gen5_preset_rx_lte_zero_mask    0x7
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen1_addr   0b100011000
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen1_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen1_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen1_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen1_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen1_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen2_addr   0b100011001
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen2_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen2_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen2_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen2_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen2_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen3_addr   0b100011010
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen3_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen3_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen3_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen3_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen3_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen4_addr   0b100011011
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen4_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen4_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen4_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen4_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen4_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen5_addr   0b100011100
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen5_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen5_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen5_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen5_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane0_gen5_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen1_addr   0b100100000
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen1_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen1_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen1_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen1_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen1_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen2_addr   0b100100001
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen2_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen2_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen2_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen2_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen2_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen3_addr   0b100100010
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen3_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen3_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen3_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen3_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen3_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen4_addr   0b100100011
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen4_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen4_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen4_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen4_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen4_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen5_addr   0b100100100
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen5_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen5_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen5_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen5_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane1_gen5_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen1_addr   0b100101000
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen1_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen1_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen1_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen1_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen1_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen2_addr   0b100101001
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen2_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen2_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen2_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen2_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen2_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen3_addr   0b100101010
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen3_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen3_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen3_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen3_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen3_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen4_addr   0b100101011
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen4_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen4_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen4_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen4_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen4_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen5_addr   0b100101100
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen5_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen5_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen5_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen5_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane2_gen5_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen1_addr   0b100110000
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen1_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen1_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen1_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen1_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen1_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen2_addr   0b100110001
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen2_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen2_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen2_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen2_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen2_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen3_addr   0b100110010
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen3_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen3_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen3_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen3_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen3_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen4_addr   0b100110011
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen4_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen4_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen4_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen4_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen4_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen5_addr   0b100110100
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen5_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen5_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen5_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen5_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane3_gen5_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen1_addr   0b100111000
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen1_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen1_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen1_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen1_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen1_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen2_addr   0b100111001
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen2_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen2_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen2_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen2_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen2_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen3_addr   0b100111010
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen3_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen3_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen3_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen3_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen3_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen4_addr   0b100111011
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen4_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen4_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen4_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen4_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen4_mask   0xffff
+
+
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen5_addr   0b100111100
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen5_startbit   0
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen5_width   16
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen5_endbit   15
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen5_shift   0
+#define pcie_ppe_preset_rx_peak_lte_lane4_gen5_mask   0xffff
 
 
 #define pcie_ppe_saved_rx_ad_loff_lane_0_addr      0b001010000
@@ -356,6 +1476,166 @@
 #define pcie_ppe_saved_tx_dcc_lane_4_endbit        15
 #define pcie_ppe_saved_tx_dcc_lane_4_shift         0
 #define pcie_ppe_saved_tx_dcc_lane_4_mask          0xffff
+
+
+#define pcie_ppe_txdetrx_dac_cntl_lane_0_addr      0b101000000
+#define pcie_ppe_txdetrx_dac_cntl_lane_0_startbit   0
+#define pcie_ppe_txdetrx_dac_cntl_lane_0_width     8
+#define pcie_ppe_txdetrx_dac_cntl_lane_0_endbit    7
+#define pcie_ppe_txdetrx_dac_cntl_lane_0_shift     8
+#define pcie_ppe_txdetrx_dac_cntl_lane_0_mask      0xff00
+
+
+#define pcie_ppe_txdetrx_dac_cntl_lane_1_addr      0b101000010
+#define pcie_ppe_txdetrx_dac_cntl_lane_1_startbit   0
+#define pcie_ppe_txdetrx_dac_cntl_lane_1_width     8
+#define pcie_ppe_txdetrx_dac_cntl_lane_1_endbit    7
+#define pcie_ppe_txdetrx_dac_cntl_lane_1_shift     8
+#define pcie_ppe_txdetrx_dac_cntl_lane_1_mask      0xff00
+
+
+#define pcie_ppe_txdetrx_dac_cntl_lane_2_addr      0b101000100
+#define pcie_ppe_txdetrx_dac_cntl_lane_2_startbit   0
+#define pcie_ppe_txdetrx_dac_cntl_lane_2_width     8
+#define pcie_ppe_txdetrx_dac_cntl_lane_2_endbit    7
+#define pcie_ppe_txdetrx_dac_cntl_lane_2_shift     8
+#define pcie_ppe_txdetrx_dac_cntl_lane_2_mask      0xff00
+
+
+#define pcie_ppe_txdetrx_dac_cntl_lane_3_addr      0b101000110
+#define pcie_ppe_txdetrx_dac_cntl_lane_3_startbit   0
+#define pcie_ppe_txdetrx_dac_cntl_lane_3_width     8
+#define pcie_ppe_txdetrx_dac_cntl_lane_3_endbit    7
+#define pcie_ppe_txdetrx_dac_cntl_lane_3_shift     8
+#define pcie_ppe_txdetrx_dac_cntl_lane_3_mask      0xff00
+
+
+#define pcie_ppe_txdetrx_dac_cntl_lane_4_addr      0b101001000
+#define pcie_ppe_txdetrx_dac_cntl_lane_4_startbit   0
+#define pcie_ppe_txdetrx_dac_cntl_lane_4_width     8
+#define pcie_ppe_txdetrx_dac_cntl_lane_4_endbit    7
+#define pcie_ppe_txdetrx_dac_cntl_lane_4_shift     8
+#define pcie_ppe_txdetrx_dac_cntl_lane_4_mask      0xff00
+
+
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_0_addr   0b101000000
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_0_startbit   0
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_0_width   16
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_0_endbit   15
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_0_shift   0
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_0_mask   0xffff
+
+
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_1_addr   0b101000001
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_1_startbit   0
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_1_width   16
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_1_endbit   15
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_1_shift   0
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_1_mask   0xffff
+
+
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_2_addr   0b101000011
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_2_startbit   0
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_2_width   16
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_2_endbit   15
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_2_shift   0
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_2_mask   0xffff
+
+
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_3_addr   0b101000101
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_3_startbit   0
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_3_width   16
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_3_endbit   15
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_3_shift   0
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_3_mask   0xffff
+
+
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_4_addr   0b101000111
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_4_startbit   0
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_4_width   16
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_4_endbit   15
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_4_shift   0
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_4_mask   0xffff
+
+
+#define pcie_ppe_txdetrx_idle_timer_lane_0_addr    0b101000000
+#define pcie_ppe_txdetrx_idle_timer_lane_0_startbit   0
+#define pcie_ppe_txdetrx_idle_timer_lane_0_width   3
+#define pcie_ppe_txdetrx_idle_timer_lane_0_endbit   2
+#define pcie_ppe_txdetrx_idle_timer_lane_0_shift   13
+#define pcie_ppe_txdetrx_idle_timer_lane_0_mask    0xe000
+
+
+#define pcie_ppe_txdetrx_idle_timer_lane_1_addr    0b101000001
+#define pcie_ppe_txdetrx_idle_timer_lane_1_startbit   0
+#define pcie_ppe_txdetrx_idle_timer_lane_1_width   3
+#define pcie_ppe_txdetrx_idle_timer_lane_1_endbit   2
+#define pcie_ppe_txdetrx_idle_timer_lane_1_shift   13
+#define pcie_ppe_txdetrx_idle_timer_lane_1_mask    0xe000
+
+
+#define pcie_ppe_txdetrx_idle_timer_lane_2_addr    0b101000011
+#define pcie_ppe_txdetrx_idle_timer_lane_2_startbit   0
+#define pcie_ppe_txdetrx_idle_timer_lane_2_width   3
+#define pcie_ppe_txdetrx_idle_timer_lane_2_endbit   2
+#define pcie_ppe_txdetrx_idle_timer_lane_2_shift   13
+#define pcie_ppe_txdetrx_idle_timer_lane_2_mask    0xe000
+
+
+#define pcie_ppe_txdetrx_idle_timer_lane_3_addr    0b101000101
+#define pcie_ppe_txdetrx_idle_timer_lane_3_startbit   0
+#define pcie_ppe_txdetrx_idle_timer_lane_3_width   3
+#define pcie_ppe_txdetrx_idle_timer_lane_3_endbit   2
+#define pcie_ppe_txdetrx_idle_timer_lane_3_shift   13
+#define pcie_ppe_txdetrx_idle_timer_lane_3_mask    0xe000
+
+
+#define pcie_ppe_txdetrx_idle_timer_lane_4_addr    0b101000111
+#define pcie_ppe_txdetrx_idle_timer_lane_4_startbit   0
+#define pcie_ppe_txdetrx_idle_timer_lane_4_width   3
+#define pcie_ppe_txdetrx_idle_timer_lane_4_endbit   2
+#define pcie_ppe_txdetrx_idle_timer_lane_4_shift   13
+#define pcie_ppe_txdetrx_idle_timer_lane_4_mask    0xe000
+
+
+#define pcie_ppe_txdetrx_samp_timer_lane_0_addr    0b101000000
+#define pcie_ppe_txdetrx_samp_timer_lane_0_startbit   8
+#define pcie_ppe_txdetrx_samp_timer_lane_0_width   8
+#define pcie_ppe_txdetrx_samp_timer_lane_0_endbit   15
+#define pcie_ppe_txdetrx_samp_timer_lane_0_shift   0
+#define pcie_ppe_txdetrx_samp_timer_lane_0_mask    0xff
+
+
+#define pcie_ppe_txdetrx_samp_timer_lane_1_addr    0b101000001
+#define pcie_ppe_txdetrx_samp_timer_lane_1_startbit   8
+#define pcie_ppe_txdetrx_samp_timer_lane_1_width   8
+#define pcie_ppe_txdetrx_samp_timer_lane_1_endbit   15
+#define pcie_ppe_txdetrx_samp_timer_lane_1_shift   0
+#define pcie_ppe_txdetrx_samp_timer_lane_1_mask    0xff
+
+
+#define pcie_ppe_txdetrx_samp_timer_lane_2_addr    0b101000011
+#define pcie_ppe_txdetrx_samp_timer_lane_2_startbit   8
+#define pcie_ppe_txdetrx_samp_timer_lane_2_width   8
+#define pcie_ppe_txdetrx_samp_timer_lane_2_endbit   15
+#define pcie_ppe_txdetrx_samp_timer_lane_2_shift   0
+#define pcie_ppe_txdetrx_samp_timer_lane_2_mask    0xff
+
+
+#define pcie_ppe_txdetrx_samp_timer_lane_3_addr    0b101000101
+#define pcie_ppe_txdetrx_samp_timer_lane_3_startbit   8
+#define pcie_ppe_txdetrx_samp_timer_lane_3_width   8
+#define pcie_ppe_txdetrx_samp_timer_lane_3_endbit   15
+#define pcie_ppe_txdetrx_samp_timer_lane_3_shift   0
+#define pcie_ppe_txdetrx_samp_timer_lane_3_mask    0xff
+
+
+#define pcie_ppe_txdetrx_samp_timer_lane_4_addr    0b101000111
+#define pcie_ppe_txdetrx_samp_timer_lane_4_startbit   8
+#define pcie_ppe_txdetrx_samp_timer_lane_4_width   8
+#define pcie_ppe_txdetrx_samp_timer_lane_4_endbit   15
+#define pcie_ppe_txdetrx_samp_timer_lane_4_shift   0
+#define pcie_ppe_txdetrx_samp_timer_lane_4_mask    0xff
 
 
 #define poff_avg_a_addr                            0b000000110
@@ -582,12 +1862,12 @@
 #define ppe_pipe_reset_inactive_phase_0_3_mask     0xf000
 
 
-#define ppe_pipe_rx_ei_inactive_phase_0_3_addr     0b110110110
-#define ppe_pipe_rx_ei_inactive_phase_0_3_startbit   4
-#define ppe_pipe_rx_ei_inactive_phase_0_3_width    4
+#define ppe_pipe_rx_ei_inactive_phase_0_3_addr     0b110110111
+#define ppe_pipe_rx_ei_inactive_phase_0_3_startbit   0
+#define ppe_pipe_rx_ei_inactive_phase_0_3_width    8
 #define ppe_pipe_rx_ei_inactive_phase_0_3_endbit   7
 #define ppe_pipe_rx_ei_inactive_phase_0_3_shift    8
-#define ppe_pipe_rx_ei_inactive_phase_0_3_mask     0xf00
+#define ppe_pipe_rx_ei_inactive_phase_0_3_mask     0xff00
 
 
 #define ppe_pr_offset_applied_a_addr               0b000000101
@@ -1116,6 +2396,14 @@
 #define rx_cmd_init_done_endbit                    6
 #define rx_cmd_init_done_shift                     9
 #define rx_cmd_init_done_mask                      0x200
+
+
+#define rx_ctle_force_peak1_peak2_cal_enable_addr   0b111100000
+#define rx_ctle_force_peak1_peak2_cal_enable_startbit   11
+#define rx_ctle_force_peak1_peak2_cal_enable_width   3
+#define rx_ctle_force_peak1_peak2_cal_enable_endbit   13
+#define rx_ctle_force_peak1_peak2_cal_enable_shift   2
+#define rx_ctle_force_peak1_peak2_cal_enable_mask   0x1c
 
 
 #define rx_ctle_gain_fail_addr                     0b000000001
@@ -1662,12 +2950,12 @@
 #define rx_eo_enable_vga_cal_mask                  0x8000
 
 
-#define rx_eo_phase_select_0_1_addr                0b110110100
-#define rx_eo_phase_select_0_1_startbit            11
-#define rx_eo_phase_select_0_1_width               2
-#define rx_eo_phase_select_0_1_endbit              12
-#define rx_eo_phase_select_0_1_shift               3
-#define rx_eo_phase_select_0_1_mask                0x18
+#define rx_eo_phase_select_0_2_addr                0b110110100
+#define rx_eo_phase_select_0_2_startbit            11
+#define rx_eo_phase_select_0_2_width               3
+#define rx_eo_phase_select_0_2_endbit              13
+#define rx_eo_phase_select_0_2_shift               2
+#define rx_eo_phase_select_0_2_mask                0x1c
 
 
 #define rx_eo_step_cntl_opt_alias_addr             0b110001001

@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23031000 |vbr     | Code update to take advantage of this only running in INIT (not recal). Don't updat poff_avg in recal.
 // vbr23010400 |vbr     | Issue 296947: Adjusted latch_dac accesses for different addresses on Odyssey vs P11/ZMetis
 // mbs22082601 |mbs     | Updated with PSL comments
 // vbr22012801 |vbr     | Use common functions for DAC accelerator
@@ -109,10 +110,13 @@ static uint16_t servo_ops_eoff_a[num_servo_ops] = { c_loff_ae_n000};
 static uint16_t servo_ops_eoff_b[num_servo_ops] = { c_loff_be_n000};
 
 
-int eo_eoff_1_lat(t_gcr_addr* gcr_addr,  bool recal,  t_bank bank, bool vote_sel)
+int eo_eoff_1_lat(t_gcr_addr* gcr_addr, t_bank bank, bool vote_sel)
 {
     //start eo_eoff
     set_debug_state(0xA00C); // DEBUG
+
+    // This is only run in Init. Can make this an input if want to use in recal.
+    const bool recal = false;
 
     // Servo op based on bank
     uint16_t* servo_ops;
@@ -191,7 +195,10 @@ int eo_eoff_1_lat(t_gcr_addr* gcr_addr,  bool recal,  t_bank bank, bool vote_sel
     //(gcr_addr, recal, bank_a);
 
     //for getting rel path offset need add previous value or if enough runs go 0
-    eo_update_poff_avg( gcr_addr, poff_n, bank, lane);
+    if (!recal)
+    {
+        eo_update_poff_avg( gcr_addr, poff_n, bank, lane);
+    }
 
     //------------------------------------------------------------------------------------
     //this code is updating the Data Dac's with path offset. Either bank A or Bank B Dacs
