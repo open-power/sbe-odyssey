@@ -76,6 +76,7 @@
 #include <generic/memory/lib/dimm/ddr5/ddr5_mr8.H>
 #include <generic/memory/lib/dimm/ddr5/ddr5_mr50.H>
 #include <generic/memory/lib/generic_attribute_accessors_manual.H>
+#include <lib/workarounds/ody_phy_workarounds.H>
 
 #ifdef __PPE__
     #ifdef FAPI_INF
@@ -3862,7 +3863,7 @@ fapi2::ReturnCode setup_phy_advanced_struct(const fapi2::Target<fapi2::TARGET_TY
 
     // ATxImpedance (set to DIMM0, rank0 value)
     {
-        const uint32_t ATxIMPCMD_Arr[mss::ody::sizes::SPD_ATXCMD_DECODE_MAX]
+        constexpr uint32_t ATxIMPCMD_Arr[mss::ody::sizes::SPD_ATXCMD_DECODE_MAX]
         __attribute__ ((aligned (8))) =
         {
             // These values are pulled from the DDR5 DDIMM SPD doc rev.1.21 for EFD Bytes 32
@@ -4081,6 +4082,9 @@ fapi2::ReturnCode setup_phy_advanced_struct(const fapi2::Target<fapi2::TARGET_TY
         }
     }
 
+    // Clones redundant CS information
+    FAPI_TRY(mss::ody::phy::workarounds::clone_redundant_cs_data_tdqstracking(i_target, io_user_input_advanced ));
+
     // DqsOscRunTimeSel
     FAPI_TRY(mss::attr::get_phy_dqs_osc_runtime_sel(i_target, l_attr_data_16));
 
@@ -4187,12 +4191,15 @@ fapi2::ReturnCode setup_phy_advanced_struct(const fapi2::Target<fapi2::TARGET_TY
 
     FAPI_TRY(mss::attr::get_uppernibble_tg(i_target, l_uppernibbletg));
 
+
     for (const auto& l_rank_info : l_rank_infos)
     {
         const auto l_port_rank = l_rank_info.get_port_rank();
         const auto l_phy_rank = l_rank_info.get_phy_rank();
         io_user_input_advanced.NoX4onUpperNibbleTg[l_phy_rank] = l_uppernibbletg[l_port_rank];
     }
+
+    FAPI_TRY(mss::ody::phy::workarounds::clone_redundant_cs_data(i_target, io_user_input_advanced.NoX4onUpperNibbleTg));
 
     // Dfi1Active
     FAPI_TRY(mss::attr::get_ddr5_chb_active(i_target, l_attr_data));
@@ -4299,6 +4306,9 @@ fapi2::ReturnCode setup_dram_input_struct(const fapi2::Target<fapi2::TARGET_TYPE
         l_RD_RTT_PARK[l_phy_rank] = l_RD_RTT_PARK_attr[l_port_rank];
         l_WR_RTT_PARK[l_phy_rank] = l_WR_RTT_PARK_attr[l_port_rank];
     }
+
+    FAPI_TRY(mss::ody::phy::workarounds::clone_redundant_cs_data(i_target, l_RD_RTT_PARK));
+    FAPI_TRY(mss::ody::phy::workarounds::clone_redundant_cs_data(i_target, l_WR_RTT_PARK));
 
     io_user_input_dram_config.WR_RD_RTT_PARK_A0 = (l_RD_RTT_PARK[0] << RTT_RD_SHIFT) | l_WR_RTT_PARK[0];
     io_user_input_dram_config.WR_RD_RTT_PARK_A1 = (l_RD_RTT_PARK[1] << RTT_RD_SHIFT) | l_WR_RTT_PARK[1];
