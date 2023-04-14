@@ -193,12 +193,12 @@ const uint32_t  RS4_RING_BUF_SIZE   = 64 * 1024;
 rs4::targetTypeInstanceTraits_t targetTypeInstanceTraits[] =
 {
     { fapi2::LOG_TARGET_TYPE_PERV,    rs4::ANY,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
-    { fapi2::LOG_TARGET_TYPE_EX,      rs4::ZME,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
-    { fapi2::LOG_TARGET_TYPE_XBUS,    rs4::ZME,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_EX,      rs4::ZME,  rs4::rs4_pack_instanceTraits(10, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_XBUS,    rs4::ZME,  rs4::rs4_pack_instanceTraits(3, 1, 1) },
     { fapi2::LOG_TARGET_TYPE_ABUS,    rs4::ZME,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
-    { fapi2::LOG_TARGET_TYPE_PEC,     rs4::ZME,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
-    { fapi2::LOG_TARGET_TYPE_CORE,    rs4::ZME,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
-    { fapi2::LOG_TARGET_TYPE_L3CACHE, rs4::ZME,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_PEC,     rs4::ZME,  rs4::rs4_pack_instanceTraits(2, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_CORE,    rs4::ZME,  rs4::rs4_pack_instanceTraits(8, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_L3CACHE, rs4::ZME,  rs4::rs4_pack_instanceTraits(9, 1, 1) },
     { fapi2::LOG_TARGET_TYPE_MC,      rs4::ZME,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
     { fapi2::LOG_TARGET_TYPE_MC,      rs4::ODY,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
     { fapi2::LOG_TARGET_TYPE_EQ,      rs4::P11T, rs4::rs4_pack_instanceTraits(2, 1, 1) },
@@ -250,6 +250,7 @@ rs4::ringTargetType_t ringTargets[] =
     { "ep_mcs",        fapi2::LOG_TARGET_TYPE_MC },
     { "ep_xbus",       fapi2::LOG_TARGET_TYPE_XBUS },
     { "ep_nest",       fapi2::LOG_TARGET_TYPE_CORE },
+    { "ep_pcie",       fapi2::LOG_TARGET_TYPE_PEC },
     { "ep_",           fapi2::LOG_TARGET_TYPE_PERV },
 };
 
