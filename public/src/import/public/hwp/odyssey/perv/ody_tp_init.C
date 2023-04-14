@@ -39,6 +39,7 @@
 
 using namespace fapi2;
 using namespace scomt::perv;
+using namespace pib;
 
 SCOMT_PERV_USE_CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_ROOT_CTRL0;
 
@@ -90,6 +91,13 @@ ReturnCode ody_tp_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 
     FAPI_INF("Set up chiplet hang pulses (PLL bucket = %d, pre divider = %d)", l_pll_bucket, pre_dividers[l_pll_bucket]);
     FAPI_TRY(mod_hangpulse_setup(l_mc_allgood, pre_dividers[l_pll_bucket], HANG_COUNTERS_ALL));
+
+    FAPI_INF("Set up SBE multipipe unit");
+    FAPI_TRY(mod_pipe_setup(i_target,
+                            PC_MMIO, false, PC_SPPE, true,
+                            PC_GSD2PIB, false, PC_SPPE, true,
+                            PC_NONE, false, PC_NONE, false,
+                            PC_NONE, false, PC_NONE, false));
 
     FAPI_INF("Miscellaneous TP setup");
     FAPI_TRY(mod_poz_tp_init_common(i_target));

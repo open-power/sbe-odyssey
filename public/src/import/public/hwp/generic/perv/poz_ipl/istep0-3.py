@@ -645,6 +645,12 @@ def p11s_tp_init():
     mod_hangpulse_setup(all good TBUS, 9, {{2, 1, 0, 1}})
     mod_hangpulse_setup(all good MC,   9, {{2, 1, 0, 1}})
 
+    ## Set up SBE multipipe unit
+    mod_pipe_setup(PC_ADU, false, PC_SPPE, true,
+                   PC_GSD2PIB, false, PC_SBE, true,
+                   PC_NONE, false, PC_NONE, false,
+                   PC_SPPE, true, PC_SBE, true)
+
     ## Unmask TP PLL unlock reporting
     if not ATTR_CP_PLLFLT_BYPASS:
         PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS &= ~(P11S_PERV_FPLL1 | P11S_PERV_FPLL2 | P11S_PERV_FPLL3 | P11S_PERV_FPLL4)
@@ -679,6 +685,12 @@ def ody_tp_init():
     const uint8_t pre_dividers[16] = {   5,    7,    9,    9,    9,    9,    9,    9,    9,    9,    9,    9,    9,    9,    0,    8 };
     mod_hangpulse_setup(pre_divider, pre_dividers[ATTR_OCMB_PLL_BUCKET], {{0, 14, 0}, {1, 1, 0}, {2, 1, 0}, {5, 4, 0}, {6, 5, 0, 1}})
 
+    ## Set up SBE multipipe unit
+    mod_pipe_setup(PC_MMIO, false, PC_SPPE, true,
+                   PC_GSD2PIB, false, PC_SPPE, true,
+                   PC_NONE, false, PC_NONE, false,
+                   PC_NONE, false, PC_NONE, false)
+
     ## Unmask TP PLL unlock reporting
     if not ATTR_PLL_BYPASS:
         PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS &= ~(ODY_PERV_PLLMC)
@@ -701,6 +713,12 @@ def zme_tp_init():
     ## Set up chiplet hang pulses
     uint8_t pre_divider = bla;
     mod_hangpulse_setup(MCGROUP_GOOD, pre_divider, {{0, 16, 0}, {1, 1, 0}, {5, 6, 0}, {6, 7, 0, 1}})
+
+    ## Set up SBE multipipe unit
+    mod_pipe_setup(PC_ADU, false, PC_SPPE, true,
+                   PC_GSD2PIB, false, PC_SBE, true,
+                   PC_SPPE, true, PC_PME, true,
+                   PC_SPPE, true, PC_SBE, true)
 
     ## Unmask TP PLL unlock reporting
     if not ATTR_FILTER_PLL_BYPASS:
@@ -971,6 +989,12 @@ def p11t_tp_init():
     # We cannot set up constant hang pulses here yet since the generation
     # logic is in the TBUS chiplet. The constant hang pulse setup for Tap
     # will happen at the end of p11t_chiplet_startclocks.
+
+    ## Set up SBE multipipe unit
+    mod_pipe_setup(PC_MMIO, false, PC_SBE, true,
+                   PC_GSD2PIB, false, PC_SBE, true,
+                   PC_NONE, false, PC_NONE, false,
+                   PC_NONE, false, PC_NONE, false)
 
     ## Set up special NET_CTRL1 init value for EQs
     with all EQ chiplets via multicast:
