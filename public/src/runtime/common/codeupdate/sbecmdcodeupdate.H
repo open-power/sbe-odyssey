@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/codeupdate/sbecodeupdate.H $        */
+/* $Source: public/src/runtime/common/codeupdate/sbecmdcodeupdate.H $     */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2015,2023                        */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,25 +21,12 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef SBE_CODE_UPDATE_H
-#define SBE_CODE_UPDATE_H
+#ifndef SBE_CMD_CODE_UPDATE_H
+#define SBE_CMD_CODE_UPDATE_H
 
 #include "sbe_sp_intf.H"
 #include "sha3.H"
-
-#define MAX_PARTITION_TABLE_ENTRY      6
-#define BUILD_TAG_CHAR_MAX_LENGTH      20
-#define PARTITION_TABLE_NAME_MAX_CHAR  16
-#define PARTITION_TABLE_TITLE_LEN      4
-
-/**
- * @brief - Used to decide no of updatable image section count.
- *        - If the updatable image section count is changed then,
- *          we should add appropriate image section type in the
- *          CodeLevelsRespMsg_t::iv_updateableImagesInfo member,
- *          refer constructor.
- */
-#define UPDATABLE_IMG_SECTION_CNT 4
+#include "imagemap.H"
 
 // CU: Code Update
 namespace CU
@@ -143,6 +129,60 @@ namespace CU
     };
 
     /*
+     * @brief structure for update image chip-op
+     */
+    typedef struct __attribute__((__packed__))
+    {
+        uint16_t reserved;
+        uint16_t imageType;
+        uint32_t imageSizeInWords;
+
+        /*
+         * @brief Validate the input parameters
+         *
+         * @param[in] image type
+         * @param[in] image size
+         *
+         * @return rc
+         */
+        uint32_t checkInputParamsValid()
+        {
+            uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+            do
+            {
+                // Check for validity of image type
+                // As we continue to maintain commonality of images across platforms
+                // (unless broken) will just check for validity of image being valid
+                // and during update image respective platform can raise error if
+                // not supported
+                if (imageType == (uint16_t)CU_IMAGES::IMG_TYPE_INVALID ||
+                    imageType >= (uint16_t)CU_IMAGES::END_OF_IMG_LIST)
+                {
+                    rc = SBE_SEC_CU_INVALID_IMAGE_TYPE;
+                    break;
+                }
+
+                // Check for validity of image size
+                if (imageSizeInWords == 0)
+                {
+                    rc = SBE_SEC_CU_INVALID_IMAGE_SIZE;
+                    break;
+                }
+                else if (WORD_TO_BYTES(imageSizeInWords) % 8 != 0)
+                {
+                    rc = SBE_SEC_CU_IMAGE_SIZE_NOT_8BYTE_ALIGNED;
+                    break;
+                }
+            }while(false);
+
+            return rc;
+        }
+
+    }updateImageCmdMsg_t;
+
+
+    /*
      * @brief Structure for image properties
      */
     typedef struct __attribute__((__packed__))
@@ -154,60 +194,8 @@ namespace CU
         uint32_t   reserved[2];
     }imageProperties_t;
 
-    /*
-     * @brief map for image::partition name in partition table
-     */
-    typedef struct
-    {
-        CU_IMAGES imageNum;
-        char      imageName[PARTITION_TABLE_NAME_MAX_CHAR];
-    } imgMap_t;
-
-    //TODO:JIRA-PFSBE-302 Remove cust.pak
-    static const imgMap_t g_imgMap[] = {
-        {CU_IMAGES::BOOTLOADER, "boot"},
-        {CU_IMAGES::RUNTIME,    "rt"},
-        {CU_IMAGES::BMC_OVRD,   "bmc"},
-        {CU_IMAGES::HOST_OVRD,  "host"}
-    };
-
-    ///////////////////////////////////////
-    /////// Partition table format ////////
-    ///////////////////////////////////////
-    // Header: 8 bytes
-    // 4 bytes - Magic word (PTBL)
-    // 2 bytes - Format version
-    // 2 bytes - Number of entries
-    //
-    // For each section entry: 24 bytes
-    // 16 bytes - Section name
-    // 04 bytes - Section offset
-    // 04 bytes - Section max size
-    //
-    // Last section entry:
-    // section size = minus 8 bytes to include trace and metadata pointer
-    /*
-     * @brief Structure for partition entry
-     */
-    typedef struct __attribute__((__packed__))
-    {
-        char     partitionName[PARTITION_TABLE_NAME_MAX_CHAR];
-        uint32_t partitionStartAddr;
-        uint32_t partitionSize;
-    }partitionEntry_t;
-
-    /*
-     * @brief Structure for partition table
-     */
-    typedef struct __attribute__((__packed__))
-    {
-        char     partitionTitle[PARTITION_TABLE_TITLE_LEN];
-        uint16_t partitionVersion;
-        uint16_t numOfEntries;
-        CU::partitionEntry_t partitionEntry[MAX_PARTITION_TABLE_ENTRY];
-    }partitionTable_t;
-
 } // namespace CU
+
 
 /*@brief - sbeGetCodeLevels : Implement SBE Get Code Levels Chipop (0xAE01)
  *
@@ -237,33 +225,47 @@ uint32_t sbeSyncPartition(uint8_t *i_pArg);
  *
  * @param[in]  -const CU_IMAGES i_imageType :i_imageType passed to the function
  * @param[in]  -uint8_t i_Partition : passed to the function
+ * @param[in]  -uint32_t i_storageDevSideSize : Storage device side size
  * @param[out] -uint8_t* o_hashArrayPtr :64-bytes image hash
  *
  * @return - success/ fail
  */
 uint32_t getImageHash(const CU_IMAGES i_imageType,
                       const uint8_t i_Partition,
+                      const uint32_t i_storageDevSideSize,
                       uint8_t* o_hashArrayPtr);
 
-/**
- * @brief getPakEntryFromPartitionTable : Get pak file entry from partition table.
- *        This info can come either from partition side in nor or from image pak
- *        file containing partition table. The function returns the absolute
- *        starting address (incl. partition start address) and size of image pak
- *        file as per the partition table in nor or passed in pak file.
+/*
+ * @brief performEraseInDevice : This API can be used to perform erase in device
+ *                               by calling the plat specific API underneath
  *
- * @param[in]  uint8_t i_partition    : running/ non-running parition info in nor
- * @param[in]  CU_IMAGES i_imageType : enum IMAGES
- * @param[in]  void *i_pakStartAddr   : pointer to image pak start address if pak
- *                                      file containing partition table is passed
- * @param[in]  uint32_t i_pakBufSize   : the size of buffer i_pakStartAddr
- * @param[out] partitionEntry_t *o_pakEntry : returns absolute address with size
+ * @param[in] i_handle : SPI controller
+ * @param[in] i_codeUpdateCtrlStruct struct used to contains various
+ *            parameters needed for code-update
  *
- * @return    RC success/fail
+ * @return fapiRc
  */
-uint32_t getPakEntryFromPartitionTable(const uint8_t i_partition,
-                                       const CU_IMAGES i_imageType,
-                                       void *i_pakStartAddr,
-                                       uint32_t i_pakBufSize,
-                                       CU::partitionEntry_t *o_pakEntry);
-#endif //SBE_CODE_UPDATE_H
+fapi2::ReturnCode performEraseInDevice(SpiControlHandle& i_handle,
+                                       codeUpdateCtrlStruct_t &i_codeUpdateReqStruct);
+
+
+/*
+ * @brief performWriteInDevice : This API can be used to perform write in device
+ *                               by calling the plat specific API underneath
+ *
+ * @param[in] i_handle : SPI controller handle
+ * @param[in] i_codeUpdateCtrlStruct struct used to contains various
+ *            parameters needed for code-update
+ * @param[in] i_writeLength : Length of data to write to device
+ * @param[in] i_buffer : buffer containing data
+ * @param[in] : i_ecc : true/false : write data with/wo ecc included
+ *
+ * @return fapiRc
+ */
+fapi2::ReturnCode performWriteInDevice(SpiControlHandle& i_handle,
+                                       codeUpdateCtrlStruct_t &i_codeUpdateReqStruct,
+                                       uint32_t i_writeLength,
+                                       void *i_buffAddr,
+                                       bool i_ecc);
+
+#endif //SBE_CMD_CODE_UPDATE_H

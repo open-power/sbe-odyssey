@@ -28,46 +28,114 @@
 #include "sbetrace.H"
 #include "codeupdateutils.H"
 
-void getPartitionInfo(uint8_t &o_runningPartition,
-                      uint8_t &o_nonRunningPartition)
+#define NOR_BASE_ADDRESS_MASK           0xFF000000
+#define NOR_FLASH_SECTOR_BOUNDARY_ALIGN 0xFFFFF000
+#define MAX_BUFFER_SIZE                 0x10000 // 64KB - In bytes always
+#define SPI_ENGINE_NOR                  0
+
+
+void getSideInfo(uint8_t &o_runningSide,
+                 uint8_t &o_nonRunningSide)
 {
-    #define SBE_FUNC " getPartitionInfo "
+    #define SBE_FUNC " getSideInfo "
     SBE_ENTER(SBE_FUNC);
 
-    //to get running partition
-    o_runningPartition=SbeRegAccess::theSbeRegAccess().getBootSelection();
+    // to get running side
+    o_runningSide=SbeRegAccess::theSbeRegAccess().getBootSelection();
 
-    // to get non-running partition
-    if (o_runningPartition == SIDE_0_INDEX)
+    // to get non-running side
+    if (o_runningSide == SIDE_0_INDEX)
     {
         // if booting from primary then making non-running is secondary
-        o_nonRunningPartition = SIDE_1_INDEX;
+        o_nonRunningSide = SIDE_1_INDEX;
     }
-    else if (o_runningPartition == SIDE_1_INDEX)
+    else if (o_runningSide == SIDE_1_INDEX)
     {
         // if booting from secondary then making non-running is primary
-        o_nonRunningPartition = SIDE_0_INDEX;
+        o_nonRunningSide = SIDE_0_INDEX;
     }
-    else if (o_runningPartition == GOLDEN_SIDE_INDEX)
+    else if (o_runningSide == GOLDEN_SIDE_INDEX)
     {
         // if booting from golden then making non-running is primary
-        o_nonRunningPartition = SIDE_0_INDEX;
+        o_nonRunningSide = SIDE_0_INDEX;
     }
 
     SBE_EXIT(SBE_FUNC);
     #undef SBE_FUNC
 }
 
-void getPartitionAddress(const uint8_t i_partition, uint32_t &o_partitionStartAddress)
+void getSideAddress(const uint8_t i_side, uint32_t &o_sideStartAddress)
 {
-    #define SBE_FUNC " getPartitionAddress "
+    #define SBE_FUNC " getSideAddress "
     SBE_ENTER(SBE_FUNC);
 
-    // Get the partition start offset
-    o_partitionStartAddress = getAbsPartitionAddr(i_partition);
-    SBE_INFO(SBE_FUNC "For Partition: [0x%02x] Partition Start Address:[0x%08x]",
-             i_partition, o_partitionStartAddress);
+    // Get the side start offset
+    o_sideStartAddress = getAbsPartitionAddr(i_side);
+    SBE_INFO(SBE_FUNC "For Side: [0x%02x] Side Start Address:[0x%08x]",
+             i_side, o_sideStartAddress);
 
     SBE_EXIT(SBE_FUNC);
     #undef SBE_FUNC
+}
+
+void getCodeUpdateParams(codeUpdateCtrlStruct_t &io_codeUpdateCtrlStruct)
+{
+    #define SBE_FUNC " getCodeUpdateParams "
+    SBE_ENTER(SBE_FUNC);
+
+    // Get storage dev params
+    io_codeUpdateCtrlStruct.storageDevStruct.storageDevBaseAddress      = NOR_SIDE_0_START_ADDR;
+    io_codeUpdateCtrlStruct.storageDevStruct.storageDevBaseAddressMask  = NOR_BASE_ADDRESS_MASK;
+    io_codeUpdateCtrlStruct.storageDevStruct.storageDevSideSize         = NOR_SIDE_SIZE;
+    io_codeUpdateCtrlStruct.storageDevStruct.storageSectorBoundaryAlign = NOR_FLASH_SECTOR_BOUNDARY_ALIGN;
+    io_codeUpdateCtrlStruct.storageDevStruct.storageSubSectorCheckMask  = NOR_FLASH_SUB_SECTOR_BOUNDARY_CHECK_MASK;
+    io_codeUpdateCtrlStruct.storageDevStruct.storageSubSectorSize       = NOR_FLASH_SUB_SECTOR_SIZE;
+    io_codeUpdateCtrlStruct.storageDevStruct.devEngineNum               = SPI_ENGINE_NOR;
+    io_codeUpdateCtrlStruct.storageDevStruct.maxBufferSize              = MAX_BUFFER_SIZE;
+
+    // Get side info from booted device
+    getSideInfo(io_codeUpdateCtrlStruct.runSideIndex,
+                io_codeUpdateCtrlStruct.nonRunSideIndex);
+
+    SBE_INFO(SBE_FUNC "RunSide:[%d] NonRunSide:[%d] MaxBuf:[0x%08x]",
+             io_codeUpdateCtrlStruct.runSideIndex,
+             io_codeUpdateCtrlStruct.nonRunSideIndex,
+             io_codeUpdateCtrlStruct.storageDevStruct.maxBufferSize);
+
+    SBE_EXIT(SBE_FUNC);
+    #undef SBE_FUNC
+}
+
+
+fapi2::ReturnCode deviceErase(SpiControlHandle& i_handle,
+                              uint32_t i_eraseStartAddress,
+                              uint32_t i_eraseEndAddress)
+{
+    return spi_erase_and_no_preserve(i_handle,
+                                     i_eraseStartAddress,
+                                     i_eraseEndAddress);
+}
+
+
+fapi2::ReturnCode deviceWrite(SpiControlHandle& i_handle,
+                              uint32_t i_writeAddress,
+                              uint32_t i_writeLength,
+                              void *i_buffer,
+                              bool i_ecc)
+{
+    if (i_ecc == true)
+    {
+        return spi_write_ecc(i_handle,
+                             i_writeAddress,
+                             i_writeLength,
+                             (uint8_t *)i_buffer,
+                             i_ecc);
+    }
+    else
+    {
+        return spi_write(i_handle,
+                         i_writeAddress,
+                         i_writeLength,
+                         (uint8_t *)i_buffer);
+    }
 }
