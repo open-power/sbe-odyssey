@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/codeupdate/sbecodeupdate.C $        */
+/* $Source: public/src/runtime/common/codeupdate/sbecmdcodeupdate.C $     */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2023                        */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,21 +21,14 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#include "sbecmdupdateimage.H"
-#include "sbecodeupdate.H"
+#include "sbecmdcodeupdate.H"
+#include "sbeupdateimage.H"
 #include "codeupdateutils.H"
 #include "chipop_struct.H"
-#include "sbe_sp_intf.H"
 #include "pakwrapper.H"
 #include "filenames.H"
 #include "sbeutil.H"
-#include "sbe_sp_intf.H"
 #include "plat_hwp_data_stream.H"
-#include "target.H"
-
-using namespace fapi2;
-
-const uint32_t partition_table_magic_word = 0x5054424C; //"PTBL"
 
 ////////////////////////////////////////////////////////
 //////// Get Code Levels Chip-op ///////////////////////
@@ -52,6 +44,9 @@ uint32_t sbeGetCodeLevels (uint8_t *i_pArg)
     chipOpParam_t* l_configStr((struct chipOpParam*)i_pArg);
     sbeFifoType l_fifoType(static_cast<sbeFifoType>(l_configStr->fifoType));
     SBE_DEBUG(SBE_FUNC "Fifo Type is:[%02X]", l_fifoType);
+
+    // Request structure for code-update params needed
+    codeUpdateCtrlStruct_t l_codeUpdateCtrlStruct;
 
     sbeRespGenHdr_t l_hdr;
     l_hdr.init();
@@ -73,9 +68,12 @@ uint32_t sbeGetCodeLevels (uint8_t *i_pArg)
             break;
         }
 
-        uint8_t l_runningPart;
-        uint8_t l_nonRunningPart; // unused now
-        getPartitionInfo(l_runningPart, l_nonRunningPart);
+        // Get code-update parameters populated
+        getCodeUpdateParams(l_codeUpdateCtrlStruct);
+
+        uint8_t l_runningSide;
+        uint8_t l_nonRunningSide;
+        getSideInfo(l_runningSide, l_nonRunningSide);
 
         // Use only for secondary rc to send in the response header
         uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
@@ -84,7 +82,9 @@ uint32_t sbeGetCodeLevels (uint8_t *i_pArg)
         {
             l_rc = getImageHash(l_codeLevelsRespMsg.iv_updateableImagesInfo[i].
                                     iv_imageType,
-                                l_runningPart,
+                                l_runningSide,
+                                l_codeUpdateCtrlStruct.storageDevStruct.
+                                    storageDevSideSize,
                                 l_codeLevelsRespMsg.iv_updateableImagesInfo[i].
                                     iv_imageHashSHA3_512);
             if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
@@ -92,7 +92,7 @@ uint32_t sbeGetCodeLevels (uint8_t *i_pArg)
                 SBE_ERROR(SBE_FUNC \
                           "Failed to get image hash, "
                           "RC[0x%08x] RunningSide[%d] ImageType[%d]",
-                          l_rc, l_runningPart, l_codeLevelsRespMsg.
+                          l_rc, l_runningSide, l_codeLevelsRespMsg.
                              iv_updateableImagesInfo[i].iv_imageType);
                 l_hdr.setStatus(SBE_PRI_GENERIC_EXECUTION_FAILURE, l_rc);
                 break;
@@ -154,12 +154,13 @@ uint32_t sbeGetCodeLevels (uint8_t *i_pArg)
 ////////////////////////////////////////////////////////
 uint32_t sbeUpdateImage (uint8_t *i_pArg)
 {
-#define SBE_FUNC " sbeUpdateImage "
+    #define SBE_FUNC " sbeUpdateImage "
     SBE_ENTER(SBE_FUNC);
 
     uint32_t fifoRc = SBE_SEC_OPERATION_SUCCESSFUL;
     ReturnCode fapiRc = FAPI2_RC_SUCCESS;
-    updateImageCmdMsg_t msg;
+    uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    CU::updateImageCmdMsg_t msg;
     sbeRespGenHdr_t hdr;
     hdr.init();
     sbeResponseFfdc_t ffdc;
@@ -181,38 +182,13 @@ uint32_t sbeUpdateImage (uint8_t *i_pArg)
 
         // Get image type and its size to update in nor
         SBE_INFO(SBE_FUNC "ImageType: 0x%04x , ImageSize(bytes): 0x%08x",
-                 msg.imageType, IN_BYTES(msg.imageSizeInWords));
+                 msg.imageType, WORD_TO_BYTES(msg.imageSizeInWords));
 
-        // Check for validity of image type
-        if (msg.imageType != (uint16_t)CU_IMAGES::BOOTLOADER &&
-            msg.imageType != (uint16_t)CU_IMAGES::RUNTIME &&
-            msg.imageType != (uint16_t)CU_IMAGES::BMC_OVRD &&
-            msg.imageType != (uint16_t)CU_IMAGES::HOST_OVRD)
+        // Check for validity of input parameters
+        rc = msg.checkInputParamsValid();
+        if (rc)
         {
-            // TODO:PFSBE-311 for using END_OF_IMG_LIST
-            if (msg.imageType == (uint16_t)CU_IMAGES::IMG_TYPE_INVALID ||
-                msg.imageType >= (uint16_t)CU_IMAGES::END_OF_IMG_LIST)
-            {
-                SBE_ERROR(SBE_FUNC "Image type invalid: [0x%04x]", msg.imageType);
-                hdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                               SBE_SEC_CU_INVALID_IMAGE_TYPE );
-                break;
-            }
-        }
-
-        // Check for validity of image size
-        if (msg.imageSizeInWords == 0)
-        {
-            SBE_ERROR(SBE_FUNC "Invalid image size zero received");
-            hdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                           SBE_SEC_CU_INVALID_IMAGE_SIZE );
-            break;
-        }
-        else if (IN_BYTES(msg.imageSizeInWords) % 8 != 0)
-        {
-            SBE_ERROR(SBE_FUNC "Image size [0x%08x] not 8 byte aligned", msg.imageSizeInWords);
-            hdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                           SBE_SEC_CU_IMAGE_SIZE_NOT_8BYTE_ALIGNED );
+            hdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE, rc );
             break;
         }
 
@@ -240,6 +216,8 @@ uint32_t sbeUpdateImage (uint8_t *i_pArg)
 
     do
     {
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(fifoRc);
+
         if ((hdr.secondaryStatus() != SBE_SEC_OPERATION_SUCCESSFUL) &&
             (ackEOT == false))
         {
@@ -254,7 +232,7 @@ uint32_t sbeUpdateImage (uint8_t *i_pArg)
 
     SBE_EXIT(SBE_FUNC);
     return fifoRc;
-#undef SBE_FUNC
+    #undef SBE_FUNC
 }
 
 ////////////////////////////////////////////////////////
@@ -308,7 +286,8 @@ uint32_t sbeSyncPartition (uint8_t *i_pArg)
 }
 
 uint32_t getImageHash(const CU_IMAGES i_imageType,
-                      const uint8_t i_Partition,
+                      const uint8_t i_side,
+                      const uint32_t i_storageDevSideSize,
                       uint8_t* o_hashArrayPtr)
 {
     #define SBE_FUNC " getImageHash "
@@ -317,13 +296,13 @@ uint32_t getImageHash(const CU_IMAGES i_imageType,
     uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
     ARC_RET_t l_pakRC = ARC_OPERATION_SUCCESSFUL;
     uint32_t l_size = 0;
-    uint32_t l_partitionStartAddress = 0;
+    uint32_t l_sideStartAddress = 0;
 
     do
     {
-        //To get partition start address
-        getPartitionAddress(i_Partition,l_partitionStartAddress);
-        PakWrapper pak((void *)l_partitionStartAddress, (void *)(l_partitionStartAddress + NOR_PARTITION_SIZE));
+        //To get side start address
+        getSideAddress(i_side,l_sideStartAddress);
+        PakWrapper pak((void *)l_sideStartAddress, (void *)(l_sideStartAddress + i_storageDevSideSize));
 
         switch (i_imageType)
         {
@@ -383,159 +362,57 @@ uint32_t getImageHash(const CU_IMAGES i_imageType,
     #undef SBE_FUNC
 }
 
-uint32_t getPakEntryFromPartitionTable(const uint8_t i_partition,
-                                       const CU_IMAGES i_imageType,
-                                       void *i_pakStartAddr,
-                                       uint32_t i_pakBufSize,
-                                       CU::partitionEntry_t *o_pakEntry)
+
+fapi2::ReturnCode performEraseInDevice(SpiControlHandle& i_handle,
+                                       codeUpdateCtrlStruct_t &i_codeUpdateCtrlStruct)
 {
-    #define SBE_FUNC " getPakEntryFromPartitionTable "
-    SBE_ENTER(SBE_FUNC);
+    #define SBE_FUNC " performEraseInDevice "
 
-    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
-    char l_sectionPakName[PARTITION_TABLE_NAME_MAX_CHAR] = {NULL};
-    CU::partitionTable_t *l_partitionTable = NULL;
+    // Note: both start and end address for erase operation
+    // must be 4K aligned with ECC byte included
+    // Note: Would need to have alignment check for start address but it may
+    // not work for bootloader today as its not aligned. As we dont expect any
+    // frequent changes in partition table in Odyssey (also its frozen) so we
+    // can defer to check for alignment and raise error if any, for later.
+    // TODO:JIRA:PFSBE-387
+    uint32_t eraseStartAddress = WITH_ECC(i_codeUpdateCtrlStruct.imageStartAddr) &
+                                 i_codeUpdateCtrlStruct.storageDevStruct.storageSectorBoundaryAlign;
 
-    do
+    // Erase end address may not be aligned to the sector boundary as its dependent
+    // on the incoming image size. Erase API accept the last byte of the sector as the
+    // end address so finding the last byte of the sector contaning this. This logic
+    // would not cross to the next image as the image always starts at sector boundary
+    uint32_t eraseEndAddress = WITH_ECC(i_codeUpdateCtrlStruct.imageStartAddr +
+                               WORD_TO_BYTES(i_codeUpdateCtrlStruct.imageSizeInWords) - 1);
+
+    if (((eraseEndAddress + 1 ) & i_codeUpdateCtrlStruct.storageDevStruct.storageSubSectorCheckMask) != 0)
     {
-        uint32_t l_partitionStartAddress = 0;
-        uint8_t  l_numOfEntries = 0;
-        uint32_t l_fileSize = 0;
+        // Find the start address of this sector
+        eraseEndAddress &= i_codeUpdateCtrlStruct.storageDevStruct.storageSectorBoundaryAlign;
+        // Find the start address of the next sector
+        eraseEndAddress = eraseEndAddress + i_codeUpdateCtrlStruct.storageDevStruct.storageSubSectorSize;
+        // Find the last address of this sector
+        eraseEndAddress -= 1;
+    }
 
-        // Get the partition start offset
-        getPartitionAddress(i_partition, l_partitionStartAddress);
+    SBE_INFO(SBE_FUNC "Perform erase opreration: Start address:[0x%08x] End address:[0x%08X].",
+                      eraseStartAddress, eraseEndAddress);
 
-        // Check for valid partition start address
-        if (l_partitionStartAddress == 0)
-        {
-            SBE_ERROR("Invalid partition id %d. Returned partition start address is zero",
-                       i_partition);
-            l_rc = SBE_SEC_CU_INVALID_PARTITION_ID_PASSED;
-            break;
-        }
-
-        // Init pakwrapper with either partition start address or
-        // pak file start address. For pak start address valid partition
-        // id to be passed as well
-        uint32_t l_pakStart = (i_pakStartAddr == NULL ? l_partitionStartAddress : (uint32_t)i_pakStartAddr);
-        uint32_t l_pakMaxSize = (i_pakStartAddr == NULL ? NOR_PARTITION_SIZE : (uint32_t)i_pakBufSize);
-        PakWrapper pak((void *)l_pakStart, (void*)(l_pakStart + l_pakMaxSize));
-
-        // Get partition table start offset
-        // Note: partition table is uncompressed.
-        // This API returns start ptr only if file is uncompressed
-        ARC_RET_t l_pakRc = ARC_OPERATION_SUCCESSFUL;
-        uint32_t *l_filePtr = NULL;
-        l_pakRc = pak.get_image_start_ptr_and_size(partition_table_file_name, &l_filePtr, &l_fileSize);
-        if (l_pakRc != ARC_OPERATION_SUCCESSFUL)
-        {
-            // TODO:JIRA-PFSBE-300 - If file is compressed then uncompress to read it
-            if (l_pakRc == ARC_FUNCTIONALITY_NOT_SUPPORTED)
-            {
-                SBE_ERROR(" File is compressed. Expected uncompressed file. RC:[0x%08x] ",
-                           l_pakRc);
-                l_rc = SBE_SEC_CU_FAILED_TO_READ_COMPRESSED_FILE;
-            }
-            else
-            {
-                SBE_ERROR(" Failed to read the partition table start offset. RC:[0x%08x] ",
-                           l_pakRc);
-                l_rc = SBE_SEC_CU_FAILED_TO_READ_PARTITION_TABLE;
-            }
-            break;
-        }
-
-        // Compare returned file size of partition table
-        if (l_fileSize == 0)
-        {
-            SBE_ERROR(SBE_FUNC "Partition table size is zero");
-            l_rc = SBE_SEC_CU_PARTITION_TABLE_IS_EMPTY;
-            break;
-        }
-
-        // Get partition table entry
-        l_partitionTable = (CU::partitionTable_t *)l_filePtr;
-        l_numOfEntries   = l_partitionTable->numOfEntries;
-
-        SBE_DEBUG(SBE_FUNC "Number of entries in partition table:0x%02x",
-                  l_partitionTable->numOfEntries);
-
-        // Check for matching partition magic word in partition table
-        // TODO:JIRA-PFSBE-301 Check for version in partition table
-        if (partition_table_magic_word != *(uint32_t *)(l_partitionTable->partitionTitle))
-        {
-            SBE_ERROR(SBE_FUNC "Partition magic word mismatch."\
-                      "Expected:[0x%08x] Original:[0x%08x]."\
-                      "Partition table start addr:[0x%08x]",
-                      partition_table_magic_word,
-                      *(uint32_t *)l_partitionTable->partitionTitle,
-                      l_filePtr);
-            l_rc = SBE_SEC_CU_PARTITION_MAGIC_WORD_MISMATCH;
-            break;
-        }
-
-        // Based on imageType, get the equivalent pak file name in partition table
-        // from the mapping structure
-        uint8_t l_id = 0;
-        uint8_t l_maxMapImgNameEntries = sizeof(CU::g_imgMap)/sizeof(CU::g_imgMap[0]);
-        for(l_id=0; l_id < l_maxMapImgNameEntries; l_id++)
-        {
-            // Check for mapping name as per partition table
-            if (CU::g_imgMap[l_id].imageNum == i_imageType)
-            {
-                strcpy(l_sectionPakName,
-                       CU::g_imgMap[l_id].imageName);
-                break;
-            }
-        }
-
-        if (l_id == l_maxMapImgNameEntries)
-        {
-            SBE_ERROR(SBE_FUNC "Image type:[0x%04x] not found in mapping"\
-                               "to partiton table", i_imageType);
-            l_rc = SBE_SEC_CU_PARTITION_MAP_INVALID_IMG_TYPE;
-            break;
-        }
-
-        SBE_DEBUG(SBE_FUNC "Partition info index:[%d], ImageNum:[0x%04x]",\
-                 l_id, (uint16_t)CU::g_imgMap[l_id].imageNum);
-
-        // Based on pak file name from map above, search for it in the partition table
-        // if found, get the image pak's starting offset and its size
-        for(l_id=0; l_id < l_numOfEntries; l_id++)
-        {
-            // Compare section name with pak file name expected
-            if (!strcmp(l_sectionPakName,
-                        l_partitionTable->partitionEntry[l_id].partitionName))
-            {
-                strcpy(o_pakEntry->partitionName,
-                       l_partitionTable->partitionEntry[l_id].partitionName);
-                // Get absolute address for image start address in NOR
-                o_pakEntry->partitionStartAddr =
-                    l_partitionTable->partitionEntry[l_id].partitionStartAddr +
-                    l_partitionStartAddress;
-                o_pakEntry->partitionSize      =
-                    l_partitionTable->partitionEntry[l_id].partitionSize;
-                break;
-            }
-        }
-
-        if (l_id == l_numOfEntries)
-        {
-            SBE_ERROR(SBE_FUNC "Image type:[0x%04x] entry not found in partition"\
-                               "table. Section pak name:[0x%08x]", i_imageType,
-                               *(uint32_t *)l_sectionPakName);
-            l_rc = SBE_SEC_CU_IMG_NOT_FOUND_IN_PARTITION_TBL;
-            break;
-        }
-
-        SBE_INFO(SBE_FUNC "PSN:[0x%08x] PSA:[0x%08x] PS:[0x%08x]",\
-                 *(uint32_t *)o_pakEntry->partitionName,
-                 o_pakEntry->partitionStartAddr,
-                 o_pakEntry->partitionSize);
-    } while(false);
-
-    SBE_EXIT(SBE_FUNC);
-    return l_rc;
+    return deviceErase(i_handle, eraseStartAddress, eraseEndAddress);
     #undef SBE_FUNC
 }
+
+
+fapi2::ReturnCode performWriteInDevice(SpiControlHandle& i_handle,
+                                       codeUpdateCtrlStruct_t &i_codeUpdateCtrlStruct,
+                                       uint32_t i_writeLength,
+                                       void *i_bufferAddr,
+                                       bool i_ecc)
+{
+    return deviceWrite(i_handle,
+                       i_codeUpdateCtrlStruct.imageStartAddr,
+                       i_writeLength,
+                       (void *)i_bufferAddr,
+                       i_ecc);
+}
+
