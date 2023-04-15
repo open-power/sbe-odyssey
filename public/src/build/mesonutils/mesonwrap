@@ -219,24 +219,7 @@ fi
 
 if [ "$1" == "clean" ]; then
     echo "Removing...."
-    CMD="rm -rf $MESON_INSTALL_DIR"
-    echo $CMD
-    $CMD || exit -1
-
-    CMD="rm -rf $SBEROOT/genfiles"
-    echo $CMD
-    $CMD || exit -1
-
-    echo "Cleaning up builddir...."
-    CMD="rm -rf $SBEROOT/builddir/public"
-    echo $CMD
-    $CMD || exit -1
-
-    CMD="rm -rf $SBEROOT/builddir/internal"
-    echo $CMD
-    $CMD || exit -1
-
-    CMD="$BASE_CMD compile --clean -C $MESON_BUILD_DIR"
+    CMD="rm -rf $MESON_INSTALL_DIR $SBEROOT/genfiles $SBEROOT/builddir $SBEROOT/simics/sbe/"
     exc_cmd "$CMD"
 fi
 
