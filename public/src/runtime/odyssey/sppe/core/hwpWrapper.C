@@ -241,9 +241,9 @@ ReturnCode sbeexecutehwponpak( voidfuncptr_t i_hwp, uint8_t* const i_bin_data,
     ReturnCode fapiRc = FAPI2_RC_SUCCESS;
 
     Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
-    SBE_EXEC_HWP(fapiRc, reinterpret_cast<ody_common_image_load_FP_t>( i_hwp ),
+    SBE_EXEC_HWP(fapiRc, reinterpret_cast<poz_common_image_load_FP_t>( i_hwp ),
                  l_ocmb_chip, (uint8_t *)i_bin_data, i_bin_size, i_bin_offset,
-                 static_cast<ody_image_type>(i_ioppeImage));
+                 static_cast<poz_image_type>(i_ioppeImage));
     return fapiRc;
     #undef SBE_FUNC
 }

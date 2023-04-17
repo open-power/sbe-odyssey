@@ -52,7 +52,7 @@ extern "C"
                                     uint8_t* const i_dmem_data,
                                     const uint32_t i_dmem_size,
                                     const uint32_t i_dmem_offset,
-                                    ody_image_type /*unused*/)
+                                    poz_image_type /*unused*/)
     {
         mss::display_git_commit_info("ody_load_dmem");
         FAPI_TRY(mss::ody::phy::ody_load_dmem_helper(i_target, i_dmem_data, i_dmem_size, i_dmem_offset));

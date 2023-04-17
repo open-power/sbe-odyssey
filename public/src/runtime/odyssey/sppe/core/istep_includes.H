@@ -49,6 +49,6 @@
 #include <ody_nest_enable_io.H>
 #include <poz_cmdtable_interpreter.H>
 #include <ody_sppe_attr_setup.H>
-#include <ody_common_image_load.H>
+#include <poz_common_image_load.H>
 
 #endif
