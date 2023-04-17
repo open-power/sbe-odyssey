@@ -167,7 +167,7 @@ class ErrorInfoFfdc
         uint32_t iv_ffdcId;
 
         // Pointer to the FFDC
-        std::shared_ptr<uint8_t> iv_pFfdc;
+        std::shared_ptr<uint8_t[]> iv_pFfdc;
 
         // Size of the FFDC
         uint32_t iv_size;

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -52,7 +52,7 @@ ErrorInfoFfdc::ErrorInfoFfdc(const uint32_t i_ffdcId,
     iv_ffdcId(i_ffdcId),
     iv_size(i_size)
 {
-    iv_pFfdc = std::shared_ptr<uint8_t>(new uint8_t[i_size]());
+    iv_pFfdc = std::shared_ptr<uint8_t[]>(new uint8_t[i_size]());
 
     // If they passed us a NULL pointer they want to fill
     // in the data themselves later.
