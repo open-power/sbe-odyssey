@@ -60,6 +60,7 @@
 #define BOOT_RC_INVALID_PAK_MAGIC        0x105
 #define BOOT_RC_INVALID_FN_SIZE          0x106
 #define BOOT_RC_FILE_COMPRESSED          0x107
+#define BOOT_RC_PARTITION_OVERRUN        0x108
 
 // 0x110..0x11f - errors during command table execution
 #define BOOT_RC_INSTRUCTION_OVERRUN 0x110

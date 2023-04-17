@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -117,7 +117,8 @@ cust_fsm_fname:
         //
         // @param[in]    r1   file name start address
         // @param[in]    r2   file name length, excluding trailing null byte
-        // @param[in]    r3   will contain NOR partition offset, this should not be modified
+        // @param[in]    r3   NOR partition start, this should not be modified
+        // @param[in]    r4   NOR partition limit (first invalid address), this should not be modified
         //
         // @return       r1   start of file in PPE address space, or 0 if file not found
         // @return       r2   length of file
@@ -125,15 +126,22 @@ cust_fsm_fname:
         // May clobber any GPR except r28..r31
         .global locate_seeprom_file
 locate_seeprom_file:
-        cmpwibeq %r2, 8, 1f             # we're assuming that the file size is 8 below
-        panic   BOOT_RC_INVALID_FN_SIZE   # so panic if not
-
+        cmpwibeq %r2, 8, 1f             # we're assuming that the file name size is 8 below
+        panic   BOOT_RC_INVALID_FN_SIZE # so panic if not
 1:
-        mr      %r4, %r3
+        mr      %r13, %r3               # Use r13 as the pointer into SEEPROM
+
 check_magic:
-        lwz     %r5, 0(r4)              # Load the magic word from pak file
+        cmpwblt %r13, %r3, partition_overrun  # Check that we're still within the partition limits
+        cmpwblt %r13, %r4, 1f           # in either direction
+
+partition_overrun:
+        panic   BOOT_RC_PARTITION_OVERRUN
+1:
+        lwz     %r5, 0(%r13)            # Load the magic word from pak file
         _liw    %r6, PAK_MAGIC_END      # Load end magic value
         cmpwbne %r5, %r6, 1f
+
 return_empty_file:
         li      %r1, 0
         blr
@@ -146,38 +154,43 @@ return_empty_file:
         panic   BOOT_RC_INVALID_PAK_MAGIC  # None of the above - panic
 
 skip_padding:
-        lwz     %r5, 4(r4)              # Load amount of bytes to skip and advance the read pointer
-        addi    %r4, %r4, 8
-        add     %r4, %r4, %r5
+        lwz     %r5, 4(%r13)            # Load amount of bytes to skip and advance the read pointer
+        addi    %r13, %r13, 8
+        add     %r13, %r13, %r5
         b       check_magic
 
 process_file_entry:
-        lhz     %r5, PAK_CORE_HE_SIZE_OFFSET(%r4)
-        lwz     %r6, PAK_EXT_P_SIZE_OFFSET(%r4)
-        lhz     %r7, PAK_EXT_N_SIZE_OFFSET(%r4)
+        lhz     %r5, PAK_CORE_HE_SIZE_OFFSET(%r13)
+        lwz     %r6, PAK_EXT_P_SIZE_OFFSET(%r13)
+        lhz     %r7, PAK_EXT_N_SIZE_OFFSET(%r13)
         cmpwbne %r7, %r2, jump_to_next_file     # compare iv_nsize with r2 (input file name size)
         lvd     %d7, 0(%r1)                     # read the expected file name (assuming always 8 byte)
-        lwz     %r9, PAK_EXT_NAME_OFFSET(%r4)   # read the name from NOR (1st 4-bytes, since address is not aligned)
-        lwz     %r10, PAK_EXT_NAME_OFFSET + 4(%r4)      # 2nd 4-bytes
-        cmpwbne %r7, %r9, jump_to_next_file      # compare MS-Word
-        cmpwbne %r8, %r10, jump_to_next_file     # compare LS-Word
+        lwz     %r9, PAK_EXT_NAME_OFFSET(%r13)  # read the name from NOR (1st 4-bytes, since address is not aligned)
+        lwz     %r10, PAK_EXT_NAME_OFFSET + 4(%r13)      # 2nd 4-bytes
+        cmpwbne %r7, %r9, jump_to_next_file     # compare MS-Word
+        cmpwbne %r8, %r10, jump_to_next_file    # compare LS-Word
 
 return_file_pointer:
-        lbz     %r1, PAK_EXT_METHOD_OFFSET(%r4)
+        lbz     %r1, PAK_EXT_METHOD_OFFSET(%r13)
         cmpwibeq %r1, 1, 1f             # panic if the file is compressed
         panic   BOOT_RC_FILE_COMPRESSED
 
 1:
-        addi    %r1, %r4, 8             # add core header size
+        addi    %r1, %r13, 8            # add core header size
         add     %r1, %r1, %r5           # add iv_hesize
-        lwz     %r2, PAK_EXT_D_SIZE_OFFSET(%r4)
+        lwz     %r2, PAK_EXT_D_SIZE_OFFSET(%r13)
+
+        # check that the end of the file does not exceed the partition boundaries
+        add     %r5, %r1, %r2
+        cmpwblt %r5, %r3, partition_overrun
+        cmpwbge %r5, %r4, partition_overrun
         blr
 
 jump_to_next_file:
-        # move r4 (pak pointer) to next file entry
-        addi    %r4, %r4, 8             # add core header size
-        add     %r4, %r4, %r5           # add iv_hesize
-        add     %r4, %r4, %r6           # add iv_psize
+        # move r13 (pak pointer) to next file entry
+        addi    %r13, %r13, 8           # add core header size
+        add     %r13, %r13, %r5         # add iv_hesize
+        add     %r13, %r13, %r6         # add iv_psize
         b       check_magic
 
 ////////////////////////////////////////////////////////////////////////////////
