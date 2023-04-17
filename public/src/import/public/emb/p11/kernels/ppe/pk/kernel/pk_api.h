@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -539,15 +539,15 @@ typedef struct
      pk_trace_big(HASH_ARG_COMBO(str, 1), ((uint64_t)(parm0)) << 32, 0))
 
 #define PKTRACE3(str, parm0, parm1) \
-    pk_trace_big(HASH_ARG_COMBO(str, 2), ((((uint64_t)(parm0)) << 32) | (parm1)), 0)
+    pk_trace_big(HASH_ARG_COMBO(str, 2), ((((uint64_t)(parm0)) << 32) | (uint32_t)(parm1)), 0)
 
 #define PKTRACE4(str, parm0, parm1, parm2) \
-    pk_trace_big(HASH_ARG_COMBO(str, 3), ((((uint64_t)(parm0)) << 32) | (parm1)), \
+    pk_trace_big(HASH_ARG_COMBO(str, 3), ((((uint64_t)(parm0)) << 32) | (uint32_t)(parm1)), \
                  ((uint64_t)(parm2)) << 32 )
 
 #define PKTRACE5(str, parm0, parm1, parm2, parm3) \
-    pk_trace_big(HASH_ARG_COMBO(str, 4), ((((uint64_t)(parm0)) << 32) | (parm1)), \
-                 ((((uint64_t)(parm2)) << 32) | (parm3)) )
+    pk_trace_big(HASH_ARG_COMBO(str, 4), ((((uint64_t)(parm0)) << 32) | (uint32_t)(parm1)), \
+                 ((((uint64_t)(parm2)) << 32) | (uint32_t)(parm3)) )
 
 #define PKTRACE6(...) pk_trace_tiny() //will fail at compile time
 #define PKTRACE7(...) pk_trace_tiny() //will fail at compile time
