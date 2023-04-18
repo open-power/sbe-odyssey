@@ -36,6 +36,7 @@
 #include <fapi2.H>
 #include <poz_common_stopclocks.H>
 #include <poz_common_stopclocks_flags.H>
+#include <poz_perv_common_params.H>
 
 /// @brief Stop clocks for TP chiplet
 ///
@@ -46,7 +47,8 @@
 fapi2::ReturnCode poz_tp_stopclocks(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     const StopClocksFlags i_stopclocks_flags,
-    bool i_pcb_accessible);
+    const bool i_pcb_accessible,
+    const mux::mux_type i_bypass_mux = mux::FSI2PCB);
 
 /// @brief Stopclocks for all regions of TP chiplet except sbe
 ///
@@ -60,4 +62,5 @@ fapi2::ReturnCode poz_tp_stopclocks_all_regions_except_sbe(
 /// @param[in]     i_target       Reference to TARGET_TYPE_ANY_POZ_CHIP
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode poz_sbe_region_stopclocks(
-    const  fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target);
+    const  fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const mux::mux_type i_bypass_mux);

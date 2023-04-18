@@ -54,7 +54,8 @@ enum POZ_TP_STOPCLOCKS_Private_Constants
 fapi2::ReturnCode poz_tp_stopclocks(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     const StopClocksFlags i_stopclocks_flags,
-    bool i_pcb_accessible)
+    const bool i_pcb_accessible,
+    const mux::mux_type i_bypass_mux)
 {
     fapi2::ReturnCode l_rc;
     NET_CTRL0_t NET_CTRL0;
@@ -87,7 +88,7 @@ fapi2::ReturnCode poz_tp_stopclocks(
 
     if(i_stopclocks_flags & STOP_REGION_SBE)
     {
-        l_rc = poz_sbe_region_stopclocks(i_target);
+        l_rc = poz_sbe_region_stopclocks(i_target, i_bypass_mux);
         FAPI_ASSERT_NOEXIT(l_rc == fapi2::FAPI2_RC_SUCCESS,
                            fapi2::SBE_STOPCLOCKS_ERR()
                            .set_TARGET_CHIP(i_target),
@@ -126,7 +127,8 @@ fapi_try_exit:
 }
 
 fapi2::ReturnCode poz_sbe_region_stopclocks(
-    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target)
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const mux::mux_type i_bypass_mux)
 {
     FSXCOMP_FSXLOG_ROOT_CTRL0_t ROOT_CTRL0;
 
@@ -141,7 +143,7 @@ fapi2::ReturnCode poz_sbe_region_stopclocks(
     else
     {
         FAPI_DBG("Switch mux to FSI2PCB path");
-        FAPI_TRY(mod_switch_pcbmux_cfam(i_target, mux::FSI2PCB));
+        FAPI_TRY(mod_switch_pcbmux_cfam(i_target, i_bypass_mux));
 
         //Using CBS interface to stop clock
         FAPI_DBG("Call module clock start stop for SBE only");
