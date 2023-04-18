@@ -68,6 +68,7 @@ odyssey_abs_core_c_file_paths += [ abs_pak_c_path,
                                     abs_runtime_cmn_stopclock_c_path,
                                     abs_runtime_cmn_tracearray_c_path,
                                     abs_runtime_cmn_fastarray_c_path,
+                                    abs_i2c_driver_cmn_c_path,
                                     odyssey_abs_hwpf_c_file_paths,
                                     odyssey_abs_tgt_c_file_paths,
                                     odyssey_abs_attr_c_file_paths

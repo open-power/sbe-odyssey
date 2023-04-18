@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/common/meson.build $
+# $Source: public/src/runtime/common/drivers/meson.build $
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
-# [+] International Business Machines Corp.
+# Contributors Listed Below - COPYRIGHT 2023
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,10 +22,4 @@
 #
 # IBM_PROLOG_END_TAG
 
-subdir('core')
-subdir('plat')
-subdir('hwpf')
-subdir('utils')
-subdir('codeupdate')
-subdir('chipops')
-subdir('drivers')
+subdir('i2c')
