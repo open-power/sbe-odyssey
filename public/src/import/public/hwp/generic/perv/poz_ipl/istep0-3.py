@@ -307,8 +307,6 @@ def poz_cbs_emulate(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_cl
     if i_start_sbe:
         SB_CS.SB_CS_START_RESTART_VECTOR0 = 1
 
-    mod_cbs_cleanup(i_target)
-
 """
 Step 1: Spinal TP init, SPPE tries to find its feet
 

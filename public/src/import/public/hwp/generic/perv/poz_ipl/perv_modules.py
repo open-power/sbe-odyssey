@@ -258,6 +258,8 @@ def mod_cbs_start_prep(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0
         ASSERT(VDN_PGOOD_NOT_SET)
 
     SB_MSG = 0                        # Clear Selfboot Message Register
+    SB_CS.SB_CS_START_RESTART_VECTOR0 = 0    # Clear SBE start bits to make sure the CBS creates a 0->1 transition
+    SB_CS.SB_CS_START_RESTART_VECTOR1 = 0
     FSB_DOWNFIFO_RESET = 0x80000000   # Reset SBE FIFO
 
     if CBS_ENVSTAT.CBS_ENVSTAT_C4_TEST_ENABLE:
@@ -273,11 +275,6 @@ def mod_cbs_start_prep(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0
     CBS_CS.OPTION_PREVENT_SBE_START = not i_start_sbe
     # write CBS_CS
 
-def mod_cbs_cleanup(target<ANY_POZ_CHIP>):
-    # Cleanup steps not performed by the CBS
-    ROOT_CTRL0.FSI_CC_CBS_CMD = 0          # Clear CBS command to enable clock gating inside clock controller
-    SB_CS.SB_CS_START_RESTART_VECTOR0 = 0  # Clear SBE start bit to facilitate restarts later
-
 def mod_cbs_start(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_clockstart=true):
     # This module uses CFAM accesses for everything
 
@@ -290,8 +287,6 @@ def mod_cbs_start(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_cloc
     wait until CBS_CS.INTERNAL_STATE_VECTOR == CBS_STATE_IDLE, time out after 200 x delay(640us, 750kcyc)
     if timed out:
         ASSERT(CBS_NOT_IN_IDLE_STATE)
-
-    mod_cbs_cleanup(i_target)
 
 def mod_switch_pcbmux(target<ANY_POZ_CHIP>, mux_type i_path):
     uint8_t l_oob_mux_save = ROOT_CTRL0.OOB_MUX
@@ -389,6 +384,10 @@ def mod_multicast_setup(target<ANY_POZ_CHIP>, uint8_t i_group_id, uint64_t i_chi
         putScom(i_target, (PCB_RESPONDER_MULTICAST_GROUP_1 + i_group_id) | (i << 24), (new_group << 58) | (prev_group << 42));
 
 def mod_poz_tp_init_common(target<ANY_POZ_CHIP>):
+    SB_CS.SB_CS_START_RESTART_VECTOR0 = 0    # Clear SBE start bits to be tidy; they're no longer needed now
+    SB_CS.SB_CS_START_RESTART_VECTOR1 = 0
+    ROOT_CTRL0.FSI_CC_CBS_CMD = 0            # Clear CBS command to enable clock gating inside clock controller
+
     # IPOLL_MASK_INIT = 0xF800_0000_0000_0000
     HOST_MASK_REG = IPOLL_MASK_INIT          # Set up IPOLL mask
     CPLT_CTRL2 = ATTR_PG(PERV)               # Transfer PERV partial good attribute into region good register
