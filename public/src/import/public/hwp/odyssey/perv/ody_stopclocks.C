@@ -79,7 +79,7 @@ fapi2::ReturnCode ody_stopclocks(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHI
     {
         // poz_tp_stopclocks will log errors if any
         FAPI_INF("Calling poz_tp_stopclocks...");
-        poz_tp_stopclocks(i_target, i_stopclocks_flags, l_stop_chiplet_clocks_possible);
+        poz_tp_stopclocks(i_target, i_stopclocks_flags, l_stop_chiplet_clocks_possible, mux::I2C2PCB);
     }
 
     // Vital stopclocks
