@@ -34,7 +34,6 @@ namespace fapi2
 
     constexpr TargetType TARGET_TYPE_PROC_CHILDREN = TARGET_TYPE_CHIPLETS;
     constexpr TargetType TARGET_TYPE_PERV_CHILDREN = TARGET_TYPE_CHIPLETS;
-    constexpr TargetType TARGET_TYPE_MC_CHILDREN = TARGET_TYPE_MI;
     constexpr TargetType TARGET_TYPE_MEM_PORT_CHILDREN = TARGET_TYPE_DIMM;
 
     template<TargetType T>
@@ -48,12 +47,6 @@ namespace fapi2
     constexpr LogTargetType fapiTargetTypeToPlatTargetType<SBE_ROOT_CHIP_TYPE>()
     {
         return LOG_SBE_ROOT_CHIP_TYPE;
-    }
-
-    template<>
-    constexpr LogTargetType fapiTargetTypeToPlatTargetType<TARGET_TYPE_MC>()
-    {
-        return LOG_TARGET_TYPE_MC;
     }
 
     template<>
@@ -147,13 +140,6 @@ namespace fapi2
                          "Invalid child target for PERV parent");
             plat_target_sbe_handle child = *this;
             return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_PERV>(child);
-        }
-        else if (T_NO_MCAST == TARGET_TYPE_MC)
-        {
-            STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_MC_CHILDREN) == 0,
-                         "Invalid child target for MC parent");
-            plat_target_sbe_handle child = *this;
-            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_MC>(child);
         }
         else if (T_NO_MCAST == TARGET_TYPE_MEM_PORT)
         {

@@ -237,7 +237,7 @@ namespace fapi2
             Target<TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_BITX> l_tmpTarget(i_parent);
             getScom(l_tmpTarget, 0xF0001, l_enabledTargets);
 
-            if ((i_parent.getTargetType() == LOG_TARGET_TYPE_PERV) || (i_parent.getTargetType() == LOG_TARGET_TYPE_MC) )
+            if ((i_parent.getTargetType() == LOG_TARGET_TYPE_PERV) )
             {
                 // Non-core (i.e. chiplet) target -> loop over all PERV targets, match chiplet ID
                 loopTargetsByChiplet(l_enabledTargets, i_include_nonfunctional, o_children);
