@@ -144,6 +144,7 @@ runtime_cmn_inc_paths = [
     '/public/src/runtime/common/chipops/stopclocks',
     '/public/src/runtime/common/chipops/tracearray',
     '/public/src/runtime/common/chipops/fastarray',
+    '/public/src/runtime/common/drivers/i2c'
         ]
 
 runtime_cmn_code_update_inc_paths = [
