@@ -260,7 +260,6 @@ namespace fapi2
                 {
                     case LOG_TARGET_TYPE_OCMB_CHIP:
                     case LOG_TARGET_TYPE_PERV:
-                    case LOG_TARGET_TYPE_MC:
                     case LOG_TARGET_TYPE_SYSTEM:
                     case LOG_TARGET_TYPE_MEM_PORT:
                     case LOG_TARGET_TYPE_DIMM:

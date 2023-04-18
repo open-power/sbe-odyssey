@@ -14,11 +14,6 @@
         "__targInfo__" : true,
         "ntargets" : 9
     },
-    "TARGET_TYPE_MC" :
-    {
-        "__targInfo__" : true,
-        "ntargets" : 1
-    },
     "TARGET_TYPE_MEM_PORT" :
     {
         "__targInfo__" : true,
