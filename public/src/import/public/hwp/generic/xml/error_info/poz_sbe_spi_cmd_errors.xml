@@ -149,4 +149,25 @@
         </callout>
     </hwpError>
     <!-- *****************************************************************-->
+    <hwpError>
+        <sbeError/>
+        <rc>RC_SBE_SPI_WRITTEN_DATA_MISMATCH</rc>
+        <description>
+            Procedure: Error calling poz_sbe_spi_cmd HWP
+            Error due to the verification of data after writing to
+            flash failed.
+        </description>
+        <ffdc>CHIP_TARGET</ffdc>
+        <ffdc>SPI_ENGINE</ffdc>
+        <ffdc>WRITTEN_DATA_ADDRESS</ffdc>
+        <ffdc>WRITTEN_DATA_LENGTH</ffdc>
+        <gard>
+            <target>CHIP_TARGET</target>
+        </gard>
+        <callout>
+            <target>CHIP_TARGET</target>
+            <priority>HIGH</priority>
+        </callout>
+    </hwpError>
+    <!-- *****************************************************************-->
 </hwpErrors>
