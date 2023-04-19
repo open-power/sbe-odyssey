@@ -38,6 +38,9 @@
 #include <lib/phy/ody_draminit_utils.H>
 #include <generic/memory/mss_git_data_helper.H>
 #include <generic/memory/lib/utils/mss_generic_check.H>
+#include <generic/memory/lib/utils/c_str.H>
+#include <mss_odyssey_attribute_getters.H>
+
 extern "C"
 {
 
@@ -56,6 +59,17 @@ extern "C"
                                     poz_image_type /*unused*/)
     {
         mss::display_git_commit_info("ody_load_imem");
+
+        uint8_t l_draminit_step_enable = 0;
+
+        FAPI_TRY(mss::attr::get_ody_draminit_step_enable(l_draminit_step_enable));
+
+        if (mss::ody::skip_this_step(fapi2::ENUM_ATTR_ODY_DRAMINIT_STEP_ENABLE_LOAD_IMEM, l_draminit_step_enable))
+        {
+            FAPI_INF(TARGTIDFORMAT " ATTR_ODY_DRAMINIT_STEP_ENABLE set to skip ody_load_imem. Exiting...", TARGTID);
+            return fapi2::FAPI2_RC_SUCCESS;
+        }
+
         FAPI_TRY(mss::ody::phy::ody_load_imem_helper(i_target, i_imem_data, i_imem_size, i_imem_offset));
 
     fapi_try_exit:
