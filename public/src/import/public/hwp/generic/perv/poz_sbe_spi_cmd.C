@@ -1745,6 +1745,32 @@ spi_write_secure(SpiControlHandle& i_handle, uint32_t i_address, uint8_t* i_data
 
         // Get write post seq
         FAPI_TRY(spi_write_post_seq(i_handle, i_address));
+
+        // Verify the written data by reading it back and compare
+        // FIXME: The assumption is,
+        //  - The "spi_write_secure" API try to write max
+        //    SEEPROM_SECURE_DATA_LEN_MAX per attempt and also
+        //    the MAX_READ_LENGTH value will be the same as like
+        //    SEEPROM_SECURE_DATA_LEN_MAX so using the given length to write
+        //    as a read length too.
+        //  - Always read with the "RAW_BYTE_ACCESS" since the caller of
+        //    "spi_write_secure" API needs to read with ECC bytes only since
+        //    we will write with ECC byte always.
+        static_assert(SEEPROM_SECURE_DATA_LEN_MAX == MAX_READ_LENGTH,
+                      "Mismatch between SEEPROM_SECURE_DATA_LEN_MAX and MAX_READ_LENGTH");
+        uint8_t readData[MAX_READ_LENGTH] = {0};
+        FAPI_TRY(spi_read(i_handle, i_address, i_length,
+                          SPI_ECC_CONTROL_STATUS::RAW_BYTE_ACCESS,
+                          readData),
+                 "Failed to read back the written data for the verification.");
+
+        FAPI_ASSERT((memcmp(i_data, readData, i_length) == 0),
+                    fapi2::SBE_SPI_WRITTEN_DATA_MISMATCH()
+                    .set_CHIP_TARGET(i_handle.target_chip)
+                    .set_SPI_ENGINE(i_handle.engine)
+                    .set_WRITTEN_DATA_ADDRESS(i_address)
+                    .set_WRITTEN_DATA_LENGTH(i_length),
+                    "SPI: Verification of data after writing to flash failed.");
     }
     while(0);
 
