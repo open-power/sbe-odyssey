@@ -82,7 +82,7 @@ extern "C"
         FAPI_INF(TARGTIDFORMAT " ody_getecid : Exiting ...", TARGTID);
 
     fapi_try_exit:
-        return fapi2::FAPI2_RC_SUCCESS;
+        return fapi2::current_err;
     }
 
 } // extern "C"

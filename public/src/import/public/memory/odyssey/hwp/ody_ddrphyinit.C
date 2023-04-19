@@ -41,6 +41,7 @@
 #include <lib/phy/ody_ddrphy_phyinit_config.H>
 #include <lib/phy/ody_phy_reset.H>
 #include <lib/phy/ody_phy_utils.H>
+#include <generic/memory/lib/utils/fir/gen_mss_unmask.H>
 
 extern "C"
 {
@@ -63,6 +64,9 @@ extern "C"
             // Clears the DMEM
             FAPI_TRY(mss::ody::phy::reset_dmem(l_port), TARGTIDFORMAT "failed to clear the DMEM", TARGTID);
         }
+
+        // Unmask FIRs
+        FAPI_TRY(mss::unmask::after_phy_reset<mss::mc_type::ODYSSEY>(i_target));
 
         return fapi2::FAPI2_RC_SUCCESS;
 
