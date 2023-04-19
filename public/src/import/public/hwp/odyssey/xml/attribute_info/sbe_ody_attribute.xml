@@ -2481,9 +2481,6 @@
   <entry name="ATTR_OMI_CRC_DEBUG">
     <value>0x00</value>
   </entry>
-  <entry name="ATTR_OMI_DL_PREIPL_PRBS_TIME">
-    <value>0x400</value>
-  </entry>
   <entry name="ATTR_OMI_X4_DEGRADE_ACTION">
     <value>0x03</value>
   </entry>
