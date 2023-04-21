@@ -1,0 +1,12 @@
+{% for reg in regs %}
+* {{reg.mnemonic}} (CFAM {{"%X" % reg.cfam}}, SCOM {{"%X" % reg.scom}}){% if reg.description %} - {{reg.description}}{% endif +%}
+  {% for field in reg.fields %}
+  * {% if field.single_bit %}Bit `{{field.bits.start}}`{% else %}Bits `{{field.bits.start}}..{{field.bits.stop-1}}`{% endif %}: **{{field.mnemonic}}**{% if field.attribute %} (attribute: {{field.attribute}}){% endif +%}
+    {% if field.description %}
+    * {{field.description|indent(6)}}
+    {% endif %}
+    {% for enum in field.enums or [] %}
+    * Value {{enum.value}}: {{enum.name}}{% if enum.description %} ({{enum.description}}){% endif +%}
+    {% endfor %}
+  {% endfor %}
+{% endfor %}
