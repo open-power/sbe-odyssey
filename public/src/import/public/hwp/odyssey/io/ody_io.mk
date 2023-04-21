@@ -38,6 +38,7 @@ endef
 ODYSSEY_IO_PROCEDURE = $(eval $(call __ODYSSEY_IO_PROCEDURE,$1,$2))
 $(call ODYSSEY_IO_PROCEDURE,ody_putsram,poz_writesram)
 $(call ODYSSEY_IO_PROCEDURE,ody_getsram,poz_readsram)
+$(call ODYSSEY_IO_PROCEDURE,ody_omi_unload)
 
 $(call ODYSSEY_IO_PROCEDURE,ody_omi_hss_ppe_load,ody_putsram poz_writesram)
 $(call ODYSSEY_IO_PROCEDURE,ody_omi_hss_config)
@@ -55,4 +56,3 @@ $(call ODYSSEY_IO_PROCEDURE,ody_omi_setup)
 $(call ODYSSEY_IO_PROCEDURE,ody_omi_train)
 $(call ODYSSEY_IO_PROCEDURE,ody_omi_train_check)
 $(call ODYSSEY_IO_PROCEDURE,ody_omi_posttrain_adv)
-$(call ODYSSEY_IO_PROCEDURE,ody_unload)

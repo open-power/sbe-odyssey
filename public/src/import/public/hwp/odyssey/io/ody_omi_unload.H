@@ -1,11 +1,12 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_unload.H $        */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_unload.H $    */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,7 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 ///------------------------------------------------------------------------------
-/// @file ody_unload.H
+/// @file ody_omi_unload.H
 /// @brief Streams IO Data back in payload for report
 ///
 /// *HWP HW Maintainer : Josh Chica <josh.chica@ibm.com>
@@ -30,15 +31,15 @@
 /// *HWP Consumed by: SBE
 ///------------------------------------------------------------------------------
 #include <fapi2.H>
-#include <common_unload.H>
+#include <hwp_data_stream.H>
 
 //------------------------------------------------------------------------------
 // Structure definitions
 //------------------------------------------------------------------------------
-typedef fapi2::ReturnCode (*ody_unload_FP_t)(
+typedef fapi2::ReturnCode (*ody_omi_unload_FP_t)(
     const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
-    const uint64_t,
-    unload_ostream&);
+    const uint32_t,
+    fapi2::hwp_bit_ostream&);
 
 //------------------------------------------------------------------------------
 // Function prototypes
@@ -51,11 +52,13 @@ extern "C"
 /// @brief Streams IO Data back in payload for report
 ///
 /// @param[in] i_target Chip target to start
+/// @param[in] i_chipunit_mask  Chip unit mask (Not used in Odyssey, but used in P/Z)
+/// @param[out] o_ostream       Stream object to return data in
 ///
 /// @return fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
-    fapi2::ReturnCode ody_unload(
+    fapi2::ReturnCode ody_omi_unload(
         const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
-        const uint64_t i_chipunit_mask,
-        unload_ostream& o_ostream);
+        const uint32_t i_chipunit_mask,
+        fapi2::hwp_bit_ostream& o_ostream);
 
 } // extern "C"
