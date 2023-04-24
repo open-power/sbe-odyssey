@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -134,8 +135,7 @@ class io_ppe_firs
 
         fapi2::ReturnCode ioppe_fir_set(const fapi2::Target<K, M, V>& i_target);
 
-        fapi2::ReturnCode mc_omi_fir_set(const fapi2::Target<K, M, V>& i_target,
-                                         bool i_mfg_mode);
+        fapi2::ReturnCode mc_omi_fir_set(const fapi2::Target<K, M, V>& i_target);
 
         fapi2::ReturnCode tlx_fir_set(const fapi2::Target<K, M, V>& i_target);
     private:
@@ -204,8 +204,7 @@ fapi_try_exit:
 }
 
 template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
-fapi2::ReturnCode io_ppe_firs<K, M, V>::mc_omi_fir_set(const fapi2::Target<K, M, V>& i_target,
-        bool i_mfg_mode)
+fapi2::ReturnCode io_ppe_firs<K, M, V>::mc_omi_fir_set(const fapi2::Target<K, M, V>& i_target)
 {
     FAPI_DBG("Start MC OMI FIRs");
 
@@ -228,13 +227,8 @@ fapi2::ReturnCode io_ppe_firs<K, M, V>::mc_omi_fir_set(const fapi2::Target<K, M,
     l_buffer.setBit<MASK_INSUFFICIENT_WORKING_LANES>();
     l_buffer.setBit<MASK_TX_DEGRADE_MODE>();
     l_buffer.clearBit<MASK_LOST_BLOCK_LOCK>();
-
-    if (!i_mfg_mode)
-    {
-        l_buffer.setBit<MASK_TX_PERFORMANCE_THRESH_BREACH>();
-        l_buffer.setBit<MASK_EDPL_THRESH_REACHED>();
-    }
-
+    l_buffer.setBit<MASK_TX_PERFORMANCE_THRESH_BREACH>();
+    l_buffer.setBit<MASK_EDPL_THRESH_REACHED>();
     l_buffer.clearBit<MASK_REMOTE_LINK_ERRRO_4>();
     l_buffer.clearBit<MASK_REMOTE_LINK_ERROR_5>();
     l_buffer.clearBit<MASK_SKITTER_ERROR>();
@@ -255,12 +249,7 @@ fapi2::ReturnCode io_ppe_firs<K, M, V>::mc_omi_fir_set(const fapi2::Target<K, M,
     l_buffer.setBit<DL0_X4_MODE>();
     l_buffer.setBit<DL0_TIMEOUT>();
     l_buffer.setBit<DL0_ERROR_RETRAIN>();
-
-    if (!i_mfg_mode)
-    {
-        l_buffer.setBit<DL0_EDPL_RETRAIN>();
-    }
-
+    l_buffer.setBit<DL0_EDPL_RETRAIN>();
     l_buffer.setBit<DL0_SKITTER_ERROR>();
     l_buffer.setBit<DL0_SKITTER_DRIFT>();
     FAPI_TRY(fapi2::putScom(i_target, l_mc_omi_rw_wclear_mask, l_buffer));
@@ -270,12 +259,7 @@ fapi2::ReturnCode io_ppe_firs<K, M, V>::mc_omi_fir_set(const fapi2::Target<K, M,
     l_buffer.setBit<DL0_X4_MODE>();
     l_buffer.setBit<DL0_TIMEOUT>();
     l_buffer.setBit<DL0_ERROR_RETRAIN>();
-
-    if (!i_mfg_mode)
-    {
-        l_buffer.setBit<DL0_EDPL_RETRAIN>();
-    }
-
+    l_buffer.setBit<DL0_EDPL_RETRAIN>();
     l_buffer.setBit<DL0_SKITTER_ERROR>();
     l_buffer.setBit<DL0_SKITTER_DRIFT>();
     FAPI_TRY(fapi2::putScom(i_target, l_mc_omi_rec, l_buffer));
