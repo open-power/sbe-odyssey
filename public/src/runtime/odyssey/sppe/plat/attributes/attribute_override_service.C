@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -121,8 +122,8 @@ AttributeOverrideRc AttributesTable::applyOverride(
     {
         // As per the attribute table, the attribute is a normal attribute. The
         // request is also to update a normal attribute.
-        if ((i_attrEntry->iv_row == 0) && (i_attrEntry->iv_col == 0) &&
-            (i_attrEntry->iv_hgt == 0))
+        if ((i_attrEntry->iv_row == 0xFF) && (i_attrEntry->iv_col == 0xFF) &&
+            (i_attrEntry->iv_hgt == 0xFF))
         {
             if ( i_attrEntry->iv_dataSize != iv_size )
             {
