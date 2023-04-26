@@ -65,7 +65,7 @@ void sbePakSearchStartOffset(void)
     PPE_LVD(scomt::poz_ppe::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW, lfrReg);
 
     g_partitionOffset = getAbsPartitionAddr(lfrReg.boot_selection);
-    g_partitionSize = NOR_PARTITION_SIZE;
+    g_partitionSize = NOR_SIDE_SIZE;
 
 
     SBE_INFO(SBE_FUNC "Partition offset is : 0x%08x, "

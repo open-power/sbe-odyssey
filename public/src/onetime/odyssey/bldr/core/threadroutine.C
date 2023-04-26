@@ -146,7 +146,7 @@ void bldrthreadroutine(void *i_pArg)
         SBE_INFO(SBE_FUNC "Partition start Address is : 0x%08x, Partition selected is : 0x%02x",
                     partitionStartAddress,(uint8_t)lfrReg.boot_selection);
 
-        PakWrapper pak((void *)partitionStartAddress, (void *)(partitionStartAddress + NOR_PARTITION_SIZE));
+        PakWrapper pak((void *)partitionStartAddress, (void *)(partitionStartAddress + NOR_SIDE_SIZE));
 
         //Load the secure container into pibmem
         pakRc = pak.read_file(secure_hdr_fname, secureContainer, SECURE_HEADER_SIZE, NULL, &shvReq.containerSize);

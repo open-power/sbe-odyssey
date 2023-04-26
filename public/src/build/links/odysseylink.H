@@ -182,16 +182,16 @@ ASSERT((SROM_BLDR_CMN_SH_FILE_SCRATCH_END < BOOTLOADER_ORIGIN), \
 #define SPPE_TRACE_START_OFFSET         (HASH_LIST_START_OFFSET - SPPE_PK_TRACE_SIZE_WITH_HEADER)
 
 /********************** NOR partition Layout *********************************/
-// Lets keep each partition size as 4mb
-#define NOR_PARTITION_SIZE              0x00400000
-#define NOR_PARTITION_0_START_ADDR      0xFE000000
-#define NOR_PARTITION_1_START_ADDR      (NOR_PARTITION_0_START_ADDR + NOR_PARTITION_SIZE)
-#define NOR_GOLDEN_PARTITION_START_ADDR (NOR_PARTITION_1_START_ADDR + NOR_PARTITION_SIZE)
+// Lets keep each side size as 4mb
+#define NOR_SIDE_SIZE              0x00400000
+#define NOR_SIDE_0_START_ADDR      0xFE000000
+#define NOR_SIDE_1_START_ADDR      (NOR_SIDE_0_START_ADDR + NOR_SIDE_SIZE)
+#define NOR_GOLDEN_SIDE_START_ADDR (NOR_SIDE_1_START_ADDR + NOR_SIDE_SIZE)
 
-// Partition index based on bit 17,18 in FSXCOMP_FSXLOG_SB_CS
-#define PARTITION_0_INDEX 0
-#define PARTITION_1_INDEX 1
-#define GOLDEN_PARTITION_INDEX 2
+// Side index based on bit 17,18 in FSXCOMP_FSXLOG_SB_CS
+#define SIDE_0_INDEX 0
+#define SIDE_1_INDEX 1
+#define GOLDEN_SIDE_INDEX 2
 
 #ifndef __ASSEMBLER__
 // This is done so that during linker compilation does not fail.
@@ -202,12 +202,12 @@ ASSERT((SROM_BLDR_CMN_SH_FILE_SCRATCH_END < BOOTLOADER_ORIGIN), \
     {
         switch(partitionSelect)
         {
-            case PARTITION_0_INDEX:
-                return NOR_PARTITION_0_START_ADDR;
-            case PARTITION_1_INDEX:
-                return NOR_PARTITION_1_START_ADDR;
-            case GOLDEN_PARTITION_INDEX:
-                return NOR_GOLDEN_PARTITION_START_ADDR;
+            case SIDE_0_INDEX:
+                return NOR_SIDE_0_START_ADDR;
+            case SIDE_1_INDEX:
+                return NOR_SIDE_1_START_ADDR;
+            case GOLDEN_SIDE_INDEX:
+                return NOR_GOLDEN_SIDE_START_ADDR;
             default:
                 return 0;
         }
