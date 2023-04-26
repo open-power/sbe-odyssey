@@ -28,7 +28,7 @@
         <sbeError/>
         <rc>RC_SBE_SPI_INVALID_PORT_MULTIPLEX_SET</rc>
         <description>
-            Procedure: Error calling p10_sbe_spi_cmd HWP
+            Procedure: Error calling poz_sbe_spi_cmd HWP
             Error due to settings error bit 50 for port multiplexer setting
             on SPI cmd status register.
         </description>
@@ -64,7 +64,7 @@
         <sbeError/>
         <rc>RC_SBE_SPI_HANG_TIMEOUT</rc>
         <description>
-            Procedure: Error calling p10_sbe_spi_cmd HWP
+            Procedure: Error calling poz_sbe_spi_cmd HWP
             Error due to detected hang while waiting for SPI cmd completion.
         </description>
         <ffdc>CHIP_TARGET</ffdc>
@@ -82,7 +82,7 @@
         <sbeError/>
         <rc>RC_SBE_SPI_OPR_COMPLETION_CHECK_ERROR</rc>
         <description>
-            Procedure: Error calling p10_sbe_spi_cmd HWP
+            Procedure: Error calling poz_sbe_spi_cmd HWP
             Error due to SPI operation failed to complete.
         </description>
         <ffdc>CHIP_TARGET</ffdc>
@@ -95,5 +95,58 @@
         </callout>
     </hwpError>
     <!-- *****************************************************************-->
-
+    <hwpError>
+        <sbeError/>
+        <rc>RC_SBE_SPI_INVALID_LENGTH</rc>
+        <description>
+            Procedure: Error calling poz_sbe_spi_cmd HWP
+            Error due to the given length is not in the required range.
+        </description>
+        <ffdc>CHIP_TARGET</ffdc>
+        <ffdc>SPI_ENGINE</ffdc>
+        <ffdc>LENGTH</ffdc>
+        <ffdc>MIN_LENGTH</ffdc>
+        <ffdc>MAX_LENGTH</ffdc>
+        <ffdc>ECC_STATUS</ffdc>
+        <ffdc>ADDRESS</ffdc>
+        <callout>
+            <procedure>CODE</procedure>
+            <priority>HIGH</priority>
+        </callout>
+    </hwpError>
+    <!-- *****************************************************************-->
+    <hwpError>
+        <sbeError/>
+        <rc>RC_SBE_SPI_LENGTH_IS_NOT_ALIGNED</rc>
+        <description>
+            Procedure: Error calling poz_sbe_spi_cmd HWP
+            Error due to the given length is not aligned.
+        </description>
+        <ffdc>CHIP_TARGET</ffdc>
+        <ffdc>SPI_ENGINE</ffdc>
+        <ffdc>LENGTH</ffdc>
+        <ffdc>ECC_STATUS</ffdc>
+        <callout>
+            <procedure>CODE</procedure>
+            <priority>HIGH</priority>
+        </callout>
+    </hwpError>
+    <!-- *****************************************************************-->
+    <hwpError>
+        <sbeError/>
+        <rc>RC_SBE_SPI_ADDRESS_IS_NOT_ALIGNED</rc>
+        <description>
+            Procedure: Error calling poz_sbe_spi_cmd HWP
+            Error due to the given address is not aligned.
+        </description>
+        <ffdc>CHIP_TARGET</ffdc>
+        <ffdc>SPI_ENGINE</ffdc>
+        <ffdc>ADDRESS</ffdc>
+        <ffdc>ECC_STATUS</ffdc>
+        <callout>
+            <procedure>CODE</procedure>
+            <priority>HIGH</priority>
+        </callout>
+    </hwpError>
+    <!-- *****************************************************************-->
 </hwpErrors>
