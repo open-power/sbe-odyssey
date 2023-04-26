@@ -38,20 +38,20 @@ void getPartitionInfo(uint8_t &o_runningPartition,
     o_runningPartition=SbeRegAccess::theSbeRegAccess().getBootSelection();
 
     // to get non-running partition
-    if (o_runningPartition == PARTITION_0_INDEX)
+    if (o_runningPartition == SIDE_0_INDEX)
     {
         // if booting from primary then making non-running is secondary
-        o_nonRunningPartition = PARTITION_1_INDEX;
+        o_nonRunningPartition = SIDE_1_INDEX;
     }
-    else if (o_runningPartition == PARTITION_1_INDEX)
+    else if (o_runningPartition == SIDE_1_INDEX)
     {
         // if booting from secondary then making non-running is primary
-        o_nonRunningPartition = PARTITION_0_INDEX;
+        o_nonRunningPartition = SIDE_0_INDEX;
     }
-    else if (o_runningPartition == GOLDEN_PARTITION_INDEX)
+    else if (o_runningPartition == GOLDEN_SIDE_INDEX)
     {
         // if booting from golden then making non-running is primary
-        o_nonRunningPartition = PARTITION_0_INDEX;
+        o_nonRunningPartition = SIDE_0_INDEX;
     }
 
     SBE_EXIT(SBE_FUNC);

@@ -136,7 +136,7 @@ check_magic:
         cmpwblt %r13, %r4, 1f           # in either direction
 
 partition_overrun:
-        panic   BOOT_RC_PARTITION_OVERRUN
+        panic   BOOT_RC_SIDE_OVERRUN
 1:
         lwz     %r5, 0(%r13)            # Load the magic word from pak file
         _liw    %r6, PAK_MAGIC_END      # Load end magic value

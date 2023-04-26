@@ -53,14 +53,14 @@
 
 // Area 0x1 --> ASM Code (SPI Init etc) Fails
 // 0x100..0x10f - errors locating command tables
-#define BOOT_RC_INVALID_PARTITION_SELECT 0x101
+#define BOOT_RC_INVALID_SIDE_SELECT      0x101
 #define BOOT_RC_MISSING_MAIN_FSM         0x102
 #define BOOT_RC_INVALID_MAIN_FSM         0x103
 #define BOOT_RC_INVALID_CUST_FSM         0x104
 #define BOOT_RC_INVALID_PAK_MAGIC        0x105
 #define BOOT_RC_INVALID_FN_SIZE          0x106
 #define BOOT_RC_FILE_COMPRESSED          0x107
-#define BOOT_RC_PARTITION_OVERRUN        0x108
+#define BOOT_RC_SIDE_OVERRUN             0x108
 
 // 0x110..0x11f - errors during command table execution
 #define BOOT_RC_INSTRUCTION_OVERRUN 0x110
