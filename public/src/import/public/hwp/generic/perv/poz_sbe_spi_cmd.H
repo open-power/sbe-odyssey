@@ -53,10 +53,10 @@
 #define NOR_FLASH_SUB_SECTOR_BOUNDARY_CHECK_MASK 0x00000FFF
 #define NOR_FLASH_SECTOR_SIZE                    0x10000
 
-//The counter reg is 8 bits and with each seq with 8byte transfer.
-//For the purposes of security, we're using 8-byte transfers, since
-//8-byte transfers don't use the restricted 0xEX op code.
-#define MAX_LENGTH_TRNS 8
+// The MAX_READ_LENGTH is changed from "8" to "256" since the spi_read API
+// changed to read 256 bytes per attempt by using the loop command.
+#define MAX_READ_LENGTH 256
+#define MIN_READ_LENGTH 1
 
 //Byte-length of data to do secure write or read for TPM
 #define TPM_SECURE_DATA_LEN 8

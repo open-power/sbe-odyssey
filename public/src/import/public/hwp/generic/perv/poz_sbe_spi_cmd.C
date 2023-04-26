@@ -1394,105 +1394,155 @@ fapi_try_exit:
 }
 
 
-//Reads data. For this implementation of one time use to counter,
-//we can read at max of MAX_LENGTH_TRNS.
-//Length should be multiple of 8
-/* Steps to read the seeprom.
+/**
+ * @brief This function is used to read data from the device which use SPI
+ *        as a interface and store into the given buffer.
+ *
+ * @description
+ *
+ * - This API expects the read length should be equal or greater than
+ *   the MIN_READ_LENGTH.
+ * - This API expects the read length should be equal or less than
+ *   the MAX_READ_LENGTH.
+ * - This API supports to read max MAX_READ_LENGTH per attempt by using
+ *   the counter.
+ * - The length and address should be physical (with adding ECC bytes)
+ *   if the SPI_ECC_CONTROL_STATUS is the RAW_BYTE_ACCESS, and
+ *   length and address should be logical (without adding ECC bytes) otherwise.
+ *
+ * Steps to read from device (aka, SEEPROM or NOR) which using interface as SPI.
  * 1. Send the READ command along with the address.
  * 2. Configure count control
- * 3. SEEPROM will start sending the data from that offset
+ * 3. The device will start sending the data from that offset
  *    continuously.
- * 4. Read the data. Use the loop mode if more than 8 byte reads
+ * 4. Read the data. Use the loop mode if more than 8 bytes reads
  * 5. Deselect the slave to stop it from sending any more data
  *
+ * @param[in] i_handle Used to pass SPI handler to get the SPI port and other
+ *                     necessary inputs.
+ * @param[in] i_address Used to pass the address to say from where needs to
+ *                      read.
+ * @param[in] i_length Used to pass the length to read required data from
+ *                     the device.
+ * @param[out] o_buffer Used to pass the buffer address to store the read data.
+ * @param[in] i_eccStatus Used to pass the ecc mode to read back from the device.
+ *
+ * @return FAPIRC if any failure otherwise success FAPIRC.
  */
 static fapi2::ReturnCode
 spi_read_secure(SpiControlHandle& i_handle, uint32_t i_address, uint32_t i_length,
                 uint8_t* o_buffer, SPI_ECC_CONTROL_STATUS i_eccStatus)
 {
     fapi2::buffer<uint64_t> data64;
-    uint64_t temp;
     uint64_t SEQ;
     uint64_t CNT = 0;
     uint64_t TDR;
-    fapi2::ReturnCode rc = fapi2::FAPI2_RC_SUCCESS;
-    int number_rdr = i_length / 8;
+    bool l_ecc = false;
 
-    if ((i_length > MAX_LENGTH_TRNS) || (i_length % 8))
+    FAPI_ASSERT(((i_length <= MAX_READ_LENGTH) && (i_length >= MIN_READ_LENGTH)),
+                fapi2::SBE_SPI_INVALID_LENGTH()
+                .set_CHIP_TARGET(i_handle.target_chip)
+                .set_SPI_ENGINE(i_handle.engine)
+                .set_LENGTH(i_length)
+                .set_MIN_LENGTH(MIN_READ_LENGTH)
+                .set_MAX_LENGTH(MAX_READ_LENGTH)
+                .set_ECC_STATUS(i_eccStatus)
+                .set_ADDRESS(i_address),
+                "SPI: The given length to read is not in the required range.");
+
+    // Check the state of the h/w
+    FAPI_TRY(spi_precheck(i_handle),
+             "spi_precheck failed before executing read operation");
+
+    // Check whether the ecc is on or not
+    FAPI_TRY(is_ecc_on(i_handle, l_ecc),
+             "is_ecc_on failed before executing read operation");
+
+    if ((i_eccStatus == RAW_BYTE_ACCESS) && (l_ecc))
     {
-        return fapi2::FAPI2_RC_INVALID_PARAMETER;
+        spi_set_ecc_off(i_handle);
     }
-
 
     if((i_eccStatus == STANDARD_ECC_ACCESS) ||
        (i_eccStatus == DISCARD_ECC_ACCESS)   )
     {
-        if (i_address % 8) //Address should be aligned for ecc
-        {
-            return fapi2::FAPI2_RC_INVALID_PARAMETER;
-        }
+        FAPI_ASSERT(((i_length % 8) == 0),
+                    fapi2::SBE_SPI_LENGTH_IS_NOT_ALIGNED()
+                    .set_CHIP_TARGET(i_handle.target_chip)
+                    .set_SPI_ENGINE(i_handle.engine)
+                    .set_LENGTH(i_length)
+                    .set_ECC_STATUS(i_eccStatus),
+                    "SPI: The given length to read is not aligned by 8 bytes");
 
-        if (i_length <= 8)
+        FAPI_ASSERT(((i_address % 8) == 0),
+                    fapi2::SBE_SPI_ADDRESS_IS_NOT_ALIGNED()
+                    .set_CHIP_TARGET(i_handle.target_chip)
+                    .set_SPI_ENGINE(i_handle.engine)
+                    .set_ADDRESS(i_length)
+                    .set_ECC_STATUS(i_eccStatus),
+                    "SPI: The given address to read is not aligned by 8 bytes");
+
+        if (i_length == 8)
         {
-            SEQ = 0x1034491000000000ULL | (static_cast<uint64_t>(i_handle.slave) << 56); // slave0, TX4, RX9, loop
+            // select slave0, TX4, RX9, deselect slave0
+            SEQ = 0x1034491000000000ULL | (static_cast<uint64_t>(i_handle.slave) << 56);
             CNT = 0x0;
-        }
-        else if (i_length <= 40)
-        {
-            SEQ = 0x1034000000000000ULL | (static_cast<uint64_t>(i_handle.slave) << 56);
-
-            for(int i = 0; i < number_rdr; i++)
-            {
-                SEQ |= static_cast<uint64_t>(0x40) << (40 - (i * 8));
-            }
-
-            SEQ |= static_cast<uint64_t>(0x10) << (40 - ((number_rdr) * 8));
-            // #shifted bits (9x8=64=0x48) | reload+tx+rx
-            CNT = (static_cast<uint64_t>(0x48) << 48) | (static_cast<uint64_t>(0xb) << 8);
         }
         else
         {
-            FAPI_ERR( "spi_read_secure: (ecc) Read length is greater than 40 bytes, which cannot be"
-                      " done in a secure read. i_length = %d", i_length);
-            return fapi2::FAPI2_RC_INVALID_PARAMETER;
+            // select slave0, TX4, RX9, Loop, deselect slave0
+            SEQ = 0x103449E210000000ULL | (static_cast<uint64_t>(i_handle.slave) << 56);
+            // LoopCount (No of the loop iteration to run the specified index
+            // op-code in the sequence command thats is "xxxx49E2xxxxxxxx",
+            // index start with 0 from the MSB in the sequence command)
+            CNT = ((uint64_t)((i_length / 8) - 1) << 32);
+            // N2_control (0xf - 1111, bit 0: counter N2 reload,
+            // bit 1: force N2 count implicit, bit 2: use N2 counter for data
+            // transmit, bit 3: use N2 counter for data receive)
+            CNT |= ((uint64_t)(0xf) << 8);
         }
 
+        // Need to covert logical to physical address for ecc mode
         i_address = i_address * 9 / 8;
     }
     else
     {
-        if (i_length <= 8)
+        if (i_length < 8)
         {
-            SEQ = 0x1034481000000000ULL | (static_cast<uint64_t>(i_handle.slave) << 56); //slave0, TX4, RX8, loop
+            // select slave0, TX4, RX(i_length), deselect slave0
+            SEQ = 0x1034401000000000ULL | (static_cast<uint64_t>(i_handle.slave) << 56);
+            SEQ |= (static_cast<uint64_t>(i_length) << 40);
             CNT = 0x0;
         }
-        else if(i_length <= 40)
+        else if (i_length == 8)
         {
-            SEQ = 0x1034000000000000ULL | (static_cast<uint64_t>(i_handle.slave) << 56);
-
-            for(int i = 0; i < number_rdr; i++)
-            {
-                SEQ |= static_cast<uint64_t>(0x40) << (40 - (i * 8));
-            }
-
-            SEQ |= static_cast<uint64_t>(0x10) << (40 - ((number_rdr) * 8));
-            // #shifted bits (8x8=64=0x40) | reload+tx+rx
-            CNT = (static_cast<uint64_t>(0x40) << 48) | (static_cast<uint64_t>(0xb) << 8);
+            // select slave0, TX4, RX8, deselect slave0
+            SEQ = 0x1034481000000000ULL | (static_cast<uint64_t>(i_handle.slave) << 56);
+            CNT = 0x0;
+        }
+        else if (i_length % 8)
+        {
+            // select slave0, TX4, RX8, Loop, RX(i_length % 8), deselect slave0
+            SEQ = 0x103448E240100000ULL | (static_cast<uint64_t>(i_handle.slave) << 56);
+            SEQ |= ((uint64_t)(i_length % 8) << 24);
+            // LoopCount (No of the loop iteration to run the specified index
+            // op-code in the sequence command thats is "xxxx48E2xxxxxxxx",
+            // index start with 0 from the MSB in the sequence command)
+            CNT = ((uint64_t)((i_length / 8) - 1) << 32);
+            // N2_control (0xf - 1111, bit 0: counter N2 reload,
+            // bit 1: force N2 count implicit, bit 2: use N2 counter for data
+            // transmit, bit 3: use N2 counter for data receive)
+            CNT |= ((uint64_t)(0xf) << 8);
         }
         else
         {
-            FAPI_ERR( "spi_read_secure: Read length is greater than 40 bytes, which cannot be"
-                      " done in a secure read. i_length = %d", i_length);
-            return fapi2::FAPI2_RC_INVALID_PARAMETER;
+            // select slave0, TX4, RX8, Loop, deselect slave0
+            SEQ = 0x103448E210000000ULL | (static_cast<uint64_t>(i_handle.slave) << 56);
+            // LoopCount (No of the loop iteration to run the specified index
+            // op-code in the sequence command thats is "xxxx48E2xxxxxxxx",
+            // index start with 0 from the MSB in the sequence command)
+            CNT = ((uint64_t)((i_length / 8) - 1) << 32) | ((uint64_t)(0xf) << 8);
         }
-    }
-
-    // Check the state of the h/w
-    rc = spi_precheck(i_handle);
-
-    if (rc != fapi2::FAPI2_RC_SUCCESS)
-    {
-        return rc;
     }
 
     // Read command (0x3)|| address in TDR to be sent to the slave
@@ -1513,18 +1563,26 @@ spi_read_secure(SpiControlHandle& i_handle, uint32_t i_address, uint32_t i_lengt
         FAPI_TRY(putScom(i_handle.target_chip, i_handle.base_addr + SPIM_TDR, 0x0ULL));
     }
 
+    // Copying data from the RDR buffer into the given output buffer.
     for (uint32_t i = 0; i < i_length; i += 8)
     {
         FAPI_TRY(spi_wait_for_rdr_full(i_handle));
 
         FAPI_TRY(getScom(i_handle.target_chip, i_handle.base_addr + SPIM_RDR, data64));
         FAPI_DBG("spi_read_secure: data64 = [0x%08X%08X]", data64 >> 32, data64 & 0xFFFFFFFF);
-        data64.extract<0, 64>(temp);
-        FAPI_DBG("spi_read_secure: temp = [0x%08X%08X]", temp >> 32, temp & 0xFFFFFFFF);
-        FAPI_DBG("spi_read_secure: temp = [0x%08X%08X]", temp >> 32, temp & 0xFFFFFFFF);
-        FAPI_DBG("spi_read_secure: o_buffer = [0x%08X]", o_buffer);
-        ((uint64_t*)o_buffer)[i / 8] = temp;
-        FAPI_DBG("spi_read_secure: o_buffer[4] = [0x%08X]", o_buffer[4]);
+
+        if ( (i_length % 8) && (i_length < (i + 8)))
+        {
+            // If the length is unaligned then, the last of chunk data will be
+            // less than 8 bytes so we need to do the left shift to get the
+            // correct data else we will get previous chunk data from
+            // the 0th index.
+            ((uint64_t*)o_buffer)[i / 8] = data64 << ((8 - i_length % 8) * 8);
+        }
+        else
+        {
+            ((uint64_t*)o_buffer)[i / 8] = data64();
+        }
     }
 
     FAPI_TRY(spi_wait_for_idle(i_handle));
@@ -1537,7 +1595,7 @@ spi_read_secure(SpiControlHandle& i_handle, uint32_t i_address, uint32_t i_lengt
                      i_handle.base_addr + SPIM_SEQREG, SPI_DEFAULT_SEQ));
 
 fapi_try_exit:
-    return fapi2::current_err;
+    return spi_restore_ecc_status(i_handle, fapi2::current_err, l_ecc);
 }
 
 
@@ -1548,61 +1606,34 @@ fapi2::ReturnCode
 spi_read( SpiControlHandle& i_handle, uint32_t i_address, uint32_t i_length,
           SPI_ECC_CONTROL_STATUS i_eccStatus, uint8_t* o_buffer )
 {
-    fapi2::ReturnCode rc  = fapi2::FAPI2_RC_SUCCESS;
-    uint32_t readlen = 0, i;
-    bool l_ecc = false;
-    is_ecc_on(i_handle, l_ecc);
-
-    FAPI_INF("spi_read: Entering...");
-
-    if ((i_eccStatus == RAW_BYTE_ACCESS) && (l_ecc))
-    {
-        spi_set_ecc_off(i_handle);
-    }
+    FAPI_DBG("spi_read: Entering...");
 
     do
     {
-
-        if (i_length <= MAX_LENGTH_TRNS)
+        for(uint32_t i = 0; i < i_length; i += MAX_READ_LENGTH)
         {
-            rc = spi_read_secure( i_handle, i_address,
-                                  i_length, o_buffer, i_eccStatus );
-            break;
-        }
-
-        for(i = 0; i < i_length; i += MAX_LENGTH_TRNS)
-        {
-            readlen = (i_length - i) < MAX_LENGTH_TRNS ?
-                      (i_length - i) : MAX_LENGTH_TRNS;
+            uint32_t readlen = (i_length - i) < MAX_READ_LENGTH ?
+                               (i_length - i) : MAX_READ_LENGTH;
 
             if (readlen == 0)
             {
                 break;
             }
 
-            rc = spi_read_secure( i_handle, i_address,
-                                  readlen, o_buffer, i_eccStatus );
-
-            if (rc != fapi2::FAPI2_RC_SUCCESS)
-            {
-                break;
-            }
+            FAPI_TRY(spi_read_secure(i_handle, i_address, readlen,
+                                     o_buffer, i_eccStatus),
+                     "SPI: Failed to read, length[%d] address[0x%08X] "
+                     "eccStatus[%d]", readlen, i_address, i_eccStatus);
 
             i_address += readlen;
             o_buffer = (uint8_t*)(reinterpret_cast<uint64_t>(o_buffer) + readlen);
         }
-
     }
     while(0);
 
-    // Restore ECC setting, if necessary
-    if ((i_eccStatus == RAW_BYTE_ACCESS) && (l_ecc))
-    {
-        spi_set_ecc_on(i_handle);
-    }
-
-    FAPI_INF("spi_read: Exiting...");
-    return rc;
+fapi_try_exit:
+    FAPI_DBG("spi_read: Exiting...");
+    return fapi2::current_err;
 }
 
 
