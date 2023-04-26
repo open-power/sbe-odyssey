@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2015,2023
+# Contributors Listed Below - COPYRIGHT 2015,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -28,7 +28,6 @@
 # The following ENV variables are required by the pre/post commit hooks
 export PROJECT_NAME=sbe
 export LICENSE=$SBEROOT/LICENSE_PROLOG # Copyright license file for PPE
-export LICENSE_INT=$SBEROOT/LICENSE_PROLOG_INT # Copyright license file for SBE internal
 SBE_LOCAL_HOME=".sbe/local/" # SBE home local directory
 if [ "$SCL_PYTHON_ENABLED" == 1 ]; then
     # Python 2 machine, PYTHONUSERBASE location change to ~/.sbe/local/scl_python36/
