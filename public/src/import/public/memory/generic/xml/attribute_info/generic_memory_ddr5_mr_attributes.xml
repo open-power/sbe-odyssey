@@ -40,6 +40,9 @@
     <enum>BL16 = 0, BC8_OTF = 1, BL32 = 2, BL32_OTF = 3</enum>
     <writeable/>
     <mssAccessorName>burst_length</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR2 attributes -->

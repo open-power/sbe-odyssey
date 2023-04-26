@@ -1035,6 +1035,9 @@
         <default>0</default>
         <writeable/>
         <mssAccessorName>ody_draminit_fw_revision</mssAccessorName>
+        <sbeAttrSync toSBE="0" fromSBE="1" chipTypes="ody">
+          <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+        </sbeAttrSync>
     </attribute>
 
     <attribute>

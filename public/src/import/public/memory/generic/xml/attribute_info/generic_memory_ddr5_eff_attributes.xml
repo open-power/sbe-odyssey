@@ -264,6 +264,9 @@
         <valueType>uint8</valueType>
         <writeable/>
         <enum>NOT_EN = 0, PORT0_EN = 1, PORT1_EN = 2, BOTH_EN = 3</enum>
+        <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="ody">
+          <targetTypes>TARGET_TYPE_OCMB_CHIP</targetTypes>
+        </sbeAttrSync>
         <mssAccessorName>ddr5_mem_port_enable</mssAccessorName>
     </attribute>
 
