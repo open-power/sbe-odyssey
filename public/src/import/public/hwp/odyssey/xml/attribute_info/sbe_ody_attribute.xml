@@ -3634,13 +3634,10 @@
     <value>7</value>
   </entry>
   <entry name="ATTR_OMI_RX_LTEZ">
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_OMI_RX_PHASE_STEP">
-    <value>-1</value>
+    <value>1</value>
   </entry>
   <entry name="ATTR_OMI_TX_PRE1">
-    <value>6</value>
+    <value>4</value>
   </entry>
   <entry name="ATTR_OMI_TX_PRE2">
     <value>0</value>
