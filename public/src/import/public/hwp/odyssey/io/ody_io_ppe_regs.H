@@ -257,6 +257,56 @@
 
 //=================== threaded regs ======================
 
+#define MEM_REG_RX_EO_PHASE_SELECT_0_1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+    REGS->putData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b110110100, \
+                  0x18, \
+                  3, \
+                  THREAD, \
+                  0x400, \
+                  LANE, \
+                  DATA)
+
+#define MEM_REG_RX_EO_PHASE_SELECT_0_1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+    REGS->getData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b110110100, \
+                  0x18, \
+                  3, \
+                  THREAD, \
+                  0x400, \
+                  LANE, \
+                  DATA)
+
+
+#define MEM_REG_RX_EO_PHASE_SELECT_0_1_PUT(REGS, TARGET, THREAD, DATA) \
+    REGS->putData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b110110100, \
+                  0x18, \
+                  3, \
+                  THREAD, \
+                  0x400, \
+                  0, \
+                  DATA)
+
+#define MEM_REG_RX_EO_PHASE_SELECT_0_1_GET(REGS, TARGET, THREAD, DATA) \
+    REGS->getData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b110110100, \
+                  0x18, \
+                  3, \
+                  THREAD, \
+                  0x400, \
+                  0, \
+                  DATA)
+
+
 #define MEM_REG_RX_CTLE_PEAK1_PEAK2_CAL_DISABLE_ALIAS_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -400,56 +450,6 @@
                   0xffff5800, \
                   0b110110000, \
                   0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0x7, \
                   0, \
                   THREAD, \
                   0x400, \
@@ -757,56 +757,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_TX_DETECTRX_OVR_EN_0_15_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -907,56 +857,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_PPE_LOFF_OFFSET_PAUSE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -1050,156 +950,6 @@
                   0xffff5800, \
                   0b000000010, \
                   0x10, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN3_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN3_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN3_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN3_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0x70, \
                   4, \
                   THREAD, \
                   0x400, \
@@ -1307,56 +1057,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_DFE_H1_MIN_CHECK_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -1451,56 +1151,6 @@
                   0b110100110, \
                   0xff00, \
                   8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000001, \
-                  0xe000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000001, \
-                  0xe000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000001, \
-                  0xe000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000001, \
-                  0xe000, \
-                  13, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -1651,56 +1301,6 @@
                   0b110100001, \
                   0x1e, \
                   1, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0x7, \
-                  0, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -1907,11 +1507,11 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN3_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011010, \
+                  0b100101000, \
                   0xffff, \
                   0, \
                   THREAD, \
@@ -1919,11 +1519,11 @@
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN3_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011010, \
+                  0b100101000, \
                   0xffff, \
                   0, \
                   THREAD, \
@@ -1932,11 +1532,11 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN3_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_2_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011010, \
+                  0b100101000, \
                   0xffff, \
                   0, \
                   THREAD, \
@@ -1944,13 +1544,63 @@
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN3_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_2_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011010, \
+                  0b100101000, \
                   0xffff, \
                   0, \
+                  THREAD, \
+                  0x400, \
+                  0, \
+                  DATA)
+
+
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+    REGS->putData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b100011000, \
+                  0xf000, \
+                  12, \
+                  THREAD, \
+                  0x400, \
+                  LANE, \
+                  DATA)
+
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+    REGS->getData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b100011000, \
+                  0xf000, \
+                  12, \
+                  THREAD, \
+                  0x400, \
+                  LANE, \
+                  DATA)
+
+
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
+    REGS->putData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b100011000, \
+                  0xf000, \
+                  12, \
+                  THREAD, \
+                  0x400, \
+                  0, \
+                  DATA)
+
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
+    REGS->getData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b100011000, \
+                  0xf000, \
+                  12, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -2051,56 +1701,6 @@
                   0b110001001, \
                   0x200, \
                   9, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0xf00, \
-                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -2307,56 +1907,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_0_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_0_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_0_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_0_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_PCIE_PPE_SAVED_RX_BD_LOFF_LANE_1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -2501,106 +2051,6 @@
                   0b000000001, \
                   0x4000, \
                   14, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0x70, \
-                  4, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -2757,56 +2207,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_CTLE_PEAK1_HYST_DELTA_MODE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -2857,56 +2257,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_PPE_THREAD_LAST_ACTIVE_TIME_US_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -2949,56 +2299,6 @@
                   TARGET, \
                   0xffff5800, \
                   0b110110101, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
                   0xffff, \
                   0, \
                   THREAD, \
@@ -3257,56 +2557,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_PPE_PIPE_LANE_STRESS_MODE_0_3_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -3407,106 +2657,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_BER_TIMER_SEL_BIST_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -3551,106 +2701,6 @@
                   0b110000101, \
                   0xf000, \
                   12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_3_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000101, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_3_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000101, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_3_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000101, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_3_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000101, \
-                  0xffff, \
-                  0, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -3707,56 +2757,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_RC_ENABLE_VGA_CAL_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -3801,56 +2801,6 @@
                   0b110001010, \
                   0x8000, \
                   15, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0xff00, \
-                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -4107,106 +3057,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN3_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN3_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN3_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN3_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_PPE_SERVO_STATUS1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -4407,56 +3257,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000011, \
-                  0xe000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000011, \
-                  0xe000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000011, \
-                  0xe000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000011, \
-                  0xe000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_A_LTE_ZERO_DONE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -4500,56 +3300,6 @@
                   0xffff5800, \
                   0b000000010, \
                   0x100, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110011, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110011, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110011, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110011, \
-                  0xf00, \
                   8, \
                   THREAD, \
                   0x400, \
@@ -4601,56 +3351,6 @@
                   0b000000000, \
                   0x40, \
                   6, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0xff00, \
-                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -4751,56 +3451,6 @@
                   0b110111001, \
                   0x7000, \
                   12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN5_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN5_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN5_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN5_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0xffff, \
-                  0, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -5057,6 +3707,56 @@
                   DATA)
 
 
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+    REGS->putData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b100011000, \
+                  0x7, \
+                  0, \
+                  THREAD, \
+                  0x400, \
+                  LANE, \
+                  DATA)
+
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+    REGS->getData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b100011000, \
+                  0x7, \
+                  0, \
+                  THREAD, \
+                  0x400, \
+                  LANE, \
+                  DATA)
+
+
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
+    REGS->putData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b100011000, \
+                  0x7, \
+                  0, \
+                  THREAD, \
+                  0x400, \
+                  0, \
+                  DATA)
+
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
+    REGS->getData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b100011000, \
+                  0x7, \
+                  0, \
+                  THREAD, \
+                  0x400, \
+                  0, \
+                  DATA)
+
+
 #define MEM_REG_TX_DETECTRX_OVR_EN_16_23_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -5151,56 +3851,6 @@
                   0b000001101, \
                   0xffff, \
                   0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0xf00, \
-                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -5407,56 +4057,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_TX_BIST_DCC_I_MIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -5657,124 +4257,24 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PCIE_GEN3_LANE0_SAVED_TX_DCC_I_TUNE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b101000001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011100, \
-                  0xf00, \
+                  0b011110000, \
+                  0xff00, \
                   8, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PCIE_GEN3_LANE0_SAVED_TX_DCC_I_TUNE_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011100, \
-                  0xf00, \
+                  0b011110000, \
+                  0xff00, \
                   8, \
                   THREAD, \
                   0x400, \
@@ -5782,125 +4282,25 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PCIE_GEN3_LANE0_SAVED_TX_DCC_I_TUNE_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011100, \
-                  0xf00, \
+                  0b011110000, \
+                  0xff00, \
                   8, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PCIE_GEN3_LANE0_SAVED_TX_DCC_I_TUNE_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011100, \
-                  0xf00, \
+                  0b011110000, \
+                  0xff00, \
                   8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0xf000, \
-                  12, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -5951,56 +4351,6 @@
                   0b110000100, \
                   0xc, \
                   2, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_GEN3_LANE0_SAVED_TX_DCC_I_TUNE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b011110000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_GEN3_LANE0_SAVED_TX_DCC_I_TUNE_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b011110000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_GEN3_LANE0_SAVED_TX_DCC_I_TUNE_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b011110000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_GEN3_LANE0_SAVED_TX_DCC_I_TUNE_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b011110000, \
-                  0xff00, \
-                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -6157,56 +4507,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_A_LANE_HIST_MIN_EYE_WIDTH_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -6301,56 +4601,6 @@
                   0b110001001, \
                   0x1000, \
                   12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_4_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101001000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_4_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101001000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_4_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101001000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_4_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101001000, \
-                  0xff00, \
-                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -6457,106 +4707,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_BIST_RX_FAIL_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -6607,24 +4757,24 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_0_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b101000000, \
-                  0xff00, \
+                  0b100011000, \
+                  0xf00, \
                   8, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_0_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b101000000, \
-                  0xff00, \
+                  0b100011000, \
+                  0xf00, \
                   8, \
                   THREAD, \
                   0x400, \
@@ -6632,24 +4782,24 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_0_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b101000000, \
-                  0xff00, \
+                  0b100011000, \
+                  0xf00, \
                   8, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_0_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b101000000, \
-                  0xff00, \
+                  0b100011000, \
+                  0xf00, \
                   8, \
                   THREAD, \
                   0x400, \
@@ -6701,56 +4851,6 @@
                   0b011110000, \
                   0xffff, \
                   0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0x70, \
-                  4, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -6857,56 +4957,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101011, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101011, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101011, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101011, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_ESD_ABS_VAL_CHECK_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -6951,56 +5001,6 @@
                   0b110100101, \
                   0x3f8, \
                   3, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN3_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN3_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN3_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN3_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0xffff, \
-                  0, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -7157,56 +5157,6 @@
                   DATA)
 
 
-#define MEM_REG_PPE_INIT_TIME_US_WARNING_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110110100, \
-                  0x2000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PPE_INIT_TIME_US_WARNING_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110110100, \
-                  0x2000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PPE_INIT_TIME_US_WARNING_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110110100, \
-                  0x2000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PPE_INIT_TIME_US_WARNING_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110110100, \
-                  0x2000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_POFF_AVG_A_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -7257,50 +5207,50 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PPE_INIT_TIME_US_WARNING_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100101011, \
-                  0xff00, \
-                  8, \
+                  0b110110100, \
+                  0x2000, \
+                  13, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PPE_INIT_TIME_US_WARNING_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100101011, \
-                  0xff00, \
-                  8, \
+                  0b110110100, \
+                  0x2000, \
+                  13, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PPE_INIT_TIME_US_WARNING_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100101011, \
-                  0xff00, \
-                  8, \
+                  0b110110100, \
+                  0x2000, \
+                  13, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PPE_INIT_TIME_US_WARNING_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100101011, \
-                  0xff00, \
-                  8, \
+                  0b110110100, \
+                  0x2000, \
+                  13, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -7351,106 +5301,6 @@
                   0b111001100, \
                   0xffff, \
                   0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0x70, \
-                  4, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -7557,50 +5407,50 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PPE_PR_OFFSET_APPLIED_A_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100111000, \
-                  0xff00, \
-                  8, \
+                  0b000000101, \
+                  0x2000, \
+                  13, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PPE_PR_OFFSET_APPLIED_A_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100111000, \
-                  0xff00, \
-                  8, \
+                  0b000000101, \
+                  0x2000, \
+                  13, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PPE_PR_OFFSET_APPLIED_A_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100111000, \
-                  0xff00, \
-                  8, \
+                  0b000000101, \
+                  0x2000, \
+                  13, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PPE_PR_OFFSET_APPLIED_A_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100111000, \
-                  0xff00, \
-                  8, \
+                  0b000000101, \
+                  0x2000, \
+                  13, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -7657,106 +5507,6 @@
                   DATA)
 
 
-#define MEM_REG_PPE_PR_OFFSET_APPLIED_A_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000000101, \
-                  0x2000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PPE_PR_OFFSET_APPLIED_A_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000000101, \
-                  0x2000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PPE_PR_OFFSET_APPLIED_A_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000000101, \
-                  0x2000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PPE_PR_OFFSET_APPLIED_A_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000000101, \
-                  0x2000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_DFE_FULL_MAX_ERROR_DISABLE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -7801,56 +5551,6 @@
                   0b110000110, \
                   0x100, \
                   8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN5_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN5_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN5_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN5_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0xffff, \
-                  0, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -7951,56 +5651,6 @@
                   0b111001011, \
                   0x1000, \
                   12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011100, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011100, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011100, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011100, \
-                  0x7, \
-                  0, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -8207,56 +5857,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000011, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000011, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000011, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000011, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_DCCAL_DONE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -8407,56 +6007,6 @@
                   DATA)
 
 
-#define MEM_REG_RX_B_STEP_DONE_ALIAS_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000000011, \
-                  0xfff8, \
-                  3, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_RX_B_STEP_DONE_ALIAS_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000000011, \
-                  0xfff8, \
-                  3, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_RX_B_STEP_DONE_ALIAS_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000000011, \
-                  0xfff8, \
-                  3, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_RX_B_STEP_DONE_ALIAS_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000000011, \
-                  0xfff8, \
-                  3, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_PPE_THREAD_TIME_STRESS_MODE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -8501,6 +6051,56 @@
                   0b110000100, \
                   0x80, \
                   7, \
+                  THREAD, \
+                  0x400, \
+                  0, \
+                  DATA)
+
+
+#define MEM_REG_RX_B_STEP_DONE_ALIAS_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+    REGS->putData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b000000011, \
+                  0xfff8, \
+                  3, \
+                  THREAD, \
+                  0x400, \
+                  LANE, \
+                  DATA)
+
+#define MEM_REG_RX_B_STEP_DONE_ALIAS_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+    REGS->getData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b000000011, \
+                  0xfff8, \
+                  3, \
+                  THREAD, \
+                  0x400, \
+                  LANE, \
+                  DATA)
+
+
+#define MEM_REG_RX_B_STEP_DONE_ALIAS_PUT(REGS, TARGET, THREAD, DATA) \
+    REGS->putData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b000000011, \
+                  0xfff8, \
+                  3, \
+                  THREAD, \
+                  0x400, \
+                  0, \
+                  DATA)
+
+#define MEM_REG_RX_B_STEP_DONE_ALIAS_GET(REGS, TARGET, THREAD, DATA) \
+    REGS->getData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b000000011, \
+                  0xfff8, \
+                  3, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -8607,56 +6207,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_TX_PCIE_IDLE_DEL_SEL_3_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -8699,56 +6249,6 @@
                   TARGET, \
                   0xffff5800, \
                   0b110010111, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110011, \
                   0xf000, \
                   12, \
                   THREAD, \
@@ -9107,150 +6607,50 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_A_CTLE_PEAK1_DONE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100100001, \
-                  0xffff, \
-                  0, \
+                  0b000000010, \
+                  0x800, \
+                  11, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_A_CTLE_PEAK1_DONE_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100100001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN5_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN5_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0xffff, \
-                  0, \
+                  0b000000010, \
+                  0x800, \
+                  11, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN5_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_A_CTLE_PEAK1_DONE_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110100, \
-                  0xffff, \
-                  0, \
+                  0b000000010, \
+                  0x800, \
+                  11, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN5_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_A_CTLE_PEAK1_DONE_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110100, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0xff00, \
-                  8, \
+                  0b000000010, \
+                  0x800, \
+                  11, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -9301,56 +6701,6 @@
                   0b000000100, \
                   0xf0, \
                   4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_RX_A_CTLE_PEAK1_DONE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000000010, \
-                  0x800, \
-                  11, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_RX_A_CTLE_PEAK1_DONE_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000000010, \
-                  0x800, \
-                  11, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_RX_A_CTLE_PEAK1_DONE_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000000010, \
-                  0x800, \
-                  11, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_RX_A_CTLE_PEAK1_DONE_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000000010, \
-                  0x800, \
-                  11, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -9451,56 +6801,6 @@
                   0b000000011, \
                   0x8, \
                   3, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_3_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000110, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_3_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000110, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_3_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000110, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_3_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000110, \
-                  0xff00, \
-                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -9657,50 +6957,50 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011001, \
-                  0xf000, \
-                  12, \
+                  0b100011000, \
+                  0xff00, \
+                  8, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011001, \
-                  0xf000, \
-                  12, \
+                  0b100011000, \
+                  0xff00, \
+                  8, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011001, \
-                  0xf000, \
-                  12, \
+                  0b100011000, \
+                  0xff00, \
+                  8, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011001, \
-                  0xf000, \
-                  12, \
+                  0b100011000, \
+                  0xff00, \
+                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -9857,106 +7157,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_EYE_HEIGHT_MIN_CHECK_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -10007,156 +7207,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_TX_DCC_MAIN_MIN_SAMPLES_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -10200,106 +7250,6 @@
                   0xffff5800, \
                   0b110010100, \
                   0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0x7, \
                   0, \
                   THREAD, \
                   0x400, \
@@ -10607,106 +7557,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_PCIE_PPE_SAVED_RX_AD_LOFF_LANE_4_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -10751,156 +7601,6 @@
                   0b011010000, \
                   0xff00, \
                   8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101000, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101000, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101000, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101000, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0x7, \
-                  0, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -11001,106 +7701,6 @@
                   0b110110011, \
                   0xfe, \
                   1, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0xf00, \
-                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -11307,56 +7907,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_PCIE_PPE_SAVED_RX_AD_LOFF_LANE_1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -11401,106 +7951,6 @@
                   0b001110000, \
                   0xff00, \
                   8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0x7, \
-                  0, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -11557,56 +8007,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_BIST_OTHER_FAIL_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -11651,56 +8051,6 @@
                   0b111001011, \
                   0x800, \
                   11, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0xf00, \
-                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -12057,56 +8407,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN4_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN4_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN4_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN4_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_HIST_MIN_EYE_WIDTH_LANE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -12250,56 +8550,6 @@
                   0xffff5800, \
                   0b110001010, \
                   0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_3_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000101, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_3_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000101, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_3_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000101, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_3_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000101, \
-                  0xff, \
                   0, \
                   THREAD, \
                   0x400, \
@@ -12457,106 +8707,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_PPE_LAST_CAL_TIME_US_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -12651,56 +8801,6 @@
                   0b111101111, \
                   0xfe, \
                   1, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_3_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000101, \
-                  0xe000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_3_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000101, \
-                  0xe000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_3_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000101, \
-                  0xe000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_3_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000101, \
-                  0xe000, \
-                  13, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -12807,56 +8907,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_PPE_DATA_RATE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -12957,56 +9007,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_A_CTLE_GAIN_DONE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -13101,56 +9101,6 @@
                   0b000000010, \
                   0x1000, \
                   12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101000, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101000, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101000, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101000, \
-                  0xf00, \
-                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -13299,56 +9249,6 @@
                   TARGET, \
                   0xffff5800, \
                   0b100001000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000011, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000011, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000011, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000011, \
                   0xffff, \
                   0, \
                   THREAD, \
@@ -13507,74 +9407,24 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_0_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100101000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000001, \
-                  0xff, \
+                  0b100011000, \
+                  0xffff, \
                   0, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_0_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b101000001, \
-                  0xff, \
+                  0b100011000, \
+                  0xffff, \
                   0, \
                   THREAD, \
                   0x400, \
@@ -13582,175 +9432,25 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_1_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_0_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b101000001, \
-                  0xff, \
+                  0b100011000, \
+                  0xffff, \
                   0, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_1_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_0_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b101000001, \
-                  0xff, \
+                  0b100011000, \
+                  0xffff, \
                   0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_RX_CURRENT_CAL_LANE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110110100, \
-                  0x1f00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_RX_CURRENT_CAL_LANE_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110110100, \
-                  0x1f00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_RX_CURRENT_CAL_LANE_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110110100, \
-                  0x1f00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_RX_CURRENT_CAL_LANE_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110110100, \
-                  0x1f00, \
-                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -13807,50 +9507,50 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_CURRENT_CAL_LANE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100101000, \
-                  0x70, \
-                  4, \
+                  0b110110100, \
+                  0x1f00, \
+                  8, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_CURRENT_CAL_LANE_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100101000, \
-                  0x70, \
-                  4, \
+                  0b110110100, \
+                  0x1f00, \
+                  8, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_CURRENT_CAL_LANE_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100101000, \
-                  0x70, \
-                  4, \
+                  0b110110100, \
+                  0x1f00, \
+                  8, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_CURRENT_CAL_LANE_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100101000, \
-                  0x70, \
-                  4, \
+                  0b110110100, \
+                  0x1f00, \
+                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -13907,56 +9607,6 @@
                   DATA)
 
 
-#define MEM_REG_RX_DC_ENABLE_LOFF_AB_ALIAS_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110110100, \
-                  0x60, \
-                  5, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_RX_DC_ENABLE_LOFF_AB_ALIAS_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110110100, \
-                  0x60, \
-                  5, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_RX_DC_ENABLE_LOFF_AB_ALIAS_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110110100, \
-                  0x60, \
-                  5, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_RX_DC_ENABLE_LOFF_AB_ALIAS_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110110100, \
-                  0x60, \
-                  5, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_A_LATCH_OFFSET_DONE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -14007,100 +9657,50 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_DC_ENABLE_LOFF_AB_ALIAS_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110000, \
-                  0xff00, \
-                  8, \
+                  0b110110100, \
+                  0x60, \
+                  5, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_DC_ENABLE_LOFF_AB_ALIAS_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_4_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000111, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_4_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000111, \
-                  0xff, \
-                  0, \
+                  0b110110100, \
+                  0x60, \
+                  5, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_4_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_DC_ENABLE_LOFF_AB_ALIAS_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b101000111, \
-                  0xff, \
-                  0, \
+                  0b110110100, \
+                  0x60, \
+                  5, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_4_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_DC_ENABLE_LOFF_AB_ALIAS_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b101000111, \
-                  0xff, \
-                  0, \
+                  0b110110100, \
+                  0x60, \
+                  5, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -14207,56 +9807,6 @@
                   DATA)
 
 
-#define MEM_REG_RX_CTLE_FORCE_PEAK1_PEAK2_CAL_ENABLE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b111100000, \
-                  0x1c, \
-                  2, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_RX_CTLE_FORCE_PEAK1_PEAK2_CAL_ENABLE_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b111100000, \
-                  0x1c, \
-                  2, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_RX_CTLE_FORCE_PEAK1_PEAK2_CAL_ENABLE_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b111100000, \
-                  0x1c, \
-                  2, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_RX_CTLE_FORCE_PEAK1_PEAK2_CAL_ENABLE_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b111100000, \
-                  0x1c, \
-                  2, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_AMP_SETTING_OVR_ENB_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -14349,56 +9899,6 @@
                   TARGET, \
                   0xffff5800, \
                   0b110101110, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
                   0xff00, \
                   8, \
                   THREAD, \
@@ -14507,74 +10007,24 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PPE_PR_OFFSET_D_OVERRIDE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN5_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_RX_MIN_RECAL_CNT_REACHED_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000000000, \
-                  0x800, \
+                  0b110101010, \
+                  0xf800, \
                   11, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_RX_MIN_RECAL_CNT_REACHED_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PPE_PR_OFFSET_D_OVERRIDE_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b000000000, \
-                  0x800, \
+                  0b110101010, \
+                  0xf800, \
                   11, \
                   THREAD, \
                   0x400, \
@@ -14582,24 +10032,24 @@
                   DATA)
 
 
-#define MEM_REG_RX_MIN_RECAL_CNT_REACHED_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PPE_PR_OFFSET_D_OVERRIDE_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b000000000, \
-                  0x800, \
+                  0b110101010, \
+                  0xf800, \
                   11, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_RX_MIN_RECAL_CNT_REACHED_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PPE_PR_OFFSET_D_OVERRIDE_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b000000000, \
-                  0x800, \
+                  0b110101010, \
+                  0xf800, \
                   11, \
                   THREAD, \
                   0x400, \
@@ -14657,24 +10107,24 @@
                   DATA)
 
 
-#define MEM_REG_PPE_PR_OFFSET_D_OVERRIDE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_MIN_RECAL_CNT_REACHED_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b110101010, \
-                  0xf800, \
+                  0b000000000, \
+                  0x800, \
                   11, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PPE_PR_OFFSET_D_OVERRIDE_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_MIN_RECAL_CNT_REACHED_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b110101010, \
-                  0xf800, \
+                  0b000000000, \
+                  0x800, \
                   11, \
                   THREAD, \
                   0x400, \
@@ -14682,75 +10132,25 @@
                   DATA)
 
 
-#define MEM_REG_PPE_PR_OFFSET_D_OVERRIDE_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_MIN_RECAL_CNT_REACHED_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b110101010, \
-                  0xf800, \
+                  0b000000000, \
+                  0x800, \
                   11, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PPE_PR_OFFSET_D_OVERRIDE_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_MIN_RECAL_CNT_REACHED_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b110101010, \
-                  0xf800, \
+                  0b000000000, \
+                  0x800, \
                   11, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0x7, \
-                  0, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -14957,56 +10357,6 @@
                   DATA)
 
 
-#define MEM_REG_RX_CTLE_PEAK1_MAX_CHECK_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110100100, \
-                  0xf800, \
-                  11, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_RX_CTLE_PEAK1_MAX_CHECK_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110100100, \
-                  0xf800, \
-                  11, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_RX_CTLE_PEAK1_MAX_CHECK_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110100100, \
-                  0xf800, \
-                  11, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_RX_CTLE_PEAK1_MAX_CHECK_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110100100, \
-                  0xf800, \
-                  11, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_CMD_INIT_DONE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -15051,6 +10401,56 @@
                   0b000000000, \
                   0x200, \
                   9, \
+                  THREAD, \
+                  0x400, \
+                  0, \
+                  DATA)
+
+
+#define MEM_REG_RX_CTLE_PEAK1_MAX_CHECK_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+    REGS->putData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b110100100, \
+                  0xf800, \
+                  11, \
+                  THREAD, \
+                  0x400, \
+                  LANE, \
+                  DATA)
+
+#define MEM_REG_RX_CTLE_PEAK1_MAX_CHECK_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+    REGS->getData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b110100100, \
+                  0xf800, \
+                  11, \
+                  THREAD, \
+                  0x400, \
+                  LANE, \
+                  DATA)
+
+
+#define MEM_REG_RX_CTLE_PEAK1_MAX_CHECK_PUT(REGS, TARGET, THREAD, DATA) \
+    REGS->putData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b110100100, \
+                  0xf800, \
+                  11, \
+                  THREAD, \
+                  0x400, \
+                  0, \
+                  DATA)
+
+#define MEM_REG_RX_CTLE_PEAK1_MAX_CHECK_GET(REGS, TARGET, THREAD, DATA) \
+    REGS->getData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b110100100, \
+                  0xf800, \
+                  11, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -15157,50 +10557,50 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PPE_LTE_HYSTERESIS_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110011, \
-                  0x7, \
-                  0, \
+                  0b110001011, \
+                  0xe000, \
+                  13, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PPE_LTE_HYSTERESIS_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110011, \
-                  0x7, \
-                  0, \
+                  0b110001011, \
+                  0xe000, \
+                  13, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PPE_LTE_HYSTERESIS_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110011, \
-                  0x7, \
-                  0, \
+                  0b110001011, \
+                  0xe000, \
+                  13, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PPE_LTE_HYSTERESIS_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110011, \
-                  0x7, \
-                  0, \
+                  0b110001011, \
+                  0xe000, \
+                  13, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -15257,100 +10657,50 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100101001, \
-                  0x7, \
-                  0, \
+                  0b100011000, \
+                  0x70, \
+                  4, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100101001, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PPE_LTE_HYSTERESIS_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110001011, \
-                  0xe000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PPE_LTE_HYSTERESIS_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110001011, \
-                  0xe000, \
-                  13, \
+                  0b100011000, \
+                  0x70, \
+                  4, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
 
-#define MEM_REG_PPE_LTE_HYSTERESIS_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b110001011, \
-                  0xe000, \
-                  13, \
+                  0b100011000, \
+                  0x70, \
+                  4, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PPE_LTE_HYSTERESIS_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PCIE_GEN1_LANE0_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b110001011, \
-                  0xe000, \
-                  13, \
+                  0b100011000, \
+                  0x70, \
+                  4, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -15401,56 +10751,6 @@
                   0b110010101, \
                   0xfc0, \
                   6, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0xf000, \
-                  12, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -15649,56 +10949,6 @@
                   TARGET, \
                   0xffff5800, \
                   0b111001110, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
                   0xffff, \
                   0, \
                   THREAD, \
@@ -16107,56 +11357,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101001, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_LATCHOFF_MIN_CHECK_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -16201,56 +11401,6 @@
                   0b110100010, \
                   0xff, \
                   0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0xf000, \
-                  12, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -16357,56 +11507,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_ESD_SHIFT_VAL_CHECK_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -16451,56 +11551,6 @@
                   0b110100101, \
                   0xfc00, \
                   10, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0xf00, \
-                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -16607,56 +11657,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_DDC_BER_PERIOD_SEL_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -16707,56 +11707,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_TX_LANES_PON_16_23_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -16801,106 +11751,6 @@
                   0b111010100, \
                   0xff00, \
                   8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN4_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110011, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN4_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110011, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN4_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110011, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN4_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110011, \
-                  0xffff, \
-                  0, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -17057,56 +11907,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_PPE_THREAD_ACTIVE_TIME_US_LIMIT_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -17201,106 +12001,6 @@
                   0b110001001, \
                   0x4000, \
                   14, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0x70, \
-                  4, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -17457,106 +12157,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_CTLE_PEAK1_HYST_LIMIT_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -17601,206 +12201,6 @@
                   0b110000111, \
                   0xe000, \
                   13, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN5_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN5_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN5_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN5_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100100, \
-                  0xff00, \
-                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -17907,150 +12307,50 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_4_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110011, \
-                  0x70, \
-                  4, \
+                  0b100111000, \
+                  0xffff, \
+                  0, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_4_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110011, \
-                  0x70, \
-                  4, \
+                  0b100111000, \
+                  0xffff, \
+                  0, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_4_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110011, \
-                  0x70, \
-                  4, \
+                  0b100111000, \
+                  0xffff, \
+                  0, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_4_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110011, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
+                  0b100111000, \
+                  0xffff, \
                   0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0xff00, \
-                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -18157,11 +12457,11 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN5_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_3_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011100, \
+                  0b100110000, \
                   0xffff, \
                   0, \
                   THREAD, \
@@ -18169,11 +12469,11 @@
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN5_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_3_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011100, \
+                  0b100110000, \
                   0xffff, \
                   0, \
                   THREAD, \
@@ -18182,11 +12482,11 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN5_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_3_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011100, \
+                  0b100110000, \
                   0xffff, \
                   0, \
                   THREAD, \
@@ -18194,11 +12494,11 @@
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN5_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_3_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011100, \
+                  0b100110000, \
                   0xffff, \
                   0, \
                   THREAD, \
@@ -18251,56 +12551,6 @@
                   0b110000111, \
                   0x1c00, \
                   10, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN4_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0x70, \
-                  4, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -18407,56 +12657,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_PPE_PIPE_CURRENT_LANE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -18507,56 +12707,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_DDC_MIN_ERR_LIM_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -18601,106 +12751,6 @@
                   0b110001110, \
                   0x1c, \
                   2, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0xf00, \
-                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -18957,56 +13007,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_DC_ENABLE_LOFF_B_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -19051,256 +13051,6 @@
                   0b110110100, \
                   0x20, \
                   5, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101011, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101011, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101011, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101011, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN3_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110010, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_RX_EPOFF_MAX_CHECK_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110101000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_RX_EPOFF_MAX_CHECK_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110101000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_RX_EPOFF_MAX_CHECK_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110101000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_RX_EPOFF_MAX_CHECK_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110101000, \
-                  0xff00, \
-                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -19357,50 +13107,50 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_4_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_EPOFF_MAX_CHECK_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b101000111, \
-                  0xe000, \
-                  13, \
+                  0b110101000, \
+                  0xff00, \
+                  8, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_4_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_EPOFF_MAX_CHECK_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b101000111, \
-                  0xe000, \
-                  13, \
+                  0b110101000, \
+                  0xff00, \
+                  8, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_4_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_EPOFF_MAX_CHECK_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b101000111, \
-                  0xe000, \
-                  13, \
+                  0b110101000, \
+                  0xff00, \
+                  8, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_4_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_EPOFF_MAX_CHECK_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b101000111, \
-                  0xe000, \
-                  13, \
+                  0b110101000, \
+                  0xff00, \
+                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -19507,56 +13257,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN2_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_PPE_LTE_GAIN_ZERO_DISABLE_ALIAS_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -19601,56 +13301,6 @@
                   0b110001011, \
                   0x6, \
                   1, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0x7, \
-                  0, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -20007,6 +13657,56 @@
                   DATA)
 
 
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+    REGS->putData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b100100000, \
+                  0xffff, \
+                  0, \
+                  THREAD, \
+                  0x400, \
+                  LANE, \
+                  DATA)
+
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+    REGS->getData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b100100000, \
+                  0xffff, \
+                  0, \
+                  THREAD, \
+                  0x400, \
+                  LANE, \
+                  DATA)
+
+
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_1_PUT(REGS, TARGET, THREAD, DATA) \
+    REGS->putData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b100100000, \
+                  0xffff, \
+                  0, \
+                  THREAD, \
+                  0x400, \
+                  0, \
+                  DATA)
+
+#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE_1_GET(REGS, TARGET, THREAD, DATA) \
+    REGS->getData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b100100000, \
+                  0xffff, \
+                  0, \
+                  THREAD, \
+                  0x400, \
+                  0, \
+                  DATA)
+
+
 #define MEM_REG_TX_PCIE_IDLE_LOZ_DEL_SEL_1_ALIAS_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -20057,56 +13757,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_PPE_THREAD_LOOP_COUNT_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -20150,106 +13800,6 @@
                   0xffff5800, \
                   0b110110001, \
                   0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_0_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000000, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_0_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000000, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_0_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000000, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_0_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000000, \
-                  0xff, \
                   0, \
                   THREAD, \
                   0x400, \
@@ -20557,106 +14107,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101000, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101000, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101000, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101000, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE4_GEN2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111001, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_RC_ENABLE_EDGE_OFFSET_CAL_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -20701,106 +14151,6 @@
                   0b110001010, \
                   0x4000, \
                   14, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN4_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111011, \
-                  0x7, \
-                  0, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -20957,106 +14307,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011000, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_DFE_COEF_3_4_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -21101,106 +14351,6 @@
                   0b000001101, \
                   0xff, \
                   0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101011, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101011, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101011, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN4_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101011, \
-                  0xf00, \
-                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -21257,56 +14407,6 @@
                   DATA)
 
 
-#define MEM_REG_RX_EPOFF_MIN_CHECK_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110101000, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_RX_EPOFF_MIN_CHECK_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110101000, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_RX_EPOFF_MIN_CHECK_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110101000, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_RX_EPOFF_MIN_CHECK_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110101000, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_DFE_DEBUG_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -21357,24 +14457,24 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN3_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_EPOFF_MIN_CHECK_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110010, \
-                  0xffff, \
+                  0b110101000, \
+                  0xff, \
                   0, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN3_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_EPOFF_MIN_CHECK_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110010, \
-                  0xffff, \
+                  0b110101000, \
+                  0xff, \
                   0, \
                   THREAD, \
                   0x400, \
@@ -21382,24 +14482,24 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN3_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_EPOFF_MIN_CHECK_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110010, \
-                  0xffff, \
+                  0b110101000, \
+                  0xff, \
                   0, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN3_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_EPOFF_MIN_CHECK_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110010, \
-                  0xffff, \
+                  0b110101000, \
+                  0xff, \
                   0, \
                   THREAD, \
                   0x400, \
@@ -21457,56 +14557,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_0_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000000, \
-                  0xe000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_0_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000000, \
-                  0xe000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_0_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000000, \
-                  0xe000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_0_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000000, \
-                  0xe000, \
-                  13, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_BIST_OVERALL_PASS_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -21551,106 +14601,6 @@
                   0b111001011, \
                   0x400, \
                   10, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_RX_EO_PHASE_SELECT_0_2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110110100, \
-                  0x1c, \
-                  2, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_RX_EO_PHASE_SELECT_0_2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110110100, \
-                  0x1c, \
-                  2, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_RX_EO_PHASE_SELECT_0_2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110110100, \
-                  0x1c, \
-                  2, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_RX_EO_PHASE_SELECT_0_2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110110100, \
-                  0x1c, \
-                  2, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN3_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111010, \
-                  0x7, \
-                  0, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -21857,106 +14807,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_TX_PCIE_IDLE_LOZ_DEL_SEL_5_ALIAS_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -22151,56 +15001,6 @@
                   0b110001110, \
                   0x40, \
                   6, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN3_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100010, \
-                  0x70, \
-                  4, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -22407,156 +15207,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_4_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000111, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_4_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000111, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_4_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000111, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_TXDETRX_IDLE_SAMP_TIMER_LANE_4_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b101000111, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_RX_DDC_HYSTERESIS_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110001110, \
-                  0x3, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_RX_DDC_HYSTERESIS_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110001110, \
-                  0x3, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_RX_DDC_HYSTERESIS_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110001110, \
-                  0x3, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_RX_DDC_HYSTERESIS_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b110001110, \
-                  0x3, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_B_LTE_ZERO_DONE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -22657,24 +15307,24 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN4_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_DDC_HYSTERESIS_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011011, \
-                  0xffff, \
+                  0b110001110, \
+                  0x3, \
                   0, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN4_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_DDC_HYSTERESIS_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011011, \
-                  0xffff, \
+                  0b110001110, \
+                  0x3, \
                   0, \
                   THREAD, \
                   0x400, \
@@ -22682,24 +15332,24 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN4_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_DDC_HYSTERESIS_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011011, \
-                  0xffff, \
+                  0b110001110, \
+                  0x3, \
                   0, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN4_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_DDC_HYSTERESIS_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100011011, \
-                  0xffff, \
+                  0b110001110, \
+                  0x3, \
                   0, \
                   THREAD, \
                   0x400, \
@@ -22957,50 +15607,50 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_BER_FAIL_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110011, \
-                  0xff00, \
-                  8, \
+                  0b000000001, \
+                  0x1, \
+                  0, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_BER_FAIL_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110011, \
-                  0xff00, \
-                  8, \
+                  0b000000001, \
+                  0x1, \
+                  0, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_BER_FAIL_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110011, \
-                  0xff00, \
-                  8, \
+                  0b000000001, \
+                  0x1, \
+                  0, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_LANE3_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_BER_FAIL_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100110011, \
-                  0xff00, \
-                  8, \
+                  0b000000001, \
+                  0x1, \
+                  0, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -23057,74 +15707,24 @@
                   DATA)
 
 
-#define MEM_REG_RX_BER_FAIL_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_DFE_COEF_1_6_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b000000001, \
-                  0x1, \
+                  0b000001010, \
+                  0xff, \
                   0, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_RX_BER_FAIL_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_DFE_COEF_1_6_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b000000001, \
-                  0x1, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_RX_BER_FAIL_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000000001, \
-                  0x1, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_RX_BER_FAIL_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000000001, \
-                  0x1, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN4_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101011, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN4_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101011, \
-                  0xffff, \
+                  0b000001010, \
+                  0xff, \
                   0, \
                   THREAD, \
                   0x400, \
@@ -23132,24 +15732,24 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN4_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_DFE_COEF_1_6_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100101011, \
-                  0xffff, \
+                  0b000001010, \
+                  0xff, \
                   0, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN4_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_DFE_COEF_1_6_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100101011, \
-                  0xffff, \
+                  0b000001010, \
+                  0xff, \
                   0, \
                   THREAD, \
                   0x400, \
@@ -23201,106 +15801,6 @@
                   0b000000000, \
                   0x8000, \
                   15, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_RX_DFE_COEF_1_6_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000001010, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_RX_DFE_COEF_1_6_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000001010, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_RX_DFE_COEF_1_6_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000001010, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_RX_DFE_COEF_1_6_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000001010, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN1_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111000, \
-                  0xf000, \
-                  12, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -23407,56 +15907,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_LATCHOFF_MAX_CHECK_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -23557,50 +16007,50 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PCIE_PPE_SAVED_RX_AD_LOFF_LANE_2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100101000, \
-                  0xffff, \
-                  0, \
+                  0b010010000, \
+                  0xff00, \
+                  8, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_PCIE_PPE_SAVED_RX_AD_LOFF_LANE_2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100101000, \
-                  0xffff, \
-                  0, \
+                  0b010010000, \
+                  0xff00, \
+                  8, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN1_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PCIE_PPE_SAVED_RX_AD_LOFF_LANE_2_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100101000, \
-                  0xffff, \
-                  0, \
+                  0b010010000, \
+                  0xff00, \
+                  8, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN1_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_PCIE_PPE_SAVED_RX_AD_LOFF_LANE_2_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100101000, \
-                  0xffff, \
-                  0, \
+                  0b010010000, \
+                  0xff00, \
+                  8, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -23657,262 +16107,12 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_SAVED_RX_AD_LOFF_LANE_2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b010010000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_SAVED_RX_AD_LOFF_LANE_2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b010010000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_SAVED_RX_AD_LOFF_LANE_2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b010010000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_SAVED_RX_AD_LOFF_LANE_2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b010010000, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE2_GEN3_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100101010, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_CTLE_PEAK1_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_CTLE_PEAK1_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_CTLE_PEAK1_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_CTLE_PEAK1_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0xf000, \
-                  12, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_CTLE_PEAK1_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0xff00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE4_GEN5_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100111100, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_PPE_PIPE_RX_EI_INACTIVE_PHASE_0_3_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b110110111, \
-                  0xff00, \
+                  0b110110110, \
+                  0xf00, \
                   8, \
                   THREAD, \
                   0x400, \
@@ -23923,8 +16123,8 @@
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b110110111, \
-                  0xff00, \
+                  0b110110110, \
+                  0xf00, \
                   8, \
                   THREAD, \
                   0x400, \
@@ -23936,8 +16136,8 @@
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b110110111, \
-                  0xff00, \
+                  0b110110110, \
+                  0xf00, \
                   8, \
                   THREAD, \
                   0x400, \
@@ -23948,8 +16148,8 @@
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b110110111, \
-                  0xff00, \
+                  0b110110110, \
+                  0xf00, \
                   8, \
                   THREAD, \
                   0x400, \
@@ -24057,56 +16257,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_CTLE_PEAK2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_CTLE_PEAK2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_CTLE_PEAK2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN4_PRESET_RX_CTLE_PEAK2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011011, \
-                  0xf00, \
-                  8, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_TX_LANES_PON_00_15_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -24149,6 +16299,56 @@
                   TARGET, \
                   0xffff5800, \
                   0b111010011, \
+                  0xffff, \
+                  0, \
+                  THREAD, \
+                  0x400, \
+                  0, \
+                  DATA)
+
+
+#define MEM_REG_PCIE_PPE_SAVED_TX_DCC_LANE_2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+    REGS->putData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b100000000, \
+                  0xffff, \
+                  0, \
+                  THREAD, \
+                  0x400, \
+                  LANE, \
+                  DATA)
+
+#define MEM_REG_PCIE_PPE_SAVED_TX_DCC_LANE_2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+    REGS->getData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b100000000, \
+                  0xffff, \
+                  0, \
+                  THREAD, \
+                  0x400, \
+                  LANE, \
+                  DATA)
+
+
+#define MEM_REG_PCIE_PPE_SAVED_TX_DCC_LANE_2_PUT(REGS, TARGET, THREAD, DATA) \
+    REGS->putData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b100000000, \
+                  0xffff, \
+                  0, \
+                  THREAD, \
+                  0x400, \
+                  0, \
+                  DATA)
+
+#define MEM_REG_PCIE_PPE_SAVED_TX_DCC_LANE_2_GET(REGS, TARGET, THREAD, DATA) \
+    REGS->getData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b100000000, \
                   0xffff, \
                   0, \
                   THREAD, \
@@ -24207,56 +16407,6 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_SAVED_TX_DCC_LANE_2_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100000000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_SAVED_TX_DCC_LANE_2_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100000000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_SAVED_TX_DCC_LANE_2_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100000000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_PPE_SAVED_TX_DCC_LANE_2_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100000000, \
-                  0xffff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
 #define MEM_REG_RX_RUNNING_RECAL_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
@@ -24301,106 +16451,6 @@
                   0b110110100, \
                   0x8000, \
                   15, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_RX_QPA_HYSTERESIS_ENABLE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b111100000, \
-                  0x200, \
-                  9, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_RX_QPA_HYSTERESIS_ENABLE_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b111100000, \
-                  0x200, \
-                  9, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_RX_QPA_HYSTERESIS_ENABLE_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b111100000, \
-                  0x200, \
-                  9, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_RX_QPA_HYSTERESIS_ENABLE_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b111100000, \
-                  0x200, \
-                  9, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_RX_MARGIN_TIMING_OFFSET_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000001111, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_RX_MARGIN_TIMING_OFFSET_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000001111, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_RX_MARGIN_TIMING_OFFSET_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000001111, \
-                  0xff, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_RX_MARGIN_TIMING_OFFSET_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b000001111, \
-                  0xff, \
-                  0, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -24457,74 +16507,24 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_MARGIN_TIMING_OFFSET_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100100000, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100000, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN4_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100100011, \
-                  0xffff, \
+                  0b000001111, \
+                  0xff, \
                   0, \
                   THREAD, \
                   0x400, \
                   LANE, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN4_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+#define MEM_REG_RX_MARGIN_TIMING_OFFSET_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100100011, \
-                  0xffff, \
+                  0b000001111, \
+                  0xff, \
                   0, \
                   THREAD, \
                   0x400, \
@@ -24532,25 +16532,75 @@
                   DATA)
 
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN4_PUT(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_MARGIN_TIMING_OFFSET_PUT(REGS, TARGET, THREAD, DATA) \
     REGS->putData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100100011, \
-                  0xffff, \
+                  0b000001111, \
+                  0xff, \
                   0, \
                   THREAD, \
                   0x400, \
                   0, \
                   DATA)
 
-#define MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN4_GET(REGS, TARGET, THREAD, DATA) \
+#define MEM_REG_RX_MARGIN_TIMING_OFFSET_GET(REGS, TARGET, THREAD, DATA) \
     REGS->getData(\
                   TARGET, \
                   0xffff5800, \
-                  0b100100011, \
-                  0xffff, \
+                  0b000001111, \
+                  0xff, \
                   0, \
+                  THREAD, \
+                  0x400, \
+                  0, \
+                  DATA)
+
+
+#define MEM_REG_RX_QPA_HYSTERESIS_ENABLE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
+    REGS->putData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b111100000, \
+                  0x200, \
+                  9, \
+                  THREAD, \
+                  0x400, \
+                  LANE, \
+                  DATA)
+
+#define MEM_REG_RX_QPA_HYSTERESIS_ENABLE_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
+    REGS->getData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b111100000, \
+                  0x200, \
+                  9, \
+                  THREAD, \
+                  0x400, \
+                  LANE, \
+                  DATA)
+
+
+#define MEM_REG_RX_QPA_HYSTERESIS_ENABLE_PUT(REGS, TARGET, THREAD, DATA) \
+    REGS->putData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b111100000, \
+                  0x200, \
+                  9, \
+                  THREAD, \
+                  0x400, \
+                  0, \
+                  DATA)
+
+#define MEM_REG_RX_QPA_HYSTERESIS_ENABLE_GET(REGS, TARGET, THREAD, DATA) \
+    REGS->getData(\
+                  TARGET, \
+                  0xffff5800, \
+                  0b111100000, \
+                  0x200, \
+                  9, \
                   THREAD, \
                   0x400, \
                   0, \
@@ -24653,156 +16703,6 @@
                   0, \
                   THREAD, \
                   0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_LTE_GAIN_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_LTE_GAIN_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_LTE_GAIN_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_LTE_GAIN_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100110001, \
-                  0x70, \
-                  4, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_LTE_ZERO_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_LTE_ZERO_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  LANE, \
-                  DATA)
-
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_LTE_ZERO_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-#define MEM_REG_PCIE_LANE0_GEN3_PRESET_RX_LTE_ZERO_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff5800, \
-                  0b100011010, \
-                  0x7, \
-                  0, \
-                  THREAD, \
-                  0x400, \
-                  0, \
-                  DATA)
-
-
-#define FW_REG_EXT_CMD_STATUS_CLEAR_MODE_PL_PUT(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff30e0, \
-                  0b000000111, \
-                  0x1, \
-                  0, \
-                  THREAD, \
-                  0x20, \
-                  LANE, \
-                  DATA)
-
-#define FW_REG_EXT_CMD_STATUS_CLEAR_MODE_PL_GET(REGS, TARGET, THREAD, LANE, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff30e0, \
-                  0b000000111, \
-                  0x1, \
-                  0, \
-                  THREAD, \
-                  0x20, \
-                  LANE, \
-                  DATA)
-
-
-#define FW_REG_EXT_CMD_STATUS_CLEAR_MODE_PUT(REGS, TARGET, THREAD, DATA) \
-    REGS->putData(\
-                  TARGET, \
-                  0xffff30e0, \
-                  0b000000111, \
-                  0x1, \
-                  0, \
-                  THREAD, \
-                  0x20, \
-                  0, \
-                  DATA)
-
-#define FW_REG_EXT_CMD_STATUS_CLEAR_MODE_GET(REGS, TARGET, THREAD, DATA) \
-    REGS->getData(\
-                  TARGET, \
-                  0xffff30e0, \
-                  0b000000111, \
-                  0x1, \
-                  0, \
-                  THREAD, \
-                  0x20, \
                   0, \
                   DATA)
 
