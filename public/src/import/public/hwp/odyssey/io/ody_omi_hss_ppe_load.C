@@ -71,7 +71,7 @@ uint64_t MEM_REG_OFFSETS[NUM_OF_MEM_REGS] =
 
 /// NOTE: doxygen in header
 fapi2::ReturnCode ody_omi_hss_ppe_load(
-    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     uint8_t* const i_img_data,
     uint32_t const i_img_size,
     uint32_t const i_offset,
@@ -79,17 +79,21 @@ fapi2::ReturnCode ody_omi_hss_ppe_load(
 {
     FAPI_DBG("Start");
 
-    io_ppe_firs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_firs(FIR_SCOM_LFIR_RW_WCLEAR_REG, FIR_DL0_ERROR_MASK,
-            FIR_DL0_ERROR_ACTION, FIR_MC_OMI_RW_WCLEAR_REG,
-            FIR_DL0_SKIT_CTL, FIR_TLX_RW_WCLEAR);
-    l_ppe_firs.ioppe_fir_set(i_target);
-
     PHY_PPE_WRAP0_XIXCR_t WRAP0_XIXCR;
     PHY_PPE_WRAP0_SCOM_CNTL_t WRAP0_SCOM_CNTL;
 
-    // Validate inputs
     bool l_invalid = false;
 
+    io_ppe_firs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_firs(FIR_SCOM_LFIR_RW_WCLEAR_REG, FIR_DL0_ERROR_MASK,
+            FIR_DL0_ERROR_ACTION, FIR_MC_OMI_RW_WCLEAR_REG,
+            FIR_DL0_SKIT_CTL, FIR_TLX_RW_WCLEAR);
+
+    fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP> l_ocmb_target;
+    FAPI_TRY(i_target.reduceType(l_ocmb_target));
+
+    l_ppe_firs.ioppe_fir_set(l_ocmb_target);
+
+    // Validate inputs
     if (i_img_data == NULL)
     {
         l_invalid = true;
@@ -121,7 +125,7 @@ fapi2::ReturnCode ody_omi_hss_ppe_load(
 
     FAPI_ASSERT( !l_invalid,
                  fapi2::ODY_IO_LOAD_PPE_IMG_ERROR()
-                 .set_TARGET(i_target)
+                 .set_TARGET(l_ocmb_target)
                  .set_IMAGE_SIZE(i_img_size)
                  .set_OFFSET(i_offset)
                  .set_IMAGE_TYPE(i_type),
@@ -140,23 +144,23 @@ fapi2::ReturnCode ody_omi_hss_ppe_load(
             // Halt PPE
             FAPI_DBG("Halt PPE.");
             WRAP0_XIXCR.set_PPE_XIXCR_XCR(1); // Write 0b001
-            FAPI_TRY(WRAP0_XIXCR.putScom(i_target),
+            FAPI_TRY(WRAP0_XIXCR.putScom(l_ocmb_target),
                      "Error putscom to PPE_XIXCR_XCR (halt PPE).");
 
             // Logic IO reset, toggle SCOM_PPE_IORESET
             FAPI_DBG("IO reset");
             WRAP0_SCOM_CNTL.set_SCOM_PPE_IORESET(1);
-            FAPI_TRY(WRAP0_SCOM_CNTL.putScom(i_target),
+            FAPI_TRY(WRAP0_SCOM_CNTL.putScom(l_ocmb_target),
                      "Error putscom to SCOM_PPE_IORESET (1).");
             WRAP0_SCOM_CNTL.set_SCOM_PPE_IORESET(0);
-            FAPI_TRY(WRAP0_SCOM_CNTL.putScom(i_target),
+            FAPI_TRY(WRAP0_SCOM_CNTL.putScom(l_ocmb_target),
                      "Error putscom to SCOM_PPE_IORESET (0).");
         }
 
         // Load IO PPE base image to SRAM
         // SBE will compile this HWP natively (with an istep chipop) to execute the load
         // It calls the HWP and supplies image data read from the NOR flash
-        FAPI_TRY(ody_putsram(i_target, SRAM_IO_PPE_IMAGE_OFFSET + (static_cast<uint64_t>(i_offset) << 32), i_img_size,
+        FAPI_TRY(ody_putsram(l_ocmb_target, SRAM_IO_PPE_IMAGE_OFFSET + (static_cast<uint64_t>(i_offset) << 32), i_img_size,
                              i_img_data),
                  "Error returned from ody_putsram (PPE image type)");
 
@@ -169,7 +173,7 @@ fapi2::ReturnCode ody_omi_hss_ppe_load(
         {
             // Intentionally ignore input offset, use fixed
             // offsets defined for memregs
-            FAPI_TRY(ody_putsram(i_target,
+            FAPI_TRY(ody_putsram(l_ocmb_target,
                                  MEM_REG_OFFSETS[ii],
                                  i_img_size,
                                  i_img_data),
