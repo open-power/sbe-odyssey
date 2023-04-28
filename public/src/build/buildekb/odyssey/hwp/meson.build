@@ -48,6 +48,8 @@ infile_c = [
             '/hwp/odyssey/perv/ody_scratch_regs_utils.C',
             '/hwp/odyssey/perv/ody_stopclocks.C',
             '/hwp/odyssey/perv/ody_gettracearray.C',
+            '/hwp/odyssey/perv/ody_putsram.C',
+            '/hwp/odyssey/perv/ody_getsram.C',
 
             '/memory/odyssey/hwp/ody_sppe_draminit.C',
             '/memory/odyssey/hwp/ody_thermal_init.C',
@@ -62,8 +64,6 @@ infile_c = [
             '/hwp/generic/utils/poz_readsram.C',
             '/hwp/odyssey/io/ody_omi_unload.C',
             '/hwp/generic/io/io_ppe_cache.C',
-            '/hwp/odyssey/io/ody_putsram.C',
-            '/hwp/odyssey/io/ody_getsram.C',
             '/hwp/odyssey/io/ody_omi_hss_ppe_load.C',
             '/hwp/odyssey/io/ody_omi_hss_config.C',
             '/hwp/odyssey/io/ody_omi_hss_ppe_start.C',

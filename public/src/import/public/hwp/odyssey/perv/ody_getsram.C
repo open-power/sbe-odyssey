@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/memory/odyssey/hwp/ody_putsram_io_ppe.C $ */
+/* $Source: public/src/import/public/hwp/odyssey/perv/ody_getsram.C $     */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -22,9 +22,9 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+/// @file ody_getsram.C
+/// @brief Read data from Odyssey SRAM
 ///
-/// @file ody_putsram_io_ppe.C
-/// @brief Write data to IO PPE SRAM
 /// *HWP HW Maintainer: Thi Tran <thi@us.ibm.com>
 /// *HWP FW Maintainer:
 /// *HWP Consumed by: HB, Cronus, SBE
@@ -33,87 +33,44 @@
 //------------------------------------------------------------------------------
 // Includes
 //------------------------------------------------------------------------------
-#include <ody_putsram_io_ppe.H>
+#include <ody_getsram.H>
+#include <poz_readsram.H>
 #include <ody_scom_omi_ioo.H>
 
 //------------------------------------------------------------------------------
-// scomt name spaces
+// Constants
 //------------------------------------------------------------------------------
-// Scomt definitions
-SCOMT_OMI_USE_PHY_PPE_WRAP0_ARB_CSCR
+// OCMB
 SCOMT_OMI_USE_PHY_PPE_WRAP0_ARB_CSAR
-SCOMT_OMI_USE_PHY_PPE_WRAP0_ARB_CSDR
-
-using namespace scomt::omi;
 
 //------------------------------------------------------------------------------
 // Function definitions
 //------------------------------------------------------------------------------
 /// NOTE: doxygen in header
-fapi2::ReturnCode ody_putsram_io_ppe(
-    const fapi2::Target < fapi2::TARGET_TYPE_OCMB_CHIP >& i_target,
+fapi2::ReturnCode ody_getsram(
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
     const uint64_t i_offset,
     const uint32_t i_bytes,
-    const uint8_t* i_data)
+    uint8_t* o_data)
 {
     FAPI_DBG("Start");
-    PHY_PPE_WRAP0_ARB_CSCR_t  WRAP0_ARB_CSCR;
+
+    using namespace scomt::omi;
     PHY_PPE_WRAP0_ARB_CSAR_t  WRAP0_ARB_CSAR;
-    PHY_PPE_WRAP0_ARB_CSDR_t  WRAP0_ARB_CSDR;
 
-    uint8_t* l_dataPtr = i_data;
-    uint64_t l_data64 = 0;
-
-    FAPI_DBG("ody_putsram_io_ppe: i_offset [0x%.8X%.8X], i_bytes %u.",
+    FAPI_DBG("i_offset [0x%.8X%.8X], i_bytes %u.",
              ((i_offset >> 32) & 0xFFFFFFFF), (i_offset & 0xFFFFFFFF), i_bytes);
 
-    // Enable auto increment
-    if (i_bytes > 8)
-    {
-        FAPI_DBG("ody_putsram_io_ppe: enable auto-increment.");
-        WRAP0_ARB_CSCR.set_SRAM_ACCESS_MODE(1);
-        FAPI_TRY(WRAP0_ARB_CSCR.putScom(i_target),
-                 "Error putscom to WRAP0_ARB_CSCR (1).");
-    }
-
-    // Set the address pointer to the input offset
+    // Set SRAM address
     WRAP0_ARB_CSAR = i_offset;
     FAPI_TRY(WRAP0_ARB_CSAR.putScom(i_target),
              "Error putscom to WRAP0_ARB_CSAR (SRAM address).");
 
-    // Write data
-    FAPI_DBG("Write data to SRAM...");
+    // Read SRAM
+    FAPI_TRY(poz_readsram(i_target, PHY_PPE_WRAP0_ARB_CSCR_RW, PHY_PPE_WRAP0_ARB_CSDR, i_bytes, o_data),
+             "Error from poz_readsram (Odyssey).");
 
-    while (l_dataPtr < (i_data + i_bytes))
-    {
-        l_data64 = 0;
-
-        // Load 8 bytes into 64-bit word
-        for (uint8_t ii = 0; ii < 8; ii++)
-        {
-            l_data64 |= ( static_cast<uint64_t>(*l_dataPtr++) << (56 - (8 * ii)) );
-
-            // Exit if size has reached. Remaining data in double words are zeroes
-            if (l_dataPtr >= i_data + i_bytes)
-            {
-                break;
-            }
-        }
-
-        WRAP0_ARB_CSDR.set_CSDR_SRAM_DATA(l_data64);
-        FAPI_TRY(WRAP0_ARB_CSDR.putScom(i_target),
-                 "Error putscom to WRAP0_ARB_CSDR.");
-    }
-
-    // Disable auto-increment
-    if (i_bytes > 8)
-    {
-        WRAP0_ARB_CSCR.set_SRAM_ACCESS_MODE(0);
-        FAPI_TRY(WRAP0_ARB_CSCR.putScom(i_target),
-                 "Error putscom to WRAP0_ARB_CSCR (0).");
-    }
-
-    FAPI_DBG("putsram completes.");
+    FAPI_DBG("poz_readsram completes.");
 
 fapi_try_exit:
     FAPI_DBG("End");
