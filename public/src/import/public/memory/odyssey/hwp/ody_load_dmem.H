@@ -40,7 +40,7 @@
 #include <poz_common_image_load.H>
 
 // Required for Cronus
-typedef fapi2::ReturnCode (*ody_load_dmem_FP_t) (const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
+typedef fapi2::ReturnCode (*ody_load_dmem_FP_t) (const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&,
         uint8_t* const i_dmem_data,
         const uint32_t i_dmem_size,
         const uint32_t i_dmem_offset,
@@ -58,7 +58,7 @@ extern "C"
 /// @param[in] i_image_type type of image being loaded
 /// @return FAPI2_RC_SUCCESS iff ok
 ///
-    fapi2::ReturnCode ody_load_dmem(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+    fapi2::ReturnCode ody_load_dmem(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
                                     uint8_t* const i_dmem_data,
                                     const uint32_t i_dmem_size,
                                     const uint32_t i_dmem_offset,
