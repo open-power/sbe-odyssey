@@ -45,6 +45,7 @@ generic_infile_c = [
                     'poz_common_stopclocks.C',
                     'poz_gettracearray.C',
                     'poz_fastarray.C',
+                    'poz_scan_compare.C',
                     'poz_ppe_load.C',
                     'poz_nest_enable_io.C'
                    ]

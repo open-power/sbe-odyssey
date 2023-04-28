@@ -33,11 +33,12 @@ extern "C" {
 #include "pk_api.h"
 #include "ppe42_scom.h"
 #include "ppe42_string.h"
-#include "sha3.H"
 
 #ifdef __cplusplus
 }
 #endif
+
+#include "sha3.H"
 
 #define MASK_ZERO_L32B_UINT64(x)    ((x) & 0xFFFFFFFF00000000ull)
 #define MASK_ZERO_H32B_UINT64(x)    ((x) & 0x00000000FFFFFFFFull)

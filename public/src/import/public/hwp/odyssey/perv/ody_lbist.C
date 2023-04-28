@@ -99,10 +99,20 @@ ReturnCode ody_lbist(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     FAPI_INF("Entering ...");
 
-    bist_return ody_lbist_return;
+    bist_diags l_bist_diags;
+    std::vector<uint32_t> l_failing_rings;
     auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
 
-    FAPI_TRY(poz_bist(i_target, ody_lbist_params, ody_lbist_return));
+    FAPI_TRY(poz_bist(i_target, ody_lbist_params, l_bist_diags, l_failing_rings));
+
+    if (l_bist_diags.completed_stages & ody_lbist_params.bist_stages::COMPARE)
+    {
+        FAPI_ASSERT(!l_failing_rings.size(),
+                    fapi2::NONZERO_MISCOMPARES().
+                    set_FAILING_RING_COUNT(l_failing_rings.size()),
+                    "%d rings failed compare check",
+                    l_failing_rings.size());
+    }
 
     // Post-BIST scan0 for IML with BIST
     FAPI_TRY(mod_scan0(l_chiplets_mc, cc::REGION_ALL));
