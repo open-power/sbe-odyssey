@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/memory/odyssey/hwp/ody_putsram_io_ppe.H $ */
+/* $Source: public/src/import/public/hwp/odyssey/perv/ody_getsram.H $     */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,8 +23,9 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 ///
-/// @file ody_putsram_io_ppe.H
-/// @brief Write data to IO PPE SRAM
+/// @file ody_getsram.H
+/// @brief Read data from Odyssey SRAM
+///
 /// *HWP HW Maintainer: Thi Tran <thi@us.ibm.com>
 /// *HWP FW Maintainer:
 /// *HWP Consumed by: HB, Cronus, SBE
@@ -40,33 +41,34 @@
 //------------------------------------------------------------------------------
 // Structure definitions
 //------------------------------------------------------------------------------
-// function pointer typedef definition for HWP call support
-typedef fapi2::ReturnCode(*ody_putsram_io_ppe_FP_t) (
-    const fapi2::Target <fapi2::TARGET_TYPE_OCMB_CHIP>&,
+// Function pointer typedef definition for HWP call support
+typedef fapi2::ReturnCode(*ody_getsram_FP_t) (
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
     const uint64_t,
     const uint32_t,
-    const uint8_t*);
+    uint8_t*);
 
 //------------------------------------------------------------------------------
 // Function prototype
 //------------------------------------------------------------------------------
+//
+
 extern "C" {
 
 ///
+/// @brief Read data from Odyssey SRAM
 ///
-/// @brief Write data to Odyssey IO PPE SRAM
-///
-/// @param[in]  i_target    Reference to Odyssey chip target
-/// @param[in]  i_offset    SRAM address offset to write to
-/// @param[in]  i_bytes     Size of data in bytes
-/// @param[in]  i_data      Pointer to write data
+/// @param[in]  i_target        Reference to proc Odyssey target
+/// @param[in]  i_offset        SRAM offset to read from
+/// @param[in]  i_bytes         Size of data to read (in bytes)
+/// @param[out] o_data          Pointer to data storage
 ///
 /// @return FAPI_RC_SUCCESS if success, else error code
 ///
-    fapi2::ReturnCode ody_putsram_io_ppe(
-        const fapi2::Target < fapi2::TARGET_TYPE_OCMB_CHIP >& i_target,
+    fapi2::ReturnCode ody_getsram(
+        const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
         const uint64_t i_offset,
         const uint32_t i_bytes,
-        const uint8_t* i_data);
+        uint8_t* o_data);
 
 } //extern "C"

@@ -28,6 +28,9 @@ $$(call ADD_MODULE_INCDIR,$$(PROCEDURE),$$(ROOTPATH)/public/hwp/generic/utils)
 $$(call ADD_MODULE_SRCDIR,$$(PROCEDURE),$$(ROOTPATH)/public/hwp/generic/utils)
 $$(call ADD_MODULE_INCDIR,$$(PROCEDURE),$$(ROOTPATH)/public/hwp/generic/io)
 $$(call ADD_MODULE_SRCDIR,$$(PROCEDURE),$$(ROOTPATH)/public/hwp/generic/io)
+$$(call ADD_MODULE_INCDIR,$$(PROCEDURE),$$(ROOTPATH)/public/hwp/odyssey/perv/)
+$$(call ADD_MODULE_SRCDIR,$$(PROCEDURE),$$(ROOTPATH)/public/hwp/odyssey/perv/)
+
 $$(call ADD_MODULE_OBJ,$$(PROCEDURE),io_ppe_cache.o)
 # Depending objs should be delimited by spaces after the first one.
 ifneq (($2),)
@@ -36,10 +39,7 @@ endif
 $$(call BUILD_PROCEDURE)
 endef
 ODYSSEY_IO_PROCEDURE = $(eval $(call __ODYSSEY_IO_PROCEDURE,$1,$2))
-$(call ODYSSEY_IO_PROCEDURE,ody_putsram,poz_writesram)
-$(call ODYSSEY_IO_PROCEDURE,ody_getsram,poz_readsram)
 $(call ODYSSEY_IO_PROCEDURE,ody_omi_unload)
-
 $(call ODYSSEY_IO_PROCEDURE,ody_omi_hss_ppe_load,ody_putsram poz_writesram)
 $(call ODYSSEY_IO_PROCEDURE,ody_omi_hss_config)
 $(call ODYSSEY_IO_PROCEDURE,ody_omi_hss_ppe_start)
