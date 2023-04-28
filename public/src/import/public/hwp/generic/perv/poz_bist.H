@@ -172,7 +172,7 @@ constexpr bist_params::bist_flags operator|(const bist_params::bist_flags a, con
     return static_cast<bist_params::bist_flags>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
 }
 
-struct bist_return
+struct bist_diags
 {
     uint64_t opcg_counts[64];
     uint16_t pass_counter;
@@ -180,17 +180,18 @@ struct bist_return
 };
 
 typedef fapi2::ReturnCode (*poz_bist_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&,
-        const bist_params&, bist_return&);
+        const bist_params&, bist_diags&, std::vector<uint32_t>&);
 
 /// @brief Common module for ABIST/LBIST
 ///
-/// @param[in]   i_target   Chip to operate on
-/// @param[in]   i_params   Parameter block to select operation type, mode, parameters...
-/// @param[out]  o_return   All relevant fail/diagnostic return data
+/// @param[in]   i_target               Chip to operate on
+/// @param[in]   i_params               Parameter block to define runtime options
+/// @param[out]  o_diags                Diagnostic return data
+/// @param[out]  o_failing_rings        Vector of ring addresses which failed compare
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {
     fapi2::ReturnCode poz_bist(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-                               const bist_params& i_params, bist_return& o_return);
+                               const bist_params& i_params, bist_diags& o_diags, std::vector<uint32_t>& o_failing_rings);
 }

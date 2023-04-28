@@ -87,9 +87,19 @@ ReturnCode ody_abist(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     FAPI_INF("Entering ...");
 
-    bist_return ody_abist_return;
+    bist_diags l_bist_diags;
+    std::vector<uint32_t> l_failing_rings;
 
-    FAPI_TRY(poz_bist(i_target, ody_abist_params, ody_abist_return));
+    FAPI_TRY(poz_bist(i_target, ody_abist_params, l_bist_diags, l_failing_rings));
+
+    if (l_bist_diags.completed_stages & ody_abist_params.bist_stages::COMPARE)
+    {
+        FAPI_ASSERT(!l_failing_rings.size(),
+                    fapi2::NONZERO_MISCOMPARES().
+                    set_FAILING_RING_COUNT(l_failing_rings.size()),
+                    "%d rings failed compare check",
+                    l_failing_rings.size());
+    }
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");

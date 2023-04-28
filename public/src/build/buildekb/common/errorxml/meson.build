@@ -36,6 +36,7 @@ common_error_xml_files = [
                           'poz_stopclocks_errors.xml',
                           'poz_tracearray_errors.xml',
                           'poz_fastarray_errors.xml',
+                          'poz_scan_compare_errors.xml',
                           'poz_scan_via_scom_errors.xml',
                           'poz_sbe_i2c_errors.xml'
                         ]

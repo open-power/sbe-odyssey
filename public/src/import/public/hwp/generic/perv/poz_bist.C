@@ -37,6 +37,7 @@
 #include <poz_perv_mod_chiplet_clocking_regs.H>
 #include <poz_perv_mod_bist.H>
 #include <poz_perv_utils.H>
+#include <poz_scan_compare.H>
 #include <target_filters.H>
 #include <endian.h>
 
@@ -145,7 +146,7 @@ static void print_bist_params(const bist_params& i_params)
 static ReturnCode poz_bist_execute(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_chiplets_target,
     const std::vector<Target<TARGET_TYPE_PERV>>& i_chiplets_uc, const bist_params& i_params,
-    const uint16_t i_enum_condition_a, const uint16_t i_enum_condition_b, bist_return& o_return)
+    const uint16_t i_enum_condition_a, const uint16_t i_enum_condition_b, bist_diags& o_diags)
 {
     // Helper buffers produced from bist_params constituents
     const buffer<uint64_t> l_uc_go_chiplets_buffer = i_params.uc_go_chiplets;
@@ -157,9 +158,9 @@ static ReturnCode poz_bist_execute(
     OPCG_REG0_t OPCG_REG0;
 
     // Clear out completed stages from potential previous iterations
-    o_return.completed_stages &= ~(i_params.bist_stages::REG_SETUP |
-                                   i_params.bist_stages::GO |
-                                   i_params.bist_stages::POLL);
+    o_diags.completed_stages &= ~(i_params.bist_stages::REG_SETUP |
+                                  i_params.bist_stages::GO |
+                                  i_params.bist_stages::POLL);
 
 
     ////////////////////////////////////////////////////////////////
@@ -203,7 +204,7 @@ static ReturnCode poz_bist_execute(
                                      i_enum_condition_b));
         }
 
-        o_return.completed_stages |= i_params.bist_stages::REG_SETUP;
+        o_diags.completed_stages |= i_params.bist_stages::REG_SETUP;
     }
 
     ////////////////////////////////////////////////////////////////
@@ -230,7 +231,7 @@ static ReturnCode poz_bist_execute(
             FAPI_TRY(mod_opcg_go(i_chiplets_target));
         }
 
-        o_return.completed_stages |= i_params.bist_stages::GO;
+        o_diags.completed_stages |= i_params.bist_stages::GO;
     }
 
     ////////////////////////////////////////////////////////////////
@@ -245,8 +246,8 @@ static ReturnCode poz_bist_execute(
                                i_params.max_polls,
                                i_params.poll_delay_hw,
                                i_params.poll_delay_sim));
-        o_return.completed_stages |= i_params.bist_stages::POLL;
-        o_return.pass_counter++;
+        o_diags.completed_stages |= i_params.bist_stages::POLL;
+        o_diags.pass_counter++;
 
         if (!(i_params.flags & i_params.bist_flags::FAST_DIAGNOSTICS))
         {
@@ -256,7 +257,7 @@ static ReturnCode poz_bist_execute(
                 FAPI_DBG("OPCG cycles elapsed for chiplet %d: %lu",
                          chiplet.getChipletNumber(),
                          OPCG_REG0.get_LOOP_COUNT());
-                o_return.opcg_counts[chiplet.getChipletNumber()] = OPCG_REG0.get_LOOP_COUNT();
+                o_diags.opcg_counts[chiplet.getChipletNumber()] = OPCG_REG0.get_LOOP_COUNT();
             }
         }
     }
@@ -267,7 +268,8 @@ fapi_try_exit:
 }
 
 ReturnCode poz_bist(
-    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist_params& i_params, bist_return& o_return)
+    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist_params& i_params, bist_diags& o_diags,
+    std::vector<uint32_t>& o_failing_rings)
 {
     FAPI_INF("Entering ...");
 
@@ -284,8 +286,18 @@ ReturnCode poz_bist(
     uint16_t l_tp_regions = i_params.base_regions;
 
     // char arrays for accessing pak scan data
-    char l_load_dir[9] = {'l', 'b', 'i', 's', 't', '/', 'l', '/'};
+    char l_load_dir[7] = {'l', 'b', 'i', 's', 't', '/'};
     char l_load_path[sizeof(l_load_dir) + sizeof(i_params.program) - 1];
+    char l_compare_hash_dir[10] = {'l', 'b', 'i', 's', 't', '/', 'c', 'h', '/'};
+    char l_compare_hash_path[sizeof(l_compare_hash_dir) + sizeof(i_params.program) - 1];
+    char l_care_mask_dir[10] = {'l', 'b', 'i', 's', 't', '/', 'c', 'm', '/'};
+
+    if (i_params.flags & i_params.bist_flags::ABIST_NOT_LBIST)
+    {
+        l_load_dir[0] = 'a';
+        l_compare_hash_dir[0] = 'a';
+        l_care_mask_dir[0] = 'a';
+    }
 
     // Helper buffers produced from bist_params constituents
     const buffer<uint64_t> l_chiplets_mask = i_params.chiplets;
@@ -301,6 +313,9 @@ ReturnCode poz_bist(
     OPCG_ALIGN_t OPCG_ALIGN;
     CPLT_CTRL0_t l_cplt_ctrl0_save[64];
     OPCG_ALIGN_t l_opcg_align_save[64];
+
+    // To temporarily store return codes for evaluation before throwing error
+    ReturnCode rc;
 
     // Assert the provided bist_params struct is the expected version
     FAPI_ASSERT(i_params.BIST_PARAMS_VERSION == BIST_PARAMS_CURRENT_VERSION,
@@ -391,7 +406,7 @@ ReturnCode poz_bist(
         FAPI_DBG("Do a scan0");
         FAPI_TRY(mod_scan0(l_chiplets_target, l_all_active_regions, i_params.scan0_types,
                            i_params.flags & i_params.bist_flags::SCAN0_ARY_FILL));
-        o_return.completed_stages |= i_params.bist_stages::SCAN0;
+        o_diags.completed_stages |= i_params.bist_stages::SCAN0;
     }
 
     ////////////////////////////////////////////////////////////////
@@ -401,7 +416,7 @@ ReturnCode poz_bist(
     {
         FAPI_DBG("Do an arrayinit");
         FAPI_TRY(mod_arrayinit(l_chiplets_target, l_all_active_regions, ARRAYINIT_RUNN_CYCLES, false));
-        o_return.completed_stages |= i_params.bist_stages::ARRAYINIT;
+        o_diags.completed_stages |= i_params.bist_stages::ARRAYINIT;
     }
 
     ////////////////////////////////////////////////////////////////
@@ -411,22 +426,19 @@ ReturnCode poz_bist(
     {
         FAPI_INF("Scan load BIST programming");
 
-        if (i_params.flags & i_params.bist_flags::ABIST_NOT_LBIST)
-        {
-            l_load_dir[0] = 'a';
-        }
-
         // Load base image if it exists
         strcpy(l_load_path, l_load_dir);
         strcat(l_load_path, "base_image");
+        FAPI_DBG("Attempting to load base BIST image");
         FAPI_TRY(fapi2::putRing(l_chiplets_target, l_load_path));
 
         // Load program image
         strcpy(l_load_path, l_load_dir);
         strcat(l_load_path, i_params.program);
+        FAPI_DBG("Attempting to load overlay BIST image");
         FAPI_TRY(fapi2::putRing(l_chiplets_target, l_load_path));
 
-        o_return.completed_stages |= i_params.bist_stages::RING_SETUP;
+        o_diags.completed_stages |= i_params.bist_stages::RING_SETUP;
     }
 
     ////////////////////////////////////////////////////////////////
@@ -436,7 +448,7 @@ ReturnCode poz_bist(
     {
         FAPI_INF("Apply scan patches if needed");
         FAPI_TRY(fapi2::putRing(l_chiplets_target, i_params.ring_patch));
-        o_return.completed_stages |= i_params.bist_stages::RING_PATCH;
+        o_diags.completed_stages |= i_params.bist_stages::RING_PATCH;
     }
 
     ////////////////////////////////////////////////////////////////
@@ -479,7 +491,7 @@ ReturnCode poz_bist(
                                               i_params,
                                               outer_index,
                                               inner_index,
-                                              o_return));
+                                              o_diags));
                 }
             }
         }
@@ -492,7 +504,7 @@ ReturnCode poz_bist(
     {
         FAPI_INF("Cleanup all SCOM registers");
         FAPI_TRY(mod_bist_reg_cleanup(l_chiplets_target, l_is_tp_bist));
-        o_return.completed_stages |= i_params.bist_stages::REG_CLEANUP;
+        o_diags.completed_stages |= i_params.bist_stages::REG_CLEANUP;
     }
 
     if (l_save_uc_reg_values)
@@ -521,10 +533,28 @@ ReturnCode poz_bist(
     if (i_params.stages & i_params.bist_stages::COMPARE)
     {
         FAPI_INF("Compare scan chains against expects");
-        // TODO add in scan code once supported
-        // FAPI_TRY(getRing(i_params.program.hash));
-        FAPI_DBG("BIST compare not yet implemented; check back later");
-        o_return.completed_stages |= i_params.bist_stages::COMPARE;
+
+        strcpy(l_compare_hash_path, l_compare_hash_dir);
+        strcat(l_compare_hash_path, i_params.program);
+
+        for (auto& cplt : l_chiplets_uc)
+        {
+            rc = poz_compare(cplt, l_compare_hash_path, l_care_mask_dir, o_failing_rings);
+
+            if (rc == FAPI2_RC_FILE_NOT_FOUND)
+            {
+                FAPI_DBG("Compare file(s) not found; skipping compare...");
+                current_err = FAPI2_RC_SUCCESS;
+                break;
+            }
+
+            FAPI_TRY(rc);
+        }
+
+        if (rc == FAPI2_RC_SUCCESS)
+        {
+            o_diags.completed_stages |= i_params.bist_stages::COMPARE;
+        }
     }
 
 

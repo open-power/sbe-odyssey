@@ -33,6 +33,7 @@ $$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_perv_mod_misc.o)
 $$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_perv_mod_chiplet_clocking.o)
 $$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_perv_mod_bist.o)
 $$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_perv_utils.o)
+$$(call ADD_MODULE_SRCDIR,$$(PROCEDURE),$$(ROOTPATH)/public/common/utils/imageProcs)
 ifneq ($(2),)
 $(foreach DEP,$(2),$$(call ADD_MODULE_OBJ,$$(PROCEDURE),$(DEP).o))
 endif
@@ -44,6 +45,6 @@ GENERIC_PERV_PROCEDURE = $(eval $(call __GENERIC_PERV_PROCEDURE,$1,$2))
 # And now the actual HWP definitions
 #
 $(call GENERIC_PERV_PROCEDURE,poz_cmdtable_interpreter)
-$(call GENERIC_PERV_PROCEDURE,poz_bist)
 $(call GENERIC_PERV_PROCEDURE,poz_fastarray)
+$(call GENERIC_PERV_PROCEDURE,poz_bist,poz_scan_compare poz_fastarray sha3)
 $(call GENERIC_PERV_PROCEDURE,poz_sbe_spi_cmd)
