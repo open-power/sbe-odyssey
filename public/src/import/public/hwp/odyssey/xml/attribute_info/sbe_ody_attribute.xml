@@ -909,6 +909,24 @@
     <value>0x0</value>
     <value>0x0</value>
   </entry>
+  <entry name="ATTR_DDR5_EN_TX_DM_PREAMBLE_PATTERN">
+    <value>0x0</value>
+  </entry>
+  <entry name="ATTR_DDR5_EN_TX_DQ_PREAMBLE_PATTERN_U0">
+    <value>0x0</value>
+  </entry>
+  <entry name="ATTR_DDR5_EN_TX_DQ_PREAMBLE_PATTERN_U1">
+    <value>0x0</value>
+  </entry>
+  <entry name="ATTR_DDR5_TX_DM_PREAMBLE_PATTERN">
+    <value>0x0</value>
+  </entry>
+  <entry name="ATTR_DDR5_TX_DQ_PREAMBLE_PATTERN_U0">
+    <value>0x0</value>
+  </entry>
+  <entry name="ATTR_DDR5_TX_DQ_PREAMBLE_PATTERN_U1">
+    <value>0x0</value>
+  </entry>
   <entry name="ATTR_DRAM_PD_DRV_IMP">
     <value>0x22</value>
     <value>0x0</value>
@@ -1467,6 +1485,18 @@
   </entry>
   <entry name="ATTR_MEM_EFF_VOLT_VPP">
     <value>0x00000708</value>
+  </entry>
+  <entry name="ATTR_MEM_EFF_DDR5_VREFCA_SWEEP_MAX">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_MEM_EFF_DDR5_VREFCA_SWEEP_MIN">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_MEM_EFF_DDR5_VREFCS_SWEEP_MAX">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_MEM_EFF_DDR5_VREFCS_SWEEP_MIN">
+    <value>0</value>
   </entry>
   <entry name="ATTR_MEM_IGNORE_PLUG_RULES">
     <value>0x0</value>
@@ -2676,6 +2706,9 @@
   <entry name="ATTR_ODY_IS_HIGHVDD">
     <value>0</value>
   </entry>
+  <entry name="ATTR_ODY_LP2_PWRSAVINGS">
+    <value>0</value>
+  </entry>
   <entry name="ATTR_ODY_METADATA_ENABLE">
     <value>0x1</value>
   </entry>
@@ -2748,6 +2781,9 @@
   <entry name="ATTR_ODY_PLL_BYPASS_EN">
     <value>0</value>
   </entry>
+  <entry name="ATTR_ODY_POWERDOWN_ANIBS">
+    <value>0</value>
+  </entry>
   <entry name="ATTR_ODY_RST_RXTRK_STATE">
     <value>0</value>
   </entry>
@@ -2780,6 +2816,9 @@
   </entry>
   <entry name="ATTR_ODY_SIM_TSTAOFF">
     <value>0</value>
+  </entry>
+  <entry name="ATTR_ODY_SPECIAL_OFFSET_VALUE">
+    <value>0x525</value>
   </entry>
   <entry name="ATTR_ODY_TMPL_0_PACING">
     <value>0xF</value>
