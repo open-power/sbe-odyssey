@@ -295,7 +295,7 @@ void populate_pmic_data(
 /// @param[in] i_adc_reg Register
 /// @return double scale factor
 ///
-uint32_t get_adc_scale_factor(const mss::generic_i2c_slave i_adc_num, const uint8_t i_adc_reg);
+uint32_t get_adc_scale_factor(const mss::generic_i2c_responder_ddr4 i_adc_num, const uint8_t i_adc_reg);
 
 ///
 /// @brief Populate the ADC data struct
@@ -306,7 +306,7 @@ uint32_t get_adc_scale_factor(const mss::generic_i2c_slave i_adc_num, const uint
 ///
 void populate_adc_data(
     const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CRESPONDER>& i_adc,
-    const mss::generic_i2c_slave i_adc_num,
+    const mss::generic_i2c_responder_ddr4 i_adc_num,
     adc_telemetry& o_adc_data);
 
 ///
