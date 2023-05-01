@@ -74,7 +74,7 @@ inline void add_adc_opcode(const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CRESP
     // For DDR4:ADC's are index 0,1; GPIO0 is index 2
     // For DDR5: Going to use the same function for DDR5 since there is only 1 ADC supported in DDR5
     // and the below condition will still be satisfied
-    if (mss::index(i_target) <= mss::generic_i2c_slave::ADC2)
+    if (mss::index(i_target) <= mss::generic_i2c_responder_ddr4::ADC2)
     {
         // ADC devices need an extra opcode frame
         io_command.push_back(i_opcode);

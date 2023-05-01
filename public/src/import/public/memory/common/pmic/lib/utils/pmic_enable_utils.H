@@ -393,26 +393,26 @@ struct target_info_redundancy
 
         // If we are given a guaranteed failing list of targets (< 2 PMICs or < 4 GI2CS), exit now
         FAPI_ASSERT((NUM_PMICS >= NUM_PRIMARY_PMICS) &&
-                    (NUM_GENERICI2CRESPONDER == mss::generic_i2c_slave::NUM_TOTAL_DEVICES),
+                    (NUM_GENERICI2CRESPONDER == mss::generic_i2c_responder_ddr4::NUM_TOTAL_DEVICES),
                     fapi2::INVALID_PMIC_GI2C_TARGET_CONFIG()
                     .set_OCMB_TARGET(i_ocmb)
                     .set_NUM_PMICS(NUM_PMICS)
                     .set_NUM_GI2CS(NUM_GENERICI2CRESPONDER)
                     .set_EXPECTED_MIN_PMICS(NUM_PRIMARY_PMICS)
-                    .set_EXPECTED_GI2CS(mss::generic_i2c_slave::NUM_TOTAL_DEVICES),
+                    .set_EXPECTED_GI2CS(mss::generic_i2c_responder_ddr4::NUM_TOTAL_DEVICES),
                     "%s pmic_enable requires at least %u PMICs and exactly %u GI2C targets. "
                     "Given %u PMICs, %u GI2C",
                     mss::c_str(i_ocmb),
                     NUM_PRIMARY_PMICS,
-                    mss::generic_i2c_slave::NUM_TOTAL_DEVICES,
+                    mss::generic_i2c_responder_ddr4::NUM_TOTAL_DEVICES,
                     NUM_PMICS,
                     NUM_GENERICI2CRESPONDER);
 
         // Since we have all 4 and they are sorted, we already know what is where
-        iv_adc1 = I2C_DEVICES[mss::generic_i2c_slave::ADC1];
-        iv_adc2 = I2C_DEVICES[mss::generic_i2c_slave::ADC2];
-        iv_gpio1 = I2C_DEVICES[mss::generic_i2c_slave::GPIO1];
-        iv_gpio2 = I2C_DEVICES[mss::generic_i2c_slave::GPIO2];
+        iv_adc1 = I2C_DEVICES[mss::generic_i2c_responder_ddr4::ADC1];
+        iv_adc2 = I2C_DEVICES[mss::generic_i2c_responder_ddr4::ADC2];
+        iv_gpio1 = I2C_DEVICES[mss::generic_i2c_responder_ddr4::GPIO1];
+        iv_gpio2 = I2C_DEVICES[mss::generic_i2c_responder_ddr4::GPIO2];
 
         iv_ocmb = i_ocmb;
 

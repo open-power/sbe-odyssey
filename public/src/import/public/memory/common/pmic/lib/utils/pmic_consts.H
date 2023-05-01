@@ -383,7 +383,7 @@ enum sizes
 ///
 /// @brief Constants for GENERICI2CRESPONDER devices
 ///
-enum generic_i2c_slave
+enum generic_i2c_responder_ddr4
 {
     NUM_TOTAL_DEVICES = 4,
     NUM_GPIO = 2,
