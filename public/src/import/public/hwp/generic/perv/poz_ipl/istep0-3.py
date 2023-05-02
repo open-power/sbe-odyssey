@@ -713,12 +713,29 @@ def zme_tp_init():
     ROOT_CTRL0.OOB_MUX = 0
 
     ## Set up static multicast groups
-    mod_multicast_setup(i_target, MCGROUP_GOOD, 0x7FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL)
+    mod_multicast_setup(i_target, MCGROUP_GOOD,       0x7FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL)
     mod_multicast_setup(i_target, MCGROUP_GOOD_NO_TP, 0x3FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL)
+    mod_multicast_setup(i_target, MCGROUP_GOOD_EX,    0x0000FFC000000000, TARGET_STATE_FUNCTIONAL)
 
     ## Set up chiplet hang pulses
-    uint8_t pre_divider = bla;
-    mod_hangpulse_setup(MCGROUP_GOOD, pre_divider, {{0, 16, 0}, {1, 1, 0}, {5, 6, 0}, {6, 7, 0, 1}})
+    uint8_t pre_divider = 0x13
+    if   SCRATCH_REGISTER_6[16:31] >= 4300 and SCRATCH_REGISTER_6[16:31] < 4500:
+        pre_divider = 0x10
+    elif SCRATCH_REGISTER_6[16:31] >= 4500 and SCRATCH_REGISTER_6[16:31] < 4800:
+        pre_divider = 0x11
+    elif SCRATCH_REGISTER_6[16:31] >= 4800 and SCRATCH_REGISTER_6[16:31] < 5000:
+        pre_divider = 0x12
+    elif SCRATCH_REGISTER_6[16:31] >= 5000 and SCRATCH_REGISTER_6[16:31] < 5300:
+        pre_divider = 0x13
+    elif SCRATCH_REGISTER_6[16:31] >= 5300 and SCRATCH_REGISTER_6[16:31] < 5600:
+        pre_divider = 0x14
+    elif SCRATCH_REGISTER_6[16:31] >= 5600 and SCRATCH_REGISTER_6[16:31] < 5733:
+        pre_divider = 0x15
+    else:
+        pre_divider = 0x16
+    
+    mod_hangpulse_setup(MCGROUP_GOOD, pre_divider, {{0, 16, 0}, {1, 1, 0}, {2, 1, 0}, {3, 1, 0}, {4, 1, 0}, {5, 28, 0}, {6, 5, 0, 1}})
+    mod_hangpulse_setup(MCGROUP_GOOD_EX, pre_divider, {{1, 3, 0, 1}})
 
     ## Set up SBE multipipe unit
     mod_pipe_setup(PC_ADU, false, PC_SPPE, true,
