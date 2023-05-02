@@ -544,6 +544,14 @@ def zme_sppe_attr_setup():
 ISTEP(1, 14, "ph_sppe_attr_override", "BMC,SPPE")
 # BMC sends attribute overrides into SPPE via chipop
 
+ISTEP(1, 15, "zme_sbe_pme_load", "ZSPPE")
+
+# only used on zMe - load and start SBE and PME
+
+ISTEP(1, 16, "zme_sbe_pme_attr_setup", "ZSBE")
+
+# only used on zMe - call attr_setup on both SBE and PME
+
 ISTEP(1, 17, "ph_rcs_setup", "SPPE")
 
 def poz_rcs_setup():
@@ -847,6 +855,8 @@ def p11t_pib_startclocks():
 # 2.11 used to be ph_g2p_init but we dropped G2P acceleration from the plan
 
 ISTEP(2, 12, "proc_sbe_load", "SPPE")
+
+# only on P11S - Metis SBE is loaded in istep 1 already
 
 def p11s_sbe_load():
     # SPPE loads SPINAL & TAP SBE common image (FW code, common data)
