@@ -197,6 +197,7 @@ enum sbeSecondaryResponse
     SBE_SEC_CU_BOTH_SIDES_UPDATE_FAILED       = 0x72,
     SBE_SEC_CU_SIDE_1_UPDATE_FAILED           = 0x73,
     SBE_SEC_CU_SIDE_0_UPDATE_FAILED           = 0x74,
+    SBE_SEC_CHIPLET_ID_NOT_PRESENT_IN_SBE     = 0x75,
 };
 
 /**

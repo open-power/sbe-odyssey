@@ -340,12 +340,14 @@ namespace fapi2
         ///
         /// @brief Function to get the plat target handle from log target type
         /// @param [in] i_logTargetType log target type
-        /// @param [in] i_instanceId instance id
+        /// @param [in] i_instanceId
+        ///                if i_logTargetType = LOG_TARGET_TYPE_PERV, then chiplet id of the target
+        ///                else instance id of the target
         /// @param [out] o_tgtHndl fapi plat target handle
         /// @return sbeSecondaryResponse Secondary RC
-        ///                  SBE_SEC_OPERATION_SUCCESSFUL: Valid i_logTargetType and i_instanceId passed
-        ///                  SBE_SEC_INVALID_TARGET_TYPE_PASSED: Invalid i_logTargetType passed
-        ///                  SBE_SEC_INVALID_INSTANCE_ID_PASSED: Invalid i_instanceId passed
+        ///           SBE_SEC_OPERATION_SUCCESSFUL: Valid i_logTargetType and i_instanceId passed
+        ///           SBE_SEC_INVALID_TARGET_TYPE_PASSED: Invalid i_logTargetType passed
+        ///           SBE_SEC_INVALID_INSTANCE_ID_PASSED: Invalid i_instanceId passed
         ///
         sbeSecondaryResponse getSbePlatTargetHandle( const uint8_t i_logTargetType,
                                                   const uint8_t i_instanceId,
@@ -360,6 +362,73 @@ namespace fapi2
             SBE_DEBUG(SBE_FUNC "Log target type: 0x%02X, instance ID: 0x%02X",
                                                 i_logTargetType, i_instanceId);
 
+            if(i_logTargetType == LOG_TARGET_TYPE_PERV)
+            {
+                // here instance id has to be treated as chiplet id, and may spread across
+                // multiple specific target types. So we need perv specific logic.
+                rc = getPervTargetByChipletId(i_instanceId, o_tgtHndl);
+                if(rc == SBE_SEC_CHIPLET_ID_NOT_PRESENT_IN_SBE)
+                {
+                    rc = SBE_SEC_INVALID_INSTANCE_ID_PASSED;
+                }
+            }
+            else
+            {
+                /* Platform target map pointer */
+                targetInfo_t * targetMap = getTargetMap();
+                /* Target index form global plat target */
+                uint32_t targetIndex = 0;
+
+                /* checking the target types in TARGET MAP */
+                for(uint32_t targetNo = 0; targetNo < iv_targetTypesCnt; targetNo++)
+                {
+                    SBE_DEBUG("target count is 0x%08X", (uint32_t)targetMap[targetNo].targetCnt);
+
+                    /* target not matched goto next target */
+                    if(targetMap[targetNo].targetType != i_logTargetType)
+                    {
+                        /* targetIndex depends on target count of target map */
+                        targetIndex = targetIndex + targetMap[targetNo].targetCnt;
+                        continue;
+                    }
+
+                    if (i_instanceId < targetMap[targetNo].targetCnt)
+                    {
+                        /* get target handle from TARGET MAP */
+                        o_tgtHndl = iv_targets[targetIndex + i_instanceId];
+                        rc = SBE_SEC_OPERATION_SUCCESSFUL; // Target and Instance ID found
+                    }
+                    else
+                    {
+                        rc = SBE_SEC_INVALID_INSTANCE_ID_PASSED; // Instance ID not found
+                    }
+
+                    break;
+                }
+            }
+
+            SBE_EXIT(SBE_FUNC);
+            return rc;
+            #undef SBE_FUNC
+        }
+
+        ///
+        /// @brief Function to get the plat target handle of a perv target using chiplet id
+        /// @param [in] i_chiplet_num chilet id of the target
+        /// @param [out] o_tgtHndl fapi plat target handle
+        /// @return sbeSecondaryResponse Secondary RC
+        ///           SBE_SEC_OPERATION_SUCCESSFUL: Valid i_logTargetType and i_instanceId passed
+        ///           SBE_SEC_CHIPLET_ID_NOT_PRESENT_IN_SBE: chiplet id passed is not valid for this SBE
+        ///
+        sbeSecondaryResponse getPervTargetByChipletId(
+            uint8_t i_chiplet_num,
+            fapi2::plat_target_handle_t &o_tgtHndl)
+        {
+            #define SBE_FUNC " getPervTargetByChipletId: "
+            SBE_ENTER(SBE_FUNC);
+            // Secondary RC
+            sbeSecondaryResponse l_rc = SBE_SEC_CHIPLET_ID_NOT_PRESENT_IN_SBE;
+
             /* Platform target map pointer */
             targetInfo_t * targetMap = getTargetMap();
             /* Target index form global plat target */
@@ -370,30 +439,30 @@ namespace fapi2
             {
                 SBE_DEBUG("target count is 0x%08X", (uint32_t)targetMap[targetNo].targetCnt);
 
-                /* target not matched goto next target */
-                if(targetMap[targetNo].targetType != i_logTargetType)
+                /* target is not pervasive type goto next target */
+                if(targetMap[targetNo].isPervType != 0)
                 {
-                    /* targetIndex depends on target count of target map */
-                    targetIndex = targetIndex + targetMap[targetNo].targetCnt;
-                    continue;
+                    for(uint8_t inst = 0; inst < targetMap[targetNo].targetCnt; inst++)
+                    {
+                        if(iv_targets[targetIndex + inst].getChipletNumber() == i_chiplet_num)
+                        {
+                            /* get target handle from TARGET MAP */
+                            o_tgtHndl = iv_targets[targetIndex + inst];
+                            l_rc = SBE_SEC_OPERATION_SUCCESSFUL; // Target and Instance ID found
+                            break;
+                        }
+                    }
                 }
-
-                if (i_instanceId < targetMap[targetNo].targetCnt)
+                if(l_rc == SBE_SEC_OPERATION_SUCCESSFUL)
                 {
-                    /* get target handle from TARGET MAP */
-                    o_tgtHndl = iv_targets[targetIndex + i_instanceId];
-                    rc = SBE_SEC_OPERATION_SUCCESSFUL; // Target and Instance ID found
+                    break;
                 }
-                else
-                {
-                    rc = SBE_SEC_INVALID_INSTANCE_ID_PASSED; // Instance ID not found
-                }
-
-                break;
+                /* targetIndex depends on target count of target map */
+                targetIndex = targetIndex + targetMap[targetNo].targetCnt;
             }
 
             SBE_EXIT(SBE_FUNC);
-            return rc;
+            return l_rc;
             #undef SBE_FUNC
         }
 
@@ -449,6 +518,7 @@ namespace fapi2
             }
 
         }
+
         uint32_t iv_targetTypesCnt;
     };
 }
