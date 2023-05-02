@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -185,6 +186,15 @@ uint32_t getPakEntryFromPartitionTable(const uint8_t i_sideNumber,
     #undef SBE_FUNC
 }
 
+
+/*
+ * @brief checkStartAddrHighNibble : Validate higher 8-bits in incoming address
+ *                                   maps to correct device address
+ *
+ * @param[in] i_codeUpdateCtrlStruct_t : control structure for code-update params
+ *
+ * @return rc
+ */
 static
 uint32_t checkStartAddrHighNibble(codeUpdateCtrlStruct_t &i_codeUpdateCtrlStruct)
 {
@@ -207,6 +217,16 @@ uint32_t checkStartAddrHighNibble(codeUpdateCtrlStruct_t &i_codeUpdateCtrlStruct
     #undef SBE_FUNC
 }
 
+
+/*
+ * @brief checkStartAddrNSizeLessSideSize : Validate for an entry in partition table
+ *                                          the sum of start address and its corressponding
+ *                                          size should not exceed device side size
+ *
+ * @param[in] i_codeUpdateCtrlStruct_t : control structure for code-update params
+ *
+ * @return rc
+ */
 static
 uint32_t checkStartAddrNSizeLessSideSize(codeUpdateCtrlStruct_t &i_codeUpdateCtrlStruct)
 {
@@ -234,6 +254,17 @@ uint32_t checkStartAddrNSizeLessSideSize(codeUpdateCtrlStruct_t &i_codeUpdateCtr
     #undef SBE_FUNC
 }
 
+
+/*
+ * @brief checkNextImgStartAddr : Validate next entry start address in partition table
+ *                                matches to sum of start address and its corressponding
+ *                                size in the previous entry
+ *
+ * @param[in] i_sideStartAddr : entry start address
+ * @param[in] i_codeUpdateCtrlStruct_t : control structure for code-update params
+ *
+ * @return rc
+ */
 static
 uint32_t checkNextImgStartAddr(uint32_t i_sideStartAddr,
                                codeUpdateCtrlStruct_t &i_codeUpdateCtrlStruct)
@@ -256,6 +287,16 @@ uint32_t checkNextImgStartAddr(uint32_t i_sideStartAddr,
     #undef SBE_FUNC
 }
 
+
+/*
+ * @brief checkSumOfSectionsSize : Validate sum of all entries size in partition
+ *                                 table doesn't exceed device side size
+ *
+ * @param[in] i_sumOfSectionSizes : sum of all sections size
+ * @param[in] i_codeUpdateCtrlStruct_t : control structure for code-update params
+ *
+ * @return rc
+ */
 static
 uint32_t checkSumOfSectionsSize(uint32_t i_sumOfSectionSizes,
                                 codeUpdateCtrlStruct_t &i_codeUpdateCtrlStruct)
@@ -277,6 +318,7 @@ uint32_t checkSumOfSectionsSize(uint32_t i_sumOfSectionSizes,
     return l_rc;
     #undef SBE_FUNC
 }
+
 
 uint32_t validatePartitionTable(void *i_pakStartAddr,
                                 codeUpdateCtrlStruct_t &i_codeUpdateCtrlStruct)

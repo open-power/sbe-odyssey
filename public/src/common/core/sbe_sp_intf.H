@@ -194,6 +194,9 @@ enum sbeSecondaryResponse
     SBE_SEC_CU_WRITE_IMAGE_FAILURE            = 0x6F,
     SBE_SEC_FILE_CORRUPTED                    = 0x70,
     SBE_SEC_FILE_NOT_FOUND                    = 0x71,
+    SBE_SEC_CU_BOTH_SIDES_UPDATE_FAILED       = 0x72,
+    SBE_SEC_CU_SIDE_1_UPDATE_FAILED           = 0x73,
+    SBE_SEC_CU_SIDE_0_UPDATE_FAILED           = 0x74,
 };
 
 /**
