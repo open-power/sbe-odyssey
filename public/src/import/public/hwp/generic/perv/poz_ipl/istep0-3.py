@@ -1158,6 +1158,32 @@ def zme_chiplet_reset():
         CPLT_CTRL0.CTRL_CC_FLUSHMODE_INH_DC = 1
         CPLT_CONF0.SDIS_N = 1
 
+    with all EX chiplets via multicast:
+        #########################################
+        ## L3 voltage regulator setup for VBLH ##
+        #########################################
+        
+        ## Clear and then set VREF anatune in CPLT_CONF0(56:63) according to value in attribute
+        CPLT_CONF0[56:64] = ATTR_L3_VREF_ANATUNE;
+
+        ## Clear and then set UREG and VREG anatune in CPLT_CONF1( 0: 7) & CPLT_CONF1(16:23) according to value in attribute
+        CPLT_CONF1[ 0: 8] = ATTR_L3_UREG_ANATUNE;
+        CPLT_CONF1[ 8:16] = ATTR_L3_VREG_ANATUNE;
+        CPLT_CONF1[16:24] = ATTR_L3_VREG_ANATUNE;
+
+        ## Clear and then set VBLH voltage in NET_CTRL1(24:30) according to value in attribute
+        NET_CTRL1[24:30] = ATTR_L3_VREG_VBLH_VOLTAGE;
+
+        ## Clear or set VBLH voltage in NET_CTRL1(10) according to value in attribute
+        NET_CTRL1[10] = ATTR_L3_VREG_VBLH_VOLTAGE
+
+        ## Clear or set VREG enable in NET_CTRL1( 8) according to value in attribute
+        NET_CTRL1[8]  = ATTR_L3_VREG_GLOBAL_ENABLE
+
+        ## Clear or set VREG global enable in NET_CTRL1( 7) according to value in attribute
+        NET_CTRL1[7]  = ATTR_L3_VREG_GLOBAL_ENABLE
+
+
 enum poz_chiplet_reset_phases : uint8_t {
     PRE_SCAN0 = 0x80,
     SCAN0_AND_UP = 0x40,
@@ -1499,30 +1525,150 @@ def ody_chiplet_init():
 def zme_chiplet_init():
     if not ATTR_HOTPLUG:
         with Nest chiplet:
-            CPLT_CONF0.TCNEST_FBC_XBUS0_DCM_ID_DC  = ATTR_FBC_XBUS_DCM_ID[0]   # uint8_t[6]
-            CPLT_CONF0.TCNEST_FBC_XBUS0_CHIP_ID_DC = ATTR_FBC_XBUS_CHIP_ID[0]  # uint8_t[6]
-            CPLT_CONF0.TCNEST_FBC_XBUS1_DCM_ID_DC  = ATTR_FBC_XBUS_DCM_ID[1]
-            CPLT_CONF0.TCNEST_FBC_XBUS1_CHIP_ID_DC = ATTR_FBC_XBUS_CHIP_ID[1]
-            CPLT_CONF0.TCNEST_FBC_XBUS2_DCM_ID_DC  = ATTR_FBC_XBUS_DCM_ID[2]
-            CPLT_CONF0.TCNEST_FBC_XBUS2_CHIP_ID_DC = ATTR_FBC_XBUS_CHIP_ID[2]
-            CPLT_CONF0.TCNEST_FBC_XBUS3_DCM_ID_DC  = ATTR_FBC_XBUS_DCM_ID[3]
-            CPLT_CONF0.TCNEST_FBC_XBUS3_CHIP_ID_DC = ATTR_FBC_XBUS_CHIP_ID[3]
-            CPLT_CONF0.TCNEST_FBC_XBUS4_DCM_ID_DC  = ATTR_FBC_XBUS_DCM_ID[4]
-            CPLT_CONF0.TCNEST_FBC_XBUS4_CHIP_ID_DC = ATTR_FBC_XBUS_CHIP_ID[4]
-            CPLT_CONF0.TCNEST_FBC_XBUS5_DCM_ID_DC  = ATTR_FBC_XBUS_DCM_ID[5]
-            CPLT_CONF0.TCNEST_FBC_XBUS5_CHIP_ID_DC = ATTR_FBC_XBUS_CHIP_ID[5]
+            # Drawer ID, Chip ID, DCM ID
+            # Chip positions present: 0:31
+            # TicketMaster ID
 
-            CPLT_CONF1.TCNEST_FBC_TM_DCM_ID_DC = ATTR_FBC_TM_DCM_ID  # uint8_t
-
-            CPLT_CONF1.TC_FBC_DWR_ID = ATTR_FBC_DWR_ID    # uint8_t
-            CPLT_CONF1.TC_FBC_DCM_ID = ATTR_FBC_DCM_ID    # uint8_t
+            # uint8_t
+            CPLT_CONF1.TC_FBC_DCM_ID  = ATTR_FBC_DCM_ID   # uint8_t
             CPLT_CONF1.TC_FBC_CHIP_ID = ATTR_FBC_CHIP_ID  # uint8_t
 
-            CPLT_CONF1.TCNEST_FBC_XBUS0_XBUS1_DWR_ID_DC = ATTR_FBC_XBUS_DWR_ID[0]  # uint8_t[3]
-            CPLT_CONF1.TCNEST_FBC_XBUS2_XBUS3_DWR_ID_DC = ATTR_FBC_XBUS_DWR_ID[1]
-            CPLT_CONF1.TCNEST_FBC_XBUS4_XBUS5_DWR_ID_DC = ATTR_FBC_XBUS_DWR_ID[2]
+            static const uint8_t xbus_mapping[4][2][6][2] =
+            {
+                {
+                    {{1, 0}, {1, 1}, {3, 1}, {3, 0}, {2, 0}, {2, 1}}, ## M0CP0 ports: module & chip
+                    {{2, 0}, {2, 1}, {3, 0}, {1, 0}, {1, 1}, {3, 1}}  ## M0CP1 ports: module & chip
+                },
+                {
+                    {{0, 1}, {0, 0}, {3, 0}, {3, 1}, {2, 0}, {2, 1}}, ## M1CP0 ports: module & chip
+                    {{2, 0}, {2, 1}, {3, 0}, {3, 1}, {0, 1}, {0, 0}}  ## M1CP1 ports: module & chip
+                },
+                {
+                    {{1, 1}, {1, 0}, {0, 1}, {0, 0}, {3, 0}, {3, 1}}, ## M2CP0 ports: module & chip
+                    {{3, 0}, {3, 1}, {0, 1}, {0, 0}, {1, 1}, {1, 0}}  ## M2CP1 ports: module & chip
+                },
+                {
+                    {{1, 1}, {2, 1}, {2, 0}, {0, 0}, {1, 0}, {0, 1}}, ## M3CP0 ports: module & chip
+                    {{0, 0}, {2, 1}, {0, 1}, {1, 1}, {2, 0}, {1, 0}}  ## M3CP1 ports: module & chip
+                }
+            };
 
-            CPLT_CONF1.TCNEST_FBC_MBUS_ABUS_DWR_ID_DC = ATTR_FBC_MABUS_DWR_ID      # uint8_t
+            ## XB0, XB1, XB2, XB3, XB4, XB5, XB6, MBUS, ABUS
+            static const uint8_t abus_mapping[4][4][2][8] =
+            {
+                {
+                    {
+                        {2, 2, 3, 3, 1, 1, 0, 0},                           ##D0M0CP0 ports
+                        {1, 1, 3, 3, 2, 2, 0, 0}                            ## D0M0CP1 ports
+                    },
+                    {
+                        {0, 0, 3, 3, 1, 1, 2, 2},                           ##D0M1CP0 ports
+                        {1, 1, 3, 3, 0, 0, 2, 2}                            ##D0M1CP1 ports
+                    },
+                    {
+                        {2, 2, 0, 0, 3, 3, 1, 1},                           ##D0M2CP0 ports
+                        {3, 3, 0, 0, 2, 2, 1, 1}                            ##D0M2CP1 ports
+                    },
+                    {
+                        {2, 1, 1, 0, 2, 0, 3, 3},                           ##D0M3CP0 ports
+                        {0, 1, 0, 2, 1, 2, 3, 3}                            ##D0M3CP1 ports
+                    }
+                },
+                {
+                    {
+                        {2, 2, 3, 3, 0, 0, 1, 1},                           ##D1M0CP0 ports
+                        {0, 0, 3, 2, 2, 3, 1, 1}                            ##D1M0CP1 ports
+                    },
+                    {
+                        {1, 1, 3, 3, 0, 0, 2, 2},                           ##D1M1CP0 ports
+                        {0, 0, 3, 3, 1, 1, 2, 2}                            ##D1M1CP1 ports
+                    },
+                    {
+                        {2, 2, 1, 1, 3, 3, 0, 0},                           ##D1M2CP0 ports
+                        {3, 3, 1, 1, 2, 2, 0, 0}                            ##D1M2CP1 ports
+                    },
+                    {
+                        {2, 0, 0, 1, 2, 1, 3, 3},                           ##D1M3CP0 ports
+                        {1, 0, 1, 2, 0, 2, 3, 3}                            ##D1M3CP1 ports
+                    }
+                },
+                {
+                    {
+                        {0, 0, 3, 3, 1, 1, 2, 2},                           ##D2M0CP0 ports
+                        {1, 1, 3, 3, 0, 0, 2, 2}                            ##D2M0CP1 ports
+                    },
+                    {
+                        {2, 2, 3, 3, 1, 1, 0, 0},                           ##D2M1CP0 ports
+                        {1, 1, 3, 3, 2, 2, 0, 0}                            ##D2M1CP1 ports
+                    },
+                    {
+                        {0, 0, 2, 2, 3, 3, 1, 1},                           ##D2M2CP0 ports
+                        {3, 3, 2, 2, 0, 0, 1, 1}                            ##D2M2CP1 ports
+                    },
+                    {
+                        {0, 1, 1, 2, 0, 2, 3, 3},                           ##D2M3CP0 ports
+                        {2, 1, 2, 0, 1, 0, 3, 3}                            ##D2M3CP1 ports
+                    }
+                },
+                {
+                    {
+                        {2, 2, 1, 1, 0, 0, 3, 3},                           ##D3M0CP0 ports
+                        {0, 0, 1, 1, 2, 2, 3, 3}                            ##D3M0CP1 ports
+                    },
+                    {
+                        {3, 3, 1, 1, 0, 0, 2, 2},                           ##D3M1CP0 ports
+                        {0, 0, 1, 1, 3, 3, 2, 2}                            ##D3M1CP1 ports
+                    },
+                    {
+                        {2, 2, 3, 3, 1, 1, 0, 0},                           ##D3M2CP0 ports
+                        {1, 1, 3, 3, 2, 2, 0, 0}                            ##D3M2CP1 ports
+                    },
+                    {
+                        {2, 0, 0, 3, 2, 3, 1, 1},                           ##D3M3CP0 ports
+                        {3, 0, 3, 2, 0, 2, 1, 1}                            ##D3M3CP1 ports
+                    }
+                },
+            };
+
+            ## Ticket Manager: preferrably one with ABUS
+            ## Priority order for DCMs to be assigned: 2-1-3-0
+            if   ATTR_CHIPS_PRESENT[ATTR_FBC_DWR_ID][2][0] and ATTR_CHIPS_PRESENT[ATTR_FBC_DWR_ID][2][0]:
+                ATTR_FBC_TM_DCM_ID = 2;
+            elif ATTR_CHIPS_PRESENT[ATTR_FBC_DWR_ID][1][0] and ATTR_CHIPS_PRESENT[ATTR_FBC_DWR_ID][1][0]:
+                ATTR_FBC_TM_DCM_ID = 2;
+            elif ATTR_CHIPS_PRESENT[ATTR_FBC_DWR_ID][3][0] and ATTR_CHIPS_PRESENT[ATTR_FBC_DWR_ID][3][0]:
+                ATTR_FBC_TM_DCM_ID = 3;
+            elif ATTR_CHIPS_PRESENT[ATTR_FBC_DWR_ID][0][0] and ATTR_CHIPS_PRESENT[ATTR_FBC_DWR_ID][0][0]:
+                ATTR_FBC_TM_DCM_ID = 0;
+            elif ATTR_CHIPS_PRESENT[ATTR_FBC_DWR_ID][2][0] or ATTR_CHIPS_PRESENT[ATTR_FBC_DWR_ID][2][0]:
+                ATTR_FBC_TM_DCM_ID = 2;
+            elif ATTR_CHIPS_PRESENT[ATTR_FBC_DWR_ID][1][0] or ATTR_CHIPS_PRESENT[ATTR_FBC_DWR_ID][1][0]:
+                ATTR_FBC_TM_DCM_ID = 2;
+            elif ATTR_CHIPS_PRESENT[ATTR_FBC_DWR_ID][3][0] or ATTR_CHIPS_PRESENT[ATTR_FBC_DWR_ID][3][0]:
+                ATTR_FBC_TM_DCM_ID = 3;
+            elif ATTR_CHIPS_PRESENT[ATTR_FBC_DWR_ID][0][0] or ATTR_CHIPS_PRESENT[ATTR_FBC_DWR_ID][0][0]:
+                ATTR_FBC_TM_DCM_ID = 0;
+            else:
+                # no chips....
+                pass
+
+
+            ## Drawer ID, Chip ID, DCM ID
+            ## Chip positions present: 0:31
+            ## TicketMaster ID
+
+            CPLT_CONF1[12:14] = ATTR_FBC_DCM_ID
+            CPLT_CONF1[11]    = ATTR_FBC_CHIP_ID
+            CPLT_CONF1[ 9:11] = ATTR_FBC_TM_DCM_ID_DC
+
+            for i in range(0, 6):
+                # XBUS_FENCE
+                CPLT_CONF1[16+i]            = !ATTR_CHIPS_PRESENT[ATTR_FBC_DWR_ID][xbus_mapping[ATTR_FBC_DCM_ID][ATTR_FBC_CHIP_ID][i][0]][xbus_mapping[ATTR_FBC_DCM_ID][ATTR_FBC_CHIP_ID][i][1]]
+                CPLT_CTRL1[20+2*i:22+2*i]   = abus_mapping[ATTR_FBC_DWR_ID][ATTR_FBC_DCM_ID][ATTR_FBC_CHIP_ID][i]
+                CPLT_CONF0[46+3*i:46+3*i+2] = xbus_mapping[ATTR_FBC_DCM_ID][ATTR_FBC_CHIP_ID][i][0]
+                CPLT_CONF0[48+3*i:48+3*i+1] = xbus_mapping[ATTR_FBC_DCM_ID][ATTR_FBC_CHIP_ID][i][1]
+                CPLT_CONF1[22]              = ATTR_CHIP_MODE
+                CPLT_CONF1[7:9]             = abus_mapping[ATTR_FBC_DWR_ID][ATTR_FBC_DCM_ID][ATTR_FBC_CHIP_ID][6]
 
 ISTEP(3, 20, "proc_chiplet_startclocks", "SSBE, TSBE")
 
