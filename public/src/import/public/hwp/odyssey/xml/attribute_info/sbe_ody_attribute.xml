@@ -2620,7 +2620,7 @@
     <value>0x00</value>
   </entry>
   <entry name="ATTR_DRAMINIT_TRAINING_TIMEOUT">
-    <value>20000</value>
+    <value>400000</value>
   </entry>
   <entry name="ATTR_MEM_EFF_ARDPTRINITVAL">
     <value>3</value>
