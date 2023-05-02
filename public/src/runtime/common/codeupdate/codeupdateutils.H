@@ -154,11 +154,15 @@ fapi2::ReturnCode deviceErase(SpiControlHandle& i_handle,
  * @param[in] : i_handle : SPI controller handle
  * @param[in] : i_writeLength : Length of data to write to device
  * @param[in] : i_buffer : buffer containing data
- * @param[in] : i_writeAddress : address to write buffer data.
- *              This is logical address that may (i_ecc=true)/may not
- *              (i_ecc=false) be converted to physical address (incl ECC)
- *              by driver during write opr.
- * @param[in] : i_ecc : true/false : write data with/wo ecc included
+ * @param[in] : i_writeAddress : address to write buffer data in device.
+ *              -This function when used to write raw data (no ecc byte
+ *               calculated and included by driver) the address passed should
+ *               be phyical address and i_ecc should be set to false.
+ *              -This function when used to write plain data (with ecc
+ *               byte calculated and included by driver) the address passed
+ *               should be logical address and i_ecc should be set to true.
+ * @param[in] : i_ecc : true/false : write data with/wo ecc byte included
+ *              as explained in i_writeAddress above
  *
  * @return : fapiRc
  */
