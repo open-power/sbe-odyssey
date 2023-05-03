@@ -32,6 +32,6 @@
     "TARGET_TYPE_TEMP_SENSOR" :
     {
         "__targInfo__":true,
-        "ntargets":4
+        "ntargets":3
     }
 }

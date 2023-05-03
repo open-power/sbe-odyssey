@@ -46,7 +46,7 @@ namespace fapi2
         {0xD, LOG_TARGET_TYPE_MEM_PORT, 0, 1, 2},
         {0xD, LOG_TARGET_TYPE_DIMM, 0, 0, 2},
         {0xE, LOG_TARGET_TYPE_DIMM, 0, 0, 2},
-        {0x0, LOG_TARGET_TYPE_TEMP_SENSOR, 0, 0, 4}, // First byte is port number
+        {0x0, LOG_TARGET_TYPE_TEMP_SENSOR, 0, 0, 3}, // First byte is port number
                                                     // for the TEMP SENSOR target.
     };
 
