@@ -2839,7 +2839,7 @@
     <value>0</value>
   </entry>
   <entry name="ATTR_PHY_GET_MAIL_TIMEOUT">
-    <value>20000</value>
+    <value>400000</value>
   </entry>
   <entry name="ATTR_POS">
     <value>0</value>
