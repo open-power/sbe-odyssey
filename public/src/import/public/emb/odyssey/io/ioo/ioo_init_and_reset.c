@@ -433,7 +433,7 @@ const t_data_rate_settings c_data_rate_settings_25g =
 {
     .rx_freq_adjust               = 0x016A,
     .rx_ctle_peak2_h_sel          = 0, // H2
-    .rx_pr_phase_step             = c_phase_step_296875,
+    .rx_pr_phase_step             = 12,
     .rx_bist_freq_adjust_8xx      = 3,
     .rx_bist_freq_adjust_9xx      = 1, // EWM300848: Correct Rx Bist Freq Adjust
     .rx_bist_atten_dc_sel_dc      = 7, // EWM300844: Correct Rx Bist DC Atten
@@ -462,7 +462,7 @@ const t_data_rate_settings c_data_rate_settings_32g =
 {
     .rx_freq_adjust               = 0x01AC,
     .rx_ctle_peak2_h_sel          = 0, // H2
-    .rx_pr_phase_step             = c_phase_step_296875,
+    .rx_pr_phase_step             = 12,
     .rx_bist_freq_adjust_8xx      = 3, // EWM300848: Correct Rx Bist Freq Adjust
     .rx_bist_freq_adjust_9xx      = 1, // EWM300848: Correct Rx Bist Freq Adjust
     .rx_bist_atten_dc_sel_dc      = 7, // EWM300844: Correct Rx Bist DC Atten
@@ -491,7 +491,7 @@ const t_data_rate_settings c_data_rate_settings_38g =
 {
     .rx_freq_adjust               = 0x01EE,
     .rx_ctle_peak2_h_sel          = 0, // H2
-    .rx_pr_phase_step             = c_phase_step_296875,
+    .rx_pr_phase_step             = 12,
     .rx_bist_freq_adjust_8xx      = 3, // EWM300848: Correct Rx Bist Freq Adjust
     .rx_bist_freq_adjust_9xx      = 1, // EWM300848: Correct Rx Bist Freq Adjust
     .rx_bist_atten_dc_sel_dc      = 7, // EWM300844: Correct Rx Bist DC Atten
