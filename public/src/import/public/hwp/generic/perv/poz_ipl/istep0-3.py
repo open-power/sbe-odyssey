@@ -1764,6 +1764,9 @@ def zme_nest_enable_io():
 
 def poz_nest_enable_io():
     ROOT_CTRL1.GLOBAL_PERST_OVERRIDE = 0
+    ROOT_CTRL1.TP_RI_DC_N = 1
+    ROOT_CTRL1.TP_DI1_DC_N = 1
+    ROOT_CTRL1.TP_DI2_DC_N = 1
 
     for chiplet in TARGET_FILTER_NEST:
         NET_CTRL0.DCTRL = 1

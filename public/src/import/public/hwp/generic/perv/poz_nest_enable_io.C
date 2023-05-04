@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -52,6 +52,13 @@ ReturnCode poz_nest_enable_io(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
     ROOT_CTRL1 = 0;
     ROOT_CTRL1.set_GLOBAL_PERST_OVERRIDE(1);
     FAPI_TRY(ROOT_CTRL1.putScom_CLEAR(i_target));
+
+    FAPI_DBG("Enable TP drivers");
+    ROOT_CTRL1 = 0;
+    ROOT_CTRL1.set_TP_RI_DC_N(1);
+    ROOT_CTRL1.set_TP_DI1_DC_N(1);
+    ROOT_CTRL1.set_TP_DI2_DC_N(1);
+    FAPI_TRY(ROOT_CTRL1.putScom_SET(i_target));
 
     FAPI_DBG("Chiplet receiver enable, Chiplet driver enable.");
 
