@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -25,6 +26,7 @@
 #define _I2CACCESS_H_
 
 #include <plat_hw_access.H>
+#include "plat_i2c_access.H"
 
 namespace fapi2
 {
@@ -45,9 +47,8 @@ inline ReturnCode getI2c(const Target<K>& i_target,
                          const std::vector<uint8_t>& i_data,
                          std::vector<uint8_t>& o_data)
 {
-    // TODO: Enable the i2C driver.
-    // return platGetI2c(i_target, i_get_size, i_data, o_data);
-    return FAPI2_RC_SUCCESS;
+    plati2c sbei2c;
+    return sbei2c.getI2c(i_target, i_get_size, i_data, o_data);
 }
 
 
@@ -62,11 +63,10 @@ template< TargetType K >
 inline ReturnCode putI2c(const Target<K>& i_target,
                          const std::vector<uint8_t>& i_data)
 {
-    // TODO: Enable the i2C driver.
-    // return platPutI2c(i_target, i_data);
-    return FAPI2_RC_SUCCESS;
+    plati2c sbei2c;
+    return sbei2c.putI2c(i_target, i_data);
 }
 
-};
+}; //namespace fapi2
 
 #endif
