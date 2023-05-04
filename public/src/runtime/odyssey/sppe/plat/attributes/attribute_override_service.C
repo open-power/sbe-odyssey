@@ -302,6 +302,7 @@ uint32_t applyOverride(const void *i_buffer,void *o_buffer,
         memcpy((void *)&l_respHeader, (void *)l_buffer.getHeader(), sizeof(HeaderEntry_t));
 
         l_respHeader.iv_numTargets = 0;
+        l_respHeader.iv_fileType = ATTROVERRIDE_RESP_FILE_TYPE;
         l_resBuffer.setHeader(&l_respHeader);
 
         SBE_INFO(SBE_FUNC "Number of targets:%d", l_buffer.getNumTargets());
