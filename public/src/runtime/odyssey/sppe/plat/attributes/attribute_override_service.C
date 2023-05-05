@@ -98,7 +98,7 @@ AttributeOverrideRc AttributesTable::applyOverride(
                     const AttrEntry_t*  i_attrEntry)
 {
 
-    SBE_INFO("iv_max_row=%d, iv_max_col=%d, iv_max_hgt=%d",
+    SBE_DEBUG("iv_max_row=%d, iv_max_col=%d, iv_max_hgt=%d",
                 iv_max_row, iv_max_col, iv_max_hgt);
 
     // Attribute override supports 4-dimensional array ie. instance, row,
@@ -128,7 +128,7 @@ AttributeOverrideRc AttributesTable::applyOverride(
             if ( i_attrEntry->iv_dataSize != iv_size )
             {
                 SBE_ERROR("The size is not matching. Expected:%d Actual:%d",
-                                i_attrEntry->iv_dataSize, iv_size);
+                                iv_size, i_attrEntry->iv_dataSize);
                 return ATTROVERRIDE_RC_SIZE_NOT_MATCHING;
             }
             memcpy((reinterpret_cast<uint8_t *>(iv_ptr))+(iv_size*i_tgt_inst),
@@ -155,7 +155,7 @@ AttributeOverrideRc AttributesTable::applyOverride(
             if ( i_attrEntry->iv_dataSize != arraySize )
             {
                 SBE_ERROR("The size is not matching. Expected:%d Actual:%d",
-                                i_attrEntry->iv_dataSize, iv_size);
+                                arraySize, i_attrEntry->iv_dataSize);
                 return ATTROVERRIDE_RC_SIZE_NOT_MATCHING;
             }
             index = (i_tgt_inst * arraySize);
@@ -173,7 +173,7 @@ AttributeOverrideRc AttributesTable::applyOverride(
             if ( i_attrEntry->iv_dataSize != iv_size )
             {
                 SBE_ERROR("The size is not matching. Expected:%d Actual:%d",
-                                i_attrEntry->iv_dataSize, iv_size);
+                                iv_size, i_attrEntry->iv_dataSize);
                 return ATTROVERRIDE_RC_SIZE_NOT_MATCHING;
             }
             index = (((i_tgt_inst * iv_max_row + i_attrEntry->iv_row) *
@@ -223,7 +223,7 @@ AttributeOverrideRc TargetsTable::applyOverride(
     uint8_t l_targ_inst_end = (i_targ_inst == 0xFF) ? this->iv_max_inst :
                                                       i_targ_inst + 1;
 
-    SBE_INFO("l_targ_inst_start=%d, l_targ_inst_end=%d",
+    SBE_DEBUG("l_targ_inst_start=%d, l_targ_inst_end=%d",
                         l_targ_inst_st, l_targ_inst_end);
 
     while ( ((l_attrEntry=i_buffer.getNextAttr()) != nullptr) &&
