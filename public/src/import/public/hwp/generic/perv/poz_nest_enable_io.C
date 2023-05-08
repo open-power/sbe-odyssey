@@ -68,6 +68,7 @@ ReturnCode poz_nest_enable_io(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
         NET_CTRL0.set_DCTRL(1);
         NET_CTRL0.set_RCTRL(1);
         NET_CTRL0.set_RCTRL2(1);
+        NET_CTRL0.setBit<30>(); // PHY power on
         FAPI_TRY(NET_CTRL0.putScom_SET(chiplet));
     }
 

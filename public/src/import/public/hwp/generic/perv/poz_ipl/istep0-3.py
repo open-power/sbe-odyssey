@@ -1789,6 +1789,7 @@ def poz_nest_enable_io():
         NET_CTRL0.DCTRL = 1
         NET_CTRL0.RCTRL = 1
         NET_CTRL0.RCTRL2 = 1
+        NET_CTRL0.PHY_POWER_ON = 1
 
 ISTEP(3, 25, "proc_chiplet_scominit", "SSBE, TSBE")
 
