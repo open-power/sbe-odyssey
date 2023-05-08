@@ -29,29 +29,54 @@
 #include "globals.H"
 #include "sbeglobals.H"
 #include "archive.H"
+#include "metadata.H"
 
 using namespace fapi2;
 
-ARC_RET_t PakStreamReceiver::consume(const void* i_data, uint32_t i_size)
+ARC_RET_t HwpStreamReceiver::consume(const void* i_data, uint32_t i_size)
 {
-    ReturnCode fapiRc = FAPI2_RC_SUCCESS;
     SBE_INFO("PakStreamReceiver::consume: i_size is 0x%08X and iv_offset is 0x%08X", i_size, iv_offset);
 
     // Execute the HWP.
     if(iv_hwp != NULL)
     {
-        fapiRc = sbeexecutehwponpak(iv_hwp, (uint8_t *)i_data,
-                                    i_size, iv_offset, iv_image);
-        if(fapiRc)
+        iv_fapiRc = sbeexecutehwponpak(iv_hwp, (uint8_t *)i_data,
+                                       i_size, iv_offset, iv_image);
+        if (iv_fapiRc)
         {
-            SBE_ERROR(SBE_FUNC "sbeexecutehwponpak failed with RC[%08X]", fapiRc);
+            SBE_ERROR("PakStreamReceiver::consume: sbeexecutehwponpak failed with RC[%08X]", iv_fapiRc);
         }
     }
     iv_offset += i_size;
-    return fapiRc;
+
+    return iv_fapiRc;
 }
 
-ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname, voidfuncptr_t i_hwp, uint8_t i_image, uint32_t *io_offset)
+ARC_RET_t PpeImageReceiver::consume(const void* i_data, uint32_t i_size)
+{
+    if (iv_offset == 0)
+    {
+        const uint8_t *meta_start = ((uint8_t *)i_data) + 0x200;
+        const META_HEA_t *hea = GET_META_HEA(meta_start);
+        const META_GIT_t *git = GET_META_GIT(meta_start);
+
+        if (!(hea && git))
+        {
+            SBE_ERROR("PpeImageReceiver::consume: Required metadata missing in image");
+            iv_fapiRc = FAPI2_RC_PLAT_ERR_SEE_DATA;
+            return ARC_INVALID_PARAMS;
+        }
+
+        iv_heapStart = hea->heapAddr;
+        iv_gitId = git->commitId;
+    }
+
+    return HwpStreamReceiver::consume(i_data, i_size);
+}
+
+ReturnCode sbestreampaktohwp(
+    PakWrapper *i_pak, const char * i_pakname,
+    HwpStreamReceiver &i_receiver)
 {
     #define SBE_FUNC " sbestreampaktohwp "
     SBE_ENTER(SBE_FUNC);
@@ -60,7 +85,6 @@ ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname, voidfunc
     ARC_RET_t pakRc = ARC_OPERATION_SUCCESSFUL;
     uint32_t *scratchArea = NULL;
     sha3_t hashData;
-    uint32_t l_offset = 0;
 
     // load the entirety of the stream, build actual hash value
     do
@@ -89,29 +113,22 @@ ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname, voidfunc
             break;
         }
 
-        // Create the receiver object.
-	if (io_offset != NULL) {
-	  l_offset     = *io_offset;
-	  *io_offset  += entry.get_size();
-	}
-        PakStreamReceiver recObj(l_offset, i_hwp, i_image);
-
         // Call stream_decompress
-        pakRc = entry.stream_decompress(recObj, scratchArea, (sha3_t *)hashData);
+        pakRc = entry.stream_decompress(i_receiver, scratchArea, (sha3_t *)hashData);
+	
+	// Deallocate the scratch space.
+        Heap::get_instance().scratch_free(scratchArea);
+	
         if(pakRc)
         {
             SBE_ERROR(SBE_FUNC "stream_decompress failed with RC[%08X]", pakRc);
-            fapiRc = FAPI2_RC_PLAT_ERR_SEE_DATA;
+            fapiRc = i_receiver.getFapiRc();
             break;
         }
     } while(false);
-    // exit if we've failed inside the while loop above
-    if (fapiRc != FAPI2_RC_SUCCESS)
-    {
-        goto fapi_try_exit;
-    }
-    // else, validate that hash value is as expected
-    else
+    
+    // validate that hash value is as expected
+    if (fapiRc == FAPI2_RC_SUCCESS)
     {
         /* In case hash mismatch from pak img, check_file_hash will return the miss-match hash*/
         uint64_t *ptrMismatchHash;
@@ -158,15 +175,7 @@ ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname, voidfunc
 fapi_try_exit:
     
     // Assign fapiRc for failure case, Assign current_err for PLAT_FAPI_ASSERT
-    if (fapiRc != FAPI2_RC_SUCCESS) {
-       fapiRc = fapi2::current_err;
-       if (io_offset != NULL) {
-        *io_offset = 0;
-       }
-    }
-
-    // Deallocate the scratch space.
-    Heap::get_instance().scratch_free(scratchArea);
+    fapiRc = (fapiRc != FAPI2_RC_SUCCESS)? fapiRc : fapi2::current_err;
 
     SBE_EXIT(SBE_FUNC);
     return fapiRc;
