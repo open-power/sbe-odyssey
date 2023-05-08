@@ -179,6 +179,8 @@ ReturnCode ody_sppe_attr_setup(const Target<TARGET_TYPE_OCMB_CHIP>& i_target_chi
         fapi2::buffer<uint64_t> l_scratch11_reg = 0;
         fapi2::Target<fapi2::TARGET_TYPE_SYSTEM> FAPI_SYSTEM;
         fapi2::ATTR_IS_SIMULATION_Type l_attr_is_simulation = 0;
+        fapi2::ATTR_ENABLE_ABIST_Type l_enable_abist = fapi2::ENUM_ATTR_ENABLE_ABIST_ENABLE;
+        fapi2::ATTR_ENABLE_LBIST_Type l_enable_lbist = fapi2::ENUM_ATTR_ENABLE_LBIST_ENABLE;
 
         if (l_scratch16_reg.getBit<SCRATCH11_REG_VALID_BIT>())
         {
@@ -188,10 +190,53 @@ ReturnCode ody_sppe_attr_setup(const Target<TARGET_TYPE_OCMB_CHIP>& i_target_chi
             FAPI_DBG("Setting up ATTR_IS_SIMULATION");
             l_scratch11_reg.extractToRight<ATTR_IS_SIMULATION_STARTBIT, ATTR_IS_SIMULATION_LENGTH>
             (l_attr_is_simulation);
-
             FAPI_TRY(FAPI_ATTR_SET(fapi2::ATTR_IS_SIMULATION, FAPI_SYSTEM, l_attr_is_simulation));
+
+            // mailbox bits act as disables
+            FAPI_DBG("Setting up ATTR_ENABLE_ABIST");
+
+            if (l_scratch11_reg.getBit<ATTR_ENABLE_ABIST_DISABLE_BIT>())
+            {
+                l_enable_abist = fapi2::ENUM_ATTR_ENABLE_ABIST_DISABLE;
+            }
+
+            FAPI_TRY(FAPI_ATTR_SET(fapi2::ATTR_ENABLE_ABIST, i_target_chip, l_enable_abist));
+
+            FAPI_DBG("Setting up ATTR_ENABLE_LBIST");
+
+            if (l_scratch11_reg.getBit<ATTR_ENABLE_LBIST_DISABLE_BIT>())
+            {
+                l_enable_lbist = fapi2::ENUM_ATTR_ENABLE_LBIST_DISABLE;
+            }
+
+            FAPI_TRY(FAPI_ATTR_SET(fapi2::ATTR_ENABLE_LBIST, i_target_chip, l_enable_lbist));
         }
     }
+
+
+#ifdef __PPE__
+    // scratch 12 -- dynamic inits
+    {
+        fapi2::buffer<uint64_t> l_scratch12_reg = 0;
+
+        fapi2::ATTR_DYNAMIC_INIT_FEATURE_VEC_Type l_dynamic_init_feature_vec = { 0 };
+        uint32_t l_dynamic_init_feature_vec_0_31 = 0;
+
+        if (l_scratch16_reg.getBit<SCRATCH12_REG_VALID_BIT>())
+        {
+            FAPI_DBG("Reading Scratch 12 mailbox register");
+            FAPI_TRY(fapi2::getScom(i_target_chip, SCRATCH_REGISTER12.scom_addr, l_scratch12_reg));
+
+            FAPI_DBG("Setting up ATTR_DYNAMIC_INIT_FEATURE_VEC");
+            l_scratch12_reg.extractToRight<ATTR_DYNAMIC_INIT_FEATURE_STARTBIT, ATTR_DYNAMIC_INIT_FEATURE_LENGTH>
+            (l_dynamic_init_feature_vec_0_31);
+
+            l_dynamic_init_feature_vec[0] |= (((uint64_t) l_dynamic_init_feature_vec_0_31) << 32);
+
+            FAPI_TRY(FAPI_ATTR_SET(fapi2::ATTR_DYNAMIC_INIT_FEATURE_VEC, i_target_chip, l_dynamic_init_feature_vec));
+        }
+    }
+#endif
 
     // set platform attributes for partial good
     // since there are no optional/configurable regions on Odyssey, a functional chip has static partial good attributes
