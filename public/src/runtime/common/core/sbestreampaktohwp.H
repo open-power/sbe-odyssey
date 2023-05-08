@@ -30,22 +30,21 @@
 #include "hwp_table.H"
 #include "pakwrapper.H"
 
-using namespace fapi2;
-
 /**
  * @brief Implementation of StreamReceiver interface class for stream
  *        decompression.
  */
-class PakStreamReceiver : public FileArchive::StreamReceiver
+class HwpStreamReceiver : public FileArchive::StreamReceiver
 {
     public:
         /**
-         * @brief Constructor for PakStreamReceiver class.
+         * @brief Constructor for HwpStreamReceiver class.
          *
          * @param[in] i_destinationDataPtr Pointer to destination buffer.
          * @param[in] i_decompressedSize Size of decompressed data.
          */
-        PakStreamReceiver(uint32_t i_offset, voidfuncptr_t i_hwp, uint8_t i_Image) :
+        HwpStreamReceiver(uint32_t i_offset, voidfuncptr_t i_hwp, uint8_t i_Image) :
+                        iv_fapiRc(fapi2::FAPI2_RC_SUCCESS),
                         iv_offset(i_offset),
                         iv_hwp(i_hwp),
                         iv_image(i_Image)
@@ -53,23 +52,44 @@ class PakStreamReceiver : public FileArchive::StreamReceiver
                         }
         // Each platfrom will have its own implementation of consume.
         int consume(const void* i_data, uint32_t i_size);
-    private:
+
+        fapi2::ReturnCode getFapiRc() { return iv_fapiRc; }
+        uint32_t getEndOffset() { return iv_offset; }
+
+    protected:
+        fapi2::ReturnCode iv_fapiRc;
         uint32_t iv_offset;
         voidfuncptr_t iv_hwp;
         uint8_t iv_image;
+};
+
+/**
+ * @brief Extension of HwpStreamReceiver which extracts specific metadata
+ *        from the first block of a PPE image
+ */
+class PpeImageReceiver : public HwpStreamReceiver
+{
+    public:
+        PpeImageReceiver(uint32_t i_offset, voidfuncptr_t i_hwp, uint8_t i_Image) :
+            HwpStreamReceiver(i_offset, i_hwp, i_Image) {};
+        int consume(const void* i_data, uint32_t i_size);
+
+        /// @brief Heap start address of loaded image
+        uint32_t iv_heapStart;
+        /// @brief Abbreviated git commit hash of loaded image
+        uint32_t iv_gitId;
 };
 
 /// @brief Wrapper that loads pak into scratch area in SRAM.
 ///
 /// @param[in]    i_pak          Pointer to PakWrapper
 /// @param[in]    i_pakname      Name of pak to load
-/// @param[in]    i_hwp          Finction pointer to HWP
-/// @param[in]    i_image        Image type
-/// @param[in]    io_offset      Start offset before call, end offset after call
+/// @param[in]    i_receiver     StreamReceiver to receive the image data
 /// @return  FAPI2_RC_SUCCESS on success
 
-ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname,
-                             voidfuncptr_t i_hwp, uint8_t i_image, uint32_t *io_offset = NULL);
+fapi2::ReturnCode sbestreampaktohwp(
+    PakWrapper *i_pak, const char * i_pakname,
+    HwpStreamReceiver &i_receiver);
 
 /**
  * @brief Execute HWP on pak stream
@@ -82,8 +102,9 @@ ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname,
  *
  * @return FAPI2_RC_SUCCESS on success
  */
-ReturnCode sbeexecutehwponpak( voidfuncptr_t i_hwp, uint8_t* const i_bin_data,
-                               const uint32_t i_bin_size, const uint32_t i_bin_offset,
-                               uint8_t i_image);
+fapi2::ReturnCode sbeexecutehwponpak(
+    voidfuncptr_t i_hwp, uint8_t* const i_bin_data,
+    const uint32_t i_bin_size, const uint32_t i_bin_offset,
+    uint8_t i_image);
 
 #endif

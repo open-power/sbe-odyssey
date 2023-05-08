@@ -147,16 +147,12 @@ ReturnCode istepLoadIMEMwithOcmb( voidfuncptr_t i_hwp)
             break;
         }
 
-        char pakname[MEM_PAKNAME_MAX_CHAR] = "";
-        if(imageType  == fapi2::ENUM_ATTR_MSS_ODY_PHY_IMAGE_SELECT_ATE_IMAGE)
-        {
-            strcpy(pakname, "ddr/ate/imem.bin");
-        }
-        else
-        {
-            strcpy(pakname, "ddr/ddimm/imem.bin");
-        }
-        rc = sbestreampaktohwp(&pak, pakname, i_hwp, DDR_IMEM_IMAGE);
+        const char *pakname =
+            (imageType == fapi2::ENUM_ATTR_MSS_ODY_PHY_IMAGE_SELECT_ATE_IMAGE) ?
+            "ddr/ate/imem.bin" : "ddr/ddimm/imem.bin";
+
+        HwpStreamReceiver rec(0, i_hwp, DDR_IMEM_IMAGE);
+        rc = sbestreampaktohwp(&pak, pakname, rec);
         if (rc)
         {
             SBE_ERROR(SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X", rc);
@@ -184,16 +180,13 @@ ReturnCode istepLoadDMEMwithOcmb( voidfuncptr_t i_hwp)
             SBE_ERROR(SBE_FUNC "get_ody_phy_image_select failed with rc: 0x%08X", rc);
             break;
         }
-        char pakname[MEM_PAKNAME_MAX_CHAR] = "";
-        if(imageType == fapi2::ENUM_ATTR_MSS_ODY_PHY_IMAGE_SELECT_ATE_IMAGE)
-        {
-            strcpy(pakname, "ddr/ate/dmem.bin");
-        }
-        else
-        {
-            strcpy(pakname, "ddr/ddimm/dmem.bin");
-        }
-        rc = sbestreampaktohwp(&pak, pakname, i_hwp, DDR_DMEM_IMAGE);
+
+        const char *pakname =
+            (imageType == fapi2::ENUM_ATTR_MSS_ODY_PHY_IMAGE_SELECT_ATE_IMAGE) ?
+            "ddr/ate/dmem.bin" : "ddr/ddimm/dmem.bin";
+
+        HwpStreamReceiver rec(0, i_hwp, DDR_DMEM_IMAGE);
+        rc = sbestreampaktohwp(&pak, pakname, rec);
         if (rc)
         {
             SBE_ERROR(SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X", rc);
@@ -212,19 +205,24 @@ ReturnCode istepLoadIOPPEwithOcmb( voidfuncptr_t i_hwp)
 
     do{
         PakWrapper pak((void *)g_partitionOffset, (void *)(g_partitionOffset + g_partitionSize));
-        static const char ioppe[]   =  "ioppe/ioo.bin";
-        rc = sbestreampaktohwp(&pak, ioppe, i_hwp, IOPPE_BASE_IMAGE);
-        if (rc)
+
         {
-            SBE_ERROR(SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X for ioppe/ioo.bin", rc);
-            break;
+            HwpStreamReceiver rec(0, i_hwp, IOPPE_BASE_IMAGE);
+            rc = sbestreampaktohwp(&pak, "ioppe/ioo.bin", rec);
+            if (rc)
+            {
+                SBE_ERROR(SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X for ioppe/ioo.bin", rc);
+                break;
+            }
         }
 
-        static const char memregs[]   =  "ioppe/ioo_memregs.bin";
-        rc = sbestreampaktohwp(&pak, memregs, i_hwp, IOPPE_MEMREGS_IMAGE);
-        if (rc)
         {
-            SBE_ERROR(SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X for ioppe/ioo_memregs.bin", rc);
+            HwpStreamReceiver rec(0, i_hwp, IOPPE_MEMREGS_IMAGE);
+            rc = sbestreampaktohwp(&pak, "ioppe/ioo_memregs.bin", rec);
+            if (rc)
+            {
+                SBE_ERROR(SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X for ioppe/ioo_memregs.bin", rc);
+            }
         }
     }while(0);
 
