@@ -370,6 +370,9 @@ class AttributeFileParser(AttributeFile):
         for i in range(num_target_sections):
             num_attribute_rows, target = self.readTarget()
             response[target] = list()
+            if(num_attribute_rows == 0):
+                print("Invalid Target section, num attributes = 0")
+                raise Exception()
             for k in range(num_attribute_rows):
                 response[target].append(self.readAttribute())
         return response
