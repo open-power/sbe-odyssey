@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/sbestreampaktohwp.H $    */
+/* $Source: public/src/runtime/common/core/sbestreampaktohwp.H $          */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -64,11 +64,12 @@ class PakStreamReceiver : public FileArchive::StreamReceiver
 /// @param[in]    i_pak          Pointer to PakWrapper
 /// @param[in]    i_pakname      Name of pak to load
 /// @param[in]    i_hwp          Finction pointer to HWP
-/// @param[in]    i_Image        Image type
+/// @param[in]    i_image        Image type
+/// @param[in]    io_offset      Start offset before call, end offset after call
 /// @return  FAPI2_RC_SUCCESS on success
 
 ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname,
-                        voidfuncptr_t i_hwp, uint8_t i_Image);
+                             voidfuncptr_t i_hwp, uint8_t i_image, uint32_t *io_offset = NULL);
 
 /**
  * @brief Execute HWP on pak stream
@@ -77,12 +78,12 @@ ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname,
  * @param[in] i_bin_data     Pointer to binary data
  * @param[in] i_bin_size     Binary size
  * @param[in] i_bin_offset   Binary offset
- * @param[in] i_ioppeImage   Image type
+ * @param[in] i_image        Image type
  *
  * @return FAPI2_RC_SUCCESS on success
  */
 ReturnCode sbeexecutehwponpak( voidfuncptr_t i_hwp, uint8_t* const i_bin_data,
                                const uint32_t i_bin_size, const uint32_t i_bin_offset,
-                               uint8_t i_ioppeImage);
+                               uint8_t i_image);
 
 #endif

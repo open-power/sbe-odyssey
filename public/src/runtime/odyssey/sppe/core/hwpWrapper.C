@@ -234,7 +234,7 @@ ReturnCode istepLoadIOPPEwithOcmb( voidfuncptr_t i_hwp)
 
 ReturnCode sbeexecutehwponpak( voidfuncptr_t i_hwp, uint8_t* const i_bin_data,
                                const uint32_t i_bin_size, const uint32_t i_bin_offset,
-                               uint8_t i_ioppeImage)
+                               uint8_t i_image)
 {
     #define SBE_FUNC " sbeexecutehwponpak "
     SBE_INFO(SBE_FUNC);
@@ -243,7 +243,7 @@ ReturnCode sbeexecutehwponpak( voidfuncptr_t i_hwp, uint8_t* const i_bin_data,
     Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
     SBE_EXEC_HWP(fapiRc, reinterpret_cast<poz_common_image_load_FP_t>( i_hwp ),
                  l_ocmb_chip, (uint8_t *)i_bin_data, i_bin_size, i_bin_offset,
-                 static_cast<poz_image_type>(i_ioppeImage));
+                 static_cast<poz_image_type>(i_image));
     return fapiRc;
     #undef SBE_FUNC
 }

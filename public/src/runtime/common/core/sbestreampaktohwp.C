@@ -51,7 +51,7 @@ ARC_RET_t PakStreamReceiver::consume(const void* i_data, uint32_t i_size)
     return fapiRc;
 }
 
-ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname, voidfuncptr_t i_hwp, uint8_t i_Image)
+ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname, voidfuncptr_t i_hwp, uint8_t i_image, uint32_t *io_offset)
 {
     #define SBE_FUNC " sbestreampaktohwp "
     SBE_ENTER(SBE_FUNC);
@@ -60,6 +60,7 @@ ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname, voidfunc
     ARC_RET_t pakRc = ARC_OPERATION_SUCCESSFUL;
     uint32_t *scratchArea = NULL;
     sha3_t hashData;
+    uint32_t l_offset = 0;
 
     // load the entirety of the stream, build actual hash value
     do
@@ -89,7 +90,11 @@ ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname, voidfunc
         }
 
         // Create the receiver object.
-        PakStreamReceiver recObj(0, i_hwp, i_Image);
+	if (io_offset != NULL) {
+	  l_offset     = *io_offset;
+	  *io_offset  += entry.get_size();
+	}
+        PakStreamReceiver recObj(l_offset, i_hwp, i_image);
 
         // Call stream_decompress
         pakRc = entry.stream_decompress(recObj, scratchArea, (sha3_t *)hashData);
@@ -151,8 +156,14 @@ ReturnCode sbestreampaktohwp(PakWrapper *i_pak, const char * i_pakname, voidfunc
     }
 
 fapi_try_exit:
+    
     // Assign fapiRc for failure case, Assign current_err for PLAT_FAPI_ASSERT
-    fapiRc = (fapiRc != FAPI2_RC_SUCCESS)? fapiRc : fapi2::current_err;
+    if (fapiRc != FAPI2_RC_SUCCESS) {
+       fapiRc = fapi2::current_err;
+       if (io_offset != NULL) {
+        *io_offset = 0;
+       }
+    }
 
     // Deallocate the scratch space.
     Heap::get_instance().scratch_free(scratchArea);
