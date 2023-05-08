@@ -59,7 +59,7 @@ static sbeSecondaryResponse checkTargetPresent(const uint8_t i_logTargetType,
     do
     {
         // TARGET_TYPE_SYSTEM will be always present
-        // Also, the beow logic will not work for TARGET_TYPE_SYSTEM
+        // Also, the below logic will not work for TARGET_TYPE_SYSTEM
         // since it is not available in the SBE target vector
         if (i_logTargetType == fapi2::LOG_TARGET_TYPE_SYSTEM)
         {
@@ -98,16 +98,20 @@ static sbeSecondaryResponse checkTargetPresent(const uint8_t i_logTargetType,
     #undef SBE_FUNC
 }
 
-void  ListResponseBuffer::setHeader(HeaderEntry_t* i_header)
+void  ListResponseBuffer::setHeader()
 {
-    assert(nullptr!=i_header);
-    memcpy((void *)iv_headerPtr, (uint8_t *)i_header, sizeof(HeaderEntry_t));
-    iv_currPtr += sizeof(HeaderEntry_t);
+    iv_headerPtr->iv_fmtMajor = fapi2::ATTR::ATTRLIST_MAJOR_VERSION;
+    iv_headerPtr->iv_fmtMinor = fapi2::ATTR::ATTRLIST_MINOR_VERSION;
+    iv_headerPtr->iv_chipType = CHIP_TYPE_ODYSSEY_00 +
+                                fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_BUS_POS;
+    iv_headerPtr->iv_fileType = ATTRLIST_RESP_FILE_TYPE;
+    iv_headerPtr->iv_numTargets = 0;
 }
 
 void  ListResponseBuffer::setTarget(TargetEntry_t* i_target)
 {
     assert(nullptr!=i_target);
+    iv_headerPtr->iv_numTargets++;
     memcpy((void *)iv_currPtr, (uint8_t *)i_target, sizeof(TargetEntry_t));
     iv_currPtr += sizeof(TargetEntry_t);
 }
@@ -161,16 +165,6 @@ void ListResponseBuffer::setAttribute(uint32_t i_gindex,
     }
 }
 
-uint32_t ListResponseBuffer::getNumTargetSections()
-{
-    uint32_t numtargets = 0;
-    for(uint8_t l_tgtIdx=0;l_tgtIdx<g_tgts_tab_size;l_tgtIdx++)
-    {
-        numtargets += g_targetsTab[l_tgtIdx].iv_max_inst;
-    }
-    return numtargets;
-}
-
 uint32_t ListResponseBuffer::getExpectedHeapSize()
 {
     uint32_t expectedHeapSize = 0;
@@ -222,16 +216,8 @@ uint32_t listAttribute(void *o_buffer)
     ListResponseBuffer   l_respBuffer(o_buffer);
     do
     {
-        HeaderEntry_t l_respHeader;
-        l_respHeader.iv_fmtMajor = ATTRLIST_MAJOR_VERSION;
-        l_respHeader.iv_fmtMinor = ATTRLIST_MINOR_VERSION;
-        l_respHeader.iv_chipType = CHIP_TYPE_ODYSSEY_00 +
-                                   fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_BUS_POS;
-        l_respHeader.iv_fileType = ATTRLIST_RESP_FILE_TYPE;
-        l_respHeader.iv_numTargets = l_respBuffer.getNumTargetSections();
-
         SBE_INFO(SBE_FUNC " resp buffer after set header = 0x%08x", l_respBuffer.iv_currPtr);
-        l_respBuffer.setHeader(&l_respHeader);
+        l_respBuffer.setHeader();
 
         bool l_isPresent = false;
         // read target

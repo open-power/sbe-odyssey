@@ -46,6 +46,7 @@ const uint8_t ATTRLIST_MINOR_VERSION = 1;
  *
  * @details List Response Buffer
  *          data members
+ *          - iv_headerPtr : HeaderEntry_t
  *          - iv_currPtr : void *
  *          member functions
  *          + setHeader
@@ -70,18 +71,16 @@ class ListResponseBuffer
 
         ListResponseBuffer(void *i_ptr)
         {
-            iv_currPtr   = (uint8_t *)i_ptr;
-            iv_headerPtr = (HeaderEntry_t *)i_ptr;
+            iv_currPtr   = (uint8_t *)i_ptr+sizeof(HeaderEntry_t);
+            iv_headerPtr = (HeaderEntry_t *)i_ptr;//this if for start
         }
 
         /**
          * @brief Set Header in the list response buffer
          *
-         * @param[in] HeaderEntry_t ptr
-         *
          * @return
         */
-        void  setHeader(HeaderEntry_t* i_header);
+        void  setHeader();
 
         /**
          * @brief Set Target in the list response buffer
@@ -120,14 +119,6 @@ class ListResponseBuffer
         {
             return iv_currPtr-reinterpret_cast<uint8_t*>(iv_headerPtr);
         }
-
-        /**
-         * @brief get the number of target sections
-         * in the list response buffer
-         *
-         * @return uint32_t number of target sections
-        */
-        uint32_t getNumTargetSections();
 
         /**
          * @brief get the Expected Heap Size to be allocated
