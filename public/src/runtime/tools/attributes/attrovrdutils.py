@@ -30,6 +30,7 @@ import typing
 import os,sys
 import hashlib
 import pickle
+import json
 
 class Utils:
     def _getAttrHash(id):
@@ -225,25 +226,93 @@ class AttributeUpdateFileGenerator(AttributeFileGenerator):
                     AttributeOverride(AttributeInfo(ATTR_BUS_POS, [], 1), 5)
                 ],
         }
+        or json file
+        [
+            {
+                "target":"LOG_TARGET_TYPE_SYSTEM",
+                "instance":"0",
+                "attributes":[
+                    {
+                        "id":"ATTR_IS_SIMULATION",
+                        "index":[255, 255, 255],
+                        "size":1,
+                        "value":["0x01"]
+                    },
+                    {
+                        "id":"ATTR_HOTPLUG",
+                        "size":1,
+                        "value":["0x03"]
+                    }
+                ]
+            }
+        ]
     '''
+    @classmethod
+    def attributeJsonLoader(cls, io_attrDict:dict, **kwarg : dict):
+        if('target' in kwarg):
+            target = AttributeFile.Target(Fapi2.TargetType[kwarg['target']],
+                                    int(kwarg['instance'],10))
+            io_attrDict[target]=[]
+            io_attrDict[target].extend( kwarg['attributes'] )
+        elif('id' in kwarg):
+            if('index' in kwarg):
+                index = kwarg['index']
+            else:
+                index = [0xff, 0xff, 0xff]
+            index = [int(i, 16) if isinstance(i, str) else i for i in index]
+            size = kwarg['size']
+            if(isinstance(size,str)):
+                size = int(size, 16)
+            attrInfo = AttributeFile.AttributeInfo(
+                                                Utils._getAttrHash(kwarg['id']),
+                                                index, size)
+            value = [int(i, 16) if isinstance(i, str) \
+                    else i for i in kwarg['value']]
+            attrOvrd = AttributeFile.AttributeOverride(attrInfo, value)
+            return attrOvrd
+        else:
+            raise Exception("Key mismatch, 'target', or 'id' not found")
+
+    @classmethod
+    def fromAttrJson(cls, i_jsonfile):
+        try:
+            attrDict={}
+            target=None
+            with open(i_jsonfile,'r') as fp:
+                data = json.load(fp,
+                                object_hook= lambda d:
+                        AttributeUpdateFileGenerator.attributeJsonLoader(attrDict,
+                                                        **d))
+            return attrDict
+        except KeyError:
+            raise Exception("Expected keys not found in json file")
+        except FileNotFoundError:
+            raise Exception("Expected json file {} not found".format(i_jsonfile))
+
     def __init__(
         self,
         i_chip_type : Fapi2.ChipType,
-        i_attr_list: typing.Dict[AttributeFile.Target, 'list[AttributeFile.AttributeOverride]']
-        ):
+        i_attr_list):
+
         self.iv_file_type = Fapi2.FileType.OVERRIDE
         self.iv_chip_type= i_chip_type
         self.iv_attr_list = {}
+        if(isinstance(i_attr_list, str)):
+            if(os.path.isfile(i_attr_list)):
+                self.iv_attr_list = AttributeUpdateFileGenerator.fromAttrJson(i_attr_list)
+            else:
+                raise Exception("{} is not a valid file path".format(i_attr_list))
+        else:
+            for target, attrovrdlist in i_attr_list.items():
+                newAttrOvrd = []
+                for attrovrd in attrovrdlist:
+                    attr_hash28bits = Utils._getAttrHash(attrovrd.attr_inf.id)
+                    attrovrd = AttributeFile.AttributeOverride(
+                        AttributeFile.AttributeInfo(attr_hash28bits,
+                        attrovrd.attr_inf.index, attrovrd.attr_inf.size), attrovrd.value)
+                    newAttrOvrd.append(attrovrd)
+                self.iv_attr_list[target] = newAttrOvrd
         super().__init__()
-        for target, attrovrdlist in i_attr_list.items():
-            newAttrOvrd = []
-            for attrovrd in attrovrdlist:
-                attr_hash28bits = Utils._getAttrHash(attrovrd.attr_inf.id)
-                attrovrd = AttributeFile.AttributeOverride(
-                    AttributeFile.AttributeInfo(attr_hash28bits,
-                    attrovrd.attr_inf.index, attrovrd.attr_inf.size), attrovrd.value)
-                newAttrOvrd.append(attrovrd)
-            self.iv_attr_list[target] = newAttrOvrd
 
     def writeAttribute(self,
                         attr_id:int,
