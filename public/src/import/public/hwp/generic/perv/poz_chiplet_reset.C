@@ -61,99 +61,95 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     HEARTBEAT_REG_t HEARTBEAT_REG;
     buffer<uint32_t> l_attr_pg;
     buffer<uint64_t> l_data64;
-    MulticastGroup l_mc_group;
     uint32_t l_poll_count;
 
+    Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_mc;
+    Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_BITX > l_chiplets_bitx;
+    std::vector<Target<TARGET_TYPE_PERV>> l_chiplets_uc;
+
     FAPI_INF("Entering ...");
-    FAPI_TRY(get_hotplug_mc_group(i_target, l_mc_group));
+    FAPI_TRY(get_hotplug_targets(i_target, l_chiplets_mc, &l_chiplets_uc, MCGROUP_ALL));
+    l_chiplets_bitx = l_chiplets_mc;
 
+    if (i_phases & PRE_SCAN0)
     {
-        // Initializing chiplets inside a new scope to prevent issues with FAPI_TRY
-        auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(l_mc_group);
-        auto l_chiplets_uc = l_chiplets_mc.getChildren<TARGET_TYPE_PERV>();
-        fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST,
-              fapi2::MULTICAST_BITX > l_chiplets_bitx = l_chiplets_mc;
+        FAPI_INF("Enable and reset chiplets");
+        NET_CTRL0 = 0;
+        NET_CTRL0.set_PCB_EP_RESET(1);
+        FAPI_TRY(NET_CTRL0.putScom_SET(l_chiplets_mc));
 
-        if (i_phases & PRE_SCAN0)
+        NET_CTRL0 = 0;
+        NET_CTRL0.set_PCB_EP_RESET(1);
+        FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
+
+        NET_CTRL0 = 0;
+        NET_CTRL0.set_CHIPLET_EN(1);
+        NET_CTRL0.setBit<23>();   // SRAM_ENABLE
+        FAPI_TRY(NET_CTRL0.putScom_SET(l_chiplets_mc));
+
+        l_poll_count = HEARTBEAT_POLL_COUNT;
+
+        while (l_poll_count != 0)
         {
-            FAPI_INF("Enable and reset chiplets");
-            NET_CTRL0 = 0;
-            NET_CTRL0.set_PCB_EP_RESET(1);
-            FAPI_TRY(NET_CTRL0.putScom_SET(l_chiplets_mc));
+            FAPI_INF("Reading HEARTBEAT_REG register to check HEARTBEAT_DEAD");
+            FAPI_TRY(HEARTBEAT_REG.getScom(l_chiplets_bitx));
 
-            NET_CTRL0 = 0;
-            NET_CTRL0.set_PCB_EP_RESET(1);
-            FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
-
-            NET_CTRL0 = 0;
-            NET_CTRL0.set_CHIPLET_EN(1);
-            NET_CTRL0.setBit<23>();   // SRAM_ENABLE
-            FAPI_TRY(NET_CTRL0.putScom_SET(l_chiplets_mc));
-
-            l_poll_count = HEARTBEAT_POLL_COUNT;
-
-            while (l_poll_count != 0)
+            if (!HEARTBEAT_REG)
             {
-                FAPI_INF("Reading HEARTBEAT_REG register to check HEARTBEAT_DEAD");
-                FAPI_TRY(HEARTBEAT_REG.getScom(l_chiplets_bitx));
-
-                if (!HEARTBEAT_REG)
-                {
-                    break;
-                }
-
-                FAPI_TRY(fapi2::delay(HEARTBEAT_HW_NS_DELAY, HEARTBEAT_SIM_CYCLE_DELAY));
-                --l_poll_count;
+                break;
             }
 
-            FAPI_DBG("HEARTBEAT Poll Count : %d", l_poll_count);
-
-            FAPI_ASSERT(l_poll_count > 0,
-                        fapi2::POZ_HEARTBEAT_NOT_SET_ERR()
-                        .set_PERV_HEARTBEAT_REG(HEARTBEAT_REG)
-                        .set_POLL_COUNT(HEARTBEAT_POLL_COUNT)
-                        .set_PROC_TARGET(i_target),
-                        "ERROR:HEARTBEAT NOT RUNNING");
-
-            FAPI_INF("Set up clock controllers (decimal 9 -> 10 cycles) ");
-            SYNC_CONFIG = 0;
-            SYNC_CONFIG.set_SYNC_PULSE_DELAY(0b1001);
-            FAPI_TRY(SYNC_CONFIG.putScom(l_chiplets_mc));
-
-            FAPI_INF("Set up per-chiplet OPCG delays");
-
-            for (auto& targ : l_chiplets_uc)
-            {
-                OPCG_ALIGN = 0;
-                OPCG_ALIGN.set_INOP_ALIGN(7);
-                OPCG_ALIGN.set_INOP_WAIT(0);
-                OPCG_ALIGN.set_SCAN_RATIO(3);
-                OPCG_ALIGN.set_OPCG_WAIT_CYCLES(0x30 - 4 * i_chiplet_delays[targ.getChipletNumber()]);
-                FAPI_TRY(OPCG_ALIGN.putScom(targ));
-            }
+            FAPI_TRY(fapi2::delay(HEARTBEAT_HW_NS_DELAY, HEARTBEAT_SIM_CYCLE_DELAY));
+            --l_poll_count;
         }
 
-        if (i_phases & SCAN0_AND_UP)
+        FAPI_DBG("HEARTBEAT Poll Count : %d", l_poll_count);
+
+        FAPI_ASSERT(l_poll_count > 0,
+                    fapi2::POZ_HEARTBEAT_NOT_SET_ERR()
+                    .set_PERV_HEARTBEAT_REG(HEARTBEAT_REG)
+                    .set_POLL_COUNT(HEARTBEAT_POLL_COUNT)
+                    .set_PROC_TARGET(i_target),
+                    "ERROR:HEARTBEAT NOT RUNNING");
+
+        FAPI_INF("Set up clock controllers (decimal 9 -> 10 cycles) ");
+        SYNC_CONFIG = 0;
+        SYNC_CONFIG.set_SYNC_PULSE_DELAY(0b1001);
+        FAPI_TRY(SYNC_CONFIG.putScom(l_chiplets_mc));
+
+        FAPI_INF("Set up per-chiplet OPCG delays");
+
+        for (auto& targ : l_chiplets_uc)
         {
-            FAPI_DBG("scan0 all clock regions, scan types GPTR, TIME, REPR");
-            FAPI_TRY(mod_scan0(l_chiplets_mc, cc::REGION_ALL, cc::SCAN_TYPE_RTG));
+            OPCG_ALIGN = 0;
+            OPCG_ALIGN.set_INOP_ALIGN(7);
+            OPCG_ALIGN.set_INOP_WAIT(0);
+            OPCG_ALIGN.set_SCAN_RATIO(3);
+            OPCG_ALIGN.set_OPCG_WAIT_CYCLES(0x30 - 4 * i_chiplet_delays[targ.getChipletNumber()]);
+            FAPI_TRY(OPCG_ALIGN.putScom(targ));
+        }
+    }
 
-            FAPI_DBG("scan0 all clock regions, scan types except GPTR, TIME, REPR");
-            FAPI_TRY(mod_scan0(l_chiplets_mc, cc::REGION_ALL, cc::SCAN_TYPE_NOT_RTG));
+    if (i_phases & SCAN0_AND_UP)
+    {
+        FAPI_DBG("scan0 all clock regions, scan types GPTR, TIME, REPR");
+        FAPI_TRY(mod_scan0(l_chiplets_mc, cc::REGION_ALL, cc::SCAN_TYPE_RTG));
 
-            FAPI_INF("Transfer partial good attributes into region PGOOD and PSCOM enable registers");
+        FAPI_DBG("scan0 all clock regions, scan types except GPTR, TIME, REPR");
+        FAPI_TRY(mod_scan0(l_chiplets_mc, cc::REGION_ALL, cc::SCAN_TYPE_NOT_RTG));
 
-            for (auto& targ : l_chiplets_uc)
-            {
-                FAPI_TRY(FAPI_ATTR_GET(ATTR_PG, targ, l_attr_pg));
-                l_attr_pg.invert();
-                l_data64.flush<0>();
-                l_data64.insert< PGOOD_REGIONS_STARTBIT, PGOOD_REGIONS_LENGTH, PGOOD_REGIONS_OFFSET >(l_attr_pg);
-                CPLT_CTRL2 = l_data64();
-                FAPI_TRY(CPLT_CTRL2.putScom(targ));
-                CPLT_CTRL3 = l_data64();
-                FAPI_TRY(CPLT_CTRL3.putScom(targ));
-            }
+        FAPI_INF("Transfer partial good attributes into region PGOOD and PSCOM enable registers");
+
+        for (auto& targ : l_chiplets_uc)
+        {
+            FAPI_TRY(FAPI_ATTR_GET(ATTR_PG, targ, l_attr_pg));
+            l_attr_pg.invert();
+            l_data64.flush<0>();
+            l_data64.insert< PGOOD_REGIONS_STARTBIT, PGOOD_REGIONS_LENGTH, PGOOD_REGIONS_OFFSET >(l_attr_pg);
+            CPLT_CTRL2 = l_data64();
+            FAPI_TRY(CPLT_CTRL2.putScom(targ));
+            CPLT_CTRL3 = l_data64();
+            FAPI_TRY(CPLT_CTRL3.putScom(targ));
         }
     }
 

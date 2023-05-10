@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -34,6 +34,7 @@
 #include <poz_chiplet_pll_setup_regs.H>
 #include <poz_perv_common_params.H>
 #include <poz_perv_mod_chip_clocking.H>
+#include <poz_perv_utils.H>
 #include <target_filters.H>
 
 using namespace fapi2;
@@ -48,10 +49,11 @@ ReturnCode poz_chiplet_pll_setup(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targe
     CPLT_CTRL1_t CPLT_CTRL1;
     NET_CTRL0_t NET_CTRL0;
     PCB_RESPONDER_CONFIG_t PCB_RESPONDER_CONFIG;
-    auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
-    auto l_chiplets_uc = l_chiplets_mc.getChildren<TARGET_TYPE_PERV>();
+    Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_mc;
+    std::vector<Target<TARGET_TYPE_PERV>> l_chiplets_uc;
 
     FAPI_INF("Entering ...");
+    FAPI_TRY(get_hotplug_targets(i_target, l_chiplets_mc, &l_chiplets_uc));
 
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_IO_TANK_PLL_BYPASS, i_target, l_attr_io_tank_pll_bypass));
 

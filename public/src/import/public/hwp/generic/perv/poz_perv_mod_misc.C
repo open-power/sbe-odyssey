@@ -519,9 +519,10 @@ fapi_try_exit:
 
 ReturnCode mod_unmask_firs(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
 {
-    auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
-
     FAPI_INF("Entering ...");
+
+    Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_mc;
+    FAPI_TRY(get_hotplug_targets(i_target, l_chiplets_mc));
 
     FAPI_DBG("Unmask chiplet FIRs");
     FAPI_TRY(putScom(l_chiplets_mc, EPS_MASK_RW_WCLEAR, ~LFIR_MASK_DEFAULT));
@@ -542,10 +543,12 @@ ReturnCode mod_setup_clockstop_on_xstop(
     XSTOP1_t XSTOP1;
     CLKSTOP_ON_XSTOP_MASK1_t EPS_CLKSTOP_ON_XSTOP_MASK1;
     fapi2::buffer<uint8_t>  l_clkstop_on_xstop;
-    auto l_chiplets_mc   = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
-    auto l_chiplets_uc   = l_chiplets_mc.getChildren<TARGET_TYPE_PERV>();
 
     FAPI_INF("Entering ...");
+
+    Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_mc;
+    std::vector<Target<TARGET_TYPE_PERV>> l_chiplets_uc;
+    FAPI_TRY(get_hotplug_targets(i_target, l_chiplets_mc, &l_chiplets_uc));
 
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CLOCKSTOP_ON_XSTOP, i_target, l_clkstop_on_xstop));
 
