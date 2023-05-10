@@ -33,7 +33,7 @@
 #include <poz_chiplet_arrayinit.H>
 #include <poz_perv_common_params.H>
 #include <poz_perv_mod_chiplet_clocking.H>
-
+#include <poz_perv_utils.H>
 
 using namespace fapi2;
 using namespace cc;
@@ -50,7 +50,8 @@ ReturnCode poz_chiplet_arrayinit(
 {
     FAPI_INF("Entering ...");
 
-    auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
+    Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_mc;
+    FAPI_TRY(get_hotplug_targets(i_target, l_chiplets_mc));
 
     FAPI_DBG("Arrayinit then scan0 all regions on all non-TP chiplets");
     FAPI_TRY(mod_arrayinit(l_chiplets_mc, i_clock_regions, i_runn_cycles, i_do_scan0));

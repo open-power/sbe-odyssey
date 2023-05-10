@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -49,9 +49,12 @@ ReturnCode poz_chiplet_clk_config(
 {
     NET_CTRL0_t NET_CTRL0;
     CPLT_CTRL0_t CPLT_CTRL0;
-    MulticastGroup l_mc_group;
+    Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_mc;
+    uint64_t l_chiplet_mask;
 
     FAPI_INF("Entering ...");
+    FAPI_TRY(get_hotplug_targets(i_target, l_chiplets_mc, NULL, MCGROUP_ALL));
+    l_chiplet_mask = get_mc_group_members(l_chiplets_mc);
 
     FAPI_DBG("Inhibit PLAT flush on Pervasive chiplet");
     // Some pervasive PLATs are needed to facilitate synchronization
@@ -61,32 +64,18 @@ ReturnCode poz_chiplet_clk_config(
     CPLT_CTRL0.set_FLUSHMODE_INH(1);
     FAPI_TRY(CPLT_CTRL0.putScom_SET(get_tp_chiplet_target(i_target)));
 
-    FAPI_TRY(get_hotplug_mc_group(i_target, l_mc_group));
+    FAPI_INF("Set up chiplet clock muxing");
+    FAPI_TRY(i_mux_setup(i_target, l_chiplet_mask));
 
-    {
-        // Initializing chiplets inside a new scope to prevent issues with FAPI_TRY
-        auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(l_mc_group);
+    FAPI_INF("Enable chiplet clocks");
+    NET_CTRL0 = 0;
+    NET_CTRL0.set_CLK_ASYNC_RESET(1);
+    NET_CTRL0.set_LVLTRANS_FENCE(1);
+    FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
 
-        buffer<uint64_t> l_chiplet_mask = 0;
-
-        for (auto l_chiplet : l_chiplets_mc.getChildren<TARGET_TYPE_PERV>(TARGET_STATE_PRESENT))
-        {
-            l_chiplet_mask.setBit(l_chiplet.getChipletNumber());
-        }
-
-        FAPI_INF("Set up chiplet clock muxing");
-        FAPI_TRY(i_mux_setup(i_target, l_chiplet_mask));
-
-        FAPI_INF("Enable chiplet clocks");
-        NET_CTRL0 = 0;
-        NET_CTRL0.set_CLK_ASYNC_RESET(1);
-        NET_CTRL0.set_LVLTRANS_FENCE(1);
-        FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
-
-        NET_CTRL0 = 0;
-        NET_CTRL0.set_PLL_FORCE_OUT_EN(1);
-        FAPI_TRY(NET_CTRL0.putScom_SET(l_chiplets_mc));
-    }
+    NET_CTRL0 = 0;
+    NET_CTRL0.set_PLL_FORCE_OUT_EN(1);
+    FAPI_TRY(NET_CTRL0.putScom_SET(l_chiplets_mc));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
