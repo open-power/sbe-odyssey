@@ -54,7 +54,8 @@ static const bist_params ody_abist_params =
     bist_params::POLL_ABIST_DONE    |   ///< 0x08000000
     bist_params::ASSERT_ABIST_DONE,     ///< 0x04000000
 
-    0x0080000000000000,                 ///< chiplets
+    /// 0x0 for chiplets to let hotplug decide which chiplets to BIST
+    0x0000000000000000,                 ///< chiplets
     0x0000000000000000,                 ///< uc_go_chiplets
     135000000,                          ///< opcg_count
     0x20000,                            ///< idle_count
