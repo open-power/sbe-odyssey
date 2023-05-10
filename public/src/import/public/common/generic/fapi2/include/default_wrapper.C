@@ -52,7 +52,12 @@ uint64_t default_loop(ecmdChipTarget& i_target)
     fapi2::Target<FAPI_TARGET_TYPE>fapi_target(&i_target);
     fapi2::ReturnCode rc_fapi;
 
+    // call_hwp is a weak symbol and will be NULL if nobody bothered to implement it
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Waddress"
+
     if (call_hwp)
+#pragma GCC diagnostic pop
     {
         call_hwp(fapi_target, rc_fapi);
     }
@@ -119,7 +124,11 @@ void help()
     output("      -verif   Run procedure in sim verification mode (default = false).");
 
     // extra_help is a weak symbol and will be NULL if nobody bothered to implement it
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Waddress"
+
     if (extra_help)
+#pragma GCC diagnostic pop
     {
         extra_help();
     }
@@ -178,7 +187,11 @@ int main(int argc, char* argv[])
     }
 
     // parse_extra_args is a weak symbol and will be NULL if nobody bothered to implement it
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Waddress"
+
     if (parse_extra_args)
+#pragma GCC diagnostic pop
     {
         TRY_NOMSG(parse_extra_args(&argc, &argv));
     }
@@ -240,7 +253,11 @@ int main(int argc, char* argv[])
         target_found = true;
 
         // loop is a weak symbol and will be NULL if nobody bothered to implement it
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Waddress"
+
         if (loop)
+#pragma GCC diagnostic pop
         {
             TRY_NOMSG(loop(target));
         }
@@ -253,7 +270,11 @@ int main(int argc, char* argv[])
     TRY(!target_found, "No targets found, procedure did not run!");
 
     // post_loop_cleanup is a weak symbol and will be NULL if nobody bothered to implement it
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Waddress"
+
     if (post_loop_cleanup)
+#pragma GCC diagnostic pop
     {
         TRY_NOMSG(post_loop_cleanup());
     }
