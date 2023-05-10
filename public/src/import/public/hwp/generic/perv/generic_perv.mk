@@ -28,6 +28,7 @@
 #
 define __GENERIC_PERV_PROCEDURE
 PROCEDURE=$(1)
+$$(call ADD_MODULE_INCDIR,$$(PROCEDURE),$$(ROOTPATH)/public/ring/generic)
 $$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_perv_mod_misc.o)
 $$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_perv_mod_chiplet_clocking.o)
 $$(call ADD_MODULE_SHARED_OBJ,$$(PROCEDURE),poz_perv_mod_bist.o)

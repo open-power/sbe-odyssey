@@ -39,7 +39,7 @@ using namespace fapi2;
 
 static const bist_params ody_lbist_params =
 {
-    BIST_PARAMS_CURRENT_VERSION,        ///< BIST_PARAMS_VERSION
+    BIST_PARAMS_CURRENT_VERSION,                    ///< BIST_PARAMS_VERSION
 
     bist_params::SCAN0                  |           ///< 0x0200
     bist_params::ARRAYINIT              |           ///< 0x0100
@@ -55,7 +55,8 @@ static const bist_params ody_lbist_params =
     bist_params::CHIPLET_FENCE_ACTIVE   |           ///< 0x02000000
     bist_params::INT_MODE,                          ///< 0x00800000
 
-    0x0080000000000000,                             ///< chiplets
+    /// 0x0 for chiplets to let hotplug decide which chiplets to BIST
+    0x0000000000000000,                             ///< chiplets
     0x0000000000000000,                             ///< uc_go_chiplets
     0x100000,                                       ///< opcg_count
     0x80,                                           ///< idle_count
@@ -69,10 +70,10 @@ static const bist_params ody_lbist_params =
     1120000,                                        ///< poll_delay_sim
     cc::SCAN_TYPE_ALL,                              ///< scan0_types
 
-    //lbist_scan_types
+    /// lbist_scan_types
     cc::SCAN_TYPE_NOT_RTG & ~cc::SCAN_TYPE_CMSK,    ///< 0xDCD
 
-    // base_regions
+    /// base_regions
     cc::ODY_MC_PERV |                               ///< REGION(0)
     cc::ODY_MC_IOO  |                               ///< REGION(1)
     cc::ODY_MC_CORE |                               ///< REGION(2)

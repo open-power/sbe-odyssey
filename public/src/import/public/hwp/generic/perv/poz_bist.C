@@ -36,6 +36,7 @@
 #include <poz_perv_mod_chiplet_clocking.H>
 #include <poz_perv_mod_chiplet_clocking_regs.H>
 #include <poz_perv_mod_bist.H>
+#include <poz_perv_utils.H>
 #include <target_filters.H>
 #include <endian.h>
 
@@ -48,28 +49,19 @@ enum POZ_BIST_Private_Constants
 };
 
 // Determine if we only have one chiplet and can unicast BIST
-bool can_unicast(uint64_t i_chiplets)
+static inline bool can_unicast(uint64_t i_chiplets)
 {
     // Currently, only one bit is set means only one chiplet
     return (i_chiplets != 0 && (i_chiplets & (i_chiplets - 1)) == 0);
 }
 
 // Given a 64-bit mask, return the index of the first set bit
-uint8_t get_set_bit_index(uint64_t i_mask)
+static inline uint8_t get_set_bit_index(uint64_t i_mask)
 {
-    uint8_t l_index = 0;
-    uint64_t l_mask_scanner = 0x8000000000000000;
-
-    while (l_mask_scanner && !(l_mask_scanner & i_mask))
-    {
-        l_mask_scanner >>= 1;
-        l_index++;
-    }
-
-    return l_index;
+    return __builtin_clzll(i_mask);  // clzll == count leading zeros long long
 }
 
-void print_bist_params(const bist_params& i_params)
+static void print_bist_params(const bist_params& i_params)
 {
     FAPI_DBG("BIST_PARAMS_VERSION = %d", i_params.BIST_PARAMS_VERSION);
     FAPI_DBG("stages = 0x%04x", i_params.stages);
@@ -150,7 +142,7 @@ void print_bist_params(const bist_params& i_params)
              be32toh(((uint32_t*)i_params.ring_patch)[7]));
 }
 
-ReturnCode poz_bist_execute(
+static ReturnCode poz_bist_execute(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_chiplets_target,
     const std::vector<Target<TARGET_TYPE_PERV>>& i_chiplets_uc, const bist_params& i_params,
     const uint16_t i_enum_condition_a, const uint16_t i_enum_condition_b, bist_return& o_return)
@@ -280,7 +272,6 @@ ReturnCode poz_bist(
     FAPI_INF("Entering ...");
 
     // All required pervasive targets and target containers
-    Target<TARGET_TYPE_PERV> l_chiplet;
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_target;
     std::vector<Target<TARGET_TYPE_PERV>> l_chiplets_uc;
 
@@ -329,6 +320,7 @@ ReturnCode poz_bist(
     {
         if (can_unicast(i_params.chiplets))
         {
+            Target<TARGET_TYPE_PERV> l_chiplet;
             FAPI_DBG("Only one chiplet requested; using unicast");
             l_chiplet_number = get_set_bit_index(i_params.chiplets);
             FAPI_TRY(mod_get_chiplet_by_number(i_target, l_chiplet_number, l_chiplet));
@@ -362,7 +354,7 @@ ReturnCode poz_bist(
     else
     {
         FAPI_DBG("No chiplet mask provided; opting for all good, no TP group");
-        l_chiplets_target = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
+        FAPI_TRY(get_hotplug_targets(i_target, l_chiplets_target));
     }
 
     // Set up unicast chiplets vector now that parent container is defined
