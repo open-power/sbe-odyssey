@@ -137,6 +137,18 @@
 </attribute>
 <!-- ********************************************************************** -->
 <attribute>
+  <id>ATTR_HOTPLUG_MASK</id>
+  <targetType>TARGET_TYPE_HUB_CHIP, TARGET_TYPE_COMPUTE_CHIP, TARGET_TYPE_PROC_CHIP, TARGET_TYPE_OCMB_CHIP</targetType>
+  <description>
+    Mask of chiplets to participate in a hotplug operation, only used if ATTR_HOTPLUG == true.
+    Each bit corresponds to one chiplet; if a bit is 1 that chiplet participates in the hotplug operation.
+  </description>
+  <valueType>uint64</valueType>
+  <initToZero/>
+  <writeable/>
+</attribute>
+<!-- ********************************************************************** -->
+<attribute>
   <id>ATTR_SCAN0_SCAN_RATIO</id>
   <targetType>TARGET_TYPE_HUB_CHIP, TARGET_TYPE_COMPUTE_CHIP, TARGET_TYPE_PROC_CHIP, TARGET_TYPE_OCMB_CHIP</targetType>
   <description>

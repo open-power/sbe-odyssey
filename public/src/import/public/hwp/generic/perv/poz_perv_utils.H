@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -36,6 +36,33 @@
 
 fapi2::Target<fapi2::TARGET_TYPE_PERV> get_tp_chiplet_target(const fapi2::Target<fapi2::TARGET_TYPE_CHIPS> i_chip);
 
+/// @brief In hotplug mode, return the hotplug mask. Otherwise, return an all-1 mask.
+///
+/// @param[in]  i_target       Chip to query hotplug mask for
+/// @param[out] o_hotplug_mask Receives the hotplug mask if in hotplug mode, otherwise all-F
+///
+fapi2::ReturnCode get_hotplug_mask(
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    uint64_t& o_hotplug_mask);
+
+/// @brief Determine (and init) multicast group for hotplug operations
+///
+/// Depending on whether or not we want to hotplug we may need to use different
+/// sets of targets. This sets up a multicast target with the right members and returns
+/// both it and its unicast decomposition.
+///
+/// @param[in]   i_target       Chip to operate on
+/// @param[out]  o_chiplets_mc  Multicast target targeting the right chiplets
+/// @param[out]  o_chiplets_uc  (optional) Vector of corresponding unicast targets
+/// @param[in]   i_non_hp_group (optional) Multicast group to use outside of hotplug mode;
+///                             defaults to MCGROUP_GOOD_NO_TP,
+///                             use MCGROUP_ALL if you want all PRESENT chiplets
+///
+fapi2::ReturnCode get_hotplug_targets(
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > &o_chiplets_mc,
+    std::vector<fapi2::Target<fapi2::TARGET_TYPE_PERV>>* o_chiplets_uc = NULL,
+    fapi2::MulticastGroup i_non_hp_group = fapi2::MCGROUP_GOOD_NO_TP);
 
 /// @brief Determine (and init) multicast group for hotplug operations
 ///
@@ -49,6 +76,11 @@ fapi2::Target<fapi2::TARGET_TYPE_PERV> get_tp_chiplet_target(const fapi2::Target
 fapi2::ReturnCode get_hotplug_mc_group(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     fapi2::MulticastGroup& o_mcgroup);
+
+/// @brief Determine the member chiplets in a (potentially) multicast perv target
+/// @return A bit mask with bits set corresponding to each member chiplet
+uint64_t get_mc_group_members(
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target);
 
 /**
  * @brief Print the hex equivalent of an integer into a string
