@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -35,10 +35,10 @@ static uint32_t MAX_SEMAPHORE_COUNT = 3;
 // be more than 1.
 static uint32_t MAX_PERIODIC_TIMER_SEMAPHORE_COUNT = 1;
 
-uint8_t sbe_Kernel_NCInt_stack[SBE_NONCRITICAL_STACK_SIZE];
-uint8_t sbeCommandReceiver_stack[SBE_THREAD_CMD_RECV_STACK_SIZE];
-uint8_t sbeSyncCommandProcessor_stack[SBE_THREAD_SYNC_CMD_PROC_STACK_SIZE];
-uint8_t sbeAsyncCommandProcessor_stack[SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE];
+uint8_t sbe_Kernel_NCInt_stack[SBE_NONCRITICAL_STACK_SIZE] __attribute__((aligned(8)));
+uint8_t sbeCommandReceiver_stack[SBE_THREAD_CMD_RECV_STACK_SIZE] __attribute__((aligned(8)));
+uint8_t sbeSyncCommandProcessor_stack[SBE_THREAD_SYNC_CMD_PROC_STACK_SIZE] __attribute__((aligned(8)));
+uint8_t sbeAsyncCommandProcessor_stack[SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE] __attribute__((aligned(8)));
 
 uint32_t sbeInitSems(void)
 {
