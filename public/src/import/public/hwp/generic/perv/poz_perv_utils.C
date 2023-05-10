@@ -50,6 +50,85 @@ Target<TARGET_TYPE_PERV> get_tp_chiplet_target(const Target<TARGET_TYPE_CHIPS> i
     return l_children[0];
 }
 
+uint64_t get_mc_group_members(const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target)
+{
+    buffer<uint64_t> l_result;
+
+    for (auto cplt : i_target.getChildren<TARGET_TYPE_PERV>(TARGET_STATE_PRESENT))
+    {
+        l_result.setBit(cplt.getChipletNumber());
+    }
+
+    return l_result;
+}
+
+ReturnCode get_hotplug_mask(
+    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    uint64_t& o_hotplug_mask)
+{
+    Target<TARGET_TYPE_SYSTEM> l_system_target;
+    uint8_t l_hotplug;
+
+    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_HOTPLUG, l_system_target, l_hotplug));
+
+    if (l_hotplug)
+    {
+        FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_HOTPLUG_MASK, i_target, o_hotplug_mask));
+    }
+    else
+    {
+        o_hotplug_mask = -1ULL;
+    }
+
+fapi_try_exit:
+    return current_err;
+}
+
+ReturnCode get_hotplug_targets(
+    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > &o_chiplets_mc,
+    std::vector<Target<TARGET_TYPE_PERV>>* o_chiplets_uc,
+    fapi2::MulticastGroup i_non_hp_group)
+{
+    Target<TARGET_TYPE_SYSTEM> l_system_target;
+    uint8_t l_hotplug;
+    uint64_t l_chiplet_mask;
+    TargetState l_target_state;
+
+    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_HOTPLUG, l_system_target, l_hotplug));
+
+    if (!l_hotplug && (i_non_hp_group != MCGROUP_ALL))
+    {
+        o_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(i_non_hp_group);
+    }
+    else
+    {
+        if (l_hotplug)
+        {
+            FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_HOTPLUG_MASK, i_target, l_chiplet_mask));
+            l_target_state = TARGET_STATE_FUNCTIONAL;
+        }
+        else
+        {
+            FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_SIM_CHIPLET_MASK, i_target, l_chiplet_mask));
+            l_target_state = TARGET_STATE_PRESENT;
+        }
+
+        FAPI_INF("Set up hotplug groups - l_hotplug=%d l_chiplet_mask=0x%08x%08x",
+                 l_hotplug, l_chiplet_mask >> 32, l_chiplet_mask & 0xFFFFFFFF);
+        FAPI_TRY(mod_multicast_setup(i_target, MCGROUP_5, l_chiplet_mask & 0x3FFFFFFFFFFFFFFF, l_target_state));
+        o_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_5);
+    }
+
+    if (o_chiplets_uc)
+    {
+        *o_chiplets_uc = o_chiplets_mc.getChildren<TARGET_TYPE_PERV>(TARGET_STATE_PRESENT);
+    }
+
+fapi_try_exit:
+    return current_err;
+}
+
 ReturnCode get_hotplug_mc_group(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     MulticastGroup& o_mcgroup)

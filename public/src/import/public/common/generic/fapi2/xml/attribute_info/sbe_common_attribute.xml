@@ -51,6 +51,9 @@
   <entry name="ATTR_HOTPLUG">
     <value>0x0</value>
   </entry>
+  <entry name="ATTR_HOTPLUG_MASK">
+    <value>0x0</value>
+  </entry>
   <entry name="ATTR_PG">
     <value>0xFFFFFFFF</value>
   </entry>
