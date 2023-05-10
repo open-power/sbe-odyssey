@@ -180,21 +180,6 @@ static inline TargetType rs4_getTargetType(const CompressedScanData& i_rs4)
     return static_cast<TargetType>(1ULL << i_rs4.iv_targetType.get());
 }
 
-/// @brief Determine the member chiplets in a (potentially) multicast perv target
-/// @return A bit mask with bits set corresponding to each member chiplet
-static inline uint64_t getGroupMembers(
-    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target)
-{
-    buffer<uint64_t> l_result;
-
-    for (auto cplt : i_target.getChildren<TARGET_TYPE_PERV>())
-    {
-        l_result.setBit(cplt.getChipletNumber());
-    }
-
-    return l_result;
-}
-
 /// @brief Get a perv target corresponding to a given chiplet ID
 static inline ReturnCode getChiplet(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_chip_target,
@@ -335,8 +320,8 @@ class ChipTarget
          * @brief Create a ChipTarget object
          * @param[in]  i_chip_target   The chip target to encapsulate
          */
-        ChipTarget(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_chip_target) :
-            iv_chip_target(i_chip_target), iv_mc_saved(false), iv_mc_saved_members(0) {}
+        ChipTarget(const Target<TARGET_TYPE_ALL_MC>& i_target) :
+            iv_chip_target(i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>()), iv_mc_saved(false), iv_mc_saved_members(0) {}
 
         /**
          * @brief Clean up the target object, potentially restoring saved multicast groups
@@ -357,7 +342,7 @@ class ChipTarget
         }
 
     private:
-        const Target<TARGET_TYPE_ANY_POZ_CHIP>& iv_chip_target;
+        const Target<TARGET_TYPE_ANY_POZ_CHIP> iv_chip_target;
         bool iv_mc_saved;
         uint64_t iv_mc_saved_members;
 };
@@ -376,7 +361,8 @@ ReturnCode ChipTarget::setup_scan_mc_group(uint64_t i_chiplets)
     // Save the members of the temporary group before we set it up for the first time
     if (not iv_mc_saved)
     {
-        iv_mc_saved_members = getGroupMembers(iv_chip_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_SCAN_TARGETS));
+        iv_mc_saved_members = get_mc_group_members(
+                                  iv_chip_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_SCAN_TARGETS));
         iv_mc_saved = true;
     }
 
@@ -492,6 +478,8 @@ ReturnCode ScanApplyEngine::apply()
 
         if (FAPI2_RC_SUCCESS == iv_target.reduceType(l_chip_target))
         {
+            // Schlimme Dinge: We're assuming that in this case l_chip_target == iv_chip_target
+
             /*
              * If we get a pure chip target, we pretend that instead we got
              * a multicast PERV target pointing to the "all good chiplets" group.
@@ -502,7 +490,24 @@ ReturnCode ScanApplyEngine::apply()
              */
             auto l_perv_mc_target = l_chip_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD);
 
-            // Schlimme Dinge: We're assuming that in this case l_chip_target == iv_chip_target
+            /*
+             * Normally we expect the caller to have considered hotplug for the
+             * incoming target, but in this case we're constructing our own target
+             * so it's us who need to take care of hotplug.
+             */
+            uint8_t l_hotplug;
+            Target<TARGET_TYPE_SYSTEM> FAPI_SYSTEM;
+            FAPI_TRY(FAPI_ATTR_GET(ATTR_HOTPLUG, FAPI_SYSTEM, l_hotplug));
+
+            if (l_hotplug)
+            {
+                uint64_t l_hotplug_mask;
+                uint64_t l_good_chiplets = get_mc_group_members(l_perv_mc_target);
+                FAPI_TRY(FAPI_ATTR_GET(ATTR_HOTPLUG_MASK, l_chip_target, l_hotplug_mask));
+                FAPI_TRY(iv_chip_target.setup_scan_mc_group(l_good_chiplets & l_hotplug_mask));
+                l_perv_mc_target = l_chip_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_SCAN_TARGETS);
+            }
+
             return applyToPervMCTarget(l_perv_mc_target);
         }
     }
@@ -572,7 +577,7 @@ ReturnCode ScanApplyEngine::applyToPervMCTarget(
 {
     // Determine the chiplets in the multicast group (or the single targeted chiplet)
     // and of those, the ones that would be covered by the scan image.
-    const uint64_t l_group_members = getGroupMembers(i_perv_mc_target);
+    const uint64_t l_group_members = get_mc_group_members(i_perv_mc_target);
     const uint64_t l_target_chiplets = l_group_members & iv_instanceTraits.chiplet_mask();
 
     FAPI_DBG(">> applyToPervMCTarget l_group_members=0x%08x_%08x l_target_chiplets=0x%08x_%08x",
@@ -840,7 +845,7 @@ ReturnCode poz_applyCompositeImage(const Target<TARGET_TYPE_ALL_MC>& i_target,
                                    const size_t i_size,
                                    const RingMode i_ringMode)
 {
-    auto chip_target = ChipTarget(i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>());
+    auto chip_target = ChipTarget(i_target);
     return applyCompositeImage(chip_target, i_target, i_image, i_size, i_ringMode);
 }
 
@@ -894,7 +899,7 @@ ReturnCode poz_putRingBackend(const Target<TARGET_TYPE_ALL_MC>& i_target,
     char fname[RING_ID_MAXLEN + 16];
     memcpy(fname, ringBaseDir, sizeof(ringBaseDir));
 
-    auto chip_target = ChipTarget(i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>());
+    auto chip_target = ChipTarget(i_target);
 
 #ifndef __PPE_QME
     // Grab the vector of dynamic chip features
