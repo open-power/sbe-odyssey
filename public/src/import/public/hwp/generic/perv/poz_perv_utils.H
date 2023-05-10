@@ -64,19 +64,6 @@ fapi2::ReturnCode get_hotplug_targets(
     std::vector<fapi2::Target<fapi2::TARGET_TYPE_PERV>>* o_chiplets_uc = NULL,
     fapi2::MulticastGroup i_non_hp_group = fapi2::MCGROUP_GOOD_NO_TP);
 
-/// @brief Determine (and init) multicast group for hotplug operations
-///
-/// Depending on whether or not we want to hotplug we may need to use different
-/// sets of targets. This either returns a matching static group or initializes
-/// the required dynamic group and returns the group ID.
-///
-/// @param[in]   i_target                  Chip to operate on
-/// @param[out]  o_mcgroup                 Resulting MC group to use for further operations
-///
-fapi2::ReturnCode get_hotplug_mc_group(
-    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    fapi2::MulticastGroup& o_mcgroup);
-
 /// @brief Determine the member chiplets in a (potentially) multicast perv target
 /// @return A bit mask with bits set corresponding to each member chiplet
 uint64_t get_mc_group_members(
