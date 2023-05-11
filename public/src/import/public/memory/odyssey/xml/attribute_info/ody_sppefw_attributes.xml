@@ -74,4 +74,32 @@
         </sbeAttrSync>
     </attribute>
 
+    <attribute>
+        <id>ATTR_SPPE_I2C_ENGINE</id>
+        <targetType>
+           TARGET_TYPE_TEMP_SENSOR
+        </targetType>
+        <description>
+          The i2c engine of the temperature sensor behind the Odyssey.
+          There is only a single engine on odyssey which is engine B.
+        </description>
+        <valueType>uint8</valueType>
+        <default>0</default>
+        <platInit/>
+    </attribute>
+
+    <attribute>
+        <id>ATTR_SPPE_I2C_PORT</id>
+        <targetType>
+           TARGET_TYPE_TEMP_SENSOR
+        </targetType>
+        <description>
+          The i2c port of the temperature sensor behind the Odyssey.
+          There is only a single port on odyssey which is port 0.
+        </description>
+        <valueType>uint8</valueType>
+        <default>0</default>
+        <platInit/>
+    </attribute>
+
 </attributes>
