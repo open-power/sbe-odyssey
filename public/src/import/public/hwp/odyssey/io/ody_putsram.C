@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -49,7 +49,7 @@ SCOMT_OMI_USE_PHY_PPE_WRAP0_ARB_CSAR
 fapi2::ReturnCode ody_putsram(const fapi2::Target <fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
                               const uint64_t i_offset,
                               const uint32_t i_bytes,
-                              uint8_t* i_data)
+                              const uint8_t* i_data)
 {
     FAPI_DBG("Start");
     using namespace scomt::omi;
