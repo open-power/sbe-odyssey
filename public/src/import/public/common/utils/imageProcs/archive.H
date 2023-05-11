@@ -388,4 +388,4 @@ class FileArchive
          * @brief Internal function used by append_*
          */
         ARC_RET_t _append_find_end(void*& io_end, size_t i_archiveMaxSize);
-};
+} __attribute__((aligned(8)));
