@@ -49,6 +49,7 @@ infile_c = ['main.C',
             'sbetspolling.C',
             'sbethermalsensorpolltimer.C',
             'sbecmdsramaaccesswrap.C',
+            'sbetspollctrl.C'
           ]
 
 odyssey_abs_core_c_file_paths = []
