@@ -54,7 +54,7 @@ fapi2::ReturnCode ody_putsram_io_ppe(
     const fapi2::Target < fapi2::TARGET_TYPE_OCMB_CHIP >& i_target,
     const uint64_t i_offset,
     const uint32_t i_bytes,
-    uint8_t* i_data)
+    const uint8_t* i_data)
 {
     FAPI_DBG("Start");
     PHY_PPE_WRAP0_ARB_CSCR_t  WRAP0_ARB_CSCR;

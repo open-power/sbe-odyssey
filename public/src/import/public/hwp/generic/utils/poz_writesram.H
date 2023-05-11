@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -62,4 +62,4 @@ fapi2::ReturnCode poz_writesram(const fapi2::Target <
                                 const uint32_t i_controlReg,
                                 const uint32_t i_dataReg,
                                 const uint32_t i_bytes,
-                                uint8_t* i_data);
+                                const uint8_t* i_data);
