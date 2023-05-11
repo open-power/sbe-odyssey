@@ -30,24 +30,25 @@
  */
 #define I2C_BUS_SPEED 400
 
-#define TEMP_SENSOR_ENGINE_NU I2C_ENGINE_B
-#define TEMP_SENSOR_PORT_NU   I2C_PORT_0
-
 namespace fapi2
 {
 
 ReturnCode plati2c::populatei2cdetails(const Target<TARGET_TYPE_ALL>& target)
 {
-    //TODO: PFSBE-253 Read the from attributes port and Engine for i2c init.
-    iv_port = TEMP_SENSOR_PORT_NU;
-
-    iv_engine = TEMP_SENSOR_ENGINE_NU;
-
     Target<TARGET_TYPE_TEMP_SENSOR>  l_temp_target;
     target.reduceType(l_temp_target);
+
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_SPPE_I2C_DEV_ADDR,
                   l_temp_target,
                   iv_devAddr));
+
+    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_SPPE_I2C_ENGINE,
+                l_temp_target,
+                iv_engine));
+
+    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_SPPE_I2C_PORT,
+                l_temp_target,
+                iv_port));
 
     iv_bus_speed = I2C_BUS_SPEED;
 
