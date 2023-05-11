@@ -14,9 +14,18 @@
       "command": "0x03",
       "function": "sbeUpdateAttr",
       "fences": [
-        "SBE_FENCE_AT_CONTINUOUS_IPL"
+        "SBE_FENCE_AT_CONTINUOUS_IPL","SBE_FENCE_AT_DUMPING"
       ],
       "headerFile": "sbecmdupdateattr.H"
+    },
+    {
+      "cmdClass":"AC",
+      "command":"0x02",
+      "function":"sbectrltspoll",
+      "fences":[
+        "SBE_FENCE_AT_CONTINUOUS_IPL","SBE_FENCE_AT_DUMPING"
+      ],
+      "headerFile":"sbetspollctrl.H"
     }
   ]
 }
