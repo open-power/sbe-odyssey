@@ -40,7 +40,7 @@
     <enum>BL16 = 0, BC8_OTF = 1, BL32 = 2, BL32_OTF = 3</enum>
     <writeable/>
     <mssAccessorName>burst_length</mssAccessorName>
-    <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="ody">
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
       <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
     </sbeAttrSync>
   </attribute>
@@ -57,6 +57,9 @@
     <enum>DISABLE = 0, ENABLE = 1</enum>
     <writeable/>
     <mssAccessorName>mpsm</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -70,6 +73,9 @@
     <default>SINGLE_CYCLE</default>
     <writeable/>
     <mssAccessorName>cs_assert_in_mpc</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -83,6 +89,9 @@
     <enum>DISABLE = 0, ENABLE = 1</enum>
     <writeable/>
     <mssAccessorName>device15_mpsm</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -96,6 +105,9 @@
     <default>ENABLE</default>
     <writeable/>
     <mssAccessorName>internal_wr_timing_mode</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR3 attributes -->
@@ -113,6 +125,9 @@
     <writeable/>
     <array>2 4 20</array>
     <mssAccessorName>wl_internal_cycle_alignment</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR4 attributes -->
@@ -126,6 +141,9 @@
     <writeable/>
     <default>1</default>
     <mssAccessorName>ref_rate_indic</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -138,6 +156,9 @@
     <valueType>uint8</valueType>
     <writeable/>
     <mssAccessorName>ddr5_min_ref_rate</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -151,6 +172,9 @@
     <enum>UNSUPPORTED = 0, SUPPORTED = 1</enum>
     <writeable/>
     <mssAccessorName>ddr5_ref_wide_range</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -163,6 +187,9 @@
     <valueType>uint8</valueType>
     <writeable/>
     <mssAccessorName>ddr5_ref_tuf</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR5 attributes -->
@@ -180,6 +207,9 @@
     <mssUnits> Ohms </mssUnits>
     <array>2 4</array>
     <mssAccessorName>dram_pu_drv_imp</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -193,6 +223,9 @@
     <enum>UNSUPPORTED = 0, SUPPORTED = 1</enum>
     <writeable/>
     <mssAccessorName>ddr5_dram_test_mode</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -209,6 +242,9 @@
     <mssUnits> Ohms </mssUnits>
     <array>2 4</array>
     <mssAccessorName>dram_pd_drv_imp</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR8 attributes -->
@@ -225,6 +261,9 @@
     <writeable/>
     <enum>TCK1 = 0, TCK2_OPT1 = 1, TCK2_OPT2 = 2, TCK3 = 3, TCK4 = 4</enum>
     <mssAccessorName>ddr5_dram_rd_preamble</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -238,6 +277,9 @@
     <enum>TCK2 = 1, TCK3 = 2, TCK4 = 3</enum>
     <default>TCK2</default>
     <mssAccessorName>ddr5_dram_wr_preamble</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -251,6 +293,9 @@
     <writeable/>
     <enum>TCK0P5 = 0, TCK1P5 = 1</enum>
     <mssAccessorName>ddr5_dram_rd_postamble</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -264,6 +309,9 @@
     <writeable/>
     <enum>TCK0P5 = 0, TCK1P5 = 1</enum>
     <mssAccessorName>ddr5_dram_wr_postamble</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR10 attributes -->
@@ -279,6 +327,9 @@
     <writeable/>
     <array>2 4 20</array>
     <mssAccessorName>ddr5_dram_wr_vrefdq</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR11 attributes -->
@@ -294,6 +345,9 @@
     <writeable/>
     <array>2 4 20</array>
     <mssAccessorName>ddr5_dram_vrefca</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR12 attributes -->
@@ -309,6 +363,9 @@
     <writeable/>
     <array>2 4 20</array>
     <mssAccessorName>ddr5_dram_vrefcs</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR14 attributes -->
@@ -323,6 +380,9 @@
     <writeable/>
     <enum>DISABLED = 0, ENABLED = 1</enum>
     <mssAccessorName>ddr5_dram_ecs_mode</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -336,6 +396,9 @@
     <writeable/>
     <enum>NORMAL = 0, RESET = 1</enum>
     <mssAccessorName>ddr5_dram_ecs_reset_counter</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -349,6 +412,9 @@
     <writeable/>
     <enum>ROWS = 0, CODE_WORDS = 1</enum>
     <mssAccessorName>ddr5_dram_ecs_count_mode</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -361,6 +427,9 @@
     <valueType>uint8</valueType>
     <writeable/>
     <mssAccessorName>ddr5_dram_ecs_srank_select</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR15 attributes -->
@@ -376,6 +445,9 @@
     <!-- Count => attributes -->
     <enum>4 = 0, 16 = 1, 64 = 2, 256 = 3, 1024 = 4, 4096 = 5</enum>
     <mssAccessorName>ddr5_dram_ecs_threshold_count</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -389,6 +461,9 @@
     <writeable/>
     <enum>DISABLED = 0, ENABLED = 1</enum>
     <mssAccessorName>ddr5_dram_ecs_in_self_refresh</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -402,6 +477,9 @@
     <writeable/>
     <enum>ALLOWED = 0, SUPRESSED = 1</enum>
     <mssAccessorName>ddr5_dram_ecs_writeback</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -415,6 +493,9 @@
     <writeable/>
     <enum>ALLOWED = 0, SUPRESSED = 1</enum>
     <mssAccessorName>ddr5_dram_ecs_x4_writes</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR32 attributes -->
@@ -432,6 +513,9 @@
     <mssUnits>ohm</mssUnits>
     <enum>DISABLE = 0, OHM480 = 480, OHM240 = 240, OHM120 = 120, OHM80 = 80, OHM60 = 60, OHM40 = 40</enum>
     <mssAccessorName>ddr5_dram_ck_odt</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -448,6 +532,9 @@
     <mssUnits>ohm</mssUnits>
     <enum>DISABLE = 0, OHM480 = 480, OHM240 = 240, OHM120 = 120, OHM80 = 80, OHM60 = 60, OHM40 = 40</enum>
     <mssAccessorName>ddr5_dram_cs_odt</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -464,6 +551,9 @@
     <mssUnits>ohm</mssUnits>
     <enum>DISABLE = 0, OHM480 = 480, OHM240 = 240, OHM120 = 120, OHM80 = 80, OHM60 = 60, OHM40 = 40</enum>
     <mssAccessorName>ddr5_dram_ck_odt_per_dram</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -480,6 +570,9 @@
     <mssUnits>ohm</mssUnits>
     <enum>DISABLE = 0, OHM480 = 480, OHM240 = 240, OHM120 = 120, OHM80 = 80, OHM60 = 60, OHM40 = 40</enum>
     <mssAccessorName>ddr5_dram_cs_odt_per_dram</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR33 attributes -->
@@ -497,6 +590,9 @@
     <mssUnits>ohm</mssUnits>
     <enum>DISABLE = 0, OHM480 = 480, OHM240 = 240, OHM120 = 120, OHM80 = 80, OHM60 = 60, OHM40 = 40</enum>
     <mssAccessorName>ddr5_dram_ca_odt</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -513,6 +609,9 @@
     <mssUnits>ohm</mssUnits>
     <mssAccessorName>ddr5_dram_dqs_rtt_park</mssAccessorName>
     <array>2 4 2</array>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -529,6 +628,9 @@
     <mssUnits>ohm</mssUnits>
     <enum>DISABLE = 0, OHM480 = 480, OHM240 = 240, OHM120 = 120, OHM80 = 80, OHM60 = 60, OHM40 = 40</enum>
     <mssAccessorName>ddr5_dram_ca_odt_per_dram</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -545,6 +647,9 @@
     <mssUnits>ohm</mssUnits>
     <mssAccessorName>ddr5_dram_dqs_rtt_park_per_dram</mssAccessorName>
     <array>2 4 20</array>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR34 attributes -->
@@ -562,6 +667,9 @@
     <mssUnits>ohm</mssUnits>
     <mssAccessorName>ddr5_dram_rtt_wr</mssAccessorName>
     <array>2 4 2</array>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -578,6 +686,9 @@
     <mssUnits>ohm</mssUnits>
     <mssAccessorName>ddr5_dram_rtt_park</mssAccessorName>
     <array>2 4 2</array>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR35 attributes -->
@@ -595,6 +706,9 @@
     <mssUnits>ohm</mssUnits>
     <mssAccessorName>ddr5_dram_rtt_nom_wr</mssAccessorName>
     <array>2 4 2</array>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -611,6 +725,9 @@
     <mssUnits>ohm</mssUnits>
     <mssAccessorName>ddr5_dram_rtt_nom_rd</mssAccessorName>
     <array>2 4 2</array>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR37 attributes -->
@@ -627,6 +744,9 @@
     <mssUnits>clocks</mssUnits>
     <mssAccessorName>ddr5_dram_odtlon_wr</mssAccessorName>
     <array>2 4</array>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -642,6 +762,9 @@
     <mssUnits>clocks</mssUnits>
     <mssAccessorName>ddr5_dram_odtloff_wr</mssAccessorName>
     <array>2 4</array>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR38 attributes -->
@@ -658,6 +781,9 @@
     <mssUnits>clocks</mssUnits>
     <mssAccessorName>ddr5_dram_odtlon_wr_nt</mssAccessorName>
     <array>2 4</array>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -673,6 +799,9 @@
     <mssUnits>clocks</mssUnits>
     <mssAccessorName>ddr5_dram_odtloff_wr_nt</mssAccessorName>
     <array>2 4</array>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR39 attributes -->
@@ -689,6 +818,9 @@
     <mssUnits>clocks</mssUnits>
     <mssAccessorName>ddr5_dram_odtlon_rd_nt</mssAccessorName>
     <array>2 4</array>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -704,6 +836,9 @@
     <mssUnits>clocks</mssUnits>
     <mssAccessorName>ddr5_dram_odtloff_rd_nt</mssAccessorName>
     <array>2 4</array>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR50 attributes -->
@@ -718,6 +853,9 @@
     <enum>CLEAR = 0, ERROR = 1</enum>
     <writeable/>
     <mssAccessorName>ddr5_wr_crc_err_status</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -731,6 +869,9 @@
     <enum>DISABLE = 0, ENABLE = 1</enum>
     <writeable/>
     <mssAccessorName>ddr5_wr_crc_autodisable_enable</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -744,6 +885,9 @@
     <enum>NOT_TRIGGERED = 0, TRIGGERED = 1</enum>
     <writeable/>
     <mssAccessorName>ddr5_wr_crc_autodisable_status</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR51 attributes -->
@@ -757,6 +901,9 @@
     <valueType>uint8</valueType>
     <writeable/>
     <mssAccessorName>ddr5_wr_crc_autodisable_threshold</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR52 attributes -->
@@ -770,6 +917,9 @@
     <valueType>uint8</valueType>
     <writeable/>
     <mssAccessorName>ddr5_wr_crc_autodisable_window</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 <!-- MR111 attributes -->
@@ -784,6 +934,9 @@
     <enum>ENABLE = 0, DISABLE = 1</enum>
     <writeable/>
     <mssAccessorName>ddr5_global_dfe_gain</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -797,6 +950,9 @@
     <enum>ENABLE = 0, DISABLE = 1</enum>
     <writeable/>
     <mssAccessorName>ddr5_global_dfe_tap1</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -810,6 +966,9 @@
     <enum>ENABLE = 0, DISABLE = 1</enum>
     <writeable/>
     <mssAccessorName>ddr5_global_dfe_tap2</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -823,6 +982,9 @@
     <enum>ENABLE = 0, DISABLE = 1</enum>
     <writeable/>
     <mssAccessorName>ddr5_global_dfe_tap3</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -836,6 +998,9 @@
     <enum>ENABLE = 0, DISABLE = 1</enum>
     <writeable/>
     <mssAccessorName>ddr5_global_dfe_tap4</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -851,6 +1016,9 @@
     <enum>STEP0 = 0, STEP1 = 1, STEP2 = 2, STEP3 = 3</enum>
     <array>2 4</array>
     <mssAccessorName>ddr5_dfe_gain_bias</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
   <attribute>
@@ -866,6 +1034,9 @@
     <writeable/>
     <array>2 4</array>
     <mssAccessorName>ddr5_dfe_sign_bit</mssAccessorName>
+    <sbeAttrSync toSBE="1" fromSBE="1" chipTypes="ody">
+      <targetTypes>TARGET_TYPE_MEM_PORT</targetTypes>
+    </sbeAttrSync>
   </attribute>
 
 </attributes>
