@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -52,5 +52,8 @@ RING_ID(mma_initf);
 RING_ID(chiplet_pll);
 RING_ID(chiplet_rtg);
 RING_ID(chiplet_initf);
-
+RING_ID(abus_pll_XX);
+RING_ID(xbus_pll_XX);
+RING_ID(pcie_pll_XX);
+RING_ID(pcie_fpll_XX);
 }
