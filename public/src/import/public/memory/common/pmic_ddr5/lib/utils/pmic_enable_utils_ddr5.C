@@ -95,7 +95,7 @@ fapi2::ReturnCode setup_dt(const target_info_redundancy_ddr5& i_target_info)
             FAPI_TRY_LAMBDA(mss::pmic::i2c::reg_write(i_dt, DT_REGS::EN_REGISTER, 0x01));
 
             // Clear breadcrumb register.
-            FAPI_TRY_LAMBDA(mss::pmic::i2c::reg_write(i_target_info.iv_pmic_dt_map[l_dt_count].iv_dt, DT_REGS::BREADCRUMB, 0x00));
+            FAPI_TRY_LAMBDA(mss::pmic::i2c::reg_write(i_dt, DT_REGS::BREADCRUMB, 0x00));
 
             // Delay for 1 ms. Might remove this if natural delay is sufficient
             fapi2::delay(1 * mss::common_timings::DELAY_1MS, mss::common_timings::DELAY_1MS);
