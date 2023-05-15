@@ -43,12 +43,6 @@ Heap& Heap::get_instance()
     return iv_instance;
 }
 
-void Heap::heap_init_memory(uint32_t i_ptr)
-{
-    SBE_INFO(" Initializing heap area" );
-    memset((uint64_t *)i_ptr, 0, iv_heap_top - i_ptr);
-}
-
 uint32_t* Heap::getPakStackPushPtr()
 {
     return reinterpret_cast<uint32_t*>(iv_heap_midline - sizeof(PakFileHeaderCore));
@@ -97,8 +91,6 @@ void Heap::initialize()
     }
     SBE_INFO(" Available heap to start at addr: 0x%X, of size: 0x%X", iv_heap_midline,
             iv_heap_top-iv_heap_midline);
-    //Initialize heap memory (after sppe_rt.pak if present)
-    heap_init_memory(iv_heap_midline);
 
     if (iv_heap_midline == iv_heap_bottom)
     {
