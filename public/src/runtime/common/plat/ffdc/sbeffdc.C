@@ -168,8 +168,8 @@ uint32_t SbeFFDCPackage::createHwPackage( uint32_t &o_wordsSent, const bool isFi
                  o_wordsSent, iv_ffdcPackageHeader.lenInWords);
 
     } while(false);
-    // Clean up scratch data
-    Heap::get_instance().scratch_free(fapi2::g_FfdcData.ffdcDataPtr);
+    // Clean up all cratch data
+    Heap::get_instance().scratch_free_all();
     SBE_EXIT(SBE_FUNC);
     return rc;
     #undef SBE_FUNC
@@ -247,7 +247,7 @@ uint32_t sendFFDCOverFIFO( const uint32_t i_fieldsConfig,
                            uint32_t &o_wordsSent,
                            const bool i_isFifoData )
 {
-    #define SBE_FUNC "sendOverFfdePackageToFifo"
+    #define SBE_FUNC "sendFFDCOverFIFO"
     SBE_ENTER(SBE_FUNC);
     uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
     do
@@ -272,7 +272,6 @@ uint32_t sendFFDCOverFIFO( const uint32_t i_fieldsConfig,
             objFFDC.createSbePackage( wordsCount, i_isFifoData );
             o_wordsSent += wordsCount;
         }
-        o_wordsSent = wordsCount;
 
     } while(false);
 

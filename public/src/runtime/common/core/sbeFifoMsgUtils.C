@@ -349,8 +349,6 @@ uint32_t sbeDownFifoSignalEot ( sbeFifoType i_type )
     #undef SBE_FUNC
 }
 
-//namespace fapi2
-//{
 uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
                           sbeResponseFfdc_t *i_ffdc, sbeFifoType i_type )
 {
@@ -367,39 +365,14 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
             break;
         }
         distance += len;
+        uint32_t dumpFieldsConfig = 0;
 
         // If no ffdc , exit;
         if( (i_ffdc != NULL) && (i_ffdc->getRc() != FAPI2_RC_SUCCESS))
         {
             SBE_ERROR( SBE_FUNC" FAPI RC:0x%08X", i_ffdc->getRc());
-            // making sure ffdc length is multiples of uint32_t
-            assert((fapi2::g_FfdcData.ffdcLength % sizeof(uint32_t)) == 0);
-            uint32_t ffdcDataLenInWords = fapi2::g_FfdcData.ffdcLength
-                                            / sizeof(uint32_t);
-            // Set failed command information
-            // Sequence Id is 0 by default for Fifo interface
-            i_ffdc->setCmdInfo(0, i_hdr.cmdClass(), i_hdr.command());
-            // Add HWP specific ffdc data length
-            i_ffdc->lenInWords += ffdcDataLenInWords;
-            len = sizeof(sbeResponseFfdc_t)/sizeof(uint32_t);
-            rc = sbeDownFifoEnq_mult ( len, ( uint32_t *) i_ffdc, i_type);
-            if (rc)
-            {
-                break;
-            }
-            distance += len;
-
-            // Send HWP ffdc data
-            rc = sbeDownFifoEnq_mult ( ffdcDataLenInWords,
-                                   ( uint32_t *) fapi2::g_FfdcData.ffdcDataPtr, i_type);
-            if (rc)
-            {
-                break;
-            }
-            distance += ffdcDataLenInWords;
-            SBE_ERROR( SBE_FUNC" ffdc length 0x%08X len :0x%08X", ffdcDataLenInWords, len);
+            dumpFieldsConfig |= SBE_FFDC_ALL_HW_DATA;
         }
-#if 0
         // If there is a SBE internal failure
         if((i_hdr.primaryStatus() != SBE_PRI_OPERATION_SUCCESSFUL) ||\
            (i_hdr.secondaryStatus() != SBE_SEC_OPERATION_SUCCESSFUL))
@@ -407,19 +380,12 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
             SBE_ERROR( SBE_FUNC" PriStatus:0x%08X SecStatus:0x%08X"
                 " Fifo Type is:[%02X]", (uint32_t)i_hdr.primaryStatus(),
                 (uint32_t)i_hdr.secondaryStatus(), i_type);
-            //Add FFDC data as well.
-            //Generate all the fields of FFDC package
-            SbeFFDCPackage sbeFfdc;
-            rc = sbeFfdc.sendOverFIFO(SBE_FFDC_ALL_DUMP,
-                                      len, false, i_type);
-            if (rc)
-            {
-                break;
-            }
-            distance += len;
-
+            dumpFieldsConfig |= SBE_FFDC_ALL_PLAT_DATA;
         }
-#endif
+        rc = sendFFDCOverFIFO(dumpFieldsConfig, len, true);
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(rc);
+
+        distance += len;
         len = sizeof(distance)/sizeof(uint32_t);
         rc = sbeDownFifoEnq_mult ( len, &distance, i_type);
         if (rc)
@@ -428,11 +394,14 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
         }
 
     }while(0);
+
+    // Clean up all cratch data
+    Heap::get_instance().scratch_free_all();
+  
     SBE_EXIT(SBE_FUNC);
     return rc;
     #undef SBE_FUNC
 }
-//}
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 sbeFifoType sbeFifoGetSource (bool reset)
