@@ -2541,9 +2541,6 @@
     <value>0x0</value>
     <value>0x0</value>
   </entry>
-  <entry name="ATTR_MNFG_FLAGS">
-    <value>0x0</value>
-  </entry>
   <entry name="ATTR_MEM_EFF_BYTE_ENABLES">
     <value>0x03FF</value>
     <value>0x0</value>
