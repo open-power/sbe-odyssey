@@ -31,6 +31,7 @@
 #include "sbestates.H"
 #include "sbestatesutils.H"
 #include "mss_odyssey_attribute_getters.H"
+#include "mss_generic_attribute_getters.H"
 
 #define SRAM_SCRATCH_GRANULAR_SIZE 0x10000 // 64 KB
 #define MEM_PAKNAME_MAX_CHAR  20 // ddr/ddimm/dmem.bin
@@ -128,6 +129,53 @@ ReturnCode istepLbistWithOcmb( voidfuncptr_t i_hwp)
     #undef SBE_FUNC
 }
 
+///
+/// @brief Gets the directory of the binary for a given package
+/// @param[in,out] io_packname the base pakage name directory
+/// @return fapi2::ReturnCode SUCCESS iff procedure is successful
+///
+ReturnCode getBinaryDirectory( char (&io_packname)[MEM_PAKNAME_MAX_CHAR])
+{
+    // Get ATTR_MSS_ODY_PHY_IMAGE_SELECT
+    uint8_t imageType = 0;
+    const Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
+
+    // The IMEM/DMEM are different for RDIMM's, so get the DIMM type to see if this is an RDIMM
+    constexpr uint8_t DIMM_PER_PORT = 2;
+    uint8_t dimmType[DIMM_PER_PORT] = {};
+    const auto& l_mem_ports = l_ocmb_chip.getChildren<fapi2::TARGET_TYPE_MEM_PORT>();
+
+    // If there are no mem ports, use a default and exit out
+    if(l_mem_ports.empty())
+    {
+        strcpy(io_packname, "ddr/ddimm/");
+        return fapi2::FAPI2_RC_SUCCESS;
+    }
+
+    FAPI_TRY(mss::attr::get_ody_phy_image_select(l_ocmb_chip, imageType), "get_ody_phy_image_select failed");
+    FAPI_TRY(mss::attr::get_dimm_type(l_mem_ports[0], dimmType), "get_dimm_type failed");
+
+    // Use the ATE image if ATE is selected
+    if(imageType  == fapi2::ENUM_ATTR_MSS_ODY_PHY_IMAGE_SELECT_ATE_IMAGE)
+    {
+        strcpy(io_packname, "ddr/ate/");
+    }
+    // RDIMM? grab the RDIMM image
+    // Note: only DIMM0 on the port matters
+    else if(dimmType[0] == fapi2::ENUM_ATTR_MEM_EFF_DIMM_TYPE_RDIMM)
+    {
+        strcpy(io_packname, "ddr/rdimm/");
+    }
+    // Otherwise, grab the DDIMM image
+    else
+    {
+        strcpy(io_packname, "ddr/ddimm/");
+    }
+
+fapi_try_exit:
+    return fapi2::current_err;
+}
+
 ReturnCode istepLoadIMEMwithOcmb( voidfuncptr_t i_hwp)
 {
     #define SBE_FUNC " istepLoadIMEMwithOcmb "
@@ -137,19 +185,17 @@ ReturnCode istepLoadIMEMwithOcmb( voidfuncptr_t i_hwp)
     {
         PakWrapper pak((void *)g_partitionOffset, (void *)(g_partitionOffset + g_partitionSize));
 
-        // Get ATTR_MSS_ODY_PHY_IMAGE_SELECT
-        uint8_t imageType = 0;
-        Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
-        rc = mss::attr::get_ody_phy_image_select(l_ocmb_chip, imageType);
-        if(rc)
+        char pakname[MEM_PAKNAME_MAX_CHAR] = "";
+
+        rc = getBinaryDirectory(pakname);
+        if (rc)
         {
-            SBE_ERROR(SBE_FUNC "get_ody_phy_image_select failed with rc: 0x%08X", rc);
+            SBE_ERROR(SBE_FUNC " getBinaryDirectory failed with rc 0x%08X", rc);
             break;
         }
 
-        const char *pakname =
-            (imageType == fapi2::ENUM_ATTR_MSS_ODY_PHY_IMAGE_SELECT_ATE_IMAGE) ?
-            "ddr/ate/imem.bin" : "ddr/ddimm/imem.bin";
+        // Now append the imem.bin
+        strcat (pakname,"imem.bin");
 
         HwpStreamReceiver rec(0, i_hwp, DDR_IMEM_IMAGE);
         rc = sbestreampaktohwp(&pak, pakname, rec);
@@ -171,19 +217,17 @@ ReturnCode istepLoadDMEMwithOcmb( voidfuncptr_t i_hwp)
     {
         PakWrapper pak((void *)g_partitionOffset, (void *)(g_partitionOffset + g_partitionSize));
 
-        // Get ATTR_MSS_ODY_PHY_IMAGE_SELECT
-        uint8_t imageType = 0;
-        Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
-        rc = mss::attr::get_ody_phy_image_select(l_ocmb_chip, imageType);
-        if(rc)
+        char pakname[MEM_PAKNAME_MAX_CHAR] = "";
+
+        rc = getBinaryDirectory(pakname);
+        if (rc)
         {
-            SBE_ERROR(SBE_FUNC "get_ody_phy_image_select failed with rc: 0x%08X", rc);
+            SBE_ERROR(SBE_FUNC " getBinaryDirectory failed with rc 0x%08X", rc);
             break;
         }
 
-        const char *pakname =
-            (imageType == fapi2::ENUM_ATTR_MSS_ODY_PHY_IMAGE_SELECT_ATE_IMAGE) ?
-            "ddr/ate/dmem.bin" : "ddr/ddimm/dmem.bin";
+        // Now append the dmem.bin
+        strcat (pakname,"dmem.bin");
 
         HwpStreamReceiver rec(0, i_hwp, DDR_DMEM_IMAGE);
         rc = sbestreampaktohwp(&pak, pakname, rec);
