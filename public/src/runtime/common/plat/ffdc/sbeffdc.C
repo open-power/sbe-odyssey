@@ -110,7 +110,7 @@ void SbeFFDCPackage::updateSBEpackageDataHeader(void)
     #undef SBE_FUNC
 }
 
-uint32_t SbeFFDCPackage::createHwPackage( uint32_t &o_wordsSent, const bool isFifoData )
+uint32_t SbeFFDCPackage::createHwPackage( uint32_t &o_wordsSent, const bool isFifoData, sbeFifoType i_type )
 {
     #define SBE_FUNC "createHwPackage "
     SBE_ENTER(SBE_FUNC);
@@ -124,7 +124,7 @@ uint32_t SbeFFDCPackage::createHwPackage( uint32_t &o_wordsSent, const bool isFi
         updateHWpackageDataHeader();
 
         // Create the fifo ostream class pointing to the scratch space values
-        fapi2::sbefifo_hwp_data_ostream ffdcPakageStream;
+        fapi2::sbefifo_hwp_data_ostream ffdcPakageStream(i_type);
 
         //Send FFDC package header
         length = sizeof(iv_ffdcPackageHeader) / sizeof(uint32_t);
@@ -175,7 +175,7 @@ uint32_t SbeFFDCPackage::createHwPackage( uint32_t &o_wordsSent, const bool isFi
     #undef SBE_FUNC
 }
 
-uint32_t SbeFFDCPackage::createSbePackage( uint32_t &o_bytesSent, const bool isFifoData )
+uint32_t SbeFFDCPackage::createSbePackage( uint32_t &o_bytesSent, const bool isFifoData, sbeFifoType i_type )
 {
     #define SBE_FUNC "createSbePakage "
     SBE_ENTER(SBE_FUNC);
@@ -189,7 +189,7 @@ uint32_t SbeFFDCPackage::createSbePackage( uint32_t &o_bytesSent, const bool isF
         updateSBEpackageDataHeader();
 
         // Create the fifo ostream class pointing to the scratch space values
-        fapi2::sbefifo_hwp_data_ostream ffdcPakageStream;
+        fapi2::sbefifo_hwp_data_ostream ffdcPakageStream(i_type);
 
         //Send FFDC package header
         length = sizeof(iv_ffdcPackageHeader) / sizeof(uint32_t);
@@ -245,7 +245,7 @@ uint32_t SbeFFDCPackage::createSbePackage( uint32_t &o_bytesSent, const bool isF
 
 uint32_t sendFFDCOverFIFO( const uint32_t i_fieldsConfig,
                            uint32_t &o_wordsSent,
-                           const bool i_isFifoData )
+                           const bool i_isFifoData, sbeFifoType i_type )
 {
     #define SBE_FUNC "sendFFDCOverFIFO"
     SBE_ENTER(SBE_FUNC);
@@ -260,7 +260,7 @@ uint32_t sendFFDCOverFIFO( const uint32_t i_fieldsConfig,
             SBE_INFO(SBE_FUNC " Creating  ALL HW FFDC Package[%d]",
                      i_fieldsConfig & SBE_FFDC_ALL_HW_DATA);
             SbeFFDCPackage objFFDC(i_fieldsConfig & SBE_FFDC_ALL_HW_DATA);
-            objFFDC.createHwPackage( wordsCount, i_isFifoData);
+            objFFDC.createHwPackage( wordsCount, i_isFifoData, i_type );
             o_wordsSent += wordsCount;
         }
 
@@ -269,7 +269,7 @@ uint32_t sendFFDCOverFIFO( const uint32_t i_fieldsConfig,
             SbeFFDCPackage objFFDC(i_fieldsConfig & SBE_FFDC_ALL_PLAT_DATA);
             SBE_INFO(SBE_FUNC " Creating  ALL SBE FFDC Pakage[%d]",
                      i_fieldsConfig & SBE_FFDC_ALL_PLAT_DATA);
-            objFFDC.createSbePackage( wordsCount, i_isFifoData );
+            objFFDC.createSbePackage( wordsCount, i_isFifoData, i_type );
             o_wordsSent += wordsCount;
         }
 
