@@ -44,6 +44,8 @@
 #include "sbeffdc.H"
 #include "sbehandleresponse.H"
 #include "ipl.H"
+#include "sbetspolling.H"
+#include "sbethermalsensorpolltimer.H"
 
 const uint64_t PERIODIC_TIMER_INTERVAL_SECONDS = 24*60*60; // 24 hours
 
@@ -317,27 +319,46 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
 void sbeAsyncCommandProcessor_routine(void *arg)
 {
     #define SBE_FUNC "sbeAsyncCommandProcessor"
-    SBE_INFO(SBE_FUNC " Thread started");
-    #if PERIODIC_IO_TOGGLE_SUPPORTED
+    SBE_INFO(SBE_FUNC " Thread started ");
+
+    uint32_t l_tspinterval = 0;
+    uint8_t l_dqscount = 0;
+
     do
     {
-        // Since currently there is only one async job
-        // - IO EOL toggle, this task runs every
-        // PERIODIC_TIMER_INTERVAL_MS and performs the
-        // operation. Modify this implementation by introducing job
-        // queue, if there are more asynchronous jobs.
+        SBE_DEBUG(SBE_FUNC " Pend the thread");
         int l_rcPk = pk_semaphore_pend (
-                    &SBE_GLOBAL->sbeSemAsyncProcess,
-                    PK_SECONDS(PERIODIC_TIMER_INTERVAL_SECONDS));
-        // PK API failure
-        if ((-l_rcPk) != PK_SEMAPHORE_PEND_TIMED_OUT)
+                     &SBE_GLOBAL->sbeSemAsyncProcess,
+                     PK_WAIT_FOREVER);
+        // pk API failure
+        if (l_rcPk != PK_OK)
         {
-            SBE_ERROR(SBE_FUNC" pk_semaphore_pend failed, "
-                          "l_rcPk=-%04x", -l_rcPk );
-            // Ignore the failure
+            SBE_ERROR(SBE_FUNC "pk_semaphore_pend failed with RC 0x%08X", l_rcPk);
+            break;
         }
 
-    } while(1);
-    #endif // PERIODIC_IO_TOGGLE_SUPPORTED
+        // Call the thermal sensor polling HWPs and DOA polling.
+        uint32_t l_rc = sbepollTSnDQS(l_tspinterval, l_dqscount);
+        if(l_rc)
+        {
+            SBE_ERROR(SBE_FUNC "sbepollTSnDQS failed with rc 0x%08X", l_rc);
+            // Incase of failure set the asyn bit to true.
+            (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
+        }
+        SBE_INFO(SBE_FUNC "Thermal sensor polling done.");
+
+        // Start the timer with the updated value.
+        SBE_INFO(SBE_FUNC "l_tspinterval is 0x%08X", l_tspinterval);
+        l_rc = g_sbe_thermal_sensor_timer.startTimer(
+                             l_tspinterval,
+                             (PkTimerCallback)&sbeasyncthreadPkExpiryCallback );
+        if(l_rc)
+        {
+            SBE_ERROR(SBE_FUNC "Failed to start the async thread timer with rc"
+                               " 0x%08X", l_rc);
+            // Incase of failure set the asyn bit to true.
+            (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
+        }
+    } while(true);
     #undef SBE_FUNC
 }

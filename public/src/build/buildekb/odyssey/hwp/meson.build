@@ -118,7 +118,9 @@ infile_c = [
             # Files needed for ody_thermal_init
             '/memory/odyssey/hwp/lib/power_thermal/ody_thermal_init_utils.C',
             '/hwp/odyssey/perv/ody_dts_read.C',
-
+            # Files needed for Thermal sensor and DQS polling.
+            '/memory/odyssey/hwp/ody_thermal_read.C',
+            '/memory/odyssey/hwp/ody_dqs_track.C',
             ]
 
 #Create abs path for input files before creating .o
