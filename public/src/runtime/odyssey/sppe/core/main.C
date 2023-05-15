@@ -43,11 +43,12 @@
 #include "sbestatesutils.H"
 #include "heap.H"
 #include "imgcustomize.H"
+#include "sbethermalsensorpolltimer.H"
+#include "sbetspolling.H"
 
 extern "C" {
 #include "pk_api.h"
 }
-
 ////////////////////////////////////////////////////////////////
 //// @brief Stacks for Non-critical Interrupts ( timebase, timers )
 ////////////////////////////////////////////////////////////////
@@ -61,6 +62,7 @@ uint8_t sppe_Kernel_NC_Int_stack[SPPE_NONCRITICAL_STACK_SIZE];
 
 uint32_t g_partitionOffset = 0;
 uint32_t g_partitionSize = 0;
+
 // ody draminit offset address
 uint32_t g_draminitOffset = 0;
 
@@ -209,6 +211,18 @@ int  main(int argc, char **argv)
 
         sbePakSearchStartOffset();
 
+        // Start the timer for the async thread.
+        rc = g_sbe_thermal_sensor_timer.startTimer(
+                             THERMAL_SENSOR_POLLING_INITIAL_PERIOD_MICROSEC,
+                             (PkTimerCallback)&sbeasyncthreadPkExpiryCallback );
+        if(rc)
+        {
+            SBE_ERROR(SBE_FUNC "Failed to start the async thread timer with rc"
+                               " 0x%08X", rc);
+            break;
+        }
+
+        SBE_INFO(SBE_FUNC "Start all the threads.");
         // Start running the highest priority thread.
         // This function never returns
         pk_start_threads();

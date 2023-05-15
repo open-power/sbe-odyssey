@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -76,7 +76,7 @@ typedef enum
 enum sbeThreadStackSize
 {
     SBE_NONCRITICAL_STACK_SIZE           = 512,
-    SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE = 256,
+    SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE = 6144,  //6K of stack to thermal sensor polling
     SBE_THREAD_CMD_RECV_STACK_SIZE       = 512,
     SBE_THREAD_SYNC_CMD_PROC_STACK_SIZE  = 12288, //12K of Stack to handle large rings
 };

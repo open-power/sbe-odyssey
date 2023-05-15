@@ -45,7 +45,9 @@ infile_c = ['main.C',
             'sberegaccessplat.C',
             'sbecmdtracearraywrap.C',
             'sbecmdlistattr.C',
-            'getcapabilitiesutils.C'
+            'getcapabilitiesutils.C',
+            'sbetspolling.C',
+            'sbethermalsensorpolltimer.C',
           ]
 
 odyssey_abs_core_c_file_paths = []
