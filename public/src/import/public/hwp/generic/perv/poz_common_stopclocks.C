@@ -376,7 +376,7 @@ fapi_try_exit:
     return fapi2::current_err;
 }
 
-fapi2::ReturnCode poz_stop_chiplet_clocks_with_multiacst(
+fapi2::ReturnCode poz_stop_chiplet_clocks_with_multicast(
     const fapi2::Target < fapi2::TARGET_TYPE_ANY_POZ_CHIP >& i_target, fapi2::TargetFilter i_target_filter)
 {
     uint64_t l_chiplets_to_stop = 0;

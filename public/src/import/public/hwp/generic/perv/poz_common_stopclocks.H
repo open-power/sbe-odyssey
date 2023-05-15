@@ -92,6 +92,6 @@ fapi2::ReturnCode poz_chiplet_stopclocks(
 /// @param[in]     i_target          Reference to TARGET_TYPE_ANY_POZ_CHIP
 /// @param[in]     i_target_filter   Target filter containing chiplets to stop clocks
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-fapi2::ReturnCode poz_stop_chiplet_clocks_with_multiacst(
+fapi2::ReturnCode poz_stop_chiplet_clocks_with_multicast(
     const fapi2::Target < fapi2::TARGET_TYPE_ANY_POZ_CHIP >& i_target, fapi2::TargetFilter i_target_filter);
 #endif
