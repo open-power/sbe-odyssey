@@ -17,7 +17,7 @@ gcc_defs_odyssey_bldr = [
 gcc_defs_odyssey_sppe = [
         ]
 
-odyssey_cmn_inc_paths = ['/public/src/common/cnfg/odyssey/'
+odyssey_cmn_inc_paths = ['/public/src/common/cnfg/odyssey'
         ]
 
 odyssey_runtime_inc_paths = [
@@ -41,13 +41,13 @@ odyssey_hwp_inc_paths = [
     '/hwp/generic/perv',
     '/common/generic/scomt',
     '/memory/odyssey/initfiles',
-    '/memory/generic/memory/lib/',
-    '/memory/generic/memory/lib/utils/shared/',
-    '/memory/generic/memory/lib/utils/mc/',
-    '/memory/generic/memory/lib/utils/',
-    '/hwp/odyssey/io/',
-    '/hwp/generic/io/',
-    '/hwp/generic/utils/',
+    '/memory/generic/memory/lib',
+    '/memory/generic/memory/lib/utils/shared',
+    '/memory/generic/memory/lib/utils/mc',
+    '/memory/generic/memory/lib/utils',
+    '/hwp/odyssey/io',
+    '/hwp/generic/io',
+    '/hwp/generic/utils',
         ]
 
 odyssey_srom_inc_paths = [
