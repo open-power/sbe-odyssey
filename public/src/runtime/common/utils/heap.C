@@ -128,7 +128,7 @@ uint32_t Heap::pushPakStack(sbeFifoType i_type, uint32_t i_size)
             l_rc = SBE_PRI_USER_ERROR;
             break;
         }
-        if(i_size + iv_heap_midline > iv_scratch_bottom)
+        if(i_size*4 + iv_heap_midline > iv_scratch_bottom)
         {
             SBE_ERROR("Not enough room to push pak into heap space. Exiting");
             l_rc = SBE_SEC_HEAP_SPACE_FULL_FAILURE;
