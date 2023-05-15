@@ -50,12 +50,6 @@ private :
     uint8_t  iv_pak_count = 0;
 
     /**
-     * @brief Initialize alloted heap space once to make sure we never
-     * run into uninitialized memory that might give us parity errors.
-     */
-    void heap_init_memory(uint32_t i_ptr);
-
-    /**
      * @brief Get a pointer to where data should be written to at the end of the pakstack
      *
      * @return An 8-byte aligned pointer to the end marker location at the end of the archive
