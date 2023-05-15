@@ -133,7 +133,7 @@ public:
      *
      */
     uint32_t createHwPackage( uint32_t &o_wordsSent,
-                              const bool isFifoData = false );
+                              const bool isFifoData = false, sbeFifoType i_type = SBE_FIFO );
 
     /**
      * @brief createHwPackage  - method to pack and send PLAT internal FFDC data
@@ -147,7 +147,7 @@ public:
      * @return                 - SBE secondary RC
      *
      */
-    uint32_t createSbePackage( uint32_t &o_wordsSent, const bool isFifoData = false );
+    uint32_t createSbePackage( uint32_t &o_wordsSent, const bool isFifoData = false, sbeFifoType i_type = SBE_FIFO );
 };
 
 /**
@@ -163,6 +163,6 @@ public:
  * @return                       - SBE secondary RC
  */
 uint32_t sendFFDCOverFIFO( const uint32_t i_fieldsConfig, uint32_t &o_wordsSent,
-                           const bool isFifoData = false );
+                           const bool isFifoData = false, sbeFifoType i_type = SBE_FIFO );
 
 #endif //__SBE_FFDC_H

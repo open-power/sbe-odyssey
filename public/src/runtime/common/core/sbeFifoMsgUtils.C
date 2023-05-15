@@ -404,7 +404,7 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
 }
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
-sbeFifoType sbeFifoGetSource (bool reset)
+sbeFifoType sbeFifoGetSource (bool reset, uint8_t pibCtrlId)
 {
     #define SBE_FUNC "sbeFifoGetSource"
     uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
@@ -456,7 +456,7 @@ sbeFifoType sbeFifoGetSource (bool reset)
         }
 
         // Check pending interrupt on Pipes
-        type = sbePipeGetSource ();
+        type = sbePipeGetSource(pibCtrlId);
 
         // Fatal error is no interrupt source was found
         assert(type != SBE_FIFO_UNKNOWN);
@@ -507,10 +507,11 @@ sbeInterfaceSrc_t sbeFifoGetInstSource (sbeFifoType upFifoType, bool reset)
     return SBE_INTERFACE_UNKNOWN;
 }
 
-sbeFifoType sbePipeGetSource (void)
+sbeFifoType sbePipeGetSource (uint8_t pibCtrlId)
 {
     #define SBE_FUNC "sbePipeGetSource "
     uint64_t accessCtrlCfg = 0;
+    uint64_t ctlrId = 0;
     sbeFifoType type = SBE_FIFO_UNKNOWN;
 
     uint32_t rc = getscom_abs(SBE_PIPE_REG_ACCESS_CTRL, &accessCtrlCfg);
@@ -521,35 +522,42 @@ sbeFifoType sbePipeGetSource (void)
         // This is a fatal error
         pk_halt ();
     }
-    else
+    rc = getscom_abs (SBE_PIPE_REG_CTLR_ID, &ctlrId);
+    if (rc)
     {
-        rc = SBE_SEC_GENERIC_FAILURE_IN_EXECUTION;
+        SBE_ERROR (SBE_FUNC "Error reading Pipe CtlrId: 0x08X", rc);
+        // rc = SBE_SEC_FIFO_ACCESS_FAILURE;
+        // This is a fatal error
+        pk_halt ();
+    }
+    rc = SBE_SEC_GENERIC_FAILURE_IN_EXECUTION;
 
-        for (uint8_t i=SBE_PIPE1; i<= SBE_PIPE8; i++)
-        {   // For Pipes, look at access control reg to find the source
-            sbePipeAccessFlags_t cfg = {0};
-            cfg.flags = (SBE_PIPE_GET_CFG_BYTE (i, accessCtrlCfg));
+    for (uint8_t i=SBE_PIPE1; i<= SBE_PIPE8; i++)
+    {   // For Pipes, look at access control reg to find the source
+        sbePipeAccessFlags_t cfg = {0};
+	sbePipeCtlrId_t ctrl = {0};
+        cfg.flags = (SBE_PIPE_GET_CFG_BYTE (i, accessCtrlCfg));
+	ctrl.byte = (SBE_PIPE_GET_CFG_BYTE (i, ctlrId));
 
-            // ctrlID field of read end determines intr routing if RIE is set,
-            // independent of RUID setting. So,below flag being set implies SBE
-            // got either the new data available or reset request interrupt
-            if (cfg.rd_intr_pending)
-            {
-                rc = SBE_SEC_OPERATION_SUCCESSFUL;
-                type = static_cast<sbeFifoType> (i);
-                SBE_INFO (SBE_FUNC "Intr received on PIPE# %d", i);
-                break;
-            }
+        // ctrlID field of read end determines intr routing if RIE is set,
+        // independent of RUID setting. So,below flag being set implies SBE
+        // got either the new data available or reset request interrupt
+        if (cfg.rd_intr_pending && ctrl.readend == pibCtrlId)
+        {
+            rc = SBE_SEC_OPERATION_SUCCESSFUL;
+            type = static_cast<sbeFifoType> (i);
+            SBE_INFO (SBE_FUNC "Intr received on PIPE# %d", i);
+            break;
         }
+    }
 
-        if (rc != SBE_SEC_OPERATION_SUCCESSFUL)
-        {   // Note: The ctrlID field of read end determines interrupt routing
-            // if interrupt enable (RIE) is set, independent of use ctrlID(RUID)
-            // setting. Since we got an interrupt (which is not from FIFO, this
-            // is an unexpected HW bug .. catch it as soon as detected
-            SBE_ERROR (SBE_FUNC "No interrupts pending on any pipe!");
-            pk_halt ();
-        }
+    if (rc != SBE_SEC_OPERATION_SUCCESSFUL)
+    {   // Note: The ctrlID field of read end determines interrupt routing
+        // if interrupt enable (RIE) is set, independent of use ctrlID(RUID)
+        // setting. Since we got an interrupt (which is not from FIFO, this
+        // is an unexpected HW bug .. catch it as soon as detected
+        SBE_ERROR (SBE_FUNC "No interrupts pending on any pipe!");
+        pk_halt ();
     }
 
     return type;

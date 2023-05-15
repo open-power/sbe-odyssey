@@ -61,7 +61,7 @@ uint32_t sbeGetFfdc (uint8_t *i_pArg)
 
         //Send the FFDC data over FIFO.
         uint32_t wordCount = 0;
-        rc = sendFFDCOverFIFO(dumpFieldsConfig, wordCount, true);
+        rc = sendFFDCOverFIFO(dumpFieldsConfig, wordCount, true, type);
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(rc);
 
         rc = sbeDsSendRespHdr(respHdr, NULL, type);

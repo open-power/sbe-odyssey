@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -166,7 +166,7 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
  *
  * @return                 FIFO type
  */
-sbeFifoType sbeFifoGetSource (bool reset);
+sbeFifoType sbeFifoGetSource (bool reset, uint8_t pibCtrlId=PIB_CTLR_SPPE);
 
 /**
  * @brief sbeFifoGetInstSource : Find SBE Interface source
@@ -183,7 +183,7 @@ sbeInterfaceSrc_t sbeFifoGetInstSource (sbeFifoType upFifoType, bool reset);
  * @brief sbePipeGetSource: Find which pipe the request originated from
  * @return                  PIPE type
  */
-sbeFifoType sbePipeGetSource (void);
+sbeFifoType sbePipeGetSource (uint8_t pibCtrlId);
 
 /**
  * @brief sbeHandleDsPipeCnfg: Check and update the downstream pipe config
