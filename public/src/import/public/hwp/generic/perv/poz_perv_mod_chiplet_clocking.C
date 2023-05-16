@@ -398,10 +398,12 @@ fapi_try_exit:
 ReturnCode mod_scan0(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
     uint16_t i_clock_regions,
-    uint16_t i_scan_types)
+    uint16_t i_scan_types,
+    const bool i_do_ary_fill)
 {
     CLK_REGION_t CLK_REGION;
     OPCG_REG0_t OPCG_REG0;
+    OPCG_REG1_t OPCG_REG1;
     SCAN_REGION_TYPE_t SCAN_REGION_TYPE;
     OPCG_ALIGN_t OPCG_ALIGN;
     OPCG_ALIGN_t l_opcg_align_save[64];
@@ -433,10 +435,17 @@ ReturnCode mod_scan0(
 
     FAPI_INF("Set up clock regions for NSL fill.");
     CLK_REGION = 0;
-    CLK_REGION.insertFromRight<CLK_REGION_CLOCK_REGION_PERV, 16>(i_clock_regions)
-    .setBit<CLK_REGION_SEL_THOLD_NSL>()
-    .setBit<CLK_REGION_SEL_THOLD_ARY>();
+    // Don't try to set any HLD bits here since NSL fill is hardcoded to NSL+ARY and ignores them
+    CLK_REGION.insertFromRight<CLK_REGION_CLOCK_REGION_PERV, 16>(i_clock_regions);
     FAPI_TRY(CLK_REGION.putScom(i_target));
+
+    if (!i_do_ary_fill)
+    {
+        FAPI_INF("Disable ARY fill during NSL fill.");
+        OPCG_REG1 = 0;
+        OPCG_REG1.set_DISABLE_ARY_CLK_DURING_FILL(1);
+        FAPI_TRY(OPCG_REG1.putScom(i_target));
+    }
 
     FAPI_INF("Set up scan regions for scan0.");
     SCAN_REGION_TYPE = 0;
@@ -458,6 +467,12 @@ ReturnCode mod_scan0(
     FAPI_TRY(CLK_REGION.putScom(i_target));
     SCAN_REGION_TYPE = 0;
     FAPI_TRY(SCAN_REGION_TYPE.putScom(i_target));
+
+    if (!i_do_ary_fill)
+    {
+        OPCG_REG1 = 0;
+        FAPI_TRY(OPCG_REG1.putScom(i_target));
+    }
 
     if (l_attr_scan0_scan_ratio != 0)
     {
