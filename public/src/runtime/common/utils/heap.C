@@ -31,7 +31,11 @@
 #include "fapi2.H"
 #include "archive.H"
 
-#define CANARY 0xFEEDB0B0ull
+#define CANARY      0xFEEDB0B0ull
+#define CANARY_MASK 0xFFFFFFF0ull
+
+#define BLOCK_FLAG_FREED 1ull
+#define BLOCK_FLAG_PERSIST 2ull
 
 Heap& Heap::get_instance()
 {
@@ -198,52 +202,73 @@ uint32_t Heap::popPakStack(uint8_t pop_count)
     return l_rc;
 }
 
-void* Heap::scratch_alloc(uint32_t i_size)
+void* Heap::scratch_alloc(uint32_t i_size, alloc_flags i_flags)
 {
     const uint32_t rounded_size = (i_size + 7) & ~7;
     const uint32_t new_bottom = iv_scratch_bottom - rounded_size - 8;
+    const bool l_persist = i_flags & AF_PERSIST;
+
     // The midline, determined by the pakstack usage, is the limit on what can be allocated
     if (new_bottom < iv_heap_midline)
     {
-        SBE_ERROR("Out of scratch space. rounded_size=0x%X limit=0x%X bottom=0x%X",
+        SBE_ERROR("scratch_alloc: Out of scratch space. rounded_size=0x%X limit=0x%X bottom=0x%X",
                   rounded_size, iv_heap_midline, iv_scratch_bottom);
         return NULL;
     }
 
-    SBE_INFO(" scratch_alloc: rounded_size=0x%X limit=0x%X old_bottom=0x%X new_bottom=0x%X",
+    // We only allow persistent blocks if they are either the first allocation
+    // or the previous allocation was also persistent. This ensures that all persistent
+    // blocks are clumped up near the top of memory, preventing fragmentation.
+    if (l_persist && !(
+            (iv_scratch_bottom == iv_heap_top)
+            || ((scratch_bottom_header() >> 32) & BLOCK_FLAG_PERSIST)
+        ))
+    {
+        SBE_ERROR("scratch_alloc: Persistent blocks must be allocated before any temporary blocks.");
+        return NULL;
+    }
+
+    SBE_INFO("scratch_alloc: rounded_size=0x%X limit=0x%X old_bottom=0x%X new_bottom=0x%X",
               rounded_size, iv_heap_midline, iv_scratch_bottom, new_bottom);
 
-    uint64_t new_bottom_value = CANARY << 32 | iv_scratch_bottom;
-    *(volatile uint64_t *)new_bottom = new_bottom_value;
+    uint64_t header = (CANARY | (l_persist ? BLOCK_FLAG_PERSIST : 0)) << 32 | iv_scratch_bottom;
+    *(uint64_t *)new_bottom = header;
     iv_scratch_bottom = new_bottom;
     return (void *)(new_bottom + 8);
 }
 
 void Heap::scratch_free(const void *i_ptr)
 {
-
     if(i_ptr != NULL)
     {
-        uint32_t old_bottom = (uintptr_t)i_ptr - 8;
-        if (old_bottom != iv_scratch_bottom)
-        {
-            SBE_ERROR("scratch_free: Attempted to free a scratch block that is not at the bottom. "
-                    "ptr=%p bottom=0x%X", i_ptr, iv_scratch_bottom);
-            PK_PANIC(SBE::PANIC_ASSERT);
-        }
+        // Grab the header, which is one word below the allocated block pointer
+        uint64_t* const pheader = (uint64_t *)i_ptr - 1;
+        const uint64_t header = *pheader;
+        const uint32_t canary = (header >> 32) & CANARY_MASK;
+        const uint32_t flags = (header >> 32) & ~CANARY_MASK;
 
-        uint64_t header = *(uint64_t *)old_bottom;
-        if (header >> 32 != CANARY)
+        if (canary != CANARY)
         {
             SBE_ERROR("scratch_free: Block header corrupted, halting. ptr=%p header=0x%08X%08X",
-                    i_ptr, header >> 32, header & 0xFFFFFFFF);
+                      i_ptr, header >> 32, header & 0xFFFFFFFF);
             PK_PANIC(SBE::PANIC_ASSERT);
         }
 
-        uint32_t new_bottom = header & 0xFFFFFFFF;
-        SBE_DEBUG("scratch_free: ptr=%p old_bottom=0x%X new_bottom=0x%X", i_ptr, iv_scratch_bottom,
-                new_bottom);
-        iv_scratch_bottom = new_bottom;
+        if (flags & BLOCK_FLAG_FREED)
+        {
+            SBE_ERROR("scratch_free: Double free detected, halting. ptr=%p header=0x%08X%08X",
+                      i_ptr, header >> 32, header & 0xFFFFFFFF);
+            PK_PANIC(SBE::PANIC_ASSERT);
+        }
+
+        // Mark the block as freed.
+        // For persistent blocks we can leave BLOCK_FLAG_PERSIST in place since
+        // BLOCK_FLAG_FREED takes precedence.
+        SBE_DEBUG("scratch_free: marking ptr=%p as freed", i_ptr);
+        *pheader = header | (BLOCK_FLAG_FREED << 32);
+
+        // Drop all blocks that became droppable now
+        scratch_unwind(false);
     }
     else
     {
@@ -258,7 +283,45 @@ bool Heap::is_scratch_pointer(const void *i_ptr)
 
 void Heap::scratch_free_all()
 {
-    iv_scratch_bottom = iv_heap_top;
+    scratch_unwind(true);
+}
+
+uint64_t Heap::scratch_bottom_header()
+{
+    const uint64_t header = *(uint64_t *)iv_scratch_bottom;
+    const uint32_t canary = (header >> 32) & CANARY_MASK;
+
+    if (canary != CANARY)
+    {
+        SBE_ERROR("scratch: Chain of blocks corrupted, halting. ptr=%p header=0x%08X%08X",
+                  iv_scratch_bottom, header >> 32, header & 0xFFFFFFFF);
+        PK_PANIC(SBE::PANIC_ASSERT);
+    }
+
+    return header & ~(CANARY_MASK << 32);
+}
+
+void Heap::scratch_unwind(bool i_unwind_all)
+{
+    while (iv_scratch_bottom < iv_heap_top)
+    {
+        const uint64_t header = scratch_bottom_header();
+        const uint32_t flags = header >> 32;
+
+        if ((flags & BLOCK_FLAG_FREED)
+            || (i_unwind_all && !(flags & BLOCK_FLAG_PERSIST)))
+        {
+            uint32_t new_bottom = header & 0xFFFFFFFF;
+            SBE_DEBUG("scratch_unwind: unwind old_bottom=0x%X new_bottom=0x%X",
+                      iv_scratch_bottom, new_bottom);
+            iv_scratch_bottom = new_bottom;
+        }
+        else
+        {
+            // We found a block that is not freed -> done
+            break;
+        }
+    }
 }
 
 size_t Heap::getFreeHeapSize()
