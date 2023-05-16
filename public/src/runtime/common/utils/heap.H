@@ -76,6 +76,14 @@ private :
     Heap(uint32_t i_heap_start, uint32_t i_heap_size);
 
 public :
+    /**
+     * @brief Allocation flags for the scratch allocator
+     */
+    enum alloc_flags
+    {
+        AF_NONE = 0,    ///< Empty flags, no special request
+        AF_PERSIST = 1, ///< The allocated memory must persist across scratch_free_all() calls
+    };
 
     /**
      * @brief  Initialize the pakstack and scratch shared memory space
@@ -110,18 +118,15 @@ public :
      * total amount of memory that can be allocated is limited by the space allocated
      * by the linker (minus engdata images and so on).
      *
-     * @param size Amount of bytes requested; will be rounded up to a multiple of 8
+     * @param i_size    Amount of bytes requested; will be rounded up to a multiple of 8
+     * @param i_flags   Options for the allocation request
      * @return A pointer to the allocated scratch space, or
      *         NULL if not enough space was available
      */
-    void *scratch_alloc(uint32_t i_size);
+    void *scratch_alloc(uint32_t i_size, alloc_flags i_flags = AF_NONE);
 
     /**
-     * @brief Free the most recent chunk of scratch memory
-     *
-     * Scratch memory can only be freed in strict reverse order of allocation, so the
-     * pointer to be freed must point to the most recently allocated chunk of scratch
-     * memory that has not been freed yet, otherwise the function will halt the SBE.
+     * @brief Free a chunk of scratch memory
      *
      * @param ptr The block of memory to free
      */
@@ -134,8 +139,6 @@ public :
      */
     bool is_scratch_pointer(const void *i_ptr);
 
-    //TODO: Currently unused and not supported.
-    //This will be needed for runtime image
     /**
      * @brief Free all scratch memory
      */
@@ -152,6 +155,29 @@ public :
      * @brief Static method to get the singleton instance
      */
     static Heap& get_instance();
+
+private:
+    /**
+     * @brief Update the scratch bottom mark
+     *
+     * Walk the linked list of blocks starting at the very bottom
+     * and rewind the bottom pointer to the bottommost non-freed block
+     * (or the top of scratch).
+     *
+     * @param i_unwind_all If true, non-freed blocks will also be removed
+     */
+    void scratch_unwind(bool i_unwind_all);
+
+    /**
+     * @brief Get the flags and next pointer for the bottommost scratch block
+     *
+     * This also checks for scratch space consistency and halts if the
+     * chain of blocks is corrupted.
+     *
+     * @return A 64 bit value with the flags in the left 32 bits
+     *         and the next pointer in the right 32 bits
+     */
+    uint64_t scratch_bottom_header();
 };
 
 #endif /* _HEAP_H_ */
