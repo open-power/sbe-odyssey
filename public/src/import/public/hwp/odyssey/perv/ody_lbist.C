@@ -53,7 +53,8 @@ static const bist_params ody_lbist_params =
 
     bist_params::FAST_DIAGNOSTICS       |           ///< 0x40000000
     bist_params::CHIPLET_FENCE_ACTIVE   |           ///< 0x02000000
-    bist_params::INT_MODE,                          ///< 0x00800000
+    bist_params::INT_MODE               |           ///< 0x00800000
+    bist_params::SCAN0_ARY_FILL,                    ///< 0x00400000
 
     /// 0x0 for chiplets to let hotplug decide which chiplets to BIST
     0x0000000000000000,                             ///< chiplets

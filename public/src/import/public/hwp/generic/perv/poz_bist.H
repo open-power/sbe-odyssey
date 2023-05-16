@@ -34,7 +34,7 @@
 
 #include <fapi2.H>
 
-static const uint16_t BIST_PARAMS_CURRENT_VERSION = 10;
+static const uint16_t BIST_PARAMS_CURRENT_VERSION = 11;
 
 struct bist_params
 {
@@ -70,6 +70,7 @@ struct bist_params
         CHIPLET_FENCE_ACTIVE = 0x02000000,
         LBIST_COMBINED       = 0x01000000,
         INT_MODE             = 0x00800000,
+        SCAN0_ARY_FILL       = 0x00400000,
 
         /// Multi bit flags
         /// PCB mux switching

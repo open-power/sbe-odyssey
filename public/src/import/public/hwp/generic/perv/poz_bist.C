@@ -389,7 +389,8 @@ ReturnCode poz_bist(
     if (i_params.stages & i_params.bist_stages::SCAN0)
     {
         FAPI_DBG("Do a scan0");
-        FAPI_TRY(mod_scan0(l_chiplets_target, l_all_active_regions, i_params.scan0_types));
+        FAPI_TRY(mod_scan0(l_chiplets_target, l_all_active_regions, i_params.scan0_types,
+                           i_params.flags & i_params.bist_flags::SCAN0_ARY_FILL));
         o_return.completed_stages |= i_params.bist_stages::SCAN0;
     }
 
