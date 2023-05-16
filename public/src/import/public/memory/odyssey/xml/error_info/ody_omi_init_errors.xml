@@ -25,6 +25,7 @@
 <!-- Error definitions for ody_omi_init HWP -->
 <!-- EKB-Mirror-To: hostboot -->
 <hwpErrors>
+  <format>poz</format>
 
   <!-- ******************************************************************** -->
   <hwpError>

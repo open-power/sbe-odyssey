@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022                             -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -24,6 +24,7 @@
 <!-- IBM_PROLOG_END_TAG                                                     -->
 
 <hwpErrors>
+  <format>poz</format>
   <!-- ******************************************************************** -->
     <hwpError>
       <rc>RC_OMI_TRAINING_DONE_POLL_FAILED</rc>
