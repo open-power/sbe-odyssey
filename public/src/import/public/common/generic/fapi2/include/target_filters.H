@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -55,6 +55,8 @@ enum TargetFilter : uint64_t
     TARGET_FILTER_ABUS       = (1ull << 63) >> 12,
     TARGET_FILTER_CORE       = (1ull << 63) >> 13,
     TARGET_FILTER_TBUS       = (1ull << 63) >> 14,
+    TARGET_FILTER_SHADOW     = (1ull << 63) >> 15,
+    TARGET_FILTER_L3CACHE    = (1ull << 63) >> 16,
 };
 
 constexpr TargetFilter operator|(const TargetFilter a, const TargetFilter b)
