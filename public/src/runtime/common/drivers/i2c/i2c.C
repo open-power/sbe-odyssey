@@ -451,6 +451,15 @@ ReturnCode i2c::i2cLockEngine()
         rc = i2cRegisterOp(I2C_REG_ATOMIC_LOCK,
                            false,
                            &lock_data);
+
+        if(rc == FAPI2_RC_SUCCESS)
+        {
+            SBE_INFO( SBE_FUNC " succeeded in grabbing i2c lock. ");
+            break;
+        }
+
+        // Incase HB,CRONUS etc have the i2c lock and we are trying to
+        // grab the lock as well, we will fail with RC_SBE_PIB_XSCOM_ERROR
         if(rc != (const uint32_t) RC_SBE_PIB_XSCOM_ERROR)
         {
             SBE_ERROR(SBE_FUNC " failed for i2cRegisterOp with rc 0x%08X", rc);
@@ -462,15 +471,16 @@ ReturnCode i2c::i2cLockEngine()
 
     if(timeoutCount == 0)
     {
+        lock_data = 0x0;
         ReturnCode l_rc = FAPI2_RC_SUCCESS;
         //TODO: PFSBE-394 i2c driver: Error handling improvement.
         //RC handling when multiple rc are generated
         l_rc = i2cRegisterOp(I2C_REG_ATOMIC_LOCK,
                             true,
                             &lock_data);
-        if(l_rc != (const uint32_t) RC_SBE_PIB_XSCOM_ERROR)
+        if(l_rc != FAPI2_RC_SUCCESS)
         {
-            SBE_ERROR("Failed to read atomic lock reg");
+            SBE_ERROR("Failed to read atomic lock reg. RC: 0x%08X", l_rc);
         }
 
         rc = RC_SBE_I2C_FAILED_TO_LOCK_ENGINE_TIMEOUT_ERROR;
@@ -503,6 +513,22 @@ ReturnCode i2c::i2cUnlockEngine()
     return rc;
 }
 
+ReturnCode i2c::i2cResetEngine()
+{
+    ReturnCode rc = FAPI2_RC_SUCCESS;
+
+    //Set bit 0 in IMM_RESET_I2C_X to
+    //reset command,mode,watermark,interrupt mask,status registers
+    uint64_t reset_data = 0x8000000000000000;
+
+    SBE_INFO("Resetting i2c ENGINE......");
+    rc = i2cRegisterOp(I2C_REG_RESET,
+                        false,
+                        &reset_data);
+
+    return rc;
+}
+
 ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
                         const size_t get_size,
                         const std::vector<uint8_t>& cfgData,
@@ -529,7 +555,14 @@ ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
             break;
         }
 
-        uint8_t data[MAX_OCMB_CMD_SIZE] = {};
+        rc = i2cResetEngine();
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC " failed for i2cResetEngine with rc 0x%08X", rc);
+            break;
+        }
+
+        uint8_t data[MAX_I2C_CMD_SIZE] = {};
         ////////////////////////////////
         // I2C read with offset ///////
         ///////////////////////////////
@@ -611,7 +644,14 @@ ReturnCode i2c::putI2c( const Target<TARGET_TYPE_ALL>& target,
             break;
         }
 
-        uint8_t buffer[MAX_OCMB_CMD_SIZE] = {};
+        rc = i2cResetEngine();
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC " failed for i2cResetEngine with rc 0x%08X", rc);
+            break;
+        }
+
+        uint8_t buffer[MAX_I2C_CMD_SIZE] = {};
         std::copy(data.begin(), data.end(), buffer);
 
         // Do a write with stop

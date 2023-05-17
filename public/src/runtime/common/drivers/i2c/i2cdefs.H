@@ -27,7 +27,7 @@
 
 #include <stdint.h>
 
-#define MAX_OCMB_CMD_SIZE 16
+#define MAX_I2C_CMD_SIZE 16
 
 /**
  * @brief 0xA is the PIB responder ID and

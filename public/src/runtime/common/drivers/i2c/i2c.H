@@ -239,6 +239,12 @@ private:
   */
   ReturnCode i2cWaitForFifo(fifo_condition_t condition);
 
+  /**
+   * @brief Reset the i2c engine
+   *
+   * @return ReturnCode FAPI RC
+   */
+  ReturnCode i2cResetEngine();
 };
 
 } //namespace fapi2
