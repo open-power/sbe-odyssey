@@ -222,6 +222,23 @@ char* stpcpy(char* dest, const char* src)
 }
 */
 
+#ifdef __PPE_QME
+/// @brief Determine the member chiplets in a (potentially) multicast perv target
+/// @return A bit mask with bits set corresponding to each member chiplet
+static inline uint64_t get_mc_group_members(
+    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target)
+{
+    buffer<uint64_t> l_result;
+
+    for (auto cplt : i_target.getChildren<TARGET_TYPE_PERV>())
+    {
+        l_result.setBit(cplt.getChipletNumber());
+    }
+
+    return l_result;
+}
+#endif
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //// INSTANCE TRAITS
@@ -472,7 +489,7 @@ ReturnCode ScanApplyEngine::apply()
     /* We exclude most code paths on the QME to reduce compiled code size */
 
     /* Chip targets */
-    if (not is_platform<PLAT_QME>())
+#ifndef __PPE_QME
     {
         Target<TARGET_TYPE_ANY_POZ_CHIP> l_chip_target;
 
@@ -511,6 +528,7 @@ ReturnCode ScanApplyEngine::apply()
             return applyToPervMCTarget(l_perv_mc_target);
         }
     }
+#endif
 
     /* Special case handling for multicast+multiregion core targets */
     /* Unicast core targets will be handled by the chip unit path below */
