@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -103,6 +103,8 @@ enum LogTargetType : uint8_t
     LOG_TARGET_TYPE_PHB16X              = 53, ///< PHB16X type
     LOG_TARGET_TYPE_POWER_IC            = 54, ///< POWER_IC type
     LOG_TARGET_TYPE_TEMP_SENSOR         = 55, ///< TEMP_SENSOR type
+    LOG_TARGET_TYPE_XBUSL               = 56, ///< XBUS Link
+    LOG_TARGET_TYPE_SHADOW              = 57, ///< Shadow core
     LOG_TARGET_TYPE_MULTICAST           = 63, ///< MULTICAST type
 };
 
@@ -167,6 +169,8 @@ enum TargetType : uint64_t
     TARGET_TYPE_PHB16X              = 1ULL << LOG_TARGET_TYPE_PHB16X,              ///< PHB16X type
     TARGET_TYPE_POWER_IC            = 1ULL << LOG_TARGET_TYPE_POWER_IC,            ///< POWER_IC type
     TARGET_TYPE_TEMP_SENSOR         = 1ULL << LOG_TARGET_TYPE_TEMP_SENSOR,         ///< TEMP_SENSOR type
+    TARGET_TYPE_XBUSL               = 1ULL << LOG_TARGET_TYPE_XBUSL,               ///< XBUS Link
+    TARGET_TYPE_SHADOW              = 1ULL << LOG_TARGET_TYPE_SHADOW,              ///< Shadow core
     TARGET_TYPE_MULTICAST           = 1ULL << LOG_TARGET_TYPE_MULTICAST,           ///< MULTICAST type
 
     TARGET_TYPE_ALL                 = 0x7FFFFFFFFFFFFFFF, ///< Any/All types
@@ -179,10 +183,13 @@ enum TargetType : uint64_t
                                 TARGET_TYPE_COMPUTE_CHIP |
                                 TARGET_TYPE_HUB_CHIP,
 
+    // Types that correspond to a chiplet or a chiplet subunit
     TARGET_TYPE_CHIPLETS      = TARGET_TYPE_EX            |
+                                TARGET_TYPE_SHADOW        |
                                 TARGET_TYPE_MBA           |
                                 TARGET_TYPE_MCS           |
                                 TARGET_TYPE_XBUS          |
+                                TARGET_TYPE_XBUSL         |
                                 TARGET_TYPE_ABUS          |
                                 TARGET_TYPE_L4            |
                                 TARGET_TYPE_CORE          |
@@ -224,11 +231,16 @@ enum TargetType : uint64_t
 
     TARGET_TYPE_MULTICASTABLE = TARGET_TYPE_CORE        |
                                 TARGET_TYPE_EQ          |
+                                TARGET_TYPE_EX          |
+                                TARGET_TYPE_SHADOW      |
                                 TARGET_TYPE_IOHS        |
                                 TARGET_TYPE_MC          |
                                 TARGET_TYPE_PAUC        |
                                 TARGET_TYPE_PEC         |
                                 TARGET_TYPE_PERV        |
+                                TARGET_TYPE_ABUS        |
+                                TARGET_TYPE_XBUS        |
+                                TARGET_TYPE_XBUSL       |
                                 TARGET_TYPE_TBUSC       |
                                 TARGET_TYPE_TBUSL       |
                                 TARGET_TYPE_NX          |
