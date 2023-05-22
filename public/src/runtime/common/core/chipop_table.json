@@ -57,13 +57,6 @@
             "headerFile":"sbecmdgenericffdc.H"
         },
         {
-            "cmdClass":"A8",
-            "command":"0x02",
-            "function":"sbeGetCapability",
-            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
-            "headerFile":"sbecmdgeneric.H"
-        },
-        {
             "cmdClass":"AD",
             "command":"0x01",
             "function":"sbeGetRawAttrDump",

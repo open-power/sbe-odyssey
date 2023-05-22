@@ -54,10 +54,17 @@ static const char runtime_image_hash_file_name[]= "rt/image.hash";
  * @brief List of all file names in BMC OVERRIDE Pak(BMC_OVRD)
  */
 static const char bmc_image_hash_file_name[]    = "bmc/image.hash";
+static const char bmc_info_file_name[]          = "bmc/info.txt";
 
 /*
- * @brief List of all file names in HOSTBOOT OVERRIDE Pak(HB_OVRD)
+ * @brief List of all file names in HOST OVERRIDE Pak(HOST_OVRD)
  */
 static const char host_image_hash_file_name[]   = "host/image.hash";
+static const char host_info_file_name[]         = "host/info.txt";
+
+/*
+ * @brief List of all file names in EKB
+ */
+static const char ekb_info_file_name[]         = "info.txt";
 
 #endif /* _ODYSSEYFILENAMES_H_ */

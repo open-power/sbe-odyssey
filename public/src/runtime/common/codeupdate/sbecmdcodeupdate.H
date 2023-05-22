@@ -29,6 +29,7 @@
 #include "sha3.H"
 #include "imagemap.H"
 #include "sbeSpMsg.H"
+#include "sbeCmdGetCapabilities.H"
 
 // CU: Code Update
 namespace CU
@@ -111,15 +112,15 @@ namespace CU
          *        its members with the expected value to frame the response.
          */
         CodeLevelsRespMsg_t() :
-            // TODO: JIRA: PFSBE-6
+            // TODO: JIRA: PFSBE-409
             // Value must be assign based on no of chip-ops that are supported
             // by the SBE FW by using chip-op json instead of hard code value.
             // Note, it should be in words like p10.
-            iv_noOfCapabilities(23),
-            // TODO: JIRA: PFSBE-6
+            iv_noOfCapabilities(GETCAPABILITIES_NO_OF_CAPABILITIES),
+            // TODO: JIRA: PFSBE-410
             // Value must be assign based on no of sub-images that are supported
             // in the specific SBE FW project.
-            iv_noOfSubImages(10),
+            iv_noOfSubImages(GETCAPABILITIES_NO_OF_IMAGES),
             iv_reserved1(0),
             // If a new image section type added in below list then,
             // we should update in UPDATABLE_IMG_SECTION_CNT macro as well.

@@ -36,15 +36,12 @@ extern "C" {
 
 #include "stdint.h"
 
-/**
- * $Version: Conforms to SP-SBE Interface Spec v0.8e
- */
-
 /*
+ * $Version: Confirms to SP-SBE Interface Spec v0.2e
  * Constants for SBE FW major and minor number
  */
-static const uint16_t SBE_FW_MAJOR_VERSION = 1;
-static const uint16_t SBE_FW_MINOR_VERSION = 4;
+static const uint16_t SBE_FW_MAJOR_VERSION = 0;
+static const uint16_t SBE_FW_MINOR_VERSION = 2;
 
 /**
  * @brief enums for SBE command classes
@@ -246,6 +243,116 @@ enum class CU_IMAGES : uint16_t
     BMC_OVRD,          // Updatable
     HOST_OVRD,         // Updatable
     END_OF_IMG_LIST
+};
+
+/**
+ * - No of sub-images that supported by the SBE FW.
+ * - sub-images details for the GetCapabilities chip-op.
+ *
+ * - TODO: JIRA: PFSBE-413
+ *   We should have a single enum image list instead of many for each code
+ *   updates and get capabilities chip-ops.
+ */
+enum class CAPABILITY_IMAGES : uint16_t
+{
+    IMG_TYPE_INVALID = 0,
+    SROM,
+    BOOTLOADER,
+    RUNTIME,
+    BMC_OVRD,
+    HOST_OVRD,
+    EKB,
+};
+
+/**
+ * @brief Capabilities index (aka, command class) values.
+ *
+ * - TODO: JIRA: PFSBE-409
+ *   we have to fill capabilities automatically by using chip-op table
+ *   instead of hardcoding.
+ */
+enum
+{
+    GENERIC_CAPABILTITY_START_IDX = 0,
+    IPL_CAPABILITY_START_IDX,
+    SCOM_CAPABILITY_START_IDX,
+    RING_CAPABILITY_START_IDX ,
+    ARRAY_CAPABILITY_START_IDX ,
+    GENERIC_CHIPOP_CAPABILITY_START_IDX ,
+    STOP_CLOCKS_CAPABILITY_START_IDX ,
+    ATTRIBUTE_CAPABILITY_START_IDX ,
+    CODEUPDATE_CAPABILITY_START_IDX,
+};
+
+/**
+ * @brief Capabilities enum values.
+ *
+ * - Each enum value needs to be decided based on the supported SBE
+ *   features and chip-ops bit position in the respective capabilities word.
+ *
+ * - In a single capability word, we can represent 24 features or chip-ops
+ *   Format: 0x<Class_1byte><BitPosition_3byte>.
+ *
+ * - The chip-op bit position needs to be decided by the chip-op op-code.
+ *   For example, the execute hwp chip-op (0xA104) bit position will be 4th bit
+ *   in the capability word based on the execute hwp chip-op op-code "04".
+ *
+ * - TODO: JIRA: PFSBE-409
+ *   we have to fill capabilities automatically by using chip-op table
+ *   instead of hardcoding.
+ */
+enum
+{
+    // SBE supported features list
+
+    HWP_FFDC_COLLECTION_SUPPPORTED      = 0xC0000001,
+    SBE_FFDC_COLLECTION_SUPPPORTED      = 0xC0000002,
+    FIFO_RESET_SUPPPORTED               = 0xC0000008,
+
+    // SBE supported chip-ops list
+    // 0xA101
+    EXECUTE_ISTEP_SUPPPORTED            = 0xA1000001,
+    // 0xA104
+    EXECUTE_HWP_SUPPPORTED              = 0xA1000008,
+
+    // 0xA201
+    GET_SCOM_SUPPPORTED                 = 0xA2000001,
+    // 0xA202
+    PUT_SCOM_SUPPPORTED                 = 0xA2000002,
+
+    // 0xA301
+    GET_RING_SUPPPORTED                 = 0xA3000001,
+    // 0xA302
+    PUT_RING_SUPPPORTED                 = 0xA3000002,
+    // 0xA303
+    PUT_RING_FROM_IMAGE_SUPPPORTED      = 0xA3000004,
+
+    // 0xA601
+    CONTROL_FAST_ARRAY_SUPPPORTED       = 0xA6000001,
+    // 0xA602
+    CONTROL_TRACE_ARRAY_SUPPPORTED      = 0xA6000002,
+
+    // 0xA801
+    GET_SBE_FFDC_SUPPPORTED             = 0xA8000001,
+    // 0xA802
+    GET_CAPABILITIES_SUPPORTED          = 0xA8000002,
+
+    // 0xA903
+    STOP_CLOCKS_SUPPORTED               = 0xA9000004,
+
+    // 0xAD01
+    GET_RAWATTR_DUMP_SUPPORTED          = 0xAD000001,
+    // 0xAD02
+    LIST_ATTR_SUPPORTED                 = 0xAD000002,
+    // 0xAD03
+    UPDATE_ATTR_SUPPORTED               = 0xAD000004,
+
+    // 0xAE01
+    GET_CODE_LEVELS_SUPPORTED           = 0xAE000001,
+    // 0xAE02
+    UPDATE_IMAGE_SUPPORTED              = 0xAE000002,
+    // 0xAE03
+    SYNC_SIDE_SUPPORTED                 = 0xAE000004,
 };
 
 #ifdef __cplusplus
