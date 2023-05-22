@@ -1,0 +1,232 @@
+/* IBM_PROLOG_BEGIN_TAG                                                   */
+/* This is an automatically generated prolog.                             */
+/*                                                                        */
+/* $Source: public/src/runtime/odyssey/sppe/core/getcapabilitiesutils.C $ */
+/*                                                                        */
+/* OpenPOWER sbe Project                                                  */
+/*                                                                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/*                                                                        */
+/*                                                                        */
+/* Licensed under the Apache License, Version 2.0 (the "License");        */
+/* you may not use this file except in compliance with the License.       */
+/* You may obtain a copy of the License at                                */
+/*                                                                        */
+/*     http://www.apache.org/licenses/LICENSE-2.0                         */
+/*                                                                        */
+/* Unless required by applicable law or agreed to in writing, software    */
+/* distributed under the License is distributed on an "AS IS" BASIS,      */
+/* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or        */
+/* implied. See the License for the specific language governing           */
+/* permissions and limitations under the License.                         */
+/*                                                                        */
+/* IBM_PROLOG_END_TAG                                                     */
+
+#include "filenames.H"
+#include "metadata.H"
+#include "globals.H"
+#include "odysseylink.H"
+#include "pakwrapper.H"
+#include "getcapabilitiesutils.H"
+
+using namespace fapi2;
+
+constexpr CAPABILITY_IMAGES g_getCapabilitiesImages [] __attribute__ ((aligned (8))) =
+{
+    CAPABILITY_IMAGES::SROM,
+    CAPABILITY_IMAGES::BOOTLOADER,
+    CAPABILITY_IMAGES::RUNTIME,
+    CAPABILITY_IMAGES::BMC_OVRD,
+    CAPABILITY_IMAGES::HOST_OVRD,
+    CAPABILITY_IMAGES::EKB
+};
+
+/**
+ * TODO: JIRA: PFSBE-410
+ * It should be refactored to have common API and get projects image details
+ * from the project layer.
+ */
+uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
+{
+    #define SBE_FUNC " fillImagesDetails "
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    do
+    {
+        // Iterating the loop to get all the images properties.
+        for (uint8_t l_img = 0;
+             l_img < (sizeof(g_getCapabilitiesImages) /
+                      sizeof(g_getCapabilitiesImages[0]));
+             l_img++)
+        {
+            switch (g_getCapabilitiesImages[l_img])
+            {
+                case CAPABILITY_IMAGES::SROM:
+                    {
+                        // Update the image type as SROM.
+                        o_capMsg.iv_imageInfo[l_img].iv_imageType =
+                                                    CAPABILITY_IMAGES::SROM;
+
+                        // Get image metadata pointer.
+                        auto ptrGITStruct = GET_META_GIT((uint8_t*)SROM_ORIGIN + SROM_VECTOR_SIZE);
+                        if (ptrGITStruct == NULL)
+                        {
+                            SBE_ERROR(SBE_FUNC "Failed to get GIT commitId of an image[%d] ",
+                                                o_capMsg.iv_imageInfo[l_img].iv_imageType);
+                            break;
+                        }
+                        // Update the commit id.
+                        o_capMsg.iv_imageInfo[l_img].iv_identifier = ptrGITStruct->commitId;
+
+                        //TODO: JIRA: PFSBE-415: Fill SROM build timestamp.
+                    }
+                    break;
+
+                case CAPABILITY_IMAGES::BOOTLOADER:
+                    {
+                        // Update the image type as BOOTLOADER.
+                        o_capMsg.iv_imageInfo[l_img].iv_imageType =
+                                                CAPABILITY_IMAGES::BOOTLOADER;
+
+                        PakWrapper pak((void *)g_partitionOffset,
+                                       (void *)(g_partitionOffset + g_partitionSize));
+
+                        uint32_t* l_filePtr = NULL;
+                        l_rc = pak.get_image_start_ptr_and_size(bldr_file_name,
+                                                                &l_filePtr);
+                        if (l_rc != ARC_OPERATION_SUCCESSFUL)
+                        {
+                            SBE_ERROR(SBE_FUNC " Pak get image start pointer Failed "
+                                               " imageType[%d], RC[0x%08x]",
+                                                o_capMsg.iv_imageInfo[l_img].iv_imageType, l_rc);
+                            break;
+                        }
+
+                        // Get image metadata pointer.
+                        auto ptrGITStruct = GET_META_GIT((uint8_t*)l_filePtr + VECTOR_SIZE);
+                        if (ptrGITStruct == NULL)
+                        {
+                            SBE_ERROR(SBE_FUNC "Failed to get GIT commitId of an image[%d] ",
+                                                o_capMsg.iv_imageInfo[l_img].iv_imageType);
+                            break;
+                        }
+                        // Update the commit id.
+                        o_capMsg.iv_imageInfo[l_img].iv_identifier = ptrGITStruct->commitId;
+
+                        // Get image metadata pointer.
+                        auto ptrLDAStruct = GET_META_DAT((uint8_t*)l_filePtr + VECTOR_SIZE);
+                        if (ptrLDAStruct == NULL)
+                        {
+                            SBE_ERROR(SBE_FUNC "Failed to get time stamp of an image[%d] ",
+                                                o_capMsg.iv_imageInfo[l_img].iv_imageType);
+                            break;
+                        }
+                        // Update the time stamp.
+                        o_capMsg.iv_imageInfo[l_img].iv_buildTime = ptrLDAStruct->timeStamp;
+                    }
+                    break;
+
+                case CAPABILITY_IMAGES::RUNTIME:
+                    {
+                        // Update the image type as RUNTIME.
+                        o_capMsg.iv_imageInfo[l_img].iv_imageType =
+                                                    CAPABILITY_IMAGES::RUNTIME;
+                        // Get image metadata pointer to get timestamp.
+                        auto ptrMetaDataStruct = GET_META_DAT((uint8_t*)
+                                                    (SRAM_ORIGIN + VECTOR_SIZE));
+                        if (ptrMetaDataStruct == NULL)
+                        {
+                            SBE_ERROR(SBE_FUNC "Failed to get time stamp of an " \
+                                                " image[%d]"
+                                                o_capMsg.iv_imageInfo[l_img].iv_imageType);
+                            break;
+                        }
+                        // Update the time stamp.
+                        o_capMsg.iv_imageInfo[l_img].iv_buildTime =
+                                                ptrMetaDataStruct->timeStamp;
+
+                        // Get image metadata pointer to get commit id.
+                        auto ptrGITStruct = GET_META_GIT((uint8_t*)
+                                                (SRAM_ORIGIN + VECTOR_SIZE));
+                        if (ptrGITStruct == NULL)
+                        {
+                            SBE_ERROR(SBE_FUNC "Failed to get GIT commit Id of an image"
+                                                o_capMsg.iv_imageInfo[l_img].iv_imageType);
+                            break;
+                        }
+                        // Update the commit id.
+                        o_capMsg.iv_imageInfo[l_img].iv_identifier = ptrGITStruct->commitId;
+                    }
+                    break;
+
+                case CAPABILITY_IMAGES::BMC_OVRD:
+                case CAPABILITY_IMAGES::HOST_OVRD:
+                case CAPABILITY_IMAGES::EKB:
+                    // TODO: JIRA: PFSBE-416 : Need to fill from the info.txt
+                    SBE_ERROR(SBE_FUNC "Unsupported image type[%d]",
+                                       g_getCapabilitiesImages[l_img]);
+                    break;
+
+                default:
+                    // Update the image type as invalid.
+                    l_rc = SBE_SEC_CU_INVALID_IMAGE_TYPE;
+                    SBE_ERROR(SBE_FUNC "Invalid Image type[%d]",
+                              o_capMsg.iv_imageInfo[l_img].iv_imageType);
+                    break;
+            }
+            SBE_INFO(SBE_FUNC "ImageType[%d], TimeStamp[0x%08x], CommitId[0x%08x]",
+                               o_capMsg.iv_imageInfo[l_img].iv_imageType,
+                               o_capMsg.iv_imageInfo[l_img].iv_buildTime,
+                               o_capMsg.iv_imageInfo[l_img].iv_identifier);
+        }
+    } while (false);
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
+/**
+ * - TODO: JIRA: PFSBE-409
+ *   we have to fill capabilities automatically by using chip-op table
+ *   instead of hardcoding.
+ */
+void fillCapabilitiesDetails(uint32_t *o_capability)
+{
+    o_capability[GENERIC_CAPABILTITY_START_IDX] =
+                                                HWP_FFDC_COLLECTION_SUPPPORTED |
+                                                SBE_FFDC_COLLECTION_SUPPPORTED |
+                                                FIFO_RESET_SUPPPORTED ;
+
+    o_capability[IPL_CAPABILITY_START_IDX] =
+                                            EXECUTE_ISTEP_SUPPPORTED |
+                                            EXECUTE_HWP_SUPPPORTED;
+
+    o_capability[SCOM_CAPABILITY_START_IDX] =
+                                            GET_SCOM_SUPPPORTED |
+                                            PUT_SCOM_SUPPPORTED ;
+
+    o_capability[RING_CAPABILITY_START_IDX] =
+                                            GET_RING_SUPPPORTED |
+                                            PUT_RING_SUPPPORTED |
+                                            PUT_RING_FROM_IMAGE_SUPPPORTED ;
+
+    o_capability[ARRAY_CAPABILITY_START_IDX] =
+                                            CONTROL_FAST_ARRAY_SUPPPORTED |
+                                            CONTROL_TRACE_ARRAY_SUPPPORTED ;
+
+    o_capability[GENERIC_CHIPOP_CAPABILITY_START_IDX] =
+                                                    GET_SBE_FFDC_SUPPPORTED |
+                                                    GET_CAPABILITIES_SUPPORTED;
+
+    o_capability[STOP_CLOCKS_CAPABILITY_START_IDX] = STOP_CLOCKS_SUPPORTED;
+
+    o_capability[ATTRIBUTE_CAPABILITY_START_IDX] = GET_RAWATTR_DUMP_SUPPORTED |
+                                                   LIST_ATTR_SUPPORTED |
+                                                   UPDATE_ATTR_SUPPORTED ;
+
+    o_capability[CODEUPDATE_CAPABILITY_START_IDX] = GET_CODE_LEVELS_SUPPORTED |
+                                                    UPDATE_IMAGE_SUPPORTED |
+                                                    SYNC_SIDE_SUPPORTED;
+}

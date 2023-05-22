@@ -64,6 +64,7 @@
 
 /*********************************** SROM IMAGE *******************************/
 #define VECTOR_SIZE                     0x200
+#define SROM_VECTOR_SIZE                0x164
 #define FUNCTION_TABLE_OFFSET           (SROM_ORIGIN + VECTOR_SIZE)
 #define FUNCTION_TABLE_SIZE             0x40
 

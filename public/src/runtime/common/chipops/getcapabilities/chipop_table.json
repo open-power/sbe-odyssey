@@ -1,0 +1,11 @@
+{
+    "chipoptable":[
+        {
+            "cmdClass":"A8",
+            "command":"0x02",
+            "function":"sbeCmdGetCapabilities",
+            "fences":["SBE_FENCE_AT_DUMPING"],
+            "headerFile":"sbeCmdGetCapabilities.H"
+        }
+    ]
+}
