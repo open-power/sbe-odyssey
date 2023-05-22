@@ -53,7 +53,8 @@ enum POZ_CHIPLET_RESET_Private_Constants
 
 ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
                              const uint8_t i_sync_pulse_delay,
-                             const poz_chiplet_reset_phases i_phases)
+                             const poz_chiplet_reset_phases i_phases,
+                             const uint16_t i_scan0_stagger_mask)
 {
     NET_CTRL0_t NET_CTRL0;
     SYNC_CONFIG_t SYNC_CONFIG;
@@ -156,11 +157,28 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
         FAPI_INF("Align chiplets");
         FAPI_TRY(mod_align_regions(l_chiplets_mc, cc::REGION_ALL));
 
-        FAPI_DBG("scan0 all clock regions, scan types GPTR, TIME, REPR");
-        FAPI_TRY(mod_scan0(l_chiplets_mc, cc::REGION_ALL, cc::SCAN_TYPE_RTG));
+        const cc::clock_region l_first_scan0 = static_cast<cc::clock_region>(
+                cc::REGION_ALL & ~i_scan0_stagger_mask);
+        const cc::clock_region l_second_scan0 = static_cast<cc::clock_region>(
+                cc::REGION_ALL & i_scan0_stagger_mask);
 
-        FAPI_DBG("scan0 all clock regions, scan types except GPTR, TIME, REPR");
-        FAPI_TRY(mod_scan0(l_chiplets_mc, cc::REGION_ALL, cc::SCAN_TYPE_NOT_RTG));
+        FAPI_INF("scan0 all clock regions, scan types GPTR, TIME, REPR");
+        FAPI_TRY(mod_scan0(l_chiplets_mc, l_first_scan0, cc::SCAN_TYPE_RTG));
+
+        if (l_second_scan0)
+        {
+            FAPI_INF("scan0 all clock regions, scan types GPTR, TIME, REPR (staggered part 2)");
+            FAPI_TRY(mod_scan0(l_chiplets_mc, l_second_scan0, cc::SCAN_TYPE_RTG));
+        }
+
+        FAPI_INF("scan0 all clock regions, scan types except GPTR, TIME, REPR");
+        FAPI_TRY(mod_scan0(l_chiplets_mc, l_first_scan0, cc::SCAN_TYPE_NOT_RTG));
+
+        if (l_second_scan0)
+        {
+            FAPI_INF("scan0 all clock regions, scan types except GPTR, TIME, REPR (staggered part 2)");
+            FAPI_TRY(mod_scan0(l_chiplets_mc, l_second_scan0, cc::SCAN_TYPE_NOT_RTG));
+        }
 
         FAPI_INF("Transfer partial good attributes into region PGOOD and PSCOM enable registers");
 
