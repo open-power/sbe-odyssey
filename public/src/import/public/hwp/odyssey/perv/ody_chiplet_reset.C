@@ -71,7 +71,8 @@ ReturnCode ody_chiplet_reset(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
     CPLT_CONF1.setBit<24, 6>();
     FAPI_TRY(CPLT_CONF1.putScom_SET(l_target_MC));
 
-    FAPI_TRY(poz_chiplet_reset(i_target, 10, SCAN0_AND_UP));
+    FAPI_TRY(poz_chiplet_reset(i_target, 10, SCAN0_AND_UP,
+                               cc::ODY_MC_CORE | cc::ODY_MC_PUB1 | cc::ODY_MC_PRIM1));
 
     FAPI_INF("Force MC ATPG regions disabled despite ATTR_PG settings");
     CPLT_CTRL2 = 0;
