@@ -1194,7 +1194,10 @@ enum poz_chiplet_reset_phases : uint8_t {
     ALL = 0xFF,
 };
 
-def poz_chiplet_reset(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64], uint8_t i_sync_pulse_delay = 8, const poz_chiplet_reset_phases i_phases = ALL):
+def poz_chiplet_reset(target<ANY_POZ_CHIP>,
+                      const uint8_t i_chiplet_delays[64],
+                      const poz_chiplet_reset_phases i_phases = ALL,
+                      const uint16_t i_scan0_stagger_mask = 0):
     if ATTR_HOTPLUG:
         chiplets = All functional chiplets except TP
     else:
@@ -1249,8 +1252,13 @@ def poz_chiplet_reset(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64], 
 
         ## Scan-zero
         # NOTE ignore errors on non-functional chiplets
-        mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_RTG)
-        mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_NOT_RTG)
+        mod_scan0(chiplets via multicast, regions=all & ~i_scan0_stagger_mask, scan_types=cc::SCAN_TYPE_RTG)
+        if i_scan0_stagger_mask:
+            mod_scan0(chiplets via multicast, regions=all & i_scan0_stagger_mask, scan_types=cc::SCAN_TYPE_RTG)
+
+        mod_scan0(chiplets via multicast, regions=all & ~i_scan0_stagger_mask, scan_types=cc::SCAN_TYPE_NOT_RTG)
+        if i_scan0_stagger_mask:
+            mod_scan0(chiplets via multicast, regions=all & i_scan0_stagger_mask, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
         ## Transfer partial good attributes into region PGOOD and PSCOM enable registers
         for chiplet in chiplets:

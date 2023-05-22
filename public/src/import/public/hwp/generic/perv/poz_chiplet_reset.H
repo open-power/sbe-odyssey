@@ -41,6 +41,9 @@ enum poz_chiplet_reset_phases : uint8_t
     ALL = 0xFF,
 };
 
+typedef fapi2::ReturnCode (*poz_chiplet_reset_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&,
+        const uint8_t, const poz_chiplet_reset_phases, const uint16_t);
+
 /// @brief Enable and reset chiplets
 /// -- Enable and reset chiplets, setup clock controllers & OPCG delays
 /// -- do SCAN0 on all regions, transfer PGOOD attr into CPLT_CTRL[2,3]
@@ -49,11 +52,16 @@ enum poz_chiplet_reset_phases : uint8_t
 /// @param[in]   i_chiplet_delays[64]      Array of per-chiplet delays to be programmed in OPCG_WAIT_CYCLES
 /// @param[in]   i_sync_pulse_delay        Delay incoming sync pulse by the specified number of cycles (2 <= i_sync_pulse_delay < 16) with the default being 8
 /// @param[in]   i_phases                  Option to split chiplet reset in 2 halves (PRE_SCAN0 / SCAN0_AND_UP) or do the combination (ALL)
+/// @param[in]   i_scan0_stagger_mask      Run scan0 in two parts to reduce transient current draw:
+///                                        If non-zero, exclude regions set here from the first scan0
+///                                        and run a second scan0 with the rest.
+
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {
     fapi2::ReturnCode poz_chiplet_reset(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
                                         const uint8_t i_sync_pulse_delay = 8,
-                                        const poz_chiplet_reset_phases i_phases = ALL);
+                                        const poz_chiplet_reset_phases i_phases = ALL,
+                                        const uint16_t i_scan0_stagger_mask = 0);
 }
