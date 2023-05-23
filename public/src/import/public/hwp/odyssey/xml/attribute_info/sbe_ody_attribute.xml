@@ -2856,11 +2856,17 @@
   <entry name="ATTR_ODY_DQS_TRACKING_PERIOD">
     <value>0</value>
   </entry>
+  <entry name="ATTR_ODY_DQS_TRACKING_PERIOD_INIT">
+    <value>5</value>
+  </entry>
   <entry name="ATTR_ODY_MRR_ODT_TERM">
     <value>1</value>
   </entry>
-  <entry name="ATTR_ODY_SENSOR_POLLING_PERIOD">
+  <entry name="ATTR_ODY_SENSOR_POLLING_PERIOD_MS">
     <value>0</value>
+  </entry>
+  <entry name="ATTR_ODY_SENSOR_POLLING_PERIOD_MS_INIT">
+    <value>200</value>
   </entry>
   <entry name="ATTR_ODY_THERMAL_SENSOR_0_PREVIOUS_VALUE">
     <value>0</value>

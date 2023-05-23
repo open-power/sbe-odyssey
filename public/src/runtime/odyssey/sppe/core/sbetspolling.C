@@ -40,8 +40,8 @@ uint32_t sbepollTSnDQS(uint32_t &io_tspperiod, uint8_t &io_dqscount)
         // Read the ATTR_ODY_SENSOR_POLLING_PERIOD and
         // ATTR_ODY_DQS_TRACKING_PERIOD.
 
-        ATTR_ODY_SENSOR_POLLING_PERIOD_Type l_tspperiod =
-                     fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_ODY_SENSOR_POLLING_PERIOD;;
+        ATTR_ODY_SENSOR_POLLING_PERIOD_MS_Type l_tspperiod =
+                     fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_ODY_SENSOR_POLLING_PERIOD_MS;
 
         ATTR_ODY_DQS_TRACKING_PERIOD_Type l_dqscount =
                      fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_ODY_DQS_TRACKING_PERIOD;
