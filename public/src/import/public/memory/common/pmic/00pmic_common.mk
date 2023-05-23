@@ -29,10 +29,11 @@ MSS_PMIC_INCLUDES += $(ROOTPATH)/public/memory
 MSS_PMIC_INCLUDES += $(ROOTPATH)/public/memory/common/include
 MSS_PMIC_INCLUDES += $(ROOTPATH)/public/memory/common/pmic
 MSS_PMIC_INCLUDES += $(ROOTPATH)/public/memory/common/pmic/lib
+MSS_PMIC_INCLUDES += $(ROOTPATH)/public/memory/common/pmic/lib/i2c
 MSS_PMIC_INCLUDES += $(ROOTPATH)/public/memory/common/pmic/lib/utils
 MSS_PMIC_INCLUDES += $(ROOTPATH)/public/memory/common/pmic_ddr5
 MSS_PMIC_INCLUDES += $(ROOTPATH)/public/memory/generic/memory/lib/utils
-# MSS_PMIC_INCLUDES += $(ROOTPATH)/chips/ocmb/common/procedures/hwp/pmic_ddr5
+MSS_PMIC_INCLUDES += $(ROOTPATH)/public/memory/common/pmic_ddr5
 
 # For generic attribute accessors
 MSS_PMIC_INCLUDES += $(ROOTPATH)/public/memory/generic/memory/lib
