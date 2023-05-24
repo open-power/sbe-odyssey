@@ -86,7 +86,8 @@ static uint32_t getEffectiveAddress(const uint32_t *i_target, const uint32_t i_a
     const plat_target_sbe_handle* l_targetBase =
             reinterpret_cast<const plat_target_sbe_handle*>(i_target);
     uint8_t targetInstance = 0;
-    uint32_t BITSHIFT = 0;
+    uint8_t ring = 0;
+
     switch(l_targetBase->getTargetType())
     {
         case LOG_SBE_ROOT_CHIP_TYPE:
@@ -95,25 +96,28 @@ static uint32_t getEffectiveAddress(const uint32_t *i_target, const uint32_t i_a
         case LOG_TARGET_TYPE_MEM_PORT:
             // Get the target instance.
             targetInstance = l_targetBase->getTargetInstance();
-            // Check for Indirect scom.
-            if(isIndirectScom) // Left most bit is set for indirect scom address.
+            translatedAddr = i_addr;
+
+            // MEMPORT0_RING_ID = 0x6,
+            // MEMPORT1_RING_ID = 0xA,
+            // MEMPORT0_PHY_RING_ID = 0xC,
+            // MEMPORT1_PHY_RING_ID = 0xD,
+            ring = ((i_addr >> 10) & 0xF);
+            if ((ring == 0x6) || (ring == 0xA))
             {
-                // Base Addr  0x800070550801303F
-                // Trans Addr 0x800070550801303F ---> Mem port 0
-                // Trans Addr 0x800070550801343F ---> Mem port 1
-                BITSHIFT = 10;
-                translatedAddr = i_addr;
+                // clear ring ID
+                translatedAddr &= 0xFFFFC3FF;
+                // OR in translated ring ID
+                translatedAddr |= (((targetInstance == 0)?(0x6):(0xA)) << 10);
             }
-            else
+            else if ((ring == 0xC) || (ring == 0xD))
             {
-                //Base Addr  0x08011810
-                //Trans Addr 0x08011810 ---> Mem port 0
-                //Trans Addr 0x08012810 ---> Mem port 1
-                BITSHIFT = 13;
-                // Set bit 12 to 0.
-                translatedAddr = targetInstance ? (i_addr & 0xFFFFEFFF) : i_addr;
+                // clear ring ID
+                translatedAddr &= 0xFFFFC3FF;
+                // OR in translated ring ID
+                translatedAddr |= (((targetInstance == 0)?(0xC):(0xD)) << 10);
             }
-            translatedAddr = targetInstance ? translatedAddr | ( 1 << BITSHIFT ) : translatedAddr;
+
             break;
         default: //For all the chiplet types
             {
