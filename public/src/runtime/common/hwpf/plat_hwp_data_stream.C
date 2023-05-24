@@ -159,7 +159,7 @@ seeprom_hwp_data_istream::seeprom_hwp_data_istream(const uint32_t *i_data, size_
 
 ReturnCodes seeprom_hwp_data_istream::get(hwp_data_unit& o_data)
 {
-    #define SBE_FUNC "seeprom_hwp_data_ostream::get"
+    #define SBE_FUNC "seeprom_hwp_data_istream::get"
     SBE_ENTER(SBE_FUNC);
     if (iv_words_left == 0)
     {
