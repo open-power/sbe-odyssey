@@ -31,12 +31,15 @@
 
 using namespace fapi2;
 
+#define CHIPLET_NUMBER_MC   8u
+
 sbeSecondaryResponse sbeStopClocksReqMsgHdr_t::validateParams(void)
 {
     sbeSecondaryResponse rc = SBE_SEC_INVALID_TARGET_TYPE_PASSED;
 
     if ((iv_logTargetType == LOG_TARGET_TYPE_OCMB_CHIP) ||
-        (iv_logTargetType == LOG_TARGET_TYPE_MC))
+        (iv_logTargetType == LOG_TARGET_TYPE_PERV &&
+         iv_instanceId == CHIPLET_NUMBER_MC) )
     {
         plat_target_handle_t tgtHndl;
         rc = g_platTarget->getSbePlatTargetHandle(iv_logTargetType, iv_instanceId, tgtHndl);
