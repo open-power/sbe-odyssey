@@ -76,6 +76,36 @@ if ((l_rc) != SBE_SEC_OPERATION_SUCCESSFUL) \
 // align address to next 8 byte boundary
 #define ALIGN_8_BYTES(address) (address+0x7)&(~0x7)
 
+/*
+ * Wrapper class to wrap an array and its size, so you can use range based for loops on it:
+ * for (auto &x : array) { ... }
+ *
+ * NOTE you don't need this if the array declaration is known in the current translation
+ * unit; if so you can use a range based loop directly on the array itself.
+ *
+ * This wrapper is only needed if the size of the array is not known at compile time of the
+ * translation unit using it, e.g. in generic infrastructure code which expects to be
+ * customized using a table of variable size.
+ */
+template<typename T>
+struct ArrayWrapper
+{
+    const T *first;
+    const T *last;
+
+    const T *begin() const { return first; }
+    const T *end() const { return last; }
+};
+
+/*
+ * Helper macro to initialized an array wrapper.
+ *
+ * Example usage:
+ *   static const mytype array_to_wrap[] = { ... };
+ *   const ArrayWrapper<mytype> wrapped_array = WRAP_ARRAY(array_to_wrap);
+ */
+#define WRAP_ARRAY(a) { a, a + ARRAY_SIZE(a) }
+
 extern uint32_t _attrs_start_ __attribute__ ((section (".attr")));
 extern uint32_t _attrs_end_ __attribute__((section(".attr")));
 typedef enum

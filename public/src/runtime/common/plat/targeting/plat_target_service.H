@@ -44,10 +44,8 @@ namespace fapi2
          */
         sbe_target_service()
         {
-            iv_targetTypesCnt = getTargetTypesCount();
         }
 
-        std::vector<fapi2::plat_target_sbe_handle> iv_targets;
         ///
         /// @brief Function to print the G_targets vector
         ///
@@ -64,7 +62,7 @@ namespace fapi2
         /// @brief Fuction to get the target count.
         ///
         /// @return number of target.
-        uint32_t plat_getTargeCount();
+        uint32_t plat_getTargetCount();
 
         ///
         /// @brief Enumerate all targets with a given type regardless of chiplet ID
@@ -212,6 +210,9 @@ namespace fapi2
             uint8_t i_chiplet_num,
             fapi2::plat_target_handle_t &o_tgtHndl);
 
+    protected:
+        std::vector<fapi2::plat_target_sbe_handle> iv_targets;
+
     private:
         ///
         /// @brief Get all pervasive children for a proc.
@@ -222,8 +223,6 @@ namespace fapi2
                              const bool i_include_nonfunctional,
                              std::vector<plat_target_sbe_handle>& o_children,
                              bool i_ignore_filter = false) const;
-
-        uint32_t iv_targetTypesCnt;
     };
 }
 #endif

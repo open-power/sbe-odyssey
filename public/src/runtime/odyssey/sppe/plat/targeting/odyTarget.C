@@ -29,15 +29,14 @@
 
 #include "plat_target_base.H"
 #include "plat_target_sbe.H"
+#include <ody_target_filters.H>
 
 namespace fapi2
 {
     /*
      * Target map for Odyssey.
      */
-     //struct targetInfo odyTargetMap;
-
-    targetInfo_t odyTargetMap[] =
+    static const targetInfo_t ody_platTargetMap[] =
     {
         {0x0, LOG_SBE_ROOT_CHIP_TYPE, 0, 0, 1},
         {0x1, LOG_TARGET_TYPE_PERV, 1, 1, 1},
@@ -50,15 +49,6 @@ namespace fapi2
                                                     // for the TEMP SENSOR target.
     };
 
-    targetInfo_t * getTargetMap()
-    {
-        return odyTargetMap;
-    }
-    uint32_t targetTypesCount = sizeof(odyTargetMap) / sizeof(odyTargetMap[0]);
-
-    uint32_t getTargetTypesCount()
-    {
-        return targetTypesCount;
-    }
-
+    const ArrayWrapper<targetInfo_t> G_projTargetMap = WRAP_ARRAY(ody_platTargetMap);
+    const ArrayWrapper<target_filter_definition> G_projTargetFilters = WRAP_ARRAY(ody::TARGET_FILTERS);
 }

@@ -24,16 +24,13 @@
 /* IBM_PROLOG_END_TAG                                                     */
 #include "plat_target_base.H"
 #include "plat_target_service.H"
-// TODO: Need to remove dependency on odyssey files in common space.
-//       Same fix need in cross_file.txt also.
-#include <ody_target_filters.H>
 #include <fapi2.H>
 
 using namespace fapi2;
 
 void sbe_target_service::plat_PrintTargets()
 {
-    uint32_t targetCnt = plat_getTargeCount();
+    uint32_t targetCnt = plat_getTargetCount();
     for(uint32_t i = 0; i < targetCnt; i++)
     {
         SBE_INFO("sbe_target_service 0x%08X", iv_targets[i].iv_value());
@@ -44,45 +41,39 @@ ReturnCode sbe_target_service::plat_TargetsInit()
 {
     SBE_INFO("sbe_target_service plat_TargetsInit()");
 
-    targetInfo_t * targetMap = getTargetMap();
-    for(uint32_t i = 0; i < iv_targetTypesCnt; i++)
+    for (auto &targetInfo : G_projTargetMap)
     {
-        SBE_DEBUG("target count is 0x%08X", (uint32_t)targetMap[i].targetCnt);
-        for(uint32_t j = 0; j < targetMap[i].targetCnt; j++)
+        SBE_DEBUG("target count is 0x%08X", (uint32_t)targetInfo.targetCnt);
+        for(uint32_t j = 0; j < targetInfo.targetCnt; j++)
         {
             SBE_DEBUG("sbe_target_service target to be inserted is 0x%08X",
-                      plat_target_sbe_handle(targetMap[i].chipletNum + j,
-                                             targetMap[i].targetType,
+                      plat_target_sbe_handle(targetInfo.chipletNum + j,
+                                             targetInfo.targetType,
                                              j));
             uint32_t chipletNum = 0;
-            if(targetMap[i].isChipletType)
+            if(targetInfo.isChipletType)
             {
-                chipletNum = targetMap[i].chipletNum + j;
+                chipletNum = targetInfo.chipletNum + j;
             }
             else
             {
-                chipletNum = targetMap[i].chipletNum;
+                chipletNum = targetInfo.chipletNum;
             }
             iv_targets.push_back(plat_target_sbe_handle(
-                                     chipletNum, targetMap[i].targetType, j));
+                                     chipletNum, targetInfo.targetType, j));
         }
     }
 
-    //Print Odyssey targets.
     plat_PrintTargets();
     return FAPI2_RC_SUCCESS;
 }
 
-uint32_t sbe_target_service::plat_getTargeCount()
+uint32_t sbe_target_service::plat_getTargetCount()
 {
     uint32_t targetCnt = 0;
-    targetInfo_t * targetMap = getTargetMap();
-    for(uint32_t i = 0; i < iv_targetTypesCnt; i++)
+    for (auto &targetInfo : G_projTargetMap)
     {
-        for(uint32_t j = 0; j < targetMap[i].targetCnt; j++)
-        {
-            ++targetCnt;
-        }
+        targetCnt += targetInfo.targetCnt;
     }
     return targetCnt;
 }
@@ -99,13 +90,12 @@ void sbe_target_service::getProcChildren( const LogTargetType i_child_type,
     }
     else
     {
-        targetInfo_t * targetMap = getTargetMap();
         uint32_t targetIndex = 0;
-        for(uint32_t i = 0; i < iv_targetTypesCnt; i++)
+        for (auto &targetInfo : G_projTargetMap)
         {
-            if(targetMap[i].targetType == i_child_type)
+            if(targetInfo.targetType == i_child_type)
             {
-                for(uint32_t j = 0; j < targetMap[i].targetCnt; j++)
+                for(uint32_t j = 0; j < targetInfo.targetCnt; j++)
                 {
                     plat_target_sbe_handle l_target = iv_targets[targetIndex + j];
                     if((i_include_nonfunctional || l_target.getFunctional()) &&
@@ -115,7 +105,7 @@ void sbe_target_service::getProcChildren( const LogTargetType i_child_type,
                     }
                 }
             }
-            targetIndex = targetIndex + targetMap[i].targetCnt;
+            targetIndex = targetIndex + targetInfo.targetCnt;
         }
     }
 }
@@ -125,14 +115,13 @@ void sbe_target_service::getChipletChildren(const LogTargetType i_child_type,
                                             const bool i_include_nonfunctional,
                                             std::vector<plat_target_sbe_handle> &o_children) const
 {
-    targetInfo_t * targetMap = getTargetMap();
     uint32_t targetIndex = 0;
-    for(uint32_t i = 0; i < iv_targetTypesCnt; i++)
+    for (auto &targetInfo : G_projTargetMap)
     {
-        if( (targetMap[i].targetType == i_child_type) &&
-            (targetMap[i].chipletNum == i_parent.getChipletNumber()) )
+        if( (targetInfo.targetType == i_child_type) &&
+            (targetInfo.chipletNum == i_parent.getChipletNumber()) )
         {
-            for(uint32_t j = 0; j < targetMap[i].targetCnt; j++)
+            for(uint32_t j = 0; j < targetInfo.targetCnt; j++)
             {
                 plat_target_sbe_handle l_target = iv_targets[targetIndex + j];
                 {
@@ -140,7 +129,7 @@ void sbe_target_service::getChipletChildren(const LogTargetType i_child_type,
                 }
             }
         }
-        targetIndex = targetIndex + targetMap[i].targetCnt;
+        targetIndex = targetIndex + targetInfo.targetCnt;
     }
 }
 
@@ -173,14 +162,14 @@ void sbe_target_service::loopTargetsByChiplet(const buffer<uint64_t> &i_enabled,
                                               const bool i_include_nonfunctional,
                                               std::vector<plat_target_sbe_handle> &o_children)
 {
-    targetInfo_t * targetMap = getTargetMap();
-    for(uint32_t i = 0; i < iv_targetTypesCnt; i++)
+    int targetIndex = 0;
+    for (auto &targetInfo : G_projTargetMap)
     {
-        if(targetMap[i].isPervType)
+        if(targetInfo.isPervType)
         {
-            for(uint32_t j = 0; j < targetMap[i].targetCnt; j++)
+            for(uint32_t j = 0; j < targetInfo.targetCnt; j++)
             {
-                plat_target_sbe_handle l_target = iv_targets[i + j];
+                plat_target_sbe_handle l_target = iv_targets[targetIndex + j];
                 uint8_t chipletId = l_target.getChipletNumber();
                 if((i_enabled.getBit(chipletId)) &&
                    (i_include_nonfunctional || l_target.getFunctional()))
@@ -189,6 +178,7 @@ void sbe_target_service::loopTargetsByChiplet(const buffer<uint64_t> &i_enabled,
                 }
             }
         }
+        targetIndex += targetInfo.targetCnt;
     }
 }
 
@@ -217,25 +207,23 @@ sbeSecondaryResponse sbe_target_service::getSbePlatTargetHandle( const uint8_t i
     }
     else
     {
-        /* Platform target map pointer */
-        targetInfo_t * targetMap = getTargetMap();
         /* Target index form global plat target */
         uint32_t targetIndex = 0;
 
         /* checking the target types in TARGET MAP */
-        for(uint32_t targetNo = 0; targetNo < iv_targetTypesCnt; targetNo++)
+        for (auto &targetInfo : G_projTargetMap)
         {
-            SBE_DEBUG("target count is 0x%08X", (uint32_t)targetMap[targetNo].targetCnt);
+            SBE_DEBUG("target count is 0x%08X", (uint32_t)targetInfo.targetCnt);
 
             /* target not matched goto next target */
-            if(targetMap[targetNo].targetType != i_logTargetType)
+            if(targetInfo.targetType != i_logTargetType)
             {
                 /* targetIndex depends on target count of target map */
-                targetIndex = targetIndex + targetMap[targetNo].targetCnt;
+                targetIndex = targetIndex + targetInfo.targetCnt;
                 continue;
             }
 
-            if (i_instanceId < targetMap[targetNo].targetCnt)
+            if (i_instanceId < targetInfo.targetCnt)
             {
                 /* get target handle from TARGET MAP */
                 o_tgtHndl = iv_targets[targetIndex + i_instanceId];
@@ -264,20 +252,18 @@ sbeSecondaryResponse sbe_target_service::getPervTargetByChipletId(
     // Secondary RC
     sbeSecondaryResponse l_rc = SBE_SEC_CHIPLET_ID_NOT_PRESENT_IN_SBE;
 
-    /* Platform target map pointer */
-    targetInfo_t * targetMap = getTargetMap();
     /* Target index form global plat target */
     uint32_t targetIndex = 0;
 
     /* checking the target types in TARGET MAP */
-    for(uint32_t targetNo = 0; targetNo < iv_targetTypesCnt; targetNo++)
+    for (auto &targetInfo : G_projTargetMap)
     {
-        SBE_DEBUG("target count is 0x%08X", (uint32_t)targetMap[targetNo].targetCnt);
+        SBE_DEBUG("target count is 0x%08X", (uint32_t)targetInfo.targetCnt);
 
         /* target is not pervasive type goto next target */
-        if(targetMap[targetNo].isPervType != 0)
+        if(targetInfo.isPervType != 0)
         {
-            for(uint8_t inst = 0; inst < targetMap[targetNo].targetCnt; inst++)
+            for(uint8_t inst = 0; inst < targetInfo.targetCnt; inst++)
             {
                 if(iv_targets[targetIndex + inst].getChipletNumber() == i_chiplet_num)
                 {
@@ -293,7 +279,7 @@ sbeSecondaryResponse sbe_target_service::getPervTargetByChipletId(
             break;
         }
         /* targetIndex depends on target count of target map */
-        targetIndex = targetIndex + targetMap[targetNo].targetCnt;
+        targetIndex = targetIndex + targetInfo.targetCnt;
     }
 
     SBE_EXIT(SBE_FUNC);
@@ -310,7 +296,7 @@ void sbe_target_service::getPervChildren(const TargetFilter i_filter,
     const fapi2::buffer<__underlying_type(TargetFilter)> l_filter = i_filter;
 
     uint64_t l_chiplet_mask = 0;
-    for (auto def : ody::TARGET_FILTERS)
+    for (auto &def :  G_projTargetFilters)
     {
         if (l_filter & def.filter)
         {
@@ -319,14 +305,14 @@ void sbe_target_service::getPervChildren(const TargetFilter i_filter,
     }
 
     const fapi2::buffer<__underlying_type(TargetFilter)> filter = l_chiplet_mask;
-    targetInfo_t * targetMap = getTargetMap();
-    for(uint32_t i = 0; i < iv_targetTypesCnt; i++)
+    int targetIndex = 0;
+    for (auto &targetInfo : G_projTargetMap)
     {
-        if(targetMap[i].isPervType)
+        if(targetInfo.isPervType)
         {
-            for(uint32_t j = 0; j < targetMap[i].targetCnt; j++)
+            for(uint32_t j = 0; j < targetInfo.targetCnt; j++)
             {
-                plat_target_sbe_handle l_target = iv_targets[i + j];
+                plat_target_sbe_handle l_target = iv_targets[targetIndex + j];
                 uint8_t chipletId = l_target.getChipletNumber();
                 if((i_ignore_filter || filter.getBit(chipletId)) &&
                    (i_include_nonfunctional || l_target.getFunctional()))
@@ -335,5 +321,7 @@ void sbe_target_service::getPervChildren(const TargetFilter i_filter,
                 }
             }
         }
+        targetIndex += targetInfo.targetCnt;
     }
+
 }
