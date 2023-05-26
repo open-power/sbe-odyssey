@@ -52,6 +52,8 @@ RING_ID(mma_initf);
 RING_ID(chiplet_pll);
 RING_ID(chiplet_rtg);
 RING_ID(chiplet_initf);
+RING_ID(cced_override);
+RING_ID(cced_saverestore);
 RING_ID(abus_pll_XX);
 RING_ID(xbus_pll_XX);
 RING_ID(pcie_pll_XX);
