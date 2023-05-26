@@ -39,7 +39,8 @@ common_error_xml_files = [
                           'poz_fastarray_errors.xml',
                           'poz_scan_compare_errors.xml',
                           'poz_scan_via_scom_errors.xml',
-                          'poz_sbe_i2c_errors.xml'
+                          'poz_sbe_i2c_errors.xml',
+			  'poz_efuse_errors.xml',
                         ]
 
 #Create abs path for input xml files

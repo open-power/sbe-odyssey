@@ -47,7 +47,15 @@ generic_infile_c = [
                     'poz_fastarray.C',
                     'poz_scan_compare.C',
                     'poz_ppe_load.C',
-                    'poz_nest_enable_io.C'
+                    'poz_nest_enable_io.C',
+                    'poz_efuse_program.C',
+                    'poz_efuse_check.C',
+                   ]
+
+import_libs_dir_path = pub_import_dir_path + 'common/libs/crypto/'
+
+libs_infile_c = [
+                    'ibmecc.C',
                    ]
 
 #Create abs path for input files before creating .o
@@ -57,6 +65,13 @@ foreach generic_infile : generic_infile_c
 
 abs_generic_infile_c_path = import_generic_dir_path + generic_infile
 ekb_generic_hwp_c_path += abs_generic_infile_c_path
+
+endforeach
+
+foreach libs_infile : libs_infile_c
+
+abs_libs_infile_c_path = import_libs_dir_path + libs_infile
+ekb_generic_hwp_c_path += abs_libs_infile_c_path
 
 endforeach
 
