@@ -30,6 +30,7 @@
 #include <stdint.h>
 #include <target_types.H>
 #include <target_states.H>
+#include <target_filters.H>
 #include <assert.h>
 #include <vector>
 #include <buffer.H>
@@ -48,11 +49,11 @@ namespace fapi2
         uint32_t targetCnt:16;
     }targetInfo_t;
 
-    targetInfo_t * getTargetMap();
-    uint32_t getTargetTypesCount();
+    extern const ArrayWrapper<targetInfo_t> G_projTargetMap;
+    extern const ArrayWrapper<target_filter_definition> G_projTargetFilters;
 
     // LOG target type to FAPI target type
-    #define GET_FAPI_TARGET_TYPE(log_target)    (1ull << log_target)
+    #define GET_FAPI_TARGET_TYPE(log_target)    static_cast<fapi2::TargetType>(1ull << log_target)
 
     /*
      * The plat_target_base_handle bit layout is designed so that when the bits
@@ -68,7 +69,8 @@ namespace fapi2
      *   Type                           : 06 Bits => PPE target type         [ bit08 – bit13 ]
      *   Present                        : 01 Bit  => Target present or not   [ bit14 ]
      *   Functional                     : 01 Bit  => Target functional state [ bit15 ]
-     *   Reserve                        : 16 Bits => Free Bits               [ bit16 – bit31 ]
+     *   Instance number                : 08 Bits => Target instance number  [ bit16 - bit23 ]
+     *   Reserve                        : 08 Bits => Free Bits               [ bit24 – bit31 ]
      */
     class plat_target_base_handle {
 
@@ -97,10 +99,10 @@ namespace fapi2
                                      bool i_present = true,
                                      bool i_functional = true )
             {
-                iv_value.insertFromRight(i_chipletNum, 0, 8);
-                iv_value.insertFromRight(i_type, 8, 6);
-                iv_value.writeBit<14>(i_present);
-                iv_value.writeBit<15>(i_functional);
+                setChipletNumber(i_chipletNum);
+                setTargetType(i_type);
+                setPresent(i_present);
+                setFunctional(i_functional);
             }
 
             ///
@@ -109,7 +111,7 @@ namespace fapi2
             ///
             uint8_t getChipletNumber() const
             {
-                return static_cast<uint8_t>(iv_value.getBits<0,8>());
+                return static_cast<uint8_t>(iv_value.getBits<0, 8>());
             }
 
             ///
@@ -118,16 +120,7 @@ namespace fapi2
             ///
             bool getIsMulticast() const
             {
-                return static_cast<bool>(iv_value.getBits<1>());
-            }
-
-            ///
-            /// @brief Set the is_multicast for this target
-            /// @param[in] i_is_multicast present state to set
-            ///
-            void setIsMulticast(const bool i_is_multicast)
-            {
-                iv_value.writeBit<1>(i_is_multicast);
+                return static_cast<bool>(iv_value.getBit<1>());
             }
 
             ///
@@ -136,7 +129,7 @@ namespace fapi2
             ///
             bool getMcastType() const
             {
-                return static_cast<uint8_t>(iv_value.getBits<2,3>());
+                return static_cast<uint8_t>(iv_value.getBits<2, 3>());
             }
 
             ///
@@ -145,7 +138,7 @@ namespace fapi2
             ///
             void setMcastType(uint8_t i_mcast_type)
             {
-                iv_value.insertFromRight(i_mcast_type, 2, 3);
+                iv_value.insertFromRight<2, 3>(i_mcast_type);
             }
 
             ///
@@ -154,7 +147,7 @@ namespace fapi2
             ///
             bool getMcastGroup() const
             {
-                return static_cast<uint8_t>(iv_value.getBits<5,3>());
+                return static_cast<uint8_t>(iv_value.getBits<5, 3>());
             }
 
             ///
@@ -163,17 +156,7 @@ namespace fapi2
             ///
             void setMcastGroup(uint8_t i_mcast_group)
             {
-                iv_value.insertFromRight(i_mcast_group, 5, 3);
-            }
-
-            ///
-            /// @brief Get the plat target type
-            /// @param[in] i_value for target number to set
-            ///
-            void setChipletNumber(const uint8_t i_value)
-            {
-                iv_value.insertFromRight(i_value, 0, 8);
-                return;
+                iv_value.insertFromRight<5, 3>(i_mcast_group);
             }
 
             ///
@@ -182,16 +165,7 @@ namespace fapi2
             ///
             uint8_t getTargetInstance() const
             {
-                return static_cast<uint8_t>(iv_value.getBits<16,8>());
-            }
-
-            ///
-            /// @brief Set the target instance number.
-            /// @param[in] i_value target instance number
-            ///
-            void setTargetInstance(const uint8_t i_value)
-            {
-                iv_value.insertFromRight(i_value, 16, 8);
+                return static_cast<uint8_t>(iv_value.getBits<16, 8>());
             }
 
             ///
@@ -200,16 +174,7 @@ namespace fapi2
             ///
             LogTargetType getTargetType() const
             {
-                return static_cast<LogTargetType>(iv_value.getBits<8,6>());
-            }
-
-            ///
-            /// @brief Set the plat target type
-            /// @return @param[in] i_value for target number to set
-            ///
-            void setTargetType(uint8_t i_value)
-            {
-                iv_value.insertFromRight(i_value, 8, 6);
+                return static_cast<LogTargetType>(iv_value.getBits<8, 6>());
             }
 
             ///
@@ -254,25 +219,7 @@ namespace fapi2
             ///
             TargetType getFapiTargetType() const
             {
-                TargetType l_targetType = TARGET_TYPE_NONE;
-
-                switch(getTargetType())
-                {
-                    case LOG_TARGET_TYPE_OCMB_CHIP:
-                    case LOG_TARGET_TYPE_PERV:
-                    case LOG_TARGET_TYPE_SYSTEM:
-                    case LOG_TARGET_TYPE_MEM_PORT:
-                    case LOG_TARGET_TYPE_DIMM:
-                    case LOG_TARGET_TYPE_TEMP_SENSOR:
-                        l_targetType = (TargetType) GET_FAPI_TARGET_TYPE(getTargetType());
-                        break;
-                    default:
-                        SBE_ERROR("getFapiTargetType() called for getTargetType 0x%X", getTargetType());
-                        assert(false);
-                        break;
-                }
-
-                return l_targetType;
+                return GET_FAPI_TARGET_TYPE(getTargetType());
             }
 
             ///
@@ -290,6 +237,43 @@ namespace fapi2
             ///
             operator uint32_t() const {return iv_value();}
 
+            // TODO: Find ways to make these setters protected
+
+            ///
+            /// @brief Set the is_multicast for this target
+            /// @param[in] i_is_multicast present state to set
+            ///
+            void setIsMulticast(const bool i_is_multicast)
+            {
+                iv_value.writeBit<1>(i_is_multicast);
+            }
+
+            ///
+            /// @brief Set the plat target type
+            /// @return @param[in] i_value for target number to set
+            ///
+            void setTargetType(uint8_t i_value)
+            {
+                iv_value.insertFromRight<8, 6>(i_value);
+            }
+
+            ///
+            /// @brief Set the target instance number.
+            /// @param[in] i_value target instance number
+            ///
+            void setTargetInstance(const uint8_t i_value)
+            {
+                iv_value.insertFromRight<16, 8>(i_value);
+            }
+    protected:
+            ///
+            /// @brief Set the chiplet number
+            /// @param[in] i_value chiplet number to set
+            ///
+            void setChipletNumber(const uint8_t i_value)
+            {
+                iv_value.insertFromRight<0, 8>(i_value);
+            }
     };
 };
 
