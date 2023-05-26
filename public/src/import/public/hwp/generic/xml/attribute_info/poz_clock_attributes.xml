@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022                             -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -53,7 +53,7 @@
 </attribute>
 <!-- ************************************************************************-->
 <attribute>
-  <id>ATTR_CLOCK_RCS_OUTPUT_MUX20</id>
+  <id>ATTR_CLOCK_RCS_OUTPUT</id>
   <targetType>TARGET_TYPE_HUB_CHIP, TARGET_TYPE_PROC_CHIP</targetType>
   <description>
    Select RCS output to be forwarded to filter PLLs

@@ -147,10 +147,18 @@ def pz_setup_ref_clock(target<PROC_CHIP | HUB_CHIP>):
     ROOT_CTRL5.TPFSI_RCS_BYPASS_DC = 1
     ROOT_CTRL5.TPFSI_RCS_FORCE_CLKSEL_DC = 1 if ATTR_CP_REFCLOCK_SELECT is *OSC1* else 0
     ROOT_CTRL5.TPFSI_RCS_CLK_TEST_IN_DC = 0
-    ROOT_CTRL5.EN_REFCLK = ATTR_CLOCK_RCS_OUTPUT_MUX20 == SYNC
-    ROOT_CTRL5.EN_ASYNC_OUT = ATTR_CLOCK_RCS_OUTPUT_MUX20 == ASYNC
+    ROOT_CTRL5.EN_REFCLK = ATTR_CLOCK_RCS_OUTPUT == SYNC
+    ROOT_CTRL5.EN_ASYNC_OUT = ATTR_CLOCK_RCS_OUTPUT == ASYNC
 
     ROOT_CTRL5_COPY = ROOT_CTRL5      # Update copy register to match
+
+    ## Unprotect inputs to RCS sense register
+    ROOT_CTRL0.CFAM_PROTECTION_0 = 0
+    ROOT_CTRL0_COPY.CFAM_PROTECTION_0 = 0
+
+def p11s_setup_ref_clock():
+
+    pz_setup_ref_clock()
 
     ## Set up refclock receiver termination
     ROOT_CTRL6 = 0
@@ -158,13 +166,6 @@ def pz_setup_ref_clock(target<PROC_CHIP | HUB_CHIP>):
     ROOT_CTRL6.TP_AN_SYS1_RX_REFCLK_TERM = ATTR_SYS1_REFCLOCK_RCVR_TERM
 
     ROOT_CTRL6_COPY = ROOT_CTRL6      # Update copy register to match
-
-    ## Unprotect inputs to RCS sense register
-    ROOT_CTRL0.CFAM_PROTECTION_0 = 0
-    ROOT_CTRL0_COPY.CFAM_PROTECTION_0 = 0
-
-def p11s_setup_ref_clock():
-    pz_setup_ref_clock()
 
     ## Set up refclock transmitter termination
     ROOT_CTRL7 = 0
@@ -203,21 +204,11 @@ def p11s_setup_ref_clock():
     ROOT_CTRL4_COPY = ROOT_CTRL4      # Update copy register to match
 
 def zme_setup_ref_clock():
+
+    ROOT_CTRL4[0] = ATTR_CLOCK_RCS_OUTPUT == BYPASS
+    ROOT_CTRL4_COPY[0] = ROOT_CTRL4
+
     pz_setup_ref_clock()
-
-    ## Set up refclock transmitter termination
-    ROOT_CTRL7 = 0
-    # TBD
-
-    ROOT_CTRL7_COPY = ROOT_CTRL7      # Update copy register to match
-
-    ## Set up clock muxing, application dependent
-    ROOT_CTRL4 = 0
-    # TODO:  Set up zMe refclock muxing
-    ROOT_CTRL4.NEST_GLM_ASYNC_RESET = 0
-    ROOT_CTRL4.NEST_DIV2_ASYNC_RESET = 0
-
-    ROOT_CTRL4_COPY = ROOT_CTRL4      # Update copy register to match
 
 ISTEP(0, 9, "clock_test", "BMC")
 
@@ -733,7 +724,7 @@ def zme_tp_init():
         pre_divider = 0x15
     else:
         pre_divider = 0x16
-    
+
     mod_hangpulse_setup(MCGROUP_GOOD, pre_divider, {{0, 16, 0}, {1, 1, 0}, {2, 1, 0}, {3, 1, 0}, {4, 1, 0}, {5, 28, 0}, {6, 5, 0, 1}})
     mod_hangpulse_setup(MCGROUP_GOOD_EX, pre_divider, {{1, 3, 0, 1}})
 
