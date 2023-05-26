@@ -52,30 +52,31 @@ ReturnCode pz_setup_ref_clock(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE
     ROOT_CTRL0_COPY_t ROOT_CTRL0_COPY;
     ROOT_CTRL5_t ROOT_CTRL5;
     ROOT_CTRL5_COPY_t ROOT_CTRL5_COPY;
-    ROOT_CTRL6_t ROOT_CTRL6;
-    ROOT_CTRL6_COPY_t ROOT_CTRL6_COPY;
-    fapi2::ATTR_CLOCK_RCS_OUTPUT_MUX20_Type l_clock_rcs_output_mux20;
+    fapi2::ATTR_CLOCK_RCS_OUTPUT_Type l_clock_rcs_output;
     fapi2::Target<fapi2::TARGET_TYPE_SYSTEM> FAPI_SYSTEM;
-    uint8_t l_sys0_term, l_sys1_term, l_pci0_term, l_pci1_term, l_cp_refclock_select;
+    uint8_t l_cp_refclock_select;
 
     FAPI_INF("Entering ...");
 
-    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_SYS0_REFCLOCK_RCVR_TERM, FAPI_SYSTEM, l_sys0_term),
-             "Error from FAPI_ATTR_GET (ATTR_SYS0_REFCLOCK_RCVR_TERM)");
-    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_SYS1_REFCLOCK_RCVR_TERM, FAPI_SYSTEM, l_sys1_term),
-             "Error from FAPI_ATTR_GET (ATTR_SYS1_REFCLOCK_RCVR_TERM)");
-    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_PCI0_REFCLOCK_RCVR_TERM, FAPI_SYSTEM, l_pci0_term),
-             "Error from FAPI_ATTR_GET (ATTR_PCI0_REFCLOCK_RCVR_TERM)");
-    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_PCI1_REFCLOCK_RCVR_TERM, FAPI_SYSTEM, l_pci1_term),
-             "Error from FAPI_ATTR_GET (ATTR_PCI1_REFCLOCK_RCVR_TERM)");
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CP_REFCLOCK_SELECT, i_target, l_cp_refclock_select),
              "Error from FAPI_ATTR_GET (ATTR_CP_REFCLOCK_SELECT)");
-    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CLOCK_RCS_OUTPUT_MUX20, i_target, l_clock_rcs_output_mux20),
-             "Error from FAPI_ATTR_GET (ATTR_CLOCK_PLL_MUX20)");
+    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CLOCK_RCS_OUTPUT, i_target, l_clock_rcs_output),
+             "Error from FAPI_ATTR_GET (ATTR_CLOCK_PLL)");
 
     FAPI_INF("Disable Write Protection for Root/Perv Control registers");
     GPWRP = CONTROL_WRITE_PROTECT_DISABLE;
     FAPI_TRY(GPWRP.putCfam(i_target));
+
+
+    if (l_clock_rcs_output == fapi2::ENUM_ATTR_CLOCK_RCS_OUTPUT_SYNC)
+    {
+        FAPI_INF("RCS sync mode");
+    }
+    else if (l_clock_rcs_output == fapi2::ENUM_ATTR_CLOCK_RCS_OUTPUT_ASYNC)
+    {
+        FAPI_INF("RCS async mode");
+    }
+    else {}
 
     FAPI_INF("Set RCS control signals to CFAM reset values, apply basic configuration for output clock enables and forced input clock.");
     ROOT_CTRL5 = 0;
@@ -90,21 +91,12 @@ ReturnCode pz_setup_ref_clock(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE
     }
 
     ROOT_CTRL5.set_RCS_CLK_TEST_IN(0);
-    ROOT_CTRL5.set_EN_REFCLK(l_clock_rcs_output_mux20 == fapi2::ENUM_ATTR_CLOCK_RCS_OUTPUT_MUX20_SYNC);
-    ROOT_CTRL5.set_EN_ASYNC_OUT(l_clock_rcs_output_mux20 == fapi2::ENUM_ATTR_CLOCK_RCS_OUTPUT_MUX20_ASYNC);
+    ROOT_CTRL5.set_EN_REFCLK(l_clock_rcs_output == fapi2::ENUM_ATTR_CLOCK_RCS_OUTPUT_SYNC);
+    ROOT_CTRL5.set_EN_ASYNC_OUT(l_clock_rcs_output == fapi2::ENUM_ATTR_CLOCK_RCS_OUTPUT_ASYNC);
     FAPI_TRY(ROOT_CTRL5.putCfam(i_target));
 
     ROOT_CTRL5_COPY = ROOT_CTRL5;
     FAPI_TRY(ROOT_CTRL5_COPY.putCfam(i_target));
-
-    FAPI_INF("Set up refclock receiver termination");
-    ROOT_CTRL6 = 0;
-    ROOT_CTRL6.set_TC_AN_CLKTOP_SYS0_RX_REFCLK_TERM(l_sys0_term);
-    ROOT_CTRL6.set_TC_AN_CLKTOP_SYS1_RX_REFCLK_TERM(l_sys1_term);
-    FAPI_TRY(ROOT_CTRL6.putCfam(i_target));
-
-    ROOT_CTRL6_COPY = ROOT_CTRL6;
-    FAPI_TRY(ROOT_CTRL6_COPY.putCfam(i_target));
 
     FAPI_INF("Unprotect inputs to RCS sense register");
     FAPI_TRY(ROOT_CTRL0.getCfam(i_target));
