@@ -23,155 +23,48 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
+
+#standard library imports
 import hashlib
 from collections import namedtuple
 import struct
 from attrdb import *
 import copy
-from typing import NamedTuple
+from collections import namedtuple
+import pickle
 
-class ArgumentError(Exception):
-    def __init__(self, message="Argument Exception occured"):
-        self.message = "Argument Error :\n"+message
-        super().__init__(self.message)
+#attrtool library imports
+from attrdb import *
+import attrdatatype
 
-class DumpRecord(NamedTuple):
-    name:str
-    targ:str
-    value:str
-
-class _AttrIntValueType(object):
-    def __init__(self, typestr:str):
-        self._type = typestr
-        self.size = struct.calcsize(typestr)
-
-    def get(self, image:bytearray, offset:int) -> int:
-        return struct.unpack_from(self._type, image, offset)[0]
-
-    def valuestr(self, image:bytearray, offset:int) -> str:
-        return "0x%x" % struct.unpack_from(self._type, image, offset)[0]
-
-    def dump_record_row(self,
-                        image:bytearray, offset:int,
-                        partial_row:DumpRecord) -> 'list[DumpRecord]':
-
-        value = "0x%x" % self.get(image, offset)
-        return [DumpRecord(partial_row.name, partial_row.targ, value)]
-
-    def set(self, image:bytearray, offset:int, value:list):
-        if (len(value) != 1):
-            raise ValueError("Invalid array attribute value - expected len=1, but len=%d" % (len(value)))
-        struct.pack_into(self._type, image, offset, value[0])
-
-    def set_element(self, image:bytearray, offset:int, value:int):
-        struct.pack_into(self._type, image, offset, value)
-
-class _EnumValueType(object):
-    def __init__(self, base_type:_AttrIntValueType, enum_values:dict):
-        self._base = base_type
-        self._values = enum_values
-        self._inverse = {v: k for k, v in enum_values.items()}
-        self.size = base_type.size
-
-    def get(self, image:bytearray, offset:int):
-        value = self._base.get(image, offset)
-        try:
-            return self._inverse[value]
-        except KeyError:
-            return value
-
-    def dump_record_row(self,
-                        image:bytearray, offset:int,
-                        partial_row:DumpRecord) -> 'list[DumpRecord]':
-
-        value = str(self.get(image, offset)) + \
-                "("+str(self._base.get(image, offset))+")"
-        return [DumpRecord(partial_row.name, partial_row.targ, value)]
-
-    def set(self, image:bytearray, offset:int, value:list):
-        if isinstance(value, str):
-            self._base.set_element(image, offset, self._values[value[0]])
-        else:
-            self._base.set_element(image, offset, value[0])
-
-    def set_element(self, image:bytearray, offset:int, value:'int|str'):
-        if isinstance(value, str):
-            if value in self._values:
-                self._base.set_element(image, offset, self._values[value])
-            else:
-                raise ArgumentError('Value is not an enum')
-        else:
-            if value in self._values.values():
-                self._base.set_element(image, offset, value)
-            else:
-                raise ArgumentError('Integer value passed does not map to any\
- enum')
-
-class _ArrayValueType(object):
-    def __init__(self, base_type:_AttrIntValueType, dim:int, is_targ_dim:bool = False):
-        self._base = base_type
-        self._dim = dim
-        self.size = base_type.size * dim
-        self._is_targ_dim = is_targ_dim
-
-    def get(self, image:bytearray, offset:int) -> list:
-        return [self._base.get(image, offset + self._base.size * i) for i in \
-                range(self._dim)]
-
-    def dump_record_row(self,
-                        image:bytearray, offset:int,
-                        partial_row:DumpRecord) -> 'list[DumpRecord]':
-
-        ret_list:list[DumpRecord] = []
-        for i in range(self._dim):
-            if(self._is_targ_dim):
-                targ_append = "[" + str(i) + "]"
-                name_append = ""
-            else:
-                name_append = "[" + str(i) + "]"
-                targ_append = ""
-
-            new_partial_row = DumpRecord(
-                partial_row.name + name_append, partial_row.targ + targ_append, '')
-
-            ret_list += self._base.dump_record_row(image,
-                                    offset + self._base.size * i,
-                                    new_partial_row)
-
-        return ret_list
-
-    def set_element(self, image:bytearray, offset:int, value:int):
-        self._base.set_element(image, offset, value)
-
-    def set_element_by_index(
-        self, image:bytearray, base_offset:int, value:int, index:list, cur_dim:int=0):
-
-        if(len(index) == 0):
-            raise ArgumentError("Expected index")
-        if(index[0] >= self._dim):
-            vprint("index (%d) at dimension %d, is out of range (%d)"
-                    %(index[0], cur_dim, self._dim))
-            raise ArgumentError("Index(%d) out of range(%d)" % (index[0],self._dim))
-        base_offset = base_offset + index[0] * self._base.size
-        if(isinstance(self._base, _ArrayValueType)):
-            return self._base.set_element_by_index(
-                image, base_offset, value, index[1:], cur_dim + 1)
-        else:
-            # this the 0th dimension
-            assert (len(index) == 1), "more dimension than expected"
-            return self.set_element(image, base_offset, value)
-
-    def set(self, image:bytearray, offset:int, value:list):
-        if (len(value) % self._dim != 0):
-            raise ValueError(
-                "Invalid array attribute value - array dim %d, value dim %d" %
-                (self._dim, len(value)))
-
-        sub_list_len = int(len(value) / self._dim)
-        for i in range(self._dim):
-            sub_list = [value[j] for j in range(i * sub_list_len, (i + 1) * sub_list_len)]
-            self._base.set(image, offset + self._base.size * i, sub_list)
-
+###############################################################
+# attrtool helper classess
+#
+# The attribute tank represents storage of SBE attributes
+# in the PPE image and also in the PIBMEM. The classes in this
+# file helps to set compile time values for the attribute. After
+# parsing and validating attributes in attribute definition XML
+# files, only those attributes listed in the SBE XML files are
+# stored in the attribute tank.
+#
+# The python classes:
+#   RealAttrFieldInfo    -   represents an attribute requiring
+#                            memory in the attribute tank
+#   EcAttrFieldInfo      -   does not occupy memory in the
+#                            attribute tank. These are read only
+#                            attributes
+#   VirtualAttrFieldInfo -   SBE attributes with keyword virtual
+#                            in the SBE XML. These attributes
+#                            are also not stored in the attribute
+#                            tank
+#   AttributeStructure   -   represents a collection of SBE
+#                            supported attributes.
+#   SymbolTable          -   PPE image symbol files are parsed
+#                            and stored in this class. This class
+#                            provides the offset of the SBE
+#                            attributes from the base of the
+#                            attribute tank
+###############################################################
 
 class AttrFieldInfo(object):
     has_storage = False
@@ -229,17 +122,8 @@ class AttrFieldInfo(object):
 
 
 class RealAttrFieldInfo(AttrFieldInfo):
+
     has_storage = True
-    _VALUE_TYPES = {
-        "int8":   _AttrIntValueType(">b"),
-        "uint8":  _AttrIntValueType(">B"),
-        "int16":  _AttrIntValueType(">h"),
-        "uint16": _AttrIntValueType(">H"),
-        "int32":  _AttrIntValueType(">i"),
-        "uint32": _AttrIntValueType(">I"),
-        "int64":  _AttrIntValueType(">q"),
-        "uint64": _AttrIntValueType(">Q"),
-    }
 
     def __init__(self,
                  name: str,
@@ -262,17 +146,17 @@ class RealAttrFieldInfo(AttrFieldInfo):
         self.sbe_address = 0
         self.num_targ_inst = AttributeDB.TARGET_TYPES[sbe_target_type].ntargets
         try:
-            self._type = self._VALUE_TYPES[value_type.lower()]
+            self._type = attrdatatype.VALUE_TYPES[value_type.lower()]
         except KeyError:
             raise ParseError("Attribute %s: Unknown value type '%s'" % (self.name, self.value_type))
 
         if self.enum_values is not None:
-            self._type = _EnumValueType(self._type, self.enum_values)
+            self._type = attrdatatype.EnumValueType(self._type, self.enum_values)
 
         for dim in reversed(self.array_dims):
-            self._type = _ArrayValueType(self._type, dim)
+            self._type = attrdatatype.ArrayValueType(self._type, dim)
         if(self.num_targ_inst > 1):
-            self._type = _ArrayValueType(self._type, self.num_targ_inst, True)
+            self._type = attrdatatype.ArrayValueType(self._type, self.num_targ_inst, True)
         self.tot_size = self._type.size
 
     def set(self, image, image_base, value:list):
@@ -313,7 +197,7 @@ class RealAttrFieldInfo(AttrFieldInfo):
         if(self.num_targ_inst > 1):
             index.insert(0, instance)
         try:
-            if isinstance(self._type, _ArrayValueType):
+            if isinstance(self._type, attrdatatype.ArrayValueType):
                 self._type.set_element_by_index(image, offset, value, index)
             else:
                 self._type.set_element(image, offset, value)
@@ -331,7 +215,7 @@ class RealAttrFieldInfo(AttrFieldInfo):
         return self.value_type + "".join("[%d]" % dim for dim in self.array_dims)
 
     def createDumpRecord(self, attr_list, image, image_base):
-        partial_row = DumpRecord(self.name, self.sbe_targ_type, '')
+        partial_row = attrdatatype.DumpRecord(self.name, self.sbe_targ_type, '')
         dump_record_list = self._type.dump_record_row(
                                     image,
                                     self.sbe_address - image_base,

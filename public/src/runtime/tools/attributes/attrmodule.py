@@ -22,6 +22,8 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
+
+#attrtool library imports
 from attrdb import *
 from attrtank import *
 from attrtoolutils import *

@@ -37,9 +37,9 @@ endif
 ODYSSEY_ATTR_DB_FILE_PATH = odyssey_sppe_genfiles_dir_path + '/sbe_attr.db'
 
 run_cmd_result = run_command(attrTool, 'parse', EKB_CMN_ATTR_XMLS, EKB_ODY_ATTR_XMLS,
-    '-fx', SBE_CMN_ATTR_FILTER_XML, SBE_ODY_ATTR_FILTER_XML,
-    '-db', ODYSSEY_ATTR_DB_FILE_PATH,
-    '-tl', ODYSSEY_TARGET_LIST_JSON,
+    '-s', SBE_CMN_ATTR_FILTER_XML, SBE_ODY_ATTR_FILTER_XML,
+    '-d', ODYSSEY_ATTR_DB_FILE_PATH,
+    '-t', ODYSSEY_TARGET_LIST_JSON,
     # we can keep -v options to get the backtrace if it failed.
     #'-v'
     )

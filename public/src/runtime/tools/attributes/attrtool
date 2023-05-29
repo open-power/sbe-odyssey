@@ -1,14 +1,39 @@
 #!/usr/bin/env python3
+
+#standard library imports
+
+from argparse import ArgumentParser, ArgumentError
+import sys, os
+import pickle
+import re
+
+#attrtool library imports
+
 from attrdb import *
 from attrtank import *
 from attrtoolutils import *
-from argparse import ArgumentParser
-from contextlib import suppress
-from tabulate import tabulate
-import pickle, jinja2, sys, os
 import attrmodule
-import re
 
+#special library imports :
+#For SBE usage,
+#   - the required speical libraries are listed in a file and then installed in the user's local
+#For ekb HWP generation,
+#   - the reqired special libraries are installed in a virtual environment
+
+import jinja2
+
+###############################################################
+# attrtool main
+#
+# SBE tool to parse attribute definition XML files and generating
+# source code for accessing attributes in the attribute tank. This
+# tool also provides an option to view and set the value of attributes
+# at build time and also during the runtime. Since this tool has all
+# information related to attributes, this tool has been extended to
+# generate the hardware procedure required for attribute update and
+# attribute list.
+#
+###############################################################
 def cmd_parse(args):
     db = AttributeDB(args.targetlist)
     for xml in args.attr_xml:
@@ -102,13 +127,18 @@ def cmd_getattr(args):
     dbfile = pickle.loads(utilOpen(args.dbfile))
     image = bytearray(utilOpen(args.image))
     try:
-        attribute = attrmodule.get_attr(dbfile, args.attr, args.target, image, args.raw)
+        attribute = attrmodule.get_attr(dbfile, args.attr, image)
         print(attribute)
     except Exception as e:
         print(e)
         sys.exit(1)
 
 def cmd_dumpattr(args):
+    #Use the packages only if it is required. This way, for generating
+    #HWP for attribute override, there is no need to install all the
+    #packages
+    from tabulate import tabulate
+
     dbfile = pickle.load(open(args.dbfile, "rb"))
     image = open(args.image, "rb").read()
     try:
@@ -118,6 +148,33 @@ def cmd_dumpattr(args):
     except Exception as e:
         print(e)
         sys.exit(1)
+
+def cmd_genhwp(args):
+    db = AttributeDB(args.targetlist, args.chiptype)
+    for xml in args.attr_xml:
+        vprint("Parsing attribute definitions from " + xml)
+        db.load_xml(xml, True)
+    db.tabulateSyncAttributes()
+
+    env = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(sys.argv[0]), "templates")),
+        trim_blocks=True,
+        lstrip_blocks=True,
+        undefined=jinja2.StrictUndefined
+    )
+    env.globals = {
+        "toolname": "attrtool",
+        "attr_data": db
+    }
+
+    def generate(fname):
+        with open(os.path.join(args.outdir, fname), "w") as f:
+            # templates named .t to prevent them from being code-formatted
+            f.write(env.get_template(fname + ".t").render())
+
+    generate("ody_sbe_attribute_data_size.H")
+    generate("ody_generate_attribute_generated.C")
+    generate("ody_apply_attribute_generated.C")
 
 def img_standard_parms(parser):
     #parser.add_argument("-b", "--base", type=hexint, default=None, help="Base address (hex) of the image file, defaults to an autodetected value")
@@ -131,9 +188,9 @@ if __name__ == "__main__":
 
     sub = subparsers.add_parser("parse", help="Parse attribute XML and generate attribute database")
     sub.add_argument("attr_xml", nargs="+", help="Attribute definition XML files")
-    sub.add_argument("-fx", "--sbe_attrs", nargs='+', help="Path to xmls which will filter the sbe required attributes")
-    sub.add_argument("-db", "--dbfile", help="Name of the database to be written")
-    sub.add_argument("-tl", "--targetlist", help="path to json file defining supported targets")
+    sub.add_argument("-s", "--sbe_attrs", nargs='+', help="Path to xmls which will filter the sbe required attributes")
+    sub.add_argument("-d", "--dbfile", help="Name of the database to be written")
+    sub.add_argument("-t", "--targetlist", help="path to json file defining supported targets")
     sub.add_argument("-v", "--verbose", action="store_true", help="Increase verbosity")
     sub.set_defaults(func=cmd_parse)
 
@@ -180,6 +237,15 @@ if __name__ == "__main__":
     img_standard_parms(sub)
     sub.set_defaults(func=cmd_setfixed)
 
+    CHIP_TYPE_CHOICES = ["p", "ody", "z"]
+    sub = subparsers.add_parser("genhwp", help="Generate ekb hardware procedure for attribute update and attribute list")
+    sub.add_argument("chiptype", help="Chiptype for which the HWP has to be generated.", choices=CHIP_TYPE_CHOICES)
+    sub.add_argument("targetlist", help="Path to json file defining supported targets")
+    sub.add_argument("attr_xml", nargs="+", help="Attribute definition XML files")
+    sub.add_argument("-o", "--outdir", help="Output directory for the generated source",required=True)
+    sub.add_argument("-v", "--verbose", action="store_true", help="Increase verbosity")
+    sub.set_defaults(func=cmd_genhwp)
+
     args = parser.parse_args()
     if not hasattr(args, "func"):
         parser.print_help()
@@ -191,7 +257,4 @@ if __name__ == "__main__":
         args.func(args)
     except ArgumentError as e:
         print("Invalid argument: " + str(e))
-        exit(1)
-    except ParseError as e:
-        print("Parser error: " + str(e))
         exit(1)
