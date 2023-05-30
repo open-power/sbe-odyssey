@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/hwpf/plat_utils.C $           */
+/* $Source: public/src/runtime/common/hwpf/plat_utils.C $                 */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -55,7 +55,7 @@ namespace fapi2
     // frequency till istep 2.7
     inline uint64_t delayCycles(uint64_t i_nanoSeconds )
     {
-        return ( i_nanoSeconds/1000) * ( CMN_GLOBAL->sbefreq /(1000*1000));
+        return ( i_nanoSeconds / 1024) * ( CMN_GLOBAL->sbefreq / (1024*1024));
     }
     /// @brief Delay this thread.
     ///
