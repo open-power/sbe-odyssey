@@ -26,10 +26,7 @@
 ody_hwpf_dir_path = meson.global_source_root() + '/public/src/runtime/odyssey/sppe/hwpf/'
 
 infile_c = ['plat_hw_access.C',
-            'plat_handle_scom.C',
-            'plat_utils.C',
-            'plat_ring_utils.C',
-            'plat_i2c_access.C'
+            'plat_i2c_access.C',
            ]
 
 odyssey_abs_hwpf_c_file_paths = []

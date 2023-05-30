@@ -25,7 +25,10 @@
 runtime_cmn_hwpf_dir_path = meson.global_source_root() + '/public/src/runtime/common/hwpf/'
 
 infile_c = ['plat_file_access.C',
-            'plat_hwp_data_stream.C'
+            'plat_ring_utils.C',
+            'plat_spd_access.C',
+            'plat_hwp_data_stream.C',
+            'plat_utils.C',
            ]
 
 abs_runtime_cmn_hwpf_c_path = []
