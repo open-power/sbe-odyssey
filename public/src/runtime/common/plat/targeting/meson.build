@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/common/plat/meson.build $
+# $Source: public/src/runtime/common/plat/targeting/meson.build $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022,2023
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +22,6 @@
 #
 # IBM_PROLOG_END_TAG
 
-subdir('ffdc')
-subdir('attributes')
-subdir('targeting')
+abs_runtime_cmn_targeting_c_path = [
+    files('plat_target_service.C'),
+]
