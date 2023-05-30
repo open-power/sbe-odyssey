@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,7 +27,7 @@
 /// @file ecc_traits_explorer.H
 /// @brief Traits class for the MC ECC syndrome registers
 ///
-// *HWP HWP Owner: Matt Hickman <Matthew.Hickman@ibm.com>
+// *HWP HWP Owner: Sneha Kadam <Sneha.Kadam1@ibm.com>
 // *HWP HWP Backup: Louis Stermole <stermole@us.ibm.com>
 // *HWP Team: Memory
 // *HWP Level: 3

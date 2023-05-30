@@ -27,7 +27,7 @@
 /// @file mds_scom_addresses.H
 /// @brief MDS I2C scom register definitions
 ///
-// *HWP HWP Owner: Matthew Hickman <Matthew.Hickman@ibm.com>
+// *HWP HWP Owner: Sneha Kadam <Sneha.Kadam1@ibm.com>
 // *HWP HWP Backup: Louis Stermole <stermole@us.ibm.com>
 // *HWP Team: Memory
 // *HWP Level: 3
