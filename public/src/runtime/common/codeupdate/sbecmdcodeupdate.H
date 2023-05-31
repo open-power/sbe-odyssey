@@ -95,11 +95,14 @@ namespace CU
         uint16_t iv_noOfSubImages;
 
         /**
-         * @brief 4 bytes is reserved for future needs.
-         *        Also, its helps to align the size of ImageUpdate_t
-         *        in multiple of 8 bytes.
+         * @brief Used to display SBE FW major version
          */
-        uint32_t iv_reserved1;
+        uint16_t iv_versionMajor;
+
+        /**
+         * @brief Used to display SBE FW minor version
+         */
+        uint16_t iv_versionMinor;
 
         /**
          * @brief Buffer to respond image (aka section i.e bldr, rt, bmc,
@@ -121,7 +124,10 @@ namespace CU
             // Value must be assign based on no of sub-images that are supported
             // in the specific SBE FW project.
             iv_noOfSubImages(GETCAPABILITIES_NO_OF_IMAGES),
-            iv_reserved1(0),
+            // Major version must be update as per poz specs
+            iv_versionMajor(SBE_FW_MAJOR_VERSION),
+            // Minor version must be update as per poz specs
+            iv_versionMinor(SBE_FW_MINOR_VERSION),
             // If a new image section type added in below list then,
             // we should update in UPDATABLE_IMG_SECTION_CNT macro as well.
             iv_updateableImagesInfo{ImageUpdate_t(CU_IMAGES::BOOTLOADER),
