@@ -33,21 +33,43 @@ namespace fapi2
 {
 
 ReturnCode queryChipEcAndName(
-                    const Target<fapi2::SBE_ROOT_CHIP_TYPE>& i_target,
-                    fapi2::ATTR_NAME_Type& , fapi2::ATTR_EC_Type & );
+    const Target < fapi2::TARGET_TYPE_ALL>& i_target,
+    fapi2::ATTR_NAME_Type& o_chipName,
+    fapi2::ATTR_EC_Type& o_chipEc );
 
 template<int T>
-ReturnCode queryChipEcFeature(int2Type<T> id,
-                    const Target<fapi2::SBE_ROOT_CHIP_TYPE>& i_target,
-                    uint8_t & o_hasFeature)
+ReturnCode queryChipEcFeature(
+    int2Type<T> id,
+    const Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    uint8_t & o_hasFeature)
 {
     fapi2::ATTR_NAME_Type l_chipName;
     fapi2::ATTR_EC_Type l_chipEc;
 
     o_hasFeature = 0;
 
-    queryChipEcAndName(i_target, l_chipName, l_chipEc);
+    FAPI_TRY(queryChipEcAndName(i_target, l_chipName, l_chipEc), "queryChipEcAndName failed");
     o_hasFeature = hasFeature(int2Type<T>(), l_chipName, l_chipEc);
+
+
+fapi_try_exit:
+    FAPI_INF("Exiting ...");
+    return fapi2::current_err;
+}
+
+inline ReturnCode queryChipConstTrue(
+    const Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    uint8_t & o_hasFeature)
+{
+    o_hasFeature = true;
+    return FAPI2_RC_SUCCESS;
+}
+
+inline ReturnCode queryChipConstFalse(
+    const Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    uint8_t & o_hasFeature)
+{
+    o_hasFeature = false;
     return FAPI2_RC_SUCCESS;
 }
 

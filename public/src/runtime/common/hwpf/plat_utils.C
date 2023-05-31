@@ -28,14 +28,11 @@
  *  @brief Implements fapi2 common utilities
  */
 
-#include <stdint.h>
-
-#include <return_code.H>
-#include <plat_trace.H>
+#include <plat_utils.H>
 #include <target.H>
-#include <sbeutil.H>
 #include "cmnglobals.H"
-
+#include "fapi2_error_scope.H"
+#include "virtualattrfunctions.H"
 
 namespace fapi2
 {
@@ -123,6 +120,18 @@ namespace fapi2
 
         // replace with platform specific implementation
         return FAPI2_RC_SUCCESS;
+    }
+
+    ReturnCode queryChipEcAndName(
+        const Target < fapi2::TARGET_TYPE_ALL>& i_target,
+        fapi2::ATTR_NAME_Type& o_chipName,
+        fapi2::ATTR_EC_Type& o_chipEc )
+    {
+        FAPI_TRY(get_ATTR_NAME(i_target, o_chipName), "queryChipEcFeature: error getting chip name");
+        FAPI_TRY(get_ATTR_EC(i_target, o_chipEc), "queryChipEcFeature: error getting chip ec");
+
+    fapi_try_exit:
+        return fapi2::current_err;
     }
 
 };

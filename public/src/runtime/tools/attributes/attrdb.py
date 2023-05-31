@@ -29,13 +29,12 @@
 from xml.dom.minidom import Element
 import xml.etree.ElementTree as etree
 from textwrap import dedent
-from collections import namedtuple
-import json
 import copy
 
 #attrltool library imports
 from attrtoolutils import *
 import attrdatatype
+import attrtargets
 
 ###############################################################
 # attrtool helper classess
@@ -59,13 +58,6 @@ import attrdatatype
 #   TargetEntry   - represents a child of SBE attribute to
 #                   provide values for compile time initialization
 ###############################################################
-
-TargetTypeInfo = namedtuple("TargetTypeInfo", "ntargets")
-
-def targetTypeInfoLoader(**kwarg : dict):
-    if '__targInfo__' in kwarg:
-        return TargetTypeInfo(kwarg['ntargets'])
-    return kwarg
 
 class ParseError(Exception):
     pass
@@ -220,6 +212,7 @@ class ECAttribute(object):
 
         self.db = db
         self.sbe_entry:"SBEEntry" = None
+        self.unsupported_attribute = True
 
         name, target_type, description, enum_values, array_dims = (
             node.find(tag) for tag in ("id", "targetType", "description", "enum", "array"))
@@ -232,34 +225,50 @@ class ECAttribute(object):
             raise ParseError("Attribute %s is missing a target type" % self.name)
         self.target_type = target_type.text
 
-        target_type_str_list = [targ.strip().upper() for targ in self.target_type.split(',')]
-        self.ekb_target_type:list[str] = []
-        for targ in target_type_str_list:
-            self.ekb_target_type.append(targ)
+        self.ekb_target_type:list[str] = [targ.strip().upper() for targ in self.target_type.split(',')]
+        if(not set(self.ekb_target_type).issubset(set(attrtargets.CHIP_TARGETS))):
+            print(self.ekb_target_type)
+            raise ParseError(self.name + " is EC attribute but target is not"
+                        " valid: " + self.target_type)
 
         self.value_type = "uint8"
         self.array_dims = []
         self.enum_values = None
 
-        self.chip_name = node.find("chipEcFeature").find("chip").find("name").text
-        self.ec_value = node.find("chipEcFeature").find("chip").find("ec").find("value").text
-        self.ec_test = node.find("chipEcFeature").find("chip").find("ec").find("test").text
+        self.ec_value = ""
+        self.ec_test_op = ""
+        # filter-out the ec feature for current root chip
+        for chip in node.find("chipEcFeature").findall("chip"):
+            self.chip_name = chip.find("name").text
+            if(self.chip_name != AttributeDB.ROOT_CHIP_NAME):
+                continue
+
+            self.unsupported_attribute = False
+            self.ec_value = chip.find("ec").find("value").text
+            self.ec_test = chip.find("ec").find("test").text
+            if(self.ec_test == 'EQUAL'):
+                self.ec_test_op = '=='
+            elif(self.ec_test == 'GREATER_THAN'):
+                self.ec_test_op = '>'
+            elif(self.ec_test == 'GREATER_THAN_OR_EQUAL'):
+                self.ec_test_op = '>='
+            elif(self.ec_test == 'LESS_THAN'):
+                self.ec_test_op = '<'
+            elif(self.ec_test == 'LESS_THAN_OR_EQUAL'):
+                self.ec_test_op = '<='
+            else:
+                raise ParseError("Invalid test in EC Attribute", self.name, self.chip_name, self.ec_test)
+            # only one root chip is supported at a time
+            break
+
+        self.false_if_match = node.find("chipEcFeature").find("falseIfMatch") != None
 
     def validate_and_return_sbe_attribute(self, sbe_value:"SBEEntry") -> "SBEEntry":
-        #TODO: Enable this while supporting EC_attribute
         if sbe_value != None:
             vprint("Validating attribute: " + self.name)
-            '''
+
             if sbe_value.virtual == False:
                 raise ParseError(self.name + " is EC attribute but not virtual")
-
-            if self.target_type != 'TARGET_TYPE_PROC_CHIP':
-                raise ParseError(self.name + " is EC attribute but target is not"
-                        " valid: " + self.target_type)
-
-            if self.ec_test != "EQUAL":
-                raise ParseError(self.name + " is EC attribute but target is not valid")
-            '''
 
             sbe_value.validated = True
 
@@ -270,7 +279,8 @@ class AttributeDB(object):
     An object of this class will represent collection of all attributes in
         attribute xmls from EKB.
     """
-    TARGET_TYPES : 'dict[str, TargetTypeInfo]' = dict()
+    TARGET_TYPES : 'dict[str, attrtargets.TargetTypeInfo]' = dict()
+    ROOT_CHIP_NAME = ''
 
     '''
     An object of this class will be instantiated for two purposes.
@@ -281,9 +291,7 @@ class AttributeDB(object):
        So "i_chip_type" is not required here.
     '''
     def __init__(self, i_target_json_path : str, i_chip_type : str = None):
-        with open(i_target_json_path, 'r') as fp:
-            AttributeDB.TARGET_TYPES =json.load(
-                    fp, object_hook= lambda d : targetTypeInfoLoader(**d))
+        AttributeDB.TARGET_TYPES, AttributeDB.ROOT_CHIP_NAME = attrtargets.load_target_list_json(i_target_json_path)
 
         self.attributes : 'dict[str, RealAttribute|ECAttribute]' = dict()
         self.chip_type = i_chip_type
