@@ -29,21 +29,11 @@
 #include "fapi2_target.H"
 #include "target.H"
 #include "return_code.H"
+#include <plat_hw_access.H>
+#include <poz_scom_perv_cfam.H>
 
 namespace fapi2
 {
-
-// Class to pass return code for attribute related functions
-class AttributeRC
-{
-    public:
-    AttributeRC() : value(FAPI2_RC_SUCCESS){}
-    AttributeRC(uint32_t i_val) : value(i_val){}
-    operator uint32_t (){return value;}
-    operator ReturnCode (){return value;}
-    private:
-    uint32_t value;
-};
 
 namespace ATTR
 {
@@ -63,7 +53,7 @@ extern uint8_t ATTR_NAME;
   */
 template<TargetType K>
 inline
-AttributeRC get_ATTR_CHIP_UNIT_POS(const Target<K>& i_target,
+ReturnCode get_ATTR_CHIP_UNIT_POS(const Target<K>& i_target,
         ATTR_CHIP_UNIT_POS_Type& o_val)
 {
     o_val = i_target.get().getTargetInstance();
@@ -72,7 +62,7 @@ AttributeRC get_ATTR_CHIP_UNIT_POS(const Target<K>& i_target,
 
 template<>
 inline
-AttributeRC get_ATTR_CHIP_UNIT_POS(const Target<TARGET_TYPE_PERV>& i_target,
+ReturnCode get_ATTR_CHIP_UNIT_POS(const Target<TARGET_TYPE_PERV>& i_target,
                                 ATTR_CHIP_UNIT_POS_Type& o_val)
 {
     o_val = i_target.getChipletNumber();
@@ -94,7 +84,7 @@ AttributeRC get_ATTR_CHIP_UNIT_POS(const Target<TARGET_TYPE_PERV>& i_target,
   */
 template<TargetType K>
 inline
-AttributeRC get_ATTR_REL_POS(const Target<K>& i_target,
+ReturnCode get_ATTR_REL_POS(const Target<K>& i_target,
         ATTR_REL_POS_Type& o_val)
 {
     o_val = i_target.get().getTargetInstance();
@@ -115,7 +105,7 @@ AttributeRC get_ATTR_REL_POS(const Target<K>& i_target,
   */
 template<>
 inline
-AttributeRC get_ATTR_REL_POS(const Target<fapi2::TARGET_TYPE_DIMM>& i_target,
+ReturnCode get_ATTR_REL_POS(const Target<fapi2::TARGET_TYPE_DIMM>& i_target,
         ATTR_REL_POS_Type& o_val)
 {
     o_val = i_target.get().getTargetInstance() % 2;
@@ -132,13 +122,37 @@ AttributeRC get_ATTR_REL_POS(const Target<fapi2::TARGET_TYPE_DIMM>& i_target,
   *
   * @return   returncode
   */
-template<TargetType K>
 inline
-AttributeRC get_ATTR_NAME(
-    const Target<K>& i_target,
+ReturnCode get_ATTR_NAME(
+    const Target<TARGET_TYPE_ALL>& i_target,
     ATTR_NAME_Type& o_val)
 {
     o_val = fapi2::ATTR::ATTR_NAME;
+
+    return FAPI2_RC_SUCCESS;
+}
+
+/**
+  * @brief read the EC level of the chip
+  *
+  * Return the EC level of the chip.
+  *
+  * @param[in]  i_target input target
+  * @param[out] o_val    output parameter
+  *
+  * @return   returncode
+  */
+inline
+ReturnCode get_ATTR_EC(
+    const Target<TARGET_TYPE_ALL>& i_target,
+    ATTR_EC_Type& o_val)
+{
+    uint64_t cbs_envstat_reg = 0;
+    fapi2::getscom_abs_wrap(&i_target,
+                    scomt::poz::FSXCOMP_FSXLOG_CBS_ENVSTAT_RO,
+                    &cbs_envstat_reg);
+
+    o_val = ((cbs_envstat_reg >> 32) & 0xFF);
 
     return FAPI2_RC_SUCCESS;
 }

@@ -23,39 +23,14 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#ifndef __ODY_VIRTUAL_FUNCTIONS_H
-#define __ODY_VIRTUAL_FUNCTIONS_H
+// File to add odyssey specific virtual functions
+// this file will be passed with --vfh, to attrtool to generate attribute tank.
+
+#pragma once
 
 #include <virtualattrfunctions.H>
 
 namespace fapi2
 {
-/**
-  * @brief read the EC level of the chip
-  *
-  * Return the EC level of the chip.
-  *
-  * @param[in]  i_target input target
-  * @param[out] o_val    output parameter
-  *
-  * @return   returncode
-  */
-template<TargetType K>
-inline
-AttributeRC get_ATTR_EC(const Target<K>& i_target,
-        ATTR_EC_Type& o_val)
-{
-    // TODO: Uncomment this after plat code is ready for getscom
-    /*
-    fapi2::buffer<uint64_t> cbs_envstat_reg = 0;
-    fapi2::getScom(i_target, scomt::poz::FSXCOMP_FSXLOG_CBS_ENVSTAT_RO,
-                             cbs_envstat_reg);
 
-    o_val = ((cbs_envstat_reg >> 32) & 0xFF);
-    */
-    o_val = 0x10;
-    return FAPI2_RC_SUCCESS;
 }
-}
-
-#endif //__ODY_VIRTUAL_FUNCTIONS_H

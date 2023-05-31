@@ -28,28 +28,33 @@
 #include <attribute_ids.H>
 #include <attribute_properties.H>
 
+
+namespace fapi2
+{
 // create a unique type from an int ( or attribute id)
 template<int I>
 struct int2Type {
 enum { value = I };
 };
 
-namespace fapi2
-{
-{% for attr in attributes if attr.has_ec %}
+{% for attr in attributes if attr.has_supported_chip %}
 
-/*
 inline bool hasFeature(int2Type<{{attr.name}}>, fapi2::ATTR_NAME_Type i_name, fapi2::ATTR_EC_Type i_ec)
 {
    uint8_t hasFeature = false;
 
-    if(((i_name == {{attr.chip_name}}) &&  (i_ec == {{attr.ec_value}})))
+    if(i_ec {{attr.ec_test_op}} {{attr.ec_value}})
     {
         hasFeature = true;
     }
+
+    {% if attr.false_if_match %}
+    hasFeature = !hasFeature;
+    {% endif %}
+
     return hasFeature;
-};
-*/
+}
+
 {% endfor %}
 
 } //fapi2

@@ -68,7 +68,7 @@ import attrdatatype
 
 class AttrFieldInfo(object):
     has_storage = False
-    has_ec = False
+    has_supported_chip = False
 
     def __init__(self,
                  name: str,
@@ -370,21 +370,25 @@ class VirtualAttrFieldInfo(AttrFieldInfo):
         return "get_" + self.name + "(TARGET,VAL)"
 
 class EcAttrFieldInfo(AttrFieldInfo):
-    has_ec = True
 
     def __init__(self,
                  name: str,
                  hash: int,
+                 is_unsupported: bool,
                  ekb_target_type: list,
                  value_type: str,
                  chip_name: str,
                  ec_value: str,
-                 ec_test: str) -> None:
+                 ec_test_op: str,
+                 false_if_match: bool) -> None:
 
         super().__init__(name, hash, ekb_target_type, value_type)
         self.chip_name = chip_name
-        self.ec_value = ec_value
-        self.ec_test = ec_test
+        if(not is_unsupported):
+            self.has_supported_chip = True
+            self.ec_value = ec_value
+            self.ec_test_op = ec_test_op
+        self.false_if_match = false_if_match
 
     def set(self, image, image_base, value):
         raise NotImplementedError("Cannot modify an EC level attribute")
@@ -397,7 +401,12 @@ class EcAttrFieldInfo(AttrFieldInfo):
 
     @property
     def getter(self):
-        return "queryChipEcFeature(fapi2::int2Type<ID>(), TARGET, VAL)"
+        if(self.has_supported_chip):
+            return "queryChipEcFeature(fapi2::int2Type<ID>(), TARGET, VAL)"
+        elif(self.false_if_match):
+            return "queryChipConstTrue(TARGET, VAL)"
+        else:
+            return "queryChipConstFalse(TARGET, VAL)"
 
 
 class AttributeStructure(object):
@@ -427,11 +436,13 @@ class AttributeStructure(object):
                 self.field_list.append(EcAttrFieldInfo(
                     attr.name,
                     attr_hash28bit,
+                    attr.unsupported_attribute,
                     attr.ekb_target_type,
                     attr.value_type,
                     attr.chip_name,
                     attr.ec_value,
-                    attr.ec_test))
+                    attr.ec_test_op,
+                    attr.false_if_match))
             elif attr.sbe_entry.virtual:
                 self.field_list.append(VirtualAttrFieldInfo(
                     attr.name,

@@ -22,9 +22,9 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef _PLAT_UTILS_H_
-#define _PLAT_UTILS_H_
+#pragma once
 
+#include <stdint.h>
 #include <plat_types.H>
 
 namespace fapi2 {
@@ -73,4 +73,3 @@ static const PlatformType PLATFORM = PLAT_SBE;
 #ifndef BIT
     #define BIT(b) BITS((b), 1)
 #endif
-#endif //_PLAT_UTILS_H_
