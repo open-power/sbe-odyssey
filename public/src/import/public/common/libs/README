@@ -1,0 +1,47 @@
+LIBRARIES
+=========
+
+Libraries are a way for modules/exes to easily include sets of common functions
+which will be statically linked into the module or exe instead of provided via
+a shared library. This way commonly used utility code can be picked from a
+shared location without complicated makefile mechanics or shared library
+dependencies.
+
+HOW TO WRITE A LIBRARY
+======================
+
+Libraries should go into their own subdirectory of public/common/libs; the
+makefile should build a module named after the library which includes all the
+compiled C files; only the static .a library for the module will be used. The
+makefile must also specify two variables:
+
+LIB_(library name)_DEPLIBS specifies the libraries to link if the library is
+used; usually this will be only the name of the library in question but may
+include additional dependencies of the library itself.
+
+LIB_(library name)_INCDIRS specifies the include paths to be added for users
+of the library. This is usually the library directory itself.
+
+HOW TO USE A LIBRARY
+====================
+
+Users can easily add the library to their module/exe by using the
+ADD_MODULE_LIBRARY and ADD_EXE_LIBRARY macros. They will make sure that the
+static library is built and linked in, and add the library include dirs to the
+module/exe include dirs.
+
+LIBRARY EXAMPLE
+===============
+
+For an example take a look at the crypto library, specifically its makefile
+public/common/libs/crypto/libcrypto.mk.
+
+Modules wanting to use the library can simply add ADD_MODULE_LIBRARY to their
+makefile like so:
+
+  PROCEDURE=myhwp
+  OBJS=myhwp.o
+  $(call ADD_MODULE_LIBRARY,$(PROCEDURE),crypto)   <---
+  $(call BUILD_PROCEDURE)
+
+Now your source can #include <crc32.H> and use crc32_gen() at leisure.

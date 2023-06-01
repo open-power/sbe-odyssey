@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/common/utils/imageProcs/sha3.C $     */
+/* $Source: public/src/import/public/common/libs/crypto/sha3.C $          */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -24,8 +24,8 @@
 /* IBM_PROLOG_END_TAG                                                     */
 
 #include "sha3.H"
-//#include <fapi2.H>
-// update the state with given number of rounds
+#include <string.h>
+#include <algorithm>
 
 void sha3_keccakf(uint64_t st[25])
 {
@@ -195,25 +195,15 @@ int sha3_final(sha3_t* result, sha3_ctx_t* c)
     return 1;
 }
 
-uint32_t make32Bit(uint8_t* ptr)
+// compute a sha3 hash (md) of given byte length from "in"
+void* sha3(const void* in, size_t inlen, void* md, int mdlen)
 {
-    uint32_t val = 0;
-    uint32_t y;
+    sha3_ctx_t ctx;
+    sha3_t digest;
+    sha3_init(&ctx);
+    sha3_update(&ctx, in, inlen);
+    sha3_final(&digest, &ctx);
 
-    for(y = 0; y < 4; y++)
-    {
-        uint8_t mybyte = *ptr;
-        ptr++;
-        val = (val << 8) | (uint32_t)mybyte;
-    }
-
-    return val;
-}
-
-void SHA3_dump(sha3_t* result)
-{
-    //uint8_t *myptr=(uint8_t*)result;
-    //for(uint32_t x=0;x<SHA3_DIGEST_LENGTH;x+=16){
-//    SBE_INFO("%08x%08x%08x%08x", make32Bit(&myptr[x]),make32Bit(&myptr[x+4]),make32Bit(&myptr[x+8]),make32Bit(&myptr[x+12]));
-    //}
+    memcpy(md, digest, std::min((size_t)mdlen, sizeof(digest)));
+    return md;
 }

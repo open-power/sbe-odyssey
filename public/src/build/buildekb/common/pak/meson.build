@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -26,7 +26,7 @@
 import_dir_path = pub_import_dir_path + '/common/utils/imageProcs/'
 
 infile_c = ['archive.C',
-            'sha3.C',
+            '../../libs/crypto/sha3.C',
            ]
 
 tinflate_c = [ 'tinflate.C' ]
