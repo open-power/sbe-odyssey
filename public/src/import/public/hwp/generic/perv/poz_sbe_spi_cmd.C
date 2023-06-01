@@ -38,11 +38,7 @@
 #endif
 
 // Memcpy functionality
-#if __PPE42__
-    #include "ppe42_string.h"
-#else
-    #include <string.h>
-#endif
+#include <string.h>
 
 // SPI commands
 #define SPI_SLAVE_WR_CMD   0x0200000000000000ULL

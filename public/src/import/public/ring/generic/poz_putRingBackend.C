@@ -39,9 +39,7 @@
     #include <poz_perv_utils.H>
 #endif
 
-#ifdef __PPE__
-    #include "ppe42_string.h"
-#endif
+#include <string.h>
 
 #define SCOMT_OMIT_FIELD_ACCESSORS
 #include <poz_scom_perv_tpchip.H>
