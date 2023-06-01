@@ -155,11 +155,9 @@
 #ifndef __PPE__
     #include <stdlib.h>
     #include <stdio.h>
-    #include <string.h>
-    #include <endian.h>
-#else
-    #include "ppe42_string.h"
 #endif
+#include <string.h>
+#include <endian.h>
 #include "scan_compression.H"
 
 const uint32_t  MAX_RING_BUF_SIZE_TOOL  = 450000;

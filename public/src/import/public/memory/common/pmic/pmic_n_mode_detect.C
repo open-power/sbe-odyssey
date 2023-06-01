@@ -39,9 +39,7 @@
 #include <lib/i2c/i2c_pmic.H>
 #include <lib/utils/pmic_consts.H>
 
-#ifdef __PPE__
-    #include <ppe42_string.h>
-#endif
+#include <string.h>
 
 ///
 /// @brief Write a register of a PMIC target, helper function for pmic_info type
