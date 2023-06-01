@@ -3659,16 +3659,16 @@
   </entry>
   <!-- SPPE FW : SPPE FW attributes added from here  -->
   <entry name="ATTR_SPPE_TARGET_STATE">
-    <value>0x00</value>
+    <value>0x2</value>
   </entry>
   <entry name="ATTR_SPPE_I2C_DEV_ADDR">
-    <value>0x00</value>
+    <value>0</value>
   </entry>
   <entry name="ATTR_SPPE_I2C_PORT">
-    <value>0x00</value>
+    <value>0</value>
   </entry>
   <entry name="ATTR_SPPE_I2C_ENGINE">
-    <value>0x00</value>
+    <value>0</value>
   </entry>
   <entry name="ATTR_MEM_EFF_Z_MODE">
     <value>0</value>
