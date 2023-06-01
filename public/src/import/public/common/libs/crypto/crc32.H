@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/common/utils/imageProcs/sha3.H $     */
+/* $Source: public/src/import/public/common/libs/crypto/crc32.H $         */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,55 +22,41 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef SHA3_H
-#define SHA3_H
+/// @file crc32.H
+/// @brief Implement crc32
+//
+// *HWP HWP Owner: Ben Gass bgass@us.ibm.com
+// *HWP FW Owner: Daniel Crowell dcrowell@us.ibm.com
+// *HWP Team: Nest
+// *HWP Level: 3
+// *HWP Consumed by: HB
+//
 
-#include <stddef.h>
+#pragma once
+
 #include <stdint.h>
+#include <vector>
+#include <algorithm>
 
-#ifndef KECCAKF_ROUNDS
-    #define KECCAKF_ROUNDS 24
-#endif
+// CRC32 lookup table to match the table used in Microchip firmware
+// Note that this table is known as CRC32_BZIP2 in some texts
+extern const uint32_t crc32_lookup_table[];
 
-#ifndef ROTL64
-    #define ROTL64(x, y) (((x) << (y)) | ((x) >> (64 - (y))))
-#endif
+///
+/// @brief Generates a CRC on a range of data
+/// @param[in] i_data data on which to generate the CRC32
+/// @param[in] i_len the length of the data
+/// @return the CRC32 for the input data
+///
+uint32_t crc32_gen(const uint8_t* i_data, uint64_t i_len);
 
-#define SHA3_DIGEST_LENGTH 64
-
-typedef uint8_t sha3_t[SHA3_DIGEST_LENGTH];
-
-// state context
-typedef struct
+///
+/// @brief Generates a CRC on a vector of data
+/// @param[in] i_data data on which to generate the CRC32
+/// @param[in] i_len allows the user to specify a length of data to generate CRC - used for response structure - defaulted to max (use whole array)
+/// @return the CRC32 for the inputted vector
+///
+static inline uint32_t crc32_gen(const std::vector<uint8_t>& i_data, const uint64_t i_len = ~0)
 {
-    union                                   // state:
-    {
-        uint8_t b[200];                     // 8-bit bytes
-        uint64_t q[25];                     // 64-bit words
-    } st;
-    int pt, rsiz, mdlen;                    // these don't overflow
-} sha3_ctx_t;
-
-// Compression function.
-void sha3_keccakf(uint64_t st[25]);
-
-// OpenSSL - like interfece
-int sha3_init(sha3_ctx_t* c);    // mdlen = hash output in bytes
-int sha3_update(sha3_ctx_t* c, const void* data, size_t len);
-int sha3_final(sha3_t* md, sha3_ctx_t* c);    // digest goes to md
-
-// compute a sha3 hash (md) of given byte length from "in"
-void* sha3(const void* in, size_t inlen, void* md, int mdlen);
-
-// SHAKE128 and SHAKE256 extensible-output functions
-//#define shake128_init(c) sha3_init(c, 16)
-//#define shake256_init(c) sha3_init(c, 32)
-//#define shake_update sha3_update
-
-//void shake_xof(sha3_ctx_t *c);
-//void shake_out(sha3_ctx_t *c, void *out, size_t len);
-
-void SHA3_dump(sha3_t* result);
-
-
-#endif
+    return crc32_gen(i_data.data(), std::min(i_data.size(), i_len));
+}
