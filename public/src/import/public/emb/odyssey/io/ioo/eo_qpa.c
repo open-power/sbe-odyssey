@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// jfg23041401 |jfg     | EWM303066 Add PR restore in support of servo abort changes
 // vbr23011800 |vbr     | EWM297475: Added a sleep on an abort to reduce thread active time
 // jfg22111701 |jfg     | EWM293721 Add PR restore in support of servo abort changes
 // mbs22082601 |mbs     | Updated with PSL comments
@@ -187,7 +188,6 @@ int eo_qpa(t_gcr_addr* gcr_addr, t_bank bank, bool recal_2ndrun, bool* pr_change
             // MBS reclaim these reg bits // mem_pl_field_put(rx_qpa_se_obs, lane, 7);
             // MBS reclaim these reg bits // mem_pl_field_put(rx_qpa_we_obs, lane, 7);
             abort_status |= error_code;
-            mem_pl_bit_set(rx_quad_phase_fail, lane);
             set_debug_state(0xE08F); //DEBUG: Main RX abort
         }
 
@@ -419,7 +419,6 @@ int eo_qpa(t_gcr_addr* gcr_addr, t_bank bank, bool recal_2ndrun, bool* pr_change
     set_debug_state(0xE031, 3); // DEBUG - Phase adjust done
 
     // qpa passed
-    //mem_pl_bit_clr(rx_quad_phase_fail, lane); // EWM300845: Don't clear step fails
     //Checking done
     if (bank == bank_a)
     {

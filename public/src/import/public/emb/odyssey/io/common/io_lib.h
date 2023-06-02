@@ -39,6 +39,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23051700 |vbr     | Added macros for doing u32 accesses to mem_regs/fw_regs for speed/size improvement.
+// vbr23051100 |vbr     | Fast write instead of RMW on mem_reg/fw_reg/img_reg fields that are the full 16 bits as a speed/size improvement.
+// vbr23042600 |vbr     | Added io_spin_ns so can do some coarse sub-microsecond waits.
 // vbr23030800 |vbr     | EWM300894: Added some address/offset bounds checks for fw_regs and img_regs.
 // mwh23003020 |mwh     | Fix rounding for poff edge off. emw 300342
 // mwh23011300 |mwh     | Added void set_rxbist_fail_lane since used by ioo and iot
@@ -179,17 +182,20 @@ int set_fir(uint32_t fir_code);
 
 // Function Return Codes (for EO steps)
 // These are 1-hot error codes; pass_code must remain 0.
-// error_code can be used to report fatal errors which results in skipping the remaining steps and not switching the bank in recal. A FIR is set.
-// warning_code can be used to report warnings (recoverable errors) which results in skipping the remaining steps and not switching the bank in recal. A FIR is set.
-// abort_*_code is used to indicate an recal_abort and will also result in skipping the remaining steps and not switching the bank. FIR setting depends on the specific code:
+// There is some differentiation between error_code and warning_code, but they are largely used interchangably in the code.
+//   error_code can be used to report fatal errors which results in skipping the remaining steps and not switching the bank in recal. A FIR is set.
+//   warning_code can be used to report warnings (recoverable errors) which results in skipping the remaining steps and not switching the bank in recal. A FIR is set.
+// abort_*_code is used to indicate a recal_abort and will also result in skipping the remaining steps and not switching the bank. FIR setting depends on the specific code:
 //   abort_error_code will set a FIR
 //   abort_clean_code does not set a FIR
+// phase_done_code is used in multi-phase training to skip final steps (bank switching) while not setting errors and skipping abort handling code.
 #define pass_code           rc_no_error  //0x00
 #define error_code          rc_error     //0x01
 #define warning_code        rc_warning   //0x02
 #define abort_error_code    0x04         //0x04
 #define abort_clean_code    0x08         //0x08
 #define abort_code          (abort_error_code | abort_clean_code)
+#define phase_done_code     0x10         //0x10
 
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -483,12 +489,22 @@ extern uint16_t _img_regs_start __attribute__ ((section ("imgdata")));
 #define mem_regs_u16_base_bit_set(a, m)   (bit_set(mem_regs_u16_base[a], m))
 #define mem_regs_u16_base_bit_clr(a, m)   (bit_clr(mem_regs_u16_base[a], m))
 
+// Special get/put functions for operating on 2 adjacent u16 mem_regs with no masking/shifting. Primarily for *_0_23 or *_0_31 fields.
+// Take an address (a), lane (l), and a value (v). The address is a u16 address that must be u32 aligned.
+// Base funcs should do u32 alignment check here, but then can't have PL/PG address wrappers which is the typical use case.
+#define mem_regs_u32_raw_get(a)      (((uint32_t*)(mem_regs_u16))[a>>1])
+#define mem_regs_u32_raw_put(a, v)   (((uint32_t*)(mem_regs_u16))[a>>1] = (v))
+#define mem_pg_u32_raw_get(a)        ({ PK_STATIC_ASSERT((a % 2)==0); ( mem_regs_u32_raw_get(pg_addr(a)) ); })
+#define mem_pl_u32_raw_get(a, l)     ({ PK_STATIC_ASSERT((a % 2)==0); ( mem_regs_u32_raw_get(pl_addr(a, l)) ); })
+#define mem_pg_u32_raw_put(a, v)     ({ PK_STATIC_ASSERT((a % 2)==0); ( mem_regs_u32_raw_put(pg_addr(a), v) ); })
+#define mem_pl_u32_raw_put(a, l, v)  ({ PK_STATIC_ASSERT((a % 2)==0); ( mem_regs_u32_raw_put(pl_addr(a, l), v) ); })
+
 // Wrapper functions to simplify the calls a bit. Seperate versions for PG and PL fields.
 // Takes a field name and lane instead of address/mask/shift.  Also takes a value.
 #define mem_pg_field_get(field)              (mem_regs_u16_get(pg_addr(field##_addr),         field##_mask, field##_shift))
 #define mem_pl_field_get(field, lane)        (mem_regs_u16_get(pl_addr(field##_addr, (lane)), field##_mask, field##_shift))
-#define mem_pg_field_put(field, val)         (mem_regs_u16_put(pg_addr(field##_addr),         field##_mask, field##_shift, (val)))
-#define mem_pl_field_put(field, lane, val)   (mem_regs_u16_put(pl_addr(field##_addr, (lane)), field##_mask, field##_shift, (val)))
+#define mem_pg_field_put(field, val)         ({ if (field##_width == 16) { mem_regs_u16[pg_addr(field##_addr)]         = (val); } else {  mem_regs_u16_put(pg_addr(field##_addr),         field##_mask, field##_shift, (val)); } })
+#define mem_pl_field_put(field, lane, val)   ({ if (field##_width == 16) { mem_regs_u16[pl_addr(field##_addr, (lane))] = (val); } else {  mem_regs_u16_put(pl_addr(field##_addr, (lane)), field##_mask, field##_shift, (val)); } })
 #define mem_pg_bit_set(field)                (mem_regs_u16_bit_set(pg_addr(field##_addr),         field##_mask))
 #define mem_pl_bit_set(field, lane)          (mem_regs_u16_bit_set(pl_addr(field##_addr, (lane)), field##_mask))
 #define mem_pg_bit_clr(field)                (mem_regs_u16_bit_clr(pg_addr(field##_addr),         field##_mask))
@@ -513,10 +529,15 @@ extern uint16_t _img_regs_start __attribute__ ((section ("imgdata")));
     #define fw_addr(a)         fw_base_addr(a, 0)
 #endif
 
+// Special get/put functions for operating on 2 adjacent u16 mem_regs with no masking/shifting. Primarily for *_0_23 or *_0_31 fields.
+// Take an address (a) and a value (v). The address is a u16 address that must be u32 aligned.
+#define fw_regs_u32_raw_get(a)      ({ PK_STATIC_ASSERT((a % 2)==0); ( ((uint32_t*)(fw_regs_u16))[fw_addr(a)>>1] ); })
+#define fw_regs_u32_raw_put(a, v)   ({ PK_STATIC_ASSERT((a % 2)==0);   ((uint32_t*)(fw_regs_u16))[fw_addr(a)>>1] = (v); })
+
 // Wrapper functions to simplify the calls a bit.
 // Takes a field name instead of address/mask/shift and incorporates the fw_addr() call.  Also takes a value.
 #define fw_field_get(field)        (fw_regs_u16_get(fw_addr(field##_addr), field##_mask, field##_shift))
-#define fw_field_put(field, val)   (fw_regs_u16_put(fw_addr(field##_addr), field##_mask, field##_shift, (val)))
+#define fw_field_put(field, val)   ({ if (field##_width == 16) { fw_regs_u16[fw_addr(field##_addr)] = (val); } else { fw_regs_u16_put(fw_addr(field##_addr), field##_mask, field##_shift, (val)); } })
 #define fw_bit_set(field)          (fw_regs_u16_bit_set(fw_addr(field##_addr), field##_mask))
 #define fw_bit_clr(field)          (fw_regs_u16_bit_clr(fw_addr(field##_addr), field##_mask))
 
@@ -531,7 +552,7 @@ extern uint16_t _img_regs_start __attribute__ ((section ("imgdata")));
 // Wrapper functions to simplify the calls a bit.
 // Takes a field name instead of address/mask/shift and incorporates the img_addr() call.  Also takes a value.
 #define img_field_get(field)        (img_regs_u16_get(img_addr(field##_addr), field##_mask, field##_shift))
-#define img_field_put(field, val)   (img_regs_u16_put(img_addr(field##_addr), field##_mask, field##_shift, (val)))
+#define img_field_put(field, val)   ({ if (field##_width == 16) { img_regs_u16[img_addr(field##_addr)] = (val); } else { img_regs_u16_put(img_addr(field##_addr), field##_mask, field##_shift, (val)); } })
 #define img_bit_set(field)          (img_regs_u16_bit_set(img_addr(field##_addr), field##_mask))
 #define img_bit_clr(field)          (img_regs_u16_bit_clr(img_addr(field##_addr), field##_mask))
 
@@ -680,7 +701,7 @@ static inline void set_pointers(uint8_t thread)
 // Use u32 instead of PkInterval (u64) since this will always be less than 2^32.
 extern uint32_t scaled_microsecond;
 
-// Constants to use with io_spin.
+// Constants to use with io_spin().
 // For IOO, the PPE is always running at 250MHz. However, the UI per cycle depends on bus rate.
 // Use the slowest data rate (32Gbps) for UI per cycle so that the code always waits the minimum desired UI.
 // For IOF, we use a single image regardless of whether we are in 4:1 or 8:1 mode; for the code to function correctly,
@@ -693,15 +714,27 @@ extern uint32_t scaled_microsecond;
     #define cycles_1us 250
     #define ui_per_cycle 64
 #endif
-#if defined(IOO) || defined(IOT)
+#if defined(IOO)
+    // Based on PCIe/AXO-32Gbps, waits will be slow for AXO <32Gbps and fast for AXO >32Gbps.
+    // In general, this is fine since io_wait() should be used with margin for anything that really requires a minimum time.
+    // Bank sync uses io_spin() instead of io_wait(), but it scales withs bus rate so it is fine for how it is used.
+    #define cycles_4ns 1
+    #define cycles_1us 250
+    #define ui_per_cycle 128
+#endif
+#if defined(IOT)
+    // VBR230426 TODO - are these correct for IOT? This is assuming PPE is run at 250MHz.
+    #define cycles_4ns 1
     #define cycles_1us 250
     #define ui_per_cycle 128
 #endif
 
 // Wait by spinning (busy wait)
 // Input parameter is number of PPE core clock cycles to wait.
-// The PPE runs on the PAU clock / 8:
-// P10: PPE clock =  250 MHz = 4.000 ns / cycle
+// P10: The PPE runs on the PAU clock / 8:
+//      PPE clock =  250 MHz = 4.000 ns / cycle
+// P11: The PPE runs on the grid cock and thus varies by bus rate. But for PCIe where times are most critical:
+//      PPE clock =  250 MHz = 4.000 ns / cycle
 static inline void io_spin(unsigned int cycles)
 {
     // Divide cycles by 2 to account for the bdnz instruction we are using to spin taking 2 cycles to execute (page 18 of PPE manual).
@@ -765,6 +798,15 @@ static inline void io_spin_us(unsigned int us)
 #endif
     io_spin(cycles);
 } //io_spin_us
+
+// Wrapper for io_spin in terms of nanoseconds
+#if defined(IOO) || defined(IOT)
+static inline void io_spin_ns(unsigned int ns)
+{
+    unsigned int cycles = (ns / 4) * cycles_4ns;
+    io_spin(cycles);
+} //io_spin_ns
+#endif
 
 #if PK_THREAD_SUPPORT
 

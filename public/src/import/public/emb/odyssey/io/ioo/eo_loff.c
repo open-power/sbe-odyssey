@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// vbr23050100 |vbr     | EWM 303525: Split training step into phases for PCIe reset inactive phases
 // mwh23033000 |mwh     | Issue 301484: Need to add set_rxbist_fail_lane, to loff error
 // vbr23010400 |vbr     | Issue 296947: Adjusted latch_dac accesses for different addresses on Odyssey vs P11/ZMetis
 // vbr22120500 |vbr     | Issue 294793: added sleep when there is a pipe_abort
@@ -104,7 +105,6 @@
 
 
 // Declare servo op arrays as static globals so they are placed in static memory thus reducing code size and complexity.
-
 static uint16_t servo_ops_loff_a[36] = { c_loff_ad_n000,  c_loff_ad_n001, c_loff_ad_n010, c_loff_ad_n011, c_loff_ad_n100, c_loff_ad_n101, c_loff_ad_n110, c_loff_ad_n111,
                                          c_loff_ad_e000,  c_loff_ad_e001, c_loff_ad_e010, c_loff_ad_e011, c_loff_ad_e100, c_loff_ad_e101, c_loff_ad_e110, c_loff_ad_e111,
                                          c_loff_ad_s000,  c_loff_ad_s001, c_loff_ad_s010, c_loff_ad_s011, c_loff_ad_s100, c_loff_ad_s101, c_loff_ad_s110, c_loff_ad_s111,
@@ -120,9 +120,10 @@ static uint16_t servo_ops_loff_b[36] = { c_loff_bd_n000,  c_loff_bd_n001, c_loff
                                          c_loff_be_n000, c_loff_be_e000, c_loff_be_s000, c_loff_be_w000
                                        };
 
+#define data_servo_op_start_index 0
+#define edge_servo_op_start_index 32
 
-
-
+PK_STATIC_ASSERT(rx_dc_enable_loff_data_edge_alias_width == 2);
 
 
 static inline int loff_check(t_gcr_addr* gcr_addr, int lane, uint32_t l_dac_addr, uint32_t num_dacs,
@@ -154,12 +155,11 @@ static inline int loff_check(t_gcr_addr* gcr_addr, int lane, uint32_t l_dac_addr
 // Latch Offset (fenced)
 int eo_loff_fenced(t_gcr_addr* gcr_addr, t_bank bank)
 {
-    //start eo_loff
     set_debug_state(0x4000); // DEBUG
 
     // int abort_status, abort_status_d, abort_status_e;
     // Servo op based on bank
-    unsigned int num_servo_ops;
+    unsigned int num_servo_ops, servo_array_start;
     uint16_t* servo_ops;
     int lane = get_gcr_addr_lane(gcr_addr);
 
@@ -185,12 +185,32 @@ int eo_loff_fenced(t_gcr_addr* gcr_addr, t_bank bank)
         servo_ops = servo_ops_loff_b;
     }//bank B is alt A is main
 
+    // Select the servo ops to run
+    int loff_enable_data_edge = mem_pg_field_get(rx_dc_enable_loff_data_edge_alias);
 
-    set_debug_state(0x4001);// DEBUG
-    num_servo_ops = 36;
+    if (loff_enable_data_edge == 0b11)
+    {
+        // Both Data and Edge Servo Ops
+        num_servo_ops     = 36;
+        servo_array_start = 0;
+    }
+    else if (loff_enable_data_edge == 0b10)
+    {
+        // Only Data Servo Ops
+        num_servo_ops     = 32;
+        servo_array_start = data_servo_op_start_index;
+    }
+    else     //(loff_enable_data_edge == 0b01)
+    {
+        // Only Edge Servo Ops
+        num_servo_ops     = 4;
+        servo_array_start = edge_servo_op_start_index;
+    }
 
     //Run all the servo latch offset ops (also checks for pipe_abort)
-    int status = run_servo_ops_with_results_disabled(gcr_addr, c_servo_queue_general, num_servo_ops, servo_ops);
+    //set_debug_state(0x4001);// DEBUG
+    int status = run_servo_ops_with_results_disabled(gcr_addr, c_servo_queue_general, num_servo_ops,
+                 &servo_ops[servo_array_start]);
 
     //Setting fence back to default value after servo ops
     if (bank == bank_a )
@@ -202,18 +222,23 @@ int eo_loff_fenced(t_gcr_addr* gcr_addr, t_bank bank)
         put_ptr_field(gcr_addr, rx_b_fence_en , 0b0, read_modify_write);
     }
 
-    // In PCIe mode, save the data latch dac values (when no pipe_abort)
+    // In PCIe mode, save the data latch dac values (when no pipe_abort).
+    // Only do this in the edge phase of reset inactive (or in DC Cal) for time concerns. Edge phase will always run after the data phase.
     // PSL no_pipe_abort
     if ((status & abort_code) == 0)
     {
-        int pcie_mode = fw_field_get(fw_pcie_mode);
-
-        // PSL pcie_mode
-        if (pcie_mode)
+        // PSL edge_phase
+        if (loff_enable_data_edge & 0b01)
         {
-            set_debug_state(0x4003); // DEBUG - Save Data Latch DAC values
-            save_rx_data_latch_dac_values(gcr_addr, bank);
-            io_sleep(get_gcr_addr_thread(gcr_addr));
+            int pcie_mode = fw_field_get(fw_pcie_mode);
+
+            // PSL pcie_mode
+            if (pcie_mode)
+            {
+                set_debug_state(0x4003); // DEBUG - Save Data Latch DAC values
+                save_rx_data_latch_dac_values(gcr_addr, bank);
+                io_sleep(get_gcr_addr_thread(gcr_addr));
+            }
         }
     }
     else     //abort_code
@@ -221,10 +246,10 @@ int eo_loff_fenced(t_gcr_addr* gcr_addr, t_bank bank)
         io_sleep(get_gcr_addr_thread(gcr_addr));
     }
 
-    //Begin rxbist checking of latch offset values. Depedning on bank what address get chosen
+    //Begin rxbist checking of latch offset values. Depedning on bank what address get chosen. Only run in DC Cal when both data/edge are enabled
     //edge ae=20-22 be=23-26 ad=27-58 bd=59-90
-    int rx_latchoff_check_en_int  = get_ptr(gcr_addr, rx_latchoff_check_en_addr, rx_latchoff_check_en_startbit,
-                                            rx_latchoff_check_en_endbit);//pg
+    int rx_latchoff_check_en_int = (loff_enable_data_edge != 0b11) ? 0 : get_ptr(gcr_addr, rx_latchoff_check_en_addr,
+                                   rx_latchoff_check_en_startbit, rx_latchoff_check_en_endbit); //pg
 
     if(rx_latchoff_check_en_int)
     {

@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// mwh23050300 |mwh     | Issue 304210 put dl clk enable in loop set all lanes
 // mwh23040500 |mwh     | Issue 300849 add in check see if DL clock are on
 // jjb22120700 |jjb     | Added Enabling/Disabling dl_clock
 // mbs22082601 |mbs     | Updated with PSL comments
@@ -72,10 +73,17 @@
 #include "io_config.h"
 #include "io_logger.h"
 
+
 // most common for loop shorthand
 #define FOR_LESS(i, stop) for(i = 0; i < stop; ++i)
 // check if mask has the given lane selected. Big endian.
 #define LANE_MASKED(mask, lane) (((mask << lane) & 0x80000000) == 0x0)
+
+
+//NOTE:  Exceptation is that the rx_dl_clk_en is on when running bist.
+//       It need to be on during init training so that a 1 will be in
+//       the stick error latch in the DL. IF rx_dl_clk_en is not on
+//       than LLBIST will not run correctly.
 
 int eo_llbist(t_gcr_addr* gcr_addr, const uint32_t lane_mask)
 {
@@ -83,10 +91,11 @@ int eo_llbist(t_gcr_addr* gcr_addr, const uint32_t lane_mask)
     set_debug_state(0x51E0); // DEBUG
     int status = rc_no_error;
 
+
+    // Make sure IO_DL_CLOCK is enabled, required to run LLBIST
     const uint32_t l_num_lanes = get_num_rx_lane_slices();
     int orig_gcr_lane = get_gcr_addr_lane(gcr_addr);
 
-    // Make sure IO_DL_CLOCK is enabled, required to run LLBIST
     int lane = 0;
     FOR_LESS(lane, l_num_lanes)
     {
@@ -97,13 +106,11 @@ int eo_llbist(t_gcr_addr* gcr_addr, const uint32_t lane_mask)
         }
 
         set_gcr_addr_lane(gcr_addr, lane);
-        put_ptr_field(gcr_addr, rx_dl_clk_en, 0b1, read_modify_write);
+        put_ptr_field(gcr_addr, rx_dl_clk_en, 0b1, read_modify_write);//pl
     }//end for
     set_gcr_addr_lane(gcr_addr, orig_gcr_lane);//back to per group
 
-    io_spin_us(2); // 2us
-
-
+    //Grab error see if DL has clock on
     int error = get_ptr_field(gcr_addr, rx_pb_io_iobist_prbs_error);//pg
 
     //clock in DL or something is not right

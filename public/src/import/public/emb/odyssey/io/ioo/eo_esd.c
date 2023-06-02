@@ -40,6 +40,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mwh23041400 |mwh     | Add set_rxbist_fail_lane issue 292951
 // mwh22111100 |mwh     | Add in fail log, fail bit, and reg code for compare
 // vbr22111000 |vbr     | General cleanup and code size reductions
 // jac22061700 |jac     | Initial Rev A1yy debug state
@@ -217,8 +218,10 @@ int eo_esd_test(t_gcr_addr* gcr_addr, t_bank test_bank)
         // Set the ESD Fail
         mem_pl_bit_set(rx_esd_fail, lane);
 
+        //set Fir Error and lane
+        set_rxbist_fail_lane(gcr_addr);//add for issue 292951
         // Set the FIRs and PPE Error Status
-        set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
+        //set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
 
         // Log the dual offset and single offset
         ADD_LOG(DEBUG_BIST_ESD_FAIL, gcr_addr, result_sum_loop[0]); // Dual Bank Offset

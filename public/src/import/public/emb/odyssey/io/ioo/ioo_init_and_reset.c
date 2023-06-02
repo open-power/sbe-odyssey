@@ -39,6 +39,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23050800 |vbr     | EWM 303758: set phase_step to 0.09375 for all rates on Odyssey
+// vbr23042800 |vbr     | Issue 303676: Increasing invalid lock thresh setting for gen4 peak2 mesa fails.
+// vbr23042000 |vbr     | EWM302995: Set rx_recal_run_or_unused_0_23 bit on a lane reset.
 // vbr23040300 |vbr     | EWM302139: 16G/21.3G phase step 0.296875 -> 0.375.
 // jjb23040400 |jjb     | Issue 302460: Enable PMB timeouts in pcie functional mode.
 // vbr23032900 |vbr     | EWM301686: updated dl/rlm clock phase select settings; different for Odyssey and zMetis.
@@ -207,11 +210,13 @@
 #include "ppe_fw_reg_const_pkg.h"
 
 #include "eo_bist_init_ovride.h"
+#include "eo_wrappers.h"
 #include "ioo_common.h"
 #include "ioo_pipe_ifc.h"
 
 
 // CDR KP Settings
+#define c_phase_step_09375   0x0C
 #define c_phase_step_125     0x10
 #define c_phase_step_250     0x20
 #define c_phase_step_296875  0x26
@@ -275,11 +280,14 @@ typedef struct struct_data_rate_settings
     uint8_t  tx_d2_en_dc                  : 1;
     uint16_t rx_freq_adjust               : 9;
 
-    // bytes 6-7
+    // byte 6
     uint8_t  rx_clkgen_cmlmux_irctrl      : 3;
     uint8_t  rx_bist_lfpath_sel_dc        : 1;
     uint8_t  rx_dpr_vbn_cal               : 2;
-    uint8_t  fill_data0                   : 3; // Fill space for alignment
+    uint8_t  fill_data0                   : 2; // Fill space for alignment
+
+    // byte 7
+    uint8_t  fill_data1                   : 1; // Fill space for alignment
     uint8_t  rx_pr_phase_step             : 7;
 } __attribute__((packed, aligned(2))) t_data_rate_settings;
 
@@ -543,6 +551,7 @@ PK_STATIC_ASSERT(rx_a_bank_controls_width == 6);
 PK_STATIC_ASSERT(rx_b_bank_controls_width == 6);
 PK_STATIC_ASSERT(rx_ab_bank_controls_alias_width == 16);
 PK_STATIC_ASSERT(rx_pr_ki_kp_full_reg_width == 16);
+PK_STATIC_ASSERT(rx_pr_ki_kp_coarse_bump_full_reg_width == 16);
 PK_STATIC_ASSERT(rx_pr_phase_force_cmd_a_alias_width == 8);
 PK_STATIC_ASSERT(rx_ctle_peak_invalid_lock_thresh_alias_width == 16);
 PK_STATIC_ASSERT(rx_dac_cntl8_pl_full_reg_width == 16);
@@ -782,9 +791,11 @@ void update_rx_rate_dependent_analog_ctrl_pl_regs(t_gcr_addr* gcr_addr, uint32_t
 {
     int l_vio_volt  = img_field_get(ppe_vio_volts);
     const t_data_rate_settings* l_data_rate_settings = determine_data_rate_and_get_settings(gcr_addr, ovr_rate_one_hot);
+    bool l_is_odyssey = is_odyssey();
 
     // CDR Phase Step (KP)
-    put_ptr_field(gcr_addr, rx_pr_phase_step, l_data_rate_settings->rx_pr_phase_step, read_modify_write); //pl
+    int l_phase_step = l_is_odyssey ? c_phase_step_09375 : l_data_rate_settings->rx_pr_phase_step;
+    put_ptr_field(gcr_addr, rx_pr_phase_step, l_phase_step, read_modify_write); //pl
 
     // RX_FREQ_ADJUST / RX_DFE_SELFTIMED_PHASE_ADJ / RX PCIE_CLKGEN_DIV / RX CLKGEN_CMLCMUX Controls
     put_ptr_field(gcr_addr, rx_pcie_clkgen_div_rctrl, l_data_rate_settings->rx_pcie_clkgen_div_rctrl,
@@ -823,7 +834,6 @@ void update_rx_rate_dependent_analog_ctrl_pl_regs(t_gcr_addr* gcr_addr, uint32_t
 
 
     // Set the RX DL/RLM clock phase offset (data and clock relationship). RX_DPR_VBN_CAL / RX VDAC VOLTAGE CONFIGs.
-    bool l_is_odyssey = is_odyssey();
     int rlm_clk_phase_sel = l_is_odyssey ? l_data_rate_settings->rx_clk_phase_select_ody    :
                             l_data_rate_settings->rx_clk_phase_select;
     int  dl_clk_phase_sel = l_is_odyssey ? l_data_rate_settings->rx_dl_clk_phase_select_ody :
@@ -851,22 +861,39 @@ void write_rx_pl_overrides(t_gcr_addr* gcr_addr)
     // Update RX Rate Dependent Analog Controls
     update_rx_rate_dependent_analog_ctrl_pl_regs(gcr_addr, 0x0);
 
+    // Psave returns after powering the bank (do not wait for CDR lock)
+    put_ptr_field(gcr_addr, rx_psave_cdrlock_mode_sel, 0b11, read_modify_write); //pl
+
     // Different settings when Spread Spectrum Clocking (SSC) is disabled
+    int l_pcie_mode = fw_field_get(fw_pcie_mode);
     int spread_en = fw_field_get(fw_spread_en);
 
     // PSL spread_en
     if ( ! spread_en )
     {
-        // HW532326: Set rx_pr_fw_range_sel=1 (by setting rx_pr_fw_inertia_amt_coarse=15) when when spread is disabled.
-        // This reduces the max flywheel correction and increases the Bump UI step size.
-        put_ptr_field(gcr_addr, rx_pr_fw_inertia_amt_coarse, 15, read_modify_write); //pl
-
         // Lower fw_inertia (KI) when no spread
         put_ptr_field(gcr_addr, rx_pr_fw_inertia_amt, 1, read_modify_write); //pl
+
+        // HW532326: Set rx_pr_fw_range_sel=1 (by setting rx_pr_fw_inertia_amt_coarse=15) when when spread is disabled.
+        // This reduces the max flywheel correction and increases the Bump UI step size.
+        // PSL not_pcie_mode
+        if (!l_pcie_mode)   // Skip this write on PCIe since redundant with next write
+        {
+            put_ptr_field(gcr_addr, rx_pr_fw_inertia_amt_coarse, 15, read_modify_write); //pl
+        }
     }
 
-    // Psave returns after powering the bank (do not wait for CDR lock)
-    put_ptr_field(gcr_addr, rx_psave_cdrlock_mode_sel, 0b11, read_modify_write); //pl
+    // EWM304759: Use the bump mode settings to disable flywheel updates during bank align/sync.
+    // In PCIe, do not have spread. Also, Bump UI (and bump UI mode) are only used for Gen1/2 Bank Sync.
+    // PSL pcie_mode
+    if (l_pcie_mode)
+    {
+        int rx_pr_ki_kp_coarse_bump_regval =
+            (15               << rx_pr_fw_inertia_amt_coarse_shift) | // No spread in PCIe (HW532326, see above)
+            (0                << rx_pr_fw_inertia_amt_bump_shift)   | // Disable flywheel updates in bump UI mode (EWM 304759)
+            (c_phase_step_250 << rx_pr_phase_step_bump_shift);        // 0.250 min phase_step for bank_align time
+        put_ptr_field(gcr_addr, rx_pr_ki_kp_coarse_bump_full_reg, rx_pr_ki_kp_coarse_bump_regval, fast_write); //pl
+    }
 
     /////////////////////////////////////////////////////////////////
     // Set up Per Lane RX Terminations and sigdet power down control
@@ -879,8 +906,6 @@ void write_rx_pl_overrides(t_gcr_addr* gcr_addr)
     // rx_sigdet_pd is '0' for PCIe
     // rx_sigdet_ps is '1' for AXO (via reset)
     /////////////////////////////////////////////////////////////////
-    int l_pcie_mode = fw_field_get(fw_pcie_mode);
-
     if (l_pcie_mode)
     {
         put_ptr_field(gcr_addr, rx_term_adjust, 0, read_modify_write);
@@ -1072,6 +1097,12 @@ void io_hw_reg_init(t_gcr_addr* gcr_addr)
     // This function loops through the lanes in the group and should not use broadcast
     if(l_pcie_mode)   // PCIe Mode
     {
+        if (num_lanes_rx > 4)
+        {
+            set_debug_state(0x000B); // Illegal number of lanes for PCIe Mode
+            set_fir(fir_code_fatal_error);
+        }
+
         pipe_abort_config(gcr_addr, PIPE_ABORT_CFG_IDLE); //sets rx_group
     }
 
@@ -1092,9 +1123,9 @@ void io_hw_reg_init(t_gcr_addr* gcr_addr)
 
     // Allow invalid lock voting on peak2. Enable is set by default for peak1.
     put_ptr_field(gcr_addr, rx_ctle_peak2_invalid_lock_en, 0b1, read_modify_write); //pg
-    int ctle_peak_invalid_lock_thresh_val = (2 << rx_ctle_peak1_invalid_lock_thresh_inc_shift) |
+    int ctle_peak_invalid_lock_thresh_val = ( 2 << rx_ctle_peak1_invalid_lock_thresh_inc_shift) |
                                             (13 << rx_ctle_peak1_invalid_lock_thresh_dec_shift) |
-                                            (6 << rx_ctle_peak2_invalid_lock_thresh_inc_shift) | (13 << rx_ctle_peak2_invalid_lock_thresh_dec_shift);
+                                            (10 << rx_ctle_peak2_invalid_lock_thresh_inc_shift) | (13 << rx_ctle_peak2_invalid_lock_thresh_dec_shift);
     put_ptr_field(gcr_addr, rx_ctle_peak_invalid_lock_thresh_alias, ctle_peak_invalid_lock_thresh_val,
                   fast_write); //pg, full register
 
@@ -1230,6 +1261,8 @@ int io_reset_lane_rx(t_gcr_addr* gcr_addr)
                   fast_write); //pl, rx_ioreset/rx_iodom_ioreset are only fields in register
     put_ptr_field(gcr_addr, rx_ioreset,            0b0,
                   fast_write); //pl, rx_ioreset/rx_iodom_ioreset are only fields in register
+
+    // RX PL Registers in the PG Logic (not reset by rx_ioreset)
     put_ptr_field(gcr_addr, rx_phy_dl_init_done,   0b0, read_modify_write); //pl, in datasm_mac so not reset by rx_ioreset
     put_ptr_field(gcr_addr, rx_phy_dl_recal_done,  0b0, read_modify_write); //pl, in datasm_mac so not reset by rx_ioreset
 
@@ -1255,6 +1288,9 @@ int io_reset_lane_rx(t_gcr_addr* gcr_addr)
     {
         mem_regs_u16[pl_addr_start + i] = 0;
     }
+
+    // Reset lane bits in per-group mem_regs as needed.
+    set_recal_or_unused(lane);  // rx_recal_run_or_unused_0_15/_16_23: Default state is 1 (lane unused)
 
     io_sleep(get_gcr_addr_thread(gcr_addr));
     return status;

@@ -120,6 +120,7 @@ typedef enum
 //   When Cal B: use A for main data, B for alt data. bank_sel_a=1; rlm_clk_sel_a=0; dl_clk_sel_a=1.
 #define cal_bank_to_bank_rlmclk_dlclk_sel_a(cal_bank) ((cal_bank))
 #define cal_bank_to_bank_rlmclk_sel_a(cal_bank) ((cal_bank) >> 1)
+#define cal_bank_to_rlmclk_sel_a(cal_bank) (((cal_bank) >> 1) & 0b1)
 #define bank_to_bitfield_ab_mask(bank) ((bank) & 0b11)
 PK_STATIC_ASSERT(rx_bank_rlmclk_dlclk_sel_a_full_reg_width == 16);
 PK_STATIC_ASSERT(rx_bank_rlmclk_dlclk_sel_a_alias_width == 3);
@@ -329,6 +330,7 @@ void remove_edge_pr_offset(t_gcr_addr* gcr_addr);
 // PCIe Only: Save to the mem_regs the current data latch dac values for all RX data latches in a bank
 // Must set the gcr reg_id to rx_group before calling this
 void save_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank);
+void save_rx_data_latch_dac_values_both_banks(t_gcr_addr* gcr_addr);
 
 // PCIe Only: Write the RX data latches in a bank with the saved value + the recorded path offset
 // MUST set the gcr reg_id to rx_group before calling this.

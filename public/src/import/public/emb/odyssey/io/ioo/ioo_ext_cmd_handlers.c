@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mwh23050400 |mwh     | Updated for LLBIST Issue 304210
 // jjb22120700 |jjb     | enabled link layer bist for pci
 // mwh22111100 |mwh     | Updated enable with rx register enable for ESD
 // gap22102600 |gap     | EWM293106 update io_sleep to solve tx_ffe thread active time exceeded
@@ -73,7 +74,7 @@
 #include "eo_llbist.h"
 #include "eo_dac_test.h"
 #include "eo_esd.h"
-
+#include "ioo_ext_cmd_berm.h"
 
 #include "ppe_fw_reg_const_pkg.h"
 #include "ppe_img_reg_const_pkg.h"
@@ -243,6 +244,16 @@ int cmd_tx_rxdetect_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, c
  * @param[in   ] i_lane_mask   Lane Mask
  * @retval void
  */
+PK_STATIC_ASSERT((rx_lane_fail_0_15_addr + 1) == rx_lane_fail_16_23_addr);
+PK_STATIC_ASSERT((rx_lane_fail_0_15_addr % 2) == 0);
+PK_STATIC_ASSERT(rx_lane_fail_0_15_width == 16);
+PK_STATIC_ASSERT(rx_lane_fail_16_23_width == 8);
+PK_STATIC_ASSERT(rx_lane_fail_16_23_startbit == 0);
+PK_STATIC_ASSERT((tx_bist_fail_0_15_addr + 1) == tx_bist_fail_16_23_addr);
+PK_STATIC_ASSERT((tx_bist_fail_0_15_addr % 2) == 0);
+PK_STATIC_ASSERT(tx_bist_fail_0_15_width == 16);
+PK_STATIC_ASSERT(tx_bist_fail_16_23_width == 8);
+PK_STATIC_ASSERT(tx_bist_fail_16_23_startbit == 0);
 int cmd_bist_final(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const uint32_t i_lane_mask_tx)
 {
     set_debug_state(0xFD0E, EXT_CMD_DBG_LVL);
@@ -314,13 +325,7 @@ int cmd_bist_final(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const
     uint32_t l_internal_error = 0;
 
     // Check Per-Lane Data
-    uint32_t l_lane_fail_mask = (mem_pg_field_get            (rx_lane_fail_0_15 ) << 16) |
-                                //(get_ptr_field(io_gcr_addr, rx_a_lane_fail_0_15 ) << 16) |
-                                //(get_ptr_field(io_gcr_addr, rx_b_lane_fail_0_15 ) << 16) |
-                                (mem_pg_field_get            (rx_lane_fail_16_23) <<  8);
-    //(get_ptr_field(io_gcr_addr, rx_a_lane_fail_16_23) <<  8) |
-    //(get_ptr_field(io_gcr_addr, rx_b_lane_fail_16_23) <<  8);
-
+    uint32_t l_lane_fail_mask = mem_pg_u32_raw_get(rx_lane_fail_0_15_addr); //reads _0_15 + _16_23
     l_lane = 0;
     i_lane_shift = i_lane_mask_rx;
     l_num_lanes = get_num_rx_lane_slices();
@@ -344,8 +349,7 @@ int cmd_bist_final(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const
 
 
     // Verify the tx lane mask sets a tx fail flag
-    l_lane_fail_mask = (mem_pg_field_get(tx_bist_fail_0_15 ) << 16) |
-                       (mem_pg_field_get(tx_bist_fail_16_23) <<  8);
+    l_lane_fail_mask = mem_pg_u32_raw_get(tx_bist_fail_0_15_addr); //reads _0_15 + _16_23
     l_internal_error |= ((l_lane_fail_mask == 0 ? 0x0 : 0x1) ^ l_tx_fail);
 
     // Verify that PPE ERROR is always valid when there is a rx/tx failure
@@ -355,6 +359,22 @@ int cmd_bist_final(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const
 
     return status;
 } //cmd_bist_final
+
+
+/**
+ * @brief Calls Rx BERM Per-Lane
+ * @param[inout] io_gcr_addr   Target Information
+ * @param[in   ] i_lane_mask   Lane Mask
+ * @retval void
+ */
+int cmd_berm(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const uint32_t i_lane_mask_tx)
+{
+    set_gcr_addr_reg_id(io_gcr_addr, rx_group);
+
+    ioo_ext_cmd_berm(io_gcr_addr, i_lane_mask_rx);
+
+    return rc_no_error;
+} //cmd_berm
 
 
 ////////////////////////////////////////////////
@@ -377,7 +397,7 @@ IO_EXT_CMD_HANDLER(cmd_recal_pl)          // [12]:
 IO_EXT_CMD_HANDLER(cmd_bist_final)        // [13]:
 IO_EXT_CMD_HANDLER(cmd_nop)               // [14]: Reserved Deskew (IOT)
 IO_EXT_CMD_HANDLER(cmd_nop)               // [15]: Reserved Repair (IOT)
-IO_EXT_CMD_HANDLER(cmd_lab_code_pl)       // [16]:
+IO_EXT_CMD_HANDLER(cmd_berm)              // [16]:
 IO_EXT_CMD_HANDLER(cmd_lab_code_pg)       // [17]:
 IO_EXT_CMD_TABLE_END
 

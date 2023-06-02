@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23050100 |vbr     | EWM 303525: Set LOFF data/edge enables for DC Cal
 // vbr23031601 |vbr     | EWM 301316: Don't clear done/fail when mode bit is set (let FW do it)
 // vbr22120300 |vbr     | Shifted some sleeps
 // mbs22083000 |mbs     | PSL comment updates
@@ -89,14 +90,31 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Run External Commands from API Registers
-// This function assumes there are only 16 (not 32) possible external commands
 /////////////////////////////////////////////////////////////////////////////////
+PK_STATIC_ASSERT(ext_cmd_req_00_15_width == 16);
+PK_STATIC_ASSERT(ext_cmd_req_16_31_width == 16);
+PK_STATIC_ASSERT((ext_cmd_req_00_15_addr + 1) == ext_cmd_req_16_31_addr);
+PK_STATIC_ASSERT((ext_cmd_req_00_15_addr % 2) == 0);
+PK_STATIC_ASSERT(ext_cmd_done_00_15_width == 16);
+PK_STATIC_ASSERT(ext_cmd_done_16_31_width == 16);
+PK_STATIC_ASSERT((ext_cmd_done_00_15_addr + 1) == ext_cmd_done_16_31_addr);
+PK_STATIC_ASSERT((ext_cmd_done_00_15_addr % 2) == 0);
+PK_STATIC_ASSERT(ext_cmd_fail_00_15_width == 16);
+PK_STATIC_ASSERT(ext_cmd_fail_16_31_width == 16);
+PK_STATIC_ASSERT((ext_cmd_fail_00_15_addr + 1) == ext_cmd_fail_16_31_addr);
+PK_STATIC_ASSERT((ext_cmd_fail_00_15_addr % 2) == 0);
+PK_STATIC_ASSERT(ext_cmd_lanes_rx_00_15_width == 16);
+PK_STATIC_ASSERT(ext_cmd_lanes_rx_16_31_width == 16);
+PK_STATIC_ASSERT((ext_cmd_lanes_rx_00_15_addr + 1) == ext_cmd_lanes_rx_16_31_addr);
+PK_STATIC_ASSERT((ext_cmd_lanes_rx_00_15_addr % 2) == 0);
+PK_STATIC_ASSERT(ext_cmd_lanes_tx_00_15_width == 16);
+PK_STATIC_ASSERT(ext_cmd_lanes_tx_16_31_width == 16);
+PK_STATIC_ASSERT((ext_cmd_lanes_tx_00_15_addr + 1) == ext_cmd_lanes_tx_16_31_addr);
+PK_STATIC_ASSERT((ext_cmd_lanes_tx_00_15_addr % 2) == 0);
+
 void run_external_commands(t_gcr_addr* io_gcr_addr)
 {
-    uint32_t l_cmd_req  = (fw_field_get(ext_cmd_req_00_15) << 16) |
-                          (fw_field_get(ext_cmd_req_16_31) <<  0);
-    uint32_t l_cmd_done = (fw_field_get(ext_cmd_done_00_15) << 16) |
-                          (fw_field_get(ext_cmd_done_16_31) <<  0);
+    uint32_t l_cmd_req  = fw_regs_u32_raw_get(ext_cmd_req_00_15_addr); //reads _0_15 + _16_31
 
     // Clear the _done and _fail in response to _req=0
     if (l_cmd_req == 0x0)
@@ -104,22 +122,24 @@ void run_external_commands(t_gcr_addr* io_gcr_addr)
         // PSL ext_cmd_status_clear_mode
         if (fw_field_get(ext_cmd_status_clear_mode) == 0)
         {
-            fw_field_put(ext_cmd_done_00_15, 0);
-            fw_field_put(ext_cmd_done_16_31, 0);
-            fw_field_put(ext_cmd_fail_00_15, 0);
-            fw_field_put(ext_cmd_fail_16_31, 0);
+            fw_regs_u32_raw_put(ext_cmd_done_00_15_addr, 0); //writes _0_15 + _16_31
+            fw_regs_u32_raw_put(ext_cmd_fail_00_15_addr, 0); //writes _0_15 + _16_31
         }
+
+        // Exit (nothing else to do)
+        return;
     }
-    else if (l_cmd_req ^ l_cmd_done)
+
+    // REQ is not 0, so read the current DONE and process commands that have not been handled as yet
+    uint32_t l_cmd_done = fw_regs_u32_raw_get(ext_cmd_done_00_15_addr); //reads _0_15 + _16_31
+
+    if (l_cmd_req ^ l_cmd_done)
     {
         // Process new commands
         //ADD_LOG(DEBUG_EXT_CMD, io_gcr_addr, l_cmd_req);
-        uint32_t l_cmd_fail     = (fw_field_get(ext_cmd_fail_00_15) << 16) |
-                                  (fw_field_get(ext_cmd_fail_16_31) <<  0);
-        uint32_t l_lane_mask_rx = (fw_field_get(ext_cmd_lanes_rx_00_15) << 16) |
-                                  (fw_field_get(ext_cmd_lanes_rx_16_31) <<  0);
-        uint32_t l_lane_mask_tx = (fw_field_get(ext_cmd_lanes_tx_00_15) << 16) |
-                                  (fw_field_get(ext_cmd_lanes_tx_16_31) <<  0);
+        uint32_t l_cmd_fail     = fw_regs_u32_raw_get(ext_cmd_fail_00_15_addr); //reads _0_15 + _16_31
+        uint32_t l_lane_mask_rx = fw_regs_u32_raw_get(ext_cmd_lanes_rx_00_15_addr); //reads _0_15 + _16_31
+        uint32_t l_lane_mask_tx = fw_regs_u32_raw_get(ext_cmd_lanes_tx_00_15_addr); //reads _0_15 + _16_31
 
         // Run commands in priority order until all are completed
         uint32_t l_new_cmd_req = l_cmd_req & ~l_cmd_done;
@@ -137,14 +157,12 @@ void run_external_commands(t_gcr_addr* io_gcr_addr)
             if (status)
             {
                 l_cmd_fail |= l_cmd_mask;
-                fw_field_put(ext_cmd_fail_00_15, ((l_cmd_fail & 0xFFFF0000) >> 16));
-                fw_field_put(ext_cmd_fail_16_31, ((l_cmd_fail & 0x0000FFFF) >>  0));
+                fw_regs_u32_raw_put(ext_cmd_fail_00_15_addr, l_cmd_fail); //writes _0_15 + _16_31
             }
 
             // Write the Command Done Bit
             l_cmd_done |= l_cmd_mask;
-            fw_field_put(ext_cmd_done_00_15, ((l_cmd_done & 0xFFFF0000) >> 16));
-            fw_field_put(ext_cmd_done_16_31, ((l_cmd_done & 0x0000FFFF) >>  0));
+            fw_regs_u32_raw_put(ext_cmd_done_00_15_addr, l_cmd_done); //writes _0_15 + _16_31
 
             // Update command req vec
             l_new_cmd_req = l_new_cmd_req & ~l_cmd_done;
@@ -171,14 +189,23 @@ int cmd_nop(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const uint32
 ///////////////////////////
 // Helper Functions
 ///////////////////////////
+
+PK_STATIC_ASSERT((tx_lanes_pon_00_15_addr + 1) == tx_lanes_pon_16_23_addr);
+PK_STATIC_ASSERT((tx_lanes_pon_00_15_addr % 2) == 0);
+PK_STATIC_ASSERT(tx_lanes_pon_00_15_width == 16);
+PK_STATIC_ASSERT(tx_lanes_pon_16_23_width == 8);
+PK_STATIC_ASSERT(tx_lanes_pon_16_23_startbit == 0);
+PK_STATIC_ASSERT((rx_lanes_pon_00_15_addr + 1) == rx_lanes_pon_16_23_addr);
+PK_STATIC_ASSERT((rx_lanes_pon_00_15_addr % 2) == 0);
+PK_STATIC_ASSERT(rx_lanes_pon_00_15_width == 16);
+PK_STATIC_ASSERT(rx_lanes_pon_16_23_width == 8);
+PK_STATIC_ASSERT(rx_lanes_pon_16_23_startbit == 0);
 void track_and_adjust_group_power(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const uint32_t i_lane_mask_tx,
                                   const int new_power_state)
 {
     // Load Current Lane State
-    uint32_t l_tx_lanes_power_on = (mem_pg_field_get(tx_lanes_pon_00_15) << 16) |
-                                   (mem_pg_field_get(tx_lanes_pon_16_23) << (16 - tx_lanes_pon_16_23_width));
-    uint32_t l_rx_lanes_power_on = (mem_pg_field_get(rx_lanes_pon_00_15) << 16) |
-                                   (mem_pg_field_get(rx_lanes_pon_16_23) << (16 - rx_lanes_pon_16_23_width));
+    uint32_t l_tx_lanes_power_on = mem_pg_u32_raw_get(tx_lanes_pon_00_15_addr); //reads _0_15 + _16_23
+    uint32_t l_rx_lanes_power_on = mem_pg_u32_raw_get(rx_lanes_pon_00_15_addr); //reads _0_15 + _16_23
 
     // Adjustments based on new state
     bool state_changed = false;
@@ -248,10 +275,9 @@ void track_and_adjust_group_power(t_gcr_addr* io_gcr_addr, const uint32_t i_lane
     }
 
     // Store New Lane State
-    mem_pg_field_put(tx_lanes_pon_00_15, (l_tx_lanes_power_on >> 16) & 0xFFFF);
-    mem_pg_field_put(tx_lanes_pon_16_23, (l_tx_lanes_power_on >>  8) & 0x00FF);
-    mem_pg_field_put(rx_lanes_pon_00_15, (l_rx_lanes_power_on >> 16) & 0xFFFF);
-    mem_pg_field_put(rx_lanes_pon_16_23, (l_rx_lanes_power_on >>  8) & 0x00FF);
+    mem_pg_u32_raw_put(tx_lanes_pon_00_15_addr, l_tx_lanes_power_on); //writes _0_15 + _16_23
+    mem_pg_u32_raw_put(rx_lanes_pon_00_15_addr, l_rx_lanes_power_on); //writes _0_15 + _16_23
+
 
     // PSL state_changed
     if(state_changed)
@@ -458,7 +484,7 @@ int cmd_dccal_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const u
     set_debug_state(0xFD06, EXT_CMD_DBG_LVL);
 
 #ifdef IOO
-    mem_pg_field_put(rx_dc_enable_loff_ab_alias, 0b11); // Both banks
+    mem_pg_field_put(rx_dc_enable_loff_ab_data_edge_alias, 0xF); // Both banks, data and edge latches
 #endif
 
     // Update lanes_pon_* and power on group (if needed)
