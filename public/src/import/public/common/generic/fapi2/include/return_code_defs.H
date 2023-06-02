@@ -100,9 +100,6 @@ enum ReturnCodes : uint32_t
     FAPI2_RC_FILE_NOT_FOUND              = FAPI2_RC_FAPI2_MASK | 0x07,
     ///< A requested file was not found
 
-    FAPI2_RC_HASH_MISMATCH               = FAPI2_RC_FAPI2_MASK | 0x08,
-    ///< A requested file hash was miss-match
-
     //
     // PLAT generated return codes. Additional details may be contained in
     // ReturnCode platData (this can only be looked at by PLAT code)
