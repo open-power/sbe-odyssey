@@ -36,7 +36,6 @@
 #include <ody_chiplet_clk_config.H>
 #include <ody_chiplet_reset.H>
 #include <ody_chiplet_unused_psave.H>
-#include <ody_chiplet_pll_setup.H>
 #include <ody_bist_repr_initf.H>
 #include <ody_abist.H>
 #include <ody_lbist.H>
