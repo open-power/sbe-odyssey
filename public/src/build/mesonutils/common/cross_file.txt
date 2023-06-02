@@ -156,6 +156,10 @@ runtime_cmn_attributes_inc_paths = [
     '/public/src/runtime/common/attributes',
     ]
 
+runtime_cmn_collectdump_inc_paths = [
+    '/public/src/runtime/common/chipops/collectdump',
+    ]
+
 onetime_cmn_inc_paths = [
     '/public/src/onetime/common/srom/init',
     '/public/src/onetime/common/srom/core',

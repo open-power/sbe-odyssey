@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/common/chipops/meson.build $
+# $Source: public/src/runtime/common/chipops/collectdump/meson.build $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2023
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,10 +21,9 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-
-subdir('stopclocks')
-subdir('tracearray')
-subdir('fastarray')
-subdir('getcapabilities')
-subdir('sramaccess')
-subdir('collectdump')
+CMN_COLLECT_DUMP_CHIPOPS_JSON = files('chipop_table.json')
+abs_runtime_cmn_collectdump_c_path = files(
+                                            'sbecmddump.C',
+                                            'sbedumpconstants.C',
+                                            'sbecollectdump.C'
+                                          )
