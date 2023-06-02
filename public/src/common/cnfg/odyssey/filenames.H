@@ -49,6 +49,7 @@ static const char hw_keys_hash_fname[]          = "rt/hwkeyshash.bin";
 static const char sppe_ram_pak_fname[]          = "rt/sppe.ram.pak";
 static const char cust_sppe_pak_fname[]         = "cust/sppe.pak";
 static const char runtime_image_hash_file_name[]= "rt/image.hash";
+static const char hdct_binary_fname[]           = "hdct.bin";
 
 /*
  * @brief List of all file names in BMC OVERRIDE Pak(BMC_OVRD)

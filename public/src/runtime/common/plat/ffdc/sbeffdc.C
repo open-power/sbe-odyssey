@@ -215,7 +215,7 @@ uint32_t SbeFFDCPackage::createSbePackage( uint32_t &o_bytesSent, const bool isF
             SBE_INFO(SBE_FUNC " trace fields and PackageData length[0x%08X]",
                                                    iv_sbeTraceBlob.field.get());
             length = iv_sbeTraceBlob.field.fieldLen / sizeof(uint32_t);
-            SBE_INFO(" SBE_FFDC_TRACE_DATA data length[%d]", length);
+            SBE_INFO(SBE_FUNC " SBE_FFDC_TRACE_DATA data length[%d]", length);
             FIFO_BLOB_DATA_UPDATE( length, (uint32_t*)(G_PK_TRACE_BUF));
         }
         o_bytesSent += length;

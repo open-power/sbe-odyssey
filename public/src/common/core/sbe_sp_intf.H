@@ -66,6 +66,17 @@ enum sbeCommandClass
 
 static const uint8_t SBE_CMD_UNKNOWN = 0x00;
 
+// JIRA: PFSBE-439 -> Cmd Class and Cmd Opcode should be generated
+/**
+ * @brief enums for SCOM Access Messages
+ *
+*/
+enum sbeScomAccessCommands
+{
+    SBE_CMD_GETSCOM          = 0x01, /* Get SCOM */
+    SBE_CMD_PUTSCOM          = 0x02, /* Put SCOM */
+};
+
 /**
  * @brief enums for primary SBE response
  *
@@ -86,6 +97,7 @@ enum sbePrimResponse
  * @brief enums for secondary SBE response
  *   @TODO via RTC: 129763
  *         Discuss on SBE_SEC_INVALID_TARGET_ID_PASSED
+ *         Discuss on SBE_SEC_INVALID_CHIPLET_ID_PASSED
  *
  */
 enum sbeSecondaryResponse
@@ -204,8 +216,8 @@ enum sbeSecondaryResponse
     SBE_SEC_UNALIGNED_ADDRESS_PASSED          = 0x7C,
     SBE_SEC_INVALID_LENGTH_PASSED             = 0x7D,
     SBE_SEC_GIT_COMMIT_ID_FAILURE             = 0x7E,
-    SBE_SEC_GIT_TIME_STAMP_FAILURE            = 0x7F
-
+    SBE_SEC_GIT_TIME_STAMP_FAILURE            = 0x7F,
+    SBE_SEC_INVALID_CLOCK_STATE               = 0x80
 };
 
 /**
@@ -351,6 +363,18 @@ enum
     UPDATE_IMAGE_SUPPORTED              = 0xAE000002,
     // 0xAE03
     SYNC_SIDE_SUPPORTED                 = 0xAE000004,
+};
+
+/**
+ * @brief enum for sbe supported dump types
+ *
+*/
+enum sbeSupportedDumpTypes
+{
+    SBE_DUMP_TYPE_SCS   = 0x01, /** System Check Stop */
+    SBE_DUMP_TYPE_MPIPL = 0x02, /** Memory Preserving IPl */
+    SBE_DUMP_TYPE_PERF  = 0x03, /** Performance */
+    SBE_DUMP_TYPE_HB    = 0x04, /** Host Boot */
 };
 
 #ifdef __cplusplus

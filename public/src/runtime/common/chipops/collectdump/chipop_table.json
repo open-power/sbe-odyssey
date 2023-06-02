@@ -1,0 +1,11 @@
+{
+    "chipoptable":[
+        {
+            "cmdClass":"AA",
+            "command":"0x01",
+            "function":"sbeGetDump",
+            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL","SBE_FENCE_AT_DUMPING"],
+            "headerFile":"sbecmddump.H"
+        }
+    ]
+}

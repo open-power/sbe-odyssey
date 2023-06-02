@@ -1,0 +1,375 @@
+/* IBM_PROLOG_BEGIN_TAG                                                   */
+/* This is an automatically generated prolog.                             */
+/*                                                                        */
+/* $Source: public/src/runtime/common/chipops/collectdump/sbecollectdump.C $ */
+/*                                                                        */
+/* OpenPOWER sbe Project                                                  */
+/*                                                                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
+/*                                                                        */
+/*                                                                        */
+/* Licensed under the Apache License, Version 2.0 (the "License");        */
+/* you may not use this file except in compliance with the License.       */
+/* You may obtain a copy of the License at                                */
+/*                                                                        */
+/*     http://www.apache.org/licenses/LICENSE-2.0                         */
+/*                                                                        */
+/* Unless required by applicable law or agreed to in writing, software    */
+/* distributed under the License is distributed on an "AS IS" BASIS,      */
+/* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or        */
+/* implied. See the License for the specific language governing           */
+/* permissions and limitations under the License.                         */
+/*                                                                        */
+/* IBM_PROLOG_END_TAG                                                     */
+#include "sbecollectdump.H"
+#include "sbedumpconstants.H"
+#include "plat_hw_access.H"
+
+#define PRI_SEC_RC_UNION(primary_rc, secondary_rc) primary_rc<<16 | secondary_rc
+
+inline bool sbeCollectDump::isDumpTypeMapped()
+{
+    return (iv_hdctRow->genericHdr.dumpContent & iv_hdctDumpTypeMap);
+}
+
+
+/********************* Types of Dump Packets to FIFO START ****************************/
+uint32_t sbeCollectDump::writePutScomPacketToFifo()
+{
+    #define SBE_FUNC "writePutScomPacketToFifo"
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    fapi2::ReturnCode fapiRc = fapi2::FAPI2_RC_SUCCESS;
+    uint64_t dumpData = 0;
+    do
+    {
+        // Set FFDC failed command information and
+        // Sequence Id is 0 by default for Fifo interface
+        iv_chipOpffdc.setCmdInfo(0, SBE_CMD_CLASS_SCOM_ACCESS, SBE_CMD_PUTSCOM);
+
+        // Update address, length and stream header data via FIFO
+        iv_tocRow.hdctHeader.address = iv_hdctRow->cmdPutScom.addr;
+        iv_tocRow.hdctHeader.dataLength = 0x00;
+        uint32_t len = sizeof(iv_tocRow.hdctHeader) / sizeof(uint32_t);
+        if(!iv_tocRow.tgtHndl.getFunctional())
+        {
+            iv_tocRow.hdctHeader.preReq = PRE_REQ_NON_FUNCTIONAL;
+            l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
+            CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+            SBE_DEBUG("DUMP PUTSCOM: NonFunctional Target UnitNum[0x%08X]",
+                     (uint32_t)iv_tocRow.hdctHeader.chipUnitNum);
+            break;
+        }
+        l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+
+        uint32_t addr = iv_tocRow.hdctHeader.address;
+        uint32_t maskType = iv_hdctRow->cmdPutScom.extGenericHdr.bitModifier;
+        fapi2::Target<fapi2::TARGET_TYPE_CHIPS> dumpRowTgt(iv_tocRow.tgtHndl);
+        fapi2::seeprom_hwp_data_istream stream((uint32_t*)&iv_hdctRow->cmdPutScom.value,
+                                         sizeof(uint64_t));
+        uint32_t msbValue, lsbValue;
+        stream.get(msbValue), stream.get(lsbValue);
+        uint64_t mask = (((uint64_t)msbValue << 32 ) | ((uint64_t)lsbValue));
+        dumpData = mask; // maskType is nnone then putScom data is mask value.
+
+        SBE_DEBUG("putscom address:[0x%08X], maskType:[0x%08X], mask:[0x%08X%08X]",
+                  addr, maskType, SBE::higher32BWord(mask), SBE::lower32BWord(mask));
+
+        if( B_NONE != maskType )
+        {
+            uint64_t readData = 0;
+            fapiRc = getscom_abs_wrap(&dumpRowTgt, addr, &readData);
+            if(fapiRc != fapi2::FAPI2_RC_SUCCESS)
+            {
+                iv_oStream.setFifoRc(fapiRc);
+                iv_oStream.setPriSecRc(PRI_SEC_RC_UNION(
+                            SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                            SBE_SEC_GENERIC_FAILURE_IN_EXECUTION));
+                break;
+            }
+            SBE_INFO(SBE_FUNC " putscom scom value: 0x%.8X%.8X ",
+                     SBE::higher32BWord(readData),SBE::lower32BWord(readData));
+            if( B_OR == maskType )
+            {
+                dumpData = (readData | mask);
+            }
+            if( B_AND == maskType )
+            {
+                dumpData = (readData & mask);
+            }
+        }
+        SBE_DEBUG(SBE_FUNC " maskType[0x%02X], data [0x%08X %08X] ", maskType,
+                      SBE::higher32BWord(dumpData),SBE::lower32BWord(dumpData));
+        fapiRc = putscom_abs_wrap(&dumpRowTgt, addr, dumpData);
+        if(fapiRc != fapi2::FAPI2_RC_SUCCESS)
+        {
+            iv_oStream.setFifoRc(fapiRc);
+            iv_oStream.setPriSecRc(PRI_SEC_RC_UNION(
+                        SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                        SBE_SEC_GENERIC_FAILURE_IN_EXECUTION));
+            break;
+        }
+    }
+    while(0);
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
+uint32_t sbeCollectDump::writeGetScomPacketToFifo()
+{
+    #define SBE_FUNC "writeGetScomPacketToFifo"
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    fapi2::ReturnCode fapiRc = fapi2::FAPI2_RC_SUCCESS;
+
+    do{
+        // Set FFDC failed command information and
+        // Sequence Id is 0 by default for Fifo interface
+        iv_chipOpffdc.setCmdInfo(0, SBE_CMD_CLASS_SCOM_ACCESS, SBE_CMD_GETSCOM );
+
+        // Update address, length and stream header data vai FIFO
+        iv_tocRow.hdctHeader.address = iv_hdctRow->cmdGetScom.addr;
+        uint32_t len = sizeof(iv_tocRow.hdctHeader) / sizeof(uint32_t);
+        if(!iv_tocRow.tgtHndl.getFunctional())
+        {
+            // Update non functional state DUMP header
+            iv_tocRow.hdctHeader.preReq = PRE_REQ_NON_FUNCTIONAL;
+            iv_tocRow.hdctHeader.dataLength = 0x00;
+            SBE_DEBUG("DUMP GETSCOM: NonFunctional Target UnitNum[0x%08X]",
+                    (uint32_t)iv_tocRow.hdctHeader.chipUnitNum);
+            l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
+            CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+        }
+        iv_tocRow.hdctHeader.dataLength = 0x40; // 64 bits -or- 2 words
+        l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+        uint64_t dumpData;
+        // Proc Scoms
+        fapi2::Target<fapi2::TARGET_TYPE_CHIPS> dumpRowTgt(iv_tocRow.tgtHndl);
+        fapiRc = getscom_abs_wrap(&dumpRowTgt, iv_tocRow.hdctHeader.address, &dumpData);
+        if(fapiRc != fapi2::FAPI2_RC_SUCCESS)
+        {
+            iv_oStream.setFifoRc(fapiRc);
+            iv_oStream.setPriSecRc(PRI_SEC_RC_UNION(
+                            SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                            SBE_SEC_GENERIC_FAILURE_IN_EXECUTION));
+            break;
+        }
+        SBE_DEBUG("getScom: address: 0x%08X, data HI: 0x%08X, data LO: 0x%08X ",
+                iv_tocRow.hdctHeader.address, SBE::higher32BWord(dumpData),
+                SBE::lower32BWord(dumpData));
+        l_rc = iv_oStream.put(FIFO_DOUBLEWORD_LEN, (uint32_t*)&dumpData);
+    }while(0);
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
+
+/******************** Types of Dump Packets to FIFO END **********************/
+
+
+// ------------------------------------------------------------------------------ //
+
+
+/****************  Dump Packet to FIFO based on type ********************/
+uint32_t sbeCollectDump::writeDumpPacketRowToFifo()
+{
+    #define SBE_FUNC "writeDumpPacketRowToFifo"
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    do
+    {
+        // Get update row values by using HDCT bin data
+        iv_tocRow.hdctHeaderInit(iv_hdctRow);
+        // TODO: Clean-Up once other chip-op enabled.
+        if( !( (iv_tocRow.hdctHeader.cmdType == CMD_GETSCOM)    ||
+               (iv_tocRow.hdctHeader.cmdType == CMD_PUTSCOM))
+          )
+        {
+            SBE_ERROR(SBE_FUNC "Unsupported command types %d", (uint32_t)iv_tocRow.hdctHeader.cmdType);
+            break;
+        }
+
+        // Map Dump target id with plat target list
+        std::vector<fapi2::plat_target_handle_t> targetList;
+        getTargetList(targetList);
+
+        for( auto &target : targetList )
+        {
+            //CPU cycles to complete the chip-op.
+            iv_tocRow.cpuCycles = pk_timebase_get();
+
+            // write dump row header contents using FIFO
+            fapi2::Target<fapi2::TARGET_TYPE_CHIPS> dumpRowTgtHnd(target);
+            iv_tocRow.tgtHndl = target;
+            iv_tocRow.hdctHeader.preReq = PRE_REQ_PASSED;
+            if(iv_tocRow.hdctHeader.chipUnitType == CHIP_UNIT_TYPE_PERV)
+            {
+                iv_tocRow.hdctHeader.chipUnitNum = dumpRowTgtHnd.getChipletNumber();
+            }
+            else
+            {
+                iv_tocRow.hdctHeader.chipUnitNum = dumpRowTgtHnd.get().getTargetInstance();
+            }
+            // Clear FifoRc and Clear Primary Secondary RC
+            iv_oStream.setFifoRc(fapi2::FAPI2_RC_SUCCESS);
+            iv_oStream.setPriSecRc(SBE_PRI_OPERATION_SUCCESSFUL);
+            // Add HWP specific ffdc data length
+            iv_chipOpffdc.lenInWords = 0;
+
+            switch(iv_tocRow.hdctHeader.cmdType)
+            {
+                case CMD_GETSCOM:
+                {
+                    l_rc = writeGetScomPacketToFifo();
+                    break;
+                }
+                case CMD_PUTSCOM:
+                {
+                    l_rc = writePutScomPacketToFifo();
+                    break;
+                }
+                default:
+                {
+                    // Print the error message and continue the dumping
+                    SBE_ERROR(SBE_FUNC " command Id [0x%08X] is not supported.",
+                                        (uint8_t)iv_tocRow.hdctHeader.cmdType);
+                    break;
+                }
+            } // End switch
+            CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+            if( (iv_oStream.getFifoRc() != fapi2::FAPI2_RC_SUCCESS) ||
+                (iv_oStream.getPriSecRc() != SBE_SEC_OPERATION_SUCCESSFUL) )
+            {
+                iv_chipOpffdc.setRc(iv_oStream.getFifoRc());
+                // Update FFDC lenth + PrimarySecondary(32 bits) RC lenth
+                iv_tocRow.ffdcLen = sizeof(sbeResponseFfdc_t) + sizeof(uint32_t);
+                // write FFDC data on failed case using FIFO
+                l_rc = iv_oStream.put(iv_tocRow.ffdcLen);
+                CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+                // Set Primary Secondary RC
+                l_rc = iv_oStream.put(iv_oStream.getPriSecRc());
+                CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+                l_rc = iv_oStream.put(sizeof(sbeResponseFfdc_t)/sizeof(uint32_t)
+                                        ,(uint32_t*)&iv_chipOpffdc);
+                CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+            }
+            else
+            {
+                uint32_t ffdcDataLength = 0x00;
+                // write FFDC data as a zero for success using FIFO
+                l_rc = iv_oStream.put(ffdcDataLength);
+                CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+            }
+            // FIFO the cpuCycles value
+            iv_tocRow.cpuCycles = pk_timebase_get() - iv_tocRow.cpuCycles; // Delay time
+            l_rc = iv_oStream.put(FIFO_DOUBLEWORD_LEN,
+                                    (uint32_t*)&iv_tocRow.cpuCycles);
+            CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+        } // End For loop
+    }while(0);
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
+/******************** Parse Single HDCT Entry **********************/
+uint32_t sbeCollectDump::parserSingleHDCTEntry()
+{
+    #define SBE_FUNC " parserSingleHDCTEntry "
+    SBE_ENTER(SBE_FUNC);
+
+    //Return status
+    bool status = true;
+    do
+    {
+        //Check if all HDCT entries are parsed
+        if(!(iv_hdctPakSecDetails.currAddr < iv_hdctPakSecDetails.endAddr))
+        {
+            SBE_INFO("All HDCT entries parsed for Clock State: %d", iv_clockState);
+            status = false;
+            break;
+        }
+
+        //Parse single HDCT row and populate genericHdctRow_t struct
+        iv_hdctRow = (genericHdctRow_t*)iv_hdctPakSecDetails.currAddr;
+
+        //Increment the current address to point to the next HDCT row
+        iv_hdctPakSecDetails.currAddr = iv_hdctPakSecDetails.currAddr +
+                                        genericHdctRowSize_table[(uint8_t)(iv_hdctRow->genericHdr.command)];
+
+        //Error Check
+        if(genericHdctRowSize_table[(uint8_t)(iv_hdctRow->genericHdr.command)] == CMD_TYPE_NOT_USED)
+        {
+            SBE_ERROR("Unknown command type: %X, Error in parsing HDCT.bin",
+                      (uint8_t) iv_hdctRow->genericHdr.command);
+            status = false;
+            break;
+        }
+
+        // Clock off state filter
+        if (iv_clockState == SBE_DUMP_CLOCK_OFF &&
+            iv_clockOffEntryFlag == true &&
+            iv_hdctRow->genericHdr.command == CMD_STOPCLOCKS)
+        {
+            iv_clockOffEntryFlag = false;
+        }
+
+        //Clock On state filter
+        if (iv_clockState == SBE_DUMP_CLOCK_ON && iv_hdctRow->genericHdr.command == CMD_STOPCLOCKS)
+        {
+            SBE_INFO("All HDCT entries parsed for Clock State: %d", iv_clockState);
+            status = false;
+            break;
+        }
+
+    }while(iv_clockOffEntryFlag ? true : (!(sbeCollectDump::isDumpTypeMapped())));
+
+    SBE_EXIT(SBE_FUNC);
+    return status;
+    #undef SBE_FUNC
+}
+
+// ------------------------------------------------------------------------------ //
+
+
+/******************** MAIN ENTRY POINT TO COLLECT HDCT ENTRIES
+ * Loop For HDCT Entries and Dump them based on Types
+ * 1. parseSingleHDCTEntry
+ * 2. Dump packet to FIFO based on
+ * 3. Dump Type
+ * **********************/
+uint32_t sbeCollectDump::collectAllHDCTEntries()
+{
+#define SBE_FUNC " collectAllHDCTEntries "
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    do
+    {
+        // Write the dump header to FIFO
+        uint32_t len = sizeof(dumpHeader_t)/ sizeof(uint32_t);
+        l_rc = iv_oStream.put(len, (uint32_t*)&iv_dumpHeader);
+        // If FIFO access failure
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+
+        while(sbeCollectDump::parserSingleHDCTEntry())
+        {
+            l_rc = writeDumpPacketRowToFifo();
+            // If FIFO access failure
+            CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+        }
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+        //Dump chip-op Footer - DONE
+        l_rc = iv_oStream.put(DUMP_CHIP_OP_FOOTER);
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+    }
+    while(0);
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+#undef SBE_FUNC
+}
