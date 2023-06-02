@@ -35,7 +35,7 @@
 #include <fapi2.H>
 #include <ody_getecid.H>
 #include <ody_scom_perv.H>
-#include <generic/memory/lib/utils/mss_generic_check.H>
+#include <generic/memory/lib/utils/c_str.H>
 
 
 
