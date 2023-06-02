@@ -296,8 +296,6 @@ inline fapi2::ReturnCode invalid_value(const fapi2::Target<T>& i_target,
                                        const FFDC i_ffdc_codes,
                                        const char* i_err_str = "")
 {
-#ifndef __PPE__
-/// @TODO: remove once ffdc enabled in sbe
     FAPI_ASSERT(i_conditional,
                 fapi2::MSS_FAILED_DATA_INTEGRITY_CHECK().
                 set_VALUE(i_data).
@@ -306,7 +304,7 @@ inline fapi2::ReturnCode invalid_value(const fapi2::Target<T>& i_target,
                 set_FFDC_CODE(i_ffdc_codes),
                 "%s. Byte %d, Data returned: %d for " TARGTIDFORMAT,
                 i_err_str, i_byte_index, i_data, TARGTID );
-#endif
+
     return fapi2::FAPI2_RC_SUCCESS;
 
 fapi_try_exit:
@@ -314,6 +312,7 @@ fapi_try_exit:
 
 } // invalid_value
 
+#ifndef __PPE__
 ///
 /// @brief Checks conditional passes and implements traces & exits if it fails
 /// @tparam OT data type we want to check safe conversion against (explicit)
@@ -335,8 +334,7 @@ inline fapi2::ReturnCode invalid_type_conversion(const fapi2::Target<T>& i_targe
         const char* i_err_str = "")
 {
     OT l_temp = static_cast<OT>(i_data);
-#ifndef __PPE__
-/// @TODO: remove once ffdc enabled in sbe
+
     FAPI_ASSERT( i_data == l_temp,
                  fapi2::MSS_CONVERSION_ERROR()
                  .set_ORIGINAL_VAL(i_data)
@@ -345,13 +343,14 @@ inline fapi2::ReturnCode invalid_type_conversion(const fapi2::Target<T>& i_targe
                  .set_FUNCTION(i_ffdc_codes),
                  "%s. Conversion error between original %d to converted %d value for " TARGTIDFORMAT,
                  i_err_str, i_data, l_temp, TARGTID );
-#endif
+
     return fapi2::FAPI2_RC_SUCCESS;
 
 fapi_try_exit:
     return fapi2::current_err;
 
 } // invalid_type_conversion
+#endif
 
 ///
 /// @brief Checks conditional passes and implements traces & exits if it fails
@@ -373,8 +372,6 @@ fapi2::ReturnCode index_within_bounds(const fapi2::Target<T>& i_target,
                                       const FFDC i_ffdc_codes,
                                       const char* i_err_str = "")
 {
-#ifndef __PPE__
-/// @TODO: remove once ffdc enabled in sbe
     FAPI_ASSERT( i_index < i_size,
                  fapi2::MSS_OUT_OF_BOUNDS_INDEXING()
                  .set_INDEX(i_index)
@@ -383,7 +380,7 @@ fapi2::ReturnCode index_within_bounds(const fapi2::Target<T>& i_target,
                  .set_TARGET(i_target),
                  "%s. Out of bounds indexing (with %d) on a list of size %d for " TARGTIDFORMAT,
                  i_err_str, i_index, i_size, TARGTID );
-#endif
+
     return fapi2::FAPI2_RC_SUCCESS;
 
 fapi_try_exit:
