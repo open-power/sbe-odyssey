@@ -33,7 +33,6 @@ infile_c = [
             '/hwp/odyssey/perv/ody_chiplet_clk_config.C',
             '/hwp/odyssey/perv/ody_chiplet_reset.C',
             '/hwp/odyssey/perv/ody_chiplet_unused_psave.C',
-            '/hwp/odyssey/perv/ody_chiplet_pll_setup.C',
             '/hwp/odyssey/perv/ody_bist_repr_initf.C',
             '/hwp/odyssey/perv/ody_abist.C',
             '/hwp/odyssey/perv/ody_lbist.C',
