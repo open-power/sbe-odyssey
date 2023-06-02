@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -52,7 +53,7 @@ uint32_t sbepollTSnDQS(uint32_t &io_tspperiod, uint8_t &io_dqscount)
             io_tspperiod = l_tspperiod;
             io_dqscount = 0;
         }
-        SBE_INFO(SBE_FUNC "Thermal Sensor polling period is 0x%08X ms",
+        SBE_DEBUG(SBE_FUNC "Thermal Sensor polling period is 0x%08X ms",
                            io_tspperiod);
 
         if(l_tspperiod == 0)
@@ -60,12 +61,12 @@ uint32_t sbepollTSnDQS(uint32_t &io_tspperiod, uint8_t &io_dqscount)
             // This measn SBE does not have to execute the thermal init HWP.
             // The polling interval will be set to the pre defined one.
             io_tspperiod = THERMAL_SENSOR_POLLING_INITIAL_PERIOD_MICROSEC;
-            SBE_INFO(SBE_FUNC "Polling is not enabled, l_tspperiod is 0x%08X",
+            SBE_DEBUG(SBE_FUNC "Polling is not enabled, l_tspperiod is 0x%08X",
                                l_tspperiod);
             break;
         }
 
-        SBE_INFO(SBE_FUNC "Execute the Thermal Sensor polling HWP");
+        SBE_DEBUG(SBE_FUNC "Execute the Thermal Sensor polling HWP");
         // Execute the Thermal Sensor polling HWP.
         SBE_EXEC_HWP(l_rc, ody_thermal_read, l_ocmb_chip);
         if(l_rc)
@@ -77,7 +78,7 @@ uint32_t sbepollTSnDQS(uint32_t &io_tspperiod, uint8_t &io_dqscount)
         if((l_dqscount != 0) && ((io_dqscount % l_dqscount) == 0))
 
         {
-            SBE_INFO(SBE_FUNC "Execute the DQS HWP");
+            SBE_DEBUG(SBE_FUNC "Execute the DQS HWP");
             SBE_EXEC_HWP(l_rc, ody_dqs_track, l_ocmb_chip);
         }
 

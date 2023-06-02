@@ -345,10 +345,10 @@ void sbeAsyncCommandProcessor_routine(void *arg)
             // Incase of failure set the asyn bit to true.
             (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
         }
-        SBE_INFO(SBE_FUNC "Thermal sensor polling done.");
+        SBE_DEBUG(SBE_FUNC "Thermal sensor polling done.");
 
         // Start the timer with the updated value.
-        SBE_INFO(SBE_FUNC "l_tspinterval is 0x%08X", l_tspinterval);
+        SBE_DEBUG(SBE_FUNC "l_tspinterval is 0x%08X", l_tspinterval);
         l_rc = g_sbe_thermal_sensor_timer.startTimer(
                              l_tspinterval,
                              (PkTimerCallback)&sbeasyncthreadPkExpiryCallback );
