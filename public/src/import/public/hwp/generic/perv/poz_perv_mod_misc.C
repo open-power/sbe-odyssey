@@ -326,28 +326,23 @@ ReturnCode mod_multicast_setup(
 
     FAPI_TRY(mod_multicast_setup_plat_remap(i_group_id, l_group_id));
 
-    FAPI_INF("Determine required group members.");
-
     for (auto& targ : l_all_chiplets)
     {
         l_eligible_chiplets.setBit(targ.getChipletNumber());
     }
 
     l_required_group_members = l_eligible_chiplets & i_chiplets;
-    FAPI_DBG("Required multicast group members : 0x%08X%08X",
+    FAPI_INF("Required multicast group members : 0x%08X%08X",
              l_required_group_members >> 32, l_required_group_members & 0xFFFFFFFF);
 
     // MC_GROUP_MEMBERSHIP_BITX_READ = 0x500F0001
     // This performs a multicast read with the BITX merge operation.
     // It reads a register that has bit 0 tied to 1, so the return value
     // will have a 1 for each chiplet that is a member of the targeted group.
-    FAPI_INF("Determine current group members");
     FAPI_TRY(fapi2::getScom(i_target, MC_GROUP_MEMBERSHIP_BITX_READ | ((uint32_t)l_group_id << 24),
                             l_current_group_members));
-    FAPI_DBG("Current multicast group members : 0x%08X%08X",
+    FAPI_INF("Current multicast group members : 0x%08X%08X",
              l_current_group_members >> 32, l_current_group_members & 0xFFFFFFFF);
-
-    FAPI_INF("Update group membership where needed");
 
     for (int i = 0; i <= 63; i++)
     {
