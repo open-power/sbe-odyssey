@@ -1478,7 +1478,7 @@
 #define pcie_ppe_saved_tx_dcc_lane_4_mask          0xffff
 
 
-#define pcie_ppe_txdetrx_dac_cntl_lane_0_addr      0b101000000
+#define pcie_ppe_txdetrx_dac_cntl_lane_0_addr      0b101000001
 #define pcie_ppe_txdetrx_dac_cntl_lane_0_startbit   0
 #define pcie_ppe_txdetrx_dac_cntl_lane_0_width     8
 #define pcie_ppe_txdetrx_dac_cntl_lane_0_endbit    7
@@ -1486,7 +1486,7 @@
 #define pcie_ppe_txdetrx_dac_cntl_lane_0_mask      0xff00
 
 
-#define pcie_ppe_txdetrx_dac_cntl_lane_1_addr      0b101000010
+#define pcie_ppe_txdetrx_dac_cntl_lane_1_addr      0b101000011
 #define pcie_ppe_txdetrx_dac_cntl_lane_1_startbit   0
 #define pcie_ppe_txdetrx_dac_cntl_lane_1_width     8
 #define pcie_ppe_txdetrx_dac_cntl_lane_1_endbit    7
@@ -1494,7 +1494,7 @@
 #define pcie_ppe_txdetrx_dac_cntl_lane_1_mask      0xff00
 
 
-#define pcie_ppe_txdetrx_dac_cntl_lane_2_addr      0b101000100
+#define pcie_ppe_txdetrx_dac_cntl_lane_2_addr      0b101000101
 #define pcie_ppe_txdetrx_dac_cntl_lane_2_startbit   0
 #define pcie_ppe_txdetrx_dac_cntl_lane_2_width     8
 #define pcie_ppe_txdetrx_dac_cntl_lane_2_endbit    7
@@ -1502,7 +1502,7 @@
 #define pcie_ppe_txdetrx_dac_cntl_lane_2_mask      0xff00
 
 
-#define pcie_ppe_txdetrx_dac_cntl_lane_3_addr      0b101000110
+#define pcie_ppe_txdetrx_dac_cntl_lane_3_addr      0b101000111
 #define pcie_ppe_txdetrx_dac_cntl_lane_3_startbit   0
 #define pcie_ppe_txdetrx_dac_cntl_lane_3_width     8
 #define pcie_ppe_txdetrx_dac_cntl_lane_3_endbit    7
@@ -1510,7 +1510,7 @@
 #define pcie_ppe_txdetrx_dac_cntl_lane_3_mask      0xff00
 
 
-#define pcie_ppe_txdetrx_dac_cntl_lane_4_addr      0b101001000
+#define pcie_ppe_txdetrx_dac_cntl_lane_4_addr      0b101001001
 #define pcie_ppe_txdetrx_dac_cntl_lane_4_startbit   0
 #define pcie_ppe_txdetrx_dac_cntl_lane_4_width     8
 #define pcie_ppe_txdetrx_dac_cntl_lane_4_endbit    7
@@ -1526,7 +1526,7 @@
 #define pcie_ppe_txdetrx_idle_samp_timer_lane_0_mask   0xffff
 
 
-#define pcie_ppe_txdetrx_idle_samp_timer_lane_1_addr   0b101000001
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_1_addr   0b101000010
 #define pcie_ppe_txdetrx_idle_samp_timer_lane_1_startbit   0
 #define pcie_ppe_txdetrx_idle_samp_timer_lane_1_width   16
 #define pcie_ppe_txdetrx_idle_samp_timer_lane_1_endbit   15
@@ -1534,7 +1534,7 @@
 #define pcie_ppe_txdetrx_idle_samp_timer_lane_1_mask   0xffff
 
 
-#define pcie_ppe_txdetrx_idle_samp_timer_lane_2_addr   0b101000011
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_2_addr   0b101000100
 #define pcie_ppe_txdetrx_idle_samp_timer_lane_2_startbit   0
 #define pcie_ppe_txdetrx_idle_samp_timer_lane_2_width   16
 #define pcie_ppe_txdetrx_idle_samp_timer_lane_2_endbit   15
@@ -1542,7 +1542,7 @@
 #define pcie_ppe_txdetrx_idle_samp_timer_lane_2_mask   0xffff
 
 
-#define pcie_ppe_txdetrx_idle_samp_timer_lane_3_addr   0b101000101
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_3_addr   0b101000110
 #define pcie_ppe_txdetrx_idle_samp_timer_lane_3_startbit   0
 #define pcie_ppe_txdetrx_idle_samp_timer_lane_3_width   16
 #define pcie_ppe_txdetrx_idle_samp_timer_lane_3_endbit   15
@@ -1550,7 +1550,7 @@
 #define pcie_ppe_txdetrx_idle_samp_timer_lane_3_mask   0xffff
 
 
-#define pcie_ppe_txdetrx_idle_samp_timer_lane_4_addr   0b101000111
+#define pcie_ppe_txdetrx_idle_samp_timer_lane_4_addr   0b101001000
 #define pcie_ppe_txdetrx_idle_samp_timer_lane_4_startbit   0
 #define pcie_ppe_txdetrx_idle_samp_timer_lane_4_width   16
 #define pcie_ppe_txdetrx_idle_samp_timer_lane_4_endbit   15
@@ -1566,7 +1566,7 @@
 #define pcie_ppe_txdetrx_idle_timer_lane_0_mask    0xe000
 
 
-#define pcie_ppe_txdetrx_idle_timer_lane_1_addr    0b101000001
+#define pcie_ppe_txdetrx_idle_timer_lane_1_addr    0b101000010
 #define pcie_ppe_txdetrx_idle_timer_lane_1_startbit   0
 #define pcie_ppe_txdetrx_idle_timer_lane_1_width   3
 #define pcie_ppe_txdetrx_idle_timer_lane_1_endbit   2
@@ -1574,7 +1574,7 @@
 #define pcie_ppe_txdetrx_idle_timer_lane_1_mask    0xe000
 
 
-#define pcie_ppe_txdetrx_idle_timer_lane_2_addr    0b101000011
+#define pcie_ppe_txdetrx_idle_timer_lane_2_addr    0b101000100
 #define pcie_ppe_txdetrx_idle_timer_lane_2_startbit   0
 #define pcie_ppe_txdetrx_idle_timer_lane_2_width   3
 #define pcie_ppe_txdetrx_idle_timer_lane_2_endbit   2
@@ -1582,7 +1582,7 @@
 #define pcie_ppe_txdetrx_idle_timer_lane_2_mask    0xe000
 
 
-#define pcie_ppe_txdetrx_idle_timer_lane_3_addr    0b101000101
+#define pcie_ppe_txdetrx_idle_timer_lane_3_addr    0b101000110
 #define pcie_ppe_txdetrx_idle_timer_lane_3_startbit   0
 #define pcie_ppe_txdetrx_idle_timer_lane_3_width   3
 #define pcie_ppe_txdetrx_idle_timer_lane_3_endbit   2
@@ -1590,7 +1590,7 @@
 #define pcie_ppe_txdetrx_idle_timer_lane_3_mask    0xe000
 
 
-#define pcie_ppe_txdetrx_idle_timer_lane_4_addr    0b101000111
+#define pcie_ppe_txdetrx_idle_timer_lane_4_addr    0b101001000
 #define pcie_ppe_txdetrx_idle_timer_lane_4_startbit   0
 #define pcie_ppe_txdetrx_idle_timer_lane_4_width   3
 #define pcie_ppe_txdetrx_idle_timer_lane_4_endbit   2
@@ -1606,7 +1606,7 @@
 #define pcie_ppe_txdetrx_samp_timer_lane_0_mask    0xff
 
 
-#define pcie_ppe_txdetrx_samp_timer_lane_1_addr    0b101000001
+#define pcie_ppe_txdetrx_samp_timer_lane_1_addr    0b101000010
 #define pcie_ppe_txdetrx_samp_timer_lane_1_startbit   8
 #define pcie_ppe_txdetrx_samp_timer_lane_1_width   8
 #define pcie_ppe_txdetrx_samp_timer_lane_1_endbit   15
@@ -1614,7 +1614,7 @@
 #define pcie_ppe_txdetrx_samp_timer_lane_1_mask    0xff
 
 
-#define pcie_ppe_txdetrx_samp_timer_lane_2_addr    0b101000011
+#define pcie_ppe_txdetrx_samp_timer_lane_2_addr    0b101000100
 #define pcie_ppe_txdetrx_samp_timer_lane_2_startbit   8
 #define pcie_ppe_txdetrx_samp_timer_lane_2_width   8
 #define pcie_ppe_txdetrx_samp_timer_lane_2_endbit   15
@@ -1622,7 +1622,7 @@
 #define pcie_ppe_txdetrx_samp_timer_lane_2_mask    0xff
 
 
-#define pcie_ppe_txdetrx_samp_timer_lane_3_addr    0b101000101
+#define pcie_ppe_txdetrx_samp_timer_lane_3_addr    0b101000110
 #define pcie_ppe_txdetrx_samp_timer_lane_3_startbit   8
 #define pcie_ppe_txdetrx_samp_timer_lane_3_width   8
 #define pcie_ppe_txdetrx_samp_timer_lane_3_endbit   15
@@ -1630,7 +1630,7 @@
 #define pcie_ppe_txdetrx_samp_timer_lane_3_mask    0xff
 
 
-#define pcie_ppe_txdetrx_samp_timer_lane_4_addr    0b101000111
+#define pcie_ppe_txdetrx_samp_timer_lane_4_addr    0b101001000
 #define pcie_ppe_txdetrx_samp_timer_lane_4_startbit   8
 #define pcie_ppe_txdetrx_samp_timer_lane_4_width   8
 #define pcie_ppe_txdetrx_samp_timer_lane_4_endbit   15
@@ -1846,6 +1846,14 @@
 #define ppe_pipe_current_lane_mask                 0xc0
 
 
+#define ppe_pipe_ei_reset_inactive_phase_alias_addr   0b110110111
+#define ppe_pipe_ei_reset_inactive_phase_alias_startbit   0
+#define ppe_pipe_ei_reset_inactive_phase_alias_width   16
+#define ppe_pipe_ei_reset_inactive_phase_alias_endbit   15
+#define ppe_pipe_ei_reset_inactive_phase_alias_shift   0
+#define ppe_pipe_ei_reset_inactive_phase_alias_mask   0xffff
+
+
 #define ppe_pipe_lane_stress_mode_0_3_addr         0b110000110
 #define ppe_pipe_lane_stress_mode_0_3_startbit     8
 #define ppe_pipe_lane_stress_mode_0_3_width        4
@@ -1854,12 +1862,36 @@
 #define ppe_pipe_lane_stress_mode_0_3_mask         0xf0
 
 
-#define ppe_pipe_reset_inactive_phase_0_3_addr     0b110110110
-#define ppe_pipe_reset_inactive_phase_0_3_startbit   0
-#define ppe_pipe_reset_inactive_phase_0_3_width    4
-#define ppe_pipe_reset_inactive_phase_0_3_endbit   3
-#define ppe_pipe_reset_inactive_phase_0_3_shift    12
-#define ppe_pipe_reset_inactive_phase_0_3_mask     0xf000
+#define ppe_pipe_margin_mode_0_3_addr              0b111001000
+#define ppe_pipe_margin_mode_0_3_startbit          0
+#define ppe_pipe_margin_mode_0_3_width             4
+#define ppe_pipe_margin_mode_0_3_endbit            3
+#define ppe_pipe_margin_mode_0_3_shift             12
+#define ppe_pipe_margin_mode_0_3_mask              0xf000
+
+
+#define ppe_pipe_reset_active_phase_0_3_addr       0b110110110
+#define ppe_pipe_reset_active_phase_0_3_startbit   0
+#define ppe_pipe_reset_active_phase_0_3_width      4
+#define ppe_pipe_reset_active_phase_0_3_endbit     3
+#define ppe_pipe_reset_active_phase_0_3_shift      12
+#define ppe_pipe_reset_active_phase_0_3_mask       0xf000
+
+
+#define ppe_pipe_reset_active_txdetectrx_phase_alias_addr   0b110110110
+#define ppe_pipe_reset_active_txdetectrx_phase_alias_startbit   0
+#define ppe_pipe_reset_active_txdetectrx_phase_alias_width   8
+#define ppe_pipe_reset_active_txdetectrx_phase_alias_endbit   7
+#define ppe_pipe_reset_active_txdetectrx_phase_alias_shift   8
+#define ppe_pipe_reset_active_txdetectrx_phase_alias_mask   0xff00
+
+
+#define ppe_pipe_reset_inactive_phase_0_3_addr     0b110110111
+#define ppe_pipe_reset_inactive_phase_0_3_startbit   8
+#define ppe_pipe_reset_inactive_phase_0_3_width    8
+#define ppe_pipe_reset_inactive_phase_0_3_endbit   15
+#define ppe_pipe_reset_inactive_phase_0_3_shift    0
+#define ppe_pipe_reset_inactive_phase_0_3_mask     0xff
 
 
 #define ppe_pipe_rx_ei_inactive_phase_0_3_addr     0b110110111
@@ -1868,6 +1900,14 @@
 #define ppe_pipe_rx_ei_inactive_phase_0_3_endbit   7
 #define ppe_pipe_rx_ei_inactive_phase_0_3_shift    8
 #define ppe_pipe_rx_ei_inactive_phase_0_3_mask     0xff00
+
+
+#define ppe_pipe_txdetectrx_phase_0_3_addr         0b110110110
+#define ppe_pipe_txdetectrx_phase_0_3_startbit     4
+#define ppe_pipe_txdetectrx_phase_0_3_width        4
+#define ppe_pipe_txdetectrx_phase_0_3_endbit       7
+#define ppe_pipe_txdetectrx_phase_0_3_shift        8
+#define ppe_pipe_txdetectrx_phase_0_3_mask         0xf00
 
 
 #define ppe_pr_offset_applied_a_addr               0b000000101
@@ -2374,6 +2414,46 @@
 #define rx_ber_timer_sel_bist_mask                 0xf000
 
 
+#define rx_berm_bank_addr                          0b111100001
+#define rx_berm_bank_startbit                      0
+#define rx_berm_bank_width                         1
+#define rx_berm_bank_endbit                        0
+#define rx_berm_bank_shift                         15
+#define rx_berm_bank_mask                          0x8000
+
+
+#define rx_berm_depth_addr                         0b111100001
+#define rx_berm_depth_startbit                     1
+#define rx_berm_depth_width                        2
+#define rx_berm_depth_endbit                       2
+#define rx_berm_depth_shift                        13
+#define rx_berm_depth_mask                         0x6000
+
+
+#define rx_berm_hoffset_addr                       0b111100010
+#define rx_berm_hoffset_startbit                   0
+#define rx_berm_hoffset_width                      7
+#define rx_berm_hoffset_endbit                     6
+#define rx_berm_hoffset_shift                      9
+#define rx_berm_hoffset_mask                       0xfe00
+
+
+#define rx_berm_pattern_sel_addr                   0b111100001
+#define rx_berm_pattern_sel_startbit               3
+#define rx_berm_pattern_sel_width                  3
+#define rx_berm_pattern_sel_endbit                 5
+#define rx_berm_pattern_sel_shift                  10
+#define rx_berm_pattern_sel_mask                   0x1c00
+
+
+#define rx_berm_voffset_addr                       0b111100010
+#define rx_berm_voffset_startbit                   7
+#define rx_berm_voffset_width                      9
+#define rx_berm_voffset_endbit                     15
+#define rx_berm_voffset_shift                      0
+#define rx_berm_voffset_mask                       0x1ff
+
+
 #define rx_clr_eye_height_width_addr               0b110100000
 #define rx_clr_eye_height_width_startbit           12
 #define rx_clr_eye_height_width_width              1
@@ -2575,27 +2655,59 @@
 
 
 #define rx_dc_enable_loff_a_addr                   0b110110100
-#define rx_dc_enable_loff_a_startbit               9
+#define rx_dc_enable_loff_a_startbit               8
 #define rx_dc_enable_loff_a_width                  1
-#define rx_dc_enable_loff_a_endbit                 9
-#define rx_dc_enable_loff_a_shift                  6
-#define rx_dc_enable_loff_a_mask                   0x40
+#define rx_dc_enable_loff_a_endbit                 8
+#define rx_dc_enable_loff_a_shift                  7
+#define rx_dc_enable_loff_a_mask                   0x80
 
 
 #define rx_dc_enable_loff_ab_alias_addr            0b110110100
-#define rx_dc_enable_loff_ab_alias_startbit        9
+#define rx_dc_enable_loff_ab_alias_startbit        8
 #define rx_dc_enable_loff_ab_alias_width           2
-#define rx_dc_enable_loff_ab_alias_endbit          10
-#define rx_dc_enable_loff_ab_alias_shift           5
-#define rx_dc_enable_loff_ab_alias_mask            0x60
+#define rx_dc_enable_loff_ab_alias_endbit          9
+#define rx_dc_enable_loff_ab_alias_shift           6
+#define rx_dc_enable_loff_ab_alias_mask            0xc0
+
+
+#define rx_dc_enable_loff_ab_data_edge_alias_addr   0b110110100
+#define rx_dc_enable_loff_ab_data_edge_alias_startbit   8
+#define rx_dc_enable_loff_ab_data_edge_alias_width   4
+#define rx_dc_enable_loff_ab_data_edge_alias_endbit   11
+#define rx_dc_enable_loff_ab_data_edge_alias_shift   4
+#define rx_dc_enable_loff_ab_data_edge_alias_mask   0xf0
 
 
 #define rx_dc_enable_loff_b_addr                   0b110110100
-#define rx_dc_enable_loff_b_startbit               10
+#define rx_dc_enable_loff_b_startbit               9
 #define rx_dc_enable_loff_b_width                  1
-#define rx_dc_enable_loff_b_endbit                 10
-#define rx_dc_enable_loff_b_shift                  5
-#define rx_dc_enable_loff_b_mask                   0x20
+#define rx_dc_enable_loff_b_endbit                 9
+#define rx_dc_enable_loff_b_shift                  6
+#define rx_dc_enable_loff_b_mask                   0x40
+
+
+#define rx_dc_enable_loff_data_addr                0b110110100
+#define rx_dc_enable_loff_data_startbit            10
+#define rx_dc_enable_loff_data_width               1
+#define rx_dc_enable_loff_data_endbit              10
+#define rx_dc_enable_loff_data_shift               5
+#define rx_dc_enable_loff_data_mask                0x20
+
+
+#define rx_dc_enable_loff_data_edge_alias_addr     0b110110100
+#define rx_dc_enable_loff_data_edge_alias_startbit   10
+#define rx_dc_enable_loff_data_edge_alias_width    2
+#define rx_dc_enable_loff_data_edge_alias_endbit   11
+#define rx_dc_enable_loff_data_edge_alias_shift    4
+#define rx_dc_enable_loff_data_edge_alias_mask     0x30
+
+
+#define rx_dc_enable_loff_edge_addr                0b110110100
+#define rx_dc_enable_loff_edge_startbit            11
+#define rx_dc_enable_loff_edge_width               1
+#define rx_dc_enable_loff_edge_endbit              11
+#define rx_dc_enable_loff_edge_shift               4
+#define rx_dc_enable_loff_edge_mask                0x10
 
 
 #define rx_dc_step_cntl_opt_alias_addr             0b110001101
@@ -2798,7 +2910,7 @@
 #define rx_dfe_h1_fail_mask                        0x8
 
 
-#define rx_dfe_h1_max_check_addr                   0b110101111
+#define rx_dfe_h1_max_check_addr                   0b110101011
 #define rx_dfe_h1_max_check_startbit               0
 #define rx_dfe_h1_max_check_width                  7
 #define rx_dfe_h1_max_check_endbit                 6
@@ -2806,7 +2918,7 @@
 #define rx_dfe_h1_max_check_mask                   0xfe00
 
 
-#define rx_dfe_h1_min_check_addr                   0b110101111
+#define rx_dfe_h1_min_check_addr                   0b110101011
 #define rx_dfe_h1_min_check_startbit               7
 #define rx_dfe_h1_min_check_width                  7
 #define rx_dfe_h1_min_check_endbit                 13
@@ -2854,7 +2966,7 @@
 #define rx_disable_bank_pdwn_mask                  0x8
 
 
-#define rx_enable_auto_recal_0_15_addr             0b110101101
+#define rx_enable_auto_recal_0_15_addr             0b110101110
 #define rx_enable_auto_recal_0_15_startbit         0
 #define rx_enable_auto_recal_0_15_width            16
 #define rx_enable_auto_recal_0_15_endbit           15
@@ -2862,7 +2974,7 @@
 #define rx_enable_auto_recal_0_15_mask             0xffff
 
 
-#define rx_enable_auto_recal_16_23_addr            0b110101110
+#define rx_enable_auto_recal_16_23_addr            0b110101111
 #define rx_enable_auto_recal_16_23_startbit        0
 #define rx_enable_auto_recal_16_23_width           8
 #define rx_enable_auto_recal_16_23_endbit          7
@@ -2951,11 +3063,11 @@
 
 
 #define rx_eo_phase_select_0_2_addr                0b110110100
-#define rx_eo_phase_select_0_2_startbit            11
+#define rx_eo_phase_select_0_2_startbit            12
 #define rx_eo_phase_select_0_2_width               3
-#define rx_eo_phase_select_0_2_endbit              13
-#define rx_eo_phase_select_0_2_shift               2
-#define rx_eo_phase_select_0_2_mask                0x1c
+#define rx_eo_phase_select_0_2_endbit              14
+#define rx_eo_phase_select_0_2_shift               1
+#define rx_eo_phase_select_0_2_mask                0xe
 
 
 #define rx_eo_step_cntl_opt_alias_addr             0b110001001
@@ -3142,7 +3254,7 @@
 #define rx_lane_busy_mask                          0x2000
 
 
-#define rx_lane_fail_0_15_addr                     0b111000101
+#define rx_lane_fail_0_15_addr                     0b111000100
 #define rx_lane_fail_0_15_startbit                 0
 #define rx_lane_fail_0_15_width                    16
 #define rx_lane_fail_0_15_endbit                   15
@@ -3150,7 +3262,7 @@
 #define rx_lane_fail_0_15_mask                     0xffff
 
 
-#define rx_lane_fail_16_23_addr                    0b111000110
+#define rx_lane_fail_16_23_addr                    0b111000101
 #define rx_lane_fail_16_23_startbit                0
 #define rx_lane_fail_16_23_width                   8
 #define rx_lane_fail_16_23_endbit                  7
@@ -3470,7 +3582,7 @@
 #define rx_rc_step_cntl_opt_alias_mask             0xff80
 
 
-#define rx_recal_abort_0_15_addr                   0b110101011
+#define rx_recal_abort_0_15_addr                   0b110101100
 #define rx_recal_abort_0_15_startbit               0
 #define rx_recal_abort_0_15_width                  16
 #define rx_recal_abort_0_15_endbit                 15
@@ -3478,7 +3590,7 @@
 #define rx_recal_abort_0_15_mask                   0xffff
 
 
-#define rx_recal_abort_16_23_addr                  0b110101100
+#define rx_recal_abort_16_23_addr                  0b110101101
 #define rx_recal_abort_16_23_startbit              0
 #define rx_recal_abort_16_23_width                 8
 #define rx_recal_abort_16_23_endbit                7
@@ -3519,11 +3631,11 @@
 
 
 #define rx_running_eq_eval_addr                    0b110110100
-#define rx_running_eq_eval_startbit                8
+#define rx_running_eq_eval_startbit                1
 #define rx_running_eq_eval_width                   1
-#define rx_running_eq_eval_endbit                  8
-#define rx_running_eq_eval_shift                   7
-#define rx_running_eq_eval_mask                    0x80
+#define rx_running_eq_eval_endbit                  1
+#define rx_running_eq_eval_shift                   14
+#define rx_running_eq_eval_mask                    0x4000
 
 
 #define rx_running_recal_addr                      0b110110100
@@ -3694,7 +3806,7 @@
 #define tx_dc_enable_dcc_mask                      0x4000
 
 
-#define tx_dcc_debug_addr                          0b111000100
+#define tx_dcc_debug_addr                          0b111000110
 #define tx_dcc_debug_startbit                      0
 #define tx_dcc_debug_width                         16
 #define tx_dcc_debug_endbit                        15
@@ -3766,7 +3878,7 @@
 #define tx_ffe_pre2_coef_mask                      0xf000
 
 
-#define tx_lanes_pon_00_15_addr                    0b111010011
+#define tx_lanes_pon_00_15_addr                    0b111010010
 #define tx_lanes_pon_00_15_startbit                0
 #define tx_lanes_pon_00_15_width                   16
 #define tx_lanes_pon_00_15_endbit                  15
@@ -3774,7 +3886,7 @@
 #define tx_lanes_pon_00_15_mask                    0xffff
 
 
-#define tx_lanes_pon_16_23_addr                    0b111010100
+#define tx_lanes_pon_16_23_addr                    0b111010011
 #define tx_lanes_pon_16_23_startbit                0
 #define tx_lanes_pon_16_23_width                   8
 #define tx_lanes_pon_16_23_endbit                  7
@@ -3902,14 +4014,6 @@
 #define tx_pcie_loz_del_sel_5_mask                 0xf00
 
 
-#define tx_pipe_txdetectrx_phase_0_3_addr          0b111010101
-#define tx_pipe_txdetectrx_phase_0_3_startbit      0
-#define tx_pipe_txdetectrx_phase_0_3_width         4
-#define tx_pipe_txdetectrx_phase_0_3_endbit        3
-#define tx_pipe_txdetectrx_phase_0_3_shift         12
-#define tx_pipe_txdetectrx_phase_0_3_mask          0xf000
-
-
 #define tx_rc_enable_dcc_addr                      0b110001010
 #define tx_rc_enable_dcc_startbit                  6
 #define tx_rc_enable_dcc_width                     1
@@ -3942,7 +4046,7 @@
 #define tx_seg_test_en_mask                        0x8000
 
 
-#define tx_seg_test_fail_addr                      0b111010010
+#define tx_seg_test_fail_addr                      0b111010100
 #define tx_seg_test_fail_startbit                  0
 #define tx_seg_test_fail_width                     1
 #define tx_seg_test_fail_endbit                    0

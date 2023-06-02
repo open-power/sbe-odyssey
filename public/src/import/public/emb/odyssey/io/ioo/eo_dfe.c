@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23041700 |vbr     | EWM 302758: skip DFE Fast BIST checks in RxEqEval.
 // vbr23033000 |vbr     | EWM 302249: Moved sleep in DFE Full latch update loop and added quick abort from loop
 // vbr23031300 |vbr     | Updated sleeps in dfe full for EWM301148.
 // vbr23030100 |vbr     | Allow running DFE Full in PCIe Gen 1/2 recal with no H3-H1 pattern matching
@@ -513,7 +514,7 @@ static int32_t rx_eo_dfe_check_hvals(t_gcr_addr* i_tgt)
     int32_t l_lane = get_gcr_addr_lane(i_tgt);
 
     // Rxbist check of H1 value
-    int rx_dfe_h1_check_en_int = get_ptr_field(i_tgt, rx_dfe_h1_check_en);
+    int rx_dfe_h1_check_en_int = (mem_pg_field_get(rx_running_eq_eval) == 1) ? 0 : get_ptr_field(i_tgt, rx_dfe_h1_check_en);
     uint32_t l_fir_code = rx_dfe_h1_check_en_int ? (fir_code_dft_error | fir_code_bad_lane_warning) :
                           fir_code_bad_lane_warning;
 

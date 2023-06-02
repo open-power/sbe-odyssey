@@ -385,8 +385,8 @@ void io_wait(int thread, PkInterval wait_time)
     // The thread context switch time and thus the minium thread time is ~2us.
     // When there is a single IO thread, the supervisor thread is only switched to every C_SUPERVISOR_THREAD_RATE loops.
     // This means that the minimum time to hit the loop limit is (loop_limit / C_SUPERVISOR_THREAD_RATE) * ~4us.
-    // The loop count is configured to give a minimum ~512us timeout.
-    int32_t loop_limit = (512 / 4) * C_SUPERVISOR_THREAD_RATE;
+    // The loop count is configured to give a minimum ~2ms timeout.
+    int32_t loop_limit = (2048 / 4) * C_SUPERVISOR_THREAD_RATE;
 
     do
     {

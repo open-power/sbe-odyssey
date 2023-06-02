@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// jfg23033100 |jfg     | Coverage-based obsolete code cleanup: pr_seek_ber remove all edge support. Only data is manipulated.
 // jfg22111701 |jfg     | Remove PR defines in lieu of common read_active_pr
 // jfg21120100 |jfg     | Add constants and function defs for new eo_ddc.c
 // jfg20090100 |jfg     | HW532333 Move offset changes to eo_main
@@ -56,8 +57,7 @@
 
 int  pr_recenter(t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, uint32_t* Esave, uint32_t* Dsave, int* Doffset,
                  int Eoffset);
-int pr_seek_ber (t_gcr_addr* gcr_addr, t_bank bank, unsigned int Dstep, unsigned int Estep, bool dirL1R0, bool noBER,
-                 t_seek seek_edge, int* pr_vals);
+int pr_seek_ber (t_gcr_addr* gcr_addr, t_bank bank, unsigned int Dstep, bool dirL1R0, t_seek seek_edge, int* pr_vals);
 // Run DDC on a lane and update historical width
 int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal);
 

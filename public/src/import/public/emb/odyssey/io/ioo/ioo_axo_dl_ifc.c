@@ -107,7 +107,7 @@ void dl_init_req(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
         //PSL unused_lane
         if (!l_dl_init_req)
         {
-            set_recal_or_unused(l_lane, 0x1);
+            set_recal_or_unused(l_lane);
 
             // Power down ALT bank if DL is requesting DL power save
             //PSL unused_lane_psave_req

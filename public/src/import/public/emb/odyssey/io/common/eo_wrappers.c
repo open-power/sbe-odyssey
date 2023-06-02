@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23051100 |vbr     | EWM 304487: Use ppe_pipe_margin_mode_0_3 to check for margin mode instead of a HW register read
 // vbr22120600 |vbr     | Add a sleep when exiting the auto_recal loop on an abort
 // vbr22111501 |vbr     | Remove sleep after initial training
 // vbr22110800 |vbr     | Added skips on a recal_abort
@@ -94,17 +95,17 @@
 ////////////////////////////////////////////////
 
 // Assert Lane Mask for Recal or Unused Lanes (for handshaking with supervisor thread
-void set_recal_or_unused(const uint32_t i_lane, const uint32_t i_value)
+PK_STATIC_ASSERT((rx_recal_run_or_unused_0_15_addr + 1) == rx_recal_run_or_unused_16_23_addr);
+PK_STATIC_ASSERT((rx_recal_run_or_unused_0_15_addr % 2) == 0);
+PK_STATIC_ASSERT(rx_recal_run_or_unused_0_15_width == 16);
+PK_STATIC_ASSERT(rx_recal_run_or_unused_16_23_width == 8);
+PK_STATIC_ASSERT(rx_recal_run_or_unused_16_23_startbit == 0);
+
+void set_recal_or_unused(const uint32_t i_lane)
 {
-    uint32_t l_data = (mem_pg_field_get(rx_recal_run_or_unused_0_15) << 16) |
-                      (mem_pg_field_get(rx_recal_run_or_unused_16_23) << (16 - rx_recal_run_or_unused_16_23_width));
-    l_data &= ~(0x80000000 >> i_lane);
-    l_data |= ((i_value & 0x1) << (31 - i_lane));
-
-    mem_pg_field_put(rx_recal_run_or_unused_0_15, (l_data >> 16) & 0xFFFF);
-    mem_pg_field_put(rx_recal_run_or_unused_16_23, (l_data >>  8) & 0x00FF);
-
-    return;
+    uint32_t l_data = mem_pg_u32_raw_get(rx_recal_run_or_unused_0_15_addr); //reads _0_15 + _16_23
+    l_data |= (0x80000000 >> i_lane);
+    mem_pg_u32_raw_put(rx_recal_run_or_unused_0_15_addr, l_data); //writes _0_15 + _16_23
 } //set_recal_or_unused
 
 
@@ -128,7 +129,7 @@ int run_initial_training(t_gcr_addr* io_gcr_addr, const uint32_t i_lane)
     mem_pl_bit_clr(rx_recal_done, i_lane);
 
     // Don't require a recal in first interval after initial cal
-    set_recal_or_unused(i_lane, 0x1);
+    set_recal_or_unused(i_lane);
 
     // Restore original reg_id (if not RX since already set to rx_group)
     // PSL reg_id_not_rx
@@ -169,13 +170,19 @@ int run_recalibration(t_gcr_addr* io_gcr_addr, const uint32_t i_lane)
     mem_pg_bit_clr(rx_running_recal);
     mem_pl_bit_clr(rx_lane_busy, i_lane);
     mem_pl_bit_set(rx_recal_done, i_lane);
-    set_recal_or_unused(i_lane, 0x1);
+    set_recal_or_unused(i_lane);
 
     return status;
 } //run_recalibration
 
 
 // Auto-Recalibration and EO status housekeeping
+PK_STATIC_ASSERT((rx_enable_auto_recal_0_15_addr + 1) == rx_enable_auto_recal_16_23_addr);
+PK_STATIC_ASSERT((rx_enable_auto_recal_0_15_addr % 2) == 0);
+PK_STATIC_ASSERT(rx_enable_auto_recal_0_15_width == 16);
+PK_STATIC_ASSERT(rx_enable_auto_recal_16_23_width == 8);
+PK_STATIC_ASSERT(rx_enable_auto_recal_16_23_startbit == 0);
+
 int auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
 {
     set_debug_state(0x0005); // DEBUG - Auto Recal
@@ -194,8 +201,7 @@ int auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
 
 #ifdef IOO
     // Auto recal enable
-    int l_auto_recal_0_23 = (mem_pg_field_get(rx_enable_auto_recal_0_15)  << 16) |
-                            (mem_pg_field_get(rx_enable_auto_recal_16_23) << (16 - rx_enable_auto_recal_16_23_width));
+    int l_auto_recal_0_23 = mem_pg_u32_raw_get(rx_enable_auto_recal_0_15_addr); //reads _0_15 + _16_23
 
     // For PCIe, check if there is a PIPE commands to run on any lane as a recal abort. Redundant with ioo_thread check.
     int pcie_mode = fw_field_get(fw_pcie_mode);
@@ -211,6 +217,8 @@ int auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
                                     (get_ptr_field(io_gcr_addr, rx_recal_abort_16_23) << (16 - rx_recal_abort_16_23_width));
     }
 
+    // For PCI, check the PIPE margining mode (this read will just be 0 for AXO)
+    int l_pipe_margin_mode_0_3 = mem_pg_field_get(ppe_pipe_margin_mode_0_3);
 #endif
 
     // Loop through all lanes for recal (IOO) and house keeping (IOO/IOT)
@@ -222,8 +230,8 @@ int auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
     {
         set_gcr_addr_lane(io_gcr_addr, l_lane);
 
-        // PSL lane_mod_six_eq_five
-        if ( (l_lane % 6) == 5)
+        // PSL lane_mod_sleep
+        if ((l_lane % 8) == 7)
         {
             io_sleep(thread);
         }
@@ -250,7 +258,7 @@ int auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
         if ( mem_pl_field_get(rx_lane_bad, l_lane) || ((mem_pg_field_get(rx_spare_lane_code) >= 1)
                 && (mem_pg_field_get(rx_spare_lane1) == l_lane)) )
         {
-            set_recal_or_unused(l_lane, 0x1);
+            set_recal_or_unused(l_lane);
         }
 
 #endif
@@ -262,7 +270,7 @@ int auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
         // PSL init_done
         if (!init_done)
         {
-            set_recal_or_unused(l_lane, 0x1);
+            set_recal_or_unused(l_lane);
         }
 
         // IOO: Run Simple Auto Recalibration if necessary and initial training has been run
@@ -285,10 +293,12 @@ int auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes)
             {
                 // Do not run recalibration if RX margining is enabled
                 // PSL recal_pcie_rxmargin
-                if (get_ptr_field(io_gcr_addr, rx_berpl_pcie_rx_margin_start))
+                if ((0x8 >> l_lane) & l_pipe_margin_mode_0_3)
                 {
                     continue;
                 }
+
+                //if (get_ptr_field(io_gcr_addr, rx_berpl_pcie_rx_margin_start)) continue;
 
                 // Do not run recalibration if RX is inactive (electrical idle, or no data on bus)
                 set_gcr_addr_reg_id(io_gcr_addr, tx_group);

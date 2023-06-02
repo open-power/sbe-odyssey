@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23042600 |vbr     | EWM 302895: Set mini PR to exactly 16 on a PCIe rate change
 // vbr23030200 |vbr     | Issue 300456: Only check specific banks in wait for cdr lock
 // vbr23020300 |vbr     | Issue 298086: new function to remove edge pr offset on PIPE rate change or rx eq eval
 // vbr22120900 |vbr     | Only allow lanes 0-3 for PCIe (instead of 0-4)
@@ -227,6 +228,12 @@ int wait_for_cdr_lock(t_gcr_addr* gcr_addr, t_bank check_bank, bool set_fir_on_e
 PK_STATIC_ASSERT(rx_dl_phy_ro_full_reg_alias_width == 16);
 PK_STATIC_ASSERT(rx_dl_phy_ro_full_reg_alias_addr == rx_dl_phy_recal_abort_sticky_addr);
 PK_STATIC_ASSERT(rx_dl_phy_ro_full_reg_alias_addr == rx_dl_phy_bump_recal_abort_sticky_addr);
+PK_STATIC_ASSERT((rx_recal_abort_0_15_addr + 1) == rx_recal_abort_16_23_addr);
+PK_STATIC_ASSERT((rx_recal_abort_0_15_addr % 2) == 0);
+PK_STATIC_ASSERT(rx_recal_abort_0_15_width == 16);
+PK_STATIC_ASSERT(rx_recal_abort_16_23_width == 8);
+PK_STATIC_ASSERT(rx_recal_abort_16_23_startbit == 0);
+
 int check_rx_abort(t_gcr_addr* gcr_addr)
 {
     int ret_val = pass_code;
@@ -255,8 +262,7 @@ int check_rx_abort(t_gcr_addr* gcr_addr)
     {
         // Check the recal_abort mem_reg
         int lane = get_gcr_addr_lane(gcr_addr);
-        int abort_val0 = (0x80000000 >> lane) & ( (mem_pg_field_get(rx_recal_abort_0_15) << 16) | (mem_pg_field_get(
-                             rx_recal_abort_16_23) << (16 - rx_recal_abort_16_23_width)) );
+        int abort_val0 = (0x80000000 >> lane) & mem_pg_u32_raw_get(rx_recal_abort_0_15_addr); //reads _0_15 + _16_23
 
         if (abort_val0)
         {
@@ -896,7 +902,20 @@ void save_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank)
     put_ptr_field(gcr_addr, rx_latch_dac_double_mode, 0, fast_write); // fast_write OK, only field in register
 } //save_rx_data_latch_dac_values
 
+// Wrapper function to save both banks with sleeps
+void save_rx_data_latch_dac_values_both_banks(t_gcr_addr* gcr_addr)
+{
+    int thread = get_gcr_addr_thread(gcr_addr);
 
+    save_rx_data_latch_dac_values(gcr_addr, bank_a);
+    io_sleep(thread);
+
+    save_rx_data_latch_dac_values(gcr_addr, bank_b);
+    io_sleep(thread);
+} //save_rx_data_latch_dac_values_both_banks
+
+
+PK_STATIC_ASSERT(rx_mini_pr_step_data_edge_adj_full_reg_width == 16);
 PK_STATIC_ASSERT(rx_mini_pr_step_run_done_full_reg_width == 16);
 PK_STATIC_ASSERT(rx_mini_pr_step_a_ns_data_run_startbit == 0);
 PK_STATIC_ASSERT(rx_mini_pr_step_a_ew_data_run_startbit == 1);
@@ -906,8 +925,20 @@ PK_STATIC_ASSERT(rx_mini_pr_step_b_ns_data_run_startbit == 8);
 PK_STATIC_ASSERT(rx_mini_pr_step_b_ew_data_run_startbit == 9);
 PK_STATIC_ASSERT(rx_mini_pr_step_b_ns_edge_run_startbit == 10);
 PK_STATIC_ASSERT(rx_mini_pr_step_b_ew_edge_run_startbit == 11);
+PK_STATIC_ASSERT(rx_a_pr_ns_data_startbit == rx_a_pr_ew_data_startbit);
+PK_STATIC_ASSERT(rx_a_pr_ns_edge_startbit == rx_a_pr_ew_edge_startbit);
+PK_STATIC_ASSERT(rx_a_pr_ns_data_startbit == rx_b_pr_ns_data_startbit);
+PK_STATIC_ASSERT(rx_a_pr_ew_data_startbit == rx_b_pr_ew_data_startbit);
+PK_STATIC_ASSERT(rx_a_pr_ns_edge_startbit == rx_b_pr_ns_edge_startbit);
+PK_STATIC_ASSERT(rx_a_pr_ew_edge_startbit == rx_b_pr_ew_edge_startbit);
+PK_STATIC_ASSERT(rx_a_pr_ns_full_reg_width == 16);
+PK_STATIC_ASSERT(rx_a_pr_ew_full_reg_width == 16);
+PK_STATIC_ASSERT(rx_b_pr_ns_full_reg_width == 16);
+PK_STATIC_ASSERT(rx_b_pr_ew_full_reg_width == 16);
 
-// PCIe Only: Write the data latches in a bank with the saved value + the recorded path offset
+// PCIe Only (Rate Change):
+//   Write the data latches in a bank with the saved loff value + the recorded path offset.
+//   Set data and edge mini PRs to nominal (16).
 // MUST set the gcr reg_id to rx_group before calling this
 // ASSUMPTION: Not waiting for mini PR stepper to complete since expect it to be faster (~200ns) than subsequent code that would access the rx_data_dac_*_regs.
 void restore_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank)
@@ -961,11 +992,7 @@ void restore_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank)
 
     put_ptr_field(gcr_addr, rx_latch_dac_double_mode, 0, fast_write); // fast_write OK, only field in register
 
-    // Reset DFE Fast
-    // ASSUMPTION: Not waiting for mini PR stepper to complete since expect it to be faster (~200ns) than subsequent code that would access the rx_data_dac_*_regs.
-    int clk_adj;
-    int run_done_wr_val;
-
+    // Clear out DFE Fast state info and reset PR offset
     // PSL dfe_bank_a
     if (target_bank == bank_a)
     {
@@ -974,35 +1001,78 @@ void restore_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank)
         mem_pl_field_put(rx_dfe_coef_5_2_3_4_alias, lane, 0);
         mem_pl_bit_clr(rx_loff_ad_n000_valid, lane);
 
-        // Read current clock adjust (account for QPA by taking average of NS and EW)
-        clk_adj = 16 - ((get_ptr_field(gcr_addr, rx_a_pr_ns_data) + get_ptr_field(gcr_addr, rx_a_pr_ew_data)) / 2);
+        // Clear pr_offset_applied
+        mem_pl_field_put(ppe_pr_offset_applied_ab_alias, lane, 0);
+    }
+
+    // Reset Mini PR to nominal (16)
+    // ASSUMPTION: Not waiting for mini PR stepper to complete since expect it to be faster (~200ns) than subsequent code that would access the rx_data_dac_*_regs.
+    int run_done_wr_val_ns, run_done_wr_val_ew;
+    int pr_ns_reg_addr, pr_ew_reg_addr;
+
+    if (target_bank == bank_a)
+    {
+        // Select register addresses
+        pr_ns_reg_addr = rx_a_pr_ns_full_reg_addr;
+        pr_ew_reg_addr = rx_a_pr_ew_full_reg_addr;
 
         // Select the mini pr stepper run bits
-        run_done_wr_val = (rx_mini_pr_step_a_ns_data_run_mask | rx_mini_pr_step_a_ew_data_run_mask);
+        run_done_wr_val_ns = (rx_mini_pr_step_a_ns_data_run_mask | rx_mini_pr_step_a_ns_edge_run_mask);
+        run_done_wr_val_ew = (rx_mini_pr_step_a_ew_data_run_mask | rx_mini_pr_step_a_ew_edge_run_mask);
     }
     else     //bank_b
     {
-        // Read current clock adjust (account for QPA by taking average of NS and EW)
-        clk_adj = 16 - ((get_ptr_field(gcr_addr, rx_b_pr_ns_data) + get_ptr_field(gcr_addr, rx_b_pr_ew_data)) / 2);
+        // Select register addresses
+        pr_ns_reg_addr = rx_b_pr_ns_full_reg_addr;
+        pr_ew_reg_addr = rx_b_pr_ew_full_reg_addr;
 
         // Select the mini pr stepper run bits
-        run_done_wr_val = (rx_mini_pr_step_b_ns_data_run_mask | rx_mini_pr_step_b_ew_data_run_mask);
+        run_done_wr_val_ns = (rx_mini_pr_step_b_ns_data_run_mask | rx_mini_pr_step_b_ns_edge_run_mask);
+        run_done_wr_val_ew = (rx_mini_pr_step_b_ew_data_run_mask | rx_mini_pr_step_b_ew_edge_run_mask);
     }
 
-    // Step the mini PR back to nominal (16)
-    int clk_adj_regval = IntToTwosComp(clk_adj, rx_mini_pr_step_data_adj_width);
-    put_ptr_field(gcr_addr, rx_mini_pr_step_data_adj, clk_adj_regval,
+    // Read current values
+    int pr_ew_regval = get_ptr(gcr_addr, pr_ew_reg_addr, rx_a_pr_ew_full_reg_startbit, rx_a_pr_ew_full_reg_endbit);
+    int pr_ns_regval = get_ptr(gcr_addr, pr_ns_reg_addr, rx_a_pr_ns_full_reg_startbit, rx_a_pr_ns_full_reg_endbit);
+
+    // Calculate values for stepping the NS mini PR back to nominal (16)
+    int pr_data_adj = 16 - bitfield_get(pr_ns_regval, rx_a_pr_ns_data_mask, rx_a_pr_ns_data_shift);
+    int pr_edge_adj = 16 - bitfield_get(pr_ns_regval, rx_a_pr_ns_edge_mask, rx_a_pr_ns_edge_shift);
+    int pr_data_adj_regval = IntToTwosComp(pr_data_adj, rx_mini_pr_step_data_adj_width);
+    int pr_edge_adj_regval = IntToTwosComp(pr_edge_adj, rx_mini_pr_step_edge_adj_width);
+    int pr_data_edge_adj_regval = (pr_data_adj_regval << rx_mini_pr_step_data_adj_shift) |
+                                  (pr_edge_adj_regval << rx_mini_pr_step_edge_adj_shift);
+
+    // Start the PR stepper for NS
+    put_ptr_field(gcr_addr, rx_mini_pr_step_data_edge_adj_full_reg, pr_data_edge_adj_regval,
                   fast_write); // fast_write OK, rx_mini_pr_step_data/edge_adj are only fields in register
-    put_ptr_field(gcr_addr, rx_mini_pr_step_run_done_full_reg, run_done_wr_val,
+    put_ptr_field(gcr_addr, rx_mini_pr_step_run_done_full_reg, run_done_wr_val_ns,
                   fast_write); // OK to write 0 to rest of register
 
-    // Wait for PR stepper to complete
+    // Calculate values for stepping the EW mini PR back to nominal (16)
+    pr_data_adj = 16 - bitfield_get(pr_ew_regval, rx_a_pr_ew_data_mask, rx_a_pr_ew_data_shift);
+    pr_edge_adj = 16 - bitfield_get(pr_ew_regval, rx_a_pr_ew_edge_mask, rx_a_pr_ew_edge_shift);
+    pr_data_adj_regval = IntToTwosComp(pr_data_adj, rx_mini_pr_step_data_adj_width);
+    pr_edge_adj_regval = IntToTwosComp(pr_edge_adj, rx_mini_pr_step_edge_adj_width);
+    pr_data_edge_adj_regval = (pr_data_adj_regval << rx_mini_pr_step_data_adj_shift) | (pr_edge_adj_regval <<
+                              rx_mini_pr_step_edge_adj_shift);
+
+    // Wait for PR stepper to complete for NS. Should be about 200ns, so wait much longer.
+    io_spin_ns(500);
+
+    // Start the PR stepper for EW
+    put_ptr_field(gcr_addr, rx_mini_pr_step_data_edge_adj_full_reg, pr_data_edge_adj_regval,
+                  fast_write); // fast_write OK, rx_mini_pr_step_data/edge_adj are only fields in register
+    put_ptr_field(gcr_addr, rx_mini_pr_step_run_done_full_reg, run_done_wr_val_ew,
+                  fast_write); // OK to write 0 to rest of register
+
+    // Wait for PR stepper to complete for EW
     // ASSUMPTION: Not waiting for mini PR stepper to complete since expect it to be faster (~200ns) than subsequent code that would access the rx_data_dac_*_regs.
     //do { step_done = get_ptr_field(gcr_addr, rx_mini_pr_step_a/b_done_alias); } while (step_done != 0b1100); // bits[0:1] = ns_data_done, ew_data_done
 } //restore_rx_data_latch_dac_values
 
 
-// Clear the RX DFE from both Banks latches and Mini PRs
+// Clear the RX DFE from both Banks latches and data Mini PRs (for PCIe RxEqEval)
 // Must set the gcr reg_id to rx_group before calling this
 // ASSUMPTION: Not waiting for DAC accelerator to complete since expect it to be faster (~800ns) than subsequent code that would access the rx_data_dac_*_regs
 PK_STATIC_ASSERT(rx_mini_pr_step_a_done_alias_width == 4);
@@ -1012,7 +1082,7 @@ void clear_rx_dfe(t_gcr_addr* gcr_addr)
     int clk_adj_a = 16 - ((get_ptr_field(gcr_addr, rx_a_pr_ns_data) + get_ptr_field(gcr_addr, rx_a_pr_ew_data)) / 2);
     int clk_adj_b = 16 - ((get_ptr_field(gcr_addr, rx_b_pr_ns_data) + get_ptr_field(gcr_addr, rx_b_pr_ew_data)) / 2);
 
-    // Bank A Step the mini PR back to nominal (16)
+    // Bank A Step the data mini PR back to centered around nominal (16)
     int clk_adj_regval = IntToTwosComp(clk_adj_a, rx_mini_pr_step_data_adj_width);
     put_ptr_field(gcr_addr, rx_mini_pr_step_data_adj, clk_adj_regval,
                   fast_write); // fast_write OK, rx_mini_pr_step_data/edge_adj are only fields in register

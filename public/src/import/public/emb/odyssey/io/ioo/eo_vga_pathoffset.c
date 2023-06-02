@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mwh23051800 |mwh     | change to void eo_vga_pathoffset
 // vbr23030600 |vbr     | Turned inputs into constants since this is now only run in PCIe Gen1/2 initial training (not recal, not Gen3).
 // mwh23013000 |mwh     | Issue 298005 Poff_avg going to 0 and than a restore get done with wrong value.
 // mwh23011800 |mwh     | Issue 297375 Change way we grab loff n000 value and add in poffset
@@ -71,7 +72,7 @@
 #include "eo_vga_pathoffset.h"
 
 //eo_vga_pathoffset(gcr_addr, bank_a, &saved_Amax, recal, first_loop_iteration);
-int eo_vga_pathoffset(t_gcr_addr* gcr_addr, t_bank bank, int saved_Amax_poff, bool pcie_bist_mode)
+void eo_vga_pathoffset(t_gcr_addr* gcr_addr, t_bank bank, int saved_Amax_poff, bool pcie_bist_mode)
 {
     //start eo_vga_pathoffset.c
     set_debug_state(0xA020); // DEBUG - APPLY PATH OFFSET
@@ -218,5 +219,5 @@ int eo_vga_pathoffset(t_gcr_addr* gcr_addr, t_bank bank, int saved_Amax_poff, bo
     //------------------------------------------------------------------------------------
 
     set_debug_state(0xA022);
-    return pass_code;
+
 }//end eo_vga_pathoffset.c

@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23041700 |vbr     | EWM 302964/302702: Skip run_ext_cmds/auto_recal and loop on run_pipe_cmds when a pipe command is pending
 // vbr22110800 |vbr     | Added some skips on a pipe_recal_abort
 // vbr22082300 |vbr     | Add thread time stress mode for testing PCIe
 // vbr22031500 |vbr     | Issue 265958: move reading of some config into main loop
@@ -142,15 +143,20 @@ void ioo_thread(void* arg)
     t_gcr_addr l_gcr_addr;
     set_gcr_addr(&l_gcr_addr, l_thread, l_bus_id, rx_group, 0); // RX lane 0
 
-    uint32_t l_stop_thread = 0;
-    bool     l_pcie_mode   = 0;
+    // Assume AXO initially, read every thread loop along with number of lanes
+    int l_pcie_mode = 0;
+
+
+    /////////////////
+    // Thread Loop //
+    /////////////////
+    int status = rc_no_error;
 
     do
     {
-        int status = rc_no_error;
         // Do not run loop  while fw_stop_thread is set; this may be done when in an error condition and need to reset.
         // Also, mirror the setting as the status/handshake.
-        l_stop_thread = fw_field_get(fw_stop_thread);
+        int l_stop_thread = fw_field_get(fw_stop_thread);
         fw_field_put(fw_thread_stopped, l_stop_thread);
 
         if (l_stop_thread)
@@ -163,6 +169,8 @@ void ioo_thread(void* arg)
                 // 11.4+ us thread active time = 9us busy wait + 2.4us thread switch
                 io_spin_us(9);
             }
+
+            status = rc_no_error;
         }
         else     //!fw_stop_thread
         {
@@ -172,8 +180,14 @@ void ioo_thread(void* arg)
             uint32_t l_num_lanes_rx = get_num_rx_physical_lanes();
             l_pcie_mode = fw_field_get(fw_pcie_mode);
 
-            // Checks if any new command requests need to be run
-            run_external_commands(&l_gcr_addr);
+            // Checks if any new command requests need to be run; skip if a pipe_abort in pcie mode.
+            // PSL run_ext_cmds
+            if (!l_pcie_mode || (status & abort_code) == 0)
+            {
+                run_external_commands(&l_gcr_addr);
+            }
+
+            status = rc_no_error;
 
             if (!l_pcie_mode)   // AXO DL Interface
             {
@@ -192,39 +206,68 @@ void ioo_thread(void* arg)
             }
             else     // PIPE Interface (PCIe)
             {
-                // Run highest priority PIPE command on each lane
-                set_debug_state(0x0004, IOO_THREAD_DBG_LVL); // DEBUG - Thread PIPE Commands
-                run_pipe_commands(&l_gcr_addr, l_num_lanes_rx);
-
-                if (get_ptr_field(&l_gcr_addr, rx_pipe_ifc_recal_abort))
+                if (l_num_lanes_rx > 4)
                 {
-                    status |= abort_clean_code;    //status |= check_rx_abort(&l_gcr_addr);
+                    set_debug_state(0x000A); // Illegal number of lanes for PCIe Mode
+                    set_fir(fir_code_fatal_error);
                 }
+
+                // Run highest priority PIPE command on each lane until all pending commands are completed
+                set_debug_state(0x0004, IOO_THREAD_DBG_LVL); // DEBUG - Thread PIPE Commands
+
+                do
+                {
+                    run_pipe_commands(&l_gcr_addr, l_num_lanes_rx);
+
+                    // EWM 302964/302702: Skip recal and thread loops to continue running PIPE commands if there is a pipe_abort or
+                    // remaining phases of ei_inactive, reset_inactive, reset_active, or txdetectrx
+                    if (get_ptr_field(&l_gcr_addr, rx_pipe_ifc_recal_abort) || mem_pg_field_get(ppe_pipe_ei_reset_inactive_phase_alias)
+                        || mem_pg_field_get(ppe_pipe_reset_active_txdetectrx_phase_alias))
+                    {
+                        status = abort_clean_code;
+                    }
+                    else
+                    {
+                        status = rc_no_error;
+                    }
+                }
+                while (status & abort_code);
             }
 
             // Auto recal.  Also checks for some status clears.  Skip on PIPE abort.
+            // PSL auto_recal_loop
             if ((status & abort_code) == 0)
             {
                 set_debug_state(0x0005, IOO_THREAD_DBG_LVL); // DEBUG - Thread Auto Recal
-                status |= auto_recal(&l_gcr_addr, l_num_lanes_rx);
+                status = auto_recal(&l_gcr_addr, l_num_lanes_rx);
             }
 
+
+            ///////////////////////////////////////////////////
+            // End of (Non-Stopped) Thread Loop
+            ///////////////////////////////////////////////////
             set_debug_state(0x000F); // DEBUG - Thread Loop End
         } //!fw_stop_thread
 
 
-        // Increment the thread loop count (for both active and stopped)
-        uint16_t l_thread_loop_cnt = mem_pg_field_get(ppe_thread_loop_count);
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // Increment the thread loop count (for both active and stopped). Never set it to 0.
+        ///////////////////////////////////////////////////////////////////////////////////////
+        uint32_t l_thread_loop_cnt = mem_pg_field_get(ppe_thread_loop_count);
         l_thread_loop_cnt = l_thread_loop_cnt + 1;
 
-        if (l_thread_loop_cnt == 0)
+        if (l_thread_loop_cnt == 65536)
         {
-            l_thread_loop_cnt = 1;
+            l_thread_loop_cnt = 1;    //u16 rollover, never set to 0
         }
 
         mem_pg_field_put(ppe_thread_loop_count, l_thread_loop_cnt);
 
-        // Yield to other threads at least once per thread loop; skip if a pipe_abort in pcie mode.
+
+        ////////////////////////////////////////////////////////////////////////
+        // Yield to other threads at least once per thread loop
+        // Skip if a pipe_abort in pcie mode.
+        ////////////////////////////////////////////////////////////////////////
         if (!l_pcie_mode || ((status & abort_code) == 0))
         {
             io_sleep(get_gcr_addr_thread(&l_gcr_addr));

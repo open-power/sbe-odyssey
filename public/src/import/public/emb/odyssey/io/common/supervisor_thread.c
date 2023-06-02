@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23050900 |vbr     | EWM 303528: Updates to EOL toggle for relative rates/periods, code size, and testability
 // vbr23032100 |vbr     | EWM 301318: Increase recal not run limit from 500ms to 5s due to Odyssey DL recal req rate.
 // mbs22083000 |mbs     | PSL comment updates
 // vbr22061401 |vbr     | Issue 255514: Reduce fast/slow eol toggle from 12/24 hours to 100 ms
@@ -96,10 +97,9 @@
 /////////////////////////////////////////////////
 // Time constants for periodic events
 /////////////////////////////////////////////////
+#define FAST_EOL_TOGGLE_PERIOD      PK_MILLISECONDS(200)  // Keeping this the same as THREAD_LOCK_CHECK_PERIOD is not required, but saves ~64B
 #define THREAD_LOCK_CHECK_PERIOD    PK_MILLISECONDS(200)
 #define RECAL_NOT_RUN_CHECK_PERIOD  PK_MILLISECONDS(5000)
-#define FAST_EOL_TOGGLE_PERIOD      PK_MILLISECONDS(100)
-#define SLOW_EOL_TOGGLE_PERIOD      PK_MILLISECONDS(100)
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,9 +130,7 @@ void supervisor_thread(void* arg)
     int io_threads = img_field_get(ppe_num_threads);
 
     // Calculate check intervals
-    PkInterval fast_eol_toggle_interval     = PK_INTERVAL_SCALE(FAST_EOL_TOGGLE_PERIOD);
-    PkInterval slow_eol_toggle_interval     = PK_INTERVAL_SCALE(SLOW_EOL_TOGGLE_PERIOD);
-
+    PkInterval fast_eol_toggle_interval;
     PkInterval thread_locked_check_interval;
     unsigned int thread_lock_sim_mode = mem_pg_field_get(ppe_thread_lock_sim_mode);
 
@@ -140,11 +138,13 @@ void supervisor_thread(void* arg)
     {
         // Sim Mode: 2^ppe_thread_lock_sim_mode microseconds
         thread_locked_check_interval = (PkInterval)scaled_microsecond << thread_lock_sim_mode;
+        fast_eol_toggle_interval     = (PkInterval)scaled_microsecond << thread_lock_sim_mode;
     }
     else
     {
         // Operational Mode
         thread_locked_check_interval = PK_INTERVAL_SCALE(THREAD_LOCK_CHECK_PERIOD);
+        fast_eol_toggle_interval     = PK_INTERVAL_SCALE(FAST_EOL_TOGGLE_PERIOD);
     }
 
     PkInterval recal_not_run_check_interval;
@@ -166,7 +166,6 @@ void supervisor_thread(void* arg)
     PkTimebase thread_locked_check_time = current_time + thread_locked_check_interval;
     PkTimebase recal_not_run_check_time = current_time + recal_not_run_check_interval;
     PkTimebase fast_eol_toggle_time     = current_time + fast_eol_toggle_interval;
-    PkTimebase slow_eol_toggle_time     = current_time + slow_eol_toggle_interval;
 
 
     /////////////////////
@@ -363,44 +362,26 @@ void supervisor_thread(void* arg)
             } //if(time>check_time)
 
 
-            ////////////////////////////////
-            // Toggle fast EOL register
-            ////////////////////////////////
+            ////////////////////////////////////////
+            // Toggle fast and slow EOL registers
+            ////////////////////////////////////////
             // PSL fast_eol_toggle
             if (current_time > fast_eol_toggle_time )
             {
-                set_debug_state(0xF00B); // DEBUG - toggle fast EOL register
+                set_debug_state(0xF00B); // DEBUG - toggle fast/slow EOL registers
 
                 // Update the time for the next check
                 fast_eol_toggle_time = current_time + fast_eol_toggle_interval;
 
-                // RMW the full local scom_ppe_func reg
+                // Read the full local scom_ppe_func reg
                 uint32_t scom_ppe_func_reg = lcl_get(scom_ppe_func_lcl_addr, scom_ppe_func_full_reg_width);
 
-                // Invert the EOL bit. The mask is 64b, but the lcl_get/put operate on 32b so the mask needs to be shifted.
-                scom_ppe_func_reg = scom_ppe_func_reg ^ (eol_fast_toggle_mask >> (64 - scom_ppe_func_full_reg_width));
-
-                // Write the inverted value to toggle
-                lcl_put(scom_ppe_func_lcl_addr, scom_ppe_func_full_reg_width, scom_ppe_func_reg);
-            } //if(time>check_time)
-
-
-            ////////////////////////////////
-            // Toggle slow EOL register
-            ////////////////////////////////
-            // PSL slow_eol_toggle
-            if (current_time > slow_eol_toggle_time )
-            {
-                set_debug_state(0xF00C); // DEBUG - toggle slow EOL register
-
-                // Update the time for the next check
-                slow_eol_toggle_time = current_time + slow_eol_toggle_interval;
-
-                // RMW the full local scom_ppe_func reg
-                uint32_t scom_ppe_func_reg = lcl_get(scom_ppe_func_lcl_addr, scom_ppe_func_full_reg_width);
-
-                // Invert the EOL bit. The mask is 64b, but the lcl_get/put operate on 32b so the mask needs to be shifted.
-                scom_ppe_func_reg = scom_ppe_func_reg ^ (eol_slow_toggle_mask >> (64 - scom_ppe_func_full_reg_width));
+                // Invert the fast EOL bit every period.  Only invert the slow EOL bit every other period (when fast transitions 1->0).
+                // The mask is 64b, but the lcl_get/put operate on 32b so the mask needs to be shifted.
+                uint32_t eol_fast_bit = scom_ppe_func_reg & (eol_fast_toggle_mask >> (64 - scom_ppe_func_full_reg_width));
+                uint32_t invert_mask  = (eol_fast_bit ? (eol_fast_toggle_mask | eol_slow_toggle_mask) : eol_fast_toggle_mask) >>
+                                        (64 - scom_ppe_func_full_reg_width);
+                scom_ppe_func_reg     = scom_ppe_func_reg ^ invert_mask;
 
                 // Write the inverted value to toggle
                 lcl_put(scom_ppe_func_lcl_addr, scom_ppe_func_full_reg_width, scom_ppe_func_reg);
@@ -414,21 +395,21 @@ void supervisor_thread(void* arg)
 
 
             ///////////////////////////////////////////////////
-            // End of Thread Loop
+            // End of (Non-Stopped) Thread Loop
             ///////////////////////////////////////////////////
             set_debug_state(0xF00F); // DEBUG - Thread Loop End
         } //!fw_stop_thread
 
 
-        ////////////////////////////////////////////////////////////////////////
-        // Increment the thread loop count (for both active and stopped)
-        ////////////////////////////////////////////////////////////////////////
-        uint16_t l_thread_loop_cnt = mem_pg_field_get(ppe_thread_loop_count);
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // Increment the thread loop count (for both active and stopped). Never set it to 0.
+        ///////////////////////////////////////////////////////////////////////////////////////
+        uint32_t l_thread_loop_cnt = mem_pg_field_get(ppe_thread_loop_count);
         l_thread_loop_cnt = l_thread_loop_cnt + 1;
 
-        if (l_thread_loop_cnt == 0)
+        if (l_thread_loop_cnt == 65536)
         {
-            l_thread_loop_cnt = 1;
+            l_thread_loop_cnt = 1;    //u16 rollover, never set to 0
         }
 
         mem_pg_field_put(ppe_thread_loop_count, l_thread_loop_cnt);

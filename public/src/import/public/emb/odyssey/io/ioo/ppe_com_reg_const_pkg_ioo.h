@@ -4632,6 +4632,14 @@
 #define rx_ber_en_mask                             0x8000
 
 
+#define rx_ber_en_timer_sel_alias_addr             0b100100000
+#define rx_ber_en_timer_sel_alias_startbit         0
+#define rx_ber_en_timer_sel_alias_width            5
+#define rx_ber_en_timer_sel_alias_endbit           4
+#define rx_ber_en_timer_sel_alias_shift            11
+#define rx_ber_en_timer_sel_alias_mask             0xf800
+
+
 #define rx_ber_pcie_mode_addr                      0b100100000
 #define rx_ber_pcie_mode_startbit                  5
 #define rx_ber_pcie_mode_width                     1
@@ -8014,6 +8022,14 @@
 #define rx_pr_bump_sl_1ui_b_endbit                 4
 #define rx_pr_bump_sl_1ui_b_shift                  11
 #define rx_pr_bump_sl_1ui_b_mask                   0x800
+
+
+#define rx_pr_bump_slsr_1ui_ab_alias_addr          0b001110000
+#define rx_pr_bump_slsr_1ui_ab_alias_startbit      2
+#define rx_pr_bump_slsr_1ui_ab_alias_width         4
+#define rx_pr_bump_slsr_1ui_ab_alias_endbit        5
+#define rx_pr_bump_slsr_1ui_ab_alias_shift         10
+#define rx_pr_bump_slsr_1ui_ab_alias_mask          0x3c00
 
 
 #define rx_pr_bump_sr_1ui_a_addr                   0b001110000

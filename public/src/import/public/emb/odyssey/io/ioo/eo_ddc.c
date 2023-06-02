@@ -40,6 +40,13 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// jfg23050900 |jfg     | Coverage-based removal of set_ddc_err function. Retain CDR lock failure as only a state indication.
+// vbr23041700 |vbr     | Check historical eye width in recal only. In init (RxEqEval, RateChange) it is less useful and slows training (EWM302758); also skip BIST checks in RxEqEval.
+// jfg23033100 |jfg     | Coverage-based obsolete code cleanup: Remove hysteresis condition for recal_dac_changed
+// jfg23033100 |jfg     | Coverage-based obsolete code cleanup: Remove hysteresis condition for change in QPA offset spread
+// jfg23033100 |jfg     | Coverage-based obsolete code cleanup: ddc_seek_loop error status is obsolete. always reports pass.
+// jfg23033100 |jfg     | Coverage-based obsolete code cleanup: In 800B remove redundant range checking to pr_recenter function
+// jfg23033100 |jfg     | Coverage-based obsolete code cleanup: pr_seek_ber remove all edge support. Only data is manipulated.
 // vbr23031600 |vbr     | Skip the final CDR check in PCIe initial training to save time
 // vbr23031000 |vbr     | Tied off recal_dac_changed to save some code space
 // vbr23030200 |vbr     | Issue 300456: Only check cal bank in wait for cdr lock
@@ -258,35 +265,23 @@ int G_io_threads;
 // - Estep   : Step size for edge mini-PR to take
 // - Dstep   : Step size for data mini-PR to take
 // - pr_vals: 4 int array containing values of MINI-PR in order of NS Data; NS Edge; EW Data; EW Edge
-//--- dirL1R0 -- noBER -- seek_edge --- ACTION --- (IF PR MAX or PR MIN exceeded return max_eye) -------------------
-//    FALSE      FALSE    noseek{ns/ew} Subtract D from selected DATA PR and add E to EDGE; Reset & Perform BER check
-//    FALSE      FALSE    doseek        Add D to both DATA PR and subtract E from EDGE PR; Perform BER check
-//    FALSE      TRUE     noseek{ns/ew} Subtract D from selected DATA PR and add E to EDGE; Do NOT run BER check
-//    FALSE      TRUE     doseek        Add D to both DATA PR and subtract E from EDGE PR; Do NOT run BER check
-//    TRUE       FALSE    noseek{ns/ew} Add D to selected DATA PR and subtract E from EDGE; Reset & Perform BER check
-//    TRUE       FALSE    doseek        Subtract D from both DATA PR and add E to EDGE PR; Perform BER check
-//    TRUE       TRUE     noseek{ns/ew} Add D to selected DATA PR and subtract E from EDGE ; Do NOT run BER check
-//    TRUE       TRUE     doseek        Subtract D from both DATA PR and add E to EDGE PR; Do NOT run BER check
+//--- dirL1R0 -- seek_edge --- ACTION --- (IF PR MAX or PR MIN exceeded return max_eye) -------------------
+//    FALSE      noseek{ns/ew} Subtract D from selected DATA PR and add E to EDGE; Reset & Perform BER check
+//    FALSE      doseek        Add D to both DATA PR and subtract E from EDGE PR; Perform BER check
+//    TRUE       noseek{ns/ew} Add D to selected DATA PR and subtract E from EDGE; Reset & Perform BER check
+//    TRUE       doseek        Subtract D from both DATA PR and add E to EDGE PR; Perform BER check
 // Return value:
 //   -- An error count value if noBER = false else seek_error
 //   -- A constant == seek_error if the mini-PR extents will be violated
-int pr_seek_ber (t_gcr_addr* gcr_addr, t_bank bank, unsigned int Dstep, unsigned int Estep, bool dirL1R0, bool noBER,
-                 t_seek seek_edge, int* pr_vals)
+int pr_seek_ber (t_gcr_addr* gcr_addr, t_bank bank, unsigned int Dstep, bool dirL1R0, t_seek seek_edge, int* pr_vals)
 {
 
     int ber_count = 0;
-    int pr_temp[4];
     int pr_sel_both = 0b11; // Enable both phases by default
     bool dirL = dirL1R0 ^ (seek_edge != doseek);
 
-    int ns_edge_go = 0;
-    int ns_data_go = 0;
-    int ew_edge_go = 0;
-    int ew_data_go = 0;
-
     // BERPL Sequencer requires an even starting value since it truncates odd remainders
     int Dstep_val = Dstep;// + step_val_plus;
-    int Estep_val = Estep;
 
     // Disable NS Phase (0) move or EW Phase (1) move
     // PSL seek_edge_noseekNS
@@ -301,18 +296,6 @@ int pr_seek_ber (t_gcr_addr* gcr_addr, t_bank bank, unsigned int Dstep, unsigned
         pr_sel_both = pr_sel_both ^ 0b10;
     }
 
-    if (seek_edge != noseekEW)
-    {
-        ns_data_go = Dstep_val;
-        ns_edge_go = Estep_val;
-    }
-
-    if (seek_edge != noseekNS)
-    {
-        ew_data_go = Dstep_val ;
-        ew_edge_go = Estep_val;
-    }
-
 #if IO_DEBUG_LEVEL > 1
     set_debug_state(0x800A | (Dstep_val << 4)); // DEBUG - DDC Setup pr_seek_br
 #endif
@@ -321,145 +304,82 @@ int pr_seek_ber (t_gcr_addr* gcr_addr, t_bank bank, unsigned int Dstep, unsigned
     if (dirL)
     {
         // if dir LEFT
-        pr_temp[prDns_i] = pr_vals[prDns_i] - ns_data_go;//
-        pr_temp[prDew_i] = pr_vals[prDew_i] - ew_data_go;//
-        pr_temp[prEns_i] = pr_vals[prEns_i] + ns_edge_go;//
-        pr_temp[prEew_i] = pr_vals[prEew_i] + ew_edge_go;//
         Dstep_val = 0 - Dstep_val;
     }
     else
     {
-        pr_temp[prDns_i] = pr_vals[prDns_i] + ns_data_go;//
-        pr_temp[prDew_i] = pr_vals[prDew_i] + ew_data_go;//
-        pr_temp[prEns_i] = pr_vals[prEns_i] - ns_edge_go;//
-        pr_temp[prEew_i] = pr_vals[prEew_i] - ew_edge_go;//
-        Estep_val = 0 - Estep_val;
     } // else dir RIGHT
-
-    // Bounds Checking
-    //TODO JG: Consider removing this
-    //  if ((((pr_temp[prDns_i] > pr_mini_max) || (pr_temp[prDew_i] > pr_mini_max) || (Dstep==0)) &&
-    //       ((pr_temp[prEns_i] < pr_mini_min) || (pr_temp[prEew_i] < pr_mini_min) || (Estep==0))) ||
-    //      (((pr_temp[prDns_i] < pr_mini_min) || (pr_temp[prDew_i] < pr_mini_min) || (Dstep==0)) &&
-    //       ((pr_temp[prEns_i] > pr_mini_max) || (pr_temp[prEew_i] > pr_mini_max) || (Estep==0)))) { // Coverage may require an initial pr_*_edge offset > 1/2 max
-    //    return seek_error; // New position has exceeded the PR max/min and is a bad request. A measurement CANNOT be taken. Return error value.
-    // NOTES:
-    // This looks like it prevents full utilization of PR space by combining NS and EW checks. It works with these two case
-    // A - When stepping by >1 step then seek is expected and both data phases must move in sync or risk wiping out prior alignment work.
-    // B - When a non-seek phase mode is enabled then the conditionals for *_go variable will truncate an unmovable phase step so the other can reach max
-    //}
 
     // Write the target phases for BER Seq to manipulate.
     put_ptr_fast(gcr_addr, rx_berpl_seq_pr_sel_addr, rx_berpl_seq_pr_sel_endbit, pr_sel_both);
     uint32_t Dstep_2c = IntToTwosComp(Dstep_val, rx_mini_pr_step_data_adj_width);
 
-    // PSL noBER
-    if (!noBER)
-    {
-        uint32_t ber_status;
+    uint32_t ber_status;
 
-        // PSL seek_edge
-        if (((seek_edge == doseek) || (seek_edge == noseek)) && (Estep > 0))
-        {
-            // During doseek or noseek, it is assumed that this is DDC and edges are already aligned. Make sure that alignment does not change
-            // by inadvertently stopping one of them at an extent.
-            // Calculate the overage
-            int Estep_limit_ns = limit(pr_temp[prEns_i], pr_mini_min, pr_mini_max);
-            Estep_limit_ns -= pr_temp[prEns_i];
-            int Estep_limit_ew = limit(pr_temp[prEew_i], pr_mini_min, pr_mini_max);
-            Estep_limit_ew -= pr_temp[prEew_i];
-            bool limit_ns = abs(Estep_limit_ns) > abs(Estep_limit_ew);
-            // Reduce the DIRECTIONAL Estep_val by the largest diff
-            Estep_val += (limit_ns) ? Estep_limit_ns : Estep_limit_ew;
-            uint32_t Estep_2c = IntToTwosComp(Estep_val, rx_mini_pr_step_edge_adj_width);
-
-            // TODO JG?: Need to expose the berpl_lane_mode to regs for random counting use.
-            uint32_t adj_val = Dstep_2c << rx_mini_pr_step_data_adj_shift | Estep_2c << rx_mini_pr_step_edge_adj_shift;
-            put_ptr_fast(gcr_addr, rx_mini_pr_step_data_edge_adj_full_reg_addr, rx_mini_pr_step_data_edge_adj_full_reg_endbit,
-                         adj_val);
-            uint32_t runid = (rx_mini_pr_step_a_ns_edge_run_mask | rx_mini_pr_step_a_ew_edge_run_mask);
-
-            // PSL seek_edge_bank_a
-            if (bank != bank_a)
-            {
-                runid = (rx_mini_pr_step_b_ns_edge_run_mask | rx_mini_pr_step_b_ew_edge_run_mask);
-            }
-
-            put_ptr_fast(gcr_addr, rx_mini_pr_step_run_done_full_reg_addr, rx_mini_pr_step_run_done_full_reg_endbit, runid);
-            pr_vals[prEew_i] += Estep_val;
-            pr_vals[prEns_i] += Estep_val;
-        }
-        else
-        {
-            uint32_t adj_val = Dstep_2c << rx_mini_pr_step_data_adj_shift;
-            put_ptr_fast(gcr_addr, rx_mini_pr_step_data_edge_adj_full_reg_addr, rx_mini_pr_step_data_edge_adj_full_reg_endbit,
-                         adj_val);
-        }
+    uint32_t adj_val = Dstep_2c << rx_mini_pr_step_data_adj_shift;
+    put_ptr_fast(gcr_addr, rx_mini_pr_step_data_edge_adj_full_reg_addr, rx_mini_pr_step_data_edge_adj_full_reg_endbit,
+                 adj_val);
 
 #if IO_DEBUG_LEVEL > 1
-        set_debug_state(0x8002 ); // DEBUG - DDC pr_seek sleep
+    set_debug_state(0x8002 ); // DEBUG - DDC pr_seek sleep
 #endif
 
-        // Run BER-PL PR Control Sequencer. It independently resolves the enabled bank and returns the final data adjustment
-        // A BER Count == 0 means no error threshold was detected within the search window: A likely max_eye condition
-        put_ptr_fast(gcr_addr, rx_berpl_seq_run_addr, rx_berpl_seq_run_endbit, 1);
-        bool single_sleep = true;
+    // Run BER-PL PR Control Sequencer. It independently resolves the enabled bank and returns the final data adjustment
+    // A BER Count == 0 means no error threshold was detected within the search window: A likely max_eye condition
+    put_ptr_fast(gcr_addr, rx_berpl_seq_run_addr, rx_berpl_seq_run_endbit, 1);
+    bool single_sleep = true;
 
-        do
-        {
-            // PSL single_sleep
-            if (single_sleep )
-            {
-                if (mem_pg_field_get(rx_running_eq_eval) == 0)
-                {
-                    io_sleep(get_gcr_addr_thread(gcr_addr));
-                }
-            }
-
-            single_sleep = (G_io_threads < 2);
-
-            ber_status = get_ptr(gcr_addr, rx_berpl_final_adj_done_alias_addr, rx_berpl_final_adj_done_alias_startbit,
-                                 rx_berpl_final_adj_done_alias_endbit);
-        }
-        while ((ber_status & rx_berpl_seq_done_mask) == 0);
-
-        int pr_adj = TwosCompToInt( ((ber_status & rx_berpl_final_adj_mask) >> rx_berpl_final_adj_shift),
-                                    rx_berpl_final_adj_width);
-#if IO_DEBUG_LEVEL > 1
-        set_debug_state(0x8003 ); // DEBUG - DDC pr_seek status
-#endif
-
-        if (seek_edge != noseekNS)
-        {
-            pr_vals[prDew_i] += pr_adj;
-        }
-
-        if (seek_edge != noseekEW)
-        {
-            pr_vals[prDns_i] += pr_adj;
-        }
-
-        ber_count = get_ptr(gcr_addr, rx_berpl_count_addr, rx_berpl_count_startbit, rx_berpl_count_endbit);
-
-        // PSL max_eye
-        if (  (abs(pr_adj) >= (abs(Dstep_val))) && (Dstep != 0) && (ber_count == 0))
-        {
-            // Traversed requested range and no error reversal detected
-            ber_count = max_eye;
-        }
-
-        // PSL ber_seek_error
-        if ((pr_adj == 0) && (ber_count != 0))
-        {
-            // The BER Sequencer algorithm will only return 0 when no other position will satisfy the BER Error Threshold
-            ber_count = seek_error;
-        }
-    }
-    else
+    do
     {
-        ber_count = seek_error; // BER is not requested just return bad value
-        // PR Stepping out BER context is no longer implemented
+        // PSL single_sleep
+        if (single_sleep )
+        {
+            if (mem_pg_field_get(rx_running_eq_eval) == 0)
+            {
+                io_sleep(get_gcr_addr_thread(gcr_addr));
+            }
+        }
+
+        //Don't adjust sleeps for any thread count. Obsolete now.
+        //single_sleep=(G_io_threads < 2);
+
+        ber_status = get_ptr(gcr_addr, rx_berpl_final_adj_done_alias_addr, rx_berpl_final_adj_done_alias_startbit,
+                             rx_berpl_final_adj_done_alias_endbit);
     }
+    while ((ber_status & rx_berpl_seq_done_mask) == 0);
+
+    int pr_adj = TwosCompToInt( ((ber_status & rx_berpl_final_adj_mask) >> rx_berpl_final_adj_shift),
+                                rx_berpl_final_adj_width);
+#if IO_DEBUG_LEVEL > 1
+    set_debug_state(0x8003 ); // DEBUG - DDC pr_seek status
+#endif
+
+    if (seek_edge != noseekNS)
+    {
+        pr_vals[prDew_i] += pr_adj;
+    }
+
+    if (seek_edge != noseekEW)
+    {
+        pr_vals[prDns_i] += pr_adj;
+    }
+
+    ber_count = get_ptr(gcr_addr, rx_berpl_count_addr, rx_berpl_count_startbit, rx_berpl_count_endbit);
+
+    // PSL max_eye
+    if (  (abs(pr_adj) >= (abs(Dstep_val))) && (Dstep != 0) && (ber_count == 0))
+    {
+        // Traversed requested range and no error reversal detected
+        ber_count = max_eye;
+    }
+
+    // Removed: The seek error will return a 0 width eye movement which is sufficient error handling
+    //// PSL---ber_seek_error
+    //if ((pr_adj == 0) && (ber_count != 0)) {
+    //  // The BER Sequencer algorithm will only return 0 when no other position will satisfy the BER Error Threshold
+    //  ber_count = seek_error;
+    //}
+
 
     return ber_count;
 } //pr_seek_ber()
@@ -605,32 +525,6 @@ int  pr_recenter(t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, uint32_t* Esav
 }
 
 
-void set_ddc_err (t_gcr_addr* gcr_addr, t_bank bank, int lane, int* pr_vals, uint32_t* Esave, uint32_t* Dsave)
-{
-    mem_pl_bit_set(rx_bad_eye_opt_width, lane);
-    //EWM265038: This fail is for rx_bist not abort or ddc internal error: mem_pl_bit_set(rx_ddc_fail, lane);
-    //Disable BER
-    put_ptr(gcr_addr, rx_ber_en_addr, rx_ber_en_startbit, rx_ber_en_endbit, 0, read_modify_write);
-    // Disable the per-lane counter
-    put_ptr(gcr_addr, rx_berpl_count_en_addr, rx_berpl_count_en_startbit, rx_berpl_count_en_endbit, 0, read_modify_write);
-    // Reset BER compare A/B data banks to PRBS
-    put_ptr(gcr_addr, rx_berpl_exp_data_sel_addr, rx_berpl_exp_data_sel_startbit, rx_berpl_exp_data_sel_endbit, 0,
-            read_modify_write);
-    put_ptr(gcr_addr, rx_berpl_mask_mode_addr, rx_berpl_mask_mode_startbit, rx_berpl_mask_mode_endbit, 0,
-            read_modify_write);
-    put_ptr(gcr_addr, rx_err_trap_mask_addr, rx_err_trap_mask_startbit, rx_err_trap_mask_endbit, 0 , read_modify_write);
-    /* int ds = 1; */
-    /* int es = 0; */
-    /* // make 1 data step */
-    /* ber_reported = pr_seek_ber(gcr_addr, bank, ds, es, false, false, noseek, pr_active, ber_count); */
-    int offsets[2] = {0, 0};
-
-    // PSL pr_recenter
-    pr_recenter(gcr_addr, bank, pr_vals, Esave, Dsave, offsets, 0);
-    // Run this twice in case D/E get out of whack and need to restore in opposite directions
-    pr_recenter(gcr_addr, bank, pr_vals, Esave, Dsave, offsets, 0);
-
-}
 
 /////////////////////////////////////////////////////////////////////////////////
 // FUNCDOC: ddc_seek_loop
@@ -721,7 +615,7 @@ int ddc_seek_loop (t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, bool seekdir
     //int seek_status;
     G_SLEEP_MIN = C_BER_SEEK_SLEEP_CNT;
     //  do {
-    *ber_reported = pr_seek_ber(gcr_addr, bank, ds, 0, seekdir, false, doseek, pr_vals);
+    *ber_reported = pr_seek_ber(gcr_addr, bank, ds, seekdir, doseek, pr_vals);
     // If MAX EYE is reached while < ber_count it means that quad phase balancing is not possible nor required due to huge eye or other error.
 
     // PSL max_eye
@@ -777,7 +671,7 @@ int ddc_seek_loop (t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, bool seekdir
         ds = 0;
         /* Skip BACKOFF Paranoia Test for Evaluation
         *****************************
-          *ber_reported = pr_seek_ber(gcr_addr, bank, ds, es, seekdir, false, noseek, pr_vals);
+          *ber_reported = pr_seek_ber(gcr_addr, bank, ds, es, seekdir, noseek, pr_vals);
           if ((*ber_reported > ber_lim)){ //This is pure paranoia and may not be coverable except on really bad channel
               //HW552377 After increased 5 step standoff...skip paranoia completely if we reach starting position.
               set_debug_state(0x8015 ); // DEBUG DDC Large Edge Noise Warning
@@ -830,8 +724,7 @@ int ddc_seek_loop (t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, bool seekdir
             // 4: Search RIGHT until above threshold ///////////////////////////////////////////////////
             // Set target search width = remaining Data PR Steps
             ds = (seekdir == dirLseek) ? Dsave[i] : (pr_mini_max - Dsave[i]);
-            es = 0;
-            *ber_reported = pr_seek_ber(gcr_addr, bank, ds, es, revSeekDir, false, seek_quad[i], pr_vals);
+            *ber_reported = pr_seek_ber(gcr_addr, bank, ds, revSeekDir, seek_quad[i], pr_vals);
 
             // If MAX EYE is reached while < ber_count it means that quad phase balancing is not possible nor required due to huge eye or other error.
             // PSL max_eye
@@ -888,7 +781,6 @@ int ddc_seek_loop (t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, bool seekdir
 int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal)
 {
     set_debug_state(0x8000); // DEBUG - DDC Start
-    const bool recal_dac_changed = false; // potential input to bypass hysteresis on a dac change
     int abort_status = pass_code;
     int pr_active[4]; // All four PR positions packed in as: {Data NS, Edge NS, Data EW, Edge EW}
     G_io_threads = img_field_get(ppe_num_threads);
@@ -988,40 +880,14 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal)
     //Clear out any prior bad measurement indicator.
     mem_pl_field_put(rx_ddc_measure_limited, lane, 0);
     int ber_reported;
-    /* //We're Skipping initial search since BER Sequencer will return 0 in event of a fail
-    uint32_t ber_sel_val = (ber_count << (rx_berpl_sat_thresh_shift-(16-rx_berpl_sat_sample_sel_alias_width)))
-      | (G_ber_sel_final << (rx_berpl_sample_sel_shift-(16-rx_berpl_sat_sample_sel_alias_width)));
-    set_debug_state(0x8001 | (ber_sel_val << 4)); // DEBUG - DDC Setup
-
-    uint32_t ds = 0;
-
-    //Initialize sat_thresh to max value to begin error search
-    put_ptr_fast(gcr_addr, rx_berpl_sat_sample_sel_alias_addr, rx_berpl_sat_sample_sel_alias_endbit, ber_sel_val);
-    // Initial error sense provided by pr_seek_ber because it is convenient with a ds = 0
-    int ber_reported = pr_seek_ber(gcr_addr, bank, ds, ds, dirRseek, false, noseek, pr_active);
 
     // NOTE: Basic stipulation that the opening eye position must be error free.
     // NOTE: DDC Does not implement a search algorithm to locate an arbitrary starting eye center position
     //       but the BER Sequencer will identify the lack of an error free sampling position during intial seek.
-    if ((ber_reported > ber_count) && (ber_reported != max_eye)) {
-      set_ddc_err (gcr_addr, bank, lane, pr_active, Esave, Dsave);
-      set_debug_state(0x8081 | (ber_reported << 8)); // DEBUG: Algorithm error. Problem with data eye.
-      set_fir(fir_code_bad_lane_warning);
-      return warning_code;
-    } // ber_reported > ber_count
-    */
+    //       A high error eye will result in a 0 width measurement and no change in the original sample position.
 
     // 3: Search RIGHT Edge //////////////////////////////////////////////////
-    abort_status |= ddc_seek_loop (gcr_addr, bank, pr_active, dirRseek, &ber_reported, ber_count, recal);
-
-    if ((ber_reported == max_eye) && (abort_status != pass_code))
-    {
-        // PSL set_ddc_err
-        set_ddc_err (gcr_addr, bank, lane, pr_active, Esave, Dsave);
-        set_debug_state(0x8087); // DEBUG: Algorithm error. Lane broke during measure
-        //EWM265038: This fail is for rx_bist not abort or ddc internal error: set_fir(fir_code_bad_lane_warning);
-        return warning_code;
-    }
+    ddc_seek_loop (gcr_addr, bank, pr_active, dirRseek, &ber_reported, ber_count, recal);
 
     // 5: Calculate mini-pr and total right-side edge width
     // First each quadrant pair data and edge position is saved
@@ -1034,7 +900,7 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal)
     int Eright[2];
     Eright[0] = Esave[0] - (pr_active[prEns_i]);
     Eright[1] = Esave[1] - (pr_active[prEew_i]);
-    // TODO-JG: Is error detection of negative values here neccessary? While a negative here would screw stuff up is it possible?
+
     int last_right_edge[2];
     last_right_edge[0] = Dright[0] + Eright[0]; // Defined as positive distance of edge right of center
     last_right_edge[1] = Dright[1] + Eright[1]; // Defined as positive distance of edge right of center
@@ -1042,29 +908,13 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal)
     // 6: Search LEFT first error
 
     set_debug_state(0x800B); // DEBUG - X: Return to center. Begin LEFT search
-
     // Do not enable BER until we've moved past the original start point to avoid false passes
-    if ((pr_active[prDns_i] > Dsave[0]) || (pr_active[prEns_i] < Esave[0]) ||
-        (pr_active[prDew_i] > Dsave[1]) || (pr_active[prEew_i] < Esave[1]))
-    {
-        // The left seek continually gets fooled by marginal error rates lower than 10^5 that sneak in
-        // prior to advancing far enough from the right edge to avoid corrupting the error read
-        int offsets[2] = {0, 0};
-        // PSL pr_recenter_left_first_error
-        pr_recenter(gcr_addr, bank, pr_active, Esave, Dsave, offsets, 0);
-    }
+    int offsets[2] = {0, 0};
+    // PSL pr_recenter_left_first_error
+    pr_recenter(gcr_addr, bank, pr_active, Esave, Dsave, offsets, 0);
 
-    abort_status |= ddc_seek_loop (gcr_addr, bank, pr_active, dirLseek, &ber_reported, ber_count, recal);
 
-    if ((ber_reported == seek_error) && (abort_status != pass_code))
-    {
-        // abort_status of rc_error on either side coupled with a seek_error on the left indicates undetectable eye.
-        // PSL set_ddc_err
-        set_ddc_err (gcr_addr, bank, lane, pr_active, Esave, Dsave);
-        set_debug_state(0x8088); // DEBUG: Algorithm error. Lane broke during measure
-        //EWM265038: This fail is for rx_bist not abort or ddc internal error: set_fir(fir_code_bad_lane_warning);
-        return warning_code;
-    }
+    ddc_seek_loop (gcr_addr, bank, pr_active, dirLseek, &ber_reported, ber_count, recal);
 
     // 8: Calculate mini-pr and total left-side edge width
     // Then find the distance traveled from the last saved center to the new edge
@@ -1120,16 +970,12 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal)
     //DD1  mem_pl_field_put(rx_ddc_last_left_edge, lane, last_left_edge_reg);
     //DD1 mem_pl_field_put(rx_ddc_last_right_edge, lane, last_right_edge_reg);
 
-    int old_offset = Dsave[0] - Dsave[1];
-    int new_offset = ddc_offset_w_hyst[0] - ddc_offset_w_hyst[1];
     int width = last_right_edge_reg + last_left_edge_reg;
     ddc_hyst_val += (width >> 4);
 
     // If the difference between the left and right edges exceeds the hysteresis then shift the offset and save the new measurements.
     // PSL hysteresis
-    if (((((abs(ddc_offset_w_hyst[0]) > ddc_hyst_val) || (abs(ddc_offset_w_hyst[1]) > ddc_hyst_val)
-           || (abs(old_offset + new_offset) > (ddc_hyst_val << 1)))
-          || recal_dac_changed)
+    if (((((abs(ddc_offset_w_hyst[0]) > ddc_hyst_val) || (abs(ddc_offset_w_hyst[1]) > ddc_hyst_val) ) )
          || !recal) &&
         (abort_status == pass_code))
     {
@@ -1183,8 +1029,7 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal)
 
         if (cdr_status != pass_code)
         {
-            // PSL set_ddc_error
-            set_ddc_err (gcr_addr, bank, lane, pr_active, Esave, Dsave);
+            // Issue 304123: We're not going to store an error on a CDR lock problem
             set_debug_state(0x8083); // DEBUG: Algorithm error. Final lock error
             //EWM265038: This fail is for rx_bist not abort or ddc internal error: set_fir(fir_code_bad_lane_warning);
             return warning_code;
@@ -1200,9 +1045,8 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal)
       uint32_t ds = 0;
       put_ptr_fast(gcr_addr, rx_berpl_sat_sample_sel_alias_addr, rx_berpl_sat_sample_sel_alias_endbit, ber_sel_val);
       // Final error sense provided by pr_seek_ber because it is convenient with a ds = 0
-      ber_reported = pr_seek_ber(gcr_addr, bank, ds, ds, noseek, false, noseek, pr_active);
+      ber_reported = pr_seek_ber(gcr_addr, bank, ds, ds, noseek, noseek, pr_active);
       if (ber_reported >  ber_count) {
-        set_ddc_err (gcr_addr, bank, lane, pr_active, Esave, Dsave);
         set_debug_state(0x8084); // DEBUG: Problem with data eye: final error check failed.
         set_fir(fir_code_bad_lane_warning);
         return warning_code;
@@ -1220,8 +1064,9 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal)
     //Replaced with FAST: put_ptr(gcr_addr, rx_berpl_exp_data_sel_addr, rx_berpl_exp_data_sel_startbit, rx_berpl_exp_data_sel_endbit, 0, read_modify_write);
     put_ptr_fast(gcr_addr, rx_berpl_cnt_en_exp_sel_alias_addr, rx_berpl_cnt_en_exp_sel_alias_endbit, 0);
 
-    // Log historical width when clear is not asserted
-    int clr_eye_height_width  = mem_pg_field_get(rx_clr_eye_height_width);
+    // Log historical width when clear is not asserted (in recal only).
+    // The actual clear happens in the auto_recal loop.
+    int clr_eye_height_width  = recal ? mem_pg_field_get(rx_clr_eye_height_width) : 1;
 
     // PSL clr_eye_height_width
     if (!clr_eye_height_width)
@@ -1281,8 +1126,8 @@ int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal)
     //Rxbist check min eye width
     //After DDC runs should have min eye width of 40 -- could change based on hardware
     //Perfect eye would be 63 -- width will be postive only.
-    int rx_ddc_check_en_int =  get_ptr(gcr_addr, rx_ddc_check_en_addr , rx_ddc_check_en_startbit  ,
-                                       rx_ddc_check_en_endbit); //pg
+    int rx_ddc_check_en_int = (mem_pg_field_get(rx_running_eq_eval) == 1) ? 0 : get_ptr(gcr_addr, rx_ddc_check_en_addr ,
+                              rx_ddc_check_en_startbit  , rx_ddc_check_en_endbit); //pg
 
     // PSL rx_ddc_check_en
     if (rx_ddc_check_en_int)

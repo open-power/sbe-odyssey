@@ -39,6 +39,15 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23051500 |vbr     | EWM 304749: Skip final CDR lock check in PCIe Gen1/2 Recal.
+// mwh23051800 |mwh     | change to void eo_vga_pathoffset
+// mwh23051700 |mwh     | EWM 303123: removed if (status & abort_code) { goto CLEANUP; } for eo_vga_pathoffset never used or hit
+// vbr23050100 |vbr     | EWM 303579: Consolidate bank switching, flywheel resetting from ei_inactive into eo_main to save time
+// vbr23042500 |vbr     | EWM 303525/302758: Moved setting clock to Gen5 in PCIe DC Cal to PIPE reset active, updates for 4 phases of DC Cal
+// mwh23050400 |mwh     | EWM 304250 Change QPA bist to run only gen 4 5 AXO init
+// mwh23050300 |mwh     | Add comment to for BIST as related to DFE
+// vbr23041700 |vbr     | EWM 302758: Skip BIST checks in RxEqEval.
+// vbr23041000 |vbr     | EWM 302633: New procedure for Gen1/2 bank sync
 // vbr23040300 |vbr     | EWM 301953: Split initial training into 3 phases (from 2) for PCIe EI exit
 // vbr23032700 |vbr     | EWM 301977: Do not skip DC Cal on abort mem_reg being set.
 // mwh23033000 |mwh     | EWM 301889 change to true for bool first_loop_iteration = true phase one
@@ -294,6 +303,7 @@
 #include "eo_eoff_1_lat.h"
 #include "eo_edge_amax.h"
 #include "eo_qpa.h"
+#include "eo_bank_sync.h"
 #include "eo_rxbist_epoff_final.h"
 #include "rx_sigdetbist_test.h"
 #include "ioo_margin_hv.h"
@@ -326,6 +336,7 @@ static int eo_main_recal_rx(t_gcr_addr* gcr_addr);
 PK_STATIC_ASSERT(rx_pr_edge_track_cntl_full_reg_width == 16);
 PK_STATIC_ASSERT(rx_servo_intr_config_full_reg_width == 16);
 PK_STATIC_ASSERT(rx_eo_phase_select_0_2_width == 3);
+PK_STATIC_ASSERT(rx_dc_enable_loff_ab_data_edge_alias_width == 4);
 
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -449,25 +460,25 @@ int eo_main_dccal_rx(t_gcr_addr* gcr_addr)
     pipe_abort_config(gcr_addr, PIPE_ABORT_CFG_DCCAL);
 
     // Get LOFF sub steps enables (indicates phase for pipe_reset_inactive)
-    int loff_enable_ab = mem_pg_field_get(rx_dc_enable_loff_ab_alias);
+    int loff_enable_ab_data_edge = mem_pg_field_get(rx_dc_enable_loff_ab_data_edge_alias);
 
     // Disable Clock to RX DL During DC Cal to prevent glitches
-    // Only needs to be done in Phase 0 (Bank A Loff).
-    if (loff_enable_ab & 0b10)
+    // Only needs to be done in Phase 0/1 (Bank A Data/Edge Loff).
+    if (loff_enable_ab_data_edge & 0b1000)
     {
         io_sleep(get_gcr_addr_thread(gcr_addr));
         put_ptr_field(gcr_addr, rx_dl_clk_en, 0b0, read_modify_write);
     }
 
     // PCIe: Run RX SIGDET BIST if enabled
-    // PCIe: Set RX Clock to Gen5 rate to speed up servos
+    // PCIe: Set RX Clock to Gen5 rate to speed up servos (moved to pipe reset active)
     int pcie_mode = fw_field_get(fw_pcie_mode);
 
     if (pcie_mode)  //only run for pcie
     {
-        if (loff_enable_ab & 0b10)
+        if (loff_enable_ab_data_edge == 0b1111)
         {
-            // RX SIGDET BIST. Only needs to be done in Phase 0 (Bank A Loff).
+            // RX SIGDET BIST. Only needs to be done in BIST where do not split DC Cal into multiple phase.
             int rx_sigdet_check_en_int = get_ptr(gcr_addr, rx_sigdet_check_en_addr, rx_sigdet_check_en_startbit,
                                                  rx_sigdet_check_en_endbit);//pg
 
@@ -475,19 +486,6 @@ int eo_main_dccal_rx(t_gcr_addr* gcr_addr)
             {
                 rx_sigdetbist_test(gcr_addr);
             }
-
-            // Set RX Clock/Circuit to Gen5 Rate to speed up servos. Only needs to be done in Phase 0 (Bank A Loff).
-            // We do not run the pipe ppe code or logic when in bist, so rate will not be correct if call this.
-            uint32_t l_fw_bist_en = fw_field_get(fw_bist_en);
-
-            if (!l_fw_bist_en)  //only if not in bist mode
-            {
-                int rate_one_hot = 0b10000; //gen5
-                put_ptr_field(gcr_addr, rx_hold_div_clks_ab_alias,     0b11,          read_modify_write);
-                put_ptr_field(gcr_addr, rx_pcie_clk_sel,               rate_one_hot,  read_modify_write);
-                update_rx_rate_dependent_analog_ctrl_pl_regs(gcr_addr, rate_one_hot);
-                put_ptr_field(gcr_addr, rx_hold_div_clks_ab_alias,     0b00,          read_modify_write);
-            }//if bist
         }//loff_ab
     } //if(pcie)
 
@@ -498,14 +496,9 @@ int eo_main_dccal_rx(t_gcr_addr* gcr_addr)
     // Prior to asserting cal_lane_sel:
     //   Initialize/Reset CDR by clearing FW; Phase accumulator not cleared since that can cause a glitch.
     //   Make sure the CDR is disabled.
-    //   Only needs to be done in Phase 0 (Bank A Loff).
-    if (loff_enable_ab & 0b10)
-    {
-        put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_dis_cdr_b_dis, fast_write);
-        put_ptr_field(gcr_addr, rx_pr_fw_reset_ab_alias,        0b11,                read_modify_write);
-        put_ptr_field(gcr_addr, rx_pr_fw_reset_ab_alias,        0b00,                read_modify_write);
-        io_sleep(get_gcr_addr_thread(gcr_addr));
-    }
+    put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_dis_cdr_b_dis, fast_write);
+    put_ptr_field(gcr_addr, rx_pr_fw_reset_ab_alias,        0b11,                read_modify_write);
+    put_ptr_field(gcr_addr, rx_pr_fw_reset_ab_alias,        0b00,                read_modify_write);
 
     // Select the cal lane (servo logic) but do not assert cal_lane_sel as yet
     put_ptr_field(gcr_addr, rx_cal_lane_pg_phy_gcrmsg, lane, read_modify_write);
@@ -519,7 +512,7 @@ int eo_main_dccal_rx(t_gcr_addr* gcr_addr)
     if (loff_enable)
     {
         // PSL eo_loff_fenced_bank_a
-        if (loff_enable_ab & 0b10)
+        if (loff_enable_ab_data_edge & 0b1000)
         {
             // Safely switch to bank_a and run LOFF (assumes cal_lane_sel is unasserted)
             set_cal_bank(gcr_addr, bank_a);// Set Bank B as Main, Bank A as Alt (cal_bank)
@@ -532,7 +525,7 @@ int eo_main_dccal_rx(t_gcr_addr* gcr_addr)
         if ((status & abort_code) == 0)
         {
             // PSL eo_loff_fenced_bank_b
-            if (loff_enable_ab & 0b01)
+            if (loff_enable_ab_data_edge & 0b0100)
             {
                 io_sleep(get_gcr_addr_thread(gcr_addr));
                 // Safely switch to bank_b and run LOFF (assumes cal_lane_sel is unasserted)
@@ -694,7 +687,7 @@ int eo_main_init(t_gcr_addr* gcr_addr)
     //bool pcie_gen2_cal     = (cal_mode == C_PCIE_GEN2_CAL);
     bool pcie_gen3_cal     = (cal_mode == C_PCIE_GEN3_CAL);
     //bool pcie_gen4_cal     = (cal_mode == C_PCIE_GEN4_CAL);
-    //bool pcie_gen5_cal     = (cal_mode == C_PCIE_GEN5_CAL);
+    bool pcie_gen4_5_cal   = (cal_mode == C_PCIE_GEN5_CAL) || (cal_mode == C_PCIE_GEN4_CAL);
     bool pcie_gen3_4_5_cal = (cal_mode == C_PCIE_GEN5_CAL) || (cal_mode == C_PCIE_GEN4_CAL)
                              || (cal_mode == C_PCIE_GEN3_CAL);
     bool pcie_gen1_2_cal   = (cal_mode == C_PCIE_GEN1_CAL) || (cal_mode == C_PCIE_GEN2_CAL);
@@ -714,28 +707,34 @@ int eo_main_init(t_gcr_addr* gcr_addr)
     put_ptr_field(gcr_addr, rx_psave_cdrlock_mode_sel, 0b11, read_modify_write); //pl
     alt_bank_psave_clear_and_wait(gcr_addr);
 
-    // AXO: Make sure the CDRs are disabled for INIT.
-    // PCIe: Leave the CDRs in their current state.
-    // PSL axo_disable_edge_track_cntl
-    if (!pcie_cal)
-    {
-        put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_dis_cdr_b_dis, fast_write);
-    }
-
     // Prior to asserting cal_lane_sel: Set Bank B as Main, Bank A as Alt (cal_bank)
     // This may cause a DL clock glitch if the lane was not already in this state (HW496723)
     // AXO: Setting B as Main and A as Alt (with DL clock change) should be unnecessary since that is the state after DC Cal
-    // PCIe: On a rate change we have already switched back to Bank A as ALT (pipe_cmd_rate_updated, step 10).
-    //       On a RXEQ (Gen 3+) we need to safely switch to A. The DL clock is disabled (pipe_cmd_rxeqeval) so we do
-    //       not need to be aligned, but we may need to do something to ensure that the switch happens (HW519449).
-    // PSL rxeqeval
-    if (rx_eq_eval)
+    // PCIe: On a RXEQ (Gen 3+) or EI Inactive (rate change) we need to safely switch to A (only in phase 0 for ei_inactive).
+    //       The DL clock is disabled prior to calling this, so we do not need to be aligned.
+    //       However, we may need to do something to ensure that the switch happens (HW519449, EWM257157).
+    // PSL pcie_set_bank_a
+    if (pcie_cal && (eo_phase_sel_0_2 & 0b100))
     {
-        // Make sure are on A bank and then do a bump on A to ensure bank switch happens (HW519449).
-        // CDR will always be enabled on A in this situation (was either main or psave enabled it).
+        // Make sure are on A bank and then do a bump to ensure bank switch happens (HW519449, EWM257157).
+        // The bump is done on both banks in opposite directions since only the original Alt bank CDR is guaranteed to be enabled (by psave).
         set_cal_bank(gcr_addr, bank_a);
-        put_ptr_field(gcr_addr, rx_pr_bump_sl_1ui_a, 0b1, fast_write);
-    } //rx_eq_eval
+        int bump_regval = (rx_pr_bump_sl_1ui_a_mask | rx_pr_bump_sr_1ui_b_mask) >> rx_pr_bump_slsr_1ui_ab_alias_shift;
+        put_ptr_field(gcr_addr, rx_pr_bump_slsr_1ui_ab_alias, bump_regval, fast_write); //strobe
+    }
+
+    // AXO: Make sure the CDRs are disabled for INIT and reset the flywheel.
+    // PCIe EI Exit (Rate Change): Make sure the CDRs are disabled for INIT and reset the flywheel (if Phase 0).
+    // PCIe RxEqEval: Make sure the CDRs are disabled for INIT and reset the flywheel.
+    // PSL phase_zero_disable_cdr_fw_reset
+    if (eo_phase_sel_0_2 & 0b100)
+    {
+        put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_dis_cdr_b_dis, fast_write);
+
+        // Issue 256712: Reset the flywheel to clear out bad value that may have been reached during Electrical Idle or TxEq Change
+        put_ptr_field(gcr_addr, rx_pr_fw_reset_ab_alias, 0b11, read_modify_write);
+        put_ptr_field(gcr_addr, rx_pr_fw_reset_ab_alias, 0b00, read_modify_write);
+    }
 
     // HW532652: The psave logic sets bit_lock_done, so clear it here
     put_ptr_field(gcr_addr, rx_pr_bit_lock_done_ab_clr_alias, 0b11, fast_write);
@@ -757,7 +756,7 @@ int eo_main_init(t_gcr_addr* gcr_addr)
     /////////////////////////////////////////////////////////////////////////
 
     // BIST Enables
-    int bist_check_en = get_ptr_field(gcr_addr, rx_check_en_alias);
+    int bist_check_en = rx_eq_eval ? 0 : get_ptr_field(gcr_addr, rx_check_en_alias);
 
     // Cal Step: VGA (Gain) - Only run in AXO (A) or PCIe Gen1/Gen2 (A/B) or pcie_bist_mode
     int vga_enable = (pcie_gen3_4_5_cal && !pcie_bist_mode) ? 0 : mem_pg_field_get(rx_eo_enable_vga_cal);
@@ -773,7 +772,7 @@ int eo_main_init(t_gcr_addr* gcr_addr)
 
     // Cal Step: Quad Phase Adjust - Enabled for AXO and pcie bist in gen 3/4/5 on bank A only
     int quad_enable = (!pcie_cal || (pcie_bist_mode
-                                     && pcie_gen3_4_5_cal)) ? mem_pg_field_get(rx_eo_enable_quad_phase_cal) : 0;
+                                     && pcie_gen4_5_cal)) ? mem_pg_field_get(rx_eo_enable_quad_phase_cal) : 0;
 
 
     /////////////
@@ -820,16 +819,10 @@ int eo_main_init(t_gcr_addr* gcr_addr)
         }
 
         // Cal Step: Path Offset (Ap+An/2) - Only run in PCIe Gen1 or Gen2 or pcie_bist_mode
-        if (poff_enable)   // && ((status & abort_code) == 0)) {
+        if (poff_enable)
         {
             // PSL eo_vga_pathoffset
-            status |= eo_vga_pathoffset(gcr_addr, bank_a, saved_Amax_poff, pcie_bist_mode);
-
-            // PSL poff_a_abort
-            if (status & abort_code)
-            {
-                goto CLEANUP;
-            }
+            eo_vga_pathoffset(gcr_addr, bank_a, saved_Amax_poff, pcie_bist_mode);
         }
 
         // CDR must be locked prior to running EOFF, Quad Adjust, CTLE, or LTE.
@@ -975,11 +968,10 @@ int eo_main_init(t_gcr_addr* gcr_addr)
     } //while run_vga_ctle_loop
 
     // Phase 0 complete.  Skip to clean up if Phase 1 or 2 is not enabled.
-    // Set the abort status so skip the final CDR lock and bank switch.
     // PSL phase0_done
     if ((eo_phase_sel_0_2 & 0b011) == 0)
     {
-        status |= abort_clean_code;
+        status |= phase_done_code; //skip cdr lock and bank switch
         goto CLEANUP;
     }
 
@@ -1035,13 +1027,7 @@ int eo_main_init(t_gcr_addr* gcr_addr)
             // PSL poff_eo_vga_pathoffset
             if (true)   //((status & abort_code) == 0) {
             {
-                status |= eo_vga_pathoffset(gcr_addr, bank_b, saved_Amax_poff, pcie_bist_mode);
-
-                // PSL poff_b_abort
-                if (status & abort_code)
-                {
-                    goto CLEANUP;
-                }
+                eo_vga_pathoffset(gcr_addr, bank_b, saved_Amax_poff, pcie_bist_mode);
             }
         }//poff_en
 
@@ -1068,48 +1054,43 @@ int eo_main_init(t_gcr_addr* gcr_addr)
     } //bank_b poff/eoff
 
     // Perform Bank A/B UI Alignment by putting Alt bank into align mode. Requires edge tracking.
-    // Run in both Phase 1 and 2 (needed for AXO/Gen3-5 DFE and DDC, Gen1-2 DDC).
-    int bank_sync_enable = mem_pg_field_get(rx_eo_enable_bank_sync);
+    // Run in Phase 1 and 2 as needed (AXO/Gen3-5 DFE and DDC, Gen1-2 Final Bank Switch).
+    int bank_sync_enable;
+
+    if (pcie_gen1_2_cal && ((eo_phase_sel_0_2 & 0b001) == 0))
+    {
+        // Only need bank sync for Phase 2 in Gen1/2 (final bank switch); do not need in Phase 1.
+        bank_sync_enable = 0;
+    }
+    else
+    {
+        // Need bank sync for Gen1/2 Phase 2 and AXO/Gen3-5 Phase 1 and 2
+        bank_sync_enable = mem_pg_field_get(rx_eo_enable_bank_sync);
+    }
 
     if (bank_sync_enable)   // && ((status & abort_code) == 0)) {
     {
         set_debug_state(0x2010); // DEBUG - Init Cal Bank Sync
-        put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_lcl_align_cdr_b_lcl, fast_write);
-
-        // Max Sync Time: AXO/Gen5 = 500ns, Gen4 = 1us, Gen3 = 2us, Gen2 = 4us, Gen1 = 8us
-        // PSL bank_sync_pcie_gen1_2_cal
-        if (pcie_gen1_2_cal)
-        {
-            io_wait_us(get_gcr_addr_thread(gcr_addr), 8); //sleep
-        }
-        else     //AXO, PCIe Gen 3-5
-        {
-            if (!rx_eq_eval)
-            {
-                io_sleep(get_gcr_addr_thread(gcr_addr));
-            }
-
-            io_spin_us(2); //busy wait
-        }
+        status |= eo_bank_sync(gcr_addr, bank_a, cal_mode);
     }
 
-    // HW525009: Turn off invalid lock detection to avoid coming out of sync on bank B after bank sync
+    // HW525009: Turn off invalid lock detection to avoid coming out of sync on bank B after bank sync during DFE (initial training only)
     put_ptr_field(gcr_addr, rx_pr_bit_lock_done_ab_set_alias, 0b11, fast_write);
 
     // Disable bank sync mode before running DFE/DDC since alter the data (Issue 291915: do not do at same time as ext_mode_en)
-    put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_lcl_cdr_b_lcl, fast_write);
+    // Moved to eo_bank_sync(): put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_lcl_cdr_b_lcl, fast_write);
 
     // Check for abort during bank sync
-    status |= check_rx_abort(gcr_addr);
-
+    // Moved to eo_bank_sync(): status |= check_rx_abort(gcr_addr);
     // PSL bank_sync_abort
     if (status & abort_code)
     {
         goto CLEANUP;
     }
 
-    // Put Alt (Cal, A) bank into CDR External mode (if no pipe abort) for DFE Amp Measurements and DDC
-    if (true)   //((status & abort_code) == 0) {
+    // Put Alt (Cal, A) bank into CDR External mode (if no pipe abort) for AXO/Gen3-5 DFE Amp Measurements and DDC.
+    // Not needed for PCIe Gen1-2 (no DFE or DDC); but enable anyways for the bank align sim bugspray in Phase 2.
+    if (!pcie_gen1_2_cal || (eo_phase_sel_0_2 & 0b001))   //((status & abort_code) == 0) {
     {
         put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_ext_cdr_b_lcl, fast_write);
     }
@@ -1150,11 +1131,10 @@ int eo_main_init(t_gcr_addr* gcr_addr)
     put_ptr_field(gcr_addr, rx_pr_bit_lock_done_ab_clr_alias, 0b11, fast_write);
 
     // Phase 1 complete.  Skip to clean up if Phase 2 is not enabled.
-    // Set the abort status so skip the final CDR lock and bank switch.
     // PSL phase1_done
     if ((eo_phase_sel_0_2 & 0b001) == 0)
     {
-        status |= abort_clean_code;
+        status |= phase_done_code; //skip cdr lock and bank switch
         goto CLEANUP;
     }
 
@@ -1588,36 +1568,6 @@ static int eo_main_recal_rx(t_gcr_addr* gcr_addr)
         }
     }
 
-    // Perform Bank A/B UI Alignment by putting Alt bank into align mode. Requires edge tracking.
-    int bank_sync_enable = mem_pg_field_get(rx_rc_enable_bank_sync);
-
-    if (bank_sync_enable)   // && (status == rc_no_error)) {
-    {
-        set_debug_state(0x3010); // DEBUG - Recal Bank Sync
-
-        // PSL enable_bank_sync_cal_bank_a
-        if (cal_bank == bank_a)
-        {
-            put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_lcl_align_cdr_b_lcl, fast_write);
-        }
-        else     //bank_b
-        {
-            put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_lcl_cdr_b_lcl_align, fast_write);
-        }
-
-        // Max Sync Time: Gen5 = 500ns, Gen4 = 1us, Gen3 = 2us, Gen2 = 4us, Gen1 = 8us
-        io_wait_us(get_gcr_addr_thread(gcr_addr), 8); //sleep
-
-        // Check for abort during bank sync
-        status |= check_rx_abort(gcr_addr);
-
-        // PSL bank_sync_abort
-        if (status)
-        {
-            goto CLEANUP;
-        }
-    }
-
     // Cal Step: LTE - Disabled for all rates/modes in Recal by default. Read mem_reg enable instead of hardcoding 0 to include code for lab/sim.
     // Requires edge tracking (local data mode) but does not require bank alignment
     int lte_enable = 0; //mem_pg_field_get(rx_rc_enable_lte_cal);
@@ -1638,11 +1588,27 @@ static int eo_main_recal_rx(t_gcr_addr* gcr_addr)
         }
     }
 
-    // Disable bank sync mode before running DFE/DDC since alter the data
+    // Perform Bank A/B UI Alignment by putting Alt bank into align mode. Requires edge tracking.
+    int bank_sync_enable = mem_pg_field_get(rx_rc_enable_bank_sync);
+
+    if (bank_sync_enable)   // && (status == rc_no_error)) {
+    {
+        set_debug_state(0x3010); // DEBUG - Recal Bank Sync
+        status |= eo_bank_sync(gcr_addr, cal_bank, cal_mode);
+
+        // Check for abort during bank sync
+        // Moved to eo_bank_sync(): status |= check_rx_abort(gcr_addr);
+        // PSL bank_sync_abort
+        if (status)
+        {
+            goto CLEANUP;
+        }
+    }
+
     // Put Alt (Cal) bank into CDR External mode (if no errors) for  DFE Amp Measurements and DDC
     if (true)   //(status == rc_no_error) {
     {
-        // PSL disable_bank_sync_cal_bank_a
+        // PSL cdr_ext_mode_cal_bank_a
         if (cal_bank == bank_a)
         {
             put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_ext_cdr_b_lcl, fast_write);
@@ -1655,11 +1621,11 @@ static int eo_main_recal_rx(t_gcr_addr* gcr_addr)
     else     //!rc_no_error
     {
         // Disable bank sync, but do not enable external data mode on an error
-        // PSL rc_error_rx_pr_edge_track_cntl
-        put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_lcl_cdr_b_lcl, fast_write);
+        // Moved to eo_bank_sync(): put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_lcl_cdr_b_lcl, fast_write);
     }
 
     // Cal Step: DFE Full - Run in AXO and PCIe Gen 1-5
+    // DFE Full is run on B bank during BIST for Gen 1-5
     // Requires edge tracking (external data mode) and bank alignment
     int dfe_enable = mem_pg_field_get(rx_rc_enable_dfe_cal);
 
@@ -1703,6 +1669,9 @@ static int eo_main_recal_rx(t_gcr_addr* gcr_addr)
         io_sleep(get_gcr_addr_thread(gcr_addr));
     }
 
+    //////////////
+    // CLEAN UP //
+    //////////////
 CLEANUP:
     // Re-enable CDR local data mode on both banks (not bank sync)
     put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_lcl_cdr_b_lcl, fast_write);
@@ -1759,10 +1728,14 @@ CLEANUP:
             // Add LOff margin offset
             loff_offset_wrap(gcr_addr, cal_bank, true);
 
-            // Cal Done:  Double check lock
+            // Cal Done:  Double check lock (EWM304749: except PCIe Gen1/2)
             set_debug_state(0x3015); // DEBUG - Recal Final Edge Tracking and Bank Switch
-            bool set_fir_on_error = true;
-            wait_for_cdr_lock(gcr_addr, cal_bank, set_fir_on_error);
+
+            if (!pcie_gen1_2_cal)
+            {
+                bool set_fir_on_error = true;
+                wait_for_cdr_lock(gcr_addr, cal_bank, set_fir_on_error);
+            }
 
             // HW532652: Turn off invalid lock detection to help with DL bumping
             put_ptr_field(gcr_addr, rx_pr_bit_lock_done_ab_set_alias, 0b11, fast_write);
@@ -1816,7 +1789,7 @@ CLEANUP:
     } //if(status==rc_no_error)
 
 
-    // Clear cal lane sel
+    // Clear cal lane sel (must be after the bank_safe_swap so the clock is enabled for that logic)
     put_ptr_field(gcr_addr, rx_clr_cal_lane_sel, 0b1, fast_write);
 
     // Power Down the Alternate Bank (new cal_bank)

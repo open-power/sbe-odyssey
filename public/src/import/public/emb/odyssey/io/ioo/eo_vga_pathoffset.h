@@ -40,6 +40,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// mwh23051800 |mwh     | change to void eo_vga_pathoffset
 // jjb22112200 |jjb     | added pcie_bist_mode parameters
 // mwh21060100 |mwh     | Add recal to inputs for Gen 3 recal
 // mwh21052000 |mwh     | Add first_recal,gen3,2,1
@@ -53,7 +54,7 @@
 #include "ioo_common.h"
 
 // VGA Gain loop portion of VGA
-int eo_vga_pathoffset(t_gcr_addr* gcr_addr, t_bank bank, int saved_Amax_poff, bool pcie_bist_mode);
+void eo_vga_pathoffset(t_gcr_addr* gcr_addr, t_bank bank, int saved_Amax_poff, bool pcie_bist_mode);
 
 
 

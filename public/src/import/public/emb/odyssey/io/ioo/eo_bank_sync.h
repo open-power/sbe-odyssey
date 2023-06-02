@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/emb/odyssey/io/common/eo_wrappers.h $ */
+/* $Source: public/src/import/public/emb/odyssey/io/ioo/eo_bank_sync.h $  */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,13 +23,13 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 // *!---------------------------------------------------------------------------
-// *! (C) Copyright International Business Machines Corp. 2021
+// *! (C) Copyright International Business Machines Corp. 2023
 // *! All Rights Reserved -- Property of IBM
 // *! *** IBM Confidential ***
 // *!---------------------------------------------------------------------------
-// *! FILENAME    : eo_wrappers.h
+// *! FILENAME    : eo_bank_sync.h
 // *! TITLE       :
-// *! DESCRIPTION : Common functions for calling EyeOpt flows from main thread
+// *! DESCRIPTION :
 // *!
 // *! OWNER NAME  : Vikram Raj          Email: vbraj@us.ibm.com
 // *! BACKUP NAME : Mike Spear          Email: mspear@us.ibm.com
@@ -39,18 +39,15 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
-// vbr21020800 |vbr     | Initial Rev
+// vbr23041100 |vbr     | Initial Rev (P11). See Github m*ster_a3 for P10 version.
 // -----------------------------------------------------------------------------
 
-#ifndef _EO_WRAPPERS_H_
-#define _EO_WRAPPERS_H_
+#ifndef _EO_BANK_SYNC_H_
+#define _EO_BANK_SYNC_H_
 
-#include "io_lib.h"
+#include "ioo_common.h"
 
+// Run Bank Sync by moving the passed in bank. No error checking.
+int eo_bank_sync(t_gcr_addr* gcr_addr, t_bank sync_bank, t_init_cal_mode cal_mode);
 
-void set_recal_or_unused(const uint32_t i_lane);
-int run_initial_training(t_gcr_addr* io_gcr_addr, const uint32_t i_lane);
-int run_recalibration(t_gcr_addr* io_gcr_addr, const uint32_t i_lane);
-int auto_recal(t_gcr_addr* io_gcr_addr, const uint32_t i_num_lanes);
-
-#endif //_EO_WRAPPERS_H__
+#endif //_EO_BANK_SYNC_H_

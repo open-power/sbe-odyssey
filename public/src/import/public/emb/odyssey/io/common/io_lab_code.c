@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -63,11 +63,6 @@ int io_lab_code_pg(t_gcr_addr* io_gcr_addr)
     set_debug_state(0xF500); // DEBUG - Lab Code PG
 
     // TODO - Space reservation that should be deleted
-    reserve_256B;
-    reserve_256B;
-    reserve_256B;
-    reserve_256B;
-    reserve_256B;
     reserve_256B;
     reserve_256B;
     reserve_256B;

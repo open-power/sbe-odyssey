@@ -39,6 +39,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23050100 |vbr     | EWM 303579: Consolidate bank switching, flywheel resetting from ei_inactive into eo_main to save time
+// vbr23042500 |vbr     | EWM 303525/302758: Split reset active into 2 phases, reset inactive into 4 phases (from 2)
+// jjb23050200 |jjb     | Issue 304124: Moved rxelecidle_en prior to phystatus pulse in pclkchangeack_active
 // vbr23040300 |vbr     | Issue 301953: Split initial training into 3 phases (from 2) on EI exit
 // jjb23040300 |jjb     | Issue 302460: Added timeout loop in PMB busy checking functions
 // jjb23032700 |jjb     | Issue 302010: fixed lane offset multiplier in timer and dac mem reg restore read
@@ -737,10 +740,17 @@ void pipe_preset_rx(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, bool restore
     // Preset Peak/LTE
     preset_rx_peak_lte_values(gcr_addr, cal_mode);
 
-    // Two different methods for restoring the data latch dacs and removing any offset (pr_offset_d, dfe_clk/ddc) from the data mini PRs
+    // Two different methods for restoring the data latch dacs and removing any offset (pr_offset_d/e, dfe_clk/ddc, qpa) from the mini PRs.
+    //   On a restore (rate change):
+    //     The edge and data mini PRs are set exactly to nominal (16).
+    //     The data latch dacs are set back to their original loff + poff value. Edge latch dacs are untouched.
+    //   Otherwise (rx eq eval):
+    //     The edge mini PRs are left unchanged and the data mini PRs are centered around nominal (16). This leaves QPA untouched and is faster.
+    //     The data latch dacs have the original DFE Fast coefficients subtracted out (faster). Edge latch dacs are untouched.
     if (restore)
     {
-        // Restore saved values for Bank A & B (Rate Change)
+        // Rate Change:
+        // Restore saved values for Bank A & B, reset mini PR, and clear pr_offset_applied
         restore_rx_data_latch_dac_values(gcr_addr, bank_a);
         int thread = get_gcr_addr_thread(gcr_addr);
         io_sleep(thread);
@@ -749,12 +759,12 @@ void pipe_preset_rx(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode, bool restore
     }
     else     //!restore
     {
-        // Subtract DFE From Both Banks (RxEqEval)
+        // RxEqEval:
+        // Subtract DFE From Both Banks
         clear_rx_dfe(gcr_addr);
+        // Remove the offset (pr_offset_e) from the edge mini PRs and clear pr_offset_applied
+        remove_edge_pr_offset(gcr_addr);
     }
-
-    // Remove the offset (pr_offset_e) from the edge mini PRs and clear pr_offset_applied
-    remove_edge_pr_offset(gcr_addr);
 
     // Restore original reg_id (if not RX since already set to rx_group)
     if (l_saved_reg_id != rx_group)
@@ -776,7 +786,7 @@ void run_pipe_commands(t_gcr_addr* gcr_addr, uint32_t num_lanes)
                                            (32 - ppe_pipe_lane_stress_mode_0_3_width);
 
     // Run one command per lane to prevent starving lanes
-    int l_lane = get_num_rx_physical_lanes();
+    int l_lane;
 
     for (l_lane = 0; l_lane < num_lanes; l_lane++)
     {
@@ -842,19 +852,49 @@ void pipe_cmd_nop(t_gcr_addr* gcr_addr)
 //////////////////////////////////
 // RESETN_ACTIVE
 //////////////////////////////////
-
+PK_STATIC_ASSERT(ppe_pipe_reset_active_phase_0_3_width == 4);
 void pipe_cmd_resetn_active(t_gcr_addr* gcr_addr)
 {
-    set_debug_state(0xFC01, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_RESETN_ACTIVE Transaction
+    int l_lane = get_gcr_addr_lane(gcr_addr);
 
-    // 1.) Run per lane reset which powers down the lane
-    io_reset_lane_tx(gcr_addr); //sleeps at end
-    io_reset_lane_rx(gcr_addr); //sleeps at end
+    // Determine the phase of this command
+    uint32_t l_pipe_reset_active_phase_0_3 = mem_pg_field_get(ppe_pipe_reset_active_phase_0_3);
+    uint32_t l_phase = l_pipe_reset_active_phase_0_3 & (0x8 >> l_lane);
+
+    /////////////
+    // PHASE 0 //
+    /////////////
+    // PSL phase_zero
+    if (l_phase == 0)
+    {
+        set_debug_state(0xFC01, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_RESETN_ACTIVE Transaction
+
+        // Set phase for next call
+        l_pipe_reset_active_phase_0_3 |= (0x8 >> l_lane);
+        mem_pg_field_put(ppe_pipe_reset_active_phase_0_3, l_pipe_reset_active_phase_0_3);
+
+        // 1.) Run per lane reset which powers down the lane
+        io_reset_lane_tx(gcr_addr); //sleeps at end
+        io_reset_lane_rx(gcr_addr); //sleeps at end
+
+        // Return so don't run final phase
+        return;
+    } //if (phase0)
+
+    /////////////
+    // PHASE 1 //
+    /////////////
+    set_debug_state(0xFC11, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_RESETN_ACTIVE Transaction
+
+    // Clear phase for next call
+    l_pipe_reset_active_phase_0_3 &= ~(0x8 >> l_lane);
+    mem_pg_field_put(ppe_pipe_reset_active_phase_0_3, l_pipe_reset_active_phase_0_3);
 
     // 2.) Power up TX to allow EI propagation.
     //     Also go ahead and power up RX here (DL clock will be disabled).
     io_lane_power_on_tx(gcr_addr); //sleeps at end
-    io_lane_power_on_rx(gcr_addr, main_only, false); // Power on but leave dl_clk_en untouched (HW508366)
+    io_lane_power_on_rx(gcr_addr, main_only,
+                        false); // Power on but leave dl_clk_en untouched (HW508366), has sleep in middle
 
     // 3.) Enable idle_loz and idle_mode hardware
     //     The FIFO and delay logic for pipe_tx_elecidle don't work during reset.
@@ -914,19 +954,28 @@ void pipe_cmd_resetn_active(t_gcr_addr* gcr_addr)
                                pipe_state_rxmargincontrol_clear_mask;
     put_ptr_field(gcr_addr, pipe_state_0_15_clear_alias, l_register_data, fast_write);
 
-    // Clear phase/state bits
-    int l_lane = get_gcr_addr_lane(gcr_addr);
-    uint32_t pipe_reset_inactive_phase_0_3 = mem_pg_field_get(ppe_pipe_reset_inactive_phase_0_3);
-    pipe_reset_inactive_phase_0_3 &= ~(0x8 >> l_lane);
-    mem_pg_field_put(ppe_pipe_reset_inactive_phase_0_3, pipe_reset_inactive_phase_0_3);
+    // 9.) // Set RX Clock/Circuit to Gen5 Rate to speed up the servos in DC Cal (LOFF) that is run in reset_inactive
+    set_gcr_addr_reg_id(gcr_addr, rx_group);
+    int rate_one_hot = 0b10000; //gen5
+    put_ptr_field(gcr_addr, rx_hold_div_clks_ab_alias,     0b11,          read_modify_write);
+    put_ptr_field(gcr_addr, rx_pcie_clk_sel,               rate_one_hot,  read_modify_write);
+    update_rx_rate_dependent_analog_ctrl_pl_regs(gcr_addr, rate_one_hot);
+    put_ptr_field(gcr_addr, rx_hold_div_clks_ab_alias,     0b00,          read_modify_write);
 
-    uint32_t pipe_rx_ei_inactive_phase_0_3 = mem_pg_field_get(ppe_pipe_rx_ei_inactive_phase_0_3);
-    pipe_rx_ei_inactive_phase_0_3 &= ~(0x8 >> l_lane);
-    mem_pg_field_put(ppe_pipe_rx_ei_inactive_phase_0_3, pipe_rx_ei_inactive_phase_0_3);
+    // 10.) Clear phase/state bits for other PIPE commands (since the lane is being reset)
+    uint32_t l_pipe_reset_inactive_phase_0_3 = mem_pg_field_get(ppe_pipe_reset_inactive_phase_0_3);
+    l_pipe_reset_inactive_phase_0_3 &= ~(0xC0 >> (2 * l_lane));
+    mem_pg_field_put(ppe_pipe_reset_inactive_phase_0_3, l_pipe_reset_inactive_phase_0_3);
 
-    uint32_t pipe_txdetectrx_phase_0_3 = mem_pg_field_get(tx_pipe_txdetectrx_phase_0_3);
-    pipe_txdetectrx_phase_0_3 &= ~(0x8 >> l_lane);
-    mem_pg_field_put(tx_pipe_txdetectrx_phase_0_3, pipe_txdetectrx_phase_0_3);
+    uint32_t l_pipe_rx_ei_inactive_phase_0_3 = mem_pg_field_get(ppe_pipe_rx_ei_inactive_phase_0_3);
+    l_pipe_rx_ei_inactive_phase_0_3 &= ~(0xC0 >> (2 * l_lane));
+    mem_pg_field_put(ppe_pipe_rx_ei_inactive_phase_0_3, l_pipe_rx_ei_inactive_phase_0_3);
+
+    uint32_t l_pipe_txdetectrx_phase_0_3 = mem_pg_field_get(ppe_pipe_txdetectrx_phase_0_3);
+    l_pipe_txdetectrx_phase_0_3 &= ~(0x8 >> l_lane);
+    mem_pg_field_put(ppe_pipe_txdetectrx_phase_0_3, l_pipe_txdetectrx_phase_0_3);
+
+    mem_pl_bit_clr(rx_dccal_done, l_lane);
 
     return;
 } //pipe_cmd_resetn_active
@@ -934,7 +983,8 @@ void pipe_cmd_resetn_active(t_gcr_addr* gcr_addr)
 //////////////////////////////////
 // RESETN_INACTIVE
 //////////////////////////////////
-PK_STATIC_ASSERT(ppe_pipe_reset_inactive_phase_0_3_width == 4);
+PK_STATIC_ASSERT(rx_dc_enable_loff_ab_data_edge_alias_width == 4);
+PK_STATIC_ASSERT(ppe_pipe_reset_inactive_phase_0_3_width == 8); // 2 bits per lane
 void pipe_cmd_resetn_inactive(t_gcr_addr* gcr_addr)
 {
     set_gcr_addr_reg_id(gcr_addr, rx_group);
@@ -942,38 +992,78 @@ void pipe_cmd_resetn_inactive(t_gcr_addr* gcr_addr)
 
     // Determine the phase of this command
     uint32_t l_pipe_reset_inactive_phase_0_3 = mem_pg_field_get(ppe_pipe_reset_inactive_phase_0_3);
-    uint32_t l_phase = l_pipe_reset_inactive_phase_0_3 & (0x8 >> l_lane);
+    uint32_t l_phase = ( l_pipe_reset_inactive_phase_0_3 >> (2 * (3 - l_lane)) ) & 0x03;
 
     /////////////
     // PHASE 0 //
     /////////////
     // PSL phase_zero
-    if (l_phase == 0)
+    if (l_phase == 0b00)
     {
         set_debug_state(0xFC02, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_RESETN_INACTIVE Transaction
 
-        // Set phase for next call
-        l_pipe_reset_inactive_phase_0_3 |= (0x8 >> l_lane);
+        // Set Phase 1 (01) for next call
+        l_pipe_reset_inactive_phase_0_3 |= (0x40 >> (2 * l_lane));
         mem_pg_field_put(ppe_pipe_reset_inactive_phase_0_3, l_pipe_reset_inactive_phase_0_3);
 
-        // 1.) Run RX DC Cal on A
-        mem_pg_field_put(rx_dc_enable_loff_ab_alias, 0b10); //A Only
+        // 1a.) Run RX DC Cal on A Data
+        mem_pg_field_put(rx_dc_enable_loff_ab_data_edge_alias, 0b1010); //A Data Only
         eo_main_dccal_rx(gcr_addr);
 
+        // Return so don't run final phase
         return;
-    }
+    } //if (phase0)
 
     /////////////
     // PHASE 1 //
     /////////////
-    set_debug_state(0xFC12, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_RESEN_INACTIVE Phase 1 Processing
+    // PSL phase_one
+    if (l_phase == 0b01)
+    {
+        set_debug_state(0xFC12, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_RESEN_INACTIVE Phase 1 Processing
 
-    // Clear phase for next call
-    l_pipe_reset_inactive_phase_0_3 &= ~(0x8 >> l_lane);
+        // Set Phase 2 (11) for next call
+        l_pipe_reset_inactive_phase_0_3 |= (0x80 >> (2 * l_lane));
+        mem_pg_field_put(ppe_pipe_reset_inactive_phase_0_3, l_pipe_reset_inactive_phase_0_3);
+
+        // 1b.) Run RX DC Cal on A Edge (also saves A Data loff results)
+        mem_pg_field_put(rx_dc_enable_loff_ab_data_edge_alias, 0b1001); //A Edge Only
+        eo_main_dccal_rx(gcr_addr);
+
+        // Return so don't run final phase
+        return;
+    } //if (phase1)
+
+    /////////////
+    // PHASE 2 //
+    /////////////
+    if (l_phase == 0b11)
+    {
+        set_debug_state(0xFC22, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_RESEN_INACTIVE Phase 2 Processing
+
+        // Set Phase 3 (10) for next call
+        l_pipe_reset_inactive_phase_0_3 &= ~(0x40 >> (2 * l_lane));
+        mem_pg_field_put(ppe_pipe_reset_inactive_phase_0_3, l_pipe_reset_inactive_phase_0_3);
+
+        // 2a.) Run RX DC Cal on B Data
+        mem_pg_field_put(rx_dc_enable_loff_ab_data_edge_alias, 0b0110); //B Data Only
+        eo_main_dccal_rx(gcr_addr);
+
+        // Return so don't run final phase
+        return;
+    } //if (phase2)
+
+    /////////////
+    // PHASE 3 //
+    /////////////
+    set_debug_state(0xFC32, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_RESEN_INACTIVE Phase 3 Processing
+
+    // Clear phase (Phase 0, 00) for next call
+    l_pipe_reset_inactive_phase_0_3 &= ~(0xC0 >> (2 * l_lane));
     mem_pg_field_put(ppe_pipe_reset_inactive_phase_0_3, l_pipe_reset_inactive_phase_0_3);
 
-    // 2.) Run RX DC Cal on B
-    mem_pg_field_put(rx_dc_enable_loff_ab_alias, 0b01); //B Only
+    // 2b.) Run RX DC Cal on B Edge (also saves B Data loff results)
+    mem_pg_field_put(rx_dc_enable_loff_ab_data_edge_alias, 0b0101); //B Edge Only
     eo_main_dccal_rx(gcr_addr);
     mem_pl_bit_set(rx_dccal_done, l_lane);
 
@@ -1177,20 +1267,17 @@ void pipe_cmd_pclkchangeack_active(t_gcr_addr* gcr_addr)
                                pipe_state_txdeemph_updated_clear_mask;
     put_ptr_field(gcr_addr, pipe_state_0_15_clear_alias, l_register_data, fast_write);
 
-    // 9.) fast write pipe_state_cntl1_pl pipe_state_phystatus_pulse to 1 and pipe_state_pclkchangeack_clr_apsp to 1 if pipe_resetn_active is low
+    // 9.) Enable rxelecidle_en then fast write pipe_state_cntl1_pl pipe_state_phystatus_pulse to 1 and pipe_state_pclkchangeack_clr_apsp to 1 if pipe_resetn_active is low
     l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);
     l_pipe_state_resetn_active = l_pipe_state & pipe_state_resetn_active_mask;
 
     // PSL resetn_active
     if (!l_pipe_state_resetn_active)
     {
+        put_ptr_field(gcr_addr, pipe_state_rxelecidle_en_set, 0b1, fast_write);
         put_ptr_field(gcr_addr, pipe_state_cntl1_pl_full_reg,
                       (pipe_state_phystatus_pulse_mask | pipe_state_pclkchangeack_clr_apsp_mask), fast_write);
     }
-
-    // 10.) Do not wait on M2P PBM txdeemph writes. Enable rxelecidle detection.
-
-    put_ptr_field(gcr_addr, pipe_state_rxelecidle_en_set, 0b1, fast_write);
 
     return;
 } //pipe_cmd_pclkchangeack_active
@@ -1246,7 +1333,12 @@ void pipe_cmd_rate_updated(t_gcr_addr* gcr_addr)
 
     put_ptr_field(gcr_addr, tx_pcie_idle_loz_del_sel_alias, l_idle_loz_del_sel, fast_write); //Only fields in register
 
-    // 5.) Clear pending pipe requests for service prior to waiting for pclkchangeack to be asserted.
+    // 5.) Clear rx_init_done and set unused since not run at new rate as yet (EWM304487).
+    int l_lane = get_gcr_addr_lane(gcr_addr);
+    mem_pl_bit_clr(rx_init_done, l_lane);
+    set_recal_or_unused(l_lane);
+
+    // 6.) Clear pending pipe requests for service prior to waiting for pclkchangeack to be asserted.
     uint32_t l_register_data = pipe_state_rxstandby_active_clear_mask |
                                pipe_state_pclkchangeack_clear_mask |
                                pipe_state_rate_updated_clear_mask |
@@ -1261,7 +1353,7 @@ void pipe_cmd_rate_updated(t_gcr_addr* gcr_addr)
                                pipe_state_txdeemph_updated_clear_mask;
     put_ptr_field(gcr_addr, pipe_state_0_15_clear_alias, l_register_data, fast_write);
 
-    // 6.) fast write pipe_state_cntl1_pl and set pipe_state_pclkchangeok_pulse to 1
+    // 7.) fast write pipe_state_cntl1_pl and set pipe_state_pclkchangeok_pulse to 1
     put_ptr_field(gcr_addr, pipe_state_pclkchangeok_pulse, 0b1, fast_write);
 
     return;
@@ -1427,7 +1519,7 @@ void pipe_cmd_powerdown_updated(t_gcr_addr* gcr_addr)
 //////////////////////////////////
 // RXEQEVAL
 //////////////////////////////////
-
+PK_STATIC_ASSERT(rx_eo_phase_select_0_2_width == 3);
 void pipe_cmd_rxeqeval(t_gcr_addr* gcr_addr)
 {
     set_debug_state(0xFC08, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_RXEQEVAL Transaction
@@ -1496,7 +1588,7 @@ void pipe_cmd_rxeqeval(t_gcr_addr* gcr_addr)
 //////////////////////////////////
 // TXDETECTRX
 //////////////////////////////////
-PK_STATIC_ASSERT(tx_pipe_txdetectrx_phase_0_3_width == 4);
+PK_STATIC_ASSERT(ppe_pipe_txdetectrx_phase_0_3_width == 4);
 void pipe_cmd_txdetectrx(t_gcr_addr* gcr_addr)
 {
 
@@ -1509,7 +1601,7 @@ void pipe_cmd_txdetectrx(t_gcr_addr* gcr_addr)
 
     // Determine the phase of this command
     int l_lane = get_gcr_addr_lane(gcr_addr);
-    uint32_t l_pipe_txdetectrx_phase_0_3 = mem_pg_field_get(tx_pipe_txdetectrx_phase_0_3);
+    uint32_t l_pipe_txdetectrx_phase_0_3 = mem_pg_field_get(ppe_pipe_txdetectrx_phase_0_3);
     uint32_t l_phase = l_pipe_txdetectrx_phase_0_3 & (0x8 >> l_lane);
 
     /////////////
@@ -1522,7 +1614,7 @@ void pipe_cmd_txdetectrx(t_gcr_addr* gcr_addr)
 
         // Set phase for next call
         l_pipe_txdetectrx_phase_0_3 |= (0x8 >> l_lane);
-        mem_pg_field_put(tx_pipe_txdetectrx_phase_0_3, l_pipe_txdetectrx_phase_0_3);
+        mem_pg_field_put(ppe_pipe_txdetectrx_phase_0_3, l_pipe_txdetectrx_phase_0_3);
 
         // Load per lane tx_detrx_idle_timer_sel, tx_detrx_samp_timer_val, tx_tdr_dac_cntl values from firmware initialized mem regs
 
@@ -1615,7 +1707,7 @@ void pipe_cmd_txdetectrx(t_gcr_addr* gcr_addr)
 
         // Clear phase for next call
         l_pipe_txdetectrx_phase_0_3 &= ~(0x8 >> l_lane);
-        mem_pg_field_put(tx_pipe_txdetectrx_phase_0_3, l_pipe_txdetectrx_phase_0_3);
+        mem_pg_field_put(ppe_pipe_txdetectrx_phase_0_3, l_pipe_txdetectrx_phase_0_3);
 
         if (l_txdetectrx_ok)
         {
@@ -1671,10 +1763,16 @@ void pipe_cmd_txdetectrx(t_gcr_addr* gcr_addr)
 //////////////////////////////////
 // RXELECIDLE_INACTIVE
 //////////////////////////////////
+PK_STATIC_ASSERT(pipe_state_status2_pl_full_reg_addr == pipe_state_rxactive_addr);
+PK_STATIC_ASSERT(pipe_state_status2_pl_full_reg_addr == pipe_state_powerdown_addr);
+PK_STATIC_ASSERT(pipe_state_status2_pl_full_reg_width == 16);
 PK_STATIC_ASSERT(ppe_pipe_rx_ei_inactive_phase_0_3_width == 8); // 2 bits per lane
 void pipe_cmd_rxelecidle_inactive(t_gcr_addr* gcr_addr)
 {
     int l_lane = get_gcr_addr_lane(gcr_addr);
+
+    // Small additional thread active time allowance for sleep optimization (EWM 303579)
+    mem_pg_field_put(ppe_thread_active_time_us_limit, 14);
 
     // Determine the phase of this command (gray coded: 00, 01, 11)
     uint32_t l_pipe_rx_ei_inactive_phase_0_3 = mem_pg_field_get(ppe_pipe_rx_ei_inactive_phase_0_3);
@@ -1688,8 +1786,11 @@ void pipe_cmd_rxelecidle_inactive(t_gcr_addr* gcr_addr)
     {
         set_debug_state(0xFC0B, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_RXELECIDLE_INACTIVE Transaction
 
-        uint32_t l_pipe_state_rxactive  = get_ptr_field(gcr_addr, pipe_state_rxactive);  // get pipe_state_rxactive
-        uint32_t l_pipe_state_powerdown = get_ptr_field(gcr_addr, pipe_state_powerdown); // get pipe_state_powerdown
+        uint32_t l_pipe_state_status2_regval = get_ptr_field(gcr_addr, pipe_state_status2_pl_full_reg);
+        uint32_t l_pipe_state_rxactive  = bitfield_get(l_pipe_state_status2_regval, pipe_state_rxactive_mask,
+                                          pipe_state_rxactive_shift);  // get pipe_state_rxactive
+        uint32_t l_pipe_state_powerdown = bitfield_get(l_pipe_state_status2_regval, pipe_state_powerdown_mask,
+                                          pipe_state_powerdown_shift); // get pipe_state_powerdown
 
         // PSL not_rxactive_and_powerdown_eq_0
         if ((!l_pipe_state_rxactive) && (l_pipe_state_powerdown == 0))                   // if rxactive=0 and powerdown=P0
@@ -1698,30 +1799,10 @@ void pipe_cmd_rxelecidle_inactive(t_gcr_addr* gcr_addr)
             l_pipe_rx_ei_inactive_phase_0_3 |= (0x40 >> (2 * l_lane));
             mem_pg_field_put(ppe_pipe_rx_ei_inactive_phase_0_3, l_pipe_rx_ei_inactive_phase_0_3);
 
-            // Switch Bank A to the cal bank at this time so it is in correct state for training
+            // Disable the DL clock before calling initial training
+            // eo_main handles switching Bank A to the cal bank, disabling the CDR, and resetting the flywheel
             set_gcr_addr_reg_id(gcr_addr, rx_group);                                        // select rx_group addressing
-            put_ptr_field(gcr_addr, rx_psave_cdrlock_mode_sel, 0b11,
-                          read_modify_write);    // Psave does not wait for CDR lock (per-lane)
-            alt_bank_psave_clear_and_wait(gcr_addr);                                        // Ensure both banks are powered up
             put_ptr_field(gcr_addr, rx_dl_clk_en, 0b0, read_modify_write);                  // Disable DL clock to avoid glitching
-            set_cal_bank(gcr_addr,
-                         bank_a);                                                 // Set Bank B as Main, Bank A as Alt (cal_bank)
-            // Issue 257157: Bump bank a several times to ensure that banks are not 180deg out of phase for some time and can switch
-            int bump_cnt;                                                                   // declare bump_cnt integer
-
-            for (bump_cnt = 0; bump_cnt < 2; bump_cnt++)                                    // for X bumps
-            {
-                put_ptr_field(gcr_addr, rx_pr_bump_sl_1ui_a, 0b1, fast_write);                //  bump bank a left 1 UI
-            }                                                                               // end for loop
-
-            put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_dis_cdr_b_dis,
-                          fast_write); // Disable CDR, will be reenabled during initial training
-            // Issue 256712: Reset the flywheel to clear out bad value that may have been reached during electrical idle
-            put_ptr_field(gcr_addr, rx_pr_fw_reset_ab_alias, 0b11,
-                          read_modify_write);      // set PR flywheel reset for bank a and bank b
-            put_ptr_field(gcr_addr, rx_pr_fw_reset_ab_alias, 0b00,
-                          read_modify_write);      // clear PR flywheel reset for bank a and bank b
-            io_sleep(get_gcr_addr_thread(gcr_addr));                                        // sleep to fix thread timeout
 
             // Run Phase 0 of training
             mem_pg_field_put(rx_eo_phase_select_0_2, 0b100);
@@ -1810,7 +1891,7 @@ void pipe_cmd_rxelecidle_inactive(t_gcr_addr* gcr_addr)
 //////////////////////////////////
 // RXMARGINCONTROL
 //////////////////////////////////
-
+PK_STATIC_ASSERT(ppe_pipe_margin_mode_0_3_width == 4);
 void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
 {
     set_debug_state(0xFC0E, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_RXMARGINGCONTROL Transaction
@@ -1840,6 +1921,9 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
     if (l_pipe_state_rxmargin_start !=
         0)                                                                                                                   // if rx margining start
     {
+        int l_pipe_margin_mode_0_3 = mem_pg_field_get(ppe_pipe_margin_mode_0_3) | (0x8 >>
+                                     l_lane);                                                             // Set margin_mode for the lane
+        mem_pg_field_put(ppe_pipe_margin_mode_0_3, l_pipe_margin_mode_0_3);
         set_gcr_addr_reg_id(gcr_addr,
                             rx_group);                                                                                                               //  set gcr addr to rx group
         put_ptr_field(gcr_addr, rx_ber_pcie_mode, 0b1,
@@ -1973,6 +2057,9 @@ void pipe_cmd_rxmargincontrol(t_gcr_addr* gcr_addr)
     if (l_pipe_state_rxmargin_stop !=
         0)                                                                                                                    // if rx margining stop
     {
+        int l_pipe_margin_mode_0_3 = mem_pg_field_get(ppe_pipe_margin_mode_0_3) & ~(0x8 >>
+                                     l_lane);                                                            // Clear margin_mode for the lane
+        mem_pg_field_put(ppe_pipe_margin_mode_0_3, l_pipe_margin_mode_0_3);
         set_gcr_addr_reg_id(gcr_addr,
                             rx_group);                                                                                                               //  set gcr addr to rx group
         uint32_t l_rx_berpl_pcie_sample = get_rxmargin_sample_count(
