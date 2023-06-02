@@ -93,7 +93,7 @@ typedef enum
 typedef struct ipcmsg_start_stop
 {
     ipcmsg_base_t   msg_cb;
-    uint32_t         action;
+    uint32_t        action;
     PMCR_OWNER      pmcr_owner;
 } ipcmsg_start_stop_t;
 
@@ -129,16 +129,34 @@ typedef struct ipcmsg_wof_control
 } ipcmsg_wof_control_t;
 
 
-typedef struct ipcmsg_wof_crt
+typedef struct
 {
-    ipcmsg_base_t   msg_cb;
-    uint8_t         cratio_mode;        // 0 = variable; 1 = fixed
-    uint8_t         fixed_cratio_index; // if cratio_mode = fixed, index to use
-    uint8_t         pad[2];
-    CRT_t*          crt_ptr[MAX_TAPS];  // Core Ratio Table per domain
-    uint32_t        vdd_ceff_ratio;     // Used for CRT - debug only
-} ipcmsg_wof_crt_t;
+    union
+    {
+        uint64_t value;
+        struct
+        {
+            uint64_t    marker              : 8;  // 0xCF
+            uint64_t    cfr_index           : 8;  // CefFRratio
+            uint64_t    io_index            : 8;  // IO power
+            uint64_t    hs_index            : 8;  // HeatSink
+            uint64_t    ic_state            : 8;  // ICredit state
+            uint64_t    nn_index            : 8;  // Nearest Neighbor
+            uint64_t    cr_mode             : 8;  // CoreRatio mode (0:variable, 1: fixed)
+            uint64_t    cr_index            : 8;  // CoreRatio if CoreRatio mode=fixed
+        } fields;
+    } dw0;
+    union
+    {
+        uint64_t value;                   // future expansion
+    } dw1;
+} CeffInfo_t;
 
+typedef struct ipcmsg_wof_ceffinfo
+{
+    ipcmsg_base_t       msg_cb;
+    CeffInfo_t*       ceff_info_ptr[MAX_TAPS];     // Ceff Info per Tap
+} ipcmsg_wof_ci_t;
 
 // -----------------------------------------------------------------------------
 
