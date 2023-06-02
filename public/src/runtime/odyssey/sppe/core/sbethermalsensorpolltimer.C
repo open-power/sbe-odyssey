@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -31,7 +32,7 @@ timerService g_sbe_thermal_sensor_timer;
 void sbeasyncthreadPkExpiryCallback(void *)
 {
     #define SBE_FUNC " sbeasyncthreadPkExpiryCallback "
-    SBE_INFO( SBE_FUNC "Async thread timer has expired. Async thread will be posted");
+    SBE_DEBUG( SBE_FUNC "Async thread timer has expired. Async thread will be posted");
 
     // Post the Async thread.
     uint32_t l_rc = pk_semaphore_post(&SBE_GLOBAL->sbeSemAsyncProcess);
