@@ -24,7 +24,7 @@
 /* IBM_PROLOG_END_TAG                                                     */
 
 ///
-/// @file pmic_enable_utils.C
+/// @file pmic_enable_utils_ddr5.C
 /// @brief Utility functions for DDR5 PMIC enable operation
 ///
 // *HWP HWP Owner: Sneha Kadam <sneha.kadam1@ibm.com>
