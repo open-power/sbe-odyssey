@@ -57,7 +57,10 @@ In this case all images will be built for all supported platforms in the repo un
 
 ### To run simics:
 
-All options will take care to prepare the genesis NOR image to use in the simics.
+- All options will take care to prepare the genesis NOR image to use in the simics.
+
+- The SBE supports different standalone simics model to validate so use
+the `SIMICS_MODEL` envrionment varaible to switch the model for the validation as per needs.
 
 #### Option-1:
 
