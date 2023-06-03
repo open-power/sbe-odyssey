@@ -52,7 +52,7 @@ cp ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe_DD
 # Copy simics related tools and utils into simics dir (This is required for HB)
 mkdir -p  ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/simics/
 cp ${MESON_SOURCE_ROOT}/internal/src/runtime/odyssey/sppe/test/testcases/testUtil.py \
-   ${MESON_SOURCE_ROOT}/internal/src/tools/simics/sbestartupodystandalone.simics \
+   ${MESON_SOURCE_ROOT}/internal/src/tools/simics/sbeinitstandalone.simics \
    ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/simics/ || exit 1
 
 tar -czvf ${MESON_INSTALL_PREFIX}/$SBE_PLATFORM/${SBE_PLATFORM}_sbe_debug.tar.gz \
