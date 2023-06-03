@@ -243,9 +243,9 @@ sbe_run_simics()
         cd simics
 
         if [[ "till_boot" == $1 ]]; then
-            TILL_BOOT="TRUE"
+            TILL_BOOT=true
         else
-            TILL_BOOT="FALSE"
+            TILL_BOOT=false
         fi
         $SBEROOT/internal/src/tools/simics/runsimicscmd.sh -p $SBE_PLATFORM \
                 -i $SBE_IMAGE -r $TILL_BOOT
@@ -333,7 +333,7 @@ sbe_runtest()
         cd simics
 
         $SBEROOT/internal/src/tools/simics/runsimicscmd.sh -p $SBE_PLATFORM \
-                -i $SBE_IMAGE -c true -r FALSE || exit 1
+                -i $SBE_IMAGE -c true -r false || exit 1
     else
         echo "Please do workon and re launch..."
     fi
