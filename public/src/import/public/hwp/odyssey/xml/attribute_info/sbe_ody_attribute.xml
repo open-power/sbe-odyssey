@@ -2532,9 +2532,6 @@
     <value>0x0</value>
     <value>0x0</value>
   </entry>
-  <entry name="ATTR_IS_SIMICS">
-    <value>0x2</value>
-  </entry>
   <entry name="ATTR_MFG_FLAGS">
     <value>0x0</value>
     <value>0x0</value>
