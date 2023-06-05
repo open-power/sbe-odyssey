@@ -50,7 +50,7 @@ uint32_t sbepollTSnDQS(uint32_t &io_tspperiod, uint8_t &io_dqscount)
         // Also set the DQS count to 0.
         if(io_tspperiod != l_tspperiod)
         {
-            io_tspperiod = l_tspperiod;
+            io_tspperiod = l_tspperiod * 1000; // Convert into microSeconds
             io_dqscount = 0;
         }
         SBE_DEBUG(SBE_FUNC "Thermal Sensor polling period is 0x%08X ms",
