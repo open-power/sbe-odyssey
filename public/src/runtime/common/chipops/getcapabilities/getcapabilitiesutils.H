@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -26,6 +27,29 @@
 #define GETCAPABILITIES_UTILS_H
 
 #include "sbeCmdGetCapabilities.H"
+
+#define GET_IMAGE_DETAILS_FROM_INFO_TXT(i_imageFileName, i_imageType, i_imageInfo,\
+        o_identifier, o_buildDate, o_rc) \
+    i_imageInfo.iv_imageType = i_imageType;                                              \
+    o_identifier = 0, o_buildDate = 0;                                          \
+    o_rc = loadAndParseInfoTxt(i_imageFileName, i_imageType, o_identifier, o_buildDate); \
+    if (o_rc != SBE_SEC_OPERATION_SUCCESSFUL)                                            \
+    {                                                                                    \
+        SBE_ERROR(SBE_FUNC " loadAndParseInfoTxt failed for image [%d] from [%s]. "      \
+                           "RC[0x%08x]", i_imageType, i_imageFileName, o_rc);            \
+        break;                                                                           \
+    }                                                                                    \
+    i_imageInfo.iv_identifier = o_identifier;                                            \
+    i_imageInfo.iv_buildTime = o_buildDate;
+
+// Structure map for maintaining image name corresponding to image number.
+// Its usage is project specific defined by global variable - g_getCapabilitiesImages
+#define INFO_TXT_IMAGE_NAME_MAX_LENGTH       5
+typedef struct
+{
+    CAPABILITY_IMAGES imageNum;
+    char              imageName[INFO_TXT_IMAGE_NAME_MAX_LENGTH];
+} capImgMap_t;
 
 /**
  * @brief Used to get images details to send in the GetCapabilities response

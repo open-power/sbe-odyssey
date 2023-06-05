@@ -164,5 +164,19 @@ uint32_t getTimeStamp(const uint8_t *i_meta_start,
  */
 uint32_t getCommitId(const uint8_t *i_meta_start,
                      uint32_t &o_commitID);
+/*
+* @brief This API is used to retreive information from the info.txt
+*
+* @param[in] i_fileName: file name corresponding to image type
+* @param[in] i_capImg: enum CAPABILITY_IMAGES of image type supported
+* @param[out] o_identifier : commitId/version of image type from the info.txt
+* @param[out] o_timeStamp : time stamp of image built from the info.txt
+*
+* @return rc
+*/
+uint32_t loadAndParseInfoTxt(const char *i_fileName,
+                             const CAPABILITY_IMAGES i_capImg,
+                             uint32_t &o_identifier,
+                             uint32_t &o_timeStamp);
 
 #endif // SBE_CMD_GETCAPABILITIES_H
