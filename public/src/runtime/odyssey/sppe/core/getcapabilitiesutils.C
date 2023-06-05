@@ -28,30 +28,16 @@
 #include "globals.H"
 #include "odysseylink.H"
 #include "pakwrapper.H"
+#include "sbe_sp_intf.H"
+#include "heap.H"
+#include "imagemap.H"
 #include "getcapabilitiesutils.H"
-#include "sbeCmdGetCapabilities.H"
-
-using namespace fapi2;
-
-constexpr CAPABILITY_IMAGES g_getCapabilitiesImages [] __attribute__ ((aligned (8))) =
-{
-    CAPABILITY_IMAGES::SROM,
-    CAPABILITY_IMAGES::BOOTLOADER,
-    CAPABILITY_IMAGES::RUNTIME,
-    CAPABILITY_IMAGES::BMC_OVRD,
-    CAPABILITY_IMAGES::HOST_OVRD,
-    CAPABILITY_IMAGES::EKB
-};
-
 
 uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
 {
     #define SBE_FUNC " fillImagesDetails "
     SBE_ENTER(SBE_FUNC);
     uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
-    uint32_t l_timeStamp = 0;
-    uint32_t l_commitId = 0;
-
 
     do
     {
@@ -61,7 +47,9 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
                       sizeof(g_getCapabilitiesImages[0]));
              l_img++)
         {
-            switch (g_getCapabilitiesImages[l_img])
+            uint32_t l_identifier = 0, l_timeStamp = 0, l_commitId = 0;
+
+            switch (g_getCapabilitiesImages[l_img].imageNum)
             {
                 case CAPABILITY_IMAGES::SROM:
                     {
@@ -190,11 +178,18 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
                     break;
 
                 case CAPABILITY_IMAGES::BMC_OVRD:
+                    GET_IMAGE_DETAILS_FROM_INFO_TXT(bmc_info_file_name, CAPABILITY_IMAGES::BMC_OVRD,\
+                                                    o_capMsg.iv_imageInfo[l_img], l_identifier, l_timeStamp, l_rc);
+                    break;
+
                 case CAPABILITY_IMAGES::HOST_OVRD:
+                    GET_IMAGE_DETAILS_FROM_INFO_TXT(host_info_file_name, CAPABILITY_IMAGES::HOST_OVRD,\
+                                                    o_capMsg.iv_imageInfo[l_img], l_identifier, l_timeStamp, l_rc);
+                    break;
+
                 case CAPABILITY_IMAGES::EKB:
-                    // TODO: JIRA: PFSBE-416 : Need to fill from the info.txt
-                    SBE_ERROR(SBE_FUNC "Unsupported image type[%d]",
-                                       g_getCapabilitiesImages[l_img]);
+                    GET_IMAGE_DETAILS_FROM_INFO_TXT(ekb_info_file_name, CAPABILITY_IMAGES::EKB,\
+                                                    o_capMsg.iv_imageInfo[l_img], l_identifier, l_timeStamp, l_rc);
                     break;
 
                 default:
@@ -204,7 +199,7 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
                               o_capMsg.iv_imageInfo[l_img].iv_imageType);
                     break;
             }
-            SBE_INFO(SBE_FUNC "ImageType[%d], TimeStamp[0x%08x], CommitId[0x%08x]",
+            SBE_INFO(SBE_FUNC "ImageType[%d], TimeStamp[0x%08x], Identifier[0x%08x]",
                                o_capMsg.iv_imageInfo[l_img].iv_imageType,
                                o_capMsg.iv_imageInfo[l_img].iv_buildTime,
                                o_capMsg.iv_imageInfo[l_img].iv_identifier);
@@ -215,6 +210,7 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
     return l_rc;
     #undef SBE_FUNC
 }
+
 
 void fillCapabilitiesDetails(uint32_t *o_capability)
 {
@@ -255,3 +251,4 @@ void fillCapabilitiesDetails(uint32_t *o_capability)
                                                     UPDATE_IMAGE_SUPPORTED |
                                                     SYNC_SIDE_SUPPORTED;
 }
+

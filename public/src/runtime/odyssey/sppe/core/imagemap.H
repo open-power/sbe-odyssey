@@ -26,6 +26,7 @@
 #define __IMAGE_MAP_H
 
 #include "codeupdateutils.H"
+#include "getcapabilitiesutils.H"
 
 #define MAX_PARTITION_TABLE_ENTRY 6
 
@@ -43,8 +44,8 @@ namespace CU
 {
     static const imgMap_t g_imgMap[] = {
         {CU_IMAGES::BOOTLOADER, "boot"},
-        {CU_IMAGES::RUNTIME,    "rt"},
-        {CU_IMAGES::BMC_OVRD,   "bmc"},
+        {CU_IMAGES::RUNTIME,    "rt"  },
+        {CU_IMAGES::BMC_OVRD,   "bmc" },
         {CU_IMAGES::HOST_OVRD,  "host"}
     };
 } // namespace CU
@@ -57,4 +58,13 @@ constexpr CU_IMAGES g_syncableImgs [] __attribute__ ((aligned (8))) =
    CU_IMAGES::HOST_OVRD
 };
 
+constexpr capImgMap_t g_getCapabilitiesImages [] =
+{
+    {CAPABILITY_IMAGES::SROM,       "srom"},
+    {CAPABILITY_IMAGES::BOOTLOADER, "boot"},
+    {CAPABILITY_IMAGES::RUNTIME,    "rt"  },
+    {CAPABILITY_IMAGES::BMC_OVRD,   "bmc" },
+    {CAPABILITY_IMAGES::HOST_OVRD,  "host"},
+    {CAPABILITY_IMAGES::EKB,        "ekb" }
+};
 #endif //IMAGE_MAP_H

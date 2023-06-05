@@ -203,4 +203,61 @@ namespace SBE
         messagingReg.iv_progressCode = value;
         putscom_abs(scomt::poz::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
     }
+
+    uint32_t alphaNumericToHex(const uint8_t *i_str,
+                               const uint8_t i_size,
+                               const uint8_t i_hexSize,
+                               uint8_t *o_hex)
+    {
+        uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+        uint8_t charIdx = 0, hexValIdx = 0;
+        uint8_t val = 0;
+
+        do
+        {
+            // Check for size of hex buffer value
+            // Note: added 1 to i_size to take care of odd size number
+            if (i_hexSize < ((i_size + 1)/ 2))
+            {
+                l_rc = SBE_SEC_BUFFER_SIZE_SMALL;
+                SBE_ERROR("Buffer size [0x%02x] passed is small than expected [0x%02x]",
+                        i_hexSize, (i_size + 1)/2);
+                break;
+            }
+
+            while (charIdx < i_size)
+            {
+                if (i_str[charIdx] >= '0' && i_str[charIdx] <= '9')
+                    val = i_str[charIdx] - '0';
+                else if (i_str[charIdx] >= 'a' && i_str[charIdx] <= 'z')
+                    val = i_str[charIdx] - 'a' + 10;
+                else if (i_str[charIdx] >= 'A' && i_str[charIdx] <= 'Z')
+                    val = i_str[charIdx] - 'A' + 10;
+                else
+                {
+                    l_rc = SBE_SEC_NON_ALPHA_NUMERIC_CHAR_FOUND;
+                    SBE_ERROR("Non-alphanumeric character [%c] [0x%02x] found at index [%d]",
+                            i_str[charIdx], i_str[charIdx], charIdx);
+                    break;
+                }
+
+                // each char converted hex would take a nibble position in byte
+                if (i_size == 1)
+                {
+                    o_hex[hexValIdx] |= val;
+                }
+                else
+                {
+                    o_hex[hexValIdx] |= (val << (4 - ((charIdx % 2) * 4)));
+                }
+                if (charIdx % 2)
+                {
+                    hexValIdx++;
+                }
+                charIdx++;
+            }
+        }while(false);
+
+        return l_rc;
+    }
 }

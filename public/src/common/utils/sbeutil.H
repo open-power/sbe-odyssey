@@ -178,9 +178,16 @@ inline void SBE_MAGIC_INSTRUCTION(int _n)
 
 #define SBE_EXEC_HWP_NOARG(...) SBE_EXEC_HWP(__VA_ARGS__)
 #define SBE_EXEC_HWP(fapiRc, hwp, ...) \
-{ \
-    fapiRc = hwp(__VA_ARGS__); \
+{                                      \
+    fapiRc = hwp(__VA_ARGS__);         \
 }
+
+#define PRINT_STRING_DATA(msg, ptr, size)                       \
+    for (uint8_t i = 0; i < size; i++)                          \
+    {                                                           \
+        SBE_ERROR(SBE_FUNC msg \ "[%c][0x%02x]",                \
+                  *(uint8_t *)(ptr + i),*(uint8_t *)(ptr + i)); \
+    }
 
 namespace SBE
 {
@@ -386,6 +393,24 @@ namespace SBE
         sha3_update(&ctx, i_data, i_size);
         sha3_final(o_hash, &ctx);
     }
+
+    /**
+     * @brief Convert alphanumeric string to hex value
+     *
+     * @param i_str alphanumeric string
+     * @param i_size number of characters to be converted
+     * @param i_hexSize size of hex output buffer
+     * @param o_hex  corresponding hex value. Note here that this param
+     *               is coupled with i_size and should be no-less than (int)(i_size/2)
+     *               as accordingly its incremented to next byte/location based
+     *               on input string
+     *
+     * @return rc
+     **/
+    uint32_t alphaNumericToHex(const uint8_t *i_str,
+                               const uint8_t i_size,
+                               const uint8_t i_hexSize,
+                               uint8_t *o_hex);
 
 } // namespace SBE
 

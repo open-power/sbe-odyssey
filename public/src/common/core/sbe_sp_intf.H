@@ -43,6 +43,9 @@ extern "C" {
 static const uint16_t SBE_FW_MAJOR_VERSION = 1;
 static const uint16_t SBE_FW_MINOR_VERSION = 1;
 
+static const uint8_t INFO_TXT_MAJOR_VERSION = 0;
+static const uint8_t INFO_TXT_MINOR_VERSION = 1;
+
 /**
  * @brief enums for SBE command classes
  *
@@ -217,7 +220,12 @@ enum sbeSecondaryResponse
     SBE_SEC_INVALID_LENGTH_PASSED             = 0x7D,
     SBE_SEC_GIT_COMMIT_ID_FAILURE             = 0x7E,
     SBE_SEC_GIT_TIME_STAMP_FAILURE            = 0x7F,
-    SBE_SEC_INVALID_CLOCK_STATE               = 0x80
+    SBE_SEC_INVALID_CLOCK_STATE               = 0x80,
+    SBE_SEC_INFO_TXT_FORMAT_INVALID           = 0x81,
+    SBE_SEC_INFO_TXT_FORMAT_VERSION_MISMATCH  = 0x82,
+    SBE_SEC_FILE_SIZE_IS_ZERO                 = 0x83,
+    SBE_SEC_BUFFER_SIZE_SMALL                 = 0x84,
+    SBE_SEC_NON_ALPHA_NUMERIC_CHAR_FOUND      = 0x85
 };
 
 /**
