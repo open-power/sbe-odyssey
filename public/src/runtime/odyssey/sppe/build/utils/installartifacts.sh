@@ -44,6 +44,9 @@ cp ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe_DD
    ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/srom/build/images/odyssey_srom_DD1.syms \
    ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/srom/build/images/odyssey_srom_DD1.map \
    ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/srom/build/images/odyssey_srom_DD1.dis \
+   ${MESON_SOURCE_ROOT}/internal/src/tools/debug/ppe2fsp \
+   ${MESON_SOURCE_ROOT}/internal/src/tools/debug/fsp-trace \
+   ${MESON_SOURCE_ROOT}/public/src/runtime/tools/attributes/attr* \
    ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/ || exit 1
 
 # Copy simics related tools and utils into simics dir (This is required for HB)
