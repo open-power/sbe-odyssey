@@ -34,7 +34,7 @@
 
 #define DUMP_DATA_LAYOUT_VERSION 0x3
 
-//Dump chip-op Footer - DONE
+// Dump chip-op Footer - DONE
 static const uint32_t DUMP_CHIP_OP_FOOTER = 0x444F4E45;
 static const uint32_t FIFO_DOUBLEWORD_LEN = 2;
 
@@ -48,6 +48,18 @@ enum preReqCommandStatus : uint8_t
 };
 
 extern size_t genericHdctRowSize_table[NO_OF_CMD_TYPES];
+
+
+/**
+ * @brief enums for Trace Array Access Messages
+ *
+*/
+enum sbeArrayAccessCommands
+{
+    SBE_CMD_CONTROL_FAST_ARRAY    = 0x01, /**< Control Fast Array */
+    SBE_CMD_CONTROL_TRACE_ARRAY   = 0x02, /**< Control Trace Array */
+};
+
 
 //Struct containing details of HDCT PAK section
 // Change this to pak instead of HDCT PAK Section

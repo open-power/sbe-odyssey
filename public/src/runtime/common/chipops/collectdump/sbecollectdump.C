@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -25,12 +26,98 @@
 #include "sbedumpconstants.H"
 #include "plat_hw_access.H"
 
+#include "poz_gettracearray.H" /// For Trace-array dump support
+#include "sbecmdtracearray.H"
+
 #define PRI_SEC_RC_UNION(primary_rc, secondary_rc) primary_rc<<16 | secondary_rc
 
 inline bool sbeCollectDump::isDumpTypeMapped()
 {
     return (iv_hdctRow->genericHdr.dumpContent & iv_hdctDumpTypeMap);
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+/// SBE get DUMP - Write trace-array data to FIFO
+////////////////////////////////////////////////////////////////////////////////
+uint32_t sbeCollectDump::writeGetTracearrayPacketToFifo()
+{
+    #define SBE_FUNC " writeGetTracearrayPacketToFifo: "
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    do
+    {
+        // Set FFDC failed command information and
+        // Sequence Id is 0 by default for Fifo interface
+        iv_chipOpffdc.setCmdInfo( 0, SBE_CMD_CLASS_ARRAY_ACCESS, SBE_CMD_CONTROL_TRACE_ARRAY );
+
+        // Update address, length and stream header data vai FIFO
+        iv_tocRow.hdctHeader.address = iv_hdctRow->cmdTraceArray.strEqvHash32;
+        uint32_t len = sizeof( iv_tocRow.hdctHeader ) / sizeof( uint32_t );
+        if( !iv_tocRow.tgtHndl.getFunctional() )
+        {
+            // Update non functional state DUMP header
+            iv_tocRow.hdctHeader.preReq     = PRE_REQ_NON_FUNCTIONAL;
+            iv_tocRow.hdctHeader.dataLength = 0x00;
+            l_rc = iv_oStream.put( len, (uint32_t*)&iv_tocRow.hdctHeader );
+            SBE_DEBUG( "DUMP GETTRACEARRAY: NonFunctional Target UnitNum[0x%08X]",
+                    (uint32_t)iv_tocRow.hdctHeader.chipUnitNum );
+            break;
+        }
+
+        // The size of data streamed from SBE is irrespective of trace ID
+        // and it is 128*16*8 bits. [ PROC_TRACEARRAY_MAX_SIZE ]
+        iv_tocRow.hdctHeader.dataLength = PROC_TRACEARRAY_MAX_SIZE * 8;
+        l_rc = iv_oStream.put( len, (uint32_t*)&iv_tocRow.hdctHeader );
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+
+        // Trace array request message packet
+        sbeControlTraceArrayCmd_t reqMsg = {};
+        len  = sizeof( sbeControlTraceArrayCmd_t )/sizeof( uint32_t );
+
+        reqMsg.iv_traceArrayId = iv_hdctRow->cmdTraceArray.traceArrayID;
+        reqMsg.iv_operation    =    SBE_TA_OPERATION_RESTART            |
+                                    SBE_TA_OPERATION_STOP               |
+                                    SBE_TA_OPERATION_COLLECT_DUMP;
+
+        SBE_INFO(SBE_FUNC "traceArrayId [0x%04X] operation [0x%04X]",
+                        reqMsg.iv_traceArrayId, reqMsg.iv_operation);
+
+        sbefifo_hwp_data_istream istreamDump( iv_fifoType, len,
+                                        (uint32_t*)&reqMsg, false );
+        uint32_t startCount = iv_oStream.words_written();
+
+        // Calling trace array HWP
+        l_rc = sbeControlTraceArrayWrap( istreamDump, iv_oStream );
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+
+        // Calculate the word written to fifo and len
+        uint32_t endCount          = iv_oStream.words_written();
+        uint32_t totalCountInBytes = iv_tocRow.hdctHeader.dataLength / 8;
+        uint32_t totalCount        = totalCountInBytes / (sizeof(uint32_t));
+        uint32_t dummyData         = 0x00;
+
+        /// If endCount = startCount means chip-op failed. We will write dummy data.
+        /// Rc is not handled properly. Will hardcode rc=fail based on endCount
+        /// and startCount.
+        if(endCount == startCount || ((endCount - startCount) != totalCount))
+        {
+            totalCount = totalCount - (endCount - startCount);
+            while(totalCount !=0)
+            {
+                l_rc = iv_oStream.put(dummyData);
+                CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+
+                totalCount = totalCount - 1;
+            }
+        }
+    }while(0);
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
 
 
 /********************* Types of Dump Packets to FIFO START ****************************/
@@ -187,7 +274,8 @@ uint32_t sbeCollectDump::writeDumpPacketRowToFifo()
         iv_tocRow.hdctHeaderInit(iv_hdctRow);
         // TODO: Clean-Up once other chip-op enabled.
         if( !( (iv_tocRow.hdctHeader.cmdType == CMD_GETSCOM)    ||
-               (iv_tocRow.hdctHeader.cmdType == CMD_PUTSCOM))
+               (iv_tocRow.hdctHeader.cmdType == CMD_PUTSCOM)    ||
+               (iv_tocRow.hdctHeader.cmdType == CMD_GETTRACEARRAY) )
           )
         {
             SBE_ERROR(SBE_FUNC "Unsupported command types %d", (uint32_t)iv_tocRow.hdctHeader.cmdType);
@@ -207,6 +295,7 @@ uint32_t sbeCollectDump::writeDumpPacketRowToFifo()
             fapi2::Target<fapi2::TARGET_TYPE_CHIPS> dumpRowTgtHnd(target);
             iv_tocRow.tgtHndl = target;
             iv_tocRow.hdctHeader.preReq = PRE_REQ_PASSED;
+
             if(iv_tocRow.hdctHeader.chipUnitType == CHIP_UNIT_TYPE_PERV)
             {
                 iv_tocRow.hdctHeader.chipUnitNum = dumpRowTgtHnd.getChipletNumber();
@@ -215,6 +304,7 @@ uint32_t sbeCollectDump::writeDumpPacketRowToFifo()
             {
                 iv_tocRow.hdctHeader.chipUnitNum = dumpRowTgtHnd.get().getTargetInstance();
             }
+
             // Clear FifoRc and Clear Primary Secondary RC
             iv_oStream.setFifoRc(fapi2::FAPI2_RC_SUCCESS);
             iv_oStream.setPriSecRc(SBE_PRI_OPERATION_SUCCESSFUL);
@@ -228,11 +318,19 @@ uint32_t sbeCollectDump::writeDumpPacketRowToFifo()
                     l_rc = writeGetScomPacketToFifo();
                     break;
                 }
+
                 case CMD_PUTSCOM:
                 {
                     l_rc = writePutScomPacketToFifo();
                     break;
                 }
+
+                case CMD_GETTRACEARRAY:
+                {
+                    l_rc = writeGetTracearrayPacketToFifo();
+                    break;
+                }
+
                 default:
                 {
                     // Print the error message and continue the dumping

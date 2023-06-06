@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -98,7 +99,7 @@ uint32_t sbeControlTraceArrayWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
         // If FIFO access failure
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
 
-        SBE_INFO(SBE_FUNC " traceArrayId [0x%04X] operation [0x%04X]",
+        SBE_INFO(SBE_FUNC "traceArrayId [0x%04X] operation [0x%04X]",
                           l_req.iv_traceArrayId,
                           l_req.iv_operation);
 
@@ -113,13 +114,12 @@ uint32_t sbeControlTraceArrayWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
             ffdc.setRc(fapiRc);
         }
 
-        l_rc  = i_putStream.put(i_putStream.words_written());
-
     } while (false);
 
     // In case of trace array chipop SBE will send the response
     if (i_putStream.isStreamRespHeader(respHdr.rcStatus(),ffdc.getRc()))
     {
+        l_rc  = i_putStream.put(i_putStream.words_written());
         // If there was a FIFO error, will skip sending the response,
         // instead give the control back to the command processor thread
         if(SBE_SEC_OPERATION_SUCCESSFUL == l_rc)
