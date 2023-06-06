@@ -166,8 +166,8 @@ typedef struct __attribute__((packed))
             uint64_t value;
             struct __attribute__((packed))
             {
-            uint32_t reserved:28;
-            uint32_t bitModifier:4;
+                uint32_t reserved:28;
+                uint32_t bitModifier:4;
             }extGenericHdr;
         }cmdPutScom;
 

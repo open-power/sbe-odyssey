@@ -36,20 +36,20 @@ DUMPTYPEMAP dumpTypeMap[4] = {
 //Write NULL for commands that are not used in HDCT.txt
 size_t genericHdctRowSize_table[NO_OF_CMD_TYPES] = {
     CMD_TYPE_NOT_USED,
-    genericHdctRowSize(genericHdctRow_t,cmdGetScom),
-    genericHdctRowSize(genericHdctRow_t,cmdPutScom),
-    CMD_TYPE_NOT_USED,
-    CMD_TYPE_NOT_USED,
-    genericHdctRowSize(genericHdctRow_t,cmdGetRing),
-    CMD_TYPE_NOT_USED,
-    genericHdctRowSize(genericHdctRow_t,cmdStopClocks),
-    CMD_TYPE_NOT_USED,
-    CMD_TYPE_NOT_USED,
-    CMD_TYPE_NOT_USED,
-    genericHdctRowSize(genericHdctRow_t,cmdTraceArray),
-    genericHdctRowSize(genericHdctRow_t,cmdFastArray),
-    CMD_TYPE_NOT_USED,
-    genericHdctRowSize(genericHdctRow_t,cmdGetSram)
+    genericHdctRowSize(genericHdctRow_t, cmdGetScom),   // 0x01
+    genericHdctRowSize(genericHdctRow_t, cmdPutScom),   // 0x02
+    CMD_TYPE_NOT_USED,                                  // 0x03
+    CMD_TYPE_NOT_USED,                                  // 0x04
+    genericHdctRowSize(genericHdctRow_t,cmdGetRing),    // 0x05
+    CMD_TYPE_NOT_USED,                                  // 0x06
+    genericHdctRowSize(genericHdctRow_t,cmdStopClocks), // 0x07
+    CMD_TYPE_NOT_USED,                                  // 0x08
+    CMD_TYPE_NOT_USED,                                  // 0x09
+    CMD_TYPE_NOT_USED,                                  // 0x0A
+    genericHdctRowSize(genericHdctRow_t,cmdTraceArray), // 0x0B
+    genericHdctRowSize(genericHdctRow_t,cmdFastArray),  // 0x0C
+    CMD_TYPE_NOT_USED,                                  // 0x0D
+    genericHdctRowSize(genericHdctRow_t,cmdGetSram)     // 0x0E
 };
 
 uint16_t getEquivDumpType(uint8_t reqDumpType)
