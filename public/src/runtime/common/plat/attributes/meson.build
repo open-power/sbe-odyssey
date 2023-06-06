@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022,2023
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,5 +23,5 @@
 #
 # IBM_PROLOG_END_TAG
 
-abs_runtime_cmn_attribute_c_path = []
-abs_runtime_cmn_attribute_c_path += files('plat_attribute_service.C')
+abs_runtime_cmn_plat_attribute_c_path = []
+abs_runtime_cmn_plat_attribute_c_path += files('plat_attribute_service.C')

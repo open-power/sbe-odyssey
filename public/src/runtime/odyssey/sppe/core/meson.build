@@ -64,11 +64,12 @@ odyssey_abs_core_c_file_paths += [ abs_pak_c_path,
                                     abs_cmn_utils_c_path,
                                     abs_runtime_cmn_core_c_path,
                                     abs_runtime_cmn_ffdc_c_path,
-                                    abs_runtime_cmn_attribute_c_path,
                                     abs_runtime_cmn_targeting_c_path,
+                                    abs_runtime_cmn_plat_attribute_c_path,
                                     abs_runtime_cmn_hwpf_c_path,
                                     abs_runtime_cmn_utils_c_path,
                                     abs_runtime_cmn_code_update_c_path,
+                                    abs_runtime_cmn_attributes_c_path,
                                     abs_runtime_cmn_stopclock_c_path,
                                     abs_runtime_cmn_tracearray_c_path,
                                     abs_runtime_cmn_fastarray_c_path,
@@ -76,8 +77,7 @@ odyssey_abs_core_c_file_paths += [ abs_pak_c_path,
                                     abs_runtime_cmn_sramaccess_c_path,
                                     abs_i2c_driver_cmn_c_path,
                                     odyssey_abs_hwpf_c_file_paths,
-                                    odyssey_abs_tgt_c_file_paths,
-                                    odyssey_abs_attr_c_file_paths
+                                    odyssey_abs_tgt_c_file_paths
                                 ]
 
 # List of image specific customize files
@@ -147,7 +147,8 @@ odyssey_sppe_obj_file_cpp = obj_gen_cpp.process([odyssey_abs_core_c_file_paths,
                                         runtime_cmn_abs_inc_paths,
                                         odyssey_hwp_abs_inc_paths,
                                         ekb_hwp_abs_inc_paths,
-                                        runtime_cmn_abs_code_update_inc_paths])
+                                        runtime_cmn_abs_code_update_inc_paths,
+                                        runtime_cmn_abs_attributes_inc_paths])
 
 # tinflate.C must be compiled with -O2 -falign-loops=32 for significantly improved decompression performance
 #   -O2 enables a few additional speed optimizations

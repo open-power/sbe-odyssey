@@ -1,7 +1,7 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/odyssey/sppe/plat/meson.build $
+# $Source: public/src/runtime/common/attributes/meson.build $
 #
 # OpenPOWER sbe Project
 #
@@ -23,10 +23,5 @@
 #
 # IBM_PROLOG_END_TAG
 
-ODYSSEY_TARGET_LIST_JSON = files('targetlist.json')
-
-subdir('targeting')
-subdir('errorxml')
-if platform != 'odysseylab'
-    subdir('attributes')
-endif
+abs_runtime_cmn_attributes_c_path = files('attribute_list_service.C',
+                                          'attribute_override_service.C')

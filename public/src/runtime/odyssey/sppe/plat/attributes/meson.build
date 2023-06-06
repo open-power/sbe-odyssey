@@ -23,15 +23,6 @@
 #
 # IBM_PROLOG_END_TAG
 
-odyssey_abs_attr_c_file_paths = files(
-                                ['attribute_override_service.C',
-                                'attribute_list_service.C'
-           ])
-
-if platform == 'odysseylab'
-  subdir_done()
-endif
-
 #Keep all genfiles related stuff below as odysseylab will generate its own genfiles
 ###################### Runtime genfiles ########################################
 ODYSSEY_ATTR_DB_FILE_PATH = odyssey_sppe_genfiles_dir_path + '/sbe_attr.db'
