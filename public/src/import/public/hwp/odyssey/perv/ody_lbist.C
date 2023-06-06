@@ -99,7 +99,7 @@ ReturnCode ody_lbist(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     FAPI_INF("Entering ...");
 
-    bist_diags l_bist_diags;
+    bist_diags l_bist_diags = {0};
     std::vector<uint32_t> l_failing_rings;
     auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
 
