@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/sbecmdlistattr.H $       */
+/* $Source: public/src/runtime/common/attributes/sbecmdgetrawattrdump.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -21,16 +21,18 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __SBEFW_SBECMDLISTATTR_H
-#define __SBEFW_SBECMDLISTATTR_H
+#ifndef __SBE_CMDGETRAWATTRDUMP_H
+#define __SBE_CMDGETRAWATTRDUMP_H
+
+#include <stdint.h>
 
 /**
- * @brief List attribute chipop handler.
+ * @brief sbeGetRawAttrDump: GetRawAttrDump chipop handler.
  *
  * @param[in] i_pArg Buffer to be passed to the function
  *
  * @return    Rc from the FIFO access utility
  */
-uint32_t sbeCmdListAttr(uint8_t *i_pArg);
+uint32_t sbeGetRawAttrDump(uint8_t *i_pArg);
 
-#endif /* __SBEFW_SBECMDLISTATTR_H */
+#endif /* __SBE_CMDGETRAWATTRDUMP_H */

@@ -23,5 +23,10 @@
 #
 # IBM_PROLOG_END_TAG
 
+CMN_ATTRIBUTES_CHIPOPS_JSON = files('chipop_table.json')
+
 abs_runtime_cmn_attributes_c_path = files('attribute_list_service.C',
-                                          'attribute_override_service.C')
+                                          'attribute_override_service.C',
+                                          'sbecmdlistattr.C',
+                                          'sbecmdupdateattr.C',
+                                          'sbecmdgetrawattrdump.C')
