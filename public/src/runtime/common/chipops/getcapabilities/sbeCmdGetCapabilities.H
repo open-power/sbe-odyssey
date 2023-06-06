@@ -33,10 +33,8 @@
  * - No of capabilities that supported by the SBE FW.
  * - It is used to decide the maximum number of capabilities details
  *   for the GetCapabilities and GetCodeLevels chip-ops.
- *
- * - TODO: JIRA: PFSBE-409
- *   No of capabilities should be decided automatically by using chip-op table
- *   instead of hardcoding.
+ *   whenever any chip-op is added,the GETCAPABILITIES_NO_OF_CAPABILITIES
+ *   must be updatable.
  */
 static const uint16_t GETCAPABILITIES_NO_OF_CAPABILITIES = 9;
 
@@ -44,9 +42,6 @@ static const uint16_t GETCAPABILITIES_NO_OF_CAPABILITIES = 9;
  * - No of images count to get images details.
  * - It is used to decide the maximum number of images details
  *   for the GetCapabilities and GetCodeLevels chip-ops.
- *
- * - TODO: JIRA: PFSBE-410
- *   No of images should be decided automatically based on the project.
  */
 static const uint16_t GETCAPABILITIES_NO_OF_IMAGES = 6;
 
@@ -146,5 +141,28 @@ struct __attribute__((packed)) GetCapabilityResp_t
  * @return the RC from the FIFO access utility
  */
 uint32_t sbeCmdGetCapabilities(uint8_t *i_pArg);
+
+/**
+ * @brief used to get timestamp from given offset
+ *
+ * @param[in] i_meta_start : address to get time stamp
+ * @param[out] o_timeStamp : we will get time stamp as a output
+ *                           from given address
+ *
+ * @return  RC
+ */
+uint32_t getTimeStamp(const uint8_t *i_meta_start,
+                      uint32_t &o_timeStamp);
+
+/**
+ * @brief used to get commitId from given offset
+ *
+ * @param[in] i_meta_start : address to get commitId
+ * @param[out] o_commitID : we will get commitId as a output from given address
+ *
+ * @return  RC
+ */
+uint32_t getCommitId(const uint8_t *i_meta_start,
+                     uint32_t &o_commitID);
 
 #endif // SBE_CMD_GETCAPABILITIES_H
