@@ -1,24 +1,6 @@
 {
   "chipoptable": [
     {
-      "cmdClass": "AD",
-      "command": "0x02",
-      "function": "sbeCmdListAttr",
-      "fences": [
-        "SBE_FENCE_AT_CONTINUOUS_IPL"
-      ],
-      "headerFile": "sbecmdlistattr.H"
-    },
-    {
-      "cmdClass": "AD",
-      "command": "0x03",
-      "function": "sbeUpdateAttr",
-      "fences": [
-        "SBE_FENCE_AT_CONTINUOUS_IPL","SBE_FENCE_AT_DUMPING"
-      ],
-      "headerFile": "sbecmdupdateattr.H"
-    },
-    {
       "cmdClass":"AC",
       "command":"0x02",
       "function":"sbectrltspoll",

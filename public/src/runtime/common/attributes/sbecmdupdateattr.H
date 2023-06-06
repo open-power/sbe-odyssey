@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/sbecmdgetrawattrdump.H $ */
+/* $Source: public/src/runtime/common/attributes/sbecmdupdateattr.H $     */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022,2023                        */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,18 +21,17 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __SBE_CMDGETRAWATTRDUMP_H
-#define __SBE_CMDGETRAWATTRDUMP_H
+#ifndef __SBEFW_SBECMDUPDATEATTR_H
+#define __SBEFW_SBECMDUPDATEATTR_H
 
-#include <stdint.h>
 
 /**
- * @brief sbeGetRawAttrDump: GetRawAttrDump chipop handler.
+ * @brief Update attribute chipop handler.
  *
  * @param[in] i_pArg Buffer to be passed to the function
  *
  * @return    Rc from the FIFO access utility
  */
-uint32_t sbeGetRawAttrDump(uint8_t *i_pArg);
+uint32_t sbeUpdateAttr(uint8_t *i_pArg);
 
-#endif /* __SBE_CMDGETRAWATTRDUMP_H */
+#endif /* __SBEFW_SBECMDUPDATEATTR_H */

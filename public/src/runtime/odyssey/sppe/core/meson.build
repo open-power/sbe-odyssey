@@ -36,15 +36,12 @@ infile_c = ['main.C',
             'sbecmdscomaccess.C',
             'sbescom.C',
             'sbecmdringaccess.C',
-            'sbecmdgetrawattrdump.C',
             'sbecmdexecutehwp.C',
             'hwpWrapper.C',
             'codeupdateutils.C',
-            'sbecmdupdateattr.C',
             'sbecmdstopclockswrapper.C',
             'sberegaccessplat.C',
             'sbecmdtracearraywrap.C',
-            'sbecmdlistattr.C',
             'getcapabilitiesutils.C',
             'sbetspolling.C',
             'sbethermalsensorpolltimer.C',
@@ -98,7 +95,7 @@ odyssey_img_cust_c_file = [
                   'atefw.C',
 ]
 
-ODYSSEY_CHIPOPS_JSON = files('chipop_table.json')[0]
+ODYSSEY_CHIPOPS_JSON = files('chipop_table.json')
 
 ody_cmn_chipop_json_list = [
                     COMMON_CHIPOPS_JSON,
@@ -109,6 +106,7 @@ ody_cmn_chipop_json_list = [
                     CMN_TRACE_ARRAY_CHIPOPS_JSON,
                     CMN_SRAM_ACCESS_CHIPOPS_JSON,
                     CMN_COLLECT_DUMP_CHIPOPS_JSON,
+                    CMN_ATTRIBUTES_CHIPOPS_JSON,
                 ]
 
 ody_chipop_json_list = [ody_cmn_chipop_json_list,

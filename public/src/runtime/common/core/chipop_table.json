@@ -55,13 +55,6 @@
             "function":"sbeGetFfdc",
             "fences":["SBE_NO_FENCE"],
             "headerFile":"sbecmdgenericffdc.H"
-        },
-        {
-            "cmdClass":"AD",
-            "command":"0x01",
-            "function":"sbeGetRawAttrDump",
-            "fences":["SBE_NO_FENCE"],
-            "headerFile":"sbecmdgetrawattrdump.H"
         }
     ]
 }
