@@ -40,8 +40,8 @@ extern "C" {
  * $Version: Confirms to SP-SBE Interface Spec v0.2e
  * Constants for SBE FW major and minor number
  */
-static const uint16_t SBE_FW_MAJOR_VERSION = 0;
-static const uint16_t SBE_FW_MINOR_VERSION = 2;
+static const uint16_t SBE_FW_MAJOR_VERSION = 1;
+static const uint16_t SBE_FW_MINOR_VERSION = 1;
 
 /**
  * @brief enums for SBE command classes
@@ -203,6 +203,9 @@ enum sbeSecondaryResponse
     SBE_SEC_ATTR_UPD_INVALID_FILE_TYPE        = 0x7B,
     SBE_SEC_UNALIGNED_ADDRESS_PASSED          = 0x7C,
     SBE_SEC_INVALID_LENGTH_PASSED             = 0x7D,
+    SBE_SEC_GIT_COMMIT_ID_FAILURE             = 0x7E,
+    SBE_SEC_GIT_TIME_STAMP_FAILURE            = 0x7F
+
 };
 
 /**
@@ -268,10 +271,6 @@ enum class CAPABILITY_IMAGES : uint16_t
 
 /**
  * @brief Capabilities index (aka, command class) values.
- *
- * - TODO: JIRA: PFSBE-409
- *   we have to fill capabilities automatically by using chip-op table
- *   instead of hardcoding.
  */
 enum
 {
@@ -298,10 +297,6 @@ enum
  * - The chip-op bit position needs to be decided by the chip-op op-code.
  *   For example, the execute hwp chip-op (0xA104) bit position will be 4th bit
  *   in the capability word based on the execute hwp chip-op op-code "04".
- *
- * - TODO: JIRA: PFSBE-409
- *   we have to fill capabilities automatically by using chip-op table
- *   instead of hardcoding.
  */
 enum
 {
@@ -310,6 +305,7 @@ enum
     HWP_FFDC_COLLECTION_SUPPPORTED      = 0xC0000001,
     SBE_FFDC_COLLECTION_SUPPPORTED      = 0xC0000002,
     FIFO_RESET_SUPPPORTED               = 0xC0000008,
+    PIPES_SUPPPORTED                    = 0xC0000040,
 
     // SBE supported chip-ops list
     // 0xA101

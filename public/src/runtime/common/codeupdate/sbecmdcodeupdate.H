@@ -115,14 +115,7 @@ namespace CU
          *        its members with the expected value to frame the response.
          */
         CodeLevelsRespMsg_t() :
-            // TODO: JIRA: PFSBE-409
-            // Value must be assign based on no of chip-ops that are supported
-            // by the SBE FW by using chip-op json instead of hard code value.
-            // Note, it should be in words like p10.
             iv_noOfCapabilities(GETCAPABILITIES_NO_OF_CAPABILITIES),
-            // TODO: JIRA: PFSBE-410
-            // Value must be assign based on no of sub-images that are supported
-            // in the specific SBE FW project.
             iv_noOfSubImages(GETCAPABILITIES_NO_OF_IMAGES),
             // Major version must be update as per poz specs
             iv_versionMajor(SBE_FW_MAJOR_VERSION),

@@ -27,6 +27,7 @@
 #include "plat_hwp_data_stream.H"
 #include "sbeCmdGetCapabilities.H"
 #include "getcapabilitiesutils.H"
+#include "metadata.H"
 
 uint32_t sbeCmdGetCapabilities(uint8_t *i_pArg)
 {
@@ -96,5 +97,59 @@ uint32_t sbeCmdGetCapabilities(uint8_t *i_pArg)
 
     SBE_EXIT(SBE_FUNC);
     return l_fifoRc;
+    #undef SBE_FUNC
+}
+
+uint32_t getTimeStamp(const uint8_t *i_meta_start,
+                      uint32_t &o_timeStamp)
+{
+    #define SBE_FUNC " getTimeStamp "
+    SBE_ENTER(SBE_FUNC);
+
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    do
+    {
+        // Get image metadata pointer.
+        auto ptrLDAStruct = GET_META_DAT((uint8_t*)i_meta_start);
+        if (ptrLDAStruct == NULL)
+        {
+            l_rc = SBE_SEC_GIT_TIME_STAMP_FAILURE;
+            SBE_ERROR(SBE_FUNC "Failed to get GIT timeStamp at Addr:[%p] ",
+                                i_meta_start);
+            break;
+        }
+        o_timeStamp = ptrLDAStruct->timeStamp;
+
+    } while(false);
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
+uint32_t getCommitId(const uint8_t *i_meta_start,
+                     uint32_t &o_commitID)
+{
+    #define SBE_FUNC " getCommitId "
+    SBE_ENTER(SBE_FUNC);
+
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    do
+    {
+        // Get image metadata pointer.
+        auto ptrGITStruct = GET_META_GIT((uint8_t*)i_meta_start);
+        if (ptrGITStruct == NULL)
+        {
+            l_rc = SBE_SEC_GIT_COMMIT_ID_FAILURE;
+            SBE_ERROR(SBE_FUNC "Failed to get GIT commitId at Addr:[%p] ",
+                                i_meta_start);
+            break;
+        }
+        o_commitID = ptrGITStruct->commitId;
+
+    } while(false);
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
     #undef SBE_FUNC
 }
