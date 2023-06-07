@@ -139,11 +139,12 @@ void strhex(char* o_str, uint64_t i_value, int i_width)
 
 ReturnCode putRingBucket(const Target<TARGET_TYPE_ALL_MC>& i_target,
                          const char* i_ring_id,
-                         int i_bucket)
+                         int i_bucket,
+                         const RingMode i_ringMode)
 {
     char ring_id[RING_ID_MAXLEN];
     int len = strlen(i_ring_id);
     memcpy(ring_id, i_ring_id, len + 1);
     strhex(ring_id + len - 2, i_bucket, 2);
-    return putRing(i_target, ring_id);
+    return putRing(i_target, ring_id, i_ringMode);
 }
