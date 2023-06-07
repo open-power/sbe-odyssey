@@ -59,10 +59,15 @@ namespace fapi2
         ReturnCode plat_TargetsInit();
 
         ///
-        /// @brief Fuction to get the target count.
+        /// @brief Function to get the target count.
         ///
         /// @return number of target.
         uint32_t plat_getTargetCount();
+
+        ///
+        /// @brief Update target functional state based on ATTR_PG
+        ///
+        void plat_updateFunctionalState();
 
         ///
         /// @brief Enumerate all targets with a given type regardless of chiplet ID
@@ -110,18 +115,6 @@ namespace fapi2
         /// @param [out] o_children             A vector of child target handles
         ///
         void getMulticastChildren(const plat_target_sbe_handle i_parent,
-                                  const bool i_include_nonfunctional,
-                                  std::vector<plat_target_sbe_handle> &o_children);
-
-        ///
-        ///
-        /// @brief Return the multicast enabled targets
-        ///
-        /// @param [in] i_enabled               Multicast enabled buffer.
-        /// @param [in] i_include_nonfunctional Return also targets that are not functional
-        /// @param [out] o_children             A vector of child target handles
-        ///
-        void loopTargetsByChiplet(const buffer<uint64_t> &i_enabled,
                                   const bool i_include_nonfunctional,
                                   std::vector<plat_target_sbe_handle> &o_children);
 
@@ -213,6 +206,40 @@ namespace fapi2
     protected:
         std::vector<fapi2::plat_target_sbe_handle> iv_targets;
 
+        ///
+        /// @brief Determine functional state of a chiplet based target based on functional regions
+        ///
+        /// This is a helper function called internally by plat_updateFunctionalState for all
+        /// targets that are backed by a chiplet (i.e. chiplets or chip units).
+        ///
+        /// Platform specializations are supposed to override the default implementation; some
+        /// chip unit specific targets (such as TBUSL) are functional based on the partial-goodness
+        /// of specific clock regions inside a chiplet.
+        ///
+        /// @param[in] i_target              The target to assess
+        /// @param[in] i_functional_regions  Set of functional regions, extracted from ATTR_PG
+        ///                                  Bit 0 corresponds to region 0 and so forth.
+        ///                                  A set bit means that the region is good.
+        ///
+        /// @return that target's desired functional state
+        virtual bool plat_isChipletBasedTargetFunctional(
+            plat_target_sbe_handle &i_target,
+            uint16_t i_functional_regions);
+
+        ///
+        /// @brief Determine functional state of a specialtarget based on functional regions
+        ///
+        /// This is a helper function called internally by plat_updateFunctionalState for all
+        /// targets that are not backed by a chiplet and not the chip or system.
+        ///
+        /// Platform specializations are supposed to override the default implementation.
+        ///
+        /// @param[in] i_target              The target to assess
+        ///
+        /// @return that target's desired functional state
+        virtual bool plat_isOtherTargetFunctional(
+            plat_target_sbe_handle &i_target);
+
     private:
         ///
         /// @brief Get all pervasive children for a proc.
@@ -223,6 +250,20 @@ namespace fapi2
                              const bool i_include_nonfunctional,
                              std::vector<plat_target_sbe_handle>& o_children,
                              bool i_ignore_filter = false) const;
+
+        ///
+        ///
+        /// @brief Enumerate targets of a specific type based on a mask of chiplets to include
+        ///
+        /// @param [in] i_type                  Type of targets to return
+        /// @param [in] i_enabled               Chiplet mask - 1 means include, 0 means exclude
+        /// @param [in] i_include_nonfunctional Return also targets that are not functional
+        /// @param [out] o_children             A vector of child target handles
+        ///
+        void loopTargetsByChiplet(const LogTargetType i_type,
+                                  const buffer<uint64_t> &i_enabled,
+                                  const bool i_include_nonfunctional,
+                                  std::vector<plat_target_sbe_handle> &o_children);
     };
 }
 #endif
