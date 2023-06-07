@@ -28,12 +28,19 @@
 
 using namespace fapi2;
 
+// The only shared clock region definition is the PERV region,
+// which is on region 0 for all chiplets on all chips. Any other
+// region is chip specific and should be defined in the chip
+// specific targeting implementation.
+static const uint16_t CLOCK_REGION_PERV = 0x8000;
+
 void sbe_target_service::plat_PrintTargets()
 {
     uint32_t targetCnt = plat_getTargetCount();
     for(uint32_t i = 0; i < targetCnt; i++)
     {
-        SBE_INFO("sbe_target_service 0x%08X", iv_targets[i].iv_value());
+        SBE_INFO("sbe_target_service 0x%08X p%d f%d", iv_targets[i].iv_value(),
+                 iv_targets[i].getPresent(), iv_targets[i].getFunctional());
     }
 }
 
@@ -46,7 +53,7 @@ ReturnCode sbe_target_service::plat_TargetsInit()
         SBE_DEBUG("target count is 0x%08X", (uint32_t)targetInfo.targetCnt);
         for(uint32_t j = 0; j < targetInfo.targetCnt; j++)
         {
-            const uint8_t chipletNum = targetInfo.isChipletType ?
+            const uint8_t chipletNum = targetInfo.isChiplet ?
                 targetInfo.chipletNum + j :
                 targetInfo.chipletNum;
 
@@ -70,6 +77,55 @@ uint32_t sbe_target_service::plat_getTargetCount()
         targetCnt += targetInfo.targetCnt;
     }
     return targetCnt;
+}
+
+bool sbe_target_service::plat_isChipletBasedTargetFunctional(
+    plat_target_sbe_handle&, uint16_t i_functional_regions)
+{
+    // Default implementation: The target is good if the entire
+    // chiplet is good. The PERV clock region will always be
+    // enabled on good chiplets so we can use it as reference.
+    return i_functional_regions & CLOCK_REGION_PERV;
+}
+
+bool sbe_target_service::plat_isOtherTargetFunctional(
+    plat_target_sbe_handle&)
+{
+    // Just a placeholder implementation
+    return true;
+}
+
+void sbe_target_service::plat_updateFunctionalState()
+{
+    uint32_t targetCnt = 0;
+    for (auto &targetInfo : G_projTargetMap)
+    {
+        for (uint32_t i = 0; i < targetInfo.targetCnt; i++)
+        {
+            auto &target = iv_targets[targetCnt + i];
+            const LogTargetType type = target.getTargetType();
+            const uint32_t attr_pg = fapi2::ATTR::TARGET_TYPE_PERV::ATTR_PG[target.getChipletNumber()];
+            const uint16_t good_regions = ~(attr_pg >> 4);
+            bool functional = true;
+
+            if (type == LOG_SBE_ROOT_CHIP_TYPE || type == LOG_TARGET_TYPE_SYSTEM)
+            {
+                functional = true;
+            }
+            else if (targetInfo.isChipletBased)
+            {
+                functional = plat_isChipletBasedTargetFunctional(target, good_regions);
+            }
+            else
+            {
+                functional = plat_isOtherTargetFunctional(target);
+            }
+
+            target.setFunctional(functional);
+        }
+        targetCnt += targetInfo.targetCnt;
+    }
+    plat_PrintTargets();
 }
 
 void sbe_target_service::getProcChildren( const LogTargetType i_child_type,
@@ -139,19 +195,23 @@ void sbe_target_service::getMulticastChildren(const plat_target_sbe_handle i_par
     if ((i_parent.getTargetType() == LOG_TARGET_TYPE_PERV) )
     {
         // Non-core (i.e. chiplet) target -> loop over all PERV targets, match chiplet ID
-        loopTargetsByChiplet(l_enabledTargets, i_include_nonfunctional, o_children);
+        loopTargetsByChiplet(i_parent.getTargetType(),
+                             l_enabledTargets,
+                             i_include_nonfunctional,
+                             o_children);
     }
     return;
 }
 
-void sbe_target_service::loopTargetsByChiplet(const buffer<uint64_t> &i_enabled,
+void sbe_target_service::loopTargetsByChiplet(const LogTargetType i_type,
+                                              const buffer<uint64_t> &i_enabled,
                                               const bool i_include_nonfunctional,
                                               std::vector<plat_target_sbe_handle> &o_children)
 {
     int targetIndex = 0;
     for (auto &targetInfo : G_projTargetMap)
     {
-        if(targetInfo.isPervType)
+        if(targetInfo.targetType == i_type)
         {
             for(uint32_t j = 0; j < targetInfo.targetCnt; j++)
             {
@@ -247,7 +307,7 @@ sbeSecondaryResponse sbe_target_service::getPervTargetByChipletId(
         SBE_DEBUG("target count is 0x%08X", (uint32_t)targetInfo.targetCnt);
 
         /* target is not pervasive type goto next target */
-        if(targetInfo.isPervType != 0)
+        if (targetInfo.targetType == LOG_TARGET_TYPE_PERV)
         {
             for(uint8_t inst = 0; inst < targetInfo.targetCnt; inst++)
             {
@@ -293,7 +353,7 @@ void sbe_target_service::getPervChildren(const TargetFilter i_filter,
     int targetIndex = 0;
     for (auto &targetInfo : G_projTargetMap)
     {
-        if(targetInfo.isPervType)
+        if (targetInfo.targetType == LOG_TARGET_TYPE_PERV)
         {
             for(uint32_t j = 0; j < targetInfo.targetCnt; j++)
             {

@@ -38,16 +38,17 @@
 namespace fapi2
 {
    /*
-    * Structure for target params
+    * Defines a group of one or more chiplets which are created together.
     */
     typedef struct targetInfo
     {
-        uint32_t chipletNum:6;
-        uint32_t targetType:6;
-        uint32_t isPervType:1;
-        uint32_t isChipletType:1;
-        uint32_t instanceBase:6;
-        uint32_t targetCnt:7;
+        uint32_t chipletNum:6;     ///< Chiplet ID of first instance in the group if isChiplet==1
+                                   ///< Chiplet ID for all instances in the group if isChiplet==0
+        uint32_t targetType:6;     ///< Log target type for all targets in the group
+        uint32_t isChipletBased:1; ///< Targets are inside a chiplet (chiplet or chip unit)
+        uint32_t isChiplet:1;      ///< Targets are equivalent to a chiplet
+        uint32_t instanceBase:6;   ///< Instance ID of first instance in the group
+        uint32_t targetCnt:7;      ///< Number of instances in the group
     } targetInfo_t;
 
     extern const ArrayWrapper<targetInfo_t> G_projTargetMap;
