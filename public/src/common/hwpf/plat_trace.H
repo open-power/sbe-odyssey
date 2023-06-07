@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2011,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2011,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -56,14 +57,6 @@ namespace fapi2
 #define FAPI_TRACE(_id_, _fmt_, _args_...)                              \
     PK_TRACE(_fmt_, ##_args_);
 
-
-/*  The following is a desirous trace entry but the second line has a
-    compilation issue that is unresolved
-
-#define FAPI_TRACE(_id_, _fmt_, _args_...)                              \
-    PK_TRACE("%s: %s:%d ", _id_, __FUNCTION__, __LINE__);               \
-    PK_TRACE(_fmt_, ##_args_);
-*/
 // FAPI_TRACE_LEVEL controls what traces are included in the code build
 // 0 == No tracing
 // 1 == ERR traces only

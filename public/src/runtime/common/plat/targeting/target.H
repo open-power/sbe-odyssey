@@ -30,8 +30,6 @@
 
 namespace fapi2
 {
-    static const uint32_t MAX_ECMD_STRING_LEN = 64;
-
     constexpr TargetType TARGET_TYPE_PROC_CHILDREN = TARGET_TYPE_CHIPLETS;
     constexpr TargetType TARGET_TYPE_PERV_CHILDREN = TARGET_TYPE_CHIPLETS;
     constexpr TargetType TARGET_TYPE_MEM_PORT_CHILDREN = TARGET_TYPE_DIMM;
