@@ -62,15 +62,19 @@ installRequiredPackages()
     if [ "$SCL_PYTHON_ENABLED" == 1 ]; then
         # default python 2 scl, Intstalling packages in $HOME/.local_rh_python36/ path
         # --no-warn-script-location supress the warning message for changing pythonuserbase location
-        CMD="pip install -r $SBEROOT_PUB/src/tools/install/requirements.txt --user --no-warn-script-location"
+        CMD="pip install --no-warn-script-location"
      elif [ "$SCL_PYTHON_ENABLED" == 0 ]; then
         # default python 3 path /user/bin/python3 or /bin/python3, Installing packages in $HOME/.local/
-        CMD="python3 -m pip install -r $SBEROOT_PUB/src/tools/install/requirements.txt --user"
+        CMD="python3 -m pip install"
     else
         echo "Error: sbe-workon-utils | installRequiredPackages | SCL_PYTHON_ENABLED is not defined"
         exit -1
     fi
 
+    CMD="$CMD -r $SBEROOT_PUB/src/tools/install/buildtoolrequirements.txt      \
+              -r $SBEROOT_PUB/src/tools/install/debugtoolrequirements.txt      \
+              -r $SBEROOT_PUB/src/tools/install/regressiontoolrequirements.txt \
+            --user"
     echo $CMD
     $CMD || {
         if (($? != 0)); then

@@ -1,7 +1,0 @@
-ninja==1.10.2
-meson==0.60.3
-Jinja2==3.0.3
-tabulate==0.8.9
-openpyxl
-pandas
-typing
