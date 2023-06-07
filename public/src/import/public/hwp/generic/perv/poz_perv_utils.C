@@ -92,7 +92,6 @@ ReturnCode get_hotplug_targets(
 {
     Target<TARGET_TYPE_SYSTEM> l_system_target;
     uint8_t l_hotplug;
-    uint64_t l_chiplet_mask;
     TargetState l_target_state;
 
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_HOTPLUG, l_system_target, l_hotplug));
@@ -103,15 +102,12 @@ ReturnCode get_hotplug_targets(
     }
     else
     {
+        uint64_t l_chiplet_mask = 0xFFFFFFFFFFFFFFFFULL;
+
         if (l_hotplug)
         {
             FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_HOTPLUG_MASK, i_target, l_chiplet_mask));
             l_target_state = TARGET_STATE_FUNCTIONAL;
-        }
-        else
-        {
-            FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_SIM_CHIPLET_MASK, i_target, l_chiplet_mask));
-            l_target_state = TARGET_STATE_PRESENT;
         }
 
         FAPI_INF("Set up hotplug groups - l_hotplug=%d l_chiplet_mask=0x%08x%08x",

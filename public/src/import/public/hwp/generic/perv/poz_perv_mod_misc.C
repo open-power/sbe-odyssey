@@ -315,6 +315,8 @@ ReturnCode mod_multicast_setup(
     fapi2::buffer<uint64_t> l_eligible_chiplets = 0;
     fapi2::buffer<uint64_t> l_required_group_members;
     fapi2::buffer<uint64_t> l_current_group_members;
+    fapi2::buffer<uint64_t> l_attr_sim_chiplet_mask;
+
     auto l_all_chiplets = i_target.getChildren<fapi2::TARGET_TYPE_PERV>(i_pgood_policy);
 
     FAPI_INF("Entering ...");
@@ -331,7 +333,9 @@ ReturnCode mod_multicast_setup(
         l_eligible_chiplets.setBit(targ.getChipletNumber());
     }
 
-    l_required_group_members = l_eligible_chiplets & i_chiplets;
+    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_SIM_CHIPLET_MASK, i_target, l_attr_sim_chiplet_mask));
+
+    l_required_group_members = l_eligible_chiplets & i_chiplets & l_attr_sim_chiplet_mask;
     FAPI_INF("Required multicast group members : 0x%08X%08X",
              l_required_group_members >> 32, l_required_group_members & 0xFFFFFFFF);
 
