@@ -61,7 +61,9 @@ ReturnCode i2c::i2cRegisterOp(i2c_reg_offset_t reg,
                                     "Error writing i2c register");
         }
 
-        SBE_DEBUG( SBE_FUNC "ReadNotWrite[%d] Addr [0x%08x] Data [0x%08x%08x]",
+        //TODO: Change this to debug once we are able to find out the issue with
+        //      intermediate failure while reading temp sensor data during thermal init
+        SBE_INFO( SBE_FUNC "ReadNotWrite[%d] Addr [0x%08x] Data [0x%08x%08x]",
         readNotWrite, SBE::lower32BWord(addr),
         SBE::higher32BWord(*io_data), SBE::lower32BWord(*io_data));
 
@@ -609,10 +611,13 @@ ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
         }
     } while(0);
 
-    rc = i2cUnlockEngine();
-    if(rc != FAPI2_RC_SUCCESS)
+    //TODO: PFSBE-394
+    ReturnCode l_rc = i2cUnlockEngine();
+    if(l_rc != FAPI2_RC_SUCCESS)
     {
-        SBE_ERROR(SBE_FUNC " failed for i2cUnlockEngine with rc 0x%08X", rc);
+        SBE_ERROR(SBE_FUNC " failed for i2cUnlockEngine with l_rc 0x%08X", l_rc);
+        if(rc == FAPI2_RC_SUCCESS)
+            rc = l_rc;
     }
 
     SBE_EXIT(SBE_FUNC)
@@ -666,10 +671,13 @@ ReturnCode i2c::putI2c( const Target<TARGET_TYPE_ALL>& target,
         }
     } while(0);
 
-    rc = i2cUnlockEngine();
-    if(rc != FAPI2_RC_SUCCESS)
+    //TODO: PFSBE-394
+    ReturnCode l_rc = i2cUnlockEngine();
+    if(l_rc != FAPI2_RC_SUCCESS)
     {
-        SBE_ERROR(SBE_FUNC " failed for i2cUnlockEngine with rc 0x%08X", rc);
+        SBE_ERROR(SBE_FUNC " failed for i2cUnlockEngine with l_rc 0x%08X", l_rc);
+        if(rc == FAPI2_RC_SUCCESS)
+            rc = l_rc;
     }
 
     SBE_EXIT(SBE_FUNC)
