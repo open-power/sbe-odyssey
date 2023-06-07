@@ -75,8 +75,6 @@ endforeach
 generic_abs_io_error_xml_files = []
 import_io_xml_dir_base_path = pub_import_dir_path + '/hwp/generic/xml/error_info/'
 generic_io_error_xml_files = [
-    'poz_hss_errors.xml',
-    'io_ppe_errors.xml',
     ]
 
 foreach error_xml_file : generic_io_error_xml_files
