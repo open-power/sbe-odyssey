@@ -31,8 +31,12 @@
 namespace fapi2
 {
     // Declare the SBE_ROOT_CHIP_TYPE at plat level
-    #define SBE_ROOT_CHIP_TYPE      TARGET_TYPE_OCMB_CHIP    // FAPI target type
-    #define LOG_SBE_ROOT_CHIP_TYPE  LOG_TARGET_TYPE_OCMB_CHIP// Log target type
+    static const TargetType SBE_ROOT_CHIP_TYPE = TARGET_TYPE_OCMB_CHIP;
+    static const LogTargetType LOG_SBE_ROOT_CHIP_TYPE = LOG_TARGET_TYPE_OCMB_CHIP;
+    static const TargetType SBE_ROOT_CHIP_CHILDREN = TARGET_TYPE_PERV
+        | TARGET_TYPE_MEM_PORT
+        | TARGET_TYPE_DIMM
+        | TARGET_TYPE_TEMP_SENSOR;
 
     /*
      * Derived class for target handle.
@@ -62,47 +66,25 @@ namespace fapi2
             */
 
             ///
-            /// @brief     Plat target handle constructor
-            /// @param[in] i_chipletNum to update FAPI target type
-            /// @param[in] i_type to update PPE target type
-            /// @param[in] i_instanceNum to update target instance num
-            /// @param[in] i_present to set target present or not
-            /// @param[in] i_functional to set target functional state
+            /// @brief Create a platform target handle, defaults to present+functional
+            /// @param[in] i_chipletNum The chiplet ID for this target
+            /// @param[in] i_type       The log FAPI of this target
+            /// @param[in] i_instance   The instance ID of this target
             ///
             plat_target_sbe_handle(uint8_t i_chipletNum,
                                 uint8_t i_type,
-                                uint8_t i_instanceNum,
-                                bool i_present = true,
-                                bool i_functional = true):
+                                uint8_t i_instance):
                 plat_target_base_handle(i_chipletNum,
                                         i_type,
-                                        i_present,
-                                        i_functional)
+                                        i_instance)
             {
-                if(i_type == LOG_TARGET_TYPE_DIMM)
+                if(i_type == LOG_TARGET_TYPE_TEMP_SENSOR)
                 {
-                    // There are two entries for DIMM in the odyTargetMap.
-                    // So to calculate the instance number,
-                    // we will depend on the chiplet number.
-                    uint8_t instanceNum = i_instanceNum;
-                    if(i_chipletNum == 0xE)
-                    {
-                        instanceNum = instanceNum + 2;
-                    }
-                    iv_value.insertFromRight(instanceNum, 16, 8);
-                }
-                else if(i_type == LOG_TARGET_TYPE_TEMP_SENSOR)
-                {
-                    iv_value.insertFromRight(i_instanceNum, 16, 8);
                     // TODO: Read the attributes to set the port and device addr.
                     uint8_t portNum = 0;
                     uint8_t devAddr = 0xFF;
                     iv_value.insertFromRight(portNum, 0, 8);
                     iv_value.insertFromRight(devAddr, 24, 8);
-                }
-                else
-                {
-                    iv_value.insertFromRight(i_instanceNum, 16, 8);
                 }
             }
 

@@ -42,12 +42,13 @@ namespace fapi2
     */
     typedef struct targetInfo
     {
-        uint32_t chipletNum:8;
+        uint32_t chipletNum:6;
         uint32_t targetType:6;
         uint32_t isPervType:1;
         uint32_t isChipletType:1;
-        uint32_t targetCnt:16;
-    }targetInfo_t;
+        uint32_t instanceBase:6;
+        uint32_t targetCnt:7;
+    } targetInfo_t;
 
     extern const ArrayWrapper<targetInfo_t> G_projTargetMap;
     extern const ArrayWrapper<target_filter_definition> G_projTargetFilters;
@@ -88,21 +89,20 @@ namespace fapi2
             }
 
             ///
-            /// @brief Plat target handle constructor with parameters
-            /// @param[in] i_chipletNum to update FAPI target type
-            /// @param[in] i_type to update PPE target type
-            /// @param[in] i_present to set target present or not
-            /// @param[in] i_functional to set target functional state
+            /// @brief Create a platform target handle, defaults to present+functional
+            /// @param[in] i_chipletNum The chiplet ID for this target
+            /// @param[in] i_type       The log FAPI of this target
+            /// @param[in] i_instance   The instance ID of this target
             ///
             explicit plat_target_base_handle( uint8_t i_chipletNum,
-                                     uint8_t i_type,
-                                     bool i_present = true,
-                                     bool i_functional = true )
+                                              uint8_t i_type,
+                                              uint8_t i_instance )
             {
                 setChipletNumber(i_chipletNum);
                 setTargetType(i_type);
-                setPresent(i_present);
-                setFunctional(i_functional);
+                setTargetInstance(i_instance);
+                setPresent(true);
+                setFunctional(true);
             }
 
             ///

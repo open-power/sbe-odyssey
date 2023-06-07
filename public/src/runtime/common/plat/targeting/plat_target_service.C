@@ -46,21 +46,15 @@ ReturnCode sbe_target_service::plat_TargetsInit()
         SBE_DEBUG("target count is 0x%08X", (uint32_t)targetInfo.targetCnt);
         for(uint32_t j = 0; j < targetInfo.targetCnt; j++)
         {
-            SBE_DEBUG("sbe_target_service target to be inserted is 0x%08X",
-                      plat_target_sbe_handle(targetInfo.chipletNum + j,
-                                             targetInfo.targetType,
-                                             j));
-            uint32_t chipletNum = 0;
-            if(targetInfo.isChipletType)
-            {
-                chipletNum = targetInfo.chipletNum + j;
-            }
-            else
-            {
-                chipletNum = targetInfo.chipletNum;
-            }
-            iv_targets.push_back(plat_target_sbe_handle(
-                                     chipletNum, targetInfo.targetType, j));
+            const uint8_t chipletNum = targetInfo.isChipletType ?
+                targetInfo.chipletNum + j :
+                targetInfo.chipletNum;
+
+            const uint8_t instanceNum = j + targetInfo.instanceBase;
+
+            iv_targets.push_back(
+                plat_target_sbe_handle(
+                    chipletNum, targetInfo.targetType, instanceNum));
         }
     }
 
@@ -82,7 +76,6 @@ void sbe_target_service::getProcChildren( const LogTargetType i_child_type,
                                           const bool i_include_nonfunctional,
                                           std::vector<plat_target_sbe_handle> &o_children) const
 {
-    SBE_INFO("sbe_target_service getProcChildren");
     if(i_child_type == LOG_TARGET_TYPE_PERV)
     {
         const TargetFilter l_filter = TARGET_FILTER_NONE;
@@ -115,21 +108,14 @@ void sbe_target_service::getChipletChildren(const LogTargetType i_child_type,
                                             const bool i_include_nonfunctional,
                                             std::vector<plat_target_sbe_handle> &o_children) const
 {
-    uint32_t targetIndex = 0;
-    for (auto &targetInfo : G_projTargetMap)
+    const uint8_t cplt_id = i_parent.getChipletNumber();
+    for (auto &target : iv_targets)
     {
-        if( (targetInfo.targetType == i_child_type) &&
-            (targetInfo.chipletNum == i_parent.getChipletNumber()) )
+        if (target.getTargetType() == i_child_type &&
+            target.getChipletNumber() == cplt_id)
         {
-            for(uint32_t j = 0; j < targetInfo.targetCnt; j++)
-            {
-                plat_target_sbe_handle l_target = iv_targets[targetIndex + j];
-                {
-                    o_children.push_back(l_target);
-                }
-            }
+            o_children.push_back(target);
         }
-        targetIndex = targetIndex + targetInfo.targetCnt;
     }
 }
 
@@ -292,7 +278,6 @@ void sbe_target_service::getPervChildren(const TargetFilter i_filter,
                                          std::vector<plat_target_sbe_handle>& o_children,
                                          bool i_ignore_filter) const
 {
-    SBE_INFO("sbe_target_service getPervChildren with filter");
     const fapi2::buffer<__underlying_type(TargetFilter)> l_filter = i_filter;
 
     uint64_t l_chiplet_mask = 0;
@@ -323,5 +308,4 @@ void sbe_target_service::getPervChildren(const TargetFilter i_filter,
         }
         targetIndex += targetInfo.targetCnt;
     }
-
 }

@@ -33,6 +33,10 @@ namespace fapi2
     constexpr TargetType TARGET_TYPE_PROC_CHILDREN = TARGET_TYPE_CHIPLETS;
     constexpr TargetType TARGET_TYPE_PERV_CHILDREN = TARGET_TYPE_CHIPLETS;
     constexpr TargetType TARGET_TYPE_MEM_PORT_CHILDREN = TARGET_TYPE_DIMM;
+    constexpr TargetType TARGET_TYPE_MC_CHILDREN = TARGET_TYPE_OMI;
+    constexpr TargetType TARGET_TYPE_XBUS_CHILDREN = TARGET_TYPE_XBUSL;
+    constexpr TargetType TARGET_TYPE_EX_CHILDREN = TARGET_TYPE_L3CACHE
+        | TARGET_TYPE_SHADOW | TARGET_TYPE_CORE;
 
     template<TargetType T>
     constexpr LogTargetType fapiTargetTypeToPlatTargetType()
@@ -47,29 +51,29 @@ namespace fapi2
         return LOG_SBE_ROOT_CHIP_TYPE;
     }
 
-    template<>
-    constexpr LogTargetType fapiTargetTypeToPlatTargetType<TARGET_TYPE_PERV>()
-    {
-        return LOG_TARGET_TYPE_PERV;
+#define TARGET_TYPE_SUPPORT(type)                                                \
+    template<>                                                                   \
+    constexpr LogTargetType fapiTargetTypeToPlatTargetType<TARGET_TYPE_##type>() \
+    {                                                                            \
+        return LOG_TARGET_TYPE_##type;                                           \
     }
 
-    template<>
-    constexpr LogTargetType fapiTargetTypeToPlatTargetType<TARGET_TYPE_MEM_PORT>()
-    {
-        return LOG_TARGET_TYPE_MEM_PORT;
-    }
+    TARGET_TYPE_SUPPORT(PERV);
+    TARGET_TYPE_SUPPORT(MEM_PORT);
+    TARGET_TYPE_SUPPORT(DIMM);
+    TARGET_TYPE_SUPPORT(TEMP_SENSOR);
+    TARGET_TYPE_SUPPORT(EX);
+    TARGET_TYPE_SUPPORT(L3CACHE);
+    TARGET_TYPE_SUPPORT(SHADOW);
+    TARGET_TYPE_SUPPORT(CORE);
+    TARGET_TYPE_SUPPORT(PEC);
+    TARGET_TYPE_SUPPORT(ABUS);
+    TARGET_TYPE_SUPPORT(MC);
+    TARGET_TYPE_SUPPORT(OMI);
+    TARGET_TYPE_SUPPORT(XBUS);
+    TARGET_TYPE_SUPPORT(XBUSL);
 
-    template<>
-    constexpr LogTargetType fapiTargetTypeToPlatTargetType<TARGET_TYPE_DIMM>()
-    {
-        return LOG_TARGET_TYPE_DIMM;
-    }
-
-    template<>
-    constexpr LogTargetType fapiTargetTypeToPlatTargetType<TARGET_TYPE_TEMP_SENSOR>()
-    {
-        return LOG_TARGET_TYPE_TEMP_SENSOR;
-    }
+#undef TARGET_TYPE_SUPPORT
 
     template<TargetType K, MulticastType M, typename V>
     static constexpr void plat_apply_target_limits(void)
@@ -121,7 +125,6 @@ namespace fapi2
     template<TargetType T>
     inline Target<T, M, V> Target<K, M, V>::getParent(void) const
     {
-        SBE_INFO("getParent PROC");
         constexpr TargetType T_NO_MCAST = T & ~TARGET_TYPE_MULTICAST;
         constexpr TargetType K_NO_MCAST = K & ~TARGET_TYPE_MULTICAST;
 
@@ -136,17 +139,38 @@ namespace fapi2
         {
             STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_PERV_CHILDREN) == 0,
                          "Invalid child target for PERV parent");
-            plat_target_sbe_handle child = *this;
-            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_PERV>(child);
+            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_PERV>(*this);
         }
         else if (T_NO_MCAST == TARGET_TYPE_MEM_PORT)
         {
             STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_MEM_PORT_CHILDREN) == 0,
                          "Invalid child target for MEM PORT parent");
-            plat_target_sbe_handle child = *this;
-            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_MEM_PORT>(child);
+            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_MEM_PORT>(*this);
         }
+        else if (T_NO_MCAST == TARGET_TYPE_MC)
+        {
+            STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_MC_CHILDREN) == 0,
+                         "Invalid child target for MC parent");
+            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_MC>(*this);
+        }
+        else if (T_NO_MCAST == TARGET_TYPE_XBUS)
+        {
+            STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_XBUS_CHILDREN) == 0,
+                         "Invalid child target for XBUS parent");
+            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_XBUS>(*this);
+        }
+        else if (T_NO_MCAST == TARGET_TYPE_EX)
+        {
+            STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_EX_CHILDREN) == 0,
+                         "Invalid child target for EX parent");
+            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_EX>(*this);
+        }
+
+        // If we fall through to here, there is no defined code path to handle the
+        // combination of T and K -- let's fail loudly.
         STATIC_COMPILE_ERROR("Unsupported combination of parent and child for getParent()");
+        // Fake return value to suppress compiler warning; we rely on STATIC_COMPILE_ERROR
+        return Target<T, M, V>();
     }
 
     /// @brief Get the PROC target's children
@@ -163,7 +187,7 @@ namespace fapi2
     std::vector<Target<T, M, V>>
     Target<K, M, V>::getChildren(const TargetState i_state) const
     {
-        constexpr TargetType K_NO_CHIP  = K & ~SBE_ROOT_CHIP_TYPE;
+        constexpr TargetType K_NO_T = K & ~T;
         constexpr TargetType K_NO_MCAST = K & ~TARGET_TYPE_MULTICAST;
         constexpr LogTargetType P = fapiTargetTypeToPlatTargetType<T>();
 
@@ -180,22 +204,58 @@ namespace fapi2
 
         if ((K & TARGET_TYPE_MULTICAST) && (T == K_NO_MCAST))
         {
-            plat_target_sbe_handle parent = *this;
-            g_platTarget->getMulticastChildren(parent, l_include_nonfunctional, l_cast_children);
+            g_platTarget->getMulticastChildren(*this, l_include_nonfunctional, l_cast_children);
             return l_children;
         }
-        else if ( K_NO_CHIP == TARGET_TYPE_MEM_PORT)
+        else if ((K & T) && (this->get().getTargetType() == P))
+        {
+            // Special case: Target<K | whatever>::getChildren<K> will return
+            // itself if the _actual_ target type is K
+            l_children.push_back(this->get());
+            return l_children;
+        }
+        else if (K_NO_T == SBE_ROOT_CHIP_TYPE || K_NO_T == TARGET_TYPE_ANY_POZ_CHIP)
+        {
+            STATIC_CHECK((T & ~SBE_ROOT_CHIP_CHILDREN) == 0,
+                         "Invalid child type for CHIP target");
+            g_platTarget->getProcChildren(P, l_include_nonfunctional, l_cast_children);
+            return l_children;
+        }
+        else if (K_NO_T == TARGET_TYPE_MEM_PORT)
         {
             STATIC_CHECK((T & ~TARGET_TYPE_MEM_PORT_CHILDREN) == 0,
-                           "Invalid child type for MEM PORT target");
-            plat_target_sbe_handle parent = *this;
-            g_platTarget->getChipletChildren(P, parent, l_include_nonfunctional, l_cast_children);
+                         "Invalid child type for MEM PORT target");
+            g_platTarget->getChipletChildren(P, *this, l_include_nonfunctional, l_cast_children);
             return l_children;
         }
-
-        // TODO: check whether K == Proc and T == supported proc children
-        g_platTarget->getProcChildren(P, l_include_nonfunctional, l_cast_children);
-        return l_children;
+        else if (K_NO_T == TARGET_TYPE_MC)
+        {
+            STATIC_CHECK((T & ~TARGET_TYPE_MC_CHILDREN) == 0,
+                         "Invalid child type for MC target");
+            g_platTarget->getChipletChildren(P, *this, l_include_nonfunctional, l_cast_children);
+            return l_children;
+        }
+        else if (K_NO_T == TARGET_TYPE_XBUS)
+        {
+            STATIC_CHECK((T & ~TARGET_TYPE_XBUS_CHILDREN) == 0,
+                         "Invalid child type for XBUS target");
+            g_platTarget->getChipletChildren(P, *this, l_include_nonfunctional, l_cast_children);
+            return l_children;
+        }
+        else if (K_NO_T == TARGET_TYPE_EX)
+        {
+            STATIC_CHECK((T & ~TARGET_TYPE_EX_CHILDREN) == 0,
+                         "Invalid child type for EX target");
+            g_platTarget->getChipletChildren(P, *this, l_include_nonfunctional, l_cast_children);
+            return l_children;
+        }
+        else
+        {
+            // If we fall through to here, there is no defined code path to handle the
+            // combination of T and K -- let's fail loudly.
+            STATIC_COMPILE_ERROR("Unsupported combination of parent and child for getChildren()");
+            return l_children;
+        }
     }
 
     /// @brief Specialization of getChildren, filtered for the chip target
@@ -222,8 +282,7 @@ namespace fapi2
                   "Sizes of plat target and FAPI target must match");
         static_assert((K & TARGET_TYPE_CHIPS) != 0,
                   "Parent target must be the chip");
-        // TODO: we have to put SBE-Image specific chiplet list
-        static_assert((T & ~TARGET_TYPE_CHIPLETS) == 0,
+        static_assert((T & ~(SBE_ROOT_CHIP_CHILDREN & TARGET_TYPE_CHIPLETS)) == 0,
                   "Child target type must be a pervasive chiplet");
 
         std::vector<Target<T, M, V> > l_children;
