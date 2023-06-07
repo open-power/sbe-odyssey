@@ -382,7 +382,7 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
                 (uint32_t)i_hdr.secondaryStatus(), i_type);
             dumpFieldsConfig |= SBE_FFDC_ALL_PLAT_DATA;
         }
-        rc = sendFFDCOverFIFO(dumpFieldsConfig, len, true);
+        rc = sendFFDCOverFIFO(dumpFieldsConfig, len, true, i_type);
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(rc);
 
         distance += len;
