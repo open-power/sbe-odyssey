@@ -228,83 +228,86 @@ static inline ReturnCode shortRotate(const ScanTarget& i_target, uint32_t i_nbit
     return getScom(i_target, l_scomAddress, l_dummy);
 }
 
+static ReturnCode waitOpcgDone(const ScanTarget& i_target, uint32_t i_nbits)
+{
+    // Some musings on timeout (for P10):
+    //
+    // The slowest expected scan rate is at bypass speeds:
+    //   f=100 MHz, scan ratio = 1:1 => 100e6 bits per second => 10 ns per bit
+    // The fastest expected scan rate is at ~4GHz core:
+    //   f=4000 MHz, scan ratio = 4:1 => 1e9 bits per second => 1 ns per bit
+    //
+    // The OPCG won't be done earlier than the minimum time, and after, say,
+    // 1.5x the maximum time we can safely assume that something went wrong.
+    //
+    // So here's the approach:
+    //   1. Do the first poll without waiting - small rotates may be done immediately
+    //   2. Wait for the minimum time, poll again
+    //   3. Continue polling at a faster rate until the maximum time expires
+
+    const uint32_t POLL_DELAY_NS = 1024;      // Using power of two to avoid division at l_attempts below
+    const uint32_t POLL_DELAY_CYCLES = 10000;
+    const uint32_t MIN_NS_PER_BIT = 1;
+    const uint32_t MIN_CYCLES_PER_BIT = 16;   // Replicating Cronus value here
+    const uint32_t MAX_NS_PER_BIT = 15;       // Includes 50% extra allowance
+
+    // The minimum time until the OPCG can reasonably be finished
+    const uint32_t l_initialDelay_ns = i_nbits * MIN_NS_PER_BIT;
+    const uint32_t l_initialDelay_cycles = i_nbits * MIN_CYCLES_PER_BIT;
+
+    // The difference between the maximum time and the minimum
+    const uint32_t l_additionalDelay_ns = i_nbits * (MAX_NS_PER_BIT - MIN_NS_PER_BIT);
+
+    // Add 1 to round up, 1 for the error check below, and 1 for the initial delay
+    // TODO: Scale number of attempts down if in simulation
+    uint32_t l_attempts = (l_additionalDelay_ns / POLL_DELAY_NS) + 3;
+    bool l_first_attempt = true;
+
+    while( l_attempts > 0 )
+    {
+        l_attempts--;
+
+        buffer<uint64_t> l_opcgStatus;
+
+        FAPI_TRY( getScom( i_target, CPLT_STAT0, l_opcgStatus ),
+                  "Failure during OPCG Check" );
+
+        if( l_opcgStatus.getBit( CPLT_STAT0_CC_CTRL_OPCG_DONE_DC ) )
+        {
+            FAPI_INF("OPCG_DONE set");
+            break;
+        }
+
+        if (l_first_attempt)
+        {
+            l_first_attempt = false;
+            FAPI_TRY( delay( l_initialDelay_ns, l_initialDelay_cycles) );
+        }
+        else
+        {
+            FAPI_TRY( delay( POLL_DELAY_NS, POLL_DELAY_CYCLES ) );
+        }
+    }
+
+    if( 0 == l_attempts )
+    {
+        FAPI_ERR("Max attempts exceeded checking OPCG_DONE");
+        FAPI_ASSERT(false,
+                    PUTRING_OPCG_DONE_TIMEOUT()
+                    .set_TARGET(i_target)
+                    .set_ROTATE_COUNT(i_nbits),
+                    "ROTATE operation failed  due to timeout");
+    }
+
+fapi_try_exit:
+    return current_err;
+}
+
 static ReturnCode longRotate(const ScanTarget& i_target, uint32_t i_nbits)
 {
     // Scom Data needs to have the no.of rotates in the bits 12-31
     FAPI_TRY(putScom(i_target, ROTATE_ADDRESS_REG, uint64_t(i_nbits) << 32));
-
-    // Now wait for OPCG_DONE
-    {
-        // Some musings on timeout (for P10):
-        //
-        // The slowest expected scan rate is at bypass speeds:
-        //   f=100 MHz, scan ratio = 1:1 => 100e6 bits per second => 10 ns per bit
-        // The fastest expected scan rate is at ~4GHz core:
-        //   f=4000 MHz, scan ratio = 4:1 => 1e9 bits per second => 1 ns per bit
-        //
-        // The OPCG won't be done earlier than the minimum time, and after, say,
-        // 1.5x the maximum time we can safely assume that something went wrong.
-        //
-        // So here's the approach:
-        //   1. Do the first poll without waiting - small rotates may be done immediately
-        //   2. Wait for the minimum time, poll again
-        //   3. Continue polling at a faster rate until the maximum time expires
-
-        const uint32_t POLL_DELAY_NS = 1024;      // Using power of two to avoid division at l_attempts below
-        const uint32_t POLL_DELAY_CYCLES = 10000;
-        const uint32_t MIN_NS_PER_BIT = 1;
-        const uint32_t MIN_CYCLES_PER_BIT = 16;   // Replicating Cronus value here
-        const uint32_t MAX_NS_PER_BIT = 15;       // Includes 50% extra allowance
-
-        // The minimum time until the OPCG can reasonably be finished
-        const uint32_t l_initialDelay_ns = i_nbits * MIN_NS_PER_BIT;
-        const uint32_t l_initialDelay_cycles = i_nbits * MIN_CYCLES_PER_BIT;
-
-        // The difference between the maximum time and the minimum
-        const uint32_t l_additionalDelay_ns = i_nbits * (MAX_NS_PER_BIT - MIN_NS_PER_BIT);
-
-        // Add 1 to round up, 1 for the error check below, and 1 for the initial delay
-        // TODO: Scale number of attempts down if in simulation
-        uint32_t l_attempts = (l_additionalDelay_ns / POLL_DELAY_NS) + 3;
-        bool l_first_attempt = true;
-
-        while( l_attempts > 0 )
-        {
-            l_attempts--;
-
-            buffer<uint64_t> l_opcgStatus;
-
-            FAPI_TRY( getScom( i_target, CPLT_STAT0, l_opcgStatus ),
-                      "Failure during OPCG Check" );
-
-            if( l_opcgStatus.getBit( CPLT_STAT0_CC_CTRL_OPCG_DONE_DC ) )
-            {
-                FAPI_INF("OPCG_DONE set");
-                break;
-            }
-
-            if (l_first_attempt)
-            {
-                l_first_attempt = false;
-                FAPI_TRY( delay( l_initialDelay_ns, l_initialDelay_cycles) );
-            }
-            else
-            {
-                FAPI_TRY( delay( POLL_DELAY_NS, POLL_DELAY_CYCLES ) );
-            }
-        }
-
-        if( 0 == l_attempts )
-        {
-            FAPI_ERR("Max attempts exceeded checking OPCG_DONE");
-            FAPI_ASSERT(false,
-                        PUTRING_OPCG_DONE_TIMEOUT()
-                        .set_TARGET(i_target)
-                        .set_ROTATE_COUNT(i_nbits),
-                        "ROTATE operation failed  due to timeout");
-        }
-    }
-
+    FAPI_TRY(waitOpcgDone(i_target, i_nbits));
 fapi_try_exit:
     return current_err;
 }
@@ -468,6 +471,7 @@ ReturnCode setupClockController(
         {
             // SET_PULSE_SL is applied before we start scanning
             FAPI_TRY( putScom( i_target, OPCG_REG0_ADDRESS, OPCG_GO_SINGLE_LOOP ) );
+            FAPI_TRY( waitOpcgDone( i_target, 10 ) );
         }
     }
 
@@ -494,7 +498,9 @@ ReturnCode cleanupClockController(
         {
             // SET_PULSE_NSL and SET_PULSE_ALL are applied after we're done scanning
             FAPI_TRY( putScom( i_target, OPCG_REG0_ADDRESS, OPCG_GO_SINGLE_LOOP ) );
+            FAPI_TRY( waitOpcgDone( i_target, 10 ) );
         }
+
 
         FAPI_TRY( putScom( i_target, CLK_REGION_ADDRESS, 0x0ULL ) );
         // restore register state
