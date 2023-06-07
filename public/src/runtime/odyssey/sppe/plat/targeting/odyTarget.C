@@ -38,15 +38,16 @@ namespace fapi2
      */
     static const targetInfo_t ody_platTargetMap[] =
     {
-        {0x0, LOG_SBE_ROOT_CHIP_TYPE, 0, 0, 1},
-        {0x1, LOG_TARGET_TYPE_PERV, 1, 1, 1},
+    // cpltid  target type                  perv cplt instbase count
+        {0x0,  LOG_SBE_ROOT_CHIP_TYPE,      0,   0,   0,       1},
+        {0x1,  LOG_TARGET_TYPE_PERV,        1,   1,   0,       1},
         // Adding second PERV target since chiplet number is not continuous.
-        {0x8, LOG_TARGET_TYPE_PERV, 1, 1, 1},
-        {0xD, LOG_TARGET_TYPE_MEM_PORT, 0, 1, 2},
-        {0xD, LOG_TARGET_TYPE_DIMM, 0, 0, 2},
-        {0xE, LOG_TARGET_TYPE_DIMM, 0, 0, 2},
-        {0x0, LOG_TARGET_TYPE_TEMP_SENSOR, 0, 0, 3}, // First byte is port number
-                                                    // for the TEMP SENSOR target.
+        {0x8,  LOG_TARGET_TYPE_PERV,        1,   1,   8,       1},
+        {0xD,  LOG_TARGET_TYPE_MEM_PORT,    0,   1,   0,       2},
+        {0xD,  LOG_TARGET_TYPE_DIMM,        0,   0,   0,       2},
+        {0xE,  LOG_TARGET_TYPE_DIMM,        0,   0,   2,       2},
+        {0x0,  LOG_TARGET_TYPE_TEMP_SENSOR, 0,   0,   0,       3}, // First byte is port number
+                                                                   // for the TEMP SENSOR target.
     };
 
     const ArrayWrapper<targetInfo_t> G_projTargetMap = WRAP_ARRAY(ody_platTargetMap);
