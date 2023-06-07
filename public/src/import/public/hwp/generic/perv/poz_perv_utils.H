@@ -91,4 +91,5 @@ void strhex(char* o_str, uint64_t i_value, int i_width);
  */
 fapi2::ReturnCode putRingBucket(const fapi2::Target<fapi2::TARGET_TYPE_ALL_MC>& i_target,
                                 const char* i_ring_id,
-                                int i_bucket);
+                                int i_bucket,
+                                const fapi2::RingMode i_ringMode = fapi2::RING_MODE_HEADER_CHECK);
