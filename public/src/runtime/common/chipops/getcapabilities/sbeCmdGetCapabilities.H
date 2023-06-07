@@ -53,7 +53,7 @@ static const uint16_t GETCAPABILITIES_NO_OF_IMAGES = 6;
 /**
  * @brief Structure for GetCapabilities image details
  */
-struct __attribute__((packed, aligned(8))) ImageDetails_t
+struct __attribute__((packed)) ImageDetails_t
 {
     /**
      * @brief 2 bytes is reserved for future needs.
@@ -79,27 +79,20 @@ struct __attribute__((packed, aligned(8))) ImageDetails_t
     uint32_t iv_identifier;
 
     /**
-     * @brief 4 bytes is reserved for future needs.
-     *        Also, its helps to align with the FIFO a word (aka 4bytes)
-     */
-    uint32_t iv_reserved2;
-
-    /**
      * @brief Explicit constructor to initialize its members.
      */
     explicit ImageDetails_t() :
         iv_reserved1(0),
         iv_imageType(CAPABILITY_IMAGES::IMG_TYPE_INVALID),
         iv_buildTime(0),
-        iv_identifier(0),
-        iv_reserved2(0)
+        iv_identifier(0)
     {}
 };
 
 /**
  * @brief Structure for GetCapabilities response data
  */
-struct __attribute__((packed, aligned(8))) GetCapabilityResp_t
+struct __attribute__((packed)) GetCapabilityResp_t
 {
     /**
      * @brief Used for the SBE FW major number
