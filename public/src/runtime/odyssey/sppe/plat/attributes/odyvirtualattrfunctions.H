@@ -45,7 +45,7 @@ namespace fapi2
   */
 template<TargetType K>
 inline
-AttributeRC _getAttrName(const Target<K>& i_target,
+AttributeRC get_ATTR_NAME(const Target<K>& i_target,
         ATTR_NAME_Type& o_val)
 {
     o_val = fapi2::ENUM_ATTR_NAME_ODYSSEY;
@@ -65,7 +65,7 @@ fapi_try_exit:
   */
 template<TargetType K>
 inline
-AttributeRC _getAttrEC(const Target<K>& i_target,
+AttributeRC get_ATTR_EC(const Target<K>& i_target,
         ATTR_EC_Type& o_val)
 {
     // TODO: Uncomment this after plat code is ready for getscom

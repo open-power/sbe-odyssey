@@ -347,12 +347,6 @@ class RealAttrFieldInfo(AttrFieldInfo):
         return retval
 
 class VirtualAttrFieldInfo(AttrFieldInfo):
-    VIRTUAL_FUNCTION = {
-        "ATTR_NAME": "_getAttrName",
-        "ATTR_EC": "_getAttrEC",
-        "ATTR_CHIP_UNIT_POS": "_getAttrChipUnitPos",
-        "ATTR_REL_POS": "_getAttrRelPos"
-    }
 
     def __init__(self,
                  name: str,
@@ -373,7 +367,7 @@ class VirtualAttrFieldInfo(AttrFieldInfo):
 
     @property
     def getter(self):
-        return self.VIRTUAL_FUNCTION[self.name] + "(TARGET, VAL)"
+        return "get_" + self.name + "(TARGET,VAL)"
 
 class EcAttrFieldInfo(AttrFieldInfo):
     has_ec = True
