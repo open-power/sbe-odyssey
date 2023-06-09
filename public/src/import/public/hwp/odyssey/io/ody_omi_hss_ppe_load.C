@@ -81,17 +81,14 @@ fapi2::ReturnCode ody_omi_hss_ppe_load(
 
     PHY_PPE_WRAP0_XIXCR_t WRAP0_XIXCR;
     PHY_PPE_WRAP0_SCOM_CNTL_t WRAP0_SCOM_CNTL;
-
     bool l_invalid = false;
+    fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP> l_ocmb_target;
 
     io_ppe_firs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_firs(FIR_SCOM_LFIR_RW_WCLEAR_REG, FIR_DL0_ERROR_MASK,
             FIR_DL0_ERROR_ACTION, FIR_MC_OMI_RW_WCLEAR_REG,
             FIR_DL0_SKIT_CTL, FIR_TLX_RW_WCLEAR);
-
-    fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP> l_ocmb_target;
     FAPI_TRY(i_target.reduceType(l_ocmb_target));
-
-    l_ppe_firs.ioppe_fir_set(l_ocmb_target);
+    FAPI_TRY(l_ppe_firs.ioppe_fir_set_pre_start(l_ocmb_target));
 
     // Validate inputs
     if (i_img_data == NULL)
