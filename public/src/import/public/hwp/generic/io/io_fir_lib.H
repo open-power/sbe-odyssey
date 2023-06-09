@@ -77,6 +77,7 @@ enum ERROR_MASK_FIR_BITS
     MASK_TX_DEGRADE_MODE = 45,
     MASK_LOST_BLOCK_LOCK = 30,
     MASK_EDPL_THRESH_REACHED = 27,
+    MASK_RX_PERFORMANCE_THRESH_BREACH = 26,
     MASK_TX_PERFORMANCE_THRESH_BREACH = 25,
     MASK_REMOTE_LINK_ERRRO_4 = 19,
     MASK_REMOTE_LINK_ERROR_5 = 18,
@@ -133,7 +134,9 @@ class io_ppe_firs
 
         }
 
-        fapi2::ReturnCode ioppe_fir_set(const fapi2::Target<K, M, V>& i_target);
+        fapi2::ReturnCode ioppe_fir_set_pre_start(const fapi2::Target<K, M, V>& i_target);
+
+        fapi2::ReturnCode ioppe_fir_set_post_start(const fapi2::Target<K, M, V>& i_target);
 
         fapi2::ReturnCode mc_omi_fir_set(const fapi2::Target<K, M, V>& i_target);
 
@@ -153,7 +156,7 @@ class io_ppe_firs
 };
 
 template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
-fapi2::ReturnCode io_ppe_firs<K, M, V>::ioppe_fir_set(const fapi2::Target<K, M, V>& i_target)
+fapi2::ReturnCode io_ppe_firs<K, M, V>::ioppe_fir_set_pre_start(const fapi2::Target<K, M, V>& i_target)
 {
     FAPI_DBG("Start IO PPE FIRs");
     // Mask/recoverable regs
@@ -170,7 +173,6 @@ fapi2::ReturnCode io_ppe_firs<K, M, V>::ioppe_fir_set(const fapi2::Target<K, M, 
     l_buffer.setBit<PPE_EXT_HWERROR>();
     l_buffer.setBit<PPE_HALT_WATCHDOG_OR_INTERRUPT>();
     l_buffer.setBit<PPE_HALT_DEBUG>();
-    l_buffer.setBit<PPE_HALTED>();
     l_buffer.setBit<PPE_WATCHDOG_TIMEOUT>();
     l_buffer.setBit<PPE_ARB_MISSED_SCRUB_TICK>();
     l_buffer.setBit<PPE_ARB_ARRAY_UNCORRECTABLE_ERROR>();
@@ -204,6 +206,25 @@ fapi_try_exit:
 }
 
 template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
+fapi2::ReturnCode io_ppe_firs<K, M, V>::ioppe_fir_set_post_start(const fapi2::Target<K, M, V>& i_target)
+{
+    FAPI_DBG("Start IO PPE FIRs");
+    // Mask/recoverable regs
+    const uint64_t l_lfir_rw_wclear_mask = iv_lfir_rw_wclear + 2;
+
+    fapi2::buffer<uint64_t> l_buffer = 0;
+
+    // Unmask other PHY PPE FIRs
+    FAPI_DBG("Unmask PHY PPE FIRs.");
+    l_buffer.setBit<PPE_HALTED>();
+    FAPI_TRY(fapi2::putScom(i_target, l_lfir_rw_wclear_mask, l_buffer));
+
+fapi_try_exit:
+    FAPI_DBG("End");
+    return fapi2::current_err;
+}
+
+template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
 fapi2::ReturnCode io_ppe_firs<K, M, V>::mc_omi_fir_set(const fapi2::Target<K, M, V>& i_target)
 {
     FAPI_DBG("Start MC OMI FIRs");
@@ -228,6 +249,7 @@ fapi2::ReturnCode io_ppe_firs<K, M, V>::mc_omi_fir_set(const fapi2::Target<K, M,
     l_buffer.setBit<MASK_TX_DEGRADE_MODE>();
     l_buffer.clearBit<MASK_LOST_BLOCK_LOCK>();
     l_buffer.setBit<MASK_TX_PERFORMANCE_THRESH_BREACH>();
+    l_buffer.clearBit<MASK_RX_PERFORMANCE_THRESH_BREACH>();
     l_buffer.setBit<MASK_EDPL_THRESH_REACHED>();
     l_buffer.clearBit<MASK_REMOTE_LINK_ERRRO_4>();
     l_buffer.clearBit<MASK_REMOTE_LINK_ERROR_5>();
