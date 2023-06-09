@@ -197,7 +197,7 @@ int  main(int argc, char **argv)
             break;
         }
 
-        plat_AttrInit();
+        plat_AttrInit(fapi2::ENUM_ATTR_NAME_ODYSSEY);
 
         if(SbeRegAccess::theSbeRegAccess().init())
         {
