@@ -22,13 +22,14 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __SBE_TARGET_SERVICE__
-#define __SBE_TARGET_SERVICE__
+#pragma once
 
-#include <fapi2_target.H>
-#include <return_code.H>
+#include <vector>
+#include <plat_target_sbe.H>
+#include <target_types.H>
 #include <target_filters.H>
 #include "sbe_sp_intf.H"
+#include <fapi2_target.H>
 
 namespace fapi2
 {
@@ -49,14 +50,14 @@ namespace fapi2
         ///
         /// @brief Function to print the G_targets vector
         ///
-        void plat_PrintTargets();
+        void plat_printTargets();
 
         ///
         /// @brief Function to initialize the G_targets vector based on partial good
         ///        targets
         /// @return FAPI2_RC_SUCCESS if okay
         ///
-        ReturnCode plat_TargetsInit();
+        uint32_t plat_targetsInit();
 
         ///
         /// @brief Function to get the target count.
@@ -119,22 +120,10 @@ namespace fapi2
                                   std::vector<plat_target_sbe_handle> &o_children);
 
         ///
-        /// @brief Function to get the proc chip target initialize the G_targets vector
-        /// @return proc target
+        /// @brief Function to get the chip target initialize the G_targets vector
+        /// @return chip target
         ///
-        Target<SBE_ROOT_CHIP_TYPE> plat_getChipTarget()
-        {
-            return ((fapi2::Target<fapi2::SBE_ROOT_CHIP_TYPE>)iv_targets[0]);
-        }
-
-        ///
-        /// @brief Function to get the proc chip target initialize the G_targets vector
-        /// @return proc target
-        ///
-        plat_target_sbe_handle plat_getChipTargetPlatType()
-        {
-            return iv_targets[0];
-        }
+        Target<SBE_ROOT_CHIP_TYPE> plat_getChipTarget();
 
         ///
         /// @brief Function to get target is chiplet
@@ -189,7 +178,7 @@ namespace fapi2
         ///
         sbeSecondaryResponse getSbePlatTargetHandle( const uint8_t i_logTargetType,
                                                      const uint8_t i_instanceId,
-                                                     fapi2::plat_target_handle_t &o_tgtHndl);
+                                                     plat_target_sbe_handle &o_tgtHndl);
 
         ///
         /// @brief Function to get the plat target handle of a perv target using chiplet id
@@ -201,10 +190,10 @@ namespace fapi2
         ///
         sbeSecondaryResponse getPervTargetByChipletId(
             uint8_t i_chiplet_num,
-            fapi2::plat_target_handle_t &o_tgtHndl);
+            plat_target_sbe_handle &o_tgtHndl);
 
     protected:
-        std::vector<fapi2::plat_target_sbe_handle> iv_targets;
+        std::vector<plat_target_sbe_handle> iv_targets;
 
         ///
         /// @brief Determine functional state of a chiplet based target based on functional regions
@@ -242,6 +231,24 @@ namespace fapi2
 
     private:
         ///
+        /// @brief Function to get the proc chip target initialize the G_targets vector
+        ///        Making this function private since, this can be called and casted to any target type,
+        ///        and will not ensure type safe.
+        ///        But this function is required to be called from
+        ///        "inline Target<T, M, V> Target<K, M, V>::getParent(void) const"
+        ///        hence making it friend function of this class.
+        /// @return proc target
+        ///
+        plat_target_sbe_handle plat_getChipTargetPlatType()
+        {
+            return iv_targets[0];
+        }
+        template<TargetType K, MulticastType M, typename V>
+        template<TargetType T>
+        friend
+        inline Target<T, M, V> Target<K, M, V>::getParent(void) const;
+
+        ///
         /// @brief Get all pervasive children for a proc.
         /// @param [in] i_include_nonfunctional Return also targets that are not functional
         /// @param [out] o_children             A vector of child target handles
@@ -266,4 +273,3 @@ namespace fapi2
                                   std::vector<plat_target_sbe_handle> &o_children);
     };
 }
-#endif

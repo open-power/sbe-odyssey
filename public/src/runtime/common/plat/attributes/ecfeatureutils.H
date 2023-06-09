@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,13 +22,12 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+#pragma once
 
-#ifndef __EC_FEATURE_UTILS_H
-#define __EC_FEATURE_UTILS_H
-
-#include <attribute_ids.H>
-#include <virtualattrfunctions.H>
+#include <fapi2_target.H>
+#include <target.H>
 #include <fapi2_chip_ec_feature.H>
+#include <fapi2_error_scope.H>
 
 namespace fapi2
 {
@@ -38,7 +37,7 @@ ReturnCode queryChipEcAndName(
                     fapi2::ATTR_NAME_Type& , fapi2::ATTR_EC_Type & );
 
 template<int T>
-AttributeRC queryChipEcFeature(int2Type<T> id,
+ReturnCode queryChipEcFeature(int2Type<T> id,
                     const Target<fapi2::SBE_ROOT_CHIP_TYPE>& i_target,
                     uint8_t & o_hasFeature)
 {
@@ -53,4 +52,3 @@ AttributeRC queryChipEcFeature(int2Type<T> id,
 }
 
 }
-#endif //__EC_FEATURE_UTILS_H

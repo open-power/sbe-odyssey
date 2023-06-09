@@ -22,11 +22,11 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __FAPI2_TARGET__
-#define __FAPI2_TARGET__
+#pragma once
 
 #include "plat_utils.H"
 #include "target_service.H"
+#include <fapi2_target.H>
 
 namespace fapi2
 {
@@ -394,4 +394,3 @@ namespace fapi2
         return FAPI2_RC_SUCCESS;
     }
 }
-#endif

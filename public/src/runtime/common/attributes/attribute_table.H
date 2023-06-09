@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -21,11 +22,11 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __ATTRIBUTE_TABLE_H__
-#define __ATTRIBUTE_TABLE_H__
+#pragma once
 
 #include <attribute_ids.H>
 #include <attribute_utils.H>
+#include <target_types.H>
 
 namespace fapi2
 {
@@ -75,5 +76,3 @@ extern uint8_t         g_tgts_tab_size;
 } //ATTR
 
 } //fapi2
-
-#endif // __ATTRIBUTE_TABLE_H__

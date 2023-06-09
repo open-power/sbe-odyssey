@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2020,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -113,7 +114,7 @@ uint32_t sbefifo_hwp_data_ostream::put(uint32_t i_length, uint32_t* i_buffer)
 #define SBE_FUNC "sbefifo_hwp_data_ostream::put()"
     SBE_ENTER(SBE_FUNC);
     uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
-    ReturnCode fapiRc = FAPI2_RC_SUCCESS;
+    ReturnCodes fapiRc = FAPI2_RC_SUCCESS;
     if(iv_hbMemAddr) //Dump the data into the memory
     {
         //fapiRc  = iv_memInterface.accessWithBuffer(

@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -21,8 +22,10 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __HWPTABLE_H
-#define __HWPTABLE_H
+#pragma once
+
+#include <stdint.h>
+#include "return_code.H"
 
 using voidfuncptr_t = void (*)(void);
 using hwp_t = fapi2::ReturnCode (*)( voidfuncptr_t );
@@ -57,5 +60,3 @@ struct hwpTable_t
        entries, \
        sizeof(entries)/sizeof(entries[0]) \
     };
-
-#endif

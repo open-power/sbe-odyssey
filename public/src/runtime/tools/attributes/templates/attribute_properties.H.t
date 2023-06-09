@@ -24,7 +24,9 @@
 /* IBM_PROLOG_END_TAG                                                     */
 /* This file is generated from a python script - {{toolname}} */
 #pragma once
-#include <attribute_ids.H>
+
+#include <stdint.h>
+#include <target_types.H>
 
 namespace fapi2
 {

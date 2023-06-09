@@ -22,7 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-/* This file is generated from a python script - {{toolname}} */
+/* This file is generated from a python script - {{toolname}}             */
+
 #include <attribute.H>
 
 namespace fapi2

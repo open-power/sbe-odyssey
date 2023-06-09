@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -27,7 +28,7 @@
 #include <attribute.H>
 #include <target_types.H>
 #include "ppe42_string.h"
-#include <plat_target_service.H>
+#include <target_service.H>
 
 namespace fapi2
 {
@@ -67,7 +68,7 @@ static sbeSecondaryResponse checkTargetPresent(const uint8_t i_logTargetType,
             o_present = true;
             break;
         }
-        fapi2::plat_target_handle_t l_targetHandle;
+        plat_target_sbe_handle l_targetHandle;
 
         l_rc = g_platTarget->getSbePlatTargetHandle(i_logTargetType,
                                                     i_instanceId,

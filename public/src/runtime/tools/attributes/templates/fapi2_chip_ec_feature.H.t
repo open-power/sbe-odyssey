@@ -22,9 +22,17 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-/* This file is generated from a python script - {{toolname}} */
+/* This file is generated from a python script - {{toolname}}             */
 #pragma once
-#include <ecfeatureutils.H>
+
+#include <attribute_ids.H>
+#include <attribute_properties.H>
+
+// create a unique type from an int ( or attribute id)
+template<int I>
+struct int2Type {
+enum { value = I };
+};
 
 namespace fapi2
 {
