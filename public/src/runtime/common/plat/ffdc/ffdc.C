@@ -29,7 +29,7 @@
 
 #include <ffdc.H>
 #include <error_info.H>
-
+#include <return_code.H>
 
 namespace fapi2
 {

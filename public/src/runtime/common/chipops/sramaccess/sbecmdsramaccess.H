@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -21,12 +22,10 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+#pragma once
 
-#ifndef __SBECMDSRAM_H
-#define __SBECMDSRAM_H
-
-#include <stdint.h>
 #include "plat_hwp_data_stream.H"
+#include "return_code.H"
 
 static const uint8_t SBE_32BIT_ALIGN_FACTOR = 4;
 static const uint8_t SBE_64BIT_ALIGN_FACTOR = 8;
@@ -124,5 +123,3 @@ uint32_t sbePutSram (uint8_t *i_pArg);
 uint32_t sbeSramAccessWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
                             fapi2::sbefifo_hwp_data_ostream& i_putStream,
                             const bool i_isGetFlag );
-
-#endif // __SBECMDSRAM_H

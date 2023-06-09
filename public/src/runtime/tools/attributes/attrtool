@@ -75,6 +75,7 @@ def cmd_gensrc(args):
     generate("attribute_properties.H")
     generate("attribute.C")
     generate("attribute.H")
+    generate("attribute_accessors.H")
     generate("attribute_macros.H")
     generate("fapi2_chip_ec_feature.H")
     generate("attribute_override.C")

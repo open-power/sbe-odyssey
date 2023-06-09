@@ -22,8 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#include "plat_target_base.H"
 #include "plat_target_service.H"
+#include "sbe_sp_intf.H"
 #include <fapi2.H>
 
 using namespace fapi2;
@@ -34,7 +34,7 @@ using namespace fapi2;
 // specific targeting implementation.
 static const uint16_t CLOCK_REGION_PERV = 0x8000;
 
-void sbe_target_service::plat_PrintTargets()
+void sbe_target_service::plat_printTargets()
 {
     uint32_t targetCnt = plat_getTargetCount();
     for(uint32_t i = 0; i < targetCnt; i++)
@@ -44,9 +44,9 @@ void sbe_target_service::plat_PrintTargets()
     }
 }
 
-ReturnCode sbe_target_service::plat_TargetsInit()
+uint32_t sbe_target_service::plat_targetsInit()
 {
-    SBE_INFO("sbe_target_service plat_TargetsInit()");
+    SBE_INFO("sbe_target_service plat_targetsInit()");
 
     for (auto &targetInfo : G_projTargetMap)
     {
@@ -65,8 +65,17 @@ ReturnCode sbe_target_service::plat_TargetsInit()
         }
     }
 
-    plat_PrintTargets();
-    return FAPI2_RC_SUCCESS;
+    plat_printTargets();
+    return SBE_SEC_OPERATION_SUCCESSFUL;
+}
+
+///
+/// @brief Function to get the proc chip target initialize the G_targets vector
+/// @return proc target
+///
+Target<SBE_ROOT_CHIP_TYPE> sbe_target_service::plat_getChipTarget()
+{
+    return ((fapi2::Target<fapi2::SBE_ROOT_CHIP_TYPE>)iv_targets[0]);
 }
 
 uint32_t sbe_target_service::plat_getTargetCount()
@@ -125,7 +134,7 @@ void sbe_target_service::plat_updateFunctionalState()
         }
         targetCnt += targetInfo.targetCnt;
     }
-    plat_PrintTargets();
+    plat_printTargets();
 }
 
 void sbe_target_service::getProcChildren( const LogTargetType i_child_type,
@@ -188,9 +197,11 @@ void sbe_target_service::getMulticastChildren(const plat_target_sbe_handle i_par
 
     // If a real multicast target, loop over all targets in the chip
     // but filter for multicast group members.
-    fapi2::buffer<uint64_t> l_enabledTargets;
-    Target<TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_BITX> l_tmpTarget(i_parent);
-    getScom(l_tmpTarget, 0xF0001, l_enabledTargets);
+    uint64_t l_enabledTargets;
+    plat_target_sbe_handle l_tmpTarget(i_parent);
+    l_tmpTarget.setIsMulticast(true);
+    l_tmpTarget.setMcastType(MULTICAST_BITX);
+    getscom_abs_wrap(&l_tmpTarget, 0xF0001, &l_enabledTargets);
 
     if ((i_parent.getTargetType() == LOG_TARGET_TYPE_PERV) )
     {
@@ -228,9 +239,10 @@ void sbe_target_service::loopTargetsByChiplet(const LogTargetType i_type,
     }
 }
 
-sbeSecondaryResponse sbe_target_service::getSbePlatTargetHandle( const uint8_t i_logTargetType,
-                                                                 const uint8_t i_instanceId,
-                                                                 fapi2::plat_target_handle_t &o_tgtHndl)
+sbeSecondaryResponse sbe_target_service::getSbePlatTargetHandle(
+    const uint8_t i_logTargetType,
+    const uint8_t i_instanceId,
+    plat_target_sbe_handle &o_tgtHndl)
 {
 #define SBE_FUNC " getSbePlatTargetHandle: "
     SBE_ENTER(SBE_FUNC);
@@ -291,7 +303,7 @@ sbeSecondaryResponse sbe_target_service::getSbePlatTargetHandle( const uint8_t i
 
 sbeSecondaryResponse sbe_target_service::getPervTargetByChipletId(
     uint8_t i_chiplet_num,
-    fapi2::plat_target_handle_t &o_tgtHndl)
+    plat_target_sbe_handle &o_tgtHndl)
 {
 #define SBE_FUNC " getPervTargetByChipletId: "
     SBE_ENTER(SBE_FUNC);

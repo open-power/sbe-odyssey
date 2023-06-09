@@ -22,15 +22,13 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-/* This file is generated from a python script - {{toolname}} */
+/* This file is generated from a python script - {{toolname}}             */
 #pragma once
-#include <attribute.H>
+
 #include <ecfeatureutils.H>
-#include <ppe42_string.h>
 {% if virt_header %}
 #include <{{virt_header}}>
 {% endif %}
-
 
 {% for attr in attributes %}
 /*-----------------------------------------*/

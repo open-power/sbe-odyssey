@@ -188,10 +188,10 @@ int  main(int argc, char **argv)
         // Initialize heap space after bootloader has loaded paks to pibmem
         Heap::get_instance().initialize();
 
-        fapi2::ReturnCode fapiRc = g_platTarget->plat_TargetsInit();
+        fapi2::ReturnCode fapiRc = g_platTarget->plat_targetsInit();
         if( fapiRc != fapi2::FAPI2_RC_SUCCESS )
         {
-            SBE_ERROR(SBE_FUNC"plat_TargetsInit failed  fapiRc 0x%08x",fapiRc);
+            SBE_ERROR(SBE_FUNC"plat_targetsInit failed  fapiRc 0x%08x",fapiRc);
             stateTransition(SBE_EVENT_CMN_FAILURE);
             // Hard Reset SBE to recover
             break;

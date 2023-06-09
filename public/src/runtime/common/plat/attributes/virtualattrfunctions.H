@@ -23,22 +23,14 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#ifndef __VIRTUAL_FUNCTIONS_H
-#define __VIRTUAL_FUNCTIONS_H
+#pragma once
 
-#include <attribute_ids.H>
-#include <return_code.H>
+#include <attribute_properties.H>
 #include "fapi2_target.H"
 #include "target.H"
 
 namespace fapi2
 {
-
-// create a unique type from an int ( or attribute id)
-template<int I>
-struct int2Type {
-enum { value = I };
-};
 
 // Class to pass return code for attribute related functions
 class AttributeRC
@@ -124,5 +116,3 @@ AttributeRC get_ATTR_REL_POS(const Target<fapi2::TARGET_TYPE_DIMM>& i_target,
     return FAPI2_RC_SUCCESS;
 }
 }
-
-#endif //__VIRTUAL_FUNCTIONS_H

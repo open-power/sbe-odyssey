@@ -30,6 +30,7 @@
 
 #include <attribute_properties.H>
 #include <attribute_macros.H>
+#include <attribute_accessors.H>
 
 // Work around for EC attributes
 #ifdef ATTR_CHIP_EC_FEATURE_PERV_NET_REGION_3_NOT_4_GETMACRO
