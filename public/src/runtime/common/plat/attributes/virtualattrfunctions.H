@@ -65,7 +65,7 @@ class AttributeRC
   */
 template<TargetType K>
 inline
-AttributeRC _getAttrChipUnitPos(const Target<K>& i_target,
+AttributeRC get_ATTR_CHIP_UNIT_POS(const Target<K>& i_target,
         ATTR_CHIP_UNIT_POS_Type& o_val)
 {
     o_val = i_target.get().getTargetInstance();
@@ -74,7 +74,7 @@ AttributeRC _getAttrChipUnitPos(const Target<K>& i_target,
 
 template<>
 inline
-AttributeRC _getAttrChipUnitPos(const Target<TARGET_TYPE_PERV>& i_target,
+AttributeRC get_ATTR_CHIP_UNIT_POS(const Target<TARGET_TYPE_PERV>& i_target,
                                 ATTR_CHIP_UNIT_POS_Type& o_val)
 {
     o_val = i_target.getChipletNumber();
@@ -96,7 +96,7 @@ AttributeRC _getAttrChipUnitPos(const Target<TARGET_TYPE_PERV>& i_target,
   */
 template<TargetType K>
 inline
-AttributeRC _getAttrRelPos(const Target<K>& i_target,
+AttributeRC get_ATTR_REL_POS(const Target<K>& i_target,
         ATTR_REL_POS_Type& o_val)
 {
     o_val = i_target.get().getTargetInstance();
@@ -117,7 +117,7 @@ AttributeRC _getAttrRelPos(const Target<K>& i_target,
   */
 template<>
 inline
-AttributeRC _getAttrRelPos(const Target<fapi2::TARGET_TYPE_DIMM>& i_target,
+AttributeRC get_ATTR_REL_POS(const Target<fapi2::TARGET_TYPE_DIMM>& i_target,
         ATTR_REL_POS_Type& o_val)
 {
     o_val = i_target.get().getTargetInstance() % 2;
