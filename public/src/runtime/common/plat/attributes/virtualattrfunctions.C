@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/plat/attributes/odyvirtualattrfunctions.H $ */
+/* $Source: public/src/runtime/common/plat/attributes/virtualattrfunctions.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,40 +21,13 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-
-#ifndef __ODY_VIRTUAL_FUNCTIONS_H
-#define __ODY_VIRTUAL_FUNCTIONS_H
-
-#include <virtualattrfunctions.H>
+#include "virtualattrfunctions.H"
 
 namespace fapi2
 {
-/**
-  * @brief read the EC level of the chip
-  *
-  * Return the EC level of the chip.
-  *
-  * @param[in]  i_target input target
-  * @param[out] o_val    output parameter
-  *
-  * @return   returncode
-  */
-template<TargetType K>
-inline
-AttributeRC get_ATTR_EC(const Target<K>& i_target,
-        ATTR_EC_Type& o_val)
+
+namespace ATTR
 {
-    // TODO: Uncomment this after plat code is ready for getscom
-    /*
-    fapi2::buffer<uint64_t> cbs_envstat_reg = 0;
-    fapi2::getScom(i_target, scomt::poz::FSXCOMP_FSXLOG_CBS_ENVSTAT_RO,
-                             cbs_envstat_reg);
-
-    o_val = ((cbs_envstat_reg >> 32) & 0xFF);
-    */
-    o_val = 0x10;
-    return FAPI2_RC_SUCCESS;
+uint8_t ATTR_NAME = ENUM_ATTR_NAME_NONE;
 }
 }
-
-#endif //__ODY_VIRTUAL_FUNCTIONS_H

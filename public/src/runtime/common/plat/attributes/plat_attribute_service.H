@@ -52,4 +52,4 @@
 /*
  * @brief - plat_AttrInit : Initiallize attributes based on the platform logic
  */
-void plat_AttrInit();
+void plat_AttrInit(fapi2::ATTR_NAME_Type i_chip_name);

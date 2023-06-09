@@ -28,6 +28,7 @@
 #include <attribute_properties.H>
 #include "fapi2_target.H"
 #include "target.H"
+#include "return_code.H"
 
 namespace fapi2
 {
@@ -43,6 +44,11 @@ class AttributeRC
     private:
     uint32_t value;
 };
+
+namespace ATTR
+{
+extern uint8_t ATTR_NAME;
+}
 
 /**
   * @brief read the targets positions
@@ -113,6 +119,27 @@ AttributeRC get_ATTR_REL_POS(const Target<fapi2::TARGET_TYPE_DIMM>& i_target,
         ATTR_REL_POS_Type& o_val)
 {
     o_val = i_target.get().getTargetInstance() % 2;
+    return FAPI2_RC_SUCCESS;
+}
+
+/**
+  * @brief read the chip name of the target
+  *
+  * Return the name of the chip.
+  *
+  * @param[in]  i_target input target
+  * @param[out] o_val    output parameter
+  *
+  * @return   returncode
+  */
+template<TargetType K>
+inline
+AttributeRC get_ATTR_NAME(
+    const Target<K>& i_target,
+    ATTR_NAME_Type& o_val)
+{
+    o_val = fapi2::ATTR::ATTR_NAME;
+
     return FAPI2_RC_SUCCESS;
 }
 }

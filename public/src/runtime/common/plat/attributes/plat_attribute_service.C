@@ -26,12 +26,10 @@
 // This file is to just not include target.H file from import
 // Nothing required here.
 
-#include <attribute_properties.H>
-#include <fapi2_attribute_service.H>
 #include <plat_attribute_service.H>
 #include "sbeutil.H"
 
-void plat_AttrInit()
+void plat_AttrInit(fapi2::ATTR_NAME_Type i_chip_name)
 {
 #define SBE_FUNC "plat_AttrInit "
 
@@ -41,6 +39,8 @@ void plat_AttrInit()
 
         fapi2::ATTR::TARGET_TYPE_SYSTEM::ATTR_IS_SIMICS = 1;
     }
+
+    fapi2::ATTR::ATTR_NAME = i_chip_name;
 
 #undef SBE_FUNC
 }

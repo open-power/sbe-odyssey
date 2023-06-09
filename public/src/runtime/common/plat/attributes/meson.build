@@ -25,3 +25,4 @@
 
 abs_runtime_cmn_plat_attribute_c_path = []
 abs_runtime_cmn_plat_attribute_c_path += files('plat_attribute_service.C')
+abs_runtime_cmn_plat_attribute_c_path += files('virtualattrfunctions.C')
