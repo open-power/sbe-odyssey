@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -32,9 +32,25 @@
     Invalid PPE or MEMREGS image passed to HWP
   </description>
   <ffdc>TARGET</ffdc>
-  <ffdc>PPE_IMAGE</ffdc>
+  <ffdc>IMAGE_TYPE</ffdc>
+  <ffdc>IMAGE_CHIPLET</ffdc>
   <ffdc>PPE_IMAGE_SIZE</ffdc>
-  <ffdc>MEM_REGS_IMAGE</ffdc>
+  <callout>
+    <procedure>CODE</procedure>
+    <priority>HIGH</priority>
+  </callout>
+</hwpError>
+<!-- ******************************************************************** -->
+<hwpError>
+  <sbeError/>
+  <rc>RC_P11S_LOAD_PPE_IMG_ERROR</rc>
+  <description>
+    Invalid Spinal PPE or MEMREGS image passed to HWP
+  </description>
+  <ffdc>TARGET</ffdc>
+  <ffdc>IMAGE_TYPE</ffdc>
+  <ffdc>IMAGE_CHIPLET</ffdc>
+  <ffdc>PPE_IMAGE_SIZE</ffdc>
   <callout>
     <procedure>CODE</procedure>
     <priority>HIGH</priority>
