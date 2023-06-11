@@ -93,10 +93,10 @@ void SbeFFDCPackage::updateSBEpackageDataHeader(void)
         // Package SBE Attr Data Blob with Field id and length
         uint32_t *startAddr = &_attrs_start_;
         uint32_t *endAddr = &_attrs_end_;
-        uint32_t len = ALIGN_8_BYTES(endAddr-startAddr);
+        uint32_t len = ALIGN_8_BYTES((uint32_t)endAddr-(uint32_t)startAddr);
         SBE_INFO(SBE_FUNC " Attr Blob Length is 0x%08x", len);
         iv_sbeAttrBlob.field.fieldId = (uint16_t)SBE_FFDC_ATTR_DATA;
-        iv_sbeAttrBlob.field.fieldLen = len * sizeof(uint32_t) ;
+        iv_sbeAttrBlob.field.fieldLen = len;
         iv_ffdcPackageHeader.lenInWords += ( sizeof(packageBlobField_t) +
                              iv_sbeAttrBlob.field.fieldLen ) / sizeof(uint32_t);
         SBE_INFO(SBE_FUNC" Enable SBE_FFDC_ATTR_DATA with lenInWords[%d]",
