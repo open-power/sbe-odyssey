@@ -42,10 +42,9 @@ enum POZ_PERV_MOD_CHIPLET_CLOCKING_Private_Constants
     SIM_CYCLE_DELAY = 1000, // unit in cycles
     CPLT_ALIGN_CHECK_POLL_COUNT = 10, // count to wait for chiplet aligned
     CPLT_OPCG_DONE_DC_POLL_COUNT = 10,    // count to wait for chiplet opcg done
-    OPCG_DONE_SCAN0_POLL_COUNT = 200, // Scan0 Poll count
-    OPCG_DONE_SCAN0_HW_NS_DELAY = 16000, // unit is nano seconds [min : 8k cycles x 4 = 8000/2 x 4 = 16000 x 10(-9) = 16 us
-    //                       max : 8k cycles  =  (8000/25) x 10 (-6) = 320 us]
-    OPCG_DONE_SCAN0_SIM_CYCLE_DELAY = 800000, // unit is cycles, to match the poll count change ( 10000 * 8 )
+    OPCG_DONE_SCAN0_POLL_COUNT = 1000, // Scan0 Poll count
+    OPCG_DONE_SCAN0_HW_NS_DELAY = 40000, // unit is nano seconds
+    OPCG_DONE_SCAN0_SIM_CYCLE_DELAY = 2000000, // unit is cycles, to match the poll count change
     OPCG_DONE_ARRAYINIT_HW_NS_DELAY = 200000, // unit is nano seconds [min : 400k/2 = 200k ns = 200 us
     //                       max : 200k /25 = 8000 us = 8 ms]
     OPCG_DONE_ARRAYINIT_POLL_COUNT = 8000, // Arrayinit Poll count
