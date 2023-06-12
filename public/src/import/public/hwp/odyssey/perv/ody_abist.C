@@ -89,8 +89,10 @@ ReturnCode ody_abist(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 
     bist_diags l_bist_diags = {0};
     std::vector<uint32_t> l_failing_rings;
+    ReturnCode l_rc;
 
-    FAPI_TRY(poz_bist(i_target, ody_abist_params, l_bist_diags, l_failing_rings));
+    FAPI_EXEC_HWP(l_rc, poz_bist, i_target, ody_abist_params, l_bist_diags, l_failing_rings);
+    FAPI_TRY(l_rc);
 
     if (l_bist_diags.completed_stages & ody_abist_params.bist_stages::COMPARE)
     {
