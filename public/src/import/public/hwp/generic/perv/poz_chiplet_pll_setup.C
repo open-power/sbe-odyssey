@@ -43,7 +43,9 @@ enum POZ_CHIPLET_PLL_SETUP_Private_Constants
 {
 };
 
-ReturnCode poz_chiplet_pll_setup(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
+ReturnCode poz_chiplet_pll_setup(
+    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    fapi2::MulticastGroup i_mcgroup)
 {
     ATTR_IO_TANK_PLL_BYPASS_Type l_attr_io_tank_pll_bypass;
     CPLT_CTRL1_t CPLT_CTRL1;
@@ -53,7 +55,7 @@ ReturnCode poz_chiplet_pll_setup(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targe
     std::vector<Target<TARGET_TYPE_PERV>> l_chiplets_uc;
 
     FAPI_INF("Entering ...");
-    FAPI_TRY(get_hotplug_targets(i_target, l_chiplets_mc, &l_chiplets_uc));
+    FAPI_TRY(get_hotplug_targets(i_target, l_chiplets_mc, &l_chiplets_uc, i_mcgroup));
 
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_IO_TANK_PLL_BYPASS, i_target, l_attr_io_tank_pll_bypass));
 

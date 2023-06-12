@@ -26,6 +26,7 @@ import_generic_xml_dir_base_path = pub_import_dir_path + '/hwp/generic/xml/error
 
 common_error_xml_files = [
                           'poz_perv_mod_chiplet_clocking_errors.xml',
+                          'poz_perv_mod_chip_clocking_errors.xml',
                           'poz_perv_mod_misc_errors.xml',
                           'poz_bist_errors.xml',
                           'poz_sbe_plat_errors.xml',

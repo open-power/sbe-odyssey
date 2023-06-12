@@ -1162,7 +1162,7 @@ def zme_chiplet_reset():
         #########################################
         ## L3 voltage regulator setup for VBLH ##
         #########################################
-        
+
         ## Clear and then set VREF anatune in CPLT_CONF0(56:63) according to value in attribute
         CPLT_CONF0[56:64] = ATTR_L3_VREF_ANATUNE;
 
@@ -1330,15 +1330,21 @@ def zme_chiplet_pll_setup():
         ## Relase PLL bypass
         NET_CTRL0.DANIELS_MAGIC_FPLL_BYPASS = 0
 
-    poz_chiplet_pll_setup()
+    # Exclude PERV/NEST/EX chiplets since they don't have their own PLLs but mirror the Perv(Nest) PLL lock
+    # which has already been checked in zme_tp_pll_setup
+    l_chiplets = 0x1FFF000000000000
 
-def poz_chiplet_pll_setup():
+    mod_multicast_setup(i_target, MCGROUP_4, l_chiplets, TARGET_STATE_FUNCTIONAL)
+    poz_chiplet_pll_setup(MCGROUP_4)
+
+def poz_chiplet_pll_setup(MulticastGroup i_mcgroup = MCGROUP_GOOD_NO_TP):
     if ATTR_IO_TANK_PLL_BYPASS:
         return
 
-    CPLT_CTRL1.REGION13_FENCE = 0    # Drop PLL region fences
+    with all chiplets in i_mcgroup via multicast:
+        ## Drop PLL region fences
+        CPLT_CTRL1.REGION13_FENCE = 0
 
-    with all chiplets except TP via multicast:
         ## Start chiplet PLLs
         NET_CTRL0.PLL_TEST_ENABLE = 0
         # write NET_CTRL0
@@ -1348,11 +1354,11 @@ def poz_chiplet_pll_setup():
         ## Check for PLL lock
         mod_poll_pll_lock(chiplets, pll::ALL_PLLS)
 
-        ## Relase PLL bypass
+        ## Release PLL bypass
         NET_CTRL0.PLL_BYPASS = 0
 
     ## Enable PLL unlock error reporting
-    for chiplet in all chiplets except TP:
+    for chiplet in i_mcgroup:
         # gotta do this via RMW because there's no write-clear address
         PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS = 0
 

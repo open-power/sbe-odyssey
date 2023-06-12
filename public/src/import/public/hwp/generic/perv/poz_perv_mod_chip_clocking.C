@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -75,9 +75,39 @@ ReturnCode mod_poll_pll_lock(
     pll_lock_bits i_pll_mask)
 {
     PLL_LOCK_t PLL_LOCK;
+    fapi2::ReturnCode l_rc;
+    fapi2::buffer<uint64_t> l_read_value;
+    uint64_t l_check_value = (uint64_t)i_pll_mask << 56;
 
     FAPI_INF("Entering ...");
-    return _mod_poll_pll_lock(i_target, PLL_LOCK.addr, ((uint64_t)i_pll_mask << 56));
+    l_rc = _mod_poll_pll_lock(i_target, PLL_LOCK.addr, l_check_value);
+
+    if (l_rc == fapi2::FAPI2_RC_FALSE)
+    {
+        FAPI_INF("Gather information about failing chiplets and PLLs");
+        uint64_t l_failed_chiplets = 0;
+        uint64_t l_failed_plls = 0;
+
+        for (auto l_chiplet : i_target.getChildren<fapi2::TARGET_TYPE_PERV>())
+        {
+            FAPI_TRY(fapi2::getScom(l_chiplet, PLL_LOCK.addr, l_read_value));
+
+            if ((l_read_value & l_check_value) != l_check_value)
+            {
+                FAPI_ERR("Chiplet %d PLL lock failed: PLL_LOCK(0:8)=0x02x",
+                         l_chiplet.getChipletNumber(), l_read_value >> 56);
+                l_failed_plls |= (l_read_value & l_check_value) ^ l_check_value;
+                l_failed_chiplets |= (1ULL << (63 - l_chiplet.getChipletNumber()));
+            }
+        }
+
+        FAPI_ASSERT(false,
+                    fapi2::POZ_PLL_LOCK_ERROR()
+                    .set_FAILED_CHIPLETS(l_failed_chiplets)
+                    .set_FAILED_PLLS(l_failed_plls)
+                    .set_PROC_TARGET(i_target),
+                    "ERROR: PLL LOCK ERROR");
+    }
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");

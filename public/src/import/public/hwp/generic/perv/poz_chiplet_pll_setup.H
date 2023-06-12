@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -34,14 +34,19 @@
 
 #include <fapi2.H>
 
-typedef fapi2::ReturnCode (*poz_chiplet_pll_setup_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&);
+typedef fapi2::ReturnCode (*poz_chiplet_pll_setup_FP_t)(
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&,
+    fapi2::MulticastGroup);
 
 /// @brief Start chiplet PLLs & Check for PLL lock
 ///
-/// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_target    Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_mcgroup   (optional) Multicast group to use (defaults to MCGROUP_GOOD_NO_TP)
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {
-    fapi2::ReturnCode poz_chiplet_pll_setup(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target);
+    fapi2::ReturnCode poz_chiplet_pll_setup(
+        const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+        fapi2::MulticastGroup i_mcgroup = fapi2::MCGROUP_GOOD_NO_TP);
 }

@@ -64,7 +64,20 @@ def _mod_poll_pll_lock(target<ANY_POZ_CHIP|PERV|MC, MCAST_AND>, uint32_t i_reg_a
 
 # Standard poll for PLL lock using the PCB Responder
 def mod_poll_pll_lock(target<PERV|MC, MCAST_AND>, pll_lock_bits i_pll_mask):
-    return _mod_poll_pll_lock(i_target, PLL_LOCK_REG, i_pll_mask << 56)
+    l_rc = _mod_poll_pll_lock(i_target, PLL_LOCK_REG, i_pll_mask << 56)
+
+    if l_rc == TIMEOUT:
+        ## Gather information about failing chiplets and PLLs
+        l_failed_chiplets = 0
+        l_failed_plls = 0
+        for l_chiplet in i_target.getChildren<PERV>():
+            l_value = getScom(l_chiplet, i_reg_addr)
+            if (l_value & i_check_value) != i_check_value:
+                l_failed_plls |= (l_value & i_check_value) ^ i_check_value
+                l_failed_chiplets |= (1ULL << (63 - l_chiplet.getChipletNumber()))
+
+        log l_failed_chiplets and l_failed_plls
+        FAPI_ASSERT(PLL_LOCK_ERROR, i_target, l_failed_chiplets, l_failed_plls)
 
 # Poll for PLL lock using the FSI2PIB status register, for cases where the PCB is not up yet
 def mod_poll_pll_lock_fsi2pib(target<ANY_POZ_CHIP>, pll_lock_bits i_pll_mask):
