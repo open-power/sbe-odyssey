@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2020,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -62,7 +63,7 @@ namespace fapi2
          * @param[in] fifoType       Which FIFO to use
          * @param[in] doFifoAccess   Do FIFO data stream to get data
          */
-        sbefifo_hwp_data_istream( sbeFifoType fifoType = SBE_FIFO,
+        sbefifo_hwp_data_istream( sbeFifoType fifoType,
                                   uint32_t words_left = 0,
                                   uint32_t *data = NULL,
                                   bool doFifoAccess = true ):
@@ -131,7 +132,7 @@ namespace fapi2
          * @param[in] doRespHeader   Do FIFO header response
          *
          */
-        sbefifo_hwp_data_ostream( sbeFifoType type = SBE_FIFO,
+        sbefifo_hwp_data_ostream( sbeFifoType type,
                                   bool doRespHeader = true,
                                   uint64_t hbMemAddr = ADDR_NOT_INITAILSED ):
                                   iv_words_written(0),
