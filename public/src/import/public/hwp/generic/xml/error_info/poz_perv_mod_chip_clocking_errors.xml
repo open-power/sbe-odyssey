@@ -49,4 +49,13 @@
       <ffdc>CLOCK_POS</ffdc>
    </hwpError>
   <!-- ******************************************************************** -->
+   <hwpError>
+      <sbeError/>
+      <rc>RC_POZ_PLL_LOCK_ERROR</rc>
+      <description>Chiplet PLL lock error</description>
+      <ffdc>PROC_TARGET</ffdc>
+      <ffdc>FAILED_CHIPLETS</ffdc>
+      <ffdc>FAILED_PLLS</ffdc>
+   </hwpError>
+  <!-- ******************************************************************** -->
 </hwpErrors>
