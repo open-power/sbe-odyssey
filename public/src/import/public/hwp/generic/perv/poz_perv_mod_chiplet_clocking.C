@@ -61,12 +61,19 @@ ReturnCode poll_opcg_done(
     bool i_poll_abist_done)
 {
     CPLT_STAT0_t CPLT_STAT0;
-    // must be marked unused since FAPI_ASSERT might be a noop on some platforms
-    uint32_t original_poll_count __attribute__((unused)) = i_poll_count;
+    uint32_t l_poll_count = 0;
 
-    while (i_poll_count != 0)
+    if (!i_poll_abist_done)
     {
         FAPI_INF("Reading CPLT_STAT0 register to check OPCG_DONE");
+    }
+    else
+    {
+        FAPI_INF("Reading CPLT_STAT0 register to check OPCG_DONE and ABIST_DONE");
+    }
+
+    while (l_poll_count < i_poll_count)
+    {
         FAPI_TRY(CPLT_STAT0.getScom(i_target));
 
         if (CPLT_STAT0.get_OPCG_DONE() || (i_poll_abist_done && CPLT_STAT0.get_ABIST_DONE()))
@@ -75,15 +82,15 @@ ReturnCode poll_opcg_done(
         }
 
         FAPI_TRY(fapi2::delay(i_hw_delay, i_sim_delay));
-        --i_poll_count;
+        ++l_poll_count;
     }
 
-    FAPI_DBG("Loop Count :%d", i_poll_count);
+    FAPI_INF("Loop Count :%d", l_poll_count);
 
-    FAPI_ASSERT(i_poll_count > 0,
+    FAPI_ASSERT(l_poll_count < i_poll_count,
                 fapi2::POZ_OPCG_DONE_NOT_SET_ERR()
                 .set_PERV_CPLT_STAT0(CPLT_STAT0)
-                .set_POLL_COUNT(original_poll_count)
+                .set_POLL_COUNT(i_poll_count)
                 .set_HW_DELAY(i_hw_delay)
                 .set_PROC_TARGET(i_target),
                 "ERROR:OPCG DONE BIT NOT SET");
