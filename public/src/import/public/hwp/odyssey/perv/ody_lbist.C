@@ -102,8 +102,10 @@ ReturnCode ody_lbist(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
     bist_diags l_bist_diags = {0};
     std::vector<uint32_t> l_failing_rings;
     auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
+    ReturnCode l_rc;
 
-    FAPI_TRY(poz_bist(i_target, ody_lbist_params, l_bist_diags, l_failing_rings));
+    FAPI_EXEC_HWP(l_rc, poz_bist, i_target, ody_lbist_params, l_bist_diags, l_failing_rings);
+    FAPI_TRY(l_rc);
 
     if (l_bist_diags.completed_stages & ody_lbist_params.bist_stages::COMPARE)
     {
