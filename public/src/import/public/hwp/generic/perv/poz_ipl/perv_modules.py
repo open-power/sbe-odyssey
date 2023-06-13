@@ -342,6 +342,11 @@ def mod_setup_clockstop_on_xstop(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_d
     ## Enable clockstop on checkstop
     EPS_FIR_CLKSTOP_ON_XSTOP_MASK1.flush<1>.insertFromRight<0, 8>(ATTR_CLOCKSTOP_ON_XSTOP);
 
+def mod_setup_tracestop_on_xstop(target<ANY_POZ_CHIP>):
+    for chiplet in MCGROUP_ALL_BUT_TP:
+        DBG_MODE_REG.STOP_ON_XSTOP_SELECTION = 1
+        DBG_TRACE_MODE_REG_2.STOP_ON_ERR = 1
+
 def mod_hangpulse_setup(target<PERV | MC>, uint8_t i_pre_divider, hang_pulse_t *i_hangpulse_table):
     PRE_COUNTER_REG = 0
     PRE_COUNTER_REG.PRE_COUNTER = i_pre_divider
