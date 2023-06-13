@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -58,7 +58,7 @@ void sbe_interrupt_handler (void *i_pArg, PkIrqId i_irq)
     switch (i_irq)
     {
         case SBE_IRQ_SBEFIFO_RESET:
-            fifoType = sbeFifoGetSource(true);
+	  fifoType = sbeFifoGetSource(true, SBE_GLOBAL->pibCtrlId);
             curInterface = sbeFifoGetInstSource(fifoType, true);
             SBE_GLOBAL->sbeIntrSource.setIntrSource(SBE_INTERRUPT_ROUTINE,
                                                     curInterface);
@@ -68,7 +68,7 @@ void sbe_interrupt_handler (void *i_pArg, PkIrqId i_irq)
             break;
 
         case SBE_IRQ_SBEFIFO_DATA:
-            fifoType = sbeFifoGetSource(false);
+            fifoType = sbeFifoGetSource(false, SBE_GLOBAL->pibCtrlId);
             curInterface = sbeFifoGetInstSource(fifoType, false);
             SBE_GLOBAL->sbeIntrSource.setIntrSource(SBE_INTERRUPT_ROUTINE,
                                                     curInterface);
