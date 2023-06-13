@@ -665,6 +665,7 @@ enum opcode
     READ             = 0x10,
     WRITE            = 0x08,
     WRITE_CONTIGUOUS = 0x28,
+    READ_CONTIGUOUS  = 0x30,
 };
 }; // ns i2c
 
