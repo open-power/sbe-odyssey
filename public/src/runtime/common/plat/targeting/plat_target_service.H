@@ -50,7 +50,7 @@ namespace fapi2
         ///
         /// @brief Function to print the G_targets vector
         ///
-        void plat_printTargets();
+        void plat_printTargets() const;
 
         ///
         /// @brief Function to initialize the G_targets vector based on partial good
@@ -63,7 +63,7 @@ namespace fapi2
         /// @brief Function to get the target count.
         ///
         /// @return number of target.
-        uint32_t plat_getTargetCount();
+        uint32_t plat_getTargetCount() const;
 
         ///
         /// @brief Update target functional state based on ATTR_PG
@@ -117,20 +117,20 @@ namespace fapi2
         ///
         void getMulticastChildren(const plat_target_sbe_handle i_parent,
                                   const bool i_include_nonfunctional,
-                                  std::vector<plat_target_sbe_handle> &o_children);
+                                  std::vector<plat_target_sbe_handle> &o_children) const;
 
         ///
         /// @brief Function to get the chip target initialize the G_targets vector
         /// @return chip target
         ///
-        Target<SBE_ROOT_CHIP_TYPE> plat_getChipTarget();
+        Target<SBE_ROOT_CHIP_TYPE> plat_getChipTarget() const;
 
         ///
         /// @brief Function to get target is chiplet
         /// @tparam K log target type (template)
         ///
         template <LogTargetType K>
-        constexpr void plat_checkTargetIsChiplet( )
+        constexpr void plat_checkTargetIsChiplet( ) const
         {
             static_assert( (TARGET_TYPE_CHIPLETS && GET_FAPI_TARGET_TYPE(K)) , "Error: Destination type is not a chiplet");
         }
@@ -178,19 +178,7 @@ namespace fapi2
         ///
         sbeSecondaryResponse getSbePlatTargetHandle( const uint8_t i_logTargetType,
                                                      const uint8_t i_instanceId,
-                                                     plat_target_sbe_handle &o_tgtHndl);
-
-        ///
-        /// @brief Function to get the plat target handle of a perv target using chiplet id
-        /// @param [in] i_chiplet_num chilet id of the target
-        /// @param [out] o_tgtHndl fapi plat target handle
-        /// @return sbeSecondaryResponse Secondary RC
-        ///           SBE_SEC_OPERATION_SUCCESSFUL: Valid i_logTargetType and i_instanceId passed
-        ///           SBE_SEC_CHIPLET_ID_NOT_PRESENT_IN_SBE: chiplet id passed is not valid for this SBE
-        ///
-        sbeSecondaryResponse getPervTargetByChipletId(
-            uint8_t i_chiplet_num,
-            plat_target_sbe_handle &o_tgtHndl);
+                                                     plat_target_sbe_handle &o_tgtHndl) const;
 
     protected:
         std::vector<plat_target_sbe_handle> iv_targets;
@@ -213,7 +201,7 @@ namespace fapi2
         /// @return that target's desired functional state
         virtual bool plat_isChipletBasedTargetFunctional(
             plat_target_sbe_handle &i_target,
-            uint16_t i_functional_regions);
+            uint16_t i_functional_regions) const;
 
         ///
         /// @brief Determine functional state of a specialtarget based on functional regions
@@ -227,7 +215,7 @@ namespace fapi2
         ///
         /// @return that target's desired functional state
         virtual bool plat_isOtherTargetFunctional(
-            plat_target_sbe_handle &i_target);
+            plat_target_sbe_handle &i_target) const;
 
     private:
         ///
@@ -270,6 +258,18 @@ namespace fapi2
         void loopTargetsByChiplet(const LogTargetType i_type,
                                   const buffer<uint64_t> &i_enabled,
                                   const bool i_include_nonfunctional,
-                                  std::vector<plat_target_sbe_handle> &o_children);
+                                  std::vector<plat_target_sbe_handle> &o_children) const;
+
+        ///
+        /// @brief Function to get the plat target handle of a perv target using chiplet id
+        /// @param [in] i_chiplet_num chilet id of the target
+        /// @param [out] o_tgtHndl fapi plat target handle
+        /// @return sbeSecondaryResponse Secondary RC
+        ///           SBE_SEC_OPERATION_SUCCESSFUL: Valid i_logTargetType and i_instanceId passed
+        ///           SBE_SEC_CHIPLET_ID_NOT_PRESENT_IN_SBE: chiplet id passed is not valid for this SBE
+        ///
+        sbeSecondaryResponse getPervTargetByChipletId(
+            uint8_t i_chiplet_num,
+            plat_target_sbe_handle &o_tgtHndl) const;
     };
 }
