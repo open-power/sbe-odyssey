@@ -34,7 +34,7 @@ using namespace fapi2;
 // specific targeting implementation.
 static const uint16_t CLOCK_REGION_PERV = 0x8000;
 
-void sbe_target_service::plat_printTargets()
+void sbe_target_service::plat_printTargets() const
 {
     uint32_t targetCnt = plat_getTargetCount();
     for(uint32_t i = 0; i < targetCnt; i++)
@@ -69,16 +69,12 @@ uint32_t sbe_target_service::plat_targetsInit()
     return SBE_SEC_OPERATION_SUCCESSFUL;
 }
 
-///
-/// @brief Function to get the proc chip target initialize the G_targets vector
-/// @return proc target
-///
-Target<SBE_ROOT_CHIP_TYPE> sbe_target_service::plat_getChipTarget()
+Target<SBE_ROOT_CHIP_TYPE> sbe_target_service::plat_getChipTarget() const
 {
     return ((fapi2::Target<fapi2::SBE_ROOT_CHIP_TYPE>)iv_targets[0]);
 }
 
-uint32_t sbe_target_service::plat_getTargetCount()
+uint32_t sbe_target_service::plat_getTargetCount() const
 {
     uint32_t targetCnt = 0;
     for (auto &targetInfo : G_projTargetMap)
@@ -89,7 +85,7 @@ uint32_t sbe_target_service::plat_getTargetCount()
 }
 
 bool sbe_target_service::plat_isChipletBasedTargetFunctional(
-    plat_target_sbe_handle&, uint16_t i_functional_regions)
+    plat_target_sbe_handle&, uint16_t i_functional_regions) const
 {
     // Default implementation: The target is good if the entire
     // chiplet is good. The PERV clock region will always be
@@ -98,7 +94,7 @@ bool sbe_target_service::plat_isChipletBasedTargetFunctional(
 }
 
 bool sbe_target_service::plat_isOtherTargetFunctional(
-    plat_target_sbe_handle&)
+    plat_target_sbe_handle&) const
 {
     // Just a placeholder implementation
     return true;
@@ -186,7 +182,7 @@ void sbe_target_service::getChipletChildren(const LogTargetType i_child_type,
 
 void sbe_target_service::getMulticastChildren(const plat_target_sbe_handle i_parent,
                                               const bool i_include_nonfunctional,
-                                              std::vector<plat_target_sbe_handle> &o_children)
+                                              std::vector<plat_target_sbe_handle> &o_children) const
 {
     if (!i_parent.getIsMulticast())
     {
@@ -217,7 +213,7 @@ void sbe_target_service::getMulticastChildren(const plat_target_sbe_handle i_par
 void sbe_target_service::loopTargetsByChiplet(const LogTargetType i_type,
                                               const buffer<uint64_t> &i_enabled,
                                               const bool i_include_nonfunctional,
-                                              std::vector<plat_target_sbe_handle> &o_children)
+                                              std::vector<plat_target_sbe_handle> &o_children) const
 {
     int targetIndex = 0;
     for (auto &targetInfo : G_projTargetMap)
@@ -242,7 +238,7 @@ void sbe_target_service::loopTargetsByChiplet(const LogTargetType i_type,
 sbeSecondaryResponse sbe_target_service::getSbePlatTargetHandle(
     const uint8_t i_logTargetType,
     const uint8_t i_instanceId,
-    plat_target_sbe_handle &o_tgtHndl)
+    plat_target_sbe_handle &o_tgtHndl) const
 {
 #define SBE_FUNC " getSbePlatTargetHandle: "
     SBE_ENTER(SBE_FUNC);
@@ -303,7 +299,7 @@ sbeSecondaryResponse sbe_target_service::getSbePlatTargetHandle(
 
 sbeSecondaryResponse sbe_target_service::getPervTargetByChipletId(
     uint8_t i_chiplet_num,
-    plat_target_sbe_handle &o_tgtHndl)
+    plat_target_sbe_handle &o_tgtHndl) const
 {
 #define SBE_FUNC " getPervTargetByChipletId: "
     SBE_ENTER(SBE_FUNC);
