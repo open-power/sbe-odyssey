@@ -48,6 +48,7 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
              l_img++)
         {
             uint32_t l_identifier = 0, l_timeStamp = 0, l_commitId = 0;
+            char l_tag[BUILD_TAG_CHAR_MAX_LENGTH] = {0};
 
             switch (g_getCapabilitiesImages[l_img].imageNum)
             {
@@ -179,17 +180,24 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
 
                 case CAPABILITY_IMAGES::BMC_OVRD:
                     GET_IMAGE_DETAILS_FROM_INFO_TXT(bmc_info_file_name, CAPABILITY_IMAGES::BMC_OVRD,\
-                                                    o_capMsg.iv_imageInfo[l_img], l_identifier, l_timeStamp, l_rc);
+                                                    o_capMsg.iv_imageInfo[l_img], l_identifier,\
+                                                    l_timeStamp, l_tag, l_rc);
                     break;
 
                 case CAPABILITY_IMAGES::HOST_OVRD:
                     GET_IMAGE_DETAILS_FROM_INFO_TXT(host_info_file_name, CAPABILITY_IMAGES::HOST_OVRD,\
-                                                    o_capMsg.iv_imageInfo[l_img], l_identifier, l_timeStamp, l_rc);
+                                                    o_capMsg.iv_imageInfo[l_img], l_identifier,\
+                                                    l_timeStamp, l_tag, l_rc);
                     break;
 
                 case CAPABILITY_IMAGES::EKB:
                     GET_IMAGE_DETAILS_FROM_INFO_TXT(ekb_info_file_name, CAPABILITY_IMAGES::EKB,\
-                                                    o_capMsg.iv_imageInfo[l_img], l_identifier, l_timeStamp, l_rc);
+                                                    o_capMsg.iv_imageInfo[l_img], l_identifier,\
+                                                    l_timeStamp, l_tag, l_rc);
+                    if (strlen(l_tag))
+                    {
+                        memcpy(o_capMsg.iv_ekbFwReleaseTag, (uint8_t *)l_tag, strlen(l_tag));
+                    }
                     break;
 
                 default:
@@ -251,4 +259,3 @@ void fillCapabilitiesDetails(uint32_t *o_capability)
                                                     UPDATE_IMAGE_SUPPORTED |
                                                     SYNC_SIDE_SUPPORTED;
 }
-
