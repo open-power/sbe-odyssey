@@ -171,12 +171,24 @@ uint32_t getCommitId(const uint8_t *i_meta_start,
 * @param[in] i_capImg: enum CAPABILITY_IMAGES of image type supported
 * @param[out] o_identifier : commitId/version of image type from the info.txt
 * @param[out] o_timeStamp : time stamp of image built from the info.txt
+* @param[out] o_tag : git tag of image
 *
 * @return rc
 */
 uint32_t loadAndParseInfoTxt(const char *i_fileName,
                              const CAPABILITY_IMAGES i_capImg,
                              uint32_t &o_identifier,
-                             uint32_t &o_timeStamp);
+                             uint32_t &o_timeStamp,
+                             char (&o_tag)[BUILD_TAG_CHAR_MAX_LENGTH]);
+
+/**
+ * @brief This API is used to get tag detail of SBE image to send
+ *        in the GetCapabilities response
+ *
+ * @param[out] o_capMsg The getcapability response buffer
+ *
+ * @return  RC
+ */
+uint32_t fillSbeTagDetails(GetCapabilityResp_t &o_capMsg);
 
 #endif // SBE_CMD_GETCAPABILITIES_H

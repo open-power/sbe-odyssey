@@ -28,11 +28,12 @@
 
 #include "sbeCmdGetCapabilities.H"
 
-#define GET_IMAGE_DETAILS_FROM_INFO_TXT(i_imageFileName, i_imageType, i_imageInfo,\
-        o_identifier, o_buildDate, o_rc) \
+#define GET_IMAGE_DETAILS_FROM_INFO_TXT(i_imageFileName, i_imageType, i_imageInfo,       \
+                                        o_identifier, o_buildDate, o_tag, o_rc)          \
     i_imageInfo.iv_imageType = i_imageType;                                              \
-    o_identifier = 0, o_buildDate = 0;                                          \
-    o_rc = loadAndParseInfoTxt(i_imageFileName, i_imageType, o_identifier, o_buildDate); \
+    o_identifier = 0; o_buildDate = 0;                                                   \
+    o_rc = loadAndParseInfoTxt(i_imageFileName, i_imageType, o_identifier,               \
+                               o_buildDate, o_tag);                                      \
     if (o_rc != SBE_SEC_OPERATION_SUCCESSFUL)                                            \
     {                                                                                    \
         SBE_ERROR(SBE_FUNC " loadAndParseInfoTxt failed for image [%d] from [%s]. "      \

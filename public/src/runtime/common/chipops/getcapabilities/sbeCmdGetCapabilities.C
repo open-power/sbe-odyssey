@@ -30,25 +30,26 @@
 #include "metadata.H"
 #include "pakwrapper.H"
 #include "imagemap.H"
+#include "sbe_build_info.H"
 
 #define INFO_TXT_ENTRY_OPEN_DELIMITER   0x5B       // "["
 #define INFO_TXT_ENTRY_END_DELIMITER    0x5D       // "]"
-#define INFO_TXT_ENTRY_FILED_SEPARATOR  0x2C       // ","
+#define INFO_TXT_ENTRY_FIELD_SEPARATOR  0x2C       // ","
 
 #define INFO_TXT_FORMAT_MAX_FIELD            5
 #define INFO_TXT_VERSION_LENGTH              5 // Version format: vX.YZ whereX,Y,Z=[0-9]
 #define INFO_TXT_IMAGE_IDENTIFIER_MAX_LENGTH 8 // Identifier as this can be commit-id or version no.
 #define INFO_TXT_BUILDDATE_LENGTH            8
-#define INFO_TXT_TAG_LENGTH                  20
+#define INFO_TXT_TAG_MAX_LENGTH              20
 
 // Info.txt format:Len = 52
 // [<5 chars version>,<5 chars image type>,<8 chars commit-Id>,<8 chars build date>,<20 chars tag>]
-#define INFO_TXT_FORMAT_MAX_LENGTH \
-        (1 + INFO_TXT_VERSION_LENGTH + \
-         1 + INFO_TXT_IMAGE_NAME_MAX_LENGTH + \
+#define INFO_TXT_FORMAT_MAX_LENGTH                  \
+        (1 + INFO_TXT_VERSION_LENGTH +              \
+         1 + INFO_TXT_IMAGE_NAME_MAX_LENGTH +       \
          1 + INFO_TXT_IMAGE_IDENTIFIER_MAX_LENGTH + \
-         1 + INFO_TXT_BUILDDATE_LENGTH + \
-         1 + INFO_TXT_TAG_LENGTH + 1)
+         1 + INFO_TXT_BUILDDATE_LENGTH +            \
+         1 + INFO_TXT_TAG_MAX_LENGTH + 1)
 
 
 uint32_t sbeCmdGetCapabilities(uint8_t *i_pArg)
@@ -78,8 +79,19 @@ uint32_t sbeCmdGetCapabilities(uint8_t *i_pArg)
         // If FIFO access failure
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_fifoRc);
 
-        // TODO: JIRA: PFSBE-408
-        // Need to fill tag for SBE and EKB.
+        // Fill-in SBE tag.
+        // For EKB tag which is part of info.txt file, would be
+        // filled as part of function fillImagesDetails.
+        // The return code if not successful, will not be send out
+        // to the host in the response data as this chip-op is never
+        // expected to fail
+        l_rc = fillSbeTagDetails(l_capRespMsg);
+        if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+        {
+            SBE_ERROR(SBE_FUNC \
+                      "Failed to fill SBE tag information, RC[0x%08x]",
+                      l_rc);
+        }
 
         // Filling image information that is used in the running SBE firmware.
         // The return code if not successful, will not be send out to the host
@@ -340,7 +352,7 @@ static uint32_t getIdentifierFromInfoTxt(const uint8_t *i_startPtr,
                                          const CAPABILITY_IMAGES i_capImg,
                                          uint32_t &o_identifier)
 {
-    #define SBE_FUNC "getIdentifierFromInfoTxt "
+    #define SBE_FUNC " getIdentifierFromInfoTxt "
     SBE_ENTER(SBE_FUNC);
     uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
 
@@ -402,7 +414,7 @@ static uint32_t getBuildDateFromInfoTxt(const uint8_t *i_startPtr,
                                         const uint8_t *i_endPtr,
                                         uint32_t &o_buildDate)
 {
-    #define SBE_FUNC "getBuildDateFromInfoTxt "
+    #define SBE_FUNC " getBuildDateFromInfoTxt "
     SBE_ENTER(SBE_FUNC);
     uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
 
@@ -442,6 +454,49 @@ static uint32_t getBuildDateFromInfoTxt(const uint8_t *i_startPtr,
 
 
 /**
+ * @brief This API is used to get tag of image specified in info.txt
+ *
+ * @param[in] i_startPtr pointer to the beginning location of tag in pibmem
+ * @param[in] i_endPtr   pointer to the last location of tag in pibmem
+ * @param[out] o_tag     tag of image as per info.txt
+ *
+ * @return  RC
+ */
+static uint32_t getTagFromInfoTxt(const uint8_t *i_startPtr,
+                                  const uint8_t *i_endPtr,
+                                  char (&o_tag)[INFO_TXT_TAG_MAX_LENGTH])
+{
+    #define SBE_FUNC " getTagFromInfoTxt "
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    do
+    {
+        uint8_t l_size = i_endPtr - i_startPtr;
+
+        // Validate tag length if exceeds max length go with
+        // default value for metadata
+        if (l_size > INFO_TXT_TAG_MAX_LENGTH)
+        {
+            l_rc = SBE_SEC_INFO_TXT_FORMAT_INVALID;
+            SBE_ERROR(SBE_FUNC "Length of tag must not be"\
+                    "more than [%d] [Rx:%d]. Received values..."\
+                    , INFO_TXT_TAG_MAX_LENGTH, l_size);
+            PRINT_STRING_DATA("Received: ", i_startPtr, l_size);
+            break;
+        }
+
+        // Copy tag
+        strncpy(o_tag, (char *)i_startPtr, l_size);
+    }while(false);
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
+
+/**
  * @brief This API is Used to get metadata of image specified in info.txt
  *
  * @param[in] i_capImg  enum CAPABILITY_IMAGES of images supported
@@ -449,6 +504,7 @@ static uint32_t getBuildDateFromInfoTxt(const uint8_t *i_startPtr,
  * @param[in] i_fileSize   size of info.txt file
  * @param[out] o_commitId commit-Id of image as per info.txt
  * @param[out] o_buildDate build date of image as per info.txt
+ * @param[out] o_tag tag of image as per info.txt
  *
  * @return  RC
  */
@@ -456,7 +512,8 @@ static uint32_t getMetadataFromInfoTxt(const CAPABILITY_IMAGES i_capImg,
                                        uint8_t *i_fileStartAddr,
                                        const uint32_t i_fileSize,
                                        uint32_t &o_identifier,
-                                       uint32_t &o_buildDate)
+                                       uint32_t &o_buildDate,
+                                       char (&o_tag)[INFO_TXT_TAG_MAX_LENGTH])
 {
     #define SBE_FUNC " getMetadataFromInfoTxt "
     SBE_ENTER(SBE_FUNC);
@@ -510,7 +567,7 @@ static uint32_t getMetadataFromInfoTxt(const CAPABILITY_IMAGES i_capImg,
         {
             // Next to check for end delimiter "]" or separator ","
             // for each field in info.txt file
-            if ((*l_offset == INFO_TXT_ENTRY_FILED_SEPARATOR) ||
+            if ((*l_offset == INFO_TXT_ENTRY_FIELD_SEPARATOR) ||
                 (*l_offset == INFO_TXT_ENTRY_END_DELIMITER))
             {
                 // This check if NULL would mean an entry/field is empty
@@ -610,14 +667,19 @@ static uint32_t getMetadataFromInfoTxt(const CAPABILITY_IMAGES i_capImg,
                 ////// Tag //////
                 if (l_currentEntryFieldCnt == 4)
                 {
-                    // TODO:PFSBE-408
-                    uint8_t l_size = l_offset - l_infoTxtEntryNextFieldStartAddr;
-                    char l_valBuf[l_size];
-                    memcpy(l_valBuf, (void *)l_infoTxtEntryNextFieldStartAddr, l_size);
+                    l_rc = getTagFromInfoTxt(l_infoTxtEntryNextFieldStartAddr,
+                                             l_offset,
+                                             o_tag);
+
+                    if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+                    {
+                        SBE_ERROR(SBE_FUNC "getTagFromInfoTxt failed with RC[0x%08x]", l_rc);
+                        break;
+                    }
                 }
 
                 // If separator found move to next field
-                if ((*l_offset == INFO_TXT_ENTRY_FILED_SEPARATOR) &&
+                if ((*l_offset == INFO_TXT_ENTRY_FIELD_SEPARATOR) &&
                     (l_currentEntryFieldCnt == (INFO_TXT_FORMAT_MAX_FIELD - 1)))
                 {
                     l_rc = SBE_SEC_INFO_TXT_FORMAT_INVALID;
@@ -668,7 +730,8 @@ static uint32_t getMetadataFromInfoTxt(const CAPABILITY_IMAGES i_capImg,
 uint32_t loadAndParseInfoTxt(const char *i_fileName,
                              const CAPABILITY_IMAGES i_capImg,
                              uint32_t &o_identifier,
-                             uint32_t &o_buildDate)
+                             uint32_t &o_buildDate,
+                             char (&o_tag)[INFO_TXT_TAG_MAX_LENGTH])
 {
     #define SBE_FUNC " loadAndParseInfoTxt "
     SBE_ENTER(SBE_FUNC);
@@ -729,7 +792,7 @@ uint32_t loadAndParseInfoTxt(const char *i_fileName,
             // Get metadata for the image
             l_rc = getMetadataFromInfoTxt(i_capImg,
                                           l_scratchArea, l_size,
-                                          o_identifier, o_buildDate);
+                                          o_identifier, o_buildDate, o_tag);
             if(l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
             {
                 SBE_ERROR(SBE_FUNC "getMetadataFromInfoTxt failed."\
@@ -755,3 +818,32 @@ uint32_t loadAndParseInfoTxt(const char *i_fileName,
     #undef SBE_FUNC
 }
 
+
+uint32_t fillSbeTagDetails(GetCapabilityResp_t &o_capMsg)
+{
+    #define SBE_FUNC " fillSbeTagDetails "
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    do
+    {
+        // Get SBE build tag from the generated sbe_build_info.H
+        const char *l_tag = SBE_BUILD_TAG;
+
+        // Check for tag length
+        if (sizeof(SBE_BUILD_TAG) > sizeof(o_capMsg.iv_sbeFwReleaseTag))
+        {
+            l_rc = SBE_SEC_INVALID_LENGTH_PASSED;
+            SBE_ERROR(SBE_FUNC "SBE tag length [%d] exceeds max length [%d]",
+                               sizeof(SBE_BUILD_TAG), BUILD_TAG_CHAR_MAX_LENGTH);
+            break;
+        }
+
+        // Copy the tag into response structure member - sbeFwReleaseTag
+        memcpy(o_capMsg.iv_sbeFwReleaseTag, (uint8_t *)l_tag, sizeof(SBE_BUILD_TAG));
+    } while (false);
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}

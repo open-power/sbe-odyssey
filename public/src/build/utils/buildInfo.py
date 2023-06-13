@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2016,2022
+# Contributors Listed Below - COPYRIGHT 2016,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -28,6 +28,7 @@
 # buld information required by SBE code.
 import os
 import sys
+from subprocess import Popen, PIPE
 import datetime
 
 def buildInfo():
@@ -41,15 +42,29 @@ def buildInfo():
     buildTime = "0x" + datetime.datetime.now().strftime('%Y%m%d')
     hexTime   = int(buildTime, 16)
 
-    if 'SBE_COMMIT_ID' in os.environ:
-        commitStr = os.environ['SBE_COMMIT_ID'][:8]
-    else:
-        commitStr = os.popen('git rev-parse --short=8 HEAD').read().rstrip()
+    commitStr = os.popen('git rev-parse --short=8 HEAD').read().rstrip()
     try:
         commitInt = int(commitStr, 16)
     except:
         print("Failed to get a valid SBE_COMMIT_ID")
         sys.exit(1)
+
+    ## Get SBE tag corresponding to commit_id it got included first after merge.
+    ## git describe command can be used to find the tag that comes after the commit.
+    ## The command finds the most recent tag that is reachable from a commit. If the
+    ## tag points to the commit then only the tag is returned. Otherwise, it suffixes (~)
+    ## the tag name with the additional commits on top of the tagged object
+    buildTag = ""
+    p = Popen(["git", 'describe', '--tags', '--contains', 'commitStr'],\
+              stdout=PIPE, stderr=PIPE, universal_newlines=True)
+    output, error = p.communicate()
+    if p.returncode == 0:
+        if len(output) > 0:
+            separator = '~'
+            buildTag = output.split(separator, 1)[0]
+            print ("Tag found: " + buildTag)
+    else:
+        print("Failed to get a tag" + str(p.returncode) + str(error))
 
     f = open( buildInfoFileName, 'w')
 
@@ -58,8 +73,11 @@ def buildInfo():
     f.write("#define SBE_COMMIT_ID " + hex(commitInt) + "\n")
     f.write("//Define SBE BUILD_TIME \n")
     f.write("#define SBE_BUILD_TIME " + hex(hexTime) + "\n")
+    f.write("//Define SBE BUILD_TAG \n")
+    f.write("#define SBE_BUILD_TAG " + "\"" + buildTag + "\"" + "\n")
     f.write(footer)
     f.close()
 
 # Call buildInfo
 buildInfo()
+
