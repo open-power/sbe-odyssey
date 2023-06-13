@@ -543,7 +543,7 @@ ReturnCode mod_setup_clockstop_on_xstop(
     CLKSTOP_ON_XSTOP_MASK1_t EPS_CLKSTOP_ON_XSTOP_MASK1;
     fapi2::buffer<uint8_t>  l_clkstop_on_xstop;
 
-    FAPI_INF("Entering ...");
+    FAPI_INF("Entering mod_setup_clockstop_on_xstop...");
 
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_mc;
     std::vector<Target<TARGET_TYPE_PERV>> l_chiplets_uc;
@@ -577,6 +577,34 @@ ReturnCode mod_setup_clockstop_on_xstop(
 
         FAPI_INF("Enable clockstop on checkstop");
         FAPI_TRY(EPS_CLKSTOP_ON_XSTOP_MASK1.putScom(l_chiplets_mc));
+    }
+
+fapi_try_exit:
+    FAPI_INF("Exiting ...");
+    return current_err;
+}
+
+ReturnCode mod_setup_tracestop_on_xstop(
+    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
+{
+    DBG_TRACE_MODE_REG_2_t DBG_TRACE_MODE_REG_2;
+    DBG_MODE_REG_t         DBG_MODE_REG;
+
+    FAPI_INF("Entering mod_setup_tracestop_on_xstop...");
+
+    Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_mc;
+    std::vector<Target<TARGET_TYPE_PERV>> l_chiplets_uc;
+    FAPI_TRY(get_hotplug_targets(i_target, l_chiplets_mc, &l_chiplets_uc));
+
+    for (auto& l_chiplet : l_chiplets_uc)
+    {
+        FAPI_TRY(DBG_MODE_REG.getScom(l_chiplet));
+        DBG_MODE_REG.setBit<EPS_DBG_MODE_REG_STOP_ON_XSTOP_SELECTION>();
+        FAPI_TRY(DBG_MODE_REG.putScom(l_chiplet));
+
+        FAPI_TRY(DBG_TRACE_MODE_REG_2.getScom(l_chiplet));
+        DBG_TRACE_MODE_REG_2.setBit<EPS_DBG_TRACE_MODE_REG_2_STOP_ON_ERR>();
+        FAPI_TRY(DBG_TRACE_MODE_REG_2.putScom(l_chiplet));
     }
 
 fapi_try_exit:

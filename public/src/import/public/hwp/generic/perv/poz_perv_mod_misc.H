@@ -229,3 +229,11 @@ fapi2::ReturnCode mod_unmask_firs(
 fapi2::ReturnCode mod_setup_clockstop_on_xstop(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     const uint8_t i_chiplet_delays[64]);
+
+/// @brief Setup tracestop on checkstop module
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode mod_setup_tracestop_on_xstop(
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target);
