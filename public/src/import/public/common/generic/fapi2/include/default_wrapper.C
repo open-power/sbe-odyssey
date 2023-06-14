@@ -176,7 +176,7 @@ int main(int argc, char* argv[])
     if (ecmdParseOption(&argc, &argv, "-h"))
     {
         help();
-        rc = 1;
+        rc = ECMD_SUCCESS;
         goto out;
     }
 
