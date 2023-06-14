@@ -25,6 +25,7 @@
 #include "sbecollectdump.H"
 #include "sbedumpconstants.H"
 #include "plat_hw_access.H"
+#include "sbecmdstopclocks.H"
 
 #include "poz_gettracearray.H" /// For Trace-array dump support
 #include "sbecmdtracearray.H"
@@ -121,6 +122,49 @@ uint32_t sbeCollectDump::writeGetTracearrayPacketToFifo()
 
 
 /********************* Types of Dump Packets to FIFO START ****************************/
+
+uint32_t sbeCollectDump::stopClocksOff()
+{
+    #define SBE_FUNC " stopClocksOff "
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    do
+    {
+        // Set FFDC failed command information and
+        // Sequence Id is 0 by default for Fifo interface
+        iv_chipOpffdc.setCmdInfo(0, SBE_CMD_CLASS_MPIPL_COMMANDS,
+                                    SBE_CMD_MPIPL_STOPCLOCKS);
+
+        // Update address, length and stream header data via FIFO
+        iv_tocRow.hdctHeader.address = iv_hdctRow->cmdStopClocks.strEqvHash32;
+        iv_tocRow.hdctHeader.dataLength = 0x00;
+        uint32_t len = sizeof(iv_tocRow.hdctHeader) / sizeof(uint32_t);
+        l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+
+        // Create the req struct for the sbeStopClocks Chip-op
+        sbeStopClocksReqMsgHdr_t dumpStopClockReq = {0};
+        len = sizeof(dumpStopClockReq)/sizeof(uint32_t);
+        dumpStopClockReq.reserved1 = 0x00;
+        dumpStopClockReq.iv_logTargetType = iv_hdctRow->cmdStopClocks.logTgtType;
+        dumpStopClockReq.reserved2 = 0x00;
+        dumpStopClockReq.iv_instanceId = iv_hdctRow->cmdStopClocks.chipletStart;
+        fapi2::sbefifo_hwp_data_istream istream( iv_fifoType, len,
+                                         (uint32_t*)&dumpStopClockReq, false );
+        l_rc = sbeStopClocksWrap( istream, iv_oStream );
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+        SBE_DEBUG(SBE_FUNC" clockTypeTgt[0x%04X], chipUnitNum[0x%08X] ",
+                    dumpStopClockReq.iv_logTargetType,
+                    iv_tocRow.hdctHeader.chipUnitNum);
+    }
+    while(0);
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
 uint32_t sbeCollectDump::writePutScomPacketToFifo()
 {
     #define SBE_FUNC "writePutScomPacketToFifo"
@@ -275,7 +319,8 @@ uint32_t sbeCollectDump::writeDumpPacketRowToFifo()
         // TODO: Clean-Up once other chip-op enabled.
         if( !( (iv_tocRow.hdctHeader.cmdType == CMD_GETSCOM)    ||
                (iv_tocRow.hdctHeader.cmdType == CMD_PUTSCOM)    ||
-               (iv_tocRow.hdctHeader.cmdType == CMD_GETTRACEARRAY) )
+               (iv_tocRow.hdctHeader.cmdType == CMD_GETTRACEARRAY) ||
+               (iv_tocRow.hdctHeader.cmdType == CMD_STOPCLOCKS))
           )
         {
             SBE_ERROR(SBE_FUNC "Unsupported command types %d", (uint32_t)iv_tocRow.hdctHeader.cmdType);
@@ -328,6 +373,12 @@ uint32_t sbeCollectDump::writeDumpPacketRowToFifo()
                 case CMD_GETTRACEARRAY:
                 {
                     l_rc = writeGetTracearrayPacketToFifo();
+                    break;
+                }
+
+                case CMD_STOPCLOCKS:
+                {
+                    l_rc = stopClocksOff();
                     break;
                 }
 
