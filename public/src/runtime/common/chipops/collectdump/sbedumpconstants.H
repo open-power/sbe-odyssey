@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -205,8 +206,9 @@ typedef struct __attribute__((packed))
         {
             uint32_t strEqvHash32;
             uint32_t chipletEnd:8;
-            uint32_t chipletStart:8;
-            uint32_t tgtType:16;
+            uint32_t chipletStart:8;// ody: instanceId = chipletStart
+            uint32_t reserved:8;
+            uint32_t logTgtType:8;
         }cmdStopClocks;
 
         struct __attribute__((packed))

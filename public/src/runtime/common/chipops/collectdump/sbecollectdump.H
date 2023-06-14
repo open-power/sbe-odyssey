@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -60,6 +61,14 @@ enum sbeArrayAccessCommands
     SBE_CMD_CONTROL_TRACE_ARRAY   = 0x02, /**< Control Trace Array */
 };
 
+/**
+ * @brief enum for sbe MPIPL command class
+ *
+*/
+enum sbeMpIplCommands
+{
+    SBE_CMD_MPIPL_STOPCLOCKS = 0x03, /* Stop Clocks */
+};
 
 //Struct containing details of HDCT PAK section
 // Change this to pak instead of HDCT PAK Section

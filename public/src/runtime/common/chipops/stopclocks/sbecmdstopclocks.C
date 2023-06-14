@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/chipops/stopclock/sbecmdstopclocks.C $ */
+/* $Source: public/src/runtime/common/chipops/stopclocks/sbecmdstopclocks.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -36,17 +36,17 @@ uint32_t sbeStopClocks(uint8_t *i_pArg)
     #define SBE_FUNC " sbeStopClocks "
     SBE_ENTER(SBE_FUNC);
 
-    uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
 
     chipOpParam_t* configStr = (struct chipOpParam*)i_pArg;
     sbeFifoType type = static_cast<sbeFifoType>(configStr->fifoType);
 
     sbefifo_hwp_data_ostream ostream(type);
     sbefifo_hwp_data_istream istream(type);
-    rc = sbeStopClocksWrap (istream, ostream);
+    l_rc = sbeStopClocksWrap (istream, ostream);
 
     SBE_EXIT(SBE_FUNC);
-    return rc;
+    return l_rc;
     #undef SBE_FUNC
 }
 
@@ -56,7 +56,7 @@ uint32_t sbeStopClocksWrap (fapi2::sbefifo_hwp_data_istream& i_getStream,
 {
     #define SBE_FUNC " sbeStopClocksWrap: "
     SBE_ENTER(SBE_FUNC);
-    uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
     uint32_t fapiRc = FAPI2_RC_SUCCESS;
     uint32_t len = 0;
     sbeResponseFfdc_t ffdc;
@@ -69,9 +69,9 @@ uint32_t sbeStopClocksWrap (fapi2::sbefifo_hwp_data_istream& i_getStream,
         // Get the TargetType and Instance Id from the command message
         // Get the stop clock header length
         len  = sizeof(sbeStopClocksReqMsgHdr_t)/sizeof(uint32_t);
-        rc = i_getStream.get(len, (uint32_t *)&reqMsg);
+        l_rc = i_getStream.get(len, (uint32_t *)&reqMsg);
         // If FIFO access failure
-        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(rc);
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
 
         SBE_INFO(SBE_FUNC "LogTargetType 0x%02X, Instance Id 0x%02X",
                     (uint8_t)reqMsg.iv_logTargetType,
@@ -84,7 +84,8 @@ uint32_t sbeStopClocksWrap (fapi2::sbefifo_hwp_data_istream& i_getStream,
             break;
         }
 
-        SBE_DEBUG(SBE_FUNC "Calling stopclocks HWP with log target : 0x%x", reqMsg.iv_logTargetType);
+        SBE_DEBUG(SBE_FUNC "Calling stopclocks HWP with log target : 0x%x",
+                            reqMsg.iv_logTargetType);
         /* Executing stopclock HWP */
         fapiRc = reqMsg.executeHwp( );
         if(fapiRc != FAPI2_RC_SUCCESS)
@@ -105,14 +106,14 @@ uint32_t sbeStopClocksWrap (fapi2::sbefifo_hwp_data_istream& i_getStream,
     {
         // If there was a FIFO error, will skip sending the response,
         // instead give the control back to the command processor thread
-        if(SBE_SEC_OPERATION_SUCCESSFUL == rc)
+        if(SBE_SEC_OPERATION_SUCCESSFUL == l_rc)
         {
             // Create the Response to caller
-            rc = sbeDsSendRespHdr( respHdr, &ffdc, i_getStream.getFifoType());
+            l_rc = sbeDsSendRespHdr( respHdr, &ffdc, i_getStream.getFifoType());
         }
     }
     SBE_EXIT(SBE_FUNC);
-    return rc;
+    return l_rc;
     #undef SBE_FUNC
 }
 
