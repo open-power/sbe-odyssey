@@ -26,6 +26,7 @@
 #include "sbedumpconstants.H"
 #include "plat_hw_access.H"
 #include "sbecmdstopclocks.H"
+#include "sbecmdringaccess.H"
 
 #include "poz_gettracearray.H" /// For Trace-array dump support
 #include "sbecmdtracearray.H"
@@ -37,6 +38,7 @@ inline bool sbeCollectDump::isDumpTypeMapped()
     return (iv_hdctRow->genericHdr.dumpContent & iv_hdctDumpTypeMap);
 }
 
+/********************* Types of Dump Packets to FIFO START ****************************/
 
 ////////////////////////////////////////////////////////////////////////////////
 /// SBE get DUMP - Write trace-array data to FIFO
@@ -119,9 +121,74 @@ uint32_t sbeCollectDump::writeGetTracearrayPacketToFifo()
     #undef SBE_FUNC
 }
 
+uint32_t sbeCollectDump::writeGetRingPacketToFifo()
+{
+    #define SBE_FUNC " writeGetRingPacketToFifo "
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    do{
+        // Sequence Id is 0 by default for Fifo interface
+        iv_chipOpffdc.setCmdInfo(0, SBE_CMD_CLASS_RING_ACCESS, SBE_CMD_GETRING);
 
+        // Update address, length and stream header data via FIFO
+        iv_tocRow.hdctHeader.address = iv_hdctRow->cmdGetRing.strEqvHash32;
+        uint32_t len = sizeof(iv_tocRow.hdctHeader) / sizeof(uint32_t);
 
-/********************* Types of Dump Packets to FIFO START ****************************/
+        uint32_t bitlength = iv_hdctRow->cmdGetRing.ringLen;
+        //Stream out the actual ring length.
+        iv_tocRow.hdctHeader.dataLength = bitlength;
+        //Dummy data length to be streamed out in case of FFDC.Keep it 8byte
+        //alligned based on ring length as ring chip-op streams out data 8byte
+        //aligned.
+        uint32_t dummyDataLengthInBits = 64 * (((uint32_t)(bitlength / 64)) +
+                                        ((uint32_t)(bitlength % 64) ? 1:0 ));
+        l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+
+        sbeGetRingAccessMsgHdr_t l_reqMsg;
+        len  = sizeof(sbeGetRingAccessMsgHdr_t)/sizeof(uint32_t);
+        uint32_t translatedAddress = 0;
+        getAbsoluteAddressForRing(iv_tocRow.tgtHndl,
+                                iv_hdctRow->cmdGetRing.ringAddr,
+                                translatedAddress);
+        l_reqMsg.ringAddr = translatedAddress;
+        l_reqMsg.ringMode = 0x0001;
+        l_reqMsg.ringLenInBits = bitlength;
+        SBE_DEBUG(SBE_FUNC "Ring Address 0x%08X User Ring Mode 0x%04X "
+                "Length in Bits 0x%08X Length in Bits(8 Byte aligned) 0x%08X",
+                    l_reqMsg.ringAddr,
+                    l_reqMsg.ringMode,
+                    l_reqMsg.ringLenInBits,
+                    iv_tocRow.hdctHeader.dataLength);
+        // Verify ring data length in FIFO as per length size
+        uint32_t startCount = iv_oStream.words_written();
+        uint32_t totalCountInBytes = dummyDataLengthInBits / 8;
+        uint32_t totalCount = totalCountInBytes / (sizeof(uint32_t));
+        uint32_t dummyData = 0x00;
+
+        fapi2::sbefifo_hwp_data_istream istream( iv_fifoType, len,
+                                        (uint32_t*)&l_reqMsg, false );
+        l_rc = sbeGetRingWrap( istream, iv_oStream );
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+        uint32_t endCount = iv_oStream.words_written();
+        //If endCount = startCount means chip-op failed. We will write dummy data.
+        if(endCount == startCount || ((endCount - startCount) != totalCount))
+        {
+            totalCount = totalCount - (endCount - startCount);
+            l_rc = SBE_SEC_PCB_PIB_ERR;
+            while(totalCount !=0)
+            {
+                l_rc = iv_oStream.put(dummyData);
+                CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+                totalCount = totalCount - 1;
+            }
+        }
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+    }while(0);
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
 
 uint32_t sbeCollectDump::stopClocksOff()
 {
@@ -320,7 +387,8 @@ uint32_t sbeCollectDump::writeDumpPacketRowToFifo()
         if( !( (iv_tocRow.hdctHeader.cmdType == CMD_GETSCOM)    ||
                (iv_tocRow.hdctHeader.cmdType == CMD_PUTSCOM)    ||
                (iv_tocRow.hdctHeader.cmdType == CMD_GETTRACEARRAY) ||
-               (iv_tocRow.hdctHeader.cmdType == CMD_STOPCLOCKS))
+               (iv_tocRow.hdctHeader.cmdType == CMD_STOPCLOCKS)    ||
+               (iv_tocRow.hdctHeader.cmdType == CMD_GETRING))
           )
         {
             SBE_ERROR(SBE_FUNC "Unsupported command types %d", (uint32_t)iv_tocRow.hdctHeader.cmdType);
@@ -382,6 +450,11 @@ uint32_t sbeCollectDump::writeDumpPacketRowToFifo()
                     break;
                 }
 
+                case CMD_GETRING:
+                {
+                    l_rc = writeGetRingPacketToFifo();
+                    break;
+                }
                 default:
                 {
                     // Print the error message and continue the dumping
