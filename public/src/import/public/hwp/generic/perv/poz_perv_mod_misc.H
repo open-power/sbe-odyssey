@@ -199,10 +199,12 @@ fapi_try_exit:
 /// @brief Miscellaneous TP setup
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_lfir_mask               TP LFIR mask to set up
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_poz_tp_init_common(
-    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target);
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const uint64_t i_lfir_mask);
 
 /// @brief Unmask chiplet FIRs on all good non-TP chiplets
 ///

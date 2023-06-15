@@ -51,8 +51,6 @@ enum POZ_PERV_MOD_MISC_Private_Constants
 
     LFIR_MASK_DEFAULT = 0x80dfffffffffffff,
     TP_LFIR_SPPE_HALTED_BIT = 30,
-    TP_LFIR_MASK_DEFAULT = 0x80c1c7fcf3fbffff,
-    TP_LFIR_MASK_SPPE_HALTED = 0x80c1c7fef3fbffff,
     XSTOP_MASK_ANY_ATTN_AND_DBG = 0x3000000000000000,
     RECOV_MASK_LOCAL_XSTOP = 0x2000000000000000,
     CONTROL_WRITE_PROTECT_DISABLE = 0x4453FFFF,
@@ -314,7 +312,8 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
+ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+                                  const uint64_t i_lfir_mask)
 {
     INTR_HOST_MASK_t HOST_MASK;
     ROOT_CTRL0_t ROOT_CTRL0;
@@ -371,8 +370,8 @@ ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
     // If SPPE is currently halted, don't unmask the corresponding LFIR bit
     FAPI_TRY(getScom(l_tpchiplet, LFIR_RW_WCLEAR, l_data64));
     {
-        const uint64_t l_mask = l_data64.getBit<TP_LFIR_SPPE_HALTED_BIT>() ?
-                                TP_LFIR_MASK_SPPE_HALTED : TP_LFIR_MASK_DEFAULT;
+        const auto l_mask = buffer<uint64_t>(i_lfir_mask)
+                            .writeBit<TP_LFIR_SPPE_HALTED_BIT>(l_data64.getBit<TP_LFIR_SPPE_HALTED_BIT>());
         FAPI_TRY(putScom(l_tpchiplet, EPS_MASK_RW_WCLEAR, ~l_mask));
     }
     FAPI_TRY(putScom(l_tpchiplet, XSTOP_MASK_RW, XSTOP_MASK_ANY_ATTN_AND_DBG));

@@ -46,6 +46,7 @@ SCOMT_PERV_USE_TPCHIP_NET_PCBRSPPERV_RESPONDER_CONFIG_REG;
 
 enum ODY_TP_INIT_Private_Constants
 {
+    ODY_LFIR_MASK = 0x80c1c7fcf3fbffff,
 };
 
 ReturnCode ody_tp_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
@@ -114,7 +115,7 @@ ReturnCode ody_tp_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
     }
 
     FAPI_INF("Miscellaneous TP setup");
-    FAPI_TRY(mod_poz_tp_init_common(i_target));
+    FAPI_TRY(mod_poz_tp_init_common(i_target, ODY_LFIR_MASK));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
