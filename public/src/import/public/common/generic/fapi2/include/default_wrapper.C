@@ -230,6 +230,7 @@ int main(int argc, char* argv[])
     target.cageState     = ECMD_TARGET_FIELD_WILDCARD;
     target.nodeState     = ECMD_TARGET_FIELD_WILDCARD;
     target.slotState     = ECMD_TARGET_FIELD_WILDCARD;
+    target.posState      = ECMD_TARGET_FIELD_WILDCARD;
     target.threadState   = ECMD_TARGET_FIELD_UNUSED;
 
     if (CHIP_UNIT_TYPE == NULL)
