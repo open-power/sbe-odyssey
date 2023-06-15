@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -78,5 +79,39 @@ void sbeCollectDump::getTargetList(std::vector<fapi2::plat_target_handle_t> &o_t
             break;
         }
     }
+    #undef SBE_FUNC
+}
+
+void sbeCollectDump::getAbsoluteAddressForRing(
+                                const fapi2::plat_target_handle_t i_tgtHndl,
+                                const uint32_t i_relativeAddr,
+                                uint32_t &o_absoluteAddr)
+{
+    #define SBE_FUNC " getAbsoluteAddressForRing "
+    SBE_ENTER(SBE_FUNC);
+    do
+    {
+        switch(i_tgtHndl.getTargetType())
+        {
+            case LOG_TARGET_TYPE_MC:
+            {
+                uint32_t chipletNum = i_tgtHndl.getChipletNumber();
+                chipletNum = chipletNum << 24;
+                o_absoluteAddr = (i_relativeAddr & 0x00FFFFFF) | chipletNum;
+                break;
+            }
+
+            default:
+            {
+                o_absoluteAddr = i_relativeAddr;
+                break;
+            }
+        }
+        SBE_DEBUG(SBE_FUNC "Target, Relative Addr, Absolute Addr is 0x%08X, 0x%08X 0x%08X",
+                           i_tgtHndl.getPlatTargetType(),
+                           i_relativeAddr,
+                           o_absoluteAddr);
+    }while(0);
+    SBE_EXIT(SBE_FUNC);
     #undef SBE_FUNC
 }

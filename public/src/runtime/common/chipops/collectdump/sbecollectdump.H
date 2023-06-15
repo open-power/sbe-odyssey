@@ -70,6 +70,16 @@ enum sbeMpIplCommands
     SBE_CMD_MPIPL_STOPCLOCKS = 0x03, /* Stop Clocks */
 };
 
+/**
+ * @brief enums for Ring Access Messages
+ *
+*/
+enum sbeRingAccessCommands
+{
+    SBE_CMD_GETRING          = 0x01, /* Get Ring */
+    SBE_CMD_PUTRING          = 0x02, /* Put Ring */
+};
+
 //Struct containing details of HDCT PAK section
 // Change this to pak instead of HDCT PAK Section
 typedef struct hdctPakSecDetails
@@ -371,11 +381,28 @@ class sbeCollectDump
         void getTargetList(std::vector<fapi2::plat_target_handle_t>
                             &o_targetList);
 
-       /** @brief Get Dump Header chipTypeToEncode.
-        * @return chiptypetoEncode
+        /**
+         * @brief Get Dump Header chipTypeToEncode.
+         *
+         * @return chiptypetoEncode
+         *
         */
         uint8_t getDumpHdrChipTypeToEncode();
- 
+
+        /**
+         * @brief getAbsoluteAddressForRing
+         *
+         * @param [in] const plat_target_handle_t i_tgtHndl
+         *
+         * @param [in] const uint32_t i_relativeAddr
+         *
+         * @param [out] uint32_t o_absoluteAddr
+         *
+         */
+        void getAbsoluteAddressForRing( const fapi2::plat_target_handle_t i_tgtHndl,
+                                const uint32_t i_relativeAddr,
+                                uint32_t &o_absoluteAddr);
+
         /***************** Plat Functions Ends ********************/
 
 };
