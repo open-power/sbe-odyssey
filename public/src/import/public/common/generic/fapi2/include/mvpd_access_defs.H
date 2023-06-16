@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -72,6 +72,17 @@ enum MvpdRecord
     MVPD_RECORD_LWPE = 0x20,
     MVPD_RECORD_VWML = 0x21,
     MVPD_RECORD_MER0 = 0x22,
+    MVPD_RECORD_VMPU = 0x23,
+    MVPD_RECORD_VRML = 0x24,
+    MVPD_RECORD_VRSP = 0x25,
+    MVPD_RECORD_VRT0 = 0x26,
+    MVPD_RECORD_VRT1 = 0x27,
+    MVPD_RECORD_VRT2 = 0x28,
+    MVPD_RECORD_VRT3 = 0x29,
+    MVPD_RECORD_VRT4 = 0x2a,
+    MVPD_RECORD_VRT5 = 0x2b,
+    MVPD_RECORD_VRT6 = 0x2c,
+    MVPD_RECORD_VRT7 = 0x2d,
     MVPD_RECORD_LAST, //useful for testcases
     MVPD_RECORD_FIRST = MVPD_RECORD_CRP0, //useful for testcases
 };
