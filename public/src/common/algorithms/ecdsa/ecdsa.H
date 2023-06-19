@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2020,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -189,9 +190,16 @@ void bn_add    (bn_t *a, const bn_t *b) ;
 void bn_mul    (bn_t *r, const bn_t *a, const bn_t *b) ;
 void bn_modadd (bn_t *a, const bn_t *b) ;
 void bn_modsub (bn_t *a, const bn_t *b) ;
+int bn_modinv(bn_t *inv, const bn_t *a, const bn_t *n);
 
 int bn_cmp (const bn_t a[NWORDS], const bn_t b[NWORDS]) ;
 void bn_modmul_prime (bn_t *a, const bn_t *b);
+
+void generate_lookup_2bit_1pt(bn_t lookup_2bit[16][3][ NWORDS ], bn_t px[ NWORDS ], bn_t py[ NWORDS ]);
+void generate_lookup_2bit_2pt(bn_t lookup_2bit[16][3][ NWORDS ], bn_t px[ NWORDS ], bn_t py[ NWORDS ], bn_t qx[ NWORDS ], bn_t qy[ NWORDS ]);
+int ec_multiply_1pt (bn_t lookup[16][3][ NWORDS ], bn_t *x, bn_t *y, bn_t *z, const bn_t *k);
+int ec_multiply_2pt (bn_t lookup[16][3][ NWORDS ], bn_t *x, bn_t *y, bn_t *z, const bn_t *k, const bn_t *k1);
+
 int ec_multiply (bn_t *x, bn_t *y, bn_t *z, const bn_t *k, const bn_t *k1);
 void ec_projective2affine (bn_t *x, bn_t *y, const bn_t *z);
 
