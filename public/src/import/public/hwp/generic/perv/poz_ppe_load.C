@@ -160,7 +160,7 @@ fapi2::ReturnCode poz_ioppe_load(
     {
         // Load start address
         FAPI_TRY(fapi2::putScom(i_target, i_ppe_base_address + RAM_OFFSET + IOPPE_CSAR,
-                                ((uint64_t)i_ioppe_ram_offset + RAM_OFFSET + (i_ioppe_ram_repeat_size * thread)) << 32));
+                                ((uint64_t)i_ioppe_ram_offset + (i_ioppe_ram_repeat_size * thread)) << 32));
 
         for (uint32_t i = 0; i < nwords; i++)
         {
