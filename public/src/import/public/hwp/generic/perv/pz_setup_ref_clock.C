@@ -53,7 +53,6 @@ ReturnCode pz_setup_ref_clock(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE
     ROOT_CTRL5_t ROOT_CTRL5;
     ROOT_CTRL5_COPY_t ROOT_CTRL5_COPY;
     fapi2::ATTR_CLOCK_RCS_OUTPUT_Type l_clock_rcs_output;
-    fapi2::Target<fapi2::TARGET_TYPE_SYSTEM> FAPI_SYSTEM;
     uint8_t l_cp_refclock_select;
 
     FAPI_INF("Entering ...");
