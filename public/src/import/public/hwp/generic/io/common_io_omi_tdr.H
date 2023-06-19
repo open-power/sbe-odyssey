@@ -79,7 +79,7 @@ fapi2::ReturnCode common_io_omi_tdr(
 
         FAPI_DBG("Checking %s on lane %d with status %d.", l_tgt_str, l_lane, l_status);
 
-        if (l_status != TdrResult::Good)
+        if (l_status != TdrResult::NoIssues)
         {
             // if (l_mfg_flags[fapi2::ENUM_ATTR_MFG_FLAGS_MNFG_THRESHOLDS / 32] & (1 << (31 -
             //         (fapi2::ENUM_ATTR_MFG_FLAGS_MNFG_THRESHOLDS % 32))))
