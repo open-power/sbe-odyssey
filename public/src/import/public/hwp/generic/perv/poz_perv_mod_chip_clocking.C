@@ -94,7 +94,7 @@ ReturnCode mod_poll_pll_lock(
 
             if ((l_read_value & l_check_value) != l_check_value)
             {
-                FAPI_ERR("Chiplet %d PLL lock failed: PLL_LOCK(0:8)=0x02x",
+                FAPI_ERR("Chiplet %d PLL lock failed: PLL_LOCK(0:8)=0x%02x",
                          l_chiplet.getChipletNumber(), l_read_value >> 56);
                 l_failed_plls |= (l_read_value & l_check_value) ^ l_check_value;
                 l_failed_chiplets |= (1ULL << (63 - l_chiplet.getChipletNumber()));
