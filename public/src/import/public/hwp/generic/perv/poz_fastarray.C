@@ -659,6 +659,30 @@ fapi_try_exit:
     return current_err;
 }
 
+ReturnCode poz_fastarray_get_control_info(
+    const uint32_t* i_control_data,
+    const uint32_t i_control_data_nwords,
+    poz_fastarray_control_info& o_control_info)
+{
+    const uint32_t* l_ptr = i_control_data;
+    const uint32_t* const l_limit = i_control_data + i_control_data_nwords;
+
+    while (l_ptr < l_limit)
+    {
+        const uint32_t l_value = *l_ptr;
+
+        if (poz_fastarray_chunk_tag(l_value) == POZ_FASTARRAY_TAG_CONTROL_INFO)
+        {
+            o_control_info = *reinterpret_cast<const poz_fastarray_control_info*>(l_ptr + 1);
+            return FAPI2_RC_SUCCESS;
+        }
+
+        l_ptr += poz_fastarray_chunk_length(l_value) + 1;
+    }
+
+    return FAPI2_RC_FALSE;
+}
+
 ReturnCode poz_sparse_getring(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_CORE > & i_target,
     const uint32_t                  i_ring_address,

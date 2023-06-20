@@ -99,10 +99,19 @@ struct poz_fastarray_control_info
     uint32_t return_data_nwords;
 } __attribute__((packed));
 
-typedef fapi2::ReturnCode (*poz_fastarray_FP_t)(
-    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_CORE > & i_target,
-    fapi2::hwp_data_istream&  i_instructions,
-    fapi2::hwp_data_ostream&  o_dump_data);
+/**
+ * @brief Locate the info tag in a fastarray control blob and return it
+ *
+ * @param[in]  i_control_data         Pointer to the control data blob
+ * @param[in]  i_control_data_nwords  Size of control data blob, in 32-bit words
+ * @param[out] o_control_info         The info record will be copied here
+ *
+ * @return FAPI2_RC_SUCCESS if the record was found, otherwise FAPI2_RC_FALSE
+ */
+fapi2::ReturnCode poz_fastarray_get_control_info(
+    const uint32_t* i_control_data,
+    const uint32_t i_control_data_nwords,
+    poz_fastarray_control_info& o_control_info);
 
 /**
  * @brief Unload a ring, extracting only the care bits according to run length encoded care mask
@@ -127,6 +136,12 @@ fapi2::ReturnCode poz_sparse_getring(
     const uint32_t                  i_ring_address,
     fapi2::hwp_data_istream&        i_care_data,
     fapi2::hwp_data_ostream&        o_ring_bits);
+
+
+typedef fapi2::ReturnCode (*poz_fastarray_FP_t)(
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_CORE > & i_target,
+    fapi2::hwp_data_istream&  i_instructions,
+    fapi2::hwp_data_ostream&  o_dump_data);
 
 /**
  * @brief Extract a raw fast array dump out of a given chiplet
