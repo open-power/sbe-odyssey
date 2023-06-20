@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -23,7 +24,29 @@
 /* IBM_PROLOG_END_TAG                                                     */
 #pragma once
 #include <stdint.h>
-#include "sbedumpconstants.H"
+#include "sbe_sp_intf.H"
+#include "sbetrace.H"
+
+/**
+ * @brief enum for sbe Dump clock state's
+ *
+*/
+enum sbeDumpClockStates
+{
+    SBE_DUMP_CLOCK_ON   = 0x01, /* Clock's ON  */
+    SBE_DUMP_CLOCK_OFF  = 0x02, /* Clock's OFF */
+};
+
+/**
+ * @brief enum for sbe dump fastarray collection info
+ *
+*/
+enum sbeDumpFastArrayCollectionInfo
+{
+    SBE_DUMP_FASTARRY_COLLECTION_ON     = 0x00, /* Fastarray collection ON  */
+    SBE_DUMP_FASTARRY_COLLECTION_OFF    = 0x01, /* Fastarray collection OFF */
+};
+
 
 
 /**
@@ -41,6 +64,11 @@ typedef struct
      *        eg SCS, MPIPL, Perf, HB.
      * @return bool true  if the dumpType is sbe supported dump type.
      *              false if the dumpType is not sbe supported.
+     *
+     * @todo Validate Dump type should be Plat function
+     *       odyssey not supports SBE_DUMP_TYPE_PERF
+     *       P11 supports SBE_DUMP_TYPE_PERF.
+     * Jira: PFSBE-532 Validate dump move to plat function
      */
     bool validateDumpType()
     {

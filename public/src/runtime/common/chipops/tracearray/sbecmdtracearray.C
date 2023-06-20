@@ -117,7 +117,8 @@ uint32_t sbeControlTraceArrayWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
     } while (false);
 
     // In case of trace array chipop SBE will send the response
-    if (i_putStream.isStreamRespHeader(respHdr.rcStatus(),ffdc.getRc()))
+    if (i_putStream.isStreamRespHeader(respHdr.rcStatus(),ffdc.getRc()) &&
+                                        l_rc == SBE_SEC_OPERATION_SUCCESSFUL)
     {
         l_rc  = i_putStream.put(i_putStream.words_written());
         // If there was a FIFO error, will skip sending the response,

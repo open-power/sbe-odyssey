@@ -22,14 +22,17 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __SBE_SBEDUMPCONSTANTS_H
-#define __SBE_SBEDUMPCONSTANTS_H
+
+#pragma once
 
 #include<stdint.h>
 #include<stddef.h>
 #include "sbe_sp_intf.H"
-#define NO_OF_CMD_TYPES CMD_END
-#define CMD_TYPE_NOT_USED 0
+
+#define NO_OF_CMD_TYPES             CMD_END
+#define CMD_TYPE_NOT_USED           0
+#define INVALID_DUMP_TARGET         0xFF // Dump invalid target
+#define HDCT_BIN_COMMIT_ID_SIZE     0x08 // Commit ID size, First 8 bytes in HDCT.bin has Commit ID
 
 //Get the size of the structure member
 #define member_size(type, member) sizeof(((type *)0)->member)
@@ -37,25 +40,7 @@
 //(Sizeof(genericHdr) + sizeof(cmdTypeStruct))
 #define genericHdctRowSize(type, member) (member_size(genericHdctRow_t, genericHdr) + member_size(type, member))
 
-/**
- * @brief enum for sbe Dump clock state's
- *
-*/
-enum sbeDumpClockStates
-{
-    SBE_DUMP_CLOCK_ON   = 0x01, /* Clock's ON  */
-    SBE_DUMP_CLOCK_OFF  = 0x02, /* Clock's OFF */
-};
-
-/**
- * @brief enum for sbe dump fastarray collection info
- *
-*/
-enum sbeDumpFastArrayCollectionInfo
-{
-    SBE_DUMP_FASTARRY_COLLECTION_ON     = 0x00, /* Fastarray collection ON  */
-    SBE_DUMP_FASTARRY_COLLECTION_OFF    = 0x01, /* Fastarray collection OFF */
-};
+extern uint8_t chipUnitTypeToLogTargetTypeMap[ ];
 
 /* TODO: Update
  * All enums and constants defined in this file are as per crondump repo:-
@@ -78,6 +63,8 @@ enum dumpTypes
 
 //Chip Unit types(Chip unit types encoded as in HDCT.bin)
 //No: of bits used in HDCT.bin - 6bits
+// Note: Any changes made in enum will appropriate changes need to made in
+//       @ref chipUnitTypeMap array
 enum chipUnitTypes
 {
     CHIP_UNIT_TYPE_UNKNOWN = 0x00,
@@ -141,7 +128,7 @@ enum bitModifier
     B_OR  = 0x02,
 };
 
-// Generic Structre for each HDCT row.
+// Generic structure for each HDCT row.
 // Any change in HDCT.bin row format the below structure needs to be updated.
 typedef struct __attribute__((packed))
 {
@@ -229,15 +216,32 @@ struct _dumpTypeMap_t
 };
 typedef struct _dumpTypeMap_t DUMPTYPEMAP;
 
+/**
+ * @brief Mapping HDCT parser chip unit constant with the log target type
+*/
+typedef struct
+{
+    chipUnitTypes hdctParserChipUnitType; // HDCT constant chip unit type
+    uint8_t       logTargetType;          // log target type
+}chipUnitTypeMaping_t;
+
 /*
  * @brief Get the equivalent HDCT dump type based on the requested dump type
  * from DUMPTYPEMAP
  *        eg Checkstop, HB, MPIPL.
  *
  * @param [in] reqDumpType FSP/EBMC requested dump type
- *
  * @return HDCT equivalent dump type from DUMPTYPEMAP
  */
 uint16_t getEquivDumpType(uint8_t reqDumpType);
 
-#endif /* __SBE_SBEDUMPCONSTANTS_H */
+/**
+ * @brief HDCT constant chip unit type to log target type
+ *
+ * @param [in] hdct chip unit type which is defined @ref enum chipUnitTypes
+ * @return which return log target type which is equivalent to chipUnitType type
+*/
+inline uint8_t getLogTargetFromHdctCustomChipTarget(chipUnitTypes chipUnitType)
+{
+    return chipUnitTypeToLogTargetTypeMap [chipUnitType];
+}
