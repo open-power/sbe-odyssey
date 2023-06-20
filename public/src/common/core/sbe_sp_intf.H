@@ -27,8 +27,8 @@
  *
  *  @brief This file contains the SP - SBE interface protocol common details
  */
-#ifndef __SBEFW_SBE_SP_INTF_H
-#define __SBEFW_SBE_SP_INTF_H
+
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -226,7 +226,8 @@ enum sbeSecondaryResponse
     SBE_SEC_FILE_SIZE_IS_ZERO                 = 0x83,
     SBE_SEC_BUFFER_SIZE_SMALL                 = 0x84,
     SBE_SEC_NON_ALPHA_NUMERIC_CHAR_FOUND      = 0x85,
-    SBE_SEC_NO_MEM_TRAIN_DATA                 = 0x86
+    SBE_SEC_NO_MEM_TRAIN_DATA                 = 0x86,
+    SBE_SEC_FAST_ARRAY_HWP_FAILURE            = 0x87,
 };
 
 /**
@@ -389,5 +390,3 @@ enum sbeSupportedDumpTypes
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __SBEFW_SBE_SP_INTF_H */

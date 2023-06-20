@@ -22,21 +22,65 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+
 #include "sbecollectdump.H"
 #include "sbedumpconstants.H"
-#include "plat_hw_access.H"
-#include "sbecmdstopclocks.H"
-#include "sbecmdringaccess.H"
+#include "sbecollectdumpwrap.H"
+#include "poz_gettracearray.H" // For Trace-array dump support header
+#include "sbecmdtracearray.H"  // For Trace-array dump support header
+#include "sbecmdstopclocks.H"  // For Stopclock dump support header
+#include "sbecmdringaccess.H"  // For Rings dump support header
+#include "sbecmdfastarray.H"   // For Fast-array support header
+#include "poz_fastarray.H"
+#include "sbeglobals.H"
 
-#include "poz_gettracearray.H" /// For Trace-array dump support
-#include "sbecmdtracearray.H"
 
 #define PRI_SEC_RC_UNION(primary_rc, secondary_rc) primary_rc<<16 | secondary_rc
+
 
 inline bool sbeCollectDump::isDumpTypeMapped()
 {
     return (iv_hdctRow->genericHdr.dumpContent & iv_hdctDumpTypeMap);
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+/// SBE get DUMP - HDCT PAK section details functions
+////////////////////////////////////////////////////////////////////////////////
+// Constructor
+hdctPakSecDetails::hdctPakSecDetails()
+{
+    size_t imageSize = 0;
+
+    // allocate  scratch area for hdct binary
+    // TODO rc failure case not handled here need to handle
+    //      Jira: PFSBE-533 Handle the Error condition in
+    //            hdctPakSecDetails::hdctPakSecDetails() constructor
+    fapi2::ReturnCode rc = fapi2::plat_loadEmbeddedFile(hdct_binary_fname,
+                                                        (const void *&) iv_startAddr, imageSize);
+    if(rc == fapi2::FAPI2_RC_SUCCESS)
+    {
+        // get the start address using loadEmbeddedFile api
+        iv_endAddr = iv_startAddr + imageSize;
+        //Set currAddr to start of HDCT row
+        iv_currAddr = iv_startAddr + HDCT_BIN_COMMIT_ID_SIZE;
+        //Dump start after EKB CommitID
+        SBE_INFO("hdctPakSecDetails:: Start Offset: [0x%08X] Size: [0x%08X] End offset: [0x%08X]",
+                                          iv_startAddr, imageSize, iv_endAddr );
+    }
+}
+
+// Destructor
+hdctPakSecDetails::~hdctPakSecDetails()
+{
+    // releasing allocated space for hdct binary
+    if (iv_startAddr)
+    {
+        fapi2::freeEmbeddedFile((void *)iv_startAddr);
+    }
+    iv_startAddr = NULL;
+}
+
 
 /********************* Types of Dump Packets to FIFO START ****************************/
 
@@ -55,7 +99,7 @@ uint32_t sbeCollectDump::writeGetTracearrayPacketToFifo()
         // Sequence Id is 0 by default for Fifo interface
         iv_chipOpffdc.setCmdInfo( 0, SBE_CMD_CLASS_ARRAY_ACCESS, SBE_CMD_CONTROL_TRACE_ARRAY );
 
-        // Update address, length and stream header data vai FIFO
+        // Update address, length and stream header data via FIFO
         iv_tocRow.hdctHeader.address = iv_hdctRow->cmdTraceArray.strEqvHash32;
         uint32_t len = sizeof( iv_tocRow.hdctHeader ) / sizeof( uint32_t );
         if( !iv_tocRow.tgtHndl.getFunctional() )
@@ -102,8 +146,6 @@ uint32_t sbeCollectDump::writeGetTracearrayPacketToFifo()
         uint32_t dummyData         = 0x00;
 
         /// If endCount = startCount means chip-op failed. We will write dummy data.
-        /// Rc is not handled properly. Will hardcode rc=fail based on endCount
-        /// and startCount.
         if(endCount == startCount || ((endCount - startCount) != totalCount))
         {
             totalCount = totalCount - (endCount - startCount);
@@ -121,6 +163,7 @@ uint32_t sbeCollectDump::writeGetTracearrayPacketToFifo()
     #undef SBE_FUNC
 }
 
+
 uint32_t sbeCollectDump::writeGetRingPacketToFifo()
 {
     #define SBE_FUNC " writeGetRingPacketToFifo "
@@ -133,6 +176,16 @@ uint32_t sbeCollectDump::writeGetRingPacketToFifo()
         // Update address, length and stream header data via FIFO
         iv_tocRow.hdctHeader.address = iv_hdctRow->cmdGetRing.strEqvHash32;
         uint32_t len = sizeof(iv_tocRow.hdctHeader) / sizeof(uint32_t);
+        if( !iv_tocRow.tgtHndl.getFunctional() )
+        {
+            // Update non functional state DUMP header
+            iv_tocRow.hdctHeader.preReq     = PRE_REQ_NON_FUNCTIONAL;
+            iv_tocRow.hdctHeader.dataLength = 0x00;
+            l_rc = iv_oStream.put( len, (uint32_t*)&iv_tocRow.hdctHeader );
+            SBE_DEBUG( "DUMP GETRING: NonFunctional Target UnitNum[0x%08X]",
+                    (uint32_t)iv_tocRow.hdctHeader.chipUnitNum );
+            break;
+        }
 
         uint32_t bitlength = iv_hdctRow->cmdGetRing.ringLen;
         //Stream out the actual ring length.
@@ -189,6 +242,201 @@ uint32_t sbeCollectDump::writeGetRingPacketToFifo()
     return l_rc;
     #undef SBE_FUNC
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+/// SBE get DUMP - Write fast-array data to FIFO
+////////////////////////////////////////////////////////////////////////////////
+fapi2::ReturnCode sbeCollectDump::getFastarrayControlBlobSize(
+                                                    const char * i_filename,
+                                                    uint32_t & o_blobSizeInWords,
+                                                    sbeSecondaryResponse& o_rc )
+{
+    #define SBE_FUNC " getFastarrayControlBlobSize "
+    SBE_ENTER(SBE_FUNC);
+    fapi2::ReturnCode l_fapiRc = FAPI2_RC_SUCCESS;
+    sbeSecondaryResponse l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    const void * controlData   = NULL;
+
+    do
+    {
+        uint32_t controlSize = 0;
+        l_rc = (sbeSecondaryResponse) sbeControlFastArrayGetControlData( i_filename, controlData, controlSize);
+        if (l_rc)
+        {
+            // Error handling for load file
+            SBE_ERROR(SBE_FUNC "sbeControlFastArrayGetControlData failure, RC: 0x%x", l_rc);
+            break;
+        }
+
+        // Calculating control blob size in terms of words
+        // 3 used for word alignment, by neglected decimal point and assigning
+        // to unsigned integer
+        const uint32_t controlLen =  (controlSize + 3) / sizeof(uint32_t);
+
+        // Structure which will give the fast-array blob info
+        poz_fastarray_control_info controlInfo __attribute__((aligned(8))) = {0};
+        // Getting fast-array blob info
+        l_fapiRc = poz_fastarray_get_control_info( (const uint32_t *)controlData,
+                                                 controlLen, controlInfo);
+        if (l_fapiRc)
+        {
+            SBE_ERROR(SBE_FUNC "Fail to execute poz_fastarray_get_control_info"
+                                ", RC: 0x%x", l_fapiRc);
+            break;
+        }
+
+        o_blobSizeInWords = controlInfo.return_data_nwords;
+        SBE_INFO(SBE_FUNC "poz_fastarray control blob size: 0x%x words", controlInfo.return_data_nwords);
+
+    }while(0);
+
+    if (controlData)
+    {
+        // free loaded file
+        SBE_GLOBAL->embeddedArchive.free_file(controlData);
+    }
+
+    SBE_EXIT(SBE_FUNC);
+    o_rc = l_rc;
+    return l_fapiRc;
+    #undef SBE_FUNC
+}
+
+
+uint32_t sbeCollectDump::writeGetFastArrayPacketToFifo()
+{
+    #define SBE_FUNC "writeGetFastArrayPacketToFifo "
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    ReturnCode l_fapiRc;
+
+    do
+    {
+        // Set FFDC failed command information and
+        // Sequence Id is 0 by default for Fifo interface
+        iv_chipOpffdc.setCmdInfo(0, SBE_CMD_CLASS_ARRAY_ACCESS,
+                                    SBE_CMD_CONTROL_FAST_ARRAY);
+
+        // Update address, length and stream header data vai FIFO
+        iv_tocRow.hdctHeader.address = iv_hdctRow->cmdFastArray.strEqvHash32;
+        uint32_t len = sizeof(iv_tocRow.hdctHeader) / sizeof(uint32_t);
+        if(!iv_tocRow.tgtHndl.getFunctional())
+        {
+            SBE_ERROR(SBE_FUNC "GETFASTARRAY: NonFunctional Target UnitNum[0x%08X]",
+                                    (uint32_t)iv_tocRow.hdctHeader.chipUnitNum);
+            // Update non functional state DUMP header
+            iv_tocRow.hdctHeader.preReq = PRE_REQ_NON_FUNCTIONAL;
+            iv_tocRow.hdctHeader.dataLength = 0x00;
+            l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
+            CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+            break;
+        }
+
+        // assigning to local varibale
+        const char * faFileName = (const char *)
+           &const_fastarrayFileNameMapping[iv_hdctRow->cmdFastArray.controlSet];
+        uint32_t strSize        = strlen(faFileName);
+        SBE_INFO_BIN(SBE_FUNC "Fast array file name ",(char *)faFileName, strSize);
+
+        // Create the request msg array
+        uint8_t requestMsg[sizeof(sbeControlFastArrayCMD_t) +
+                        FAST_ARRAY_FILE_NAME_MAX_LEN ] = {0};
+
+        // Create the req struct for the sbeFastArray Chip-op
+        sbeControlFastArrayCMD_t dumpFastArrayReq = {0};
+        // Size of fastarray request msg
+        uint32_t fastArrayReqMsgSize = 0;
+
+        // Initialize the fast-array request msg
+        dumpFastArrayReq.flags        = FASTARRAY_FLAG_NONE;
+        dumpFastArrayReq.logTargetType= (uint32_t) getLogTargetFromHdctCustomChipTarget(
+                                          (chipUnitTypes) iv_tocRow.hdctHeader.chipUnitType);
+        dumpFastArrayReq.instanceId   = iv_hdctRow->genericHdr.chipletStart;
+
+        // copying req struct to request message
+        memcpy ((uint8_t *)requestMsg, (uint8_t *) &dumpFastArrayReq,
+                                             sizeof(dumpFastArrayReq));
+        fastArrayReqMsgSize = sizeof(dumpFastArrayReq)/sizeof(uint32_t);
+
+        // copying fa file name (as per chipop spec) to request message
+        memcpy ((char *) &requestMsg[ sizeof( dumpFastArrayReq ) ],
+                                            (char *) faFileName, strSize );
+        // string size aliging with 4 bytes
+        fastArrayReqMsgSize += (strSize + 3)/sizeof(uint32_t);
+
+        SBE_INFO(SBE_FUNC "Chipop data - Flags %x, logtarget %x, instanceid %x",
+                            FASTARRAY_FLAG_NONE,
+                            dumpFastArrayReq.logTargetType,
+                            iv_hdctRow->genericHdr.chipletStart);
+
+        // Getting fast-array control blob size
+        uint32_t fastarrayBlobSize = 0x00;
+        l_fapiRc = getFastarrayControlBlobSize( faFileName, fastarrayBlobSize,
+                                                (sbeSecondaryResponse&) l_rc);
+        if((l_fapiRc != fapi2::FAPI2_RC_SUCCESS) ||
+                                        (l_rc != SBE_SEC_OPERATION_SUCCESSFUL))
+        {
+            // sending the dummy dump header
+            iv_tocRow.hdctHeader.dataLength = 0x00;
+            l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
+            CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+
+            SBE_ERROR(SBE_FUNC "getFastarrayControlBlobSize failure");
+            iv_oStream.setFifoRc(l_fapiRc);
+            iv_oStream.setPriSecRc(PRI_SEC_RC_UNION(
+                        SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                        l_rc));
+            break;
+        }
+
+        SBE_INFO(SBE_FUNC "fastarray blob size: 0x%x", fastarrayBlobSize);
+        // fast array length in bytes
+        iv_tocRow.hdctHeader.dataLength = (fastarrayBlobSize * 8);
+        // Update TOC Header
+        l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+
+        uint32_t startCount = iv_oStream.words_written();
+        uint32_t totalCount = fastarrayBlobSize;
+        uint32_t dummyData = 0x00;
+
+        // Create the iostream obj
+        sbefifo_hwp_data_istream istream( iv_fifoType, fastArrayReqMsgSize,
+                (uint32_t*)&requestMsg, false );
+
+        l_rc = sbeControlFastArrayWrap( istream, iv_oStream );
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+
+        uint32_t endCount = iv_oStream.words_written();
+
+        SBE_INFO(SBE_FUNC "startCount: 0x%x, endCount: 0x%x, totalCount: 0x%x,"
+                          " (endCount - startCount): 0x%x",
+                            startCount, endCount, totalCount,
+                            (endCount - startCount));
+
+        // If endCount = startCount means chip-op failed. We will write dummy data
+        // All data streamed out need's to be 8 byte aligned.
+        if(endCount == startCount || ((endCount - startCount) != totalCount))
+        {
+            totalCount = totalCount - (endCount - startCount);
+            SBE_INFO(SBE_FUNC "Fast array data total count mismatch,"
+                              " Writing dummy data len: 0x%x", totalCount);
+            while(totalCount !=0)
+            {
+                l_rc = iv_oStream.put(dummyData);
+                CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+                totalCount = totalCount - 1;
+            }
+        }
+    }
+    while(0);
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
 
 uint32_t sbeCollectDump::stopClocksOff()
 {
@@ -383,12 +631,15 @@ uint32_t sbeCollectDump::writeDumpPacketRowToFifo()
     {
         // Get update row values by using HDCT bin data
         iv_tocRow.hdctHeaderInit(iv_hdctRow);
-        // TODO: Clean-Up once other chip-op enabled.
-        if( !( (iv_tocRow.hdctHeader.cmdType == CMD_GETSCOM)    ||
-               (iv_tocRow.hdctHeader.cmdType == CMD_PUTSCOM)    ||
+
+        // Filtering HDCT Cmd types
+        if( !( (iv_tocRow.hdctHeader.cmdType == CMD_GETSCOM)       ||
+               (iv_tocRow.hdctHeader.cmdType == CMD_PUTSCOM)       ||
                (iv_tocRow.hdctHeader.cmdType == CMD_GETTRACEARRAY) ||
                (iv_tocRow.hdctHeader.cmdType == CMD_STOPCLOCKS)    ||
-               (iv_tocRow.hdctHeader.cmdType == CMD_GETRING))
+               (iv_tocRow.hdctHeader.cmdType == CMD_GETRING)       ||
+               (iv_tocRow.hdctHeader.cmdType == CMD_GETFASTARRAY)
+               )
           )
         {
             SBE_ERROR(SBE_FUNC "Unsupported command types %d", (uint32_t)iv_tocRow.hdctHeader.cmdType);
@@ -455,6 +706,13 @@ uint32_t sbeCollectDump::writeDumpPacketRowToFifo()
                     l_rc = writeGetRingPacketToFifo();
                     break;
                 }
+
+                case CMD_GETFASTARRAY:
+                {
+                    l_rc = writeGetFastArrayPacketToFifo();
+                    break;
+                }
+
                 default:
                 {
                     // Print the error message and continue the dumping
@@ -510,7 +768,7 @@ uint32_t sbeCollectDump::parserSingleHDCTEntry()
     do
     {
         //Check if all HDCT entries are parsed
-        if(!(iv_hdctPakSecDetails.currAddr < iv_hdctPakSecDetails.endAddr))
+        if(!(iv_hdctPakSecDetails.iv_currAddr < iv_hdctPakSecDetails.iv_endAddr))
         {
             SBE_INFO("All HDCT entries parsed for Clock State: %d", iv_clockState);
             status = false;
@@ -518,10 +776,10 @@ uint32_t sbeCollectDump::parserSingleHDCTEntry()
         }
 
         //Parse single HDCT row and populate genericHdctRow_t struct
-        iv_hdctRow = (genericHdctRow_t*)iv_hdctPakSecDetails.currAddr;
+        iv_hdctRow = (genericHdctRow_t*)iv_hdctPakSecDetails.iv_currAddr;
 
         //Increment the current address to point to the next HDCT row
-        iv_hdctPakSecDetails.currAddr = iv_hdctPakSecDetails.currAddr +
+        iv_hdctPakSecDetails.iv_currAddr = iv_hdctPakSecDetails.iv_currAddr +
                                         genericHdctRowSize_table[(uint8_t)(iv_hdctRow->genericHdr.command)];
 
         //Error Check

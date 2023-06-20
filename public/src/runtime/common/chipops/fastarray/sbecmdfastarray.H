@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -27,13 +28,35 @@
 #include "sbe_sp_intf.H"
 #include "plat_hwp_data_stream.H"
 
+
+/**
+ * @brief Fast-array files directory inside sppe.ram.pak
+ * sppe.ram.pak>
+ *    `-- factl --> Directory name
+ *        |-- mc_core
+ *        |-- mc_io
+ *        |-- mc_perv
+ *        |-- mc_pub0
+ *        `-- mc_pub1
+*/
+#define FAST_ARRAY_FILE_DIRECTORY "factl/"
+
+/**
+ * @brief Fast-array file name max length
+*/
+#define FAST_ARRAY_FILE_NAME_MAX_LEN  32
+
+
+/**
+ * @brief Fast array chipop flags
+*/
 enum sbeControlFastArrayFlags {
     FASTARRAY_FLAG_NONE = 0x00,
     FASTARRAY_FLAG_CUSTOM_CONTROL_DATA = 0x01,
 };
 
 
-/*
+/**
  * @brief Fast array command structure
  * */
 typedef struct
@@ -44,6 +67,22 @@ typedef struct
     uint32_t instanceId     : 8;
 } sbeControlFastArrayCMD_t;
 
+
+/**
+ * @brief Function for search and allocate scratch area for given file
+ *
+ * @param [in] i_fname pointer to the buffer
+ * @param [out] o_control pointer points to allocated scratch area for given file
+ * @param [out] o_controlSize size
+ *
+ * @return secondary RC
+ *
+ * @note this function will load a file, and it's the caller's responsibility
+ *       to call free().
+*/
+uint32_t sbeControlFastArrayGetControlData( const char * i_fname,
+                                            const void* &o_control,
+                                            uint32_t& o_controlSize);
 
 /**
  * @brief sbeControlFastArrayWrap: write the data Buffer

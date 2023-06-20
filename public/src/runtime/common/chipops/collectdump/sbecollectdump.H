@@ -22,14 +22,13 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __SBE_SBECOLLECTDUMP_H
-#define __SBE_SBECOLLECTDUMP_H
 
-#include "sbefifo.H"
+#pragma once
+
+#include "sbecmddump.H"
 #include "sbedumpconstants.H"
 #include "plat_hwp_data_stream.H"
 #include "file_access.H"
-#include "target_types.H"
 #include "filenames.H"
 #include <fapi2_attribute_service.H>
 
@@ -80,40 +79,27 @@ enum sbeRingAccessCommands
     SBE_CMD_PUTRING          = 0x02, /* Put Ring */
 };
 
-//Struct containing details of HDCT PAK section
+
+// Struct containing details of HDCT PAK section
 // Change this to pak instead of HDCT PAK Section
 typedef struct hdctPakSecDetails
 {
-    uint32_t startAddr;
-    uint32_t size;
-    uint32_t endAddr;
-    uint32_t currAddr;
+    uint32_t iv_startAddr;
+    uint32_t iv_endAddr;
+    uint32_t iv_currAddr;
 
     /**
-     * @brief Get the HDCT Pak offset(Start location) from SBE Image.
+     * @brief Constructor, Get the HDCT Pak offset(Start location) from SBE Image
      *
      * @return  HDCT Pak offset(Start location)
      */
-    hdctPakSecDetails()
-    {
-        const void *image = NULL;
-        size_t image_size;
-        fapi2::ReturnCode rc = fapi2::plat_loadEmbeddedFile(hdct_binary_fname,
-                                                            image, image_size);
-        if(rc == fapi2::FAPI2_RC_SUCCESS)
-        {
-        // get the start address using loadEmbeddedFile api
-        startAddr = reinterpret_cast<uint32_t>(image);
-        endAddr = startAddr + image_size;
-        //Set currAddr to start of HDCT row
-        currAddr = startAddr + sizeof(uint64_t);
-        //Dump start after EKB CommitID
-        SBE_INFO("Start Offset: [0x%08X] Size: [0x%08X] \
-                    End offset: [0x%08X] ", startAddr,size,endAddr );
-        }
-        fapi_try_exit:
-            fapi2::freeEmbeddedFile(image);
-     }
+    hdctPakSecDetails();
+
+    /**
+     * @brief Destructor
+    */
+    ~hdctPakSecDetails();
+
 }hdctPakSecDetails_t;
 
 //Struct for getDump chip-op header
@@ -217,7 +203,7 @@ class sbeCollectDump
             SBE_INFO("Fast array collection is %x ", iv_collectFastArray);
 
             //Populate dump header struct with EKB Commit ID
-            fapi2::seeprom_hwp_data_istream stream((uint32_t*)iv_hdctPakSecDetails.startAddr,
+            fapi2::seeprom_hwp_data_istream stream((uint32_t*)iv_hdctPakSecDetails.iv_startAddr,
                                             sizeof(uint64_t));
             uint32_t msbEkbIdValue, lsbEkbIdValue;
             stream.get(msbEkbIdValue), stream.get(lsbEkbIdValue);
@@ -322,7 +308,7 @@ class sbeCollectDump
         uint32_t writeGetMemPBAPacketToFifo();
 
        /**
-        * @brief Write tracearry data to FIFO.
+        * @brief Write tracearray data to FIFO.
         *
         * @return SUCCESS,  If chip-op is successful.
         *         ERROR,    Incase of failure.
@@ -403,8 +389,22 @@ class sbeCollectDump
                                 const uint32_t i_relativeAddr,
                                 uint32_t &o_absoluteAddr);
 
+        /**
+         * @brief Get the fast-array blob size for the provided blob in terms of n words.
+         * Before running the fast-array HWP, this function is used to calculate
+         * the fast-array blob size, which aids in the creation of dump headers.
+         *
+         * @param [in] i_filename const pointer to file name buffer
+         * @param [out] o_blobSizeNwords reference which return the blob size in
+         *                                terms of n words
+         * @param [out] o_rc secondary rc
+         * @return fapi RC
+         *
+        */
+        fapi2::ReturnCode getFastarrayControlBlobSize(
+                                                    const char * i_filename,
+                                                    uint32_t & o_blobSizeNwords,
+                                                    sbeSecondaryResponse& o_rc );
         /***************** Plat Functions Ends ********************/
 
 };
-
-#endif /* __SBEFW_SBECOLLECTDUMP_H */

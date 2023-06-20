@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,12 +23,51 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 #include "sbedumpconstants.H"
+#include "target_types.H"
 
 DUMPTYPEMAP dumpTypeMap[4] = {
-    {SBE_DUMP_TYPE_SCS , DUMP_TYPE_SCS},
+    {SBE_DUMP_TYPE_SCS   , DUMP_TYPE_SCS  },
     {SBE_DUMP_TYPE_MPIPL , DUMP_TYPE_MPIPL},
-    {SBE_DUMP_TYPE_PERF , DUMP_TYPE_PERF},
-    {SBE_DUMP_TYPE_HB , DUMP_TYPE_HB}
+    {SBE_DUMP_TYPE_PERF  , DUMP_TYPE_PERF },
+    {SBE_DUMP_TYPE_HB    , DUMP_TYPE_HB   }
+};
+
+/**
+ * @brief Chip Unit type map with Log target type
+ *
+ * @note: In case user try the changes @ref enum chipUnitTypes should changes
+ *        respective log target type here
+*/
+uint8_t chipUnitTypeToLogTargetTypeMap[ ] = {
+    INVALID_DUMP_TARGET,
+    fapi2::LOG_TARGET_TYPE_PROC_CHIP,
+    fapi2::LOG_TARGET_TYPE_MCS,
+    fapi2::LOG_TARGET_TYPE_CORE,
+    fapi2::LOG_TARGET_TYPE_EQ,
+    fapi2::LOG_TARGET_TYPE_EX,
+    fapi2::LOG_TARGET_TYPE_PERV,
+    fapi2::LOG_TARGET_TYPE_MCBIST,
+    fapi2::LOG_TARGET_TYPE_SYSTEM,
+    fapi2::LOG_TARGET_TYPE_PHB,
+    fapi2::LOG_TARGET_TYPE_MI,
+    fapi2::LOG_TARGET_TYPE_MC,
+    fapi2::LOG_TARGET_TYPE_PAUC,
+    fapi2::LOG_TARGET_TYPE_IOHS,
+    fapi2::LOG_TARGET_TYPE_NMMU,
+    fapi2::LOG_TARGET_TYPE_CAPP,
+    fapi2::LOG_TARGET_TYPE_XBUS,
+    fapi2::LOG_TARGET_TYPE_MCA,
+    INVALID_DUMP_TARGET,
+    fapi2::LOG_TARGET_TYPE_PEC,
+    fapi2::LOG_TARGET_TYPE_MBA,
+    fapi2::LOG_TARGET_TYPE_DMI,
+    INVALID_DUMP_TARGET,
+    fapi2::LOG_TARGET_TYPE_MCC,
+    fapi2::LOG_TARGET_TYPE_OMIC,
+    fapi2::LOG_TARGET_TYPE_PAU,
+    fapi2::LOG_TARGET_TYPE_OMI,
+    fapi2::LOG_TARGET_TYPE_OCMB_CHIP,
+    fapi2::LOG_TARGET_TYPE_MEM_PORT,
 };
 
 //Index mapped table wrt commandTypes enum
