@@ -47,6 +47,8 @@ enum POZ_CHIPLET_RESET_Private_Constants
     HEARTBEAT_POLL_COUNT = 20,    // count to wait for chiplet heartbeat
     HEARTBEAT_SIM_CYCLE_DELAY = 70000, // unit is cycles
     HEARTBEAT_HW_NS_DELAY = 10000, // unit is nano seconds
+    CC_ALIGNMENT_SIM_CYCLE_DELAY = 70000, // unit is cycles
+    CC_ALIGNMENT_HW_NS_DELAY = 10000, // unit is nano seconds
 };
 
 ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
@@ -79,6 +81,14 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
         NET_CTRL0 = 0;
         NET_CTRL0.set_PCB_EP_RESET(1);
         FAPI_TRY(NET_CTRL0.putScom_SET(l_chiplets_mc));
+
+        NET_CTRL0 = 0;
+        NET_CTRL0.set_VITL_ALIGN_DIS(1);
+        FAPI_TRY(NET_CTRL0.putScom_SET(l_chiplets_mc));
+
+        FAPI_TRY(fapi2::delay(CC_ALIGNMENT_HW_NS_DELAY, CC_ALIGNMENT_SIM_CYCLE_DELAY));
+
+        FAPI_TRY(NET_CTRL0.putScom_CLEAR(l_chiplets_mc));
 
         NET_CTRL0 = 0;
         NET_CTRL0.set_PCB_EP_RESET(1);
@@ -119,6 +129,12 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
         l_sync_pulse_delay = (i_sync_pulse_delay == 8) ? 0 : i_sync_pulse_delay - 1;
         SYNC_CONFIG.set_SYNC_PULSE_DELAY(l_sync_pulse_delay);
         FAPI_TRY(SYNC_CONFIG.putScom(l_chiplets_mc));
+
+        FAPI_TRY(fapi2::delay(CC_ALIGNMENT_HW_NS_DELAY, CC_ALIGNMENT_SIM_CYCLE_DELAY));
+
+        NET_CTRL0 = 0;
+        NET_CTRL0.set_VITL_ALIGN_DIS(1);
+        FAPI_TRY(NET_CTRL0.putScom_SET(l_chiplets_mc));
 
         FAPI_INF("Set up per-chiplet OPCG delays");
 
