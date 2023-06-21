@@ -145,8 +145,7 @@ class pkTraceBuffer():
         #4 Byte pad
         self.pad = int.from_bytes(ppeTraceBinFile[36:40], "big")
 
-        #8 Byte timeAdj64. This parameter needs to be extracted basic the machine endian format
-        self.timeAdj64 = int.from_bytes(ppeTraceBinFile[40:48], fspTraceEndianFormat)
+        self.timeAdj64 = int.from_bytes(ppeTraceBinFile[40:48], "big")
 
         #4Bytes of tbu32
         self.tbu32 = int.from_bytes(ppeTraceBinFile[48:52], "big")
@@ -353,7 +352,7 @@ class pkTraceEntry():
         #Only for first entry
         if self.traceNumber == 1:
 
-            self.ppe_time64 = ((pkTraceHdr.tbu32 & 0xefffffff) << 32)
+            self.ppe_time64 = ((pkTraceHdr.tbu32 & 0xffffffff) << 32)
             self.ppe_time64 |= self.timestamp
 
         else:
