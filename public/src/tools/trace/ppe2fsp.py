@@ -6,7 +6,8 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2020,2022
+# Contributors Listed Below - COPYRIGHT 2020,2023
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,6 +58,9 @@ maxOutputSize = 4 * maxInputSize
 
 #Size of word/uint32_t
 sizeofWord = 4
+
+#Size of byte/uint8_t
+sizeofByte = 1
 
 #Verbose mode
 verbose = False
@@ -243,8 +247,6 @@ class pkTraceEntry():
         self.traceNumber = traceEntryNumber
 
         #Get Parameter Values based on trace format
-        #NOTE: PK_TRACE_FORMAT_BINARY is not supported by SBE .
-        assert traceFormats[self.traceFormat] != "PK_TRACE_FORMAT_BINARY", " Unsupported trace format by SBE PK_TRACE_FORMAT_BINARY "
 
         if (traceFormats[self.traceFormat] == "PK_TRACE_FORMAT_TINY"):
 
@@ -300,6 +302,42 @@ class pkTraceEntry():
 
             #Update the total trace entry size
             self.totalTraceEntrySize = PkTraceGenericSize + (self.bytes_or_parms_count_roundoff * sizeofWord)
+
+            #Return the offset by pointing it to next trace entry
+            return (actualOffset - self.totalTraceEntrySize)
+
+        elif (traceFormats[self.traceFormat] == "PK_TRACE_FORMAT_BINARY"):
+
+            paramsCountRounded = (self.bytes_or_parms_count + 7) & (~0x00000007)
+            self.bytes_or_parms_count_roundoff = paramsCountRounded
+            paramOffset = ((actualOffset - PkTraceGenericSize - (paramsCountRounded)) & (pkTraceBuffSize - 1))
+
+            #Check if there is enough bytes left to copy from offset.This check
+            #is needed when there is a roll over and part of the params are on
+            #other side of the circular buffer
+            bytesLeft = pkTraceBuffSize - paramOffset
+
+            while(paramsCountRounded and bytesLeft):
+                param = int.from_bytes(traceBin[paramOffset:(paramOffset + sizeofByte)], "big")
+                self.params.append(param)
+                paramsCountRounded -= 1
+                paramOffset += sizeofByte
+                bytesLeft -= sizeofByte
+
+            #Now copy the rest of the data starting from the beginning of the
+            #circular buffer if there was a roll over and part of params was at
+            #beginning of circular buffer
+            if paramsCountRounded:
+                paramOffset = 0
+
+                while(paramsCountRounded):
+                    param = int.from_bytes(traceBin[paramOffset:(paramOffset + sizeofByte)], "big")
+                    self.params.append(param)
+                    paramsCountRounded -= 1
+                    paramOffset += sizeofByte
+
+            #Update the total trace entry size
+            self.totalTraceEntrySize = PkTraceGenericSize + self.bytes_or_parms_count_roundoff
 
             #Return the offset by pointing it to next trace entry
             return (actualOffset - self.totalTraceEntrySize)
@@ -454,6 +492,12 @@ class fspTraceEntry():
         #merge the hash prefix and the string_id fields together for a 32 bit hash value
         self.hashId = int((format(pkTraceBuff.hashPrefix, "04x") + format(pkTraceEntry.pkTraceHash, "04x")) , 16)
 
+        #determine the FSP trace format
+        if (traceFormats[pkTraceEntry.traceFormat] == "PK_TRACE_FORMAT_BINARY"):
+            self.tag = fspTraceFormats["TRACE_FIELDBIN"]
+        else:
+            self.tag = fspTraceFormats["TRACE_FIELDTRACE"]
+
         #Populate length and data based on trace format
         if (traceFormats[pkTraceEntry.traceFormat] == "PK_TRACE_FORMAT_TINY"):
 
@@ -488,11 +532,25 @@ class fspTraceEntry():
                 #Update With partial trace hash
                 self.hashId = int((format(pkTraceBuff.hashPrefix, "04x") + format(pkTraceBuff.partialTraceHash, "04x")) , 16)
 
-        #determine the FSP trace format
-        if (traceFormats[pkTraceEntry.traceFormat] == "PK_TRACE_FORMAT_BINARY"):
-            self.tag = fspTraceFormats["TRACE_FIELDBIN"]
-        else:
-            self.tag = fspTraceFormats["TRACE_FIELDTRACE"]
+        elif (traceFormats[pkTraceEntry.traceFormat] == "PK_TRACE_FORMAT_BINARY"):
+
+            if pkTraceEntry.isTraceComplete == 0x1:
+                #If PK trace is complete
+                self.length = pkTraceEntry.bytes_or_parms_count_roundoff
+
+                #All params are actual params/data
+                self.data = pkTraceEntry.params
+
+            else:
+                #If PK trace is in-complete(not all parm data had been written at the time the trace was
+                #captured) then we will write a trace to the fsp buffer that says
+                #"PARTIAL TRACE ENTRY.  HASH_ID = %d"
+
+                self.length = sizeofWord
+                self.data.append(self.hashId)
+
+                #Update With partial trace hash
+                self.hashId = int((format(pkTraceBuff.hashPrefix, "04x") + format(pkTraceBuff.partialTraceHash, "04x")) , 16)
 
         #set the line number to 1
         self.line = 0x01
@@ -663,7 +721,10 @@ def fspTraceBin(fspTraceBinFile, fspTraceHeader, ppe2fspEntriesAll):
         file.write(struct.pack(endianChar + "I", entry.line))
 
         for data in entry.data:
-            file.write(struct.pack(endianChar + "I", data))
+            if(entry.tag == fspTraceFormats["TRACE_FIELDBIN"]):
+                file.write(struct.pack("B", data))
+            else:
+                file.write(struct.pack(endianChar + "I", data))
 
         file.write(struct.pack(endianChar + "I", entry.size))
 
