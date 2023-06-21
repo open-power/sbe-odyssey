@@ -62,7 +62,7 @@ fapi2::ReturnCode ody_omi_hss_bist_poll(const fapi2::Target<fapi2::TARGET_TYPE_O
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_OMI_RX_LANES, i_target, l_rx_lanes));
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_OMI_TX_LANES, i_target, l_tx_lanes));
 
-    FAPI_TRY(l_ppe_common.bist_poll(i_target, l_thread, l_done, l_fail, l_ext_cmd_override));
+    FAPI_TRY(l_ppe_common.bist_poll(i_target, l_thread, l_done, l_fail, l_ext_cmd_override, 1000));
 
     if (!l_done || l_fail)
     {
