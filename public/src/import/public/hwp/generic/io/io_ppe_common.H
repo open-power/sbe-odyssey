@@ -229,12 +229,12 @@ class io_ppe_common
                                      const uint32_t i_tx_lanes_0_31,
                                      const uint32_t i_ext_cmd_override);
 
-
         fapi2::ReturnCode bist_poll(const fapi2::Target<K, M, V>& i_target,
                                     const uint8_t i_num_threads,
                                     uint8_t& o_done,
                                     uint32_t& o_fail,
-                                    const uint32_t i_ext_cmd_override);
+                                    const uint32_t i_ext_cmd_override,
+                                    const uint32_t i_poll_count);
 
         fapi2::ReturnCode fast_mode(const fapi2::Target<K, M, V>& i_target,
                                     const uint8_t i_thread);
@@ -1037,15 +1037,34 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_poll(const fapi2::Target<K, M, V>
         const uint8_t i_thread,
         uint8_t& o_done,
         uint32_t& o_fail,
-        const uint32_t i_ext_cmd_override)
+        const uint32_t i_ext_cmd_override,
+        const uint32_t i_poll_count)
 {
     FAPI_DBG("Starting io_ppe_common::bist_poll");
 
     fapi2::buffer<uint64_t> l_cmd;
     fapi2::buffer<uint64_t> l_data = 0;
+    uint32_t l_loop_count = 0;
+
+    o_done = 0;
+    o_fail = 0;
+
     l_cmd = (i_ext_cmd_override == 0x00000000) ? BIST_START_CMD : i_ext_cmd_override;
 
-    FAPI_TRY(ext_cmd_poll(i_target, i_thread, l_cmd, o_done, o_fail));
+    FAPI_DBG("io_ppe_common::BIST Poll: thread: %d", i_thread);
+
+    while (!o_done && (l_loop_count < i_poll_count))
+    {
+        FAPI_TRY(iv_regs->flushCache(i_target));
+        FAPI_TRY(ext_cmd_check(i_target, i_thread, l_cmd, o_done, o_fail));
+
+        if (!o_done)
+        {
+            fapi2::delay(2000000, 2000000); // ns, sim cycles. 1ms
+        }
+
+        l_loop_count++;
+    }
 
     FAPI_TRY(MEM_REG_BIST_OVERALL_PASS_GET(iv_regs, i_target, i_thread, l_data));
     IO_PPE_COMMON_PRINT(l_data == 0, "Thread %d BIST_OVERALL_PASS: 0x%04x", i_thread, l_data)
