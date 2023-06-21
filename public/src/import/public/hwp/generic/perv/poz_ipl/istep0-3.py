@@ -1077,6 +1077,10 @@ def ody_chiplet_clk_config():
     poz_chiplet_clk_config()
 
 def zme_chiplet_clk_config():
+    # Restoring NET_CTRL0 and NET_CTRL1 to initial value for proper hotplug
+    for chiplet in all:
+        NET_CTRL0 = 0x7C302020
+        NET_CTRL1 = 0x70000000
     poz_chiplet_clk_config()
 
 # typedef fapi2::ReturnCode (*chiplet_mux_setup_FP_t)(
@@ -1117,10 +1121,10 @@ def zme_chiplet_deskew():
 ISTEP(3, 4, "proc_chiplet_reset", "SSBE, TSBE")
 
 def p11s_chiplet_reset():
-    poz_chiplet_reset(i_target, p11s_chiplet_delay_table)
+    poz_chiplet_reset(i_target, p11s_chiplet_delay_table, 10)
 
 def p11t_chiplet_reset():
-    poz_chiplet_reset(i_target, p11t_chiplet_delay_table)
+    poz_chiplet_reset(i_target, p11t_chiplet_delay_table, 10)
 
     if not ATTR_HOTPLUG:
         p11t_hcd_ex_manual_poweron(all good cores)
@@ -1128,7 +1132,7 @@ def p11t_chiplet_reset():
         p11t_hcd_core_reset(all good cores)
 
 def ody_chiplet_reset():
-    poz_chiplet_reset(i_target, ody_chiplet_delay_table, PRE_SCAN0)
+    poz_chiplet_reset(i_target, ody_chiplet_delay_table, 10, PRE_SCAN0)
 
     with MC chiplet:
         # Assert ATPGMODE_PUBMAC while we might scan to work around
@@ -1140,7 +1144,7 @@ def ody_chiplet_reset():
         ## Program DDR PHY Nto1 clock division ratios
         CPLT_CONF1[24:29] = all 1s
 
-    poz_chiplet_reset(i_target, ody_chiplet_delay_table, SCAN0_AND_UP)
+    poz_chiplet_reset(i_target, ody_chiplet_delay_table, 10, SCAN0_AND_UP)
 
     with MC chiplet:
         ## Force MC ATPG regions disabled despite ATTR_PG settings
@@ -1166,9 +1170,9 @@ def zme_chiplet_reset():
         ## Clear and then set VREF anatune in CPLT_CONF0(56:63) according to value in attribute
         CPLT_CONF0[56:64] = ATTR_L3_VREF_ANATUNE;
 
-        ## Clear and then set UREG and VREG anatune in CPLT_CONF1( 0: 7) & CPLT_CONF1(16:23) according to value in attribute
-        CPLT_CONF1[ 0: 8] = ATTR_L3_UREG_ANATUNE;
-        CPLT_CONF1[ 8:16] = ATTR_L3_UREG_ANATUNE;
+        ## Clear and then set UREG and VREG anatune in CPLT_CONF1( 0: 23) according to value in attribute
+        CPLT_CONF1[ 0: 8] = ATTR_L3_UREG_H_ANATUNE;
+        CPLT_CONF1[ 8:16] = ATTR_L3_UREG_V_ANATUNE;
         CPLT_CONF1[16:24] = ATTR_L3_VREG_ANATUNE;
 
         ## Clear and then set VBLH voltage in NET_CTRL1(24:30) according to value in attribute
@@ -1190,7 +1194,7 @@ enum poz_chiplet_reset_phases : uint8_t {
     ALL = 0xFF,
 };
 
-def poz_chiplet_reset(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64], const poz_chiplet_reset_phases i_phases = ALL):
+def poz_chiplet_reset(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64], uint8_t i_sync_pulse_delay = 8, const poz_chiplet_reset_phases i_phases = ALL):
     if ATTR_HOTPLUG:
         chiplets = All functional chiplets except TP
     else:
@@ -1201,6 +1205,9 @@ def poz_chiplet_reset(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64], 
             ## Enable and reset chiplets
             NET_CTRL0.PCB_EP_RESET = 1
             # write NET_CTRL0
+            NET_CTRL0.VITL_ALIGN_DIS = 1
+            delay(10us, 70kcyc)
+            NET_CTRL0.VITL_ALIGN_DIS = 0
             NET_CTRL0.PCB_EP_RESET = 0
             NET_CTRL0.CHIPLET_EN = 1
             NET_CTRL0.SRAM_ENABLE = 1    # bit 23
@@ -1214,7 +1221,13 @@ def poz_chiplet_reset(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64], 
 
             ## Set up clock controllers
             SYNC_CONFIG = 0
-            SYNC_CONFIG.SYNC_PULSE_DELAY = 0b1001    # decimal 9 -> 10 cycles
+            if i_sync_pulse_delay == 8:
+                SYNC_CONFIG.SYNC_PULSE_DELAY = 0
+            else:
+                SYNC_CONFIG.SYNC_PULSE_DELAY = i_sync_pulse_delay - 1
+
+            delay(10us, 70kcyc)
+            NET_CTRL0.VITL_ALIGN_DIS = 1
 
         ## Set up per-chiplet OPCG delays
         for chiplet in chiplets:
