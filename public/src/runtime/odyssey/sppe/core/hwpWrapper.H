@@ -135,4 +135,14 @@ ReturnCode istepLoadIOPPEwithOcmb( voidfuncptr_t i_hwp);
  * @return FAPI2_RC_SUCCESS on success
  */
 ReturnCode istepDraminitWithOcmb( voidfuncptr_t i_hwp);
+
+/**
+ * @brief Wrapper to call the HWP with i2c bus reset
+ *
+ * @param[in] i_hwp Function pointer to HWP
+ *
+ * @return FAPI2_RC_SUCCESS on success
+ */
+ReturnCode istepWithOcmbWithi2cReset( voidfuncptr_t i_hwp);
+
 #endif
