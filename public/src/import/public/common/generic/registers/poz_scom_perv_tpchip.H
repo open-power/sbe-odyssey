@@ -1219,14 +1219,10 @@ static const uint32_t EPS_CLKSTOP_ON_XSTOP_MASK5_UNIT_TC_FIR_LOCAL_XSTOP52 = 62;
 static const uint32_t EPS_CLKSTOP_ON_XSTOP_MASK5_UNIT_TC_FIR_LOCAL_XSTOP53 = 63;
 
 
-static const uint64_t EPS_DBG_DEBUG_TRACE_CONTROL = 0x10410ull;
-
 static const uint32_t EPS_DBG_DEBUG_TRACE_CONTROL_START = 0;
 static const uint32_t EPS_DBG_DEBUG_TRACE_CONTROL_STOP = 1;
 static const uint32_t EPS_DBG_DEBUG_TRACE_CONTROL_RESET = 2;
 
-
-static const uint64_t EPS_DBG_INST1_COND_REG_1 = 0x10401ull;
 
 static const uint32_t EPS_DBG_INST1_COND_REG_1_COND1_SEL_A = 0;
 static const uint32_t EPS_DBG_INST1_COND_REG_1_COND1_SEL_A_LEN = 8;
@@ -1262,8 +1258,6 @@ static const uint32_t EPS_DBG_INST1_COND_REG_1_RESET_C3_SELECT = 60;
 static const uint32_t EPS_DBG_INST1_COND_REG_1_RESET_C3_SELECT_LEN = 3;
 
 
-static const uint64_t EPS_DBG_INST1_COND_REG_2 = 0x10402ull;
-
 static const uint32_t EPS_DBG_INST1_COND_REG_2_CROSS_COUPLE_SELECT_1_A = 0;
 static const uint32_t EPS_DBG_INST1_COND_REG_2_CROSS_COUPLE_SELECT_1_A_LEN = 5;
 static const uint32_t EPS_DBG_INST1_COND_REG_2_CROSS_COUPLE_SELECT_1_B = 5;
@@ -1275,12 +1269,6 @@ static const uint32_t EPS_DBG_INST1_COND_REG_2_CROSS_COUPLE_SELECT_2_B_LEN = 5;
 static const uint32_t EPS_DBG_INST1_COND_REG_2_TO_CMP_LT = 20;
 static const uint32_t EPS_DBG_INST1_COND_REG_2_TO_CMP_LT_LEN = 24;
 
-
-static const uint64_t EPS_DBG_INST1_COND_REG_3 = 0x10403ull;
-
-
-
-static const uint64_t EPS_DBG_INST2_COND_REG_1 = 0x10404ull;
 
 static const uint32_t EPS_DBG_INST2_COND_REG_1_COND1_SEL_A = 0;
 static const uint32_t EPS_DBG_INST2_COND_REG_1_COND1_SEL_A_LEN = 8;
@@ -1316,8 +1304,6 @@ static const uint32_t EPS_DBG_INST2_COND_REG_1_RESET_C3_SELECT = 60;
 static const uint32_t EPS_DBG_INST2_COND_REG_1_RESET_C3_SELECT_LEN = 3;
 
 
-static const uint64_t EPS_DBG_INST2_COND_REG_2 = 0x10405ull;
-
 static const uint32_t EPS_DBG_INST2_COND_REG_2_CROSS_COUPLE_SELECT_1_A = 0;
 static const uint32_t EPS_DBG_INST2_COND_REG_2_CROSS_COUPLE_SELECT_1_A_LEN = 5;
 static const uint32_t EPS_DBG_INST2_COND_REG_2_CROSS_COUPLE_SELECT_1_B = 5;
@@ -1329,12 +1315,6 @@ static const uint32_t EPS_DBG_INST2_COND_REG_2_CROSS_COUPLE_SELECT_2_B_LEN = 5;
 static const uint32_t EPS_DBG_INST2_COND_REG_2_TO_CMP_LT = 20;
 static const uint32_t EPS_DBG_INST2_COND_REG_2_TO_CMP_LT_LEN = 24;
 
-
-static const uint64_t EPS_DBG_INST2_COND_REG_3 = 0x10406ull;
-
-
-
-static const uint64_t EPS_DBG_MODE_REG = 0x10400ull;
 
 static const uint32_t EPS_DBG_MODE_REG_GLB_BRCST_MODE = 0;
 static const uint32_t EPS_DBG_MODE_REG_GLB_BRCST_MODE_LEN = 3;
@@ -1359,8 +1339,6 @@ static const uint32_t EPS_DBG_MODE_REG_UNUSED = 26;
 static const uint32_t EPS_DBG_MODE_REG_UNUSED_LEN = 6;
 
 
-static const uint64_t EPS_DBG_TRACE_MODE_REG_2 = 0x1040Full;
-
 static const uint32_t EPS_DBG_TRACE_MODE_REG_2_RUNN_COUNT_COMPARE_VALUE = 0;
 static const uint32_t EPS_DBG_TRACE_MODE_REG_2_RUNN_COUNT_COMPARE_VALUE_LEN = 16;
 static const uint32_t EPS_DBG_TRACE_MODE_REG_2_IMM_FREEZE_MODE = 16;
@@ -1372,8 +1350,6 @@ static const uint32_t EPS_DBG_TRACE_MODE_REG_2_FRZ_COUNT_ON = 21;
 static const uint32_t EPS_DBG_TRACE_MODE_REG_2_EXTEND_BANK = 22;
 static const uint32_t EPS_DBG_TRACE_MODE_REG_2_EXTEND_BANK_LEN = 2;
 
-
-static const uint64_t EPS_DBG_TRACE_REG_0 = 0x1040Dull;
 
 static const uint32_t EPS_DBG_TRACE_REG_0_INST1_COND3_ENABLE = 0;
 static const uint32_t EPS_DBG_TRACE_REG_0_INST2_COND3_ENABLE = 1;
@@ -1411,8 +1387,6 @@ static const uint32_t EPS_DBG_TRACE_REG_0_TRIG1_LEVEL_SEL = 54;
 static const uint32_t EPS_DBG_TRACE_REG_0_TRIG1_LEVEL_SEL_LEN = 4;
 
 
-static const uint64_t EPS_DBG_TRACE_REG_1 = 0x1040Eull;
-
 static const uint32_t EPS_DBG_TRACE_REG_1_INST1_CONDITION1_ACTION_DO = 0;
 static const uint32_t EPS_DBG_TRACE_REG_1_INST1_CONDITION1_ACTION_DO_LEN = 2;
 static const uint32_t EPS_DBG_TRACE_REG_1_INST1_CONDITION2_ACTION_DO = 2;
@@ -1444,8 +1418,6 @@ static const uint32_t EPS_DBG_TRACE_REG_1_INST2_CHECKSTOP_MODE_LT = 52;
 static const uint32_t EPS_DBG_TRACE_REG_1_INST2_CHECKSTOP_MODE_LT_LEN = 3;
 static const uint32_t EPS_DBG_TRACE_REG_1_INST2_CHECKSTOP_MODE_SELECTOR = 55;
 
-
-static const uint64_t EPS_DBG_XTRA_TRACE_MODE = 0x10411ull;
 
 static const uint32_t EPS_DBG_XTRA_TRACE_MODE_XTRA_TRACE_MODE_DATA = 0;
 static const uint32_t EPS_DBG_XTRA_TRACE_MODE_XTRA_TRACE_MODE_DATA_LEN = 42;

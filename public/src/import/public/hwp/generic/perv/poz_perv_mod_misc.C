@@ -588,18 +588,18 @@ ReturnCode mod_setup_tracestop_on_xstop_chiplet(
     const Target<TARGET_TYPE_PERV>& i_chiplet,
     const uint32_t i_dbg_scom_base)
 {
-    DBG_TRACE_MODE_REG_2_t DBG_TRACE_MODE_REG_2;
-    DBG_MODE_REG_t         DBG_MODE_REG;
+    fapi2::buffer<uint64_t> DBG_TRACE_MODE_REG_2 = 0;
+    fapi2::buffer<uint64_t> DBG_MODE_REG = 0;
 
     FAPI_INF("Set up trace stop on xstop for chiplet %d",
              i_chiplet.getChipletNumber());
 
     FAPI_TRY(getScom(i_chiplet, i_dbg_scom_base + 0, DBG_MODE_REG));
-    DBG_MODE_REG.set_STOP_ON_XSTOP_SELECTION(1);
+    DBG_MODE_REG.setBit<EPS_DBG_MODE_REG_STOP_ON_XSTOP_SELECTION>();
     FAPI_TRY(putScom(i_chiplet, i_dbg_scom_base + 0, DBG_MODE_REG));
 
     FAPI_TRY(getScom(i_chiplet, i_dbg_scom_base + 0xF, DBG_TRACE_MODE_REG_2));
-    DBG_TRACE_MODE_REG_2.set_STOP_ON_ERR(1);
+    DBG_TRACE_MODE_REG_2.setBit<EPS_DBG_TRACE_MODE_REG_2_STOP_ON_ERR>();
     FAPI_TRY(putScom(i_chiplet, i_dbg_scom_base + 0xF, DBG_TRACE_MODE_REG_2));
 
 fapi_try_exit:
@@ -610,9 +610,6 @@ ReturnCode mod_setup_tracestop_on_xstop(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     const uint32_t i_dbg_scom_base)
 {
-    DBG_TRACE_MODE_REG_2_t DBG_TRACE_MODE_REG_2;
-    DBG_MODE_REG_t         DBG_MODE_REG;
-
     FAPI_INF("Entering mod_setup_tracestop_on_xstop...");
 
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_mc;
