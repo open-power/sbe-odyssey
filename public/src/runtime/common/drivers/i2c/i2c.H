@@ -54,6 +54,8 @@ public:
    *        based on use case
    *
    * @param target FAPI HW target to operate on.
+   *
+   * @return ReturnCode FAPI RC
    */
   virtual ReturnCode populatei2cdetails(const Target<TARGET_TYPE_ALL>& target)
   {return 0;};
@@ -87,6 +89,13 @@ public:
    */
   virtual ReturnCode putI2c( const Target<TARGET_TYPE_ALL>& target,
                           const std::vector<uint8_t>& data );
+
+  /**
+   * @brief Reset i2cc and i2c bus reset
+   *
+   * @return ReturnCode FAPI RC
+   */
+  ReturnCode i2cReset();
 
 protected:
 
@@ -240,11 +249,19 @@ private:
   ReturnCode i2cWaitForFifo(fifo_condition_t condition);
 
   /**
-   * @brief Reset the i2c engine
+   * @brief Reset the i2c controller engine
    *
    * @return ReturnCode FAPI RC
    */
-  ReturnCode i2cResetEngine();
+  ReturnCode i2ccResetEngine();
+
+  /**
+   * @brief Reset the i2c responder/end-device(Eg: temp sensor)
+   *        We are sending STOP command via automatic mode reset method
+   *
+   * @return ReturnCode FAPI RC
+   */
+  ReturnCode i2cBusReset();
 };
 
 } //namespace fapi2

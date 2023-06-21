@@ -32,6 +32,7 @@
 #include "sbestatesutils.H"
 #include "mss_odyssey_attribute_getters.H"
 #include "mss_generic_attribute_getters.H"
+#include "plat_i2c_access.H"
 
 #define SRAM_SCRATCH_GRANULAR_SIZE 0x10000 // 64 KB
 #define MEM_PAKNAME_MAX_CHAR  20 // ddr/ddimm/dmem.bin
@@ -326,5 +327,42 @@ ReturnCode istepDraminitWithOcmb( voidfuncptr_t i_hwp)
 
     SBE_EXIT(SBE_FUNC);
     return fapiRc;
+    #undef SBE_FUNC
+}
+
+ReturnCode istepWithOcmbWithi2cReset( voidfuncptr_t i_hwp)
+{
+    #define SBE_FUNC " istepWithOcmbWithi2cReset "
+    SBE_ENTER(SBE_FUNC);
+
+    ReturnCode rc = FAPI2_RC_SUCCESS;
+    assert( NULL != i_hwp );
+    Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
+
+    do{
+        SBE_INFO(SBE_FUNC "Resetting all i2c end devices before accessing them");
+        // Do a i2cc reset and reset of all end devices(temp sensors) by sending stop cmd
+        plati2c sbei2c;
+
+        rc = sbei2c.populatei2cdetails(l_ocmb_chip);
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC " failed for populatei2cdetails with rc 0x%08X", rc);
+            break;
+        }
+
+        rc = sbei2c.i2cReset();
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC " failed for i2cReset with rc 0x%08X", rc);
+            break;
+        }
+
+        SBE_EXEC_HWP(rc, reinterpret_cast<sbeIstepHwpOcmb_t>( i_hwp ), l_ocmb_chip);
+
+    }while(0);
+
+    SBE_EXIT(SBE_FUNC);
+    return rc;
     #undef SBE_FUNC
 }

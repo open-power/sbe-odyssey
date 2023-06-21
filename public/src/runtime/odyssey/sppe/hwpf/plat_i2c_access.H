@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -38,6 +39,8 @@ public:
      *        i2c communication
      *
      * @param target FAPI HW target to operate on.
+     *
+     * @return ReturnCode FAPI RC
      */
     ReturnCode populatei2cdetails( const Target<TARGET_TYPE_ALL>& target);
 

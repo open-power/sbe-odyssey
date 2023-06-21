@@ -34,7 +34,7 @@ ReturnCode i2c::i2cRegisterOp(i2c_reg_offset_t reg,
                          bool readNotWrite,
                          uint64_t* io_data)
 {
-    #define SBE_FUNC "i2cRegisterOp "
+    #define SBE_FUNC " i2cRegisterOp "
     SBE_ENTER(SBE_FUNC);
 
     Target< TARGET_TYPE_ALL > l_fapiTarget = g_platTarget->plat_getChipTarget();
@@ -134,7 +134,8 @@ fapi_try_exit:
 
 ReturnCode i2c::i2cReadStatusReg(status_reg_t &o_status)
 {
-    #define SBE_FUNC "i2cReadStatusReg "
+    #define SBE_FUNC " i2cReadStatusReg "
+    SBE_ENTER(SBE_FUNC);
     ReturnCode rc = FAPI2_RC_SUCCESS;
 
     do
@@ -149,13 +150,16 @@ ReturnCode i2c::i2cReadStatusReg(status_reg_t &o_status)
         }
     } while(0);
 
+    SBE_EXIT(SBE_FUNC);
     return rc;
     #undef SBE_FUNC
 }
 
 ReturnCode i2c::i2cWaitForCmdComp()
 {
-    #define SBE_FUNC "i2cWaitForCmdComp "
+    #define SBE_FUNC " i2cWaitForCmdComp "
+    SBE_ENTER(SBE_FUNC);
+
     ReturnCode rc = FAPI2_RC_SUCCESS;
     status_reg_t status = {};
     uint64_t interval_ns = iv_polling_interval_ns;
@@ -193,17 +197,22 @@ ReturnCode i2c::i2cWaitForCmdComp()
 
         if(rc != FAPI2_RC_SUCCESS)
         {
+            SBE_ERROR(SBE_FUNC " timedout waiting for cmd completion with rc 0x%08X", rc);
             break;
         }
     } while(0);
 
 fapi_try_exit:
+    SBE_EXIT(SBE_FUNC);
     return rc;
     #undef SBE_FUNC
 }
 
 ReturnCode i2c::i2cSetup(size_t len)
 {
+    #define SBE_FUNC " i2cRead "
+    SBE_ENTER(SBE_FUNC);
+
     ReturnCode rc = FAPI2_RC_SUCCESS;
     mode_reg_t mode;
     command_reg_t cmd;
@@ -213,6 +222,7 @@ ReturnCode i2c::i2cSetup(size_t len)
         rc = i2cWaitForCmdComp();
         if(rc != FAPI2_RC_SUCCESS)
         {
+            SBE_ERROR(SBE_FUNC " failed for i2cWaitForCmdComp with rc 0x%08X", rc);
             break;
         }
 
@@ -261,12 +271,17 @@ ReturnCode i2c::i2cSetup(size_t len)
 
     } while(0);
 
+    SBE_EXIT(SBE_FUNC)
     return rc;
+    #undef SBE_FUNC
 }
 
 bool i2c::fifoCondition(fifo_condition_t condition,
                    status_reg_t status)
 {
+    #define SBE_FUNC " fifoCondition "
+    SBE_ENTER(SBE_FUNC);
+
     bool conditionStatus = false;
 
     if(condition == FIFO_DATA_AVAILABLE)
@@ -280,12 +295,16 @@ bool i2c::fifoCondition(fifo_condition_t condition,
                         (0 == status.data_request));
     }
 
+    SBE_EXIT(SBE_FUNC);
     return conditionStatus;
+    #undef SBE_FUNC
 }
 
 ReturnCode i2c::i2cWaitForFifo(fifo_condition_t condition)
 {
-    #define SBE_FUNC "i2cWaitForFifo "
+    #define SBE_FUNC " i2cWaitForFifo "
+    SBE_ENTER(SBE_FUNC);
+
     ReturnCode rc = FAPI2_RC_SUCCESS;
     uint64_t interval_ns = iv_polling_interval_ns;
     uint64_t timeoutCount = iv_timeout_count;
@@ -326,18 +345,19 @@ ReturnCode i2c::i2cWaitForFifo(fifo_condition_t condition)
             }
         }
     } while(0);
-    #undef SBE_FUNC
 
 fapi_try_exit:
+    SBE_EXIT(SBE_FUNC);
     return rc;
+    #undef SBE_FUNC
 }
 
 ReturnCode i2c::i2cWrite(void *const buffer,
                     size_t buflen)
 {
-    #define SBE_FUNC "i2cWrite "
+    #define SBE_FUNC " i2cWrite "
+    SBE_ENTER(SBE_FUNC);
     ReturnCode rc = FAPI2_RC_SUCCESS;
-
     size_t bytesWritten = buflen;
 
     fifo_reg_t fifo = {};
@@ -348,6 +368,7 @@ ReturnCode i2c::i2cWrite(void *const buffer,
         rc = i2cSetup(buflen);
         if(rc != FAPI2_RC_SUCCESS)
         {
+            SBE_ERROR(SBE_FUNC " failed for i2cSetup with rc 0x%08X", rc);
             break;
         }
 
@@ -356,6 +377,7 @@ ReturnCode i2c::i2cWrite(void *const buffer,
             rc = i2cWaitForFifo(FIFO_FREE);
             if(rc != FAPI2_RC_SUCCESS)
             {
+                SBE_ERROR(SBE_FUNC " failed for i2cWaitForFifo with rc 0x%08X", rc);
                 break;
             }
 
@@ -367,6 +389,7 @@ ReturnCode i2c::i2cWrite(void *const buffer,
                                (uint64_t*)&fifo);
             if(rc != FAPI2_RC_SUCCESS)
             {
+                SBE_ERROR(SBE_FUNC " failed for i2cRegisterOp with rc 0x%08X", rc);
                 break;
             }
         }
@@ -377,10 +400,12 @@ ReturnCode i2c::i2cWrite(void *const buffer,
         rc = i2cWaitForCmdComp();
         if(rc != FAPI2_RC_SUCCESS)
         {
+            SBE_ERROR(SBE_FUNC " failed for i2cWaitForCmdComp with rc 0x%08X", rc);
             break;
         }
     } while(0);
 
+    SBE_EXIT(SBE_FUNC);
     return rc;
     #undef SBE_FUNC
 }
@@ -388,7 +413,8 @@ ReturnCode i2c::i2cWrite(void *const buffer,
 ReturnCode i2c::i2cRead(void *o_buffer,
                    size_t buflen)
 {
-    #define SBE_FUNC "i2cRead "
+    #define SBE_FUNC " i2cRead "
+    SBE_ENTER(SBE_FUNC);
     ReturnCode rc = FAPI2_RC_SUCCESS;
 
     size_t bytesRead = buflen;
@@ -401,6 +427,7 @@ ReturnCode i2c::i2cRead(void *o_buffer,
         rc = i2cSetup(buflen);
         if(rc != FAPI2_RC_SUCCESS)
         {
+            SBE_ERROR(SBE_FUNC " failed for i2cSetup with rc 0x%08X", rc);
             break;
         }
 
@@ -409,6 +436,7 @@ ReturnCode i2c::i2cRead(void *o_buffer,
             rc = i2cWaitForFifo(FIFO_DATA_AVAILABLE);
             if(rc != FAPI2_RC_SUCCESS)
             {
+                SBE_ERROR(SBE_FUNC " failed for i2cWaitForFifo with rc 0x%08X", rc);
                 break;
             }
 
@@ -418,6 +446,7 @@ ReturnCode i2c::i2cRead(void *o_buffer,
                                (uint64_t*)&fifo);
             if(rc != FAPI2_RC_SUCCESS)
             {
+                SBE_ERROR(SBE_FUNC " failed for i2cRegisterOp with rc 0x%08X", rc);
                 break;
             }
 
@@ -430,17 +459,19 @@ ReturnCode i2c::i2cRead(void *o_buffer,
         rc = i2cWaitForCmdComp();
         if(rc != FAPI2_RC_SUCCESS)
         {
+            SBE_ERROR(SBE_FUNC " failed for i2cWaitForCmdComp with rc 0x%08X", rc);
             break;
         }
     } while(0);
 
+    SBE_EXIT(SBE_FUNC)
     return rc;
     #undef SBE_FUNC
 }
 
 ReturnCode i2c::i2cLockEngine()
 {
-    #define SBE_FUNC "i2cLockEngine "
+    #define SBE_FUNC " i2cLockEngine "
     SBE_ENTER(SBE_FUNC)
 
     ReturnCode rc = FAPI2_RC_SUCCESS;
@@ -505,6 +536,8 @@ fapi_try_exit:
 
 ReturnCode i2c::i2cUnlockEngine()
 {
+    #define SBE_FUNC " i2cUnlockEngine "
+    SBE_ENTER(SBE_FUNC);
     ReturnCode rc = FAPI2_RC_SUCCESS;
     uint64_t unlock_data = 0;
 
@@ -512,23 +545,146 @@ ReturnCode i2c::i2cUnlockEngine()
                        false,
                        &unlock_data);
 
+    SBE_EXIT(SBE_FUNC)
     return rc;
+    #undef SBE_FUNC
 }
 
-ReturnCode i2c::i2cResetEngine()
+ReturnCode i2c::i2ccResetEngine()
 {
+    #define SBE_FUNC " i2ccResetEngine "
+    SBE_ENTER(SBE_FUNC);
+
     ReturnCode rc = FAPI2_RC_SUCCESS;
 
-    //Set bit 0 in IMM_RESET_I2C_X to
-    //reset command,mode,watermark,interrupt mask,status registers
-    uint64_t reset_data = 0x8000000000000000;
+    SBE_INFO(SBE_FUNC "Resetting i2c controller ENGINE......");
 
-    SBE_INFO("Resetting i2c ENGINE......");
-    rc = i2cRegisterOp(I2C_REG_RESET,
+    do{
+        //Set bit 0 in IMM_RESET_I2C_X to
+        //reset command,mode,watermark,interrupt mask,status registers
+        uint64_t reset_data = 0x8000000000000000;
+        rc = i2cRegisterOp(I2C_REG_RESET,
                         false,
                         &reset_data);
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC " failed for i2cRegisterOp with rc 0x%08X", rc);
+            break;
+        }
 
+        //NOTE: Do not check for cmd completion here as it works in case of
+        //      its good path, in bad path it will not be seen and we need to
+        //      reset bus by sending stop command.
+    }while (false);
+
+    SBE_EXIT(SBE_FUNC);
     return rc;
+    #undef SBE_FUNC
+}
+
+ReturnCode i2c::i2cBusReset()
+{
+    #define SBE_FUNC " i2cBusReset "
+    SBE_ENTER(SBE_FUNC);
+
+    ReturnCode rc = FAPI2_RC_SUCCESS;
+
+    //Resetting i2c responder/end device by sending the STOP only command on the i2c bus
+    // by i2c controller via automatic mode.
+    SBE_INFO(SBE_FUNC "Resetting i2c responder/end-device by sending stop command......");
+
+    do{
+
+        // Write mode register with proper speed , proper port number and Enhanced_mode bit = 1.
+        // Bit 28 FGAT_MODE_000: fgat mode == Enhanced_mode bit.
+        // In automatic mode STOP command is sent by HW more than 2 times automatically
+        mode_reg_t mode;
+
+        mode.value = 0x0ull;
+        mode.bit_rate_div = iv_bit_rate_divisor;
+        mode.port_num = iv_port;
+        mode.enhanced_mode = 1;
+
+        rc = i2cRegisterOp(I2C_REG_MODE,
+                            false,
+                            (uint64_t*)&mode.value);
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            break;
+        }
+
+        //Write command register/control register with only with_stop bit asserted to trigger the operation
+        command_reg_t cmd;
+        cmd.value = 0x0ull;
+        cmd.with_stop = 1;
+
+        rc = i2cRegisterOp(I2C_REG_COMMAND,
+                           false,
+                           (uint64_t*)&cmd.value);
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            break;
+        }
+
+        // Poll status register’s command_complete bit for the value 1
+        rc = i2cWaitForCmdComp();
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC " failed for i2cWaitForCmdComp with rc 0x%08X", rc);
+            break;
+        }
+
+    }while(false);
+
+    SBE_EXIT(SBE_FUNC);
+    return rc;
+    #undef SBE_FUNC
+}
+
+ReturnCode i2c::i2cReset()
+{
+    #define SBE_FUNC " i2cReset "
+    SBE_ENTER(SBE_FUNC)
+
+    ReturnCode rc = FAPI2_RC_SUCCESS;
+
+    do{
+
+        rc = i2cLockEngine();
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC " failed for i2cLockEngine with rc 0x%08X", rc);
+            break;
+        }
+
+        rc = i2ccResetEngine();
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC " failed for i2ccResetEngine with rc 0x%08X", rc);
+            break;
+        }
+
+        rc = i2cBusReset();
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC " failed for i2cBusReset with rc 0x%08X", rc);
+            break;
+        }
+
+    }while(false);
+
+    //TODO: PFSBE-394
+    ReturnCode l_rc = i2cUnlockEngine();
+    if(l_rc != FAPI2_RC_SUCCESS)
+    {
+        SBE_ERROR(SBE_FUNC " failed for i2cUnlockEngine with l_rc 0x%08X", l_rc);
+        if(rc == FAPI2_RC_SUCCESS)
+            rc = l_rc;
+    }
+
+    SBE_EXIT(SBE_FUNC)
+    return rc;
+    #undef SBE_FUNC
 }
 
 ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
@@ -554,13 +710,6 @@ ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
         if(rc != FAPI2_RC_SUCCESS)
         {
             SBE_ERROR(SBE_FUNC " failed for i2cLockEngine with rc 0x%08X", rc);
-            break;
-        }
-
-        rc = i2cResetEngine();
-        if(rc != FAPI2_RC_SUCCESS)
-        {
-            SBE_ERROR(SBE_FUNC " failed for i2cResetEngine with rc 0x%08X", rc);
             break;
         }
 
@@ -646,13 +795,6 @@ ReturnCode i2c::putI2c( const Target<TARGET_TYPE_ALL>& target,
         if(rc != FAPI2_RC_SUCCESS)
         {
             SBE_ERROR(SBE_FUNC " failed for i2cLockEngine with rc 0x%08X", rc);
-            break;
-        }
-
-        rc = i2cResetEngine();
-        if(rc != FAPI2_RC_SUCCESS)
-        {
-            SBE_ERROR(SBE_FUNC " failed for i2cResetEngine with rc 0x%08X", rc);
             break;
         }
 
