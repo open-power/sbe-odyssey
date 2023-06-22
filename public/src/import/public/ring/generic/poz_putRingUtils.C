@@ -274,7 +274,7 @@ static ReturnCode waitOpcgDone(const ScanTarget& i_target, uint32_t i_nbits)
 
         if( l_opcgStatus.getBit( CPLT_STAT0_CC_CTRL_OPCG_DONE_DC ) )
         {
-            FAPI_INF("OPCG_DONE set");
+            FAPI_DBG("OPCG_DONE set");
             break;
         }
 
@@ -641,7 +641,7 @@ ReturnCode poz_putRingUtils(
 
             if ( 0 == l_scanCount )
             {
-                FAPI_INF("SCAN COUNT %u", l_scanCount);
+                FAPI_DBG("SCAN COUNT %u", l_scanCount);
                 break;
             }
 
