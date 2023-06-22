@@ -38,13 +38,14 @@ using namespace fapi2;
 
 enum ODY_CHIPLET_FIR_INIT_Private_Constants
 {
+    DBG_SCOM_BASE = 0x107C0,
 };
 
 ReturnCode ody_chiplet_fir_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     FAPI_INF("Entering ...");
     FAPI_TRY(mod_setup_clockstop_on_xstop(i_target, ody_chiplet_delay_table));
-    FAPI_TRY(mod_setup_tracestop_on_xstop(i_target));
+    FAPI_TRY(mod_setup_tracestop_on_xstop(i_target, DBG_SCOM_BASE));
     FAPI_TRY(mod_unmask_firs(i_target));
 
 fapi_try_exit:
