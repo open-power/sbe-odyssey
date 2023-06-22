@@ -51,6 +51,7 @@ enum POZ_CHIPLET_RESET_Private_Constants
 
 ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
                              const uint8_t i_chiplet_delays[64],
+                             const uint8_t i_sync_pulse_delay,
                              const poz_chiplet_reset_phases i_phases)
 {
     NET_CTRL0_t NET_CTRL0;
@@ -62,6 +63,7 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     buffer<uint32_t> l_attr_pg;
     buffer<uint64_t> l_data64;
     uint32_t l_poll_count;
+    uint8_t  l_sync_pulse_delay;
 
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_mc;
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_BITX > l_chiplets_bitx;
@@ -112,9 +114,10 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
                     .set_PROC_TARGET(i_target),
                     "ERROR:HEARTBEAT NOT RUNNING");
 
-        FAPI_INF("Set up clock controllers (decimal 9 -> 10 cycles) ");
+        FAPI_INF("Set up clock controllers with sync pulse delay of %d cycles", i_sync_pulse_delay);
         SYNC_CONFIG = 0;
-        SYNC_CONFIG.set_SYNC_PULSE_DELAY(0b1001);
+        l_sync_pulse_delay = (i_sync_pulse_delay == 8) ? 0 : i_sync_pulse_delay - 1;
+        SYNC_CONFIG.set_SYNC_PULSE_DELAY(l_sync_pulse_delay);
         FAPI_TRY(SYNC_CONFIG.putScom(l_chiplets_mc));
 
         FAPI_INF("Set up per-chiplet OPCG delays");
