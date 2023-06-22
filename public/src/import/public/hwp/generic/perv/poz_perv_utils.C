@@ -127,7 +127,7 @@ fapi_try_exit:
 
 static char hex[] = "0123456789abcdef";
 
-void strhex(char* o_str, uint64_t i_value, int i_width)
+void strhex(char* o_str, uint64_t i_value, size_t i_width)
 {
     while (i_width)
     {
@@ -143,7 +143,7 @@ ReturnCode putRingBucket(const Target<TARGET_TYPE_ALL_MC>& i_target,
                          const RingMode i_ringMode)
 {
     char ring_id[RING_ID_MAXLEN];
-    int len = strlen(i_ring_id);
+    auto len = strlen(i_ring_id);
     memcpy(ring_id, i_ring_id, len + 1);
     strhex(ring_id + len - 2, i_bucket, 2);
     return putRing(i_target, ring_id, i_ringMode);

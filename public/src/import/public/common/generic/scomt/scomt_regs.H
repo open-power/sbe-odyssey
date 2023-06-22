@@ -161,7 +161,7 @@ class CfamRegister : public fapi2::buffer<uint32_t>
         {
             fapi2::buffer<uint64_t> l_buf;
             fapi2::ReturnCode rc = fapi2::getScom(i_target, i_address, l_buf);
-            *this = l_buf >> 32;
+            *this = static_cast<uint32_t>(l_buf >> 32);
             return rc;
         }
 };
