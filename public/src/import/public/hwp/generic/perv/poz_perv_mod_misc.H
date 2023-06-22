@@ -230,10 +230,18 @@ fapi2::ReturnCode mod_setup_clockstop_on_xstop(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     const uint8_t i_chiplet_delays[64]);
 
-/// @brief Setup tracestop on checkstop module
+/// @brief Set up the debug macro on all chiplets to stop tracing on checkstop
 ///
-/// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// Two variants of this are available: One which sets up a single chiplet, and
+/// another which sets up each chiplet in a chip (taking hotplug into account).
+///
+/// @param[in]   i_target         Chip or chiplet to set up
+/// @param[in]   i_dbg_scom_base  Base SCOM address for debug macro; depends on chip
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode mod_setup_tracestop_on_xstop_chiplet(
+    const fapi2::Target<fapi2::TARGET_TYPE_PERV>& i_chiplet,
+    const uint32_t i_dbg_scom_base);
 fapi2::ReturnCode mod_setup_tracestop_on_xstop(
-    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target);
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const uint32_t i_dbg_scom_base);
