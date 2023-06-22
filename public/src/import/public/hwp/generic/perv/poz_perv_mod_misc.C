@@ -343,7 +343,7 @@ ReturnCode mod_multicast_setup(
     // This performs a multicast read with the BITX merge operation.
     // It reads a register that has bit 0 tied to 1, so the return value
     // will have a 1 for each chiplet that is a member of the targeted group.
-    FAPI_TRY(fapi2::getScom(i_target, MC_GROUP_MEMBERSHIP_BITX_READ | ((uint32_t)l_group_id << 24),
+    FAPI_TRY(fapi2::getScom(i_target, MC_GROUP_MEMBERSHIP_BITX_READ | (static_cast<uint32_t>(l_group_id << 24)),
                             l_current_group_members));
     FAPI_INF("Current multicast group members : 0x%08X%08X",
              l_current_group_members >> 32, l_current_group_members & 0xFFFFFFFF);

@@ -80,7 +80,7 @@ uint64_t get_mc_group_members(
  * @param i_value Value to print
  * @param i_width With in hex nibbles
  */
-void strhex(char* o_str, uint64_t i_value, int i_width);
+void strhex(char* o_str, uint64_t i_value, size_t i_width);
 
 /**
  * @brief Apply a bucketed ring
