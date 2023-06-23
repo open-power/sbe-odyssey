@@ -39,6 +39,11 @@
 namespace fapi2
 {
 
+const uint64_t ODP_TOP0_S_ODPCTRL = 0x0801300Aull;
+const uint64_t ODP_TOP1_S_ODPCTRL = 0x0801340Aull;
+const uint64_t OD_PHY_DFI1DEBUGPERFCTREN = 0x800D004B0801303Full;
+const uint64_t ODP_TOP1_DWC_DDRPHYA_APBONLY0_DFI1DEBUGPERFCTREN = 0x800D004B0801343Full;
+
 /**
  * @brief Indirect SCOM Status
  */
@@ -291,6 +296,56 @@ static ReturnCode doIndirectScom(const bool i_isRead,
     #undef SBE_FUNC
 }
 
+static ReturnCode getScomWorkAround(const void *i_target, const uint64_t i_scomAddr)
+{
+    #define SBE_FUNC " getScomWorkAround "
+    ReturnCode fapiRc = FAPI2_RC_SUCCESS;
+
+    do {
+        // Work around for EWM 299799
+        // If the call/request is for 0801300a/0801340a:
+        // Read ody.mp 0x800d004b0801303f from that target
+        //     (chip unit relative, physical addresses are:
+        //     0x800d004b0801303f (-c0)
+        //     0x800d004b0801343f (-c1)
+        //  Discard the indirect SCOM read data
+        //  Proceed to read 0801300a/0801340a and return the data to the caller
+        //
+        uint64_t l_indScomAddr = 0;
+
+        if (i_scomAddr == ODP_TOP0_S_ODPCTRL)
+        {
+            l_indScomAddr = OD_PHY_DFI1DEBUGPERFCTREN;
+        }
+        else if (i_scomAddr == ODP_TOP1_S_ODPCTRL)
+        {
+            l_indScomAddr = ODP_TOP1_DWC_DDRPHYA_APBONLY0_DFI1DEBUGPERFCTREN;
+        }
+        else
+        {
+            // Bail out of here if it's not the addrs in question
+            break;
+        }
+
+        uint64_t l_data = 0;
+        SBE_INFO(SBE_FUNC "Performing indirect SCOM on addr [0x%08X%08X]",
+                    *((uint32_t*)&l_indScomAddr),
+                    *(((uint32_t*)&l_indScomAddr) + 1));
+        fapiRc = doIndirectScom(true, i_target, l_indScomAddr, l_data);
+        if (fapiRc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC "Reading indirect SCOM failed. addr [0x%08X%08X]",
+                    *((uint32_t*)&l_indScomAddr),
+                    *(((uint32_t*)&l_indScomAddr) + 1));
+            break;
+        }
+
+    } while (false);
+    #undef SBE_FUNC
+
+    return fapiRc;
+}
+
 uint32_t platcheckIndirectAndDoScom( const bool i_isRead,
                                  const void *i_target,
                                  const uint64_t i_addr,
@@ -306,8 +361,24 @@ uint32_t platcheckIndirectAndDoScom( const bool i_isRead,
         SBE_DEBUG(SBE_FUNC "Performing Direct scom.");
         if( i_isRead )
         {
-            io_fapiRc = getscom_abs_wrap (i_target, (uint32_t)i_addr,
-                                          & io_data);
+            // TODO : PFSBE-514 : The getScomWorkAround and the actual
+            // getscom operations need to be atomic. In case of DDRPHY having
+            // odd parity, an indirect scom workaround is required before
+            // performing actual scom operation. Otherwise, the getscom
+            // operation will fail. Because of multi threading, after
+            // performing indirect scom, if context switch happens, then
+            // also the actual scom operation may fail.
+            io_fapiRc = getScomWorkAround(i_target,i_addr);
+            if (io_fapiRc == FAPI2_RC_SUCCESS)
+            {
+                io_fapiRc = getscom_abs_wrap (i_target, (uint32_t)i_addr,
+                                              & io_data);
+            }
+            else
+            {
+                SBE_ERROR(SBE_FUNC "getScomWorkAround failed. addr [0x%08X%08X]",
+                    *((uint32_t*)&i_addr), *(((uint32_t*)&i_addr) + 1));
+            }
         }
         else
         {
