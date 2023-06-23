@@ -198,7 +198,7 @@ rs4::targetTypeInstanceTraits_t targetTypeInstanceTraits[] =
     { fapi2::LOG_TARGET_TYPE_ABUS,    rs4::ZME,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
     { fapi2::LOG_TARGET_TYPE_PEC,     rs4::ZME,  rs4::rs4_pack_instanceTraits(2, 1, 1) },
     { fapi2::LOG_TARGET_TYPE_CORE,    rs4::ZME,  rs4::rs4_pack_instanceTraits(8, 1, 1) },
-    { fapi2::LOG_TARGET_TYPE_L3CACHE, rs4::ZME,  rs4::rs4_pack_instanceTraits(9, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_L3CACHE, rs4::ZME,  rs4::rs4_pack_instanceTraits(10, 1, 1) },
     { fapi2::LOG_TARGET_TYPE_MC,      rs4::ZME,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
     { fapi2::LOG_TARGET_TYPE_MC,      rs4::ODY,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
     { fapi2::LOG_TARGET_TYPE_EQ,      rs4::P11T, rs4::rs4_pack_instanceTraits(2, 1, 1) },
