@@ -132,7 +132,7 @@ class io_ppe_common
                                            const int32_t i_rx_peak1,
                                            const int32_t i_rx_peak2);
 
-        fapi2::ReturnCode ppe_start(const fapi2::Target<K, M, V>& i_target);
+        fapi2::ReturnCode ppe_start(const fapi2::Target<K, M, V>& i_target, bool& o_fail, uint32_t& o_iar);
 
         fapi2::ReturnCode config_ppe(const fapi2::Target<K, M, V>& i_target,
                                      const uint8_t i_num_threads,
@@ -366,7 +366,6 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::config_ppe(const fapi2::Target<K, M, V
         l_vio_volts = 3;
     }
 
-
     FAPI_TRY(IMG_REG_PPE_NUM_THREADS_PUT(iv_regs, i_target, i_num_threads));
 
     //"ppe_vio_volts": 2, >850mv && <=900mv
@@ -408,7 +407,8 @@ fapi_try_exit:
 // ===============================================================
 
 template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
-fapi2::ReturnCode io_ppe_common<K, M, V>::ppe_start(const fapi2::Target<K, M, V>& i_target)
+fapi2::ReturnCode io_ppe_common<K, M, V>::ppe_start(const fapi2::Target<K, M, V>& i_target, bool& o_fail,
+        uint32_t& o_iar)
 {
     const uint64_t c_lfir_wclear = (iv_regs->base_addr + 0x0);
     const uint64_t c_cscr        = (iv_regs->base_addr + 0xC);
@@ -423,12 +423,11 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::ppe_start(const fapi2::Target<K, M, V>
     const uint8_t c_ppe_halted_bit = 17;
 
     fapi2::buffer<uint64_t> l_buffer = 0;
-    uint32_t l_iar = 0;
 
     FAPI_TRY(fapi2::getScom(i_target, c_xidbgpro, l_buffer));
-    l_buffer.extractToRight<c_xidbgpro_bit, c_xidbgpro_len, uint32_t>(l_iar);
+    l_buffer.extractToRight<c_xidbgpro_bit, c_xidbgpro_len, uint32_t>(o_iar);
 
-    if (l_iar == c_ppe_start_reset_iar)
+    if (o_iar == c_ppe_start_reset_iar)
     {
         FAPI_DBG("PPE is already running");
         goto fapi_try_exit;
@@ -451,13 +450,15 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::ppe_start(const fapi2::Target<K, M, V>
     // Verify IAR @ reset vector loc
     FAPI_DBG("Verify IAR reset.");
     FAPI_TRY(fapi2::getScom(i_target, c_xidbgpro, l_buffer));
-    l_buffer.extractToRight<c_xidbgpro_bit, c_xidbgpro_len, uint32_t>(l_iar);
-    FAPI_ASSERT(
-        l_iar == c_ppe_start_reset_iar,
-        fapi2::IO_PPE_RESET()
-        .set_TARGET_CHIP(i_target)
-        .set_IAR(l_iar),
-        "IAR (0x%8x) did not reset.", l_iar);
+    l_buffer.extractToRight<c_xidbgpro_bit, c_xidbgpro_len, uint32_t>(o_iar);
+
+    if (o_iar != c_ppe_start_reset_iar)
+    {
+        o_fail = true;
+        FAPI_DBG("IAR (0x%8x) did not reset.", o_iar);
+        return fapi2::current_err;
+    }
+
     l_buffer.flush<0>();
 
     // Resume PPE
@@ -468,13 +469,14 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::ppe_start(const fapi2::Target<K, M, V>
 
     FAPI_DBG("Verify IAR cleared.");
     FAPI_TRY(fapi2::getScom(i_target, c_xidbgpro, l_buffer));
-    l_buffer.extractToRight<c_xidbgpro_bit, c_xidbgpro_len, uint32_t>(l_iar);
-    FAPI_ASSERT(
-        l_iar != c_ppe_start_reset_iar,
-        fapi2::IO_PPE_RESET()
-        .set_TARGET_CHIP(i_target)
-        .set_IAR(l_iar),
-        "IAR (0x%8x) did not resume.", l_iar);
+    l_buffer.extractToRight<c_xidbgpro_bit, c_xidbgpro_len, uint32_t>(o_iar);
+
+    if (o_iar == c_ppe_start_reset_iar)
+    {
+        o_fail = true;
+        FAPI_DBG("IAR (0x%8x) did not resume.", o_iar);
+        return fapi2::current_err;
+    }
 
     // Clear Halted FIR Bit
     // Reg is RW_CLEAR
@@ -504,6 +506,12 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init_thread(const fapi2::Target<K
     uint32_t l_lane = 0;
     uint32_t l_rx_mask = i_rx_mask;
     uint8_t l_ppe_data_rate = calc_ppe_data_rate(i_freq);
+
+    // Set PCIe Data rate
+    if (l_ppe_data_rate == 6)
+    {
+        FW_REG_FW_BIST_PCIE_RATE_PUT(iv_regs, i_target, i_thread, l_ppe_data_rate);
+    }
 
     MEM_REG_PPE_DATA_RATE_PUT(iv_regs, i_target, i_thread, l_ppe_data_rate);
 
