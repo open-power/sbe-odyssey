@@ -66,6 +66,7 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     buffer<uint64_t> l_data64;
     uint32_t l_poll_count;
     uint8_t  l_sync_pulse_delay;
+    uint8_t  l_attr_cont_scan_short_wait;
 
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_mc;
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_BITX > l_chiplets_bitx;
@@ -74,6 +75,7 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     FAPI_INF("Entering ...");
     FAPI_TRY(get_hotplug_targets(i_target, l_chiplets_mc, &l_chiplets_uc, MCGROUP_ALL));
     l_chiplets_bitx = l_chiplets_mc;
+    FAPI_TRY(FAPI_ATTR_GET(ATTR_CHIP_EC_FEATURE_CONT_SCAN_SHORT_WAIT, i_target, l_attr_cont_scan_short_wait));
 
     if (i_phases & PRE_SCAN0)
     {
@@ -128,6 +130,7 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
         SYNC_CONFIG = 0;
         l_sync_pulse_delay = (i_sync_pulse_delay == 8) ? 0 : i_sync_pulse_delay - 1;
         SYNC_CONFIG.set_SYNC_PULSE_DELAY(l_sync_pulse_delay);
+        SYNC_CONFIG.set_CONT_SCAN_SHORT_WAIT(l_attr_cont_scan_short_wait);
         FAPI_TRY(SYNC_CONFIG.putScom(l_chiplets_mc));
 
         FAPI_TRY(fapi2::delay(CC_ALIGNMENT_HW_NS_DELAY, CC_ALIGNMENT_SIM_CYCLE_DELAY));

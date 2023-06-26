@@ -1226,7 +1226,11 @@ def poz_chiplet_reset(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64], 
             else:
                 SYNC_CONFIG.SYNC_PULSE_DELAY = i_sync_pulse_delay - 1
 
+            if ATTR_CHIP_EC_FEATURE_CONT_SCAN_SHORT_WAIT:
+                SYNC_CONFIG.CONT_SCAN_SHORT_WAIT = 1
+
             delay(10us, 70kcyc)
+
             NET_CTRL0.VITL_ALIGN_DIS = 1
 
         ## Set up per-chiplet OPCG delays
