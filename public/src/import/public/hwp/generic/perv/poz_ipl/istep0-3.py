@@ -1168,7 +1168,7 @@ def zme_chiplet_reset():
 
         ## Clear and then set UREG and VREG anatune in CPLT_CONF1( 0: 7) & CPLT_CONF1(16:23) according to value in attribute
         CPLT_CONF1[ 0: 8] = ATTR_L3_UREG_ANATUNE;
-        CPLT_CONF1[ 8:16] = ATTR_L3_VREG_ANATUNE;
+        CPLT_CONF1[ 8:16] = ATTR_L3_UREG_ANATUNE;
         CPLT_CONF1[16:24] = ATTR_L3_VREG_ANATUNE;
 
         ## Clear and then set VBLH voltage in NET_CTRL1(24:30) according to value in attribute
