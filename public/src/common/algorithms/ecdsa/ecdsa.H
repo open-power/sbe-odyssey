@@ -179,9 +179,26 @@ const consts_t consts = {
  * @return >1 if signature could be verified correctly
  *
  */
-int ec_verify (const unsigned char *publicpt,    /* 2*EC_COORDBYTES */
-               const unsigned char *hash,        /*   EC_HASHBYTES  */
+
+int ec_verify (const unsigned char *publicpt,     /* 2*EC_COORDBYTES */
+               const unsigned char *hash,         /*   EC_HASHBYTES  */
                const unsigned char *signature);   /* 2*EC_COORDBYTES */
+
+int ec_ecies_gen (const unsigned char *i_rxPubKey, /* 2*EC_COORDBYTES */
+                  const unsigned char *i_ranNum,   /* EC_COORDBYTES   */
+                  unsigned char *o_eciesR,         /* 2*EC_COORDBYTES */
+                  unsigned char *o_eciesS);        /* 2*EC_COORDBYTES */
+
+int ec_ecies_acc(const unsigned char *i_eciesR,    /* 2*EC_COORDBYTES */
+                 const unsigned char *i_privKey,   /* EC_COORDBYTES   */
+                 unsigned char *o_eciesS);         /* 2*EC_COORDBYTES */
+
+int ecdh_derive_key(const unsigned char *i_pubKey,  /* 2*EC_COORDBYTES */
+                    const unsigned char *i_privKey, /* EC_COORDBYTES   */
+                    unsigned char *o_derivedPt);    /* 2*EC_COORDBYTES */
+
+int ec_derive_public_key(const unsigned char *i_privKey, /* EC_COORDBYTES   */
+                         unsigned char *o_pubKey);       /* 2*EC_COORDBYTES */
 
 void bn_read_pt(bn_t *r, const unsigned char *data);
 void __attribute__((noinline)) BN_COPY (bn_t *dst, const bn_t *src);
@@ -192,6 +209,7 @@ void bn_modadd (bn_t *a, const bn_t *b) ;
 void bn_modsub (bn_t *a, const bn_t *b) ;
 int bn_modinv(bn_t *inv, const bn_t *a, const bn_t *n);
 
+
 int bn_cmp (const bn_t a[NWORDS], const bn_t b[NWORDS]) ;
 void bn_modmul_prime (bn_t *a, const bn_t *b);
 
@@ -200,7 +218,8 @@ void generate_lookup_2bit_2pt(bn_t lookup_2bit[16][3][ NWORDS ], bn_t px[ NWORDS
 int ec_multiply_1pt (bn_t lookup[16][3][ NWORDS ], bn_t *x, bn_t *y, bn_t *z, const bn_t *k);
 int ec_multiply_2pt (bn_t lookup[16][3][ NWORDS ], bn_t *x, bn_t *y, bn_t *z, const bn_t *k, const bn_t *k1);
 
-int ec_multiply (bn_t *x, bn_t *y, bn_t *z, const bn_t *k, const bn_t *k1);
+int on_curve(const unsigned char *publicpt);
+
 void ec_projective2affine (bn_t *x, bn_t *y, const bn_t *z);
 
 inline const consts_t* __attribute__((pure)) consts_p()
