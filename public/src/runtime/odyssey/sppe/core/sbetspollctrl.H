@@ -38,18 +38,17 @@ typedef struct
 
     /**
      * @brief Validate the input parameters.
-     *        There can be no case where temperature sensor polling is enabled but DQS is disabled
-     *        and vise versa.
+     *        DQS can be disabled and TS can be enabled but
+     *        vise versa is not allowed.
      *
-     * @return true only if both TS Polling and DQS is enabled or disabled
-     * @return false if either is enabled and later is disabled and vise versa
+     * @return true for all cases except for TS disabled and DQS disabled
+     * @return false if TS is disabled and DQS is not disabled
      */
     bool validateInputParams()
     {
         bool status = true;
 
-        if((tempSensorPollIntervalMs == 0x0 && dqsInterval != 0x0) ||
-            (tempSensorPollIntervalMs != 0x0 && dqsInterval == 0x0))
+        if((tempSensorPollIntervalMs == 0x0 && dqsInterval != 0x0))
                 status = false;
 
         return status;
