@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2020,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -1421,6 +1422,7 @@ int ec_multiply_1pt (bn_t lookup[16][3][ NWORDS ], bn_t *x, bn_t *y, bn_t *z, co
     }
     mask = (3<<bit);
     int word = (i/32);  // TODO: Corner case handling when i is divisible by 32
+    k += (NWORDS - 1) - word;
 
 
     BN_COPY(px, x);
@@ -1442,6 +1444,7 @@ int ec_multiply_1pt (bn_t lookup[16][3][ NWORDS ], bn_t *x, bn_t *y, bn_t *z, co
     while (word>=0)
     {
 
+        ec_double(x, y, z);
         ec_double(x, y, z);
 
         int index = ((mask & *k)>>bit);
@@ -1642,6 +1645,30 @@ void generate_lookup_2bit_2pt(bn_t lookup_2bit[16][3][ NWORDS ], bn_t px[ NWORDS
     BN_COPY(lookup_2bit[15][2], temp_z);
 }
 
+int on_curve(const unsigned char *publicpt)
+{
+  bn_t a[ NWORDS ], b[ NWORDS ], x[ NWORDS ], x1[ NWORDS ], x2[ NWORDS ], y[ NWORDS ], y1[ NWORDS ];
+
+  bn_read_pt  (x, publicpt);
+  bn_read_pt  (y, publicpt +EC_COORDBYTES);
+
+  BN_COPY(a, consts_p()->coeff_a);
+  BN_COPY(b, consts_p()->coeff_b);
+
+  BN_COPY(x1, x);
+  bn_modmul_prime(x1, x);    /* x1  = x*x                  */
+  bn_modmul_prime(x1, x);    /* x1 *= x == x*x*x           */
+  BN_COPY(x2, x);
+  bn_modmul_prime(x2, a);    /* x2  = a*x                  */
+  bn_modsub(x1, x2);         /* x1 = x2 == x*x*x - a*x    */
+  bn_modadd(x1, b);          /* x1 += b == x*x*x - a*x + b */
+
+  BN_COPY(y1, y);
+  bn_modmul_prime(y1, y);    /* y1  = y*y                  */
+
+  return (bn_cmp(x1, y1) == 0);  /* y1 == x1 <===> y*y == x*x*x - a*x + b */
+}
+
 //=====================================================  public function  ====
 
 int ec_verify (const unsigned char *publicpt,    /* 2*EC_COORDBYTES */
@@ -1702,3 +1729,231 @@ int ec_verify (const unsigned char *publicpt,    /* 2*EC_COORDBYTES */
 
     return (! bn_cmp(r, res_x));
 }
+
+
+/// @brief Generates an ECIES challenge
+///
+/// Generate R = r*G, R is send to receiver to reproduce S.
+/// Generate S = r*P where P is P_receiver, S must be kept secret.
+///
+/// @param[in]    i_rxPubKey             Pubkey of whom R should receive
+/// @param[in]    i_ranNum               Random numbers r for R=r*G.
+/// @param[out]   o_eciesR               Point on curve R. Sent to receiver.
+/// @param[out]   o_eciesS               Point on curve S. Kept secret!
+int ec_ecies_gen (const unsigned char *i_rxPubKey, const unsigned char *i_ranNum,
+                  unsigned char *o_eciesR, unsigned char *o_eciesS)
+{
+    bn_t px[ NWORDS ], py[ NWORDS ], pz[ NWORDS ], random[ NWORDS ],
+        Rx[ NWORDS ], Ry[ NWORDS ], Rz[ NWORDS ];
+    bn_t lookup[16][3][ NWORDS ];
+
+    if    ((NULL == i_rxPubKey) || (NULL == i_ranNum)
+           || (NULL == o_eciesS)  || (NULL == o_eciesR))
+    {
+        return -1;
+    }
+
+    BN_COPY(Rx, consts_p()->prime_px);
+    BN_COPY(Ry, consts_p()->prime_py);
+    bn_read_pt  (random, i_ranNum);
+    bn_read_pt  (px, i_rxPubKey);
+    bn_read_pt  (py, i_rxPubKey +EC_COORDBYTES);
+
+    if (bn_ge_order(random)) {
+        bn_sub(random, consts_p()->ec_order);    // randnum mod order
+    }
+
+    if (bn_ge_prime(px)  || bn_ge_prime(py)  ||
+        bn_is_zero(px,0) || bn_is_zero(py,0))
+    {
+        return -1;  // admin fault; should not happen
+    }
+
+
+    if (!on_curve(i_rxPubKey))
+    {
+        return -1;
+    }
+
+    // Generate R = r*G
+    generate_lookup_2bit_1pt(lookup, Rx, Ry);
+    ec_multiply_1pt(lookup, Rx, Ry, Rz, random);
+    ec_projective2affine(Rx, Ry, Rz);
+
+    if (bn_is_zero(Rx,0) || bn_is_zero(Ry,0))
+    {
+        return -1; // can also occur if r was 0 - both would be horrible
+    }
+
+    for (uint32_t i = 0; i < NWORDS; i++)
+    {
+        for (uint32_t j = 0; j < sizeof(bn_t); j++)
+        {
+            if (i * sizeof(bn_t) + j >= (BNBYTES - EC_PRIMEBYTES))
+            {
+                o_eciesR[0 * EC_COORDBYTES + i * sizeof(bn_t) + j - (BNBYTES - EC_PRIMEBYTES)] =
+                    (Rx[i] >> (8*(sizeof(bn_t) - 1 - j))) & 0xFF;
+
+                o_eciesR[1 * EC_COORDBYTES + i * sizeof(bn_t) + j - (BNBYTES - EC_PRIMEBYTES)] =
+                    (Ry[i] >> (8*(sizeof(bn_t) - 1 - j))) & 0xFF;
+            }
+        }
+    }
+
+    // Generate S = r*P
+    generate_lookup_2bit_1pt(lookup, px, py);
+    ec_multiply_1pt(lookup, px, py, pz, random); // (px,py,pz) = random * (px,py);
+    ec_projective2affine(px, py, pz);
+
+    if (bn_is_zero(px,0) || bn_is_zero(py,0))
+    {
+        return -1;
+    }
+
+    for (uint32_t i = 0; i < NWORDS; i++)
+    {
+        for (uint32_t j = 0; j < sizeof(bn_t); j++)
+        {
+            if (i * sizeof(bn_t) + j >= (BNBYTES - EC_PRIMEBYTES))
+            {
+                o_eciesS[0 * EC_COORDBYTES + i * sizeof(bn_t) + j - (BNBYTES - EC_PRIMEBYTES)] =
+                    (px[i] >> (8*(sizeof(bn_t) - 1 - j))) & 0xFF;
+
+                o_eciesS[1 * EC_COORDBYTES + i * sizeof(bn_t) + j - (BNBYTES - EC_PRIMEBYTES)] =
+                    (py[i] >> (8*(sizeof(bn_t) - 1 - j))) & 0xFF;
+            }
+        }
+    }
+    return 1;
+
+}
+
+
+/// @brief Scalar mult
+///
+/// Calculates o_derivedPt = i_privKey*i_pubKey.
+///
+/// @param[in]    i_pubKey               Public Key
+/// @param[in]    i_privKey              Random numbers or private Key.
+/// @param[out]   o_derivedPt            Output of  !
+int ecdh_derive_key(const unsigned char *i_pubKey, const unsigned char *i_privKey,
+                    unsigned char *o_derivedPt)
+{
+    bn_t px[ NWORDS ], py[ NWORDS ], pz[ NWORDS ], private_key[ NWORDS ];
+    bn_t lookup[16][3][ NWORDS ];
+
+    if    ((NULL == i_pubKey) || (NULL == i_privKey)
+           || (NULL == o_derivedPt))
+    {
+        return -1;
+    }
+
+    bn_read_pt(px, i_pubKey);
+    bn_read_pt(py, i_pubKey + EC_COORDBYTES);
+    bn_read_pt(private_key, i_privKey);
+
+    if (!on_curve(i_pubKey))
+    {
+        return -1;
+    }
+
+    generate_lookup_2bit_1pt(lookup, px, py);
+    ec_multiply_1pt(lookup, px, py, pz, private_key);
+    ec_projective2affine(px, py, pz);
+
+    if (bn_is_zero(px,0) || bn_is_zero(py,0))
+    {
+        return -1; // can also occur if private_key was 0 - both would be horrible
+    }
+
+    for (uint32_t i = 0; i < NWORDS; i++)
+    {
+        for (uint32_t j = 0; j < sizeof(bn_t); j++)
+        {
+            if (i * sizeof(bn_t) + j >= (BNBYTES - EC_PRIMEBYTES))
+            {
+                o_derivedPt[0 * EC_COORDBYTES + i * sizeof(bn_t) + j - (BNBYTES - EC_PRIMEBYTES)] =
+                    (px[i] >> (8*(sizeof(bn_t) - 1 - j))) & 0xFF;
+
+                o_derivedPt[1 * EC_COORDBYTES + i * sizeof(bn_t) + j - (BNBYTES - EC_PRIMEBYTES)] =
+                    (py[i] >> (8*(sizeof(bn_t) - 1 - j))) & 0xFF;
+            }
+        }
+    }
+    return 1;
+}
+
+
+/// @brief Accepts an ECIES challenge
+///
+/// Reproduces S = p*R where R=r*G.
+///
+/// @param[in]    i_eciesR               Ecies Challenge
+/// @param[in]    i_privKey              Random numbers r for R=r*G.
+/// @param[out]   o_eciesS               Point on curve S. Kept secret!
+int ec_ecies_acc(const unsigned char *i_eciesR, const unsigned char *i_privKey,
+                 unsigned char *o_eciesS)
+{
+    bn_t px[ NWORDS ], py[ NWORDS ], pz[ NWORDS ], private_key[ NWORDS ];
+    bn_t lookup_2bit[16][3][ NWORDS ];
+
+    if    ((NULL == i_eciesR) || (NULL == i_privKey)
+           || (NULL == o_eciesS))
+    {
+        return -1;
+    }
+
+    bn_read_pt(px, i_eciesR);
+    bn_read_pt(py, i_eciesR + EC_COORDBYTES);
+    bn_read_pt(private_key, i_privKey);
+    if (!on_curve(i_eciesR))
+    {
+        return -1;
+    }
+
+    BN_COPY(pz, bn_one);
+    generate_lookup_2bit_1pt(lookup_2bit, px, py);
+    ec_multiply_1pt(lookup_2bit, px, py, pz, private_key);
+
+    if (bn_is_zero(px,0) || bn_is_zero(py,0))
+    {
+        return -1; // can also occur if r was 0 - both would be horrible
+    }
+
+    for (uint32_t i = 0; i < NWORDS; i++)
+    {
+        for (uint32_t j = 0; j < sizeof(bn_t); j++)
+        {
+            if (i * sizeof(bn_t) + j >= (BNBYTES - EC_PRIMEBYTES))
+            {
+                o_eciesS[0 * EC_COORDBYTES + i * sizeof(bn_t) + j - (BNBYTES - EC_PRIMEBYTES)] =
+                    (px[i] >> (8*(sizeof(bn_t) - 1 - j))) & 0xFF;
+
+                o_eciesS[1 * EC_COORDBYTES + i * sizeof(bn_t) + j - (BNBYTES - EC_PRIMEBYTES)] =
+                    (py[i] >> (8*(sizeof(bn_t) - 1 - j))) & 0xFF;
+            }
+        }
+    }
+    return 1;
+}
+
+
+/// @brief Derive Public Key
+///
+/// Calculates the Public Key belonging to given Private Key.
+///
+/// @param[in]    i_privKey               Private Key
+/// @param[out]   o_pubKey                Resulting Public Key
+int ec_derive_public_key(const unsigned char *i_privKey, unsigned char *o_pubKey)
+{
+
+  uint8_t primept[2 * EC_COORDBYTES];
+
+  memcpy(primept,                 ((uint8_t*)consts_p()->prime_px) + BNBYTES - EC_PRIMEBYTES, EC_COORDBYTES);
+  memcpy(primept + EC_COORDBYTES, ((uint8_t*)consts_p()->prime_py) + BNBYTES - EC_PRIMEBYTES, EC_COORDBYTES);
+
+  return ecdh_derive_key(primept, i_privKey, o_pubKey);
+
+}
+
+
