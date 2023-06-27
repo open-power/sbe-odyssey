@@ -201,6 +201,14 @@ namespace fapi2
                                                      const uint8_t i_instanceId,
                                                      plat_target_sbe_handle &o_tgtHndl) const;
 
+        /// @brief Function to apply the target state attributes
+        ///        to corresponding target states in target vector
+        ///
+        virtual void plat_TargetStateUpdateFromAttribute()
+        {
+            // Platform are supposed to provide the implementation;
+        }
+
     protected:
         std::vector<plat_target_sbe_handle> iv_targets;
 
