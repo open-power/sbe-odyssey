@@ -50,7 +50,6 @@ ReturnCode poz_chiplet_startclocks(
     CPLT_CTRL0_t CPLT_CTRL0;
     SYNC_CONFIG_t SYNC_CONFIG;
     NET_CTRL0_t NET_CTRL0;
-    Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_COMPARE > l_mcast_cmp_target = i_target;
 
     FAPI_INF("Entering ...");
 
@@ -68,14 +67,6 @@ ReturnCode poz_chiplet_startclocks(
     CPLT_CTRL0.set_ABSTCLK_MUXSEL(1);
     CPLT_CTRL0.set_SYNCCLK_MUXSEL(1);
     FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
-
-    FAPI_DBG("Disable listen to sync");
-    FAPI_TRY(SYNC_CONFIG.getScom(l_mcast_cmp_target));
-    SYNC_CONFIG.set_SYNC_PULSE_INPUT_DIS(1);
-    FAPI_TRY(SYNC_CONFIG.putScom(i_target));
-
-    FAPI_INF("Align chiplets");
-    FAPI_TRY(mod_align_regions(i_target, i_clock_regions));
 
     FAPI_INF("Drop chiplet fence");
     // Drop fences before starting clocks because fences are DC and might glitch

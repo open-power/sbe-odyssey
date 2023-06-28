@@ -139,6 +139,10 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
         NET_CTRL0.set_VITL_ALIGN_DIS(1);
         FAPI_TRY(NET_CTRL0.putScom_SET(l_chiplets_mc));
 
+        FAPI_DBG("Disable listen to sync");
+        SYNC_CONFIG.set_SYNC_PULSE_INPUT_DIS(1);
+        FAPI_TRY(SYNC_CONFIG.putScom(l_chiplets_mc));
+
         FAPI_INF("Set up per-chiplet OPCG delays");
 
         for (auto& targ : l_chiplets_uc)
@@ -154,6 +158,9 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
 
     if (i_phases & SCAN0_AND_UP)
     {
+        FAPI_INF("Align chiplets");
+        FAPI_TRY(mod_align_regions(l_chiplets_mc, cc::REGION_ALL));
+
         FAPI_DBG("scan0 all clock regions, scan types GPTR, TIME, REPR");
         FAPI_TRY(mod_scan0(l_chiplets_mc, cc::REGION_ALL, cc::SCAN_TYPE_RTG));
 

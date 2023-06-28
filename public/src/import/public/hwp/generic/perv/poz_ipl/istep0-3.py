@@ -1233,6 +1233,9 @@ def poz_chiplet_reset(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64], 
 
             NET_CTRL0.VITL_ALIGN_DIS = 1
 
+            ## Disable listen to sync
+            SYNC_CONFIG.LISTEN_TO_SYNC_DIS = 1
+
         ## Set up per-chiplet OPCG delays
         for chiplet in chiplets:
             OPCG_ALIGN = 0
@@ -1242,6 +1245,9 @@ def poz_chiplet_reset(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64], 
             OPCG_ALIGN.OPCG_WAIT_CYCLES = 0x30 - 4 * i_chiplet_delays[chiplet.getChipletNumber()]
 
     if i_phases & SCAN0_AND_UP:
+        ## Align chiplets
+        mod_align_regions(i_target, i_clock_regions)
+
         ## Scan-zero
         # NOTE ignore errors on non-functional chiplets
         mod_scan0(chiplets via multicast, regions=all, scan_types=cc::SCAN_TYPE_RTG)
@@ -1784,13 +1790,6 @@ def poz_chiplet_startclocks(target<ANY_POZ_CHIP>, target<PERV|MC>, uint16_t i_cl
     ## Switch ABIST and sync clock muxes to functional state
     CPLT_CTRL0.ABSTCLK_MUXSEL = 0
     CPLT_CTRL0.SYNCCLK_MUXSEL = 0
-
-    ## Disable listen to sync
-    # Use read-compare here to make sure all clock controllers are set up the same coming in
-    SYNC_CONFIG.LISTEN_TO_SYNC_DIS = 1
-
-    ## Align chiplets
-    mod_align_regions(i_target, i_clock_regions)
 
     ## Drop chiplet fence
     # Drop fences before starting clocks because fences are DC and might glitch
