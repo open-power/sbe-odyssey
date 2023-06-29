@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -1031,7 +1031,6 @@ class cas_latency<mss::mc_type::ODYSSEY>
             }
 
             // Collecting stack type
-            if( iv_is_3ds != loading::IS_3DS)
             {
                 constexpr uint8_t MONOLITHIC_SDRAM = 0;
                 uint8_t l_die_per_pkg = 0;
