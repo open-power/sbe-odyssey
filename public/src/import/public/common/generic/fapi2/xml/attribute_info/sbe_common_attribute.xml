@@ -97,5 +97,9 @@
   <entry name="ATTR_SPPE_BOOT_SIDE">
     <value>0x0</value>
   </entry>
-
+  <entry name="ATTR_SECURITY_LEVEL">
+    <!-- Use the strictest possible default while there is no platform code -->
+    <!-- in place to read the hardware state and update this accordingly. -->
+    <value>0x2</value>
+  </entry>
 </entries>
