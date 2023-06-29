@@ -1,0 +1,102 @@
+<!-- IBM_PROLOG_BEGIN_TAG                                                   -->
+<!-- This is an automatically generated prolog.                             -->
+<!--                                                                        -->
+<!-- $Source: public/src/import/public/common/libs/spi/libspi_errors.xml $  -->
+<!--                                                                        -->
+<!-- OpenPOWER sbe Project                                                  -->
+<!--                                                                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2023                             -->
+<!-- [+] International Business Machines Corp.                              -->
+<!--                                                                        -->
+<!--                                                                        -->
+<!-- Licensed under the Apache License, Version 2.0 (the "License");        -->
+<!-- you may not use this file except in compliance with the License.       -->
+<!-- You may obtain a copy of the License at                                -->
+<!--                                                                        -->
+<!--     http://www.apache.org/licenses/LICENSE-2.0                         -->
+<!--                                                                        -->
+<!-- Unless required by applicable law or agreed to in writing, software    -->
+<!-- distributed under the License is distributed on an "AS IS" BASIS,      -->
+<!-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or        -->
+<!-- implied. See the License for the specific language governing           -->
+<!-- permissions and limitations under the License.                         -->
+<!--                                                                        -->
+<!-- IBM_PROLOG_END_TAG                                                     -->
+<!-- File: libspi_errors.xml. -->
+<!-- Halt codes for SPI support code -->
+
+<hwpErrors>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_UNSUPPORTED_LENGTH</rc>
+    <description>One or more of the lengths in a transaction exceed the supported limits</description>
+    <ffdc>CMD_LEN</ffdc>
+    <ffdc>REQ_LEN</ffdc>
+    <ffdc>RSP_LEN</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_POLL_TIMEOUT</rc>
+    <description>Polling for a status change timed out</description>
+    <ffdc>TARGET</ffdc>
+    <ffdc>BASE_ADDRESS</ffdc>
+    <ffdc>POLL_BIT</ffdc>
+    <ffdc>POLL_VALUE</ffdc>
+    <ffdc>SEQUENCE_REG</ffdc>
+    <ffdc>COUNTER_REG</ffdc>
+    <ffdc>CLOCK_CONFIG_REG</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_ERROR_STATUS</rc>
+    <description>The SPI controller logic signaled an error</description>
+    <ffdc>TARGET</ffdc>
+    <ffdc>BASE_ADDRESS</ffdc>
+    <ffdc>STATUS_REG</ffdc>
+    <ffdc>SEQUENCE_REG</ffdc>
+    <ffdc>COUNTER_REG</ffdc>
+    <ffdc>CLOCK_CONFIG_REG</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_MEMORY_WRITE_TIMEOUT</rc>
+    <description>A write/erase command to SPI memory did not complete in time</description>
+    <ffdc>OPERATION</ffdc>
+    <ffdc>ADDRESS</ffdc>
+    <ffdc>LENGTH</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_MEMORY_INVALID_ADDR_LEN</rc>
+    <description>Invalid address/length: Must be divisible by 8 in ECC mode</description>
+    <ffdc>START</ffdc>
+    <ffdc>LENGTH</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_MEMORY_ADDRESS_OVERRUN</rc>
+    <description>Invalid address/length: The request exceeds the size of the memory device</description>
+    <ffdc>START</ffdc>
+    <ffdc>LENGTH</ffdc>
+    <ffdc>RAW_START</ffdc>
+    <ffdc>RAW_LENGTH</ffdc>
+    <ffdc>RAW_DEVICE_SIZE</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_MEMORY_INCOMPLETE_WRITE</rc>
+    <description>A write operation did not write the intended amount of data</description>
+    <ffdc>ECC_MODE</ffdc>
+    <ffdc>START_ADDRESS</ffdc>
+    <ffdc>END_ADDRESS</ffdc>
+    <ffdc>FINAL_WRITE_POINTER</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_MEMORY_INVALID_WRITE_SEQUENCE</rc>
+    <description>A write operation was not properly called in the begin-data[-data...]-end sequence</description>
+    <ffdc>OPERATION</ffdc>
+    <ffdc>WRITE_ACTIVE</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+</hwpErrors>
