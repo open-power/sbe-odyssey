@@ -64,7 +64,7 @@ static const bist_params ody_lbist_params =
     0,                                              ///< linear_stagger
     0,                                              ///< zigzag_stagger
     0x77701186FE407080,                             ///< opcg_align
-    0x4010000000000008,                             ///< lbist_opcg1
+    0x4010000000200008,                             ///< lbist_opcg1
     {0},                                            ///< opcg_count_adjust
     100000,                                         ///< max_polls
     200000,                                         ///< poll_delay_hw
