@@ -271,6 +271,12 @@ ReturnCode ody_sppe_attr_setup(const Target<TARGET_TYPE_OCMB_CHIP>& i_target_chi
         FAPI_TRY(FAPI_ATTR_SET(fapi2::ATTR_PG, l_perv, l_pg));
     }
 
+    // relax scan ratio
+    {
+        fapi2::ATTR_SCAN0_SCAN_RATIO_Type l_scan0_scan_ratio = 0xF;
+        FAPI_TRY(FAPI_ATTR_SET(fapi2::ATTR_SCAN0_SCAN_RATIO, i_target_chip, l_scan0_scan_ratio));
+    }
+
     // set platform attributes needed for basic multicast setup used in following HWPs
     FAPI_TRY(ody_scratch_regs_setup_plat_multicast_attrs(i_target_chip));
 
