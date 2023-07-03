@@ -92,7 +92,6 @@ ReturnCode get_hotplug_targets(
 {
     Target<TARGET_TYPE_SYSTEM> l_system_target;
     uint8_t l_hotplug;
-    TargetState l_target_state;
 
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_HOTPLUG, l_system_target, l_hotplug));
 
@@ -102,6 +101,7 @@ ReturnCode get_hotplug_targets(
     }
     else
     {
+        TargetState l_target_state = TARGET_STATE_PRESENT;
         uint64_t l_chiplet_mask = 0xFFFFFFFFFFFFFFFFULL;
 
         if (l_hotplug)
