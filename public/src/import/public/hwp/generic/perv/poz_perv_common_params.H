@@ -368,7 +368,7 @@ const uint8_t p11t_chiplet_delay_table[64] =
 {
     0, 0, 0, 1, /* None, TP, N0, TBUS */
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    2, 3, 4,    /* EQs */
+    3, 2,       /* EQs */
 };
 
 /* Odyssey is super boring since it only has two chiplets and both are at the same level */

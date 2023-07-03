@@ -1236,13 +1236,12 @@ def poz_chiplet_reset(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64], 
             ## Disable listen to sync
             SYNC_CONFIG.LISTEN_TO_SYNC_DIS = 1
 
-        ## Set up per-chiplet OPCG delays
-        for chiplet in chiplets:
+            ## Set up OPCG_ALIGN
             OPCG_ALIGN = 0
             OPCG_ALIGN.INOP_ALIGN = 7     # 16:1 INOP align
             OPCG_ALIGN.INOP_WAIT  = 0
             OPCG_ALIGN.SCAN_RATIO = 3     # 4:1 scan ratio
-            OPCG_ALIGN.OPCG_WAIT_CYCLES = 0x30 - 4 * i_chiplet_delays[chiplet.getChipletNumber()]
+            OPCG_ALIGN.OPCG_WAIT_CYCLES = 0x20
 
     if i_phases & SCAN0_AND_UP:
         ## Align chiplets

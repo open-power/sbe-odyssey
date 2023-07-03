@@ -56,7 +56,7 @@ ReturnCode ody_chiplet_reset(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
     auto l_target_MC = i_target.getChildren<fapi2::TARGET_TYPE_PERV>(fapi2::TARGET_FILTER_MC, TARGET_STATE_PRESENT)[0];
 
     FAPI_INF("Entering ...");
-    FAPI_TRY(poz_chiplet_reset(i_target, ody_chiplet_delay_table, 10, PRE_SCAN0));
+    FAPI_TRY(poz_chiplet_reset(i_target, 10, PRE_SCAN0));
 
     //Assert ATPGMODE_PUBMAC while we might scan to work around
     //a problem where a latch controlling async resets is on the scan chain.
@@ -71,7 +71,7 @@ ReturnCode ody_chiplet_reset(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
     CPLT_CONF1.setBit<24, 6>();
     FAPI_TRY(CPLT_CONF1.putScom_SET(l_target_MC));
 
-    FAPI_TRY(poz_chiplet_reset(i_target, ody_chiplet_delay_table, 10, SCAN0_AND_UP));
+    FAPI_TRY(poz_chiplet_reset(i_target, 10, SCAN0_AND_UP));
 
     FAPI_INF("Force MC ATPG regions disabled despite ATTR_PG settings");
     CPLT_CTRL2 = 0;

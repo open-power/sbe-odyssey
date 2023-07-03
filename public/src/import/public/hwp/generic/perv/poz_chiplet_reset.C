@@ -52,7 +52,6 @@ enum POZ_CHIPLET_RESET_Private_Constants
 };
 
 ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-                             const uint8_t i_chiplet_delays[64],
                              const uint8_t i_sync_pulse_delay,
                              const poz_chiplet_reset_phases i_phases)
 {
@@ -143,17 +142,13 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
         SYNC_CONFIG.set_SYNC_PULSE_INPUT_DIS(1);
         FAPI_TRY(SYNC_CONFIG.putScom(l_chiplets_mc));
 
-        FAPI_INF("Set up per-chiplet OPCG delays");
-
-        for (auto& targ : l_chiplets_uc)
-        {
-            OPCG_ALIGN = 0;
-            OPCG_ALIGN.set_INOP_ALIGN(7);
-            OPCG_ALIGN.set_INOP_WAIT(0);
-            OPCG_ALIGN.set_SCAN_RATIO(3);
-            OPCG_ALIGN.set_OPCG_WAIT_CYCLES(0x30 - 4 * i_chiplet_delays[targ.getChipletNumber()]);
-            FAPI_TRY(OPCG_ALIGN.putScom(targ));
-        }
+        FAPI_INF("Set up OPCG_ALIGN");
+        OPCG_ALIGN = 0;
+        OPCG_ALIGN.set_INOP_ALIGN(7);
+        OPCG_ALIGN.set_INOP_WAIT(0);
+        OPCG_ALIGN.set_SCAN_RATIO(3);
+        OPCG_ALIGN.set_OPCG_WAIT_CYCLES(0x20);
+        FAPI_TRY(OPCG_ALIGN.putScom(l_chiplets_mc));
     }
 
     if (i_phases & SCAN0_AND_UP)
