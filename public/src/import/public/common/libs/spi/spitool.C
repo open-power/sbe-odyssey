@@ -97,6 +97,7 @@ void help()
         "  --outfile  Write response to FILENAME as binary data instead of dumping to the console",
         "",
         "Read from a SEEPROM device: eeread addr length [--raw] [--noecc] [--outfile FILENAME]",
+        "Read from a Flash device: flashread addr length [--raw] [--noecc] [--outfile FILENAME]",
         "  addr       Address (hex) to start reading from. Will be ECC translated unless --raw is used",
         "  length     Length in bytes (hex) to read. Will be ECC translated unless --raw is used",
         "  --raw      Disable ECC checking - read raw memory",
@@ -104,6 +105,7 @@ void help()
         "  --outfile  Write read data to FILENAME as binary data instead of dumping to the console",
         "",
         "Write to a SEEPROM device: eewrite addr [--raw] [--input INPUT] [--infile FILENAME]",
+        "Write to a Flash device: flashwrite addr [--raw] [--input INPUT] [--infile FILENAME]",
         "  addr       Address (hex) to start writing. Will be ECC translated unless --raw is used",
         "  --raw      Disable on-the-fly ECC generation - write raw memory",
         "  --input    Write INPUT (hex string, arbitrary length) to memory",
@@ -121,6 +123,8 @@ enum tool_command
     CMD_RAWTRANS = 0,
     CMD_EEREAD,
     CMD_EEWRITE,
+    CMD_FLASHREAD,
+    CMD_FLASHWRITE,
     CMD_UNKNOWN = 0xFF
 };
 
@@ -134,6 +138,8 @@ static const struct
     { CMD_RAWTRANS,   "rawtrans",   2 },
     { CMD_EEREAD,     "eeread",     2 },
     { CMD_EEWRITE,    "eewrite",    1 },
+    { CMD_FLASHREAD,  "flashread",  2 },
+    { CMD_FLASHWRITE, "flashwrite", 1 },
 };
 
 struct
@@ -223,15 +229,17 @@ int parse_args(int& argc, char**& argv)
             }
 
         case CMD_EEREAD:
+        case CMD_FLASHREAD:
             {
                 args.rw_start_addr = strtoul(argv[5], &endptr, 16);
                 CHECK(*endptr == 0, "Invalid start address");
-                args.output_len = strtoul(argv[6], &endptr, 0);
+                args.output_len = strtoul(argv[6], &endptr, 16);
                 CHECK(*endptr == 0, "Invalid read length");
                 break;
             }
 
         case CMD_EEWRITE:
+        case CMD_FLASHWRITE:
             {
                 args.rw_start_addr = strtoul(argv[5], &endptr, 16);
                 CHECK(*endptr == 0, "Invalid start address");
@@ -343,6 +351,15 @@ ReturnCode run(Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
             mem = new spi::SEEPROMDevice(port, 0x1000000);
             break;
 
+        case CMD_FLASHREAD:
+        case CMD_FLASHWRITE:
+            {
+                spi::FlashDevice::device_type type;
+                FAPI_TRY(spi::FlashDevice::detect_device(port, type));
+                mem = new spi::FlashDevice(port, type, 0x1000000,
+                                           new uint8_t[spi::FlashDevice::ERASE_BUFFER_SIZE]);
+            }
+
         default:
             break;
     }
@@ -359,12 +376,14 @@ ReturnCode run(Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
             }
 
         case CMD_EEREAD:
+        case CMD_FLASHREAD:
             {
                 FAPI_TRY(mem->read(args.rw_start_addr, output_len, output_data));
                 break;
             }
 
         case CMD_EEWRITE:
+        case CMD_FLASHWRITE:
             {
                 FAPI_TRY(mem->write_begin(args.rw_start_addr, input_len));
                 FAPI_TRY(mem->write_data(input_data, input_len));

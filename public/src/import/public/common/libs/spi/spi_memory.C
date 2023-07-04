@@ -41,6 +41,23 @@ enum spi_memory_constants
     //   MX66 NOR Flash:  3ms
     // Generously round up to 10ms for good measure.
     PAGE_WRITE_TIMEOUT_MS = 10,
+
+    // Max erase times according to datasheets:
+    //   MT25Q: 1s
+    //   MX66:  2.2s   (yes SECONDS)
+    ERASE_TIMEOUT_MS = 3000,
+};
+
+enum flash_device_commands
+{
+    X25_CMD_READ_ID = 0x9F,
+    MT25Q_CMD_READ_FLAG_STATUS_REG = 0x70,
+    MX66_CMD_READ_SECURITY_REG = 0x2B,
+
+    // Commands with 24-bit address
+    X25_CMD_ERASE_64K = 0xD8000000,
+    X25_CMD_ERASE_32K = 0x52000000,
+    X25_CMD_ERASE_4K = 0x20000000,
 };
 
 ReturnCode spi::SEEPROMDevice::check_start_and_length(uint32_t i_start, uint32_t i_length) const
@@ -89,7 +106,6 @@ constexpr uint32_t MAX_READ_SIZE = 0x800;
 
 ReturnCode spi::SEEPROMDevice::read(uint32_t i_start, uint32_t i_length, void* o_buffer) const
 {
-    uint8_t* buf8 = (uint8_t*)o_buffer;
     uint32_t address = ecc_correct(i_start);
     // When reading with ECC (either correcting or discarding), the length increase
     // caused by the ECC byte will be handled inside the transaction so we must not
@@ -99,16 +115,26 @@ ReturnCode spi::SEEPROMDevice::read(uint32_t i_start, uint32_t i_length, void* o
     FAPI_INF("Memory read i_start=0x%08x (ECC corrected 0x%08x) i_length=0x%08x",
              i_start, address, i_length);
     FAPI_TRY(check_start_and_length(i_start, i_length));
+    FAPI_TRY(read_internal(address, length, true, o_buffer));
 
-    while (length)
+fapi_try_exit:
+    return current_err;
+}
+
+ReturnCode spi::SEEPROMDevice::read_internal(
+    uint32_t i_start, uint32_t i_length, bool i_use_ecc, void* o_buffer) const
+{
+    uint8_t* buf8 = (uint8_t*)o_buffer;
+
+    while (i_length)
     {
-        const uint32_t nbytes = min(length, MAX_READ_SIZE);
+        const uint32_t nbytes = min(i_length, MAX_READ_SIZE);
 
-        FAPI_TRY(iv_port.transaction(X25_CMD_READ | (address & X25_ADDR_MASK), 4,
-                                     NULL, 0, buf8, nbytes, true));
-        length -= nbytes;
+        FAPI_TRY(iv_port.transaction(X25_CMD_READ | (i_start & X25_ADDR_MASK), 4,
+                                     NULL, 0, buf8, nbytes, i_use_ecc));
+        i_length -= nbytes;
         buf8 += nbytes;
-        address += ecc_correct(nbytes);
+        i_start += ecc_correct(nbytes);
     }
 
 fapi_try_exit:
@@ -125,7 +151,7 @@ ReturnCode spi::SEEPROMDevice::write_begin(uint32_t i_start, uint32_t i_length)
     iv_buf_pos = 0;
     iv_write_active = true;
 
-    FAPI_INF("SEEPROM write begin i_start=0x%08x i_length=0x%08x "
+    FAPI_INF("Memory write begin i_start=0x%08x i_length=0x%08x "
              "iv_write_start=0x%08x iv_write_end=0x%08x",
              i_start, i_length, iv_write_start, iv_write_end);
 
@@ -183,10 +209,10 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode spi::SEEPROMDevice::flush_page_buf()
+ReturnCode spi::SEEPROMDevice::flush_page_buf(bool i_final_write)
 {
-    // iv_write_pos points to the _next_ byte that will be written, so
-    // (iv_write_pos - 1) is the _last_ byte written. We want to know that
+    // iv_write_pos points to the _next_ byte that will be written to the buffer, so
+    // (iv_write_pos - 1) is the _last_ byte written to the buffer. We want to know that
     // byte's page start address.
     const uint32_t page_start = (iv_write_pos - 1) & ~WRITE_PAGE_MASK;
 
@@ -220,7 +246,7 @@ inline ReturnCode spi::SEEPROMDevice::write_byte(uint8_t i_byte)
 
     if ((iv_write_pos & WRITE_PAGE_MASK) == 0)
     {
-        return flush_page_buf();
+        return flush_page_buf(false);
     }
 
     return FAPI2_RC_SUCCESS;
@@ -230,7 +256,7 @@ ReturnCode spi::SEEPROMDevice::write_data(const void* i_buffer, uint32_t i_lengt
 {
     auto buf8 = static_cast<const uint8_t*>(i_buffer);
 
-    FAPI_INF("SEEPROM write data iv_write_pos=0x%08x iv_write_end=0x%08x i_length=0x%08x",
+    FAPI_INF("Memory write data iv_write_pos=0x%08x iv_write_end=0x%08x i_length=0x%08x",
              iv_write_pos, iv_write_end, i_length);
 
     FAPI_TRY(check_write_active(WRITE_DATA, true));
@@ -261,14 +287,14 @@ fapi_try_exit:
 
 ReturnCode spi::SEEPROMDevice::write_end()
 {
-    FAPI_INF("SEEPROM write end iv_write_pos=0x%08x iv_write_end=0x%08x",
+    FAPI_INF("Memory write end iv_write_pos=0x%08x iv_write_end=0x%08x",
              iv_write_pos, iv_write_end);
 
     FAPI_TRY(check_write_active(WRITE_END, true));
 
     if ((iv_write_pos & WRITE_PAGE_MASK) != 0)
     {
-        FAPI_TRY(flush_page_buf());
+        FAPI_TRY(flush_page_buf(true));
     }
 
     iv_write_active = false;
@@ -282,6 +308,358 @@ ReturnCode spi::SEEPROMDevice::write_end()
                 "Incomplete write operation: ecc_mode=%d start_address=0x%08x "
                 "end_address=0x%08x write_pointer=0x%08x",
                 iv_ecc_mode, iv_write_start, iv_write_end, iv_write_pos);
+
+fapi_try_exit:
+    return current_err;
+}
+
+// The Flash driver expands upon the SEEPROM driver like so:
+//
+//  * The read mechanism is simply reused as-is.
+//  * The write mechanism is expanded by overriding flush_page_buf() so that
+//    it issues erase commands as needed before writing the next page.
+//  * write_begin() takes care of saving off and writing back the beginning of
+//    the first erase block and saving the tail end of the last erase block if
+//    necessary. It uses the existing read() and write_data() mechanics for this.
+//  * write_end() writes back the saved tail end of the last erase block.
+//
+// This way, it needs very little in the way of additional code.
+
+ReturnCode spi::FlashDevice::write_begin(uint32_t i_start, uint32_t i_length)
+{
+    // Save the ECC mode now so we can restore it even on an error
+    const ecc_mode saved_ecc_mode = iv_ecc_mode;
+
+    // First defer to the superclass for basic initialization & ECC correction
+    FAPI_TRY(SEEPROMDevice::write_begin(i_start, i_length));
+
+    // Now, expand the total amount we're writing to cover entire erase blocks
+    iv_erase_start = iv_erase_pos = iv_write_start & ~SMALLEST_ERASE_BLOCK_MASK;
+    iv_erase_end = (iv_write_end + SMALLEST_ERASE_BLOCK_MASK) & ~SMALLEST_ERASE_BLOCK_MASK;
+
+    // Save off partial erase blocks if necessary
+    {
+        const uint32_t partial_start = iv_write_pos - iv_erase_pos;
+        const uint32_t partial_end = iv_erase_end - iv_write_end;
+        const uint32_t erase_length = iv_erase_end - iv_erase_pos;
+        const uint32_t saved_erase_end = iv_erase_end;
+
+        // If we write very little new data we may end up staying within a
+        // single erase block. This is a special case since the first and last
+        // erase block are identical.
+        const bool single_erase_block = erase_length == SMALLEST_ERASE_BLOCK_SIZE;
+
+        FAPI_DBG("iv_erase_start=0x%08x iv_erase_end=0x%08x partial_start=0x%08x partial_end=0x%08x",
+                 iv_erase_start, iv_erase_end, partial_start, partial_end);
+
+        FAPI_ASSERT(iv_erase_buffer || !(partial_start || partial_end),
+                    SPI_FLASH_ERASE_BUFFER_NEEDED()
+                    .set_ADDRESS(i_start)
+                    .set_LENGTH(i_length),
+                    "Write request requires an erase buffer but no buffer was provided: "
+                    "i_start=0x%08x i_length=0x%08x", i_start, i_length);
+
+        // Temporarily disable ECC while we move raw data around
+        iv_ecc_mode = ECC_DISABLED;
+
+        // Rewind the write pointer to the beginning of the erase area
+        iv_write_pos = iv_erase_pos;
+
+        // Since the write process always tries to use the largest fitting erase
+        // block size, it's possible that the entire write area will be erased upon
+        // the first write - including a potential partially written last block.
+        // Since we haven't saved off that last page's data yet we have to make sure
+        // this does not happen - so temporarily modify the erase length to exclude
+        // the last block.
+        if (partial_end && !single_erase_block)
+        {
+            iv_erase_end -= SMALLEST_ERASE_BLOCK_SIZE;
+        }
+
+        // Save off the first erase block and write back its beginning
+        if (partial_start)
+        {
+            // If we only have a single erase block we need to save all of it
+            // so we get both the beginning and the end before it's erased.
+            // Otherwise we only need to save the beginning.
+            const uint32_t read_size = (partial_end && single_erase_block) ?
+                                       SMALLEST_ERASE_BLOCK_SIZE : partial_start;
+
+            FAPI_TRY(read_internal(iv_erase_pos, read_size, false, iv_erase_buffer));
+            iv_partial_end_restore_buffer = iv_erase_buffer + SMALLEST_ERASE_BLOCK_SIZE - partial_end;
+
+            // write_data will implicitly do the erase
+            FAPI_TRY(write_data(iv_erase_buffer, partial_start));
+        }
+
+        // Save off the end of the last erase block for later
+        if (partial_end && !(partial_start && single_erase_block))
+        {
+            FAPI_TRY(read_internal(iv_write_end, partial_end, false, iv_erase_buffer));
+            iv_partial_end_restore_buffer = iv_erase_buffer;
+        }
+
+        // Undo our earlier hacks
+        iv_erase_end = saved_erase_end;
+    }
+
+fapi_try_exit:
+    iv_ecc_mode = saved_ecc_mode;
+    return current_err;
+}
+
+struct erase_mode_t
+{
+    uint32_t addr_mask;
+    uint32_t block_size;
+    uint32_t command;
+};
+
+// Erase modes sorted from large to small blocks
+static const struct erase_mode_t ERASE_MODES[] =
+{
+    { 0xFFFF, 65536, X25_CMD_ERASE_64K },
+    { 0x7FFF, 32768, X25_CMD_ERASE_32K },
+    { 0x0FFF,  4096, X25_CMD_ERASE_4K  },
+};
+
+ReturnCode spi::FlashDevice::flush_page_buf(bool i_final_write)
+{
+    // If SEEPROMDevice::write_end() calls this to "finalize" we have to politely
+    // refuse since we're going to add the saved tail end of the last erase block.
+    if (i_final_write)
+    {
+        return FAPI2_RC_SUCCESS;
+    }
+
+    // iv_write_pos points to the _next_ byte that will be written to the buffer, so
+    // (iv_write_pos - 1) is the _last_ byte written to the buffer. We want to know that
+    // byte's page start address.
+    const uint32_t page_start = (iv_write_pos - 1) & ~WRITE_PAGE_MASK;
+
+    // Check whether we need to erase before we can write
+    if (page_start >= iv_erase_pos)
+    {
+        // Go through available erase modes from largest to smallest block size
+        // and pick the largest one that fits both the current erase address
+        // and remaining erase size
+        const uint32_t max_size = iv_erase_end - iv_erase_pos;
+
+        for (auto& mode : ERASE_MODES)
+        {
+            if ((iv_erase_pos & mode.addr_mask) == 0 && max_size >= mode.block_size)
+            {
+                FAPI_DBG("erase address=0x%08x length=0x%08x", iv_erase_pos, mode.block_size);
+
+                FAPI_TRY(write_enable());
+                FAPI_TRY(iv_port.transaction(mode.command | (iv_erase_pos & X25_ADDR_MASK),
+                                             4, NULL, 0, NULL, 0));
+                FAPI_TRY(wait_for_write_complete(ERASE_TIMEOUT_MS, OP_BLOCK_ERASE,
+                                                 iv_erase_pos, mode.block_size));
+                FAPI_TRY(check_extended_status(iv_erase_pos, mode.block_size));
+
+                iv_erase_pos += mode.block_size;
+                break;
+            }
+        }
+
+        FAPI_ASSERT(iv_erase_pos > page_start,
+                    SPI_FLASH_ERASE_INSUFFICIENT()
+                    .set_PAGE_ADDRESS(page_start)
+                    .set_ERASE_START(iv_erase_start)
+                    .set_ERASE_POS(iv_erase_pos)
+                    .set_ERASE_END(iv_erase_end),
+                    "Did not erase enough blocks to continue - CODE BUG "
+                    "page_start=0x%08x erase_start=0x%08x erase_pos=0x%08x erase_end=0x%08x",
+                    page_start, iv_erase_start, iv_erase_pos, iv_erase_end);
+    }
+
+    // Now write the page buffer; since we don't do partial pages the address
+    // and size calculations become a lot simpler than for SEEPROM.
+    {
+        FAPI_DBG("flush_page_buf iv_write_pos=0x%08x page_start=0x%08x",
+                 iv_write_pos, page_start);
+
+        FAPI_TRY(write_page(page_start, WRITE_PAGE_SIZE, iv_page_buffer));
+        FAPI_TRY(check_extended_status(page_start, WRITE_PAGE_SIZE));
+        iv_buf_pos = 0;
+    }
+
+fapi_try_exit:
+    // Save off current_err since cleanup might modify it
+    const ReturnCode l_final_rc = current_err;
+
+    if (current_err != FAPI2_RC_SUCCESS)
+    {
+        // Recover a partial last block if needed;
+        // we call this without FAPI_TRY since we're just trying to clean up
+        finalize_write(false);
+    }
+
+    return l_final_rc;
+}
+
+ReturnCode spi::FlashDevice::finalize_write(const bool i_write_end)
+{
+    const ecc_mode saved_ecc_mode = iv_ecc_mode;
+
+    // This code might be called in the context of write_begin() where
+    // we're lying about the real end of the erase area, so we have to
+    // re-calculate the actual end of the erase area.
+    const uint32_t l_real_erase_end = (iv_write_end + SMALLEST_ERASE_BLOCK_MASK) & ~SMALLEST_ERASE_BLOCK_MASK;
+    const uint32_t partial_end = l_real_erase_end - iv_write_end;
+    const bool last_block_erased = iv_erase_pos == l_real_erase_end;
+
+    // In the good path, we always restore the partial end if we have one;
+    // in the error case we only need to do this if the last block has been erased
+    if (partial_end && (i_write_end || last_block_erased))
+    {
+        // Set up internal state to pretend we wrote data all
+        // the way to the end and are ready to write the partial end
+        // (in the good case this is already the case)
+        iv_buf_pos = iv_write_end & WRITE_PAGE_MASK;
+        iv_write_pos = iv_write_end;
+
+        // We need to write the saved block with ECC off
+        iv_ecc_mode = ECC_DISABLED;
+
+        // Make sure we don't trip the write sequence check
+        iv_write_active = true;
+
+        // Write out saved erase block end
+        FAPI_TRY(write_data(iv_partial_end_restore_buffer, partial_end));
+    }
+
+fapi_try_exit:
+    iv_write_active = false;
+    iv_ecc_mode = saved_ecc_mode;
+    return current_err;
+}
+
+ReturnCode spi::FlashDevice::write_end()
+{
+    ReturnCode l_rc = SEEPROMDevice::write_end();
+
+    // Always restore the saved last block data even if the previous write_end failed
+    FAPI_TRY(finalize_write(true));
+    FAPI_TRY(l_rc);
+
+    FAPI_ASSERT(iv_erase_pos == iv_erase_end,
+                SPI_MEMORY_ERASE_MISMATCH()
+                .set_ECC_MODE(iv_ecc_mode)
+                .set_START_ADDRESS(iv_erase_start)
+                .set_END_ADDRESS(iv_erase_end)
+                .set_FINAL_ERASE_POINTER(iv_erase_pos),
+                "Erasing did not go as planned: ecc_mode=%d start_address=0x%08x "
+                "end_address=0x%08x erase_pointer=0x%08x",
+                iv_ecc_mode, iv_erase_start, iv_erase_end, iv_erase_pos);
+
+fapi_try_exit:
+    return current_err;
+}
+
+ReturnCode spi::FlashDevice::check_extended_status(
+    uint32_t i_address, uint32_t i_length) const
+{
+    uint8_t dev_status;
+    extended_status status = ES_NONE;
+
+    // Depending on the device type the extended status has a different
+    // read command and bit layout.
+    if (iv_devtype == DEV_MICRON_MT25Q)
+    {
+        FAPI_TRY(iv_port.transaction(MT25Q_CMD_READ_FLAG_STATUS_REG, 1, NULL, 0, &dev_status, 1));
+        status = static_cast<extended_status>(
+                     ((dev_status & 0x40) ? ES_ERASE_SUSP : 0) |
+                     ((dev_status & 0x20) ? ES_ERASE_FAIL : 0) |
+                     ((dev_status & 0x10) ? ES_PROG_FAIL : 0) |
+                     ((dev_status & 0x04) ? ES_PROG_SUSP : 0) |
+                     ((dev_status & 0x02) ? ES_WRITE_PROT : 0));
+    }
+    else if (iv_devtype == DEV_MACRONIX_MX66)
+    {
+        FAPI_TRY(iv_port.transaction(MX66_CMD_READ_SECURITY_REG, 1, NULL, 0, &dev_status, 1));
+        status = static_cast<extended_status>(
+                     ((dev_status & 0x40) ? ES_ERASE_FAIL : 0) |
+                     ((dev_status & 0x20) ? ES_PROG_FAIL : 0) |
+                     ((dev_status & 0x08) ? ES_ERASE_SUSP : 0) |
+                     ((dev_status & 0x04) ? ES_PROG_SUSP : 0));
+    }
+
+    // Now check for errors
+    FAPI_ASSERT(!(status & ES_WRITE_PROT),
+                SPI_FLASH_WRITE_PROTECTED()
+                .set_ADDRESS(i_address)
+                .set_LENGTH(i_length),
+                "Flash is write protected at address=0x%08x length=0x%08x",
+                i_address, i_length);
+
+    FAPI_ASSERT(!(status & ES_PROG_FAIL),
+                SPI_FLASH_WRITE_FAIL()
+                .set_ADDRESS(i_address)
+                .set_LENGTH(i_length),
+                "Flash write failed at address=0x%08x length=0x%08x",
+                i_address, i_length);
+
+    FAPI_ASSERT(!(status & ES_ERASE_FAIL),
+                SPI_FLASH_ERASE_FAIL()
+                .set_ADDRESS(i_address)
+                .set_LENGTH(i_length),
+                "Flash erase failed at address=0x%08x length=0x%08x",
+                i_address, i_length);
+
+fapi_try_exit:
+    return current_err;
+}
+
+// Special value that we don't want to expose to user code
+static const auto DEV_UNKNOWN = static_cast<spi::FlashDevice::device_type>(0xFF);
+
+/**
+ * @brief Map a device ID read from the Flash chip to a supported device type
+ */
+static inline spi::FlashDevice::device_type get_mode_from_id(const uint8_t id[3])
+{
+    if (id[0] == 0xC2)
+    {
+        if (id[1] == 0x20)
+        {
+            FAPI_DBG("Detected Macronix MX66 type flash device");
+            return spi::FlashDevice::DEV_MACRONIX_MX66;
+        }
+    }
+    else if (id[0] == 0x20)
+    {
+        if (id[1] == 0xBA || id[1] == 0xBB)
+        {
+            FAPI_DBG("Detected Micron MT25Q type flash device");
+            return spi::FlashDevice::DEV_MICRON_MT25Q;
+        }
+    }
+
+    return DEV_UNKNOWN;
+}
+
+ReturnCode spi::FlashDevice::detect_device(const AbstractPort& i_port, device_type& o_devtype)
+{
+    union
+    {
+        uint8_t b[4];
+        uint32_t i;
+    } id = { 0 };
+
+    FAPI_TRY(i_port.transaction(X25_CMD_READ_ID, 1, NULL, 0, id.b, 3));
+
+    FAPI_ASSERT(id.i != 0,
+                SPI_FLASH_NO_DEVICE(),
+                "Got zero response to 'get device ID' command, looks like no device attached?");
+
+    o_devtype = get_mode_from_id(id.b);
+
+    FAPI_ASSERT(o_devtype != DEV_UNKNOWN,
+                SPI_FLASH_UNKNOWN_DEVICE()
+                .set_DEVICE_ID(be32toh(id.i)),
+                "Unknown device, id=0x%08x", be32toh(id.i));
 
 fapi_try_exit:
     return current_err;

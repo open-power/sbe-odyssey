@@ -147,7 +147,7 @@ class SEEPROMDevice : public AbstractMemoryDevice
 
         const AbstractPort& iv_port;
         const uint32_t iv_raw_size;
-        const ecc_mode iv_ecc_mode;
+        ecc_mode iv_ecc_mode;
         bool iv_write_active;
 
         enum seeprom_device_commands
@@ -178,6 +178,7 @@ class SEEPROMDevice : public AbstractMemoryDevice
         enum write_operation_ffdc
         {
             OP_PAGE_WRITE,
+            OP_BLOCK_ERASE,
         };
 
         uint8_t iv_page_buffer[WRITE_PAGE_SIZE];
@@ -216,6 +217,17 @@ class SEEPROMDevice : public AbstractMemoryDevice
         }
 
         /**
+         * @brief Perform a read with a choice of ECC enabled or disabled
+         *
+         * @param[in]  i_start    Raw start address; no ECC correction will be applied
+         * @param[in]  i_length   Raw read length; no ECC correction will be applied
+         * @param[in]  i_use_ecc  Enable the communication port's ECC feature
+         * @param[out] o_buffer   Output data buffer
+         */
+        fapi2::ReturnCode read_internal(
+            uint32_t i_start, uint32_t i_length, bool i_use_ecc, void* o_buffer) const;
+
+        /**
          * @brief Wait for a write/erase operation to complete
          *
          * This will also make sure that the write enable latch is cleared even in
@@ -252,8 +264,9 @@ class SEEPROMDevice : public AbstractMemoryDevice
 
         /**
          * @brief Commit the current page buffer content to the device
+         * @param[in] i_final_write indicates that the call came from write_end() trying to tie up loose ends
          */
-        fapi2::ReturnCode flush_page_buf();
+        virtual fapi2::ReturnCode flush_page_buf(bool i_final_write);
 
         /**
          * @brief Helper to write a single byte to the page buffer
@@ -261,6 +274,104 @@ class SEEPROMDevice : public AbstractMemoryDevice
          * This flushes data out to the device whenever we cross a page boundary
          */
         fapi2::ReturnCode write_byte(uint8_t i_byte);
+};
+
+/**
+ * @brief Driver for a NOR Flash device following the 25 series industry standard
+ */
+class FlashDevice : public SEEPROMDevice
+{
+    protected:
+        static const uint32_t SMALLEST_ERASE_BLOCK_SIZE = 4096;
+        static const uint32_t SMALLEST_ERASE_BLOCK_MASK = SMALLEST_ERASE_BLOCK_SIZE - 1;
+
+    public:
+        /**
+         * @brief Device types supported by the driver
+         */
+        enum device_type
+        {
+            DEV_MICRON_MT25Q = 1,
+            DEV_MACRONIX_MX66,
+        };
+
+        static const uint32_t ERASE_BUFFER_SIZE = SMALLEST_ERASE_BLOCK_SIZE;
+
+        /**
+         * @brief Construct a Flash driver object
+         *
+         * Write operations may require a temporary buffer for preserving erase block data
+         * before it is erased. To facilitate use on embedded platforms that buffer is optional
+         * and must be provided by the caller. If the buffer is not provided write operations
+         * which are not strictly aligned to erase block boundaries will fail.
+         *
+         * @param[in] i_port          Communication port to which the device is attached
+         * @param[in] i_devtype       Flash device type - if unclear you can use detect_device()
+         * @param[in] i_raw_size      Size of the device's memory array in bytes.
+         *                            Will be used for range checking on reads and writes.
+         * @param[in] i_erase_buffer  Buffer for preserving partial erase block data.
+         *                            Must be able to hold ERASE_BUFFER_SIZE bytes.
+         *                            Can be omitted (i.e. a null pointer) if only reads or
+         *                            erase block aligned writes are performed.
+         */
+        FlashDevice(const AbstractPort& i_port,
+                    device_type i_devtype,
+                    uint32_t i_raw_size,
+                    uint8_t* i_erase_buffer) :
+            SEEPROMDevice(i_port, i_raw_size), iv_devtype(i_devtype), iv_erase_buffer(i_erase_buffer)
+        {}
+
+        /// @brief Implementation of write_begin - see AbstractMemoryDevice::write_begin() for details
+        fapi2::ReturnCode write_begin(uint32_t i_start, uint32_t i_length) override;
+
+        /// @brief Implementation of write_end - see AbstractMemoryDevice::write_end() for details
+        fapi2::ReturnCode write_end() override;
+
+        /**
+         * @brief Detect the type of an attached device based on its device ID
+         *
+         * This sends a "get device ID" command to the specified port and attempts to match the
+         * returned ID to a known device type.
+         *
+         * @param[in]  i_port     Communications port to query
+         * @param[out] o_devtype  Detected device type
+         */
+        static fapi2::ReturnCode detect_device(const AbstractPort& i_port, device_type& o_devtype);
+
+    protected:
+        enum extended_status
+        {
+            ES_NONE       = 0,
+            ES_ERASE_FAIL = 0x01,
+            ES_PROG_FAIL  = 0x02,
+            ES_ERASE_SUSP = 0x04,
+            ES_PROG_SUSP  = 0x08,
+            ES_WRITE_PROT = 0x10,
+        };
+
+        const device_type iv_devtype;
+        uint8_t* const iv_erase_buffer;
+
+        uint32_t iv_erase_start, iv_erase_pos, iv_erase_end;
+        uint8_t* iv_partial_end_restore_buffer;
+
+        /**
+         * @brief New implementation of flush_page_buf() which incorporates erase support
+         */
+        fapi2::ReturnCode flush_page_buf(bool i_final_write) override;
+
+        /**
+         * @brief Attempt to write back the saved tail end of the last erase block, and terminate write state
+         *
+         * @param[in]  i_write_end  true if called from write_end(), false if called from an error path
+         */
+        fapi2::ReturnCode finalize_write(const bool i_write_end);
+
+        /**
+         * @brief Check the extended status of the device and raise an error if the device reports a problem
+         */
+        fapi2::ReturnCode check_extended_status(uint32_t i_address, uint32_t i_length) const;
+
 };
 
 };

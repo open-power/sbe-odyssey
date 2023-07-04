@@ -93,10 +93,70 @@
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <rc>RC_SPI_MEMORY_ERASE_MISMATCH</rc>
+    <description>A Flash write operation ended with the erase sequence not stopping at the expected final address</description>
+    <ffdc>ECC_MODE</ffdc>
+    <ffdc>START_ADDRESS</ffdc>
+    <ffdc>END_ADDRESS</ffdc>
+    <ffdc>FINAL_ERASE_POINTER</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
     <rc>RC_SPI_MEMORY_INVALID_WRITE_SEQUENCE</rc>
     <description>A write operation was not properly called in the begin-data[-data...]-end sequence</description>
     <ffdc>OPERATION</ffdc>
     <ffdc>WRITE_ACTIVE</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_FLASH_UNKNOWN_DEVICE</rc>
+    <description>The type of an attached Flash device could not be determined</description>
+    <ffdc>DEVICE_ID</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_FLASH_NO_DEVICE</rc>
+    <description>Got an all-zero response to a "get device ID" command, indicating that no SPI device might be attached</description>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_FLASH_ERASE_BUFFER_NEEDED</rc>
+    <description>
+      The requested write operation needs an erase buffer to save partial erase block data
+      but no buffer was provided at driver initialization.
+    </description>
+    <ffdc>ADDRESS</ffdc>
+    <ffdc>LENGTH</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_FLASH_WRITE_PROTECTED</rc>
+    <description>Flash is write protected</description>
+    <ffdc>ADDRESS</ffdc>
+    <ffdc>LENGTH</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_FLASH_WRITE_FAIL</rc>
+    <description>A flash page write operation failed</description>
+    <ffdc>ADDRESS</ffdc>
+    <ffdc>LENGTH</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_FLASH_ERASE_FAIL</rc>
+    <description>A flash sector erase operation failed</description>
+    <ffdc>ADDRESS</ffdc>
+    <ffdc>LENGTH</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_FLASH_ERASE_INSUFFICIENT</rc>
+    <description>Code should have erased far enough for new data to be written but didn't</description>
+    <ffdc>PAGE_ADDRESS</ffdc>
+    <ffdc>ERASE_START</ffdc>
+    <ffdc>ERASE_POS</ffdc>
+    <ffdc>ERASE_END</ffdc>
   </hwpError>
   <!-- ******************************************************************** -->
 </hwpErrors>
