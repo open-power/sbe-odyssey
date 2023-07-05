@@ -36,7 +36,7 @@ check_path()
 {
     if [ ! -f $1 ]; then
         echo "***ERROR | SBE | signHashList : $1 DNE!"
-        exit -1
+        exit 1
     fi
 }
 
@@ -99,7 +99,7 @@ do
         *)
             echo "Bad option: $OPTARG"
             usage
-            exit -1
+            exit 1
         ;;
 
     esac
@@ -109,25 +109,25 @@ done
 if [ -z $SCRATCH_DIR ]; then
     echo "***ERROR | SBE | signHashList : Scratch directory path not set. Please supply the -s option."
     usage
-    exit -1
+    exit 1
 fi
 
 if [ -z $HASH_LIST ]; then
     echo "***ERROR | SBE | signHashList : Hash List path not set. Please supply the -i option."
     usage
-    exit -1
+    exit 1
 fi
 
 if [ -z $COMPONENT_ID ]; then
     echo "***INFO | SBE | signHashList : Component ID not entered. Please supply the -c option."
     usage
-    exit -1
+    exit 1
 fi
 
 if [ -z $SECURE_HDR_PATH ]; then
     echo "***INFO | SBE | signHashList : Secure Header output path not entered. Please supply the -c option."
     usage
-    exit -1
+    exit 1
 fi
 
 SIGNING_DIR=
@@ -150,7 +150,7 @@ elif [ -z $SBE_IMG_DIR_OP ]; then
         SIGNING_DIR=${SIGNING_RHEL_PATH}/bin/
     else
         echo "***ERROR | SBE | signHashList : SIGNING_RHEL_PATH env var is not defined"
-        exit -1
+        exit 1
     fi
 
 else
@@ -208,11 +208,11 @@ elif [ "$SIGNING_MODE" = "Production" ] ; then
     if [ "$COMPONENT_ID" = "BOOT_LDR" ]; then
         if [ -z $SB_PROJECT_INI_ODY_BOOT ] || [ ! -e $SB_PROJECT_INI_ODY_BOOT ]; then
             echo "***ERROR | SBE | signHashList : Unable to locate production signing boot loader project ini file : $SB_PROJECT_INI_ODY_BOOT"
-            exit -1
+            exit 1
         fi
         if [ -z $SB_ARCHIVE_IN_ODY_BOOT ] || [ ! -e $SB_ARCHIVE_IN_ODY_BOOT ]; then
             echo "***ERROR | SBE | signHashList : Unable to locate production signing boot loader key archive : $SB_ARCHIVE_IN_ODY_BOOT"
-            exit -1
+            exit 1
         fi
 
         echo "***INFO | SBE | signHashList : Production Mode Signing."
@@ -224,11 +224,11 @@ elif [ "$SIGNING_MODE" = "Production" ] ; then
     if [ "$COMPONENT_ID" = "RUN_TIME" ]; then
         if [ -z $SB_PROJECT_INI_ODY_RUNTIME ] || [ ! -e $SB_PROJECT_INI_ODY_RUNTIME ]; then
             echo "***ERROR | SBE | signHashList : Unable to locate production signing runtime project ini file : $SB_PROJECT_INI_ODY_RUNTIME"
-            exit -1
+            exit 1
         fi
         if [ -z $SB_ARCHIVE_IN_ODY_RUNTIME ] || [ ! -e $SB_ARCHIVE_IN_ODY_RUNTIME ]; then
             echo "***ERROR | SBE | signHashList : Unable to locate production signing runtime key archive : $SB_ARCHIVE_IN_ODY_RUNTIME"
-            exit -1
+            exit 1
         fi
 
         echo "***INFO | SBE | signHashList : Production Mode Signing."
@@ -244,7 +244,7 @@ elif [ "$SIGNING_MODE" = "Production" ] ; then
 else
     echo "***ERROR | SBE | signHashList : Invalid signing mode option: $SIGNING_MODE. Enter correct -f option"
     usage
-    exit -1
+    exit 1
 fi
 
 # Do we need to set the device ECID into the FW header

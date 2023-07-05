@@ -68,13 +68,13 @@ fi
 installRequiredPackages ||
 {
     echo "Error: env.bash | installRequiredPackages  | Failure $?. Please do workon again."
-    exit -1
+    exit 1
 }
 
 if [ -f "builddir/build.ninja" ]; then
     # Sync with current workon settings
     mesonwrap sync || {
         echo "Error: env.bash | mesonwrap sync       | Failure $?. Please do workon again."
-        exit -1
+        exit 1
     }
 fi

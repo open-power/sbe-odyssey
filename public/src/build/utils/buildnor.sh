@@ -35,7 +35,7 @@ check_path()
 {
     if [ ! -f $1 ]; then
         echo "***ERROR | SBE | buildnor : $1 DNE!"
-        exit -1
+        exit 1
     fi
 }
 
@@ -90,7 +90,7 @@ do
         *)
             echo "Bad option: $OPTARG"
             usage
-            exit -1
+            exit 1
         ;;
 
     esac
@@ -100,13 +100,13 @@ done
 if [ -z $PARTITION_0_IMAGE_PATH ]; then
     echo "***ERROR | SBE | buildnor : Supply Partition 0 image path. Please supply the -p option."
     usage
-    exit -1
+    exit 1
 fi
 
 if [ -z $OUTPUT_IMAGE_PATH ]; then
     echo "***ERROR | SBE | buildnor : Supply output image path. Please supply the -o option."
     usage
-    exit -1
+    exit 1
 fi
 
 # If partition 1 image path is not passed default it to partition 0 path

@@ -38,7 +38,7 @@ check_path()
 {
     if [ ! -f $1 ]; then
         echo "***ERROR | SBE | $toolName : $1 DNE!"
-        exit -1
+        exit 1
     fi
 }
 
@@ -82,7 +82,7 @@ do
         *)
             echo "Bad option: $OPTARG"
             usage
-            exit -1
+            exit 1
         ;;
 
     esac
@@ -92,13 +92,13 @@ done
 if [ -z $SECURE_HDR ]; then
     echo "***ERROR | SBE | $toolName : Secure Header not passed. Please supply the -i option."
     usage
-    exit -1
+    exit 1
 fi
 
 if [ -z $FILE_NAME ]; then
     echo "***ERROR | SBE | $toolName : File name base not passed. Please supply the -f option."
     usage
-    exit -1
+    exit 1
 fi
 
 SIGNING_DIR=
@@ -119,7 +119,7 @@ elif [ -z $SBE_IMG_DIR_OP ]; then
         SIGNING_DIR=${SIGNING_RHEL_PATH}/bin/
     else
         echo "***ERROR | SBE | $toolName : SIGNING_RHEL_PATH env var is not defined"
-        exit -1
+        exit 1
     fi
 
 else
