@@ -159,4 +159,11 @@
     <ffdc>ERASE_END</ffdc>
   </hwpError>
   <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_MEMORY_VERIFY_FAIL</rc>
+    <description>The data read back from memory after a write operation did not match the write data</description>
+    <ffdc>ADDRESS</ffdc>
+    <ffdc>LENGTH</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
 </hwpErrors>
