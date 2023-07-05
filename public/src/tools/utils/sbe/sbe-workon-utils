@@ -39,17 +39,17 @@ swapingNewShell()
         echo "***INFO | Machine has Python3 as default"
         echo "Spawning new shell (/bin/bash)..."
         export SCL_PYTHON_ENABLED=0
-        bash --rcfile ./env.bash -i || exit -1
+        bash --rcfile ./env.bash -i || exit 1
     elif [[ "$PYTHON_VERSION" == "2" ]]; then
         echo "***INFO | Machine has Python2 as default"
         # we need to pass "bash --rcfile ./env.bash" as single argument to scl command
         CMD_ARR=("scl" "enable" "rh-python36" "bash --rcfile ./env.bash -i")
         export SCL_PYTHON_ENABLED=1
         echo "Spawning new shell : ${CMD_ARR[@]}"
-        "${CMD_ARR[@]}" || exit -1
+        "${CMD_ARR[@]}" || exit 1
     else
         echo "Error: sbe-workon-utils | swapingNewShell          | Cannot detect python2 or python3"
-        exit -1
+        exit 1
     fi
 }
 
@@ -68,7 +68,7 @@ installRequiredPackages()
         CMD="python3 -m pip install"
     else
         echo "Error: sbe-workon-utils | installRequiredPackages | SCL_PYTHON_ENABLED is not defined"
-        exit -1
+        exit 1
     fi
 
     CMD="$CMD -r $SBEROOT_PUB/src/tools/install/buildtoolrequirements.txt      \
@@ -80,6 +80,6 @@ installRequiredPackages()
         if (($? != 0)); then
             echo "Error: sbe-workon-utils | installRequiredPackages  | Failure: $?. Please do workon again."
         fi
-        exit -1
+        exit 1
     }
 }

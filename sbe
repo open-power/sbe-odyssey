@@ -150,7 +150,7 @@ sbe_workon()
 {
     if [ -n "${SBE_INSIDE_WORKON}" ]; then
         echo "Already in a workon."
-        exit -1
+        exit 1
     else
         export SBE_INSIDE_WORKON=1
 
@@ -184,14 +184,14 @@ sbe_workon()
             echo "***ERROR | Un-Supported platform type $1"
             echo "***ERROR | Supported Platforms : [<${SUPPORTED_PLATFORM[*]}>]"
             echo "***ERROR | Exiting...."
-            exit -1
+            exit 1
         fi
 
         if [ -z "$SBE_IMAGE" ]; then
             echo "***ERROR | Un-Supported image type $2"
             echo "***ERROR | Supported Images : [<${SUPPORTED_IMAGES[*]}>]"
             echo "***ERROR | Exiting...."
-            exit -1
+            exit 1
         fi
 
         # calling fucntion for swaping new shell
@@ -215,7 +215,7 @@ sbe_prime()
 {
     if [ -n "${SBE_INSIDE_WORKON}" ]; then
         echo "Already in a workon.. Continuing"
-        ${SBE_TOOLS_PATH}/sbePrime.py $* || exit -1
+        ${SBE_TOOLS_PATH}/sbePrime.py $* || exit 1
     else
         echo "Please do workon and re launch..."
     fi
@@ -238,7 +238,7 @@ sbe_run_simics()
     if [ -n "${SBE_INSIDE_WORKON}" ]; then
         echo "Already in a workon.. Continuing"
 
-        sbe_prime || exit -1
+        sbe_prime || exit 1
 
         cd simics
 
@@ -260,10 +260,10 @@ sbe_build()
     if [ -n "${SBE_INSIDE_WORKON}" ]; then
         echo "Already in a workon.. Continuing"
         if [ ! -f "builddir/build.ninja" ]; then
-            mesonwrap setup || exit -1
+            mesonwrap setup || exit 1
         fi
 
-        mesonwrap build || exit -1
+        mesonwrap build || exit 1
     else
         echo "Please do workon and re launch..."
     fi
@@ -283,8 +283,8 @@ sbe_execute()
 {
     if [ -n "${SBE_INSIDE_WORKON}" ]; then
         echo "Already in a workon.. Continuing"
-        sbe_build || exit -1
-        sbe_prime || exit -1
+        sbe_build || exit 1
+        sbe_prime || exit 1
         sbe_run_simics $1
     else
         echo "Please do workon and re launch..."
@@ -309,7 +309,7 @@ sbe_cronus_devready()
     if [ -n "${SBE_INSIDE_WORKON}" ]; then
         echo "Already in a workon.. Continuing"
         export PERLMODULES=$SBEROOT_INT/src/tools/perlTools
-        ($PERLMODULES/cronusDevTool $*) || exit -1
+        ($PERLMODULES/cronusDevTool $*) || exit 1
     else
         echo "Please do workon and re launch..."
     fi

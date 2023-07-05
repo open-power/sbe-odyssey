@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2016,2022
+# Contributors Listed Below - COPYRIGHT 2016,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -34,7 +34,7 @@ def parserElf(argv):
         img     = argv[1]
     except:
         print("Missing argument : arg[0] image(.out)")
-        exit(-1)
+        exit(1)
 
     SBE_OUT = img
     binFileName = SBE_OUT.split(".", 1)[0]
@@ -70,13 +70,13 @@ def parserElf(argv):
         break;
 
     if( (startSize == 0) or (endSize == 0)):
-        exit(-1)
+        exit(1)
 
     # cut the image
     cmd2 = "dd skip=" + str(startSize) + " count=" + str(endSize) + " if="+SBE_OUT+" of="+SBE_BIN+" bs=1"
     rc = os.system(cmd2)
     if ( rc ):
        print("ERROR running %s: %d "%( cmd2, rc ))
-       exit(-1)
+       exit(1)
 
 parserElf(sys.argv)
