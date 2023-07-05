@@ -112,9 +112,10 @@ class SEEPROMDevice : public AbstractMemoryDevice
          * @param[in] i_port     Communication port to which the device is attached
          * @param[in] i_raw_size Size of the device's memory array in bytes.
          *                       Will be used for range checking on reads and writes.
+         * @param[in] i_verify   Read back and compare write data immediately after writing
          */
-        SEEPROMDevice(const AbstractPort& i_port, uint32_t i_raw_size) :
-            iv_port(i_port), iv_raw_size(i_raw_size),
+        SEEPROMDevice(const AbstractPort& i_port, uint32_t i_raw_size, bool i_verify) :
+            iv_port(i_port), iv_raw_size(i_raw_size), iv_verify(i_verify),
             iv_ecc_mode(i_port.get_ecc_mode()), iv_write_active(false)
         {}
 
@@ -147,6 +148,7 @@ class SEEPROMDevice : public AbstractMemoryDevice
 
         const AbstractPort& iv_port;
         const uint32_t iv_raw_size;
+        const bool iv_verify;
         ecc_mode iv_ecc_mode;
         bool iv_write_active;
 
@@ -183,6 +185,9 @@ class SEEPROMDevice : public AbstractMemoryDevice
 
         uint8_t iv_page_buffer[WRITE_PAGE_SIZE];
         uint32_t iv_write_start, iv_write_pos, iv_write_end, iv_buf_pos;
+
+        bool iv_verify_fail;
+        uint32_t iv_verify_fail_address, iv_verify_fail_length;
 
         /**
          * @brief Translate an address from logical to raw in ECC mode, otherwise don't
@@ -260,7 +265,25 @@ class SEEPROMDevice : public AbstractMemoryDevice
          * @param[in] i_length  Amount of bytes to write; must not cross a page boundary
          * @param[in] i_buffer  Buffer containing write data
          */
-        fapi2::ReturnCode write_page(uint32_t i_start, uint32_t i_length, const uint8_t* i_buffer) const;
+        fapi2::ReturnCode write_page(uint32_t i_start, uint32_t i_length, const uint8_t* i_buffer);
+
+        /**
+         * @brief Read back data from the device and compare to the expected data
+         *
+         * This does not immediately raise an error but store the fact that verify failed.
+         * To turn this into an error code must call verify_check(); this is to allow drivers
+         * to continue writing up to a point where aborting would cause less damage.
+         *
+         * @param[in] i_start   The raw device address at which to start reading
+         * @param[in] i_length  Amount of bytes to read
+         * @param[in] i_buffer  Buffer to compare to
+         */
+        fapi2::ReturnCode verify_write(uint32_t i_start, uint32_t i_length, const uint8_t* i_buffer);
+
+        /**
+         * @brief Assert if a previous verify failed
+         */
+        fapi2::ReturnCode verify_check() const;
 
         /**
          * @brief Commit the current page buffer content to the device
@@ -313,12 +336,14 @@ class FlashDevice : public SEEPROMDevice
          *                            Must be able to hold ERASE_BUFFER_SIZE bytes.
          *                            Can be omitted (i.e. a null pointer) if only reads or
          *                            erase block aligned writes are performed.
+         * @param[in] i_verify        Read back and compare write data immediately after writing
          */
         FlashDevice(const AbstractPort& i_port,
                     device_type i_devtype,
                     uint32_t i_raw_size,
-                    uint8_t* i_erase_buffer) :
-            SEEPROMDevice(i_port, i_raw_size), iv_devtype(i_devtype), iv_erase_buffer(i_erase_buffer)
+                    uint8_t* i_erase_buffer,
+                    bool i_verify = true) :
+            SEEPROMDevice(i_port, i_raw_size, i_verify), iv_devtype(i_devtype), iv_erase_buffer(i_erase_buffer)
         {}
 
         /// @brief Implementation of write_begin - see AbstractMemoryDevice::write_begin() for details

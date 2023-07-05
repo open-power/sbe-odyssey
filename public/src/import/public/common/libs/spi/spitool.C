@@ -108,6 +108,7 @@ void help()
         "Write to a Flash device: flashwrite addr [--raw] [--input INPUT] [--infile FILENAME]",
         "  addr       Address (hex) to start writing. Will be ECC translated unless --raw is used",
         "  --raw      Disable on-the-fly ECC generation - write raw memory",
+        "  --noverify Disable verify after write - faster but unsafe",
         "  --input    Write INPUT (hex string, arbitrary length) to memory",
         "  --infile   Write contents of the binary file FILENAME",
     };
@@ -144,7 +145,8 @@ static const struct
 
 struct
 {
-    bool do_reset;
+    bool do_reset = false;
+    bool verify = true;
     char* chip = NULL;
     uint32_t base_addr = 0;
     int responder = 0;
@@ -167,6 +169,7 @@ int parse_args(int& argc, char**& argv)
     TRY(ecmdCommandArgs(&argc, &argv), "Error calling ecmdCommandArgs.");
 
     args.do_reset = ecmdParseOption(&argc, &argv, "--reset");
+    args.verify = !ecmdParseOption(&argc, &argv, "--noverify");
 
     if (ecmdParseOption(&argc, &argv, "--raw"))
     {
@@ -348,7 +351,7 @@ ReturnCode run(Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
     {
         case CMD_EEREAD:
         case CMD_EEWRITE:
-            mem = new spi::SEEPROMDevice(port, 0x1000000);
+            mem = new spi::SEEPROMDevice(port, 0x1000000, args.verify);
             break;
 
         case CMD_FLASHREAD:
@@ -357,7 +360,7 @@ ReturnCode run(Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
                 spi::FlashDevice::device_type type;
                 FAPI_TRY(spi::FlashDevice::detect_device(port, type));
                 mem = new spi::FlashDevice(port, type, 0x1000000,
-                                           new uint8_t[spi::FlashDevice::ERASE_BUFFER_SIZE]);
+                                           new uint8_t[spi::FlashDevice::ERASE_BUFFER_SIZE], args.verify);
             }
 
         default:

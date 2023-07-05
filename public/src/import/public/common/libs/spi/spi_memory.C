@@ -23,6 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 #include <algorithm>
+#include <string.h>
 #include "spi_memory.H"
 #include "ibmecc.H"
 
@@ -149,6 +150,7 @@ ReturnCode spi::SEEPROMDevice::write_begin(uint32_t i_start, uint32_t i_length)
     iv_write_start = iv_write_pos = ecc_correct(i_start);
     iv_write_end = iv_write_start + ecc_correct(i_length);
     iv_buf_pos = 0;
+    iv_verify_fail = false;
     iv_write_active = true;
 
     FAPI_INF("Memory write begin i_start=0x%08x i_length=0x%08x "
@@ -197,13 +199,53 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode spi::SEEPROMDevice::write_page(uint32_t i_start, uint32_t i_length, const uint8_t* i_buffer) const
+ReturnCode spi::SEEPROMDevice::write_page(uint32_t i_start, uint32_t i_length, const uint8_t* i_buffer)
 {
     FAPI_TRY(write_enable());
     FAPI_TRY(iv_port.transaction(X25_CMD_PAGE_PROGRAM | (i_start & X25_ADDR_MASK), 4,
                                  i_buffer, i_length, NULL, 0, true));
 
     FAPI_TRY(wait_for_write_complete(PAGE_WRITE_TIMEOUT_MS, OP_PAGE_WRITE, i_start, i_length));
+
+    if (iv_verify)
+    {
+        FAPI_TRY(verify_write(i_start, i_length, i_buffer));
+    }
+
+fapi_try_exit:
+    return current_err;
+}
+
+ReturnCode spi::SEEPROMDevice::verify_write(uint32_t i_start, uint32_t i_length, const uint8_t* i_buffer)
+{
+    uint8_t verify_buffer[WRITE_PAGE_SIZE];
+    FAPI_TRY(read_internal(i_start, i_length, false, verify_buffer));
+
+    if (memcmp(i_buffer, verify_buffer, i_length) != 0)
+    {
+        FAPI_ERR("Write verify failed at address=0x%08x length=0x%08x", i_start, i_length);
+
+        // Store the first fail's address and length
+        if (!iv_verify_fail)
+        {
+            iv_verify_fail = true;
+            iv_verify_fail_address = i_start;
+            iv_verify_fail_length = i_length;
+        }
+    }
+
+fapi_try_exit:
+    return current_err;
+}
+
+ReturnCode spi::SEEPROMDevice::verify_check() const
+{
+    FAPI_ASSERT(!iv_verify_fail,
+                SPI_MEMORY_VERIFY_FAIL()
+                .set_ADDRESS(iv_verify_fail_address)
+                .set_LENGTH(iv_verify_fail_length),
+                "Verify after write failed address=0x%08x length=0x%08x",
+                iv_verify_fail_address, iv_verify_fail_length);
 
 fapi_try_exit:
     return current_err;
@@ -232,7 +274,11 @@ ReturnCode spi::SEEPROMDevice::flush_page_buf(bool i_final_write)
              iv_write_pos, page_start, offset, length);
 
     iv_buf_pos = 0;
-    return write_page(page_start + offset, length, iv_page_buffer);
+    FAPI_TRY(write_page(page_start + offset, length, iv_page_buffer));
+    FAPI_TRY(verify_check());
+
+fapi_try_exit:
+    return current_err;
 }
 
 inline ReturnCode spi::SEEPROMDevice::write_byte(uint8_t i_byte)
@@ -445,6 +491,11 @@ ReturnCode spi::FlashDevice::flush_page_buf(bool i_final_write)
         // and remaining erase size
         const uint32_t max_size = iv_erase_end - iv_erase_pos;
 
+        // If we had a verify fail before, this is a good point to abort the write
+        // since we completed the current erase block (and thus wrote back all the
+        // saved data that would otherwise be lost) and have not yet erased the next.
+        FAPI_TRY(verify_check());
+
         for (auto& mode : ERASE_MODES)
         {
             if ((iv_erase_pos & mode.addr_mask) == 0 && max_size >= mode.block_size)
@@ -543,6 +594,9 @@ ReturnCode spi::FlashDevice::write_end()
     // Always restore the saved last block data even if the previous write_end failed
     FAPI_TRY(finalize_write(true));
     FAPI_TRY(l_rc);
+
+    // One last check for verify fails
+    FAPI_TRY(verify_check());
 
     FAPI_ASSERT(iv_erase_pos == iv_erase_end,
                 SPI_MEMORY_ERASE_MISMATCH()
