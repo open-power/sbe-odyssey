@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -26,6 +26,7 @@
 #include <endian.h>
 
 using namespace fapi2;
+using namespace spi;
 
 enum spi_base_constants
 {
@@ -47,6 +48,8 @@ enum spi_base_constants
     SPIC_RECEIVE_DATA_REG   = 6,
     SPIC_SEQUENCER_OP_REG   = 7,
     SPIC_STATUS_REG         = 8,
+
+    TPM_RDR_MATCH           = 0x00000000FF01FF00ull,
 };
 
 #define _SPIOP(op, arg) (uint64_t)((op) | ((arg) & 0xF))
@@ -61,14 +64,15 @@ enum spi_base_constants
 #define _SPI_SEQUENCE(c0, c1, c2, c3, c4, c5, c6, c7, ...) (((c0) << 56) | ((c1) << 48) | ((c2) << 40) | ((c3) << 32) | ((c4) << 24) | ((c5) << 16) | ((c6) << 8) | ((c7) << 0))
 #define SPI_SEQUENCE(...) _SPI_SEQUENCE(_VA_ARGS_, 0, 0, 0, 0, 0, 0, 0)
 
-ReturnCode spi::SPIPort::transaction(const uint64_t cmd, const uint32_t cmd_len,
+ReturnCode _SPIPortBase::transaction(const uint64_t cmd, const uint32_t cmd_len,
                                      const void* req, const uint32_t req_len,
                                      void* rsp, const uint32_t rsp_len,
                                      const bool i_use_ecc) const
 {
-    /* Combine command and request payload since otherwise we
-     * might end up with more than 8 ops in the sequence */
-    const uint32_t total_req_len = cmd_len + req_len;
+    // Combine command and request payload since otherwise we
+    // might end up with more than 8 ops in the sequence.
+    // Exception: In TPM mode we send the command separately
+    const uint32_t total_req_len = iv_tpm_mode ? req_len : cmd_len + req_len;
     const ecc_mode l_ecc_mode = i_use_ecc ? iv_ecc_mode : ECC_DISABLED;
     uint64_t saved_seq = -1ULL, saved_ctr = -1ULL, saved_clk = -1ULL;
     uint8_t delay_cs = 0;
@@ -77,16 +81,12 @@ ReturnCode spi::SPIPort::transaction(const uint64_t cmd, const uint32_t cmd_len,
              cmd >> 32, cmd & 0xFFFFFFFF, (l_ecc_mode << 8) | cmd_len,
              (req_len << 16) | rsp_len);
 
-    /* Doing this check very late since we're declaring a lot of
-     * variables before this point and don't want the implicit goto to
-     * cause compiler fails. Max request/response 256*8bytes */
-    FAPI_ASSERT(cmd_len <= 8 && req_len <= 2048 && rsp_len <= 2048,
-                SPI_UNSUPPORTED_LENGTH()
-                .set_CMD_LEN(cmd_len)
-                .set_REQ_LEN(req_len)
-                .set_RSP_LEN(rsp_len),
-                "Unsupported length: cmd_len=%d (max 8) req_len=%d (max 2048) rsp_len=%d (max 2048)",
-                cmd_len, req_len, rsp_len);
+    if (cmd_len > 8 || req_len > 2048 || rsp_len > 2048)
+    {
+        FAPI_ERR("Unsupported length: cmd_len=%d (max 8) req_len=%d (max 2048) rsp_len=%d (max 2048)",
+                 cmd_len, req_len, rsp_len);
+        return log_invalid_parms(cmd, cmd_len, req_len, rsp_len, i_use_ecc);
+    }
 
     if (rsp_len == 0)
     {
@@ -125,9 +125,24 @@ ReturnCode spi::SPIPort::transaction(const uint64_t cmd, const uint32_t cmd_len,
     FAPI_TRY(getscom(SPIC_SEQUENCER_OP_REG, saved_seq));
     FAPI_TRY(getscom(SPIC_COUNTER_REG, saved_ctr));
 
+    // In TPM mode set up pattern match
+    if (iv_tpm_mode)
+    {
+        FAPI_TRY(putscom(SPIC_MEMORY_MAPPING_REG, TPM_RDR_MATCH));
+    }
+
     /* Game time */
-    FAPI_TRY(setup_seq_cnt(iv_resp_select, l_ecc_mode, total_req_len, rsp_len, delay_cs));
-    FAPI_TRY(transmit_req(cmd, cmd_len, req, req_len, total_req_len));
+    FAPI_TRY(setup_seq_cnt(iv_resp_select, l_ecc_mode, cmd_len, total_req_len, rsp_len, delay_cs));
+
+    if (iv_tpm_mode)
+    {
+        FAPI_TRY(transmit_req_tpm(cmd, cmd_len, req, req_len, total_req_len));
+    }
+    else
+    {
+        FAPI_TRY(transmit_req(cmd, cmd_len, req, req_len, total_req_len));
+    }
+
     FAPI_TRY(receive_rsp(rsp, rsp_len));
     FAPI_TRY(complete_transaction(delay_cs));
 
@@ -140,9 +155,10 @@ fapi_try_exit:
     return (rc != FAPI2_RC_SUCCESS) ? rc : restore_rc;
 }
 
-ReturnCode spi::SPIPort::setup_seq_cnt(
+ReturnCode _SPIPortBase::setup_seq_cnt(
     uint8_t resp_select,
     uint8_t ecc_mode,
+    uint16_t cmd_len,
     uint16_t req_len,
     uint16_t rsp_len,
     uint8_t& delay_cs) const
@@ -157,12 +173,28 @@ ReturnCode spi::SPIPort::setup_seq_cnt(
      * data from RDR and run into RDR overflow.
      *
      * It is not intuitive at all but it's what works ¯\_(ツ)_/¯
+     *
+     * In TPM mode we cannot use this mode since it interferes with the
+     * self-paced waiting for the TPM ready signal. It is also not
+     * necessary since the SPI controller seems to do receive pacing
+     * already.
      */
-    uint64_t CNT = 0x6F00;
+    uint64_t CNT = iv_tpm_mode ? 0x6500 : 0x6F00;
 
     /* Start with a responder select op */
     uint64_t SEQ = SPIOP_SELECT_RESP(1 << resp_select);
     uint32_t n_ops = 1;
+
+    // In TPM mode, send the initial command and address,
+    // then wait for the TPM to report ready.
+    if (iv_tpm_mode)
+    {
+        SEQ = (SEQ << 24) |
+              SPIOP_SHIFT_N1(cmd_len) << 16 |
+              SPIOP_SHIFT_N2(1) << 8 |
+              SPIOP_B_RDR_NE(n_ops + 1);
+        n_ops += 3;
+    }
 
     /* Transmit entire words if necessary */
     if (req_len >= 8)
@@ -223,21 +255,27 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode spi::SPIPort::transmit_req(const uint64_t cmd, const uint32_t cmd_len,
+ReturnCode _SPIPortBase::transmit_req(const uint64_t cmd, const uint32_t cmd_len,
                                       const void* req, const uint32_t req_len,
                                       const uint32_t total_req_len) const
 {
-    /* Prepare TDR for command and first bits of data */
+    // The generic variant needs to merge the command and request payload
+    // together, so there's some buffering and shifting involved.
+
+    // Prepare TDR for command and first bits of data
     const uint64_t* req64 = (uint64_t*)req;
+    const uint32_t req_chunks = (total_req_len + 7) / 8;
     uint64_t TDR = cmd << (8 * (8 - cmd_len));
     uint64_t read_buf = 0;
     uint32_t read_buf_shift = cmd_len * 8;
     uint32_t read_buf_remain = 64 - read_buf_shift;
 
-    if (req_len && read_buf_remain)
+    if (req_len)
     {
         read_buf = be64toh(*req64);
         req64++;
+        // Note that if read_buf_shift == 64 the shift result
+        // is zero according to the C++ standard.
         TDR |= (read_buf >> read_buf_shift);
     }
 
@@ -245,12 +283,16 @@ ReturnCode spi::SPIPort::transmit_req(const uint64_t cmd, const uint32_t cmd_len
     FAPI_TRY(putscom(SPIC_TRANSMIT_DATA_REG, TDR));
 
     /* Send remaining chunks of data */
-    for (uint32_t i = 0; i < ((total_req_len + 7) / 8) - 1; i++)
+    for (uint32_t i = 1; i < req_chunks; i++)
     {
         FAPI_TRY(wait_for_tdr_empty());
+        // Note that if read_buf_remain == 64 the shift result
+        // is zero according to the C++ standard.
         TDR = read_buf << read_buf_remain;
         read_buf = be64toh(*req64);
         req64++;
+        // Note that if read_buf_shift == 64 the shift result
+        // is zero according to the C++ standard.
         TDR |= read_buf >> read_buf_shift;
         FAPI_TRY(putscom(SPIC_TRANSMIT_DATA_REG, TDR));
     }
@@ -259,11 +301,48 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode spi::SPIPort::receive_rsp(void* rsp, const uint32_t rsp_len) const
+ReturnCode _SPIPortBase::transmit_req_tpm(const uint64_t cmd, const uint32_t cmd_len,
+        const void* req, const uint32_t req_len,
+        const uint32_t total_req_len) const
+{
+    // The TPM variant has an easier task since there is no merging of command
+    // and payload, but it needs to wait for the pattern match instruction
+    // after the initial command to complete before sending the payload.
+
+    // Prepare TDR for command and first bits of data
+    const uint64_t* req64 = (uint64_t*)req;
+    const uint32_t req_chunks = (total_req_len + 7) / 8;
+
+    /* Send command */
+    uint64_t TDR = cmd << (8 * (8 - cmd_len));
+    FAPI_TRY(putscom(SPIC_TRANSMIT_DATA_REG, TDR));
+
+    // Wait until we pass the wait for pattern match
+    FAPI_TRY(wait_for_instruction(4));
+
+    /* Send request payload */
+    for (uint32_t i = 0; i < req_chunks; i++)
+    {
+        // workaround for unaligned buffers, which unfortunately
+        // is required in TPM mode.
+        // TODO implement proper handling of unaligned buffers
+        uint64_t dataAlign64;
+        memcpy(&dataAlign64, req64, sizeof(uint64_t));
+        TDR = be64toh(dataAlign64);
+        req64++;
+        FAPI_TRY(putscom(SPIC_TRANSMIT_DATA_REG, TDR));
+        FAPI_TRY(wait_for_tdr_empty());
+    }
+
+fapi_try_exit:
+    return current_err;
+}
+
+ReturnCode _SPIPortBase::receive_rsp(void* rsp, const uint32_t rsp_len) const
 {
     uint64_t* rsp64 = (uint64_t*)rsp;
 
-    if (rsp_len)
+    if (rsp_len && !iv_tpm_mode)
     {
         // We set the SPI controller up to shift out and in at the same time
         // so we can use the transmit side pacing for pacing the receive data.
@@ -279,9 +358,14 @@ ReturnCode spi::SPIPort::receive_rsp(void* rsp, const uint32_t rsp_len) const
     for (uint32_t i = 0; i < rsp_len / 8; i++)
     {
         uint64_t RDR;
+        uint64_t dataAlign64;
         FAPI_TRY(wait_for_rdr_full());
         FAPI_TRY(getscom(SPIC_RECEIVE_DATA_REG, RDR));
-        *rsp64 = htobe64(RDR);
+//        *rsp64 = htobe64(RDR);
+        // temporary workaround for unaligned buffers
+        // TODO implement proper handling of unaligned buffers
+        dataAlign64 = htobe64(RDR);
+        memcpy(rsp64, &dataAlign64, sizeof(RDR));
         rsp64++;
     }
 
@@ -307,7 +391,7 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode spi::SPIPort::complete_transaction(uint8_t delay_cs) const
+ReturnCode _SPIPortBase::complete_transaction(uint8_t delay_cs) const
 {
     if (delay_cs)
     {
@@ -325,7 +409,7 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode spi::SPIPort::restore_spi_regs(
+ReturnCode _SPIPortBase::restore_spi_regs(
     uint64_t i_saved_seq,
     uint64_t i_saved_ctr,
     uint64_t i_saved_clk) const
@@ -349,14 +433,15 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode spi::SPIPort::write_status(uint64_t i_status) const
+ReturnCode _SPIPortBase::write_status(uint64_t i_status) const
 {
     return putscom(SPIC_STATUS_REG, i_status);
 }
 
-ReturnCode spi::SPIPort::poll_status(
+ReturnCode _SPIPortBase::poll_status(
     const uint32_t i_bitrange,
-    const uint32_t i_wait_for) const
+    const uint32_t i_wait_for,
+    comparison i_comparison) const
 {
     const uint32_t l_start_bit = i_bitrange >> 8;
     const uint32_t l_nbits = i_bitrange & 0xFF;
@@ -390,7 +475,10 @@ ReturnCode spi::SPIPort::poll_status(
                         l_buf >> 32, l_buf & 0xFFFFFFFF);
         }
 
-        if (l_buf.getBits(l_start_bit, l_nbits) == i_wait_for)
+        const uint32_t l_cur_value = l_buf.getBits(l_start_bit, l_nbits);
+
+        if ((i_comparison == EQUAL && l_cur_value == i_wait_for)
+            || (i_comparison == GREATER_OR_EQUAL && l_cur_value >= i_wait_for))
         {
             return FAPI2_RC_SUCCESS;
         }
@@ -421,7 +509,7 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode spi::SPIPort::reset_controller() const
+ReturnCode _SPIPortBase::reset_controller() const
 {
     buffer<uint64_t> CLK;
 
@@ -439,4 +527,38 @@ ReturnCode spi::SPIPort::reset_controller() const
 
 fapi_try_exit:
     return current_err;
+}
+
+ReturnCode _SPIPortBase::log_invalid_parms(const uint64_t i_cmd,
+        const uint32_t i_cmd_len,
+        const uint32_t i_req_len,
+        const uint32_t i_rsp_len,
+        const bool i_use_ecc) const
+{
+    FAPI_ASSERT(false,
+                SPI_INVALID_TRANSACTION_PARMS()
+                .set_TARGET(iv_target)
+                .set_BASE_ADDRESS(iv_base_address)
+                .set_COMMAND(i_cmd)
+                .set_CMD_LENGTH(i_cmd_len)
+                .set_REQ_LENGTH(i_req_len)
+                .set_RSP_LENGTH(i_rsp_len)
+                .set_TPM_MODE(iv_tpm_mode)
+                .set_ECC_MODE(i_use_ecc), "");
+fapi_try_exit:
+    return current_err;
+}
+
+ReturnCode SPITPMPort::transaction(const uint64_t i_cmd, uint32_t i_cmd_len,
+                                   const void* i_req, uint32_t i_req_len,
+                                   void* o_rsp, uint32_t i_rsp_len,
+                                   bool i_use_ecc) const
+{
+    if (i_use_ecc || (i_req_len && i_rsp_len))
+    {
+        FAPI_ERR("TPM transaction must be only read or only write and does not support ECC");
+        return log_invalid_parms(i_cmd, i_cmd_len, i_req_len, i_rsp_len, i_use_ecc);
+    }
+
+    return spi::_SPIPortBase::transaction(i_cmd, i_cmd_len, i_req, i_req_len, o_rsp, i_rsp_len);
 }

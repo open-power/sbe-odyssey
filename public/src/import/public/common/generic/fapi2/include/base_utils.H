@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -32,6 +32,9 @@
 
 /// @brief Determine the number of elements in an array
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+
+/// @brief Function attribute to force inlining. Use sparingly; in most cases this will blow up your code size rather than reduce it.
+#define ALWAYS_INLINE inline __attribute__((always_inline))
 
 namespace fapi2
 {

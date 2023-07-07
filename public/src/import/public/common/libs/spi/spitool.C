@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include "spi_base.H"
 #include "spi_memory.H"
+#include "spi_tpm.H"
 
 using namespace fapi2;
 
@@ -89,28 +90,42 @@ void help()
         "  command    Subcommand to run, see below",
         "  arguments  Arguments for subcommand, see below",
         "",
-        "Execute a raw SPI transaction: rawspi cmd rsp_len [--input INPUT] [--infile FILENAME] [--outfile FILENAME]",
-        "  cmd        Command (hex string, may 8 bytes) to send to the device. Use \"\" for empty command",
+        "Execute a raw SPI transaction (in generic SPI or TPM mode):",
+        "          rawspi cmd rsp_len [--input INPUT] [--infile FILENAME] [--outfile FILENAME]",
+        "          rawtpm cmd rsp_len [--input INPUT] [--infile FILENAME] [--outfile FILENAME]",
+        "  cmd        Command (hex string, max 8 bytes) to send to the device. Use \"\" for empty command",
         "  rsp_len    Response length (bytes) to receive back. Use 0 if no response expected.",
         "  --input    Send INPUT (hex string, arbitrary length) to the device after the command",
         "  --infile   Send contents of the binary file FILENAME to the device after the command",
         "  --outfile  Write response to FILENAME as binary data instead of dumping to the console",
         "",
-        "Read from a SEEPROM device: eeread addr length [--raw] [--noecc] [--outfile FILENAME]",
-        "Read from a Flash device: flashread addr length [--raw] [--noecc] [--outfile FILENAME]",
+        "Read from a SEEPROM or Flash device:",
+        "          eeread addr length [--raw] [--noecc] [--outfile FILENAME]",
+        "          flashread addr length [--raw] [--noecc] [--outfile FILENAME]",
         "  addr       Address (hex) to start reading from. Will be ECC translated unless --raw is used",
         "  length     Length in bytes (hex) to read. Will be ECC translated unless --raw is used",
         "  --raw      Disable ECC checking - read raw memory",
         "  --noecc    Ignore ECC and strip it out from the read data",
         "  --outfile  Write read data to FILENAME as binary data instead of dumping to the console",
         "",
-        "Write to a SEEPROM device: eewrite addr [--raw] [--input INPUT] [--infile FILENAME]",
-        "Write to a Flash device: flashwrite addr [--raw] [--input INPUT] [--infile FILENAME]",
+        "Write to a SEEPROM or Flash device:",
+        "          eewrite addr [--raw] [--input INPUT] [--infile FILENAME]",
+        "          flashwrite addr [--raw] [--input INPUT] [--infile FILENAME]",
         "  addr       Address (hex) to start writing. Will be ECC translated unless --raw is used",
         "  --raw      Disable on-the-fly ECC generation - write raw memory",
         "  --noverify Disable verify after write - faster but unsafe",
         "  --input    Write INPUT (hex string, arbitrary length) to memory",
         "  --infile   Write contents of the binary file FILENAME",
+        "",
+        "Execute a TPM command (command, TPM_GO, response):",
+        "          tpmcmd [--locality LOCALITY] [--input INPUT] [--infile FILENAME]",
+        "                 [--maxlen LEN] [--outfile FILENAME] [--timeout TIMEOUT_MS]",
+        "  --locality TPM locality to access, defaults to 0",
+        "  --input    Send INPUT (hex string, arbitrary length) to the device",
+        "  --infile   Send contents of the binary file FILENAME to the device",
+        "  --maxlen   Maximum response length (bytes) to expect. Defaults to 10MB",
+        "  --outfile  Write response to FILENAME as binary data instead of dumping to the console",
+        "  --timeout  Timeout (in ms) for the TPM to respond. Defaults to 10s.",
     };
 
     for (auto& s : helptext)
@@ -121,11 +136,19 @@ void help()
 
 enum tool_command
 {
-    CMD_RAWTRANS = 0,
+    CMD_GROUP_MASK = 0xF0,
+    CMD_GROUP_BASE = 0x00,
+    CMD_GROUP_TPM  = 0x20,
+
+    CMD_RAWSPI = CMD_GROUP_BASE,
     CMD_EEREAD,
     CMD_EEWRITE,
     CMD_FLASHREAD,
     CMD_FLASHWRITE,
+
+    CMD_RAWTPM = CMD_GROUP_TPM,
+    CMD_TPMCMD,
+
     CMD_UNKNOWN = 0xFF
 };
 
@@ -136,17 +159,21 @@ static const struct
     int nargs;
 } command_names[] =
 {
-    { CMD_RAWTRANS,   "rawtrans",   2 },
+    { CMD_RAWSPI,     "rawspi",     2 },
     { CMD_EEREAD,     "eeread",     2 },
     { CMD_EEWRITE,    "eewrite",    1 },
     { CMD_FLASHREAD,  "flashread",  2 },
     { CMD_FLASHWRITE, "flashwrite", 1 },
+    { CMD_RAWTPM,     "rawtpm",     2 },
+    { CMD_TPMCMD,     "tpmcmd",     0 },
 };
 
 struct
 {
     bool do_reset = false;
     bool verify = true;
+    bool secure = false;
+    int locality = 0;
     char* chip = NULL;
     uint32_t base_addr = 0;
     int responder = 0;
@@ -154,9 +181,11 @@ struct
     ecmdDataBuffer input;
     char* outfile = NULL;
     ecmdDataBuffer dev_cmd;
+    size_t maxlen = 10 * 1024 * 1024;
     size_t output_len = 0;
     spi::ecc_mode ecc_mode = spi::ECC_ENABLED;
     uint32_t rw_start_addr = 0;
+    uint32_t timeout = 10000;
 } args;
 
 int parse_args(int& argc, char**& argv)
@@ -174,6 +203,25 @@ int parse_args(int& argc, char**& argv)
     if (ecmdParseOption(&argc, &argv, "--raw"))
     {
         args.ecc_mode = spi::ECC_DISABLED;
+    }
+
+    if ((opt = ecmdParseOptionWithArgs(&argc, &argv, "--maxlen")))
+    {
+        args.maxlen = strtoul(opt, &endptr, 0);
+        CHECK(*endptr == 0, "Invalid maxlen parameter");
+    }
+
+    if ((opt = ecmdParseOptionWithArgs(&argc, &argv, "--timeout")))
+    {
+        args.timeout = strtoul(opt, &endptr, 0);
+        CHECK(*endptr == 0, "Invalid timeout parameter");
+    }
+
+    if ((opt = ecmdParseOptionWithArgs(&argc, &argv, "--locality")))
+    {
+        args.locality = strtoul(opt, &endptr, 0);
+        CHECK(*endptr == 0, "Invalid locality parameter");
+        CHECK(args.locality < 5, "Invalid locality value, must be 0..4");
     }
 
     if (ecmdParseOption(&argc, &argv, "--noecc"))
@@ -222,33 +270,33 @@ int parse_args(int& argc, char**& argv)
 
     switch (args.command)
     {
-        case CMD_RAWTRANS:
-            {
-                TRY(ecmdReadDataFormatted(args.dev_cmd, argv[5], "x"), "Error parsing device command");
-                CHECK(args.dev_cmd.getByteLength() <= 8, "Device command is too long, max 8 bytes - use -input or -infile for more");
-                args.output_len = strtoul(argv[6], &endptr, 0);
-                CHECK(*endptr == 0, "Invalid response length");
-                break;
-            }
+        case CMD_RAWSPI:
+        case CMD_RAWTPM:
+            TRY(ecmdReadDataFormatted(args.dev_cmd, argv[5], "x"), "Error parsing device command");
+            CHECK(args.dev_cmd.getByteLength() <= 8, "Device command is too long, max 8 bytes - use -input or -infile for more");
+            args.output_len = strtoul(argv[6], &endptr, 0);
+            CHECK(*endptr == 0, "Invalid response length");
+            break;
 
         case CMD_EEREAD:
         case CMD_FLASHREAD:
-            {
-                args.rw_start_addr = strtoul(argv[5], &endptr, 16);
-                CHECK(*endptr == 0, "Invalid start address");
-                args.output_len = strtoul(argv[6], &endptr, 16);
-                CHECK(*endptr == 0, "Invalid read length");
-                break;
-            }
+            args.rw_start_addr = strtoul(argv[5], &endptr, 16);
+            CHECK(*endptr == 0, "Invalid start address");
+            args.output_len = strtoul(argv[6], &endptr, 16);
+            CHECK(*endptr == 0, "Invalid read length");
+            break;
 
         case CMD_EEWRITE:
         case CMD_FLASHWRITE:
-            {
-                args.rw_start_addr = strtoul(argv[5], &endptr, 16);
-                CHECK(*endptr == 0, "Invalid start address");
-                CHECK(args.input.getByteLength() > 0, "One of --input or --infile must be provided");
-                break;
-            }
+            args.rw_start_addr = strtoul(argv[5], &endptr, 16);
+            CHECK(*endptr == 0, "Invalid start address");
+            CHECK(args.input.getByteLength() > 0, "One of --input or --infile must be provided");
+            break;
+
+        case CMD_TPMCMD:
+            CHECK(args.input.getByteLength() > 0, "One of --input or --infile must be provided");
+            args.output_len = args.maxlen;
+            break;
 
         default:
             break;
@@ -326,21 +374,13 @@ out:
     return rc;
 }
 
-ReturnCode run(Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
+ReturnCode run_spibase(
+    Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const uint8_t* const input_data, const size_t input_len,
+    uint8_t* const output_data, const size_t output_len)
 {
     spi::SPIPort port(i_target, args.base_addr, args.responder, args.ecc_mode);
     spi::AbstractMemoryDevice* mem = NULL;
-
-    const size_t input_len = args.input.getByteLength();
-    const uint8_t* const input_data = !input_len ? NULL : [input_len]()
-    {
-        auto tmp = new uint8_t[input_len];
-        args.input.memCopyOut(tmp, input_len);
-        return tmp;
-    }();
-
-    const size_t output_len = args.output_len;
-    uint8_t* const output_data = !output_len ? NULL : new uint8_t[output_len];
 
     if (args.do_reset)
     {
@@ -369,7 +409,7 @@ ReturnCode run(Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
 
     switch (args.command)
     {
-        case CMD_RAWTRANS:
+        case CMD_RAWSPI:
             {
                 int cmd_len = args.dev_cmd.getByteLength();
                 args.dev_cmd.shiftRightAndResize(64 - args.dev_cmd.getBitLength());
@@ -380,21 +420,79 @@ ReturnCode run(Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
 
         case CMD_EEREAD:
         case CMD_FLASHREAD:
-            {
-                FAPI_TRY(mem->read(args.rw_start_addr, output_len, output_data));
-                break;
-            }
+            FAPI_TRY(mem->read(args.rw_start_addr, output_len, output_data));
+            break;
 
         case CMD_EEWRITE:
         case CMD_FLASHWRITE:
-            {
-                FAPI_TRY(mem->write_begin(args.rw_start_addr, input_len));
-                FAPI_TRY(mem->write_data(input_data, input_len));
-                FAPI_TRY(mem->write_end());
-                break;
-            }
+            FAPI_TRY(mem->write_begin(args.rw_start_addr, input_len));
+            FAPI_TRY(mem->write_data(input_data, input_len));
+            FAPI_TRY(mem->write_end());
+            break;
 
         default:
+            break;
+    }
+
+fapi_try_exit:
+    return current_err;
+}
+
+ReturnCode run_tpm(
+    Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const uint8_t* const input_data, const size_t input_len,
+    uint8_t* const output_data, size_t& output_len)
+{
+    spi::SPITPMPort port(i_target, args.base_addr, args.responder);
+
+    if (args.do_reset)
+    {
+        FAPI_INF("Resetting port");
+        FAPI_TRY(port.reset_controller());
+    }
+
+    if (args.command == CMD_RAWTPM)
+    {
+        int cmd_len = args.dev_cmd.getByteLength();
+        args.dev_cmd.shiftRightAndResize(64 - args.dev_cmd.getBitLength());
+        uint64_t cmd = args.dev_cmd.getDoubleWord(0);
+        FAPI_TRY(port.transaction(cmd, cmd_len, input_data, input_len, output_data, output_len));
+    }
+    else
+    {
+        uint32_t rsp_len;
+        spi::TPM tpm(port);
+
+        tpm.set_locality(args.locality);
+        FAPI_TRY(tpm.command(input_data, input_len, output_data, rsp_len, output_len, args.timeout));
+        output_len = rsp_len;
+    }
+
+fapi_try_exit:
+    return current_err;
+}
+
+ReturnCode run(Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
+{
+    const size_t input_len = args.input.getByteLength();
+    const uint8_t* const input_data = !input_len ? NULL : [input_len]()
+    {
+        auto tmp = new uint8_t[input_len];
+        args.input.memCopyOut(tmp, input_len);
+        return tmp;
+    }();
+
+    size_t output_len = args.output_len;
+    uint8_t* const output_data = !output_len ? NULL : new uint8_t[output_len];
+
+    switch (args.command & CMD_GROUP_MASK)
+    {
+        case CMD_GROUP_BASE:
+            FAPI_TRY(run_spibase(i_target, input_data, input_len, output_data, output_len));
+            break;
+
+        case CMD_GROUP_TPM:
+            FAPI_TRY(run_tpm(i_target, input_data, input_len, output_data, output_len));
             break;
     }
 
