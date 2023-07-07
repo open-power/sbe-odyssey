@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -65,8 +65,8 @@
 #define OCCHW_IRQ_PBAX_OCC_SEND_ATTN            16 /* 16 */
 #define OCCHW_IRQ_PBAX_OCC_PUSH0                17 /* 17 */
 #define OCCHW_IRQ_PBAX_OCC_PUSH1                18 /* 18 */
-#define OCCHW_IRQ_PBA_BCDE_ATTN                 19 /* 19 */
-#define OCCHW_IRQ_PBA_BCUE_ATTN                 20 /* 20 */
+#define OCCHW_IRQ_PBA_BCE0_ATTN                 19 /* 19 */
+#define OCCHW_IRQ_PBA_BCE1_ATTN                 20 /* 20 */
 #define OCCHW_IRQ_OCC_STRM0_PULL                21 /* 21 */
 #define OCCHW_IRQ_OCC_STRM0_PUSH                22 /* 22 */
 #define OCCHW_IRQ_OCC_STRM1_PULL                23 /* 23 */
@@ -141,8 +141,8 @@
                                                     "OCCHW_IRQ_PBAX_OCC_SEND",                  \
                                                     "OCCHW_IRQ_PBAX_OCC_PUSH0",                 \
                                                     "OCCHW_IRQ_PBAX_OCC_PUSH1",                 \
-                                                    "OCCHW_IRQ_PBA_BCDE_ATTN",                  \
-                                                    "OCCHW_IRQ_PBA_BCUE_ATTN",                  \
+                                                    "OCCHW_IRQ_PBA_BCE0_ATTN",                  \
+                                                    "OCCHW_IRQ_PBA_BCE1_ATTN",                  \
                                                     "OCCHW_IRQ_STRM0_PULL",                     \
                                                     "OCCHW_IRQ_STRM0_PUSH",                     \
                                                     "OCCHW_IRQ_STRM1_PULL",                     \
