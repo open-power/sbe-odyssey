@@ -55,7 +55,15 @@ ReturnCode poz_compare(
 
     auto l_chip = i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>();
     FAPI_DBG("Loading compare hash file");
-    FAPI_TRY(loadEmbeddedFile(l_chip, i_compare_hash_fname, l_hash_file_data, l_hash_file_size));
+    ReturnCode l_rc = loadEmbeddedFile(l_chip, i_compare_hash_fname, l_hash_file_data, l_hash_file_size);
+
+    if (l_rc != FAPI2_RC_SUCCESS)
+    {
+        // Not using FAPI_TRY here because we don't want to call freeEmbeddedFile in fapi_try_exit
+        FAPI_INF("Exiting ...");
+        return l_rc;
+    }
+
     l_hash_data = (hash_data*)l_hash_file_data;
 
     for (uint8_t i = 0; i < l_hash_file_size / sizeof(hash_data); i++)
@@ -78,7 +86,7 @@ ReturnCode poz_compare(
 
         // Perform a sparse getring with an hwp_hash_ostream to hash output data
         FAPI_DBG("Running poz_sparse_getring on ring 0x%08x", l_ring_address);
-        ReturnCode l_rc = poz_sparse_getring(i_target, l_ring_address, l_mask, l_hash);
+        l_rc = poz_sparse_getring(i_target, l_ring_address, l_mask, l_hash);
         freeEmbeddedFile(l_mask_file_data);
         FAPI_TRY(l_rc, "poz_sparse_getring failed");
 
