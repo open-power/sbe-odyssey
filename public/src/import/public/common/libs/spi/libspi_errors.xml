@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2023                             -->
+<!-- Contributors Listed Below - COPYRIGHT 2023,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -28,11 +28,16 @@
 <hwpErrors>
   <!-- ******************************************************************** -->
   <hwpError>
-    <rc>RC_SPI_UNSUPPORTED_LENGTH</rc>
-    <description>One or more of the lengths in a transaction exceed the supported limits</description>
-    <ffdc>CMD_LEN</ffdc>
-    <ffdc>REQ_LEN</ffdc>
-    <ffdc>RSP_LEN</ffdc>
+    <rc>RC_SPI_INVALID_TRANSACTION_PARMS</rc>
+    <description>An attempt to initiate a SPI transaction used invalid parameters</description>
+    <ffdc>TARGET</ffdc>
+    <ffdc>BASE_ADDRESS</ffdc>
+    <ffdc>COMMAND</ffdc>
+    <ffdc>CMD_LENGTH</ffdc>
+    <ffdc>REQ_LENGTH</ffdc>
+    <ffdc>RSP_LENGTH</ffdc>
+    <ffdc>TPM_MODE</ffdc>
+    <ffdc>ECC_MODE</ffdc>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
@@ -164,6 +169,84 @@
     <description>The data read back from memory after a write operation did not match the write data</description>
     <ffdc>ADDRESS</ffdc>
     <ffdc>LENGTH</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_TPM_ZERO_LENGTH_RW</rc>
+    <description>Low-level read or write with zero length</description>
+    <ffdc>READ_NOT_WRITE</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_TPM_FIFO_TIMEOUT</rc>
+    <description>Timed out while waiting for the TPM FIFO to have space/data available</description>
+    <ffdc>TOTAL_LENGTH</ffdc>
+    <ffdc>REMAINING_LENGTH</ffdc>
+    <ffdc>STATUS</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_TPM_ACCESS_TIMEOUT</rc>
+    <description>Timed out while waiting for locality access to be granted</description>
+    <ffdc>LOCALITY</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_TPM_READ_ABORT</rc>
+    <description>A TPM read resulted in the TPM aborting the cycle and returning all-F data</description>
+    <ffdc>LOCALITY</ffdc>
+    <ffdc>ADDRESS</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_TPM_READY_TIMEOUT</rc>
+    <description>Timed out while waiting for the TPM to become ready to accept commands</description>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_TPM_COMMAND_TIMEOUT</rc>
+    <description>Timed out while waiting for the TPM to complete a command</description>
+    <ffdc>TIMEOUT_MS</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_TPM_REQUEST_TOO_SHORT</rc>
+    <description>The TPM indicated it was still expecting data after the request got sent</description>
+    <ffdc>REQUEST_LENGTH</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_TPM_REQUEST_TOO_LONG</rc>
+    <description>The TPM indicated it was no longer expecting data before the full request got sent</description>
+    <ffdc>REQUEST_LENGTH</ffdc>
+    <ffdc>REMAINING_LENGTH</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_TPM_RESPONSE_BUF_TOO_SHORT</rc>
+    <description>The response buffer for a TPM transaction is too small to fit the response length</description>
+    <ffdc>MAX_LENGTH</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_TPM_RESPONSE_TOO_SHORT</rc>
+    <description>The response returned by the TPM is too short to contain a length field</description>
+    <ffdc>RESPONSE_LENGTH</ffdc>
+    <ffdc>MAX_LENGTH</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_TPM_RESPONSE_TOO_LONG</rc>
+    <description>The response returned by the TPM does not fit the receive buffer</description>
+    <ffdc>RESPONSE_LENGTH</ffdc>
+    <ffdc>MAX_LENGTH</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SPI_TPM_RESPONSE_SIZE_MISMATCH</rc>
+    <description>The size of the received TPM response does not match the length field in the response header</description>
+    <ffdc>RECEIVED_LENGTH</ffdc>
+    <ffdc>HEADER_LENGTH</ffdc>
   </hwpError>
   <!-- ******************************************************************** -->
 </hwpErrors>

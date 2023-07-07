@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -103,9 +103,9 @@ class AbstractPort
 };
 
 /**
- * @brief Driver for a SPI port
+ * @brief Base driver for both a generic SPI port and a TPM SPI port
  */
-class SPIPort : public AbstractPort
+class _SPIPortBase : public AbstractPort
 {
     public:
         /**
@@ -116,12 +116,14 @@ class SPIPort : public AbstractPort
          *                            i.e. address of its _ERROR_INJECT register
          * @param[in] i_resp_select   Responder select value, range 0..3
          * @param[in] i_ecc_mode      ECC mode to use for all transactions
+         * @param[in] i_tpm_mode      True if this is a TPM port
          */
-        SPIPort(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-                const uint32_t i_base_address, const uint8_t i_resp_select,
-                const ecc_mode i_ecc_mode) :
+        _SPIPortBase(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+                     const uint32_t i_base_address, const uint8_t i_resp_select,
+                     const ecc_mode i_ecc_mode, const bool i_tpm_mode) :
             iv_target(i_target), iv_base_address(i_base_address),
-            iv_resp_select(i_resp_select), iv_ecc_mode(i_ecc_mode)
+            iv_resp_select(i_resp_select), iv_ecc_mode(i_ecc_mode),
+            iv_tpm_mode(i_tpm_mode)
         {}
 
         /**
@@ -148,6 +150,9 @@ class SPIPort : public AbstractPort
     protected:
         const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& iv_target;
         const uint32_t iv_base_address;
+        const uint32_t iv_resp_select;
+        const ecc_mode iv_ecc_mode;
+        const bool iv_tpm_mode;
 
         /**
          * @brief Wrapper around SCOM write accesses to simplify driver code
@@ -173,6 +178,17 @@ class SPIPort : public AbstractPort
         }
 
         /**
+         * @brief Log an "invalid parms" error.and return FFDC
+         *
+         * Used in two places so it's a separate function to instantiate FFDC
+         */
+        fapi2::ReturnCode log_invalid_parms(const uint64_t i_cmd,
+                                            const uint32_t i_cmd_len,
+                                            const uint32_t i_req_len,
+                                            const uint32_t i_rsp_len,
+                                            const bool i_use_ecc) const;
+
+        /**
          * @brief function to write status register
          * @param[in] i_status  status value to write
          */
@@ -191,7 +207,6 @@ class SPIPort : public AbstractPort
             return fapi2::FAPI2_RC_SUCCESS;
         }
 
-    private:
 #define BITRANGE(start, length) ((start) << 8 | (length))
         static const uint32_t TDR_FULL_STATUS    = BITRANGE(4, 1);
         static const uint32_t RDR_FULL_STATUS    = BITRANGE(0, 1);
@@ -200,20 +215,25 @@ class SPIPort : public AbstractPort
         static const uint32_t SEQUENCER_OP_INDEX = BITRANGE(28, 4);
 #undef BITRANGE
 
-        const uint32_t iv_resp_select;
-        const ecc_mode iv_ecc_mode;
+        enum comparison
+        {
+            EQUAL = 0,
+            GREATER_OR_EQUAL,
+        };
 
         /**
          * @brief Generic status polling function
          *
          * Waits for a range of bits in the status reg to turn a specific value.
          *
-         * @param[in] i_bitrange  The bit range to poll on
-         * @param[in] i_wait_for  Value to wait for
+         * @param[in] i_bitrange   The bit range to poll on
+         * @param[in] i_wait_for   Value to wait for
+         * @param[in] i_comparison Comparison to use while polling; defaults to equality
          */
         fapi2::ReturnCode poll_status(
             const uint32_t i_bitrange,
-            const uint32_t i_wait_for) const;
+            const uint32_t i_wait_for,
+            comparison i_comparison = EQUAL) const;
 
         /**
          * @brief Inline wrappers which poll for specific status bits
@@ -244,16 +264,20 @@ class SPIPort : public AbstractPort
 
         fapi2::ReturnCode wait_for_instruction(uint32_t i_insn) const
         {
-            FAPI_TRY(poll_status(SEQUENCER_OP_INDEX, i_insn),
+            FAPI_TRY(poll_status(SEQUENCER_OP_INDEX, i_insn, GREATER_OR_EQUAL),
                      "Error while waiting for instruction %d to complete", i_insn);
         fapi_try_exit:
             return fapi2::current_err;
         }
 
+        // The following functions comprise the internal parts of ::transaction().
+        // They have been split out for legibility, but we make the compiler inline
+        // them all back in to enable some more size optimizations.
+
         /**
          * @brief Restore SPI controller registers saved by SPIPort::transaction.
          */
-        fapi2::ReturnCode restore_spi_regs(
+        ALWAYS_INLINE fapi2::ReturnCode restore_spi_regs(
             uint64_t i_saved_seq,
             uint64_t i_saved_ctr,
             uint64_t i_saved_clk) const;
@@ -261,29 +285,94 @@ class SPIPort : public AbstractPort
         /**
          * @brief Set up sequence and counter registers
          */
-        fapi2::ReturnCode setup_seq_cnt(
+        ALWAYS_INLINE fapi2::ReturnCode setup_seq_cnt(
             uint8_t resp_select,
             uint8_t ecc_mode,
+            uint16_t cmd_len,
             uint16_t req_len,
             uint16_t rsp_len,
             uint8_t& delay_cs) const;
 
+        // We put both the generic and TPM flavors into the base class
+        // since the compiler can very efficiently munge both code paths
+        // together so that after inlining and optimization the TPM flavor
+        // costs less than 100 extra bytes on the PPE.
+
         /**
-         * @brief Transmit the command + request of a transaction
+         * @brief Transmit the command + request of a transaction (generic SPI)
          */
-        fapi2::ReturnCode transmit_req(const uint64_t cmd, const uint32_t cmd_len,
-                                       const void* req, const uint32_t req_len,
-                                       const uint32_t total_req_len) const;
+        ALWAYS_INLINE fapi2::ReturnCode transmit_req(
+            const uint64_t cmd, const uint32_t cmd_len,
+            const void* req, const uint32_t req_len,
+            const uint32_t total_req_len) const;
+
+        /**
+         * @brief Transmit the command + request of a transaction (TPM)
+         */
+        ALWAYS_INLINE fapi2::ReturnCode transmit_req_tpm(
+            const uint64_t cmd, const uint32_t cmd_len,
+            const void* req, const uint32_t req_len,
+            const uint32_t total_req_len) const;
 
         /**
          * @brief Receive the response of a transaction
          */
-        fapi2::ReturnCode receive_rsp(void* rsp, const uint32_t rsp_len) const;
+        ALWAYS_INLINE fapi2::ReturnCode receive_rsp(void* rsp, const uint32_t rsp_len) const;
 
         /**
          * @brief Complete a transaction
          */
-        fapi2::ReturnCode complete_transaction(uint8_t delay_cs) const;
+        ALWAYS_INLINE fapi2::ReturnCode complete_transaction(uint8_t delay_cs) const;
+};
+
+class SPIPort : public _SPIPortBase
+{
+    public:
+        /**
+         * @brief Construct a port object
+         *
+         * @param[in] i_target        Target chip containing the SPI controller logic
+         * @param[in] i_base_address  SCOM base address of the targeted SPI controller port;
+         *                            i.e. address of its _ERROR_INJECT register
+         * @param[in] i_resp_select   Responder select value, range 0..3
+         * @param[in] i_ecc_mode      ECC mode to use for all transactions
+         */
+        SPIPort(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+                const uint32_t i_base_address, const uint8_t i_resp_select,
+                const ecc_mode i_ecc_mode) :
+            _SPIPortBase(i_target, i_base_address, i_resp_select, i_ecc_mode, false)
+        {}
+};
+
+/**
+ * @brief Driver for a SPI port with a TPM attached
+ *
+ * This extends the SPIPort driver to wait for the TPM to signal readiness before
+ * write/read data is transferred over the SPI bus.
+ */
+class SPITPMPort : public _SPIPortBase
+{
+    public:
+        /**
+         * @brief Construct a port object
+         *
+         * @param[in] i_target        Target chip containing the SPI controller logic
+         * @param[in] i_base_address  SCOM base address of the targeted SPI controller port;
+         *                            i.e. address of its _ERROR_INJECT register
+         * @param[in] i_resp_select   Responder select value, range 0..3
+         */
+        SPITPMPort(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+                   const uint32_t i_base_address, const uint8_t i_resp_select) :
+            _SPIPortBase(i_target, i_base_address, i_resp_select, ECC_DISABLED, true)
+        {}
+
+        /**
+         * @brief Conduct a transaction; see AbstractPort::transaction() for details
+         */
+        fapi2::ReturnCode transaction(const uint64_t i_cmd, uint32_t i_cmd_len,
+                                      const void* i_req, uint32_t i_req_len,
+                                      void* o_rsp, uint32_t i_rsp_len,
+                                      bool i_use_ecc = false) const override;
 };
 
 }
