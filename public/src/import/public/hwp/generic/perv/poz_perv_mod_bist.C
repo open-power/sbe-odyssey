@@ -55,11 +55,11 @@ ReturnCode mod_bist_poll(
     CPLT_STAT0_t CPLT_STAT0;
     PCB_OPCG_STOP_t PCB_OPCG_STOP;
     OPCG_REG0_t OPCG_REG0;
-    // BH_SCRATCH_REG_t BH_SCRATCH_REG;
-
+    FSXCOMP_FSXLOG_SCRATCH_REGISTER_11_t SCRATCH_REGISTER_11;
     uint32_t l_total_polls = 0;
     // Infinite polling if negative signed (or massive unsigned) number
     const bool l_infinite_polling = i_max_polls > 0x7FFFFFFF;
+    auto l_chip = i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>();
 
     if (i_poll_abist_done)
     {
@@ -70,8 +70,6 @@ ReturnCode mod_bist_poll(
         FAPI_INF("Watching OPCG_DONE and BIST_HALT");
     }
 
-    FAPI_DBG("BIST_HALT not yet implemented; check back later");
-
     if (l_infinite_polling)
     {
         FAPI_DBG("Poll count value triggers infinite polling");
@@ -79,15 +77,13 @@ ReturnCode mod_bist_poll(
 
     while ((l_total_polls < i_max_polls) || l_infinite_polling)
     {
-        // TODO add BIST_HALT functionality once supported
-        /*
-        FAPI_TRY(BH_SCRATCH_REG.getScom(i_target));
-        if (BH_SCRATCH_REG.get_BIST_HALT() == 1)
+        FAPI_TRY(SCRATCH_REGISTER_11.getScom(l_chip));
+
+        if (SCRATCH_REGISTER_11.getBit<25>() == 1)
         {
             FAPI_INF("BIST_HALT observed");
             break;
         }
-        */
 
         FAPI_TRY(CPLT_STAT0.getScom(i_target));
 
@@ -161,8 +157,8 @@ ReturnCode mod_bist_reg_cleanup(
     CPLT_CTRL1_t CPLT_CTRL1;                    ///< 0x00001
     CPLT_CONF0_t CPLT_CONF0;                    ///< 0x00008
     NET_CTRL0_t NET_CTRL0;                      ///< 0xF0040
-    // BH_SCRATCH_REG_t BH_SCRATCH_REG;         ///< 0x?????
-
+    FSXCOMP_FSXLOG_SCRATCH_REGISTER_11_t SCRATCH_REGISTER_11;
+    auto l_chip = i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>();
     FAPI_INF("Entering ...");
 
     FAPI_INF("Zeroing out OPCG and region registers.");
@@ -196,8 +192,9 @@ ReturnCode mod_bist_reg_cleanup(
     }
 
     FAPI_INF("Resetting BIST halt signal.");
-    // TODO reset BIST halt once supported
-    FAPI_DBG("BIST halt not yet implemented; check back later");
+    FAPI_TRY(SCRATCH_REGISTER_11.getScom(l_chip));
+    SCRATCH_REGISTER_11.clearBit<25>();
+    FAPI_TRY(SCRATCH_REGISTER_11.putScom(l_chip));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
