@@ -65,8 +65,8 @@
 #define TCCHW_IRQ_PBAX_TCC_SEND_ATTN            16 /* 16 */
 #define TCCHW_IRQ_PBAX_TCC_PUSH0                17 /* 17 */
 #define TCCHW_IRQ_PBAX_TCC_PUSH1                18 /* 18 */
-#define TCCHW_IRQ_PBA_BCDE_ATTN                 19 /* 19 */
-#define TCCHW_IRQ_PBA_BCUE_ATTN                 20 /* 20 */
+#define TCCHW_IRQ_PBA_BCE0_ATTN                 19 /* 19 */
+#define TCCHW_IRQ_PBA_BCE1_ATTN                 20 /* 20 */
 #define TCCHW_IRQ_STRM0_PULL                    21 /* 21 */
 #define TCCHW_IRQ_STRM0_PUSH                    22 /* 22 */
 #define TCCHW_IRQ_STRM1_PULL                    23 /* 23 */
@@ -141,8 +141,8 @@
                                                     "TCCHW_IRQ_TCC_SEND_ATTN",                  \
                                                     "TCCHW_IRQ_TCC_PUSH0",                      \
                                                     "TCCHW_IRQ_TCC_PUSH1"                       \
-                                                    "TCCHW_IRQ_PBA_BCDE_ATTN",                  \
-                                                    "TCCHW_IRQ_PBA_BCUE_ATTN",                  \
+                                                    "TCCHW_IRQ_PBA_BCE0_ATTN",                  \
+                                                    "TCCHW_IRQ_PBA_BCE1_ATTN",                  \
                                                     "TCCHW_IRQ_STRM0_PULL",                     \
                                                     "TCCHW_IRQ_STRM0_PUSH",                     \
                                                     "TCCHW_IRQ_STRM1_PULL",                     \
