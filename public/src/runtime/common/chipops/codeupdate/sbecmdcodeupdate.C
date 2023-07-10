@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -79,6 +80,8 @@ uint32_t sbeGetCodeLevels (uint8_t *i_pArg)
         CU::CodeLevelsRespMsg_t l_codeLevelsRespMsg;
         for (uint8_t i = 0; i < UPDATABLE_IMG_SECTION_CNT; i++)
         {
+            l_codeLevelsRespMsg.iv_updateableImagesInfo[i].iv_imageType =
+                                            (CU_IMAGES)CU::g_updatableImgPkgMap[i].imageNum;
             l_rc = getImageHash(l_codeLevelsRespMsg.iv_updateableImagesInfo[i].
                                     iv_imageType,
                                 l_runningSide,

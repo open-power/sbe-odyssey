@@ -32,31 +32,19 @@
 
 /**
  * @brief - Used to decide no of updatable image section count.
- *        - If the updatable image section count is changed then,
- *          we should add appropriate image section type in the
- *          CodeLevelsRespMsg_t::iv_updateableImagesInfo member,
- *          refer constructor.
  */
-#define UPDATABLE_IMG_SECTION_CNT 4
+#define UPDATABLE_IMG_SECTION_CNT sizeof(CU::g_updatableImgPkgMap)/sizeof(CU::g_updatableImgPkgMap[0])
 
 // CU: Code Update
 namespace CU
 {
-    static const imgMap_t g_imgMap[] = {
+    constexpr imgMap_t g_updatableImgPkgMap[] = {
         {CU_IMAGES::BOOTLOADER, "boot"},
         {CU_IMAGES::RUNTIME,    "rt"  },
         {CU_IMAGES::BMC_OVRD,   "bmc" },
         {CU_IMAGES::HOST_OVRD,  "host"}
     };
 } // namespace CU
-
-constexpr CU_IMAGES g_syncableImgs [] __attribute__ ((aligned (8))) =
-{
-   CU_IMAGES::BOOTLOADER,
-   CU_IMAGES::RUNTIME,
-   CU_IMAGES::BMC_OVRD,
-   CU_IMAGES::HOST_OVRD
-};
 
 constexpr capImgMap_t g_getCapabilitiesImages [] =
 {

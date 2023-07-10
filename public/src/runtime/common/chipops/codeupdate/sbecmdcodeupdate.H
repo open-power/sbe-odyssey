@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -68,12 +69,10 @@ namespace CU
 
             /**
              * @brief Explicit constructor to initialize its members.
-             *
-             * @param[in] i_imgType used to pass the type of updatable image.
              */
-            explicit ImageUpdate_t(const CU_IMAGES i_imgType) :
+            explicit ImageUpdate_t() :
                 iv_reserved1(0),
-                iv_imageType(i_imgType),
+                iv_imageType(CU_IMAGES::IMG_TYPE_INVALID),
                 iv_reserved2(0),
                 iv_imageHashSHA3_512()
             {}
@@ -120,12 +119,7 @@ namespace CU
             iv_versionMajor(SBE_FW_MAJOR_VERSION),
             // Minor version must be update as per poz specs
             iv_versionMinor(SBE_FW_MINOR_VERSION),
-            // If a new image section type added in below list then,
-            // we should update in UPDATABLE_IMG_SECTION_CNT macro as well.
-            iv_updateableImagesInfo{ImageUpdate_t(CU_IMAGES::BOOTLOADER),
-                ImageUpdate_t(CU_IMAGES::RUNTIME),
-                ImageUpdate_t(CU_IMAGES::BMC_OVRD),
-                ImageUpdate_t(CU_IMAGES::HOST_OVRD)}
+            iv_updateableImagesInfo()
         {}
     };
 
