@@ -52,8 +52,13 @@ cp ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe_DD
 
 # Copy simics related tools and utils into simics dir (This is required for HB)
 mkdir -p  ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/simics/
-cp ${MESON_SOURCE_ROOT}/internal/src/test/utils/sbeSimUtils.py \
-   ${MESON_SOURCE_ROOT}/internal/src/tools/simics/pozsbeinitstandalone.simics \
+cp ${MESON_SOURCE_ROOT}/internal/src/tools/simics/pozsbeinitstandalone.simics \
+   ${MESON_SOURCE_ROOT}/internal/src/tools/simics/sbestandaloneenv.simics \
+   ${MESON_SOURCE_ROOT}/internal/src/test/utils/simTargets.py \
+   ${MESON_SOURCE_ROOT}/internal/src/tools/simics/poz-simics-debug-framework.py \
+   ${MESON_SOURCE_ROOT}/internal/src/test/utils/toolwrappers.py \
+   ${MESON_SOURCE_ROOT}/internal/src/test/utils/sbeSimUtils.py \
+   ${MESON_SOURCE_ROOT}/internal/src/test/utils/sbeIstepAuto.py \
    ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/simics/ || exit 1
 
 tar -czvf ${MESON_INSTALL_PREFIX}/$SBE_PLATFORM/${SBE_PLATFORM}_sbe_debug.tar.gz \
