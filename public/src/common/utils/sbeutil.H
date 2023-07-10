@@ -144,7 +144,7 @@ static inline void UNUSED(int dummy, ...) {}
  *  If a hap is registered, then Simics will call the hap handler.  Hap
  *  handlers are written in Python, and the best place for them is
  *
- *     src/tools/debug//simics-debug-framework.py
+ *     src/tools/debug//poz-simics-debug-framework.py
  *
  *  Sample code to register the hap handler:
  *        # arg contains the integer parameter n passed to MAGIC_INSTRUCTION(n)
