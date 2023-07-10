@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -50,7 +50,17 @@ void pk_trace_binary(uint32_t i_hash_and_size, const void* bufp)
 
     //fill in the footer data
     tb64 = pk_timebase_get();
+
+    //*****The following operations must be done atomically*****
+    pk_critical_section_enter(&ctx);
     footer.parms.word32 = i_hash_and_size; //this has the size and hash
+
+#if (PK_TRACE_VERSION == 4)
+    _pk_check_and_add_special_trace_entries(tb64);
+#endif
+
+    // This is not required in new version (v4) since it will be done in above function,
+    //   but keeping it common since it will not break anything for v4.
     state.tbu32 = tb64 >> 32;
     footer.time_format.word32 = tb64 & 0x00000000ffffffffull;
     footer.time_format.format = PK_TRACE_FORMAT_BINARY;
@@ -63,9 +73,6 @@ void pk_trace_binary(uint32_t i_hash_and_size, const void* bufp)
     {
         data_size = PK_TRACE_CLIPPED_BINARY_SZ;
     }
-
-    //*****The following operations must be done atomically*****
-    pk_critical_section_enter(&ctx);
 
     //load in the offset in the cb for the entry we are adding
 #ifdef APP_DEFINED_TRACE_BUFFER
@@ -106,7 +113,7 @@ void pk_trace_binary(uint32_t i_hash_and_size, const void* bufp)
 #endif
 
     //write the footer data to the circular buffer including the
-    //timesamp, string hash and data size
+    //timestamp, string hash and data size
     *ptr64 = footer.word64;
 
     //*******************exit the critical section***************

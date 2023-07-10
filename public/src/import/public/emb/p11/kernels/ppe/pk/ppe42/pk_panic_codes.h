@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -115,9 +115,9 @@ typedef enum
     PK_SCHEDULING_INVARIANT             = 0x0405,
     PK_TIMER_HANDLER_INVARIANT          = 0x0406,
     PK_THREAD_TIMEOUT_STATE             = 0x0407,
+    PK_TRACE_TIME_INCONSISTENT          = 0x0408,
 
     // PK
-    PK_UNUSED_0408                      = 0x0408,
     PK_UNUSED_0409                      = 0x0409,
     PK_UNUSED_040a                      = 0x040a,
     PK_UNUSED_040d                      = 0x040d,

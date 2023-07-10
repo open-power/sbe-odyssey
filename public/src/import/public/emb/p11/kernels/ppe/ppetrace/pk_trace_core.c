@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -100,6 +100,140 @@ PkOpTraceBuffer* g_pk_op_trace_buf_ptr = &g_pk_op_trace_buf;
     uint32_t G_wrap_mask = 0;
 #endif
 
+#if (PK_TRACE_VERSION == 4)
+
+// Helper function to add a Special trace entry into the trace buffer.
+// This function is expected to be called inside critical section.
+//
+// i_tbl32 lower 32-bit value of 64-bit time base
+// i_type  type of special entry
+// i_param parameter for the special entry
+void _pk_trace_add_special_entry(
+    uint32_t i_tbl32, PkTraceSpecialTypes i_type, uint32_t i_param)
+{
+    PkTraceSpecial      footer;
+    uint64_t*           ptr64;
+
+    // We might be already inside critical section,
+    //  so not entering critical section again here.
+
+    footer.time_format.word32 = i_tbl32;
+
+    footer.time_format.format = PK_TRACE_FORMAT_SPECIAL;
+
+    footer.type = i_type;
+    footer.value = i_param;
+#ifdef APP_DEFINED_TRACE_BUFFER
+    //load the current byte count and calculate the address for this
+    // entry in the cb
+    ptr64 = (uint64_t*)&G_PK_TRACE_BUF->cb[G_PK_TRACE_BUF->state.offset & PK_TRACE_CB_MASK];
+
+    //calculate the offset for the next entry in the cb
+    G_PK_TRACE_BUF->state.offset = G_PK_TRACE_BUF->state.offset + sizeof(PkTraceSpecial);
+#else
+    //load the current byte count and calculate the address for this
+    // entry in the cb
+    ptr64 = (uint64_t*)&g_pk_trace_buf.cb[g_pk_trace_buf.state.offset & PK_TRACE_CB_MASK];
+
+    //calculate the offset for the next entry in the cb
+    g_pk_trace_buf.state.offset = g_pk_trace_buf.state.offset + sizeof(PkTraceSpecial);
+#endif
+
+    //write the special entry to the circular buffer
+    *ptr64 = footer.word64;
+}
+
+// Creates an 8 byte time bump trace entry
+// This function is expected to be called inside critical section.
+//
+// i_tbu32 upper 32-bit value of 64-bit time base
+// i_tbl32 lower 32-bit value of 64-bit time base
+void _pk_trace_time_bump(uint32_t i_tbu32, uint32_t i_tbl32)
+{
+#ifdef APP_DEFINED_TRACE_BUFFER
+    uint32_t current_tbu32 = G_PK_TRACE_BUF->state.tbu32;
+    G_PK_TRACE_BUF->state.tbu32 = i_tbu32;
+#else
+    uint32_t current_tbu32 = g_pk_trace_buf.state.tbu32;
+    g_pk_trace_buf.state.tbu32 = i_tbu32;
+#endif
+
+    _pk_trace_add_special_entry(
+        i_tbl32,
+        TIME_BUMP,
+        (i_tbu32 - current_tbu32) & 0x00FFFFFF);
+}
+
+// Creates an 8 byte thread switch trace entry
+// This function is expected to be called inside critical section.
+//
+// i_tbl32     lower 32-bit value of 64-bit time base
+// i_thread_id id of currently running thread
+void _pk_trace_thread_switch(uint32_t i_tbl32, uint8_t i_thread_id)
+{
+#ifdef APP_DEFINED_TRACE_BUFFER
+    uint8_t cur_thread_id = G_PK_TRACE_BUF->thread_id;
+    G_PK_TRACE_BUF->thread_id = i_thread_id;
+#else
+    uint8_t cur_thread_id = g_pk_trace_buf.thread_id;
+    g_pk_trace_buf.thread_id = i_thread_id;
+#endif
+
+    _pk_trace_add_special_entry(
+        i_tbl32,
+        THREAD_CHANGE,
+        cur_thread_id);
+}
+
+// Check whether a special trace entry needed or not. If needed, add the entry.
+void _pk_check_and_add_special_trace_entries(uint64_t i_time_base)
+{
+    uint32_t tbu32 = i_time_base >> 32;
+    uint32_t tbl32 = i_time_base & 0x00000000ffffffffull;
+
+#ifdef APP_DEFINED_TRACE_BUFFER
+
+    if(tbu32 < G_PK_TRACE_BUF->state.tbu32)
+#else
+    if(tbu32 < g_pk_trace_buf.state.tbu32)
+#endif
+    {
+        // There is small window after pk_timebase_get() called from this thread
+        //  where another thread (or a callback) will add some traces.
+        //  And it may cause this condition.
+        // TODO: PFSBE-802
+        //  can remove this check as part of above story.
+        PK_PANIC(PK_TRACE_TIME_INCONSISTENT);
+    }
+
+#ifdef APP_DEFINED_TRACE_BUFFER
+    else if(tbu32 > G_PK_TRACE_BUF->state.tbu32)
+#else
+    else if(tbu32 > g_pk_trace_buf.state.tbu32)
+#endif
+    {
+        // Add a time bump entry
+        _pk_trace_time_bump(tbu32, tbl32);
+    }
+
+    // TODO: once we enable mutex for tracing then we should not allow tracing in
+    //       non-thread (interrupt) context.
+
+    // PK_THREADS can be used to indicate this trace is outside any thread context.
+    uint8_t thread_id = __pk_current_thread ? __pk_current_thread->priority : PK_THREADS;
+#ifdef APP_DEFINED_TRACE_BUFFER
+
+    if(thread_id != G_PK_TRACE_BUF->thread_id)
+#else
+    if(thread_id != g_pk_trace_buf.thread_id)
+#endif
+    {
+        _pk_trace_thread_switch(tbl32, thread_id);
+    }
+}
+
+#endif
+
 // Creates an 8 byte entry in the trace buffer that includes a timestamp,
 // a format string hash value and a 16 bit parameter.
 //
@@ -115,13 +249,21 @@ void pk_trace_tiny(uint32_t i_parm)
     //fill in the footer data
     footer.parms.word32 = i_parm;
     tb64 = pk_timebase_get();
-    state.tbu32 = tb64 >> 32;
-    footer.time_format.word32 = tb64 & 0x00000000ffffffffull;
-
-    footer.time_format.format = PK_TRACE_FORMAT_TINY;
 
     //The following operations must be done atomically
     pk_critical_section_enter(&ctx);
+
+#if (PK_TRACE_VERSION == 4)
+    _pk_check_and_add_special_trace_entries(tb64);
+#endif
+
+    // This is not required in new version (v4) since it will be done in above function,
+    //   but keeping it common since it will not break anything for v4.
+    state.tbu32 = tb64 >> 32;
+
+    footer.time_format.word32 = tb64 & 0x00000000ffffffffull;
+
+    footer.time_format.format = PK_TRACE_FORMAT_TINY;
 
     //load the current byte count and calculate the address for this
     //entry in the cb
