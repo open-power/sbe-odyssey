@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -124,20 +125,19 @@ uint32_t getPakEntryFromPartitionTable(const uint8_t i_sideNumber,
         // Based on imageType, get the equivalent pak file name in partition table
         // from the mapping structure
         uint8_t l_id = 0;
-        uint8_t l_maxMapImgNameEntries = sizeof(CU::g_imgMap)/sizeof(CU::g_imgMap[0]);
-        for(l_id=0; l_id < l_maxMapImgNameEntries; l_id++)
+        for(l_id=0; l_id < UPDATABLE_IMG_SECTION_CNT; l_id++)
         {
             // Check for mapping name as per partition table
-            if (CU::g_imgMap[l_id].imageNum == i_imageType)
+            if (CU::g_updatableImgPkgMap[l_id].imageNum == i_imageType)
             {
                 strncpy(l_sectionPakName,
-                        CU::g_imgMap[l_id].imageName,
-                        sizeof(CU::g_imgMap[l_id].imageName));
+                        CU::g_updatableImgPkgMap[l_id].imageName,
+                        sizeof(CU::g_updatableImgPkgMap[l_id].imageName));
                 break;
             }
         }
 
-        if (l_id == l_maxMapImgNameEntries)
+        if (l_id == UPDATABLE_IMG_SECTION_CNT)
         {
             SBE_ERROR(SBE_FUNC "Image type:[0x%04x] not found in mapping"\
                                "to partiton table", i_imageType);
@@ -146,7 +146,7 @@ uint32_t getPakEntryFromPartitionTable(const uint8_t i_sideNumber,
         }
 
         SBE_DEBUG(SBE_FUNC "Partition info index:[%d], ImageNum:[0x%04x]",\
-                 l_id, (uint16_t)CU::g_imgMap[l_id].imageNum);
+                 l_id, (uint16_t)CU::g_updatableImgPkgMap[l_id].imageNum);
 
         // Based on pak file name from map above, search for it in the partition table
         // if found, get the image pak's starting offset and its size

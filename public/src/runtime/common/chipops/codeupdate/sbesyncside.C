@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -61,17 +62,16 @@ fapi2::ReturnCode syncSide(const sbeSyncReqMsg_t *i_msg,
       // because if bootloader is synced (there may be chance that partition table
       // is modified) then we need to sync all other images without checking
       // the respective image hash.
-      static_assert(g_syncableImgs[0] == CU_IMAGES::BOOTLOADER ,
-                   "First element must be BootLoader in the g_syncableImgs"
+      static_assert(CU::g_updatableImgPkgMap[0].imageNum == CU_IMAGES::BOOTLOADER,
+                   "First element must be BootLoader in the g_updatableImgPkgMap"
                    "as per sync chip-op algorithm");
 
-      for (uint8_t l_img = 0;
-          l_img < (sizeof(g_syncableImgs)/sizeof(g_syncableImgs[0])); l_img++)
+      for (uint8_t l_img = 0; l_img < UPDATABLE_IMG_SECTION_CNT; l_img++)
       {
          bool  l_isImgHashMatched = false;
 
          // Get incoming chip-op params updated
-         l_syncSideCtrlStruct.imageType = (uint16_t)g_syncableImgs[l_img];
+         l_syncSideCtrlStruct.imageType = (uint16_t)CU::g_updatableImgPkgMap[l_img].imageNum;
 
          //When force sync is set no need to compare the image hash
          //corresponding to each image type on both sides instead force copy
@@ -113,7 +113,7 @@ fapi2::ReturnCode syncSide(const sbeSyncReqMsg_t *i_msg,
                SBE_ERROR(SBE_FUNC \
                            "Failed to sync imageType[%d] from " \
                            " runSide[%d] to nonRunSide[%d] ",
-                           g_syncableImgs[l_img],
+                           CU::g_updatableImgPkgMap[l_img].imageNum,
                            l_syncSideCtrlStruct.runSideIndex,
                            l_syncSideCtrlStruct.nonRunSideIndex);
                //in case sync is failed , making this flag true
@@ -121,7 +121,7 @@ fapi2::ReturnCode syncSide(const sbeSyncReqMsg_t *i_msg,
                l_isSyncFailed = true;
                break;
             }
-            else if (g_syncableImgs[l_img] == CU_IMAGES::BOOTLOADER)
+            else if (CU::g_updatableImgPkgMap[l_img].imageNum == CU_IMAGES::BOOTLOADER)
             {
                // incase of bootloader, making this flag true
                // to avoid comparision for other image like(runtime,host,bmc)
