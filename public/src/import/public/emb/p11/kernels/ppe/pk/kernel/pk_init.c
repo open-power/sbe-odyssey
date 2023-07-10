@@ -183,7 +183,12 @@ _pk_initialize(PkAddress     kernel_stack,
         trace_ppe_hash("PARTIAL TRACE ENTRY. HASH_ID = %d", PK_TRACE_HASH_PREFIX);
 
     G_PK_TRACE_BUF->size               = pk_trace_size;
+#if (PK_TRACE_VERSION == 4)
+    // PK_THREADS can be used to indicate this trace is outside any thread context.
+    G_PK_TRACE_BUF->thread_id          = PK_THREADS;
+#else
     G_PK_TRACE_BUF->max_time_change    = PK_TRACE_MTBT;
+#endif
     G_PK_TRACE_BUF->hz                 = timebase_frequency_hz;
     G_PK_TRACE_BUF->time_adj64         = 0;
     G_PK_TRACE_BUF->state.word64       = 0;

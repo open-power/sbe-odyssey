@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -162,7 +162,11 @@
 //Trace formats that are supported
 typedef enum
 {
+#if (PK_TRACE_VERSION == 4)
+    PK_TRACE_FORMAT_SPECIAL, // A special entry indicating empty, time bump, thread change etc.
+#else
     PK_TRACE_FORMAT_EMPTY,
+#endif
     PK_TRACE_FORMAT_TINY,
     PK_TRACE_FORMAT_BIG,
     PK_TRACE_FORMAT_BINARY,
@@ -219,6 +223,30 @@ typedef union
 
 //PK trace uses a 16 bit string format hash value
 typedef uint16_t PkTraceHash; //pk_trace_hash_t;
+
+#if (PK_TRACE_VERSION == 4)
+
+typedef enum
+{
+    EMPTY,
+    TIME_BUMP,
+    THREAD_CHANGE,
+} PkTraceSpecialTypes;
+
+//A time bump entry (a type of special entry) which will be needed when upper
+//  32 bit field of 64-bit time stamp is changed from previous entry
+typedef union
+{
+    struct
+    {
+        uint32_t type  : 8; // PkTraceSpecialTypes
+        uint32_t value : 24;
+        PkTraceTime time_format;
+    };
+    uint64_t    word64;
+} PkTraceSpecial;
+
+#endif
 
 //The constant 16 bit hash value is combined with a
 //16 bit parameter value when doing a tiny trace
@@ -374,7 +402,14 @@ typedef struct
     uint16_t            partial_trace_hash;
     uint16_t            hash_prefix;
     uint16_t            size;
+    // in version-4 we dont need max_time_change field since we are using special
+    //   trace entires for deriving the 64-bit time stamp
+#if (PK_TRACE_VERSION == 4)
+    uint8_t             thread_id;
+    uint8_t             reserved[3];
+#else
     uint32_t            max_time_change;
+#endif
     uint32_t            hz;
     uint32_t            pad;
     uint64_t            time_adj64;
@@ -421,6 +456,13 @@ typedef struct
 
 #ifdef PK_TRACE_BUFFER_WRAP_MARKER
     extern uint32_t G_wrap_mask;
+#endif
+
+#if (PK_TRACE_VERSION == 4)
+
+    // Check whether a special trace entry needed or not. If needed, add the entry.
+    void _pk_check_and_add_special_trace_entries(uint64_t i_time_base);
+
 #endif
 
 #endif /* __PK_TRACE_H__ */
