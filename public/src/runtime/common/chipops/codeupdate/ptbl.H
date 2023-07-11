@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/codeupdate/ptbl.H $                 */
+/* $Source: public/src/runtime/common/chipops/codeupdate/ptbl.H $         */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
