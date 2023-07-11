@@ -100,6 +100,8 @@
 
 #define SB_CS_REG 0x50008
 #define HRESET_SET BIT(13)
+#define CBS_CS_REG 0x50001
+#define CBS_CS_SECURE_ACCESS_BIT BIT(4)
 
 //added below fields by Sreekanth to support P11
 #define ROOT_CTRL1_SET 0x50121
