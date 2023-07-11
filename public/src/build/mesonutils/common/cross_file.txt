@@ -150,7 +150,7 @@ runtime_cmn_inc_paths = [
         ]
 
 runtime_cmn_code_update_inc_paths = [
-    '/public/src/runtime/common/codeupdate',
+    '/public/src/runtime/common/chipops/codeupdate',
     ]
 
 runtime_cmn_attributes_inc_paths = [

@@ -29,3 +29,5 @@ subdir('fastarray')
 subdir('getcapabilities')
 subdir('sramaccess')
 subdir('collectdump')
+subdir('codeupdate')
+

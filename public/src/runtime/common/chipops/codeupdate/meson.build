@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/common/codeupdate/meson.build $
+# $Source: public/src/runtime/common/chipops/codeupdate/meson.build $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2023
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +24,7 @@
 
 CMN_CODE_UPDATE_CHIPOPS_JSON = files('chipop_table.json')
 
-runtime_cmn_code_update_dir_path = meson.global_source_root() + '/public/src/runtime/common/codeupdate/'
+runtime_cmn_code_update_dir_path = meson.global_source_root() + '/public/src/runtime/common/chipops/codeupdate/'
 
 infile_c = ['sbecmdcodeupdate.C',
             'sbeupdateimage.C',
