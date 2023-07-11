@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -32,16 +32,24 @@
 
 #include "defines.inc"
 #include "registers.inc"
+#include "settings.inc"
 
 hreset_check:
          // Check whether we are in hreset path or not
-         cmpbne SB_CS_REG, HRESET_SET, HRESET_SET, ody_tp_chiplet_reset
+         cmpbne SB_CS_REG, HRESET_SET, HRESET_SET, force_security_enable_check
 
          // return if it is hreset path
          return
 
-ody_tp_chiplet_reset:
+force_security_enable_check:
+         // if boot flags scratch register is not valid, default to not forcing security
+         cmpbne SCRATCH_REGISTER_16, FORCE_SECURITY_ON_VALID, FORCE_SECURITY_ON_VALID, ody_tp_chiplet_reset
+         // if boot flags scratch register is valid, check setting bit
+         cmpbne FORCE_SECURITY_ON_REG, FORCE_SECURITY_ON_BIT, FORCE_SECURITY_ON_BIT, ody_tp_chiplet_reset
+         // force security on
+         putscom CBS_CS_REG, CBS_CS_SECURE_ACCESS_BIT, CBS_CS_SECURE_ACCESS_BIT
 
+ody_tp_chiplet_reset:
          // Drop PCB interface reset to enable access into TP chiplet
          putscom     ROOT_CTRL0_CLEAR, ALL, ROOT_CTRL0__PCB_RESET_DC    //ROOT_CTRL0.set_PCB_RESET_DC(0);
 
