@@ -42,13 +42,10 @@ import struct
 ############################################################
 
 #Tool version
-toolVersion = 1.0
+toolVersion = 1.1
 
-#PK Trace Version
-pkTraceVersion = 2
-
-#PK Trace buffer size
-pkTraceSize = 4096
+#PK Trace Version supported by this tool
+supportedPkTraceVersions = [2, 4]
 
 #Maximum Input size
 maxInputSize = 0x2040       #8k
@@ -69,11 +66,19 @@ verbose = False
 fspTraceEndianFormat = ""
 
 #Trace formats that are supported
-traceFormats = { 0x0 : "PK_TRACE_FORMAT_EMPTY",
-                 0x1 : "PK_TRACE_FORMAT_TINY",
-                 0x2 : "PK_TRACE_FORMAT_BIG",
-                 0x3 : "PK_TRACE_FORMAT_BINARY"
-        }
+traceFormats = {
+    0x0 : "PK_TRACE_FORMAT_EMPTY", # will be treated as PK_TRACE_FORMAT_SPECIAL in v4
+    0x1 : "PK_TRACE_FORMAT_TINY",
+    0x2 : "PK_TRACE_FORMAT_BIG",
+    0x3 : "PK_TRACE_FORMAT_BINARY"
+    }
+
+# special tags in v4 format
+traceFormatsSpecialTags = {
+    "EMPTY"         : 0x0,
+    "TIME_BUMP"     : 0x1,
+    "THREAD_CHANGE" : 0x2,
+}
 
 #FSP Trace time flag options
 fspTraceTimeFlagOptions = { "TRAC_TIME_REAL"   : 0x00,
@@ -116,7 +121,7 @@ class pkTraceBuffer():
     def populateParams(self, ppeTraceBinFile):
         #2 Bytes of version
         self.version = int.from_bytes(ppeTraceBinFile[:2], "big")
-        assert self.version == pkTraceVersion, "PPE to FSP invalid version: %s" % self.version
+        assert self.version in supportedPkTraceVersions, "PPE to FSP invalid version: %s" % self.version
 
         #2 Byte rsvd
         self.rsvd = int.from_bytes(ppeTraceBinFile[2:4], "big")
@@ -136,8 +141,13 @@ class pkTraceBuffer():
         #2 Byte size
         self.size = int.from_bytes(ppeTraceBinFile[26:28], "big")
 
-        #4 byte maxTimeChange
-        self.maxTimeChange = int.from_bytes(ppeTraceBinFile[28:32], "big")
+        if(self.version == 2):
+            #4 byte maxTimeChange
+            self.maxTimeChange = int.from_bytes(ppeTraceBinFile[28:32], "big")
+            self.threadId = None
+        else:
+            self.maxTimeChange = None
+            self.threadId = int.from_bytes(ppeTraceBinFile[28:29], "big")
 
         #4 Byte hz
         self.hz = int.from_bytes(ppeTraceBinFile[32:36], "big")
@@ -178,6 +188,7 @@ class pkTraceBuffer():
         print("tbu32: %s" % hex(self.tbu32))
         print("offset: %s" % hex(self.offset))
         #print("cb(Circular Buffer Content): %s" % self.cb)
+        print("======================================")
 
 class pkTraceEntry():
     """
@@ -203,7 +214,9 @@ class pkTraceEntry():
         self.totalTraceEntrySize = 0x0
         self.isTraceComplete = 0x01          #By Default trace is complete
 
-    def populateParams(self, traceBin, offset, pkTraceBuffSize, traceEntryNumber):
+    def populateParams(self, pkTraceHeader, traceBin, offset, pkTraceBuffSize, traceEntryNumber):
+
+        self.header : pkTraceBuffer = pkTraceHeader
 
         #Store it for returing
         actualOffset = offset
@@ -244,6 +257,9 @@ class pkTraceEntry():
 
         #Update the trace number
         self.traceNumber = traceEntryNumber
+
+        self.tbu32Change = 0
+        self.threadSwitch = None
 
         #Get Parameter Values based on trace format
 
@@ -341,39 +357,71 @@ class pkTraceEntry():
             #Return the offset by pointing it to next trace entry
             return (actualOffset - self.totalTraceEntrySize)
 
-        else:                #PK_TRACE_FORMAT_EMPTY
+        else: # PK_TRACE_FORMAT_EMPTY or PK_TRACE_FORMAT_SPECIAL
+            # get type of special tag
+            specialTagType = (self.pkTraceHash & 0xFF00) >> 8
 
-            #Return zero which implies all trace entries are parsed.There cannot
-            #be a empty trace entry
-            return 0
+            if((self.header.version == 2) or (specialTagType == traceFormatsSpecialTags["EMPTY"])):
+                #Return zero which implies all trace entries are parsed.There cannot
+                #be a empty trace entry
+                return 0
+
+            if(specialTagType == traceFormatsSpecialTags["TIME_BUMP"]):
+                self.tbu32Change = ((self.pkTraceHash & 0x00FF) << 16) | self.param
+            elif(specialTagType == traceFormatsSpecialTags["THREAD_CHANGE"]):
+                # we can assume thread index will not be more than 2 bytes
+                self.threadSwitch = self.param
+            else : # TODO PFSBE-690 thread number support
+                assert False, "Invalid special trace tag"
+
+            #Update the total trace entry size
+            self.totalTraceEntrySize = PkTraceGenericSize
+
+            #Return the offset by pointing it to next trace entry
+            return (actualOffset - self.totalTraceEntrySize)
 
     def calculate64bitTime(self, pkTraceHdr, previousEntry):
+        if(self.header.version == 2):
+            #Only for first entry
+            if self.traceNumber == 1:
 
-        #Only for first entry
-        if self.traceNumber == 1:
+                self.ppe_time64 = ((pkTraceHdr.tbu32 & 0xffffffff) << 32)
+                self.ppe_time64 |= self.timestamp
+
+            else:
+
+                time_diff32 = previousEntry.timestamp - self.timestamp
+                time_diff32 &= 0x00000000ffffffff
+
+                if (time_diff32 > pkTraceHdr.maxTimeChange):
+                    time_diff32 = self.timestamp - previousEntry.timestamp
+                    self.ppe_time64 = previousEntry.ppe_time64 + time_diff32
+                else:
+                    self.ppe_time64 = previousEntry.ppe_time64 - time_diff32
+        else:
+            if self.tbu32Change != 0:
+                pkTraceHdr.tbu32 -= self.tbu32Change
 
             self.ppe_time64 = ((pkTraceHdr.tbu32 & 0xffffffff) << 32)
             self.ppe_time64 |= self.timestamp
 
-        else:
-
-            time_diff32 = previousEntry.timestamp - self.timestamp
-            time_diff32 &= 0x00000000ffffffff
-
-            if (time_diff32 > pkTraceHdr.maxTimeChange):
-                time_diff32 = self.timestamp - previousEntry.timestamp
-                self.ppe_time64 = previousEntry.ppe_time64 + time_diff32
-            else:
-                self.ppe_time64 = previousEntry.ppe_time64 - time_diff32
-
         #Adjust the time with timeAdj64 parameter from header
         self.ppe_timeAdjusted = self.ppe_time64 + pkTraceHdr.timeAdj64
-        self.ppe_timeAdjusted &= 0xffffffffffffffff                      #Keep the result to 64bit
+        #Keep the result to 64bit
+        self.ppe_timeAdjusted &= 0xffffffffffffffff
+
+    def setThreadId(self, pkTraceHdr:pkTraceBuffer):
+        if self.threadSwitch != None:
+            pkTraceHdr.threadId = self.threadSwitch
+
+        self.threadId = pkTraceHdr.threadId
 
     def printParams(self):
-        print("")
+        print("-----------------------------------")
         print("Trace Number : %s" % self.traceNumber)
         print("pkTraceHash: %s" % hex(self.pkTraceHash))
+        print("param: %s" % hex(self.param))
+        print("tbu32Change: %s" % hex(self.tbu32Change))
         print("complete: %s" % hex(self.complete))
         print("bytes_or_parms_count: %s" % hex(self.bytes_or_parms_count))
         print("Internal Use: bytes_or_parms_count_roundoff: %s" % hex(self.bytes_or_parms_count_roundoff))
@@ -477,7 +525,7 @@ class fspTraceEntry():
         #Internal use
         self.fspEntryCount = 0
 
-    def populateParams(self, pkTraceBuff, pkTraceEntry):
+    def populateParams(self, pkTraceBuff, pkTraceEntry:pkTraceEntry):
 
         #size of total entry excluding data as it varies from entry to entry
         entrySizeExcludingData = 28
@@ -485,8 +533,11 @@ class fspTraceEntry():
         #Convert PPE time to FSP time format and popylate tbh and tbl
         self.convertPpeTimeToFspTimeFormat(pkTraceBuff.hz, pkTraceEntry.ppe_timeAdjusted)
 
-        #use the ppe instance id as the thread id
-        self.tid = pkTraceBuff.instanceId
+        if(pkTraceBuff.version == 2):
+            #use the ppe instance id as the thread id
+            self.tid = pkTraceBuff.instanceId
+        else:
+            self.tid = pkTraceEntry.threadId
 
         #merge the hash prefix and the string_id fields together for a 32 bit hash value
         self.hashId = int((format(pkTraceBuff.hashPrefix, "04x") + format(pkTraceEntry.pkTraceHash, "04x")) , 16)
@@ -627,10 +678,13 @@ def parsePkTraceBuff(ppeTraceBinFile):
 
         traceEntry = pkTraceEntry()
         totalTraces += 1
-        curOffset = traceEntry.populateParams(pkTraceBuff.cb, curOffset, pkTraceBuff.size, totalTraces)
+        curOffset = traceEntry.populateParams(pkTraceBuff, pkTraceBuff.cb, curOffset, pkTraceBuff.size, totalTraces)
 
         #Update the timing info parameter for the trace
         traceEntry.calculate64bitTime(pkTraceBuff, pkTraceEntryAll[-1] if traceEntry.traceNumber != 1 else "")
+
+        if(pkTraceBuff.version != 2):
+            traceEntry.setThreadId(pkTraceBuff)
 
         #Update bytes left
         bytesLeft -= traceEntry.totalTraceEntrySize
@@ -660,6 +714,9 @@ def ppe2fsp(pkTraceBuff, pkTraceEntryAll):
         fspTraceHdr.printParams()
 
     for entry in pkTraceEntryAll:
+
+        if (traceFormats[entry.traceFormat] == "PK_TRACE_FORMAT_EMPTY"):
+            continue
 
         singleFspTraceEntry = fspTraceEntry()
         singleFspTraceEntry.populateParams(pkTraceBuff, entry)
