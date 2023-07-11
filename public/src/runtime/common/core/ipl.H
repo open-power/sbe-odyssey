@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/ipl.H $                  */
+/* $Source: public/src/runtime/common/core/ipl.H $                        */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2017,2023                        */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -23,71 +22,36 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#ifndef __IPL_H
-#define __IPL_H
+#pragma once
 
-#include "cmnglobals.H"
-#include "return_code.H"
-
-extern fapi2::ReturnCode g_iplFailRc;
-/**
- * @brief Support function to execute specific istep
- *
- * @param[in] i_major Major Istep Number
- * @param[in] i_minor Minor Istep Number
- *
- * @return FAPI2_RC_SUCCESS if success, else error code.
- */
-fapi2::ReturnCode sbeExecuteIstep (uint8_t i_major, uint8_t i_minor);
+#include "ipltable.H"
 
 /**
- * @brief Executes IPL steps in auto mode.
- * @par run istep table continuously
- */
-void sbeAutoBoot();
-
-/*
- * @brief Check for the system checkstop based on
- *        P9N2_PERV_ATTN_INTERRUPT_REG bit 3
+ * @brief ipl class is a abstract class which
+ *        can be used for ipling SBE
  *
- * @return if the system is checkstop or not
  */
-bool isSystemCheckstop();
+class ipl {
 
-using voidfuncptr_t = void (*)(void);
-using iStep_t = fapi2::ReturnCode (*)( voidfuncptr_t );
+public:
 
-struct istepMap_t
-{
-    iStep_t         istepWrapper;
-    voidfuncptr_t   istepHwp;
-};
+    /**
+     * @brief Executes IPL steps in auto mode.
+     * @par run istep table continuously
+     */
+    void sbeAutoBoot();
 
-struct istepTableEntry_t
-{
-    uint8_t         istepMajorNum;
-    istepMap_t*     istepMinorArr;
-    size_t          len;
-};
+protected:
 
-struct istepTable_t
-{
-    istepTableEntry_t*  istepMajorArr;
-    size_t              len;
-};
+private:
 
-#define ISTEP_MAP(wrapper, hwp) \
-    {wrapper, reinterpret_cast<voidfuncptr_t>(hwp)}
+    /**
+     * @brief isSpiParityError() Check for parity error while
+     *        accessing data via SPI from PNOR/SEEPROM
+     *
+     * @return true if there is a parity error
+     * @return false if there is no parity error
+     */
+    virtual bool isSpiParityError() = 0;
 
-#define ISTEP_ENTRY(majornum, entrytable) \
-    {majornum, entrytable, sizeof(entrytable)/sizeof(entrytable[0])}
-
-#define REGISTER_ISTEP_TABLE(entries) \
-    istepTable_t istepTable = { \
-        entries, \
-        sizeof(entries)/sizeof(entries[0]) \
-    };
-
-extern istepTable_t istepTable;
-
-#endif
+}; //class ipl

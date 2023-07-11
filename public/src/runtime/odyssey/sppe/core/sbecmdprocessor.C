@@ -43,7 +43,7 @@
 #include "chipop_handler.H"
 #include "sbeffdc.H"
 #include "sbehandleresponse.H"
-#include "ipl.H"
+#include "istepIplUtils.H"
 #include "sbetspolling.H"
 #include "sbethermalsensorpolltimer.H"
 
@@ -166,7 +166,7 @@ void setSBEBootState(uint8_t bootMode)
             SBE_INFO(SBE_FUNC "AutoBoot Mode set... IPLing");
             (void)SbeRegAccess::theSbeRegAccess().
                 updateSbeState(SBE_STATE_CMN_IPLING);
-            sbeAutoBoot();
+            g_pSbeIstepIplUtils->sbeAutoBoot();
             break;
         case SbeRegAccess::BootMode::JUMP_TO_RUNTIME:
             // jumpToRuntime

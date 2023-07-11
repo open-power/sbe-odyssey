@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/istep.C $                */
+/* $Source: public/src/runtime/common/core/istep.C $                      */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2022                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,8 +21,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#include <stdint.h>
 
+#include <stdint.h>
 #include "chipop_struct.H"
 #include "sbefifo.H"
 #include "sbetrace.H"
@@ -33,31 +32,36 @@
 #include "sberegaccess.H"
 #include "sbestates.H"
 #include "sbeglobals.H"
-#include "ipl.H"
 #include "istep.H"
-
-#define ISTEP_START_MINOR_NUMBER 13
+#include "istepIplUtils.H"
 
 using namespace fapi2;
-//----------------------------------------------------------------------------
-static void findNextIstep(uint8_t& o_nextMajor, uint8_t& o_nextMinor)
+
+extern "C" void __sbe_register_saveoff();
+extern uint32_t __g_isParityError;
+
+void istep::findNextIstep(uint8_t& o_nextMajor, uint8_t& o_nextMinor)
 {
-    #define SBE_FUNC "findNextIstep "
+    #define SBE_FUNC " findNextIstep "
+    SBE_ENTER(SBE_FUNC);
+
     uint8_t prevMajorNumber =
                 SbeRegAccess::theSbeRegAccess().getSbeMajorIstepNumber();
     uint8_t prevMinorNumber =
                 SbeRegAccess::theSbeRegAccess().getSbeMinorIstepNumber();
+
     SBE_INFO(SBE_FUNC"prevMajorNumber:%u prevMinorNumber:%u ",
                         prevMajorNumber, prevMinorNumber );
+
     if( 0 == prevMajorNumber )
     {
-        prevMajorNumber = istepTable.istepMajorArr[0].istepMajorNum;
-        prevMinorNumber = ISTEP_START_MINOR_NUMBER - 1;
+        prevMajorNumber = g_istepTable.istepMajorArr[0].istepMajorNum;
+        prevMinorNumber = iv_istepStartMinorNumber - 1;
     }
 
-    for(size_t entry = 0; entry < istepTable.len; entry++)
+    for(size_t entry = 0; entry < g_istepTable.len; entry++)
     {
-        auto istepTableEntry = &istepTable.istepMajorArr[entry];
+        auto istepTableEntry = &g_istepTable.istepMajorArr[entry];
         if( istepTableEntry->istepMajorNum == prevMajorNumber)
         {
             if( prevMinorNumber == istepTableEntry->len )
@@ -73,26 +77,34 @@ static void findNextIstep(uint8_t& o_nextMajor, uint8_t& o_nextMinor)
             break;
         }
     }
+
+    SBE_EXIT(SBE_FUNC);
     #undef SBE_FUNC
 }
 
-static bool validateIstepRange(const uint8_t i_major, const uint8_t i_minor)
+bool istep::validateIstepRange(const uint8_t i_major, const uint8_t i_minor)
 {
+    #define SBE_FUNC " validateIstepRange "
+    SBE_ENTER(SBE_FUNC);
+
     bool inRange = false;
+
     do
     {
         if( 0 == i_minor )
         {
             break;
         }
-        if((istepTable.istepMajorArr[0].istepMajorNum == i_major) &&
-            (i_minor < ISTEP_START_MINOR_NUMBER))
+
+        if((g_istepTable.istepMajorArr[0].istepMajorNum == i_major) &&
+            (i_minor < iv_istepStartMinorNumber))
         {
             break;
         }
-        for(size_t entry = 0; entry < istepTable.len; entry++)
+
+        for(size_t entry = 0; entry < g_istepTable.len; entry++)
         {
-            auto istepTableEntry = &istepTable.istepMajorArr[entry];
+            auto istepTableEntry = &g_istepTable.istepMajorArr[entry];
             if( i_major == istepTableEntry->istepMajorNum )
             {
                 if( i_minor <= istepTableEntry->len )
@@ -105,12 +117,16 @@ static bool validateIstepRange(const uint8_t i_major, const uint8_t i_minor)
     }
     while(0);
 
+    SBE_EXIT(SBE_FUNC);
     return inRange;
+    #undef SBE_FUNC
 }
 
-bool validateIstep (const uint8_t i_major, const uint8_t i_minor)
+bool istep::validateIstep (const uint8_t i_major, const uint8_t i_minor)
 {
-    #define SBE_FUNC "validateIstep "
+    #define SBE_FUNC " validateIstep "
+    SBE_ENTER(SBE_FUNC);
+
     bool valid = false;
     do
     {
@@ -120,9 +136,10 @@ bool validateIstep (const uint8_t i_major, const uint8_t i_minor)
                         i_major, i_minor);
             break;
         }
+
 // TODO: P11SBE Porting
 #if 0
-        // If secuirty is not enabled, no further chacks asre required
+        // If security is not enabled, no further checks are required
         if(!SBE_GLOBAL->sbeFWSecurityEnabled)
         {
             SBE_INFO(SBE_FUNC" Security is disabled. Skipping istep order check");
@@ -152,16 +169,62 @@ bool validateIstep (const uint8_t i_major, const uint8_t i_minor)
         }
     } while(0);
 
+    SBE_EXIT(SBE_FUNC);
     return valid;
     #undef SBE_FUNC
 }
 
-//----------------------------------------------------------------------------
-uint32_t sbeHandleIstep (uint8_t *i_pArg)
+ReturnCode istep::sbeExecuteIstep(const uint8_t i_major, const uint8_t i_minor)
 {
-    #define SBE_FUNC "sbeHandleIstep "
+    #define SBE_FUNC " sbeExecuteIstep "
+    SBE_ENTER(SBE_FUNC)
+
+    ReturnCode rc = FAPI2_RC_SUCCESS;
+
+    SBE_INFO(SBE_FUNC "Major number:%d Minor number:%d", i_major, i_minor);
+
+    for(size_t entry = 0; entry < g_istepTable.len; entry++)
+    {
+        auto istepTableEntry = &g_istepTable.istepMajorArr[entry];
+        if(( i_major == istepTableEntry->istepMajorNum ) &&
+           ( i_minor <= istepTableEntry->len ))
+        {
+            auto istepMap = &istepTableEntry->istepMinorArr[i_minor-1];
+            if(istepMap->istepWrapper != NULL)
+            {
+                rc = istepMap->istepWrapper(istepMap->istepHwp);
+            }
+            break;
+        }
+    }
+
+    if (isSpiParityError()) // If true call saveoff and halt
+    {
+        __g_isParityError = 1;
+        __sbe_register_saveoff();
+    }
+
+    if(rc != FAPI2_RC_SUCCESS)
+    {
+        SBE_ERROR(SBE_FUNC "FAPI RC:0x%08X", rc);
+        stateTransition(SBE_EVENT_CMN_DUMP_FAILURE);
+    }
+    else
+    {
+        (void)SbeRegAccess::theSbeRegAccess().updateSbeStep(i_major, i_minor);
+    }
+
+    SBE_EXIT(SBE_FUNC)
+    return rc;
+    #undef SBE_FUNC
+}
+
+uint32_t sbeHandleIstep(uint8_t *i_pArg)
+{
+    #define SBE_FUNC " sbeHandleIstep "
     SBE_ENTER(SBE_FUNC);
-    uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    uint32_t fifoRc = SBE_SEC_OPERATION_SUCCESSFUL;
     ReturnCode fapiRc = FAPI2_RC_SUCCESS;
     uint32_t len = 0;
     sbeIstepReqMsg_t req;
@@ -172,76 +235,41 @@ uint32_t sbeHandleIstep (uint8_t *i_pArg)
     chipOpParam_t* configStr = (struct chipOpParam*)i_pArg;
     sbeFifoType type = static_cast<sbeFifoType>(configStr->fifoType);
 
-    // NOTE: In this function we will have two loops
-    // First loop will deque data and prepare the response
-    // Second loop will enque the data on DS FIFO
-    //loop 1
     do
     {
         len = sizeof( req )/sizeof(uint32_t);
-        rc = sbeUpFifoDeq_mult ( len, (uint32_t *)&req, true, false, type);
-        if (rc != SBE_SEC_OPERATION_SUCCESSFUL) //FIFO access issue
-        {
-            SBE_ERROR(SBE_FUNC"FIFO dequeue failed, rc[0x%X]", rc);
-            break;
-        }
+        fifoRc = sbeUpFifoDeq_mult ( len, (uint32_t *)&req, true, false, type);
+        // If FIFO access failure
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(fifoRc);
 
-        if( false == validateIstep( req.major, req.minor ) )
+        if(g_pSbeIstepIplUtils->validateIstep(req.major, req.minor) == false)
         {
-            SBE_ERROR(SBE_FUNC" Invalid Istep. major:%u"
-                      " minor:%u",
+            SBE_ERROR(SBE_FUNC" Invalid Istep. major:%u minor:%u",
                       req.major, req.minor);
-            // @TODO via RTC 132295.
-            // Need to change code asper better error handling.
             respHdr.setStatus( SBE_PRI_INVALID_DATA,
                                SBE_SEC_GENERIC_FAILURE_IN_EXECUTION);
             break;
         }
 
-        fapiRc = sbeExecuteIstep( req.major, req.minor );
-        // TODO - F001A is not available till istep 2.3, which is driven by the
-        // nest clock, so we can enable this only after 2.3, For time being
-        // commenting this out.
-        //bool checkstop = isSystemCheckstop();
+        fapiRc = g_pSbeIstepIplUtils->sbeExecuteIstep( req.major, req.minor );
         if( fapiRc != FAPI2_RC_SUCCESS )
-        //if(( fapiRc != FAPI2_RC_SUCCESS ) || (checkstop))
         {
             SBE_ERROR(SBE_FUNC" sbeExecuteIstep() Failed. major:%u"
                 " minor:%u", req.major, req.minor);
-            //if(checkstop)
-            //{
-            //    respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-            //                       SBE_SEC_SYSTEM_CHECKSTOP );
-            //}
-            //else
-            //{
-                respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                                   SBE_SEC_GENERIC_FAILURE_IN_EXECUTION );
-                ffdc.setRc(fapiRc);
-            //}
-
+            respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                                SBE_SEC_GENERIC_FAILURE_IN_EXECUTION );
+            ffdc.setRc(fapiRc);
             break;
         }
 
-    }while(0);
+    }while(false);
 
-    //loop 2
-    do
+    if( fifoRc == SBE_SEC_OPERATION_SUCCESSFUL )
     {
-        // FIFO error
-        if ( rc )
-        {
-            break;
-        }
-
-        rc = sbeDsSendRespHdr(respHdr, &ffdc, type);
-    }while(0);
-
-    if( rc )
-    {
-        SBE_ERROR( SBE_FUNC"Failed. rc[0x%X]", rc);
+        fifoRc = sbeDsSendRespHdr(respHdr, &ffdc, type);
     }
+
     SBE_EXIT(SBE_FUNC);
-    return rc;
+    return fifoRc;
     #undef SBE_FUNC
 }

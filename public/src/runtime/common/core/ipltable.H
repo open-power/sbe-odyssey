@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/istep.H $                */
+/* $Source: public/src/runtime/common/core/ipltable.H $                   */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -21,22 +21,52 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __ISTEP_TABLE_H
-#define __ISTEP_TABLE_H
+
+#pragma once
+
+#include "fapi2.H"
+#include "ipl.H"
 
 /**
-  * @brief structure for execute istep chipop (0xA101) contents.
-  *
-  */
+ * @file  ipltable.H
+ * @brief This file contains all info needed for creating
+ *        istep/ipl tables.
+ *        The istep/ipl tables are created in platform level.
+ *
+ */
 
-typedef struct
+using voidfuncptr_t = void (*)(void);
+using iStep_t = fapi2::ReturnCode (*)( voidfuncptr_t );
+
+struct istepMap_t
 {
-    uint32_t reserved1:8;
-    uint32_t major:8;
-    uint32_t reserved2:8;
-    uint32_t minor:8;
-}sbeIstepReqMsg_t;
+    iStep_t         istepWrapper;
+    voidfuncptr_t   istepHwp;
+};
 
-    uint32_t sbeHandleIstep (uint8_t *i_pArg);
+struct istepTableEntry_t
+{
+    uint8_t         istepMajorNum;
+    istepMap_t*     istepMinorArr;
+    size_t          len;
+};
 
-#endif
+struct istepTable_t
+{
+    istepTableEntry_t*  istepMajorArr;
+    size_t              len;
+};
+
+#define ISTEP_MAP(wrapper, hwp) \
+    {wrapper, reinterpret_cast<voidfuncptr_t>(hwp)}
+
+#define ISTEP_ENTRY(majornum, entrytable) \
+    {majornum, entrytable, sizeof(entrytable)/sizeof(entrytable[0])}
+
+#define REGISTER_ISTEP_TABLE(entries) \
+    istepTable_t g_istepTable = { \
+    entries, \
+    sizeof(entries)/sizeof(entries[0]) \
+    };
+
+extern istepTable_t g_istepTable;

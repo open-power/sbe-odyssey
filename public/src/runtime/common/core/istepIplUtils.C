@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/istep_includes.H $       */
+/* $Source: public/src/runtime/common/core/istepIplUtils.C $              */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -23,31 +22,46 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#ifndef __ISTEP_INCLUDES_H
-#define __ISTEP_INCLUDES_H
+#include "istepIplUtils.H"
+#include "sbetrace.H"
+#include "ppe42_scom.h"
 
-#include <ody_tp_arrayinit.H>
-#include <ody_tp_arrayinit_cleanup.H>
-#include <ody_tp_initf.H>
-#include <ody_tp_repr_initf.H>
-#include <ody_tp_startclocks.H>
-#include <ody_tp_init.H>
-#include <ody_ddrphyinit.H>
-#include <ody_chiplet_clk_config.H>
-#include <ody_chiplet_reset.H>
-#include <ody_chiplet_unused_psave.H>
-#include <ody_bist_repr_initf.H>
-#include <ody_abist.H>
-#include <ody_lbist.H>
-#include <ody_chiplet_repr_initf.H>
-#include <ody_chiplet_arrayinit.H>
-#include <ody_chiplet_initf.H>
-#include <ody_chiplet_init.H>
-#include <ody_chiplet_startclocks.H>
-#include <ody_chiplet_fir_init.H>
-#include <ody_nest_enable_io.H>
-#include <poz_cmdtable_interpreter.H>
-#include <ody_sppe_attr_setup.H>
-#include <poz_common_image_load.H>
+/**
+ * @brief Macro to check if there are any parity errors during
+ *        SPI operation via spi controller status register.
+ *        Bits 32-42 in spi controller status register indicate
+ *        if there were any parity errors.
+ *
+ */
+#define SPI_PARITY_CHECK_MASK 0x00000000FFE00000
 
-#endif
+using namespace fapi2;
+
+istepIplUtils& istepIplUtils::getInstance(uint32_t i_spiStatusRegAddr,
+                      uint8_t i_istepStartMinorNumber)
+{
+    static istepIplUtils iv_instance(i_spiStatusRegAddr, i_istepStartMinorNumber);
+    return iv_instance;
+}
+
+bool istepIplUtils::isSpiParityError()
+{
+    #define SBE_FUNC " isSpiParityError "
+    SBE_ENTER(SBE_FUNC)
+
+    bool status = false;
+    uint64_t data = 0;
+
+    // Load the SPI Status Register Here
+    PPE_LVD(iv_spiStatusRegAdr, data);
+
+    if(data & SPI_PARITY_CHECK_MASK)
+    {
+        SBE_ERROR(SBE_FUNC "SPI Parity Error observed");
+        status = true;
+    }
+
+    SBE_EXIT(SBE_FUNC)
+    return status;
+    #undef SBE_FUNC
+}

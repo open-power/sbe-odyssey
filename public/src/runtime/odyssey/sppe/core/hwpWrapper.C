@@ -23,7 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 #include "hwpWrapper.H"
-#include "istep_includes.H"
+#include "istepincludes.H"
 #include "sbestreampaktohwp.H"
 #include "pakwrapper.H"
 #include "globals.H"
