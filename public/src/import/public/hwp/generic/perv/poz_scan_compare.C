@@ -54,7 +54,7 @@ ReturnCode poz_compare(
     char* l_fpath_write_ptr = NULL;
 
     auto l_chip = i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>();
-    FAPI_DBG("Loading compare hash file");
+    FAPI_DBG("Loading compare hash file: %s", i_compare_hash_fname);
     ReturnCode l_rc = loadEmbeddedFile(l_chip, i_compare_hash_fname, l_hash_file_data, l_hash_file_size);
 
     if (l_rc != FAPI2_RC_SUCCESS)
@@ -80,7 +80,7 @@ ReturnCode poz_compare(
         l_fpath_write_ptr[8] = 0;
 
         // Load the care mask file
-        FAPI_DBG("Loading care mask file");
+        FAPI_DBG("Loading care mask file: %s", l_fpath);
         FAPI_TRY(loadEmbeddedFile(l_chip, l_fpath, l_mask_file_data, l_mask_file_size));
         hwp_be_array_istream l_mask((hwp_data_unit*)l_mask_file_data, l_mask_file_size);
 
