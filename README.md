@@ -4,13 +4,31 @@ This project is SBE repository for P, Odyssey & Z projects.
 
 ### Before workon:
 
-- Create a file `~/.sbe/customrc` for any personal rc settings. This will be applied during `workon`
-
-- To enable bash complete for sbe script:
+#### To enable bash complete for sbe script:
 
 ```
 source public/src/tools/utils/sbe/sbe_complete
 ```
+
+#### User-specific configuration setup
+
+The SBE has a set of environment variables that could be customized as per
+the user's needs. Refer at [sample_customrc](internal/sample_customrc).
+These configuration will be applied during `workon`.
+The pointed `customrc` can be used in two different contexts.
+
+i. The user-specific customization can be put in `HOME/.sbe/customrc`.
+   If the `HOME/.sbe` does not exist, please create it.
+
+ii. The workspace-specific customization can be put in `SBE_ROOT/customrc`.
+    Replace the `SBE_ROOT` with the interested sbe workspace path.
+
+iii. The workspace-specific customization `customrc` has higher priority than
+     the user-specific customization `customrc` to support different
+     customization between different sbe codes.
+
+**Note:** The `customrc` has higher priority than the `projectrc` so the project
+specific customization will be overwritten based on the `customrc`.
 
 ### To Setup Environment:
 
