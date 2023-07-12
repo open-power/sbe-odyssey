@@ -35,3 +35,9 @@ foreach infile : odyssey_genfiles_c
   odyssey_abs_genfiles_c_file_paths += abs_infile_c_path
 
 endforeach
+
+result_tagInfo = run_command(buildInfo, odyssey_sppe_genfiles_dir_path, 'sbe*')
+if not (result_tagInfo.returncode() == 0)
+      message(result_tagInfo.stdout())
+      error(result_tagInfo.stderr())
+endif
