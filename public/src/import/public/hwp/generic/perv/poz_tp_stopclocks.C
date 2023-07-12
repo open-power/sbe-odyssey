@@ -92,7 +92,7 @@ fapi2::ReturnCode poz_tp_stopclocks(
         FAPI_ASSERT_NOEXIT(l_rc == fapi2::FAPI2_RC_SUCCESS,
                            fapi2::SBE_STOPCLOCKS_ERR()
                            .set_TARGET_CHIP(i_target),
-                           "poz_sbe_region_stopclocks returned error ");
+                           "poz_sbe_region_stopclocks returned error. ");
     }
 
 fapi_try_exit:

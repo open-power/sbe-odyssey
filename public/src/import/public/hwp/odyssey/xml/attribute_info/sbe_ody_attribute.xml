@@ -3679,4 +3679,236 @@
   <entry name="ATTR_ODY_DRAMINIT_STEP_ENABLE">
     <value>0xFF</value>
   </entry>
+  <!-- RCW attributes for Channel A DIMM0-->
+  <entry name="ATTR_RCW00_CHA_D0">
+    <value>1</value>
+  </entry>
+  <entry name="ATTR_RCW05_CHA_D0">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW08_CHA_D0">
+    <value>0x2e</value>
+  </entry>
+  <entry name="ATTR_RCW09_CHA_D0">
+    <value>0x4e</value>
+  </entry>
+  <entry name="ATTR_RCW0A_CHA_D0">
+    <value>0x55</value>
+  </entry>
+  <entry name="ATTR_RCW0C_CHA_D0">
+    <value>1</value>
+  </entry>
+  <entry name="ATTR_RCW0D_CHA_D0">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW0E_CHA_D0">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW0F_CHA_D0">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW40_CHA_D0">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW41_CHA_D0">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW42_CHA_D0">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW43_CHA_D0">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW44_CHA_D0">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW45_CHA_D0">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW46_CHA_D0">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW47_CHA_D0">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW48_CHA_D0">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW49_CHA_D0">
+    <value>0x39</value>
+  </entry>
+  <!-- RCW attributes for Channel A DIMM1-->
+  <entry name="ATTR_RCW00_CHA_D1">
+    <value>1</value>
+  </entry>
+  <entry name="ATTR_RCW05_CHA_D1">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW08_CHA_D1">
+    <value>0x2e</value>
+  </entry>
+  <entry name="ATTR_RCW09_CHA_D1">
+    <value>0x4e</value>
+  </entry>
+  <entry name="ATTR_RCW0A_CHA_D1">
+    <value>0x55</value>
+  </entry>
+  <entry name="ATTR_RCW0C_CHA_D1">
+    <value>1</value>
+  </entry>
+  <entry name="ATTR_RCW0D_CHA_D1">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW0E_CHA_D1">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW0F_CHA_D1">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW40_CHA_D1">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW41_CHA_D1">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW42_CHA_D1">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW43_CHA_D1">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW44_CHA_D1">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW45_CHA_D1">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW46_CHA_D1">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW47_CHA_D1">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW48_CHA_D1">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW49_CHA_D1">
+    <value>0x39</value>
+  </entry>
+  <!-- RCW attributes for Channel B DIMM0-->
+  <entry name="ATTR_RCW00_CHB_D0">
+    <value>1</value>
+  </entry>
+  <entry name="ATTR_RCW05_CHB_D0">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW08_CHB_D0">
+    <value>0x2e</value>
+  </entry>
+  <entry name="ATTR_RCW09_CHB_D0">
+    <value>0x4e</value>
+  </entry>
+  <entry name="ATTR_RCW0A_CHB_D0">
+    <value>0x55</value>
+  </entry>
+  <entry name="ATTR_RCW0C_CHB_D0">
+    <value>1</value>
+  </entry>
+  <entry name="ATTR_RCW0D_CHB_D0">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW0E_CHB_D0">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW0F_CHB_D0">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW40_CHB_D0">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW41_CHB_D0">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW42_CHB_D0">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW43_CHB_D0">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW44_CHB_D0">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW45_CHB_D0">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW46_CHB_D0">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW47_CHB_D0">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW48_CHB_D0">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW49_CHB_D0">
+    <value>0x39</value>
+  </entry>
+  <!-- RCW attributes for Channel B DIMM1-->
+  <entry name="ATTR_RCW00_CHB_D1">
+    <value>1</value>
+  </entry>
+  <entry name="ATTR_RCW05_CHB_D1">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW08_CHB_D1">
+    <value>0x2e</value>
+  </entry>
+  <entry name="ATTR_RCW09_CHB_D1">
+    <value>0x4e</value>
+  </entry>
+  <entry name="ATTR_RCW0A_CHB_D1">
+    <value>0x55</value>
+  </entry>
+  <entry name="ATTR_RCW0C_CHB_D1">
+    <value>1</value>
+  </entry>
+  <entry name="ATTR_RCW0D_CHB_D1">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW0E_CHB_D1">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW0F_CHB_D1">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW40_CHB_D1">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_RCW41_CHB_D1">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW42_CHB_D1">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW43_CHB_D1">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW44_CHB_D1">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW45_CHB_D1">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW46_CHB_D1">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW47_CHB_D1">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW48_CHB_D1">
+    <value>0x39</value>
+  </entry>
+  <entry name="ATTR_RCW49_CHB_D1">
+    <value>0x39</value>
+  </entry>
 </entries>

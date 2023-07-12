@@ -2531,7 +2531,6 @@ fapi2::ReturnCode configure_dram_train_message_block(const fapi2::Target<fapi2::
     FAPI_TRY(l_msg_block_config.setup_Reserved1E7(o_struct));
     FAPI_TRY(l_msg_block_config.setup_WL_ADJ_START(o_struct));
     FAPI_TRY(l_msg_block_config.setup_WL_ADJ_END(o_struct));
-    // TODO: Zen:MST-1732 Fill in RCW fields in ody_draminit message block from attributes
     FAPI_TRY(l_msg_block_config.setup_RCW(o_struct));
     FAPI_TRY(l_msg_block_config.setup_BCW(o_struct));
     FAPI_TRY(l_msg_block_config.setup_VrefDq(o_struct));
