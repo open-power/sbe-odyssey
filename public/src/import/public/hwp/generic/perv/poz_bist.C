@@ -38,6 +38,7 @@
 #include <poz_perv_mod_bist.H>
 #include <poz_perv_utils.H>
 #include <poz_scan_compare.H>
+#include <file_access.H>
 #include <target_filters.H>
 #include <endian.h>
 
@@ -291,7 +292,7 @@ ReturnCode poz_bist(
     char l_load_path[sizeof(l_load_dir) + sizeof(i_params.program) - 1];
     char l_compare_hash_dir[10] = {'l', 'b', 'i', 's', 't', '/', 'c', 'h', '/'};
     char l_compare_hash_path[sizeof(l_compare_hash_dir) + sizeof(i_params.program) - 1];
-    char l_care_mask_dir[10] = {'l', 'b', 'i', 's', 't', '/', 'c', 'm', '/'};
+    char l_care_mask_dir[12] = {'l', 'b', 'i', 's', 't', '/', 'c', 'm', '/', '0', '/'};
 
     if (i_params.flags & i_params.bist_flags::ABIST_NOT_LBIST)
     {
@@ -316,7 +317,7 @@ ReturnCode poz_bist(
     OPCG_ALIGN_t l_opcg_align_save[64];
 
     // To temporarily store return codes for evaluation before throwing error
-    ReturnCode rc;
+    ReturnCode l_rc;
 
     // Assert the provided bist_params struct is the expected version
     FAPI_ASSERT(i_params.BIST_PARAMS_VERSION == BIST_PARAMS_CURRENT_VERSION,
@@ -533,26 +534,48 @@ ReturnCode poz_bist(
     ////////////////////////////////////////////////////////////////
     if (i_params.stages & i_params.bist_stages::COMPARE)
     {
+        const void* l_hash_file_data = NULL;
+        size_t l_hash_file_size;
+
         FAPI_INF("Compare scan chains against expects");
 
         strcpy(l_compare_hash_path, l_compare_hash_dir);
         strcat(l_compare_hash_path, i_params.program);
 
+        FAPI_DBG("Loading compare hash file to acquire compare care mask set key");
+        l_rc = loadEmbeddedFile(i_target, l_compare_hash_path, l_hash_file_data, l_hash_file_size);
+
+        if (l_rc == FAPI2_RC_FILE_NOT_FOUND)
+        {
+            FAPI_DBG("Compare hash file not found; skipping compare care mask set key assignment");
+            current_err = FAPI2_RC_SUCCESS;
+        }
+        else if (l_rc == FAPI2_RC_SUCCESS)
+        {
+            // The compare hash file's second to last byte indicates which compare care mask set to use
+            strhex(l_care_mask_dir + 9, ((uint8_t*)l_hash_file_data)[l_hash_file_size - 2], 1);
+            FAPI_TRY(freeEmbeddedFile(l_hash_file_data));
+        }
+        else
+        {
+            FAPI_TRY(l_rc, "loadEmbeddedFile failed");
+        }
+
         for (auto& cplt : l_chiplets_uc)
         {
-            rc = poz_compare(cplt, l_compare_hash_path, l_care_mask_dir, o_failing_rings);
+            l_rc = poz_compare(cplt, l_compare_hash_path, l_care_mask_dir, o_failing_rings);
 
-            if (rc == FAPI2_RC_FILE_NOT_FOUND)
+            if (l_rc == FAPI2_RC_FILE_NOT_FOUND)
             {
                 FAPI_DBG("Compare file(s) not found; skipping compare...");
                 current_err = FAPI2_RC_SUCCESS;
                 break;
             }
 
-            FAPI_TRY(rc);
+            FAPI_TRY(l_rc);
         }
 
-        if (rc == FAPI2_RC_SUCCESS)
+        if (l_rc == FAPI2_RC_SUCCESS)
         {
             o_diags.completed_stages |= i_params.bist_stages::COMPARE;
         }
