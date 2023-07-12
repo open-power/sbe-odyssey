@@ -30,7 +30,7 @@
 #include "metadata.H"
 #include "pakwrapper.H"
 #include "imagemap.H"
-#include "sbe_build_info.H"
+#include "sbe_tag_info.H"
 
 #define INFO_TXT_ENTRY_OPEN_DELIMITER   0x5B       // "["
 #define INFO_TXT_ENTRY_END_DELIMITER    0x5D       // "]"

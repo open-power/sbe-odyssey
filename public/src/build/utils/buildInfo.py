@@ -34,10 +34,7 @@ import datetime
 def buildInfo():
     buildInfoFileName = sys.argv[1]+"/sbe_build_info.H"
     header = \
-"#ifndef SBE_BUILD_INFO_H  \n\
-#define SBE_BUILD_INFO_H  \n\n"
-
-    footer = "\n#endif  // SBE_BUILD_INFO_H"
+"#pragma once  \n\n"
 
     buildTime = "0x" + datetime.datetime.now().strftime('%Y%m%d')
     hexTime   = int(buildTime, 16)
@@ -49,23 +46,6 @@ def buildInfo():
         print("Failed to get a valid SBE_COMMIT_ID")
         sys.exit(1)
 
-    ## Get SBE tag corresponding to commit_id it got included first after merge.
-    ## git describe command can be used to find the tag that comes after the commit.
-    ## The command finds the most recent tag that is reachable from a commit. If the
-    ## tag points to the commit then only the tag is returned. Otherwise, it suffixes (~)
-    ## the tag name with the additional commits on top of the tagged object
-    buildTag = ""
-    p = Popen(["git", 'describe', '--tags', '--contains', 'commitStr'],\
-              stdout=PIPE, stderr=PIPE, universal_newlines=True)
-    output, error = p.communicate()
-    if p.returncode == 0:
-        if len(output) > 0:
-            separator = '~'
-            buildTag = output.split(separator, 1)[0]
-            print ("Tag found: " + buildTag)
-    else:
-        print("Failed to get a tag" + str(p.returncode) + str(error))
-
     f = open( buildInfoFileName, 'w')
 
     f.write(header)
@@ -73,11 +53,47 @@ def buildInfo():
     f.write("#define SBE_COMMIT_ID " + hex(commitInt) + "\n")
     f.write("//Define SBE BUILD_TIME \n")
     f.write("#define SBE_BUILD_TIME " + hex(hexTime) + "\n")
-    f.write("//Define SBE BUILD_TAG \n")
-    f.write("#define SBE_BUILD_TAG " + "\"" + buildTag + "\"" + "\n")
-    f.write(footer)
     f.close()
 
-# Call buildInfo
-buildInfo()
+def tagInfo():
+    tagInfoFileName = sys.argv[1]+"/sbe_tag_info.H"
+    ## TODO:PFSBE-501:Use template for gen files
+    header = \
+"#pragma once  \n\n"
+
+    ## git describe command can be used to find the tag that comes after the commit.
+    ## The command finds the most recent tag that is reachable from a commit. If the
+    ## tag points to the commit then only the tag is returned. Otherwise, it suffixes (~)
+    ## the tag name with the additional commits on top of the tagged object
+    buildTag = ""
+    p = Popen(['git', 'describe', '--tags', '--match', sys.argv[2], '--contains', 'HEAD'],\
+              stdout=PIPE, stderr=PIPE, universal_newlines=True)
+    output, error = p.communicate()
+    if p.returncode == 0:
+        if len(output) > 0:
+            separator = '~'
+            if output.find('^') != -1:
+                separator = '^'
+            buildTag = output.split(separator, 1)[0]
+            print ("Tag found: " + str(buildTag))
+    else:
+        print("Failed to get a tag" + str(p.returncode) + str(error))
+
+    f = open( tagInfoFileName, 'w')
+
+    f.write(header)
+    f.write("//Define SBE BUILD_TAG \n")
+    f.write("#define SBE_BUILD_TAG " + "\"" + buildTag + "\"" + "\n")
+    f.close()
+
+## TODO:PFSBE:502:Use command parser to process arguments
+## The arguments are:
+## argv[1]: path to the location where generated header file is stored
+## argv[2]: prefixed starting word to filter out plat specific git tag
+if len(sys.argv) > 2:
+    # Call tagInfo
+    tagInfo()
+else:
+    # Call buildInfo
+    buildInfo()
 
