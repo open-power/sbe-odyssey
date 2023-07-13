@@ -39,7 +39,7 @@ enum POZ_PERV_MOD_CHIPLET_CLOCKING_Private_Constants
 {
     NS_DELAY = 100000,      // unit in nano seconds
     DELAY_10us = 10000,      // unit in nano seconds
-    SIM_CYCLE_DELAY = 1000, // unit in cycles
+    SIM_CYCLE_DELAY = 20000, // unit in cycles
     CPLT_ALIGN_CHECK_POLL_COUNT = 10, // count to wait for chiplet aligned
     CPLT_OPCG_DONE_DC_POLL_COUNT = 10,    // count to wait for chiplet opcg done
     OPCG_DONE_SCAN0_POLL_COUNT = 1000, // Scan0 Poll count
