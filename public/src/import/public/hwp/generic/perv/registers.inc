@@ -108,8 +108,10 @@
 #define CPLT_CONF1 0x01000009
 #define CPLT_CONF1__NEST_PROGDLY(value) BITVALUE(16, 20, value)
 
+#define PERV_CTRL1_SET 0x5012B
 #define PERV_CTRL1_CLEAR 0x5013B
 #define PERV_CTRL1__TP_CHIPLET_CLK_PDLY_BYPASS_EN_DC BIT(2)
+#define PERV_CTRL1__SEC_BUF_STRENGTH(value) BITVALUE(16, 19, value)
 
 //added below fields by kjduffy to support zme
 #define ROOT_CTRL1__BURNIN_MODE BIT(24)
