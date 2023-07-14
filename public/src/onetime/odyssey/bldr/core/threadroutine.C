@@ -429,6 +429,9 @@ void bldrthreadroutine(void *i_pArg)
                     lfrReg.disable_invalid_scom_addr_check = 0x1;
                 }
 
+                //Update the LFR reg to tell its a imprint/lab only driver
+                lfrReg.is_imprint_mode = 0x1;
+
                 //Update LFR Reg. Update LFR W_OR
                 PPE_STVD(scomt::poz_ppe::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_PPE1, lfrReg);
 
