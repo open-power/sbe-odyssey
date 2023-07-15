@@ -82,7 +82,7 @@
       Bit 24     : Disable Abist
       Bit 25     : Disable Lbist
       Bit 26     : Enable Burn-In mode
-      Bit 27     : Graceful terminate of any istep (via HWP if supported) – only works when in imprint key mode
+      Bit 27     : Graceful terminate of any istep (via HWP if supported) -- only works when in imprint key mode
       Bit 28     : Force production Mode/ Production signed image.
       Bits 29-31 : Reserved
     </description>

@@ -489,7 +489,6 @@ def createOutputDirectory(outputPath, target):
             out.critical("Problem creating: %s" % outputPathCommon)
             out.critical("Exception: %s" % sys.exc_info()[0])
             sys.exit(1)
-        out.print("Output path is %s" % outputPathCommon)
     return outputPathCommon
 
 
@@ -509,7 +508,6 @@ def createSeperateDirForBinFile(eclevel, outputpath, target):
                 out.critical("Problem creating: %s" % outputPathBin)
                 out.critical("Exception: %s" % sys.exc_info()[0])
                 sys.exit(1)
-            out.print("Output path is %s" % outputPathBin)
 
         filename[str(hex(x)) + "_bin"] = os.path.join(outputPathBin, filenameBase + "_" + target + "dd" + str(hex(x))[2:] +".bin")
     return filename
@@ -575,6 +573,8 @@ def main():
     # Setup our logging infrastructure
     # This has to be done after cmdline args are processed and we know output dirs and suffixes
     out.setupLogging(filenames["log"], filenames["console"])
+
+    out.print("Output path is %s" % outputPathCommon)
 
     # parseHdct takes dumpFormat argument, so passing as part of it.
     # By default the dump format will be embc.
