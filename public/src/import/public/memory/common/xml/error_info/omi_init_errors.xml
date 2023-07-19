@@ -37,6 +37,7 @@
     <ffdc>PROC_TARGET</ffdc>
     <ffdc>US_TEMPLATES_0159</ffdc>
     <ffdc>B</ffdc>
+    <ffdc>OCMB_TARGET</ffdc>
     <callout>
       <procedure>CODE</procedure>
       <priority>LOW</priority>
@@ -64,6 +65,7 @@
     <ffdc>PROC_TARGET</ffdc>
     <ffdc>DS_TEMPLATES_0147</ffdc>
     <ffdc>A</ffdc>
+    <ffdc>OCMB_TARGET</ffdc>
     <callout>
       <procedure>CODE</procedure>
       <priority>LOW</priority>
