@@ -27,7 +27,7 @@
 #define __SBESTREAMPAKTOHWP_H
 
 #include "fapi2.H"
-#include "hwp_table.H"
+#include "hwptable.H"
 #include "pakwrapper.H"
 
 /**

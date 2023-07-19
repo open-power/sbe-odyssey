@@ -23,11 +23,10 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#ifndef _ATEFW_H_
-#define _ATEFW_H_
+#pragma once
 
 #include "fapi2.H"
-#include "hwp_table.H"
+#include "hwptable.H"
 
 /**
  * @brief Wrapper function to start the ATE PHY reset sequence
@@ -44,5 +43,3 @@ fapi2::ReturnCode istepATEPHYReset(voidfuncptr_t i_hwp);
  *
  */
 fapi2::ReturnCode istepATEFW(voidfuncptr_t i_hwp);
-
-#endif /* _ATEFW_H_ */

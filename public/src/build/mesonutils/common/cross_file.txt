@@ -161,6 +161,10 @@ runtime_cmn_collectdump_inc_paths = [
     '/public/src/runtime/common/chipops/collectdump',
     ]
 
+runtime_cmn_exc_hwp_inc_paths = [
+    '/public/src/runtime/common/chipops/exchwp',
+    ]
+
 onetime_cmn_inc_paths = [
     '/public/src/onetime/common/srom/init',
     '/public/src/onetime/common/srom/core',
