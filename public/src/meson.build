@@ -86,6 +86,7 @@ runtime_cmn_abs_inc_paths = []
 runtime_cmn_abs_collectdump_inc_paths = []
 runtime_cmn_abs_code_update_inc_paths = []
 runtime_cmn_abs_attributes_inc_paths = []
+runtime_cmn_abs_exc_hwp_inc_paths = []
 onetime_cmn_abs_inc_paths = []
 odyssey_cmn_abs_inc_paths = []
 odyssey_runtime_abs_inc_paths = []
@@ -144,6 +145,13 @@ foreach inc_path : meson.get_external_property('runtime_cmn_attributes_inc_paths
 
   abs_inc_path = '-I' + meson.global_source_root() + inc_path
   runtime_cmn_abs_attributes_inc_paths += abs_inc_path
+
+endforeach
+
+foreach inc_path : meson.get_external_property('runtime_cmn_exc_hwp_inc_paths')
+
+  abs_inc_path = '-I' + meson.global_source_root() + inc_path
+  runtime_cmn_abs_exc_hwp_inc_paths += abs_inc_path
 
 endforeach
 

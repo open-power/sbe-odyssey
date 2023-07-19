@@ -8,13 +8,6 @@
             "headerFile":"istep.H"
         },
         {
-            "cmdClass":"A1",
-            "command":"0x04",
-            "function":"sbeExecuteHWP",
-            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
-            "headerFile":"sbecmdexecutehwp.H"
-        },
-        {
             "cmdClass":"A2",
             "command":"0x01",
             "function":"sbeGetScom",

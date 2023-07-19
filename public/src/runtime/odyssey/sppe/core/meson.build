@@ -36,7 +36,6 @@ infile_c = ['main.C',
             'sbecmdscomaccess.C',
             'sbescom.C',
             'sbecmdringaccess.C',
-            'sbecmdexecutehwp.C',
             'hwpWrapper.C',
             'codeupdateutils.C',
             'sbecmdstopclockswrapper.C',
@@ -48,6 +47,7 @@ infile_c = ['main.C',
             'sbecmdsramaaccesswrap.C',
             'sbetspollctrl.C',
             'sbecollectdumpwrap.C',
+            'hwptable.C',
           ]
 
 odyssey_abs_core_c_file_paths = []
@@ -74,10 +74,11 @@ odyssey_abs_core_c_file_paths += [ abs_pak_c_path,
                                     abs_runtime_cmn_fastarray_c_path,
                                     abs_runtime_cmn_getcapability_c_path,
                                     abs_runtime_cmn_sramaccess_c_path,
+                                    abs_runtime_cmn_exc_hwp_c_path,
                                     abs_i2c_driver_cmn_c_path,
                                     abs_runtime_cmn_collectdump_c_path,
                                     odyssey_abs_hwpf_c_file_paths,
-                                    odyssey_abs_tgt_c_file_paths
+                                    odyssey_abs_tgt_c_file_paths,
                                 ]
 
 # List of image specific customize files
@@ -107,6 +108,7 @@ ody_cmn_chipop_json_list = [
                     CMN_SRAM_ACCESS_CHIPOPS_JSON,
                     CMN_COLLECT_DUMP_CHIPOPS_JSON,
                     CMN_ATTRIBUTES_CHIPOPS_JSON,
+                    CMN_EXC_HWP_CHIPOPS_JSON
                 ]
 
 ody_chipop_json_list = [ody_cmn_chipop_json_list,
@@ -151,7 +153,8 @@ odyssey_sppe_obj_file_cpp = obj_gen_cpp.process([odyssey_abs_core_c_file_paths,
                                         ekb_hwp_abs_inc_paths,
                                         runtime_cmn_abs_code_update_inc_paths,
                                         runtime_cmn_abs_attributes_inc_paths,
-                                        runtime_cmn_abs_collectdump_inc_paths])
+                                        runtime_cmn_abs_collectdump_inc_paths,
+                                        runtime_cmn_abs_exc_hwp_inc_paths])
 
 # tinflate.C must be compiled with -O2 -falign-loops=32 for significantly improved decompression performance
 #   -O2 enables a few additional speed optimizations
