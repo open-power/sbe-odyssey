@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,7 +39,6 @@
 #include <fapi2.H>
 
 #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
-#include <generic/memory/lib/utils/mcbist/gen_mss_mcbist_address.H>
 
 namespace mss
 {
@@ -63,10 +62,19 @@ class mcbistTraits;
 
 ///
 /// @class mcbist_address_map_MCTraits
+/// @tparam MC the mc type
 /// @brief A collection of address mapping traits with MCBIST engine or hardware
 ///
 template< mss::mc_type MC >
 class mcbist_address_map_MCTraits;
+
+///
+/// @class mcbistAddrTraits
+/// @tparam MC the mc type
+/// @brief a collection of traits associated with the MCBIST address class
+///
+template< mss::mc_type MC >
+class mcbistAddrTraits;
 
 }// mss
 #endif
