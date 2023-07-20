@@ -272,22 +272,46 @@ enum TargetType : uint64_t
     TARGET_TYPE_ABUS_ENDPOINT = TARGET_TYPE_ABUS,
 };
 
-///
-/// @brief Forward declaration of the TargetFilter enum type
-///
-/// The actual enum values will be declared in target_filters.H
-///
-enum TargetFilter : uint64_t;
+/**
+ * @brief The helper function used in the conversion of TargetType to LogTargetType.
+ *        This is a recursive function which call itself until the value being passed
+ *        to it is 1.
+ *
+ */
+constexpr uint8_t getBitPos(const uint64_t i_val, const uint8_t i_cur_bit)
+{
+    return ((i_val & 0x1) == 0x1) ?
+           i_cur_bit :
+           getBitPos(i_val >> 1, i_cur_bit + 1);
+}
 
-    constexpr TargetType logToTargetType(const LogTargetType i_logTargetType)
+/**
+ * @brief Function to convert TargetType to LogTargetType
+ *
+ * @return LogTargetType
+ *
+ * Note:
+ *
+ * C++11 allows only a return statement inside a constexpr function,
+ */
+template<TargetType T>
+constexpr LogTargetType toLogTargetType()
+{
+    static_assert(((T - 1) & T) == 0,
+                  "Composite target cannot be converted to LOG_TARGET");
+    return (LogTargetType)getBitPos(T, 0);
+}
+
+constexpr TargetType logToTargetType(const LogTargetType i_logTargetType)
 {
     return TargetType(1ULL << i_logTargetType);
 }
 
+enum TargetFilter : uint64_t;
 // attributeOverride tool requires x86.nfp compile
 #ifndef CONTEXT_x86_nfp
 /// @cond
-constexpr TargetType operator|(TargetType x, TargetType y)
+    constexpr TargetType operator|(TargetType x, TargetType y)
 {
     return static_cast<TargetType>(static_cast<uint64_t>(x) |
                                    static_cast<uint64_t>(y));
@@ -305,5 +329,4 @@ constexpr TargetType operator~(TargetType x)
 }
 /// @endcond
 #endif
-
 }
