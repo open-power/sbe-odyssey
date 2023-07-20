@@ -171,23 +171,27 @@ static ReturnCode poz_bist_execute(
     {
         FAPI_INF("Setup all SCOM registers");
 
-        // TODO pass in zigzag_stagger to setup functions once supported
-        if (i_params.zigzag_stagger)
-        {
-            FAPI_DBG("zigzag_stagger not yet implemented; check back later");
-            return FAPI2_RC_FALSE;
-        }
-
         if (i_params.flags & i_params.bist_flags::ABIST_NOT_LBIST)
         {
             FAPI_TRY(mod_abist_setup(i_chiplets_target,
                                      i_params.base_regions,
                                      i_params.opcg_count,
                                      i_params.idle_count,
-                                     i_params.linear_stagger,
                                      i_params.chiplets_regions,
                                      i_params.flags & i_params.bist_flags::SKIP_FIRST_CLOCK,
                                      i_params.flags & i_params.bist_flags::SKIP_LAST_CLOCK));
+
+            if (i_params.linear_stagger || i_params.zigzag_stagger)
+            {
+                OPCG_REG1_t OPCG_REG1;
+                OPCG_REG1.set_INFINITE_MODE(runn_triggers_opcg_infinite(i_params.opcg_count));
+                FAPI_TRY(mod_stagger_idle_setup(i_chiplets_target,
+                                                i_chiplets_uc,
+                                                i_params.idle_count,
+                                                i_params.linear_stagger,
+                                                i_params.zigzag_stagger,
+                                                OPCG_REG1));
+            }
         }
         else
         {
@@ -198,6 +202,7 @@ static ReturnCode poz_bist_execute(
                 l_ctrl_chiplets = i_params.uc_go_chiplets;
             }
 
+            // TODO consider enabling LBIST to use idle and stagger
             FAPI_TRY(mod_lbist_setup(i_chiplets_target,
                                      i_params,
                                      l_ctrl_chiplets,

@@ -128,12 +128,18 @@ fapi_try_exit:
 }
 
 
+bool runn_triggers_opcg_infinite(const uint64_t i_runn_cycles)
+{
+    // Trigger OPCG infinite mode if loop count is greater than max possible value
+    return i_runn_cycles > 0x7FFFFFFFFFF;
+}
+
+
 ReturnCode mod_abist_setup(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
     uint16_t i_regions,
     uint64_t i_runn_cycles,
     uint64_t i_abist_start_at,
-    uint64_t i_abist_start_stagger,
     const uint16_t* i_chiplets_regions,
     const bool i_skip_first_clock,
     const bool i_skip_last_clock)
@@ -145,9 +151,7 @@ ReturnCode mod_abist_setup(
     OPCG_REG0_t OPCG_REG0;
     OPCG_REG1_t OPCG_REG1;
 
-    // Trigger infinite mode if loop count is greater than max possible value
-    const bool l_opcg_infinite_mode = i_runn_cycles > 0x7FFFFFFFFFF;
-    uint64_t l_idle_count = i_abist_start_at;
+    const bool l_opcg_infinite_mode = runn_triggers_opcg_infinite(i_runn_cycles);
     auto l_chiplets_uc = i_target.getChildren<TARGET_TYPE_PERV>();
 
     FAPI_INF("Entering ...");
@@ -187,29 +191,11 @@ ReturnCode mod_abist_setup(
                                           CLK_REGION_CLOCK_REGION_PERV, i_chiplets_regions));
     }
 
-    FAPI_INF("Configure idle count in OPCG_REG1.");
+    FAPI_INF("Configure idle count and/or OPCG infinite in OPCG_REG1.");
     OPCG_REG1 = 0;
-
-    if (l_opcg_infinite_mode)
-    {
-        FAPI_INF("Loop count value triggers OPCG infinite mode.");
-        OPCG_REG1.set_INFINITE_MODE(1);
-    }
-
-    if (i_abist_start_stagger)
-    {
-        for (auto& targ : l_chiplets_uc)
-        {
-            OPCG_REG1.insertFromRight<0, 36>(l_idle_count);
-            FAPI_TRY(OPCG_REG1.putScom(targ));
-            l_idle_count += i_abist_start_stagger;
-        }
-    }
-    else
-    {
-        OPCG_REG1.insertFromRight<0, 36>(l_idle_count);
-        FAPI_TRY(OPCG_REG1.putScom(i_target));
-    }
+    OPCG_REG1.insertFromRight<0, 36>(i_abist_start_at);
+    OPCG_REG1.set_INFINITE_MODE(l_opcg_infinite_mode);
+    FAPI_TRY(OPCG_REG1.putScom(i_target));
 
     FAPI_INF("Configure loop count and prep OPCG.");
     OPCG_REG0 = 0;
@@ -248,14 +234,12 @@ ReturnCode mod_abist_start(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
     uint16_t i_regions,
     uint64_t i_runn_cycles,
-    uint64_t i_abist_start_at,
-    uint64_t i_abist_start_stagger)
+    uint64_t i_abist_start_at)
 {
     FAPI_TRY(mod_abist_setup(i_target,
                              i_regions,
                              i_runn_cycles,
-                             i_abist_start_at,
-                             i_abist_start_stagger));
+                             i_abist_start_at));
 
     FAPI_TRY(mod_opcg_go(i_target));
 
