@@ -33,7 +33,6 @@
 #define __SBEFW_SBEFIFOMSGUTILS_H
 
 #include <stdint.h>
-#include "sbeexeintf.H"
 #include "sbefifo.H"
 
 /**********************************************************************/

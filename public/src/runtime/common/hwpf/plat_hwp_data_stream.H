@@ -22,9 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef PLATHWPDATASTREAM_H_
-#define PLATHWPDATASTREAM_H_
 
+#pragma once
 /**
  *  @file plat_hw_access.H
  *  @brief Define platform specific calls for hardware accesses.
@@ -66,10 +65,7 @@ namespace fapi2
         sbefifo_hwp_data_istream( sbeFifoType fifoType,
                                   uint32_t words_left = 0,
                                   uint32_t *data = NULL,
-                                  bool doFifoAccess = true ):
-                                  iv_fifoType(fifoType),
-                                  iv_words_left(words_left), iv_data(data),
-                                  iv_doFifoAccess(doFifoAccess) {};
+                                  bool doFifoAccess = true );
 
         /**
          *	@brief Reads 4 bytes of data from the FIFO to the caller.
@@ -86,18 +82,18 @@ namespace fapi2
         /**
          * @brief Reads bytes of buffer data from the caller to the FIFO.
          *
-         * @param[in] length     The amount of data buffer units the buffer
-         * @param[in] buffer     The buffer data to read from FIFO/dump data.
-         * @param[in] isEot      fifo eot expected then true or else false 
-         * @param[in] flush      fifo flush then true or else false
+         * @param[in] i_length     The amount of data buffer units the buffer
+         * @param[in] o_buffer     The buffer data to read from FIFO/dump data.
+         * @param[in] i_isEot      fifo eot expected then true or else false
+         * @param[in] i_flush      fifo flush then true or else false
          *
          * @return
-         *    FAPI2_RC_SUCCESS if data is available
+         *    SBE_SEC_OPERATION_SUCCESSFUL if data is available
          *    any other RC     if an error occurred and the data could not be
          *                     read.
          */
-        uint32_t get( uint32_t length, uint32_t* buffer,
-                      bool isEot = true, bool flush = false );
+        uint32_t get( uint32_t i_length, uint32_t* o_buffer,
+                      bool i_isEot = true, bool i_flush = false );
 
         /**
          * @brief Return FIFO type as per the stream init
@@ -109,11 +105,22 @@ namespace fapi2
             return iv_fifoType;
         }
 
+        /**
+         * @brief Return FIFO remaining word length
+         *
+         * @return return data length in multiple of word
+         */
+        uint32_t getFifoWordLeft()
+        {
+            return iv_words_left;
+        }
+
     private:
-        const sbeFifoType iv_fifoType;
-        uint32_t iv_words_left;
-        uint32_t* iv_data;
-        bool iv_doFifoAccess;
+        const sbeFifoType   iv_fifoType;
+        uint32_t            iv_words_left;
+        uint32_t            iv_len;
+        uint32_t*           iv_data;
+        bool                iv_doFifoAccess;
     };
 
     /**
@@ -272,7 +279,7 @@ namespace fapi2
          * @brief return updated HB MEM address after adding DUMP data
          *
          * @return return updated value back to caller
-         */ 
+         */
         uint64_t getUpdatedHbMemAddr()
         {
             return iv_hbMemAddr + (iv_words_written * 4);
@@ -330,4 +337,3 @@ namespace fapi2
         uint32_t iv_2ndword;
     };
 }
-#endif // PLATHWPDATASTREAM_H_
