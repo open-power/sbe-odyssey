@@ -24,57 +24,112 @@
 /* IBM_PROLOG_END_TAG                                                     */
 
 #include "plat_hwp_data_stream.H"
-#include "sbeFifoMsgUtils.H"
+#include "sbeglobals.H"
 
 using namespace fapi2;
+
+
+sbefifo_hwp_data_istream::sbefifo_hwp_data_istream( sbeFifoType fifoType,
+                                  uint32_t words_left,
+                                  uint32_t *data,
+                                  bool doFifoAccess):
+                                  iv_fifoType(fifoType),
+                                  iv_words_left(words_left), iv_data(data),
+                                  iv_doFifoAccess(doFifoAccess)
+{
+    if (iv_doFifoAccess)
+    {
+        // get the fifo len
+        iv_words_left = SBE_GLOBAL->sbeFifoCmdHdr.len -
+                        sizeof(SBE_GLOBAL->sbeFifoCmdHdr)/sizeof(uint32_t);
+    }
+    iv_len = iv_words_left;
+}
+
 
 ReturnCodes sbefifo_hwp_data_istream::get(hwp_data_unit& o_data)
 {
     #define SBE_FUNC "sbefifo_hwp_data_istream::get"
     SBE_ENTER(SBE_FUNC);
-    if (iv_words_left == 0)
-    {
-        return FAPI2_RC_FALSE;
-    }
+
     uint32_t len = 1;
-    uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
-    if(iv_doFifoAccess)
-    {   // PopUp data from the upstream FIFO
-        rc = sbeUpFifoDeq_mult(len, &o_data, iv_words_left == 1,
-                               false, iv_fifoType);
-        if (rc)
+    ReturnCodes fapiRc = FAPI2_RC_SUCCESS;
+
+    do
+    {
+        if (iv_words_left == 0)
         {
-            return FAPI2_RC_PLAT_ERR_SEE_DATA;
+            fapiRc = FAPI2_RC_FALSE;
+            break;
         }
-    }
-    iv_words_left--;
-    return FAPI2_RC_SUCCESS;
+
+        if(iv_doFifoAccess)
+        {
+            // PopUp data from the upstream FIFO
+            uint32_t fifoRc = sbeUpFifoDeq_mult(len,&o_data, iv_words_left == 1,
+                                                        false, iv_fifoType);
+            if (fifoRc)
+            {
+                fapiRc = FAPI2_RC_PLAT_ERR_SEE_DATA;
+                break;
+            }
+        }
+        else
+        {
+            if ((iv_data != NULL) && iv_words_left)
+            {
+                o_data = iv_data[iv_len - iv_words_left];
+            }
+            else
+            {
+                fapiRc = FAPI2_RC_FALSE;
+                break;
+            }
+        }
+
+        iv_words_left--;
+    }while(0);
+
+    return fapiRc;
     #undef SBE_FUNC
 }
 
-uint32_t sbefifo_hwp_data_istream::get( uint32_t o_length, uint32_t* o_buffer,
-                                        bool i_isEot, bool i_flush )
+
+uint32_t sbefifo_hwp_data_istream::get( uint32_t i_length, uint32_t* o_buffer,
+                                                    bool i_isEot, bool i_flush )
 {
     #define SBE_FUNC "sbefifo_hwp_data_istream::get with length"
     SBE_ENTER(SBE_FUNC);
-    uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
-    uint32_t len = o_length;
 
-    if(iv_doFifoAccess)
-    {   // Push data into the downstream FIFO
-        rc = sbeUpFifoDeq_mult(len, o_buffer, i_isEot,
-                               i_flush, iv_fifoType);
-    }
-    else
+    uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    do
     {
-        if(iv_data == NULL)
-        {
-            rc = SBE_SEC_GET_DUMP_STREAM_FAILED;
+        if(iv_doFifoAccess)
+        {   // Push data into the downstream FIFO
+            rc = sbeUpFifoDeq_mult(i_length, o_buffer, i_isEot, i_flush, iv_fifoType);
+            if (rc != SBE_SEC_OPERATION_SUCCESSFUL)
+            {
+                break;
+            }
         }
-        for( uint8_t i=0; i< o_length; i++ )
-            o_buffer[i] = iv_data[i];
-    }
-    iv_words_left += o_length;
+        else
+        {
+            if (iv_data == NULL && i_length > iv_words_left)
+            {
+                rc = SBE_SEC_GET_DUMP_STREAM_FAILED;
+                break;
+            }
+
+            for( uint8_t i = 0; i < i_length; i++ )
+            {
+                o_buffer[i] = iv_data[(iv_len - iv_words_left) + i];
+            }
+        }
+
+        iv_words_left -= i_length;
+    }while(0);
+
     return rc;
     #undef SBE_FUNC
 }
