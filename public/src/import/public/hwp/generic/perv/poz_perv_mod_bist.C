@@ -34,12 +34,73 @@
 #include <poz_perv_mod_chiplet_clocking.H>
 #include <poz_perv_mod_chiplet_clocking_regs.H>
 #include <poz_perv_mod_bist_common.H>
+#include <target_filters.H>
 
 using namespace fapi2;
 
 enum POZ_PERV_MOD_BIST_Private_Constants
 {
 };
+
+
+ReturnCode mod_stagger_idle_setup(
+    const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
+    const std::vector<Target<TARGET_TYPE_PERV>>& i_chiplets_uc,
+    const uint64_t i_base_idle,
+    const uint64_t i_linear_stagger,
+    const uint64_t i_zigzag_stagger,
+    const uint64_t i_base_opcg_reg1)
+{
+    OPCG_REG1_t OPCG_REG1;
+    OPCG_REG1 = i_base_opcg_reg1;
+
+    uint64_t l_idle_count = i_base_idle;
+    uint64_t l_chiplets_idle_count[64] = {0};
+
+    FAPI_INF("Entering ...");
+
+    if (i_zigzag_stagger)
+    {
+        uint8_t l_ex_zigzag_stagger;
+
+        FAPI_DBG("Calculating zigzag stagger OPCG idle");
+        FAPI_TRY(FAPI_ATTR_GET(ATTR_CHIP_EC_FEATURE_EX_ZIGZAG_STAGGER,
+                               i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>(),
+                               l_ex_zigzag_stagger));
+
+        if (l_ex_zigzag_stagger)
+        {
+            for (auto& targ : i_target.getChildren<TARGET_TYPE_PERV>(TARGET_FILTER_EX))
+            {
+                FAPI_DBG("Applying zigzag stagger to EX chiplet %d", targ.getChipletNumber());
+                l_chiplets_idle_count[targ.getChipletNumber()] += i_zigzag_stagger;
+            }
+
+            for (auto& targ : i_target.getChildren<TARGET_TYPE_PERV>(TARGET_FILTER_EXZIG))
+            {
+                FAPI_DBG("Applying extra zigzag stagger to zig EX chiplet %d", targ.getChipletNumber());
+                l_chiplets_idle_count[targ.getChipletNumber()] += i_zigzag_stagger;
+            }
+        }
+        else
+        {
+            FAPI_DBG("***WARNING*** zigzag stagger requested but not implemented for this chip");
+        }
+    }
+
+    FAPI_DBG("Applying staggered OPCG idle via unicast");
+
+    for (auto& targ : i_chiplets_uc)
+    {
+        OPCG_REG1.insertFromRight<0, 36>(l_idle_count + l_chiplets_idle_count[targ.getChipletNumber()]);
+        FAPI_TRY(OPCG_REG1.putScom(targ));
+        l_idle_count += i_linear_stagger;
+    }
+
+fapi_try_exit:
+    FAPI_INF("Exiting ...");
+    return current_err;
+}
 
 
 ReturnCode mod_bist_poll(

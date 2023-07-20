@@ -38,6 +38,26 @@
 
 using namespace cc;
 
+/// @brief Configure OPCG idle across all provided chiplets.
+/// --Calculate staggered OPCG idle values by chiplet
+/// --Apply OPCG idle value to all chiplets
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
+/// @param[in]   i_chiplets_uc             Container of unicast targets within i_target
+/// @param[in]   i_base_idle               Base idle count value to set in OPCG_REG1
+/// @param[in]   i_linear_stagger          Iteratively increasing OPCG_REG1 idle value per target
+/// @param[in]   i_zigzag_stagger          Zig-zag staggered OPCG_REG1 idle value per chip topology
+/// @param[in]   i_base_opcg_reg1          Initial state of the OPCG_REG1 value before we overlay OPCG idle
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode mod_stagger_idle_setup(
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
+    const std::vector<fapi2::Target<fapi2::TARGET_TYPE_PERV>>& i_chiplets_uc,
+    const uint64_t i_base_idle = 0xF0,
+    const uint64_t i_linear_stagger = 0,
+    const uint64_t i_zigzag_stagger = 0,
+    const uint64_t i_base_opcg_reg1 = 0);
+
 /// @brief Poll for and exit upon OPCG_DONE, BIST_HALT, or (optionally) ABIST_DONE.
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST

@@ -54,6 +54,14 @@ fapi2::ReturnCode apply_regions_by_chiplet(
     const uint32_t i_starting_bit,
     const uint16_t* i_chiplets_regions);
 
+
+/// @brief Determine if a runn count value should trigger OPCG infinite
+///
+/// @param[in]   i_runn_cycles             OPCG loop count value to inspect
+///
+/// @return  true if infinite mode should be used, else false
+bool runn_triggers_opcg_infinite(const uint64_t i_runn_cycles);
+
 /// @brief ABIST setup module
 /// --Switch dual clocked arrays to ABIST clock domain
 /// --Setup BIST regions, clocking.
@@ -64,7 +72,6 @@ fapi2::ReturnCode apply_regions_by_chiplet(
 /// @param[in]   i_regions                 Select base clock / BIST regions
 /// @param[in]   i_runn_cycles             Loop count value to set OPCG run-N mode (>0x7FFFFFFFFFF for infinite)
 /// @param[in]   i_abist_start_at          Idle count value to set in OPCG_REG1
-/// @param[in]   i_abist_start_stagger     Per target OPCG_REG1 stagger value
 /// @param[in]   i_chiplets_regions        Array of custom regions per chiplet in i_target indexed by chiplet ID
 ///                                        If zero for an index, pass; else, overwrite i_regions on that chiplet
 /// @param[in]   i_skip_first_clock        OPCG will skip the first clock (EVEN) and starts with the ODD clock
@@ -76,7 +83,6 @@ fapi2::ReturnCode mod_abist_setup(
     uint16_t i_regions,
     uint64_t i_runn_cycles = 0x42FFF,
     uint64_t i_abist_start_at = 0xF0,
-    uint64_t i_abist_start_stagger = 0,
     const uint16_t* i_chiplets_regions = NULL,
     const bool i_skip_first_clock = false,
     const bool i_skip_last_clock = false);
@@ -114,15 +120,13 @@ fapi2::ReturnCode mod_opcg_go(
 /// @param[in]   i_regions                 Select clock / BIST regions
 /// @param[in]   i_runn_cycles             Loop count value to set OPCG run-N mode (>0x7FFFFFFFFFF for infinite)
 /// @param[in]   i_abist_start_at          Idle count value to set in OPCG_REG1
-/// @param[in]   i_abist_start_stagger     Per target OPCG_REG1 stagger value
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_abist_start(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
     uint16_t i_regions,
     uint64_t i_runn_cycles = 0x42FFF,
-    uint64_t i_abist_start_at = 0xF0,
-    uint64_t i_abist_start_stagger = 0);
+    uint64_t i_abist_start_at = 0xF0);
 
 /// @brief Poll OPCG done bit to check for run-N completeness.
 ///
