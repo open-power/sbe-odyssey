@@ -247,63 +247,6 @@ uint32_t sbeCollectDump::writeGetRingPacketToFifo()
 ////////////////////////////////////////////////////////////////////////////////
 /// SBE get DUMP - Write fast-array data to FIFO
 ////////////////////////////////////////////////////////////////////////////////
-fapi2::ReturnCode sbeCollectDump::getFastarrayControlBlobSize(
-                                                    const char * i_filename,
-                                                    uint32_t & o_blobSizeInWords,
-                                                    sbeSecondaryResponse& o_rc )
-{
-    #define SBE_FUNC " getFastarrayControlBlobSize "
-    SBE_ENTER(SBE_FUNC);
-    fapi2::ReturnCode l_fapiRc = FAPI2_RC_SUCCESS;
-    sbeSecondaryResponse l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
-    const void * controlData   = NULL;
-
-    do
-    {
-        uint32_t controlSize = 0;
-        l_rc = (sbeSecondaryResponse) sbeControlFastArrayGetControlData( i_filename, controlData, controlSize);
-        if (l_rc)
-        {
-            // Error handling for load file
-            SBE_ERROR(SBE_FUNC "sbeControlFastArrayGetControlData failure, RC: 0x%x", l_rc);
-            break;
-        }
-
-        // Calculating control blob size in terms of words
-        // 3 used for word alignment, by neglected decimal point and assigning
-        // to unsigned integer
-        const uint32_t controlLen =  (controlSize + 3) / sizeof(uint32_t);
-
-        // Structure which will give the fast-array blob info
-        poz_fastarray_control_info controlInfo __attribute__((aligned(8))) = {0};
-        // Getting fast-array blob info
-        l_fapiRc = poz_fastarray_get_control_info( (const uint32_t *)controlData,
-                                                 controlLen, controlInfo);
-        if (l_fapiRc)
-        {
-            SBE_ERROR(SBE_FUNC "Fail to execute poz_fastarray_get_control_info"
-                                ", RC: 0x%x", l_fapiRc);
-            break;
-        }
-
-        o_blobSizeInWords = controlInfo.return_data_nwords;
-        SBE_INFO(SBE_FUNC "poz_fastarray control blob size: 0x%x words", controlInfo.return_data_nwords);
-
-    }while(0);
-
-    if (controlData)
-    {
-        // free loaded file
-        SBE_GLOBAL->embeddedArchive.free_file(controlData);
-    }
-
-    SBE_EXIT(SBE_FUNC);
-    o_rc = l_rc;
-    return l_fapiRc;
-    #undef SBE_FUNC
-}
-
-
 uint32_t sbeCollectDump::writeGetFastArrayPacketToFifo()
 {
     #define SBE_FUNC "writeGetFastArrayPacketToFifo "
@@ -372,8 +315,9 @@ uint32_t sbeCollectDump::writeGetFastArrayPacketToFifo()
 
         // Getting fast-array control blob size
         uint32_t fastarrayBlobSize = 0x00;
-        l_fapiRc = getFastarrayControlBlobSize( faFileName, fastarrayBlobSize,
-                                                (sbeSecondaryResponse&) l_rc);
+        l_fapiRc = sbeCtrlFaUtilsGetCtrlBlobSize( faFileName,
+                                                  fastarrayBlobSize,
+                                                  (sbeSecondaryResponse&) l_rc);
         if((l_fapiRc != fapi2::FAPI2_RC_SUCCESS) ||
                                         (l_rc != SBE_SEC_OPERATION_SUCCESSFUL))
         {
