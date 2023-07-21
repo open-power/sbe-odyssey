@@ -14,14 +14,6 @@
         "enumdatamemberstartwith": "ODY_TB"
     },
 
-    "fastArrayControlSet": {
-        "mc_core": "0x00000001",
-        "mc_pub0": "0x00000002",
-        "mc_pub1": "0x00000003",
-        "mc_io"  : "0x00000004",
-        "mc_perv": "0x00000005"
-    },
-
     "stopClocksTgtType": {
         "all": "0x0000001C",
         "mc" : "0x00080015"

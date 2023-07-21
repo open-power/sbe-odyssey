@@ -254,17 +254,6 @@ class JsonParser:
         else:
             self.raiseExp("JSON data not loaded. Call 'parseJsonFile()' first.")
 
-    def getFastarrayConfig(self):
-        self.fastarrayConfig = None
-        if self.jsonParsedData:
-            if (self.jsonParsedData["fastArrayControlSet"]):
-                self.fastarrayConfig = self.jsonParsedData["fastArrayControlSet"]
-                return self.fastarrayConfig
-            else:
-                return self.fastarrayConfig
-        else:
-            self.raiseExp("JSON data not loaded. Call 'parseJsonFile()' first.")
-
     def getStopClockConfig(self):
         self.stopclockConfig = None
         if self.jsonParsedData:
@@ -275,7 +264,6 @@ class JsonParser:
                 return self.stopclockConfig
         else:
             self.raiseExp("JSON data not loaded. Call 'parseJsonFile()' first.")
-
 
 
 ############################################################
@@ -401,7 +389,6 @@ def createSBEFormattedChipType(chipType, chipUnitType, chipNum):
 
     # |      6 BITS       | 6 BITS | 6 BITS |
     # |   CHIPLET OFFSET  | START  |   END  |
-
     chip = chip << 12
     out.debug("chiplet number %s" %chip)
     if ((chipNum == None) or (chipNum == 'defall')):
@@ -512,14 +499,18 @@ def createSeperateDirForBinFile(eclevel, outputpath, target):
         filename[str(hex(x)) + "_bin"] = os.path.join(outputPathBin, filenameBase + "_" + target + "dd" + str(hex(x))[2:] +".bin")
     return filename
 
+
+def getStringwithNByteAlign (i_inputString, i_nBytesToAlign):
+    alignedString = i_inputString[:i_nBytesToAlign].ljust(i_nBytesToAlign, '\x00')
+    alignedBytes = alignedString.encode ('ascii')
+    return (alignedBytes)
+
 ############################################################
 # Main - Main - Main - Main - Main - Main - Main - Main
 ############################################################
 
 # Create a generic time stamp we can use throughout the program
 timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-
-
 
 def main():
     argParser = ArgParser()
@@ -735,13 +726,14 @@ def main():
                 # Write the control_set to HDCT binary in case of fast array if not
                 # found in dict write 0xffffffff
                 if(entry.command == "getfastarray"):
-                    if entry.commandArg in jsonparse.getFastarrayConfig().keys():
-                        out.info("Control set: %s " % jsonparse.getFastarrayConfig()[entry.commandArg])
-                        fdDict[key].write(struct.pack(">I", int(jsonparse.getFastarrayConfig()[entry.commandArg], 16)))
-                        parsedData.append(struct.pack(">I", int(jsonparse.getFastarrayConfig()[entry.commandArg], 16)))
+                    fastarrayFilenameSizeMax = 32
+                    if entry.commandArg:
+                        out.info("Control set: %s " % entry.commandArg)
+                        fdDict[key].write(getStringwithNByteAlign(entry.commandArg, fastarrayFilenameSizeMax))
+                        parsedData.append(getStringwithNByteAlign(entry.commandArg, fastarrayFilenameSizeMax))
                     else:
-                        fdDict[key].write(struct.pack(">I",0xffffffff))
-                        parsedData.append(struct.pack(">I", struct.pack(">I",0xffffffff)))
+                        fdDict[key].write(getStringwithNByteAlign("", fastarrayFilenameSizeMax))
+                        parsedData.append(getStringwithNByteAlign("", fastarrayFilenameSizeMax))
                         out.info("Control_set info not found for fast array: %s " % entry.commandArg)
 
                 # Write the data to HDCT incase of getmempba and getsram
@@ -833,20 +825,20 @@ def main():
 
 
                 # Printing binary value for comapre
-                out.print("Packet : +++")
+                out.debug("Packet : +++")
                 # |      6 BITS       | 6 BITS | 6 BITS |4 bits| 10 Bits |
                 # |   CHIPLET OFFSET  | START  |   END  |Cmd  | Content |
                 chipinfoprint = (chipInfo >> 14)
-                out.print("generic Val: %s %s %s %s %s" % ( hex((chipinfoprint >> 12) & 0x3F),
+                out.debug("generic Val: %s %s %s %s %s" % ( hex((chipinfoprint >> 12) & 0x3F),
                                             hex((chipinfoprint >> 6) & 0x3F),
                                             hex((chipinfoprint) & 0x3F),
                                             hex((cmdType >> 10 ) & 0xF),
                                             hex((bitMapDumpTypes) & 0x3FF) ))
 
-                out.print("Addr: %s" % hex(addr) )
-                out.print('PACKET with no comama  ' + ' '.join(' '.join(format(i, '02X') for i in list(j)) for j in parsedData) )
-                out.print('PACKET with with comama' + ',  '.join(''.join(format(i, '02X') for i in list(j)) for j in parsedData) )
-                out.print("Packet : ---")
+                out.debug("Addr: %s" % hex(addr) )
+                out.debug('PACKET with no comama  ' + ' '.join(' '.join(format(i, '02X') for i in list(j)) for j in parsedData) )
+                out.debug('PACKET with with comama' + ',  '.join(''.join(format(i, '02X') for i in list(j)) for j in parsedData) )
+                out.debug("Packet : ---")
 
 
 
