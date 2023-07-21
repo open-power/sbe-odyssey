@@ -74,6 +74,9 @@ enum fastarray_constants
     FA_FLAG_SET_SDIS        = 0x000002,
     FA_FLAG_COMPLETE_ABIST  = 0x000004,
     FA_FORMAT_VERSION       = 6,
+    OPCG_CAPT_SL_NSL_ARY    = 0x1C,
+    OPCG_CAPT_SL_NSL        = 0x18,
+    ARY_PIPE_MAX_LEN        = 5,
 };
 
 /*
@@ -218,6 +221,37 @@ fapi_try_exit:
     return current_err;
 }
 
+static ReturnCode setup_opcg_sequence(
+    const Target<TARGET_TYPE_PERV>& i_target_chiplet,
+    const uint8_t i_capt_value,
+    const fastarray_header& i_options)
+{
+    /* calculate OPCG_CAPT sequence length */
+    unsigned int l_seq_len = 0;
+
+    for (int i = 0; i < 12; i++)
+    {
+        if ((i_options.slow_clock_phases & (0x80000000 >> i)) or (i_options.fast_clock_phases & (0xC0000000 >> (i * 2))))
+        {
+            l_seq_len = i + 1;
+        }
+    }
+
+    /* set up all OPCG_CAPT regs */
+    FAPI_TRY(setup_opcg_capt(i_target_chiplet, OPCG_CAPT1, l_seq_len,
+                             i_capt_value, i_options.slow_clock_phases),
+             "Failed to set up OPCG_CAPT1");
+    FAPI_TRY(setup_opcg_capt(i_target_chiplet, OPCG_CAPT2, 0, i_capt_value,
+                             i_options.fast_clock_phases & 0xFFF00000),
+             "Failed to set up OPCG_CAPT2");
+    FAPI_TRY(setup_opcg_capt(i_target_chiplet, OPCG_CAPT3, 0, i_capt_value,
+                             i_options.fast_clock_phases << 12),
+             "Failed to set up OPCG_CAPT3");
+
+fapi_try_exit:
+    return current_err;
+}
+
 /**
  * @brief Set up a chiplet for fast array dump
  * @param[in] i_target_chiplet The chiplet to prepare
@@ -238,19 +272,8 @@ static ReturnCode setup(
 {
     // Five-bit value for OPCG_CAPT registers. Bits are SL, NSL, ARY, SE, FCE in that order
     // For flush cycles, we set up SL+NSL, for actual dumps SL+NSL+ARY
-    const uint8_t l_capt_value = i_setup_flush ? 0x18 : 0x1C;
+    const uint8_t l_capt_value = i_setup_flush ? OPCG_CAPT_SL_NSL : OPCG_CAPT_SL_NSL_ARY;
     buffer<uint64_t> l_buf;
-
-    /* calculate OPCG_CAPT sequence length */
-    unsigned int l_seq_len = 0;
-
-    for (int i = 0; i < 12; i++)
-    {
-        if ((i_options.slow_clock_phases & (0x80000000 >> i)) or (i_options.fast_clock_phases & (0xC0000000 >> (i * 2))))
-        {
-            l_seq_len = i + 1;
-        }
-    }
 
     /* Switch dual-clocked arrays to the local ABIST engine */
     {
@@ -289,15 +312,7 @@ static ReturnCode setup(
     FAPI_TRY(putScom(i_target_chiplet, OPCG_REG1, l_buf), "Failed to clear OPCG_REG1");
     FAPI_TRY(putScom(i_target_chiplet, OPCG_REG2, l_buf), "Failed to clear OPCG_REG2");
 
-    FAPI_TRY(setup_opcg_capt(i_target_chiplet, OPCG_CAPT1, l_seq_len,
-                             l_capt_value, i_options.slow_clock_phases),
-             "Failed to set up OPCG_CAPT1");
-    FAPI_TRY(setup_opcg_capt(i_target_chiplet, OPCG_CAPT2, 0, l_capt_value,
-                             i_options.fast_clock_phases & 0xFFF00000),
-             "Failed to set up OPCG_CAPT2");
-    FAPI_TRY(setup_opcg_capt(i_target_chiplet, OPCG_CAPT3, 0, l_capt_value,
-                             i_options.fast_clock_phases << 12),
-             "Failed to set up OPCG_CAPT3");
+    FAPI_TRY(setup_opcg_sequence(i_target_chiplet, l_capt_value, i_options));
 
     if (i_options.flags & FA_FLAG_SET_SDIS)
     {
@@ -367,7 +382,6 @@ static ReturnCode run_abist_cycles(
 
 fapi_try_exit:
     return current_err;
-
 }
 
 /**
@@ -413,6 +427,7 @@ static ReturnCode cleanup(
     FAPI_TRY(putScom(i_target_chiplet, CLK_REGION, l_buf), "Failed to clear clock regions");
     FAPI_TRY(putScom(i_target_chiplet, OPCG_CAPT1, l_buf), "Failed to clear OPCG_CAPT1");
     FAPI_TRY(putScom(i_target_chiplet, OPCG_CAPT2, l_buf), "Failed to clear OPCG_CAPT2");
+    FAPI_TRY(putScom(i_target_chiplet, OPCG_CAPT3, l_buf), "Failed to clear OPCG_CAPT3");
 
     /* Restore OPCG_ALIGN */
     FAPI_TRY(putScom(i_target_chiplet, OPCG_ALIGN, i_reg_save.opcg_align), "Failed to restore OPCG_ALIGN");
@@ -587,7 +602,24 @@ static ReturnCode do_dump(
             // Cycles but no data -> skip cycles
             if (!l_nwords)
             {
-                FAPI_TRY(run_abist_cycles(i_perv_target, l_ncycles * l_stepsize, i_options));
+                uint32_t l_skip_cycles = l_ncycles;
+
+                // If we skip a large amount of cycles, skip the majority with ARY clocks turned off
+                // to work around potential ABIST bugs where arrays are accidentally written during
+                // an outer loop switch.
+                if (l_ncycles > ARY_PIPE_MAX_LEN)
+                {
+                    FAPI_TRY(setup_opcg_sequence(i_perv_target, OPCG_CAPT_SL_NSL, i_options));
+                    FAPI_TRY(run_abist_cycles(i_perv_target, (l_ncycles - ARY_PIPE_MAX_LEN) * l_stepsize, i_options));
+                    FAPI_TRY(setup_opcg_sequence(i_perv_target, OPCG_CAPT_SL_NSL_ARY, i_options));
+
+                    // Do run the last few cycles with ARY back on to account for potential
+                    // pipelining inside the arrays; the final clock cycle must yield data
+                    // as if nothing ever changed.
+                    l_skip_cycles = ARY_PIPE_MAX_LEN;
+                }
+
+                FAPI_TRY(run_abist_cycles(i_perv_target, l_skip_cycles * l_stepsize, i_options));
                 continue;
             }
 
