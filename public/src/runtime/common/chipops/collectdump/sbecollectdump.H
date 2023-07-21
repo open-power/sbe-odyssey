@@ -388,23 +388,6 @@ class sbeCollectDump
         void getAbsoluteAddressForRing( const fapi2::plat_target_handle_t i_tgtHndl,
                                 const uint32_t i_relativeAddr,
                                 uint32_t &o_absoluteAddr);
-
-        /**
-         * @brief Get the fast-array blob size for the provided blob in terms of n words.
-         * Before running the fast-array HWP, this function is used to calculate
-         * the fast-array blob size, which aids in the creation of dump headers.
-         *
-         * @param [in] i_filename const pointer to file name buffer
-         * @param [out] o_blobSizeNwords reference which return the blob size in
-         *                                terms of n words
-         * @param [out] o_rc secondary rc
-         * @return fapi RC
-         *
-        */
-        fapi2::ReturnCode getFastarrayControlBlobSize(
-                                                    const char * i_filename,
-                                                    uint32_t & o_blobSizeNwords,
-                                                    sbeSecondaryResponse& o_rc );
         /***************** Plat Functions Ends ********************/
 
 };

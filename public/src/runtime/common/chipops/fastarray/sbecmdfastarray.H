@@ -27,6 +27,7 @@
 #include <stdint.h>
 #include "sbe_sp_intf.H"
 #include "plat_hwp_data_stream.H"
+#include <fapi2.H>
 
 
 /**
@@ -69,33 +70,17 @@ typedef struct
 
 
 /**
- * @brief Function for search and allocate scratch area for given file
- *
- * @param [in] i_fname pointer to the buffer
- * @param [out] o_control pointer points to allocated scratch area for given file
- * @param [out] o_controlSize size
- *
- * @return secondary RC
- *
- * @note this function will load a file, and it's the caller's responsibility
- *       to call free().
-*/
-uint32_t sbeControlFastArrayGetControlData( const char * i_fname,
-                                            const void* &o_control,
-                                            uint32_t& o_controlSize);
-
-/**
  * @brief sbeControlFastArrayWrap: write the data Buffer
  *
  * @param[in]  i_getStream  upstream fifo for chip-op /
  *                          memory interface for dump
- * @param[in]  i_putStream  down-stream fifo for chip-op /
+ * @param[in]  o_putStream  down-stream fifo for chip-op /
  *                          memory interface for dump
  *
  * @return    Rc from the FIFO access utility
  */
 uint32_t sbeControlFastArrayWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
-                                 fapi2::sbefifo_hwp_data_ostream& i_putStream);
+                                 fapi2::sbefifo_hwp_data_ostream& o_putStream);
 
 /**
  * @brief Control Fast Array Command (0xA601)
@@ -105,3 +90,57 @@ uint32_t sbeControlFastArrayWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
  * @return    RC from the FIFO access utility
  */
 uint32_t sbeControlFastArray(uint8_t *i_pArg);
+
+
+////////////////////////////////////////////////////////////////////////////////
+/// SBE Fast-array utils functions
+////////////////////////////////////////////////////////////////////////////////
+/**
+ * @brief Function for search and allocate scratch area for given file
+ *
+ * @param [in] i_fname pointer to the buffer
+ * @param [out] o_controlData pointer points to allocated scratch area for given
+ *                            file
+ * @param [out] o_controlSize size
+ *
+ * @return secondary RC
+ *
+ * @note this function will load a file, and it's the caller's responsibility
+ *       to call free().
+*/
+uint32_t sbeCtrlFaUtilsGetCtrlData( const char * i_fname,
+                                    const void* &o_controlData,
+                                    uint32_t& o_controlSize);
+
+
+/**
+ * @brief Get the fast-array blob size for the provided control data
+ *
+ * @param [in] i_controlData pointer points to allocated scratch area for file
+ * @param [in] i_controlSize allocated scratch area size
+ * @param [out] o_blobSizeInWords reference which return the blob size in
+ *                               terms of n words
+ * @return fapi RC
+*/
+fapi2::ReturnCode sbeCtrlFaUtilsGetCtrlDataBlobSize (const void * i_controlData,
+                                                  uint32_t i_controlSize,
+                                                  uint32_t& o_blobSizeInWords);
+
+/**
+ * @brief Get the fast-array blob size for the given fast-array file.
+ * Before running the fast-array HWP, this function is used to calculate
+ * the fast-array blob size.
+ *
+ * @param [in] i_filename        const pointer to file name buffer
+ * @param [out] o_blobSizeInWords reference which return the blob size in
+ *                               terms of n words
+ * @param [out] o_rc secondary rc
+ * @return fapi RC
+*/
+fapi2::ReturnCode sbeCtrlFaUtilsGetCtrlBlobSize ( const char * i_filename,
+                                                  uint32_t& o_blobSizeInWords,
+                                                  sbeSecondaryResponse& o_rc );
+
+
+
+

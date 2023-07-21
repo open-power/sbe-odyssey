@@ -39,10 +39,10 @@ namespace fapi2
     static const targetInfo_t ody_platTargetMap[] =
     {
     // cpltid  target type                  cpltbased cplt instbase count
-        {0x0,  LOG_SBE_ROOT_CHIP_TYPE,      0,        0,   0,       1},
-        {0x1,  LOG_TARGET_TYPE_PERV,        1,        1,   0,       1},
+        {0x0,  LOG_SBE_ROOT_CHIP_TYPE,      0,        0,   0,       1}, // ROOT Chip target
+        {0x1,  LOG_TARGET_TYPE_PERV,        1,        1,   0,       1}, // TP target
         // Adding second PERV target since chiplet number is not continuous.
-        {0x8,  LOG_TARGET_TYPE_PERV,        1,        1,   8,       1},
+        {0x8,  LOG_TARGET_TYPE_PERV,        1,        1,   8,       1}, // MC target
         {0xD,  LOG_TARGET_TYPE_MEM_PORT,    0,        1,   0,       2},
         {0xD,  LOG_TARGET_TYPE_DIMM,        0,        0,   0,       2},
         {0xE,  LOG_TARGET_TYPE_DIMM,        0,        0,   2,       2},
