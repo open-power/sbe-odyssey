@@ -92,7 +92,6 @@ class HDCTBinEntry():
         self.addDetails = dict()
 
     def printSingleEntry(self):
-
         out.debug(" ")
         out.debug("{:<45} {:<15} {:<15} {:<15} {:<15} {:<15}".format('Dump Types','Command Type','Chip Type','Chip Unit Type','Chip Unit Num','Address','Func Args'))
         out.debug("{:<45} {:<15} {:<15} {:<15} {:<15} {:<15}".format(str(self.dumpTypes),self.command,str(self.chipType),str(self.chipUnitType),str(self.chipUnitNum),self.address,str(self.funcargs)))
@@ -206,7 +205,7 @@ def createHDCTTxt(HDCTBinFileName, parserUsage = "ppe", stringHashDict = None):
             # decode control_set in case of fast array and write into dictionary
             # Will not be validated as it is not a part of HDCT.txt
             if(entry.command == "getfastarray"):
-                entry.addDetails.update({entry.address:int.from_bytes(file.read(4), "big")})
+                entry.addDetails.update({entry.address:int.from_bytes(file.read(32), "big")})
 
             # Decode ring address and length in case of getring and write into dictionary.
             # Will not be validated as it is not part of HDCT.txt
