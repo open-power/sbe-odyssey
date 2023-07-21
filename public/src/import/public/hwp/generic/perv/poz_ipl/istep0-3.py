@@ -1824,6 +1824,13 @@ def ody_chiplet_fir_init():
     mod_setup_tracestop_on_xstop(MCGROUP_GOOD_NO_TP)
     mod_unmask_firs(target)
 
+    # Mask FIR reporting to host via OMI until OMI is set up;
+    # will be cleared in ody_unmask later.
+    HOST_MASK_REG.ERROR_MASK_0 = 1
+    HOST_MASK_REG.ERROR_MASK_1 = 1
+    HOST_MASK_REG.ERROR_MASK_2 = 1
+    HOST_MASK_REG.ERROR_MASK_3 = 1
+
 def zme_chiplet_fir_init():
     mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, zme_chiplet_delay_table)
     mod_setup_tracestop_on_xstop(MCGROUP_GOOD_NO_TP)

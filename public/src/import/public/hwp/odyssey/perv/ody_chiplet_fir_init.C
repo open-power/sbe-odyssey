@@ -33,8 +33,14 @@
 #include <ody_chiplet_fir_init.H>
 #include <poz_perv_common_params.H>
 #include <poz_perv_mod_misc.H>
+#include <poz_scom_perv.H>
 
+SCOMT_PERV_USE_PCBCTL_COMP_INTR_HOST_MASK_REG;
+
+using namespace scomt::poz;
 using namespace fapi2;
+
+typedef PCBCTL_COMP_INTR_HOST_MASK_REG_t INTR_HOST_MASK_t;
 
 enum ODY_CHIPLET_FIR_INIT_Private_Constants
 {
@@ -43,10 +49,21 @@ enum ODY_CHIPLET_FIR_INIT_Private_Constants
 
 ReturnCode ody_chiplet_fir_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
+    INTR_HOST_MASK_t HOST_MASK;
+
     FAPI_INF("Entering ...");
     FAPI_TRY(mod_setup_clockstop_on_xstop(i_target, ody_chiplet_delay_table));
     FAPI_TRY(mod_setup_tracestop_on_xstop(i_target, DBG_SCOM_BASE));
     FAPI_TRY(mod_unmask_firs(i_target));
+
+    // Mask FIR reporting to host via OMI until OMI is set up;
+    // will be cleared in ody_unmask later.
+    FAPI_TRY(HOST_MASK.getScom(i_target));
+    HOST_MASK.set_ERROR_MASK_0(1);
+    HOST_MASK.set_ERROR_MASK_1(1);
+    HOST_MASK.set_ERROR_MASK_2(1);
+    HOST_MASK.set_ERROR_MASK_3(1);
+    FAPI_TRY(HOST_MASK.putScom(i_target));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
