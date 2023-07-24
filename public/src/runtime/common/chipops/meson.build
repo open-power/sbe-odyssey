@@ -30,5 +30,5 @@ subdir('getcapabilities')
 subdir('sramaccess')
 subdir('collectdump')
 subdir('codeupdate')
-subdir('exchwp')
+subdir('exechwp')
 

@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/chipops/exchwp/sbecmdexecutehwp.C $ */
+/* $Source: public/src/runtime/common/chipops/exechwp/sbecmdexecutehwp.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -48,8 +48,8 @@ bool isHWPParamsValid(const uint8_t hwpClass, const uint8_t hwpNum)
     do
     {
         // Validate the HWP Class.
-        SBE_INFO(SBE_FUNC " HWPTable length is 0x%02X", hwpTable.len);
-        if(hwpClass > hwpTable.len)
+        SBE_INFO(SBE_FUNC " HWPTable length is 0x%02X", g_hwpTable.len);
+        if(hwpClass > g_hwpTable.len)
         {
             SBE_ERROR(SBE_FUNC "Invalid HWP Class 0x%02X", hwpClass);
             isValid = false;
@@ -57,7 +57,7 @@ bool isHWPParamsValid(const uint8_t hwpClass, const uint8_t hwpNum)
         }
 
         // Validate the HWP Number.
-        auto hwpTableEntry = &hwpTable.hwpClassArr[hwpClass - 1];
+        auto hwpTableEntry = &g_hwpTable.hwpClassArr[hwpClass - 1];
         SBE_INFO(SBE_FUNC " HWPTableArray length is 0x%02X for HWP table Array 0x%02X",
                             hwpTableEntry->len, hwpClass);
         if(hwpNum > hwpTableEntry->len)
@@ -115,7 +115,7 @@ uint32_t sbeExecuteHWP(uint8_t *i_pArg)
         }
 
         // Execute the HWP
-        auto hwpTableEntry = &hwpTable.hwpClassArr[regReqMsg.hwpClass - 1];
+        auto hwpTableEntry = &g_hwpTable.hwpClassArr[regReqMsg.hwpClass - 1];
         auto hwpMap = &hwpTableEntry->hwpNum[regReqMsg.hwpNum - 1];
         if(hwpMap->hwpWrapper != NULL)
         {

@@ -161,8 +161,8 @@ runtime_cmn_collectdump_inc_paths = [
     '/public/src/runtime/common/chipops/collectdump',
     ]
 
-runtime_cmn_exc_hwp_inc_paths = [
-    '/public/src/runtime/common/chipops/exchwp',
+runtime_cmn_exec_hwp_inc_paths = [
+    '/public/src/runtime/common/chipops/exechwp',
     ]
 
 onetime_cmn_inc_paths = [
