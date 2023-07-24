@@ -88,7 +88,7 @@ the `SIMICS_MODEL` envrionment varaible to switch the model for the validation a
 ```
 - In simics console run this.
 ```
-simics> start-cbs-poz 0
+simics> poz-start-cbs 0
 simics> run           # This code will start exeuting code form reset vector.
                       # Put any breakpoint before this if required.
 ```
@@ -110,7 +110,7 @@ simics> run           # This code will start exeuting code form reset vector.
 ### To get SBE traces:
 - Run below command at the simics console.
 ```
-simics> sbe-trace-poz 0
+simics> poz-sbe-trace 0
 ```
 
 ### To run test-cases:
