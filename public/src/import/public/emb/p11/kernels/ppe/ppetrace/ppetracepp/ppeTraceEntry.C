@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -56,7 +56,7 @@ string PpeTraceEntry::getTimeStamp() const
 {
     ostringstream oss;
     oss << dec << setfill('0') << setw(8) << iv_Seconds
-        << '.' << setw(9) << iv_microSeconds;
+        << '.' << setw(6) << iv_microSeconds;
     return oss.str();
 }
 
@@ -80,7 +80,7 @@ string PpeTraceEntry::getTimeDiff(const PpeTraceEntry* i_previous) const
 
     ostringstream oss;
     oss << dec << setfill('0') << setw(8) << diff_Seconds
-        << '.' << setw(9) << diff_microSs;
+        << '.' << setw(6) << diff_microSs;
     return oss.str();
 
 
