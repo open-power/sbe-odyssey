@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/chipops/exchwp/sbecmdexecutehwp.H $ */
+/* $Source: public/src/runtime/common/chipops/exechwp/hwptable.H $        */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -26,24 +25,41 @@
 #pragma once
 
 #include <stdint.h>
+#include <stddef.h>
+#include "return_code.H"
 
-/**
-  * @brief Execute HWP message header
-  */
-typedef struct
+using voidfuncptr_t = void (*)(void);
+using hwp_t = fapi2::ReturnCode (*)( voidfuncptr_t );
+
+struct hwpMap_t
 {
-    uint32_t :8;
-    uint32_t hwpClass:8;
-    uint32_t :8;
-    uint32_t hwpNum:8;
+    hwp_t         hwpWrapper;
+    voidfuncptr_t hwp;
+};
 
-}sbeExecuteHwpMsgHdr_t;
+struct hwpTableEntry_t
+{
+    uint8_t         hwpClassNum;
+    hwpMap_t*       hwpNum;
+    size_t          len;
+};
 
-/**
- * @brief sbeExecuteHWP: Implement sbeExecuteHWP chipop. (0xA104)
- *
- * @param[in] i_pArg Buffer to be passed to the function
- *
- * @return    Rc from the FIFO access utility
- */
-uint32_t sbeExecuteHWP(uint8_t *i_pArg);
+struct hwpTable_t
+{
+    hwpTableEntry_t*    hwpClassArr;
+    size_t              len;
+};
+
+#define HWP_MAP(wrapper, hwp) \
+    {wrapper, reinterpret_cast<voidfuncptr_t>(hwp)}
+
+#define HWP_ENTRY(hwpClass, hwpClassTable) \
+    {hwpClass, hwpClassTable, sizeof(hwpClassTable)/sizeof(hwpClassTable[0])}
+
+#define REGISTER_HWP_TABLE(entries) \
+     hwpTable_t g_hwpTable = { \
+       entries, \
+       sizeof(entries)/sizeof(entries[0]) \
+    };
+
+extern hwpTable_t g_hwpTable;

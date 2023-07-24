@@ -148,7 +148,7 @@ foreach inc_path : meson.get_external_property('runtime_cmn_attributes_inc_paths
 
 endforeach
 
-foreach inc_path : meson.get_external_property('runtime_cmn_exc_hwp_inc_paths')
+foreach inc_path : meson.get_external_property('runtime_cmn_exec_hwp_inc_paths')
 
   abs_inc_path = '-I' + meson.global_source_root() + inc_path
   runtime_cmn_abs_exc_hwp_inc_paths += abs_inc_path
