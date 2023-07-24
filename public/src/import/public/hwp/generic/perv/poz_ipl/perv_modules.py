@@ -423,6 +423,10 @@ def mod_poz_tp_init_common(target<ANY_POZ_CHIP>):
     ROOT_CTRL1.TP_DI1_DC_B = 1
     ROOT_CTRL1.TP_DI2_DC_B = 1
 
+    ## Drop TP chiplet fence
+    PERV_CTRL0.TC_PERV_CHIPLET_FENCE_DC = 0    # new field - bit 17
+
+
 ISTEP(99, 99, "poz_perv_mod_bist", "")
 
 def poz_bist(target<ANY_POZ_CHIP>, bist_params &i_params):

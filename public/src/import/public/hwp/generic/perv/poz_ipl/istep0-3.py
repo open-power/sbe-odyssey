@@ -1725,9 +1725,6 @@ def p11t_chiplet_startclocks():
     mod_constant_hangpulse_setup(i_target, scomt::tbusl::HANGP_HANG_PULSE_CONFIG_REG, {{9, 3, 0}, {0, 0, 0}, {9, 1, 0}, {0, 0, 0}})
 
 def ody_chiplet_startclocks():
-    ## Drop TP chiplet fence
-    PERV_CTRL0.TC_PERV_CHIPLET_FENCE_DC = 0    # new field - bit 17
-
     with MC chiplet:
         # Deassert ATPGMODE_PUBMAC (asserted in chiplet_reset)
         # before we go through the DDR PHY reset.
@@ -1782,8 +1779,6 @@ def zme_chiplet_startclocks():
 
 def poz_chiplet_startclocks(target<ANY_POZ_CHIP>, target<PERV|MC>, uint16_t i_clock_regions=cc::REGION_ALL_BUT_PLL):
     ## Drop TP chiplet fence
-    PERV_CTRL0.TC_PERV_CHIPLET_FENCE_DC = 0    # new field - bit 17
-
     NET_CTRL0.PERV2CHIPLET_CHIPLET_FENCE = 0    # bit 11
 
     ## Switch ABIST and sync clock muxes to functional state
@@ -1792,7 +1787,7 @@ def poz_chiplet_startclocks(target<ANY_POZ_CHIP>, target<PERV|MC>, uint16_t i_cl
 
     ## Drop chiplet fence
     # Drop fences before starting clocks because fences are DC and might glitch
-    NET_CTRL0.PERV2FSI_CHIPLET_FENCE = 0
+    NET_CTRL0.FENCE_EN = 0
 
     ## Start chiplet clocks
     mod_start_stop_clocks(i_target, i_clock_regions)

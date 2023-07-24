@@ -66,11 +66,6 @@ ReturnCode ody_chiplet_startclocks(const Target<TARGET_TYPE_OCMB_CHIP>& i_target
 
     FAPI_INF("Entering ...");
 
-    FAPI_INF("Drop TP chiplet fence");
-    PERV_CTRL0 = 0;
-    PERV_CTRL0.set_PERV_CHIPLET_FENCE(1);
-    FAPI_TRY(PERV_CTRL0.putScom_CLEAR(i_target));
-
     FAPI_INF("Deassert ATPGMODE_PUBMAC (asserted in chiplet_reset)");
     CPLT_CONF1 = 0;
     CPLT_CONF1.setBit<16>();
