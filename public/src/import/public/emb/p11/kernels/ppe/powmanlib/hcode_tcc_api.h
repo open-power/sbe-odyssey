@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -217,16 +217,16 @@ typedef struct
 enum ACT_CNT_IDX
 {
     ACT_CNT_IDX_CORECLK_OFF    = 0,
-    ACT_CNT_IDX_CORE_VMIN      = 1,
+    ACT_CNT_IDX_CORE_PWR_OFF   = 1,
     ACT_CNT_IDX_MMA_OFF        = 2,
-    ACT_CNT_IDX_CORECACHE_OFF  = 3,
+    ACT_CNT_IDX_CACHE_PWR_OFF  = 3,
     ACT_CNT_IDX_MAX            = 4,
 };
 
 typedef union
 {
-    uint8_t act_val[MAX_TAPS][ACT_CNT_IDX_MAX];
-    uint32_t act_val_core[32];
+    uint8_t act_val[MAX_CORES_PER_TAP][ACT_CNT_IDX_MAX];
+    uint32_t act_val_core[MAX_CORES_PER_TAP];
 } iddq_activity_t;
 
 typedef struct
