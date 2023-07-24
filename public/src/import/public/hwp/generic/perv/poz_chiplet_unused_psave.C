@@ -37,14 +37,14 @@
 
 using namespace fapi2;
 
-
 enum POZ_CHIPLET_UNUSED_PSAVE_Private_Constants
 {
 };
 
 ReturnCode poz_chiplet_unused_psave(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
 {
-    NET_CTRL0_t NET_CTRL0;
+    NET_CTRL0_t  NET_CTRL0;
+    CPLT_CTRL0_t CPLT_CTRL0;
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_mc;
     std::vector<Target<TARGET_TYPE_PERV>> l_chiplets_uc;
 
@@ -53,20 +53,35 @@ ReturnCode poz_chiplet_unused_psave(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_ta
 
     FAPI_DBG("put all non-functional chiplets into a state of minimal power usage");
 
-    for (auto& targ : l_chiplets_uc)
+    for (auto& l_perv : l_chiplets_uc)
     {
-        if (!targ.isFunctional())
+        if (!l_perv.isFunctional())
         {
-            FAPI_TRY(NET_CTRL0.getScom(targ));
+            /* If the chiplet has its own mesh:
+                 - endpoint reset would make sure vital logic is not toggling weirdly
+             - however mesh already in stable state (force out enable & clk async reset)
+             - if power's gone, it's fenced anyways
+             => endpoint reset is a weak requirement
+               If the chiplet is on the mesh of another:
+                 - no endpoint reset (because it forces all vital logic to be free-running)
+             - put the PLATs in flush saving considerable amount of power
+             */
+
+            FAPI_TRY(CPLT_CTRL0.getScom(l_perv));
+            CPLT_CTRL0.set_FORCE_ALIGN(0);
+            FAPI_TRY(CPLT_CTRL0.putScom(l_perv));
+            CPLT_CTRL0.set_FLUSHMODE_INH(0);
+            FAPI_TRY(CPLT_CTRL0.putScom(l_perv));
+
+            FAPI_TRY(NET_CTRL0.getScom(l_perv));
             NET_CTRL0.set_CHIPLET_EN(0);
-            NET_CTRL0.set_PCB_EP_RESET(1);
             NET_CTRL0.set_FENCE_EN(1);
-            FAPI_TRY(NET_CTRL0.putScom(targ));
+            FAPI_TRY(NET_CTRL0.putScom(l_perv));
 
             NET_CTRL0.set_PLL_FORCE_OUT_EN(0);
             NET_CTRL0.set_CLK_ASYNC_RESET(1);
             NET_CTRL0.set_LVLTRANS_FENCE(1);
-            FAPI_TRY(NET_CTRL0.putScom(targ));
+            FAPI_TRY(NET_CTRL0.putScom(l_perv));
         }
     }
 
