@@ -511,6 +511,11 @@ ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
     FAPI_TRY(putScom(l_tpchiplet, ATTN_MASK_RW, 0));
     FAPI_TRY(putScom(l_tpchiplet, LOCAL_XSTOP_MASK_RW, 0));
 
+    FAPI_INF("Drop TP chiplet fence");
+    PERV_CTRL0 = 0;
+    PERV_CTRL0.setBit<17>(); // bit 17: PERV_CHIPLET_FENCE required for Odyssey only
+    FAPI_TRY(PERV_CTRL0.putScom_CLEAR(i_target));
+
 fapi_try_exit:
     FAPI_INF("Exiting ...");
     return current_err;
