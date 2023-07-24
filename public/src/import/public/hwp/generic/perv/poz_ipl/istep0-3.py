@@ -1278,8 +1278,22 @@ def poz_chiplet_unused_psave():
     # now put all non-functional chiplets into a state of minimal power usage
     for chiplet in all PRESENT chiplets:
         if chiplet is not functional:
+            # If the chiplet has its own mesh:
+            # - endpoint reset would make sure vital logic is not toggling weirdly
+            # - however mesh already in stable state (force out enable & clk async reset)
+            # - if power's gone, it's fenced anyways
+            # => endpoint reset is a weak requirement
+            # If the chiplet is on the mesh of another:
+            # - no endpoint reset (because it forces all vital logic to be free-running)
+            # - put the PLATs in flush saving considerable amount of power
+
+            # Put PLATs in flush
+            CPLT_CTRL0.FORCE_ALIGN = 0
+            CPLT_CTRL0.FLUSHMODE_INH = 0
+            
             NET_CTRL0.CHIPLET_ENABLED = 0
-            NET_CTRL0.PCB_EP_RESET = 1
+            # Don't do endpoint reset to save on vital logic power
+            #NET_CTRL0.PCB_EP_RESET = 1
             NET_CTRL0.CHIPLET_FENCE_PCB = 1
             # write NET_CTRL0
             NET_CTRL0.PLLFORCE_OUT_ENABLE = 0
