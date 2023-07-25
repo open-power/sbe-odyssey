@@ -61,6 +61,7 @@ endforeach
 odyssey_abs_core_c_file_paths += [ abs_pak_c_path,
                                     abs_cmn_core_c_path,
                                     abs_cmn_utils_c_path,
+                                    abs_cmn_utils_rt_c_path,
                                     abs_runtime_cmn_core_c_path,
                                     abs_runtime_cmn_ffdc_c_path,
                                     abs_runtime_cmn_targeting_c_path,
@@ -79,6 +80,7 @@ odyssey_abs_core_c_file_paths += [ abs_pak_c_path,
                                     abs_runtime_cmn_collectdump_c_path,
                                     odyssey_abs_hwpf_c_file_paths,
                                     odyssey_abs_tgt_c_file_paths,
+                                    odyssey_abs_attr_c_file_paths
                                 ]
 
 # List of image specific customize files

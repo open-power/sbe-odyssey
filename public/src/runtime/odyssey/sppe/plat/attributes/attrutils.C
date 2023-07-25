@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/plat/attributes/plat_attribute_service.C $ */
+/* $Source: public/src/runtime/odyssey/sppe/plat/attributes/attrutils.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,28 +23,12 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-// This file is to just not include target.H file from import
-// Nothing required here.
+#include "attrutils.H"
+#include "attribute.H"
 
-#include <plat_attribute_service.H>
-#include "sbeutil.H"
-#include "securityutils.H"
+using namespace fapi2;
 
-void plat_AttrInit(fapi2::ATTR_NAME_Type i_chip_name)
+void platSetAttrSecurityLvl(fapi2::ATTR_SECURITY_LEVEL_Type i_securityLvl)
 {
-#define SBE_FUNC "plat_AttrInit "
-
-    if(SBE::isSimicsRunning())
-    {
-        SBE_INFO(SBE_FUNC "Setting ATTR_IS_SIMICS");
-
-        fapi2::ATTR::TARGET_TYPE_SYSTEM::ATTR_IS_SIMICS = 1;
-    }
-
-    fapi2::ATTR::ATTR_NAME = i_chip_name;
-
-    //Set ATTR_SECURITY_LEVEL
-    setAttrSecurityLvl();
-
-#undef SBE_FUNC
+    ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_SECURITY_LEVEL = i_securityLvl;
 }

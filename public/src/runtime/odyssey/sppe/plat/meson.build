@@ -27,6 +27,5 @@ ODYSSEY_TARGET_LIST_JSON = files('targetlist.json')
 
 subdir('targeting')
 subdir('errorxml')
-if platform != 'odysseylab'
-    subdir('attributes')
-endif
+subdir('attributes')
+

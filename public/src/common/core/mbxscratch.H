@@ -42,7 +42,8 @@ typedef union
         // @ref iv_bootFlags - sberegaccess::BootMode enum
         uint64_t iv_bootFlags : 2;                        //bit 0..1: p11, odyssey
         uint64_t iv_mpiplMode : 1;                        //bit 2: p11
-        uint64_t iv_mbx11DontCare1 : 2;                   //bit 3..4: p11
+        uint64_t iv_attrIsSimulation : 1;                 //bit 3: p11, odyssey
+        uint64_t iv_emulateSABSet : 1;                    //bit 4: p11, odyssey
         uint64_t iv_sendFFDC : 1;                         //bit 5: p11, odyssey
         uint64_t iv_disableSecurity : 1;                  //bit 6: p11
         uint64_t iv_allowAttrOverride : 1;                //bit 7: p11, odyssey
@@ -59,8 +60,14 @@ typedef union
         uint64_t iv_enableHwKeyHashVerification : 1;      //bit 19: p11, odyssey
         uint64_t iv_fileHashCalculationEnable : 1;        //bit 20: p11, odyssey
         uint64_t iv_enforceMatchingSecurity  : 1;         //bit 21: p11, odyssey
-        uint64_t iv_secureBootValidityVerification :1;    //bit 22: p11, odyssey
-        uint64_t iv_mbx11DontCare2 : 9;                   //bit 23..31: p11
+        uint64_t iv_secureBootValidityVerification : 1;   //bit 22: p11, odyssey
+        uint64_t iv_disableIOBist : 1;                    //bit 23: p11, odyssey
+        uint64_t iv_disableAbist : 1;                     //bit 24: p11, odyssey
+        uint64_t iv_disableLbist : 1;                     //bit 25: p11, odyssey
+        uint64_t iv_enableBurnInMode : 1;                 //bit 26: p11, odyssey
+        uint64_t iv_enableIstepTermination : 1;           //bit 27: p11, odyssey
+        uint64_t iv_forceProductionMode : 1;              //bit 28: p11, odyssey
+        uint64_t iv_mbx11DontCare2 : 3;                   //bit 29..31: p11, odyssey
         uint64_t iv_mbx11Unused : 32;
     };
     uint64_t iv_mbx11;
