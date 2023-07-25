@@ -23,6 +23,14 @@
 #
 # IBM_PROLOG_END_TAG
 
+odyssey_abs_attr_c_file_paths = [files('attrutils.C')
+            ]
+
+#We can break off at this point if its a lab image as lab would do below stuff in internal
+if platform == 'odysseylab'
+  subdir_done()
+endif
+
 #Keep all genfiles related stuff below as odysseylab will generate its own genfiles
 ###################### Runtime genfiles ########################################
 ODYSSEY_ATTR_DB_FILE_PATH = odyssey_sppe_genfiles_dir_path + '/sbe_attr.db'

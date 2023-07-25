@@ -45,6 +45,7 @@
 #include "imgcustomize.H"
 #include "sbethermalsensorpolltimer.H"
 #include "sbetspolling.H"
+#include "securityutils.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -197,8 +198,6 @@ int  main(int argc, char **argv)
             break;
         }
 
-        plat_AttrInit(fapi2::ENUM_ATTR_NAME_ODYSSEY);
-
         if(SbeRegAccess::theSbeRegAccess().init())
         {
             SBE_ERROR(SBE_FUNC"Failed to initialize SbeRegAccess.");
@@ -208,6 +207,8 @@ int  main(int argc, char **argv)
             // Hard Reset SBE to recover
             break;
         }
+
+        plat_AttrInit(fapi2::ENUM_ATTR_NAME_ODYSSEY);
 
         sbePakSearchStartOffset();
 

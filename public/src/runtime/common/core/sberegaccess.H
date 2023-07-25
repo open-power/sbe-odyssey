@@ -263,6 +263,57 @@ class SbeRegAccess
         }
 
         /**
+         * @brief Get the Secure Mode bit from lfr reg(SAB bit)
+         *        This bit is set in SROM code by reading SAB bit
+         *
+         * @return true SAB set
+         * @return false SAB not set
+         */
+        bool getSecureMode()
+        {
+            return lfrReg.secure_mode;
+        }
+
+        /**
+         * @brief Get the Is Imprint Mode value from LFR reg
+         *        This value is updated in boot loader flow
+         *        based on runtime image prefix header flags
+         *        in secure header
+         *
+         * @return true runtime image is imprint/lab signed
+         * @return false runtime image is production signed
+         */
+        bool getIsImprintMode()
+        {
+            return lfrReg.is_imprint_mode;
+        }
+
+        /**
+         * @brief Get the Emulate Security Enable bit from scratch11
+         *        Emulates SAB bit that based on OTPROM fuse values
+         *
+         * @return true user want to emulate SAB on
+         * @return false user does not want to emulate SAB on
+         */
+        bool getEmulateSABSet()
+        {
+            return mbx11.iv_emulateSABSet;
+        }
+
+        /**
+         * @brief Get the Force Production Mode bit from scratch11
+         *
+         * @return true User wants to force production level security
+         * @return false User wants to proceed with imprint/production
+         *               level security based on runtime secure header
+         *               prefix flags
+         */
+        bool getForceProductionMode()
+        {
+            return mbx11.iv_forceProductionMode;
+        }
+
+        /**
          * @brief Update the async bit into the SBE messaging register. The
          * function does a read-modify-write, so any bits other than the async
          * bits are retained.

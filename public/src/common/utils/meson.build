@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -23,14 +23,14 @@
 #
 # IBM_PROLOG_END_TAG
 
-cmn_utils_dir_path = meson.global_source_root() + '/public/src/common/utils/'
+#NOTE: Do not add files which uses fapi, targeting etc in below list as its
+#      used by SROM and BLDR images which do not support it.
+abs_cmn_utils_c_path = [files('sbeutil.C',
+                              'metadata_base.C')
+                       ]
 
-infile_c = ['sbeutil.C',
-            'metadata_base.C'
-            ]
-
-abs_cmn_utils_c_path = []
-
-foreach infile : infile_c
-  abs_cmn_utils_c_path += cmn_utils_dir_path + infile
-endforeach
+#Note: Add any files that use fapi,targeting etc in below list that will
+#      be picked up for runtime images (SPPE,HSBE,TSBE etc)
+abs_cmn_utils_rt_c_path = [files('securityutils.C',
+                              )
+                          ]
