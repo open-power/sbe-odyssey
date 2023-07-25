@@ -30,15 +30,6 @@
 
 
 //
-// IddqResult_t : IDDQ result structure
-//
-typedef struct
-{
-    uint32_t      iddq_100ua; // 4
-    uint32_t      icsq_100ua; // 4
-} IDDQResult_t;
-
-//
 // OCEIDDQData_t : High-level OCE IDDQ data struct for OCC(405)
 //
 // Notes:
@@ -46,12 +37,12 @@ typedef struct
 //
 typedef struct
 {
-    IDDQResult_t iddq_result;             // 8B
+    uint32_t     iddq_100ua;              // 4B
     uint32_t     tbr_new_dce_data_detect; // 4B - Time OCE detected NEW data from DCE
     uint32_t     tbr_iddq_calc_duration;  // 4B - IDDQ calculation duration (ref: data_ready detect)
     uint32_t     tod_iddq_rcvd;           // 4B - For optional use by 405 using local 2MHz TOD
     uint16_t     oce_status_flag;         // 2B - Status vector. See OCE_STATUS_FLAGS enum below.
-    uint16_t     undefined[1];            // 2B - Pad to 8B (VC push demand)
+    uint16_t     undefined[3];            // 6B - Pad to 8B (VC push demand)
 } OCEIDDQData_t;
 
 
