@@ -114,7 +114,7 @@ fapi2::ReturnCode nibble_enable_db_disable(const fapi2::buffer<uint32_t>& i_nibb
         uint8_t(&o_byte_disables)[10]);
 
 constexpr uint8_t NUM_RCW = 0x80;
-constexpr uint8_t NUM_SUPPORTED_RCW = 19;
+constexpr uint8_t NUM_SUPPORTED_RCW = 20;
 constexpr uint8_t DIMM_NUMBER = 2;
 constexpr uint8_t DIMM0 = 0;
 constexpr uint8_t DIMM1 = 1;
@@ -137,6 +137,17 @@ get_rcw[NUM_SUPPORTED_RCW][mss::ddr5::mr::ATTR_NUM_CHANNELS][DIMM_NUMBER] =
         {
             {0x00, mss::attr::get_ddr5_rcw00_chb_d0},
             {0x00, mss::attr::get_ddr5_rcw00_chb_d1}
+        }
+    },
+    //RCW01
+    {
+        {
+            {0x01, mss::attr::get_ddr5_rcw01_cha_d0},
+            {0x01, mss::attr::get_ddr5_rcw01_cha_d1}
+        },
+        {
+            {0x01, mss::attr::get_ddr5_rcw01_chb_d0},
+            {0x01, mss::attr::get_ddr5_rcw01_chb_d1}
         }
     },
     //RCW05
@@ -4245,16 +4256,6 @@ fapi2::ReturnCode configure_dram_train_message_block(const fapi2::Target<fapi2::
         i_target,
         PMU_SMB_DDR5U_1D_t& io_msg_block);
 
-///
-/// @brief Configure and load the msg block on to snps phy
-/// @param[in] i_target the target on which to operate
-/// @param[in,out] io_msg_block the message block to configure and load
-/// @return fapi2::FAPI2_RC_SUCCESS iff successful
-///
-fapi2::ReturnCode configure_and_load_dram_train_message_block(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>&
-        i_target,
-        PMU_SMB_DDR5U_1D_t& io_msg_block);
-
 // The defines should be removed once GENERICI2C target is added to SBE
 #if (!defined(__HOSTBOOT_MODULE) && !defined(__PPE__))
 ///
@@ -4274,6 +4275,17 @@ fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CRESPONDER> get_rcd_target(const fapi2
 ///
 void assemble_rcw_i2c_data(const rcw_id& i_rcw_info, std::vector<uint8_t>& o_rcw_puti2c_data);
 #endif
+
+///
+/// @brief Configure and load the msg block on to snps phy
+/// @param[in] i_target the target on which to operate
+/// @param[in,out] io_msg_block the message block to configure and load
+/// @return fapi2::FAPI2_RC_SUCCESS iff successful
+///
+fapi2::ReturnCode configure_and_load_dram_train_message_block(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>&
+        i_target,
+        PMU_SMB_DDR5U_1D_t& io_msg_block);
+
 ///
 /// @brief Processes a streaming message from the mailbox protocol
 /// @param[in] i_target the target on which to operate

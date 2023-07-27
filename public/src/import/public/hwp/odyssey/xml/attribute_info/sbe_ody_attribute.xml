@@ -3683,6 +3683,9 @@
   <entry name="ATTR_RCW00_CHA_D0">
     <value>1</value>
   </entry>
+  <entry name="ATTR_RCW01_CHA_D0">
+    <value>0</value>
+  </entry>
   <entry name="ATTR_RCW05_CHA_D0">
     <value>0</value>
   </entry>
@@ -3740,6 +3743,9 @@
   <!-- RCW attributes for Channel A DIMM1-->
   <entry name="ATTR_RCW00_CHA_D1">
     <value>1</value>
+  </entry>
+   <entry name="ATTR_RCW01_CHA_D1">
+    <value>0</value>
   </entry>
   <entry name="ATTR_RCW05_CHA_D1">
     <value>0</value>
@@ -3799,6 +3805,9 @@
   <entry name="ATTR_RCW00_CHB_D0">
     <value>1</value>
   </entry>
+  <entry name="ATTR_RCW01_CHB_D0">
+    <value>0</value>
+  </entry>
   <entry name="ATTR_RCW05_CHB_D0">
     <value>0</value>
   </entry>
@@ -3856,6 +3865,9 @@
   <!-- RCW attributes for Channel B DIMM1-->
   <entry name="ATTR_RCW00_CHB_D1">
     <value>1</value>
+  </entry>
+  <entry name="ATTR_RCW01_CHB_D1">
+    <value>0</value>
   </entry>
   <entry name="ATTR_RCW05_CHB_D1">
     <value>0</value>
