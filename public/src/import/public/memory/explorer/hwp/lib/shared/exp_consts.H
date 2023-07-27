@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -36,9 +36,9 @@
 #ifndef MSS_EXP_CONSTS_H
 #define MSS_EXP_CONSTS_H
 
-#ifndef __PPE__
-    #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
-#endif
+// #ifndef __PPE__
+//     #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
+// #endif
 
 namespace mss
 {
