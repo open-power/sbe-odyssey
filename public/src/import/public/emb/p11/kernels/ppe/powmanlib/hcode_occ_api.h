@@ -28,7 +28,7 @@
 // *HWP HW Owner        : Prasad Bg Ranganath <prasadbgr@in.ibm.com>
 // *HWP HW Owner        : Greg Still <stillgs@us.ibm.com>
 // *HWP Team            : PM
-// *HWP Level           : 1
+// *HWP Level           : 3
 // *HWP Consumed by     : PGPE:OCC
 
 
@@ -161,9 +161,6 @@ typedef struct ipcmsg_wof_ceffinfo
 // -----------------------------------------------------------------------------
 
 /// Hub collected data
-
-/// Shared SRAM Section Header with Tap Number
-
 typedef struct
 {
     union
@@ -176,10 +173,10 @@ typedef struct
         } words;
         struct
         {
-            uint64_t rdp_limit_10ma             : 16;
-            uint64_t io_power_proxy_10w         : 16;
-            uint64_t compute_pwr_10mw           : 16;
-            uint64_t reserved0                  : 16;
+            uint64_t rdp_limit_10ma         : 16;
+            uint64_t io_power_proxy_10w     : 16;
+            uint64_t io_compute_pwr_10mw    : 16;
+            uint64_t reserved0              : 16;
         } fields;
     } dw0;
     union
@@ -192,17 +189,47 @@ typedef struct
         } words;
         struct
         {
-            uint64_t vdd_avg_mv                 : 16;
-            uint64_t vcs_avg_mv                 : 16;
-            uint64_t vdn_avg_mv                 : 16;
-            uint64_t vio_avg_mv                 : 16;
+            uint64_t vdn_avg_mv             : 16;
+            uint64_t vio_avg_mv             : 16;
+            uint64_t idn_avg_10ma           : 16;
+            uint64_t iio_avg_10ma           : 16;
         } fields;
     } dw1;
+    union
+    {
+        uint64_t value;
+        struct
+        {
+            uint32_t high_order;
+            uint32_t low_order;
+        } words;
+        struct
+        {
+            uint64_t idn_max_100ma          : 16;
+            uint64_t idn_min_100ma          : 16;
+            uint64_t iio_max_100ma          : 16;
+            uint64_t iio_min_100ma          : 16;
+        } fields;
+    } dw2;
+    union
+    {
+        uint64_t value;
+        struct
+        {
+            uint32_t high_order;
+            uint32_t low_order;
+        } words;
+        struct
+        {
+            uint64_t vdn_vrm_temp_0p1degC   : 16;
+            uint64_t vio_vrm_temp_0p1degC   : 16;
+            uint64_t reserved3              : 32;
+        } fields;
+    } dw3;
 } OSS_HUB_t;
 
 // -----------------------------------------------------------------------------
 
-/// Per TAP collected data
 typedef struct
 {
     union
@@ -215,10 +242,10 @@ typedef struct
         } words;
         struct
         {
-            uint64_t vdd_avg_mv                 : 16;
-            uint64_t vcs_avg_mv                 : 16;
-            uint64_t idd_avg_10ma              : 16;
-            uint64_t ics_avg_10ma               : 16;
+            uint64_t idd_avg_10ma           : 16;
+            uint64_t ics_avg_10ma           : 16;
+            uint64_t idd_max_100ma          : 16;
+            uint64_t idd_min_100ma          : 16;
         } fields;
     } dw0;
     union
@@ -231,10 +258,10 @@ typedef struct
         } words;
         struct
         {
-            uint64_t idd_max_100ma              : 16;
-            uint64_t ocs_avg_max_10ma           : 16;
-            uint64_t ocs_avg_0p01pct            : 16;
-            uint64_t dirty_current_10ma         : 16;
+            uint64_t ics_max_100ma          : 16;
+            uint64_t ics_min_100ma          : 16;
+            uint64_t ocs_avg_max_10ma       : 16;
+            uint64_t ocs_avg_max_0p01pct    : 16;
         } fields;
     } dw1;
     union
@@ -247,8 +274,9 @@ typedef struct
         } words;
         struct
         {
-            uint64_t ics_max_10ma               : 16;
-            uint64_t reserved                   : 48;
+            uint64_t vdd_vrm_temp_0p1degC   : 16;
+            uint64_t vcs_vrm_temp_0p1degC   : 16;
+            uint64_t reserved3              : 32;
         } fields;
     } dw2;
 } OSS_TAP_t;
@@ -256,6 +284,11 @@ typedef struct
 // -----------------------------------------------------------------------------
 
 /// XGPE created content
+
+// "XGW"
+#define HCODE_OCC_XGPE_MAGIC_NUMBER         0x584757
+#define HCODE_OCC_XGPE_VERSION              1
+
 typedef struct
 {
     union
@@ -263,31 +296,66 @@ typedef struct
         uint32_t value;
         struct
         {
-            uint32_t  magic     :   24;
-            uint32_t  version   :    8;
+            uint32_t  magic_value           : 24;
+            uint32_t  version               : 8;
         } fields;
     } signature;
     uint8_t     header_reserved;
-    uint8_t     num_of_taps;
+    uint8_t     valid_tap_vector;
     uint16_t    length;
     uint16_t    hub_data_offset;
     uint16_t    hub_data_length;
     uint16_t    tap_data_offset;
     uint16_t    tap_data_length;
-} OCCShSrScTapHeader_t;
+} OCCShSrXGPEHeader_t;
 
 typedef struct
 {
-    OCCShSrScTapHeader_t    header;
+    OCCShSrXGPEHeader_t     header;
     OSS_HUB_t               hub;
     OSS_TAP_t               tap[MAX_TAPS];
-} OSS_xgpe_values_t;
+} XGPE_t;
+
+// -----------------------------------------------------------------------------
+
+/// PGPE created content
+
+// "PGW"
+#define HCODE_OCC_PGPE_MAGIC_NUMBER         0x504757
+#define HCODE_OCC_PGPE_VERSION              1
+
+typedef struct
+{
+    union
+    {
+        uint32_t value;
+        struct
+        {
+            uint32_t  magic_value           : 24;
+            uint32_t  version               : 8;
+        } fields;
+    } signature;
+    uint8_t     header_reserved;
+    uint8_t     valid;
+    uint16_t    length;
+    uint64_t    reserved;
+} OCCShSrPGPEHeader_t;
+
+// Content is presently undefined
+typedef struct
+{
+    OCCShSrPGPEHeader_t    header;
+    uint64_t               reserved;
+} PGPE_t;
 
 // -----------------------------------------------------------------------------
 
 /// Hcode<>OCC Shared Data Structure
 ///
 /// Shared data between OCC, PGPE and XGPE
+// "TSS"
+#define HCODE_OCC_SHARED_MAGIC_NUMBER       0x4F5353
+#define HCODE_OCC_SHARED_VERSION            1
 
 /// Shared SRAM Header
 typedef struct
@@ -297,21 +365,21 @@ typedef struct
         uint32_t value;
         struct
         {
-            uint32_t  magic     :   24;
-            uint32_t  version   :    8;
+            uint32_t  magic_value           : 24;
+            uint32_t  version               : 8;
         } fields;
     } signature;
     uint32_t pgpe_beacon;
-    uint16_t pce_data_offset;
-    uint16_t pce_data_length;
-    uint16_t xgpe_data_offset;
-    uint16_t xgpe_data_length;
     uint16_t errlog_table_offset;
     uint16_t errlog_table_length;
-    uint32_t reserved0;
-    uint64_t reserved1;
+    uint16_t xgpe_data_offset;
+    uint16_t xgpe_data_length;
+    uint16_t pgpe_data_offset;
+    uint16_t pgpe_data_length;
+    uint16_t pce_tap0_data_offset;
+    uint16_t pce_tap0_data_length;
+    uint64_t reserved0;
 } OCCShSrHeader_t;
-
 
 typedef struct
 {
@@ -322,11 +390,16 @@ typedef struct
     /// Hcode Error Log Index
     hcode_error_table_t errlog_idx;
 
-    /// PCE Produced WOF Values
-    PCW_t               pce_wof_values[MAX_TAPS];
-
     /// XGPE Produced WOF Values
-    OSS_xgpe_values_t   xgpe_wof_values;
+    XGPE_t              xgpe_wof_values;
+
+    /// PGPE Produced WOF Values
+    PGPE_t              pgpe_wof_values;
+
+    /// PCE Produced WOF Values
+    /// This member is actually a ping/pong buffer that is 2 times the size of
+    ///    the structure.
+    PCW_t               pce_wof_values[2 * MAX_TAPS];
 
 } HcodeOCCSharedData_t;
 
