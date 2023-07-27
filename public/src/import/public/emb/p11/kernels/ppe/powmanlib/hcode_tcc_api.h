@@ -25,10 +25,10 @@
 /// @file  hcode_tcc_api.h
 /// @brief Structures used between the Compute Engines on the TCC
 ///
-// *HWP HW Owner        : Rahul Batra <rbatra@us.ibm.com>
+// *HWP HW Owner        : Prasad Bg Ranganath <prasadbgr@in.ibm.com>
 // *HWP HW Owner        : Greg Still <stillgs@us.ibm.com>
 // *HWP Team            : PM
-// *HWP Level           : 1
+// *HWP Level           : 3
 // *HWP Consumed by     : DCE:OCE:PCE:XCE
 
 
@@ -36,6 +36,7 @@
 #define __HCODE_TCC_API_H__
 
 #include <p11_ppb_global.H>
+#include <p11_hcode_image_defines.H>
 #include <hcode_errl_table.h>
 
 #ifdef __cplusplus
@@ -57,7 +58,7 @@ enum TCC_IPC_MESSAGE_IDS
 
 // -----------------------------------------------------------------------------
 
-/// Shared SRAM Section Header
+/// TCC Shared SRAM Section Header
 typedef struct
 {
     union
@@ -65,11 +66,11 @@ typedef struct
         uint32_t value;
         struct
         {
-            uint32_t  magic     :   24;
-            uint32_t  version   :    8;
+            uint32_t  magic_value               : 24;
+            uint32_t  version                   : 8;
         } fields;
     } signature;;
-    uint8_t     header_reserved;
+    uint8_t     block_valid;
     uint8_t     instance_number;
     uint16_t    length;
 } TCCShSrScHeader_t;
@@ -77,6 +78,11 @@ typedef struct
 // -----------------------------------------------------------------------------
 
 /// DCE created content
+
+// "DCV"
+#define HCODE_TCC_DCE_MAGIC_NUMBER      0x444356
+#define HCODE_TCC_DCE_VERSION           1
+
 ///   This is a placeholder structure for DCE created elements.  This
 ///   may well only amount to an address where the structure resides.
 typedef struct
@@ -101,6 +107,11 @@ typedef struct
 // -----------------------------------------------------------------------------
 
 /// OCE created content
+
+// "OCV"
+#define HCODE_TCC_OCE_MAGIC_NUMBER      0x4F4356
+#define HCODE_TCC_OCE_VERSION           1
+
 ///   This is a placeholder structure for OCE consumable temperatures.  This
 ///   may well only amount to an address where the structure resides.
 typedef struct
@@ -125,28 +136,14 @@ typedef struct
 // -----------------------------------------------------------------------------
 
 /// PCE created content
-///   This content is created by PCE and shipped to the OCC shared SRAM.
-typedef struct
-{
-    union
-    {
-        uint32_t value;
-        struct
-        {
-            uint32_t  magic     :   24;
-            uint32_t  version   :    8;
-        } fields;
-    } signature;;
-    uint8_t     header_reserved;
-    uint8_t     instance_number;
-    uint16_t    length;
-} OCCShSrScHeader_t;
 
-/// PCE created content
+// "PCV"
+#define HCODE_TCC_PCE_MAGIC_NUMBER      0x504356
+#define HCODE_TCC_PCE_VERSION           1
 
 typedef struct
 {
-    OCCShSrScHeader_t header;
+    TCCShSrScHeader_t header;
 
     union
     {
@@ -158,15 +155,16 @@ typedef struct
         } words;
         struct
         {
-            uint64_t average_pstate             : 8;
-            uint64_t average_frequency_pstate   : 8;
+            uint64_t average_pstate             : 8;  // Average of all Pstates including the throttle space
+            uint64_t average_frequency_pstate   : 8;  // Average of all Pstates in the frequency region only
             uint64_t wof_clip_pstate            : 8;
-            uint64_t average_throttle_idx       : 8;
-            uint64_t cratio_vdd_roundup_avg     : 16;
-            uint64_t reserved1                  : 16;
+            uint64_t wof_clip_throttle          : 8;
+            uint64_t uv_avg_0p1pct              : 8;
+            uint64_t ov_avg_0p1pct              : 8;
+            uint64_t ceff_ratio                 : 8;
+            uint64_t dirty                      : 8;
         } fields;
     } dw1;
-
     union
     {
         uint64_t value;
@@ -177,9 +175,10 @@ typedef struct
         } words;
         struct
         {
-            uint64_t uv_avg_0p1pct              :  8;
-            uint64_t ov_avg_0p1pct              :  8;
-            uint64_t reserved_2                 : 48;
+            uint64_t average_throttle_idx       : 8;
+            uint64_t reserved_2                 : 8;
+            uint64_t cratio_vdd_avg             : 16;
+            uint64_t cratio_vdd_actual          : 32;
         } fields;
     } dw2;
     union
@@ -192,7 +191,10 @@ typedef struct
         } words;
         struct
         {
-            uint64_t dirty_ttsr;
+            uint64_t vdd_ext_avg_mv             : 16;
+            uint64_t vdd_eff_avg_mv             : 16;
+            uint64_t idd_avg_10ma               : 16;
+            uint64_t vcs_int_avg_mv             : 16;
         } fields;
     } dw3;
     union
@@ -205,9 +207,57 @@ typedef struct
         } words;
         struct
         {
-            uint64_t reserved;
+            uint64_t dirty_ttsr;
         } fields;
-    } dw47[4];    // 4 reserved double words
+    } dw4;
+    union
+    {
+        uint64_t value;
+        struct
+        {
+            uint32_t high_order;
+            uint32_t low_order;
+        } words;
+        struct
+        {
+            uint64_t ceff_ratio_idx             : 8;
+            uint64_t cratio_idx                 : 8;
+            uint64_t hs_ratio_idx               : 8;
+            uint64_t icr_mma_idx                : 8;
+            uint64_t io_idx                     : 8;
+            uint64_t icr_value                  : 8;
+            uint64_t reserved_5                 : 16;
+        } fields;
+    } dw5;
+    union
+    {
+        uint64_t value;
+        struct
+        {
+            uint32_t high_order;
+            uint32_t low_order;
+        } words;
+        struct
+        {
+            uint64_t wof_adjust_freq_mhz        : 16;
+            uint64_t wof_limit_freq_mhz         : 16;
+            uint64_t wof_adjust_throt_idx       : 16;
+            uint64_t wof_limit_throt_idx        : 16;
+        } fields;
+    } dw6;
+    union
+    {
+        uint64_t value;
+        struct
+        {
+            uint32_t high_order;
+            uint32_t low_order;
+        } words;
+        struct
+        {
+            uint64_t reserved_7;
+        } fields;
+    } dw7;
 } PCW_t;
 
 // -----------------------------------------------------------------------------
@@ -223,9 +273,13 @@ enum ACT_CNT_IDX
     ACT_CNT_IDX_MAX            = 4,
 };
 
+// "XCV"
+#define HCODE_TCC_XCE_MAGIC_NUMBER      0x584356
+#define HCODE_TCC_XCE_VERSION           1
+
 typedef union
 {
-    uint8_t act_val[MAX_CORES_PER_TAP][ACT_CNT_IDX_MAX];
+    uint8_t  act_val[MAX_CORES_PER_TAP][ACT_CNT_IDX_MAX];
     uint32_t act_val_core[MAX_CORES_PER_TAP];
 } iddq_activity_t;
 
@@ -270,7 +324,7 @@ typedef struct
     uint16_t errlog_table_offset;
     uint16_t errlog_table_length;
     uint8_t  reserved0[3];
-    uint8_t  iddq_active_sample_depth;
+    uint8_t  iddq_active_sample_depth;   // ???
 } TCCShSrHeader_t;
 
 
