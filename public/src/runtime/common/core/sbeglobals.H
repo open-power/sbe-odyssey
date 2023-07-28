@@ -136,7 +136,7 @@ class SBEGlobalsSingleton
         static uint64_t i2cModeRegister;
 
         // PPE PIB CTRL ID
-        static uint8_t pibCtrlId;
+        static PIBCtrlId pibCtrlId;
 
     private:
         /* Constructor
