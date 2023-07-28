@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -63,7 +63,7 @@ IPC_FUNC_ID(IPC_MSGID_405_START_SUSPEND)
 IPC_FUNC_ID(IPC_MSGID_405_CLIPS)
 IPC_FUNC_ID(IPC_MSGID_405_SET_PMCR)
 IPC_FUNC_ID(IPC_MSGID_405_WOF_CONTROL)
-IPC_FUNC_ID(IPC_MSGID_405_WOF_VFRT)
+IPC_FUNC_ID(IPC_MSGID_405_WOF_CEFF_INFO)
 IPC_FUNC_ID(IPC_MSGID_405_RESERVED_1)
 IPC_FUNC_ID(IPC_MSGID_405_RESERVED_2)
 IPC_FUNC_ID(IPC_MSGID_XGPE_PGPE_BEACON_STOP)
