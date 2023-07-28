@@ -48,6 +48,8 @@ class CMNGlobalsSingleton
     }
 };
 
+enum PIBCtrlId {PIBCTRL_SPPE = 0xD, PIBCTRL_SBE = 0xE, PIBCTRL_PME = 0xC};
+
 extern CMNGlobalsSingleton* cmnGlobal;
 
 
