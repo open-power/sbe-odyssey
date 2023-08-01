@@ -191,13 +191,18 @@ typedef struct
 // Notes:
 // - See previous notes to CoreData_t.
 // - Compared to the P10 implementation approach, which would have consumed a total of
-//   8 x 96B = 768B, the below struct reduces this to 8 x 88B + 24B = 728B.
+//   8 x 96B = 768B, the below struct reduces this to 8 x 88B + 24B   =  752 Bytes
+// - With a future increase to 12 cores and 3 quads, size grows to = 1116 Bytes
 // - The data block is managed in link.ld to guarantee 8-byte alignment.
 //
 typedef struct
 {
-    CoreData_t  core_data[MAX_CORES_PER_TAP];  // 8 x 88B
-    QuadData_t  quad_data[MAX_QUADS_PER_TAP];  // 2 x 2B
+    CoreData_t  core_data[MAX_CORES_PER_TAP];      // 8 x 88B
+    uint16_t    core_temp[MAX_CORES_PER_TAP];      // 8 x 2B (some avg of core, cache, mma)
+    QuadData_t  quad_data[MAX_QUADS_PER_TAP];      // 2 x 2B
+    uint16_t    dragstrip_temp[MAX_QUADS_PER_TAP]; // 2 x 2B (straight from quad_data)
+    uint16_t    dragstrip_temp_avg;                // 1 x 2B (some avg of dragstrip temps)
+    uint8_t     undefined[2];                      // 2B - Pad to 4B
     uint32_t    tbr_notif_period;          // 4B - Most recent notification period (DB or FIT)
     uint32_t    tbr_notif_rcvd;            // 4B - Most recent notif reception time (DB or FIT)
     uint32_t    tbr_data_collect_duration; // 4B - Data collection duration (since notif_rcvd)
