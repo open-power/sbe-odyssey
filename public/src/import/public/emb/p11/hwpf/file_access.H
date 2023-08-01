@@ -35,7 +35,7 @@
 extern "C" {
 #endif
 
-void qme_load_ring(void*, uint16_t*);
+void qme_load_ring(const void*, uint16_t*);
 
 #ifdef __cplusplus
 }
@@ -57,7 +57,7 @@ namespace fapi2
 ///         FAPI2_RC_FILE_NOT_FOUND if the file was not found, or another error.
 inline ReturnCode loadEmbeddedFile(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
                                    const char* i_path,
-                                   void*& o_data, size_t& o_size)
+                                   const void*& o_data, size_t& o_size, uint32_t i_flags)
 {
     uint16_t l_length = 0;
     qme_load_ring(o_data, &l_length);
@@ -68,7 +68,7 @@ inline ReturnCode loadEmbeddedFile(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_tar
 /// @brief Free memory allocated by loadEmbeddedFile()
 /// @param[in] i_data  Pointer to file contents
 /// @return FAPI2_RC_SUCCESS on success, else error code
-inline ReturnCode freeEmbeddedFile(void* i_data)
+inline ReturnCode freeEmbeddedFile(const void* i_data)
 {
     return FAPI2_RC_SUCCESS;
 }
