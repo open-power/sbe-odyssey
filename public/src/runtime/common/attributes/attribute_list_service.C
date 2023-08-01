@@ -29,6 +29,7 @@
 #include <target_types.H>
 #include "ppe42_string.h"
 #include <target_service.H>
+#include <attrutils.H>
 
 namespace fapi2
 {
@@ -104,8 +105,7 @@ void  ListResponseBuffer::setHeader()
 {
     iv_headerPtr->iv_fmtMajor = fapi2::ATTR::ATTRLIST_MAJOR_VERSION;
     iv_headerPtr->iv_fmtMinor = fapi2::ATTR::ATTRLIST_MINOR_VERSION;
-    iv_headerPtr->iv_chipType = CHIP_TYPE_ODYSSEY_00 +
-                                fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_BUS_POS;
+    iv_headerPtr->iv_chipType = platGetChipType();
     iv_headerPtr->iv_fileType = ATTRLIST_RESP_FILE_TYPE;
     iv_headerPtr->iv_numTargets = 0;
 }
