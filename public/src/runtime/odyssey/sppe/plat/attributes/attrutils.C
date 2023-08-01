@@ -32,3 +32,10 @@ void platSetAttrSecurityLvl(fapi2::ATTR_SECURITY_LEVEL_Type i_securityLvl)
 {
     ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_SECURITY_LEVEL = i_securityLvl;
 }
+
+uint8_t platGetChipType()
+{
+    return (CHIP_TYPE_ODYSSEY_00 +
+            fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_BUS_POS);
+}
+

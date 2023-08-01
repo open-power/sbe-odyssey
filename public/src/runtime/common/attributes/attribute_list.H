@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -31,10 +32,8 @@ namespace fapi2
 namespace ATTR
 {
 
-// TODO : Instead of creating a constant here, use sbe_target.H from ekb
-//        which defines enum for all the ODYSSEY chips.
-const uint8_t CHIP_TYPE_ODYSSEY_00 = 1;
-
+// TODO : Instead of creating a constant here, use sbe_attribute_utils.H from
+//        ekb which defines an enum for file type.
 const uint8_t ATTRLIST_RESP_FILE_TYPE = 3;
 const uint8_t ATTRLIST_MAJOR_VERSION = 0;
 const uint8_t ATTRLIST_MINOR_VERSION = 2;
