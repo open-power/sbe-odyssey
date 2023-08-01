@@ -57,6 +57,8 @@ enum TargetFilter : uint64_t
     TARGET_FILTER_TBUS       = (1ull << 63) >> 14,
     TARGET_FILTER_SHADOW     = (1ull << 63) >> 15,
     TARGET_FILTER_L3CACHE    = (1ull << 63) >> 16,
+    TARGET_FILTER_EXZIG      = (1ull << 63) >> 17,
+    TARGET_FILTER_EXZAG      = (1ull << 63) >> 18,
 };
 
 constexpr TargetFilter operator|(const TargetFilter a, const TargetFilter b)
