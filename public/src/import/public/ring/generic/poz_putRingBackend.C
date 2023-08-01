@@ -107,7 +107,7 @@ static const uint32_t EQ_PARALLEL_SCAN_REGIONS = 0x2208; // cl20, l30, mma0
 /// The list of subdirectories attempted in order when loading a scan image
 const char ringTypeOrder[][8] =
 {
-    "base/", "cust/", "dynXX/", "bmc/", "hb/", "ovr/"
+    "cust/", "base/", "dynXX/", "bmc/", "hb/", "ovr/"
 };
 
 /// The base directory for all scan images
