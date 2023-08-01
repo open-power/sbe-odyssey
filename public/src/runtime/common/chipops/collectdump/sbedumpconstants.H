@@ -186,7 +186,7 @@ typedef struct __attribute__((packed))
         struct __attribute__((packed))
         {
             uint32_t strEqvHash32;
-            uint32_t controlSet;
+            uint8_t filename[32];
         }cmdFastArray;
 
         struct __attribute__((packed))

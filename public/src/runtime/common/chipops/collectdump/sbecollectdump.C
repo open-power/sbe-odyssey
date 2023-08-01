@@ -25,7 +25,6 @@
 
 #include "sbecollectdump.H"
 #include "sbedumpconstants.H"
-#include "sbecollectdumpwrap.H"
 #include "poz_gettracearray.H" // For Trace-array dump support header
 #include "sbecmdtracearray.H"  // For Trace-array dump support header
 #include "sbecmdstopclocks.H"  // For Stopclock dump support header
@@ -83,6 +82,146 @@ hdctPakSecDetails::~hdctPakSecDetails()
 
 
 /********************* Types of Dump Packets to FIFO START ****************************/
+////////////////////////////////////////////////////////////////////////////////
+/// SBE get DUMP - Put SCOM
+////////////////////////////////////////////////////////////////////////////////
+uint32_t sbeCollectDump::writePutScomPacketToFifo()
+{
+    #define SBE_FUNC "writePutScomPacketToFifo"
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    fapi2::ReturnCode fapiRc = fapi2::FAPI2_RC_SUCCESS;
+    uint64_t dumpData = 0;
+    do
+    {
+        // Set FFDC failed command information and
+        // Sequence Id is 0 by default for Fifo interface
+        iv_chipOpffdc.setCmdInfo(0, SBE_CMD_CLASS_SCOM_ACCESS, SBE_CMD_PUTSCOM);
+
+        // Update address, length and stream header data via FIFO
+        iv_tocRow.hdctHeader.address = iv_hdctRow->cmdPutScom.addr;
+        iv_tocRow.hdctHeader.dataLength = 0x00;
+        uint32_t len = sizeof(iv_tocRow.hdctHeader) / sizeof(uint32_t);
+        if(!iv_tocRow.tgtHndl.getFunctional())
+        {
+            iv_tocRow.hdctHeader.preReq = PRE_REQ_NON_FUNCTIONAL;
+            l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
+            CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+            SBE_DEBUG("DUMP PUTSCOM: NonFunctional Target UnitNum[0x%08X]",
+                     (uint32_t)iv_tocRow.hdctHeader.chipUnitNum);
+            break;
+        }
+        l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+
+        uint32_t addr = iv_tocRow.hdctHeader.address;
+        uint32_t maskType = iv_hdctRow->cmdPutScom.extGenericHdr.bitModifier;
+        fapi2::Target<fapi2::TARGET_TYPE_CHIPS> dumpRowTgt(iv_tocRow.tgtHndl);
+        fapi2::seeprom_hwp_data_istream stream((uint32_t*)&iv_hdctRow->cmdPutScom.value,
+                                         sizeof(uint64_t));
+        uint32_t msbValue, lsbValue;
+        stream.get(msbValue), stream.get(lsbValue);
+        uint64_t mask = (((uint64_t)msbValue << 32 ) | ((uint64_t)lsbValue));
+        dumpData = mask; // maskType is nnone then putScom data is mask value.
+
+        SBE_DEBUG("putscom address:[0x%08X], maskType:[0x%08X], mask:[0x%08X%08X]",
+                  addr, maskType, SBE::higher32BWord(mask), SBE::lower32BWord(mask));
+
+        if( B_NONE != maskType )
+        {
+            uint64_t readData = 0;
+            fapiRc = getscom_abs_wrap(&dumpRowTgt, addr, &readData);
+            if(fapiRc != fapi2::FAPI2_RC_SUCCESS)
+            {
+                iv_oStream.setFifoRc(fapiRc);
+                iv_oStream.setPriSecRc(PRI_SEC_RC_UNION(
+                            SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                            SBE_SEC_GENERIC_FAILURE_IN_EXECUTION));
+                break;
+            }
+            SBE_INFO(SBE_FUNC " putscom scom value: 0x%.8X%.8X ",
+                     SBE::higher32BWord(readData),SBE::lower32BWord(readData));
+            if( B_OR == maskType )
+            {
+                dumpData = (readData | mask);
+            }
+            if( B_AND == maskType )
+            {
+                dumpData = (readData & mask);
+            }
+        }
+        SBE_DEBUG(SBE_FUNC " maskType[0x%02X], data [0x%08X %08X] ", maskType,
+                      SBE::higher32BWord(dumpData),SBE::lower32BWord(dumpData));
+        fapiRc = putscom_abs_wrap(&dumpRowTgt, addr, dumpData);
+        if(fapiRc != fapi2::FAPI2_RC_SUCCESS)
+        {
+            iv_oStream.setFifoRc(fapiRc);
+            iv_oStream.setPriSecRc(PRI_SEC_RC_UNION(
+                        SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                        SBE_SEC_GENERIC_FAILURE_IN_EXECUTION));
+            break;
+        }
+    }
+    while(0);
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+/// SBE get DUMP - Get SCOM
+////////////////////////////////////////////////////////////////////////////////
+uint32_t sbeCollectDump::writeGetScomPacketToFifo()
+{
+    #define SBE_FUNC "writeGetScomPacketToFifo"
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    fapi2::ReturnCode fapiRc = fapi2::FAPI2_RC_SUCCESS;
+
+    do{
+        // Set FFDC failed command information and
+        // Sequence Id is 0 by default for Fifo interface
+        iv_chipOpffdc.setCmdInfo(0, SBE_CMD_CLASS_SCOM_ACCESS, SBE_CMD_GETSCOM );
+
+        // Update address, length and stream header data vai FIFO
+        iv_tocRow.hdctHeader.address = iv_hdctRow->cmdGetScom.addr;
+        uint32_t len = sizeof(iv_tocRow.hdctHeader) / sizeof(uint32_t);
+        if(!iv_tocRow.tgtHndl.getFunctional())
+        {
+            // Update non functional state DUMP header
+            iv_tocRow.hdctHeader.preReq = PRE_REQ_NON_FUNCTIONAL;
+            iv_tocRow.hdctHeader.dataLength = 0x00;
+            SBE_DEBUG("DUMP GETSCOM: NonFunctional Target UnitNum[0x%08X]",
+                    (uint32_t)iv_tocRow.hdctHeader.chipUnitNum);
+            l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
+            CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+        }
+        iv_tocRow.hdctHeader.dataLength = 0x40; // 64 bits -or- 2 words
+        l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+        uint64_t dumpData;
+        // Proc Scoms
+        fapi2::Target<fapi2::TARGET_TYPE_CHIPS> dumpRowTgt(iv_tocRow.tgtHndl);
+        fapiRc = getscom_abs_wrap(&dumpRowTgt, iv_tocRow.hdctHeader.address, &dumpData);
+        if(fapiRc != fapi2::FAPI2_RC_SUCCESS)
+        {
+            iv_oStream.setFifoRc(fapiRc);
+            iv_oStream.setPriSecRc(PRI_SEC_RC_UNION(
+                            SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                            SBE_SEC_GENERIC_FAILURE_IN_EXECUTION));
+            break;
+        }
+        SBE_DEBUG("getScom: address: 0x%08X, data HI: 0x%08X, data LO: 0x%08X ",
+                iv_tocRow.hdctHeader.address, SBE::higher32BWord(dumpData),
+                SBE::lower32BWord(dumpData));
+        l_rc = iv_oStream.put(FIFO_DOUBLEWORD_LEN, (uint32_t*)&dumpData);
+    }while(0);
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 /// SBE get DUMP - Write trace-array data to FIFO
@@ -164,6 +303,55 @@ uint32_t sbeCollectDump::writeGetTracearrayPacketToFifo()
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
+/// SBE get DUMP - stopclock
+////////////////////////////////////////////////////////////////////////////////
+uint32_t sbeCollectDump::stopClocksOff()
+{
+    #define SBE_FUNC " stopClocksOff "
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    do
+    {
+        // Set FFDC failed command information and
+        // Sequence Id is 0 by default for Fifo interface
+        iv_chipOpffdc.setCmdInfo(0, SBE_CMD_CLASS_MPIPL_COMMANDS,
+                                    SBE_CMD_MPIPL_STOPCLOCKS);
+
+        // Update address, length and stream header data via FIFO
+        iv_tocRow.hdctHeader.address = iv_hdctRow->cmdStopClocks.strEqvHash32;
+        iv_tocRow.hdctHeader.dataLength = 0x00;
+        uint32_t len = sizeof(iv_tocRow.hdctHeader) / sizeof(uint32_t);
+        l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+
+        // Create the req struct for the sbeStopClocks Chip-op
+        sbeStopClocksReqMsgHdr_t dumpStopClockReq = {0};
+        len = sizeof(dumpStopClockReq)/sizeof(uint32_t);
+        dumpStopClockReq.reserved1 = 0x00;
+        dumpStopClockReq.iv_logTargetType = iv_hdctRow->cmdStopClocks.logTgtType;
+        dumpStopClockReq.reserved2 = 0x00;
+        dumpStopClockReq.iv_instanceId = iv_hdctRow->cmdStopClocks.chipletStart;
+        fapi2::sbefifo_hwp_data_istream istream( iv_fifoType, len,
+                                         (uint32_t*)&dumpStopClockReq, false );
+        l_rc = sbeStopClocksWrap( istream, iv_oStream );
+        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+        SBE_DEBUG(SBE_FUNC" clockTypeTgt[0x%04X], chipUnitNum[0x%08X] ",
+                    dumpStopClockReq.iv_logTargetType,
+                    iv_tocRow.hdctHeader.chipUnitNum);
+    }
+    while(0);
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+/// SBE get DUMP - Get Ring
+////////////////////////////////////////////////////////////////////////////////
 uint32_t sbeCollectDump::writeGetRingPacketToFifo()
 {
     #define SBE_FUNC " writeGetRingPacketToFifo "
@@ -276,9 +464,8 @@ uint32_t sbeCollectDump::writeGetFastArrayPacketToFifo()
             break;
         }
 
-        // assigning to local varibale
-        const char * faFileName = (const char *)
-           &const_fastarrayFileNameMapping[iv_hdctRow->cmdFastArray.controlSet];
+        // assigning to local variable
+        const char * faFileName = (const char *) &iv_hdctRow->cmdFastArray.filename[0];
         uint32_t strSize        = strlen(faFileName);
         SBE_INFO_BIN(SBE_FUNC "Fast array file name ",(char *)faFileName, strSize);
 
@@ -376,182 +563,6 @@ uint32_t sbeCollectDump::writeGetFastArrayPacketToFifo()
     }
     while(0);
 
-    SBE_EXIT(SBE_FUNC);
-    return l_rc;
-    #undef SBE_FUNC
-}
-
-
-uint32_t sbeCollectDump::stopClocksOff()
-{
-    #define SBE_FUNC " stopClocksOff "
-    SBE_ENTER(SBE_FUNC);
-    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
-
-    do
-    {
-        // Set FFDC failed command information and
-        // Sequence Id is 0 by default for Fifo interface
-        iv_chipOpffdc.setCmdInfo(0, SBE_CMD_CLASS_MPIPL_COMMANDS,
-                                    SBE_CMD_MPIPL_STOPCLOCKS);
-
-        // Update address, length and stream header data via FIFO
-        iv_tocRow.hdctHeader.address = iv_hdctRow->cmdStopClocks.strEqvHash32;
-        iv_tocRow.hdctHeader.dataLength = 0x00;
-        uint32_t len = sizeof(iv_tocRow.hdctHeader) / sizeof(uint32_t);
-        l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
-        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
-
-        // Create the req struct for the sbeStopClocks Chip-op
-        sbeStopClocksReqMsgHdr_t dumpStopClockReq = {0};
-        len = sizeof(dumpStopClockReq)/sizeof(uint32_t);
-        dumpStopClockReq.reserved1 = 0x00;
-        dumpStopClockReq.iv_logTargetType = iv_hdctRow->cmdStopClocks.logTgtType;
-        dumpStopClockReq.reserved2 = 0x00;
-        dumpStopClockReq.iv_instanceId = iv_hdctRow->cmdStopClocks.chipletStart;
-        fapi2::sbefifo_hwp_data_istream istream( iv_fifoType, len,
-                                         (uint32_t*)&dumpStopClockReq, false );
-        l_rc = sbeStopClocksWrap( istream, iv_oStream );
-        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
-        SBE_DEBUG(SBE_FUNC" clockTypeTgt[0x%04X], chipUnitNum[0x%08X] ",
-                    dumpStopClockReq.iv_logTargetType,
-                    iv_tocRow.hdctHeader.chipUnitNum);
-    }
-    while(0);
-
-    SBE_EXIT(SBE_FUNC);
-    return l_rc;
-    #undef SBE_FUNC
-}
-
-uint32_t sbeCollectDump::writePutScomPacketToFifo()
-{
-    #define SBE_FUNC "writePutScomPacketToFifo"
-    SBE_ENTER(SBE_FUNC);
-    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
-    fapi2::ReturnCode fapiRc = fapi2::FAPI2_RC_SUCCESS;
-    uint64_t dumpData = 0;
-    do
-    {
-        // Set FFDC failed command information and
-        // Sequence Id is 0 by default for Fifo interface
-        iv_chipOpffdc.setCmdInfo(0, SBE_CMD_CLASS_SCOM_ACCESS, SBE_CMD_PUTSCOM);
-
-        // Update address, length and stream header data via FIFO
-        iv_tocRow.hdctHeader.address = iv_hdctRow->cmdPutScom.addr;
-        iv_tocRow.hdctHeader.dataLength = 0x00;
-        uint32_t len = sizeof(iv_tocRow.hdctHeader) / sizeof(uint32_t);
-        if(!iv_tocRow.tgtHndl.getFunctional())
-        {
-            iv_tocRow.hdctHeader.preReq = PRE_REQ_NON_FUNCTIONAL;
-            l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
-            CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
-            SBE_DEBUG("DUMP PUTSCOM: NonFunctional Target UnitNum[0x%08X]",
-                     (uint32_t)iv_tocRow.hdctHeader.chipUnitNum);
-            break;
-        }
-        l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
-        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
-
-        uint32_t addr = iv_tocRow.hdctHeader.address;
-        uint32_t maskType = iv_hdctRow->cmdPutScom.extGenericHdr.bitModifier;
-        fapi2::Target<fapi2::TARGET_TYPE_CHIPS> dumpRowTgt(iv_tocRow.tgtHndl);
-        fapi2::seeprom_hwp_data_istream stream((uint32_t*)&iv_hdctRow->cmdPutScom.value,
-                                         sizeof(uint64_t));
-        uint32_t msbValue, lsbValue;
-        stream.get(msbValue), stream.get(lsbValue);
-        uint64_t mask = (((uint64_t)msbValue << 32 ) | ((uint64_t)lsbValue));
-        dumpData = mask; // maskType is nnone then putScom data is mask value.
-
-        SBE_DEBUG("putscom address:[0x%08X], maskType:[0x%08X], mask:[0x%08X%08X]",
-                  addr, maskType, SBE::higher32BWord(mask), SBE::lower32BWord(mask));
-
-        if( B_NONE != maskType )
-        {
-            uint64_t readData = 0;
-            fapiRc = getscom_abs_wrap(&dumpRowTgt, addr, &readData);
-            if(fapiRc != fapi2::FAPI2_RC_SUCCESS)
-            {
-                iv_oStream.setFifoRc(fapiRc);
-                iv_oStream.setPriSecRc(PRI_SEC_RC_UNION(
-                            SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                            SBE_SEC_GENERIC_FAILURE_IN_EXECUTION));
-                break;
-            }
-            SBE_INFO(SBE_FUNC " putscom scom value: 0x%.8X%.8X ",
-                     SBE::higher32BWord(readData),SBE::lower32BWord(readData));
-            if( B_OR == maskType )
-            {
-                dumpData = (readData | mask);
-            }
-            if( B_AND == maskType )
-            {
-                dumpData = (readData & mask);
-            }
-        }
-        SBE_DEBUG(SBE_FUNC " maskType[0x%02X], data [0x%08X %08X] ", maskType,
-                      SBE::higher32BWord(dumpData),SBE::lower32BWord(dumpData));
-        fapiRc = putscom_abs_wrap(&dumpRowTgt, addr, dumpData);
-        if(fapiRc != fapi2::FAPI2_RC_SUCCESS)
-        {
-            iv_oStream.setFifoRc(fapiRc);
-            iv_oStream.setPriSecRc(PRI_SEC_RC_UNION(
-                        SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                        SBE_SEC_GENERIC_FAILURE_IN_EXECUTION));
-            break;
-        }
-    }
-    while(0);
-    SBE_EXIT(SBE_FUNC);
-    return l_rc;
-    #undef SBE_FUNC
-}
-
-uint32_t sbeCollectDump::writeGetScomPacketToFifo()
-{
-    #define SBE_FUNC "writeGetScomPacketToFifo"
-    SBE_ENTER(SBE_FUNC);
-    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
-    fapi2::ReturnCode fapiRc = fapi2::FAPI2_RC_SUCCESS;
-
-    do{
-        // Set FFDC failed command information and
-        // Sequence Id is 0 by default for Fifo interface
-        iv_chipOpffdc.setCmdInfo(0, SBE_CMD_CLASS_SCOM_ACCESS, SBE_CMD_GETSCOM );
-
-        // Update address, length and stream header data vai FIFO
-        iv_tocRow.hdctHeader.address = iv_hdctRow->cmdGetScom.addr;
-        uint32_t len = sizeof(iv_tocRow.hdctHeader) / sizeof(uint32_t);
-        if(!iv_tocRow.tgtHndl.getFunctional())
-        {
-            // Update non functional state DUMP header
-            iv_tocRow.hdctHeader.preReq = PRE_REQ_NON_FUNCTIONAL;
-            iv_tocRow.hdctHeader.dataLength = 0x00;
-            SBE_DEBUG("DUMP GETSCOM: NonFunctional Target UnitNum[0x%08X]",
-                    (uint32_t)iv_tocRow.hdctHeader.chipUnitNum);
-            l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
-            CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
-        }
-        iv_tocRow.hdctHeader.dataLength = 0x40; // 64 bits -or- 2 words
-        l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
-        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
-        uint64_t dumpData;
-        // Proc Scoms
-        fapi2::Target<fapi2::TARGET_TYPE_CHIPS> dumpRowTgt(iv_tocRow.tgtHndl);
-        fapiRc = getscom_abs_wrap(&dumpRowTgt, iv_tocRow.hdctHeader.address, &dumpData);
-        if(fapiRc != fapi2::FAPI2_RC_SUCCESS)
-        {
-            iv_oStream.setFifoRc(fapiRc);
-            iv_oStream.setPriSecRc(PRI_SEC_RC_UNION(
-                            SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                            SBE_SEC_GENERIC_FAILURE_IN_EXECUTION));
-            break;
-        }
-        SBE_DEBUG("getScom: address: 0x%08X, data HI: 0x%08X, data LO: 0x%08X ",
-                iv_tocRow.hdctHeader.address, SBE::higher32BWord(dumpData),
-                SBE::lower32BWord(dumpData));
-        l_rc = iv_oStream.put(FIFO_DOUBLEWORD_LEN, (uint32_t*)&dumpData);
-    }while(0);
     SBE_EXIT(SBE_FUNC);
     return l_rc;
     #undef SBE_FUNC
