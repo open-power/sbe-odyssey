@@ -69,9 +69,9 @@ uint32_t sbe_target_service::plat_targetsInit()
     return SBE_SEC_OPERATION_SUCCESSFUL;
 }
 
-Target<SBE_ROOT_CHIP_TYPE> sbe_target_service::plat_getChipTarget() const
+Target<SBE_ROOT_CHIP_TYPE>& sbe_target_service::plat_getChipTarget() const
 {
-    return ((fapi2::Target<fapi2::SBE_ROOT_CHIP_TYPE>)iv_targets[0]);
+    return ((fapi2::Target<fapi2::SBE_ROOT_CHIP_TYPE>&)iv_targets[0]);
 }
 
 uint32_t sbe_target_service::plat_getTargetCount() const
