@@ -144,7 +144,7 @@ namespace fapi2
         /// @brief Function to get the chip target initialize the G_targets vector
         /// @return chip target
         ///
-        Target<SBE_ROOT_CHIP_TYPE> plat_getChipTarget() const;
+        Target<SBE_ROOT_CHIP_TYPE>& plat_getChipTarget() const;
 
         ///
         /// @brief Function to get target is chiplet
