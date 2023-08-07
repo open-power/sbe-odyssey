@@ -537,13 +537,14 @@ static uint64_t expand_ring_address(
 {
     const uint32_t l_chiplet_id   =   ((i_ring_address & 0xFF000000) >> 24 );
     const uint32_t l_core_select  =   (l_chiplet_id >= 0x20) ? i_target.getCoreSelect() : 0x8;
+    const uint32_t l_scan_region  =   (i_ring_address & 0x0000FFF0) | ((i_ring_address & 0x00F00000) >> 20);
+    const uint32_t l_fastinit     =   (i_ring_address & 0x00080000) << 12;
     // Multiplication with l_core_select puts copies of l_core_select everywhere a bit is set in the input region vector
     // Since core 0 is 0x8 we need to shift left by three positions less
-    const uint32_t l_scan_region  =   l_core_select *
-                                      (((i_ring_address & 0x0000FFF0) | ((i_ring_address & 0x00F00000) >> 20)) << (13 - 3));
+    const uint32_t l_reg_upper    =   ((l_scan_region << (13 - 3)) * l_core_select) | l_fastinit;
     const uint32_t l_scan_encode  =   i_ring_address & 0x0000000F;
     const uint32_t l_scan_type    =   (l_scan_encode == 0xF) ? 0x9000 : (0x8000 >> l_scan_encode);
-    return ((uint64_t)l_scan_region << 32) | l_scan_type;
+    return ((uint64_t)l_reg_upper << 32) | l_scan_type;
 }
 
 static ReturnCode do_dump(
