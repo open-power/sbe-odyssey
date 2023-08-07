@@ -42,13 +42,31 @@
 // Note that this table is known as CRC32_BZIP2 in some texts
 extern const uint32_t crc32_lookup_table[];
 
+static const uint32_t CRC32_SEED = 0;
+
+///
+/// @brief Updates a CRC on a range of data
+///
+/// This can be used to incrementally generate CRC on lots of data which is
+/// delivered in separate chunks.
+///
+/// @param[in] i_crc  Previous CRC value; initialize with CRC32_SEED
+/// @param[in] i_data data on which to generate the CRC32
+/// @param[in] i_len  the length of the data
+/// @return the updated CRC32 for the input data
+///
+uint32_t crc32_update(const uint32_t i_crc, const uint8_t* i_data, uint64_t i_len);
+
 ///
 /// @brief Generates a CRC on a range of data
 /// @param[in] i_data data on which to generate the CRC32
 /// @param[in] i_len the length of the data
 /// @return the CRC32 for the input data
 ///
-uint32_t crc32_gen(const uint8_t* i_data, uint64_t i_len);
+static inline uint32_t crc32_gen(const uint8_t* i_data, uint64_t i_len)
+{
+    return crc32_update(CRC32_SEED, i_data, i_len);
+}
 
 ///
 /// @brief Generates a CRC on a vector of data

@@ -60,9 +60,9 @@ const uint32_t crc32_lookup_table[] =
     0xafb010b1, 0xab710d06, 0xa6322bdf, 0xa2f33668, 0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4,
 };
 
-uint32_t crc32_gen(const uint8_t* i_data, uint64_t i_len)
+uint32_t crc32_update(const uint32_t i_crc, const uint8_t* i_data, uint64_t i_len)
 {
-    uint32_t l_crc = 0xFFFFFFFFul;
+    uint32_t l_crc = ~i_crc;
 
     while (i_len--)
     {
@@ -72,5 +72,5 @@ uint32_t crc32_gen(const uint8_t* i_data, uint64_t i_len)
         l_crc = (l_crc << 8) ^ crc32_lookup_table[ l_tmp & 0xFF ];
     }
 
-    return l_crc ^ 0xFFFFFFFFul;
+    return ~l_crc;
 }
