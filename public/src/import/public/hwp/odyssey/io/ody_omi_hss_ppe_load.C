@@ -93,7 +93,15 @@ fapi2::ReturnCode ody_omi_hss_ppe_load(
     // Validate inputs
     if (i_img_data == NULL)
     {
-        l_invalid = true;
+        if (i_img_size == 0)
+        {
+            FAPI_DBG("Last HWP consume call after hash checking passed, nothing further to load");
+            return fapi2::current_err;
+        }
+        else
+        {
+            l_invalid = true;
+        }
     }
 
     // IOPPE_BASE_IMAGE
