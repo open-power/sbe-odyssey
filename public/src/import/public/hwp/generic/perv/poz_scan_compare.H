@@ -34,7 +34,7 @@
 
 #include <fapi2.H>
 #include <hwp_data_stream.H>
-#include "sha3.H"
+#include "crc32.H"
 #include <endian.h>
 
 using namespace fapi2;
@@ -48,33 +48,33 @@ class hwp_hash_ostream : public hwp_data_ostream
 {
     public:
         /**
-         * @brief Initialize the stream by initializing our hash object
+         * @brief Initialize the stream by initializing our hash value
          */
         hwp_hash_ostream()
         {
-            sha3_init(&hash);
+            hash_value = 0;
         };
 
         virtual ReturnCodes put(hwp_data_unit i_data)
         {
             uint32_t l_be32_data = htobe32(i_data);
-            sha3_update(&hash, &l_be32_data, sizeof(l_be32_data));
+            hash_value = crc32_update(hash_value, &l_be32_data, sizeof(l_be32_data));
             return FAPI2_RC_SUCCESS;
         }
 
-        void digestHash(sha3_t& o_digest)
+        uint32_t getCurrentValue()
         {
-            sha3_final(&o_digest, &hash);
+            return hash_value;
         }
 
     private:
-        sha3_ctx_t hash;
+        uint32_t hash_value;
 };
 
 struct hash_data
 {
     uint32_t ring_address;
-    sha3_t hash; // Talk to Drew Turner about this - should we use CRC instead of SHA?
+    uint32_t hash_value;
 };
 
 /// @brief Compare ring content against expect hashes in the provided file

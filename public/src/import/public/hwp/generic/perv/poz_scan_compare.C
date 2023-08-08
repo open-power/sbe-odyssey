@@ -69,8 +69,6 @@ ReturnCode poz_compare(
     for (uint8_t i = 0; i < l_hash_file_size / sizeof(hash_data); i++)
     {
         hwp_hash_ostream l_hash;
-        sha3_t l_digest;
-
         uint32_t l_ring_address = be32toh(l_hash_data[i].ring_address);
 
         // Construct care mask file path with ring address
@@ -90,10 +88,7 @@ ReturnCode poz_compare(
         freeEmbeddedFile(l_mask_file_data);
         FAPI_TRY(l_rc, "poz_sparse_getring failed");
 
-        // Digest the hash and compare it to our expect hash
-        l_hash.digestHash(l_digest);
-
-        if (memcmp(l_digest, l_hash_data[i].hash, sizeof(l_digest)))
+        if (l_hash.getCurrentValue() != l_hash_data[i].hash_value)
         {
             FAPI_INF("COMPARE FAILURE: Scan content mismatch for ring 0x%08x", l_ring_address);
             o_failing_rings.push_back(l_ring_address);
