@@ -2,5 +2,5 @@ Library of crypto and hash functions (some of them not really crypto but ehh)
 
 Interfaces available:
   - SHA3-512 (via sha3.H)
-  - CRC32 (bzip2 flavor) (via crc32.H)
+  - CRC32 (gzip/RFC1952 flavor) (via crc32.H)
   - IBM 64bit ECC (via ibmecc64.H)
