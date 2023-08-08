@@ -23,7 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 /// @file crc32.H
-/// @brief Implement crc32
+/// @brief Implement gzip compatible crc32
 //
 // *HWP HWP Owner: Ben Gass bgass@us.ibm.com
 // *HWP FW Owner: Daniel Crowell dcrowell@us.ibm.com
@@ -38,8 +38,7 @@
 #include <vector>
 #include <algorithm>
 
-// CRC32 lookup table to match the table used in Microchip firmware
-// Note that this table is known as CRC32_BZIP2 in some texts
+// CRC32 lookup table to match the gzip crc32 method
 extern const uint32_t crc32_lookup_table[];
 
 static const uint32_t CRC32_SEED = 0;
@@ -55,7 +54,7 @@ static const uint32_t CRC32_SEED = 0;
 /// @param[in] i_len  the length of the data
 /// @return the updated CRC32 for the input data
 ///
-uint32_t crc32_update(const uint32_t i_crc, const uint8_t* i_data, uint64_t i_len);
+uint32_t crc32_update(const uint32_t i_crc, const void* i_data, uint64_t i_len);
 
 ///
 /// @brief Generates a CRC on a range of data
@@ -63,7 +62,7 @@ uint32_t crc32_update(const uint32_t i_crc, const uint8_t* i_data, uint64_t i_le
 /// @param[in] i_len the length of the data
 /// @return the CRC32 for the input data
 ///
-static inline uint32_t crc32_gen(const uint8_t* i_data, uint64_t i_len)
+static inline uint32_t crc32_gen(const void* i_data, uint64_t i_len)
 {
     return crc32_update(CRC32_SEED, i_data, i_len);
 }
@@ -74,7 +73,7 @@ static inline uint32_t crc32_gen(const uint8_t* i_data, uint64_t i_len)
 /// @param[in] i_len allows the user to specify a length of data to generate CRC - used for response structure - defaulted to max (use whole array)
 /// @return the CRC32 for the inputted vector
 ///
-static inline uint32_t crc32_gen(const std::vector<uint8_t>& i_data, const uint64_t i_len = ~0)
+static inline uint32_t crc32_gen(const std::vector<uint8_t>& i_data, const size_t i_len = ~0)
 {
     return crc32_gen(i_data.data(), std::min(i_data.size(), i_len));
 }
