@@ -260,22 +260,33 @@ namespace fapi2
     template<TargetType T>
     std::vector<Target<T, M, V> >
     Target<K, M, V>::getChildren(const TargetFilter i_filter,
-                                      const TargetState i_state) const
+                                 const TargetState i_state) const
     {
-        SBE_INFO("getChildren with filter");
         const bool l_include_nonfunctional = i_state == TARGET_STATE_PRESENT;
+        constexpr TargetType K_NO_MCAST = K & ~TARGET_TYPE_MULTICAST;
         check_getChildren<T>();
 
         static_assert(sizeof(Target<T, M, V>) == sizeof(plat_target_sbe_handle),
                   "Sizes of plat target and FAPI target must match");
-        static_assert((K & TARGET_TYPE_CHIPS) != 0,
-                  "Parent target must be the chip");
         static_assert((T & ~(SBE_ROOT_CHIP_CHILDREN & TARGET_TYPE_CHIPLETS)) == 0,
                   "Child target type must be a pervasive chiplet");
 
         std::vector<Target<T, M, V> > l_children;
-        g_platTarget->getChildren(i_filter, l_include_nonfunctional,
-                      reinterpret_cast<std::vector<plat_target_sbe_handle>&>(l_children));
+        auto &l_cast_children = reinterpret_cast<std::vector<plat_target_sbe_handle>&>(l_children);
+        if ((K & TARGET_TYPE_CHIPS) != 0)
+        {
+            g_platTarget->getChildren(i_filter, l_include_nonfunctional, l_cast_children);
+        }
+        else if ((K & TARGET_TYPE_MULTICAST) && (T == K_NO_MCAST))
+        {
+            g_platTarget->getMulticastChildren(i_filter, *this, l_include_nonfunctional, l_cast_children);
+        }
+        else
+        {
+            // If we fall through to here, there is no defined code path to handle the
+            // combination of T and K -- let's fail loudly.
+            STATIC_COMPILE_ERROR("Unsupported combination of parent and child for getChildren() with filter");
+        }
         return l_children;
     }
 

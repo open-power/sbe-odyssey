@@ -180,14 +180,18 @@ void sbe_target_service::getChipletChildren(const LogTargetType i_child_type,
     }
 }
 
-void sbe_target_service::getMulticastChildren(const plat_target_sbe_handle i_parent,
-                                              const bool i_include_nonfunctional,
-                                              std::vector<plat_target_sbe_handle> &o_children) const
+void sbe_target_service::getMulticastChildrenInternal(const uint64_t i_chiplet_mask,
+                                                      const plat_target_sbe_handle i_parent,
+                                                      const bool i_include_nonfunctional,
+                                                      std::vector<plat_target_sbe_handle> &o_children) const
 {
     if (!i_parent.getIsMulticast())
     {
         // Trivial case where we're already a unicast target of the requested type - return just this target
-        o_children.push_back(i_parent);
+        if (buffer<uint64_t>(i_chiplet_mask).getBit(i_parent.getChipletNumber()))
+        {
+            o_children.push_back(i_parent);
+        }
         return;
     }
 
@@ -203,7 +207,7 @@ void sbe_target_service::getMulticastChildren(const plat_target_sbe_handle i_par
     {
         // Non-core (i.e. chiplet) target -> loop over all PERV targets, match chiplet ID
         loopTargetsByChiplet(i_parent.getTargetType(),
-                             l_enabledTargets,
+                             l_enabledTargets & i_chiplet_mask,
                              i_include_nonfunctional,
                              o_children);
     }
@@ -341,23 +345,26 @@ sbeSecondaryResponse sbe_target_service::getPervTargetByChipletId(
 #undef SBE_FUNC
 }
 
+uint64_t sbe_target_service::convertTargetFilterToChipletMask(const TargetFilter i_filter)
+{
+    uint64_t l_chiplet_mask = 0;
+    for (auto &def :  G_projTargetFilters)
+    {
+        if (i_filter & def.filter)
+        {
+            l_chiplet_mask |= def.chiplets;
+        }
+    }
+    return l_chiplet_mask;
+}
+
 void sbe_target_service::getPervChildren(const TargetFilter i_filter,
                                          const bool i_include_nonfunctional,
                                          std::vector<plat_target_sbe_handle>& o_children,
                                          bool i_ignore_filter) const
 {
-    const fapi2::buffer<__underlying_type(TargetFilter)> l_filter = i_filter;
-
-    uint64_t l_chiplet_mask = 0;
-    for (auto &def :  G_projTargetFilters)
-    {
-        if (l_filter & def.filter)
-        {
-            l_chiplet_mask |= def.chiplets;
-        }
-    }
-
-    const fapi2::buffer<__underlying_type(TargetFilter)> filter = l_chiplet_mask;
+    const fapi2::buffer<__underlying_type(TargetFilter)> filter =
+        convertTargetFilterToChipletMask(i_filter);
     int targetIndex = 0;
     for (auto &targetInfo : G_projTargetMap)
     {
