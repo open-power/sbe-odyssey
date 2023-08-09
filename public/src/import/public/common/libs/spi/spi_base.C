@@ -72,6 +72,7 @@ ReturnCode spi::SPIPort::transaction(const uint64_t cmd, const uint32_t cmd_len,
     const uint64_t* req64 = (uint64_t*)req;
     const ecc_mode l_ecc_mode = i_use_ecc ? iv_ecc_mode : ECC_DISABLED;
     uint64_t* rsp64 = (uint64_t*)rsp;
+    uint64_t saved_seq = -1ULL, saved_ctr = -1ULL, saved_clk = -1ULL;
 
     FAPI_DBG("SPI transaction: cmd=0x%08x%08x ecc|cmd_len=0x%04x req_len|rsp_len=0x%08x",
              cmd >> 32, cmd & 0xFFFFFFFF, (l_ecc_mode << 8) | cmd_len,
@@ -161,13 +162,13 @@ ReturnCode spi::SPIPort::transaction(const uint64_t cmd, const uint32_t cmd_len,
 
     /* Doing this check very late since we're declaring a lot of
      * variables before this point and don't want the implicit goto to
-     * cause compiler fails. */
-    FAPI_ASSERT(cmd_len <= 8 && req_len < 1024 && rsp_len < 1024,
+     * cause compiler fails. Max request/response 256*8bytes */
+    FAPI_ASSERT(cmd_len <= 8 && req_len <= 2048 && rsp_len <= 2048,
                 SPI_UNSUPPORTED_LENGTH()
                 .set_CMD_LEN(cmd_len)
                 .set_REQ_LEN(req_len)
                 .set_RSP_LEN(rsp_len),
-                "Unsupported length: cmd_len=%d (max 8) req_len=%d (max 1024) rsp_len=%d (max 1024)",
+                "Unsupported length: cmd_len=%d (max 8) req_len=%d (max 2048) rsp_len=%d (max 2048)",
                 cmd_len, req_len, rsp_len);
 
     /* Check SPI controller health before we begin */
@@ -177,6 +178,7 @@ ReturnCode spi::SPIPort::transaction(const uint64_t cmd, const uint32_t cmd_len,
     {
         buffer<uint64_t> CLK;
         FAPI_TRY(getscom(SPIC_CLOCK_CONFIG_REG, CLK));
+        saved_clk = CLK;
 
         if (CLK.getBits<ECC_CONTROL, ECC_CONTROL_LEN>() != l_ecc_mode)
         {
@@ -184,6 +186,10 @@ ReturnCode spi::SPIPort::transaction(const uint64_t cmd, const uint32_t cmd_len,
             FAPI_TRY(putscom(SPIC_CLOCK_CONFIG_REG, CLK));
         }
     }
+
+    /* Save off the previous sequence and counter */
+    FAPI_TRY(getscom(SPIC_SEQUENCER_OP_REG, saved_seq));
+    FAPI_TRY(getscom(SPIC_COUNTER_REG, saved_ctr));
 
     /* Send first chunk of data */
     FAPI_TRY(putscom(SPIC_SEQUENCER_OP_REG,  SEQ));
@@ -246,6 +252,35 @@ ReturnCode spi::SPIPort::transaction(const uint64_t cmd, const uint32_t cmd_len,
     }
 
     FAPI_TRY(wait_for_idle());
+
+fapi_try_exit:
+    /* Save return code and restore all the registers we saved off */
+    const ReturnCode rc = current_err;
+    const ReturnCode restore_rc =
+        restore_spi_regs(saved_seq, saved_ctr, saved_clk);
+    /* A bad RC from the main code takes precedence over a bad RC from the restore */
+    return (rc != FAPI2_RC_SUCCESS) ? rc : restore_rc;
+}
+
+ReturnCode spi::SPIPort::restore_spi_regs(
+    uint64_t i_saved_seq,
+    uint64_t i_saved_ctr,
+    uint64_t i_saved_clk) const
+{
+    if (i_saved_seq != -1ULL)
+    {
+        FAPI_TRY(putscom(SPIC_SEQUENCER_OP_REG, i_saved_seq));
+    }
+
+    if (i_saved_ctr != -1ULL)
+    {
+        FAPI_TRY(putscom(SPIC_COUNTER_REG, i_saved_ctr));
+    }
+
+    if (i_saved_clk != -1ULL)
+    {
+        FAPI_TRY(putscom(SPIC_CLOCK_CONFIG_REG, i_saved_clk));
+    }
 
 fapi_try_exit:
     return current_err;
