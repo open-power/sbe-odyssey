@@ -55,6 +55,7 @@ enum flash_device_commands
     X25_CMD_RESET1 = 0x66,
     X25_CMD_RESET2 = 0x99,
     MT25Q_CMD_READ_FLAG_STATUS_REG = 0x70,
+    MT25Q_CMD_CLR_FLAG_STATUS_REG = 0x50,
     MX66_CMD_READ_SECURITY_REG = 0x2B,
 
     // Commands with 24-bit address
@@ -614,33 +615,49 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode spi::FlashDevice::check_extended_status(
-    uint32_t i_address, uint32_t i_length) const
+ReturnCode spi::FlashDevice::read_extended_status(uint32_t i_address, extended_status& o_status) const
 {
     uint8_t dev_status;
-    extended_status status = ES_NONE;
 
     // Depending on the device type the extended status has a different
     // read command and bit layout.
     if (iv_devtype == DEV_MICRON_MT25Q)
     {
         FAPI_TRY(iv_port.transaction(MT25Q_CMD_READ_FLAG_STATUS_REG, 1, NULL, 0, &dev_status, 1));
-        status = static_cast<extended_status>(
-                     ((dev_status & 0x40) ? ES_ERASE_SUSP : 0) |
-                     ((dev_status & 0x20) ? ES_ERASE_FAIL : 0) |
-                     ((dev_status & 0x10) ? ES_PROG_FAIL : 0) |
-                     ((dev_status & 0x04) ? ES_PROG_SUSP : 0) |
-                     ((dev_status & 0x02) ? ES_WRITE_PROT : 0));
+        o_status = static_cast<extended_status>(
+                       ((dev_status & 0x40) ? ES_ERASE_SUSP : 0) |
+                       ((dev_status & 0x20) ? ES_ERASE_FAIL : 0) |
+                       ((dev_status & 0x10) ? ES_PROG_FAIL : 0) |
+                       ((dev_status & 0x04) ? ES_PROG_SUSP : 0) |
+                       ((dev_status & 0x02) ? ES_WRITE_PROT : 0));
+
+        // Clear status if any error bit was set
+        if (o_status != ES_NONE)
+        {
+            FAPI_TRY(iv_port.transaction(MT25Q_CMD_CLR_FLAG_STATUS_REG, 1, NULL, 0, NULL, 0));
+        }
     }
     else if (iv_devtype == DEV_MACRONIX_MX66)
     {
         FAPI_TRY(iv_port.transaction(MX66_CMD_READ_SECURITY_REG, 1, NULL, 0, &dev_status, 1));
-        status = static_cast<extended_status>(
-                     ((dev_status & 0x40) ? ES_ERASE_FAIL : 0) |
-                     ((dev_status & 0x20) ? ES_PROG_FAIL : 0) |
-                     ((dev_status & 0x08) ? ES_ERASE_SUSP : 0) |
-                     ((dev_status & 0x04) ? ES_PROG_SUSP : 0));
+        o_status = static_cast<extended_status>(
+                       ((dev_status & 0x40) ? ES_ERASE_FAIL : 0) |
+                       ((dev_status & 0x20) ? ES_PROG_FAIL : 0) |
+                       ((dev_status & 0x08) ? ES_ERASE_SUSP : 0) |
+                       ((dev_status & 0x04) ? ES_PROG_SUSP : 0));
     }
+
+fapi_try_exit:
+    return current_err;
+}
+
+ReturnCode spi::FlashDevice::check_extended_status(
+    uint32_t i_address, uint32_t i_length) const
+{
+    extended_status status = ES_NONE;
+
+    // Read the status
+    FAPI_TRY(read_extended_status(i_address, status));
 
     // Now check for errors
     FAPI_ASSERT(!(status & ES_WRITE_PROT),

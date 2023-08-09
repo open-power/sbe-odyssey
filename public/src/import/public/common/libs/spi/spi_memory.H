@@ -183,7 +183,7 @@ class SEEPROMDevice : public AbstractMemoryDevice
             OP_BLOCK_ERASE,
         };
 
-        uint8_t iv_page_buffer[WRITE_PAGE_SIZE];
+        uint8_t iv_page_buffer[WRITE_PAGE_SIZE] __attribute__((aligned(8)));
         uint32_t iv_write_start, iv_write_pos, iv_write_end, iv_buf_pos;
 
         bool iv_verify_fail;
@@ -400,10 +400,15 @@ class FlashDevice : public SEEPROMDevice
         fapi2::ReturnCode finalize_write(const bool i_write_end);
 
         /**
-         * @brief Check the extended status of the device and raise an error if the device reports a problem
+         * @brief Read the extended status of the device
+         */
+        virtual fapi2::ReturnCode read_extended_status(uint32_t i_address, extended_status& o_status) const;
+
+        /**
+         * @brief Read the extended status of the device and raise an error if the device reports a problem
          */
         fapi2::ReturnCode check_extended_status(uint32_t i_address, uint32_t i_length) const;
 
-};
+}; //class FlashDevice
 
-};
+}; //namespace spi

@@ -188,6 +188,14 @@ class SPIPort : public AbstractPort
         fapi2::ReturnCode poll_status(uint32_t i_bit, bool i_wait_for) const;
 
         /**
+         * @brief Restore SPI controller registers saved by SPIPort::transaction.
+         */
+        fapi2::ReturnCode restore_spi_regs(
+            uint64_t i_saved_seq,
+            uint64_t i_saved_ctr,
+            uint64_t i_saved_clk) const;
+
+        /**
          * @brief Inline wrappers which poll for specific status bits
          */
         fapi2::ReturnCode wait_for_tdr_empty() const
