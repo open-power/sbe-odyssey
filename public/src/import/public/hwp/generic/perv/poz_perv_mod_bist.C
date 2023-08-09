@@ -79,7 +79,7 @@ ReturnCode mod_bist_poll(
     {
         FAPI_TRY(SCRATCH_REGISTER_11.getScom(l_chip));
 
-        if (SCRATCH_REGISTER_11.getBit<25>() == 1)
+        if (SCRATCH_REGISTER_11.getBit<27>() == 1)
         {
             FAPI_INF("BIST_HALT observed");
             break;
@@ -193,7 +193,7 @@ ReturnCode mod_bist_reg_cleanup(
 
     FAPI_INF("Resetting BIST halt signal.");
     FAPI_TRY(SCRATCH_REGISTER_11.getScom(l_chip));
-    SCRATCH_REGISTER_11.clearBit<25>();
+    SCRATCH_REGISTER_11.clearBit<27>();
     FAPI_TRY(SCRATCH_REGISTER_11.putScom(l_chip));
 
 fapi_try_exit:
