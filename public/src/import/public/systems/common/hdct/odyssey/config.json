@@ -4,10 +4,6 @@
     "hdctfile"      : "$PROJECT_ROOT/public/systems/p11/HDCT.txt",
     "defaultdump"   : "ebmc",
 
-    "scanfile"      : {
-        "DD10" : "/afs/apd/projects/eclipz/lab/p11/engd/odyssey/10.v0002/odyssey.scandef"
-    },
-
     "tracearray"    : {
         "file"                   : "$PROJECT_ROOT/public/hwp/odyssey/perv/ody_gettracearray.H",
         "enumname"               : "enum ody_tracearray_bus_id",

@@ -156,7 +156,7 @@ reqgroup.add_argument('-f', '--hdctbinfile', required = True, help="The HDCT Bin
 reqgroup.add_argument('-e', '--ekbCommit', required=True, help="EKB commit")
 reqgroup.add_argument('-s', '--hashlookup', required=True, help="The HDCT.lookup to be used for fetching hash equivalent strings")
 reqgroup.add_argument('-r', '--originalHdctTxt', required=True, help="The original HDCT.txt file with which the HDCT.bin=>HDCT.txt needs to be compared")
-reqgroup.add_argument('-g', '--generation', required=True, choices=['p11', 'ody'], help="The generation of directory structure")
+reqgroup.add_argument('-g', '--generation', required=True, choices=['p11', 'odyssey'], help="The generation of directory structure")
 
 # Create our group of optional cmdline args
 optgroup = argparser.add_argument_group('Optional Arguments')
@@ -201,9 +201,9 @@ else:
 ekbCommitID = args.ekbCommit
 
 # Create the filename.
-filenameBase = "verifyHdct"
+filenameBase = "verify_hdct"
 filenames = dict()
-outputPath = outputPath + "/" + filenameBase + "_" + args.generation + "dd" + str(ecLevel)
+outputPath = outputPath + "/" + filenameBase + "_" + args.generation + "_" + str(ecLevel)
 
 # Make sure the path exists
 if (not os.path.exists(outputPath)):

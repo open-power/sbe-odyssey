@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/memory/odyssey/initfiles/odyssey_mp_scom.C $ */
+/* $Source: public/src/import/public/initfiles/odyssey/scom/odyssey_mp_scom.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */

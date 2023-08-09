@@ -39,7 +39,7 @@ odyssey_hwp_inc_paths = [
     '/common/generic/include',
     '/hwp/generic/perv',
     '/common/generic/scomt',
-    '/memory/odyssey/initfiles',
+    '/initfiles/odyssey/scom',
     '/memory/generic/memory/lib',
     '/memory/generic/memory/lib/utils/shared',
     '/memory/generic/memory/lib/utils/mc',
