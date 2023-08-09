@@ -49,14 +49,13 @@ def main():
     else:
         # Default value as odyssey
         arg = "ody"
-    arg = arg[:3]
 
-    if not (arg == 'ody' or arg == 'p11'):
+    if not (arg == 'odyssey' or arg == 'p11'):
         print("Target is not supporting, exiting...")
         sys.exit(1)
 
     # Verify HDCT.bin
-    cmd = os.environ['PATH_PYTHON3'] + " " + "$PROJECT_ROOT/public/systems/common/hdct/hdcttxt.py -f $PROJECT_ROOT/output/images/$ECMD_ARCH/hdct_"+arg+"dd10/hdct_"+arg+"dd10.bin -o $PROJECT_ROOT/output/images/$ECMD_ARCH/ -s $PROJECT_ROOT/output/images/$ECMD_ARCH/hdct_"+arg+"BinCommon/hdct.lookup -r $PROJECT_ROOT/public/systems/p11/HDCT.txt -g "+arg+" -c critical -l critical -e " + commitId
+    cmd = os.environ['PATH_PYTHON3'] + " " + "$PROJECT_ROOT/public/systems/common/hdct/hdcttxt.py -f $PROJECT_ROOT/output/images/$ECMD_ARCH/hdct_"+arg+"_10/hdct_"+arg+"_10.bin -o $PROJECT_ROOT/output/images/$ECMD_ARCH/ -s $PROJECT_ROOT/output/images/$ECMD_ARCH/hdct_"+arg+"_common/hdct.lookup -r $PROJECT_ROOT/public/systems/p11/HDCT.txt -g "+arg+" -c critical -l critical -e " + commitId
     rc = os.system( cmd )
 
     if rc:

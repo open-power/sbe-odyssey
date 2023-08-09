@@ -67,7 +67,7 @@ import customEnv
 
 
 # supported targets
-supporttedTargtes = ["ody", "p11"]
+supportedTargets = ["odyssey", "p11"]
 
 # Dict of ec level and file descriptors.
 fdDict = dict()
@@ -111,7 +111,7 @@ class ArgParser:
 
         # Add arguments to the respective groups
         requiredGroup.add_argument('-j', '--jsonfile', required=True, help="Json configuration file")
-        requiredGroup.add_argument('-t', '--target', required=True, choices=['ody', 'p11'], help="The generation we are building for.")
+        requiredGroup.add_argument('-t', '--target', required=True, choices=['odyssey', 'p11'], help="The generation we are building for.")
         requiredGroup.add_argument('-e', '--ekbcommit', required=True, help="EKB commit")
 
         # Create our group of optional cmdline args
@@ -131,7 +131,7 @@ class ArgParser:
 
     def getTarget(self):
         ''' Get the target from input args '''
-        if self.args.target in supporttedTargtes:
+        if self.args.target in supportedTargets:
             return self.args.target
         else:
             out.critical("Unsupported target type passed in args")
@@ -432,23 +432,33 @@ def createSBEFormattedAddrOrId(cmdType, addrID):
     return(addr)
 
 
-def getScandefFilePath(jsonparse):
-    # Get the scandef file path from json data passed in
-    scandefFilePath = None
-    if jsonparse.getScanFile():
-        # Converting dict to list variable
-        scandefFilePath = [jsonparse.getScanFile()[key] for key in jsonparse.getScanFile()]
+def getScandefFilePath(target, ecs, jsonparse):
+    # parse existing JSON config file entry, if it exists
+    try:
+        if jsonparse.getScanFile():
+            scandefFilePath = [jsonparse.getScanFile()[key] for key in jsonparse.getScanFile()]
 
-        # Iterate over the list, and replace $PROJECT_ROOT with absolute path
+        # Iterate over the list, and replace environment variables
         for i in range(len(scandefFilePath)):
             if "$PROJECT_ROOT" in scandefFilePath[i]:
                 scandefFilePath[i] = scandefFilePath[i].replace("$PROJECT_ROOT", projectroot)
 
-        # validating file exist in given path, in case not found raise error
-        for scandeffile in scandefFilePath:
-            if (not os.path.exists(scandeffile)):
-                out.critical("SCANDEF file not found...")
-                sys.exit(1)
+    # if not, use existing EKB defaults to attempt to find data
+    except KeyError:
+        scandefFilePath = [None] * len(ecs)
+
+        for i in range(len(ecs)):
+            chipdef_base = "%s_%02x_chipdef_base" % (target, ecs[i])
+            chipdef_ver = "%s_%02x_chipdef_ver" % (target, ecs[i])
+
+            scandefFilePath[i] = "%s/%s/%s.scandef" % (os.environ[chipdef_base], os.environ[chipdef_ver], target)
+
+    # validating file exist in given path, in case not found raise error
+    for scandeffile in scandefFilePath:
+        if (not os.path.exists(scandeffile)):
+            out.critical("SCANDEF file (%s) not found..." % scandeffile)
+            sys.exit(1)
+
     return scandefFilePath
 
 
@@ -464,7 +474,7 @@ def getTraceIDFilePath(jsonparse):
 
 def createOutputDirectory(outputPath, target):
     ''' create output directory to strore .lookup, .hdct, .log, .console'''
-    outputPathCommon = outputPath + "/" + filenameBase + "_" + target + "BinCommon"
+    outputPathCommon = outputPath + "/" + filenameBase + "_" + target + "_common"
 
     # Make sure the path exists
     if (not os.path.exists(outputPathCommon)):
@@ -483,7 +493,7 @@ def createSeperateDirForBinFile(eclevel, outputpath, target):
     # Create seperate dir for each DD level specific hdct.bin(As per EKB Requirement)
     filename = dict()
     for x in eclevel:
-        outputPathBin = outputpath + "/" + filenameBase + "_" + target + "dd" + str(hex(x))[2:]
+        outputPathBin = outputpath + "/" + filenameBase + "_" + target + "_" + str(hex(x))[2:]
 
         # Make sure the path exists
         if (not os.path.exists(outputPathBin)):
@@ -496,7 +506,7 @@ def createSeperateDirForBinFile(eclevel, outputpath, target):
                 out.critical("Exception: %s" % sys.exc_info()[0])
                 sys.exit(1)
 
-        filename[str(hex(x)) + "_bin"] = os.path.join(outputPathBin, filenameBase + "_" + target + "dd" + str(hex(x))[2:] +".bin")
+        filename[str(hex(x)) + "_bin"] = os.path.join(outputPathBin, filenameBase + "_" + target + "_" + str(hex(x))[2:] +".bin")
     return filename
 
 
@@ -522,7 +532,7 @@ def main():
     hdctfileName = jsonparse.getHdctFile()
 
     # Get the scandef file path from json data passed in
-    scandefFilePaths = getScandefFilePath(jsonparse)
+    scandefFilePaths = getScandefFilePath(args.target, jsonparse.getEcLevel(), jsonparse)
 
     # Get the tracearray_defs.H file path from commandline arge passed in.
     traceArrayIdFilePath = getTraceIDFilePath(jsonparse)
@@ -651,7 +661,7 @@ def main():
     out.info("|  6 BITS           | 6 BITS | 6 BITS |4 bits| 10 Bits |")
     out.info("|   CHIPLET OFFSET  | START  |   END  |Cmd   | Content |")
 
-    chiptypemapwithhdct = "ody" if (argParser.getTarget() == 'ody') else "pu"
+    chiptypemapwithhdct = "ody" if (argParser.getTarget() == 'odyssey') else "pu"
 
     for entry in allHdctEntries:
 

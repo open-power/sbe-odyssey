@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/memory/odyssey/initfiles/odyssey_mp_scom.H $ */
+/* $Source: public/src/import/public/initfiles/odyssey/scom/odyssey_scom.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -22,8 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef _INIT_ODYSSEY_MP_SCOM_PROCEDURE_H_
-#define _INIT_ODYSSEY_MP_SCOM_PROCEDURE_H_
+#ifndef _INIT_ODYSSEY_SCOM_PROCEDURE_H_
+#define _INIT_ODYSSEY_SCOM_PROCEDURE_H_
 
 
 #include <stddef.h>
@@ -31,12 +31,14 @@
 #include <fapi2.H>
 
 
-typedef fapi2::ReturnCode (*odyssey_mp_scom_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>&);
+typedef fapi2::ReturnCode (*odyssey_scom_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
+        const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>&, const fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>&);
 
 extern "C"
 {
 
-    fapi2::ReturnCode odyssey_mp_scom(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& TGT0);
+    fapi2::ReturnCode odyssey_scom(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& TGT0,
+                                   const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& TGT1, const fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>& TGT2);
 
 }
 

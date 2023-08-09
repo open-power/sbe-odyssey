@@ -61,8 +61,7 @@ def main():
         arg = sys.argv[1]
     else:
         # Default value as odyssey
-        arg = "ody"
-    arg = arg[:3]
+        arg = "odyssey"
 
     buildCmd = os.environ['PATH_PYTHON3'] + " " + "$PROJECT_ROOT/public/systems/common/hdct/hdctbin.py -j $PROJECT_ROOT/public/systems/common/hdct/"+arg+"/config.json -o $PROJECT_ROOT/output/images/$ECMD_ARCH/ -t "+arg+" -c critical -l critical -e " + commitId
     rc = os.system( buildCmd )
