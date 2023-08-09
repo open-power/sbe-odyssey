@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -342,6 +342,30 @@ namespace std
                 const_reference back() const
                 {
                     return *(iv_finish-1);
+                }
+
+                /**
+                 * Get a mutable pointer to the entire array backing the container
+                 * @return pointer to array data
+                 * @pre none
+                 * @post None
+                 */
+                __attribute__ ((always_inline))
+                pointer data()
+                {
+                    return (iv_start);
+                }
+
+                /**
+                 * Get an immutable pointer to the entire array backing the container
+                 * @return pointer to array data
+                 * @pre none
+                 * @post None
+                 */
+                __attribute__ ((always_inline))
+                const_pointer data() const
+                {
+                    return (iv_start);
                 }
 
                 /**
