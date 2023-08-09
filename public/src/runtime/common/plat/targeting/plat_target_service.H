@@ -117,7 +117,28 @@ namespace fapi2
         ///
         void getMulticastChildren(const plat_target_sbe_handle i_parent,
                                   const bool i_include_nonfunctional,
-                                  std::vector<plat_target_sbe_handle> &o_children) const;
+                                  std::vector<plat_target_sbe_handle> &o_children) const
+        {
+            getMulticastChildrenInternal(-1ULL, i_parent, i_include_nonfunctional, o_children);
+        }
+
+        ///
+        ///
+        /// @brief Break a multicast target up into unicast targets, and apply a target filter
+        ///
+        /// @param [in] i_filter     Target filter to apply
+        /// @param [in] i_parent     Parent target handle
+        /// @param [in] i_include_nonfunctional Return also targets that are not functional
+        /// @param [out] o_children             A vector of child target handles
+        ///
+        void getMulticastChildren(const TargetFilter i_filter,
+                                  const plat_target_sbe_handle i_parent,
+                                  const bool i_include_nonfunctional,
+                                  std::vector<plat_target_sbe_handle> &o_children) const
+        {
+            const uint64_t l_chiplet_mask = convertTargetFilterToChipletMask(i_filter);
+            getMulticastChildrenInternal(l_chiplet_mask, i_parent, i_include_nonfunctional, o_children);
+        }
 
         ///
         /// @brief Function to get the chip target initialize the G_targets vector
@@ -245,6 +266,26 @@ namespace fapi2
                              const bool i_include_nonfunctional,
                              std::vector<plat_target_sbe_handle>& o_children,
                              bool i_ignore_filter = false) const;
+
+        ///
+        /// @brief Break a multicast target up into unicast targets (internal implementation)
+        ///
+        /// @param [in] i_chiplet_mask Mask of chiplets to include in the result
+        /// @param [in] i_parent     Parent target handle
+        /// @param [in] i_include_nonfunctional Return also targets that are not functional
+        /// @param [out] o_children             A vector of child target handles
+        ///
+        void getMulticastChildrenInternal(const uint64_t i_chiplet_mask,
+                                          const plat_target_sbe_handle i_parent,
+                                          const bool i_include_nonfunctional,
+                                          std::vector<plat_target_sbe_handle> &o_children) const;
+
+        ///
+        /// @brief convert a fapi2::TargetFilter to a chiplet mask
+        /// @param [in]  i_filter  The target filter to convert
+        /// @return The converted chiplet mask
+        ///
+        static uint64_t convertTargetFilterToChipletMask(const TargetFilter i_filter);
 
         ///
         ///
