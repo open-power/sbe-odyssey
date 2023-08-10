@@ -51,7 +51,7 @@ generic_infile_c = [
                     'poz_nest_enable_io.C',
                     'poz_efuse_program.C',
                     'poz_efuse_check.C',
-                   ]
+                  ]
 
 import_libs_dir_path = pub_import_dir_path + 'common/libs/crypto/'
 
@@ -87,5 +87,19 @@ foreach util_generic_infile : util_generic_infile_c
 
 abs_util_generic_infile_c_path = import_util_generic_dir_path + util_generic_infile
 ekb_generic_hwp_c_path += abs_util_generic_infile_c_path
+
+endforeach
+
+import_spi_libs_dir_path = pub_import_dir_path + '/common/libs/spi/'
+
+libs_spi_infile_c = [
+                        'spi_memory.C',
+                        'spi_base.C',
+                    ]
+
+foreach libs_spi_infile : libs_spi_infile_c
+
+abs_libs_spi_infile_c_path = import_spi_libs_dir_path + libs_spi_infile
+ekb_generic_hwp_c_path += abs_libs_spi_infile_c_path
 
 endforeach

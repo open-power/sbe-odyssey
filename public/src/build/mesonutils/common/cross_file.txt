@@ -110,7 +110,8 @@ ekb_cmn_inc_path = [
     '/emb/p11/kernels/ppe/boltonlib/standard',
     '/common/generic/registers',
     '/ring/generic',
-    '/hwp/generic/ffdc'
+    '/hwp/generic/ffdc',
+    '/common/libs/spi',
         ]
 
 ekb_hwp_inc_path = [
