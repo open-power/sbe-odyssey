@@ -1,7 +1,7 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/common/chipops/meson.build $
+# $Source: public/src/runtime/common/chipops/spiaccess/meson.build $
 #
 # OpenPOWER sbe Project
 #
@@ -23,13 +23,8 @@
 #
 # IBM_PROLOG_END_TAG
 
-subdir('stopclocks')
-subdir('tracearray')
-subdir('fastarray')
-subdir('getcapabilities')
-subdir('sramaccess')
-subdir('collectdump')
-subdir('codeupdate')
-subdir('exechwp')
-subdir('rings')
-subdir('spiaccess')
+CMN_SPI_ACCESS_CHIPOPS_JSON = files('chipop_table.json')
+
+abs_runtime_cmn_spi_access_c_path = [
+                     files('sbecmdspi.C'),
+   ]
