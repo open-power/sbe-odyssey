@@ -56,6 +56,7 @@ import_libs_dir_path = pub_import_dir_path + 'common/libs/crypto/'
 
 libs_infile_c = [
                     'ibmecc.C',
+                    'crc32.C',
                    ]
 
 #Create abs path for input files before creating .o
