@@ -40,16 +40,29 @@ common_error_xml_files = [
                           'poz_scan_compare_errors.xml',
                           'poz_scan_via_scom_errors.xml',
                           'poz_sbe_i2c_errors.xml',
-			  'poz_efuse_errors.xml',
+                          'poz_efuse_errors.xml',
                           'poz_hss_errors.xml',
                           'io_ppe_errors.xml',
                         ]
+
+import_spi_xml_dir_base_path = pub_import_dir_path + '/common/libs/spi/'
+common_spi_error_xml_files = [
+                              'libspi_errors.xml',
+                             ]
 
 #Create abs path for input xml files
 common_abs_error_xml_files = []
 foreach error_xml_file : common_error_xml_files
 
 abs_error_xml_file = import_generic_xml_dir_base_path + error_xml_file
+common_abs_error_xml_files += abs_error_xml_file
+
+endforeach
+
+#Create abs path for spi xml files
+foreach error_xml_file : common_spi_error_xml_files
+
+abs_error_xml_file = import_spi_xml_dir_base_path + error_xml_file
 common_abs_error_xml_files += abs_error_xml_file
 
 endforeach
