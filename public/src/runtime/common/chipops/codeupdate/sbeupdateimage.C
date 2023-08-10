@@ -39,11 +39,13 @@ fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
     SBE_ENTER(SBE_FUNC);
     uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
     ReturnCode l_fapiRc = FAPI2_RC_SUCCESS;
+    fapi2::current_err = FAPI2_RC_SUCCESS;
 
     // Request structure for update image
     codeUpdateCtrlStruct_t l_updateImgCtrlStruct __attribute__ ((aligned (8)));
     // Buffer pointer
     uint32_t *l_imgBufScratchArea = NULL;
+    spi::AbstractMemoryDevice *l_memHandle = NULL;
     // Set ackEOT to false
     o_ackEOT = false;
 
@@ -69,9 +71,16 @@ fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
             break;
         }
 
-        // Initialize SPI controller
-        SpiControlHandle spiHandle(g_platTarget->plat_getChipTarget(),
-                                   l_updateImgCtrlStruct.storageDevStruct.devEngineNum);
+        // Get memory device handle
+        l_rc = createMemoryDevice(l_updateImgCtrlStruct.runSideIndex,
+                                  l_updateImgCtrlStruct.storageDevStruct.memId,
+                                  true, true, l_memHandle);
+        if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+        {
+            SBE_ERROR(SBE_FUNC " createMemoryDevice unsuccessful. RC[0x%08x] ", l_rc);
+            o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE, l_rc);
+            break;
+        }
 
         // The received image would be updated in chunks of maxSpiWriteInWords
         // or less depending on the image size in a loop
@@ -115,7 +124,7 @@ fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
             // 2. Validate partition table if image type is bootloader
             // 3. Get image detail from partition table
             // 4. Validate incoming image size
-            // 5. Perform erase in device
+            // 5. Start on write_begin
             if (l_preCheckFlag == true)
             {
 	        // 1. Verify image signature
@@ -163,51 +172,75 @@ fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
                     break;
                 }
 
-                // 5. Before starting to write into device, make sure to erase entire
-                // requisite number of sectors/blocks as per the image size
-                // to be updated.
-                l_fapiRc = performEraseInDevice(spiHandle, l_updateImgCtrlStruct);
+                // 5. Start on write_begin
+                SBE_INFO(SBE_FUNC "Write begin.....");
+                l_fapiRc = l_memHandle->write_begin(l_updateImgCtrlStruct.imageStartAddr,
+                                                   WORD_TO_BYTES(l_updateImgCtrlStruct.imageSizeInWords));
                 if(l_fapiRc != FAPI2_RC_SUCCESS)
                 {
+                    SBE_ERROR(SBE_FUNC "Write begin to device failed, Addr:0x%08X Size:0x%08X",\
+                              l_updateImgCtrlStruct.imageStartAddr,\
+                              WORD_TO_BYTES(l_updateImgCtrlStruct.imageSizeInWords));
+
                     o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                                      SBE_SEC_CU_ERASE_IMAGE_FAILURE );
+                                      SBE_SEC_CU_WRITE_BEGIN_IMAGE_FAILURE );
                     break;
                 }
-
-                // Make sure flag is set
                 l_preCheckFlag = false;
             }
 
             if (l_eotFlag == true)
             {
                 // Incoming pak file should contain the pak end marker and its size
-                // towards the last 8-bytes in the incoming file so check for same
+                // towards the last 8-bytes in the incoming file so check for same.
+                // Note: Calling this function before write_data so that data buffer
+                // is updated with correct pak header
                 l_rc = checkNUpdatePakMarkerNSize(l_imgBufScratchArea,
                                                   l_writeWordsLen,
                                                   l_updateImgCtrlStruct);
                 if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
                 {
                     o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,l_rc );
+
+                    // Clean-up by calling write functions to clear error states and
+                    // restoring the tail end of a partially written erase block so
+                    // it's crucial to finish the write operation to ensure we don't lose
+                    // data outside of the partition we're writing
+                    l_memHandle->write_end();
                     break;
                 }
             }
 
-            // Perform device write
-            l_fapiRc = performWriteInDevice(spiHandle,
-                                            l_updateImgCtrlStruct,
-                                            WORD_TO_BYTES(l_writeWordsLen),
-                                            l_imgBufScratchArea,
-                                            true);
-
+            SBE_INFO(SBE_FUNC "Write data...");
+            l_fapiRc = l_memHandle->write_data(l_imgBufScratchArea, WORD_TO_BYTES(l_writeWordsLen));
             if(l_fapiRc != FAPI2_RC_SUCCESS)
             {
-                SBE_ERROR(SBE_FUNC "Write to device failed, Addr:0x%08X Size:0x%08X",\
-                          WITH_ECC(l_updateImgCtrlStruct.imageStartAddr),\
+                SBE_ERROR(SBE_FUNC "Write data to device failed, Addr:0x%08X Size:0x%08X",\
+                          l_updateImgCtrlStruct.imageStartAddr,\
                           WORD_TO_BYTES(l_writeWordsLen));
 
                 o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                                  SBE_SEC_CU_WRITE_IMAGE_FAILURE );
+                                  SBE_SEC_CU_WRITE_DATA_IMAGE_FAILURE );
+
+                // Explanation as per LN:204-207
+                l_memHandle->write_end();
                 break;
+            }
+
+            if (l_eotFlag == true)
+            {
+                SBE_INFO(SBE_FUNC "Write end...");
+                l_fapiRc = l_memHandle->write_end();
+                if(l_fapiRc != FAPI2_RC_SUCCESS)
+                {
+                    SBE_ERROR(SBE_FUNC "Write end to device failed, Addr:0x%08X Size:0x%08X",\
+                              l_updateImgCtrlStruct.imageStartAddr,\
+                              WORD_TO_BYTES(l_writeWordsLen));
+
+                    o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                                      SBE_SEC_CU_WRITE_END_IMAGE_FAILURE );
+                    break;
+                }
             }
 
             l_updateImgCtrlStruct.imageStartAddr += WORD_TO_BYTES(l_writeWordsLen);
@@ -227,6 +260,10 @@ fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
 
     //Free the scratch area
     Heap::get_instance().scratch_free(l_imgBufScratchArea);
+    if (l_memHandle != NULL)
+    {
+        freeMemoryDevice(l_memHandle);
+    }
 
     SBE_EXIT(SBE_FUNC);
     return l_fapiRc;

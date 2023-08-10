@@ -232,6 +232,9 @@ enum sbeSecondaryResponse
     SBE_SEC_CU_UNKNOWN_DEVICE                 = 0x89,
     SBE_SEC_CU_INVALID_BOOT_SIDE              = 0x8A,
     SBE_SEC_CU_ECC_USE_DISABLED               = 0x8B,
+    SBE_SEC_CU_WRITE_BEGIN_IMAGE_FAILURE      = 0x8C,
+    SBE_SEC_CU_WRITE_END_IMAGE_FAILURE        = 0x8D,
+    SBE_SEC_CU_WRITE_DATA_IMAGE_FAILURE       = 0x8E,
 };
 
 /**

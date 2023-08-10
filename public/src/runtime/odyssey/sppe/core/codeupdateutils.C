@@ -36,6 +36,7 @@
 #define SPI_ENGINE_NOR                  0
 #define SPIM_BASEADDR_PIB               0x70000
 #define NOR_DEVICE_MAX_SIZE             0x1000000 // 16MB
+#define MEMORY_ID                       0 // refers to one monolithic memory with logical partitions
 
 using spi::SPIPort;
 using spi::FlashDevice;
@@ -103,6 +104,7 @@ void getCodeUpdateParams(codeUpdateCtrlStruct_t &io_codeUpdateCtrlStruct)
     io_codeUpdateCtrlStruct.storageDevStruct.storageSubSectorSize       = NOR_FLASH_SUB_SECTOR_SIZE;
     io_codeUpdateCtrlStruct.storageDevStruct.devEngineNum               = SPI_ENGINE_NOR;
     io_codeUpdateCtrlStruct.storageDevStruct.maxBufferSize              = MAX_BUFFER_SIZE;
+    io_codeUpdateCtrlStruct.storageDevStruct.memId                      = MEMORY_ID;
 
     // Get side info from booted device
     getSideInfo(io_codeUpdateCtrlStruct.runSideIndex,
@@ -201,6 +203,9 @@ uint32_t createMemoryDevice(
             l_rc = SBE_SEC_HEAP_BUFFER_ALLOC_FAILED;
             break;
         }
+
+        //Using  memset() to force all bytes of l_memblock to zero
+        memset(l_memblock, 0, l_alloc_size);
 
         //
         // Initialize SPI port object using placement new

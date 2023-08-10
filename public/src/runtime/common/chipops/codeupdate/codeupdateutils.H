@@ -60,8 +60,9 @@ struct storageDevStruct_t
 
     // This refer to engine attach to storage device
     uint8_t devEngineNum;
+    uint8_t memId;
 
-    uint8_t reserved[3];
+    uint8_t reserved[2];
 };
 
 /*
