@@ -1,0 +1,13 @@
+{
+    "chipoptable":[
+    {
+        "cmdClass":"F1",
+        "command":"0x05",
+        "function":"sbeSpiWrite",
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
+        "headerFile":"sbecmdspi.H"
+    }
+    ]
+}
+
+
