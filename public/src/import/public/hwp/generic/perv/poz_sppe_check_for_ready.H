@@ -37,7 +37,7 @@
 typedef struct
 {
     uint32_t boot_flags;
-    uint32_t  max_polls;
+    uint32_t max_polls;
     uint64_t poll_delay_cycles;
     uint64_t poll_delay_ns;
 } poz_sppe_boot_parms;
@@ -48,4 +48,4 @@ typedef struct
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode poz_sppe_check_for_ready(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    const poz_sppe_boot_parms i_boot_parms);
+    const poz_sppe_boot_parms& i_boot_parms);
