@@ -61,6 +61,6 @@ cp ${MESON_SOURCE_ROOT}/internal/src/tools/simics/pozsbeinitstandalone.simics \
    ${MESON_SOURCE_ROOT}/internal/src/test/utils/sbeIstepAuto.py \
    ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/simics/ || exit 1
 
-tar -czvf ${MESON_INSTALL_PREFIX}/$SBE_PLATFORM/${SBE_PLATFORM}_sbe_debug.tar.gz \
+tar -czvf ${MESON_INSTALL_PREFIX}/$SBE_PLATFORM/${SBE_PLATFORM}_sbe_debug_DD1.tar.gz \
     -C ${MESON_BUILD_ROOT} \
     ${SBE_PLATFORM}_debug_files_tools || exit 1
