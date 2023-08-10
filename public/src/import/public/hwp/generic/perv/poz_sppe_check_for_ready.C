@@ -37,7 +37,7 @@ using namespace fapi2;
 
 ReturnCode poz_sppe_check_for_ready(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    const poz_sppe_boot_parms i_boot_parms)
+    const poz_sppe_boot_parms& i_boot_parms)
 {
     FAPI_DBG("Entering ...");
 
@@ -60,12 +60,8 @@ ReturnCode poz_sppe_check_for_ready(
 
     // loop until expected state is reached or we've
     // waited for the prescribed timeout
-    while (1)
+    while ( true )
     {
-        // delay before polling
-        FAPI_TRY(delay(i_boot_parms.poll_delay_ns,
-                       i_boot_parms.poll_delay_cycles));
-
         // sample register, break if expected bit is set
         FAPI_TRY(SB_MSG.getCfam(i_target));
 
@@ -74,6 +70,9 @@ ReturnCode poz_sppe_check_for_ready(
         {
             break;
         }
+
+        FAPI_TRY(delay(i_boot_parms.poll_delay_ns,
+                       i_boot_parms.poll_delay_cycles));
 
         // bump count
         l_poll++;
