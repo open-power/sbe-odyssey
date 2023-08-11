@@ -83,6 +83,10 @@ fapi2::ReturnCode odyssey_scom(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>
                                const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& TGT1, const fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>& TGT2)
 {
     {
+        fapi2::ATTR_EC_Type   l_chip_ec;
+        fapi2::ATTR_NAME_Type l_chip_id;
+        FAPI_TRY(FAPI_ATTR_GET_PRIVILEGED(fapi2::ATTR_NAME, TGT0, l_chip_id));
+        FAPI_TRY(FAPI_ATTR_GET_PRIVILEGED(fapi2::ATTR_EC, TGT0, l_chip_ec));
         fapi2::ATTR_MSS_OCMB_HALF_DIMM_MODE_Type l_TGT0_ATTR_MSS_OCMB_HALF_DIMM_MODE;
         FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_MSS_OCMB_HALF_DIMM_MODE, TGT0, l_TGT0_ATTR_MSS_OCMB_HALF_DIMM_MODE));
         uint64_t l_def_ATTR_MSS_OCMB_HALF_DIMM_MODE = l_TGT0_ATTR_MSS_OCMB_HALF_DIMM_MODE;
