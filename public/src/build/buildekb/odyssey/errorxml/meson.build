@@ -43,9 +43,11 @@ endforeach
 mss_odyssey_abs_error_xml_files = []
 import_xml_dir_base_path = pub_import_dir_path + '/memory/odyssey/xml/error_info/'
 mss_odyssey_error_xml_files = [
+    'ody_ccs_errors.xml',
     'ody_draminit_errors.xml',
     'ody_phyinit_errors.xml',
     'ody_omi_train_check_errors.xml',
+    'ody_mcbist_errors.xml',
     'ody_sbe_tracearray_errors.xml',
     'ody_i2c_errors.xml'
     ]

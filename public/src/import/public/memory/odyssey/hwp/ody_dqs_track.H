@@ -37,6 +37,7 @@
 #define _ODY_DQS_TRACK_
 
 #include <fapi2.H>
+#include <ody_dqs_track_utils.H>
 
 typedef fapi2::ReturnCode (*ody_dqs_track_FP_t) (const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
 

@@ -46,6 +46,8 @@ extern "C"
     ///
     fapi2::ReturnCode ody_dqs_track( const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target )
     {
-        return fapi2::FAPI2_RC_SUCCESS;
+        FAPI_TRY(mss::ody::ody_dqs_track(i_target));
+    fapi_try_exit:
+        return fapi2::current_err;
     }
 } //extern C
