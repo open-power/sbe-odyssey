@@ -118,8 +118,15 @@ infile_c = [
             '/memory/odyssey/hwp/lib/power_thermal/ody_thermal_init_utils.C',
             '/hwp/odyssey/perv/ody_dts_read.C',
             # Files needed for Thermal sensor and DQS polling.
+            '/memory/generic/memory/lib/utils/mcbist/gen_mss_mcbist_patterns.C',
             '/memory/odyssey/hwp/ody_thermal_read.C',
             '/memory/odyssey/hwp/ody_dqs_track.C',
+            '/memory/odyssey/hwp/lib/ody_attribute_accessors_manual.C',
+            '/memory/odyssey/hwp/lib/ody_dqs_track_utils.C',
+            '/memory/odyssey/hwp/lib/ccs/ody_ccs.C',
+            '/memory/odyssey/hwp/lib/mcbist/ody_mcbist.C',
+            '/memory/odyssey/hwp/lib/mcbist/ody_memdiags.C',
+            '/memory/odyssey/hwp/lib/workarounds/ody_ccs_des_insert_workaround.C',
             ]
 
 #Create abs path for input files before creating .o
