@@ -46,6 +46,7 @@
 #include "istepIplUtils.H"
 #include "sbetspolling.H"
 #include "sbethermalsensorpolltimer.H"
+#include "sbebootutils.H"
 
 const uint64_t PERIODIC_TIMER_INTERVAL_SECONDS = 24*60*60; // 24 hours
 
@@ -151,44 +152,6 @@ void sbeHandleFifoResponse (const uint32_t i_rc, sbeFifoType i_type)
         }
     } while (false);
     #undef SBE_FUNC
-}
-
-//////////////////////////////////////////////////////
-//////////////////////////////////////////////////////
-// TODO - Move this to common utils once metis has
-// sbeAutoBoot implemented
-// JIRA: PFSBE-336
-void setSBEBootState(uint8_t bootMode)
-{
-    switch(bootMode)
-    {
-        case SbeRegAccess::BootMode::AUTOBOOT:
-            SBE_INFO(SBE_FUNC "AutoBoot Mode set... IPLing");
-            (void)SbeRegAccess::theSbeRegAccess().
-                updateSbeState(SBE_STATE_CMN_IPLING);
-            g_pSbeIstepIplUtils->sbeAutoBoot();
-            break;
-        case SbeRegAccess::BootMode::JUMP_TO_RUNTIME:
-            // jumpToRuntime
-            SBE_INFO(SBE_FUNC "Jump To Runtime Mode ...");
-            (void)SbeRegAccess::theSbeRegAccess().
-                updateSbeState(SBE_STATE_CMN_RUNTIME);
-            break;
-        case SbeRegAccess::BootMode::ISTEP:
-            SBE_INFO(SBE_FUNC " Istep Mode ...");
-            (void)SbeRegAccess::theSbeRegAccess().
-                updateSbeState(SBE_STATE_CMN_ISTEP);
-            break;
-        case SbeRegAccess::BootMode::PAUSE_AND_BOOT:
-            // PauseAndBoot
-            // TODO: JIRA: PFSBE-315
-            SBE_ERROR(SBE_FUNC "Unsupported Pause and Boot mode ");
-        default:
-            SBE_ERROR(SBE_FUNC " Not a supported Boot mode 0x%02X", bootMode);
-            (void)SbeRegAccess::theSbeRegAccess().
-                updateSbeState(SBE_STATE_CMN_FAILURE);
-            break;
-    }
 }
 
 void sbeSyncCommandProcessor_routine(void *i_pArg)
