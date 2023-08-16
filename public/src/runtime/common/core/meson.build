@@ -43,7 +43,8 @@ infile_c = ['sbeSpMsg.C',
             'initthreads.C',
             'istep.C',
             'ipl.C',
-            'istepIplUtils.C'
+            'istepIplUtils.C',
+            'sbebootutils.C'
            ]
 
 abs_runtime_cmn_core_c_path = []
