@@ -272,6 +272,7 @@ ReturnCode mod_lbist_setup(
 {
     CPLT_CTRL0_t CPLT_CTRL0_set, CPLT_CTRL0_clear;
     CPLT_CTRL1_t CPLT_CTRL1;
+    CPLT_CONF0_t CPLT_CONF0;
     CPLT_CONF1_t CPLT_CONF1;
     CLK_REGION_t CLK_REGION;
     OPCG_REG0_t OPCG_REG0;
@@ -403,6 +404,26 @@ ReturnCode mod_lbist_setup(
         {
             FAPI_TRY(OPCG_REG0.putScom(targ));
         }
+    }
+
+    uint8_t l_pcie_clk_en;
+
+    FAPI_TRY(FAPI_ATTR_GET(ATTR_CHIP_EC_FEATURE_PCIE_CLK_EN,
+                           i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>(),
+                           l_pcie_clk_en));
+
+    if (l_pcie_clk_en)
+    {
+        // PCIE non clocking bug fix
+        for (auto& targ : i_target.getChildren<TARGET_TYPE_PERV>(TARGET_FILTER_PEC))
+        {
+            // save whats in CPLT_CONF0
+            FAPI_TRY(CPLT_CONF0.getScom(targ));
+            // set bits 48 - 51
+            CPLT_CONF0.insertFromRight<CPLT_CONF0_TOPOLOGY_ID, CPLT_CONF0_TOPOLOGY_ID_LEN>(0b1111);
+            FAPI_TRY(CPLT_CONF0.putScom(targ));
+        }
+
     }
 
     // OPCG_REG1
