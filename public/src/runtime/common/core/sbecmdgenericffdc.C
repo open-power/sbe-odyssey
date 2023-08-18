@@ -57,10 +57,16 @@ uint32_t sbeGetFfdc (uint8_t *i_pArg)
         SBE_INFO(SBE_FUNC"FAPI RC is %x", g_FfdcData.fapiRc);
 
         //Send the HW Package and Plat Package data over FIFO.
-        dumpFieldsConfig = SBE_FFDC_ALL_DATA;
+        dumpFieldsConfig = SBE_FFDC_ALL_PLAT_DATA;
 
         //Send the FFDC data over FIFO.
         uint32_t wordCount = 0;
+        if( (ffdc.getRc() != FAPI2_RC_SUCCESS) )
+        {
+            SBE_ERROR( SBE_FUNC" FAPI RC:0x%08X", ffdc.getRc());
+            dumpFieldsConfig |= SBE_FFDC_ALL_HW_DATA;
+        }
+        
         rc = sendFFDCOverFIFO(dumpFieldsConfig, wordCount, true, type);
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(rc);
 

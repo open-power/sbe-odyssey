@@ -97,16 +97,17 @@ public:
                                 SBE_GLOBAL->failedCmdClass,
                                 SBE_GLOBAL->failedCmd);
         SBE_INFO(" i_fieldsConfig :0x%08X ", i_fieldsConfig);
-        iv_ffdcPackageHeader.fapiRc = fapi2::current_err;
         if( i_fieldsConfig & SBE_FFDC_ALL_HW_DATA )
         {
             //length and dumpFields will be filled up depending on the fields
             //to be sent in send APIs
+            iv_ffdcPackageHeader.fapiRc = fapi2::current_err;
             iv_hwDataHeader.dumpFields = {0};
             iv_hwDataHeader.dumpFields.set(i_fieldsConfig);
             SBE_INFO(" HW get :0x%08X ", iv_hwDataHeader.dumpFields.get());
         } else if( i_fieldsConfig & SBE_FFDC_ALL_PLAT_DATA )
         {
+            iv_ffdcPackageHeader.fapiRc = fapi2::FAPI2_RC_PLAT_ERR_SEE_DATA;
             iv_sbeDataHeader.primaryStatus = SBE_GLOBAL->failedPrimStatus;
             iv_sbeDataHeader.secondaryStatus = SBE_GLOBAL->failedSecStatus;
             iv_sbeDataHeader.fwCommitID = SBE_COMMIT_ID;
