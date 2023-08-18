@@ -371,7 +371,7 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
         if( (i_ffdc != NULL) && (i_ffdc->getRc() != FAPI2_RC_SUCCESS))
         {
             SBE_ERROR( SBE_FUNC" FAPI RC:0x%08X", i_ffdc->getRc());
-            dumpFieldsConfig |= SBE_FFDC_ALL_HW_DATA;
+            dumpFieldsConfig |= SBE_FFDC_ALL_DATA;
         }
         // If there is a SBE internal failure
         if((i_hdr.primaryStatus() != SBE_PRI_OPERATION_SUCCESSFUL) ||\
@@ -382,10 +382,14 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
                 (uint32_t)i_hdr.secondaryStatus(), i_type);
             dumpFieldsConfig |= SBE_FFDC_ALL_PLAT_DATA;
         }
-        rc = sendFFDCOverFIFO(dumpFieldsConfig, len, true, i_type);
-        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(rc);
 
-        distance += len;
+        if( dumpFieldsConfig )
+        {
+            rc = sendFFDCOverFIFO(dumpFieldsConfig, len, true, i_type);
+            CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(rc);
+            distance += len;
+        }
+
         len = sizeof(distance)/sizeof(uint32_t);
         rc = sbeDownFifoEnq_mult ( len, &distance, i_type);
         if (rc)
