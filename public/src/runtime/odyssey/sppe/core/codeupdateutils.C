@@ -40,6 +40,11 @@
 using spi::SPIPort;
 using spi::FlashDevice;
 
+#define SECTOR_NUM_CHECK(sector, address)\
+        ((address >= (sector * SMALLEST_ERASE_BLOCK_SIZE)) && (address < ((sector + 1) * SMALLEST_ERASE_BLOCK_SIZE)))
+#define SECTOR_00 0x00
+#define SECTOR_72 0x48
+
 void getSideInfo(uint8_t &o_runningSide,
                  uint8_t &o_nonRunningSide)
 {
@@ -112,10 +117,37 @@ void getCodeUpdateParams(codeUpdateCtrlStruct_t &io_codeUpdateCtrlStruct)
     #undef SBE_FUNC
 }
 
+// A flash device with a built-in offset to encapsulate the boot side selection
+class OdyFlashDevice : public FlashDevice
+{
+public:
+    OdyFlashDevice(const spi::AbstractPort& i_port,
+                   device_type i_devtype,
+                   uint32_t i_raw_size,
+                   uint8_t* i_erase_buffer) :
+        FlashDevice(i_port, i_devtype, i_raw_size, i_erase_buffer)
+        {}
+
+private:
+    fapi2::ReturnCode read_extended_status(uint32_t i_address, extended_status& o_status) const override
+    {
+        FAPI_TRY(FlashDevice::read_extended_status(i_address, o_status));
+        if ((o_status & (ES_ERASE_FAIL | ES_PROG_FAIL)) &&
+            (SECTOR_NUM_CHECK(SECTOR_00, i_address) || SECTOR_NUM_CHECK(SECTOR_72, i_address)))
+        {
+            // Ignore erase/write errors on debug partition
+            o_status = ES_NONE;
+        }
+
+    fapi_try_exit:
+        return current_err;
+    }
+};
+
 // A struct to hold all objects associated with a memory device in one place
 // for easy allocation and freeing
 struct OdyMemoryDevice {
-    FlashDevice flash;
+    OdyFlashDevice flash;
     SPIPort port;
     uint8_t erase_buffer[0] __attribute__((aligned(8)));
 };
@@ -199,7 +231,7 @@ uint32_t createMemoryDevice(
         // Initialize Flash driver object using placement new
         //
         uint8_t * const l_erase_buffer = i_intent_to_write ? l_memblock->erase_buffer : NULL;
-        new (&l_memblock->flash) FlashDevice(l_memblock->port, l_dev_type, NOR_DEVICE_MAX_SIZE, l_erase_buffer);
+        new (&l_memblock->flash) OdyFlashDevice(l_memblock->port, l_dev_type, NOR_DEVICE_MAX_SIZE, l_erase_buffer);
 
         // Return the pointer to the Flash device, which is at the beginning of our memory
         // block so we can use that same pointer to free later.
@@ -217,7 +249,7 @@ void freeMemoryDevice(spi::AbstractMemoryDevice *i_mem_device)
     auto const l_memblock = reinterpret_cast<OdyMemoryDevice *>(i_mem_device);
 
     // Destroy the objects we created
-    l_memblock->flash.~FlashDevice();
+    l_memblock->flash.~OdyFlashDevice();
     l_memblock->port.~SPIPort();
 
     // Free the memory block regardless of whether the previous call failed or not
