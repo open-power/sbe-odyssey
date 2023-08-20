@@ -40,6 +40,7 @@ fapi2::ReturnCode syncSide(const sbeSyncReqMsg_t *i_msg,
    #define SBE_FUNC " syncSide "
    SBE_ENTER(SBE_FUNC);
    ReturnCode l_fapiRc = FAPI2_RC_SUCCESS;
+   fapi2::current_err = FAPI2_RC_SUCCESS;
 
    do
    {
@@ -154,7 +155,8 @@ fapi2::ReturnCode syncImage(codeUpdateCtrlStruct_t &i_syncSideCtrlStruct,
    ReturnCode l_fapiRc = FAPI2_RC_SUCCESS;
 
    //buffer pointer
-   uint32_t *l_ImgBufScratchArea __attribute__ ((aligned (8))) = {0};
+   uint32_t *l_imgBufScratchArea = NULL;
+   spi::AbstractMemoryDevice *l_memHandle = NULL;
 
    do
    {
@@ -245,10 +247,10 @@ fapi2::ReturnCode syncImage(codeUpdateCtrlStruct_t &i_syncSideCtrlStruct,
       i_syncSideCtrlStruct.imageSizeInWords = BYTES_TO_WORDS(l_actualImageSize);
 
       // Allocate buffer of bufferSize
-      l_ImgBufScratchArea =
+      l_imgBufScratchArea =
                   (uint32_t *)Heap::get_instance().scratch_alloc(
                   i_syncSideCtrlStruct.storageDevStruct.maxBufferSize);
-      if(l_ImgBufScratchArea == NULL)
+      if(l_imgBufScratchArea == NULL)
       {
          SBE_ERROR(SBE_FUNC "Allocation of buffer size [0x%08x] failed",
                      i_syncSideCtrlStruct.storageDevStruct.maxBufferSize);
@@ -257,22 +259,21 @@ fapi2::ReturnCode syncImage(codeUpdateCtrlStruct_t &i_syncSideCtrlStruct,
          break;
       }
 
+      // Get memory device handle
+      l_rc = createMemoryDevice(i_syncSideCtrlStruct.runSideIndex,
+                                i_syncSideCtrlStruct.storageDevStruct.memId,
+                                true, true, l_memHandle);
+      if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+      {
+         SBE_ERROR(SBE_FUNC " createMemoryDevice unsuccessful. RC[0x%08x] ", l_rc);
+         o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE, l_rc);
+         break;
+      }
+
       // local variable declaration
       uint32_t l_imgOffset = 0;
       uint32_t l_readWriteLen = 0;
-
-      // Initialize SPI controller
-      SpiControlHandle spiHandle(g_platTarget->plat_getChipTarget(),
-                           i_syncSideCtrlStruct.storageDevStruct.devEngineNum);
-
-      // Perform SPI erase
-      l_fapiRc = performEraseInDevice(spiHandle, i_syncSideCtrlStruct);
-      if(l_fapiRc != FAPI2_RC_SUCCESS)
-      {
-         o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                           SBE_SEC_CU_ERASE_IMAGE_FAILURE );
-         break;
-      }
+      bool l_preDataReadFlag = true;
 
       for(uint32_t l_len = l_actualImageSize; l_len > 0;
             l_len -= l_readWriteLen, l_imgOffset += l_readWriteLen)
@@ -281,53 +282,91 @@ fapi2::ReturnCode syncImage(codeUpdateCtrlStruct_t &i_syncSideCtrlStruct,
                            i_syncSideCtrlStruct.storageDevStruct.maxBufferSize : l_len);
 
          //Using  memset() to force all bytes of ImgBufScratchArea to zero
-         memset(l_ImgBufScratchArea,0,
+         memset(l_imgBufScratchArea,0,
                 i_syncSideCtrlStruct.storageDevStruct.maxBufferSize);
 
-         // Perform SPI Read without ecc byte
-         l_fapiRc = performReadFromDevice(spiHandle,
-                                          (l_runSideImageStartAddr + l_imgOffset),
-                                          l_readWriteLen,
-                                          STANDARD_ECC_ACCESS,
-                                          l_ImgBufScratchArea);
+         if (l_preDataReadFlag == true)
+         {
+            SBE_INFO(SBE_FUNC "Write begin.....");
+            l_fapiRc = l_memHandle->write_begin(i_syncSideCtrlStruct.imageStartAddr,
+                                                WORD_TO_BYTES(i_syncSideCtrlStruct.imageSizeInWords));
+            if(l_fapiRc != FAPI2_RC_SUCCESS)
+            {
+               SBE_ERROR(SBE_FUNC "Write begin to device failed, Addr:0x%08X Size:0x%08X",\
+                         i_syncSideCtrlStruct.imageStartAddr,\
+                         WORD_TO_BYTES(i_syncSideCtrlStruct.imageSizeInWords));
+
+               o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                                 SBE_SEC_CU_WRITE_BEGIN_IMAGE_FAILURE );
+               break;
+            }
+            l_preDataReadFlag = false;
+         }
+
+         SBE_INFO(SBE_FUNC "Read data...");
+         l_fapiRc = l_memHandle->read(l_runSideImageStartAddr + l_imgOffset,
+                                      l_readWriteLen,
+                                      l_imgBufScratchArea);
          if(l_fapiRc != FAPI2_RC_SUCCESS)
          {
-            SBE_ERROR(SBE_FUNC " SPI Read failed, runSide[%d] " \
-                      "Addr:0x%08X Size:0x%08X Error:0x%016llX",
-                      i_syncSideCtrlStruct.runSideIndex,
-                      (l_runSideImageStartAddr + l_imgOffset), l_readWriteLen,
-                      (uint64_t)l_fapiRc);
+            SBE_ERROR(SBE_FUNC "Read data from device failed, Addr:0x%08X Size:0x%08X",\
+                      l_runSideImageStartAddr + l_imgOffset,\
+                      l_readWriteLen);
+
             o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                              SBE_SEC_CU_READ_IMAGE_FAILURE);
+                              SBE_SEC_CU_READ_DATA_IMAGE_FAILURE );
+
+            // Clean-up by calling write functions to clear error states and
+            // restoring the tail end of a partially written erase block so
+            // it's crucial to finish the write operation to ensure we don't lose
+            // data outside of the partition we're writing
+            l_memHandle->write_end();
             break;
          }
 
-         // Perform SPI Write with ecc
-         l_fapiRc = performWriteInDevice(spiHandle,
-                                         i_syncSideCtrlStruct,
-                                         l_readWriteLen,
-                                         l_ImgBufScratchArea,
-                                         true);
+         SBE_INFO(SBE_FUNC "Write data...");
+         l_fapiRc = l_memHandle->write_data(l_imgBufScratchArea, l_readWriteLen);
          if(l_fapiRc != FAPI2_RC_SUCCESS)
          {
-            SBE_ERROR(SBE_FUNC " SPI write failed, nonRunSide[%d]  " \
-                      " Addr:0x%08X Size:0x%08X Error:0x%016llX ",
-                      i_syncSideCtrlStruct.nonRunSideIndex,
-                      i_syncSideCtrlStruct.imageStartAddr,
-                      l_readWriteLen,(uint64_t)l_fapiRc);
+            SBE_ERROR(SBE_FUNC "Write data to device failed, Addr:0x%08X Size:0x%08X",\
+                      i_syncSideCtrlStruct.imageStartAddr,\
+                      l_readWriteLen);
+
             o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                              SBE_SEC_CU_WRITE_IMAGE_FAILURE);
+                              SBE_SEC_CU_WRITE_DATA_IMAGE_FAILURE );
+
+            // Explanation as per LN:318-321
+            l_memHandle->write_end();
             break;
+         }
+
+         if (l_len == l_readWriteLen)
+         {
+            SBE_INFO(SBE_FUNC "Write end...");
+            l_fapiRc = l_memHandle->write_end();
+            if(l_fapiRc != FAPI2_RC_SUCCESS)
+            {
+               SBE_ERROR(SBE_FUNC "Write end to device failed, Addr:0x%08X Size:0x%08X",\
+                         i_syncSideCtrlStruct.imageStartAddr,\
+                         l_readWriteLen);
+
+               o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                                 SBE_SEC_CU_WRITE_END_IMAGE_FAILURE );
+               break;
+            }
          }
 
          i_syncSideCtrlStruct.imageStartAddr += l_readWriteLen;
-
       }
 
    } while (false);
 
    //Free the scratch area
-   Heap::get_instance().scratch_free(l_ImgBufScratchArea);
+   Heap::get_instance().scratch_free(l_imgBufScratchArea);
+   if (l_memHandle != NULL)
+   {
+      freeMemoryDevice(l_memHandle);
+   }
 
    SBE_EXIT(SBE_FUNC);
    return l_fapiRc;
