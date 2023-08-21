@@ -33,8 +33,11 @@
 #pragma once
 
 #include <fapi2.H>
+#include <hwp_data_stream.H>
+#include <poz_tlv_utils.H>
 
 static const uint16_t BIST_PARAMS_CURRENT_VERSION = 11;
+static const uint16_t BIST_CHIPOP_ID = 0xF101;
 
 struct bist_params
 {
@@ -180,7 +183,7 @@ struct bist_diags
 };
 
 typedef fapi2::ReturnCode (*poz_bist_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&,
-        const bist_params&, bist_diags&, std::vector<uint32_t>&);
+        const bist_params&, bist_diags&, fapi2::hwp_data_ostream&, std::vector<compare_fail>&, const uint16_t);
 
 /// @brief Common module for ABIST/LBIST
 ///
@@ -193,5 +196,6 @@ typedef fapi2::ReturnCode (*poz_bist_FP_t)(const fapi2::Target<fapi2::TARGET_TYP
 extern "C"
 {
     fapi2::ReturnCode poz_bist(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-                               const bist_params& i_params, bist_diags& o_diags, std::vector<uint32_t>& o_failing_rings);
+                               const bist_params& i_params, bist_diags& o_diags, fapi2::hwp_data_ostream& o_stream,
+                               std::vector<compare_fail>& o_failing_rings, const uint16_t i_dict_def = BIST_CHIPOP_ID);
 }

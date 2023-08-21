@@ -46,6 +46,7 @@ generic_infile_c = [
                     'poz_gettracearray.C',
                     'poz_fastarray.C',
                     'poz_scan_compare.C',
+                    'poz_tlv_utils.C',
                     'poz_ppe_load.C',
                     'poz_nest_enable_io.C',
                     'poz_efuse_program.C',
