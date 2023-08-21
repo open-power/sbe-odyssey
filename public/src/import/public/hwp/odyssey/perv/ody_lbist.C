@@ -99,12 +99,16 @@ ReturnCode ody_lbist(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     FAPI_INF("Entering ...");
 
-    bist_diags l_bist_diags = {0};
-    std::vector<uint32_t> l_failing_rings;
-    auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
     ReturnCode l_rc;
+    bist_diags l_bist_diags = {0};
+    std::vector<compare_fail> l_failing_rings;
+    auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
 
-    FAPI_EXEC_HWP(l_rc, poz_bist, i_target, ody_lbist_params, l_bist_diags, l_failing_rings);
+    // Dummy variables to support poz_bist API, but unused in istep mode
+    hwp_data_unit dbuff[128 * 4]; // SCA TODO: implement a filestream instead??
+    hwp_array_ostream l_stream(dbuff, (sizeof(dbuff) / sizeof((dbuff)[0])));
+
+    FAPI_EXEC_HWP(l_rc, poz_bist, i_target, ody_lbist_params, l_bist_diags, l_stream, l_failing_rings, BIST_CHIPOP_ID);
     FAPI_TRY(l_rc);
 
     if (l_bist_diags.completed_stages & ody_lbist_params.bist_stages::COMPARE)

@@ -35,6 +35,7 @@
 #include <fapi2.H>
 #include <hwp_data_stream.H>
 #include "crc32.H"
+#include "poz_tlv_utils.H"
 #include <endian.h>
 
 using namespace fapi2;
@@ -79,9 +80,26 @@ struct hash_data
     uint32_t hash_value;
 };
 
+/// @brief Get ring addresses for a hash_data and target if they match
+///
+/// Given a target and a hash_data, plug the base and exact ring addresses into their respective
+/// output parameters, and return a boolean indicating if the hash_data applies to the target.
+///
+/// @param[in]   i_target                  Target object on which to compare ring content
+/// @param[in]   i_hash_data               The hash_data instance to decipher
+/// @param[out]  o_base_ring_address       The base ring address that i_hash_data applies to
+/// @param[out]  o_ring_address            The ring address that i_hash_data applies to on i_target
+///
+/// @return  true if i_hash_data applies to i_target, else false
+bool get_hash_target_addresses(
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_CORE > & i_target,
+    const hash_data& i_hash_data,
+    uint32_t& o_base_ring_address,
+    uint32_t& o_ring_address);
+
 /// @brief Compare ring content against expect hashes in the provided file
 ///
-/// Given a file containing ring addresses and associate hash signatures, sparse
+/// Given a file containing ring addresses and associated hash signatures, sparse
 /// scan out the corresponding rings, hash the data with care mask files in the
 /// provided directory, and append any addresses for rings with mismatching
 /// signatures to our output vector.
@@ -91,8 +109,9 @@ struct hash_data
 /// @param[in]   i_care_mask_dir           Path to directory of care masks hash with
 /// @param[out]  o_failing_rings           Vector of ring addresses mismatching their expect hash
 ///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode poz_compare(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_CORE > & i_target,
     const char* i_compare_hash_fname,
     const char* i_care_mask_dir,
-    std::vector<uint32_t>& o_failing_rings);
+    std::vector<compare_fail>& o_failing_rings);
