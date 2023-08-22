@@ -601,6 +601,14 @@ uint32_t sbeCollectDump::writeDumpPacketRowToFifo()
             break;
         }
 
+        if((iv_tocRow.hdctHeader.cmdType == CMD_GETFASTARRAY) &&
+           (iv_skipFastArray == true))
+        {
+            SBE_INFO(SBE_FUNC "Fast array collection is not enabled."
+                              " Skipping fastarray...");
+            break;
+        }
+
         // Map Dump target id with plat target list
         std::vector<fapi2::plat_target_handle_t> targetList;
         getTargetList(targetList);

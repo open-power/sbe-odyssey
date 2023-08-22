@@ -169,7 +169,7 @@ class sbeCollectDump
         uint16_t iv_hdctDumpTypeMap; //Equivalent HDCT dump type wrt requested dump type.
         //Unset the below flag once we find the 1st clock HDCT entry for Clock OFF state. Flag needs to be unset if clock ON state(Done in constructor).
         bool iv_clockOffEntryFlag = true;
-        uint8_t iv_collectFastArray = false;
+        uint8_t iv_skipFastArray = false;
         uint32_t iv_OCMBInstance; // OCMB instance number
 
         genericHdctRow_t *iv_hdctRow;
@@ -187,10 +187,10 @@ class sbeCollectDump
          * @param [in] clockState  Dump collection clock state.(ON or OFF)
          * @param [in] type        sbe fifo type.
          */
-        sbeCollectDump( uint8_t i_dumpID, uint8_t i_clockState, uint8_t i_collectFastArray,
+        sbeCollectDump( uint8_t i_dumpID, uint8_t i_clockState, uint8_t i_skipFastArray,
                         sbeFifoType i_type, uint64_t i_hbMemAddr = 0x00 ):
                         iv_oStream(i_type, false, i_hbMemAddr),
-                        iv_clockState(i_clockState), iv_fifoType(i_type), iv_collectFastArray(i_collectFastArray)
+                        iv_clockState(i_clockState), iv_fifoType(i_type), iv_skipFastArray(i_skipFastArray)
         {
             iv_clockState = i_clockState;
             iv_dumpType = i_dumpID;
@@ -200,7 +200,7 @@ class sbeCollectDump
             iv_hdctDumpTypeMap = getEquivDumpType(i_dumpID);
 
             SBE_INFO("Dump Type Map is %x ", iv_hdctDumpTypeMap);
-            SBE_INFO("Fast array collection is %x ", iv_collectFastArray);
+            SBE_INFO("Fast array collection is %x ", iv_skipFastArray);
 
             //Populate dump header struct with EKB Commit ID
             fapi2::seeprom_hwp_data_istream stream((uint32_t*)iv_hdctPakSecDetails.iv_startAddr,
