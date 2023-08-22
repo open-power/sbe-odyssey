@@ -61,9 +61,7 @@ ReturnCode i2c::i2cRegisterOp(i2c_reg_offset_t reg,
                                     "Error writing i2c register");
         }
 
-        //TODO: Change this to debug once we are able to find out the issue with
-        //      intermediate failure while reading temp sensor data during thermal init
-        SBE_INFO( SBE_FUNC "ReadNotWrite[%d] Addr [0x%08x] Data [0x%08x%08x]",
+        SBE_DEBUG( SBE_FUNC "ReadNotWrite[%d] Addr [0x%08x] Data [0x%08x%08x]",
         readNotWrite, SBE::lower32BWord(addr),
         SBE::higher32BWord(*io_data), SBE::lower32BWord(*io_data));
 
@@ -487,7 +485,7 @@ ReturnCode i2c::i2cLockEngine()
 
         if(rc == FAPI2_RC_SUCCESS)
         {
-            SBE_INFO( SBE_FUNC " succeeded in grabbing i2c lock. ");
+            SBE_DEBUG( SBE_FUNC " succeeded in grabbing i2c lock. ");
             break;
         }
 

@@ -52,7 +52,7 @@ ReturnCode plati2c::populatei2cdetails(const Target<TARGET_TYPE_ALL>& target)
 
     iv_bus_speed = I2C_BUS_SPEED;
 
-    SBE_INFO("OMI Freq 0x%08x MHz", fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_FREQ_OMI_MHZ);
+    SBE_DEBUG("OMI Freq 0x%08x MHz", fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_FREQ_OMI_MHZ);
 
     iv_bit_rate_divisor = i2cGetBitRateDivisor(iv_bus_speed,
                             fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_FREQ_OMI_MHZ/128);
@@ -61,7 +61,8 @@ ReturnCode plati2c::populatei2cdetails(const Target<TARGET_TYPE_ALL>& target)
 
     iv_timeout_count = I2C_TIMEOUT_COUNT(iv_polling_interval_ns);
 
-    printi2cdetails();
+    //NOTE: Enable below function if required for debug
+    //printi2cdetails();
 
     fapi_try_exit:
         return current_err;
