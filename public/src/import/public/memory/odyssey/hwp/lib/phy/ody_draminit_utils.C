@@ -2737,13 +2737,6 @@ fapi2::ReturnCode load_mem_bin_data(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_
     // Passing in a nullptr gets us the current time
     const auto l_start_time = time(nullptr);
 #endif
-
-    if (i_data_start == NULL && i_mem_size == 0)
-    {
-        FAPI_INF("Last HWP consume call after hash checking passed, nothing further to load");
-        return fapi2::current_err;
-    }
-
     FAPI_ASSERT(i_data_start != NULL,
                 fapi2::ODY_DRAMINIT_START_DATA_PTR_NULL().
                 set_TARGET(i_target),
@@ -7177,7 +7170,6 @@ fapi2::ReturnCode check_training_result(const fapi2::Target<fapi2::TARGET_TYPE_M
                                         const _PMU_SMB_DDR5_1D_t& i_msg_block_response)
 {
     constexpr uint8_t MSG_BLOCK_TRAIN_PASS = 0x00;
-    bool l_firs_found = false;
     uint8_t l_is_sim = 0;
     uint8_t l_is_simics = 0;
     fapi2::ReturnCode l_rc = fapi2::FAPI2_RC_SUCCESS;
@@ -7216,12 +7208,9 @@ fapi2::ReturnCode check_training_result(const fapi2::Target<fapi2::TARGET_TYPE_M
 
     // Check for FIRs then record the bad bits data into our attribute if there are no FIRs set
     // Hostboot will consume the bad bits attribute in the memdiags procedure
-    FAPI_TRY(mss::check::blame_firs<mss::mc_type::ODYSSEY>(i_target, l_firs_found));
-
-    if (!l_firs_found)
-    {
-        FAPI_TRY(mss::record_bad_bits(i_target, l_interface));
-    }
+    FAPI_TRY( (mss::check::fir_or_pll_fail<mss::mc_type::ODYSSEY, mss::check::firChecklist::DRAMINIT>(i_target,
+               fapi2::current_err)) );
+    FAPI_TRY(mss::record_bad_bits(i_target, l_interface));
 
     FAPI_INF(TARGTIDFORMAT " DRAM training returned PASSING status", TARGTID);
     return fapi2::FAPI2_RC_SUCCESS;
