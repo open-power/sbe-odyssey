@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -30,7 +31,6 @@
 #include "hwptable.H"
 #include "hwp_includes.H"
 #include "hwpWrapper.H"
-#include "atefw.H"
 
 using namespace fapi2;
 
