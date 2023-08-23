@@ -68,12 +68,24 @@ ReturnCode poz_compare(
 
     for (uint8_t i = 0; i < l_hash_file_size / sizeof(hash_data); i++)
     {
+        const uint32_t l_base_ring_address = be32toh(l_hash_data[i].ring_address);
+        const uint16_t l_chiplets_in_group = (be16toh(l_hash_data[i].instance_traits) & 0x1F) + 1;
+        const uint8_t l_base_chiplet_id = l_base_ring_address >> 24;
+        const uint8_t l_chiplet_id = i_target.getChipletNumber();
+
+        // Skip if this ring address doesn't apply to the input target
+        if ((l_chiplet_id < l_base_chiplet_id) || (l_chiplet_id >= l_base_chiplet_id + l_chiplets_in_group))
+        {
+            FAPI_DBG("Skipping ring 0x%08x not in chiplet 0x%02x", l_base_ring_address, l_chiplet_id);
+            continue;
+        }
+
         hwp_hash_ostream l_hash;
-        uint32_t l_ring_address = be32toh(l_hash_data[i].ring_address);
+        const uint32_t l_ring_address = l_base_ring_address + ((l_chiplet_id - l_base_chiplet_id) << 24);
 
         // Construct care mask file path with ring address
         l_fpath_write_ptr = stpcpy(l_fpath, i_care_mask_dir);
-        strhex(l_fpath_write_ptr, l_ring_address, 8);
+        strhex(l_fpath_write_ptr, l_base_ring_address, 8);
         // Write trailing null ptr since strhex doesn't do that automatically
         l_fpath_write_ptr[8] = 0;
 
@@ -88,7 +100,7 @@ ReturnCode poz_compare(
         freeEmbeddedFile(l_mask_file_data);
         FAPI_TRY(l_rc, "poz_sparse_getring failed");
 
-        if (l_hash.getCurrentValue() != l_hash_data[i].hash_value)
+        if (l_hash.getCurrentValue() != be32toh(l_hash_data[i].hash_value))
         {
             FAPI_INF("COMPARE FAILURE: Scan content mismatch for ring 0x%08x", l_ring_address);
             o_failing_rings.push_back(l_ring_address);
