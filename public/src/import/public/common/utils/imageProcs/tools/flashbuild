@@ -15,10 +15,11 @@ PART_NAME_MAXLEN = 16
 PT_FORMAT_VER = 1
 
 class Partition(object):
-    def __init__(self, name, start, size, last):
+    def __init__(self, name, mem_id, start, size, last):
         if len(name) > PART_NAME_MAXLEN:
             raise ValueError("Partition name '%s' exceeds maximum length of %d bytes" % (name, PART_NAME_MAXLEN))
         self.name = name
+        self.mem_id = mem_id
         self.start = start
         # Space for the end marker on the last entry
         self.size = size - (8 if last else 0)
@@ -53,10 +54,12 @@ class Partition(object):
 
     def table_entry(self):
         name = self.name.encode()
-        return name + bytes(-len(name) % PART_NAME_MAXLEN) + self.start.to_bytes(4, 'big') + self.size.to_bytes(4, 'big')
+        start = self.start | (self.mem_id << 28)
+        size = self.size
+        return name + bytes(-len(name) % PART_NAME_MAXLEN) + start.to_bytes(4, 'big') + size.to_bytes(4, 'big')
 
 def cmd_build_image(args, partitions):
-    partition_index = {p.name: p for p in partitions}
+    partition_index = {p.name: p for p in partitions if p.mem_id == args.memory}
     for pname, fname in args.partition:
         try:
             partition_index[pname].load_pak(fname)
@@ -66,8 +69,9 @@ def cmd_build_image(args, partitions):
 
     with open(args.outfile, "wb") as image:
         for part in partitions:
-            part.expand()
-            part.write_partition(image)
+            if part.mem_id == args.memory:
+                part.expand()
+                part.write_partition(image)
 
         # Add a new end marker with the updated total size
         image.write(PAK_END.to_bytes(4, 'big'))
@@ -123,6 +127,17 @@ def pspec(arg):
         raise ArgumentTypeError("Partition specification must be part_name=file_name")
     return parts
 
+def convert_from_formatv1(v1):
+    return {
+        "format-version": 2,
+        "memories": [                   # v1 only had a single memory
+            {
+                "size": 0x0FFFFFFF,     # max size since v1 didn't have a size field
+                "partitions": v1,
+            }
+        ],
+    }
+
 if __name__ == "__main__":
     parser = ArgumentParser(description="Utilities around pak based flash images")
     subparsers = parser.add_subparsers()
@@ -130,6 +145,7 @@ if __name__ == "__main__":
     sub = subparsers.add_parser("build-image", help="Build a flash image from individual pak partitions")
     sub.add_argument("parttable", type=open, help="Partition table description")
     sub.add_argument("outfile", help="Output image file name")
+    sub.add_argument("--memory", "-m", type=int, default=0, help="Memory ID for which to generate the image")
     sub.add_argument("--partition", "-p", action="append", default=[], type=pspec, help="Partition images in part_name=file_name format")
     sub.set_defaults(func=cmd_build_image)
 
@@ -138,7 +154,7 @@ if __name__ == "__main__":
     sub.add_argument("outfile", help="Output file name")
     sub.set_defaults(func=cmd_compile_ptable)
 
-    sub = subparsers.add_parser("concat-image",help="concatinate pak images into one")
+    sub = subparsers.add_parser("concat-image",help="concatenate pak images into one")
     sub.add_argument("parttable", type=open, help="Partition table description")
     sub.add_argument("outfile", help="Output image file name")
     sub.add_argument("--partition", "-p", action="append", default=[], type=pspec, help="Partition images in part_name=file_name format")
@@ -150,11 +166,44 @@ if __name__ == "__main__":
         exit(1)
 
     partition_table = literal_eval(args.parttable.read())
+    if isinstance(partition_table, list):
+        # v1 format table, convert
+        partition_table = convert_from_formatv1(partition_table)
+
+    # check format version
+    format_version = partition_table.get("format-version", 1)
+    if format_version != 2:
+        print("Unknown input format version %d" % format_version)
+        exit(1)
+
     partitions = []
-    offset = 0
-    for i, (name, size) in enumerate(partition_table):
-        last = i == (len(partition_table) - 1)
-        partitions.append(Partition(name, offset, size, last))
-        offset += size
+    part_names = set()
+    for mem_id, mem in enumerate(partition_table["memories"]):
+        try:
+            mem_size = mem["size"]
+            mem_parts = mem["partitions"]
+        except KeyError as e:
+            print("Missing memory attribute: %s" % e.args[0])
+            exit(1)
+
+        if mem_size >= (1 << 28):
+            print("Memory #%d size exceeds maximum of 256MiB" % mem_id)
+            exit(1)
+
+        offset = 0
+        for i, (name, size) in enumerate(mem_parts):
+            if name in part_names:
+                print("Duplicate partition name: %s" % name)
+                exit(1)
+            part_names.add(name)
+
+            part_end = offset + size
+            if part_end > mem_size:
+                print("Partition '%s' exceeds memory size" % name)
+                exit(1)
+
+            last = i == (len(mem_parts) - 1)
+            partitions.append(Partition(name, mem_id, offset, size, last))
+            offset += size
 
     args.func(args, partitions)
