@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -41,11 +42,15 @@ namespace CU
     //
     // For each section entry: 24 bytes
     // 16 bytes - Section name
-    // 04 bytes - Section offset
-    // 04 bytes - Section max size
+    // 04 bytes -
+    //    04 bits - Memory ID of partition
+    //    28 bits - Section offset
+    // 04 bytes -
+    //    04 bits - reserved for additional flags
+    //    28 bits - Section max size
     //
     // Last section entry:
-    // section size = minus 8 bytes to include trace and metadata pointer
+    // section size = minus 8 bytes to leave room for PAK_END marker
 
     /*
      * @brief Structure for partition entry
@@ -53,8 +58,10 @@ namespace CU
     typedef struct __attribute__((__packed__))
     {
         char     partitionName[PARTITION_ENTRY_NAME_MAX_CHAR];
-        uint32_t partitionStartOffset;
-        uint32_t partitionSize;
+        uint32_t partitionMemoryIndex : 4;
+        uint32_t partitionStartOffset : 28;
+        uint32_t reserved             : 4;
+        uint32_t partitionSize        : 28;
     }partitionEntry_t;
 
     /*
