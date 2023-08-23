@@ -212,15 +212,18 @@ typedef union plat_target_handle
         return (target_info & 0x0FFF0000) | (addr);
     }
 
+    // Currently only use this function for per-core address overlay
+    // and due to nature of QME, always use multi-hot for both
+    // multicast target and unicast target(latter will just be single-hot)
     __attribute__((always_inline))
     inline uint32_t getScomAddressOverlay(const uint32_t addr) const
     {
         return ((target_info & 0x0F000000) << 3) |
                (target_info & 0x0000F000)       |
 #ifdef USE_QME_QUEUED_SCOM
-               ((addr | 0x07800000) & 0x0FFFFFFF);
+               ((addr & 0x0FFFFFFF) | 0x47800000);
 #else
-               ((addr | 0x07000000) & 0x0FFFFFFF);
+               ((addr & 0x0FFFFFFF) | 0x47000000);
 #endif
     }
 
@@ -370,7 +373,7 @@ createPlatTargetHandle(const uint32_t i_plat_argument)
         l_handle.fields.target_num = i_plat_argument;
         l_handle.fields.target_type = PPE_TARGET_TYPE_EQ;
     }
-    else if( K & TARGET_TYPE_CORE )
+    else if( K & TARGET_TYPE_CORE || K & TARGET_TYPE_L3CACHE )
     {
         // functional bit is set by caller based on partial good
         l_handle.fields.target_type = PPE_TARGET_TYPE_CORE;
