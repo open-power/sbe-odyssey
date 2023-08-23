@@ -74,6 +74,8 @@ class hwp_hash_ostream : public hwp_data_ostream
 struct hash_data
 {
     uint32_t ring_address;
+    uint16_t instance_traits;
+    uint16_t padding;
     uint32_t hash_value;
 };
 
