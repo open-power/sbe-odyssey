@@ -227,10 +227,11 @@ Target<K, M, V>::getChildren(const TargetState i_state) const
                    "improper child of fapi2::TARGET_TYPE_MULTICAST");
 
     static_assert( ( (T & TARGET_TYPE_CORE) ||
+                     (T & TARGET_TYPE_L3CACHE) ||
                      (T & TARGET_TYPE_PERV) ),
                    "Invalid parent/child passed to getChildren");
 
-    std::vector<Target<T> > l_children;
+    std::vector<Target<T, M, V> > l_children;
 
     // < EQ or Core | MC > ==> Cores
     uint32_t l_childrenPerParent = PPE_CORE_TARGET_COUNT;
@@ -244,17 +245,17 @@ Target<K, M, V>::getChildren(const TargetState i_state) const
         return l_children;
     }
 
-    if ( K & TARGET_TYPE_CORE )
+    if ( (K & TARGET_TYPE_CORE) || (K & TARGET_TYPE_L3CACHE) )
     {
         l_core_select = this->iv_handle.getCoreSelect();
     }
 
     for(uint32_t i = 0; i < l_childrenPerParent; ++i)
     {
-        Target<T>* l_temp =
-            reinterpret_cast< Target<T>* >(&G_vec_targets.at(l_childTargetOffset + i));
+        Target<T, M, V>* l_temp =
+            reinterpret_cast< Target<T, M, V>* >(&G_vec_targets.at(l_childTargetOffset + i));
 
-        if ( ( K & TARGET_TYPE_CORE ) &&
+        if ( ( (K & TARGET_TYPE_CORE) || (K & TARGET_TYPE_L3CACHE) ) &&
              (! ( l_core_select & ( 0x8 >> i ) ) ) )
         {
             continue;
@@ -313,7 +314,7 @@ Target<K, M, V>::getMulticast(const MulticastGroup i_group, const MulticastCoreS
 {
     check_getCoreCacheMulticast<T, O>();
     return Target < T | TARGET_TYPE_MULTICAST, O, V > (
-               createPlatTargetHandle < TARGET_TYPE_CORE | TARGET_TYPE_MULTICAST > (i_cores));
+               createPlatTargetHandle < T | TARGET_TYPE_MULTICAST > (i_cores));
 }
 
 
