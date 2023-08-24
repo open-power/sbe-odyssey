@@ -228,6 +228,10 @@ enum sbeSecondaryResponse
     SBE_SEC_NON_ALPHA_NUMERIC_CHAR_FOUND      = 0x85,
     SBE_SEC_NO_MEM_TRAIN_DATA                 = 0x86,
     SBE_SEC_FAST_ARRAY_HWP_FAILURE            = 0x87,
+    SBE_SEC_CU_MEM_DEV_ID_NOT_SUPPORTED       = 0x88,
+    SBE_SEC_CU_UNKNOWN_DEVICE                 = 0x89,
+    SBE_SEC_CU_INVALID_BOOT_SIDE              = 0x8A,
+    SBE_SEC_CU_ECC_USE_DISABLED               = 0x8B,
 };
 
 /**
