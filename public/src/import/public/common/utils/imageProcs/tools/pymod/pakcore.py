@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2023
 # [+] International Business Machines Corp.
 #
 #
@@ -766,7 +766,7 @@ class Archive(UserList):
                 raise ArchiveError("Unknown magic block found at offset: %d" % offset)
 
             # The entry is created without error, add it to the list
-            self.append(entry)
+            self.data.append(entry)
 
         return
 
