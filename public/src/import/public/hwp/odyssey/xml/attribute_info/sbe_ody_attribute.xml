@@ -3923,4 +3923,32 @@
   <entry name="ATTR_RCW49_CHB_D1">
     <value>0x39</value>
   </entry>
+  <entry name="ATTR_MEM_EFF_DIMM_SERIAL_NUMBER">
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+    <value>0x0</value>
+  </entry>
 </entries>
