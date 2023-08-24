@@ -202,6 +202,12 @@ class ChipopData():
         """
         self.fences = fences
 
+    def setHeaderFile(self, headerFile):
+        """
+        Setter for headerFile (headerFile)
+        """
+        self.headerFile = headerFile
+
     #####FUNCTIONS#####
     def updateChipop(self, new_entry:'ChipopData'):
         """
@@ -214,6 +220,8 @@ class ChipopData():
             self.setFences(new_entry.getFences())
         if len(new_entry.getFunctionName())!= 0:
             self.setFunctionName(new_entry.getFunctionName())
+        if len(new_entry.getHeaderFile())!= 0:
+            self.setHeaderFile(new_entry.getHeaderFile())
 
 class FenceConflictHandler():
     """
