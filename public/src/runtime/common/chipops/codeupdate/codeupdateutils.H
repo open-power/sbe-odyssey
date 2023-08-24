@@ -32,6 +32,7 @@
 #include "sbe_sp_intf.H"
 #include "poz_sbe_spi_cmd.H"
 #include "target.H"
+#include "spi_memory.H"
 
 using namespace fapi2;
 
@@ -86,6 +87,31 @@ struct codeUpdateCtrlStruct_t
     // Constructor
     codeUpdateCtrlStruct_t() {};
 };
+
+/*
+ * @brief Project specific code to instantiate a memory device handle
+ *
+ * @param[in]  i_boot_side        Boot side (0=PRIMARY, 1=SECONDARY)
+ * @param[in]  i_memory_id        Memory ID (from partition table)
+ * @param[in]  i_use_ecc          Generate ECC on write, strip ECC on read; raw mode if false
+ * @param[in]  i_intent_to_write  Prepare device for write access
+ * @param[out] o_mem_device       Allocated and initialized memory device
+ *
+ * @return SBE_SEC return code
+ */
+uint32_t createMemoryDevice(
+    uint8_t i_boot_side,
+    uint8_t i_memory_id,
+    bool i_use_ecc,
+    bool i_intent_to_write,
+    spi::AbstractMemoryDevice *&o_mem_device);
+
+/*
+ * @brief Free a memory device allocated by createMemoryDevice
+ *
+ * @param[in]  i_mem_device    Memory device to free
+ */
+void freeMemoryDevice(spi::AbstractMemoryDevice *i_mem_device);
 
 #define PARTITION_ENTRY_NAME_MAX_CHAR  16
 namespace CU

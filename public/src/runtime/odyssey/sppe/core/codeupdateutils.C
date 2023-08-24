@@ -32,9 +32,13 @@
 
 #define NOR_BASE_ADDRESS_MASK           0xFF000000
 #define NOR_FLASH_SECTOR_BOUNDARY_ALIGN 0xFFFFF000
-#define MAX_BUFFER_SIZE                 0x10000 // 64KB - In bytes always
+#define MAX_BUFFER_SIZE                 0x1000 // 4KB - In bytes always
 #define SPI_ENGINE_NOR                  0
+#define SPIM_BASEADDR_PIB               0x70000
+#define NOR_DEVICE_MAX_SIZE             0x1000000 // 16MB
 
+using spi::SPIPort;
+using spi::FlashDevice;
 
 void getSideInfo(uint8_t &o_runningSide,
                  uint8_t &o_nonRunningSide)
@@ -108,6 +112,117 @@ void getCodeUpdateParams(codeUpdateCtrlStruct_t &io_codeUpdateCtrlStruct)
     #undef SBE_FUNC
 }
 
+// A struct to hold all objects associated with a memory device in one place
+// for easy allocation and freeing
+struct OdyMemoryDevice {
+    FlashDevice flash;
+    SPIPort port;
+    uint8_t erase_buffer[0] __attribute__((aligned(8)));
+};
+
+uint32_t createMemoryDevice(
+    uint8_t i_boot_side,
+    uint8_t i_memory_id,
+    bool i_use_ecc,
+    bool i_intent_to_write,
+    spi::AbstractMemoryDevice *&o_mem_device)
+{
+    #define SBE_FUNC " createMemoryDevice "
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    do
+    {
+        if ((i_boot_side != SIDE_0_INDEX) && (i_boot_side != SIDE_1_INDEX))
+        {
+            // Fail if i_boot_side is any value other than 0 & 1 (excl. golden)
+            SBE_ERROR(SBE_FUNC "Invalid boot side:[%d]", i_boot_side);
+            l_rc = SBE_SEC_CU_INVALID_BOOT_SIDE;
+            break;
+        }
+
+        if (i_memory_id != 0)
+        {
+            // Fail if i_memory_id != 0 since that is all we support for Odyssey
+            SBE_ERROR(SBE_FUNC "Memory dev Id:[%d] not supported", i_memory_id);
+            l_rc = SBE_SEC_CU_MEM_DEV_ID_NOT_SUPPORTED;
+            break;
+        }
+
+        if (i_use_ecc == false)
+        {
+            // Fail if ECC use is set to false
+            SBE_ERROR(SBE_FUNC "ECC should be enabled[%d]", i_use_ecc);
+            l_rc = SBE_SEC_CU_ECC_USE_DISABLED;
+            break;
+        }
+
+        //
+        // Allocate driver objects and eventual erase buffer from scratch
+        //
+        const uint32_t l_alloc_size = sizeof(OdyMemoryDevice) + (i_intent_to_write ? FlashDevice::ERASE_BUFFER_SIZE : 0);
+        auto const l_memblock = static_cast<OdyMemoryDevice *>(Heap::get_instance().scratch_alloc(l_alloc_size));
+        if (!l_memblock)
+        {
+            // Handle alloc error
+            SBE_ERROR(SBE_FUNC "Allocation of buffer size [0x%08x] failed", l_alloc_size);
+            l_rc = SBE_SEC_HEAP_BUFFER_ALLOC_FAILED;
+            break;
+        }
+
+        //
+        // Initialize SPI port object using placement new
+        //
+        new (&l_memblock->port) SPIPort((fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&)g_platTarget->plat_getChipTarget(),
+                                        SPIM_BASEADDR_PIB, SPI_ENGINE_NOR,
+                                        i_use_ecc ? spi::ECC_ENABLED : spi::ECC_DISCARD);
+
+        //
+        // Detect Flash device type
+        //
+        static bool l_dev_type_known = false;
+        static FlashDevice::device_type l_dev_type;
+        if (!l_dev_type_known)
+        {
+            fapi2::ReturnCode l_fapiRc = FlashDevice::detect_device(l_memblock->port, l_dev_type);
+            if (l_fapiRc != fapi2::FAPI2_RC_SUCCESS)
+            {
+                SBE_ERROR(SBE_FUNC "Unknown device, id=[0x%08x]", l_dev_type);
+                l_rc = SBE_SEC_CU_UNKNOWN_DEVICE;
+                break;
+            }
+            SBE_INFO(SBE_FUNC "Device type:[%d]", l_dev_type);
+            l_dev_type_known = true;
+        }
+
+        //
+        // Initialize Flash driver object using placement new
+        //
+        uint8_t * const l_erase_buffer = i_intent_to_write ? l_memblock->erase_buffer : NULL;
+        new (&l_memblock->flash) FlashDevice(l_memblock->port, l_dev_type, NOR_DEVICE_MAX_SIZE, l_erase_buffer);
+
+        // Return the pointer to the Flash device, which is at the beginning of our memory
+        // block so we can use that same pointer to free later.
+        o_mem_device = &l_memblock->flash;
+    } while(false);
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
+void freeMemoryDevice(spi::AbstractMemoryDevice *i_mem_device)
+{
+    // Cast the pointer back to our original memory block type
+    auto const l_memblock = reinterpret_cast<OdyMemoryDevice *>(i_mem_device);
+
+    // Destroy the objects we created
+    l_memblock->flash.~FlashDevice();
+    l_memblock->port.~SPIPort();
+
+    // Free the memory block regardless of whether the previous call failed or not
+    Heap::get_instance().scratch_free(l_memblock);
+}
 
 fapi2::ReturnCode deviceErase(SpiControlHandle& i_handle,
                               uint32_t i_eraseStartAddress,
