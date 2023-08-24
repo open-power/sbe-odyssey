@@ -74,9 +74,10 @@ ARC_RET_t PpeImageReceiver::consume(const void* i_data, uint32_t i_size)
     return HwpStreamReceiver::consume(i_data, i_size);
 }
 
-ReturnCode sbestreampaktohwp(
+static ReturnCode sbestreampaktohwp_internal(
     PakWrapper *i_pak, const char * i_pakname,
-    HwpStreamReceiver &i_receiver)
+    HwpStreamReceiver &i_receiver,
+    bool i_check_hash)
 {
     #define SBE_FUNC " sbestreampaktohwp "
     SBE_ENTER(SBE_FUNC);
@@ -114,11 +115,11 @@ ReturnCode sbestreampaktohwp(
         }
 
         // Call stream_decompress
-        pakRc = entry.stream_decompress(i_receiver, scratchArea, (sha3_t *)hashData);
-	
+        pakRc = entry.stream_decompress(i_receiver, scratchArea, i_check_hash ? &hashData : NULL);
+
 	// Deallocate the scratch space.
         Heap::get_instance().scratch_free(scratchArea);
-	
+
         if(pakRc)
         {
             SBE_ERROR(SBE_FUNC "stream_decompress failed with RC[%08X]", pakRc);
@@ -126,9 +127,9 @@ ReturnCode sbestreampaktohwp(
             break;
         }
     } while(false);
-    
+
     // validate that hash value is as expected
-    if (fapiRc == FAPI2_RC_SUCCESS)
+    if (fapiRc == FAPI2_RC_SUCCESS && i_check_hash)
     {
         /* In case hash mismatch from pak img, check_file_hash will return the miss-match hash*/
         uint64_t *ptrMismatchHash;
@@ -173,11 +174,25 @@ ReturnCode sbestreampaktohwp(
     }
 
 fapi_try_exit:
-    
+
     // Assign fapiRc for failure case, Assign current_err for PLAT_FAPI_ASSERT
     fapiRc = (fapiRc != FAPI2_RC_SUCCESS)? fapiRc : fapi2::current_err;
 
     SBE_EXIT(SBE_FUNC);
     return fapiRc;
     #undef SBE_FUNC
+}
+
+ReturnCode sbestreampaktohwp(
+    PakWrapper *i_pak, const char * i_pakname,
+    HwpStreamReceiver &i_receiver)
+{
+    return sbestreampaktohwp_internal(i_pak, i_pakname, i_receiver, true);
+}
+
+ReturnCode sbestreampaktohwp_unverified(
+    PakWrapper *i_pak, const char * i_pakname,
+    HwpStreamReceiver &i_receiver)
+{
+    return sbestreampaktohwp_internal(i_pak, i_pakname, i_receiver, false);
 }

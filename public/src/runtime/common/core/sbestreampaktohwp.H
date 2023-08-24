@@ -91,6 +91,19 @@ fapi2::ReturnCode sbestreampaktohwp(
     PakWrapper *i_pak, const char * i_pakname,
     HwpStreamReceiver &i_receiver);
 
+/// @brief Wrapper that loads pak into scratch area in SRAM.
+/// Does _NOT_ verify the hash, for use in case a file is loaded from
+/// the PIBMEM embedded archive which has already been verified.
+///
+/// @param[in]    i_pak          Pointer to PakWrapper
+/// @param[in]    i_pakname      Name of pak to load
+/// @param[in]    i_receiver     StreamReceiver to receive the image data
+/// @return  FAPI2_RC_SUCCESS on success
+
+fapi2::ReturnCode sbestreampaktohwp_unverified(
+    PakWrapper *i_pak, const char * i_pakname,
+    HwpStreamReceiver &i_receiver);
+
 /**
  * @brief Execute HWP on pak stream
  *
