@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -58,10 +59,9 @@ ReturnCode queryChipEcAndName(
     return l_rc;
 }
 
-
 // convert sbe instance of target to a fapi position
 uint16_t convertSbeTargInstanceToFapiPos(fapi2::TargetType i_targType,
-        fapi2::Target<TARGET_TYPE_PROC_CHIP>& i_proc, uint16_t i_instance)
+        fapi2::Target<TARGET_TYPE_ANY_POZ_CHIP>& i_sbeChip, uint16_t i_instance)
 {
     // Compute this target's FAPI_POS value.  We first take the parent's
     // FAPI_POS and multiply by the max number of targets of this type that
@@ -79,20 +79,26 @@ uint16_t convertSbeTargInstanceToFapiPos(fapi2::TargetType i_targType,
 
     uint16_t fapi_pos = INVALID_FAPI_POS;
 
-    ATTR_FAPI_POS_Type l_procPosition = 0;
+    ATTR_FAPI_POS_Type l_sbeChipPosition = 0;
 
-    FAPI_ATTR_GET(fapi2::ATTR_FAPI_POS, i_proc, l_procPosition);
+    FAPI_ATTR_GET(fapi2::ATTR_FAPI_POS, i_sbeChip, l_sbeChipPosition);
 
-    // if the target type being converted is a proc chip, then
-    // it will be the same proc as the sbe instance, just return that one
-    if(i_targType == TARGET_TYPE_PROC_CHIP )
+    // if the target type being converted is a POZ chip, then
+    // it will be the same chip as the sbe instance, just return that one
+    if(((i_targType & TARGET_TYPE_ANY_POZ_CHIP) != 0) && ((i_sbeChip.getType() & i_targType) != 0))
     {
-        fapi_pos = l_procPosition;
+        fapi_pos = l_sbeChipPosition;
     }
     else
     {
         switch( i_targType )
         {
+            case  TARGET_TYPE_DIMM:
+                {
+                    max_targets = MAX_DIMM_PER_PROC;
+                    break;
+                }
+
             case  TARGET_TYPE_EQ:
                 {
                     max_targets = MAX_EQ_PER_PROC;
@@ -105,21 +111,21 @@ uint16_t convertSbeTargInstanceToFapiPos(fapi2::TargetType i_targType,
                     break;
                 }
 
-            case  TARGET_TYPE_EX:
+            case  TARGET_TYPE_FC:
                 {
-                    max_targets = MAX_EX_PER_PROC;
+                    max_targets = MAX_FC_PER_PROC;
                     break;
                 }
 
-            case  TARGET_TYPE_MCS:
+            case  TARGET_TYPE_IOLINK:
                 {
-                    max_targets = MAX_MCS_PER_PROC;
+                    max_targets = MAX_IOLINK_PER_PROC;
                     break;
                 }
 
-            case  TARGET_TYPE_MCA:
+            case  TARGET_TYPE_MDS_CTLR:
                 {
-                    max_targets = MAX_MCA_PER_PROC;
+                    max_targets = MAX_MDS_CTLR_PER_PROC;
                     break;
                 }
 
@@ -135,15 +141,15 @@ uint16_t convertSbeTargInstanceToFapiPos(fapi2::TargetType i_targType,
                     break;
                 }
 
-            case  TARGET_TYPE_PHB:
+            case  TARGET_TYPE_NMMU:
                 {
-                    max_targets = MAX_PHB_PER_PROC;
+                    max_targets = MAX_NMMU_PER_PROC;
                     break;
                 }
 
-            case  TARGET_TYPE_MCBIST:
+            case  TARGET_TYPE_PHB:
                 {
-                    max_targets = MAX_MCBIST_PER_PROC;
+                    max_targets = MAX_PHB_PER_PROC;
                     break;
                 }
 
@@ -219,9 +225,54 @@ uint16_t convertSbeTargInstanceToFapiPos(fapi2::TargetType i_targType,
                     break;
                 }
 
-            default:
-                max_targets = INVALID_TARGET_COUNT;
-                break;
+            case TARGET_TYPE_NONE:
+            case TARGET_TYPE_SYSTEM:
+            case TARGET_TYPE_PROC_CHIP:
+            case TARGET_TYPE_MEMBUF_CHIP:
+            case TARGET_TYPE_EX:
+            case TARGET_TYPE_MBA:
+            case TARGET_TYPE_MCS:
+            case TARGET_TYPE_XBUS:
+            case TARGET_TYPE_ABUS:
+            case TARGET_TYPE_L4:
+            case TARGET_TYPE_MCA:
+            case TARGET_TYPE_MCBIST:
+            case TARGET_TYPE_CAPP:
+            case TARGET_TYPE_DMI:
+            case TARGET_TYPE_OBUS_BRICK:
+            case TARGET_TYPE_SBE:
+            case TARGET_TYPE_PPE:
+            case TARGET_TYPE_MEM_PORT:
+            case TARGET_TYPE_RESERVED:
+            case TARGET_TYPE_POWER_IC:
+            case TARGET_TYPE_TEMP_SENSOR:
+            case TARGET_TYPE_MULTICAST:
+            case TARGET_TYPE_ALL:
+            case TARGET_TYPE_ALL_MC:
+            case TARGET_TYPE_CHIPS:
+            case TARGET_TYPE_CHIPLETS:
+            case TARGET_TYPE_MULTICASTABLE:
+            case TARGET_TYPE_MULTICAST_CHIP:
+            case TARGET_TYPE_TBUSC:
+            case TARGET_TYPE_TBUSL:
+            case TARGET_TYPE_L3CACHE:
+            case TARGET_TYPE_INT:
+            case TARGET_TYPE_NX:
+            case TARGET_TYPE_PAX:
+            case TARGET_TYPE_PAXO:
+            case TARGET_TYPE_SMPLINK:
+            case TARGET_TYPE_PEC6P:
+            case TARGET_TYPE_PEC2P:
+            case TARGET_TYPE_PHB248X:
+            case TARGET_TYPE_PHB16X:
+            case TARGET_TYPE_XBUSL:
+            case TARGET_TYPE_SHADOW:
+            case TARGET_TYPE_HUB_CHIP:
+            case TARGET_TYPE_COMPUTE_CHIP:
+                {
+                    max_targets = INVALID_TARGET_COUNT;
+                    break;
+                }
         }
 
         if( max_targets == INVALID_TARGET_COUNT )
@@ -229,11 +280,11 @@ uint16_t convertSbeTargInstanceToFapiPos(fapi2::TargetType i_targType,
             FAPI_ERR("Unable to determine the target count "
                      "for target type = 0x%.16lX and instance 0x%d "
                      "associated with proc position %d",
-                     i_targType, i_instance, l_procPosition);
+                     i_targType, i_instance, l_sbeChipPosition);
         }
         else
         {
-            fapi_pos = max_targets * l_procPosition +
+            fapi_pos = max_targets * l_sbeChipPosition +
                        (i_instance % max_targets);
         }
     }
