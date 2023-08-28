@@ -363,6 +363,13 @@ class FlashDevice : public SEEPROMDevice
          */
         static fapi2::ReturnCode detect_device(const AbstractPort& i_port, device_type& o_devtype);
 
+        /**
+         * @brief Perform a soft reset of the Flash device
+         *
+         * This sends the soft reset sequence to the device which will cause the device status to be cleared.
+         */
+        fapi2::ReturnCode soft_reset();
+
     protected:
         enum extended_status
         {
