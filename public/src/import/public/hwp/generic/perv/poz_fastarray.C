@@ -76,7 +76,7 @@ enum fastarray_constants
     FA_FORMAT_VERSION       = 6,
     OPCG_CAPT_SL_NSL_ARY    = 0x1C,
     OPCG_CAPT_SL_NSL        = 0x18,
-    ARY_PIPE_MAX_LEN        = 5,
+    ARY_PIPE_MAX_LEN        = 10,
 };
 
 /*
