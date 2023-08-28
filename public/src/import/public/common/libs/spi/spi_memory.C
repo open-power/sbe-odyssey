@@ -52,6 +52,8 @@ enum spi_memory_constants
 enum flash_device_commands
 {
     X25_CMD_READ_ID = 0x9F,
+    X25_CMD_RESET1 = 0x66,
+    X25_CMD_RESET2 = 0x99,
     MT25Q_CMD_READ_FLAG_STATUS_REG = 0x70,
     MX66_CMD_READ_SECURITY_REG = 0x2B,
 
@@ -714,6 +716,15 @@ ReturnCode spi::FlashDevice::detect_device(const AbstractPort& i_port, device_ty
                 SPI_FLASH_UNKNOWN_DEVICE()
                 .set_DEVICE_ID(be32toh(id.i)),
                 "Unknown device, id=0x%08x", be32toh(id.i));
+
+fapi_try_exit:
+    return current_err;
+}
+
+ReturnCode spi::FlashDevice::soft_reset()
+{
+    FAPI_TRY(iv_port.transaction(X25_CMD_RESET1, 1, NULL, 0, NULL, 0));
+    FAPI_TRY(iv_port.transaction(X25_CMD_RESET2, 1, NULL, 0, NULL, 0));
 
 fapi_try_exit:
     return current_err;
