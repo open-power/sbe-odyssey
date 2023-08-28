@@ -530,7 +530,11 @@ def ody_sppe_attr_setup():
     pass
 
 def zme_sppe_attr_setup():
-    pass
+    ## Set up SBE multipipe unit
+    mod_pipe_setup(PC_ADU, false, PC_SPPE, true,
+                   PC_ADU, false, PC_SBE,  true,
+                   PC_SPPE, true, PC_PME,  true,
+                   PC_SPPE, true, PC_SBE,  true)
 
 ISTEP(1, 14, "ph_sppe_attr_override", "BMC,SPPE")
 # BMC sends attribute overrides into SPPE via chipop
@@ -727,12 +731,6 @@ def zme_tp_init():
 
     mod_hangpulse_setup(MCGROUP_GOOD, pre_divider, {{0, 16, 0}, {1, 1, 0}, {2, 1, 0}, {3, 1, 0}, {4, 1, 0}, {5, 28, 0}, {6, 5, 0, 1}})
     mod_hangpulse_setup(MCGROUP_GOOD_EX, pre_divider, {{1, 3, 0, 1}})
-
-    ## Set up SBE multipipe unit
-    mod_pipe_setup(PC_ADU, false, PC_SPPE, true,
-                   PC_GSD2PIB, false, PC_SBE, true,
-                   PC_SPPE, true, PC_PME, true,
-                   PC_SPPE, true, PC_SBE, true)
 
     ## Unmask TP PLL unlock reporting
     if not ATTR_FILTER_PLL_BYPASS:
