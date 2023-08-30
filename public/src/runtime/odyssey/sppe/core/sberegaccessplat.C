@@ -31,7 +31,7 @@ void SbeRegAccess::platInitAttrBootFlags()
 {
     #define SBE_FUNC "SbeRegAccess::platInitAttrBootFlags "
     uint32_t l_attr = 0;
-    l_attr = fapi2::ATTR::TARGET_TYPE_SYSTEM::ATTR_OCMB_BOOT_FLAGS;
+    l_attr = fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_OCMB_BOOT_FLAGS;
     SBE_INFO(SBE_FUNC" mbx11 from Attribute, 0x%08x", l_attr);
     SbeRegAccess::theSbeRegAccess().updateMbx11( (uint64_t)l_attr<<32 );
     #undef SBE_FUNC
