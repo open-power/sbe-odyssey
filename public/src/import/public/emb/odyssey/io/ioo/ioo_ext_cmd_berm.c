@@ -54,29 +54,32 @@
 #include "ioo_common.h"
 #include "eo_bank_sync.h"
 
-// Format
-// [00:04] 05b : Lane
-// [05   ] 01b : X Out Of Range
-// [06   ] 01b : Y Out of Range
-// [07:11] 05b : X Offset
-// [12:16] 05b : Timer Loops
-// [17:31] 15b : Errors
-#define BERM_LANE_MASK 0xF8000000
-#define BERM_X_OUT_OF_RANGE_MASK 0x04000000
-#define BERM_Y_OUT_OF_RANGE_MASK 0x02000000
-#define BERM_X_OFFSET_MASK 0x01F00000
-#define BERM_TIMER_MASK 0x000F8000
-#define BERM_ERROR_MASK 0x00007FFF
+#define BERM_CONTROL_KILL     0x8000
+#define BERM_CONTROL_STOP     0x4000
 
-#define BERM_LANE_SHIFT 27
-#define BERM_X_OUT_OF_RANGE_SHIFT 26
-#define BERM_Y_OUT_OF_RANGE_SHIFT 25
-#define BERM_X_OFFSET_SHIFT 20
-#define BERM_TIMER_SHIFT 15
+#define BERM_CONTROL_START    0x8000
+
+#define BERM_STATUS_DONE      0x8000
+#define BERM_STATUS_RUNNING   0x4000
+
+
+#define SPACE_A 4
+#define SPACE_B 32
+
+
+
+
+// Format
+// [00:03] 04b : Timer Loops
+// [04:15] 12b : Errors
+#define BERM_TIMER_MASK 0xF000
+#define BERM_ERROR_MASK 0x0FFF
+
+#define BERM_TIMER_SHIFT 12
 #define BERM_ERRORS_SHIFT 0
 
-extern uint32_t _debug_log_start __attribute__((section("debuglog")));
-volatile uint32_t* g_logspace = &_debug_log_start;
+extern uint16_t _debug_log_start __attribute__((section("debuglog")));
+uint16_t* g_logspace = &_debug_log_start;
 
 int pr_stepper_run(t_gcr_addr* gcr_addr, const t_bank bank, const int32_t i_data_offset, const int32_t i_edge_offset)
 {
@@ -172,50 +175,26 @@ int apply_pr_offset(t_gcr_addr* gcr_addr, const t_bank bank, const int i_total_o
  * @param[in   ] i_lane_mask_rx   Rx Lane Mask
  * @retval void
  */
-int ioo_ext_cmd_berm(t_gcr_addr* gcr_addr, const uint32_t i_lane_mask_rx)
+int ioo_berm_init(t_gcr_addr* gcr_addr,
+                  const uint32_t i_lane_mask_rx,
+                  uint16_t* io_logspace)
 {
-
-    const int32_t c_num_lanes = get_num_rx_physical_lanes();
-    int32_t l_thread = get_gcr_addr_thread(gcr_addr);
-    int32_t l_ber_timer_sel = 15;
-    int32_t l_rx_berpl_count = 0;
-    int32_t l_lane = 0;
-    int32_t l_count = 0;
-    uint32_t l_done_mask = 0x00;
-    uint32_t l_xskip_mask = 0x00;
-    uint32_t l_yskip_mask = 0x00;
+    uint16_t l_lane = 0;
+    uint16_t l_count = 0;
     t_init_cal_mode l_cal_mode = C_AXO_CAL;
 
 
     t_bank l_bank = (mem_pg_field_get(rx_berm_bank) == 0) ? bank_a : bank_b;
-    int32_t l_timer_depth = 0;
-    int32_t l_dac_offset = TwosCompToInt(mem_pg_field_get(rx_berm_voffset), rx_berm_voffset_width);
-    int32_t l_pr_offset = TwosCompToInt(mem_pg_field_get(rx_berm_hoffset), rx_berm_hoffset_width);
     int32_t l_pattern_sel = mem_pg_field_get(rx_berm_pattern_sel);
-
-    int32_t l_depth = mem_pg_field_get(rx_berm_depth);
-
-    if (l_depth == 0)
-    {
-        l_timer_depth = 20;
-    }
-    else if (l_depth == 1)
-    {
-        l_timer_depth = 15;
-    }
-    else
-    {
-        l_timer_depth = 10;
-    }
 
     // Step 0: Setup the Debug Log Space
     // Set the entries to max so our data does not get overwritten
     img_field_put(ppe_debug_log_num, 127);
 
-    // Clear the Debug Log (Note the ptr is defined as 32b sizes which is why we are indexing to 255)
-    for (; l_count < 32; ++l_count)
+    // Clear the Debug Log (Note the ptr is defined as 16b sizes which is why we are indexing to 255)
+    for (; l_count < 72; ++l_count)
     {
-        g_logspace[(l_thread * 32) + l_count] = 0;
+        io_logspace[l_count] = 0x0;
     }
 
     // Step 1: Power On, Bank Sync, Enable BER, Apply Offsets
@@ -228,7 +207,7 @@ int ioo_ext_cmd_berm(t_gcr_addr* gcr_addr, const uint32_t i_lane_mask_rx)
     clear_all_cal_lane_sel(
         gcr_addr); // HW507890: Broadcast write rx_clr_cal_lane_sel to briefly enable all clocks for data pipe latches to clear them when switching cal lane.
 
-    for (l_lane = 0; l_lane < c_num_lanes; ++l_lane)
+    for (l_lane = 0; l_lane < 32; ++l_lane)
     {
         if ((i_lane_mask_rx & (0x80000000 >> l_lane)) == 0x0)
         {
@@ -236,56 +215,40 @@ int ioo_ext_cmd_berm(t_gcr_addr* gcr_addr, const uint32_t i_lane_mask_rx)
         }
 
         set_gcr_addr_lane(gcr_addr, l_lane);
-        g_logspace[(l_thread * 32) + l_lane] |= (l_lane << BERM_LANE_SHIFT) & BERM_LANE_MASK;
 
-        put_ptr_field(gcr_addr, rx_set_cal_lane_sel, 0b1, fast_write); // strobe bit
-        put_ptr_field(gcr_addr, rx_cal_lane_pg_phy_gcrmsg, l_lane, read_modify_write);
+        // put_ptr_field(gcr_addr, rx_set_cal_lane_sel, 0b1, fast_write); // strobe bit
+        // put_ptr_field(gcr_addr, rx_cal_lane_pg_phy_gcrmsg, l_lane, read_modify_write);
 
-        // Power On the Alt Bank
         alt_bank_psave_clear_and_wait(gcr_addr);
-
-        t_bank l_current_main_bank  = (get_ptr_field(gcr_addr, rx_bank_sel_a) == 0) ? bank_b : bank_a;
 
         // If we want to test the current main bank, we have to sync the alt bank before
         //   we switch over, or else we will cause errors downstream on the dl
-        if (l_bank == l_current_main_bank)
-        {
-            if (l_bank == bank_a)
-            {
-                eo_bank_sync(gcr_addr, bank_b, l_cal_mode);
-            }
-            else
-            {
-                eo_bank_sync(gcr_addr, bank_a, l_cal_mode);
-            }
-        }
+        eo_bank_sync(gcr_addr, (get_ptr_field(gcr_addr, rx_bank_sel_a) == 1) ? bank_b : bank_a, l_cal_mode);
 
         // Set the correct bank under test, so we do not corrupt main data
         set_cal_bank(gcr_addr, l_bank);
 
+        int bit_lock_done_clr_regval = bank_to_bitfield_ab_mask(l_bank);
+        put_ptr_field(gcr_addr, rx_pr_bit_lock_done_ab_clr_alias, bit_lock_done_clr_regval, fast_write);
+
 
         if (l_bank == bank_a)
         {
-            //put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_lcl_align_cdr_b_lcl, fast_write);
             put_ptr_field(gcr_addr, rx_pr_external_mode_a, 1, read_modify_write);
         }
         else
         {
             // bank_b
-            //put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_lcl_cdr_b_lcl_align, fast_write);
             put_ptr_field(gcr_addr, rx_pr_external_mode_b, 1, read_modify_write);
         }
 
-        // Do I need to do another bank sync after we set external mode?
-        eo_bank_sync(gcr_addr, l_bank, l_cal_mode);
-
 
         // Enable BER
-        // put_ptr_field(gcr_addr, rx_berpl_count_en, 1, read_modify_write);
-        // put_ptr_field(gcr_addr, rx_berpl_exp_data_sel, 0, read_modify_write);
+        put_ptr_field(gcr_addr, rx_berpl_count_en, 1, read_modify_write);
+        put_ptr_field(gcr_addr, rx_berpl_exp_data_sel, 0, read_modify_write);
         // put_ptr_field(gcr_addr, rx_berpl_mask_mode, 0, read_modify_write);
         // put_ptr_field(gcr_addr, rx_berpl_lane_invert, 0, read_modify_write);
-        put_ptr_field(gcr_addr, rx_berpl_count_en, 1, fast_write); // does the above scoms in a single write
+        //put_ptr_field(gcr_addr, rx_berpl_count_en, 1, fast_write); // does the above scoms in a single write
         put_ptr_field(gcr_addr, rx_berpl_pattern_sel, l_pattern_sel, read_modify_write);
         put_ptr_field(gcr_addr, rx_berpl_sat_thresh, 0xFFF, fast_write);
 
@@ -306,38 +269,85 @@ int ioo_ext_cmd_berm(t_gcr_addr* gcr_addr, const uint32_t i_lane_mask_rx)
         put_ptr_field(gcr_addr, rx_dac_accel_rollover_sticky_clr, 1, read_modify_write);
         put_ptr_field(gcr_addr, rx_mini_pr_step_rollover_sticky_clr, 1, read_modify_write);
 
-        // Apply DAC Offset
+        // put_ptr_field(gcr_addr, rx_clr_cal_lane_sel, 0b1, fast_write); // clear rx_cal_lane_sel
+    }
+
+    return rc_no_error;
+}
+
+int ioo_berm_run(t_gcr_addr* gcr_addr,
+                 const uint32_t i_lane_mask_rx,
+                 const int32_t l_pr_offset,
+                 const int32_t l_dac_offset,
+                 uint16_t* i_control,
+                 uint16_t* io_data)
+{
+    uint16_t l_lane = 0;
+    uint16_t l_count = 0;
+    int32_t l_ber_timer_sel = 15;
+    uint16_t l_rx_berpl_count = 0;
+    uint32_t l_done_mask = 0x00;
+    uint32_t l_accurate_mask = 0x00;
+    uint32_t l_xskip_mask = 0x00;
+    uint32_t l_yskip_mask = 0x00;
+    int16_t l_max_depth = 0;
+    t_bank l_bank = (mem_pg_field_get(rx_berm_bank) == 0) ? bank_a : bank_b;
+
+    int32_t l_depth = mem_pg_field_get(rx_berm_depth);
+
+    if (l_depth == 0)
+    {
+        l_max_depth = 15;
+    }
+    else if (l_depth == 1)
+    {
+        l_max_depth = 8;
+    }
+    else
+    {
+        l_max_depth = 5;
+    }
+
+    for (l_count = 0; l_count < 24; ++l_count)
+    {
+        io_data[l_count] = 0x0;
+    }
+
+
+    for (l_lane = 0; l_lane < 32; ++l_lane)
+    {
+        if ((i_lane_mask_rx & (0x80000000 >> l_lane)) == 0x0)
+        {
+            continue;
+        }
+
+        set_gcr_addr_lane(gcr_addr, l_lane);
+
         apply_rx_dac_offset(gcr_addr, data_only, l_bank, l_dac_offset);
 
         if (get_ptr_field(gcr_addr, rx_dac_accel_rollover_sticky))
         {
-            g_logspace[(l_thread * 32) + l_lane] |= BERM_Y_OUT_OF_RANGE_MASK;
             l_yskip_mask |= (0x80000000 >> l_lane);
         }
 
-        // Apply PR Offset
-        // - If the offset is out of range, we will apply zero offset and mark the lane
-        g_logspace[(l_thread * 32) + l_lane] |= (l_pr_offset << BERM_X_OFFSET_SHIFT) & BERM_X_OFFSET_MASK;
         int32_t rc = apply_pr_offset(gcr_addr, l_bank, l_pr_offset);
 
         if (rc || get_ptr_field(gcr_addr, rx_mini_pr_step_rollover_sticky))
         {
-            g_logspace[(l_thread * 32) + l_lane] |= BERM_X_OUT_OF_RANGE_MASK;
             l_xskip_mask |= (0x80000000 >> l_lane);
         }
-
-        put_ptr_field(gcr_addr, rx_clr_cal_lane_sel, 0b1, fast_write); // clear rx_cal_lane_sel
     }
+
 
     // Step 2: Collect the BER Data
     // - The amount of dwell time is configurable based on the depth
     l_done_mask |= l_xskip_mask | l_yskip_mask;
     l_ber_timer_sel = 14;
 
-    for (l_count = 0; l_count <= l_timer_depth; ++l_count)
+    for (l_count = 0; l_count <= l_max_depth; ++l_count)
     {
         // Skip collectin BER measurements if none of the lanes are valid
-        if (l_done_mask == i_lane_mask_rx)
+        if ((l_done_mask | l_accurate_mask) == i_lane_mask_rx)
         {
             break;
         }
@@ -347,13 +357,21 @@ int ioo_ext_cmd_berm(t_gcr_addr* gcr_addr, const uint32_t i_lane_mask_rx)
         put_ptr_field(gcr_addr, rx_ber_reset, 1, fast_write);
 
         // Poll for Timer Completion
-        while (get_ptr_field(gcr_addr, rx_ber_timer_running) != 0)
+        while (get_ptr_field(gcr_addr, rx_ber_timer_running) != 0 && (i_control[0] & BERM_CONTROL_STOP) == 0)
         {
-            io_sleep(l_thread);
+            if (l_count > 2)
+            {
+                io_sleep(get_gcr_addr_thread(gcr_addr));
+            }
+        }
+
+        if (i_control[0] & BERM_CONTROL_STOP)
+        {
+            break;
         }
 
         // Collect and Analyze the data
-        for (l_lane = 0; l_lane < c_num_lanes; ++l_lane)
+        for (l_lane = 0; l_lane < 32; ++l_lane)
         {
             if ((i_lane_mask_rx & ~l_done_mask & (0x80000000 >> l_lane)) == 0x0)
             {
@@ -363,36 +381,33 @@ int ioo_ext_cmd_berm(t_gcr_addr* gcr_addr, const uint32_t i_lane_mask_rx)
             set_gcr_addr_lane(gcr_addr, l_lane);
             l_rx_berpl_count = get_ptr_field(gcr_addr, rx_berpl_count);
 
-            // If the counter is saturated, we do not have an accurate measurement,
+            // - If the counter is saturated, we do not have an accurate measurement, (saturated = 0xFFF, 4096)
             //   so we will not add the data to the log space
-            if (l_rx_berpl_count == 0xFFF)
+            if ((l_rx_berpl_count + (io_data[l_lane] & BERM_ERROR_MASK)) >= 0xFFF)
             {
                 l_done_mask |= (0x80000000 >> l_lane);
-                continue;
+            }
+            else
+            {
+                // Add Errors and Bits Samples to log space
+                io_data[l_lane] = (((l_count + 1) << BERM_TIMER_SHIFT) & BERM_TIMER_MASK) | ((io_data[l_lane] + l_rx_berpl_count) &
+                                  BERM_ERROR_MASK);
             }
 
-            // Add Errors and Bits Samples to log space
-            g_logspace[(l_thread * 32) + l_lane] += l_rx_berpl_count;
-            g_logspace[(l_thread * 32) + l_lane] = (g_logspace[(l_thread * 32) + l_lane] & ~BERM_TIMER_MASK) | ((
-                    l_count << BERM_TIMER_SHIFT) & BERM_TIMER_MASK);
-
             // With > 100 errors, the data sample will be statistically accurate, no need to collect more data
-            if ((g_logspace[(l_thread * 32) + l_lane] & BERM_ERROR_MASK) > 100)
+            if ((io_data[l_lane] & BERM_ERROR_MASK) > 100)
             {
-                l_done_mask |= (0x80000000 >> l_lane);
+                l_accurate_mask |= (0x80000000 >> l_lane);
             }
         }
 
         if (l_ber_timer_sel > 0)
         {
-            --l_ber_timer_sel;
+            l_ber_timer_sel -= 2;
         }
     }
 
-    // Step 3: Cleanup
-    // l_pr_data_offset_vec[0] = 0;
-    // l_pr_data_offset_vec[1] = 0;
-    for (l_lane = 0; l_lane < c_num_lanes; ++l_lane)
+    for (l_lane = 0; l_lane < 32; ++l_lane)
     {
         if ((i_lane_mask_rx & (0x80000000 >> l_lane)) == 0x0)
         {
@@ -401,20 +416,12 @@ int ioo_ext_cmd_berm(t_gcr_addr* gcr_addr, const uint32_t i_lane_mask_rx)
 
         set_gcr_addr_lane(gcr_addr, l_lane);
 
-        put_ptr_field(gcr_addr, rx_set_cal_lane_sel, 0b1, fast_write); // strobe bit
-        put_ptr_field(gcr_addr, rx_cal_lane_pg_phy_gcrmsg, l_lane, read_modify_write);
-
-        put_ptr_field(gcr_addr, rx_berpl_count_en, 0, read_modify_write); //pl
-
-        // Remove Dac Offset
         if ((l_yskip_mask & (0x80000000 >> l_lane)) == 0x0)
         {
             int l_poff_adj = -TwosCompToInt(get_ptr_field(gcr_addr, rx_poff_adj), rx_poff_adj_width);
             apply_rx_dac_offset(gcr_addr, data_only, l_bank, l_poff_adj);
         }
 
-        // Remove PR Offset on lanes that we have successfully applied the x offset to
-        // - If x was out of range, then we never applied the offset in the first place.
         if ((l_xskip_mask & (0x80000000 >> l_lane)) == 0x0)
         {
             uint32_t l_pr_step_adjust = get_ptr(gcr_addr, rx_mini_pr_step_data_edge_adj_full_reg_addr,
@@ -426,6 +433,33 @@ int ioo_ext_cmd_berm(t_gcr_addr* gcr_addr, const uint32_t i_lane_mask_rx)
 
             pr_stepper_run(gcr_addr, l_bank, l_data_offset, l_edge_offset);
         }
+    }
+
+    set_gcr_addr_lane(gcr_addr, 0);
+    return rc_no_error;
+}
+
+int ioo_berm_cleanup(t_gcr_addr* gcr_addr, const uint32_t i_lane_mask_rx)
+{
+    uint16_t l_lane = 0;
+
+    // Step 3: Cleanup
+    set_gcr_addr_lane(gcr_addr, 0);
+    put_ptr_field(gcr_addr, rx_ber_en, 0, fast_write); // Per-Group
+
+    for (l_lane = 0; l_lane < 32; ++l_lane)
+    {
+        if ((i_lane_mask_rx & (0x80000000 >> l_lane)) == 0x0)
+        {
+            continue;
+        }
+
+        set_gcr_addr_lane(gcr_addr, l_lane);
+
+        // put_ptr_field(gcr_addr, rx_set_cal_lane_sel, 0b1, fast_write); // strobe bit
+        // put_ptr_field(gcr_addr, rx_cal_lane_pg_phy_gcrmsg, l_lane, read_modify_write);
+
+        put_ptr_field(gcr_addr, rx_berpl_count_en, 0, read_modify_write); //pl
 
         put_ptr_field(gcr_addr, rx_pr_external_mode_a, 0, read_modify_write);
         put_ptr_field(gcr_addr, rx_pr_external_mode_b, 0, read_modify_write);
@@ -438,10 +472,134 @@ int ioo_ext_cmd_berm(t_gcr_addr* gcr_addr, const uint32_t i_lane_mask_rx)
             put_ptr_field(gcr_addr, rx_psave_req_alt_set, 0b1, fast_write);
         }
 
-        put_ptr_field(gcr_addr, rx_clr_cal_lane_sel, 0b1, fast_write); // clear rx_cal_lane_sel
+        // put_ptr_field(gcr_addr, rx_clr_cal_lane_sel, 0b1, fast_write); // clear rx_cal_lane_sel
+
+        put_ptr_field(gcr_addr, rx_pr_bit_lock_done_ab_set_alias, 0b11, fast_write);
     }
 
     set_gcr_addr_lane(gcr_addr, 0);
 
     return rc_no_error;
 }
+
+
+
+/**
+ * @brief Runs a Bit Error rate Measurement on a given X/Y location
+ * @param[inout] gcr_addr         Target Information
+ * @param[in   ] i_lane_mask_rx   Rx Lane Mask
+ * @retval void
+ */
+int ioo_ext_cmd_berm(t_gcr_addr* gcr_addr, const uint32_t i_lane_mask_rx)
+{
+    int32_t l_thread = get_gcr_addr_thread(gcr_addr);
+    int32_t l_dac_offset = TwosCompToInt(mem_pg_field_get(rx_berm_voffset), rx_berm_voffset_width);
+    int32_t l_pr_offset = TwosCompToInt(mem_pg_field_get(rx_berm_hoffset), rx_berm_hoffset_width);
+    int32_t l_space = 0;
+    uint16_t* l_thread_space = &g_logspace[(l_thread * 72) + SPACE_A];
+    uint16_t l_space_control = 0;
+
+    ioo_berm_init(gcr_addr, i_lane_mask_rx, &g_logspace[(l_thread * 72)]);
+    g_logspace[(l_thread * 72) + SPACE_A + 1] = BERM_STATUS_DONE;
+    g_logspace[(l_thread * 72) + SPACE_B + 1] = BERM_STATUS_DONE;
+
+
+    while ((g_logspace[0] & BERM_CONTROL_KILL) == 0)
+    {
+        if (l_thread_space[0] & BERM_CONTROL_START)
+        {
+            l_space_control = l_thread_space[0];
+            l_pr_offset = TwosCompToInt((l_space_control >> 8) & 0x7F, 7);
+            l_dac_offset = TwosCompToInt(l_space_control & 0xFF, 8);
+            l_thread_space[0] = 0;
+            ioo_berm_run(gcr_addr,
+                         i_lane_mask_rx,
+                         l_pr_offset,
+                         l_dac_offset,
+                         &g_logspace[0],
+                         &l_thread_space[2]);
+            l_thread_space[1] = l_space_control;
+        }
+        else
+        {
+            io_sleep(l_thread);
+        }
+
+        l_space = (l_space ^ 0x1 ) & 0x1;
+
+        if(l_space)
+        {
+            l_thread_space = &g_logspace[(l_thread * 72) + SPACE_B];
+        }
+        else
+        {
+            l_thread_space = &g_logspace[(l_thread * 72) + SPACE_A];
+        }
+    }
+
+    ioo_berm_cleanup(gcr_addr, i_lane_mask_rx);
+    return rc_no_error;
+}
+
+// Layout (16bits per entry, 512 entries total in the debug space)
+// [000]: Thread 0  Control        :: [0] Kill, [1] Stop-Op
+// [001]: Thread 0  None           ::
+// [002]: Thread 0  None           ::
+// [003]: Thread 0  None           ::
+
+// [004]: Thread 0 A Control X/Y Reg     :: [0]: Start, [1:7] X-Value, [8:15] Y-Value -- PPE Clears these when starting
+// [005]: Thread 0 A Status X/Y Reg      :: [0]: Done, [1:7] X-Value, [8:15] Y-Value -- User Clears these when starting
+// [006]: Thread 0 A Lane 0 Data         :: [0:3] Timer, [4:15] Errors
+// ...................................................................
+// [030]: Thread 0 A Lane 23 Data        :: [0:3] Timer, [4:15] Errors
+
+// [032]: Thread 0 B Control X/Y Reg     :: [0]: Start, [1:7] X-Value, [8:15] Y-Value -- PPE Clears these when starting
+// [033]: Thread 0 B Status X/Y Reg      :: [0]: Done, [1:7] X-Value, [8:15] Y-Value -- User Clears these when starting
+// [034]: Thread 0 B Lane 0 Data         :: [0:3] Timer, [4:15] Errors
+// ...................................................................
+// [058]: Thread 0 B Lane 23 Data        :: [0:3] Timer, [4:15] Errors
+
+// [072]: Thread 1 Control               :: [0]: Start, [1:7] X-Value, [8:15] Y-Value -- PPE Clears these when starting
+
+
+
+
+
+
+// Layout (16bits per entry, 512 entries total in the debug space)
+// [000]: Thread 0 Space Control        :: [0] Kill, [1] Stop-Op
+// [001]: Thread 0 Space A X/Y Reg      :: [0]: Start, [1:7] X-Value, [8:15] Y-Value
+// [002]: Thread 0 Space B X/Y Reg      :: [0]: Start, [1:7] X-Value, [8:15] Y-Value
+// [003]: Thread 0 Space None           ::
+// [004]: Thread 0 Space A Status       :: [0] Ready, [1] Running, [2] Done, [3] Killed
+// [005]: Thread 0 Space B Status       :: [0] Ready, [1] Running, [2] Done, [3] Killed
+// [006]: Thread 0 Space None           ::
+// [007]: Thread 0 Space None           ::
+// [008]: Thread 0 Space A Lane 0 Data  :: [0:3] Timer, [4:15] Errors
+// ...
+// [039]: Thread 0 Space A Lane 32 Data :: [0:3] Timer, [4:15] Errors
+// [040]: Thread 0 Space B Lane 0 Data  :: [0:3] Timer, [4:15] Errors
+// ...
+// [071]: Thread 0 Space B Lane 32 Data :: [0:3] Timer, [4:15] Errors
+// [072]: Thread 1 Space Control        :: [0] Kill, [1] Stop-Op
+// ...
+
+
+
+// Layout (16bits per entry, 512 entries total in the debug space)
+// [000]: Thread 0 Space A Control Reg  :: [0] Start, [1] Running, [2] Done, [3] Stop, [4] Kill
+// [001]: Thread 0 Space A X/Y Reg      :: [0:7] X-Value, [8:15] Y-Value
+// [002]: Thread 0 Space A None         ::
+// [003]: Thread 0 Space A None         ::
+// [004]: Thread 0 Space A Lane 0 Data  :: [0:3] Timer, [4:15] Errors
+// ...
+// [035]: Thread 0 Space A Lane 32 Data :: [0:3] Timer, [4:15] Errors
+// [036]: Thread 0 Space B Control Reg  :: [0] Start, [1] Running, [2] Done, [3] Stop, [4] Kill
+// [037]: Thread 0 Space B X/Y Reg      :: [0:7] X-Value, [8:15] Y-Value
+// [038]: Thread 0 Space B None         ::
+// [039]: Thread 0 Space B None         ::
+// [040]: Thread 0 Space B Lane 0 Data  :: [0:3] Timer, [4:15] Errors
+// ...
+// [071]: Thread 0 Space B Lane 32 Data :: [0:3] Timer, [4:15] Errors
+// [072]: Thread 1 Space A Control Reg  :: [0] Start, [1] Running, [2] Done, [3] Stop, [4] Kill
+// ...
