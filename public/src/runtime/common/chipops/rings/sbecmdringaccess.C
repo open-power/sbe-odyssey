@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/sbecmdringaccess.C $     */
+/* $Source: public/src/runtime/common/chipops/rings/sbecmdringaccess.C $  */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2023                        */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -50,7 +49,6 @@
 
 using namespace fapi2;
 
-static const uint32_t SIZE_OF_LENGTH_INWORDS = 1;
 static const uint32_t NUM_WORDS_PER_GRANULE = 2;
 static const uint32_t GETRING_GRANULE_SIZE_IN_BITS = 64;
 
@@ -379,84 +377,6 @@ uint32_t sbePutRing(uint8_t *i_pArg)
     sbefifo_hwp_data_istream istream(type);
     SBE_INFO(SBE_FUNC" hwp streams created");
     l_rc = sbePutRingWrap( istream, ostream );
-
-    SBE_EXIT(SBE_FUNC);
-    return l_rc;
-#undef SBE_FUNC
-}
-
-//////////////////////////////////////////////////////
-//////////////////////////////////////////////////////
-uint32_t sbePutRingFromImgWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
-                               fapi2::sbefifo_hwp_data_ostream& i_putStream)
-{
-#define SBE_FUNC " sbePutRingFromImgWrap "
-    SBE_ENTER(SBE_FUNC);
-
-    uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
-    sbeRespGenHdr_t respHdr;
-    respHdr.init();
-    sbeResponseFfdc_t ffdc;
-    ReturnCode fapiRc;
-    sbePutRingFromImgCMD_t hdr;
-    uint32_t len = 0;
-
-    do{
-        len = sizeof(sbePutRingFromImgCMD_t)/sizeof(uint32_t);
-        rc = i_getStream.get(len, (uint32_t *)&hdr);
-        // If FIFO access failure
-        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(rc);
-
-        // Initialize with HEADER CHECK mode
-        uint16_t ringMode = sbeToFapiRingMode(hdr.ringMode);
-
-        Target<SBE_ROOT_CHIP_TYPE> l_hndl = g_platTarget->plat_getChipTarget();
-        auto l_allgood_mc =
-              l_hndl.getMulticast<fapi2::TARGET_TYPE_PERV>(fapi2::MCGROUP_GOOD);
-
-        SBE_EXEC_HWP(fapiRc,
-                     putRing,
-                     l_allgood_mc, hdr.ringIdString,
-                     (fapi2::RingMode)ringMode);
-
-        if( fapiRc != FAPI2_RC_SUCCESS )
-        {
-            SBE_ERROR(SBE_FUNC"  poz_putRingBackend failed."
-                "fapiRc:0x%04x",  fapiRc);
-            respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                               SBE_SEC_PUTRING_FAILED);
-            ffdc.setRc(fapiRc);
-            break;
-        }
-    }while(false);
-
-    // Now build and enqueue response into downstream FIFO
-    // If there was a FIFO error, will skip sending the response,
-    // instead give the control back to the command processor thread
-    if ( SBE_SEC_OPERATION_SUCCESSFUL == rc )
-    {
-        rc = sbeDsSendRespHdr( respHdr, &ffdc, i_getStream.getFifoType());
-    }
-
-    SBE_EXIT(SBE_FUNC);
-    return rc;
-#undef SBE_FUNC
-}
-
-uint32_t sbePutRingFromImg(uint8_t *i_pArg)
-{
-#define SBE_FUNC " sbePutRingFromImg "
-    SBE_ENTER(SBE_FUNC);
-
-    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
-
-    chipOpParam_t* configStr = (struct chipOpParam*)i_pArg;
-    sbeFifoType type = static_cast<sbeFifoType>(configStr->fifoType);
-
-    sbefifo_hwp_data_ostream ostream(type);
-    sbefifo_hwp_data_istream istream(type);
-    SBE_INFO(SBE_FUNC" hwp streams created");
-    l_rc = sbePutRingFromImgWrap( istream, ostream );
 
     SBE_EXIT(SBE_FUNC);
     return l_rc;

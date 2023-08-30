@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/sbecmdringaccess.H $     */
+/* $Source: public/src/runtime/common/chipops/rings/sbecmdringaccess.H $  */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2023                        */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -29,18 +28,10 @@
  *
  */
 
-#ifndef __SBEFW_SBECMDRINGACCESS_H
-#define __SBEFW_SBECMDRINGACCESS_H
+#pragma once
 
 #include <stdint.h>
 #include "plat_hwp_data_stream.H"
-
-typedef struct
-{
-    uint32_t reserved:16;
-    uint32_t ringMode:16;
-    char ringIdString[32];
-} sbePutRingFromImgCMD_t;
 
 /**
  * @brief Put Ring message header
@@ -82,25 +73,10 @@ uint32_t sbeGetRing(uint8_t *i_pArg);
 uint32_t sbePutRing(uint8_t *i_pArg);
 
 /**
- * @brief Put Ring Command from image
- *        Search for the ring in sbe.ram.pak and pak stack(DFT) in pibmem and
- *        apply the ring
+ * @brief Utility function to convert SBE ring mode to FAPI ring mode
  *
- * @param[in] i_pArg Buffer to be passed to the function (not used as of now)
+ * @param[in] i_ringMode SBE ring mode
  *
- * @return    RC from the FIFO access utility
+ * @return    FAPI ring mode
  */
-uint32_t sbePutRingFromImg(uint8_t *i_pArg);
-
-/**
-  * @brief sbePutRingFromImgWrap : Apply the ring
-  *
-  * @param[in]  i_getStream      fifo down stream interface
-  * @param[in]  i_putStream      fifo up stream interface
-  *
-  * @return    Rc from the FIFO access utility
-  */
-uint32_t sbePutRingFromImgWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
-                               fapi2::sbefifo_hwp_data_ostream& i_putStream);
-
-#endif /* __SBEFW_SBECMDRINGACCESS_H */
+uint16_t sbeToFapiRingMode(uint16_t i_ringMode);
