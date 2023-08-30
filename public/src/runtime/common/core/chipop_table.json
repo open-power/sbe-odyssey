@@ -22,27 +22,6 @@
             "headerFile":"sbecmdscomaccess.H"
         },
         {
-            "cmdClass":"A3",
-            "command":"0x01",
-            "function":"sbeGetRing",
-            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
-            "headerFile":"sbecmdringaccess.H"
-        },
-        {
-            "cmdClass":"A3",
-            "command":"0x02",
-            "function":"sbePutRing",
-            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
-            "headerFile":"sbecmdringaccess.H"
-        },
-        {
-            "cmdClass":"A3",
-            "command":"0x03",
-            "function":"sbePutRingFromImg",
-            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
-            "headerFile":"sbecmdringaccess.H"
-        },
-        {
             "cmdClass":"A8",
             "command":"0x01",
             "function":"sbeGetFfdc",

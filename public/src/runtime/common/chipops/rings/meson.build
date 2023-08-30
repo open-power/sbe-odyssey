@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/common/chipops/meson.build $
+# $Source: public/src/runtime/common/chipops/rings/meson.build $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2023
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,12 +22,6 @@
 #
 # IBM_PROLOG_END_TAG
 
-subdir('stopclocks')
-subdir('tracearray')
-subdir('fastarray')
-subdir('getcapabilities')
-subdir('sramaccess')
-subdir('collectdump')
-subdir('codeupdate')
-subdir('exechwp')
-subdir('rings')
+CMN_RING_ACCESS_CHIPOPS_JSON = files('chipop_table.json')
+
+abs_runtime_cmn_ring_c_path = files('sbecmdringaccess.C')

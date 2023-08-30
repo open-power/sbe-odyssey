@@ -1,0 +1,19 @@
+
+{
+    "chipoptable":[
+        {
+            "cmdClass":"A3",
+            "command":"0x01",
+            "function":"sbeGetRing",
+            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL", "SBE_FENCE_AT_DUMPING"],
+            "headerFile":"sbecmdringaccess.H"
+        },
+        {
+            "cmdClass":"A3",
+            "command":"0x02",
+            "function":"sbePutRing",
+            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL", "SBE_FENCE_AT_DUMPING"],
+            "headerFile":"sbecmdringaccess.H"
+        }
+    ]
+}
