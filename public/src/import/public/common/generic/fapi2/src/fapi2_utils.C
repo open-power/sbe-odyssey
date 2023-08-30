@@ -61,7 +61,9 @@ ReturnCode queryChipEcAndName(
 
 // convert sbe instance of target to a fapi position
 uint16_t convertSbeTargInstanceToFapiPos(fapi2::TargetType i_targType,
-        fapi2::Target<TARGET_TYPE_ANY_POZ_CHIP>& i_sbeChip, uint16_t i_instance)
+        uint16_t i_instance,
+        uint64_t i_sbeChipType,
+        uint16_t i_sbeChipFapiPos)
 {
     // Compute this target's FAPI_POS value.  We first take the parent's
     // FAPI_POS and multiply by the max number of targets of this type that
@@ -79,15 +81,11 @@ uint16_t convertSbeTargInstanceToFapiPos(fapi2::TargetType i_targType,
 
     uint16_t fapi_pos = INVALID_FAPI_POS;
 
-    ATTR_FAPI_POS_Type l_sbeChipPosition = 0;
-
-    FAPI_ATTR_GET(fapi2::ATTR_FAPI_POS, i_sbeChip, l_sbeChipPosition);
-
     // if the target type being converted is a POZ chip, then
     // it will be the same chip as the sbe instance, just return that one
-    if(((i_targType & TARGET_TYPE_ANY_POZ_CHIP) != 0) && ((i_sbeChip.getType() & i_targType) != 0))
+    if ((i_targType & i_sbeChipType) != 0)
     {
-        fapi_pos = l_sbeChipPosition;
+        fapi_pos = i_sbeChipFapiPos;
     }
     else
     {
@@ -207,21 +205,79 @@ uint16_t convertSbeTargInstanceToFapiPos(fapi2::TargetType i_targType,
                     break;
                 }
 
-            case  TARGET_TYPE_PMIC:
-                {
-                    max_targets = MAX_PMIC_PER_PROC;
-                    break;
-                }
-
             case  TARGET_TYPE_PAUC:
                 {
                     max_targets = MAX_PAUC_PER_PROC;
                     break;
                 }
 
+            case  TARGET_TYPE_PMIC:
+                {
+                    if ((i_sbeChipType & TARGET_TYPE_PROC_CHIP) != 0)
+                    {
+                        max_targets = MAX_PMIC_PER_PROC;
+                    }
+                    else
+                    {
+                        max_targets = MAX_PMIC_PER_OCMB;
+                    }
+
+                    break;
+                }
+
             case  TARGET_TYPE_GENERICI2CRESPONDER:
                 {
-                    max_targets = MAX_GI2C_PER_PROC;
+                    if ((i_sbeChipType & TARGET_TYPE_PROC_CHIP) != 0)
+                    {
+                        max_targets = MAX_GI2C_PER_PROC;
+                    }
+                    else
+                    {
+                        max_targets = MAX_GENERIC_I2C_DEVICE_PER_OCMB;
+                    }
+
+                    break;
+                }
+
+            case TARGET_TYPE_MEM_PORT:
+                {
+                    if ((i_sbeChipType & TARGET_TYPE_PROC_CHIP) != 0)
+                    {
+                        max_targets = MAX_MEM_PORT_PER_PROC;
+                    }
+                    else
+                    {
+                        max_targets = MAX_MEM_PORT_PER_OCMB;
+                    }
+
+                    break;
+                }
+
+            case TARGET_TYPE_POWER_IC:
+                {
+                    if ((i_sbeChipType & TARGET_TYPE_PROC_CHIP) != 0)
+                    {
+                        max_targets = MAX_POWER_IC_PER_PROC;
+                    }
+                    else
+                    {
+                        max_targets = MAX_POWER_IC_PER_OCMB;
+                    }
+
+                    break;
+                }
+
+            case TARGET_TYPE_TEMP_SENSOR:
+                {
+                    if ((i_sbeChipType & TARGET_TYPE_PROC_CHIP) != 0)
+                    {
+                        max_targets = MAX_TEMP_SENSOR_PER_PROC;
+                    }
+                    else
+                    {
+                        max_targets = MAX_TEMP_SENSOR_PER_OCMB;
+                    }
+
                     break;
                 }
 
@@ -242,10 +298,7 @@ uint16_t convertSbeTargInstanceToFapiPos(fapi2::TargetType i_targType,
             case TARGET_TYPE_OBUS_BRICK:
             case TARGET_TYPE_SBE:
             case TARGET_TYPE_PPE:
-            case TARGET_TYPE_MEM_PORT:
             case TARGET_TYPE_RESERVED:
-            case TARGET_TYPE_POWER_IC:
-            case TARGET_TYPE_TEMP_SENSOR:
             case TARGET_TYPE_MULTICAST:
             case TARGET_TYPE_ALL:
             case TARGET_TYPE_ALL_MC:
@@ -279,12 +332,12 @@ uint16_t convertSbeTargInstanceToFapiPos(fapi2::TargetType i_targType,
         {
             FAPI_ERR("Unable to determine the target count "
                      "for target type = 0x%.16lX and instance 0x%d "
-                     "associated with proc position %d",
-                     i_targType, i_instance, l_sbeChipPosition);
+                     "associated with chip position %d",
+                     i_targType, i_instance, i_sbeChipFapiPos);
         }
         else
         {
-            fapi_pos = max_targets * l_sbeChipPosition +
+            fapi_pos = max_targets * i_sbeChipFapiPos +
                        (i_instance % max_targets);
         }
     }
