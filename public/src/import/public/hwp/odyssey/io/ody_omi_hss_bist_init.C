@@ -50,9 +50,7 @@ fapi2::ReturnCode ody_omi_hss_bist_init(const fapi2::Target<fapi2::TARGET_TYPE_O
 {
     FAPI_DBG("Start - BIST Init");
 
-    io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(PHY_PPE_WRAP0_ARB_CSAR,
-            PHY_PPE_WRAP0_ARB_CSDR,
-            PHY_ODY_OMI_BASE);
+    io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(PHY_ODY_OMI_BASE);
 
     ody_io::io_ppe_common<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_common(&l_ppe_regs);
 
@@ -100,7 +98,7 @@ fapi2::ReturnCode ody_omi_hss_bist_init(const fapi2::Target<fapi2::TARGET_TYPE_O
     l_dl0_cya.set_PRBS15_NPRBS7(1);
     FAPI_TRY(l_dl0_cya.putScom(i_target));
 
-    FAPI_TRY(l_ppe_common.bist_init(i_target, l_dacTest, l_esdTest),
+    FAPI_TRY(l_ppe_common.bist_init(i_target, 0, l_dacTest, l_esdTest),
              "Failed to run common HSS BIST init");
 
     FAPI_TRY(l_ppe_common.bist_init_thread(i_target, c_thread, l_rx_mask, l_omi_freq, l_bist_timer),

@@ -26,7 +26,7 @@
 <!-- ********************************************************************** -->
 <attribute>
   <id>ATTR_FREQ_OMI_MHZ</id>
-  <targetType>TARGET_TYPE_OMI,TARGET_TYPE_OCMB_CHIP</targetType>
+  <targetType>TARGET_TYPE_OMI,TARGET_TYPE_OCMB_CHIP,TARGET_TYPE_PROC_CHIP</targetType>
   <description>
     The frequency of the OMI channel in MHz.
   </description>
@@ -36,6 +36,59 @@
     32000 = 32000,
     38400 = 38400
   </enum>
+  <platInit/>
+  <writeable/>
+</attribute>
+<!-- ********************************************************************** -->
+<attribute>
+  <id>ATTR_DATARATE_POZ_OMI</id>
+  <targetType>TARGET_TYPE_OCMB_CHIP,TARGET_TYPE_PROC_CHIP</targetType>
+  <description>
+    The data rate of the OMI channel.
+  </description>
+  <valueType>uint32</valueType>
+  <enum>
+    21460 = 21460,
+    25600 = 25600,
+  </enum>
+  <default>21460</default>
+  <platInit/>
+  <writeable/>
+</attribute>
+<!-- ********************************************************************** -->
+<attribute>
+  <id>ATTR_DATARATE_POZ_BUS</id>
+  <targetType>TARGET_TYPE_PROC_CHIP</targetType>
+  <description>
+    The data rate of the XBUS and ABUS channel.
+  </description>
+  <valueType>uint32</valueType>
+  <enum>
+    25600 = 25600,
+    28800 = 28800,
+    32000 = 32000,
+    38400 = 38400
+  </enum>
+  <default>28800</default>
+  <platInit/>
+  <writeable/>
+</attribute>
+<!-- ********************************************************************** -->
+<attribute>
+  <id>ATTR_DATARATE_POZ_PCIE</id>
+  <targetType>TARGET_TYPE_PROC_CHIP</targetType>
+  <description>
+    The data rate of the PCIE channel.
+  </description>
+  <valueType>uint32</valueType>
+  <enum>
+    2500 = 2500,
+    5000 = 5000,
+    8000 = 8000,
+    16000 = 16000,
+    32000 = 32000
+  </enum>
+  <default>32000</default>
   <platInit/>
   <writeable/>
 </attribute>
