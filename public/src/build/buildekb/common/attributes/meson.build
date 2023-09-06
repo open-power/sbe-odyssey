@@ -51,6 +51,7 @@ infile_attr_xml = [
             'poz_clock_attributes.xml',
             'poz_chip_attributes.xml',
             'poz_freq_attributes.xml',
+            'poz_bist_attributes.xml',
             'poz_chip_ec_attributes.xml',
             ]
 

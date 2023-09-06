@@ -151,6 +151,7 @@ class io_ppe_common
                                            const uint8_t i_bist_timer_sel);
 
         fapi2::ReturnCode bist_init(const fapi2::Target<K, M, V>& i_target,
+                                    const uint8_t i_group,
                                     const uint8_t i_dacTest,
                                     const uint8_t i_esdTest);
 
@@ -416,6 +417,7 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::ppe_start(const fapi2::Target<K, M, V>
     const uint64_t c_xidbgpro    = (iv_regs->base_addr + 0x15);
 
     const uint64_t c_ppe_start_reset_iar = 0xfffe0040 >> 2;
+    const uint64_t c_ppe_program_exception_iar = 0xfffe00e0 >> 2;
     const uint8_t c_sram_scrub_enable_bit = 1;
     const uint8_t c_xidbgpro_bit = 32;
     const uint8_t c_xidbgpro_len = 30;
@@ -423,17 +425,6 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::ppe_start(const fapi2::Target<K, M, V>
     const uint8_t c_ppe_halted_bit = 17;
 
     fapi2::buffer<uint64_t> l_buffer = 0;
-
-    FAPI_TRY(fapi2::getScom(i_target, c_xidbgpro, l_buffer));
-    l_buffer.extractToRight<c_xidbgpro_bit, c_xidbgpro_len, uint32_t>(o_iar);
-
-    if (o_iar == c_ppe_start_reset_iar)
-    {
-        FAPI_DBG("PPE is already running");
-        goto fapi_try_exit;
-    }
-
-    l_buffer.flush<0>();
 
     // SRAM Scrub, set via Write-OR to CSCR
     FAPI_DBG("SRAM Scrub");
@@ -452,10 +443,10 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::ppe_start(const fapi2::Target<K, M, V>
     FAPI_TRY(fapi2::getScom(i_target, c_xidbgpro, l_buffer));
     l_buffer.extractToRight<c_xidbgpro_bit, c_xidbgpro_len, uint32_t>(o_iar);
 
-    if (o_iar != c_ppe_start_reset_iar)
+    if ((o_iar != c_ppe_start_reset_iar) || (o_iar == c_ppe_program_exception_iar))
     {
         o_fail = true;
-        FAPI_DBG("IAR (0x%8x) did not reset.", o_iar);
+        FAPI_DBG("IAR (0x%8x) did not reset correctly.", o_iar);
         return fapi2::current_err;
     }
 
@@ -503,6 +494,8 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init_thread(const fapi2::Target<K
         const uint8_t i_bist_timer_sel)
 {
     FAPI_DBG("Start");
+    constexpr uint32_t c_max_lanes = 32;
+
     uint32_t l_lane = 0;
     uint32_t l_rx_mask = i_rx_mask;
     uint8_t l_ppe_data_rate = calc_ppe_data_rate(i_freq);
@@ -533,7 +526,7 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init_thread(const fapi2::Target<K
     //"rx_ctle_peak1_cal_disable": 0, *
     FAPI_TRY(MEM_REG_RX_CTLE_PEAK1_CAL_DISABLE_PUT(iv_regs, i_target, i_thread, 0));
 
-    for (l_lane = 0; l_lane < 8; l_lane++)
+    for (l_lane = 0; l_lane < c_max_lanes; l_lane++)
     {
         if (l_rx_mask & 0x80000000)
         {
@@ -555,6 +548,7 @@ fapi_try_exit:
 
 template<fapi2::TargetType K, fapi2::MulticastType M, typename V>
 fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init(const fapi2::Target<K, M, V>& i_target,
+        const uint8_t i_group,
         const uint8_t i_dacTest,
         const uint8_t i_esdTest)
 {
@@ -571,7 +565,8 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init(const fapi2::Target<K, M, V>
     fapi2::buffer<uint64_t> l_buffer;
     uint64_t l_addr = 0;
 
-    l_addr = buildAddr(iv_regs->base_addr, 0, 0, c_reg_rx_datasm_cnt22);
+    l_addr = buildAddr(iv_regs->base_addr, i_group, 0, c_reg_rx_datasm_cnt22);
+    FAPI_DBG("RX_DATASM_CNTL22 Address 0x%08X%08X", (l_addr >> 32) & 0xFFFFFFFF, l_addr & 0xFFFFFFFF);
 
     // Write rx_dac_test_check_en = 0
     FAPI_DBG("Setting RX DAC test Check enabled");
@@ -586,7 +581,8 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init(const fapi2::Target<K, M, V>
 
     l_buffer.flush<0>();
 
-    l_addr = buildAddr(iv_regs->base_addr, 0, 0, c_reg_rx_ctl_cntl5);
+    l_addr = buildAddr(iv_regs->base_addr, i_group, 0, c_reg_rx_ctl_cntl5);
+    FAPI_DBG("RX_CTL_CNTL5 Address 0x%08X%08X", (l_addr >> 32) & 0xFFFFFFFF, l_addr & 0xFFFFFFFF);
 
     // Write rx_pervasive_capt = 1
     FAPI_DBG("Setting RX Pervasive Capt enabled");
@@ -641,7 +637,7 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_cleanup(const fapi2::Target<K, M,
 
     // Set rx_ctl_cntl5_pg to 0
     l_buffer = 0;
-    l_addr = buildAddr(iv_regs->base_addr, 0, 0, c_reg_rx_ctl_cntl5);
+    l_addr = buildAddr(iv_regs->base_addr, i_thread, 0, c_reg_rx_ctl_cntl5);
     FAPI_TRY(putScom(i_target, l_addr, l_buffer),
              "Error putscom to address 0x%08X.", l_addr);
 
@@ -650,19 +646,19 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_cleanup(const fapi2::Target<K, M,
         if (i_rx_lanes_0_31 & 0x80000000)
         {
             // Set rx_pr_fw_inertia_amt to 4
-            l_addr = buildAddr(iv_regs->base_addr, 0, l_lane, c_reg_rx_bit_mode4);
+            l_addr = buildAddr(iv_regs->base_addr, i_thread, l_lane, c_reg_rx_bit_mode4);
             FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, 4, 48 + 0, 4),
                      "Error rmwIoHardwareReg to address 0x%08X.", l_addr);
 
             // Set rx_pr_fw_inertia_amt_coarse to 7
-            l_addr = buildAddr(iv_regs->base_addr, 0, l_lane, c_reg_rx_bit_mode5);
+            l_addr = buildAddr(iv_regs->base_addr, i_thread, l_lane, c_reg_rx_bit_mode5);
             FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, 7, 48 + 0, 4),
                      "Error rmwIoHardwareReg to address 0x%08X.", l_addr);
         }
     }
 
     // Set tx_bist_en_alias to 0
-    l_addr = buildAddr(iv_regs->base_addr, 0, 0, c_reg_tx_ctl_mode1);
+    l_addr = buildAddr(iv_regs->base_addr, i_thread, 0, c_reg_tx_ctl_mode1);
     FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, 0, 48 + 6, 3),
              "Error rmwIoHardwareReg to address 0x%08X.", l_addr);
 
@@ -791,7 +787,7 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::hss_init_rx(const fapi2::Target<K, M, 
     FAPI_DBG("Starting io_ppe_common::hss_init_rx");
     uint8_t l_lane = 0;
 
-    for (l_lane = 0; l_lane < 8; l_lane++)
+    for (l_lane = 0; l_lane < 32; l_lane++)
     {
         if (i_lane_mask & (0x80000000 >> l_lane))
         {
@@ -1063,12 +1059,14 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_poll(const fapi2::Target<K, M, V>
 
     while (!o_done && (l_loop_count < i_poll_count))
     {
-        FAPI_TRY(iv_regs->flushCache(i_target));
         FAPI_TRY(ext_cmd_check(i_target, i_thread, l_cmd, o_done, o_fail));
+        // FAPI_TRY(iv_regs->flushCache(i_target));
+
+        FAPI_DBG("Loop count %d", l_loop_count);
 
         if (!o_done)
         {
-            fapi2::delay(2000000, 2000000); // ns, sim cycles. 1ms
+            fapi2::delay(20000000, 20000000); // ns, 20000000 sim cycles. 20ms
         }
 
         l_loop_count++;
