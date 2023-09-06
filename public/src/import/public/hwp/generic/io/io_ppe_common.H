@@ -119,6 +119,7 @@ class io_ppe_common
         }
 
         uint32_t calc_ppe_data_rate(const uint32_t i_data_rate);
+        uint32_t calc_pcie_data_rate(const uint32_t i_data_rate);
 
         fapi2::ReturnCode set_lte_gain_zero(const fapi2::Target<K, M, V>& i_target,
                                             const uint8_t i_thread,
@@ -285,6 +286,39 @@ uint32_t io_ppe_common<K, M, V>::calc_ppe_data_rate(const uint32_t i_data_rate)
     }
 
     return l_ppe_data_rate;
+}
+
+template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
+uint32_t io_ppe_common<K, M, V>::calc_pcie_data_rate(const uint32_t i_data_rate)
+{
+    uint32_t l_pcie_data_rate = 0;
+
+    if (i_data_rate <= 2500)
+    {
+        l_pcie_data_rate = 0;
+    }
+    else if (i_data_rate <= 5000)
+    {
+        l_pcie_data_rate = 1;
+    }
+    else if (i_data_rate <= 8000)
+    {
+        l_pcie_data_rate = 2;
+    }
+    else if (i_data_rate <= 16000)
+    {
+        l_pcie_data_rate = 3;
+    }
+    else if (i_data_rate <= 32000)
+    {
+        l_pcie_data_rate = 4;
+    }
+    else
+    {
+        l_pcie_data_rate = 5;
+    }
+
+    return l_pcie_data_rate;
 }
 
 template<fapi2::TargetType K, fapi2::MulticastType M, typename V>
@@ -499,12 +533,10 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init_thread(const fapi2::Target<K
     uint32_t l_lane = 0;
     uint32_t l_rx_mask = i_rx_mask;
     uint8_t l_ppe_data_rate = calc_ppe_data_rate(i_freq);
+    uint8_t l_pcie_data_rate = calc_pcie_data_rate(i_freq);
 
     // Set PCIe Data rate
-    if (l_ppe_data_rate == 6)
-    {
-        FW_REG_FW_BIST_PCIE_RATE_PUT(iv_regs, i_target, i_thread, l_ppe_data_rate);
-    }
+    FW_REG_FW_BIST_PCIE_RATE_PUT(iv_regs, i_target, i_thread, l_pcie_data_rate);
 
     MEM_REG_PPE_DATA_RATE_PUT(iv_regs, i_target, i_thread, l_ppe_data_rate);
 
@@ -866,6 +898,9 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::ext_cmd_start(const fapi2::Target<K, M
     FAPI_TRY(FW_REG_EXT_CMD_REQ_00_15_PUT(iv_regs, i_target, i_thread, l_ext_cmd_req_0_15));
     FAPI_TRY(FW_REG_EXT_CMD_REQ_16_31_PUT(iv_regs, i_target, i_thread, l_ext_cmd_req_16_31));
 
+    // Flush lanes before start
+    FAPI_TRY(iv_regs->flushCache(i_target));
+
 fapi_try_exit:
     FAPI_DBG("Ending io_ppe_common::ext_cmd_start_thread");
     return fapi2::current_err;
@@ -881,6 +916,10 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::ext_cmd_check(const fapi2::Target<K, M
     FAPI_DBG("Starting io_ppe_common::ext_cmd_check");
 
     fapi2::buffer<uint64_t> l_data = 0;
+
+    // Need to flush to clear the cache before checking so
+    // The HW is read again
+    FAPI_TRY(iv_regs->flushCache(i_target));
 
     FAPI_TRY(FW_REG_EXT_CMD_DONE_00_15_GET(iv_regs, i_target, i_thread, l_data));
     o_done = ((l_data << 16) & (0xFFFF0000 & i_ext_cmd_req)) == (0xFFFF0000 & i_ext_cmd_req);
