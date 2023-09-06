@@ -31,4 +31,5 @@
       <description>OMI training done poll time-out</description>
       <ffdc>TARGET</ffdc>
     </hwpError>
+    <!-- ******************************************************************** -->
 </hwpErrors>
