@@ -58,4 +58,34 @@
       <ffdc>FAILED_PLLS</ffdc>
    </hwpError>
   <!-- ******************************************************************** -->
+   <hwpError>
+      <sbeError/>
+      <rc>RC_POZ_RCS_ERROR</rc>
+      <description>
+        The redundant clock switch detected a problem.  The root cause may be the processor or the
+        incoming clock(s).
+      </description>
+      <ffdc>PROC_TARGET</ffdc>
+   </hwpError>
+  <!-- ******************************************************************** -->
+   <hwpError>
+      <sbeError/>
+      <rc>RC_POZ_PPM_ERROR</rc>
+      <description>
+        The redundant clock switch detected a problem with the PPM Watchdog.  The root cause may be the processor or the
+        incoming clock(s).
+      </description>
+      <ffdc>PROC_TARGET</ffdc>
+   </hwpError>
+  <!-- ******************************************************************** -->
+   <hwpError>
+      <sbeError/>
+      <rc>RC_POZ_RCS_FPLL_NOT_LOCKED</rc>
+      <description>
+        The redundant clock switch Filter PLLs are not locking.  The root cause may be the processor or the
+        incoming clock(s).
+      </description>
+      <ffdc>PROC_TARGET</ffdc>
+   </hwpError>
+  <!-- ******************************************************************** -->
 </hwpErrors>
