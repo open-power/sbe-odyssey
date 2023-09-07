@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -61,6 +61,21 @@ static const ta_def ta_defs[] =
     { { ODY_TB_MC0},                                             0x08, 0x0000, 5 },
     { { ODY_TB_MC1},                                             0x08, 0x0001, 5 }
 };
+
+
+static const ta_const ta_consts =
+{
+
+    TA_DEBUG_BASE_SCOM,
+    TA_TRACE_BASE_SCOM,
+    TA_EQ_DEBUG_BASE_SCOM,
+    TRACEARRAY_NUM_ROWS,
+
+};
+
+const uint16_t PROC_TRACEARRAY_MAX_SIZE  =
+    (TRACEARRAY_NUM_ROWS* TRACEARRAY_BITS_PER_ROW) / 8;
+
 //------------------------------------------------------------------------------
 // HWP entry point
 //------------------------------------------------------------------------------
@@ -69,7 +84,7 @@ extern "C" ReturnCode ody_gettracearray(
     const poz_gettracearray_args& i_args,
     hwp_data_ostream& o_stream)
 {
-    FAPI_TRY(poz_gettracearray(i_target, i_args, ta_defs, ARRAY_SIZE(ta_defs), o_stream));
+    FAPI_TRY(poz_gettracearray(i_target, i_args, ta_defs, ta_consts, ARRAY_SIZE(ta_defs), o_stream));
 
     return FAPI2_RC_SUCCESS;
 
