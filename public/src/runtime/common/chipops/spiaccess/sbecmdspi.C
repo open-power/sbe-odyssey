@@ -142,6 +142,8 @@ uint32_t sbeSpiWriteWrap ( fapi2::sbefifo_hwp_data_istream& i_getStream,
         SBE_INFO(SBE_FUNC" imgLen in words: [0x%08X] in bytes: [0x%08X]",
                         imgLenWords, WORD_TO_BYTES(imgLenWords));
 
+        //////////////////////////////////////////////////////
+        //Allocoate scratch space based on the SEEPROM img length in bytes & get mem dev handle
         l_rc = prepSpiAccess(l_imgBufScratchArea, l_reqMsg.boot_side, gMemHandle, respHdr);
         if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
         {
@@ -229,3 +231,129 @@ fapi_try_exit:
     #undef SBE_FUNC
 }
 
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+uint32_t sbeSpiRead(uint8_t *i_pArg)
+{
+#define SBE_FUNC " sbeSpiRead "
+    SBE_ENTER(SBE_FUNC);
+
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    chipOpParam_t* configStr = (struct chipOpParam*)i_pArg;
+    sbeFifoType type = static_cast<sbeFifoType>(configStr->fifoType);
+
+    sbefifo_hwp_data_ostream ostream(type);
+    sbefifo_hwp_data_istream istream(type);
+    SBE_INFO(SBE_FUNC" hwp streams created");
+    l_rc = sbeSpiReadWrap( istream, ostream );
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+#undef SBE_FUNC
+}
+
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+uint32_t sbeSpiReadWrap ( fapi2::sbefifo_hwp_data_istream& i_getStream,
+                         fapi2::sbefifo_hwp_data_ostream& i_putStream )
+{
+    #define SBE_FUNC " spiRead "
+    SBE_ENTER(SBE_FUNC);
+
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    sbeSpiReadMsgHdr_t l_reqMsg = sbeSpiReadMsgHdr_t();
+    sbeRespGenHdr_t respHdr;
+    respHdr.init();
+    sbeResponseFfdc_t ffdc;
+    uint32_t len = 0;
+    uint32_t* l_imgBufScratchArea = NULL;
+
+    spi::AbstractMemoryDevice *gMemHandle;
+
+    do
+    {
+        // Dequeue seeprom_id and start_addr
+        uint32_t len2dequeue = sizeof(l_reqMsg)/sizeof(uint32_t);
+        // EoT not expected
+        l_rc = i_getStream.get(len2dequeue, (uint32_t *)&l_reqMsg, true);
+
+        // If FIFO access failure
+        if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+        {
+            // Let command processor routine to handle the RC.
+            break;
+        }
+
+        //////////////////////////////////////////////////////
+        //Allocoate scratch space based on the SEEPROM img length in bytes & get mem dev handle
+        l_rc = prepSpiAccess(l_imgBufScratchArea, l_reqMsg.boot_side, gMemHandle, respHdr);
+        if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+        {
+            // flush the fifo
+            l_rc = i_getStream.get(len, NULL, true, true);
+            // Let command processor routine to handle the RC.
+            break;
+        }
+
+        //////////////////////////////////////////////////////
+        // Read the SEEPROM img
+
+        // The received image would be updated in chunks of maxSpiReadInWords
+        // or less depending on the image size in a loop
+        uint32_t l_readWordsLen = 0;
+
+        // Offset at which to begin writing
+        uint32_t l_imageStartAddr = l_reqMsg.start_addr;
+
+        for (uint32_t l_len = l_reqMsg.len; l_len > 0; l_len -= l_readWordsLen)
+        {
+            l_readWordsLen = (l_len > MAX_BUFFER_SIZE ? MAX_BUFFER_SIZE : l_len);
+
+            SBE_INFO(SBE_FUNC "Loop: ReadLen(bytes):[0x%08X] withECC(bytes):[0x%08X]",
+                l_readWordsLen, WITH_ECC(l_readWordsLen));
+
+
+            // Perform device read
+            l_rc = gMemHandle->read(l_imageStartAddr, l_readWordsLen, l_imgBufScratchArea);
+
+            if(l_rc != FAPI2_RC_SUCCESS)
+            {
+                SBE_ERROR(SBE_FUNC "Write to device failed, Addr:0x%08X Size:0x%08X",\
+                          WITH_ECC(l_imageStartAddr),\
+                          WORD_TO_BYTES(l_readWordsLen));
+
+                respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                                  SBE_SEC_CU_WRITE_IMAGE_FAILURE );
+                break;
+            }
+
+            // Enqueing fifo
+            l_rc = i_putStream.put(l_readWordsLen, (uint32_t *)l_imgBufScratchArea);
+
+            // If FIFO access failure
+            CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+
+            l_imageStartAddr += l_readWordsLen;
+
+        } //end of for-loop
+
+    } while(false);
+
+    //////////////////////////////////////////////////////
+    //Free the scratch area
+    Heap::get_instance().scratch_free(l_imgBufScratchArea);
+    freeMemoryDevice(gMemHandle);
+
+    if(l_rc == SBE_SEC_OPERATION_SUCCESSFUL)
+    {
+        // Build the response header packet
+        l_rc = sbeDsSendRespHdr( respHdr, &ffdc, i_getStream.getFifoType());
+       // will let command processor routine handle the failure
+    }
+
+fapi_try_exit:
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}

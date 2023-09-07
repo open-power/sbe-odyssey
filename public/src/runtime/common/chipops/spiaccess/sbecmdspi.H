@@ -70,4 +70,33 @@ typedef struct
     uint32_t start_addr; // start_addr into SEEPROM to begin writing
 } sbeSpiWriteMsgHdr_t;
 
+/**
+ * @brief Spi Read Command:
+ *
+ * @param[in] i_pArg Buffer to be passed to the function (not used as of now)
+ *
+ * @return    RC from the FIFO access utility
+ */
+uint32_t sbeSpiRead(uint8_t *i_pArg);
+
+/**
+  * @brief spiSpiReadWrap:  Read data from SEEPROM via SPI driver and output to Upstream FIFO
+  *
+  * @param[in]  i_getStream      fifo down stream interface
+  * @param[in]  i_putStream      fifo up stream interface
+  *
+  * @return    Rc from the FIFO access utility
+  */
+
+uint32_t sbeSpiReadWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
+                         fapi2::sbefifo_hwp_data_ostream& i_putStream);
+
+typedef struct
+{
+    uint8_t reserved1;
+    uint8_t boot_side;
+    uint16_t len; // length of seeprom to read in bytes
+    uint32_t start_addr; // start address into SEEPROM to begin reading
+} sbeSpiReadMsgHdr_t;
+
 #endif /* __SBEFW_SBECMDSPI_H */
