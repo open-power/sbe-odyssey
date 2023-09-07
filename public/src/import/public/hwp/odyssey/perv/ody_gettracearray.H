@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -61,14 +61,22 @@ using namespace fapi2;
 
 enum ody_tracearray_bus_id
 {
-    NO_TB = 0x00,
-    ODY_TB_PIB = 0x01,
-    ODY_TB_SBE = 0x02,
+    NO_TB          = 0x00,
+    ODY_TB_PIB     = 0x01,
+    ODY_TB_SBE     = 0x02,
     ODY_TB_PIB_ALT = 0x03,
-    ODY_TB_MC0 = 0x81,
-    ODY_TB_MC1 = 0x82,
+    ODY_TB_MC0     = 0x81,
+    ODY_TB_MC1     = 0x82,
 };
 
+
+
+
+const uint32_t TA_DEBUG_BASE_SCOM      = 0x000107C0;
+const uint32_t TA_EQ_DEBUG_BASE_SCOM   = 0x000183E0;
+const uint32_t TA_TRACE_BASE_SCOM      = 0x00010400;
+// maximum trace array entries supported by Odyssey chip design
+const uint32_t TRACEARRAY_NUM_ROWS = 128;
 
 // function pointer typedef definition for HWP call support
 typedef ReturnCode

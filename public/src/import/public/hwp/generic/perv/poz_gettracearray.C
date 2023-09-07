@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -104,7 +104,7 @@ class TraceArrayFinder
         uint32_t trace_scom_base;
 
         TraceArrayFinder(tracearray_bus_id i_trace_bus, Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const ta_def* ta_defs,
-                         uint8_t ta_defs_len) :
+                         const ta_const ta_consts, uint8_t ta_defs_len) :
             valid(false), mux_num(0), pri_mux_sel(0), sec_mux_sel(0), debug_scom_base(0),
             trace_scom_base(0)
         {
@@ -124,10 +124,10 @@ class TraceArrayFinder
                         l_buffer |= l_ta_def->chiplet << 24;
 
                         trace_scom_base = l_buffer |
-                                          (TA_TRACE_BASE_SCOM
+                                          (ta_consts.trace_base_scom
                                            + (TA_BASE_SCOM_MULTIPLIER
                                               *  l_ta_def->base_multiplier));
-                        debug_scom_base = l_buffer | TA_DEBUG_BASE_SCOM;
+                        debug_scom_base = l_buffer | ta_consts.debug_base_scom;
 
                         FAPI_DBG("Chiplet: 0x%x; Multiplier: 0x%x", l_ta_def->chiplet, l_ta_def->base_multiplier);
 
@@ -174,6 +174,7 @@ class TraceArrayFinder
  * @param i_target      The target to run SCOMs against
  * @param i_args        Tracearray arguments for trace bus information
  * @param i_scom_base   Tracearray base addr
+ * @param ta_consts     Structure containing the tracebus addr information
  * @param o_stream      The destination data stream
  *
  * @return RC_PROC_GETTRACEARRAY_TRACE_RUNNING if trace is still running, else FAPI2_RC_SUCCESS
@@ -181,6 +182,7 @@ class TraceArrayFinder
 static ReturnCode do_dump(
     const Target < TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     const poz_gettracearray_args& i_args,
+    const ta_const ta_consts,
     const uint32_t i_scom_base,
     hwp_data_ostream& o_stream)
 {
@@ -192,6 +194,7 @@ static ReturnCode do_dump(
     FAPI_TRY(getScom(i_target, i_scom_base + TRACE_TRCTRL_CONFIG_OFS, l_trace_ctrl),
              "Failed to read current trace control setting");
 
+    FAPI_DBG("Trace Cntrl: 0x%x with data 0x%x", i_scom_base + TRACE_TRCTRL_CONFIG_OFS, l_trace_ctrl);
     FAPI_ASSERT(l_trace_ctrl.getBit<TRA0_TR0_CONFIG_TRCTRL_CLOCK_ENABLE>(),
                 GETTRACEARRAY_CLOCKS_OFF()
                 .set_TARGET(i_target).set_TRACE_BUS(i_args.trace_bus)
@@ -212,7 +215,7 @@ static ReturnCode do_dump(
              "tracing was started just before the SCOM access");
 
     /* Dump the Tracearray to o_stream */
-    for (uint32_t i = 0; i < TRACEARRAY_NUM_ROWS; i++)
+    for (uint32_t i = 0; i < ta_consts.ta_num_rows; i++)
     {
         buf = 0;
         FAPI_TRY(getScom(i_target, i_scom_base + TRACE_LO_DATA_OFS, buf),
@@ -257,6 +260,7 @@ extern "C" ReturnCode poz_gettracearray(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     const poz_gettracearray_args& i_args,
     const ta_def* ta_defs,
+    const ta_const ta_consts,
     uint8_t ta_defs_len,
     hwp_data_ostream& o_stream
 )
@@ -267,7 +271,7 @@ extern "C" ReturnCode poz_gettracearray(
     Target < TARGET_TYPE_ANY_POZ_CHIP > l_dbg_target = i_target;
     fapi2::ReturnCode l_rc = FAPI2_RC_SUCCESS;
 
-    TraceArrayFinder l_ta_finder(i_args.trace_bus, l_trctrl_target, ta_defs, ta_defs_len);
+    TraceArrayFinder l_ta_finder(i_args.trace_bus, l_trctrl_target, ta_defs, ta_consts, ta_defs_len);
     FAPI_DBG("Assigning targets");
     TargetType arg_type = l_trctrl_target.getType();
     //TargetType ta_type = poz_gettracearray_target_type(i_args.trace_bus);
@@ -314,6 +318,7 @@ extern "C" ReturnCode poz_gettracearray(
                          buf),
                  "Failed to read current trace mux setting");
         buf.extractToRight<TRA0_TR0_CONFIG_TRACE_SELECT_CONTROL, TRA0_TR0_CONFIG_TRACE_SELECT_CONTROL_LEN>(cur_sel);
+        FAPI_DBG("TRACE SEL : 0x%08x", cur_sel);
 
         // If the secondary mux select is <4 then this trace must use both muxes; determine if both muxes are set
         // to receive data from the requseted trace bus. Otherwise only check primary mux.
@@ -334,7 +339,7 @@ extern "C" ReturnCode poz_gettracearray(
                         GETTRACEARRAY_TRACE_MUX_INCORRECT()
                         .set_TARGET(i_target).set_TRACE_BUS(i_args.trace_bus).set_MUX_SELECT(cur_sel),
                         "Primary trace mux is set to %d, but %d is needed for requested trace bus",
-                        cur_sel, l_ta_finder.pri_mux_sel);
+                        cur_sel >> 2, l_ta_finder.pri_mux_sel);
         }
     }
 
@@ -355,6 +360,7 @@ extern "C" ReturnCode poz_gettracearray(
         /* Run the do_dump subroutine, turn the TRACE_RUNNING return code into FFDC */
         l_rc = do_dump(l_trctrl_target,
                        i_args,
+                       ta_consts,
                        TRACE_SCOM_BASE,
                        o_stream);
 

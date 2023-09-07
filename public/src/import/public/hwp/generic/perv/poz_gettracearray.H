@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -59,20 +59,13 @@ using namespace fapi2;
 // Constant definitions
 //------------------------------------------------------------------------------
 const uint32_t TA_BASE_SCOM_MULTIPLIER = 0x00000010;
-const uint32_t TA_DEBUG_BASE_SCOM      = 0x000107C0;
-const uint32_t TA_EQ_DEBUG_BASE_SCOM   = 0x000183E0;
-const uint32_t TA_TRACE_BASE_SCOM      = 0x00010400;
-
 const uint32_t TRACE_MUX_POSITIONS       = 16;
 
-// maximum trace array entries supported by Odyssey chip design
-static const uint8_t TRACEARRAY_NUM_ROWS = 128;
 // bits to store per trace array entry
 static const uint8_t TRACEARRAY_BITS_PER_ROW = 128;
-// maximum trace array size in bytes
-static const uint16_t PROC_TRACEARRAY_MAX_SIZE =
-    (TRACEARRAY_NUM_ROWS* TRACEARRAY_BITS_PER_ROW) / 8;
 
+// maximum trace array size in bytes
+extern const uint16_t PROC_TRACEARRAY_MAX_SIZE;
 
 typedef uint8_t tracearray_bus_id;
 
@@ -83,6 +76,17 @@ struct ta_def
     const uint8_t chiplet;
     const uint16_t base_multiplier;
     const uint8_t pri_setting; // setting of primary mux if secondary mux is used
+};
+
+
+struct ta_const
+{
+
+    const uint32_t debug_base_scom;
+    const uint32_t trace_base_scom;
+    const uint32_t eq_debug_base_scom;
+    const uint32_t ta_num_rows;
+
 };
 
 // structure to represent HWP arguments
@@ -101,6 +105,7 @@ typedef ReturnCode (*poz_gettracearray_FP_t) (
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     const poz_gettracearray_args& i_args,
     const ta_def* ta_defs,
+    const ta_const ta_consts,
     uint8_t ta_defs_len,
     hwp_data_ostream& o_stream
 );
@@ -113,6 +118,7 @@ typedef ReturnCode (*poz_gettracearray_FP_t) (
  * @param i_target      Chip or chiplet target.
  * @param i_args        Argument structure with additional parameters
  * @param ta_defs       Structure containing the tracebus information
+ * @param ta_consts     Structure containing the tracebus addr information
  * @param ta_defs_len   Number of tracebusses hold in ta_defs
  * @param o_stream      Stream to write Trace array to.
  *
@@ -123,6 +129,7 @@ extern "C" ReturnCode poz_gettracearray(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     const poz_gettracearray_args& i_args,
     const ta_def* ta_defs,
+    const ta_const ta_consts,
     uint8_t ta_defs_len,
     hwp_data_ostream& o_stream
 );
