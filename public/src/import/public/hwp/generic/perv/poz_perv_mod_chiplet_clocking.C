@@ -585,43 +585,52 @@ ReturnCode mod_align_regions(
     CPLT_CTRL0.set_FORCE_ALIGN(1);
     FAPI_TRY(CPLT_CTRL0.putScom_SET(i_target));
 
-    FAPI_INF("Clear 'chiplet is aligned' indication");
+    FAPI_TRY(CPLT_CTRL0.getScom(l_mcast_and_target));
 
-    FAPI_TRY(SYNC_CONFIG.getScom(l_mcast_cmp_target));
-    SYNC_CONFIG.set_CLEAR_CHIPLET_IS_ALIGNED(1);
-    FAPI_TRY(SYNC_CONFIG.putScom(l_mcast_cmp_target));
-
-    SYNC_CONFIG.set_CLEAR_CHIPLET_IS_ALIGNED(0);
-    FAPI_TRY(SYNC_CONFIG.putScom(l_mcast_cmp_target));
-
-    FAPI_INF("Wait for chiplets to be aligned");
-    FAPI_DBG("Poll OPCG 'CHIPLET_IS_ALIGNED_DC' bit to check for completeness");
-
-    l_timeout = CPLT_ALIGN_CHECK_POLL_COUNT;
-
-    while (l_timeout != 0)
+    if (CPLT_CTRL0.get_FLUSHMODE_INH() == 0)
     {
-        FAPI_INF("Getting CPLT_STAT0 register value");
-        FAPI_TRY(CPLT_STAT0.getScom(l_mcast_and_target));
+        FAPI_INF("Chiplet flush mode inhibit value not set in CPLT_CTRL0 reg, skipping chiplet is aligned check and waiting a little bit.");
+        FAPI_TRY(fapi2::delay(NS_DELAY, SIM_CYCLE_DELAY));
+    }
+    else
+    {
+        FAPI_INF("Clear 'chiplet is aligned' indication");
+        FAPI_TRY(SYNC_CONFIG.getScom(l_mcast_cmp_target));
+        SYNC_CONFIG.set_CLEAR_CHIPLET_IS_ALIGNED(1);
+        FAPI_TRY(SYNC_CONFIG.putScom(l_mcast_cmp_target));
 
-        if (CPLT_STAT0.get_CHIPLET_IS_ALIGNED() == 1)
+        SYNC_CONFIG.set_CLEAR_CHIPLET_IS_ALIGNED(0);
+        FAPI_TRY(SYNC_CONFIG.putScom(l_mcast_cmp_target));
+
+        FAPI_INF("Wait for chiplets to be aligned");
+        FAPI_DBG("Poll OPCG 'CHIPLET_IS_ALIGNED_DC' bit to check for completeness");
+
+        l_timeout = CPLT_ALIGN_CHECK_POLL_COUNT;
+
+        while (l_timeout != 0)
         {
-            break;
+            FAPI_INF("Getting CPLT_STAT0 register value");
+            FAPI_TRY(CPLT_STAT0.getScom(l_mcast_and_target));
+
+            if (CPLT_STAT0.get_CHIPLET_IS_ALIGNED() == 1)
+            {
+                break;
+            }
+
+            FAPI_TRY(fapi2::delay(NS_DELAY, SIM_CYCLE_DELAY));
+            --l_timeout;
         }
 
-        FAPI_TRY(fapi2::delay(NS_DELAY, SIM_CYCLE_DELAY));
-        --l_timeout;
+        FAPI_DBG("Loop Count :%d", l_timeout);
+
+        FAPI_ASSERT(l_timeout > 0,
+                    fapi2::POZ_CPLT_NOT_ALIGNED_ERR()
+                    .set_PERV_CPLT_STAT0(CPLT_STAT0)
+                    .set_LOOP_COUNT(CPLT_ALIGN_CHECK_POLL_COUNT)
+                    .set_HW_DELAY(NS_DELAY)
+                    .set_PROC_TARGET(i_target),
+                    "ERROR : CHIPLET NOT ALIGNED");
     }
-
-    FAPI_DBG("Loop Count :%d", l_timeout);
-
-    FAPI_ASSERT(l_timeout > 0,
-                fapi2::POZ_CPLT_NOT_ALIGNED_ERR()
-                .set_PERV_CPLT_STAT0(CPLT_STAT0)
-                .set_LOOP_COUNT(CPLT_ALIGN_CHECK_POLL_COUNT)
-                .set_HW_DELAY(NS_DELAY)
-                .set_PROC_TARGET(i_target),
-                "ERROR : CHIPLET NOT ALIGNED");
 
     FAPI_INF("Disable alignment");
     CPLT_CTRL0 = 0;
