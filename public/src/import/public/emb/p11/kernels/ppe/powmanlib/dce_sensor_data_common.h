@@ -170,8 +170,8 @@ typedef struct
     CoreDataDroop_t            droop;           //12
     CoreDataDts_t              dts;             // 8
     uint32_t                   empath_valid;    // 4
-    uint32_t                   stop_state_hist; // 4
-    DdsData_t                  dds;             // 8
+    uint32_t                   stop_state_hist; // 4 - Note that .dds is on 8B alignment after this
+    DdsData_t                  dds;             // 8 - This is an 8B entity
 } CoreData_t;
 
 //
@@ -190,43 +190,57 @@ typedef struct
 //
 // Notes:
 // - See previous notes to CoreData_t.
-// - Compared to the P10 implementation approach, which would have consumed a total of
-//   8 x 96B = 768B, the below struct reduces this to 8 x 88B + 24B   =  752 Bytes
-// - With a future increase to 12 cores and 3 quads, size grows to = 1116 Bytes
-// - The data block is managed in link.ld to guarantee 8-byte alignment.
+// - Size of this data block is 8 x 88B + 3 x 8 x 2B + 12B + 20B = 772B
+// - With a future increase to 12 cores and 3 quads, size grows to = 1164 Bytes
+// - The data block is managed in link.ld to guarantee 8-byte alignment for PSPI
+//   transfer to OCC on VC3.
 //
 typedef struct
 {
     CoreData_t  core_data[MAX_CORES_PER_TAP];      // 8 x 88B
-    uint16_t    core_temp[MAX_CORES_PER_TAP];      // 8 x 2B (some avg of core, cache, mma)
+    uint16_t    core_temp[MAX_CORES_PER_TAP];      // 8 x 2B  [0.5C] unit
+    uint16_t    mma_temp[MAX_CORES_PER_TAP];       // 8 x 2B  [0.5C] unit
+    uint16_t    cache_temp[MAX_CORES_PER_TAP];     // 8 x 2B  [0.5C] unit
     QuadData_t  quad_data[MAX_QUADS_PER_TAP];      // 2 x 2B
-    uint16_t    dragstrip_temp[MAX_QUADS_PER_TAP]; // 2 x 2B (straight from quad_data)
-    uint16_t    dragstrip_temp_avg;                // 1 x 2B (some avg of dragstrip temps)
-    uint8_t     undefined[2];                      // 2B - Pad to 4B
+    uint16_t    dragstrip_temp[MAX_QUADS_PER_TAP]; // 2 x 2B  [0.5C] unit
+    uint16_t    dragstrip_temp_avg;                // 2B      [0.5C] unit
+    uint16_t    present_cores;                     // 2B - Enabled cores (bit(0) is core 0)
     uint32_t    tbr_notif_period;          // 4B - Most recent notification period (DB or FIT)
     uint32_t    tbr_notif_rcvd;            // 4B - Most recent notif reception time (DB or FIT)
     uint32_t    tbr_data_collect_duration; // 4B - Data collection duration (since notif_rcvd)
     uint32_t    tod_data_rcvd;             // 4B - For optional use by 405 using local 2MHz TOD
     uint16_t    dce_status_flag;           // 2B - Status vector. See DCE_STATUS_FLAGS enum below.
-    uint16_t    present_cores;             // 2B - Vector of enabled cores (bit(0) is core 0)
+    uint16_t    dce_error_code;            // 2B - Error code. See DCE_ERROR_CODE enum below.
 } DCESensorData_t;
 
 
 //
-// Enum of DCE status flags (used by DCESensorData_t.dce_status_flags)
+// Enum of DCE status flags (used by DCESensorData_t.dce_status_flag)
 //
 // Notes:
-// - Used for indicating protocol violations to the 405 (and possibly the OCE too).
-// - These violations are detected at the time of DB0 IRQ reception and at commencement
-//   of data collection.
+// - Used for indicating protocol violations to the 405 and OCE.
 //
 enum DCE_STATUS_FLAGS
 {
     DCE_STATUS_RESET              = 0b0000000000000000, //Reset init value
-    DCE_STATUS_DB_VIOLATION       = 0b0000000000000001, //DB rcvd before prev data collected.
-    DCE_STATUS_OCE_IS_CALCULATING = 0b0000000000000010, //OCE is still calculating IDDQ
-    DCE_STATUS_OCE_NOT_RESPONDING = 0b0000000000000100, //OCE did not even use the prev data
-    DCE_STATUS_AUTO_MODE          = 0b0000000000001000, //DCE is in AUTO lab mode
+    DCE_STATUS_OCC_MODE           = 0b0000000000000001, //DCE is in OCC mode
+    DCE_STATUS_AUTO_MODE          = 0b0000000000000010, //DCE is in AUTO lab mode
+    DCE_STATUS_DTS_FAILURE        = 0b0000000000000100, //One or more DTSs invalid in some way
+    DCE_STATUS_UNEXPECTED_DB      = 0b0000000000001000, //DB rcvd out of order
+    DCE_STATUS_OCE_IS_CALCULATING = 0b0000000000010000, //OCE is still calculating IDDQ
+    DCE_STATUS_OCE_NOT_RESPONDING = 0b0000000000100000, //OCE did not use the prev data
+};
+
+//
+// Enum of DCE error coded (used by DCESensorData_t.dce_error_code)
+//
+// Notes:
+// - Used for indicating error status to the 405 and OCE.
+//
+enum DCE_ERROR_CODES
+{
+    DCE_RC_TOO_MANY_DTS_FAILS = 0b0000000000000001, //Eg, too many accumulated DTS fails
+    DCE_RC_OUT_OF_SYNC        = 0b0000000000000010, //Eg, too many DB rcvd but OCE didn't finish
 };
 
 

@@ -264,11 +264,13 @@ typedef struct
 
 /// XCE created content
 
+#define IDDQ_ACTIVITY_SAMPLE_DEPTH   8 // Must be <256
+
 enum ACT_CNT_IDX
 {
-    ACT_CNT_IDX_CORECLK_OFF    = 0,
+    ACT_CNT_IDX_CORE_CLK_OFF   = 0,
     ACT_CNT_IDX_CORE_PWR_OFF   = 1,
-    ACT_CNT_IDX_MMA_OFF        = 2,
+    ACT_CNT_IDX_MMA_PWR_OFF    = 2,
     ACT_CNT_IDX_CACHE_PWR_OFF  = 3,
     ACT_CNT_IDX_MAX            = 4,
 };
@@ -285,10 +287,8 @@ typedef union
 
 typedef struct
 {
-    TCCShSrScHeader_t header;
-
-    iddq_activity_t     iddq_activity_values;
-
+    TCCShSrScHeader_t  header;
+    iddq_activity_t    iddq_activity_values;
 } XCW_t;
 
 // -----------------------------------------------------------------------------
@@ -323,8 +323,7 @@ typedef struct
     uint16_t xce_data_length;
     uint16_t errlog_table_offset;
     uint16_t errlog_table_length;
-    uint8_t  reserved0[3];
-    uint8_t  iddq_active_sample_depth;   // ???
+    uint8_t  reserved0[4]; //This makes it 32B
 } TCCShSrHeader_t;
 
 
