@@ -3951,4 +3951,10 @@
     <value>0x0</value>
     <value>0x0</value>
   </entry>
+  <entry name="ATTR_ODY_DRAMINIT_RECOVERY_ENABLE">
+    <value>0x00</value>
+  </entry>
+  <entry name="ATTR_ODY_DRAMINIT_FIR_CHECK_ENABLE">
+    <value>0x01</value>
+  </entry>
 </entries>
