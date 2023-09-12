@@ -33,6 +33,7 @@
 #include <poz_nest_enable_io.H>
 #include <poz_nest_enable_io_regs.H>
 #include <poz_perv_common_params.H>
+#include <poz_perv_utils.H>
 #include <target_filters.H>
 
 using namespace fapi2;
@@ -46,31 +47,30 @@ ReturnCode poz_nest_enable_io(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
     ROOT_CTRL1_t ROOT_CTRL1;
     NET_CTRL0_t NET_CTRL0;
 
-    FAPI_INF("Entering ...");
+    Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_mc;
+
+    FAPI_INF("Entering poz_nest_enable_io...");
+    FAPI_TRY(get_hotplug_targets(i_target, l_chiplets_mc, NULL, MCGROUP_ALL));
 
     FAPI_DBG("Allow PHB control");
     ROOT_CTRL1 = 0;
     ROOT_CTRL1.set_GLOBAL_PERST_OVERRIDE(1);
     FAPI_TRY(ROOT_CTRL1.putScom_CLEAR(i_target));
 
-    FAPI_DBG("Enable TP drivers");
+    FAPI_INF("Enable TP drivers");
     ROOT_CTRL1 = 0;
     ROOT_CTRL1.set_TP_RI_DC_N(1);
     ROOT_CTRL1.set_TP_DI1_DC_N(1);
     ROOT_CTRL1.set_TP_DI2_DC_N(1);
     FAPI_TRY(ROOT_CTRL1.putScom_SET(i_target));
 
-    FAPI_DBG("Chiplet receiver enable, Chiplet driver enable.");
-
-    for (auto& chiplet : i_target.getChildren<TARGET_TYPE_PERV>(TARGET_FILTER_NEST, TARGET_STATE_FUNCTIONAL))
-    {
-        NET_CTRL0 = 0;
-        NET_CTRL0.set_DCTRL(1);
-        NET_CTRL0.set_RCTRL(1);
-        NET_CTRL0.set_RCTRL2(1);
-        NET_CTRL0.setBit<30>(); // PHY power on
-        FAPI_TRY(NET_CTRL0.putScom_SET(chiplet));
-    }
+    FAPI_INF("Chiplet receiver enable, Chiplet driver enable.");
+    NET_CTRL0 = 0;
+    NET_CTRL0.set_DCTRL(1);
+    NET_CTRL0.set_RCTRL(1);
+    NET_CTRL0.set_RCTRL2(1);
+    NET_CTRL0.setBit<30>(); // PHY power on
+    FAPI_TRY(NET_CTRL0.putScom_SET(l_chiplets_mc));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
