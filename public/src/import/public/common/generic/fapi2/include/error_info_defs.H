@@ -40,6 +40,31 @@
 #endif
 namespace fapi2
 {
+
+// POZ SBE will convert its plat target to the structure, sbe_target_info
+// before streaming to HB/BMC/FSP as part of HWP FFDC. Platfrom will try
+// to create the target based on this strucuture to guard, callout etc.
+
+union sbe_target_info
+{
+    uint64_t value;
+    struct
+    {
+        uint64_t logtargetType: 8; // used for target type
+        uint64_t : 40;    // for future use
+        union
+        {
+            uint64_t instanceID: 16;
+            struct
+            {
+                uint64_t mcast_type: 3;
+                uint64_t mcast_group: 3;
+                uint64_t : 10;
+            } __attribute__((packed));
+        } __attribute__((packed));
+    } __attribute__((packed));
+};
+
 // For HW callout - Clock position undefined to 0xFF(default)
 #define CLOCK_POS_UNDEF 0xFF
 
@@ -377,34 +402,38 @@ inline fapi2::ffdc_t getFfdcData(sbeFfdc_t& i_sbeFfdc,
                 }
             }
         }
-        // For Odyssey, target data will be in format:
-        // 0:7     = log target type
-        // 8:47    = reserved
-        // 48:63   = instance
+        // For Odyssey, target data will be in format of sbe_target_info, defined above.
         else
         {
-            // Pull log target type and instance out of the target data.
-            LogTargetType l_log_type = static_cast<fapi2::LogTargetType>(targetData >> 56);
-            uint16_t instance = static_cast<uint16_t>(targetData & 0xFFFF);
-            // Convert log target type to TargetType
-            TargetType l_type = logToTargetType(l_log_type);
+            sbe_target_info poztargetData = { .value = targetData };
 
-            uint16_t fapi_pos = convertSbeTargInstanceToFapiPos(l_type,
-                                instance,
-                                i_sbeChipTargetType,
-                                i_sbeChip_instance);
-
-            if( fapi_pos == INVALID_FAPI_POS )
+            if(poztargetData.logtargetType != LOG_TARGET_TYPE_MULTICAST)
             {
-                invalid_data = true;
+                // Convert log target type to TargetType
+                TargetType l_type = logToTargetType(static_cast<fapi2::LogTargetType>(poztargetData.logtargetType));
+
+                uint16_t fapi_pos = convertSbeTargInstanceToFapiPos(l_type,
+                                    poztargetData.instanceID,
+                                    i_sbeChipTargetType,
+                                    i_sbeChip_instance);
+
+                if( fapi_pos == INVALID_FAPI_POS )
+                {
+                    invalid_data = true;
+                }
+                else
+                {
+                    l_ffdc.ptr() = static_cast<void*>(getTarget<TARGET_TYPE_ALL>(l_type, fapi_pos));
+                }
             }
             else
             {
-                l_ffdc.ptr() = static_cast<void*>(getTarget<TARGET_TYPE_ALL>(l_type, fapi_pos));
+                // TARGET TYPE MULTICAST
+                //TODO : getTarget has to be enhanced to create the MULTICAST target
+                //       from the multicast group and multicast ID.
+                invalid_data = true;
             }
-
         }
-
 
 #endif
     }

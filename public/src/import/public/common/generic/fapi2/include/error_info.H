@@ -47,6 +47,7 @@ namespace fapi2
 {
 
 #if defined(MINIMUM_FFDC) && !defined(FAPI2_NO_FFDC)
+
 // convert generic type to uint64_t
 template<typename T>
 inline uint64_t convertType( T& i_value )
@@ -62,30 +63,22 @@ inline uint64_t convertType( const fapi2::Target<T, M>& i_value)
 {
     // send the target type and instance as ffdc they will be used
     // to instantiate a target before logging the ffdc data
-    // 0:47     = Target Type
-    // 48:63    = instance
 
-    uint64_t ret_value = static_cast<uint64_t>(i_value.get().getFapiTargetType());
+    sbe_target_info ret_value;
+    ret_value.logtargetType = i_value.get().getTargetType();
 
-    //TODO: Check if sending the multicast bit is actually required. I do not
-    //see any HWP attempting to callect the FFDC on the multicasted target. HWSV
-    //is not even expecting the multicast bit to be present.
-
-    //TODO: Bug-fix. actual size of FAPI target is 64 bit. but we are sending only
-    // lower 48-bits. Needs to change the interface to fix this.
-
-    //setting multicast bit at MSB of target type
-    if(plat_target_base_handle(i_value.get()).getIsMulticast())
+    if(i_value.get().getIsMulticast())
     {
-        ret_value = ret_value | TARGET_TYPE_MULTICAST;
+        ret_value.logtargetType = LOG_TARGET_TYPE_MULTICAST;
+        ret_value.mcast_type = i_value.get().getMcastType();
+        ret_value.mcast_group = i_value.get().getMcastGroup();
+    }
+    else
+    {
+        ret_value.instanceID = i_value.get().getTargetInstance();
     }
 
-    ret_value = ret_value << 16;
-
-    //Add the target instance value.
-    ret_value = ret_value | (i_value.get().getTargetInstance() & 0xFFFF);
-
-    return ret_value;
+    return ret_value.value;
 };
 #endif
 
