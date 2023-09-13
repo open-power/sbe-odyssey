@@ -314,6 +314,7 @@ enum pib_controller : uint8_t
     PC_FSI2PIB = 2,
     PC_I2CR    = 3,
     PC_TOD     = 4,
+    PC_XSCOM   = 5,
     PC_GPE0    = 5,
     PC_GPE1    = 6,
     PC_GPE2    = 7,

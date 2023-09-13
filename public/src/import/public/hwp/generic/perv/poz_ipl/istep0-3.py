@@ -531,10 +531,10 @@ def ody_sppe_attr_setup():
 
 def zme_sppe_attr_setup():
     ## Set up SBE multipipe unit
-    mod_pipe_setup(PC_ADU, false, PC_SPPE, true,
-                   PC_ADU, false, PC_SBE,  true,
-                   PC_SPPE, true, PC_PME,  true,
-                   PC_SPPE, true, PC_SBE,  true)
+    mod_pipe_setup(PC_XSCOM, false, PC_SPPE, true,
+                   PC_XSCOM, false, PC_SBE,  true,
+                   PC_SPPE,  true, PC_PME,  true,
+                   PC_SPPE,  true, PC_SBE,  true)
 
 ISTEP(1, 14, "ph_sppe_attr_override", "BMC,SPPE")
 # BMC sends attribute overrides into SPPE via chipop
