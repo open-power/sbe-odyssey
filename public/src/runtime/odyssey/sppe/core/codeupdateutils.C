@@ -153,3 +153,10 @@ fapi2::ReturnCode deviceRead(SpiControlHandle& i_handle,
                     i_eccStatus,
                     (uint8_t *)o_buffer);
 }
+
+uint32_t checkSignature(const CU_IMAGES i_imageType,
+			void *i_pakStartAddrInPibMem,
+			codeUpdateCtrlStruct_t &i_codeUpdateCtrlStruct)
+{
+    return SBE_SEC_OPERATION_SUCCESSFUL;
+}

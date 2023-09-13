@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -189,5 +190,21 @@ fapi2::ReturnCode deviceRead(SpiControlHandle& i_handle,
                              const SPI_ECC_CONTROL_STATUS i_eccStatus,
                              void *o_buffer
                             );
+
+/*
+ * @brief checkSignature : Check signature of partition (by looking at hash.list and secure.hdr)
+ *
+ * @param[in] i_imageType : image type received
+ * @param[in] i_pakStartAddrInPibMem : pointer to image pak start address in incoming binary file.
+ *            Valid for incoming pak file in pibmem buffer
+ * @param[in] io_codeUpdateCtrlStruct struct used to get/set/use various
+ *            context needed for code-update
+ *
+ * @return rc
+ */
+uint32_t checkSignature(const CU_IMAGES i_imageType,
+			void *i_pakStartAddrInPibMem,
+			codeUpdateCtrlStruct_t &i_codeUpdateCtrlStruct);
+
 
 #endif //CODE_UPDATE_UTILS_H
