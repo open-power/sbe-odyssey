@@ -200,7 +200,7 @@ uint32_t sbeCollectDump::writeGetScomPacketToFifo()
         iv_tocRow.hdctHeader.dataLength = 0x40; // 64 bits -or- 2 words
         l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
-        uint64_t dumpData;
+        uint64_t dumpData=0;
         // Proc Scoms
         fapi2::Target<fapi2::TARGET_TYPE_CHIPS> dumpRowTgt(iv_tocRow.tgtHndl);
         fapiRc = getscom_abs_wrap(&dumpRowTgt, iv_tocRow.hdctHeader.address, &dumpData);
@@ -210,11 +210,13 @@ uint32_t sbeCollectDump::writeGetScomPacketToFifo()
             iv_oStream.setPriSecRc(PRI_SEC_RC_UNION(
                             SBE_PRI_GENERIC_EXECUTION_FAILURE,
                             SBE_SEC_GENERIC_FAILURE_IN_EXECUTION));
-            break;
         }
-        SBE_DEBUG("getScom: address: 0x%08X, data HI: 0x%08X, data LO: 0x%08X ",
+        else
+        {
+            SBE_DEBUG("getScom: address: 0x%08X, data HI: 0x%08X, data LO: 0x%08X ",
                 iv_tocRow.hdctHeader.address, SBE::higher32BWord(dumpData),
                 SBE::lower32BWord(dumpData));
+        }
         l_rc = iv_oStream.put(FIFO_DOUBLEWORD_LEN, (uint32_t*)&dumpData);
     }while(0);
     SBE_EXIT(SBE_FUNC);
@@ -416,7 +418,6 @@ uint32_t sbeCollectDump::writeGetRingPacketToFifo()
         if(endCount == startCount || ((endCount - startCount) != totalCount))
         {
             totalCount = totalCount - (endCount - startCount);
-            l_rc = SBE_SEC_PCB_PIB_ERR;
             while(totalCount !=0)
             {
                 l_rc = iv_oStream.put(dummyData);
