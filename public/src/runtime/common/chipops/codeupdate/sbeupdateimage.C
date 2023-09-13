@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -110,13 +111,25 @@ fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
             }
 
             // For first pass/loop do:
-            // 1. Validate partition table if image type is bootloader
-            // 2. Get image detail from partition table
-            // 3. Validate incoming image size
-            // 4. Perform erase in device
+            // 1. Check signature of image
+            // 2. Validate partition table if image type is bootloader
+            // 3. Get image detail from partition table
+            // 4. Validate incoming image size
+            // 5. Perform erase in device
             if (l_preCheckFlag == true)
             {
-                // 1. If image type is bootloader validate incoming partition table
+	        // 1. Verify image signature
+                l_rc = checkSignature((CU_IMAGES)(i_msg->imageType),
+                                      (void *)l_imgBufScratchArea,
+                                      l_updateImgCtrlStruct);
+                if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+                {
+                    SBE_ERROR(SBE_FUNC "checkSignature unsuccessful. RC[0x%08x]", l_rc);
+                    o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE, l_rc );
+                    break;
+                }
+		
+                // 2. If image type is bootloader validate incoming partition table
                 if (i_msg->imageType == (uint16_t)CU_IMAGES::BOOTLOADER)
                 {
                     l_rc = validatePartitionTable((void *)l_imgBufScratchArea,
@@ -129,7 +142,7 @@ fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
                     }
                 }
 
-                // 2. Get incoming image info data from partition table
+                // 3. Get incoming image info data from partition table
                 l_rc = getImageEntryFromPartitionTable(l_updateImgCtrlStruct.nonRunSideIndex,
                                                        (CU_IMAGES)(i_msg->imageType),
                                                        (void *)l_imgBufScratchArea,
@@ -141,7 +154,7 @@ fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
                     break;
                 }
 
-                // 3. Validate incoming image size
+                // 4. Validate incoming image size
                 l_rc = validateImageSize(l_updateImgCtrlStruct);
                 if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
                 {
@@ -150,7 +163,7 @@ fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
                     break;
                 }
 
-                // 4. Before starting to write into device, make sure to erase entire
+                // 5. Before starting to write into device, make sure to erase entire
                 // requisite number of sectors/blocks as per the image size
                 // to be updated.
                 l_fapiRc = performEraseInDevice(spiHandle, l_updateImgCtrlStruct);
