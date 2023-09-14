@@ -101,8 +101,7 @@ namespace fapi2
                                     const uint32_t i_address,
                                     buffer<uint32_t>& o_data)
     {
-        FAPI_ERR("GET-CFAM ACCESS via SBE is NOOP!");
-        return FAPI2_RC_FALSE;
+        return fapi2::get_cfam_abs(&i_target, i_address, o_data);
     }
 
     ///
@@ -119,8 +118,7 @@ namespace fapi2
                                     const uint32_t i_address,
                                     const buffer<uint32_t> i_data)
     {
-        FAPI_ERR("PUT-CFAM ACCESS via SBE is NOOP!");
-        return FAPI2_RC_FALSE;
+        return fapi2::put_cfam_abs(&i_target, i_address, i_data);
     }
 
 /// @brief Platform-level implementation  of putRing()
