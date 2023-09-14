@@ -174,6 +174,7 @@ generic_hwp_obj_file_c = obj_gen_cpp_hwp.process([ekb_generic_hwp_c_path,
                                                   ekb_generic_ring_c_path,
                                                   odyssey_hwp_abs_infiles_c_path],
                                         extra_args:[
+                                                    meson.get_external_property('gcc_defs_cmn_odyssey'),
                                                     odyssey_runtime_abs_inc_paths,
                                                     runtime_cmn_abs_inc_paths,
                                                     odyssey_cmn_abs_inc_paths,

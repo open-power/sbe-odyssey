@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -24,12 +24,6 @@
 /* IBM_PROLOG_END_TAG                                                     */
 #ifndef __GLOBALS_H
 #define __GLOBALS_H
-
-//Define trace level for Boot Loader Image
-#ifdef SBE_TRACE_LEVEL
-#undef SBE_TRACE_LEVEL
-#endif
-#define SBE_TRACE_LEVEL 2
 
 #define SBE_REF_BASE_FREQ_HZ ((133 * 1000 * 1000)/4)
 #define SBE_PAU_DPLL_BASE_FREQ_HZ ((1968 * 1000 * 1000)/4)
