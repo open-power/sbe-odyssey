@@ -29,10 +29,21 @@ infile_c = ['plat_file_access.C',
             'plat_spd_access.C',
             'plat_hwp_data_stream.C',
             'plat_utils.C',
+            'i2cr.C',
            ]
 
 abs_runtime_cmn_hwpf_c_path = []
 
 foreach infile : infile_c
   abs_runtime_cmn_hwpf_c_path += runtime_cmn_hwpf_dir_path + infile
+endforeach
+
+infile_c = [
+            'ody_fifo.C'
+           ]
+
+abs_runtime_pz_cmn_hwpf_c_path = []
+
+foreach infile : infile_c
+  abs_runtime_pz_cmn_hwpf_c_path += runtime_cmn_hwpf_dir_path + infile
 endforeach

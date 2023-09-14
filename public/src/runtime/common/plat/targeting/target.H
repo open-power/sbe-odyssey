@@ -37,17 +37,12 @@ namespace fapi2
     constexpr TargetType TARGET_TYPE_XBUS_CHILDREN = TARGET_TYPE_XBUSL;
     constexpr TargetType TARGET_TYPE_EX_CHILDREN = TARGET_TYPE_L3CACHE
         | TARGET_TYPE_SHADOW | TARGET_TYPE_CORE;
+    constexpr TargetType TARGET_TYPE_OCMB_CHIP_CHILDREN = TARGET_TYPE_PMIC | TARGET_TYPE_GENERICI2CRESPONDER;
 
     template<TargetType T>
     constexpr LogTargetType fapiTargetTypeToPlatTargetType()
     {
         static_assert(T == SBE_ROOT_CHIP_TYPE, "Invalid or composite target type");
-        return LOG_SBE_ROOT_CHIP_TYPE;
-    }
-
-    template<>
-    constexpr LogTargetType fapiTargetTypeToPlatTargetType<SBE_ROOT_CHIP_TYPE>()
-    {
         return LOG_SBE_ROOT_CHIP_TYPE;
     }
 
@@ -72,6 +67,9 @@ namespace fapi2
     TARGET_TYPE_SUPPORT(OMI);
     TARGET_TYPE_SUPPORT(XBUS);
     TARGET_TYPE_SUPPORT(XBUSL);
+    TARGET_TYPE_SUPPORT(OCMB_CHIP);
+    TARGET_TYPE_SUPPORT(PMIC);
+    TARGET_TYPE_SUPPORT(GENERICI2CRESPONDER);
 
 #undef TARGET_TYPE_SUPPORT
 
@@ -234,6 +232,13 @@ namespace fapi2
         {
             STATIC_CHECK((T & ~TARGET_TYPE_EX_CHILDREN) == 0,
                          "Invalid child type for EX target");
+            g_platTarget->getChipletChildren(P, *this, l_include_nonfunctional, l_cast_children);
+            return l_children;
+        }
+        else if (K_NO_T == TARGET_TYPE_OCMB_CHIP)
+        {
+            STATIC_CHECK((T & ~TARGET_TYPE_OCMB_CHIP_CHILDREN) == 0,
+                         "Invalid child type for OCMB_CHIP target");
             g_platTarget->getChipletChildren(P, *this, l_include_nonfunctional, l_cast_children);
             return l_children;
         }

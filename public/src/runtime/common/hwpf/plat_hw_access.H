@@ -114,6 +114,11 @@ namespace fapi2
                                  const uint64_t i_addr,
                                  uint64_t & io_data,
                                  fapi2::ReturnCode & io_fapiRc);
+
+
+
+    fapi2::ReturnCode get_cfam_abs(const void *i_target, const uint32_t i_address, uint32_t& o_data);
+    fapi2::ReturnCode put_cfam_abs(const void *i_target, const uint32_t i_address, uint32_t i_data);
 }
 
 
