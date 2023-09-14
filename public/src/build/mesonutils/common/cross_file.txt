@@ -93,7 +93,6 @@ gcc_defs_cmn_sbe = [
         ]
 
 gcc_defs_cmn_hwp = [
-        '-DFAPI_TRACE_LEVEL=3',
         '-DSBE_TRACE_LEVEL=2',
         ]
 

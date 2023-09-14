@@ -25,12 +25,6 @@
 #ifndef __GLOBALS_H
 #define __GLOBALS_H
 
-//Define trace level for Odyssey SPPE Image
-#ifdef SBE_TRACE_LEVEL
-#undef SBE_TRACE_LEVEL
-#endif
-#define SBE_TRACE_LEVEL 2
-
 //SPPE Runtime progress code .
 //We will have only 1 status code for runtime image
 #define CODE_REACHED_RUNTIME 0x3f
