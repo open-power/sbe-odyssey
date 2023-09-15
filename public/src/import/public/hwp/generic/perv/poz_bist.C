@@ -255,7 +255,7 @@ static ReturnCode poz_bist_execute(
         o_diags.completed_stages |= i_params.bist_stages::POLL;
         o_diags.pass_counter++;
 
-        if (!(i_params.flags & i_params.bist_flags::FAST_DIAGNOSTICS))
+        if (i_params.flags & i_params.bist_flags::DIAGNOSTICS)
         {
             for (auto& chiplet : i_chiplets_uc)
             {
@@ -293,10 +293,11 @@ ReturnCode poz_bist(
     uint16_t l_tp_regions = i_params.base_regions;
 
     // char arrays for accessing pak scan data
+    char l_program[sizeof(i_params.program)] = {};
     char l_load_dir[7] = {'l', 'b', 'i', 's', 't', '/'};
-    char l_load_path[sizeof(l_load_dir) + sizeof(i_params.program) - 1];
+    char l_load_path[sizeof(l_load_dir) + sizeof(l_program) - 1] = {};
     char l_compare_hash_dir[10] = {'l', 'b', 'i', 's', 't', '/', 'c', 'h', '/'};
-    char l_compare_hash_path[sizeof(l_compare_hash_dir) + sizeof(i_params.program) - 1];
+    char l_compare_hash_path[sizeof(l_compare_hash_dir) + sizeof(l_program) - 1] = {};
     char l_compare_mask_dir[12] = {'l', 'b', 'i', 's', 't', '/', 'c', 'm', '/', '0', '/'};
     char l_unload_mask_dir[12] = {'l', 'b', 'i', 's', 't', '/', 'c', 'm', '/', '0', '/'};
 
@@ -314,7 +315,7 @@ ReturnCode poz_bist(
     const buffer<uint16_t> l_inner_loop_mask = i_params.inner_loop_mask;
 
     // Stuff for saving register values to restore after cleanup
-    const bool l_allow_fast_cleanup = i_params.stages & i_params.bist_flags::FAST_DIAGNOSTICS;
+    const bool l_allow_fast_cleanup = !(i_params.stages & i_params.bist_flags::DIAGNOSTICS);
     const bool l_save_uc_reg_values = (i_params.stages & i_params.bist_stages::REG_SETUP) &&
                                       (i_params.stages & i_params.bist_stages::REG_CLEANUP) &&
                                       (!(i_params.flags & i_params.bist_flags::ABIST_NOT_LBIST));
@@ -407,6 +408,48 @@ ReturnCode poz_bist(
             break;
     }
 
+    // Resolve any program name indirection
+    strcpy(l_program, i_params.program);
+
+    if (!strcmp(l_program, "istep"))
+    {
+        char l_istep_program_path[12] = {'l', 'b', 'i', 's', 't', '/', 'i', 's', 't', 'e', 'p'};
+        const void* l_istep_program = NULL;
+        size_t l_istep_program_size;
+
+        if (i_params.flags & i_params.bist_flags::ABIST_NOT_LBIST)
+        {
+            l_istep_program_path[0] = 'a';
+        }
+
+        l_rc = loadEmbeddedFile(i_target, l_istep_program_path, l_istep_program, l_istep_program_size);
+
+        if (l_rc == FAPI2_RC_FILE_NOT_FOUND)
+        {
+            FAPI_INF("istep program requested, but istep program file not found in the bist.pak");
+            current_err = FAPI2_RC_SUCCESS;
+        }
+        else if (l_rc == FAPI2_RC_SUCCESS)
+        {
+            strcpy(l_program, (const char*)l_istep_program);
+            FAPI_INF("Running istep program (1st half ASCII) = 0x%08x%08x%08x%08x",
+                     be32toh(((uint32_t*)l_program)[0]),
+                     be32toh(((uint32_t*)l_program)[1]),
+                     be32toh(((uint32_t*)l_program)[2]),
+                     be32toh(((uint32_t*)l_program)[3]));
+            FAPI_INF("Running istep program (2nd half ASCII) = 0x%08x%08x%08x%08x",
+                     be32toh(((uint32_t*)l_program)[4]),
+                     be32toh(((uint32_t*)l_program)[5]),
+                     be32toh(((uint32_t*)l_program)[6]),
+                     be32toh(((uint32_t*)l_program)[7]));
+            FAPI_TRY(freeEmbeddedFile(l_istep_program));
+        }
+        else
+        {
+            FAPI_TRY(l_rc, "loadEmbeddedFile failed");
+        }
+    }
+
     // Update care mask directories
     if (i_params.stages & (i_params.bist_stages::COMPARE | i_params.bist_stages::UNLOAD))
     {
@@ -415,7 +458,7 @@ ReturnCode poz_bist(
         const hash_data* l_hash_data = NULL;
 
         strcpy(l_compare_hash_path, l_compare_hash_dir);
-        strcat(l_compare_hash_path, i_params.program);
+        strcat(l_compare_hash_path, l_program);
 
         FAPI_INF("Loading compare hash file to acquire care mask set keys");
         l_rc = loadEmbeddedFile(i_target, l_compare_hash_path, l_hash_file_data, l_hash_file_size);
@@ -514,7 +557,7 @@ ReturnCode poz_bist(
 
         // Load program image
         strcpy(l_load_path, l_load_dir);
-        strcat(l_load_path, i_params.program);
+        strcat(l_load_path, l_program);
         FAPI_DBG("Attempting to load overlay BIST image");
         FAPI_TRY(fapi2::putRing(l_chiplets_target, l_load_path));
 
@@ -629,6 +672,12 @@ ReturnCode poz_bist(
             FAPI_TRY(l_rc);
         }
 
+        for (auto& l_compare_fail : o_failing_rings)
+        {
+            o_diags.failing_regions[l_compare_fail.unicast_target.getChipletNumber()] |= get_ring_region(
+                        l_compare_fail.base_ring_address);
+        }
+
         if (l_rc == FAPI2_RC_SUCCESS)
         {
             o_diags.completed_stages |= i_params.bist_stages::COMPARE;
@@ -661,8 +710,7 @@ ReturnCode poz_bist(
     }
 
     // Write Diags TLV block out through stream
-    // TODO rename FAST_DIAGNOSTICS to avoid double negative logic
-    if (!(i_params.flags & i_params.bist_flags::FAST_DIAGNOSTICS))
+    if (i_params.flags & i_params.bist_flags::DIAGNOSTICS)
     {
         FAPI_TRY(poz_write_tlv_diags(i_target, i_dict_def, sizeof(bist_diags), &o_diags, o_stream));
     }

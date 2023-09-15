@@ -36,7 +36,7 @@
 #include <hwp_data_stream.H>
 #include <poz_tlv_utils.H>
 
-static const uint16_t BIST_PARAMS_CURRENT_VERSION = 11;
+static const uint16_t BIST_PARAMS_CURRENT_VERSION = 12;
 static const uint16_t BIST_CHIPOP_ID = 0xF101;
 
 struct bist_params
@@ -65,7 +65,7 @@ struct bist_params
     {
         /// Single bit flags
         ABIST_NOT_LBIST      = 0x80000000,
-        FAST_DIAGNOSTICS     = 0x40000000,
+        DIAGNOSTICS          = 0x40000000,
         SKIP_FIRST_CLOCK     = 0x20000000,
         SKIP_LAST_CLOCK      = 0x10000000,
         POLL_ABIST_DONE      = 0x08000000,
@@ -178,6 +178,7 @@ constexpr bist_params::bist_flags operator|(const bist_params::bist_flags a, con
 struct bist_diags
 {
     uint64_t opcg_counts[64];
+    uint16_t failing_regions[64];
     uint16_t pass_counter;
     bist_params::bist_stages completed_stages;
 };
