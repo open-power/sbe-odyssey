@@ -50,7 +50,6 @@ static const bist_params ody_abist_params =
     bist_params::COMPARE,               ///< 0x0002
 
     bist_params::ABIST_NOT_LBIST    |   ///< 0x80000000
-    bist_params::FAST_DIAGNOSTICS   |   ///< 0x40000000
     bist_params::POLL_ABIST_DONE    |   ///< 0x08000000
     bist_params::ASSERT_ABIST_DONE  |   ///< 0x04000000
     bist_params::SCAN0_ARY_FILL,        ///< 0x00400000
@@ -75,7 +74,7 @@ static const bist_params ody_abist_params =
     {0},                                ///< chiplets_regions
     0x8000,                             ///< outer_loop_mask
     0x8000,                             ///< inner_loop_mask
-    "mfgfullPF_def_pre",                ///< program
+    "istep",                            ///< program
     "none",                             ///< ring_patch
 };
 

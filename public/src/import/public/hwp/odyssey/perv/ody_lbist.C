@@ -51,7 +51,6 @@ static const bist_params ody_lbist_params =
     bist_params::REG_CLEANUP            |           ///< 0x0004
     bist_params::COMPARE,                           ///< 0x0002
 
-    bist_params::FAST_DIAGNOSTICS       |           ///< 0x40000000
     bist_params::CHIPLET_FENCE_ACTIVE   |           ///< 0x02000000
     bist_params::INT_MODE               |           ///< 0x00800000
     bist_params::SCAN0_ARY_FILL,                    ///< 0x00400000
@@ -87,7 +86,7 @@ static const bist_params ody_lbist_params =
     {0},                                            ///< chiplets_regions
     0x1000,                                         ///< outer_loop_mask
     0x0400,                                         ///< inner_loop_mask
-    "system",                                       ///< program
+    "istep",                                        ///< program
     "none",                                         ///< ring_patch
 };
 

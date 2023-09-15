@@ -36,6 +36,9 @@
 
 fapi2::Target<fapi2::TARGET_TYPE_PERV> get_tp_chiplet_target(const fapi2::Target<fapi2::TARGET_TYPE_CHIPS> i_chip);
 
+/// @brief Return the left-aligned region mask given an input ring address
+uint16_t get_ring_region(const uint32_t i_ring_address);
+
 /// @brief In hotplug mode, return the hotplug mask. Otherwise, return an all-1 mask.
 ///
 /// @param[in]  i_target       Chip to query hotplug mask for

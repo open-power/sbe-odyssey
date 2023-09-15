@@ -62,6 +62,11 @@ uint64_t get_mc_group_members(const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULT
     return l_result;
 }
 
+uint16_t get_ring_region(const uint32_t i_ring_address)
+{
+    return ((i_ring_address & 0x0000FFF0) | ((i_ring_address & 0x00F00000) >> 20)) << 1;
+}
+
 ReturnCode get_hotplug_mask(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     uint64_t& o_hotplug_mask)
