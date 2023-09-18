@@ -408,7 +408,7 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
 }
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
-sbeFifoType sbeFifoGetSource (bool reset, uint8_t pibCtrlId)
+sbeFifoType sbeFifoGetSource (bool reset)
 {
     #define SBE_FUNC "sbeFifoGetSource"
     uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
@@ -460,7 +460,7 @@ sbeFifoType sbeFifoGetSource (bool reset, uint8_t pibCtrlId)
         }
 
         // Check pending interrupt on Pipes
-        type = sbePipeGetSource(pibCtrlId);
+        type = sbePipeGetSource();
 
         // Fatal error is no interrupt source was found
         assert(type != SBE_FIFO_UNKNOWN);
@@ -511,7 +511,7 @@ sbeInterfaceSrc_t sbeFifoGetInstSource (sbeFifoType upFifoType, bool reset)
     return SBE_INTERFACE_UNKNOWN;
 }
 
-sbeFifoType sbePipeGetSource (uint8_t pibCtrlId)
+sbeFifoType sbePipeGetSource ( )
 {
     #define SBE_FUNC "sbePipeGetSource "
     uint64_t accessCtrlCfg = 0;
@@ -546,7 +546,7 @@ sbeFifoType sbePipeGetSource (uint8_t pibCtrlId)
         // ctrlID field of read end determines intr routing if RIE is set,
         // independent of RUID setting. So,below flag being set implies SBE
         // got either the new data available or reset request interrupt
-        if (cfg.rd_intr_pending && ctrl.readend == pibCtrlId)
+        if (cfg.rd_intr_pending && ctrl.readend == SBE_GLOBAL->pibCtrlId)
         {
             rc = SBE_SEC_OPERATION_SUCCESSFUL;
             type = static_cast<sbeFifoType> (i);
