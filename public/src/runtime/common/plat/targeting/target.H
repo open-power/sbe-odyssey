@@ -34,6 +34,7 @@ namespace fapi2
     constexpr TargetType TARGET_TYPE_PERV_CHILDREN = TARGET_TYPE_CHIPLETS;
     constexpr TargetType TARGET_TYPE_MEM_PORT_CHILDREN = TARGET_TYPE_DIMM;
     constexpr TargetType TARGET_TYPE_MC_CHILDREN = TARGET_TYPE_OMI;
+    constexpr TargetType TARGET_TYPE_OMI_CHILDREN = TARGET_TYPE_OCMB_CHIP;
     constexpr TargetType TARGET_TYPE_XBUS_CHILDREN = TARGET_TYPE_XBUSL;
     constexpr TargetType TARGET_TYPE_EX_CHILDREN = TARGET_TYPE_L3CACHE
         | TARGET_TYPE_SHADOW | TARGET_TYPE_CORE;
@@ -150,6 +151,12 @@ namespace fapi2
             STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_EX_CHILDREN) == 0,
                          "Invalid child target for EX parent");
             return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_EX>(*this);
+        }
+        else if (T_NO_MCAST == TARGET_TYPE_OMI)
+        {
+            STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_OMI_CHILDREN) == 0,
+                         "Invalid child target for OMI parent");
+            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_OCMB_CHIP>(*this);
         }
 
         // If we fall through to here, there is no defined code path to handle the
