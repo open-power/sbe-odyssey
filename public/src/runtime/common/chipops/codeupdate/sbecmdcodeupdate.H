@@ -216,20 +216,6 @@ uint32_t sbeUpdateImage(uint8_t *i_pArg);
  */
 uint32_t sbeSyncSide(uint8_t *i_pArg);
 
-/*@brief - Get image hash for an image in NOR
- *
- * @param[in]  -const CU_IMAGES i_imageType :i_imageType passed to the function
- * @param[in]  -uint8_t i_Partition : passed to the function
- * @param[in]  -uint32_t i_storageDevSideSize : Storage device side size
- * @param[out] -uint8_t* o_hashArrayPtr :64-bytes image hash
- *
- * @return - success/ fail
- */
-uint32_t getImageHash(const CU_IMAGES i_imageType,
-                      const uint8_t i_side,
-                      const uint32_t i_storageDevSideSize,
-                      uint8_t* o_hashArrayPtr);
-
 /**
  * @brief checkImageHashMismatch : comparing the image hash of an image from
  *                                 runSide to nonRunSide
