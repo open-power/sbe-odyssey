@@ -343,9 +343,9 @@ ARC_RET_t FileArchive::_locate(const locate_what i_what,
                 return ARC_FILE_CORRUPTED;
             }
 
-            if (iv_archiveLimit && (ptr + hdre.iv_csize >= iv_archiveLimit))
+            if (iv_archiveLimit && (ptr + hdre.iv_csize > iv_archiveLimit))
             {
-                ARC_ERROR("Compressed size exceeds allowed archive limit: %p + 0x%08x >= %p",
+                ARC_ERROR("Compressed size exceeds allowed archive limit: %p + 0x%08x > %p",
                           ptr, hdre.iv_csize, iv_archiveLimit);
                 return ARC_FILE_CORRUPTED;
             }
@@ -381,9 +381,9 @@ ARC_RET_t FileArchive::locate_padding(void*& o_padStart, uint32_t& o_padSize)
         o_padStart = (uint8_t*)hdrc + 8;
         o_padSize = be32toh(((PakFileHeaderCore*)hdrc)->iv_padsize);
 
-        if (iv_archiveLimit && ((uint8_t*)o_padStart + o_padSize >= iv_archiveLimit))
+        if (iv_archiveLimit && ((uint8_t*)o_padStart + o_padSize > iv_archiveLimit))
         {
-            ARC_ERROR("Padding exceeds allowed archive limit: %p + 0x%08x >= %p",
+            ARC_ERROR("Padding exceeds allowed archive limit: %p + 0x%08x > %p",
                       o_padStart, o_padSize, iv_archiveLimit);
             return ARC_FILE_CORRUPTED;
         }
