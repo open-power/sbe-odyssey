@@ -24,6 +24,7 @@
 /* IBM_PROLOG_END_TAG                                                     */
 #include "sbecmdcodeupdate.H"
 #include "sbeupdateimage.H"
+#include "ptbl.H"
 #include "codeupdateutils.H"
 #include "chipop_struct.H"
 #include "pakwrapper.H"
@@ -85,8 +86,7 @@ uint32_t sbeGetCodeLevels (uint8_t *i_pArg)
             l_rc = getImageHash(l_codeLevelsRespMsg.iv_updateableImagesInfo[i].
                                     iv_imageType,
                                 l_runningSide,
-                                l_codeUpdateCtrlStruct.storageDevStruct.
-                                    storageDevSideSize,
+                                l_codeUpdateCtrlStruct,
                                 l_codeLevelsRespMsg.iv_updateableImagesInfo[i].
                                     iv_imageHashSHA3_512);
             if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
@@ -301,82 +301,7 @@ uint32_t sbeSyncSide (uint8_t *i_pArg)
 
 }
 
-uint32_t getImageHash(const CU_IMAGES i_imageType,
-                      const uint8_t i_side,
-                      const uint32_t i_storageDevSideSize,
-                      uint8_t* o_hashArrayPtr)
-{
-    #define SBE_FUNC " getImageHash "
-    SBE_ENTER(SBE_FUNC);
 
-    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
-    ARC_RET_t l_pakRC = ARC_OPERATION_SUCCESSFUL;
-    uint32_t l_size = 0;
-    uint32_t l_sideStartAddress = 0;
-
-    do
-    {
-        //To get side start address
-        getSideAddress(i_side,l_sideStartAddress);
-        PakWrapper pak((void *)l_sideStartAddress, (void *)(l_sideStartAddress + i_storageDevSideSize));
-
-        switch (i_imageType)
-        {
-            case CU_IMAGES::BOOTLOADER:
-                l_pakRC = pak.read_file(bldr_image_hash_file_name,
-                                        o_hashArrayPtr,SHA3_DIGEST_LENGTH,NULL,
-                                        &l_size);
-                break;
-
-            case CU_IMAGES::RUNTIME:
-                l_pakRC = pak.read_file(runtime_image_hash_file_name,
-                                        o_hashArrayPtr,SHA3_DIGEST_LENGTH,NULL,
-                                        &l_size);
-                break;
-
-            case CU_IMAGES::BMC_OVRD:
-                l_pakRC = pak.read_file(bmc_image_hash_file_name,
-                                        o_hashArrayPtr,SHA3_DIGEST_LENGTH,NULL,
-                                        &l_size);
-                break;
-
-            case CU_IMAGES::HOST_OVRD:
-                l_pakRC = pak.read_file(host_image_hash_file_name,
-                                        o_hashArrayPtr,SHA3_DIGEST_LENGTH,NULL,
-                                        &l_size);
-                break;
-
-            default:
-                l_rc = SBE_SEC_CU_INVALID_IMAGE_TYPE;
-                SBE_ERROR(SBE_FUNC " Invalid Image  Passed by caller image: %d ",
-                                     i_imageType);
-                break;
-        }
-
-        CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
-
-        if (l_pakRC != ARC_OPERATION_SUCCESSFUL)
-        {
-            l_rc = SBE_SEC_CU_FILE_IMAGE_HASH_READ_ERROR;
-            SBE_ERROR(SBE_FUNC " ImageType: %d " \
-                      "Failed to read image hash Rc:%d",i_imageType,l_pakRC);
-            break;
-        }
-
-        if (SHA3_DIGEST_LENGTH != l_size)
-        {
-            l_rc = SBE_SEC_CU_IMAGE_HASH_SIZE_MISMATCH;
-            SBE_ERROR(SBE_FUNC "Failed to read expected hash size of image:%d" \
-                               "Expected size: %d,actual size: %d ",
-                                i_imageType,SHA3_DIGEST_LENGTH,l_size);
-            break;
-        }
-    }while(false);
-
-    SBE_EXIT(SBE_FUNC);
-    return l_rc;
-    #undef SBE_FUNC
-}
 
 bool checkImageHashMismatch(codeUpdateCtrlStruct_t &i_syncSideCtrlStruct,
                             sbeRespGenHdr_t *o_hdr)
@@ -398,7 +323,7 @@ bool checkImageHashMismatch(codeUpdateCtrlStruct_t &i_syncSideCtrlStruct,
       // Get running side image hash of an image
       l_rc = getImageHash((CU_IMAGES)i_syncSideCtrlStruct.imageType,
                           i_syncSideCtrlStruct.runSideIndex,
-                          i_syncSideCtrlStruct.storageDevStruct.storageDevSideSize,
+                          i_syncSideCtrlStruct,
                           l_runSideImgHash);
       // Doing error handling of get image Hash from runSide
       if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
@@ -415,7 +340,7 @@ bool checkImageHashMismatch(codeUpdateCtrlStruct_t &i_syncSideCtrlStruct,
       // Get non-running side image hash of an image
       l_rc = getImageHash((CU_IMAGES)i_syncSideCtrlStruct.imageType,
                           i_syncSideCtrlStruct.nonRunSideIndex,
-                          i_syncSideCtrlStruct.storageDevStruct.storageDevSideSize,
+                          i_syncSideCtrlStruct,
                           l_nonRunSideImgHash);
       // Doing error handling of get image Hash from nonRunSide
       if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)

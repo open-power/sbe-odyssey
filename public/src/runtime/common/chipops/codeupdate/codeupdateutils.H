@@ -206,5 +206,20 @@ uint32_t checkSignature(const CU_IMAGES i_imageType,
 			void *i_pakStartAddrInPibMem,
 			codeUpdateCtrlStruct_t &i_codeUpdateCtrlStruct);
 
+/*@brief - Get image hash for an image in NOR
+ *
+ * @param[in]  -const CU_IMAGES i_imageType :i_imageType passed to the function
+ * @param[in]  -uint8_t i_Partition : passed to the function
+ * @param[in]  -uint32_t i_storageDevSideSize : Storage device side size
+ * @param[out] -uint8_t* o_hashArrayPtr :64-bytes image hash
+ *
+ * @return - success/ fail
+ */
+uint32_t getImageHash(const CU_IMAGES i_imageType,
+                      const uint8_t i_side,
+                      codeUpdateCtrlStruct_t &io_codeUpdateCtrlStruct,
+                      uint8_t* o_hashArrayPtr);
+
+
 
 #endif //CODE_UPDATE_UTILS_H
