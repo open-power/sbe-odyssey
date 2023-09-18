@@ -227,7 +227,7 @@ uint32_t sbeSyncSide(uint8_t *i_pArg);
  */
 uint32_t getImageHash(const CU_IMAGES i_imageType,
                       const uint8_t i_side,
-                      codeUpdateCtrlStruct_t &io_codeUpdateCtrlStruct,
+                      const uint32_t i_storageDevSideSize,
                       uint8_t* o_hashArrayPtr);
 
 /**
