@@ -68,7 +68,7 @@ fapi2::ReturnCode ody_omi_hss_bist_poll(const fapi2::Target<fapi2::TARGET_TYPE_O
         FAPI_TRY(l_ppe_common.debug_display(i_target, l_thread, l_rx_lanes, l_tx_lanes));
     }
 
-    FAPI_ASSERT(l_done && !l_fail,
+    FAPI_ASSERT(!(!l_done || l_fail),
                 fapi2::IO_PPE_DONE_POLL_FAILED()
                 .set_POS(l_pos)
                 .set_FAIL(l_fail)

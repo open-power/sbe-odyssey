@@ -1059,8 +1059,8 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_poll(const fapi2::Target<K, M, V>
 
     while (!o_done && (l_loop_count < i_poll_count))
     {
+        FAPI_TRY(iv_regs->flushCache(i_target));
         FAPI_TRY(ext_cmd_check(i_target, i_thread, l_cmd, o_done, o_fail));
-        // FAPI_TRY(iv_regs->flushCache(i_target));
 
         FAPI_DBG("Loop count %d", l_loop_count);
 
