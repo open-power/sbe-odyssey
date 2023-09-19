@@ -1477,6 +1477,9 @@
   <entry name="ATTR_MEM_EFF_THERM_SENSOR_DIFF_USAGE">
     <value>0x01</value>
   </entry>
+  <entry name="ATTR_MEM_EFF_THERM_SENSOR_READ_OVERRIDE">
+    <value>0x0</value>
+  </entry>
   <entry name="ATTR_MEM_EFF_VOLT_VDDQ">
     <value>0x0000044C</value>
   </entry>
