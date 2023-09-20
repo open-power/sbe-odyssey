@@ -93,6 +93,42 @@
     </attribute>
 <!-- ********************************************************************** -->
     <attribute>
+        <id>ATTR_POZ_BIST_IO_TEST_SECTOR</id>
+        <targetType>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            Enable to set WFT/MFT modess
+        </description>
+        <valueType>uint8</valueType>
+        <enum>
+            DISABLED = 0x00,
+            ENABLED = 0x01
+        </enum>
+        <default>DISABLED</default>
+        <platInit/>
+        <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="poz">
+          <targetTypes>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetTypes>
+        </sbeAttrSync>
+    </attribute>
+<!-- ********************************************************************** -->
+    <attribute>
+        <id>ATTR_POZ_BIST_G2P_SHRD_TST_OVRRD</id>
+        <targetType>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            Disable G2P override of shared-test-flip bit
+        </description>
+        <valueType>uint8</valueType>
+        <enum>
+            DISABLED = 0x00,
+            ENABLED = 0x01
+        </enum>
+        <default>ENABLED</default>
+        <platInit/>
+        <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="poz">
+          <targetTypes>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetTypes>
+        </sbeAttrSync>
+    </attribute>
+<!-- ********************************************************************** -->
+    <attribute>
         <id>ATTR_POZ_DAC_TEST_LIN_MAX_MIN</id>
         <targetType>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetType>
         <description>
