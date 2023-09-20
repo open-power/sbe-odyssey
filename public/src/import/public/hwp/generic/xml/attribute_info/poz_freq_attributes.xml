@@ -32,27 +32,12 @@
   </description>
   <valueType>uint32</valueType>
   <enum>
+    21460 = 21460,
     25600 = 25600,
     32000 = 32000,
     38400 = 38400
   </enum>
-  <default>25600</default>
-  <platInit/>
-  <writeable/>
-</attribute>
-<!-- ********************************************************************** -->
-<attribute>
-  <id>ATTR_DATARATE_POZ_OMI</id>
-  <targetType>TARGET_TYPE_OCMB_CHIP,TARGET_TYPE_PROC_CHIP</targetType>
-  <description>
-    The data rate of the OMI channel.
-  </description>
-  <valueType>uint32</valueType>
-  <enum>
-    21460 = 21460,
-    25600 = 25600,
-  </enum>
-  <default>21460</default>
+<default>21460</default>
   <platInit/>
   <writeable/>
 </attribute>
@@ -71,25 +56,6 @@
     38400 = 38400
   </enum>
   <default>28800</default>
-  <platInit/>
-  <writeable/>
-</attribute>
-<!-- ********************************************************************** -->
-<attribute>
-  <id>ATTR_DATARATE_POZ_PCIE</id>
-  <targetType>TARGET_TYPE_PROC_CHIP</targetType>
-  <description>
-    The data rate of the PCIE channel.
-  </description>
-  <valueType>uint32</valueType>
-  <enum>
-    2500 = 2500,
-    5000 = 5000,
-    8000 = 8000,
-    16000 = 16000,
-    32000 = 32000
-  </enum>
-  <default>32000</default>
   <platInit/>
   <writeable/>
 </attribute>

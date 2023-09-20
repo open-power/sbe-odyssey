@@ -242,6 +242,12 @@ class io_ppe_common
                                     const uint8_t i_thread);
 
         uint8_t get_num_lanes(uint32_t);
+
+        fapi2::ReturnCode clear_dl_ignore(const fapi2::Target<K, M, V>& i_target,
+                                          const uint8_t i_thread);
+
+        fapi2::ReturnCode set_dl_ignore(const fapi2::Target<K, M, V>& i_target,
+                                        const uint8_t i_thread);
 };
 
 // ===============================================================
@@ -575,7 +581,7 @@ fapi_try_exit:
     return fapi2::current_err;
 }
 
-template<fapi2::TargetType K, fapi2::MulticastType M, typename V>
+template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
 fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init(const fapi2::Target<K, M, V>& i_target,
         const uint8_t i_group,
         const uint8_t i_dacTest,
@@ -652,7 +658,17 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_cleanup(const fapi2::Target<K, M,
 
     fapi2::buffer<uint64_t> l_buffer;
     uint64_t l_addr = 0;
+    uint8_t l_max_lanes = 0;
     uint8_t l_lane = 0;
+
+    // Get the max number of lanes from the lane mask
+    for (uint32_t l_shift = 0; l_shift < 32; l_shift++)
+    {
+        if ((0x1 << l_shift) & i_rx_lanes_0_31)
+        {
+            l_max_lanes++;
+        }
+    }
 
     FAPI_DBG("Starting BIST cleanup");
 
@@ -670,7 +686,7 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_cleanup(const fapi2::Target<K, M,
     FAPI_TRY(putScom(i_target, l_addr, l_buffer),
              "Error putscom to address 0x%08X.", l_addr);
 
-    for (l_lane = 0; l_lane < 8; l_lane++)
+    for (l_lane = 0; l_lane < l_max_lanes; l_lane++)
     {
         if (i_rx_lanes_0_31 & 0x80000000)
         {
@@ -990,6 +1006,8 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::debug_display(const fapi2::Target<K, M
     fapi2::buffer<uint64_t> l_data = 0;
     uint32_t l_lane = 0;
 
+    FAPI_DBG("BASE ADDRESS: 0x%X%X, thread: %d", (iv_regs->base_addr >> 32), iv_regs->base_addr, i_thread);
+
     FAPI_TRY(iv_regs->flushCache(i_target));
 
     FAPI_TRY(MEM_REG_PPE_ERROR_STATE_GET(iv_regs, i_target, i_thread, l_data));
@@ -1192,4 +1210,29 @@ uint8_t io_ppe_common<K, M, V>::get_num_lanes(uint32_t i_lane_mask)
     }
 
     return count;
+}
+
+template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
+fapi2::ReturnCode io_ppe_common<K, M, V>::clear_dl_ignore(const fapi2::Target<K, M, V>& i_target,
+        const uint8_t i_thread)
+{
+    FAPI_TRY(MEM_REG_PPE_DL_IFC_IGNORE_PUT(iv_regs, i_target, i_thread, 0));
+    FAPI_TRY(iv_regs->flushCache(i_target));
+
+fapi_try_exit:
+    FAPI_DBG("End");
+    return fapi2::current_err;
+}
+
+template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
+fapi2::ReturnCode io_ppe_common<K, M, V>::set_dl_ignore(const fapi2::Target<K, M, V>& i_target,
+        const uint8_t i_thread)
+{
+    FAPI_DBG("Setting DL Ignore bit")
+    FAPI_TRY(MEM_REG_PPE_DL_IFC_IGNORE_PUT(iv_regs, i_target, i_thread, 1));
+    FAPI_TRY(iv_regs->flushCache(i_target));
+
+fapi_try_exit:
+    FAPI_DBG("End");
+    return fapi2::current_err;
 }
