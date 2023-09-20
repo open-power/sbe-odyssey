@@ -15,8 +15,7 @@ import textwrap
 from collections import defaultdict
 def tree(): return defaultdict(tree)
 
-# Add program modules to the path
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "pymod"))
+import pymod
 from output import out
 import pakcore as pak
 import pakutils
