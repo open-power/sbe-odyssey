@@ -802,8 +802,12 @@ def p11t_fsi_config():
     ## Set up Tap clock muxing
     ROOT_CTRL4 = 0 (reset value)
     ROOT_CTRL4.TEST_TCK_SEL = ATTR_CLOCK_MUX1
-    ROOT_CTRL4.NEST_GLM_ASYNC_RESET = 0
     ROOT_CTRL4.NEST_DIV2_ASYNC_RESET = 0
+
+    # Allow the div2 reset some time to propagate
+    # before we enable the clock tree
+    delay(1ms, 1kcyc)
+    ROOT_CTRL4.NEST_GLM_ASYNC_RESET = 0
 
     ROOT_CTRL4_COPY = ROOT_CTRL4      # Update copy register to match
 
@@ -1296,7 +1300,7 @@ def poz_chiplet_unused_psave():
             # Put PLATs in flush
             CPLT_CTRL0.FORCE_ALIGN = 0
             CPLT_CTRL0.FLUSHMODE_INH = 0
-            
+
             NET_CTRL0.CHIPLET_ENABLED = 0
             # Don't do endpoint reset to save on vital logic power
             #NET_CTRL0.PCB_EP_RESET = 1
