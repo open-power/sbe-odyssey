@@ -215,7 +215,7 @@ __pk_idle_thread:
         ##
         ## The kernel context is initialized to indicate that the idle thread
         ## is running - the idle thread priority is PK_THREADS, the
-        ## 'thread-mode' bit is asserted and so is the 'discard-ctx" bit.
+        ## 'thread-mode' bit is asserted and so is the 'discard-ctx' bit.
         ## In addition, the previous kernel context is stored in the lower
         ## 16 bits.
         ##

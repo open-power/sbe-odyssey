@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -305,6 +305,50 @@ __pk_timer_handler(void)
 }
 
 
+/// Schedule a timer for a specific absolute point in time,
+///
+/// \param timer The PkTimer to schedule.
+///
+/// \param scheduled_time The timer will be scheduled to time out at this
+/// point in time.
+///
+/// Once created with pk_timer_create() a timer can be \e scheduled, which
+/// queues the timer in the kernel time queue.  It is not an error to call \c
+/// pk_timer_schedule() or \c pk_timer_schedule_absolute() on a timer that
+/// is already scheduled in the time queue - the timer is simply rescheduled
+/// with the new characteristics.
+///
+/// Return values other than PK_OK (0) are errors; see \ref pk_errors
+///
+/// \retval 0 Successful completion
+///
+/// \retval -PK_INVALID_TIMER_AT_SCHEDULE A a null (0) pointer was provided as
+/// the \a timer argument.
+///
+
+int
+pk_timer_schedule_absolute(PkTimer*   timer,
+                           PkTimebase scheduled_time)
+{
+    PkMachineContext ctx;
+    PkTimebase  timeout = PK_INTERVAL_SCALE(scheduled_time);
+
+    pk_critical_section_enter(&ctx);
+
+    if (PK_ERROR_CHECK_API)
+    {
+        PK_ERROR_IF(timer == 0, PK_INVALID_TIMER_AT_SCHEDULE);
+    }
+
+    timer->timeout = timeout;
+    __pk_timer_schedule(timer);
+
+    pk_critical_section_exit(&ctx);
+
+    return PK_OK;
+}
+
+
 /// Schedule a timer for an interval relative to the current time.
 ///
 /// \param timer The PkTimer to schedule.
@@ -326,25 +370,10 @@ __pk_timer_handler(void)
 ///
 
 int
-pk_timer_schedule(PkTimer*    timer,
+pk_timer_schedule(PkTimer*   timer,
                   PkInterval interval)
 {
-    PkMachineContext ctx;
-    PkTimebase  timeout = pk_timebase_get() + PK_INTERVAL_SCALE(interval);
-
-    pk_critical_section_enter(&ctx);
-
-    if (PK_ERROR_CHECK_API)
-    {
-        PK_ERROR_IF(timer == 0, PK_INVALID_TIMER_AT_SCHEDULE);
-    }
-
-    timer->timeout = timeout;
-    __pk_timer_schedule(timer);
-
-    pk_critical_section_exit(&ctx);
-
-    return PK_OK;
+    return pk_timer_schedule_absolute(timer, pk_timebase_get() + interval);
 }
 
 

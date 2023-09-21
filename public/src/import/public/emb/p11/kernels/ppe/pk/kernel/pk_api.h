@@ -488,6 +488,7 @@ typedef uint8_t PkThreadFlags;
 typedef uint32_t PkSemaphoreCount;
 
 typedef uint64_t PkTimebase;
+typedef int64_t PkTimebaseSigned;
 
 typedef PK_TIME_INTERVAL_TYPE PkInterval;
 
@@ -759,6 +760,20 @@ pk_timebase_freq_set(uint32_t timebase_frequency_hz);
 PkTimebase
 pk_timebase_get(void);
 
+// Macros to compare timebase values while taking timebase wrapping into account
+
+/// @brief Return true if a is earlier than b
+#define PK_TIMEBASE_EARLIER_THAN(a, b)  ((PkTimebaseSigned)((a) - (b)) < 0)
+
+/// @brief Return true if a is equal or later than b
+#define PK_TIMEBASE_LATER_EQUAL(a, b)   !PK_TIMEBASE_EARLIER_THAN(a, b)
+
+/// @brief Return true if a is later than b
+#define PK_TIMEBASE_LATER_THAN(a, b)    ((PkTimebaseSigned)((b) - (a)) < 0)
+
+/// @brief Return true if a is equal or earlier than b
+#define PK_TIMEBASE_EARLIER_EQUAL(a, b) !PK_TIMEBASE_LATER_THAN(a, b)
+
 
 // Timer APIs
 
@@ -771,6 +786,10 @@ pk_timer_create(PkTimer*         timer,
 int
 pk_timer_schedule(PkTimer*    timer,
                   PkInterval interval);
+
+int
+pk_timer_schedule_absolute(PkTimer*   timer,
+                           PkTimebase scheduled_time);
 
 int
 pk_timer_cancel(PkTimer* timer);
