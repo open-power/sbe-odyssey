@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -160,7 +161,7 @@ fapi2::ReturnCode fetch_ody_reply(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CH
 }
 
 
-fapi2::ReturnCode ody_isetp(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target, uint8_t i_class, uint8_t hwp_num){
+fapi2::ReturnCode ody_istep_start(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target, uint8_t i_class, uint8_t hwp_num){
   uint32_t hwp[]={03, 0xa104,((uint32_t)i_class)<<16|hwp_num};
   FAPI_TRY(push_data_to_ody_eot(i_target, hwp, sizeof(hwp)/sizeof(uint32_t)));
 
@@ -168,7 +169,7 @@ fapi2::ReturnCode ody_isetp(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i
   return fapi2::current_err;
 }
 
-fapi2::ReturnCode ody_isetp_reply(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target){
+fapi2::ReturnCode ody_istep_complete(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target){
   uint32_t reply[8];
 
   fetch_ody_reply(i_target, reply,sizeof(reply)/sizeof(uint32_t));

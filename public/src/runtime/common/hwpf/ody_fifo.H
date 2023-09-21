@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -39,9 +40,23 @@
 //fapi2::ReturnCode push_data_to_ody(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target, const uint32_t *data, size_t dataSize);
 //fapi2::ReturnCode submit_eot_to_ody(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
 
-fapi2::ReturnCode ody_isetp(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target, uint8_t i_class, uint8_t hwp_num);
-uint32_t streamFifo(uint8_t *i_pArg);
-uint32_t streamFifoReply(uint8_t *i_pArg);
+///
+/// @brief start an IStep on an Odyssey, the function does not wait for completion, so user can kick off all 8 channels in parallel
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
+/// @param[in]   i_class                   IStep class
+/// @param[in]   i_hwp_num                 hwp number
+///
+/// @return fapi::ReturnCode  FAPI2_RC_SUCCESS if success, else error code.
+///
+fapi2::ReturnCode ody_istep_start(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target, uint8_t i_class, uint8_t hwp_num);
 
-fapi2::ReturnCode push_data_to_ody_eot(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target, const uint32_t *i_data, size_t word_count);
-fapi2::ReturnCode ody_isetp_reply(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
+///
+/// @brief wait for an IStep complete on an Odyssey,
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
+///
+/// @return fapi::ReturnCode  FAPI2_RC_SUCCESS if success, else error code.
+///
+fapi2::ReturnCode ody_istep_complete(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
+
