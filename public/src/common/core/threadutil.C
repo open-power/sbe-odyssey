@@ -29,7 +29,7 @@
 /**
  * @brief Create the PK thread in the loop
  */
-uint32_t ThreadsCreate( sThread_t * i_Threads, uint8_t i_NoOfThreads)
+uint32_t ThreadsCreate( const sThread_t * i_Threads, uint8_t i_NoOfThreads)
 {
     #define SBE_FUNC "ThreadsCreate "
     SBE_ENTER(SBE_FUNC);
@@ -84,7 +84,7 @@ uint32_t ThreadsCreate( sThread_t * i_Threads, uint8_t i_NoOfThreads)
 }
 
 
-uint32_t SemaCreate ( sSema_t * i_SemaData, uint32_t i_NoOfSema)
+uint32_t SemaCreate ( const sSema_t * i_SemaData, uint32_t i_NoOfSema)
 {
     #define SBE_FUNC "SemaCreate "
     SBE_ENTER(SBE_FUNC);

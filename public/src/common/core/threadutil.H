@@ -85,7 +85,7 @@ typedef struct SemaphoresDefinition
 /// @return        PK_PRIORITY_IN_USE_AT_RESUME Another thread is already
 ///                                      mapped at the priority of the thread
 ////////////////////////////////////////////////////////////////
-uint32_t ThreadsCreate( sThread_t * i_Threads, uint8_t i_NoOfThreads);
+uint32_t ThreadsCreate( const sThread_t * i_Threads, uint8_t i_NoOfThreads);
 
 
 /**
@@ -98,4 +98,4 @@ uint32_t ThreadsCreate( sThread_t * i_Threads, uint8_t i_NoOfThreads);
  * -PK_INVALID_ARGUMENT_SEMAPHORE The \a spSemaData is null pointer or
  *  u32NoOfSema is zero
  */
-uint32_t SemaCreate ( sSema_t * i_SemaData, uint32_t i_NoOfSema);
+uint32_t SemaCreate ( const sSema_t * i_SemaData, uint32_t i_NoOfSema);
