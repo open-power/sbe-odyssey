@@ -34,7 +34,7 @@
 extern "C" {
 #endif
 
-#include "stdint.h"
+#include <stdint.h>
 
 /*
  * $Version: Confirms to SP-SBE Interface Spec v0.2e
