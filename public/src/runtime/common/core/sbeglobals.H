@@ -108,6 +108,7 @@ class SBEGlobalsSingleton
         sbeIntrHandle_t sbeIntrSource;
 
         // Last failed rc's - for SBE internal ffdc
+        uint32_t asyncFfdcRC;
         static uint16_t failedPrimStatus;
         static uint16_t failedSecStatus;
         static uint16_t failedSeqId;
