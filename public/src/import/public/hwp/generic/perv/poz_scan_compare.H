@@ -107,11 +107,11 @@ bool get_hash_target_addresses(
 /// @param[in]   i_target                  Target object on which to compare ring content
 /// @param[in]   i_compare_hash_fname      Path to pak file of one or more compare hashes
 /// @param[in]   i_care_mask_dir           Path to directory of care masks hash with
-/// @param[out]  o_failing_rings           Vector of ring addresses mismatching their expect hash
+/// @param[out]  o_unload_configs          Vector of config data for unloads
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-fapi2::ReturnCode poz_compare(
+fapi2::ReturnCode poz_scan_compare(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_CORE > & i_target,
     const char* i_compare_hash_fname,
     const char* i_care_mask_dir,
-    std::vector<compare_fail>& o_failing_rings);
+    std::vector<unload_config>& o_unload_configs);
