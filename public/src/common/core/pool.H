@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,23 +23,34 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#ifndef SBE_VECTOR_POOL_H
-#define SBE_VECTOR_POOL_H
+#pragma once
+
+#include <stddef.h>
+#include <stdint.h>
+
+#define G_BLOCKSIZE g_vectorPoolBlockSize
 
 namespace SBEVECTORPOOL
 {
 
 // Size of a block  for a vector
-static const size_t G_BLOCKSIZE = 1024;
+extern const size_t g_vectorPoolBlockSize;
 
 //Pool size
-static const size_t G_POOLSIZE = 8;
+extern const size_t g_vectorPoolBlockCount;
 
-typedef struct
+extern uint8_t g_vectorPoolBuffer[];
+
+struct vectorMemPool_t
 {
-    size_t refCount;
-    uint8_t data[G_BLOCKSIZE] __attribute__ ((aligned (8)));
-}vectorMemPool_t;
+    size_t   refCount;
+    uint8_t* const data;
+
+    vectorMemPool_t(uint8_t* const i_buf_ptr = NULL):data(i_buf_ptr)
+    {}
+};
+
+extern vectorMemPool_t g_vectorPool[];
 
 /**
   * @brief Returns memory pool block.
@@ -55,4 +67,3 @@ vectorMemPool_t * allocMem();
 void releaseMem( vectorMemPool_t * i_pool );
 
 } // namespace SBEVECTORPOOL
-#endif //SBE_VECTOR_POOL_H
