@@ -237,6 +237,11 @@ enum sbeSecondaryResponse
     SBE_SEC_ITS_A_BUG                         = 0x8E,
     SBE_SEC_ATTR_UPD_BLOB_GEN_FAILED          = 0x8F,
     SBE_SEC_CHK_UPDATE_BLOB_GEN_TARGET_TYPES  = 0x90,
+    SBE_SEC_TEST_FFDC_SUCCESSFUL              = 0x91,
+    SBE_SEC_TEST_FFDC_INVALIDMODE             = 0x92,
+    SBE_SEC_BAD_TESTFFDC_ERR_RECORD           = 0x93,
+    SBE_SEC_TESTFFDC_FAILED                   = 0x94,
+    SBE_TESTFFDC_INVALID_FFDC_RC              = 0x95
 };
 
 /**
