@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/common/core/pool.C $                               */
+/* $Source: public/src/common/core/poolglobaltemplate.C $                 */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2019,2023                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -23,47 +22,32 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#include <pool.H>
-#include "assert.h"
-#include <new>
+// This is a source code template for defining pool global variables in the project
+// code. This file will not be compiled independently.
+// Each project should have a source file as shown below and should compile it.
+
+/*
+<project>/core/poolglobal.C
+---------------------------
+
+#define VECTOR_POOL_BLOCK_SIZE  1024
+#define VECTOR_POOL_BLOCK_COUNT 8
+
+#include "poolglobaltemplate.C"
+
+*/
+
+#include "pool.H"
 
 namespace SBEVECTORPOOL
 {
+// Size of a block  for a vector
+const size_t g_vectorPoolBlockSize = VECTOR_POOL_BLOCK_SIZE;
 
-vectorMemPool_t * allocMem()
-{
-    vectorMemPool_t *pool = NULL;
-    size_t idx;
-    for( idx = 0; idx < g_vectorPoolBlockCount; idx++ )
-    {
-        if( 0 == g_vectorPool[idx].refCount )
-        {
-            pool = g_vectorPool + idx;
-            new (pool) vectorMemPool_t((uint8_t*)(g_vectorPoolBuffer + idx * g_vectorPoolBlockSize));
-            pool->refCount++;
-            break;
-        }
-    }
-    if(NULL == pool )
-    {
-        SBE_ERROR("NULL pool idx:%u", idx);
-        pk_halt();
-    }
-    return pool;
+//Pool count
+const size_t g_vectorPoolBlockCount = VECTOR_POOL_BLOCK_COUNT;
+
+uint8_t g_vectorPoolBuffer[g_vectorPoolBlockCount * g_vectorPoolBlockSize];
+
+vectorMemPool_t g_vectorPool[g_vectorPoolBlockCount];
 }
-
-void releaseMem( vectorMemPool_t * i_pool )
-{
-    do
-    {
-        if ( NULL == i_pool )   break;
-
-       // Assert here.  This pool was not supposed to be in use.
-        assert( 0 != i_pool->refCount )
-        SBE_DEBUG(" Releasing pool 0x%08X", i_pool);
-        i_pool->refCount--;
-        SBE_DEBUG(" In releaseMem() RefCount:%u", i_pool->refCount);
-    }while(0);
-}
-
-} // namesspace SBEVECTORPOOL
