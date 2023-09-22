@@ -60,11 +60,11 @@ bool get_hash_target_addresses(
     return true;
 }
 
-ReturnCode poz_compare(
+ReturnCode poz_scan_compare(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_CORE > & i_target,
     const char* i_compare_hash_fname,
     const char* i_care_mask_dir,
-    std::vector<compare_fail>& o_failing_rings)
+    std::vector<unload_config>& o_unload_configs)
 {
     FAPI_INF("Entering ...");
 
@@ -76,6 +76,8 @@ ReturnCode poz_compare(
 
     char l_fpath[48];
     char* l_fpath_write_ptr = NULL;
+
+    uint16_t l_unload_config_index = 0;
 
     auto l_chip = i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>();
     FAPI_DBG("Loading compare hash file: %s", i_compare_hash_fname);
@@ -116,7 +118,19 @@ ReturnCode poz_compare(
 
         // Load the care mask file
         FAPI_DBG("Loading care mask file: %s", l_fpath);
-        FAPI_TRY(loadEmbeddedFile(l_chip, l_fpath, l_mask_file_data, l_mask_file_size));
+        l_rc = loadEmbeddedFile(l_chip, l_fpath, l_mask_file_data, l_mask_file_size);
+
+        if (l_rc == FAPI2_RC_FILE_NOT_FOUND)
+        {
+            FAPI_DBG("No compare care mask found for ring 0x%08x", l_ring_address);
+            current_err = FAPI2_RC_SUCCESS;
+            continue;
+        }
+        else if (l_rc != FAPI2_RC_SUCCESS)
+        {
+            FAPI_TRY(l_rc, "loadEmbeddedFile failed");
+        }
+
         // The care mask starts after the first 32 bits of the care mask file
         l_care_mask_ptr = (void*)(static_cast<const uint32_t*>(l_mask_file_data) + 1);
         hwp_be_array_istream l_mask((hwp_data_unit*)l_care_mask_ptr, l_mask_file_size - 4);
@@ -127,18 +141,36 @@ ReturnCode poz_compare(
         freeEmbeddedFile(l_mask_file_data);
         FAPI_TRY(l_rc, "poz_sparse_getring failed");
 
+        // Determine which unload config index this hash comparison applies to
+        for (uint16_t i = 0; i < o_unload_configs.size(); i++)
+        {
+            if ((o_unload_configs[i].base_ring_address == l_base_ring_address) &&
+                (o_unload_configs[i].unicast_target.getChipletNumber() == i_target.getChipletNumber()))
+            {
+                l_unload_config_index = i;
+                break;
+            }
+
+            if (i == (o_unload_configs.size() - 1))
+            {
+                FAPI_ERR("Cannot find unload config for ring 0x%08x on chiplet %d",
+                         l_base_ring_address,
+                         i_target.getChipletNumber());
+            }
+        }
+
         if (l_hash.getCurrentValue() != be32toh(l_hash_data[i].hash_value))
         {
             FAPI_INF("COMPARE FAILURE: Scan content mismatch for ring 0x%08x", l_ring_address);
             FAPI_DBG("Expected hash = 0x%08x; actual hash = 0x%08x",
                      be32toh(l_hash_data[i].hash_value),
                      l_hash.getCurrentValue());
-            compare_fail l_compare_fail = {l_base_ring_address, i_target};
-            o_failing_rings.push_back(l_compare_fail);
+            o_unload_configs[l_unload_config_index].compare_status = compare_status_code::FAIL;
         }
         else
         {
             FAPI_INF("COMPARE SUCCESS: Scan content equality for ring 0x%08x", l_ring_address);
+            o_unload_configs[l_unload_config_index].compare_status = compare_status_code::PASS;
         }
     }
 

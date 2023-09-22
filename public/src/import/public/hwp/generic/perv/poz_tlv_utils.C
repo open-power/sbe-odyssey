@@ -26,6 +26,21 @@
 #include "file_access.H"
 #include "poz_fastarray.H"
 
+uint16_t get_compare_fail_count(std::vector<unload_config>& i_unload_configs)
+{
+    uint16_t l_compare_fail_count = 0;
+
+    for (auto& l_unload_config : i_unload_configs)
+    {
+        if (l_unload_config.compare_status == compare_status_code::FAIL)
+        {
+            l_compare_fail_count++;
+        }
+    }
+
+    return l_compare_fail_count;
+};
+
 void generate_ring_unload_tag(Target < TARGET_TYPE_PERV | TARGET_TYPE_CORE > i_target, const uint8_t& i_chip_num,
                               const uint32_t i_ring_address, unload_tag& o_tag)
 {
@@ -66,10 +81,10 @@ void generate_diags_tag(const uint8_t& i_chip_num, const uint16_t& i_dict_def, d
     // Set other diags flags here
 }
 
-ReturnCode poz_write_tlv_ring_unload(const compare_fail& i_compare_fail, const char* i_care_file,
+ReturnCode poz_write_tlv_ring_unload(const unload_config& i_unload_config, const char* i_care_file,
                                      hwp_data_ostream& o_stream)
 {
-    auto chip = i_compare_fail.unicast_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>();
+    auto chip = i_unload_config.unicast_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>();
     const void* care_data;
     const void* cd_ptr;
     size_t size;
@@ -84,11 +99,11 @@ ReturnCode poz_write_tlv_ring_unload(const compare_fail& i_compare_fail, const c
         // Load the care mask file
         FAPI_TRY(loadEmbeddedFile(chip, i_care_file, care_data, size),
                  "Failed to load ring care mask for generic ring address 0x%08x on cplt %d, skipping...",
-                 i_compare_fail.base_ring_address,
-                 i_compare_fail.unicast_target.getChipletNumber());
+                 i_unload_config.base_ring_address,
+                 i_unload_config.unicast_target.getChipletNumber());
 
         // Prep for unloading Tag
-        generate_ring_unload_tag(i_compare_fail.unicast_target, chip_num, i_compare_fail.base_ring_address, tag);
+        generate_ring_unload_tag(i_unload_config.unicast_target, chip_num, i_unload_config.base_ring_address, tag);
 
         //// 4 BYTES OF TAG
         // Write first part of tag, leaving only 1 byte
@@ -100,7 +115,7 @@ ReturnCode poz_write_tlv_ring_unload(const compare_fail& i_compare_fail, const c
         FAPI_DBG("TLV ring unload -- total care bits %d, ring address 0x%08x, chiplet num %d",
                  care_bits_length,
                  tag.ring_address,
-                 i_compare_fail.unicast_target.getChipletNumber());
+                 i_unload_config.unicast_target.getChipletNumber());
         // Calculate total # of 32-bit deqs needed to deq that many care bits
         uint32_t deq_length = ((care_bits_length + deq_size - 1) / deq_size);
         // NOTE: length should not be more than 3 bytes worth of data
@@ -118,7 +133,7 @@ ReturnCode poz_write_tlv_ring_unload(const compare_fail& i_compare_fail, const c
         hwp_be_array_istream i_stream((hwp_data_unit*)cd_ptr, size - 4);
 
         //// VALUE
-        FAPI_TRY(poz_sparse_getring(i_compare_fail.unicast_target, i_compare_fail.base_ring_address, i_stream, o_stream));
+        FAPI_TRY(poz_sparse_getring(i_unload_config.unicast_target, i_unload_config.base_ring_address, i_stream, o_stream));
         FAPI_DBG("Done scanning ring 0x%08x", tag.ring_address);
 
         cd_ptr = NULL; // End the dangling pointer

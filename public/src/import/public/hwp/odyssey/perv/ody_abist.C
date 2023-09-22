@@ -88,22 +88,22 @@ ReturnCode ody_abist(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 
     ReturnCode l_rc;
     bist_diags l_bist_diags = {0};
-    std::vector<compare_fail> l_failing_rings;
+    std::vector<unload_config> l_unload_configs;
 
     // Dummy variables to support poz_bist API, but unused in istep mode
     hwp_data_unit dbuff[128 * 4]; // SCA TODO: implement a filestream instead??
     hwp_array_ostream l_stream(dbuff, (sizeof(dbuff) / sizeof((dbuff)[0])));
 
-    FAPI_EXEC_HWP(l_rc, poz_bist, i_target, ody_abist_params, l_bist_diags, l_stream, l_failing_rings, BIST_CHIPOP_ID);
+    FAPI_EXEC_HWP(l_rc, poz_bist, i_target, ody_abist_params, l_bist_diags, l_stream, l_unload_configs, BIST_CHIPOP_ID);
     FAPI_TRY(l_rc);
 
     if (l_bist_diags.completed_stages & ody_abist_params.bist_stages::COMPARE)
     {
-        FAPI_ASSERT(!l_failing_rings.size(),
+        FAPI_ASSERT(!get_compare_fail_count(l_unload_configs),
                     fapi2::NONZERO_MISCOMPARES().
-                    set_FAILING_RING_COUNT(l_failing_rings.size()),
+                    set_FAILING_RING_COUNT(get_compare_fail_count(l_unload_configs)),
                     "%d rings failed compare check",
-                    l_failing_rings.size());
+                    get_compare_fail_count(l_unload_configs));
     }
 
 fapi_try_exit:

@@ -275,7 +275,7 @@ fapi_try_exit:
 
 ReturnCode poz_bist(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist_params& i_params, bist_diags& o_diags,
-    fapi2::hwp_data_ostream& o_stream, std::vector<compare_fail>& o_failing_rings, const uint16_t i_dict_def)
+    fapi2::hwp_data_ostream& o_stream, std::vector<unload_config>& o_unload_configs, const uint16_t i_dict_def)
 {
     FAPI_INF("Entering ...");
 
@@ -292,7 +292,7 @@ ReturnCode poz_bist(
     clock_region l_all_active_regions = REGION_ALL_BUT_PLL;
     uint16_t l_tp_regions = i_params.base_regions;
 
-    // char arrays for accessing pak scan data
+    // Variables for accessing pak scan data
     char l_program[sizeof(i_params.program)] = {};
     char l_load_dir[7] = {'l', 'b', 'i', 's', 't', '/'};
     char l_load_path[sizeof(l_load_dir) + sizeof(l_program) - 1] = {};
@@ -300,6 +300,7 @@ ReturnCode poz_bist(
     char l_compare_hash_path[sizeof(l_compare_hash_dir) + sizeof(l_program) - 1] = {};
     char l_compare_mask_dir[12] = {'l', 'b', 'i', 's', 't', '/', 'c', 'm', '/', '0', '/'};
     char l_unload_mask_dir[12] = {'l', 'b', 'i', 's', 't', '/', 'c', 'm', '/', '0', '/'};
+    bool l_compare_hash_file_accessible = true;
 
     if (i_params.flags & i_params.bist_flags::ABIST_NOT_LBIST)
     {
@@ -465,7 +466,8 @@ ReturnCode poz_bist(
 
         if (l_rc == FAPI2_RC_FILE_NOT_FOUND)
         {
-            FAPI_INF("Compare hash file not found; skipping compare care mask set key assignment");
+            FAPI_INF("Compare hash file not found; skipping care mask set key assignment and compare");
+            l_compare_hash_file_accessible = false;
 
             // Skip hard fail if only compare was requested, since isteps will want it turned on
             // If compare file is in bist.pak, perform compare to assert no fails, else just skip
@@ -484,32 +486,29 @@ ReturnCode poz_bist(
             // The compare hash file's last byte indicates which unload care mask set to use
             strhex(l_unload_mask_dir + 9, ((uint8_t*)l_hash_file_data)[l_hash_file_size - 1], 1);
 
-            // If running unload but not compare, pretend all rings failed to unload everything
-            if (!(i_params.stages & i_params.bist_stages::COMPARE))
+            l_hash_data = (hash_data*)l_hash_file_data;
+
+            // Queue up all rings to be unloaded; compare will flag any which can be skipped
+            for (auto& cplt : l_chiplets_uc)
             {
-                l_hash_data = (hash_data*)l_hash_file_data;
-
-                for (auto& cplt : l_chiplets_uc)
+                for (uint8_t i = 0; i < l_hash_file_size / sizeof(hash_data); i++)
                 {
-                    for (uint8_t i = 0; i < l_hash_file_size / sizeof(hash_data); i++)
+                    uint32_t l_base_ring_address, l_ring_address;
+
+                    // Skip if this ring address doesn't apply to the input target
+                    if (!(get_hash_target_addresses(cplt,
+                                                    l_hash_data[i],
+                                                    l_base_ring_address,
+                                                    l_ring_address)))
                     {
-                        uint32_t l_base_ring_address, l_ring_address;
-
-                        // Skip if this ring address doesn't apply to the input target
-                        if (!(get_hash_target_addresses(cplt,
-                                                        l_hash_data[i],
-                                                        l_base_ring_address,
-                                                        l_ring_address)))
-                        {
-                            FAPI_DBG("Skipping ring 0x%08x not in chiplet %d",
-                                     l_base_ring_address,
-                                     cplt.getChipletNumber());
-                            continue;
-                        }
-
-                        compare_fail l_compare_fail = {l_base_ring_address, cplt};
-                        o_failing_rings.push_back(l_compare_fail);
+                        FAPI_DBG("Skipping ring 0x%08x not in chiplet %d",
+                                 l_base_ring_address,
+                                 cplt.getChipletNumber());
+                        continue;
                     }
+
+                    unload_config l_unload_config = {l_base_ring_address, cplt, compare_status_code::UNKNOWN};
+                    o_unload_configs.push_back(l_unload_config);
                 }
             }
 
@@ -653,35 +652,26 @@ ReturnCode poz_bist(
     ////////////////////////////////////////////////////////////////
     // STAGE: COMPARE
     ////////////////////////////////////////////////////////////////
-    if (i_params.stages & i_params.bist_stages::COMPARE)
+    if ((i_params.stages & i_params.bist_stages::COMPARE) && l_compare_hash_file_accessible)
     {
-        o_failing_rings.clear();
         FAPI_INF("Compare scan chains against expects");
 
         for (auto& cplt : l_chiplets_uc)
         {
-            l_rc = poz_compare(cplt, l_compare_hash_path, l_compare_mask_dir, o_failing_rings);
+            FAPI_TRY(poz_scan_compare(cplt, l_compare_hash_path, l_compare_mask_dir, o_unload_configs));
+        }
 
-            if (l_rc == FAPI2_RC_FILE_NOT_FOUND)
+        for (auto& l_unload_config : o_unload_configs)
+        {
+            if (l_unload_config.compare_status == compare_status_code::FAIL)
             {
-                FAPI_DBG("Compare file(s) not found; skipping compare...");
-                current_err = FAPI2_RC_SUCCESS;
-                break;
+                o_diags.failing_regions[
+                    l_unload_config.unicast_target.getChipletNumber()
+                ] |= get_ring_region(l_unload_config.base_ring_address);
             }
-
-            FAPI_TRY(l_rc);
         }
 
-        for (auto& l_compare_fail : o_failing_rings)
-        {
-            o_diags.failing_regions[l_compare_fail.unicast_target.getChipletNumber()] |= get_ring_region(
-                        l_compare_fail.base_ring_address);
-        }
-
-        if (l_rc == FAPI2_RC_SUCCESS)
-        {
-            o_diags.completed_stages |= i_params.bist_stages::COMPARE;
-        }
+        o_diags.completed_stages |= i_params.bist_stages::COMPARE;
     }
 
     ////////////////////////////////////////////////////////////////
@@ -694,16 +684,19 @@ ReturnCode poz_bist(
         char l_unload_mask_file_path[19];
         char* l_file_path_write_ptr = NULL;
 
-        for (auto& l_compare_fail : o_failing_rings)
+        for (auto& l_unload_config : o_unload_configs)
         {
-            l_file_path_write_ptr = stpcpy(l_unload_mask_file_path, l_unload_mask_dir);
-            strhex(l_file_path_write_ptr, l_compare_fail.base_ring_address, 8);
-            // Write trailing null ptr since strhex doesn't do that automatically
-            l_file_path_write_ptr[8] = 0;
-            FAPI_DBG("Going to scan out ring 0x%08x on chiplet %d",
-                     l_compare_fail.base_ring_address,
-                     l_compare_fail.unicast_target.getChipletNumber());
-            FAPI_TRY(poz_write_tlv_ring_unload(l_compare_fail, l_unload_mask_file_path, o_stream));
+            if (l_unload_config.compare_status)
+            {
+                l_file_path_write_ptr = stpcpy(l_unload_mask_file_path, l_unload_mask_dir);
+                strhex(l_file_path_write_ptr, l_unload_config.base_ring_address, 8);
+                // Write trailing null ptr since strhex doesn't do that automatically
+                l_file_path_write_ptr[8] = 0;
+                FAPI_DBG("Going to scan out ring 0x%08x on chiplet %d",
+                         l_unload_config.base_ring_address,
+                         l_unload_config.unicast_target.getChipletNumber());
+                FAPI_TRY(poz_write_tlv_ring_unload(l_unload_config, l_unload_mask_file_path, o_stream));
+            }
         }
 
         o_diags.completed_stages |= i_params.bist_stages::UNLOAD;
