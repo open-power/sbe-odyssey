@@ -399,10 +399,8 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
         }
 
     }while(0);
-
     // Clean up all cratch data
     Heap::get_instance().scratch_free_all();
-
     SBE_EXIT(SBE_FUNC);
     return rc;
     #undef SBE_FUNC

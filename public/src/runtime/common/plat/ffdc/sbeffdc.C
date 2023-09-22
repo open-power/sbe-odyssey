@@ -26,6 +26,8 @@
 #include "sbeffdc.H"
 #include "heap.H"
 #include "plat_hwp_data_stream.H"
+#include "sbestates.H"
+#include "sberegaccess.H"
 
 extern fapi2::pozFfdcData_t g_FfdcData;
 
@@ -243,6 +245,20 @@ uint32_t SbeFFDCPackage::createSbePackage( uint32_t &o_bytesSent, const bool isF
     #undef SBE_FUNC
 }
 
+// TODO: This needs to be updated as part of FFDC story
+// PFSBE-407
+void captureAsyncFFDC(uint32_t primRc, uint32_t secRc)
+{
+    SBE_GLOBAL->failedPrimStatus = primRc;
+    SBE_GLOBAL->failedSecStatus  = secRc;
+
+    // Transition to dump state
+    stateTransition(SBE_EVENT_CMN_DUMP_FAILURE);
+
+    // Set async ffdc bit
+    (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
+}
+
 uint32_t sendFFDCOverFIFO( const uint32_t i_fieldsConfig,
                            uint32_t &o_wordsSent,
                            const bool i_isFifoData, sbeFifoType i_type )
@@ -274,7 +290,6 @@ uint32_t sendFFDCOverFIFO( const uint32_t i_fieldsConfig,
         }
 
     } while(false);
-
     SBE_EXIT(SBE_FUNC);
     return rc;
     #undef SBE_FUNC

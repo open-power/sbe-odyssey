@@ -26,6 +26,7 @@
 #include "sbeFifoMsgUtils.H"
 #include "chipop_struct.H"
 #include "sbeffdc.H"
+#include "sberegaccess.H"
 
 using namespace fapi2;
 
@@ -66,7 +67,7 @@ uint32_t sbeGetFfdc (uint8_t *i_pArg)
             SBE_ERROR( SBE_FUNC" FAPI RC:0x%08X", ffdc.getRc());
             dumpFieldsConfig |= SBE_FFDC_ALL_HW_DATA;
         }
-        
+
         rc = sendFFDCOverFIFO(dumpFieldsConfig, wordCount, true, type);
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(rc);
 
@@ -76,7 +77,9 @@ uint32_t sbeGetFfdc (uint8_t *i_pArg)
             SBE_ERROR(SBE_FUNC "Failed in sbeDsSendRespHdr, rc[0x%08X]", rc);
             break;
         }
-
+        // If we are able to send ffdc, turn off async ffdc bit
+        (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(false);
+        SBE_GLOBAL->asyncFfdcRC = FAPI2_RC_SUCCESS;
     }while(0);
 
     if( rc )

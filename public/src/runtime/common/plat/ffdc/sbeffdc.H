@@ -34,6 +34,16 @@
 #include "sbe_build_info.H"
 #include "sbeglobals.H"
 
+/**
+ * @brief - Capture Async failure FFDC
+ *
+ * @param[in] primRc Primary failure rc
+ * @param[in] secRc  Secondary failure rc
+ *
+ */
+void captureAsyncFFDC(uint32_t primRc,
+                        uint32_t secRc);
+
 //SBE internal FFDC package class
 class SbeFFDCPackage
 {
@@ -149,6 +159,7 @@ public:
      *
      */
     uint32_t createSbePackage( uint32_t &o_wordsSent, const bool isFifoData = false, sbeFifoType i_type = SBE_FIFO );
+
 };
 
 /**

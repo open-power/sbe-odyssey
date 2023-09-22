@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2017,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -30,6 +31,7 @@
 #include "sbetrace.H"
 #include "sbestates.H"
 #include "sbestatesutils.H"
+#include "sbeffdc.H"
 
 using namespace fapi2;
 extern "C" void __sbe_register_saveoff();
@@ -75,12 +77,9 @@ void ipl::sbeAutoBoot()
                             "Major: %d, Minor: %d",
                             istepTableEntry->istepMajorNum, step);
 
-                    // TODO: P11SBE Porting - PFSBE-334
-                    #if 0
-                    uint32_t secRc = SBE_PRI_GENERIC_EXECUTION_FAILURE;
+                    uint32_t secRc = SBE_SEC_GENERIC_FAILURE_IN_EXECUTION;
                     captureAsyncFFDC(SBE_PRI_GENERIC_EXECUTION_FAILURE,
                                      secRc);
-                    #endif
                     // exit outer loop as well
                     entry = g_istepTable.len;
                     break;
