@@ -103,7 +103,7 @@ inline constexpr uint32_t LONG_ROTATE_MAX()
 }
 
 /**
- * @brief Low-level scan-via-scom read: rotate and return the 64bit scan buffer
+ * @brief Low-level scan-via-scom read: get the 64bit scan buffer and rotate
  * @param[in]  i_target The target to operate on
  * @param[in]  i_rotate Rotate by this many bits; min 0, max SCAN_ROTATE_MAX()
  * @param[out] o_data   Resulting scan buffer data
@@ -113,21 +113,21 @@ inline fapi2::ReturnCode scan64_get(
     const fapi2::Target<fapi2::TARGET_TYPE_PERV>& i_target,
     uint32_t i_rotate, fapi2::buffer<uint64_t>& o_data)
 {
-    return fapi2::getScom(i_target, 0x03E000 | i_rotate, o_data);
+    return fapi2::getScom(i_target, 0x03F000 | i_rotate, o_data);
 }
 
 /**
  * @brief Low-level scan-via-scom write: set the 64bit scan buffer and rotate
  * @param[in] i_target The target to operate on
- * @param[in] i_data   Data to write into the scan buffer. If i_rotate is < 64, only the first i_rotate bits will be written
  * @param[in] i_rotate Rotate by this many bits; min 0, max SCAN_ROTATE_MAX()
+ * @param[in] i_data   Data to write into the scan buffer. If i_rotate is < 64, only the first i_rotate bits will be written
  * @return the FAPI2 return code of the SCOM operation
  */
 inline fapi2::ReturnCode scan64_put(
     const fapi2::Target<fapi2::TARGET_TYPE_PERV>& i_target,
-    const fapi2::buffer<uint64_t> i_data, uint32_t i_rotate)
+    uint32_t i_rotate, const fapi2::buffer<uint64_t> i_data)
 {
-    return fapi2::putScom(i_target, 0x03E000 | i_rotate, i_data);
+    return fapi2::putScom(i_target, 0x03F000 | i_rotate, i_data);
 }
 
 /*
@@ -143,28 +143,23 @@ inline fapi2::ReturnCode scan64_put(
  * @param[in]  i_target       The target chiplet
  * @param[in]  i_nbits        Amount of bits to scan out
  * @param[out] o_stream       Bit stream to append scanned data to
- * @param[in]  i_data         Scan data buffer to use, pre-filled with current scan buffer contents
- * @param[out] o_extra_rotate Remainder of i_nbits not yet rotated, for deferring to rotate()
  * @return FAPI2 return code
  */
 inline fapi2::ReturnCode scan_out(
     const fapi2::Target<fapi2::TARGET_TYPE_PERV>& i_target,
-    uint32_t i_nbits, fapi2::hwp_bit_ostream& o_stream,
-    fapi2::buffer<uint64_t>& i_data, uint32_t& o_extra_rotate)
+    uint32_t i_nbits, fapi2::hwp_bit_ostream& o_stream)
 {
-    while (1)
+    fapi2::buffer<uint64_t> l_data;
+
+    while (i_nbits)
     {
-        FAPI_TRY(o_stream.put(i_data, std::min(i_nbits, (uint32_t)64), true),
+        uint32_t l_bits_to_scan = std::min(i_nbits, (uint32_t)64);
+        FAPI_TRY(scan64_get(i_target, l_bits_to_scan, l_data), "Failed to perform a scan read operation");
+
+        FAPI_TRY(o_stream.put(l_data, l_bits_to_scan, true),
                  "Failed to place scanned data into the output buffer");
 
-        if (i_nbits <= 64)
-        {
-            o_extra_rotate = i_nbits;
-            return fapi2::FAPI2_RC_SUCCESS;
-        }
-
-        i_nbits -= 64;
-        FAPI_TRY(scan64_get(i_target, 64, i_data), "Failed to perform a scan read operation");
+        i_nbits -= l_bits_to_scan;
     }
 
 fapi_try_exit:
@@ -175,12 +170,11 @@ fapi_try_exit:
  * @brief Rotate ring by N bits
  * @param[in]  i_target The target chiplet
  * @param[in]  i_nbits  Amount of bits to rotate by
- * @param[out] o_data   Scan data buffer after rotate
  * @return FAPI2 return code
  */
 inline fapi2::ReturnCode rotate(
     const fapi2::Target<fapi2::TARGET_TYPE_PERV>& i_target,
-    uint32_t i_nbits, fapi2::buffer<uint64_t>& o_data)
+    uint32_t i_nbits)
 {
     /* Get the # remaining bits down to a sensible range */
     while (i_nbits > LONG_ROTATE_MAX())
@@ -189,15 +183,17 @@ inline fapi2::ReturnCode rotate(
         i_nbits -= LONG_ROTATE_MAX();
     }
 
-    /* If we're outside the range of normal scan, do long rotate and just read the buffer next without rotating */
+    /* If we're outside the range of normal scan, do long rotate else do a non-blocking scan */
     if (i_nbits > SCAN_ROTATE_MAX())
     {
         FAPI_TRY(_svs_long_rotate(i_target, i_nbits));
-        i_nbits = 0;
+    }
+    else
+    {
+        fapi2::buffer<uint64_t> l_data;
+        FAPI_TRY(scan64_get(i_target, i_nbits, l_data), "Failed to read scan data");
     }
 
-    /* Rotate the remainder and get the buffer for the following scan's first data */
-    FAPI_TRY(scan64_get(i_target, i_nbits, o_data), "Failed to read scan data");
     return fapi2::FAPI2_RC_SUCCESS;
 
 fapi_try_exit:
@@ -206,7 +202,6 @@ fapi_try_exit:
 
 /**
  * @brief Scan in N bits of data
- * XXX this isn't super useful as-is, but it *does* make the scom-via-scan API "complete"
  * @param[in]  i_target       The target chiplet
  * @param[in]  i_nbits        Amount of bits to scan in
  * @param[in]  i_stream       Bit stream of data to stream in sequentially
@@ -218,23 +213,110 @@ inline fapi2::ReturnCode scan_in(
 {
     uint64_t tmp = 0;
 
-    while (1)
+    while (i_nbits)
     {
-        FAPI_TRY(i_stream.get(tmp, std::min(i_nbits, (uint32_t)64), true),
+        uint32_t l_bits_to_scan = std::min(i_nbits, (uint32_t)64);
+        FAPI_TRY(i_stream.get(tmp, l_bits_to_scan, true),
                  "Failed to read scan data from input buffer");
 
-        if (i_nbits <= 64)
-        {
-            FAPI_TRY(scan64_put(i_target, i_nbits, tmp), "Failed to perform scan put operation");
-            return fapi2::FAPI2_RC_SUCCESS;
-        }
+        FAPI_TRY(scan64_put(i_target, l_bits_to_scan, tmp), "Failed to perform scan put operation");
 
-        i_nbits -= 64;
-        FAPI_TRY(scan64_put(i_target, 64, tmp), "Failed to perform scan put operation");
+        i_nbits -= l_bits_to_scan;
     }
 
 fapi_try_exit:
     return fapi2::current_err;
 }
 
+
+/**
+ * @brief expand a 32bit ring address into a 64bit value for the clock controller's SCAN_REGION_TYPE register
+ *
+ * If the ring address belongs to a core ring, the result will be shifted to match a core target's core select.
+ *
+ * @param[in] i_target a PERV or CORE target; used for adapting the result to a core select value
+ * @param[in] i_ring_address the 32bit ring address
+ * @return The 64bit SCAN_REGION_TYPE value
+ */
+uint64_t expand_ring_address(
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_CORE > & i_target,
+    const uint32_t i_ring_address);
+
+/**
+ * @brief Dump a scan ring and into an array
+ * @param[in]  i_scan_chiplet     The chiplet that the capture latches can be scanned out of
+ * @param[in]  i_scan_region_type The value for the SCAN_REGION_TYPE register that will select the right rings
+ * @param[in]  i_bits_of_interest A definition in RS5 format of which bits from the farr chain to return and which to drop
+ * @param[out] o_array_bits       A pre-sized buffer that will be filled with the bits of interest
+ * @return FAPI2_RC_SUCCESS if success, else error code.
+ */
+fapi2::ReturnCode sparse_getring(
+    const fapi2::Target<fapi2::TARGET_TYPE_PERV>& i_scan_chiplet,
+    uint64_t                                      i_scan_region_type,
+    fapi2::hwp_bit_istream&                       i_bits_of_interest,
+    fapi2::hwp_bit_ostream&                       o_array_bits);
+
+/**
+ * @brief Restore a scan ring from an array
+ * @param[in]  i_scan_chiplet     The chiplet that the capture latches can be scanned out of
+ * @param[in]  i_scan_region_type The value for the SCAN_REGION_TYPE register that will select the right rings
+ * @param[in]  i_bits_of_interest A definition in RS5 format of which bits from the farr chain to return and which to drop
+ * @param[out] i_array_bits       A pre-sized buffer that is be filled with the bits to be restored
+ * @return FAPI2_RC_SUCCESS if success, else error code.
+ */
+fapi2::ReturnCode sparse_putring(
+    const fapi2::Target<fapi2::TARGET_TYPE_PERV>& i_scan_chiplet,
+    uint64_t                                      i_scan_region_type,
+    fapi2::hwp_bit_istream&                       i_bits_of_interest,
+    fapi2::hwp_bit_istream&                       i_array_bits);
+
+
 } // namespace svs
+
+/**
+ * @brief Unload a ring, extracting only the care bits according to run length encoded care mask
+ *
+ * This is an external API for code which is used internally in fastarray, and which is likely
+ * useful for other code as well (such as BIST). It accepts a run length encoded stream of care
+ * data (encoded by an external Python tool), will scan out the ring and emit only the ring bits
+ * marked as "care" back via an output data stream.
+ *
+ * The ring bits returned by this function are raw ring bits and not corrected for inversion!
+ *
+ * @param[in]  i_target        The chiplet or core you would like to scan out
+ * @param[in]  i_ring_address  The ring address of the ring you would like to scan
+ * @param[in]  i_care_data     A stream of care data blob as prepared by the external tool
+ * @param[out] o_ring_bits     The care bits, concatenated in big-endian fashion,
+ *                             padded to a multiple of 32-bit words by appending zero bits
+ *
+ * @return the usual FAPI2 return codes
+ */
+fapi2::ReturnCode poz_sparse_getring(
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_CORE > & i_target,
+    const uint32_t                  i_ring_address,
+    fapi2::hwp_data_istream&        i_care_data,
+    fapi2::hwp_data_ostream&        o_ring_bits);
+
+/**
+ * @brief Restore a ring, overwriting only the care bits according to run length encoded care mask
+ *
+ * This is an external API for code which is used internally in fastarray, and which is likely
+ * useful for other code as well (such as BIST). It accepts a run length encoded stream of care
+ * data (encoded by an external Python tool), will scan in the ring and change only the ring bits
+ * marked as "care" back via an input data stream.
+ *
+ * The ring bits returned by this function are raw ring bits and not corrected for inversion!
+ *
+ * @param[in]  i_target        The chiplet or core you would like to scan out
+ * @param[in]  i_ring_address  The ring address of the ring you would like to scan
+ * @param[in]  i_care_data     A stream of care data blob as prepared by the external tool
+ * @param[out] i_ring_bits     The care bits, concatenated in big-endian fashion,
+ *                             padded to a multiple of 32-bit words by appending zero bits
+ *
+ * @return the usual FAPI2 return codes
+ */
+fapi2::ReturnCode poz_sparse_putring(
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_CORE > & i_target,
+    const uint32_t                 i_ring_address,
+    fapi2::hwp_data_istream&       i_care_data,
+    fapi2::hwp_data_istream&       i_ring_bits);

@@ -113,35 +113,12 @@ fapi2::ReturnCode poz_fastarray_get_control_info(
     const uint32_t i_control_data_nwords,
     poz_fastarray_control_info& o_control_info);
 
-/**
- * @brief Unload a ring, extracting only the care bits according to run length encoded care mask
- *
- * This is an external API for code which is used internally in fastarray, and which is likely
- * useful for other code as well (such as BIST). It accepts a run length encoded stream of care
- * data (encoded by an external Python tool), will scan out the ring and emit only the ring bits
- * marked as "care" back via an output data stream.
- *
- * The ring bits returned by this function are raw ring bits and not corrected for inversion!
- *
- * @param[in]  i_target        The chiplet or core you would like to scan out
- * @param[in]  i_ring_address  The ring address of the ring you would like to scan
- * @param[in]  i_care_data     A stream of care data blob as prepared by the external tool
- * @param[out] o_ring_bits     The care bits, concatenated in big-endian fashion,
- *                             padded to a multiple of 32-bit words by appending zero bits
- *
- * @return the usual FAPI2 return codes
- */
-fapi2::ReturnCode poz_sparse_getring(
-    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_CORE > & i_target,
-    const uint32_t                  i_ring_address,
-    fapi2::hwp_data_istream&        i_care_data,
-    fapi2::hwp_data_ostream&        o_ring_bits);
-
 
 typedef fapi2::ReturnCode (*poz_fastarray_FP_t)(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_CORE > & i_target,
     fapi2::hwp_data_istream&  i_instructions,
     fapi2::hwp_data_ostream&  o_dump_data);
+
 
 /**
  * @brief Extract a raw fast array dump out of a given chiplet
