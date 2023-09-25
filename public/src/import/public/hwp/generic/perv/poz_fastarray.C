@@ -452,108 +452,6 @@ fapi_try_exit:
     return current_err;
 }
 
-/**
- * @brief Dump a single row from the FARR ring and return it to the caller
- * @param[in]  i_scan_chiplet     The chiplet that the capture latches can be scanned out of
- * @param[in]  i_scan_region_type The value for the SCAN_REGION_TYPE register that will select the right rings
- * @param[in]  i_bits_of_interest A definition in RS5 format of which bits from the farr chain to return and which to drop
- * @param[out] o_array_bits       A pre-sized buffer that will be filled with the bits of interest
- * @return FAPI2_RC_SUCCESS if success, else error code.
- */
-static ReturnCode sparse_getring(
-    const Target<TARGET_TYPE_PERV>& i_scan_chiplet,
-    uint64_t                        i_scan_region_type,
-    hwp_bit_istream&                i_bits_of_interest,
-    hwp_bit_ostream&                o_array_bits)
-{
-    buffer<uint64_t> l_data;
-    uint32_t         l_extra_rotate = 0;
-
-    /* Set up scan region & type */
-    FAPI_TRY(putScom(i_scan_chiplet, SCAN_REGION_TYPE, i_scan_region_type),
-             "Failed to set up scan region/type");
-
-    /* Scan in header */
-    FAPI_TRY(svs::scan64_put(i_scan_chiplet, SCAN_HEADER, 0), "Failed to write ring header");
-
-    while (true)
-    {
-        uint32_t l_nbits = 0;
-        /* Rotate / 'don't care' bits */
-        FAPI_TRY(i_bits_of_interest.get_var_len_int(l_nbits));
-
-        /* Regardless of whether l_nbits is 0 or not, we need to call
-         * svs::rotate() here to get the header value into l_data */
-        FAPI_TRY(svs::rotate(i_scan_chiplet, l_nbits + l_extra_rotate, l_data));
-
-        if (!l_nbits)
-        {
-            break;
-        }
-
-        /* Scan-out / 'do care' bits */
-        FAPI_TRY(i_bits_of_interest.get_var_len_int(l_nbits));
-
-        if (!l_nbits)
-        {
-            break;
-        }
-
-        FAPI_TRY(svs::scan_out(i_scan_chiplet, l_nbits, o_array_bits, l_data, l_extra_rotate));
-    }
-
-    /* Header check -- the last svs::rotate() conveniently read it into l_data for us :3 */
-    FAPI_ASSERT(l_data == SCAN_HEADER, FASTARRAY_HEADER_CHECK_FAILED()
-                .set_TARGET(i_scan_chiplet).set_EXPECTED(SCAN_HEADER).set_ACTUAL(l_data),
-                "Header check failed! Read header: 0x%08X%08X", l_data >> 32, l_data & 0xFFFFFFFF);
-
-fapi_try_exit:
-    ReturnCode l_final_rc = current_err;
-
-    /* Clear scan region & type */
-    ReturnCode l_rc = putScom(i_scan_chiplet, SCAN_REGION_TYPE, 0);
-
-    if (l_rc != FAPI2_RC_SUCCESS && l_final_rc == FAPI2_RC_SUCCESS)
-    {
-        FAPI_ERR("Failed to clear scan region/type");
-        l_final_rc = l_rc;
-    }
-
-    return l_final_rc;
-}
-
-/**
- * @brief Explicit scan type mappings for certain rings
- */
-static const uint16_t scan_type_decoder_ring[4] = { 0xDCE0, 0x0820, 0x0440, 0x9000 };
-
-/**
- * @brief expand a 32bit ring address into a 64bit value for the clock controller's SCAN_REGION_TYPE register
- *
- * If the ring address belongs to a core ring, the result will be shifted to match a core target's core select.
- *
- * @param[in] i_target a PERV or CORE target; used for adapting the result to a core select value
- * @param[in] i_ring_address the 32bit ring address
- * @return The 64bit SCAN_REGION_TYPE value
- */
-static uint64_t expand_ring_address(
-    const Target < TARGET_TYPE_PERV | TARGET_TYPE_CORE > & i_target,
-    const uint32_t i_ring_address)
-{
-    const uint32_t l_chiplet_id   =   ((i_ring_address & 0xFF000000) >> 24 );
-    const uint32_t l_core_select  =   (l_chiplet_id >= 0x20) ? i_target.getCoreSelect() : 0x8;
-    const uint32_t l_scan_region  =   (i_ring_address & 0x0000FFF0) | ((i_ring_address & 0x00F00000) >> 20);
-    const uint32_t l_fastinit     =   (i_ring_address & 0x00080000) << 12;
-    // Multiplication with l_core_select puts copies of l_core_select everywhere a bit is set in the input region vector
-    // Since core 0 is 0x8 we need to shift left by three positions less
-    const uint32_t l_reg_upper    =   ((l_scan_region << (13 - 3)) * l_core_select) | l_fastinit;
-    const uint32_t l_scan_encode  =   i_ring_address & 0x0000000F;
-    const uint32_t l_scan_type    =   (l_scan_encode < 12) ?
-                                      (0x8000 >> l_scan_encode) :
-                                      scan_type_decoder_ring[l_scan_encode - 12];
-    return ((uint64_t)l_reg_upper << 32) | l_scan_type;
-}
-
 static ReturnCode do_dump(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_CORE > & i_target,
     const Target < TARGET_TYPE_PERV >& i_perv_target,
@@ -569,7 +467,7 @@ static ReturnCode do_dump(
     {
         // Load the ring address from the stream and translate it
         FAPI_TRY(i_instructions.get(l_header));
-        const uint64_t l_scan_region_type = expand_ring_address(i_target, l_header);
+        const uint64_t l_scan_region_type = svs::expand_ring_address(i_target, l_header);
         const uint64_t l_clock_region = l_scan_region_type & 0xFFFFFFFF00000000;
         const uint64_t l_abist_region = i_options.bist_region_override ? (uint64_t)i_options.bist_region_override << 28 :
                                         l_clock_region;
@@ -661,7 +559,7 @@ static ReturnCode do_dump(
                 hwp_bit_istream l_care_stream(l_care_array);
 
                 FAPI_TRY(run_abist_cycles(i_perv_target, l_stepsize, i_options));
-                FAPI_TRY(sparse_getring(i_perv_target, l_scan_region_type, l_care_stream, l_dumped_bits));
+                FAPI_TRY(svs::sparse_getring(i_perv_target, l_scan_region_type, l_care_stream, l_dumped_bits));
             }
 
             FAPI_TRY(l_dumped_bits.flush());
@@ -686,7 +584,7 @@ static ReturnCode scan0(
     const Target<TARGET_TYPE_PERV>& i_target_chiplet,
     const uint32_t i_ring_address)
 {
-    const uint64_t l_scan_region_type = expand_ring_address(i_target_chiplet, i_ring_address);
+    const uint64_t l_scan_region_type = svs::expand_ring_address(i_target_chiplet, i_ring_address);
     const uint64_t l_clock_region = l_scan_region_type & 0xFFFFFFFF00000000;
 
     FAPI_TRY(putScom(i_target_chiplet, SCAN_REGION_TYPE, l_clock_region | SCAN_TYPES_ALL_BUT_RTG));
@@ -721,19 +619,6 @@ ReturnCode poz_fastarray_get_control_info(
     }
 
     return FAPI2_RC_FALSE;
-}
-
-ReturnCode poz_sparse_getring(
-    const Target < TARGET_TYPE_PERV | TARGET_TYPE_CORE > & i_target,
-    const uint32_t                  i_ring_address,
-    hwp_data_istream&               i_care_data,
-    hwp_data_ostream&               o_ring_bits)
-{
-    const auto l_perv_target = i_target.getParent<TARGET_TYPE_PERV>();
-    const uint64_t l_scan_region_type = expand_ring_address(i_target, i_ring_address);
-    hwp_bit_istream l_care_bits(i_care_data);
-    hwp_bit_ostream l_ring_bits(o_ring_bits);
-    return sparse_getring(l_perv_target, l_scan_region_type, l_care_bits, l_ring_bits);
 }
 
 ReturnCode poz_fastarray(

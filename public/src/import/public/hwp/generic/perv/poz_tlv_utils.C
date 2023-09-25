@@ -24,7 +24,7 @@
 /* IBM_PROLOG_END_TAG                                                     */
 #include "poz_tlv_utils.H"
 #include "file_access.H"
-#include "poz_fastarray.H"
+#include "poz_scan_via_scom.H"
 
 void generate_ring_unload_tag(Target < TARGET_TYPE_PERV | TARGET_TYPE_CORE > i_target, const uint8_t& i_chip_num,
                               const uint32_t i_ring_address, unload_tag& o_tag)

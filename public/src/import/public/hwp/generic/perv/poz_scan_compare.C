@@ -30,10 +30,10 @@
 // *HWP FW Maintainer   : Andrew Singer (andrew.singer@ibm.com)
 //------------------------------------------------------------------------------
 
+#include <poz_scan_via_scom.H>
 #include <poz_scan_compare.H>
 #include <poz_perv_utils.H>
 #include <file_access.H>
-#include <poz_fastarray.H>
 
 using namespace fapi2;
 
