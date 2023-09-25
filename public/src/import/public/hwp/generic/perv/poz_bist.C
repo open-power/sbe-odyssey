@@ -151,12 +151,21 @@ static ReturnCode poz_bist_execute(
 {
     // Helper buffers produced from bist_params constituents
     const buffer<uint64_t> l_uc_go_chiplets_buffer = i_params.uc_go_chiplets;
+    buffer<uint64_t> l_ctrl_chiplets_buffer = 0;
 
-    // Middleman variable to translate unicast chiplets into control chiplets
-    uint64_t l_ctrl_chiplets = 0;
+    // If uc_go_chiplets is equal to main chiplets mask, leave control chiplets as 0
+    // Else, plug uc_go_chiplets into control  buffer
+    if (i_params.uc_go_chiplets != i_params.chiplets)
+    {
+        l_ctrl_chiplets_buffer = i_params.uc_go_chiplets;
+    }
 
     // Needed for OPCG count diagnostic readout
     OPCG_REG0_t OPCG_REG0;
+
+    // Needed for go_mode = 'trigger' feature
+    PCB_OPCG_GO_t PCB_OPCG_GO;
+    Target<TARGET_TYPE_PERV> l_perv_chiplet;
 
     // Clear out completed stages from potential previous iterations
     o_diags.completed_stages &= ~(i_params.bist_stages::REG_SETUP |
@@ -195,17 +204,10 @@ static ReturnCode poz_bist_execute(
         }
         else
         {
-            // If uc_go_chiplets is equal to main chiplets mask, leave control chiplets as 0
-            // Else, plug uc_go_chiplets into control chiplets
-            if (i_params.uc_go_chiplets != i_params.chiplets)
-            {
-                l_ctrl_chiplets = i_params.uc_go_chiplets;
-            }
-
             // TODO consider enabling LBIST to use idle and stagger
             FAPI_TRY(mod_lbist_setup(i_chiplets_target,
                                      i_params,
-                                     l_ctrl_chiplets,
+                                     l_ctrl_chiplets_buffer,
                                      i_enum_condition_a,
                                      i_enum_condition_b));
         }
@@ -224,12 +226,27 @@ static ReturnCode poz_bist_execute(
         {
             FAPI_DBG("Enforcing OPCG_GO by chiplet via unicast");
 
+            if (l_ctrl_chiplets_buffer.getBit(1))
+            {
+                FAPI_TRY(mod_get_chiplet_by_number(i_chiplets_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>(), 1, l_perv_chiplet));
+                FAPI_INF("Setting up scom registers to run trigger mode on pervasive chiplet ...");
+                FAPI_TRY(trigger_start(l_perv_chiplet));
+            }
+
             for (auto& chiplet : i_chiplets_uc)
             {
                 if (l_uc_go_chiplets_buffer.getBit(chiplet.getChipletNumber()))
                 {
                     FAPI_TRY(mod_opcg_go(chiplet));
                 }
+            }
+
+            if (l_ctrl_chiplets_buffer.getBit(1))
+            {
+                OPCG_REG0 = 0;
+                PCB_OPCG_GO = 0;
+                FAPI_TRY(OPCG_REG0.putScom(l_perv_chiplet));
+                FAPI_TRY(PCB_OPCG_GO.putScom(l_perv_chiplet));
             }
         }
         else

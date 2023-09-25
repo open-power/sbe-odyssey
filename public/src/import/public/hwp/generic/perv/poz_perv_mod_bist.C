@@ -35,6 +35,7 @@
 #include <poz_perv_mod_chiplet_clocking_regs.H>
 #include <poz_perv_mod_bist_common.H>
 #include <target_filters.H>
+#include <poz_perv_mod_misc.H>
 
 using namespace fapi2;
 
@@ -448,6 +449,35 @@ ReturnCode mod_lbist_setup(
     FAPI_TRY(OPCG_CAPT1.putScom(i_target));
     FAPI_TRY(OPCG_CAPT2.putScom(i_target));
     FAPI_TRY(OPCG_CAPT3.putScom(i_target));
+
+fapi_try_exit:
+    FAPI_INF("Exiting ...");
+    return current_err;
+}
+
+ReturnCode trigger_start(
+    const Target < TARGET_TYPE_PERV >& i_target)
+{
+    SCAN_REGION_TYPE_t SCAN_REGION_TYPE = 0;        // 0x30005
+    CLK_REGION_t CLK_REGION = 0;                    // 0x30006
+    OPCG_REG0_t OPCG_REG0;                          // 0x30002
+    PCB_OPCG_GO_t PCB_OPCG_GO;                      // 0x30020
+
+    // setup scom registers
+    FAPI_TRY(SCAN_REGION_TYPE.putScom(i_target));
+
+    FAPI_TRY(CLK_REGION.putScom(i_target));
+
+    FAPI_TRY(OPCG_REG0.getScom(i_target));
+    OPCG_REG0.set_RUNN_MODE(1);
+    OPCG_REG0.set_OPCG_GO(0);
+    OPCG_REG0.set_OPCG_TRIGGER_RCVR_MODE(0);
+    OPCG_REG0.set_OPCG_TRIGGER_CTRL_MODE(1);
+    FAPI_TRY(OPCG_REG0.putScom(i_target));
+
+    FAPI_TRY(PCB_OPCG_GO.getScom(i_target));
+    PCB_OPCG_GO.set_PCB_OPCGGO(1);
+    FAPI_TRY(PCB_OPCG_GO.putScom(i_target));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
