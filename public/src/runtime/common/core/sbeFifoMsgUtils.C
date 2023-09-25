@@ -34,6 +34,7 @@
 #include "sbe_sp_intf.H"
 #include "sbeFifoMsgUtils.H"
 #include "sbeglobals.H"
+#include "sberegaccess.H"
 #include "sbeffdc.H"
 #include "sbeerrorcodes.H"
 #include "assert.h"
@@ -383,7 +384,7 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
             dumpFieldsConfig |= SBE_FFDC_ALL_PLAT_DATA;
         }
 
-        if( dumpFieldsConfig )
+        if( dumpFieldsConfig && SbeRegAccess::theSbeRegAccess().isSendInternalFFDC() )
         {
             rc = sendFFDCOverFIFO(dumpFieldsConfig, len, true, i_type);
             CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(rc);
@@ -401,7 +402,7 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
 
     // Clean up all cratch data
     Heap::get_instance().scratch_free_all();
-  
+
     SBE_EXIT(SBE_FUNC);
     return rc;
     #undef SBE_FUNC

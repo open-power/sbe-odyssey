@@ -44,7 +44,7 @@ typedef union
         uint64_t iv_mpiplMode : 1;                        //bit 2: p11
         uint64_t iv_attrIsSimulation : 1;                 //bit 3: p11, odyssey
         uint64_t iv_emulateSABSet : 1;                    //bit 4: p11, odyssey
-        uint64_t iv_sendFFDC : 1;                         //bit 5: p11, odyssey
+        uint64_t iv_disableFFDC : 1;                      //bit 5: p11, odyssey
         uint64_t iv_disableSecurity : 1;                  //bit 6: p11
         uint64_t iv_allowAttrOverride : 1;                //bit 7: p11, odyssey
         uint64_t iv_fwSmtOverride : 2;                    //bit 8..9: p11

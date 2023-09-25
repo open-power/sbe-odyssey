@@ -184,12 +184,12 @@ class SbeRegAccess
          * @brief Check if SBE should send internal FFDC for any chip op
          * failures as a part of the response
          *
-         * @return true if in istep mode, false otherwise
+         * @return true if FFDC should be sent, false otherwise
          *
          */
-        inline bool isSendInternalFFDCSet() const
+        inline bool isSendInternalFFDC() const
         {
-            return mbx11.iv_sendFFDC;
+            return !mbx11.iv_disableFFDC;
         }
 
         inline bool isSystemCheckStopForDMTFail() const
@@ -356,4 +356,3 @@ class SbeRegAccess
         static SbeRegAccess cv_instance;
 };
 #endif //__SBEFW_SBEREGACCESS_H
-
