@@ -103,3 +103,11 @@ fapi2::ReturnCode mod_lbist_setup(
     const uint64_t i_ctrl_chiplets = 0,
     const uint16_t i_lbist_sequence = 0x8000,
     const uint16_t i_lbist_weight = 0x8000);
+
+/// @brief Setup for running trigger mode on a pervasive target
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_PERV
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode trigger_start(
+    const Target < TARGET_TYPE_PERV >& i_target);
