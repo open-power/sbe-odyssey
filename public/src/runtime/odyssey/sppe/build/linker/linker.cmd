@@ -36,7 +36,7 @@
 OUTPUT_FORMAT(elf32-powerpc);
 
 MEMORY {
-    sram    :   ORIGIN = SPPE_ORIGIN, LENGTH = SPPE_MAX_SIZE
+    sram    :   ORIGIN = SPPE_ORIGIN, LENGTH = SRAM_SIZE
 }
 
 SECTIONS {
@@ -166,10 +166,14 @@ SECTIONS {
     {
         . = ALIGN(DOUBLE_WORD_SIZE);
         _PK_INITIAL_STACK_LIMIT = .;
+
         . = . + INITIAL_STACK_SIZE;
+
         _PK_INITIAL_STACK = . - 1;
+        . = ALIGN(DOUBLE_WORD_SIZE);
+
+        ASSERT(ABSOLUTE(.) < (SPPE_ORIGIN + SPPE_MAX_SIZE), "Error: Minimum required scratch space is not available");
     }
-    . = ALIGN(DOUBLE_WORD_SIZE);
     /*
      * Pibmem address to the beginning of the heap space
      * Ultimately separated into two spaces inside of the heap:
