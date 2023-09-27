@@ -168,10 +168,11 @@ ASSERT((SROM_BLDR_CMN_SH_FILE_SCRATCH_END < BOOTLOADER_ORIGIN), \
                /* Pointer to current image's metadata (4B)    */
                /***********************************************/
 #define SPPE_ORIGIN                     SRAM_ORIGIN
-#define SPPE_RAM_PAK_MIN_SIZE           0x8000  // 32 KB
-#define SPPE_DECOMPRESSION_AREA_MIN_SIZE 0x8000 // 32 KB
-#define SPPE_MEM_TRAINING_DATA_SIZE     0x10000 // 64 KB
-#define SPPE_RECOVERABLE_LOG_MIN_SIZE   0x4000  // 16 KB
+// TODO: revert these to actual required values (PFSBE-636)
+#define SPPE_RAM_PAK_MIN_SIZE            0x1400  // 5 KB
+#define SPPE_DECOMPRESSION_AREA_MIN_SIZE 0x800   // 2 KB
+#define SPPE_MEM_TRAINING_DATA_SIZE      0x10000 // 64 KB
+#define SPPE_RECOVERABLE_LOG_MIN_SIZE    0x0000  // 0 KB
 #define SPPE_HEAP_MIN_SIZE              (SPPE_RAM_PAK_MIN_SIZE + SPPE_DECOMPRESSION_AREA_MIN_SIZE \
                                          + SPPE_MEM_TRAINING_DATA_SIZE + SPPE_RECOVERABLE_LOG_MIN_SIZE)
 #define SPPE_MAX_SIZE                   (SRAM_SIZE - CROSS_IMAGE_FIXED_AREA_SIZE \
