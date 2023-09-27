@@ -85,7 +85,7 @@ int sbeInitThreads(void)
             SBE_THREAD_SYNC_CMD_PROC_STACK_SIZE,
             THREAD_PRIORITY_6
         },
-
+#ifndef OMIT_ASYNC_COMMAND_PROCESSOR
         {
             &SBE_GLOBAL->threads.sbeAsyncCommandProcessor_thread,
             sbeAsyncCommandProcessor_routine,
@@ -94,6 +94,7 @@ int sbeInitThreads(void)
             SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE,
             THREAD_PRIORITY_7
         },
+#endif
     };
 
     // Initialize SBE control loop threads
