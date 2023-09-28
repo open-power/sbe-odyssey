@@ -52,7 +52,8 @@ static const bist_params ody_abist_params =
     bist_params::ABIST_NOT_LBIST    |   ///< 0x80000000
     bist_params::POLL_ABIST_DONE    |   ///< 0x08000000
     bist_params::ASSERT_ABIST_DONE  |   ///< 0x04000000
-    bist_params::SCAN0_ARY_FILL,        ///< 0x00400000
+    bist_params::SCAN0_ARY_FILL     |   ///< 0x00400000
+    bist_params::SYS_BIST_PAK,          ///< 0x00200000
 
     /// 0x0 for chiplets to let hotplug decide which chiplets to BIST
     0x0000000000000000,                 ///< chiplets
@@ -88,22 +89,23 @@ ReturnCode ody_abist(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 
     ReturnCode l_rc;
     bist_diags l_bist_diags = {0};
-    std::vector<unload_config> l_unload_configs;
 
     // Dummy variables to support poz_bist API, but unused in istep mode
     hwp_data_unit dbuff[128 * 4]; // SCA TODO: implement a filestream instead??
     hwp_array_ostream l_stream(dbuff, (sizeof(dbuff) / sizeof((dbuff)[0])));
 
-    FAPI_EXEC_HWP(l_rc, poz_bist, i_target, ody_abist_params, l_bist_diags, l_stream, l_unload_configs, BIST_CHIPOP_ID);
+    FAPI_EXEC_HWP(l_rc, poz_bist, i_target, ody_abist_params, l_bist_diags, l_stream, BIST_CHIPOP_ID);
     FAPI_TRY(l_rc);
 
     if (l_bist_diags.completed_stages & ody_abist_params.bist_stages::COMPARE)
     {
-        FAPI_ASSERT(!get_compare_fail_count(l_unload_configs),
-                    fapi2::NONZERO_MISCOMPARES().
-                    set_FAILING_RING_COUNT(get_compare_fail_count(l_unload_configs)),
-                    "%d rings failed compare check",
-                    get_compare_fail_count(l_unload_configs));
+        for (uint8_t chiplet_id = 0; chiplet_id < 64; chiplet_id++)
+        {
+            if (l_bist_diags.failing_regions[chiplet_id])
+            {
+                FAPI_ERR("Nonzero scan compare fail count");
+            }
+        }
     }
 
 fapi_try_exit:

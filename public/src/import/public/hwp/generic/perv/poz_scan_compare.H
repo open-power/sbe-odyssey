@@ -99,19 +99,18 @@ bool get_hash_target_addresses(
 
 /// @brief Compare ring content against expect hashes in the provided file
 ///
-/// Given a file containing ring addresses and associated hash signatures, sparse
-/// scan out the corresponding rings, hash the data with care mask files in the
-/// provided directory, and append any addresses for rings with mismatching
-/// signatures to our output vector.
+/// Given a chiplet target, a base ring address, and an expect hash, sparse scan out the
+/// corresponding rings, hash the data with care mask files in the provided directory, and
+/// append any flag compare status.
 ///
 /// @param[in]   i_target                  Target object on which to compare ring content
-/// @param[in]   i_compare_hash_fname      Path to pak file of one or more compare hashes
+/// @param[in]   i_base_ring_address       The base ring address we want to compare on i_target
 /// @param[in]   i_care_mask_dir           Path to directory of care masks hash with
-/// @param[out]  o_unload_configs          Vector of config data for unloads
+/// @param[in]   i_expect_hash             Expect hash value for the provided compare case
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode poz_scan_compare(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_CORE > & i_target,
-    const char* i_compare_hash_fname,
+    const uint32_t i_base_ring_address,
     const char* i_care_mask_dir,
-    std::vector<unload_config>& o_unload_configs);
+    const uint32_t i_expect_hash);

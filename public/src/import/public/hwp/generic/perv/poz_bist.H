@@ -74,6 +74,7 @@ struct bist_params
         LBIST_COMBINED       = 0x01000000,
         INT_MODE             = 0x00800000,
         SCAN0_ARY_FILL       = 0x00400000,
+        SYS_BIST_PAK         = 0x00200000,
 
         /// Multi bit flags
         /// PCB mux switching
@@ -184,14 +185,14 @@ struct bist_diags
 };
 
 typedef fapi2::ReturnCode (*poz_bist_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&,
-        const bist_params&, bist_diags&, fapi2::hwp_data_ostream&, std::vector<unload_config>&, const uint16_t);
+        const bist_params&, bist_diags&, fapi2::hwp_data_ostream&, const uint16_t);
 
 /// @brief Common module for ABIST/LBIST
 ///
 /// @param[in]   i_target               Chip to operate on
 /// @param[in]   i_params               Parameter block to define runtime options
 /// @param[out]  o_diags                Diagnostic return data
-/// @param[out]  o_unload_configs       Vector of config data for unloads
+/// @param[in]   i_dict_def             bistChipOp diagnostic dict key
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
@@ -199,6 +200,5 @@ extern "C"
     fapi2::ReturnCode poz_bist(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
                                const bist_params& i_params, bist_diags& o_diags,
                                fapi2::hwp_data_ostream& o_stream,
-                               std::vector<unload_config>& o_unload_configs,
                                const uint16_t i_dict_def = BIST_CHIPOP_ID);
 }
