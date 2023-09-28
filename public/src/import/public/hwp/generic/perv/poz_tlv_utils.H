@@ -30,24 +30,6 @@
 
 using namespace fapi2;
 
-/// @brief Enum for compare fail status
-///
-enum compare_status_code : uint8_t
-{
-    PASS = 0,
-    FAIL = 1,
-    UNKNOWN = 2,
-};
-
-/// @brief Struct to package unload info together for use in TLV ring unloads
-///
-struct unload_config
-{
-    uint32_t base_ring_address;
-    Target < TARGET_TYPE_PERV | TARGET_TYPE_CORE > unicast_target;
-    compare_status_code compare_status;
-};
-
 /// @brief Enum for generic flags belonging either a ring-unload or diagnostics tag
 ///
 enum generic_tag_flags : uint8_t
@@ -87,10 +69,6 @@ struct diags_tag
         0x0000; // Dictionary definition of return struct so that we know how to unpack on the other side of the FIFO
 };
 
-/// @brief Given an unload_config vector, return the amount of them which failed compare
-///
-uint16_t get_compare_fail_count(std::vector<unload_config>& i_unload_configs);
-
 /// @brief Generate a 5-byte TLV Tag for ring unload contents
 ///
 /// Generate a ring unload Tag describing outgoing ring contents --
@@ -127,12 +105,16 @@ void generate_diags_tag(const uint8_t& i_chip_num, const uint16_t& i_dict_def, d
 /// care bits in the passed in care file. Then actually scan out and write the care data (Value) to the
 /// output stream.
 ///
-/// @param[in]   i_unload_config        Unload config data structure
+/// @param[in]   i_target               Target object on which to unload ring content
+/// @param[in]   i_base_ring_address    The base ring address we want to unload on i_target
 /// @param[in]   i_care_file            Path to ring care mask file
 /// @param[out]  o_stream               Output data stream
 ///
-ReturnCode poz_write_tlv_ring_unload(const unload_config& i_unload_config,
-                                     const char* i_care_file, fapi2::hwp_data_ostream& o_stream);
+ReturnCode poz_write_tlv_ring_unload(
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_CORE > & i_target,
+    const uint32_t i_base_ring_address,
+    const char* i_care_file,
+    fapi2::hwp_data_ostream& o_stream);
 
 /// @brief Scan out and write TLV diagnostics contents to an output stream
 ///
