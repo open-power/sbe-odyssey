@@ -26,10 +26,8 @@ runtime_cmn_hwpf_dir_path = meson.global_source_root() + '/public/src/runtime/co
 
 infile_c = ['plat_file_access.C',
             'plat_ring_utils.C',
-            'plat_spd_access.C',
             'plat_hwp_data_stream.C',
             'plat_utils.C',
-            'i2cr.C',
            ]
 
 abs_runtime_cmn_hwpf_c_path = []
@@ -39,7 +37,6 @@ foreach infile : infile_c
 endforeach
 
 infile_c = [
-            'ody_fifo.C'
            ]
 
 abs_runtime_pz_cmn_hwpf_c_path = []
