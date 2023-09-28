@@ -197,12 +197,12 @@ Target<K, M, V>::getMulticast(const MulticastGroup i_group) const
 }
 
 template<TargetType K, MulticastType M, typename V>
-template< MulticastType O >
-inline Target < TARGET_TYPE_CORE | TARGET_TYPE_MULTICAST, O, V >
+template< TargetType T , MulticastType O >
+inline Target < T | TARGET_TYPE_MULTICAST, O, V >
 Target<K, M, V>::getMulticast(const MulticastGroup i_group, const MulticastCoreSelect i_cores) const
 {
-    check_getMulticast<TARGET_TYPE_CORE, O>();
-    return Target < TARGET_TYPE_CORE | TARGET_TYPE_MULTICAST, O, V > ();
+    check_getCoreCacheMulticast<T, O>();
+    return Target < T | TARGET_TYPE_MULTICAST, O, V > ();
 }
 
 

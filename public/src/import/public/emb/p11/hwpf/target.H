@@ -142,6 +142,7 @@ inline Target<T, M, V> Target<K, M, V>::getParent(void) const
                    "Parent target for a multicast target must also be multicast or COMPUTE_CHIP");
 
     static_assert( ( (K & TARGET_TYPE_CORE)   ||
+                     (K & TARGET_TYPE_L3CACHE) ||
                      (K & TARGET_TYPE_EQ)     ||
                      (K & TARGET_TYPE_PERV) ) &&
                    ( (T & TARGET_TYPE_EQ)     ||
@@ -156,7 +157,7 @@ inline Target<T, M, V> Target<K, M, V>::getParent(void) const
                    (T == TARGET_TYPE_ANY_POZ_CHIP),
                    "Invalid parent for EQ target, must be PERV or COMPUTE_CHIP");
 
-    static_assert( ( !(K & TARGET_TYPE_CORE) ) ||
+    static_assert( ( !(K & (TARGET_TYPE_CORE | TARGET_TYPE_L3CACHE)) ) ||
                    (T & TARGET_TYPE_EQ)     ||
                    (T & TARGET_TYPE_PERV)   ||
                    (T == TARGET_TYPE_COMPUTE_CHIP) ||
@@ -188,7 +189,8 @@ inline Target<T, M, V> Target<K, M, V>::getParent(void) const
         l_temp = reinterpret_cast< Target<T>* >(&G_vec_targets.at(PPE_PERV_TARGET_OFFSET));
     }
 
-    if( (TARGET_TYPE_EQ & T) && (TARGET_TYPE_CORE & K) ) // EC ===> EQ
+    if( ((TARGET_TYPE_EQ & T) && (TARGET_TYPE_CORE & K))  ||
+        ((TARGET_TYPE_EQ & T) && (TARGET_TYPE_L3CACHE & K))) // EC ===> EQ
     {
         l_temp = reinterpret_cast< Target<T>* >(&G_vec_targets.at(PPE_EQ_TARGET_OFFSET));
     }
@@ -299,26 +301,18 @@ template< TargetType T, MulticastType O >
 inline Target < T | TARGET_TYPE_MULTICAST, O, V >
 Target<K, M, V>::getMulticast(const MulticastGroup i_group) const
 {
-    // C++ does not allow partial specialization of class member functions (please prove me wrong!),
-    // so we need to use this static assertion instead. On the upside, the error message is much clearer ;)
-    static_assert((K == TARGET_TYPE_COMPUTE_CHIP || K == TARGET_TYPE_ANY_POZ_CHIP), "Parent target must be the proc chip");
-    static_assert((T & TARGET_TYPE_MULTICASTABLE) != 0,
-                  "Requested target type must be part of TARGET_TYPE_MULTICASTABLE");
-    static_assert(bitCount<T>::count == 1,
-                  "Requested target type must be a single type, TARGET_TYPE_MULTICAST will be added automatically");
 
+    check_getMulticast<T, O>();
     return Target < T | TARGET_TYPE_MULTICAST, O, V > ();
 }
 
 template<TargetType K, MulticastType M, typename V>
-template< MulticastType O >
-inline Target < TARGET_TYPE_CORE | TARGET_TYPE_MULTICAST, O, V >
+template< TargetType T , MulticastType O >
+inline Target < T | TARGET_TYPE_MULTICAST, O, V >
 Target<K, M, V>::getMulticast(const MulticastGroup i_group, const MulticastCoreSelect i_cores) const
 {
-    // C++ does not allow partial specialization of class member functions (please prove me wrong!),
-    // so we need to use this static assertion instead. On the upside, the error message is much clearer ;)
-    static_assert((K == TARGET_TYPE_COMPUTE_CHIP), "Parent target must be the proc chip");
-    return Target < TARGET_TYPE_CORE | TARGET_TYPE_MULTICAST, O, V > (
+    check_getCoreCacheMulticast<T, O>();
+    return Target < T | TARGET_TYPE_MULTICAST, O, V > (
                createPlatTargetHandle < TARGET_TYPE_CORE | TARGET_TYPE_MULTICAST > (i_cores));
 }
 

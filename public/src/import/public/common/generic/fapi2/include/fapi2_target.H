@@ -356,17 +356,18 @@ class Target
 
         ///
         /// @brief Get a multicast core target for a given chip
+        /// @tparam T The type of target to return; TARGET_TYPE_MULTICAST is added automatically; defaults to CORE
         /// @tparam O The type of multicast read operation for the target; defaults to OR
         /// @param[in] i_group The abstract multicast group (selecting EQs) the target should point to
-        /// @param[in] i_cores Which cores inside the selected EQ should be targeted
+        /// @param[in] i_cores Which cores or caches inside the selected EQ should be targeted
         /// @return The multicast target
         ///
         /// This method is only applicable to chip-level targets.
         /// If the requested multicast group cannot be mapped to an available HW multicast
         /// group, a platform specific error will be thrown.
         ///
-        template< MulticastType O = MULTICAST_OR >
-        inline Target < TARGET_TYPE_CORE | TARGET_TYPE_MULTICAST, O, V >
+        template< TargetType T , MulticastType O = MULTICAST_OR >
+        inline Target < T | TARGET_TYPE_MULTICAST, O, V >
         getMulticast(const MulticastGroup i_group, const MulticastCoreSelect i_cores) const;
 #endif
 
@@ -406,15 +407,16 @@ class Target
         // No multicast support for Hostboot Bootloader
 #ifndef FAPI_PLAT_MULTICAST_NOT_SUPPORTED
         ///
-        /// @brief Returns the core select vector associated with a Core target
-        /// @return The core select value for the target. For unicast core targets
-        /// the return value will have exactly one bit set. For multicast core
+        /// @brief Returns the core select vector associated with a Core or Cache target
+        /// @return The core/cache select value for the target. For unicast core/cache targets
+        /// the return value will have exactly one bit set. For multicast core/cache
         /// targets it will have between one and four bits set.
         ///
         inline MulticastCoreSelect
         getCoreSelect(void) const
         {
-            static_assert(K & TARGET_TYPE_CORE, "getCoreSelect is only applicable to TARGET_TYPE_CORE targets");
+            static_assert(K & (TARGET_TYPE_CORE | TARGET_TYPE_L3CACHE),
+                          "getCoreSelect is only applicable to targets that can leverage eq select (CORE | L3CACHE)");
             return _getCoreSelect();
         }
 #endif
@@ -527,6 +529,21 @@ class Target
             static_assert(_bitCount(T) == 1u,
                           "Requested target type must be a single type, TARGET_TYPE_MULTICAST will be added automatically");
         }
+
+        ///
+        /// @brief Static checks for getMulticast() with core/cache select. Platforms are expected to call this.
+        /// @tparam T The type of target to return; TARGET_TYPE_MULTICAST is added automatically
+        /// @tparam O The type of multicast read operation for the target; defaults to OR
+        ///
+        template< TargetType T, MulticastType O >
+        inline void check_getCoreCacheMulticast() const
+        {
+            static_assert ( (T & (TARGET_TYPE_CORE | TARGET_TYPE_L3CACHE) ),
+                            "Requested target is not CORE | L3CACHE type");
+
+            check_getMulticast<T, O>();
+        }
+
 #endif
 
         ///
