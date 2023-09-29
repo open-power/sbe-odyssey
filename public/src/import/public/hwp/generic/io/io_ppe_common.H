@@ -463,6 +463,7 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::ppe_start(const fapi2::Target<K, M, V>
     const uint8_t c_xidbgpro_len = 30;
 
     const uint8_t c_ppe_halted_bit = 17;
+    const uint8_t c_ppe_status_bit = 0;
 
     fapi2::buffer<uint64_t> l_buffer = 0;
 
@@ -516,6 +517,17 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::ppe_start(const fapi2::Target<K, M, V>
     l_buffer.setBit<c_ppe_halted_bit>();
     FAPI_TRY(fapi2::putScom(i_target, c_lfir_wclear, l_buffer),
              "Error putscom to MAC0_LFIR_REG (clear halt).");
+
+    FAPI_DBG("Check PPE halted state");
+    FAPI_TRY(fapi2::getScom(i_target, c_xidbgpro, l_buffer),
+             "Error putscom to XIDBGPRO (clear halt).");
+
+    if (l_buffer.getBit<c_ppe_status_bit>())
+    {
+        o_fail = true;
+        FAPI_DBG("PPE is halted.");
+        return fapi2::current_err;
+    }
 
 fapi_try_exit:
     FAPI_DBG("End");
