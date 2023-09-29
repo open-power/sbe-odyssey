@@ -3957,4 +3957,10 @@
   <entry name="ATTR_ODY_DRAMINIT_FIR_CHECK_ENABLE">
     <value>0x01</value>
   </entry>
+  <entry name="ATTR_MEM_EFF_DIMM_RAW_CARD_REFERENCE_DESIGN">
+    <value>0x00</value>
+  </entry>
+  <entry name="ATTR_MEM_EFF_DIMM_RAW_CARD_DESIGN_REVISION">
+    <value>0x00</value>
+  </entry>
 </entries>
