@@ -249,6 +249,13 @@ namespace fapi2
             g_platTarget->getChipletChildren(P, *this, l_include_nonfunctional, l_cast_children);
             return l_children;
         }
+        else if (K_NO_T == TARGET_TYPE_OMI)
+        {
+            STATIC_CHECK((T & ~TARGET_TYPE_OMI_CHILDREN) == 0,
+                         "Invalid child type for OMI target");
+            g_platTarget->getChipletChildren(P, *this, l_include_nonfunctional, l_cast_children);
+            return l_children;
+        }
         else
         {
             // If we fall through to here, there is no defined code path to handle the
