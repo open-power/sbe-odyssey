@@ -32,7 +32,6 @@
 ///
 
 // includes
-#include <stdio.h>
 #include <odyssey_scominfo.H>
 #include <odyssey_scom_addr.H>
 #include <odyssey_cu_utils.H>
@@ -86,27 +85,27 @@ extern "C"
                     {
                         uint8_t l_ring = l_scom.getRingId();
 
-                        if (l_ring == MEMPORT0_RING_ID || l_ring == MEMPORT1_RING_ID)
+                        if (l_ring == ODY_MEMPORT0_RING_ID || l_ring == ODY_MEMPORT1_RING_ID)
                         {
                             if (i_chipUnitNum == 0)
                             {
-                                l_scom.setRingId(MEMPORT0_RING_ID);
+                                l_scom.setRingId(ODY_MEMPORT0_RING_ID);
                             }
                             else
                             {
-                                l_scom.setRingId(MEMPORT1_RING_ID);
+                                l_scom.setRingId(ODY_MEMPORT1_RING_ID);
                             }
                         }
 
-                        if (l_ring == MEMPORT0_PHY_RING_ID || l_ring == MEMPORT1_PHY_RING_ID)
+                        if (l_ring == ODY_MEMPORT0_PHY_RING_ID || l_ring == ODY_MEMPORT1_PHY_RING_ID)
                         {
                             if (i_chipUnitNum == 0)
                             {
-                                l_scom.setRingId(MEMPORT0_PHY_RING_ID);
+                                l_scom.setRingId(ODY_MEMPORT0_PHY_RING_ID);
                             }
                             else
                             {
-                                l_scom.setRingId(MEMPORT1_PHY_RING_ID);
+                                l_scom.setRingId(ODY_MEMPORT1_PHY_RING_ID);
                             }
                         }
                     }
@@ -124,7 +123,7 @@ extern "C"
 
         if (l_rc)
         {
-            l_scom.setAddr(FAILED_TRANSLATION);
+            l_scom.setAddr(ODY_FAILED_TRANSLATION);
         }
 
         return l_scom.getAddr();

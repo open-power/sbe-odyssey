@@ -50,7 +50,7 @@ extern "C"
 
     typedef enum
     {
-        FAILED_TRANSLATION = 0xFFFFFFFFFFFFFFF1ull
+        ODY_FAILED_TRANSLATION = 0xFFFFFFFFFFFFFFF1ull
     } odysseyTranslationResult_t;
 
     /// @brief Creates the actual SCOM address based on the chip unit type, instance, and the input SCOM address (relative to chip unit instance 0)
@@ -69,7 +69,7 @@ extern "C"
     /// @brief Determine if the provided SCOM address correlates to any chip units (if so creates a list of chipUnitPairing structures which correspond)
     /// @param[in] i_odysseyCU          Enumeration of the chip unit type
     /// @param[in] i_ecLevel            Chip EC level represented in HEX digit value.  Example: i_ecLevel = 0x12 --> EC level 1.2
-    /// @param[in] i_scomAddr SCOM address to be tested
+    /// @param[in] i_scomAddr           SCOM address to be tested
     /// @param[out] o_chipUnitRelated   Returns true if SCOM address is associated with any chip units
     /// @param[out] o_chipUnitPairing   Collection of chipUnitPairing enums
     /// @param[in] i_mode               Translation mode, specifying different addr translation methods.
