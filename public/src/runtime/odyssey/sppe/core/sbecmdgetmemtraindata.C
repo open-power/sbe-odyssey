@@ -29,8 +29,7 @@
 #include "chipop_handler.H"
 #include "globals.H"
 #include "heap.H"
-
-#define SRAM_SCRATCH_GRANULAR_SIZE 0x10000 // 64 KB
+#include "odysseylink.H"
 
 using namespace fapi2;
 
@@ -90,7 +89,7 @@ uint32_t sbeGetMemTrainData(uint8_t *i_pArg)
         if(reqMsg.operation == MEMTRAINDUMP)
         {
             // Data is available and now stream it.
-            fifoRc = ostream.put((SRAM_SCRATCH_GRANULAR_SIZE / 4), (uint32_t *)g_draminitOffset);
+            fifoRc = ostream.put((SPPE_MEM_TRAINING_DATA_SIZE / 4), (uint32_t *)g_draminitOffset);
 
             // If FIFO access failure
             CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(fifoRc);

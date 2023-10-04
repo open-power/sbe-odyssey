@@ -33,8 +33,8 @@
 #include "mss_odyssey_attribute_getters.H"
 #include "mss_generic_attribute_getters.H"
 #include "plat_i2c_access.H"
+#include "odysseylink.H"
 
-#define SRAM_SCRATCH_GRANULAR_SIZE 0x10000 // 64 KB
 #define MEM_PAKNAME_MAX_CHAR  20 // ddr/ddimm/dmem.bin
 
 using namespace fapi2;
@@ -303,7 +303,7 @@ ReturnCode istepDraminitWithOcmb( voidfuncptr_t i_hwp)
         {
             // Allocate the scratch space of 64 KB for log data.
             scratchArea =
-                    (fapi2::hwp_data_unit*)Heap::get_instance().scratch_alloc(SRAM_SCRATCH_GRANULAR_SIZE);
+                    (fapi2::hwp_data_unit*)Heap::get_instance().scratch_alloc(SPPE_MEM_TRAINING_DATA_SIZE);
 
             if(scratchArea == NULL)
             {
@@ -314,7 +314,7 @@ ReturnCode istepDraminitWithOcmb( voidfuncptr_t i_hwp)
 
             // Create the stream class pointing to the scratch space.
             fapi2::hwp_array_ostream  logStream( scratchArea,
-                                      SRAM_SCRATCH_GRANULAR_SIZE/sizeof(fapi2::hwp_data_unit));
+                                      SPPE_MEM_TRAINING_DATA_SIZE/sizeof(fapi2::hwp_data_unit));
 
             Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
             SBE_EXEC_HWP(fapiRc, reinterpret_cast<sbeHwpDraminit_t>( i_hwp ),
