@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -59,9 +59,9 @@ extern "C" {
 
     const ChipletVitlDomain_t ChipletVitlDomainTable[] =
     {
-        { PIB_CHIPLET_ID,     ODYSSEY_STANDBY_DOMAIN },
-        { PERV_CHIPLET_ID,    ODYSSEY_TPVITL_DOMAIN  },
-        { MEM_CHIPLET_ID,     ODYSSEY_MEMVITL_DOMAIN },
+        { ODY_PIB_CHIPLET_ID,     ODYSSEY_STANDBY_DOMAIN },
+        { ODY_PERV_CHIPLET_ID,    ODYSSEY_TPVITL_DOMAIN  },
+        { ODY_MEM_CHIPLET_ID,     ODYSSEY_MEMVITL_DOMAIN },
     };
 
     // #################################################################
@@ -81,12 +81,12 @@ extern "C" {
     {
         //      Chiplet            RingID                 Clock domain
         //      -------        --------------       -----------------------------
-        {  PIB_CHIPLET_ID,     ALL_GOOD_ID,         ODYSSEY_STANDBY_DOMAIN            }, // Standby/CFAM
+        {  ODY_PIB_CHIPLET_ID,     ALL_GOOD_ID,         ODYSSEY_STANDBY_DOMAIN            }, // Standby/CFAM
 
-        {  PERV_CHIPLET_ID,    PSCOM_RING_ID,       ODYSSEY_TPVITL_DOMAIN             }, // TP
-        {  PERV_CHIPLET_ID,    ALL_GOOD_ID,         ODYSSEY_TPSBEPIBNET_DOMAIN        }, // TP
+        {  ODY_PERV_CHIPLET_ID,    ODY_PSCOM_RING_ID,   ODYSSEY_TPVITL_DOMAIN             }, // TP
+        {  ODY_PERV_CHIPLET_ID,    ALL_GOOD_ID,         ODYSSEY_TPSBEPIBNET_DOMAIN        }, // TP
 
-        {  MEM_CHIPLET_ID,     ALL_GOOD_ID,         ODYSSEY_MEMNONVITL_DOMAIN         }, // MEM
+        {  ODY_MEM_CHIPLET_ID,     ALL_GOOD_ID,         ODYSSEY_MEMNONVITL_DOMAIN         }, // MEM
     };
 
     // #################################################################

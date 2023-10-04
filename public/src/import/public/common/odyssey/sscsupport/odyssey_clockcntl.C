@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -97,7 +97,7 @@ extern "C"
                            i_scomAddr,
                            (odysseyTranslationMode_t) i_mode);
 
-            if (l_xlatedAddr == FAILED_TRANSLATION)
+            if (l_xlatedAddr == ODY_FAILED_TRANSLATION)
             {
                 l_rc = 1;
                 break;
@@ -121,7 +121,7 @@ extern "C"
                 o_domain = ODYSSEY_TPVITL_DOMAIN;
                 break;
             }
-            else if (l_endPoint == PCBSLV_ENDPOINT) // PCB slave endpoint
+            else if (l_endPoint == ODY_PCBSLV_ENDPOINT) // PCB slave endpoint
             {
                 if ( (i_chipUnitNum != 0) || (i_odysseyCU != ODYSSEY_PERV_CHIPUNIT) )
                 {
@@ -137,8 +137,8 @@ extern "C"
             // ----------------------------------------------------------------------------------
             // For all chiplets, if endpoint is Chiplet control or Clock control, domain is Vital
             // ----------------------------------------------------------------------------------
-            if ( (l_endPoint == CHIPLET_CTRL_ENDPOINT) || // 0x0
-                 (l_endPoint == CLOCK_CTRL_ENDPOINT) )    // 0x3
+            if ( (l_endPoint == ODY_CHIPLET_CTRL_ENDPOINT) || // 0x0
+                 (l_endPoint == ODY_CLOCK_CTRL_ENDPOINT) )    // 0x3
             {
                 dbg_print("\nChipletVitlDomainTable look-up: ChipletId 0x%.2X\n", l_chipletId);
 
