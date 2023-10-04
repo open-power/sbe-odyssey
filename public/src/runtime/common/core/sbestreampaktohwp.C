@@ -90,7 +90,7 @@ static ReturnCode sbestreampaktohwp_internal(
     // load the entirety of the stream, build actual hash value
     do
     {
-        sha3_t hashData;
+        sha3_t hashData __attribute__((aligned(8)));
 
         // Locate the File.
         FileArchive::Entry entry;
@@ -132,13 +132,16 @@ static ReturnCode sbestreampaktohwp_internal(
     if (fapiRc == FAPI2_RC_SUCCESS && i_check_hash)
     {
         /* In case hash mismatch from pak img, check_file_hash will return the miss-match hash*/
-        uint64_t *ptrMismatchHash;
+        uint64_t *ptrMismatchHash __attribute__((aligned(8)));
         uint64_t *ptrGenHash = (uint64_t *) hashData;
+
+        /* Hash list structure are un-aligned, workaround to copy to local variable */
+        uint64_t mismatchHash[sizeof(sha3_t)/sizeof(uint64_t)]  __attribute__((aligned(8)));
 
         /* Checking the image hash */
         uint32_t hashListRc = SBE::check_file_hash( i_pakname, hashData,
                                                     &g_hash_list,
-                                                    (sha3_t **)&ptrMismatchHash);
+                                                    (uint8_t **)&ptrMismatchHash);
         if (hashListRc != SBE::HASH_COMPARE_PASS)
         {
             /* ERROR message */
@@ -146,6 +149,9 @@ static ReturnCode sbestreampaktohwp_internal(
             SBE_ERROR_BIN(SBE_FUNC "check_file_hash failure file name: ", i_pakname, strlen(i_pakname));
         }
 
+        /* ppe constrain not possible to read unaligned data, fix - using memcpy
+           approach */
+        memcpy((uint8_t *)&mismatchHash, (uint8_t *)ptrMismatchHash, sizeof(sha3_t));
         /* Check the SBE class RC with HASH_COMPARE_FAIL, assert with FAPI */
         PLAT_FAPI_ASSERT( !(hashListRc == SBE::HASH_COMPARE_FAIL),
                     SBE_FILE_HASH_MISMATCH().
@@ -157,14 +163,14 @@ static ReturnCode sbestreampaktohwp_internal(
                     set_GEN_HASH_5(* (ptrGenHash + 5)).
                     set_GEN_HASH_6(* (ptrGenHash + 6)).
                     set_GEN_HASH_7(* (ptrGenHash + 7)).
-                    set_CMP_HASH_0(* (ptrMismatchHash + 0)).
-                    set_CMP_HASH_1(* (ptrMismatchHash + 1)).
-                    set_CMP_HASH_2(* (ptrMismatchHash + 2)).
-                    set_CMP_HASH_3(* (ptrMismatchHash + 3)).
-                    set_CMP_HASH_4(* (ptrMismatchHash + 4)).
-                    set_CMP_HASH_5(* (ptrMismatchHash + 5)).
-                    set_CMP_HASH_6(* (ptrMismatchHash + 6)).
-                    set_CMP_HASH_7(* (ptrMismatchHash + 7)),
+                    set_CMP_HASH_0( mismatchHash[0] ).
+                    set_CMP_HASH_1( mismatchHash[1] ).
+                    set_CMP_HASH_2( mismatchHash[2] ).
+                    set_CMP_HASH_3( mismatchHash[3] ).
+                    set_CMP_HASH_4( mismatchHash[4] ).
+                    set_CMP_HASH_5( mismatchHash[5] ).
+                    set_CMP_HASH_6( mismatchHash[6] ).
+                    set_CMP_HASH_7( mismatchHash[7] ),
                     "sbestreampaktohwp: Pak file hash mismatch");
 
         /* Check the SBE class RC with FILE_NOT_FOUND, assert with FAPI */
