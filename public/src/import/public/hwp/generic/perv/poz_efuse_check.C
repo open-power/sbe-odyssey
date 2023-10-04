@@ -77,7 +77,7 @@ ReturnCode poz_efuse_check(const Target<TARGET_TYPE_PROC_CHIP>& i_target_chip,
 
         FAPI_TRY(getScom(i_target_chip, OTPROM_STATUS_REG_ADDR, statusReg));
         FAPI_ASSERT(!statusReg.getBit<4>() && !statusReg.getBit<5>(), EFUSE_PROGRAMMING_ECC_ERROR(),
-                    "HWP: ECC error (correctable: %d, uncorrectable %d) from status register: 0x%08X%08X", statusReg.getBit<4>(),
+                    "HWP: ECC error (correctable: %d, uncorrectable %d) from status reg: 0x%08X%08X", statusReg.getBit<4>(),
                     statusReg.getBit<5>(), (uint64_t(statusReg) >> 32), static_cast<uint32_t>(uint64_t(statusReg) & 0xFFFFFFFF));
     }
 
