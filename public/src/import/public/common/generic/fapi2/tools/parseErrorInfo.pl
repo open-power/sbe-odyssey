@@ -543,8 +543,7 @@ foreach my $argnum ( 0 .. $#ARGV )
         print CRFILE "#include <plat_trace.H>\n";
         print CRFILE "#include <hwp_error_info.H>\n";
         print CRFILE "#include <p11_scom_registers.H>\n";
-        print CRFILE "#include <poz_scom_perv.H>\n";
-        print CRFILE "#include <ody_scom_perv_tcmc.H>\n";
+        print CRFILE "#include <ody_scom_perv.H>\n";
         print CRFILE "#include <ody_scom_ody_odc.H>\n";
         print CRFILE "#include <explorer_scom_addresses.H>\n";
         print CRFILE "namespace fapi2\n";
