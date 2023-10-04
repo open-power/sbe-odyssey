@@ -41,7 +41,7 @@
   <description>
     Build-time only attribute used to represent model build year
   </description>
-  <valueType>uint16</valueType>
+  <valueType>uint8</valueType>
   <default>0</default>
   <writeable/>
 </attribute>
@@ -52,7 +52,7 @@
   <description>
     Build-time only attribute used to represent model build day (Julian date)
   </description>
-  <valueType>uint8</valueType>
+  <valueType>uint16</valueType>
   <default>0</default>
   <writeable/>
 </attribute>
