@@ -49,7 +49,7 @@ ReturnCode write_efuse_bit(const Target<TARGET_TYPE_PROC_CHIP>& i_target_chip, u
     {
         FAPI_TRY(getScom(i_target_chip, OTPROM_STATUS_REG_ADDR, statusReg));
 
-        if (statusReg.getBit<44>())
+        if (!statusReg.getBit<44>())
         {
             break;
         }
@@ -104,7 +104,7 @@ ReturnCode poz_efuse_program(const Target<TARGET_TYPE_PROC_CHIP>& i_target_chip,
     for (uint32_t i = i_startBit; i < i_endBit; i++)
     {
 
-        bool bitWrite = (bool)(i_buffer[(i - i_startBit) / 8] >> (7 - ((i - i_startBit) % 8))) & 1;
+        bool bitWrite = (bool)((i_buffer[(i - i_startBit) / 8] >> (7 - ((i - i_startBit) % 8))) & 1);
 
         if(bitWrite)
         {
