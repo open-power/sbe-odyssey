@@ -1,15 +1,6 @@
 {
   "chipoptable": [
     {
-      "cmdClass":"AD",
-      "command":"0x01",
-      "function":"sbeGetRawAttrDump",
-      "fences":[
-        "SBE_FENCE_AT_CONTINUOUS_IPL","SBE_FENCE_AT_DUMPING"
-      ],
-      "headerFile":"sbecmdgetrawattrdump.H"
-    },
-    {
       "cmdClass": "AD",
       "command": "0x02",
       "function": "sbeCmdListAttr",
