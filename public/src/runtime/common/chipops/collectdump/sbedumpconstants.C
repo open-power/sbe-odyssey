@@ -25,7 +25,7 @@
 #include "sbedumpconstants.H"
 #include "target_types.H"
 
-DUMPTYPEMAP dumpTypeMap[4] = {
+DUMPTYPEMAP dumpTypeMap[5] = {
     {SBE_DUMP_TYPE_SCS   , DUMP_TYPE_SCS  },
     {SBE_DUMP_TYPE_MPIPL , DUMP_TYPE_MPIPL},
     {SBE_DUMP_TYPE_PERF  , DUMP_TYPE_PERF },
