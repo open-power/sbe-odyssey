@@ -38,7 +38,7 @@ namespace fapi2
     constexpr TargetType TARGET_TYPE_XBUS_CHILDREN = TARGET_TYPE_XBUSL;
     constexpr TargetType TARGET_TYPE_EX_CHILDREN = TARGET_TYPE_L3CACHE
         | TARGET_TYPE_SHADOW | TARGET_TYPE_CORE;
-    constexpr TargetType TARGET_TYPE_OCMB_CHIP_CHILDREN = TARGET_TYPE_PMIC | TARGET_TYPE_GENERICI2CRESPONDER | TARGET_TYPE_MEM_PORT;
+    constexpr TargetType TARGET_TYPE_OCMB_CHIP_CHILDREN = TARGET_TYPE_PMIC | TARGET_TYPE_GENERICI2CRESPONDER | TARGET_TYPE_MEM_PORT | TARGET_TYPE_DIMM;
 
     template<TargetType T>
     constexpr LogTargetType fapiTargetTypeToPlatTargetType()
@@ -158,7 +158,12 @@ namespace fapi2
                          "Invalid child target for OMI parent");
             return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_OCMB_CHIP>(*this);
         }
-
+        else if (T_NO_MCAST == TARGET_TYPE_OCMB_CHIP)
+        {
+            STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_OCMB_CHIP_CHILDREN) == 0,
+                         "Invalid child target for OMI parent");
+            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_OCMB_CHIP>(*this);
+        }
         // If we fall through to here, there is no defined code path to handle the
         // combination of T and K -- let's fail loudly.
         STATIC_COMPILE_ERROR("Unsupported combination of parent and child for getParent()");

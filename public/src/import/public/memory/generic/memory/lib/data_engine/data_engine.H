@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -35,7 +35,9 @@
 #ifndef _MSS_GEN_DATA_ENGINE_H_
 #define _MSS_GEN_DATA_ENGINE_H_
 
-#include <cstring>
+#ifndef __PPE__
+    #include <cstring>
+#endif
 #include <fapi2.H>
 #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
 #include <generic/memory/lib/data_engine/data_engine_utils.H>
