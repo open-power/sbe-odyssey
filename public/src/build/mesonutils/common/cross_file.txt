@@ -112,6 +112,7 @@ ekb_cmn_inc_path = [
     '/ring/generic',
     '/hwp/generic/ffdc',
     '/common/libs/spi',
+    '/common/generic/fapi2/include/plat',
         ]
 
 ekb_hwp_inc_path = [
