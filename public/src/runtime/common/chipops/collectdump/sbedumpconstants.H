@@ -55,10 +55,16 @@ extern uint8_t chipUnitTypeToLogTargetTypeMap[ ];
 //No: of bits used in HDCT.bin - 10bits (one bit for each dump type)
 enum dumpTypes
 {
-    DUMP_TYPE_SCS   = 0x00, /** System Check Stop */
-    DUMP_TYPE_MPIPL = 0x05, /** Memory Preserving IPl */
-    DUMP_TYPE_HB    = 0x06, /** Host Boot */
-    DUMP_TYPE_PERF  = 0x08, /** Performance */
+    DUMP_TYPE_SCS       = 0x00,
+    DUMP_TYPE_CSCX      = 0x02,
+    DUMP_TYPE_CCR       = 0x03,
+    DUMP_TYPE_CHCR      = 0x04,
+    DUMP_TYPE_MPIPL     = 0x05,
+    DUMP_TYPE_HB        = 0x06,
+    DUMP_TYPE_PM        = 0x07,
+    DUMP_TYPE_PERF      = 0x08,
+    DUMP_TYPE_CCRCLK    = 0x09,
+    DUMP_TYPE_CHCRCLK   = 0x0A,
 };
 
 //Chip Unit types(Chip unit types encoded as in HDCT.bin)

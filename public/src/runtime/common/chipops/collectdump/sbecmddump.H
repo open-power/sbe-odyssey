@@ -61,29 +61,11 @@ typedef struct
 
     /**
      * @brief Validate the dumpType with the sbe supported dump type.
-     *        eg SCS, MPIPL, Perf, HB.
+     *        eg SCS, MPIPL, Perf, HB. Support given by plat code
      * @return bool true  if the dumpType is sbe supported dump type.
      *              false if the dumpType is not sbe supported.
-     *
-     * @todo Validate Dump type should be Plat function
-     *       odyssey not supports SBE_DUMP_TYPE_PERF
-     *       P11 supports SBE_DUMP_TYPE_PERF.
-     * Jira: PFSBE-532 Validate dump move to plat function
      */
-    bool validateDumpType()
-    {
-        SBE_DEBUG("Validating Dump Type: %X", (uint8_t)dumpType);
-        bool status = false;
-        switch(dumpType)
-        {
-            case SBE_DUMP_TYPE_SCS:
-            case SBE_DUMP_TYPE_MPIPL:
-            case SBE_DUMP_TYPE_PERF:
-            case SBE_DUMP_TYPE_HB:
-                status = true;
-        };
-        return status;
-    }
+    bool validateDumpType();
 
     /**
      * @brief Validate the clock state.

@@ -387,10 +387,11 @@ enum
 */
 enum sbeSupportedDumpTypes
 {
-    SBE_DUMP_TYPE_SCS   = 0x01, /** System Check Stop */
-    SBE_DUMP_TYPE_MPIPL = 0x02, /** Memory Preserving IPl */
-    SBE_DUMP_TYPE_PERF  = 0x03, /** Performance */
-    SBE_DUMP_TYPE_HB    = 0x04, /** Host Boot */
+    SBE_DUMP_TYPE_SCS        = 0x01, /* System Check Stop */
+    SBE_DUMP_TYPE_MPIPL      = 0x02, /* Memory Preserving IPl */
+    SBE_DUMP_TYPE_PERF       = 0x03, /* Performance */
+    SBE_DUMP_TYPE_RESERVED   = 0x04, /* Reserved */
+    SBE_DUMP_TYPE_HB         = 0x05, /* Host Boot */
 };
 
 #ifdef __cplusplus

@@ -28,6 +28,24 @@ using namespace fapi2;
 
 #define DUMP_HDR_CHIP_TYPE_TO_ENCODE 0x7
 
+
+
+/**************** validate dump type ***************/
+bool sbeGetDumpReq_t::validateDumpType()
+{
+    SBE_DEBUG("Validating Dump Type: %X", (uint8_t)dumpType);
+    bool status = false;
+    switch(dumpType)
+    {
+        case SBE_DUMP_TYPE_SCS:
+        case SBE_DUMP_TYPE_MPIPL:
+        case SBE_DUMP_TYPE_PERF:
+        case SBE_DUMP_TYPE_HB:
+            status = true;
+    };
+    return status;
+}
+
 /****************** getDumpHdrChipTypeToEncode *****************/
 uint8_t sbeCollectDump::getDumpHdrChipTypeToEncode()
 {
