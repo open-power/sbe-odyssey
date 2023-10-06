@@ -501,7 +501,7 @@ uint32_t sbeCollectDump::writeGetFastArrayPacketToFifo()
                             dumpFastArrayReq.logTargetType,
                             iv_hdctRow->genericHdr.chipletStart);
 
-        // Getting fast-array control blob size
+        // Getting fast-array control blob size in word
         uint32_t fastarrayBlobSize = 0x00;
         l_fapiRc = sbeCtrlFaUtilsGetCtrlBlobSize( faFileName,
                                                   fastarrayBlobSize,
@@ -523,8 +523,8 @@ uint32_t sbeCollectDump::writeGetFastArrayPacketToFifo()
         }
 
         SBE_INFO(SBE_FUNC "fastarray blob size: 0x%x", fastarrayBlobSize);
-        // fast array length in bytes
-        iv_tocRow.hdctHeader.dataLength = (fastarrayBlobSize * 8);
+        // fast array length in bits
+        iv_tocRow.hdctHeader.dataLength = ((fastarrayBlobSize * sizeof(uint32_t)) * 8);
         // Update TOC Header
         l_rc = iv_oStream.put(len, (uint32_t*)&iv_tocRow.hdctHeader);
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
