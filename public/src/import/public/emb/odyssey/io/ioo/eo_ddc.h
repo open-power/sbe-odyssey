@@ -55,8 +55,13 @@
 #define max_eye 0xFFFF
 #define seek_error -1
 
-int  pr_recenter(t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, uint32_t* Esave, uint32_t* Dsave, int* Doffset,
-                 int Eoffset);
+int  pr_recenter_werr(t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, uint32_t* Esave, uint32_t* Dsave, int* Doffset,
+                      int Eoffset, bool ret_err);
+static inline int  pr_recenter(t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, uint32_t* Esave, uint32_t* Dsave,
+                               int* Doffset, int Eoffset)
+{
+    return pr_recenter_werr(gcr_addr, bank, pr_vals, Esave, Dsave, Doffset, Eoffset, false);
+}
 int pr_seek_ber (t_gcr_addr* gcr_addr, t_bank bank, unsigned int Dstep, bool dirL1R0, t_seek seek_edge, int* pr_vals);
 // Run DDC on a lane and update historical width
 int eo_ddc(t_gcr_addr* gcr_addr, t_bank bank, bool recal);

@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23091800 |vbr     | EWM 301872: Changes for periodic (staggered) auto recal
 // vbr23050900 |vbr     | EWM 303528: Updates to EOL toggle for relative rates/periods, code size, and testability
 // vbr23032100 |vbr     | EWM 301318: Increase recal not run limit from 500ms to 5s due to Odyssey DL recal req rate.
 // mbs22083000 |mbs     | PSL comment updates
@@ -99,6 +100,7 @@
 /////////////////////////////////////////////////
 #define FAST_EOL_TOGGLE_PERIOD      PK_MILLISECONDS(200)  // Keeping this the same as THREAD_LOCK_CHECK_PERIOD is not required, but saves ~64B
 #define THREAD_LOCK_CHECK_PERIOD    PK_MILLISECONDS(200)
+#define AUTO_RECAL_RUN_PERIOD       PK_MILLISECONDS(200)
 #define RECAL_NOT_RUN_CHECK_PERIOD  PK_MILLISECONDS(5000)
 
 
@@ -147,6 +149,18 @@ void supervisor_thread(void* arg)
         fast_eol_toggle_interval     = PK_INTERVAL_SCALE(FAST_EOL_TOGGLE_PERIOD);
     }
 
+    PkInterval auto_recal_run_interval;
+    unsigned int auto_recal_period_cfg = mem_pg_field_get(rx_auto_recal_period);
+
+    if (auto_recal_period_cfg)
+    {
+        auto_recal_run_interval = (PkInterval)scaled_microsecond << (auto_recal_period_cfg + 7);
+    }
+    else
+    {
+        auto_recal_run_interval = PK_INTERVAL_SCALE(AUTO_RECAL_RUN_PERIOD);
+    }
+
     PkInterval recal_not_run_check_interval;
     unsigned int recal_not_run_sim_mode = mem_pg_field_get(ppe_recal_not_run_sim_mode);
 
@@ -166,6 +180,12 @@ void supervisor_thread(void* arg)
     PkTimebase thread_locked_check_time = current_time + thread_locked_check_interval;
     PkTimebase recal_not_run_check_time = current_time + recal_not_run_check_interval;
     PkTimebase fast_eol_toggle_time     = current_time + fast_eol_toggle_interval;
+    PkTimebase auto_recal_run_time      = current_time + auto_recal_run_interval;
+
+    // Initialize periodic auto recal to thread 0
+    unsigned int auto_recal_run_thread = 0;
+    mem_regs_u16_base_put(pg_base_addr(rx_auto_recal_periodic_run_done_alias_addr, auto_recal_run_thread),
+                          rx_auto_recal_periodic_run_done_alias_mask, rx_auto_recal_periodic_run_done_alias_shift, 0b10);
 
 
     /////////////////////
@@ -311,17 +331,10 @@ void supervisor_thread(void* arg)
                         continue;
                     }
 
-                    // Get the vector and then clear it for next time
-                    uint32_t recal_run_or_unused_0_23 =
-                        (mem_regs_u16_base_get(pg_base_addr(rx_recal_run_or_unused_0_15_addr,  thread), rx_recal_run_or_unused_0_15_mask,
-                                               rx_recal_run_or_unused_0_15_shift)  << 16) |
-                        (mem_regs_u16_base_get(pg_base_addr(rx_recal_run_or_unused_16_23_addr, thread), rx_recal_run_or_unused_16_23_mask,
-                                               rx_recal_run_or_unused_16_23_shift) << (16 - rx_recal_run_or_unused_16_23_width));
-
-                    mem_regs_u16_base_put(pg_base_addr(rx_recal_run_or_unused_0_15_addr,  thread), rx_recal_run_or_unused_0_15_mask,
-                                          rx_recal_run_or_unused_0_15_shift,  0);
-                    mem_regs_u16_base_put(pg_base_addr(rx_recal_run_or_unused_16_23_addr, thread), rx_recal_run_or_unused_16_23_mask,
-                                          rx_recal_run_or_unused_16_23_shift, 0);
+                    // Get the vector (from the specific thread) and then clear it for next time
+                    uint32_t recal_run_or_unused_0_23 = mem_regs_u32_raw_base_get(pg_base_addr(rx_recal_run_or_unused_0_15_addr,
+                                                        thread)); //reads _0_15 + _16_23
+                    mem_regs_u32_raw_base_put(pg_base_addr(rx_recal_run_or_unused_0_15_addr, thread), 0);  //writes _0_15 + _16_23
 
                     // Adjust the vector based on the actual number of lanes in the group
                     int num_lanes = get_num_rx_physical_lanes_for_thread(thread);
@@ -360,6 +373,34 @@ void supervisor_thread(void* arg)
                     } //if(!recal_run)
                 } //for(thread)
             } //if(time>check_time)
+
+
+            ////////////////////////////////////////////////
+            // Enable Auto Recal on a thread (round robin)
+            ////////////////////////////////////////////////
+            // PSL auto_recal_stagger
+            if (current_time > auto_recal_run_time)
+            {
+                set_debug_state(0xF00C); // DEBUG - stagger auto recal
+
+                // Update the time for the next run
+                auto_recal_run_time = current_time + auto_recal_run_interval;
+
+                // Clear auto recal run on the previous thread (do NOT clear done until a thread is allowed to run)
+                mem_regs_u16_base_put(pg_base_addr(rx_auto_recal_periodic_run_addr, auto_recal_run_thread),
+                                      rx_auto_recal_periodic_run_mask, rx_auto_recal_periodic_run_shift, 0);
+
+                // Move to the next thread (round robin)
+                auto_recal_run_thread = (auto_recal_run_thread + 1) % io_threads;
+
+                // Clear auto recal done lane vector for the new thread
+                mem_regs_u32_raw_base_put(pg_base_addr(rx_auto_recal_done_0_15_addr, auto_recal_run_thread),
+                                          0);  //writes _0_15 + _16_23
+
+                // Set auto recal run and clear done for the new thread
+                mem_regs_u16_base_put(pg_base_addr(rx_auto_recal_periodic_run_done_alias_addr, auto_recal_run_thread),
+                                      rx_auto_recal_periodic_run_done_alias_mask, rx_auto_recal_periodic_run_done_alias_shift, 0b10);
+            } //if(time>run_time)
 
 
             ////////////////////////////////////////
@@ -423,8 +464,20 @@ void supervisor_thread(void* arg)
 
 } //supervisor_thread
 
+
 // Assumption Checking
 PK_STATIC_ASSERT(ppe_thread_loop_count_width == 16);
+PK_STATIC_ASSERT((rx_recal_run_or_unused_0_15_addr + 1) == rx_recal_run_or_unused_16_23_addr);
+PK_STATIC_ASSERT((rx_recal_run_or_unused_0_15_addr % 2) == 0);
+PK_STATIC_ASSERT(rx_recal_run_or_unused_0_15_width == 16);
+PK_STATIC_ASSERT(rx_recal_run_or_unused_16_23_width == 8);
+PK_STATIC_ASSERT(rx_recal_run_or_unused_16_23_startbit == 0);
+PK_STATIC_ASSERT((rx_auto_recal_done_0_15_addr + 1) == rx_auto_recal_done_16_23_addr);
+PK_STATIC_ASSERT((rx_auto_recal_done_0_15_addr % 2) == 0);
+PK_STATIC_ASSERT(rx_auto_recal_done_0_15_width == 16);
+PK_STATIC_ASSERT(rx_auto_recal_done_16_23_width == 8);
+PK_STATIC_ASSERT(rx_auto_recal_done_16_23_startbit == 0);
+PK_STATIC_ASSERT(rx_auto_recal_periodic_run_done_alias_width == 2);
 
 
 // DL PPE Test Code

@@ -555,9 +555,6 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init_thread(const fapi2::Target<K
     //"ppe_channel_loss": 2,
     FAPI_TRY(MEM_REG_PPE_CHANNEL_LOSS_PUT(iv_regs, i_target, i_thread, 2));
 
-    //"rx_ctle_peak1_cal_disable": 0, *
-    FAPI_TRY(MEM_REG_RX_CTLE_PEAK1_CAL_DISABLE_PUT(iv_regs, i_target, i_thread, 0));
-
     for (l_lane = 0; l_lane < c_max_lanes; l_lane++)
     {
         if (l_rx_mask & 0x80000000)

@@ -40,6 +40,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mwh23060600 |mwh     | EMW_306006 increase jump table to 70% for init issue low Amax
 // vbr23011200 |vbr     | Issue 297310: added sleep on an abort/servo error
 // vbr22111700 |vbr     | Adjusted sleeps
 // jjb22103100 |jjb     | Issue 292937 : added io_sleeps within eo_vga and removed io_sleeps after eo_vga call.
@@ -110,15 +111,15 @@ static uint16_t servo_ops_gain_b[2] = { c_ap_xxx1x_bd_n000, c_an_xxx0x_bd_n000 }
 ///////////////////////////////////
 // VGA Jump Table (0.9 of target)
 ///////////////////////////////////
-#define vga_jump_table_size  9
+#define vga_jump_table_size  10
 #define vga_jump_table_max   (vga_jump_table_size - 1)
 const uint8_t vga_jump_table[vga_jump_table_size] =
 {
 //Jumptable was 10 but moving down to 50% we only need 8 place
 //target 50%                            90%    80%  70%  60%  50%
-    //8,   // ratio <= 0.3750        15,    13,  11,  10    ,
-    8,   // ratio <= 0.4375        12,    11,  9,   8    8,
-    7,   // ratio <= 0.5000        10,    9,   8,   7    7,
+    11,   // ratio <= 0.3750       15,    13,  11,  10    ,
+    9,   // ratio <= 0.4375        12,    11,  9,   8    8,
+    8,   // ratio <= 0.5000        10,    9,   8,   7    7,
     6,   // ratio <= 0.5625         8,    7,   6,   5    6,
     5,   // ratio <= 0.6250         7,    6,   5,   4    5,
     4,   // ratio <= 0.6875         5,    5,   4,   3    4,

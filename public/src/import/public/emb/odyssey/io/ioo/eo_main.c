@@ -39,6 +39,14 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23092900 |vbr     | EWM 313411: Moved a read and changed accesses to fast_write to improve end of recal thread active time
+// vbr23091900 |vbr     | EWM 301872: Added tracking of auto_recal free run count
+// vbr23082800 |vbr     | EWM 308211: Check and handle cdr_lock return status.
+// vbr23090600 |vbr     | EWM 307967: Increased AXO initial training time budget
+// vbr23082300 |vbr     | EWM 306166: Enable the clk phase detector for Gen 1/2 safe bank switch
+// jjb23081000 |jjb     | Issue 309272: Added Sigdet calibration support.
+// vbr23062300 |vbr     | EWM 307543: Do not do fw_reset in AXO initial training (same as P10).
+// vbr23060100 |vbr     | Always switch to A at end of initial training in PCIe (DL clock is disabled).
 // vbr23051500 |vbr     | EWM 304749: Skip final CDR lock check in PCIe Gen1/2 Recal.
 // mwh23051800 |mwh     | change to void eo_vga_pathoffset
 // mwh23051700 |mwh     | EWM 303123: removed if (status & abort_code) { goto CLEANUP; } for eo_vga_pathoffset never used or hit
@@ -307,6 +315,7 @@
 #include "eo_rxbist_epoff_final.h"
 #include "rx_sigdetbist_test.h"
 #include "ioo_margin_hv.h"
+#include "rx_sigdetcal.h"
 
 #include "tx_zcal_tdr.h"
 #include "tx_dcc_main.h"
@@ -324,7 +333,7 @@
 
 // PPE Initial Calibration Runtime limits as specified in Workbook 4.5 Calibration Main Loop with large margins
 #define PPE_INIT_CAL_TIME_US_BUDGET_PCIE  450
-#define PPE_INIT_CAL_TIME_US_BUDGET_AXO   950
+#define PPE_INIT_CAL_TIME_US_BUDGET_AXO  1350
 
 
 // Local Functions
@@ -485,6 +494,14 @@ int eo_main_dccal_rx(t_gcr_addr* gcr_addr)
             if (rx_sigdet_check_en_int)
             {
                 rx_sigdetbist_test(gcr_addr);
+            }
+
+            int rx_dc_enable_sigdet_cal_int = mem_pg_field_get(rx_dc_enable_sigdet_cal);
+
+            // PSL rx_dc_enable_sigdet_cal_int
+            if (rx_dc_enable_sigdet_cal_int)   // Run RX Sigdet Calibration if enabled
+            {
+                rx_sigdetcal(gcr_addr);
             }
         }//loff_ab
     } //if(pcie)
@@ -732,8 +749,11 @@ int eo_main_init(t_gcr_addr* gcr_addr)
         put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_dis_cdr_b_dis, fast_write);
 
         // Issue 256712: Reset the flywheel to clear out bad value that may have been reached during Electrical Idle or TxEq Change
-        put_ptr_field(gcr_addr, rx_pr_fw_reset_ab_alias, 0b11, read_modify_write);
-        put_ptr_field(gcr_addr, rx_pr_fw_reset_ab_alias, 0b00, read_modify_write);
+        if (pcie_cal)   //EWM 307543: PCIe Only (AXO has DL Clock enabled)
+        {
+            put_ptr_field(gcr_addr, rx_pr_fw_reset_ab_alias, 0b11, read_modify_write);
+            put_ptr_field(gcr_addr, rx_pr_fw_reset_ab_alias, 0b00, read_modify_write);
+        }
     }
 
     // HW532652: The psave logic sets bit_lock_done, so clear it here
@@ -1059,7 +1079,8 @@ int eo_main_init(t_gcr_addr* gcr_addr)
 
     if (pcie_gen1_2_cal && ((eo_phase_sel_0_2 & 0b001) == 0))
     {
-        // Only need bank sync for Phase 2 in Gen1/2 (final bank switch); do not need in Phase 1.
+        // Only need bank sync for Phase 2 in Gen1/2 (final bank switch); do not need in Phase 1 (or 0 which exits earlier).
+        // Don't need to be in sync for the bank switch since DL clock is disabled, but the clocks can't be 180 degrees out of phase (HW519449).
         bank_sync_enable = 0;
     }
     else
@@ -1217,9 +1238,12 @@ CLEANUP:
     // Clear cal lane sel
     put_ptr_field(gcr_addr, rx_clr_cal_lane_sel, 0b1, fast_write);
 
-    // HW522518: Don't switch banks if init failed.
+    // HW522518: Don't switch banks if init failed (AXO).
     // The primary concern is to avoid a DL clock glitch when bank sync fails.
-    if (status == rc_no_error)
+    // In PCIe, always switch at the end of the final phase since the DL clock is always disabled prior to calling this.
+    bool switch_bank = pcie_cal ? ((status & phase_done_code) == 0) : (status == rc_no_error);
+
+    if (switch_bank)
     {
         // Set Bank A as Main and Bank B as Alt
         // PSL set_cal_bank
@@ -1245,6 +1269,7 @@ CLEANUP:
     // Clear the recal count
     mem_pl_field_put(rx_lane_recal_cnt, lane, 0);
     mem_pl_bit_clr(rx_min_recal_cnt_reached, lane);
+    mem_pl_bit_clr(rx_free_run_auto_recal_cnt_reached, lane);
 
     // Moved to run_recalibration(): Clear the recal_abort sticky bit in case it was previously asserted
     //put_ptr_field(gcr_addr, rx_dl_phy_recal_abort_sticky_clr, 0b1, fast_write); // strobe bit
@@ -1446,6 +1471,9 @@ static int eo_main_recal_rx(t_gcr_addr* gcr_addr)
 
     io_sleep(get_gcr_addr_thread(gcr_addr));
 
+    // Enabled BIST Checks
+    int bist_check_en = get_ptr_field(gcr_addr, rx_check_en_alias);
+
     // Remove any applied static offset. If this is not set before initial training it could get tied up in hysteresis and act strangely.
     // Both LOff and PR functions sequence the offset via mode controls and status
     loff_offset_wrap(gcr_addr, cal_bank, false);
@@ -1508,7 +1536,13 @@ static int eo_main_recal_rx(t_gcr_addr* gcr_addr)
         // PSL put_rx_pr_edge_track_cntl
         put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_lcl_cdr_b_lcl, fast_write);
         bool set_fir_on_error = false;
-        wait_for_cdr_lock(gcr_addr, cal_bank, set_fir_on_error);
+        status |= wait_for_cdr_lock(gcr_addr, cal_bank, set_fir_on_error);
+
+        // PSL cdr_lock_abort
+        if (status)
+        {
+            goto CLEANUP;
+        }
     }
 
     // Cal Step: Edge Offset (Live Data) - Only run in AXO, PCIe Gen4, PCIe Gen5
@@ -1684,6 +1718,13 @@ CLEANUP:
         recal_cnt = recal_cnt + 1;
         mem_pl_field_put(rx_lane_recal_cnt, lane, recal_cnt);
 
+        unsigned int auto_recal_free_run_cnt = mem_pg_field_get(rx_auto_recal_free_run_cnt);
+
+        if ((auto_recal_free_run_cnt != 0) && (recal_cnt >= auto_recal_free_run_cnt))
+        {
+            mem_pl_bit_set(rx_free_run_auto_recal_cnt_reached, lane);
+        }
+
         if (!min_recal_cnt_reached)
         {
             unsigned int min_recal_cnt = mem_pg_field_get(rx_min_recal_cnt);
@@ -1694,15 +1735,14 @@ CLEANUP:
                 min_recal_cnt_reached = 1;
             }
         }
-    }
+    }//if(!abort)
 
     // Perform Check of VGA, CTLE, LTE, and QPA values
     // Check pass/fail status of other steps, too
     // part of bist
     if (min_recal_cnt_reached)
     {
-        int bist_check_en = get_ptr_field(gcr_addr, rx_check_en_alias);
-
+        // EWM 313411 Moved earlier for thread active time: int bist_check_en = get_ptr_field(gcr_addr, rx_check_en_alias);
         if ( bist_check_en )
         {
             if (bist_check_en & rx_eoff_check_en_mask) //must be before vclq so set fail_flag
@@ -1734,7 +1774,7 @@ CLEANUP:
             if (!pcie_gen1_2_cal)
             {
                 bool set_fir_on_error = true;
-                wait_for_cdr_lock(gcr_addr, cal_bank, set_fir_on_error);
+                status |= wait_for_cdr_lock(gcr_addr, cal_bank, set_fir_on_error);
             }
 
             // HW532652: Turn off invalid lock detection to help with DL bumping
@@ -1748,23 +1788,34 @@ CLEANUP:
             }
             else     //PCIe
             {
-                // EWM294195: Safely Switch Banks
-                // Note: cal_bank variable is not updated.
-
-                // Clear the bank align error checker
-                put_ptr_field(gcr_addr, rx_bank_align_error_sticky_clr, 0b1, fast_write); // pl, write-only pulse reg
-
-                // Check for PIPE RxActive
-                set_gcr_addr_reg_id(gcr_addr, tx_group); // PIPE registers are in TX reg space
-                int pipe_rxactive = get_ptr_field(gcr_addr, pipe_state_rxactive);
-                set_gcr_addr_reg_id(gcr_addr, rx_group);
-
-                // PSL pipe_rxactive
-                if (pipe_rxactive)
+                // PSL bank_swap_no_abort
+                if (status == rc_no_error)   // Skip bank swap if had an abort/error in cdr_lock
                 {
-                    // Only attempt a switch if PIPE RxActive is asserted (otherwise bus may be in electrical idle)
-                    put_ptr_field(gcr_addr, rx_bank_safe_swap, 0b1, fast_write); // pl, write-only pulse reg
-                }
+                    // EWM294195: Safely Switch Banks
+                    // Note: cal_bank variable is not updated.
+
+                    // EWM306166: Enable circuit clock phase detector (ZMetis DD2+) in the safe bank swap.
+                    // This has a +/-4UI tolerance so it does not protect against all possible fail cases.
+                    put_ptr_field(gcr_addr, rx_bank_clk_phase_detect_en_alias, 0b11, fast_write); // pl, only field in reg
+
+                    // Clear the bank align error checker
+                    put_ptr_field(gcr_addr, rx_bank_align_error_sticky_clr, 0b1, fast_write); // pl, write-only pulse reg
+
+                    // Check for PIPE RxActive
+                    set_gcr_addr_reg_id(gcr_addr, tx_group); // PIPE registers are in TX reg space
+                    int pipe_rxactive = get_ptr_field(gcr_addr, pipe_state_rxactive);
+                    set_gcr_addr_reg_id(gcr_addr, rx_group);
+
+                    // PSL pipe_rxactive
+                    if (pipe_rxactive)
+                    {
+                        // Only attempt a switch if PIPE RxActive is asserted (otherwise bus may be in electrical idle)
+                        put_ptr_field(gcr_addr, rx_bank_safe_swap, 0b1, fast_write); // pl, write-only pulse reg
+                    }
+
+                    // Disable the circuit clock phase detector
+                    put_ptr_field(gcr_addr, rx_bank_clk_phase_detect_en_alias, 0b00, fast_write); // pl, only field in reg
+                } //if(!status)
             } //if(!pcie_mode)
         } //!min_recal_cnt_reached
 

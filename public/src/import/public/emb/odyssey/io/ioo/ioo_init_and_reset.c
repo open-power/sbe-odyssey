@@ -39,6 +39,12 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// jjb23091923 |jjb     | Isssue 312840: Updated write_tx_pl_overrides to enable pipe_config_ebuffrst_clr_rxdvalid_en.
+// vbr23090600 |vbr     | EWM 307329: Set rx_clkgen_en_Xbank_outbuf for both banks on zMetis DD1.
+// mwh23082500 |mwh     | EWM 309342 :change rx_bist_freq_adjust_dc and rx_bist_lfpath_sel_dc to match picture in issue
+// vbr23082500 |vbr     | EWM 307333: updated freq_adj settings
+// jjb23082400 |jjb     | Issue 3010643: use num_lanes_tx for pcie BIST to enable BIST on ZCAL lane for PAXO links.
+// jjb23052400 |jjb     | Issue 305590: PIPE Fence Output Value for RXDATAVALID high during PCIe BIST
 // vbr23050800 |vbr     | EWM 303758: set phase_step to 0.09375 for all rates on Odyssey
 // vbr23042800 |vbr     | Issue 303676: Increasing invalid lock thresh setting for gen4 peak2 mesa fails.
 // vbr23042000 |vbr     | EWM302995: Set rx_recal_run_or_unused_0_23 bit on a lane reset.
@@ -294,10 +300,10 @@ typedef struct struct_data_rate_settings
 // 2.5 Gbps
 const t_data_rate_settings c_data_rate_settings_2g =
 {
-    .rx_freq_adjust               = 0x0030,
+    .rx_freq_adjust               = 0x0010,
     .rx_ctle_peak2_h_sel          = 0, // H2
     .rx_pr_phase_step             = c_phase_step_296875,
-    .rx_bist_freq_adjust_8xx      = 2, // EWM300848: Correct Rx Bist Freq Adjust
+    .rx_bist_freq_adjust_8xx      = 2,
     .rx_bist_freq_adjust_9xx      = 0,
     .rx_bist_atten_dc_sel_dc      = 0,
     .rx_bist_atten_ac_sel_dc      = 0,
@@ -323,10 +329,10 @@ const t_data_rate_settings c_data_rate_settings_2g =
 // 5.0 Gbps
 const t_data_rate_settings c_data_rate_settings_5g =
 {
-    .rx_freq_adjust               = 0x0072,
+    .rx_freq_adjust               = 0x0052,
     .rx_ctle_peak2_h_sel          = 0, // H2
     .rx_pr_phase_step             = c_phase_step_500,
-    .rx_bist_freq_adjust_8xx      = 2, // EWM300848: Correct Rx Bist Freq Adjust
+    .rx_bist_freq_adjust_8xx      = 2,
     .rx_bist_freq_adjust_9xx      = 0,
     .rx_bist_atten_dc_sel_dc      = 0,
     .rx_bist_atten_ac_sel_dc      = 0,
@@ -355,7 +361,7 @@ const t_data_rate_settings c_data_rate_settings_8g =
     .rx_freq_adjust               = 0x00B4,
     .rx_ctle_peak2_h_sel          = 0, // H2
     .rx_pr_phase_step             = c_phase_step_500,
-    .rx_bist_freq_adjust_8xx      = 2, // EWM300848: Correct Rx Bist Freq Adjust
+    .rx_bist_freq_adjust_8xx      = 2,
     .rx_bist_freq_adjust_9xx      = 0,
     .rx_bist_atten_dc_sel_dc      = 0,
     .rx_bist_atten_ac_sel_dc      = 0,
@@ -410,14 +416,14 @@ const t_data_rate_settings c_data_rate_settings_16g =
 // 21.3 Gbps
 const t_data_rate_settings c_data_rate_settings_21g =
 {
-    .rx_freq_adjust               = 0x016A,
+    .rx_freq_adjust               = 0x0128,
     .rx_ctle_peak2_h_sel          = 0, // H2
     .rx_pr_phase_step             = c_phase_step_375,
     .rx_bist_freq_adjust_8xx      = 2,
     .rx_bist_freq_adjust_9xx      = 0,
     .rx_bist_atten_dc_sel_dc      = 0,
     .rx_bist_atten_ac_sel_dc      = 0,
-    .rx_bist_lfpath_sel_dc        = 0,
+    .rx_bist_lfpath_sel_dc        = 1,//ewm309342
     .rx_pcie_clkgen_div_ictrl     = 0,
     .rx_pcie_clkgen_div_rctrl     = 0,
     .rx_clkgen_cmlmux_irctrl      = 5,
@@ -437,14 +443,15 @@ const t_data_rate_settings c_data_rate_settings_21g =
 };
 
 // 25.6 Gbps, 25.78125 Gbps
+#define c_rx_freq_adjust_ody_25g  0x016A
 const t_data_rate_settings c_data_rate_settings_25g =
 {
-    .rx_freq_adjust               = 0x016A,
+    .rx_freq_adjust               = 0x0128, // This is for P11/zMetis; Odyssey has a different setting
     .rx_ctle_peak2_h_sel          = 0, // H2
-    .rx_pr_phase_step             = 12,
-    .rx_bist_freq_adjust_8xx      = 3,
-    .rx_bist_freq_adjust_9xx      = 1, // EWM300848: Correct Rx Bist Freq Adjust
-    .rx_bist_atten_dc_sel_dc      = 7, // EWM300844: Correct Rx Bist DC Atten
+    .rx_pr_phase_step             = c_phase_step_296875,
+    .rx_bist_freq_adjust_8xx      = 2,//3,//ewm309342
+    .rx_bist_freq_adjust_9xx      = 2,//1,//ewm309342
+    .rx_bist_atten_dc_sel_dc      = 7,
     .rx_bist_atten_ac_sel_dc      = 0,
     .rx_bist_lfpath_sel_dc        = 0,
     .rx_pcie_clkgen_div_ictrl     = 0,
@@ -452,7 +459,7 @@ const t_data_rate_settings c_data_rate_settings_25g =
     .rx_clkgen_cmlmux_irctrl      = 5,
     .rx_clk_phase_select          = 2,
     .rx_dl_clk_phase_select       = 2,
-    .rx_clk_phase_select_ody      = 3, //0,
+    .rx_clk_phase_select_ody      = 0,
     .rx_dl_clk_phase_select_ody   = 0,
     .rx_dfe_selftimed_phase_adj   = 0,
     .rx_dpr_vbn_cal               = 3,
@@ -470,10 +477,10 @@ const t_data_rate_settings c_data_rate_settings_32g =
 {
     .rx_freq_adjust               = 0x01AC,
     .rx_ctle_peak2_h_sel          = 0, // H2
-    .rx_pr_phase_step             = 12,
-    .rx_bist_freq_adjust_8xx      = 3, // EWM300848: Correct Rx Bist Freq Adjust
-    .rx_bist_freq_adjust_9xx      = 1, // EWM300848: Correct Rx Bist Freq Adjust
-    .rx_bist_atten_dc_sel_dc      = 7, // EWM300844: Correct Rx Bist DC Atten
+    .rx_pr_phase_step             = c_phase_step_296875,
+    .rx_bist_freq_adjust_8xx      = 3,
+    .rx_bist_freq_adjust_9xx      = 1,
+    .rx_bist_atten_dc_sel_dc      = 7,
     .rx_bist_atten_ac_sel_dc      = 0,
     .rx_bist_lfpath_sel_dc        = 0,
     .rx_pcie_clkgen_div_ictrl     = 0,
@@ -481,7 +488,7 @@ const t_data_rate_settings c_data_rate_settings_32g =
     .rx_clkgen_cmlmux_irctrl      = 6,
     .rx_clk_phase_select          = 2,
     .rx_dl_clk_phase_select       = 2,
-    .rx_clk_phase_select_ody      = 3, //0,
+    .rx_clk_phase_select_ody      = 0,
     .rx_dl_clk_phase_select_ody   = 0,
     .rx_dfe_selftimed_phase_adj   = 0,
     .rx_dpr_vbn_cal               = 2,
@@ -499,10 +506,10 @@ const t_data_rate_settings c_data_rate_settings_38g =
 {
     .rx_freq_adjust               = 0x01EE,
     .rx_ctle_peak2_h_sel          = 0, // H2
-    .rx_pr_phase_step             = 12,
-    .rx_bist_freq_adjust_8xx      = 3, // EWM300848: Correct Rx Bist Freq Adjust
-    .rx_bist_freq_adjust_9xx      = 1, // EWM300848: Correct Rx Bist Freq Adjust
-    .rx_bist_atten_dc_sel_dc      = 7, // EWM300844: Correct Rx Bist DC Atten
+    .rx_pr_phase_step             = c_phase_step_296875,
+    .rx_bist_freq_adjust_8xx      = 3,
+    .rx_bist_freq_adjust_9xx      = 1,
+    .rx_bist_atten_dc_sel_dc      = 7,
     .rx_bist_atten_ac_sel_dc      = 0,
     .rx_bist_lfpath_sel_dc        = 0,
     .rx_pcie_clkgen_div_ictrl     = 0,
@@ -510,7 +517,7 @@ const t_data_rate_settings c_data_rate_settings_38g =
     .rx_clkgen_cmlmux_irctrl      = 6,
     .rx_clk_phase_select          = 2,
     .rx_dl_clk_phase_select       = 2,
-    .rx_clk_phase_select_ody      = 3, //0,
+    .rx_clk_phase_select_ody      = 0,
     .rx_dl_clk_phase_select_ody   = 0,
     .rx_dfe_selftimed_phase_adj   = 0,
     .rx_dpr_vbn_cal               = 2,
@@ -524,6 +531,7 @@ const t_data_rate_settings c_data_rate_settings_38g =
 };
 
 // Array of pointers to the data rate setting constants
+// These indexes are also defined in ioo_common.h as c_ppe_data_rate_Xg and must match
 PK_STATIC_ASSERT(ppe_data_rate_width == 3);
 const t_data_rate_settings* c_data_rate_settings[8] =
 {
@@ -592,7 +600,7 @@ int determine_data_rate(t_gcr_addr* io_gcr_addr, uint32_t ovr_rate_one_hot)
 
         if (l_pipe_state_rate == 4)   // Translate GEN5 (4) to ppe_date_rate 32G (6)
         {
-            l_data_rate = 6;
+            l_data_rate = c_ppe_data_rate_32g;
         }
         else
         {
@@ -749,10 +757,14 @@ void write_tx_pl_overrides(t_gcr_addr* gcr_addr)
         put_ptr_field(gcr_addr, tx_pcie_eq_calc_enable, 0b1, read_modify_write); // set tx_pcie_eq_calc_enable when in pcie mode
         put_ptr_field(gcr_addr, pipe_config_pmb_timeout_en, 0b1,
                       read_modify_write); // Enable PMB timeouts when in pcie functional mode
+        put_ptr_field(gcr_addr, pipe_config_ebuffrst_clr_rxdvalid_en, 0b1,
+                      read_modify_write); // Enable pipe_config_ebuffrst_clr_rxdvalid_en when in pcie functional mode
     }
     else     // PCIe BIST Mode
     {
         isolate_pipe_interface(gcr_addr); // Disable PIPE Interface, in hw_reg_init broadcast to all lanes in multigroup
+        put_ptr_fast(gcr_addr, pipe_fence_cntl4_pl_addr, 15,
+                     0x0001 << pipe_fence_output_value_rxdatavalid_shift); // set PIPE Fence Output Value for RXDATAVALID high
         put_ptr_field(gcr_addr, tx_pcie_ffe_mode_dc, 0b1, read_modify_write); // set pcie FFE mode when in pcie mode
         put_ptr_field(gcr_addr, tx_pcie_eq_calc_enable, 0b1, read_modify_write); // set tx_pcie_eq_calc_enable when in pcie mode
 
@@ -802,9 +814,20 @@ void update_rx_rate_dependent_analog_ctrl_pl_regs(t_gcr_addr* gcr_addr, uint32_t
                   read_modify_write); //pl
     put_ptr_field(gcr_addr, rx_clkgen_cmlmux_irctrl_5nm, l_data_rate_settings->rx_clkgen_cmlmux_irctrl,
                   read_modify_write); //pl
+    int rx_freq_adjust_regval;
+
+    if (l_is_odyssey && (mem_pg_field_get(ppe_data_rate) == c_ppe_data_rate_25g))
+    {
+        rx_freq_adjust_regval = c_rx_freq_adjust_ody_25g;
+    }
+    else
+    {
+        rx_freq_adjust_regval = l_data_rate_settings->rx_freq_adjust;
+    }
+
     int dac_cntl11_reg_val =
         (0  << rx_term_pd_shift) |
-        (l_data_rate_settings->rx_freq_adjust              << rx_freq_adjust_shift) |
+        (rx_freq_adjust_regval                             << rx_freq_adjust_shift) |
         (l_data_rate_settings->rx_dfe_selftimed_phase_adj  << rx_dfe_selftimed_phase_adj_shift) |
         (l_data_rate_settings->rx_pcie_clkgen_div_ictrl    << rx_pcie_clkgen_div_ictrl_shift);
     put_ptr_field(gcr_addr, rx_dac_cntl11_pl_full_reg, dac_cntl11_reg_val, fast_write); //pl
@@ -1099,7 +1122,7 @@ void io_hw_reg_init(t_gcr_addr* gcr_addr)
     {
         if (num_lanes_rx > 4)
         {
-            set_debug_state(0x000B); // Illegal number of lanes for PCIe Mode
+            set_debug_state(0x000B); // Illegal number of RX lanes for PCIe Mode
             set_fir(fir_code_fatal_error);
         }
 
@@ -1205,7 +1228,9 @@ void io_hw_reg_init(t_gcr_addr* gcr_addr)
         // PSL pcie_bist_en
         if (l_pcie_mode)
         {
-            for (i = 0; i < num_lanes_rx; i++)
+            int num_lanes_tx = get_num_tx_physical_lanes();
+
+            for (i = 0; i < num_lanes_tx; i++)   // use num_lanes_tx to enable BIST on ZCAL lane
             {
                 set_gcr_addr_lane(gcr_addr, i);
                 pcie_bist_no_broadcast_pl_overrides(gcr_addr); //sets rx_group
@@ -1430,6 +1455,12 @@ int io_lane_power_on_rx(t_gcr_addr* gcr_addr, t_power_banks_sel banks_sel, bool 
     // PSL sequence_rx_bank_controls_bank_a
     sequence_rx_bank_controls(gcr_addr, bank_a, power_on);
 
+    // EWM 307329: On ZMetis DD1 force both bank clock buffers on to workaround a noise issue
+    if (is_zm_dd1())
+    {
+        put_ptr_field(gcr_addr, rx_clkgen_en_bank_outbuf_ab_alias, 0b11, read_modify_write); //pl
+    }
+
     put_ptr_field(gcr_addr, rx_hold_div_clks_ab_alias,  0b00,
                   read_modify_write); //pl Deassert to sync c16 and c32 clocks (initializes to 1)
 
@@ -1544,6 +1575,9 @@ int io_lane_power_off_rx(t_gcr_addr* gcr_addr, t_power_banks_sel banks_sel)
     //If the powerdown lane is asked for but we are doing a init or recal than that a no-no see Mike S -- CQ522215
     int status = check_for_rxpsave_req_sts(gcr_addr);
     io_sleep(get_gcr_addr_thread(gcr_addr));
+
+    // Undo the clock enable force done for the ZMetis DD1 workaround (EWM 307329)
+    put_ptr_field(gcr_addr, rx_clkgen_en_bank_outbuf_ab_alias, 0b00, read_modify_write); //pl
 
     // Sequence the bank_controls to the off state
     // PSL sequence_rx_bank_controls_bank_b

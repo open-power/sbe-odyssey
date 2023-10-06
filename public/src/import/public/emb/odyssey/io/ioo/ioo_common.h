@@ -161,6 +161,17 @@ typedef enum
     C_AXO_CAL = 7,
 } t_init_cal_mode;
 
+// Settings for ppe_data_rate
+// These should match the array indexes for c_data_rate_settings in ioo_init_and_reset.c
+#define c_ppe_data_rate_2g   0
+#define c_ppe_data_rate_5g   1
+#define c_ppe_data_rate_8g   2
+#define c_ppe_data_rate_16g  3
+#define c_ppe_data_rate_21g  4
+#define c_ppe_data_rate_25g  5
+#define c_ppe_data_rate_32g  6
+#define c_ppe_data_rate_38g  7
+
 // Phase rotator size constants
 #define pr_mini_min 0x00
 #define pr_mini_max 0x1F

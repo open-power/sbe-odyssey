@@ -40,6 +40,11 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// jfg23061900 |jfg     | Add back H_end conditional for dual mode that was accidentally removed. Fix some escapes.
+// jfg23061300 |jfg     | Prevent double V advance in V-only mode from state 0
+// jfg23061000 |jfg     | Add PR range checking and optimized start/finish conditionals
+// jfg23052500 |jfg     | Issue 305100 and 305102 Missed state transitions into and out of 1/2 phase mode setting
+// jfg23052500 |jfg     | Restructure state transitions for clarity & consistency separate for Loff and PR
 // jfg23022400 |jfg     | Move pr_offset_wrap and loff_offset_wrap AS-IS from eo_main.c
 // -----------------------------------------------------------------------------
 
@@ -68,7 +73,19 @@ void loff_offset_wrap (t_gcr_addr* gcr_addr, t_bank bank, bool apply)
                                ppe_loff_offset_e_override_width);
 
     int margin_st = mem_pl_field_get(ppe_margin_offset_overlay, lane);
-    int apply_val = 1;
+    int applied_tgl = 1;
+    int margin_st_next;
+
+    // PSL skip_margin_on_overflow_or_bank_mismatch
+    if (margin_mode != 0)
+    {
+        // PSL margin_mode_exit_conditions
+        if ((margin_st == offset_st_overfl) ||
+            ((margin_st & offset_mask_Bnk) ^ (bank & offset_mask_Bnk)))
+        {
+            return;
+        }
+    }
 
     // PSL setup_remove_pr_offset
     if (!apply)
@@ -81,123 +98,127 @@ void loff_offset_wrap (t_gcr_addr* gcr_addr, t_bank bank, bool apply)
         // Margin mode - Toggling behavior requires coordination of all banks and lanes to use the same value and inversion. Therefore only invert one all offsets are removed
 
 
-        bool offset_applied_lane;
-
         //PSL remove_margin0
         if (margin_mode == 0)
         {
             loff_offset_static_d = 0 - loff_offset_static_d;
             loff_offset_static_e = 0 - loff_offset_static_e;
-            apply_val = 0;
+            applied_tgl = 0;
 
-            // PSL banksel
+            // PSL non_margin_mode_bank_check
             if (bank == bank_a)
             {
-                offset_applied_lane = (margin_st & (ppe_loff_offset_applied_a_mask >> ppe_margin_offset_overlay_shift)) != 0;
+                if ((margin_st & (ppe_loff_offset_applied_a_mask >> ppe_margin_offset_overlay_shift)) == 0)
+                {
+                    return;
+                }
             }
             else
             {
-                offset_applied_lane = (margin_st & (ppe_loff_offset_applied_b_mask >> ppe_margin_offset_overlay_shift)) != 0;
+                if ((margin_st & (ppe_loff_offset_applied_b_mask >> ppe_margin_offset_overlay_shift)) == 0)
+                {
+                    return;
+                }
             }
         }
         else
         {
-            offset_applied_lane  = (margin_st & (offset_mask_HV | offset_mask_PN)) == offset_st_V_neg;
-            offset_applied_lane |= (margin_st & offset_mask_HV) == offset_st_V_off;
-            offset_applied_lane &= !((margin_st & offset_mask_Bnk) ^ (bank & offset_mask_Bnk));
-
-            // PSL offset_st_V_end
-            if (margin_st == offset_st_V_end)
+            // PSL skip_V_unapply_on_nonneg_and_nonoff
+            if (((margin_st & offset_mask_PN) == 0) &&
+                ((margin_st & offset_mask_HV) != offset_st_V_off) )
             {
-                margin_st = 0;
-                goto LOFF_LAST;
+                return;
             }
         }
 
-        // PSL force_remove_if_applied
-        if (offset_applied_lane)
-        {
-            loff_offset_pause = false;
-        }
-        else
-        {
-            // Override Pause if margin_st hasn't yet applied offsets.
-            loff_offset_pause = true;
-        }
     } // IF !apply
-
-    // PSL apply_or_remove_loff_offset
-    if (!loff_offset_pause && (((margin_mode & 0x2) == 0x2) || (margin_mode == 0)))
+    else
     {
-        // Veritcal and Horizontal margin modes must be mutually exclusive.
+        //PSL pause_on_apply
+        if (loff_offset_pause)
+        {
+            return;
+        }
+
 #if IO_DEBUG_LEVEL >4
         set_debug_state(0xFFF2); // Debug - Loffset Apply/Remove
 #endif
 
-        // PSL vertical_or_manual_mode
-        if ((margin_mode) == 0)
+        // Perform some preliminary state transitions
+        // Veritcal and Horizontal margin modes must be mutually exclusive.
+        // PSL offset_st_V_end
+        if ((((margin_st & offset_mask_end) == offset_mask_end)  || (margin_st == offset_st_H_on) ) &&
+            ((margin_mode & 0x2) == 0x2))
         {
-            // PSL banksel
-            if (bank == bank_a)
-            {
-                mem_pl_field_put(ppe_loff_offset_applied_a, lane, apply_val);
-            }
-            else
-            {
-                mem_pl_field_put(ppe_loff_offset_applied_b, lane, apply_val);
-            }
+            // Only return to on if in V standalone mode or dual mode. mode 1 is checked by PR Apply
+            // This branch also handles the case where pr_offset_pause = 1
+            margin_st_next = offset_st_V_on;
+        }
+        // Going to the next phase is handled by PR Apply as well as the normal st_H advance
+        //PSL st_V_advance
+        else if (((margin_st & offset_mask_HV) == offset_st_V_on) ||
+                 ((margin_st & offset_mask_HV) == offset_st_V_off)   )
+        {
+            margin_st_next = margin_st + 1;
         }
         else
         {
-            // PSL offset_st_V_on
-            if ((margin_st & offset_mask_HV) == offset_st_V_on)
-            {
-                // PSL offset_mask_PN
-                if ((margin_st & offset_mask_PN) != 0)
-                {
-#if IO_DEBUG_LEVEL >4
-                    set_debug_state(0xFFF3, 4); // Debug - Loff offset apply - Offset Applied Margin Mode Invert
-#endif
-                    // An offset had been applied and is now completely removed...so if it is margin_mode then invert the offset.
-                    // Veritcal and Horizontal margin modes must be mutually exclusive.
-                    // Therefore the conditional 0x2 == 1 is mutually exclusive in this instance.
-                    loff_offset_static_d = 0 - loff_offset_static_d;
-                    loff_offset_static_e = 0 - loff_offset_static_e;
-                }
-
-                // PSL apply_st_advance
-                if (apply)
-                {
-                    //PSL bank_mismatch_on_apply
-                    if ((margin_st & offset_mask_Bnk) ^ (bank & offset_mask_Bnk))
-                    {
-                        return;
-                    }
-
-                    margin_st++;
-                }
-            }
-            //PSL remove_st_advance
-            else if (((margin_st & offset_mask_HV) == offset_st_V_off) && !apply)
-            {
-                margin_st++;
-            }
-            else
-            {
-                // No longer in Vertical mode
-                return;
-            }
-
-        LOFF_LAST:
-            mem_pl_field_put(ppe_margin_offset_overlay, lane, margin_st);
+            // No longer in Vertical mode
+            return;
         }
 
-        apply_rx_dac_offset(gcr_addr, data_only, bank, loff_offset_static_d);
-        apply_rx_dac_offset(gcr_addr, edge_only, bank, loff_offset_static_e);
+        // PSL margin_mode_apply
+        if (margin_mode != 0x0)
+        {
+            mem_pl_field_put(ppe_margin_offset_overlay, lane, margin_st_next);
+        }
 
-        io_sleep(get_gcr_addr_thread(gcr_addr));
-    } //add offset
+        // PSL skip_apply_on_st_V_off
+        if (((margin_st & offset_mask_HV) == offset_st_V_off))
+        {
+            return;
+        }
+    } // ELSE apply
 
+    // Due to multistate masking in the state flow above some shared V/H states need extra exclusion as shown here.
+    // PSL not_in_V_mode
+    if (((margin_st & offset_mask_HV) == offset_st_H_on) ||
+        ((margin_st & offset_mask_HV) == offset_st_H_off))
+    {
+        return;
+    }
+
+    // NOTE: All flow control is determined in above apply or !apply conditional
+    // PSL vertical_or_manual_mode
+    if ((margin_mode) == 0)
+    {
+        // PSL banksel
+        if (bank == bank_a)
+        {
+            mem_pl_field_put(ppe_loff_offset_applied_a, lane, applied_tgl);
+        }
+        else
+        {
+            mem_pl_field_put(ppe_loff_offset_applied_b, lane, applied_tgl);
+        }
+    }
+    // PSL offset_mask_PN
+    else if ((margin_st & offset_mask_PN) != 0)
+    {
+        // Note: This condition relies on margin_st steering conditionals above to exit the function
+        // if no longer in Horizontal mode during the apply phase.
+        // It is purposely sparse.
+#if IO_DEBUG_LEVEL >4
+        set_debug_state(0xFFF3, 4); // Debug - Loff offset apply - Offset Applied Margin Mode Invert
+#endif
+        // An offset had been applied and is now completely removed...so if it is margin_mode then invert the offset.
+        loff_offset_static_d = 0 - loff_offset_static_d;
+        loff_offset_static_e = 0 - loff_offset_static_e;
+    }
+
+    apply_rx_dac_offset(gcr_addr, data_only, bank, loff_offset_static_d);
+    apply_rx_dac_offset(gcr_addr, edge_only, bank, loff_offset_static_e);
+    io_sleep(get_gcr_addr_thread(gcr_addr));
     return;
 }
 
@@ -221,9 +242,19 @@ void pr_offset_wrap (t_gcr_addr* gcr_addr, t_bank bank, bool apply)
     int pr_offset_static_d = TwosCompToInt(mem_pg_field_get(ppe_pr_offset_d_override), ppe_pr_offset_d_override_width);
     int pr_offset_static_e = TwosCompToInt(mem_pg_field_get(ppe_pr_offset_e_override), ppe_pr_offset_e_override_width);
     int margin_st = mem_pl_field_get(ppe_margin_offset_overlay, lane);
-    int apply_val = 1;
+    int applied_tgl = 1;
+    int margin_st_next;
 
-
+    // PSL skip_margin_on_overflow_or_bank_mismatch
+    if (margin_mode != 0)
+    {
+        // PSL margin_mode_exit_conditions
+        if ((margin_st == offset_st_overfl) ||
+            ((margin_st & offset_mask_Bnk) ^ (bank & offset_mask_Bnk)))
+        {
+            return;
+        }
+    }
 
     // PSL setup_remove_pr_offset
     if (!apply)
@@ -236,124 +267,133 @@ void pr_offset_wrap (t_gcr_addr* gcr_addr, t_bank bank, bool apply)
         // Margin mode - Toggling behavior requires coordination of all banks and lanes to use the same value and inversion. Therefore only invert one all offsets are removed
 
 
-        bool offset_applied_lane;
-
         //PSL remove_margin0
         if (margin_mode == 0)
         {
             pr_offset_static_d = 0 - pr_offset_static_d;
             pr_offset_static_e = 0 - pr_offset_static_e;
-            apply_val = 0;
+            applied_tgl = 0;
 
-            // PSL banksel
+            //PSL non_margin_mode_bank_check
             if (bank == bank_a)
             {
-                offset_applied_lane = (margin_st & (ppe_pr_offset_applied_a_mask >> ppe_margin_offset_overlay_shift)) != 0;
+                if ((margin_st & (ppe_pr_offset_applied_a_mask >> ppe_margin_offset_overlay_shift)) == 0)
+                {
+                    return;
+                }
             }
             else
             {
-                offset_applied_lane = (margin_st & (ppe_pr_offset_applied_b_mask >> ppe_margin_offset_overlay_shift)) != 0;
+                if ((margin_st & (ppe_pr_offset_applied_b_mask >> ppe_margin_offset_overlay_shift)) == 0)
+                {
+                    return;
+                }
             }
         }
         else
         {
-            offset_applied_lane  = (margin_st & (offset_mask_HV | offset_mask_PN)) == offset_st_H_neg ;
-            offset_applied_lane |= (margin_st & offset_mask_HV) == offset_st_H_off;
-            offset_applied_lane &= !((margin_st & offset_mask_Bnk) ^ (bank & offset_mask_Bnk));
-
-            // PSL offset_st_H_end
-            if (margin_st == offset_st_H_end)
+            // PSL skip_H_unapply_on_nonneg_and_nonoff
+            if (((margin_st & offset_mask_PN) == 0) &&
+                ((margin_st & offset_mask_HV) != offset_st_H_off) )
             {
-                margin_st = offset_st_V_on;
-                goto PR_LAST;
+                return;
             }
-        }
-
-        // PSL force_remove_if_applied
-        if (offset_applied_lane)
-        {
-            pr_offset_pause = false;
-        }
-        else
-        {
-            // Override Pause if margin_st hasn't yet applied offsets.
-            pr_offset_pause = true;
         }
     } // !apply
-
-    // PSL apply_or_remove_pr_offset
-    if (!pr_offset_pause && (((margin_mode & 0x1) == 0x1) || (margin_mode == 0)))
+    else
     {
-#if IO_DEBUG_LEVEL >4
-        set_debug_state(0xFFF5); // Debug - PRoffset Apply/Remove
-#endif
-
-        // PSL horizontal_or_manual_mode
-        if ((margin_mode) == 0)
+        //PSL pause_on_apply
+        if (pr_offset_pause)
         {
-            // PSL banksel
-            if (bank == bank_a)
-            {
-                mem_pl_field_put(ppe_pr_offset_applied_a, lane, apply_val);
-            }
-            else
-            {
-                mem_pl_field_put(ppe_pr_offset_applied_b, lane, apply_val);
-            }
+            return;
+        }
+
+        // Perform some preliminary state transitions
+        // PR Apply visits first so it handles the initial and ending dual mode state transitions
+        // Veritcal and Horizontal margin modes must be mutually exclusive.
+        // PSL offset_st_H_end
+        if (((margin_st == offset_st_H_end) && (margin_mode == 0x1)) ||
+            ((margin_st == offset_st_V_end) && (margin_mode != 0x2))   )
+        {
+            margin_st_next = offset_st_H_on;
+        }
+        // PSL st_H_advance
+        else if ((((margin_st & offset_mask_HV) == offset_st_H_on) ||
+                  ((margin_st & offset_mask_HV) == offset_st_H_off )) &&
+                 (margin_mode != 0x2) && // Here the &0x2 mask compare could be eliminated with a more unique H_on state value
+                 (margin_st != offset_st_H_end) )
+        {
+            margin_st_next = margin_st + 1;
         }
         else
         {
-            // PSL offset_H_shortcut_to_V
-            if ((margin_mode & 0x1) == 0)
-            {
-                margin_st = offset_st_V_on;
-                return;
-            }
-
-            // PSL offset_st_H_on
-            if ((margin_st & offset_mask_HV) == offset_st_H_on)
-            {
-                // PSL offset_mask_PN
-                if ((margin_st & offset_mask_PN) != 0)
-                {
-#if IO_DEBUG_LEVEL >4
-                    set_debug_state(0xFFF6); // Debug - PRoffset Remove - Offset Applied Margin Mode Invert
-#endif
-                    // An offset had been applied and is now completely removed...so if it is margin_mode then invert the offset.
-                    // Veritcal and Horizontal margin modes must be mutually exclusive.
-                    // Therefore the conditional 0x2 == 1 is mutually exclusive in this instance.
-                    pr_offset_static_d = 0 - pr_offset_static_d;
-                    pr_offset_static_e = 0 - pr_offset_static_e;
-                }
-
-                // PSL apply_st_advance
-                if (apply)
-                {
-                    //PSL bank_mismatch_on_apply
-                    if ((margin_st & offset_mask_Bnk) ^ (bank & offset_mask_Bnk))
-                    {
-                        return;
-                    }
-
-                    margin_st++;
-                }
-            }
-            // PSL remove_st_advance
-            else if (((margin_st & offset_mask_HV) == offset_st_H_off) && !apply)
-            {
-                margin_st++;
-            }
-            else
-            {
-                // No longer in Horizontal mode
-                return;
-            }
-
-        PR_LAST:
-            mem_pl_field_put(ppe_margin_offset_overlay, lane, margin_st);
+            // No longer in Horizontal mode
+            return;
         }
 
-        int pr_offset_vec_d[2]  = {pr_offset_static_d, pr_offset_static_d};
-        pr_recenter(gcr_addr, bank, pr_active, Esave, Dsave, pr_offset_vec_d, pr_offset_static_e);
+        // PSL margin_mode_apply
+        if (margin_mode != 0x0)
+        {
+            mem_pl_field_put(ppe_margin_offset_overlay, lane, margin_st_next);
+        }
+
+        // PSL skip_apply_on_st_H_off
+        if ((margin_st & offset_mask_HV) == offset_st_H_off)
+        {
+            return;
+        }
+    } // ELSE apply
+
+    // Due to multistate masking in the state flow above some shared V/H states need extra exclusion as shown here.
+    // PSL not_in_H_mode
+    if (((margin_st & offset_mask_HV) == offset_st_V_on) ||
+        ((margin_st & offset_mask_HV) == offset_st_V_off))
+    {
+        return;
     }
+
+    // NOTE: All flow control is determined in above apply or !apply conditional
+#if IO_DEBUG_LEVEL >4
+    set_debug_state(0xFFF5); // Debug - PRoffset Apply/Remove
+#endif
+
+    // PSL horizontal_or_manual_mode
+    if ((margin_mode) == 0)
+    {
+        // PSL banksel
+        if (bank == bank_a)
+        {
+            mem_pl_field_put(ppe_pr_offset_applied_a, lane, applied_tgl);
+        }
+        else
+        {
+            mem_pl_field_put(ppe_pr_offset_applied_b, lane, applied_tgl);
+        }
+    }
+    // PSL offset_mask_PN
+    else if ((margin_st & offset_mask_PN) != 0)
+    {
+        // Note: This condition relies on margin_st steering conditionals above to exit the function
+        // if no longer in Horizontal mode during the apply phase.
+        // It is purposely sparse.
+#if IO_DEBUG_LEVEL >4
+        set_debug_state(0xFFF6); // Debug - PRoffset Remove - Offset Applied Margin Mode Invert
+#endif
+        // An offset had been applied and is now completely removed...so if it is margin_mode then invert the offset.
+        pr_offset_static_d = 0 - pr_offset_static_d;
+        pr_offset_static_e = 0 - pr_offset_static_e;
+    }
+
+    int pr_offset_vec_d[2]  = {pr_offset_static_d, pr_offset_static_d};
+
+    // PSL pr_recenter_with_limit_error
+    if (pr_recenter_werr(gcr_addr, bank, pr_active, Esave, Dsave, pr_offset_vec_d, pr_offset_static_e, true))
+    {
+        // If the override request exceeds the available DAC range then set state to sticky offset_st_overfl
+        // This halts the margin or toggle sequence for that lane and should leave DAC in original position.
+        // The user is responsible for correcting this condition in the DAC values.
+        mem_pl_field_put(ppe_margin_offset_overlay, lane, offset_st_overfl);
+    }
+
+    return;
 }

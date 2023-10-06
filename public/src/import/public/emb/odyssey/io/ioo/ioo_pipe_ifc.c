@@ -39,6 +39,20 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23090700 |vbr     | Remove PIPE RX Margining to free up PPE SRAM space (~3.6KB).
+// jjb23082800 |jjb     | Issue 309272: Updated to use rx_group address prior to writing rx_off_dm.
+// jjb23082500 |jjb     | Issue 309272: Save and resetore rx_off_dm during pipe_reset_active processing to maintain sigdet calibrated value in pcie mode.
+// vbr23062300 |vbr     | EWM 307543: Have CDR and DL clock disabled when doing a flywheel reset to avoid clock glitch from CDR async violations
+// jjb23060200 |jjb     | Issue 305073: updated references to tx_pcie_idle_loz_del_sel_alias to tx_pcie_idle_loz_del_sel_pl_alias
+// vbr23060800 |vbr     | EWM 306611: Combined reads, added sleep to powerdown handler.
+// jjb23060200 |jjb     | Issue 306014: Added checking for pending rate change and power state change prior to asserting rxdatavalid in 0xFC3B processing
+// jjb23060100 |jjb     | Issue 306014: removed clearing rx_init_done in reset_inactive since redundant.
+// jjb23060100 |jjb     | Issue 306014: added reseting flywheel prior checking for cdr lock in rxelecidle_inactive non run_ininitial_training cases.
+// jjb23060100 |jjb     | Issue 306014: added pipe_preset_rx to entering P1 and P2.
+// jjb23053100 |jjb     | Issue 306014: gate executing run_initial_training during rxelecidle_inactive with rx_init_done. Clear rx_init_done on reset_active, rate_change, powerdown to L1 or L2.
+// jjb23051800 |jjb     | Issue 304568: Updated lane group to TX prior pipe_resetn_active checking in reset_inactive function.
+// jjb23051000 |jjb     | Issue 304568: Clear pipe_state_reset_inactive at end of each of it's function phases if pipe_resetn_active is set.
+// jjb23051600 |jjb     | Issue 305073: update rate change to update tx_pcie_idle_loz_del_sel_pl_alias instead of tx_pcie_idle_loz_del_sel_alias
 // vbr23050100 |vbr     | EWM 303579: Consolidate bank switching, flywheel resetting from ei_inactive into eo_main to save time
 // vbr23042500 |vbr     | EWM 303525/302758: Split reset active into 2 phases, reset inactive into 4 phases (from 2)
 // jjb23050200 |jjb     | Issue 304124: Moved rxelecidle_en prior to phystatus pulse in pclkchangeack_active
@@ -221,14 +235,14 @@ void pipe_clock_change(t_gcr_addr* gcr_addr,
                         rx_group);                                                                                                               //  Change Addressing to RX group
     put_ptr_field(gcr_addr, rx_berpl_count_en, 0b0,
                   read_modify_write);                                                                                    //  Disable rx_berpl_count_en to fully disable all io clocks
+    put_ptr_field(gcr_addr, rx_dl_clk_en, 0b0,
+                  read_modify_write);                                                                                         //  Disable rx_dl_clk
+    put_ptr_field(gcr_addr, rx_clr_cal_lane_sel, 0b1,
+                  fast_write);                                                                                         //  Disable rx_cal_lane_sel (VBR: likely not needed, should already be cleared)
     put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_dis_cdr_b_dis,
                   fast_write);                                                              //  Disable CDR
     put_ptr_field(gcr_addr, rx_pr_fw_reset_ab_alias, 0b11,
                   read_modify_write);                                                                             //  Reset Flywheel
-    put_ptr_field(gcr_addr, rx_clr_cal_lane_sel, 0b1,
-                  fast_write);                                                                                         //  Disable rx_cal_lane_sel
-    put_ptr_field(gcr_addr, rx_dl_clk_en, 0b0,
-                  read_modify_write);                                                                                         //  Disable rx_dl_clk
     put_ptr_field(gcr_addr, rx_hold_div_clks_ab_alias,  0b11,
                   read_modify_write);                                                                          //  Assert hold_div_clock to freeze c16 and c32
     put_ptr_field(gcr_addr, rx_pcie_clk_sel, rate_one_hot,
@@ -873,9 +887,17 @@ void pipe_cmd_resetn_active(t_gcr_addr* gcr_addr)
         l_pipe_reset_active_phase_0_3 |= (0x8 >> l_lane);
         mem_pg_field_put(ppe_pipe_reset_active_phase_0_3, l_pipe_reset_active_phase_0_3);
 
-        // 1.) Run per lane reset which powers down the lane
+        // 1.) Save rx sigdet off_dm value prior to reset
+        set_gcr_addr_reg_id(gcr_addr,
+                            rx_group);                                                                                                               //  set gcr addr to rx group
+        uint32_t l_rx_off_dm = get_ptr_field(gcr_addr, rx_off_dm);
+
+        // 2.) Run per lane reset which powers down the lane
         io_reset_lane_tx(gcr_addr); //sleeps at end
         io_reset_lane_rx(gcr_addr); //sleeps at end
+
+        // 3.) Restore sigdet off_dm value after reset
+        put_ptr_field(gcr_addr, rx_off_dm, l_rx_off_dm, read_modify_write);
 
         // Return so don't run final phase
         return;
@@ -925,11 +947,12 @@ void pipe_cmd_resetn_active(t_gcr_addr* gcr_addr)
     //     clear pipe_state_phystatus_pulse
     put_ptr(gcr_addr, pipe_state_cntl1_pl_addr, pipe_state_cntl1_pl_full_reg_startbit, pipe_state_cntl1_pl_full_reg_endbit,
             0x0000, fast_write);
+
     // 7.) clear pipe_state_resetn_active to disable hardware reset prior to clearing pipe_update status
     put_ptr_field(gcr_addr, pipe_state_0_15_clear_alias, pipe_state_resetn_active_clear_mask, fast_write);
 
     // 8.) clear following pending pipe processes due to reset assertion
-    //     DO NOT set pipe_state_resetn_active_clear
+    //     DO NOT CLEAR pipe_state_resetn_inactive
     //     pipe_state_rxstandby_active_clear
     //     pipe_state_pclkchangeack_clear
     //     pipe_state_rate_updated_clear
@@ -987,6 +1010,7 @@ PK_STATIC_ASSERT(rx_dc_enable_loff_ab_data_edge_alias_width == 4);
 PK_STATIC_ASSERT(ppe_pipe_reset_inactive_phase_0_3_width == 8); // 2 bits per lane
 void pipe_cmd_resetn_inactive(t_gcr_addr* gcr_addr)
 {
+
     set_gcr_addr_reg_id(gcr_addr, rx_group);
     int l_lane = get_gcr_addr_lane(gcr_addr);
 
@@ -1010,6 +1034,16 @@ void pipe_cmd_resetn_inactive(t_gcr_addr* gcr_addr)
         mem_pg_field_put(rx_dc_enable_loff_ab_data_edge_alias, 0b1010); //A Data Only
         eo_main_dccal_rx(gcr_addr);
 
+        // Abort reset_inactive if reset_active is pending
+        set_gcr_addr_reg_id(gcr_addr, tx_group);
+        uint32_t l_pipe_state_resetn_active = get_ptr_field(gcr_addr, pipe_state_0_15_alias) & pipe_state_resetn_active_mask;
+
+        // PSL pipe_reset_inactive_p2_aborted_by_pipe_reset_active
+        if(l_pipe_state_resetn_active != 0)
+        {
+            put_ptr_field(gcr_addr, pipe_state_0_15_clear_alias, pipe_state_resetn_inactive_clear_mask, fast_write);
+        }
+
         // Return so don't run final phase
         return;
     } //if (phase0)
@@ -1030,6 +1064,16 @@ void pipe_cmd_resetn_inactive(t_gcr_addr* gcr_addr)
         mem_pg_field_put(rx_dc_enable_loff_ab_data_edge_alias, 0b1001); //A Edge Only
         eo_main_dccal_rx(gcr_addr);
 
+        // Abort reset_inactive if reset_active is pending
+        set_gcr_addr_reg_id(gcr_addr, tx_group);
+        uint32_t l_pipe_state_resetn_active = get_ptr_field(gcr_addr, pipe_state_0_15_alias) & pipe_state_resetn_active_mask;
+
+        // PSL pipe_reset_inactive_p0_aborted_by_pipe_reset_active
+        if(l_pipe_state_resetn_active != 0)
+        {
+            put_ptr_field(gcr_addr, pipe_state_0_15_clear_alias, pipe_state_resetn_inactive_clear_mask, fast_write);
+        }
+
         // Return so don't run final phase
         return;
     } //if (phase1)
@@ -1048,6 +1092,16 @@ void pipe_cmd_resetn_inactive(t_gcr_addr* gcr_addr)
         // 2a.) Run RX DC Cal on B Data
         mem_pg_field_put(rx_dc_enable_loff_ab_data_edge_alias, 0b0110); //B Data Only
         eo_main_dccal_rx(gcr_addr);
+
+        // Abort reset_inactive if reset_active is pending
+        set_gcr_addr_reg_id(gcr_addr, tx_group);
+        uint32_t l_pipe_state_resetn_active = get_ptr_field(gcr_addr, pipe_state_0_15_alias) & pipe_state_resetn_active_mask;
+
+        // PSL pipe_reset_inactive_p2_aborted_by_pipe_reset_active
+        if(l_pipe_state_resetn_active != 0)
+        {
+            put_ptr_field(gcr_addr, pipe_state_0_15_clear_alias, pipe_state_resetn_inactive_clear_mask, fast_write);
+        }
 
         // Return so don't run final phase
         return;
@@ -1110,15 +1164,15 @@ void pipe_cmd_resetn_inactive(t_gcr_addr* gcr_addr)
     pipe_reg_write_committed(gcr_addr, pipe_mac_reg_tx_status_4, 0x0C);
 
     // 11.) Check to see if reset_active has been set while processing resetn_inactive
-    //      if resetn_active is set then do not clear phystatus and do not clear resetn_inactive
-    //      this will cause reset_active processing to be run next
+    //      if resetn_active is set then do not clear phystatus
+    //      if resetn_active is set then clear resetn_inactive since it has been aborted.
+    //      The above scenario is protected by requiring pipe_resetn to be asserted for a minimum time that ensures it will complete reset_active ppe processing (>4ms)
     //      if resetn_active is not set then clear phystatus and clear reset_inactive
 
-    uint32_t l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);
-    uint32_t l_pipe_state_resetn_active = l_pipe_state & pipe_state_resetn_active_mask;
+    uint32_t l_pipe_state_resetn_active = get_ptr_field(gcr_addr, pipe_state_0_15_alias) & pipe_state_resetn_active_mask;
 
     // PSL resetn_active
-    if (l_pipe_state_resetn_active == 0)   // no pending resetn_active request, clear reset_inactive
+    if (l_pipe_state_resetn_active == 0)   // no pending resetn_active request, clear reset_inactive, clear phystatus
     {
         uint32_t l_register_data = pipe_state_resetn_inactive_clear_mask |
                                    pipe_state_rxstandby_active_clear_mask |
@@ -1137,9 +1191,10 @@ void pipe_cmd_resetn_inactive(t_gcr_addr* gcr_addr)
         put_ptr_field(gcr_addr, pipe_state_phystatus_clear, 0b1, fast_write); // PHY pipe_state_phystatus_clear bit to 1
         put_ptr_field(gcr_addr, pipe_state_rxelecidle_en_set, 0b1, fast_write); // set rxelecidle_en
     }
-    else     // pending resetn_active request, do not clear resetn_inactive and do not clear phystatus
+    else     // pending resetn_active request, clear resetn_inactive, do not clear phystatus
     {
-        uint32_t l_register_data = pipe_state_rxstandby_active_clear_mask |
+        uint32_t l_register_data = pipe_state_resetn_inactive_clear_mask |
+                                   pipe_state_rxstandby_active_clear_mask |
                                    pipe_state_pclkchangeack_clear_mask |
                                    pipe_state_rate_updated_clear_mask |
                                    pipe_state_powerdown_updated_clear_mask |
@@ -1331,7 +1386,7 @@ void pipe_cmd_rate_updated(t_gcr_addr* gcr_addr)
         l_idle_loz_del_sel = mem_pg_field_get(tx_pcie_idle_loz_del_sel_1_alias);
     }
 
-    put_ptr_field(gcr_addr, tx_pcie_idle_loz_del_sel_alias, l_idle_loz_del_sel, fast_write); //Only fields in register
+    put_ptr_field(gcr_addr, tx_pcie_idle_loz_del_sel_pl_alias, l_idle_loz_del_sel, fast_write); //Only fields in register
 
     // 5.) Clear rx_init_done and set unused since not run at new rate as yet (EWM304487).
     int l_lane = get_gcr_addr_lane(gcr_addr);
@@ -1362,7 +1417,9 @@ void pipe_cmd_rate_updated(t_gcr_addr* gcr_addr)
 //////////////////////////////////
 // POWERDOWN_UDATED
 //////////////////////////////////
-
+PK_STATIC_ASSERT(pipe_state_status2_pl_full_reg_addr == pipe_state_powerdown_addr);
+PK_STATIC_ASSERT(pipe_state_status2_pl_full_reg_addr == pipe_state_rate_addr);
+PK_STATIC_ASSERT(pipe_state_status2_pl_full_reg_width == 16);
 void pipe_cmd_powerdown_updated(t_gcr_addr* gcr_addr)
 {
     set_debug_state(0xFC07, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_POWERDOWN_UPDATED Transaction
@@ -1372,7 +1429,14 @@ void pipe_cmd_powerdown_updated(t_gcr_addr* gcr_addr)
     // PCIe powerdown=10 : P1  : Mid  latency powerdown state. No power savings taken on P11. Immediate phystatus pulsed
     // PCIe powerdown=11 : P2  : High latency powerdown state. Maximum power savings taken on P11. PSAVE lane then phystatus pulsed. Requires reset to exit for P11.
 
-    uint32_t l_pipe_state_powerdown = get_ptr_field(gcr_addr, pipe_state_powerdown);     // Get pipe_state_powerdown value
+    bool l_restore = true;                                                               // rx_preset_restore enabled
+    int l_lane = get_gcr_addr_lane(gcr_addr);                                            // Get Lane
+
+    uint32_t l_pipe_state_status2_regval = get_ptr_field(gcr_addr, pipe_state_status2_pl_full_reg);
+    uint32_t l_pipe_state_powerdown = bitfield_get(l_pipe_state_status2_regval, pipe_state_powerdown_mask,
+                                      pipe_state_powerdown_shift); // get pipe_state_powerdown
+    uint32_t l_rate = bitfield_get(l_pipe_state_status2_regval, pipe_state_rate_mask,
+                                   pipe_state_rate_shift); // Get present rate value
 
     // PSL powerdown_eq_0
     if (l_pipe_state_powerdown == 0)                                                     // Change to P0 power state
@@ -1433,6 +1497,10 @@ void pipe_cmd_powerdown_updated(t_gcr_addr* gcr_addr)
     }
     else if (l_pipe_state_powerdown == 2)                                                // Change to P1 power state
     {
+        mem_pl_bit_clr(rx_init_done, l_lane);                                               // Clear RX Init Done
+        io_sleep(get_gcr_addr_thread(gcr_addr));
+        pipe_preset_rx(gcr_addr, l_rate,
+                       l_restore);                                        // Restore RX analog state for preparation for future entry into P0
         put_ptr_field(gcr_addr,
                       pipe_state_cntl1_pl_full_reg,                               // Update pipe_state_cntl1_pl register
                       (pipe_state_rxactive_clear_mask |                                     // Clear pipe_state_rxactive
@@ -1467,6 +1535,10 @@ void pipe_cmd_powerdown_updated(t_gcr_addr* gcr_addr)
     }
     else                                                                                 // Change to P2 power state
     {
+        mem_pl_bit_clr(rx_init_done, l_lane);                                               // Clear RX Init Done
+        io_sleep(get_gcr_addr_thread(gcr_addr));
+        pipe_preset_rx(gcr_addr, l_rate,
+                       l_restore);                                        // Restore RX analog state for preparation for future entry into P0
         put_ptr_field(gcr_addr,
                       pipe_state_cntl1_pl_full_reg,                               // Update pipe_state_cntl1_pl register
                       (pipe_state_rxactive_clear_mask |                                     // Clear pipe_state_rxactive
@@ -1774,6 +1846,10 @@ void pipe_cmd_rxelecidle_inactive(t_gcr_addr* gcr_addr)
     // Small additional thread active time allowance for sleep optimization (EWM 303579)
     mem_pg_field_put(ppe_thread_active_time_us_limit, 14);
 
+    // Determine if RX initialization was previously completed
+    int l_rx_init_done = mem_pl_field_get(rx_init_done, l_lane);
+    bool set_fir_on_error = false;
+
     // Determine the phase of this command (gray coded: 00, 01, 11)
     uint32_t l_pipe_rx_ei_inactive_phase_0_3 = mem_pg_field_get(ppe_pipe_rx_ei_inactive_phase_0_3);
     uint32_t l_phase = ( l_pipe_rx_ei_inactive_phase_0_3 >> (2 * (3 - l_lane)) ) & 0x03;
@@ -1782,7 +1858,7 @@ void pipe_cmd_rxelecidle_inactive(t_gcr_addr* gcr_addr)
     // PHASE 0 //
     /////////////
     // PSL phase_zero
-    if (l_phase == 0b00)
+    if ((l_phase == 0b00) && (l_rx_init_done == 0))
     {
         set_debug_state(0xFC0B, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_RXELECIDLE_INACTIVE Transaction
 
@@ -1857,6 +1933,52 @@ void pipe_cmd_rxelecidle_inactive(t_gcr_addr* gcr_addr)
         put_ptr_field(gcr_addr, pipe_state_cntl1_pl_full_reg, (pipe_state_rxactive_set_mask | pipe_state_rxdatavalid_set_mask),
                       fast_write); //  set pipe_state_rxactive, set pipe_state_rxdatavalid
     } //if (phase2)
+
+    /////////////
+    // PHASE 3 //
+    /////////////
+    // Do not run rx initialization if rx_init_done=1
+    // Wait for CDR Lock
+    // Enable DL Clock
+    // Set pipe_state_rxactive
+    // Set pipe_state_rxdatavalid
+    /////////////
+    // PSL phase_three
+    if ((l_phase == 0b00) && (l_rx_init_done == 1))   // Phase 0 and rx initialization previously completed
+    {
+        set_debug_state(0xFC3B, PIPE_IFC_DBG_LVL); // PIPE: Start of PIPE_RXELECIDLE_INACTIVE Phase 3 Processing
+        // Clear cdr lock detection, toggle flywheel reset, wait for cdr lock, enable cdr lockdetection
+        set_gcr_addr_reg_id(gcr_addr, rx_group);
+        put_ptr_field(gcr_addr, rx_dl_clk_en, 0b0,
+                      read_modify_write);                            //EWM 307543: Prevent DL clock glitch from fw_reset
+        put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, cdr_a_dis_cdr_b_dis,
+                      fast_write); //EWM 307543: Disable CDR during fw_reset
+        put_ptr_field(gcr_addr, rx_pr_bit_lock_done_ab_clr_alias, 0b11, fast_write);
+        put_ptr_field(gcr_addr, rx_pr_fw_reset_ab_alias, 0b11, read_modify_write);
+        put_ptr_field(gcr_addr, rx_pr_fw_reset_ab_alias, 0b00, read_modify_write);
+        int bank_sel_a  = get_ptr_field(gcr_addr, rx_bank_sel_a);
+        t_bank live_bank = (bank_sel_a == 1) ? bank_a : bank_b;
+        int edge_track_cnt_val = (bank_sel_a == 1) ? cdr_a_lcl_cdr_b_dis : cdr_a_dis_cdr_b_lcl;
+        put_ptr_field(gcr_addr, rx_pr_edge_track_cntl_ab_alias, edge_track_cnt_val,
+                      fast_write);  //EWM 307543: Reenable CDR after fw_reset
+        wait_for_cdr_lock(gcr_addr, live_bank, set_fir_on_error);
+        put_ptr_field(gcr_addr, rx_pr_bit_lock_done_ab_set_alias, 0b11, fast_write);
+        // Check that no pending rate change or power state changes exist
+        set_gcr_addr_reg_id(gcr_addr, tx_group);
+        uint32_t l_pipe_state = get_ptr_field(gcr_addr, pipe_state_0_15_alias);
+        uint32_t l_pipe_state_rate_updated_or_powerdown_updated = l_pipe_state & (pipe_state_rate_updated_mask |
+                pipe_state_powerdown_updated_mask);
+
+        // PSL no_pending_rate_or_power_state_change
+        if (l_pipe_state_rate_updated_or_powerdown_updated == 0)
+        {
+            set_gcr_addr_reg_id(gcr_addr, rx_group);
+            put_ptr_field(gcr_addr, rx_dl_clk_en, 0b1, read_modify_write); // Enable rx_dl_clk
+            set_gcr_addr_reg_id(gcr_addr, tx_group);
+            put_ptr_field(gcr_addr, pipe_state_cntl1_pl_full_reg, (pipe_state_rxactive_set_mask | pipe_state_rxdatavalid_set_mask),
+                          fast_write); //  set pipe_state_rxactive, set pipe_state_rxdatavalid
+        }
+    } //if (phase3)
 
     ////////////////
     // HANDSHAKES //
@@ -2444,7 +2566,7 @@ IOO_PIPE_CMD_HANDLER(
 IOO_PIPE_CMD_HANDLER(pipe_cmd_rxelecidle_inactive)   // [09]:
 IOO_PIPE_CMD_HANDLER(pipe_cmd_nop)                   // [10]: Unused. pipe_cmd_txelecidle_active unused.
 IOO_PIPE_CMD_HANDLER(pipe_cmd_nop)                   // [11]: Unused. pipe_cmd_txelecidle_inactive unused.
-IOO_PIPE_CMD_HANDLER(pipe_cmd_rxmargincontrol)       // [12]:
+IOO_PIPE_CMD_HANDLER(pipe_cmd_nop)                   // [12]: Unused: pipe_cmd_rxmargincontrol unused.
 IOO_PIPE_CMD_HANDLER(
     pipe_cmd_nop)                   // [13]: Unused. pipe_cmd_txdeemph_updated used only for monitoring state .
 IOO_PIPE_CMD_HANDLER(pipe_cmd_nop)                   // [14]: Reserved.

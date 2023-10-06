@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ---------------------|------------------------------------------------------------------
+// mwh23060900 |mwh     | issue 306461 change fast write to read/mode so can use lin max min option
 // mbs22082601 |mbs     | Updated with PSL comments
 // vbr22061500 |vbr     | Added returning of fail status for ext commands
 // mwh22021600 |mwh     | rx_dactt_bo_timer_mask no longer need fixed issue 228077
@@ -217,8 +218,10 @@ int eo_dac_test(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask)
 
         set_gcr_addr_lane(io_gcr_addr, l_lane);
 
-        //The fast write will clear both the banka and bankb done's and the fail register for bank A and B
-        put_ptr_field(io_gcr_addr, rx_dactt_done_banka , 0b0000000, fast_write);
+        //The  writes will clear both the banka and bankb done's
+        put_ptr_field(io_gcr_addr, rx_dactt_done_banka , 0b0000, read_modify_write);
+        put_ptr_field(io_gcr_addr, rx_dactt_done_bankb , 0b0000, read_modify_write);
+
 
     }//end for
 

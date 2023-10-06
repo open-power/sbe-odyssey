@@ -39,6 +39,8 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// mwh23092100 |mwh     | Updated to add tx_tdr_bist to tx_bist_main
+// gap23070500 |gap     | Issue 307738: report proper failed lane for cmd
 // mwh23050400 |mwh     | Updated for LLBIST Issue 304210
 // jjb22120700 |jjb     | enabled link layer bist for pci
 // mwh22111100 |mwh     | Updated enable with rx register enable for ESD
@@ -74,6 +76,7 @@
 #include "eo_llbist.h"
 #include "eo_dac_test.h"
 #include "eo_esd.h"
+#include "tx_tdr_bist.h"
 #include "ioo_ext_cmd_berm.h"
 
 #include "ppe_fw_reg_const_pkg.h"
@@ -114,6 +117,9 @@ int cmd_tx_ffe_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const 
         }
 
         set_gcr_addr_lane(io_gcr_addr, l_lane);
+#if IO_DEBUG_LEVEL >= 1
+        mem_pg_field_put(rx_current_cal_lane, l_lane);
+#endif
         // PSL tx_ffe
         tx_ffe(io_gcr_addr);
     }
@@ -147,6 +153,9 @@ int cmd_tx_zcal_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const
         }
 
         set_gcr_addr_lane(io_gcr_addr, l_lane);
+#if IO_DEBUG_LEVEL >= 1
+        mem_pg_field_put(rx_current_cal_lane, l_lane);
+#endif
         // PSL tx_zcal_tdr
         tx_zcal_tdr(io_gcr_addr);
         io_sleep(get_gcr_addr_thread(io_gcr_addr));
@@ -185,6 +194,8 @@ int cmd_tx_bist_tests_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx,
 
     int status = rc_no_error;
     uint32_t l_tx_seg_test_en = mem_pg_field_get(tx_seg_test_en);
+    uint32_t l_tx_tdr_bist_en = get_ptr_field (io_gcr_addr, tx_pl_spare_mode_3); //pl
+    uint32_t l_ppe_data_rate = mem_pg_field_get(ppe_data_rate);
     uint32_t l_lane = 0;
     uint32_t i_lane_shift = i_lane_mask_tx;
     uint32_t l_num_lanes = get_num_tx_lane_slices();
@@ -197,8 +208,19 @@ int cmd_tx_bist_tests_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx,
         }
 
         set_gcr_addr_lane(io_gcr_addr, l_lane);
+#if IO_DEBUG_LEVEL >= 1
+        mem_pg_field_put(rx_current_cal_lane, l_lane);
+#endif
         // PSL txbist_main
         status |= txbist_main(io_gcr_addr);
+
+        //run at AXO ratesand Gen5 rate only
+        // \n100: 21.3Gbps\n101: 25.6Gbps\n110: 32.0Gbps\n 111: 38.4Gbps
+        if ((l_tx_tdr_bist_en == 1) & (l_ppe_data_rate >= 0b100))
+        {
+            // PSL tx_tdr_bist
+            status |= tx_tdr_bist(io_gcr_addr);
+        }
 
         if (l_tx_seg_test_en == 1)
         {
@@ -229,6 +251,9 @@ int cmd_tx_rxdetect_pl(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, c
     for (; l_lane < l_num_lanes; ++l_lane, i_lane_shift = i_lane_shift << 1) {
       if ((i_lane_shift & 0x80000000) == 0x0) continue;
       set_gcr_addr_lane(io_gcr_addr, l_lane);
+    #if IO_DEBUG_LEVEL >= 1
+      mem_pg_field_put(rx_current_cal_lane, l_lane);
+    #endif
       //Run RxDetect - Where do we store results
     }
     */
@@ -301,6 +326,9 @@ int cmd_bist_final(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const
             }
 
             set_gcr_addr_lane(io_gcr_addr, l_lane);
+#if IO_DEBUG_LEVEL >= 1
+            mem_pg_field_put(rx_current_cal_lane, l_lane);
+#endif
             status |= eo_esd_test(io_gcr_addr, bank_a);
             status |= eo_esd_test(io_gcr_addr, bank_b);
         }
@@ -337,7 +365,6 @@ int cmd_bist_final(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const
             continue;
         }
 
-        set_gcr_addr_lane(io_gcr_addr, l_lane);
         uint32_t l_rxc_fail = mem_pl_field_get(rx_step_fail_alias, l_lane) == 0 ? 0x0 : 0x1;
 
         // Verify that a rx circuit fail correlates to the rx lane mask fail
@@ -360,7 +387,6 @@ int cmd_bist_final(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const
     return status;
 } //cmd_bist_final
 
-
 /**
  * @brief Calls Rx BERM Per-Lane
  * @param[inout] io_gcr_addr   Target Information
@@ -375,6 +401,7 @@ int cmd_berm(t_gcr_addr* io_gcr_addr, const uint32_t i_lane_mask_rx, const uint3
 
     return rc_no_error;
 } //cmd_berm
+
 
 
 ////////////////////////////////////////////////

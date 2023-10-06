@@ -41,6 +41,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// bhm23082400 |bhm     | Updated how fail registers are written so now they are sticky
 // mwh23033000 |mwh     | EWM 300841 put back debug statement to support lab.
 // mwh23011300 |mwh     | moved to lib.c since used by iot and ioo void set_rxbist_fail_lane
 // mwh22111100 |mwh     | Removed code checking for LTE gain and zero
@@ -106,8 +107,6 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
     {
         // start scope limiting - A
 
-        uint8_t fail = 0; // 0 = pass, 1 = fail
-
         // create 3*uint32_t arrays to retain register access information
         // store access information to speed up
         mk_ptr_ary(rx_ctle_gain);
@@ -163,21 +162,17 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
             // PSL bist_gain_check_lt_min
             if ( rx_ctle_gain_int < mem_pg_field_get(rx_ctle_gain_min_check) )
             {
-                fail = 1;
                 ADD_LOG(DEBUG_BIST_VGA_GAIN_FAIL, gcr_addr, rx_ctle_gain_int);
                 set_debug_state(0x5153); // EWM300841: Don't  Optimize out the debug state
+                mem_pl_field_put(rx_ctle_gain_fail, lane, 1);
             }
             // PSL bist_gain_check_gt_max
             else if ( rx_ctle_gain_int > mem_pg_field_get(rx_ctle_gain_max_check) )
             {
-                fail = 1;
                 ADD_LOG(DEBUG_BIST_VGA_GAIN_FAIL, gcr_addr, rx_ctle_gain_int);
                 set_debug_state(0x5154); // EWM300841: Don't  Optimize out the debug state
+                mem_pl_field_put(rx_ctle_gain_fail, lane, 1);
             }
-
-            //set the fail to register
-            mem_pl_field_put(rx_ctle_gain_fail, lane, fail);
-            fail = 0;
         }
 
 
@@ -192,20 +187,17 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
             // PSL bist_peak1_check_lt_min
             if ( rx_ctle_peak1_int < mem_pg_field_get(rx_ctle_peak1_min_check) )
             {
-                fail = 1;
                 ADD_LOG(DEBUG_BIST_CTLE_PEAK1_FAIL, gcr_addr, rx_ctle_peak1_int);
                 set_debug_state(0x5157); // EWM300841: Don't  Optimize out the debug state
+                mem_pl_field_put(rx_ctle_peak1_fail, lane, 1 );
             }
             // PSL bist_peak1_check_gt_max
             else if ( rx_ctle_peak1_int >  mem_pg_field_get(rx_ctle_peak1_max_check) )
             {
-                fail = 1;
                 ADD_LOG(DEBUG_BIST_CTLE_PEAK1_FAIL, gcr_addr, rx_ctle_peak1_int);
                 set_debug_state(0x5158); // EWM300841: Don't  Optimize out the debug state
+                mem_pl_field_put(rx_ctle_peak1_fail, lane, 1 );
             }
-
-            mem_pl_field_put(rx_ctle_peak1_fail, lane, fail );
-            fail = 0;
         }
 
         //Check ctle peak is not to low or to high
@@ -219,20 +211,17 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
             // PSL bist_peak2_check_lt_min
             if ( rx_ctle_peak2_int < mem_pg_field_get(rx_ctle_peak2_min_check) )
             {
-                fail = 1;
                 ADD_LOG(DEBUG_BIST_CTLE_PEAK2_FAIL, gcr_addr, rx_ctle_peak2_int);
                 set_debug_state(0x515B); // EWM300841: Don't  Optimize out the debug state
+                mem_pl_field_put(rx_ctle_peak2_fail, lane, 1 );
             }
             // PSL bist_peak2_check_gt_max
             else if ( rx_ctle_peak2_int >  mem_pg_field_get(rx_ctle_peak2_max_check) )
             {
-                fail = 1;
                 ADD_LOG(DEBUG_BIST_CTLE_PEAK2_FAIL, gcr_addr, rx_ctle_peak2_int);
                 set_debug_state(0x515C); // EWM300841: Don't  Optimize out the debug state
+                mem_pl_field_put(rx_ctle_peak2_fail, lane, 1 );
             }
-
-            mem_pl_field_put(rx_ctle_peak2_fail, lane, fail );
-            fail = 0;
         }
 
         //Check lte gain is not to low or to high
@@ -246,17 +235,17 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
         //    if ( rx_lte_gain_int < mem_pg_field_get(rx_lte_gain_min_check) ) {
         //        fail = 1;
         //        ADD_LOG(DEBUG_BIST_LTE_GAIN_FAIL, gcr_addr, rx_lte_gain_int);
-        //        set_debug_state(0x516F);
+        //        set_debug_state(0x516F, 3);
         //    }
         //    // PSL bist_lte_gain_check_gt_max
         //    else if ( rx_lte_gain_int >  mem_pg_field_get(rx_lte_gain_max_check) ) {
         //         fail = 1;
         //        ADD_LOG(DEBUG_BIST_LTE_GAIN_FAIL, gcr_addr, rx_lte_gain_int);
-        //        set_debug_state(0x5160);
+        //        set_debug_state(0x5160, 3);
         //    }
         //    else {
         //        fail = 0;
-        //        set_debug_state(0x5161);
+        //        set_debug_state(0x5161, 3);
         //    }
         //
         //
@@ -273,17 +262,17 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
         //    if ( rx_lte_zero_int  < mem_pg_field_get(rx_lte_zero_min_check) ) {
         //        fail = 1;
         //        ADD_LOG(DEBUG_BIST_LTE_ZERO_FAIL, gcr_addr, rx_lte_zero_int);
-        //        set_debug_state(0x5163);
+        //        set_debug_state(0x5163, 3);
         //    }
         //    // PSL bist_lte_zero_check_gt_max
         //    else if ( rx_lte_zero_int >  mem_pg_field_get(rx_lte_zero_max_check) ) {
         //        fail = 1;
         //        ADD_LOG(DEBUG_BIST_LTE_ZERO_FAIL, gcr_addr, rx_lte_zero_int);
-        //        set_debug_state(0x5164);
+        //        set_debug_state(0x5164, 3);
         //    }
         //    else {
         //        fail = 0;
-        //        set_debug_state(0x5165);
+        //        set_debug_state(0x5165, 3);
         //    }
         //
         //
@@ -304,52 +293,45 @@ void eo_vclq_checks(t_gcr_addr* gcr_addr, t_bank bank, int bist_check_en)
             int check_quad_ph_adj_min = mem_pg_field_get(rx_quad_ph_adj_min_check);
 
             //if ( rx_quad_ph_adj_nsd_int <  check_quad_ph_adj_min ) {
-            //    fail = 1;
             //    set_debug_state(0x5167);
             //}
             //else if ( rx_quad_ph_adj_nsd_int >  check_quad_ph_adj_max ) {
-            //    fail = 1;
             //    set_debug_state(0x5168);
             //}
             // PSL bist_quad_phase_check_nse_lt_min
             if ( rx_quad_ph_adj_nse_int <  check_quad_ph_adj_min )
             {
-                fail = 1;
                 ADD_LOG(DEBUG_BIST_QPA_FAIL, gcr_addr, 0x0);
                 set_debug_state(0x5169); // EWM300841: Don't  Optimize out the debug state
+                mem_pl_field_put(rx_quad_phase_fail, lane, 1);
             }
             // PSL bist_quad_phase_check_nse_gt_max
             else if ( rx_quad_ph_adj_nse_int >  check_quad_ph_adj_max )
             {
-                fail = 1;
                 ADD_LOG(DEBUG_BIST_QPA_FAIL, gcr_addr, 0x0);
                 set_debug_state(0x516A); // EWM300841: Don't  Optimize out the debug state
+                mem_pl_field_put(rx_quad_phase_fail, lane, 1);
             }
             //else if ( rx_quad_ph_adj_ewd_int <  check_quad_ph_adj_min ) {
-            //    fail = 1;
             //    set_debug_state(0x516B);
             //}
             //else if ( rx_quad_ph_adj_ewd_int >  check_quad_ph_adj_max ) {
-            //    fail = 1;
             //    set_debug_state(0x516C);
             //}
             // PSL bist_quad_phase_check_ewe_lt_min
             else if ( rx_quad_ph_adj_ewe_int <  check_quad_ph_adj_min )
             {
-                fail = 1;
                 ADD_LOG(DEBUG_BIST_QPA_FAIL, gcr_addr, 0x0);
                 set_debug_state(0x516D); // EWM300841: Don't  Optimize out the debug state
+                mem_pl_field_put(rx_quad_phase_fail, lane, 1);
             }
             // PSL bist_quad_phase_check_ewe_gt_max
             else if ( rx_quad_ph_adj_ewe_int >  check_quad_ph_adj_max )
             {
-                fail = 1;
                 ADD_LOG(DEBUG_BIST_QPA_FAIL, gcr_addr, 0x0);
                 set_debug_state(0x516E); // EWM300841: Don't  Optimize out the debug state
+                mem_pl_field_put(rx_quad_phase_fail, lane, 1);
             }
-
-            mem_pl_field_put(rx_quad_phase_fail, lane, fail);
-            fail = 0;
         }
 
     } // end scope limiting - A

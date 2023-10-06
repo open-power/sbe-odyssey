@@ -39,6 +39,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// gap23062100 |gap     | Issue 307332: add hsbist post for 5nm; refined set_debug_state calls; fixed 5nm/odyssey branching
+// gap23032100 |gap     | Issue 300851: wait 1ms during ls bist to capture noise
+// gap23030700 |gap     | Issue 300655: change detrx controls from PG to PL for Pll
 // jjb22121500 |jjb     | needed to change tx_pattern_sel to non-zero value that is different than desired value to enable fastx2 clocks
 // jjb22110700 |jjb     | moved ioo clk_sel, bus_width_sel, and gear_ratio set up code to reduce code space
 // jjb22101300 |jjb     | Updated hs and ls tx bist support for pcie mode
@@ -73,10 +76,17 @@
 #include "tx_txdetrx_bist.h"
 #include "tx_txidle_bist.h"
 
+#include "ppe_img_reg_const_pkg.h"
 #include "ppe_com_reg_const_pkg.h"
 #include "io_config.h"
 #include "io_logger.h"
 #include "tx_dcc_tune_constants.h"
+
+// Use this to set debug_state levels for testing (on select debug_states which are not necessary outside initial dev)
+// If this is less than or equal to IO_DEBUG_LEVEL in ppe_common/img_defs.mk, debug states will be written, current
+// value is 2
+#define TXBIST_DBG_LVL 3
+
 
 ////////////////////////////////////////////////////////////////////////////////////
 // TXBIST
@@ -189,7 +199,7 @@ int txbist_main_dcc(t_gcr_addr* gcr_addr_i)
     {
         txbist_main_set_bist_fail(gcr_addr_i);
         put_ptr_field(gcr_addr_i, tx_bist_dcc_fail, 0b1, read_modify_write);
-        set_debug_state(0x0111); // txbist_main_dcc fail i low
+        set_debug_state(0x0111, TXBIST_DBG_LVL); // txbist_main_dcc fail i low
         set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
         ADD_LOG(DEBUG_BIST_TX_DCC_I_FAIL, gcr_addr_i, dcc_i_tune_l);
         status = error_code;
@@ -200,7 +210,7 @@ int txbist_main_dcc(t_gcr_addr* gcr_addr_i)
     {
         txbist_main_set_bist_fail(gcr_addr_i);
         put_ptr_field(gcr_addr_i, tx_bist_dcc_fail, 0b1, read_modify_write);
-        set_debug_state(0x0112); // txbist_main_dcc fail i high
+        set_debug_state(0x0112, TXBIST_DBG_LVL); // txbist_main_dcc fail i high
         set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
         ADD_LOG(DEBUG_BIST_TX_DCC_I_FAIL, gcr_addr_i, dcc_i_tune_l);
         status = error_code;
@@ -211,7 +221,7 @@ int txbist_main_dcc(t_gcr_addr* gcr_addr_i)
     {
         txbist_main_set_bist_fail(gcr_addr_i);
         put_ptr_field(gcr_addr_i, tx_bist_dcc_fail, 0b1, read_modify_write);
-        set_debug_state(0x0113); // txbist_main_dcc fail q low
+        set_debug_state(0x0113, TXBIST_DBG_LVL); // txbist_main_dcc fail q low
         set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
         ADD_LOG(DEBUG_BIST_TX_DCC_Q_FAIL, gcr_addr_i, dcc_q_tune_l);
         status = error_code;
@@ -222,7 +232,7 @@ int txbist_main_dcc(t_gcr_addr* gcr_addr_i)
     {
         txbist_main_set_bist_fail(gcr_addr_i);
         put_ptr_field(gcr_addr_i, tx_bist_dcc_fail, 0b1, read_modify_write);
-        set_debug_state(0x0114); // txbist_main_dcc fail q high
+        set_debug_state(0x0114, TXBIST_DBG_LVL); // txbist_main_dcc fail q high
         set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
         ADD_LOG(DEBUG_BIST_TX_DCC_Q_FAIL, gcr_addr_i, dcc_q_tune_l);
         status = error_code;
@@ -233,7 +243,7 @@ int txbist_main_dcc(t_gcr_addr* gcr_addr_i)
     {
         txbist_main_set_bist_fail(gcr_addr_i);
         put_ptr_field(gcr_addr_i, tx_bist_dcc_fail, 0b1, read_modify_write);
-        set_debug_state(0x0115); // txbist_main_dcc fail iq low
+        set_debug_state(0x0115, TXBIST_DBG_LVL); // txbist_main_dcc fail iq low
         set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
         ADD_LOG(DEBUG_BIST_TX_DCC_IQ_FAIL, gcr_addr_i, dcc_iq_tune_l);
         status = error_code;
@@ -244,7 +254,7 @@ int txbist_main_dcc(t_gcr_addr* gcr_addr_i)
     {
         txbist_main_set_bist_fail(gcr_addr_i);
         put_ptr_field(gcr_addr_i, tx_bist_dcc_fail, 0b1, read_modify_write);
-        set_debug_state(0x0116); // txbist_main_dcc fail iq high
+        set_debug_state(0x0116, TXBIST_DBG_LVL); // txbist_main_dcc fail iq high
         set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
         ADD_LOG(DEBUG_BIST_TX_DCC_IQ_FAIL, gcr_addr_i, dcc_iq_tune_l);
         status = error_code;
@@ -270,12 +280,18 @@ int txbist_main_ls(t_gcr_addr* gcr_addr_i)
     put_ptr_field(gcr_addr_i, tx_bist_prbs_clear,  0b1,    read_modify_write);
     put_ptr_field(gcr_addr_i, tx_bist_prbs_clear,  0b0,    read_modify_write);
 
-    io_spin_us(2000); //2ms delay
+    uint32_t ppe_sim_speedup_l = img_field_get(ppe_sim_speedup);
+
+    // PSL ppe_sim_speedup_wait_1000
+    if (!ppe_sim_speedup_l)
+    {
+        io_wait_us(get_gcr_addr_thread(gcr_addr_i), 1000); // EWM300851: wait 1ms to capture noise
+    }
 
     // PSL prbs_stat
     if(get_ptr_field(gcr_addr_i, tx_bist_prbs_stat_alias) != 1)
     {
-        set_debug_state(0x0131); // txbist_main_ls fail
+        set_debug_state(0x0131, TXBIST_DBG_LVL); // txbist_main_ls fail
         txbist_main_set_bist_fail(gcr_addr_i);
         put_ptr_field(gcr_addr_i, tx_bist_ls_fail, 0b1, read_modify_write);
         // PSL set_fir_bad_lane_warning_and_dft_error
@@ -304,7 +320,7 @@ int txbist_main_hs(t_gcr_addr* gcr_addr_i)
     put_ptr_field(gcr_addr_i, tx_bist_hs_cust_en, 0b1,    read_modify_write);
     put_ptr_field(gcr_addr_i, tx_pattern_enable,  0b1,    read_modify_write);
     put_ptr_field(gcr_addr_i, tx_pattern_sel,     0b010,
-                  read_modify_write); // needed to induce change in tx_pattern_sel to start clocks
+                  read_modify_write); // need to run first to clear tx_rptpat_gear_ratio_sync
     put_ptr_field(gcr_addr_i, tx_pattern_sel,     0b001,  read_modify_write);
 
     status |= txbist_main_hs_pat(gcr_addr_i, 0b0011);
@@ -334,10 +350,16 @@ int txbist_main_hs_pat(t_gcr_addr* gcr_addr_i, uint8_t clk_pattern_i)
 
     status |= txbist_main_hs_pat_sel(gcr_addr_i, clk_pattern_i, 0b000); // Main N
     status |= txbist_main_hs_pat_sel(gcr_addr_i, clk_pattern_i, 0b001); // Main P
-    status |= txbist_main_hs_pat_sel(gcr_addr_i, clk_pattern_i, 0b100); // Pre1 N
-    status |= txbist_main_hs_pat_sel(gcr_addr_i, clk_pattern_i, 0b101); // Pre1 P
+    status |= txbist_main_hs_pat_sel(gcr_addr_i, clk_pattern_i, 0b100); // Pre1 P
+    status |= txbist_main_hs_pat_sel(gcr_addr_i, clk_pattern_i, 0b101); // Pre1 N
     status |= txbist_main_hs_pat_sel(gcr_addr_i, clk_pattern_i, 0b110); // Pre2 N
     status |= txbist_main_hs_pat_sel(gcr_addr_i, clk_pattern_i, 0b111); // Pre2 P
+
+    if (!is_odyssey())
+    {
+        status |= txbist_main_hs_pat_sel(gcr_addr_i, clk_pattern_i, 0b010); // Post P
+        status |= txbist_main_hs_pat_sel(gcr_addr_i, clk_pattern_i, 0b100); // Post N
+    }
 
     return status;
 } //txbist_main_hs_pat
@@ -348,7 +370,7 @@ int txbist_main_hs_pat(t_gcr_addr* gcr_addr_i, uint8_t clk_pattern_i)
 ////////////////////////////////////////////////////////////////////////////////////
 int txbist_main_hs_pat_sel(t_gcr_addr* gcr_addr_i, uint8_t clk_pattern_i, uint8_t hs_sel_i)
 {
-    set_debug_state(0x0152, 3); // txbist_main_hs_pat_sel  start
+    set_debug_state(0x0152, TXBIST_DBG_LVL); // txbist_main_hs_pat_sel  start
     int status = rc_no_error;
 
     uint16_t dac_thresh_max_l = mem_pg_field_get(tx_bist_hs_dac_thresh_max);
@@ -357,32 +379,49 @@ int txbist_main_hs_pat_sel(t_gcr_addr* gcr_addr_i, uint8_t clk_pattern_i, uint8_
     put_ptr_field(gcr_addr_i, tx_bist_hs_cust_sel,     hs_sel_i,    read_modify_write);
     io_wait_us(get_gcr_addr_thread(gcr_addr_i), 1); // wait at least 700nS from sel to compare
 
-    put_ptr_field(gcr_addr_i, tx_tdr_dac_cntl,    dac_thresh_max_l,  read_modify_write);
+    bool is_5nm_l = !is_odyssey();
+
+    if (is_5nm_l)
+    {
+        put_ptr_field(gcr_addr_i, tx_tdr_dac_cntl_pl,    dac_thresh_max_l,  read_modify_write); // P11 is per-lane
+    }
+    else
+    {
+        put_ptr_field(gcr_addr_i, tx_tdr_dac_cntl,    dac_thresh_max_l,  read_modify_write); // p10 is per-group
+    }
 
     // PSL tdr_capt_ne_0
     if(get_ptr_field(gcr_addr_i, tx_tdr_capt_val) != 0)
     {
         txbist_main_set_bist_fail(gcr_addr_i);
         put_ptr_field(gcr_addr_i, tx_bist_hs_fail, 0b1, read_modify_write);
-        set_debug_state(0x0153); // txbist_main_hs_pat_sel fail high
+        set_debug_state(0x0153, TXBIST_DBG_LVL); // txbist_main_hs_pat_sel fail high
         set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
         ADD_LOG(DEBUG_BIST_TX_HS_FAIL, gcr_addr_i, clk_pattern_i);
         status = error_code;
     }
 
-    put_ptr_field(gcr_addr_i, tx_tdr_dac_cntl,    dac_thresh_min_l,  read_modify_write);
+    if (is_5nm_l)
+    {
+        put_ptr_field(gcr_addr_i, tx_tdr_dac_cntl_pl,    dac_thresh_min_l,  read_modify_write); // p11 is per-lane
+    }
+    else
+    {
+        put_ptr_field(gcr_addr_i, tx_tdr_dac_cntl,    dac_thresh_min_l,  read_modify_write); // p10 is per-group
+    }
 
     // PSL tdr_capt_ne_1
     if(get_ptr_field(gcr_addr_i, tx_tdr_capt_val) != 1)
     {
         txbist_main_set_bist_fail(gcr_addr_i);
         put_ptr_field(gcr_addr_i, tx_bist_hs_fail, 0b1, read_modify_write);
-        set_debug_state(0x0154); // txbist_main_hs_pat_sel fail low
+        set_debug_state(0x0154, TXBIST_DBG_LVL); // txbist_main_hs_pat_sel fail low
         set_fir(fir_code_dft_error | fir_code_bad_lane_warning);
         ADD_LOG(DEBUG_BIST_TX_HS_FAIL, gcr_addr_i, clk_pattern_i);
         status = error_code;
     }
 
+    set_debug_state(0x015F, TXBIST_DBG_LVL); // txbist_main_hs_pat_sel end
     return status;
 } //txbist_main_hs_pat_sel
 
