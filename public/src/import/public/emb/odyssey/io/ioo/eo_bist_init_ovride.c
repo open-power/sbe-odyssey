@@ -41,6 +41,11 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// mwh23092800 |mwh     | EWM 313239 Setting tx idle and txrxdet default to off = 0
+// mwh23052600 |mwh     | EWM 305800 disable LLBIST so does not run
+// jjb23052400 |jjb     | Issue 305590: remove altering pipe fence value for rxdatavalid for llbist support.
+// jjb23052300 |jjb     | Issue 305590: Enable rxdatavalid in pcie mode for llbist.
+// jjb23052300 |jjb     | Issue 305590: Enable rxdatavalid in pcie mode for llbist.
 // vbr23011000 |vbr     | Issue 297222: Moved disabling of thread active time to start of hw_reg_init
 // jjb23010400 |jjb     | Removed unnecessary register read when setting bist enables
 // jjb22113000 |jjb     | Updated dac_test_check_en and rx_esd_check_en query code
@@ -113,11 +118,12 @@ void eo_bist_init_ovride(t_gcr_addr* gcr_addr)
 
     int lane = 0;//for the "for loop" used on pl registers
     int bist_num_lanes_rx = get_num_rx_lane_slices();//getting max number of lanes per theard
-    int bist_num_lanes_tx = get_num_tx_lane_slices();//getting max number of lanes per theard
+    //int bist_num_lanes_tx = get_num_tx_lane_slices();//getting max number of lanes per theard
 
 
     //enabling all rx bist checks except for dac_test and ESD_test which are enabled/disabled by tester pattern (HW560154)
-    int rx_check_en_alias_value = 0xFDFE | get_ptr_field(gcr_addr, rx_check_en_alias);
+    //Turn off llbist for ewm 305800 -- DFT will use SBE turn on in want to run.
+    int rx_check_en_alias_value = 0xFDFC | get_ptr_field(gcr_addr, rx_check_en_alias);
     put_ptr_field(gcr_addr, rx_check_en_alias, rx_check_en_alias_value, fast_write); //pg
 
     //change rx_min_recal_cnt to 1 for bist issue_290239 -- need only 1 recal for bist
@@ -130,13 +136,12 @@ void eo_bist_init_ovride(t_gcr_addr* gcr_addr)
     //enabling all tx bist checks
     put_ptr_field(gcr_addr, tx_bist_en_alias, 0b111, read_modify_write ); //pg
 
-
-    for (lane = 0; lane <  bist_num_lanes_tx; lane++)
-    {
-        //begin for
-        set_gcr_addr_lane(gcr_addr, lane);
-        put_ptr_field(gcr_addr, tx_bist_txdetidle_en_alias, 0b11, read_modify_write ); //pl
-    }//end for
+    //Removed for EMW 313239
+    //for (lane = 0; lane <  bist_num_lanes_tx; lane++)
+    //  {//begin for
+    //     set_gcr_addr_lane(gcr_addr, lane);
+    //     put_ptr_field(gcr_addr, tx_bist_txdetidle_en_alias,0b11,read_modify_write );//pl
+    //  }//end for
 
 
     // switch gcr address to rx
@@ -160,10 +165,10 @@ void eo_bist_init_ovride(t_gcr_addr* gcr_addr)
     //Disabling auto recal since using the recal command
     mem_pg_field_put(rx_enable_auto_recal_0_15, 0x0000);
 
-
     for (lane = 0; lane <  bist_num_lanes_rx; lane++)
     {
         //begin for
+        // PSL pcie_mode_llbist_rxdatavalid_enable
         //turn on circuit components for bist
         // Bist circuit settings are done elsewhere (HW548766, HW560154)
         set_gcr_addr_lane(gcr_addr, lane);

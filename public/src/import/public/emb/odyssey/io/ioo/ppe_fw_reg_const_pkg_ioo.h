@@ -46,6 +46,14 @@
 #define ext_cmd_done_00_15_mask                    0xffff
 
 
+#define ext_cmd_done_00_31_addr                    0b000001000
+#define ext_cmd_done_00_31_startbit                0
+#define ext_cmd_done_00_31_width                   32
+#define ext_cmd_done_00_31_endbit                  31
+#define ext_cmd_done_00_31_shift                   0
+#define ext_cmd_done_00_31_mask                    0xffffffff
+
+
 #define ext_cmd_done_16_31_addr                    0b000001001
 #define ext_cmd_done_16_31_startbit                0
 #define ext_cmd_done_16_31_width                   16
@@ -188,6 +196,14 @@
 #define ext_cmd_fail_00_15_endbit                  15
 #define ext_cmd_fail_00_15_shift                   0
 #define ext_cmd_fail_00_15_mask                    0xffff
+
+
+#define ext_cmd_fail_00_31_addr                    0b000001100
+#define ext_cmd_fail_00_31_startbit                0
+#define ext_cmd_fail_00_31_width                   32
+#define ext_cmd_fail_00_31_endbit                  31
+#define ext_cmd_fail_00_31_shift                   0
+#define ext_cmd_fail_00_31_mask                    0xffffffff
 
 
 #define ext_cmd_fail_16_31_addr                    0b000001101
@@ -334,6 +350,14 @@
 #define ext_cmd_lanes_rx_00_15_mask                0xffff
 
 
+#define ext_cmd_lanes_rx_00_31_addr                0b000000000
+#define ext_cmd_lanes_rx_00_31_startbit            0
+#define ext_cmd_lanes_rx_00_31_width               32
+#define ext_cmd_lanes_rx_00_31_endbit              31
+#define ext_cmd_lanes_rx_00_31_shift               0
+#define ext_cmd_lanes_rx_00_31_mask                0xffffffff
+
+
 #define ext_cmd_lanes_rx_16_31_addr                0b000000001
 #define ext_cmd_lanes_rx_16_31_startbit            0
 #define ext_cmd_lanes_rx_16_31_width               16
@@ -348,6 +372,14 @@
 #define ext_cmd_lanes_tx_00_15_endbit              15
 #define ext_cmd_lanes_tx_00_15_shift               0
 #define ext_cmd_lanes_tx_00_15_mask                0xffff
+
+
+#define ext_cmd_lanes_tx_00_31_addr                0b000000010
+#define ext_cmd_lanes_tx_00_31_startbit            0
+#define ext_cmd_lanes_tx_00_31_width               32
+#define ext_cmd_lanes_tx_00_31_endbit              31
+#define ext_cmd_lanes_tx_00_31_shift               0
+#define ext_cmd_lanes_tx_00_31_mask                0xffffffff
 
 
 #define ext_cmd_lanes_tx_16_31_addr                0b000000011
@@ -372,6 +404,14 @@
 #define ext_cmd_req_00_15_endbit                   15
 #define ext_cmd_req_00_15_shift                    0
 #define ext_cmd_req_00_15_mask                     0xffff
+
+
+#define ext_cmd_req_00_31_addr                     0b000000100
+#define ext_cmd_req_00_31_startbit                 0
+#define ext_cmd_req_00_31_width                    32
+#define ext_cmd_req_00_31_endbit                   31
+#define ext_cmd_req_00_31_shift                    0
+#define ext_cmd_req_00_31_mask                     0xffffffff
 
 
 #define ext_cmd_req_16_31_addr                     0b000000101

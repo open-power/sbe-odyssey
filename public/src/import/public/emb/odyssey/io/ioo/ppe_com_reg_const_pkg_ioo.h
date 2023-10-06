@@ -97,6 +97,7 @@
 #define rx_bit_cntlx15_pl_addr                     0b011000101
 #define rx_bit_cntlx19_pl_addr                     0b011001110
 #define rx_bit_cntlx1_pl_addr                      0b001101100
+#define rx_bit_cntlx21_pl_addr                     0b011010100
 #define rx_bit_cntlx5_pl_addr                      0b001110000
 #define rx_bit_cntlx9_pl_addr                      0b011000111
 #define rx_bit_mode10_pl_addr                      0b011010001
@@ -454,6 +455,14 @@
 #define mmio_echo_chkn_endbit                      14
 #define mmio_echo_chkn_shift                       49
 #define mmio_echo_chkn_mask                        0x2000000000000
+
+
+#define pipe_config_ebuffrst_clr_rxdvalid_en_addr   0b010111001
+#define pipe_config_ebuffrst_clr_rxdvalid_en_startbit   2
+#define pipe_config_ebuffrst_clr_rxdvalid_en_width   1
+#define pipe_config_ebuffrst_clr_rxdvalid_en_endbit   2
+#define pipe_config_ebuffrst_clr_rxdvalid_en_shift   13
+#define pipe_config_ebuffrst_clr_rxdvalid_en_mask   0x2000
 
 
 #define pipe_config_full_reg_addr                  0b010111001
@@ -3856,6 +3865,22 @@
 #define rx_bank_align_error_sticky_clr_mask        0x20
 
 
+#define rx_bank_clk_phase_detect_en_alias_addr     0b011010100
+#define rx_bank_clk_phase_detect_en_alias_startbit   0
+#define rx_bank_clk_phase_detect_en_alias_width    2
+#define rx_bank_clk_phase_detect_en_alias_endbit   1
+#define rx_bank_clk_phase_detect_en_alias_shift    14
+#define rx_bank_clk_phase_detect_en_alias_mask     0xc000
+
+
+#define rx_bank_clk_unaligned_addr                 0b011000110
+#define rx_bank_clk_unaligned_startbit             6
+#define rx_bank_clk_unaligned_width                1
+#define rx_bank_clk_unaligned_endbit               6
+#define rx_bank_clk_unaligned_shift                9
+#define rx_bank_clk_unaligned_mask                 0x200
+
+
 #define rx_bank_rlmclk_dlclk_sel_a_alias_addr      0b011001110
 #define rx_bank_rlmclk_dlclk_sel_a_alias_startbit   13
 #define rx_bank_rlmclk_dlclk_sel_a_alias_width     3
@@ -3886,6 +3911,14 @@
 #define rx_bank_safe_swap_endbit                   11
 #define rx_bank_safe_swap_shift                    4
 #define rx_bank_safe_swap_mask                     0x10
+
+
+#define rx_bank_safe_swap_clk_phase_det_en_addr    0b011010100
+#define rx_bank_safe_swap_clk_phase_det_en_startbit   1
+#define rx_bank_safe_swap_clk_phase_det_en_width   1
+#define rx_bank_safe_swap_clk_phase_det_en_endbit   1
+#define rx_bank_safe_swap_clk_phase_det_en_shift   14
+#define rx_bank_safe_swap_clk_phase_det_en_mask    0x4000
 
 
 #define rx_bank_sel_a_addr                         0b011001110
@@ -5110,6 +5143,14 @@
 #define rx_clkgen_en_abank_outbuf_endbit           8
 #define rx_clkgen_en_abank_outbuf_shift            7
 #define rx_clkgen_en_abank_outbuf_mask             0x80
+
+
+#define rx_clkgen_en_bank_outbuf_ab_alias_addr     0b011010001
+#define rx_clkgen_en_bank_outbuf_ab_alias_startbit   8
+#define rx_clkgen_en_bank_outbuf_ab_alias_width    2
+#define rx_clkgen_en_bank_outbuf_ab_alias_endbit   9
+#define rx_clkgen_en_bank_outbuf_ab_alias_shift    6
+#define rx_clkgen_en_bank_outbuf_ab_alias_mask     0xc0
 
 
 #define rx_clkgen_en_bbank_outbuf_addr             0b011010001
@@ -7886,6 +7927,14 @@
 #define rx_poff_adj_endbit                         15
 #define rx_poff_adj_shift                          0
 #define rx_poff_adj_mask                           0xff
+
+
+#define rx_pr_bank_align_clk_phase_det_en_addr     0b011010100
+#define rx_pr_bank_align_clk_phase_det_en_startbit   0
+#define rx_pr_bank_align_clk_phase_det_en_width    1
+#define rx_pr_bank_align_clk_phase_det_en_endbit   0
+#define rx_pr_bank_align_clk_phase_det_en_shift    15
+#define rx_pr_bank_align_clk_phase_det_en_mask     0x8000
 
 
 #define rx_pr_bank_align_mode_a_addr               0b001101101

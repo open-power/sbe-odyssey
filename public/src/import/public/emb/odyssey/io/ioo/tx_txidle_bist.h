@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -42,6 +42,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// gap23030700 |gap     | Issue 300655: change detrx controls from PG to PL for Pll
 // mwh22032400 |mwh     | Initial Code
 //------------------------------------------------------------------------------
 
@@ -57,10 +58,12 @@
 #define expect_1 0b1
 #define tx_idle_mode_ovr_alias_1111 0b1111
 #define tx_idle_mode_ovr_alias_1110 0b1110
-#define tdr_cntl_102_clp_padp_offset 0b01100110100
-#define tdr_cntl_102_clp_padn_offset 0b01100110110
-#define tdr_cntl_154_clp_padp_offset 0b10011010100
-#define tdr_cntl_154_clp_padn_offset 0b10011010110
+#define tdr_cntl_low  0b01100110
+#define tdr_cntl_high 0b10011010
+#define tdr_cntl_102_clp_padp_offset 0b100
+#define tdr_cntl_102_clp_padn_offset 0b110
+#define tdr_cntl_154_clp_padp_offset 0b100
+#define tdr_cntl_154_clp_padn_offset 0b110
 #define t1_p_pad_fail_exp_1 0b00000001
 #define t2_n_pad_fail_exp_1 0b00000010
 #define t3_p_pad_fail_exp_0 0b00000100
@@ -70,8 +73,8 @@
 #define t7_p_pad_fail_exp_0 0b01000000
 #define t8_n_pad_fail_exp_0 0b10000000
 
-uint16_t tx_idle_tests(t_gcr_addr* gcr_addr, uint16_t tx_tdr_cntl_alias_in, uint16_t  expect,
-                       uint16_t tx_idle_ovr_alias, uint16_t fail_mask);
+uint16_t tx_idle_tests(t_gcr_addr* gcr_addr, uint16_t tx_tdr_dac_cntl_in, uint16_t tx_tdr_cntl_alias_in,
+                       uint16_t  expect, uint16_t tx_idle_ovr_alias, uint16_t fail_mask);
 
 int tx_txidle_bist(t_gcr_addr* gcr_addr, int tx_bist_enable_ls, int tx_bist_enable_hs);
 

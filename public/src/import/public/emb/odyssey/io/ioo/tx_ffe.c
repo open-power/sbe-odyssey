@@ -72,7 +72,8 @@
 // *!            remaining segments are supplied by the main bank
 // *!          Note: the bank register width and the allowed zcal and coefficient
 // *!            are such that the resulting computation will not overflow the
-// *!            bank register controls
+// *!            ffe bank register controls and the remaining segments for the main bank
+// *!            are bounded to the available main segments.
 // *!   After the needed number of enables and selects are calculated, they
 // *!     are converted to appropriate thermometer code and written to the
 // *!     high speed ffe setting registers
@@ -86,6 +87,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// gap23040400 |gap     | EWM302057 bound main segments to prevent therm value overflow
 // gap22102600 |gap     | EWM293106 update io_sleep to solve tx_ffe thread active time exceeded
 // gap22100300 |gap     | Fix bug in main alloc that limited bound ranges, add logging when using bound
 // gap22020500 |gap     | Add 5nm post, follow 5nm constraints
@@ -368,6 +370,8 @@ void tx_ffe_bound_zcal(t_gcr_addr* gcr_addr_i, uint32_t* zcal_2r_io)
  * the calibration value would typically by the 2R equivalent resistance, though this
  *  function would work with any convention
  * the result is rounded to the nearest integer
+ * we intentionally round 1/2 up to reduce the impact of alg limitation w/high zcal results
+ * the lower result is odd and the higher result is even
  */
 uint32_t tx_ffe_calc_sel(uint32_t zcal_i, uint32_t ffe_coef_x128_i)
 {
@@ -423,11 +427,32 @@ void tx_ffe_write_main_en(t_gcr_addr* gcr_addr_i, uint32_t num_2r_equiv_i, bool 
     uint32_t high_bits_l;
     uint32_t low_bits_l;
 
-    /* for 5nm main bank is 12 1r and 1 2r segments, num_2r_eqiv_i will be less than 26
-     *  this code is shared since the therm code uses msb bits first and the msb of the 5nm
+    /* There are scenarios or possible scenarios where there are not enough main bank segments to meet
+     * requirements. This happens when the zcal result is near max and shared selects between nseg and
+     * pseg ffe banks force some unused ffe bank segments. For example, the n leg may want 7 pre1
+     * segments selected the p leg 8. Both n and p will select 4 1R and 1 2R segment. n leg will enable
+     * 3 1R and 1 2R segment while the p leg will enable 4 1R segments. The n leg will sacrifice 1 1R
+     * segment to share a select and the p leg will sacrifice 1 2R segment. This results in up to
+     * 1-1R segment per ffe bank unused. If the result of zcal is a large value and these segments
+     * are unused, the leftover segments for the main bank may be too great. Thus we go to the work
+     * of bounding the the remaining segments. In this scenario, the zcal result is relatively large
+     * so the error of reducing the enabled segments vs the calibrated value is small proportionally.
+     * */
+    uint32_t therm_width_l;
+
+    if (is_5nm_i)
+    {
+        therm_width_l = tx_nseg_main_en_width;
+    }
+    else
+    {
+        therm_width_l = tx_nseg_main_0_15_hs_en_width + tx_nseg_main_16_24_hs_en_width;
+    }
+
+    /*  This code is shared by 5nm and 7nm since the therm code uses msb bits first and the msb of the 5nm
      *  main bank reg is the same as the msb of the 7nm main bank reg */
 
-    uint32_t full_therm_l = tx_ffe_toThermWithHalfRev(num_2r_equiv_i,
+    uint32_t full_therm_l = tx_ffe_toThermWithHalfRev(min(num_2r_equiv_i, (therm_width_l << 1) - 1),
                             tx_nseg_main_0_15_hs_en_width + tx_nseg_main_16_24_hs_en_width);
     high_bits_l = full_therm_l >> (tx_nseg_main_16_24_hs_en_width);
     low_bits_l = full_therm_l & ((0x1 << tx_nseg_main_16_24_hs_en_width) - 1); // for 5nm will always be 0

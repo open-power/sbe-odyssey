@@ -1686,6 +1686,14 @@
 #define ppe_debug_stopwatch_time_us_mask           0xffff
 
 
+#define ppe_dl_ifc_ignore_addr                     0b111101110
+#define ppe_dl_ifc_ignore_startbit                 0
+#define ppe_dl_ifc_ignore_width                    1
+#define ppe_dl_ifc_ignore_endbit                   0
+#define ppe_dl_ifc_ignore_shift                    15
+#define ppe_dl_ifc_ignore_mask                     0x8000
+
+
 #define ppe_eoff_edge_hysteresis_addr              0b110001011
 #define ppe_eoff_edge_hysteresis_startbit          3
 #define ppe_eoff_edge_hysteresis_width             3
@@ -2214,6 +2222,70 @@
 #define rx_amp_gain_cnt_max_mask                   0xf0
 
 
+#define rx_auto_recal_done_0_15_addr               0b110111100
+#define rx_auto_recal_done_0_15_startbit           0
+#define rx_auto_recal_done_0_15_width              16
+#define rx_auto_recal_done_0_15_endbit             15
+#define rx_auto_recal_done_0_15_shift              0
+#define rx_auto_recal_done_0_15_mask               0xffff
+
+
+#define rx_auto_recal_done_0_23_addr               0b110111100
+#define rx_auto_recal_done_0_23_startbit           0
+#define rx_auto_recal_done_0_23_width              24
+#define rx_auto_recal_done_0_23_endbit             23
+#define rx_auto_recal_done_0_23_shift              8
+#define rx_auto_recal_done_0_23_mask               0xffffff00
+
+
+#define rx_auto_recal_done_16_23_addr              0b110111101
+#define rx_auto_recal_done_16_23_startbit          0
+#define rx_auto_recal_done_16_23_width             8
+#define rx_auto_recal_done_16_23_endbit            7
+#define rx_auto_recal_done_16_23_shift             8
+#define rx_auto_recal_done_16_23_mask              0xff00
+
+
+#define rx_auto_recal_free_run_cnt_addr            0b110011001
+#define rx_auto_recal_free_run_cnt_startbit        0
+#define rx_auto_recal_free_run_cnt_width           8
+#define rx_auto_recal_free_run_cnt_endbit          7
+#define rx_auto_recal_free_run_cnt_shift           8
+#define rx_auto_recal_free_run_cnt_mask            0xff00
+
+
+#define rx_auto_recal_period_addr                  0b110011001
+#define rx_auto_recal_period_startbit              8
+#define rx_auto_recal_period_width                 4
+#define rx_auto_recal_period_endbit                11
+#define rx_auto_recal_period_shift                 4
+#define rx_auto_recal_period_mask                  0xf0
+
+
+#define rx_auto_recal_periodic_done_addr           0b111000010
+#define rx_auto_recal_periodic_done_startbit       1
+#define rx_auto_recal_periodic_done_width          1
+#define rx_auto_recal_periodic_done_endbit         1
+#define rx_auto_recal_periodic_done_shift          14
+#define rx_auto_recal_periodic_done_mask           0x4000
+
+
+#define rx_auto_recal_periodic_run_addr            0b111000010
+#define rx_auto_recal_periodic_run_startbit        0
+#define rx_auto_recal_periodic_run_width           1
+#define rx_auto_recal_periodic_run_endbit          0
+#define rx_auto_recal_periodic_run_shift           15
+#define rx_auto_recal_periodic_run_mask            0x8000
+
+
+#define rx_auto_recal_periodic_run_done_alias_addr   0b111000010
+#define rx_auto_recal_periodic_run_done_alias_startbit   0
+#define rx_auto_recal_periodic_run_done_alias_width   2
+#define rx_auto_recal_periodic_run_done_alias_endbit   1
+#define rx_auto_recal_periodic_run_done_alias_shift   14
+#define rx_auto_recal_periodic_run_done_alias_mask   0xc000
+
+
 #define rx_b_before_loff_n000_addr                 0b000001110
 #define rx_b_before_loff_n000_startbit             8
 #define rx_b_before_loff_n000_width                8
@@ -2414,46 +2486,6 @@
 #define rx_ber_timer_sel_bist_mask                 0xf000
 
 
-#define rx_berm_bank_addr                          0b111100001
-#define rx_berm_bank_startbit                      0
-#define rx_berm_bank_width                         1
-#define rx_berm_bank_endbit                        0
-#define rx_berm_bank_shift                         15
-#define rx_berm_bank_mask                          0x8000
-
-
-#define rx_berm_depth_addr                         0b111100001
-#define rx_berm_depth_startbit                     1
-#define rx_berm_depth_width                        2
-#define rx_berm_depth_endbit                       2
-#define rx_berm_depth_shift                        13
-#define rx_berm_depth_mask                         0x6000
-
-
-#define rx_berm_hoffset_addr                       0b111100010
-#define rx_berm_hoffset_startbit                   0
-#define rx_berm_hoffset_width                      7
-#define rx_berm_hoffset_endbit                     6
-#define rx_berm_hoffset_shift                      9
-#define rx_berm_hoffset_mask                       0xfe00
-
-
-#define rx_berm_pattern_sel_addr                   0b111100001
-#define rx_berm_pattern_sel_startbit               3
-#define rx_berm_pattern_sel_width                  3
-#define rx_berm_pattern_sel_endbit                 5
-#define rx_berm_pattern_sel_shift                  10
-#define rx_berm_pattern_sel_mask                   0x1c00
-
-
-#define rx_berm_voffset_addr                       0b111100010
-#define rx_berm_voffset_startbit                   7
-#define rx_berm_voffset_width                      9
-#define rx_berm_voffset_endbit                     15
-#define rx_berm_voffset_shift                      0
-#define rx_berm_voffset_mask                       0x1ff
-
-
 #define rx_clr_eye_height_width_addr               0b110100000
 #define rx_clr_eye_height_width_startbit           12
 #define rx_clr_eye_height_width_width              1
@@ -2510,14 +2542,6 @@
 #define rx_ctle_gain_min_check_mask                0x1e
 
 
-#define rx_ctle_peak1_cal_disable_addr             0b110001110
-#define rx_ctle_peak1_cal_disable_startbit         9
-#define rx_ctle_peak1_cal_disable_width            1
-#define rx_ctle_peak1_cal_disable_endbit           9
-#define rx_ctle_peak1_cal_disable_shift            6
-#define rx_ctle_peak1_cal_disable_mask             0x40
-
-
 #define rx_ctle_peak1_fail_addr                    0b000000001
 #define rx_ctle_peak1_fail_startbit                6
 #define rx_ctle_peak1_fail_width                   1
@@ -2556,22 +2580,6 @@
 #define rx_ctle_peak1_min_check_endbit             9
 #define rx_ctle_peak1_min_check_shift              6
 #define rx_ctle_peak1_min_check_mask               0x7c0
-
-
-#define rx_ctle_peak1_peak2_cal_disable_alias_addr   0b110001110
-#define rx_ctle_peak1_peak2_cal_disable_alias_startbit   9
-#define rx_ctle_peak1_peak2_cal_disable_alias_width   2
-#define rx_ctle_peak1_peak2_cal_disable_alias_endbit   10
-#define rx_ctle_peak1_peak2_cal_disable_alias_shift   5
-#define rx_ctle_peak1_peak2_cal_disable_alias_mask   0x60
-
-
-#define rx_ctle_peak2_cal_disable_addr             0b110001110
-#define rx_ctle_peak2_cal_disable_startbit         10
-#define rx_ctle_peak2_cal_disable_width            1
-#define rx_ctle_peak2_cal_disable_endbit           10
-#define rx_ctle_peak2_cal_disable_shift            5
-#define rx_ctle_peak2_cal_disable_mask             0x20
 
 
 #define rx_ctle_peak2_fail_addr                    0b000000001
@@ -2710,12 +2718,20 @@
 #define rx_dc_enable_loff_edge_mask                0x10
 
 
+#define rx_dc_enable_sigdet_cal_addr               0b110001101
+#define rx_dc_enable_sigdet_cal_startbit           2
+#define rx_dc_enable_sigdet_cal_width              1
+#define rx_dc_enable_sigdet_cal_endbit             2
+#define rx_dc_enable_sigdet_cal_shift              13
+#define rx_dc_enable_sigdet_cal_mask               0x2000
+
+
 #define rx_dc_step_cntl_opt_alias_addr             0b110001101
 #define rx_dc_step_cntl_opt_alias_startbit         0
-#define rx_dc_step_cntl_opt_alias_width            2
-#define rx_dc_step_cntl_opt_alias_endbit           1
-#define rx_dc_step_cntl_opt_alias_shift            14
-#define rx_dc_step_cntl_opt_alias_mask             0xc000
+#define rx_dc_step_cntl_opt_alias_width            3
+#define rx_dc_step_cntl_opt_alias_endbit           2
+#define rx_dc_step_cntl_opt_alias_shift            13
+#define rx_dc_step_cntl_opt_alias_mask             0xe000
 
 
 #define rx_dccal_done_addr                         0b000000000
@@ -2974,6 +2990,22 @@
 #define rx_enable_auto_recal_0_15_mask             0xffff
 
 
+#define rx_enable_auto_recal_0_23_addr             0b110101110
+#define rx_enable_auto_recal_0_23_startbit         0
+#define rx_enable_auto_recal_0_23_width            24
+#define rx_enable_auto_recal_0_23_endbit           23
+#define rx_enable_auto_recal_0_23_shift            8
+#define rx_enable_auto_recal_0_23_mask             0xffffff00
+
+
+#define rx_enable_auto_recal_0_31_addr             0b110101110
+#define rx_enable_auto_recal_0_31_startbit         0
+#define rx_enable_auto_recal_0_31_width            32
+#define rx_enable_auto_recal_0_31_endbit           31
+#define rx_enable_auto_recal_0_31_shift            0
+#define rx_enable_auto_recal_0_31_mask             0xffffffff
+
+
 #define rx_enable_auto_recal_16_23_addr            0b110101111
 #define rx_enable_auto_recal_16_23_startbit        0
 #define rx_enable_auto_recal_16_23_width           8
@@ -3182,6 +3214,14 @@
 #define rx_fail_flag_mask                          0x8
 
 
+#define rx_free_run_auto_recal_cnt_reached_addr    0b000000000
+#define rx_free_run_auto_recal_cnt_reached_startbit   3
+#define rx_free_run_auto_recal_cnt_reached_width   1
+#define rx_free_run_auto_recal_cnt_reached_endbit   3
+#define rx_free_run_auto_recal_cnt_reached_shift   12
+#define rx_free_run_auto_recal_cnt_reached_mask    0x1000
+
+
 #define rx_hist_min_eye_height_addr                0b110110011
 #define rx_hist_min_eye_height_startbit            8
 #define rx_hist_min_eye_height_width               7
@@ -3262,6 +3302,22 @@
 #define rx_lane_fail_0_15_mask                     0xffff
 
 
+#define rx_lane_fail_0_23_addr                     0b111000100
+#define rx_lane_fail_0_23_startbit                 0
+#define rx_lane_fail_0_23_width                    24
+#define rx_lane_fail_0_23_endbit                   23
+#define rx_lane_fail_0_23_shift                    8
+#define rx_lane_fail_0_23_mask                     0xffffff00
+
+
+#define rx_lane_fail_0_31_addr                     0b111000100
+#define rx_lane_fail_0_31_startbit                 0
+#define rx_lane_fail_0_31_width                    32
+#define rx_lane_fail_0_31_endbit                   31
+#define rx_lane_fail_0_31_shift                    0
+#define rx_lane_fail_0_31_mask                     0xffffffff
+
+
 #define rx_lane_fail_16_23_addr                    0b111000101
 #define rx_lane_fail_16_23_startbit                0
 #define rx_lane_fail_16_23_width                   8
@@ -3340,6 +3396,14 @@
 #define rx_lanes_pon_00_15_endbit                  15
 #define rx_lanes_pon_00_15_shift                   0
 #define rx_lanes_pon_00_15_mask                    0xffff
+
+
+#define rx_lanes_pon_00_23_addr                    0b111001110
+#define rx_lanes_pon_00_23_startbit                0
+#define rx_lanes_pon_00_23_width                   24
+#define rx_lanes_pon_00_23_endbit                  23
+#define rx_lanes_pon_00_23_shift                   8
+#define rx_lanes_pon_00_23_mask                    0xffffff00
 
 
 #define rx_lanes_pon_16_23_addr                    0b111001111
@@ -3590,6 +3654,22 @@
 #define rx_recal_abort_0_15_mask                   0xffff
 
 
+#define rx_recal_abort_0_23_addr                   0b110101100
+#define rx_recal_abort_0_23_startbit               0
+#define rx_recal_abort_0_23_width                  24
+#define rx_recal_abort_0_23_endbit                 23
+#define rx_recal_abort_0_23_shift                  8
+#define rx_recal_abort_0_23_mask                   0xffffff00
+
+
+#define rx_recal_abort_0_31_addr                   0b110101100
+#define rx_recal_abort_0_31_startbit               0
+#define rx_recal_abort_0_31_width                  32
+#define rx_recal_abort_0_31_endbit                 31
+#define rx_recal_abort_0_31_shift                  0
+#define rx_recal_abort_0_31_mask                   0xffffffff
+
+
 #define rx_recal_abort_16_23_addr                  0b110101101
 #define rx_recal_abort_16_23_startbit              0
 #define rx_recal_abort_16_23_width                 8
@@ -3606,20 +3686,20 @@
 #define rx_recal_before_init_mask                  0x400
 
 
-#define rx_recal_done_addr                         0b000000000
-#define rx_recal_done_startbit                     3
-#define rx_recal_done_width                        1
-#define rx_recal_done_endbit                       3
-#define rx_recal_done_shift                        12
-#define rx_recal_done_mask                         0x1000
-
-
 #define rx_recal_run_or_unused_0_15_addr           0b111001100
 #define rx_recal_run_or_unused_0_15_startbit       0
 #define rx_recal_run_or_unused_0_15_width          16
 #define rx_recal_run_or_unused_0_15_endbit         15
 #define rx_recal_run_or_unused_0_15_shift          0
 #define rx_recal_run_or_unused_0_15_mask           0xffff
+
+
+#define rx_recal_run_or_unused_0_23_addr           0b111001100
+#define rx_recal_run_or_unused_0_23_startbit       0
+#define rx_recal_run_or_unused_0_23_width          24
+#define rx_recal_run_or_unused_0_23_endbit         23
+#define rx_recal_run_or_unused_0_23_shift          8
+#define rx_recal_run_or_unused_0_23_mask           0xffffff00
 
 
 #define rx_recal_run_or_unused_16_23_addr          0b111001101
@@ -4060,6 +4140,22 @@
 #define tx_seg_test_frc_2r_endbit                  1
 #define tx_seg_test_frc_2r_shift                   14
 #define tx_seg_test_frc_2r_mask                    0x4000
+
+
+#define tx_tdr_bist_done_addr                      0b000000010
+#define tx_tdr_bist_done_startbit                  13
+#define tx_tdr_bist_done_width                     1
+#define tx_tdr_bist_done_endbit                    13
+#define tx_tdr_bist_done_shift                     2
+#define tx_tdr_bist_done_mask                      0x4
+
+
+#define tx_tdr_bist_fail_addr                      0b000000010
+#define tx_tdr_bist_fail_startbit                  14
+#define tx_tdr_bist_fail_width                     1
+#define tx_tdr_bist_fail_endbit                    14
+#define tx_tdr_bist_fail_shift                     1
+#define tx_tdr_bist_fail_mask                      0x2
 
 
 #endif //_PPE_MEM_REG_CONST_IOO_PKG_H_

@@ -2,11 +2,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/import/public/emb/odyssey/io/d7nmphy_import $
+# $Source: public/src/import/public/emb/odyssey/io/iosrv_phy_import $
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2023
 # [+] International Business Machines Corp.
 #
 #
@@ -24,16 +24,16 @@
 #
 # IBM_PROLOG_END_TAG
 
-# in d7nmphy repo, run createregs prior to processing import from EKB side
-#   cd <d7nmphy>/logic/createregs
+# in iosrv_phy repo, run createregs prior to processing import from EKB side
+#   cd <iosrv_phy>/logic/createregs
 #   run cr ioo
 
-D7NMPHY_ROOT=$1
-D7NMPHY_COMMON_SRC_PATH="ppe/images/ppe_common"
-D7NMPHY_IOO_SRC_PATH="ppe/images/ppe_ioo"
-D7NMPHY_IOT_SRC_PATH="ppe/images/ppe_iot"
+IOSRV_PHY_ROOT=$1
+IOSRV_PHY_COMMON_SRC_PATH="ppe/images/ppe_common"
+IOSRV_PHY_IOO_SRC_PATH="ppe/images/ppe_ioo"
+IOSRV_PHY_IOT_SRC_PATH="ppe/images/ppe_iot"
 
-D7NMPHY_REG_PATH="logic/createregs"
+IOSRV_PHY_REG_PATH="docs/createregs"
 
 EKB_ROOT=${PROJECT_ROOT}
 EKB_PPE_COMMON_DST_PATH="public/emb/odyssey/io/common"
@@ -41,12 +41,12 @@ EKB_PPE_IOO_DST_PATH="public/emb/odyssey/io/ioo"
 EKB_PPE_IOO_MEMREGS_DST_PATH="public/emb/odyssey/io/ioo_memregs"
 
 echo ""
-echo "D7NMPHY source root: $D7NMPHY_ROOT"
+echo "IOSRV_PHY source root: $IOSRV_PHY_ROOT"
 echo "EKB destitation root: ${EKB_ROOT}"
 echo ""
 
 #
-# IOPPE source files (c/h) to import from D7NMPHY
+# IOPPE source files (c/h) to import from IOSRV_PHY
 #
 
 # common files
@@ -95,7 +95,6 @@ ioo_src_files+=("eo_bank_sync.c" "eo_bank_sync.h")
 ioo_src_files+=("io_config.h")
 ioo_src_files+=("ioo_axo_dl_ifc.c" "ioo_axo_dl_ifc.h")
 ioo_src_files+=("ioo_common.c" "ioo_common.h")
-ioo_src_files+=("ioo_ext_cmd_berm.c" "ioo_ext_cmd_berm.h")
 ioo_src_files+=("ioo_ext_cmd_handlers.c" "ioo_ext_cmd_handlers.h")
 ioo_src_files+=("ioo_init_and_reset.c" "ioo_init_and_reset.h")
 ioo_src_files+=("ioo_pipe_ifc.c" "ioo_pipe_ifc.h")
@@ -103,7 +102,6 @@ ioo_src_files+=("ioo_thread.c" "ioo_thread.h")
 ioo_src_files+=("rx_sigdetbist_test.c" "rx_sigdetbist_test.h")
 ioo_src_files+=("txbist_main.c" "txbist_main.h")
 ioo_src_files+=("tx_ffe.c" "tx_ffe.h")
-#ioo_src_files+=("tx_seg_test.c" "tx_seg_test.h")
 ioo_src_files+=("tx_txdetrx_bist.c" "tx_txdetrx_bist.h")
 ioo_src_files+=("tx_txidle_bist.c" "tx_txidle_bist.h")
 ioo_src_files+=("tx_zcal_tdr.c" "tx_zcal_tdr.h")
@@ -111,14 +109,16 @@ ioo_src_files+=("ppe_com_reg_const_pkg_ioo.h")
 ioo_src_files+=("ppe_fw_reg_const_pkg_ioo.h")
 ioo_src_files+=("ppe_img_reg_const_pkg_ioo.h")
 ioo_src_files+=("ppe_mem_reg_const_pkg_ioo.h")
-ioo_src_files+=("txbist_main.c" "txbist_main.h")
 ioo_src_files+=("eo_bist_init_ovride.c" "eo_bist_init_ovride.h")
 ioo_src_files+=("eo_esd.h" "eo_esd.c")
 ioo_src_files+=("ioo_margin_hv.c" "ioo_margin_hv.h")
 ioo_src_files+=("eo_edge_amax.c" "eo_edge_amax.h")
+ioo_src_files+=("tx_tdr_bist.c" "tx_tdr_bist.h")
+ioo_src_files+=("rx_sigdetcal.c" "rx_sigdetcal.h")
+ioo_src_files+=("ioo_ext_cmd_berm.c" "ioo_ext_cmd_berm.h")
 
 #
-# MEMREGS files to import from D7NMPHY_REG_PATH
+# MEMREGS files to import from IOSRV_PHY_REG_PATH
 #
 
 # MEMREGS image files
@@ -128,7 +128,7 @@ ioo_reg_files+=("img_reg_attribute_ioo.txt")
 ioo_reg_files+=("ppe_reg_attribute_ioo.txt")
 
 #
-# image link script to import from D7NMPHY_SRC_PATH
+# image link script to import from IOSRV_PHY_SRC_PATH
 #
 
 lnk_files+=("link.cmd")
@@ -139,14 +139,14 @@ lnk_files+=("link.cmd")
 #
 
 for i in "${common_src_files[@]}"; do
-  echo "Importing ${D7NMPHY_COMMON_SRC_PATH}/$i"
-  cp "${D7NMPHY_ROOT}/${D7NMPHY_COMMON_SRC_PATH}/$i" "${EKB_ROOT}/${EKB_PPE_COMMON_DST_PATH}/$i"
+  echo "Importing ${IOSRV_PHY_COMMON_SRC_PATH}/$i"
+  cp "${IOSRV_PHY_ROOT}/${IOSRV_PHY_COMMON_SRC_PATH}/$i" "${EKB_ROOT}/${EKB_PPE_COMMON_DST_PATH}/$i"
   beautify_file_list+=("${EKB_PPE_COMMON_DST_PATH}/$i")
 done
 
 for i in "${ioo_src_files[@]}"; do
-  echo "Importing ${D7NMPHY_IOO_SRC_PATH}/$i"
-  cp "${D7NMPHY_ROOT}/${D7NMPHY_IOO_SRC_PATH}/$i" "${EKB_ROOT}/${EKB_PPE_IOO_DST_PATH}/$i"
+  echo "Importing ${IOSRV_PHY_IOO_SRC_PATH}/$i"
+  cp "${IOSRV_PHY_ROOT}/${IOSRV_PHY_IOO_SRC_PATH}/$i" "${EKB_ROOT}/${EKB_PPE_IOO_DST_PATH}/$i"
   beautify_file_list+=("${EKB_PPE_IOO_DST_PATH}/$i")
 done
 
@@ -156,8 +156,8 @@ done
 #
 
 for i in "${ioo_reg_files[@]}"; do
-  echo "Importing ${D7NMPHY_REG_PATH}/$i"
-  cp "${D7NMPHY_ROOT}/${D7NMPHY_REG_PATH}/$i" "${EKB_ROOT}/${EKB_PPE_IOO_MEMREGS_DST_PATH}/$i"
+  echo "Importing ${IOSRV_PHY_REG_PATH}/$i"
+  cp "${IOSRV_PHY_ROOT}/${IOSRV_PHY_REG_PATH}/$i" "${EKB_ROOT}/${EKB_PPE_IOO_MEMREGS_DST_PATH}/$i"
   beautify_file_list+=("${EKB_PPE_IOO_MEMREGS_DST_PATH}/$i")
 done
 
@@ -167,8 +167,8 @@ done
 #
 
 for i in "${lnk_files[@]}"; do
-  echo "Importing ${D7NMPHY_SRC_PATH}/$i"
-  cp "${D7NMPHY_ROOT}/${D7NMPHY_COMMON_SRC_PATH}/$i" "${EKB_ROOT}/${EKB_PPE_IOO_DST_PATH}/odyssey_ioo_$i"
+  echo "Importing ${IOSRV_PHY_SRC_PATH}/$i"
+  cp "${IOSRV_PHY_ROOT}/${IOSRV_PHY_COMMON_SRC_PATH}/$i" "${EKB_ROOT}/${EKB_PPE_IOO_DST_PATH}/odyssey_ioo_$i"
   beautify_file_list+=("${EKB_PPE_IOO_DST_PATH}/odyssey_ioo_$i")
 done
 
@@ -180,7 +180,7 @@ done
 echo ""
 echo "Generate register access macros"
 echo ""
-${PROJECT_ROOT}/internal/vbu/generic/tools/generate_io_ppe_regs.pl $D7NMPHY_ROOT ioo > ${PROJECT_ROOT}/public/hwp/odyssey/io/ody_io_ppe_regs.H
+${PROJECT_ROOT}/internal/vbu/generic/tools/generate_io_ppe_regs.pl $IOSRV_PHY_ROOT ioo > ${PROJECT_ROOT}/public/hwp/odyssey/io/ody_io_ppe_regs.H
 beautify_file_list+=("public/hwp/odyssey/io/ody_io_ppe_regs.H")
 
 

@@ -39,6 +39,9 @@
 // -----------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// mwh23091900 |mwh     | Added DEBUG_BIST_TDR_FAIL
+// mwh23091900 |mwh     | Added DEBUG_RX_BIST_LL_TEST_FAIL_DL EWM 310460 replaced lte since was unused
+// jfg23030100 |jfg     | Added new log type for IOT Deskew TOO_MUCH and HANDSHAKE_END
 // mwh22111100 |mwh     | Added and removed some enter ESD add LTE remvoed
 // jfg22100700 |jfg     | Added new log type for IOT TX BIST DCC MIN/MAX fails
 // vbr22032800 |vbr     | Added new log types for IOT
@@ -91,7 +94,7 @@
 #define DEBUG_BIST_CTLE_PEAK1_FAIL              0x05
 #define DEBUG_BIST_CTLE_PEAK2_FAIL              0x06
 #define DEBUG_BIST_ESD_FAIL                     0x07
-//#define DEBUG_BIST_LTE_GAIN_FAIL                0x08
+#define DEBUG_RX_BIST_LL_TEST_FAIL_DL           0x08
 #define DEBUG_BIST_QPA_FAIL                     0x09
 #define DEBUG_BIST_TX_DCC_I_FAIL                0x0A
 #define DEBUG_BIST_TX_DCC_Q_FAIL                0x0B
@@ -137,6 +140,7 @@
 #define DEBUG_BIST_TX_ZCAL_FAIL                 0x36
 #define DEBUG_RX_BANK_SYNC_WARN                 0x37
 #define DEBUG_PPE_INIT_OVER_TIME                0x38
+#define DEBUG_GEN12_BANK_SYNC_FAIL              0x39
 
 #define DEBUG_INIT_SETUP_ERROR                  0x40
 #define DEBUG_INIT_CLEANUP_ERROR                0x41
@@ -151,6 +155,9 @@
 #define DEBUG_FUNC_DATA_TIMEOUT_ERROR           0x4A
 #define DEBUG_BIST_TX_DCC_MIN_FAIL              0x4B
 #define DEBUG_BIST_TX_DCC_MAX_FAIL              0x4C
+#define DEBUG_DESKEW_HANDSHAKE_END_FAILURE      0x4D
+#define DEBUG_DESKEW_TOO_MUCH_SKEW_FATAL        0x4E
+#define DEBUG_BIST_TDR_FAIL                     0x4F
 
 /// DEBUG LOG TYPES END
 

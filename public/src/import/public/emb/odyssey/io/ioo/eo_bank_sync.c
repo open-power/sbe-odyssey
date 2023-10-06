@@ -39,6 +39,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23082800 |vbr     | EWM 308211: Add checking of abort after Gen1/2 align wait (before ber check)
+// vbr23082300 |vbr     | EWM 306166: Enable the clk phase detector for Gen 1/2
+// vbr23060100 |vbr     | EWM 305986: For DD1, disable error on Gen1/2 bank sync fail; add debug log.
 // vbr23051500 |vbr     | EWM 304759: Use bump_ui_mode with fw_inertia_bump=0 through all of gen1/2 bank sync.
 // vbr23041100 |vbr     | Initial Rev (P11). See Github m*ster_a3 for P10 version.
 // -----------------------------------------------------------------------------
@@ -106,12 +109,15 @@ int eo_bank_sync(t_gcr_addr* gcr_addr, t_bank sync_bank, t_init_cal_mode cal_mod
     int status = rc_no_error;
     bool pcie_gen1_2_cal = (cal_mode == C_PCIE_GEN1_CAL) || (cal_mode == C_PCIE_GEN2_CAL);
 
-    // 1a) Enable CDR Bump UI Mode for Gen1/2 (EWM 304759)
+    // 1a) Enable CDR Bump UI Mode for Gen1/2 (EWM 304759).
+    //     Enable the circuit clock phase detector as part of the CDR bank align (EWM 306166).
+    //     PD is only available on ZMetis DD2+ and detects when the banks are 4 or more UI apart.
     int sel_ab_bitfield_val = bank_to_bitfield_ab_mask(sync_bank);
 
     if (pcie_gen1_2_cal)
     {
-        put_ptr_field(gcr_addr, rx_pr_bump_ui_mode_ab_alias, sel_ab_bitfield_val, read_modify_write);
+        put_ptr_field(gcr_addr, rx_pr_bump_ui_mode_ab_alias, sel_ab_bitfield_val, read_modify_write); //pl
+        put_ptr_field(gcr_addr, rx_pr_bank_align_clk_phase_det_en, 0b1, read_modify_write); //pl
     }
 
     // 1b) Enable CDR Bank Align Mode
@@ -170,6 +176,15 @@ int eo_bank_sync(t_gcr_addr* gcr_addr, t_bank sync_bank, t_init_cal_mode cal_mod
 
             // 1c) Wait 8 us (sleep) for CDR bank align
             io_wait_us(get_gcr_addr_thread(gcr_addr), 8); //sleep
+            status = check_rx_abort(gcr_addr);
+
+            // PSL gen12_abort_align
+            if (status)
+            {
+                set_debug_state(0x0B0D,
+                                EO_BANK_SYNC_DBG_LVL); // DEBUG - Bank Sync Gen1/2 Abort after Align step (1c) and before BERM step (2)
+                break;
+            }
 
             // 2) Perform Main-Alt BER check
             set_debug_state(0x0B0C, EO_BANK_SYNC_DBG_LVL); // DEBUG - Bank Sync BERM Check
@@ -219,10 +234,11 @@ int eo_bank_sync(t_gcr_addr* gcr_addr, t_bank sync_bank, t_init_cal_mode cal_mod
 
                 status = check_rx_abort(gcr_addr);
 
-                // PSL gen12_abort
+                // PSL gen12_abort_bump
                 if (status)
                 {
-                    set_debug_state(0x0B0A, EO_BANK_SYNC_DBG_LVL); // DEBUG - Bank Sync Gen1/2 Abort
+                    set_debug_state(0x0B0A,
+                                    EO_BANK_SYNC_DBG_LVL); // DEBUG - Bank Sync Gen1/2 Abort after BERM step (2) and before Bump step (3)
                     break;
                 }
 
@@ -248,15 +264,27 @@ int eo_bank_sync(t_gcr_addr* gcr_addr, t_bank sync_bank, t_init_cal_mode cal_mod
             }
         } //while(!aligned)
 
-        if (!aligned)
+        // Report errors if not aligned and not aborting
+        // PSL bank_sync_fail
+        if (!aligned && (status == rc_no_error))
         {
-            // PSL bank_sync_fail
-            set_fir(fir_code_bad_lane_warning);
-            status |= rc_error;
+            ADD_LOG(DEBUG_GEN12_BANK_SYNC_FAIL, gcr_addr, 0x0);
+
+            if (is_zm_dd1())
+            {
+                // EWM 305986: Abort cleanly if bank sync fails on ZMetis DD1
+                status = abort_clean_code;
+            }
+            else
+            {
+                set_fir(fir_code_bad_lane_warning);
+                status = rc_error;
+            }
         }
 
-        // 6a) Disable Bump UI Mode
-        put_ptr_field(gcr_addr, rx_pr_bump_ui_mode_ab_alias, 0b00, read_modify_write);
+        // 6a) Disable Bump UI Mode and circuit clock phase detector
+        put_ptr_field(gcr_addr, rx_pr_bump_ui_mode_ab_alias, 0b00, read_modify_write); //pl
+        put_ptr_field(gcr_addr, rx_pr_bank_align_clk_phase_det_en, 0b0, read_modify_write); //pl
 
         // 2d) Restore rlm_clk_sel to the Alt (sync) bank
         put_ptr_field(gcr_addr, rx_clr_cal_lane_sel, 0b1, fast_write); // clear rx_cal_lane_sel
@@ -269,7 +297,7 @@ int eo_bank_sync(t_gcr_addr* gcr_addr, t_bank sync_bank, t_init_cal_mode cal_mod
         put_ptr_field(gcr_addr, rx_ber_en,         0b0,
                       fast_write); // pg, nothing else in register except rx_ber_timer_sel and rx_ber_pcie_mode
 
-        if (!status)
+        if ((status & abort_code) == 0)
         {
             io_sleep(get_gcr_addr_thread(gcr_addr));
         }

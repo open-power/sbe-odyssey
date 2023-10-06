@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -42,6 +42,8 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// jjb23083100 |jjb     | set default off_dm and off_cm values for bist
+// bhm23062801 |bhm     | Removed debug state levels for start and end states
 // mbs22082601 |mbs     | Updated with PSL comments
 // jjb22081200 |jjb     | Issue 287309 : increased rx_sigdet_test_stat_alias to 16 bits
 // jjb22080200 |jjb     | removed rx_b_sigdet_done
@@ -96,7 +98,7 @@ static uint32_t rx_sigdetbist_test1(t_gcr_addr* gcr_addr, uint32_t cntl, uint32_
 int rx_sigdetbist_test(t_gcr_addr* gcr_addr)
 {
     //start rx_sigdetbist_test
-    set_debug_state(0x51F0, 3); // DEBUG : Start of RXSIGDET BIST
+    set_debug_state(0x51F0); // Start of RXSIGDET BIST
     uint32_t result = 0;
     uint32_t fail_result = 0;
     uint32_t done_result = 0;
@@ -107,6 +109,12 @@ int rx_sigdetbist_test(t_gcr_addr* gcr_addr)
     // Power Up Sigdet
     put_ptr_field(gcr_addr, rx_sigdet_pd, 0b0 , read_modify_write);
     io_spin(150);
+
+    // Set off_dm
+    put_ptr_field(gcr_addr, rx_off_dm, 0b101111, read_modify_write);  // Update default rx_off_dm
+
+    // Set off_cm
+    put_ptr_field(gcr_addr, rx_off_cm, 0b1010, read_modify_write);  // Update default rx_off_cm
 
     // Test 1 : Static Low Amplitude Test
     set_debug_state(0x51F1, 3); // DEBUG : Starting RXSIGDET BIST Test 1
@@ -158,7 +166,7 @@ int rx_sigdetbist_test(t_gcr_addr* gcr_addr)
 
     // Restore initial state of sigdet power down control
     put_ptr_field(gcr_addr, rx_sigdet_pd, initial_sigdet_pd_state , read_modify_write);
-    set_debug_state(0x51F7, 3); // DEBUG : RXSIGDET BIST Complete
+    set_debug_state(0x51F7); // RXSIGDET BIST Complete
 
     return (fail_result ? error_code : pass_code);
 }//end rx_sigdetbist_test

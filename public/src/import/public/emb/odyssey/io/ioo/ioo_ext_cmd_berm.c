@@ -56,8 +56,10 @@
 
 #define BERM_CONTROL_KILL     0x8000
 #define BERM_CONTROL_STOP     0x4000
+#define BERM_CONTROL_BANK     0x2000
+#define BERM_CONTROL_DEPTH    0x0003
 
-#define BERM_CONTROL_START    0x8000
+#define BERM_THREAD_CONTROL_START    0x8000
 
 #define BERM_STATUS_DONE      0x8000
 #define BERM_STATUS_RUNNING   0x4000
@@ -177,6 +179,7 @@ int apply_pr_offset(t_gcr_addr* gcr_addr, const t_bank bank, const int i_total_o
  */
 int ioo_berm_init(t_gcr_addr* gcr_addr,
                   const uint32_t i_lane_mask_rx,
+                  const t_bank i_bank,
                   uint16_t* io_logspace)
 {
     uint16_t l_lane = 0;
@@ -184,8 +187,7 @@ int ioo_berm_init(t_gcr_addr* gcr_addr,
     t_init_cal_mode l_cal_mode = C_AXO_CAL;
 
 
-    t_bank l_bank = (mem_pg_field_get(rx_berm_bank) == 0) ? bank_a : bank_b;
-    int32_t l_pattern_sel = mem_pg_field_get(rx_berm_pattern_sel);
+    int32_t l_pattern_sel = 0;
 
     // Step 0: Setup the Debug Log Space
     // Set the entries to max so our data does not get overwritten
@@ -226,13 +228,13 @@ int ioo_berm_init(t_gcr_addr* gcr_addr,
         eo_bank_sync(gcr_addr, (get_ptr_field(gcr_addr, rx_bank_sel_a) == 1) ? bank_b : bank_a, l_cal_mode);
 
         // Set the correct bank under test, so we do not corrupt main data
-        set_cal_bank(gcr_addr, l_bank);
+        set_cal_bank(gcr_addr, i_bank);
 
-        int bit_lock_done_clr_regval = bank_to_bitfield_ab_mask(l_bank);
+        int bit_lock_done_clr_regval = bank_to_bitfield_ab_mask(i_bank);
         put_ptr_field(gcr_addr, rx_pr_bit_lock_done_ab_clr_alias, bit_lock_done_clr_regval, fast_write);
 
 
-        if (l_bank == bank_a)
+        if (i_bank == bank_a)
         {
             put_ptr_field(gcr_addr, rx_pr_external_mode_a, 1, read_modify_write);
         }
@@ -277,6 +279,7 @@ int ioo_berm_init(t_gcr_addr* gcr_addr,
 
 int ioo_berm_run(t_gcr_addr* gcr_addr,
                  const uint32_t i_lane_mask_rx,
+                 const t_bank i_bank,
                  const int32_t l_pr_offset,
                  const int32_t l_dac_offset,
                  uint16_t* i_control,
@@ -291,9 +294,7 @@ int ioo_berm_run(t_gcr_addr* gcr_addr,
     uint32_t l_xskip_mask = 0x00;
     uint32_t l_yskip_mask = 0x00;
     int16_t l_max_depth = 0;
-    t_bank l_bank = (mem_pg_field_get(rx_berm_bank) == 0) ? bank_a : bank_b;
-
-    int32_t l_depth = mem_pg_field_get(rx_berm_depth);
+    int32_t l_depth = i_control[0] & BERM_CONTROL_DEPTH;
 
     if (l_depth == 0)
     {
@@ -323,14 +324,14 @@ int ioo_berm_run(t_gcr_addr* gcr_addr,
 
         set_gcr_addr_lane(gcr_addr, l_lane);
 
-        apply_rx_dac_offset(gcr_addr, data_only, l_bank, l_dac_offset);
+        apply_rx_dac_offset(gcr_addr, data_only, i_bank, l_dac_offset);
 
         if (get_ptr_field(gcr_addr, rx_dac_accel_rollover_sticky))
         {
             l_yskip_mask |= (0x80000000 >> l_lane);
         }
 
-        int32_t rc = apply_pr_offset(gcr_addr, l_bank, l_pr_offset);
+        int32_t rc = apply_pr_offset(gcr_addr, i_bank, l_pr_offset);
 
         if (rc || get_ptr_field(gcr_addr, rx_mini_pr_step_rollover_sticky))
         {
@@ -419,7 +420,7 @@ int ioo_berm_run(t_gcr_addr* gcr_addr,
         if ((l_yskip_mask & (0x80000000 >> l_lane)) == 0x0)
         {
             int l_poff_adj = -TwosCompToInt(get_ptr_field(gcr_addr, rx_poff_adj), rx_poff_adj_width);
-            apply_rx_dac_offset(gcr_addr, data_only, l_bank, l_poff_adj);
+            apply_rx_dac_offset(gcr_addr, data_only, i_bank, l_poff_adj);
         }
 
         if ((l_xskip_mask & (0x80000000 >> l_lane)) == 0x0)
@@ -431,7 +432,7 @@ int ioo_berm_run(t_gcr_addr* gcr_addr,
             int32_t l_edge_offset = -TwosCompToInt(((l_pr_step_adjust & rx_mini_pr_step_edge_adj_mask) >>
                                                     rx_mini_pr_step_edge_adj_shift), rx_mini_pr_step_edge_adj_width);
 
-            pr_stepper_run(gcr_addr, l_bank, l_data_offset, l_edge_offset);
+            pr_stepper_run(gcr_addr, i_bank, l_data_offset, l_edge_offset);
         }
     }
 
@@ -493,20 +494,22 @@ int ioo_berm_cleanup(t_gcr_addr* gcr_addr, const uint32_t i_lane_mask_rx)
 int ioo_ext_cmd_berm(t_gcr_addr* gcr_addr, const uint32_t i_lane_mask_rx)
 {
     int32_t l_thread = get_gcr_addr_thread(gcr_addr);
-    int32_t l_dac_offset = TwosCompToInt(mem_pg_field_get(rx_berm_voffset), rx_berm_voffset_width);
-    int32_t l_pr_offset = TwosCompToInt(mem_pg_field_get(rx_berm_hoffset), rx_berm_hoffset_width);
+    int32_t l_dac_offset = 0;
+    int32_t l_pr_offset = 0;
     int32_t l_space = 0;
+    t_bank l_bank = (g_logspace[0] & BERM_CONTROL_BANK) ? bank_a : bank_b;
     uint16_t* l_thread_space = &g_logspace[(l_thread * 72) + SPACE_A];
     uint16_t l_space_control = 0;
 
-    ioo_berm_init(gcr_addr, i_lane_mask_rx, &g_logspace[(l_thread * 72)]);
+    ioo_berm_init(gcr_addr, i_lane_mask_rx, l_bank, &g_logspace[(l_thread * 72)]);
     g_logspace[(l_thread * 72) + SPACE_A + 1] = BERM_STATUS_DONE;
     g_logspace[(l_thread * 72) + SPACE_B + 1] = BERM_STATUS_DONE;
 
 
+
     while ((g_logspace[0] & BERM_CONTROL_KILL) == 0)
     {
-        if (l_thread_space[0] & BERM_CONTROL_START)
+        if (l_thread_space[0] & BERM_THREAD_CONTROL_START)
         {
             l_space_control = l_thread_space[0];
             l_pr_offset = TwosCompToInt((l_space_control >> 8) & 0x7F, 7);
@@ -514,6 +517,7 @@ int ioo_ext_cmd_berm(t_gcr_addr* gcr_addr, const uint32_t i_lane_mask_rx)
             l_thread_space[0] = 0;
             ioo_berm_run(gcr_addr,
                          i_lane_mask_rx,
+                         l_bank,
                          l_pr_offset,
                          l_dac_offset,
                          &g_logspace[0],
@@ -542,7 +546,7 @@ int ioo_ext_cmd_berm(t_gcr_addr* gcr_addr, const uint32_t i_lane_mask_rx)
 }
 
 // Layout (16bits per entry, 512 entries total in the debug space)
-// [000]: Thread 0  Control        :: [0] Kill, [1] Stop-Op
+// [000]: Thread 0  Control        :: [0] Kill, [1] Stop-Op, [2] Bank, [14:15] Depth
 // [001]: Thread 0  None           ::
 // [002]: Thread 0  None           ::
 // [003]: Thread 0  None           ::
@@ -560,46 +564,3 @@ int ioo_ext_cmd_berm(t_gcr_addr* gcr_addr, const uint32_t i_lane_mask_rx)
 // [058]: Thread 0 B Lane 23 Data        :: [0:3] Timer, [4:15] Errors
 
 // [072]: Thread 1 Control               :: [0]: Start, [1:7] X-Value, [8:15] Y-Value -- PPE Clears these when starting
-
-
-
-
-
-
-// Layout (16bits per entry, 512 entries total in the debug space)
-// [000]: Thread 0 Space Control        :: [0] Kill, [1] Stop-Op
-// [001]: Thread 0 Space A X/Y Reg      :: [0]: Start, [1:7] X-Value, [8:15] Y-Value
-// [002]: Thread 0 Space B X/Y Reg      :: [0]: Start, [1:7] X-Value, [8:15] Y-Value
-// [003]: Thread 0 Space None           ::
-// [004]: Thread 0 Space A Status       :: [0] Ready, [1] Running, [2] Done, [3] Killed
-// [005]: Thread 0 Space B Status       :: [0] Ready, [1] Running, [2] Done, [3] Killed
-// [006]: Thread 0 Space None           ::
-// [007]: Thread 0 Space None           ::
-// [008]: Thread 0 Space A Lane 0 Data  :: [0:3] Timer, [4:15] Errors
-// ...
-// [039]: Thread 0 Space A Lane 32 Data :: [0:3] Timer, [4:15] Errors
-// [040]: Thread 0 Space B Lane 0 Data  :: [0:3] Timer, [4:15] Errors
-// ...
-// [071]: Thread 0 Space B Lane 32 Data :: [0:3] Timer, [4:15] Errors
-// [072]: Thread 1 Space Control        :: [0] Kill, [1] Stop-Op
-// ...
-
-
-
-// Layout (16bits per entry, 512 entries total in the debug space)
-// [000]: Thread 0 Space A Control Reg  :: [0] Start, [1] Running, [2] Done, [3] Stop, [4] Kill
-// [001]: Thread 0 Space A X/Y Reg      :: [0:7] X-Value, [8:15] Y-Value
-// [002]: Thread 0 Space A None         ::
-// [003]: Thread 0 Space A None         ::
-// [004]: Thread 0 Space A Lane 0 Data  :: [0:3] Timer, [4:15] Errors
-// ...
-// [035]: Thread 0 Space A Lane 32 Data :: [0:3] Timer, [4:15] Errors
-// [036]: Thread 0 Space B Control Reg  :: [0] Start, [1] Running, [2] Done, [3] Stop, [4] Kill
-// [037]: Thread 0 Space B X/Y Reg      :: [0:7] X-Value, [8:15] Y-Value
-// [038]: Thread 0 Space B None         ::
-// [039]: Thread 0 Space B None         ::
-// [040]: Thread 0 Space B Lane 0 Data  :: [0:3] Timer, [4:15] Errors
-// ...
-// [071]: Thread 0 Space B Lane 32 Data :: [0:3] Timer, [4:15] Errors
-// [072]: Thread 1 Space A Control Reg  :: [0] Start, [1] Running, [2] Done, [3] Stop, [4] Kill
-// ...

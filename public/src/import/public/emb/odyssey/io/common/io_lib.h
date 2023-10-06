@@ -491,13 +491,16 @@ extern uint16_t _img_regs_start __attribute__ ((section ("imgdata")));
 
 // Special get/put functions for operating on 2 adjacent u16 mem_regs with no masking/shifting. Primarily for *_0_23 or *_0_31 fields.
 // Take an address (a), lane (l), and a value (v). The address is a u16 address that must be u32 aligned.
-// Base funcs should do u32 alignment check here, but then can't have PL/PG address wrappers which is the typical use case.
-#define mem_regs_u32_raw_get(a)      (((uint32_t*)(mem_regs_u16))[a>>1])
-#define mem_regs_u32_raw_put(a, v)   (((uint32_t*)(mem_regs_u16))[a>>1] = (v))
+// Root funcs should do u32 alignment check here, but then can't have PL/PG address wrappers which is the typical use case.
+#define mem_regs_u32_raw_get(a)      (((uint32_t*)(mem_regs_u16))[(a)>>1])
+#define mem_regs_u32_raw_put(a, v)   (((uint32_t*)(mem_regs_u16))[(a)>>1] = (v))
 #define mem_pg_u32_raw_get(a)        ({ PK_STATIC_ASSERT((a % 2)==0); ( mem_regs_u32_raw_get(pg_addr(a)) ); })
 #define mem_pl_u32_raw_get(a, l)     ({ PK_STATIC_ASSERT((a % 2)==0); ( mem_regs_u32_raw_get(pl_addr(a, l)) ); })
 #define mem_pg_u32_raw_put(a, v)     ({ PK_STATIC_ASSERT((a % 2)==0); ( mem_regs_u32_raw_put(pg_addr(a), v) ); })
 #define mem_pl_u32_raw_put(a, l, v)  ({ PK_STATIC_ASSERT((a % 2)==0); ( mem_regs_u32_raw_put(pl_addr(a, l), v) ); })
+
+#define mem_regs_u32_raw_base_get(a)      (((uint32_t*)(mem_regs_u16_base))[(a)>>1])
+#define mem_regs_u32_raw_base_put(a, v)   (((uint32_t*)(mem_regs_u16_base))[(a)>>1] = (v))
 
 // Wrapper functions to simplify the calls a bit. Seperate versions for PG and PL fields.
 // Takes a field name and lane instead of address/mask/shift.  Also takes a value.
@@ -1036,25 +1039,40 @@ uint32_t lcl_get_int(uint32_t reg_addr, uint32_t shift);
                     ); \
     })
 
+////////////////////////////
 // PIR and PVR functions
-#define SPRN_PIR_CHIP_ID_MASK    0x00000700 // x00=P11, x01=zMetis                                                                          
-#define SPRN_PIR_CHIP_ID_SHIFT   8
-#define          CHIP_ID_P11     0x00000000
-#define          CHIP_ID_ZM      0x00000100
-#define          CHIP_ID_ODYSSEY 0x00000200
+////////////////////////////
 
-#define SPRN_PIR_NODE_ID_MASK    0x00003800 // x01=zMetis Xbus, x02=zMetis Abus                                                                         
-#define SPRN_PIR_NODE_ID_SHIFT   11
-#define          NODE_ID_ZM_XBUS 0x00000800
-#define          NODE_ID_ZM_ABUS 0x00001000
+// Chip ID: x00=P11, x01=zMetis, x02=Odyssey
+#define SPRN_PIR_CHIP_ID_MASK     0x00000700
+#define SPRN_PIR_CHIP_ID_SHIFT    8
+#define          CHIP_ID_P11      0x00000000
+#define          CHIP_ID_ZM       0x00000100
+#define          CHIP_ID_ODYSSEY  0x00000200
 
-#define SPRN_PVR_MAJOR_EC_MASK   0x00000f00
-#define SPRN_PVR_MAJOR_EC_SHIFT  8
-#define          MAJOR_EC_DD1    0x00000100
-#define          MAJOR_EC_DD2    0x00000200
+// Node ID (Odyssey): x05=Odyssey OMI
+// Node ID (zMetis): x01=zMetis Xbus, x02=zMetis Abus, x03=zMetis OMI, x04=zMetis PCIe
+// Node ID (P11): x00=P11 PAXO, x05=P11 OMI, x02=P11 Tbus Hub, x03=P11 Tbus Tap
+#define SPRN_PIR_NODE_ID_MASK     0x00003800
+#define SPRN_PIR_NODE_ID_SHIFT    11
+#define          NODE_ID_ODY_OMI  0x00002800
+#define          NODE_ID_ZM_XBUS  0x00000800
+#define          NODE_ID_ZM_ABUS  0x00001000
+#define          NODE_ID_ZM_OMI   0x00001800
+#define          NODE_ID_ZM_PCIE  0x00002000
+#define          NODE_ID_P11_PAXO 0x00000000
+#define          NODE_ID_P11_OMI  0x00002800
+#define          NODE_ID_P11_HUB  0x00001000
+#define          NODE_ID_P11_TAP  0x00001800
 
-#define SPRN_PVR_MINOR_EC_MASK   0x0000000f
-#define SPRN_PVR_MINOR_EC_SHIFT  0
+// Revison: x01=DD1, x02=DD2
+#define SPRN_PVR_MAJOR_EC_MASK    0x00000f00
+#define SPRN_PVR_MAJOR_EC_SHIFT   8
+#define          MAJOR_EC_DD1     0x00000100
+#define          MAJOR_EC_DD2     0x00000200
+
+#define SPRN_PVR_MINOR_EC_MASK    0x0000000f
+#define SPRN_PVR_MINOR_EC_SHIFT   0
 
 static inline int get_chip_id  ()
 {
@@ -1073,10 +1091,22 @@ static inline int get_minor_ec ()
     return mfspr(SPRN_PVR) & SPRN_PVR_MINOR_EC_MASK;
 }
 
-// Returns true if PPE running in P10 DD1 chip.
-//static inline bool is_p10_dd1() { return ( get_chip_id() == CHIP_ID_P10 ) && ( get_major_ec() == MAJOR_EC_DD1 ); }
+// Returns true/false based on the hardware that the PPE is running on.
+// Logic/registers differ based on the chip.
+// IOO currently has 3 versions:
+//   1) Odyssey           (RegDef_ioo design_level = 1)
+//   2) zMetis DD1        (RegDef_ioo design_level = 2)
+//   3) zMetis DD2 / P11  (RegDef_ioo design_level = 3)
+static inline bool is_odyssey()
+{
+    return ( get_chip_id() == CHIP_ID_ODYSSEY);
+}
+static inline bool is_zm_dd1()
+{
+    return ( get_chip_id() == CHIP_ID_ZM ) && ( get_major_ec() == MAJOR_EC_DD1 );
+}
 
-// Returns true if PPE running in zM Xbus
+// Returns true if PPE running on specified bus
 static inline bool is_zm_xbus()
 {
     return ( get_node_id() == NODE_ID_ZM_XBUS );
@@ -1084,10 +1114,6 @@ static inline bool is_zm_xbus()
 static inline bool is_zm_abus()
 {
     return ( get_node_id() == NODE_ID_ZM_ABUS );
-}
-static inline bool is_odyssey()
-{
-    return ( get_chip_id() == CHIP_ID_ODYSSEY);
 }
 
 

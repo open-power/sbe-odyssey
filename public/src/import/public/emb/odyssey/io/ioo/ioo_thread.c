@@ -39,6 +39,8 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23091100 |vbr     | EWM 312598: Ignore AXO DL and PCIe PIPE interfaces when ppe_dl_ifc_ignore is set
+// vbr23082400 |vbr     | Removed redundant check of number of PCIe RX lanes (done in hw_reg_init)
 // vbr23041700 |vbr     | EWM 302964/302702: Skip run_ext_cmds/auto_recal and loop on run_pipe_cmds when a pipe command is pending
 // vbr22110800 |vbr     | Added some skips on a pipe_recal_abort
 // vbr22082300 |vbr     | Add thread time stress mode for testing PCIe
@@ -189,58 +191,53 @@ void ioo_thread(void* arg)
 
             status = rc_no_error;
 
-            if (!l_pcie_mode)   // AXO DL Interface
+            // EWM 312598: Ignore AXO DL and PCIe PIPE interfaces when ppe_dl_ifc_ignore is set
+            if (mem_pg_field_get(ppe_dl_ifc_ignore) == 0)
             {
-                // DL Intial Training
-                set_debug_state(0x0002, IOO_THREAD_DBG_LVL); // DEBUG - Thread DL Initial Training
-                dl_init_req(&l_gcr_addr, l_num_lanes_rx);
-
-                // DL Recalibration Request
-                set_debug_state(0x0003, IOO_THREAD_DBG_LVL); // DEBUG - Thread DL Recal
-                uint32_t l_recal_req_vec = get_dl_recal_req_vec(&l_gcr_addr);
-
-                if (l_recal_req_vec)
+                if (!l_pcie_mode)   // AXO DL Interface
                 {
-                    dl_recal_req(&l_gcr_addr, l_num_lanes_rx, l_recal_req_vec);
-                }
-            }
-            else     // PIPE Interface (PCIe)
-            {
-                if (l_num_lanes_rx > 4)
-                {
-                    set_debug_state(0x000A); // Illegal number of lanes for PCIe Mode
-                    set_fir(fir_code_fatal_error);
-                }
+                    // DL Intial Training
+                    set_debug_state(0x0002, IOO_THREAD_DBG_LVL); // DEBUG - Thread DL Initial Training
+                    dl_init_req(&l_gcr_addr, l_num_lanes_rx);
 
-                // Run highest priority PIPE command on each lane until all pending commands are completed
-                set_debug_state(0x0004, IOO_THREAD_DBG_LVL); // DEBUG - Thread PIPE Commands
+                    // DL Recalibration Request
+                    set_debug_state(0x0003, IOO_THREAD_DBG_LVL); // DEBUG - Thread DL Recal
+                    uint32_t l_recal_req_vec = get_dl_recal_req_vec(&l_gcr_addr);
 
-                do
-                {
-                    run_pipe_commands(&l_gcr_addr, l_num_lanes_rx);
-
-                    // EWM 302964/302702: Skip recal and thread loops to continue running PIPE commands if there is a pipe_abort or
-                    // remaining phases of ei_inactive, reset_inactive, reset_active, or txdetectrx
-                    if (get_ptr_field(&l_gcr_addr, rx_pipe_ifc_recal_abort) || mem_pg_field_get(ppe_pipe_ei_reset_inactive_phase_alias)
-                        || mem_pg_field_get(ppe_pipe_reset_active_txdetectrx_phase_alias))
+                    if (l_recal_req_vec)
                     {
-                        status = abort_clean_code;
-                    }
-                    else
-                    {
-                        status = rc_no_error;
+                        dl_recal_req(&l_gcr_addr, l_num_lanes_rx, l_recal_req_vec);
                     }
                 }
-                while (status & abort_code);
-            }
+                else     // PIPE Interface (PCIe)
+                {
+                    // Run highest priority PIPE command on each lane until all pending commands are completed
+                    set_debug_state(0x0004, IOO_THREAD_DBG_LVL); // DEBUG - Thread PIPE Commands
+
+                    do
+                    {
+                        run_pipe_commands(&l_gcr_addr, l_num_lanes_rx);
+
+                        // EWM 302964/302702: Skip recal and thread loops to continue running PIPE commands if there is a pipe_abort or
+                        // remaining phases of ei_inactive, reset_inactive, reset_active, or txdetectrx
+                        if (get_ptr_field(&l_gcr_addr, rx_pipe_ifc_recal_abort) || mem_pg_field_get(ppe_pipe_ei_reset_inactive_phase_alias)
+                            || mem_pg_field_get(ppe_pipe_reset_active_txdetectrx_phase_alias))
+                        {
+                            status = abort_clean_code;
+                        }
+                        else
+                        {
+                            status = rc_no_error;
+                        }
+                    }
+                    while (status & abort_code);
+                }
+            } //!dl_ignore
 
             // Auto recal.  Also checks for some status clears.  Skip on PIPE abort.
-            // PSL auto_recal_loop
-            if ((status & abort_code) == 0)
-            {
-                set_debug_state(0x0005, IOO_THREAD_DBG_LVL); // DEBUG - Thread Auto Recal
-                status = auto_recal(&l_gcr_addr, l_num_lanes_rx);
-            }
+            // VBR230523 Currently imposible for abort_code to be set when here: if ((status & abort_code) == 0) {
+            set_debug_state(0x0005, IOO_THREAD_DBG_LVL); // DEBUG - Thread Auto Recal
+            status = auto_recal(&l_gcr_addr, l_num_lanes_rx);
 
 
             ///////////////////////////////////////////////////

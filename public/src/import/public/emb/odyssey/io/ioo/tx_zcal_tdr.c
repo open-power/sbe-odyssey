@@ -78,6 +78,10 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// gap23091200 |gap     | Issue 312549: add back in wait between phase switches, bug from 307733 update
+// gap23070500 |gap     | Issue 307733: correct odyssey/5nm branch
+// gap23070500 |gap     | Issue 307719: remove ppe_sim_speedup
+// gap23030700 |gap     | Issue 300655: change detrx controls from PG to PL for Pll
 // jjb23020100 |jjb     | Issue 298467: Made io_waits conditional on ppe_sim_speedup.
 // gap22101300 |gap     | If IOO, set to wide track and hold pulse during zcal
 // mbs22082601 |mbs     | Updated with PSL comments
@@ -128,6 +132,7 @@ void tx_zcal_tdr (t_gcr_addr* gcr_addr_i)
     uint32_t tdr_offset_l = 16 * tx_zcal_tdr_sample_position_c;
 
     // if IOO, save tx_tdr_th_pw_sel and overwrite to widest width
+    // This does not exist in IOT. It is unused in odyssey, but does not hurt; it's an alias in odyssey
 #ifdef IOO
     uint32_t tx_tdr_th_pw_sel_save_l = get_ptr_field(gcr_addr_i, tx_tdr_th_pw_sel);
     put_ptr_field(gcr_addr_i, tx_tdr_th_pw_sel, 0b00, read_modify_write); // set to wider pulse for zcal
@@ -210,16 +215,20 @@ void tx_zcal_tdr (t_gcr_addr* gcr_addr_i)
         //
         // written to 0 below put_ptr_field(gcr_addr_i, tx_tdr_phase_sel, 0, read_modify_write);
         set_debug_state(0xC168, DEEP_DBG_LVL); //    tx_tdr_dac_cntl
-        put_ptr_field(gcr_addr_i, tx_tdr_dac_cntl, tx_zcal_tdr_dac_75percent_vio_c,
-                      fast_write); // only other field in reg is tx_ , which we want 0 == P
-        uint32_t l_ppe_sim_speedup = img_field_get(ppe_sim_speedup);
 
-        // PSL ppe_sim_speedup_wait_1
-        if (!l_ppe_sim_speedup)
+        if (is_5nm_l)
         {
-            io_wait_us(thread_l, tx_zcal_tdr_sw_wait_us_c);
+            put_ptr_field(gcr_addr_i, tx_tdr_cntl_alias, 0, fast_write); // in 5nm, these are the only bits in the register
+            put_ptr_field(gcr_addr_i, tx_tdr_dac_cntl_pl, tx_zcal_tdr_dac_75percent_vio_c,
+                          read_modify_write); // in 5nm there are other bits in the register
+        }
+        else
+        {
+            put_ptr_field(gcr_addr_i, tx_tdr_dac_cntl, tx_zcal_tdr_dac_75percent_vio_c,
+                          fast_write); // in p10 we want the control bits in the reg to be 0
         }
 
+        io_wait_us(thread_l, tx_zcal_tdr_sw_wait_us_c);
         done_l = false;
 
         do
@@ -234,12 +243,7 @@ void tx_zcal_tdr (t_gcr_addr* gcr_addr_i)
                 {
                     set_debug_state(0xC123, DBG_LVL); // pullup decrement successful
                     updated_pu_or_pd_l = true;
-
-                    // PSL ppe_sim_speedup_wait_2
-                    if (!l_ppe_sim_speedup)
-                    {
-                        io_wait_us(thread_l, tx_zcal_tdr_seg_wait_us_c);
-                    }
+                    io_wait_us(thread_l, tx_zcal_tdr_seg_wait_us_c);
                 }
                 else
                 {
@@ -269,14 +273,17 @@ void tx_zcal_tdr (t_gcr_addr* gcr_addr_i)
         set_debug_state(0xC169, DEEP_DBG_LVL); //    tx_tdr_phase_sel
         put_ptr_field(gcr_addr_i, tx_tdr_phase_sel, 1, read_modify_write);
         set_debug_state(0xC16A, DEEP_DBG_LVL); //    tx_tdr_dac_cntl
-        put_ptr_field(gcr_addr_i, tx_tdr_dac_cntl, tx_zcal_tdr_dac_25percent_vio_c, read_modify_write);
 
-        // PSL ppe_sim_speedup_wait_3
-        if (!l_ppe_sim_speedup)
+        if (is_5nm_l)
         {
-            io_wait_us(thread_l, tx_zcal_tdr_sw_wait_us_c);
+            put_ptr_field(gcr_addr_i, tx_tdr_dac_cntl_pl, tx_zcal_tdr_dac_25percent_vio_c, read_modify_write); // per-lane in p11
+        }
+        else
+        {
+            put_ptr_field(gcr_addr_i, tx_tdr_dac_cntl, tx_zcal_tdr_dac_25percent_vio_c, read_modify_write); // per-group in p10
         }
 
+        io_wait_us(thread_l, tx_zcal_tdr_sw_wait_us_c);
         done_l = false;
 
         do
@@ -291,12 +298,7 @@ void tx_zcal_tdr (t_gcr_addr* gcr_addr_i)
                 {
                     set_debug_state(0xC133, DBG_LVL); // pulldown decrement successful
                     updated_pu_or_pd_l = true;
-
-                    // PSL ppe_sim_speedup_wait_4
-                    if (!l_ppe_sim_speedup)
-                    {
-                        io_wait_us(thread_l, tx_zcal_tdr_seg_wait_us_c);
-                    }
+                    io_wait_us(thread_l, tx_zcal_tdr_seg_wait_us_c);
                 }
                 else
                 {
@@ -325,6 +327,7 @@ void tx_zcal_tdr (t_gcr_addr* gcr_addr_i)
     put_ptr_field(gcr_addr_i, tx_tdr_pulse_offset, 0, read_modify_write);
 
     // if IOO, restore tx_tdr_th_pw_sel
+    // This does not exist in IOT. It is unused in odyssey, but does not hurt; it's an alias in odyssey
 #ifdef IOO
     put_ptr_field(gcr_addr_i, tx_tdr_th_pw_sel, tx_tdr_th_pw_sel_save_l, read_modify_write);
 #endif

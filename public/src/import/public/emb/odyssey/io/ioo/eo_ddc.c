@@ -40,6 +40,8 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// jfg23092203 |jfg     | EWM305434: Remove division of ber_count (ddc_min_err_lim) in ddc_seek_loop so original value is used. Bug.
+// jfg23061000 |jfg     | Add range checking return code for pr_recenter
 // jfg23050900 |jfg     | Coverage-based removal of set_ddc_err function. Retain CDR lock failure as only a state indication.
 // vbr23041700 |vbr     | Check historical eye width in recal only. In init (RxEqEval, RateChange) it is less useful and slows training (EWM302758); also skip BIST checks in RxEqEval.
 // jfg23033100 |jfg     | Coverage-based obsolete code cleanup: Remove hysteresis condition for recal_dac_changed
@@ -396,11 +398,12 @@ int pr_seek_ber (t_gcr_addr* gcr_addr, t_bank bank, unsigned int Dstep, bool dir
 // - Dsave  : 2 uint array containing original PR position packed into NS / EW format
 // - Doff   : 2 int array containing signed offset from orignal start if desired. Otherwise set = 0
 // - Eoff   : 1 int provided for implementing PR Bias. Must be common between both edges. Split values not supported.
+// - ret_err: bool indicator to exit on a PR range limit overflow. Taking no action.
 // Return value:
 //  rc_pass    : No errors on recenter
-//  rc_error   : Bad recenter request
-int  pr_recenter(t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, uint32_t* Esave, uint32_t* Dsave, int* Doffset,
-                 int Eoffset)
+//  rc_warning : Bad recenter request
+int  pr_recenter_werr(t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, uint32_t* Esave, uint32_t* Dsave, int* Doffset,
+                      int Eoffset, bool ret_err)
 {
     int i;
     int status = rc_pass;
@@ -430,6 +433,11 @@ int  pr_recenter(t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, uint32_t* Esav
         if (lim_chk != 0)
         {
             status = rc_warning;
+
+            if(ret_err)
+            {
+                return status;
+            }
         }
 
         Eleft[i] -= lim_chk;
@@ -440,6 +448,11 @@ int  pr_recenter(t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, uint32_t* Esav
         if (lim_chk != 0)
         {
             status = rc_warning;
+
+            if(ret_err)
+            {
+                return status;
+            }
         }
 
         Dleft[i] -= lim_chk;
@@ -547,7 +560,7 @@ int ddc_seek_loop (t_gcr_addr* gcr_addr, t_bank bank, int* pr_vals, bool seekdir
     uint32_t ds;
     uint32_t es;//edge_size(*ber_reported,ber_count);
     bool revSeekDir = !seekdir;
-    int ber_lim = (ber_count == 1) ? 1 : ber_count >> 1;
+    int ber_lim = ber_count;
     int lane = get_gcr_addr_lane(gcr_addr);
     uint32_t Dsave[2];
     uint32_t Esave[2];

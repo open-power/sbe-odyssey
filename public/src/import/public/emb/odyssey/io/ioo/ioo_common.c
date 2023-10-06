@@ -39,6 +39,9 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23082800 |vbr     | EWM 308211: wait_for_cdr_lock() returns abort status on an abort; also check for AXO (not just PCIe).
+// vbr23082400 |vbr     | EWM 309267/310587: Allow TX/RX lane 4 for PCIe mem_regs
+// vbr23060600 |vbr     | Do not clear loff_valid when removing DFE for PCIe RxEqEval.
 // vbr23042600 |vbr     | EWM 302895: Set mini PR to exactly 16 on a PCIe rate change
 // vbr23030200 |vbr     | Issue 300456: Only check specific banks in wait for cdr lock
 // vbr23020300 |vbr     | Issue 298086: new function to remove edge pr offset on PIPE rate change or rx eq eval
@@ -167,7 +170,6 @@ int wait_for_cdr_lock(t_gcr_addr* gcr_addr, t_bank check_bank, bool set_fir_on_e
         io_wait_us(get_gcr_addr_thread(gcr_addr), 5); // sleep until 5us has elapsed
     }
 
-    int pcie_mode = fw_field_get(fw_pcie_mode);
     int bank_mask = bank_to_bitfield_ab_mask(check_bank);
     int loop_count = 0;
 
@@ -184,17 +186,13 @@ int wait_for_cdr_lock(t_gcr_addr* gcr_addr, t_bank check_bank, bool set_fir_on_e
         }
         else
         {
-            // PCIe check for abort
-            if (pcie_mode)
-            {
-                int pipe_abort = check_rx_abort(gcr_addr);
+            int abort_status = check_rx_abort(gcr_addr);
 
-                // PSL pipe_abort
-                if (pipe_abort)
-                {
-                    return pass_code;  // Exit on a PCIe PIPE Abort (Issue 290234/293622)
-                }
-            } //pcie_mode
+            // PSL abort_status
+            if (abort_status)
+            {
+                return abort_status;  // Exit on a PCIe PIPE Abort (Issue 290234/293622/308211) or AXO Recal Abort
+            }
 
             // Check timeout if not locked as yet. Check if hit a loop limit (in case timer is broke HW552111).
             bool timeout = (pk_timebase_get() - start_time) > (32 * scaled_microsecond);
@@ -865,8 +863,8 @@ void save_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank)
                    rx_bd_latch_dac_n000_alias_addr; // PCIe only, so can ignore Issue 296947 (Odyssey address adjust)
     int mem_addr = (target_bank == bank_a) ? saved_rx_ad_loff_addr : saved_rx_bd_loff_addr;
 
-    // Error condition checking: Only support PCIe and lanes 0-3
-    if (lane > 3)
+    // Error condition checking: Only support PCIe (not checked) and RX lanes 0-4
+    if (lane > 4)
     {
         set_debug_state(0x400A); // Illegal parameters for save_rx_data_latch_dac_values()
         // PSL set_fir_fatal_error
@@ -950,8 +948,8 @@ void restore_rx_data_latch_dac_values(t_gcr_addr* gcr_addr, t_bank target_bank)
                    rx_bd_latch_dac_n000_alias_addr; // PCIe only, so can ignore Issue 296947 (Odyssey address adjust)
     int mem_addr = (target_bank == bank_a) ? saved_rx_ad_loff_addr : saved_rx_bd_loff_addr;
 
-    // Error condition checking: Only support PCIe and lanes 0-3
-    if (lane > 3)
+    // Error condition checking: Only support PCIe (not checked) and RX lanes 0-4
+    if (lane > 4)
     {
         set_debug_state(0x400B); // Illegal parameters for restore_rx_data_latch_dac_values()
         // PSL set_fir_fatal_error
@@ -1129,10 +1127,9 @@ void clear_rx_dfe(t_gcr_addr* gcr_addr)
     put_ptr_field(gcr_addr, rx_apply_dfe_v2_ab_run_done_alias, 0b1010,
                   fast_write); // bits[0:3]: a_run, a_done, b_run, b_done
 
-    // Clear the mem_regs holding the coefficients and latch offset
+    // Clear the mem_regs holding the coefficients. Do not clear the loff_valid for RxEqEval (saves time, ignore possible recal adjustments).
     mem_pl_field_put(rx_dfe_coef_7_0_1_6_alias, lane, 0);
     mem_pl_field_put(rx_dfe_coef_5_2_3_4_alias, lane, 0);
-    mem_pl_bit_clr(rx_loff_ad_n000_valid, lane);
 
     // Wait for DAC accelerator to finish
     // ASSUMPTION: Not waiting for DAC accelerator to complete since expect it to be faster (~800ns) than subsequent code that would access the rx_data_dac_*_regs
@@ -1199,8 +1196,8 @@ void save_tx_dcc_tune_values(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode)
 {
     int lane = get_gcr_addr_lane(gcr_addr);
 
-    // Error condition checking: Only support PCIe Gen3-5 and lanes 0-3
-    if ( (lane > 3) || (cal_mode < C_PCIE_GEN3_CAL) || (cal_mode == C_AXO_CAL) )
+    // Error condition checking: Only support PCIe Gen3-5 and TX lanes 0-4
+    if ( (lane > 4) || (cal_mode < C_PCIE_GEN3_CAL) || (cal_mode == C_AXO_CAL) )
     {
         set_debug_state(0xD01A); // Illegal parameters for save_tx_dcc_tune_values()
         // PSL set_fir_fatal_error
@@ -1224,8 +1221,8 @@ void restore_tx_dcc_tune_values(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode)
 {
     int lane = get_gcr_addr_lane(gcr_addr);
 
-    // Error condition checking: Only support PCIe and lanes 0-3
-    if ( (lane > 3) || (cal_mode == C_AXO_CAL) )
+    // Error condition checking: Only support PCIe and TX lanes 0-4
+    if ( (lane > 4) || (cal_mode == C_AXO_CAL) )
     {
         set_debug_state(0xD01B); // Illegal parameters for restore_tx_dcc_tune_values()
         // PSL set_fir_fatal_error
@@ -1278,8 +1275,8 @@ void preset_rx_peak_lte_values(t_gcr_addr* gcr_addr, t_init_cal_mode cal_mode)
 {
     int lane = get_gcr_addr_lane(gcr_addr);
 
-    // Error condition checking: Only support PCIe and lanes 0-3
-    if ( (lane > 3) || (cal_mode == C_AXO_CAL) )
+    // Error condition checking: Only support PCIe and RX lanes 0-4
+    if ( (lane > 4) || (cal_mode == C_AXO_CAL) )
     {
         set_debug_state(0x6033); // Illegal parameters for preset_rx_peak_lte_values()
         // PSL set_fir_fatal_error

@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 //-------------|--------|-------------------------------------------------------
+// vbr23053100 |vbr     | EWM 305971: Updated PCIe Gen 1/2 pattern filter and servo settings
 // vbr23041700 |vbr     | EWM 302758: skip DFE Fast BIST checks in RxEqEval.
 // vbr23033000 |vbr     | EWM 302249: Moved sleep in DFE Full latch update loop and added quick abort from loop
 // vbr23031300 |vbr     | Updated sleeps in dfe full for EWM301148.
@@ -179,8 +180,9 @@
 
 // Declare servo op arrays as static globals so they are placed in static memory thus reducing code size and complexity.
 
-#define SERVO_OP_MASK_ALL     0xF000 // Allows H3,H2,H1,H-1 to be used in pattern matching
-#define SERVO_OP_MASK_H321_X  0x1000 // Allows H-1 to be used in pattern matching while H3,H2,H1 are don't care
+#define SERVO_OP_MASK_ALL     0xF000 // Allows H3,H2,H1,H-1 to be used in pattern matching (along with H0)
+#define SERVO_OP_MASK_NONE    0x0000 // H3,H2,H1,H-1 ignored in pattern matching (only H0 used)
+//#define SERVO_OP_MASK_H321_X  0x1000 // Allows H-1 to be used in pattern matching while H3,H2,H1 are don't care
 #define SERVO_OP_AP           0x0100 // Sets H0(1) H-1(0)
 #define SERVO_OP_AN           0x0080 // Sets H0(0) H-1(1)
 #define SERVO_OP_FILT_AX000XX 0x0000
@@ -612,8 +614,17 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
 
     SET_DFE_DEBUG(0x7100); // Enter Full DFE
 
-    //SET_DFE_DEBUG(0x7101); // Initialize Settings
-    rx_eo_amp_servo_setup(i_tgt, SERVO_SETUP_DFE_FULL);
+    // EWM 305971: PCIe Gen1 and Gen2 use servo settings with less biasing since don't pattern match and 8b/10b data may be sparse
+    // PSL dfe_full_disable_pattern_filter
+    if (i_disable_pattern_filter)
+    {
+        rx_eo_amp_servo_setup(i_tgt, SERVO_SETUP_DFE_FAST);
+    }
+    else
+    {
+        rx_eo_amp_servo_setup(i_tgt, SERVO_SETUP_DFE_FULL);
+    }
+
     int rx_dfe_check_en_int = get_ptr(i_tgt, rx_dfe_check_en_addr  , rx_dfe_check_en_startbit  ,
                                       rx_dfe_check_en_endbit); //ppe pl
     int l_servo_min_max_error_dis = mem_pg_field_get(rx_dfe_full_max_error_disable);
@@ -653,8 +664,8 @@ uint32_t rx_eo_dfe_full(t_gcr_addr* i_tgt, const t_bank i_bank, bool i_run_all_q
 
     io_sleep(get_gcr_addr_thread(i_tgt)); //EWM299509
 
-    // PCIe Gen1 and Gen2 do not match on the H3-H1 pattern since may be sparse with 8b/10b. All other rates pattern match on H3-H1.
-    uint32_t l_servo_op_mask = i_disable_pattern_filter ? SERVO_OP_MASK_H321_X : SERVO_OP_MASK_ALL;
+    // PCIe Gen1 and Gen2 do not match on the H3-H1,H-1 pattern since may be sparse with 8b/10b. All other rates pattern match on H3-H1,H-1.
+    uint32_t l_servo_op_mask = i_disable_pattern_filter ? SERVO_OP_MASK_NONE : SERVO_OP_MASK_ALL;
 
     int l_dac_bank_addr = DAC_BASE_ADDR + (l_bank << 5);
 

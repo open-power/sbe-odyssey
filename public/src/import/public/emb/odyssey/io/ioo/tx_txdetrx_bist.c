@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -42,6 +42,7 @@
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
 // ------------|--------|-------------------------------------------------------
+// gap23030700 |gap     | Issue 300655: change detrx controls from PG to PL for Pll
 // mbs22082601 |mbs     | Updated with PSL comments
 // gap22052300 |gap     | change set_debug to save a few bytes
 // vbr22061500 |vbr     | Added returning of fail status for ext commands
@@ -78,7 +79,7 @@
 
 // registesr               |type| Default   | test 1   | test 2
 //-------------------------|----|-----------|----------|---------------|
-//tx_tdr_dac_cntl          |pg  | 00000000  | 11000000 | 11000000=192  |0  8 tx_ctl_cntl4_pg=C0
+//tx_tdr_dac_cntl_pl       |pl  | 00000000  | 11000000 | 11000000=192  |0  8 tx_cntl15_pl
 //tx_tdr_clamp_disable     |pg  | 0         | 1        | 1             |8  1 tx_ctl_cntl4_pg
 //tx_tdr_phase_sel         |pg  | 0         | 0        | 0             |9  1 tx_ctl_cntl4_pg
 //tx_tdr_offset_ctrl       |pg  | 0         | 0        | 0             |10 1 tx_ctl_cntl4_pg
@@ -89,8 +90,8 @@
 //tx_idle_mode_ovr_en      |pl  | 1         | 1        | 1             |3  1 tx_mode2_pl
 //tx_idle_mode_ovr_val     |pl  | 0         | 0        | 0             |4  1 tx_mode2_pl
 //tx_pcie_rxdet_mode_dc    |pl  | 0         | 1        | 1             |15 1 tx_cntl30_pl
-//tx_pcie_idle_del_sel_1   |pg  | 0100      | 0000     | 0000          |0  4 tx_ppe_mode10_pg
-//tx_pcie_loz_del_sel_1    |pg  | 0011      | 0000     | 0000          |4  4 tx_ppe_mode10_pg
+//tx_pcie_idle_del_sel_1   |pl  | 0100      | 0000     | 0000          |0  4 tx_ppe_mode10_pg
+//tx_pcie_loz_del_sel_1    |pl  | 0011      | 0000     | 0000          |4  4 tx_ppe_mode10_pg
 //tx_detrx_n_comp          |pl  | read      | 1        | 0             |13 1 tx_stat1_pl
 //tx_detrx_p_comp          |pl  | read      | 1        | 0             |14 1 tx_stat1_pl
 
@@ -129,7 +130,8 @@ int tx_txdetrx_bist(t_gcr_addr* gcr_addr, int tx_bist_enable_ls, int tx_bist_ena
 
     //Set the value in the table
     //tx_tdr_dac_cntl = C0 bits tx_tdr_clamp_disable = 0 tx_tdr_phase_sel=0 tx_tdr_offset_ctr=0
-    put_ptr_field(gcr_addr, tx_tdr_cntl_alias, 0b11000000100, fast_write);//pg
+    put_ptr_field(gcr_addr, tx_tdr_dac_cntl_pl, 0b11000000, read_modify_write);//pl
+    put_ptr_field(gcr_addr, tx_tdr_cntl_alias, 0b100, read_modify_write);//pg
 
     // Set the value in the table
     put_ptr_field(gcr_addr, tx_pcie_rxdet_mode_dc, 0b1, read_modify_write); //pl
@@ -200,7 +202,8 @@ int tx_txdetrx_bist(t_gcr_addr* gcr_addr, int tx_bist_enable_ls, int tx_bist_ena
     put_ptr_field(gcr_addr, tx_bist_txdetrx_en, 0b0, read_modify_write); //pl
     put_ptr_field(gcr_addr, tx_pcie_idle_del_sel_1, 0b0100, read_modify_write); //pl
     put_ptr_field(gcr_addr, tx_pcie_loz_del_sel_1, 0b0011, read_modify_write); //pl
-    put_ptr_field(gcr_addr, tx_tdr_cntl_alias, 0b00000000000 , fast_write); //pg
+    put_ptr_field(gcr_addr, tx_tdr_dac_cntl_pl, 0b00000000 , read_modify_write); //pl
+    put_ptr_field(gcr_addr, tx_tdr_cntl_alias, 0b000 , read_modify_write); //pg
 
     //setting done,
     put_ptr_field(gcr_addr, tx_bist_txdetrx_done, 0b1, read_modify_write); //pl

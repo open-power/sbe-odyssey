@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/emb/odyssey/io/ioo/ioo_margin_hv.h $ */
+/* $Source: public/src/import/public/emb/odyssey/io/ioo/rx_sigdetcal.h $  */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,63 +23,36 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 // *!---------------------------------------------------------------------------
-// *! (C) Copyright International Business Machines Corp. 2022
+// *! (C) Copyright International Business Machines Corp. 2023
 // *! All Rights Reserved -- Property of IBM
 // *! *** IBM Confidential ***
 // *!---------------------------------------------------------------------------
-// *! FILENAME    : ioo_margin_hv.h
+// *! FILENAME    : rx_sigdetcal.h
 // *! TITLE       :
-// *! DESCRIPTION : loff_offset_wrap for vertical offset manual and auto-margining capability
-// *|               pr_offset_wrap for horizontal offset manual and auto-margining capability
+// *! DESCRIPTION : Receiver Signal Detect Calibration PPE header code.
+// *!             :
 // *!
-// *! OWNER NAME  : John Gullickson     Email: gullicks@us.ibm.com
+// *! OWNER NAME  : John Bergkvist      Email: john.bergkvist.jr@ibm.com
+// *! BACKUP NAME : Mike Harper         Email: harperm@us.ibm.com
 // *! BACKUP NAME : Vikram Raj          Email: vbraj@us.ibm.com
+// *! BACKUP NAME : Mike Spear          Email: mspear@us.ibm.com
 // *!
 // *!---------------------------------------------------------------------------
 // CHANGE HISTORY:
 //------------------------------------------------------------------------------
 // Version ID: |Author: | Comment:
-//-------------|--------|-------------------------------------------------------
-// jfg23061000 |jfg     | Add overflow state and fix end states
-// jfg23022400 |jfg     | Companion to ioo_margin_hv.c
-// -----------------------------------------------------------------------------
+// ------------|--------|-------------------------------------------------------
+// jjb23081000 |jjb     | Initial Code
+//------------------------------------------------------------------------------
 
+#ifndef _RX_SIGDETCAL_H
+#define _RX_SIGDETCAL_H
 
-#ifndef _IOO_MARGIN_HV_
-#define _IOO_MARGIN_HV_
+#include <stdbool.h>
+#include "ioo_common.h"
 
-// Software State Machine State Variables
+// rx_sigdet_cal
 
-#define offset_st_H_on  0b0000
-#define offset_st_H_off 0b0100
-#define offset_st_H_pos 0b0000
-#define offset_st_H_neg 0b0010
-//efine offset_st_H_end 0b0011
-#define offset_st_H_end 0b0101
+int rx_sigdetcal(t_gcr_addr* gcr_addr);
 
-#define offset_st_V_on  0b1000
-#define offset_st_V_off 0b1100
-#define offset_st_V_pos 0b1000
-#define offset_st_V_neg 0b1010
-#define offset_st_V_end 0b1101
-
-#define offset_st_overfl 0b1111  // Sticky Failure State on Overflow Detection. User must resolve overflow condition and manually reset state machine to offset_st_H_on
-
-#define offset_mask_on  0b0100
-#define offset_mask_end 0b0101
-#define offset_mask_HV  0b1100
-#define offset_mask_PN  0b0010
-#define offset_mask_Bnk 0b0001
-
-
-PK_STATIC_ASSERT(ppe_margin_offset_overlay_width == 4);
-PK_STATIC_ASSERT(ppe_pr_offset_applied_a_startbit - ppe_margin_offset_overlay_startbit == 0);
-PK_STATIC_ASSERT(ppe_pr_offset_applied_b_startbit - ppe_margin_offset_overlay_startbit == 1);
-PK_STATIC_ASSERT(ppe_loff_offset_applied_a_startbit - ppe_margin_offset_overlay_startbit == 2);
-PK_STATIC_ASSERT(ppe_loff_offset_applied_b_startbit - ppe_margin_offset_overlay_startbit == 3);
-
-void loff_offset_wrap (t_gcr_addr* gcr_addr, t_bank bank, bool apply) ;
-void pr_offset_wrap (t_gcr_addr* gcr_addr, t_bank bank, bool apply);
-
-
-#endif //_IOO_MARGIN_HV_
+#endif // _RX_SIGDETCAL_H       
