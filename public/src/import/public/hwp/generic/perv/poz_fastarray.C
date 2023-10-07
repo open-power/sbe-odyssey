@@ -523,6 +523,11 @@ fapi_try_exit:
 }
 
 /**
+ * @brief Explicit scan type mappings for certain rings
+ */
+static const uint16_t scan_type_decoder_ring[4] = { 0xDCE0, 0x0820, 0x0440, 0x9000 };
+
+/**
  * @brief expand a 32bit ring address into a 64bit value for the clock controller's SCAN_REGION_TYPE register
  *
  * If the ring address belongs to a core ring, the result will be shifted to match a core target's core select.
@@ -543,7 +548,9 @@ static uint64_t expand_ring_address(
     // Since core 0 is 0x8 we need to shift left by three positions less
     const uint32_t l_reg_upper    =   ((l_scan_region << (13 - 3)) * l_core_select) | l_fastinit;
     const uint32_t l_scan_encode  =   i_ring_address & 0x0000000F;
-    const uint32_t l_scan_type    =   (l_scan_encode == 0xF) ? 0x9000 : (0x8000 >> l_scan_encode);
+    const uint32_t l_scan_type    =   (l_scan_encode < 12) ?
+                                      (0x8000 >> l_scan_encode) :
+                                      scan_type_decoder_ring[l_scan_encode - 12];
     return ((uint64_t)l_reg_upper << 32) | l_scan_type;
 }
 
