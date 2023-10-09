@@ -217,7 +217,7 @@ int  main(int argc, char **argv)
 
         // Start the timer for the async thread.
         rc = g_sbe_thermal_sensor_timer.startTimer(
-                             THERMAL_SENSOR_POLLING_INITIAL_PERIOD_MICROSEC,
+                             fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_ODY_SENSOR_POLLING_PERIOD_MS_INIT * 1000,
                              (PkTimerCallback)&sbeasyncthreadPkExpiryCallback );
         if(rc)
         {

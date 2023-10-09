@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -25,19 +26,27 @@
 #pragma once
 
 #include <stdint.h>
-
-#define THERMAL_SENSOR_POLLING_INITIAL_PERIOD_MICROSEC 2*1000*1000
+#include "fapi2.H"
 
 /**
  * @brief sbepollTSnDQS: Poll thermal sensor and DQS.
  *
- * @param[in] io_tspperiod Thermal sensor polling period in ms. This will
- *                         be default to 0 and willbe set in
- *                         ody_thermal_init.
- * @prarm[in] io_dqscount   DQS polling count. This will be in multiple
- *                         of io_tspperiod
+ * @param[in,out] io_dqscurrentcount   DQS polling current count.
  *
  * @return   Success, otherwise failure in case of any error.
  */
 
-uint32_t sbepollTSnDQS(uint32_t &io_tspperiod, uint8_t &io_dqscount);
+uint32_t sbepollTSnDQS(uint8_t &io_dqscurrentcount);
+
+/**
+ * @brief This API updates the TS Polling period to latest value.
+ *        It also converts it to micro seconds.
+ *        If there is any change in the polling period it also resets the current DQS counter value
+ *
+ * @param[in,out] io_currentTsPeriodInMicroSec Current value of TS Period in Micro sec
+ *
+ * @param[in,out] io_dqscurrentcount Current count of DQS
+ *
+ */
+void getTsPeriodInMicroSec(uint32_t &io_currentTsPeriodInMicroSec,
+                           fapi2::ATTR_ODY_DQS_TRACKING_PERIOD_Type &io_dqscurrentcount);
