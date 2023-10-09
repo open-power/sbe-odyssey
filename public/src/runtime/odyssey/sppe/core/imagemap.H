@@ -33,12 +33,14 @@
 /**
  * @brief - Used to decide no of updatable image section count.
  */
-#define UPDATABLE_IMG_SECTION_CNT sizeof(CU::g_updatableImgPkgMap)/sizeof(CU::g_updatableImgPkgMap[0])
+#define UPDATABLE_IMG_SECTION_CNT sizeof(CU::g_updatableImgList)/sizeof(CU::g_updatableImgList[0])
+#define EXPECTED_IMG_SECTION_CNT sizeof(CU::g_expectedImgPkgMap)/sizeof(CU::g_expectedImgPkgMap[0])
 
 // CU: Code Update
 namespace CU
 {
-    constexpr imgMap_t g_updatableImgPkgMap[] = {
+    constexpr CU_IMAGES g_updatableImgList[] = {CU_IMAGES::BOOTLOADER, CU_IMAGES::RUNTIME, CU_IMAGES::BMC_OVRD, CU_IMAGES::HOST_OVRD};
+    constexpr imgMap_t g_expectedImgPkgMap[] = {
         {CU_IMAGES::BOOTLOADER, "boot"},
         {CU_IMAGES::RUNTIME,    "rt"  },
         {CU_IMAGES::BMC_OVRD,   "bmc" },

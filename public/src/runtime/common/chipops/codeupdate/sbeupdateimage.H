@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -76,6 +77,15 @@ uint32_t getImageEntryFromPartitionTable(const uint8_t i_sideNumber,
  */
 uint32_t validateImageSize(codeUpdateCtrlStruct_t &i_codeUpdateReqStruct);
 
+
+/*
+ * @brief validateImageType : Validate if incoming image type is updateable
+ *
+ * @param[in] i_imageType : image type received
+ *
+ * @return rc
+ */
+uint32_t validateImageType(const CU_IMAGES i_imageType);
 
 /*
  * @brief checkNUpdatePakMarkerNSize : This API can be used to check and update
