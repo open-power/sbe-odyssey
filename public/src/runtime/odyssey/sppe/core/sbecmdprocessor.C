@@ -321,8 +321,9 @@ void sbeAsyncCommandProcessor_routine(void *arg)
     #define SBE_FUNC "sbeAsyncCommandProcessor"
     SBE_INFO(SBE_FUNC " Thread started ");
 
-    uint32_t l_tspinterval = 0;
-    uint8_t l_dqscount = 0;
+    uint32_t l_rc = 0x0;
+    uint32_t l_tspintervalmicrosec = 0x0;
+    ATTR_ODY_DQS_TRACKING_PERIOD_Type l_dqscurrentcount =0x0;
 
     do
     {
@@ -337,28 +338,29 @@ void sbeAsyncCommandProcessor_routine(void *arg)
             break;
         }
 
-        // Call the thermal sensor polling HWPs and DOA polling.
-        uint32_t l_rc = sbepollTSnDQS(l_tspinterval, l_dqscount);
-        if(l_rc)
-        {
-            SBE_ERROR(SBE_FUNC "sbepollTSnDQS failed with rc 0x%08X", l_rc);
-            // Incase of failure set the asyn bit to true.
-            (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
-        }
-        SBE_DEBUG(SBE_FUNC "Thermal sensor polling done.");
+        getTsPeriodInMicroSec(l_tspintervalmicrosec, l_dqscurrentcount);
 
         // Start the timer with the updated value.
-        SBE_DEBUG(SBE_FUNC "l_tspinterval is 0x%08X", l_tspinterval);
         l_rc = g_sbe_thermal_sensor_timer.startTimer(
-                             l_tspinterval,
+                             l_tspintervalmicrosec,
                              (PkTimerCallback)&sbeasyncthreadPkExpiryCallback );
         if(l_rc)
         {
             SBE_ERROR(SBE_FUNC "Failed to start the async thread timer with rc"
                                " 0x%08X", l_rc);
-            // Incase of failure set the asyn bit to true.
+            // Incase of failure set the async bit to true.
             (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
         }
+
+        // Call the thermal sensor polling HWPs and DQS polling.
+        l_rc = sbepollTSnDQS(l_dqscurrentcount);
+        if(l_rc)
+        {
+            SBE_ERROR(SBE_FUNC "sbepollTSnDQS failed with rc 0x%08X", l_rc);
+            // Incase of failure set the async bit to true.
+            (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
+        }
+
     } while(true);
     #undef SBE_FUNC
 }
