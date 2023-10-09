@@ -79,10 +79,10 @@ uint32_t sbeGetCodeLevels (uint8_t *i_pArg)
         // Use only for secondary rc to send in the response header
         uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
         CU::CodeLevelsRespMsg_t l_codeLevelsRespMsg;
-        for (uint8_t i = 0; i < UPDATABLE_IMG_SECTION_CNT; i++)
+        for (uint8_t i = 0; i < EXPECTED_IMG_SECTION_CNT; i++)
         {
             l_codeLevelsRespMsg.iv_updateableImagesInfo[i].iv_imageType =
-                                            (CU_IMAGES)CU::g_updatableImgPkgMap[i].imageNum;
+                                            (CU_IMAGES)CU::g_expectedImgPkgMap[i].imageNum;
             l_rc = getImageHash(l_codeLevelsRespMsg.iv_updateableImagesInfo[i].
                                     iv_imageType,
                                 l_runningSide,

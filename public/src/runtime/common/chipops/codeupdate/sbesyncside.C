@@ -63,16 +63,16 @@ fapi2::ReturnCode syncSide(const sbeSyncReqMsg_t *i_msg,
       // because if bootloader is synced (there may be chance that partition table
       // is modified) then we need to sync all other images without checking
       // the respective image hash.
-      static_assert(CU::g_updatableImgPkgMap[0].imageNum == CU_IMAGES::BOOTLOADER,
-                   "First element must be BootLoader in the g_updatableImgPkgMap"
+      static_assert(CU::g_expectedImgPkgMap[0].imageNum == CU_IMAGES::BOOTLOADER,
+                   "First element must be BootLoader in the g_expectedImgPkgMap"
                    "as per sync chip-op algorithm");
 
-      for (uint8_t l_img = 0; l_img < UPDATABLE_IMG_SECTION_CNT; l_img++)
+      for (uint8_t l_img = 0; l_img < EXPECTED_IMG_SECTION_CNT ; l_img++)
       {
          bool  l_isImgHashMatched = false;
 
          // Get incoming chip-op params updated
-         l_syncSideCtrlStruct.imageType = (uint16_t)CU::g_updatableImgPkgMap[l_img].imageNum;
+         l_syncSideCtrlStruct.imageType = (uint16_t)CU::g_expectedImgPkgMap[l_img].imageNum;
 
          //When force sync is set no need to compare the image hash
          //corresponding to each image type on both sides instead force copy
@@ -114,7 +114,7 @@ fapi2::ReturnCode syncSide(const sbeSyncReqMsg_t *i_msg,
                SBE_ERROR(SBE_FUNC \
                            "Failed to sync imageType[%d] from " \
                            " runSide[%d] to nonRunSide[%d] ",
-                           CU::g_updatableImgPkgMap[l_img].imageNum,
+                           CU::g_expectedImgPkgMap[l_img].imageNum,
                            l_syncSideCtrlStruct.runSideIndex,
                            l_syncSideCtrlStruct.nonRunSideIndex);
                //in case sync is failed , making this flag true
@@ -122,7 +122,7 @@ fapi2::ReturnCode syncSide(const sbeSyncReqMsg_t *i_msg,
                l_isSyncFailed = true;
                break;
             }
-            else if (CU::g_updatableImgPkgMap[l_img].imageNum == CU_IMAGES::BOOTLOADER)
+            else if (CU::g_expectedImgPkgMap[l_img].imageNum == CU_IMAGES::BOOTLOADER)
             {
                // incase of bootloader, making this flag true
                // to avoid comparision for other image like(runtime,host,bmc)

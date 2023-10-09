@@ -28,6 +28,7 @@
 #include "archive.H"
 #include "assert.h"
 #include "ptbl.H"
+#include "imagemap.H"
 
 fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
                               const sbeFifoType i_type,
@@ -121,7 +122,7 @@ fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
 
             // For first pass/loop do:
             // 1. Check signature of image
-            // 2. Validate partition table if image type is bootloader
+            // 2. Validate partition table if image type is bootloader else if the image is updateable
             // 3. Get image detail from partition table
             // 4. Validate incoming image size
             // 5. Start on write_begin
@@ -149,6 +150,15 @@ fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
                         o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE, l_rc);
                         break;
                     }
+                } else {
+		    l_rc = validateImageType((CU_IMAGES)(i_msg->imageType));
+                    if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+                    {
+                        SBE_ERROR(SBE_FUNC "validateImageType unsuccessful. RC[0x%08x]", l_rc);
+                        o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE, l_rc);
+                        break;
+                    }
+		    
                 }
 
                 // 3. Get incoming image info data from partition table
@@ -323,6 +333,31 @@ uint32_t validateImageSize(codeUpdateCtrlStruct_t &i_codeUpdateCtrlStruct)
     #undef SBE_FUNC
 }
 
+uint32_t validateImageType(const CU_IMAGES i_imageType)
+{
+    #define SBE_FUNC " validateImageType "
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc  = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    bool updateableImage = false;
+    for (uint32_t i = 0; i < UPDATABLE_IMG_SECTION_CNT; i++)
+    {
+        if (CU::g_updatableImgList[i] == i_imageType)
+        {
+            updateableImage = true;
+        }  
+    }
+    if (!updateableImage)
+    {
+        SBE_ERROR(SBE_FUNC "Image type passed [0x%08X] is not in the list of updateable images ",
+                  i_imageType);
+        l_rc = SBE_SEC_CU_INVALID_IMAGE_TYPE;
+    }
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
 
 uint32_t checkImagePakMarker(void *i_buffer, uint32_t i_writeWordsLength)
 {

@@ -125,19 +125,19 @@ uint32_t getPakEntryFromPartitionTable(const uint8_t i_sideNumber,
         // Based on imageType, get the equivalent pak file name in partition table
         // from the mapping structure
         uint8_t l_id = 0;
-        for(l_id=0; l_id < UPDATABLE_IMG_SECTION_CNT; l_id++)
+        for(l_id=0; l_id < EXPECTED_IMG_SECTION_CNT; l_id++)
         {
             // Check for mapping name as per partition table
-            if (CU::g_updatableImgPkgMap[l_id].imageNum == i_imageType)
+            if (CU::g_expectedImgPkgMap[l_id].imageNum == i_imageType)
             {
                 strncpy(l_sectionPakName,
-                        CU::g_updatableImgPkgMap[l_id].imageName,
-                        sizeof(CU::g_updatableImgPkgMap[l_id].imageName));
+                        CU::g_expectedImgPkgMap[l_id].imageName,
+                        sizeof(CU::g_expectedImgPkgMap[l_id].imageName));
                 break;
             }
         }
 
-        if (l_id == UPDATABLE_IMG_SECTION_CNT)
+        if (l_id == EXPECTED_IMG_SECTION_CNT)
         {
             SBE_ERROR(SBE_FUNC "Image type:[0x%04x] not found in mapping"\
                                "to partiton table", i_imageType);
@@ -146,7 +146,7 @@ uint32_t getPakEntryFromPartitionTable(const uint8_t i_sideNumber,
         }
 
         SBE_DEBUG(SBE_FUNC "Partition info index:[%d], ImageNum:[0x%04x]",\
-                 l_id, (uint16_t)CU::g_updatableImgPkgMap[l_id].imageNum);
+                 l_id, (uint16_t)CU::g_expectedImgPkgMap[l_id].imageNum);
 
         // Based on pak file name from map above, search for it in the partition table
         // if found, get the image pak's starting offset and its size
@@ -330,12 +330,12 @@ uint32_t validatePartitionTable(void *i_pakStartAddr,
 
     do
     {
-        for (uint8_t imgId = (uint8_t)CU_IMAGES::BOOTLOADER; imgId < (uint8_t)CU_IMAGES::END_OF_IMG_LIST; imgId++)
+        for (uint8_t imgId = 0; imgId < sizeof(CU::g_expectedImgPkgMap)/sizeof(CU::g_expectedImgPkgMap[0]); imgId++)
         {
             // Get each image type start address from the partition table
             // in the incoming pak file
             l_rc = getPakEntryFromPartitionTable(i_codeUpdateCtrlStruct.nonRunSideIndex,
-                                                 (CU_IMAGES)imgId,
+                                                 CU::g_expectedImgPkgMap[imgId].imageNum,
                                                  i_pakStartAddr,
                                                  i_codeUpdateCtrlStruct);
             if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
@@ -345,7 +345,7 @@ uint32_t validatePartitionTable(void *i_pakStartAddr,
             }
 
             // First image type is bootloader
-            if (imgId == (uint16_t)CU_IMAGES::BOOTLOADER)
+            if (CU::g_expectedImgPkgMap[imgId].imageNum == CU_IMAGES::BOOTLOADER)
             {
                 l_partitionStartAddr = i_codeUpdateCtrlStruct.imageStartAddr;
             }

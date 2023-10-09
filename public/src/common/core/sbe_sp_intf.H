@@ -275,6 +275,10 @@ enum class CU_IMAGES : uint16_t
     RUNTIME,           // Updatable
     BMC_OVRD,          // Updatable
     HOST_OVRD,         // Updatable
+    CUSTOM,            // Updatable
+    CUSTOM_TBL,
+    MISC,
+    PAD,
     END_OF_IMG_LIST
 };
 
@@ -295,6 +299,10 @@ enum class CAPABILITY_IMAGES : uint16_t
     BMC_OVRD,
     HOST_OVRD,
     EKB,
+    CUSTOM_TBL,
+    CUSTOM,
+    MISC,
+    PAD
 };
 
 /**
