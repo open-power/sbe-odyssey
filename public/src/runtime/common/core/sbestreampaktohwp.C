@@ -147,36 +147,37 @@ static ReturnCode sbestreampaktohwp_internal(
             /* ERROR message */
             SBE_ERROR(SBE_FUNC "check_file_hash failure rc: 0x%X", hashListRc);
             SBE_ERROR_BIN(SBE_FUNC "check_file_hash failure file name: ", i_pakname, strlen(i_pakname));
+
+            /* Check the SBE class RC with FILE_NOT_FOUND, assert with FAPI */
+            PLAT_FAPI_ASSERT( !(hashListRc == SBE::FILE_NOT_FOUND),
+                        SBE_FILE_NOT_FOUND(),
+                        "sbestreampaktohwp: Pak file not found in hash list");
+
+            /* ppe constrain not possible to read unaligned data, fix - using memcpy
+               approach */
+            memcpy((uint8_t *)&mismatchHash, (uint8_t *)ptrMismatchHash, sizeof(sha3_t));
+
+            /* Check the SBE class RC with HASH_COMPARE_FAIL, assert with FAPI */
+            PLAT_FAPI_ASSERT( !(hashListRc == SBE::HASH_COMPARE_FAIL),
+                        SBE_FILE_HASH_MISMATCH().
+                        set_GEN_HASH_0(* (ptrGenHash + 0)).
+                        set_GEN_HASH_1(* (ptrGenHash + 1)).
+                        set_GEN_HASH_2(* (ptrGenHash + 2)).
+                        set_GEN_HASH_3(* (ptrGenHash + 3)).
+                        set_GEN_HASH_4(* (ptrGenHash + 4)).
+                        set_GEN_HASH_5(* (ptrGenHash + 5)).
+                        set_GEN_HASH_6(* (ptrGenHash + 6)).
+                        set_GEN_HASH_7(* (ptrGenHash + 7)).
+                        set_CMP_HASH_0( mismatchHash[0] ).
+                        set_CMP_HASH_1( mismatchHash[1] ).
+                        set_CMP_HASH_2( mismatchHash[2] ).
+                        set_CMP_HASH_3( mismatchHash[3] ).
+                        set_CMP_HASH_4( mismatchHash[4] ).
+                        set_CMP_HASH_5( mismatchHash[5] ).
+                        set_CMP_HASH_6( mismatchHash[6] ).
+                        set_CMP_HASH_7( mismatchHash[7] ),
+                        "sbestreampaktohwp: Pak file hash mismatch");
         }
-
-        /* ppe constrain not possible to read unaligned data, fix - using memcpy
-           approach */
-        memcpy((uint8_t *)&mismatchHash, (uint8_t *)ptrMismatchHash, sizeof(sha3_t));
-        /* Check the SBE class RC with HASH_COMPARE_FAIL, assert with FAPI */
-        PLAT_FAPI_ASSERT( !(hashListRc == SBE::HASH_COMPARE_FAIL),
-                    SBE_FILE_HASH_MISMATCH().
-                    set_GEN_HASH_0(* (ptrGenHash + 0)).
-                    set_GEN_HASH_1(* (ptrGenHash + 1)).
-                    set_GEN_HASH_2(* (ptrGenHash + 2)).
-                    set_GEN_HASH_3(* (ptrGenHash + 3)).
-                    set_GEN_HASH_4(* (ptrGenHash + 4)).
-                    set_GEN_HASH_5(* (ptrGenHash + 5)).
-                    set_GEN_HASH_6(* (ptrGenHash + 6)).
-                    set_GEN_HASH_7(* (ptrGenHash + 7)).
-                    set_CMP_HASH_0( mismatchHash[0] ).
-                    set_CMP_HASH_1( mismatchHash[1] ).
-                    set_CMP_HASH_2( mismatchHash[2] ).
-                    set_CMP_HASH_3( mismatchHash[3] ).
-                    set_CMP_HASH_4( mismatchHash[4] ).
-                    set_CMP_HASH_5( mismatchHash[5] ).
-                    set_CMP_HASH_6( mismatchHash[6] ).
-                    set_CMP_HASH_7( mismatchHash[7] ),
-                    "sbestreampaktohwp: Pak file hash mismatch");
-
-        /* Check the SBE class RC with FILE_NOT_FOUND, assert with FAPI */
-        PLAT_FAPI_ASSERT( !(hashListRc == SBE::FILE_NOT_FOUND),
-                    SBE_FILE_NOT_FOUND(),
-                    "sbestreampaktohwp: Pak file not found in hash list");
     }
 
 fapi_try_exit:
