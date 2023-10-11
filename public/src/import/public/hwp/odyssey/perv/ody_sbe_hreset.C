@@ -44,7 +44,7 @@ enum ODY_SBE_HRESET_Private_Constants
 };
 
 ReturnCode ody_sbe_hreset(
-    const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
+    const Target<TARGET_TYPE_OCMB_CHIP>& i_target, bool i_use_scom_path)
 {
     poz_sbe_boot_parms l_boot_parms;
     Target<TARGET_TYPE_SYSTEM> FAPI_SYSTEM;
@@ -58,7 +58,7 @@ ReturnCode ody_sbe_hreset(
     l_boot_parms.poll_delay_ns = POLL_DELAY_NS;
 
     // call common HWP
-    FAPI_TRY(poz_sbe_hreset(i_target, l_boot_parms , true));
+    FAPI_TRY(poz_sbe_hreset(i_target, l_boot_parms, i_use_scom_path));
 
 fapi_try_exit:
     FAPI_DBG("Exiting...");

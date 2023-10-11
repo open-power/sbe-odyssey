@@ -23,11 +23,11 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  poz_sppe_check_for_ready.H
-/// @brief Confirm that SPPE has reached expected state based on reset/boot type
+/// @file  poz_sbe_hreset.H
+/// @brief Applying hreset for any POZ chip
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
-// *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
+// *HWP HW Maintainer   : Swathips (swathips@in.ibm.com)
+// *HWP FW Maintainer   : Amit Tendolkar (amit.tendolkar@in.ibm.com)
 //------------------------------------------------------------------------------
 
 #pragma once
@@ -41,10 +41,12 @@ typedef struct
     uint64_t poll_delay_ns;
 } poz_sbe_boot_parms;
 
-/// @brief       Confirm SPPE has reached expected state based on reset/boot type
+/// @brief       Applying hreset for Ody chip
 /// @param[in]   i_target         Reference to TARGET_TYPE_ANY_POZ_CHIP
 /// @param[in]   i_boot_parms     Expected SPPE end state, polling guidance
-/// @return  FAPI2_RC_SUCCESS if success, else error code.
+/// @param[in]   i_use_scom_path  Set it to true to use SCOM Path else cfam path
+///// @return  FAPI2_RC_SUCCESS if success, else error code.
+
 fapi2::ReturnCode poz_sbe_hreset(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    const poz_sbe_boot_parms i_boot_parms, bool i_use_cfam_path);
+    const poz_sbe_boot_parms i_boot_parms, bool i_use_scom_path);

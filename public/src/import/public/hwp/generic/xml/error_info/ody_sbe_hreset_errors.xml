@@ -27,8 +27,15 @@
 <hwpErrors>
   <!-- ******************************************************************** -->
   <hwpError>
-    <rc>RC_SBE_BOOT_CHECK_ERR</rc>
-    <description>SBE did not Boot prior to timeout</description>
+    <rc>RC_SBE_BOOT_CHECK_ERR_CFAM_PATH</rc>
+    <description>SBE did not Boot prior to timeout in CFAM Path</description>
+    <ffdc>TARGET</ffdc>
+    <ffdc>SB_MSG</ffdc>
+  </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+    <rc>RC_SBE_BOOT_CHECK_ERR_SCOM_PATH</rc>
+    <description>SBE did not Boot prior to timeout in SCOM Path</description>
     <ffdc>TARGET</ffdc>
     <ffdc>SB_MSG</ffdc>
   </hwpError>
