@@ -33,6 +33,7 @@
 #pragma once
 
 #include <poz_scom_perv.H>
+#include <poz_scom_perv_cfam_fields.H>
 
 using namespace scomt::poz;
 
