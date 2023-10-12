@@ -36,24 +36,28 @@
 </attribute>
 <!-- ********************************************************************** -->
 <attribute>
-  <id>ATTR_ENGD_BUILD_YEAR</id>
+  <id>ATTR_ENGD_BUILD_LOCAL</id>
   <targetType>TARGET_TYPE_SYSTEM</targetType>
   <description>
-    Build-time only attribute used to represent model build year
+    Build-time only attribute used to signify local engineering data build,
+    as opposed to library/production based build.
   </description>
   <valueType>uint8</valueType>
   <default>0</default>
+  <enum>FALSE=0, TRUE=1</enum>
   <writeable/>
 </attribute>
 <!-- ********************************************************************** -->
 <attribute>
-  <id>ATTR_ENGD_BUILD_DAY</id>
+  <id>ATTR_ENGD_BUILD_DIRTY</id>
   <targetType>TARGET_TYPE_SYSTEM</targetType>
   <description>
-    Build-time only attribute used to represent model build day (Julian date)
+    Build-time only attribute used to signify local repository state includes
+    local modifications (relative to HEAD) at time of build.
   </description>
-  <valueType>uint16</valueType>
+  <valueType>uint8</valueType>
   <default>0</default>
+  <enum>FALSE=0, TRUE=1</enum>
   <writeable/>
 </attribute>
 <!-- ********************************************************************** -->
@@ -61,10 +65,9 @@
   <id>ATTR_ENGD_BUILD_VERSION_NUMBER</id>
   <targetType>TARGET_TYPE_SYSTEM</targetType>
   <description>
-    Build-time only attribute used to represent release number for
-    given year/day
+    Build-time only attribute used to represent version information
   </description>
-  <valueType>uint8</valueType>
+  <valueType>uint32</valueType>
   <default>0</default>
   <writeable/>
 </attribute>
