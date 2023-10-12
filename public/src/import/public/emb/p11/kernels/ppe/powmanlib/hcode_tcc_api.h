@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -300,6 +300,40 @@ typedef struct
 // "TSS"
 #define HCODE_TCC_SHARED_MAGIC_NUMBER       0x545353
 #define HCODE_TCC_SHARED_VERSION            1
+
+typedef struct
+{
+    // ASCII value XGV
+    uint8_t magic_word[3];
+    // Version number of layout
+    uint8_t version;
+    // reserve
+    uint8_t reserve[2];
+    //length in bytes o XGV block including its header
+    uint16_t length;
+} XgvHdr_t;
+
+typedef struct
+{
+    XgvHdr_t xgv_header;
+    //VDD voltage averaged over 500us
+    uint16_t vdd_avg_mv;
+    // Idd current averaged over 500us
+    uint16_t idd_avg_10ma;
+    // Ics current averaged over 500us
+    uint16_t ics_avg_10mma;
+    //reserve
+    uint8_t  reserve;
+    // status
+    uint8_t status;
+} XgvValues_t;
+
+typedef union
+{
+    uint64_t    xvg_data[2];
+    XgvValues_t xvg_layout;
+} XGW_t;
+
 /// Shared SRAM Header
 typedef struct
 {
@@ -348,7 +382,11 @@ typedef struct
     /// XCE Produced WOF Values
     XCW_t               xce_wof_values;
 
+    /// XGPE Produced WOF Values
+    XGW_t               xgpe_wof_values;
+
 } HcodeTCCSharedData_t;
+
 
 #ifdef __cplusplus
 } // end extern C
