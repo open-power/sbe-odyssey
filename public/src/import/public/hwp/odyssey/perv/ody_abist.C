@@ -99,13 +99,23 @@ ReturnCode ody_abist(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 
     if (l_bist_diags.completed_stages & ody_abist_params.bist_stages::COMPARE)
     {
+        buffer<uint64_t> l_failing_chiplets_mask = 0;
+
         for (uint8_t chiplet_id = 0; chiplet_id < 64; chiplet_id++)
         {
             if (l_bist_diags.failing_regions[chiplet_id])
             {
-                FAPI_ERR("Nonzero scan compare fail count");
+                l_failing_chiplets_mask.setBit(chiplet_id);
             }
         }
+
+        FAPI_ASSERT(l_failing_chiplets_mask == 0,
+                    fapi2::BIST_NONZERO_MISCOMPARES().
+                    set_ABIST_NOT_LBIST(1).
+                    set_FAILING_CHIPLETS_MASK(l_failing_chiplets_mask),
+                    "Chiplets failing compare check: 0x%08x%08x",
+                    l_failing_chiplets_mask >> 32,
+                    l_failing_chiplets_mask & 0xFFFFFFFF);
     }
 
 fapi_try_exit:
