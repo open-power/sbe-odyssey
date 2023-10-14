@@ -38,6 +38,7 @@
 #include <poz_perv_mod_bist.H>
 #include <poz_perv_utils.H>
 #include <poz_scan_compare.H>
+#include <poz_ring_ids.H>
 #include <file_access.H>
 #include <target_filters.H>
 #include <endian.h>
@@ -292,7 +293,7 @@ fapi_try_exit:
 
 ReturnCode poz_bist(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist_params& i_params, bist_diags& o_diags,
-    fapi2::hwp_data_ostream& o_stream, const uint16_t i_dict_def) // TODO can we remove i_dict_def?
+    hwp_data_ostream& o_stream, const uint16_t i_dict_def) // TODO can we remove i_dict_def?
 {
     FAPI_INF("Entering ...");
 
@@ -358,7 +359,7 @@ ReturnCode poz_bist(
 
     // Assert the provided bist_params struct is the expected version
     FAPI_ASSERT(i_params.BIST_PARAMS_VERSION == BIST_PARAMS_CURRENT_VERSION,
-                fapi2::BAD_BIST_PARAMS_FORMAT().
+                BAD_BIST_PARAMS_FORMAT().
                 set_BIST_PARAMS(i_params.BIST_PARAMS_VERSION),
                 "BIST_PARAMS_VERSION mismatch (expected = %d, got = %d)",
                 BIST_PARAMS_CURRENT_VERSION, i_params.BIST_PARAMS_VERSION);
@@ -396,7 +397,7 @@ ReturnCode poz_bist(
         else
         {
             FAPI_ASSERT(!l_chiplets_mask.getBit(1),
-                        fapi2::MIXED_TP_CHIPLET_BIST_REQUESTED().
+                        MIXED_TP_CHIPLET_BIST_REQUESTED().
                         set_CHIPLETS(i_params.chiplets),
                         "Cannot currently run BIST on a combination of TP and non-TP chiplets");
 
@@ -513,7 +514,33 @@ ReturnCode poz_bist(
     if (i_params.stages & i_params.bist_stages::ARRAYINIT)
     {
         FAPI_DBG("Do an arrayinit");
+
+        uint8_t l_no_repr_lbist;
+        FAPI_TRY(FAPI_ATTR_GET(ATTR_CHIP_EC_FEATURE_NO_REPR_LBIST, i_target, l_no_repr_lbist));
+
+        if (l_no_repr_lbist)
+        {
+            // Scan load VPD RTG
+            FAPI_TRY(putRing(i_target, ring_id::chiplet_rtg));
+            FAPI_TRY(putRing(i_target, ring_id::core_rtg));
+            FAPI_TRY(putRing(i_target, ring_id::sh_rtg));
+
+            // Scan load generic RTG optimizations for ABIST
+            FAPI_TRY(putRing(l_chiplets_target, ring_id::abist_chiplet_rtg));
+            FAPI_TRY(putRing(l_chiplets_target, ring_id::abist_core_rtg));
+            FAPI_TRY(putRing(l_chiplets_target, ring_id::abist_sh_rtg));
+        }
+
+        // Do the arrayinit
         FAPI_TRY(mod_arrayinit(l_chiplets_target, l_all_active_regions, ARRAYINIT_RUNN_CYCLES, false));
+
+        if (l_no_repr_lbist)
+        {
+            // Post-arrayinit scan0
+            FAPI_TRY(mod_scan0(l_chiplets_target, l_all_active_regions, i_params.scan0_types,
+                               i_params.flags & i_params.bist_flags::SCAN0_ARY_FILL));
+        }
+
         o_diags.completed_stages |= i_params.bist_stages::ARRAYINIT;
     }
 
@@ -530,13 +557,13 @@ ReturnCode poz_bist(
         // The compare hash file's third to last byte indicates which base image to use
         strhex(l_load_path + 19, ((uint8_t*)l_hash_file_data)[l_hash_file_size - 3], 1);
         FAPI_DBG("Attempting to load base BIST image");
-        FAPI_TRY(fapi2::putRing(l_chiplets_target, l_load_path));
+        FAPI_TRY(putRing(l_chiplets_target, l_load_path));
 
         // Load program image
         strcpy(l_load_path, l_load_dir);
         strcat(l_load_path, l_program);
         FAPI_DBG("Attempting to load overlay BIST image");
-        FAPI_TRY(fapi2::putRing(l_chiplets_target, l_load_path));
+        FAPI_TRY(putRing(l_chiplets_target, l_load_path));
 
         o_diags.completed_stages |= i_params.bist_stages::RING_SETUP;
     }
@@ -547,7 +574,7 @@ ReturnCode poz_bist(
     if (i_params.stages & i_params.bist_stages::RING_PATCH)
     {
         FAPI_INF("Apply scan patches if needed");
-        FAPI_TRY(fapi2::putRing(l_chiplets_target, i_params.ring_patch));
+        FAPI_TRY(putRing(l_chiplets_target, i_params.ring_patch));
         o_diags.completed_stages |= i_params.bist_stages::RING_PATCH;
     }
 
