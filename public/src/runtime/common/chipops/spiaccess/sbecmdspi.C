@@ -201,7 +201,7 @@ uint32_t sbeSpiWriteWrap ( fapi2::sbefifo_hwp_data_istream& i_getStream,
                           WORD_TO_BYTES(l_writeWordsLen));
 
                 respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                                  SBE_SEC_CU_WRITE_IMAGE_FAILURE );
+                                  SBE_SEC_CU_WRITE_DATA_IMAGE_FAILURE );
                 break;
             }
 
@@ -324,7 +324,7 @@ uint32_t sbeSpiReadWrap ( fapi2::sbefifo_hwp_data_istream& i_getStream,
                           WORD_TO_BYTES(l_readWordsLen));
 
                 respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                                  SBE_SEC_CU_WRITE_IMAGE_FAILURE );
+                                  SBE_SEC_CU_READ_DATA_IMAGE_FAILURE );
                 break;
             }
 
