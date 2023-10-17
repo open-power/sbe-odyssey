@@ -82,12 +82,6 @@ class ffdc_t
         ffdc_t(void)
         {}
 
-        void operator=(const ffdc_t& i )
-        {
-            iv_value.ptr  = i.ptr();
-            iv_value.size = i.size();
-        }
-
         operator const void* () const
         {
             return iv_value.ptr;
@@ -342,8 +336,12 @@ inline fapi2::ffdc_t getFfdcData(sbeFfdc_t& i_sbeFfdc,
 
     if(l_ffdc.size() == EI_FFDC_SIZE_TARGET)
     {
-#ifdef FAPI2_ENABLE_PLATFORM_GET_TARGET
 
+#ifndef FAPI2_ENABLE_PLATFORM_GET_TARGET
+        // Circumvent warning: unused parameter 'i_sbeChip_instance' [-Wunused-parameter]
+        static_cast<void>(i_sbeChip_instance);
+        static_cast<void>(i_sbeChipTargetType);
+#else
         uint64_t targetData = i_sbeFfdc.data;
         // get a fapi target for the passed in chip instance
         fapi2::Target<TARGET_TYPE_ANY_POZ_CHIP> l_sbeChip;
