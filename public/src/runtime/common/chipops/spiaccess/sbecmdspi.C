@@ -298,30 +298,27 @@ uint32_t sbeSpiReadWrap ( fapi2::sbefifo_hwp_data_istream& i_getStream,
 
         //////////////////////////////////////////////////////
         // Read the SEEPROM img
+        uint32_t l_readBytesLen = 0;
 
-        // The received image would be updated in chunks of maxSpiReadInWords
-        // or less depending on the image size in a loop
-        uint32_t l_readWordsLen = 0;
-
-        // Offset at which to begin writing
+        // Offset at which to begin reading
         uint32_t l_imageStartAddr = l_reqMsg.start_addr;
 
-        for (uint32_t l_len = l_reqMsg.len; l_len > 0; l_len -= l_readWordsLen)
+        for (uint32_t l_len = l_reqMsg.len; l_len > 0; l_len -= l_readBytesLen)
         {
-            l_readWordsLen = (l_len > MAX_BUFFER_SIZE ? MAX_BUFFER_SIZE : l_len);
+            l_readBytesLen = (l_len > MAX_BUFFER_SIZE ? MAX_BUFFER_SIZE : l_len);
 
             SBE_INFO(SBE_FUNC "Loop: ReadLen(bytes):[0x%08X] withECC(bytes):[0x%08X]",
-                l_readWordsLen, WITH_ECC(l_readWordsLen));
+                l_readBytesLen, WITH_ECC(l_readBytesLen));
 
 
             // Perform device read
-            l_rc = gMemHandle->read(l_imageStartAddr, l_readWordsLen, l_imgBufScratchArea);
+            l_rc = gMemHandle->read(l_imageStartAddr, l_readBytesLen, l_imgBufScratchArea);
 
             if(l_rc != FAPI2_RC_SUCCESS)
             {
-                SBE_ERROR(SBE_FUNC "Write to device failed, Addr:0x%08X Size:0x%08X",\
-                          WITH_ECC(l_imageStartAddr),\
-                          WORD_TO_BYTES(l_readWordsLen));
+                SBE_ERROR(SBE_FUNC "Write to device failed, Addr(w/o ECC):0x%08X Size(in Bytes):0x%08X",\
+                          l_imageStartAddr,\
+                          l_readBytesLen);
 
                 respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
                                   SBE_SEC_CU_READ_DATA_IMAGE_FAILURE );
@@ -329,12 +326,12 @@ uint32_t sbeSpiReadWrap ( fapi2::sbefifo_hwp_data_istream& i_getStream,
             }
 
             // Enqueing fifo
-            l_rc = i_putStream.put(l_readWordsLen, (uint32_t *)l_imgBufScratchArea);
+            l_rc = i_putStream.put(BYTES_TO_WORDS(l_readBytesLen), (uint32_t *)l_imgBufScratchArea);
 
             // If FIFO access failure
             CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
 
-            l_imageStartAddr += l_readWordsLen;
+            l_imageStartAddr += l_readBytesLen;
 
         } //end of for-loop
 
