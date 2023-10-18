@@ -251,6 +251,10 @@ class io_ppe_common
 
         fapi2::ReturnCode set_pcie_presets(const fapi2::Target<K, M, V>& i_target,
                                            const uint8_t i_thread);
+
+        fapi2::ReturnCode auto_recal(const fapi2::Target<K, M, V>& i_target,
+                                     const uint8_t i_thread,
+                                     const uint8_t i_auto_recal);
 };
 
 // ===============================================================
@@ -1215,6 +1219,7 @@ template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
 fapi2::ReturnCode io_ppe_common<K, M, V>::clear_dl_ignore(const fapi2::Target<K, M, V>& i_target,
         const uint8_t i_thread)
 {
+    FAPI_DBG("Clearing DL Ignore bit");
     FAPI_TRY(MEM_REG_PPE_DL_IFC_IGNORE_PUT(iv_regs, i_target, i_thread, 0));
     FAPI_TRY(iv_regs->flushCache(i_target));
 
@@ -1227,7 +1232,7 @@ template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
 fapi2::ReturnCode io_ppe_common<K, M, V>::set_dl_ignore(const fapi2::Target<K, M, V>& i_target,
         const uint8_t i_thread)
 {
-    FAPI_DBG("Setting DL Ignore bit")
+    FAPI_DBG("Setting DL Ignore bit");
     FAPI_TRY(MEM_REG_PPE_DL_IFC_IGNORE_PUT(iv_regs, i_target, i_thread, 1));
     FAPI_TRY(iv_regs->flushCache(i_target));
 
@@ -1332,6 +1337,87 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::set_pcie_presets(const fapi2::Target<K
     FAPI_TRY(MEM_REG_PCIE_LANE3_GEN5_PRESET_RX_LTE_ZERO_PUT(iv_regs, i_target, i_thread, 1));
 
     FAPI_TRY(iv_regs->flushCache(i_target));
+
+fapi_try_exit:
+    FAPI_DBG("End");
+    return fapi2::current_err;
+}
+
+template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
+fapi2::ReturnCode io_ppe_common<K, M, V>::auto_recal(const fapi2::Target<K, M, V>& i_target,
+        const uint8_t i_thread,
+        const uint8_t i_auto_recal)
+{
+    FAPI_DBG("Getting auto_recal");
+
+    constexpr uint16_t PPE_STATE_RECAL_NOT_RUN = 0xF009;
+    constexpr uint16_t c_max_tries = 1000;
+
+    enum RECAL_BITS
+    {
+        RECAL_ABORT_BIT = 22,
+        RECAL_NOT_RUN_BIT = 26,
+        LANE_BUSY_BIT = 0
+    };
+
+    fapi2::buffer<uint64_t> l_data;
+
+    uint8_t l_tries = 0;
+
+    // Mask Recal Abort (Bit 22), Recal Not Run (Bit 26)
+    FAPI_INF("Setting RECAL_NOT_RUN & RECAL_ABORT FIR Mask")
+    l_data.setBit<RECAL_ABORT_BIT>();
+    l_data.setBit<RECAL_NOT_RUN_BIT>();
+    FAPI_TRY(fapi2::putScom(i_target, iv_regs->base_addr + 3, l_data)); // PPE_FIR_MASK WO_OR
+    l_data.flush<0>();
+
+    // Set the auto recal enable
+    FAPI_INF("Setting RX_AUTO_RECAL")
+    FAPI_TRY(fapi2::putScom(i_target, iv_regs->base_addr + 3, l_data)); // PPE_FIR_MASK WO_OR
+    FAPI_TRY(MEM_REG_RX_RECAL_ABORT_0_15_PUT(iv_regs, i_target, i_thread, (0xFFFF * i_auto_recal)));
+    FAPI_TRY(MEM_REG_RX_RECAL_ABORT_16_23_PUT(iv_regs, i_target, i_thread, (0xC0 * i_auto_recal)));
+
+    if (i_auto_recal)
+    {
+        // Check if there's an error state related to recal
+        //  Clear if so
+        FAPI_TRY(MEM_REG_PPE_ERROR_STATE_GET(iv_regs, i_target, i_thread, l_data));
+
+        if (l_data == PPE_STATE_RECAL_NOT_RUN)
+        {
+            FAPI_INF("PPE Error state related to RECAL_NOT_RUN")
+            FAPI_TRY(MEM_REG_PPE_ERROR_STATE_PUT(iv_regs, i_target, i_thread, 0));
+            FAPI_TRY(MEM_REG_PPE_ERROR_THREAD_PUT(iv_regs, i_target, i_thread, 0));
+            FAPI_TRY(MEM_REG_PPE_ERROR_LANE_PUT(iv_regs, i_target, i_thread, 0));
+            FAPI_TRY(MEM_REG_PPE_ERROR_VALID_PUT(iv_regs, i_target, i_thread, 0));
+        }
+
+        FAPI_INF("Clearing RECAL_NOT_RUN & RECAL_ABORT FIR (& Mask)")
+        l_data.setBit<RECAL_ABORT_BIT>();
+        l_data.setBit<RECAL_NOT_RUN_BIT>();
+        // Clear Recal Not Run FIR (Bit 26) & Recal Abort (Bit 22)
+        FAPI_TRY(fapi2::putScom(i_target, iv_regs->base_addr, l_data)); // PPE_FIR WCLEAR
+        // Unmask Recal Not Run (Bit 26)
+        FAPI_TRY(fapi2::putScom(i_target, iv_regs->base_addr + 2, l_data)); // PPE_FIR_MASK WCLEAR
+        l_data.flush<0>();
+    }
+    else
+    {
+        // Poll rx_lane_busy == 0
+        FAPI_INF("Polling for RX_LANE_BUSY == 0")
+
+        do
+        {
+            FAPI_TRY(MEM_REG_RX_LANE_BUSY_GET(iv_regs, i_target, i_thread, l_data));
+            l_tries++;
+        }
+        while (l_data && (l_tries < c_max_tries));
+    }
+
+    if (l_tries >= c_max_tries)
+    {
+        FAPI_ERR("RX Lane Busy, failed to set to 0");
+    }
 
 fapi_try_exit:
     FAPI_DBG("End");
