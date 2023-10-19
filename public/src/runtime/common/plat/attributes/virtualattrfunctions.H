@@ -30,7 +30,6 @@
 #include "target.H"
 #include "return_code.H"
 #include <plat_hw_access.H>
-#include <poz_scom_perv_cfam.H>
 
 namespace fapi2
 {
@@ -147,9 +146,10 @@ ReturnCode get_ATTR_EC(
     const Target<TARGET_TYPE_ALL>& i_target,
     ATTR_EC_Type& o_val)
 {
+    const uint32_t FSXCOMP_FSXLOG_CBS_ENVSTAT_RO = 0x50004;
     uint64_t cbs_envstat_reg = 0;
     fapi2::getscom_abs_wrap(&i_target,
-                    scomt::poz::FSXCOMP_FSXLOG_CBS_ENVSTAT_RO,
+                    FSXCOMP_FSXLOG_CBS_ENVSTAT_RO,
                     &cbs_envstat_reg);
 
     o_val = ((cbs_envstat_reg >> 32) & 0xFF);
