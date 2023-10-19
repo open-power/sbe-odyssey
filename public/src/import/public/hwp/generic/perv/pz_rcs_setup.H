@@ -23,7 +23,8 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  pz_rcs_setup.H
+/// @brief Lock RCS(Redundant clock switch) FPLLs(pllclksw1/pllclksw2)
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Kevin Duffy (kjduffy@us.ibm.com)
 // *HWP FW Maintainer   : Oliver Morlok (marquaro@in.ibm.com)
@@ -34,12 +35,14 @@
 
 #include <fapi2.H>
 
-typedef fapi2::ReturnCode (*pz_rcs_setup_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP>&);
+typedef fapi2::ReturnCode (*pz_rcs_setup_FP_t)(const fapi2::Target < fapi2::TARGET_TYPE_PROC_CHIP |
+        fapi2::TARGET_TYPE_HUB_CHIP > &);
 
-/// @brief
-/// @param[in]   i_target
+/// @brief Lock RCS(Redundant clock switch) FPLLs(pllclksw1/pllclksw2)
+/// @param[in]   i_target     Reference to TARGET_TYPE_PROC/HUB_CHIP
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {
-    fapi2::ReturnCode pz_rcs_setup(const fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP>& i_target);
+    fapi2::ReturnCode pz_rcs_setup(const fapi2::Target < fapi2::TARGET_TYPE_PROC_CHIP | fapi2::TARGET_TYPE_HUB_CHIP > &
+                                   i_target);
 }

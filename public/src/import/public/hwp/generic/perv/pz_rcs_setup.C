@@ -23,7 +23,8 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @brief
+/// @file  pz_rcs_setup.C
+/// @brief Lock RCS(Redundant clock switch) FPLLs(pllclksw1/pllclksw2)
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Chris Steffen (cwsteffen@us.ibm.com)
 // *HWP FW Maintainer   : Oliver Morlok (marquaro@in.ibm.com)
@@ -89,7 +90,7 @@ enum PZ_RCS_SETUP_Private_Constants
     WAIT_5MCYC   = 5000000,
 };
 
-static ReturnCode rcs_verify_clean_state(const Target<TARGET_TYPE_PROC_CHIP>& i_target,
+static ReturnCode rcs_verify_clean_state(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target,
         const fapi2::ATTR_CP_REFCLOCK_SELECT_Type& i_refclk_select)
 {
     FSXCOMP_FSXLOG_SNS1LTH_t l_sns1lth;
@@ -141,7 +142,7 @@ fapi_try_exit:
     return current_err;
 }
 
-static ReturnCode rcs_ppm_watchdog_test(const Target<TARGET_TYPE_PROC_CHIP>& i_target)
+static ReturnCode rcs_ppm_watchdog_test(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target)
 {
 
     FSXCOMP_FSXLOG_RCS_CTRL1_t l_rcs_ctrl1;
@@ -207,7 +208,7 @@ fapi_try_exit:
 }
 
 static ReturnCode rcs_simple_clock_test(
-    const Target<TARGET_TYPE_PROC_CHIP>& i_target,
+    const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target,
     const fapi2::ATTR_CP_REFCLOCK_SELECT_Type& i_refclk_select,
     const uint32_t i_test)
 {
@@ -247,7 +248,7 @@ fapi_try_exit:
 }
 
 static ReturnCode rcs_lock_fplls(
-    const Target<TARGET_TYPE_PROC_CHIP>& i_target,
+    const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target,
     const fapi2::ATTR_CP_REFCLOCK_SELECT_Type& i_refclk_select)
 {
     FSXCOMP_FSXLOG_ROOT_CTRL3_t l_root_ctrl3;
@@ -295,7 +296,7 @@ fapi_try_exit:
 }
 
 
-static ReturnCode rcs_sw_switch(const Target<TARGET_TYPE_PROC_CHIP>& i_target)
+static ReturnCode rcs_sw_switch(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target)
 {
     FSXCOMP_FSXLOG_RCS_CTRL1_t l_rcs_ctrl1;
     FSXCOMP_FSXLOG_ROOT_CTRL5_t l_root_ctrl5;
@@ -388,7 +389,7 @@ fapi_try_exit:
 
 // Pre-requisite: RCS Bypass / Clksel are setup for the correct clock
 //   if redundant clocks are not needed
-ReturnCode pz_rcs_setup(const Target<TARGET_TYPE_PROC_CHIP>& i_target)
+ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target)
 {
     FAPI_INF("RCS Entering...");
     FSXCOMP_FSXLOG_RCS_CTRL1_t l_rcs_ctrl1;
