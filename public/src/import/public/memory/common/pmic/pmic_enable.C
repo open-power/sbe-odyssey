@@ -34,6 +34,7 @@
 // *HWP Consumed by: FSP:HB
 
 #include <fapi2.H>
+#include <c_str.H>
 #include <pmic_enable.H>
 #include <generic/memory/lib/utils/find.H>
 #include <lib/utils/pmic_enable_utils.H>
@@ -42,7 +43,6 @@
 #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
 #include <generic/memory/lib/utils/count_dimm.H>
 #include <generic/memory/lib/utils/c_str.H>
-#include <mss_generic_attribute_getters.H>
 
 extern "C"
 {
@@ -60,16 +60,18 @@ extern "C"
         // Check if there are any DIMM targets
         if (mss::count_dimm(i_ocmb_target) == 0)
         {
-            FAPI_INF("Skipping %s because it has no DIMM targets", mss::c_str(i_ocmb_target));
+            FAPI_INF("Skipping " GENTARGTIDFORMAT " because it has no DIMM targets", GENTARGTID(i_ocmb_target));
             return fapi2::FAPI2_RC_SUCCESS;
         }
 
         // We need to run pmic_enable for ddr4 or ddr5 based on the DRAM gen attribute
         // We just need get dram gen of 1 dimm
         // This is ok because we do not allow mixing of DRAM generation
-        for (const auto& l_dimm : mss::find_targets<fapi2::TARGET_TYPE_DIMM>(i_ocmb_target))
+        for (const auto& l_port : mss::find_targets<fapi2::TARGET_TYPE_MEM_PORT>(i_ocmb_target))
         {
-            FAPI_TRY(mss::attr::get_dram_gen(l_dimm, l_dram_gen));
+            uint8_t l_value[2] = {};
+            FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_GEN, l_port, l_value) );
+            l_dram_gen = l_value[0];
             break;
         }
 
