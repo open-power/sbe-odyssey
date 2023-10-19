@@ -112,7 +112,7 @@
       </deconfigure>
     </hwpError>
   <!-- ******************************************************************** -->
-    <hwpError>
+  <hwpError>
       <rc>RC_BUS_TRAINING_DONE_POLL_FAILED</rc>
       <description>XBUS and ABUS training done poll fail</description>
       <ffdc>TARGET</ffdc>

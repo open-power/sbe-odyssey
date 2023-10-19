@@ -46,6 +46,7 @@
        <scomRegister>scomt::perv::CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_CBS_EL_HIST_FSI</scomRegister>
        <scomRegister>scomt::perv::CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_SB_CS_FSI</scomRegister>
        <scomRegister>scomt::perv::CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_SB_MSG_FSI</scomRegister>
+       <scomRegister>scomt::perv::CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_CBS_ENVSTAT_RO</scomRegister>
        <scomRegister>scomt::perv::CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_CBS_STAT_RO</scomRegister>
     </registerFfdc>
     <registerFfdc>
@@ -91,7 +92,7 @@
    <!-- ******************************************************************** -->
     <hwpError>
       <sbeError/>
-      <rc>RC_INVALID_SBE_FFDC_PACKET</rc>
+      <rc>RC_INVALID_SBE_FFDC</rc>
       <description>Invalid data detected in the SBE FFDC buffer</description>
       <buffer>FFDC_BUFFER</buffer>
       <ffdc>INVALID_ERRVAL</ffdc>
