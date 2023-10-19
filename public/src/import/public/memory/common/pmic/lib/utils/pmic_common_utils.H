@@ -49,7 +49,7 @@ namespace mss
 {
 namespace pmic
 {
-
+#ifndef __PPE__ // commenting the code that contains vectors for SPPE compilation.
 // For output traces
 const std::vector<const char*> PMIC_RAIL_NAMES = {"SWA", "SWB", "SWC", "SWD"};
 
@@ -157,7 +157,7 @@ inline std::vector<fapi2::Target<fapi2::TARGET_TYPE_PMIC>> get_valid_pmics_for_i
 
     return l_output_pmics;
 }
-
+#endif
 ///
 /// @brief Determine if PMIC is disabled based on ATTR_MEM_PMIC_FORCE_N_MODE attribute setting
 ///
@@ -166,7 +166,7 @@ inline std::vector<fapi2::Target<fapi2::TARGET_TYPE_PMIC>> get_valid_pmics_for_i
 /// @return fapi2::ReturnCode FAPI2_RC_SUCCESS iff success, else, error code
 ///
 fapi2::ReturnCode disabled(const fapi2::Target<fapi2::TARGET_TYPE_PMIC>& i_pmic_target, bool& o_disabled);
-
+#ifndef __PPE__
 ///
 /// @brief Run the provided function if the PMIC is present and not overridden to N-Mode
 ///
@@ -629,6 +629,7 @@ fapi2::ReturnCode check_fields(
     bool& o_error);
 
 } // status
+#endif //__PPE__
 } // pmic
 } // mss
 

@@ -73,7 +73,7 @@ namespace pmic
 using ADC_REGS = mss::adc::regs;
 using ADC_FIELDS = mss::adc::fields;
 using CONSTS = mss::pmic::consts<mss::pmic::product::JEDEC_COMPLIANT>;
-
+#ifndef __PPE__ // commenting the code that contains vectors for the sppe compilation.
 // The sequences below and accompanying comments are
 // defined in section 6.1.1 of the Redundant Power on DIMM –
 // Functional Specification document
@@ -1061,7 +1061,7 @@ fapi2::ReturnCode validate_and_return_idt_revisions_helper(
     const uint8_t i_rev_reg);
 
 } // check
-
+#endif // __PPE__
 namespace ddr4
 {
 ///

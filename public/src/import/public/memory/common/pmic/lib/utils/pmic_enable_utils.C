@@ -3024,6 +3024,7 @@ namespace ddr4
 fapi2::ReturnCode pmic_enable(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_ocmb_target,
                               const mss::pmic::enable_mode i_mode)
 {
+#ifndef __PPE__
     uint8_t l_module_height = 0;
 
     // Disable PMICs and clear status bits so we are starting at a known off state
@@ -3060,6 +3061,7 @@ fapi2::ReturnCode pmic_enable(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&
         }
     }
 
+#endif // __PPE__
     return fapi2::FAPI2_RC_SUCCESS;
 
 fapi_try_exit:
