@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/generic/io/io_fir_lib.H $        */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_fir_lib.H $       */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -24,7 +24,7 @@
 /* IBM_PROLOG_END_TAG                                                     */
 
 ///
-/// @file io_fir_lib.H
+/// @file ody_fir_lib.H
 ///
 /// @brief Function lib definition file for IO hwps
 ///
@@ -32,10 +32,12 @@
 /// *HWP FW Maintainer:
 /// *HWP Consumed by: SBE
 ///
+// EKB-Mirror-To: hostboot
 
 #pragma once
 
 #include <fapi2.H>
+
 
 enum IOPPE_FIR_BITS
 {
@@ -102,7 +104,9 @@ enum MC_OMI_FIR_BITS
 {
     DL0_FATAL_ERROR = 1,
     DL0_DATA_UE = 2,
+    DL0_CRC_ERROR = 4,
     DL0_X4_MODE = 6,
+    DL0_EDPL = 7,
     DL0_TIMEOUT = 8,
     DL0_ERROR_RETRAIN = 10,
     DL0_EDPL_RETRAIN = 11,
@@ -232,6 +236,7 @@ fapi2::ReturnCode io_ppe_firs<K, M, V>::mc_omi_fir_set(const fapi2::Target<K, M,
 
     // Mask/recoverable regs
     const uint64_t l_mc_omi_rw_wclear_mask = iv_mc_omi_rw_wclear + 2;
+    const uint64_t l_mc_omi_w0x_or_mask = iv_mc_omi_rw_wclear + 3;
     const uint64_t l_mc_omi_xstop = iv_mc_omi_rw_wclear + 4;
     const uint64_t l_mc_omi_rec = iv_mc_omi_rw_wclear + 5;
 
@@ -276,6 +281,12 @@ fapi2::ReturnCode io_ppe_firs<K, M, V>::mc_omi_fir_set(const fapi2::Target<K, M,
     l_buffer.setBit<DL0_SKITTER_ERROR>();
     l_buffer.setBit<DL0_SKITTER_DRIFT>();
     FAPI_TRY(fapi2::putScom(i_target, l_mc_omi_rw_wclear_mask, l_buffer));
+    l_buffer.flush<0>();
+
+    // Mask FIRs
+    l_buffer.setBit<DL0_CRC_ERROR>();
+    l_buffer.setBit<DL0_EDPL>();
+    FAPI_TRY(fapi2::putScom(i_target, l_mc_omi_w0x_or_mask, l_buffer));
     l_buffer.flush<0>();
 
     // Set the recoverable FIRs

@@ -48,6 +48,8 @@ fapi2::ReturnCode ody_omi_hss_bist_poll(const fapi2::Target<fapi2::TARGET_TYPE_O
 
     ody_io::io_ppe_common<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_common(&l_ppe_regs);
 
+    constexpr uint32_t c_poll_count = 1000;
+
     const uint8_t l_thread = 0;
     uint8_t l_done = 0;
     uint32_t l_fail = 0;
@@ -60,7 +62,7 @@ fapi2::ReturnCode ody_omi_hss_bist_poll(const fapi2::Target<fapi2::TARGET_TYPE_O
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_OMI_RX_LANES, i_target, l_rx_lanes));
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_OMI_TX_LANES, i_target, l_tx_lanes));
 
-    FAPI_TRY(l_ppe_common.bist_poll(i_target, l_thread, l_done, l_fail, l_ext_cmd_override, 1000));
+    FAPI_TRY(l_ppe_common.bist_poll(i_target, l_thread, l_done, l_fail, l_ext_cmd_override, c_poll_count));
 
     if (!l_done || l_fail)
     {
@@ -68,7 +70,7 @@ fapi2::ReturnCode ody_omi_hss_bist_poll(const fapi2::Target<fapi2::TARGET_TYPE_O
         FAPI_TRY(l_ppe_common.debug_display(i_target, l_thread, l_rx_lanes, l_tx_lanes));
     }
 
-    FAPI_ASSERT(!(!l_done || l_fail),
+    FAPI_ASSERT(l_done && !l_fail,
                 fapi2::IO_PPE_DONE_POLL_FAILED()
                 .set_POS(l_pos)
                 .set_FAIL(l_fail)

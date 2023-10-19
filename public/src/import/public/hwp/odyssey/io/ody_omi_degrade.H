@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_hss_ppe_start.C $ */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_omi_degrade.H $   */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -22,9 +22,11 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+// EKB-Mirror-To: hostboot
+#include <fapi2.H>
 ///------------------------------------------------------------------------------
-/// @file ody_omi_hss_ppe_start.C
-/// @brief Odyssey HSS PPE start HWP
+/// @file ody_omi_degrade.H
+/// @brief Attempt degrade recovery on degraded lanes
 ///
 /// *HWP HW Maintainer : Josh Chica <josh.chica@ibm.com>
 /// *HWP FW Maintainer :
@@ -32,47 +34,39 @@
 ///------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-// Includes
+// Structure definitions
 //------------------------------------------------------------------------------
-#include <ody_omi_hss_ppe_start.H>
-#include <fapi2_subroutine_executor.H>
-#include <ody_io_ppe_common.H>
-#include <ody_scom_omi_ioo.H>
-#include <ody_fir_lib.H>
+typedef fapi2::ReturnCode (*ody_omi_degrade_FP_t)(
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
+    const uint32_t,
+    const uint8_t,
+    const uint8_t);
 
 //------------------------------------------------------------------------------
-// Function definitions
+// Function prototypes
 //------------------------------------------------------------------------------
-fapi2::ReturnCode ody_omi_hss_ppe_start(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
+
+extern "C"
 {
-    FAPI_DBG("Start - ODY PPE Start");
 
-    io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(PHY_ODY_OMI_BASE);
+    ///
+    /// @brief Attempt degrade recovery on degraded lanes
+    ///
+    /// @param[in] i_target         Chip target to start
+    /// @param[in] i_link_mask      Which links are being recovered
+    /// @param[in] i_step           What step is currently being run
+    ///                                 0 - Power On Tx/Rx, Allow Undegrade
+    ///                                 1 - Start Initialize PHY Lanes (dccal/tx_zcal/etc) only on degraded lanes
+    ///                                 2 - Poll PHY Initialization
+    ///                                 3 - Force SW Retrain
+    ///                                 4 - Confirm Width
+    /// @param[in] i_loops_to_poll  How many loops to poll for
+    ///
+    /// @return fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
+    fapi2::ReturnCode ody_omi_degrade(
+        const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+        const uint32_t i_link_mask,
+        const uint8_t i_step,
+        const uint8_t i_loops_to_poll);
 
-    io_ppe_firs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_firs(FIR_SCOM_LFIR_RW_WCLEAR_REG,
-            FIR_DL0_ERROR_MASK,
-            FIR_DL0_ERROR_ACTION,
-            FIR_MC_OMI_RW_WCLEAR_REG,
-            FIR_DL0_SKIT_CTL,
-            FIR_TLX_RW_WCLEAR);
-
-    ody_io::io_ppe_common<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_common(&l_ppe_regs);
-
-    uint32_t l_iar = 0;
-    bool l_fail = false;
-
-    FAPI_TRY(l_ppe_common.ppe_start(i_target, l_fail, l_iar));
-
-    FAPI_ASSERT(
-        !l_fail,
-        fapi2::IO_PPE_RESET()
-        .set_TARGET_CHIP(i_target)
-        .set_IAR(l_iar),
-        "IAR (0x%8x) did not reset/resume.", l_iar);
-
-    FAPI_TRY(l_ppe_firs.ioppe_fir_set_post_start(i_target));
-
-fapi_try_exit :
-    FAPI_DBG("End");
-    return fapi2::current_err;
-}
+} // extern "C"
