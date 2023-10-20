@@ -401,4 +401,21 @@ uint32_t platcheckIndirectAndDoScom( const bool i_isRead,
     return (io_fapiRc == FAPI2_RC_SUCCESS) ? SBE_SEC_OPERATION_SUCCESSFUL : SBE_SEC_PCB_PIB_ERR;
 }
 
+fapi2::ReturnCode get_cfam_abs(const void *i_target, const uint32_t i_address, uint32_t& o_data)
+{
+    PLAT_FAPI_ASSERT(false,
+                     fapi2::SBE_CFAM_FAILURE(),
+                     "CFAM access unsupported on PPE platform!");
+    fapi_try_exit:
+      return fapi2::current_err;
+}
+
+fapi2::ReturnCode put_cfam_abs(const void *i_target, const uint32_t i_address, uint32_t i_data){
+    PLAT_FAPI_ASSERT(false,
+                     fapi2::SBE_CFAM_FAILURE(),
+                     "CFAM access unsupported on PPE platform!");
+    fapi_try_exit:
+      return fapi2::current_err;
+}
+
 };
