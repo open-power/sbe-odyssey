@@ -32,6 +32,12 @@
 <hwpError>
     <sbeError/>
     <platScomFail/>
+    <rc>RC_SBE_CFAM_FAILURE</rc>
+    <description>SBE encountered an unsupperted CFAM access</description>
+</hwpError>
+<hwpError>
+    <sbeError/>
+    <platScomFail/>
     <rc>RC_SBE_PIB_XSCOM_ERROR</rc>
     <description>SBE SCOM failure - PIB XSCOM failure</description>
 </hwpError>

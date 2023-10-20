@@ -55,18 +55,10 @@ ody_scratch_regs_get_scratch(
 {
     if (!i_use_scom)
     {
-        FAPI_ASSERT(!fapi2::is_platform<fapi2::PLAT_SBE>(),
-                    fapi2::ODY_SCRATCH_REGS_INVALID_ACCESS_ERR()
-                    .set_TARGET_CHIP(i_target_chip)
-                    .set_USE_SCOM(i_use_scom),
-                    "CFAM access unsupported on PPE platform!");
-
-#ifndef __PPE__
         FAPI_TRY(fapi2::getCfamRegister(i_target_chip,
                                         i_scratch_reg.cfam_addr,
                                         o_data),
                  "Error reading Scratch %d mailbox register (cfam)", i_scratch_reg.num);
-#endif
     }
     else
     {
@@ -104,18 +96,10 @@ ody_scratch_regs_put_scratch(
 {
     if (!i_use_scom)
     {
-        FAPI_ASSERT(!fapi2::is_platform<fapi2::PLAT_SBE>(),
-                    fapi2::ODY_SCRATCH_REGS_INVALID_ACCESS_ERR()
-                    .set_TARGET_CHIP(i_target_chip)
-                    .set_USE_SCOM(i_use_scom),
-                    "CFAM access unsupported on PPE platform!");
-
-#ifndef __PPE__
         FAPI_TRY(fapi2::putCfamRegister(i_target_chip,
                                         i_scratch_reg.cfam_addr,
                                         i_data),
                  "Error writing Scratch %d mailbox register (cfam)", i_scratch_reg.num);
-#endif
     }
     else
     {
