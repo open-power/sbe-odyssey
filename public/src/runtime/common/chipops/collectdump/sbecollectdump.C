@@ -43,6 +43,17 @@ inline bool sbeCollectDump::isDumpTypeMapped()
 }
 
 
+bool sbeCollectDump::isChipUnitNumAllowed(fapi2::plat_target_handle_t i_target)
+{
+    fapi2::Target<TARGET_TYPE_ALL> dumpRowTgt(i_target);
+    uint32_t chipUnitNum = dumpRowTgt.getChipletNumber();
+    //  Verify check as per -c1..31 values dump data
+    return ( (!iv_hdctRow->genericHdr.chipletStart) ||
+             ( (chipUnitNum >= iv_hdctRow->genericHdr.chipletStart) &&
+               (chipUnitNum <= iv_hdctRow->genericHdr.chipletEnd) ) );
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 /// SBE get DUMP - HDCT PAK section details functions
 ////////////////////////////////////////////////////////////////////////////////

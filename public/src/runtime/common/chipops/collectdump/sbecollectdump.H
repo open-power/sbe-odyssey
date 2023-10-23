@@ -251,6 +251,17 @@ class sbeCollectDump
         inline bool isDumpTypeMapped();
 
         /*
+         * @brief Check if requested chip unit is present in the current HDCT row generic header.
+         *        allowed unit chip numbers like -c2..39 / -c2..39 /  -c1..31
+         *
+         * @param [in] i_target plat target handle for chip type number.
+         *
+         * @return bool true  if the chip unit is present in the current HDCT row.
+         *              false if the chip unit is not present in the current HDCT row.
+         */
+        bool isChipUnitNumAllowed(fapi2::plat_target_handle_t i_target);
+
+        /*
          * @brief Check scom and scan state for the core target.
          *
          * @return bool true if the core is scommable or scannable.

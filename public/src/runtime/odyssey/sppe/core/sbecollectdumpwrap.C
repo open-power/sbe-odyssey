@@ -75,8 +75,11 @@ void sbeCollectDump::getTargetList(std::vector<fapi2::plat_target_handle_t> &o_t
                         fapi2::TARGET_FILTER_MC))
                 )
             {
-                o_targetList.push_back(target);
-                SBE_DEBUG(SBE_FUNC " PERV: [0x%08X]", target.get());
+                if (isChipUnitNumAllowed( target ) )
+                {
+                    o_targetList.push_back(target);
+                    SBE_DEBUG(SBE_FUNC " PERV: [0x%08X]", target.get());
+                }
             }
             break;
         }
