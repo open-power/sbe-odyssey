@@ -68,6 +68,8 @@ enum pll_lock_bits
 
     ZME_PERV_PLLPCIFLT  = 0x80,
 
+    ZME_MC_PLL          = 0xA0,
+
     PZ_PERV_PLLCLKSWA   = 0x80,
     PZ_PERV_PLLCLKSWB   = 0x40,
 };
