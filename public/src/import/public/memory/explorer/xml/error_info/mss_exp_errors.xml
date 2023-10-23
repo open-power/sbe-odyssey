@@ -542,6 +542,8 @@
       Polling the explorer I2C interface for an ACK
       timed out when explorer was coming out of reset.
     </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>PROC_TARGET</ffdc>
     <callout>
       <procedure>CODE</procedure>
       <priority>MEDIUM</priority>
@@ -565,6 +567,7 @@
       Polling the explorer I2C interface for an ACK
       timed out during explorer boot ROM to runtime FW transition
     </description>
+    <ffdc>OCMB_TARGET</ffdc>
     <callout>
       <procedure>CODE</procedure>
       <priority>MEDIUM</priority>
@@ -753,6 +756,7 @@
       failure.
     </description>
     <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>OMI_TARGET</ffdc>
     <ffdc>COMMAND</ffdc>
     <ffdc>BOOT_MODE</ffdc>
     <ffdc>STATUS_DATA</ffdc>
@@ -777,6 +781,7 @@
       failure.
     </description>
     <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>OMI_TARGET</ffdc>
     <ffdc>COMMAND</ffdc>
     <ffdc>BOOT_MODE</ffdc>
     <ffdc>STATUS_DATA</ffdc>
@@ -800,6 +805,7 @@
       BOOT_CONFIG command encountered OMI parity or UECC errors.
     </description>
     <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>OMI_TARGET</ffdc>
     <ffdc>COMMAND</ffdc>
     <ffdc>BOOT_MODE</ffdc>
     <ffdc>STATUS_DATA</ffdc>
