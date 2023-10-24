@@ -125,4 +125,21 @@
     </chipEcFeature>
   </attribute>
   <!-- ******************************************************************** -->
+  <attribute>
+    <id>ATTR_CHIP_EC_FEATURE_SPI_WRITE_NEEDS_CS_DELAY</id>
+    <targetType>TARGET_TYPE_HUB_CHIP, TARGET_TYPE_COMPUTE_CHIP, TARGET_TYPE_PROC_CHIP, TARGET_TYPE_OCMB_CHIP</targetType>
+    <description>
+      Delay CS# deassertion during SPI writes to compensate for CS# deasserting too early
+    </description>
+    <chipEcFeature>
+      <chip>
+        <name>ENUM_ATTR_NAME_ZMETIS</name>
+        <ec>
+          <value>0x10</value>
+          <test>GREATER_THAN_OR_EQUAL</test>
+        </ec>
+      </chip>
+    </chipEcFeature>
+  </attribute>
+  <!-- ******************************************************************** -->
 </attributes>

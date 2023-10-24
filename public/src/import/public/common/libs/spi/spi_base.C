@@ -71,6 +71,7 @@ ReturnCode spi::SPIPort::transaction(const uint64_t cmd, const uint32_t cmd_len,
     const uint32_t total_req_len = cmd_len + req_len;
     const ecc_mode l_ecc_mode = i_use_ecc ? iv_ecc_mode : ECC_DISABLED;
     uint64_t saved_seq = -1ULL, saved_ctr = -1ULL, saved_clk = -1ULL;
+    uint8_t delay_cs = 0;
 
     FAPI_DBG("SPI transaction: cmd=0x%08x%08x ecc|cmd_len=0x%04x req_len|rsp_len=0x%08x",
              cmd >> 32, cmd & 0xFFFFFFFF, (l_ecc_mode << 8) | cmd_len,
@@ -86,6 +87,23 @@ ReturnCode spi::SPIPort::transaction(const uint64_t cmd, const uint32_t cmd_len,
                 .set_RSP_LEN(rsp_len),
                 "Unsupported length: cmd_len=%d (max 8) req_len=%d (max 2048) rsp_len=%d (max 2048)",
                 cmd_len, req_len, rsp_len);
+
+    if (rsp_len == 0)
+    {
+        /* Workaround time! \o/
+         *
+         * The SPI controller deasserts CS# too quickly after the last bit has been transferred.
+         * During SPI reads nobody cares but during SPI writes some devices will not take this well,
+         * so we have to apply a workaround: Omit the CS# deassert operation from the sequence and
+         * wait for the sequencer to complete, then reset the entire SPI engine to deassert CS#.
+         * This costs us a bit of performance (but not much) and makes sure that CS# is deasserted
+         * long after the last bit has been transferred.
+         *
+         * Make this conditional on an EC attr so that we don't have to pull these shenanigans on
+         * a chip with a fixed SPI controller.
+         */
+        FAPI_TRY(FAPI_ATTR_GET(ATTR_CHIP_EC_FEATURE_SPI_WRITE_NEEDS_CS_DELAY, iv_target, delay_cs));
+    }
 
     /* Check SPI controller health before we begin */
     FAPI_TRY(wait_for_tdr_empty());
@@ -108,10 +126,10 @@ ReturnCode spi::SPIPort::transaction(const uint64_t cmd, const uint32_t cmd_len,
     FAPI_TRY(getscom(SPIC_COUNTER_REG, saved_ctr));
 
     /* Game time */
-    FAPI_TRY(setup_seq_cnt(iv_resp_select, l_ecc_mode, total_req_len, rsp_len));
+    FAPI_TRY(setup_seq_cnt(iv_resp_select, l_ecc_mode, total_req_len, rsp_len, delay_cs));
     FAPI_TRY(transmit_req(cmd, cmd_len, req, req_len, total_req_len));
     FAPI_TRY(receive_rsp(rsp, rsp_len));
-    FAPI_TRY(wait_for_idle());
+    FAPI_TRY(complete_transaction(delay_cs));
 
 fapi_try_exit:
     /* Save return code and restore all the registers we saved off */
@@ -126,7 +144,8 @@ ReturnCode spi::SPIPort::setup_seq_cnt(
     uint8_t resp_select,
     uint8_t ecc_mode,
     uint16_t req_len,
-    uint16_t rsp_len) const
+    uint16_t rsp_len,
+    uint8_t& delay_cs) const
 {
     /* Base setting: N1 used implicitly and for transmit,
      * N2 used implicitly, with reload and for transmit+receive
@@ -182,9 +201,17 @@ ReturnCode spi::SPIPort::setup_seq_cnt(
         n_ops++;
     }
 
-    /* Finally deselect */
-    SEQ = (SEQ << 8) | SPIOP_SELECT_RESP(0);
-    n_ops++;
+    if (delay_cs)
+    {
+        /* Omit the deselect op but store the op index where it would have gone */
+        delay_cs = n_ops;
+    }
+    else
+    {
+        /* Finally deselect */
+        SEQ = (SEQ << 8) | SPIOP_SELECT_RESP(0);
+        n_ops++;
+    }
 
     /* Shift sequence into final position */
     SEQ <<= 8 * (8 - n_ops);
@@ -280,6 +307,24 @@ fapi_try_exit:
     return current_err;
 }
 
+ReturnCode spi::SPIPort::complete_transaction(uint8_t delay_cs) const
+{
+    if (delay_cs)
+    {
+        /* Wait until the sequencer is at the end of the instruction sequence and hangs */
+        FAPI_TRY(wait_for_instruction(delay_cs));
+        /* Then reset it */
+        FAPI_TRY(reset_controller());
+    }
+    else
+    {
+        FAPI_TRY(wait_for_idle());
+    }
+
+fapi_try_exit:
+    return current_err;
+}
+
 ReturnCode spi::SPIPort::restore_spi_regs(
     uint64_t i_saved_seq,
     uint64_t i_saved_ctr,
@@ -304,8 +349,12 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode spi::SPIPort::poll_status(uint32_t i_bit, bool i_wait_for) const
+ReturnCode spi::SPIPort::poll_status(
+    const uint32_t i_bitrange,
+    const uint32_t i_wait_for) const
 {
+    const uint32_t l_start_bit = i_bitrange >> 8;
+    const uint32_t l_nbits = i_bitrange & 0xFF;
     buffer<uint64_t> l_buf;
     uint32_t l_timeout = POLL_COUNT;
 
@@ -333,7 +382,7 @@ ReturnCode spi::SPIPort::poll_status(uint32_t i_bit, bool i_wait_for) const
                         l_buf >> 32, l_buf & 0xFFFFFFFF);
         }
 
-        if (l_buf.getBit(i_bit) == i_wait_for)
+        if (l_buf.getBits(l_start_bit, l_nbits) == i_wait_for)
         {
             return FAPI2_RC_SUCCESS;
         }
@@ -351,13 +400,13 @@ ReturnCode spi::SPIPort::poll_status(uint32_t i_bit, bool i_wait_for) const
                     SPI_POLL_TIMEOUT()
                     .set_TARGET(iv_target)
                     .set_BASE_ADDRESS(iv_base_address)
-                    .set_POLL_BIT(i_bit)
+                    .set_POLL_BITRANGE(i_bitrange)
                     .set_POLL_VALUE(i_wait_for)
                     .set_SEQUENCE_REG(l_seq)
                     .set_COUNTER_REG(l_counter)
                     .set_CLOCK_CONFIG_REG(l_clk_config),
-                    "Timed out polling for bit %d to turn to %d",
-                    i_bit, i_wait_for);
+                    "Timed out polling for bits %d:%d to turn to %d",
+                    l_start_bit, l_start_bit + l_nbits - 1, i_wait_for);
     }
 
 fapi_try_exit:

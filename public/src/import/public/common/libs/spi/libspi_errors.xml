@@ -40,7 +40,7 @@
     <description>Polling for a status change timed out</description>
     <ffdc>TARGET</ffdc>
     <ffdc>BASE_ADDRESS</ffdc>
-    <ffdc>POLL_BIT</ffdc>
+    <ffdc>POLL_BITRANGE</ffdc>
     <ffdc>POLL_VALUE</ffdc>
     <ffdc>SEQUENCE_REG</ffdc>
     <ffdc>COUNTER_REG</ffdc>

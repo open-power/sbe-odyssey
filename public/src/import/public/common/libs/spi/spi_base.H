@@ -146,10 +146,13 @@ class SPIPort : public AbstractPort
         }
 
     private:
-        static const uint32_t TDR_FULL_STATUS_BIT = 4;
-        static const uint32_t RDR_FULL_STATUS_BIT = 0;
-        static const uint32_t SEQUENCER_FSM_IDLE_BIT = 15;
-        static const uint32_t SHIFTER_FSM_IDLE_BIT = 27;
+#define BITRANGE(start, length) ((start) << 8 | (length))
+        static const uint32_t TDR_FULL_STATUS    = BITRANGE(4, 1);
+        static const uint32_t RDR_FULL_STATUS    = BITRANGE(0, 1);
+        static const uint32_t SEQUENCER_FSM_IDLE = BITRANGE(15, 1);
+        static const uint32_t SHIFTER_FSM_IDLE   = BITRANGE(27, 1);
+        static const uint32_t SEQUENCER_OP_INDEX = BITRANGE(28, 4);
+#undef BITRANGE
 
         const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& iv_target;
         const uint32_t iv_base_address;
@@ -180,19 +183,23 @@ class SPIPort : public AbstractPort
         }
 
         /**
-         * @brief Generic status polling function; waits for a single bit in the status reg to turn a specific value
+         * @brief Generic status polling function
          *
-         * @param[in] i_bit       The bit index to poll on
-         * @param[in] i_wait_for  Wait for the bit to turn 0 or 1 depending on this value
+         * Waits for a range of bits in the status reg to turn a specific value.
+         *
+         * @param[in] i_bitrange  The bit range to poll on
+         * @param[in] i_wait_for  Value to wait for
          */
-        fapi2::ReturnCode poll_status(uint32_t i_bit, bool i_wait_for) const;
+        fapi2::ReturnCode poll_status(
+            const uint32_t i_bitrange,
+            const uint32_t i_wait_for) const;
 
         /**
          * @brief Inline wrappers which poll for specific status bits
          */
         fapi2::ReturnCode wait_for_tdr_empty() const
         {
-            FAPI_TRY(poll_status(TDR_FULL_STATUS_BIT, false),
+            FAPI_TRY(poll_status(TDR_FULL_STATUS, 0),
                      "Error while waiting for TDR empty");
         fapi_try_exit:
             return fapi2::current_err;
@@ -200,7 +207,7 @@ class SPIPort : public AbstractPort
 
         fapi2::ReturnCode wait_for_rdr_full() const
         {
-            FAPI_TRY(poll_status(RDR_FULL_STATUS_BIT, true),
+            FAPI_TRY(poll_status(RDR_FULL_STATUS, 1),
                      "Error while waiting for RDR full");
         fapi_try_exit:
             return fapi2::current_err;
@@ -208,8 +215,16 @@ class SPIPort : public AbstractPort
 
         fapi2::ReturnCode wait_for_idle() const
         {
-            FAPI_TRY(poll_status(SEQUENCER_FSM_IDLE_BIT, true),
+            FAPI_TRY(poll_status(SEQUENCER_FSM_IDLE, 1),
                      "Error while waiting for SPI idle");
+        fapi_try_exit:
+            return fapi2::current_err;
+        }
+
+        fapi2::ReturnCode wait_for_instruction(uint32_t i_insn) const
+        {
+            FAPI_TRY(poll_status(SEQUENCER_OP_INDEX, i_insn),
+                     "Error while waiting for instruction %d to complete", i_insn);
         fapi_try_exit:
             return fapi2::current_err;
         }
@@ -229,7 +244,8 @@ class SPIPort : public AbstractPort
             uint8_t resp_select,
             uint8_t ecc_mode,
             uint16_t req_len,
-            uint16_t rsp_len) const;
+            uint16_t rsp_len,
+            uint8_t& delay_cs) const;
 
         /**
          * @brief Transmit the command + request of a transaction
@@ -242,6 +258,11 @@ class SPIPort : public AbstractPort
          * @brief Receive the response of a transaction
          */
         fapi2::ReturnCode receive_rsp(void* rsp, const uint32_t rsp_len) const;
+
+        /**
+         * @brief Complete a transaction
+         */
+        fapi2::ReturnCode complete_transaction(uint8_t delay_cs) const;
 };
 
 }
