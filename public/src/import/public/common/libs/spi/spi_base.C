@@ -69,96 +69,12 @@ ReturnCode spi::SPIPort::transaction(const uint64_t cmd, const uint32_t cmd_len,
     /* Combine command and request payload since otherwise we
      * might end up with more than 8 ops in the sequence */
     const uint32_t total_req_len = cmd_len + req_len;
-    const uint64_t* req64 = (uint64_t*)req;
     const ecc_mode l_ecc_mode = i_use_ecc ? iv_ecc_mode : ECC_DISABLED;
-    uint64_t* rsp64 = (uint64_t*)rsp;
     uint64_t saved_seq = -1ULL, saved_ctr = -1ULL, saved_clk = -1ULL;
 
     FAPI_DBG("SPI transaction: cmd=0x%08x%08x ecc|cmd_len=0x%04x req_len|rsp_len=0x%08x",
              cmd >> 32, cmd & 0xFFFFFFFF, (l_ecc_mode << 8) | cmd_len,
              (req_len << 16) | rsp_len);
-
-    /* -----------------------------------------------------------------------------------------
-     * Construct sequence and set up counters
-     * ----------------------------------------------------------------------------------------- */
-
-    /* Base setting: N1 used implicitly and for transmit,
-     * N2 used implicitly, with reload and for transmit+receive
-     * for receive pacing.
-     *
-     * The transmit+receive+reload setting for N2 is required so that
-     * the controller logic correctly performs receive pacing. With any
-     * other setting the controller would not wait for us to pick up
-     * data from RDR and run into RDR overflow.
-     *
-     * It is not intuitive at all but it's what works ¯\_(ツ)_/¯
-     */
-    uint64_t CNT = 0x6F00;
-
-    /* Start with a responder select op */
-    uint64_t SEQ = SPIOP_SELECT_RESP(1 << iv_resp_select);
-    uint32_t n_ops = 1;
-
-    /* Transmit entire words if necessary */
-    if (total_req_len >= 8)
-    {
-        CNT |= (uint64_t)((total_req_len / 8) - 1) << 32;
-        SEQ = (SEQ << 16) |
-              SPIOP_SHIFT_N1(8) << 8 |
-              SPIOP_BNEI1(n_ops);
-        n_ops += 2;
-    }
-
-    /* Transmit remainder if there is one */
-    if (total_req_len & 7)
-    {
-        SEQ = (SEQ << 8) |
-              SPIOP_SHIFT_N1(total_req_len & 7);
-        n_ops++;
-    }
-
-    /* Receive response, entire words first */
-    if (rsp_len >= 8)
-    {
-        CNT |= (uint64_t)((rsp_len / 8) - 1) << 24;
-        SEQ = (SEQ << 16) |
-              /* If we're looking at or discarding ECC, receive 9 bytes */
-              SPIOP_SHIFT_N2((l_ecc_mode != ECC_DISABLED) ? 9 : 8) << 8 |
-              SPIOP_BNEI2(n_ops);
-        n_ops += 2;
-    }
-
-    /* Receive response remainder */
-    if (rsp_len & 7)
-    {
-        SEQ = (SEQ << 8) |
-              SPIOP_SHIFT_N2(rsp_len & 7);
-        n_ops++;
-    }
-
-    /* Finally deselect */
-    SEQ = (SEQ << 8) | SPIOP_SELECT_RESP(0);
-    n_ops++;
-
-    /* Shift sequence into final position */
-    SEQ <<= 8 * (8 - n_ops);
-
-    /* -----------------------------------------------------------------------------------------
-     * Transmit command and request payload
-     * ----------------------------------------------------------------------------------------- */
-
-    /* Prepare TDR for command and first bits of data */
-    uint64_t TDR = cmd << (8 * (8 - cmd_len));
-    uint64_t read_buf = 0;
-    uint32_t read_buf_shift = cmd_len * 8;
-    uint32_t read_buf_remain = 64 - read_buf_shift;
-
-    if (req_len && read_buf_remain)
-    {
-        read_buf = be64toh(*req64);
-        req64++;
-        TDR |= (read_buf >> read_buf_shift);
-    }
 
     /* Doing this check very late since we're declaring a lot of
      * variables before this point and don't want the implicit goto to
@@ -191,9 +107,114 @@ ReturnCode spi::SPIPort::transaction(const uint64_t cmd, const uint32_t cmd_len,
     FAPI_TRY(getscom(SPIC_SEQUENCER_OP_REG, saved_seq));
     FAPI_TRY(getscom(SPIC_COUNTER_REG, saved_ctr));
 
-    /* Send first chunk of data */
+    /* Game time */
+    FAPI_TRY(setup_seq_cnt(iv_resp_select, l_ecc_mode, total_req_len, rsp_len));
+    FAPI_TRY(transmit_req(cmd, cmd_len, req, req_len, total_req_len));
+    FAPI_TRY(receive_rsp(rsp, rsp_len));
+    FAPI_TRY(wait_for_idle());
+
+fapi_try_exit:
+    /* Save return code and restore all the registers we saved off */
+    const ReturnCode rc = current_err;
+    const ReturnCode restore_rc =
+        restore_spi_regs(saved_seq, saved_ctr, saved_clk);
+    /* A bad RC from the main code takes precedence over a bad RC from the restore */
+    return (rc != FAPI2_RC_SUCCESS) ? rc : restore_rc;
+}
+
+ReturnCode spi::SPIPort::setup_seq_cnt(
+    uint8_t resp_select,
+    uint8_t ecc_mode,
+    uint16_t req_len,
+    uint16_t rsp_len) const
+{
+    /* Base setting: N1 used implicitly and for transmit,
+     * N2 used implicitly, with reload and for transmit+receive
+     * for receive pacing.
+     *
+     * The transmit+receive+reload setting for N2 is required so that
+     * the controller logic correctly performs receive pacing. With any
+     * other setting the controller would not wait for us to pick up
+     * data from RDR and run into RDR overflow.
+     *
+     * It is not intuitive at all but it's what works ¯\_(ツ)_/¯
+     */
+    uint64_t CNT = 0x6F00;
+
+    /* Start with a responder select op */
+    uint64_t SEQ = SPIOP_SELECT_RESP(1 << resp_select);
+    uint32_t n_ops = 1;
+
+    /* Transmit entire words if necessary */
+    if (req_len >= 8)
+    {
+        CNT |= (uint64_t)((req_len / 8) - 1) << 32;
+        SEQ = (SEQ << 16) |
+              SPIOP_SHIFT_N1(8) << 8 |
+              SPIOP_BNEI1(n_ops);
+        n_ops += 2;
+    }
+
+    /* Transmit remainder if there is one */
+    if (req_len & 7)
+    {
+        SEQ = (SEQ << 8) |
+              SPIOP_SHIFT_N1(req_len & 7);
+        n_ops++;
+    }
+
+    /* Receive response, entire words first */
+    if (rsp_len >= 8)
+    {
+        CNT |= (uint64_t)((rsp_len / 8) - 1) << 24;
+        SEQ = (SEQ << 16) |
+              /* If we're looking at or discarding ECC, receive 9 bytes */
+              SPIOP_SHIFT_N2((ecc_mode != spi::ECC_DISABLED) ? 9 : 8) << 8 |
+              SPIOP_BNEI2(n_ops);
+        n_ops += 2;
+    }
+
+    /* Receive response remainder */
+    if (rsp_len & 7)
+    {
+        SEQ = (SEQ << 8) |
+              SPIOP_SHIFT_N2(rsp_len & 7);
+        n_ops++;
+    }
+
+    /* Finally deselect */
+    SEQ = (SEQ << 8) | SPIOP_SELECT_RESP(0);
+    n_ops++;
+
+    /* Shift sequence into final position */
+    SEQ <<= 8 * (8 - n_ops);
+
     FAPI_TRY(putscom(SPIC_SEQUENCER_OP_REG,  SEQ));
     FAPI_TRY(putscom(SPIC_COUNTER_REG,       CNT));
+
+fapi_try_exit:
+    return current_err;
+}
+
+ReturnCode spi::SPIPort::transmit_req(const uint64_t cmd, const uint32_t cmd_len,
+                                      const void* req, const uint32_t req_len,
+                                      const uint32_t total_req_len) const
+{
+    /* Prepare TDR for command and first bits of data */
+    const uint64_t* req64 = (uint64_t*)req;
+    uint64_t TDR = cmd << (8 * (8 - cmd_len));
+    uint64_t read_buf = 0;
+    uint32_t read_buf_shift = cmd_len * 8;
+    uint32_t read_buf_remain = 64 - read_buf_shift;
+
+    if (req_len && read_buf_remain)
+    {
+        read_buf = be64toh(*req64);
+        req64++;
+        TDR |= (read_buf >> read_buf_shift);
+    }
+
+    /* Send first chunk of data */
     FAPI_TRY(putscom(SPIC_TRANSMIT_DATA_REG, TDR));
 
     /* Send remaining chunks of data */
@@ -207,9 +228,13 @@ ReturnCode spi::SPIPort::transaction(const uint64_t cmd, const uint32_t cmd_len,
         FAPI_TRY(putscom(SPIC_TRANSMIT_DATA_REG, TDR));
     }
 
-    /* -----------------------------------------------------------------------------------------
-     * Receive response data
-     * ----------------------------------------------------------------------------------------- */
+fapi_try_exit:
+    return current_err;
+}
+
+ReturnCode spi::SPIPort::receive_rsp(void* rsp, const uint32_t rsp_len) const
+{
+    uint64_t* rsp64 = (uint64_t*)rsp;
 
     if (rsp_len)
     {
@@ -251,15 +276,8 @@ ReturnCode spi::SPIPort::transaction(const uint64_t cmd, const uint32_t cmd_len,
         }
     }
 
-    FAPI_TRY(wait_for_idle());
-
 fapi_try_exit:
-    /* Save return code and restore all the registers we saved off */
-    const ReturnCode rc = current_err;
-    const ReturnCode restore_rc =
-        restore_spi_regs(saved_seq, saved_ctr, saved_clk);
-    /* A bad RC from the main code takes precedence over a bad RC from the restore */
-    return (rc != FAPI2_RC_SUCCESS) ? rc : restore_rc;
+    return current_err;
 }
 
 ReturnCode spi::SPIPort::restore_spi_regs(

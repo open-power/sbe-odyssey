@@ -188,14 +188,6 @@ class SPIPort : public AbstractPort
         fapi2::ReturnCode poll_status(uint32_t i_bit, bool i_wait_for) const;
 
         /**
-         * @brief Restore SPI controller registers saved by SPIPort::transaction.
-         */
-        fapi2::ReturnCode restore_spi_regs(
-            uint64_t i_saved_seq,
-            uint64_t i_saved_ctr,
-            uint64_t i_saved_clk) const;
-
-        /**
          * @brief Inline wrappers which poll for specific status bits
          */
         fapi2::ReturnCode wait_for_tdr_empty() const
@@ -221,6 +213,35 @@ class SPIPort : public AbstractPort
         fapi_try_exit:
             return fapi2::current_err;
         }
+
+        /**
+         * @brief Restore SPI controller registers saved by SPIPort::transaction.
+         */
+        fapi2::ReturnCode restore_spi_regs(
+            uint64_t i_saved_seq,
+            uint64_t i_saved_ctr,
+            uint64_t i_saved_clk) const;
+
+        /**
+         * @brief Set up sequence and counter registers
+         */
+        fapi2::ReturnCode setup_seq_cnt(
+            uint8_t resp_select,
+            uint8_t ecc_mode,
+            uint16_t req_len,
+            uint16_t rsp_len) const;
+
+        /**
+         * @brief Transmit the command + request of a transaction
+         */
+        fapi2::ReturnCode transmit_req(const uint64_t cmd, const uint32_t cmd_len,
+                                       const void* req, const uint32_t req_len,
+                                       const uint32_t total_req_len) const;
+
+        /**
+         * @brief Receive the response of a transaction
+         */
+        fapi2::ReturnCode receive_rsp(void* rsp, const uint32_t rsp_len) const;
 };
 
 }
