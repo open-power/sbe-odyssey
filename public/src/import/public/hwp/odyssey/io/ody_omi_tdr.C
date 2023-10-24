@@ -36,7 +36,7 @@
 //------------------------------------------------------------------------------
 #include <cmath>
 #include <ody_omi_tdr.H>
-#include <common_io_tdr.H>
+#include <ody_io_tdr_utils.H>
 #include <ody_io_ppe_common.H>
 #include <ody_scom_omi.H>
 #include <io_scom_lib.H>
@@ -208,7 +208,7 @@ fapi2::ReturnCode ody_omi_tdr(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&
                 FAPI_TRY(l_ppe_common.ext_cmd_poll(i_target, c_thread, c_start_cmd, l_done, l_fail));
 
                 // Run TDR
-                FAPI_TRY(common_io_tdr(i_target, PHY_ODY_OMI_BASE, l_group, l_lane, l_freq, l_status, l_length_ps));
+                FAPI_TRY(ody_io_tdr(i_target, PHY_ODY_OMI_BASE, l_group, l_lane, l_freq, l_status, l_length_ps));
 
                 // Set data
                 FAPI_DBG("Checking on lane %d with status %d.", l_lane, l_status);
@@ -264,7 +264,7 @@ fapi2::ReturnCode ody_omi_tdr(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&
 
             l_data |= (static_cast<uint64_t>(l_lane) << c_lane_pos);
 
-            FAPI_TRY(common_io_tdr(i_target, PHY_ODY_OMI_BASE, l_group, l_lane, l_freq, l_status, l_length_ps));
+            FAPI_TRY(ody_io_tdr(i_target, PHY_ODY_OMI_BASE, l_group, l_lane, l_freq, l_status, l_length_ps));
 
             FAPI_DBG("Checking on lane %d with status %d.", l_lane, l_status);
 
