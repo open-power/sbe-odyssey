@@ -72,7 +72,6 @@ enum ody_tracearray_bus_id
 
 
 const uint32_t TA_DEBUG_BASE_SCOM      = 0x000107C0;
-const uint32_t TA_EQ_DEBUG_BASE_SCOM   = 0x000183E0;
 const uint32_t TA_TRACE_BASE_SCOM      = 0x00010400;
 // maximum trace array entries supported by Odyssey chip design
 const uint32_t TRACEARRAY_NUM_ROWS = 128;

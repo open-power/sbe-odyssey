@@ -57,8 +57,9 @@ using namespace fapi2;
 //------------------------------------------------------------------------------
 // Constant definitions
 //------------------------------------------------------------------------------
-const uint32_t TA_BASE_SCOM_MULTIPLIER = 0x00000010;
-const uint32_t TRACE_MUX_POSITIONS       = 16;
+const uint32_t TA_BASE_SCOM_MULTIPLIER  = 0x00000010;
+const uint32_t TRACE_MUX_POSITIONS      = 16;
+const uint8_t  NO_TRACEARRAY_CHIPLET    = 0x00;
 
 // bits to store per trace array entry
 static const uint8_t TRACEARRAY_BITS_PER_ROW = 128;
@@ -83,7 +84,6 @@ struct ta_const
 
     const uint32_t debug_base_scom;
     const uint32_t trace_base_scom;
-    const uint32_t eq_debug_base_scom;
     const uint32_t ta_num_rows;
 
 };
@@ -99,16 +99,6 @@ struct poz_gettracearray_args
     bool restart_post_dump;         ///< Start the trace array after dumping
 };
 
-//function pointer typedef definition for HWP call support
-typedef ReturnCode (*poz_gettracearray_FP_t) (
-    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    const poz_gettracearray_args& i_args,
-    const ta_def* ta_defs,
-    const ta_const ta_consts,
-    uint8_t ta_defs_len,
-    hwp_data_ostream& o_stream
-);
-
 /* @brief Retrieve trace array data from selected trace array via SCOM.
 *         Trace array data is written to a hwp_data_ostream.
  *        Optionally performing trace stop (prior to dump) and/or
@@ -119,16 +109,18 @@ typedef ReturnCode (*poz_gettracearray_FP_t) (
  * @param ta_defs       Structure containing the tracebus information
  * @param ta_consts     Structure containing the tracebus addr information
  * @param ta_defs_len   Number of tracebusses hold in ta_defs
+ * @param i_chiplet_num Chiplet number for the given trace array
  * @param o_stream      Stream to write Trace array to.
  *
  * @return FAPI2_RC_SUCCESS
  *             if trace array dump sequence completes successfully,
  */
-extern "C" ReturnCode poz_gettracearray(
-    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    const poz_gettracearray_args& i_args,
-    const ta_def* ta_defs,
-    const ta_const ta_consts,
-    uint8_t ta_defs_len,
-    hwp_data_ostream& o_stream
-);
+DECLARE_HWP(poz_gettracearray,
+            const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+            const poz_gettracearray_args& i_args,
+            const ta_def* ta_defs,
+            const ta_const ta_consts,
+            uint8_t ta_defs_len,
+            uint8_t i_chiplet_num,
+            hwp_data_ostream& o_stream
+           );

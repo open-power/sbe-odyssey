@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -104,7 +104,7 @@ class TraceArrayFinder
         uint32_t trace_scom_base;
 
         TraceArrayFinder(tracearray_bus_id i_trace_bus, Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const ta_def* ta_defs,
-                         const ta_const ta_consts, uint8_t ta_defs_len) :
+                         const ta_const ta_consts, uint8_t ta_defs_len, uint8_t i_chiplet_arg) :
             valid(false), mux_num(0), pri_mux_sel(0), sec_mux_sel(0), debug_scom_base(0),
             trace_scom_base(0)
         {
@@ -121,7 +121,14 @@ class TraceArrayFinder
                     if(l_ta_def->bus_ids[sel] == i_trace_bus)
                     {
                         uint32_t l_buffer = 0;
-                        l_buffer |= l_ta_def->chiplet << 24;
+                        uint8_t l_chiplet_num = l_ta_def->chiplet;
+
+                        if (l_chiplet_num == 0xFF)
+                        {
+                            l_chiplet_num = i_chiplet_arg;
+                        }
+
+                        l_buffer |= l_chiplet_num << 24;
 
                         trace_scom_base = l_buffer |
                                           (ta_consts.trace_base_scom
@@ -129,7 +136,7 @@ class TraceArrayFinder
                                               *  l_ta_def->base_multiplier));
                         debug_scom_base = l_buffer | ta_consts.debug_base_scom;
 
-                        FAPI_DBG("Chiplet: 0x%x; Multiplier: 0x%x", l_ta_def->chiplet, l_ta_def->base_multiplier);
+                        FAPI_DBG("Chiplet: 0x%x; Multiplier: 0x%x", l_chiplet_num, l_ta_def->base_multiplier);
 
                         // Determine mux position of requested bus
                         pri_mux_sel = sel;
@@ -262,6 +269,7 @@ extern "C" ReturnCode poz_gettracearray(
     const ta_def* ta_defs,
     const ta_const ta_consts,
     uint8_t ta_defs_len,
+    uint8_t i_chiplet_num,
     hwp_data_ostream& o_stream
 )
 {
@@ -271,7 +279,7 @@ extern "C" ReturnCode poz_gettracearray(
     Target < TARGET_TYPE_ANY_POZ_CHIP > l_dbg_target = i_target;
     fapi2::ReturnCode l_rc = FAPI2_RC_SUCCESS;
 
-    TraceArrayFinder l_ta_finder(i_args.trace_bus, l_trctrl_target, ta_defs, ta_consts, ta_defs_len);
+    TraceArrayFinder l_ta_finder(i_args.trace_bus, l_trctrl_target, ta_defs, ta_consts, ta_defs_len, i_chiplet_num);
     FAPI_DBG("Assigning targets");
     TargetType arg_type = l_trctrl_target.getType();
     //TargetType ta_type = poz_gettracearray_target_type(i_args.trace_bus);
@@ -330,7 +338,7 @@ extern "C" ReturnCode poz_gettracearray(
                         .set_TARGET(i_target).set_TRACE_BUS(i_args.trace_bus).set_MUX_SELECT(cur_sel),
                         "Secondary trace mux is set to %d, but %d is needed for requested trace bus\n"
                         "Primary trace mux is set to %d, but %d is needed for requested trace bus",
-                        (cur_sel >> 2), l_ta_finder.sec_mux_sel, (cur_sel & 0x3), l_ta_finder.pri_mux_sel);
+                        (cur_sel & 0x3), l_ta_finder.sec_mux_sel, (cur_sel >> 2), l_ta_finder.pri_mux_sel);
         }
         else
         {
