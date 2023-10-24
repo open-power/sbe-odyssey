@@ -31,110 +31,12 @@
 //------------------------------------------------------------------------------
 
 #include <ody_lbist.H>
-#include <poz_perv_common_params.H>
-#include <poz_bist.H>
-#include <poz_perv_mod_chiplet_clocking.H>
 
 using namespace fapi2;
 
-static const bist_params ody_lbist_params =
-{
-    BIST_PARAMS_CURRENT_VERSION,                    ///< BIST_PARAMS_VERSION
-
-    bist_params::SCAN0                  |           ///< 0x0200
-    bist_params::ARRAYINIT              |           ///< 0x0100
-    bist_params::RING_SETUP             |           ///< 0x0080
-    bist_params::RING_PATCH             |           ///< 0x0040
-    bist_params::REG_SETUP              |           ///< 0x0020
-    bist_params::GO                     |           ///< 0x0010
-    bist_params::POLL                   |           ///< 0x0008
-    bist_params::REG_CLEANUP            |           ///< 0x0004
-    bist_params::COMPARE,                           ///< 0x0002
-
-    bist_params::CHIPLET_FENCE_ACTIVE   |           ///< 0x02000000
-    bist_params::INT_MODE               |           ///< 0x00800000
-    bist_params::SCAN0_ARY_FILL         |           ///< 0x00400000
-    bist_params::SYS_BIST_PAK,                      ///< 0x00200000
-
-    /// 0x0 for chiplets to let hotplug decide which chiplets to BIST
-    0x0000000000000000,                             ///< chiplets
-    0x0000000000000000,                             ///< uc_go_chiplets
-    0x100000,                                       ///< opcg_count
-    0x80,                                           ///< idle_count
-    0,                                              ///< linear_stagger
-    0,                                              ///< zigzag_stagger
-    0x77701186FE407080,                             ///< opcg_align
-    0x4010000000200008,                             ///< lbist_opcg1
-    {0},                                            ///< opcg_count_adjust
-    100000,                                         ///< max_polls
-    200000,                                         ///< poll_delay_hw
-    1120000,                                        ///< poll_delay_sim
-    cc::SCAN_TYPE_ALL,                              ///< scan0_types
-
-    /// lbist_scan_types
-    cc::SCAN_TYPE_NOT_RTG & ~cc::SCAN_TYPE_CMSK,    ///< 0xDCD
-
-    /// base_regions
-    cc::ODY_MC_PERV |                               ///< REGION(0)
-    cc::ODY_MC_IOO  |                               ///< REGION(1)
-    cc::ODY_MC_CORE |                               ///< REGION(2)
-    cc::ODY_MC_CFG  |                               ///< REGION(3)
-    cc::ODY_MC_DFI  |                               ///< REGION(4)
-    cc::ODY_MC_PUB0 |                               ///< REGION(5)
-    cc::ODY_MC_PUB1,                                ///< REGION(6)
-
-    0,                                              ///< padding
-    {0},                                            ///< chiplets_regions
-    0x1000,                                         ///< outer_loop_mask
-    0x0400,                                         ///< inner_loop_mask
-    "istep",                                        ///< program
-    "none",                                         ///< ring_patch
-};
-
-enum ODY_LBIST_Private_Constants
-{
-};
 
 ReturnCode ody_lbist(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 {
-    FAPI_INF("Entering ...");
-
-    ReturnCode l_rc;
-    bist_diags l_bist_diags = {0};
-    auto l_chiplets_mc = i_target.getMulticast<TARGET_TYPE_PERV>(MCGROUP_GOOD_NO_TP);
-
-    // Dummy variables to support poz_bist API, but unused in istep mode
-    hwp_data_unit dbuff[128 * 4]; // SCA TODO: implement a filestream instead??
-    hwp_array_ostream l_stream(dbuff, (sizeof(dbuff) / sizeof((dbuff)[0])));
-
-    FAPI_EXEC_HWP(l_rc, poz_bist, i_target, ody_lbist_params, l_bist_diags, l_stream, BIST_CHIPOP_ID);
-    FAPI_TRY(l_rc);
-
-    if (l_bist_diags.completed_stages & ody_lbist_params.bist_stages::COMPARE)
-    {
-        buffer<uint64_t> l_failing_chiplets_mask = 0;
-
-        for (uint8_t chiplet_id = 0; chiplet_id < 64; chiplet_id++)
-        {
-            if (l_bist_diags.failing_regions[chiplet_id])
-            {
-                l_failing_chiplets_mask.setBit(chiplet_id);
-            }
-        }
-
-        FAPI_ASSERT(l_failing_chiplets_mask == 0,
-                    fapi2::BIST_NONZERO_MISCOMPARES().
-                    set_ABIST_NOT_LBIST(0).
-                    set_FAILING_CHIPLETS_MASK(l_failing_chiplets_mask),
-                    "Chiplets failing compare check: 0x%08x%08x",
-                    l_failing_chiplets_mask >> 32,
-                    l_failing_chiplets_mask & 0xFFFFFFFF);
-    }
-
-    // Post-BIST scan0 for IML with BIST
-    FAPI_TRY(mod_scan0(l_chiplets_mc, cc::REGION_ALL));
-
-fapi_try_exit:
-    FAPI_INF("Exiting ...");
-    return current_err;
+    FAPI_DBG("No product LBIST on Odyssey, skipping...");
+    return FAPI2_RC_SUCCESS;
 }
