@@ -39,7 +39,7 @@ using namespace pll;
 enum POZ_PERV_MOD_CHIP_CLOCKING_Private_Constants
 {
     PLL_LOCK_DELAY_CYCLES = 100000,
-    PLL_LOCK_DELAY_LOOPS = 50,
+    PLL_LOCK_DELAY_LOOPS = 1000,
     PLL_LOCK_DELAY_NS = 100000,
 };
 
