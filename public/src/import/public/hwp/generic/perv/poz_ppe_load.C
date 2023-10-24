@@ -147,6 +147,7 @@ fapi2::ReturnCode poz_ioppe_load(
     const int32_t RAM_OFFSET = -16;
     uint64_t* ptr = (uint64_t*)i_img_data;
     const uint32_t nwords = (i_img_size + 7) / 8;
+    const uint32_t ioppe_ram_offset = i_ioppe_ram_offset + i_offset;
 
     if (i_offset == 0)
     {
@@ -160,13 +161,16 @@ fapi2::ReturnCode poz_ioppe_load(
     {
         // Load start address
         FAPI_TRY(fapi2::putScom(i_target, i_ppe_base_address + RAM_OFFSET + IOPPE_CSAR,
-                                ((uint64_t)i_ioppe_ram_offset + (i_ioppe_ram_repeat_size * thread)) << 32));
+                                ((uint64_t)ioppe_ram_offset + (i_ioppe_ram_repeat_size * thread))  << 32));
 
         for (uint32_t i = 0; i < nwords; i++)
         {
             FAPI_TRY(fapi2::putScom(i_target, i_ppe_base_address + RAM_OFFSET + IOPPE_CSDR, ptr[i]));
         }
     }
+
+    // Disable auto increment
+    FAPI_TRY(fapi2::putScom(i_target, i_ppe_base_address + RAM_OFFSET + IOPPE_CSCR_WOR, 0x0000000000000000ULL));
 
     FAPI_INF("%d bytes written", nwords * 8);
 
