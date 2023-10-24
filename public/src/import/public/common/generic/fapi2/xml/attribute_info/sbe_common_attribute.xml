@@ -103,6 +103,9 @@
   <entry name="ATTR_CHIP_EC_FEATURE_PCIE_CLK_EN">
     <virtual/>
   </entry>
+  <entry name="ATTR_CHIP_EC_FEATURE_SPI_WRITE_NEEDS_CS_DELAY">
+    <virtual/>
+  </entry>
   <entry name="ATTR_SPPE_BOOT_SIDE">
     <value>0x0</value>
   </entry>
