@@ -79,7 +79,6 @@ fapi2::ReturnCode ody_omi_unload(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHI
 
     constexpr uint16_t l_pl_rx_endpoints[] = {0x0000, 0x0D00};
     constexpr uint16_t l_pg_rx_endpoints[] = {0x1000, 0x16F0};
-    constexpr uint16_t l_pb_rx_endpoints[] = {0x0000, 0x0040};
 
     FAPI_DBG("HWP: I/O UNLOAD: Base Addr(0x%08X) Groups(%d) Lanes(%d)", PHY_ODY_OMI_BASE, l_groups, l_lanes);
 
@@ -110,15 +109,14 @@ fapi2::ReturnCode ody_omi_unload(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHI
     // RX PB Regs (0x1F0 - 0x1F3)
 
     // Rx/Tx PL Regs
-    stream_pl_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, l_lanes, l_pl_tx_endpoints[0], l_pl_tx_endpoints[1]);
-    stream_pl_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, l_lanes, l_pl_rx_endpoints[0], l_pl_rx_endpoints[1]);
+    stream_hw_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, l_lanes, l_pl_tx_endpoints[0], l_pl_tx_endpoints[1]);
+    stream_hw_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, l_lanes, l_pl_rx_endpoints[0], l_pl_rx_endpoints[1]);
 
     // Rx/Tx PG Regs
-    stream_pg_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, l_pg_tx_endpoints[0], l_pg_tx_endpoints[1]);
-    stream_pg_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, l_pg_rx_endpoints[0], l_pg_rx_endpoints[1]);
+    stream_hw_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, 1, l_pg_tx_endpoints[0], l_pg_tx_endpoints[1]);
+    o_ostream.flush();
+    stream_hw_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, 1, l_pg_rx_endpoints[0], l_pg_rx_endpoints[1]);
 
-    // Rx/Tx Bus Regs
-    stream_pb_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_pb_rx_endpoints[0], l_pb_rx_endpoints[1]);
 
 fapi_try_exit:
     FAPI_DBG("End ody_omi_unload");
