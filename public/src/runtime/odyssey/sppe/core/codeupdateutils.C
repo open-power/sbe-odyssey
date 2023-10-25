@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -386,6 +386,63 @@ uint32_t getImageHash(const CU_IMAGES i_imageType,
             break;
         }
     }while(false);
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
+uint32_t getSideStartAddressAndSize(const uint8_t i_side,
+                                    const uint8_t i_devId,
+                                    uint32_t &o_sideStartAddress,
+                                    uint32_t &o_sideMaxSize)
+{
+    #define SBE_FUNC " getSideStartAddressAndSize "
+    SBE_ENTER(SBE_FUNC);
+
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    do
+    {
+        if (i_devId != 1)
+        {
+            SBE_ERROR(SBE_FUNC "Invalid device Id. RC[0x%02x] ", i_devId);
+            l_rc = SBE_SEC_RAS_INVALID_DEVICE_ID;
+            break;
+        }
+
+        // Get the side start offset
+        switch (i_side)
+        {
+        case MEMORY_SIDES::PRIMARY_SIDE:
+            // Get the side start offset for run side
+            getSideAddress(SIDE_0_INDEX, o_sideStartAddress);
+        break;
+
+        case MEMORY_SIDES::SECONDARY_SIDE:
+            // Get the side start offset for alternate side
+            getSideAddress(SIDE_1_INDEX, o_sideStartAddress);
+        break;
+
+        case MEMORY_SIDES::GOLDEN_SIDE:
+            // Get the side start offset for golden side
+            getSideAddress(GOLDEN_SIDE_INDEX, o_sideStartAddress);
+        break;
+
+        default:
+            SBE_ERROR(SBE_FUNC "Invalid memory side");
+        break;
+        }
+    }while (false);
+
+    SBE_INFO(SBE_FUNC "For Side:[0x%02x] Device:[0x%02x] Start Address:[0x%08x]",
+             i_side, i_devId, o_sideStartAddress);
+
+    // Valid NOR address is 24-bits - 16MB
+    o_sideStartAddress -= NOR_SIDE_0_START_ADDR;
+
+    // Valid max NOR memory size
+    o_sideMaxSize = NOR_SIDE_SIZE;
 
     SBE_EXIT(SBE_FUNC);
     return l_rc;

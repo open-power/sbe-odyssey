@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -241,7 +241,10 @@ enum sbeSecondaryResponse
     SBE_SEC_TEST_FFDC_INVALIDMODE             = 0x92,
     SBE_SEC_BAD_TESTFFDC_ERR_RECORD           = 0x93,
     SBE_SEC_TESTFFDC_FAILED                   = 0x94,
-    SBE_TESTFFDC_INVALID_FFDC_RC              = 0x95
+    SBE_TESTFFDC_INVALID_FFDC_RC              = 0x95,
+    SBE_SEC_RAS_INVALID_SCOPE_CHECK_VALUE     = 0x96,
+    SBE_SEC_RAS_INVALID_SIDE_VALUE            = 0x97,
+    SBE_SEC_RAS_INVALID_DEVICE_ID             = 0x98,
 };
 
 /**
@@ -393,6 +396,43 @@ enum sbeSupportedDumpTypes
     SBE_DUMP_TYPE_PERF       = 0x03, /* Performance */
     SBE_DUMP_TYPE_RESERVED   = 0x04, /* Reserved */
     SBE_DUMP_TYPE_HB         = 0x05, /* Host Boot */
+};
+
+/**
+ * @brief enum for memory scrub scope
+ *
+*/
+enum SCOPE
+{
+    SCOPE_IMAGE_ONLY = 0x01,
+    SCOPE_FULL_SIDE  = 0x02,
+};
+
+/**
+ * @brief enum for memory side types
+ *
+*/
+enum MEMORY_SIDES
+{
+    INVALID_SIDE    = 0,
+    PRIMARY_SIDE    = 0x01,
+    SECONDARY_SIDE  = 0x02,
+    GOLDEN_SIDE     = 0x04,
+    END_OF_SIDE_LIST= 0x08,
+};
+
+/**
+ * @brief enum for device Id per side
+ *
+*/
+enum DEVICE_ID
+{
+    INVALID_DEVICE_ID    = 0,
+    PHY_DEVICE_ID_0      = 0x01,
+    PHY_DEVICE_ID_1      = 0x02,
+    PHY_DEVICE_ID_2      = 0x04,
+    PHY_DEVICE_ID_3      = 0x08,
+    END_OF_DEVICE_LIST   = 0x10,
 };
 
 #ifdef __cplusplus

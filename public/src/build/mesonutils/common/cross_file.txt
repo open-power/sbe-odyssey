@@ -149,6 +149,7 @@ runtime_cmn_inc_paths = [
     '/public/src/runtime/common/chipops/sramaccess',
     '/public/src/runtime/common/drivers/i2c',
     '/public/src/runtime/common/chipops/rings',
+    '/public/src/runtime/common/chipops/ras',
         ]
 
 runtime_cmn_code_update_inc_paths = [
