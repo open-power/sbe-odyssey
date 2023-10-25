@@ -691,9 +691,6 @@ ReturnCode poz_putRingUtils(
                         uint8_t l_data      =    rs4_get_nibble( l_rs4Str, l_nibbleIndx );
                         l_nibbleIndx       +=    1;
 
-                        FAPI_INF ( "VERBATIm l_nibbleIndx %u l_scanCount %u "
-                                   "l_bitsDecoded %u", l_nibbleIndx, l_scanCount, l_bitsDecoded );
-
                         for( uint8_t i = 0; i < 4; i++ )
                         {
                             l_scomData      =    0x0;
