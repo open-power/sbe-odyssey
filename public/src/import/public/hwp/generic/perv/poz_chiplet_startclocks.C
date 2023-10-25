@@ -73,11 +73,6 @@ ReturnCode poz_chiplet_startclocks(
     FAPI_INF("Start chiplet clocks");
     FAPI_TRY(mod_start_stop_clocks(i_target, i_clock_regions));
 
-    FAPI_INF("Vital align out disable");
-    NET_CTRL0 = 0;
-    NET_CTRL0.setBit<12>(); // VITL_AL_OUT_DIS
-    FAPI_TRY(NET_CTRL0.putScom_SET(i_target));
-
     FAPI_INF("Put PLATs into flush mode");
     CPLT_CTRL0 = 0;
     CPLT_CTRL0.set_FLUSHMODE_INH(1);
