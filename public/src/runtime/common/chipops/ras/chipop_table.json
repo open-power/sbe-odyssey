@@ -1,0 +1,11 @@
+{
+    "chipoptable":[
+        {
+            "cmdClass":"A8",
+            "command":"0x09",
+            "function":"sbeCmdCheckMemoryDevice",
+            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
+            "headerFile":"sbeCmdCheckMemoryDevice.H"
+        }
+    ]
+}

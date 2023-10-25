@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -80,7 +80,8 @@ odyssey_abs_core_c_file_paths += [ abs_pak_c_path,
                                     odyssey_abs_hwpf_c_file_paths,
                                     odyssey_abs_tgt_c_file_paths,
                                     odyssey_abs_attr_c_file_paths,
-                                    abs_runtime_cmn_ring_c_path
+                                    abs_runtime_cmn_ring_c_path,
+                                    abs_runtime_cmn_checkmemorydevice_c_path
                                 ]
 
 # List of image specific customize files
@@ -111,7 +112,8 @@ ody_cmn_chipop_json_list = [
                     CMN_COLLECT_DUMP_CHIPOPS_JSON,
                     CMN_ATTRIBUTES_CHIPOPS_JSON,
                     CMN_EXC_HWP_CHIPOPS_JSON,
-                    CMN_RING_ACCESS_CHIPOPS_JSON
+                    CMN_RING_ACCESS_CHIPOPS_JSON,
+                    CMN_CHECKMEMORYDEVICE_CHIPOPS_JSON
                 ]
 
 ody_chipop_json_list = [ody_cmn_chipop_json_list,

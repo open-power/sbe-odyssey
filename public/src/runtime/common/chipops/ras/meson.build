@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/common/chipops/meson.build $
+# $Source: public/src/runtime/common/chipops/ras/meson.build $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2023,2024
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,15 +21,20 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
+# IBM_PROLOG_BEGIN_TAG
+# This is an automatically generated prolog.
 
-subdir('stopclocks')
-subdir('tracearray')
-subdir('fastarray')
-subdir('getcapabilities')
-subdir('sramaccess')
-subdir('collectdump')
-subdir('codeupdate')
-subdir('exechwp')
-subdir('rings')
-subdir('spiaccess')
-subdir('ras')
+
+CMN_CHECKMEMORYDEVICE_CHIPOPS_JSON = files('chipop_table.json')
+
+runtime_cmn_checkmemorydevice_dir_path = meson.global_source_root() + '/public/src/runtime/common/chipops/ras/'
+
+infile_c = ['sbeCmdCheckMemoryDevice.C',
+            'rasUtils.C',
+           ]
+
+abs_runtime_cmn_checkmemorydevice_c_path = []
+
+foreach infile : infile_c
+  abs_runtime_cmn_checkmemorydevice_c_path += runtime_cmn_checkmemorydevice_dir_path + infile
+endforeach

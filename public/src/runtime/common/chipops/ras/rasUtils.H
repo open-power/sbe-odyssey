@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/imagemap.H $             */
+/* $Source: public/src/runtime/common/chipops/ras/rasUtils.H $            */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2024                        */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -25,35 +24,17 @@
 
 #pragma once
 
-#include "codeupdateutils.H"
-#include "getcapabilitiesutils.H"
-
-#define MAX_PARTITION_TABLE_ENTRY 6
+#include "sbeCmdCheckMemoryDevice.H"
 
 /**
- * @brief - Used to decide no of updatable image section count.
+ * @brief Function to get memory scrub data
+ *
+ * @param[in] i_memCheckCmdMsg : memory check command structure
+ * @param[out] o_memDeviceStatus : memory device status detail
+ * @param[out] o_hdr : response header message
+ *
+ * @return  RC
  */
-#define UPDATABLE_IMG_SECTION_CNT sizeof(CU::g_updatableImgList)/sizeof(CU::g_updatableImgList[0])
-#define EXPECTED_IMG_SECTION_CNT sizeof(CU::g_expectedImgPkgMap)/sizeof(CU::g_expectedImgPkgMap[0])
-
-// CU: Code Update
-namespace CU
-{
-    constexpr CU_IMAGES g_updatableImgList[] = {CU_IMAGES::BOOTLOADER, CU_IMAGES::RUNTIME, CU_IMAGES::BMC_OVRD, CU_IMAGES::HOST_OVRD};
-    constexpr imgMap_t g_expectedImgPkgMap[] = {
-        {CU_IMAGES::BOOTLOADER, "boot"},
-        {CU_IMAGES::RUNTIME,    "rt"  },
-        {CU_IMAGES::BMC_OVRD,   "bmc" },
-        {CU_IMAGES::HOST_OVRD,  "host"},
-    };
-} // namespace CU
-
-constexpr capImgMap_t g_getCapabilitiesImages [] =
-{
-    {CU_IMAGES::SROM,       "srom"},
-    {CU_IMAGES::BOOTLOADER, "boot"},
-    {CU_IMAGES::RUNTIME,    "rt"  },
-    {CU_IMAGES::BMC_OVRD,   "bmc" },
-    {CU_IMAGES::HOST_OVRD,  "host"},
-    {CU_IMAGES::EKB,        "ekb" },
-};
+uint32_t getMemoryScrubData(const struct memCheckCmdMsg_t i_memCheckCmdMsg,
+                            struct memDeviceStatusDetails_t *&o_memDeviceStatus,
+                            sbeRespGenHdr_t &o_hdr);

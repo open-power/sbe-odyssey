@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -35,6 +35,7 @@
 #include "spi_memory.H"
 
 using namespace fapi2;
+using spi::SPIPort;
 
 /*
  * @brief Structure for storage device info
@@ -87,6 +88,36 @@ struct codeUpdateCtrlStruct_t
 
     // Constructor
     codeUpdateCtrlStruct_t() {};
+};
+
+/*
+ * @brief Structure for RAS - CE/UE
+ */
+typedef struct
+{
+    uint8_t numOfCE;
+    uint8_t numOfUE;
+}memDeviceStatus_t;
+
+// A SPI port for RAS support
+class RASSPIPort : public SPIPort
+{
+public:
+    RASSPIPort(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+               const uint32_t i_base_address, const uint8_t i_resp_select,
+               const spi::ecc_mode i_ecc_mode) :
+        SPIPort(i_target, i_base_address, i_resp_select, i_ecc_mode)
+        {}
+
+    memDeviceStatus_t iv_ioMemDeviceStatus;
+
+private:
+    //TODO:PFSBE-691 - SPI driver changes
+    fapi2::ReturnCode handle_spi_errors(
+            uint64_t &io_status) const override
+    {
+        return current_err;
+    }
 };
 
 /*
@@ -247,6 +278,18 @@ uint32_t getImageHash(const CU_IMAGES i_imageType,
                       codeUpdateCtrlStruct_t &io_codeUpdateCtrlStruct,
                       uint8_t* o_hashArrayPtr);
 
-
+/* @brief : This API is used to get side & device start address in storage device
+ *
+ * @param[in]  i_side : side of memory to scrub on
+ * @param[in]  i_devId: device per side of memory to scrub on to get its start address
+ * @param[out] o_sideStartAddress : return the device start address
+ * @param[out] o_sideMaxSize : return the device max size
+ *
+ * @return : rc
+ */
+uint32_t getSideStartAddressAndSize(const uint8_t i_side,
+                                    const uint8_t i_devId,
+                                    uint32_t &o_sideStartAddress,
+                                    uint32_t &o_sideMaxSize);
 
 #endif //CODE_UPDATE_UTILS_H
