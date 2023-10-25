@@ -569,6 +569,7 @@ ReturnCode mod_align_regions(
     CPLT_CTRL4_t CPLT_CTRL4;
     SYNC_CONFIG_t SYNC_CONFIG;
     CPLT_STAT0_t CPLT_STAT0;
+    NET_CTRL0_t NET_CTRL0;
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_COMPARE > l_mcast_cmp_target = i_target;
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > l_mcast_and_target = i_target;
     int l_timeout = 0;
@@ -636,6 +637,11 @@ ReturnCode mod_align_regions(
     CPLT_CTRL0 = 0;
     CPLT_CTRL0.set_FORCE_ALIGN(1);
     FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target));
+
+    FAPI_INF("Vital align out disable");
+    NET_CTRL0 = 0;
+    NET_CTRL0.setBit<12>(); // VITL_AL_OUT_DIS
+    FAPI_TRY(NET_CTRL0.putScom_SET(i_target));
 
     FAPI_TRY(fapi2::delay(DELAY_10us, SIM_CYCLE_DELAY));
 

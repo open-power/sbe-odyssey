@@ -504,6 +504,11 @@ ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
     CPLT_CTRL0.set_FORCE_ALIGN(1);
     FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(l_tpchiplet));
 
+    FAPI_INF("Vital align out disable");
+    PERV_CTRL0 = 0;
+    PERV_CTRL0.setBit<12>(); // VITL_AL_OUT_DIS
+    FAPI_TRY(PERV_CTRL0.putScom_SET(i_target));
+
     FAPI_DBG("Unmask pervasive FIRs");
     FAPI_TRY(putScom(l_tpchiplet, EPS_MASK_RW_WCLEAR, ~TP_LFIR_MASK_DEFAULT));
     FAPI_TRY(putScom(l_tpchiplet, XSTOP_MASK_RW, XSTOP_MASK_ANY_ATTN_AND_DBG));
