@@ -149,7 +149,8 @@ class io_ppe_common
                                            const uint8_t i_thread,
                                            const uint32_t i_rx_mask,
                                            const uint32_t i_freq,
-                                           const uint8_t i_bist_timer_sel);
+                                           const uint8_t i_bist_timer_sel,
+                                           const uint8_t i_pcie_mode);
 
         fapi2::ReturnCode bist_init(const fapi2::Target<K, M, V>& i_target,
                                     const uint8_t i_group,
@@ -550,7 +551,8 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init_thread(const fapi2::Target<K
         const uint8_t i_thread,
         const uint32_t i_rx_mask,
         const uint32_t i_freq,
-        const uint8_t i_bist_timer_sel)
+        const uint8_t i_bist_timer_sel,
+        const uint8_t i_pcie_mode)
 {
     FAPI_DBG("Start");
 
@@ -558,9 +560,10 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init_thread(const fapi2::Target<K
     uint8_t l_pcie_data_rate = calc_pcie_data_rate(i_freq);
 
     // Set PCIe Data rate
-    FW_REG_FW_BIST_PCIE_RATE_PUT(iv_regs, i_target, i_thread, l_pcie_data_rate);
+    FAPI_TRY(FW_REG_FW_BIST_PCIE_RATE_PUT(iv_regs, i_target, i_thread, l_pcie_data_rate));
 
-    MEM_REG_PPE_DATA_RATE_PUT(iv_regs, i_target, i_thread, l_ppe_data_rate);
+    // Set PPE Data rate
+    FAPI_TRY(MEM_REG_PPE_DATA_RATE_PUT(iv_regs, i_target, i_thread, l_ppe_data_rate));
 
     // Cleanup of previous run
     FAPI_TRY(MEM_REG_BIST_OVERALL_PASS_PUT(iv_regs, i_target, i_thread, 0));
@@ -576,6 +579,9 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init_thread(const fapi2::Target<K
 
     //"ppe_channel_loss": 2,
     FAPI_TRY(MEM_REG_PPE_CHANNEL_LOSS_PUT(iv_regs, i_target, i_thread, 2));
+
+    // Set FW PCIE Mode
+    FAPI_TRY(FW_REG_FW_PCIE_MODE_PUT(iv_regs, i_target, i_thread, i_pcie_mode));
 
     FAPI_TRY(iv_regs->flushCache(i_target));
 
