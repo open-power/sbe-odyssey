@@ -158,7 +158,7 @@ enum generic_sizes
 ///
 /// @brief FFDC generic codes
 ///
-enum generic_ffdc_codes : uint16_t
+enum generic_ffdc_codes
 {
     // Starting at 0x1%%% to avoid
     // any collisions with values
@@ -1149,7 +1149,7 @@ enum preipl_prbs_time
 ///
 /// @brief Supported DIMM speed equality deliberations
 ///
-enum class speed_equality : uint8_t
+enum speed_equality
 {
     NOT_EQUAL_DIMM_SPEEDS = 0, ///< denotes all DIMMs don't have the same speed
     EQUAL_DIMM_SPEEDS = 1, ///< denotes all DIMMs have the same speed
@@ -1169,7 +1169,7 @@ enum ddr5_spd
 ///
 /// @brief SPD revisions - not tied any particular module
 ///
-enum rev : uint8_t
+enum rev
 {
     V0_0 = 0x00, ///< represents Rev 0.0
     V0_3 = 0x03, ///< represents Rev 0.3
@@ -1185,7 +1185,7 @@ enum rev : uint8_t
     RDIMM_MAX = V1_1,
     LRDIMM_MAX = V1_2,
     DDIMM_DDR4_MAX = V0_4,
-    DDIMM_DDR5_MAX = V0_7,
+    DDIMM_DDR5_MAX = V0_0,
 };
 
 ///
@@ -1226,7 +1226,7 @@ enum base_module_type
     MINIRDIMM = 0b0101,
 };
 
-enum guard_band : uint16_t
+enum guard_band
 {
     // Used for caclulating spd timing values - from JEDEC rounding algorithm
     // Correction factor is 1% (for DDR3) or 2.5% (for DDR4)
