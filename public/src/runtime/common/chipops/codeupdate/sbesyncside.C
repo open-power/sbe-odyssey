@@ -260,7 +260,7 @@ fapi2::ReturnCode syncImage(codeUpdateCtrlStruct_t &i_syncSideCtrlStruct,
       }
 
       // Get memory device handle
-      l_rc = createMemoryDevice(i_syncSideCtrlStruct.runSideIndex,
+      l_rc = createMemoryDevice(i_syncSideCtrlStruct.nonRunSideIndex,
                                 i_syncSideCtrlStruct.storageDevStruct.memId,
                                 true, true, l_memHandle);
       if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)

@@ -92,7 +92,7 @@ struct codeUpdateCtrlStruct_t
 /*
  * @brief Project specific code to instantiate a memory device handle
  *
- * @param[in]  i_boot_side        Boot side (0=PRIMARY, 1=SECONDARY)
+ * @param[in]  i_boot_side        Boot side of the memory device to talk to (0=PRIMARY, 1=SECONDARY)
  * @param[in]  i_memory_id        Memory ID (from partition table)
  * @param[in]  i_use_ecc          Generate ECC on write, strip ECC on read; raw mode if false
  * @param[in]  i_intent_to_write  Prepare device for write access
