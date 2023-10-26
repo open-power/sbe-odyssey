@@ -125,7 +125,7 @@ fapi2::ReturnCode poz_ppe_load(
 
     if (i_img_data == (uint8_t*)NULL && i_img_size == 0)
     {
-        poz_ppe_start(i_target, PPE_BASE_ADDRESS);
+        FAPI_INF("Null pointer and 0 bytes provided, could probably start the PPE now but won't!");
     }
 
 fapi_try_exit:
