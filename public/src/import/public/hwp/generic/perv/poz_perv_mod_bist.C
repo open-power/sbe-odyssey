@@ -106,6 +106,7 @@ fapi_try_exit:
 
 ReturnCode mod_bist_poll(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > & i_target,
+    bool& o_bist_halt_requested,
     bool i_poll_abist_done,
     bool i_assert_abist_done,
     uint32_t i_max_polls,
@@ -144,6 +145,7 @@ ReturnCode mod_bist_poll(
         if (SCRATCH_REGISTER_11.getBit<27>() == 1)
         {
             FAPI_INF("BIST_HALT observed");
+            o_bist_halt_requested = true;
             break;
         }
 

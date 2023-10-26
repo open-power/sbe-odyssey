@@ -147,8 +147,12 @@ static void print_bist_params(const bist_params& i_params)
 
 static ReturnCode poz_bist_execute(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_chiplets_target,
-    const std::vector<Target<TARGET_TYPE_PERV>>& i_chiplets_uc, const bist_params& i_params,
-    const uint16_t i_enum_condition_a, const uint16_t i_enum_condition_b, bist_diags& o_diags)
+    const std::vector<Target<TARGET_TYPE_PERV>>& i_chiplets_uc,
+    const bist_params& i_params,
+    const uint16_t i_enum_condition_a,
+    const uint16_t i_enum_condition_b,
+    bool& o_bist_halt_requested,
+    bist_diags& o_diags)
 {
     // Helper buffers produced from bist_params constituents
     const buffer<uint64_t> l_uc_go_chiplets_buffer = i_params.uc_go_chiplets;
@@ -265,6 +269,7 @@ static ReturnCode poz_bist_execute(
     {
         FAPI_INF("Poll for DONE or HALT");
         FAPI_TRY(mod_bist_poll(i_chiplets_target,
+                               o_bist_halt_requested,
                                i_params.flags & i_params.bist_flags::POLL_ABIST_DONE,
                                i_params.flags & i_params.bist_flags::ASSERT_ABIST_DONE,
                                i_params.max_polls,
@@ -603,6 +608,8 @@ ReturnCode poz_bist(
 
     for (uint8_t outer_index = 0; outer_index < 16; outer_index++)
     {
+        bool l_bist_halt_requested = false;
+
         if (l_outer_loop_mask.getBit(outer_index))
         {
             FAPI_DBG("Bit %d present in outer loop mask; proceeding ...", outer_index);
@@ -618,9 +625,20 @@ ReturnCode poz_bist(
                                               i_params,
                                               outer_index,
                                               inner_index,
+                                              l_bist_halt_requested,
                                               o_diags));
                 }
+
+                if (l_bist_halt_requested)
+                {
+                    break;
+                }
             }
+        }
+
+        if (l_bist_halt_requested)
+        {
+            break;
         }
     }
 
