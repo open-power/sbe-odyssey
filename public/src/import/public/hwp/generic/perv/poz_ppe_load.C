@@ -134,7 +134,8 @@ fapi_try_exit:
 }
 
 fapi2::ReturnCode poz_ioppe_load(
-    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > &
+    i_target,
     const uint8_t* i_img_data,
     const uint32_t i_img_size,
     const uint32_t i_offset,
@@ -170,7 +171,7 @@ fapi2::ReturnCode poz_ioppe_load(
     }
 
     // Disable auto increment
-    FAPI_TRY(fapi2::putScom(i_target, i_ppe_base_address + RAM_OFFSET + IOPPE_CSCR_WOR, 0x0000000000000000ULL));
+    FAPI_TRY(fapi2::putScom(i_target, i_ppe_base_address + RAM_OFFSET + IOPPE_CSCR_WCLR, 0x8000000000000000ULL));
 
     FAPI_INF("%d bytes written", nwords * 8);
 
