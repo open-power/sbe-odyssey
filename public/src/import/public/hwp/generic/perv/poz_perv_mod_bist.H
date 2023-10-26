@@ -61,6 +61,7 @@ fapi2::ReturnCode mod_stagger_idle_setup(
 /// @brief Poll for and exit upon OPCG_DONE, BIST_HALT, or (optionally) ABIST_DONE.
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
+/// @param[out   o_bist_halt_requested     Whether or not the BIST_HALT signal was received
 /// @param[in]   i_poll_abist_done         Inspect ABIST_DONE alongside the other bits
 /// @param[in]   i_assert_abist_done       Assert ABIST_DONE is set at the end of the procedure
 /// @param[in]   i_max_polls               Max number of polls to issue (>0x7FFFFFFF for infinite)
@@ -70,6 +71,7 @@ fapi2::ReturnCode mod_stagger_idle_setup(
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_bist_poll(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST, fapi2::MULTICAST_AND > & i_target,
+    bool& o_bist_halt_requested,
     bool i_poll_abist_done = true,
     bool i_assert_abist_done = true,
     uint32_t i_max_polls = 400,
