@@ -110,9 +110,9 @@ fapi2::ReturnCode get_supported_cas_latencies(
         // Update output value only if range check passes
         l_field = uint32_t(l_buffer);
 
-        FAPI_INF("%s. CAS latencies supported (bitmap): 0x%llX",
-                 spd::c_str(i_dimm),
-                 l_field);
+        // FAPI_INF("%s. CAS latencies supported (bitmap): 0x%llX",
+        //          spd::c_str(i_dimm),
+        //          l_field);
         o_field = l_field;
     }
 
@@ -175,9 +175,9 @@ fapi2::ReturnCode get_supported_cas_latencies(
         // so no range checking is needed
         o_field = uint64_t(l_buffer);
 
-        FAPI_INF("%s. CAS latencies supported (bitmap): 0x%010X",
-                 spd::c_str(i_dimm),
-                 o_field);
+        // FAPI_INF("%s. CAS latencies supported (bitmap): 0x%010X",
+        //          spd::c_str(i_dimm),
+        //          o_field);
     }
 
 fapi_try_exit:
@@ -220,8 +220,8 @@ fapi2::ReturnCode calc_vref_offset(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PO
         }
         else
         {
-            FAPI_INF("Port %s VREF Overflow detected on DRAM %u Rank %u (Offset w/ multiplier value %d)",
-                     spd::c_str(i_port),
+            FAPI_INF("VREF Overflow detected on DRAM %u Rank %u (Offset w/ multiplier value %d)",
+                     //spd::c_str(i_port),
                      i_dram,
                      i_dimm_rank,
                      l_calc_vref_step);
@@ -240,8 +240,8 @@ fapi2::ReturnCode calc_vref_offset(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PO
         }
         else
         {
-            FAPI_INF("Port %s VREF Underflow detected on DRAM %u Rank %u (Offset w/ multiplier value %d)",
-                     spd::c_str(i_port),
+            FAPI_INF("VREF Underflow detected on DRAM %u Rank %u (Offset w/ multiplier value %d)",
+                     //spd::c_str(i_port),
                      i_dram,
                      i_dimm_rank,
                      l_calc_vref_step);
@@ -284,7 +284,7 @@ fapi2::ReturnCode apply_vref_offset_mult(const fapi2::Target<fapi2::TARGET_TYPE_
                 set_FUNCTION(i_ffdc_code).
                 set_RANK(i_dimm_rank).
                 set_PORT_TARGET(i_port),
-                "%s rank out of bounds rank %u", spd::c_str(i_port), i_dimm_rank);
+                "rank out of bounds rank %u", i_dimm_rank);
 
     // Multiplies offset by l_vref_mult then adds or subtracts from vrefca
     //    Port  Rank  Dram   Byte
@@ -402,14 +402,14 @@ fapi2::ReturnCode get_raw_data_planar(
     fapi2::VPDInfo<fapi2::TARGET_TYPE_OCMB_CHIP> l_vpd_info(l_vpd_type);
 
     FAPI_TRY( fapi2::getVPD(i_target, l_vpd_info, nullptr),
-              "%s failed getting VPD size from getVPD", spd::c_str(i_target) );
+              "failed getting VPD size from getVPD");
 
     // If we have a negative SPD size, assert out
     FAPI_ASSERT(l_vpd_info.iv_size < 0x80000,
                 fapi2::MSS_NEGATIVE_VPD_SIZE()
                 .set_OCMB_TARGET(i_target)
                 .set_SIZE(l_vpd_info.iv_size),
-                "%s has a negative VPD size of %i", spd::c_str(i_target), l_vpd_info.iv_size);
+                "has a negative VPD size of %i", l_vpd_info.iv_size);
 
     // Reassign container size with the retrieved size
     // Arbitrarily set the data to zero since it will be overwritten
@@ -417,7 +417,7 @@ fapi2::ReturnCode get_raw_data_planar(
 
     // Get SPD data
     FAPI_TRY( fapi2::getVPD(i_target, l_vpd_info, o_spd.data()),
-              "%s. Failed to retrieve SPD data", spd::c_str(i_target) );
+              "Failed to retrieve SPD data");
 
 fapi_try_exit:
     return fapi2::current_err;
@@ -444,7 +444,9 @@ void combine_planar_spd(
     constexpr uint64_t MODULE_SUPPLIER_DATA_END = MODULE_SUPPLIER_DATA_START + MODULE_SUPPLIER_DATA_LEN;
 
     o_spd.clear();
+#ifndef __PPE__
     o_spd.resize(i_planar_spd.size());
+#endif
 
     // Copy base config content
     std::copy(i_isdimm_spd.begin(),
@@ -492,6 +494,7 @@ fapi2::ReturnCode get_raw_data(
 
         // First read the ISDIMM SPD
         FAPI_TRY(mss::spd::get_raw_data_dimm(i_target, l_isdimm_spd));
+
 
         // Next read the planar VPD
         FAPI_TRY(mss::spd::get_raw_data_planar(l_ocmb, l_planar_vpd));

@@ -113,6 +113,7 @@
        This is probably due to a bad part or bad values accidentally burned to the VPD
     </description>
     <ffdc>SIZE</ffdc>
+    <ffdc>OCMB_TARGET</ffdc>
     <callout>
       <target>OCMB_TARGET</target>
       <priority>MEDIUM</priority>
@@ -904,6 +905,7 @@
     <description>Invalid value calculated for timing value based on MTB and FTB from SPD.</description>
     <ffdc>VALUE</ffdc>
     <ffdc>FUNCTION</ffdc>
+    <ffdc>DIMM_TARGET</ffdc>
     <callout>
       <target>DIMM_TARGET</target>
       <priority>MEDIUM</priority>
