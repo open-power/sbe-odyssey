@@ -73,7 +73,7 @@ fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
         }
 
         // Get memory device handle
-        l_rc = createMemoryDevice(l_updateImgCtrlStruct.runSideIndex,
+        l_rc = createMemoryDevice(l_updateImgCtrlStruct.nonRunSideIndex,
                                   l_updateImgCtrlStruct.storageDevStruct.memId,
                                   true, true, l_memHandle);
         if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
@@ -138,7 +138,7 @@ fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
                     o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE, l_rc );
                     break;
                 }
-		
+
                 // 2. If image type is bootloader validate incoming partition table
                 if (i_msg->imageType == (uint16_t)CU_IMAGES::BOOTLOADER)
                 {
@@ -158,7 +158,7 @@ fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
                         o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE, l_rc);
                         break;
                     }
-		    
+
                 }
 
                 // 3. Get incoming image info data from partition table
@@ -345,7 +345,7 @@ uint32_t validateImageType(const CU_IMAGES i_imageType)
         if (CU::g_updatableImgList[i] == i_imageType)
         {
             updateableImage = true;
-        }  
+        }
     }
     if (!updateableImage)
     {
@@ -474,4 +474,3 @@ uint32_t checkNUpdatePakMarkerNSize(void *i_buffer,
     return l_rc;
     #undef SBE_FUNC
 }
-
