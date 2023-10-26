@@ -412,7 +412,7 @@ def mod_poz_tp_init_common(target<ANY_POZ_CHIP>):
     CPLT_CTRL2 = ATTR_PG(PERV)               # Transfer PERV partial good attribute into region good register
     PERV_CTRL0.VITL_CG_DIS = 0               # Enabe PERV vital clock gating
     CPLT_CTRL0.CTRL_CC_FORCE_ALIGN_DC = 0    # Disable alignment pulse
-    PERV_CTRL0.VITL_AL_DIS_OUT = 0           # Disable vital alignment pulse
+    PERV_CTRL0.VITL_AL_OUT_DIS = 1           # Disable vital alignment pulse
 
     EPS_MASK = TP_LFIR_MASK_DEFAULT            # 0x80c1c7fcf3fbffff
     XSTOP_MASK = XSTOP_MASK_ANY_ATTN_AND_DBG   # 0x3000000000000000
