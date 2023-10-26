@@ -238,13 +238,9 @@ enum sbeSecondaryResponse
     SBE_SEC_ATTR_UPD_BLOB_GEN_FAILED          = 0x8F,
     SBE_SEC_CHK_UPDATE_BLOB_GEN_TARGET_TYPES  = 0x90,
     SBE_SEC_TEST_FFDC_SUCCESSFUL              = 0x91,
-    SBE_SEC_TEST_FFDC_INVALIDMODE             = 0x92,
-    SBE_SEC_BAD_TESTFFDC_ERR_RECORD           = 0x93,
-    SBE_SEC_TESTFFDC_FAILED                   = 0x94,
-    SBE_TESTFFDC_INVALID_FFDC_RC              = 0x95,
-    SBE_SEC_RAS_INVALID_SCOPE_CHECK_VALUE     = 0x96,
-    SBE_SEC_RAS_INVALID_SIDE_VALUE            = 0x97,
-    SBE_SEC_RAS_INVALID_DEVICE_ID             = 0x98,
+    SBE_SEC_RAS_INVALID_SCOPE_CHECK_VALUE     = 0x92,
+    SBE_SEC_RAS_INVALID_SIDE_VALUE            = 0x93,
+    SBE_SEC_RAS_INVALID_DEVICE_ID             = 0x94,
 };
 
 /**
@@ -437,6 +433,20 @@ enum DEVICE_ID
     PHY_DEVICE_ID_2      = 0x04,
     PHY_DEVICE_ID_3      = 0x08,
     END_OF_DEVICE_LIST   = 0x10,
+};
+
+
+/**
+ * @brief enum for sbe test ffdc chipop
+*/
+enum testFFDCFormat
+{
+    ASYNC_NONFATAL_FFDC  = 0x01, // Async Non Fatal FFDC mode
+    ASYNC_FATAL_FFDC     = 0x02, // Async Fatal FFDC mode
+    SYNC_NONFATAL_FFDC   = 0x03, // Sync Non Fatal FFDC mode
+    SYNC_FATAL_FFDC      = 0x04, // Sync Fatal FFDC mode
+    TIMEOUT_SBE_HALT     = 0x05, // Timeout halt sbe mode, pkhalt
+    TIMEOUT_SBE_HANG     = 0x06  // Timeout hang sbe mode, busy loop
 };
 
 #ifdef __cplusplus
