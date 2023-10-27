@@ -771,7 +771,9 @@ fapi2::ReturnCode ody_omi_init(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>
     FAPI_TRY(ody::omiSetACTagPASIDMetaData(i_target));
     FAPI_TRY(ody::omiEnableAFU(i_target));
 
+#ifndef __PPE__
     FAPI_TRY(mss::unmask::after_mc_omi_init<mss::mc_type::ODYSSEY>(i_target));
+#endif
 
 fapi_try_exit:
 
