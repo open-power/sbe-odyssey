@@ -231,6 +231,7 @@
     <ffdc>VENDOR_ATTR</ffdc>
     <ffdc>VENDOR_REG</ffdc>
     <ffdc>PMIC_TARGET</ffdc>
+    <ffdc>OCMB_TARGET</ffdc>
     <callout>
       <target>PMIC_TARGET</target>
       <priority>MEDIUM</priority>
@@ -253,6 +254,7 @@
     <ffdc>REVISION_ATTR</ffdc>
     <ffdc>REVISION_REG</ffdc>
     <ffdc>PMIC_TARGET</ffdc>
+    <ffdc>OCMB_TARGET</ffdc>
     <callout>
       <target>PMIC_TARGET</target>
       <priority>MEDIUM</priority>
@@ -289,6 +291,7 @@
     <ffdc>REVISION_ATTR</ffdc>
     <ffdc>REVISION_REG</ffdc>
     <ffdc>PMIC_TARGET</ffdc>
+    <ffdc>OCMB_TARGET</ffdc>
     <callout>
       <target>PMIC_TARGET</target>
       <priority>MEDIUM</priority>
