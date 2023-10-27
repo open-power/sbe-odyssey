@@ -49,6 +49,10 @@ static uint64_t getPPEMessageRegisterAddress() {
     {
         return scomt::poz::FSXCOMP_FSXLOG_SCRATCH_REGISTER_15_RW;
     }
+    if (SBE_GLOBAL->pibCtrlId == PIBCTRL_PME)
+    {
+        return scomt::poz::FSXCOMP_FSXLOG_SCRATCH_REGISTER_2_RW;
+    }
     return scomt::poz::FSXCOMP_FSXLOG_SB_MSG;
 }
 
