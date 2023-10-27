@@ -40,9 +40,9 @@
 #include <generic/memory/lib/utils/mss_pair.H>
 #include <generic/memory/lib/utils/c_str.H>
 
+#include <vector>
+#include <generic/memory/lib/utils/pos.H>
 #ifndef __PPE__
-    #include <vector>
-    #include <generic/memory/lib/utils/pos.H>
     #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
 #endif
 
@@ -382,7 +382,6 @@ find_targets( const fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP>& i_target,
     return l_ports;
 }
 
-#ifndef __PPE__
 ///
 /// @brief Helper to find a set of elements based on a fapi2 target, then sort them
 /// @tparam M the target type to be returned
@@ -400,6 +399,7 @@ static inline std::vector< fapi2::Target<M> > find_targets_sorted_by_pos( const 
     return l_targets;
 }
 
+#ifndef __PPE__
 ///
 /// @brief find a key value from a vector of STL pairs
 /// @tparam T  input type

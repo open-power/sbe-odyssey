@@ -40,14 +40,12 @@
 #include <pmic_enable_utils_ddr5.H>
 #include <pmic_regs.H>
 #include <pmic_regs_fld.H>
-#include <pmic_enable_4u_settings.H>
 #include <generic/memory/lib/utils/index.H>
 #include <generic/memory/lib/utils/find.H>
 #include <mss_generic_attribute_getters.H>
 #include <mss_pmic_attribute_accessors_manual.H>
 #include <mss_generic_system_attribute_getters.H>
 #include <generic/memory/lib/utils/poll.H>
-#include <generic/memory/lib/utils/pos.H>
 
 
 namespace mss
@@ -360,9 +358,8 @@ fapi_try_exit:
 fapi2::ReturnCode pmic_power_down(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     uint8_t l_module_height = 0;
-    fapi2::ReturnCode l_rc = fapi2::FAPI2_RC_SUCCESS;
 
-    FAPI_TRY(mss::attr::get_dram_module_height(i_target, l_module_height));
+    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_MODULE_HEIGHT, i_target, l_module_height));
 
     if (l_module_height == fapi2::ENUM_ATTR_MEM_EFF_DRAM_MODULE_HEIGHT_4U)
     {
@@ -655,9 +652,13 @@ fapi2::ReturnCode enable_2u(
         FAPI_ERR("Renesas not yet supported");
     }
 
+#ifndef __PPE__
+    // Host SBE does not support 2U so we can safely ifndef this function call
+
     // Check that all the PMIC statuses are good post-enable
     FAPI_TRY(mss::pmic::status::check_all_pmics(i_ocmb_target),
              "Bad statuses returned, or error checking statuses of PMICs on " GENTARGTIDFORMAT, GENTARGTID(i_ocmb_target));
+#endif
 
     return fapi2::FAPI2_RC_SUCCESS;
 
@@ -767,6 +768,7 @@ fapi2::ReturnCode setup_adc(const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CRES
 fapi_try_exit:
     return fapi2::current_err;
 }
+
 
 ///
 /// @brief Setup and initialize PMIC
@@ -988,7 +990,7 @@ fapi2::ReturnCode pmic_enable(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&
         uint8_t l_module_height = 0;
 
         // Grab the module-height attribute to determine 1U/2U vs 4U
-        FAPI_TRY(mss::attr::get_dram_module_height(i_ocmb_target, l_module_height));
+        FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_MODULE_HEIGHT, i_ocmb_target, l_module_height));
 
         // Kick off the matching enable procedure
         if (l_module_height == fapi2::ENUM_ATTR_MEM_EFF_DRAM_MODULE_HEIGHT_4U)

@@ -36,9 +36,9 @@ namespace fapi2
     constexpr TargetType TARGET_TYPE_MC_CHILDREN = TARGET_TYPE_OMI;
     constexpr TargetType TARGET_TYPE_OMI_CHILDREN = TARGET_TYPE_OCMB_CHIP;
     constexpr TargetType TARGET_TYPE_XBUS_CHILDREN = TARGET_TYPE_XBUSL;
-    constexpr TargetType TARGET_TYPE_EX_CHILDREN = TARGET_TYPE_L3CACHE
-        | TARGET_TYPE_SHADOW | TARGET_TYPE_CORE;
-    constexpr TargetType TARGET_TYPE_OCMB_CHIP_CHILDREN = TARGET_TYPE_PMIC | TARGET_TYPE_GENERICI2CRESPONDER | TARGET_TYPE_MEM_PORT | TARGET_TYPE_DIMM;
+    constexpr TargetType TARGET_TYPE_EX_CHILDREN = TARGET_TYPE_L3CACHE | TARGET_TYPE_SHADOW | TARGET_TYPE_CORE;
+    constexpr TargetType TARGET_TYPE_OCMB_CHIP_CHILDREN = TARGET_TYPE_PMIC | TARGET_TYPE_GENERICI2CRESPONDER | TARGET_TYPE_MEM_PORT |
+                                                          TARGET_TYPE_DIMM | TARGET_TYPE_POWER_IC;
 
     template<TargetType T>
     constexpr LogTargetType fapiTargetTypeToPlatTargetType()
@@ -71,6 +71,7 @@ namespace fapi2
     TARGET_TYPE_SUPPORT(OCMB_CHIP);
     TARGET_TYPE_SUPPORT(PMIC);
     TARGET_TYPE_SUPPORT(GENERICI2CRESPONDER);
+    TARGET_TYPE_SUPPORT(POWER_IC);
 
 #undef TARGET_TYPE_SUPPORT
 
@@ -161,7 +162,7 @@ namespace fapi2
         else if (T_NO_MCAST == TARGET_TYPE_OCMB_CHIP)
         {
             STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_OCMB_CHIP_CHILDREN) == 0,
-                         "Invalid child target for OMI parent");
+                         "Invalid child target for OCMB parent");
             return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_OCMB_CHIP>(*this);
         }
         // If we fall through to here, there is no defined code path to handle the
