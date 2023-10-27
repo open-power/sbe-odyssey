@@ -1134,6 +1134,8 @@ ISTEP(3, 4, "proc_chiplet_reset", "SSBE, TSBE")
 
 def p11s_chiplet_reset():
     poz_chiplet_reset(i_target, p11s_chiplet_delay_table, 10)
+    with all chiplets except TP via multicast:
+        NET_CTRL0.SRAM_ENABLE = 1    # bit 23
 
 def p11t_chiplet_reset():
     poz_chiplet_reset(i_target, p11t_chiplet_delay_table, 10)
@@ -1199,6 +1201,8 @@ def zme_chiplet_reset():
         ## Clear or set VREG global enable in NET_CTRL1( 7) according to value in attribute
         NET_CTRL1[7]  = ATTR_L3_VREG_GLOBAL_ENABLE
 
+    with all chiplets except TP via multicast:
+        NET_CTRL0.SRAM_ENABLE = 1    # bit 23
 
 enum poz_chiplet_reset_phases : uint8_t {
     PRE_SCAN0 = 0x80,
@@ -1225,7 +1229,6 @@ def poz_chiplet_reset(target<ANY_POZ_CHIP>,
             NET_CTRL0.VITL_ALIGN_DIS = 0
             NET_CTRL0.PCB_EP_RESET = 0
             NET_CTRL0.CHIPLET_EN = 1
-            NET_CTRL0.SRAM_ENABLE = 1    # bit 23
 
             ## Wait for chiplet heartbeat to become active
             # read HEARTBEAT_REG using MULTICAST_BITX so we can tell which chiplet(s) failed on timeout

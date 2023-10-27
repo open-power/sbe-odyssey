@@ -98,7 +98,6 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
 
         NET_CTRL0 = 0;
         NET_CTRL0.set_CHIPLET_EN(1);
-        NET_CTRL0.setBit<23>();   // SRAM_ENABLE
         FAPI_TRY(NET_CTRL0.putScom_SET(l_chiplets_mc));
 
         l_poll_count = HEARTBEAT_POLL_COUNT;
