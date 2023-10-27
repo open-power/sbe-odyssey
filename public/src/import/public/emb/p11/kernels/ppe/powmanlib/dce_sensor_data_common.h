@@ -54,7 +54,7 @@ typedef union DtsSensorReading
 
 typedef struct
 {
-    DtsSensorReading_t core[2];
+    DtsSensorReading_t core[2]; //0:ISU, 1:VSU
     DtsSensorReading_t mma;
     DtsSensorReading_t cache;
 } CoreDataDts_t;
