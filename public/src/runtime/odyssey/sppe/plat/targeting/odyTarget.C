@@ -50,6 +50,6 @@ namespace fapi2
                                                                         // for the TEMP SENSOR target.
     };
 
-    const ArrayWrapper<targetInfo_t> G_projTargetMap = WRAP_ARRAY(ody_platTargetMap);
-    const ArrayWrapper<target_filter_definition> G_projTargetFilters = WRAP_ARRAY(ody::TARGET_FILTERS);
+    const fapi2::static_array<targetInfo_t> G_projTargetMap = WRAP_ARRAY(ody_platTargetMap);
+    const fapi2::static_array<target_filter_definition> G_projTargetFilters = WRAP_ARRAY(ody::TARGET_FILTERS);
 }
