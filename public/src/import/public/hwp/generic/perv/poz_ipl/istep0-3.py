@@ -136,10 +136,20 @@ def sim_poweron_sequence():
 
 ISTEP(0, 8, "setup_ref_clock", "BMC")
 
-def pz_setup_ref_clock(target<PROC_CHIP | HUB_CHIP>):
+#struct root_control_restore {
+#    uint16_t main_addr, copy_addr;
+#    uint32_t init_value;
+#};
+
+def pz_setup_ref_clock(target<PROC_CHIP | HUB_CHIP>, const root_ctrl_restore i_restores[]):
     ## Disable Write Protection for Root/Perv Control registers
     # CONTROL_WRITE_PROTECT_DISABLE = 0x4453FFFF
     GPWRP = CONTROL_WRITE_PROTECT_DISABLE
+
+    ## Restoring root/perv control register values
+    for restore in i_restores:
+        putScom(i_target, restore.main_addr, restore.init_value);
+        putScom(i_target, restore.copy_addr, restore.init_value);
 
     ## Set RCS control signals to CFAM reset values, apply basic configuration for output clock enables and forced input clock.
     ROOT_CTRL5 = 0
@@ -205,10 +215,10 @@ def p11s_setup_ref_clock():
 
 def zme_setup_ref_clock():
 
+    pz_setup_ref_clock()
+
     ROOT_CTRL4[0] = ATTR_CLOCK_RCS_OUTPUT == BYPASS
     ROOT_CTRL4_COPY[0] = ROOT_CTRL4
-
-    pz_setup_ref_clock()
 
 ISTEP(0, 9, "clock_test", "BMC")
 
