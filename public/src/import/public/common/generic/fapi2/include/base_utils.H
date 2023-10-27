@@ -132,4 +132,39 @@ constexpr uint64_t bit_mask(const int start_bit, const int length)
     return (~0ULL >> (64 - length)) << (64 - start_bit - length);
 }
 
+/*
+ * Wrapper class to wrap an array and its size, so you can use range based for loops on it:
+ * for (auto &x : array) { ... }
+ *
+ * NOTE you don't need this if the array declaration is known in the current translation
+ * unit; if so you can use a range based loop directly on the array itself.
+ *
+ * This wrapper is only needed if the size of the array is not known at compile time of the
+ * translation unit using it, e.g. in generic infrastructure code which expects to be
+ * customized using a table of variable size.
+ */
+template<typename T>
+struct static_array
+{
+    const T* first;
+    const T* last;
+
+    const T* begin() const
+    {
+        return first;
+    }
+    const T* end() const
+    {
+        return last;
+    }
+};
+
+template<typename T>
+constexpr static_array<T> _WRAP_ARRAY(const T array[], const long len)
+{
+    return { array, array + len };
+}
+
+#define WRAP_ARRAY(a) _WRAP_ARRAY(a, ARRAY_SIZE(a))
+
 }

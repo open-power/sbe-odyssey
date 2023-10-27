@@ -51,8 +51,8 @@ namespace fapi2
         uint32_t targetCnt:7;      ///< Number of instances in the group
     } targetInfo_t;
 
-    extern const ArrayWrapper<targetInfo_t> G_projTargetMap;
-    extern const ArrayWrapper<target_filter_definition> G_projTargetFilters;
+    extern const fapi2::static_array<targetInfo_t> G_projTargetMap;
+    extern const fapi2::static_array<target_filter_definition> G_projTargetFilters;
 
     // LOG target type to FAPI target type
     #define GET_FAPI_TARGET_TYPE(log_target)    static_cast<fapi2::TargetType>(1ull << log_target)
