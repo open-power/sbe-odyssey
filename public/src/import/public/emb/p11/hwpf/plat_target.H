@@ -373,7 +373,7 @@ createPlatTargetHandle(const uint32_t i_plat_argument)
         l_handle.fields.target_num = i_plat_argument;
         l_handle.fields.target_type = PPE_TARGET_TYPE_EQ;
     }
-    else if( K & TARGET_TYPE_CORE || K & TARGET_TYPE_L3CACHE )
+    else if( K & (TARGET_TYPE_CORE | TARGET_TYPE_L3CACHE ) )
     {
         // functional bit is set by caller based on partial good
         l_handle.fields.target_type = PPE_TARGET_TYPE_CORE;
