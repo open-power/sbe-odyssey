@@ -45,7 +45,9 @@ enum PZ_SETUP_REF_CLOCK_Private_Constants
     CONTROL_WRITE_PROTECT_DISABLE = 0x4453FFFF,
 };
 
-ReturnCode pz_setup_ref_clock(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target)
+ReturnCode pz_setup_ref_clock(
+    const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target,
+    const static_array<root_ctrl_restore>& i_ctrl_reg_restores)
 {
     GPWRP_t GPWRP;
     ROOT_CTRL0_t ROOT_CTRL0;
@@ -66,6 +68,13 @@ ReturnCode pz_setup_ref_clock(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE
     GPWRP = CONTROL_WRITE_PROTECT_DISABLE;
     FAPI_TRY(GPWRP.putCfam(i_target));
 
+    FAPI_INF("Restoring root/perv control register values");
+
+    for (auto restore : i_ctrl_reg_restores)
+    {
+        FAPI_TRY(putCfamRegister(i_target, restore.main_addr, restore.init_value));
+        FAPI_TRY(putCfamRegister(i_target, restore.copy_addr, restore.init_value));
+    }
 
     if (l_clock_rcs_output == fapi2::ENUM_ATTR_CLOCK_RCS_OUTPUT_SYNC)
     {
