@@ -188,7 +188,7 @@ ReturnCode spi::SEEPROMDevice::wait_for_write_complete(
                     .set_LENGTH(i_length),
                     "Timed out waiting for operation %d to complete: "
                     "i_address=0x%08x i_length=0x%08x",
-                    i_address, i_length);
+                    i_operation, i_address, i_length);
 
         delay(WRITE_POLL_DELAY_NS, WRITE_POLL_DELAY_CYCLES);
     }
