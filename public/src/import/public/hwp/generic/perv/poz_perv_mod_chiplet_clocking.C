@@ -204,7 +204,7 @@ ReturnCode mod_abist_setup(
 
     if (!l_opcg_infinite_mode)
     {
-        OPCG_REG0.set_LOOP_COUNT(i_runn_cycles);
+        OPCG_REG0.set_LOOP_COUNT(i_runn_cycles + i_abist_start_at);
     }
 
     FAPI_TRY(OPCG_REG0.putScom(i_target));
