@@ -117,7 +117,7 @@ def mod_abist_setup(target<PERV|MC>, uint16_t i_clock_regions, uint32_t i_runn_c
     OPCG_REG0 = 0
     OPCG_REG0.RUNN_MODE = 1
     OPCG_REG0.OPCG_STARTS_BIST = 1
-    OPCG_REG0.LOOP_COUNT = i_runn_cycles
+    OPCG_REG0.LOOP_COUNT = i_runn_cycles + idle_count
 
 def mod_opcg_go(target<PERV|MC>):
     OPCG_REG0.OPCG_GO = 1

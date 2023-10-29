@@ -82,7 +82,7 @@ fapi2::ReturnCode mod_abist_setup(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
     uint16_t i_regions,
     uint64_t i_runn_cycles = 0x42FFF,
-    uint64_t i_abist_start_at = 0xF0,
+    uint64_t i_abist_start_at = 0x100000,
     const uint16_t* i_chiplets_regions = NULL,
     const bool i_skip_first_clock = false,
     const bool i_skip_last_clock = false);
