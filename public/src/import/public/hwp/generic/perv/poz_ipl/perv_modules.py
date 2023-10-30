@@ -260,6 +260,17 @@ def mod_start_stop_clocks(target<PERV|MC>, uint16_t i_clock_regions, uint16_t i_
 
 ISTEP(99, 99, "poz_perv_mod_misc", "")
 
+#struct root_control_restore {
+#    uint16_t main_addr, copy_addr;
+#    uint32_t init_value;
+#};
+
+def mod_restore_root_controls(target<ANY_POZ_CHIP>, const root_ctrl_restore i_restores[]):
+    ## Restoring root/perv control register values
+    for restore in i_restores:
+        putScom(i_target, restore.main_addr, restore.init_value);
+        putScom(i_target, restore.copy_addr, restore.init_value);
+
 def mod_cbs_start_prep(target<ANY_POZ_CHIP>, bool i_start_sbe=true, bool i_scan0_clockstart=true):
     # This module uses CFAM accesses for everything
 
