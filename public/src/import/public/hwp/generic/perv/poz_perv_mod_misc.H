@@ -37,6 +37,25 @@
 
 using namespace mux;
 
+/// @brief Address and data to restore a root control (or other mailbox reg; we don't judge)
+struct root_ctrl_restore
+{
+    /// Address of the main and copy register
+    uint16_t main_addr, copy_addr;
+    /// Value to write; should equal the init value after CFAM_RESET
+    uint32_t init_value;
+};
+
+/// @brief Restore root control register values according to a list
+///
+/// @param[in]   i_target              Target chip
+/// @param[in]   i_ctrl_reg_restores   List of root/perv control registers to restore to init values
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode mod_restore_root_controls(
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const fapi2::static_array<root_ctrl_restore>& i_restores);
+
 /// @brief CBS start module
 /// -- Prepare for CBS start
 /// -- Start CBS and check CBS_CS INTERNAL_STATE_VECTOR for IDLE state.

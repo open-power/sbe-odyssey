@@ -165,6 +165,6 @@ constexpr static_array<T> _WRAP_ARRAY(const T array[], const long len)
     return { array, array + len };
 }
 
-#define WRAP_ARRAY(a) _WRAP_ARRAY(a, ARRAY_SIZE(a))
+#define WRAP_ARRAY(a) fapi2::_WRAP_ARRAY(a, ARRAY_SIZE(a))
 
 }

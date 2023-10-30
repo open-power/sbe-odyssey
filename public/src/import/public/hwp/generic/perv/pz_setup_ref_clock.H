@@ -35,14 +35,8 @@
 
 #include <fapi2.H>
 
-struct root_ctrl_restore
-{
-    uint16_t main_addr, copy_addr;
-    uint32_t init_value;
-};
-
 typedef fapi2::ReturnCode (*pz_setup_ref_clock_FP_t)(const fapi2::Target < fapi2::TARGET_TYPE_PROC_CHIP |
-        fapi2::TARGET_TYPE_HUB_CHIP > &, const fapi2::static_array<root_ctrl_restore>&);
+        fapi2::TARGET_TYPE_HUB_CHIP > &);
 
 /// @brief shared code for setup_ref_clock procedure
 /// -- Disable Write Protection for Root/Perv Control registers
@@ -50,12 +44,10 @@ typedef fapi2::ReturnCode (*pz_setup_ref_clock_FP_t)(const fapi2::Target < fapi2
 /// -- Setup refclock receiver termination & Unprotect inputs to RCS sense register
 ///
 /// @param[in]   i_target              Reference to TARGET_TYPE_HUB_CHIP or TARGET_TYPE_PROC_CHIP
-/// @param[in]   i_ctrl_reg_restores   List of root/perv control registers to restore to init values
-
+///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 extern "C"
 {
     fapi2::ReturnCode pz_setup_ref_clock(const fapi2::Target < fapi2::TARGET_TYPE_PROC_CHIP |
-                                         fapi2::TARGET_TYPE_HUB_CHIP > & i_target,
-                                         const fapi2::static_array<root_ctrl_restore>& i_ctrl_reg_restores);
+                                         fapi2::TARGET_TYPE_HUB_CHIP > & i_target);
 }

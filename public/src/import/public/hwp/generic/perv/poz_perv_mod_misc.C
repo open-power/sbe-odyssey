@@ -58,7 +58,30 @@ enum POZ_PERV_MOD_MISC_Private_Constants
     TP_LFIR_MASK_DEFAULT = 0x80c1c7fcf3fbffff,
     XSTOP_MASK_ANY_ATTN_AND_DBG = 0x3000000000000000,
     RECOV_MASK_LOCAL_XSTOP = 0x2000000000000000,
+    CONTROL_WRITE_PROTECT_DISABLE = 0x4453FFFF,
 };
+
+ReturnCode mod_restore_root_controls(
+    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const static_array<root_ctrl_restore>& i_restores)
+{
+    GPWRP_t GPWRP;
+
+    FAPI_INF("Disable Write Protection for Root/Perv Control registers");
+    GPWRP = CONTROL_WRITE_PROTECT_DISABLE;
+    FAPI_TRY(GPWRP.putCfam(i_target));
+
+    FAPI_INF("Restoring root/perv control register values");
+
+    for (auto restore : i_restores)
+    {
+        FAPI_TRY(putCfamRegister(i_target, restore.main_addr, restore.init_value));
+        FAPI_TRY(putCfamRegister(i_target, restore.copy_addr, restore.init_value));
+    }
+
+fapi_try_exit:
+    return current_err;
+}
 
 ReturnCode mod_cbs_start_prep(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
