@@ -33,6 +33,12 @@
 
 using namespace fapi2;
 
+// ody draminit offset address
+uint32_t g_draminitOffset = 0;
+
+// ody dram data Size
+uint32_t g_dramDataSizeInWords = 0;
+
 uint32_t sbeGetMemTrainData(uint8_t *i_pArg)
 {
     #define SBE_FUNC " sbeGetMemTrainData "
@@ -89,7 +95,7 @@ uint32_t sbeGetMemTrainData(uint8_t *i_pArg)
         if(reqMsg.operation == MEMTRAINDUMP)
         {
             // Data is available and now stream it.
-            fifoRc = ostream.put((SPPE_MEM_TRAINING_DATA_SIZE / 4), (uint32_t *)g_draminitOffset);
+            fifoRc = ostream.put((g_dramDataSizeInWords), (uint32_t *)g_draminitOffset);
 
             // If FIFO access failure
             CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(fifoRc);

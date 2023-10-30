@@ -37,4 +37,6 @@ extern uint32_t g_partitionOffset;
 extern uint32_t g_partitionSize;
 // DRAM Init Offset
 extern uint32_t g_draminitOffset;
+// DRAM Data Size
+extern uint32_t g_dramDataSizeInWords;
 #endif //__GLOBALS_H
