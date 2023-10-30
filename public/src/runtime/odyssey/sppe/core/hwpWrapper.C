@@ -304,11 +304,13 @@ ReturnCode istepDraminitWithOcmb( voidfuncptr_t i_hwp)
             Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
             SBE_EXEC_HWP(fapiRc, reinterpret_cast<sbeHwpDraminit_t>( i_hwp ),
                           l_ocmb_chip, logStream);
+
+            g_dramDataSizeInWords = (logStream.getLength() * sizeof(hwp_data_unit) / 4);
+
+            // Update DRAM offset with allocate the scratch space.
+            g_draminitOffset =  (uint32_t)scratchArea;
         }
     }while(0);
-
-    // Update DRAM offset with allocate the scratch space.
-    g_draminitOffset =  (uint32_t)scratchArea;
 
     SBE_EXIT(SBE_FUNC);
     return fapiRc;
