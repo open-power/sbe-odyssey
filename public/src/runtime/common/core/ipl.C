@@ -97,6 +97,12 @@ void ipl::sbeAutoBoot()
         }
     }while(false);
 
+    if(rc == FAPI2_RC_SUCCESS)
+    {
+        // Transition to runtime state on autoboot success
+        stateTransition(SBE_EVENT_CMN_RUNTIME);
+    }
+
     SBE_EXIT(SBE_FUNC);
     #undef SBE_FUNC
 }

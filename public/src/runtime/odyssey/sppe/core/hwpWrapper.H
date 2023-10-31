@@ -64,16 +64,6 @@ using  sbeHwpDraminit_t = ReturnCode (*)
 ReturnCode istepWithOcmb( voidfuncptr_t i_hwp);
 
 /**
- * @brief Wrapper to call the final HWP
- *
- * @param[in] i_hwp Function pointer to HWP
- *
- * @return FAPI2_RC_SUCCESS on success
- */
-ReturnCode istepWithOcmbAndMoveToRuntime( voidfuncptr_t i_hwp);
-
-
-/**
  * @brief Wrapper to call the HWP
  *
  * @param[in] i_hwp Function pointer to HWP
