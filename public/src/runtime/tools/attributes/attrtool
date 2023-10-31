@@ -128,7 +128,7 @@ def cmd_getattr(args):
     dbfile = pickle.loads(utilOpen(args.dbfile))
     image = bytearray(utilOpen(args.image))
     try:
-        attribute = attrmodule.get_attr(dbfile, args.attr, image)
+        attribute = attrmodule.get_attr(dbfile, args.attr, args.target, image, args.raw)
         print(attribute)
     except Exception as e:
         print(e)

@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -92,12 +93,12 @@ inline fapi2::ReturnCode get_{{attr.name}}(
     {% for targ in attr.ekb_target_list if targ in target_types.keys() %}
     case fapi2::{{targ}}:
         attr_copy(o_val,
-        fapi2::ATTR::{{targ}}::{{attr.name}}{{attr.inst_index(target_types[targ].ntargets, targ,'i_target')}});
+        fapi2::ATTR::{{targ}}::{{attr.name}}{{attr.inst_index(target_types[targ].ntargets, targ,'i_target', target_types[attr.shared_mem_targets[targ]].ntargets if targ in attr.shared_mem_targets.keys())}});
         break;
     {% endfor %}
     default:
         l_rc = fapi2::FAPI2_RC_FALSE;
-        SBE_ERROR("The target passed (type=0x%08X%08X) is not valid for "
+        SBE_ERROR("The target passed (type=0x%08X%08X) is not valid for the "
             "attribute {{attr.name}}", (l_type >> 32), (l_type & 0xFFFFFFFF));
         break;
     }
@@ -119,12 +120,12 @@ inline fapi2::ReturnCode set_{{attr.name}}(
     {
     {% for targ in attr.ekb_target_list if targ in target_types.keys() %}
     case fapi2::{{targ}}:
-        attr_copy(fapi2::ATTR::{{targ}}::{{attr.name}}{{attr.inst_index(target_types[targ].ntargets,targ,'i_target')}}, o_val);
+        attr_copy(fapi2::ATTR::{{targ}}::{{attr.name}}{{attr.inst_index(target_types[targ].ntargets,targ,'i_target',target_types[attr.shared_mem_targets[targ]].ntargets if targ in attr.shared_mem_targets.keys())}}, o_val);
         break;
     {% endfor %}
     default:
         l_rc = fapi2::FAPI2_RC_FALSE;
-        SBE_ERROR("The target passed (type=0x%08X%08X) is not valid for "
+        SBE_ERROR("The target passed (type=0x%08X%08X) is not valid for the "
              "attribute {{attr.name}}",(l_type >> 32), (l_type & 0xFFFFFFFF));
         break;
     }
