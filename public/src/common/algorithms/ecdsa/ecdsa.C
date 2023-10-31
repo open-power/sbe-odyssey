@@ -1914,7 +1914,7 @@ int ec_ecies_acc(const unsigned char *i_eciesR, const unsigned char *i_privKey,
     BN_COPY(pz, bn_one);
     generate_lookup_2bit_1pt(lookup_2bit, px, py);
     ec_multiply_1pt(lookup_2bit, px, py, pz, private_key);
-
+    ec_projective2affine(px, py, pz);
     if (bn_is_zero(px,0) || bn_is_zero(py,0))
     {
         return -1; // can also occur if r was 0 - both would be horrible
