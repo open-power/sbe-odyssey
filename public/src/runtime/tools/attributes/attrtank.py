@@ -129,6 +129,9 @@ class RealAttrFieldInfo(AttrFieldInfo):
                  name: str,
                  hash: int,
                  sbe_target_type: str,
+                 is_memory_shared:bool,
+                 share_by_target_type:str,
+                 shared_mem_targets:'dict[str,str]',
                  ekb_target_type: list,
                  value_type: str,
                  enum_values: str,
@@ -141,10 +144,24 @@ class RealAttrFieldInfo(AttrFieldInfo):
                     writeable, platinit)
 
         self.sbe_targ_type = sbe_target_type
+        self.is_memory_shared = is_memory_shared
+        self.share_by_target_type = share_by_target_type
+        self.shared_mem_targets = shared_mem_targets
         self.targ_entry = copy.deepcopy(targ_entry)
         self.array_dims = array_dims
         self.sbe_address = 0
         self.num_targ_inst = AttributeDB.TARGET_TYPES[sbe_target_type].ntargets
+
+        if (is_memory_shared == True):
+            if (self.num_targ_inst % AttributeDB.TARGET_TYPES[share_by_target_type].ntargets) != 0:
+                raise ParseError("\"forTarget\" {0} instance(s) [{1}] is not in multiples "
+                       "of \"byTarget\" {2} instance(s) [{3}]".format(sbe_target_type,
+                       self.num_targ_inst, share_by_target_type,
+                       AttributeDB.TARGET_TYPES[share_by_target_type].ntargets))
+            self.adj_num_targ_inst = int(self.num_targ_inst / AttributeDB.TARGET_TYPES[share_by_target_type].ntargets)
+        else:
+            self.adj_num_targ_inst = self.num_targ_inst
+
         try:
             self._type = attrdatatype.VALUE_TYPES[value_type.lower()]
         except KeyError:
@@ -155,8 +172,8 @@ class RealAttrFieldInfo(AttrFieldInfo):
 
         for dim in reversed(self.array_dims):
             self._type = attrdatatype.ArrayValueType(self._type, dim)
-        if(self.num_targ_inst > 1):
-            self._type = attrdatatype.ArrayValueType(self._type, self.num_targ_inst, True)
+        if(self.adj_num_targ_inst > 1):
+            self._type = attrdatatype.ArrayValueType(self._type, self.adj_num_targ_inst, True)
         self.tot_size = self._type.size
 
     def set(self, image, image_base, value:list):
@@ -175,9 +192,9 @@ class RealAttrFieldInfo(AttrFieldInfo):
         values = []
 
         if(self.targ_entry.comm_values):
-            values = self.targ_entry.values[0xFF] * self.num_targ_inst
+            values = self.targ_entry.values[0xFF] * self.adj_num_targ_inst
         else:
-            for i in range(self.num_targ_inst):
+            for i in range(self.adj_num_targ_inst):
                 values += self.targ_entry.values[i]
 
         vprint("values:", values)
@@ -194,7 +211,7 @@ class RealAttrFieldInfo(AttrFieldInfo):
     def set_value(self, image, image_base, value, instance, index:list):
 
         offset = self.sbe_address - image_base
-        if(self.num_targ_inst > 1):
+        if(self.adj_num_targ_inst > 1):
             index.insert(0, instance)
         try:
             if isinstance(self._type, attrdatatype.ArrayValueType):
@@ -239,29 +256,57 @@ class RealAttrFieldInfo(AttrFieldInfo):
     @property
     def internal_dims(self) -> str:
         retval = self.type_dims
-        if self.num_targ_inst > 1:
-            retval = "[%d]" % self.num_targ_inst + retval
+        if self.adj_num_targ_inst > 1:
+            retval = "[%d]" % self.adj_num_targ_inst + retval
         return retval
 
     def targ_inst(self, targ_var:str):
         inst_index = ""
-        if self.num_targ_inst > 1:
+        if self.adj_num_targ_inst > 1:
             inst_index += "[" + targ_var + ".get()."
+            #The below logic will work for both shared and non shared
+            #memory.
+            #   getTargetInstance() % self.adj_num_targ_inst
+            #   getChipletNumber() % self.adj_num_targ_inst
+            #To avoid additional computation at runtime, we do this
+            #only in case of shared memory.
             if(self.sbe_targ_type == 'TARGET_TYPE_PERV'):
-                inst_index += "getChipletNumber()"
+                if (self.is_memory_shared):
+                    inst_index += "getChipletNumber() % " + str(self.adj_num_targ_inst)
+                else:
+                    inst_index += "getChipletNumber()"
             else:
-                inst_index += "getTargetInstance()"
+                if (self.is_memory_shared):
+                    inst_index += "getTargetInstance() % " + str(self.adj_num_targ_inst)
+                else:
+                    inst_index += "getTargetInstance()"
             inst_index += "]"
         return inst_index
 
-    def inst_index(self, num_inst:int, targ_type:str, targ_var:str):
+    def inst_index(self, num_inst:int, targ_type:str, targ_var:str, by_target_cnt:int):
         inst_index = ""
-        if num_inst > 1:
+
+        adj_num_inst=num_inst
+        using_shared_memory = targ_type in self.shared_mem_targets.keys()
+        #If this attribute is marked as using shared memory for this
+        #target type, then compute the adjusted target count
+        if using_shared_memory:
+            if by_target_cnt is None or (by_target_cnt == 0):
+               raise Exception("attribute [{0}] target type [{1}] target count is not available to define accessors for the composite target".format(self.name,targ_type))
+            adj_num_inst=num_inst/by_target_cnt
+
+        if adj_num_inst > 1:
             inst_index += "[" + targ_var + ".get()."
             if(targ_type == 'TARGET_TYPE_PERV'):
-                inst_index += "getChipletNumber()"
+                if (self.is_memory_shared):
+                    inst_index += "getChipletNumber() % " + str(adj_num_inst)
+                else:
+                    inst_index += "getChipletNumber()"
             else:
-                inst_index += "getTargetInstance()"
+                if (self.is_memory_shared):
+                    inst_index += "getTargetInstance() % " + str(adj_num_inst)
+                else:
+                    inst_index += "getTargetInstance()"
             inst_index += "]"
         return inst_index
 
@@ -460,6 +505,9 @@ class AttributeStructure(object):
                         attr.name,
                         attr_hash28bit,
                         sbe_targ,
+                        sbe_targ in attr.sbe_entry.shared_memory.keys(),
+                        attr.sbe_entry.shared_memory.get(sbe_targ,None),
+                        attr.sbe_entry.shared_memory,
                         ekb_target_list,
                         attr.value_type,
                         attr.enum_values,

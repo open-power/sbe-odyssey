@@ -27,6 +27,7 @@
 from attrdb import *
 from attrtank import *
 from attrtoolutils import *
+from attrdatatype import *
 
 def set_attr(i_attrDb:AttributeStructure, io_image:bytearray, i_attr:str,\
                 i_value:int, i_target:str, i_index:list, i_instance:int)->bytearray:
@@ -35,6 +36,10 @@ def set_attr(i_attrDb:AttributeStructure, io_image:bytearray, i_attr:str,\
         if not isinstance(attr, RealAttrFieldInfo):
             continue
         if((attr.name == i_attr.upper()) and (attr.sbe_targ_type == i_target)) :
+            if (i_instance >= attr.adj_num_targ_inst):
+                raise ArgumentError("The instance [{0}] is not supported. The attribute "
+                                    "{1} [{2}] supports [{3}] instance(s)".format(
+                                    i_instance, i_attr, i_target, attr.adj_num_targ_inst))
             attr_to_set = attr
             break
 
@@ -48,7 +53,7 @@ def set_attr(i_attrDb:AttributeStructure, io_image:bytearray, i_attr:str,\
     if(instance != 0xFF):
         attr_to_set.set_value(io_image, i_attrDb.image_base, i_value, instance, i_index)
     else:
-        for i in range(attr_to_set.num_targ_inst):
+        for i in range(attr_to_set.adj_num_targ_inst):
             attr_to_set.set_value(io_image, i_attrDb.image_base, i_value, i, i_index)
     return io_image
 

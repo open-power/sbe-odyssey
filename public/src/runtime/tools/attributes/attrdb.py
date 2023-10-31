@@ -420,6 +420,7 @@ class SBEEntry(object):
         self.virtual = False
         self.overridable = False
         self.validated = False
+        self.shared_memory:dict[str,str]=dict()
 
     def set_overridable(self):
         self.is_empty = False
@@ -443,6 +444,10 @@ class SBEEntry(object):
         vprint("Target entry not found for target %s" % targ_name)
         return None
 
+    def add_shared_memory(self, for_target:str, by_target:str):
+        self.is_empty = False
+        self.shared_memory[for_target] = by_target
+
     def update_sbe_entry(self, in_entry:"SBEEntry") -> None:
         if (in_entry == None) or in_entry.is_empty:
             return
@@ -452,6 +457,7 @@ class SBEEntry(object):
             self.overridable = True
         if in_entry.virtual:
             self.virtual = True
+        self.shared_memory = in_entry.shared_memory.copy()
 
 class SBEAttributes(object):
     """
@@ -469,6 +475,7 @@ class SBEAttributes(object):
             virtual = elem.find("virtual")
             overridable = elem.find("Overridable")
             values = elem.findall("value")
+            shared_memories = elem.findall("sharedMemory")
 
             if name is None:
                 raise ParseError("Unnamed SBE attribute")
@@ -538,6 +545,33 @@ class SBEAttributes(object):
 
                 for targ_entry in tgt_ins:
                     entry.add_target_entry(tgt_ins[targ_entry])
+
+            if shared_memories != None:
+                shared_memory_cnt = 0
+                missing_attr_txt = "{0} : For the sharedMemory element {1}, " \
+                                   "the attribute \"{2}\" is missing."
+                invalid_target_txt = "{0} : For the sharedMemory element {1}, " \
+                                     "the target type [{2}] specified for the " \
+                                     "attribute \"{3}\" is not supported"
+                for shared_memory in shared_memories:
+                    shared_memory_cnt += 1
+                    for_target = shared_memory.attrib.get("forTarget",None)
+                    if for_target is None:
+                        raise ParseError(missing_attr_txt.format(
+                                            name, shared_memory_cnt, "forTarget"))
+                    if for_target not in AttributeDB.TARGET_TYPES.keys():
+                        raise ParseError(invalid_target_txt.format(
+                                        name, shared_memory_cnt, for_target, "forTarget"))
+
+                    by_target = shared_memory.attrib.get("byTarget",None)
+                    if by_target is None:
+                        raise ParseError(missing_attr_txt.format(
+                                            name, shared_memory_cnt, "byTarget"))
+                    if by_target not in AttributeDB.TARGET_TYPES.keys():
+                        raise ParseError(invalid_target_txt.format(
+                                        name, shared_memory_cnt, for_target, "byTarget"))
+
+                    entry.add_shared_memory(for_target,by_target)
 
             if not entry.is_empty:
                 self.attributes[name] = entry
