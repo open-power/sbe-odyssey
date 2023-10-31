@@ -2767,7 +2767,7 @@
     <value>0x1E</value>
   </entry>
   <entry name="ATTR_ODY_PHY_TX2D_DFE_MISC">
-    <value>0x01</value>
+    <value>0x55</value>
   </entry>
   <entry name="ATTR_ODY_PHY_TX2D_TRAIN_OPT">
     <value>0x1E</value>
