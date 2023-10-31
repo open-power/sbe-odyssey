@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -70,15 +70,6 @@ extern "C"
     void odyssey_displayAddrFields(uint64_t i_addr,
                                    odysseyChipUnits_t i_chipUnitType,
                                    uint32_t i_chipEcLevel);
-
-    /// @brief Validate the chip unit number to be within range
-    ///        of a chip unit type.
-    /// @param[in] i_chipUnitNum   Value of chip unit number (instance)
-    /// @param[in] i_chipUnitType  Chip unit type
-    /// @retval Non-zero if error
-    uint8_t odyssey_validateChipUnitNum(const uint8_t i_chipUnitNum,
-                                        const odysseyChipUnits_t i_chipUnitType);
-
 
 } // extern "C"
 
