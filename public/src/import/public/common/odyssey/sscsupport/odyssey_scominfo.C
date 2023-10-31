@@ -32,6 +32,9 @@
 ///
 
 // includes
+#ifndef __HOSTBOOT_MODULE
+    #include <stdio.h>
+#endif
 #include <odyssey_scominfo.H>
 #include <odyssey_scom_addr.H>
 #include <odyssey_cu_utils.H>
@@ -214,6 +217,56 @@ extern "C"
         o_odysseyCU = i_odysseyCU;
         o_modifiedChipUnitNum = i_targetChipUnitNum;
         return l_rc;
+    }
+
+    // See header file for function description
+    uint8_t odyssey_validateChipUnitNum(const uint8_t i_chipUnitNum,
+                                        const odysseyChipUnits_t i_chipUnitType)
+    {
+        uint8_t l_rc = 0;
+        uint8_t l_index;
+
+        for (l_index = 0;
+             l_index < (sizeof(odysseyChipUnitDescriptionTable) / sizeof(odyssey_chipUnitDescription_t));
+             l_index++)
+        {
+            // Looking for input chip unit type in table
+            if (i_chipUnitType == odysseyChipUnitDescriptionTable[l_index].enumVal)
+            {
+                // Found a match, check input i_chipUnitNum to be <= max chip unit num
+                // for this unit type
+                if (i_chipUnitNum > odysseyChipUnitDescriptionTable[l_index].maxChipUnitNum)
+                {
+#ifndef __HOSTBOOT_MODULE
+                    printf("ERROR: Chip Unit num entered (%d) is out of range for Chip Unit type %d\n",
+                           i_chipUnitNum, i_chipUnitType);
+#endif
+                    l_rc = 1;
+                }
+
+                // Additional check for PERV targets, where there are gaps between instances
+                else if (i_chipUnitType == ODYSSEY_PERV_CHIPUNIT)
+                {
+                    if (i_chipUnitNum > MAX_ODYSSEY_PERV_CHIPUNIT) //invalid for pervasive target
+                    {
+#ifndef __HOSTBOOT_MODULE
+                        printf("ERROR: Pervasive Chip Unit number is invalid: 0x%.8X\n", i_chipUnitNum);
+#endif
+                        l_rc = 1;
+                    }
+                }
+
+                break;
+            }
+        }
+
+        // Can't find i_chipUnitType in table
+        if ( l_index >= (sizeof(odysseyChipUnitDescriptionTable) / sizeof(odyssey_chipUnitDescription_t)) )
+        {
+            l_rc = 1;
+        }
+
+        return (l_rc);
     }
 
 } // extern "C"
