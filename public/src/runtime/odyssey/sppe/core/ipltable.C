@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -84,7 +85,7 @@ static istepMap_t g_istep3PtrTbl[] = {
     ISTEP_MAP( istepWithOcmb, ody_chiplet_fir_init ),              // 3.21
     ISTEP_MAP( NULL, NULL ),                                       // 3.22
     ISTEP_MAP( NULL, NULL ),                                       // 3.23
-    ISTEP_MAP( istepWithOcmbAndMoveToRuntime, ody_nest_enable_io ), // 3.24
+    ISTEP_MAP( istepWithOcmb, ody_nest_enable_io ),                // 3.24
 };
 
 istepTableEntry_t g_istepTableEntries[] = {

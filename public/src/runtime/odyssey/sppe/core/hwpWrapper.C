@@ -54,21 +54,6 @@ ReturnCode istepWithOcmb( voidfuncptr_t i_hwp)
     #undef SBE_FUNC
 }
 
-ReturnCode istepWithOcmbAndMoveToRuntime( voidfuncptr_t i_hwp)
-{
-    #define SBE_FUNC " istepWithOcmbAndMoveToRuntime "
-    SBE_ENTER(SBE_FUNC);
-    ReturnCode rc = FAPI2_RC_SUCCESS;
-    rc = istepWithOcmb(i_hwp);
-
-    if(rc == FAPI2_RC_SUCCESS)
-    {
-        stateTransition(SBE_EVENT_CMN_RUNTIME);
-    }
-    return rc;
-    #undef SBE_FUNC
-}
-
 ReturnCode istepBistWithOcmb( voidfuncptr_t i_hwp)
 {
     #define SBE_FUNC " istepBistWithOcmb "
