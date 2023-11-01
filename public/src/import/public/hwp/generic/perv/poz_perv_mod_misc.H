@@ -200,6 +200,12 @@ static inline fapi2::ReturnCode mod_pipe_setup(
     FAPI_TRY(fapi2::putScom(i_target, 0xB0120, l_acc_ctrl));
     FAPI_TRY(fapi2::putScom(i_target, 0xB0123, l_ctrl_id));
 
+    // Clean up all the pipes; they're in the CFAM domain and thus not cleaned up by scan0
+    for (int i = 0; i < 8; i++)
+    {
+        FAPI_TRY(fapi2::putScom(i_target, 0xB0104 + 0x100 * i, 1ULL << 63));
+    }
+
 fapi_try_exit:
     return fapi2::current_err;
 }
