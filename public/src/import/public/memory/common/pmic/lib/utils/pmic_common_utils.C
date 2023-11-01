@@ -338,7 +338,7 @@ fapi2::ReturnCode calculate_voltage_bitmap_from_attr(
                 .set_SPD_OFFSET(l_volt_offset)
                 .set_EFD_OFFSET(l_efd_volt_offset),
 #ifndef __PPE__
-                "Voltage bitmap 0x%02X out of range as determined by SPD voltage +/- offset for %s of " GENTARGTIDFORMAT,
+                "Voltage bitmap 0x%02X out of range as determined by SPD voltage +/- offset for %s of " GENTARGTIDFORMAT
                 " SPD_VOLT: %u SPD_OFFSET: %d EFD_OFFSET: %d",
                 o_volt_bitmap, PMIC_RAIL_NAMES[i_rail], GENTARGTID(i_pmic_target),
                 l_volt, l_volt_offset, l_efd_volt_offset);
