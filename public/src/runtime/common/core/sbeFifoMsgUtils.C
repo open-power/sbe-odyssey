@@ -227,6 +227,28 @@ uint32_t sbeDownFifoEnq_mult (uint32_t        &io_len,
     do
     {
         sbeDownFifoStatusReg_t l_status = {0};
+        sbeUpFifoStatusReg_t l_upfifo_status = {0};
+
+        // On pipes, the reset requests always come in on the upfifo side and aren't mirrored to the downfifo side
+        // so we need to check the upfifo side separately while we write the downfifo.
+        if (i_type >= SBE_PIPE1)
+        {
+            l_rc = sbeUpFifoGetStatus(reinterpret_cast<uint64_t *>(&l_upfifo_status), i_type);
+            if (l_rc)
+            {
+                SBE_ERROR(SBE_FUNC"sbeUpFifoGetStatus failed, l_rc=[0x%08X] "
+                          "Fifo Type is:[%02X]", l_rc, i_type);
+                l_rc = SBE_SEC_FIFO_ACCESS_FAILURE;
+                break;
+            }
+            if (l_upfifo_status.upfifo_status.req_upfifo_reset)
+            {
+                SBE_ERROR(SBE_FUNC"Received reset request and the "
+                          "Fifo Type is:[%02X]", i_type);
+                l_rc = SBE_FIFO_RESET_RECEIVED;
+                break;
+            }
+        }
 
         // Read the down stream FIFO status
         l_rc = sbeDownFifoGetStatus (reinterpret_cast<uint64_t *>(&l_status),
@@ -459,7 +481,7 @@ sbeFifoType sbeFifoGetSource (bool reset)
         }
 
         // Check pending interrupt on Pipes
-        type = sbePipeGetSource();
+        type = sbePipeGetSource(reset);
 
         // Fatal error is no interrupt source was found
         assert(type != SBE_FIFO_UNKNOWN);
@@ -510,7 +532,7 @@ sbeInterfaceSrc_t sbeFifoGetInstSource (sbeFifoType upFifoType, bool reset)
     return SBE_INTERFACE_UNKNOWN;
 }
 
-sbeFifoType sbePipeGetSource ( )
+sbeFifoType sbePipeGetSource (bool  reset)
 {
     #define SBE_FUNC "sbePipeGetSource "
     uint64_t accessCtrlCfg = 0;
@@ -535,22 +557,54 @@ sbeFifoType sbePipeGetSource ( )
     }
     rc = SBE_SEC_GENERIC_FAILURE_IN_EXECUTION;
 
-    for (uint8_t i=SBE_PIPE1; i<= SBE_PIPE8; i++)
-    {   // For Pipes, look at access control reg to find the source
-        sbePipeAccessFlags_t cfg = {0};
-	sbePipeCtlrId_t ctrl = {0};
-        cfg.flags = (SBE_PIPE_GET_CFG_BYTE (i, accessCtrlCfg));
-	ctrl.byte = (SBE_PIPE_GET_CFG_BYTE (i, ctlrId));
-
-        // ctrlID field of read end determines intr routing if RIE is set,
-        // independent of RUID setting. So,below flag being set implies SBE
-        // got either the new data available or reset request interrupt
-        if (cfg.rd_intr_pending && ctrl.readend == SBE_GLOBAL->pibCtrlId)
+    if (!reset)
+    {
+        // Look for data indications by checking the "interrupt pending" bits
+        // in the access control register.
+        for (uint8_t i=SBE_PIPE1; i<= SBE_PIPE8; i++)
         {
-            rc = SBE_SEC_OPERATION_SUCCESSFUL;
-            type = static_cast<sbeFifoType> (i);
-            SBE_INFO (SBE_FUNC "Intr received on PIPE# %d", i);
-            break;
+            sbePipeAccessFlags_t cfg = {0};
+            sbePipeCtlrId_t ctrl = {0};
+            cfg.flags = (SBE_PIPE_GET_CFG_BYTE (i, accessCtrlCfg));
+            ctrl.byte = (SBE_PIPE_GET_CFG_BYTE (i, ctlrId));
+
+            // ctrlID field of read end determines intr routing if RIE is set,
+            // independent of RUID setting. So,below flag being set implies SBE
+            // got either the new data available or reset request interrupt
+            if (cfg.rd_intr_pending && ctrl.readend == SBE_GLOBAL->pibCtrlId)
+            {
+                rc = SBE_SEC_OPERATION_SUCCESSFUL;
+                type = static_cast<sbeFifoType> (i);
+                SBE_INFO (SBE_FUNC "Intr received on PIPE# %d", i - SBE_PIPE1 + 1);
+                break;
+            }
+        }
+    }
+    else
+    {
+        // Reset requests are not reflected in the access control register so
+        // we have to check the individual pipe status registers instead.
+        for (uint8_t i = SBE_PIPE1; i <= SBE_PIPE8; i++)
+        {
+            sbePipeCtlrId_t ctrl = { .byte = SBE_PIPE_GET_CFG_BYTE (i, ctlrId) };
+            if (ctrl.readend == SBE_GLOBAL->pibCtrlId)
+            {
+                sbeUpFifoStatusReg_t pipeStatus;
+                rc = sbeUpFifoGetStatus((uint64_t *)&pipeStatus, (sbeFifoType)i);
+                if (rc)
+                {
+                    SBE_ERROR (SBE_FUNC "Error reading Pipe %d status: 0x08X", i - SBE_PIPE1 + 1, rc);
+                    pk_halt ();
+                }
+
+                if (pipeStatus.upfifo_status.req_upfifo_reset)
+                {
+                    rc = SBE_SEC_OPERATION_SUCCESSFUL;
+                    type = static_cast<sbeFifoType> (i);
+                    SBE_INFO (SBE_FUNC "Reset received on PIPE# %d", i - SBE_PIPE1 + 1);
+                    break;
+                }
+            }
         }
     }
 

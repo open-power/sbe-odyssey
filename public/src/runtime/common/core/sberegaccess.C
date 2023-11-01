@@ -76,6 +76,17 @@ uint32_t SbeRegAccess::init(bool forced)
         //Read the LFR reg
         PPE_LVD(scomt::poz_ppe::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_RW, lfrReg);
 
+        // On the SPPE, reset the SBE FIFO
+        if (SBE_GLOBAL->pibCtrlId == PIBCTRL_SPPE)
+        {
+            rc = putscom_abs(0xB0004, 1ULL << 63);
+            if (rc)
+            {
+                SBE_ERROR(SBE_FUNC "Failed to reset the SBE FIFO, rc=0x%08x", rc);
+                break;
+            }
+        }
+
         // Read SBE messaging register into iv_messagingReg
         rc = getscom_abs(getPPEMessageRegisterAddress(), &messagingReg.iv_messagingReg);
         if(PCB_ERROR_NONE != rc)
@@ -230,4 +241,3 @@ uint32_t SbeRegAccess::updateAsyncFFDCBit( bool i_on )
     return rc;
     #undef SBE_FUNC
 }
-

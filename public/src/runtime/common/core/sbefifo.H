@@ -50,7 +50,7 @@ extern const uint64_t g_Fifo_baseAddresses[];
 // defined by "sbeFifoType"
 #define FIFO_BASE_ADDR(SBE_FIFO_TYPE) g_Fifo_baseAddresses[SBE_FIFO_TYPE]
 
-#define FIFO_DS_TYPE(TYPE) ((TYPE==SBE_FIFO || TYPE==SBE_HB_FIFO) ? (TYPE):(TYPE+1))
+#define FIFO_OTHER_SIDE(TYPE) ((TYPE==SBE_FIFO || TYPE==SBE_HB_FIFO) ? (TYPE):(static_cast<sbeFifoType>(TYPE^1)))
 
 //Base address for SBE FIFOs
 const uint64_t SBE_FIFO_BASE                     =  0x000B0000;
@@ -241,19 +241,18 @@ extern inline uint32_t sbeUpFifoPerformReset (
     uint32_t rc = 0;
     SBE_INFO("sbeUpFifoPerformReset");
 
-// @TODO via PFSBE-206:
-//        This logic changes once PIPE Pairs get fixed per HWFW interlock.
-//        Request reset on downstream pipe, but dont wait for completion
-// For FIFOs, HW handles reset on fixed downstream FIFO automatically
-// For Pipes, need to do this in FW dynamically based on designated downstream
-    if (i_type != SBE_FIFO)
+    // For FIFO and HFIFO one reset will reset both directions.
+    // For pipes reset will only reset the one direction, so we have to reset
+    // the opposite pipe separately.
+    if (i_type >= SBE_PIPE1)
     {
-        rc = putscom_abs (SBE_DOWNSTREAM_FIFO_REQ_RESET +
-                          FIFO_BASE_ADDR(FIFO_DS_TYPE(i_type)),
+        const sbeFifoType other_pipe = FIFO_OTHER_SIDE(i_type);
+        rc = putscom_abs (SBE_UPSTREAM_FIFO_PERFORM_RESET +
+                          FIFO_BASE_ADDR(other_pipe),
                           ((uint64_t)0x1)<<32);
         if (rc)
         {
-            SBE_ERROR ("Error resetting the downstream pipe %d", i_type+1);
+            SBE_ERROR ("Error resetting the downstream pipe %d", other_pipe);
         }
     }
     return putscom_abs(SBE_UPSTREAM_FIFO_PERFORM_RESET + FIFO_BASE_ADDR(i_type),
@@ -295,13 +294,8 @@ extern inline uint32_t sbeUpFifoAckEot (const sbeFifoType i_type = SBE_FIFO)
 extern inline uint32_t sbeDownFifoEnq (const uint64_t i_data,
                                        const sbeFifoType i_type = SBE_FIFO)
 {
-#ifndef DFT
-    // This particular message is overly verbose for DFT; it can fill an entire
-    // pk tracebuffer!
-    SBE_DEBUG(">sbeDownFifoEnq");
-#endif
     return putscom_abs(SBE_DOWNSTREAM_FIFO_ENQ_ADD +
-                       FIFO_BASE_ADDR(FIFO_DS_TYPE(i_type)), i_data);
+                       FIFO_BASE_ADDR(FIFO_OTHER_SIDE(i_type)), i_data);
 }
 
 
@@ -319,7 +313,7 @@ extern inline uint32_t sbeDownFifoEnq (const uint64_t i_data,
 extern inline uint32_t sbeDownFifoGetStatus (uint64_t *o_data, const sbeFifoType i_type = SBE_FIFO)
 {
     return getscom_abs(SBE_DOWNSTREAM_FIFO_STATUS +
-                       FIFO_BASE_ADDR(FIFO_DS_TYPE(i_type)), o_data);
+                       FIFO_BASE_ADDR(FIFO_OTHER_SIDE(i_type)), o_data);
 }
 
 /**
@@ -333,7 +327,22 @@ extern inline uint32_t sbeDownFifoGetStatus (uint64_t *o_data, const sbeFifoType
 extern inline uint32_t sbeDownFifoWriteEot ( const sbeFifoType i_type = SBE_FIFO )
 {
     return putscom_abs(SBE_DOWNSTREAM_FIFO_SIGNAL_EOT +
-                   FIFO_BASE_ADDR(FIFO_DS_TYPE(i_type)), DOWNSTREAM_EOT_DATA);
+                   FIFO_BASE_ADDR(FIFO_OTHER_SIDE(i_type)), DOWNSTREAM_EOT_DATA);
+}
+
+/**
+  * @brief Signal to the other side on a downstream FIFO that we would like to reset the connection
+  *
+  * @param sbeFifoType: i_type
+  *
+  * @return     Rc from the underlying scom utility
+  *
+  */
+extern inline uint32_t sbeDownFifoRequestReset ( const sbeFifoType i_type = SBE_FIFO )
+{
+    SBE_INFO("sbeDownFifoRequestReset");
+    return putscom_abs(SBE_DOWNSTREAM_FIFO_REQ_RESET +
+                       FIFO_BASE_ADDR(FIFO_OTHER_SIDE(i_type)), 1ULL << 63);
 }
 
 #endif // __SBEFW_SBEFIFO_H
