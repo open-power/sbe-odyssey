@@ -308,7 +308,7 @@ namespace fapi2
                                   const buffer<uint64_t> &i_enabled,
                                   const bool i_include_nonfunctional,
                                   std::vector<plat_target_sbe_handle> &o_children) const;
-
+        public:
         ///
         /// @brief Function to get the plat target handle of a perv target using chiplet id
         /// @param [in] i_chiplet_num chilet id of the target

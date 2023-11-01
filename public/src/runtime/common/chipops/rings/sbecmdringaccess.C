@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -123,8 +124,10 @@ uint32_t sbeGetRingWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
 
         // Call getRing_setup - loads the scan region data for the given ring
         // address and updates the check word data
+        sbeSecondaryResponse sbeRc = SBE_SEC_OPERATION_SUCCESSFUL;
         l_fapiRc = fapi2::getRing_setup(l_reqMsg.ringAddr,
-                                       (fapi2::RingMode)l_ringMode);
+                                       (fapi2::RingMode)l_ringMode,
+                                        sbeRc);
         if( l_fapiRc != FAPI2_RC_SUCCESS )
         {
             SBE_ERROR(SBE_FUNC" getRing_setup failed. RingAddress: 0x%08X "
@@ -133,6 +136,15 @@ uint32_t sbeGetRingWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
             respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
                                SBE_SEC_GETRING_SETUP_FAILED);
             l_ffdc.setRc(l_fapiRc);
+            break;
+         }
+         if(sbeRc)
+         {
+            SBE_ERROR(SBE_FUNC" getRing_setup failed. RingAddress: 0x%08X "
+                        "RingMode: 0x%04X, sbeRc: 0x%08X", l_reqMsg.ringAddr,
+                         l_ringMode, sbeRc);
+            respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                               sbeRc);
             break;
          }
          // Calculate the iteration length
@@ -216,7 +228,8 @@ uint32_t sbeGetRingWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
             // Call getRing_verifyAndcleanup - verify the check word data is
             // matching or not and will clean up the scan region data
             l_fapiRc = getRing_verifyAndcleanup((uint32_t)(l_reqMsg.ringAddr),
-                                        (fapi2::RingMode)l_ringMode);
+                                        (fapi2::RingMode)l_ringMode,
+                                        sbeRc);
             if( l_fapiRc != FAPI2_RC_SUCCESS )
             {
                 SBE_ERROR(SBE_FUNC" getRing_verifyAndcleanup failed. "
@@ -225,6 +238,14 @@ uint32_t sbeGetRingWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
                 respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
                                    SBE_SEC_GETRING_VERIFY_CLEANUP);
                 l_ffdc.setRc(l_fapiRc);
+            }
+            if(sbeRc)
+            {
+                SBE_ERROR(SBE_FUNC" getRing_setup failed. RingAddress: 0x%08X "
+                        "RingMode: 0x%04X, sbeRc: 0x%08X", l_reqMsg.ringAddr,
+                         l_ringMode, sbeRc);
+                respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                               sbeRc);
             }
         }
     }while(false);

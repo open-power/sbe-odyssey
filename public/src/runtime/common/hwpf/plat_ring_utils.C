@@ -63,17 +63,26 @@ ReturnCode plat_putringutil( const void *i_target,
     return l_rc;
 }
 ReturnCode getRing_setup(const uint32_t i_ringAddress,
-                             const RingMode i_ringMode)
+                         const RingMode i_ringMode,
+                         sbeSecondaryResponse &o_sbeRc)
 {
     fapi2::ReturnCode l_rc = FAPI2_RC_SUCCESS;
 
-    uint64_t l_scanRegion = 0;
-    Target<SBE_ROOT_CHIP_TYPE> l_target =  g_platTarget->plat_getChipTarget();
-    auto l_hndl = l_target.getChildren<fapi2::TARGET_TYPE_PERV>(fapi2::TARGET_FILTER_MC,TARGET_STATE_FUNCTIONAL)[0];
     do
     {
-        l_scanRegion = decodeScanRegionData(l_hndl, i_ringAddress, i_ringMode);
+        uint8_t chipletUnitNum = ( ( i_ringAddress & 0xFF000000 ) >> 24 );
+        plat_target_sbe_handle l_hndl;
+        o_sbeRc = g_platTarget->getPervTargetByChipletId(chipletUnitNum, l_hndl);
+        if(o_sbeRc)
+        {
+            FAPI_ERR("getRing_setup: getPervTargetByChipletId failed with 0x%08X sbe rc",
+                                     o_sbeRc);
+            break;
+        }
+
         // Prep clock controller for ring scan with modified type
+        uint64_t l_scanRegion = 0;
+        l_scanRegion = decodeScanRegionData(l_hndl, i_ringAddress, i_ringMode);
         l_rc =  setupClockController( l_hndl, i_ringMode,
                                       l_scanRegion, g_opcgData);
         if(l_rc != fapi2::FAPI2_RC_SUCCESS)
@@ -85,11 +94,11 @@ ReturnCode getRing_setup(const uint32_t i_ringAddress,
         // Write a 64 bit value for header.
         const uint64_t l_header = 0xa5a5a5a5a5a5a5a5ull;
         uint32_t l_scomAddress = 0x0003E000 |  (i_ringAddress & 0xFF000000);
-        l_rc = fapi2::putScom(l_hndl, l_scomAddress, l_header);
+        l_rc = fapi2::putScom((Target<TARGET_TYPE_PERV>)l_hndl, l_scomAddress, l_header);
 
         if(l_rc != fapi2::FAPI2_RC_SUCCESS)
         {
-            FAPI_ERR("setupClockController ring header failed.Rc:0x%08X", l_rc);
+            FAPI_ERR("getRing_setup failed while writing for header, Rc:0x%08X", l_rc);
             break;
         }
     } while(0);
@@ -98,14 +107,22 @@ ReturnCode getRing_setup(const uint32_t i_ringAddress,
 }
 
 ReturnCode getRing_verifyAndcleanup(const uint32_t i_ringAddress,
-                                    const RingMode i_ringMode)
+                                    const RingMode i_ringMode,
+                                    sbeSecondaryResponse &o_sbeRc)
 {
     fapi2::ReturnCode l_rc = FAPI2_RC_SUCCESS;
 
-    Target<SBE_ROOT_CHIP_TYPE> l_target =  g_platTarget->plat_getChipTarget();
-    auto l_hndl = l_target.getChildren<fapi2::TARGET_TYPE_PERV>(fapi2::TARGET_FILTER_MC, TARGET_STATE_FUNCTIONAL)[0];
     do
     {
+        uint8_t chipletUnitNum = ( ( i_ringAddress & 0xFF000000 ) >> 24 );
+        plat_target_sbe_handle l_hndl;
+        o_sbeRc = g_platTarget->getPervTargetByChipletId(chipletUnitNum, l_hndl);
+        if(o_sbeRc)
+        {
+            FAPI_ERR("getRing_setup: getPervTargetByChipletId failed with 0x%08X rc",
+                                     o_sbeRc);
+            break;
+        }
         uint64_t l_scanRegion = 0;
         l_scanRegion = decodeScanRegionData(l_hndl, i_ringAddress, i_ringMode);
         // Verify header

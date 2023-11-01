@@ -28,6 +28,7 @@
 
 #include <return_code.H>
 #include <hw_access_def.H>
+#include "sbe_sp_intf.H"
 
 namespace fapi2
 {
@@ -35,17 +36,21 @@ namespace fapi2
     // updates the check word data
     // @param[in] : ring addtress
     // @param[in]:  ring mode
+    // @param[in, out]:  sbe secondary response code
     // @return fapi::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
     fapi2::ReturnCode getRing_setup(const uint32_t i_ringAddress,
-                             const RingMode i_ringMode);
+                             const RingMode i_ringMode,
+                             sbeSecondaryResponse &o_sbeRc);
 
     // This function verify the check word data is matching or not and will
     // clean up the scan region data
     // @param[in] i_ringAddress - absolute ring address
     // @param[in] i_ringMode - Ring mode value
+    // @param[in, out]:  sbe secondary response code
     // @return fapi::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
     fapi2::ReturnCode getRing_verifyAndcleanup(const uint32_t i_ringAddress,
-                                        const RingMode i_ringMode);
+                                        const RingMode i_ringMode,
+                                        sbeSecondaryResponse &o_sbeRc);
 
     /// @brief Backend platform implementation of iplat putRing
     /// This applies a single scan image to a given target.
