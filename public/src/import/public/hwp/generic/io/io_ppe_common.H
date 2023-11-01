@@ -253,9 +253,21 @@ class io_ppe_common
         fapi2::ReturnCode set_pcie_presets(const fapi2::Target<K, M, V>& i_target,
                                            const uint8_t i_thread);
 
-        fapi2::ReturnCode auto_recal(const fapi2::Target<K, M, V>& i_target,
-                                     const uint8_t i_thread,
-                                     const uint8_t i_auto_recal);
+        /// @brief      Setting auto recal for xbus syncmode operations
+        /// @param[in] i_target         Chip target to start
+        /// @param[in] i_thread         The thread LTE is being set on
+        /// @param[in] i_auto_recal     Wheter or not auto_recal will run
+        /// @return fapi2::ReturnCode FAPI2_RC_SUCCESS if success, else error code.
+        fapi2::ReturnCode auto_recal_sync(const fapi2::Target<K, M, V>& i_target,
+                                          const uint8_t i_thread,
+                                          const uint8_t i_auto_recal);
+
+        /// @brief      Turning on auto recal after posttrain for A/XBUS
+        /// @param[in] i_target         Chip target to start
+        /// @param[in] i_thread         The thread LTE is being set on
+        /// @return fapi2::ReturnCode FAPI2_RC_SUCCESS if success, else error code.
+        fapi2::ReturnCode auto_recal_posttrain(const fapi2::Target<K, M, V>& i_target,
+                                               const uint8_t i_thread);
 };
 
 // ===============================================================
@@ -1353,11 +1365,11 @@ fapi_try_exit:
 }
 
 template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
-fapi2::ReturnCode io_ppe_common<K, M, V>::auto_recal(const fapi2::Target<K, M, V>& i_target,
+fapi2::ReturnCode io_ppe_common<K, M, V>::auto_recal_sync(const fapi2::Target<K, M, V>& i_target,
         const uint8_t i_thread,
         const uint8_t i_auto_recal)
 {
-    FAPI_DBG("Getting auto_recal");
+    FAPI_DBG("Getting auto_recal_sync");
 
     constexpr uint16_t PPE_STATE_RECAL_NOT_RUN = 0xF009;
     constexpr uint16_t c_max_tries = 1000;
@@ -1427,6 +1439,20 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::auto_recal(const fapi2::Target<K, M, V
     {
         FAPI_ERR("RX Lane Busy, failed to set to 0");
     }
+
+fapi_try_exit:
+    FAPI_DBG("End");
+    return fapi2::current_err;
+}
+
+template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
+fapi2::ReturnCode io_ppe_common<K, M, V>::auto_recal_posttrain(const fapi2::Target<K, M, V>& i_target,
+        const uint8_t i_thread)
+{
+    FAPI_DBG("Getting auto_recal_posttrain");
+
+    FAPI_TRY(MEM_REG_RX_ENABLE_AUTO_RECAL_0_15_PUT(iv_regs, i_target, i_thread, 1));
+    FAPI_TRY(MEM_REG_RX_ENABLE_AUTO_RECAL_16_23_PUT(iv_regs, i_target, i_thread, 1));
 
 fapi_try_exit:
     FAPI_DBG("End");
