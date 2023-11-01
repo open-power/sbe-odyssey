@@ -687,6 +687,9 @@ ReturnCode poz_bist(
         // Queue up all rings to be unloaded; compare will flag any which can be skipped
         for (auto& cplt : l_chiplets_uc)
         {
+            CPLT_CTRL2_t CPLT_CTRL2;
+            CPLT_CTRL2.getScom(cplt);
+
             for (uint8_t i = 0; i < l_hash_file_size / sizeof(hash_data); i++)
             {
                 uint32_t l_base_ring_address, l_ring_address;
@@ -698,6 +701,17 @@ ReturnCode poz_bist(
                                                 l_base_ring_address,
                                                 l_ring_address)))
                 {
+                    continue;
+                }
+
+                // Skip if this ring isn't configured for the input target
+                const uint16_t l_ring_region = get_ring_region(l_base_ring_address);
+
+                if (!(CPLT_CTRL2.getBits<4, 16>() & l_ring_region))
+                {
+                    FAPI_DBG("Ring 0x%08x region 0x%04x deconfigured per PG; skipping scans ...",
+                             l_ring_address,
+                             l_ring_region);
                     continue;
                 }
 
@@ -720,7 +734,6 @@ ReturnCode poz_bist(
                     }
                     else if (l_rc == FAPI2_RC_FALSE)
                     {
-                        const uint16_t l_ring_region = get_ring_region(l_base_ring_address);
                         FAPI_DBG("Adding 0x%04x to chiplet %d fail regions",
                                  l_ring_region,
                                  cplt.getChipletNumber());
