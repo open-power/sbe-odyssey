@@ -46,11 +46,6 @@
 #define PLAT_HEADER_SIZE_IN_WORDS   0x0004 // PLAT Header values
 #define BLOB_HEADER_SIZE_IN_WORDS   0x0001 // Blob Header size
 
-/// @TODO JIRA: PFSBE-351
-/// bellow trace length will be removed once SPPE_PK_TRACE_SIZE_WITH_HEADER
-/// can start using in common code by linker.cmd changes
-#define SBE_FFDC_TRACE_DUMP_LENGTH  0x2020 // Package SBE Trace Data length
-
 enum SBE_FFDC_DD_LEVEL
 {
     SBE_FFDC_DD1 = 1,

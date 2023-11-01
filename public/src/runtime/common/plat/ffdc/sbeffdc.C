@@ -84,7 +84,7 @@ void SbeFFDCPackage::updateSBEpackageDataHeader(void)
     {
         // Package SBE Trace Data Blob with Field id and length
         iv_sbeTraceBlob.field.fieldId = (uint16_t)SBE_FFDC_TRACE_DATA;
-        iv_sbeTraceBlob.field.fieldLen = SBE_FFDC_TRACE_DUMP_LENGTH;
+        iv_sbeTraceBlob.field.fieldLen = sizeof(*G_PK_TRACE_BUF) - sizeof(G_PK_TRACE_BUF->cb) + G_PK_TRACE_BUF->size;
         iv_ffdcPackageHeader.lenInWords += ( sizeof(packageBlobField_t) +
                         iv_sbeTraceBlob.field.fieldLen ) / sizeof(uint32_t);
         SBE_INFO(SBE_FUNC" Enable SBE_FFDC_TRACE_DATA with lenInWords[%d]",
@@ -294,4 +294,3 @@ uint32_t sendFFDCOverFIFO( const uint32_t i_fieldsConfig,
     return rc;
     #undef SBE_FUNC
 }
-
