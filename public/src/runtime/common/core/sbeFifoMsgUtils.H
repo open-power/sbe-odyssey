@@ -180,9 +180,10 @@ sbeInterfaceSrc_t sbeFifoGetInstSource (sbeFifoType upFifoType, bool reset);
 
 /**
  * @brief sbePipeGetSource: Find which pipe the request originated from
+ * @param[in]    reset      Look for the source of a reset interrupt; if false, look for a data interrupt
  * @return                  PIPE type
  */
-sbeFifoType sbePipeGetSource ( );
+sbeFifoType sbePipeGetSource (bool reset);
 
 /**
  * @brief sbeHandleDsPipeCnfg: Check and update the downstream pipe config
