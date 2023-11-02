@@ -331,7 +331,6 @@ pk_timer_schedule_absolute(PkTimer*   timer,
                            PkTimebase scheduled_time)
 {
     PkMachineContext ctx;
-    PkTimebase  timeout = PK_INTERVAL_SCALE(scheduled_time);
 
     pk_critical_section_enter(&ctx);
 
@@ -340,7 +339,7 @@ pk_timer_schedule_absolute(PkTimer*   timer,
         PK_ERROR_IF(timer == 0, PK_INVALID_TIMER_AT_SCHEDULE);
     }
 
-    timer->timeout = timeout;
+    timer->timeout = scheduled_time;
     __pk_timer_schedule(timer);
 
     pk_critical_section_exit(&ctx);
@@ -373,7 +372,7 @@ int
 pk_timer_schedule(PkTimer*   timer,
                   PkInterval interval)
 {
-    return pk_timer_schedule_absolute(timer, pk_timebase_get() + interval);
+    return pk_timer_schedule_absolute(timer, pk_timebase_get() + PK_INTERVAL_SCALE(interval));
 }
 
 
