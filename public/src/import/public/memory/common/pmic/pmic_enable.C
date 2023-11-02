@@ -77,7 +77,11 @@ extern "C"
 
         if (l_dram_gen == fapi2::ENUM_ATTR_MEM_EFF_DRAM_GEN_DDR4)
         {
+#ifndef __PPE__
             FAPI_TRY(mss::pmic::ddr4::pmic_enable(i_ocmb_target, i_mode));
+#else
+            FAPI_INF("l_dram_gen is found to be DDR4, exiting pmic_enable");
+#endif
         }
         else
         {

@@ -150,7 +150,9 @@ fapi2::ReturnCode power_down_sequence_2u(const fapi2::Target<fapi2::TARGET_TYPE_
 
         if (l_rc != fapi2::FAPI2_RC_SUCCESS)
         {
+#ifndef __PPE__
             fapi2::logError(l_rc, fapi2::FAPI2_ERRL_SEV_RECOVERED);
+#endif
             fapi2::current_err = fapi2::FAPI2_RC_SUCCESS;
         }
     }
@@ -410,7 +412,9 @@ fapi2::ReturnCode disable_and_reset_pmics(const fapi2::Target<fapi2::TARGET_TYPE
 
         if (l_rc != fapi2::FAPI2_RC_SUCCESS)
         {
+#ifndef __PPE__
             fapi2::logError(l_rc, fapi2::FAPI2_ERRL_SEV_RECOVERED);
+#endif
             fapi2::current_err = fapi2::FAPI2_RC_SUCCESS;
         }
     }
@@ -666,7 +670,9 @@ fapi_try_exit:
 
     // Logs the current error as prective, as it predicts that we had a PMIC enable fail
     // Deconfigures happen at the end of an istep, so this should be ok with hostboot
+#ifndef __PPE__
     fapi2::logError(fapi2::current_err, fapi2::FAPI2_ERRL_SEV_PREDICTIVE);
+#endif
     fapi2::current_err = fapi2::FAPI2_RC_SUCCESS;
 
     FAPI_ASSERT_NOEXIT(false,
