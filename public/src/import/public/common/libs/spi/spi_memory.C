@@ -116,7 +116,7 @@ ReturnCode spi::SEEPROMDevice::read(uint32_t i_start, uint32_t i_length, void* o
     // apply ECC correction here.
     uint32_t length = i_length;
 
-    FAPI_INF("Memory read i_start=0x%08x (ECC corrected 0x%08x) i_length=0x%08x",
+    FAPI_DBG("Memory read i_start=0x%08x (ECC corrected 0x%08x) i_length=0x%08x",
              i_start, address, i_length);
     FAPI_TRY(check_start_and_length(i_start, i_length));
     FAPI_TRY(read_internal(address, length, true, o_buffer));
