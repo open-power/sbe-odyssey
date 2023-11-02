@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2017,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -59,14 +60,18 @@ public:
 protected:
 
     uint8_t iv_istepStartMinorNumber;
+    uint8_t iv_istepEndMajorNumber;
 
     /**
      * @brief Construct a new istep object
      *
      * @param i_istepStartMinorNumber istep start minor number
+     *
+     * @param i_istepEndMajorNumber   istep end major number
      */
-    istep(uint8_t i_istepStartMinorNumber) :
-      iv_istepStartMinorNumber(i_istepStartMinorNumber)
+    istep(uint8_t i_istepStartMinorNumber,uint8_t i_istepEndMajorNumber) :
+      iv_istepStartMinorNumber(i_istepStartMinorNumber),
+      iv_istepEndMajorNumber(i_istepEndMajorNumber)
       {};
 
 private:

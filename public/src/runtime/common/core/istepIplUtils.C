@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -38,9 +39,11 @@
 using namespace fapi2;
 
 istepIplUtils& istepIplUtils::getInstance(uint32_t i_spiStatusRegAddr,
-                      uint8_t i_istepStartMinorNumber)
+                                          uint8_t i_istepStartMinorNumber,
+                                          uint8_t i_istepEndMajorNumber
+                                          )
 {
-    static istepIplUtils iv_instance(i_spiStatusRegAddr, i_istepStartMinorNumber);
+    static istepIplUtils iv_instance(i_spiStatusRegAddr, i_istepStartMinorNumber, i_istepEndMajorNumber);
     return iv_instance;
 }
 
