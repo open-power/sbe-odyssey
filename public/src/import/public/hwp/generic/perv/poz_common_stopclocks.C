@@ -367,9 +367,13 @@ fapi2::ReturnCode poz_chiplet_stopclocks(
     FAPI_INF("Set FLUSHMODE_INH, ABISTCLK_MUXSEL & SYNCCLK_MUXSEL");
     CPLT_CTRL0 = 0;
     CPLT_CTRL0.set_FLUSHMODE_INH(1);
-    CPLT_CTRL0.set_ABSTCLK_MUXSEL(1);
     CPLT_CTRL0.set_SYNCCLK_MUXSEL(1);
     FAPI_TRY(CPLT_CTRL0.putScom_SET(i_target_chiplet));
+
+    FAPI_INF("Clear ABISTCLK_MUXSEL");
+    CPLT_CTRL0 = 0;
+    CPLT_CTRL0.set_ABSTCLK_MUXSEL(1);
+    FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(i_target_chiplet));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
