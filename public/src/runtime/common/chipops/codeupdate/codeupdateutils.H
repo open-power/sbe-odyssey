@@ -95,8 +95,8 @@ struct codeUpdateCtrlStruct_t
  */
 typedef struct
 {
-    uint8_t numOfCE;
-    uint8_t numOfUE;
+    uint16_t numOfCE;
+    uint16_t numOfUE;
 }memDeviceStatus_t;
 
 // A SPI port for RAS support
@@ -109,13 +109,44 @@ public:
         SPIPort(i_target, i_base_address, i_resp_select, i_ecc_mode)
         {}
 
-    memDeviceStatus_t iv_ioMemDeviceStatus;
+    mutable memDeviceStatus_t iv_ioMemDeviceStatus;
 
 private:
-    //TODO:PFSBE-691 - SPI driver changes
     fapi2::ReturnCode handle_spi_errors(
             uint64_t &io_status) const override
     {
+        // bit 43: ecc correctable error
+        // bit 44: ecc uncorrectable error
+        const uint64_t ERROR_MASK_CE = 0x0000000000100000;
+        const uint64_t ERROR_MASK_UE = 0x0000000000080000;
+
+        SBE_DEBUG("Inside handle_spi_errors-1..[0x%08x][0x%08x][0x%08x][0x%08x]",
+                  iv_ioMemDeviceStatus.numOfCE, iv_ioMemDeviceStatus.numOfUE,
+                  io_status >> 32, io_status & 0xFFFFFFFF);
+        if (io_status & ERROR_MASK_CE)
+        {
+            if (iv_ioMemDeviceStatus.numOfCE < UINT16_MAX)
+            {
+                iv_ioMemDeviceStatus.numOfCE++;
+            }
+        }
+        if (io_status & ERROR_MASK_UE)
+        {
+            if (iv_ioMemDeviceStatus.numOfUE < UINT16_MAX)
+            {
+                iv_ioMemDeviceStatus.numOfUE++;
+            }
+        }
+
+        if ((io_status & (ERROR_MASK_CE | ERROR_MASK_UE)) != 0)
+        {
+            const uint64_t RESET_CE_UE_MASK = io_status & ~(ERROR_MASK_CE | ERROR_MASK_UE);
+            FAPI_TRY(write_status(RESET_CE_UE_MASK));
+
+            io_status = RESET_CE_UE_MASK;
+        }
+
+    fapi_try_exit:
         return current_err;
     }
 };
@@ -144,6 +175,29 @@ uint32_t createMemoryDevice(
  * @param[in]  i_mem_device    Memory device to free
  */
 void freeMemoryDevice(spi::AbstractMemoryDevice *i_mem_device);
+
+/*
+ * @brief Project specific code to instantiate a memory device handle - RAS
+ *
+ * @param[in]  i_boot_side        Boot side of the memory device to talk to (0=PRIMARY, 1=SECONDARY)
+ * @param[in]  i_memory_id        Memory ID (from partition table)
+ * @param[out] o_mem_device       Allocated and initialized memory device
+ * @param[out] o_port             Allocated and initialized port
+ *
+ * @return SBE_SEC return code
+ */
+uint32_t createMemoryDeviceRAS(
+    uint8_t i_boot_side,
+    uint8_t i_memory_id,
+    spi::AbstractMemoryDevice *&o_mem_device,
+    RASSPIPort *&o_port);
+
+/*
+ * @brief Free a memory device allocated by createMemoryDevice - RAS
+ *
+ * @param[in]  i_mem_device    Memory device to free
+ */
+void freeMemoryDeviceRAS(spi::AbstractMemoryDevice *i_mem_device);
 
 #define PARTITION_ENTRY_NAME_MAX_CHAR  16
 namespace CU
