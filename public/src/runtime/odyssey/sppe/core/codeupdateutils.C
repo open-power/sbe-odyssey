@@ -154,6 +154,12 @@ struct OdyMemoryDevice {
     uint8_t erase_buffer[0] __attribute__((aligned(8)));
 };
 
+// A struct for RAS support
+struct OdyMemoryDeviceRAS {
+    OdyFlashDevice flash;
+    RASSPIPort port;
+};
+
 uint32_t createMemoryDevice(
     uint8_t i_boot_side,
     uint8_t i_memory_id,
@@ -196,6 +202,7 @@ uint32_t createMemoryDevice(
         //
         const uint32_t l_alloc_size = sizeof(OdyMemoryDevice) + (i_intent_to_write ? FlashDevice::ERASE_BUFFER_SIZE : 0);
         auto const l_memblock = static_cast<OdyMemoryDevice *>(Heap::get_instance().scratch_alloc(l_alloc_size));
+
         if (!l_memblock)
         {
             // Handle alloc error
@@ -221,7 +228,8 @@ uint32_t createMemoryDevice(
         static FlashDevice::device_type l_dev_type;
         if (!l_dev_type_known)
         {
-            fapi2::ReturnCode l_fapiRc = FlashDevice::detect_device(l_memblock->port, l_dev_type);
+            fapi2::ReturnCode l_fapiRc;
+            l_fapiRc = FlashDevice::detect_device(l_memblock->port, l_dev_type);
             if (l_fapiRc != fapi2::FAPI2_RC_SUCCESS)
             {
                 SBE_ERROR(SBE_FUNC "Unknown device, id=[0x%08x]", l_dev_type);
@@ -256,6 +264,96 @@ void freeMemoryDevice(spi::AbstractMemoryDevice *i_mem_device)
     // Destroy the objects we created
     l_memblock->flash.~OdyFlashDevice();
     l_memblock->port.~SPIPort();
+
+    // Free the memory block regardless of whether the previous call failed or not
+    Heap::get_instance().scratch_free(l_memblock);
+}
+
+uint32_t createMemoryDeviceRAS(
+    uint8_t i_boot_side,
+    uint8_t i_memory_id,
+    spi::AbstractMemoryDevice *&o_mem_device,
+    RASSPIPort *&o_port)
+{
+    #define SBE_FUNC " createMemoryDeviceRAS "
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    do
+    {
+        if ((i_boot_side != SIDE_0_INDEX) && (i_boot_side != SIDE_1_INDEX))
+        {
+            // Fail if i_boot_side is any value other than 0 & 1 (excl. golden)
+            SBE_ERROR(SBE_FUNC "Invalid boot side:[%d]", i_boot_side);
+            l_rc = SBE_SEC_CU_INVALID_BOOT_SIDE;
+            break;
+        }
+
+        //
+        // Allocate driver object
+        //
+        const uint32_t l_alloc_size = sizeof(OdyMemoryDeviceRAS);
+        auto const l_memblock = static_cast<OdyMemoryDeviceRAS *>(Heap::get_instance().scratch_alloc(l_alloc_size));
+
+        if (!l_memblock)
+        {
+            // Handle alloc error
+            SBE_ERROR(SBE_FUNC "Allocation of buffer size [0x%08x] failed", l_alloc_size);
+            l_rc = SBE_SEC_HEAP_BUFFER_ALLOC_FAILED;
+            break;
+        }
+
+        //Using  memset() to force all bytes of l_memblock to zero
+        memset(l_memblock, 0, l_alloc_size);
+
+        //
+        // Initialize SPI port object using placement new
+        //
+        new (&l_memblock->port) RASSPIPort((fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&)g_platTarget->plat_getChipTarget(),
+                                           SPIM_BASEADDR_PIB, SPI_ENGINE_NOR, spi::ECC_ENABLED);
+
+        //
+        // Detect Flash device type
+        //
+        static bool l_dev_type_known = false;
+        static FlashDevice::device_type l_dev_type;
+        if (!l_dev_type_known)
+        {
+            fapi2::ReturnCode l_fapiRc = FlashDevice::detect_device(l_memblock->port, l_dev_type);
+            if (l_fapiRc != fapi2::FAPI2_RC_SUCCESS)
+            {
+                SBE_ERROR(SBE_FUNC "Unknown device, id=[0x%08x]", l_dev_type);
+                l_rc = SBE_SEC_CU_UNKNOWN_DEVICE;
+                break;
+            }
+            SBE_INFO(SBE_FUNC "Device type:[%d]", l_dev_type);
+            l_dev_type_known = true;
+        }
+
+        //
+        // Initialize Flash driver object using placement new
+        //
+        new (&l_memblock->flash) OdyFlashDevice(l_memblock->port, l_dev_type, NOR_DEVICE_MAX_SIZE, NULL);
+
+        // Return the pointer to the Flash device and port, which is at the beginning of our memory
+        // block so we can use that same pointer to free later.
+        o_mem_device = &l_memblock->flash;
+        o_port = &l_memblock->port;
+    } while(false);
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
+void freeMemoryDeviceRAS(spi::AbstractMemoryDevice *i_mem_device)
+{
+    // Cast the pointer back to our original memory block type
+    auto const l_memblock = reinterpret_cast<OdyMemoryDeviceRAS *>(i_mem_device);
+
+    // Destroy the objects we created
+    l_memblock->flash.~OdyFlashDevice();
+    l_memblock->port.~RASSPIPort();
 
     // Free the memory block regardless of whether the previous call failed or not
     Heap::get_instance().scratch_free(l_memblock);

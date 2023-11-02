@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2024                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -83,6 +84,7 @@ uint32_t getMemoryScrubData(const struct memCheckCmdMsg_t i_memCheckCmdMsg,
     ReturnCode l_fapiRc = FAPI2_RC_SUCCESS;
     uint32_t *l_imgBufScratchArea = NULL;
     spi::AbstractMemoryDevice *l_memHandle = NULL;
+    RASSPIPort *l_portHandle = NULL;
 
     do
     {
@@ -103,11 +105,11 @@ uint32_t getMemoryScrubData(const struct memCheckCmdMsg_t i_memCheckCmdMsg,
         }
 
         // Get memory device handle
-        l_rc = createMemoryDevice(l_runSideIndex,
-                                  0, true, true, l_memHandle);
+        l_rc = createMemoryDeviceRAS(l_runSideIndex,
+                                     0, l_memHandle, l_portHandle);
         if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
         {
-            SBE_ERROR(SBE_FUNC " createMemoryDevice unsuccessful. RC[0x%08x] ", l_rc);
+            SBE_ERROR(SBE_FUNC " createMemoryDeviceRAS unsuccessful. RC[0x%08x] ", l_rc);
             o_hdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE, l_rc);
             break;
         }
@@ -131,6 +133,8 @@ uint32_t getMemoryScrubData(const struct memCheckCmdMsg_t i_memCheckCmdMsg,
                     continue;
                 }
 
+                // Initialize the count for CE and UE
+                l_portHandle->iv_ioMemDeviceStatus = {0}; 
                 uint32_t l_sideStartAddress = 0;
                 uint32_t l_sideMaxSize = 0;
 
@@ -163,8 +167,8 @@ uint32_t getMemoryScrubData(const struct memCheckCmdMsg_t i_memCheckCmdMsg,
                 o_memDeviceStatus[l_scrubEntryCnt].side = l_side;
                 o_memDeviceStatus[l_scrubEntryCnt].devId = l_dev;
                 o_memDeviceStatus[l_scrubEntryCnt].status = (l_fapiRc == FAPI2_RC_SUCCESS ? 0 : SBE_SEC_CU_READ_DATA_IMAGE_FAILURE);
-                o_memDeviceStatus[l_scrubEntryCnt].numOfCE = 0; // to be updated
-                o_memDeviceStatus[l_scrubEntryCnt].numOfUE = 0; // to be updated
+                o_memDeviceStatus[l_scrubEntryCnt].numOfCE = l_portHandle->iv_ioMemDeviceStatus.numOfCE;
+                o_memDeviceStatus[l_scrubEntryCnt].numOfUE = l_portHandle->iv_ioMemDeviceStatus.numOfUE;
                 l_scrubEntryCnt++;
             }
         }
