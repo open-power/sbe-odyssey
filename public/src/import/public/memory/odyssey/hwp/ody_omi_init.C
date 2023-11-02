@@ -525,9 +525,9 @@ fapi2::ReturnCode omiSetMMIOEnableBAR(const fapi2::Target<fapi2::TARGET_TYPE_OCM
     FAPI_TRY(mss::ody::ib::putOCCfg(i_target, ODY_OC_O1MBIT_O1DID_MSB, l_value));
 #else
     fapi2::buffer<uint64_t> l_scom;
-    l_value = 0x03;
+    l_value = 0x800;
     FAPI_TRY(ody_get_scom(i_target, scomt::ody::ODC_MMIO_O1BAR0, l_scom));
-    l_scom.insertFromRight<0, 32>(l_value);
+    l_scom.insertFromRight<0, 29>(l_value);
     FAPI_TRY(ody_put_scom(i_target, scomt::ody::ODC_MMIO_O1BAR0, l_scom));
 
     //Enable the bar
