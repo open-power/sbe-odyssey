@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/core/sbestates.C $                  */
+/* $Source: public/src/runtime/odyssey/sppe/core/sbestates.C $            */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2023                             */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -21,18 +21,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-/*
- * @file: ppe/sbe/sbefw/sberegaccess.C
- *
- * @brief This file contains interfaces to get/set FW flags either in the
- * scratch registers and/or the FW attributes.
- */
-
 #include "sbestates.H"
 
-// Entry Point and End point to the StateTransition Map for a State
-// It is sequenced as per the sbeState enum, Don't change the sequence
-// of states. Events are incremented w.r.t previous event.
 const stateEventRangeStr_t eventRangePerState[SBE_MAX_STATE] =
 {
     {SBE_STATE_CMN_UNKNOWN_ENTRY_TO_MAP, SBE_STATE_CMN_UNKNOWN_MAX_EVENT},
@@ -43,11 +33,6 @@ const stateEventRangeStr_t eventRangePerState[SBE_MAX_STATE] =
     {SBE_STATE_CMN_FAILURE_ENTRY_TO_MAP, SBE_STATE_CMN_FAILURE_MAX_EVENT},
 };
 
-// Map to connect the current State with an event along with the final state
-// transition. It is sequenced according to the sbeState enums, Don't change the
-// sequence of states.
-//TODO: Complete state transition Map needs to be reworked for odyssey.
-//We need to accmodate HRESET State and clean up p10 states which are not used
 const stateTransitionStr_t stateTransMap[SBE_MAX_TRANSITIONS] =
 {
     {SBE_STATE_CMN_UNKNOWN, SBE_EVENT_CMN_FAILURE, SBE_STATE_CMN_FAILURE},
