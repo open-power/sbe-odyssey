@@ -182,14 +182,17 @@ ReturnCode istep::sbeExecuteIstep(const uint8_t i_major, const uint8_t i_minor)
     SBE_ENTER(SBE_FUNC)
 
     ReturnCode rc = FAPI2_RC_SUCCESS;
+    uint8_t l_lengthOfMinorNo = 0;
 
     SBE_INFO(SBE_FUNC "Major number:%d Minor number:%d", i_major, i_minor);
 
     for(size_t entry = 0; entry < g_istepTable.len; entry++)
     {
         auto istepTableEntry = &g_istepTable.istepMajorArr[entry];
-        if(( i_major == istepTableEntry->istepMajorNum ) &&
-           ( i_minor <= istepTableEntry->len ))
+
+        l_lengthOfMinorNo = istepTableEntry->len;
+
+        if(( i_major == istepTableEntry->istepMajorNum ) && ( i_minor <=  l_lengthOfMinorNo))
         {
             auto istepMap = &istepTableEntry->istepMinorArr[i_minor-1];
             if(istepMap->istepWrapper != NULL)
@@ -198,6 +201,11 @@ ReturnCode istep::sbeExecuteIstep(const uint8_t i_major, const uint8_t i_minor)
             }
             break;
         }
+    }
+
+    if ((i_major == iv_istepEndMajorNumber) && (l_lengthOfMinorNo == i_minor))
+    {
+        stateTransition(SBE_EVENT_CMN_RUNTIME);
     }
 
     if (isSpiParityError()) // If true call saveoff and halt

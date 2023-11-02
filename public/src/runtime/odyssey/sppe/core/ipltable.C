@@ -32,6 +32,9 @@
 
 #define ISTEP_START_MINOR_NUMBER 13
 
+// istep end major number (we have to update ISTEP_END_MAJOR_NUMBER when major number change )
+#define ISTEP_END_MAJOR_NUMBER   3
+
 using namespace fapi2;
 
 static istepMap_t g_istep1PtrTbl[] = {
@@ -90,11 +93,11 @@ static istepMap_t g_istep3PtrTbl[] = {
 
 istepTableEntry_t g_istepTableEntries[] = {
     ISTEP_ENTRY(  1, g_istep1PtrTbl),
-    ISTEP_ENTRY(  3, g_istep3PtrTbl),
+    ISTEP_ENTRY(  ISTEP_END_MAJOR_NUMBER, g_istep3PtrTbl),
 };
 
 REGISTER_ISTEP_TABLE(g_istepTableEntries)
 
 istepIplUtils* g_pSbeIstepIplUtils =
             &istepIplUtils::getInstance(scomt::perv::TPCHIP_PIB_SPICTL_SPICTL0_STATUS_REG,
-                                        ISTEP_START_MINOR_NUMBER);
+                                        ISTEP_START_MINOR_NUMBER, ISTEP_END_MAJOR_NUMBER);

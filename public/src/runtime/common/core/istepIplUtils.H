@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -53,10 +54,13 @@ public:
      *                           errors need to be checked
      * @param i_istepStartMinorNumber istep start minor number
      *
+     * * @param i_istepEndMajorNumber istep end major number
+     *
      * @return A reference to istepIplUtils
      */
     static istepIplUtils& getInstance(uint32_t i_spiStatusRegAddr,
-                    uint8_t i_istepStartMinorNumber);
+                                      uint8_t i_istepStartMinorNumber,
+                                      uint8_t i_istepEndMajorNumber);
 
 protected:
 
@@ -70,10 +74,12 @@ private:
      * @param i_spiStatusRegAddr SPI status reg from which parity
      *                           errors need to be checked
      * @param i_istepStartMinorNumber istep start minor number
+     *
+     * @param i_istepEndMajorNumber istep end major number
      */
     istepIplUtils(uint32_t i_spiStatusRegAddr,
-                    uint8_t i_istepStartMinorNumber) :
-        istep(i_istepStartMinorNumber),
+                  uint8_t i_istepStartMinorNumber, uint8_t i_istepEndMajorNumber) :
+        istep(i_istepStartMinorNumber, i_istepEndMajorNumber),
         iv_spiStatusRegAdr(i_spiStatusRegAddr)
         {};
 
