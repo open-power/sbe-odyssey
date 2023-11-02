@@ -349,6 +349,11 @@ fapi_try_exit:
     return current_err;
 }
 
+ReturnCode spi::SPIPort::write_status(uint64_t i_status) const
+{
+    return putscom(SPIC_STATUS_REG, i_status);
+}
+
 ReturnCode spi::SPIPort::poll_status(
     const uint32_t i_bitrange,
     const uint32_t i_wait_for) const
@@ -363,6 +368,9 @@ ReturnCode spi::SPIPort::poll_status(
     while (l_timeout)
     {
         FAPI_TRY(getScom(iv_target, iv_base_address + SPIC_STATUS_REG, l_buf));
+
+        /* Check on SPI errors */
+        FAPI_TRY(handle_spi_errors(l_buf));
 
         if ((l_buf & ERROR_MASK) != 0)
         {

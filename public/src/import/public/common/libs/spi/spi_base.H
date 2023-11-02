@@ -145,19 +145,9 @@ class SPIPort : public AbstractPort
             return iv_ecc_mode;
         }
 
-    private:
-#define BITRANGE(start, length) ((start) << 8 | (length))
-        static const uint32_t TDR_FULL_STATUS    = BITRANGE(4, 1);
-        static const uint32_t RDR_FULL_STATUS    = BITRANGE(0, 1);
-        static const uint32_t SEQUENCER_FSM_IDLE = BITRANGE(15, 1);
-        static const uint32_t SHIFTER_FSM_IDLE   = BITRANGE(27, 1);
-        static const uint32_t SEQUENCER_OP_INDEX = BITRANGE(28, 4);
-#undef BITRANGE
-
+    protected:
         const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& iv_target;
         const uint32_t iv_base_address;
-        const uint32_t iv_resp_select;
-        const ecc_mode iv_ecc_mode;
 
         /**
          * @brief Wrapper around SCOM write accesses to simplify driver code
@@ -181,6 +171,37 @@ class SPIPort : public AbstractPort
             o_data = l_data;
             return l_rc;
         }
+
+        /**
+         * @brief function to write status register
+         * @param[in] i_status  status value to write
+         */
+        fapi2::ReturnCode write_status(uint64_t i_status) const;
+
+        /**
+         * @brief Handle SPI errors
+         *
+         * This function would be used to handle/analyze spi status register error bits for
+         * specific needs. e.g. analyzing CE & UE ecc bits for RAS chipop
+         *
+         * @param[io] io_status   SPI controller status register value
+         */
+        virtual fapi2::ReturnCode handle_spi_errors(uint64_t& io_status) const
+        {
+            return fapi2::FAPI2_RC_SUCCESS;
+        }
+
+    private:
+#define BITRANGE(start, length) ((start) << 8 | (length))
+        static const uint32_t TDR_FULL_STATUS    = BITRANGE(4, 1);
+        static const uint32_t RDR_FULL_STATUS    = BITRANGE(0, 1);
+        static const uint32_t SEQUENCER_FSM_IDLE = BITRANGE(15, 1);
+        static const uint32_t SHIFTER_FSM_IDLE   = BITRANGE(27, 1);
+        static const uint32_t SEQUENCER_OP_INDEX = BITRANGE(28, 4);
+#undef BITRANGE
+
+        const uint32_t iv_resp_select;
+        const ecc_mode iv_ecc_mode;
 
         /**
          * @brief Generic status polling function
