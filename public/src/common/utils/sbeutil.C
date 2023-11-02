@@ -204,6 +204,37 @@ namespace SBE
         putscom_abs(scomt::poz::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
     }
 
+    bool reserveSemaphore(uint8_t semaphore)
+    {
+        uint32_t timeoutCount = 1024;     // 1 s
+        uint64_t data64; 
+        for (uint32_t i = 0; i < timeoutCount; i++) {
+            data64 = 0x8000000000000000ULL >> (semaphore * 2 + 1);
+            putscom_abs(0x50191, data64);
+            getscom_abs(0x50191, &data64);
+            if (data64 & (0x8000000000000000ULL >> (semaphore * 2 + 1)))
+            {
+                return false;
+            }
+            pk_sleep(PK_MILLISECONDS(1));
+        }
+        SBE_ERROR("Semaphore %04X reservation timeout", semaphore);
+        return true;
+    }
+
+    void releaseSemaphore(uint8_t semaphore)
+    {
+        uint64_t data64;
+        getscom_abs(0x50191, &data64);
+        if (data64 & (0x8000000000000000ULL >> (semaphore * 2 + 1)))
+        {
+            data64 = 0xC000000000000000ULL >> (semaphore * 2);
+            putscom_abs(0x50191, data64);
+        } else {
+            SBE_ERROR("Trying to free unreserved semaphore %04X", semaphore);
+        }
+    }
+
     uint32_t alphaNumericToHex(const uint8_t *i_str,
                                const uint8_t i_size,
                                const uint8_t i_hexSize,
