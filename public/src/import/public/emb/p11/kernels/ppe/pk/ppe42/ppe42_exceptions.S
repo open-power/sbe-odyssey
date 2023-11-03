@@ -288,7 +288,14 @@ restore_and_update_sprg0:
 
         lwz     %r3, PK_CTX_KERNEL_CTX(%r1)
         rlwimi  %r3, %r31, 24, 2, 7
+
+#if defined (__PPE42A__)
         mtsprg0 %r3
+#else
+        # since lcxu will be executed in ctx_pop, write this value to stack,
+        # so that finally it will reach sprg0
+        stw     %r3, PK_CTX_KERNEL_CTX(%r1)
+#endif
 
 #ifdef HWMACRO_GPE
         ## restore PBA slave on GPE if it needed
@@ -611,7 +618,14 @@ ctx_pop_with_sprg0:
         ##
         ## restore sprg0 from the saved context
         lwz     %r0,    PK_CTX_KERNEL_CTX(%r1)
+
+#if defined (__PPE42A__)
         mtsprg0 %r0
+#else
+        # since lcxu will be executed in ctx_pop, write this value to stack,
+        # so that finally it will reach sprg0
+        stw     %r0, PK_CTX_KERNEL_CTX(%r1)
+#endif
 
 #if PK_KERNEL_TRACE_ENABLE
         srwi    %r0, %r0, 16
