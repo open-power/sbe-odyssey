@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -41,6 +41,13 @@
     #include <ffdc.H>
 #endif
 
+// MINIMUM_FFDC_RE feature is on top of MINIMUM_FFDC feature.
+//   So MINIMUM_FFDC needed for enabling MINIMUM_FFDC_RE.
+//   Checking this at compile time.
+#if !defined (MINIMUM_FFDC) && defined (MINIMUM_FFDC_RE)
+    static_assert(false, "MINIMUM_FFDC is not defined");
+#endif
+
 namespace fapi2
 {
 ///
@@ -56,13 +63,23 @@ class ReturnCode : public FirstFailureData<ReturnCode>
 {
     public:
 
+#if defined (MINIMUM_FFDC_RE)
         ///
-        /// @brief Constructor.
-        /// @param[in] i_rc the rc to set
+        /// @brief Constructor for ReturnCode
+        /// @param[in] i_rc Initial value for the RC. Default is FAPI2_RC_SUCCESS
+        /// @param[in] i_data_ptr Initial value for the data pointer. Default is 0
+        ///
+        ReturnCode(const uint32_t i_rc = FAPI2_RC_SUCCESS, const uint32_t i_data_ptr = 0):
+            iv_rc(i_rc), iv_data_ptr(i_data_ptr) {};
+#else
+        ///
+        /// @brief Constructor for ReturnCode.
+        /// @param[in] i_rc Initial value for the RC. Default is FAPI2_RC_SUCCESS
         ///
         ReturnCode(const uint32_t i_rc = FAPI2_RC_SUCCESS):
             iv_rc(i_rc)
         {};
+#endif
 
         ///
         /// @brief integral type conversion function. Returns the error code
@@ -98,7 +115,20 @@ class ReturnCode : public FirstFailureData<ReturnCode>
         inline ReturnCode& operator=(const uint32_t& rhs);
         inline ReturnCode& operator=(const ReturnCodes& rhs);
 #endif
-
+#if defined (MINIMUM_FFDC_RE)
+        inline ReturnCode& operator=(const uint32_t& rhs)
+        {
+            iv_rc = rhs;
+            iv_data_ptr = 0;
+            return *this;
+        }
+        inline ReturnCode& operator=(const ReturnCodes& rhs)
+        {
+            iv_rc = rhs;
+            iv_data_ptr = 0;
+            return *this;
+        }
+#endif
         inline bool operator==(const uint32_t& rhs) const
         {
             return rhs == iv_rc;
@@ -178,9 +208,51 @@ class ReturnCode : public FirstFailureData<ReturnCode>
             iv_rc = i_rc;
         }
 
+        ///
+        /// @brief Retrieves the return code (RC)
+        ///        This inline function retrieves the value of the member
+        ///        variable iv_rc.
+        /// @return The current value of iv_rc.
+        ///
+        inline uint32_t getRC(void)
+        {
+            return iv_rc;
+        }
+
+#if defined (MINIMUM_FFDC_RE)
+        ///
+        /// @brief Sets the data pointer.
+        ///        This inline function sets the value of the member variable
+        ///        iv_data_ptr.
+        /// @param[in] i_data_ptr The data pointer to be set.
+        ///
+        inline void setDataPtr(const uint32_t i_data_ptr)
+        {
+            iv_data_ptr = i_data_ptr;
+        }
+
+        ///
+        /// @brief Retrieves the data pointer
+        ///        This inline function retrieves the value of the member
+        ///        variable iv_data_ptr.
+        /// @return The current value of iv_data_ptr.
+        ///
+        inline uint32_t getDataPtr(void)
+        {
+            return iv_data_ptr;
+        }
+#endif
 
     private:
-        uint32_t iv_rc;
+        uint32_t iv_rc __attribute__ ((aligned (8)));
+#if defined (MINIMUM_FFDC_RE)
+        ///
+        /// @brief Stores the data pointer associated with the class instance.
+        ///
+        /// Data pointer which will point to the FFDC in the PIBMEM.
+        ///
+        uint32_t iv_data_ptr;
+#endif
 };
 
 /// This implementation assumes no exception handling and leverages thread-local
