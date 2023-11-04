@@ -37,6 +37,15 @@
 
 using namespace cc;
 
+namespace poz_perv_mod_chiplet_clocking
+{
+enum poz_perv_mod_chiplet_clocking_public_constants
+{
+    DEFAULT_RUNN_CYCLES = 0x42FFF,
+    DEFAULT_ABIST_START_AT = 0x100000,
+};
+};
+
 /// @brief Apply regions to a scom register by chiplet
 ///
 /// @param[in]   i_chiplets_uc             Reference to the unicast target container
@@ -81,8 +90,8 @@ bool runn_triggers_opcg_infinite(const uint64_t i_runn_cycles);
 fapi2::ReturnCode mod_abist_setup(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
     uint16_t i_regions,
-    uint64_t i_runn_cycles = 0x42FFF,
-    uint64_t i_abist_start_at = 0x100000,
+    uint64_t i_runn_cycles = poz_perv_mod_chiplet_clocking::DEFAULT_RUNN_CYCLES,
+    uint64_t i_abist_start_at = poz_perv_mod_chiplet_clocking::DEFAULT_ABIST_START_AT,
     const uint16_t* i_chiplets_regions = NULL,
     const bool i_skip_first_clock = false,
     const bool i_skip_last_clock = false);
@@ -125,8 +134,8 @@ fapi2::ReturnCode mod_opcg_go(
 fapi2::ReturnCode mod_abist_start(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
     uint16_t i_regions,
-    uint64_t i_runn_cycles = 0x42FFF,
-    uint64_t i_abist_start_at = 0xF0);
+    uint64_t i_runn_cycles = poz_perv_mod_chiplet_clocking::DEFAULT_RUNN_CYCLES,
+    uint64_t i_abist_start_at = poz_perv_mod_chiplet_clocking::DEFAULT_ABIST_START_AT);
 
 /// @brief Poll OPCG done bit to check for run-N completeness.
 ///
@@ -176,7 +185,7 @@ fapi2::ReturnCode mod_scan0(
 fapi2::ReturnCode mod_arrayinit(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
     const uint16_t i_clock_regions = REGION_ALL,
-    const uint64_t i_runn_cycles = 0x42FFF,
+    const uint64_t i_runn_cycles = poz_perv_mod_chiplet_clocking::DEFAULT_RUNN_CYCLES,
     const bool i_do_scan0 = true);
 
 /// @brief Clock start/stop module
