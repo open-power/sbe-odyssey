@@ -363,6 +363,12 @@ class RealAttrFieldInfo(AttrFieldInfo):
         retval = ""
 
         retval += "{"
+
+        retval += str(int(self.is_memory_shared)) + ","
+
+        #reserved
+        retval += "0,"
+
         #AttributeId
         retval += self.name
 

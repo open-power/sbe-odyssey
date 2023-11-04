@@ -235,6 +235,8 @@ enum sbeSecondaryResponse
     SBE_SEC_CU_WRITE_DATA_IMAGE_FAILURE       = 0x8C,
     SBE_SEC_CU_READ_DATA_IMAGE_FAILURE        = 0x8D,
     SBE_SEC_ITS_A_BUG                         = 0x8E,
+    SBE_SEC_ATTR_UPD_BLOB_GEN_FAILED          = 0x8F,
+    SBE_SEC_CHK_UPDATE_BLOB_GEN_TARGET_TYPES  = 0x90,
 };
 
 /**

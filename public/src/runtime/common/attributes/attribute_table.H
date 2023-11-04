@@ -35,7 +35,9 @@ namespace ATTR
 
 struct AttributesTable
 {
-    fapi2::AttributeId      iv_attr_id;
+    uint32_t                iv_memory_shared : 1;
+    uint32_t                iv_reserved      : 3;
+    uint32_t                iv_attr_id       : 28;
     uint8_t                 iv_max_row; //Row
     uint8_t                 iv_max_col; //Column
     uint8_t                 iv_max_hgt; //Height
@@ -56,6 +58,7 @@ struct TargetsTable
     uint8_t                 iv_max_inst;
     uint16_t                iv_attr_row_start;
     uint16_t                iv_attr_row_size;
+    uint8_t                 iv_gen_override;
 
     uint32_t applyOverride(const TargetEntry_t *i_targetEntry,
                            AttributeUpdateBuffer&  i_buffer);
