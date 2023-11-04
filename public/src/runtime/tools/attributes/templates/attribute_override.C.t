@@ -52,7 +52,11 @@ TargetsTable  g_targetsTab[] =
     {#      row_count = row_count + 1                                    #}
     {% if row_count.append(row_count.pop()+1)%} {% endif %}
 {% endfor %}
-{ LOG_{{key}},{{target_types[key].ntargets}},{{start_row[0]}},{{row_count[0]}} },
+{% if target_types[key].updateBlobGen %}
+{ LOG_{{key}},{{target_types[key].ntargets}},{{start_row[0]}},{{row_count[0]}},1 },
+{% else %}
+{ LOG_{{key}},{{target_types[key].ntargets}},{{start_row[0]}},{{row_count[0]}},0 },
+{% endif %}
     {# <--- The below if-else statement is the workaround for performing #}
     {#      start_row = start_row + row_count                    --->    #}
 {% if start_row.append(start_row.pop()+row_count[0])%} {% endif %}

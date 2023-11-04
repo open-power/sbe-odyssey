@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2023
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +28,7 @@ import json
 class TargetListParseError(Exception):
     pass
 
-TargetTypeInfo = namedtuple("TargetTypeInfo", "ntargets")
+TargetTypeInfo = namedtuple("TargetTypeInfo", ["ntargets","updateBlobGen"])
 
 CHIP_TARGETS = [
         'TARGET_TYPE_HUB_CHIP',
@@ -48,7 +49,7 @@ def load_target_list_json(i_path:str) -> 'tuple[dict[str, TargetTypeInfo], str]'
                     raise TargetListParseError("Multiple root chip is declared")
                 root_chip_name = kwarg['chipName']
 
-            return TargetTypeInfo(kwarg['ntargets'])
+            return TargetTypeInfo(kwarg['ntargets'],kwarg.get('updateBlobGen',False))
         return kwarg
 
     with open(i_path, 'r') as fp:
