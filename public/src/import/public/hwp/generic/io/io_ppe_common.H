@@ -1267,6 +1267,13 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::set_pcie_presets(const fapi2::Target<K
         const uint8_t i_thread)
 {
     FAPI_DBG("Setting PCIE Presets")
+
+    // Tx Detect Rx
+    FAPI_TRY(MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_0_PUT(iv_regs, i_target, i_thread, 192));
+    FAPI_TRY(MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_1_PUT(iv_regs, i_target, i_thread, 192));
+    FAPI_TRY(MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_2_PUT(iv_regs, i_target, i_thread, 192));
+    FAPI_TRY(MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_3_PUT(iv_regs, i_target, i_thread, 192));
+
     // Gen1
     FAPI_TRY(MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_CTLE_PEAK1_PUT(iv_regs, i_target, i_thread, 4));
     FAPI_TRY(MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_CTLE_PEAK2_PUT(iv_regs, i_target, i_thread, 7));
