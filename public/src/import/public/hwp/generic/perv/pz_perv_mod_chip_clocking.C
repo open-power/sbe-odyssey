@@ -46,6 +46,7 @@ enum POZ_PERV_MOD_CHIP_CLOCKING_Private_Constants
 ReturnCode mod_clock_test(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target,
                           bool i_use_cfam_path)
 {
+    ROOT_CTRL0_t ROOT_CTRL0;
     ROOT_CTRL5_t ROOT_CTRL5;
     SNS1LTH_t SNS1LTH;
     fapi2::ATTR_CP_REFCLOCK_SELECT_Type l_cp_refclock_select;
@@ -53,6 +54,9 @@ ReturnCode mod_clock_test(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB
     FAPI_INF("Entering ...");
 
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CP_REFCLOCK_SELECT, i_target, l_cp_refclock_select));
+
+    ROOT_CTRL0.set_CFAM_PROTECTION_0(1);
+    ROOT_CTRL0.putScom_CLEAR(i_target);
 
     for(int i = 0; i < POLL_COUNT; i++)
     {
