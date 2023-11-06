@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -68,7 +68,7 @@ uint32_t sbeGetFfdc (uint8_t *i_pArg)
             dumpFieldsConfig |= SBE_FFDC_ALL_HW_DATA;
         }
 
-        rc = sendFFDCOverFIFO(dumpFieldsConfig, wordCount, true, type);
+        rc = sendFFDCOverFIFO(wordCount, type, true);
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(rc);
 
         rc = sbeDsSendRespHdr(respHdr, NULL, type);

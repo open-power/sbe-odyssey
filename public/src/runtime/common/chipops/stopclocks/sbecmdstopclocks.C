@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,6 +27,7 @@
 #include "sbeFifoMsgUtils.H"
 #include "chipop_handler.H"
 #include "plat_hwp_data_stream.H"
+#include "sbeffdc.H"
 
 using namespace fapi2;
 

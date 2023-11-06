@@ -23,7 +23,7 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-#
+
 # @file   parseErrorInfo.pl
 # @brief  This perl script will parse HWP Error XML files and generate required
 #         FAPI code to create and error log and add FFDC to the error.
@@ -314,10 +314,15 @@ sub addFfdcMethod
             # need to use the objectNumber here so when we decode the info at the hwsv/hb side we have a reference,
             # they will be copied into/out of the sbe buffer in the correct order
 
-            $method_body .= "    {\n        fapi2::g_FfdcData.ffdcDataPtr[$objectNumber].data= convertType(i_value);\n";
-            $method_body .= "        fapi2::g_FfdcData.ffdcDataPtr[$objectNumber].size =";
+            $method_body .= "    {\n";
+            $method_body .= "        if (iv_localFfdcData)\n";
+            $method_body .= "        {\n";
+            $method_body .= "            iv_localFfdcData[$objectNumber].data= convertType(i_value);\n";
+            $method_body .= "            iv_localFfdcData[$objectNumber].size =";
             $method_body .= " fapi2::getErrorInfoFfdcSize(i_value);\n";
-            $method_body .= "        return *this;\n    };\n\n";
+            $method_body .= "        }\n";
+            $method_body .= "        return *this;\n";
+            $method_body .= "    };\n\n";
 
             # ffdc_count is used to determine the maximum index written in sbe buffer
             if ( $objectNumber > $ffdc_count )
@@ -405,10 +410,15 @@ sub addFfdcMethod
         {
             # need to use the objectNumber here so when we decode the info at the hwsv/hb side we have a point of
             # reference and they will be copied into/out of the sbe buffer in the correct order
-            $method_body .= "    {\n        fapi2::g_FfdcData.ffdcDataPtr[$objectNumber].data= convertType(i_value);\n";
-            $method_body .= "        fapi2::g_FfdcData.ffdcDataPtr[$objectNumber].size =";
+            $method_body .= "    {\n";
+            $method_body .= "        if (iv_localFfdcData)\n";
+            $method_body .= "        {\n";
+            $method_body .= "            iv_localFfdcData[$objectNumber].data= convertType(i_value);\n";
+            $method_body .= "            iv_localFfdcData[$objectNumber].size =";
             $method_body .= " fapi2::getErrorInfoFfdcSize(i_value);\n";
-            $method_body .= "        return *this;\n    };\n\n";
+            $method_body .= "        }\n";
+            $method_body .= "        return *this;\n";
+            $method_body .= "    };\n\n";
 
             # ffdc_count is used to determine the maximum index written in sbe buffer
             if ( $objectNumber > $ffdc_count )
@@ -481,7 +491,7 @@ foreach my $argnum ( 0 .. $#ARGV )
     );
 
     # Uncomment to get debug output of all errors
-    #print "\nFile: ", $infile, "\n", Dumper($errors), "\n";
+    # print "\nFile: ", $infile, "\n", Dumper($errors), "\n";
 
     #------------------------------------------------------------------------------
     # Print start of file information to hwp_error_info.H
@@ -494,6 +504,10 @@ foreach my $argnum ( 0 .. $#ARGV )
         print EIFILE "#define FAPI2_HWPERRORINFO_H_\n\n";
         print EIFILE "#include <target.H>\n";
         print EIFILE "#include <plat_trace.H>\n";
+        print EIFILE "#ifdef __SBE__\n";
+        print EIFILE "#include <sbeffdctype.H>\n";
+        print EIFILE "#include <error_info_defs.H>\n";
+        print EIFILE "#endif\n";
         print EIFILE "#ifdef __PPE__\n";
         print EIFILE "#include <heap.H>\n";
         print EIFILE "#else\n";
@@ -518,10 +532,14 @@ foreach my $argnum ( 0 .. $#ARGV )
         print ECFILE "#include <buffer.H>\n";
         print ECFILE "#include <variable_buffer.H>\n" if ( $arg_use_variable_buffers ne undef );
         print ECFILE "#include <hwp_error_info.H>\n";
+        print ECFILE "#include <error_info_defs.H>\n";
         print ECFILE "#if !defined(FAPI2_NO_FFDC) && !defined(MINIMUM_FFDC)\n";
         print ECFILE "#include <utils.H>\n";
         print ECFILE "#include <ffdc_includes.H>\n";
         print ECFILE "#include <collect_reg_ffdc.H>\n";
+        print ECFILE "#endif\n";
+        print ECFILE "#if defined(__SBE__) && defined(MINIMUM_FFDC) && !defined(MINIMUM_FFDC_RE)\n";
+        print ECFILE "#include <sbeffdctype.H>\n";
         print ECFILE "#endif\n";
         print ECFILE "/**\n";
         print ECFILE " * \@brief FFDC gathering classes\n";
@@ -531,6 +549,9 @@ foreach my $argnum ( 0 .. $#ARGV )
         if ($arg_local_ffdc)
         {
             print ECFILE "extern pozFfdcData_t g_FfdcData;\n";
+            print ECFILE "#if defined(__SBE__) && defined(MINIMUM_FFDC) && !defined(MINIMUM_FFDC_RE)\n";
+            print ECFILE "extern pozFfdcCtrl_t g_ffdcCtrlSingleton;\n";
+            print ECFILE "#endif\n";
         }
 
         #------------------------------------------------------------------------------
@@ -544,9 +565,9 @@ foreach my $argnum ( 0 .. $#ARGV )
         print CRFILE "#include <hwp_error_info.H>\n";
         print CRFILE "#include <p11_scom_registers.H>\n";
         print CRFILE "#include <ody_scom_perv.H>\n";
-        print CRFILE "#include <poz_scom_perv.H>\n";
         print CRFILE "#include <ody_scom_ody_odc.H>\n";
         print CRFILE "#include <explorer_scom_addresses.H>\n";
+        print CRFILE "#include <poz_scom_perv_cfam.H>\n";
         print CRFILE "namespace fapi2\n";
         print CRFILE "{\n";
         print CRFILE "void getAddressData(const fapi2::HwpFfdcId i_ffdcId,\n";
@@ -1539,6 +1560,7 @@ foreach my $argnum ( 0 .. $#ARGV )
 
         # Class declaration
         print ECFILE "\nclass $class_name\n{\n  public:\n";
+        print ECFILE "    sbeFfdc_t * iv_localFfdcData = NULL;\n";
 
         # Constructor. This traces the description. If this is too much, we can
         # remove it.
@@ -1556,9 +1578,14 @@ foreach my $argnum ( 0 .. $#ARGV )
             else
             {
                 $constructor .= "    $class_name()\n";
-                $constructor .=
-                    "    {\n        fapi2::current_err = RC_$class_name;\n#if !defined(MINIMUM_FFDC)\n        FAPI_ERR(\"$err->{description}\");\n#endif\n";
-                $constructor .= "        fapi2::g_FfdcData.fapiRc = RC_$class_name;\n";
+                $constructor .= "    {\n";
+                $constructor .= "        fapi2::current_err =  RC_$class_name;\n";
+                $constructor .= "#if defined(MINIMUM_FFDC_RE)\n";
+                $constructor .= "        fapi2::current_err.setDataPtr(0);\n";
+                $constructor .= "#endif\n";
+                $constructor .= "#if !defined(MINIMUM_FFDC)\n";
+                $constructor .= "        FAPI_ERR(\"$err->{description}\");\n";
+                $constructor .= "#endif\n";
             }
         }
         else
@@ -1681,22 +1708,31 @@ foreach my $argnum ( 0 .. $#ARGV )
         }
         else
         {
-            $constructor .= "#ifdef __PPE__\n";
-            $constructor .= "        fapi2::g_FfdcData.ffdcLength = ( $count * sizeof(sbeFfdc_t));\n ";
-            $constructor .= "        fapi2::g_FfdcData.ffdcDataPtr = (sbeFfdc_t*) Heap::get_instance().\n";
-            $constructor .= "             scratch_alloc( $count * sizeof(sbeFfdc_t));\n";
-            $constructor .= "#else\n";
-            $constructor .= "        if(g_FfdcData.ffdcDataPtr) { free(g_FfdcData.ffdcDataPtr); } \n";
-            $constructor .= "        g_FfdcData.ffdcDataPtr = (sbeFfdc_t*) malloc ( $count * sizeof(sbeFfdc_t));\n ";
+            $constructor .= "#if defined(__SBE__)\n";
+            $constructor .= "  #if defined (MINIMUM_FFDC)\n";
+            $constructor .= "    void* ptr = nullptr;\n";
+            $constructor .= "    uint32_t tempScratchAddr = ffdcConstructor( \n";
+            $constructor .= "                     (uint32_t)RC_$class_name,\n";
+            $constructor .= "                     (uint16_t)($count * sizeof(fapi2::sbeFfdc_t)),\n";
+            $constructor .= "                     ( void *&)iv_localFfdcData,\n";
+            $constructor .= "                     (uint16_t)0,\n";
+            $constructor .= "                     ( void *&)ptr\n";
+            $constructor .= "                   );\n";
+            $constructor .= "    #if defined (MINIMUM_FFDC_RE)\n";
+            $constructor .= "        fapi2::current_err.setDataPtr(tempScratchAddr);\n";
+            $constructor .= "    #elif !defined (MINIMUM_FFDC_RE)\n";
+            $constructor .=
+                "        fapi2::g_ffdcCtrlSingleton.setHead(reinterpret_cast<const pozFfdcNode_t*>(tempScratchAddr));\n";
+            $constructor .= "    #endif\n";
+            $constructor .= "  #endif\n";
             $constructor .= "#endif\n";
-            $constructor .= "        }\n";
+            $constructor .= "    }\n";
             print ECFILE "    void execute()\n";
             print ECFILE "    {\n";
             print ECFILE "$executeStr\n";
             print ECFILE "    }\n";
         }
         print ECFILE $constructor;
-
         print ECFILE "};\n\n";
 
         #----------------------------------------------------------------------
@@ -1841,6 +1877,7 @@ if ($arg_local_ffdc)
 {
     print EIFILE "  extern pozFfdcData_t g_FfdcData;\n";
 }
+
 print EIFILE "/**\n";
 print EIFILE " * \@brief Enumeration of FFDC identifiers\n";
 print EIFILE " *\/\n";

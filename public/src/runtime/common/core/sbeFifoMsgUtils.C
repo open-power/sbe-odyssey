@@ -394,27 +394,18 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
             break;
         }
         distance += len;
-        uint32_t dumpFieldsConfig = 0;
 
-        // If no ffdc , exit;
-        if( (i_ffdc != NULL) && (i_ffdc->getRc() != FAPI2_RC_SUCCESS))
-        {
-            SBE_ERROR( SBE_FUNC" FAPI RC:0x%08X", i_ffdc->getRc());
-            dumpFieldsConfig |= SBE_FFDC_ALL_DATA;
-        }
+        bool isFatalFlag = false;
         // If there is a SBE internal failure
-        if((i_hdr.primaryStatus() != SBE_PRI_OPERATION_SUCCESSFUL) ||\
-           (i_hdr.secondaryStatus() != SBE_SEC_OPERATION_SUCCESSFUL))
+        if( i_hdr.primaryStatus() != SBE_PRI_OPERATION_SUCCESSFUL )
         {
-            SBE_ERROR( SBE_FUNC" PriStatus:0x%08X SecStatus:0x%08X"
-                " Fifo Type is:[%02X]", (uint32_t)i_hdr.primaryStatus(),
-                (uint32_t)i_hdr.secondaryStatus(), i_type);
-            dumpFieldsConfig |= SBE_FFDC_ALL_PLAT_DATA;
+            isFatalFlag = true;
         }
 
-        if( dumpFieldsConfig && SbeRegAccess::theSbeRegAccess().isSendInternalFFDC() )
+        if( SbeRegAccess::theSbeRegAccess().isSendInternalFFDC() )
         {
-            rc = sendFFDCOverFIFO(dumpFieldsConfig, len, true, i_type);
+            len = 0;
+            rc = sendFFDCOverFIFO( len, i_type, isFatalFlag);
             CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(rc);
             distance += len;
         }
