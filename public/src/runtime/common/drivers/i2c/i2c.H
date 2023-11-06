@@ -147,20 +147,6 @@ protected:
   ReturnCode i2cUnlockEngine();
 
   /**
-  * @brief Arbitrate I2C port with BMC
-  *
-  * @return FAPI RC
-  */
-  ReturnCode i2cArbitratePort();
-
-  /**
-  * @brief Release I2C port to BMC
-  *
-  * @return FAPI RC
-  */
-  ReturnCode i2cReleasePort();
-
-  /**
    * @brief Inline function used to calculate Bit Rate Divisor setting
    *        based on I2C Bus Speed and Nest Frequency
    *

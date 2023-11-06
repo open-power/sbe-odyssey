@@ -365,20 +365,6 @@ namespace SBE
         sha3_final(o_hash, &ctx);
     }
 
-    /*
-     * This function call only for Runtime image main function
-     *
-     * @brief - reserve HW semaphore
-     */
-    bool reserveSemaphore(uint8_t semaphore);
-
-    /*
-     * This function call only for Runtime image main function
-     *
-     * @brief - release HW semaphore
-     */
-    void releaseSemaphore(uint8_t semaphore);
-  
     /**
      * @brief Convert alphanumeric string to hex value
      *
