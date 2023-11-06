@@ -477,8 +477,6 @@ ReturnCode i2c::i2cLockEngine()
     uint64_t timeoutCount = 4000/160; // total 4 ms
     uint64_t lock_data = 0x8000000000000000;
 
-    fapi2::Target < TARGET_TYPE_OCMB_CHIP > l_ocmb_target;
-
     do
     {
         rc = i2cRegisterOp(I2C_REG_ATOMIC_LOCK,
@@ -528,12 +526,6 @@ ReturnCode i2c::i2cLockEngine()
                     "timedout waiting to lock i2c engine");
     }
 
-    if (FAPI2_RC_SUCCESS != g_platTarget->plat_getChipTarget().reduceType(l_ocmb_target)
-        && SBE::reserveSemaphore(iv_port))
-    {
-        rc = FAPI2_RC_FALSE;
-    }
-
 fapi_try_exit:
     SBE_EXIT(SBE_FUNC)
     return rc;
@@ -546,17 +538,11 @@ ReturnCode i2c::i2cUnlockEngine()
     SBE_ENTER(SBE_FUNC);
     ReturnCode rc = FAPI2_RC_SUCCESS;
     uint64_t unlock_data = 0;
-    fapi2::Target < TARGET_TYPE_OCMB_CHIP > l_ocmb_target;
-
-    if (FAPI2_RC_SUCCESS != g_platTarget->plat_getChipTarget().reduceType(l_ocmb_target))
-    {
-        SBE::releaseSemaphore(iv_port);
-    }
 
     rc = i2cRegisterOp(I2C_REG_ATOMIC_LOCK,
                        false,
                        &unlock_data);
-	
+
     SBE_EXIT(SBE_FUNC)
     return rc;
     #undef SBE_FUNC
