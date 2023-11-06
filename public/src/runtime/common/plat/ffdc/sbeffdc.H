@@ -162,25 +162,24 @@ public:
 
 };
 
+
 /**
- * @brief sendFFDCOverFIFO       - method to pack and send HW / PLAT internal FFDC
- *                                 only if isFifoData is true for Recoverable
- *                                 Unrecoverable Error over FIFO interface
- * @param[in] i_fieldsConfig     - bitmap indicating the field
- *                                 to be sent in FFDC
+ * @brief only if isFifoData is true for Recoverable
+ *         Unrecoverable Error over FIFO interface
+ *
  * @param[out] o_wordsSent       - number of words sent
  *                                 By default it is false.
- * @param[in] i_isFifoData       - i_isFifoData request data from FIFO or not
- *                                 The default is FIFO data is FALSE
  * @param[in] i_type             - FIFO type @enum sbeFifoType
  *                                 The default fifo type is FIFO: SBE_FIFO (0)
+ * @param[in] i_forceFullTracePackage - Request from get FFDC chipop side or not
  * @return                       - SBE secondary RC
+ *
  */
-uint32_t sendFFDCOverFIFO( const uint32_t i_fieldsConfig,
-                           uint32_t &o_wordsSent,
-                           const bool isFifoData  = false,
-                           sbeFifoType i_type     = SBE_FIFO);
+uint32_t sendFFDCOverFIFO( uint32_t &o_wordsSent,
+                           sbeFifoType i_type,
+                           bool i_forceFullTracePackage );
 
+#if defined( MINIMUM_FFDC_RE )
 ///
 /// @brief Log a sbe internal error. This will create a sbe-FFDC object in heap,
 ///        which will have sbe-header and only plat package. Newly created
@@ -194,12 +193,10 @@ uint32_t sendFFDCOverFIFO( const uint32_t i_fieldsConfig,
 ///
 void logSbeError( const uint16_t i_primRc,
                   const uint16_t i_secRc,
-                  fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE
-#if defined( MINIMUM_FFDC_RE )
-                  , bool i_isFatal = false
-#endif
+                  fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE,
+                  bool i_isFatal = true
                 );
-
+#endif
 
 ///
 /// @brief Log a HWP error. but will not be commited by HWP and sbe firmware has

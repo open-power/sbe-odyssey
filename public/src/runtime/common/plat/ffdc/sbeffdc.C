@@ -46,12 +46,16 @@ namespace fapi2
  *        includes the trace header size @ref PkTraceBuffer
  *        plat_truncated_trace_size = sizeof (PkTraceBuffer) + truncatedTraceSize
 */
-#define PLAT_FFDC_TRUNCATED_TRACE_SIZE  ((sizeof(*G_PK_TRACE_BUF) - \
-                                          sizeof(G_PK_TRACE_BUF->cb)) + \
+#define PLAT_FFDC_TRUNCATED_TRACE_SIZE  ((sizeof(*G_PK_TRACE_BUF) -        \
+                                          sizeof(G_PK_TRACE_BUF->cb)) +    \
                                           SBE_FFDC_TRUNCATED_TRACE_LENGTH)
 
-#define FFDC_TRACE_FULL_SIZE ( sizeof(*G_PK_TRACE_BUF) - \
-                                sizeof(G_PK_TRACE_BUF->cb) + \
+/**
+ * @brief FFDC plat full size trace size (8k)
+ *        which is include trace_header + trace_size(8K)
+*/
+#define FFDC_TRACE_FULL_SIZE ( sizeof(*G_PK_TRACE_BUF) -       \
+                                sizeof(G_PK_TRACE_BUF->cb) +   \
                                 G_PK_TRACE_BUF->size )
 
 
@@ -431,7 +435,7 @@ static uint32_t ffdcPlatCreateAndSendWithFullTrace (
 
 uint32_t sendFFDCOverFIFO( uint32_t &o_wordsSent,
                            sbeFifoType i_type,
-                           bool i_isGetFfdcChipopReq )
+                           bool i_forceFullTracePackage )
 {
     #define SBE_FUNC "sendFFDCOverFIFO "
     SBE_ENTER(SBE_FUNC);
@@ -452,6 +456,7 @@ uint32_t sendFFDCOverFIFO( uint32_t &o_wordsSent,
             pozFfdcNode_t * nextNode = nullptr;
             do
             {
+                SBE_DEBUG(SBE_FUNC " currentNode: 0x%08X", currentNode);
                 ffdcUtils_checkScratchPtrCorruptionAndHalt((const void *)currentNode);
 
                 uint32_t len = currentNode->iv_ffdcLen;
@@ -467,7 +472,7 @@ uint32_t sendFFDCOverFIFO( uint32_t &o_wordsSent,
                 if (currentNode->iv_isFatal)
                 {
                     SBE_DEBUG (SBE_FUNC "current node is fatal, streaming full trace");
-                    i_isGetFfdcChipopReq = false;
+                    i_forceFullTracePackage = false;
 
                     uint16_t slid                = fapi2::g_ffdcCtrlSingleton.iv_localSlid;
                     fapi2::errlSeverity_t sev    = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE;
@@ -522,7 +527,7 @@ uint32_t sendFFDCOverFIFO( uint32_t &o_wordsSent,
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
 
         // This is for Get FFDC chipop, in case no FFDC are present in scratch
-        if ( i_isGetFfdcChipopReq )
+        if ( i_forceFullTracePackage )
         {
             uint32_t tempByteSent = 0;
             l_rc = ffdcPlatCreateAndSendWithFullTrace ( tempByteSent,
@@ -668,7 +673,7 @@ static void ffdcInitHwpData( const pozHwpFfdcPackageFormat_t * i_hwpAddr,
     #undef SBE_FUNC
 }
 
-
+#if defined( MINIMUM_FFDC_RE )
 /**
  * @brief FFDC initialization plat ffdc data
  *        This function used to update the plat Response Header including the
@@ -747,6 +752,7 @@ static void ffdcInitPlatData( const pozPlatFfdcPackageFormat_t * i_platAddr,
         platAddr->platHeader.setfwCommitId ( SBE_COMMIT_ID );
         platAddr->platHeader.setDdlevel    ( 0, 0 );
         platAddr->platHeader.setThreadId   ( 0 );
+        platAddr->dumpFields = 0;
 
         if ( i_ffdcLen > sizeof(pozPlatFfdcPackageFormat_t) )
         {
@@ -758,18 +764,10 @@ static void ffdcInitPlatData( const pozPlatFfdcPackageFormat_t * i_platAddr,
                                                 sizeof(pozPlatFfdcPackageFormat_t) );
             blobField->setFields( (uint16_t) SBE_FFDC_TRACE_DATA,
                                     (uint16_t) PLAT_FFDC_TRUNCATED_TRACE_SIZE );
-
-            // Calculating the truncated trace start address
-            uint8_t * traceBufferPtr = (uint8_t *) ((uint8_t *)i_platAddr)         +
-                                                sizeof(pozPlatFfdcPackageFormat_t) +
-                                                sizeof(packageBlobField_t) ;
-            /* TODO: Need to check this is correct way to copy trace */
-            memcpy ( (uint8_t *) traceBufferPtr,
-                        (uint8_t *) G_PK_TRACE_BUF,
-                        PLAT_FFDC_TRUNCATED_TRACE_SIZE  );
         }
     }
 }
+#endif
 
 
 uint32_t ffdcConstructor ( uint32_t i_rc,
@@ -796,9 +794,9 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
 
 #if defined( MINIMUM_FFDC_RE )
 
-    ffdcPlatSize = sizeof(pozPlatFfdcPackageFormat_t)+ /* Plat FFDC size (plat data started) */
-                   sizeof(packageBlobField_t)        + /* FFDC fields size */
-                   PLAT_FFDC_TRUNCATED_TRACE_SIZE;     /* Truncated Trace Len */
+    ffdcPlatSize = sizeof(pozPlatFfdcPackageFormat_t); /* Plat FFDC size (plat data started) */
+                //    sizeof(packageBlobField_t)        + /* FFDC fields size */ // TODO: need to enable once truncated trace enabled
+                //    PLAT_FFDC_TRUNCATED_TRACE_SIZE;     /* Truncated Trace Len */
                    /* size of (PkTraceBuffer) - size of trace buffer = size of PkTraceBuffer except trace buffer size*/
 
 #endif
@@ -822,6 +820,7 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
     // Check for Scratch is allocation
     if (currentNode)
     {
+        SBE_DEBUG (SBE_FUNC "currentNode: 0x%08X", currentNode);
         // Updating FFDC node status
         currentNode->set ((uint16_t)ffdcLen, false, false, ffdcHwpSize, ffdcPlatSize);
         currentNode->next = NULL;
@@ -845,7 +844,7 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
 
         // HWP FFDC data pointer
         pozHwpFfdcPackageFormat_t * hwpFfdcPtr = ( pozHwpFfdcPackageFormat_t * )
-                               ((uint8_t *)currentNode) + sizeof(pozFfdcNode_t);
+                               (((uint8_t *)currentNode) + sizeof(pozFfdcNode_t));
 
 #if defined( MINIMUM_FFDC_RE )
         // Plat FFDC data pointer
@@ -887,39 +886,23 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
     #undef SBE_FUNC
 }
 
-
+#if defined( MINIMUM_FFDC_RE )
 void logSbeError( const uint16_t i_primRc,
                   const uint16_t i_secRc,
-                  fapi2::errlSeverity_t i_sev
-#if defined( MINIMUM_FFDC_RE )
-                  , bool i_isFatal
-#endif
+                  fapi2::errlSeverity_t i_sev,
+                  bool i_isFatal
                 )
 {
-    bool l_fatalFlag = true;
     uint32_t ffdcLen = sizeof(pozPlatFfdcPackageFormat_t); /* Plat ffdc header + plat header(commit ID + DD level) + Dump field size */
-
-#if !defined( MINIMUM_FFDC_RE )
-    // Note: For MINIMUM_FFDC, MINIMUM_FFDC_RE not defined by default Unrecoverable
-    //         error enable.
-    if (fapi2::g_ffdcCtrlSingleton.getHead() != nullptr)
-    {
-        Heap::get_instance().scratch_free((const void*) fapi2::g_ffdcCtrlSingleton.getHead());
-
-    }
-#else
-    l_fatalFlag = i_isFatal;
-    ffdcLen +=  sizeof(packageBlobField_t)      + /* FFDC fields size */
-                PLAT_FFDC_TRUNCATED_TRACE_SIZE ;  /* Trace data size  */
-
-#endif
+    //             sizeof(packageBlobField_t)      + /* FFDC fields size */ // TODO: need to enable once truncated trace enabled
+    //             PLAT_FFDC_TRUNCATED_TRACE_SIZE ;  /* Trace data size  */
 
     pozFfdcNode_t * currentNode = (pozFfdcNode_t *) Heap::get_instance().
                                scratch_alloc( ffdcLen + sizeof(pozFfdcNode_t) );
     if (currentNode)
     {
         // Updating the FFDC node status, Committing the created node
-        currentNode->set ((uint16_t)ffdcLen, true, l_fatalFlag, 0, ffdcLen);
+        currentNode->set ((uint16_t)ffdcLen, true, i_isFatal, 0, ffdcLen);
         currentNode->next = NULL;
 
         // Incrementing SBE log ID, Identical slid ID for particular FFDC
@@ -938,13 +921,8 @@ void logSbeError( const uint16_t i_primRc,
                           i_sev
                         );
 
-#if defined(MINIMUM_FFDC_RE)
         /* Add node at last */
         fapi2::g_ffdcCtrlSingleton.addNextNode(currentNode);
-#else
-        /* Add node at last */
-        fapi2::g_ffdcCtrlSingleton.setHead( currentNode );
-#endif
 
         // Set async ffdc bit
         (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
@@ -956,6 +934,7 @@ void logSbeError( const uint16_t i_primRc,
         pk_halt();
     }
 }
+#endif
 
 
 void logFatalError( fapi2::ReturnCode& i_rc )
@@ -1037,7 +1016,7 @@ void logError( fapi2::ReturnCode& io_rc,
 #if defined(MINIMUM_FFDC_RE)
 
     pozFfdcNode_t * node = reinterpret_cast<pozFfdcNode_t*>(io_rc.getDataPtr());
-    if (node != NULL)
+    if (node != nullptr)
     {
         // marks as node is committed
         node->iv_isCommited = true;

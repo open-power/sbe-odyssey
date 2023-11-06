@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -261,7 +261,7 @@ typedef struct sbeResponseFfdc
                            / sizeof(uint32_t);
         fapiRc = fapi2::FAPI2_RC_SUCCESS;
     }
-}__attribute__((packed, aligned(8))) sbeResponseFfdc_t;
+}__attribute__((packed, aligned(4))) sbeResponseFfdc_t;
 
 /**
  * @brief Aliasing sbeResponseFfdc_t as pozFfdcRespHeader_t

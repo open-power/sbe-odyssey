@@ -22,8 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __SBE_FFDC_TYPE_H
-#define __SBE_FFDC_TYPE_H
+
+#pragma once
 
 #include <endian.h>
 #include "error_info_defs.H"
@@ -549,5 +549,3 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
                            uint16_t i_hwpRegDataLen,
                            void *&  o_hwpRegDataStartAddr
                          );
-
-#endif //__SBE_FFDC_TYPE_H
