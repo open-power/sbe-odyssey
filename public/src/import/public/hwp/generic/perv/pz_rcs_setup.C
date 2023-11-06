@@ -41,6 +41,7 @@ using namespace fapi2;
 using namespace scomt::poz;
 
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_RCS_CTRL1;
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL0;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL3;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL5;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_SNS1LTH;
@@ -218,7 +219,7 @@ static ReturnCode rcs_simple_clock_test(
     l_root_ctrl5.set_RCS_CLK_TEST_IN(i_test);
     l_root_ctrl5.putScom(i_target);
 
-    fapi2::delay(WAIT_20NS, WAIT_100KCYC);
+    fapi2::delay(WAIT_1US, WAIT_100KCYC);
 
     l_sns1lth.getScom(i_target);
 
@@ -391,6 +392,7 @@ ReturnCode pz_rcs_setup(const Target<TARGET_TYPE_PROC_CHIP>& i_target)
 {
     FAPI_INF("RCS Entering...");
     FSXCOMP_FSXLOG_RCS_CTRL1_t l_rcs_ctrl1;
+    FSXCOMP_FSXLOG_ROOT_CTRL0_t l_root_ctrl0;
     FSXCOMP_FSXLOG_ROOT_CTRL5_t l_root_ctrl5;
     FSXCOMP_FSXLOG_SNS1LTH_t l_sns1lth;
     FSXCOMP_FSXLOG_SNS2LTH_t l_sns2lth;
@@ -398,6 +400,8 @@ ReturnCode pz_rcs_setup(const Target<TARGET_TYPE_PROC_CHIP>& i_target)
     fapi2::ATTR_CP_REFCLOCK_SELECT_Type l_refclock_select;
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CP_REFCLOCK_SELECT, i_target, l_refclock_select));
 
+    l_root_ctrl0.set_CFAM_PROTECTION_0(1);
+    l_root_ctrl0.putScom_CLEAR(i_target);
 
     // Even if the RCS is disabled, we still want to provide a clock to the PLLs
     //   for end of life.
