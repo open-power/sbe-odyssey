@@ -34,6 +34,12 @@
  *
  */
 
+/**
+ * @brief Default max retry attempts along with i2c reset to be made before bailing out
+ *
+ */
+#define DEFAULT_MAX_I2C_RETRY 0x1
+
 namespace fapi2
 {
 
@@ -64,6 +70,8 @@ public:
    * @brief To read from i2c device
    *        This implementation can be overriden in derived class
    *        based on use case
+   *        This API also performs a i2c reset incase of any i2c fails
+   *        and retries based on iv_max_retry_count
    *
    * @param target FAPI HW target to operate on.
    * @param get_size Size that getI2c will read from the HW target.
@@ -98,11 +106,12 @@ public:
                                    uint8_t  *o_data,
                              const uint32_t  o_size);
 
-
   /**
    * @brief To write to i2c device
    *        This implementation can be overriden in derived class
    *        based on use case
+   *        This API also performs a i2c reset incase of any i2c fails
+   *        and retries based on iv_max_retry_count
    *
    * @param target FAPI HW target to operate on.
    * @param data Buffer that holds data to write to the HW target.
@@ -146,6 +155,8 @@ protected:
   uint16_t iv_bit_rate_divisor;   // uint16_t to match size in mode register
   uint64_t iv_polling_interval_ns;// in nanoseconds
   uint64_t iv_timeout_count;
+  uint8_t  iv_max_retry_count = DEFAULT_MAX_I2C_RETRY;
+  uint8_t  iv_curr_retry_count = 0x0;
 
   /**
   * @brief write to a I2C device
@@ -299,6 +310,62 @@ private:
    * @return ReturnCode FAPI RC
    */
   ReturnCode i2cBusReset();
+
+  /**
+   * @brief To read from i2c device
+   *
+   * @param get_size Size that getI2c will read from the HW target.
+   * @param cfgData Buffer that holds data to write to the HW target.
+   *                May be empty if no address/command is required
+   *                before the read.
+   * @param o_data Buffer that holds data read from HW target.
+   * @return ReturnCode FAPI2_RC_SUCCESS if success, else error code.
+   */
+  ReturnCode getI2cHelper( const size_t get_size,
+                        const std::vector<uint8_t>& cfgData,
+                        std::vector<uint8_t>& o_data );
+
+  /**
+   * @brief To write to i2c device
+   *
+   * @param data Buffer that holds data to write to the HW target.
+   * @return ReturnCode fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
+   */
+  ReturnCode putI2cHelper( const std::vector<uint8_t>& data );
+
+    /**
+   * @brief To read from i2c device
+   *        This implementation can be overriden in derived class
+   *        based on use case
+   *
+   * @param i_data  Buffer that holds data to write to the HW target.
+   *                May be empty if no address/command is required
+   *                before the read.
+   * @param i_size  True size of i_data
+   * @param o_data  Buffer that holds data read from HW target.
+   * @param o_size  True size of o_data
+   * @return ReturnCode FAPI2_RC_SUCCESS if success, else error code.
+   */
+
+  virtual ReturnCode getI2cHelper( const uint8_t  *i_data,
+                                   const uint32_t  i_size,
+                                         uint8_t  *o_data,
+                                   const uint32_t  o_size);
+
+  /**
+   * @brief To write to i2c device
+   *        This implementation can be overriden in derived class
+   *        based on use case
+   *
+   * @param i_data  Buffer that holds data to write to the HW target.
+   *                May be empty if no address/command is required
+   *                before the read.
+   * @param i_size  True size of i_data
+   * @return ReturnCode fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
+   */
+  virtual ReturnCode putI2cHelper( const uint8_t  *i_data,
+                                   const uint32_t  i_size);
+
 };
 
 } //namespace fapi2

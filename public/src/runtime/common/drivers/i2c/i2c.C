@@ -685,24 +685,16 @@ ReturnCode i2c::i2cReset()
     #undef SBE_FUNC
 }
 
-ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
-                        const size_t get_size,
-                        const std::vector<uint8_t>& cfgData,
-                        std::vector<uint8_t>& o_data )
+ReturnCode i2c::getI2cHelper( const size_t get_size,
+                            const std::vector<uint8_t>& cfgData,
+                            std::vector<uint8_t>& o_data )
 {
-    #define SBE_FUNC " getI2c "
+    #define SBE_FUNC " getI2cHelper "
     SBE_ENTER(SBE_FUNC)
 
     ReturnCode rc = FAPI2_RC_SUCCESS;
 
     do {
-
-        rc = populatei2cdetails(target);
-        if(rc != FAPI2_RC_SUCCESS)
-        {
-            SBE_ERROR(SBE_FUNC " failed for populatei2cdetails with rc 0x%08X", rc);
-            break;
-        }
 
         rc = i2cLockEngine();
         if(rc != FAPI2_RC_SUCCESS)
@@ -743,8 +735,9 @@ ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
             iv_with_stop = true;
             iv_skip_mode_setup = false;
         }
-	
+
         rc = i2cRead(o_data.data(), get_size);
+
         if(rc != FAPI2_RC_SUCCESS)
         {
             SBE_ERROR(SBE_FUNC " failed for i2cRead(without offset) with rc 0x%08X", rc);
@@ -768,24 +761,65 @@ ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
 }
 
 ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
-                        const uint8_t  *i_data,
-                        const uint32_t  i_size,
-                              uint8_t  *o_data,
-                        const uint32_t  o_size)
+                        const size_t get_size,
+                        const std::vector<uint8_t>& cfgData,
+                        std::vector<uint8_t>& o_data )
 {
     #define SBE_FUNC " getI2c "
     SBE_ENTER(SBE_FUNC)
 
     ReturnCode rc = FAPI2_RC_SUCCESS;
 
-    do {
-
+    do{
+        //We just need to populate i2c details once
         rc = populatei2cdetails(target);
         if(rc != FAPI2_RC_SUCCESS)
         {
             SBE_ERROR(SBE_FUNC " failed for populatei2cdetails with rc 0x%08X", rc);
             break;
         }
+
+        do{
+
+            SBE_DEBUG(SBE_FUNC "Current retry count 0x%02x", iv_curr_retry_count);
+            //TODO: PFSBE-394
+            rc = getI2cHelper(get_size, cfgData, o_data);
+            //Lets exit out if there were no i2c fails
+            if(rc == FAPI2_RC_SUCCESS)
+            {
+                break;
+            }
+            else
+            {
+                //TODO: PFSBE-394
+                ReturnCode l_rc = i2cReset();
+                if(l_rc != FAPI2_RC_SUCCESS)
+                {
+                    break;
+                }
+            }
+
+            iv_curr_retry_count++;
+
+        }while(iv_curr_retry_count <= iv_max_retry_count);
+    }while(false);
+
+    SBE_EXIT(SBE_FUNC)
+    return rc;
+    #undef SBE_FUNC
+}
+
+ReturnCode i2c::getI2cHelper( const uint8_t  *i_data,
+                            const uint32_t  i_size,
+                                uint8_t  *o_data,
+                            const uint32_t  o_size)
+{
+    #define SBE_FUNC " getI2cHelper "
+    SBE_ENTER(SBE_FUNC)
+
+    ReturnCode rc = FAPI2_RC_SUCCESS;
+
+    do {
 
         rc = i2cLockEngine();
         if(rc != FAPI2_RC_SUCCESS)
@@ -823,7 +857,7 @@ ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
             iv_with_stop = true;
             iv_skip_mode_setup = false;
         }
-	
+
         rc = i2cRead(o_data, o_size);
         if(rc != FAPI2_RC_SUCCESS)
         {
@@ -847,22 +881,63 @@ ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
     #undef SBE_FUNC
 }
 
-ReturnCode i2c::putI2c( const Target<TARGET_TYPE_ALL>& target,
-                        const std::vector<uint8_t>& data )
+ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
+                        const uint8_t  *i_data,
+                        const uint32_t  i_size,
+                              uint8_t  *o_data,
+                        const uint32_t  o_size)
 {
-    #define SBE_FUNC " putI2c "
+    #define SBE_FUNC " getI2c "
     SBE_ENTER(SBE_FUNC)
 
-    ReturnCode rc = FAPI2_RC_SUCCESS;
+   ReturnCode rc = FAPI2_RC_SUCCESS;
 
-    do {
-
+    do{
+        //We just need to populate i2c details once
         rc = populatei2cdetails(target);
         if(rc != FAPI2_RC_SUCCESS)
         {
             SBE_ERROR(SBE_FUNC " failed for populatei2cdetails with rc 0x%08X", rc);
             break;
         }
+
+        do{
+
+            SBE_DEBUG(SBE_FUNC "Current retry count 0x%02x", iv_curr_retry_count);
+            //TODO: PFSBE-394
+            rc = getI2cHelper(i_data, i_size, o_data, o_size);
+            //Lets exit out if there were no i2c fails
+            if(rc == FAPI2_RC_SUCCESS)
+            {
+                break;
+            }
+            else
+            {
+                //TODO: PFSBE-394
+                ReturnCode l_rc = i2cReset();
+                if(l_rc != FAPI2_RC_SUCCESS)
+                {
+                    break;
+                }
+            }
+
+            iv_curr_retry_count++;
+
+        }while(iv_curr_retry_count <= iv_max_retry_count);
+    }while(false);
+    SBE_EXIT(SBE_FUNC)
+    return rc;
+    #undef SBE_FUNC
+}
+
+ReturnCode i2c::putI2cHelper( const std::vector<uint8_t>& data )
+{
+    #define SBE_FUNC " putI2cHelper "
+    SBE_ENTER(SBE_FUNC)
+
+    ReturnCode rc = FAPI2_RC_SUCCESS;
+
+    do {
 
         rc = i2cLockEngine();
         if(rc != FAPI2_RC_SUCCESS)
@@ -897,22 +972,61 @@ ReturnCode i2c::putI2c( const Target<TARGET_TYPE_ALL>& target,
 }
 
 ReturnCode i2c::putI2c( const Target<TARGET_TYPE_ALL>& target,
-                        const uint8_t  *i_data,
-                        const uint32_t  i_size )
+                        const std::vector<uint8_t>& data )
 {
     #define SBE_FUNC " putI2c "
     SBE_ENTER(SBE_FUNC)
 
     ReturnCode rc = FAPI2_RC_SUCCESS;
 
-    do {
-
+    do{
+        //We just need to populate i2c details once
         rc = populatei2cdetails(target);
         if(rc != FAPI2_RC_SUCCESS)
         {
             SBE_ERROR(SBE_FUNC " failed for populatei2cdetails with rc 0x%08X", rc);
             break;
         }
+
+        do{
+
+            SBE_DEBUG(SBE_FUNC "Current retry count 0x%02x", iv_curr_retry_count);
+            //TODO: PFSBE-394
+            rc = putI2cHelper(data);
+            //Lets exit out if there were no i2c fails
+            if(rc == FAPI2_RC_SUCCESS)
+            {
+                break;
+            }
+            else
+            {
+                //TODO: PFSBE-394
+                ReturnCode l_rc = i2cReset();
+                if(l_rc != FAPI2_RC_SUCCESS)
+                {
+                    break;
+                }
+            }
+
+            iv_curr_retry_count++;
+
+        }while(iv_curr_retry_count <= iv_max_retry_count);
+    }while(false);
+
+    SBE_EXIT(SBE_FUNC)
+    return rc;
+    #undef SBE_FUNC
+}
+
+ReturnCode i2c::putI2cHelper( const uint8_t  *i_data,
+                              const uint32_t  i_size )
+{
+    #define SBE_FUNC " putI2cHelper "
+    SBE_ENTER(SBE_FUNC)
+
+    ReturnCode rc = FAPI2_RC_SUCCESS;
+
+    do {
 
         rc = i2cLockEngine();
         if(rc != FAPI2_RC_SUCCESS)
@@ -930,7 +1044,7 @@ ReturnCode i2c::putI2c( const Target<TARGET_TYPE_ALL>& target,
             SBE_ERROR(SBE_FUNC " failed for i2cWrite with rc 0x%08X", rc);
             break;
         }
-    } while(0);
+    } while(false);
 
     //TODO: PFSBE-394
     ReturnCode l_rc = i2cUnlockEngine();
@@ -940,6 +1054,54 @@ ReturnCode i2c::putI2c( const Target<TARGET_TYPE_ALL>& target,
         if(rc == FAPI2_RC_SUCCESS)
             rc = l_rc;
     }
+
+    SBE_EXIT(SBE_FUNC)
+    return rc;
+    #undef SBE_FUNC
+}
+
+ReturnCode i2c::putI2c( const Target<TARGET_TYPE_ALL>& target,
+                        const uint8_t  *i_data,
+                        const uint32_t  i_size )
+{
+    #define SBE_FUNC " putI2c "
+    SBE_ENTER(SBE_FUNC)
+
+    ReturnCode rc = FAPI2_RC_SUCCESS;
+
+    do{
+        //We just need to populate i2c details once
+        rc = populatei2cdetails(target);
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC " failed for populatei2cdetails with rc 0x%08X", rc);
+            break;
+        }
+
+        do{
+
+            SBE_DEBUG(SBE_FUNC "Current retry count 0x%02x", iv_curr_retry_count);
+            //TODO: PFSBE-394
+            rc = putI2cHelper(i_data, i_size);
+            //Lets exit out if there were no i2c fails
+            if(rc == FAPI2_RC_SUCCESS)
+            {
+                break;
+            }
+            else
+            {
+                //TODO: PFSBE-394
+                ReturnCode l_rc = i2cReset();
+                if(l_rc != FAPI2_RC_SUCCESS)
+                {
+                    break;
+                }
+            }
+
+            iv_curr_retry_count++;
+
+        }while(iv_curr_retry_count <= iv_max_retry_count);
+    }while(false);
 
     SBE_EXIT(SBE_FUNC)
     return rc;
@@ -960,6 +1122,8 @@ void i2c::printi2cdetails()
                                         SBE::lower32BWord(iv_polling_interval_ns));
     SBE_INFO(SBE_FUNC "Time out count 0x%08X %08X", SBE::higher32BWord(iv_timeout_count),
                                         SBE::lower32BWord(iv_timeout_count));
+    SBE_INFO(SBE_FUNC "Max i2c retry count 0x%02x, Current i2c retry count 0x%02x",
+                        iv_max_retry_count, iv_curr_retry_count);
 
     SBE_EXIT(SBE_FUNC);
     #undef SBE_FUNC

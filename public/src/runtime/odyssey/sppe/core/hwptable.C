@@ -103,7 +103,7 @@ static hwpMap_t hwpClass2PtrTbl[] =
                HWP_MAP( istepWithOcmb, ody_load_pie ),                   // 2.08
                HWP_MAP( istepWithOcmb, ody_draminit_mc ),                // 2.09
                HWP_MAP( istepWithOcmb, ody_enable_ecc ),                 // 2.10
-               HWP_MAP( istepWithOcmbWithi2cReset, ody_thermal_init ),   // 2.11
+               HWP_MAP( istepWithOcmb, ody_thermal_init ),               // 2.11
           };
 
 hwpTableEntry_t hwpTableEntries[] = {
