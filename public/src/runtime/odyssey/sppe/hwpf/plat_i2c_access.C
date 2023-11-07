@@ -36,7 +36,7 @@ namespace fapi2
 ReturnCode plati2c::populatei2cdetails(const Target<TARGET_TYPE_ALL>& target)
 {
     Target<TARGET_TYPE_TEMP_SENSOR>  l_temp_target;
-    target.reduceType(l_temp_target);
+    FAPI_TRY(target.reduceType(l_temp_target));
 
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_SPPE_I2C_DEV_ADDR,
                   l_temp_target,
@@ -60,6 +60,10 @@ ReturnCode plati2c::populatei2cdetails(const Target<TARGET_TYPE_ALL>& target)
     iv_polling_interval_ns = i2cGetPollingInterval(I2C_BUS_SPEED);
 
     iv_timeout_count = I2C_TIMEOUT_COUNT(iv_polling_interval_ns);
+
+    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_SPPE_I2C_MAX_RETRY_COUNT,
+                        l_temp_target,
+                        iv_max_retry_count));
 
     //NOTE: Enable below function if required for debug
     //printi2cdetails();
