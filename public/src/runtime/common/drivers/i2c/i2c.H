@@ -366,6 +366,12 @@ private:
   virtual ReturnCode putI2cHelper( const uint8_t  *i_data,
                                    const uint32_t  i_size);
 
+  /**
+   * @brief API to confirm clean i2c status after a i2c reset
+   *
+   * @return ReturnCode FAPI RC
+   */
+  ReturnCode isI2cResetClean();
 };
 
 } //namespace fapi2
