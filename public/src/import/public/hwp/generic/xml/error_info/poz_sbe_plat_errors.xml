@@ -26,60 +26,60 @@
 <hwpError>
     <sbeError/>
     <platScomFail/>
-    <rc>RC_SBE_SCOM_FAILURE</rc>
+    <rc>RC_POZ_SCOM_FAILURE</rc>
     <description>SBE encountered a SCOM failure</description>
 </hwpError>
 <hwpError>
     <sbeError/>
     <platScomFail/>
-    <rc>RC_SBE_CFAM_FAILURE</rc>
+    <rc>RC_POZ_CFAM_FAILURE</rc>
     <description>SBE encountered an unsupperted CFAM access</description>
 </hwpError>
 <hwpError>
     <sbeError/>
     <platScomFail/>
-    <rc>RC_SBE_PIB_XSCOM_ERROR</rc>
+    <rc>RC_POZ_PIB_XSCOM_ERROR</rc>
     <description>SBE SCOM failure - PIB XSCOM failure</description>
 </hwpError>
 <hwpError>
     <sbeError/>
     <platScomFail/>
-    <rc>RC_SBE_PIB_OFFLINE_ERROR</rc>
+    <rc>RC_POZ_PIB_OFFLINE_ERROR</rc>
     <description>SBE SCOM failure - Chiplet offline</description>
 </hwpError>
 <hwpError>
     <sbeError/>
     <platScomFail/>
-    <rc>RC_SBE_PIB_PARTIAL_ERROR</rc>
+    <rc>RC_POZ_PIB_PARTIAL_ERROR</rc>
     <description>SBE SCOM failure - Partial SCOM failure</description>
 </hwpError>
 <hwpError>
     <sbeError/>
     <platScomFail/>
-    <rc>RC_SBE_PIB_ADDRESS_ERROR</rc>
+    <rc>RC_POZ_PIB_ADDRESS_ERROR</rc>
     <description>SBE SCOM failure - SCOM address failure</description>
 </hwpError>
 <hwpError>
     <sbeError/>
     <platScomFail/>
-    <rc>RC_SBE_PIB_CLOCK_ERROR</rc>
+    <rc>RC_POZ_PIB_CLOCK_ERROR</rc>
     <description>SBE SCOM failure - Clock error</description>
 </hwpError>
 <hwpError>
     <sbeError/>
     <platScomFail/>
-    <rc>RC_SBE_PIB_PARITY_ERROR</rc>
+    <rc>RC_POZ_PIB_PARITY_ERROR</rc>
     <description>SBE SCOM failure - Parity error</description>
 </hwpError>
 <hwpError>
     <sbeError/>
     <platScomFail/>
-    <rc>RC_SBE_PIB_TIMEOUT_ERROR</rc>
+    <rc>RC_POZ_PIB_TIMEOUT_ERROR</rc>
     <description>SBE SCOM failure - Timeout error</description>
 </hwpError>
 <hwpError>
     <sbeError/>
-    <rc>RC_SBE_FILE_HASH_MISMATCH</rc>
+    <rc>RC_POZ_FILE_HASH_MISMATCH</rc>
     <description>SBE PLAT Error - File hash mismatch</description>
     <ffdc>GEN_HASH_0</ffdc>
     <ffdc>GEN_HASH_1</ffdc>
@@ -100,7 +100,7 @@
 </hwpError>
 <hwpError>
     <sbeError/>
-    <rc>RC_SBE_FILE_NOT_FOUND</rc>
+    <rc>RC_POZ_FILE_NOT_FOUND</rc>
     <description>SBE PLAT Error - File not found</description>
 </hwpError>
 </hwpErrors>
