@@ -118,17 +118,23 @@ union status_reg_t
         uint64_t data_request : 1;
         uint64_t command_complete : 1;
         uint64_t stop_error : 1;
-        uint64_t upper_threshold : 7;
+        uint64_t max_num_of_ports : 7;
         uint64_t any_i2c_interrupt : 1;
         uint64_t waiting_for_i2c_busy : 1;
-        uint64_t error_in : 1;
+        uint64_t const_zero0 : 1;
         uint64_t i2c_port_history_busy : 1;
         uint64_t scl_input_level : 1;
         uint64_t sda_input_level : 1;
         uint64_t i2c_port_busy : 1;
         uint64_t i2c_interface_busy : 1;
-        uint64_t fifo_entry_count : 8;
-        uint64_t padding : 32;
+        uint64_t const_zero1 : 4;
+        uint64_t fifo_entry_count : 4;
+        uint64_t peek_data1 : 8;
+        uint64_t lbus_parity_error1 : 1;
+        uint64_t const_zero2 : 3;
+        uint64_t i2cm_steered_interrupts : 4;
+        uint64_t external_status : 6;
+        uint64_t const_zero3 : 10;
     };
 };
 
