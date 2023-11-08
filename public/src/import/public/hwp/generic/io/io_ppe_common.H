@@ -818,7 +818,7 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::hss_init_tx(const fapi2::Target<K, M, 
     MEM_REG_TX_FFE_POST_COEF_PUT(iv_regs, i_target, i_thread, i_tx_post);
     FAPI_TRY(iv_regs->flushCache(i_target));
 
-    for (l_lane = 0; l_lane < 8; l_lane++)
+    for (l_lane = 0; l_lane < 32; l_lane++)
     {
         if (i_lane_mask & (0x80000000 >> l_lane))
         {
