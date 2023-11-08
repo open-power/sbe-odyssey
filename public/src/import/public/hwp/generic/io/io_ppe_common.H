@@ -266,8 +266,9 @@ class io_ppe_common
         /// @param[in] i_target         Chip target to start
         /// @param[in] i_thread         The thread LTE is being set on
         /// @return fapi2::ReturnCode FAPI2_RC_SUCCESS if success, else error code.
-        fapi2::ReturnCode auto_recal_posttrain(const fapi2::Target<K, M, V>& i_target,
-                                               const uint8_t i_thread);
+        fapi2::ReturnCode set_auto_recal(const fapi2::Target<K, M, V>& i_target,
+                                         const uint8_t i_thread,
+                                         const uint32_t i_data);
 };
 
 // ===============================================================
@@ -1269,44 +1270,54 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::set_pcie_presets(const fapi2::Target<K
     FAPI_DBG("Setting PCIE Presets")
 
     // Tx Detect Rx
+    FAPI_TRY(MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_0_PUT(iv_regs, i_target, i_thread, 7));
+    FAPI_TRY(MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_1_PUT(iv_regs, i_target, i_thread, 7));
+    FAPI_TRY(MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_2_PUT(iv_regs, i_target, i_thread, 7));
+    FAPI_TRY(MEM_REG_PCIE_PPE_TXDETRX_IDLE_TIMER_LANE_3_PUT(iv_regs, i_target, i_thread, 7));
+
+    FAPI_TRY(MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_0_PUT(iv_regs, i_target, i_thread, 2));
+    FAPI_TRY(MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_1_PUT(iv_regs, i_target, i_thread, 2));
+    FAPI_TRY(MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_2_PUT(iv_regs, i_target, i_thread, 2));
+    FAPI_TRY(MEM_REG_PCIE_PPE_TXDETRX_SAMP_TIMER_LANE_3_PUT(iv_regs, i_target, i_thread, 2));
+
     FAPI_TRY(MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_0_PUT(iv_regs, i_target, i_thread, 192));
     FAPI_TRY(MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_1_PUT(iv_regs, i_target, i_thread, 192));
     FAPI_TRY(MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_2_PUT(iv_regs, i_target, i_thread, 192));
     FAPI_TRY(MEM_REG_PCIE_PPE_TXDETRX_DAC_CNTL_LANE_3_PUT(iv_regs, i_target, i_thread, 192));
 
     // Gen1
-    FAPI_TRY(MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_CTLE_PEAK1_PUT(iv_regs, i_target, i_thread, 4));
-    FAPI_TRY(MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_CTLE_PEAK2_PUT(iv_regs, i_target, i_thread, 7));
+    FAPI_TRY(MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_CTLE_PEAK1_PUT(iv_regs, i_target, i_thread, 2));
+    FAPI_TRY(MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_CTLE_PEAK2_PUT(iv_regs, i_target, i_thread, 2));
     FAPI_TRY(MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_LTE_GAIN_PUT(iv_regs, i_target, i_thread, 7));
     FAPI_TRY(MEM_REG_PCIE_LANE0_GEN1_PRESET_RX_LTE_ZERO_PUT(iv_regs, i_target, i_thread, 1));
-    FAPI_TRY(MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_CTLE_PEAK1_PUT(iv_regs, i_target, i_thread, 4));
-    FAPI_TRY(MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_CTLE_PEAK2_PUT(iv_regs, i_target, i_thread, 7));
+    FAPI_TRY(MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_CTLE_PEAK1_PUT(iv_regs, i_target, i_thread, 2));
+    FAPI_TRY(MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_CTLE_PEAK2_PUT(iv_regs, i_target, i_thread, 2));
     FAPI_TRY(MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_LTE_GAIN_PUT(iv_regs, i_target, i_thread, 7));
     FAPI_TRY(MEM_REG_PCIE_LANE1_GEN1_PRESET_RX_LTE_ZERO_PUT(iv_regs, i_target, i_thread, 1));
-    FAPI_TRY(MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_CTLE_PEAK1_PUT(iv_regs, i_target, i_thread, 4));
-    FAPI_TRY(MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_CTLE_PEAK2_PUT(iv_regs, i_target, i_thread, 7));
+    FAPI_TRY(MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_CTLE_PEAK1_PUT(iv_regs, i_target, i_thread, 2));
+    FAPI_TRY(MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_CTLE_PEAK2_PUT(iv_regs, i_target, i_thread, 2));
     FAPI_TRY(MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_LTE_GAIN_PUT(iv_regs, i_target, i_thread, 7));
     FAPI_TRY(MEM_REG_PCIE_LANE2_GEN1_PRESET_RX_LTE_ZERO_PUT(iv_regs, i_target, i_thread, 1));
-    FAPI_TRY(MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_CTLE_PEAK1_PUT(iv_regs, i_target, i_thread, 4));
-    FAPI_TRY(MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_CTLE_PEAK2_PUT(iv_regs, i_target, i_thread, 7));
+    FAPI_TRY(MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_CTLE_PEAK1_PUT(iv_regs, i_target, i_thread, 2));
+    FAPI_TRY(MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_CTLE_PEAK2_PUT(iv_regs, i_target, i_thread, 2));
     FAPI_TRY(MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_LTE_GAIN_PUT(iv_regs, i_target, i_thread, 7));
     FAPI_TRY(MEM_REG_PCIE_LANE3_GEN1_PRESET_RX_LTE_ZERO_PUT(iv_regs, i_target, i_thread, 1));
 
     // Gen 2
-    FAPI_TRY(MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_CTLE_PEAK1_PUT(iv_regs, i_target, i_thread, 4));
-    FAPI_TRY(MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_CTLE_PEAK2_PUT(iv_regs, i_target, i_thread, 7));
+    FAPI_TRY(MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_CTLE_PEAK1_PUT(iv_regs, i_target, i_thread, 2));
+    FAPI_TRY(MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_CTLE_PEAK2_PUT(iv_regs, i_target, i_thread, 2));
     FAPI_TRY(MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_LTE_GAIN_PUT(iv_regs, i_target, i_thread, 7));
     FAPI_TRY(MEM_REG_PCIE_LANE0_GEN2_PRESET_RX_LTE_ZERO_PUT(iv_regs, i_target, i_thread, 1));
-    FAPI_TRY(MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_CTLE_PEAK1_PUT(iv_regs, i_target, i_thread, 4));
-    FAPI_TRY(MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_CTLE_PEAK2_PUT(iv_regs, i_target, i_thread, 7));
+    FAPI_TRY(MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_CTLE_PEAK1_PUT(iv_regs, i_target, i_thread, 2));
+    FAPI_TRY(MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_CTLE_PEAK2_PUT(iv_regs, i_target, i_thread, 2));
     FAPI_TRY(MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_LTE_GAIN_PUT(iv_regs, i_target, i_thread, 7));
     FAPI_TRY(MEM_REG_PCIE_LANE1_GEN2_PRESET_RX_LTE_ZERO_PUT(iv_regs, i_target, i_thread, 1));
-    FAPI_TRY(MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_CTLE_PEAK1_PUT(iv_regs, i_target, i_thread, 4));
-    FAPI_TRY(MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_CTLE_PEAK2_PUT(iv_regs, i_target, i_thread, 7));
+    FAPI_TRY(MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_CTLE_PEAK1_PUT(iv_regs, i_target, i_thread, 2));
+    FAPI_TRY(MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_CTLE_PEAK2_PUT(iv_regs, i_target, i_thread, 2));
     FAPI_TRY(MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_LTE_GAIN_PUT(iv_regs, i_target, i_thread, 7));
     FAPI_TRY(MEM_REG_PCIE_LANE2_GEN2_PRESET_RX_LTE_ZERO_PUT(iv_regs, i_target, i_thread, 1));
-    FAPI_TRY(MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_CTLE_PEAK1_PUT(iv_regs, i_target, i_thread, 4));
-    FAPI_TRY(MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_CTLE_PEAK2_PUT(iv_regs, i_target, i_thread, 7));
+    FAPI_TRY(MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_CTLE_PEAK1_PUT(iv_regs, i_target, i_thread, 2));
+    FAPI_TRY(MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_CTLE_PEAK2_PUT(iv_regs, i_target, i_thread, 2));
     FAPI_TRY(MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_LTE_GAIN_PUT(iv_regs, i_target, i_thread, 7));
     FAPI_TRY(MEM_REG_PCIE_LANE3_GEN2_PRESET_RX_LTE_ZERO_PUT(iv_regs, i_target, i_thread, 1));
 
@@ -1453,13 +1464,14 @@ fapi_try_exit:
 }
 
 template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
-fapi2::ReturnCode io_ppe_common<K, M, V>::auto_recal_posttrain(const fapi2::Target<K, M, V>& i_target,
-        const uint8_t i_thread)
+fapi2::ReturnCode io_ppe_common<K, M, V>::set_auto_recal(const fapi2::Target<K, M, V>& i_target,
+        const uint8_t i_thread,
+        const uint32_t i_data)
 {
-    FAPI_DBG("Getting auto_recal_posttrain");
+    FAPI_DBG("Getting set_auto_recal");
 
-    FAPI_TRY(MEM_REG_RX_ENABLE_AUTO_RECAL_0_15_PUT(iv_regs, i_target, i_thread, 1));
-    FAPI_TRY(MEM_REG_RX_ENABLE_AUTO_RECAL_16_23_PUT(iv_regs, i_target, i_thread, 1));
+    FAPI_TRY(MEM_REG_RX_ENABLE_AUTO_RECAL_0_15_PUT(iv_regs, i_target, i_thread, (i_data >> 16) & 0xFFFF));
+    FAPI_TRY(MEM_REG_RX_ENABLE_AUTO_RECAL_16_23_PUT(iv_regs, i_target, i_thread, i_data & 0xFFFF));
 
 fapi_try_exit:
     FAPI_DBG("End");
