@@ -45,6 +45,7 @@ enum sbeState
     SBE_STATE_CMN_RUNTIME = 0x3, // SBE Runtime
     SBE_STATE_CMN_DUMP    = 0x4, // Dumping
     SBE_STATE_CMN_FAILURE = 0x5, // Internal SBE failure
+    SBE_STATE_CMN_HRESET  = 0xA, // Hreset SBE state
 
     /** Plat specific states across all platforms.
      *  -If any state defined below is not used by a platform implies that
@@ -56,7 +57,7 @@ enum sbeState
      *   in sbe messaging reg(0x2809)**/
 
     // Max States, Always keep it at the last of the enum and sequential
-    SBE_MAX_STATE     = 0x6,
+    SBE_MAX_STATE     = 0xB,
     // Don't count this in the state, just to intialize the state variables
     SBE_INVALID_STATE = 0xF,
 };
