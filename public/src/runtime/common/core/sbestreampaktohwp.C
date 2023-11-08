@@ -150,7 +150,7 @@ static ReturnCode sbestreampaktohwp_internal(
 
             /* Check the SBE class RC with FILE_NOT_FOUND, assert with FAPI */
             PLAT_FAPI_ASSERT( !(hashListRc == SBE::FILE_NOT_FOUND),
-                        SBE_FILE_NOT_FOUND(),
+                        POZ_FILE_NOT_FOUND(),
                         "sbestreampaktohwp: Pak file not found in hash list");
 
             /* ppe constrain not possible to read unaligned data, fix - using memcpy
@@ -159,7 +159,7 @@ static ReturnCode sbestreampaktohwp_internal(
 
             /* Check the SBE class RC with HASH_COMPARE_FAIL, assert with FAPI */
             PLAT_FAPI_ASSERT( !(hashListRc == SBE::HASH_COMPARE_FAIL),
-                        SBE_FILE_HASH_MISMATCH().
+                        POZ_FILE_HASH_MISMATCH().
                         set_GEN_HASH_0(* (ptrGenHash + 0)).
                         set_GEN_HASH_1(* (ptrGenHash + 1)).
                         set_GEN_HASH_2(* (ptrGenHash + 2)).

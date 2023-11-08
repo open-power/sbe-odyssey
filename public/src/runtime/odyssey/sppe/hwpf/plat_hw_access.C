@@ -140,25 +140,25 @@ fapi2::ReturnCode pibRcToFapiRc(const uint32_t i_pibRc)
     switch(i_pibRc)
     {
         case PIB_XSCOM_ERROR:
-            l_fapiRc = RC_SBE_PIB_XSCOM_ERROR;
+            l_fapiRc = RC_POZ_PIB_XSCOM_ERROR;
             break;
         case PIB_OFFLINE_ERROR:
-            l_fapiRc = RC_SBE_PIB_OFFLINE_ERROR;
+            l_fapiRc = RC_POZ_PIB_OFFLINE_ERROR;
             break;
         case PIB_PARTIAL_ERROR:
-            l_fapiRc = RC_SBE_PIB_PARTIAL_ERROR;
+            l_fapiRc = RC_POZ_PIB_PARTIAL_ERROR;
             break;
         case PIB_ADDRESS_ERROR:
-            l_fapiRc = RC_SBE_PIB_ADDRESS_ERROR;
+            l_fapiRc = RC_POZ_PIB_ADDRESS_ERROR;
             break;
         case PIB_CLOCK_ERROR:
-            l_fapiRc = RC_SBE_PIB_CLOCK_ERROR;
+            l_fapiRc = RC_POZ_PIB_CLOCK_ERROR;
             break;
         case PIB_PARITY_ERROR:
-            l_fapiRc = RC_SBE_PIB_PARITY_ERROR;
+            l_fapiRc = RC_POZ_PIB_PARITY_ERROR;
             break;
         case PIB_TIMEOUT_ERROR:
-            l_fapiRc = RC_SBE_PIB_TIMEOUT_ERROR;
+            l_fapiRc = RC_POZ_PIB_TIMEOUT_ERROR;
             break;
         case PIB_NO_ERROR:
         default:
@@ -171,7 +171,7 @@ fapi2::ReturnCode handle_scom_error(const uint32_t i_addr, uint8_t i_pibRc)
 {
     SBE_ERROR("handle_scom_error : pibrc=0x%X, i_addr=0x%8X", i_pibRc, i_addr);
     PLAT_FAPI_ASSERT( false,
-                      SBE_SCOM_FAILURE().
+                      POZ_SCOM_FAILURE().
                       set_address(i_addr).
                       set_pcb_pib_rc(i_pibRc),
                       "SCOM : pcb pib error, pibRc[0x%08X] Translated_ScomAddr[0x%08X]",
@@ -283,7 +283,7 @@ static ReturnCode doIndirectScom(const bool i_isRead,
             if (elapsedIndScomTimeNs > MAX_INDSCOM_TIMEOUT_NS)
             {
                 SBE_ERROR(SBE_FUNC "Indirect scom timeout.");
-                fapiRc = RC_SBE_PIB_TIMEOUT_ERROR;
+                fapiRc = RC_POZ_PIB_TIMEOUT_ERROR;
                 break;
             }
 
@@ -404,7 +404,7 @@ uint32_t platcheckIndirectAndDoScom( const bool i_isRead,
 fapi2::ReturnCode get_cfam_abs(const void *i_target, const uint32_t i_address, uint32_t& o_data)
 {
     PLAT_FAPI_ASSERT(false,
-                     fapi2::SBE_CFAM_FAILURE(),
+                     fapi2::POZ_CFAM_FAILURE(),
                      "CFAM access unsupported on PPE platform!");
     fapi_try_exit:
       return fapi2::current_err;
@@ -412,7 +412,7 @@ fapi2::ReturnCode get_cfam_abs(const void *i_target, const uint32_t i_address, u
 
 fapi2::ReturnCode put_cfam_abs(const void *i_target, const uint32_t i_address, uint32_t i_data){
     PLAT_FAPI_ASSERT(false,
-                     fapi2::SBE_CFAM_FAILURE(),
+                     fapi2::POZ_CFAM_FAILURE(),
                      "CFAM access unsupported on PPE platform!");
     fapi_try_exit:
       return fapi2::current_err;

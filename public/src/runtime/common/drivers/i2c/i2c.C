@@ -91,9 +91,9 @@ ReturnCode i2c::i2cCheckForErrors(status_reg_t &status)
            status.stop_error)
         {
 
-            rc = RC_I2C_STATUS_ERROR;
+            rc = RC_POZ_I2C_STATUS_ERROR;
             FAPI_ASSERT(false,
-                        I2C_STATUS_ERROR()
+                        POZ_I2C_STATUS_ERROR()
                         .set_VALUE(status.value)
                         .set_PORT(iv_port)
                         .set_ENGINE(iv_engine)
@@ -112,9 +112,9 @@ ReturnCode i2c::i2cCheckForErrors(status_reg_t &status)
                 SBE_ERROR(SBE_FUNC " failed for i2cRegisterOp with rc 0x%08X", rc);
                 break;
             }
-            rc = RC_I2C_STATUS_INTR_ERROR;
+            rc = RC_POZ_I2C_STATUS_INTR_ERROR;
             FAPI_ASSERT(false,
-                        I2C_STATUS_INTR_ERROR()
+                        POZ_I2C_STATUS_INTR_ERROR()
                         .set_STATUS(status.value)
                         .set_VALUE(intreg.value)
                         .set_PORT(iv_port)
@@ -179,9 +179,9 @@ ReturnCode i2c::i2cWaitForCmdComp()
             }
             if(--timeoutCount == 0)
             {
-                rc = RC_SBE_I2C_WAIT_FOR_CMD_COMP_TIMEOUT_ERROR;
+                rc = RC_POZ_I2C_WAIT_FOR_CMD_COMP_TIMEOUT_ERROR;
                 FAPI_ASSERT(false,
-                            SBE_I2C_WAIT_FOR_CMD_COMP_TIMEOUT_ERROR()
+                            POZ_I2C_WAIT_FOR_CMD_COMP_TIMEOUT_ERROR()
                             .set_STATUS(status.value)
                             .set_PORT(iv_port)
                             .set_ENGINE(iv_engine)
@@ -329,9 +329,9 @@ ReturnCode i2c::i2cWaitForFifo(fifo_condition_t condition)
             }
             if(--timeoutCount == 0)
             {
-                rc = RC_I2C_FIFO_TIMEOUT_ERROR;
+                rc = RC_POZ_I2C_FIFO_TIMEOUT_ERROR;
                 FAPI_ASSERT(false,
-                            I2C_FIFO_TIMEOUT_ERROR()
+                            POZ_I2C_FIFO_TIMEOUT_ERROR()
                             .set_STATUS(status.value)
                             .set_PORT(iv_port)
                             .set_ENGINE(iv_engine)
@@ -490,8 +490,8 @@ ReturnCode i2c::i2cLockEngine()
         }
 
         // Incase HB,CRONUS etc have the i2c lock and we are trying to
-        // grab the lock as well, we will fail with RC_SBE_PIB_XSCOM_ERROR
-        if(rc != (const uint32_t) RC_SBE_PIB_XSCOM_ERROR)
+        // grab the lock as well, we will fail with RC_POZ_PIB_XSCOM_ERROR
+        if(rc != (const uint32_t) RC_POZ_PIB_XSCOM_ERROR)
         {
             SBE_ERROR(SBE_FUNC " failed for i2cRegisterOp with rc 0x%08X", rc);
             break;
@@ -514,9 +514,9 @@ ReturnCode i2c::i2cLockEngine()
             SBE_ERROR("Failed to read atomic lock reg. RC: 0x%08X", l_rc);
         }
 
-        rc = RC_SBE_I2C_FAILED_TO_LOCK_ENGINE_TIMEOUT_ERROR;
+        rc = RC_POZ_I2C_FAILED_TO_LOCK_ENGINE_TIMEOUT_ERROR;
         FAPI_ASSERT(false,
-                    SBE_I2C_FAILED_TO_LOCK_ENGINE_TIMEOUT_ERROR()
+                    POZ_I2C_FAILED_TO_LOCK_ENGINE_TIMEOUT_ERROR()
                     .set_ATOMICLOCKREG(lock_data)
                     .set_PORT(iv_port)
                     .set_ENGINE(iv_engine)

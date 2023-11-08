@@ -26,7 +26,7 @@
 
     <hwpError>
         <sbeError/>
-        <rc>RC_I2C_STATUS_ERROR</rc>
+        <rc>RC_POZ_I2C_STATUS_ERROR</rc>
         <description>I2C status error - one of the error bits set</description>
         <ffdc>VALUE</ffdc>
         <ffdc>PORT</ffdc>
@@ -35,7 +35,7 @@
     </hwpError>
     <hwpError>
         <sbeError/>
-        <rc>RC_I2C_STATUS_INTR_ERROR</rc>
+        <rc>RC_POZ_I2C_STATUS_INTR_ERROR</rc>
         <description>I2C status error - one of the i2c interrupt hit</description>
         <ffdc>STATUS</ffdc>
         <ffdc>VALUE</ffdc>
@@ -45,7 +45,7 @@
     </hwpError>
     <hwpError>
         <sbeError/>
-        <rc>RC_I2C_FIFO_TIMEOUT_ERROR</rc>
+        <rc>RC_POZ_I2C_FIFO_TIMEOUT_ERROR</rc>
         <description>I2C fifo condition error - timedout waiting for a condition</description>
         <ffdc>STATUS</ffdc>
         <ffdc>PORT</ffdc>
@@ -56,7 +56,7 @@
     </hwpError>
     <hwpError>
         <sbeError/>
-        <rc>RC_SBE_I2C_WAIT_FOR_CMD_COMP_TIMEOUT_ERROR</rc>
+        <rc>RC_POZ_I2C_WAIT_FOR_CMD_COMP_TIMEOUT_ERROR</rc>
         <description>I2C wait for command completion error - Timeout error</description>
         <ffdc>STATUS</ffdc>
         <ffdc>PORT</ffdc>
@@ -67,7 +67,7 @@
     </hwpError>
     <hwpError>
         <sbeError/>
-        <rc>RC_SBE_I2C_FAILED_TO_LOCK_ENGINE_TIMEOUT_ERROR</rc>
+        <rc>RC_POZ_I2C_FAILED_TO_LOCK_ENGINE_TIMEOUT_ERROR</rc>
         <description>I2C failed to lock i2c engine - Timeout error</description>
         <ffdc>ATOMICLOCKREG</ffdc>
         <ffdc>PORT</ffdc>
