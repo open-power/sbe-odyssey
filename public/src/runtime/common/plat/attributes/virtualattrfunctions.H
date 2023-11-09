@@ -111,6 +111,22 @@ ReturnCode get_ATTR_REL_POS(const Target<fapi2::TARGET_TYPE_DIMM>& i_target,
     return FAPI2_RC_SUCCESS;
 }
 
+inline
+ReturnCode get_ATTR_REL_POS(const Target<fapi2::TARGET_TYPE_POWER_IC>& i_target,
+        ATTR_REL_POS_Type& o_val)
+{
+    o_val = i_target.get().getTargetInstance() % 4;
+    return FAPI2_RC_SUCCESS;
+}
+
+inline
+ReturnCode get_ATTR_REL_POS(const Target<fapi2::TARGET_TYPE_PMIC>& i_target,
+	ATTR_REL_POS_Type& o_val)
+{
+    o_val = i_target.get().getTargetInstance() % 4;
+    return FAPI2_RC_SUCCESS;
+}
+
 /**
   * @brief read the chip name of the target
   *
