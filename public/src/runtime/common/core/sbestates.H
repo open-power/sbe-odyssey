@@ -32,8 +32,6 @@
 #ifndef __SBE_STATES_H
 #define __SBE_STATES_H
 
-#include "sbestatesutils.H"
-
 /**
  * @brief An enumeration of all SBE states
  *
@@ -78,41 +76,6 @@ enum sbeEvent
 
     /** Platforms specific events **/
 };
-
-// Maximum number of Events per State
-enum maxEventPerState
-{
-    /** Common Max Events per states across all platforms **/
-    SBE_STATE_CMN_UNKNOWN_MAX_EVENT = 4,
-    SBE_STATE_CMN_IPLING_MAX_EVENT  = 3,
-    SBE_STATE_CMN_ISTEP_MAX_EVENT   = 2,
-    SBE_STATE_CMN_RUNTIME_MAX_EVENT = 2,
-    SBE_STATE_CMN_DUMP_MAX_EVENT    = 0,
-    SBE_STATE_CMN_FAILURE_MAX_EVENT = 0,
-
-    /** Platforms specific Max Events per states across all platforms(including common) **/
-
-    // Total number of State Transition Events, Addition of all the above(common+platform)
-    SBE_MAX_TRANSITIONS = 11,
-};
-
-
-// Entry Point to stateTransitionStr_t Map Structure, This adds up all the state
-// transition of the previous state, If any more transition is added, this will
-// add up to all subsequent entries. This is closely mapped with the sbestates.H
-// as well.
-enum entryToStateMap
-{
-    SBE_STATE_CMN_UNKNOWN_ENTRY_TO_MAP = 0,
-    SBE_STATE_CMN_IPLING_ENTRY_TO_MAP  = SBE_STATE_CMN_UNKNOWN_ENTRY_TO_MAP + SBE_STATE_CMN_UNKNOWN_MAX_EVENT, //4
-    SBE_STATE_CMN_ISTEP_ENTRY_TO_MAP   = SBE_STATE_CMN_IPLING_ENTRY_TO_MAP + SBE_STATE_CMN_IPLING_MAX_EVENT, //7
-    SBE_STATE_CMN_RUNTIME_ENTRY_TO_MAP = SBE_STATE_CMN_ISTEP_ENTRY_TO_MAP + SBE_STATE_CMN_ISTEP_MAX_EVENT, //9
-    SBE_STATE_CMN_DUMP_ENTRY_TO_MAP    = SBE_STATE_CMN_RUNTIME_ENTRY_TO_MAP + SBE_STATE_CMN_RUNTIME_MAX_EVENT, //11
-    SBE_STATE_CMN_FAILURE_ENTRY_TO_MAP = SBE_STATE_CMN_DUMP_ENTRY_TO_MAP + SBE_STATE_CMN_DUMP_MAX_EVENT, //11
-};
-
-extern const stateEventRangeStr_t eventRangePerState[SBE_MAX_STATE];
-extern const stateTransitionStr_t stateTransMap[SBE_MAX_TRANSITIONS];
 
 #endif //__SBE_STATES_H
 

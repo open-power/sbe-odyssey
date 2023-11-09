@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2017,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -31,6 +32,7 @@
 #include "assert.h"
 #include "sberegaccess.H"
 #include "sbestates.H"
+#include "sbestatesutils.H"
 #include "sbeglobals.H"
 #include "istep.H"
 #include "istepIplUtils.H"

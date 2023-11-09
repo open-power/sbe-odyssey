@@ -27,6 +27,7 @@
 #include "heap.H"
 #include "plat_hwp_data_stream.H"
 #include "sbestates.H"
+#include "sbestatesutils.H"
 #include "sberegaccess.H"
 
 extern fapi2::pozFfdcData_t g_FfdcData;
