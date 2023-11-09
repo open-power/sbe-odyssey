@@ -44,99 +44,8 @@
   <entry name="ATTR_MEM_DIMM_POS_METADATA">
     <value>0x00000008</value>
   </entry>
-  <entry name="ATTR_MEM_DIMM_TYPE_METADATA">
-    <value>0x04</value>
-  </entry>
-  <entry name="ATTR_MEM_DRAM_GEN_METADATA">
-    <value>0x03</value>
-  </entry>
   <entry name="ATTR_MEM_DRAM_CWL">
     <value>0x18</value>
-  </entry>
-  <entry name="ATTR_MEM_RDIMM_BUFFER_DELAY">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_VPD_DQ_MAP">
-    <value>0</value>
-    <value>1</value>
-    <value>2</value>
-    <value>3</value>
-    <value>4</value>
-    <value>5</value>
-    <value>6</value>
-    <value>7</value>
-    <value>8</value>
-    <value>9</value>
-    <value>10</value>
-    <value>11</value>
-    <value>12</value>
-    <value>13</value>
-    <value>14</value>
-    <value>15</value>
-    <value>16</value>
-    <value>17</value>
-    <value>18</value>
-    <value>19</value>
-    <value>20</value>
-    <value>21</value>
-    <value>22</value>
-    <value>23</value>
-    <value>24</value>
-    <value>25</value>
-    <value>26</value>
-    <value>27</value>
-    <value>28</value>
-    <value>29</value>
-    <value>30</value>
-    <value>31</value>
-    <value>32</value>
-    <value>33</value>
-    <value>34</value>
-    <value>35</value>
-    <value>36</value>
-    <value>37</value>
-    <value>38</value>
-    <value>39</value>
-    <value>40</value>
-    <value>41</value>
-    <value>42</value>
-    <value>43</value>
-    <value>44</value>
-    <value>45</value>
-    <value>46</value>
-    <value>47</value>
-    <value>48</value>
-    <value>49</value>
-    <value>50</value>
-    <value>51</value>
-    <value>52</value>
-    <value>53</value>
-    <value>54</value>
-    <value>55</value>
-    <value>56</value>
-    <value>57</value>
-    <value>58</value>
-    <value>59</value>
-    <value>60</value>
-    <value>61</value>
-    <value>62</value>
-    <value>63</value>
-    <value>64</value>
-    <value>65</value>
-    <value>66</value>
-    <value>67</value>
-    <value>68</value>
-    <value>69</value>
-    <value>70</value>
-    <value>71</value>
-    <value>72</value>
-    <value>73</value>
-    <value>74</value>
-    <value>75</value>
-    <value>76</value>
-    <value>77</value>
-    <value>78</value>
-    <value>79</value>
   </entry>
   <entry name="ATTR_BAD_DQ_BITMAP">
     <value>0x0</value>
@@ -947,9 +856,6 @@
     <value>0x0</value>
     <value>0x0</value>
   </entry>
-  <entry name="ATTR_ENABLE_FIR_UNMASKING">
-    <value>0x1</value>
-  </entry>
   <entry name="ATTR_MEM_2N_MODE">
     <value>0x0</value>
   </entry>
@@ -960,16 +866,8 @@
   <entry name="ATTR_MEM_BURST_LENGTH">
     <value>0x01</value>
   </entry>
-  <entry name="ATTR_MEM_CA_PARITY_LATENCY">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
   <entry name="ATTR_MEM_CS_ASSERT_IN_MPC">
     <value>0x1</value>
-  </entry>
-  <entry name="ATTR_MEM_CS_CMD_LATENCY">
-    <value>0x0</value>
-    <value>0x0</value>
   </entry>
   <entry name="ATTR_MEM_DDR5_DFE_GAIN_BIAS">
     <value>0x0</value>
@@ -1012,9 +910,6 @@
   <entry name="ATTR_MEM_DDR5_REF_TUF">
     <value>0x0</value>
   </entry>
-  <entry name="ATTR_MEM_DDR5_SPD_CL_SUPPORTED">
-    <value>0x0000000000000d7a</value>
-  </entry>
   <entry name="ATTR_MEM_DDR5_WR_CRC_AUTODISABLE_ENABLE">
     <value>0x0</value>
   </entry>
@@ -1033,90 +928,6 @@
   <entry name="ATTR_MEM_DEVICE15_MPSM">
     <value>0x0</value>
   </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F0RC02">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F0RC03">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F0RC04">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F0RC05">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F0RC0B">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F0RC0F">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F0RC1X">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F0RC7X">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F1RC00">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F1RC02">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F1RC03">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F1RC04">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F1RC05">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F1RC1X">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F1RC2X">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F1RC3X">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F1RC4X">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F1RC5X">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F1RC6X">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_DIMM_DDR4_F1RC7X">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_CHANNELS_PER_DIMM">
-    <value>0x2</value>
-    <value>0x0</value>
-  </entry>
   <entry name="ATTR_MEM_EFF_DDR5_PHY_VREF_RD">
     <value>0x5C</value>
   </entry>
@@ -1126,9 +937,6 @@
   <entry name="ATTR_MEM_EFF_DDR5_TX_SLEW_FALL_AC">
     <value>0x08</value>
     <value>0x08</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_DDR5_TX_SLEW_FALL_CK">
-    <value>0x0</value>
   </entry>
   <entry name="ATTR_MEM_EFF_DDR5_TX_SLEW_FALL_DQ">
     <value>0x0</value>
@@ -1154,10 +962,6 @@
     <value>0x80</value>
     <value>0x0</value>
   </entry>
-  <entry name="ATTR_MEM_EFF_DIMM_SIZE">
-    <value>0x00000010</value>
-    <value>0x0</value>
-  </entry>
   <entry name="ATTR_MEM_EFF_DIMM_SPARE">
     <value>0x03</value>
     <value>0x0</value>
@@ -1172,20 +976,8 @@
     <value>0x04</value>
     <value>0x0</value>
   </entry>
-  <entry name="ATTR_MEM_EFF_DRAM_BANK_BITS">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_DRAM_BANK_GROUP_BITS">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
   <entry name="ATTR_MEM_EFF_DRAM_CL">
     <value>0x1A</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_DRAM_COLUMN_BITS">
-    <value>0x0A</value>
-    <value>0x0</value>
   </entry>
   <entry name="ATTR_MEM_EFF_DRAM_DENSITY">
     <value>0x10</value>
@@ -1195,42 +987,15 @@
     <value>0x03</value>
     <value>0x0</value>
   </entry>
-  <entry name="ATTR_MEM_EFF_DRAM_MDS">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_DRAM_MFG_ID">
-    <value>0x80AD</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_DRAM_MODULE_HEIGHT">
-    <value>0x01</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_DRAM_PPR">
-    <value>0x0</value>
-    <value>0x0</value>
+  <entry name="ATTR_MEM_EFF_DRAM_TCCD_L">
+    <value>0x08</value>
   </entry>
   <entry name="ATTR_MEM_EFF_DRAM_ROW_BITS">
     <value>0x10</value>
     <value>0x0</value>
   </entry>
-  <entry name="ATTR_MEM_EFF_DRAM_SOFT_PPR">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_DRAM_TCCD_L">
-    <value>0x08</value>
-  </entry>
   <entry name="ATTR_MEM_EFF_DRAM_TFAW">
     <value>0x20</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_DRAM_TMAW">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_DRAM_TRAS">
-    <value>0x34</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_DRAM_TRC">
-    <value>0x4D</value>
   </entry>
   <entry name="ATTR_MEM_EFF_DRAM_TRCD">
     <value>0x1A</value>
@@ -1246,9 +1011,6 @@
   </entry>
   <entry name="ATTR_MEM_EFF_DRAM_TRP">
     <value>0x1A</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_DRAM_TRRD_DLR">
-    <value>0x04</value>
   </entry>
   <entry name="ATTR_MEM_EFF_DRAM_TRRD_L">
     <value>0x08</value>
@@ -1275,116 +1037,12 @@
   <entry name="ATTR_MEM_EFF_FREQ">
     <value>0x0000000000000C80</value>
   </entry>
-  <entry name="ATTR_MEM_EFF_HOST_TO_DDR_SPEED_RATIO">
-    <value>0x80</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_HYBRID">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_HYBRID_MEMORY_TYPE">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
   <entry name="ATTR_MEM_EFF_LOGICAL_RANKS_PER_DIMM">
     <value>0x01</value>
     <value>0x0</value>
   </entry>
-  <entry name="ATTR_MEM_EFF_MODULE_MFG_ID">
-    <value>0x0194</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_NIBBLE_MAP">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
   <entry name="ATTR_MEM_EFF_NUM_MASTER_RANKS_PER_DIMM">
     <value>0x01</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_PACKAGE_RANK_MAP">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_PRIM_BUS_WIDTH">
-    <value>0x0</value>
     <value>0x0</value>
   </entry>
   <entry name="ATTR_MEM_EFF_PRIM_DIE_COUNT">
@@ -1395,24 +1053,6 @@
     <value>0x0</value>
     <value>0x0</value>
   </entry>
-  <entry name="ATTR_MEM_EFF_RCD_MFG_ID">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_REGISTER_REV">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_REGISTER_TYPE">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_SPD_CONTENT_REVISION">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_SPD_REVISION">
-    <value>0x01</value>
-  </entry>
   <entry name="ATTR_MEM_EFF_SUPPORTED_RCD">
     <value>0x0</value>
     <value>0x0</value>
@@ -1420,22 +1060,7 @@
   <entry name="ATTR_MEM_EFF_THERM_SENSOR_0_AVAIL">
     <value>0x01</value>
   </entry>
-  <entry name="ATTR_MEM_EFF_THERM_SENSOR_0_I2C_ADDR">
-    <value>0x30</value>
-  </entry>
   <entry name="ATTR_MEM_EFF_THERM_SENSOR_0_LOCATION">
-    <value>0x01</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_THERM_SENSOR_0_SECOND_AVAIL">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_THERM_SENSOR_0_SECOND_I2C_ADDR">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_THERM_SENSOR_0_SECOND_LOCATION">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_THERM_SENSOR_0_TYPE">
     <value>0x01</value>
   </entry>
   <entry name="ATTR_MEM_EFF_THERM_SENSOR_0_USAGE">
@@ -1444,50 +1069,14 @@
   <entry name="ATTR_MEM_EFF_THERM_SENSOR_1_AVAIL">
     <value>0x01</value>
   </entry>
-  <entry name="ATTR_MEM_EFF_THERM_SENSOR_1_I2C_ADDR">
-    <value>0x32</value>
-  </entry>
   <entry name="ATTR_MEM_EFF_THERM_SENSOR_1_LOCATION">
     <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_THERM_SENSOR_1_SECOND_AVAIL">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_THERM_SENSOR_1_SECOND_I2C_ADDR">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_THERM_SENSOR_1_SECOND_LOCATION">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_THERM_SENSOR_1_TYPE">
-    <value>0x01</value>
   </entry>
   <entry name="ATTR_MEM_EFF_THERM_SENSOR_1_USAGE">
     <value>0x01</value>
   </entry>
-  <entry name="ATTR_MEM_EFF_THERM_SENSOR_DIFF_AVAIL">
-    <value>0x01</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_THERM_SENSOR_DIFF_I2C_ADDR">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_THERM_SENSOR_DIFF_TYPE">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_THERM_SENSOR_DIFF_USAGE">
-    <value>0x01</value>
-  </entry>
   <entry name="ATTR_MEM_EFF_THERM_SENSOR_READ_OVERRIDE">
     <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_VOLT_VDDQ">
-    <value>0x0000044C</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_VOLT_VDDR">
-    <value>0x0000044C</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_VOLT_VPP">
-    <value>0x00000708</value>
   </entry>
   <entry name="ATTR_MEM_EFF_DDR5_VREFCA_SWEEP_MAX">
     <value>0</value>
@@ -1501,15 +1090,6 @@
   <entry name="ATTR_MEM_EFF_DDR5_VREFCS_SWEEP_MIN">
     <value>0</value>
   </entry>
-  <entry name="ATTR_MEM_IGNORE_PLUG_RULES">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_IGNORE_PLUG_RULES_DIMM_HEIGHT_MIX">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_IGNORE_PLUG_RULES_DIMM_SIZE_MIX">
-    <value>0x0</value>
-  </entry>
   <entry name="ATTR_MEM_INTERNAL_WR_TIMING_MODE">
     <value>0x01</value>
   </entry>
@@ -1519,9 +1099,6 @@
   <entry name="ATTR_MEM_MRW_IS_PLANAR">
     <value>0x0</value>
   </entry>
-  <entry name="ATTR_MEM_PORT_POS_OF_FAIL_THROTTLE">
-    <value>0x0</value>
-  </entry>
   <entry name="ATTR_MEM_REF_INTERVAL_RATE_INDIC">
     <value>0x0</value>
   </entry>
@@ -1529,42 +1106,6 @@
     <value>0x0</value>
   </entry>
   <entry name="ATTR_MEM_REORDER_QUEUE_SETTING">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_DIMM_RCD_IBT_CA">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_DIMM_RCD_IBT_CKE">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_DIMM_RCD_IBT_CS">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_DIMM_RCD_IBT_ODT">
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_DRAM_DRV_IMP_DQ_DQS">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_DRAM_PREAMBLE">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
     <value>0x0</value>
   </entry>
   <entry name="ATTR_MEM_SI_DRAM_RTT_NOM">
@@ -1597,77 +1138,7 @@
     <value>0x0</value>
     <value>0x0</value>
   </entry>
-  <entry name="ATTR_MEM_SI_GEARDOWN_MODE">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_MC_DRV_DQ_DQS">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_MC_DRV_EQ_DQ_DQS">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_MC_DRV_IMP_CLK">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
   <entry name="ATTR_MEM_SI_MC_DRV_IMP_CMD_ADDR">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_MC_DRV_IMP_CNTL">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_MC_DRV_IMP_CSCID">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_DOWN">
     <value>0x0</value>
     <value>0x0</value>
     <value>0x0</value>
@@ -1679,66 +1150,6 @@
   </entry>
   <entry name="ATTR_MEM_SI_MC_DRV_IMP_DQ_DQS_PULL_UP">
     <value>0x0028</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_MC_DRV_SLEW_RATE_CLK">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_MC_DRV_SLEW_RATE_CMD_ADDR">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_MC_DRV_SLEW_RATE_CNTL">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_MC_DRV_SLEW_RATE_CSCID">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_MC_DRV_SLEW_RATE_DQ_DQS">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_MC_RCV_EQ_DQ_DQS">
-    <value>0x0</value>
     <value>0x0</value>
     <value>0x0</value>
     <value>0x0</value>
@@ -1785,28 +1196,6 @@
     <value>0x0</value>
     <value>0x0</value>
     <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_PHY_EQUALIZATION">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_SIGNATURE_HASH">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_VREF_DRAM_WR">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_VREF_MC_RD">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MEM_SI_WINDAGE_RD_CTR">
     <value>0x0</value>
   </entry>
   <entry name="ATTR_MEM_WL_INTERNAL_CYCLE_ALIGNMENT">
@@ -1971,31 +1360,13 @@
     <value>0x0</value>
     <value>0x0</value>
   </entry>
-  <entry name="ATTR_MRW_VMEM_REGULATOR_MEMORY_POWER_LIMIT_PER_DIMM_DDR4">
-    <value>0x000006A4</value>
-  </entry>
   <entry name="ATTR_MSS_IS_APOLLO">
     <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_ALLOW_UNSUPPORTED_RCW">
-    <value>0x1</value>
   </entry>
   <entry name="ATTR_MSS_MRW_DDR5_DRAM_READ_CRC">
     <value>0x0</value>
   </entry>
-  <entry name="ATTR_MSS_MRW_DIMM_HEIGHT_MIXING_POLICY">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_DIMM_POWER_CURVE_PERCENT_UPLIFT">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_DIMM_POWER_CURVE_PERCENT_UPLIFT_IDLE">
-    <value>0x0</value>
-  </entry>
   <entry name="ATTR_MSS_MRW_DIMM_SLOT_AIRFLOW">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_DRAM_2N_MODE">
     <value>0x0</value>
   </entry>
   <entry name="ATTR_MSS_MRW_DRAM_WRITE_CRC">
@@ -2004,518 +1375,14 @@
   <entry name="ATTR_MSS_MRW_FINE_REFRESH_MODE">
     <value>0x0</value>
   </entry>
-  <entry name="ATTR_MSS_MRW_FORCE_BCMODE_OFF">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_IDLE_POWER_CONTROL_REQUESTED">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_MAX_DRAM_DATABUS_UTIL">
-    <value>0x00002710</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_MAX_NUMBER_DIMMS_POSSIBLE_PER_VMEM_REGULATOR">
-    <value>0x0</value>
-  </entry>
   <entry name="ATTR_MSS_MRW_MEM_M_DRAM_CLOCKS">
     <value>0x00000200</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_NVDIMM_PLUG_RULES">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_OCMB_CURRENT_CURVE_WITH_LIMIT">
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-    <value>0xFFFFFC0064152094</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_OCMB_PWR_INTERCEPT">
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-    <value>0xfffffc0005260000</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_OCMB_PWR_SLOPE">
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-    <value>0xfffffc0004620000</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_OCMB_RESET_GROUP">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_OCMB_SAFEMODE_UTIL_ARRAY">
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-    <value>0xFFFFFFC009C40000</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_OCMB_THERMAL_MEMORY_POWER_LIMIT">
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-    <value>0xfffffc0009c40000</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_OVERRIDE_THERM_SENSOR_USAGE">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_PERIODIC_MEMCAL_MODE_OPTIONS">
-    <value>0xD90C</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_PERIODIC_ZQCAL_MODE_OPTIONS">
-    <value>0x8000</value>
   </entry>
   <entry name="ATTR_MSS_MRW_POWER_CONTROL_REQUESTED">
     <value>0x0</value>
   </entry>
-  <entry name="ATTR_MSS_MRW_PWR_INTERCEPT">
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-    <value>0xfffff8000384044C</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_PWR_SLOPE">
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-    <value>0xfffff800041A044C</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_REFRESH_RATE_REQUEST">
-    <value>0x1</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_RESET_DELAY_BEFORE_CAL">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_SAFEMODE_DRAM_DATABUS_UTIL">
-    <value>0x000009C4</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_SAFEMODE_MEM_THROTTLED_N_COMMANDS_PER_PORT">
-    <value>32</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_SUPPORTED_DRAM_WIDTH">
-    <value>0xc0</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_TEMP_REFRESH_MODE">
-    <value> 0  </value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_TEMP_REFRESH_RANGE">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_THERMAL_MEMORY_POWER_LIMIT">
-    <value>0xfffff80000000794</value>
-    <value>0xfffff80000000794</value>
-    <value>0xfffff80000000794</value>
-    <value>0xfffff80000000794</value>
-    <value>0xfffff80000000794</value>
-    <value>0xfffff80000000794</value>
-    <value>0xfffff80000000794</value>
-    <value>0xfffff80000000794</value>
-    <value>0xfffff80000000794</value>
-    <value>0xfffff80000000794</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_THERMAL_SENSOR_POLLING_PERIOD">
-    <value>200</value>
-  </entry>
-  <entry name="ATTR_MSS_OCMB_APPINTR_OBJ_HANDLE">
-    <value>0x3</value>
-  </entry>
-  <entry name="ATTR_MSS_OCMB_CHECKSTOP_OBJ_HANDLE">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MSS_OCMB_RECOV_OBJ_HANDLE">
-    <value>0x1</value>
-  </entry>
-  <entry name="ATTR_MSS_OCMB_SPECATTN_OBJ_HANDLE">
-    <value>0x2</value>
-  </entry>
-  <entry name="ATTR_MSS_OMI_EDPL_DISABLE">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_MSS_POST_MEMDIAGS_READ_SUBTEST">
-    <value>0x1</value>
-  </entry>
-  <entry name="ATTR_MSS_POST_MEMDIAGS_READ_SUBTEST_FAIL_BEHAVIOR">
-    <value>0x0</value>
-  </entry>
   <entry name="ATTR_MSS_SAFEMODE_DRAM_DATABUS_UTIL">
     <value>0x000009C4</value>
-  </entry>
-  <entry name="ATTR_OMI_CRC_DEBUG">
-    <value>0x00</value>
-  </entry>
-  <entry name="ATTR_OMI_X4_DEGRADE_ACTION">
-    <value>0x03</value>
   </entry>
   <entry name="ATTR_ROW_REPAIR_DATA">
     <value>0x0</value>
@@ -2549,10 +1416,6 @@
     <value>0x0007FDFF</value>
     <value>0x00000000</value>
   </entry>
-  <entry name="ATTR_MEM_DRAM_ADDRESS_MIRRORING">
-    <value>0</value>
-    <value>0</value>
-  </entry>
   <entry name="ATTR_MEM_EFF_DDR5_RTT_PARK_RD">
     <value>0x0F</value>
     <value>0</value>
@@ -2580,14 +1443,8 @@
   <entry name="ATTR_MEM_EFF_THERM_SENSOR_2_AVAIL">
     <value>0x01</value>
   </entry>
-  <entry name="ATTR_MEM_EFF_THERM_SENSOR_2_I2C_ADDR">
-    <value>0x34</value>
-  </entry>
   <entry name="ATTR_MEM_EFF_THERM_SENSOR_2_LOCATION">
     <value>0x02</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_THERM_SENSOR_2_TYPE">
-    <value>0x01</value>
   </entry>
   <entry name="ATTR_MEM_EFF_THERM_SENSOR_2_USAGE">
     <value>0x01</value>
@@ -2595,20 +1452,11 @@
   <entry name="ATTR_MEM_EFF_THERM_SENSOR_3_AVAIL">
     <value>0</value>
   </entry>
-  <entry name="ATTR_MEM_EFF_THERM_SENSOR_3_I2C_ADDR">
-    <value>0</value>
-  </entry>
   <entry name="ATTR_MEM_EFF_THERM_SENSOR_3_LOCATION">
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_THERM_SENSOR_3_TYPE">
     <value>0</value>
   </entry>
   <entry name="ATTR_MEM_EFF_THERM_SENSOR_3_USAGE">
     <value>0</value>
-  </entry>
-  <entry name="ATTR_MSS_MRW_ALLOW_DDR5">
-    <value>0x01</value>
   </entry>
   <entry name="ATTR_MSS_ODY_PHY_IMAGE_SELECT">
     <value>0</value>
@@ -2631,14 +1479,8 @@
   <entry name="ATTR_MEM_EFF_MEMALERTEN">
     <value>0x01</value>
   </entry>
-  <entry name="ATTR_ODY_ACTAG_BASE">
-    <value>0x0</value>
-  </entry>
   <entry name="ATTR_ODY_ADV_TRAIN_OPT">
     <value>0</value>
-  </entry>
-  <entry name="ATTR_ODY_AFU_ACTAG_LEN">
-    <value>0x0</value>
   </entry>
   <entry name="ATTR_ODY_ALERT_RECOV_ENABLE">
     <value>0</value>
@@ -2676,21 +1518,6 @@
   <entry name="ATTR_ODY_ENABLE_MALERT_ASYNC">
     <value>0</value>
   </entry>
-  <entry name="ATTR_ODY_ENABLE_US_TMPL_1">
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_ODY_ENABLE_US_TMPL_5">
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_ODY_ENABLE_US_TMPL_9">
-    <value>1</value>
-  </entry>
-  <entry name="ATTR_ODY_ENABLE_US_TMPL_A">
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_ODY_ENABLE_US_TMPL_B">
-    <value>0</value>
-  </entry>
   <entry name="ATTR_ODY_EN_RXDQS_TRACKING">
     <value>0</value>
   </entry>
@@ -2706,20 +1533,11 @@
   <entry name="ATTR_ODY_LP2_PWRSAVINGS">
     <value>0</value>
   </entry>
-  <entry name="ATTR_ODY_METADATA_ENABLE">
-    <value>0x1</value>
-  </entry>
   <entry name="ATTR_ODY_MSG_BLOCK_DATA_SOURCE">
     <value>0</value>
   </entry>
   <entry name="ATTR_ODY_MSG_MISC">
     <value>0</value>
-  </entry>
-  <entry name="ATTR_ODY_PASID_BASE">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_ODY_PASID_LEN">
-    <value>0x0</value>
   </entry>
   <entry name="ATTR_ODY_PHY_CALINTERVAL">
     <value>5</value>
@@ -2790,47 +1608,8 @@
   <entry name="ATTR_ODY_SEQUENCE_CTRL">
     <value>0x821F</value>
   </entry>
-  <entry name="ATTR_ODY_SHRT_BACKOFF_TIMER">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_ODY_SIM_TCASL_ADD">
-    <value>0</value>
-    <value>0</value>
-    <value>0</value>
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_ODY_SIM_TCASL_OVERRIDE">
-    <value>1</value>
-  </entry>
-  <entry name="ATTR_ODY_SIM_TDQS2DQ">
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_ODY_SIM_TDQSCK">
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_ODY_SIM_TPDM">
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_ODY_SIM_TSTAOFF">
-    <value>0</value>
-  </entry>
   <entry name="ATTR_ODY_SPECIAL_OFFSET_VALUE">
     <value>0x525</value>
-  </entry>
-  <entry name="ATTR_ODY_TMPL_0_PACING">
-    <value>0xF</value>
-  </entry>
-  <entry name="ATTR_ODY_TMPL_1_PACING">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_ODY_TMPL_5_PACING">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_ODY_TMPL_9_PACING">
-    <value>0x0</value>
-  </entry>
-  <entry name="ATTR_ODY_TMPL_B_PACING">
-    <value>0x0</value>
   </entry>
   <entry name="ATTR_ODY_WL_ADJ">
     <value>0</value>
@@ -2901,15 +1680,8 @@
   <entry name="ATTR_MEM_EFF_DRAM_TCCD_L_WR">
     <value>0x20</value>
   </entry>
-  <entry name="ATTR_MEM_EFF_DDR5_CHANNEL_BUS_WIDTH">
-    <value>0x24</value>
-    <value>0x24</value>
-  </entry>
   <entry name="ATTR_MEM_EFF_DDR5_MEM_PORT_ENABLE">
     <value>0x01</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_MODULE_THERMAL_SENSORS">
-    <value>0x03</value>
   </entry>
   <entry name="ATTR_DDR5_DRAM_CK_ODT_PER_DRAM">
     <value>0x0028</value>
@@ -3559,59 +2331,12 @@
     <value>0x00</value>
     <value>0x00</value>
   </entry>
-    <entry name="ATTR_EXP_MEM_THROTTLED_N_COMMANDS_PER_PORT">
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_EXP_MEM_THROTTLED_N_COMMANDS_PER_SLOT">
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_EXP_RUNTIME_MEM_THROTTLED_N_COMMANDS_PER_PORT">
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_EXP_RUNTIME_MEM_THROTTLED_N_COMMANDS_PER_SLOT">
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_EXP_SAFEMODE_MEM_THROTTLED_N_COMMANDS_PER_PORT">
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_EXP_MEM_WATT_TARGET">
-    <value>0</value>
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_EXP_TOTAL_PWR_SLOPE">
-    <value>0</value>
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_EXP_TOTAL_PWR_INTERCEPT">
-    <value>0</value>
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_EXP_PORT_MAXPOWER">
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_EXP_DIMM_THERMAL_LIMIT">
-    <value>0</value>
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_ODY_MEM_THROTTLED_N_COMMANDS_PER_PORT">
-    <value>0</value>
-  </entry>
-  <entry name="ATTR_ODY_MEM_THROTTLED_N_COMMANDS_PER_SLOT">
-    <value>0</value>
-  </entry>
   <entry name="ATTR_ODY_RUNTIME_MEM_THROTTLED_N_COMMANDS_PER_PORT">
     <value>0</value>
   </entry>
   <entry name="ATTR_ODY_RUNTIME_MEM_THROTTLED_N_COMMANDS_PER_SLOT">
     <value>0</value>
   </entry>
-  <entry name="ATTR_MSS_MRW_DDR5_MAX_DRAM_DATABUS_UTIL">
-    <value>0</value>
-  </entry>
-  <!-- IO HWP : IO OMI attributes added from here  -->
-  <!--        <entry name="ATTR_OMI_name">   -->
-  <!--          <value>0x0</value>  -->
-  <!--        </entry> -->
   <entry name="ATTR_OMI_BIST_DAC_TEST">
     <value>0x00</value>
   </entry>
@@ -3662,19 +2387,16 @@
     <value>0</value>
   </entry>
   <entry name="ATTR_SPPE_I2C_DEV_ADDR">
-    <value>0</value>
+    <value>0x00</value>
   </entry>
   <entry name="ATTR_SPPE_I2C_PORT">
-    <value>0</value>
+    <value>0x00</value>
   </entry>
   <entry name="ATTR_SPPE_I2C_ENGINE">
     <value>0</value>
   </entry>
   <entry name="ATTR_SPPE_I2C_MAX_RETRY_COUNT">
     <value>0x01</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_Z_MODE">
-    <value>0</value>
   </entry>
   <entry name="ATTR_MSS_OCMB_HALF_DIMM_MODE">
     <value>0</value>
@@ -3929,44 +2651,10 @@
   <entry name="ATTR_RCW49_CHB_D1">
     <value>0x39</value>
   </entry>
-  <entry name="ATTR_MEM_EFF_DIMM_SERIAL_NUMBER">
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-    <value>0x0</value>
-  </entry>
   <entry name="ATTR_ODY_DRAMINIT_RECOVERY_ENABLE">
     <value>0x00</value>
   </entry>
   <entry name="ATTR_ODY_DRAMINIT_FIR_CHECK_ENABLE">
     <value>0x01</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_DIMM_RAW_CARD_REFERENCE_DESIGN">
-    <value>0x00</value>
-  </entry>
-  <entry name="ATTR_MEM_EFF_DIMM_RAW_CARD_DESIGN_REVISION">
-    <value>0x00</value>
   </entry>
 </entries>
