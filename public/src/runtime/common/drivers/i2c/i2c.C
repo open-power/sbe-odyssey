@@ -89,6 +89,7 @@ ReturnCode i2c::i2cCheckForErrors(status_reg_t &status)
     SBE_ENTER(SBE_FUNC)
 
     ReturnCode rc = FAPI2_RC_SUCCESS;
+
     do
     {
         if(status.invalid_cmd ||
@@ -122,6 +123,7 @@ ReturnCode i2c::i2cCheckForErrors(status_reg_t &status)
                 SBE_ERROR(SBE_FUNC " failed for i2cRegisterOp with rc 0x%08X", rc);
                 break;
             }
+
             rc = RC_POZ_I2C_STATUS_INTR_ERROR;
             PLAT_FAPI_ASSERT(false,
                             POZ_I2C_STATUS_INTR_ERROR()
@@ -155,6 +157,13 @@ ReturnCode i2c::i2cReadStatusReg(status_reg_t &o_status)
         if(rc != FAPI2_RC_SUCCESS)
         {
             SBE_ERROR(SBE_FUNC " failed for i2cRegisterOp with rc 0x%08X", rc);
+            break;
+        }
+
+        rc = i2cCheckForErrors(o_status);
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC " failed for i2cCheckForErrors with rc 0x%08X", rc);
             break;
         }
     } while(0);
