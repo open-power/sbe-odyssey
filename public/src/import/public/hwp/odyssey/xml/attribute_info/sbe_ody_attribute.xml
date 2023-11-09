@@ -2671,7 +2671,7 @@
     <value>0</value>
   </entry>
   <entry name="ATTR_ODY_DRAMINIT_VERBOSITY">
-    <value>5</value>
+    <value>0x0a</value>
   </entry>
   <entry name="ATTR_ODY_ENABLE_MALERT_ASYNC">
     <value>0</value>
