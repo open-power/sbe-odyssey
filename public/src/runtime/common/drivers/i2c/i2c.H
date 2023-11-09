@@ -118,7 +118,7 @@ protected:
   *
   * @return FAPI RC
   */
-  ReturnCode i2cWrite(void *const buffer,
+  ReturnCode i2cWrite(const void *buffer,
                       size_t buflen);
 
   /**

@@ -350,7 +350,7 @@ fapi_try_exit:
     #undef SBE_FUNC
 }
 
-ReturnCode i2c::i2cWrite(void *const buffer,
+ReturnCode i2c::i2cWrite(const void *buffer,
                     size_t buflen)
 {
     #define SBE_FUNC " i2cWrite "
@@ -711,19 +711,19 @@ ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
             break;
         }
 
-        uint8_t data[MAX_I2C_CMD_SIZE] = {};
+	o_data.clear();
+	o_data.assign(get_size, 0x00);
+	
         ////////////////////////////////
         // I2C read with offset ///////
         ///////////////////////////////
         if(!cfgData.empty())
         {
-            std::copy(cfgData.begin(), cfgData.end(), data);
             // First write offset to device without stop
             iv_with_stop = false;
             iv_skip_mode_setup = false;
 
-            rc = i2cWrite(data,
-                            cfgData.size());
+            rc = i2cWrite(cfgData.data(), cfgData.size());
             if(rc != FAPI2_RC_SUCCESS)
             {
                 SBE_ERROR(SBE_FUNC " failed for i2cWrite(with offset) with rc 0x%08X", rc);
@@ -743,19 +743,13 @@ ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
             iv_with_stop = true;
             iv_skip_mode_setup = false;
         }
-        rc = i2cRead(data,
-                        get_size);
+        rc = i2cRead(o_data.data(), get_size);
         if(rc != FAPI2_RC_SUCCESS)
         {
             SBE_ERROR(SBE_FUNC " failed for i2cRead(without offset) with rc 0x%08X", rc);
             break;
         }
 
-        o_data.clear();
-        for(size_t i = 0; i < get_size; i++)
-        {
-            o_data.push_back(data[i]);
-        }
     } while(0);
 
     //TODO: PFSBE-394
@@ -796,14 +790,10 @@ ReturnCode i2c::putI2c( const Target<TARGET_TYPE_ALL>& target,
             break;
         }
 
-        uint8_t buffer[MAX_I2C_CMD_SIZE] = {};
-        std::copy(data.begin(), data.end(), buffer);
-
         // Do a write with stop
         iv_with_stop = true;
         iv_skip_mode_setup = false;
-        rc = i2cWrite(buffer,
-                        data.size());
+        rc = i2cWrite(data.data(), data.size());
         if(rc != FAPI2_RC_SUCCESS)
         {
             SBE_ERROR(SBE_FUNC " failed for i2cWrite with rc 0x%08X", rc);
