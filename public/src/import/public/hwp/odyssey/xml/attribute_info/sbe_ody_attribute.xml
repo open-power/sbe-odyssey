@@ -3670,6 +3670,9 @@
   <entry name="ATTR_SPPE_I2C_ENGINE">
     <value>0</value>
   </entry>
+  <entry name="ATTR_SPPE_I2C_MAX_RETRY_COUNT">
+    <value>0x01</value>
+  </entry>
   <entry name="ATTR_MEM_EFF_Z_MODE">
     <value>0</value>
   </entry>
