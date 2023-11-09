@@ -27,8 +27,6 @@
 
 #include <stdint.h>
 
-#define MAX_I2C_CMD_SIZE 16
-
 /**
  * @brief 0xA is the PIB responder ID and
  *        0x10000 is the local reg space
