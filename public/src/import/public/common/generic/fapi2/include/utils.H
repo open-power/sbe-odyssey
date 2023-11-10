@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -82,6 +82,31 @@ static inline constexpr bool is_platform()
     return fapi2::PLATFORM == i_type;
 }
 
+
+#if !defined(__PPE__) && !defined(BOOTLOADER) || defined (__SBE__)
+
+///
+/// @brief Log an error.
+///
+/// @param[in,out] io_rc Reference to ReturnCode (Any references to data and error
+///            target are removed and rc value is set to success after
+///            function ends.)
+/// @param[in] i_sev Fapi error log severity defaulted to unrecoverable
+/// @param[in] i_unitTestError - flag to log error which does not cause a unit
+///                              test to fail.
+///
+/// @note This function is called from the ffdc collection classes and no longer
+/// needs to be called directly.
+/// @note Implemented by platform code
+///
+void logError(
+    fapi2::ReturnCode& io_rc,
+    fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE,
+    bool i_unitTestError = false );
+
+#endif
+
+
 #if !defined(__PPE__) && !defined(BOOTLOADER)
 ///
 /// @brief Enable/Disable special wakeup on processor chip core(s)
@@ -134,25 +159,6 @@ inline ReturnCode specialWakeup(const Target<T, M, V>& i_target,
 
     return l_rc;
 }
-
-///
-/// @brief Log an error.
-///
-/// @param[in,out] io_rc Reference to ReturnCode (Any references to data and error
-///            target are removed and rc value is set to success after
-///            function ends.)
-/// @param[in] i_sev Fapi error log severity defaulted to unrecoverable
-/// @param[in] i_unitTestError - flag to log error which does not cause a unit
-///                              test to fail.
-///
-/// @note This function is called from the ffdc collection classes and no longer
-/// needs to be called directly.
-/// @note Implemented by platform code
-///
-void logError(
-    fapi2::ReturnCode& io_rc,
-    fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE,
-    bool i_unitTestError = false );
 
 ///
 /// @brief Create a platform error log
