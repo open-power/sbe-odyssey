@@ -223,6 +223,16 @@ namespace std
                 }
 
                 /**
+                 * Returns the number of elements that the container has currently allocated space for.
+                 * @return Capacity of the currently allocated storage
+                 */
+                __attribute__ ((always_inline))
+                size_type capacity() const
+                {
+                    return SBEVECTORPOOL::G_BLOCKSIZE/(sizeof(T));
+                }
+
+                /**
                  * Query for empty container
                  * @return bool, true if size()==0 else false.
                  * @pre none
