@@ -234,6 +234,7 @@ enum sbeSecondaryResponse
     SBE_SEC_CU_ECC_USE_DISABLED               = 0x8B,
     SBE_SEC_CU_WRITE_DATA_IMAGE_FAILURE       = 0x8C,
     SBE_SEC_CU_READ_DATA_IMAGE_FAILURE        = 0x8D,
+    SBE_SEC_ITS_A_BUG                         = 0x8E,
 };
 
 /**
