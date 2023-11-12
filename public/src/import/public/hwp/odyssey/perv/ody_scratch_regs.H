@@ -92,8 +92,8 @@ enum ody_scratch_regs
     ATTR_IS_SIMULATION_STARTBIT                     = 3,
     ATTR_IS_SIMULATION_LENGTH                       = 1,
 
-    ATTR_ENABLE_ABIST_DISABLE_BIT                   = 22,
-    ATTR_ENABLE_LBIST_DISABLE_BIT                   = 23,
+    ATTR_ENABLE_ABIST_DISABLE_BIT                   = 24,
+    ATTR_ENABLE_LBIST_DISABLE_BIT                   = 25,
 
     // Scratch_reg_12 (dynamic inits)
     SCRATCH12_REG_VALID_BIT                         = 11,
