@@ -3659,7 +3659,7 @@
   </entry>
   <!-- SPPE FW : SPPE FW attributes added from here  -->
   <entry name="ATTR_SPPE_TARGET_STATE">
-    <value>0x2</value>
+    <value>0</value>
   </entry>
   <entry name="ATTR_SPPE_I2C_DEV_ADDR">
     <value>0</value>
