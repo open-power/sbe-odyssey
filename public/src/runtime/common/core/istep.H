@@ -57,6 +57,16 @@ public:
      */
     fapi2::ReturnCode sbeExecuteIstep (uint8_t i_major, uint8_t i_minor);
 
+    /**
+     * @brief getIstepEndMajorNumber() to get end major number
+     *
+     * @return istep end major number
+     */
+    uint8_t getIstepEndMajorNumber()
+    {
+      return iv_istepEndMajorNumber;
+    }
+
 protected:
 
     uint8_t iv_istepStartMinorNumber;

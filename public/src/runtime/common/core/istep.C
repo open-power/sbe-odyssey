@@ -203,11 +203,6 @@ ReturnCode istep::sbeExecuteIstep(const uint8_t i_major, const uint8_t i_minor)
         }
     }
 
-    if ((i_major == iv_istepEndMajorNumber) && (l_lengthOfMinorNo == i_minor))
-    {
-        stateTransition(SBE_EVENT_CMN_RUNTIME);
-    }
-
     if (isSpiParityError()) // If true call saveoff and halt
     {
         __g_isParityError = 1;
@@ -222,6 +217,12 @@ ReturnCode istep::sbeExecuteIstep(const uint8_t i_major, const uint8_t i_minor)
     else
     {
         (void)SbeRegAccess::theSbeRegAccess().updateSbeStep(i_major, i_minor);
+
+        // Setting SBE to runtime after executing end major and minor number
+        if ((i_major == iv_istepEndMajorNumber) && (l_lengthOfMinorNo == i_minor))
+        {
+            stateTransition(SBE_EVENT_CMN_RUNTIME);
+        }
     }
 
     SBE_EXIT(SBE_FUNC)

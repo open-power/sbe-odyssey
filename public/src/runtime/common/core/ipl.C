@@ -32,6 +32,8 @@
 #include "sbestates.H"
 #include "sbestatesutils.H"
 #include "sbeffdc.H"
+#include "istepIplUtils.H"
+
 
 using namespace fapi2;
 extern "C" void __sbe_register_saveoff();
@@ -60,9 +62,6 @@ void ipl::sbeAutoBoot()
                     // SBE_MSG_CONSOLE("istep ", istepTableEntry->istepMajorNum, ".", step);
                     SBE_DEBUG("istep %d.%d", istepTableEntry->istepMajorNum, step);
                     rc = istepMap->istepWrapper(istepMap->istepHwp);
-                    (void)SbeRegAccess::theSbeRegAccess()
-                    .updateSbeStep(istepTableEntry->istepMajorNum,
-                                    step);
                 }
 
                 if (isSpiParityError()) // If true call saveoff and halt
@@ -84,24 +83,24 @@ void ipl::sbeAutoBoot()
                     entry = g_istepTable.len;
                     break;
                 }
-
-                // Check if we reached runtime
-                if( SbeRegAccess::theSbeRegAccess().getSbeState() ==
-                        SBE_STATE_CMN_RUNTIME)
+                else
                 {
-                    // Exit outer loop as well
-                    entry = g_istepTable.len;
-                    break;
+                    (void)SbeRegAccess::theSbeRegAccess()
+                    .updateSbeStep(istepTableEntry->istepMajorNum,
+                                    step);
+
+                    // Checking once we reached istepEndMajor number and successfully executed
+                    // All minor number then transition to runtime state .
+                    if ( istepTableEntry->istepMajorNum == g_pSbeIstepIplUtils->getIstepEndMajorNumber())
+                    {
+                        // Transition to runtime state on autoboot success
+                        stateTransition(SBE_EVENT_CMN_RUNTIME);
+                    }
                 }
             }
+
         }
     }while(false);
-
-    if(rc == FAPI2_RC_SUCCESS)
-    {
-        // Transition to runtime state on autoboot success
-        stateTransition(SBE_EVENT_CMN_RUNTIME);
-    }
 
     SBE_EXIT(SBE_FUNC);
     #undef SBE_FUNC
