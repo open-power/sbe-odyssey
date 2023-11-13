@@ -138,7 +138,7 @@ ReturnCode getBinaryDirectory( char (&io_packname)[MEM_PAKNAME_MAX_CHAR])
         return fapi2::FAPI2_RC_SUCCESS;
     }
 
-    FAPI_TRY(mss::attr::get_ody_phy_image_select(l_ocmb_chip, imageType), "get_ody_phy_image_select failed");
+    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_MSS_ODY_PHY_IMAGE_SELECT, l_ocmb_chip, imageType), "get_ody_phy_image_select failed");
     FAPI_TRY(mss::attr::get_dimm_type(l_mem_ports[0], dimmType), "get_dimm_type failed");
 
     // Use the ATE image if ATE is selected
