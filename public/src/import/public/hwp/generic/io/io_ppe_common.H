@@ -40,7 +40,7 @@
 #include <io_ppe_lib.H>
 #include <io_scom_lib.H>
 
-#define IO_PPE_COMMON_PRINT(_fail_, _fmt_, _args_...) if (!(_fail_)) { FAPI_DBG(_fmt_, ##_args_);} else { FAPI_ERR(_fmt_, ##_args_);}
+#define IO_PPE_COMMON_PRINT(_fail_, _fmt_, _args_...) if (!(_fail_)) { FAPI_INF(_fmt_, ##_args_);} else { FAPI_ERR(_fmt_, ##_args_);}
 
 enum IO_PPE_CONSTS
 {
@@ -239,6 +239,7 @@ class io_ppe_common
                                     const uint8_t i_num_threads,
                                     uint8_t& o_done,
                                     uint32_t& o_fail,
+                                    bool& o_bist_overall_fail,
                                     const uint32_t i_ext_cmd_override,
                                     const uint32_t i_poll_count);
 
@@ -1027,20 +1028,20 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::debug_display(const fapi2::Target<K, M
         const uint32_t i_rx_lanes_0_31,
         const uint32_t i_tx_lanes_0_31)
 {
-    FAPI_DBG("Start");
+    FAPI_INF("Start");
 
     fapi2::buffer<uint64_t> l_data = 0;
     uint32_t l_lane = 0;
 
-    FAPI_DBG("BASE ADDRESS: 0x%X%X, thread: %d", (iv_regs->base_addr >> 32), iv_regs->base_addr, i_thread);
+    FAPI_INF("BASE ADDRESS: 0x%X%X, thread: %d", (iv_regs->base_addr >> 32), iv_regs->base_addr, i_thread);
 
     FAPI_TRY(iv_regs->flushCache(i_target));
 
     FAPI_TRY(MEM_REG_PPE_ERROR_STATE_GET(iv_regs, i_target, i_thread, l_data));
-    FAPI_DBG("PPE_ERROR_STATE: 0x%X, thread: %d", l_data, i_thread);
+    FAPI_INF("PPE_ERROR_STATE: 0x%X, thread: %d", l_data, i_thread);
 
     FAPI_TRY(MEM_REG_TX_BIST_FAIL_0_15_GET(iv_regs, i_target, i_thread, l_data));
-    FAPI_DBG("MEM_REG_TX_BIST_FAIL_0_15: 0x%X, thread: %d", l_data, i_thread);
+    FAPI_INF("MEM_REG_TX_BIST_FAIL_0_15: 0x%X, thread: %d", l_data, i_thread);
 
     FAPI_TRY(MEM_REG_PPE_ERROR_VALID_GET(iv_regs, i_target, i_thread, l_data));
     IO_PPE_COMMON_PRINT(l_data != 0, "Thread %d PPE_ERROR_VALID: %d", i_thread, l_data)
@@ -1108,6 +1109,7 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_start(const fapi2::Target<K, M, V
 
     fapi2::buffer<uint64_t> l_cmd;
     l_cmd = (i_ext_cmd_override == 0x00000000) ? BIST_START_CMD : i_ext_cmd_override;
+    FAPI_INF("BIST EXT CMD 0x%08X", l_cmd);
 
     FAPI_TRY(ext_cmd_start(i_target, i_thread, i_rx_lanes_0_31, i_tx_lanes_0_31, l_cmd));
 
@@ -1121,6 +1123,7 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_poll(const fapi2::Target<K, M, V>
         const uint8_t i_thread,
         uint8_t& o_done,
         uint32_t& o_fail,
+        bool& o_bist_overall_fail,
         const uint32_t i_ext_cmd_override,
         const uint32_t i_poll_count)
 {
@@ -1134,6 +1137,7 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_poll(const fapi2::Target<K, M, V>
     o_fail = 0;
 
     l_cmd = (i_ext_cmd_override == 0x00000000) ? BIST_START_CMD : i_ext_cmd_override;
+    FAPI_INF("BIST EXT CMD 0x%08X", l_cmd);
 
     FAPI_DBG("io_ppe_common::BIST Poll: thread: %d", i_thread);
 
@@ -1158,8 +1162,7 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_poll(const fapi2::Target<K, M, V>
     FAPI_TRY(MEM_REG_BIST_OVERALL_PASS_GET(iv_regs, i_target, i_thread, l_data));
     IO_PPE_COMMON_PRINT(l_data == 0, "Thread %d BIST_OVERALL_PASS: 0x%04x", i_thread, l_data)
 
-    // Use bit 31 for no overall-pass
-    o_fail = o_fail | (l_data != 1);
+    o_bist_overall_fail = l_data != 1;
 
 fapi_try_exit:
     FAPI_DBG("Ending io_ppe_common::bist_poll");
