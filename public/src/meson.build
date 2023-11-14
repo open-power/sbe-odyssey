@@ -38,7 +38,6 @@ flashBuildTool = find_program('import/public/common/utils/imageProcs/tools/flash
 cmdTableTool = find_program('import/public/hwp/generic/perv/cmdtable/cmdtable.py')
 signHashList = find_program('build/utils/signHashList')
 tracehashwrap = find_program('tools/trace/tracehashwrap.py')
-buildInfo = find_program('build/utils/buildInfo.py')
 genMeasuredHash = find_program('build/utils/genMeasuredHash.sh')
 chipoptablegen = find_program('runtime/tools/chipoptable.py')
 
@@ -71,13 +70,6 @@ run_command('mkdir', '-p', cmn_genfiles_dir_path)
 #Lets define all genfiles paths that can be used elsewhere in the project
 onetime_genfiles_dir_path = genfiles_dir_path + '/onetime/'
 runtime_genfiles_dir_path = genfiles_dir_path + '/runtime/'
-
-#Common genfiles
-result_buildInfo = run_command(buildInfo, cmn_genfiles_dir_path)
-if not (result_buildInfo.returncode() == 0)
-      message(result_buildInfo.stdout())
-      error(result_buildInfo.stderr())
-endif
 
 #Update cmn include path with -I and global source dir.
 cmn_abs_inc_paths = []

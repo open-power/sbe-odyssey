@@ -117,7 +117,7 @@ constexpr struct PACKED metadata_t {
     METADATA(IMG, { IMAGES::RUNTIME });
     METADATA_STR(IID, "odyssey/sppe");
     METADATA(GIT, { SBE_COMMIT_ID });
-    METADATA(DAT, { SBE_BUILD_TIME });
+    METADATA(DAT, { SBE_BUILD_DATE });
     METADATA(TRA, { SPPE_TRACE_START_OFFSET, SPPE_PK_TRACE_SIZE_WITH_HEADER });
     METADATA(HEA, { (uint32_t)&_heap_space_start_, (uint32_t)&_heap_space_size_});
     METADATA(ATR, { (uint32_t)&_attrs_start_, (uint32_t)&_attrs_size_ });

@@ -30,7 +30,8 @@
 #include "metadata.H"
 #include "pakwrapper.H"
 #include "imagemap.H"
-#include "sbe_tag_info.H"
+#include "sbe_build_info.H"
+#include <algorithm>
 
 #define INFO_TXT_ENTRY_OPEN_DELIMITER   0x5B       // "["
 #define INFO_TXT_ENTRY_END_DELIMITER    0x5D       // "]"
@@ -79,19 +80,7 @@ uint32_t sbeCmdGetCapabilities(uint8_t *i_pArg)
         // If FIFO access failure
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_fifoRc);
 
-        // Fill-in SBE tag.
-        // For EKB tag which is part of info.txt file, would be
-        // filled as part of function fillImagesDetails.
-        // The return code if not successful, will not be send out
-        // to the host in the response data as this chip-op is never
-        // expected to fail
-        l_rc = fillSbeTagDetails(l_capRespMsg);
-        if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
-        {
-            SBE_ERROR(SBE_FUNC \
-                      "Failed to fill SBE tag information, RC[0x%08x]",
-                      l_rc);
-        }
+        // Fill-in SBE tag is done by fillCapabilitiesDetails
 
         // Filling image information that is used in the running SBE firmware.
         // The return code if not successful, will not be send out to the host
@@ -812,36 +801,6 @@ uint32_t loadAndParseInfoTxt(const char *i_fileName,
 
     //Free the scratch area
     Heap::get_instance().scratch_free(l_scratchArea);
-
-    SBE_EXIT(SBE_FUNC);
-    return l_rc;
-    #undef SBE_FUNC
-}
-
-
-uint32_t fillSbeTagDetails(GetCapabilityResp_t &o_capMsg)
-{
-    #define SBE_FUNC " fillSbeTagDetails "
-    SBE_ENTER(SBE_FUNC);
-    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
-
-    do
-    {
-        // Get SBE build tag from the generated sbe_build_info.H
-        const char *l_tag = SBE_BUILD_TAG;
-
-        // Check for tag length
-        if (sizeof(SBE_BUILD_TAG) > sizeof(o_capMsg.iv_sbeFwReleaseTag))
-        {
-            l_rc = SBE_SEC_INVALID_LENGTH_PASSED;
-            SBE_ERROR(SBE_FUNC "SBE tag length [%d] exceeds max length [%d]",
-                               sizeof(SBE_BUILD_TAG), BUILD_TAG_CHAR_MAX_LENGTH);
-            break;
-        }
-
-        // Copy the tag into response structure member - sbeFwReleaseTag
-        memcpy(o_capMsg.iv_sbeFwReleaseTag, (uint8_t *)l_tag, sizeof(SBE_BUILD_TAG));
-    } while (false);
 
     SBE_EXIT(SBE_FUNC);
     return l_rc;

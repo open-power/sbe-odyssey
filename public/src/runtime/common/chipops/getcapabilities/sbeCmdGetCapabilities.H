@@ -181,14 +181,4 @@ uint32_t loadAndParseInfoTxt(const char *i_fileName,
                              uint32_t &o_timeStamp,
                              char (&o_tag)[BUILD_TAG_CHAR_MAX_LENGTH]);
 
-/**
- * @brief This API is used to get tag detail of SBE image to send
- *        in the GetCapabilities response
- *
- * @param[out] o_capMsg The getcapability response buffer
- *
- * @return  RC
- */
-uint32_t fillSbeTagDetails(GetCapabilityResp_t &o_capMsg);
-
 #endif // SBE_CMD_GETCAPABILITIES_H

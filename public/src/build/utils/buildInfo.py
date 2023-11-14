@@ -28,72 +28,36 @@
 # buld information required by SBE code.
 import os
 import sys
-from subprocess import Popen, PIPE
 import datetime
 
-def buildInfo():
-    buildInfoFileName = sys.argv[1]+"/sbe_build_info.H"
-    header = \
-"#pragma once  \n\n"
+buildDate = "0x" + datetime.datetime.now().strftime('%Y%m%d')
+hexDate   = int(buildDate, 16)
 
-    buildTime = "0x" + datetime.datetime.now().strftime('%Y%m%d')
-    hexTime   = int(buildTime, 16)
+# Change to the directory where this script is located since that's
+# guaranteed to be inside the git repo, so all git commands will
+# query the right repo.
+os.chdir(os.path.dirname(__file__))
 
-    commitStr = os.popen('git rev-parse --short=8 HEAD').read().rstrip()
-    try:
-        commitInt = int(commitStr, 16)
-    except:
-        print("Failed to get a valid SBE_COMMIT_ID")
+commitStr = os.popen('git rev-parse --short=8 HEAD').read().rstrip()
+try:
+    commitInt = int(commitStr, 16)
+except:
+    print("Failed to get a valid SBE_COMMIT_ID", file=sys.stderr)
+    sys.exit(1)
+
+tags = []
+for proj in ["ody", "zme", "p11"]:
+    proc = os.popen('git describe --tags --dirty --long --always --match "sbe*_%s.*"' % proj)
+    tags.append((proj, proc.read().strip()))
+    rc = proc.close()
+    if rc:
+        print("Failed to get an SBE tag for " + proj, file=sys.stderr)
         sys.exit(1)
 
-    f = open( buildInfoFileName, 'w')
-
-    f.write(header)
-    f.write("//Define SBE Commit ID \n")
-    f.write("#define SBE_COMMIT_ID " + hex(commitInt) + "\n")
-    f.write("//Define SBE BUILD_TIME \n")
-    f.write("#define SBE_BUILD_TIME " + hex(hexTime) + "\n")
-    f.close()
-
-def tagInfo():
-    tagInfoFileName = sys.argv[1]+"/sbe_tag_info.H"
-    ## TODO:PFSBE-501:Use template for gen files
-    header = \
-"#pragma once  \n\n"
-
-    ## git describe command can be used to find the tag that comes after the commit.
-    ## The command finds the most recent tag that is reachable from a commit. If the
-    ## tag points to the commit then only the tag is returned. Otherwise, it suffixes (~)
-    ## the tag name with the additional commits on top of the tagged object
-    buildTag = ""
-    p = Popen(['git', 'describe', '--tags', '--match', sys.argv[2], '--contains', 'HEAD'],\
-              stdout=PIPE, stderr=PIPE, universal_newlines=True)
-    output, error = p.communicate()
-    if p.returncode == 0:
-        if len(output) > 0:
-            separator = '~'
-            if output.find('^') != -1:
-                separator = '^'
-            buildTag = output.split(separator, 1)[0]
-            print ("Tag found: " + str(buildTag))
-    else:
-        print("Failed to get a tag" + str(p.returncode) + str(error))
-
-    f = open( tagInfoFileName, 'w')
-
-    f.write(header)
-    f.write("//Define SBE BUILD_TAG \n")
-    f.write("#define SBE_BUILD_TAG " + "\"" + buildTag + "\"" + "\n")
-    f.close()
-
-## TODO:PFSBE:502:Use command parser to process arguments
-## The arguments are:
-## argv[1]: path to the location where generated header file is stored
-## argv[2]: prefixed starting word to filter out plat specific git tag
-if len(sys.argv) > 2:
-    # Call tagInfo
-    tagInfo()
-else:
-    # Call buildInfo
-    buildInfo()
-
+print("#pragma once\n")
+print("//Define SBE Commit ID")
+print("#define SBE_COMMIT_ID " + hex(commitInt))
+print("//Define SBE BUILD_DATE")
+print("#define SBE_BUILD_DATE " + hex(hexDate))
+for proj, tag in tags:
+    print('#define SBE_BUILD_TAG_%s "%s"' % (proj.upper(), tag))
