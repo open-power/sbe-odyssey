@@ -104,12 +104,13 @@ void __eabi()
 
 // Invoke all metadata for an image inside a constant struct to keep the
 // values together.
-const struct PACKED metadata_t {
+constexpr struct PACKED metadata_t {
     METADATA(LDA, { BOOTLOADER_ORIGIN });
     METADATA(IMG, { IMAGES::BOOTLOADER });
     METADATA_STR(IID, "odyssey/bldr");
     METADATA(GIT, { SBE_COMMIT_ID });
     METADATA(DAT, { SBE_BUILD_DATE });
+    METADATA_STR(BLD, SBE_BUILD_TAG_ODY);
     METADATA(TRA, { BLDR_TRACE_START_OFFSET, BLDR_PK_TRACE_SIZE_WITH_HEADER });
     ImageMetadataHeader end = {0, 0};
 } g_image_metadata __attribute__ ((section (".bldr_metadata")));
