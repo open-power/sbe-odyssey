@@ -4,7 +4,7 @@
         "cmdClass":"AE",
         "command":"0x01",
         "function":"sbeGetCodeLevels",
-        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL","SBE_FENCE_AT_DUMPING"],
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
         "headerFile":"sbecmdcodeupdate.H"
     },
     {
@@ -18,7 +18,7 @@
         "cmdClass":"AE",
         "command":"0x03",
         "function":"sbeSyncSide",
-        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL","SBE_FENCE_AT_DUMPING"],
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL","SBE_FENCE_AT_DUMPING", "SBE_FENCE_AT_ISTEP","SBE_FENCE_AT_SECURE_MODE"],
         "headerFile":"sbecmdcodeupdate.H"
     }
     ]

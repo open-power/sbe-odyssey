@@ -4,7 +4,7 @@
             "cmdClass":"A1",
             "command":"0x04",
             "function":"sbeExecuteHWP",
-            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
+            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL", "SBE_FENCE_AT_DUMPING"],
             "headerFile":"sbecmdexecutehwp.H"
         }
     ]
