@@ -5,7 +5,7 @@
             "cmdClass":"A3",
             "command":"0x01",
             "function":"sbeGetRing",
-            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL", "SBE_FENCE_AT_DUMPING"],
+            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
             "headerFile":"sbecmdringaccess.H"
         },
         {

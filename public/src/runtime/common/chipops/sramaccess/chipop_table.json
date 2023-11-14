@@ -5,7 +5,7 @@
             "cmdClass":"A4",
             "command":"0x03",
             "function":"sbeGetSram",
-            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL", "SBE_FENCE_AT_DUMPING"],
+            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
             "headerFile":"sbecmdsramaccess.H"
         },
         {
