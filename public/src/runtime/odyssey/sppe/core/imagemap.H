@@ -44,17 +44,17 @@ namespace CU
         {CU_IMAGES::BOOTLOADER, "boot"},
         {CU_IMAGES::RUNTIME,    "rt"  },
         {CU_IMAGES::BMC_OVRD,   "bmc" },
-        {CU_IMAGES::HOST_OVRD,  "host"}
+        {CU_IMAGES::HOST_OVRD,  "host"},
     };
 } // namespace CU
 
 constexpr capImgMap_t g_getCapabilitiesImages [] =
 {
-    {CAPABILITY_IMAGES::SROM,       "srom"},
-    {CAPABILITY_IMAGES::BOOTLOADER, "boot"},
-    {CAPABILITY_IMAGES::RUNTIME,    "rt"  },
-    {CAPABILITY_IMAGES::BMC_OVRD,   "bmc" },
-    {CAPABILITY_IMAGES::HOST_OVRD,  "host"},
-    {CAPABILITY_IMAGES::EKB,        "ekb" }
+    {CU_IMAGES::SROM,       "srom"},
+    {CU_IMAGES::BOOTLOADER, "boot"},
+    {CU_IMAGES::RUNTIME,    "rt"  },
+    {CU_IMAGES::BMC_OVRD,   "bmc" },
+    {CU_IMAGES::HOST_OVRD,  "host"},
+    {CU_IMAGES::EKB,        "ekb" },
 };
 #endif //IMAGE_MAP_H

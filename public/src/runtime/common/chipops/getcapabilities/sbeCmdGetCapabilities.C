@@ -273,13 +273,13 @@ static uint32_t getVersionFromInfoTxt(const uint8_t *i_startPtr,
  *
  * @param[in] i_startPtr pointer to the beginning location of image type in pibmem
  * @param[in] i_endPtr   pointer to the last location of image type in pibmem
- * @param[in] i_capImg  enum CAPABILITY_IMAGES of images supported
+ * @param[in] i_capImg  enum CU_IMAGES of images supported
  *
  * @return  RC
  */
 static uint32_t validateImageTypeFromInfoTxt(const uint8_t *i_startPtr,
                                              const uint8_t *i_endPtr,
-                                             const CAPABILITY_IMAGES i_capImg)
+                                             const CU_IMAGES i_capImg)
 {
     #define SBE_FUNC " validateImageTypeFromInfoTxt "
     SBE_ENTER(SBE_FUNC);
@@ -342,14 +342,14 @@ static uint32_t validateImageTypeFromInfoTxt(const uint8_t *i_startPtr,
  *
  * @param[in] i_startPtr pointer to the beginning location of identifier in pibmem
  * @param[in] i_endPtr   pointer to the last location of identifier in pibmem
- * @param[in] i_capImg  enum CAPABILITY_IMAGES of images supported
+ * @param[in] i_capImg  enum CU_IMAGES of images supported
  * @param[out] o_commitId commit-Id of image as per info.txt
  *
  * @return  RC
  */
 static uint32_t getIdentifierFromInfoTxt(const uint8_t *i_startPtr,
                                          const uint8_t *i_endPtr,
-                                         const CAPABILITY_IMAGES i_capImg,
+                                         const CU_IMAGES i_capImg,
                                          uint32_t &o_identifier)
 {
     #define SBE_FUNC " getIdentifierFromInfoTxt "
@@ -372,7 +372,7 @@ static uint32_t getIdentifierFromInfoTxt(const uint8_t *i_startPtr,
             break;
         }
 
-        if ((i_capImg == CAPABILITY_IMAGES::EKB) && (l_size != 8))
+        if ((i_capImg == CU_IMAGES::EKB) && (l_size != 8))
         {
             l_rc = SBE_SEC_INFO_TXT_FORMAT_INVALID;
             SBE_ERROR(SBE_FUNC "Length of commitId must be" \
@@ -499,7 +499,7 @@ static uint32_t getTagFromInfoTxt(const uint8_t *i_startPtr,
 /**
  * @brief This API is Used to get metadata of image specified in info.txt
  *
- * @param[in] i_capImg  enum CAPABILITY_IMAGES of images supported
+ * @param[in] i_capImg  enum CU_IMAGES of images supported
  * @param[in] i_fileStartAddr pointer to the beginning location of info.txt in pibmem
  * @param[in] i_fileSize   size of info.txt file
  * @param[out] o_commitId commit-Id of image as per info.txt
@@ -508,7 +508,7 @@ static uint32_t getTagFromInfoTxt(const uint8_t *i_startPtr,
  *
  * @return  RC
  */
-static uint32_t getMetadataFromInfoTxt(const CAPABILITY_IMAGES i_capImg,
+static uint32_t getMetadataFromInfoTxt(const CU_IMAGES i_capImg,
                                        uint8_t *i_fileStartAddr,
                                        const uint32_t i_fileSize,
                                        uint32_t &o_identifier,
@@ -728,7 +728,7 @@ static uint32_t getMetadataFromInfoTxt(const CAPABILITY_IMAGES i_capImg,
 
 
 uint32_t loadAndParseInfoTxt(const char *i_fileName,
-                             const CAPABILITY_IMAGES i_capImg,
+                             const CU_IMAGES i_capImg,
                              uint32_t &o_identifier,
                              uint32_t &o_buildDate,
                              char (&o_tag)[INFO_TXT_TAG_MAX_LENGTH])

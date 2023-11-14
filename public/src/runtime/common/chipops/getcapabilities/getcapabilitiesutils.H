@@ -48,8 +48,8 @@
 #define INFO_TXT_IMAGE_NAME_MAX_LENGTH       5
 typedef struct
 {
-    CAPABILITY_IMAGES imageNum;
-    char              imageName[INFO_TXT_IMAGE_NAME_MAX_LENGTH];
+    CU_IMAGES  imageNum;
+    char       imageName[INFO_TXT_IMAGE_NAME_MAX_LENGTH];
 } capImgMap_t;
 
 /**

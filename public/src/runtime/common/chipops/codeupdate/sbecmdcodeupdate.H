@@ -152,7 +152,7 @@ namespace CU
                 // and during update image respective platform can raise error if
                 // not supported
                 if (imageType == (uint16_t)CU_IMAGES::IMG_TYPE_INVALID ||
-                    imageType >= (uint16_t)CU_IMAGES::END_OF_IMG_LIST)
+                    imageType >= (uint16_t)CU_IMAGES::END_OF_CU_IMAGES)
                 {
                     rc = SBE_SEC_CU_INVALID_IMAGE_TYPE;
                     break;
