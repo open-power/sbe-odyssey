@@ -222,7 +222,7 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
 
 void fillCapabilitiesDetails(uint32_t *o_capability)
 {
-    o_capability[GENERIC_CAPABILTITY_START_IDX] =
+    o_capability[GENERIC_CAPABILITY_START_IDX] =
                                                 HWP_FFDC_COLLECTION_SUPPPORTED |
                                                 SBE_FFDC_COLLECTION_SUPPPORTED |
                                                 FIFO_RESET_SUPPPORTED |
