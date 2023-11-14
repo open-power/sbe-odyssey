@@ -36,8 +36,3 @@ foreach infile : odyssey_genfiles_c
 
 endforeach
 
-result_tagInfo = run_command(buildInfo, odyssey_sppe_genfiles_dir_path, 'sbe*')
-if not (result_tagInfo.returncode() == 0)
-      message(result_tagInfo.stdout())
-      error(result_tagInfo.stderr())
-endif

@@ -177,6 +177,15 @@ fi
 
 MESON_OPT_IMAGE_TYPE="-Dimage_type=${SBE_IMAGE}"
 
+# Always rebuild the build info but only replace the current file if it
+# actually changed to save unnecessary rebuilds.
+TEMPFILE=$(mktemp)
+mkdir -p $SBEROOT/genfiles/common
+BUILDINFO=$SBEROOT/genfiles/common/sbe_build_info.H
+$SBEROOT/public/src/build/utils/buildInfo.py > $TEMPFILE || exit 1
+cmp -s $TEMPFILE $BUILDINFO && rm $TEMPFILE || mv $TEMPFILE $BUILDINFO
+unset TEMPFILE
+
 if [ "$1" == "setup" ]; then
     cat > $SBEROOT/.user_cross_file.txt <<EOF
 [constants]
