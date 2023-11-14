@@ -210,6 +210,9 @@ int  main(int argc, char **argv)
 
         plat_AttrInit(fapi2::ENUM_ATTR_NAME_ODYSSEY);
 
+        SBE_INFO("Calling plat_TargetStateUpdateFromAttribute()");
+        g_platTarget->plat_TargetStateUpdateFromAttribute();
+
         sbePakSearchStartOffset();
 
         // Start the timer for the async thread.
