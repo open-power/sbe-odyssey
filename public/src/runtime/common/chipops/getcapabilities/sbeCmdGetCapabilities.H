@@ -59,7 +59,7 @@ struct __attribute__((packed)) ImageDetails_t
     /**
      * @brief Used to maintain the image type
      */
-    CAPABILITY_IMAGES iv_imageType; // uint16_t
+    CU_IMAGES iv_imageType; // uint16_t
 
     /**
      * @brief Used to maintain the time stamp of an image
@@ -78,7 +78,7 @@ struct __attribute__((packed)) ImageDetails_t
      */
     explicit ImageDetails_t() :
         iv_reserved1(0),
-        iv_imageType(CAPABILITY_IMAGES::IMG_TYPE_INVALID),
+        iv_imageType(CU_IMAGES::IMG_TYPE_INVALID),
         iv_buildTime(0),
         iv_identifier(0)
     {}
@@ -168,7 +168,7 @@ uint32_t getCommitId(const uint8_t *i_meta_start,
 * @brief This API is used to retreive information from the info.txt
 *
 * @param[in] i_fileName: file name corresponding to image type
-* @param[in] i_capImg: enum CAPABILITY_IMAGES of image type supported
+* @param[in] i_capImg: enum CU_IMAGES of image type supported
 * @param[out] o_identifier : commitId/version of image type from the info.txt
 * @param[out] o_timeStamp : time stamp of image built from the info.txt
 * @param[out] o_tag : git tag of image
@@ -176,7 +176,7 @@ uint32_t getCommitId(const uint8_t *i_meta_start,
 * @return rc
 */
 uint32_t loadAndParseInfoTxt(const char *i_fileName,
-                             const CAPABILITY_IMAGES i_capImg,
+                             const CU_IMAGES i_capImg,
                              uint32_t &o_identifier,
                              uint32_t &o_timeStamp,
                              char (&o_tag)[BUILD_TAG_CHAR_MAX_LENGTH]);

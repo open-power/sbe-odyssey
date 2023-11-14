@@ -280,30 +280,15 @@ enum class CU_IMAGES : uint16_t
     CUSTOM_TBL,
     MISC,
     PAD,
-    END_OF_IMG_LIST
-};
+    RUNTIME2,          // Updatable
+    CUSTOM_BACKUP,
+    END_OF_CU_IMAGES,
 
-/**
- * - No of sub-images that supported by the SBE FW.
- * - sub-images details for the GetCapabilities chip-op.
- *
- * - TODO: JIRA: PFSBE-413
- *   We should have a single enum image list instead of many for each code
- *   updates and get capabilities chip-ops.
- */
-enum class CAPABILITY_IMAGES : uint16_t
-{
-    IMG_TYPE_INVALID = 0,
-    SROM,
-    BOOTLOADER,
-    RUNTIME,
-    BMC_OVRD,
-    HOST_OVRD,
+    // Virtual images, only used for getCapability
+    // Start at a high number to leave space for expanding the CodeUpdate images
+    SROM = 0x1000,
     EKB,
-    CUSTOM_TBL,
-    CUSTOM,
-    MISC,
-    PAD
+    END_OF_VIRTUAL_IMAGES,
 };
 
 /**
