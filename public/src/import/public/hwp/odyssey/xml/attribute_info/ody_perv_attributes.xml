@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -79,8 +79,8 @@
       Bit 21     : Enforce matching security version for boot loader
       Bit 22     : Set Secure Boot Validity Verification. Force enables strict secure boot failure
       Bit 23     : Disable IOBist
-      Bit 24     : Disable Abist
-      Bit 25     : Disable Lbist
+      Bit 24     : unused (used to disable ABist but we don't do ABist on Odyssey)
+      Bit 25     : unused (used to disable LBust but we don't do LBist on Odyssey)
       Bit 26     : Enable Burn-In mode
       Bit 27     : Graceful terminate of any istep (via HWP if supported) -- only works when in imprint key mode
       Bit 28     : Force production Mode/ Production signed image.
