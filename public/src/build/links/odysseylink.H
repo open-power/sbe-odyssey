@@ -170,13 +170,13 @@ ASSERT((SROM_BLDR_CMN_SH_FILE_SCRATCH_END < BOOTLOADER_ORIGIN), \
 
 #define SBE_NONCRITICAL_STACK_SIZE              512
 
-// 6K of stack to thermal sensor polling
-#define SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE    6144
+// 2K of stack to thermal sensor polling
+#define SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE    2048
 
 #define SBE_THREAD_CMD_RECV_STACK_SIZE          512
 
-//12K of Stack to handle large rings
-#define SBE_THREAD_SYNC_CMD_PROC_STACK_SIZE     10240
+// 8K of Stack for processor thread
+#define SBE_THREAD_SYNC_CMD_PROC_STACK_SIZE     8192
 
 #define SBE_TOTAL_STACK_SIZE_REQUIRED_IN_SCRATCH  (     \
             SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE +      \
