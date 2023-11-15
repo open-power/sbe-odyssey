@@ -96,5 +96,14 @@
       <buffer>FFDC_BUFFER</buffer>
       <ffdc>INVALID_ERRVAL</ffdc>
     </hwpError>
+    <!-- ******************************************************************** -->
+    <hwpError>
+      <sbeError/>
+      <rc>RC_ERROR_UNSUPPORTED_BY_SBE</rc>
+      <description>An error was encountered that the SBE didn't expect.</description>
+      <buffer>FFDC_BUFFER</buffer>
+      <ffdc>INVALID_ERRVAL</ffdc>
+    </hwpError>
    <!-- ******************************************************************** -->
+
 </hwpErrors>
