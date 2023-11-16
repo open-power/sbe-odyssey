@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -97,7 +97,7 @@
     OCCHW_IRQ_CHECK_STOP_GPE2               OCCHW_IRQ_TARGET_ID_GPE2 \
     OCCHW_IRQ_CHECK_STOP_GPE3               OCCHW_IRQ_TARGET_ID_GPE3 \
     OCCHW_IRQ_OCC_MALF_ALERT                OCCHW_IRQ_TARGET_ID_NONE \
-    OCCHW_IRQ_PVREF_ERROR                   OCCHW_IRQ_TARGET_ID_GPE3 \
+    OCCHW_IRQ_PVREF_ERROR                   OCCHW_IRQ_TARGET_ID_GPE2 \
     OCCHW_IRQ_IPI2_HI_PRIORITY              OCCHW_IRQ_TARGET_ID_GPE2 \
     OCCHW_IRQ_IPI3_HI_PRIORITY              OCCHW_IRQ_TARGET_ID_GPE3 \
     OCCHW_IRQ_DEBUG_TRIGGER                 OCCHW_IRQ_TARGET_ID_NONE \
