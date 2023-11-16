@@ -238,6 +238,10 @@ Target<K, M, V>::getChildren(const TargetState i_state) const
     uint32_t l_childTargetOffset = PPE_CORE_TARGET_OFFSET;
     uint32_t l_core_select       = 0;
 
+    // Read the QMCR registers (last 4 bits is partial good)
+    // to set the functional state of EC, EQ and EX targets.
+    uint32_t l_pg_l3 = ((*(volatile uint32_t*)(0xC0000884)) >> 8) & 0xF;
+
     if ( K & TARGET_TYPE_PERV )
     {
         Target<T> l_perv;
@@ -250,13 +254,13 @@ Target<K, M, V>::getChildren(const TargetState i_state) const
         l_core_select = this->iv_handle.getCoreSelect();
     }
 
-    for(uint32_t i = 0; i < l_childrenPerParent; ++i)
+    for(uint32_t id = 0, mask = 0x8; id < l_childrenPerParent; ++id, mask = mask >> 1)
     {
         Target<T, M, V>* l_temp =
-            reinterpret_cast< Target<T, M, V>* >(&G_vec_targets.at(l_childTargetOffset + i));
+            reinterpret_cast< Target<T, M, V>* >(&G_vec_targets.at(l_childTargetOffset + id));
 
         if ( ( (K & TARGET_TYPE_CORE) || (K & TARGET_TYPE_L3CACHE) ) &&
-             (! ( l_core_select & ( 0x8 >> i ) ) ) )
+             (! ( l_core_select & mask ) ) )
         {
             continue;
         }
@@ -270,7 +274,8 @@ Target<K, M, V>::getChildren(const TargetState i_state) const
             case TARGET_STATE_PRESENT:
             case TARGET_STATE_FUNCTIONAL:
             default:
-                if ((*l_temp).isFunctional())
+                if ( ( ((*l_temp).isFunctional()) && (K & TARGET_TYPE_CORE) ) ||
+                     ( l_pg_l3 & mask ) ) // apply l3 PG/functional in this shortcut
                 {
                     l_children.push_back((*l_temp));
                 }
