@@ -224,7 +224,7 @@ namespace fapi2
         {
             STATIC_CHECK((T & ~TARGET_TYPE_MEM_PORT_CHILDREN) == 0,
                          "Invalid child type for MEM PORT target");
-            g_platTarget->getChipletChildren(P, *this, l_include_nonfunctional, l_cast_children);
+            g_platTarget->getMemportChildren(P, *this, l_include_nonfunctional, l_cast_children);
             return l_children;
         }
         else if (K_NO_T == TARGET_TYPE_MC)

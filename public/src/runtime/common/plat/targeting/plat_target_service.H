@@ -108,6 +108,16 @@ namespace fapi2
                                 std::vector<plat_target_sbe_handle> &o_children) const;
 
         ///
+        /// @brief Get the memport Children 
+        /// @param [in] i_parent     Parent target handle
+        /// @param [in] i_include_nonfunctional Return also targets that are not functional
+        /// @param [in/out] o_children             A vector of child target handles
+        void getMemportChildren(const LogTargetType i_child_type,
+                                const plat_target_sbe_handle i_parent,
+                                const bool i_include_nonfunctional,
+                                std::vector<plat_target_sbe_handle> &o_children) const;
+
+        ///
         ///
         /// @brief Break a multicast target up into unicast targets
         ///
