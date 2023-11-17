@@ -79,6 +79,27 @@ public:
                   std::vector<uint8_t>& o_data );
 
   /**
+   * @brief To read from i2c device
+   *        This implementation can be overriden in derived class
+   *        based on use case
+   *
+   * @param target FAPI HW target to operate on.
+   * @param i_data  Buffer that holds data to write to the HW target.
+   *                May be empty if no address/command is required
+   *                before the read.
+   * @param i_size  True size of i_data
+   * @param o_data  Buffer that holds data read from HW target.
+   * @param o_size  True size of o_data
+   * @return ReturnCode FAPI2_RC_SUCCESS if success, else error code.
+   */
+  virtual ReturnCode getI2c( const Target<TARGET_TYPE_ALL>& target,
+                             const uint8_t  *i_data,
+                             const uint32_t  i_size,
+                                   uint8_t  *o_data,
+                             const uint32_t  o_size);
+
+
+  /**
    * @brief To write to i2c device
    *        This implementation can be overriden in derived class
    *        based on use case
@@ -89,6 +110,22 @@ public:
    */
   virtual ReturnCode putI2c( const Target<TARGET_TYPE_ALL>& target,
                           const std::vector<uint8_t>& data );
+
+  /**
+   * @brief To write to i2c device
+   *        This implementation can be overriden in derived class
+   *        based on use case
+   *
+   * @param target FAPI HW target to operate on.
+   * @param i_data  Buffer that holds data to write to the HW target.
+   *                May be empty if no address/command is required
+   *                before the read.
+   * @param i_size  True size of i_data
+   * @return ReturnCode fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
+   */
+  virtual ReturnCode putI2c( const Target<TARGET_TYPE_ALL>& target,
+                             const uint8_t  *i_data,
+                             const uint32_t  i_size);
 
   /**
    * @brief Reset i2cc and i2c bus reset

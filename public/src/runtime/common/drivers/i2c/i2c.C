@@ -208,7 +208,7 @@ fapi_try_exit:
 
 ReturnCode i2c::i2cSetup(size_t len)
 {
-    #define SBE_FUNC " i2cRead "
+    #define SBE_FUNC " i2cSetup "
     SBE_ENTER(SBE_FUNC);
 
     ReturnCode rc = FAPI2_RC_SUCCESS;
@@ -711,9 +711,9 @@ ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
             break;
         }
 
-	o_data.clear();
-	o_data.assign(get_size, 0x00);
-	
+        o_data.clear();
+        o_data.assign(get_size, 0x00);
+
         ////////////////////////////////
         // I2C read with offset ///////
         ///////////////////////////////
@@ -743,7 +743,88 @@ ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
             iv_with_stop = true;
             iv_skip_mode_setup = false;
         }
+	
         rc = i2cRead(o_data.data(), get_size);
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC " failed for i2cRead(without offset) with rc 0x%08X", rc);
+            break;
+        }
+
+    } while(0);
+
+    //TODO: PFSBE-394
+    ReturnCode l_rc = i2cUnlockEngine();
+    if(l_rc != FAPI2_RC_SUCCESS)
+    {
+        SBE_ERROR(SBE_FUNC " failed for i2cUnlockEngine with l_rc 0x%08X", l_rc);
+        if(rc == FAPI2_RC_SUCCESS)
+            rc = l_rc;
+    }
+
+    SBE_EXIT(SBE_FUNC)
+    return rc;
+    #undef SBE_FUNC
+}
+
+ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
+                        const uint8_t  *i_data,
+                        const uint32_t  i_size,
+                              uint8_t  *o_data,
+                        const uint32_t  o_size)
+{
+    #define SBE_FUNC " getI2c "
+    SBE_ENTER(SBE_FUNC)
+
+    ReturnCode rc = FAPI2_RC_SUCCESS;
+
+    do {
+
+        rc = populatei2cdetails(target);
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC " failed for populatei2cdetails with rc 0x%08X", rc);
+            break;
+        }
+
+        rc = i2cLockEngine();
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC " failed for i2cLockEngine with rc 0x%08X", rc);
+            break;
+        }
+
+        ////////////////////////////////
+        // I2C read with offset ///////
+        ///////////////////////////////
+        if(i_size != 0)
+        {
+            // First write offset to device without stop
+            iv_with_stop = false;
+            iv_skip_mode_setup = false;
+
+            rc = i2cWrite(i_data, i_size);
+            if(rc != FAPI2_RC_SUCCESS)
+            {
+                SBE_ERROR(SBE_FUNC " failed for i2cWrite(with offset) with rc 0x%08X", rc);
+                break;
+            }
+            // Now do the READ with a stop
+            iv_with_stop = true;
+            // Skip mode setup, cmd already set
+            iv_skip_mode_setup = true;
+        }
+        ////////////////////////////////
+        // I2C read without offset ////
+        ///////////////////////////////
+        else
+        {
+            // Do a direct read
+            iv_with_stop = true;
+            iv_skip_mode_setup = false;
+        }
+	
+        rc = i2cRead(o_data, o_size);
         if(rc != FAPI2_RC_SUCCESS)
         {
             SBE_ERROR(SBE_FUNC " failed for i2cRead(without offset) with rc 0x%08X", rc);
@@ -794,6 +875,56 @@ ReturnCode i2c::putI2c( const Target<TARGET_TYPE_ALL>& target,
         iv_with_stop = true;
         iv_skip_mode_setup = false;
         rc = i2cWrite(data.data(), data.size());
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC " failed for i2cWrite with rc 0x%08X", rc);
+            break;
+        }
+    } while(0);
+
+    //TODO: PFSBE-394
+    ReturnCode l_rc = i2cUnlockEngine();
+    if(l_rc != FAPI2_RC_SUCCESS)
+    {
+        SBE_ERROR(SBE_FUNC " failed for i2cUnlockEngine with l_rc 0x%08X", l_rc);
+        if(rc == FAPI2_RC_SUCCESS)
+            rc = l_rc;
+    }
+
+    SBE_EXIT(SBE_FUNC)
+    return rc;
+    #undef SBE_FUNC
+}
+
+ReturnCode i2c::putI2c( const Target<TARGET_TYPE_ALL>& target,
+                        const uint8_t  *i_data,
+                        const uint32_t  i_size )
+{
+    #define SBE_FUNC " putI2c "
+    SBE_ENTER(SBE_FUNC)
+
+    ReturnCode rc = FAPI2_RC_SUCCESS;
+
+    do {
+
+        rc = populatei2cdetails(target);
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC " failed for populatei2cdetails with rc 0x%08X", rc);
+            break;
+        }
+
+        rc = i2cLockEngine();
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC " failed for i2cLockEngine with rc 0x%08X", rc);
+            break;
+        }
+
+        // Do a write with stop
+        iv_with_stop = true;
+        iv_skip_mode_setup = false;
+        rc = i2cWrite(i_data, i_size);
         if(rc != FAPI2_RC_SUCCESS)
         {
             SBE_ERROR(SBE_FUNC " failed for i2cWrite with rc 0x%08X", rc);
