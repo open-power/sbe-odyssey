@@ -51,6 +51,31 @@ inline ReturnCode getI2c(const Target<K>& i_target,
     return sbei2c.getI2c(i_target, i_get_size, i_data, o_data);
 }
 
+/**
+ * @brief Platform-level implementation of getI2c()
+ * @tparam K the type (Kind) of target, from i_target
+ * @param[in]  i_target  HW target to operate on.
+ * @param[in]  i_data    Buffer that holds data to write to the HW target.
+ *                       May be empty if no address/command is required
+ *                       before the read.
+ * @param[in]  i_size    True size of i_data
+ * @param[out] o_data    Buffer that holds data read from HW target.
+ * @param[out] o_size    True size of o_data
+ * @return ReturnCode FAPI2_RC_SUCCESS if success, else error code.
+ */
+template< TargetType K >
+inline ReturnCode getI2c(const Target<K>& i_target,
+                         const uint8_t  *i_data,
+                         const uint32_t  i_size,
+                               uint8_t  *o_data,
+                         const uint32_t  o_size)
+{
+    plati2c sbei2c;
+    return sbei2c.getI2c(i_target, i_data, i_size, o_data, o_size);
+}
+
+
+
 
 /**
  * @brief Platform-level implementation of putI2c()
@@ -67,6 +92,24 @@ inline ReturnCode putI2c(const Target<K>& i_target,
     return sbei2c.putI2c(i_target, i_data);
 }
 
-}; //namespace fapi2
+/**
+ * @brief Platform-level implementation of putI2c()
+ * @tparam K the type (Kind) of target, from i_target
+ * @param[in] i_target     HW target to operate on.
+ * @param[in] i_data       Buffer that holds data to write to the HW target.
+ * @param[in] i_size       True size of i_data
+ * @return fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
+ */
+template< TargetType K >
+inline ReturnCode putI2c(const Target<K>& i_target,
+                         const uint8_t  *i_data,
+                         const uint32_t  i_size)
+{
+    plati2c sbei2c;
+    return sbei2c.putI2c(i_target, i_data, i_size);
+}
+
+};
+ //namespace fapi2
 
 #endif
