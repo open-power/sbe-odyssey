@@ -175,7 +175,37 @@ void sbe_target_service::getChipletChildren(const LogTargetType i_child_type,
         if (target.getTargetType() == i_child_type &&
             target.getChipletNumber() == cplt_id)
         {
-            o_children.push_back(target);
+            if((i_include_nonfunctional || target.getFunctional()) &&
+               (target.getPresent())) 
+            {
+                o_children.push_back(target);
+            }
+        }
+    }
+}
+
+void sbe_target_service::getMemportChildren(const LogTargetType i_child_type,
+                                            const plat_target_sbe_handle i_parent,
+                                            const bool i_include_nonfunctional,
+                                            std::vector<plat_target_sbe_handle> &o_children) const
+{
+    const uint8_t cplt_id = i_parent.getChipletNumber();
+    uint8_t parentInstance = i_parent.getTargetInstance();
+
+    for (auto &target : iv_targets)
+    {
+        if( (target.getTargetType() == i_child_type)
+            && (target.getChipletNumber() == cplt_id))
+        {
+            if ((target.getTargetInstance() == (2 * parentInstance))
+             || (target.getTargetInstance() == (2 * parentInstance + 1)))
+            {
+                if((i_include_nonfunctional || target.getFunctional()) &&
+                   (target.getPresent())) 
+                {
+                    o_children.push_back(target);
+                }
+            }
         }
     }
 }
