@@ -59,6 +59,7 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     NET_CTRL0_t NET_CTRL0;
     SYNC_CONFIG_t SYNC_CONFIG;
     OPCG_ALIGN_t OPCG_ALIGN;
+    CPLT_CTRL0_t CPLT_CTRL0;
     CPLT_CTRL2_t CPLT_CTRL2;
     CPLT_CTRL3_t CPLT_CTRL3;
     HEARTBEAT_REG_t HEARTBEAT_REG;
@@ -125,6 +126,18 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
                     .set_PROC_TARGET(i_target),
                     "ERROR:HEARTBEAT NOT RUNNING");
 
+        // We have to inhibit Pervasive flush until now because some Pervasive PLATs
+        // are used for the sync mechanism.
+        FAPI_INF("Pull pervasive chiplet PLATs out of flush mode to be able to send sync pulses to other chiplets");
+        CPLT_CTRL0 = 0;
+        CPLT_CTRL0.set_FLUSHMODE_INH(1);
+        FAPI_TRY(CPLT_CTRL0.putScom_SET(get_tp_chiplet_target(i_target)));
+
+        FAPI_INF("Enable Pervasive chiplet to send sync pulses to other chiplets");
+        FAPI_TRY(SYNC_CONFIG.getScom(get_tp_chiplet_target(i_target)));
+        SYNC_CONFIG.set_SYNC_PULSE_OUT_DIS(0);
+        FAPI_TRY(SYNC_CONFIG.putScom(get_tp_chiplet_target(i_target)));
+
         FAPI_INF("Set up clock controllers with sync pulse delay of %d cycles", i_sync_pulse_delay);
         SYNC_CONFIG = 0;
         l_sync_pulse_delay = (i_sync_pulse_delay == 8) ? 0 : i_sync_pulse_delay - 1;
@@ -141,6 +154,11 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
         FAPI_DBG("Disable listen to sync");
         SYNC_CONFIG.set_SYNC_PULSE_INPUT_DIS(1);
         FAPI_TRY(SYNC_CONFIG.putScom(l_chiplets_mc));
+
+        FAPI_INF("Disable pervasive chiplet sending sync pulses to other chiplets");
+        FAPI_TRY(SYNC_CONFIG.getScom(get_tp_chiplet_target(i_target)));
+        SYNC_CONFIG.set_SYNC_PULSE_OUT_DIS(1);
+        FAPI_TRY(SYNC_CONFIG.putScom(get_tp_chiplet_target(i_target)));
 
         FAPI_INF("Set up OPCG_ALIGN");
         OPCG_ALIGN = 0;
