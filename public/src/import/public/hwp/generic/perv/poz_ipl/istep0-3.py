@@ -241,6 +241,8 @@ def ody_cbs_start(target<OCMB_CHIP>, bool i_start_sbe=true):
     mod_cbs_start(i_target, i_start_sbe)
 
 def zme_cbs_start(target<PROC_CHIP>, bool i_start_sbe=true):
+    # Clear SBE message register because mod_cbs_start only clears it for SPPE
+    SCRATCH_REGISTER_15 = 0
     mod_cbs_start(i_target, i_start_sbe)
 
 # You can use this HWP instead of cbs_start if you want to
