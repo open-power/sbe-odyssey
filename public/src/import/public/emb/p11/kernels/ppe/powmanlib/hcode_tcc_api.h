@@ -355,37 +355,40 @@ typedef struct
     uint16_t pce_data_length;
     uint16_t xce_data_offset;
     uint16_t xce_data_length;
+    uint16_t xgpe_data_offset;
+    uint16_t xgpe_data_length;
     uint16_t errlog_table_offset;
     uint16_t errlog_table_length;
-    uint8_t  reserved0[4]; //This makes it 32B
 } TCCShSrHeader_t;
 
 
+/// Main shared data structure placed at the beginning of the shared
+/// Sram region at address TCC_SHARED_SRAM_BASE_ADDR (=0xFFFFC000)
 typedef struct
 {
 
     /// Header that points to each of the indicated sections
-    TCCShSrHeader_t     header;
+    TCCShSrHeader_t     header;           //              32B
 
     /// Hcode Error Log Index
-    hcode_error_table_t errlog_idx;
+    hcode_error_table_t errlog_idx;       // 8B + 160B = 168B
 
     /// DCE Produced WOF Values
-    DCW_t               dce_wof_values;
+    DCW_t               dce_wof_values;   // 8B + 8B   =  16B
 
     /// OCE Produced WOF Values
-    OCW_t               oce_wof_values;
+    OCW_t               oce_wof_values;   // 8B + 8B   =  16B
 
     /// PCE Produced WOF Values
-    PCW_t               pce_wof_values;
+    PCW_t               pce_wof_values;   // 8B + 56B  =  64B
 
     /// XCE Produced WOF Values
-    XCW_t               xce_wof_values;
+    XCW_t               xce_wof_values;   // 8B + 32B  =  40B
 
     /// XGPE Produced WOF Values
-    XGW_t               xgpe_wof_values;
+    XGW_t               xgpe_wof_values;  //              16B
 
-} HcodeTCCSharedData_t;
+} HcodeTCCSharedData_t;                   // Total     = 352B
 
 
 #ifdef __cplusplus
