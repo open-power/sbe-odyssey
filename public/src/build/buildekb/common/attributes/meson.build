@@ -53,6 +53,7 @@ infile_attr_xml = [
             'poz_freq_attributes.xml',
             'poz_bist_attributes.xml',
             'poz_chip_ec_attributes.xml',
+            'poz_sppefw_attributes.xml',
             ]
 
 foreach infile : infile_attr_xml

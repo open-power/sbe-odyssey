@@ -1,7 +1,7 @@
 <!-- IBM_PROLOG_BEGIN_TAG                                                   -->
 <!-- This is an automatically generated prolog.                             -->
 <!--                                                                        -->
-<!-- $Source: public/src/import/public/memory/odyssey/xml/attribute_info/ody_sppefw_attributes.xml $ -->
+<!-- $Source: public/src/import/public/hwp/generic/xml/attribute_info/poz_sppefw_attributes.xml $ -->
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
@@ -24,8 +24,8 @@
 <!-- IBM_PROLOG_END_TAG                                                     -->
 
 <!-- -->
-<!-- @file ody_sppefw_attributes.xml -->
-<!-- @brief Defines attributes that are consumed by the Odyssey SPPE        -->
+<!-- @file poz_sppefw_attributes.xml -->
+<!-- @brief Defines attributes that are consumed by the POZ  SPPE/SBE       -->
 <!--        Firmware itself to exercise its platform functions.  These      -->
 <!--        attributes should NOT be consumed by general HWP code.          -->
 <!-- -->
