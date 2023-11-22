@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -280,10 +280,16 @@ uint32_t sbeDownFifoEnq_mult (uint32_t        &io_len,
             // Downstream FIFO is full
             if( SBE::isSimicsRunning() )
             {
+                // While sending the FFDC pk sleep might invoke async thread,
+                // And async thread creating FFDC, leads to corrupt FFDC linking
+                // list in scratch.
+                pk_thread_suspend(&SBE_GLOBAL->threads.sbeAsyncCommandProcessor_thread);
                 // sleep if simics is running. Otherwise simics becomes
                 // 99 % busy and fsp does not get a chance to do operation
                 // over FIFO.
                 pk_sleep(PK_MILLISECONDS(FIFO_WAIT_SLEEP_TIME));
+
+                pk_thread_resume(&SBE_GLOBAL->threads.sbeAsyncCommandProcessor_thread);
             }
             continue;
         }

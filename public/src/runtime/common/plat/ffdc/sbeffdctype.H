@@ -144,7 +144,7 @@ enum SBE_FFDC_DD_LEVEL
  * bit_3 - Attribute dump
  * bit 4-31 - reserved
  */
-typedef struct __attribute__((packed, aligned(8)))
+typedef struct __attribute__((packed, aligned(4)))
 {
 #if __BYTE_ORDER == __BIG_ENDIAN
     uint32_t hwField:1;
@@ -478,10 +478,9 @@ typedef struct pozFfdcNode
 */
 typedef struct pozFfdcCtrl
 {
-    uint32_t        iv_localSlid : 16;
-    uint32_t        reserved     : 16;
-    uint32_t        iv_fapiRc;
-    pozFfdcNode_t * iv_firstCommitted;
+    uint32_t        iv_localSlid                : 16; // Which hold the SBE log ID which is incrementing for every full FFDC
+    uint32_t        reserved                    : 16;
+    pozFfdcNode_t * iv_firstCommitted;                // Which hold the first commited ffdc
 
     /**
      * @brief Constructor a poz Ffdc control object
@@ -489,7 +488,6 @@ typedef struct pozFfdcCtrl
     pozFfdcCtrl( )
     {
         iv_localSlid                   = 0;
-        iv_fapiRc                      = 0;
         iv_firstCommitted              = nullptr;
     }
 
@@ -501,19 +499,6 @@ typedef struct pozFfdcCtrl
     void setHead(const pozFfdcNode_t  *  i_head)
     {
         iv_firstCommitted = const_cast<pozFfdcNode_t *>(i_head);
-    }
-
-    /**
-     * @brief Add given node to head (first commited node)
-     *
-     * @param[in] i_head pointer to node
-    */
-    void addHead(const pozFfdcNode_t  *  i_head)
-    {
-        if (i_head != nullptr)
-        {
-            iv_firstCommitted = (pozFfdcNode_t  *) i_head;
-        }
     }
 
     /**
@@ -532,18 +517,11 @@ typedef struct pozFfdcCtrl
      */
     void incrementSlid(void)
     {
-        iv_localSlid++;
+        ++iv_localSlid;
     }
 
     /**
-     * @brief find the last node and return the node
-     *
-     * @return last node ptr @ref pozFfdcNode_t
-    */
-    pozFfdcNode_t * getLastNode( void );
-
-    /**
-     * @brief Find last/next node and extend node by linking
+     * @brief Find last/next node and extend node for given node
      *
      * @param[in] i_node node pointer
     */
