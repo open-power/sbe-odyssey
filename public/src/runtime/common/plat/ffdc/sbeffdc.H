@@ -170,17 +170,22 @@ public:
  *                                 to be sent in FFDC
  * @param[out] o_wordsSent       - number of words sent
  *                                 By default it is false.
- * @param[in]                    - i_isFifoData FIFO type is set or not
- *                                 The default fifo type is FIFO:0
+ * @param[in] i_isFifoData       - i_isFifoData request data from FIFO or not
+ *                                 The default is FIFO data is FALSE
+ * @param[in] i_type             - FIFO type @enum sbeFifoType
+ *                                 The default fifo type is FIFO: SBE_FIFO (0)
  * @return                       - SBE secondary RC
  */
-uint32_t sendFFDCOverFIFO( const uint32_t i_fieldsConfig, uint32_t &o_wordsSent,
-                           const bool isFifoData = false, sbeFifoType i_type = SBE_FIFO );
+uint32_t sendFFDCOverFIFO( const uint32_t i_fieldsConfig,
+                           uint32_t &o_wordsSent,
+                           const bool isFifoData  = false,
+                           sbeFifoType i_type     = SBE_FIFO);
 
 ///
 /// @brief Log a sbe internal error. This will create a sbe-FFDC object in heap,
 ///        which will have sbe-header and only plat package. Newly created
 ///        object will be marked as committed and added to the list
+///        Note: In case of UE fatal is always true
 ///
 /// @param[in] i_primRc Primary RC as @enum sbePrimResponse
 /// @param[in] i_secRc SBE Secondary RC as @enum sbeSecondaryResponse
@@ -189,8 +194,11 @@ uint32_t sendFFDCOverFIFO( const uint32_t i_fieldsConfig, uint32_t &o_wordsSent,
 ///
 void logSbeError( const uint16_t i_primRc,
                   const uint16_t i_secRc,
-                  fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE,
-                  bool i_isFatal = false);
+                  fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE
+#if defined( MINIMUM_FFDC_RE )
+                  , bool i_isFatal = false
+#endif
+                );
 
 
 ///
