@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/memory/odyssey/hwp/lib/omi/ody_system_specific_omi.H $ */
+/* $Source: public/src/import/public/memory/generic/memory/proc_specific/mss_target_abstractions.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -22,53 +22,27 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-// EKB-Mirror-To: hostboot
 
 ///
-/// @file ody_system_specific_omi.H
-/// @brief OMI EC Feature template check P11
+/// @file mss_target_abstractions.H
+/// @brief Header file used to obfuscate target types as needed
 ///
 // *HWP HWP Owner: Stephen Glancy <sglancy@us.ibm.com>
 // *HWP HWP Backup: Louis Stermole <stermole@us.ibm.com>
 // *HWP Team: Memory
 // *HWP Level: 2
-// *HWP Consumed by: HB
+// *HWP Consumed by: FSP:HB
+// EKB-Mirror-To: hostboot
 
-#ifndef _ODY_SYSTEM_SPECIFIC_OMI_H_
-#define _ODY_SYSTEM_SPECIFIC_OMI_H_
+#ifndef MSS_TARGET_ABSTRACTION_H
+#define MSS_TARGET_ABSTRACTION_H
 
 #include <fapi2.H>
-#include <generic/memory/proc_specific/mss_target_abstractions.H>
 
-namespace mss
-{
-namespace omi
-{
-///
-/// @brief Retrieves ec feature template from attr p11 specific - returns false for now
-/// @param[in] i_proc PROC Chip we are operating on
-/// @param[in,out] io_us_only_0159 EC FEATURE TEMPLATE VALUE
-/// @return fapi2::FAPI2_RC_SUCCESS
-///
-fapi2::ReturnCode get_us_template_support(const fapi2::Target<PROC_TYPE>& i_proc,
-        uint8_t& io_us_only_0159)
-{
-    io_us_only_0159 = false;
-    return fapi2::FAPI2_RC_SUCCESS;
-}
-///
-/// @brief Retrieves ec feature template from attr p11 specific - returns false for now
-/// @param[in] i_proc PROC Chip we are operating on
-/// @param[in,out] io_ds_only_0147 EC FEATURE TEMPLATE VALUE
-/// @return fapi2::FAPI2_RC_SUCCESS
-///
-fapi2::ReturnCode get_ds_template_support(const fapi2::Target<PROC_TYPE>& i_proc,
-        uint8_t& io_ds_only_0147)
-{
-    io_ds_only_0147 = false;
-    return fapi2::FAPI2_RC_SUCCESS;
-}
-} // namespace omi
-} // namespace mss
+#ifdef __PPE__
+    static constexpr fapi2::TargetType PROC_TYPE = fapi2::TARGET_TYPE_PROC_CHIP;
+#else
+    static constexpr fapi2::TargetType PROC_TYPE = fapi2::TARGET_TYPE_HUB_CHIP;
+#endif
 
-# endif
+#endif
