@@ -97,7 +97,8 @@ ReturnCode i2c::i2cCheckForErrors(status_reg_t &status)
                         .set_VALUE(status.value)
                         .set_PORT(iv_port)
                         .set_ENGINE(iv_engine)
-                        .set_DEVICEADDR(iv_devAddr),
+                        .set_DEVICEADDR(iv_devAddr)
+                        .set_RETRYCOUNT(iv_curr_retry_count),
                         "I2C Status error");
         }
 
@@ -119,7 +120,8 @@ ReturnCode i2c::i2cCheckForErrors(status_reg_t &status)
                         .set_VALUE(intreg.value)
                         .set_PORT(iv_port)
                         .set_ENGINE(iv_engine)
-                        .set_DEVICEADDR(iv_devAddr),
+                        .set_DEVICEADDR(iv_devAddr)
+                        .set_RETRYCOUNT(iv_curr_retry_count),
                         "I2C Interrupt Status error");
         }
     } while(0);
@@ -187,7 +189,8 @@ ReturnCode i2c::i2cWaitForCmdComp()
                             .set_ENGINE(iv_engine)
                             .set_DEVICEADDR(iv_devAddr)
                             .set_POLLINGINT(iv_polling_interval_ns)
-                            .set_TIMEOUTCOUNT(iv_timeout_count),
+                            .set_TIMEOUTCOUNT(iv_timeout_count)
+                            .set_RETRYCOUNT(iv_curr_retry_count),
                             "timedout waiting for cmd completion");
                 break;
             }
@@ -337,7 +340,8 @@ ReturnCode i2c::i2cWaitForFifo(fifo_condition_t condition)
                             .set_ENGINE(iv_engine)
                             .set_DEVICEADDR(iv_devAddr)
                             .set_POLLINGINT(iv_polling_interval_ns)
-                            .set_TIMEOUTCOUNT(iv_timeout_count),
+                            .set_TIMEOUTCOUNT(iv_timeout_count)
+                            .set_RETRYCOUNT(iv_curr_retry_count),
                             "timedout waiting for fifo condition");
                 break;
             }
@@ -522,7 +526,8 @@ ReturnCode i2c::i2cLockEngine()
                     .set_ENGINE(iv_engine)
                     .set_DEVICEADDR(iv_devAddr)
                     .set_POLLINGINT(interval_ns)
-                    .set_TIMEOUTCOUNT(timeoutCount),
+                    .set_TIMEOUTCOUNT(timeoutCount)
+                    .set_RETRYCOUNT(iv_curr_retry_count),
                     "timedout waiting to lock i2c engine");
     }
 
