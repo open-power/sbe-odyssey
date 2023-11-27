@@ -53,7 +53,7 @@ ReturnCode queryChipEcFeature(
 
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting queryChipEcFeature...");
     return fapi2::current_err;
 }
 
