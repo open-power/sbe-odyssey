@@ -123,7 +123,7 @@ public :
      * @return A pointer to the allocated scratch space, or
      *         NULL if not enough space was available
      */
-    void *scratch_alloc(uint32_t i_size, alloc_flags i_flags = AF_NONE);
+    void *scratch_alloc(const uint32_t i_size, const alloc_flags i_flags = AF_NONE);
 
     /**
      * @brief Free a chunk of scratch memory
