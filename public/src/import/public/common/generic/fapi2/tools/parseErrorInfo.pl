@@ -1340,7 +1340,7 @@ foreach my $argnum ( 0 .. $#ARGV )
             }    # gard
 
             # Process the callout, deconfigures and GARDs for each Target
-            foreach my $cdg ( keys %cdgTargetHash )
+            foreach my $cdg ( sort keys %cdgTargetHash )
             {
                 my $callout  = 0;
                 my $priority = 'NONE';
@@ -1390,9 +1390,9 @@ foreach my $argnum ( 0 .. $#ARGV )
             }
 
             # Process the callout, deconfigures and GARDs for Child Targets
-            foreach my $parent ( keys %cdgChildHash )
+            foreach my $parent ( sort keys %cdgChildHash )
             {
-                foreach my $childType ( keys %{ $cdgChildHash{$parent} } )
+                foreach my $childType ( sort keys %{ $cdgChildHash{$parent} } )
                 {
                     my $callout     = 0;
                     my $priority    = 'NONE';
@@ -1577,7 +1577,7 @@ foreach my $argnum ( 0 .. $#ARGV )
         # Methods
         $ffdc_count = 0;
         my $count = 0;
-        foreach my $key ( keys %methods )
+        foreach my $key ( sort keys %methods )
         {
             print ECFILE $methods{$key}{method};
             $method_count++;
@@ -1664,7 +1664,7 @@ foreach my $argnum ( 0 .. $#ARGV )
             if ( $arg_empty_ffdc eq undef )
             {
                 print ECFILE "    public:\n";
-                foreach my $key ( keys %methods )
+                foreach my $key ( sort keys %methods )
                 {
                     if ( !( $methods{$key}{member} eq undef ) )
                     {
@@ -1817,14 +1817,14 @@ print RCFILE " *\/\n";
 print RCFILE "enum HwpReturnCode\n";
 print RCFILE "{\n";
 
-foreach my $key ( keys %errNameToValueHash )
+foreach my $key ( sort keys %errNameToValueHash )
 {
     print RCFILE "    $key = 0x$errNameToValueHash{$key},\n";
 }
 print RCFILE "};\n\n";
 print RCFILE "}\n\n";
 print RCFILE "#else\n";
-foreach my $key ( keys %errNameToValueHash )
+foreach my $key ( sort keys %errNameToValueHash )
 {
     print RCFILE "    .set $key, 0x$errNameToValueHash{$key}\n";
 }
@@ -1845,7 +1845,7 @@ print EIFILE " * \@brief Enumeration of FFDC identifiers\n";
 print EIFILE " *\/\n";
 print EIFILE "enum HwpFfdcId\n";
 print EIFILE "{\n";
-foreach my $key ( keys %ffdcNameToValueHash )
+foreach my $key ( sort keys %ffdcNameToValueHash )
 {
     print EIFILE "    $key = 0x$ffdcNameToValueHash{$key},\n";
 }
