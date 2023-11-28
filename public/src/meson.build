@@ -53,15 +53,17 @@ MESON_SETUP_EXTRA_DEPENDENCIES = []
 #ekb-src public mirror path.(import dir path)
 pub_import_dir_path = meson.global_source_root() + '/public/src/import/public/'
 
-#Generate ppetrace app
-ppetraceapp_dir = 'import/public/emb/p11/kernels/ppe/ppetrace/ppetracepp/'
-inc_dir = include_directories(ppetraceapp_dir)
-ppetraceapp = executable('ppetraceapp',
-              ppetraceapp_dir + 'ppetracepp.C',
-              cpp_args : ['-O3','-w','-g'],
-              include_directories : inc_dir,
-              implicit_include_directories : false,
-              native : true)
+#Generate ppetrace preprocessor
+ppetracepp_dir = 'import/public/emb/p11/kernels/ppe/ppetrace/ppetracepp/'
+inc_dir = include_directories(ppetracepp_dir)
+ppetracepp = executable('ppetracepp',
+             ppetracepp_dir + 'ppetracepp.C',
+             cpp_args : ['-O3','-w','-g'],
+             include_directories : inc_dir,
+             implicit_include_directories : false,
+             native : true)
+
+ppetracepp_wrap = find_program('build/utils/ppetracepp-wrap')
 
 #Output Path for common genfiles
 cmn_genfiles_dir_path = genfiles_dir_path + '/common/'
@@ -240,9 +242,11 @@ if platform == 'p11' or platform == 'all'
 endif
 
 #Object file generation generator's (api's)
-obj_gen_c = generator(ppetraceapp,
+obj_gen_c = generator(ppetracepp_wrap,
+                    depends : ppetracepp,
                     output  : '@BASENAME@.o',
                     arguments : [
+                                 ppetracepp.full_path(),
                                  meson.get_external_property('powerpc_eabi_gcc'),
                                  '@EXTRA_ARGS@',
                                  meson.get_external_property('cc_flags_cmn'),
@@ -252,9 +256,11 @@ obj_gen_c = generator(ppetraceapp,
                     depfile : '@BASENAME@.d'
                     )
 
-obj_gen_cpp = generator(ppetraceapp,
+obj_gen_cpp = generator(ppetracepp_wrap,
+                    depends : ppetracepp,
                     output  : '@BASENAME@.o',
                     arguments : [
+                                 ppetracepp.full_path(),
                                  meson.get_external_property('powerpc_eabi_gcc'),
                                  '@EXTRA_ARGS@',
                                  meson.get_external_property('cc_flags_cmn'),
@@ -266,9 +272,11 @@ obj_gen_cpp = generator(ppetraceapp,
                     depfile : '@BASENAME@.d'
                     )
 
-obj_gen_cpp_hwp = generator(ppetraceapp,
+obj_gen_cpp_hwp = generator(ppetracepp_wrap,
+                    depends : ppetracepp,
                     output  : '@BASENAME@.o',
                     arguments : [
+                                 ppetracepp.full_path(),
                                  meson.get_external_property('powerpc_eabi_gcc'),
                                  '@EXTRA_ARGS@',
                                  meson.get_external_property('cc_flags_cmn'),

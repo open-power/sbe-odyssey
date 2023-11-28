@@ -8,7 +8,7 @@ General Requirements
 File and Directory naming format:
 1. Use of underscore(_) is prohibited while naming dir's/files.
 2. Use only small case
-   Ex: ppetraceapp  --> Dir name
+   Ex: ppetracepp   --> Dir name
        ppe42utils.x --> File name
 
 File extensions:
