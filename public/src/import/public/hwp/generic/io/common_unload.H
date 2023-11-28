@@ -202,15 +202,15 @@ void stream_mem_data_pt(const fapi2::Target<K, M, V>& i_target,
 
     // Loop over # of threads for FW & Mem regs
     //                      firmware regs       mem regs
-    uint64_t l_base[] = {0xFFF30E0000000000, 0xFFFF580000000000};
+    uint64_t l_base[] = {0xFFFF30E000000000, 0xFFFF580000000000};
     uint32_t l_size[] = {0x20,               0x400};
 
-    for (uint32_t thread = 0; thread < i_threads; thread++)
+    for (uint32_t i = 0; i < sizeof(l_base) / sizeof(l_base[0]); i++)
     {
-        for (uint32_t i = 0; i < sizeof(l_base) / sizeof(l_base[0]); i++)
-        {
-            fapi2::putScom(i_target, c_addr_reg, l_base[i]);
+        fapi2::putScom(i_target, c_addr_reg, l_base[i]);
 
+        for (uint32_t thread = 0; thread < i_threads; thread++)
+        {
             for (uint32_t offset = 0; offset < l_size[i]; offset += 0x8)
             {
                 l_rc = fapi2::getScom(i_target, c_data_reg, l_data);
