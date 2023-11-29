@@ -270,3 +270,37 @@ fapi2::ReturnCode mod_setup_tracestop_on_xstop_chiplet(
 fapi2::ReturnCode mod_setup_tracestop_on_xstop(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     const uint32_t i_dbg_scom_base);
+
+
+enum class SemaphoreMode { silent = 0, handleError = 1 };
+enum class SemaphoreSide { CFAM = 0, SBE = 1 };
+
+/// @brief Reserve semaphore
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_semaphore               Number of the semaphore to be reserved
+/// @param[in]   i_silent                  FAPI_ASSERT (silent), FAPI_ERR + force release semaphore (handleError)
+/// @param[in]   i_side                    CFAM (false), SBE (true)
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+
+fapi2::ReturnCode mod_semaphore_reserve(
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const uint32_t i_semaphore,
+    const SemaphoreMode i_silent = SemaphoreMode::handleError,
+    const SemaphoreSide i_side = SemaphoreSide::SBE);
+
+/// @brief Release semaphore
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_semaphore               Number of the semaphore to be reserved
+/// @param[in]   i_silent                  FAPI_ASSERT (silent), FAPI_ERR + force release semaphore (handleError)
+/// @param[in]   i_side                    CFAM (false), SBE (true)
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+
+fapi2::ReturnCode mod_semaphore_release(
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const uint32_t i_semaphore,
+    const SemaphoreMode i_silent = SemaphoreMode::handleError,
+    const SemaphoreSide i_side = SemaphoreSide::SBE);
