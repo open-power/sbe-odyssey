@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -29,6 +29,7 @@ odyssey_error_xml_files = [
     'ody_dts_read_errors.xml',
     'ody_omi_hss_ppe_load_errors.xml',
     'ody_omi_train_check_errors.xml',
+    'ody_sbe_tracearray_errors.xml',
     ]
 
 #Create abs path for input xml files
@@ -49,7 +50,6 @@ mss_odyssey_error_xml_files = [
     'ody_row_repair_errors.xml',
     'ody_phyinit_errors.xml',
     'ody_mcbist_errors.xml',
-    'ody_sbe_tracearray_errors.xml',
     'ody_i2c_errors.xml'
     ]
 
