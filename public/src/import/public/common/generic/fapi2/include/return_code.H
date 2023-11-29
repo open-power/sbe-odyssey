@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -191,11 +191,22 @@ class ReturnCode : public FirstFailureData<ReturnCode>
 extern thread_local uint64_t pib_error_mask;     /// the pib mask
 extern thread_local uint64_t operational_state;  /// the operational mode
 #ifndef PLAT_NO_THREAD_LOCAL_STORAGE
-    extern thread_local ReturnCode current_err;      /// the current error state
+extern thread_local ReturnCode current_err;      /// the current error state
+
+#elif defined(NATIVE_THREAD_LOCAL_SUPPORT)
+
+} // namspace fapi2
+
+#include <nativethreadlocalreturncode.H>
+
+namespace fapi2
+{
+extern NativeThreadLocalReturnCode current_err;
+
 #else
-    extern ReturnCode current_err;
+extern ReturnCode current_err;
 #endif
 
-}
+} // namspace fapi2
 
 #endif
