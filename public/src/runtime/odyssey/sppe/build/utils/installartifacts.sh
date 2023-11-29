@@ -56,6 +56,7 @@ cp ${MESON_SOURCE_ROOT}/internal/src/tools/simics/pozsbeinitstandalone.simics \
    ${MESON_SOURCE_ROOT}/internal/src/tools/simics/sbestandaloneenv.simics \
    ${MESON_SOURCE_ROOT}/internal/src/test/utils/simTargets.py \
    ${MESON_SOURCE_ROOT}/internal/src/tools/simics/poz-simics-debug-framework.py \
+   ${MESON_SOURCE_ROOT}/internal/src/tools/simics/pozmsgregparser.py \
    ${MESON_SOURCE_ROOT}/internal/src/test/utils/toolwrappers.py \
    ${MESON_SOURCE_ROOT}/internal/src/test/utils/sbeSimUtils.py \
    ${MESON_SOURCE_ROOT}/internal/src/test/utils/sbeIstepAuto.py \
