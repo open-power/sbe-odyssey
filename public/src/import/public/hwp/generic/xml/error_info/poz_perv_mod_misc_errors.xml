@@ -59,5 +59,19 @@
       <ffdc>CHIPLET_NUMBER</ffdc>
       <ffdc>PROC_TARGET</ffdc>
    </hwpError>
+   <!-- ******************************************************************** -->
+   <hwpError>
+      <rc>RC_POZ_ARBSEMA_RESERVE_TIMEOUT</rc>
+      <description>Couldn't reserve semaphore on a side</description>
+      <ffdc>SEMAPHORE</ffdc>
+      <ffdc>SIDE</ffdc>
+   </hwpError>
+   <!-- ******************************************************************** -->
+   <hwpError>
+      <rc>RC_POZ_ARBSEMA_RELEASE_ERROR</rc>
+      <description>Couldn't release semaphore on a side</description>
+      <ffdc>SEMAPHORE</ffdc>
+      <ffdc>SIDE</ffdc>
+   </hwpError>
   <!-- ******************************************************************** -->
 </hwpErrors>

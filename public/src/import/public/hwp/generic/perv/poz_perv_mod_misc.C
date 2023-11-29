@@ -46,6 +46,7 @@ enum POZ_PERV_MOD_MISC_Private_Constants
     CBS_IDLE_HW_NS_DELAY = 640000, // unit is nano seconds [min : 64k x (1/100MHz) = 64k x 10(-8) = 640 us
     //                       max : 64k x (1/50MHz) = 128k x 10(-8) = 1280 us]
     CBS_IDLE_SIM_CYCLE_DELAY = 750000, // unit is sim cycles,to match the poll count change ( 250000 * 30 )
+    SEMAPHORE_POLL_COUNT = 1000,
     MC_GROUP_MEMBERSHIP_BITX_READ = 0x500F0001,
     PCB_RESPONDER_MCAST_GROUP_1 = 0xF0001,
     HOST_MASK_REG_IPOLL_MASK = 0xF800000000000000,
@@ -652,6 +653,90 @@ ReturnCode mod_setup_tracestop_on_xstop(
     for (auto& l_chiplet : l_chiplets_uc)
     {
         FAPI_TRY(mod_setup_tracestop_on_xstop_chiplet(l_chiplet, i_dbg_scom_base));
+    }
+
+fapi_try_exit:
+    FAPI_INF("Exiting ...");
+    return current_err;
+}
+
+ReturnCode mod_semaphore_reserve(
+    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const uint32_t i_semaphore,
+    const SemaphoreMode i_silent,
+    const SemaphoreSide i_side)
+{
+    FAPI_DBG("Entering mod_semaphore_reserve...");
+    fapi2::buffer<uint64_t> l_data, l_status;
+
+    static const uint32_t FSXCOMP_FSXLOG_I2CARBSEMA_REGISTER = 0x50191ull;
+
+    l_data.setBit(2 * i_semaphore + (uint32_t)i_side);
+
+    for (uint32_t i = 0; i < SEMAPHORE_POLL_COUNT; i++)
+    {
+        FAPI_TRY(putScom(i_target, FSXCOMP_FSXLOG_I2CARBSEMA_REGISTER, l_data));
+        FAPI_TRY(getScom(i_target, FSXCOMP_FSXLOG_I2CARBSEMA_REGISTER, l_status));
+
+        if (l_status.getBit(2 * i_semaphore + (uint32_t)i_side))
+        {
+            FAPI_DBG("Exiting after successfully reserving semaphore 0x%X side %x...", i_semaphore, (uint32_t)i_side);
+            return FAPI2_RC_SUCCESS;
+        }
+
+        FAPI_TRY(fapi2::delay(DELAY_10us, SIM_CYCLE_DELAY));
+    }
+
+    if (i_silent == SemaphoreMode::silent)
+    {
+        FAPI_ERR("Semaphore 0x%X side %x reservation timeout, force release semaphore with 0b11", i_semaphore,
+                 (uint32_t)i_side);
+        l_data.insertFromRight(2 * i_semaphore, 2, 0x3);
+        FAPI_TRY(putScom(i_target, FSXCOMP_FSXLOG_I2CARBSEMA_REGISTER, l_data));
+        return FAPI2_RC_SUCCESS;
+    }
+    else
+    {
+        FAPI_ASSERT(false, fapi2::POZ_ARBSEMA_RESERVE_TIMEOUT().set_SEMAPHORE(i_semaphore).set_SIDE(i_side),
+                    "Semaphore 0x%X side %x reservation timeout", i_semaphore, (uint32_t)i_side);
+    }
+
+fapi_try_exit:
+    FAPI_DBG("Exiting ...");
+    return current_err;
+}
+
+ReturnCode mod_semaphore_release(
+    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const uint32_t i_semaphore,
+    const SemaphoreMode i_silent,
+    const SemaphoreSide i_side)
+{
+    FAPI_DBG("Entering mod_semaphore_release...");
+
+    fapi2::buffer<uint64_t> l_data, l_status;
+
+    static const uint32_t FSXCOMP_FSXLOG_I2CARBSEMA_REGISTER = 0x50191ull;
+
+    FAPI_TRY(getScom(i_target, FSXCOMP_FSXLOG_I2CARBSEMA_REGISTER, l_status));
+
+    if (l_status.getBit(2 * i_semaphore + (uint32_t)i_side))
+    {
+        l_data.setBit(2 * i_semaphore + (uint32_t)i_side);
+        FAPI_TRY(putScom(i_target, FSXCOMP_FSXLOG_I2CARBSEMA_REGISTER, l_data));
+    }
+    else
+    {
+        if (i_silent == SemaphoreMode::silent)
+        {
+            FAPI_ERR("Trying to free unreserved semaphore 0x%X side %x...", i_semaphore, (uint32_t)i_side);
+            return FAPI2_RC_SUCCESS;
+        }
+        else
+        {
+            FAPI_ASSERT(false, fapi2::POZ_ARBSEMA_RELEASE_ERROR().set_SEMAPHORE(i_semaphore).set_SIDE(i_side),
+                        "Trying to free unreserved semaphore 0x%X side %x...", i_semaphore, (uint32_t)i_side);
+        }
     }
 
 fapi_try_exit:
