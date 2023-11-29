@@ -76,6 +76,9 @@ enum IO_PPE_CONSTS
     IO_PPE_HARD_RESET_DELAY_SIM_CYCLES = 10000000,
     IO_PPE_RESUME_DELAY_NS = 5000,
     IO_PPE_RESUME_DELAY_SIM_CYCLES = 10000000,
+
+    IO_PPE_DELAY_1MS = 1000000,
+    IO_PPE_DELAY_SIM_CYCLES = 100000000,
 };
 
 //WARNING!!  Since these are hard coded and not generated
@@ -259,6 +262,7 @@ class io_ppe_common
         /// @param[in] i_auto_recal     Wheter or not auto_recal will run
         /// @return fapi2::ReturnCode FAPI2_RC_SUCCESS if success, else error code.
         fapi2::ReturnCode auto_recal_sync(const fapi2::Target<K, M, V>& i_target,
+                                          const uint32_t i_auto_recal_mask,
                                           const uint8_t i_thread,
                                           const uint8_t i_auto_recal);
 
@@ -1384,24 +1388,27 @@ fapi_try_exit:
 
 template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
 fapi2::ReturnCode io_ppe_common<K, M, V>::auto_recal_sync(const fapi2::Target<K, M, V>& i_target,
+        const uint32_t i_auto_recal_mask,
         const uint8_t i_thread,
         const uint8_t i_auto_recal)
 {
-    FAPI_DBG("Getting auto_recal_sync");
+    FAPI_INF("Starting auto_recal_sync");
 
     constexpr uint16_t PPE_STATE_RECAL_NOT_RUN = 0xF009;
-    constexpr uint16_t c_max_tries = 1000;
+    constexpr uint16_t c_max_tries = 20;
+
+    const uint32_t c_recal_abort_mask = i_auto_recal ? 0 : i_auto_recal_mask;
+    const uint32_t c_recal_lane_mask = i_auto_recal ? i_auto_recal_mask : 0;
 
     enum RECAL_BITS
     {
         RECAL_ABORT_BIT = 22,
         RECAL_NOT_RUN_BIT = 26,
+        ASYNC_MODE_SWITCH_BIT = 32,
         LANE_BUSY_BIT = 0
     };
 
     fapi2::buffer<uint64_t> l_data;
-
-    uint8_t l_tries = 0;
 
     // Mask Recal Abort (Bit 22), Recal Not Run (Bit 26)
     FAPI_INF("Setting RECAL_NOT_RUN & RECAL_ABORT FIR Mask")
@@ -1412,9 +1419,10 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::auto_recal_sync(const fapi2::Target<K,
 
     // Set the auto recal enable
     FAPI_INF("Setting RX_AUTO_RECAL")
-    FAPI_TRY(fapi2::putScom(i_target, iv_regs->base_addr + 3, l_data)); // PPE_FIR_MASK WO_OR
-    FAPI_TRY(MEM_REG_RX_RECAL_ABORT_0_15_PUT(iv_regs, i_target, i_thread, (0xFFFF * i_auto_recal)));
-    FAPI_TRY(MEM_REG_RX_RECAL_ABORT_16_23_PUT(iv_regs, i_target, i_thread, (0xC0 * i_auto_recal)));
+    FAPI_TRY(MEM_REG_RX_RECAL_ABORT_0_15_PUT(iv_regs, i_target, i_thread, (c_recal_abort_mask >> 16) & 0xFFFF));
+    FAPI_TRY(MEM_REG_RX_RECAL_ABORT_16_23_PUT(iv_regs, i_target, i_thread, (c_recal_abort_mask >> 8) & 0xFF));
+    FAPI_TRY(set_auto_recal(i_target, i_thread, c_recal_lane_mask));
+    FAPI_TRY(iv_regs->flushCache(i_target));
 
     if (i_auto_recal)
     {
@@ -1429,37 +1437,54 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::auto_recal_sync(const fapi2::Target<K,
             FAPI_TRY(MEM_REG_PPE_ERROR_THREAD_PUT(iv_regs, i_target, i_thread, 0));
             FAPI_TRY(MEM_REG_PPE_ERROR_LANE_PUT(iv_regs, i_target, i_thread, 0));
             FAPI_TRY(MEM_REG_PPE_ERROR_VALID_PUT(iv_regs, i_target, i_thread, 0));
+            FAPI_TRY(iv_regs->flushCache(i_target));
         }
 
         FAPI_INF("Clearing RECAL_NOT_RUN & RECAL_ABORT FIR (& Mask)")
         l_data.setBit<RECAL_ABORT_BIT>();
         l_data.setBit<RECAL_NOT_RUN_BIT>();
-        // Clear Recal Not Run FIR (Bit 26) & Recal Abort (Bit 22)
+        l_data.setBit<ASYNC_MODE_SWITCH_BIT>();
+        // Clear Recal Not Run FIR (Bit 26), Recal Abort (Bit 22), & ASYNC_MODE_SWITCH (Bit 32)
         FAPI_TRY(fapi2::putScom(i_target, iv_regs->base_addr, l_data)); // PPE_FIR WCLEAR
-        // Unmask Recal Not Run (Bit 26)
+        // Unmask Recal Not Run (Bit 26), Recal Abort (Bit 22), & ASYNC_MODE_SWITCH (Bit 32)
         FAPI_TRY(fapi2::putScom(i_target, iv_regs->base_addr + 2, l_data)); // PPE_FIR_MASK WCLEAR
         l_data.flush<0>();
+
     }
     else
     {
         // Poll rx_lane_busy == 0
         FAPI_INF("Polling for RX_LANE_BUSY == 0")
 
-        do
+        for(uint32_t l_lane = 0; l_lane < 32; l_lane++)
         {
-            FAPI_TRY(MEM_REG_RX_LANE_BUSY_GET(iv_regs, i_target, i_thread, l_data));
-            l_tries++;
+            uint8_t l_tries = 0;
+
+            if (!((0x80000000 >> l_lane) & i_auto_recal_mask))
+            {
+                continue;
+            }
+
+            do
+            {
+
+                FAPI_TRY(MEM_REG_RX_LANE_BUSY_PL_GET(iv_regs, i_target, i_thread, l_lane, l_data));
+                FAPI_TRY(iv_regs->flushCache(i_target));
+                l_tries++;
+                fapi2::delay(IO_PPE_DELAY_1MS, IO_PPE_DELAY_SIM_CYCLES);
+            }
+            while (l_data && (l_tries < c_max_tries));
+
+            if (l_tries >= c_max_tries)
+            {
+                FAPI_ERR("RX Lane Busy, failed to set to 0");
+            }
         }
-        while (l_data && (l_tries < c_max_tries));
     }
 
-    if (l_tries >= c_max_tries)
-    {
-        FAPI_ERR("RX Lane Busy, failed to set to 0");
-    }
 
 fapi_try_exit:
-    FAPI_DBG("End");
+    FAPI_INF("End - auto_recal_sync");
     return fapi2::current_err;
 }
 
@@ -1468,12 +1493,12 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::set_auto_recal(const fapi2::Target<K, 
         const uint8_t i_thread,
         const uint32_t i_data)
 {
-    FAPI_DBG("Getting set_auto_recal");
+    FAPI_INF("Setting set_auto_recal to 0x%08X", i_data);
 
     FAPI_TRY(MEM_REG_RX_ENABLE_AUTO_RECAL_0_15_PUT(iv_regs, i_target, i_thread, (i_data >> 16) & 0xFFFF));
-    FAPI_TRY(MEM_REG_RX_ENABLE_AUTO_RECAL_16_23_PUT(iv_regs, i_target, i_thread, i_data & 0xFFFF));
+    FAPI_TRY(MEM_REG_RX_ENABLE_AUTO_RECAL_16_23_PUT(iv_regs, i_target, i_thread, (i_data >> 8) & 0xFF));
 
 fapi_try_exit:
-    FAPI_DBG("End");
+    FAPI_INF("End - set_auto_recal");
     return fapi2::current_err;
 }
