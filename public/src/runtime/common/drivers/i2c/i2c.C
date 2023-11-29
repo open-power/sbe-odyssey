@@ -679,11 +679,15 @@ ReturnCode i2c::isI2cResetClean()
             break;
         }
 
+        //max_num_of_ports is a const and project dependent and does not need to be checked as part of i2c reset clean state.
+        l_i2cc_status_data_act.max_num_of_ports = 0x0;
+
         if(I2CC_EXPECTED_CLEAN_RESET_STATUS != l_i2cc_status_data_act.value)
         {
-            SBE_ERROR(SBE_FUNC "Unexpected state after i2cc reset (actual: 0x%08X%08X, expected: 0x%08X%08X)",
-                        l_i2cc_status_data_act.value >> 32, l_i2cc_status_data_act.value & 0xFFFFFFFF,
-                        I2CC_EXPECTED_CLEAN_RESET_STATUS >> 32, I2CC_EXPECTED_CLEAN_RESET_STATUS & 0xFFFFFFFF);
+            SBE_ERROR(SBE_FUNC "Unexpected state after i2cc reset (actual: 0x%08X%08X, expected: 0x%08X%08X) \
+                                NOTE: max_num_of_ports is not checked ",
+                        SBE::higher32BWord(l_i2cc_status_data_act.value), SBE::lower32BWord(l_i2cc_status_data_act.value),
+                        SBE::higher32BWord(I2CC_EXPECTED_CLEAN_RESET_STATUS), SBE::lower32BWord(I2CC_EXPECTED_CLEAN_RESET_STATUS));
 
             rc = RC_POZ_I2CC_RESET_ERROR;
             // confirm clean i2c status after a reset, if not assert
