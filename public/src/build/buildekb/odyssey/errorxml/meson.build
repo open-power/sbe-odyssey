@@ -28,6 +28,7 @@ odyssey_error_xml_files = [
     'ody_scratch_regs_errors.xml',
     'ody_dts_read_errors.xml',
     'ody_omi_hss_ppe_load_errors.xml',
+    'ody_omi_train_check_errors.xml',
     ]
 
 #Create abs path for input xml files
@@ -47,7 +48,6 @@ mss_odyssey_error_xml_files = [
     'ody_draminit_errors.xml',
     'ody_row_repair_errors.xml',
     'ody_phyinit_errors.xml',
-    'ody_omi_train_check_errors.xml',
     'ody_mcbist_errors.xml',
     'ody_sbe_tracearray_errors.xml',
     'ody_i2c_errors.xml'
