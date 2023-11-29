@@ -1,11 +1,11 @@
 <!-- IBM_PROLOG_BEGIN_TAG                                                   -->
 <!-- This is an automatically generated prolog.                             -->
 <!--                                                                        -->
-<!-- $Source: public/src/import/public/memory/odyssey/xml/attribute_info/ody_sim_attributes.xml $ -->
+<!-- $Source: public/src/import/public/hwp/odyssey/xml/error_info/ody_sbe_tracearray_errors.xml $ -->
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022                             -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -22,17 +22,53 @@
 <!-- permissions and limitations under the License.                         -->
 <!--                                                                        -->
 <!-- IBM_PROLOG_END_TAG                                                     -->
-<attributes>
-  <attribute>
-    <id>ATTR_ODYSSEY_SIM_POWER_COMPLETE</id>
-    <targetType>TARGET_TYPE_SYSTEM</targetType>
-    <description>
-        Tracks if the sim-only Odyssey sim power ramp HWP has completed
-	Sim VHDL packaging ensures that all chips are controlled by common
-	signals
-    </description>
-    <valueType>uint8</valueType>
-    <default>0</default>
-    <writeable/>
-  </attribute>
-</attributes>
+<hwpErrors>
+  <format>poz</format>
+  <hwpError>
+    <sbeError/>
+    <rc>RC_ODY_GETTRACEARRAY_INVALID_MUX</rc>
+    <description>The trace control select for this trace array does not match the position of the requested trace bus.</description>
+    <ffdc>TARGET</ffdc>
+    <ffdc>TRACE_ARRAY</ffdc>
+    <ffdc>MUX_SELECT</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+  <hwpError>
+    <sbeError/>
+    <rc>RC_ODY_GETTRACEARRAY_INVALID_ARRAY</rc>
+    <description>The specified trace array ID is invalid.</description>
+    <ffdc>TARGET</ffdc>
+    <ffdc>TRACE_ARRAY</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+  <hwpError>
+    <sbeError/>
+    <rc>RC_ODY_GETTRACEARRAY_TRACE_RUNNING</rc>
+    <description>An attempt was made to dump a trace array while it was still running.</description>
+    <ffdc>TARGET</ffdc>
+    <ffdc>TRACE_ARRAY</ffdc>
+    <ffdc>TRCTRL_REG</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+  <hwpError>
+    <sbeError/>
+    <rc>RC_ODY_GETTRACEARRAY_CLOCKS_OFF</rc>
+    <description>The requested trace array's clocks are not enabled.</description>
+    <ffdc>TARGET</ffdc>
+    <ffdc>TRACE_ARRAY</ffdc>
+    <ffdc>TRCTRL_REG</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+  </hwpError>
+</hwpErrors>

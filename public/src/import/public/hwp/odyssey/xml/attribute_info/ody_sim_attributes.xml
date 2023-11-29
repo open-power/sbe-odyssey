@@ -1,11 +1,11 @@
 <!-- IBM_PROLOG_BEGIN_TAG                                                   -->
 <!-- This is an automatically generated prolog.                             -->
 <!--                                                                        -->
-<!-- $Source: public/src/import/public/memory/odyssey/xml/error_info/ody_sim_set_mem_volt_errors.xml $ -->
+<!-- $Source: public/src/import/public/hwp/odyssey/xml/attribute_info/ody_sim_attributes.xml $ -->
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -22,16 +22,17 @@
 <!-- permissions and limitations under the License.                         -->
 <!--                                                                        -->
 <!-- IBM_PROLOG_END_TAG                                                     -->
-<hwpErrors>
-  <format>poz</format>
-<!-- ******************************************************************** -->
-<hwpError>
-  <sbeError/>
-  <rc>RC_ODY_SIM_SET_MEM_VOLT_ERROR</rc>
-  <description>
-    Model initialization failed, ECMD return code captured in FFDC
-  </description>
-  <ffdc>ECMD_RC</ffdc>
-</hwpError>
-<!-- ******************************************************************** -->
-</hwpErrors>
+<attributes>
+  <attribute>
+    <id>ATTR_ODYSSEY_SIM_POWER_COMPLETE</id>
+    <targetType>TARGET_TYPE_SYSTEM</targetType>
+    <description>
+        Tracks if the sim-only Odyssey sim power ramp HWP has completed
+	Sim VHDL packaging ensures that all chips are controlled by common
+	signals
+    </description>
+    <valueType>uint8</valueType>
+    <default>0</default>
+    <writeable/>
+  </attribute>
+</attributes>
