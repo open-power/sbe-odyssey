@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -176,5 +176,31 @@ public:
  */
 uint32_t sendFFDCOverFIFO( const uint32_t i_fieldsConfig, uint32_t &o_wordsSent,
                            const bool isFifoData = false, sbeFifoType i_type = SBE_FIFO );
+
+///
+/// @brief Log a sbe internal error. This will create a sbe-FFDC object in heap,
+///        which will have sbe-header and only plat package. Newly created
+///        object will be marked as committed and added to the list
+///
+/// @param[in] i_primRc Primary RC as @enum sbePrimResponse
+/// @param[in] i_secRc SBE Secondary RC as @enum sbeSecondaryResponse
+/// @param[in] i_sev Fapi error log severity defaulted to unrecoverable
+/// @param[in] i_isFatal true error is fatal error
+///
+void logSbeError( const uint16_t i_primRc,
+                  const uint16_t i_secRc,
+                  fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE,
+                  bool i_isFatal = false);
+
+
+///
+/// @brief Log a HWP error. but will not be commited by HWP and sbe firmware has
+///        to commit it. The given error object will be marked as fatal and
+///        committed. If it is marked as fatal, we will be sending full trace
+///        package with same slid.
+///
+/// @param[in] i_rc FAPI Return Code object
+///
+void logFatalError( fapi2::ReturnCode& i_rc );
 
 #endif //__SBE_FFDC_H

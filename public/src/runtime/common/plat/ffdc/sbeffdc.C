@@ -314,6 +314,7 @@ uint32_t sendFFDCOverFIFO( const uint32_t i_fieldsConfig,
 
 
 /********************** FFDC utils functions *************************/
+#if defined(MINIMUM_FFDC_RE)
 /**
  * @brief FFDC utils function for validate given address is with in scratch
  *        space. In case given address not with in scratch space executing
@@ -321,11 +322,11 @@ uint32_t sendFFDCOverFIFO( const uint32_t i_fieldsConfig,
  *
  * @param i_addr pointer to the address
  */
-static void ffdcUtils_isAddrWithinScratchSpace (const void * i_addr)
+static void ffdcUtils_checkScratchPtrCorruptionAndHalt (const void * i_addr)
 {
     if ( !Heap::get_instance().is_scratch_pointer( i_addr ) )
     {
-        SBE_ERROR (SBE_FUNC "Scratch space corrupted...!" );
+        SBE_ERROR ("ffdcUtils_checkScratchPtrCorruptionAndHalt Scratch space corrupted...!");
         pk_halt();
     }
 }
@@ -334,14 +335,14 @@ static void ffdcUtils_isAddrWithinScratchSpace (const void * i_addr)
 pozFfdcNode_t * pozFfdcCtrl_t::getLastNode( void )
 {
     pozFfdcNode_t * node = iv_firstCommitted;
-    ffdcUtils_isAddrWithinScratchSpace ( (const void *) node);
+    ffdcUtils_checkScratchPtrCorruptionAndHalt ((const void *) node);
 
     if (node != nullptr)
     {
         while (node->next != nullptr)
         {
             node = node->next;
-            ffdcUtils_isAddrWithinScratchSpace ( (const void *) node);
+            ffdcUtils_checkScratchPtrCorruptionAndHalt ((const void *) node);
         }
     }
     return node;
@@ -350,9 +351,6 @@ pozFfdcNode_t * pozFfdcCtrl_t::getLastNode( void )
 
 void pozFfdcCtrl_t::addNextNode( const pozFfdcNode_t  *  i_node )
 {
-    #define SBE_FUNC "pozFfdcCtrl_t::addNextNode "
-    SBE_ENTER(SBE_FUNC);
-
     pozFfdcNode_t * node = (pozFfdcNode_t *) iv_firstCommitted;
     if (node != nullptr)
     {
@@ -363,10 +361,8 @@ void pozFfdcCtrl_t::addNextNode( const pozFfdcNode_t  *  i_node )
     {
         iv_firstCommitted = const_cast<pozFfdcNode_t *>(i_node);
     }
-
-    SBE_EXIT(SBE_FUNC);
-    #undef SBE_FUNC
 }
+#endif
 
 
 /**
@@ -493,7 +489,6 @@ static void ffdcInitHwpData( const pozHwpFfdcPackageFormat_t * i_hwpAddr,
 }
 
 
-#if defined( MINIMUM_FFDC_RE )
 /**
  * @brief FFDC initialization plat ffdc data
  *        This function used to update the plat Response Header including the
@@ -554,14 +549,11 @@ static void ffdcInitPlatData( const pozPlatFfdcPackageFormat_t * i_platAddr,
                               uint16_t i_secRc,
                               fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE )
 {
-    #define SBE_FUNC "ffdcInitPlatData "
-    SBE_ENTER(SBE_FUNC);
-
     pozPlatFfdcPackageFormat_t * platAddr = (pozPlatFfdcPackageFormat_t *) i_platAddr;
     if (platAddr)
     {
         // Assigning the PLAT ffdc response header
-        platAddr->header.setMagicbytes(SBE_FFDC_MAGIC_BYTES);
+        platAddr->header.setMagicbytes( SBE_FFDC_MAGIC_BYTES );
         platAddr->header.setLenInWord ( BYTES_TO_WORDS(i_ffdcLen) );
         platAddr->header.setCmdInfo   ( 0,
                                        SBE_GLOBAL->sbeFifoCmdHdr.cmdClass,
@@ -576,28 +568,28 @@ static void ffdcInitPlatData( const pozPlatFfdcPackageFormat_t * i_platAddr,
         platAddr->platHeader.setDdlevel    ( 0, 0 );
         platAddr->platHeader.setThreadId   ( 0 );
 
-        platAddr->dumpFields = SBE_FFDC_TRACE_DATA;
+        if ( i_ffdcLen > sizeof(pozPlatFfdcPackageFormat_t) )
+        {
+            platAddr->dumpFields = SBE_FFDC_TRACE_DATA;
 
-        // Calculating the address to trace blobfield
-        packageBlobField_t * blobField = (packageBlobField_t *)
-                                        ( ((uint8_t *)i_platAddr)  +
-                                            sizeof(pozPlatFfdcPackageFormat_t) );
-        blobField->setFields( (uint16_t) SBE_FFDC_TRACE_DATA,
-                                (uint16_t) PLAT_FFDC_TRUNCATED_TRACE_SIZE );
+            // Calculating the address to trace blobfield
+            packageBlobField_t * blobField = (packageBlobField_t *)
+                                            ( ((uint8_t *)i_platAddr)  +
+                                                sizeof(pozPlatFfdcPackageFormat_t) );
+            blobField->setFields( (uint16_t) SBE_FFDC_TRACE_DATA,
+                                    (uint16_t) PLAT_FFDC_TRUNCATED_TRACE_SIZE );
 
-        // Calculating the truncated trace start address
-        uint8_t * traceBufferPtr = (uint8_t *) ((uint8_t *)i_platAddr)         +
-                                            sizeof(pozPlatFfdcPackageFormat_t) +
-                                            sizeof(packageBlobField_t) ;
-        /* TODO: Need to check this is correct way to copy trace */
-        memcpy ( (uint8_t *) traceBufferPtr,
-                    (uint8_t *) G_PK_TRACE_BUF,
-                    PLAT_FFDC_TRUNCATED_TRACE_SIZE  );
+            // Calculating the truncated trace start address
+            uint8_t * traceBufferPtr = (uint8_t *) ((uint8_t *)i_platAddr)         +
+                                                sizeof(pozPlatFfdcPackageFormat_t) +
+                                                sizeof(packageBlobField_t) ;
+            /* TODO: Need to check this is correct way to copy trace */
+            memcpy ( (uint8_t *) traceBufferPtr,
+                        (uint8_t *) G_PK_TRACE_BUF,
+                        PLAT_FFDC_TRUNCATED_TRACE_SIZE  );
+        }
     }
-    SBE_EXIT(SBE_FUNC);
-    #undef SBE_FUNC
 }
-#endif
 
 
 uint32_t ffdcConstructor ( uint32_t i_rc,
@@ -617,16 +609,16 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
      * refer diagram in @file sbeffdctype.H (figure 1 and 2)
     */
     ffdcHwpSize = sizeof(pozHwpFfdcPackageFormat_t)+ /* hwp ffdc Frame size */
-                  sizeof(packageBlobField_t)      + /* HWP local data fields size */
-                  i_hwpLocalDataLen               + /* HWP local data length */
+                  sizeof(packageBlobField_t)       + /* HWP local data fields size */
+                  i_hwpLocalDataLen                + /* HWP local data length */
                   ((i_hwpRegDataLen)? sizeof(packageBlobField_t) : 0) + /* HWP Reg data field size */
-                  i_hwpRegDataLen                 ; /* HWP reg data length */
+                  i_hwpRegDataLen                  ; /* HWP reg data length */
 
 #if defined( MINIMUM_FFDC_RE )
 
     ffdcPlatSize = sizeof(pozPlatFfdcPackageFormat_t)+ /* Plat FFDC size (plat data started) */
                    sizeof(packageBlobField_t)        + /* FFDC fields size */
-                   PLAT_FFDC_TRUNCATED_TRACE_SIZE;   /* Truncated Trace Len */
+                   PLAT_FFDC_TRUNCATED_TRACE_SIZE;     /* Truncated Trace Len */
                    /* size of (PkTraceBuffer) - size of trace buffer = size of PkTraceBuffer except trace buffer size*/
 
 #endif
@@ -716,6 +708,108 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
 }
 
 
+void logSbeError( const uint16_t i_primRc,
+                  const uint16_t i_secRc,
+                  fapi2::errlSeverity_t i_sev,
+                  bool i_isFatal )
+{
+    uint32_t ffdcLen = sizeof(pozPlatFfdcPackageFormat_t); /* Plat ffdc header + plat header(commit ID + DD level) + Dump field size */
+
+#if !defined( MINIMUM_FFDC_RE )
+    // in case of UE check for is fatal and it should always true, if it is false and print the error trace and force it to fatal
+
+    if (i_isFatal != true)
+    {
+        SBE_ERROR ("logSbeError fatal should be always set");
+        i_isFatal = true;
+    }
+
+    // Note: For MINIMUM_FFDC, MINIMUM_FFDC_RE not defined by default Unrecoverable
+    //         error enable.
+    if (fapi2::g_ffdcCtrlSingleton.getHead() != nullptr)
+    {
+        Heap::get_instance().scratch_free((const void*) fapi2::g_ffdcCtrlSingleton.getHead());
+
+    }
+#else
+
+    ffdcLen +=  sizeof(packageBlobField_t)      + /* FFDC fields size */
+                PLAT_FFDC_TRUNCATED_TRACE_SIZE ;  /* Trace data size  */
+
+#endif
+
+    pozFfdcNode_t * currentNode = (pozFfdcNode_t *) Heap::get_instance().
+                               scratch_alloc( ffdcLen + sizeof(pozFfdcNode_t) );
+    if (currentNode)
+    {
+        // Updating the FFDC node status, Committing the created node
+        currentNode->set ((uint16_t)ffdcLen, true, i_isFatal, 0, ffdcLen);
+        currentNode->next = NULL;
+
+        // Incrementing SBE log ID, Identical slid ID for particular FFDC
+        fapi2::g_ffdcCtrlSingleton.iv_localSlid++;
+
+        pozPlatFfdcPackageFormat_t * platFfdcPtr = (pozPlatFfdcPackageFormat_t *)
+                                                      ( ((uint8_t *)currentNode) +
+                                                        sizeof(pozFfdcNode_t)
+                                                      );
+
+        ffdcInitPlatData( platFfdcPtr,
+                          ffdcLen,
+                          fapi2::g_ffdcCtrlSingleton.iv_localSlid,
+                          i_primRc,
+                          i_secRc,
+                          i_sev
+                        );
+
+#if defined(MINIMUM_FFDC_RE)
+        /* Add node at last */
+        fapi2::g_ffdcCtrlSingleton.addNextNode(currentNode);
+#else
+        /* Add node at last */
+        fapi2::g_ffdcCtrlSingleton.setHead( currentNode );
+#endif
+
+        // Set async ffdc bit
+        (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
+    }
+    else
+    {
+        // Failed to allocate scratch
+        SBE_ERROR ("logSbeError failed to allocate scratch space, executing PK_HALT()");
+        pk_halt();
+    }
+}
+
+
+void logFatalError( fapi2::ReturnCode& i_rc )
+{
+#if defined(MINIMUM_FFDC_RE)
+    pozFfdcNode_t * currentNode = (pozFfdcNode_t *) i_rc.getDataPtr();
+    if (currentNode != NULL)
+    {
+        currentNode->iv_isCommited = true;
+        currentNode->iv_isFatal    = true;
+
+        // Add node
+        fapi2::g_ffdcCtrlSingleton.addNextNode(currentNode);
+
+        // Set async ffdc bit
+        (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
+
+        // clearing iv_dataPtr, Note: ideally iv_rc ideally make it clear.
+        i_rc.setDataPtr ( NULL );
+    }
+    else
+    {
+        SBE_ERROR ("logFatalError Lost the iv_dataPtr unable to log the error, "
+                            "executing PK_HALT()");
+        pk_halt();
+    }
+
+#endif
+}
+
 #if defined(MINIMUM_FFDC_RE)
 /**
  * @brief Update FFDC severity to created FFDC node. Will identify the package
@@ -761,8 +855,6 @@ void logError( fapi2::ReturnCode& io_rc,
                fapi2::errlSeverity_t i_sev,
                bool i_unitTestError )
 {
-    #define SBE_FUNC "logError "
-    SBE_ENTER(SBE_FUNC);
 
 #if defined(MINIMUM_FFDC_RE)
 
@@ -787,17 +879,14 @@ void logError( fapi2::ReturnCode& io_rc,
     }
     else
     {
-        // In case on error pk_halt()
-        SBE_ERROR (SBE_FUNC "Lost the iv_dataPtr can't able to log the error, "
+        SBE_ERROR (SBE_FUNC "Lost the iv_dataPtr unable to log the error, "
                             "executing PK_HALT()");
         pk_halt();
     }
 #else
-    SBE_ERROR (SBE_FUNC "Recoverable error not support");
+    SBE_ERROR ("logError Recoverable error not support");
 #endif
 
-    SBE_EXIT(SBE_FUNC);
-    #undef SBE_FUNC
 }
 
 };
