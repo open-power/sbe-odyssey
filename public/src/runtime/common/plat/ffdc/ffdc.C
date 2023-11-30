@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -30,16 +30,20 @@
 #include <ffdc.H>
 #include <error_info.H>
 #include <return_code.H>
+#include "sbeffdctype.H"
 
 namespace fapi2
 {
 #ifndef __noRC__
-    ReturnCode current_err;
+    ReturnCode current_err __attribute__ ((aligned (8)));
 #endif
 
 #ifdef MINIMUM_FFDC
     // buffer used to hold ffdc data
     pozFfdcData_t g_FfdcData;
+
+    // Hold the FFDC data which mainly hold the first commited ffdc
+    pozFfdcCtrl_t g_ffdcCtrlSingleton;
 #endif
 
 };
