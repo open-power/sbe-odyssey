@@ -335,20 +335,23 @@ def mod_unmask_firs(target<ANY_POZ_CHIP>):
         ATTN_MASK = 0
         LOCAL_XSTOP_MASK = 0
 
-def mod_setup_clockstop_on_xstop(target<ANY_POZ_CHIP>, const uint8_t i_chiplet_delays[64]):
+def mod_setup_clockstop_on_xstop(target<ANY_POZ_CHIP>, const uint16_t i_regions_to_stop, const uint8_t i_chiplet_delays[64]):
     if not ATTR_CLOCKSTOP_ON_XSTOP:
         return
 
-    # XSTOP1_INIT_VALUE = 0x97FFE00000000000
     # you can copy this code from p10_sbe_chiplet_fir_init.C
     if ATTR_CLOCKSTOP_ON_XSTOP[bit EPS_FIR_CLKSTOP_ON_XSTOP_MASK1_SYS_XSTOP_STAGED_ERR]:
         ## Staged xstop is masked, leave all delays at 0 for fast stopping
         with MCGROUP_ALL_BUT_TP:
-            XSTOP1 = XSTOP1_INIT_VALUE
+            XSTOP1.ENABLE = 1
+            XSTOP1.WAIT_ALWAYS = 1
+            XSTOP1[bits 4..15] = i_regions_to_stop
     else:
         ## Staged xstop is unmasked, set up per-chiplet delays
         for chiplet in MCGROUP_ALL_BUT_TP:
-            XSTOP1 = XSTOP1_INIT_VALUE
+            XSTOP1.ENABLE = 1
+            XSTOP1.WAIT_ALWAYS = 1
+            XSTOP1[bits 4..15] = i_regions_to_stop
             XSTOP1.WAIT_CYCLES = 4 * (4 - i_chiplet_delays[chiplet.getChipletNumber()])
 
     ## Enable clockstop on checkstop

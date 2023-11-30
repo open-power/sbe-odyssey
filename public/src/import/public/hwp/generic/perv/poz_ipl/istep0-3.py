@@ -1837,17 +1837,17 @@ def poz_chiplet_startclocks(target<ANY_POZ_CHIP>, target<PERV|MC>, uint16_t i_cl
 ISTEP(3, 21, "proc_chiplet_fir_init", "SSBE, TSBE")
 
 def p11s_chiplet_fir_init():
-    mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, p11s_chiplet_delay_table)
+    mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, REGION_ALL_BUT_PERV, p11s_chiplet_delay_table)
     mod_setup_tracestop_on_xstop(MCGROUP_GOOD_NO_TP)
     mod_unmask_firs(target)
 
 def p11t_chiplet_fir_init():
-    mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, p11t_chiplet_delay_table)
+    mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, REGION_ALL_BUT_PERV, p11t_chiplet_delay_table)
     mod_setup_tracestop_on_xstop(MCGROUP_GOOD_NO_TP)
     mod_unmask_firs(target)
 
 def ody_chiplet_fir_init():
-    mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, ody_chiplet_delay_table)
+    mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, REGION_ALL_BUT_PERV, ody_chiplet_delay_table)
     mod_setup_tracestop_on_xstop(MCGROUP_GOOD_NO_TP)
     mod_unmask_firs(target)
 
@@ -1859,7 +1859,7 @@ def ody_chiplet_fir_init():
     HOST_MASK_REG.ERROR_MASK_3 = 1
 
 def zme_chiplet_fir_init():
-    mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, zme_chiplet_delay_table)
+    mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, REGION_ALL, zme_chiplet_delay_table)
     mod_setup_tracestop_on_xstop(MCGROUP_GOOD_NO_TP)
     mod_unmask_firs(target)
 
