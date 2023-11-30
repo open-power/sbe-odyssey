@@ -111,15 +111,36 @@ typedef struct
   */
 typedef struct sbeResponseFfdc
 {
-    uint32_t magicBytes:16;
-    uint32_t lenInWords:16;  // length in word( 4 byte )
-    uint32_t seqId:16;
-    uint32_t cmdClass:8;
-    uint32_t cmd:8;
-    uint32_t sbeLogId:16;  // SLID - SBE Log Identifier
-    uint32_t severity:8;
-    uint32_t chipId:8;
+    uint32_t magicBytes :16;
+    uint32_t lenInWords :16;  // length in word( 4 byte )
+    uint32_t seqId      :16;
+    uint32_t cmdClass   : 8;
+    uint32_t cmd        : 8;
+    uint32_t slid       :16;  // SLID - SBE Log Identifier
+    uint32_t severity   : 8;
+    uint32_t chipId     : 8;
     uint32_t fapiRc;
+
+    /**
+     * @brief set method to set the value of the magicBytes member variable
+     *
+     * @param[in] i_magicBytes The new magic byte to the set
+     *
+    */
+    void inline setMagicbytes(const uint16_t i_magicBytes)
+    {
+        magicBytes = i_magicBytes;
+    }
+
+    /**
+     * @brief set method to set the value of the lenInWords member variable
+     *
+     * @param[in] i_lenInWord The new len in word to the set
+    */
+    void inline setLenInWord(const uint16_t i_lenInWord)
+    {
+        lenInWords = i_lenInWord;
+    }
 
     /**
       * @brief set failed command information
@@ -141,21 +162,20 @@ typedef struct sbeResponseFfdc
 
     /**
       * @brief set SLID - SBE Log Identifier
-      * @param[in] i_sbeLogId
+      * @param[in] i_slid
       * @return
       */
-    void setSbeLogId(const uint16_t i_sbeLogId)
+    void setSlid(const uint16_t i_slid)
     {
-        sbeLogId = i_sbeLogId;
+        slid = i_slid;
     }
-
     /**
       * @brief get SLID - SBE Log Identifier
-      * @return sbeLogId
+      * @return slid
       */
-    uint32_t getSbeLogId() const
+    uint32_t getSlid() const
     {
-        return sbeLogId;
+        return slid;
     }
 
     /**
@@ -231,7 +251,7 @@ typedef struct sbeResponseFfdc
         seqId = 0;
         cmdClass = SBE_CMD_CLASS_UNKNOWN;
         cmd = SBE_CMD_UNKNOWN;
-        sbeLogId = 0;
+        slid = 0;
         severity = 0;
         chipId = 0;  // @TODO JIRA: PFSBE-351
         lenInWords  = ( sizeof(uint32_t )    // For magicBytes + lenInWords
@@ -241,7 +261,12 @@ typedef struct sbeResponseFfdc
                            / sizeof(uint32_t);
         fapiRc = fapi2::FAPI2_RC_SUCCESS;
     }
-}sbeResponseFfdc_t;
+}__attribute__((packed, aligned(8))) sbeResponseFfdc_t;
+
+/**
+ * @brief Aliasing sbeResponseFfdc_t as pozFfdcRespHeader_t
+*/
+typedef sbeResponseFfdc_t pozFfdcRespHeader_t;
 
 /**
   * @brief Command response structure to hold the primary and secondary
