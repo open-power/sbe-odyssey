@@ -135,7 +135,7 @@ ReturnCode putRing(const Target<K, M, V>& i_target,
 {
     fapi2::ReturnCode l_rc = FAPI2_RC_SUCCESS;
 
-    l_rc = poz_putRingBackend(i_target,
+    SBE_EXEC_HWP( l_rc, poz_putRingBackend, i_target,
                               i_ringID, i_ringMode);
 
     if( l_rc != FAPI2_RC_SUCCESS )

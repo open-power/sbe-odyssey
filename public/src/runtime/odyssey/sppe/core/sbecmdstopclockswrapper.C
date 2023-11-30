@@ -50,7 +50,7 @@ sbeSecondaryResponse sbeStopClocksReqMsgHdr_t::validateParams(void)
 
 ReturnCode sbeStopClocksReqMsgHdr_t::executeHwp( void )
 {
-    uint32_t fapiRc = FAPI2_RC_SUCCESS;
+    ReturnCode fapiRc = FAPI2_RC_SUCCESS;
 
     // For OCMB and MC target stop the MC region clock
     // Sbe can't stopclock the TP, Vital, SBE target.
@@ -58,6 +58,6 @@ ReturnCode sbeStopClocksReqMsgHdr_t::executeHwp( void )
 
     /* Execute odyssey HWP */
     Target<SBE_ROOT_CHIP_TYPE> l_fapiTarget =  g_platTarget->plat_getChipTarget();
-    FAPI_EXEC_HWP(fapiRc, ody_stopclocks, l_fapiTarget, i_stopClockFlag);
+    SBE_EXEC_HWP(fapiRc, ody_stopclocks, l_fapiTarget, i_stopClockFlag);
     return fapiRc;
 }

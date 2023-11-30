@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023                             */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -34,7 +35,7 @@ ody_gettracearray_FP_t ody_sbe_tracearray_hwp = &ody_gettracearray;
 ReturnCode sbeControlTraceArrayCmd_t::executeHwp(
                                     fapi2::sbefifo_hwp_data_ostream& o_stream)
 {
-    uint32_t fapiRc = FAPI2_RC_SUCCESS;
+    ReturnCode fapiRc = FAPI2_RC_SUCCESS;
 
     /* Execute odyssey HWP */
     Target<SBE_ROOT_CHIP_TYPE>l_fapiTarget = g_platTarget->plat_getChipTarget();
