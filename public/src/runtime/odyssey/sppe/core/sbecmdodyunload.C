@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023,2024                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -69,7 +70,8 @@ uint32_t sbeHssOdyUnload(uint8_t *i_pArg)
         fapi2::sbefifo_hwp_data_ostream l_ostream(type);
         hwp_bit_ostream l_bit_os(l_ostream);
         // Call the wrapper
-        fapi2::ReturnCode fapi_rc = ody_omi_unload(tgt, c_chipunit_mask, l_bit_os);
+        fapi2::ReturnCode fapi_rc = fapi2::FAPI2_RC_SUCCESS;
+        SBE_EXEC_HWP( fapi_rc, ody_omi_unload, tgt, c_chipunit_mask, l_bit_os);
         if (fapi_rc != fapi2::FAPI2_RC_SUCCESS)
         {
             hdr.setStatus(SBE_PRI_GENERIC_EXECUTION_FAILURE, SBE_SEC_GENERIC_FAILURE_IN_EXECUTION);

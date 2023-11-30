@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,6 +39,7 @@ extern "C" {
 #endif
 
 #include "sha3.H"
+#include "return_code.H"
 
 #define MASK_ZERO_L32B_UINT64(x)    ((x) & 0xFFFFFFFF00000000ull)
 #define MASK_ZERO_H32B_UINT64(x)    ((x) & 0x00000000FFFFFFFFull)
@@ -146,10 +147,18 @@ inline void SBE_MAGIC_INSTRUCTION(int _n)
         "i" ((((n) >> 0) & 0xf) | 16));
 }
 
+// Extern logFatalError
+extern void logFatalError( fapi2::ReturnCode & );
+
 #define SBE_EXEC_HWP_NOARG(...) SBE_EXEC_HWP(__VA_ARGS__)
 #define SBE_EXEC_HWP(fapiRc, hwp, ...) \
 {                                      \
+    fapiRc = fapi2::FAPI2_RC_SUCCESS;  \
     fapiRc = hwp(__VA_ARGS__);         \
+    if (fapiRc != fapi2::FAPI2_RC_SUCCESS) \
+    {                                  \
+        logFatalError (fapiRc);        \
+    }                                  \
 }
 
 #define PRINT_STRING_DATA(msg, ptr, size)                       \
