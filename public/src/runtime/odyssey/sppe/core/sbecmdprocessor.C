@@ -47,6 +47,8 @@
 #include "sbetspolling.H"
 #include "sbethermalsensorpolltimer.H"
 #include "sbebootutils.H"
+#include "hwpWrapper.H"
+#include "ody_sppe_attr_setup.H"
 
 const uint64_t PERIODIC_TIMER_INTERVAL_SECONDS = 24*60*60; // 24 hours
 
@@ -166,13 +168,29 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
 
     if(SBE::isHreset())
     {
-        // clear hreset bit,
-        // bit16 in lfrReg and update sbe state
-        SBE_INFO(SBE_FUNC "Hreset, going to Runtime");
-        (void)SbeRegAccess::theSbeRegAccess().
-            updateSbeState(SBE_STATE_CMN_RUNTIME);
-        // clear hreset bit
-        SBE::clearHreset();
+        // Execute ody_sppe_attr_setup to sync the attributes from 
+        // the scratch. These scratch register are used by HB and
+        // value are intact through out the ipl.
+        ReturnCode rc = FAPI2_RC_SUCCESS;
+        rc = istepWithOcmb(reinterpret_cast<voidfuncptr_t>( ody_sppe_attr_setup ));
+        if(rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC "ody_sppe_attr_setup failed in HRESET"
+                                " with rc = 0x%08X", rc);
+            // Set the async bit and SBE state to DUMPING.
+            // HB can collect the FFDC.
+            captureAsyncFFDC(SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                             SBE_SEC_HWP_FAILURE);
+        }
+        else
+        {
+            // bit16 in lfrReg and update sbe state
+            SBE_INFO(SBE_FUNC "Hreset, going to Runtime");
+            (void)SbeRegAccess::theSbeRegAccess().
+                  updateSbeState(SBE_STATE_CMN_RUNTIME);
+            // clear hreset bit
+            SBE::clearHreset();
+        }
     }
     else
     {
