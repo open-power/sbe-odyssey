@@ -470,6 +470,7 @@ typedef struct pozFfdcNode
         iv_hwpSize    = i_hwpSize;
         iv_platSize   = i_platSize;
     }
+
 }__attribute__((packed, aligned(8))) pozFfdcNode_t; // ffdc package
 
 /**
@@ -483,8 +484,7 @@ typedef struct pozFfdcCtrl
     pozFfdcNode_t * iv_firstCommitted;
 
     /**
-     * @brief Construct a poz Ffdc control object
-     *
+     * @brief Constructor a poz Ffdc control object
      */
     pozFfdcCtrl( )
     {

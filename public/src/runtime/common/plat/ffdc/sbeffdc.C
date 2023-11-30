@@ -714,3 +714,90 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
     return reinterpret_cast<uint32_t>(currentNode);
     #undef SBE_FUNC
 }
+
+
+#if defined(MINIMUM_FFDC_RE)
+/**
+ * @brief Update FFDC severity to created FFDC node. Will identify the package
+ *        (HWP/PLAT) and update severity
+ *
+ * @param i_nodeAddr Node address
+ * @param i_sev      severity of the error, default FAPI2_ERRL_SEV_UNRECOVERABLE
+ */
+static void ffdcUpdateSeverity ( const pozFfdcNode_t * i_nodeAddr,
+                          fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE)
+{
+    pozFfdcNode_t * node = const_cast<pozFfdcNode_t*>(i_nodeAddr);
+
+    /* Check the node contain HWP local data */
+    if (node->iv_hwpSize)
+    {
+        // Get the HWP ffdc package start address
+        pozHwpFfdcPackageFormat_t * hwpAddr = (pozHwpFfdcPackageFormat_t *)
+                                ( ((uint8_t *)node) + sizeof (pozFfdcNode_t));
+        // Update severity
+        hwpAddr->header.setSeverity( i_sev );
+    }
+
+    /* Check the node contain Plat data */
+    if (node->iv_platSize)
+    {
+        // Get the plat ffdc package start address
+        pozPlatFfdcPackageFormat_t * platAddr = (pozPlatFfdcPackageFormat_t *)
+                                                     ( ((uint8_t *)node)      +
+                                                       sizeof (pozFfdcNode_t) +
+                                                       node->iv_hwpSize
+                                                     );
+        // Update severity
+        platAddr->header.setSeverity( i_sev );
+    }
+}
+#endif
+
+namespace fapi2
+{
+
+void logError( fapi2::ReturnCode& io_rc,
+               fapi2::errlSeverity_t i_sev,
+               bool i_unitTestError )
+{
+    #define SBE_FUNC "logError "
+    SBE_ENTER(SBE_FUNC);
+
+#if defined(MINIMUM_FFDC_RE)
+
+    pozFfdcNode_t * node = reinterpret_cast<pozFfdcNode_t*>(io_rc.getDataPtr());
+    if (node != NULL)
+    {
+        // marks as node is committed
+        node->iv_isCommited = true;
+
+        // update severity
+        ffdcUpdateSeverity ( node, i_sev );
+
+        // Add node
+        fapi2::g_ffdcCtrlSingleton.addNextNode (node);
+
+        // Set async ffdc bit
+        (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
+
+        // clear rc
+        io_rc.setDataPtr ( NULL );
+        io_rc.setRC ( FAPI2_RC_SUCCESS );
+    }
+    else
+    {
+        // In case on error pk_halt()
+        SBE_ERROR (SBE_FUNC "Lost the iv_dataPtr can't able to log the error, "
+                            "executing PK_HALT()");
+        pk_halt();
+    }
+#else
+    SBE_ERROR (SBE_FUNC "Recoverable error not support");
+#endif
+
+    SBE_EXIT(SBE_FUNC);
+    #undef SBE_FUNC
+}
+
+};
