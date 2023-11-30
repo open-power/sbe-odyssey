@@ -50,7 +50,6 @@ enum POZ_PERV_MOD_MISC_Private_Constants
     MC_GROUP_MEMBERSHIP_BITX_READ = 0x500F0001,
     PCB_RESPONDER_MCAST_GROUP_1 = 0xF0001,
     HOST_MASK_REG_IPOLL_MASK = 0xF800000000000000,
-    XSTOP1_INIT_VALUE = 0x97FFE00000000000,
     PGOOD_REGIONS_STARTBIT = 4,
     PGOOD_REGIONS_LENGTH = 15,
     PGOOD_REGIONS_OFFSET = 12,
@@ -571,6 +570,7 @@ fapi_try_exit:
 
 ReturnCode mod_setup_clockstop_on_xstop(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const uint16_t i_regions_to_stop,
     const uint8_t i_chiplet_delays[64])
 {
     XSTOP1_t XSTOP1;
@@ -587,14 +587,17 @@ ReturnCode mod_setup_clockstop_on_xstop(
 
     if (l_clkstop_on_xstop)
     {
+        XSTOP1.flush<0>();
+        XSTOP1.set_ENABLE(1);
+        XSTOP1.set_WAIT_ALWAYS(1);
+        XSTOP1.insertFromRight<4, 15>(i_regions_to_stop);
+
         EPS_CLKSTOP_ON_XSTOP_MASK1.flush<1>();
         EPS_CLKSTOP_ON_XSTOP_MASK1.insert<0, 8>(l_clkstop_on_xstop);
 
         if (EPS_CLKSTOP_ON_XSTOP_MASK1.get_SYS_XSTOP_STAGED_ERR())
         {
             FAPI_DBG("Staged xstop is masked, leave all delays at 0 for fast stopping.");
-
-            XSTOP1 = XSTOP1_INIT_VALUE;
             FAPI_TRY(XSTOP1.putScom(l_chiplets_mc));
         }
         else
@@ -603,7 +606,6 @@ ReturnCode mod_setup_clockstop_on_xstop(
 
             for (auto& l_chiplet : l_chiplets_uc)
             {
-                XSTOP1 = XSTOP1_INIT_VALUE;
                 XSTOP1.set_WAIT_CYCLES(4 * (4 - i_chiplet_delays[l_chiplet.getChipletNumber()]));
                 FAPI_TRY(XSTOP1.putScom(l_chiplet));
             }
