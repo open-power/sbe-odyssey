@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2012,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2012,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -29,6 +29,8 @@
 
 #ifndef __FAPI2_PLAT_ERROR_SCOPE__
 #define __FAPI2_PLAT_ERROR_SCOPE__
+
+#include "utils.H"
 
 /// @cond
 #define PLAT_FAPI_TRY_NO_TRACE( __operation__ )                         \
@@ -81,8 +83,10 @@
 #define PLAT_FAPI_ASSERT_NOEXIT( __conditional__, __ffdc__, ... )   \
     if (! (__conditional__))                                        \
     {                                                               \
-        (__ffdc__).execute();                                       \
         FAPI_ERR(__VA_ARGS__);                                      \
+        (__ffdc__).execute();                                       \
+        fapi2::logError(fapi2::current_err, fapi2::FAPI2_ERRL_SEV_RECOVERED);\
+        fapi2::current_err = fapi2::FAPI2_RC_SUCCESS;               \
     }
 
 ///
