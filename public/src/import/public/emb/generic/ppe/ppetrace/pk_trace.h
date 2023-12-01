@@ -418,7 +418,12 @@ typedef struct
     PkTraceState        state;
 
     //circular trace buffer
+#ifdef APP_DEFINED_TRACE_BUFFER
+    // Size of circular buffer will be defined by application at runtime
+    uint8_t             cb[0];
+#else
     uint8_t             cb[PK_TRACE_SZ];
+#endif
 } PkTraceBuffer; //pk_trace_buffer_t;
 
 //Header data for the trace buffer that is used for parsing the data.
@@ -441,13 +446,19 @@ typedef struct
     PkTraceState        state;
 
     //circular trace buffer
+#ifdef APP_DEFINED_TRACE_BUFFER
+    // Size of circular buffer will be defined by application at runtime
+    uint8_t             cb[0];
+#else
     uint8_t             cb[PK_OP_TRACE_SZ];
+#endif
 } PkOpTraceBuffer; //pk_trace_buffer_t;
 
 #ifdef APP_DEFINED_TRACE_BUFFER
     extern PkTraceBuffer* G_PK_TRACE_BUF __attribute__((section (".g_pk_trace_buf")));
 #else
     extern PkTraceBuffer g_pk_trace_buf __attribute__((section (".sdata")));
+    #define G_PK_TRACE_BUF (&g_pk_trace_buf)
 #endif
 
 #if (PK_OP_TRACE_SUPPORT)
