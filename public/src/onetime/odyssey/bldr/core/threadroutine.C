@@ -76,6 +76,12 @@ void load_image(PakWrapper &i_pak, const char *i_fname, uint32_t &io_load_offset
 {
     sha3_t digest;
     uint32_t size = 0;
+    if(io_load_offset > BOOTLOADER_ORIGIN)
+    {
+        SBE_ERROR(SBE_FUNC "No space left for loading the image");
+        SBE::updatePakErrorCodeAndHalt(FILE_RC_PAYLOAD_FILE_READ_BASE_ERROR,
+                                        ARC_INPUT_BUFFER_OVERFLOW);
+    }
     uint32_t size_available = BOOTLOADER_ORIGIN - io_load_offset;
 
     ARC_RET_t pakRc = i_pak.read_file(i_fname, (void *)io_load_offset, size_available,
