@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -42,6 +43,8 @@ typedef struct
     uint32_t ringMode:16;
 }sbePutRingMsgHdr_t;
 
+enum class GetPutMode { get = 0, put = 1 };
+
 /**
   * @brief sbeGetRing : write the ring data Buffer
   *
@@ -51,8 +54,9 @@ typedef struct
   * @return    Rc from the FIFO access utility
   */
 
-uint32_t sbeGetRingWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
-                        fapi2::sbefifo_hwp_data_ostream& i_putStream);
+uint32_t sbeGetPutRingWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
+                           fapi2::sbefifo_hwp_data_ostream& i_putStream,
+                           GetPutMode i_getPutMode);
 
 /**
   * @brief sbeGetRing : Get the ring data
