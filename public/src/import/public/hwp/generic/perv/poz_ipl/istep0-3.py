@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -329,7 +329,10 @@ ISTEP(1, 2, "ph_tp_chiplet_reset", "SPPE")
 
 def p11s_tp_chiplet_reset():
     ROOT_CTRL0.PCB_RESET = 0           # Drop PCB interface reset to enable access into TP chiplet
-    OPCG_ALIGN.OPCG_WAIT_CYCLES = 0x20 # Increase OPCG wait cycles to enable scanning
+
+    # Spinal TP needs a special, increased wait value due to much longer staging pipelines
+    # for inter-chiplet sync and OPCG triggering; see https://github.ibm.com/p11Tp/p11/pull/4092
+    OPCG_ALIGN.OPCG_WAIT_CYCLES = 0x30 # Increase OPCG wait cycles to enable scanning
 
     ROOT_CTRL1.TP_TPM_DI1_DC_B = 0b1   # Enable TPM SPI port
 
