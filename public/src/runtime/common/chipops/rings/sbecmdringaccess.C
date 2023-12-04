@@ -86,10 +86,11 @@ uint16_t sbeToFapiRingMode(uint16_t i_ringMode)
 
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
-uint32_t sbeGetRingWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
-                        fapi2::sbefifo_hwp_data_ostream& i_putStream)
+uint32_t sbeGetPutRingWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
+                        fapi2::sbefifo_hwp_data_ostream& i_putStream,
+                        GetPutMode i_getPutMode)
 {
-    #define SBE_FUNC " sbeGetRingWrap "
+    #define SBE_FUNC " sbeGetPutRingWrap "
     SBE_ENTER(SBE_FUNC);
 
     uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
@@ -99,18 +100,13 @@ uint32_t sbeGetRingWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
     sbeResponseFfdc_t l_ffdc;
     ReturnCode l_fapiRc;
     uint32_t l_len = 0;
-    // Note-Read operation flow is SHIFT and then READ.
-    // First time , the shift count will be 0.. because of the way it
-    // works. if we shift 64bits in the very first iteration then we
-    // loose first 64 bit. But still we should update l_bitSentCnt
-    // because we are sending back this data
-    uint32_t l_bitSentCnt = 64;
-    const uint32_t LONG_ROTATE_ADDRESS = 0x0003E000;
+    uint32_t l_ringPos = 0;
+    const uint32_t LONG_ROTATE_ADDRESS = 0x0003F000;
     do
     {
         // Get the ring access header
         l_len  = sizeof(sbeGetRingAccessMsgHdr_t)/sizeof(uint32_t);
-        l_rc = i_getStream.get(l_len, (uint32_t *)&l_reqMsg);
+        l_rc = i_getStream.get(l_len, (uint32_t *)&l_reqMsg, false);
 
         // If FIFO access failure
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
@@ -147,32 +143,36 @@ uint32_t sbeGetRingWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
                                sbeRc);
             break;
          }
-         // Calculate the iteration length
-         uint32_t l_loopCnt =
-                  (l_reqMsg.ringLenInBits / GETRING_GRANULE_SIZE_IN_BITS);
-         // Check for modulus - remainder
-         uint8_t l_mod = (l_reqMsg.ringLenInBits % GETRING_GRANULE_SIZE_IN_BITS);
-         if(l_mod)
-         {
-             ++l_loopCnt;
-         }
         // fix for the alignment issue
         uint32_t l_buf[NUM_WORDS_PER_GRANULE]__attribute__ ((aligned (8))) ={0};
-        uint32_t l_bitShift = 0;
         l_len = NUM_WORDS_PER_GRANULE;
         Target<SBE_ROOT_CHIP_TYPE> l_hndl =  g_platTarget->plat_getChipTarget();
         uint32_t l_chipletId = (uint32_t)(l_reqMsg.ringAddr) & 0xFF000000;
         uint32_t l_scomAddress = 0;
 
         // Fetch the ring data in bits, each iteration will give you 64bits
-        for(uint32_t l_cnt=0; l_cnt < l_loopCnt; l_cnt++)
+        while (l_ringPos < l_reqMsg.ringLenInBits)
         {
-            l_scomAddress = LONG_ROTATE_ADDRESS | l_chipletId;
-            l_scomAddress |= l_bitShift;
+            uint32_t l_bitShift = std::min(GETRING_GRANULE_SIZE_IN_BITS, l_reqMsg.ringLenInBits - l_ringPos);
+            l_scomAddress = LONG_ROTATE_ADDRESS | l_chipletId | l_bitShift;
 
-            l_fapiRc = getscom_abs_wrap (&l_hndl,
-                                         l_scomAddress,
-                                         (uint64_t*)&l_buf);
+            if (i_getPutMode == GetPutMode::put) {
+                l_rc = i_getStream.get(l_len, (uint32_t *)&l_buf, false);
+            }
+
+            // Read if getring OR first word for putring (to not overwrite the scan header)
+            if (i_getPutMode == GetPutMode::get
+            || (i_getPutMode == GetPutMode::put && l_ringPos == 0)) {
+                l_fapiRc = getscom_abs_wrap (&l_hndl,
+                                             l_scomAddress,
+                                             (uint64_t*)&l_buf);
+            } else if (i_getPutMode == GetPutMode::put && l_ringPos != 0) {
+                l_fapiRc = putscom_abs_wrap (&l_hndl,
+                                             l_scomAddress,
+                                             *((uint64_t*)&l_buf));
+            }
+            l_ringPos += l_bitShift;
+            
             if( l_fapiRc != FAPI2_RC_SUCCESS )
             {
                 SBE_ERROR(SBE_FUNC" getRing_granule_data failed. "
@@ -183,47 +183,19 @@ uint32_t sbeGetRingWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
                 l_ffdc.setRc(l_fapiRc);
                 break;
             }
-            // if the length of ring is not divisible by 64 then mod value
-            // should be considered which will match with the length in bits
-            // that passed
-            if((l_cnt == (l_loopCnt -1)) && (l_mod))
-            {
-                l_bitShift = l_mod;
-            }
+            
             // Send it to DS Fifo
             // If this is the last iteration in the loop, let the full 64bit
             // go, even for 1bit of remaining length. The length passed to
             // the user will take care of actual number of bits.
-            l_rc = i_putStream.put(l_len, (uint32_t *)&l_buf);
+            if (i_getPutMode == GetPutMode::get) {
+                l_rc = i_putStream.put(l_len, (uint32_t *)&l_buf);
+            }
             CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
-            l_bitSentCnt = l_bitSentCnt + l_bitShift;
-            l_bitShift = GETRING_GRANULE_SIZE_IN_BITS;
         }
         if ( (l_fapiRc == FAPI2_RC_SUCCESS) &&
              (l_rc == SBE_SEC_OPERATION_SUCCESSFUL) )
         {
-            if (!l_mod)
-            {
-                l_mod = GETRING_GRANULE_SIZE_IN_BITS;
-            }
-            //Here we need to shift with the mod value to enter into the
-            //starting position of the ring.But the data is already read in the
-            //above for loop.. so here we ignore the data
-            l_scomAddress = LONG_ROTATE_ADDRESS | l_chipletId;
-            l_scomAddress |= l_mod;
-            l_fapiRc = getscom_abs_wrap (&l_hndl,
-                                         l_scomAddress,
-                                         (uint64_t*)&l_buf);
-            if( l_fapiRc != FAPI2_RC_SUCCESS )
-            {
-                SBE_ERROR(SBE_FUNC" getRing_granule_data failed. "
-                       "RingAddress:0x%08X RingMode:0x%04X fapiRc:0x%08X",
-                        l_reqMsg.ringAddr, l_ringMode, l_fapiRc);
-                    respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                        SBE_SEC_GENERIC_FAILURE_IN_EXECUTION);
-               l_ffdc.setRc(l_fapiRc);
-               break;
-            }
 
             // Call getRing_verifyAndcleanup - verify the check word data is
             // matching or not and will clean up the scan region data
@@ -250,13 +222,16 @@ uint32_t sbeGetRingWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
         }
     }while(false);
 
+    l_len = 0;
+    l_rc = i_getStream.get(l_len, NULL, true, true);
+
     // Now build and enqueue response into downstream FIFO
     // If there was a FIFO error, will skip sending the response,
     // instead give the control back to the command processor thread
     if ( (SBE_SEC_OPERATION_SUCCESSFUL == l_rc) &&
          (i_putStream.isStreamRespHeader( respHdr.rcStatus(),l_ffdc.getRc())) )
     {
-        l_rc  = i_putStream.put(l_bitSentCnt);
+        l_rc  = i_putStream.put(l_ringPos);
         if( (SBE_SEC_OPERATION_SUCCESSFUL == l_rc) )
         {
             l_rc = sbeDsSendRespHdr( respHdr, &l_ffdc,
@@ -282,7 +257,7 @@ uint32_t sbeGetRing(uint8_t *i_pArg)
     sbefifo_hwp_data_ostream ostream(type);
     sbefifo_hwp_data_istream istream(type);
     SBE_INFO(SBE_FUNC" hwp streams created");
-    l_rc = sbeGetRingWrap( istream, ostream );
+    l_rc = sbeGetPutRingWrap( istream, ostream, GetPutMode::get);
 
     SBE_EXIT(SBE_FUNC);
     return l_rc;
@@ -291,10 +266,10 @@ uint32_t sbeGetRing(uint8_t *i_pArg)
 
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
-uint32_t sbePutRingWrap( fapi2::sbefifo_hwp_data_istream& i_getStream,
+uint32_t sbePutRingRS4Wrap( fapi2::sbefifo_hwp_data_istream& i_getStream,
                          fapi2::sbefifo_hwp_data_ostream& i_putStream )
 {
-#define SBE_FUNC " sbePutRingWrap "
+#define SBE_FUNC " sbePutRingRS4Wrap "
     SBE_ENTER(SBE_FUNC);
 
     uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
@@ -397,7 +372,7 @@ uint32_t sbePutRing(uint8_t *i_pArg)
     sbefifo_hwp_data_ostream ostream(type);
     sbefifo_hwp_data_istream istream(type);
     SBE_INFO(SBE_FUNC" hwp streams created");
-    l_rc = sbePutRingWrap( istream, ostream );
+    l_rc = sbePutRingRS4Wrap( istream, ostream );
 
     SBE_EXIT(SBE_FUNC);
     return l_rc;

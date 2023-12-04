@@ -93,7 +93,7 @@ ReturnCode getRing_setup(const uint32_t i_ringAddress,
 
         // Write a 64 bit value for header.
         const uint64_t l_header = 0xa5a5a5a5a5a5a5a5ull;
-        uint32_t l_scomAddress = 0x0003E000 |  (i_ringAddress & 0xFF000000);
+        uint32_t l_scomAddress = 0x0003F000 |  (i_ringAddress & 0xFF000000);
         l_rc = fapi2::putScom((Target<TARGET_TYPE_PERV>)l_hndl, l_scomAddress, l_header);
 
         if(l_rc != fapi2::FAPI2_RC_SUCCESS)
@@ -124,7 +124,6 @@ ReturnCode getRing_verifyAndcleanup(const uint32_t i_ringAddress,
             break;
         }
         uint64_t l_scanRegion = 0;
-        l_scanRegion = decodeScanRegionData(l_hndl, i_ringAddress, i_ringMode);
         // Verify header
         l_rc = verifyHeader( l_hndl, l_scanRegion, 0) ;
         if(l_rc != fapi2::FAPI2_RC_SUCCESS)

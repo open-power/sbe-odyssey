@@ -422,7 +422,7 @@ uint32_t sbeCollectDump::writeGetRingPacketToFifo()
 
         fapi2::sbefifo_hwp_data_istream istream( iv_fifoType, len,
                                         (uint32_t*)&l_reqMsg, false );
-        l_rc = sbeGetRingWrap( istream, iv_oStream );
+        l_rc = sbeGetPutRingWrap( istream, iv_oStream, GetPutMode::get );
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
         uint32_t endCount = iv_oStream.words_written();
         //If endCount = startCount means chip-op failed. We will write dummy data.
