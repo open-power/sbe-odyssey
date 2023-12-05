@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2017,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -127,11 +127,19 @@ class SBEGlobalsSingleton
         ////////////////////////////////////////////////////////////////
         SbeGlobalHandlerSemas_t semphores;
 
+        // size of trusted embedded PAKs 
+        static uint64_t trustedPakEnd __attribute__ ((section (".sdata"),aligned (8)));
+
         // @brief FileArchive object to keep track of the pak stack in pibmem
         // Allows access for a global FileArchive object independent of the Heap object
         // initialized below
+        RuntimePakWrapper trustedEmbeddedArchive __attribute__ ((aligned (8)))
+        { (void*)&_heap_space_start_, (void*)std::min(trustedPakEnd,(uint64_t)&_heap_space_end_)};  
+
+        
         RuntimePakWrapper embeddedArchive __attribute__ ((aligned (8)))
-                            { (void*)&_heap_space_start_, (void*)&_heap_space_end_};
+        { (void*)&_heap_space_start_, (void*)&_heap_space_end_};
+        
 
         // i2c mode register
         static uint64_t i2cModeRegister;

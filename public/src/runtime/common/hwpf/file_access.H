@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -49,7 +49,7 @@ inline ReturnCode loadEmbeddedFile(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_tar
                                    const char* i_path,
                                    const void*& o_data, size_t& o_size)
 {
-    return plat_loadEmbeddedFile(i_path, o_data, o_size);
+    return plat_loadEmbeddedFile(i_path, o_data, o_size, 0);
 }
 
 // placeholder variant to prepare for an upcoming fapi2 update
@@ -58,7 +58,7 @@ inline ReturnCode loadEmbeddedFile(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_tar
                                    const void*& o_data, size_t& o_size,
                                    uint32_t i_flags)
 {
-    return plat_loadEmbeddedFile(i_path, o_data, o_size);
+    return plat_loadEmbeddedFile(i_path, o_data, o_size, i_flags);
 }
 
 /// @brief Free memory allocated by loadEmbeddedFile()

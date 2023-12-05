@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2019,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2019,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -122,6 +122,7 @@ constexpr struct PACKED metadata_t {
     METADATA(TRA, { SPPE_TRACE_START_OFFSET, SPPE_PK_TRACE_SIZE_WITH_HEADER });
     METADATA(HEA, { (uint32_t)&_heap_space_start_, (uint32_t)&_heap_space_size_});
     METADATA(ATR, { (uint32_t)&_attrs_start_, (uint32_t)&_attrs_size_ });
+    METADATA(TPE, { (uint32_t)&SBEGlobalsSingleton::trustedPakEnd });
     ImageMetadataHeader end = {0, 0};
 } g_image_metadata __attribute__ ((section (".sppe_metadata")));
 

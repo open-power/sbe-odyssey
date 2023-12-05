@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2017,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -43,4 +43,5 @@ uint8_t  SBEGlobalsSingleton::failedCmdClass   = 0;
 uint8_t  SBEGlobalsSingleton::failedCmd        = 0;
 uint32_t SBEGlobalsSingleton::activeUsFifo     = SBE_FIFO_UNKNOWN;
 uint32_t SBEGlobalsSingleton::activeInterface  = SBE_INTERFACE_UNKNOWN;
+uint64_t SBEGlobalsSingleton::trustedPakEnd    = 0x00000000FFFFFFFFULL;
 PIBCtrlId SBEGlobalsSingleton::pibCtrlId       = PIBCTRL_SPPE;
