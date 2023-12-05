@@ -1,2 +1,27 @@
 Version,Chiplet,Base Address,Chiplet Id - range,Bit Mask,User,Register name,Description/Usage,Type
-,TP,00F001A,0x00,,HWSV,PCBCTL_INTERRUPT_TYPE_REG,,write_allowlist
+,MC,080108EB,0x08,,K. Wong,OD.ODC.MMIO.SCOMEWD,SCOM write data log after an error,read_denylist
+,MC,080108E9,0x08,,K. Wong,OD.ODC.MMIO.MMIOEWD,MMIO write data log after an error,read_denylist
+,MC,08011C03,0x08,,L. Friedman,OD.ODC.WDF.REGS.AADR,Write Buffer data port,read_denylist
+,MC,08011C04,0x08,,L. Friedman,OD.ODC.WDF.REGS.AAER,Write Buffer data port,read_denylist
+,MC,0801182A,0x08,,L. Friedman,OD.ODC.RDF0.SCOM.AADR,Read Buffer data port,read_denylist
+,MC,0801182B,0x08,,L. Friedman,OD.ODC.RDF0.SCOM.AAER,Read Buffer data port,read_denylist
+,MC,0801282A,0x08,,L. Friedman,OD.ODC.RDF1.SCOM.AADR,Read Buffer data port,read_denylist
+,MC,0801282B,0x08,,L. Friedman,OD.ODC.RDF1.SCOM.AAER,Read Buffer data port,read_denylist
+,MC,08010822,0x08,,K. Wong,OD.ODC.MMIO.OVERCFG,OpenCAPI Transport Layer Configuration,write_allowlist
+,MC,08010824,0x08,,K. Wong,OD.ODC.MMIO.OTTCFG,OpenCAPI TLX Transmit Template Configurations ,write_allowlist
+,MC,0801082D,0x08,,K. Wong,OD.ODC.MMIO.OTRCFG76,OpenCAPI TLX Flit Transmit Rate per Template Configurations,write_allowlist
+,MC,08010880,0x08,,K. Wong,OD.ODC.MMIO.O1MBIT_O1DID,OpenCAPI Function 1 Device ID & Vendor ID,write_allowlist
+,MC,08010882,0x08,,K. Wong,OD.ODC.MMIO.O1BAR0,OpenCAPI Function 1 MMIO Base Address 0,write_allowlist
+,MC,080108B1,0x08,,K. Wong,OD.ODC.MMIO.O1ACTAG_O1FNID,OpenCAPI acTag and Function DVSEC ID,write_allowlist
+,MC,080108D1,0x08,,K. Wong,OD.ODC.MMIO.OCTRLEND_OCTRLID,OpenCAPI AFU Control,write_allowlist
+,MC,080108D2,0x08,,K. Wong,OD.ODC.MMIO.OCTRLPID,OpenCAPI AFU Control,write_allowlist
+,MC,080108D3,0x08,,K. Wong,OD.ODC.MMIO.OCTRLTAG,OpenCAPI AFU Control,write_allowlist
+,MC,08010400,0x08,,J. Fenkes,OD.T.TCMC.TRA0.TRA.SCOMSAT_ARRAY_SELECT#0.SAMP.TRACE_HI_DATA_REG,Trace Data,read_denylist
+,MC,08010401,0x08,,J. Fenkes,OD.T.TCMC.TRA0.TRA.SCOMSAT_ARRAY_SELECT#0.SAMP.TRACE_LO_DATA_REG,Trace Data,read_denylist
+,MC,08010410,0x08,,J. Fenkes,OD.T.TCMC.TRA0.TRA.SCOMSAT_ARRAY_SELECT#1.SAMP.TRACE_HI_DATA_REG,Trace Data,read_denylist
+,MC,08010411,0x08,,J. Fenkes,OD.T.TCMC.TRA0.TRA.SCOMSAT_ARRAY_SELECT#1.SAMP.TRACE_LO_DATA_REG,Trace Data,read_denylist
+,MC,08012010,0x08,,N. Rolfe,OD.ODC.TLXT.TLXT_REGS.TLXTINTHLD0,Interrupt handles,write_allowlist
+,MC,08012011,0x08,,N. Rolfe,OD.ODC.TLXT.TLXT_REGS.TLXTINTHLD1,Interrupt handles,write_allowlist
+,MC,08012012,0x08,,N. Rolfe,OD.ODC.TLXT.TLXT_REGS.TLXTINTHLD2,Interrupt handles,write_allowlist
+,MC,08012013,0x08,,N. Rolfe,OD.ODC.TLXT.TLXT_REGS.TLXTINTHLD3,Interrupt handles,write_allowlist
+,MC,0801200D,0x08,,N. Rolfe,OD.ODC.TLXT.TLXT_REGS.TLXCFG1,Interrupt handles,write_allowlist
