@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -33,6 +33,11 @@
 namespace fapi2
 {
 
+enum loadEmbeddedFileFlags
+{
+    LEFF_ALLOW_UNTRUSTED = 0x80000000
+};
+
 /// @brief Load a file from the embedded archive
 /// Attempts to locate a file with given name inside the embedded archive
 /// and makes it available in memory.
@@ -42,7 +47,7 @@ namespace fapi2
 /// @return FAPI2_RC_SUCCESS on success,
 ///         FAPI2_RC_FILE_NOT_FOUND if the file was not found, or another error.
 ReturnCode plat_loadEmbeddedFile( const char* i_path,
-                                  const void*&o_data, size_t &o_size);
+                                  const void*&o_data, size_t &o_size, uint32_t i_flags);
 
 /// @brief Free memory allocated by loadEmbeddedFile()
 /// @param[in] i_data  Pointer to file contents

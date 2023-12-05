@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -80,6 +80,8 @@ class PpeImageReceiver : public HwpStreamReceiver
         uint32_t iv_heapSize;
         /// @brief Abbreviated git commit hash of loaded image
         uint32_t iv_gitId;
+        /// @brief Secure Pak boundary
+        uint32_t iv_trustedPakEndPtr;
 };
 
 /// @brief Wrapper that loads pak into scratch area in SRAM.

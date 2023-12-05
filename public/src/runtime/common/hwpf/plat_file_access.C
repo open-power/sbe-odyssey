@@ -32,7 +32,7 @@ namespace fapi2
 {
 
 ReturnCode plat_loadEmbeddedFile(const char* i_path,
-                                const void*&o_data, size_t &o_size)
+                                 const void*&o_data, size_t &o_size, uint32_t i_flags)
 {
 #define SBE_FUNC " plat_loadEmbeddedFile "
     SBE_ENTER(SBE_FUNC);
@@ -72,9 +72,25 @@ ReturnCode plat_loadEmbeddedFile(const char* i_path,
             break;
         }
 
-        // Uncompresses/copy the file into the scratch area
-        pakRc = SBE_GLOBAL->embeddedArchive.read_file(i_path, decompressionScratchArea,
-                                l_entry.get_size(), NULL, NULL);
+        if (i_flags & fapi2::LEFF_ALLOW_UNTRUSTED)
+        {
+
+            // Uncompresses/copy the file into the scratch area
+            pakRc = SBE_GLOBAL->embeddedArchive.read_file(i_path,
+                                                          decompressionScratchArea,
+                                                          l_entry.get_size(),
+                                                          NULL, NULL);
+        }
+        else
+        {
+            // Uncompresses/copy the file into the scratch area
+            pakRc = SBE_GLOBAL->trustedEmbeddedArchive.read_file(i_path,
+                                                     decompressionScratchArea,
+                                                     l_entry.get_size(),
+                                                     NULL, NULL);
+
+        }
+
         if( pakRc != ARC_OPERATION_SUCCESSFUL )
         {
             FAPI_ERR(SBE_FUNC "File read failed with RC[%08X]", pakRc);

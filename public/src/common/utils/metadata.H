@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -54,6 +54,7 @@
 #define DAT_ASCII 0x444154
 #define HEA_ASCII 0x484541
 #define BLD_ASCII 0x424c44
+#define TPE_ASCII 0x545045
 
 // Image type information
 DECLARE_METADATA(IMG, IMG_ASCII) {
@@ -95,6 +96,11 @@ DECLARE_METADATA(DAT, DAT_ASCII) {
 DECLARE_METADATA(HEA, HEA_ASCII) {
     uint32_t heapAddr; // Address of the heap space
     uint32_t heapSize; // Size of heap space area
+};
+
+// Heap information
+DECLARE_METADATA(TPE, TPE_ASCII) {
+    uint32_t trustedPakEndPtr; // Address of the secure pak boundary (starting from that content untrusted)
 };
 
 // String metadata needs no field declaration

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -67,7 +67,7 @@ hdctPakSecDetails::hdctPakSecDetails()
     //      Jira: PFSBE-533 Handle the Error condition in
     //            hdctPakSecDetails::hdctPakSecDetails() constructor
     fapi2::ReturnCode rc = fapi2::plat_loadEmbeddedFile(hdct_binary_fname,
-                                                        (const void *&) iv_startAddr, imageSize);
+                                                        (const void *&) iv_startAddr, imageSize, 0);
     if(rc == fapi2::FAPI2_RC_SUCCESS)
     {
         // get the start address using loadEmbeddedFile api

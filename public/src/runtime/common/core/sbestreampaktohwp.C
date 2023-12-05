@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -59,8 +59,9 @@ ARC_RET_t PpeImageReceiver::consume(const void* i_data, uint32_t i_size)
         const uint8_t *meta_start = ((uint8_t *)i_data) + 0x200;
         const META_HEA_t *hea = GET_META_HEA(meta_start);
         const META_GIT_t *git = GET_META_GIT(meta_start);
+        const META_TPE_t *tpe = GET_META_TPE(meta_start);
 
-        if (!(hea && git))
+        if (!(hea && git && tpe))
         {
             SBE_ERROR("PpeImageReceiver::consume: Required metadata missing in image");
             iv_fapiRc = FAPI2_RC_PLAT_ERR_SEE_DATA;
@@ -70,6 +71,7 @@ ARC_RET_t PpeImageReceiver::consume(const void* i_data, uint32_t i_size)
         iv_heapStart = hea->heapAddr;
         iv_heapSize  = hea->heapSize;
         iv_gitId = git->commitId;
+        iv_trustedPakEndPtr = tpe->trustedPakEndPtr;
     }
 
     return HwpStreamReceiver::consume(i_data, i_size);
