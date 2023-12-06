@@ -216,11 +216,8 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
             // This is required as none of procedure set this value in success
             // case. So if we do not reset previous value, previous failure
             // will impact new chipops also.
-            //fapi2::current_err = fapi2::FAPI2_RC_SUCCESS;
+            fapi2::current_err = fapi2::FAPI2_RC_SUCCESS;
 
-            // SBE ChipOp associating config settings to processing functions
-            // chipOpParam_t configStr = { SBE_FIFO, 0x00, (uint8_t*)i_pArg };
-            // configStr.pkThreadRoutine_param = reinterpret_cast<uint8_t*>(i_pArg);
             if ( SBE_GLOBAL->sbeIntrSource.isSet(SBE_RX_ROUTINE,(sbeInterfaceSrc_t)(
                                              SBE_INTERFACE_MASK_DATA_ALL)) )
             {
