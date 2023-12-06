@@ -972,12 +972,12 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::ext_cmd_check(const fapi2::Target<K, M
     FAPI_TRY(iv_regs->flushCache(i_target));
 
     FAPI_TRY(FW_REG_EXT_CMD_DONE_00_15_GET(iv_regs, i_target, i_thread, l_data));
-    o_done = ((l_data << 16) & (0xFFFF0000 & i_ext_cmd_req)) == (0xFFFF0000 & i_ext_cmd_req);
+    o_done = (((l_data << 16) ^ i_ext_cmd_req) & 0xFFFF0000) == 0x00000000;
     FAPI_DBG("io_ppe_common::ext_cmd_check FW_REG_EXT_CMD_DONE_00_15_GET: l_data 0x%08X%08X, exp: 0x%04X\n",
              (l_data >> 32) & 0xFFFFFFFF, l_data & 0xFFFFFFFF, (i_ext_cmd_req & 0xFFFF0000) >> 16);
 
     FAPI_TRY(FW_REG_EXT_CMD_DONE_16_31_GET(iv_regs, i_target, i_thread, l_data));
-    o_done = o_done && ((l_data & (0xFFFF & i_ext_cmd_req)) == (0xFFFF & i_ext_cmd_req));
+    o_done = o_done && (((l_data ^ i_ext_cmd_req) & 0x0000FFFF) == 0x00000000);
     FAPI_DBG("io_ppe_common::ext_cmd_check FW_REG_EXT_CMD_DONE_16_31_GET: l_data 0x%08X%08X, exp: 0x%04X\n",
              (l_data >> 32) & 0xFFFFFFFF, l_data & 0xFFFFFFFF, i_ext_cmd_req & 0xFFFF);
 
