@@ -163,7 +163,11 @@
 const uint32_t  MAX_RING_BUF_SIZE_TOOL  = 450000;
 const uint32_t  RS4_RING_BUF_SIZE   = 64 * 1024;
 
-#define MY_ERR(...)
+#ifndef __PPE__
+    #define MY_ERR(...) printf(__VA_ARGS__)
+#else
+    #define MY_ERR(...)
+#endif
 
 // Diagnostic aids for debugging
 #ifdef DEBUG_SCAN_COMPRESSION
@@ -278,7 +282,8 @@ int rs4::ringTargetType_t::findType(const std::string& i_ringName,
 
     if( rc )
     {
-        MY_ERR("Ring name %s does not have a rs4 target type defined.\n",)
+        MY_ERR("Ring name %s does not have a rs4 target type defined.\n",
+               i_ringName.c_str());
     }
 
     return rc;
