@@ -108,7 +108,9 @@ infile_c = [
 
             # Files needed for ody_draminit_mc
             '/memory/odyssey/hwp/ody_draminit_mc.C',
+            '/memory/odyssey/hwp/ody_deploy_row_repairs.C',
             '/memory/odyssey/hwp/lib/mc/ody_port.C',
+            '/memory/odyssey/hwp/lib/ccs/ody_row_repair.C',
 
             # Files needed for ody_enable_ecc
             '/memory/odyssey/hwp/ody_enable_ecc.C',
