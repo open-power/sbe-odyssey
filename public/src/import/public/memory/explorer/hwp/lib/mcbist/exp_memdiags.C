@@ -61,6 +61,18 @@ fapi2::ReturnCode operation<mss::mc_type::EXPLORER>::multi_port_init_internal()
 }
 
 ///
+/// @brief memdiags multi-port read for specific chip - Explorer specialization
+/// Initializes common sections. Broken out rather than the base class ctor to enable checking return codes
+/// in subclassed constructors more easily.
+/// @return FAPI2_RC_SUCCESS iff everything ok
+///
+template <>
+fapi2::ReturnCode operation<mss::mc_type::EXPLORER>::multi_port_read_internal()
+{
+    return single_port_init();
+}
+
+///
 /// @brief Helper function to get the subtest to run continuous scrub for this memory controller type - Explorer specialization
 /// @return The subtest used to run continuous scrub
 ///
