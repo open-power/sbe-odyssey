@@ -1186,16 +1186,16 @@ void i2c::printi2cdetails()
     #define SBE_FUNC " printi2cdetails "
     SBE_ENTER(SBE_FUNC);
 
-    SBE_INFO(SBE_FUNC "iv_port: %02X Engine: %02X DevAddr: %02x set.",
-                    iv_port, iv_engine, iv_devAddr);
-    SBE_INFO(SBE_FUNC "Bit rate Divisor 0x%08X ", iv_bit_rate_divisor);
-    SBE_INFO(SBE_FUNC "Bus speed 0x%08X %08X", SBE::higher32BWord(iv_bus_speed),
-                                        SBE::lower32BWord(iv_bus_speed));
-    SBE_INFO(SBE_FUNC "Polling interval 0x%08X %08X", SBE::higher32BWord(iv_polling_interval_ns),
-                                        SBE::lower32BWord(iv_polling_interval_ns));
-    SBE_INFO(SBE_FUNC "Time out count 0x%08X %08X", SBE::higher32BWord(iv_timeout_count),
-                                        SBE::lower32BWord(iv_timeout_count));
-    SBE_INFO(SBE_FUNC "Max i2c retry count 0x%02x, Current i2c retry count 0x%02x",
+    SBE_INFO(SBE_FUNC "iv_port: 0x%02X Engine: 0x%02X DevAddr: 0x%02x bit_rate_div: 0x%08X.",
+                    iv_port, iv_engine, iv_devAddr, iv_bit_rate_divisor);
+
+    SBE_DEBUG(SBE_FUNC "Bus speed 0x%08X %08X", SBE::higher32BWord(iv_bus_speed),
+                                                SBE::lower32BWord(iv_bus_speed));
+    SBE_DEBUG(SBE_FUNC "Polling interval 0x%08X %08X", SBE::higher32BWord(iv_polling_interval_ns),
+                                                       SBE::lower32BWord(iv_polling_interval_ns));
+    SBE_DEBUG(SBE_FUNC "Time out count 0x%08X %08X", SBE::higher32BWord(iv_timeout_count),
+                                                     SBE::lower32BWord(iv_timeout_count));
+    SBE_DEBUG(SBE_FUNC "Max i2c retry count 0x%02x, Current i2c retry count 0x%02x",
                         iv_max_retry_count, iv_curr_retry_count);
 
     SBE_EXIT(SBE_FUNC);
