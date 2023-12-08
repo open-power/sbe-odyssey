@@ -173,6 +173,7 @@
     GOLDEN = 0x2
   </enum>
   <platInit/>
+  <writeable/>
   <initToZero/>
   <mrwHide/>
 </attribute>
