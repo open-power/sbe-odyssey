@@ -9,7 +9,7 @@ import sys, os
 
 # Add program modules to the path
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "pymod"))
-from pakcore import Archive, PAK_END
+from pakcore import Archive, ArchiveError, PAK_END
 
 PART_NAME_MAXLEN = 16
 PT_FORMAT_VER = 1
@@ -65,6 +65,9 @@ def cmd_build_image(args, partitions):
             partition_index[pname].load_pak(fname)
         except KeyError:
             print("Unknown partition name: " + pname)
+            exit(1)
+        except ArchiveError as e:
+            print("Archive error while loading partition '%s': %s" % (pname, e))
             exit(1)
 
     with open(args.outfile, "wb") as image:

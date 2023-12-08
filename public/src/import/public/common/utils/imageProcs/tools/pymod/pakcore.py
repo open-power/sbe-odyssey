@@ -709,8 +709,7 @@ class Archive(UserList):
             # See if the input archive already exists as a file
             # If it doesn't, throw an error.. maybe make that supressable
             if not os.path.isfile(self.filename):
-                out.error("The given archive file \'%s\' does not exist!" % self.filename)
-                return None
+                raise ArchiveError("The given archive file \'%s\' does not exist!" % self.filename)
 
             # Read the entire file into the image for reference
             with open(self.filename, "rb") as f:
