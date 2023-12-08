@@ -55,8 +55,17 @@ ReturnCode mod_clock_test(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB
 
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CP_REFCLOCK_SELECT, i_target, l_cp_refclock_select));
 
+    ROOT_CTRL0 = 0;
     ROOT_CTRL0.set_CFAM_PROTECTION_0(1);
-    ROOT_CTRL0.putScom_CLEAR(i_target);
+
+    if (i_use_cfam_path)
+    {
+        FAPI_TRY(ROOT_CTRL0.putCfam_CLEAR(i_target));
+    }
+    else
+    {
+        FAPI_TRY(ROOT_CTRL0.putScom_CLEAR(i_target));
+    }
 
     for(int i = 0; i < POLL_COUNT; i++)
     {
