@@ -22,8 +22,7 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __ODYSSEY_LINK_H
-#define __ODYSSEY_LINK_H
+#pragma once
 
 /// \file odysseylink.H
 /// \brief Constants required for linking SBE code images
@@ -168,13 +167,31 @@ ASSERT((SROM_BLDR_CMN_SH_FILE_SCRATCH_END < BOOTLOADER_ORIGIN), \
                /* Pointer to current image's metadata (4B)    */
                /***********************************************/
 #define SPPE_ORIGIN                     SRAM_ORIGIN
+
+#define SBE_NONCRITICAL_STACK_SIZE              512
+
+// 6K of stack to thermal sensor polling
+#define SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE    6144
+
+#define SBE_THREAD_CMD_RECV_STACK_SIZE          512
+
+//12K of Stack to handle large rings
+#define SBE_THREAD_SYNC_CMD_PROC_STACK_SIZE     12288
+
+#define SBE_TOTAL_STACK_SIZE_REQUIRED_IN_SCRATCH  (     \
+            SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE +      \
+            SBE_THREAD_CMD_RECV_STACK_SIZE +            \
+            SBE_THREAD_SYNC_CMD_PROC_STACK_SIZE )
+
 // TODO: revert these to actual required values (PFSBE-636)
 #define SPPE_RAM_PAK_MIN_SIZE            0x1400  // 5 KB
 #define SPPE_DECOMPRESSION_AREA_MIN_SIZE 0x800   // 2 KB
 #define SPPE_MEM_TRAINING_DATA_SIZE      0x8200  // 32 KB + 512 B
 #define SPPE_RECOVERABLE_LOG_MIN_SIZE    0x0000  // 0 KB
-#define SPPE_HEAP_MIN_SIZE              (SPPE_RAM_PAK_MIN_SIZE + SPPE_DECOMPRESSION_AREA_MIN_SIZE \
-                                         + SPPE_MEM_TRAINING_DATA_SIZE + SPPE_RECOVERABLE_LOG_MIN_SIZE)
+#define SPPE_HEAP_MIN_SIZE              (SPPE_RAM_PAK_MIN_SIZE + SPPE_DECOMPRESSION_AREA_MIN_SIZE       \
+                                         + SPPE_MEM_TRAINING_DATA_SIZE + SPPE_RECOVERABLE_LOG_MIN_SIZE  \
+                                         + SBE_TOTAL_STACK_SIZE_REQUIRED_IN_SCRATCH)
+
 #define SPPE_MAX_SIZE                   (SRAM_SIZE - CROSS_IMAGE_FIXED_AREA_SIZE \
                                          - SPPE_HEAP_MIN_SIZE - SPPE_PK_TRACE_SIZE_WITH_HEADER)
 
@@ -217,5 +234,3 @@ ASSERT((SROM_BLDR_CMN_SH_FILE_SCRATCH_END < BOOTLOADER_ORIGIN), \
 
 #endif
 #endif
-
-#endif  // __ODYSSEY_LINK_H
