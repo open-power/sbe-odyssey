@@ -31,6 +31,8 @@
 namespace SBEVECTORPOOL
 {
 
+extern vectorMemPool_t g_vectorPool[];
+
 vectorMemPool_t * allocMem()
 {
     vectorMemPool_t *pool = NULL;
