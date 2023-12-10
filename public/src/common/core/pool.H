@@ -46,11 +46,12 @@ struct vectorMemPool_t
     size_t   refCount;
     uint8_t* const data;
 
-    vectorMemPool_t(uint8_t* const i_buf_ptr = NULL):data(i_buf_ptr)
-    {}
+    vectorMemPool_t(uint8_t* const i_buf_ptr = NULL):
+        refCount(0),
+        data(i_buf_ptr)
+    {
+    }
 };
-
-extern vectorMemPool_t g_vectorPool[];
 
 /**
   * @brief Returns memory pool block.

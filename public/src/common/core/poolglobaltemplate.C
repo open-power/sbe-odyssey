@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2019,2023                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -49,5 +50,9 @@ const size_t g_vectorPoolBlockCount = VECTOR_POOL_BLOCK_COUNT;
 
 uint8_t g_vectorPoolBuffer[g_vectorPoolBlockCount * g_vectorPoolBlockSize];
 
-vectorMemPool_t g_vectorPool[g_vectorPoolBlockCount];
+// defining g_vectorPool as a normal uint8_t so that compiler will not generate
+//   any .ctors for this. If compiler generates a .ctor, and if it is after the
+//   .ctor of any other global object which has a vector, then this variables .ctor
+//   might corrupt the original content.
+uint8_t g_vectorPool[sizeof(vectorMemPool_t) * g_vectorPoolBlockCount];
 }
