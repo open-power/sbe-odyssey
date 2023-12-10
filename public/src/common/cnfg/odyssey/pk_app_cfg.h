@@ -29,9 +29,9 @@
  *
  */
 
-#ifndef __PK_APP_CFG_H__
-#define __PK_APP_CFG_H__
+#pragma once
 
+#include "odysseylink.H"
 #include "sbeirq.H"
 
 /*
@@ -140,37 +140,3 @@
 #undef PPE_CAPTURE_INTERRUPT_FFDC
 #endif
 #define PPE_CAPTURE_INTERRUPT_FFDC SBE_INTERRUPT_REGISTER_SAVEOFF
-
-/**
- * @brief enums for thread stack sizes
- *  - Non-Critical Stack used by non-critical interrupt handlers
- *  - Critical Stack used for critical interrupts
- *  - Stacks for each thread
- */
-#ifdef SBE_NONCRITICAL_STACK_SIZE
-#undef SBE_NONCRITICAL_STACK_SIZE
-#endif
-#define SBE_NONCRITICAL_STACK_SIZE              512
-
-
-#ifdef SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE
-#undef SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE
-#endif
-// 6K of stack to thermal sensor polling
-#define SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE    6144
-
-
-#ifdef SBE_THREAD_CMD_RECV_STACK_SIZE
-#undef SBE_THREAD_CMD_RECV_STACK_SIZE
-#endif
-#define SBE_THREAD_CMD_RECV_STACK_SIZE          512
-
-
-#ifdef SBE_THREAD_SYNC_CMD_PROC_STACK_SIZE
-#undef SBE_THREAD_SYNC_CMD_PROC_STACK_SIZE
-#endif
-//12K of Stack to handle large rings
-#define SBE_THREAD_SYNC_CMD_PROC_STACK_SIZE     12288
-
-
-#endif /*__PK_APP_CFG_H__*/
