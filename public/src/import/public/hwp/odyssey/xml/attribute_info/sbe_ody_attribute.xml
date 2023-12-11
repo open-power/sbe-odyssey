@@ -1497,6 +1497,9 @@
   <entry name="ATTR_ODY_DMEM_FIRST_LOAD">
     <value>0</value>
   </entry>
+  <entry name="ATTR_ODY_PSRO">
+    <value>0</value>
+  </entry>
   <entry name="ATTR_ODY_DQS_OSC_RUNTIME_SEL">
     <value>256</value>
   </entry>
