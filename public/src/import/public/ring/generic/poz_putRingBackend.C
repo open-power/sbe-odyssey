@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -818,7 +818,8 @@ static ReturnCode applyCompositeImage(ChipTarget& i_chip_target,
                                       const Target<TARGET_TYPE_ALL_MC>& i_target,
                                       const void* i_image,
                                       const size_t i_size,
-                                      const RingMode i_ringMode)
+                                      const RingMode i_ringMode,
+                                      const bool i_trusted = false)
 {
     const uint8_t* start = (uint8_t*)i_image;
     size_t offset = 0;
@@ -828,6 +829,7 @@ static ReturnCode applyCompositeImage(ChipTarget& i_chip_target,
     {
         const uint8_t* ptr = start + offset;
         const CompressedScanData* hdr = (CompressedScanData*)ptr;
+        const uint32_t scan_type = hdr->iv_scanAddr.get() & 0x0000000F;
 
         // Check that we didn't veer off course
         FAPI_ASSERT(hdr->iv_magic.get() == RS4_MAGIC && hdr->iv_version.get() == RS4_VERSION,
@@ -846,6 +848,27 @@ static ReturnCode applyCompositeImage(ChipTarget& i_chip_target,
                     .set_VERSION_REQUIRED(RS4_VERSION),
                     "Invalid RS4 header in scan image! offset=0x%x magic=0x%04X version=%d version_required=%d",
                     offset, hdr->iv_magic.get(), hdr->iv_version.get(), RS4_VERSION);
+
+        // Check that the image is trusted else that it's not trying to scan FUNC/REGF/LBST/CMSK
+        FAPI_ASSERT(!(!i_trusted && (scan_type == 0 /* FUNC */
+                                     || scan_type == 3 /* REGF */
+                                     || scan_type == 4 /* LBST */
+                                     || scan_type == 10 /* LBST */
+                                     || scan_type == 12 /* ALLF */
+                                     || scan_type == 13 /* LBCM */
+                                     || scan_type == 15 /* FURE */)),
+                    UNTRUSTED_RING_IMAGE()
+#ifndef __PPE__
+                    .set_RS4_HEADER(*hdr),
+#else
+                    .set_RS4_HEADER((uint64_t)(hdr->iv_magic.get()) << 48 |
+                                    (uint64_t)(hdr->iv_version.get()) << 40 |
+                                    (uint64_t)(hdr->iv_type.get()) << 32  |
+                                    (uint64_t)(hdr->iv_scanAddr.get()) ),
+#endif
+                    "Untrusted scan image trying to scan FUNC/REGF/LBST! scan_addr=0x%x",
+                    hdr->iv_scanAddr.get());
+
 
         // Apply the RS4
         FAPI_TRY(ScanApplyEngine(i_chip_target, i_target, *hdr, i_ringMode).apply());
@@ -886,12 +909,24 @@ static ReturnCode tryLoadCompositeImage(ChipTarget& i_chip_target,
 {
     const void* image = NULL;
     size_t image_size;
-    ReturnCode rc = loadEmbeddedFile(i_chip_target(), i_fname, image, image_size);
+    bool trusted = true;
+    ReturnCode rc = loadEmbeddedFile(i_chip_target(), i_fname, image, image_size, 0);
 
-    if (rc == FAPI2_RC_FILE_NOT_FOUND)
+    if ((rc == FAPI2_RC_FILE_NOT_FOUND) || (rc == FAPI2_RC_PLAT_ERR_SEE_DATA))
     {
-        // We're feeling our way around the embedded archive; don't fail if a file does not exist
-        return FAPI2_RC_SUCCESS;
+        // Check if it would have been found from an untrusted source
+        rc = loadEmbeddedFile(i_chip_target(), i_fname, image, image_size, LEFF_ALLOW_UNTRUSTED);
+
+        if (rc == FAPI2_RC_SUCCESS)
+        {
+            FAPI_INF("Loading image from untrusted source, restricting scan types selectable!");
+            trusted = false;
+        }
+        else
+        {
+            // We're feeling our way around the embedded archive; don't fail if a file does not exist
+            return FAPI2_RC_SUCCESS;
+        }
     }
     else if (rc != FAPI2_RC_SUCCESS)
     {
@@ -903,7 +938,7 @@ static ReturnCode tryLoadCompositeImage(ChipTarget& i_chip_target,
 #ifndef __PPE__
     FAPI_DBG("Loaded image %s", i_fname);
 #endif
-    FAPI_TRY(applyCompositeImage(i_chip_target, i_target, image, image_size, i_ringMode));
+    FAPI_TRY(applyCompositeImage(i_chip_target, i_target, image, image_size, i_ringMode, trusted));
 
 fapi_try_exit:
     freeEmbeddedFile(image);
