@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,7 +39,7 @@ namespace fapi2
 
 enum loadEmbeddedFileFlags
 {
-    // No flags defined at the moment, just for future expansion
+    LEFF_ALLOW_UNTRUSTED = 0x80000000
 };
 
 /// @brief Load a file from the embedded archive

@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -65,6 +65,14 @@
       <ffdc>MAGIC</ffdc>
       <ffdc>VERSION</ffdc>
       <ffdc>VERSION_REQUIRED</ffdc>
+    </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+      <rc>RC_UNTRUSTED_RING_IMAGE</rc>
+      <description>Untrusted scan image for scan types FUNC/REGF/LBST/CMSK</description>
+      <ffdc>RS4_HEADER</ffdc>
+      <ffdc>OFFSET</ffdc>
+      <ffdc>MAGIC</ffdc>
     </hwpError>
   <!-- ******************************************************************** -->
   <!-- template
