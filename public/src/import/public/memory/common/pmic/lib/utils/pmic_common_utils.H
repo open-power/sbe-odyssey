@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -174,6 +174,18 @@ fapi2::ReturnCode pmic_is_ti(const fapi2::Target<fapi2::TARGET_TYPE_PMIC>& i_pmi
 fapi2::ReturnCode check_number_pmics_received_2u(
     const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_ocmb_target,
     const uint8_t i_pmics_size);
+
+///
+/// @brief Declare N-Mode and log fapi2::current_err as recoverable
+///
+/// @param[in] i_ocmb_target OCMB target
+/// @param[in] i_pmic_id PMIC ID (0-3)
+/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS
+/// @note expected to be called in a fapi_try_exit with bad current_err
+///
+fapi2::ReturnCode declare_n_mode(
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_ocmb_target,
+    uint8_t i_pmic_id);
 
 ///
 /// @brief Determine if PMIC is disabled based on ATTR_MEM_PMIC_FORCE_N_MODE attribute setting
@@ -360,6 +372,14 @@ inline mss::pmic::id get_relative_pmic_id(const fapi2::Target<fapi2::TARGET_TYPE
     using CONSTS = mss::pmic::consts<mss::pmic::product::JEDEC_COMPLIANT>;
     return static_cast<mss::pmic::id>(mss::index(i_pmic_target) % CONSTS::NUM_PRIMARY_PMICS);
 }
+
+///
+/// @brief Get the mnfg thresholds policy setting
+///
+/// @param[out] o_thresholds thresholds policy setting
+/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS iff success, else error code
+///
+fapi2::ReturnCode get_mnfg_thresholds(bool& o_thresholds);
 
 namespace status
 {
@@ -702,6 +722,15 @@ fapi2::ReturnCode matching_vendors_helper(
     const uint16_t i_vendor_attr,
     const uint8_t i_vendor_reg_lo,
     const uint8_t i_vendor_reg_hi);
+
+///
+/// @brief Reset N Mode attributes
+///
+/// @param[in] i_ocmb OCMB target
+/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS, else error code
+/// @note For 4U only. Has no effect on 1U/2U.
+///
+fapi2::ReturnCode reset_n_mode_attrs(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_ocmb);
 
 } // check
 } // pmic
