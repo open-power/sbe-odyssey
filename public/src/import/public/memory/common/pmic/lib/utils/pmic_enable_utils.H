@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -511,18 +511,6 @@ fapi2::ReturnCode start_vr_enable(
     const fapi2::Target<fapi2::TargetType::TARGET_TYPE_PMIC>& i_pmic_target);
 
 ///
-/// @brief Declare N-Mode and log fapi2::current_err as recoverable
-///
-/// @param[in] i_ocmb_target OCMB target
-/// @param[in] i_pmic_id PMIC ID (0-3)
-/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS
-/// @note expected to be called in a fapi_try_exit with bad current_err
-///
-fapi2::ReturnCode declare_n_mode(
-    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_ocmb_target,
-    uint8_t i_pmic_id);
-
-///
 /// @brief Set the up VIN latch bit for TPS pmics
 ///
 /// @param[in] i_pmic_target PMIC target
@@ -803,13 +791,6 @@ fapi2::ReturnCode assert_n_mode_states(
     const std::array<mss::pmic::n_mode, CONSTS::NUM_PMICS_4U>& i_n_mode_pmic,
     const bool i_mnfg_thresholds);
 
-///
-/// @brief Get the mnfg thresholds policy setting
-///
-/// @param[out] o_thresholds thresholds policy setting
-/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS iff success, else error code
-///
-fapi2::ReturnCode get_mnfg_thresholds(bool& o_thresholds);
 
 ///
 /// @brief Process the results of the N-Mode declarations (if any)
@@ -846,15 +827,6 @@ bool bad_any(const std::array<mss::pmic::n_mode, CONSTS::NUM_PMICS_4U>& i_n_mode
 /// @return true/false either primary pmic is bad
 ///
 bool bad_primary(const std::array<mss::pmic::n_mode, CONSTS::NUM_PMICS_4U>& i_n_mode_pmic);
-
-///
-/// @brief Reset N Mode attributes
-///
-/// @param[in] i_target_info OCMB, PMIC and I2C target struct
-/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS, else error code
-/// @note For 4U only. Has no effect on 1U/2U.
-///
-fapi2::ReturnCode reset_n_mode_attrs(const target_info_redundancy& i_target_info);
 
 ///
 ///
