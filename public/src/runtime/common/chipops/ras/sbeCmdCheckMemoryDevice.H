@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -54,9 +55,7 @@ struct __attribute__((__packed__)) memCheckCmdMsg_t
             // Check for validity of scope
             // 0x01: Image
             // 0x02: Full side
-            //TODO: Enable image only scope PFSBE-758
-            //if ( (scope != SCOPE_IMAGE_ONLY) && (scope != SCOPE_FULL_SIDE) )
-            if (scope != SCOPE_FULL_SIDE)
+            if ( (scope != SCOPE_IMAGE_ONLY) && (scope != SCOPE_FULL_SIDE) )
             {
                 rc = SBE_SEC_RAS_INVALID_SCOPE_CHECK_VALUE;
                 break;
