@@ -26,18 +26,20 @@
 #include "sbe_sp_intf.H"
 #include "imagemap.H"
 #include "rasUtils.H"
+#include "pakwrapper.H"
+#include "filenames.H"
+#include "ptbl.H"
 
 #define MAX_BUFFER_SIZE 0x1000 // 4KB
 
-static
-fapi2::ReturnCode scrubMemoryForAddressNSize(spi::AbstractMemoryDevice *&i_memHandle,
-                                             uint32_t *i_bufferScratchArea,
-                                             uint32_t i_sideStartAddress,
-                                             uint32_t i_sideMaxSize,
-                                             sbeRespGenHdr_t &o_hdr)
+uint32_t scrubMemoryForAddressNSize(spi::AbstractMemoryDevice *&i_memHandle,
+                                    uint32_t *i_bufferScratchArea,
+                                    uint32_t i_sideStartAddress,
+                                    uint32_t i_sideMaxSize)
 {
     #define SBE_FUNC " scrubMemoryForAddressNSize "
     SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
     ReturnCode l_fapiRc = FAPI2_RC_SUCCESS;
 
     do
@@ -50,9 +52,6 @@ fapi2::ReturnCode scrubMemoryForAddressNSize(spi::AbstractMemoryDevice *&i_memHa
         {
             l_readLen = (l_len > MAX_BUFFER_SIZE ? MAX_BUFFER_SIZE : l_len);
 
-            //Using  memset() to force all bytes of ImgBufScratchArea to zero
-            memset(i_bufferScratchArea, 0, MAX_BUFFER_SIZE);
-
             l_fapiRc = i_memHandle->read(i_sideStartAddress + l_offset,
                                          l_readLen,
                                          i_bufferScratchArea);
@@ -60,17 +59,99 @@ fapi2::ReturnCode scrubMemoryForAddressNSize(spi::AbstractMemoryDevice *&i_memHa
             {
                 SBE_ERROR(SBE_FUNC "Read data from device failed, Addr:0x%08X Size:0x%08X",\
                           i_sideStartAddress + l_offset, l_readLen);
-
-                o_hdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                                  SBE_SEC_CU_READ_DATA_IMAGE_FAILURE );
-
+                l_rc = SBE_SEC_CU_READ_DATA_IMAGE_FAILURE;
                 break;
             }
         }
     } while(false);
 
     SBE_EXIT(SBE_FUNC);
-    return l_fapiRc;
+    return l_rc;
+    #undef SBE_FUNC
+}
+
+uint32_t scrubMemoryImageOnly(spi::AbstractMemoryDevice *&i_memHandle,
+                              uint32_t *i_bufferScratchArea,
+                              uint8_t i_side)
+{
+    #define SBE_FUNC " scrubMemoryImageOnly "
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    do
+    {
+        // Get side number in memory: 0,1,2
+        uint8_t l_side = i_side / 2;
+
+        // control structure for memory scrub
+        codeUpdateCtrlStruct_t l_scrubMemCtrlStruct;
+
+        // Get memory scrub parameters populated
+        getCodeUpdateParams(l_scrubMemCtrlStruct);
+
+        for (uint8_t l_img = 0; l_img < EXPECTED_IMG_SECTION_CNT; l_img++)
+        {
+            l_scrubMemCtrlStruct.imageType = (uint16_t)CU::g_expectedImgPkgMap[l_img].imageNum;
+
+            // Get the partition start offset and size for the image from side passed
+            l_rc = getPakEntryFromPartitionTable(l_side,
+                                                 (CU_IMAGES)l_scrubMemCtrlStruct.imageType,
+                                                 NULL,
+                                                 l_scrubMemCtrlStruct);
+            if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+            {
+                SBE_ERROR(SBE_FUNC "getPakEntryFromPartitionTable unsuccessful " \
+                                    "Side[%d] imageTyepe[%d] RC[0x%08x]",
+                                    l_side, l_scrubMemCtrlStruct.imageType, l_rc);
+                break;
+            }
+
+            // Declaring variable to get pad size
+            uint32_t l_paddedSize = 0;
+            void *l_padStart = NULL;
+
+            // Get the side start offset
+            uint32_t l_sideStartAddress = 0;
+            getSideAddress(l_side, l_sideStartAddress);
+
+            // archive file start address and max size(archive limit)
+            FileArchive pakPadSize((uint32_t *)l_scrubMemCtrlStruct.imageStartAddr,
+                                   (uint32_t *)(l_sideStartAddress +
+                                   l_scrubMemCtrlStruct.storageDevStruct.storageDevSideSize));
+            l_rc = pakPadSize.locate_padding((void*&)l_padStart, l_paddedSize);
+            if (l_rc != ARC_OPERATION_SUCCESSFUL)
+            {
+                SBE_ERROR("padSize is not found of an image[%d]"
+                          "of address [0x%08x]",l_scrubMemCtrlStruct.imageType,
+                          l_scrubMemCtrlStruct.imageStartAddr);
+                break;
+            }
+            SBE_INFO(SBE_FUNC " padStart[%p], padSize[0x%08x]", (uint8_t*)l_padStart, l_paddedSize);
+
+            //Getting actual image size, this size is going to be scrubbed.
+            //Actual image size will be subtraction of image start address
+            //from return padStart address
+            uint32_t l_actualImageSize = (uint32_t)((uint8_t*)l_padStart - l_scrubMemCtrlStruct.imageStartAddr);
+
+            //converting 24 bit as nor is 16MB 24-bits used to address
+            //it to pass on to the spi
+            l_scrubMemCtrlStruct.imageStartAddr  -=
+                        l_scrubMemCtrlStruct.storageDevStruct.storageDevBaseAddress;
+
+            SBE_INFO(SBE_FUNC "Image:[0x%02x] StartAddress:[0x%08x] Size:[0x%08x]",
+                               l_img, l_scrubMemCtrlStruct.imageStartAddr, l_actualImageSize);
+
+            l_rc = scrubMemoryForAddressNSize(i_memHandle, i_bufferScratchArea,
+                                              l_scrubMemCtrlStruct.imageStartAddr, l_actualImageSize);
+            if(l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+            {
+                break;
+            }
+        }
+    } while(false);
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
     #undef SBE_FUNC
 }
 
@@ -81,7 +162,6 @@ uint32_t getMemoryScrubData(const struct memCheckCmdMsg_t i_memCheckCmdMsg,
     #define SBE_FUNC " getMemoryScrubData "
     SBE_ENTER(SBE_FUNC);
     uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
-    ReturnCode l_fapiRc = FAPI2_RC_SUCCESS;
     uint32_t *l_imgBufScratchArea = NULL;
     spi::AbstractMemoryDevice *l_memHandle = NULL;
     RASSPIPort *l_portHandle = NULL;
@@ -134,7 +214,7 @@ uint32_t getMemoryScrubData(const struct memCheckCmdMsg_t i_memCheckCmdMsg,
                 }
 
                 // Initialize the count for CE and UE
-                l_portHandle->iv_ioMemDeviceStatus = {0}; 
+                l_portHandle->iv_ioMemDeviceStatus = {0};
                 uint32_t l_sideStartAddress = 0;
                 uint32_t l_sideMaxSize = 0;
 
@@ -154,19 +234,20 @@ uint32_t getMemoryScrubData(const struct memCheckCmdMsg_t i_memCheckCmdMsg,
                 {
                     SBE_INFO(SBE_FUNC "Scope: Full side: Side:[0x%02x] Device:[0x%02x] Address:[0x%08x] Size:[0x%08x]",
                                        l_side, l_dev, l_sideStartAddress, l_sideMaxSize);
-                    l_fapiRc = scrubMemoryForAddressNSize(l_memHandle, l_imgBufScratchArea,
-                                                          l_sideStartAddress, l_sideMaxSize, o_hdr);
+                    l_rc = scrubMemoryForAddressNSize(l_memHandle, l_imgBufScratchArea,
+                                                      l_sideStartAddress, l_sideMaxSize);
                 }
                 else if (i_memCheckCmdMsg.scope == SCOPE_IMAGE_ONLY)
                 {
-                    //TODO: Enable image only scope PFSBE-758
-                    SBE_ERROR(SBE_FUNC "Scope image only not supported");
+                    SBE_INFO(SBE_FUNC "Scope: Image only: Side:[0x%02x] Device:[0x%02x] Address:[0x%08x]",
+                                       l_side, l_dev, l_sideStartAddress);
+                    l_rc = scrubMemoryImageOnly(l_memHandle, l_imgBufScratchArea, l_side);
                 }
 
                 // Get ecc status for the memory side read
                 o_memDeviceStatus[l_scrubEntryCnt].side = l_side;
                 o_memDeviceStatus[l_scrubEntryCnt].devId = l_dev;
-                o_memDeviceStatus[l_scrubEntryCnt].status = (l_fapiRc == FAPI2_RC_SUCCESS ? 0 : SBE_SEC_CU_READ_DATA_IMAGE_FAILURE);
+                o_memDeviceStatus[l_scrubEntryCnt].status = (uint16_t)l_rc;
                 o_memDeviceStatus[l_scrubEntryCnt].numOfCE = l_portHandle->iv_ioMemDeviceStatus.numOfCE;
                 o_memDeviceStatus[l_scrubEntryCnt].numOfUE = l_portHandle->iv_ioMemDeviceStatus.numOfUE;
                 l_scrubEntryCnt++;
