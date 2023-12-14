@@ -501,6 +501,107 @@ static uint32_t ffdcPlatCreateAndSendWithFullTrace (
 }
 
 
+/**
+ * @brief Get the Truncated Trace
+ *        Function help to copy truncated trace to given buffer.
+ *
+ * Assuming TRACE buffer:
+ * +----------------------------------------------------+
+ * |                 Trace header                       |
+ * +----------------------------------------------------+ -\
+ * |                                                    |  |
+ * |               Trace buffer start                   |   }> 8K trace buffer space
+ * |                                                    |  |
+ * +----------------------------------------------------+ -/
+ *
+ * Trace header contain all data about trace, etc, Timestamp, offset,
+ * buffer size etc..
+ *
+ * Truncated trace:
+ *   For truncated trace, have to calculate the trace "offset address".
+ *   As per trace logic offset is just a increment variable. Once it
+ *   reaches the "trace size" it will be reloaded.
+ *
+ * Note:
+ *  - When curTraceOffset >= SBE_FFDC_TRUNCATED_TRACE_LENGTH bytes, then we will
+ *    get a continuous truncated buffer directly from trace buffer.
+ *  - When curTraceOffset < 512 bytes, we have two sections from trace
+ *    buffer going to truncated buffer.
+ *      - Section from 0 to curTraceOffset. This will be copied to bottom of
+ *        the truncated buffer.
+ *      - Section from (8k-(512-curTraceOffset)) to 8k. This will be copied
+ *        to top of the truncated buffer.
+ *  - Because of this shuffle, we can always set 512 as offset in trace header.
+ *  - This has corner case when "(curTraceOffset < 512) and bottom of trace
+ *    buffer is empty)", where the starting of truncated buffer will be
+ *    empty entires. But since parser will be parsing from offset to
+ *    backward, parser still will be able to parse this.
+ *
+ *
+ * @param[in] i_TraceAddr pointer to save truncated trace
+ * @return Secondary RC in case any error
+ */
+void getTruncatedTrace ( const void * i_TraceAddr)
+{
+    #define SBE_FUNC "getTruncatedTrace "
+    SBE_ENTER(SBE_FUNC);
+
+
+
+    uint32_t curTraceOffset = 0;
+    uint32_t byteRemaining  = 0;
+    uint32_t truncatedTraceOffset = 0;
+    uint32_t traceStartOffset     = 0;
+    PkTraceBuffer * ffdcTraceSpace = const_cast<PkTraceBuffer *>(reinterpret_cast<const PkTraceBuffer*>(i_TraceAddr));
+
+    PkMachineContext    ctx;
+    // Enter the critical section
+    pk_critical_section_enter(&ctx);
+
+    curTraceOffset = G_PK_TRACE_BUF->state.offset & PK_TRACE_CB_MASK;
+    // Copying trace header to given trace space
+    memcpy ( (uint8_t *) ffdcTraceSpace, // ffdc Truncated trace buff
+                (uint8_t *) G_PK_TRACE_BUF, // Actual PK trace buffer which is 8 KB size
+                (sizeof(*G_PK_TRACE_BUF) - sizeof(G_PK_TRACE_BUF->cb)));
+
+    // exit the critical section
+    pk_critical_section_exit(&ctx);
+
+    // Number of bytes remains from full trace over truncated trace
+    byteRemaining = SBE_FFDC_TRUNCATED_TRACE_LENGTH;
+    // To find the roll over in resulting buffer after truncation
+    if (curTraceOffset < SBE_FFDC_TRUNCATED_TRACE_LENGTH)
+    {
+        // remaining byte from start of truncated buffer
+        uint32_t rolledOverPortion = SBE_FFDC_TRUNCATED_TRACE_LENGTH - curTraceOffset;
+        // truncated buffer start offset
+        traceStartOffset = (G_PK_TRACE_BUF->size) - rolledOverPortion;
+
+        // copying the start half of the trace
+        memcpy ( (uint8_t *) &ffdcTraceSpace->cb[0],
+                (uint8_t *) &G_PK_TRACE_BUF->cb[traceStartOffset],
+                (size_t) rolledOverPortion);
+        truncatedTraceOffset = rolledOverPortion;
+        traceStartOffset     = 0;
+        byteRemaining        = curTraceOffset;
+    }
+    else
+    {
+        traceStartOffset = curTraceOffset - SBE_FFDC_TRUNCATED_TRACE_LENGTH;
+    }
+    // copying remaining trace
+    memcpy ( (uint8_t *) &ffdcTraceSpace->cb[truncatedTraceOffset],
+            (uint8_t *) &G_PK_TRACE_BUF->cb[traceStartOffset],
+            (size_t) byteRemaining);
+    // Modifying the trace size in truncated ffdc trace (other wise parser logic won't work as expected)
+    ffdcTraceSpace->size = SBE_FFDC_TRUNCATED_TRACE_LENGTH;
+    ffdcTraceSpace->state.offset = (SBE_FFDC_TRUNCATED_TRACE_LENGTH);
+
+    SBE_EXIT(SBE_FUNC);
+    #undef SBE_FUNC
+}
+
+
 uint32_t sendFFDCOverFIFO( uint32_t &o_wordsSent,
                            sbeFifoType i_type,
                            bool i_forceFullTracePackage )
@@ -799,6 +900,12 @@ static void ffdcInitPlatData( const pozPlatFfdcPackageFormat_t * i_platAddr,
                                                 sizeof(pozPlatFfdcPackageFormat_t) );
             blobField->setFields( (uint16_t) SBE_FFDC_TRACE_DATA,
                                     (uint16_t) PLAT_FFDC_TRUNCATED_TRACE_SIZE );
+
+            // Calculating the truncated trace start address
+            uint8_t * traceBufferPtr = (uint8_t *) ((uint8_t *)i_platAddr)         +
+                                                sizeof(pozPlatFfdcPackageFormat_t) +
+                                                sizeof(packageBlobField_t) ;
+            getTruncatedTrace ( (void *) traceBufferPtr);
         }
     }
 }
@@ -829,9 +936,9 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
 
 #if defined( MINIMUM_FFDC_RE )
 
-    ffdcPlatSize = sizeof(pozPlatFfdcPackageFormat_t); /* Plat FFDC size (plat data started) */
-                //    sizeof(packageBlobField_t)        + /* FFDC fields size */ // TODO: need to enable once truncated trace enabled
-                //    PLAT_FFDC_TRUNCATED_TRACE_SIZE;     /* Truncated Trace Len */
+    ffdcPlatSize = sizeof(pozPlatFfdcPackageFormat_t)+ /* Plat FFDC size (plat data started) */
+                   sizeof(packageBlobField_t)        + /* FFDC fields size */
+                   PLAT_FFDC_TRUNCATED_TRACE_SIZE;     /* Truncated Trace Len */
                    /* size of (PkTraceBuffer) - size of trace buffer = size of PkTraceBuffer except trace buffer size*/
 
 #endif
@@ -928,9 +1035,9 @@ void logSbeError( const uint16_t i_primRc,
                   bool i_isFatal
                 )
 {
-    uint32_t ffdcLen = sizeof(pozPlatFfdcPackageFormat_t); /* Plat ffdc header + plat header(commit ID + DD level) + Dump field size */
-    //             sizeof(packageBlobField_t)      + /* FFDC fields size */ // TODO: need to enable once truncated trace enabled
-    //             PLAT_FFDC_TRUNCATED_TRACE_SIZE ;  /* Trace data size  */
+    uint32_t ffdcLen = sizeof(pozPlatFfdcPackageFormat_t)+ /* Plat ffdc header + plat header(commit ID + DD level) + Dump field size */
+                       sizeof(packageBlobField_t)        + /* FFDC fields size */
+                       PLAT_FFDC_TRUNCATED_TRACE_SIZE ;    /* Trace data size  */
 
     pozFfdcNode_t * currentNode = (pozFfdcNode_t *) Heap::get_instance().
                                scratch_alloc( ffdcLen + sizeof(pozFfdcNode_t) );
