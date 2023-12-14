@@ -23,7 +23,8 @@
 <!--                                                                        -->
 <!-- IBM_PROLOG_END_TAG                                                     -->
 <hwpErrors>
-
+  <format>poz</format>
+<!-- ******************************************************************** -->
     <hwpError>
         <sbeError/>
         <rc>RC_POZ_I2C_STATUS_ERROR</rc>
