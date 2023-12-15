@@ -76,6 +76,8 @@ class PpeImageReceiver : public HwpStreamReceiver
 
         /// @brief Heap start address of loaded image
         uint32_t iv_heapStart;
+        /// @brief Heap size of loaded image
+        uint32_t iv_heapSize;
         /// @brief Abbreviated git commit hash of loaded image
         uint32_t iv_gitId;
 };

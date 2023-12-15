@@ -68,6 +68,7 @@ ARC_RET_t PpeImageReceiver::consume(const void* i_data, uint32_t i_size)
         }
 
         iv_heapStart = hea->heapAddr;
+        iv_heapSize  = hea->heapSize;
         iv_gitId = git->commitId;
     }
 
@@ -117,7 +118,7 @@ static ReturnCode sbestreampaktohwp_internal(
         // Call stream_decompress
         pakRc = entry.stream_decompress(i_receiver, scratchArea, i_check_hash ? &hashData : NULL);
 
-	// Deallocate the scratch space.
+        // Deallocate the scratch space.
         Heap::get_instance().scratch_free(scratchArea);
 
         if(pakRc)
