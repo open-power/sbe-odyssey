@@ -41,7 +41,7 @@ extern "C" {
  * Constants for SBE FW major and minor number
  */
 static const uint16_t SBE_FW_MAJOR_VERSION = 1;
-static const uint16_t SBE_FW_MINOR_VERSION = 1;
+static const uint16_t SBE_FW_MINOR_VERSION = 2;
 
 static const uint8_t INFO_TXT_MAJOR_VERSION = 0;
 static const uint8_t INFO_TXT_MINOR_VERSION = 1;
