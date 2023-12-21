@@ -118,6 +118,8 @@ const char ringBaseDir[] = "rings/";
 /// scanning we can simply target the entire chiplet without having
 /// to play any games with the scan address.
 static const TargetType TARGET_TYPE_ACTUALLY_PERV = TARGET_TYPE_NONE
+        | TARGET_TYPE_SHADOW
+        | TARGET_TYPE_CORE
         | TARGET_TYPE_EX
         | TARGET_TYPE_XBUS
         | TARGET_TYPE_ABUS
