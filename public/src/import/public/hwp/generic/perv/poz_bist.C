@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -274,7 +274,8 @@ static ReturnCode poz_bist_execute(
                                i_params.flags & i_params.bist_flags::ASSERT_ABIST_DONE,
                                i_params.max_polls,
                                i_params.poll_delay_hw,
-                               i_params.poll_delay_sim));
+                               i_params.poll_delay_sim,
+                               runn_triggers_opcg_infinite(i_params.opcg_count)));
         o_diags.completed_stages |= i_params.bist_stages::POLL;
         o_diags.pass_counter++;
 

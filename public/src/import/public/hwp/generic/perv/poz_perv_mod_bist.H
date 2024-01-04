@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -65,8 +65,9 @@ fapi2::ReturnCode mod_stagger_idle_setup(
 /// @param[in]   i_poll_abist_done         Inspect ABIST_DONE alongside the other bits
 /// @param[in]   i_assert_abist_done       Assert ABIST_DONE is set at the end of the procedure
 /// @param[in]   i_max_polls               Max number of polls to issue (>0x7FFFFFFF for infinite)
-/// @param[in]   i_poll_delay_hw           Delay in terms of nS between polls on hardware environment
+/// @param[in]   i_poll_delay_hw           Delay in terms of nanoseconds between polls on hardware environment
 /// @param[in]   i_poll_delay_sim          Delay in terms of simcycles between polls on simulation environment
+/// @param[in]   i_force_allow_not_done    Force this call to not raise an error if DONE is never measured
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_bist_poll(
@@ -76,7 +77,8 @@ fapi2::ReturnCode mod_bist_poll(
     bool i_assert_abist_done = true,
     uint32_t i_max_polls = 400,
     uint32_t i_poll_delay_hw = 200000,
-    uint32_t i_poll_delay_sim = 1120000);
+    uint32_t i_poll_delay_sim = 1120000,
+    bool i_force_allow_not_done = false);
 
 /// @brief BIST SCOM reg cleanup module.
 /// --Zero OPCG_REG0/1/2, SCAN_REGION_TYPE, CLK_REGION, BIST, and OPCG_CAPT1/2/3 registers
