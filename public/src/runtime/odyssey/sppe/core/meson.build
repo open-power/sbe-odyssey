@@ -47,6 +47,7 @@ infile_c = ['main.C',
             'hwptable.C',
             'sbecmdgetmemtraindata.C',
             'poolglobal.C',
+            'sbecmdodyunload.C',
           ]
 
 odyssey_abs_core_c_file_paths = []
