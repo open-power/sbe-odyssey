@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -111,7 +111,8 @@ ReturnCode mod_bist_poll(
     bool i_assert_abist_done,
     uint32_t i_max_polls,
     uint32_t i_poll_delay_hw,
-    uint32_t i_poll_delay_sim)
+    uint32_t i_poll_delay_sim,
+    bool i_force_allow_not_done)
 {
     FAPI_INF("Entering ...");
 
@@ -191,7 +192,7 @@ ReturnCode mod_bist_poll(
         FAPI_TRY(PCB_OPCG_STOP.putScom(i_target));
     }
 
-    FAPI_ASSERT((l_total_polls < i_max_polls) || l_infinite_polling,
+    FAPI_ASSERT((l_total_polls < i_max_polls) || l_infinite_polling || i_force_allow_not_done,
                 fapi2::DONE_HALT_NOT_SET()
                 .set_PERV_CPLT_STAT0(CPLT_STAT0)
                 .set_POLL_COUNT(l_total_polls)
