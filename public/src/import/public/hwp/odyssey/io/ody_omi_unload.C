@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -34,6 +34,18 @@
 #include <ody_omi_unload.H>
 #include <common_unload.H>
 #include <ody_io_ppe_common.H>
+
+enum section_header_numbers : uint64_t
+{
+    DL_Regs = 0,
+    Flat_Scom_Regs = 1,
+    Mem_Regs_Per_PPE = 2,
+    Mem_Regs_Per_Thread = 3,
+    Tx_Pl_Hw_Regs = 4,
+    Rx_Pl_Hw_Regs = 5,
+    Tx_Pg_Hw_Regs = 6,
+    Rx_Pg_Hw_Regs = 7
+};
 
 /// @brief                      Stream DL data to file
 /// @param[in] i_target         Target Chip
@@ -70,15 +82,14 @@ fapi2::ReturnCode ody_omi_unload(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHI
 {
     FAPI_DBG("Starting ody_omi_unload");
 
+    constexpr uint64_t c_section_mark = 0xAC1D000000000000;
     constexpr uint32_t l_groups = 1;
     constexpr uint32_t l_lanes = 8;
     constexpr uint32_t l_threads = 1;
-    //                                         start    end
-    constexpr uint16_t l_pl_tx_endpoints[] = {0x0808, 0x0BF8};
-    constexpr uint16_t l_pg_tx_endpoints[] = {0x1808, 0x1C88};
+    constexpr uint16_t c_REVISION = 0x01;
+    constexpr uint8_t c_section_number_shift = 40;
 
-    constexpr uint16_t l_pl_rx_endpoints[] = {0x0000, 0x0D00};
-    constexpr uint16_t l_pg_rx_endpoints[] = {0x1000, 0x16F0};
+    uint64_t l_section_header = 0xAC1D000000000000;
 
     FAPI_DBG("HWP: I/O UNLOAD: Base Addr(0x%08X) Groups(%d) Lanes(%d)", PHY_ODY_OMI_BASE, l_groups, l_lanes);
 
@@ -88,15 +99,33 @@ fapi2::ReturnCode ody_omi_unload(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHI
     // 4. Tx Hardware Regs (16bit reads, will pack them to 32b fifo entries)
     // 5. Rx Hardware Regs (16bit reads, will pack them to 32b fifo entries)
 
+    o_ostream.put8(c_REVISION);
+    o_ostream.put8(0x01);   // System number Ody = 0x01
+    o_ostream.put8(0);      // FBC Drawer
+    o_ostream.put8(0);      // FBC DCM
+    o_ostream.put8(0);      // FBC Chip
+
+    o_ostream.put8(0);      // Reserved
+    o_ostream.put16(0);     // Reserved
+    o_ostream.put32(i_chipunit_mask);
+
     // 1. DL regs
+    l_section_header = c_section_mark | (DL_Regs << c_section_number_shift) | PHY_ODY_OMI_BASE;
+    o_ostream.put64(l_section_header);
     stream_ody_dl_data(i_target, o_ostream);
 
     // 2. Flat Scom Regs (64b reads): 18 * 2 = 36(32B)
+    l_section_header = c_section_mark | (Flat_Scom_Regs << c_section_number_shift) | PHY_ODY_OMI_BASE;
+    o_ostream.put64(l_section_header);
     stream_scom_data(i_target, o_ostream, PHY_ODY_OMI_BASE);
 
     // 3. Mem Regs (64b reads, only need the mem-regs sections)
     //  Image Regs (32B)
+    l_section_header = c_section_mark | (Mem_Regs_Per_PPE << c_section_number_shift) | PHY_ODY_OMI_BASE;
+    o_ostream.put64(l_section_header);
     stream_mem_data_pp(i_target, PHY_ODY_OMI_BASE, o_ostream);
+    l_section_header = c_section_mark | (Mem_Regs_Per_Thread << c_section_number_shift) | PHY_ODY_OMI_BASE;
+    o_ostream.put64(l_section_header);
     stream_mem_data_pt(i_target, PHY_ODY_OMI_BASE, l_threads, o_ostream);
 
     // 4-5. Tx Hardware Regs (16bit reads, will pack them to 32b fifo entries)
@@ -105,17 +134,24 @@ fapi2::ReturnCode ody_omi_unload(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHI
     // TX PL Regs (0x080 - 0x0A5)
     // RX PG Regs (0x100 - 0x16F)
     // TX PG Regs (0x180 - 0x1AD)
-    // TX PB Regs (0x1E0 - 0x1EF)
-    // RX PB Regs (0x1F0 - 0x1F3)
 
     // Rx/Tx PL Regs
-    stream_hw_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, l_lanes, l_pl_tx_endpoints[0], l_pl_tx_endpoints[1]);
-    stream_hw_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, l_lanes, l_pl_rx_endpoints[0], l_pl_rx_endpoints[1]);
+
+    l_section_header = c_section_mark | (Tx_Pl_Hw_Regs << c_section_number_shift) | PHY_ODY_OMI_BASE;
+    o_ostream.put64(l_section_header);
+    stream_hw_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, l_lanes, true, true);
+    l_section_header = c_section_mark | (Rx_Pl_Hw_Regs << c_section_number_shift) | PHY_ODY_OMI_BASE;
+    o_ostream.put64(l_section_header);
+    stream_hw_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, l_lanes, false, true);
 
     // Rx/Tx PG Regs
-    stream_hw_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, 1, l_pg_tx_endpoints[0], l_pg_tx_endpoints[1]);
-    o_ostream.flush();
-    stream_hw_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, 1, l_pg_rx_endpoints[0], l_pg_rx_endpoints[1]);
+    l_section_header = c_section_mark | (Tx_Pg_Hw_Regs << c_section_number_shift) | PHY_ODY_OMI_BASE;
+    o_ostream.put64(l_section_header);
+    stream_hw_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, 1, true, false);
+
+    l_section_header = c_section_mark | (Rx_Pg_Hw_Regs << c_section_number_shift) | PHY_ODY_OMI_BASE;
+    o_ostream.put64(l_section_header);
+    stream_hw_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, 1, false, false);
 
 
 fapi_try_exit:
