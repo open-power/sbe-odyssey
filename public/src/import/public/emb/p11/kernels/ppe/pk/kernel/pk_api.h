@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -282,7 +282,7 @@
 /// ignored. The application can redefine this macro.
 
 #ifndef PK_SECONDS
-    #define PK_SECONDS(s) ((PkInterval)(PK_BASE_FREQ_HZ * (s)))
+    #define PK_SECONDS(s) ((PK_BASE_FREQ_HZ * (PkInterval)(s)))
 #endif
 
 /// Convert a time in integral milliseconds to a time interval - overflows are
@@ -290,7 +290,7 @@
 /// assumed. The application can redefine this macro.
 
 #ifndef PK_MILLISECONDS
-    #define PK_MILLISECONDS(m) ( (PkInterval)(PK_BASE_FREQ_KHZ * (m)) )
+    #define PK_MILLISECONDS(m) ((PK_BASE_FREQ_KHZ * (PkInterval)(m)))
 #endif
 
 /// Convert a time in integral microseconds to a time interval - overflows are
@@ -298,7 +298,7 @@
 /// assumed. The application can redefine this macro.
 
 #ifndef PK_MICROSECONDS
-    #define PK_MICROSECONDS(u)  ( (PkInterval)(PK_BASE_FREQ_MHZ * (u)) )
+    #define PK_MICROSECONDS(u)  ((PK_BASE_FREQ_MHZ * (PkInterval)(u)))
 #endif
 
 /// Convert a time in integral nanoseconds to a time interval - overflows are
@@ -306,7 +306,7 @@
 /// assumed. The application can redefine this macro.
 
 #ifndef PK_NANOSECONDS
-    #define PK_NANOSECONDS(n) ( (PkInterval)( ( ((PK_BASE_FREQ_MHZ<<10)/1000) * (n) ) >> 10) )
+    #define PK_NANOSECONDS(n) (( ( ((PK_BASE_FREQ_MHZ<<10)/1000) * (PkInterval)(n) ) >> 10) )
 #endif
 
 /// Enable PK application tracing for latency measurments
