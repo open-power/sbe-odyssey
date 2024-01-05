@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -251,7 +251,9 @@ void fillCapabilitiesDetails(uint32_t *o_capability)
 
     o_capability[GENERIC_CHIPOP_CAPABILITY_START_IDX] =
                                                     GET_SBE_FFDC_SUPPPORTED |
-                                                    GET_CAPABILITIES_SUPPORTED;
+                                                    GET_CAPABILITIES_SUPPORTED |
+                                                    GET_SBE_SCRATCH_DATA_SUPPORTED |
+                                                    SCRUB_MEMORY_DEVICE_SUPPORTED;
 
     o_capability[STOP_CLOCKS_CAPABILITY_START_IDX] = STOP_CLOCKS_SUPPORTED;
 
