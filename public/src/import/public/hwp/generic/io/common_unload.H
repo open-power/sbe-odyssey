@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -245,16 +245,52 @@ void stream_hw_data(const fapi2::Target<K, M, V>& i_target,
                     const uint64_t i_base_addr,
                     const uint16_t i_num_groups,
                     const uint16_t i_max_lanes,
-                    const uint16_t i_start,
-                    const uint16_t i_end)
+                    const bool i_tx,
+                    const bool i_per_lane)
 {
-    FAPI_DBG("Stream PL Data");
+    FAPI_DBG("Stream HW Data");
+
+    //                                         start    end
+    constexpr uint16_t l_pl_tx_endpoints[] = {0x0808, 0x0BF8};
+    constexpr uint16_t l_pl_rx_endpoints[] = {0x0000, 0x0D40};
+
+    constexpr uint16_t l_pg_tx_endpoints[] = {0x1808, 0x1C88};
+    constexpr uint16_t l_pg_rx_endpoints[] = {0x1000, 0x16F0};
 
     fapi2::buffer<uint64_t> l_data = 0;
     uint64_t l_addr = 0;
     uint32_t l_rc = 0; // FAPI_RC_SUCCESS
+    uint16_t l_start = 0;
+    uint16_t l_end = 0;
 
-    for (uint32_t l_reg_addr = i_start; l_reg_addr <= i_end; l_reg_addr += 0x10)
+    if (i_per_lane)
+    {
+        if (i_tx)
+        {
+            l_start = l_pl_tx_endpoints[0];
+            l_end = l_pl_tx_endpoints[1];
+        }
+        else
+        {
+            l_start = l_pl_rx_endpoints[0];
+            l_end = l_pl_rx_endpoints[1];
+        }
+    }
+    else
+    {
+        if (i_tx)
+        {
+            l_start = l_pg_tx_endpoints[0];
+            l_end = l_pg_tx_endpoints[1];
+        }
+        else
+        {
+            l_start = l_pg_rx_endpoints[0];
+            l_end = l_pg_rx_endpoints[1];
+        }
+    }
+
+    for (uint32_t l_reg_addr = l_start; l_reg_addr <= l_end; l_reg_addr += 0x10)
     {
         for (uint32_t l_ioo_unit = 0; l_ioo_unit < i_num_groups; l_ioo_unit++)
         {
