@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -2659,5 +2659,8 @@
   </entry>
   <entry name="ATTR_ODY_DRAMINIT_FIR_CHECK_ENABLE">
     <value>0x01</value>
+  </entry>
+  <entry name="ATTR_RTG_SCAN_ORDER">
+    <value>0</value>
   </entry>
 </entries>
