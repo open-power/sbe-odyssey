@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -627,7 +627,7 @@ ReturnCode mod_setup_tracestop_on_xstop_chiplet(
     fapi2::buffer<uint64_t> DBG_TRACE_MODE_REG_2 = 0;
     fapi2::buffer<uint64_t> DBG_MODE_REG = 0;
 
-    FAPI_INF("Set up trace stop on xstop for chiplet %d",
+    FAPI_DBG("Set up trace stop on xstop for chiplet %d",
              i_chiplet.getChipletNumber());
 
     FAPI_TRY(getScom(i_chiplet, i_dbg_scom_base + 0, DBG_MODE_REG));
