@@ -105,9 +105,14 @@ static const MulticastGroup MCGROUP_SCAN_TARGETS = MCGROUP_5;
 static const uint32_t EQ_PARALLEL_SCAN_REGIONS = 0x2208; // cl20, l30, mma0
 
 /// The list of subdirectories attempted in order when loading a scan image
-const char ringTypeOrder[][8] =
+const char ringTypeOrderCustBeforeEkb[][8] =
 {
     "cust/", "base/", "dynXX/", "bmc/", "hb/", "ovr/"
+};
+
+const char ringTypeOrderEkbBeforeCust[][8] =
+{
+    "base/", "dynXX/", "cust/", "bmc/", "hb/", "ovr/"
 };
 
 /// The base directory for all scan images
@@ -960,8 +965,13 @@ ReturnCode poz_putRingBackend(const Target<TARGET_TYPE_ALL_MC>& i_target,
     FAPI_TRY(FAPI_ATTR_GET(ATTR_DYNAMIC_INIT_FEATURE_VEC, chip_target(), dynamic_features));
 #endif
 
+    ATTR_RTG_SCAN_ORDER_Type rtg_scan_order;
+    FAPI_TRY(FAPI_ATTR_GET(ATTR_RTG_SCAN_ORDER, chip_target(), rtg_scan_order));
+
     // Iterate over all possible ring subdirs in order
-    for (auto type : ringTypeOrder)
+    for (auto type : ((rtg_scan_order == fapi2::ENUM_ATTR_RTG_SCAN_ORDER_EKB_BEFORE_CUST) ?
+                      (ringTypeOrderEkbBeforeCust) :
+                      (ringTypeOrderCustBeforeEkb)))
     {
         // Start constructing the directory by appending the subdir name to the base
         char* ptr = fname + sizeof(ringBaseDir) - 1;
