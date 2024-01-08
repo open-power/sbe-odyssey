@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2012,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2012,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -186,7 +186,7 @@ ReturnCode putRing(const Target<K, M, V>& i_target,
                                 const uint32_t i_modifiedRingAddress,
                                 const RingMode i_ringMode)
     {
-        FAPI_INF("PUT-RING: plat_putRingImpl inside SBE plat_putringutil ");
+        FAPI_DBG("PUT-RING: plat_putRingImpl inside SBE plat_putringutil ");
         ReturnCode l_rc = plat_putringutil( (void*)&i_target, i_scanImage,
                                             i_modifiedRingAddress, i_ringMode );
         return l_rc;
