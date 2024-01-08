@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -213,19 +213,17 @@ uint32_t sbeSpiWriteWrap ( fapi2::sbefifo_hwp_data_istream& i_getStream,
 
     } while(false);
 
+fapi_try_exit:
+
     //////////////////////////////////////////////////////
     //Free the scratch area
     Heap::get_instance().scratch_free(l_imgBufScratchArea);
     freeMemoryDevice(gMemHandle);
 
-    if(l_rc == SBE_SEC_OPERATION_SUCCESSFUL)
-    {
-        // Build the response header packet
-        l_rc = sbeDsSendRespHdr( respHdr, &ffdc, i_getStream.getFifoType());
-       // will let command processor routine handle the failure
-    }
+    // Build the response header packet
+    l_rc = sbeDsSendRespHdr( respHdr, &ffdc, i_getStream.getFifoType());
+    // will let command processor routine handle the failure
 
-fapi_try_exit:
     SBE_EXIT(SBE_FUNC);
     return l_rc;
     #undef SBE_FUNC
@@ -336,20 +334,18 @@ uint32_t sbeSpiReadWrap ( fapi2::sbefifo_hwp_data_istream& i_getStream,
         } //end of for-loop
 
     } while(false);
+  
+fapi_try_exit:
 
     //////////////////////////////////////////////////////
     //Free the scratch area
     Heap::get_instance().scratch_free(l_imgBufScratchArea);
     freeMemoryDevice(gMemHandle);
 
-    if(l_rc == SBE_SEC_OPERATION_SUCCESSFUL)
-    {
-        // Build the response header packet
-        l_rc = sbeDsSendRespHdr( respHdr, &ffdc, i_getStream.getFifoType());
-       // will let command processor routine handle the failure
-    }
+    // Build the response header packet
+    l_rc = sbeDsSendRespHdr( respHdr, &ffdc, i_getStream.getFifoType());
+    // will let command processor routine handle the failure
 
-fapi_try_exit:
     SBE_EXIT(SBE_FUNC);
     return l_rc;
     #undef SBE_FUNC
