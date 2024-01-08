@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -354,7 +354,7 @@ ReturnCode verifyHeader(
 
     FAPI_TRY(getScom(i_target_comp, SCAN64CONTSCAN, l_readHeader));
 
-    FAPI_INF("Got header - %08x%08x", l_readHeader >> 32, l_readHeader & 0xFFFFFFFF);
+    FAPI_DBG("Got header - %08x%08x", l_readHeader >> 32, l_readHeader & 0xFFFFFFFF);
     FAPI_ASSERT( l_readHeader == SCAN_HEADER_DATA,
                  PUTRING_CHECKWORD_DATA_MISMATCH()
                  .set_TARGET( i_target_comp )
@@ -577,7 +577,7 @@ ReturnCode poz_putRingUtils(
     const uint32_t i_modifiedRingAddress,
     const RingMode i_ringMode)
 {
-    FAPI_INF(">> poz_putRingUtils  i_modifiedRingAddress=0x%08X i_ringMode=0x%08x",
+    FAPI_DBG(">> poz_putRingUtils  i_modifiedRingAddress=0x%08X i_ringMode=0x%08x",
              i_modifiedRingAddress, i_ringMode);
 
     const ScanTarget& l_target          = i_target;
@@ -789,6 +789,6 @@ ReturnCode poz_putRingUtils(
     FAPI_TRY(cleanupClockController(l_target, i_ringMode, l_scanRegion, l_OPCGData));
 
 fapi_try_exit:
-    FAPI_INF( "<< poz_putRingUtils" );
+    FAPI_DBG( "<< poz_putRingUtils" );
     return current_err;
 }
