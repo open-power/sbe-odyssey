@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2023                             -->
+<!-- Contributors Listed Below - COPYRIGHT 2023,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -25,42 +25,6 @@
 <attributes>
 <!-- ********************************************************************** -->
     <attribute>
-        <id>ATTR_POZ_BIST_ESD_TEST</id>
-        <targetType>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetType>
-        <description>
-            Specifies if the BIST ESD test is going to run
-        </description>
-        <valueType>uint8</valueType>
-        <enum>
-            DISABLED = 0x00,
-            ENABLED = 0x01
-        </enum>
-        <default>DISABLED</default>
-        <platInit/>
-        <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="poz">
-          <targetTypes>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetTypes>
-        </sbeAttrSync>
-    </attribute>
-<!-- ********************************************************************** -->
-    <attribute>
-        <id>ATTR_POZ_BIST_DAC_TEST</id>
-        <targetType>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetType>
-        <description>
-            Specifies if the BIST DAC test is going to run
-        </description>
-        <valueType>uint8</valueType>
-        <enum>
-            DISABLED = 0x00,
-            ENABLED = 0x01
-        </enum>
-        <default>DISABLED</default>
-        <platInit/>
-        <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="poz">
-          <targetTypes>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetTypes>
-        </sbeAttrSync>
-    </attribute>
-<!-- ********************************************************************** -->
-    <attribute>
         <id>ATTR_POZ_BIST_TIMER</id>
         <targetType>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetType>
         <description>
@@ -73,87 +37,4 @@
           <targetTypes>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetTypes>
         </sbeAttrSync>
     </attribute>
-<!-- ********************************************************************** -->
-    <attribute>
-        <id>ATTR_POZ_BIST_DFT_MODE</id>
-        <targetType>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetType>
-        <description>
-            Enable to run IO hwps in DFT/tester g2p mode
-        </description>
-        <valueType>uint8</valueType>
-        <enum>
-            DISABLED = 0x00,
-            ENABLED = 0x01
-        </enum>
-        <default>DISABLED</default>
-        <platInit/>
-        <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="poz">
-          <targetTypes>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetTypes>
-        </sbeAttrSync>
-    </attribute>
-<!-- ********************************************************************** -->
-    <attribute>
-        <id>ATTR_POZ_BIST_IO_TEST_SECTOR</id>
-        <targetType>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetType>
-        <description>
-            Enable to set WFT/MFT modess
-        </description>
-        <valueType>uint8</valueType>
-        <enum>
-            DISABLED = 0x00,
-            ENABLED = 0x01
-        </enum>
-        <default>DISABLED</default>
-        <platInit/>
-        <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="poz">
-          <targetTypes>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetTypes>
-        </sbeAttrSync>
-    </attribute>
-<!-- ********************************************************************** -->
-    <attribute>
-        <id>ATTR_POZ_BIST_G2P_SHRD_TST_OVRRD</id>
-        <targetType>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetType>
-        <description>
-            Disable G2P override of shared-test-flip bit
-        </description>
-        <valueType>uint8</valueType>
-        <enum>
-            DISABLED = 0x00,
-            ENABLED = 0x01
-        </enum>
-        <default>ENABLED</default>
-        <platInit/>
-        <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="poz">
-          <targetTypes>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetTypes>
-        </sbeAttrSync>
-    </attribute>
-<!-- ********************************************************************** -->
-    <attribute>
-        <id>ATTR_POZ_DAC_TEST_LIN_MAX_MIN</id>
-        <targetType>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetType>
-        <description>
-            DAC Test Linear Max Min value
-        </description>
-        <valueType>uint8</valueType>
-        <default>10</default>
-        <platInit/>
-        <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="poz">
-          <targetTypes>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetTypes>
-        </sbeAttrSync>
-    </attribute>
-<!-- ********************************************************************** -->
-    <attribute>
-        <id>ATTR_POZ_DAC_TEST_DELTA</id>
-        <targetType>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetType>
-        <description>
-            DAC Test Delta value
-        </description>
-        <valueType>uint8</valueType>
-        <default>5</default>
-        <platInit/>
-        <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="poz">
-          <targetTypes>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetTypes>
-        </sbeAttrSync>
-    </attribute>
-<!-- ********************************************************************** -->
 </attributes>
