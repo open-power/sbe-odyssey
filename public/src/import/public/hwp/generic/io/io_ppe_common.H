@@ -356,13 +356,9 @@ uint32_t io_ppe_common<K, M, V>::calc_pcie_data_rate(const uint32_t i_data_rate)
     {
         l_pcie_data_rate = 3;
     }
-    else if (i_data_rate <= 32000)
-    {
-        l_pcie_data_rate = 4;
-    }
     else
     {
-        l_pcie_data_rate = 5;
+        l_pcie_data_rate = 4;
     }
 
     return l_pcie_data_rate;
