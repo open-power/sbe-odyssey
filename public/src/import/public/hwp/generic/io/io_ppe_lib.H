@@ -79,25 +79,33 @@ class io_ppe_regs
 #endif
         }
 
-        fapi2::ReturnCode getData(const fapi2::Target<K, M, V>& i_target,
-                                  const uint32_t i_section_addr,
-                                  const uint32_t i_address,
-                                  const uint32_t i_mask,
-                                  const uint32_t i_shift,
-                                  const uint32_t i_thread,
-                                  const uint32_t i_thread_size,
-                                  const uint32_t i_lane,
-                                  fapi2::buffer<uint64_t>& o_data);
+        inline fapi2::ReturnCode getData(const fapi2::Target<K, M, V>& i_target,
+                                         const uint32_t i_section_addr,
+                                         const uint32_t i_address,
+                                         const uint32_t i_mask,
+                                         const uint32_t i_shift,
+                                         const uint32_t i_thread,
+                                         const uint32_t i_thread_size,
+                                         const uint32_t i_lane,
+                                         fapi2::buffer<uint64_t>& o_data)
+        {
+            return getData(i_target, calcAddress(i_section_addr, i_address, i_thread, i_thread_size, i_lane),
+                           ams(i_address, i_mask, i_shift), o_data);
+        }
 
-        fapi2::ReturnCode putData(const fapi2::Target<K, M, V>& i_target,
-                                  const uint32_t i_section_addr,
-                                  const uint32_t i_address,
-                                  const uint32_t i_mask,
-                                  const uint32_t i_shift,
-                                  const uint32_t i_thread,
-                                  const uint32_t i_thread_size,
-                                  const uint32_t i_lane,
-                                  fapi2::buffer<uint64_t> i_data);
+        inline fapi2::ReturnCode putData(const fapi2::Target<K, M, V>& i_target,
+                                         const uint32_t i_section_addr,
+                                         const uint32_t i_address,
+                                         const uint32_t i_mask,
+                                         const uint32_t i_shift,
+                                         const uint32_t i_thread,
+                                         const uint32_t i_thread_size,
+                                         const uint32_t i_lane,
+                                         fapi2::buffer<uint64_t> i_data)
+        {
+            return putData(i_target, calcAddress(i_section_addr, i_address, i_thread, i_thread_size, i_lane),
+                           ams(i_address, i_mask, i_shift), i_data);
+        }
 
         fapi2::ReturnCode flushCache(const fapi2::Target<K, M, V>& i_target);
 
@@ -111,22 +119,25 @@ class io_ppe_regs
         fapi2::Target<K, M, V> last_target;
 #endif
 
-        uint64_t calcAddress(const uint32_t i_section_addr,
-                             const uint32_t i_address,
-                             const uint32_t i_thread,
-                             const uint32_t i_thread_size,
-                             const uint32_t i_lane);
+        constexpr uint32_t calcAddress(const uint32_t i_section_addr,
+                                       const uint32_t i_address,
+                                       const uint32_t i_thread,
+                                       const uint32_t i_thread_size,
+                                       const uint32_t i_lane);
+
+        constexpr uint32_t ams(const uint32_t i_address,
+                               const uint32_t i_mask,
+                               const uint32_t i_shift)
+        {
+            return (i_address & 3) << 24 | (i_shift << 16) | i_mask;
+        }
 
         uint64_t extractData(const uint64_t i_8b_data,
-                             const uint32_t i_address,
-                             const uint32_t i_mask,
-                             const uint32_t i_shift);
+                             const uint32_t i_ams);
 
         uint64_t updateData(const uint64_t i_8b_data,
                             const uint32_t i_reg_data,
-                            const uint32_t i_address,
-                            const uint32_t i_mask,
-                            const uint32_t i_shift);
+                            const uint32_t i_ams);
 
 #if IO_PPE_MAX_CACHE_SIZE > 0
         fapi2::ReturnCode cacheData(const fapi2::Target<K, M, V>& i_target,
@@ -134,6 +145,16 @@ class io_ppe_regs
                                     const fapi2::buffer<uint64_t> i_data,
                                     const uint8_t i_modified);
 #endif
+
+        fapi2::ReturnCode getData(const fapi2::Target<K, M, V>& i_target,
+                                  const uint32_t i_addr,
+                                  const uint32_t i_ams,
+                                  fapi2::buffer<uint64_t>& o_data);
+
+        fapi2::ReturnCode putData(const fapi2::Target<K, M, V>& i_target,
+                                  const uint32_t i_addr,
+                                  const uint32_t i_ams,
+                                  fapi2::buffer<uint64_t> i_data);
 
         fapi2::ReturnCode getData(const fapi2::Target<K, M, V>& i_target, const uint64_t i_addr,
                                   fapi2::buffer<uint64_t>& o_data);
@@ -145,16 +166,11 @@ class io_ppe_regs
 
 template<fapi2::TargetType K, fapi2::MulticastType M, typename V>
 fapi2::ReturnCode io_ppe_regs<K, M, V>::getData(const fapi2::Target<K, M, V>& i_target,
-        const uint32_t i_section_addr,
-        const uint32_t i_address,
-        const uint32_t i_mask,
-        const uint32_t i_shift,
-        const uint32_t i_thread,
-        const uint32_t i_thread_size,
-        const uint32_t i_lane,
+        const uint32_t i_addr,
+        const uint32_t i_ams,
         fapi2::buffer<uint64_t>& o_data)
 {
-    uint64_t l_addr = calcAddress(i_section_addr, i_address, i_thread, i_thread_size, i_lane);
+    uint64_t l_addr = uint64_t(i_addr) << 32;
     fapi2::buffer<uint64_t> l_data;
 
     // FAPI_DBG("io_ppe_regs::getData: calcAddress l_addr 0x%08X%08X",
@@ -180,7 +196,7 @@ fapi2::ReturnCode io_ppe_regs<K, M, V>::getData(const fapi2::Target<K, M, V>& i_
 
 #endif
 
-    o_data = extractData(l_data, i_address, i_mask, i_shift);
+    o_data = extractData(l_data, i_ams);
     // FAPI_DBG("io_ppe_regs::getData: extractData - o_data 0x%08X%08X",
     //          (o_data >> 32) & 0xFFFFFFFF, o_data & 0xFFFFFFFF);
 
@@ -190,17 +206,11 @@ fapi_try_exit:
 
 template<fapi2::TargetType K, fapi2::MulticastType M, typename V>
 fapi2::ReturnCode io_ppe_regs<K, M, V>::putData(const fapi2::Target<K, M, V>& i_target,
-        const uint32_t i_section_addr,
-        const uint32_t i_address,
-        const uint32_t i_mask,
-        const uint32_t i_shift,
-        const uint32_t i_thread,
-        const uint32_t i_thread_size,
-        const uint32_t i_lane,
+        const uint32_t i_addr,
+        const uint32_t i_ams,
         fapi2::buffer<uint64_t> i_data)
 {
-
-    uint64_t l_addr = calcAddress(i_section_addr, i_address, i_thread, i_thread_size, i_lane);
+    uint64_t l_addr = uint64_t(i_addr) << 32;
     fapi2::buffer<uint64_t> l_data;
 
 #if IO_PPE_MAX_CACHE_SIZE > 0
@@ -218,7 +228,7 @@ fapi2::ReturnCode io_ppe_regs<K, M, V>::putData(const fapi2::Target<K, M, V>& i_
 
 #endif
     // FAPI_DBG(">>updateData l_data: %llx, i_data: %llx", l_data, i_data);
-    l_data = updateData(l_data, i_data, i_address, i_mask, i_shift);
+    l_data = updateData(l_data, i_data, i_ams);
     // FAPI_DBG("<<updateData l_data: %llx, i_data: %llx", l_data, i_data);
 
 #if IO_PPE_MAX_CACHE_SIZE > 0
@@ -288,11 +298,11 @@ fapi_try_exit:
 
 template<fapi2::TargetType K, fapi2::MulticastType M, typename V>
 uint64_t io_ppe_regs<K, M, V>::extractData(const uint64_t i_8b_data,
-        const uint32_t i_address,
-        const uint32_t i_mask,
-        const uint32_t i_shift)
+        const uint32_t i_ams)
 {
-    uint64_t l_reg16 = i_address & 0x03;
+    const uint32_t i_mask = i_ams & 0xFFFF;
+    const uint32_t i_shift = (i_ams >> 16) & 0xFF;
+    const uint64_t l_reg16 = i_ams >> 24;
     uint64_t l_data = i_8b_data;
 
     if (i_mask > 0xFFFF)
@@ -319,11 +329,11 @@ uint64_t io_ppe_regs<K, M, V>::extractData(const uint64_t i_8b_data,
 template<fapi2::TargetType K, fapi2::MulticastType M, typename V>
 uint64_t io_ppe_regs<K, M, V>::updateData(const uint64_t i_8b_data,
         const uint32_t i_reg_data,
-        const uint32_t i_address,
-        const uint32_t i_mask,
-        const uint32_t i_shift)
+        const uint32_t i_ams)
 {
-    uint64_t l_reg16 = i_address & 0x03;
+    const uint32_t i_mask = i_ams & 0xFFFF;
+    const uint32_t i_shift = (i_ams >> 16) & 0xFF;
+    const uint64_t l_reg16 = i_ams >> 24;
     uint64_t l_update_8b = i_reg_data;
     l_update_8b <<= i_shift;
     l_update_8b &= i_mask;
@@ -361,18 +371,15 @@ uint64_t io_ppe_regs<K, M, V>::updateData(const uint64_t i_8b_data,
 
 
 template<fapi2::TargetType K, fapi2::MulticastType M, typename V>
-uint64_t io_ppe_regs<K, M, V>::calcAddress(const uint32_t i_section_addr,
+constexpr uint32_t io_ppe_regs<K, M, V>::calcAddress(const uint32_t i_section_addr,
         const uint32_t i_address,
         const uint32_t i_thread,
         const uint32_t i_thread_size,
         const uint32_t i_lane)
 {
-    uint64_t l_reg_addr = ((i_lane << 4) | i_address) & 0xFFC;
-    l_reg_addr <<= 1; //input address is 16bit register address, shift left to get byte addr
-    uint64_t l_addr = i_section_addr + l_reg_addr;
-    l_addr += (i_thread * i_thread_size);
-    l_addr <<= 32;
-    return l_addr;
+    return i_section_addr +
+           ((((i_lane << 4) | i_address) & 0xFFC) << 1) +
+           (i_thread * i_thread_size);
 }
 
 
