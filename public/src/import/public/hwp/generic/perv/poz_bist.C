@@ -350,6 +350,9 @@ ReturnCode poz_bist(
     const buffer<uint16_t> l_outer_loop_mask = i_params.outer_loop_mask;
     const buffer<uint16_t> l_inner_loop_mask = i_params.inner_loop_mask;
 
+    // Needed for burnin stress
+    const bool repeat_exec_loop = l_inner_loop_mask.getBit(15);
+
     // Stuff for saving register values to restore after cleanup
     const bool l_allow_fast_cleanup = !(i_params.stages & i_params.bist_flags::DIAGNOSTICS);
     const bool l_save_uc_reg_values = (i_params.stages & i_params.bist_stages::REG_SETUP) &&
@@ -607,33 +610,41 @@ ReturnCode poz_bist(
         }
     }
 
-    for (uint8_t outer_index = 0; outer_index < 16; outer_index++)
+    do
     {
         bool l_bist_halt_requested = false;
 
-        if (l_outer_loop_mask.getBit(outer_index))
+        for (uint8_t outer_index = 0; outer_index < 16; outer_index++)
         {
-            FAPI_DBG("Bit %d present in outer loop mask; proceeding ...", outer_index);
-
-            for (uint8_t inner_index = 0; inner_index < 16; inner_index++)
+            if (l_outer_loop_mask.getBit(outer_index))
             {
-                if (l_inner_loop_mask.getBit(inner_index))
-                {
-                    FAPI_DBG("Bit %d present in inner loop mask; proceeding ...", inner_index);
+                FAPI_DBG("Bit %d present in outer loop mask; proceeding ...", outer_index);
 
-                    FAPI_TRY(poz_bist_execute(l_chiplets_target,
-                                              l_chiplets_uc,
-                                              i_params,
-                                              outer_index,
-                                              inner_index,
-                                              l_bist_halt_requested,
-                                              o_diags));
-                }
-
-                if (l_bist_halt_requested)
+                for (uint8_t inner_index = 0; inner_index < 16; inner_index++)
                 {
-                    break;
+                    if (l_inner_loop_mask.getBit(inner_index))
+                    {
+                        FAPI_DBG("Bit %d present in inner loop mask; proceeding ...", inner_index);
+
+                        FAPI_TRY(poz_bist_execute(l_chiplets_target,
+                                                  l_chiplets_uc,
+                                                  i_params,
+                                                  outer_index,
+                                                  inner_index,
+                                                  l_bist_halt_requested,
+                                                  o_diags));
+                    }
+
+                    if (l_bist_halt_requested)
+                    {
+                        break;
+                    }
                 }
+            }
+
+            if (l_bist_halt_requested)
+            {
+                break;
             }
         }
 
@@ -641,7 +652,9 @@ ReturnCode poz_bist(
         {
             break;
         }
+
     }
+    while(repeat_exec_loop);
 
     ////////////////////////////////////////////////////////////////
     // STAGE: REG_CLEANUP
