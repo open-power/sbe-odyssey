@@ -15,6 +15,7 @@ gcc_defs_odyssey_bldr = [
 
 gcc_defs_odyssey_sppe = [
         '-DTHREAD_STACK_IN_SCRATCH',
+        '-DMINIMUM_FFDC_RE=1',
         ]
 
 odyssey_cmn_inc_paths = ['/public/src/common/cnfg/odyssey'
