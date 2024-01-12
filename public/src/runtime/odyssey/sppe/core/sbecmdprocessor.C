@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -49,13 +49,90 @@
 #include "sbebootutils.H"
 #include "hwpWrapper.H"
 #include "ody_sppe_attr_setup.H"
+#include "poz_perv_mod_misc.H"
 
 const uint64_t PERIODIC_TIMER_INTERVAL_SECONDS = 24*60*60; // 24 hours
 
 using namespace fapi2;
+using namespace pib;
 
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
+/**
+ * @brief     platInitOnHreset: Handles any initializations or cleanups after
+ *            booting from a hard reset to ensure basic infrastructure like
+ *            attributes, fifos/pipes are all set up for SBE to operate as
+ *            normal
+ *
+ * @param[in]   none
+ * @param[out]  none
+ *
+ * @return      none
+ * @note        On success, the SBE will transition to SBE_STATE_CMN_RUNTIME
+ *                          Users should be able to issue chip-ops as normal
+ *              On error, the SBE will transition to SBE_STATE_CMN_DUMP
+ *                          Users should attempt the GetSBEFFDC chip-op to extract
+ *                          any ffdc. In addition, users should trigger their
+ *                          SBE error handling mechanisms like gather an SBE Dump
+ *                          to collect FFDC
+ */
+void platInitOnHreset (void)
+{
+#define SBE_FUNC "platInitOnHreset: "
+    SBE_ENTER (SBE_FUNC);
+    ReturnCode fapiRc = FAPI2_RC_SUCCESS;
+
+    do
+    {
+        Target<TARGET_TYPE_OCMB_CHIP> l_ocmb_chip = g_platTarget->plat_getChipTarget();
+
+        // Note: CFAM FIFOs are reset in main via SbeRegAccess::theSbeRegAccess().init()
+
+        // Reset the PIB Pipes
+        SBE_EXEC_HWP (fapiRc, mod_pipe_setup, l_ocmb_chip,
+                      PC_MMIO, false, PC_SPPE, true,
+                      PC_GSD2PIB, false, PC_SPPE, true,
+                      PC_NONE, false, PC_NONE, false,
+                      PC_NONE, false, PC_NONE, false);
+
+        if (fapiRc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC "Error calling mod_pipe_setup. fapiRc = 0x%08X", fapiRc);
+            break;
+        }
+
+        // Execute ody_sppe_attr_setup to sync the attributes from 
+        // the scratch. These scratch register are used by HB and
+        // value are intact through out the ipl.
+        SBE_EXEC_HWP (fapiRc, ody_sppe_attr_setup, l_ocmb_chip);
+        if (fapiRc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC "Error calling ody_sppe_attr_setup. fapiRc = 0x%08X", fapiRc);
+            break;
+        }
+
+        // clear hreset bit in LFR
+        SBE::clearHreset();
+
+        // Update SBE State to Runtime
+        (void)SbeRegAccess::theSbeRegAccess().
+              updateSbeState(SBE_STATE_CMN_RUNTIME);
+
+        SBE_INFO(SBE_FUNC "Transitioned from HReset -> Runtime");
+    } while(0);
+
+    if (fapiRc != FAPI2_RC_SUCCESS)
+    {
+        // Set the async bit and SBE state to DUMPING.
+        captureAsyncFFDC(SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                         SBE_SEC_HWP_FAILURE);
+    }
+
+    SBE_EXIT (SBE_FUNC);
+#undef SBE_FUNC
+}
+
+
 void sbeHandleFifoResponse (const uint32_t i_rc, sbeFifoType i_type)
 {
     #define SBE_FUNC " sbeHandleFifoResponse "
@@ -168,35 +245,15 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
 
     if(SBE::isHreset())
     {
-        // Execute ody_sppe_attr_setup to sync the attributes from 
-        // the scratch. These scratch register are used by HB and
-        // value are intact through out the ipl.
-        ReturnCode rc = FAPI2_RC_SUCCESS;
-        rc = istepWithOcmb(reinterpret_cast<voidfuncptr_t>( ody_sppe_attr_setup ));
-        if(rc != FAPI2_RC_SUCCESS)
-        {
-            SBE_ERROR(SBE_FUNC "ody_sppe_attr_setup failed in HRESET"
-                                " with rc = 0x%08X", rc);
-            // Set the async bit and SBE state to DUMPING.
-            // HB can collect the FFDC.
-            captureAsyncFFDC(SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                             SBE_SEC_HWP_FAILURE);
-        }
-        else
-        {
-            // bit16 in lfrReg and update sbe state
-            SBE_INFO(SBE_FUNC "Hreset, going to Runtime");
-            (void)SbeRegAccess::theSbeRegAccess().
-                  updateSbeState(SBE_STATE_CMN_RUNTIME);
-            // clear hreset bit
-            SBE::clearHreset();
-        }
+        platInitOnHreset();
     }
     else
     {
         setSBEBootState(SbeRegAccess::theSbeRegAccess().getBootMode());
     }
+
     chipOpParam_t configStr = { SBE_FIFO, 0x00, (uint8_t*)i_pArg };
+
     do
     {
         uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
