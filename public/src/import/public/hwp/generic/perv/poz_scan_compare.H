@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -76,7 +76,8 @@ struct hash_data
 {
     uint32_t ring_address;
     uint16_t instance_traits;
-    uint16_t padding;
+    uint8_t care_mask_id_override;
+    uint8_t padding;
     uint32_t hash_value;
 };
 
@@ -107,10 +108,12 @@ bool get_hash_target_addresses(
 /// @param[in]   i_base_ring_address       The base ring address we want to compare on i_target
 /// @param[in]   i_care_mask_dir           Path to directory of care masks hash with
 /// @param[in]   i_expect_hash             Expect hash value for the provided compare case
+/// @param[in]   i_care_mask_id_override   Override chiplet ID to use for care mask files (0 for skip)
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode poz_scan_compare(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_CORE > & i_target,
     const uint32_t i_base_ring_address,
     const char* i_care_mask_dir,
-    const uint32_t i_expect_hash);
+    const uint32_t i_expect_hash,
+    const uint8_t i_care_mask_id_override = 0);
