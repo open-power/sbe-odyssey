@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2018,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2018,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -1186,7 +1186,7 @@ void i2c::printi2cdetails()
     #define SBE_FUNC " printi2cdetails "
     SBE_ENTER(SBE_FUNC);
 
-    SBE_INFO(SBE_FUNC "iv_port: 0x%02X Engine: 0x%02X DevAddr: 0x%02x bit_rate_div: 0x%08X.",
+    SBE_DEBUG(SBE_FUNC "iv_port: 0x%02X Engine: 0x%02X DevAddr: 0x%02x bit_rate_div: 0x%08X.",
                     iv_port, iv_engine, iv_devAddr, iv_bit_rate_divisor);
 
     SBE_DEBUG(SBE_FUNC "Bus speed 0x%08X %08X", SBE::higher32BWord(iv_bus_speed),
