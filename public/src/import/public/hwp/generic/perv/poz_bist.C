@@ -726,7 +726,8 @@ ReturnCode poz_bist(
                     l_rc = poz_scan_compare(cplt,
                                             l_base_ring_address,
                                             l_compare_mask_dir,
-                                            be32toh(l_hash_data[i].hash_value));
+                                            be32toh(l_hash_data[i].hash_value),
+                                            l_hash_data[i].care_mask_id_override);
 
                     if (l_rc == FAPI2_RC_SUCCESS)
                     {
@@ -759,12 +760,16 @@ ReturnCode poz_bist(
                     FAPI_INF("Dump miscomparing scan chains");
 
                     char l_unload_mask_file_path[21];
-                    char* l_file_path_write_ptr = NULL;
+                    char* l_fpath_write_ptr = NULL;
 
-                    l_file_path_write_ptr = stpcpy(l_unload_mask_file_path, l_unload_mask_dir);
-                    strhex(l_file_path_write_ptr, l_base_ring_address, 8);
+                    l_fpath_write_ptr = stpcpy(l_unload_mask_file_path, l_unload_mask_dir);
+                    strhex(l_fpath_write_ptr,
+                           l_hash_data[i].care_mask_id_override ?
+                           (l_hash_data[i].care_mask_id_override << 24) | (l_base_ring_address & 0x00FFFFFF) :
+                           l_base_ring_address,
+                           8);
                     // Write trailing null ptr since strhex doesn't do that automatically
-                    l_file_path_write_ptr[8] = 0;
+                    l_fpath_write_ptr[8] = 0;
                     FAPI_DBG("Going to scan out ring 0x%08x on chiplet %d",
                              l_base_ring_address,
                              cplt.getChipletNumber());

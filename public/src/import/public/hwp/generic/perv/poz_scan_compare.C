@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -64,7 +64,8 @@ ReturnCode poz_scan_compare(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_CORE > & i_target,
     const uint32_t i_base_ring_address,
     const char* i_care_mask_dir,
-    const uint32_t i_expect_hash)
+    const uint32_t i_expect_hash,
+    const uint8_t i_care_mask_id_override)
 {
     FAPI_INF("Entering ...");
 
@@ -82,7 +83,11 @@ ReturnCode poz_scan_compare(
 
     // Construct care mask file path with ring address
     l_fpath_write_ptr = stpcpy(l_fpath, i_care_mask_dir);
-    strhex(l_fpath_write_ptr, i_base_ring_address, 8);
+    strhex(l_fpath_write_ptr,
+           i_care_mask_id_override ?
+           (i_care_mask_id_override << 24) | (i_base_ring_address & 0x00FFFFFF) :
+           i_base_ring_address,
+           8);
     // Write trailing null ptr since strhex doesn't do that automatically
     l_fpath_write_ptr[8] = 0;
 
