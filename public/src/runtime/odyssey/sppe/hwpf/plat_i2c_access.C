@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -65,8 +65,7 @@ ReturnCode plati2c::populatei2cdetails(const Target<TARGET_TYPE_ALL>& target)
                         l_temp_target,
                         iv_max_retry_count));
 
-    //NOTE: Enable below function if required for debug
-    //printi2cdetails();
+    printi2cdetails();
 
     fapi_try_exit:
         return current_err;
