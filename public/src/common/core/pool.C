@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -26,6 +26,7 @@
 #include <pool.H>
 #include "assert.h"
 #include <new>
+#include "pk_api.h"
 
 namespace SBEVECTORPOOL
 {
@@ -34,6 +35,11 @@ vectorMemPool_t * allocMem()
 {
     vectorMemPool_t *pool = NULL;
     size_t idx;
+    PkMachineContext    ctx;
+
+    //The following operations must be done atomically
+    pk_critical_section_enter(&ctx);
+
     for( idx = 0; idx < g_vectorPoolBlockCount; idx++ )
     {
         if( 0 == g_vectorPool[idx].refCount )
@@ -44,6 +50,10 @@ vectorMemPool_t * allocMem()
             break;
         }
     }
+
+    //exit the critical section
+    pk_critical_section_exit(&ctx);
+
     if(NULL == pool )
     {
         SBE_ERROR("NULL pool idx:%u", idx);
@@ -54,16 +64,25 @@ vectorMemPool_t * allocMem()
 
 void releaseMem( vectorMemPool_t * i_pool )
 {
+    PkMachineContext    ctx;
+
     do
     {
         if ( NULL == i_pool )   break;
 
-       // Assert here.  This pool was not supposed to be in use.
+        // Assert here.  This pool was not supposed to be in use.
         assert( 0 != i_pool->refCount )
         SBE_DEBUG(" Releasing pool 0x%08X", i_pool);
+
+        //The following operations must be done atomically
+        pk_critical_section_enter(&ctx);
+
         i_pool->refCount--;
         SBE_DEBUG(" In releaseMem() RefCount:%u", i_pool->refCount);
+
+        //exit the critical section
+        pk_critical_section_exit(&ctx);
     }while(0);
 }
 
-} // namesspace SBEVECTORPOOL
+} // namespace SBEVECTORPOOL
