@@ -4,3 +4,5 @@ Interfaces available:
   - SHA3-512 (via sha3.H)
   - CRC32 (gzip/RFC1952 flavor) (via crc32.H)
   - IBM 64bit ECC (via ibmecc64.H)
+  - Dilithium (III/IV/V) (via pqalgs.H)
+  - ECDSA (via ec_verify.H)
