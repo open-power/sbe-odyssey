@@ -669,18 +669,18 @@ ReturnCode mod_semaphore_reserve(
     const SemaphoreSide i_side)
 {
     FAPI_DBG("Entering mod_semaphore_reserve...");
-    fapi2::buffer<uint64_t> l_data, l_status;
+    fapi2::buffer<uint64_t> l_data = 0, l_status = 0;
 
     static const uint32_t FSXCOMP_FSXLOG_I2CARBSEMA_REGISTER = 0x50191ull;
 
-    l_data.setBit(2 * i_semaphore + (uint32_t)i_side);
+    l_data.setBit((2 * i_semaphore) + (uint32_t)i_side);
 
     for (uint32_t i = 0; i < SEMAPHORE_POLL_COUNT; i++)
     {
         FAPI_TRY(putScom(i_target, FSXCOMP_FSXLOG_I2CARBSEMA_REGISTER, l_data));
         FAPI_TRY(getScom(i_target, FSXCOMP_FSXLOG_I2CARBSEMA_REGISTER, l_status));
 
-        if (l_status.getBit(2 * i_semaphore + (uint32_t)i_side))
+        if (l_status.getBit((2 * i_semaphore) + (uint32_t)i_side))
         {
             FAPI_DBG("Exiting after successfully reserving semaphore 0x%X side %x...", i_semaphore, (uint32_t)i_side);
             return FAPI2_RC_SUCCESS;
@@ -693,7 +693,8 @@ ReturnCode mod_semaphore_reserve(
     {
         FAPI_ERR("Semaphore 0x%X side %x reservation timeout, force release semaphore with 0b11", i_semaphore,
                  (uint32_t)i_side);
-        l_data.insertFromRight(2 * i_semaphore, 2, 0x3);
+        l_data.setBit((2 * i_semaphore) + (uint32_t)SemaphoreSide::CFAM);
+        l_data.setBit((2 * i_semaphore) + (uint32_t)SemaphoreSide::SBE);
         FAPI_TRY(putScom(i_target, FSXCOMP_FSXLOG_I2CARBSEMA_REGISTER, l_data));
         return FAPI2_RC_SUCCESS;
     }
@@ -716,15 +717,16 @@ ReturnCode mod_semaphore_release(
 {
     FAPI_DBG("Entering mod_semaphore_release...");
 
-    fapi2::buffer<uint64_t> l_data, l_status;
+    fapi2::buffer<uint64_t> l_data = 0, l_status = 0;
 
     static const uint32_t FSXCOMP_FSXLOG_I2CARBSEMA_REGISTER = 0x50191ull;
 
     FAPI_TRY(getScom(i_target, FSXCOMP_FSXLOG_I2CARBSEMA_REGISTER, l_status));
 
-    if (l_status.getBit(2 * i_semaphore + (uint32_t)i_side))
+    if (l_status.getBit((2 * i_semaphore) + (uint32_t)i_side))
     {
-        l_data.setBit(2 * i_semaphore + (uint32_t)i_side);
+        l_data.setBit((2 * i_semaphore) + (uint32_t)SemaphoreSide::CFAM);
+        l_data.setBit((2 * i_semaphore) + (uint32_t)SemaphoreSide::SBE);
         FAPI_TRY(putScom(i_target, FSXCOMP_FSXLOG_I2CARBSEMA_REGISTER, l_data));
     }
     else
