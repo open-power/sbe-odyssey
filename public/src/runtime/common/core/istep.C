@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2017,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -33,9 +33,9 @@
 #include "sberegaccess.H"
 #include "sbestates.H"
 #include "sbestatesutils.H"
-#include "sbeglobals.H"
 #include "istep.H"
 #include "istepIplUtils.H"
+#include "securityutils.H"
 
 using namespace fapi2;
 
@@ -139,16 +139,12 @@ bool istep::validateIstep (const uint8_t i_major, const uint8_t i_minor)
             break;
         }
 
-// TODO: P11SBE Porting
-#if 0
-        // If security is not enabled, no further checks are required
-        if(!SBE_GLOBAL->sbeFWSecurityEnabled)
+        if(g_pSbeSecurityUtils->getScomFilteringCheckLvl() != SOFT_SECURITY_CHECK_ENABLED)
         {
             SBE_INFO(SBE_FUNC" Security is disabled. Skipping istep order check");
             valid = true;
             break;
         }
-#endif
 
         uint8_t nextMajorIstep = 0;
         uint8_t nextMinorIstep = 0;
@@ -157,18 +153,15 @@ bool istep::validateIstep (const uint8_t i_major, const uint8_t i_minor)
         if( ( i_major != nextMajorIstep) ||
             ( i_minor != nextMinorIstep) )
         {
-            SBE_ERROR("Secuity validation failed for executing istep "
+            SBE_ERROR("Security validation failed for executing istep "
                     "Skipping istep not allowed "
                     "in secure mode. nextMajorIstep:%u "
                     "nextMinorIstep:%u", nextMajorIstep, nextMinorIstep);
-            // TODO: remove this workaround after odyssey rit
-            valid = true;
             break;
         }
-        else
-        {
-            valid = true;
-        }
+
+        valid = true;
+
     } while(0);
 
     SBE_EXIT(SBE_FUNC);
