@@ -22,8 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __SBE_GLOBALS_H
-#define __SBE_GLOBALS_H
+
+#pragma once
 
 #include "sbeexeintf.H"
 #include "sbeSpMsg.H"
@@ -127,22 +127,17 @@ class SBEGlobalsSingleton
         ////////////////////////////////////////////////////////////////
         SbeGlobalHandlerSemas_t semphores;
 
-        // size of trusted embedded PAKs 
+        // size of trusted embedded PAKs
         static uint64_t trustedPakEnd __attribute__ ((section (".sdata"),aligned (8)));
 
         // @brief FileArchive object to keep track of the pak stack in pibmem
         // Allows access for a global FileArchive object independent of the Heap object
         // initialized below
         RuntimePakWrapper trustedEmbeddedArchive __attribute__ ((aligned (8)))
-        { (void*)&_heap_space_start_, (void*)std::min(trustedPakEnd,(uint64_t)&_heap_space_end_)};  
+        { (void*)&_heap_space_start_, (void*)std::min(trustedPakEnd,(uint64_t)&_heap_space_end_)};
 
-        
         RuntimePakWrapper embeddedArchive __attribute__ ((aligned (8)))
         { (void*)&_heap_space_start_, (void*)&_heap_space_end_};
-        
-
-        // i2c mode register
-        static uint64_t i2cModeRegister;
 
         // PPE PIB CTRL ID
         static PIBCtrlId pibCtrlId;
@@ -154,10 +149,9 @@ class SBEGlobalsSingleton
             sbeFifoCmdHdr(),
             sbeCmdRespHdr(),
             sbeIntrSource(),
+            threads(),
             semphores()
-            {
-            }
+            {}
 };
-extern SBEGlobalsSingleton* sbeGlobal;
 
-#endif //__SBE_GLOBALS_H
+extern SBEGlobalsSingleton* sbeGlobal;
