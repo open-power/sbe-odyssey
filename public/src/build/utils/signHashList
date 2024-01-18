@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2016,2023
+# Contributors Listed Below - COPYRIGHT 2016,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -25,7 +25,7 @@
 # IBM_PROLOG_END_TAG
 
 # Exit if any command fails
-set -e
+set -eu
 
 # @brief Checks whether the file that is the input argument exists on the file
 # system. The function
@@ -135,13 +135,13 @@ DEV_KEY_DIR=
 SIGNTOOL_ARGS=
 
 # Determine if our path setup has been provided by the environment
-if [ ! -z $SIGNING_BASE_DIR ]; then
+if [ ! -z "${SIGNING_BASE_DIR+x}" ]; then
     echo "***INFO | SBE | signHashList : Fetching signing tools from provided environment"
     RH_DIR=`sed "s/^.*release \([0-9]*\).*$/rh\1/" /etc/redhat-release`
     SIGNING_DIR=$SIGNING_BASE_DIR/$RH_DIR/$SIGNING_UTILS_DIR
     DEV_KEY_DIR=${SIGNING_BASE_DIR}/sb-signing-keys
 
-elif [ -z $SBE_IMG_DIR_OP ]; then
+elif [ -z "${SBE_IMG_DIR_OP+x}" ]; then
     echo "***INFO | SBE | signHashList : Not OP_build. Fetching keys and signing scripts from /gsa/..."
     #RH_DIR=`sed 's/^.*release \([0-9]*\)\..*$/rh\1/' /etc/redhat-release`
     #TODO: Update below paths
@@ -160,21 +160,26 @@ else
 fi
 
 # Adjust paths to pick up the signing tools
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SIGNING_DIR
+if [ ! -z "${LD_LIBRARY_PATH+x}" ]; then
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SIGNING_DIR
+else
+    LD_LIBRARY_PATH=$SIGNING_DIR
+fi
+
 PATH=$SIGNING_DIR:$PATH
 
 
 #TODO: Change to p11 env variable once op-build is enabled
 # Check for signing mode passed in by environment (p10)
-if [ ! -z $BR2_OPENPOWER_P10_SECUREBOOT_SIGN_MODE ]; then
+if [ ! -z "${BR2_OPENPOWER_P10_SECUREBOOT_SIGN_MODE+x}" ]; then
     SIGNING_MODE=$BR2_OPENPOWER_P10_SECUREBOOT_SIGN_MODE
 
 # To allow for prod signing boot loader with dev runtime can set the following env
-elif [ "$COMPONENT_ID" = "BOOT_LDR" -a ! -z "$ODY_BOOT_LDR_SECUREBOOT_SIGN_MODE" ]; then
+elif [ "$COMPONENT_ID" = "BOOT_LDR" -a ! -z "${ODY_BOOT_LDR_SECUREBOOT_SIGN_MODE+x}" ]; then
     SIGNING_MODE=$ODY_BOOT_LDR_SECUREBOOT_SIGN_MODE
 
 #Check if user has passed signing mode
-elif [ -z $SIGNING_MODE ]; then
+elif [ -z "${SIGNING_MODE+x}" ]; then
     SIGNING_MODE="Development"
     echo "***INFO | SBE | signHashList : Defaulting signing mode to $SIGNING_MODE "
 fi
@@ -248,20 +253,20 @@ else
 fi
 
 # Do we need to set the device ECID into the FW header
-if [ ! -z $SB_ODY_SECUREBOOT_ECID ]; then
+if [ ! -z "${SB_ODY_SECUREBOOT_ECID+x}" ]; then
     SIGNTOOL_ARGS="$SIGNTOOL_ARGS --fw-ecid $SB_ODY_SECUREBOOT_ECID"
 fi
 
 #Determine secure version setting
-if [ -z $SV ]; then
+if [ -z "${SV+x}" ]; then
     # Build process can pass in the secure version through the environment
-    if [ ! -z $BR2_OPENPOWER_SIGNED_SECURITY_VERSION ]; then
+    if [ ! -z "${BR2_OPENPOWER_SIGNED_SECURITY_VERSION+x}" ]; then
         SV=$BR2_OPENPOWER_SIGNED_SECURITY_VERSION
         echo "***INFO | SBE | signHashList : SV(Secure Version) passed via " \
              "BR2_OPENPOWER_SIGNED_SECURITY_VERSION as $SV"
 
     # To allow for boot loader signing with a different SV you can set the following env
-    elif [ "$COMPONENT_ID" = "BOOT_LDR" -a ! -z "$ODY_BOOT_LDR_SECURITY_VERSION" ]; then
+    elif [ "$COMPONENT_ID" = "BOOT_LDR" -a ! -z "${ODY_BOOT_LDR_SECURITY_VERSION+x}" ]; then
         SV=$ODY_BOOT_LDR_SECURITY_VERSION
         echo "***INFO | SBE | signHashList : SV(Secure Version) passed via " \
              "ODY_BOOT_LDR_SECURITY_VERSION as $SV for boot loader"
