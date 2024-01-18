@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -36,7 +36,7 @@
 #include <hwp_data_stream.H>
 #include <poz_tlv_utils.H>
 
-static const uint16_t BIST_PARAMS_CURRENT_VERSION = 12;
+static const uint16_t BIST_PARAMS_CURRENT_VERSION = 13;
 static const uint16_t BIST_CHIPOP_ID = 0xF101;
 
 struct bist_params
@@ -75,6 +75,7 @@ struct bist_params
         INT_MODE             = 0x00800000,
         SCAN0_ARY_FILL       = 0x00400000,
         SYS_BIST_PAK         = 0x00200000,
+        TESTER_HANDSHAKE     = 0x00100000,
 
         /// Multi bit flags
         /// PCB mux switching

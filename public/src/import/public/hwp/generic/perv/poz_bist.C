@@ -225,6 +225,11 @@ static ReturnCode poz_bist_execute(
     ////////////////////////////////////////////////////////////////
     if (i_params.stages & i_params.bist_stages::GO)
     {
+        if (i_params.flags & i_params.bist_flags::TESTER_HANDSHAKE)
+        {
+            FAPI_TRY(mod_handshake_with_tester(i_chiplets_target));
+        }
+
         FAPI_INF("Start BIST with OPCG GO");
 
         if (i_params.uc_go_chiplets)
@@ -278,6 +283,11 @@ static ReturnCode poz_bist_execute(
                                runn_triggers_opcg_infinite(i_params.opcg_count)));
         o_diags.completed_stages |= i_params.bist_stages::POLL;
         o_diags.pass_counter++;
+
+        if (i_params.flags & i_params.bist_flags::TESTER_HANDSHAKE)
+        {
+            FAPI_TRY(mod_handshake_with_tester(i_chiplets_target));
+        }
 
         if (i_params.flags & i_params.bist_flags::DIAGNOSTICS)
         {

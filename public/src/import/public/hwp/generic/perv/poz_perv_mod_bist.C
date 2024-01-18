@@ -486,3 +486,31 @@ fapi_try_exit:
     FAPI_INF("Exiting ...");
     return current_err;
 }
+
+ReturnCode mod_handshake_with_tester(const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target)
+{
+    FAPI_DBG("Entering mod_handshake_with_tester...");
+
+    CPLT_CONF0_t CPLT_CONF0;
+
+    FAPI_INF("Waiting for tester to adjust conditions");
+
+    //Query OFLOW_FEH_SEL until it's set to 1.
+    FAPI_TRY(CPLT_CONF0.getScom(i_target));
+
+    while (CPLT_CONF0.get_OFLOW_FEH_SEL() == 0)
+    {
+        FAPI_TRY(fapi2::delay(1000, 1000))
+        FAPI_TRY(CPLT_CONF0.getScom(i_target));
+    }
+
+    //Reset OFLOW_FEH_SEL to 0.
+    CPLT_CONF0 = 0;
+    CPLT_CONF0.set_OFLOW_FEH_SEL(1);
+    FAPI_TRY(CPLT_CONF0.putScom_CLEAR(i_target));
+
+fapi_try_exit:
+    FAPI_DBG("Exiting mod_handshake_with_tester...");
+    return current_err;
+
+}

@@ -115,3 +115,11 @@ fapi2::ReturnCode mod_lbist_setup(
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode trigger_start(
     const Target < TARGET_TYPE_PERV >& i_target);
+
+/// @brief Setup for tester handshake in order to control voltage during chipop through poz_bist.C code
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode mod_handshake_with_tester(
+    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target);
