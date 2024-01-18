@@ -67,7 +67,7 @@ ReturnCode poz_scan_compare(
     const uint32_t i_expect_hash,
     const uint8_t i_care_mask_id_override)
 {
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering poz_scan_compare...");
 
     const void* l_mask_file_data = NULL;
     const void* l_care_mask_ptr = NULL;
@@ -125,6 +125,6 @@ ReturnCode poz_scan_compare(
     }
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting poz_scan_compare...");
     return current_err;
 }

@@ -240,7 +240,7 @@ static ReturnCode poz_bist_execute(
             {
                 FAPI_TRY(mod_get_chiplet_by_number(i_chiplets_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>(), 1, l_perv_chiplet));
                 FAPI_INF("Setting up scom registers to run trigger mode on pervasive chiplet ...");
-                FAPI_TRY(trigger_start(l_perv_chiplet));
+                FAPI_TRY(mod_trigger_start(l_perv_chiplet));
             }
 
             for (auto& chiplet : i_chiplets_uc)
@@ -311,7 +311,7 @@ ReturnCode poz_bist(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const bist_params& i_params, bist_diags& o_diags,
     hwp_data_ostream& o_stream, const uint16_t i_dict_def) // TODO can we remove i_dict_def?
 {
-    FAPI_INF("Entering ...");
+    FAPI_INF("Entering poz_bist...");
 
     // All required pervasive targets and target containers
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_target;
@@ -521,7 +521,7 @@ ReturnCode poz_bist(
     ////////////////////////////////////////////////////////////////
     if (i_params.stages & i_params.bist_stages::SCAN0)
     {
-        FAPI_DBG("Do a scan0");
+        FAPI_INF("Do a scan0");
         FAPI_TRY(mod_scan0(l_chiplets_target, l_all_active_regions, i_params.scan0_types,
                            i_params.flags & i_params.bist_flags::SCAN0_ARY_FILL));
         o_diags.completed_stages |= i_params.bist_stages::SCAN0;
@@ -532,7 +532,7 @@ ReturnCode poz_bist(
     ////////////////////////////////////////////////////////////////
     if (i_params.stages & i_params.bist_stages::ARRAYINIT)
     {
-        FAPI_DBG("Do an arrayinit");
+        FAPI_INF("Do an arrayinit");
 
         uint8_t l_no_repr_lbist;
         FAPI_TRY(FAPI_ATTR_GET(ATTR_CHIP_EC_FEATURE_NO_REPR_LBIST, i_target, l_no_repr_lbist));
@@ -699,6 +699,8 @@ ReturnCode poz_bist(
     // Read compare hash file then run compare and/or unload together
     if (i_params.stages & (i_params.bist_stages::COMPARE | i_params.bist_stages::UNLOAD))
     {
+        FAPI_INF("Compare scan chains against expects and/or unload them");
+
         bool l_incomplete_compare = false;
 
         // The compare hash file's second to last byte indicates which compare care mask set to use
@@ -744,8 +746,6 @@ ReturnCode poz_bist(
                 ////////////////////////////////////////////////////////////////
                 if (i_params.stages & i_params.bist_stages::COMPARE)
                 {
-                    FAPI_INF("Compare scan chains against expects");
-
                     l_rc = poz_scan_compare(cplt,
                                             l_base_ring_address,
                                             l_compare_mask_dir,
@@ -780,8 +780,6 @@ ReturnCode poz_bist(
                 ////////////////////////////////////////////////////////////////
                 if ((i_params.stages & i_params.bist_stages::UNLOAD) && !l_skip_unload)
                 {
-                    FAPI_INF("Dump miscomparing scan chains");
-
                     char l_unload_mask_file_path[21];
                     char* l_fpath_write_ptr = NULL;
 
@@ -793,7 +791,7 @@ ReturnCode poz_bist(
                            8);
                     // Write trailing null ptr since strhex doesn't do that automatically
                     l_fpath_write_ptr[8] = 0;
-                    FAPI_DBG("Going to scan out ring 0x%08x on chiplet %d",
+                    FAPI_INF("Scanning out ring 0x%08x on chiplet %d",
                              l_base_ring_address,
                              cplt.getChipletNumber());
                     FAPI_TRY(poz_write_tlv_ring_unload(cplt,
@@ -816,9 +814,11 @@ ReturnCode poz_bist(
         }
     }
 
-    // Write Diags TLV block out through stream
+    // Write TLV diagnostics block out through stream
     if (i_params.flags & i_params.bist_flags::DIAGNOSTICS)
     {
+        FAPI_INF("Streaming out poz_bist diagnostics");
+
         FAPI_TRY(poz_write_tlv_diags(i_target, i_dict_def, sizeof(bist_diags), &o_diags, o_stream));
     }
 
@@ -829,6 +829,6 @@ fapi_try_exit:
         freeEmbeddedFile(l_hash_file_data);
     }
 
-    FAPI_INF("Exiting ...");
+    FAPI_INF("Exiting poz_bist...");
     return current_err;
 }

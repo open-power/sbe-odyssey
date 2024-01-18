@@ -167,7 +167,7 @@ ReturnCode mod_cbs_start(
     fapi2::buffer<uint8_t> l_bootSide;
     int l_timeout = 0;
 
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
 
     // Get and set the side to boot the SPPE from
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_SPPE_BOOT_SIDE, i_target, l_bootSide));
@@ -217,7 +217,7 @@ ReturnCode mod_cbs_start(
                 "ERROR: CBS HAS NOT REACHED IDLE STATE VALUE 0x002 ");
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -228,7 +228,7 @@ ReturnCode mod_switch_pcbmux(
     ROOT_CTRL0_t ROOT_CTRL0;
     uint8_t l_oob_mux_save = 0;
 
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
     FAPI_DBG("Save OOB Mux setting.");
     FAPI_TRY(ROOT_CTRL0.getScom(i_target));
     l_oob_mux_save = ROOT_CTRL0.get_OOB_MUX();
@@ -270,7 +270,7 @@ ReturnCode mod_switch_pcbmux(
     }
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -281,7 +281,7 @@ ReturnCode mod_switch_pcbmux_cfam(
     ROOT_CTRL0_t ROOT_CTRL0;
     uint8_t l_oob_mux_save = 0;
 
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
     FAPI_DBG("Save OOB Mux setting.");
     FAPI_TRY(ROOT_CTRL0.getCfam(i_target));
     l_oob_mux_save = ROOT_CTRL0.get_OOB_MUX();
@@ -324,7 +324,7 @@ ReturnCode mod_switch_pcbmux_cfam(
     }
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -342,7 +342,7 @@ ReturnCode mod_multicast_setup(
 
     auto l_all_chiplets = i_target.getChildren<fapi2::TARGET_TYPE_PERV>(i_pgood_policy);
 
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
     FAPI_ASSERT(!(i_group_id > 6),
                 fapi2::POZ_INVALID_GROUP_ID()
                 .set_GROUP_ID_VALUE(i_group_id)
@@ -359,8 +359,6 @@ ReturnCode mod_multicast_setup(
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_SIM_CHIPLET_MASK, i_target, l_attr_sim_chiplet_mask));
 
     l_required_group_members = l_eligible_chiplets & i_chiplets & l_attr_sim_chiplet_mask;
-    FAPI_INF("Required multicast group members : 0x%08X%08X",
-             l_required_group_members >> 32, l_required_group_members & 0xFFFFFFFF);
 
     // MC_GROUP_MEMBERSHIP_BITX_READ = 0x500F0001
     // This performs a multicast read with the BITX merge operation.
@@ -368,8 +366,12 @@ ReturnCode mod_multicast_setup(
     // will have a 1 for each chiplet that is a member of the targeted group.
     FAPI_TRY(fapi2::getScom(i_target, MC_GROUP_MEMBERSHIP_BITX_READ | (static_cast<uint32_t>(l_group_id << 24)),
                             l_current_group_members));
-    FAPI_INF("Current multicast group members : 0x%08X%08X",
-             l_current_group_members >> 32, l_current_group_members & 0xFFFFFFFF);
+
+    FAPI_INF("MCG members: Current=0x%08X%08X, Required=0x%08X%08X",
+             l_current_group_members >> 32,
+             l_current_group_members & 0xFFFFFFFF,
+             l_required_group_members >> 32,
+             l_required_group_members & 0xFFFFFFFF);
 
     for (int i = 0; i <= 63; i++)
     {
@@ -388,7 +390,7 @@ ReturnCode mod_multicast_setup(
     }
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -399,7 +401,7 @@ ReturnCode mod_get_chiplet_by_number(
 {
     auto l_chiplets = i_target.getChildren<fapi2::TARGET_TYPE_PERV>();
 
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
 
     for (auto& chiplet : l_chiplets)
     {
@@ -417,7 +419,7 @@ ReturnCode mod_get_chiplet_by_number(
                 "ERROR: Provided chiplet number does not match anything in provided target.");
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -427,7 +429,7 @@ ReturnCode mod_hangpulse_setup(const Target < TARGET_TYPE_PERV | TARGET_TYPE_MUL
     HANG_PULSE_0_t HANG_PULSE_0;
     PRE_COUNTER_t PRE_COUNTER;
 
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
     FAPI_DBG("Set pre_divider value in pre_counter register.");
     PRE_COUNTER = 0;
     PRE_COUNTER.set_PRE_COUNTER(i_pre_divider);
@@ -450,7 +452,7 @@ ReturnCode mod_hangpulse_setup(const Target < TARGET_TYPE_PERV | TARGET_TYPE_MUL
     }
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -460,7 +462,7 @@ ReturnCode mod_constant_hangpulse_setup(const Target<TARGET_TYPE_ANY_POZ_CHIP>& 
     PRE_COUNTER_t PRE_COUNTER;
     HANG_PULSE_0_t HANG_PULSE_0;
 
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
 
     for (int i = 0; i <= 3; i++)
     {
@@ -475,7 +477,7 @@ ReturnCode mod_constant_hangpulse_setup(const Target<TARGET_TYPE_ANY_POZ_CHIP>& 
     }
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -491,7 +493,7 @@ ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
     fapi2::buffer<uint32_t> l_attr_pg;
     fapi2::buffer<uint64_t> l_data64;
 
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
     fapi2::Target<fapi2::TARGET_TYPE_PERV> l_tpchiplet = get_tp_chiplet_target(i_target);
 
     FAPI_INF("Clear SBE start bits to be tidy");
@@ -545,13 +547,13 @@ ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
     FAPI_TRY(PERV_CTRL0.putScom_CLEAR(i_target));
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
 ReturnCode mod_unmask_firs(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
 {
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
 
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_mc;
     FAPI_TRY(get_hotplug_targets(i_target, l_chiplets_mc));
@@ -564,7 +566,7 @@ ReturnCode mod_unmask_firs(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
     FAPI_TRY(putScom(l_chiplets_mc, LOCAL_XSTOP_MASK_RW, 0));
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -616,7 +618,7 @@ ReturnCode mod_setup_clockstop_on_xstop(
     }
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -658,7 +660,7 @@ ReturnCode mod_setup_tracestop_on_xstop(
     }
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -744,6 +746,6 @@ ReturnCode mod_semaphore_release(
     }
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }

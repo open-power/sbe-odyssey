@@ -58,7 +58,7 @@ ReturnCode mod_stagger_idle_setup(
     uint64_t l_idle_count = i_base_idle;
     uint64_t l_chiplets_idle_count[64] = {0};
 
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering mod_stagger_idle_setup...");
 
     if (i_zigzag_stagger)
     {
@@ -99,7 +99,7 @@ ReturnCode mod_stagger_idle_setup(
     }
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting mod_stagger_idle_setup...");
     return current_err;
 }
 
@@ -114,7 +114,7 @@ ReturnCode mod_bist_poll(
     uint32_t i_poll_delay_sim,
     bool i_force_allow_not_done)
 {
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering mod_bist_poll...");
 
     CPLT_STAT0_t CPLT_STAT0;
     PCB_OPCG_STOP_t PCB_OPCG_STOP;
@@ -209,7 +209,7 @@ ReturnCode mod_bist_poll(
                 "ERROR: ABIST_DONE NOT SET");
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting mod_bist_poll...");
     return current_err;
 }
 
@@ -224,7 +224,7 @@ ReturnCode mod_bist_reg_cleanup(
     NET_CTRL0_t NET_CTRL0;                      ///< 0xF0040
     FSXCOMP_FSXLOG_SCRATCH_REGISTER_11_t SCRATCH_REGISTER_11;
     auto l_chip = i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>();
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering mod_bist_reg_cleanup...");
 
     FAPI_INF("Zeroing out OPCG and region registers.");
     FAPI_TRY(putScom(i_target, scomt::poz::OPCG_REG0, 0));
@@ -262,7 +262,7 @@ ReturnCode mod_bist_reg_cleanup(
     FAPI_TRY(SCRATCH_REGISTER_11.putScom(l_chip));
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting mod_bist_reg_cleanup...");
     return current_err;
 }
 
@@ -289,6 +289,8 @@ ReturnCode mod_lbist_setup(
     SCAN_REGION_TYPE_t SCAN_REGION_TYPE;
     NET_CTRL0_t NET_CTRL0;
     OPCG_ALIGN_t OPCG_ALIGN;
+
+    FAPI_DBG("Entering mod_lbist_setup...");
 
     auto l_chiplets_uc = i_target.getChildren<TARGET_TYPE_PERV>();
     buffer<uint64_t> l_ctrl_chiplets = i_ctrl_chiplets;
@@ -454,17 +456,19 @@ ReturnCode mod_lbist_setup(
     FAPI_TRY(OPCG_CAPT3.putScom(i_target));
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting mod_lbist_setup...");
     return current_err;
 }
 
-ReturnCode trigger_start(
+ReturnCode mod_trigger_start(
     const Target < TARGET_TYPE_PERV >& i_target)
 {
     SCAN_REGION_TYPE_t SCAN_REGION_TYPE = 0;        // 0x30005
     CLK_REGION_t CLK_REGION = 0;                    // 0x30006
     OPCG_REG0_t OPCG_REG0;                          // 0x30002
     PCB_OPCG_GO_t PCB_OPCG_GO;                      // 0x30020
+
+    FAPI_DBG("Entering mod_trigger_start...");
 
     // setup scom registers
     FAPI_TRY(SCAN_REGION_TYPE.putScom(i_target));
@@ -483,7 +487,7 @@ ReturnCode trigger_start(
     FAPI_TRY(PCB_OPCG_GO.putScom(i_target));
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting mod_trigger_start...");
     return current_err;
 }
 

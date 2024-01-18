@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -123,7 +123,7 @@ ReturnCode apply_regions_by_chiplet(
     }
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -154,7 +154,7 @@ ReturnCode mod_abist_setup(
     const bool l_opcg_infinite_mode = runn_triggers_opcg_infinite(i_runn_cycles);
     auto l_chiplets_uc = i_target.getChildren<TARGET_TYPE_PERV>();
 
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
 
     FAPI_INF("Switch dual-clocked arrays to ABIST clock domain.");
     CPLT_CTRL0 = 0;
@@ -210,7 +210,7 @@ ReturnCode mod_abist_setup(
     FAPI_TRY(OPCG_REG0.putScom(i_target));
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -219,13 +219,13 @@ ReturnCode mod_opcg_go(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > &i_target)
 {
     OPCG_REG0_t OPCG_REG0;
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
     FAPI_TRY(OPCG_REG0.getScom(i_target));
     OPCG_REG0.set_OPCG_GO(1);
     FAPI_TRY(OPCG_REG0.putScom(i_target));
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -244,7 +244,7 @@ ReturnCode mod_abist_start(
     FAPI_TRY(mod_opcg_go(i_target));
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -254,7 +254,7 @@ ReturnCode mod_abist_poll(
     bool i_poll_abist_done)
 {
     CPLT_STAT0_t CPLT_STAT0;
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
     FAPI_DBG("Poll OPCG done bit to check for run-N completeness.");
     FAPI_TRY(poll_opcg_done(i_target, OPCG_DONE_ARRAYINIT_HW_NS_DELAY, OPCG_DONE_ARRAYINIT_SIM_CYCLE_DELAY,
                             OPCG_DONE_ARRAYINIT_POLL_COUNT, i_poll_abist_done));
@@ -269,7 +269,7 @@ ReturnCode mod_abist_poll(
                 "ERROR: SRAM_ABIST_DONE_BIT_NOT_SET");
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -284,7 +284,7 @@ ReturnCode mod_abist_cleanup(
     CPLT_CTRL0_t CPLT_CTRL0;
     OPCG_REG0_t OPCG_REG0;
 
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
 
     FAPI_INF("Clear OPCG_REG0.");
     OPCG_REG0 = 0;
@@ -310,7 +310,7 @@ ReturnCode mod_abist_cleanup(
     FAPI_TRY(BIST.putScom(i_target));
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -401,7 +401,7 @@ ReturnCode mod_scan0(
     std::vector<Target<TARGET_TYPE_PERV>> l_chiplets_uc;
     auto l_chip_target = i_target.getParent<TARGET_TYPE_ANY_POZ_CHIP>();
 
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_SCAN0_SCAN_RATIO, l_chip_target, l_attr_scan0_scan_ratio),
              "Error from FAPI_ATTR_GET (ATTR_SCAN0_SCAN_RATIO)");
 
@@ -475,7 +475,7 @@ ReturnCode mod_scan0(
     }
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -485,7 +485,7 @@ ReturnCode mod_arrayinit(
     const uint64_t i_runn_cycles,
     const bool i_do_scan0)
 {
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
 
     FAPI_DBG("ABIST start");
     FAPI_TRY(mod_abist_start(i_target, i_clock_regions, i_runn_cycles));
@@ -503,7 +503,7 @@ ReturnCode mod_arrayinit(
     }
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -520,7 +520,7 @@ ReturnCode mod_start_stop_clocks(
     CPLT_CTRL1 = 0;
     CPLT_CTRL1.insertFromRight<CPLT_CTRL1_REGION0_FENCE, 16>(i_clock_regions);
 
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
     FAPI_INF("Clear SCAN_REGION_TYPE register");
     SCAN_REGION_TYPE = 0;
     FAPI_TRY(SCAN_REGION_TYPE.putScom(i_target));
@@ -557,7 +557,7 @@ ReturnCode mod_start_stop_clocks(
     }
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -574,7 +574,7 @@ ReturnCode mod_align_regions(
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > l_mcast_and_target = i_target;
     int l_timeout = 0;
 
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
 
     FAPI_INF("Write region flush mode inhibit value in CPLT_CTRL4 reg.");
     CPLT_CTRL4 = 0;
@@ -649,6 +649,6 @@ ReturnCode mod_align_regions(
     FAPI_TRY(CPLT_CTRL4.putScom(i_target));
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
