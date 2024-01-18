@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -49,7 +49,7 @@ static ReturnCode _mod_poll_pll_lock(
     uint64_t i_check_value)
 {
     fapi2::buffer<uint64_t> o_read_value;
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
 
     for(int loop = 0; loop < PLL_LOCK_DELAY_LOOPS; loop++)
     {
@@ -66,7 +66,7 @@ static ReturnCode _mod_poll_pll_lock(
     return fapi2::FAPI2_RC_FALSE;
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -79,7 +79,7 @@ ReturnCode mod_poll_pll_lock(
     fapi2::buffer<uint64_t> l_read_value;
     uint64_t l_check_value = (uint64_t)i_pll_mask << 56;
 
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
     l_rc = _mod_poll_pll_lock(i_target, PLL_LOCK.addr, l_check_value);
 
     if (l_rc == fapi2::FAPI2_RC_FALSE)
@@ -110,7 +110,7 @@ ReturnCode mod_poll_pll_lock(
     }
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
 
@@ -118,10 +118,10 @@ ReturnCode mod_poll_pll_lock_fsi2pib(
     const Target < TARGET_TYPE_ANY_POZ_CHIP >& i_target,
     pll_lock_bits i_pll_mask)
 {
-    FAPI_INF("Entering ...");
+    FAPI_DBG("Entering ...");
     return _mod_poll_pll_lock(i_target, FSXCOMP_FSXLOG_MIRR_FSI2PIB_STAT, ((uint64_t)i_pll_mask << 36));
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
+    FAPI_DBG("Exiting ...");
     return current_err;
 }
