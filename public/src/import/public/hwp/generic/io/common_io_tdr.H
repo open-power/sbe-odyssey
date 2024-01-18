@@ -62,6 +62,12 @@ enum TdrRegisters
     tx_ctl_mode1_pg = 0x1818,
 };
 
+enum TdrConsts
+{
+    tdrDacStart = 56,
+    tdrDacLength = 8,
+};
+
 struct TdrStruct
 {
     uint32_t iv_lane;
@@ -166,7 +172,8 @@ fapi2::ReturnCode common_io_tdr(
     uint32_t& o_length_ps)
 {
 
-    FAPI_DBG("Begin TDR Isolation (Version 0.0)");
+    FAPI_DBG("Begin TDR Isolation (Version 0.0): base(0x%08X) group(%d) lane(%d) freq(%d)", i_baseAddr, i_group, i_lane,
+             i_freq);
 
     const uint32_t c_pulse_width = 100;
 
@@ -446,7 +453,8 @@ fapi2::ReturnCode common_io_tdr(
         }
     }
 
-    FAPI_INF("N-leg status(0x%04X) length(%d) :: P-leg status(0x%04X) length(%d) :: 0x0010 = GOOD", l_status[0],
+    FAPI_INF("N-leg status(0x%04X) length(%d) :: P-leg status(0x%04X) length(%d) :: 0x0010(GOOD), 0x0020(OPEN), 0x0030(SHORT), 0x0040(DID_NOT_RUN), 0x0050(NOT SUPPORTED), 0x0060(UNABLE)",
+             l_status[0],
              l_length_ui[0], l_status[1], l_length_ui[1]);
 
     // Set length and status based on both phases
@@ -640,8 +648,6 @@ fapi2::ReturnCode common_io_tdr_sample_point(const fapi2::Target<K, M, V>& i_tar
     const int32_t DAC_MAX = 255; // The upper limit of the dac
     const int32_t DAC_MIN = 0;   // The lower limit of the dac
     const uint32_t DIRECTION_CHANGE_MAX = 3;
-    const uint8_t c_dacBit = 56;
-    const uint8_t c_dacLen = 8;
     uint32_t loop_count = 0;
     uint32_t direction_change_count = 0;
     int32_t direction[2] = {0, 0};
@@ -662,7 +668,7 @@ fapi2::ReturnCode common_io_tdr_sample_point(const fapi2::Target<K, M, V>& i_tar
         direction[1] = direction[0];
 
         // set TDR dac value
-        l_buffer.insertFromRight(o_dac, c_dacBit, c_dacLen);
+        l_buffer.insertFromRight(o_dac, TdrConsts::tdrDacStart, TdrConsts::tdrDacLength);
         FAPI_TRY(putScom(i_target, c_tx_cntl15_pl, l_buffer));
 
         // read the TDR capture value for the selected lane
@@ -747,8 +753,6 @@ fapi2::ReturnCode common_io_tdr_find_limit(const fapi2::Target<K, M, V>& i_targe
     const int32_t LOOP_MAX = 255; // Loop Max
     const int32_t DAC_MAX = 255;  // The upper limit of the dac
     const int32_t DAC_MIN = 0;    // The lower limit of the dac
-    const uint8_t c_dacBit = 48;
-    const uint8_t c_dacLen = 8;
 
     fapi2::buffer<uint64_t> l_data = 0;
 
@@ -760,7 +764,7 @@ fapi2::ReturnCode common_io_tdr_find_limit(const fapi2::Target<K, M, V>& i_targe
     // set TDR dac value
     // FAPI_INF("Setting TDR Dac: %d", o_limit);
     l_addr = buildAddr(i_baseAddr, i_group, i_lane, TdrRegisters::tx_cntl15_pl);
-    FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, o_limit, c_dacBit, c_dacLen),
+    FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, o_limit, TdrConsts::tdrDacStart, TdrConsts::tdrDacLength),
              "Error on RMW to set DAC value to %d at address %d", o_limit, l_addr);
 
     for (uint32_t l_offset = i_offset_start; l_offset < i_offset_end; l_offset++)
@@ -773,8 +777,8 @@ fapi2::ReturnCode common_io_tdr_find_limit(const fapi2::Target<K, M, V>& i_targe
             if (l_prev_limit != o_limit)
             {
                 // FAPI_INF("Setting TDR Dac: %d", o_limit);
-                l_addr = buildAddr(i_baseAddr, i_group, 0, TdrRegisters::tx_cntl15_pl);
-                FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, o_limit, c_dacBit, c_dacLen),
+                l_addr = buildAddr(i_baseAddr, i_group, i_lane, TdrRegisters::tx_cntl15_pl);
+                FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, o_limit, TdrConsts::tdrDacStart, TdrConsts::tdrDacLength),
                          "Error on RMW to set DAC value to %d at address %d", o_limit, l_addr);
                 l_prev_limit = o_limit;
             }
@@ -903,8 +907,6 @@ fapi2::ReturnCode common_io_tdr_find_horizontal_crossing(const fapi2::Target<K, 
         uint32_t& o_offset)
 {
     const uint8_t c_phaseSelBit = 57;
-    const uint8_t c_dacBit = 48;
-    const uint8_t c_dacLen = 8;
     fapi2::buffer<uint64_t> l_cntl4_data = 0;
     uint64_t l_addr = 0;
     uint32_t x_vals[2] = {i_x_min, i_x_max};
@@ -915,7 +917,7 @@ fapi2::ReturnCode common_io_tdr_find_horizontal_crossing(const fapi2::Target<K, 
     // set TDR Dac and phase sel
     FAPI_INF("Horizontal Crossing - Setting (TDR Dac/Phase): (%d / %d)", i_dac, i_phase);
     l_addr = buildAddr(i_baseAddr, i_group, i_lane, TdrRegisters::tx_cntl15_pl);
-    FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, i_dac, c_dacBit, c_dacLen),
+    FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, i_dac, TdrConsts::tdrDacStart, TdrConsts::tdrDacLength),
              "Error on RMW to set DAC value to %d at address %d", i_dac, l_addr);
     l_addr = buildAddr(i_baseAddr, i_group, 0, TdrRegisters::tx_ctl_cntl4_pg);
     FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, i_phase, c_phaseSelBit, 1),
@@ -947,12 +949,11 @@ fapi2::ReturnCode common_io_tdr_find_horizontal_crossing(const fapi2::Target<K, 
         FAPI_TRY(common_io_tdr_set_pulse_offset(i_target, i_baseAddr, i_group, i_lane, current_x));
         FAPI_TRY(common_io_tdr_get_capt_val(i_target, i_baseAddr, i_group, i_lane, current_y));
 
-        FAPI_INF("(%03d,%03d) < ",
-                 x_vals[0], y_vals[0]);
-        FAPI_INF("(%03d,%03d) < ",
-                 current_x, current_y);
-        FAPI_INF("(%03d,%03d)",
-                 x_vals[1], y_vals[1]);
+        // FAPI_INF("(%03d,%03d) < ",
+        //          x_vals[0], y_vals[0]);
+        FAPI_INF("TDR H-Crossing Binary Search dac(%3d) xoffset(%3d) sample(%1d)", i_dac, current_x, current_y);
+        // FAPI_INF("(%03d,%03d)",
+        //          x_vals[1], y_vals[1]);
 
         if (current_y == y_vals[0])
         {
@@ -999,8 +1000,6 @@ fapi2::ReturnCode common_io_tdr_find_short_crossing(const fapi2::Target<K, M, V>
         int32_t& o_offset)
 {
     const uint8_t c_phaseSelBit = 57;
-    const uint8_t c_dacBit = 48;
-    const uint8_t c_dacLen = 8;
     fapi2::buffer<uint64_t> l_cntl4_data = 0;
     uint64_t l_addr = 0;
     uint32_t current_x = i_x_offset;
@@ -1013,7 +1012,7 @@ fapi2::ReturnCode common_io_tdr_find_short_crossing(const fapi2::Target<K, M, V>
     // set TDR Dac and phase sel
     FAPI_INF("Short Crossing - Setting (TDR Dac/Phase): (%d / %d)", i_dac, i_phase);
     l_addr = buildAddr(i_baseAddr, i_group, i_lane, TdrRegisters::tx_cntl15_pl);
-    FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, i_dac, c_dacBit, c_dacLen),
+    FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, i_dac, TdrConsts::tdrDacStart, TdrConsts::tdrDacLength),
              "Error on RMW to set DAC value to %d at address %d", i_dac, l_addr);
     l_addr = buildAddr(i_baseAddr, i_group, 0, TdrRegisters::tx_ctl_cntl4_pg);
     FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, i_phase, c_phaseSelBit, 1),
