@@ -113,7 +113,6 @@ __pk_thread_context_initialize:
 
 #ifdef HWMACRO_GPE
         ## Save the context of the PBASLVCTL reg
-        ## (Note that PBA reg name changed from SLVCTLN to PORTCTLN)
         _liw    %r7,  PBA_PORTCTLN(PBASLVCTLN)
         lvd     %d7, 0(%r7)
         stvd    %d7, PK_CTX_PBASLVCTLV(%r6)

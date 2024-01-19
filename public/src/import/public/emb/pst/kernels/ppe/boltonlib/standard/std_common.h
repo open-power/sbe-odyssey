@@ -33,7 +33,6 @@
     #include <stdint.h>
 #endif
 
-//#include "cmehw_interrupts.h"
 #include "std_irq_config.h"
 
 #ifdef __ASSEMBLER__

@@ -23,4 +23,6 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 #pragma once
+#ifdef __PPE__
 #include "ppe42_string.h"
+#endif

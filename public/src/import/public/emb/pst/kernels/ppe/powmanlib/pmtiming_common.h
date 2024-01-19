@@ -27,7 +27,7 @@
 
 #include <stdint.h>
 #include <ppe42_spr.h>
-
+#include <gpe_register_addresses.h>
 
 //
 // TSEL register defines for PPE Watchdog and FIT timers
@@ -207,6 +207,51 @@ static inline uint32_t calc_tbr_avg( uint32_t i_begin, uint32_t i_end)
     {
         return ( i_end );
     }
+}
+
+
+//
+// Function: fit_init()
+//
+// Description: Initialize the GPE or CE FIT and trace out TSEL content
+//
+// Notes:
+// - Pass zero in i_tsel_fit_sel if you don't intend on programming the TSEL value
+//   in this call.
+//
+static inline void fit_init(void* i_fit_handler, uint32_t i_instance_id, uint32_t i_tsel_fit_sel)
+{
+    uint32_t this_tsel_reg_addr = OCI_ADDR(GPE_OCB_GPETSEL, i_instance_id);
+    uint32_t tsel_reg_data = 0;
+    uint32_t tcr_val = 0;
+
+    //Register the handler
+    IOTA_FIT_HANDLER(i_fit_handler); //=> g_iota_fit_handler = (iotaTimerFuncPtr)dce_fit_handler
+
+    //Kick off the FIT
+    mtspr(SPRN_TSR, TSR_FIS); //Clear any pending FIT interrupt
+    tcr_val = mfspr(SPRN_TCR);
+    tcr_val |= TCR_FIE;
+    mtspr(SPRN_TCR, tcr_val); //Enable FIT interrupt - We will need it asap for AUTO Flag monitor.
+
+    // Note that we currently depend on external means to configure the TSEL register
+    // to set the FIT freq, mainly pm_ppe_init HWP. But sometimes a PPE image may get
+    // loaded in such a way that these external means did not get a chance to program
+    // the TSEL.  Therefore, if the TSEL reg's FIT_SEL(4:7) == 0b0000, the FIT will
+    // never fire and this function will assume, if it's called, that we intend on
+    // using the FIT and that if FIT_SEL(4:7) == 0b0000 that the i_tsel_fit_sel
+    // value passed in the argument will be used to program the TSEL reg.
+    tsel_reg_data = in32(this_tsel_reg_addr);
+
+    if ( i_tsel_fit_sel && ((tsel_reg_data & TSEL_FIT_SEL_MASK) == 0) )
+    {
+        tsel_reg_data |= (i_tsel_fit_sel & TSEL_FIT_SEL_MASK);
+        out32(this_tsel_reg_addr, tsel_reg_data);
+    }
+
+    // Check the FIT frequency
+    tsel_reg_data  = in32(this_tsel_reg_addr);
+    PK_TRACE("FIT init: Content of TSEL reg: 0x%08x", tsel_reg_data);
 }
 
 #endif  /* __PMTIMING_COMMON_H__ */

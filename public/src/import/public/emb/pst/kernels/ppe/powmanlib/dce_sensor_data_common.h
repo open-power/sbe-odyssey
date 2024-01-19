@@ -170,7 +170,7 @@ typedef struct
     CoreDataDroop_t            droop;           //12
     CoreDataDts_t              dts;             // 8
     uint32_t                   empath_valid;    // 4
-    uint32_t                   stop_state_hist; // 4 - Note that .dds is on 8B alignment after this
+    uint32_t                   stop_state_hist; // 4 - .dds is 8B aligned after this
     DdsData_t                  dds;             // 8 - This is an 8B entity
 } CoreData_t;
 
@@ -186,14 +186,14 @@ typedef struct
 
 
 //
-// DCESensorData_t : High-level DCE sensor data struct for DCE, OCC(405) and OCE
+// DCESensorData_t : High-level DCE sensor data struct for DCE, OCE and 405
 //
 // Notes:
 // - See previous notes to CoreData_t.
 // - Size of this data block is 8 x 88B + 3 x 8 x 2B + 12B + 20B = 772B
 // - With a future increase to 12 cores and 3 quads, size grows to = 1164 Bytes
-// - The data block is managed in link.ld to guarantee 8-byte alignment for PSPI
-//   transfer to OCC on VC3.
+// - The data block is managed in link.ld where it is 8-byte aligned for PSPI
+//   transfer to the 405 on VC3.
 //
 typedef struct
 {
@@ -210,15 +210,12 @@ typedef struct
     uint32_t    tbr_data_collect_duration; // 4B - Data collection duration (since notif_rcvd)
     uint32_t    tod_data_rcvd;             // 4B - For optional use by 405 using local 2MHz TOD
     uint16_t    dce_status_flag;           // 2B - Status vector. See DCE_STATUS_FLAGS enum below.
-    uint16_t    dce_error_code;            // 2B - Error code. See DCE_ERROR_CODE enum below.
+    uint16_t    dce_error_code;            // 2B - Error code. See DCE_ERROR_CODES enum below.
 } DCESensorData_t;
 
 
 //
 // Enum of DCE status flags (used by DCESensorData_t.dce_status_flag)
-//
-// Notes:
-// - Used for indicating protocol violations to the 405 and OCE.
 //
 enum DCE_STATUS_FLAGS
 {

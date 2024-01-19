@@ -33,8 +33,7 @@
 // OCEIDDQData_t : High-level OCE IDDQ data struct for OCC(405)
 //
 // Notes:
-// - oce_status_flag is a **vector** and may have multiple bits set. This is to
-//   give OCC as much info as possible.
+// - oce_status_flag is a vector and may have multiple bits set.
 // - The data block is managed in link.ld to guarantee 8-byte alignment.
 //
 typedef struct
@@ -49,20 +48,12 @@ typedef struct
 
 
 //
-// Enum of OCE status flags
-//
-// Notes:
-// - Used for indicating protocol violations to the OCC.
-// - Used by OCEIddqData_t.oce_status_flags:
-//   - Note that oce_status_flag is a **vector** and may have multiple bits set.
-//     This is to give OCC as much info as possible.
-// - These violations are detected at the time of DB0 IRQ reception and at commencement
-//   of data collection.
+// Enum of OCE status flags (used by OCEIDDQData_t.oce_status_flag)
 //
 enum OCE_STATUS_FLAGS
 {
     OCE_STATUS_RESET               = 0b0000000000000000, //Reset init value
-    OCE_STATUS_NORMAL              = 0b0000000000000001, //All is good
+    OCE_STATUS_NORMAL              = 0b0000000000000001, //All is NORMAL
     OCE_STATUS_DCE_NOT_RESPONDING  = 0b0000000000000010, //DCE has not updated w/NEW data in >1ms
     OCE_STATUS_IDDQ_RESULT_STALE   = 0b0000000000000100, //Previous time slot's Iddq result used
     OCE_STATUS_IDDQ_GOING_NEGATIVE = 0b0000000000001000, //Iddq calc going negative
