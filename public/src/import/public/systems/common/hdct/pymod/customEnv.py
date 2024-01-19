@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2023
+# Contributors Listed Below - COPYRIGHT 2023,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -76,6 +76,13 @@ def copyStatsFile(outputDir, statsFile, creator, timeStamp, product, dllProductT
 
     # Get the path for the stats file to copy
     statsFilePath = os.path.join(outputDir, statsFile)
+    if not os.path.isfile(statsFilePath):
+        # try the filename directly.
+        if os.path.isfile(statsFile):
+            statsFilePath = statsFile
+        else:
+            out.error("Unable to find the statsFile: {}".format(statsFile))
+            return  # bail because of fail
 
     # Copy the file from output dir to gsa dir for stela to pick up
     try:
