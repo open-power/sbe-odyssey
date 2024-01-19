@@ -586,11 +586,9 @@
 #define SPRN_PC_AUTOINCREMENT                  0x400
 
 
-////////////////////////////////////////////////////////////////////////////
-// Centaur
-////////////////////////////////////////////////////////////////////////////
-
-// DIMM sensor status codes
+////////////////////////////////
+/// DIMM sensor status codes ///
+////////////////////////////////
 
 /// The next sampling period began before this sensor was read or the master
 /// enable is off, or the individual sensor is disabled. If the subsequent
@@ -614,13 +612,25 @@
 /// return to DIMM_SENSOR_STATUS_VALID_OLD after this register is read.
 #define DIMM_SENSOR_STATUS_VALID_NEW 3
 
-/// OCCHW SSX panic codes
+
+/////////////////////////////
+/// OCCHW SSX panic codes ///
+/////////////////////////////
+
 /// For PK and IOTA panic codes, see {pk,iota}_panic_codes.h
 #ifdef __SSX__
     #define PMHW_INSTANCE_MISMATCH     0x00622400
     #define PMHW_IRQ_ROUTING_ERROR     0x00622401
     #define PMHW_XIR_INVALID_POINTER   0x00622402
     #define PMHW_XIR_INVALID_GPE       0x00622403
+    #define PMHW_PANIC_TEST0           0x0062fff0 //Test codes that can be used in any context
+    #define PMHW_PANIC_TEST1           0x0062fff1
+    #define PMHW_PANIC_TEST2           0x0062fff2
+    #define PMHW_PANIC_TEST3           0x0062fff3
+    #define PMHW_PANIC_TEST4           0x0062fff4
+    #define PMHW_PANIC_TEST5           0x0062fff5
+    #define PMHW_PANIC_TEST6           0x0062fff6
+    #define PMHW_PANIC_TEST7           0x0062fff7
 #endif
 
 #endif  /* __OCCHW_COMMON_H__ */
