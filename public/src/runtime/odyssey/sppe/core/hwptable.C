@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -100,7 +100,7 @@ static hwpMap_t hwpClass2PtrTbl[] =
                HWP_MAP( istepLoadDMEMwithOcmb, ody_load_dmem ),          // 2.05
                HWP_MAP( istepDraminitWithOcmb, ody_sppe_draminit ),      // 2.06
                HWP_MAP( istepATEFW, NULL),                               // 2.07 LAB HWPs
-               HWP_MAP( istepWithOcmb, ody_load_pie ),                   // 2.08
+               HWP_MAP( istepLoadPIEwithOcmb, ody_load_pie ),            // 2.08
                HWP_MAP( istepWithOcmb, ody_draminit_mc ),                // 2.09
                HWP_MAP( istepWithOcmb, ody_enable_ecc ),                 // 2.10
                HWP_MAP( istepWithOcmb, ody_thermal_init ),               // 2.11

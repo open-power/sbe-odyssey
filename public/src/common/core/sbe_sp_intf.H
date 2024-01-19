@@ -241,6 +241,7 @@ enum sbeSecondaryResponse
     SBE_SEC_RAS_INVALID_SCOPE_CHECK_VALUE     = 0x92,
     SBE_SEC_RAS_INVALID_SIDE_VALUE            = 0x93,
     SBE_SEC_RAS_INVALID_DEVICE_ID             = 0x94,
+    SBE_SEC_IMAGE_SIZE_MISMATCH               = 0x95,
 };
 
 /**
