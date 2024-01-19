@@ -134,59 +134,9 @@ static ReturnCode sbestreampaktohwp_internal(
     // validate that hash value is as expected
     if (fapiRc == FAPI2_RC_SUCCESS && i_check_hash)
     {
-        /* In case hash mismatch from pak img, check_file_hash will return the miss-match hash*/
-        uint64_t *ptrMismatchHash __attribute__((aligned(8)));
-        uint64_t *ptrGenHash = (uint64_t *) hashData;
-
-        /* Hash list structure are un-aligned, workaround to copy to local variable */
-        uint64_t mismatchHash[sizeof(sha3_t)/sizeof(uint64_t)]  __attribute__((aligned(8)));
-
-        /* Checking the image hash */
-        uint32_t hashListRc = SBE::check_file_hash( i_pakname, hashData,
-                                                    &g_hash_list,
-                                                    (uint8_t **)&ptrMismatchHash);
-        if (hashListRc != SBE::HASH_COMPARE_PASS)
-        {
-            /* ERROR message */
-            SBE_ERROR(SBE_FUNC "check_file_hash failure rc: 0x%X", hashListRc);
-            SBE_ERROR_BIN(SBE_FUNC "check_file_hash failure file name: ", i_pakname, strlen(i_pakname));
-
-            /* Check the SBE class RC with FILE_NOT_FOUND, assert with FAPI */
-            PLAT_FAPI_ASSERT( !(hashListRc == SBE::FILE_NOT_FOUND),
-                        POZ_FILE_NOT_FOUND(),
-                        "sbestreampaktohwp: Pak file not found in hash list");
-
-            /* ppe constrain not possible to read unaligned data, fix - using memcpy
-               approach */
-            memcpy((uint8_t *)&mismatchHash, (uint8_t *)ptrMismatchHash, sizeof(sha3_t));
-
-            /* Check the SBE class RC with HASH_COMPARE_FAIL, assert with FAPI */
-            PLAT_FAPI_ASSERT( !(hashListRc == SBE::HASH_COMPARE_FAIL),
-                        POZ_FILE_HASH_MISMATCH().
-                        set_GEN_HASH_0(* (ptrGenHash + 0)).
-                        set_GEN_HASH_1(* (ptrGenHash + 1)).
-                        set_GEN_HASH_2(* (ptrGenHash + 2)).
-                        set_GEN_HASH_3(* (ptrGenHash + 3)).
-                        set_GEN_HASH_4(* (ptrGenHash + 4)).
-                        set_GEN_HASH_5(* (ptrGenHash + 5)).
-                        set_GEN_HASH_6(* (ptrGenHash + 6)).
-                        set_GEN_HASH_7(* (ptrGenHash + 7)).
-                        set_CMP_HASH_0( mismatchHash[0] ).
-                        set_CMP_HASH_1( mismatchHash[1] ).
-                        set_CMP_HASH_2( mismatchHash[2] ).
-                        set_CMP_HASH_3( mismatchHash[3] ).
-                        set_CMP_HASH_4( mismatchHash[4] ).
-                        set_CMP_HASH_5( mismatchHash[5] ).
-                        set_CMP_HASH_6( mismatchHash[6] ).
-                        set_CMP_HASH_7( mismatchHash[7] ),
-                        "sbestreampaktohwp: Pak file hash mismatch");
-        }
+        /* Checking the image hash and validate */
+        fapiRc = check_file_hash_and_validate(i_pakname, hashData);
     }
-
-fapi_try_exit:
-
-    // Assign fapiRc for failure case, Assign current_err for PLAT_FAPI_ASSERT
-    fapiRc = (fapiRc != FAPI2_RC_SUCCESS)? fapiRc : fapi2::current_err;
 
     SBE_EXIT(SBE_FUNC);
     return fapiRc;
@@ -205,4 +155,64 @@ ReturnCode sbestreampaktohwp_unverified(
     HwpStreamReceiver &i_receiver)
 {
     return sbestreampaktohwp_internal(i_pak, i_pakname, i_receiver, false);
+}
+
+ReturnCode check_file_hash_and_validate(const char * i_pakname, const sha3_t &i_hashData)
+{
+    #define SBE_FUNC " check_file_hash_and_validate "
+    SBE_ENTER(SBE_FUNC);
+
+    do
+    {
+        // In case hash mismatch from pak img, check_file_hash will return the miss-match hash
+        uint64_t *l_ptrMismatchHash __attribute__((aligned(8)));
+        uint64_t *l_ptrGenHash = (uint64_t *) i_hashData;
+
+        /* Hash list structure are un-aligned, workaround to copy to local variable */
+        uint64_t l_mismatchHash[sizeof(sha3_t)/sizeof(uint64_t)]  __attribute__((aligned(8)));
+
+        uint32_t l_hashListRc = SBE::check_file_hash(i_pakname, i_hashData, &g_hash_list, (uint8_t **)&l_ptrMismatchHash);
+        if(l_hashListRc != SBE::HASH_COMPARE_PASS)
+        {
+            /* ERROR message */
+            SBE_ERROR(SBE_FUNC "check_file_hash failure rc: 0x%X", l_hashListRc);
+            SBE_ERROR_BIN(SBE_FUNC "check_file_hash failure file name: ", i_pakname, strlen(i_pakname));
+
+            /* Check the SBE class RC with FILE_NOT_FOUND, assert with FAPI */
+            PLAT_FAPI_ASSERT( !(l_hashListRc == SBE::FILE_NOT_FOUND),
+                        POZ_FILE_NOT_FOUND(),
+                        "Pak file not found in hash list");
+
+            /* ppe constrain not possible to read unaligned data, fix - using memcpy
+            approach */
+            memcpy((uint8_t *)&l_mismatchHash, (uint8_t *)l_ptrMismatchHash, sizeof(sha3_t));
+
+            /* Check the SBE class RC with HASH_COMPARE_FAIL, assert with FAPI */
+            PLAT_FAPI_ASSERT( !(l_hashListRc == SBE::HASH_COMPARE_FAIL),
+                        POZ_FILE_HASH_MISMATCH().
+                        set_GEN_HASH_0(* (l_ptrGenHash + 0)).
+                        set_GEN_HASH_1(* (l_ptrGenHash + 1)).
+                        set_GEN_HASH_2(* (l_ptrGenHash + 2)).
+                        set_GEN_HASH_3(* (l_ptrGenHash + 3)).
+                        set_GEN_HASH_4(* (l_ptrGenHash + 4)).
+                        set_GEN_HASH_5(* (l_ptrGenHash + 5)).
+                        set_GEN_HASH_6(* (l_ptrGenHash + 6)).
+                        set_GEN_HASH_7(* (l_ptrGenHash + 7)).
+                        set_CMP_HASH_0( l_mismatchHash[0] ).
+                        set_CMP_HASH_1( l_mismatchHash[1] ).
+                        set_CMP_HASH_2( l_mismatchHash[2] ).
+                        set_CMP_HASH_3( l_mismatchHash[3] ).
+                        set_CMP_HASH_4( l_mismatchHash[4] ).
+                        set_CMP_HASH_5( l_mismatchHash[5] ).
+                        set_CMP_HASH_6( l_mismatchHash[6] ).
+                        set_CMP_HASH_7( l_mismatchHash[7] ),
+                                "Pak file hash mismatch");
+        }
+
+    }while(0);
+
+    fapi_try_exit:
+    return fapi2::current_err;
+    SBE_EXIT(SBE_FUNC);
+    #undef SBE_FUNC
 }

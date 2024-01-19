@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -34,6 +34,10 @@
 #include "mss_generic_attribute_getters.H"
 #include "plat_i2c_access.H"
 #include "odysseylink.H"
+#include "sha3.H"
+#include "sbeutil.H"
+#include "sbeglobals.H"
+#include "archive.H"
 
 #define MEM_PAKNAME_MAX_CHAR  20 // ddr/ddimm/dmem.bin
 
@@ -314,5 +318,97 @@ ReturnCode istepDraminitWithOcmb( voidfuncptr_t i_hwp)
 
     SBE_EXIT(SBE_FUNC);
     return fapiRc;
+    #undef SBE_FUNC
+}
+
+ReturnCode istepLoadPIEwithOcmb( voidfuncptr_t i_hwp)
+{
+    #define SBE_FUNC " istepLoadPIEwithOcmb "
+    SBE_ENTER(SBE_FUNC);
+
+    // Variable declaration
+    ReturnCode l_rc = FAPI2_RC_SUCCESS;
+    uint8_t *l_scratchArea = nullptr;
+
+    do
+    {
+        // assret if there in no HWP
+        assert( NULL != i_hwp );
+        Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
+
+        PakWrapper pak((void *)g_partitionOffset, (void *)(g_partitionOffset + g_partitionSize));
+
+        char pakname[MEM_PAKNAME_MAX_CHAR] = "";
+        l_rc = getBinaryDirectory(pakname);
+
+        if (l_rc)
+        {
+            SBE_ERROR(SBE_FUNC " getBinaryDirectory failed with l_rc[0x%08X]", l_rc);
+            break;
+        }
+
+        // Now append the pie.bin
+        strcat (pakname,"pie.bin");
+
+        // Variable declaration
+        uint32_t l_imageSize = 0;
+        uint32_t* l_imageStartPtr = nullptr;
+
+        l_rc = pak.get_image_start_ptr_and_size(pakname, &l_imageStartPtr, &l_imageSize);
+
+        //Decompress the file
+        if ((l_rc == FAPI2_RC_SUCCESS) && (l_imageSize != 0))
+        {
+            l_scratchArea = (uint8_t *)Heap::get_instance().scratch_alloc(l_imageSize);
+            if(l_scratchArea == nullptr)
+            {
+                l_rc = SBE_SEC_HEAP_BUFFER_ALLOC_FAILED;
+                SBE_ERROR(SBE_FUNC " scratch allocation request for [%d] bytes failed " \
+                                    " RC[0x%08x]",l_imageSize, l_rc);
+                break;
+            }
+
+            uint32_t l_size = 0;
+            sha3_t l_digest = {0};
+            l_rc = pak.read_file(pakname, l_scratchArea, l_imageSize, &l_digest, &l_size);
+
+            if( l_rc != FAPI2_RC_SUCCESS )
+            {
+                SBE_ERROR(SBE_FUNC "Failed to read image file [%s]. RC=0x%08X", pakname, l_rc);
+                break;
+            }
+
+            if (l_imageSize != l_size)
+            {
+                l_rc = SBE_SEC_IMAGE_SIZE_MISMATCH;
+                SBE_ERROR(SBE_FUNC "Failed to read, Expected size[%d]" \
+                                    "actual size[%d] ", l_imageSize, l_size);
+                break;
+            }
+
+            // checking the image hash and validate
+            l_rc = check_file_hash_and_validate(pakname, l_digest);
+            if(l_rc != FAPI2_RC_SUCCESS)
+            {
+                SBE_ERROR(SBE_FUNC " File hash valiadtion failed ", l_rc);
+                break;
+            }
+        }
+
+        // Pad out image size to 32-bit boundary
+        uint8_t l_remainder = (l_imageSize % 4);
+        l_imageSize = (l_remainder == 0) ? l_imageSize : l_imageSize + (4 - l_remainder);
+
+        fapi2::hwp_array_istream l_dimm_istream_0((fapi2::hwp_data_unit*)l_scratchArea, (l_imageSize / sizeof(uint32_t)));
+        fapi2::hwp_array_istream l_dimm_istream_1((fapi2::hwp_data_unit*)l_scratchArea, (l_imageSize / sizeof(uint32_t)));
+
+        SBE_EXEC_HWP(l_rc, reinterpret_cast<sbeHwpLoadPIE_t>( i_hwp ), l_ocmb_chip,
+                     l_dimm_istream_0, l_dimm_istream_1);
+
+    }while(0);
+
+    Heap::get_instance().scratch_free(l_scratchArea);
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
     #undef SBE_FUNC
 }

@@ -124,4 +124,16 @@ fapi2::ReturnCode sbeexecutehwponpak(
     const uint32_t i_bin_size, const uint32_t i_bin_offset,
     uint8_t i_image);
 
+
+/**
+ * @brief Check file hash and validate
+ *
+ * @param[in] i_pakname             Name of pak to check hash and validate
+ * @param[in] i_hashData            Hash data
+ *
+ * @return ReturnCode
+ */
+fapi2::ReturnCode check_file_hash_and_validate(const char * i_pakname, const sha3_t &i_hashData);
+
+
 #endif

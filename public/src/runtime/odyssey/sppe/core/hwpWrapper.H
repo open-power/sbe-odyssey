@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -35,6 +35,10 @@ using namespace fapi2;
 using  sbeIstepHwpOcmb_t = ReturnCode (*)
                       (const Target<TARGET_TYPE_OCMB_CHIP> & i_target);
 
+using  sbeHwpLoadPIE_t = ReturnCode (*)
+                      (const Target<TARGET_TYPE_OCMB_CHIP> & i_target,
+                      fapi2::hwp_data_istream&, fapi2::hwp_data_istream&);
+
 // MEM HWPs
 using  sbeHwpMEMLoadbin_t = ReturnCode (*)
                       (const Target<TARGET_TYPE_OCMB_CHIP> & i_target,
@@ -62,6 +66,15 @@ using  sbeHwpDraminit_t = ReturnCode (*)
  * @return FAPI2_RC_SUCCESS on success
  */
 ReturnCode istepWithOcmb( voidfuncptr_t i_hwp);
+
+/**
+ * @brief Wrapper to call the HWP
+ *
+ * @param[in] i_hwp Function pointer to HWP
+ *
+ * @return FAPI2_RC_SUCCESS on success
+ */
+ReturnCode istepLoadPIEwithOcmb( voidfuncptr_t i_hwp);
 
 /**
  * @brief Wrapper to call the HWP
