@@ -101,7 +101,7 @@ void platInitOnHreset (void)
             break;
         }
 
-        // Execute ody_sppe_attr_setup to sync the attributes from 
+        // Execute ody_sppe_attr_setup to sync the attributes from
         // the scratch. These scratch register are used by HB and
         // value are intact through out the ipl.
         SBE_EXEC_HWP (fapiRc, ody_sppe_attr_setup, l_ocmb_chip);
@@ -169,7 +169,7 @@ void sbeHandleFifoResponse (const uint32_t i_rc, sbeFifoType i_type)
             case SBE_SEC_COMMAND_CLASS_NOT_SUPPORTED:
             case SBE_SEC_COMMAND_NOT_SUPPORTED:
             case SBE_SEC_COMMAND_NOT_ALLOWED_IN_THIS_STATE:
-            case SBE_SEC_BLACKLISTED_CHIPOP_ACCESS:
+            case SBE_SEC_DENYLIST_CHIPOP_ACCESS:
                 // Caller sent Invalid Command
 
             case SBE_SEC_OS_FAILURE:

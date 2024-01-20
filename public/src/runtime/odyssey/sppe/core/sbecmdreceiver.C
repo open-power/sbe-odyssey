@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -213,7 +213,7 @@ void sbeCommandReceiver_routine(void *i_pArg)
         if ((l_rcPk != PK_OK) || (l_rc != SBE_SEC_OPERATION_SUCCESSFUL))
         {
             if( (l_rc != SBE_SEC_COMMAND_NOT_ALLOWED_IN_THIS_STATE) &&
-                (l_rc != SBE_SEC_BLACKLISTED_CHIPOP_ACCESS ))
+                (l_rc != SBE_SEC_DENYLIST_CHIPOP_ACCESS ))
             {
                 // It's likely a code bug or PK failure,
                 // or any other PSU/FIFO access (scom) failure.
