@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2017,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -26,10 +26,10 @@
 #include "sbe_sp_intf.H"
 #include "sbestates.H"
 #include "sberegaccess.H"
-#include "sbeglobals.H"
 #include "cmd_class_init.H"
 #include "chipop_handler.H"
 #include "fences.H"
+#include "securityutils.H"
 
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
@@ -38,6 +38,8 @@ sbeChipOpRc_t sbeIsCmdAllowed (const uint8_t i_cmdClass,
                                const uint8_t i_cmdOpcode)
 {
     #define SBE_FUNC " sbeIsCmdAllowedAtState "
+    SBE_ENTER(SBE_FUNC);
+
     bool l_ret = true;
     sbeChipOpRc_t retRc;
     uint8_t l_numCmds = 0;
@@ -100,9 +102,23 @@ sbeChipOpRc_t sbeIsCmdAllowed (const uint8_t i_cmdClass,
                 retRc.secStatus  = SBE_SEC_COMMAND_NOT_ALLOWED_IN_THIS_STATE;
                 break;
             }
+
+            if(g_pSbeSecurityUtils->getScomFilteringCheckLvl() == SOFT_SECURITY_CHECK_ENABLED)
+            {
+                if(SBE_FENCE_AT_SECURE_MODE & l_pCmd->cmd_state_fence)
+                {
+                    SBE_ERROR(SBE_FUNC "Denylist chipop requested");
+                    retRc.primStatus = SBE_PRI_UNSECURE_ACCESS_DENIED;
+                    retRc.secStatus  = SBE_SEC_DENYLIST_CHIPOP_ACCESS;
+                    break;
+                }
+            }
+
             break;
         }
     }
+
+    SBE_EXIT(SBE_FUNC);
     // For any other state, which is not handled above, return from here
     return retRc;
     #undef SBE_FUNC
