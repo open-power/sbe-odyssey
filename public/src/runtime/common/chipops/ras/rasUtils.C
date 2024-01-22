@@ -30,12 +30,23 @@
 #include "filenames.H"
 #include "ptbl.H"
 
+using namespace fapi2;
 #define MAX_BUFFER_SIZE 0x1000 // 4KB
 
+/*
+ * @brief scrubMemoryForAddressNSize : Scrub region in memory for ecc errors
+ *
+ * @param[in] i_memHandle         : handle to memory device
+ * @param[in] i_bufferScratchArea : pointer to buffer in scratch for spi read.
+ * @param[in] i_sideStartAddress  : scrub side start address
+ * @param[in] i_sideMaxSize.      : scrub side max size
+ *
+ * @return rc
+ */
 uint32_t scrubMemoryForAddressNSize(spi::AbstractMemoryDevice *&i_memHandle,
                                     uint32_t *i_bufferScratchArea,
-                                    uint32_t i_sideStartAddress,
-                                    uint32_t i_sideMaxSize)
+                                    const uint32_t i_sideStartAddress,
+                                    const uint32_t i_sideMaxSize)
 {
     #define SBE_FUNC " scrubMemoryForAddressNSize "
     SBE_ENTER(SBE_FUNC);
@@ -60,6 +71,10 @@ uint32_t scrubMemoryForAddressNSize(spi::AbstractMemoryDevice *&i_memHandle,
                 SBE_ERROR(SBE_FUNC "Read data from device failed, Addr:0x%08X Size:0x%08X",\
                           i_sideStartAddress + l_offset, l_readLen);
                 l_rc = SBE_SEC_CU_READ_DATA_IMAGE_FAILURE;
+
+                // Commit the ffdc
+                logError(l_fapiRc, fapi2::FAPI2_ERRL_SEV_RECOVERED);
+                CLEAR_FAPI2_CURRENT_ERROR();
                 break;
             }
         }
@@ -70,9 +85,21 @@ uint32_t scrubMemoryForAddressNSize(spi::AbstractMemoryDevice *&i_memHandle,
     #undef SBE_FUNC
 }
 
+/*
+ * @brief scrubMemoryImageOnly : Scrub image only region in memory for ecc errors
+ *
+ * @param[in]    i_memHandle         : handle to memory device
+ * @param[in]    i_bufferScratchArea : pointer to buffer in scratch for spi read.
+ * @param[in]    i_side              : side to scrub
+ * @param[inout] io_scrubMemCtrlStruct struct used to get/set/use various
+ *               context needed for memory scrub operations
+ *
+ * @return rc
+ */
 uint32_t scrubMemoryImageOnly(spi::AbstractMemoryDevice *&i_memHandle,
                               uint32_t *i_bufferScratchArea,
-                              uint8_t i_side)
+                              uint8_t i_side,
+                              codeUpdateCtrlStruct_t &io_scrubMemCtrlStruct)
 {
     #define SBE_FUNC " scrubMemoryImageOnly "
     SBE_ENTER(SBE_FUNC);
@@ -83,26 +110,20 @@ uint32_t scrubMemoryImageOnly(spi::AbstractMemoryDevice *&i_memHandle,
         // Get side number in memory: 0,1,2
         uint8_t l_side = i_side / 2;
 
-        // control structure for memory scrub
-        codeUpdateCtrlStruct_t l_scrubMemCtrlStruct;
-
-        // Get memory scrub parameters populated
-        getCodeUpdateParams(l_scrubMemCtrlStruct);
-
         for (uint8_t l_img = 0; l_img < EXPECTED_IMG_SECTION_CNT; l_img++)
         {
-            l_scrubMemCtrlStruct.imageType = (uint16_t)CU::g_expectedImgPkgMap[l_img].imageNum;
+            io_scrubMemCtrlStruct.imageType = (uint16_t)CU::g_expectedImgPkgMap[l_img].imageNum;
 
             // Get the partition start offset and size for the image from side passed
             l_rc = getPakEntryFromPartitionTable(l_side,
-                                                 (CU_IMAGES)l_scrubMemCtrlStruct.imageType,
+                                                 (CU_IMAGES)io_scrubMemCtrlStruct.imageType,
                                                  NULL,
-                                                 l_scrubMemCtrlStruct);
+                                                 io_scrubMemCtrlStruct);
             if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
             {
                 SBE_ERROR(SBE_FUNC "getPakEntryFromPartitionTable unsuccessful " \
-                                    "Side[%d] imageTyepe[%d] RC[0x%08x]",
-                                    l_side, l_scrubMemCtrlStruct.imageType, l_rc);
+                                   "Side[%d] imageTyepe[%d] RC[0x%08x]",
+                                   l_side, io_scrubMemCtrlStruct.imageType, l_rc);
                 break;
             }
 
@@ -115,15 +136,15 @@ uint32_t scrubMemoryImageOnly(spi::AbstractMemoryDevice *&i_memHandle,
             getSideAddress(l_side, l_sideStartAddress);
 
             // archive file start address and max size(archive limit)
-            FileArchive pakPadSize((uint32_t *)l_scrubMemCtrlStruct.imageStartAddr,
+            FileArchive pakPadSize((uint32_t *)io_scrubMemCtrlStruct.imageStartAddr,
                                    (uint32_t *)(l_sideStartAddress +
-                                   l_scrubMemCtrlStruct.storageDevStruct.storageDevSideSize));
+                                   io_scrubMemCtrlStruct.storageDevStruct.storageDevSideSize));
             l_rc = pakPadSize.locate_padding((void*&)l_padStart, l_paddedSize);
             if (l_rc != ARC_OPERATION_SUCCESSFUL)
             {
                 SBE_ERROR("padSize is not found of an image[%d]"
-                          "of address [0x%08x]",l_scrubMemCtrlStruct.imageType,
-                          l_scrubMemCtrlStruct.imageStartAddr);
+                          "of address [0x%08x]",io_scrubMemCtrlStruct.imageType,
+                          io_scrubMemCtrlStruct.imageStartAddr);
                 break;
             }
             SBE_INFO(SBE_FUNC " padStart[%p], padSize[0x%08x]", (uint8_t*)l_padStart, l_paddedSize);
@@ -131,18 +152,18 @@ uint32_t scrubMemoryImageOnly(spi::AbstractMemoryDevice *&i_memHandle,
             //Getting actual image size, this size is going to be scrubbed.
             //Actual image size will be subtraction of image start address
             //from return padStart address
-            uint32_t l_actualImageSize = (uint32_t)((uint8_t*)l_padStart - l_scrubMemCtrlStruct.imageStartAddr);
+            uint32_t l_actualImageSize = (uint32_t)((uint8_t*)l_padStart - io_scrubMemCtrlStruct.imageStartAddr);
 
             //converting 24 bit as nor is 16MB 24-bits used to address
             //it to pass on to the spi
-            l_scrubMemCtrlStruct.imageStartAddr  -=
-                        l_scrubMemCtrlStruct.storageDevStruct.storageDevBaseAddress;
+            io_scrubMemCtrlStruct.imageStartAddr  -=
+                        io_scrubMemCtrlStruct.storageDevStruct.storageDevBaseAddress;
 
             SBE_INFO(SBE_FUNC "Image:[0x%02x] StartAddress:[0x%08x] Size:[0x%08x]",
-                               l_img, l_scrubMemCtrlStruct.imageStartAddr, l_actualImageSize);
+                               l_img, io_scrubMemCtrlStruct.imageStartAddr, l_actualImageSize);
 
             l_rc = scrubMemoryForAddressNSize(i_memHandle, i_bufferScratchArea,
-                                              l_scrubMemCtrlStruct.imageStartAddr, l_actualImageSize);
+                                              io_scrubMemCtrlStruct.imageStartAddr, l_actualImageSize);
             if(l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
             {
                 break;
@@ -173,6 +194,12 @@ uint32_t getMemoryScrubData(const struct memCheckCmdMsg_t i_memCheckCmdMsg,
         getSideInfo(l_runSideIndex, l_nonRunSideIndex);
         SBE_INFO(SBE_FUNC "run:[%d] non-run:[%d]", l_runSideIndex, l_nonRunSideIndex);
 
+        // control structure for memory scrub
+        codeUpdateCtrlStruct_t l_scrubMemCtrlStruct;
+
+        // Get memory scrub parameters populated
+        getCodeUpdateParams(l_scrubMemCtrlStruct);
+
         // Allocate buffer size
         l_imgBufScratchArea =
                     (uint32_t *)Heap::get_instance().scratch_alloc(MAX_BUFFER_SIZE);
@@ -184,21 +211,11 @@ uint32_t getMemoryScrubData(const struct memCheckCmdMsg_t i_memCheckCmdMsg,
             break;
         }
 
-        // Get memory device handle
-        l_rc = createMemoryDeviceRAS(l_runSideIndex,
-                                     0, l_memHandle, l_portHandle);
-        if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
-        {
-            SBE_ERROR(SBE_FUNC " createMemoryDeviceRAS unsuccessful. RC[0x%08x] ", l_rc);
-            o_hdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE, l_rc);
-            break;
-        }
-
         // Iterating the loop to get all the device status
         uint8_t l_scrubEntryCnt = 0;
 
         // Iterate over sides
-        for (uint8_t l_side = 1; l_side < END_OF_SIDE_LIST; l_side <<= 1)
+        for (uint8_t l_side = 1; l_side <= END_OF_SIDE_LIST; l_side <<= 1)
         {
             if (!(l_side & i_memCheckCmdMsg.side))
             {
@@ -206,15 +223,13 @@ uint32_t getMemoryScrubData(const struct memCheckCmdMsg_t i_memCheckCmdMsg,
             }
 
             // Iterate over device per side
-            for (uint8_t l_dev = 1; l_dev < END_OF_DEVICE_LIST; l_dev <<= 1)
+            for (uint8_t l_dev = 1; l_dev <= END_OF_DEVICE_LIST; l_dev <<= 1)
             {
                 if (!(l_dev & i_memCheckCmdMsg.devId))
                 {
                     continue;
                 }
 
-                // Initialize the count for CE and UE
-                l_portHandle->iv_ioMemDeviceStatus = {0};
                 uint32_t l_sideStartAddress = 0;
                 uint32_t l_sideMaxSize = 0;
 
@@ -223,6 +238,20 @@ uint32_t getMemoryScrubData(const struct memCheckCmdMsg_t i_memCheckCmdMsg,
                 if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
                 {
                     SBE_ERROR(SBE_FUNC " getSideStartAddressAndSize unsuccessful. RC[0x%08x] ", l_rc);
+                    o_memDeviceStatus[l_scrubEntryCnt].side = l_side;
+                    o_memDeviceStatus[l_scrubEntryCnt].devId = l_dev;
+                    o_memDeviceStatus[l_scrubEntryCnt].status = (uint16_t)l_rc;
+                    l_scrubEntryCnt++;
+                    continue;
+                }
+
+                // Get memory device handle
+                l_rc = createMemoryDeviceRAS(l_runSideIndex,
+                                             l_scrubMemCtrlStruct.storageDevStruct.memId,
+                                             l_memHandle, l_portHandle);
+                if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+                {
+                    SBE_ERROR(SBE_FUNC " createMemoryDeviceRAS unsuccessful. RC[0x%08x] ", l_rc);
                     o_memDeviceStatus[l_scrubEntryCnt].side = l_side;
                     o_memDeviceStatus[l_scrubEntryCnt].devId = l_dev;
                     o_memDeviceStatus[l_scrubEntryCnt].status = (uint16_t)l_rc;
@@ -241,7 +270,7 @@ uint32_t getMemoryScrubData(const struct memCheckCmdMsg_t i_memCheckCmdMsg,
                 {
                     SBE_INFO(SBE_FUNC "Scope: Image only: Side:[0x%02x] Device:[0x%02x] Address:[0x%08x]",
                                        l_side, l_dev, l_sideStartAddress);
-                    l_rc = scrubMemoryImageOnly(l_memHandle, l_imgBufScratchArea, l_side);
+                    l_rc = scrubMemoryImageOnly(l_memHandle, l_imgBufScratchArea, l_side, l_scrubMemCtrlStruct);
                 }
 
                 // Get ecc status for the memory side read
@@ -251,16 +280,20 @@ uint32_t getMemoryScrubData(const struct memCheckCmdMsg_t i_memCheckCmdMsg,
                 o_memDeviceStatus[l_scrubEntryCnt].numOfCE = l_portHandle->iv_ioMemDeviceStatus.numOfCE;
                 o_memDeviceStatus[l_scrubEntryCnt].numOfUE = l_portHandle->iv_ioMemDeviceStatus.numOfUE;
                 l_scrubEntryCnt++;
+
+                if (l_memHandle != NULL)
+                {
+                    freeMemoryDeviceRAS(l_memHandle);
+                }
+
+                // Reset the rc value for next iteration if any
+                l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
             }
         }
     } while (false);
 
    //Free the scratch area
    Heap::get_instance().scratch_free(l_imgBufScratchArea);
-   if (l_memHandle != NULL)
-   {
-      freeMemoryDevice(l_memHandle);
-   }
 
     SBE_EXIT(SBE_FUNC);
     return l_rc;

@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -27,13 +28,13 @@
 #include "sbeCmdCheckMemoryDevice.H"
 
 /**
- * @brief Function to get memory scrub data
+ * @brief getMemoryScrubData : Function to scrub memory to check and return ecc errors
  *
  * @param[in] i_memCheckCmdMsg : memory check command structure
  * @param[out] o_memDeviceStatus : memory device status detail
  * @param[out] o_hdr : response header message
  *
- * @return  RC
+ * @return  rc
  */
 uint32_t getMemoryScrubData(const struct memCheckCmdMsg_t i_memCheckCmdMsg,
                             struct memDeviceStatusDetails_t *&o_memDeviceStatus,

@@ -34,8 +34,8 @@
 #include "target.H"
 #include "spi_memory.H"
 
-using namespace fapi2;
-using spi::SPIPort;
+extern bool l_dev_type_known;
+extern spi::FlashDevice::device_type l_dev_type;
 
 /*
  * @brief Structure for storage device info
@@ -90,17 +90,8 @@ struct codeUpdateCtrlStruct_t
     codeUpdateCtrlStruct_t() {};
 };
 
-/*
- * @brief Structure for RAS - CE/UE
- */
-typedef struct
-{
-    uint16_t numOfCE;
-    uint16_t numOfUE;
-} memDeviceStatus_t __attribute__((aligned(4)));
-
 // A SPI port for RAS support
-class RASSPIPort : public SPIPort
+class RASSPIPort : public spi::SPIPort
 {
 public:
     RASSPIPort(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
@@ -109,6 +100,11 @@ public:
         SPIPort(i_target, i_base_address, i_resp_select, i_ecc_mode)
         {}
 
+    typedef struct
+    {
+        uint16_t numOfCE;
+        uint16_t numOfUE;
+    }memDeviceStatus_t __attribute__((aligned(4)));
     mutable memDeviceStatus_t iv_ioMemDeviceStatus;
 
 private:
@@ -147,7 +143,7 @@ private:
         }
 
     fapi_try_exit:
-        return current_err;
+        return fapi2::current_err;
     }
 };
 

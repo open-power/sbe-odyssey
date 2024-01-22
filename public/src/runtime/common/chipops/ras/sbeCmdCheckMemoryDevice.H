@@ -30,7 +30,7 @@
 /*
  * @brief structure for check memory chip-op
  */
-struct __attribute__((__packed__)) memCheckCmdMsg_t
+struct memCheckCmdMsg_t
 {
     uint8_t reserved;
     uint8_t scope;
@@ -57,21 +57,24 @@ struct __attribute__((__packed__)) memCheckCmdMsg_t
             // 0x02: Full side
             if ( (scope != SCOPE_IMAGE_ONLY) && (scope != SCOPE_FULL_SIDE) )
             {
-                rc = SBE_SEC_RAS_INVALID_SCOPE_CHECK_VALUE;
+                SBE_ERROR("Invalid scope check value:[%d]", scope);
+                rc = SBE_SEC_INVALID_PARAMS;
                 break;
             }
 
             // Check for validity of side param
-            if ( (side == INVALID_SIDE) || (side >= END_OF_SIDE_LIST) )
+            if ( (side == INVALID_SIDE) || (side > END_OF_SIDE_LIST) )
             {
-                rc = SBE_SEC_RAS_INVALID_SIDE_VALUE;
+                SBE_ERROR("Invalid memory side value:[%d]", side);
+                rc = SBE_SEC_INVALID_PARAMS;
                 break;
             }
 
             // Check for validity of device Id param
-            if ( (devId == INVALID_DEVICE_ID) || (devId >= END_OF_DEVICE_LIST) )
+            if ( (devId == INVALID_DEVICE_ID) || (devId > END_OF_DEVICE_LIST) )
             {
-                rc = SBE_SEC_RAS_INVALID_DEVICE_ID;
+                SBE_ERROR("Invalid device Id:[%d]", devId);
+                rc = SBE_SEC_INVALID_PARAMS;
                 break;
             }
         }while(false);
@@ -83,7 +86,7 @@ struct __attribute__((__packed__)) memCheckCmdMsg_t
 /**
  * @brief Structure for memory device status details
  */
-struct __attribute__((packed)) memDeviceStatusDetails_t
+struct memDeviceStatusDetails_t
 {
     // Side value
     uint8_t side;

@@ -64,6 +64,9 @@ if ((l_rc) != SBE_SEC_OPERATION_SUCCESSFUL) \
     break; \
 } \
 
+#define CLEAR_FAPI2_CURRENT_ERROR() \
+    fapi2::current_err = FAPI2_RC_SUCCESS;
+
 #define SBE_TRY(what) { l_rc = what; CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc); }
 
 #define SBE_ASSERT(condition, flush, pri_rc, sec_rc, msg, args...)     \

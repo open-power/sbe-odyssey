@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -29,6 +29,8 @@
 #include "assert.h"
 #include "ptbl.H"
 #include "imagemap.H"
+
+using namespace fapi2;
 
 fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
                               const sbeFifoType i_type,
