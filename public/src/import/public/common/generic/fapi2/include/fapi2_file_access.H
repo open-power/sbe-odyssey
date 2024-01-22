@@ -39,7 +39,8 @@ namespace fapi2
 
 enum loadEmbeddedFileFlags
 {
-    LEFF_ALLOW_UNTRUSTED = 0x80000000
+    LEFF_ALLOW_UNTRUSTED    = 0x80000000,   ///< Allow loading of untrusted files
+    LEFF_QUIET_IF_NOT_FOUND = 0x40000000,   ///< Suppress error message if file not found; useful for probing a file's presence
 };
 
 /// @brief Load a file from the embedded archive
