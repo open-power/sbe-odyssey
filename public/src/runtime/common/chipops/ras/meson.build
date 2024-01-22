@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2023,2024
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,14 +28,7 @@
 
 CMN_CHECKMEMORYDEVICE_CHIPOPS_JSON = files('chipop_table.json')
 
-runtime_cmn_checkmemorydevice_dir_path = meson.global_source_root() + '/public/src/runtime/common/chipops/ras/'
-
-infile_c = ['sbeCmdCheckMemoryDevice.C',
-            'rasUtils.C',
-           ]
-
-abs_runtime_cmn_checkmemorydevice_c_path = []
-
-foreach infile : infile_c
-  abs_runtime_cmn_checkmemorydevice_c_path += runtime_cmn_checkmemorydevice_dir_path + infile
-endforeach
+abs_runtime_cmn_checkmemorydevice_c_path = [
+  files('sbeCmdCheckMemoryDevice.C'),
+  files('rasUtils.C'),
+]

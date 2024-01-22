@@ -36,8 +36,9 @@
 #define SPI_ENGINE_NOR                  0
 #define SPIM_BASEADDR_PIB               0x70000
 #define NOR_DEVICE_MAX_SIZE             0x1000000 // 16MB
-#define MEMORY_ID                       0 // refers to one monolithic memory with logical partitions
+#define MEMORY_ID                       1 // refers to one monolithic memory with logical partitions
 
+using namespace fapi2;
 using spi::SPIPort;
 using spi::FlashDevice;
 
@@ -45,6 +46,10 @@ using spi::FlashDevice;
         ((address >= (sector * SMALLEST_ERASE_BLOCK_SIZE)) && (address < ((sector + 1) * SMALLEST_ERASE_BLOCK_SIZE)))
 #define SECTOR_00 0x00
 #define SECTOR_72 0x48
+
+// Get device type
+bool l_dev_type_known = false;
+FlashDevice::device_type l_dev_type;
 
 void getSideInfo(uint8_t &o_runningSide,
                  uint8_t &o_nonRunningSide)
@@ -181,9 +186,9 @@ uint32_t createMemoryDevice(
             break;
         }
 
-        if (i_memory_id != 0)
+        if (i_memory_id != MEMORY_ID)
         {
-            // Fail if i_memory_id != 0 since that is all we support for Odyssey
+            // Fail if i_memory_id != 1 since that is all we support for Odyssey
             SBE_ERROR(SBE_FUNC "Memory dev Id:[%d] not supported", i_memory_id);
             l_rc = SBE_SEC_CU_MEM_DEV_ID_NOT_SUPPORTED;
             break;
@@ -224,8 +229,6 @@ uint32_t createMemoryDevice(
         //
         // Detect Flash device type
         //
-        static bool l_dev_type_known = false;
-        static FlashDevice::device_type l_dev_type;
         if (!l_dev_type_known)
         {
             fapi2::ReturnCode l_fapiRc;
@@ -289,6 +292,14 @@ uint32_t createMemoryDeviceRAS(
             break;
         }
 
+        if (i_memory_id != MEMORY_ID)
+        {
+            // Fail if i_memory_id != 1 since that is all we support for Odyssey
+            SBE_ERROR(SBE_FUNC "Memory dev Id:[%d] not supported", i_memory_id);
+            l_rc = SBE_SEC_CU_MEM_DEV_ID_NOT_SUPPORTED;
+            break;
+        }
+
         //
         // Allocate driver object
         //
@@ -315,8 +326,6 @@ uint32_t createMemoryDeviceRAS(
         //
         // Detect Flash device type
         //
-        static bool l_dev_type_known = false;
-        static FlashDevice::device_type l_dev_type;
         if (!l_dev_type_known)
         {
             fapi2::ReturnCode l_fapiRc = FlashDevice::detect_device(l_memblock->port, l_dev_type);
@@ -502,7 +511,7 @@ uint32_t getSideStartAddressAndSize(const uint8_t i_side,
 
     do
     {
-        if (i_devId != 1)
+        if (i_devId != MEMORY_ID)
         {
             SBE_ERROR(SBE_FUNC "Invalid device Id. RC[0x%02x] ", i_devId);
             l_rc = SBE_SEC_RAS_INVALID_DEVICE_ID;
@@ -526,21 +535,17 @@ uint32_t getSideStartAddressAndSize(const uint8_t i_side,
             // Get the side start offset for golden side
             getSideAddress(GOLDEN_SIDE_INDEX, o_sideStartAddress);
         break;
-
-        default:
-            SBE_ERROR(SBE_FUNC "Invalid memory side");
-        break;
         }
+
+        SBE_INFO(SBE_FUNC "For Side:[0x%02x] Device:[0x%02x] Start Address:[0x%08x]",
+                i_side, i_devId, o_sideStartAddress);
+
+        // Valid NOR address is 24-bits - 16MB
+        o_sideStartAddress -= NOR_SIDE_0_START_ADDR;
+
+        // Valid max NOR memory size
+        o_sideMaxSize = NOR_SIDE_SIZE;
     }while (false);
-
-    SBE_INFO(SBE_FUNC "For Side:[0x%02x] Device:[0x%02x] Start Address:[0x%08x]",
-             i_side, i_devId, o_sideStartAddress);
-
-    // Valid NOR address is 24-bits - 16MB
-    o_sideStartAddress -= NOR_SIDE_0_START_ADDR;
-
-    // Valid max NOR memory size
-    o_sideMaxSize = NOR_SIDE_SIZE;
 
     SBE_EXIT(SBE_FUNC);
     return l_rc;

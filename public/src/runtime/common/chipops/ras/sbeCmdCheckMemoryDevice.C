@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023,2024                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -28,6 +29,8 @@
 #include "rasUtils.H"
 #include "imagemap.H"
 #include "heap.H"
+
+using namespace fapi2;
 
 /*
  * @brief getNumOfBitsSetInByte : function would check and return number
@@ -60,7 +63,6 @@ uint32_t sbeCmdCheckMemoryDevice(uint8_t *i_pArg)
 
     sbeRespGenHdr_t l_hdr;
     l_hdr.init();
-    sbeResponseFfdc_t l_ffdc;
     sbeFifoType l_fifoType;
     struct memCheckCmdMsg_t l_memCheckCmdMsg;
     struct memDeviceStatusDetails_t *l_memDeviceStatusBufferArea = NULL;
@@ -140,7 +142,7 @@ uint32_t sbeCmdCheckMemoryDevice(uint8_t *i_pArg)
     if (l_fifoRc == SBE_SEC_OPERATION_SUCCESSFUL)
     {
         // Build the response header packet
-        l_rc = sbeDsSendRespHdr(l_hdr, &l_ffdc, l_fifoType);
+        l_rc = sbeDsSendRespHdr(l_hdr, NULL, l_fifoType);
         if(l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
         {
             SBE_ERROR(SBE_FUNC \
