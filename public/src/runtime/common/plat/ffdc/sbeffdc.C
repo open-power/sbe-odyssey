@@ -338,7 +338,49 @@ static void ffdcUtils_checkScratchPtrCorruptionAndHalt (const void * i_addr)
     }
 }
 
+
 #if defined(MINIMUM_FFDC_RE)
+/**
+ * @brief Commit the given error and mask as commit.
+ *        For null iv_data validating given RC and create ffdc for genuine RC
+ *
+ * @param io_rc  FAPI Return Code object
+ */
+void ffdcUtils_commitError ( fapi2::ReturnCode& io_rc )
+{
+
+    if (io_rc.getDataPtr() == 0)
+    {
+        uint32_t l_fapiRc = io_rc.getRC();
+        if ( (l_fapiRc != fapi2::FAPI2_RC_SUCCESS)      &&
+            ((l_fapiRc & fapi2::FAPI2_RC_PHAL_MASK)     ||
+             (l_fapiRc & fapi2::FAPI2_RC_FAPI2_MASK)    ||
+             (l_fapiRc & fapi2::FAPI2_RC_PLAT_MASK))
+           )
+        {
+            void * ptr = NULL;
+            io_rc.setDataPtr( ffdcConstructor( io_rc.getRC(), 0, ptr, 0, ptr) );
+        }
+        else
+        {
+            SBE_ERROR (SBE_FUNC "Lost the iv_dataPtr for given rc : 0x08X, "
+                                "unable to log the error, executing PK_HALT()", l_fapiRc);
+            pk_halt();
+        }
+    }
+
+    pozFfdcNode_t * node = reinterpret_cast<pozFfdcNode_t*>(io_rc.getDataPtr());
+
+    // marks as node is committed
+    node->iv_isCommited = true;
+
+    // Add node
+    fapi2::g_ffdcCtrlSingleton.addNextNode (node);
+
+    // Set async ffdc bit
+    (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
+}
+
 
 void pozFfdcCtrl_t::addNextNode( const pozFfdcNode_t  *  i_node )
 {
@@ -637,24 +679,29 @@ static void ffdcInitHwpData( const pozHwpFfdcPackageFormat_t * i_hwpAddr,
         hwpAddr->header.setChipId    ( 0 );
         hwpAddr->header.setRc        ( i_rc );
 
-        hwpAddr->dumpFields        = SBE_FFDC_HW_DATA;
+        hwpAddr->dumpFields = 0;
 
-        // calculating the field data ptr
-        packageBlobField_t * packetPtr = (packageBlobField_t *)
-                      (((uint8_t *)i_hwpAddr) + sizeof(pozHwpFfdcPackageFormat_t));
+        if (i_hwpLocalDataLen)
+        {
+            hwpAddr->dumpFields        = SBE_FFDC_HW_DATA;
 
-        packetPtr->setFields( (uint16_t) SBE_FFDC_HW_DATA,
-                              (uint16_t) i_hwpLocalDataLen );
-        // calculating the hwp local data start ptr
-        o_hwpLocalDataStartAddr = (void *) ( ((uint8_t *)i_hwpAddr)    +
-                                        sizeof(pozHwpFfdcPackageFormat_t) +
-                                        sizeof(packageBlobField_t) );
+            // calculating the field data ptr
+            packageBlobField_t * packetPtr = (packageBlobField_t *)
+                        (((uint8_t *)i_hwpAddr) + sizeof(pozHwpFfdcPackageFormat_t));
+
+            packetPtr->setFields( (uint16_t) SBE_FFDC_HW_DATA,
+                                (uint16_t) i_hwpLocalDataLen );
+            // calculating the hwp local data start ptr
+            o_hwpLocalDataStartAddr = (void *) ( ((uint8_t *)i_hwpAddr)    +
+                                            sizeof(pozHwpFfdcPackageFormat_t) +
+                                            sizeof(packageBlobField_t) );
+        }
 
         // Checking the HWP reg data dump fields
         if ( i_hwpRegDataLen )
         {
             hwpAddr->dumpFields |= SBE_FFDC_REG_DATA;
-            packetPtr = (packageBlobField_t *) ( ((uint8_t *)i_hwpAddr)           +
+            packageBlobField_t * packetPtr = (packageBlobField_t *) ( ((uint8_t *)i_hwpAddr)           +
                                                  sizeof(pozHwpFfdcPackageFormat_t)+
                                                  sizeof(packageBlobField_t)       +
                                                  i_hwpLocalDataLen );
@@ -940,30 +987,18 @@ void logSbeError( const uint16_t i_primRc,
 void logFatalError( fapi2::ReturnCode& i_rc )
 {
 #if defined(MINIMUM_FFDC_RE)
+
+    ffdcUtils_commitError( i_rc );
+
     pozFfdcNode_t * currentNode = (pozFfdcNode_t *) i_rc.getDataPtr();
-    if (currentNode != nullptr)
-    {
-        currentNode->iv_isCommited = true;
-        currentNode->iv_isFatal    = true;
 
-        // Add node
-        fapi2::g_ffdcCtrlSingleton.addNextNode(currentNode);
+    // Mark Error as a FATAL
+    currentNode->iv_isFatal    = true;
 
-        // Set async ffdc bit
-        (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
-
-        // Note: Ideally iv_rc also need to be cleared. but not clearing since,
-        //       it will break some of the existing flow where sbe functions
-        //       which is calling SBE_EXEC_HWP is returning fapi-rc.
-        i_rc.setDataPtr ( NULL );
-    }
-    else
-    {
-        SBE_ERROR ("logFatalError Lost the iv_dataPtr unable to log the error, "
-                            "executing PK_HALT()");
-        pk_halt();
-    }
-
+    // Note: Ideally iv_rc also need to be cleared. but not clearing since,
+    //       it will break some of the existing flow where sbe functions
+    //       which is calling SBE_EXEC_HWP is returning fapi-rc.
+    i_rc.setDataPtr ( NULL );
 #endif
 }
 
@@ -1015,20 +1050,13 @@ void logError( fapi2::ReturnCode& io_rc,
 
 #if defined(MINIMUM_FFDC_RE)
 
+    ffdcUtils_commitError( io_rc );
+
     pozFfdcNode_t * node = reinterpret_cast<pozFfdcNode_t*>(io_rc.getDataPtr());
     if (node != nullptr)
     {
-        // marks as node is committed
-        node->iv_isCommited = true;
-
         // update severity
         ffdcUpdateSeverity ( node, i_sev );
-
-        // Add node
-        fapi2::g_ffdcCtrlSingleton.addNextNode (node);
-
-        // Set async ffdc bit
-        (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
 
         // clear rc
         io_rc.setDataPtr ( NULL );
