@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -150,7 +150,7 @@ static ReturnCode rcs_ppm_watchdog_test(const Target < TARGET_TYPE_PROC_CHIP | T
 
     // Release Reset
     l_rcs_ctrl1.getScom(i_target);
-    l_rcs_ctrl1.writeBit(0, CTRL1_PPM_RESET);
+    l_rcs_ctrl1.clearBit<CTRL1_PPM_RESET>();
     l_rcs_ctrl1.putScom(i_target);
     fapi2::delay(WAIT_10US, WAIT_1500CYC);
 
@@ -188,8 +188,8 @@ static ReturnCode rcs_ppm_watchdog_test(const Target < TARGET_TYPE_PROC_CHIP | T
 
 
     // Setup Functional Mode
-    l_rcs_ctrl1.writeBit(0, CTRL1_PPM_FASTA_ERR_INJ);
-    l_rcs_ctrl1.writeBit(0, CTRL1_PPM_FASTB_ERR_INJ);
+    l_rcs_ctrl1.clearBit<CTRL1_PPM_FASTA_ERR_INJ>();
+    l_rcs_ctrl1.clearBit<CTRL1_PPM_FASTB_ERR_INJ>();
     l_rcs_ctrl1.putScom(i_target);
     fapi2::delay(WAIT_10US, WAIT_1500CYC);
     l_sns2lth.getScom(i_target);
@@ -376,9 +376,9 @@ static ReturnCode rcs_sw_switch(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TY
 
     // Clear the Auto Block Switchover Signal
     l_rcs_ctrl1.getScom(i_target);
-    l_rcs_ctrl1.writeBit(1, CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER);
+    l_rcs_ctrl1.setBit<CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER>();
     l_rcs_ctrl1.putScom(i_target);
-    l_rcs_ctrl1.writeBit(0, CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER);
+    l_rcs_ctrl1.clearBit<CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER>();
     l_rcs_ctrl1.putScom(i_target);
 
 fapi_try_exit:
@@ -430,24 +430,24 @@ ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_C
     l_rcs_ctrl1 = 0;
     l_rcs_ctrl1.set_DESKEW_SEL_A(0);
     l_rcs_ctrl1.set_DESKEW_SEL_B(0);
-    l_rcs_ctrl1.writeBit(1, CTRL1_ENABLE_19P5_DLL);
-    l_rcs_ctrl1.writeBit(0, CTRL1_LOCK_19P5_DLL_CODE);
+    l_rcs_ctrl1.setBit<CTRL1_ENABLE_19P5_DLL>();
+    l_rcs_ctrl1.clearBit<CTRL1_LOCK_19P5_DLL_CODE>();
     l_rcs_ctrl1.set_DESKEW_AUTO_EN(1);
     l_rcs_ctrl1.set_DESKEW_AUTO_LOCK(0);
     l_rcs_ctrl1.set_DESKEW_AUTO_FILT(0);
     l_rcs_ctrl1.set_TESTOUT_SEL(0);
     l_rcs_ctrl1.set_TESTOUT_EN(0);
-    l_rcs_ctrl1.writeBit(0, CTRL1_EN_AUTO_BLOCK_SWITCHOVER); // Leaving this at zero for now until a later point
-    l_rcs_ctrl1.writeBit(0, CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER);
-    l_rcs_ctrl1.writeBit(0, CTRL1_PPM_FASTA_ERR_INJ);
-    l_rcs_ctrl1.writeBit(0, CTRL1_PPM_FASTB_ERR_INJ);
-    l_rcs_ctrl1.writeBit(1, CTRL1_PPM_RESET);
-    l_rcs_ctrl1.writeBit(0, CTRL1_PPM_OUTMUX_SEL0);
-    l_rcs_ctrl1.writeBit(0, CTRL1_PPM_OUTMUX_SEL1);
-    l_rcs_ctrl1.writeBit(1, CTRL1_PPM_OUTMUX_SEL2);
-    l_rcs_ctrl1.writeBit(0, CTRL1_PPM_INMUX_SEL0);
-    l_rcs_ctrl1.writeBit(1, CTRL1_PPM_INMUX_SEL1);
-    l_rcs_ctrl1.writeBit(0, CTRL1_FORCE_ERROR_HIGH);
+    l_rcs_ctrl1.clearBit<CTRL1_EN_AUTO_BLOCK_SWITCHOVER>(); // Leaving this at zero for now until a later point
+    l_rcs_ctrl1.clearBit<CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER>();
+    l_rcs_ctrl1.clearBit<CTRL1_PPM_FASTA_ERR_INJ>();
+    l_rcs_ctrl1.clearBit<CTRL1_PPM_FASTB_ERR_INJ>();
+    l_rcs_ctrl1.setBit<CTRL1_PPM_RESET>();
+    l_rcs_ctrl1.clearBit<CTRL1_PPM_OUTMUX_SEL0>();
+    l_rcs_ctrl1.clearBit<CTRL1_PPM_OUTMUX_SEL1>();
+    l_rcs_ctrl1.setBit<CTRL1_PPM_OUTMUX_SEL2>();
+    l_rcs_ctrl1.clearBit<CTRL1_PPM_INMUX_SEL0>();
+    l_rcs_ctrl1.setBit<CTRL1_PPM_INMUX_SEL1>();
+    l_rcs_ctrl1.clearBit<CTRL1_FORCE_ERROR_HIGH>();
     l_rcs_ctrl1.putScom(i_target);
 
     // Simple Clock Check
@@ -491,7 +491,7 @@ ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_C
     // Lock the 19.5ps DLL
     FAPI_INF("RCS Locking 19.5ps DLL.");
     fapi2::delay(WAIT_1MS, WAIT_100KCYC); // Need at least 1ms of stability for the DLL to lock
-    l_rcs_ctrl1.writeBit(1, CTRL1_LOCK_19P5_DLL_CODE);
+    l_rcs_ctrl1.setBit<CTRL1_LOCK_19P5_DLL_CODE>();
     l_rcs_ctrl1.putScom(i_target);
 
     // Release RCS Bypass
@@ -519,11 +519,11 @@ ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_C
     // Clear the Auto Block Switchover Signal
     FAPI_INF("RCS Clearing Block Switchover.");
     l_rcs_ctrl1.getScom(i_target);
-    l_rcs_ctrl1.writeBit(1, CTRL1_EN_AUTO_BLOCK_SWITCHOVER);
-    l_rcs_ctrl1.writeBit(1, CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER);
+    l_rcs_ctrl1.setBit<CTRL1_EN_AUTO_BLOCK_SWITCHOVER>();
+    l_rcs_ctrl1.setBit<CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER>();
     l_rcs_ctrl1.putScom(i_target);
     fapi2::delay(WAIT_1US, WAIT_100KCYC);
-    l_rcs_ctrl1.writeBit(0, CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER);
+    l_rcs_ctrl1.clearBit<CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER>();
     l_rcs_ctrl1.putScom(i_target);
     fapi2::delay(WAIT_1US, WAIT_100KCYC);
 
