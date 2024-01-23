@@ -915,29 +915,37 @@ static ReturnCode tryLoadCompositeImage(ChipTarget& i_chip_target,
     const void* image = NULL;
     size_t image_size;
     bool trusted = true;
-    ReturnCode rc = loadEmbeddedFile(i_chip_target(), i_fname, image, image_size, 0);
+    ReturnCode rc = FAPI2_RC_SUCCESS;
+    uint32_t flags = LEFF_QUIET_IF_NOT_FOUND;
 
-    if ((rc == FAPI2_RC_FILE_NOT_FOUND) || (rc == FAPI2_RC_PLAT_ERR_SEE_DATA))
+    // Try loading twice - once only looking for trusted files, once allowing untrusted files too
+    do
     {
-        // Check if it would have been found from an untrusted source
-        rc = loadEmbeddedFile(i_chip_target(), i_fname, image, image_size, LEFF_ALLOW_UNTRUSTED);
+        ReturnCode rc = loadEmbeddedFile(i_chip_target(), i_fname, image, image_size, flags);
 
-        if (rc == FAPI2_RC_SUCCESS)
+        if ((rc == FAPI2_RC_FILE_NOT_FOUND) || (rc == FAPI2_RC_PLAT_ERR_SEE_DATA))
         {
-            FAPI_INF("Loading image from untrusted source, restricting scan types selectable!");
-            trusted = false;
+            if (trusted)
+            {
+                // Try again with untrusted file
+                trusted = false;
+                flags |= LEFF_ALLOW_UNTRUSTED;
+                continue;
+            }
+            else
+            {
+                // We're feeling our way around the embedded archive; don't fail if a file does not exist
+                return FAPI2_RC_SUCCESS;
+            }
         }
-        else
+        else if (rc != FAPI2_RC_SUCCESS)
         {
-            // We're feeling our way around the embedded archive; don't fail if a file does not exist
-            return FAPI2_RC_SUCCESS;
+            // Other errors are plain errors
+            // Not using FAPI_TRY here because we don't want to call freeEmbeddedImage below
+            return rc;
         }
     }
-    else if (rc != FAPI2_RC_SUCCESS)
-    {
-        // Not using FAPI_TRY here because we don't want to call freeEmbeddedImage below
-        return rc;
-    }
+    while (rc != FAPI2_RC_SUCCESS);
 
     // Hooray, we loaded the image; now do something with it!
 #ifndef __PPE__
