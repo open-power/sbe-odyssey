@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2023                             -->
+<!-- Contributors Listed Below - COPYRIGHT 2023,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -25,6 +25,7 @@
 <hwpErrors>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_EFUSE_PROGRAMMING_MISMATCH_ERROR</rc>
     <description>
       e-Fuse programming mismatch error
@@ -38,6 +39,7 @@
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_EFUSE_PROGRAMMING_ECC_ERROR</rc>
     <description>
        e-Fuse programming ECC error
@@ -51,10 +53,11 @@
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_EFUSE_PROGRAMMING_ALIGNMENT_ERROR</rc>
     <description>
       e-Fuse programming alignment error.
-      Start and endbit need to be 64 bit aligned. 
+      Start and endbit need to be 64 bit aligned.
     </description>
     <ffdc>TARGET_CHIP</ffdc>
     <ffdc>USE_SCOM</ffdc>
@@ -65,6 +68,7 @@
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_EFUSE_PROGRAMMING_RANGE_ERROR</rc>
     <description>
       e-Fuse programming range error
@@ -78,6 +82,7 @@
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_EFUSE_PROGRAMMING_TIMEOUT_ERROR</rc>
     <description>
       e-Fuse programming timeout error

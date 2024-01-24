@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2023                             -->
+<!-- Contributors Listed Below - COPYRIGHT 2023,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -28,6 +28,7 @@
 <hwpErrors>
   <!-- ******************************************************************** -->
     <hwpError>
+      <sbeError/>
       <rc>RC_BIST_NONZERO_MISCOMPARES</rc>
       <description>At least one chiplet failed compare check in BIST</description>
       <ffdc>ABIST_NOT_LBIST</ffdc>
