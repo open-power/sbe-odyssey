@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -30,6 +30,8 @@
 #include <target_filters.H>
 #include "sbe_sp_intf.H"
 #include <fapi2_target.H>
+
+
 
 namespace fapi2
 {
@@ -220,7 +222,9 @@ namespace fapi2
         }
 
     protected:
-        std::vector<plat_target_sbe_handle> iv_targets;
+        static const uint32_t MAX_TARGETS = 256;
+        static plat_target_sbe_handle iv_targets[MAX_TARGETS];
+        static uint32_t iv_targets_size;
 
         ///
         /// @brief Determine functional state of a chiplet based target based on functional regions
