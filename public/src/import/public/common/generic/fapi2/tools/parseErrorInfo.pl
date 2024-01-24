@@ -679,9 +679,12 @@ foreach my $argnum ( 0 .. $#ARGV )
         }
 
         #----------------------------------------------------------------------
-        # Set the error enum value in a global hash
+        # Set the error enum value in a global hash only for those who has the sbeError tag
         #---------------------------------------------------------------------
-        setErrorEnumValue( $err->{rc} );
+        if ( ( $arg_local_ffdc eq undef ) || ( exists $err->{sbeError} ) )
+        {
+            setErrorEnumValue( $err->{rc} );
+        }
 
         #----------------------------------------------------------------------
         # if there is an sbeTarget, we will add a method for it regardless
@@ -708,7 +711,10 @@ foreach my $argnum ( 0 .. $#ARGV )
             my $objNum = addEntryToArray( \@eiObjects, $ffdc );
 
             # Add a method to the ffdc-gathering class
-            addFfdcMethod( \%methods, $ffdc, $err->{rc}, $ffdc_type, $objNum );
+            if ( ( $arg_local_ffdc eq undef ) || ( exists $err->{sbeError} ) )
+            {
+                addFfdcMethod( \%methods, $ffdc, $err->{rc}, $ffdc_type, $objNum );
+            }
 
             $ffdc = $mangle_names{$ffdc} if ( $mangle_names{$ffdc} ne undef );
 
@@ -762,7 +768,11 @@ foreach my $argnum ( 0 .. $#ARGV )
 
                 # add a set method for each parameter too..
                 @elements[$i] =~ s/^\s+|\s+$//g;
-                addFfdcMethod( \%methods, @elements[$i], $err->{rc}, $ffdc_type, $objNum );
+
+                if ( ( $arg_local_ffdc eq undef ) || ( exists $err->{sbeError} ) )
+                {
+                    addFfdcMethod( \%methods, @elements[$i], $err->{rc}, $ffdc_type, $objNum );
+                }
 
                 $collectFfdc .= "@elements[$i]";
 
@@ -1560,7 +1570,11 @@ foreach my $argnum ( 0 .. $#ARGV )
         $class_name = ( split( /_/, $class_name, 2 ) )[1];
 
         # Class declaration
-        print ECFILE "\nclass $class_name\n{\n  public:\n";
+        if ( ( $arg_local_ffdc eq undef ) || ( exists $err->{sbeError} ) )
+        {
+            print ECFILE "\nclass $class_name\n{\n  public:\n";
+        }
+
         print ECFILE "    sbeFfdc_t * iv_localFfdcData = NULL;\n";
 
         # Constructor. This traces the description. If this is too much, we can
@@ -1578,15 +1592,20 @@ foreach my $argnum ( 0 .. $#ARGV )
             }
             else
             {
-                $constructor .= "    $class_name(fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE)\n";
-                $constructor .= "    {\n";
-                $constructor .= "        fapi2::current_err =  RC_$class_name;\n";
-                $constructor .= "#if defined(MINIMUM_FFDC_RE)\n";
-                $constructor .= "        fapi2::current_err.setDataPtr(0);\n";
-                $constructor .= "#endif\n";
-                $constructor .= "#if !defined(MINIMUM_FFDC)\n";
-                $constructor .= "        FAPI_ERR(\"$err->{description}\");\n";
-                $constructor .= "#endif\n";
+                if ( exists $err->{sbeError} )
+                {
+
+                    $constructor .=
+                        "    $class_name(fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE)\n";
+                    $constructor .= "    {\n";
+                    $constructor .= "        fapi2::current_err =  RC_$class_name;\n";
+                    $constructor .= "#if defined(MINIMUM_FFDC_RE)\n";
+                    $constructor .= "        fapi2::current_err.setDataPtr(0);\n";
+                    $constructor .= "#endif\n";
+                    $constructor .= "#if !defined(MINIMUM_FFDC)\n";
+                    $constructor .= "        FAPI_ERR(\"$err->{description}\");\n";
+                    $constructor .= "#endif\n";
+                }
             }
         }
         else
@@ -1709,38 +1728,45 @@ foreach my $argnum ( 0 .. $#ARGV )
         }
         else
         {
-            $constructor .= "#if defined(__SBE__)\n";
-            $constructor .= "  #if defined (MINIMUM_FFDC)\n";
-            $constructor .= "    void* ptr = nullptr;\n";
-            $constructor .= "    uint32_t tempScratchAddr = ffdcConstructor( \n";
-            $constructor .= "                     (uint32_t)RC_$class_name,\n";
-            $constructor .= "                     (uint16_t)($count * sizeof(fapi2::sbeFfdc_t)),\n";
-            $constructor .= "                     ( void *&)iv_localFfdcData,\n";
-            $constructor .= "                     (uint16_t)0,\n";
-            $constructor .= "                     ( void *&)ptr,\n";
-            $constructor .= "                     i_sev\n";
-            $constructor .= "                   );\n";
-            $constructor .= "    #if defined (MINIMUM_FFDC_RE)\n";
-            $constructor .= "        fapi2::current_err.setDataPtr(tempScratchAddr);\n";
-            $constructor .= "    #elif !defined (MINIMUM_FFDC_RE)\n";
-            $constructor .=
-                "        fapi2::g_ffdcCtrlSingleton.setHead(reinterpret_cast<const pozFfdcNode_t*>(tempScratchAddr));\n";
-            $constructor .= "    #endif\n";
-            $constructor .= "  #endif\n";
-            $constructor .= "#endif\n";
-            $constructor .= "    }\n";
-            print ECFILE "    void execute()\n";
-            print ECFILE "    {\n";
-            print ECFILE "$executeStr\n";
-            print ECFILE "    }\n";
-
-            if ( $max_ffdc_lv_count < ($count) )
+            if ( exists $err->{sbeError} )
             {
-                $max_ffdc_lv_count = $count;
+                $constructor .= "#if defined(__SBE__)\n";
+                $constructor .= "  #if defined (MINIMUM_FFDC)\n";
+                $constructor .= "    void* ptr = nullptr;\n";
+                $constructor .= "    uint32_t tempScratchAddr = ffdcConstructor( \n";
+                $constructor .= "                     (uint32_t)RC_$class_name,\n";
+                $constructor .= "                     (uint16_t)($count * sizeof(fapi2::sbeFfdc_t)),\n";
+                $constructor .= "                     ( void *&)iv_localFfdcData,\n";
+                $constructor .= "                     (uint16_t)0,\n";
+                $constructor .= "                     ( void *&)ptr,\n";
+                $constructor .= "                     i_sev\n";
+                $constructor .= "                   );\n";
+                $constructor .= "    #if defined (MINIMUM_FFDC_RE)\n";
+                $constructor .= "        fapi2::current_err.setDataPtr(tempScratchAddr);\n";
+                $constructor .= "    #elif !defined (MINIMUM_FFDC_RE)\n";
+                $constructor .=
+                    "        fapi2::g_ffdcCtrlSingleton.setHead(reinterpret_cast<const pozFfdcNode_t*>(tempScratchAddr));\n";
+                $constructor .= "    #endif\n";
+                $constructor .= "  #endif\n";
+                $constructor .= "#endif\n";
+                $constructor .= "    }\n";
+                print ECFILE "    void execute()\n";
+                print ECFILE "    {\n";
+                print ECFILE "$executeStr\n";
+                print ECFILE "    }\n";
+
+                if ( $max_ffdc_lv_count < ($count) )
+                {
+                    $max_ffdc_lv_count = $count;
+                }
             }
         }
-        print ECFILE $constructor;
-        print ECFILE "};\n\n";
+
+        if ( ( $arg_local_ffdc eq undef ) || ( exists $err->{sbeError} ) )
+        {
+            print ECFILE $constructor;
+            print ECFILE "};\n\n";
+        }
 
         #----------------------------------------------------------------------
         # If this is an SBE error, add it to set_sbe_error.H

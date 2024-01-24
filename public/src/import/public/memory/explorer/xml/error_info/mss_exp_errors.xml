@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -65,6 +65,7 @@
 
   <!-- Note: error should be handled by PRD, so no deconfig desired -->
   <hwpError>
+    <sbeError/>
     <rc>RC_EXP_MEMDIAGS_COMPARE_ERROR_IN_LAST_PATTERN</rc>
     <description>A miscompare error was caused by the last MCBIST pattern</description>
     <ffdc>PORT</ffdc>
@@ -82,6 +83,7 @@
 
   <!-- Note: error should be handled by PRD, so no deconfig desired -->
   <hwpError>
+    <sbeError/>
     <rc>RC_EXP_MEMDIAGS_ERROR_IN_LAST_PATTERN</rc>
     <description>An error was caused by the last MCBIST pattern</description>
     <ffdc>STATUS0</ffdc>
@@ -99,6 +101,7 @@
 
   <!-- Note: error should be handled by PRD, so no deconfig desired -->
   <hwpError>
+    <sbeError/>
     <rc>RC_EXP_MEMDIAGS_MCBIST_FAILED_TO_START</rc>
     <description>The MCBIST engine failed to start its program</description>
     <collectRegisterFfdc>
@@ -114,6 +117,7 @@
 
   <!-- Note: error should be handled by PRD, so no deconfig desired -->
   <hwpError>
+    <sbeError/>
     <rc>RC_EXP_MEMDIAGS_PORT_NOT_FUNCTIONAL</rc>
     <description>The port used in an MCBIST program is not functional</description>
     <ffdc>RELATIVE_PORT_POSITION</ffdc>
@@ -132,6 +136,7 @@
 
   <!-- Note: error should be handled by PRD, so no deconfig desired -->
   <hwpError>
+    <sbeError/>
     <rc>RC_EXP_MEMDIAGS_SUPERFAST_INIT_FAILED_TO_INIT</rc>
     <description>A superfast init operation failed initialization</description>
     <collectRegisterFfdc>
@@ -147,6 +152,7 @@
 
   <!-- Note: error should be handled by PRD, so no deconfig desired -->
   <hwpError>
+    <sbeError/>
     <rc>RC_EXP_MEMDIAGS_SUPERFAST_READ_FAILED_TO_INIT</rc>
     <description>A superfast read operation failed initialization</description>
     <collectRegisterFfdc>
@@ -162,6 +168,7 @@
 
   <!-- Note: error should be handled by PRD, so no deconfig desired -->
   <hwpError>
+    <sbeError/>
     <rc>RC_EXP_MEMDIAGS_MCBIST_FAILED_TO_STOP</rc>
     <description>The MCBIST engine failed to stop its program</description>
     <collectRegisterFfdc>
@@ -178,6 +185,7 @@
 
   <!-- Note: error should be handled by PRD, so no deconfig desired -->
   <hwpError>
+    <sbeError/>
     <rc>RC_EXP_MEMDIAGS_CONTINUOUS_SCRUB_FAILED_TO_INIT</rc>
     <description>A continuous scrub operation failed initialization</description>
     <collectRegisterFfdc>
@@ -193,6 +201,7 @@
 
   <!-- Note: error should be handled by PRD, so no deconfig desired -->
   <hwpError>
+    <sbeError/>
     <rc>RC_EXP_MEMDIAGS_TARGETED_SCRUB_FAILED_TO_INIT</rc>
     <description>A continuous scrub operation failed initialization</description>
     <collectRegisterFfdc>
@@ -208,6 +217,7 @@
 
   <!-- Note: error should be handled by PRD, so no deconfig desired -->
   <hwpError>
+    <sbeError/>
     <rc>RC_EXP_MEMDIAGS_ALREADY_AT_BOUNDARY</rc>
     <description>A continue request asked to stop at a boundary, but we are there already</description>
     <ffdc>MC_TARGET</ffdc>
@@ -224,6 +234,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_EXP_MCBIST_TIMEOUT</rc>
     <description>
         MCBIST program failed to return in the time allowed
@@ -247,6 +258,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_EXP_MCBIST_DATA_FAIL</rc>
     <description>
         MCBIST program appeared to have failed, but set conflicting bits in the status register
@@ -270,6 +282,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_EXP_MCBIST_UNKNOWN_FAILURE</rc>
     <description>MCBIST program reported a failure but no error status was found</description>
     <ffdc>STATUS_REGISTER</ffdc>
@@ -291,6 +304,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_DRAMINIT_UNSUPPORTED_DIMM_TYPE</rc>
     <description>Unsupported DIMM type encountered in draminit_training procedure</description>
     <ffdc>OCMB_TARGET</ffdc>
@@ -313,6 +327,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_DRAMINIT_UNSUPPORTED_DRAM_WIDTH</rc>
     <description>Unsupported DRAM width encountered in draminit_training procedure</description>
     <ffdc>OCMB_TARGET</ffdc>
@@ -335,6 +350,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_DRAMINIT_UNSUPPORTED_3DS_HEIGHT</rc>
     <description>Unsupported 3DS height encountered in draminit_training procedure</description>
     <ffdc>OCMB_TARGET</ffdc>
@@ -357,6 +373,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_FW_STATUS_POLLING_TIMEOUT</rc>
     <description>
       An OCMB chip failed to reply over i2c during FW_STATUS loop.
@@ -372,6 +389,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_ENTERPRISE_INVALID_CONFIGURATION</rc>
     <description>
       The enterprise supported bit from explorer fuse
@@ -389,6 +407,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_ENTERPRISE_SETUP_ERROR</rc>
     <description>The enterprise mode bit is in the incorrect state</description>
     <ffdc>EXPECTED</ffdc>
@@ -404,6 +423,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_I2C_FW_STATUS_BUSY</rc>
     <description>
       Received FW_BUSY status after polling timeout for
@@ -429,6 +449,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_POLL_ABORT_FW_STATUS_BUSY</rc>
     <description>
       Received FW_BUSY status after polling timeout for
@@ -456,6 +477,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_I2C_CMD_FAIL</rc>
     <description>
       Received non-SUCCESS status for command ID EXP_FW_STATUS.
@@ -482,6 +504,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_MDS_I2C_WRONG_RSP_SIZE</rc>
     <description>
       Received an incorrect response size for MDS I2C scoms.
@@ -497,6 +520,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_MDS_I2C_CMD_FAIL</rc>
     <description>
       Received non-SUCCESS status for MDS I2C scoms.
@@ -512,6 +536,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_I2C_WRONG_BOOT_STAGE</rc>
     <description>
       Received incorrect boot stage from command ID EXP_FW_STATUS
@@ -537,6 +562,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_I2C_POLLING_TIMEOUT_RESET</rc>
     <description>
       Polling the explorer I2C interface for an ACK
@@ -562,6 +588,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_I2C_POLLING_TIMEOUT_BOOT_ROM</rc>
     <description>
       Polling the explorer I2C interface for an ACK
@@ -582,6 +609,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_I2C_FW_STATUS_INVALID_SIZE</rc>
     <description>
       Received incorrect EXP_FW_STATUS data size
@@ -595,6 +623,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_RSP_ARG_FAILED</rc>
     <description>
       The response_argument field of the host_fw_response_struct returned a FAILURE
@@ -623,6 +652,7 @@
   <hwpError>
     <!-- Note: we do not want to knock out a whole DIMM for a sensor cache fail -->
     <!--       HB will handle the lack of deconfig on their side -->
+    <sbeError/>
     <rc>RC_MSS_EXP_SENSOR_CACHE_ENABLE_FAILED</rc>
     <description>
       The response_argument field of the host_fw_response_struct returned
@@ -649,6 +679,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_BOOT_CONFIG_INVALID_CMD</rc>
     <description>
       BOOT_CONFIG command was invalid.
@@ -666,6 +697,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_BOOT_CONFIG_LOOPBACK_FAIL</rc>
     <description>
       BOOT_CONFIG command encountered an OMI loopback test failure.
@@ -689,6 +721,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_BOOT_CONFIG_SERDES_INIT_FAIL</rc>
     <description>
       BOOT_CONFIG command encountered an OMI SerDes initialization
@@ -714,6 +747,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_BOOT_CONFIG_SERDES_DLL_LOCK_FAIL</rc>
     <description>
       BOOT_CONFIG command encountered an OMI SerDes DLL lock
@@ -750,6 +784,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_BOOT_CONFIG_DLX_CONFIG_FAIL</rc>
     <description>
       BOOT_CONFIG command encountered an OMI DL config or training
@@ -775,6 +810,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_BOOT_CONFIG_LANE_INV_FAIL</rc>
     <description>
       BOOT_CONFIG command encountered an OMI lane inversion
@@ -800,6 +836,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_BOOT_CONFIG_PARITY_UECC_ERROR</rc>
     <description>
       BOOT_CONFIG command encountered OMI parity or UECC errors.
@@ -824,6 +861,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_DDR_PHY_INIT_UNSUPPORTED_MODE</rc>
     <description>
       Phy Init command configured with an unsupported phy init mode.
@@ -843,6 +881,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_DDR_PHY_INIT_USER_INPUT_MSDG_SIZE_ERROR</rc>
     <description>
       Phy Init command sent user_input_msdg with an incorrect size.
@@ -862,6 +901,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_DDR_PHY_INIT_USER_INPUT_MSDG_MISSING_FLAG</rc>
     <description>
       Phy Init command sent user_input_msdg missing extended data flag.
@@ -881,6 +921,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_DDR_PHY_INIT_USER_INPUT_MSDG_ERROR</rc>
     <description>
       Phy Init command encountered user_input_msdg error.
@@ -907,6 +948,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_DDR_PHY_INIT_TRAINING_FAIL</rc>
     <description>
       Phy Init command encountered a training fail.
@@ -938,6 +980,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_DRAMINIT_TRAINING_TIMEOUT_FAIL</rc>
     <description>
       Phy Init command encountered a training timeout fail.
@@ -964,6 +1007,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_CATASTROPHIC_DRAMINIT_TRAINING_FAIL</rc>
     <description>
       Phy Init command encountered a catastrophic training fail.
@@ -990,6 +1034,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_DDR_PHY_INIT_UNKNOWN_ERROR</rc>
     <description>
       Phy Init command encountered an unknown fail.
@@ -1102,6 +1147,7 @@
   </registerFfdc>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_CCS_READ_MISCOMPARE</rc>
     <description>
         CCS reports a read miscompare.
@@ -1125,6 +1171,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_CCS_UE_SUE</rc>
     <description>
         CCS reports a UE or SUE in the CCS program array
@@ -1149,6 +1196,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_CCS_HUNG</rc>
     <description>
         Software reported that the machine is not seeing the CCS finish in the alloted time
@@ -1175,6 +1223,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_CCS_RCD_FAIL</rc>
     <description>
         Indicates that an RCD fail occurred during CCS
@@ -1198,6 +1247,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_EXP_CCS_HUNG_TRYING_TO_STOP</rc>
     <description>
         CCS failed to return from in-progress status while trying to stop a previous program
@@ -1221,6 +1271,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_EXP_DRAMINIT_BAD_RTT_WR</rc>
     <description>
         A bad RTT WR was passed in to Explorer's draminit function
@@ -1241,6 +1292,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_EXP_RESPONSE_WRONG_REQID</rc>
     <description>
         Request ID in Explorer response was not equal to the ID in the command.
@@ -1266,6 +1318,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_UNKNOWN_PHY_INIT_MODE</rc>
     <description>
       The PHY init mode value was an unknown value.
@@ -1279,6 +1332,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_INVALID_PHY_INIT_RSP_DATA_LENGTH</rc>
     <description>
       The data buffer vector retrieved from the EXP_FW_DDR_PHY_INIT response did not match the expected length
@@ -1304,6 +1358,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_INVALID_FW_ADAPTER_PROPERTIES_RSP_DATA_LENGTH</rc>
     <description>
       The data buffer vector retrieved from the EXP_FW_ADAPTER_PROPERTIES_GET response did not match the expected length
@@ -1327,6 +1382,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_SUM_MASK_REG_SCOM_FAIL</rc>
     <description>
         A Scom fail occurred when attempting to access EXPLR_TP_MB_UNIT_TOP_SUM_MASK_REG at address
@@ -1344,6 +1400,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_EXP_UNKNOWN_THERMAL_SENSOR</rc>
     <description>
       The thermal sensor type for the given port was not a known value

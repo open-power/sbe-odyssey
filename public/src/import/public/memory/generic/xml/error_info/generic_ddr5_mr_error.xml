@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -41,6 +41,7 @@
 <!-- Generic MR errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR_BAD_DRAM</rc>
     <description>
        A bad DRAM latency was passed to an MR
@@ -63,6 +64,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR_BAD_STRAP_VALUE</rc>
     <description>
        A bad strap value was passed to an MR
@@ -87,6 +89,7 @@
 <!-- MR0 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR0_BAD_CAS_LATENCY</rc>
     <description>
        A bad CAS latency was passed to MR0
@@ -109,6 +112,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR0_BAD_BURST_LENGTH</rc>
     <description>
        A bad burst length was passed to MR0
@@ -134,6 +138,7 @@
 <!-- MR3 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR3_BAD_CYCLE_ALIGN</rc>
     <description>
        A bad cycle alignment value was passed to MR3
@@ -157,6 +162,7 @@
 <!-- MR4 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR4_BAD_TRFC_MODE</rc>
     <description>
        A bad TRFC mode was passed into MR4
@@ -169,6 +175,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR4_BAD_MIN_REFRESH_RATE</rc>
     <description>
        A bad minimum refresh rate was passed into MR4
@@ -192,6 +199,7 @@
 <!-- MR5 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR5_DRV_IMP_ATTR_VALUE</rc>
     <description>
        A bad drive impedance value was passed to MR5
@@ -214,6 +222,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR5_DRV_IMP_FIELD_VALUE</rc>
     <description>
        A bad drive impedance field value was passed by MR5
@@ -238,6 +247,7 @@
 <!-- MR6 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR6_WR_RECOVERY_ATTR_VALUE</rc>
     <description>
        A bad drive WR recovery value was passed to MR6
@@ -258,6 +268,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR6_WR_RECOVERY_FIELD_VALUE</rc>
     <description>
        A bad drive WR recovery value was passed by MR6
@@ -278,6 +289,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR6_TRTP_ATTR_VALUE</rc>
     <description>
        A bad tRTP value was passed to MR6
@@ -298,6 +310,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR6_TRTP_FIELD_VALUE</rc>
     <description>
        A bad tRTP field value was passed by MR6
@@ -320,6 +333,7 @@
 <!-- MR8 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR8_WR_PREAMBLE_ATTR_VALUE</rc>
     <description>
        A bad drive WR preamble value was passed to MR8
@@ -340,6 +354,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR8_RD_PREAMBLE_ATTR_VALUE</rc>
     <description>
        A bad drive RD preamble value was passed to MR8
@@ -360,6 +375,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR8_WR_PREAMBLE_FIELD_VALUE</rc>
     <description>
        A bad drive WR preamble value was passed by MR8
@@ -380,6 +396,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR8_RD_PREAMBLE_FIELD_VALUE</rc>
     <description>
        A bad drive RD preamble value was passed by MR8
@@ -402,6 +419,7 @@
 <!-- MR10 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR10_BAD_VREFDQ</rc>
     <description>
        A bad cycle VREFDQ was passed to MR10
@@ -427,6 +445,7 @@
 <!-- MR11 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR11_BAD_VREFCA</rc>
     <description>
        A bad cycle VREFCA was passed to MR11
@@ -452,6 +471,7 @@
 <!-- MR12 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR12_BAD_VREFCS</rc>
     <description>
        A bad cycle VREFDQ was passed to MR12
@@ -477,6 +497,7 @@
 <!-- MR13 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR13_BAD_TCCD_L</rc>
     <description>
        A bad TCCD_L was passed to MR13
@@ -501,6 +522,7 @@
 <!-- MR14 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR14_BAD_ECS_CID</rc>
     <description>
        A bad CID was passed to MR14
@@ -524,6 +546,7 @@
 <!-- MR15 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR15_ECS_ERROR_THRESHOLD</rc>
     <description>
        A bad ECS error threshold was passed to MR15
@@ -547,6 +570,7 @@
 <!-- MR32 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR32_CA_ODT_ATTR_VALUE</rc>
     <description>
        A bad CK or CS ODT was passed to MR32
@@ -570,6 +594,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR32_CA_ODT_FIELD_VALUE</rc>
     <description>
        A bad CK or CS ODT was processed by MR32
@@ -593,6 +618,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR32_CA_ODT_PER_DRAM_ATTR_VALUE</rc>
     <description>
        A bad CK or CS ODT was passed to MR32
@@ -616,6 +642,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR32_CA_ODT_PER_DRAM_FIELD_VALUE</rc>
     <description>
        A bad CK or CS ODT was processed by MR32
@@ -641,6 +668,7 @@
 <!-- MR33 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR33_CA_ODT_ATTR_VALUE</rc>
     <description>
        A bad CA ODT was passed to MR33
@@ -663,6 +691,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR33_CA_ODT_PER_DRAM_ATTR_VALUE</rc>
     <description>
        A bad CA ODT was passed to MR33
@@ -685,6 +714,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR33_CA_ODT_FIELD_VALUE</rc>
     <description>
        A bad CA ODT was processed by MR33
@@ -707,6 +737,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR33_CA_ODT_PER_DRAM_FIELD_VALUE</rc>
     <description>
        A bad CA ODT was processed by MR33
@@ -729,6 +760,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR33_DQS_RTT_PARK_ATTR_VALUE</rc>
     <description>
        A bad DQS RTT Park value was passed to MR33
@@ -751,6 +783,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR33_DQS_RTT_PARK_PER_DRAM_ATTR_VALUE</rc>
     <description>
        A bad DQS RTT Park value was passed to MR33
@@ -773,6 +806,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR33_DQS_RTT_PARK_FIELD_VALUE</rc>
     <description>
        A bad DQS RTT Park value was processed by MR33
@@ -795,6 +829,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR33_DQS_RTT_PARK_PER_DRAM_FIELD_VALUE</rc>
     <description>
        A bad DQS RTT Park value was processed by MR33
@@ -819,6 +854,7 @@
 <!-- MR34 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR34_RTT_ATTR_VALUE</rc>
     <description>
        A bad RTT value was passed to MR34
@@ -841,6 +877,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR34_RTT_FIELD_VALUE</rc>
     <description>
        A bad RTT value was processed by MR34
@@ -865,6 +902,7 @@
 <!-- MR35 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR35_RTT_ATTR_VALUE</rc>
     <description>
        A bad RTT value was passed to MR35
@@ -887,6 +925,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR35_RTT_FIELD_VALUE</rc>
     <description>
        A bad RTT value was processed by MR35
@@ -911,6 +950,7 @@
 <!-- MR37 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR37_ODTLON_ATTR_VALUE</rc>
     <description>
        A bad ODTLon value was passed to MR37
@@ -934,6 +974,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR37_ODTLOFF_ATTR_VALUE</rc>
     <description>
        A bad ODTLon value was passed to MR37
@@ -959,6 +1000,7 @@
 <!-- MR38 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR38_ODTLON_NT_ATTR_VALUE</rc>
     <description>
        A bad ODTLon NT (non terminating) value was passed to MR38
@@ -982,6 +1024,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR38_ODTLOFF_NT_ATTR_VALUE</rc>
     <description>
        A bad ODTLon NT (non terminating) value was passed to MR38
@@ -1007,6 +1050,7 @@
 <!-- MR39 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR39_ODTLON_RD_ATTR_VALUE</rc>
     <description>
        A bad ODTLon RD value was passed to MR39
@@ -1030,6 +1074,7 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR39_ODTLOFF_RD_ATTR_VALUE</rc>
     <description>
        A bad ODTLon RD value was passed to MR39
@@ -1059,6 +1104,7 @@
 <!-- MR51 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR51_BAD_WR_CRC_THRESHOLD</rc>
     <description>
        A bad WR CRC threshold value was passed to MR51
@@ -1082,6 +1128,7 @@
 <!-- MR52 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR52_BAD_WR_CRC_WINDOW</rc>
     <description>
        A bad WR CRC window value was passed to MR52
@@ -1107,6 +1154,7 @@
 <!-- MR112 errors -->
 
   <hwpError>
+    <sbeError/>
     <rc>RC_MSS_DDR5_MR112_BAD_DFE_GAIN_BIAS</rc>
     <description>
        A bad DFE gain bias was passed to MR112 (or above)
