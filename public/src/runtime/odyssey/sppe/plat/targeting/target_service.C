@@ -42,7 +42,7 @@ void fapi2::target_service::plat_TargetStateUpdateFromAttribute()
 
     // set functional state for TARGET_TYPE_MEM_PORT, TARGET_TYPE_DIMM, TARGET_TYPE_TEMP_SENSOR
     //    using attribute value ATTR_SPPE_TARGET_STATE
-    for(uint16_t j = 0; j < iv_targets.size(); j++)
+    for(uint16_t j = 0; j < iv_targets_size; j++)
     {
         uint8_t l_state = 0;
         uint8_t l_targ_inst = iv_targets[j].getTargetInstance();

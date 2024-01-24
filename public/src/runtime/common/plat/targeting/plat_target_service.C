@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -34,6 +34,9 @@ using namespace fapi2;
 // specific targeting implementation.
 static const uint16_t CLOCK_REGION_PERV = 0x8000;
 
+plat_target_sbe_handle sbe_target_service::iv_targets[MAX_TARGETS];
+uint32_t sbe_target_service::iv_targets_size;
+
 void sbe_target_service::plat_printTargets() const
 {
     uint32_t targetCnt = plat_getTargetCount();
@@ -48,6 +51,10 @@ uint32_t sbe_target_service::plat_targetsInit()
 {
     SBE_INFO("sbe_target_service plat_targetsInit()");
 
+    iv_targets_size = 0;
+    assert((sizeof(iv_targets)/sizeof(iv_targets[0])) >=
+	   ((uint32_t)(G_projTargetMap.last - G_projTargetMap.first)/sizeof(targetInfo)));
+
     for (auto &targetInfo : G_projTargetMap)
     {
         SBE_DEBUG("target count is 0x%08X", (uint32_t)targetInfo.targetCnt);
@@ -59,9 +66,8 @@ uint32_t sbe_target_service::plat_targetsInit()
 
             const uint8_t instanceNum = j + targetInfo.instanceBase;
 
-            iv_targets.push_back(
-                plat_target_sbe_handle(
-                    chipletNum, targetInfo.targetType, instanceNum));
+            iv_targets[iv_targets_size++] =
+                plat_target_sbe_handle(chipletNum, targetInfo.targetType, instanceNum);
         }
     }
 
@@ -170,8 +176,9 @@ void sbe_target_service::getChipletChildren(const LogTargetType i_child_type,
                                             std::vector<plat_target_sbe_handle> &o_children) const
 {
     const uint8_t cplt_id = i_parent.getChipletNumber();
-    for (auto &target : iv_targets)
+    for (uint32_t i = 0; i < iv_targets_size; i++)
     {
+        auto &target = iv_targets[i];
         if (target.getTargetType() == i_child_type &&
             target.getChipletNumber() == cplt_id)
         {
@@ -192,8 +199,9 @@ void sbe_target_service::getMemportChildren(const LogTargetType i_child_type,
     const uint8_t cplt_id = i_parent.getChipletNumber();
     uint8_t parentInstance = i_parent.getTargetInstance();
 
-    for (auto &target : iv_targets)
+    for (uint32_t i = 0; i < iv_targets_size; i++)
     {
+        auto &target = iv_targets[i];
         if( (target.getTargetType() == i_child_type)
             && (target.getChipletNumber() == cplt_id))
         {
