@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -50,7 +50,7 @@ ReturnCode poz_nest_enable_io(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_mc;
 
     FAPI_INF("Entering poz_nest_enable_io...");
-    FAPI_TRY(get_hotplug_targets(i_target, l_chiplets_mc, NULL, MCGROUP_ALL));
+    FAPI_TRY(get_hotplug_targets(i_target, l_chiplets_mc));
 
     FAPI_DBG("Allow PHB control");
     ROOT_CTRL1 = 0;
