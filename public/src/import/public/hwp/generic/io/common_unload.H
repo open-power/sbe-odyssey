@@ -91,7 +91,7 @@ void auto_increment_ctrl(const fapi2::Target<K, M, V>& i_target,
             FAPI_ERR("Auto increment disable getScom failed");
         }
 
-        l_data |= 0x7FFFFFFFFFFFFFFF;
+        l_data &= 0x7FFFFFFFFFFFFFFF;
         l_rc = fapi2::putScom(i_target, c_incr_reg, l_data);
 
         if (l_rc != fapi2::FAPI2_RC_SUCCESS)
@@ -112,7 +112,7 @@ void stream_scom_data(const fapi2::Target<K, M, V>& i_target,
                       fapi2::hwp_bit_ostream& o_ostream,
                       const uint64_t i_base_addr)
 {
-    uint32_t offsets[] = {0x00, 0x02, 0x04, 0x05, 0x0A, 0x0D, 0x0E, 0x13, 0x14, 0x15, 0x17, 0x18, 0x19, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x27, 0x2C, 0x2D};
+    uint32_t offsets[] = {0x00, 0x02, 0x04, 0x05, 0x0A, 0x0D, 0x0E, 0x13, 0x14, 0x15, 0x17, 0x18, 0x19, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x26, 0x27, 0x2C, 0x2D};
 
     fapi2::buffer<uint64_t> l_data = 0;
     uint64_t l_addr = 0;
