@@ -496,6 +496,7 @@ uint32_t sendFFDCOverFIFO( uint32_t &o_wordsSent,
             /* Get the address of first committed FFDC */
             pozFfdcNode_t * currentNode = (pozFfdcNode_t *) node;
             pozFfdcNode_t * nextNode = nullptr;
+
             do
             {
                 SBE_DEBUG(SBE_FUNC " currentNode: 0x%08X", currentNode);
@@ -509,52 +510,12 @@ uint32_t sendFFDCOverFIFO( uint32_t &o_wordsSent,
 
                 byteSent += len;
 
-                /* Check FFDC is fatal, In case is fatal send the plat ffdc
-                package with FULL trace with full ATTR dump */
+                /* Check FFDC is fatal, In case of fatal send full trace at last node */
                 if (currentNode->iv_isFatal)
                 {
-                    SBE_DEBUG (SBE_FUNC "current node is fatal, streaming full trace");
-                    i_forceFullTracePackage = false;
-
-                    uint16_t slid                = fapi2::g_ffdcCtrlSingleton.iv_localSlid;
-                    fapi2::errlSeverity_t sev    = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE;
-
-                    // Plat data is available in current node which is RE enabled or
-                    //  SBE internal error. the Apply slid and severity from plat
-                    //  data to full trace
-                    if (currentNode->iv_platSize)
-                    {
-                        pozPlatFfdcPackageFormat_t * platFfdc =
-                                            (pozPlatFfdcPackageFormat_t *)
-                                                (((uint8_t *)currentNode)   +
-                                                    sizeof(pozFfdcNode_t)   +
-                                                    currentNode->iv_hwpSize
-                                                );
-
-                        slid = platFfdc->header.slid;
-                        sev  = static_cast<fapi2::errlSeverity_t>(platFfdc->header.severity);
-                    }
-                    // Only HWP local data available in current node which is
-                    //  related to RE not enabled, then Apply slid and severity
-                    //  from HWP local data to full trace
-                    else if (currentNode->iv_hwpSize)
-                    {
-                        pozHwpFfdcPackageFormat_t * hwpFfdc =
-                                            (pozHwpFfdcPackageFormat_t *)
-                                                (((uint8_t *)currentNode)   +
-                                                    sizeof(pozFfdcNode_t)
-                                                );
-                        slid = hwpFfdc->header.slid;
-                        sev  = static_cast<fapi2::errlSeverity_t>(hwpFfdc->header.severity);
-                    }
-
-                    uint32_t tempByteSent = 0;
-                    l_rc = ffdcPlatCreateAndSendWithFullTrace ( tempByteSent,
-                                                                slid,
-                                                                sev,
-                                                                ffdcPakageStream );
-                    CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
-                    byteSent += tempByteSent;
+                    // Stream out full trace at last with different slid id for
+                    // any one of the FFDC has FATAL
+                    i_forceFullTracePackage = true;
                 }
 
                 /* Logic to get the next FFDC */
@@ -568,7 +529,8 @@ uint32_t sendFFDCOverFIFO( uint32_t &o_wordsSent,
         /* Check RC and Break */
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
 
-        // This is for Get FFDC chipop, in case no FFDC are present in scratch
+        // stream out FULL trace, 1. For any one of FFDC are FATAL,
+        //                        2. For get FFDC
         if ( i_forceFullTracePackage )
         {
             uint32_t tempByteSent = 0;
