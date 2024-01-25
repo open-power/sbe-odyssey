@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -27,7 +28,7 @@
 
 uint32_t RuntimePakWrapper::load_file(
     const char* i_fileName, const void* &o_fileContents,
-    uint32_t &o_fileSize, sha3_t* o_hash)
+    uint32_t &o_fileSize, sha3_t* o_hash, uint32_t i_flags)
 {
     // Load safe values into output parameters until we're done
     o_fileContents = NULL;
@@ -36,7 +37,7 @@ uint32_t RuntimePakWrapper::load_file(
     if (i_fileName == nullptr)
         return ARC_INVALID_PARAMS;
 
-    uint32_t rc = locate_file(i_fileName, fileArchiveEntry);
+    uint32_t rc = locate_file(i_fileName, fileArchiveEntry, i_flags);
     if (rc != ARC_OPERATION_SUCCESSFUL)
         return rc;
 

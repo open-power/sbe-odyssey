@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -45,10 +46,11 @@ public:
      * @param[out] i_fileContents Will point to the loaded file contents on success
      * @param[out] o_fileSize Size of the loaded file
      * @param[out] o_hash Pointer to sha3_t, if NULL no hash is returned else hash is returned.
+     * @param[in]  i_flags Archive flags, will be handed to FileArchive.locate_file()
      */
     uint32_t load_file(
         const char* i_fileName, const void* &o_fileContents,
-        uint32_t &o_fileSize, sha3_t* o_hash = NULL);
+        uint32_t &o_fileSize, sha3_t* o_hash = NULL, uint32_t i_flags = 0);
 
     /**
      * @brief Free a buffer returned by load_file
