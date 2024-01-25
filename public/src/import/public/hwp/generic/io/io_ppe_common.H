@@ -148,6 +148,10 @@ class io_ppe_common
                                         const uint8_t i_num_rx_lanes,
                                         const uint8_t i_num_tx_lanes);
 
+        fapi2::ReturnCode stop_thread(const fapi2::Target<K, M, V>& i_target,
+                                      const uint8_t i_max_threads,
+                                      bool i_stop_thread);
+
         fapi2::ReturnCode bist_init_thread(const fapi2::Target<K, M, V>& i_target,
                                            const uint8_t i_thread,
                                            const uint32_t i_rx_mask,
@@ -474,6 +478,51 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::config_thread(const fapi2::Target<K, M
     FAPI_TRY(FW_REG_FW_NUM_LANES_TX_PUT(iv_regs, i_target, i_thread, i_num_tx_lanes));
     FAPI_TRY(FW_REG_FW_STOP_THREAD_PUT(iv_regs, i_target, i_thread, 0));
     FAPI_TRY(iv_regs->flushCache(i_target));
+fapi_try_exit:
+    FAPI_DBG("End");
+    return fapi2::current_err;
+}
+
+template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
+fapi2::ReturnCode io_ppe_common<K, M, V>::stop_thread(const fapi2::Target<K, M, V>& i_target,
+        const uint8_t i_max_threads,
+        bool i_stop_thread)
+{
+    FAPI_DBG("Start");
+
+    constexpr uint8_t c_max_tries = 20;
+
+    fapi2::buffer<uint64_t> l_done = 0;
+    uint8_t l_tries = 0;
+
+    for (uint8_t l_thread = 0; l_thread < i_max_threads; l_thread++)
+    {
+        l_done = 0;
+        l_tries = 0;
+
+        FAPI_TRY(FW_REG_FW_STOP_THREAD_PUT(iv_regs, i_target, l_thread, i_stop_thread));
+
+        FAPI_TRY(iv_regs->flushCache(i_target));
+
+        if (i_stop_thread)
+        {
+            FAPI_TRY(FW_REG_FW_THREAD_STOPPED_GET(iv_regs, i_target, l_thread, l_done));
+
+            while (l_done && (l_tries < c_max_tries))
+            {
+                FAPI_TRY(iv_regs->flushCache(i_target));
+                FAPI_TRY(FW_REG_FW_THREAD_STOPPED_GET(iv_regs, i_target, l_thread, l_done));
+                l_tries++;
+                fapi2::delay(2000000, 2000000);
+            }
+
+            if (l_done == 0)
+            {
+                FAPI_INF("Thread Never Stopped...");
+            }
+        }
+    }
+
 fapi_try_exit:
     FAPI_DBG("End");
     return fapi2::current_err;

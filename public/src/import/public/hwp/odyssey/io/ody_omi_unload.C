@@ -89,6 +89,9 @@ fapi2::ReturnCode ody_omi_unload(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHI
     constexpr uint16_t c_REVISION = 0x01;
     constexpr uint8_t c_section_number_shift = 40;
 
+    io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(PHY_ODY_OMI_BASE);
+    ody_io::io_ppe_common<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_common(&l_ppe_regs);
+
     uint64_t l_section_header = 0xAC1D000000000000;
 
     FAPI_DBG("HWP: I/O UNLOAD: Base Addr(0x%08X) Groups(%d) Lanes(%d)", PHY_ODY_OMI_BASE, l_groups, l_lanes);
@@ -123,10 +126,14 @@ fapi2::ReturnCode ody_omi_unload(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHI
     //  Image Regs (32B)
     l_section_header = c_section_mark | (Mem_Regs_Per_PPE << c_section_number_shift) | PHY_ODY_OMI_BASE;
     o_ostream.put64(l_section_header);
+    // Stop the threads so it doesn't corrupt the data
+    FAPI_TRY(l_ppe_common.stop_thread(i_target, PHY_ODY_NUM_THREADS, true));
     stream_mem_data_pp(i_target, PHY_ODY_OMI_BASE, o_ostream);
     l_section_header = c_section_mark | (Mem_Regs_Per_Thread << c_section_number_shift) | PHY_ODY_OMI_BASE;
     o_ostream.put64(l_section_header);
     stream_mem_data_pt(i_target, PHY_ODY_OMI_BASE, l_threads, o_ostream);
+    // Restart the threads
+    FAPI_TRY(l_ppe_common.stop_thread(i_target, PHY_ODY_NUM_THREADS, false));
 
     // 4-5. Tx Hardware Regs (16bit reads, will pack them to 32b fifo entries)
 
