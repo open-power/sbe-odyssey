@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -113,8 +113,11 @@ enum fastarray_constants
  * Output stream format description:
  *
  * The output stream format is identical to the input stream format minus the initial ring address word, except
- * after each tuple the read data is appended in a separate byte_ostream. For each run of care bits, that many
- * bits are appended to the stream, and at the end of each row, the number of bits is zero-padded to a byte boundary.
+ * after each tuple the read data is appended in a separate byte_ostream.
+ *
+ * For each dumped row of care bits, the care bits according to the care data are appended to the stream in
+ * ring order (resulting in exactly as many bits as we care about to be appended). At the end of a tuple, zero
+ * padding bits are appended to bring the stream to a word boundary before the next tuple header starts.
  *
  * This way, the output stream contains all necessary information about its own composition, and the offline
  * post processor can decode it without knowledge of the SBE image that produced it.
@@ -487,6 +490,10 @@ static ReturnCode do_dump(
 
         uint32_t l_row = 0;
 
+        // We have to run 1 extra cycle on the first skip operation to compensate an off-by-one bug
+        // in the data preparation step. TODO: Fix this end to end.
+        uint32_t l_start_extra = 1;
+
         while (true)
         {
             FAPI_INF("Progress: Row %d", l_row);
@@ -508,15 +515,16 @@ static ReturnCode do_dump(
             // Cycles but no data -> skip cycles
             if (!l_nwords)
             {
-                uint32_t l_skip_cycles = l_ncycles;
+                uint32_t l_skip_cycles = l_ncycles + l_start_extra;
+                l_start_extra = 0;
 
                 // If we skip a large amount of cycles, skip the majority with ARY clocks turned off
                 // to work around potential ABIST bugs where arrays are accidentally written during
                 // an outer loop switch.
-                if (l_ncycles > ARY_PIPE_MAX_LEN)
+                if (l_skip_cycles > ARY_PIPE_MAX_LEN)
                 {
                     FAPI_TRY(setup_opcg_sequence(i_perv_target, OPCG_CAPT_SL_NSL, i_options));
-                    FAPI_TRY(run_abist_cycles(i_perv_target, (l_ncycles - ARY_PIPE_MAX_LEN) * l_stepsize, i_options));
+                    FAPI_TRY(run_abist_cycles(i_perv_target, (l_skip_cycles - ARY_PIPE_MAX_LEN) * l_stepsize, i_options));
                     FAPI_TRY(setup_opcg_sequence(i_perv_target, OPCG_CAPT_SL_NSL_ARY, i_options));
 
                     // Do run the last few cycles with ARY back on to account for potential
@@ -558,8 +566,8 @@ static ReturnCode do_dump(
                 hwp_array_istream l_care_array(l_care_bits, l_nwords);
                 hwp_bit_istream l_care_stream(l_care_array);
 
-                FAPI_TRY(run_abist_cycles(i_perv_target, l_stepsize, i_options));
                 FAPI_TRY(svs::sparse_getring(i_perv_target, l_scan_region_type, l_care_stream, l_dumped_bits));
+                FAPI_TRY(run_abist_cycles(i_perv_target, l_stepsize, i_options));
             }
 
             FAPI_TRY(l_dumped_bits.flush());
