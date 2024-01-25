@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "fapi2_file_access.H"
 #include "plat_file_access.H"
 
 namespace fapi2
@@ -43,16 +44,9 @@ namespace fapi2
 /// @param[in]  i_path   Full path name of the file to look for
 /// @param[out] o_data   Will point to the file data on success
 /// @param[out] o_size   Will receive the file size on success
+/// @param[in]  i_flags  Optional flags to affect the operation
 /// @return FAPI2_RC_SUCCESS on success,
 ///         FAPI2_RC_FILE_NOT_FOUND if the file was not found, or another error.
-inline ReturnCode loadEmbeddedFile(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-                                   const char* i_path,
-                                   const void*& o_data, size_t& o_size)
-{
-    return plat_loadEmbeddedFile(i_path, o_data, o_size, 0);
-}
-
-// placeholder variant to prepare for an upcoming fapi2 update
 inline ReturnCode loadEmbeddedFile(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
                                    const char* i_path,
                                    const void*& o_data, size_t& o_size,

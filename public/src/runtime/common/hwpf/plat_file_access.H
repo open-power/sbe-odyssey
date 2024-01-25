@@ -33,11 +33,6 @@
 namespace fapi2
 {
 
-enum loadEmbeddedFileFlags
-{
-    LEFF_ALLOW_UNTRUSTED = 0x80000000
-};
-
 /// @brief Load a file from the embedded archive
 /// Attempts to locate a file with given name inside the embedded archive
 /// and makes it available in memory.
