@@ -21,7 +21,14 @@
       "command":"0x06",
       "function":"sbeHssOdyUnload",
       "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
-      "headerFile":"sbecmdodyunload.H"
+      "headerFile":"sbecmdhssody.H"
+    },
+    {
+      "cmdClass":"D3",
+      "command":"0x07",
+      "function":"sbeHssOdyTdr",
+      "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
+      "headerFile":"sbecmdhssody.H"
     },
     {
       "cmdClass":"A3",

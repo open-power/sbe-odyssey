@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -63,6 +63,7 @@ infile_c = [
             '/hwp/generic/utils/poz_writesram.C',
             '/hwp/generic/utils/poz_readsram.C',
             '/hwp/odyssey/io/ody_omi_unload.C',
+            '/hwp/odyssey/io/ody_omi_tdr.C',
             '/hwp/generic/io/io_ppe_cache.C',
             '/hwp/odyssey/io/ody_omi_hss_ppe_load.C',
             '/hwp/odyssey/io/ody_omi_hss_config.C',
