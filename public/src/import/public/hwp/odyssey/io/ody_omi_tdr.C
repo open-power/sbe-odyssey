@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -34,7 +34,6 @@
 //------------------------------------------------------------------------------
 // Includes
 //------------------------------------------------------------------------------
-#include <cmath>
 #include <ody_omi_tdr.H>
 #include <ody_io_tdr_utils.H>
 #include <ody_io_ppe_common.H>
@@ -43,88 +42,111 @@
 
 SCOMT_OMI_USE_D_REG_DL0_STATUS
 
+#define TX_PSAVE_FORCE_REQ_0_15_0 0x19C8
+#define TX_PSAVE_FENCE_REG_DL_IO_0_15 0x1988
+#define TX_PSAVE_START 48
+#define TX_PSAVE_LENGTH 16
+
+enum STREAM_DATA
+{
+    CLEAR_CMD = 0,
+    OMI_START_CMD = ody_io::TX_FIFO_INIT_PL,
+    LANE_POS = 48,
+    GROUP_POS = 56,
+    STATUS_POS = 40,
+};
 enum PRECURSOR_DATA
 {
     PRE1_REG = 0x4640,
-    PRE1_BIT = 48,
-    PRE1_LEN = 8,
     PRE2_REG = 0x45C0,
-    PRE2_BIT = 48,
-    PRE2_LEN = 5,
     POST_REG = 0x4BC0,
-    POST_BIT = 48,
-    POST_LEN = 8,
 };
 
 //------------------------------------------------------------------------------
 // Function definitions
 //------------------------------------------------------------------------------
-inline fapi2::ReturnCode getPrecursor(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
-                                      const uint8_t i_lane,
-                                      uint8_t& o_pre1,
-                                      uint8_t& o_pre2,
-                                      uint8_t& o_post)
+fapi2::ReturnCode run_ext_cmd(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+                              const uint32_t i_ext_cmd,
+                              const uint32_t i_phy_lane)
 {
-    FAPI_DBG("Start OMI TDR::getPrecursor");
+    io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(PHY_ODY_OMI_BASE);
 
-    constexpr uint8_t c_thread = 0;
+    ody_io::io_ppe_common<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_common(&l_ppe_regs);
 
-    fapi2::buffer<uint64_t> l_buffer = 0;
-    fapi2::buffer<uint64_t> l_addr = 0;
+    uint32_t l_fail = 0;
+    uint8_t l_done = 0;
+    uint8_t l_pos = 99;
+    uint32_t l_phy_tx_lane_mask = 0x80000000 >> i_phy_lane;
 
-    // Get the precursor
-    l_addr = buildAddr(PHY_ODY_OMI_BASE, c_thread, i_lane, PRE1_REG);
-    FAPI_TRY(fapi2::getScom(i_target, l_addr, l_buffer));
-    l_buffer.extractToRight<PRE1_BIT, PRE1_LEN, uint8_t>(o_pre1);
-    l_buffer.flush<0>();
-
-    l_addr = buildAddr(PHY_ODY_OMI_BASE, c_thread, i_lane, PRE2_REG);
-    FAPI_TRY(fapi2::getScom(i_target, l_addr, l_buffer));
-    l_buffer.extractToRight<PRE2_BIT, PRE2_LEN, uint8_t>(o_pre2);
-    l_buffer.flush<0>();
-
-    l_addr = buildAddr(PHY_ODY_OMI_BASE, c_thread, i_lane, POST_REG);
-    FAPI_TRY(fapi2::getScom(i_target, l_addr, l_buffer));
-    l_buffer.extractToRight<POST_BIT, POST_LEN, uint8_t>(o_post);
+    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_BUS_POS, i_target, l_pos));
+    FAPI_INF("ody_hss_tdr::run_ext_cmd group(%d) lane_mask(0x%08X) running ExtCmd(0x%08X)", 0, l_phy_tx_lane_mask,
+             i_ext_cmd);
+    FAPI_TRY(l_ppe_common.ext_cmd_start(i_target, 0, 0, l_phy_tx_lane_mask, i_ext_cmd));
+    FAPI_TRY(l_ppe_common.iv_regs->flushCache(i_target));
+    FAPI_TRY(l_ppe_common.ext_cmd_poll(i_target, 0, i_ext_cmd, l_done, l_fail));
+    FAPI_ASSERT(l_done && !l_fail,
+                fapi2::IO_PPE_DONE_POLL_FAILED()
+                .set_POS(l_pos)
+                .set_FAIL(l_fail)
+                .set_DONE(l_done)
+                .set_TARGET(i_target),
+                "IO Ext Cmd Poll (0x%08X) Done Fail on %d :: Done(%d), Fail(0x%08X)",
+                i_ext_cmd, l_pos, l_done, l_fail);
 
 fapi_try_exit:
-    FAPI_DBG("End OMI TDR::getPrecursor");
     return fapi2::current_err;
 }
 
-inline fapi2::ReturnCode setPrecursor(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
-                                      const uint8_t i_lane,
-                                      const uint8_t i_pre1,
-                                      const uint8_t i_pre2,
-                                      const uint8_t i_post)
+fapi2::ReturnCode lane_power_on(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+                                const uint32_t i_phy_lane)
 {
-    FAPI_DBG("Start OMI TDR::setPrecursor");
+    fapi2::buffer<uint64_t> l_buffer;
+    uint64_t l_addr = 0;
 
-    constexpr uint8_t c_thread = 0;
-
-    fapi2::buffer<uint64_t> l_buffer = 0;
-    fapi2::buffer<uint64_t> l_addr = 0;
-
-    // Set the precursor
-    l_addr = buildAddr(PHY_ODY_OMI_BASE, c_thread, i_lane, PRE1_REG);
-    FAPI_TRY(fapi2::getScom(i_target, l_addr, l_buffer));
-    l_buffer.insertFromRight<PRE1_BIT, PRE1_LEN, uint8_t>(i_pre1);
-    FAPI_TRY(fapi2::putScom(i_target, l_addr, l_buffer));
     l_buffer.flush<0>();
-
-    l_addr = buildAddr(PHY_ODY_OMI_BASE, c_thread, i_lane, PRE2_REG);
-    FAPI_TRY(fapi2::getScom(i_target, l_addr, l_buffer));
-    l_buffer.insertFromRight<PRE2_BIT, PRE2_LEN, uint8_t>(i_pre2);
+    l_buffer.insertFromRight<TX_PSAVE_START, TX_PSAVE_LENGTH>(0x8000 >> i_phy_lane);
+    l_addr = buildAddr(PHY_ODY_OMI_BASE, 0, 0, TX_PSAVE_FORCE_REQ_0_15_0);
     FAPI_TRY(fapi2::putScom(i_target, l_addr, l_buffer));
-    l_buffer.flush<0>();
+    l_addr = buildAddr(PHY_ODY_OMI_BASE, 0, 0, TX_PSAVE_FENCE_REG_DL_IO_0_15);
+    FAPI_TRY(fapi2::putScom(i_target, l_addr, l_buffer));
 
-    l_addr = buildAddr(PHY_ODY_OMI_BASE, c_thread, i_lane, POST_REG);
-    FAPI_TRY(fapi2::getScom(i_target, l_addr, l_buffer));
-    l_buffer.insertFromRight<POST_BIT, POST_LEN, uint8_t>(i_post);
+    // Tx Fifo
+    FAPI_TRY(run_ext_cmd(i_target, CLEAR_CMD, i_phy_lane));
+    FAPI_TRY(run_ext_cmd(i_target, OMI_START_CMD, i_phy_lane));
+
+fapi_try_exit:
+    return fapi2::current_err;
+}
+
+fapi2::ReturnCode lane_power_off(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+                                 const uint32_t i_phy_lane)
+{
+    fapi2::buffer<uint64_t> l_buffer;
+    uint64_t l_addr = 0;
+
+    l_buffer.flush<0>();
+    l_addr = buildAddr(PHY_ODY_OMI_BASE, 0, 0, TX_PSAVE_FORCE_REQ_0_15_0);
+    FAPI_TRY(fapi2::putScom(i_target, l_addr, l_buffer));
+    l_addr = buildAddr(PHY_ODY_OMI_BASE, 0, 0, TX_PSAVE_FENCE_REG_DL_IO_0_15);
     FAPI_TRY(fapi2::putScom(i_target, l_addr, l_buffer));
 
 fapi_try_exit:
-    FAPI_DBG("End OMI TDR::setPrecursor");
+    return fapi2::current_err;
+}
+
+inline fapi2::ReturnCode clear_ffe_selects(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+        const uint64_t i_base_addr,
+        const uint8_t i_lane)
+{
+    uint64_t l_addr = 0;
+    l_addr = buildAddr(i_base_addr, 0, i_lane, PRE1_REG);
+    FAPI_TRY(fapi2::putScom(i_target, l_addr, 0));
+    l_addr = buildAddr(i_base_addr, 0, i_lane, PRE2_REG);
+    FAPI_TRY(fapi2::putScom(i_target, l_addr, 0));
+    l_addr = buildAddr(i_base_addr, 0, i_lane, POST_REG);
+    FAPI_TRY(fapi2::putScom(i_target, l_addr, 0));
+
+fapi_try_exit:
     return fapi2::current_err;
 }
 
@@ -134,11 +156,6 @@ fapi2::ReturnCode ody_omi_tdr(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&
 {
     FAPI_DBG("Start - OMI TDR Isolation");
 
-    constexpr uint64_t c_start_cmd = ody_io::POWER_ON_PL | ody_io::TX_FIFO_INIT_PL | ody_io::TX_FFE_PL;
-    constexpr uint64_t c_stop_cmd = ody_io::POWER_OFF_PL | ody_io::TX_FFE_PL;
-    constexpr uint8_t c_lane_pos = 48;
-    constexpr uint8_t c_status_pos = 40;
-    constexpr uint8_t c_max_lanes = 8;
     constexpr uint8_t c_thread = 0;
 
     io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(PHY_ODY_OMI_BASE);
@@ -150,13 +167,9 @@ fapi2::ReturnCode ody_omi_tdr(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&
     fapi2::ATTR_FREQ_OMI_MHZ_Type l_freq;
     uint64_t l_data = 0;
     uint32_t l_group = 0x0;
-    uint32_t l_training_state = 0;
     uint32_t l_disabled_lanes = 0;
     uint32_t l_fail = 0;
     uint8_t l_done = 0;
-    uint8_t l_tx_pre1 = 0;
-    uint8_t l_tx_pre2 = 0;
-    uint8_t l_tx_post = 0;
     uint8_t l_pos = 0;
 
     fapi2::ATTR_MFG_FLAGS_Type l_mfg_flags = {0};
@@ -168,10 +181,9 @@ fapi2::ReturnCode ody_omi_tdr(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_MFG_FLAGS, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), l_mfg_flags));
 
     FAPI_TRY(l_dl0_status.getScom(i_target));
-    l_training_state = l_dl0_status.get_TRAINING_STATE_MACHINE();
     l_disabled_lanes = l_dl0_status.get_LANES_DISABLED();
 
-    FAPI_TRY(l_ppe_common.ext_cmd_start(i_target, c_thread, c_max_lanes, 0, ody_io::CLEAR))
+    FAPI_TRY(l_ppe_common.ext_cmd_start(i_target, c_thread, PHY_ODY_NUM_LANES, 0, ody_io::CLEAR))
     FAPI_TRY(l_ppe_common.ext_cmd_poll(i_target, c_thread, ody_io::CLEAR, l_done, l_fail));
 
     /*
@@ -184,114 +196,42 @@ fapi2::ReturnCode ody_omi_tdr(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&
         It writes this information to a file in /tmp.
     */
 
-    // Check if link is trained
-    if (l_training_state == 0x7) // Trained / Link up
+    for (uint8_t l_lane = 0; l_lane < PHY_ODY_NUM_LANES; l_lane++)
     {
-        for (uint8_t l_lane = 0; l_lane < c_max_lanes; l_lane++)
+        l_status = TdrResult::DidNotRun;
+        l_length_ps = 0;
+
+        // If the lane is not being actively used run TDR
+        if ((0x80000000 >> l_lane) & l_disabled_lanes) // Lane is disabled
         {
-            l_data = l_data | (static_cast<uint64_t>(l_lane) << c_lane_pos);
+            FAPI_TRY(clear_ffe_selects(i_target, PHY_ODY_OMI_BASE, l_lane));
 
-            // If the lane is not being actively used run TDR
-            if ((0x01 << l_lane) & l_disabled_lanes) // Lane is disabled
-            {
-                FAPI_DBG("ody_omi_tdr::power on lane %d calling l_ppe.ext_cmd_start", l_lane);
+            // Power on lane
+            FAPI_TRY(lane_power_on(i_target, l_lane));
 
-                // Save the precursor
-                getPrecursor(i_target, l_lane, l_tx_pre1, l_tx_pre2, l_tx_post);
-
-                // Clear the precursor
-                setPrecursor(i_target, l_lane, 0, 0, 0);
-
-                // Power on lane
-                FAPI_TRY(l_ppe_common.ext_cmd_start(i_target, c_thread, l_lane, 0, c_start_cmd));
-                FAPI_TRY(l_ppe_regs.flushCache(i_target));
-                FAPI_TRY(l_ppe_common.ext_cmd_poll(i_target, c_thread, c_start_cmd, l_done, l_fail));
-
-                // Run TDR
-                FAPI_TRY(ody_io_tdr(i_target, PHY_ODY_OMI_BASE, l_group, l_lane, l_freq, l_status, l_length_ps));
-
-                // Set data
-                FAPI_DBG("Checking on lane %d with status %d.", l_lane, l_status);
-                l_data |= (static_cast<uint64_t>(l_status) << c_status_pos);
-                l_data |= l_length_ps;
-
-                // Reset the precursor
-                setPrecursor(i_target, l_lane, l_tx_pre1, l_tx_pre2, l_tx_post);
-
-                // Power off lane
-                FAPI_DBG("ody_omi_tdr::power off lanes calling l_ppe.ext_cmd_start");
-                FAPI_TRY(l_ppe_common.ext_cmd_start(i_target, c_thread, l_lane, 0, c_stop_cmd));
-                FAPI_TRY(l_ppe_regs.flushCache(i_target));
-                FAPI_TRY(l_ppe_common.ext_cmd_poll(i_target, c_thread, c_stop_cmd, l_done, l_fail));
-            }
-            // Lane in use, TDR not run
-            else
-            {
-                FAPI_DBG("Lane %d is up & trained.", l_lane);
-                l_data |= (static_cast<uint64_t>(TdrResult::DidNotRun) << c_status_pos);
-            }
-
-            o_ostream.put64(l_data);
-            // Clear the lane & other data without touching the group
-            // Not necessary here, as group will always be 0 for Ody
-            l_data &= 0xFF00000000000000;
-        }
-    }
-    else // Not trained / Link down
-    {
-        for (uint8_t l_lane = 0; l_lane < 8; l_lane++)
-        {
-
-            // Save the precursor
-            getPrecursor(i_target, l_lane, l_tx_pre1, l_tx_pre2, l_tx_post);
-
-            // Clear the precursor
-            setPrecursor(i_target, l_lane, 0, 0, 0);
-
-            FAPI_DBG("ody_omi_tdr::power on lanes calling l_ppe.ext_cmd_start");
-            FAPI_TRY(l_ppe_common.ext_cmd_start(i_target, c_thread, l_lane, 0, c_start_cmd));
-            FAPI_TRY(l_ppe_regs.flushCache(i_target));
-            FAPI_TRY(l_ppe_common.ext_cmd_poll(i_target, c_thread, c_start_cmd, l_done, l_fail));
-
-            FAPI_ASSERT(l_done && !l_fail,
-                        fapi2::IO_EXT_CMD_POLL_FAILED()
-                        .set_POS(l_pos)
-                        .set_FAIL(l_fail)
-                        .set_DONE(l_done)
-                        .set_TARGET(i_target),
-                        "IO Ext Cmd Poll (0x%08X) Done Fail on %d :: Done(%d), Fail(0x%04X)",
-                        c_start_cmd, l_pos, l_done, l_fail);
-
-            l_data |= (static_cast<uint64_t>(l_lane) << c_lane_pos);
-
+            // Run TDR
             FAPI_TRY(ody_io_tdr(i_target, PHY_ODY_OMI_BASE, l_group, l_lane, l_freq, l_status, l_length_ps));
 
+            // Set data
             FAPI_DBG("Checking on lane %d with status %d.", l_lane, l_status);
 
-            l_data |= (static_cast<uint64_t>(l_status) << c_status_pos);
-            l_data |= l_length_ps;
-            o_ostream.put64(l_data);
-            // Clear the lane & other data without touching the group
-            // Not necessary here, as group will always be 0 for Ody
-            l_data &= 0xFF00000000000000;
-
-            // Reset the precursor
-            setPrecursor(i_target, l_lane, l_tx_pre1, l_tx_pre2, l_tx_post);
-
-            FAPI_DBG("ody_omi_tdr::power off lanes calling l_ppe.ext_cmd_start");
-            FAPI_TRY(l_ppe_common.ext_cmd_start(i_target, c_thread, l_lane, 0, c_stop_cmd));
-            FAPI_TRY(l_ppe_regs.flushCache(i_target));
-            FAPI_TRY(l_ppe_common.ext_cmd_poll(i_target, c_thread, c_stop_cmd, l_done, l_fail));
-
-            FAPI_ASSERT(l_done && !l_fail,
-                        fapi2::IO_EXT_CMD_POLL_FAILED()
-                        .set_POS(l_pos)
-                        .set_FAIL(l_fail)
-                        .set_DONE(l_done)
-                        .set_TARGET(i_target),
-                        "IO Ext Cmd Poll (0x%08X) Done Fail on %d :: Done(%d), Fail(0x%04X)",
-                        c_stop_cmd, l_pos, l_done, l_fail);
+            // Power off lane
+            FAPI_TRY(lane_power_off(i_target, l_lane));
         }
+        // Lane in use, TDR not run
+        else
+        {
+            FAPI_DBG("Lane %d is up & trained.", l_lane);
+        }
+
+        l_data = l_data | (static_cast<uint64_t>(l_lane) << LANE_POS);
+        l_data |= (static_cast<uint64_t>(l_status) << STATUS_POS);
+        l_data |= l_length_ps;
+
+        o_ostream.put64(l_data);
+        // Clear the lane & other data without touching the group
+        // Not necessary here, as group will always be 0 for Ody
+        l_data &= 0xFF00000000000000;
     }
 
     FAPI_TRY(o_ostream.flush());
