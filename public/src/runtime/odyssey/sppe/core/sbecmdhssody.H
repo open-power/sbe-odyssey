@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/sbecmdodyunload.H $      */
+/* $Source: public/src/runtime/odyssey/sppe/core/sbecmdhssody.H $         */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -33,3 +33,12 @@
  * @return    RC from the FIFO access utility
  */
 uint32_t sbeHssOdyUnload(uint8_t *i_pArg);
+
+/**
+ * @brief Call the tdr HWP and return the data through the SBE FIFO
+ *
+ * @param[in] i_pArg Buffer to be passed to the function
+ *
+ * @return    RC from the FIFO access utility
+ */
+uint32_t sbeHssOdyTdr(uint8_t *i_pArg);
