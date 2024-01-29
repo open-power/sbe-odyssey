@@ -77,9 +77,7 @@ uint32_t sbeGetFfdc (uint8_t *i_pArg)
             SBE_ERROR(SBE_FUNC "Failed in sbeDsSendRespHdr, rc[0x%08X]", rc);
             break;
         }
-        // If we are able to send ffdc, turn off async ffdc bit
-        (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(false);
-        SBE_GLOBAL->asyncFfdcRC = FAPI2_RC_SUCCESS;
+
     }while(0);
 
     if( rc )

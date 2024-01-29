@@ -652,6 +652,9 @@ uint32_t sendFFDCOverFIFO( uint32_t &o_wordsSent,
                 currentNode = nextNode;
 
             }while (currentNode != nullptr);
+
+            // Clearing the ASYNC bit
+            (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(false);
         }
         /* Check RC and Break */
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
