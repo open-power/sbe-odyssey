@@ -46,9 +46,15 @@ extern "C" {
 #define SHIFT_RIGHT(x, bits)        ((x) >> bits)
 #define SHIFT_LEFT(x, bits)         ((x) << bits)
 
-#define BUILD_TAG_CHAR_MAX_LENGTH      20
+#define BUILD_TAG_CHAR_MAX_LENGTH           20
+#define BUILD_DATE_N_COMMIT_ID_MAX_LEN_BYTE 4
+#define BUILD_TAG_MAX_LENGTH_BYTE           20
 #define WORD_TO_BYTES(x)               ((x)*4)
 #define BYTES_TO_WORDS(x)              ((x)/4)
+
+#define OFFSET_COMMIT_ID_IN_METADATA  0x20
+#define OFFSET_BUILD_DATE_IN_METADATA 0x28
+#define OFFSET_BUILD_TAG_IN_METADATA  0x30
 
 #define SBE_MESSAGE_REG_PROGRESS_CODE_BIT_MASK 0x3F00000000
 #define CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc) \

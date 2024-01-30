@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -50,6 +50,7 @@ static const char sppe_ram_pak_fname[]          = "rt/sppe.ram.pak";
 static const char cust_sppe_pak_fname[]         = "cust/sppe.pak";
 static const char runtime_image_hash_file_name[]= "rt/image.hash";
 static const char hdct_binary_fname[]           = "hdct.bin";
+static const char sbe_build_info_fname[]        = "rt/sbebuildinfo.bin";
 
 /*
  * @brief List of all file names in BMC OVERRIDE Pak(BMC_OVRD)

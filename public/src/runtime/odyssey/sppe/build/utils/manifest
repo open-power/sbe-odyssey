@@ -31,5 +31,9 @@
             "file": "public/src/runtime/odyssey/sppe/odyssey_sppe_DD1.bin",
             "method" : "zlib_ppc",
         },
+        "rt/sbebuildinfo.bin": {
+            "file": "public/src/runtime/odyssey/sppe/sbeBuildInfo.bin",
+            "method" : "store",
+        },
     }, # end layout
 } # end dict

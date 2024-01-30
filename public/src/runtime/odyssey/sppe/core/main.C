@@ -37,7 +37,6 @@
 #include "fapi2_attribute_service.H"
 #include "errorcodes.H"
 #include "sbeutil.H"
-#include "sbe_build_info.H"
 #include "ppe42_string.h"
 #include "metadata.H"
 #include "sbestatesutils.H"
@@ -117,9 +116,9 @@ void __eabi()
 constexpr struct PACKED metadata_t {
     METADATA(IMG, { IMAGES::RUNTIME });
     METADATA_STR(IID, "odyssey/sppe");
-    METADATA(GIT, { SBE_COMMIT_ID });
-    METADATA(DAT, { SBE_BUILD_DATE });
-    METADATA_STR(BLD, SBE_BUILD_TAG_ODY);
+    METADATA(GIT, { 0 });
+    METADATA(DAT, { 0 });
+    METADATA_STR(BLD, "00000000000000000000");
     METADATA(TRA, { SPPE_TRACE_START_OFFSET, SPPE_PK_TRACE_SIZE_WITH_HEADER });
     METADATA(HEA, { (uint32_t)&_heap_space_start_, (uint32_t)&_heap_space_size_});
     METADATA(ATR, { (uint32_t)&_attrs_start_, (uint32_t)&_attrs_size_ });
@@ -231,6 +230,9 @@ int  main(int argc, char **argv)
                                " 0x%08X", rc);
             break;
         }
+
+        // Populate runtime image metadata
+        sbeRuntimePopulateMetadataWrap(g_metadata_ptr);
 
         SBE_INFO(SBE_FUNC "Start all the threads.");
         // Start running the highest priority thread.
