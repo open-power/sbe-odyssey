@@ -260,10 +260,17 @@ fi
 #Determine secure version setting
 if [ -z "${SV+x}" ]; then
     # Build process can pass in the secure version through the environment
+    # BR2_OPENPOWER_SIGNED_SECURITY_VERSION is set by op build
     if [ ! -z "${BR2_OPENPOWER_SIGNED_SECURITY_VERSION+x}" ]; then
         SV=$BR2_OPENPOWER_SIGNED_SECURITY_VERSION
         echo "***INFO | SBE | signHashList : SV(Secure Version) passed via " \
              "BR2_OPENPOWER_SIGNED_SECURITY_VERSION as $SV"
+
+    # SIGNING_SECURITY_VERSION is set by FIPS build
+    elif [ ! -z "${SIGNING_SECURITY_VERSION+x}" ]; then
+        SV=$SIGNING_SECURITY_VERSION
+        echo "***INFO | SBE | signHashList : SV(Secure Version) passed via " \
+             "SIGNING_SECURITY_VERSION as $SV"
 
     # To allow for boot loader signing with a different SV you can set the following env
     elif [ "$COMPONENT_ID" = "BOOT_LDR" -a ! -z "${ODY_BOOT_LDR_SECURITY_VERSION+x}" ]; then
