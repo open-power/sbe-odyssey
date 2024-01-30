@@ -1,12 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/odyssey/sppe/plat/meson.build $
+# $Source: public/src/runtime/common/security/meson.build $
 #
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2022,2024
-# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,9 +22,6 @@
 #
 # IBM_PROLOG_END_TAG
 
-ODYSSEY_TARGET_LIST_JSON = files('targetlist.json')
 
-subdir('targeting')
-subdir('errorxml')
-subdir('attributes')
-subdir('security')
+abs_runtime_cmn_security_c_path = files('securityutils.C',
+                                        )

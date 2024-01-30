@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -29,8 +29,7 @@
  * scratch registers and/or the FW attributes.
  */
 
-#ifndef __SBEFW_SBEREGACCESS_H
-#define __SBEFW_SBEREGACCESS_H
+#pragma once
 
 #include <stdint.h>
 #include "mbxscratch.H"
@@ -326,19 +325,25 @@ class SbeRegAccess
         uint32_t updateAsyncFFDCBit( bool i_on );
 
         /**
-         * @brief Check if Invalid Scom Addr Check is not required
+         * @brief Get Disable invalid scom address bit from LFR
          *
          * @return true  - skip invalid scom address check
          *         false - do invalid scom address check
          */
-        bool isSbeRegressionBit();
+        bool getDisableInvalidScomAddrBit()
+        {
+            return lfrReg.disable_invalid_scom_addr_check;
+        }
 
         /*
-         * @brief Get disable scom filtering bit
+         * @brief Get disable scom filtering bit from LFR
          *
          * @return scom filtering disable allowed
          */
-        bool disableScomFiltering();
+        bool getDisableScomFilteringBit()
+        {
+            return lfrReg.disable_scom_filtering;
+        }
 
     private:
 
@@ -355,4 +360,3 @@ class SbeRegAccess
 
         static SbeRegAccess cv_instance;
 };
-#endif //__SBEFW_SBEREGACCESS_H

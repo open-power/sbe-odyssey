@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -64,13 +64,6 @@ enum SbeChipType_t : uint8_t
  *        Project can implement these APIs in plat/attributes/attrutils.C
  *
  */
-
-/**
- * @brief Set ATTR_SECURITY_LEVEL attribute value for project specific chip type
- *
- * @param i_securityLvl Value to be set for ATTR_SECURITY_LEVEL
- */
-void platSetAttrSecurityLvl(fapi2::ATTR_SECURITY_LEVEL_Type i_securityLvl);
 
 /**
  * @brief Return the ChipType based on SbeChipType +

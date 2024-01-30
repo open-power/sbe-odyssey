@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,11 +27,6 @@
 #include "attribute.H"
 
 using namespace fapi2;
-
-void platSetAttrSecurityLvl(fapi2::ATTR_SECURITY_LEVEL_Type i_securityLvl)
-{
-    ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_SECURITY_LEVEL = i_securityLvl;
-}
 
 uint8_t platGetChipType()
 {

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -44,7 +44,7 @@ void plat_AttrInit(fapi2::ATTR_NAME_Type i_chip_name)
     fapi2::ATTR::ATTR_NAME = i_chip_name;
 
     //Set ATTR_SECURITY_LEVEL
-    setAttrSecurityLvl();
+    g_pSbeSecurityUtils->setSecurityLvl();
 
 #undef SBE_FUNC
 }

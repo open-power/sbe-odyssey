@@ -48,6 +48,7 @@
 #include "securityutils.H"
 #include "irqutils.H"
 #include "threadutil.H"
+#include "platsecurityutils.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -209,6 +210,9 @@ int  main(int argc, char **argv)
             // Hard Reset SBE to recover
             break;
         }
+
+        // Override base security utils with plat implementation
+        platSecurityUtils::getInstance().init();
 
         plat_AttrInit(fapi2::ENUM_ATTR_NAME_ODYSSEY);
 

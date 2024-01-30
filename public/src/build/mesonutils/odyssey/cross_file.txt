@@ -24,6 +24,7 @@ odyssey_cmn_inc_paths = ['/public/src/common/cnfg/odyssey'
 odyssey_runtime_inc_paths = [
     '/public/src/runtime/odyssey/sppe/plat/targeting',
     '/public/src/runtime/odyssey/sppe/plat/ffdc',
+    '/public/src/runtime/odyssey/sppe/plat/security',
     '/public/src/runtime/odyssey/sppe/hwpf',
     '/genfiles/runtime/odyssey/sppe',
     '/public/src/runtime/odyssey/sppe/plat/attributes',

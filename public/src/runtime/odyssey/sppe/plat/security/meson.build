@@ -1,11 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/odyssey/sppe/plat/meson.build $
+# $Source: public/src/runtime/odyssey/sppe/plat/security/meson.build $
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2024
+# Contributors Listed Below - COPYRIGHT 2024
 # [+] International Business Machines Corp.
 #
 #
@@ -23,9 +23,5 @@
 #
 # IBM_PROLOG_END_TAG
 
-ODYSSEY_TARGET_LIST_JSON = files('targetlist.json')
+odyssey_abs_plat_security_c_file_paths = files('platsecurityutils.C')
 
-subdir('targeting')
-subdir('errorxml')
-subdir('attributes')
-subdir('security')
