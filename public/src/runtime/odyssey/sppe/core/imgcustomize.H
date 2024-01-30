@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,8 +22,10 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef _IMGCUSTOMIZE_H_
-#define _IMGCUSTOMIZE_H_
+
+#pragma once
+
+#include <stdint.h>
 
 /**
  * @brief This file contains wrapper functions that differin implementation for
@@ -47,4 +49,9 @@ void sbeSecurityCheckWrap(void);
  */
 void sbePakSearchStartOffset(void);
 
-#endif /* _IMGCUSTOMIZE_H_ */
+/**
+ * @brief Wrapper function to populate metadata in runtime image
+ *
+ */
+void sbeRuntimePopulateMetadataWrap(uint32_t i_metadata_ptr);
+

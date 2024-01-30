@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -32,6 +32,9 @@
 #include "odysseylink.H"
 #include "globals.H"
 #include "sbeglobals.H"
+#include "sberegaccess.H"
+#include "pakwrapper.H"
+#include "filenames.H"
 
 void sbeSecurityCheckWrap(void)
 {
@@ -73,4 +76,34 @@ void sbePakSearchStartOffset(void)
                         "Partition selected is : 0x%02x",
                         g_partitionOffset, g_partitionSize,
                         (uint8_t)lfrReg.boot_selection);
+}
+
+void sbeRuntimePopulateMetadataWrap(uint32_t i_metadata_ptr)
+{
+    // Update commit-Id, build-date and build-tag from sbeBuildInfo.bin
+    uint8_t l_runSide = SbeRegAccess::theSbeRegAccess().getBootSelection();
+    uint32_t l_sideStartAddr = getAbsPartitionAddr(l_runSide);
+
+    PakWrapper pak((void *)l_sideStartAddr, (void*)(l_sideStartAddr + NOR_SIDE_SIZE));
+    ARC_RET_t l_pakRc = ARC_OPERATION_SUCCESSFUL;
+    uint32_t *l_filePtr = NULL, l_fileSize = 0;
+    l_pakRc = pak.get_image_start_ptr_and_size(sbe_build_info_fname, &l_filePtr, &l_fileSize);
+    if (l_pakRc != ARC_OPERATION_SUCCESSFUL)
+    {
+        SBE_ERROR("Failed to read the SBE build info file. RC:[0x%08x]", l_pakRc);
+    }
+    else
+    {
+        // Get commit-Id
+        memcpy((uint8_t *)(i_metadata_ptr + OFFSET_COMMIT_ID_IN_METADATA),
+                (uint8_t *)l_filePtr, BUILD_DATE_N_COMMIT_ID_MAX_LEN_BYTE);
+
+        // Get build-date
+        memcpy((uint8_t *)(i_metadata_ptr + OFFSET_BUILD_DATE_IN_METADATA),
+            (uint8_t *)(l_filePtr+1), BUILD_DATE_N_COMMIT_ID_MAX_LEN_BYTE);
+
+        // Get build-tag
+        memcpy((uint8_t *)(i_metadata_ptr + OFFSET_BUILD_TAG_IN_METADATA),
+            (uint8_t *)(l_filePtr+2), BUILD_TAG_MAX_LENGTH_BYTE);
+    }
 }
