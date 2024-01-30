@@ -150,6 +150,7 @@ runtime_cmn_inc_paths = [
     '/public/src/runtime/common/drivers/i2c',
     '/public/src/runtime/common/chipops/rings',
     '/public/src/runtime/common/chipops/ras',
+    '/public/src/runtime/common/security',
         ]
 
 runtime_cmn_code_update_inc_paths = [

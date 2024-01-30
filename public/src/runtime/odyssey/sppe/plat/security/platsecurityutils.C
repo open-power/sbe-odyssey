@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/common/utils/securityutils.C $                     */
+/* $Source: public/src/runtime/odyssey/sppe/plat/security/platsecurityutils.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2024                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,47 +23,22 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#include "securityutils.H"
-#include "sberegaccess.H"
-#include "attrutils.H"
+#include "platsecurityutils.H"
 #include "sbetrace.H"
+#include "fapi2.H"
+#include "sbeglobals.H"
 
 using namespace fapi2;
 
-void setAttrSecurityLvl()
+void platSecurityUtils::setAttrSecurityLvl()
 {
-        #define SBE_FUNC " setAttrSecurityLvl "
-        SBE_ENTER(SBE_FUNC);
+    #define SBE_FUNC " setAttrSecurityLvl "
+    SBE_ENTER(SBE_FUNC)
 
-    /**
-     * @brief Security Level
-                Level 0 - DISABLED   - Security disabled, SAB=0
-                Level 1 - PERMISSIVE - Security enabled but not strictly enforced,
-                                        SAB=1 but firmware signed with imprint keys
-                Level 2 - ENFORCING  - Security enabled and strictly enforced,
-                                        SAB=1 and firmware signed with production keys
-    *
-    */
+    // Set the ATTR_SECURITY_LEVEL
+    SBE_INFO(SBE_FUNC "Updating ATTR_SECURITY_LEVEL to 0x%02x", getSecurityLevel());
+    ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_SECURITY_LEVEL = getSecurityLevel();
 
-    //By default we will always enforce highest security level
-    ATTR_SECURITY_LEVEL_Type securityLevel = ENUM_ATTR_SECURITY_LEVEL_ENFORCING;
-
-    bool isSecurityEnabled = SbeRegAccess::theSbeRegAccess().getSecureMode() ||
-                            SbeRegAccess::theSbeRegAccess().getEmulateSABSet();
-
-    bool isProductionSigned = ((!SbeRegAccess::theSbeRegAccess().getIsImprintMode()) ||
-                                SbeRegAccess::theSbeRegAccess().getForceProductionMode());
-
-    if(isSecurityEnabled == true && isProductionSigned == false)
-            securityLevel = ENUM_ATTR_SECURITY_LEVEL_PERMISSIVE;
-
-    if(isSecurityEnabled == false)
-            securityLevel = ENUM_ATTR_SECURITY_LEVEL_DISABLED;
-
-    //Plat function call to set the attr
-    SBE_INFO(SBE_FUNC "Updating ATTR_SECURITY_LEVEL to 0x%02x", securityLevel);
-    platSetAttrSecurityLvl(securityLevel);
-
-    SBE_EXIT(SBE_FUNC);
+    SBE_EXIT(SBE_FUNC)
     #undef SBE_FUNC
 }

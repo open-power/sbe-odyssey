@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -31,6 +31,6 @@ abs_cmn_utils_c_path = [files('sbeutil.C',
 
 #Note: Add any files that use fapi,targeting etc in below list that will
 #      be picked up for runtime images (SPPE,HSBE,TSBE etc)
-abs_cmn_utils_rt_c_path = [files('securityutils.C',
+abs_cmn_utils_rt_c_path = [files(
                               )
                           ]

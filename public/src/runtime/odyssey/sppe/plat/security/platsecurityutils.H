@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/common/utils/securityutils.H $                     */
+/* $Source: public/src/runtime/odyssey/sppe/plat/security/platsecurityutils.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2024                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -25,8 +25,57 @@
 
 #pragma once
 
-/**
- * @brief Set the ATTR_SECURITY_LEVEL attribute
- *
- */
-void setAttrSecurityLvl();
+#include "securityutils.H"
+#include "sbefifo.H"
+
+#define NUMBER_OF_NON_SECURE_HW_PATHS 0x1
+
+class platSecurityUtils : public securityUtils {
+
+    public:
+
+    /**
+     * @brief Returns the instance of this class
+     *
+     * @return A reference to platSecurityUtils
+    */
+    static platSecurityUtils& getInstance(){
+        static platSecurityUtils iv_instance;
+        return iv_instance;
+    }
+
+    /**
+     * @brief Initialise plat security class.
+     *        Override g_pSbeSecurityUtils to point to derived class
+     *
+    */
+    void init(){
+        g_pSbeSecurityUtils = this;
+    }
+
+    protected:
+
+    /**
+     * @brief Set the Attr Security Lvl
+     *
+     */
+    void setAttrSecurityLvl() override;
+
+    private:
+
+    /**
+     * @brief Constructor for a new plat Security Utils object
+     *
+     */
+    platSecurityUtils() :
+        securityUtils(iv_nonSecureHwPaths, (size_t)NUMBER_OF_NON_SECURE_HW_PATHS)
+    {};
+
+    // Disable copy construction and assignment operators
+    platSecurityUtils(const platSecurityUtils&) = delete;
+    platSecurityUtils& operator=(const platSecurityUtils&) = delete;
+
+    const sbeFifoType iv_nonSecureHwPaths[NUMBER_OF_NON_SECURE_HW_PATHS] = {
+            SBE_FIFO
+        };
+};
