@@ -93,6 +93,56 @@ class ParseError(Exception):
     '''
     pass
 
+class CollectRegisterFfdc(object):
+    '''
+    Class to parse 'collectRegisterFfdc' tag in error xml and create an instance
+    of this class, which models all properties of xml tag.
+    '''
+
+    def __init__(self, i_node:Element):
+        '''
+        Constructor which will parse the input XML node.
+        '''
+        id, targetType, target = (
+            i_node.find(tag) for tag in ("id", "targetType", "target"))
+
+        self.id = id.text
+        self.target_type = targetType.text
+        self.target = target.text
+
+        i_node.remove(id)
+        i_node.remove(targetType)
+        i_node.remove(target)
+
+        if(len(i_node)):
+            raise ParseError(
+                f"There are unprocessed nodes {list(i_node)} in {self.id}")
+
+    def process(self, i_parent_rc:'HwpError'):
+        '''
+        Find out the index of LV-FFDC for the target mentioned in 'collectRegisterFfdc'
+        '''
+        self.target_index = i_parent_rc.ffdc.index(self.target)
+        self.id_hash = i_parent_rc.db.register_ffdcs[self.id].hash
+
+    @property
+    def id_hash_hex(self) -> str:
+        return "0x%08x" % self.id_hash
+
+    def display(self):
+        from icecream.icecream import ic
+
+        temp = ic.enabled
+        try:
+            ic.enable()
+            ic('---------------------------------------------')
+            ic(self.id)
+            ic(self.target_type)
+            ic(self.target)
+            ic(self.target_index)
+        finally:
+            ic.enabled = temp
+
 class HwpError(object):
     '''
     Class to parse 'hwpError' tag in error xml and create an instance
@@ -143,8 +193,9 @@ class HwpError(object):
             i_node.remove(f)
 
         collectRegisterFfdc = i_node.findall('collectRegisterFfdc')
+        self.collect_reg_ffdc : list[CollectRegisterFfdc] = []
         for crf in collectRegisterFfdc:
-            # TODO: parse collect register
+            self.collect_reg_ffdc.append(CollectRegisterFfdc(crf))
             i_node.remove(crf)
 
         buffer = i_node.findall('buffer')
@@ -216,27 +267,35 @@ class HwpError(object):
             self.ffdc.append('address')
             self.ffdc.append('pcb_pib_rc')
 
+        for crf in self.collect_reg_ffdc:
+            crf.process(self)
+
     @property
     def hash_hex(self) -> str:
         return "0x%06x" % self.hash
 
-    # work around to keep same as old script generated file
-    @property
-    def sorted_ffdc_with_index(self) -> 'list[str]':
-        '''
-        Sort the FFDC but return a tuple of ffdc and its original index.
-        To make the output same as output of old script,
-        * sorting should make a longer string come first compare to a shorter
-          string when shorter string is subset of longer string. ie, ABCDEFGH should
-          come prior to ABCD.
-        '''
-        ffdc_tuple = [(self.ffdc[i], i) for i in range(len(self.ffdc))]
-        # it will sort based on the first element (ie, ffdc)
-        return sorted(ffdc_tuple, key=lambda x : x[0] + 'zzz')
-
     @property
     def ffdc_len(self) -> int:
         return len(self.ffdc)
+
+    @property
+    def hasCollectRegister(self) -> bool:
+        return (len(self.collect_reg_ffdc) > 0)
+
+    @property
+    def reg_ffdc_size_in_bytes(self) -> int:
+        ret_size = 0
+
+        for crf in self.collect_reg_ffdc:
+            ret_size += 3 * 4 # size for ffdc-id, target-position and size fields
+
+            num_of_scoms = self.db.register_ffdcs[crf.id].scom_list_len
+
+            # Since this tool now only support scom reg ffdc, and each scom data
+            #  will be 8-byte length
+            ret_size += num_of_scoms * 8
+
+        return ret_size
 
     def display(self):
         from icecream.icecream import ic
@@ -250,6 +309,81 @@ class HwpError(object):
             ic(self.is_poz)
             ic(self.description)
             ic(self.ffdc)
+
+            for crf in self.collect_reg_ffdc:
+                crf.display()
+        finally:
+            ic.enabled = temp
+
+class RegisterFfdc(object):
+    '''
+    Class to parse 'registerFfdc' tag in error xml and create an instance
+    of this class, which models all properties of xml tag.
+    '''
+
+    def __init__(self, i_db:'HwpErrorDB', i_node:Element):
+        '''
+        Constructor which will parse the input XML node.
+        '''
+        self.db = i_db
+
+        id = i_node.find('id')
+
+        if id is None:
+            raise ParseError("Invalid register ffdc node")
+        self.id = id.text
+        i_node.remove(id)
+
+        cfamregs = i_node.findall('cfamRegister')
+        for reg in cfamregs:
+            #TODO: parse cfam registers
+            i_node.remove(reg)
+
+        self.scom_list = []
+        scomregs = i_node.findall('scomRegister')
+        for reg in scomregs:
+            self.scom_list.append(reg.text)
+
+            i_node.remove(reg)
+
+        if(len(i_node)):
+            raise ParseError(
+                f"There are unprocessed nodes {list(i_node)} in {self.id}")
+
+    def process(self) -> None:
+        '''
+        Post-process the XML data.
+          1. Calculate 32-bit hash of each reg-ffdc-id.
+          2. Confirm there is no duplicate hash.
+        '''
+        hash16bytes = hashlib.md5(self.id.encode()).digest()
+        hash32bits = int.from_bytes(hash16bytes[0:4], "big")
+        if hash32bits in self.db.hwp_err_hash_set:
+            raise ParseError("Hash for register ffdc " + self.id +
+                    " already used")
+        else:
+            self.hash = hash32bits
+            self.db.hwp_err_hash_set.add(hash32bits)
+
+        # confirm there is no duplicate scoms
+        if(len(set(self.scom_list)) != self.scom_list_len):
+            raise ParseError(f"Duplicate scoms present in {self.id}")
+
+    @property
+    def scom_list_len(self):
+        return len(self.scom_list)
+
+    def display(self):
+        from icecream.icecream import ic
+
+        temp = ic.enabled
+        try:
+            ic.enable()
+            ic('=============================================')
+            ic(self.id)
+            ic('---------------------------------------------')
+            for scom in self.scom_list:
+                ic(scom)
         finally:
             ic.enabled = temp
 
@@ -267,6 +401,9 @@ class HwpErrorDB(object):
         self.hwp_errors : dict[str, HwpError] = dict()
         self.hwp_err_hash_set : set[int] = set()
         self.max_ffdc_len = 0
+        self.register_ffdcs : dict[str, RegisterFfdc] = dict()
+        self.reg_ffdc_hash_set : set[int] = set()
+        self.max_reg_ffdc_size = 0
 
     def parserHwpError(
             self,
@@ -294,6 +431,22 @@ class HwpErrorDB(object):
             if(hwperr.ffdc_len > self.max_ffdc_len):
                 self.max_ffdc_len = hwperr.ffdc_len
 
+    def parseRegisterFfdc(self, i_node : Element) -> None:
+        '''
+        parser all "registerFfdc" tags and aggregate to 'self.register_ffdcs'
+        '''
+        registerFfdc = i_node.findall('registerFfdc')
+        for regffdc_node in registerFfdc:
+            regffdc = RegisterFfdc(self, regffdc_node)
+
+            if(regffdc.id in self.register_ffdcs):
+                raise ParseError(
+                    f"Duplicate register ffdc {regffdc.id}")
+
+            i_node.remove(regffdc_node)
+
+            self.register_ffdcs[regffdc.id] = regffdc
+
     def loadXml(
             self,
             fname: str,
@@ -310,10 +463,11 @@ class HwpErrorDB(object):
                 is_poz = True
             root.remove(format)
 
-        registerFfdc = root.findall('registerFfdc')
-        for regffdc in registerFfdc:
-            # TODO: parse registerFfdc
-            root.remove(regffdc)
+        try:
+            self.parseRegisterFfdc(root)
+        except Exception as e:
+            raise ParseError(
+                f"Loading xml {fname} failed") from e
 
         try:
             self.parserHwpError(root, is_poz, i_platform)
@@ -325,15 +479,17 @@ class HwpErrorDB(object):
             raise ParseError(
                 f"There are unprocessed nodes {list(root)} in {fname}")
 
-    # work around to keep same as old script generated file
-    @property
-    def sorted_rc(self) -> 'list[str]':
-        return sorted(self.hwp_errors)
-
     def process(self) -> None:
+        for regffdc in self.register_ffdcs:
+            self.register_ffdcs[regffdc].process()
+
         for rc in self.hwp_errors:
             self.hwp_errors[rc].process()
+            if(self.hwp_errors[rc].reg_ffdc_size_in_bytes > self.max_reg_ffdc_size):
+                self.max_reg_ffdc_size = self.hwp_errors[rc].reg_ffdc_size_in_bytes
 
     def display(self):
+        for regffdc in self.register_ffdcs:
+            self.register_ffdcs[regffdc].display()
         for rc in self.hwp_errors:
             self.hwp_errors[rc].display()

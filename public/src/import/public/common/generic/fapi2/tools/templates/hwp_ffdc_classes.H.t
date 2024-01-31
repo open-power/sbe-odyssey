@@ -62,12 +62,44 @@
 #if defined(__SBE__) && defined(MINIMUM_FFDC) && !defined(MINIMUM_FFDC_RE)
 #include <sbeffdctype.H>
 #endif
+#ifdef MINIMUM_REG_COLLECTION
+#include <hwp_reg_ffdc.H>
+#endif
 
 /**
  * @brief FFDC gathering classes
  */
 namespace fapi2
 {
+
+#ifdef MINIMUM_REG_COLLECTION
+/**
+ * @brief - Collect all register values whose addess is provided.
+ *
+ *      Platform which supports MINIMUM_REG_COLLECTION has to implement this
+ *       function.
+ *
+ *      Limitation of this implementation:
+ *          1. Only scom register collections are supported now
+ *          2. register collection for multiple target using <childTarget>
+ *             is not supported now.
+ *
+ *      Store the register collection in array of uint64_t (since its scom),
+ *       with target index as a header, such that this array can be directly
+ *       logged into the pel by host/sp
+ *
+ * @param[in] i_target_ffdc     pointer to lv-ffdc which has target info
+ * @param[in] i_address_list    pointer to first address of address list
+ * @param[in] i_length          length of address list
+ * @param[in] io_hwp_reg_ffdc   pointer to the output buffer
+ *
+ */
+void collectRegisters(
+    const void *i_target_ffdc,
+    const uint32_t* i_address_list,
+    const uint32_t i_length,
+    uint32_t*& io_hwp_reg_ffdc);
+#endif
 
 extern pozFfdcData_t g_FfdcData;
 #if defined(__SBE__) && defined(MINIMUM_FFDC) && !defined(MINIMUM_FFDC_RE)
@@ -79,22 +111,38 @@ class {{rc[3:]}}
 {
   public:
     sbeFfdc_t * iv_localFfdcData = NULL;
-    {% for lv_ffdc, index in hwpErrorDB.hwp_errors[rc].sorted_ffdc_with_index %}
+    void* iv_hwRegFfdcData = NULL;
+
+    {% for lv_ffdc in hwpErrorDB.hwp_errors[rc].ffdc %}
     template< typename T >
     inline {{rc[3:]}}& set_{{lv_ffdc}}(const T& i_value)
     {
         if (iv_localFfdcData)
         {
-            iv_localFfdcData[{{index}}].data= convertType(i_value);
-            iv_localFfdcData[{{index}}].size = fapi2::getErrorInfoFfdcSize(i_value);
+            iv_localFfdcData[{{loop.index-1}}].data= convertType(i_value);
+            iv_localFfdcData[{{loop.index-1}}].size = fapi2::getErrorInfoFfdcSize(i_value);
         }
         return *this;
     };
-
     {% endfor %}{# lv_ffdc #}
+
     void execute()
     {
+#ifdef MINIMUM_REG_COLLECTION
+    {% if hwpErrorDB.hwp_errors[rc].hasCollectRegister %}
+        auto word_ptr = (uint32_t*)iv_hwRegFfdcData;
+    {% endif %}
+    {% for crf in hwpErrorDB.hwp_errors[rc].collect_reg_ffdc %}
+        *word_ptr = {{crf.id_hash_hex}};
+        word_ptr++;
+        collectRegisters(
+            &iv_localFfdcData[{{crf.target_index}}].data,
+            CONST_REG_FFDC_{{crf.id}},
+            sizeof(CONST_REG_FFDC_{{crf.id}})/sizeof(CONST_REG_FFDC_{{crf.id}}[0]),
+            word_ptr);
 
+    {% endfor %}
+#endif
     }
     {{rc[3:]}}(fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE)
     {
@@ -105,16 +153,20 @@ class {{rc[3:]}}
 #if !defined(MINIMUM_FFDC)
         FAPI_ERR("{{hwpErrorDB.hwp_errors[rc].description}}");
 #endif
+#ifdef MINIMUM_REG_COLLECTION
+        uint32_t hwRegisterFfdcSize = {{hwpErrorDB.hwp_errors[rc].reg_ffdc_size_in_bytes}};
+#else
+        uint32_t hwRegisterFfdcSize = 0;
+#endif
 #if defined(__SBE__)
   #if defined (MINIMUM_FFDC)
-    void* ptr = nullptr;
     uint32_t tempScratchAddr = ffdcConstructor(
-                     (uint32_t){{rc}},
-                     (uint16_t)({{hwpErrorDB.hwp_errors[rc].ffdc_len}} * sizeof(fapi2::sbeFfdc_t)),
-                     ( void *&)iv_localFfdcData,
-                     (uint16_t)0,
-                     ( void *&)ptr,
-                     i_sev
+                    {{rc}},
+                    ({{hwpErrorDB.hwp_errors[rc].ffdc_len}} * sizeof(fapi2::sbeFfdc_t)),
+                    (void*&)iv_localFfdcData,
+                    hwRegisterFfdcSize,
+                    iv_hwRegFfdcData,
+                    i_sev
                    );
     #if defined (MINIMUM_FFDC_RE)
         fapi2::current_err.setDataPtr(tempScratchAddr);
@@ -130,5 +182,6 @@ class {{rc[3:]}}
 {% endfor %}{# rc #}
 
 #define MAX_FFDC_LV_SIZE ({{hwpErrorDB.max_ffdc_len}} * sizeof(fapi2::sbeFfdc_t))
+#define MAX_REG_FFDC_SIZE ({{hwpErrorDB.max_reg_ffdc_size}})
 
 } // namespace fapi2

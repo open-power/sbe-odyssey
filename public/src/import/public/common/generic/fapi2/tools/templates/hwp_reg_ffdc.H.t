@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/common/generic/fapi2/tools/templates/hwp_return_codes.H.t $ */
+/* $Source: public/src/import/public/common/generic/fapi2/tools/templates/hwp_reg_ffdc.H.t $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -24,29 +24,28 @@
 /* IBM_PROLOG_END_TAG                                                     */
 
 /**
- * hwp_return_codes.H
+ * hwp_reg_ffdc.H
  *
  * This file is generated from a python script - {{toolname}}.
  *
- * This file contain enum of all HWP RCs defined in error xmls.
+ * This file contain declaration of arrays of scom address for various
+ *  register-ffdc. This file is required for platform which has compile
+ *  flag 'MINIMUM_REG_COLLECTION' (mostly SBE platform).
+
+ * These constants are defining as extern in this header files,
+ *  such that full scom def header files are only required to add in
+ *  corresponding source file only.
+ *  Hence compilation performance will improve.
  *
- * Integer value of each RC enum is calculated by last 24-bits of
- *  md5 checksum
  */
 
 #pragma once
 
+
+
 namespace fapi2
 {
-
-/**
- * @brief Enumeration of HWP return codes
- */
-enum HwpReturnCode
-{
-{% for rc in hwpErrorDB.hwp_errors %}
-    {{rc}} = {{hwpErrorDB.hwp_errors[rc].hash_hex}},
+{% for (id, reg_ffdc) in hwpErrorDB.register_ffdcs.items() %}
+    extern const uint32_t CONST_REG_FFDC_{{id}}[{{reg_ffdc.scom_list_len}}];
 {% endfor %}
-};
-
 } // namespace fapi2

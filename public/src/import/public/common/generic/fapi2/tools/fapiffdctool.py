@@ -102,6 +102,8 @@ def cmd_gensrc(args):
     generate("hwp_return_codes.H")
     generate("hwp_ffdc_classes.H")
     generate("hwp_error_info.H")
+    generate("hwp_reg_ffdc.H")
+    generate("hwp_reg_ffdc.C")
 
 if __name__ == '__main__':
     parser = ArgumentParser(description="Tools to generate code for error XMLs.")
