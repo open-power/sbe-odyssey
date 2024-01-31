@@ -86,7 +86,7 @@ fapi2::ReturnCode ody_omi_unload(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHI
     constexpr uint32_t l_groups = 1;
     constexpr uint32_t l_lanes = 8;
     constexpr uint32_t l_threads = 1;
-    constexpr uint16_t c_REVISION = 0x01;
+    constexpr uint16_t c_REVISION = 0x02;
     constexpr uint8_t c_section_number_shift = 40;
 
     io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(PHY_ODY_OMI_BASE);
