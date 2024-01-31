@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2023
+# Contributors Listed Below - COPYRIGHT 2023,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -44,6 +44,8 @@ cp ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe_DD
    ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/srom/build/images/odyssey_srom_DD1.syms \
    ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/srom/build/images/odyssey_srom_DD1.map \
    ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/srom/build/images/odyssey_srom_DD1.dis \
+   ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/srom/build/images/odyssey_srom_DD1.bin \
+   ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/otprom/build/images/v2.0/odyssey_otprom_DD1.bin \
    ${MESON_SOURCE_ROOT}/internal/src/tools/debug/ppe2fsp \
    ${MESON_SOURCE_ROOT}/internal/src/tools/debug/fsp-trace \
    ${MESON_SOURCE_ROOT}/public/src/runtime/tools/attributes/attr* \
