@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/common/generic/fapi2/tools/templates/hwp_return_codes.H.t $ */
+/* $Source: public/src/import/public/common/generic/fapi2/tools/templates/hwp_reg_ffdc.C.t $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -24,29 +24,33 @@
 /* IBM_PROLOG_END_TAG                                                     */
 
 /**
- * hwp_return_codes.H
+ * hwp_reg_ffdc.C
  *
  * This file is generated from a python script - {{toolname}}.
  *
- * This file contain enum of all HWP RCs defined in error xmls.
+ * This file contain definiton of arrays of scom address for various
+ *  register-ffdc. This file is required for platform which has compile
+ *  flag 'MINIMUM_REG_COLLECTION' (mostly SBE platform).
+
+ * Please refer hwp_reg_ffdc.H.t for more details
  *
- * Integer value of each RC enum is calculated by last 24-bits of
- *  md5 checksum
  */
 
-#pragma once
+#include <stdint.h>
+
+// This header file should be defined by plat
+//   This will contain list of all scom header files.
+#include <hw_reg_address.H>
+
+#include <hwp_reg_ffdc.H>
 
 namespace fapi2
 {
-
-/**
- * @brief Enumeration of HWP return codes
- */
-enum HwpReturnCode
-{
-{% for rc in hwpErrorDB.hwp_errors %}
-    {{rc}} = {{hwpErrorDB.hwp_errors[rc].hash_hex}},
+{% for (id, reg_ffdc) in hwpErrorDB.register_ffdcs.items() %}
+    const uint32_t CONST_REG_FFDC_{{id}}[{{reg_ffdc.scom_list_len}}] = {
+        {% for scoms in reg_ffdc.scom_list %}
+        {{scoms}},
+        {% endfor %}
+    };
 {% endfor %}
-};
-
 } // namespace fapi2
