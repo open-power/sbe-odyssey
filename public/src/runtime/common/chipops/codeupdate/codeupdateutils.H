@@ -97,7 +97,7 @@ typedef struct
 {
     uint16_t numOfCE;
     uint16_t numOfUE;
-}memDeviceStatus_t;
+} memDeviceStatus_t __attribute__((aligned(4)));
 
 // A SPI port for RAS support
 class RASSPIPort : public SPIPort
