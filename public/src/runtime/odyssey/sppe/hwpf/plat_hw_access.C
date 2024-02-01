@@ -78,7 +78,7 @@ enum sbeScomType
 };
 
 
-static uint32_t getEffectiveAddress(const uint32_t *i_target, const uint32_t i_addr, bool isIndirectScom = false)
+static uint32_t getEffectiveAddress(const uint32_t *i_target, const uint32_t i_addr, bool i_isIndirectScom = false)
 {
     uint32_t translatedAddr = 0;
     const plat_target_sbe_handle* l_targetBase =
@@ -160,29 +160,53 @@ fapi2::ReturnCode pibRcToFapiRc(const uint32_t i_pibRc)
     return l_fapiRc;
 }
 
-fapi2::ReturnCode handle_scom_error(const uint32_t i_addr, uint8_t i_pibRc)
+///
+/// @brief handle scom error
+///
+/// @param [in] i_addr   The SCOM address
+/// @param [in] i_pibRc  scom return code
+///
+/// @return fapi::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
+///
+static fapi2::ReturnCode handle_scom_error(
+    const uint32_t i_addr,
+    uint8_t i_pibRc,
+    bool i_ffdcAllowed = true)
 {
     SBE_ERROR("handle_scom_error : pibrc=0x%X, i_addr=0x%8X", i_pibRc, i_addr);
-    PLAT_FAPI_ASSERT( false,
-                      POZ_SCOM_FAILURE().
-                      set_address(i_addr).
-                      set_pcb_pib_rc(i_pibRc),
-                      "SCOM : pcb pib error, pibRc[0x%08X] Translated_ScomAddr[0x%08X]",
-                      i_pibRc, i_addr);
-    fapi_try_exit:
+
+    if(i_ffdcAllowed)
+    {
+        PLAT_FAPI_ASSERT( false,
+                        POZ_SCOM_FAILURE().
+                        set_address(i_addr).
+                        set_pcb_pib_rc(i_pibRc),
+                        "SCOM : pcb pib error, pibRc[0x%08X] Translated_ScomAddr[0x%08X]",
+                        i_pibRc, i_addr);
+    }
+
+fapi_try_exit:
+    if(i_ffdcAllowed)
+    {
         // Override FAPI RC based on PIB RC
         fapi2::current_err = pibRcToFapiRc(i_pibRc);
         fapi2::g_FfdcData.fapiRc = fapi2::current_err;
-    return fapi2::current_err;
+        return fapi2::current_err;
+    }
+    else
+    {
+        return pibRcToFapiRc(i_pibRc);
+    }
 }
 
 fapi2::ReturnCode getscom_abs_wrap(const void *i_target,
                                    const uint32_t i_addr, uint64_t *o_data,
-                                   bool isIndirectScom)
+                                   bool i_isIndirectScom,
+                                   bool i_ffdcAllowed)
 {
     uint32_t l_pibRc = 0;
     uint32_t l_addr = i_addr;
-    l_addr = getEffectiveAddress((uint32_t *)i_target, i_addr, isIndirectScom);
+    l_addr = getEffectiveAddress((uint32_t *)i_target, i_addr, i_isIndirectScom);
     l_pibRc = getscom_abs(l_addr, o_data);
 
     SBE_DEBUG("SCOMOUT  %08X %08X%08X",
@@ -191,16 +215,16 @@ fapi2::ReturnCode getscom_abs_wrap(const void *i_target,
                     *(((uint32_t*)o_data) + 1));
 
     return (l_pibRc == PIB_NO_ERROR) ? fapi2::ReturnCode(FAPI2_RC_SUCCESS) :
-                 handle_scom_error(l_addr, l_pibRc);
+                 handle_scom_error(l_addr, l_pibRc, i_ffdcAllowed);
 }
 
 fapi2::ReturnCode putscom_abs_wrap(const void *i_target,
                                     const uint32_t i_addr, uint64_t i_data,
-                                    bool isIndirectScom)
+                                    bool i_isIndirectScom)
 {
     uint32_t l_pibRc = 0;
     uint32_t l_addr = i_addr;
-    l_addr = getEffectiveAddress((uint32_t *)i_target, i_addr, isIndirectScom);
+    l_addr = getEffectiveAddress((uint32_t *)i_target, i_addr, i_isIndirectScom);
 
     SBE_DEBUG("SCOMIN   %08X %08X%08X",
                     l_addr,

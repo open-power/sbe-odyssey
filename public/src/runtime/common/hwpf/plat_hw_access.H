@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -60,18 +60,28 @@ namespace fapi2
     ///
     /// @brief Platform wrapper over PK getscom_abs
     ///
+    /// @param [in]  i_target pointer to plat target structure
     /// @param [in]  i_addr The SCOM address
     /// @param [out] o_data The data read
-    /// @param [in] isIndirectScom True incase of Indirect scom
+    /// @param [in]  i_isIndirectScom True incase of Indirect scom
+    /// @param [in]  i_ffdcAllowed False if scom error should not create an ffdc.
+    ///                            Just return a simple ReturnCodes value.
+    ///                            This can be used when performing register collection
+    ///                            on another failure.
     ///
     /// @return fapi::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
     ///
-    fapi2::ReturnCode getscom_abs_wrap(const void *i_target,
-                                    const uint32_t i_addr, uint64_t *o_data, bool isIndirectScom = false);
+    fapi2::ReturnCode getscom_abs_wrap(
+        const void *i_target,
+        const uint32_t i_addr,
+        uint64_t *o_data,
+        bool i_isIndirectScom = false,
+        bool i_ffdcAllowed = true);
 
     ///
     /// @brief Platform wrapper over PK putscom_abs
     ///
+    /// @param [in] i_target pointer to plat target structure
     /// @param [in] i_addr The SCOM address
     /// @param [in] i_data The data to write
     /// @param [in] isIndirectScom True incase of Indirect scom
@@ -89,16 +99,6 @@ namespace fapi2
     /// @return fapi::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
     ///
     fapi2::ReturnCode pibRcToFapiRc(const uint32_t i_pibRc);
-
-    ///
-    /// @brief handle scom error
-    ///
-    /// @param [in] i_addr   The SCOM address
-    /// @param [in] i_pibRc  scom return code
-    ///
-    /// @return fapi::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
-    ///
-    fapi2::ReturnCode handle_scom_error(const uint32_t i_addr, uint8_t i_pibRc);
 
     ///
     /// brief check if scom address is Indirect scom and perform scom
