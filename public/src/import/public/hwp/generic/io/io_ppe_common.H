@@ -1327,30 +1327,30 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::set_pcie_presets(const fapi2::Target<K
     // [04:07] peak2 = 7
     // [09:11] lte gain = 1
     // [13:15] let zero = 5
-    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN2_PUT(iv_regs, i_target, i_thread, 0x4715));
-    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN2_PUT(iv_regs, i_target, i_thread, 0x4715));
-    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN2_PUT(iv_regs, i_target, i_thread, 0x4715));
-    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN2_PUT(iv_regs, i_target, i_thread, 0x4715));
+    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN3_PUT(iv_regs, i_target, i_thread, 0x4715));
+    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN3_PUT(iv_regs, i_target, i_thread, 0x4715));
+    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN3_PUT(iv_regs, i_target, i_thread, 0x4715));
+    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN3_PUT(iv_regs, i_target, i_thread, 0x4715));
 
     // Gen 4 :: 16Gbps :: Peak1 Preset, Peak2 Cal En
     // [00:03] peak1 = 4
     // [04:07] peak2 = 0
     // [09:11] lte gain = 1
     // [13:15] let zero = 5
-    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN2_PUT(iv_regs, i_target, i_thread, 0x4015));
-    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN2_PUT(iv_regs, i_target, i_thread, 0x4015));
-    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN2_PUT(iv_regs, i_target, i_thread, 0x4015));
-    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN2_PUT(iv_regs, i_target, i_thread, 0x4015));
+    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN4_PUT(iv_regs, i_target, i_thread, 0x4015));
+    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN4_PUT(iv_regs, i_target, i_thread, 0x4015));
+    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN4_PUT(iv_regs, i_target, i_thread, 0x4015));
+    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN4_PUT(iv_regs, i_target, i_thread, 0x4015));
 
     // Gen 5 :: 32Gbps :: Peak1 Cal En, Peak2 Preset
     // [00:03] peak1 = 0
     // [04:07] peak2 = 7
     // [09:11] lte gain = 1
     // [13:15] let zero = 5
-    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN2_PUT(iv_regs, i_target, i_thread, 0x0715));
-    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN2_PUT(iv_regs, i_target, i_thread, 0x0715));
-    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN2_PUT(iv_regs, i_target, i_thread, 0x0715));
-    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN2_PUT(iv_regs, i_target, i_thread, 0x0715));
+    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE0_GEN5_PUT(iv_regs, i_target, i_thread, 0x0715));
+    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE1_GEN5_PUT(iv_regs, i_target, i_thread, 0x0715));
+    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE2_GEN5_PUT(iv_regs, i_target, i_thread, 0x0715));
+    FAPI_TRY(MEM_REG_PCIE_PPE_PRESET_RX_PEAK_LTE_LANE3_GEN5_PUT(iv_regs, i_target, i_thread, 0x0715));
 
     FAPI_TRY(iv_regs->flushCache(i_target));
 
