@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -70,7 +70,7 @@ SECTIONS {
         KEEP(*(.ctors));
         KEEP(*(.ctors.*));
         ctor_end_address = .;
-        KEEP(*(.rodata*));
+        *(.rodata*);
     }
     . = ALIGN(DOUBLE_WORD_SIZE);
     _code_size = . - SPPE_ORIGIN;
