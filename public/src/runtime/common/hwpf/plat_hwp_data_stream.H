@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2020,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2020,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -205,7 +205,7 @@ namespace fapi2
          * @return return Response Header
          */
         bool isStreamRespHeader( uint32_t hdrRc  = SBE_PRI_OPERATION_SUCCESSFUL,
-                                 uint32_t ffdcRc = FAPI2_RC_SUCCESS )
+                                 ReturnCode ffdcRc = FAPI2_RC_SUCCESS )
         {
             if(!iv_isResponseHeader)
             {
@@ -241,7 +241,7 @@ namespace fapi2
          *
          * @return return Fifo Rc
          */
-        void setFifoRc(uint32_t ffdcRc = FAPI2_RC_SUCCESS)
+        void setFifoRc(ReturnCode ffdcRc = FAPI2_RC_SUCCESS)
         {
             iv_ffdcRc = ffdcRc;
             return;
@@ -251,7 +251,7 @@ namespace fapi2
          *
          * @return return Fifo Rc
          */
-        uint32_t getFifoRc()
+        ReturnCode getFifoRc()
         {
             return iv_ffdcRc;
         }
@@ -293,7 +293,7 @@ namespace fapi2
         bool                     iv_isPBALastAccess;
         const sbeFifoType        iv_fifoType;
         uint32_t                 iv_primarySecondaryRc;
-        uint32_t                 iv_ffdcRc;
+        ReturnCode               iv_ffdcRc;
         //p10_PBA_oper_flag        pbaFlag;
         //sbeMemAccessInterface    iv_memInterface;
     };

@@ -401,6 +401,32 @@ void pozFfdcCtrl_t::addNextNode( const pozFfdcNode_t  *  i_node )
 }
 #endif
 
+void pozFfdcCtrl_t::deleteLastNode()
+{
+    pozFfdcNode_t * node = (pozFfdcNode_t *) iv_firstCommitted;
+    do
+    {
+        if(node == nullptr)
+        {
+            break;
+        }
+
+        if(node->next == nullptr)
+        {
+            // Free up the last node
+            Heap::get_instance().scratch_free((const void*)node);
+            iv_firstCommitted = nullptr;
+            break;
+        }
+        while(node->next->next != nullptr)
+        {
+            node = node->next;
+        }
+        // Free up the last node
+        Heap::get_instance().scratch_free((const void*)node->next);
+        node->next = nullptr;
+    }while(0);
+}
 
 /**
  * @brief Function to send plat ffdc with full trace

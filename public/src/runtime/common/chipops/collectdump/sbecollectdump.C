@@ -36,6 +36,10 @@
 
 #define PRI_SEC_RC_UNION(primary_rc, secondary_rc) primary_rc<<16 | secondary_rc
 
+namespace fapi2
+{
+   extern pozFfdcCtrl_t g_ffdcCtrlSingleton;
+}
 
 inline bool sbeCollectDump::isDumpTypeMapped()
 {
@@ -141,7 +145,7 @@ uint32_t sbeCollectDump::writePutScomPacketToFifo()
         if( B_NONE != maskType )
         {
             uint64_t readData = 0;
-            fapiRc = getscom_abs_wrap(&dumpRowTgt, addr, &readData);
+            SBE_EXEC_HWP(fapiRc, getscom_abs_wrap, &dumpRowTgt, addr, &readData)
             if(fapiRc != fapi2::FAPI2_RC_SUCCESS)
             {
                 iv_oStream.setFifoRc(fapiRc);
@@ -163,7 +167,7 @@ uint32_t sbeCollectDump::writePutScomPacketToFifo()
         }
         SBE_DEBUG(SBE_FUNC " maskType[0x%02X], data [0x%08X %08X] ", maskType,
                       SBE::higher32BWord(dumpData),SBE::lower32BWord(dumpData));
-        fapiRc = putscom_abs_wrap(&dumpRowTgt, addr, dumpData);
+        SBE_EXEC_HWP(fapiRc, putscom_abs_wrap, &dumpRowTgt, addr, dumpData)
         if(fapiRc != fapi2::FAPI2_RC_SUCCESS)
         {
             iv_oStream.setFifoRc(fapiRc);
@@ -214,7 +218,10 @@ uint32_t sbeCollectDump::writeGetScomPacketToFifo()
         uint64_t dumpData=0;
         // Proc Scoms
         fapi2::Target<fapi2::TARGET_TYPE_CHIPS> dumpRowTgt(iv_tocRow.tgtHndl);
-        fapiRc = getscom_abs_wrap(&dumpRowTgt, iv_tocRow.hdctHeader.address, &dumpData);
+
+        // Calling getscom_abs_wrap with SBE_EXEC_HWP will create the
+        // FFDC and link the FFDC to the node.
+        SBE_EXEC_HWP(fapiRc, getscom_abs_wrap, &dumpRowTgt, iv_tocRow.hdctHeader.address, &dumpData)
         if(fapiRc != fapi2::FAPI2_RC_SUCCESS)
         {
             iv_oStream.setFifoRc(fapiRc);
@@ -514,9 +521,9 @@ uint32_t sbeCollectDump::writeGetFastArrayPacketToFifo()
 
         // Getting fast-array control blob size in word
         uint32_t fastarrayBlobSize = 0x00;
-        l_fapiRc = sbeCtrlFaUtilsGetCtrlBlobSize( faFileName,
+        SBE_EXEC_HWP(l_fapiRc, sbeCtrlFaUtilsGetCtrlBlobSize, faFileName,
                                                   fastarrayBlobSize,
-                                                  (sbeSecondaryResponse&) l_rc);
+                                                  (sbeSecondaryResponse&) l_rc)
         if((l_fapiRc != fapi2::FAPI2_RC_SUCCESS) ||
                                         (l_rc != SBE_SEC_OPERATION_SUCCESSFUL))
         {
@@ -701,6 +708,7 @@ uint32_t sbeCollectDump::writeDumpPacketRowToFifo()
                 (iv_oStream.getPriSecRc() != SBE_SEC_OPERATION_SUCCESSFUL) )
             {
                 iv_chipOpffdc.setRc(iv_oStream.getFifoRc());
+
                 // Update FFDC lenth + PrimarySecondary(32 bits) RC lenth
                 iv_tocRow.ffdcLen = sizeof(sbeResponseFfdc_t) + sizeof(uint32_t);
                 // write FFDC data on failed case using FIFO
@@ -720,6 +728,15 @@ uint32_t sbeCollectDump::writeDumpPacketRowToFifo()
                 l_rc = iv_oStream.put(ffdcDataLength);
                 CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
             }
+
+            // Incase of failure, HWP have created the ffdc which
+            // will be sitting in the scratch. That needs to be cleared.
+            // Otherwise it will exhaust the scratch.
+            if(iv_oStream.getFifoRc() != fapi2::FAPI2_RC_SUCCESS)
+            {
+                fapi2::g_ffdcCtrlSingleton.deleteLastNode();
+            }
+
             // FIFO the cpuCycles value
             iv_tocRow.cpuCycles = pk_timebase_get() - iv_tocRow.cpuCycles; // Delay time
             l_rc = iv_oStream.put(FIFO_DOUBLEWORD_LEN,
