@@ -282,7 +282,10 @@ constexpr uint32_t plat_ffdcUtilGeFfdcInitSpaceSize(void)
         +   sizeof(pozFfdcNode_t)
         +   ffdcUtils_getHwpSize(FFDC_SCRATCH_FULL_RC_LV_SIZE, 0)
         +   ffdcUtils_getPlatSize<0>() // For Scratch FULL RC space ffdc disable the TRACE data
-#endif
+#endif // MINIMUM_FFDC_RE
+#ifdef MINIMUM_REG_COLLECTION
+        +   MAX_REG_FFDC_SIZE
+#endif // MINIMUM_REG_COLLECTION
             );
 }
 

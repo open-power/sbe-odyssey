@@ -56,7 +56,10 @@ if (get_option('sppe').enabled() or
     ffdctool_deps = ['error_xml_parser.py',
                     '/templates/hwp_return_codes.H.t',
                     '/templates/hwp_ffdc_classes.H.t',
-                    '/templates/hwp_error_info.H.t',]
+                    '/templates/hwp_error_info.H.t',
+                    '/templates/hwp_reg_ffdc.H.t',
+                    '/templates/hwp_reg_ffdc.C.t',
+                    ]
     ffdctool_path = meson.global_source_root() + '/public/src/import/public/common/generic/fapi2/tools/'
 
     foreach depfile : ffdctool_deps

@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -26,6 +26,7 @@
 odyssey_genfiles_c = ['attribute.C',
                       'chipop_table.C',
                       'attribute_override.C',
+                      'hwp_reg_ffdc.C'
            ]
 
 odyssey_abs_genfiles_c_file_paths = []

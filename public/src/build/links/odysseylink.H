@@ -193,11 +193,11 @@ ASSERT((SROM_BLDR_CMN_SH_FILE_SCRATCH_END < BOOTLOADER_ORIGIN), \
 //- So setting this 24 KB
 #define SPPE_DECOMPRESSION_AREA_MIN_SIZE 0x6000 // 24 KB
 #define SPPE_MEM_TRAINING_DATA_SIZE      0x8200 // 32 KB + 512 B
-#define SPPE_RECOVERABLE_LOG_MIN_SIZE    0x1000  // 4 KB
+#define SPPE_RECOVERABLE_LOG_MIN_SIZE    0x0    // 0 KB
 // Minimum Space required for FFDC initilization
 // Allocating the persistent space for LAST UE (840B) and Scratch space RC (112B)
 // while FFDC initialization, which is used for both RE/UE
-#define SPPE_FFDC_INIT_REQUIRED_SIZE     952
+#define SPPE_FFDC_INIT_REQUIRED_SIZE     0x800  // 2 KB
 #define SPPE_HEAP_MIN_SIZE              (SPPE_RAM_PAK_MIN_SIZE + SPPE_DECOMPRESSION_AREA_MIN_SIZE       \
                                          + SPPE_MEM_TRAINING_DATA_SIZE + SPPE_RECOVERABLE_LOG_MIN_SIZE  \
                                          + SBE_TOTAL_STACK_SIZE_REQUIRED_IN_SCRATCH + SPPE_FFDC_INIT_REQUIRED_SIZE)
