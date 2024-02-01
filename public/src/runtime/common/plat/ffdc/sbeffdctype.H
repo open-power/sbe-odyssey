@@ -527,6 +527,11 @@ typedef struct pozFfdcCtrl
     */
     void addNextNode( const pozFfdcNode_t  *  i_node );
 
+    /**
+     * @brief Delete last node from the linked list.
+     *
+    */
+    void deleteLastNode();
 } __attribute__ ((aligned (8)))  pozFfdcCtrl_t;
 
 
