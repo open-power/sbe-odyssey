@@ -22,6 +22,22 @@
       "function":"sbeHssOdyUnload",
       "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
       "headerFile":"sbecmdodyunload.H"
+    },
+    {
+      "cmdClass":"A3",
+      "command":"0x02",
+      "function":"sbePutRing",
+      "fences":["SBE_FENCE_AT_CONTINUOUS_IPL", "SBE_FENCE_AT_DUMPING", "SBE_FENCE_AT_SECURE_MODE"],
+      "headerFile":"sbecmdringaccess.H",
+      "override":"True"
+    },
+    {
+      "cmdClass":"A4",
+      "command":"0x04",
+      "function":"sbePutSram",
+      "fences":["SBE_FENCE_AT_CONTINUOUS_IPL", "SBE_FENCE_AT_DUMPING", "SBE_FENCE_AT_SECURE_MODE"],
+      "headerFile":"sbecmdsramaccess.H",
+      "override":"True"
     }
   ]
 }
