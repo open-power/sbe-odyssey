@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -343,7 +343,8 @@ class FlashDevice : public SEEPROMDevice
                     uint32_t i_raw_size,
                     uint8_t* i_erase_buffer,
                     bool i_verify = true) :
-            SEEPROMDevice(i_port, i_raw_size, i_verify), iv_devtype(i_devtype), iv_erase_buffer(i_erase_buffer)
+            SEEPROMDevice(i_port, i_raw_size, i_verify), iv_devtype(i_devtype),
+            iv_erase_buffer(i_erase_buffer), iv_recovered_from_error(false)
         {}
 
         /// @brief Implementation of write_begin - see AbstractMemoryDevice::write_begin() for details
@@ -386,6 +387,8 @@ class FlashDevice : public SEEPROMDevice
 
         uint32_t iv_erase_start, iv_erase_pos, iv_erase_end;
         uint8_t* iv_partial_end_restore_buffer;
+
+        bool iv_recovered_from_error;
 
         /**
          * @brief New implementation of flush_page_buf() which incorporates erase support

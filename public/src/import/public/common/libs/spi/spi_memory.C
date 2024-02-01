@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -383,6 +383,7 @@ ReturnCode spi::FlashDevice::write_begin(uint32_t i_start, uint32_t i_length)
     FAPI_TRY(SEEPROMDevice::write_begin(i_start, i_length));
 
     // Now, expand the total amount we're writing to cover entire erase blocks
+    iv_recovered_from_error = false;
     iv_erase_start = iv_erase_pos = iv_write_start & ~SMALLEST_ERASE_BLOCK_MASK;
     iv_erase_end = (iv_write_end + SMALLEST_ERASE_BLOCK_MASK) & ~SMALLEST_ERASE_BLOCK_MASK;
 
@@ -548,6 +549,7 @@ fapi_try_exit:
         // Recover a partial last block if needed;
         // we call this without FAPI_TRY since we're just trying to clean up
         finalize_write(false);
+        iv_recovered_from_error = true;
     }
 
     return l_final_rc;
@@ -592,9 +594,21 @@ fapi_try_exit:
 
 ReturnCode spi::FlashDevice::write_end()
 {
-    ReturnCode l_rc = SEEPROMDevice::write_end();
+    ReturnCode l_rc;
 
-    // Always restore the saved last block data even if the previous write_end failed
+    // If we're no longer in write mode because we just had an error
+    // and recovered from it, allow exactly one call to write_end()
+    // without raising an error.
+    if (iv_recovered_from_error)
+    {
+        iv_recovered_from_error = false;
+        return FAPI2_RC_SUCCESS;
+    }
+
+    FAPI_TRY(check_write_active(WRITE_END, true));
+
+    // Always restore the saved last block data even if write_end fails
+    l_rc = SEEPROMDevice::write_end();
     FAPI_TRY(finalize_write(true));
     FAPI_TRY(l_rc);
 
