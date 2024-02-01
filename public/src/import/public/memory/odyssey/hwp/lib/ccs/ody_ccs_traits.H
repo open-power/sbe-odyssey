@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -168,6 +168,9 @@ class ccsTraits<mss::mc_type::ODYSSEY>
 
             // Due to extra deselect at beginning and end of arr, max depth is decremented by 2
             MAX_INST_DEPTH = CCS_ARRAY_LEN - 2,
+
+            NUM_DRAM_X4 = 20,
+            NUM_DRAM_X8 = 10,
         };
 
         ///
