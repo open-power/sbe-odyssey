@@ -1395,7 +1395,66 @@ void logError( fapi2::ReturnCode& io_rc,
 
 }
 
-};
+#ifdef MINIMUM_REG_COLLECTION
+// Platform implementation for FAPI API for HW Register Collection
+void collectRegisters(
+    const void *i_target,
+    const uint32_t* i_address_list,
+    const uint32_t i_length,
+    uint32_t*& io_hwp_reg_ffdc)
+{
+    plat_target_sbe_handle plat_target;
+    auto ffdc_targ_val = reinterpret_cast<const sbe_target_info*>(i_target);
+
+    uint32_t target_search_rc = g_platTarget->getSbePlatTargetHandle(
+            ffdc_targ_val->logtargetType,
+            ffdc_targ_val->instanceID,
+            plat_target);
+
+    // update target position
+    *io_hwp_reg_ffdc = ffdc_targ_val->instanceID;
+    io_hwp_reg_ffdc++;
+
+    for(uint16_t i = 0; i < i_length; i++)
+    {
+        uint64_t data;
+
+        if(target_search_rc == SBE_SEC_OPERATION_SUCCESSFUL)
+        {
+            ReturnCode rc = getscom_abs_wrap(
+                &plat_target,
+                i_address_list[i],
+                &data,
+                false,  // i_isIndirectScom
+                false); // i_ffdcAllowed
+            if(rc)
+            {
+                // updating data with bad magic word to indicate the failure
+                data = (0xBAADBAADllu << 32) | ((uint32_t)rc);
+            }
+        }
+        else
+        {
+            // updating data with bad magic word to indicate the failure
+            data = (0xBAAAAAADllu << 32) | target_search_rc;
+        }
+
+        // since hw register data will be stored after lv-ffdc,
+        //  and its size is 12 bytes per lv-ffdc, we cannot ensure an
+        //  8-byte aligned address here.
+        // Hence always using a word by word assignment.
+        *io_hwp_reg_ffdc = data >> 32;
+        io_hwp_reg_ffdc++;
+        *io_hwp_reg_ffdc = data; // copying lower 32-bytes
+        io_hwp_reg_ffdc++;
+    }
+    // each scom will have 2 words, and size of FFDC-ID, Target Pos and size-field
+    *io_hwp_reg_ffdc = 3 + i_length * 2;
+    io_hwp_reg_ffdc++;
+}
+#endif // MINIMUM_REG_COLLECTION
+
+} // namespace fapi2
 
 
 void plat_FfdcInit (void)
