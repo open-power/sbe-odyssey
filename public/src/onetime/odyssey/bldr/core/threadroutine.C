@@ -394,7 +394,7 @@ void bldrthreadroutine(void *i_pArg)
             SBE::updateErrorCodeAndHalt(BOOT_RC_SPPE_MEASUREMENT_MISMATCH_IN_HRESET);
         }
 
-        //Check if scom filtering and invalid addr check need's to be enabled or disabled
+        //Check if scom filtering,invalid addr and allow attr override check need's to be enabled or disabled
         //based on imprint mode/production mode and scratch settings
         do{
             if((shvRsp.flag & IMPRINT_MODE) && (!(SBE::isHreset())))
@@ -436,6 +436,12 @@ void bldrthreadroutine(void *i_pArg)
                 {
                     SBE_INFO(SBE_FUNC "Disabling Imvlid Scom Address Check in Imprint/Lab Mode" );
                     lfrReg.disable_invalid_scom_addr_check = 0x1;
+                }
+
+                if(mbx11.iv_allowAttrOverride)
+                {
+                    SBE_INFO(SBE_FUNC "Attribute Override allowed/enabled in Imprint/Lab Mode" );
+                    lfrReg.allow_attr_override = 0x1;
                 }
 
                 //Update the LFR reg to tell its a imprint/lab only driver
