@@ -278,6 +278,12 @@ class ccsTraits<mss::mc_type::ODYSSEY>
         // For Odyssey, CS2/3 (the second number in the pair) are command 1's chip selects
         static const mss::pair<uint64_t, uint64_t> CS_ND[mss::MAX_RANK_PER_DIMM];
 
+        // CSN Setup for commands requiring non-target ODT
+        // Odyssey only has one DIMM and only has up to two ranks
+        // However, attributes can have up to 4 ranks per DIMM -> keeping this constant for consistent code between MC's
+        // For Odyssey, CS2/3 (the second number in the pair) are command 1's chip selects
+        static const mss::pair<uint64_t, uint64_t> CS_NTODT[mss::MAX_RANK_PER_DIMM];
+
         ///
         /// @brief Get and perform CS tied operation if needed
         ///
