@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -210,7 +210,7 @@ def signPak(args:argparse.Namespace):
         finally:
             shutil.rmtree(os.path.dirname(signPakWorkDir))
 
-def removeSig(archive, secureHdr:str):
+def removeHWSigAFWSigP(archive, secureHdr:str):
 
     entries = archive.find(secureHdr)
     secureHdrData = bytearray(entries[0].ddata)
@@ -218,15 +218,14 @@ def removeSig(archive, secureHdr:str):
 
     signCodeContMetaData = signedCodeContainerMetaData.get("v_2_4")
 
-    hwSigTotalLen = signCodeContMetaData.get("hwSigALen") + \
-                    signCodeContMetaData.get("hwSigDLen")
-    fwSigTotalLen = signCodeContMetaData.get("fwSigPLen") + \
-                    signCodeContMetaData.get("fwSigSLen")
+    hwSigTotalLen = signCodeContMetaData.get("hwSigALen")
+    fwSigTotalLen = signCodeContMetaData.get("fwSigPLen")
 
-    secureHdrData[signCodeContMetaData.get("hwSigStartOffset") : \
-                  hwSigTotalLen] = bytearray(hwSigTotalLen)
-    secureHdrData[signCodeContMetaData.get("fwSigStartOffset") : \
-                  fwSigTotalLen] = bytearray(fwSigTotalLen)
+    hwSigStartOffset = signCodeContMetaData.get("hwSigStartOffset")
+    fwSigStartOffset = signCodeContMetaData.get("fwSigStartOffset")
+
+    secureHdrData[hwSigStartOffset : (hwSigStartOffset + hwSigTotalLen)] = bytearray(hwSigTotalLen)
+    secureHdrData[fwSigStartOffset : (fwSigStartOffset + fwSigTotalLen)] = bytearray(fwSigTotalLen)
 
     archive.add(secureHdr, pak.CM.store, secureHdrData)
     archive.save()
@@ -253,7 +252,7 @@ def pakHash(args:argparse.Namespace):
             pakHashFile = os.path.join(pakHashWorkDir, "image.hash")
 
             if exists(archive, secureHdr):
-                removeSig(archive, secureHdr)
+                removeHWSigAFWSigP(archive, secureHdr)
 
             if args.excludeFiles is not None and pakName in args.excludeFiles:
                 logger.debug("Exclude files for image hash")
