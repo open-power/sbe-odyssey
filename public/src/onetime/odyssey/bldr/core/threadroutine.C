@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -355,6 +355,9 @@ void bldrthreadroutine(void *i_pArg)
         if(!(SBE::isHreset()))
         {
             bldrSecureBootCtrlSettings.bootComplete = 0x1;
+
+            // Check if we are running production driver
+            bldrSecureBootCtrlSettings.nonImprintImg = (shvRsp.flag & IMPRINT_MODE) ? 0x0 : 0x1;
 
             SBE_INFO(SBE_FUNC "BLDR Secure Boot Control Measurement Reg Value: 0x%08x",
                     bldrSecureBootCtrlSettings.secureBootControl);

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -116,8 +116,9 @@ typedef union secureBootCtrlSettings
         uint32_t secureModeEnable : 1;                    //Bit 5
         uint32_t enforceMatchingMSV : 1;                  //Bit 6
         uint32_t fileHashCalculationEnable : 1;           //Bit 7
-        uint32_t bootComplete : 1;                        //Bit  8       //SROM or BLDR boot complete
-        uint32_t reserved1 : 3;                           //Bit 9..11
+        uint32_t bootComplete : 1;                        //Bit 8       //SROM or BLDR boot complete
+        uint32_t nonImprintImg : 1;                       //Bit 9
+        uint32_t reserved1 : 2;                           //Bit 10..11
         uint32_t msv : 8;                                 //Bit 12..19
         uint32_t reserved2 : 12;                          //Bit 20..31
     };
