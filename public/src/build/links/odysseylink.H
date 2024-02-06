@@ -191,12 +191,15 @@ ASSERT((SROM_BLDR_CMN_SH_FILE_SCRATCH_END < BOOTLOADER_ORIGIN), \
 //- Large decompression space required after ody_sppe_draminit, is ody_load_pie, where we
 //  need around 21 KB.
 //- So setting this 24 KB
-#define SPPE_DECOMPRESSION_AREA_MIN_SIZE 0x6000   // 24 KB
-#define SPPE_MEM_TRAINING_DATA_SIZE      0x8200   // 32 KB + 512 B
-#define SPPE_RECOVERABLE_LOG_MIN_SIZE    0x1000   // 4 KB
+#define SPPE_DECOMPRESSION_AREA_MIN_SIZE 0x6000 // 24 KB
+#define SPPE_MEM_TRAINING_DATA_SIZE      0x8200 // 32 KB + 512 B
+#define SPPE_RECOVERABLE_LOG_MIN_SIZE    0x1000  // 4 KB
+// Minimum Space required for LAST FFDC.
+// Allocating the persistent space for LAST UE (840B) which is used for both RE/UE,
+#define SPPE_LAST_FFDC_MIN_SIZE          840
 #define SPPE_HEAP_MIN_SIZE              (SPPE_RAM_PAK_MIN_SIZE + SPPE_DECOMPRESSION_AREA_MIN_SIZE       \
                                          + SPPE_MEM_TRAINING_DATA_SIZE + SPPE_RECOVERABLE_LOG_MIN_SIZE  \
-                                         + SBE_TOTAL_STACK_SIZE_REQUIRED_IN_SCRATCH)
+                                         + SBE_TOTAL_STACK_SIZE_REQUIRED_IN_SCRATCH + SPPE_LAST_FFDC_MIN_SIZE)
 
 #define SPPE_MAX_SIZE                   (SRAM_SIZE - CROSS_IMAGE_FIXED_AREA_SIZE \
                                          - SPPE_HEAP_MIN_SIZE - SPPE_PK_TRACE_SIZE_WITH_HEADER)

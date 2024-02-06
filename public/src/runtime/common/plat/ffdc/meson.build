@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -23,7 +23,4 @@
 #
 # IBM_PROLOG_END_TAG
 
-abs_runtime_cmn_ffdc_c_path = [
-    files('ffdc.C'),
-    files('sbeffdc.C'),
-    ]
+abs_runtime_cmn_ffdc_c_path = files('ffdc.C', 'sbeffdc.C')

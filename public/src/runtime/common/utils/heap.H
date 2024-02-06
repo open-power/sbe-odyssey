@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -124,6 +124,16 @@ public :
      *         NULL if not enough space was available
      */
     void *scratch_alloc(const uint32_t i_size, const alloc_flags i_flags = AF_NONE);
+
+    /**
+     * @brief Allocate scratch memory from the top of the heap space and clear the allocated memory
+     *          function internally calling scratch_alloc methods
+     * @param i_size    Amount of bytes requested; will be rounded up to a multiple of 8
+     * @param i_flags   Options for the allocation request
+     * @return A pointer to the allocated scratch space, or
+     *         NULL if not enough space was available
+     */
+    void* scratch_calloc(const uint32_t i_size, const alloc_flags i_flags = AF_NONE);
 
     /**
      * @brief Free a chunk of scratch memory

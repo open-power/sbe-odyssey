@@ -48,6 +48,7 @@
 #include "irqutils.H"
 #include "threadutil.H"
 #include "platsecurityutils.H"
+#include "sbeffdc.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -219,6 +220,10 @@ int  main(int argc, char **argv)
         g_platTarget->plat_TargetStateUpdateFromAttribute();
 
         sbePakSearchStartOffset();
+
+        // Static assert for minimum scratch space allocated in link.H
+        static_assert(plat_ffdcUtilGetMinLastUeSpace() < SPPE_LAST_FFDC_MIN_SIZE, "Minimum Recoverable size less than required size");
+        plat_FfdcInit();
 
         // Start the timer for the async thread.
         rc = g_sbe_thermal_sensor_timer.startTimer(
