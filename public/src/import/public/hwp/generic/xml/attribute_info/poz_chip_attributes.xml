@@ -117,6 +117,7 @@
       <targetTypes>TARGET_TYPE_OCMB_CHIP</targetTypes>
     </sbeAttrSync>
     <mrwHide/>
+    <denyForSecurityUpdate/>
   </attribute>
   <!-- ******************************************************************** -->
   <attribute>
