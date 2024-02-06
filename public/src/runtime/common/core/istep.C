@@ -68,7 +68,8 @@ void istep::findNextIstep(uint8_t& o_nextMajor, uint8_t& o_nextMinor)
         {
             if( prevMinorNumber == istepTableEntry->len )
             {
-                o_nextMajor = prevMajorNumber + 1;
+                istepTableEntry = &g_istepTable.istepMajorArr[entry+1];
+                o_nextMajor = istepTableEntry->istepMajorNum;
                 o_nextMinor =  1;
             }
             else
