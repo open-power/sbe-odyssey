@@ -399,19 +399,19 @@ void check_current_imbalance(mss::pmic::ddr5::target_info_redundancy_ddr5& io_ta
                              mss::pmic::ddr5::health_check_telemetry_data& io_health_check_info)
 {
     // VDDQ
-    FAPI_INF("Checking voltage domain VDDQ");
+    FAPI_INF_NO_SBE("Checking voltage domain VDDQ");
     read_ivddq(io_target_info, io_health_check_info);
 
     // VIO
-    FAPI_INF("Checking voltage domain VIO");
+    FAPI_INF_NO_SBE("Checking voltage domain VIO");
     read_ivio(io_target_info, io_health_check_info);
 
     // VPP
-    FAPI_INF("Checking voltage domain VPP");
+    FAPI_INF_NO_SBE("Checking voltage domain VPP");
     read_ivpp(io_target_info, io_health_check_info);
 
     // VDD
-    FAPI_INF("Checking voltage domain VDD");
+    FAPI_INF_NO_SBE("Checking voltage domain VDD");
     read_ivdd(io_target_info, io_health_check_info);
 }
 
@@ -1092,7 +1092,7 @@ fapi_try_exit:
 fapi2::ReturnCode pmic_health_check_ddr5(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_ocmb_target,
         fapi2::hwp_data_ostream& o_data)
 {
-    FAPI_INF(GENTARGTIDFORMAT " Running pmic_health_check HWP", GENTARGTID(i_ocmb_target));
+    FAPI_INF_NO_SBE(GENTARGTIDFORMAT " Running pmic_health_check HWP", GENTARGTID(i_ocmb_target));
     fapi2::ReturnCode l_rc = fapi2::FAPI2_RC_SUCCESS;
 
     mss::pmic::ddr5::health_check_telemetry_data l_health_check_info;

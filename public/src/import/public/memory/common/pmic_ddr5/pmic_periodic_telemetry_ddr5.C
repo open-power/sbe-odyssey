@@ -103,7 +103,7 @@ void scale_adc_readings(uint16_t* (&io_adc_fill_array)[ADC_U16_MAP_LEN],
 void read_adc_regs(mss::pmic::ddr5::target_info_redundancy_ddr5& io_target_info,
                    mss::pmic::ddr5::periodic_telemetry_data& io_periodic_tele_info)
 {
-    FAPI_INF(GENTARGTIDFORMAT " Populating ADC data", GENTARGTID(io_target_info.iv_adc));
+    FAPI_INF_NO_SBE(GENTARGTIDFORMAT " Populating ADC data", GENTARGTID(io_target_info.iv_adc));
 
     fapi2::buffer<uint8_t> l_reg_contents[NUM_BYTES_TO_READ] = {0};
 
@@ -514,7 +514,7 @@ fapi_try_exit:
 fapi2::ReturnCode pmic_periodic_telemetry_ddr5(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_ocmb_target,
         fapi2::hwp_data_ostream& o_data)
 {
-    FAPI_INF(GENTARGTIDFORMAT " Running pmic_periodic_telemetry HWP", GENTARGTID(i_ocmb_target));
+    FAPI_INF_NO_SBE(GENTARGTIDFORMAT " Running pmic_periodic_telemetry HWP", GENTARGTID(i_ocmb_target));
     fapi2::ReturnCode l_rc = fapi2::FAPI2_RC_SUCCESS;
 
     mss::pmic::ddr5::periodic_telemetry_data l_info;

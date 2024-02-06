@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -60,7 +60,7 @@ extern "C"
         // Check if there are any DIMM targets
         if (mss::count_dimm(i_ocmb_target) == 0)
         {
-            FAPI_INF("Skipping " GENTARGTIDFORMAT " because it has no DIMM targets", GENTARGTID(i_ocmb_target));
+            FAPI_INF_NO_SBE("Skipping " GENTARGTIDFORMAT " because it has no DIMM targets", GENTARGTID(i_ocmb_target));
             return fapi2::FAPI2_RC_SUCCESS;
         }
 
@@ -80,7 +80,7 @@ extern "C"
 #ifndef __PPE__
             FAPI_TRY(mss::pmic::ddr4::pmic_enable(i_ocmb_target, i_mode));
 #else
-            FAPI_INF("l_dram_gen is found to be DDR4, exiting pmic_enable");
+            FAPI_INF_NO_SBE("l_dram_gen is found to be DDR4, exiting pmic_enable");
 #endif
         }
         else
