@@ -105,7 +105,7 @@ fapi2::ReturnCode setup_dt(const target_info_redundancy_ddr5& i_target_info)
         FAPI_TRY_NO_TRACE(mss::pmic::ddr5::run_if_present_dt(i_target_info, l_dt_count, [&l_dt_data_to_write]
                           (const fapi2::Target<fapi2::TARGET_TYPE_POWER_IC>& i_dt) -> fapi2::ReturnCode
         {
-            FAPI_INF("Setting up DT " GENTARGTIDFORMAT, GENTARGTID(i_dt));
+            FAPI_INF_NO_SBE("Setting up DT " GENTARGTIDFORMAT, GENTARGTID(i_dt));
 
             // Clear faults 0 reg
             l_dt_data_to_write[0] = 0xFF;
@@ -219,7 +219,7 @@ fapi2::ReturnCode pre_config(const target_info_redundancy_ddr5& i_target_info,
         FAPI_TRY_NO_TRACE(mss::pmic::ddr5::run_if_present(i_target_info, l_pmic_count, [i_value_comp_config]
                           (const fapi2::Target<fapi2::TARGET_TYPE_PMIC>& i_pmic) -> fapi2::ReturnCode
         {
-            FAPI_INF("Pre-config PMIC " GENTARGTIDFORMAT, GENTARGTID(i_pmic));
+            FAPI_INF_NO_SBE("Pre-config PMIC " GENTARGTIDFORMAT, GENTARGTID(i_pmic));
 
             fapi2::buffer<uint8_t> l_reg_buffer;
 
@@ -306,10 +306,10 @@ fapi2::ReturnCode post_config(const target_info_redundancy_ddr5& i_target_info,
                           (const fapi2::Target<fapi2::TARGET_TYPE_PMIC>& i_pmic) -> fapi2::ReturnCode
         {
             fapi2::buffer<uint8_t> l_pmic_buffer;
-            FAPI_INF("Post-config PMIC " GENTARGTIDFORMAT, GENTARGTID(i_pmic));
+            FAPI_INF_NO_SBE("Post-config PMIC " GENTARGTIDFORMAT, GENTARGTID(i_pmic));
 
             // Start VR_ENABLE
-            FAPI_INF("Executing VR_ENABLE for PMIC " GENTARGTIDFORMAT, GENTARGTID(i_pmic));
+            FAPI_INF_NO_SBE("Executing VR_ENABLE for PMIC " GENTARGTIDFORMAT, GENTARGTID(i_pmic));
             FAPI_TRY_LAMBDA(mss::pmic::i2c::reg_read_reverse_buffer(i_pmic, REGS::R32, l_pmic_buffer));
             // Start VR Enable (1 --> Bit 7)
             l_pmic_buffer.writeBit<FIELDS::R32_VR_ENABLE>(i_value);
@@ -355,18 +355,18 @@ fapi2::ReturnCode power_down_sequence_4u(const fapi2::Target<fapi2::TARGET_TYPE_
     if (l_rc != fapi2::FAPI2_RC_SUCCESS)
     {
         // We don't fail here because we could be looking at a DIMM that's been deconfigured already
-        FAPI_INF("Non-functional targets found from " GENTARGTIDFORMAT, GENTARGTID(i_target));
+        FAPI_INF_NO_SBE("Non-functional targets found from " GENTARGTIDFORMAT, GENTARGTID(i_target));
         fapi2::current_err = fapi2::FAPI2_RC_SUCCESS;
         return fapi2::FAPI2_RC_SUCCESS;
     }
 
-    FAPI_INF("Power down PMICs on target " GENTARGTIDFORMAT, GENTARGTID(i_target));
+    FAPI_INF_NO_SBE("Power down PMICs on target " GENTARGTIDFORMAT, GENTARGTID(i_target));
 
     // First, pre configure PMIC for power down
     FAPI_TRY(mss::pmic::ddr5::pre_config(l_target_info, CONSTS::DISABLE));
 
     // Second. Disable PMIC
-    FAPI_INF("Disable PMIC using ADC " GENTARGTIDFORMAT, GENTARGTID(l_target_info.iv_adc));
+    FAPI_INF_NO_SBE("Disable PMIC using ADC " GENTARGTIDFORMAT, GENTARGTID(l_target_info.iv_adc));
     FAPI_TRY(mss::pmic::ddr5::enable_disable_pmic(l_target_info.iv_adc, CONSTS::DISABLE_PMIC_EN));
 
     // Delay for 60 ms.
@@ -514,8 +514,8 @@ fapi2::ReturnCode validate_pmic_revisions_helper(
 {
     const auto& l_ocmb = mss::find_target<fapi2::TARGET_TYPE_OCMB_CHIP>(i_pmic_target);
 
-    FAPI_INF("PMIC i_rev_attr: 0x%02X, PMIC i_rev_reg: 0x%02X " GENTARGTIDFORMAT, i_rev_attr, i_rev_reg,
-             GENTARGTID(i_pmic_target));
+    FAPI_INF_NO_SBE("PMIC i_rev_attr: 0x%02X, PMIC i_rev_reg: 0x%02X " GENTARGTIDFORMAT, i_rev_attr, i_rev_reg,
+                    GENTARGTID(i_pmic_target));
 
     FAPI_ASSERT(i_rev_attr == i_rev_reg,
                 fapi2::PMIC_MISMATCHING_REVISIONS_DDR5()
@@ -559,7 +559,7 @@ fapi2::ReturnCode enable_2u(
     uint16_t l_vendor_id = 0;
     fapi2::buffer<uint8_t> l_pmic_buffer;
 
-    FAPI_INF("Enabling PMICs on " GENTARGTIDFORMAT " with 2U mode", GENTARGTID(i_ocmb_target));
+    FAPI_INF_NO_SBE("Enabling PMICs on " GENTARGTIDFORMAT " with 2U mode", GENTARGTID(i_ocmb_target));
 
     auto l_pmics = mss::find_targets_sorted_by_pos<fapi2::TARGET_TYPE_PMIC>(i_ocmb_target, fapi2::TARGET_STATE_PRESENT);
     // We're guaranteed to have at least one PMIC here due to the check in pmic_enable
@@ -626,14 +626,14 @@ fapi2::ReturnCode enable_2u(
         }
     }
 
-    FAPI_INF("Executing VR_ENABLE for PMIC " GENTARGTIDFORMAT, GENTARGTID(l_pmics[PMIC0]));
+    FAPI_INF_NO_SBE("Executing VR_ENABLE for PMIC " GENTARGTIDFORMAT, GENTARGTID(l_pmics[PMIC0]));
     l_current_pmic = l_pmics[PMIC0];
     // Start VR Enable (1 --> Bit 7)
     FAPI_TRY(mss::pmic::i2c::reg_read_reverse_buffer(l_pmics[PMIC0], REGS::R32, l_pmic_buffer));
     l_pmic_buffer.setBit<FIELDS::R32_VR_ENABLE>();
     FAPI_TRY(mss::pmic::i2c::reg_write_reverse_buffer(l_pmics[PMIC0], REGS::R32, l_pmic_buffer));
 
-    FAPI_INF("Executing VR_ENABLE for PMIC " GENTARGTIDFORMAT, GENTARGTID(l_pmics[PMIC1]));
+    FAPI_INF_NO_SBE("Executing VR_ENABLE for PMIC " GENTARGTIDFORMAT, GENTARGTID(l_pmics[PMIC1]));
     // We have 2 PMICs here as check_number_pmics_received_2u() above makes sure we have 2 PMICs
     l_current_pmic = l_pmics[PMIC1];
     // Start VR Enable (1 --> Bit 7)
@@ -645,14 +645,14 @@ fapi2::ReturnCode enable_2u(
     if (l_vendor_id == mss::pmic::vendor::TI)
     {
         // TI will be enabled by releasing the CAMP control first and then re-instating it
-        FAPI_INF("Executing CAMP control release for TI PMIC " GENTARGTIDFORMAT, GENTARGTID(l_pmics[PMIC0]));
+        FAPI_INF_NO_SBE("Executing CAMP control release for TI PMIC " GENTARGTIDFORMAT, GENTARGTID(l_pmics[PMIC0]));
         l_current_pmic = l_pmics[PMIC0];
         FAPI_TRY(mss::pmic::i2c::reg_read_reverse_buffer(l_pmics[PMIC0], REGS::R32, l_pmic_buffer));
         // Release CAMP control (R32_CAMP_PWR_GOOD_OUTPUT_SIGNAL_CONTROL) (1 --> Bit 3)
         l_pmic_buffer.setBit<FIELDS::R32_CAMP_PWR_GOOD_OUTPUT_SIGNAL_CONTROL>();
         FAPI_TRY(mss::pmic::i2c::reg_write_reverse_buffer(l_pmics[PMIC0], REGS::R32, l_pmic_buffer));
 
-        FAPI_INF("Executing CAMP control release for TI PMIC " GENTARGTIDFORMAT, GENTARGTID(l_pmics[PMIC1]));
+        FAPI_INF_NO_SBE("Executing CAMP control release for TI PMIC " GENTARGTIDFORMAT, GENTARGTID(l_pmics[PMIC1]));
         l_current_pmic = l_pmics[PMIC1];
         FAPI_TRY(mss::pmic::i2c::reg_read_reverse_buffer(l_pmics[PMIC1], REGS::R32, l_pmic_buffer));
         // Release CAMP control (R32_CAMP_PWR_GOOD_OUTPUT_SIGNAL_CONTROL) (1 --> Bit 3)
@@ -663,14 +663,14 @@ fapi2::ReturnCode enable_2u(
         fapi2::delay(40 * mss::common_timings::DELAY_1MS, mss::common_timings::DELAY_1MS);
 
         // Re-instate CAMP control
-        FAPI_INF("Re-instating CAMP control for TI PMIC " GENTARGTIDFORMAT, GENTARGTID(l_pmics[PMIC0]));
+        FAPI_INF_NO_SBE("Re-instating CAMP control for TI PMIC " GENTARGTIDFORMAT, GENTARGTID(l_pmics[PMIC0]));
         l_current_pmic = l_pmics[PMIC0];
         FAPI_TRY(mss::pmic::i2c::reg_read_reverse_buffer(l_pmics[PMIC0], REGS::R32, l_pmic_buffer));
         // Re-instate CAMP control (R32_CAMP_PWR_GOOD_OUTPUT_SIGNAL_CONTROL) (0 --> Bit 3)
         l_pmic_buffer.clearBit<FIELDS::R32_CAMP_PWR_GOOD_OUTPUT_SIGNAL_CONTROL>();
         FAPI_TRY(mss::pmic::i2c::reg_write_reverse_buffer(l_pmics[PMIC0], REGS::R32, l_pmic_buffer));
 
-        FAPI_INF("Re-instating CAMP control for TI PMIC " GENTARGTIDFORMAT, GENTARGTID(l_pmics[PMIC1]));
+        FAPI_INF_NO_SBE("Re-instating CAMP control for TI PMIC " GENTARGTIDFORMAT, GENTARGTID(l_pmics[PMIC1]));
         l_current_pmic = l_pmics[PMIC1];
         FAPI_TRY(mss::pmic::i2c::reg_read_reverse_buffer(l_pmics[PMIC1], REGS::R32, l_pmic_buffer));
         // Re-instate CAMP control (R32_CAMP_PWR_GOOD_OUTPUT_SIGNAL_CONTROL) (0 --> Bit 3)
@@ -734,7 +734,7 @@ fapi2::ReturnCode setup_adc(const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CRES
 
     fapi2::buffer<uint8_t> l_data_adc[NUM_BYTES_TO_WRITE];
 
-    FAPI_INF("Enabling ADC " GENTARGTIDFORMAT, GENTARGTID(i_adc));
+    FAPI_INF_NO_SBE("Enabling ADC " GENTARGTIDFORMAT, GENTARGTID(i_adc));
 
     l_data_adc[ADC_REGS::SYSTEM_STATUS] = 0x01;
     l_data_adc[ADC_REGS::GENERAL_CFG]   = 0x30;
@@ -833,7 +833,7 @@ fapi2::ReturnCode initialize_pmic(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CH
             uint16_t l_vendor_id = 0;
             fapi2::buffer<uint8_t> l_pmic_data_to_write[NUM_BYTES_TO_WRITE];
 
-            FAPI_INF("Initializing PMIC " GENTARGTIDFORMAT, GENTARGTID(i_pmic));
+            FAPI_INF_NO_SBE("Initializing PMIC " GENTARGTIDFORMAT, GENTARGTID(i_pmic));
 
             // PMIC position/ID under OCMB target
             uint8_t l_relative_pmic_id = 0;
@@ -906,7 +906,7 @@ fapi2::ReturnCode clear_adc_events(const fapi2::Target<fapi2::TARGET_TYPE_GENERI
 
     fapi2::buffer<uint8_t> l_reg_contents;
 
-    FAPI_INF("Clearing previous ADC events port pmic_enable() " GENTARGTIDFORMAT, GENTARGTID(i_adc));
+    FAPI_INF_NO_SBE("Clearing previous ADC events port pmic_enable() " GENTARGTIDFORMAT, GENTARGTID(i_adc));
 
     FAPI_TRY(mss::pmic::i2c::reg_write(i_adc, ADC_REGS::LOW_EVENT_FLAGS, 0xFF));
 
@@ -939,7 +939,7 @@ fapi2::ReturnCode redundancy_check_all_pmics(const target_info_redundancy_ddr5& 
 ///
 fapi2::ReturnCode enable_with_redundancy(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_ocmb_target)
 {
-    FAPI_INF("Enabling PMICs on " GENTARGTIDFORMAT " with 4U/redundancy mode", GENTARGTID(i_ocmb_target));
+    FAPI_INF_NO_SBE("Enabling PMICs on " GENTARGTIDFORMAT " with 4U/redundancy mode", GENTARGTID(i_ocmb_target));
 
     fapi2::buffer<uint8_t> l_reg_contents;
     fapi2::ReturnCode l_rc = fapi2::FAPI2_RC_SUCCESS;
@@ -982,7 +982,7 @@ fapi2::ReturnCode enable_with_redundancy(const fapi2::Target<fapi2::TARGET_TYPE_
     fapi2::delay(60 * mss::common_timings::DELAY_1MS, mss::common_timings::DELAY_1MS);
 
     // 3c, Post config PMIC for VR_ENABLE
-    FAPI_INF("Enable PMIC using ADC " GENTARGTIDFORMAT, GENTARGTID(l_target_info.iv_adc));
+    FAPI_INF_NO_SBE("Enable PMIC using ADC " GENTARGTIDFORMAT, GENTARGTID(l_target_info.iv_adc));
     FAPI_TRY(mss::pmic::ddr5::post_config(l_target_info, CONSTS::ENABLE));
 
     // Fourth, Clear ADC events
@@ -994,7 +994,7 @@ fapi2::ReturnCode enable_with_redundancy(const fapi2::Target<fapi2::TARGET_TYPE_
     // to be on, create a unique case of breadcrumbs
     FAPI_TRY(mss::pmic::ddr5::redundancy_check_all_pmics(l_target_info));
 
-    FAPI_INF("Successfully enabled PMICs on" GENTARGTIDFORMAT " with 4U/redundancy mode", GENTARGTID(i_ocmb_target));
+    FAPI_INF_NO_SBE("Successfully enabled PMICs on" GENTARGTIDFORMAT " with 4U/redundancy mode", GENTARGTID(i_ocmb_target));
 
     return fapi2::FAPI2_RC_SUCCESS;
 
@@ -1014,7 +1014,7 @@ fapi2::ReturnCode pmic_enable(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&
     // Check that we have functional pmics to enable, otherwise, we can just exit now
     if (mss::find_targets<fapi2::TARGET_TYPE_PMIC>(i_ocmb_target, fapi2::TARGET_STATE_PRESENT).empty())
     {
-        FAPI_INF("No PMICs to enable on " GENTARGTIDFORMAT ", exiting.", GENTARGTID(i_ocmb_target));
+        FAPI_INF_NO_SBE("No PMICs to enable on " GENTARGTIDFORMAT ", exiting.", GENTARGTID(i_ocmb_target));
         return fapi2::FAPI2_RC_SUCCESS;
     }
 
@@ -1035,12 +1035,12 @@ fapi2::ReturnCode pmic_enable(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&
         // Kick off the matching enable procedure
         if (l_module_height == fapi2::ENUM_ATTR_MEM_EFF_DRAM_MODULE_HEIGHT_4U)
         {
-            FAPI_INF("Enabling PMICs on " GENTARGTIDFORMAT "with Redundancy/4U Mode", GENTARGTID(i_ocmb_target));
+            FAPI_INF_NO_SBE("Enabling PMICs on " GENTARGTIDFORMAT "with Redundancy/4U Mode", GENTARGTID(i_ocmb_target));
             FAPI_TRY(mss::pmic::ddr5::enable_with_redundancy(i_ocmb_target));
         }
         else
         {
-            FAPI_INF("Enabling PMICs on " GENTARGTIDFORMAT "with 2U Mode", GENTARGTID(i_ocmb_target));
+            FAPI_INF_NO_SBE("Enabling PMICs on " GENTARGTIDFORMAT "with 2U Mode", GENTARGTID(i_ocmb_target));
             FAPI_TRY(mss::pmic::ddr5::enable_2u(i_ocmb_target, i_mode));
         }
     }
