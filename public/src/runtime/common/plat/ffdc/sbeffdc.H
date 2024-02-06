@@ -35,6 +35,17 @@
 #include "sbeglobals.H"
 
 /**
+ * @brief FFDC plat truncated trace size
+ *        SBE_FFDC_TRUNCATED_TRACE_LENGTH for truncated trace len, and extra logic
+ *        includes the trace header size @ref PkTraceBuffer
+ *        plat_truncated_trace_size = sizeof (PkTraceBuffer) + truncatedTraceSize
+*/
+#define PLAT_FFDC_TRUNCATED_TRACE_SIZE  ((sizeof(*G_PK_TRACE_BUF) -        \
+                                          sizeof(G_PK_TRACE_BUF->cb)) +    \
+                                          SBE_FFDC_TRUNCATED_TRACE_LENGTH)
+
+
+/**
  * @brief - Capture Async failure FFDC
  *
  * @param[in] primRc Primary failure rc
@@ -207,5 +218,32 @@ void logSbeError( const uint16_t i_primRc,
 /// @param[in] i_rc FAPI Return Code object
 ///
 void logFatalError( fapi2::ReturnCode& i_rc );
+
+
+
+/**
+ * @brief Function to get Minimum Last LE space size
+ *
+ * @return constexpr uint32_t  Minimum Last LE space size
+ */
+constexpr uint32_t plat_ffdcUtilGetMinLastUeSpace(void)
+{
+    return (sizeof(pozFfdcNode_t)              + /* Node size*/
+            sizeof(pozHwpFfdcPackageFormat_t)  + /* hwp ffdc Frame size */
+            sizeof(packageBlobField_t)         + /* HWP local data fields size */
+            MAX_FFDC_LV_SIZE
+#ifdef MINIMUM_FFDC_RE
+        +  sizeof(pozPlatFfdcPackageFormat_t) /* Plat FFDC size (plat data started) */
+        +  sizeof(packageBlobField_t)         /* FFDC fields size */
+        +  PLAT_FFDC_TRUNCATED_TRACE_SIZE     /* Truncated Trace Len */
+#endif
+            );
+}
+
+
+/**
+ * @brief FFDC init to creating persistent space for last Error
+ */
+void plat_FfdcInit(void);
 
 #endif //__SBE_FFDC_H

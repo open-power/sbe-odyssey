@@ -478,9 +478,10 @@ typedef struct pozFfdcNode
 */
 typedef struct pozFfdcCtrl
 {
-    uint32_t        iv_localSlid                : 16; // Which hold the SBE log ID which is incrementing for every full FFDC
-    uint32_t        reserved                    : 16;
-    pozFfdcNode_t * iv_firstCommitted;                // Which hold the first commited ffdc
+    uint32_t        iv_localSlid         : 16; // Which hold the SBE log ID which is incrementing for every full FFDC
+    uint32_t        reserved             : 16;
+    pozFfdcNode_t * iv_firstCommitted;         // holds the pointer to the first committed FFDC
+    pozFfdcNode_t * iv_lastUEPersistentSpace;  // holds a pointer pointing to the space reserved for the last error
 
     /**
      * @brief Constructor a poz Ffdc control object
@@ -488,6 +489,7 @@ typedef struct pozFfdcCtrl
     pozFfdcCtrl( )
     {
         iv_localSlid                   = 0;
+        iv_lastUEPersistentSpace       = nullptr;
         iv_firstCommitted              = nullptr;
     }
 
@@ -504,11 +506,32 @@ typedef struct pozFfdcCtrl
     /**
      * @brief get head (fist commited ptr)
      *
-     * @return node ptr @ref pozFfdcNode_t
-    */
+     * @return pozFfdcNode_t * node ptr @ref pozFfdcNode_t
+     */
     pozFfdcNode_t * getHead( void )
     {
         return iv_firstCommitted;
+    }
+
+    /**
+     * @brief set given node reserved for last one minimum UE
+     *
+     * @param[in] i_LastUE pointer to last UE space
+     */
+    void setLastUeSpace(const pozFfdcNode_t* i_LastUeSpace)
+    {
+        iv_lastUEPersistentSpace = const_cast<pozFfdcNode_t *>(i_LastUeSpace);
+    }
+
+    /**
+     * @brief get reserved for last one minimum UE Node
+     *
+     * @return pozFfdcNode_t* node ptr @ref pozFfdcNode_t
+     */
+    pozFfdcNode_t * getLastUeSpace( void )
+    {
+        return iv_lastUEPersistentSpace;
+
     }
 
     /**
@@ -523,14 +546,21 @@ typedef struct pozFfdcCtrl
     /**
      * @brief Find last/next node and extend node for given node
      *
-     * @param[in] i_node node pointer
-    */
-    void addNextNode( const pozFfdcNode_t  *  i_node );
+     * @param[in] i_newNode node pointer
+     */
+    void addNextNode(const pozFfdcNode_t * i_newNode);
+
+    /**
+     * @brief Function to get the last node of the list
+     *
+     * @return pozFfdcNode_t* node pointer
+     */
+    pozFfdcNode_t * getLastNode();
 
     /**
      * @brief Delete last node from the linked list.
      *
-    */
+     */
     void deleteLastNode();
 } __attribute__ ((aligned (8)))  pozFfdcCtrl_t;
 

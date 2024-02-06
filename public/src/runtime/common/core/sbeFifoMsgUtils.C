@@ -44,6 +44,11 @@
 #include <error_info.H>
 #include <hwp_error_info.H>
 
+namespace fapi2
+{
+    extern pozFfdcCtrl_t g_ffdcCtrlSingleton;
+}
+
 // If we can not perform FIFO operation ( FIFO FULL while writing
 // or EMPTY while reading ) we will sleep for FIFO_WAIT_SLEEP_TIME
 // ms so that FIFO can be ready.
@@ -408,6 +413,14 @@ uint32_t sbeDsSendRespHdr(const sbeRespGenHdr_t &i_hdr,
             rc = sendFFDCOverFIFO( len, i_type, isFatalFlag);
             CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(rc);
             distance += len;
+        }
+        else
+        {
+            // Stream out FFDC can be disabled using mbx11.iv_disableFFDC bit,
+            // bit set which will disable the FFDC stream out.
+            // Have to clear the all FFDC for above bit set to avoid keep on
+            // accumulating FFDC in scratch space
+            fapi2::g_ffdcCtrlSingleton.setHead((pozFfdcNode_t *) NULL);
         }
 
         len = sizeof(distance)/sizeof(uint32_t);

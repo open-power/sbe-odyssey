@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -282,6 +282,16 @@ void* Heap::scratch_alloc(const uint32_t i_size, const alloc_flags i_flags)
               rounded_size, l_heap_midline, l_scratch_bottom, new_bottom);
 
     return (void *)(new_bottom + 8);
+}
+
+void* Heap::scratch_calloc(const uint32_t i_size, const alloc_flags i_flags)
+{
+    void* scratchPtr = scratch_alloc(i_size, i_flags);
+    if (scratchPtr)
+    {
+        memset (scratchPtr, 0x00, i_size);
+    }
+    return scratchPtr;
 }
 
 void Heap::scratch_free(const void *i_ptr)

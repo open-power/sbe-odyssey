@@ -41,16 +41,6 @@ namespace fapi2
     CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(ffdcPakageStream.put(length, headerptr))
 
 /**
- * @brief FFDC plat truncated trace size
- *        SBE_FFDC_TRUNCATED_TRACE_LENGTH for truncated trace len, and extra logic
- *        includes the trace header size @ref PkTraceBuffer
- *        plat_truncated_trace_size = sizeof (PkTraceBuffer) + truncatedTraceSize
-*/
-#define PLAT_FFDC_TRUNCATED_TRACE_SIZE  ((sizeof(*G_PK_TRACE_BUF) -        \
-                                          sizeof(G_PK_TRACE_BUF->cb)) +    \
-                                          SBE_FFDC_TRUNCATED_TRACE_LENGTH)
-
-/**
  * @brief FFDC plat full size trace size (8k)
  *        which is include trace_header + trace_size(8K)
 */
@@ -333,7 +323,7 @@ static void ffdcUtils_checkScratchPtrCorruptionAndHalt (const void * i_addr)
 {
     if ( !Heap::get_instance().is_scratch_pointer( i_addr ) )
     {
-        SBE_ERROR ("ffdcUtils_checkScratchPtrCorruptionAndHalt Scratch space corrupted...!");
+        SBE_ERROR ("ffdcUtils_checkScratchPtrCorruptionAndHalt Scratch space corrupted...! addr: [0x%08X]", i_addr);
         pk_halt();
     }
 }
@@ -348,7 +338,6 @@ static void ffdcUtils_checkScratchPtrCorruptionAndHalt (const void * i_addr)
  */
 void ffdcUtils_commitError ( fapi2::ReturnCode& io_rc )
 {
-
     if (io_rc.getDataPtr() == 0)
     {
         uint32_t l_fapiRc = io_rc.getRC();
@@ -369,34 +358,43 @@ void ffdcUtils_commitError ( fapi2::ReturnCode& io_rc )
         }
     }
 
-    pozFfdcNode_t * node = reinterpret_cast<pozFfdcNode_t*>(io_rc.getDataPtr());
+    do
+    {
+        // Skip committing the last UE FFDC
+        if (fapi2::g_ffdcCtrlSingleton.getLastNode() == fapi2::g_ffdcCtrlSingleton.getLastUeSpace())
+        {
+            // FFDC's should be linked only once instance, Last UE already linked
+            // them should not be linked again, which lead to stream out same
+            // data twice
+            break;
+        }
 
-    // marks as node is committed
-    node->iv_isCommited = true;
+        pozFfdcNode_t * node = reinterpret_cast<pozFfdcNode_t*>(io_rc.getDataPtr());
 
-    // Add node
-    fapi2::g_ffdcCtrlSingleton.addNextNode (node);
+        // marks as node is committed
+        node->iv_isCommited = true;
 
-    // Set async ffdc bit
-    (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
+        // Add node
+        fapi2::g_ffdcCtrlSingleton.addNextNode (node);
+
+        // Set async ffdc bit
+        (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
+    }while (0);
 }
 
 
-void pozFfdcCtrl_t::addNextNode( const pozFfdcNode_t  *  i_node )
+void pozFfdcCtrl_t::addNextNode(const pozFfdcNode_t * i_newNode)
 {
-    pozFfdcNode_t * node = (pozFfdcNode_t *) iv_firstCommitted;
-    if (node != nullptr)
+    ffdcUtils_checkScratchPtrCorruptionAndHalt ((const void *) i_newNode);
+
+    if ( !getHead() )
     {
-        while (node->next != nullptr)
-        {
-            ffdcUtils_checkScratchPtrCorruptionAndHalt ((const void *) node);
-            node = node->next;
-        }
-        node->next = const_cast<pozFfdcNode_t *>(i_node);
+        setHead(i_newNode);
     }
     else
     {
-        iv_firstCommitted = const_cast<pozFfdcNode_t *>(i_node);
+        pozFfdcNode_t * lastNode = getLastNode();
+        lastNode->next = const_cast<pozFfdcNode_t *>(i_newNode);
     }
 }
 #endif
@@ -418,6 +416,7 @@ void pozFfdcCtrl_t::deleteLastNode()
             iv_firstCommitted = nullptr;
             break;
         }
+
         while(node->next->next != nullptr)
         {
             node = node->next;
@@ -427,6 +426,42 @@ void pozFfdcCtrl_t::deleteLastNode()
         node->next = nullptr;
     }while(0);
 }
+
+
+pozFfdcNode_t * pozFfdcCtrl_t::getLastNode()
+{
+    pozFfdcNode_t * node = nullptr;
+    do
+    {
+        if (!getHead( ))
+        {
+            break;
+        }
+
+        node = getHead( );
+        ffdcUtils_checkScratchPtrCorruptionAndHalt ((const void *) node);
+
+        while (node->next)
+        {
+            node = node->next;
+            ffdcUtils_checkScratchPtrCorruptionAndHalt ((const void *) node);
+        }
+    }while (0);
+
+    return node;
+}
+
+
+void plat_FfdcInit (void)
+{
+    /* Allocation scratch space for one minimum UE */
+    pozFfdcNode_t * node  = (pozFfdcNode_t *) Heap::get_instance().
+                                scratch_calloc(plat_ffdcUtilGetMinLastUeSpace(), Heap::AF_PERSIST);
+
+    fapi2::g_ffdcCtrlSingleton.setLastUeSpace(node);
+    SBE_INFO ("ffdcCreatePersistentSpace, LAST UE size: %d, addr: [0x%08X]", plat_ffdcUtilGetMinLastUeSpace(), node);
+}
+
 
 /**
  * @brief Function to send plat ffdc with full trace
@@ -647,8 +682,20 @@ uint32_t sendFFDCOverFIFO( uint32_t &o_wordsSent,
 
                 /* Logic to get the next FFDC */
                 nextNode = currentNode->next;
-                SBE_INFO (SBE_FUNC "Scratch free addr: 0x%08X, Changing head to 0x%08X", currentNode, nextNode);
-                Heap::get_instance().scratch_free((const void*) currentNode);
+
+                // Do not free the scratch space for persistent space
+                if (fapi2::g_ffdcCtrlSingleton.getLastUeSpace() == currentNode)
+                {
+                    SBE_DEBUG (SBE_FUNC "Scratch persistent addr: 0x%08X, Changing head to 0x%08X", currentNode, nextNode);
+                    // clear memory
+                    memset ((void *) currentNode, 0x00, (sizeof(pozFfdcNode_t) + currentNode->iv_ffdcLen));
+                }
+                else
+                {
+                    SBE_DEBUG (SBE_FUNC "Scratch free addr: 0x%08X, Changing head to 0x%08X", currentNode, nextNode);
+                    Heap::get_instance().scratch_free((const void*) currentNode);
+                }
+
                 currentNode = nextNode;
 
             }while (currentNode != nullptr);
@@ -950,19 +997,21 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
     uint32_t ffdcLen = ffdcHwpSize           + /* HWP size */
                        ffdcPlatSize;           /* Plat size */
 
-#if !defined( MINIMUM_FFDC_RE )
-    // Note: For MINIMUM_FFDC, MINIMUM_FFDC_RE not defined by default Unrecoverable
-    //         error enable.
-    if (fapi2::g_ffdcCtrlSingleton.getHead() != nullptr)
-    {
-        Heap::get_instance().scratch_free((const void*) fapi2::g_ffdcCtrlSingleton.getHead());
-
-    }
-#endif
+    pozFfdcNode_t * currentNode = nullptr;
+    // For RE disable, utilize the last UE space that was created
+#if defined( MINIMUM_FFDC_RE )
 
     /* Allocation scratch space */
-    pozFfdcNode_t * currentNode  = (pozFfdcNode_t *) Heap::get_instance().
-                                scratch_alloc( ffdcLen + sizeof(pozFfdcNode_t) );
+    currentNode  = (pozFfdcNode_t *) Heap::get_instance().
+                            scratch_calloc( ffdcLen + sizeof(pozFfdcNode_t) );
+
+#endif
+
+    if (currentNode == nullptr)
+    {
+        currentNode = fapi2::g_ffdcCtrlSingleton.getLastUeSpace();
+    }
+
     // Check for Scratch is allocation
     if (currentNode)
     {
@@ -1023,8 +1072,8 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
     }
     else
     {
-        // failed to allocate scratch space
-        SBE_ERROR (SBE_FUNC "failed to allocate scratch space, executing PK_HALT()");
+        // scratch space not available and lastUe is not initialized
+        SBE_ERROR (SBE_FUNC "scratch space not available and lastUe is not initialized, executing pk_halt()");
         pk_halt();
     }
 
@@ -1045,7 +1094,13 @@ void logSbeError( const uint16_t i_primRc,
                        PLAT_FFDC_TRUNCATED_TRACE_SIZE ;    /* Trace data size  */
 
     pozFfdcNode_t * currentNode = (pozFfdcNode_t *) Heap::get_instance().
-                               scratch_alloc( ffdcLen + sizeof(pozFfdcNode_t) );
+                               scratch_calloc( ffdcLen + sizeof(pozFfdcNode_t) );
+
+    if (currentNode == nullptr)
+    {
+        currentNode = fapi2::g_ffdcCtrlSingleton.getLastUeSpace();
+    }
+
     if (currentNode)
     {
         // Updating the FFDC node status, Committing the created node
@@ -1076,8 +1131,8 @@ void logSbeError( const uint16_t i_primRc,
     }
     else
     {
-        // Failed to allocate scratch
-        SBE_ERROR ("logSbeError failed to allocate scratch space, executing PK_HALT()");
+        // scratch space not available and lastUe is not initialized
+        SBE_ERROR (SBE_FUNC "scratch space not available and lastUe is not initialized, executing pk_halt()");
         pk_halt();
     }
 }
