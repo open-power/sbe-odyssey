@@ -336,8 +336,9 @@ ReturnCode spi::TPM::write_fifo(const void* i_data, const uint32_t i_length) con
                     i_length, l_remain);
 
         {
-            const uint32_t burst_count = min(status.get_burst_count(), 4U);  // TODO can't we use the full burst count?
-            const uint32_t chunk = min(l_remain, burst_count);
+            const uint32_t burst_count = std::min(status.get_burst_count(),
+                                                  (uint32_t)4);  // TODO can't we use the full burst count? ekb vs sbe unsigned vs unsigned longf
+            const uint32_t chunk = std::min(l_remain, burst_count);
             FAPI_TRY(write(TPM_DATA_FIFO, data8, chunk));
             data8 += chunk;
             l_remain -= chunk;
@@ -403,8 +404,8 @@ ReturnCode spi::TPM::read_fifo(void* o_data, uint32_t& o_length, uint32_t i_max_
         }
 
         {
-            const uint32_t burst_count = min(status.get_burst_count(), 4U);
-            const uint32_t chunk = min(l_expect - l_received, burst_count);
+            const uint32_t burst_count = std::min(status.get_burst_count(), (uint32_t)4);
+            const uint32_t chunk = std::min(l_expect - l_received, burst_count);
             FAPI_TRY(read(TPM_DATA_FIFO, data8 + l_received, chunk));
             l_received += chunk;
         }
