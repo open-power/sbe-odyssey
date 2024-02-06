@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -45,7 +45,7 @@ generic_infile_c = [
                     'poz_common_stopclocks.C',
                     'poz_gettracearray.C',
                     'poz_fastarray.C',
-		    'poz_scan_via_scom.C',
+                    'poz_scan_via_scom.C',
                     'poz_scan_compare.C',
                     'poz_tlv_utils.C',
                     'poz_ppe_load.C',
@@ -96,6 +96,7 @@ import_spi_libs_dir_path = pub_import_dir_path + '/common/libs/spi/'
 libs_spi_infile_c = [
                         'spi_memory.C',
                         'spi_base.C',
+                        'spi_tpm.C'
                     ]
 
 foreach libs_spi_infile : libs_spi_infile_c
