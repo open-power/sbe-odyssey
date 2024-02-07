@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -93,6 +93,14 @@ uint32_t sbepollTSnDQS(uint8_t &io_dqscount)
         {
             SBE_DEBUG(SBE_FUNC "Execute the DQS HWP");
             SBE_EXEC_HWP(l_rc, ody_dqs_track, l_ocmb_chip);
+            if(l_rc != FAPI2_RC_SUCCESS)
+            {
+                // Set the attribute ATTR_ODY_DQS_TRACKING_PERIOD to 0.
+                // So that next time HWP will not be called. This was done
+                // to make sure there will be no repetitive FFDC packets from this
+                // failure.
+                fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_ODY_DQS_TRACKING_PERIOD = 0;
+            }
             io_dqscount = 0x0;
         }
         ++io_dqscount;
