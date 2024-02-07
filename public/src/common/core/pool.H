@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,7 +39,7 @@ extern const size_t g_vectorPoolBlockSize;
 //Pool size
 extern const size_t g_vectorPoolBlockCount;
 
-extern uint8_t g_vectorPoolBuffer[];
+extern uint8_t g_vectorPoolBuffer[] __attribute__ ((aligned (8)));
 
 struct vectorMemPool_t
 {
