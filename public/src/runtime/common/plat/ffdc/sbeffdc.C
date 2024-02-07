@@ -919,7 +919,8 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
                            uint16_t i_hwpLocalDataLen,
                            void *&  o_hwpLocalDataStartAddr,
                            uint16_t i_hwpRegDataLen,
-                           void *&  o_hwpRegDataStartAddr
+                           void *&  o_hwpRegDataStartAddr,
+                           fapi2::errlSeverity_t i_sev
                          )
 {
     #define SBE_FUNC "ffdcConstructor "
@@ -1006,7 +1007,8 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
                          i_hwpLocalDataLen,
                          o_hwpLocalDataStartAddr,
                          i_hwpRegDataLen,
-                         o_hwpRegDataStartAddr );
+                         o_hwpRegDataStartAddr,
+                         i_sev );
 
 #if defined( MINIMUM_FFDC_RE )
         // Calling PLAT FFDC initialization function
@@ -1015,7 +1017,7 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
                           fapi2::g_ffdcCtrlSingleton.iv_localSlid,
                           SBE_PRI_GENERIC_EXECUTION_FAILURE,
                           SBE_SEC_HWP_FAILURE,
-                          fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE
+                          i_sev
                         );
 #endif
     }
@@ -1153,8 +1155,11 @@ void logError( fapi2::ReturnCode& io_rc,
     pozFfdcNode_t * node = reinterpret_cast<pozFfdcNode_t*>(io_rc.getDataPtr());
     if (node != nullptr)
     {
-        // update severity
-        ffdcUpdateSeverity ( node, i_sev );
+        if (i_sev != fapi2::FAPI2_ERRL_SEV_UNDEFINED)
+        {
+            // update severity
+            ffdcUpdateSeverity ( node, i_sev );
+        }
 
         // clear rc
         io_rc.setDataPtr ( NULL );
