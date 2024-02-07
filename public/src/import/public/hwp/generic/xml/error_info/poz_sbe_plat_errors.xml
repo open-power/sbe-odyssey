@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -104,5 +104,13 @@
     <sbeError/>
     <rc>RC_POZ_FILE_NOT_FOUND</rc>
     <description>SBE PLAT Error - File not found</description>
+</hwpError>
+<hwpError>
+    <sbeError/>
+    <rc>RC_POZ_FFDC_SCRATCH_SPACE_FULL_ERROR</rc>
+    <description>FFDC Heap Error - Scratch space FULL RC for FFDC</description>
+    <ffdc>FAILED_RC</ffdc>
+    <ffdc>REQUIRED_SPACE</ffdc>
+    <ffdc>AVAILABLE_SPACE</ffdc>
 </hwpError>
 </hwpErrors>

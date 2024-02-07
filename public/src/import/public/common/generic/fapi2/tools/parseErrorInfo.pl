@@ -69,6 +69,7 @@ my $scom_addr_type            = "uint64_t";
 my $ffdc_count                = 0;
 my $clock_ffdc_type           = "uint8_t";
 my $include_onlyonce          = 0;
+my $max_ffdc_lv_count         = 0;
 
 # There are some names used in the XML files which exist in either
 # c++ keywords (case, for example) or macros (DOMAIN). The one's which
@@ -1732,6 +1733,11 @@ foreach my $argnum ( 0 .. $#ARGV )
             print ECFILE "    {\n";
             print ECFILE "$executeStr\n";
             print ECFILE "    }\n";
+
+            if ( $max_ffdc_lv_count < ($count) )
+            {
+                $max_ffdc_lv_count = $count;
+            }
         }
         print ECFILE $constructor;
         print ECFILE "};\n\n";
@@ -1899,6 +1905,7 @@ print EIFILE "\n\n#endif\n";
 #------------------------------------------------------------------------------
 # Print end of file information to hwp_ffdc_classes.H
 #------------------------------------------------------------------------------
+print ECFILE "#define MAX_FFDC_LV_SIZE ($max_ffdc_lv_count * sizeof(fapi2::sbeFfdc_t))\n";
 print ECFILE "\n};\n";    # close the namespace
 print ECFILE "\n\n#endif\n";
 
