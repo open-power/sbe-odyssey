@@ -1577,7 +1577,7 @@ foreach my $argnum ( 0 .. $#ARGV )
             }
             else
             {
-                $constructor .= "    $class_name()\n";
+                $constructor .= "    $class_name(fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE)\n";
                 $constructor .= "    {\n";
                 $constructor .= "        fapi2::current_err =  RC_$class_name;\n";
                 $constructor .= "#if defined(MINIMUM_FFDC_RE)\n";
@@ -1716,7 +1716,8 @@ foreach my $argnum ( 0 .. $#ARGV )
             $constructor .= "                     (uint16_t)($count * sizeof(fapi2::sbeFfdc_t)),\n";
             $constructor .= "                     ( void *&)iv_localFfdcData,\n";
             $constructor .= "                     (uint16_t)0,\n";
-            $constructor .= "                     ( void *&)ptr\n";
+            $constructor .= "                     ( void *&)ptr,\n";
+            $constructor .= "                     i_sev\n";
             $constructor .= "                   );\n";
             $constructor .= "    #if defined (MINIMUM_FFDC_RE)\n";
             $constructor .= "        fapi2::current_err.setDataPtr(tempScratchAddr);\n";
