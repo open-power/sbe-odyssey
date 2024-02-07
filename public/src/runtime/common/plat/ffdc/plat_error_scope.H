@@ -85,7 +85,7 @@
     {                                                               \
         FAPI_ERR(__VA_ARGS__);                                      \
         (__ffdc__).execute();                                       \
-        fapi2::logError(fapi2::current_err, fapi2::FAPI2_ERRL_SEV_RECOVERED);\
+        fapi2::logError(fapi2::current_err, fapi2::FAPI2_ERRL_SEV_UNDEFINED);\
         fapi2::current_err = fapi2::FAPI2_RC_SUCCESS;               \
     }
 

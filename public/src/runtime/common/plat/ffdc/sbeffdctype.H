@@ -552,5 +552,6 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
                            uint16_t i_hwpLocalDataLen,
                            void *&  o_hwpLocalDataStartAddr,
                            uint16_t i_hwpRegDataLen,
-                           void *&  o_hwpRegDataStartAddr
+                           void *&  o_hwpRegDataStartAddr,
+                           fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE
                          );
