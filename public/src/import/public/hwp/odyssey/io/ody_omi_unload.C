@@ -82,11 +82,13 @@ fapi2::ReturnCode ody_omi_unload(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHI
 {
     FAPI_DBG("Starting ody_omi_unload");
 
+    fapi2::buffer<uint64_t> l_ecid_data = 0;
+
     constexpr uint64_t c_section_mark = 0xAC1D000000000000;
     constexpr uint32_t l_groups = 1;
     constexpr uint32_t l_lanes = 8;
     constexpr uint32_t l_threads = 1;
-    constexpr uint16_t c_REVISION = 0x02;
+    constexpr uint16_t c_REVISION = 0x03;
     constexpr uint8_t c_section_number_shift = 40;
 
     io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(PHY_ODY_OMI_BASE);
@@ -111,6 +113,15 @@ fapi2::ReturnCode ody_omi_unload(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHI
     o_ostream.put8(0);      // Reserved
     o_ostream.put16(0);     // Reserved
     o_ostream.put32(i_chipunit_mask);
+    FAPI_TRY(fapi2::getScom(i_target, 0x00018000ull, l_ecid_data));
+    o_ostream.put64(l_ecid_data);
+    l_ecid_data.flush<0>();
+    FAPI_TRY(fapi2::getScom(i_target, 0x00018001ull, l_ecid_data));
+    o_ostream.put64(l_ecid_data);
+    l_ecid_data.flush<0>();
+    FAPI_TRY(fapi2::getScom(i_target, 0x00018002ull, l_ecid_data));
+    o_ostream.put64(l_ecid_data);
+    l_ecid_data.flush<0>();
 
     // 1. DL regs
     l_section_header = c_section_mark | (DL_Regs << c_section_number_shift) | PHY_ODY_OMI_BASE;
