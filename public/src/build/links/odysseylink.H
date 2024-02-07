@@ -185,9 +185,15 @@ ASSERT((SROM_BLDR_CMN_SH_FILE_SCRATCH_END < BOOTLOADER_ORIGIN), \
 
 // As per now sppe.ram.pak size is 3.5KB. So given some buffer and declared to 5 KB
 #define SPPE_RAM_PAK_MIN_SIZE            0x1400   // 5 KB
-#define SPPE_DECOMPRESSION_AREA_MIN_SIZE 0x8000   // 32 KB
+//- Most of the heavy decompression (where a space of 32 KB required) is done before
+//  ody_sppe_draminit and SPPE_MEM_TRAINING_DATA_SIZE will not be used till this point.
+//  Hence all these decompression can use SPPE_MEM_TRAINING_DATA_SIZE.
+//- Large decompression space required after ody_sppe_draminit, is ody_load_pie, where we
+//  need around 21 KB.
+//- So setting this 24 KB
+#define SPPE_DECOMPRESSION_AREA_MIN_SIZE 0x6000   // 24 KB
 #define SPPE_MEM_TRAINING_DATA_SIZE      0x8200   // 32 KB + 512 B
-#define SPPE_RECOVERABLE_LOG_MIN_SIZE    0        // 0 KB
+#define SPPE_RECOVERABLE_LOG_MIN_SIZE    0x1000   // 4 KB
 #define SPPE_HEAP_MIN_SIZE              (SPPE_RAM_PAK_MIN_SIZE + SPPE_DECOMPRESSION_AREA_MIN_SIZE       \
                                          + SPPE_MEM_TRAINING_DATA_SIZE + SPPE_RECOVERABLE_LOG_MIN_SIZE  \
                                          + SBE_TOTAL_STACK_SIZE_REQUIRED_IN_SCRATCH)
@@ -195,7 +201,7 @@ ASSERT((SROM_BLDR_CMN_SH_FILE_SCRATCH_END < BOOTLOADER_ORIGIN), \
 #define SPPE_MAX_SIZE                   (SRAM_SIZE - CROSS_IMAGE_FIXED_AREA_SIZE \
                                          - SPPE_HEAP_MIN_SIZE - SPPE_PK_TRACE_SIZE_WITH_HEADER)
 
-#define SPPE_PK_TRACE_SIZE              0x2000  // Size: 8KB
+#define SPPE_PK_TRACE_SIZE              0x1000  // Size: 4KB
 #define SPPE_PK_TRACE_SIZE_WITH_HEADER  (PK_TRACE_STRUCT_SIZE + SPPE_PK_TRACE_SIZE)
 
 #define SPPE_TRACE_START_OFFSET         (HASH_LIST_START_OFFSET - SPPE_PK_TRACE_SIZE_WITH_HEADER)
