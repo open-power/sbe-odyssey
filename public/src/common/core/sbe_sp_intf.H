@@ -41,7 +41,7 @@ extern "C" {
  * Constants for SBE FW major and minor number
  */
 static const uint16_t SBE_FW_MAJOR_VERSION = 1;
-static const uint16_t SBE_FW_MINOR_VERSION = 2;
+static const uint16_t SBE_FW_MINOR_VERSION = 4;
 
 static const uint8_t INFO_TXT_MAJOR_VERSION = 0;
 static const uint8_t INFO_TXT_MINOR_VERSION = 1;
@@ -304,86 +304,34 @@ enum class CU_IMAGES : uint16_t
 enum
 {
     GENERIC_CAPABILITY_START_IDX = 0,
-    IPL_CAPABILITY_START_IDX,
-    SCOM_CAPABILITY_START_IDX,
-    RING_CAPABILITY_START_IDX ,
-    ARRAY_CAPABILITY_START_IDX ,
-    GENERIC_CHIPOP_CAPABILITY_START_IDX ,
-    STOP_CLOCKS_CAPABILITY_START_IDX ,
-    ATTRIBUTE_CAPABILITY_START_IDX ,
-    CODEUPDATE_CAPABILITY_START_IDX,
+    CMD_CAPABILITIES_START_IDX = 1
 };
 
 /**
- * @brief Capabilities enum values.
+ * @brief SBE Generic Functionality Capabilities enum values.
  *
- * - Each enum value needs to be decided based on the supported SBE
- *   features and chip-ops bit position in the respective capabilities word.
- *
- * - In a single capability word, we can represent 24 features or chip-ops
- *   Format: 0x<Class_1byte><BitPosition_3byte>.
- *
- * - The chip-op bit position needs to be decided by the chip-op op-code.
- *   For example, the execute hwp chip-op (0xA104) bit position will be 4th bit
- *   in the capability word based on the execute hwp chip-op op-code "04".
+ * @note This enum only lists capability bitsets for general (non-command)
+ *       functionalities supported by the SBE platform.
+ * @note These bitsets are reserved for word 0 of the capabilities words and
+ *       have to be filled by individual platforms. The generic format would be
+ *       Word0[0:7] == 0xCA
+ *       Word0[8:31] == Bit position of up to 24 generic functionality supported
+ *                      by the SBE
+ * @note For capability bitsets of Commands supported, please refer the project
+ *       specific, auto-generated file at ..
+ *       genfiles/runtime/<platform>/<sbetype>/capabilities.H
  */
 enum
 {
-    // SBE supported features list
-
-    HWP_FFDC_COLLECTION_SUPPPORTED      = 0xC0000001,
-    SBE_FFDC_COLLECTION_SUPPPORTED      = 0xC0000002,
-    FIFO_RESET_SUPPPORTED               = 0xC0000008,
-    PIPES_SUPPPORTED                    = 0xC0000040,
-
-    // SBE supported chip-ops list
-    // 0xA101
-    EXECUTE_ISTEP_SUPPPORTED            = 0xA1000001,
-    // 0xA104
-    EXECUTE_HWP_SUPPPORTED              = 0xA1000008,
-
-    // 0xA201
-    GET_SCOM_SUPPPORTED                 = 0xA2000001,
-    // 0xA202
-    PUT_SCOM_SUPPPORTED                 = 0xA2000002,
-
-    // 0xA301
-    GET_RING_SUPPPORTED                 = 0xA3000001,
-    // 0xA302
-    PUT_RING_SUPPPORTED                 = 0xA3000002,
-    // 0xA303
-    PUT_RING_FROM_IMAGE_SUPPPORTED      = 0xA3000004,
-
-    // 0xA601
-    CONTROL_FAST_ARRAY_SUPPPORTED       = 0xA6000001,
-    // 0xA602
-    CONTROL_TRACE_ARRAY_SUPPPORTED      = 0xA6000002,
-
-    // 0xA801
-    GET_SBE_FFDC_SUPPPORTED             = 0xA8000001,
-    // 0xA802
-    GET_CAPABILITIES_SUPPORTED          = 0xA8000002,
-    // 0xA804
-    GET_SBE_SCRATCH_DATA_SUPPORTED      = 0xA8000008,
-    // 0xA809
-    SCRUB_MEMORY_DEVICE_SUPPORTED       = 0xA8000100,
-
-    // 0xA903
-    STOP_CLOCKS_SUPPORTED               = 0xA9000004,
-
-    // 0xAD01
-    GET_RAWATTR_DUMP_SUPPORTED          = 0xAD000001,
-    // 0xAD02
-    LIST_ATTR_SUPPORTED                 = 0xAD000002,
-    // 0xAD03
-    UPDATE_ATTR_SUPPORTED               = 0xAD000004,
-
-    // 0xAE01
-    GET_CODE_LEVELS_SUPPORTED           = 0xAE000001,
-    // 0xAE02
-    UPDATE_IMAGE_SUPPORTED              = 0xAE000002,
-    // 0xAE03
-    SYNC_SIDE_SUPPORTED                 = 0xAE000004,
+    // SBE General (Non Command) Functions Supported
+    HWP_FFDC_COLLECTION_SUPPORTED      = 0xCA000001,
+    SBE_FFDC_COLLECTION_SUPPORTED      = 0xCA000002,
+    SBE_SCOM_FILTERING_SUPPORTED       = 0xCA000004,
+    SBE_FIFO_RESET_SUPPORTED           = 0xCA000008,
+    SBE_HOST_PSU_INTERFACE_SUPPORTED   = 0xCA000010,
+    SBE_SPLESS_MPIPL_SUPPORTED         = 0xCA000020,
+    SBE_PIPES_INTERFACE_SUPPORTED      = 0xCA000040,
+    SBE_NONFATAL_ERRORS_SUPPORTED      = 0xCA000080,
 };
 
 /**
