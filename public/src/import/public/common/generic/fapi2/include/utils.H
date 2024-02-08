@@ -41,6 +41,21 @@
 #include <multicast_defs.H>
 #include <fapi2_assert.H>
 
+///
+/// @brief Declare the function signature and function pointer type for a hardware procedure
+///
+/// This saves a lot of typing and makes sure that the function
+/// itself and the function pointer always match.
+///
+/// Example: DECLARE_HWP(my_procedure, fapi2::Target<TARGET_TYPE_PROC_CHIP> &i_target, uint32_t i_parameter);
+///
+/// @param name    Name of the HWP, must match the file name
+/// @param args... Parameter list for the HWP
+///
+#define DECLARE_HWP(name, args...) \
+    extern "C" fapi2::ReturnCode name(args); \
+    typedef decltype(name) *name##_FP_t;
+
 namespace fapi2
 {
 

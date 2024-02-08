@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -35,14 +35,9 @@
 
 #include <fapi2.H>
 
-typedef fapi2::ReturnCode (*pz_rcs_setup_FP_t)(const fapi2::Target < fapi2::TARGET_TYPE_PROC_CHIP |
-        fapi2::TARGET_TYPE_HUB_CHIP > &);
-
 /// @brief Lock RCS(Redundant clock switch) FPLLs(pllclksw1/pllclksw2)
 /// @param[in]   i_target     Reference to TARGET_TYPE_PROC/HUB_CHIP
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-extern "C"
-{
-    fapi2::ReturnCode pz_rcs_setup(const fapi2::Target < fapi2::TARGET_TYPE_PROC_CHIP | fapi2::TARGET_TYPE_HUB_CHIP > &
-                                   i_target);
-}
+DECLARE_HWP(pz_rcs_setup,
+            const fapi2::Target < fapi2::TARGET_TYPE_PROC_CHIP |
+            fapi2::TARGET_TYPE_HUB_CHIP > &i_target);

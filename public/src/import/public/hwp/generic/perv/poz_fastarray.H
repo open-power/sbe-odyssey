@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -113,13 +113,6 @@ fapi2::ReturnCode poz_fastarray_get_control_info(
     const uint32_t i_control_data_nwords,
     poz_fastarray_control_info& o_control_info);
 
-
-typedef fapi2::ReturnCode (*poz_fastarray_FP_t)(
-    const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_CORE > & i_target,
-    fapi2::hwp_data_istream&  i_instructions,
-    fapi2::hwp_data_ostream&  o_dump_data);
-
-
 /**
  * @brief Extract a raw fast array dump out of a given chiplet
  *
@@ -142,10 +135,7 @@ typedef fapi2::ReturnCode (*poz_fastarray_FP_t)(
  *
  * @return the usual FAPI return codes
  */
-extern "C"
-{
-    fapi2::ReturnCode poz_fastarray(
-        const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_CORE > & i_target,
-        fapi2::hwp_data_istream&  i_instructions,
-        fapi2::hwp_data_ostream&  o_dump_data);
-}
+DECLARE_HWP(poz_fastarray,
+            const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_CORE > & i_target,
+            fapi2::hwp_data_istream&  i_instructions,
+            fapi2::hwp_data_ostream&  o_dump_data);
