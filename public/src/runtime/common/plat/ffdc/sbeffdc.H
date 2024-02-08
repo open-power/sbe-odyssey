@@ -44,6 +44,15 @@
                                           sizeof(G_PK_TRACE_BUF->cb)) +    \
                                           SBE_FFDC_TRUNCATED_TRACE_LENGTH)
 
+/**
+ * @brief SCRATCH Space required fo scratch full RC ffdc HWP local data size
+ *
+ * @note This is Required HWP local variable data size fo RC_POZ_FFDC_SCRATCH_SPACE_FULL_ERROR
+ *       User modified any of HWP local variable are respective RC which is
+ *       directly effect to the below mentioned value
+ */
+#define FFDC_SCRATCH_FULL_RC_LV_SIZE (3 * sizeof(fapi2::sbeFfdc_t))
+
 
 /**
  * @brief - Capture Async failure FFDC
@@ -220,22 +229,59 @@ void logSbeError( const uint16_t i_primRc,
 void logFatalError( fapi2::ReturnCode& i_rc );
 
 
+/**
+ * @brief Function to get HWP FFDC package size
+ *
+ * @param i_hwpLocalDataLen HWP local variable length
+ * @param i_hwpRegDataLen   HWP register data length
+ * @return uint16_t size fof HWP FFDC package
+ */
+constexpr uint16_t ffdcUtils_getHwpSize(uint16_t i_hwpLocalDataLen, uint16_t i_hwpRegDataLen)
+{
+    return ( sizeof(pozHwpFfdcPackageFormat_t)+ /* hwp ffdc Frame size */
+             sizeof(packageBlobField_t)       + /* HWP local data fields size */
+             i_hwpLocalDataLen                + /* HWP local data length */
+             ((i_hwpRegDataLen)? sizeof(packageBlobField_t) : 0) + /* HWP Reg data field size */
+             i_hwpRegDataLen                 ); /* HWP reg data length */
+}
 
 /**
- * @brief Function to get Minimum Last LE space size
+ * @brief Function to get PLAT FFDC package size
  *
- * @return constexpr uint32_t  Minimum Last LE space size
+ * @tparam N truncated trace size default PLAT_FFDC_TRUNCATED_TRACE_SIZE
+ *           expected trace size: zero or PLAT_FFDC_TRUNCATED_TRACE_SIZE
+ * @return constexpr uint16_t  size of PLAT FFDC package
  */
-constexpr uint32_t plat_ffdcUtilGetMinLastUeSpace(void)
+template <uint16_t N = PLAT_FFDC_TRUNCATED_TRACE_SIZE>
+constexpr uint16_t ffdcUtils_getPlatSize()
 {
-    return (sizeof(pozFfdcNode_t)              + /* Node size*/
-            sizeof(pozHwpFfdcPackageFormat_t)  + /* hwp ffdc Frame size */
-            sizeof(packageBlobField_t)         + /* HWP local data fields size */
-            MAX_FFDC_LV_SIZE
+    static_assert(((N == 0) || (N == PLAT_FFDC_TRUNCATED_TRACE_SIZE)), "Unexpected Trace size");
+
+    return ( sizeof(pozPlatFfdcPackageFormat_t) + /* Plat FFDC size (plat data started) */
+            ((N)?  sizeof(packageBlobField_t) + N : 0) );
+}
+
+
+/**
+ * @brief Function to get FFDC initialization scratch space size
+ *
+ * @return constexpr uint32_t  FFDC initialization scratch space size
+ *
+ * @note For any changes in plat_FfdcInit() function directly effect this function,
+ *       Have to modify in both place.
+ */
+constexpr uint32_t plat_ffdcUtilGeFfdcInitSpaceSize(void)
+{
+    return (// Size of LAST UE FFDC
+            sizeof(pozFfdcNode_t) +
+            ffdcUtils_getHwpSize(MAX_FFDC_LV_SIZE, 0)
 #ifdef MINIMUM_FFDC_RE
-        +  sizeof(pozPlatFfdcPackageFormat_t) /* Plat FFDC size (plat data started) */
-        +  sizeof(packageBlobField_t)         /* FFDC fields size */
-        +  PLAT_FFDC_TRUNCATED_TRACE_SIZE     /* Truncated Trace Len */
+        +   ffdcUtils_getPlatSize()
+
+        // Size of scratch space FULL RC ffdc
+        +   sizeof(pozFfdcNode_t)
+        +   ffdcUtils_getHwpSize(FFDC_SCRATCH_FULL_RC_LV_SIZE, 0)
+        +   ffdcUtils_getPlatSize<0>() // For Scratch FULL RC space ffdc disable the TRACE data
 #endif
             );
 }

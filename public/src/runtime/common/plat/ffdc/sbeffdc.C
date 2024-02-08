@@ -48,6 +48,39 @@ namespace fapi2
                                 sizeof(G_PK_TRACE_BUF->cb) +   \
                                 G_PK_TRACE_BUF->size )
 
+/**
+ * @brief FFDC params utils structure
+ *
+ */
+typedef struct
+{
+    uint16_t hwpLocalDataLen;
+    void *&  hwpLocalDataStartAddr;
+    uint16_t hwpRegDataLen;
+    void *&  hwpRegDataStartAddr;
+}ffdcParams_t;
+
+
+// Functions Prototype
+#if defined( MINIMUM_FFDC_RE )
+static void ffdcInitPlatData( const pozPlatFfdcPackageFormat_t * i_platAddr,
+                              const uint16_t i_ffdcLen,
+                              uint16_t i_slidId,
+                              uint16_t i_primRc,
+                              uint16_t i_secRc,
+                              fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE );
+#endif
+
+static void ffdcInitHwpData( const pozHwpFfdcPackageFormat_t * i_hwpAddr,
+                             const uint16_t i_ffdcLen,
+                             uint32_t i_rc,
+                             uint16_t i_slidId,
+                             uint16_t i_hwpLocalDataLen,
+                             void *&  o_hwpLocalDataStartAddr,
+                             uint16_t i_hwpRegDataLen,
+                             void *&  o_hwpRegDataStartAddr,
+                             fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE);
+
 
 void SbeFFDCPackage::updateHWpackageDataHeader(void)
 {
@@ -382,6 +415,129 @@ void ffdcUtils_commitError ( fapi2::ReturnCode& io_rc )
     }while (0);
 }
 
+#endif
+
+
+/**
+ * @brief Function to create FFDC package
+ *
+ * @param i_packagePtr package buffer pointer
+ * @param i_hwpSize    HWP package size
+ * @param i_platSize   plat package size
+ * @param i_slid       sbe log ID
+ * @param i_sev        severity
+ * @param i_rc         FAPI rc
+ * @param params       param arg
+ */
+static void ffdcUtils_createPackage( const void * i_packagePtr,
+                                     uint16_t i_hwpSize,
+                                     uint16_t i_platSize,
+                                     uint16_t i_slid,
+                                     fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE,
+                                     uint32_t i_rc = fapi2::FAPI2_RC_SUCCESS,
+                                     void * params = nullptr
+                                    )
+{
+    const pozHwpFfdcPackageFormat_t * hwpPkg = static_cast<const pozHwpFfdcPackageFormat_t *>(i_packagePtr);
+
+    if (i_hwpSize)
+    {
+        ffdcParams_t * hwpParam = static_cast<ffdcParams_t *>(params);
+
+        // Calling HWP data initialization function
+        ffdcInitHwpData( hwpPkg,
+                        i_hwpSize,
+                        i_rc,
+                        i_slid,
+                        hwpParam->hwpLocalDataLen,
+                        hwpParam->hwpLocalDataStartAddr,
+                        hwpParam->hwpRegDataLen,
+                        hwpParam->hwpRegDataStartAddr
+                        );
+    }
+
+#if defined( MINIMUM_FFDC_RE )
+
+    if (i_platSize)
+    {
+        // Plat FFDC data pointer
+        pozPlatFfdcPackageFormat_t * platPkg = (pozPlatFfdcPackageFormat_t * )
+                                                    ( ((uint8_t *)hwpPkg) +
+                                                      i_hwpSize
+                                                    ) ;
+
+        // Calling PLAT FFDC initialization function
+        ffdcInitPlatData( platPkg,
+                          i_platSize,
+                          i_slid,
+                          SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                          SBE_SEC_HWP_FAILURE
+                        );
+    }
+
+#endif
+}
+
+
+#if defined(MINIMUM_FFDC_RE)
+/**
+ * @brief Function to create scratch space full error rc ffdc package
+ *
+ * @param i_failedRc      failed RC
+ * @param i_requiredSpace scratch space required size
+ * @param i_slid          sbe log id
+ */
+static void ffdcUtils_createScratchFullErrorRcPkg(uint32_t i_failedRc, uint32_t i_requiredSpace, uint16_t i_slid)
+{
+    pozFfdcNode_t * node  = fapi2::g_ffdcCtrlSingleton.getScratchFullRcSpace();
+
+    uint32_t hwpSize = ffdcUtils_getHwpSize(FFDC_SCRATCH_FULL_RC_LV_SIZE, 0);
+    // Scratch FULL Error FFDC doesn't required plat trace
+    uint32_t platSize = ffdcUtils_getPlatSize<0>();
+
+    // Updating FFDC node status
+    node->set ((uint16_t)(hwpSize + platSize), true, true, hwpSize, platSize);
+    node->next = NULL;
+
+    // Assigning dummy data, which will be updated with actual data when an error occurs
+    fapi2::sbeFfdc_t * hwpLvPtr = nullptr;
+    void * tempPtr = nullptr;
+    ffdcParams_t params =
+    {
+        FFDC_SCRATCH_FULL_RC_LV_SIZE,
+        (void *&)hwpLvPtr,
+        0,
+        tempPtr,
+    };
+    ffdcUtils_createPackage( (const void *)(((uint8_t *) node) + sizeof(pozFfdcNode_t)) ,
+                               hwpSize,
+                               platSize,
+                               i_slid,
+                               fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE,
+                               fapi2::RC_POZ_FFDC_SCRATCH_SPACE_FULL_ERROR,
+                               &params
+                            );
+    // FAILED_RC
+    hwpLvPtr[0].data = i_failedRc;
+    hwpLvPtr[0].size = sizeof(i_failedRc);
+
+    // REQUIRED_SPACE
+    hwpLvPtr[1].data = i_requiredSpace;
+    hwpLvPtr[1].size = sizeof(i_requiredSpace);
+
+    // AVAILABLE_SPACE
+    size_t availSize = Heap::get_instance().getFreeHeapSize();
+    hwpLvPtr[2].data = availSize;
+    hwpLvPtr[2].size = sizeof(availSize);
+
+
+
+    // Commit the scratch space full error
+    fapi2::ReturnCode l_rc = fapi2::RC_POZ_FFDC_SCRATCH_SPACE_FULL_ERROR;
+    l_rc.setDataPtr(reinterpret_cast<uint32_t>(node));
+    ffdcUtils_commitError(l_rc);
+}
+
 
 void pozFfdcCtrl_t::addNextNode(const pozFfdcNode_t * i_newNode)
 {
@@ -397,7 +553,37 @@ void pozFfdcCtrl_t::addNextNode(const pozFfdcNode_t * i_newNode)
         lastNode->next = const_cast<pozFfdcNode_t *>(i_newNode);
     }
 }
+
 #endif
+
+
+/**
+ * @brief Function to get last UE space and creates the scratch full rc
+ *
+ * @return pozFfdcNode_t*
+ */
+static pozFfdcNode_t * ffdcUtils_getLastUeSpace (uint32_t i_rc = 0, uint16_t i_reqSpace = 0)
+{
+
+#if defined( MINIMUM_FFDC_RE )
+    // Check scratch full flag
+    if (!fapi2::g_ffdcCtrlSingleton.isScratchFull())
+    {
+        // updating scratch full flag
+        fapi2::g_ffdcCtrlSingleton.setScratchFull(true);
+
+        fapi2::g_ffdcCtrlSingleton.incrementSlid();
+        // create scratch full error ffdc package
+        ffdcUtils_createScratchFullErrorRcPkg( i_rc,
+                                               i_reqSpace,
+                                               fapi2::g_ffdcCtrlSingleton.iv_localSlid
+                                             );
+    }
+#endif
+
+    return (fapi2::g_ffdcCtrlSingleton.getLastUeSpace());
+}
+
 
 void pozFfdcCtrl_t::deleteLastNode()
 {
@@ -427,7 +613,6 @@ void pozFfdcCtrl_t::deleteLastNode()
     }while(0);
 }
 
-
 pozFfdcNode_t * pozFfdcCtrl_t::getLastNode()
 {
     pozFfdcNode_t * node = nullptr;
@@ -449,17 +634,6 @@ pozFfdcNode_t * pozFfdcCtrl_t::getLastNode()
     }while (0);
 
     return node;
-}
-
-
-void plat_FfdcInit (void)
-{
-    /* Allocation scratch space for one minimum UE */
-    pozFfdcNode_t * node  = (pozFfdcNode_t *) Heap::get_instance().
-                                scratch_calloc(plat_ffdcUtilGetMinLastUeSpace(), Heap::AF_PERSIST);
-
-    fapi2::g_ffdcCtrlSingleton.setLastUeSpace(node);
-    SBE_INFO ("ffdcCreatePersistentSpace, LAST UE size: %d, addr: [0x%08X]", plat_ffdcUtilGetMinLastUeSpace(), node);
 }
 
 
@@ -683,8 +857,12 @@ uint32_t sendFFDCOverFIFO( uint32_t &o_wordsSent,
                 /* Logic to get the next FFDC */
                 nextNode = currentNode->next;
 
-                // Do not free the scratch space for persistent space
-                if (fapi2::g_ffdcCtrlSingleton.getLastUeSpace() == currentNode)
+                // Do not double free the scratch space for persistent space
+                if ((fapi2::g_ffdcCtrlSingleton.getLastUeSpace() == currentNode)
+#ifdef MINIMUM_FFDC_RE
+                   || (fapi2::g_ffdcCtrlSingleton.getScratchFullRcSpace() == currentNode)
+#endif
+                   )
                 {
                     SBE_DEBUG (SBE_FUNC "Scratch persistent addr: 0x%08X, Changing head to 0x%08X", currentNode, nextNode);
                     // clear memory
@@ -700,6 +878,7 @@ uint32_t sendFFDCOverFIFO( uint32_t &o_wordsSent,
 
             }while (currentNode != nullptr);
 
+            fapi2::g_ffdcCtrlSingleton.setScratchFull(false);
             // Clearing the ASYNC bit
             (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(false);
         }
@@ -799,7 +978,7 @@ static void ffdcInitHwpData( const pozHwpFfdcPackageFormat_t * i_hwpAddr,
                              void *&  o_hwpLocalDataStartAddr,
                              uint16_t i_hwpRegDataLen,
                              void *&  o_hwpRegDataStartAddr,
-                             fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE)
+                             fapi2::errlSeverity_t i_sev)
 {
     #define SBE_FUNC "ffdcInitHwpData "
     SBE_ENTER(SBE_FUNC);
@@ -918,7 +1097,7 @@ static void ffdcInitPlatData( const pozPlatFfdcPackageFormat_t * i_platAddr,
                               uint16_t i_slidId,
                               uint16_t i_primRc,
                               uint16_t i_secRc,
-                              fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE )
+                              fapi2::errlSeverity_t i_sev )
 {
     pozPlatFfdcPackageFormat_t * platAddr = (pozPlatFfdcPackageFormat_t *) i_platAddr;
     if (platAddr)
@@ -979,19 +1158,9 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
      * Calculating the FFDC size to allocate the heap
      * refer diagram in @file sbeffdctype.H (figure 1 and 2)
     */
-    ffdcHwpSize = sizeof(pozHwpFfdcPackageFormat_t)+ /* hwp ffdc Frame size */
-                  sizeof(packageBlobField_t)       + /* HWP local data fields size */
-                  i_hwpLocalDataLen                + /* HWP local data length */
-                  ((i_hwpRegDataLen)? sizeof(packageBlobField_t) : 0) + /* HWP Reg data field size */
-                  i_hwpRegDataLen                  ; /* HWP reg data length */
-
+    ffdcHwpSize = ffdcUtils_getHwpSize(i_hwpLocalDataLen, i_hwpRegDataLen);
 #if defined( MINIMUM_FFDC_RE )
-
-    ffdcPlatSize = sizeof(pozPlatFfdcPackageFormat_t)+ /* Plat FFDC size (plat data started) */
-                   sizeof(packageBlobField_t)        + /* FFDC fields size */
-                   PLAT_FFDC_TRUNCATED_TRACE_SIZE;     /* Truncated Trace Len */
-                   /* size of (PkTraceBuffer) - size of trace buffer = size of PkTraceBuffer except trace buffer size*/
-
+    ffdcPlatSize = ffdcUtils_getPlatSize();
 #endif
 
     uint32_t ffdcLen = ffdcHwpSize           + /* HWP size */
@@ -1001,15 +1170,20 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
     // For RE disable, utilize the last UE space that was created
 #if defined( MINIMUM_FFDC_RE )
 
-    /* Allocation scratch space */
-    currentNode  = (pozFfdcNode_t *) Heap::get_instance().
+    // Once the scratch space is full, allocation of space for FFDC is not
+    //  allowed until the FFDC data is streamed out.
+    if (!fapi2::g_ffdcCtrlSingleton.isScratchFull())
+    {
+        /* Allocation scratch space */
+        currentNode  = (pozFfdcNode_t *) Heap::get_instance().
                             scratch_calloc( ffdcLen + sizeof(pozFfdcNode_t) );
+    }
 
 #endif
 
     if (currentNode == nullptr)
     {
-        currentNode = fapi2::g_ffdcCtrlSingleton.getLastUeSpace();
+        currentNode = ffdcUtils_getLastUeSpace(i_rc, (ffdcLen + sizeof(pozFfdcNode_t)));
     }
 
     // Check for Scratch is allocation
@@ -1020,13 +1194,13 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
         currentNode->set ((uint16_t)ffdcLen, false, false, ffdcHwpSize, ffdcPlatSize);
         currentNode->next = NULL;
 
-#if defined( MINIMUM_FFDC_RE )
         // Incrementing SBE log ID, Identical slid ID for particular FFDC
         //  this may roll-over after 2^16, but its ok, since we can safely
         //  assume by that time the first ffdc with slid-id = 0, might have
         //  streamed back
         fapi2::g_ffdcCtrlSingleton.incrementSlid();
-#else
+
+#if !defined( MINIMUM_FFDC_RE )
         // Note: For not defined MINIMUM_FFDC_RE, Directly assign allocated scratch
         //        address to iv_firstCommitedFfdc and mark error as commited and
         //        fatal error
@@ -1037,38 +1211,25 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
         fapi2::g_ffdcCtrlSingleton.setHead( currentNode );
 #endif
 
-        // HWP FFDC data pointer
-        pozHwpFfdcPackageFormat_t * hwpFfdcPtr = ( pozHwpFfdcPackageFormat_t * )
+        // FFDC package data pointer
+        pozHwpFfdcPackageFormat_t * ffdcPackagePtr = ( pozHwpFfdcPackageFormat_t * )
                                (((uint8_t *)currentNode) + sizeof(pozFfdcNode_t));
 
-#if defined( MINIMUM_FFDC_RE )
-        // Plat FFDC data pointer
-        pozPlatFfdcPackageFormat_t * platFfdcPtr = (pozPlatFfdcPackageFormat_t * )
-                                                      ( ((uint8_t *)hwpFfdcPtr) +
-                                                        ffdcHwpSize
-                                                      ) ;
-#endif
-        // Calling HWP data initialization function
-        ffdcInitHwpData( hwpFfdcPtr,
-                         ffdcHwpSize,
-                         i_rc,
-                         fapi2::g_ffdcCtrlSingleton.iv_localSlid,
-                         i_hwpLocalDataLen,
-                         o_hwpLocalDataStartAddr,
-                         i_hwpRegDataLen,
-                         o_hwpRegDataStartAddr,
-                         i_sev );
+        ffdcParams_t params = {
+            i_hwpLocalDataLen,
+            o_hwpLocalDataStartAddr,
+            i_hwpRegDataLen,
+            o_hwpRegDataStartAddr
+        };
 
-#if defined( MINIMUM_FFDC_RE )
-        // Calling PLAT FFDC initialization function
-        ffdcInitPlatData( platFfdcPtr,
-                          ffdcPlatSize,
-                          fapi2::g_ffdcCtrlSingleton.iv_localSlid,
-                          SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                          SBE_SEC_HWP_FAILURE,
-                          i_sev
-                        );
-#endif
+        ffdcUtils_createPackage( ffdcPackagePtr,
+                                 ffdcHwpSize,
+                                 ffdcPlatSize,
+                                 fapi2::g_ffdcCtrlSingleton.iv_localSlid,
+                                 fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE,
+                                 i_rc,
+                                 &params
+                               );
     }
     else
     {
@@ -1098,7 +1259,8 @@ void logSbeError( const uint16_t i_primRc,
 
     if (currentNode == nullptr)
     {
-        currentNode = fapi2::g_ffdcCtrlSingleton.getLastUeSpace();
+        currentNode = ffdcUtils_getLastUeSpace(fapi2::FAPI2_RC_PLAT_ERR_SEE_DATA,
+                                               ffdcLen + sizeof(pozFfdcNode_t));
     }
 
     if (currentNode)
@@ -1234,3 +1396,43 @@ void logError( fapi2::ReturnCode& io_rc,
 }
 
 };
+
+
+void plat_FfdcInit (void)
+{
+    constexpr uint32_t ffdcLastUeSize = ( sizeof(pozFfdcNode_t)                   +
+                                       ffdcUtils_getHwpSize(MAX_FFDC_LV_SIZE, 0)
+#ifdef MINIMUM_FFDC_RE
+                                     + ffdcUtils_getPlatSize()
+#endif
+                                     );
+
+    /* Allocation scratch space for one minimum UE */
+    pozFfdcNode_t * node  = (pozFfdcNode_t *) Heap::get_instance().
+                                scratch_calloc(ffdcLastUeSize, Heap::AF_PERSIST);
+    if (node == nullptr)
+    {
+        SBE_ERROR ("plat_FfdcInit failed to alloc for min one UE %d", ffdcLastUeSize);
+        pk_halt();
+    }
+    fapi2::g_ffdcCtrlSingleton.setLastUeSpace(node);
+    SBE_INFO ("plat_FfdcInit: LAST UE size: %d, addr: [0x%08X]", ffdcLastUeSize, node);
+
+#if defined(MINIMUM_FFDC_RE)
+    /* Allocation scratch space for Scratch Full RC Space */
+   constexpr  uint32_t ffdcSizeScratchFullRc = sizeof(pozFfdcNode_t) +
+                                        ffdcUtils_getHwpSize(FFDC_SCRATCH_FULL_RC_LV_SIZE, 0) +
+                                        ffdcUtils_getPlatSize<0>(); // For Scratch FULL RC space ffdc disable the TRACE data
+
+    node  = (pozFfdcNode_t *) Heap::get_instance().
+                                    scratch_calloc(ffdcSizeScratchFullRc, Heap::AF_PERSIST);
+    if (node == nullptr)
+    {
+        SBE_ERROR ("plat_FfdcInit failed to alloc for Scratch FULL persistent space %d", ffdcSizeScratchFullRc);
+        pk_halt();
+    }
+    fapi2::g_ffdcCtrlSingleton.setScratchFullRcSpace(node);
+    SBE_INFO ("plat_FfdcInit, Scratch full rc size: %d, addr: [0x%08X]", ffdcSizeScratchFullRc, node);
+#endif
+
+}

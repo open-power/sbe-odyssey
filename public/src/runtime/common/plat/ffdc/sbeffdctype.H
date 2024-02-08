@@ -36,6 +36,7 @@
 #define SBE_FFDC_REG_DATA       (uint16_t)0x0002
 #define SBE_FFDC_TRACE_DATA     (uint16_t)0x0004
 #define SBE_FFDC_ATTR_DATA      (uint16_t)0x0008
+
 // SBE_FFDC_ALL_HW_DATA: Get FFDC_HW + FFDC_REG
 #define SBE_FFDC_ALL_HW_DATA    (uint16_t)(SBE_FFDC_HW_DATA     | SBE_FFDC_REG_DATA )
 // SBE_FFDC_ALL_PLAT_DATA Get FFDC_ATTR + FFDC_TRACE
@@ -479,9 +480,13 @@ typedef struct pozFfdcNode
 typedef struct pozFfdcCtrl
 {
     uint32_t        iv_localSlid         : 16; // Which hold the SBE log ID which is incrementing for every full FFDC
-    uint32_t        reserved             : 16;
+    uint32_t        iv_isScratchFull     :  1; // which hold the scratch full error data
+    uint32_t        reserved             : 15;
     pozFfdcNode_t * iv_firstCommitted;         // holds the pointer to the first committed FFDC
     pozFfdcNode_t * iv_lastUEPersistentSpace;  // holds a pointer pointing to the space reserved for the last error
+#if defined(MINIMUM_FFDC_RE)
+    pozFfdcNode_t * iv_scratchFullRcSpace;     // holds a pointer pointing to the space reserved for scratch full RC error
+#endif
 
     /**
      * @brief Constructor a poz Ffdc control object
@@ -489,8 +494,12 @@ typedef struct pozFfdcCtrl
     pozFfdcCtrl( )
     {
         iv_localSlid                   = 0;
+        iv_isScratchFull               = 0;
         iv_lastUEPersistentSpace       = nullptr;
         iv_firstCommitted              = nullptr;
+#if defined(MINIMUM_FFDC_RE)
+        iv_scratchFullRcSpace          = nullptr;
+#endif
     }
 
     /**
@@ -534,6 +543,28 @@ typedef struct pozFfdcCtrl
 
     }
 
+#if defined(MINIMUM_FFDC_RE)
+    /**
+     * @brief set given node reserved for scratch full RC space
+     *
+     * @param[in] i_LastUE pointer to scratch full RC space
+     */
+    void setScratchFullRcSpace(const pozFfdcNode_t* i_scratchFullRcPtr)
+    {
+        iv_scratchFullRcSpace = const_cast<pozFfdcNode_t *>(i_scratchFullRcPtr);
+    }
+
+    /**
+     * @brief get reserved for scratch full RC space
+     *
+     * @return pozFfdcNode_t* node ptr @ref pozFfdcNode_t
+     */
+    pozFfdcNode_t * getScratchFullRcSpace( void )
+    {
+        return iv_scratchFullRcSpace;
+
+    }
+#endif
     /**
      * @brief Increment the slid by one count
      *
@@ -541,6 +572,16 @@ typedef struct pozFfdcCtrl
     void incrementSlid(void)
     {
         ++iv_localSlid;
+    }
+
+    void setScratchFull(bool i_isScratchFull)
+    {
+        iv_isScratchFull = (i_isScratchFull)? 1 : 0;
+    }
+
+    bool isScratchFull(void)
+    {
+        return (iv_isScratchFull);
     }
 
     /**
