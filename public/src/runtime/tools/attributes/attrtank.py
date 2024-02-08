@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2021,2023
+# Contributors Listed Below - COPYRIGHT 2021,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -132,6 +132,7 @@ class RealAttrFieldInfo(AttrFieldInfo):
                  is_memory_shared:bool,
                  share_by_target_type:str,
                  shared_mem_targets:'dict[str,str]',
+                 deny_update:bool,
                  ekb_target_type: list,
                  value_type: str,
                  enum_values: str,
@@ -147,6 +148,7 @@ class RealAttrFieldInfo(AttrFieldInfo):
         self.is_memory_shared = is_memory_shared
         self.share_by_target_type = share_by_target_type
         self.shared_mem_targets = shared_mem_targets
+        self.deny_update = deny_update
         self.targ_entry = copy.deepcopy(targ_entry)
         self.array_dims = array_dims
         self.sbe_address = 0
@@ -366,6 +368,8 @@ class RealAttrFieldInfo(AttrFieldInfo):
 
         retval += str(int(self.is_memory_shared)) + ","
 
+        retval += str(int(self.deny_update)) + ","
+
         #reserved
         retval += "0,"
 
@@ -514,6 +518,7 @@ class AttributeStructure(object):
                         sbe_targ in attr.sbe_entry.shared_memory.keys(),
                         attr.sbe_entry.shared_memory.get(sbe_targ,None),
                         attr.sbe_entry.shared_memory,
+                        attr.deny_update,
                         ekb_target_list,
                         attr.value_type,
                         attr.enum_values,

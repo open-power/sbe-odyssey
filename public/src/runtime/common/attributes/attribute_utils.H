@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -33,6 +34,10 @@ namespace ATTR
 
 enum AttributeOverrideRc
 {
+    // Note : These enum values must match with the enum values defined in
+    //        hwpf/sbe_utils/include/sbe_attribute_utils.H in the ekb repository.
+    //        Hostboot/Cronus refer the enums defined in sbe_attribute_utils.H
+    //        available in the ekb.
     ATTROVERRIDE_RC_SUCCESS                 = 0,
     ATTROVERRIDE_RC_TGT_TYPE_NOT_FOUND      = 1,
     ATTROVERRIDE_RC_ATTR_NOT_FOUND          = 2,
@@ -41,6 +46,9 @@ enum AttributeOverrideRc
     ATTROVERRIDE_RC_ARRAY_INDEX_OUT_RANGE   = 5,
     ATTROVERRIDE_RC_ATTR_NOT_ARRAY          = 6,
     ATTROVERRIDE_RC_OVRD_NOT_ALLOWED        = 7,
+    // The enum values 8,9, and 10 are assigned to RC returned by the apply hardware
+    // procedure used by Hostboot/Cronus.
+    ATTROVERRIDE_RC_DENIED_UPDATE           = 11,
 };
 
 const uint8_t ATTROVERRIDE_MAJOR_VERSION = 0;

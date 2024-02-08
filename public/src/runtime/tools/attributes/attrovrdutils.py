@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -162,6 +162,12 @@ class AttributeFile(ABC):
         AttrOverrideRc_ARRAY_INDEX_OUT_RANGE    = 5
         AttrOverrideRc_ATTR_NOT_ARRAY           = 6
         AttrOverrideRc_OVRD_NOT_ALLOWED         = 7
+
+        #Note : These enum values must match with the enum values defined in
+        #       hwpf/sbe_utils/include/sbe_attribute_utils.H in the ekb repository.
+        #       Hostboot/Cronus refer the enums defined in sbe_attribute_utils.H
+        #       available in the ekb.
+        AttrOverrideRc_DENIED_UPDATE            = 11
 
 
     class AttributeOvrdResponse(NamedTuple):

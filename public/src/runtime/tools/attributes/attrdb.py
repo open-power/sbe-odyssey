@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2021,2023
+# Contributors Listed Below - COPYRIGHT 2021,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -94,8 +94,9 @@ class RealAttribute(object):
         self.attr_sync = None
         self.unsupported_attribute = False
 
-        name, target_type, value_type, description, enum_values, array_dims, attr_sync = (
-            node.find(tag) for tag in ("id", "targetType", "valueType", "description", "enum", "array", "sbeAttrSync"))
+        name, target_type, value_type, description, enum_values, array_dims, attr_sync, deny_update  = (
+            node.find(tag) for tag in ("id", "targetType", "valueType", "description", "enum", "array",
+                                        "sbeAttrSync", "denyForSecurityUpdate"))
 
         if name is None:
             raise ParseError("Unnamed attribute")
@@ -117,16 +118,25 @@ class RealAttribute(object):
                 self.sbe_target_type.append(targ)
             self.ekb_target_type.append(targ)
 
+        if deny_update is None:
+            self.deny_update = False
+        else:
+            self.deny_update = True
+
         if(parse_sync_tag and (attr_sync != None)):
             try:
-                self.attr_sync = RealAttribute.SbeAttrSync(attr_sync, self.sbe_target_type)
+                self.attr_sync = RealAttribute.SbeAttrSync(attr_sync, self.ekb_target_type)
             except ParseError as e:
                 raise ParseError("SbeAttrSync parsing failed for " + self.name) from e
-
 
         if((len(self.sbe_target_type) == 0) and (self.attr_sync == None)):
             self.unsupported_attribute = True
             return
+
+        if (self.deny_update == True) and (self.attr_sync != None) and (self.attr_sync.to_sbe == True):
+                raise ParseError("Attribute name [%s] has denyForSecurityUpdate tag and sbeAttrSync.toSBE=\"1\""
+                         " which are mutually exclusive. Please review XML changes before proceeding further." %
+                         self.name)
 
         self.description = dedent(description.text.strip("\n")) if description else None
 
@@ -301,7 +311,7 @@ class AttributeDB(object):
         # Attribute update header size is 4 bytes
         self.attr_upd_blob_size = 4
 
-    def load_xml(self, fname, parse_sync_tag = False):
+    def load_xml(self, fname, parse_sync_tag = True):
         root = etree.parse(fname).getroot()
         for elem in root.iter("attribute"):
             attr = ECAttribute(self, elem) if elem.find("chipEcFeature") else RealAttribute(self, elem, parse_sync_tag)

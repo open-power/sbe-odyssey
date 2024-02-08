@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -36,7 +36,8 @@ namespace ATTR
 struct AttributesTable
 {
     uint32_t                iv_memory_shared : 1;
-    uint32_t                iv_reserved      : 3;
+    uint32_t                iv_deny_update   : 1;
+    uint32_t                iv_reserved      : 2;
     uint32_t                iv_attr_id       : 28;
     uint8_t                 iv_max_row; //Row
     uint8_t                 iv_max_col; //Column

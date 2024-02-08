@@ -107,6 +107,9 @@ void securityUtils::setSoftSecurityCheckLvl()
     iv_invalidAddrCheckLvl = getSoftSecurityCheckLvl(SbeRegAccess::theSbeRegAccess().getDisableInvalidScomAddrBit());
     SBE_INFO(SBE_FUNC "Soft security check level for invalid scom address check functionality %d", iv_invalidAddrCheckLvl);
 
+    iv_allowAttrOverrideLvl = getSoftSecurityCheckLvl(SbeRegAccess::theSbeRegAccess().getAllowAttrOverrideBit());
+    SBE_INFO(SBE_FUNC "Soft security check level for allow attribute override functionality %d", iv_allowAttrOverrideLvl);
+
     SBE_EXIT(SBE_FUNC)
     #undef SBE_FUNC
 }

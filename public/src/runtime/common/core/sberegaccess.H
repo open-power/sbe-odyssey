@@ -345,6 +345,17 @@ class SbeRegAccess
             return lfrReg.disable_scom_filtering;
         }
 
+        /**
+         * @brief Get allow attribute override bit from LFR
+         *
+         * @return true  - Allow attribute override by attribute update chip-op
+         *         false - Don't allow attribute override by attribute update chip-op
+         */
+        bool getAllowAttrOverrideBit()
+        {
+            return lfrReg.allow_attr_override;
+        }
+
     private:
 
         mbx11_t mbx11 = {0};
