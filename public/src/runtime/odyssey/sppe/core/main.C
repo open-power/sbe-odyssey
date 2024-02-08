@@ -222,7 +222,8 @@ int  main(int argc, char **argv)
         sbePakSearchStartOffset();
 
         // Static assert for minimum scratch space allocated in link.H
-        static_assert(plat_ffdcUtilGetMinLastUeSpace() < SPPE_LAST_FFDC_MIN_SIZE, "Minimum Recoverable size less than required size");
+        static_assert(plat_ffdcUtilGeFfdcInitSpaceSize() < SPPE_FFDC_INIT_REQUIRED_SIZE, "Minimum FFDC init scratch size less than required size");
+        // Initialize FFDC by creating persistent space for RE
         plat_FfdcInit();
 
         // Start the timer for the async thread.
