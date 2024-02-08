@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -25,31 +25,21 @@
 #pragma once
 #include <fapi2.H>
 
-
-typedef fapi2::ReturnCode (*poz_efuse_program_FP_t)(
-    const fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP>& i_target,
-    const uint8_t* i_buffer, uint32_t i_startBit, uint32_t i_endBit);
-
-
-
-extern "C"
-{
-
-    /**
-     * @brief Programing efuse bits
-     *
-     * Takes a databuffer and programs efuse bits with it.
-     * Data is given byte-wise, while the range is given bit-wise.
-     * Ecc is calculated automatically when enabled and written to the
-     * corresponding efuse bits written.
-     *
-     * @param[in]    i_target        The chiplet or core containing the efuses.
-     * @param[in]    i_buffer        Buffer with data to be written to the fuses.
-     * @param[in]    i_startBit      First bit to be written.
-     * @param[in]    i_endBit          Last bit to be written.
-     *
-     * @return the usual FAPI2 return codes
-     */
-    fapi2::ReturnCode poz_efuse_program(const fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP>& i_target,
-                                        const uint8_t* i_buffer, uint32_t i_startBit, uint32_t i_endBit);
-}
+/**
+ * @brief Programing efuse bits
+ *
+ * Takes a databuffer and programs efuse bits with it.
+ * Data is given byte-wise, while the range is given bit-wise.
+ * Ecc is calculated automatically when enabled and written to the
+ * corresponding efuse bits written.
+ *
+ * @param[in]    i_target        The chiplet or core containing the efuses.
+ * @param[in]    i_buffer        Buffer with data to be written to the fuses.
+ * @param[in]    i_startBit      First bit to be written.
+ * @param[in]    i_endBit          Last bit to be written.
+ *
+ * @return the usual FAPI2 return codes
+ */
+DECLARE_HWP(poz_efuse_program,
+            const fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP>& i_target,
+            const uint8_t* i_buffer, uint32_t i_startBit, uint32_t i_endBit);

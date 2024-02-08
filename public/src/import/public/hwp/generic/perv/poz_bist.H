@@ -185,9 +185,6 @@ struct bist_diags
     bist_params::bist_stages completed_stages;
 };
 
-typedef fapi2::ReturnCode (*poz_bist_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>&,
-        const bist_params&, bist_diags&, fapi2::hwp_data_ostream&, const uint16_t);
-
 /// @brief Common module for ABIST/LBIST
 ///
 /// @param[in]   i_target               Chip to operate on
@@ -196,10 +193,7 @@ typedef fapi2::ReturnCode (*poz_bist_FP_t)(const fapi2::Target<fapi2::TARGET_TYP
 /// @param[in]   i_dict_def             bistChipOp diagnostic dict key
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-extern "C"
-{
-    fapi2::ReturnCode poz_bist(const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-                               const bist_params& i_params, bist_diags& o_diags,
-                               fapi2::hwp_data_ostream& o_stream,
-                               const uint16_t i_dict_def = BIST_CHIPOP_ID);
-}
+DECLARE_HWP(poz_bist, const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+            const bist_params& i_params, bist_diags& o_diags,
+            fapi2::hwp_data_ostream& o_stream,
+            const uint16_t i_dict_def = BIST_CHIPOP_ID);

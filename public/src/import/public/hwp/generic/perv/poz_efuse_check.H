@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -25,27 +25,19 @@
 #pragma once
 #include <fapi2.H>
 
-
-typedef fapi2::ReturnCode (*poz_efuse_check_FP_t)(
-    const fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP>& i_target_chip,
-    const uint8_t* i_buffer, uint32_t i_startBit, uint32_t i_endBit);
-
-
-extern "C"
-{
-    /**
-     * @brief Checking efuse bits
-     *
-     * Takes a buffer of data written to the efuses.
-     * Checks if the expected data was written and if ECC is correct.
-     *
-     * @param[in]    i_target        The chiplet or core containing the efuses.
-     * @param[in]    i_buffer        Buffer with data written to the fuses.
-     * @param[in]    i_startBit      First bit written.
-     * @param[in]    i_endBit        Last bit written.
-     *
-     * @return the usual FAPI2 return codes
-     */
-    fapi2::ReturnCode poz_efuse_check(const fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP>& i_target,
-                                      const uint8_t* i_buffer, uint32_t i_startBit, uint32_t i_endBit);
-}
+/**
+ * @brief Checking efuse bits
+ *
+ * Takes a buffer of data written to the efuses.
+ * Checks if the expected data was written and if ECC is correct.
+ *
+ * @param[in]    i_target        The chiplet or core containing the efuses.
+ * @param[in]    i_buffer        Buffer with data written to the fuses.
+ * @param[in]    i_startBit      First bit written.
+ * @param[in]    i_endBit        Last bit written.
+ *
+ * @return the usual FAPI2 return codes
+ */
+DECLARE_HWP(poz_efuse_check,
+            const fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP>& i_target,
+            const uint8_t* i_buffer, uint32_t i_startBit, uint32_t i_endBit);
