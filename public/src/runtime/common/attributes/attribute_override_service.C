@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -26,6 +26,7 @@
 #include <attribute_table.H>
 #include <sbetrace.H>
 #include <sbe_sp_intf.H>
+#include <securityutils.H>
 #include "ppe42_string.h"
 #include "assert.h"
 
@@ -346,6 +347,34 @@ AttributeOverrideRc AttributesTable::applyOverride(
 
     do
     {
+        if (iv_deny_update == true)
+        {
+            if (g_pSbeSecurityUtils->getAllowAttrOverrideCheckLvl() == SOFT_SECURITY_CHECK_ENABLED)
+            {
+                // denyForSecurityUpdate tag has been specified for this attribute.
+                // Hence, this attribute can be updated only if the soft security level is
+                // permissive enabled ie. ATTR_SECURITY_LEVEL is PERMISSIVE and
+                //                        Scratch 11 Bit 7 is set
+                //
+                l_rc = ATTROVERRIDE_RC_OVRD_NOT_ALLOWED;
+
+                SBE_INFO(SBE_FUNC "Attribute update is not allowed for the attribute Id : 0x%08X",
+                            i_attrEntry->iv_attrId);
+                // Dont update the attribute
+                break;
+            }
+            else if (g_pSbeSecurityUtils->getAllowAttrOverrideCheckLvl() ==
+                                SOFT_SECURITY_CHECK_PERMISSIVE_ENABLED)
+            {
+                // Though denyForSecurityUpdate tag has been specified for the attribute, as the soft security
+                // is permissive and enabled, it is being updated. In such case, return a different RC.
+                l_rc = ATTROVERRIDE_RC_DENIED_UPDATE;
+                SBE_INFO(SBE_FUNC "Attribute Id : 0x%08X has been updated as soft security is permissive enabled.",
+                            i_attrEntry->iv_attrId);
+                // Proceed to update the attribute
+            }
+        }
+
         // Data is present at the end of AttrEntry structure
         uint8_t* l_data = (uint8_t *)i_attrEntry + sizeof(AttrEntry_t);
 
@@ -364,7 +393,7 @@ AttributeOverrideRc AttributesTable::applyOverride(
                 {
                     l_rc = ATTROVERRIDE_RC_SIZE_NOT_MATCHING;
                     // the target instance can be printed along with target
-                    //   in the caller function, for better trace readability.
+                    // in the caller function, for better trace readability.
                     SBE_ERROR(SBE_FUNC "Size is not matching for attribute 0x%08x."
                                " Expected:%d Actual:%d ",
                                i_attrEntry->iv_attrId,

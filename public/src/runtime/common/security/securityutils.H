@@ -103,6 +103,19 @@ class securityUtils {
                 SOFT_SECURITY_CHECK_DISABLED);
     }
 
+    /**
+     * @brief Get allow attribute override soft security Check Lvl
+     *        This api internally also checks if the current HW access path is trusted or not
+     *
+     * @return softSecurityCheckLvl
+     */
+    inline softSecurityCheckLvl getAllowAttrOverrideCheckLvl()
+    {
+        return (iv_noOfNonSecureHwPaths ?
+                (isHwAccessPathTrusted() ? SOFT_SECURITY_CHECK_DISABLED : iv_allowAttrOverrideLvl) :
+                SOFT_SECURITY_CHECK_DISABLED);
+    }
+
     protected:
 
     /**
@@ -121,6 +134,7 @@ class securityUtils {
         iv_securityLevel(fapi2::ENUM_ATTR_SECURITY_LEVEL_ENFORCING),
         iv_scomFilteringCheckLvl(SOFT_SECURITY_CHECK_ENABLED),
         iv_invalidAddrCheckLvl(SOFT_SECURITY_CHECK_ENABLED),
+        iv_allowAttrOverrideLvl(SOFT_SECURITY_CHECK_ENABLED),
         iv_nonSecureHwPaths(NULL),
         iv_noOfNonSecureHwPaths(0)
     {};
@@ -138,6 +152,7 @@ class securityUtils {
         iv_securityLevel(fapi2::ENUM_ATTR_SECURITY_LEVEL_ENFORCING),
         iv_scomFilteringCheckLvl(SOFT_SECURITY_CHECK_ENABLED),
         iv_invalidAddrCheckLvl(SOFT_SECURITY_CHECK_ENABLED),
+        iv_allowAttrOverrideLvl(SOFT_SECURITY_CHECK_ENABLED),
         iv_nonSecureHwPaths(nonSecureHwPaths),
         iv_noOfNonSecureHwPaths(noOfNonSecureHwPaths)
     {};
@@ -188,6 +203,7 @@ class securityUtils {
     // Used for istep and secure mode chipop fence check as well
     softSecurityCheckLvl iv_scomFilteringCheckLvl;
     softSecurityCheckLvl iv_invalidAddrCheckLvl;
+    softSecurityCheckLvl iv_allowAttrOverrideLvl;
 
     const sbeFifoType *iv_nonSecureHwPaths;
     const size_t iv_noOfNonSecureHwPaths;
