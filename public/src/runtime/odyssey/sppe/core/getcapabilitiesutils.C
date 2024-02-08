@@ -227,41 +227,11 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
 void fillCapabilitiesDetails(uint32_t *o_capability)
 {
     o_capability[GENERIC_CAPABILITY_START_IDX] =
-                                                HWP_FFDC_COLLECTION_SUPPPORTED |
-                                                SBE_FFDC_COLLECTION_SUPPPORTED |
-                                                FIFO_RESET_SUPPPORTED |
-                                                PIPES_SUPPPORTED ;
-
-    o_capability[IPL_CAPABILITY_START_IDX] =
-                                            EXECUTE_ISTEP_SUPPPORTED |
-                                            EXECUTE_HWP_SUPPPORTED;
-
-    o_capability[SCOM_CAPABILITY_START_IDX] =
-                                            GET_SCOM_SUPPPORTED |
-                                            PUT_SCOM_SUPPPORTED ;
-
-    o_capability[RING_CAPABILITY_START_IDX] =
-                                            GET_RING_SUPPPORTED |
-                                            PUT_RING_SUPPPORTED |
-                                            PUT_RING_FROM_IMAGE_SUPPPORTED ;
-
-    o_capability[ARRAY_CAPABILITY_START_IDX] =
-                                            CONTROL_FAST_ARRAY_SUPPPORTED |
-                                            CONTROL_TRACE_ARRAY_SUPPPORTED ;
-
-    o_capability[GENERIC_CHIPOP_CAPABILITY_START_IDX] =
-                                                    GET_SBE_FFDC_SUPPPORTED |
-                                                    GET_CAPABILITIES_SUPPORTED |
-                                                    GET_SBE_SCRATCH_DATA_SUPPORTED |
-                                                    SCRUB_MEMORY_DEVICE_SUPPORTED;
-
-    o_capability[STOP_CLOCKS_CAPABILITY_START_IDX] = STOP_CLOCKS_SUPPORTED;
-
-    o_capability[ATTRIBUTE_CAPABILITY_START_IDX] = GET_RAWATTR_DUMP_SUPPORTED |
-                                                   LIST_ATTR_SUPPORTED |
-                                                   UPDATE_ATTR_SUPPORTED ;
-
-    o_capability[CODEUPDATE_CAPABILITY_START_IDX] = GET_CODE_LEVELS_SUPPORTED |
-                                                    UPDATE_IMAGE_SUPPORTED |
-                                                    SYNC_SIDE_SUPPORTED;
+                                                HWP_FFDC_COLLECTION_SUPPORTED |
+                                                SBE_FFDC_COLLECTION_SUPPORTED |
+                                                SBE_FIFO_RESET_SUPPORTED |
+                                                SBE_PIPES_INTERFACE_SUPPORTED |
+                                                //SBE_SCOM_FILTERING_SUPPORTED | // @TODO JIRA: PFSBE-42
+                                                SBE_NONFATAL_ERRORS_SUPPORTED ;
+    fillCmdCapabilityWords (o_capability + CMD_CAPABILITIES_START_IDX);
 }

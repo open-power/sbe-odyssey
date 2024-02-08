@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -805,4 +805,23 @@ uint32_t loadAndParseInfoTxt(const char *i_fileName,
     SBE_EXIT(SBE_FUNC);
     return l_rc;
     #undef SBE_FUNC
+}
+
+void fillCmdCapabilityWords (uint32_t* o_capabilityWords)
+{
+#define SBE_FUNC " fillCmdCapabilityWords "
+    SBE_ENTER(SBE_FUNC);
+
+    // Validate NR_CMD_CAPABILITY_WORDS matches length of the autogen array
+    static_assert (
+        (NR_CMD_CAPABILITY_WORDS == sizeof(CmdCapabilityWords)/sizeof(CmdCapabilityWords[0])),
+        SBE_FUNC "Mismatch between NR_CMD_CAPABILITY_WORDS and length of CmdCapabilityWords[]");
+
+    for (uint16_t i=0; i < NR_CMD_CAPABILITY_WORDS; i++)
+    {
+        o_capabilityWords[i] = CmdCapabilityWords[i];
+    }
+
+    SBE_EXIT(SBE_FUNC);
+#undef SBE_FUNC
 }
