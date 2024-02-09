@@ -1530,6 +1530,13 @@
     <value>0</value>
     <value>0</value>
   </entry>
+  <entry name="ATTR_ODY_SENSOR_READ_FIRST_FAIL">
+    <value>0</value>
+    <value>0</value>
+    <value>0</value>
+    <value>0</value>
+    <value>0</value>
+  </entry>
   <entry name="ATTR_ODY_IS_HIGHVDD">
     <value>0</value>
   </entry>
