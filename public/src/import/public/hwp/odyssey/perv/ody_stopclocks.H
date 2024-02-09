@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -38,9 +38,6 @@
 #include <poz_common_stopclocks.H>
 #include <poz_common_stopclocks_flags.H>
 
-typedef fapi2::ReturnCode (*ody_stopclocks_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
-        const StopClocksFlags);
-
 /// @brief To stop chiplet clocks for Odyssey chip
 ///
 /// @param[in]   i_target            Reference to TARGET_TYPE_OCMB_CHIP
@@ -48,10 +45,8 @@ typedef fapi2::ReturnCode (*ody_stopclocks_FP_t)(const fapi2::Target<fapi2::TARG
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 
-extern "C"
-{
-    fapi2::ReturnCode ody_stopclocks(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
-                                     const StopClocksFlags i_stopclocks_flags);
-}
+DECLARE_HWP(ody_stopclocks, const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+            const StopClocksFlags i_stopclocks_flags);
+
 
 #endif

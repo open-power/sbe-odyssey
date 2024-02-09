@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -34,11 +34,6 @@
 
 #include <fapi2.H>
 
-typedef fapi2::ReturnCode (*ody_cmdtable_interpreter_FP_t)(
-    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
-    const void*, const size_t,
-    const void*, const size_t);
-
 /// @brief Interpreter for boot ROM command tables
 ///
 /// This executes the command tables from SEEPROM like the boot ROM would.
@@ -54,10 +49,7 @@ typedef fapi2::ReturnCode (*ody_cmdtable_interpreter_FP_t)(
 /// @return  FAPI2_RC_FALSE   if command table execution failed and the SBE would have halted
 /// @return  FAPI2_RC_INVALID_PARAMETER if either command table is malformed
 /// @return  FAPI error code  if another FAPI error occurred, such as a SCOM error
-extern "C"
-{
-    fapi2::ReturnCode ody_cmdtable_interpreter(
-        const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
-        const void* i_main_table, const size_t i_main_table_size,
-        const void* i_cust_table, const size_t i_cust_table_size);
-}
+DECLARE_HWP(ody_cmdtable_interpreter,
+            const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+            const void* i_main_table, const size_t i_main_table_size,
+            const void* i_cust_table, const size_t i_cust_table_size);

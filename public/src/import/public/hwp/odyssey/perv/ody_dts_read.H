@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -87,19 +87,12 @@ static inline int ody_dts_get_calibrated_temp(
     return result_shifted >> 18;
 }
 
-typedef fapi2::ReturnCode (*ody_dts_read_FP_t)(
-    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
-    int16_t& o_temperature);
-
 /// @brief Read the (single) DTS on Odyssey and return a calibrated temp value
 ///
 /// @param[in]   i_target        Odyssey chip to read out
 /// @param[out]  o_temperature   Calibrated temperature reading
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-extern "C"
-{
-    fapi2::ReturnCode ody_dts_read(
-        const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
-        int16_t& o_temperature);
-}
+DECLARE_HWP(ody_dts_read,
+            const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+            int16_t& o_temperature);
