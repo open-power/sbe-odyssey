@@ -199,7 +199,6 @@ ReturnCode istep::sbeExecuteIstep(const uint8_t i_major, const uint8_t i_minor)
 
     if (isSpiParityError()) // If true call saveoff and halt
     {
-        __g_isParityError = 1;
         __sbe_register_saveoff();
     }
 

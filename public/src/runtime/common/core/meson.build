@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -43,7 +43,8 @@ infile_c = ['sbeSpMsg.C',
             'istep.C',
             'ipl.C',
             'istepIplUtils.C',
-            'sbebootutils.C'
+            'sbebootutils.C',
+            'sbeexceptionhandler.C',
            ]
 
 abs_runtime_cmn_core_c_path = []

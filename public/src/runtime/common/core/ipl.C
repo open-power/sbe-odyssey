@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2017,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2017,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -66,7 +66,6 @@ void ipl::sbeAutoBoot()
 
                 if (isSpiParityError()) // If true call saveoff and halt
                 {
-                    __g_isParityError = true;
                     __sbe_register_saveoff();
                 }
 
