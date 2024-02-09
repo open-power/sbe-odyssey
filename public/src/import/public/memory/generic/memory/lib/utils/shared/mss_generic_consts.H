@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -135,17 +135,6 @@ enum conversions
 enum row_repair_data
 {
     ROW_REPAIR_BYTES_PER_RANK = 4,
-    ROW_REPAIR_DRAM_POS = 0,
-    ROW_REPAIR_DRAM_POS_LEN = 5,
-    ROW_REPAIR_SRANK = 5,
-    ROW_REPAIR_SRANK_LEN = 3,
-    ROW_REPAIR_BANK_GROUP = 8,
-    ROW_REPAIR_BANK_GROUP_LEN = 2,
-    ROW_REPAIR_BANK = 10,
-    ROW_REPAIR_BANK_LEN = 3,
-    ROW_REPAIR_ROW_ADDR = 13,
-    ROW_REPAIR_ROW_ADDR_LEN = 18,
-    ROW_REPAIR_VALID = 31,
 };
 
 enum generic_sizes
@@ -1149,7 +1138,7 @@ enum preipl_prbs_time
 ///
 /// @brief Supported DIMM speed equality deliberations
 ///
-enum speed_equality
+enum class speed_equality
 {
     NOT_EQUAL_DIMM_SPEEDS = 0, ///< denotes all DIMMs don't have the same speed
     EQUAL_DIMM_SPEEDS = 1, ///< denotes all DIMMs have the same speed
@@ -1185,7 +1174,7 @@ enum rev
     RDIMM_MAX = V1_1,
     LRDIMM_MAX = V1_2,
     DDIMM_DDR4_MAX = V0_4,
-    DDIMM_DDR5_MAX = V0_0,
+    DDIMM_DDR5_MAX = V0_7,
 };
 
 ///
