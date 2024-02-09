@@ -1641,6 +1641,15 @@
   <entry name="ATTR_ODY_DQS_TRACKING_PERIOD_INIT">
     <value>5</value>
   </entry>
+  <entry name="ATTR_ODY_THERMAL_SENSOR_DIFF_PREVIOUS_VALUE">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_MEM_EFF_THERM_SENSOR_DIFF_USAGE">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_MEM_EFF_THERM_SENSOR_DIFF_AVAIL">
+    <value>0</value>
+  </entry>
   <entry name="ATTR_ODY_MRR_ODT_TERM">
     <value>1</value>
   </entry>
