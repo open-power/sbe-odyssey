@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,21 +39,9 @@
 #include <fapi2.H>
 
 //------------------------------------------------------------------------------
-// Structure definitions
-//------------------------------------------------------------------------------
-// Function pointer typedef definition for HWP call support
-typedef fapi2::ReturnCode(*ody_getsram_FP_t) (
-    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
-    const uint64_t,
-    const uint32_t,
-    uint8_t*);
-
-//------------------------------------------------------------------------------
 // Function prototype
 //------------------------------------------------------------------------------
 //
-
-extern "C" {
 
 ///
 /// @brief Read data from Odyssey SRAM
@@ -65,10 +53,8 @@ extern "C" {
 ///
 /// @return FAPI_RC_SUCCESS if success, else error code
 ///
-    fapi2::ReturnCode ody_getsram(
-        const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
-        const uint64_t i_offset,
-        const uint32_t i_bytes,
-        uint8_t* o_data);
-
-} //extern "C"
+DECLARE_HWP(ody_getsram,
+            const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+            const uint64_t i_offset,
+            const uint32_t i_bytes,
+            uint8_t* o_data);

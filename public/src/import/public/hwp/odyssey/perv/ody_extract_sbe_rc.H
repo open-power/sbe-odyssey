@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -38,17 +38,12 @@
 
 #include <fapi2.H>
 
-typedef fapi2::ReturnCode (*ody_extract_sbe_rc_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&, bool, bool);
-
 /// @brief To look for any correctable errors on the SPPE, OTPROM, PIBMEM & PNOR.
 ///
 /// @param[in]     i_target           Reference to TARGET_TYPE_OCMB_CHIP target
 /// @param[in]     i_set_sdb          To program the chip to set SDB (default True as its most used)
 /// @param[in]     i_use_scom         True : prefer scom over OMI interface; False : prefer cfam. (default True)
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-extern "C"
-{
-    fapi2::ReturnCode ody_extract_sbe_rc(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
-                                         bool i_set_sdb = true,
-                                         bool i_use_scom = true);
-}
+DECLARE_HWP(ody_extract_sbe_rc, const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+            bool i_set_sdb = true,
+            bool i_use_scom = true);

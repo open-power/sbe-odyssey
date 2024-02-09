@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -43,8 +43,7 @@
 // *HWP Consumed by     : FSP
 //------------------------------------------------------------------------------
 
-#ifndef _ODY_GETTRACEARRAY_H_
-#define _ODY_GETTRACEARRAY_H_
+#pragma once
 
 //------------------------------------------------------------------------------
 // Includes
@@ -78,40 +77,27 @@ const uint32_t TA_TRACE_BASE_SCOM      = 0x00010400;
 // maximum trace array entries supported by Odyssey chip design
 const uint32_t TRACEARRAY_NUM_ROWS = 128;
 
-// function pointer typedef definition for HWP call support
-typedef ReturnCode
-(*ody_gettracearray_FP_t)(const Target<TARGET_TYPE_OCMB_CHIP>&,
-                          const poz_gettracearray_args&,
-                          hwp_data_ostream&);
-
-extern "C"
-{
-
-
 //------------------------------------------------------------------------------
 // Function prototype
 //------------------------------------------------------------------------------
 
-    /**
-     * @brief Retrieve trace array data from selected trace array via SCOM,
-     *        optionally performing trace stop (prior to dump) and/or
-     *        trace restart (after dump)
-     *
-     * @param[in] i_target  Chip or chiplet target.
-     * @param[in] i_args    Argument structure with additional parameters
-     * @param[out] o_stream Trace array stream. Will contain all trace entries read
-     *                  from the array concatenated, starting with the oldest trace
-     *                  entry and ending with the newest.
-     * @return FAPI2_RC_SUCCESS
-     *             if trace array dump sequence completes successfully,
-     *         RC_PROC_GETTRACEARRAY_TRACE_RUNNING
-     *             if trace array is running when dump collection is attempted,
-     *         else FAPI getscom/putscom return code for failing operation
-     */
-    ReturnCode ody_gettracearray(const Target<TARGET_TYPE_OCMB_CHIP>& i_target,
-                                 const poz_gettracearray_args& i_args,
-                                 hwp_data_ostream& o_stream);
-
-} // extern "C"
-
-#endif // _ODY_GETTRACEARRAY_H_
+/**
+ * @brief Retrieve trace array data from selected trace array via SCOM,
+ *        optionally performing trace stop (prior to dump) and/or
+ *        trace restart (after dump)
+ *
+ * @param[in] i_target  Chip or chiplet target.
+ * @param[in] i_args    Argument structure with additional parameters
+ * @param[out] o_stream Trace array stream. Will contain all trace entries read
+ *                  from the array concatenated, starting with the oldest trace
+ *                  entry and ending with the newest.
+ * @return FAPI2_RC_SUCCESS
+ *             if trace array dump sequence completes successfully,
+ *         RC_PROC_GETTRACEARRAY_TRACE_RUNNING
+ *             if trace array is running when dump collection is attempted,
+ *         else FAPI getscom/putscom return code for failing operation
+ */
+DECLARE_HWP(ody_gettracearray,
+            const Target<TARGET_TYPE_OCMB_CHIP>& i_target,
+            const poz_gettracearray_args& i_args,
+            hwp_data_ostream& o_stream);

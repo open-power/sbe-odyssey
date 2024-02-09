@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -34,16 +34,10 @@
 
 #include <fapi2.H>
 
-typedef fapi2::ReturnCode (*ody_sbe_hreset_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&, bool);
-
 /// @brief       Applying hreset for Ody chip
 /// @param[in]   i_target         Reference to TARGET_TYPE_OCMB_CHIP
 /// @param[in]   i_use_scom_path  Set it to true to use SCOM Path (Default is CFAM Path)
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 
-extern "C"
-{
-    fapi2::ReturnCode ody_sbe_hreset(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
-                                     bool i_use_scom_path = false);
-
-}
+DECLARE_HWP(ody_sbe_hreset, const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+            bool i_use_scom_path = false);

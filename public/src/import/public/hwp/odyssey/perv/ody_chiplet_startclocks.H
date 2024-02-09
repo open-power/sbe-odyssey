@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -34,14 +34,9 @@
 
 #include <fapi2.H>
 
-typedef fapi2::ReturnCode (*ody_chiplet_startclocks_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
-
 /// @brief Align and start chiplet clocks, drop chiplet fence
 ///
 /// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-extern "C"
-{
-    fapi2::ReturnCode ody_chiplet_startclocks(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
-}
+DECLARE_HWP(ody_chiplet_startclocks, const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
