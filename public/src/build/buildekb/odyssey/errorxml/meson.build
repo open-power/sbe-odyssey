@@ -28,7 +28,6 @@ odyssey_error_xml_files = [
     'ody_scratch_regs_errors.xml',
     'ody_dts_read_errors.xml',
     'ody_omi_hss_ppe_load_errors.xml',
-    'ody_omi_train_check_errors.xml',
     'ody_sbe_tracearray_errors.xml',
     'ody_sbe_common_errors.xml',
     ]
