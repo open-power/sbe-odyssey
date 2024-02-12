@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -31,6 +31,7 @@
 #include "file_access.H"
 #include "filenames.H"
 #include <fapi2_attribute_service.H>
+#include "sbeCmdGetCapabilities.H"
 
 #define DUMP_DATA_LAYOUT_VERSION 0x3
 
@@ -205,11 +206,20 @@ class sbeCollectDump
             //Populate dump header struct with EKB Commit ID
             fapi2::seeprom_hwp_data_istream stream((uint32_t*)iv_hdctPakSecDetails.iv_startAddr,
                                             sizeof(uint64_t));
-            uint32_t msbEkbIdValue, lsbEkbIdValue;
-            stream.get(msbEkbIdValue), stream.get(lsbEkbIdValue);
+
+            //Get EKB commit-Id from Info.txt file
+            uint32_t buildDate = 0;
+            uint64_t commitId = 0;
+            char tag[BUILD_TAG_CHAR_MAX_LENGTH] = {0};
+            uint32_t rc = loadAndParseInfoTxt(ekb_info_file_name, CU_IMAGES::EKB, commitId, buildDate, tag);
+            if (rc != SBE_SEC_OPERATION_SUCCESSFUL)
+            {
+                SBE_ERROR(SBE_FUNC " loadAndParseInfoTxt failed for image [%d] from [%s]. "\
+                                "RC[0x%08x]", CU_IMAGES::EKB, ekb_info_file_name, rc);
+            }
+
             iv_dumpHeader.chipTypeToEncode = getDumpHdrChipTypeToEncode();
-            iv_dumpHeader.hdctVer = (((uint64_t)msbEkbIdValue << 32 ) |
-                                    ((uint64_t)lsbEkbIdValue));
+            iv_dumpHeader.hdctVer = commitId;
             SBE_INFO("EKB Commit ID: 0x%.8x%.8x ",
                     SBE::higher32BWord(iv_dumpHeader.hdctVer),
                     SBE::lower32BWord(iv_dumpHeader.hdctVer));
