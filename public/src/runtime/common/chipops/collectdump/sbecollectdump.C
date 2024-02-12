@@ -77,8 +77,8 @@ hdctPakSecDetails::hdctPakSecDetails()
         // get the start address using loadEmbeddedFile api
         iv_endAddr = iv_startAddr + imageSize;
         //Set currAddr to start of HDCT row
-        iv_currAddr = iv_startAddr + HDCT_BIN_COMMIT_ID_SIZE;
-        //Dump start after EKB CommitID
+        iv_currAddr = iv_startAddr;
+        //Dump start with iv_currAddr
         SBE_INFO("hdctPakSecDetails:: Start Offset: [0x%08X] Size: [0x%08X] End offset: [0x%08X]",
                                           iv_startAddr, imageSize, iv_endAddr );
     }
