@@ -340,7 +340,7 @@ def get_tables(id, xlist):
                 #         {base_address1 : [chiplet range1, chiplet range2]}       #
                 #..................................................................#
                 # Eg: [01ABCDEF, 02ABCDEF, 01AB1234, 02AB1234, 04ABCDEF, 05ABCDEF, #
-                #      10UVWXYZ, 11UVWXYZ, 04UVWXYZ, 05UVWXYZ]                     #
+                #      10UVWXYZ, 11UVWXYZ, 04UVWXYZ, 05UVWXYZ]                     #
                 #                           ||                                     #
                 #                           \/                                     #
                 #  {ABCDEF : [0102, 0405], AB1234:[0102], UVWXYZ : [1011, 0405]}   #
@@ -459,8 +459,8 @@ def get_tables(id, xlist):
                 # Eg:{0102 :[ABCDEF,AB1234], 0405 :[ABCDEF,UVWXYZ], 1011 :[UVWXYZ]}#
                 #                           ||                                     #
                 #                           \/                                     #
-                #               {0102 : {AB : [CDEF, 1234]},                       #
-                #                0405 : {AB : [CDEF], UV : [WXYZ]},                #
+                #               {0102 : {AB : [CDEF, 1234]},                       #
+                #                0405 : {AB : [CDEF], UV : [WXYZ]},                #
                 #                1011 : {UV : [WXYZ]}}                             #
                 # -----------------------------------------------------------------#
             """
@@ -518,8 +518,8 @@ def get_tables(id, xlist):
                 #                           \/                                     #
                 #                  table1, table2, table3                          #
                 #..................................................................#
-                # Eg:           {0102 : {AB : [CDEF, 1234]},                       #
-                #                0405 : {AB : [CDEF], UV : [WXYZ]},                #
+                # Eg:           {0102 : {AB : [CDEF, 1234]},                       #
+                #                0405 : {AB : [CDEF], UV : [WXYZ]},                #
                 #                1011 : {UV : [WXYZ]}}                             #
                 #                           ||                                     #
                 #                           \/                                     #
