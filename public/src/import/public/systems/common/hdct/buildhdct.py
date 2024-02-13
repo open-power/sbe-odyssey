@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2023
+# Contributors Listed Below - COPYRIGHT 2023,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -53,7 +53,7 @@ import os, sys, glob
 def main():
 
     #Get the latest commit id.
-    gitCommand = "git rev-parse HEAD"
+    gitCommand = "git rev-parse --short=16 HEAD"
     commitId = os.popen(gitCommand).read()
 
     # Accessing the command-line argument

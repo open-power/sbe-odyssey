@@ -114,10 +114,7 @@ def copyHdctFile(filenames, generation, hashType, hashValue, saveLookup):
 
     # For the ekb, all firmware stores is the first 16 characters of the hash
     # That is all we need for the dir hashvalue
-    if (hashType == "ekb"):
-        hashDir = hashValue[:16]
-    else:
-        hashDir = hashValue
+    hashDir = hashValue
 
     # Add the type and value to the gsaPath
     gsaPath = os.path.join(gsaPath, hashType, hashDir[0], hashDir)

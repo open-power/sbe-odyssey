@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2023
+# Contributors Listed Below - COPYRIGHT 2023,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -108,11 +108,6 @@ def createHDCTTxt(HDCTBinFileName, parserUsage = "ppe", stringHashDict = None):
     file = open(HDCTBinFileName,"rb" )
 
     # out.setConsoleLevel(out.levels.DEBUG)
-
-    # Read and process the ekb commit ID from HDCT.bin
-    byte = file.read(8)
-    ekbCommitIDBin = binascii.hexlify(bytearray(byte)).upper()
-    out.debug("EKB Commit ID from HDCT.bin: %s" % ekbCommitIDBin.decode('utf8'))
 
     # Our return type will contain all the HDCT.txt decode entries from HDCT.bin.
     hdctTxtEntries = list()
@@ -254,4 +249,4 @@ def createHDCTTxt(HDCTBinFileName, parserUsage = "ppe", stringHashDict = None):
             break
     file.close()
 
-    return (ekbCommitIDBin, hdctTxtEntries)
+    return (hdctTxtEntries)

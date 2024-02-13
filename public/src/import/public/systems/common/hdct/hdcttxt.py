@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2023
+# Contributors Listed Below - COPYRIGHT 2023,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -259,7 +259,7 @@ except IOError as e :
     sys.exit(1)
 
 # Parse the HDCT.bin file
-(commitId, hdctTxtEntries) = hdctTxtUtils.createHDCTTxt(hdctBinFileName, "ekb", strHashDict)
+hdctTxtEntries = hdctTxtUtils.createHDCTTxt(hdctBinFileName, "ekb", strHashDict)
 
 # Remove comment line,new lines from original HDCT.txt
 processesHdctTxt(hdctTxtFileName, ecLevel)
