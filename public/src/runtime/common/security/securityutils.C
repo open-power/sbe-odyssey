@@ -87,8 +87,8 @@ softSecurityCheckLvl securityUtils::getSoftSecurityCheckLvl(bool isUserRequested
 
     }while(false);
 
-    SBE_INFO(SBE_FUNC "Has user requested to disable soft security check via scratch 11: %x, "
-                          "Soft security check level: %x",
+    SBE_INFO(SBE_FUNC "has user requested to disable soft security check via scratch 11: %x,"
+                          " Soft security check level: %x",
                             isUserRequestedDisable, softSecurityCheckLvlForFunc);
 
     SBE_EXIT(SBE_FUNC);
@@ -102,10 +102,10 @@ void securityUtils::setSoftSecurityCheckLvl()
     SBE_ENTER(SBE_FUNC)
 
     iv_scomFilteringCheckLvl = getSoftSecurityCheckLvl(SbeRegAccess::theSbeRegAccess().getDisableScomFilteringBit());
-    SBE_INFO(SBE_FUNC "Soft security check level for scom filtering functionality %d", iv_scomFilteringCheckLvl);
+    SBE_INFO(SBE_FUNC "Soft security check level for scom filtering functionality is %d", iv_scomFilteringCheckLvl);
 
     iv_invalidAddrCheckLvl = getSoftSecurityCheckLvl(SbeRegAccess::theSbeRegAccess().getDisableInvalidScomAddrBit());
-    SBE_INFO(SBE_FUNC "Soft security check level for invalid scom address check functionality %d", iv_invalidAddrCheckLvl);
+    SBE_INFO(SBE_FUNC "Soft security check level for invalid scom address check functionality is %d", iv_invalidAddrCheckLvl);
 
     iv_allowAttrOverrideLvl = getSoftSecurityCheckLvl(SbeRegAccess::theSbeRegAccess().getAllowAttrOverrideBit());
     SBE_INFO(SBE_FUNC "Soft security check level for allow attribute override functionality %d", iv_allowAttrOverrideLvl);

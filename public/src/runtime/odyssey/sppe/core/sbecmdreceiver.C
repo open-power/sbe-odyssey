@@ -117,7 +117,7 @@ void sbeCommandReceiver_routine(void *i_pArg)
                 // If FIFO reset is requested,
                 if (l_rc == SBE_FIFO_RESET_RECEIVED)
                 {
-                    SBE_ERROR(SBE_FUNC "SBE Interface = 0x%08x reset received",
+                    SBE_ERROR(SBE_FUNC "SBE Interface 0x%08x reset received",
                                        curInterface);
                     break;
                 }
