@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -70,7 +70,7 @@ uint32_t sbeGetMemTrainData(uint8_t *i_pArg)
         // Validate the params.
         if(!reqMsg.isValidOperations())
         {
-            SBE_ERROR(SBE_FUNC "Operation is not correct. Operation is: [%02X]",
+            SBE_ERROR(SBE_FUNC "Operation is not correct,  Operation is: [%02X]",
                                 (uint32_t)reqMsg.operation);
             hdr.setStatus( SBE_PRI_INVALID_DATA,
                            SBE_SEC_INVALID_PARAMS);

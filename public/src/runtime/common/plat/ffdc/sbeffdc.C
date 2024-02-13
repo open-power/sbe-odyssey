@@ -129,7 +129,7 @@ void SbeFFDCPackage::updateSBEpackageDataHeader(void)
         SBE_INFO(SBE_FUNC" Enable SBE_FFDC_ATTR_DATA with lenInWords[%d]",
                                        (uint32_t)iv_sbeAttrBlob.field.fieldLen);
     }
-    SBE_INFO(SBE_FUNC" SBE Trace and Attr  data in words[%d] ",
+    SBE_INFO(SBE_FUNC" SBE Trace and Attr data [%d] words",
                                      uint32_t(iv_ffdcPackageHeader.lenInWords));
 
     return;

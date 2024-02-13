@@ -684,7 +684,7 @@ ReturnCode i2c::isI2cResetClean()
 
         if(I2CC_EXPECTED_CLEAN_RESET_STATUS != l_i2cc_status_data_act.value)
         {
-            SBE_ERROR(SBE_FUNC "Unexpected state after i2cc reset (actual: 0x%08X%08X, expected: 0x%08X%08X) \
+            SBE_ERROR(SBE_FUNC "Unexpected state after i2cc  reset (actual: 0x%08X%08X, expected: 0x%08X%08X) \
                                 NOTE: max_num_of_ports is not checked ",
                         SBE::higher32BWord(l_i2cc_status_data_act.value), SBE::lower32BWord(l_i2cc_status_data_act.value),
                         SBE::higher32BWord(I2CC_EXPECTED_CLEAN_RESET_STATUS), SBE::lower32BWord(I2CC_EXPECTED_CLEAN_RESET_STATUS));
@@ -698,7 +698,7 @@ ReturnCode i2c::isI2cResetClean()
                             .set_ENGINE(iv_engine)
                             .set_DEVICEADDR(iv_devAddr)
                             .set_RETRYCOUNT(iv_curr_retry_count),
-                            "Unexpected state after i2cc reset");
+                            "Unexpected state after i2cc  reset");
         }
 
     }while(false);

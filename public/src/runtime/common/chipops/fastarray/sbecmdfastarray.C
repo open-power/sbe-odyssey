@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -152,7 +152,7 @@ uint32_t sbeControlFastArrayWrap( fapi2::sbefifo_hwp_data_istream& i_getStream,
 
         if(fapiRc != FAPI2_RC_SUCCESS)
         {
-            SBE_ERROR(SBE_FUNC" HWP failure:logTargetType [0x%02X] "
+            SBE_ERROR(SBE_FUNC" HWP failure: logTargetType [0x%02X] "
                       "chipletId [0x%02X] flags [0x%02X] ",
                       static_cast<uint8_t>(req.logTargetType),
                       static_cast<uint8_t>(req.instanceId),
