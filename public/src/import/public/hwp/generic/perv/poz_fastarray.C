@@ -67,6 +67,7 @@ enum fastarray_constants
     MAX_CARE_WORDS          = 100,
     NUM_FLUSH_CYCLES        = 16,  // 4 should be plenty but let's go for broke
     FA_TAG_HEADER           = 0x4E,
+    FA_TAG_FAD_VERSION      = 0xFA,
     FA_TAG_SCAN_IMAGE       = 0x5C,
     FA_TAG_SCAN_ZERO        = 0x50,
     FA_TAG_CAREDATA         = 0xCA,
@@ -111,6 +112,9 @@ enum fastarray_constants
  *
  *
  * Output stream format description:
+ *
+ * The output stream optionally starts with a FA_TAG_FAD_VERSION TLV to indicate the fad file and version used
+ * to generate the dump. This information is copied from the control file if it exists.
  *
  * The output stream format is identical to the input stream format minus the initial ring address word, except
  * after each tuple the read data is appended in a separate byte_ostream.
@@ -658,6 +662,18 @@ ReturnCode poz_fastarray(
                         .set_HEADER_VERSION(l_header.version).set_HWP_VERSION(FA_FORMAT_VERSION),
                         "Control data version mismatch: got/exp = %d/%d",
                         l_header.version, FA_FORMAT_VERSION);
+        }
+        else if (l_tag == FA_TAG_FAD_VERSION)
+        {
+            FAPI_INF("FAD version block found, copying to output");
+            FAPI_TRY(o_dump_data.put(l_tlv));
+
+            for (uint32_t i = 0; i < l_length; i++)
+            {
+                uint32_t l_word;
+                FAPI_TRY(i_instructions.get(l_word));
+                FAPI_TRY(o_dump_data.put(l_word));
+            }
         }
         else if (l_tag == FA_TAG_SCAN_IMAGE)
         {
