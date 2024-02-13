@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -37,8 +37,10 @@
 #define _MSS_PMIC_ATTR_ACCESSORS_MANUAL_H_
 
 #include <fapi2.H>
-#include <mss_pmic_attribute_getters.H>
-#include <mss_pmic_attribute_setters.H>
+#ifndef __PPE__
+    #include <mss_pmic_attribute_getters.H>
+    #include <mss_pmic_attribute_setters.H>
+#endif
 #include <lib/utils/pmic_consts.H>
 
 namespace mss
@@ -53,7 +55,7 @@ namespace attr
 // Attribute getter pointer for manufacturer/vendor ID
 typedef fapi2::ReturnCode (*mfg_id_attr_ptr)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
         uint16_t& o_value);
-
+#ifndef __PPE__
 // Manufacturer / Vendor ID
 static constexpr mfg_id_attr_ptr get_mfg_id[] =
 {
@@ -79,7 +81,6 @@ static constexpr pmic_attr_ptr get_revision[] =
     mss::attr::get_pmic2_revision,
     mss::attr::get_pmic3_revision
 };
-
 // Voltage Setting
 static constexpr pmic_attr_ptr get_swa_voltage_setting[] =
 {
@@ -88,6 +89,7 @@ static constexpr pmic_attr_ptr get_swa_voltage_setting[] =
     mss::attr::get_pmic2_swa_voltage_setting,
     mss::attr::get_pmic3_swa_voltage_setting
 };
+
 static constexpr pmic_attr_ptr get_swb_voltage_setting[] =
 {
     mss::attr::get_pmic0_swb_voltage_setting,
@@ -139,7 +141,6 @@ static constexpr pmic_attr_ptr get_swd_voltage_range_select[] =
     mss::attr::get_pmic2_swd_voltage_range_select,
     mss::attr::get_pmic3_swd_voltage_range_select
 };
-
 // Voltage Offset
 static constexpr pmic_attr_ptr_signed get_swa_voltage_offset[] =
 {
@@ -201,7 +202,6 @@ static constexpr pmic_attr_ptr get_swd_voltage_coarse_offset[] =
 };
 
 // EFD Fields
-
 // Offset
 static constexpr pmic_attr_ptr_signed get_efd_swa_voltage_offset[] =
 {
@@ -234,7 +234,6 @@ static constexpr pmic_attr_ptr_signed get_efd_swd_voltage_offset[] =
     mss::attr::get_efd_pmic2_swd_voltage_offset,
     mss::attr::get_efd_pmic3_swd_voltage_offset
 };
-
 // Current limiter warnings (EFD)
 static constexpr pmic_attr_ptr get_swa_current_warning[] =
 {
@@ -267,7 +266,6 @@ static constexpr pmic_attr_ptr get_swd_current_warning[] =
     mss::attr::get_pmic2_swd_current_warning,
     mss::attr::get_pmic3_swd_current_warning
 };
-
 // These arrays allow us to dynamically choose the right attribute getter at runtime based on the rail and mss::pmic::id
 static constexpr const pmic_attr_ptr* get_volt_setting[] =
 {
@@ -276,7 +274,6 @@ static constexpr const pmic_attr_ptr* get_volt_setting[] =
     get_swc_voltage_setting,
     get_swd_voltage_setting
 };
-
 static constexpr const pmic_attr_ptr* get_volt_range_select[] =
 {
     get_swa_voltage_range_select,
@@ -300,7 +297,6 @@ static constexpr const pmic_attr_ptr* get_volt_coarse_offset[] =
     get_swc_voltage_coarse_offset,
     get_swd_voltage_coarse_offset
 };
-
 // EFD Offset + Direction functions
 static constexpr const pmic_attr_ptr_signed* get_efd_volt_offset[] =
 {
@@ -309,7 +305,6 @@ static constexpr const pmic_attr_ptr_signed* get_efd_volt_offset[] =
     get_efd_swc_voltage_offset,
     get_efd_swd_voltage_offset
 };
-
 // Current limiter warning threshold
 static constexpr const pmic_attr_ptr* get_current_warning[] =
 {
@@ -444,6 +439,7 @@ static constexpr pmic_attr_ptr get_phase_comb[] =
     mss::attr::get_pmic2_phase_comb,
     mss::attr::get_pmic3_phase_comb
 };
+#endif
 
 ///
 /// @brief Get pmic n mode state for the given PMIC ID

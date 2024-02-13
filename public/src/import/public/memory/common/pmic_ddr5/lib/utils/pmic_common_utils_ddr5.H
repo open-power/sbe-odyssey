@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -44,8 +44,10 @@
 #include <i2c_pmic.H>
 #include <pmic_consts.H>
 #include <pmic_common_utils.H>
-#include <mss_pmic_attribute_getters.H>
 #include <generic/memory/lib/utils/find.H>
+#ifndef __PPE__
+    #include <mss_pmic_attribute_getters.H>
+#endif
 
 namespace mss
 {
