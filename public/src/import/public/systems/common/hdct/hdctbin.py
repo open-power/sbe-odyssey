@@ -642,7 +642,6 @@ def main():
     try:
         for x in jsonparse.getEcLevel():
             y = open(filenames[str(hex(x)) + "_bin"], "wb")
-            y.write(struct.pack(">Q",int(ekbCommitID[0:16], 16)))
             fdDict[x] = y
     except IOError as e :
         out.error( "I/O error File for hdct.bin file: %s " % (filenames[str(hex(x)) + "_bin"]))
