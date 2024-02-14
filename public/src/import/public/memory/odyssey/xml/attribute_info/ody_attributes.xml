@@ -411,7 +411,8 @@
         <enum>
             40_OHM  = 40,
             120_OHM = 120,
-            240_OHM = 240
+            240_OHM = 240,
+            RESERVED = 0xFF
         </enum>
         <default>240_OHM</default>
         <writeable/>
