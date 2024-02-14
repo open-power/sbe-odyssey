@@ -532,7 +532,11 @@ ISTEP(1, 12, "ph_sppe_update", "BMC")
 ISTEP(1, 13, "ph_sppe_attr_setup", "SPPE")
 
 def p11s_sppe_attr_setup():
-    pass
+    ## Set up SBE multipipe unit
+    mod_pipe_setup(PC_ADU, false, PC_SPPE, true,
+                   PC_GSD2PIB, false, PC_SBE, true,
+                   PC_NONE, false, PC_NONE, false,
+                   PC_SPPE, true, PC_SBE, true)
 
 def ody_sppe_attr_setup():
     pass
@@ -653,12 +657,6 @@ def p11s_tp_init():
     mod_hangpulse_setup(all good PAXO, 9, {{2, 1, 0, 1}})
     mod_hangpulse_setup(all good TBUS, 9, {{2, 1, 0, 1}})
     mod_hangpulse_setup(all good MC,   9, {{2, 1, 0, 1}})
-
-    ## Set up SBE multipipe unit
-    mod_pipe_setup(PC_ADU, false, PC_SPPE, true,
-                   PC_GSD2PIB, false, PC_SBE, true,
-                   PC_NONE, false, PC_NONE, false,
-                   PC_SPPE, true, PC_SBE, true)
 
     ## Unmask TP PLL unlock reporting
     if not ATTR_CP_PLLFLT_BYPASS:
@@ -931,7 +929,11 @@ def p11s_sbe_attr_setup():
     pass # provided by Thi
 
 def p11t_sbe_attr_setup():
-    pass # provided by Thi
+    ## Set up SBE multipipe unit
+    mod_pipe_setup(PC_MMIO, false, PC_SBE, true,
+                   PC_GSD2PIB, false, PC_SBE, true,
+                   PC_NONE, false, PC_NONE, false,
+                   PC_NONE, false, PC_NONE, false)
 
 ISTEP(2, 17, "pc_pll_initf", "TSBE")
 
@@ -1015,12 +1017,6 @@ def p11t_tp_init():
     # We cannot set up constant hang pulses here yet since the generation
     # logic is in the TBUS chiplet. The constant hang pulse setup for Tap
     # will happen at the end of p11t_chiplet_startclocks.
-
-    ## Set up SBE multipipe unit
-    mod_pipe_setup(PC_MMIO, false, PC_SBE, true,
-                   PC_GSD2PIB, false, PC_SBE, true,
-                   PC_NONE, false, PC_NONE, false,
-                   PC_NONE, false, PC_NONE, false)
 
     ## Set up special NET_CTRL1 init value for EQs
     with all EQ chiplets via multicast:
