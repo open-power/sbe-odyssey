@@ -1648,6 +1648,15 @@
   <entry name="ATTR_ODY_DQS_TRACKING_PERIOD_INIT">
     <value>5</value>
   </entry>
+  <entry name="ATTR_ODY_DQS_TRACKING_TEMP_THRESHOLD">
+    <value>5</value>
+  </entry>
+  <entry name="ATTR_ODY_DQS_TRACKING_COUNT_THRESHOLD">
+    <value>3600</value>
+  </entry>
+  <entry name="ATTR_ODY_DQS_TRACKING_COUNT_SINCE_LAST_RECAL">
+    <value>0</value>
+  </entry>
   <entry name="ATTR_ODY_THERMAL_SENSOR_DIFF_PREVIOUS_VALUE">
     <value>0</value>
   </entry>
