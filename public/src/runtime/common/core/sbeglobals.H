@@ -92,6 +92,16 @@ typedef struct
      */
     PkSemaphore sbeSemAsyncProcess;
 
+    /**
+     * @brief Global semaphore for FFDC
+     *
+     *   This is used to make thread safety for FFDC.
+     *   This is used to protect like while adding a node no other thread can
+     *   Delete or modify at sametime and vice-versa.
+     *
+     */
+    PkSemaphore sbeSemFfdc;
+
 }SbeGlobalHandlerSemas_t;
 
 
