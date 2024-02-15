@@ -29,6 +29,8 @@
 #include "sbestates.H"
 #include "sbestatesutils.H"
 #include "sberegaccess.H"
+#include "pk_api.h"
+#include "sbeglobals.H"
 
 extern fapi2::pozFfdcData_t g_FfdcData;
 
@@ -361,6 +363,67 @@ static void ffdcUtils_checkScratchPtrCorruptionAndHalt (const void * i_addr)
     }
 }
 
+/**
+ * @brief ffdcUtils_SemaPend: This is a utility function
+ *                           Used to call pk_semaphore_pend
+ *
+ * @return: None (void)
+ *
+ */
+void ffdcUtils_SemaPend()
+{
+    // Declare all local variable here
+    int l_rcPk = PK_OK;
+
+    // Wait on a sbeSemFfdc semaphore
+    // It is used to acquire the resources, it means while adding the
+    // Node no other thread can delete/modify the addNextNode or
+    // While deleting the Node no other thread can add/modify the deleteLastNode .
+    l_rcPk = pk_semaphore_pend (
+                &SBE_GLOBAL->semphores.sbeSemFfdc, PK_WAIT_FOREVER);
+
+    // PK API failure
+    if (l_rcPk != PK_OK)
+    {
+        SBE_ERROR(" pk_semaphore_pend failed in addNextNode of FFDC infrastructure "
+                "l_rcPk=%d, SBE_GLOBAL->semphores.sbeSemFfdc.count=%d ,executing PK_HALT()",
+                l_rcPk, SBE_GLOBAL->semphores.sbeSemFfdc.count);
+
+        // If it's a semphore_pend error then halt.
+        pk_halt();
+    }
+
+}
+
+/**
+ * @brief ffdcUtils_SemaPost: This is a utility function
+ *                           Used to call pk_semaphore_post
+ *
+ * @return: None (void)
+ *
+ */
+void ffdcUtils_SemaPost()
+{
+    // Declare all local variable here
+    int l_rcPk = PK_OK;
+
+    // Release sbeSemFfdc semaphore
+    // It is used to release resource those acquired by semaphorepend
+    // So any other thread can acquire the resouces.
+    l_rcPk = pk_semaphore_post(&SBE_GLOBAL->semphores.sbeSemFfdc);
+    if (l_rcPk != PK_OK)
+    {
+        SBE_ERROR(" pk_semaphore_post failed in addNextNode of FFDC infrastructure "
+                    "l_rcPk=%d, SBE_GLOBAL->semphores.sbeSemFfdc.count=%d, executing PK_HALT()",
+                    l_rcPk, SBE_GLOBAL->semphores.sbeSemFfdc.count);
+
+        // If it's a semphore_post error then halting.
+        pk_halt();
+    }
+
+}
+
+
 
 #if defined(MINIMUM_FFDC_RE)
 /**
@@ -541,8 +604,11 @@ static void ffdcUtils_createScratchFullErrorRcPkg(uint32_t i_failedRc, uint32_t 
 
 void pozFfdcCtrl_t::addNextNode(const pozFfdcNode_t * i_newNode)
 {
-    ffdcUtils_checkScratchPtrCorruptionAndHalt ((const void *) i_newNode);
+    // Calling function to acquire the resource so no other
+    // Thread can modify/delete , while adding the node
+    ffdcUtils_SemaPend();
 
+    ffdcUtils_checkScratchPtrCorruptionAndHalt ((const void *) i_newNode);
     if ( !getHead() )
     {
         setHead(i_newNode);
@@ -552,6 +618,11 @@ void pozFfdcCtrl_t::addNextNode(const pozFfdcNode_t * i_newNode)
         pozFfdcNode_t * lastNode = getLastNode();
         lastNode->next = const_cast<pozFfdcNode_t *>(i_newNode);
     }
+
+    // Calling function to release the resources so any other
+    // Thread can acquire the resources
+    ffdcUtils_SemaPost();
+
 }
 
 #endif
@@ -587,6 +658,10 @@ static pozFfdcNode_t * ffdcUtils_getLastUeSpace (uint32_t i_rc = 0, uint16_t i_r
 
 void pozFfdcCtrl_t::deleteLastNode()
 {
+    // Calling function to acquire the resource so no other
+    // Thread can add/modify while deleting the Node
+    ffdcUtils_SemaPend();
+
     pozFfdcNode_t * node = (pozFfdcNode_t *) iv_firstCommitted;
     do
     {
@@ -610,7 +685,12 @@ void pozFfdcCtrl_t::deleteLastNode()
         // Free up the last node
         Heap::get_instance().scratch_free((const void*)node->next);
         node->next = nullptr;
-    }while(0);
+
+    } while(false);
+
+    // Calling function to release the resources so any other
+    // Thread can acquire the resources
+    ffdcUtils_SemaPost();
 }
 
 pozFfdcNode_t * pozFfdcCtrl_t::getLastNode()
@@ -1455,7 +1535,6 @@ void collectRegisters(
 #endif // MINIMUM_REG_COLLECTION
 
 } // namespace fapi2
-
 
 void plat_FfdcInit (void)
 {

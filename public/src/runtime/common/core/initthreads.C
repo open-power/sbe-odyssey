@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -66,6 +66,11 @@ uint32_t sbeInitSems(void)
             &SBE_GLOBAL->semphores.sbeSemAsyncProcess,
             0,
             MAX_PERIODIC_TIMER_SEMAPHORE_COUNT
+        },
+        {
+            &SBE_GLOBAL->semphores.sbeSemFfdc,
+            1,
+            0
         },
     };
 
