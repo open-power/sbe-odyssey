@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -67,8 +67,8 @@ fapi2::ReturnCode mod_restore_root_controls(
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_cbs_start(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    bool i_start_sbe = true,
-    bool i_scan0_clockstart = true);
+    const bool i_start_sbe = true,
+    const bool i_scan0_clockstart = true);
 
 /// @brief Switch pcbmux module
 /// -- enable the new path first and disable the old path.
@@ -79,7 +79,7 @@ fapi2::ReturnCode mod_cbs_start(
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_switch_pcbmux(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    mux_type i_path);
+    const mux_type i_path);
 
 /// @brief Switch pcbmux module using cfams
 /// -- enable the new path first and disable the old path.
@@ -90,7 +90,7 @@ fapi2::ReturnCode mod_switch_pcbmux(
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_switch_pcbmux_cfam(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    mux_type i_path);
+    const mux_type i_path);
 
 /// @brief Multicast setup module
 /// -- Determine required/current group members and update group memebership where needed.
@@ -103,9 +103,9 @@ fapi2::ReturnCode mod_switch_pcbmux_cfam(
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_multicast_setup(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    uint8_t i_group_id,
-    uint64_t i_chiplets,
-    fapi2::TargetState i_pgood_policy);
+    const uint8_t i_group_id,
+    const uint64_t i_chiplets,
+    const fapi2::TargetState i_pgood_policy);
 
 /// @brief Get chiplet by chiplet number module
 /// -- Given a chiplet number, plug the corresponding chiplet target into the output argument.
@@ -117,7 +117,7 @@ fapi2::ReturnCode mod_multicast_setup(
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_get_chiplet_by_number(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_ANY_POZ_CHIP > & i_target,
-    uint8_t i_chiplet_number,
+    const uint8_t i_chiplet_number,
     fapi2::Target < fapi2::TARGET_TYPE_PERV >& o_target);
 
 /// @brief Hangpulse setup module
@@ -130,7 +130,7 @@ fapi2::ReturnCode mod_get_chiplet_by_number(
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_hangpulse_setup(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
-    uint8_t i_pre_divider,
+    const uint8_t i_pre_divider,
     const hang_pulse_t* i_hangpulse_table);
 
 /// @brief Constant hangpulse setup module
@@ -143,7 +143,7 @@ fapi2::ReturnCode mod_hangpulse_setup(
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_constant_hangpulse_setup(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    uint32_t i_base_address,
+    const uint32_t i_base_address,
     const constant_hang_pulse_t i_hangpulses[4]);
 
 // Own namespace to hide the helper functions
