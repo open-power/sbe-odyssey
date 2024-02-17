@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -80,7 +80,7 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
 
     if (i_phases & PRE_SCAN0)
     {
-        FAPI_INF("Enable and reset chiplets");
+        FAPI_DBG("Enable and reset chiplets");
         NET_CTRL0 = 0;
         NET_CTRL0.set_PCB_EP_RESET(1);
         FAPI_TRY(NET_CTRL0.putScom_SET(l_chiplets_mc));
@@ -105,7 +105,7 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
 
         while (l_poll_count != 0)
         {
-            FAPI_INF("Reading HEARTBEAT_REG register to check HEARTBEAT_DEAD");
+            FAPI_DBG("Reading HEARTBEAT_REG register to check HEARTBEAT_DEAD");
             FAPI_TRY(HEARTBEAT_REG.getScom(l_chiplets_bitx));
 
             if (!HEARTBEAT_REG)
@@ -128,17 +128,17 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
 
         // We have to inhibit Pervasive flush until now because some Pervasive PLATs
         // are used for the sync mechanism.
-        FAPI_INF("Pull pervasive chiplet PLATs out of flush mode to be able to send sync pulses to other chiplets");
+        FAPI_DBG("Pull pervasive chiplet PLATs out of flush mode to be able to send sync pulses to other chiplets");
         CPLT_CTRL0 = 0;
         CPLT_CTRL0.set_FLUSHMODE_INH(1);
         FAPI_TRY(CPLT_CTRL0.putScom_SET(get_tp_chiplet_target(i_target)));
 
-        FAPI_INF("Enable Pervasive chiplet to send sync pulses to other chiplets");
+        FAPI_DBG("Enable Pervasive chiplet to send sync pulses to other chiplets");
         FAPI_TRY(SYNC_CONFIG.getScom(get_tp_chiplet_target(i_target)));
         SYNC_CONFIG.set_SYNC_PULSE_OUT_DIS(0);
         FAPI_TRY(SYNC_CONFIG.putScom(get_tp_chiplet_target(i_target)));
 
-        FAPI_INF("Set up clock controllers with sync pulse delay of %d cycles", i_sync_pulse_delay);
+        FAPI_DBG("Set up clock controllers with sync pulse delay of %d cycles", i_sync_pulse_delay);
         SYNC_CONFIG = 0;
         l_sync_pulse_delay = (i_sync_pulse_delay == 8) ? 0 : i_sync_pulse_delay - 1;
         SYNC_CONFIG.set_SYNC_PULSE_DELAY(l_sync_pulse_delay);
@@ -155,12 +155,12 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
         SYNC_CONFIG.set_SYNC_PULSE_INPUT_DIS(1);
         FAPI_TRY(SYNC_CONFIG.putScom(l_chiplets_mc));
 
-        FAPI_INF("Disable pervasive chiplet sending sync pulses to other chiplets");
+        FAPI_DBG("Disable pervasive chiplet sending sync pulses to other chiplets");
         FAPI_TRY(SYNC_CONFIG.getScom(get_tp_chiplet_target(i_target)));
         SYNC_CONFIG.set_SYNC_PULSE_OUT_DIS(1);
         FAPI_TRY(SYNC_CONFIG.putScom(get_tp_chiplet_target(i_target)));
 
-        FAPI_INF("Set up OPCG_ALIGN");
+        FAPI_DBG("Set up OPCG_ALIGN");
         OPCG_ALIGN = 0;
         OPCG_ALIGN.set_INOP_ALIGN(7);
         OPCG_ALIGN.set_INOP_WAIT(0);
@@ -171,7 +171,7 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
 
     if (i_phases & SCAN0_AND_UP)
     {
-        FAPI_INF("Align chiplets");
+        FAPI_DBG("Align chiplets");
         FAPI_TRY(mod_align_regions(l_chiplets_mc, cc::REGION_ALL));
 
         const cc::clock_region l_first_scan0 = static_cast<cc::clock_region>(
@@ -179,25 +179,25 @@ ReturnCode poz_chiplet_reset(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
         const cc::clock_region l_second_scan0 = static_cast<cc::clock_region>(
                 cc::REGION_ALL & i_scan0_stagger_mask);
 
-        FAPI_INF("scan0 all clock regions, scan types GPTR, TIME, REPR");
+        FAPI_DBG("scan0 all clock regions, scan types GPTR, TIME, REPR");
         FAPI_TRY(mod_scan0(l_chiplets_mc, l_first_scan0, cc::SCAN_TYPE_RTG));
 
         if (l_second_scan0)
         {
-            FAPI_INF("scan0 all clock regions, scan types GPTR, TIME, REPR (staggered part 2)");
+            FAPI_DBG("scan0 all clock regions, scan types GPTR, TIME, REPR (staggered part 2)");
             FAPI_TRY(mod_scan0(l_chiplets_mc, l_second_scan0, cc::SCAN_TYPE_RTG));
         }
 
-        FAPI_INF("scan0 all clock regions, scan types except GPTR, TIME, REPR");
+        FAPI_DBG("scan0 all clock regions, scan types except GPTR, TIME, REPR");
         FAPI_TRY(mod_scan0(l_chiplets_mc, l_first_scan0, cc::SCAN_TYPE_NOT_RTG));
 
         if (l_second_scan0)
         {
-            FAPI_INF("scan0 all clock regions, scan types except GPTR, TIME, REPR (staggered part 2)");
+            FAPI_DBG("scan0 all clock regions, scan types except GPTR, TIME, REPR (staggered part 2)");
             FAPI_TRY(mod_scan0(l_chiplets_mc, l_second_scan0, cc::SCAN_TYPE_NOT_RTG));
         }
 
-        FAPI_INF("Transfer partial good attributes into region PGOOD and PSCOM enable registers");
+        FAPI_DBG("Transfer partial good attributes into region PGOOD and PSCOM enable registers");
 
         for (auto& targ : l_chiplets_uc)
         {

@@ -67,11 +67,11 @@ ReturnCode mod_restore_root_controls(
 {
     GPWRP_t GPWRP;
 
-    FAPI_INF("Disable Write Protection for Root/Perv Control registers");
+    FAPI_DBG("Disable Write Protection for Root/Perv Control registers");
     GPWRP = CONTROL_WRITE_PROTECT_DISABLE;
     FAPI_TRY(GPWRP.putCfam(i_target));
 
-    FAPI_INF("Restoring root/perv control register values");
+    FAPI_DBG("Restoring root/perv control register values");
 
     for (auto restore : i_restores)
     {
@@ -85,8 +85,8 @@ fapi_try_exit:
 
 ReturnCode mod_cbs_start_prep(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    bool i_start_sbe,
-    bool i_scan0_clockstart)
+    const bool i_start_sbe,
+    const bool i_scan0_clockstart)
 {
     ROOT_CTRL0_t ROOT_CTRL0;
     ROOT_CTRL1_t ROOT_CTRL1;
@@ -99,7 +99,7 @@ ReturnCode mod_cbs_start_prep(
     SB_MSG_t SB_MSG;
     SB_CS_t SB_CS;
 
-    FAPI_INF("Drop CFAM protection 0 to ungate VDN_PRESENT");
+    FAPI_DBG("Drop CFAM protection 0 to ungate VDN_PRESENT");
     FAPI_TRY(ROOT_CTRL0.getCfam(i_target));
     ROOT_CTRL0.set_CFAM_PROTECTION_0(0);
     FAPI_TRY(ROOT_CTRL0.putCfam(i_target));
@@ -108,7 +108,7 @@ ReturnCode mod_cbs_start_prep(
     ROOT_CTRL0_COPY = ROOT_CTRL0;
     FAPI_TRY(ROOT_CTRL0_COPY.putCfam(i_target));
 
-    FAPI_INF("Read FSI2PIB_STATUS register and check whether VDN power is on or not(VDD_NEST_OBSERVE).");
+    FAPI_DBG("Read FSI2PIB_STATUS register and check whether VDN power is on or not(VDD_NEST_OBSERVE).");
     FAPI_TRY(FSI2PIB_STATUS.getCfam(i_target));
     FAPI_ASSERT(FSI2PIB_STATUS.get_VDD_NEST_OBSERVE(),
                 fapi2::POZ_VDN_POWER_NOT_ON()
@@ -116,7 +116,7 @@ ReturnCode mod_cbs_start_prep(
                 .set_PROC_TARGET(i_target),
                 "ERROR: VDN power is NOT on. i.e. FSI2PIB_STATUS register bit 16 is NOT set.");
 
-    FAPI_INF("Clear Selfboot Message Register, clear SBE start bit, reset SBE FIFO.");
+    FAPI_DBG("Clear Selfboot Message Register, clear SBE start bit, reset SBE FIFO.");
     SB_MSG = 0;
     FAPI_TRY(SB_MSG.putCfam(i_target));
 
@@ -128,7 +128,7 @@ ReturnCode mod_cbs_start_prep(
     FSB_DOWNFIFO_RESET = 0x80000000;
     FAPI_TRY(FSB_DOWNFIFO_RESET.putCfam(i_target));
 
-    FAPI_INF("Read CBS_ENVSTAT register to check the status of TEST_ENABLE C4 pin");
+    FAPI_DBG("Read CBS_ENVSTAT register to check the status of TEST_ENABLE C4 pin");
     FAPI_TRY(CBS_ENVSTAT.getCfam(i_target));
 
     if (CBS_ENVSTAT.get_CBS_ENVSTAT_C4_TEST_ENABLE())
@@ -146,7 +146,7 @@ ReturnCode mod_cbs_start_prep(
         FAPI_TRY(ROOT_CTRL1_COPY.putCfam(i_target));
     }
 
-    FAPI_INF("Prepare for CBS start.");
+    FAPI_DBG("Prepare for CBS start.");
     FAPI_TRY(CBS_CS.getCfam(i_target));
     CBS_CS.set_START_BOOT_SEQUENCER(0);
     CBS_CS.set_OPTION_SKIP_SCAN0_CLOCKSTART(not i_scan0_clockstart);
@@ -159,8 +159,8 @@ fapi_try_exit:
 
 ReturnCode mod_cbs_start(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    bool i_start_sbe,
-    bool i_scan0_clockstart)
+    const bool i_start_sbe,
+    const bool i_scan0_clockstart)
 {
     CBS_CS_t CBS_CS;
     SB_CS_t SB_CS;
@@ -223,7 +223,7 @@ fapi_try_exit:
 
 ReturnCode mod_switch_pcbmux(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    mux_type i_path)
+    const mux_type i_path)
 {
     ROOT_CTRL0_t ROOT_CTRL0;
     uint8_t l_oob_mux_save = 0;
@@ -276,7 +276,7 @@ fapi_try_exit:
 
 ReturnCode mod_switch_pcbmux_cfam(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    mux_type i_path)
+    const mux_type i_path)
 {
     ROOT_CTRL0_t ROOT_CTRL0;
     uint8_t l_oob_mux_save = 0;
@@ -330,17 +330,15 @@ fapi_try_exit:
 
 ReturnCode mod_multicast_setup(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    uint8_t i_group_id,
-    uint64_t i_chiplets,
-    TargetState i_pgood_policy)
+    const uint8_t i_group_id,
+    const uint64_t i_chiplets,
+    const TargetState i_pgood_policy)
 {
     uint8_t l_group_id = i_group_id;
     fapi2::buffer<uint64_t> l_eligible_chiplets = 0;
     fapi2::buffer<uint64_t> l_required_group_members;
     fapi2::buffer<uint64_t> l_current_group_members;
     fapi2::buffer<uint64_t> l_attr_sim_chiplet_mask;
-
-    auto l_all_chiplets = i_target.getChildren<fapi2::TARGET_TYPE_PERV>(i_pgood_policy);
 
     FAPI_DBG("Entering ...");
     FAPI_ASSERT(!(i_group_id > 6),
@@ -351,7 +349,7 @@ ReturnCode mod_multicast_setup(
 
     FAPI_TRY(mod_multicast_setup_plat_remap(i_group_id, l_group_id));
 
-    for (auto& targ : l_all_chiplets)
+    for (const auto& targ : i_target.getChildren<fapi2::TARGET_TYPE_PERV>(i_pgood_policy))
     {
         l_eligible_chiplets.setBit(targ.getChipletNumber());
     }
@@ -396,19 +394,17 @@ fapi_try_exit:
 
 ReturnCode mod_get_chiplet_by_number(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_ANY_POZ_CHIP > & i_target,
-    uint8_t i_chiplet_number,
+    const uint8_t i_chiplet_number,
     Target < TARGET_TYPE_PERV >& o_target)
 {
-    auto l_chiplets = i_target.getChildren<fapi2::TARGET_TYPE_PERV>();
-
     FAPI_DBG("Entering ...");
 
-    for (auto& chiplet : l_chiplets)
+    for (const auto& chiplet : i_target.getChildren<fapi2::TARGET_TYPE_PERV>())
     {
         if (chiplet.getChipletNumber() == i_chiplet_number)
         {
             o_target = chiplet;
-            return fapi2::FAPI2_RC_SUCCESS;
+            goto fapi_try_exit;
         }
     }
 
@@ -424,7 +420,7 @@ fapi_try_exit:
 }
 
 ReturnCode mod_hangpulse_setup(const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > & i_target,
-                               uint8_t i_pre_divider, const hang_pulse_t* i_hangpulse_table)
+                               const uint8_t i_pre_divider, const hang_pulse_t* i_hangpulse_table)
 {
     HANG_PULSE_0_t HANG_PULSE_0;
     PRE_COUNTER_t PRE_COUNTER;
@@ -456,7 +452,7 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode mod_constant_hangpulse_setup(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, uint32_t i_base_address,
+ReturnCode mod_constant_hangpulse_setup(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, const uint32_t i_base_address,
                                         const constant_hang_pulse_t i_hangpulses[4])
 {
     PRE_COUNTER_t PRE_COUNTER;
@@ -496,13 +492,13 @@ ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
     FAPI_DBG("Entering ...");
     fapi2::Target<fapi2::TARGET_TYPE_PERV> l_tpchiplet = get_tp_chiplet_target(i_target);
 
-    FAPI_INF("Clear SBE start bits to be tidy");
+    FAPI_DBG("Clear SBE start bits to be tidy");
     FAPI_TRY(SB_CS.getScom(i_target));
     SB_CS.set_START_RESTART_VECTOR0(0);
     SB_CS.set_START_RESTART_VECTOR1(0);
     FAPI_TRY(SB_CS.putScom(i_target));
 
-    FAPI_INF("Clear CBS command to enable clock gating inside clock controller");
+    FAPI_DBG("Clear CBS command to enable clock gating inside clock controller");
     ROOT_CTRL0 = 0;
     ROOT_CTRL0.set_FSI_CC_CBS_CMD(-1);
     FAPI_TRY(ROOT_CTRL0.putScom_CLEAR(i_target));
@@ -529,7 +525,7 @@ ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
     CPLT_CTRL0.set_FORCE_ALIGN(1);
     FAPI_TRY(CPLT_CTRL0.putScom_CLEAR(l_tpchiplet));
 
-    FAPI_INF("Vital align out disable");
+    FAPI_DBG("Vital align out disable");
     PERV_CTRL0 = 0;
     PERV_CTRL0.setBit<12>(); // VITL_AL_OUT_DIS
     FAPI_TRY(PERV_CTRL0.putScom_SET(i_target));
@@ -541,7 +537,7 @@ ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
     FAPI_TRY(putScom(l_tpchiplet, ATTN_MASK_RW, 0));
     FAPI_TRY(putScom(l_tpchiplet, LOCAL_XSTOP_MASK_RW, 0));
 
-    FAPI_INF("Drop TP chiplet fence");
+    FAPI_DBG("Drop TP chiplet fence");
     PERV_CTRL0 = 0;
     PERV_CTRL0.setBit<17>(); // bit 17: PERV_CHIPLET_FENCE required for Odyssey only
     FAPI_TRY(PERV_CTRL0.putScom_CLEAR(i_target));
@@ -613,7 +609,7 @@ ReturnCode mod_setup_clockstop_on_xstop(
             }
         }
 
-        FAPI_INF("Enable clockstop on checkstop");
+        FAPI_DBG("Enable clockstop on checkstop");
         FAPI_TRY(EPS_CLKSTOP_ON_XSTOP_MASK1.putScom(l_chiplets_mc));
     }
 
@@ -648,7 +644,7 @@ ReturnCode mod_setup_tracestop_on_xstop(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     const uint32_t i_dbg_scom_base)
 {
-    FAPI_INF("Entering mod_setup_tracestop_on_xstop...");
+    FAPI_DBG("Entering mod_setup_tracestop_on_xstop...");
 
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_mc;
     std::vector<Target<TARGET_TYPE_PERV>> l_chiplets_uc;
