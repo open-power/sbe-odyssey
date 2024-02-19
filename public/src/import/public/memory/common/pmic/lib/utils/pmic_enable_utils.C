@@ -345,28 +345,6 @@ fapi_try_exit:
 }
 
 ///
-/// @brief Declare N-Mode and log fapi2::current_err as recoverable
-///
-/// @param[in] i_ocmb_target OCMB target
-/// @param[in] i_pmic_id PMIC ID (0-3)
-/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS
-/// @note expected to be called in a fapi_try_exit with bad current_err
-///
-fapi2::ReturnCode declare_n_mode(
-    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_ocmb_target,
-    uint8_t i_pmic_id)
-{
-    // Log as recoverable, set N mode attribute, all will be checked later
-    fapi2::logError(fapi2::current_err, fapi2::FAPI2_ERRL_SEV_RECOVERED);
-    fapi2::current_err = fapi2::FAPI2_RC_SUCCESS;
-
-    return mss::attr::set_n_mode_helper(
-               i_ocmb_target,
-               i_pmic_id,
-               mss::pmic::n_mode::N_MODE);
-}
-
-///
 /// @brief Set the up VIN latch bit for TPS pmics
 ///
 /// @param[in] i_pmic_target PMIC target
@@ -1704,30 +1682,6 @@ fapi_try_exit:
     return fapi2::current_err;
 }
 
-///
-/// @brief Get the mnfg thresholds policy setting
-///
-/// @param[out] o_thresholds thresholds policy setting
-/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS iff success, else error code
-///
-fapi2::ReturnCode get_mnfg_thresholds(bool& o_thresholds)
-{
-    o_thresholds = false;
-
-    // Consts and vars
-    fapi2::ATTR_MFG_FLAGS_Type l_mfg_array = {0};
-    fapi2::buffer<uint32_t> l_mfg_flags;
-    static constexpr uint32_t MNFG_THRESHOLDS_ARR_IDX = 0;
-    static constexpr uint32_t MNFG_THRESHOLDS_BIT = fapi2::ENUM_ATTR_MFG_FLAGS_MNFG_THRESHOLDS;
-
-    // Grab THRESHOLDS setting
-    FAPI_TRY(mss::attr::get_mfg_flags(l_mfg_array));
-    l_mfg_flags = l_mfg_array[MNFG_THRESHOLDS_ARR_IDX];
-    o_thresholds = l_mfg_flags.getBit<MNFG_THRESHOLDS_BIT>();
-
-fapi_try_exit:
-    return fapi2::current_err;
-}
 
 ///
 /// @brief Process the results of the N-Mode declarations (if any)
@@ -1883,22 +1837,6 @@ bool bad_primary(const std::array<mss::pmic::n_mode, CONSTS::NUM_PMICS_4U>& i_n_
 
 
 ///
-/// @brief Reset N Mode attributes
-///
-/// @param[in] i_target_info OCMB, PMIC and I2C target struct
-/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS, else error code
-/// @note For 4U only. Has no effect on 1U/2U.
-///
-fapi2::ReturnCode reset_n_mode_attrs(const target_info_redundancy& i_target_info)
-{
-    uint8_t l_n_mode = 0x00;
-    FAPI_TRY(mss::attr::set_pmic_n_mode(i_target_info.iv_ocmb, l_n_mode));
-
-fapi_try_exit:
-    return fapi2::current_err;
-}
-
-///
 ///
 /// @param[in] i_gpio GPIO target
 /// @param[out] o_already_enabled true if efuses already on, else false
@@ -1932,7 +1870,7 @@ fapi_try_exit:
 fapi2::ReturnCode redundancy_gpio_efuse_setup(const target_info_redundancy& i_target_info)
 {
     // Reset N Mode attributes
-    FAPI_TRY(check::reset_n_mode_attrs(i_target_info));
+    FAPI_TRY(check::reset_n_mode_attrs(i_target_info.iv_ocmb));
 
     // Set up both trios of devices
     FAPI_TRY(setup_pmic_pair_and_gpio(
