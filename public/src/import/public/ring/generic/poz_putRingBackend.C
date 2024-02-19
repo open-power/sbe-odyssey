@@ -921,7 +921,7 @@ static ReturnCode tryLoadCompositeImage(ChipTarget& i_chip_target,
     // Try loading twice - once only looking for trusted files, once allowing untrusted files too
     do
     {
-        ReturnCode rc = loadEmbeddedFile(i_chip_target(), i_fname, image, image_size, flags);
+        rc = loadEmbeddedFile(i_chip_target(), i_fname, image, image_size, flags);
 
         if ((rc == FAPI2_RC_FILE_NOT_FOUND) || (rc == FAPI2_RC_PLAT_ERR_SEE_DATA))
         {
