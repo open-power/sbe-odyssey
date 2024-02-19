@@ -44,11 +44,35 @@
 #include <generic/memory/lib/utils/c_str.H>
 #include <generic/memory/lib/utils/find.H>
 #include <mss_pmic_attribute_accessors_manual.H>
+#include <mss_generic_system_attribute_getters.H>
 
 namespace mss
 {
 namespace pmic
 {
+///
+/// @brief Declare N-Mode and log fapi2::current_err as recoverable
+///
+/// @param[in] i_ocmb_target OCMB target
+/// @param[in] i_pmic_id PMIC ID (0-3)
+/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS
+/// @note expected to be called in a fapi_try_exit with bad current_err
+///
+fapi2::ReturnCode declare_n_mode(
+    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_ocmb_target,
+    uint8_t i_pmic_id)
+{
+#ifndef __PPE__
+    // Log as recoverable, set N mode attribute, all will be checked later
+    fapi2::logError(fapi2::current_err, fapi2::FAPI2_ERRL_SEV_RECOVERED);
+#endif
+    fapi2::current_err = fapi2::FAPI2_RC_SUCCESS;
+
+    return mss::attr::set_n_mode_helper(
+               i_ocmb_target,
+               i_pmic_id,
+               mss::pmic::n_mode::N_MODE);
+}
 
 ///
 /// @brief Determine if PMIC is disabled based on ATTR_MEM_PMIC_FORCE_N_MODE attribute setting
@@ -1302,6 +1326,31 @@ fapi_try_exit:
     return mss::pmic::lock_vendor_region(i_pmic_target, fapi2::current_err);
 }
 
+///
+/// @brief Get the mnfg thresholds policy setting
+///
+/// @param[out] o_thresholds thresholds policy setting
+/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS iff success, else error code
+///
+fapi2::ReturnCode get_mnfg_thresholds(bool& o_thresholds)
+{
+    o_thresholds = false;
+
+    // Consts and vars
+    fapi2::ATTR_MFG_FLAGS_Type l_mfg_array = {0};
+    fapi2::buffer<uint32_t> l_mfg_flags;
+    static constexpr uint32_t MNFG_THRESHOLDS_ARR_IDX = 0;
+    static constexpr uint32_t MNFG_THRESHOLDS_BIT = fapi2::ENUM_ATTR_MFG_FLAGS_MNFG_THRESHOLDS;
+
+    // Grab THRESHOLDS setting
+    FAPI_TRY(mss::attr::get_mfg_flags(l_mfg_array));
+    l_mfg_flags = l_mfg_array[MNFG_THRESHOLDS_ARR_IDX];
+    o_thresholds = l_mfg_flags.getBit<MNFG_THRESHOLDS_BIT>();
+
+fapi_try_exit:
+    return fapi2::current_err;
+}
+
 namespace status
 {
 
@@ -1899,6 +1948,26 @@ fapi2::ReturnCode matching_vendors_helper(
                 l_vendor_reg());
 
     return fapi2::FAPI2_RC_SUCCESS;
+
+fapi_try_exit:
+    return fapi2::current_err;
+}
+
+///
+/// @brief Reset N Mode attributes
+///
+/// @param[in] i_ocmb OCMB target
+/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS, else error code
+/// @note For 4U only. Has no effect on 1U/2U.
+///
+fapi2::ReturnCode reset_n_mode_attrs(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_ocmb)
+{
+    uint8_t l_n_mode = 0x00;
+#ifdef __PPE__
+    fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_MEM_PMIC_4U_N_MODE = l_n_mode;
+#else
+    FAPI_TRY(mss::attr::set_pmic_n_mode(i_ocmb, l_n_mode));
+#endif
 
 fapi_try_exit:
     return fapi2::current_err;
