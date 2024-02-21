@@ -1573,9 +1573,8 @@ foreach my $argnum ( 0 .. $#ARGV )
         if ( ( $arg_local_ffdc eq undef ) || ( exists $err->{sbeError} ) )
         {
             print ECFILE "\nclass $class_name\n{\n  public:\n";
+            print ECFILE "    sbeFfdc_t * iv_localFfdcData = NULL;\n";
         }
-
-        print ECFILE "    sbeFfdc_t * iv_localFfdcData = NULL;\n";
 
         # Constructor. This traces the description. If this is too much, we can
         # remove it.
