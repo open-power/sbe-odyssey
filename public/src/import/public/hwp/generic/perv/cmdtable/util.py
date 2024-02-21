@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -22,7 +22,7 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-import sys, os, argparse, struct
+import sys, os, argparse, struct, io
 
 def write32(f, v):
     f.write(struct.pack(">I", v))
@@ -47,6 +47,26 @@ def open_or_stdio(fname, mode="r", **kwargs):
         return os.fdopen(fileno, mode, closefd=False, **kwargs)
     else:
         return open(fname, mode, **kwargs)
+
+class EcmdOutputRedirect:
+    def __init__(self, pyecmd_module=None):
+        self.pyecmd = pyecmd_module or pyecmd
+
+    def __enter__(self, *args):
+        self.strio = io.StringIO()
+        self._oldstdout = sys.stdout
+        sys.stdout = self
+        return self
+
+    def __exit__(self, *args):
+        self.strio.close()
+        sys.stdout = self._oldstdout
+
+    def write(self, *args):
+        self.strio.seek(0)
+        self.strio.truncate()
+        self.strio.write(*args)
+        self.pyecmd.output(self.strio.getvalue())
 
 class EcmdArgumentParser(argparse.ArgumentParser):
     """
