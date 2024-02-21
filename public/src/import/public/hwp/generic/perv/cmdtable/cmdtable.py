@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -447,12 +447,14 @@ def cmd_run(args):
     else:
         import pyecmd
         with pyecmd.Ecmd(args=args.ecmd_args):
-            for target in pyecmd.loopTargets(args.chip, pyecmd.ECMD_SELECTED_TARGETS_LOOP_DEFALL):
-                print(target)
-                if args.cfam:
-                    target = CFAMTranslatorTarget(target)
-                target.delay = pyecmd.delay
-                run_commands(main, cust, target)
+            with EcmdOutputRedirect(pyecmd):
+                for target in pyecmd.loopTargets(args.chip, pyecmd.ECMD_SELECTED_TARGETS_LOOP_DEFALL):
+                    print(target)
+                    if args.cfam:
+                        target = CFAMTranslatorTarget(target)
+                    target.delay = pyecmd.delay
+                    if run_commands(main, cust, target) != 0:
+                        exit(1)
 
 def cmd_reverse(args):
     commands = load_commands(args.blob)
