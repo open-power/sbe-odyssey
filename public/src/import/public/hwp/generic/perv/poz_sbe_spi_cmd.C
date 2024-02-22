@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -129,7 +129,7 @@ fapi2::ReturnCode poz_spi_clock_init (
 
             // But also grab the attribute that might have updated values
             fapi2::buffer<uint16_t> attr_tpm_spi_bus_div = 0x0157;
-            // TODO:P11_cleanup
+            // TODO:PST_cleanup
             /*
             FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_TPM_SPI_BUS_DIV,
                                    i_spiHandle.target_chip,

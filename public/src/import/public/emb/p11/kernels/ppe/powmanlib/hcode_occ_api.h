@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -35,7 +35,7 @@
 #ifndef __HCODE_OCC_API_H__
 #define __HCODE_OCC_API_H__
 
-#include <p11_ppb_global.H>
+#include <pst_ppb_global.H>
 #include <hcode_common_api.h>
 #include <hcode_tcc_api.h>          // needed for PCE WOF structure
 #include <hcode_errl_table.h>

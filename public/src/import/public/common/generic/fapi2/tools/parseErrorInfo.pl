@@ -189,7 +189,7 @@ sub setErrorEnumValue
     # the creator of the error
     #--------------------------------------------------------------------------
     my $errHash128Bit = md5_hex($name);
-    my $errHash24Bit = substr( $errHash128Bit, 0, 6 );
+    my $errHash24Bit  = substr( $errHash128Bit, 0, 6 );
 
     #--------------------------------------------------------------------------
     # Check that the error enum-value is not a duplicate
@@ -231,7 +231,7 @@ sub setFfdcIdValue
     # the FFDC name.
     #--------------------------------------------------------------------------
     my $ffdcHash128Bit = md5_hex($name);
-    my $ffdcHash32Bit = substr( $ffdcHash128Bit, 0, 8 );
+    my $ffdcHash32Bit  = substr( $ffdcHash128Bit, 0, 8 );
 
     #--------------------------------------------------------------------------
     # Check that the error enum-value is not a duplicate
@@ -564,7 +564,7 @@ foreach my $argnum ( 0 .. $#ARGV )
         print CRFILE "#include <vector>\n";
         print CRFILE "#include <plat_trace.H>\n";
         print CRFILE "#include <hwp_error_info.H>\n";
-        print CRFILE "#include <p11_scom_registers.H>\n";
+        print CRFILE "#include <pst_scom_registers.H>\n";
         print CRFILE "#include <ody_scom_perv.H>\n";
         print CRFILE "#include <ody_scom_ody_odc.H>\n";
         print CRFILE "#include <explorer_scom_addresses.H>\n";

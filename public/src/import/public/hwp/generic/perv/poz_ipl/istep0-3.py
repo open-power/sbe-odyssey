@@ -85,7 +85,7 @@ def sim_model_to_standby():
 
 ISTEP(0, 1, "pre_cfam_reset", "BMC")
 
-def p11s_shutdown():
+def ps_shutdown():
     # This HWP is called both prior to power off as well as prior to pulling CFAM reset during IPL
     # CONTROL_WRITE_PROTECT_DISABLE = 0x4453FFFF
     GPWRP = CONTROL_WRITE_PROTECT_DISABLE         # Disable Write Protection for Root/Perv Control registers (in case the chip has just been reset)
@@ -105,7 +105,7 @@ def p11s_shutdown():
     ROOT_CTRL0.TP_I2C_BUS_FENCE = 0               # Clear FSI I2C fence to allow access from FSP side
 
 def zme_shutdown():
-    p11s_shutdown()
+    ps_shutdown()
 
 ISTEP(0, 2, "cfam_reset", "BMC")
 
@@ -121,7 +121,7 @@ def sim_p11s_cfam_reset():
 ISTEP(0, 3, "poweron", "BMC")
 # if power is already on, this is a no-op
 
-def p11s_pre_poweron():
+def ps_pre_poweron():
     mod_restore_root_controls(target, Spinal reset values)
 
 # BMC executes voltage power on sequence
@@ -159,7 +159,7 @@ def pz_setup_ref_clock(target<PROC_CHIP | HUB_CHIP>):
     ROOT_CTRL0.CFAM_PROTECTION_0 = 0
     ROOT_CTRL0_COPY.CFAM_PROTECTION_0 = 0
 
-def p11s_setup_ref_clock():
+def ps_setup_ref_clock():
 
     pz_setup_ref_clock()
 
@@ -215,7 +215,7 @@ def zme_setup_ref_clock():
 
 ISTEP(0, 9, "clock_test", "BMC")
 
-def p11s_clock_test():
+def ps_clock_test():
     mod_clock_test(path=CFAM)
 
 def zme_clock_test():
@@ -223,7 +223,7 @@ def zme_clock_test():
 
 ISTEP(0, 11, "ph_sppe_config_update", "BMC")
 
-def p11s_sppe_config_update():
+def ps_sppe_config_update():
     # provided by VBU team
 
 def ody_sppe_config_update():
@@ -234,7 +234,7 @@ def zme_sppe_config_update():
 
 ISTEP(0, 12, "cbs_start", "BMC")
 
-def p11s_cbs_start(target<HUB_CHIP>, bool i_start_sbe=true):
+def ps_cbs_start(target<HUB_CHIP>, bool i_start_sbe=true):
     mod_cbs_start(i_target, i_start_sbe)
 
 def ody_cbs_start(target<OCMB_CHIP>, bool i_start_sbe=true):
@@ -327,11 +327,11 @@ ISTEP(1, 1, "ph_enable_seeprom", "SPPE")
 ISTEP(1, 2, "ph_tp_chiplet_reset", "SPPE")
 # executes from ROM driven by command table
 
-def p11s_tp_chiplet_reset():
+def ps_tp_chiplet_reset():
     ROOT_CTRL0.PCB_RESET = 0           # Drop PCB interface reset to enable access into TP chiplet
 
     # Spinal TP needs a special, increased wait value due to much longer staging pipelines
-    # for inter-chiplet sync and OPCG triggering; see https://github.ibm.com/p11Tp/p11/pull/4092
+    # for inter-chiplet sync and OPCG triggering; see https://github.ibm.com/p11Tp/pst/pull/4092
     OPCG_ALIGN.OPCG_WAIT_CYCLES = 0x30 # Increase OPCG wait cycles to enable scanning
 
     ROOT_CTRL1.TP_TPM_DI1_DC_B = 0b1   # Enable TPM SPI port
@@ -359,7 +359,7 @@ ISTEP(1, 3, "ph_tp_pll_initf", "SPPE")
 # executes from ROM driven by command table
 # PLL buckets for Z!
 
-def p11s_tp_pll_initf():
+def ps_tp_pll_initf():
     putRing( perv_pll = perv_pll_bndy )
 
 def ody_tp_pll_initf():
@@ -371,7 +371,7 @@ def zme_tp_pll_initf():
 ISTEP(1, 4, "ph_tp_pll_setup", "SPPE")
 # executes from ROM driven by command table
 
-def p11s_tp_pll_setup():
+def ps_tp_pll_setup():
     CPLT_CTRL1.REGION13_FENCE = 0   # Drop PLL region fence
 
     if not ATTR_CP_PLLFLT_BYPASS:
@@ -386,7 +386,7 @@ def p11s_tp_pll_setup():
         ROOT_CTRL3.TP_PLLFLT3_RESET_DC = 0
         ROOT_CTRL3.TP_PLLFLT4_RESET_DC = 0
 
-        mod_poll_pll_lock_fsi2pib(i_target, P11S_PERV_FPLL1 | P11S_PERV_FPLL2 | P11S_PERV_FPLL3 | P11S_PERV_FPLL4)
+        mod_poll_pll_lock_fsi2pib(i_target, PS_PERV_FPLL1 | PS_PERV_FPLL2 | PS_PERV_FPLL3 | PS_PERV_FPLL4)
 
         ## Take chip filter PLLs out of bypass
         ROOT_CTRL3.TP_PLLFLT1_BYPASS_DC = 0
@@ -402,7 +402,7 @@ def p11s_tp_pll_setup():
         # write ROOT_CTRL3
         ROOT_CTRL3.TP_PLLNEST_RESET_DC = 0      # not available in headers yet - bit 25
 
-        mod_poll_pll_lock_fsi2pib(i_target, P11S_PERV_PLLNEST)
+        mod_poll_pll_lock_fsi2pib(i_target, PS_PERV_PLLNEST)
 
         ## Prepare chip for at-speed operation
         OPCG_ALIGN.SCAN_RATIO = 3               # Switch scan ratio to 4:1
@@ -428,13 +428,13 @@ def ody_tp_pll_setup():
         ROOT_CTRL3.TP_MCPLL_BYPASS_DC = 0     # not available in headers yet - bit 26
 
 def zme_tp_pll_setup():
-    like p11s_tp_pll_setup but do not set up SCAN_RATIO
+    like ps_tp_pll_setup but do not set up SCAN_RATIO
 
 ISTEP(1, 5, "ph_pib_repr_initf", "SPPE")
 # executes from ROM driven by command table
 # scan0 has been performed by CBS
 
-def p11s_pib_repr_initf():
+def ps_pib_repr_initf():
     putRing( pib_rtg = pib_gptr+pib_time+pib_repr(+ optional pib_abst) )
 
 def zme_pib_repr_initf():
@@ -450,28 +450,28 @@ to collect results before we clean up.
 ISTEP(1, 6, "ph_pib_arrayinit", "SPPE")
 # executes from ROM driven by command table
 
-def p11s_pib_arrayinit():
+def ps_pib_arrayinit():
     mod_abist_start(regions=[pib])
     mod_abist_poll()
 
 def ody_pib_arrayinit():
-    same as p11s_pib_arrayinit()
+    same as ps_pib_arrayinit()
 
 def zme_pib_arrayinit():
-    same as p11s_pib_arrayinit()
+    same as ps_pib_arrayinit()
 
 ISTEP(1, 7, "ph_pib_arrayinit_cleanup", "SPPE")
 # executes from ROM driven by command table
 
-def p11s_pib_arrayinit_cleanup():
+def ps_pib_arrayinit_cleanup():
     mod_abist_cleanup()
     mod_scan0(regions=[pib])
 
 def ody_pib_arrayinit_cleanup():
-    same as p11s_pib_arrayinit_cleanup()
+    same as ps_pib_arrayinit_cleanup()
 
 def zme_pib_arrayinit_cleanup():
-    same as p11s_pib_arrayinit_cleanup()
+    same as ps_pib_arrayinit_cleanup()
 
 ISTEP(1, 8, "ph_pib_lbist", "DFT")
 
@@ -491,14 +491,14 @@ PIB/SBE LBIST flow:
 ISTEP(1, 9, "ph_pib_startclocks", "SPPE")
 # executes from ROM driven by command table
 
-def p11s_pib_startclocks():
+def ps_pib_startclocks():
     mod_start_stop_clocks(regions=[pib])
 
 def ody_pib_startclocks():
-    same as p11s_pib_startclocks()
+    same as ps_pib_startclocks()
 
 def zme_pib_startclocks():
-    same as p11s_pib_startclocks()
+    same as ps_pib_startclocks()
 
 ISTEP(1, 10, "ph_sppe_boot", "SPPE")
 
@@ -518,7 +518,7 @@ def poz_sppe_check_for_ready():
             FAPI_ASSERT("SPPE failed to boot within %d seconds", CHECK_FOR_READY_TIMEOUT_SECONDS,
                         ffdc = i_target, CHECK_FOR_READY_TIMEOUT_SECONDS)
 
-def p11s_sppe_check_for_ready():
+def ps_sppe_check_for_ready():
     poz_sppe_check_for_ready()
 
 def ody_sppe_check_for_ready():
@@ -531,7 +531,7 @@ ISTEP(1, 12, "ph_sppe_update", "BMC")
 
 ISTEP(1, 13, "ph_sppe_attr_setup", "SPPE")
 
-def p11s_sppe_attr_setup():
+def ps_sppe_attr_setup():
     ## Set up SBE multipipe unit
     mod_pipe_setup(PC_ADU, false, PC_SPPE, true,
                    PC_GSD2PIB, false, PC_SBE, true,
@@ -564,7 +564,7 @@ ISTEP(1, 17, "ph_rcs_setup", "SPPE")
 def poz_rcs_setup():
     # provided by IO team / Ryan Miller followon
 
-def p11s_rcs_setup():
+def ps_rcs_setup():
     poz_rcs_setup()
 
 def zme_rcs_setup():
@@ -572,7 +572,7 @@ def zme_rcs_setup():
 
 ISTEP(1, 18, "ph_tp_repr_initf", "SPPE")
 
-def p11s_tp_repr_initf():
+def ps_tp_repr_initf():
     putRing( TP chiplet, perv_rtg = {perv,net,occ}_{gptr,time,repr}(+*_abst as needed))} )
 
 def ody_tp_repr_initf():
@@ -588,7 +588,7 @@ def poz_tp_arrayinit():
     mod_abist_poll()
     compareRing( perv_abst_check )   # if perv_abst_check is empty or does not exist, skip check
 
-def p11s_tp_arrayinit():
+def ps_tp_arrayinit():
     poz_tp_arrayinit()
 
 def ody_tp_arrayinit():
@@ -603,7 +603,7 @@ def poz_tp_arrayinit_cleanup():
     mod_abist_cleanup()
     mod_scan0(regions=[all except sbe/pib/pll])
 
-def p11s_tp_arrayinit_cleanup():
+def ps_tp_arrayinit_cleanup():
     poz_tp_arrayinit_cleanup()
 
 def ody_tp_arrayinit_cleanup():
@@ -614,7 +614,7 @@ def zme_tp_arrayinit_cleanup():
 
 ISTEP(1, 21, "ph_tp_initf", "SPPE")
 
-def p11s_tp_initf():
+def ps_tp_initf():
     putRing( TP chiplet, perv_initf = {perv,net,occ}_func )
 
 def ody_tp_initf():
@@ -625,7 +625,7 @@ def zme_tp_initf():
 
 ISTEP(1, 22, "ph_tp_startclocks", "SPPE")
 
-def p11s_tp_startclocks():
+def ps_tp_startclocks():
     mod_start_stop_clocks(regions=[perv, net, occ])
 
 def ody_tp_startclocks():
@@ -636,7 +636,7 @@ def zme_tp_startclocks():
 
 ISTEP(1, 23, "ph_tp_init", "SPPE")
 
-def p11s_tp_init():
+def ps_tp_init():
     # TODO : Set up TOD error routing, error mask via scan inits
 
     ## Start using PCB network
@@ -660,10 +660,10 @@ def p11s_tp_init():
 
     ## Unmask TP PLL unlock reporting
     if not ATTR_CP_PLLFLT_BYPASS:
-        PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS &= ~(P11S_PERV_FPLL1 | P11S_PERV_FPLL2 | P11S_PERV_FPLL3 | P11S_PERV_FPLL4)
+        PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS &= ~(PS_PERV_FPLL1 | PS_PERV_FPLL2 | PS_PERV_FPLL3 | PS_PERV_FPLL4)
 
     if not ATTR_CP_PLLNEST_BYPASS:
-        PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS &= ~(P11S_PERV_PLLNEST)
+        PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS &= ~(PS_PERV_PLLNEST)
 
     ## Miscellaneous TP setup
     mod_poz_tp_init_common(i_target)
@@ -770,7 +770,7 @@ def sim_p11t_fsi_init():
     wait for 24k cycles
     set OTPROM.SINGLE_OTP_ROM.OTPROM.EFUSE.FIRST_CSB to 1
 
-def p11s_fsi_init():
+def ps_fsi_init():
     # start with list of functional Taps based on PG+deconfig (expected to be provided by FAPI platform code)
     buffer<uint8_t> l_expected_taps = 0;
     for all functional Tap targets:
@@ -800,7 +800,7 @@ def p11s_fsi_init():
 ISTEP(2, 2, "pc_fsi_config", "SPPE")
 # Configure Tap root controls and scratch
 
-def p11t_fsi_config():
+def pt_fsi_config():
     ## Disable Write Protection for Root/Perv Control registers
     # CONTROL_WRITE_PROTECT_DISABLE = 0x4453FFFF
     GPWRP = CONTROL_WRITE_PROTECT_DISABLE
@@ -819,12 +819,12 @@ def p11t_fsi_config():
 
 ISTEP(2, 3, "pc_cbs_start", "SPPE")
 
-def p11t_cbs_start():
+def pt_cbs_start():
     mod_cbs_start(i_target, false)
 
 ISTEP(2, 4, "pc_tp_chiplet_reset", "SPPE")
 
-def p11t_tp_chiplet_reset():
+def pt_tp_chiplet_reset():
     ROOT_CTRL0.PCB_RESET = 0           # Drop PCB interface reset to enable access into TP chiplet
     OPCG_ALIGN.OPCG_WAIT_CYCLES = 0x20 # Increase OPCG wait cycles to enable scanning
 
@@ -832,7 +832,7 @@ def p11t_tp_chiplet_reset():
 
 ISTEP(2, 5, "pc_pib_initf", "SPPE")
 
-def p11t_pib_initf():
+def pt_pib_initf():
     putRing( pc_pib_rtg = *_gptr, *_time, *_repr, pib_abst (optional) )
 
 """
@@ -843,29 +843,29 @@ before moving on to polling on all Taps in sequence.
 
 ISTEP(2, 6, "pc_tp_arrayinit_start", "SPPE")
 
-def p11t_tp_arrayinit_start():
+def pt_tp_arrayinit_start():
     mod_abist_start(TP chiplet, regions=pib+perv)
 
 ISTEP(2, 7, "pc_tp_arrayinit_poll", "SPPE")
 
-def p11t_tp_arrayinit_poll():
+def pt_tp_arrayinit_poll():
     mod_abist_poll(TP chiplet)
     compareRing( pc_tp_abist_check )   # skip if image empty or not present
 
 ISTEP(2, 8, "pc_tp_arrayinit_cleanup", "SPPE")
 
-def p11t_tp_arrayinit_cleanup():
+def pt_tp_arrayinit_cleanup():
     mod_abist_cleanup(TP chiplet)
     mod_scan0(TP chiplet, regions=pib+perv)
 
 ISTEP(2, 9, "pc_tp_lbist", "SPPE")
 
-def p11t_tp_lbist():
+def pt_tp_lbist():
     poz_bist(lbist settings for pib+perv+net)
 
 ISTEP(2, 10, "pc_pib_startclocks", "SPPE")
 
-def p11t_pib_startclocks():
+def pt_pib_startclocks():
     mod_start_stop_clocks(regions=pib)
 
 # 2.11 used to be ph_g2p_init but we dropped G2P acceleration from the plan
@@ -874,7 +874,7 @@ ISTEP(2, 12, "proc_sbe_load", "SPPE")
 
 # only on P11S - Metis SBE is loaded in istep 1 already
 
-def p11s_sbe_load():
+def ps_sbe_load():
     # SPPE loads SPINAL & TAP SBE common image (FW code, common data)
     # Performs a signature check on the entire block.
     # Loads block into SPINAL SBE PIBMEM
@@ -884,7 +884,7 @@ def p11s_sbe_load():
 
 ISTEP(2, 13, "proc_sbe_customize", "SPPE")
 
-def p11s_sbe_customize():
+def ps_sbe_customize():
     # Same as above but no signature check
     # Data is Tap unique
     MODULE( load PPE image( Spinal SBE via PIB, Spinal cust image ) )
@@ -893,13 +893,13 @@ def p11s_sbe_customize():
 
 ISTEP(2, 14, "proc_sbe_config_update", "SPPE")
 
-def p11s_sbe_config_update():
+def ps_sbe_config_update():
     # Set up Tap SBE scratch regs by copying from Spinal scratch regs
     # Optional: Set up Spinal SBE scratch regs - assumption is that SBE scratch is subset of SPPE scratch so no need to modify
 
 ISTEP(2, 15, "proc_sbe_start", "SPPE")
 
-def p11_sbe_start(vector<Target<COMPUTE_CHIP | HUB_CHIP>> & i_targets):
+def pst_sbe_start(vector<Target<COMPUTE_CHIP | HUB_CHIP>> & i_targets):
     ## Boot SBEs on both Spinal and Tap
     for chip in i_targets:
         # Use TP_TPCHIP_PIB_SBE_SBEPM_SBEPPE_PPE_XIXCR_t for SBE_PPE_XIXCR
@@ -925,10 +925,10 @@ def p11_sbe_start(vector<Target<COMPUTE_CHIP | HUB_CHIP>> & i_targets):
 
 ISTEP(2, 16, "proc_sbe_attr_setup", "SSBE, TSBE")
 
-def p11s_sbe_attr_setup():
+def ps_sbe_attr_setup():
     pass # provided by Thi
 
-def p11t_sbe_attr_setup():
+def pt_sbe_attr_setup():
     ## Set up SBE multipipe unit
     mod_pipe_setup(PC_MMIO, false, PC_SBE, true,
                    PC_GSD2PIB, false, PC_SBE, true,
@@ -937,12 +937,12 @@ def p11t_sbe_attr_setup():
 
 ISTEP(2, 17, "pc_pll_initf", "TSBE")
 
-def p11t_pll_initf():
+def pt_pll_initf():
     putRing( pc_pll = perv_pll_cfg ) # perv_pll_cfg for DPLL
 
 ISTEP(2, 18, "pc_pll_setup", "TSBE")
 
-def p11t_pll_setup():
+def pt_pll_setup():
     if ATTR_TAP_DPLL_BYPASS:
         return
 
@@ -972,9 +972,9 @@ def p11t_pll_setup():
     ROOT_CTRL3.TP_DPLL_RESET = 0
 
     ## Start PLL clock and check for lock
-    mod_start_stop_clock(TP chiplet, P11T_PERV_DPLLNEST)
+    mod_start_stop_clock(TP chiplet, PT_PERV_DPLLNEST)
 
-    if mod_poll_pll_lock_fsi2pib(TP chiplet, pll::P11T_PERV_DPLLNEST) returns TIMEOUT:
+    if mod_poll_pll_lock_fsi2pib(TP chiplet, pll::PT_PERV_DPLLNEST) returns TIMEOUT:
         ASSERT(DPLL_LOCK_ERR)
 
     ## Take DPLL out of bypass and enable frequency slewing
@@ -985,17 +985,17 @@ def p11t_pll_setup():
 
 ISTEP(2, 19, "pc_tp_initf", "TSBE")
 
-def p11t_tp_initf():
+def pt_tp_initf():
     putRing( TP chiplet, perv_initf = perv_func+net_func )
 
 ISTEP(2, 20, "pc_tp_startclocks", "TSBE")
 
-def p11t_tp_startclocks():
+def pt_tp_startclocks():
     mod_start_stop_clocks(TP chiplet, regions=[perv, net])
 
 ISTEP(2, 21, "pc_tp_init", "TSBE")
 
-def p11t_tp_init():
+def pt_tp_init():
     # TODO : Set up TOD error routing, error mask via scan inits
 
     ## Start using PCB network
@@ -1016,7 +1016,7 @@ def p11t_tp_init():
 
     # We cannot set up constant hang pulses here yet since the generation
     # logic is in the TBUS chiplet. The constant hang pulse setup for Tap
-    # will happen at the end of p11t_chiplet_startclocks.
+    # will happen at the end of pt_chiplet_startclocks.
 
     ## Set up special NET_CTRL1 init value for EQs
     with all EQ chiplets via multicast:
@@ -1025,7 +1025,7 @@ def p11t_tp_init():
 
     ## Unmask TP PLL unlock reporting
     if not ATTR_TAP_DPLL_BYPASS:
-        PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS &= ~(P11T_PERV_DPLLNEST)
+        PCB_RESPONDER_CONFIG_REG.CFG_MASK_PLL_ERRS &= ~(PT_PERV_DPLLNEST)
 
     ## Miscellaneous TP setup
     mod_poz_tp_init_common(i_target)
@@ -1037,10 +1037,10 @@ Step 3: Spinal+Tap chiplet init
 ISTEP(3, 1, "proc_chiplet_force_on", "SSBE, TSBE")
 # NOT executed as part of hotplug
 
-def p11s_chiplet_force_on():
+def ps_chiplet_force_on():
     pass  # No power gated regions on Spinal
 
-def p11t_chiplet_force_on():
+def pt_chiplet_force_on():
     pass
 
 def zme_chiplet_force_on():
@@ -1048,7 +1048,7 @@ def zme_chiplet_force_on():
 
 ISTEP(3, 2, "proc_chiplet_clk_config", "SSBE, TSBE")
 
-def p11s_chiplet_clk_config():
+def ps_chiplet_clk_config():
 
     def paxo_mux_setup():
         NET_CTRL1.REFCLK_CLKMUX_SEL[0] = ATTR_CLOCK_PLL_CROSS_FEED_MUX89    # uint8, OWN_PLL = 0, OTHER_PLL = 1
@@ -1073,7 +1073,7 @@ def p11s_chiplet_clk_config():
 
     poz_chiplet_clk_config(i_target, mux_setup)
 
-def p11t_chiplet_clk_config():
+def pt_chiplet_clk_config():
     def mux_setup():
         pass  # Nothing to do
 
@@ -1118,7 +1118,7 @@ def poz_chiplet_clk_config(target<ANY_POZ_CHIP> i_target, chiplet_mux_setup_FP_t
 
 ISTEP(3, 3, "proc_chiplet_deskew", "SSBE")
 
-def p11s_chiplet_deskew():
+def ps_chiplet_deskew():
     # TBD
 
 def zme_chiplet_deskew():
@@ -1126,18 +1126,18 @@ def zme_chiplet_deskew():
 
 ISTEP(3, 4, "proc_chiplet_reset", "SSBE, TSBE")
 
-def p11s_chiplet_reset():
-    poz_chiplet_reset(i_target, p11s_chiplet_delay_table, 10)
+def ps_chiplet_reset():
+    poz_chiplet_reset(i_target, ps_chiplet_delay_table, 10)
     with all chiplets except TP via multicast:
         NET_CTRL0.SRAM_ENABLE = 1    # bit 23
 
-def p11t_chiplet_reset():
-    poz_chiplet_reset(i_target, p11t_chiplet_delay_table, 10)
+def pt_chiplet_reset():
+    poz_chiplet_reset(i_target, pt_chiplet_delay_table, 10)
 
     if not ATTR_HOTPLUG:
-        p11t_hcd_ex_manual_poweron(all good cores)
-        p11t_hcd_cache_reset(all good cores)
-        p11t_hcd_core_reset(all good cores)
+        pt_hcd_ex_manual_poweron(all good cores)
+        pt_hcd_cache_reset(all good cores)
+        pt_hcd_core_reset(all good cores)
 
 def ody_chiplet_reset():
     poz_chiplet_reset(i_target, ody_chiplet_delay_table, 10, PRE_SCAN0)
@@ -1279,10 +1279,10 @@ def poz_chiplet_reset(target<ANY_POZ_CHIP>,
 ISTEP(3, 5, "proc_chiplet_unused_psave", "SSBE, TSBE")
 # NOT executed as part of hotplug
 
-def p11t_chiplet_unused_psave():
+def pt_chiplet_unused_psave():
     poz_chiplet_unused_psave()
 
-def p11s_chiplet_unused_psave():
+def ps_chiplet_unused_psave():
     poz_chiplet_unused_psave()
 
 def ody_chiplet_unused_psave():
@@ -1319,7 +1319,7 @@ def poz_chiplet_unused_psave():
 
 ISTEP(3, 6, "proc_chiplet_pll_initf", "SSBE, TSBE")
 
-def p11s_chiplet_pll_initf():
+def ps_chiplet_pll_initf():
     putRing( chiplet_pll = all static PLL settings if any )
 
     # Load bucketed rings based on bucket attrs
@@ -1344,7 +1344,7 @@ def p11s_chiplet_pll_initf():
     # NEST_LCPLL_BUCKET is correct here, we use that same setting for the TBUS buckets
     putRingBucket(tbus_pll_XX, ATTR_NEST_LCPLL_BUCKET)
 
-def p11t_chiplet_pll_initf():
+def pt_chiplet_pll_initf():
     putRing( chiplet_pll_common = all static PLL settings if any )
 
     # Load bucketed rings based on bucket attrs
@@ -1361,10 +1361,10 @@ def zme_chiplet_pll_initf():
 
 ISTEP(3, 7, "proc_chiplet_pll_setup", "SSBE, TSBE")
 
-def p11t_chiplet_pll_setup():
+def pt_chiplet_pll_setup():
     poz_chiplet_pll_setup()
 
-def p11s_chiplet_pll_setup():
+def ps_chiplet_pll_setup():
     poz_chiplet_pll_setup()
 
 # No ody_chiplet_pll_setup - The single PLL is started in step 1 by the command table
@@ -1421,13 +1421,13 @@ def poz_chiplet_pll_setup(MulticastGroup i_mcgroup = MCGROUP_GOOD_NO_TP):
 
 ISTEP(3, 8, "proc_bist_repr_initf", "SSBE, TSBE")
 
-def p11s_bist_repr_initf():
+def ps_bist_repr_initf():
     if ATTR_ENABLE_LBIST or ATTR_ENABLE_ABIST:
-        p11s_chiplet_repr_initf()
+        ps_chiplet_repr_initf()
 
-def p11t_bist_repr_initf():
+def pt_bist_repr_initf():
     if ATTR_ENABLE_LBIST or ATTR_ENABLE_ABIST:
-        p11t_chiplet_repr_initf()
+        pt_chiplet_repr_initf()
 
 def ody_bist_repr_initf():
     if ATTR_ENABLE_LBIST or ATTR_ENABLE_ABIST:
@@ -1439,14 +1439,14 @@ def zme_bist_repr_initf():
 
 ISTEP(3, 9, "proc_abist", "SSBE, TSBE")
 
-def p11s_abist():
+def ps_abist():
     if not ATTR_ENABLE_ABIST:
         return
 
     poz_bist({"s_abst_setup", "s_abst_cmp", chiplets=all, abist+setup+run+compare+cleanup, regions=all except PLL})
     mod_scan0(chiplets via multicast, regions=all except PLL, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
-def p11t_abist():
+def pt_abist():
     if not ATTR_ENABLE_ABIST:
         return
 
@@ -1470,7 +1470,7 @@ def zme_abist():
 
 ISTEP(3, 10, "proc_lbist", "SSBE, TSBE")
 
-def p11s_lbist():
+def ps_lbist():
     if not ATTR_ENABLE_LBIST:
         return
 
@@ -1478,7 +1478,7 @@ def p11s_lbist():
     mod_scan0(chiplets via multicast, regions=all except PLL, scan_types=cc::SCAN_TYPE_RTG)
     mod_scan0(chiplets via multicast, regions=all except PLL, scan_types=cc::SCAN_TYPE_NOT_RTG)
 
-def p11t_lbist():
+def pt_lbist():
     if not ATTR_ENABLE_LBIST:
         return
 
@@ -1509,10 +1509,10 @@ def zme_lbist():
 
 ISTEP(3, 11, "proc_chiplet_repr_initf", "SSBE, TSBE")
 
-def p11s_chiplet_repr_initf():
+def ps_chiplet_repr_initf():
     poz_chiplet_repr_initf()
 
-def p11t_chiplet_repr_initf():
+def pt_chiplet_repr_initf():
     poz_chiplet_repr_initf()
 
 def ody_chiplet_repr_initf():
@@ -1523,10 +1523,10 @@ def poz_chiplet_repr_initf():
 
 ISTEP(3, 12, "proc_chiplet_arrayinit", "SSBE, TSBE")
 
-def p11s_chiplet_arrayinit():
+def ps_chiplet_arrayinit():
     poz_chiplet_arrayinit()
 
-def p11t_chiplet_arrayinit():
+def pt_chiplet_arrayinit():
     # We include region 13 on Tap since that contains an MMA on the EQs and there is no PLL on any other non-TP chiplet
     poz_chiplet_arrayinit(regions=all)
 
@@ -1548,18 +1548,18 @@ def poz_chiplet_arrayinit(target<ANY_POZ_CHIP>, i_regions=all except PLL):
 ISTEP(3, 13, "proc_chiplet_undo_force_on", "SSBE, TSBE")
 # NOT executed as part of hotplug
 
-def p11s_chiplet_undo_force_on():
+def ps_chiplet_undo_force_on():
     pass
 
-def p11t_chiplet_undo_force_on():
-    p11t_hcd_ex_manual_poweroff(all good cores)
+def pt_chiplet_undo_force_on():
+    pt_hcd_ex_manual_poweroff(all good cores)
 
 ISTEP(3, 14, "proc_chiplet_initf", "SSBE, TSBE")
 
-def p11s_chiplet_initf():
+def ps_chiplet_initf():
     putRing( chiplet_initf = everything under the sun that has not been scanned yet )
 
-def p11t_chiplet_initf():
+def pt_chiplet_initf():
     putRing( chiplet_initf = everything under the sun that has not been scanned yet )
 
 def ody_chiplet_initf():
@@ -1567,12 +1567,12 @@ def ody_chiplet_initf():
 
 ISTEP(3, 15, "proc_chiplet_init", "SSBE, TSBE")
 
-def p11s_chiplet_init():
+def ps_chiplet_init():
     ## Set up topology ID
     CPLT_CONF0.TOPOLOGY_MODE = ATTR_FABRIC_TOPOLOGY_MODE
     CPLT_CONF0.TOPOLOGY_ID   = ATTR_FABRIC_TOPOLOGY_ID
 
-def p11t_chiplet_init():
+def pt_chiplet_init():
     ## Set up topology and octant ID
     CPLT_CONF0.TOPOLOGY_MODE = ATTR_FABRIC_TOPOLOGY_MODE
     CPLT_CONF0.TOPOLOGY_ID   = ATTR_FABRIC_TOPOLOGY_ID
@@ -1731,16 +1731,16 @@ def zme_chiplet_init():
 
 ISTEP(3, 20, "proc_chiplet_startclocks", "SSBE, TSBE")
 
-def p11s_chiplet_startclocks():
+def ps_chiplet_startclocks():
     ## Start chiplet clocks
     poz_chiplet_startclocks(MCGROUP_GOOD_NO_TP)
 
-def p11t_chiplet_startclocks():
+def pt_chiplet_startclocks():
     ## Starting chiplet clocks (except EQ)
     poz_chiplet_startclocks(MCGROUP_GOOD_NO_TPEQ)
 
     ## Starting EQ chiplet clocks
-    poz_chiplet_startclocks(MCGROUP_EQ, cc::P11T_EQ_PERV | cc::P11T_EQ_QME | cc::P11T_EQ_CLKADJ)
+    poz_chiplet_startclocks(MCGROUP_EQ, cc::PT_EQ_PERV | cc::PT_EQ_QME | cc::PT_EQ_CLKADJ)
 
     ## Set up constant hang pulses
     # Formula:
@@ -1835,13 +1835,13 @@ def poz_chiplet_startclocks(target<ANY_POZ_CHIP>, target<PERV|MC>, uint16_t i_cl
 
 ISTEP(3, 21, "proc_chiplet_fir_init", "SSBE, TSBE")
 
-def p11s_chiplet_fir_init():
-    mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, REGION_ALL_BUT_PERV, p11s_chiplet_delay_table)
+def ps_chiplet_fir_init():
+    mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, REGION_ALL_BUT_PERV, ps_chiplet_delay_table)
     mod_setup_tracestop_on_xstop(MCGROUP_GOOD_NO_TP)
     mod_unmask_firs(target)
 
-def p11t_chiplet_fir_init():
-    mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, REGION_ALL_BUT_PERV, p11t_chiplet_delay_table)
+def pt_chiplet_fir_init():
+    mod_setup_clockstop_on_xstop(MCGROUP_GOOD_NO_TP, REGION_ALL_BUT_PERV, pt_chiplet_delay_table)
     mod_setup_tracestop_on_xstop(MCGROUP_GOOD_NO_TP)
     mod_unmask_firs(target)
 
@@ -1864,10 +1864,10 @@ def zme_chiplet_fir_init():
 
 ISTEP(3, 22, "proc_chiplet_dts_init", "SSBE, TSBE")
 
-def p11s_chiplet_dts_init():
+def ps_chiplet_dts_init():
     poz_chiplet_dts_init(target, AN_CHIP_VOLTAGE_WRAP_SCOMSAT_KVREF_START_CAL)
 
-def p11t_chiplet_dts_init():
+def pt_chiplet_dts_init():
     poz_chiplet_dts_init(target, ANALOG_SHIM_VOLTAGE_WRAP_SCOMSAT_KVREF_START_CAL)
 
 def zme_chiplet_dts_init():
@@ -1890,7 +1890,7 @@ def poz_chiplet_dts_init(target<ANY_POZ_CHIP> i_target, uint32_t i_start_cal_add
 
 ISTEP(3, 23, "proc_chiplet_skewadj_setup", "TSBE")
 
-def p11t_chiplet_skewadj_setup():
+def pt_chiplet_skewadj_setup():
     with all EQs via multicast:
         ## Drop SkewAdj / DCAdj resets
         NET_CTRL1[16:23] = 0
@@ -1959,10 +1959,10 @@ def p11t_chiplet_skewadj_setup():
 
 ISTEP(3, 24, "proc_nest_enable_io", "SSBE, TSBE")
 
-def p11s_nest_enable_io():
+def ps_nest_enable_io():
     poz_nest_enable_io()
 
-def p11t_nest_enable_io():
+def pt_nest_enable_io():
     poz_nest_enable_io()
 
 def ody_nest_enable_io():
@@ -2019,10 +2019,10 @@ ISTEP(3, 32, "proc_tbus_setup", "SSBE, TSBE")
 
 ISTEP(3, 40, "proc_fabricinit", "SSBE, TSBE")
 
-def p11s_fabricinit():
+def ps_fabricinit():
     pass # Leaving the implementation details to the Nest team
 
-def p11t_fabricinit():
+def pt_fabricinit():
     pass # Leaving the implementation details to the Nest team
 
 ISTEP(3, 41, "proc_bmc_pci_init", "SSBE")

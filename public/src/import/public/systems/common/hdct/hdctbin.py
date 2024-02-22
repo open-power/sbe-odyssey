@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2023
+# Contributors Listed Below - COPYRIGHT 2023,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -67,7 +67,7 @@ import customEnv
 
 
 # supported targets
-supportedTargets = ["odyssey", "p11"]
+supportedTargets = ["odyssey", "pst"]
 
 # Dict of ec level and file descriptors.
 fdDict = dict()
@@ -111,7 +111,7 @@ class ArgParser:
 
         # Add arguments to the respective groups
         requiredGroup.add_argument('-j', '--jsonfile', required=True, help="Json configuration file")
-        requiredGroup.add_argument('-t', '--target', required=True, choices=['odyssey', 'p11'], help="The generation we are building for.")
+        requiredGroup.add_argument('-t', '--target', required=True, choices=['odyssey', 'pst'], help="The generation we are building for.")
         requiredGroup.add_argument('-e', '--ekbcommit', required=True, help="EKB commit")
 
         # Create our group of optional cmdline args
@@ -305,7 +305,7 @@ def getRingInfo(scandefFilePath):
 
 
 def getTraceArrayIdInfo(traceArrayFileName, config):
-    traceArrayEnumStart =  config["enumname"] # "enum p11_tracearray_bus_id"
+    traceArrayEnumStart =  config["enumname"] # "enum pst_tracearray_bus_id"
     traceArrayEumVarStartWith = config["enumdatamemberstartwith"]
     traceArrayEnumEnd = "};"
     traceArrayEnumFound = False
@@ -668,7 +668,7 @@ def main():
         skipped = False
         entryCount += 1
 
-        # Only P11 Odyssey regs are dumped
+        # Only PST Odyssey regs are dumped
         # Ignore all chip types other than 'ody'
         if entry.chipType == chiptypemapwithhdct:
             out.print("Target Type matched, Processing entry %d/%d" % (entryCount, len(allHdctEntries)))

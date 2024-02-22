@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2023
+# Contributors Listed Below - COPYRIGHT 2023,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -33,6 +33,6 @@ cd $(dirname $0)
 OUTDIR=scratch_regs_out
 rm -rf $OUTDIR
 mkdir $OUTDIR
-./scratch_regs.py poz_scratch_regs.xlsx P11 scratch_regs.md.template > $OUTDIR/p11_scratch_regs.md
+./scratch_regs.py poz_scratch_regs.xlsx PST scratch_regs.md.template > $OUTDIR/pst_scratch_regs.md
 ./scratch_regs.py poz_scratch_regs.xlsx Odyssey scratch_regs.md.template > $OUTDIR/ody_scratch_regs.md
 ./scratch_regs.py poz_scratch_regs.xlsx zMetis scratch_regs.md.template > $OUTDIR/zme_scratch_regs.md
