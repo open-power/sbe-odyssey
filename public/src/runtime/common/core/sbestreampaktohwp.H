@@ -44,7 +44,6 @@ class HwpStreamReceiver : public FileArchive::StreamReceiver
          * @param[in] i_decompressedSize Size of decompressed data.
          */
         HwpStreamReceiver(uint32_t i_offset, voidfuncptr_t i_hwp, uint8_t i_Image) :
-                        iv_fapiRc(fapi2::FAPI2_RC_SUCCESS),
                         iv_offset(i_offset),
                         iv_hwp(i_hwp),
                         iv_image(i_Image)
@@ -53,11 +52,9 @@ class HwpStreamReceiver : public FileArchive::StreamReceiver
         // Each platfrom will have its own implementation of consume.
         int consume(const void* i_data, uint32_t i_size);
 
-        fapi2::ReturnCode getFapiRc() { return iv_fapiRc; }
         uint32_t getEndOffset() { return iv_offset; }
 
     protected:
-        fapi2::ReturnCode iv_fapiRc;
         uint32_t iv_offset;
         voidfuncptr_t iv_hwp;
         uint8_t iv_image;

@@ -37,19 +37,28 @@ ARC_RET_t HwpStreamReceiver::consume(const void* i_data, uint32_t i_size)
 {
     SBE_INFO("PakStreamReceiver::consume: i_size is 0x%08X and iv_offset is 0x%08X", i_size, iv_offset);
 
+    ARC_RET_t pakRc = ARC_OPERATION_SUCCESSFUL;
+
     // Execute the HWP.
     if(iv_hwp != NULL)
     {
-        iv_fapiRc = sbeexecutehwponpak(iv_hwp, (uint8_t *)i_data,
-                                       i_size, iv_offset, iv_image);
-        if (iv_fapiRc)
+        ReturnCode l_fapiRc = sbeexecutehwponpak(iv_hwp, (uint8_t *)i_data,
+                                                    i_size, iv_offset, iv_image);
+        if (l_fapiRc)
         {
-            SBE_ERROR("PakStreamReceiver::consume: sbeexecutehwponpak failed with RC[%08X]", iv_fapiRc);
+            SBE_ERROR("PakStreamReceiver::consume: sbeexecutehwponpak failed with RC[%08X]",
+                       l_fapiRc);
+
+            // No need to return pak rc here. In case of error, the pak rc is
+            // captured in the FFDC.
+            // SBE_EXEC_HWP calls logFatalError, which commits the error log.
+            // Hence, we need to just return secondary operation failure code.
+            pakRc = SBE_SEC_HWP_FAILURE;
         }
     }
     iv_offset += i_size;
 
-    return iv_fapiRc;
+    return pakRc;
 }
 
 ARC_RET_t PpeImageReceiver::consume(const void* i_data, uint32_t i_size)
@@ -64,7 +73,6 @@ ARC_RET_t PpeImageReceiver::consume(const void* i_data, uint32_t i_size)
         if (!(hea && git && tpe))
         {
             SBE_ERROR("PpeImageReceiver::consume: Required metadata missing in image");
-            iv_fapiRc = FAPI2_RC_PLAT_ERR_SEE_DATA;
             return ARC_INVALID_PARAMS;
         }
 
@@ -85,7 +93,6 @@ static ReturnCode sbestreampaktohwp_internal(
     #define SBE_FUNC " sbestreampaktohwp "
     SBE_ENTER(SBE_FUNC);
 
-    ReturnCode fapiRc = FAPI2_RC_SUCCESS;
     ARC_RET_t pakRc = ARC_OPERATION_SUCCESSFUL;
     uint32_t *scratchArea = NULL;
     sha3_t hashData;
@@ -98,24 +105,23 @@ static ReturnCode sbestreampaktohwp_internal(
         // Locate the File.
         FileArchive::Entry entry;
         pakRc = i_pak->locate_file(i_pakname, entry);
-        if (pakRc)
-        {
-            SBE_ERROR(SBE_FUNC "Locate file failed with pakRc 0x%08X", pakRc);
-            fapiRc = FAPI2_RC_PLAT_ERR_SEE_DATA;
-            break;
-        }
+
+        PLAT_FAPI_ASSERT( (pakRc == ARC_OPERATION_SUCCESSFUL),
+                          POZ_PAK_OPERATION_FAILED().
+                          set_PAK_RC(pakRc),
+                          "Locate file failed.");
 
         SBE_INFO(SBE_FUNC "Size of the binary is 0x%08X", entry.get_size());
 
         // Allocating scratch
         scratchArea =
             (uint32_t*)Heap::get_instance().scratch_alloc(FileArchive::STREAM_SCRATCH_SIZE);
-        if(scratchArea == NULL)
-        {
-            SBE_ERROR(SBE_FUNC "scratch allocation failed.");
-            fapiRc = FAPI2_RC_PLAT_ERR_SEE_DATA;
-            break;
-        }
+
+        PLAT_FAPI_ASSERT( (scratchArea != NULL),
+                          POZ_SCRATCH_ALLOC_FAILED().
+                          set_REQUIRED_SPACE(FileArchive::STREAM_SCRATCH_SIZE).
+                          set_AVAILABLE_SPACE(Heap::get_instance().getFreeHeapSize()),
+                          "scratch allocation failed.");
 
         // Call stream_decompress
         pakRc = entry.stream_decompress(i_receiver, scratchArea, i_check_hash ? &hashData : NULL);
@@ -123,23 +129,23 @@ static ReturnCode sbestreampaktohwp_internal(
         // Deallocate the scratch space.
         Heap::get_instance().scratch_free(scratchArea);
 
-        if(pakRc)
-        {
-            SBE_ERROR(SBE_FUNC "stream_decompress failed with RC[%08X]", pakRc);
-            fapiRc = i_receiver.getFapiRc();
-            break;
-        }
+        PLAT_FAPI_ASSERT( (pakRc == ARC_OPERATION_SUCCESSFUL),
+                          POZ_PAK_OPERATION_FAILED().
+                          set_PAK_RC(pakRc),
+                          "stream_decompress failed.");
     } while(false);
 
     // validate that hash value is as expected
-    if (fapiRc == FAPI2_RC_SUCCESS && i_check_hash)
+    if (i_check_hash)
     {
-        /* Checking the image hash and validate */
-        fapiRc = check_file_hash_and_validate(i_pakname, hashData);
+        FAPI_TRY(check_file_hash_and_validate(i_pakname, hashData),
+                    "check_file_hash_and_validate failed with RC[%08X]", fapi2::current_err);
     }
 
+fapi_try_exit:
     SBE_EXIT(SBE_FUNC);
-    return fapiRc;
+    return fapi2::current_err;
+
     #undef SBE_FUNC
 }
 
