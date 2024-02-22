@@ -276,6 +276,14 @@ ReturnCode sbeexecutehwponpak( voidfuncptr_t i_hwp, uint8_t* const i_bin_data,
     SBE_EXEC_HWP(fapiRc, reinterpret_cast<poz_common_image_load_FP_t>( i_hwp ),
                  l_ocmb_chip, (uint8_t *)i_bin_data, i_bin_size, i_bin_offset,
                  static_cast<poz_image_type>(i_image));
+
+    // SBE_EXEC_HWP assigns fapi2::current_err returned by the hardware procedure to
+    // fapiRc; In case of failure, fapiRc is committed and data pointer set to NULL;
+    // But, fapi2::current_err will continue to hold the RC and the data pointer
+    // returned by the hardware procedure; So, set the RC to SUCCESS. No need to worry
+    // about the data pointer as it has been already committed via fapiRc.
+    fapi2::current_err = FAPI2_RC_SUCCESS;
+
     return fapiRc;
     #undef SBE_FUNC
 }
@@ -294,12 +302,11 @@ ReturnCode istepDraminitWithOcmb( voidfuncptr_t i_hwp)
             scratchArea =
                     (fapi2::hwp_data_unit*)Heap::get_instance().scratch_alloc(SPPE_MEM_TRAINING_DATA_SIZE);
 
-            if(scratchArea == NULL)
-            {
-                SBE_ERROR(SBE_FUNC "scratch allocation failed.");
-                fapiRc = FAPI2_RC_PLAT_ERR_SEE_DATA;
-                break;
-            }
+            PLAT_FAPI_ASSERT( (scratchArea != NULL),
+                              POZ_SCRATCH_ALLOC_FAILED().
+                              set_REQUIRED_SPACE(SPPE_MEM_TRAINING_DATA_SIZE).
+                              set_AVAILABLE_SPACE(Heap::get_instance().getFreeHeapSize()),
+                              "scratch allocation failed.");
 
             // Create the stream class pointing to the scratch space.
             fapi2::hwp_array_ostream  logStream( scratchArea,
@@ -318,6 +325,14 @@ ReturnCode istepDraminitWithOcmb( voidfuncptr_t i_hwp)
 
     SBE_EXIT(SBE_FUNC);
     return fapiRc;
+
+fapi_try_exit:
+    SBE_EXIT(SBE_FUNC);
+    // PLAT_FAPI_ASSERT will not commit the error.So, it is the responsibility of this
+    // macro user to commit the error log.
+    logFatalError(fapi2::current_err);
+    return fapi2::current_err;
+
     #undef SBE_FUNC
 }
 
