@@ -396,6 +396,8 @@ void sbeAsyncCommandProcessor_routine(void *arg)
             (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
         }
 
+        ffdcFreeUnwantedError( pk_current()->priority );
+
     } while(true);
     #undef SBE_FUNC
 }
