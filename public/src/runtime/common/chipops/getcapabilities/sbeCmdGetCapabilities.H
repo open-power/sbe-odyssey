@@ -181,7 +181,7 @@ uint32_t getCommitId(const uint8_t *i_meta_start,
 */
 uint32_t loadAndParseInfoTxt(const char *i_fileName,
                              const CU_IMAGES i_capImg,
-                             uint32_t &o_identifier,
+                             uint64_t &o_identifier,
                              uint32_t &o_timeStamp,
                              char (&o_tag)[BUILD_TAG_CHAR_MAX_LENGTH]);
 

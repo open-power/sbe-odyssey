@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -40,7 +40,7 @@
                            "RC[0x%08x]", i_imageType, i_imageFileName, o_rc);            \
         break;                                                                           \
     }                                                                                    \
-    i_imageInfo.iv_identifier = o_identifier;                                            \
+    i_imageInfo.iv_identifier = (uint32_t)(o_identifier >> 32);                          \
     i_imageInfo.iv_buildTime = o_buildDate;
 
 // Structure map for maintaining image name corresponding to image number.

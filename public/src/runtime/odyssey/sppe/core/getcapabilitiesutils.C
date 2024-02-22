@@ -51,7 +51,8 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
                       sizeof(g_getCapabilitiesImages[0]));
              l_img++)
         {
-            uint32_t l_identifier = 0, l_timeStamp = 0, l_commitId = 0;
+            uint64_t l_identifier = 0;
+            uint32_t l_timeStamp = 0, l_commitId = 0;
             char l_tag[BUILD_TAG_CHAR_MAX_LENGTH] = {0};
 
             switch (g_getCapabilitiesImages[l_img].imageNum)
