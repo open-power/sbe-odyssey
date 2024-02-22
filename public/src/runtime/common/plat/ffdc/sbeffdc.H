@@ -288,6 +288,19 @@ constexpr uint32_t plat_ffdcUtilGeFfdcInitSpaceSize(void)
 
 
 /**
+ * @brief Delete uncommitted error in FFDC list for given thread ID
+ *
+ * Function is deleting the uncommitted error in the linked list to avoid
+ * memory leakage.
+ *
+ * @param[in] i_threadId The thread ID for clearing uncommitted FFDC matches
+ *                       the thread ID
+ *
+ */
+void ffdcFreeUnwantedError(uint8_t i_threadId);
+
+
+/**
  * @brief FFDC init to creating persistent space for last Error
  */
 void plat_FfdcInit(void);

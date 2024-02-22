@@ -30,7 +30,9 @@
 #include "sbestatesutils.H"
 #include "sberegaccess.H"
 #include "pk_api.h"
+#include "pk_kernel.h"
 #include "sbeglobals.H"
+
 
 extern fapi2::pozFfdcData_t g_FfdcData;
 
@@ -470,9 +472,6 @@ void ffdcUtils_commitError ( fapi2::ReturnCode& io_rc )
         // marks as node is committed
         node->iv_isCommited = true;
 
-        // Add node
-        fapi2::g_ffdcCtrlSingleton.addNextNode (node);
-
         // Set async ffdc bit
         (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
     }while (0);
@@ -592,8 +591,6 @@ static void ffdcUtils_createScratchFullErrorRcPkg(uint32_t i_failedRc, uint32_t 
     size_t availSize = Heap::get_instance().getFreeHeapSize();
     hwpLvPtr[2].data = availSize;
     hwpLvPtr[2].size = sizeof(availSize);
-
-
 
     // Commit the scratch space full error
     fapi2::ReturnCode l_rc = fapi2::RC_POZ_FFDC_SCRATCH_SPACE_FULL_ERROR;
@@ -762,7 +759,7 @@ static uint32_t ffdcPlatCreateAndSendWithFullTrace (
         platFfdc.platHeader.setRc         ( SBE_GLOBAL->failedPrimStatus, SBE_GLOBAL->failedSecStatus );
         platFfdc.platHeader.setfwCommitId ( SBE_COMMIT_ID );
         platFfdc.platHeader.setDdlevel    ( 0, 0 );
-        platFfdc.platHeader.setThreadId   ( 0 );
+        platFfdc.platHeader.setThreadId   ( pk_current()->priority );
 
         platFfdc.dumpFields        = SBE_FFDC_TRACE_DATA;
 
@@ -909,7 +906,6 @@ uint32_t sendFFDCOverFIFO( uint32_t &o_wordsSent,
         pozFfdcNode_t * node = fapi2::g_ffdcCtrlSingleton.getHead();
         if (node != nullptr)
         {
-            /* Get the address of first committed FFDC */
             pozFfdcNode_t * currentNode = (pozFfdcNode_t *) node;
             pozFfdcNode_t * nextNode = nullptr;
 
@@ -918,20 +914,23 @@ uint32_t sendFFDCOverFIFO( uint32_t &o_wordsSent,
                 SBE_DEBUG(SBE_FUNC " currentNode: 0x%08X", currentNode);
                 ffdcUtils_checkScratchPtrCorruptionAndHalt((const void *)currentNode);
 
-                uint32_t len = currentNode->iv_ffdcLen;
-                l_rc = ffdcPakageStream.put((uint32_t) BYTES_TO_WORDS( len ),
-                                        (uint32_t*) (((uint8_t *)currentNode) +
-                                                    sizeof(pozFfdcNode_t)) );
-                CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
-
-                byteSent += len;
-
-                /* Check FFDC is fatal, In case of fatal send full trace at last node */
-                if (currentNode->iv_isFatal)
+                if (currentNode->iv_isCommited)
                 {
-                    // Stream out full trace at last with different slid id for
-                    // any one of the FFDC has FATAL
-                    i_forceFullTracePackage = true;
+                    uint32_t len = currentNode->iv_ffdcLen;
+                    l_rc = ffdcPakageStream.put((uint32_t) BYTES_TO_WORDS( len ),
+                                            (uint32_t*) (((uint8_t *)currentNode) +
+                                                        sizeof(pozFfdcNode_t)) );
+                    CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+
+                    byteSent += len;
+
+                    /* Check FFDC is fatal, In case of fatal send full trace at last node */
+                    if (currentNode->iv_isFatal)
+                    {
+                        // Stream out full trace at last with different slid id for
+                        // any one of the FFDC has FATAL
+                        i_forceFullTracePackage = true;
+                    }
                 }
 
                 /* Logic to get the next FFDC */
@@ -986,6 +985,111 @@ uint32_t sendFFDCOverFIFO( uint32_t &o_wordsSent,
 
     SBE_EXIT(SBE_FUNC);
     return l_rc;
+    #undef SBE_FUNC
+}
+
+
+#if defined(MINIMUM_FFDC_RE)
+/**
+ * @brief Get thread ID for given node
+ *
+ * @param i_nodeAddr Node address
+ * @return pk thread id (PkThreadPriority)
+ */
+static uint8_t ffdcUtils_getThreadId ( const pozFfdcNode_t * i_nodeAddr )
+{
+    uint8_t threadId = 0;
+    pozFfdcNode_t * node = const_cast<pozFfdcNode_t*>(i_nodeAddr);
+
+    /* Check the node contain Plat data */
+    if (node->iv_platSize)
+    {
+        // Get the plat ffdc package start address
+        pozPlatFfdcPackageFormat_t * platAddr = (pozPlatFfdcPackageFormat_t *)
+                                                     ( ((uint8_t *)node)      +
+                                                       sizeof (pozFfdcNode_t) +
+                                                       node->iv_hwpSize
+                                                     );
+        threadId = platAddr->platHeader.threadId;
+    }
+
+    return threadId;
+}
+#endif
+
+
+
+void ffdcFreeUnwantedError(uint8_t i_threadId)
+{
+    #define SBE_FUNC "ffdcFreeUnwantedError "
+    SBE_ENTER(SBE_FUNC);
+
+#if defined( MINIMUM_FFDC_RE )
+
+    // Thread safety
+    ffdcUtils_SemaPend();
+
+    // Get the head
+    pozFfdcNode_t * node = (pozFfdcNode_t *) fapi2::g_ffdcCtrlSingleton.getHead();
+    pozFfdcNode_t * deletingNode = nullptr;
+    pozFfdcNode_t * prevNode = node;
+
+    do
+    {
+        // Checking HEAD if we have data
+        if (node == nullptr)
+        {
+            SBE_INFO (SBE_FUNC "Head is null");
+            break;
+        }
+
+        // checking uncommitted ffdc and then clear
+        while(node != nullptr)
+        {
+            uint8_t nodeThreadId = ffdcUtils_getThreadId(node);
+            SBE_DEBUG(SBE_FUNC "prev: [0x%08X], node: [0x%08X], next: [0x%08X]", prevNode, node, node->next);
+            SBE_DEBUG(SBE_FUNC "Is node committed: %d, node: [0x%08X], thread ID: [0x%08X]", node->iv_isCommited, node, nodeThreadId);
+
+            // node is committed
+            if ( (!node->iv_isCommited) && (i_threadId == nodeThreadId) )
+            {
+                // not committed node need to delete and attach node
+                deletingNode = node;
+
+                // not committed head need to clear and set with next
+                if (node == fapi2::g_ffdcCtrlSingleton.getHead())
+                {
+                    fapi2::g_ffdcCtrlSingleton.setHead(node->next);
+                }
+
+                // linking previous node with next code
+                if (node->next != nullptr)
+                {
+                    prevNode->next = node->next;
+                    node = node->next;
+                }
+                else
+                {
+                    node = node->next;
+                    prevNode->next = node;
+                }
+
+                SBE_DEBUG(SBE_FUNC "Deleting node [0x%08X]", deletingNode);
+                // Free up the node
+                Heap::get_instance().scratch_free((const void*)deletingNode);
+            }
+            else
+            {
+                prevNode = node;
+                node = node->next;
+            }
+        }
+    }while(0);
+
+    ffdcUtils_SemaPost();
+#endif
+
+    SBE_EXIT(SBE_FUNC);
     #undef SBE_FUNC
 }
 
@@ -1196,7 +1300,7 @@ static void ffdcInitPlatData( const pozPlatFfdcPackageFormat_t * i_platAddr,
         platAddr->platHeader.setRc         ( i_primRc, i_secRc );
         platAddr->platHeader.setfwCommitId ( SBE_COMMIT_ID );
         platAddr->platHeader.setDdlevel    ( 0, 0 );
-        platAddr->platHeader.setThreadId   ( 0 );
+        platAddr->platHeader.setThreadId   ( pk_current()->priority );
         platAddr->dumpFields = 0;
 
         if ( i_ffdcLen > sizeof(pozPlatFfdcPackageFormat_t) )
@@ -1310,6 +1414,12 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
                                  i_rc,
                                  &params
                                );
+
+#if defined( MINIMUM_FFDC_RE )
+        // Created error will add to list without committing it, LogError will
+        // handle the committing error
+        fapi2::g_ffdcCtrlSingleton.addNextNode (currentNode);
+#endif
     }
     else
     {
