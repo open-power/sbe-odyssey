@@ -38,8 +38,8 @@
 #define INFO_TXT_ENTRY_FIELD_SEPARATOR  0x2C       // ","
 
 #define INFO_TXT_FORMAT_MAX_FIELD            5
-#define INFO_TXT_VERSION_LENGTH              5 // Version format: vX.YZ whereX,Y,Z=[0-9]
-#define INFO_TXT_IMAGE_IDENTIFIER_MAX_LENGTH 8 // Identifier as this can be commit-id or version no.
+#define INFO_TXT_VERSION_LENGTH              5  // Version format: vX.YZ whereX,Y,Z=[0-9]
+#define INFO_TXT_IMAGE_IDENTIFIER_MAX_LENGTH 16 // Identifier as this can be commit-id or version no.
 #define INFO_TXT_BUILDDATE_LENGTH            8
 #define INFO_TXT_TAG_MAX_LENGTH              20
 
@@ -339,7 +339,7 @@ static uint32_t validateImageTypeFromInfoTxt(const uint8_t *i_startPtr,
 static uint32_t getIdentifierFromInfoTxt(const uint8_t *i_startPtr,
                                          const uint8_t *i_endPtr,
                                          const CU_IMAGES i_capImg,
-                                         uint32_t &o_identifier)
+                                         uint64_t &o_identifier)
 {
     #define SBE_FUNC " getIdentifierFromInfoTxt "
     SBE_ENTER(SBE_FUNC);
@@ -361,7 +361,7 @@ static uint32_t getIdentifierFromInfoTxt(const uint8_t *i_startPtr,
             break;
         }
 
-        if ((i_capImg == CU_IMAGES::EKB) && (l_size != 8))
+        if ((i_capImg == CU_IMAGES::EKB) && (l_size != 16))
         {
             l_rc = SBE_SEC_INFO_TXT_FORMAT_INVALID;
             SBE_ERROR(SBE_FUNC "Length of commitId must be" \
@@ -500,7 +500,7 @@ static uint32_t getTagFromInfoTxt(const uint8_t *i_startPtr,
 static uint32_t getMetadataFromInfoTxt(const CU_IMAGES i_capImg,
                                        uint8_t *i_fileStartAddr,
                                        const uint32_t i_fileSize,
-                                       uint32_t &o_identifier,
+                                       uint64_t &o_identifier,
                                        uint32_t &o_buildDate,
                                        char (&o_tag)[INFO_TXT_TAG_MAX_LENGTH])
 {
@@ -516,7 +516,7 @@ static uint32_t getMetadataFromInfoTxt(const CU_IMAGES i_capImg,
     // Info.txt file format:
     // [<Version   : vX.YZ XYZ=[0-9] 5 chars>
     //  <Image     : ekb|bmc|host 5 chars max>
-    //  <Identifier: Commid-Id or version 8 chars max>
+    //  <Identifier: Commid-Id or version 16 chars max>
     //  <BuildDate : YYYYMMDD 8 chars>
     //  <Tag       : git tag 20 chars max>
     // ]
@@ -718,7 +718,7 @@ static uint32_t getMetadataFromInfoTxt(const CU_IMAGES i_capImg,
 
 uint32_t loadAndParseInfoTxt(const char *i_fileName,
                              const CU_IMAGES i_capImg,
-                             uint32_t &o_identifier,
+                             uint64_t &o_identifier,
                              uint32_t &o_buildDate,
                              char (&o_tag)[INFO_TXT_TAG_MAX_LENGTH])
 {
