@@ -55,7 +55,7 @@ def main():
         sys.exit(1)
 
     # Verify HDCT.bin
-    cmd = os.environ['PATH_PYTHON3'] + " " + "$PROJECT_ROOT/public/systems/common/hdct/hdcttxt.py -f $PROJECT_ROOT/output/images/$ECMD_ARCH/hdct_"+arg+"_10/hdct_"+arg+"_10.bin -o $PROJECT_ROOT/output/images/$ECMD_ARCH/ -s $PROJECT_ROOT/output/images/$ECMD_ARCH/hdct_"+arg+"_common/hdct.lookup -r $PROJECT_ROOT/public/systems/p11/HDCT.txt -g "+arg+" -c critical -l critical -e " + commitId
+    cmd = os.environ['PATH_PYTHON3'] + " " + "$PROJECT_ROOT/public/systems/common/hdct/hdcttxt.py -f $PROJECT_ROOT/output/images/$ECMD_ARCH/hdct_"+arg+"_10/hdct_"+arg+"_10.bin -o $PROJECT_ROOT/output/images/$ECMD_ARCH/ -s $PROJECT_ROOT/output/images/$ECMD_ARCH/hdct_"+arg+"_common/hdct.lookup -r $PROJECT_ROOT/public/systems/pst/HDCT.txt -g "+arg+" -c critical -l critical -e " + commitId
     rc = os.system( cmd )
 
     if rc:

@@ -1,7 +1,7 @@
 
 {
     "eclevel"       : ["0x10"],
-    "hdctfile"      : "$PROJECT_ROOT/public/systems/p11/HDCT.txt",
+    "hdctfile"      : "$PROJECT_ROOT/public/systems/pst/HDCT.txt",
     "defaultdump"   : "ebmc",
 
     "tracearray"    : {
