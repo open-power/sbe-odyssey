@@ -169,7 +169,7 @@ fi
 PATH=$SIGNING_DIR:$PATH
 
 
-#TODO: Change to p11 env variable once op-build is enabled
+#TODO: Change to pst env variable once op-build is enabled
 # Check for signing mode passed in by environment (p10)
 if [ ! -z "${BR2_OPENPOWER_P10_SECUREBOOT_SIGN_MODE+x}" ]; then
     SIGNING_MODE=$BR2_OPENPOWER_P10_SECUREBOOT_SIGN_MODE

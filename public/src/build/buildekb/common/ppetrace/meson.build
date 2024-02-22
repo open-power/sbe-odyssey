@@ -23,7 +23,7 @@
 #
 # IBM_PROLOG_END_TAG
 
-import_dir_path = pub_import_dir_path + '/emb/p11/kernels/ppe/ppetrace/'
+import_dir_path = pub_import_dir_path + '/emb/pst/kernels/ppe/ppetrace/'
 
 infile_c = ['pk_trace_core.c',
             'pk_trace_big.c',

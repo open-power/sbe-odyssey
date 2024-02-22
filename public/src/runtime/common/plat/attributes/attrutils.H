@@ -30,7 +30,7 @@
 // TODO : This enum is defined in sbe_targets.H and has been temporarily
 //        copied here. When the commit :
 //           https://rchgit01.rchland.ibm.com/gerrit1/#/c/155120/ is
-//        merged to p11-ekb and then mirrored to p11-sbe, remove the below
+//        merged to ekb-src and then mirrored to sbe, remove the below
 //        enum and include sbe_targets.H.
 /**
  *  @brief  Enum to be used while sending a target info to SBE along with

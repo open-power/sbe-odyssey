@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,10 +23,10 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 // JIRA: PFSBE-254
-// TODO : Attribute override is common for odyssey and p11. As p11 attribute has not
-//        been setup yet(addition of p11 SBE filter XML, etc...), for the time being,
+// TODO : Attribute override is common for odyssey and pst. As pst attribute has not
+//        been setup yet(addition of pst SBE filter XML, etc...), for the time being,
 //        attribute update related changes have been checked-in under runtime Odyssey
-//        sppe code. Once p11 SBE attribute XML has been updated, move these files to
+//        sppe code. Once pst SBE attribute XML has been updated, move these files to
 //        runtime common code.
 
 #ifndef __ATTRIBUTE_OVERRIDE_H__

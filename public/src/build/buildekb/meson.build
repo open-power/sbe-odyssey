@@ -29,6 +29,6 @@ if platform == 'odyssey' or platform == 'odysseylab' or platform == 'all'
     subdir('odyssey')
 endif
 
-if platform == 'p11' or platform == 'all'
-    subdir('p11')
+if platform == 'pst' or platform == 'all'
+    subdir('pst')
 endif

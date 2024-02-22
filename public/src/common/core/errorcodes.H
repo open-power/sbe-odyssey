@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -71,7 +71,7 @@
 #define BOOT_RC_SCAN_TYPE_BLOCKED   0x115
 
 // Area 0x2 --> HWP Code Fails
-// Refer ekb-p11/public/hwp/generic/perv/cmdtable/cmdtable_hwp_errors.H
+// Refer ekb-src/public/hwp/generic/perv/cmdtable/cmdtable_hwp_errors.H
 
 //Area 0x3 --> Boot Code Fails
 // 0x10 to 0x1f are used for SROM Initial Boot Checks

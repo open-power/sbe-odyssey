@@ -718,7 +718,7 @@ uint32_t sbeHandleDsPipeCnfg (const sbeFifoType  i_usPipe)
             dsPipeAccess.rd_use_ctlr_id = 1;
             dsPipeCtlrId.readend = usPipeCtlrId.writeend;
             // no interrupt routing for non-SBE PIB controllers, they poll
-            // for P11 SPPE-SBE this could be enabled
+            // for PST SPPE-SBE this could be enabled
         }
 
         if (updateDsConfig)

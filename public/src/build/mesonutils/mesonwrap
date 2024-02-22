@@ -41,7 +41,7 @@ MESON_INSTALL_DIR="$SBEROOT/images"
 CMN_PUB_MESON_CROSS_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/common/cross_file.txt"
 CMN_MESON_NATIVE_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/common/native_file.txt"
 ODYSSEY_MESON_CROSS_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/odyssey/cross_file.txt"
-P11_MESON_CROSS_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/p11/cross_file.txt"
+PST_MESON_CROSS_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/pst/cross_file.txt"
 INSTALL_DIR="$SBEROOT/images"
 
 # @brief Print the help/usage info to the console
@@ -197,7 +197,7 @@ EOF
     #Pass all cross files ir-respective of platform used.
     CROSS_FILES=" --cross-file $CMN_PUB_MESON_CROSS_FILE_PATH
                   --cross-file $ODYSSEY_MESON_CROSS_FILE_PATH
-                  --cross-file $P11_MESON_CROSS_FILE_PATH
+                  --cross-file $PST_MESON_CROSS_FILE_PATH
                   --cross-file $SBEROOT/.user_cross_file.txt"
 
     #Append internal cross file paths if any

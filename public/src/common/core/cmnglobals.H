@@ -55,25 +55,25 @@ extern CMNGlobalsSingleton* cmnGlobal;
 
 
 typedef struct sbe_local_LFR {
-    uint32_t spi_clock_divider: 12;       //Bit0-11 : odyssey,p11 : clock divider bits
-    //TODO: For p11 need to map below bits
-    uint32_t boot_selection : 2;          //Bit 12-13 : odyssey,p11 : select if primary or seconday or golden
+    uint32_t spi_clock_divider: 12;       //Bit0-11 : odyssey,pst : clock divider bits
+    //TODO: For pst need to map below bits
+    uint32_t boot_selection : 2;          //Bit 12-13 : odyssey,pst : select if primary or seconday or golden
                                           //            (golden supported only for odyssey)
-    uint32_t mpipl : 1;                   //Bit 14 : p11 : Set if mpipl is triggered
-    uint32_t ipl_reset : 1;               //Bit 15 : p11 :  Set if SBE is reset via 50008:bit12
-    uint32_t hreset : 1;                  //Bit 16 : odyssey,p11 :  Set if SBE is reset via 50008:bit13(HRESET)
+    uint32_t mpipl : 1;                   //Bit 14 : pst : Set if mpipl is triggered
+    uint32_t ipl_reset : 1;               //Bit 15 : pst :  Set if SBE is reset via 50008:bit12
+    uint32_t hreset : 1;                  //Bit 16 : odyssey,pst :  Set if SBE is reset via 50008:bit13(HRESET)
     uint32_t reserved : 1;                //Bit 17 : reserved
-    uint32_t mpipl_reset_done : 1;        //Bit 18 : p11 : Set if Mpipl flow is done in FW
-    uint32_t secure_mode : 1;             //Bit 19  : odyssey,p11 :  Secure mode bit indication
-    uint32_t round_trip_delay : 4;        //Bit 20-23 : p11 : round trip delay
-    uint32_t tpm_spi_clock_freq_Mhz : 8;  //Bit 24-31 : p11 : TPM Spi clock frequency in MHz
-    uint32_t tpm_spi_clock_delay : 4;     //Bit 32-35 : p11 : TPM Spi clock delay encoded
-    uint32_t disable_scom_filtering : 1;   //Bit 36 : odyssey,p11 : Set if scom filtering needs to be disabled
-    uint32_t disable_invalid_scom_addr_check : 1 ; //Bit 37 : odyssey,p11 : Set if invalid address check needs to be disabled
-    uint32_t is_imprint_mode : 1;           //Bit 38 : odyssey,p11 : Set if its a imprint driver
-    uint32_t allow_attr_override : 1;       //Bit 39 : odyssey,p11 : Set if attr override needs to be allowed
+    uint32_t mpipl_reset_done : 1;        //Bit 18 : pst : Set if Mpipl flow is done in FW
+    uint32_t secure_mode : 1;             //Bit 19  : odyssey,pst :  Secure mode bit indication
+    uint32_t round_trip_delay : 4;        //Bit 20-23 : pst : round trip delay
+    uint32_t tpm_spi_clock_freq_Mhz : 8;  //Bit 24-31 : pst : TPM Spi clock frequency in MHz
+    uint32_t tpm_spi_clock_delay : 4;     //Bit 32-35 : pst : TPM Spi clock delay encoded
+    uint32_t disable_scom_filtering : 1;   //Bit 36 : odyssey,pst : Set if scom filtering needs to be disabled
+    uint32_t disable_invalid_scom_addr_check : 1 ; //Bit 37 : odyssey,pst : Set if invalid address check needs to be disabled
+    uint32_t is_imprint_mode : 1;           //Bit 38 : odyssey,pst : Set if its a imprint driver
+    uint32_t allow_attr_override : 1;       //Bit 39 : odyssey,pst : Set if attr override needs to be allowed
     uint32_t bitsreserved : 8;             //Bit 40-47 Reserved
-    uint32_t pau_freq_in_mhz : 16;        //Bit 48-63 : odyssey,p11 :  PAU system frequency in MHz
+    uint32_t pau_freq_in_mhz : 16;        //Bit 48-63 : odyssey,pst :  PAU system frequency in MHz
 
     sbe_local_LFR()
     {
