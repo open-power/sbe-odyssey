@@ -23,7 +23,7 @@
 #
 # IBM_PROLOG_END_TAG
 
-import_dir_path = pub_import_dir_path + '/emb/p11/kernels/ppe/pk/kernel/'
+import_dir_path = pub_import_dir_path + '/emb/pst/kernels/ppe/pk/kernel/'
 
 infile_c = ['pk_core.c',
             'pk_init.c',

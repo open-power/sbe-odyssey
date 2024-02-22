@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2016,2023
+# Contributors Listed Below - COPYRIGHT 2016,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -40,8 +40,8 @@ def parserElf(argv):
     binFileName = SBE_OUT.split(".", 1)[0]
     SBE_BIN = binFileName + ".bin"
 
-    #TODO:Need disussion on what will be the first section in p11 basis zip design.
-    #As per p10 xip its .header. For p11 lets take it as .text.
+    #TODO:Need disussion on what will be the first section in pst basis zip design.
+    #As per p10 xip its .header. For pst lets take it as .text.
     #firstSection = b".header"
     firstSection = b".pk_vectors"
 

@@ -190,7 +190,7 @@ namespace fapi2
             // set the instance number.
             copy.setTargetInstance(i_child.getParentTargetInstance(i_child));
 
-            // TODO: P11 SBE PORTING
+            // TODO: PST SBE PORTING
             // This will work for Odyssey.
             // Set the specific bit related to core/phb/pauc.
 

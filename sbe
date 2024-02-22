@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2016,2023
+# Contributors Listed Below - COPYRIGHT 2016,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -33,7 +33,7 @@ if [ -e `pwd`/internal ]; then
     . `pwd`/internal/sbeutils.sh
 fi
 
-SUPPORTED_PLATFORM=("p11" "odyssey" ${INT_SUPPORTED_PLATFORM[*]} "all")
+SUPPORTED_PLATFORM=("pst" "odyssey" ${INT_SUPPORTED_PLATFORM[*]} "all")
 SUPPORTED_IMAGES=("sppe" "bldr" "srom" "otprom" "tsbe" "hsbe" ${INT_SUPPORTED_IMAGES[*]} "pseeprom" "pnor" "all")
 SUPPORTED_COMMAND=("workon" "prime" "install" "citest" "runsimics" "build" \
                    "clean" "execute" "printenv" "cronus_devready" "runtest")

@@ -61,7 +61,7 @@ DECLARE_METADATA(IMG, IMG_ASCII) {
     uint32_t imageType;
 };
 
-// Image ID - a string uniquely identifying the image, such as p11/tsbe or odyssey/bldr
+// Image ID - a string uniquely identifying the image, such as pst/tsbe or odyssey/bldr
 // Can be used by tools in conjunction with the GIT field to locate string files, debug data, ...
 DECLARE_METADATA_STR(IID, 0x494944);
 

@@ -23,7 +23,7 @@
 #
 # IBM_PROLOG_END_TAG
 
-import_dir_path = pub_import_dir_path + '/emb/p11/kernels/ppe/pk/ppe42/'
+import_dir_path = pub_import_dir_path + '/emb/pst/kernels/ppe/pk/ppe42/'
 
 infile_s = ['ppe42_boot.S',
             'ppe42_exceptions.S',

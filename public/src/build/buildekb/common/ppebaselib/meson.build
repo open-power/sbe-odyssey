@@ -23,7 +23,7 @@
 #
 # IBM_PROLOG_END_TAG
 
-import_dir_path = pub_import_dir_path + '/emb/p11/kernels/ppe/baselib/'
+import_dir_path = pub_import_dir_path + '/emb/pst/kernels/ppe/baselib/'
 
 infile_s = ['div64.S',
             'div32.S'

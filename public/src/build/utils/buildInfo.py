@@ -54,7 +54,7 @@ f.write(bin_commit)
 f.write(bin_date)
 
 tags = []
-for proj in ["ody", "zme", "p11"]:
+for proj in ["ody", "zme", "pst"]:
     proc = os.popen('git describe --tags --dirty --long --always --match "sbe*_%s.*"' % proj)
     tags.append((proj, proc.read().strip()))
     rc = proc.close()

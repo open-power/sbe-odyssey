@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2019,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2019,2024                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -33,7 +34,7 @@
  **/
 void sbeHandleFifoResponse ( const uint32_t i_rc, sbeFifoType i_fifoType = SBE_FIFO );
 
-//TODO: P11SBE Porting
+//TODO: PSTSBE Porting
 # if 0
 /**
  * @brief sbeHandlePsuResponse : Function for handling PSU response

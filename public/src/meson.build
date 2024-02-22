@@ -55,7 +55,7 @@ MESON_SETUP_EXTRA_DEPENDENCIES = []
 pub_import_dir_path = meson.global_source_root() + '/public/src/import/public/'
 
 #Generate ppetrace preprocessor
-ppetracepp_dir = 'import/public/emb/p11/kernels/ppe/ppetrace/ppetracepp/'
+ppetracepp_dir = 'import/public/emb/pst/kernels/ppe/ppetrace/ppetracepp/'
 inc_dir = include_directories(ppetracepp_dir)
 ppetracepp = executable('ppetracepp',
              ppetracepp_dir + 'ppetracepp.C',
@@ -85,14 +85,14 @@ runtime_cmn_abs_exc_hwp_inc_paths = []
 onetime_cmn_abs_inc_paths = []
 odyssey_cmn_abs_inc_paths = []
 odyssey_runtime_abs_inc_paths = []
-p11_cmn_abs_inc_paths = []
-p11_runtime_abs_inc_paths = []
+pst_cmn_abs_inc_paths = []
+pst_runtime_abs_inc_paths = []
 ekb_hwp_abs_inc_paths  = []
 odyssey_hwp_abs_inc_paths = []
-p11_sppe_cmn_abs_inc_paths = []
-p11_tsbe_cmn_abs_inc_paths = []
-p11_hsbe_cmn_abs_inc_paths = []
-p11_hwp_abs_inc_paths = []
+pst_sppe_cmn_abs_inc_paths = []
+pst_tsbe_cmn_abs_inc_paths = []
+pst_hsbe_cmn_abs_inc_paths = []
+pst_hwp_abs_inc_paths = []
 
 foreach inc_path : meson.get_external_property('cmn_inc_paths')
 
@@ -188,55 +188,55 @@ if platform == 'odyssey' or platform == 'odysseylab' or platform == 'all'
       odyssey_sppe_genfiles_dir_path, odyssey_cmn_genfiles_dir_path)
 endif
 
-if platform == 'p11' or platform == 'all'
-  foreach inc_path : meson.get_external_property('p11_cmn_inc_paths')
+if platform == 'pst' or platform == 'all'
+  foreach inc_path : meson.get_external_property('pst_cmn_inc_paths')
 
     abs_inc_path = '-I' + meson.global_source_root() + inc_path
-    p11_cmn_abs_inc_paths += abs_inc_path
+    pst_cmn_abs_inc_paths += abs_inc_path
 
   endforeach
 
-  foreach inc_path : meson.get_external_property('p11_cmn_runtime_inc_paths')
+  foreach inc_path : meson.get_external_property('pst_cmn_runtime_inc_paths')
 
     abs_inc_path = '-I' + meson.global_source_root() + inc_path
-    p11_runtime_abs_inc_paths += abs_inc_path
+    pst_runtime_abs_inc_paths += abs_inc_path
 
   endforeach
 
-  foreach inc_path : meson.get_external_property('p11_cmn_hwp_inc_paths')
+  foreach inc_path : meson.get_external_property('pst_cmn_hwp_inc_paths')
 
     abs_inc_path = '-I' + pub_import_dir_path + inc_path
-    p11_hwp_abs_inc_paths += abs_inc_path
+    pst_hwp_abs_inc_paths += abs_inc_path
 
   endforeach
 
-  #P11 genfiles dir path
-  p11_cmn_genfiles_dir_path  = onetime_genfiles_dir_path + '/p11/common/'
-  p11_bldr_genfiles_dir_path = onetime_genfiles_dir_path + '/p11/bldr/'
-  p11_srom_genfiles_dir_path  = onetime_genfiles_dir_path + '/p11/srom/'
-  p11_sppe_genfiles_dir_path = runtime_genfiles_dir_path + '/p11/sppe/'
-  p11_tsbe_genfiles_dir_path = runtime_genfiles_dir_path + '/p11/tsbe/'
-  run_command('mkdir','-p', p11_srom_genfiles_dir_path, p11_bldr_genfiles_dir_path,
-    p11_sppe_genfiles_dir_path, p11_tsbe_genfiles_dir_path, p11_cmn_genfiles_dir_path)
+  #PST genfiles dir path
+  pst_cmn_genfiles_dir_path  = onetime_genfiles_dir_path + '/pst/common/'
+  pst_bldr_genfiles_dir_path = onetime_genfiles_dir_path + '/pst/bldr/'
+  pst_srom_genfiles_dir_path  = onetime_genfiles_dir_path + '/pst/srom/'
+  pst_sppe_genfiles_dir_path = runtime_genfiles_dir_path + '/pst/sppe/'
+  pst_tsbe_genfiles_dir_path = runtime_genfiles_dir_path + '/pst/tsbe/'
+  run_command('mkdir','-p', pst_srom_genfiles_dir_path, pst_bldr_genfiles_dir_path,
+    pst_sppe_genfiles_dir_path, pst_tsbe_genfiles_dir_path, pst_cmn_genfiles_dir_path)
 
-  foreach inc_path : meson.get_external_property('p11_sppe_cmn_inc_paths')
+  foreach inc_path : meson.get_external_property('pst_sppe_cmn_inc_paths')
 
     abs_inc_path = '-I' + meson.global_source_root() + inc_path
-    p11_sppe_cmn_abs_inc_paths += abs_inc_path
+    pst_sppe_cmn_abs_inc_paths += abs_inc_path
 
   endforeach
 
-  foreach inc_path : meson.get_external_property('p11_tsbe_cmn_inc_paths')
+  foreach inc_path : meson.get_external_property('pst_tsbe_cmn_inc_paths')
 
     abs_inc_path = '-I' + meson.global_source_root() + inc_path
-    p11_tsbe_cmn_abs_inc_paths += abs_inc_path
+    pst_tsbe_cmn_abs_inc_paths += abs_inc_path
 
   endforeach
 
-  foreach inc_path : meson.get_external_property('p11_hsbe_cmn_inc_paths')
+  foreach inc_path : meson.get_external_property('pst_hsbe_cmn_inc_paths')
 
     abs_inc_path = '-I' + meson.global_source_root() + inc_path
-    p11_hsbe_cmn_abs_inc_paths += abs_inc_path
+    pst_hsbe_cmn_abs_inc_paths += abs_inc_path
 
   endforeach
 
