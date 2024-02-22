@@ -1,11 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/import/public/emb/p11/kernels/ppe/boltonlib/standard/pkstdfiles.mk $
+# $Source: public/src/import/public/emb/pst/kernels/ppe/boltonlib/standard/pkstdfiles.mk $
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
