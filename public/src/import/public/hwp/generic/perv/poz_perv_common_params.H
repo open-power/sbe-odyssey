@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -47,15 +47,15 @@ enum pll_lock_bits
 {
     ALL_PLLS            = 0xFF,
 
-    P11T_PERV_DPLLNEST  = 0x20,
+    PT_PERV_DPLLNEST  = 0x20,
 
-    P11S_PERV_PLLCLKSW1 = 0x80,
-    P11S_PERV_PLLCLKSW2 = 0x40,
-    P11S_PERV_FPLL1     = 0x20,
-    P11S_PERV_FPLL2     = 0x10,
-    P11S_PERV_FPLL3     = 0x08,
-    P11S_PERV_FPLL4     = 0x04,
-    P11S_PERV_PLLNEST   = 0x02,
+    PS_PERV_PLLCLKSW1 = 0x80,
+    PS_PERV_PLLCLKSW2 = 0x40,
+    PS_PERV_FPLL1     = 0x20,
+    PS_PERV_FPLL2     = 0x10,
+    PS_PERV_FPLL3     = 0x08,
+    PS_PERV_FPLL4     = 0x04,
+    PS_PERV_PLLNEST   = 0x02,
 
     ODY_PERV_PLLMC      = 0x02,
 
@@ -100,107 +100,107 @@ enum clock_region
     REGION_ALL_BUT_PERV_PLL = REGION_ALL & ~REGION_PERV & ~REGION_PLL,
     REGION_ALL_BUT_PERV_SBE = REGION_ALL & ~REGION_PERV_SBE,
 
-    // P11-Tap regions
-    P11T_PERV_PERV = REGION(0),
-    P11T_PERV_SBE = REGION(1),
-    P11T_PERV_PIB = REGION(2),
-    P11T_PERV_NET = REGION(4),
-    P11T_PERV_DPLLNEST = REGION(8),
+    // PST-Tap regions
+    PT_PERV_PERV = REGION(0),
+    PT_PERV_SBE = REGION(1),
+    PT_PERV_PIB = REGION(2),
+    PT_PERV_NET = REGION(4),
+    PT_PERV_DPLLNEST = REGION(8),
 
-    P11T_N0_PERV = REGION(0),
-    P11T_N0_FBC = REGION(1),
+    PT_N0_PERV = REGION(0),
+    PT_N0_FBC = REGION(1),
 
-    P11T_TBUS_PERV = REGION(0),
-    P11T_TBUS_TB = REGION(1),
-    P11T_TBUS_TCC = REGION(2),
-    P11T_TBUS_IOPPE = REGION(12),
-    P11T_TBUS_PLLTB = REGION(13),
+    PT_TBUS_PERV = REGION(0),
+    PT_TBUS_TB = REGION(1),
+    PT_TBUS_TCC = REGION(2),
+    PT_TBUS_IOPPE = REGION(12),
+    PT_TBUS_PLLTB = REGION(13),
 
-    P11T_EQ_PERV = REGION(0),
-    P11T_EQ_ECL20 = REGION(1),
-    P11T_EQ_ECL21 = REGION(2),
-    P11T_EQ_ECL22 = REGION(3),
-    P11T_EQ_ECL23 = REGION(4),
-    P11T_EQ_L30 = REGION(5),
-    P11T_EQ_L31 = REGION(6),
-    P11T_EQ_L32 = REGION(7),
-    P11T_EQ_L33 = REGION(8),
-    P11T_EQ_QME = REGION(9),
-    P11T_EQ_CLKADJ = REGION(10),
-    P11T_EQ_MMA0 = REGION(11),
-    P11T_EQ_MMA1 = REGION(12),
-    P11T_EQ_MMA2 = REGION(13),
-    P11T_EQ_MMA3 = REGION(14),
+    PT_EQ_PERV = REGION(0),
+    PT_EQ_ECL20 = REGION(1),
+    PT_EQ_ECL21 = REGION(2),
+    PT_EQ_ECL22 = REGION(3),
+    PT_EQ_ECL23 = REGION(4),
+    PT_EQ_L30 = REGION(5),
+    PT_EQ_L31 = REGION(6),
+    PT_EQ_L32 = REGION(7),
+    PT_EQ_L33 = REGION(8),
+    PT_EQ_QME = REGION(9),
+    PT_EQ_CLKADJ = REGION(10),
+    PT_EQ_MMA0 = REGION(11),
+    PT_EQ_MMA1 = REGION(12),
+    PT_EQ_MMA2 = REGION(13),
+    PT_EQ_MMA3 = REGION(14),
 
-    // P11-Spinal regions
-    P11S_PERV_PERV = REGION(0),
-    P11S_PERV_SBE = REGION(1),
-    P11S_PERV_PIB = REGION(2),
-    P11S_PERV_OCC = REGION(3),
-    P11S_PERV_NET = REGION(4),
-    P11S_PERV_CLKADJ = REGION(9),
-    P11S_PERV_PLLPERV = REGION(13),
+    // PST-Spinal regions
+    PS_PERV_PERV = REGION(0),
+    PS_PERV_SBE = REGION(1),
+    PS_PERV_PIB = REGION(2),
+    PS_PERV_OCC = REGION(3),
+    PS_PERV_NET = REGION(4),
+    PS_PERV_CLKADJ = REGION(9),
+    PS_PERV_PLLPERV = REGION(13),
 
-    P11S_N0_PERV = REGION(0),
-    P11S_N0_ESQ0 = REGION(1),
-    P11S_N0_ESC = REGION(2),
-    P11S_N0_ESQ1 = REGION(3),
-    P11S_N0_PAU00 = REGION(4),
-    P11S_N0_PAU01 = REGION(5),
-    P11S_N0_PAU02 = REGION(6),
-    P11S_N0_PAU03 = REGION(7),
-    P11S_N0_NX00 = REGION(8),
-    P11S_N0_PCS0 = REGION(9),
-    P11S_N0_PCS1 = REGION(10),
+    PS_N0_PERV = REGION(0),
+    PS_N0_ESQ0 = REGION(1),
+    PS_N0_ESC = REGION(2),
+    PS_N0_ESQ1 = REGION(3),
+    PS_N0_PAU00 = REGION(4),
+    PS_N0_PAU01 = REGION(5),
+    PS_N0_PAU02 = REGION(6),
+    PS_N0_PAU03 = REGION(7),
+    PS_N0_NX00 = REGION(8),
+    PS_N0_PCS0 = REGION(9),
+    PS_N0_PCS1 = REGION(10),
 
-    P11S_N1_PERV = REGION(0),
-    P11S_N1_ESQ0 = REGION(1),
-    P11S_N1_ESC = REGION(2),
-    P11S_N1_ESQ1 = REGION(3),
-    P11S_N1_PAU00 = REGION(4),
-    P11S_N1_PAU01 = REGION(5),
-    P11S_N1_PAU02 = REGION(6),
-    P11S_N1_PAU03 = REGION(7),
-    P11S_N1_NX00 = REGION(8),
-    P11S_N1_PCS0 = REGION(9),
-    P11S_N1_PCS1 = REGION(10),
+    PS_N1_PERV = REGION(0),
+    PS_N1_ESQ0 = REGION(1),
+    PS_N1_ESC = REGION(2),
+    PS_N1_ESQ1 = REGION(3),
+    PS_N1_PAU00 = REGION(4),
+    PS_N1_PAU01 = REGION(5),
+    PS_N1_PAU02 = REGION(6),
+    PS_N1_PAU03 = REGION(7),
+    PS_N1_NX00 = REGION(8),
+    PS_N1_PCS0 = REGION(9),
+    PS_N1_PCS1 = REGION(10),
 
-    P11S_N2_PERV = REGION(0),
-    P11S_N2_PB = REGION(1),
-    P11S_N2_SFBC = REGION(3),
-    P11S_N2_INT0 = REGION(4),
-    P11S_N2_INT1 = REGION(5),
+    PS_N2_PERV = REGION(0),
+    PS_N2_PB = REGION(1),
+    PS_N2_SFBC = REGION(3),
+    PS_N2_INT0 = REGION(4),
+    PS_N2_INT1 = REGION(5),
 
-    P11S_TBUS_PERV = REGION(0),
-    P11S_TBUS_FBC = REGION(3),
-    P11S_TBUS_IOT0 = REGION(4),
-    P11S_TBUS_SF0 = REGION(5),
-    P11S_TBUS_IOT1 = REGION(6),
-    P11S_TBUS_SF1 = REGION(7),
-    P11S_TBUS_IOPPE = REGION(12),
-    P11S_TBUS_PLLIOT = REGION(13),
+    PS_TBUS_PERV = REGION(0),
+    PS_TBUS_FBC = REGION(3),
+    PS_TBUS_IOT0 = REGION(4),
+    PS_TBUS_SF0 = REGION(5),
+    PS_TBUS_IOT1 = REGION(6),
+    PS_TBUS_SF1 = REGION(7),
+    PS_TBUS_IOPPE = REGION(12),
+    PS_TBUS_PLLIOT = REGION(13),
 
-    P11S_PCI_PERV = REGION(0),
-    P11S_PCI_PCI0 = REGION(4),
-    P11S_PCI_PCI1 = REGION(5),
-    P11S_PCI_PCI2 = REGION(6),
-    P11S_PCI_PCISTG = REGION(7),
-    P11S_PCI_PLLPCI = REGION(13),
+    PS_PCI_PERV = REGION(0),
+    PS_PCI_PCI0 = REGION(4),
+    PS_PCI_PCI1 = REGION(5),
+    PS_PCI_PCI2 = REGION(6),
+    PS_PCI_PCISTG = REGION(7),
+    PS_PCI_PLLPCI = REGION(13),
 
-    P11S_MC_PERV = REGION(0),
-    P11S_MC_OMI0 = REGION(1),
-    P11S_MC_DL = REGION(3),
-    P11S_MC_MC0 = REGION(4),
-    P11S_MC_MC1 = REGION(5),
-    P11S_MC_IOPPE = REGION(12),
-    P11S_MC_PLLMC = REGION(13),
+    PS_MC_PERV = REGION(0),
+    PS_MC_OMI0 = REGION(1),
+    PS_MC_DL = REGION(3),
+    PS_MC_MC0 = REGION(4),
+    PS_MC_MC1 = REGION(5),
+    PS_MC_IOPPE = REGION(12),
+    PS_MC_PLLMC = REGION(13),
 
-    P11S_PAXO_PERV = REGION(0),
-    P11S_PAXO_IOO = REGION(1),
-    P11S_PAXO_PCS = REGION(2),
-    P11S_PAXO_DL = REGION(3),
-    P11S_PAXO_IOPPE = REGION(12),
-    P11S_PAXO_PLLIOO = REGION(13),
+    PS_PAXO_PERV = REGION(0),
+    PS_PAXO_IOO = REGION(1),
+    PS_PAXO_PCS = REGION(2),
+    PS_PAXO_DL = REGION(3),
+    PS_PAXO_IOPPE = REGION(12),
+    PS_PAXO_PLLIOO = REGION(13),
 
     // Odyssey regions
     ODY_PERV_PERV = REGION(0),
@@ -357,7 +357,7 @@ enum pib_responder : uint8_t
 };
 
 /* Chiplet delays measured in PCB network levels relative to the lowest level chiplet */
-const uint8_t p11s_chiplet_delay_table[64] =
+const uint8_t ps_chiplet_delay_table[64] =
 {
     /* None, TP, None, None, N0, N1, N2, None */
     0, 0, 0, 0, 0, 0, 0, 0,
@@ -371,7 +371,7 @@ const uint8_t p11s_chiplet_delay_table[64] =
     3, 3, 3, 3, 0, 0, 0, 0,
 };
 
-const uint8_t p11t_chiplet_delay_table[64] =
+const uint8_t pt_chiplet_delay_table[64] =
 {
     0, 0, 0, 1, /* None, TP, N0, TBUS */
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

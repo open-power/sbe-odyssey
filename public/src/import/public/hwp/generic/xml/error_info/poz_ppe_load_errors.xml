@@ -43,7 +43,7 @@
 <!-- ******************************************************************** -->
 <hwpError>
   <sbeError/>
-  <rc>RC_P11S_LOAD_PPE_IMG_ERROR</rc>
+  <rc>RC_PS_LOAD_PPE_IMG_ERROR</rc>
   <description>
     Invalid Spinal PPE or MEMREGS image passed to HWP
   </description>

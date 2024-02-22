@@ -35,8 +35,8 @@
 #ifndef __HCODE_TCC_API_H__
 #define __HCODE_TCC_API_H__
 
-#include <p11_ppb_global.H>
-#include <p11_hcode_image_defines.H>
+#include <pst_ppb_global.H>
+#include <pst_hcode_image_defines.H>
 #include <hcode_errl_table.h>
 
 #ifdef __cplusplus

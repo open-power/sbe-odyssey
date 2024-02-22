@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2023                             -->
+<!-- Contributors Listed Below - COPYRIGHT 2023,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -22,7 +22,7 @@
 <!-- permissions and limitations under the License.                         -->
 <!--                                                                        -->
 <!-- IBM_PROLOG_END_TAG                                                     -->
-<!-- Halt timeout for p11_ppe_state -->
+<!-- Halt timeout for pst_ppe_state -->
 <hwpErrors>
   <!-- ******************************************************************** -->
   <hwpError>

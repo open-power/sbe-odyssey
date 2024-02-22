@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -26,7 +26,7 @@
 #define __DCE_SENSOR_DATA_COMMON_H__
 
 #include <stdint.h>
-#include <p11_hcode_image_defines.H>
+#include <pst_hcode_image_defines.H>
 
 //
 // DTS structs
@@ -131,28 +131,28 @@ typedef union
 //
 // - The following points explain why the final DCESensorData structure is different from p10:
 //   - The p10 high-level sensor data struct was named CoreData. But also contained non-core
-//     quad level only data. It is listed below for reference to be compared against the p11
+//     quad level only data. It is listed below for reference to be compared against the pst
 //     high-level sensor data struct, DCESensorData_t.
 //   - The DTS result for dragstrip was unnecessarily measured and repeated four time (per quad)
 //     in p10. It's been put into it's own function call now in get_quad_data() and has its own
 //     data struct as well, QuadData_t. (See further below.)
-//   - The TOD was unnecessarily calculated and repeated eight times in p10. In p11 we have moved
+//   - The TOD was unnecessarily calculated and repeated eight times in p10. In pst we have moved
 //     timestamp snapshot to the common calling function, dce_get_data(). (Note that we don't
-//     have a TOD on the Tap in p11. Instead we take a TBR snapshot.)
+//     have a TOD on the Tap in pst. Instead we take a TBR snapshot.)
 //-------------------------------------------------------------------------------------------------
 
 //
-// P10's CoreData listed here for reference (Compare with P11's DCESensorData_t)
+// P10's CoreData listed here for reference (Compare with PST's DCESensorData_t)
 //
 //typedef struct
 //{
 //    CoreDataEmpath             empath;          //32
 //    CoreDataThrottle           throttle;        //20
 //    CoreDataDroop              droop;           //12
-//    CoreDataDts                dts;             // 8 <- Changed in new p11 struct
+//    CoreDataDts                dts;             // 8 <- Changed in new pst struct
 //    uint64_t                   stop_state_hist; // 8
-//    uint32_t                   tod_2mhz;        // 4 <- Changed in new p11 struct
-//    uint32_t                   empathValid;     // 4 <- Changed in new p11 struct
+//    uint32_t                   tod_2mhz;        // 4 <- Changed in new pst struct
+//    uint32_t                   empathValid;     // 4 <- Changed in new pst struct
 //    DdsData                    dds;             // 8
 //} CoreData;
 
