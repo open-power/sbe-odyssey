@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -49,7 +49,7 @@ typedef struct
      bool isValidOperations()
      {
          bool isValid = false;
-         if((MEMTRAINDUMP >= operation) && (operation < MEMTRAIN_MAX_OPERATION))
+         if((operation >= MEMTRAINDUMP) && (operation < MEMTRAIN_MAX_OPERATION))
          {
             isValid = true;
          }
