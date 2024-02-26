@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -37,7 +37,8 @@ using namespace fapi2;
 
 ReturnCode poz_sppe_check_for_ready(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    const poz_sppe_boot_parms& i_boot_parms)
+    const poz_sppe_boot_parms& i_boot_parms,
+    const bool i_isHreset)
 {
     FAPI_DBG("Entering ...");
 
@@ -65,11 +66,27 @@ ReturnCode poz_sppe_check_for_ready(
         // sample register, break if expected bit is set
         FAPI_TRY(SB_MSG.getCfam(i_target));
 
-        if ((l_check_for_runtime and SB_MSG.getBits<8, 4>() == 3) or
-            (not l_check_for_runtime and SB_MSG.getBit<0>()))
+        // TODO: Need to remove check of 3(Autoboot done state) once hostboot and
+        // Cronus team will be stable to check with 6(Runtime State).
+        if (i_isHreset == true)
         {
-            break;
+            if (((l_check_for_runtime and SB_MSG.getBits<8, 4>() == 6) or
+                 (l_check_for_runtime and SB_MSG.getBits<8, 4>() == 3)) or
+                (not l_check_for_runtime and SB_MSG.getBit<0>()))
+            {
+                break;
+            }
         }
+        else
+        {
+            if ((l_check_for_runtime and SB_MSG.getBits<8, 4>() == 3) or
+                (not l_check_for_runtime and SB_MSG.getBit<0>()))
+            {
+                break;
+            }
+
+        }
+
 
         FAPI_TRY(delay(i_boot_parms.poll_delay_ns,
                        i_boot_parms.poll_delay_cycles));

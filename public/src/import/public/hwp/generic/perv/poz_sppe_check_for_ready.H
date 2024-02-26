@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -45,7 +45,9 @@ typedef struct
 /// @brief       Confirm SPPE has reached expected state based on reset/boot type
 /// @param[in]   i_target         Reference to TARGET_TYPE_ANY_POZ_CHIP
 /// @param[in]   i_boot_parms     Expected SPPE end state, polling guidance
+/// @param[in]   i_isHreset       if Hreset is true then checking with runtime state (6)
+///                               Else checking with autoboot done state(3)
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode poz_sppe_check_for_ready(
     const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
-    const poz_sppe_boot_parms& i_boot_parms);
+    const poz_sppe_boot_parms& i_boot_parms, const bool i_isHreset = false);
