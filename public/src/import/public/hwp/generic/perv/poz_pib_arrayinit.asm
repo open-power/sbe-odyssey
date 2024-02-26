@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -43,7 +43,7 @@
 #endif
 
 #ifndef I_RUNN_CYCLES
-#define I_RUNN_CYCLES 0x42FFF
+#define I_RUNN_CYCLES 0x10FFFF
 #endif
 
 #ifndef I_ABIST_START_AT
