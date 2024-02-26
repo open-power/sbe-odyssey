@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -145,16 +145,6 @@ static void refill_read_buf(struct tinf_data* d)
     for (int i = 0; i < nwords; i++)
     {
         uint64_t tmp = *(d->source++);
-
-#ifdef __USE_SHA3__
-
-        if (d->hash && whole_buffer)
-        {
-            d->hash_ctx.st.q[i] ^= tmp;
-        }
-
-#endif
-
         d->read_buf.q[i] = tmp;
     }
 
@@ -162,9 +152,9 @@ static void refill_read_buf(struct tinf_data* d)
 
     if (d->hash)
     {
-        if (whole_buffer)
+        if(d->source_remaining >= READ_BUF_SIZE)
         {
-            sha3_keccakf(d->hash_ctx.st.q);
+            sha3_update(&d->hash_ctx, d->read_buf.b, READ_BUF_SIZE);
         }
         else
         {

@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -25,11 +25,12 @@
 
 import_dir_path = pub_import_dir_path + '/common/utils/imageProcs/'
 
-infile_c = ['archive.C',
-            '../../libs/crypto/sha3.C',
+infile_c = ['archive.C'
            ]
 
-tinflate_c = [ 'tinflate.C' ]
+tinflate_c = [ 'tinflate.C',
+               '../../libs/crypto/keccak.C',
+]
 
 #Create abs path for input files before creating .o
 abs_pak_c_path = []

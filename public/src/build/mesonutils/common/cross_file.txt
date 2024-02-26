@@ -113,19 +113,18 @@ ekb_cmn_inc_path = [
     '/hwp/generic/ffdc',
     '/common/libs/spi',
     '/common/generic/fapi2/include/plat',
+    '/common/libs/crypto',
         ]
 
 ekb_hwp_inc_path = [
     '/hwp/generic/perv',
     '/common/generic/scomt',
-    'common/libs/crypto',
         ]
 
 cmn_inc_paths = [
     '/public/src/common/hwpf',
     '/public/src/common/core',
     '/public/src/common/utils',
-    '/public/src/common/algorithms/sha3',
     '/public/src/common/algorithms/ecdsa',
     '/public/src/common/algorithms/dilithium',
     '/public/src/build/links',

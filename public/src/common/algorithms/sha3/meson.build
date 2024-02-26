@@ -5,7 +5,8 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2024
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,12 +23,26 @@
 #
 # IBM_PROLOG_END_TAG
 
-infile_c = ['sha3.C'
+import_dir_path = pub_import_dir_path + '/common/libs/crypto/'
+
+infile_c = [
+            'keccak.C'
             ]
+
+#Create abs path for input files before creating .o
+abs_sha3_512_c_path = []
+
+foreach infile : infile_c
+
+  abs_infile_c_path = import_dir_path + infile
+  abs_sha3_512_c_path += abs_infile_c_path
+
+endforeach
 
 lib_file_name = 'sha3algo'
 
-sha3_algo_obj_file_cpp = obj_gen_cpp.process(infile_c)
+sha3_algo_obj_file_cpp = obj_gen_cpp.process(abs_sha3_512_c_path,
+                                             extra_args: ['-O2 -falign-loops=32'])
 
 infile  = [sha3_algo_obj_file_cpp]
 

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -37,6 +37,23 @@
 #define SROM_HASH_LIST_SUPPORTED_HASH_ALGO 0x1 // SHA3_512
 
 typedef uint8_t sha3truncated_t[SHA3_TRUNCATED_SIZE];
+
+/**
+ * @brief compute a sha3 hash (md) of given byte length from "in"
+ *        Used by SROM code in SBE repo
+ * @param in Message to be hashed
+ * @param inlen Length of the message to be hashed
+ * @param md Hash of the message
+ * @param mdlen Length of the message hash
+ * @return void* Hash of the message
+ */
+static inline void* sha3_Hash(const void* in, size_t inlen, void* md, int mdlen = SHA3_DIGEST_LENGTH)
+{
+    sha3_t digest;
+    sha3_512(digest, (const uint8_t*)in, inlen);
+    memcpy(md, digest, mdlen);
+    return md;
+}
 
 /**
  * @brief Union to store sha3 truncated hash that needs to be written into
