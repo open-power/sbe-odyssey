@@ -32,6 +32,7 @@
 //------------------------------------------------------------------------------
 
 #include "pz_rcs_setup.H"
+#include "pz_rcs_common.H"
 #include "poz_perv_common_params.H"
 #include "poz_perv_mod_chip_clocking.H"
 #include <poz_scom_perv.H>
@@ -89,58 +90,6 @@ enum PZ_RCS_SETUP_Private_Constants
     WAIT_100KCYC =  100000,
     WAIT_5MCYC   = 5000000,
 };
-
-static ReturnCode rcs_verify_clean_state(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target,
-        const fapi2::ATTR_CP_REFCLOCK_SELECT_Type& i_refclk_select)
-{
-    FSXCOMP_FSXLOG_SNS1LTH_t l_sns1lth;
-    FSXCOMP_FSXLOG_SNS2LTH_t l_sns2lth;
-
-    l_sns2lth.getScom(i_target);
-
-    if ((i_refclk_select & fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1) == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC0)
-    {
-        FAPI_ASSERT(l_sns2lth.get_MUXSEL_CLK_A() == 1 && l_sns2lth.get_MUXSEL_CLK_B() == 0,
-                    fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                    "RCS Verify Expected A but not on correct side.");
-    }
-
-    if ((i_refclk_select & fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1) == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1)
-    {
-        FAPI_ASSERT(l_sns2lth.get_MUXSEL_CLK_A() == 0 && l_sns2lth.get_MUXSEL_CLK_B() == 1,
-                    fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                    "RCS Verify Expected A but not on correct side.");
-    }
-
-    l_sns1lth.getScom(i_target);
-
-    FAPI_ASSERT(l_sns1lth.get_SWITCHED() == 0,
-                fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                "RCS Verify SW Switch: Switched Initial Error.");
-
-    FAPI_ASSERT(l_sns1lth.get_CLK_ERROR_A() == 0,
-                fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                "RCS Clk A Error.");
-
-    FAPI_ASSERT(l_sns1lth.get_CLK_ERROR_B() == 0,
-                fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                "RCS Clk B Error.");
-
-    FAPI_ASSERT(l_sns1lth.getBit(SNS1LTH_19P5_ERROR_A) == 0,
-                fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                "RCS 19.5ps Error A.");
-
-    FAPI_ASSERT(l_sns1lth.getBit(SNS1LTH_19P5_ERROR_B) == 0,
-                fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                "RCS 19.5ps Error B.");
-
-    // Do not need to check these, but would like to monitor them for debug
-    FAPI_INF("RCS Unlock A Error %d", l_sns1lth.get_UNLOCKDET_A());
-    FAPI_INF("RCS Unlock B Error %d", l_sns1lth.get_UNLOCKDET_B());
-
-fapi_try_exit:
-    return current_err;
-}
 
 static ReturnCode rcs_ppm_watchdog_test(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target)
 {
@@ -294,98 +243,6 @@ static ReturnCode rcs_lock_fplls(
 fapi_try_exit:
     return current_err;
 }
-
-
-static ReturnCode rcs_sw_switch(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target)
-{
-    FSXCOMP_FSXLOG_RCS_CTRL1_t l_rcs_ctrl1;
-    FSXCOMP_FSXLOG_ROOT_CTRL5_t l_root_ctrl5;
-    FSXCOMP_FSXLOG_SNS1LTH_t l_sns1lth;
-    FSXCOMP_FSXLOG_SNS2LTH_t l_sns2lth;
-    bool l_expect_clka = false;
-
-    l_sns2lth.getScom(i_target);
-    l_expect_clka = l_sns2lth.get_MUXSEL_CLK_A() == 1;
-
-    l_root_ctrl5.getScom(i_target);
-
-    // Force Switchover
-    if (l_expect_clka)
-    {
-        l_root_ctrl5.set_RCS_FORCE_CLKSEL(0);
-    }
-    else
-    {
-        l_root_ctrl5.set_RCS_FORCE_CLKSEL(1);
-    }
-
-    l_root_ctrl5.putScom(i_target);
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
-    l_root_ctrl5.set_SWO_FORCE_LOW(1);
-    l_root_ctrl5.putScom(i_target);
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
-    l_root_ctrl5.set_SWO_FORCE_LOW(0);
-    l_root_ctrl5.putScom(i_target);
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
-
-    l_sns1lth.getScom(i_target);
-    l_sns2lth.getScom(i_target);
-    FAPI_ASSERT(l_sns1lth.get_SWITCHED() == 1,
-                fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                "RCS Verify SW Switch: Switched Error after force low.");
-
-    if (l_expect_clka)
-    {
-        FAPI_ASSERT(l_sns1lth.get_CLK_ERROR_A() == 1,
-                    fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                    "RCS Verify SW Switch: Clk A Error after force.");
-        FAPI_ASSERT(l_sns1lth.get_CLK_ERROR_B() == 0,
-                    fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                    "RCS Verify SW Switch: Clk B Error after force.");
-        FAPI_ASSERT(l_sns2lth.get_MUXSEL_CLK_A() == 0,
-                    fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                    "RCS Verify SW Switch: Muxsel Clk A Error after force.");
-        FAPI_ASSERT(l_sns2lth.get_MUXSEL_CLK_B() == 1,
-                    fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                    "RCS Verify SW Switch: Muxsel Clk B Error after force.");
-    }
-    else
-    {
-        FAPI_ASSERT(l_sns1lth.get_CLK_ERROR_A() == 0,
-                    fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                    "RCS Verify SW Switch: Clk A Error after force.");
-        FAPI_ASSERT(l_sns1lth.get_CLK_ERROR_B() == 1,
-                    fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                    "RCS Verify SW Switch: Clk B Error after force.");
-        FAPI_ASSERT(l_sns2lth.get_MUXSEL_CLK_A() == 1,
-                    fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                    "RCS Verify SW Switch: Muxsel Clk A Error after force.");
-        FAPI_ASSERT(l_sns2lth.get_MUXSEL_CLK_B() == 0,
-                    fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                    "RCS Verify SW Switch: Muxsel Clk B Error after force.");
-    }
-
-    l_root_ctrl5.set_RCS_FORCE_CLKSEL(0);
-    l_root_ctrl5.set_CLEAR_CLK_ERROR_A(1);
-    l_root_ctrl5.set_CLEAR_CLK_ERROR_B(1);
-    l_root_ctrl5.putScom(i_target);
-    l_root_ctrl5.set_CLEAR_CLK_ERROR_A(0);
-    l_root_ctrl5.set_CLEAR_CLK_ERROR_B(0);
-    l_root_ctrl5.putScom(i_target);
-
-
-    // Clear the Auto Block Switchover Signal
-    l_rcs_ctrl1.getScom(i_target);
-    l_rcs_ctrl1.setBit<CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER>();
-    l_rcs_ctrl1.putScom(i_target);
-    l_rcs_ctrl1.clearBit<CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER>();
-    l_rcs_ctrl1.putScom(i_target);
-
-fapi_try_exit:
-    return current_err;
-}
-
-
 
 // Pre-requisite: RCS Bypass / Clksel are setup for the correct clock
 //   if redundant clocks are not needed
