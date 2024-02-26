@@ -36,7 +36,9 @@
 
 /// @brief Confirm SPPE boot progress
 ///
-/// @param[in]   i_target                  Reference to TARGET_TYPE_OCMB_CHIP
+/// @param[in]   i_target    Reference to TARGET_TYPE_OCMB_CHIP
+/// @param[in]   i_isHreset  To check Hreset bit is set or not , default is false
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-DECLARE_HWP(ody_sppe_check_for_ready, const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target);
+DECLARE_HWP(ody_sppe_check_for_ready, const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+            const bool i_isHreset = false);
