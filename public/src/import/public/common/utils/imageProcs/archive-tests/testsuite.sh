@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -27,8 +27,8 @@
 #set -x
 
 echo "### Building test programs"
-g++ -g -O0 -DARCHIVE_TEST_FIXTURE -I. -I.. -I../../../generic/fapi2/include -I../../../generic/fapi2/include/plat -iquote . -o test archive-test.C util.C ../archive.C ../tinflate.C ../sha3.C
-g++ -g -O0 -DARCHIVE_TEST_FIXTURE -I. -I.. -I../../../generic/fapi2/include -I../../../generic/fapi2/include/plat -iquote . -o append append-test.C util.C ../archive.C ../tinflate.C ../sha3.C
+g++ -g -O0 -DARCHIVE_TEST_FIXTURE -I. -I.. -I../../../generic/fapi2/include -I../../../generic/fapi2/include/plat -iquote . -o test archive-test.C util.C ../archive.C ../tinflate.C ../keccak.C
+g++ -g -O0 -DARCHIVE_TEST_FIXTURE -I. -I.. -I../../../generic/fapi2/include -I../../../generic/fapi2/include/plat -iquote . -o append append-test.C util.C ../archive.C ../tinflate.C ../keccak.H
 
 PAKTOOL=../tools/paktool
 

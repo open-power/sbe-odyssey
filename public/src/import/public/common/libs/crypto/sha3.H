@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -26,37 +26,74 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
+#include "keccak.H"
 
-#ifndef KECCAKF_ROUNDS
-    #define KECCAKF_ROUNDS 24
-#endif
-
-#ifndef ROTL64
-    #define ROTL64(x, y) (((x) << (y)) | ((x) >> (64 - (y))))
-#endif
+/**
+ * @brief Abstract layer for keccak.C
+ *
+ */
 
 #define SHA3_DIGEST_LENGTH 64
 
 typedef uint8_t sha3_t[SHA3_DIGEST_LENGTH];
 
-// state context
-typedef struct
-{
-    union                                   // state:
-    {
-        uint8_t b[200];                     // 8-bit bytes
-        uint64_t q[25];                     // 64-bit words
-    } st;
-    int pt, rsiz, mdlen;                    // these don't overflow
-} sha3_ctx_t;
-
-// Compression function.
-void sha3_keccakf(uint64_t st[25]);
+typedef Keccak_state sha3_ctx_t;
 
 // OpenSSL - like interfece
-int sha3_init(sha3_ctx_t* c);    // mdlen = hash output in bytes
-int sha3_update(sha3_ctx_t* c, const void* data, size_t len);
-int sha3_final(sha3_t* md, sha3_ctx_t* c);    // digest goes to md
+/**
+ * @brief Initialize the context for SHA3
+ *
+ * @param c Pointer to SHA3-512 context
+ * @return int true always
+ */
+static inline int sha3_init(sha3_ctx_t* c)
+{
+    sha3_512_init(c);
+    return 1;
+}
 
-// compute a sha3 hash (md) of given byte length from "in"
-void* sha3(const void* in, size_t inlen, void* md, int mdlen);
+/**
+ * @brief Stream like interface for sha3-512 .
+ *        Update state with more data
+ *
+ * @param c Pointer to SHA3-512 context
+ * @param data data to be hashed
+ * @param len length og the data to be hashed
+ * @return int true always
+ */
+static inline int sha3_update(sha3_ctx_t* c, const void* data, size_t len)
+{
+    sha3_512_update(c, data, len);
+    return 1;
+}
+
+/**
+ * @brief finalize and output a hash
+ *
+ * @param md pointer to calculated hash
+ * @param c Pointer to SHA3-512 context
+ * @return int true always
+ */
+static inline int sha3_final(sha3_t* md, sha3_ctx_t* c)
+{
+    sha3_512_final((uint8_t*)md, c);
+    return 1;
+}
+
+/**
+ * @brief compute a sha3 hash (md) of given byte length from "in"
+ *
+ * @param in Message to be hashed
+ * @param inlen Length of the message to be hashed
+ * @param md Hash of the message
+ * @param mdlen Length of the message hash
+ * @return void* Hash of the message
+ */
+static inline void* sha3(const void* in, size_t inlen, void* md, int mdlen = SHA3_DIGEST_LENGTH)
+{
+    sha3_t digest;
+    sha3_512(digest, (const uint8_t*)in, inlen);
+    memcpy(md, digest, ((mdlen > SHA3_DIGEST_LENGTH) ? SHA3_DIGEST_LENGTH : mdlen));
+    return md;
+}
