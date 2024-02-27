@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -41,8 +41,8 @@
 
 #ifdef __PPE__
     #include "plat_target.H"
+    #include "mss_generic_consts.H"
     #include "plat_utils.H"
-    #include <mss_generic_consts.H>
 #else
     #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
 #endif
