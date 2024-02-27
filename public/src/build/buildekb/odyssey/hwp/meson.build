@@ -58,6 +58,7 @@ infile_c = [
             '/initfiles/odyssey/scom/odyssey_mp_scom.C',
             '/memory/odyssey/hwp/lib/power_thermal/ody_throttle.C',
             '/memory/odyssey/hwp/lib/fir/ody_unmask.C',
+            '/memory/odyssey/hwp/lib/fir/ody_proc_specific_fir.C',
 
             # Files needed for IO
             '/hwp/generic/utils/poz_writesram.C',

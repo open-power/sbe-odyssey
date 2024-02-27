@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -306,5 +306,6 @@ fapi2::ReturnCode bad_fir_bits<mss::mc_type::ODYSSEY, firChecklist::GENERIC>( co
     //       GENERIC case required for bad_fir_bits call in mss_bad_bits.H -- update if GENERIC check needed
     return bad_fir_bits<mss::mc_type::ODYSSEY, firChecklist::DRAMINIT>(i_target, io_rc, o_fir_error);
 }
+
 } // end check ns
 } // end mss ns
