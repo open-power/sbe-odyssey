@@ -152,6 +152,7 @@ fapi_try_exit:
 
 fapi2::ReturnCode ody_omi_tdr(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
                               const uint32_t i_link_mask,
+                              const uint32_t i_lane_on,
                               fapi2::hwp_bit_ostream& o_ostream)
 {
     FAPI_DBG("Start - OMI TDR Isolation");
@@ -215,8 +216,11 @@ fapi2::ReturnCode ody_omi_tdr(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&
             // Set data
             FAPI_DBG("Checking on lane %d with status %d.", l_lane, l_status);
 
-            // Power off lane
-            FAPI_TRY(lane_power_off(i_target, l_lane));
+            if (i_lane_on == 0)
+            {
+                // Power off lane
+                FAPI_TRY(lane_power_off(i_target, l_lane));
+            }
         }
         // Lane in use, TDR not run
         else

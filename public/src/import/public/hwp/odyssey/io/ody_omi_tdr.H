@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -38,6 +38,7 @@
 // Function pointer typedef definition for HWP call support
 typedef fapi2::ReturnCode (*ody_omi_tdr_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
         const uint32_t,
+        const uint32_t,
         fapi2::hwp_bit_ostream&);
 
 extern "C"
@@ -49,5 +50,6 @@ extern "C"
     /// @return  FAPI2_RC_SUCCESS if success, else error code.
     fapi2::ReturnCode ody_omi_tdr(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
                                   const uint32_t i_link_mask,
+                                  const uint32_t i_lane_on,
                                   fapi2::hwp_bit_ostream& o_ostream);
 }
