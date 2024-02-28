@@ -93,7 +93,7 @@ void ipl::sbeAutoBoot()
                     if ( istepTableEntry->istepMajorNum == g_pSbeIstepIplUtils->getIstepEndMajorNumber())
                     {
                         // Transition to runtime state on autoboot success
-                        stateTransition(SBE_EVENT_CMN_RUNTIME);
+                        stateTransition(SBE_EVENT_CMN_AUTO_BOOT_DONE);
                     }
                 }
             }

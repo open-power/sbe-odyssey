@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -33,6 +33,7 @@ enum sbe_command_fence_attrs
     SBE_FENCE_AT_ISTEP          = 0x0008, ///< Fence off at istep state
     SBE_FENCE_AT_RUNTIME        = 0x0010, ///< Fence off at Runtime state
     SBE_FENCE_AT_SECURE_MODE    = 0x0020, ///< Fense off in secure mode
+    SBE_FENCE_AT_AUTO_BOOT_DONE = 0x0040, ///< Fence off at autobot-done state
 };
 
 #endif

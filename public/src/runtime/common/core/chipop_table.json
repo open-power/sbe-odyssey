@@ -4,7 +4,8 @@
             "cmdClass":"A1",
             "command":"0x01",
             "function":"sbeHandleIstep",
-            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL", "SBE_FENCE_AT_DUMPING"],
+            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL", "SBE_FENCE_AT_DUMPING",
+                      "SBE_FENCE_AT_RUNTIME", "SBE_FENCE_AT_AUTO_BOOT_DONE"],
             "headerFile":"istep.H"
         },
         {

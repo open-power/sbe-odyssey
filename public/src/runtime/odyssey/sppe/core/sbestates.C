@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -37,14 +37,14 @@ const stateEventRangeStr_t eventRangePerState[SBE_MAX_STATE] =
 const stateTransitionStr_t stateTransMap[SBE_MAX_TRANSITIONS] =
 {
     {SBE_STATE_CMN_UNKNOWN, SBE_EVENT_CMN_FAILURE, SBE_STATE_CMN_FAILURE},
-    {SBE_STATE_CMN_UNKNOWN, SBE_EVENT_CMN_RUNTIME, SBE_STATE_CMN_RUNTIME},
+    {SBE_STATE_CMN_UNKNOWN, SBE_EVENT_CMN_AUTO_BOOT_DONE, SBE_STATE_CMN_AUTO_BOOT_DONE},
     {SBE_STATE_CMN_UNKNOWN, SBE_EVENT_CMN_ISTEP, SBE_STATE_CMN_ISTEP},
     {SBE_STATE_CMN_UNKNOWN, SBE_EVENT_CMN_PLCK, SBE_STATE_CMN_IPLING},
-    {SBE_STATE_CMN_IPLING, SBE_EVENT_CMN_RUNTIME, SBE_STATE_CMN_RUNTIME},
+    {SBE_STATE_CMN_IPLING, SBE_EVENT_CMN_AUTO_BOOT_DONE, SBE_STATE_CMN_AUTO_BOOT_DONE},
     {SBE_STATE_CMN_IPLING, SBE_EVENT_CMN_DUMP_FAILURE, SBE_STATE_CMN_DUMP},
     {SBE_STATE_CMN_IPLING, SBE_EVENT_CMN_FAILURE, SBE_STATE_CMN_FAILURE},
-    {SBE_STATE_CMN_ISTEP, SBE_EVENT_CMN_RUNTIME, SBE_STATE_CMN_RUNTIME},
+    {SBE_STATE_CMN_ISTEP, SBE_EVENT_CMN_AUTO_BOOT_DONE, SBE_STATE_CMN_AUTO_BOOT_DONE},
     {SBE_STATE_CMN_ISTEP, SBE_EVENT_CMN_FAILURE, SBE_STATE_CMN_FAILURE},
-    {SBE_STATE_CMN_RUNTIME, SBE_EVENT_CMN_DUMP_FAILURE, SBE_STATE_CMN_DUMP},
-    {SBE_STATE_CMN_RUNTIME, SBE_EVENT_CMN_FAILURE, SBE_STATE_CMN_FAILURE},
+    {SBE_STATE_CMN_AUTO_BOOT_DONE, SBE_EVENT_CMN_DUMP_FAILURE, SBE_STATE_CMN_DUMP},
+    {SBE_STATE_CMN_AUTO_BOOT_DONE, SBE_EVENT_CMN_FAILURE, SBE_STATE_CMN_FAILURE},
 };
