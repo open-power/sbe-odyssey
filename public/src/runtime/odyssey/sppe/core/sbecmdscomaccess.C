@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -76,8 +76,12 @@ uint32_t sbeGetScom (uint8_t *i_pArg)
 
         checkIndirectAndDoScom(true, addr, scomData, &hdr, &ffdc, type);
 
-        // scom failed
-        if (hdr.secondaryStatus() != SBE_SEC_OPERATION_SUCCESSFUL)
+        // NOTE:
+        // We will return back the getscom data incase of success as well as if security level
+        // is permissive and user has requested to disable scom filtering.
+        // A special secondary RC SBE_SEC_DENYLIST_REG_ACCESS is also returned along with data.
+        if((hdr.secondaryStatus() != SBE_SEC_OPERATION_SUCCESSFUL) &&
+            (hdr.secondaryStatus() != SBE_SEC_DENYLIST_REG_ACCESS))
         {
             SBE_ERROR(SBE_FUNC"sbeGetScom failed, scomAddr[0x%08X%08X]",
                 msg.hiAddr, msg.lowAddr);
