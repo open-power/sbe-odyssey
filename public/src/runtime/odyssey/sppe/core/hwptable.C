@@ -30,44 +30,6 @@
 
 using namespace fapi2;
 
-// IO HWP Num enum. DO not change the sequence. Refer the POZ specs.
-enum iohwpnum
-{
-    ody_omi_hss_load_ppe_hwp,
-    ody_omi_hss_config_hwp,
-    ody_omi_hss_start_ppe_hwp,
-    ody_omi_hss_bist_init_hwp,
-    ody_omi_hss_bist_start_hwp,
-    ody_omi_hss_bist_poll_hwp,
-    ody_omi_hss_bist_cleanup_hwp,
-    ody_omi_hss_init_hwp,
-    ody_omi_hss_dccal_start_hwp,
-    ody_omi_hss_dccal_poll_hwp,
-    ody_omi_hss_tx_zcal_hwp,
-    ody_omi_pretrain_adv_hwp,
-    ody_omi_setup_hwp,
-    ody_omi_train_hwp,
-    ody_omi_train_check_hwp,
-    ody_omi_posttrain_adv_hwp,
-};
-
-// MEM HWP Num enum
-enum memhwpnum
-{
-    ody_scominit_hwp,
-    ody_ddrphyinit_hwp,
-    ody_ddrphyinit_ate_hwp,
-    ody_load_imem_hwp,
-    ody_load_dmem_hwp,
-    ody_sppe_draminit_hwp,
-    ody_ate_fw_hwp,
-    ody_load_pie_hwp,
-    ody_draminit_mc_hwp,
-    ody_enable_ecc_hwp,
-    ody_thermal_init_hwp,
-
-};
-
 // Refer POZ spec for this table.
 // IO HWP Class
 static hwpMap_t hwpClass1PtrTbl[] =
@@ -106,9 +68,17 @@ static hwpMap_t hwpClass2PtrTbl[] =
                HWP_MAP( istepWithOcmb, ody_thermal_init ),               // 2.11
           };
 
+// Misc Class
+// This class must be the last .
+static hwpMap_t hwpClass255PtrTbl[] =
+          {
+               HWP_MAP( istepWithOcmb, poz_exec_hwp_sequence_complete ), // FF.01
+          };
+
 hwpTableEntry_t hwpTableEntries[] = {
-    HWP_ENTRY(  1, hwpClass1PtrTbl),
-    HWP_ENTRY(  2, hwpClass2PtrTbl),
+    HWP_ENTRY(  0x1, hwpClass1PtrTbl),
+    HWP_ENTRY(  0x2, hwpClass2PtrTbl),
+    HWP_ENTRY(  0xFF, hwpClass255PtrTbl),
 };
 
 REGISTER_HWP_TABLE(hwpTableEntries)

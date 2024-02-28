@@ -92,6 +92,13 @@ sbeChipOpRc_t sbeIsCmdAllowed (const uint8_t i_cmdClass,
                     break;
                 }
 
+                case SBE_STATE_CMN_AUTO_BOOT_DONE:
+                {
+                    l_ret = ((l_pCmd->cmd_state_fence &
+                             SBE_FENCE_AT_AUTO_BOOT_DONE)? false:true);
+                    break;
+                }
+
                 default:
                     l_ret = false;
                     break;

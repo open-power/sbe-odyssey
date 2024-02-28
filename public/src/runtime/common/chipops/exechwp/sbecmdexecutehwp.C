@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -31,8 +31,30 @@
 #include "hwptable.H"
 #include "hwp_includes.H"
 #include "hwpWrapper.H"
+#include "sberegaccess.H"
+#include "sbeffdc.H"
+#include "sbestates.H"
+#include "sbecmdexecutehwpseqcmplt.H"
 
 using namespace fapi2;
+
+/**
+ * @brief it is used to update the state of sbe to runtime
+ *
+ * @return void
+ */
+void poz_exec_hwp_sequence_complete(void)
+{
+    #define SBE_FUNC " poz_exec_hwp_sequence_complete "
+    SBE_ENTER(SBE_FUNC);
+
+    SBE_INFO(SBE_FUNC " Transitioning to runtime state...");
+    // Update SBE State to runtime
+    (void)SbeRegAccess::theSbeRegAccess().updateSbeState(SBE_STATE_CMN_RUNTIME);
+
+    SBE_EXIT(SBE_FUNC);
+    #undef SBE_FUNC
+}
 
 /**
  * @brief checks if executeHWP chips-op params are valid.
@@ -44,30 +66,33 @@ using namespace fapi2;
 bool isHWPParamsValid(const uint8_t hwpClass, const uint8_t hwpNum)
 {
     #define SBE_FUNC " isHWPParamsValid "
-    bool isValid = true;
+    SBE_ENTER(SBE_FUNC);
+
+    // Declare all local variable over here
+    bool isValid = false;
     do
     {
-        // Validate the HWP Class.
+        // If there is no HWP then return parameter is not valid
+        if( 0 == hwpNum )
+        {
+            break;
+        }
+
+        // Validate the HWP Class and Number.
         SBE_INFO(SBE_FUNC " HWPTable length is 0x%02X", g_hwpTable.len);
-        if(hwpClass > g_hwpTable.len)
+        for(size_t entry = 0; entry < g_hwpTable.len; entry++)
         {
-            SBE_ERROR(SBE_FUNC "Invalid HWP Class 0x%02X", hwpClass);
-            isValid = false;
-            break;
+            auto hwpTableEntry = &g_hwpTable.hwpClassArr[entry];
+            if( hwpClass == hwpTableEntry->hwpClassNum )
+            {
+                if( hwpNum <= hwpTableEntry->len )
+                {
+                    isValid = true;
+                }
+                break;
+            }
         }
-
-        // Validate the HWP Number.
-        auto hwpTableEntry = &g_hwpTable.hwpClassArr[hwpClass - 1];
-        SBE_INFO(SBE_FUNC " HWPTableArray length is 0x%02X for HWP table Array 0x%02X",
-                            hwpTableEntry->len, hwpClass);
-        if(hwpNum > hwpTableEntry->len)
-        {
-            SBE_ERROR(SBE_FUNC "Invalid HWP Number 0x%02X", hwpNum);
-            isValid = false;
-            break;
-        }
-
-    }while(0);
+    } while(false);
     SBE_EXIT(SBE_FUNC);
     return isValid;
     #undef SBE_FUNC
@@ -78,9 +103,10 @@ uint32_t sbeExecuteHWP(uint8_t *i_pArg)
     #define SBE_FUNC " sbeExecuteHWP "
     SBE_ENTER(SBE_FUNC);
 
+    // Declare all local variable over here
     uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
-
     ReturnCode fapiRc = FAPI2_RC_SUCCESS;
+
     sbeExecuteHwpMsgHdr_t regReqMsg;
     sbeRespGenHdr_t hdr;
     hdr.init();
@@ -91,7 +117,6 @@ uint32_t sbeExecuteHWP(uint8_t *i_pArg)
     SBE_DEBUG(SBE_FUNC "Fifo Type is:[%02X]",type);
 
     fapi2::sbefifo_hwp_data_istream istream(type);
-
 
     do
     {
@@ -115,31 +140,43 @@ uint32_t sbeExecuteHWP(uint8_t *i_pArg)
         }
 
         // Execute the HWP
-        auto hwpTableEntry = &g_hwpTable.hwpClassArr[regReqMsg.hwpClass - 1];
-        auto hwpMap = &hwpTableEntry->hwpNum[regReqMsg.hwpNum - 1];
-        if(hwpMap->hwpWrapper != NULL)
+        for(size_t entry = 0; entry < g_hwpTable.len; entry++)
         {
-            fapiRc = hwpMap->hwpWrapper(hwpMap->hwp);
-            if(fapiRc != FAPI2_RC_SUCCESS)
+            auto hwpTableEntry = &g_hwpTable.hwpClassArr[entry];
+
+            uint8_t l_lengthOfHwpNo = hwpTableEntry->len;
+
+            if(( regReqMsg.hwpClass == hwpTableEntry->hwpClassNum ) &&
+               ( regReqMsg.hwpNum <=  l_lengthOfHwpNo))
             {
-                SBE_ERROR(SBE_FUNC " HWP failed for class 0x%02X and number 0x%02X "
-                                   "with rc 0x%08X", regReqMsg.hwpClass, regReqMsg.hwpNum, fapiRc);
-                hdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                               SBE_SEC_HWP_FAILURE);
-                ffdc.setRc(fapiRc);
+                auto hwpMap = &hwpTableEntry->hwpNum[regReqMsg.hwpNum-1];
+                fapiRc = hwpMap->hwpWrapper(hwpMap->hwp);
+                if(fapiRc != FAPI2_RC_SUCCESS)
+                {
+                    SBE_ERROR(SBE_FUNC " HWP failed for class 0x%02X and number 0x%02X "
+                                    "with rc 0x%08X", regReqMsg.hwpClass, regReqMsg.hwpNum, fapiRc);
+                    hdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
+                                SBE_SEC_HWP_FAILURE);
+                    ffdc.setRc(fapiRc);
+
+                    // Update SBE State to dump state
+                    (void)SbeRegAccess::theSbeRegAccess().updateSbeState(SBE_STATE_CMN_DUMP);
+
+                }
+                break;
             }
-            break;
         }
         // There will be no data sent to upstream FIFO
 
-    }while(0);
+    } while( false );
+
     do
     {
         // Build the response header packet.
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(rc);
         rc = sbeDsSendRespHdr(hdr, &ffdc, type);
         // will let command processor routine handle the failure.
-    }while(0);
+    } while( false );
 
     SBE_EXIT(SBE_FUNC);
     return rc;

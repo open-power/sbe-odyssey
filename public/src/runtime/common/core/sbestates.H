@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,13 +39,15 @@
 enum sbeState
 {
     /** Common states across all platforms **/
-    SBE_STATE_CMN_UNKNOWN = 0x0, // Unkown, initial state
-    SBE_STATE_CMN_IPLING  = 0x1, // IPL'ing - autonomous mode (transient)
-    SBE_STATE_CMN_ISTEP   = 0x2, // ISTEP - Running IPL by steps (transient)
-    SBE_STATE_CMN_RUNTIME = 0x3, // SBE Runtime
-    SBE_STATE_CMN_DUMP    = 0x4, // Dumping
-    SBE_STATE_CMN_FAILURE = 0x5, // Internal SBE failure
-    SBE_STATE_CMN_HRESET  = 0xA, // Hreset SBE state
+    SBE_STATE_CMN_UNKNOWN           = 0x0, // Unkown, initial state
+    SBE_STATE_CMN_IPLING            = 0x1, // IPL'ing - autonomous mode (transient)
+    SBE_STATE_CMN_ISTEP             = 0x2, // ISTEP - Running IPL by steps (transient)
+    SBE_STATE_CMN_AUTO_BOOT_DONE    = 0x3, // SBE auto boot is done
+    SBE_STATE_CMN_DUMP              = 0x4, // Dumping
+    SBE_STATE_CMN_FAILURE           = 0x5, // Internal SBE failure
+    SBE_STATE_CMN_RUNTIME           = 0x6, // SBE Runtime
+    SBE_STATE_CMN_HRESET            = 0xA, // Hreset SBE state
+                                           // This should not be changed due to SROM dependency
 
     /** Plat specific states across all platforms.
      *  -If any state defined below is not used by a platform implies that
@@ -69,7 +71,7 @@ enum sbeState
 enum sbeEvent
 {
     /** Common Events across all platforms **/
-    SBE_EVENT_CMN_RUNTIME          = 0x0, // From Unknown/ISTEP/IPLING State
+    SBE_EVENT_CMN_AUTO_BOOT_DONE   = 0x0, // From Unknown/ISTEP/IPLING State
     SBE_EVENT_CMN_ISTEP            = 0x1, // From Unknown State
     SBE_EVENT_CMN_PLCK             = 0x2, // From Unknown state
     SBE_EVENT_CMN_DUMP_FAILURE     = 0x3, // From IPLING/RUNTIME/Unknown State
