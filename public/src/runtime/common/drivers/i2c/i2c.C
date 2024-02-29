@@ -77,7 +77,6 @@ ReturnCode i2c::i2cRegisterOp(i2c_reg_offset_t reg,
     }while(false);
 
 fapi_try_exit:
-
     SBE_EXIT(SBE_FUNC);
     return current_err;
     #undef SBE_FUNC
@@ -92,25 +91,23 @@ ReturnCode i2c::i2cCheckForErrors(status_reg_t &status)
 
     do
     {
-        if(status.invalid_cmd ||
-           status.lbus_parity_error ||
-           status.backend_overrun_error ||
-           status.backend_access_error ||
-           status.arbitration_lost_error ||
-           status.nack_received ||
-           status.stop_error)
-        {
 
-            rc = RC_POZ_I2C_STATUS_ERROR;
-            PLAT_FAPI_ASSERT(false,
-                            POZ_I2C_STATUS_ERROR()
-                            .set_VALUE(status.value)
-                            .set_PORT(iv_port)
-                            .set_ENGINE(iv_engine)
-                            .set_DEVICEADDR(iv_devAddr)
-                            .set_RETRYCOUNT(iv_curr_retry_count),
-                            "I2C Status error");
-        }
+        PLAT_FAPI_ASSERT(
+                !(status.invalid_cmd ||
+                status.lbus_parity_error ||
+                status.backend_overrun_error ||
+                status.backend_access_error ||
+                status.arbitration_lost_error ||
+                status.nack_received ||
+                status.stop_error
+                ),
+                POZ_I2C_STATUS_ERROR()
+                .set_VALUE(status.value)
+                .set_PORT(iv_port)
+                .set_ENGINE(iv_engine)
+                .set_DEVICEADDR(iv_devAddr)
+                .set_RETRYCOUNT(iv_curr_retry_count),
+                "I2C Status error");
 
         if(status.any_i2c_interrupt)
         {
@@ -124,7 +121,6 @@ ReturnCode i2c::i2cCheckForErrors(status_reg_t &status)
                 break;
             }
 
-            rc = RC_POZ_I2C_STATUS_INTR_ERROR;
             PLAT_FAPI_ASSERT(false,
                             POZ_I2C_STATUS_INTR_ERROR()
                             .set_STATUS(status.value)
@@ -139,7 +135,7 @@ ReturnCode i2c::i2cCheckForErrors(status_reg_t &status)
 
 fapi_try_exit:
     SBE_EXIT(SBE_FUNC)
-    return rc;
+    return current_err;
     #undef SBE_FUNC
 }
 
@@ -199,7 +195,6 @@ ReturnCode i2c::i2cWaitForCmdComp()
             }
             if(--timeoutCount == 0)
             {
-                rc = RC_POZ_I2C_WAIT_FOR_CMD_COMP_TIMEOUT_ERROR;
                 PLAT_FAPI_ASSERT(false,
                                 POZ_I2C_WAIT_FOR_CMD_COMP_TIMEOUT_ERROR()
                                 .set_STATUS(status.value)
@@ -213,17 +208,11 @@ ReturnCode i2c::i2cWaitForCmdComp()
                 break;
             }
         } while(!status.command_complete);
-
-        if(rc != FAPI2_RC_SUCCESS)
-        {
-            SBE_ERROR(SBE_FUNC " timedout waiting for cmd completion with rc 0x%08X", rc);
-            break;
-        }
     } while(0);
 
 fapi_try_exit:
     SBE_EXIT(SBE_FUNC);
-    return rc;
+    return current_err;
     #undef SBE_FUNC
 }
 
@@ -350,7 +339,6 @@ ReturnCode i2c::i2cWaitForFifo(fifo_condition_t condition)
             }
             if(--timeoutCount == 0)
             {
-                rc = RC_POZ_I2C_FIFO_TIMEOUT_ERROR;
                 PLAT_FAPI_ASSERT(false,
                                 POZ_I2C_FIFO_TIMEOUT_ERROR()
                                 .set_STATUS(status.value)
@@ -368,7 +356,7 @@ ReturnCode i2c::i2cWaitForFifo(fifo_condition_t condition)
 
 fapi_try_exit:
     SBE_EXIT(SBE_FUNC);
-    return rc;
+    return current_err;
     #undef SBE_FUNC
 }
 
@@ -526,8 +514,6 @@ ReturnCode i2c::i2cLockEngine()
     {
         lock_data = 0x0;
         ReturnCode l_rc = FAPI2_RC_SUCCESS;
-        //TODO: PFSBE-394 i2c driver: Error handling improvement.
-        //RC handling when multiple rc are generated
         l_rc = i2cRegisterOp(I2C_REG_ATOMIC_LOCK,
                             true,
                             &lock_data);
@@ -535,8 +521,6 @@ ReturnCode i2c::i2cLockEngine()
         {
             SBE_ERROR("Failed to read atomic lock reg. RC: 0x%08X", l_rc);
         }
-
-        rc = RC_POZ_I2C_FAILED_TO_LOCK_ENGINE_TIMEOUT_ERROR;
         PLAT_FAPI_ASSERT(false,
                         POZ_I2C_FAILED_TO_LOCK_ENGINE_TIMEOUT_ERROR()
                         .set_ATOMICLOCKREG(lock_data)
@@ -551,7 +535,7 @@ ReturnCode i2c::i2cLockEngine()
 
 fapi_try_exit:
     SBE_EXIT(SBE_FUNC)
-    return rc;
+    return current_err;
     #undef SBE_FUNC
 }
 
@@ -682,30 +666,27 @@ ReturnCode i2c::isI2cResetClean()
         //max_num_of_ports is a const and project dependent and does not need to be checked as part of i2c reset clean state.
         l_i2cc_status_data_act.max_num_of_ports = 0x0;
 
-        if(I2CC_EXPECTED_CLEAN_RESET_STATUS != l_i2cc_status_data_act.value)
-        {
-            SBE_ERROR(SBE_FUNC "Unexpected state after i2cc  reset (actual: 0x%08X%08X, expected: 0x%08X%08X) \
-                                NOTE: max_num_of_ports is not checked ",
-                        SBE::higher32BWord(l_i2cc_status_data_act.value), SBE::lower32BWord(l_i2cc_status_data_act.value),
-                        SBE::higher32BWord(I2CC_EXPECTED_CLEAN_RESET_STATUS), SBE::lower32BWord(I2CC_EXPECTED_CLEAN_RESET_STATUS));
-
-            rc = RC_POZ_I2CC_RESET_ERROR;
-            // confirm clean i2c status after a reset, if not assert
-            PLAT_FAPI_ASSERT(false,
-                            POZ_I2CC_RESET_ERROR()
-                            .set_STATUS(l_i2cc_status_data_act.value)
-                            .set_PORT(iv_port)
-                            .set_ENGINE(iv_engine)
-                            .set_DEVICEADDR(iv_devAddr)
-                            .set_RETRYCOUNT(iv_curr_retry_count),
-                            "Unexpected state after i2cc  reset");
-        }
+        // confirm clean i2c status after a reset, if not assert
+        PLAT_FAPI_ASSERT(I2CC_EXPECTED_CLEAN_RESET_STATUS == l_i2cc_status_data_act.value,
+                        POZ_I2CC_RESET_ERROR()
+                        .set_STATUS(l_i2cc_status_data_act.value)
+                        .set_PORT(iv_port)
+                        .set_ENGINE(iv_engine)
+                        .set_DEVICEADDR(iv_devAddr)
+                        .set_RETRYCOUNT(iv_curr_retry_count),
+                        "Unexpected state after i2cc  reset (actual: 0x%08X%08X, expected: 0x%08X%08X) \
+                        NOTE: max_num_of_ports is not checked ",
+                        SBE::higher32BWord(l_i2cc_status_data_act.value),
+                        SBE::lower32BWord(l_i2cc_status_data_act.value),
+                        SBE::higher32BWord(I2CC_EXPECTED_CLEAN_RESET_STATUS),
+                        SBE::lower32BWord(I2CC_EXPECTED_CLEAN_RESET_STATUS)
+                        );
 
     }while(false);
 
 fapi_try_exit:
     SBE_EXIT(SBE_FUNC)
-    return rc;
+    return current_err;
     #undef SBE_FUNC
 }
 
@@ -717,14 +698,6 @@ ReturnCode i2c::i2cReset()
     ReturnCode rc = FAPI2_RC_SUCCESS;
 
     do{
-
-        rc = i2cLockEngine();
-        if(rc != FAPI2_RC_SUCCESS)
-        {
-            SBE_ERROR(SBE_FUNC " failed for i2cLockEngine with rc 0x%08X", rc);
-            break;
-        }
-
         rc = i2ccResetEngine();
         if(rc != FAPI2_RC_SUCCESS)
         {
@@ -740,18 +713,10 @@ ReturnCode i2c::i2cReset()
         }
 
     }while(false);
-
-    //TODO: PFSBE-394
-    ReturnCode l_rc = i2cUnlockEngine();
-    if(l_rc != FAPI2_RC_SUCCESS)
-    {
-        SBE_ERROR(SBE_FUNC " failed for i2cUnlockEngine with l_rc 0x%08X", l_rc);
-        if(rc == FAPI2_RC_SUCCESS)
-            rc = l_rc;
-    }
-
     if(rc == FAPI2_RC_SUCCESS)
+    {
         rc = isI2cResetClean();
+    }
 
     SBE_EXIT(SBE_FUNC)
     return rc;
@@ -768,13 +733,6 @@ ReturnCode i2c::getI2cHelper( const size_t get_size,
     ReturnCode rc = FAPI2_RC_SUCCESS;
 
     do {
-
-        rc = i2cLockEngine();
-        if(rc != FAPI2_RC_SUCCESS)
-        {
-            SBE_ERROR(SBE_FUNC " failed for i2cLockEngine with rc 0x%08X", rc);
-            break;
-        }
 
         o_data.clear();
         o_data.assign(get_size, 0x00);
@@ -818,16 +776,6 @@ ReturnCode i2c::getI2cHelper( const size_t get_size,
         }
 
     } while(0);
-
-    //TODO: PFSBE-394
-    ReturnCode l_rc = i2cUnlockEngine();
-    if(l_rc != FAPI2_RC_SUCCESS)
-    {
-        SBE_ERROR(SBE_FUNC " failed for i2cUnlockEngine with l_rc 0x%08X", l_rc);
-        if(rc == FAPI2_RC_SUCCESS)
-            rc = l_rc;
-    }
-
     SBE_EXIT(SBE_FUNC)
     return rc;
     #undef SBE_FUNC
@@ -842,7 +790,6 @@ ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
     SBE_ENTER(SBE_FUNC)
 
     ReturnCode rc = FAPI2_RC_SUCCESS;
-
     do{
         //We just need to populate i2c details once
         rc = populatei2cdetails(target);
@@ -853,30 +800,58 @@ ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
         }
 
         do{
-
+            rc = i2cLockEngine();
+            if(rc != FAPI2_RC_SUCCESS)
+            {
+                SBE_ERROR(SBE_FUNC " failed for i2cLockEngine with rc 0x%08X", rc);
+                break;
+            }
+            // TODO: handle RE creations from driver for
+            // scom fails when retry count if <2.
+            // send back only 1RE and UE and discard rest all RE
             SBE_DEBUG(SBE_FUNC "Current retry count 0x%02x", iv_curr_retry_count);
-            //TODO: PFSBE-394
             rc = getI2cHelper(get_size, cfgData, o_data);
             //Lets exit out if there were no i2c fails
-            if(rc == FAPI2_RC_SUCCESS)
+            if (rc == FAPI2_RC_SUCCESS)
             {
                 break;
             }
             else
             {
-                //TODO: PFSBE-394
+                // if getI2cHelper failed try to reset
                 ReturnCode l_rc = i2cReset();
                 if(l_rc != FAPI2_RC_SUCCESS)
                 {
+                    // if reset fails, logError and break
+                    logError( l_rc , fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE);
                     break;
                 }
+                // if we are not at last reset try and reset worked
+                // log getI2cHelper error
+                if ( iv_curr_retry_count != iv_max_retry_count)
+                {
+                    logError ( rc , fapi2::FAPI2_ERRL_SEV_RECOVERED);
+                }
             }
-
             iv_curr_retry_count++;
 
         }while(iv_curr_retry_count <= iv_max_retry_count);
     }while(false);
-
+    ReturnCode l_rc = i2cUnlockEngine();
+    if(l_rc != FAPI2_RC_SUCCESS)
+    {
+        SBE_ERROR(SBE_FUNC " failed for i2cUnlockEngine with l_rc 0x%08X", l_rc);
+        if(rc!= FAPI2_RC_SUCCESS)
+        {
+            // both unlock and i2chelper failed
+            logError(l_rc , fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE);
+        }
+        else
+        {
+            // only unlock engine failed -> return unlockEngine Rc
+            rc = l_rc;
+        }
+    }
     SBE_EXIT(SBE_FUNC)
     return rc;
     #undef SBE_FUNC
@@ -893,13 +868,6 @@ ReturnCode i2c::getI2cHelper( const uint8_t  *i_data,
     ReturnCode rc = FAPI2_RC_SUCCESS;
 
     do {
-
-        rc = i2cLockEngine();
-        if(rc != FAPI2_RC_SUCCESS)
-        {
-            SBE_ERROR(SBE_FUNC " failed for i2cLockEngine with rc 0x%08X", rc);
-            break;
-        }
 
         ////////////////////////////////
         // I2C read with offset ///////
@@ -940,15 +908,6 @@ ReturnCode i2c::getI2cHelper( const uint8_t  *i_data,
 
     } while(0);
 
-    //TODO: PFSBE-394
-    ReturnCode l_rc = i2cUnlockEngine();
-    if(l_rc != FAPI2_RC_SUCCESS)
-    {
-        SBE_ERROR(SBE_FUNC " failed for i2cUnlockEngine with l_rc 0x%08X", l_rc);
-        if(rc == FAPI2_RC_SUCCESS)
-            rc = l_rc;
-    }
-
     SBE_EXIT(SBE_FUNC)
     return rc;
     #undef SBE_FUNC
@@ -975,29 +934,59 @@ ReturnCode i2c::getI2c( const Target<TARGET_TYPE_ALL>& target,
         }
 
         do{
-
+            rc = i2cLockEngine();
+            if(rc != FAPI2_RC_SUCCESS)
+            {
+                SBE_ERROR(SBE_FUNC " failed for i2cLockEngine with rc 0x%08X", rc);
+                break;
+            }
+            // TODO: handle RE creations from driver for
+            // scom fails when retry count if <2.
+            // send back only 1RE and UE and discard rest all RE
             SBE_DEBUG(SBE_FUNC "Current retry count 0x%02x", iv_curr_retry_count);
-            //TODO: PFSBE-394
             rc = getI2cHelper(i_data, i_size, o_data, o_size);
             //Lets exit out if there were no i2c fails
-            if(rc == FAPI2_RC_SUCCESS)
+            if (rc == FAPI2_RC_SUCCESS)
             {
                 break;
             }
             else
             {
-                //TODO: PFSBE-394
+                // if getI2cHelper failed
+                // try to reset
                 ReturnCode l_rc = i2cReset();
                 if(l_rc != FAPI2_RC_SUCCESS)
                 {
+                    // if reset fails, logError and break
+                    logError( l_rc , fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE);
                     break;
                 }
+                // if we are not at last reset try and reset worked
+                // log getI2cHelper error
+                if ( iv_curr_retry_count != iv_max_retry_count)
+                {
+                    logError ( rc , fapi2::FAPI2_ERRL_SEV_RECOVERED);
+                }
             }
-
             iv_curr_retry_count++;
 
         }while(iv_curr_retry_count <= iv_max_retry_count);
     }while(false);
+    ReturnCode l_rc = i2cUnlockEngine();
+    if(l_rc != FAPI2_RC_SUCCESS)
+    {
+        SBE_ERROR(SBE_FUNC " failed for i2cUnlockEngine with l_rc 0x%08X", l_rc);
+        if(rc!= FAPI2_RC_SUCCESS)
+        {
+            // both unlock and i2chelper failed
+            logError(l_rc , fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE);
+        }
+        else
+        {
+            // only unlock engine failed -> return unlockEngine Rc
+            rc = l_rc;
+        }
+    }
     SBE_EXIT(SBE_FUNC)
     return rc;
     #undef SBE_FUNC
@@ -1012,13 +1001,6 @@ ReturnCode i2c::putI2cHelper( const std::vector<uint8_t>& data )
 
     do {
 
-        rc = i2cLockEngine();
-        if(rc != FAPI2_RC_SUCCESS)
-        {
-            SBE_ERROR(SBE_FUNC " failed for i2cLockEngine with rc 0x%08X", rc);
-            break;
-        }
-
         // Do a write with stop
         iv_with_stop = true;
         iv_skip_mode_setup = false;
@@ -1029,15 +1011,6 @@ ReturnCode i2c::putI2cHelper( const std::vector<uint8_t>& data )
             break;
         }
     } while(0);
-
-    //TODO: PFSBE-394
-    ReturnCode l_rc = i2cUnlockEngine();
-    if(l_rc != FAPI2_RC_SUCCESS)
-    {
-        SBE_ERROR(SBE_FUNC " failed for i2cUnlockEngine with l_rc 0x%08X", l_rc);
-        if(rc == FAPI2_RC_SUCCESS)
-            rc = l_rc;
-    }
 
     SBE_EXIT(SBE_FUNC)
     return rc;
@@ -1062,30 +1035,59 @@ ReturnCode i2c::putI2c( const Target<TARGET_TYPE_ALL>& target,
         }
 
         do{
-
+            rc = i2cLockEngine();
+            if(rc != FAPI2_RC_SUCCESS)
+            {
+                SBE_ERROR(SBE_FUNC " failed for i2cLockEngine with rc 0x%08X", rc);
+                break;
+            }
+            // TODO: handle RE creations from driver for
+            // scom fails when retry count if <2.
+            // send back only 1RE and UE and discard rest all RE
             SBE_DEBUG(SBE_FUNC "Current retry count 0x%02x", iv_curr_retry_count);
-            //TODO: PFSBE-394
             rc = putI2cHelper(data);
             //Lets exit out if there were no i2c fails
-            if(rc == FAPI2_RC_SUCCESS)
+            if (rc == FAPI2_RC_SUCCESS)
             {
                 break;
             }
             else
             {
-                //TODO: PFSBE-394
+                // if putI2cHelper failed
+                // try to reset
                 ReturnCode l_rc = i2cReset();
                 if(l_rc != FAPI2_RC_SUCCESS)
                 {
+                    // if reset fails, logError and break
+                    logError( l_rc , fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE);
                     break;
                 }
+                // if we are not at last reset try and reset worked
+                // log putI2cHelper error
+                if ( iv_curr_retry_count != iv_max_retry_count)
+                {
+                    logError ( rc , fapi2::FAPI2_ERRL_SEV_RECOVERED);
+                }
             }
-
             iv_curr_retry_count++;
 
         }while(iv_curr_retry_count <= iv_max_retry_count);
     }while(false);
-
+    ReturnCode l_rc = i2cUnlockEngine();
+    if(l_rc != FAPI2_RC_SUCCESS)
+    {
+        SBE_ERROR(SBE_FUNC " failed for i2cUnlockEngine with l_rc 0x%08X", l_rc);
+        if(rc!= FAPI2_RC_SUCCESS)
+        {
+            // both unlock and i2chelper failed
+            logError(l_rc , fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE);
+        }
+        else
+        {
+            // only unlock engine failed -> return unlockEngine Rc
+            rc = l_rc;
+        }
+    }
     SBE_EXIT(SBE_FUNC)
     return rc;
     #undef SBE_FUNC
@@ -1100,14 +1102,6 @@ ReturnCode i2c::putI2cHelper( const uint8_t  *i_data,
     ReturnCode rc = FAPI2_RC_SUCCESS;
 
     do {
-
-        rc = i2cLockEngine();
-        if(rc != FAPI2_RC_SUCCESS)
-        {
-            SBE_ERROR(SBE_FUNC " failed for i2cLockEngine with rc 0x%08X", rc);
-            break;
-        }
-
         // Do a write with stop
         iv_with_stop = true;
         iv_skip_mode_setup = false;
@@ -1118,15 +1112,6 @@ ReturnCode i2c::putI2cHelper( const uint8_t  *i_data,
             break;
         }
     } while(false);
-
-    //TODO: PFSBE-394
-    ReturnCode l_rc = i2cUnlockEngine();
-    if(l_rc != FAPI2_RC_SUCCESS)
-    {
-        SBE_ERROR(SBE_FUNC " failed for i2cUnlockEngine with l_rc 0x%08X", l_rc);
-        if(rc == FAPI2_RC_SUCCESS)
-            rc = l_rc;
-    }
 
     SBE_EXIT(SBE_FUNC)
     return rc;
@@ -1152,30 +1137,59 @@ ReturnCode i2c::putI2c( const Target<TARGET_TYPE_ALL>& target,
         }
 
         do{
-
+            rc = i2cLockEngine();
+            if(rc != FAPI2_RC_SUCCESS)
+            {
+                SBE_ERROR(SBE_FUNC " failed for i2cLockEngine with rc 0x%08X", rc);
+                break;
+            }
+            // TODO: handle RE creations from driver for
+            // scom fails when retry count if <2.
+            // send back only 1RE and UE and discard rest all RE
             SBE_DEBUG(SBE_FUNC "Current retry count 0x%02x", iv_curr_retry_count);
-            //TODO: PFSBE-394
             rc = putI2cHelper(i_data, i_size);
             //Lets exit out if there were no i2c fails
-            if(rc == FAPI2_RC_SUCCESS)
+            if (rc == FAPI2_RC_SUCCESS)
             {
                 break;
             }
             else
             {
-                //TODO: PFSBE-394
+                // if putI2cHelper failed
+                // try to reset
                 ReturnCode l_rc = i2cReset();
                 if(l_rc != FAPI2_RC_SUCCESS)
                 {
+                    // if reset fails, logError and break
+                    logError( l_rc , fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE);
                     break;
                 }
+                // if we are not at last reset try and reset worked
+                // log putI2cHelper error
+                if ( iv_curr_retry_count != iv_max_retry_count)
+                {
+                    logError ( rc , fapi2::FAPI2_ERRL_SEV_RECOVERED);
+                }
             }
-
             iv_curr_retry_count++;
 
         }while(iv_curr_retry_count <= iv_max_retry_count);
     }while(false);
-
+    ReturnCode l_rc = i2cUnlockEngine();
+    if(l_rc != FAPI2_RC_SUCCESS)
+    {
+        SBE_ERROR(SBE_FUNC " failed for i2cUnlockEngine with l_rc 0x%08X", l_rc);
+        if(rc!= FAPI2_RC_SUCCESS)
+        {
+            // both unlock and i2chelper failed
+            logError(l_rc , fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE);
+        }
+        else
+        {
+            // only unlock engine failed -> return unlockEngine Rc
+            rc = l_rc;
+        }
+    }
     SBE_EXIT(SBE_FUNC)
     return rc;
     #undef SBE_FUNC
