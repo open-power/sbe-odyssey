@@ -132,7 +132,6 @@ void stream_scom_data(const fapi2::Target<K, M, V>& i_target,
         o_ostream.put64(l_data);
     }
 
-    o_ostream.flush();
 }
 
 /// @brief                      Stream SRAM per PPE data to file
@@ -174,7 +173,6 @@ void stream_mem_data_pp(const fapi2::Target<K, M, V>& i_target,
         }
     }
 
-    o_ostream.flush();
 
     // Disable Auto Increment
     auto_increment_ctrl(i_target, i_base_addr, false);
@@ -225,7 +223,6 @@ void stream_mem_data_pt(const fapi2::Target<K, M, V>& i_target,
         }
     }
 
-    o_ostream.flush();
 
     // Disable Auto Increment
     auto_increment_ctrl(i_target, i_base_addr, false);
@@ -243,8 +240,8 @@ template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
 void stream_hw_data(const fapi2::Target<K, M, V>& i_target,
                     fapi2::hwp_bit_ostream& o_ostream,
                     const uint64_t i_base_addr,
-                    const uint16_t i_num_groups,
-                    const uint16_t i_max_lanes,
+                    const uint16_t i_group,
+                    const uint16_t i_lane,
                     const bool i_tx,
                     const bool i_per_lane)
 {
@@ -292,21 +289,15 @@ void stream_hw_data(const fapi2::Target<K, M, V>& i_target,
 
     for (uint32_t l_reg_addr = l_start; l_reg_addr <= l_end; l_reg_addr += 0x10)
     {
-        for (uint32_t l_ioo_unit = 0; l_ioo_unit < i_num_groups; l_ioo_unit++)
+        l_addr = buildAddr(i_base_addr, i_group, i_lane, l_reg_addr);
+
+        l_rc = fapi2::getScom(i_target, l_addr, l_data);
+
+        if (l_rc)
         {
-            for (uint32_t l_lane = 0; l_lane < i_max_lanes; l_lane++)
-            {
-                l_addr = buildAddr(i_base_addr, l_ioo_unit, l_lane, l_reg_addr);
-
-                l_rc = fapi2::getScom(i_target, l_addr, l_data);
-
-                if (l_rc)
-                {
-                    l_data = 0xDEADDEADDEADDEAD;
-                }
-
-                o_ostream.put16(l_data);
-            }
+            l_data = 0xDEADDEADDEADDEAD;
         }
+
+        o_ostream.put16(l_data);
     }
 }
