@@ -39,8 +39,8 @@
 
 // Max number of error log slots per PPE
 // Support 1 unrecoverable & 1 informational elog per PPE
-#define MAX_ELOG_SLOTS_PER_PPE 2
-
+#define MAX_ELOG_SLOTS_PER_PPE  2
+#define ELOG_TABLE_VER          1
 
 //TBD: Need to revisit the entry number below. for now added 20 to avoid
 //compilation error in errl.c
@@ -84,6 +84,7 @@ typedef struct hcode_error_table
     union
     {
         uint64_t value;
+        uint8_t  bytes[8];
         struct
         {
             uint32_t high_order;
@@ -91,9 +92,11 @@ typedef struct hcode_error_table
         } words;
         struct
         {
-            uint64_t magic_word                 : 32; //ELTC
+            uint64_t magic_word                 : 24; //ELT
+            uint64_t version                    : 8;
             uint64_t total_log_slots            : 8;
-            uint64_t reserved                   : 24;
+            uint64_t log_address_valid          : 8;
+            uint64_t reserved                   : 16;
         } fields;
     } dw0;
 
