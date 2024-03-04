@@ -43,19 +43,16 @@
 /// Error log table version
 #define ELOG_TABLE_VER          1
 
-//TBD: Need to revisit the entry number below. for now added 20 to avoid
-//compilation error in errl.c
+/// TBD: Need to revisit the entry number below. for now added 20 to avoid
+/// compilation error in errl.c
 
-// Maximum number of error log entries in error log table
+/// Maximum number of error log entries in error log table
 #ifdef __PPE_QME
     /// QME local table in QME SRAM
-    #define MAX_ELOG_ENTRIES 20
-#elif __PPE_CE
-    /// TCC global table in TCC SRAM .. (DCE+OCE+PCE+XCE) * 2
-    #define MAX_ELOG_ENTRIES 20
+    #define MAX_ELOG_ENTRIES 2
 #else
-    /// OCC global table in OCC SRAM .. (NGPE+PGPE+XGPE) * 2
-    #define MAX_ELOG_ENTRIES 20
+    /// Error Log global table in OCC/TCC SRAM
+    #define MAX_ELOG_ENTRIES 8
 #endif
 
 /// Structure of an individual error log entry in the table
