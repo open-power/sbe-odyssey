@@ -50,14 +50,17 @@ struct HssTdrChipopParms
     uint32_t lane_on;
 };
 
+struct HssUnloadChipopParms
+{
+    uint32_t link_mask;
+};
+
 /////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 uint32_t sbeHssOdyUnload(uint8_t *i_pArg)
 {
 #define SBE_FUNC " sbeHssOdyUnload "
     SBE_ENTER(SBE_FUNC);
-
-    constexpr uint32_t c_chipunit_mask = 0;
 
     uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
     sbeRespGenHdr_t hdr;
@@ -74,13 +77,20 @@ uint32_t sbeHssOdyUnload(uint8_t *i_pArg)
         chipOpParam_t* configStr = (struct chipOpParam*)i_pArg;
         type = static_cast<sbeFifoType>(configStr->fifoType);
         SBE_DEBUG(SBE_FUNC "Fifo Type is:[%02X]",type);
+
+        // Dequeue parameters
+        uint32_t l_len2dequeue = sizeof(HssUnloadChipopParms) / sizeof(uint32_t);
+        SBE_DEBUG(SBE_FUNC "Chipop params length %d", l_len2dequeue);
+        SBE_TRY(sbeUpFifoDeq_mult(l_len2dequeue, l_params, true, false, type));
         needsDrain = false;
+
+        const uint32_t c_link_mask = reinterpret_cast<HssUnloadChipopParms *>(l_params)->link_mask;
 
         fapi2::sbefifo_hwp_data_ostream l_ostream(type);
         hwp_bit_ostream l_bit_os(l_ostream);
         // Call the wrapper
         fapi2::ReturnCode fapi_rc = fapi2::FAPI2_RC_SUCCESS;
-        SBE_EXEC_HWP( fapi_rc, ody_omi_unload, tgt, c_chipunit_mask, l_bit_os);
+        SBE_EXEC_HWP( fapi_rc, ody_omi_unload, tgt, c_link_mask, l_bit_os);
         if (fapi_rc != fapi2::FAPI2_RC_SUCCESS)
         {
             hdr.setStatus(SBE_PRI_GENERIC_EXECUTION_FAILURE, SBE_SEC_GENERIC_FAILURE_IN_EXECUTION);
