@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -29,6 +29,9 @@ cp ${MESON_SOURCE_ROOT}/public/src/build/utils/imageTool.py \
    ${MESON_SOURCE_ROOT}/public/src/build/utils/signHashList \
    ${MESON_SOURCE_ROOT}/public/src/build/utils/genMeasuredHash.sh \
    ${MESON_SOURCE_ROOT}/public/src/build/utils/ecc \
+   ${MESON_SOURCE_ROOT}/public/src/tools/debug/sbe-debug.py \
+   ${MESON_SOURCE_ROOT}/public/src/tools/trace/fsp-trace \
+   ${MESON_SOURCE_ROOT}/public/src/tools/trace/ppe2fsp.py \
    -R ${MESON_SOURCE_ROOT}/public/src/import/public/common/utils/imageProcs/tools \
    ${MESON_BUILD_ROOT}/sbe_tools || exit 1
 
