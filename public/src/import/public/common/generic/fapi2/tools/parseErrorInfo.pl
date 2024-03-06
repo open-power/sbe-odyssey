@@ -189,7 +189,7 @@ sub setErrorEnumValue
     # the creator of the error
     #--------------------------------------------------------------------------
     my $errHash128Bit = md5_hex($name);
-    my $errHash24Bit  = substr( $errHash128Bit, 0, 6 );
+    my $errHash24Bit = substr( $errHash128Bit, 0, 6 );
 
     #--------------------------------------------------------------------------
     # Check that the error enum-value is not a duplicate
@@ -231,7 +231,7 @@ sub setFfdcIdValue
     # the FFDC name.
     #--------------------------------------------------------------------------
     my $ffdcHash128Bit = md5_hex($name);
-    my $ffdcHash32Bit  = substr( $ffdcHash128Bit, 0, 8 );
+    my $ffdcHash32Bit = substr( $ffdcHash128Bit, 0, 8 );
 
     #--------------------------------------------------------------------------
     # Check that the error enum-value is not a duplicate
@@ -993,9 +993,12 @@ foreach my $argnum ( 0 .. $#ARGV )
             $eiEntryStr .= "\tl_entries[$eiEntryCount].ffdc.iv_ffdcId = fapi2::$ffdcName; \\\n";
             $eiEntryStr .= "\tl_entries[$eiEntryCount].ffdc.iv_ffdcSize = 8; \\\n";
 
-            # Add a static method to get address from ffdc blob
-            addFfdcMethod( \%methods, "get_address", $err->{rc}, $scom_addr_type, $eiEntryCount );
-            $eiEntryCount++;
+            if ( $arg_empty_ffdc eq undef )
+            {
+                # Add a static method to get address from ffdc blob
+                addFfdcMethod( \%methods, "get_address", $err->{rc}, $scom_addr_type, $eiEntryCount );
+                $eiEntryCount++;
+            }
 
             # Set the FFDC ID value in a global hash. The name is <rc>_pib_error
             $ffdcName = $err->{rc} . "_";
@@ -1609,14 +1612,22 @@ foreach my $argnum ( 0 .. $#ARGV )
         }
         else
         {
-            # Void expression keeps the compiler from complaining about the unused arguments.
-            # We want to set the i_rc to the RC if we're empty. This otherwise gets done in _setHwpError()
-            print ECFILE
-                "    $class_name(fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE, fapi2::ReturnCode& i_rc = fapi2::current_err)\n";
-            print ECFILE "    {\n";
-            print ECFILE "        static_cast<void>(i_sev);\n";
-            print ECFILE "        i_rc = $err->{rc};\n";
-            print ECFILE "    }\n\n";
+            if ( exists $err->{sbeError} )
+            {
+                # Void expression keeps the compiler from complaining about the unused arguments.
+                # We want to set the i_rc to the RC if we're empty. This otherwise gets done in _setHwpError()
+                $constructor .= "    $class_name(fapi2::errlSeverity_t i_sev = fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE)\n";
+                $constructor .= "    {\n\n";
+                $constructor .= "        static_cast<void>(i_sev);\n";
+                $constructor .= "        fapi2::current_err =  RC_$class_name;\n";
+                $constructor .= "#if defined(MINIMUM_FFDC_RE)\n";
+                $constructor .= "        fapi2::current_err.setDataPtr(0);\n";
+                $constructor .= "#endif\n";
+                $constructor .= "#if !defined(MINIMUM_FFDC)\n";
+                $constructor .= "        FAPI_ERR(\"$err->{description}\");\n";
+                $constructor .= "#endif\n";
+                $constructor .= "    }\n\n";
+            }
         }
 
         my $method_count = 0;
@@ -1729,26 +1740,29 @@ foreach my $argnum ( 0 .. $#ARGV )
         {
             if ( exists $err->{sbeError} )
             {
-                $constructor .= "#if defined(__SBE__)\n";
-                $constructor .= "  #if defined (MINIMUM_FFDC)\n";
-                $constructor .= "    void* ptr = nullptr;\n";
-                $constructor .= "    uint32_t tempScratchAddr = ffdcConstructor( \n";
-                $constructor .= "                     (uint32_t)RC_$class_name,\n";
-                $constructor .= "                     (uint16_t)($count * sizeof(fapi2::sbeFfdc_t)),\n";
-                $constructor .= "                     ( void *&)iv_localFfdcData,\n";
-                $constructor .= "                     (uint16_t)0,\n";
-                $constructor .= "                     ( void *&)ptr,\n";
-                $constructor .= "                     i_sev\n";
-                $constructor .= "                   );\n";
-                $constructor .= "    #if defined (MINIMUM_FFDC_RE)\n";
-                $constructor .= "        fapi2::current_err.setDataPtr(tempScratchAddr);\n";
-                $constructor .= "    #elif !defined (MINIMUM_FFDC_RE)\n";
-                $constructor .=
-                    "        fapi2::g_ffdcCtrlSingleton.setHead(reinterpret_cast<const pozFfdcNode_t*>(tempScratchAddr));\n";
-                $constructor .= "    #endif\n";
-                $constructor .= "  #endif\n";
-                $constructor .= "#endif\n";
-                $constructor .= "    }\n";
+                if ( $arg_empty_ffdc eq undef )
+                {
+                    $constructor .= "#if defined(__SBE__)\n";
+                    $constructor .= "  #if defined (MINIMUM_FFDC)\n";
+                    $constructor .= "    void* ptr = nullptr;\n";
+                    $constructor .= "    uint32_t tempScratchAddr = ffdcConstructor( \n";
+                    $constructor .= "                     (uint32_t)RC_$class_name,\n";
+                    $constructor .= "                     (uint16_t)($count * sizeof(fapi2::sbeFfdc_t)),\n";
+                    $constructor .= "                     ( void *&)iv_localFfdcData,\n";
+                    $constructor .= "                     (uint16_t)0,\n";
+                    $constructor .= "                     ( void *&)ptr,\n";
+                    $constructor .= "                     i_sev\n";
+                    $constructor .= "                   );\n";
+                    $constructor .= "    #if defined (MINIMUM_FFDC_RE)\n";
+                    $constructor .= "        fapi2::current_err.setDataPtr(tempScratchAddr);\n";
+                    $constructor .= "    #elif !defined (MINIMUM_FFDC_RE)\n";
+                    $constructor .=
+                        "        fapi2::g_ffdcCtrlSingleton.setHead(reinterpret_cast<const pozFfdcNode_t*>(tempScratchAddr));\n";
+                    $constructor .= "    #endif\n";
+                    $constructor .= "  #endif\n";
+                    $constructor .= "#endif\n";
+                    $constructor .= "    }\n";
+                }
                 print ECFILE "    void execute()\n";
                 print ECFILE "    {\n";
                 print ECFILE "$executeStr\n";
