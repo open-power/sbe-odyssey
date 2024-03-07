@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -824,6 +824,8 @@ class Manifest(object):
         self.end_marker = True
         # A hashfile to put hashes in to
         self.hashfile = None
+        # maximum size
+        self.max_size = None
         # The list of layout entries
         self.layouts = list()
 
@@ -846,6 +848,8 @@ class Manifest(object):
             d["global"]["end-marker"] = self.end_marker
         if self.hashfile != None:
             d["global"]["hashfile"] = self.hashfile
+        if self.max_size != None:
+            d["global"]["max-size"] = self.max_size
 
         # Layout
         for layout in self.layouts:
@@ -862,6 +866,10 @@ class Manifest(object):
                 d["layout"][layout.name]["location"] = layout.location
             if layout.size != None:
                 d["layout"][layout.name]["size"] = layout.size
+            if layout.max_csize != None:
+                d["layout"][layout.name]["max-csize"] = layout.max_csize
+            if layout.max_dsize != None:
+                d["layout"][layout.name]["max-dsize"] = layout.max_dsize
             if layout.hash != None:
                 d["layout"][layout.name]["hash"] = layout.hash
 
@@ -876,7 +884,7 @@ class Manifest(object):
         # Open the file, parse it and eval it into the dictionary 'data'
         # Any error is a hard return of the program as we at least need a valid data struct
         with open(manifestFile, "r") as f:
-            out.print("Validating manifest syntax")
+            out.info("Validating manifest syntax")
             # First make sure we can parse the manifest - proper braces, commas, etc..
             try:
                 parsedata = ast.parse(f.read(), mode="eval")
@@ -907,12 +915,14 @@ class Manifest(object):
 
         # Instead of just getting the values we need, instead loop through all values read in
         # This will allow us to check for anything invalid added by the user
-        out.print("Validating 'global' keyword values")
+        out.info("Validating 'global' keyword values")
         for key, value in data["global"].items():
             if (key == "method"):
                 self.method = CM[value]
             elif (key == "end-marker"):
                 self.end_marker = value
+            elif (key == "max-size"):
+                self.max_size = value
             elif (key == "hashfile"):
                 self.hashfile = value
             else:
@@ -927,7 +937,7 @@ class Manifest(object):
             errors += 1
 
         # Now validate all the layout keywords in the same method
-        out.print("Validating 'layout' keyword values")
+        out.info("Validating 'layout' keyword values")
         for key, value in data["layout"].items():
             entry = ManifestLayout()
             entry.name = key
@@ -950,6 +960,10 @@ class Manifest(object):
                     entry.location = subvalue
                 elif (subkey == "size"):
                     entry.size = subvalue
+                elif (subkey == "max-csize"):
+                    entry.max_csize = subvalue
+                elif (subkey == "max-dsize"):
+                    entry.max_dsize = subvalue
                 elif (subkey == "hash"):
                     entry.hash = subvalue
                 else:
@@ -969,6 +983,11 @@ class Manifest(object):
 
             if (entry.directory and not entry.pattern):
                 out.error("A keyword 'pattern' required to be used with a directory entry")
+                errors += 1
+                continue
+
+            if (entry.directory and ((entry.max_csize is not None) or (entry.max_dsize is not None))):
+                out.error("Directory max size calculations are not yet implemented")
                 errors += 1
                 continue
 
@@ -999,7 +1018,7 @@ class Manifest(object):
         errors = 0
         newLayouts = list()
 
-        out.print("Building manifest paths")
+        out.info("Building manifest paths")
 
         for layout in self.layouts:
             # Do directory entries
@@ -1070,6 +1089,16 @@ class Manifest(object):
                     entry.hash()
                 archive.append(entry)
 
+                if (layout.max_csize is not None):
+                    if (entry.psize > layout.max_csize):
+                        raise ArchiveError("Layout entry '%s' compressed size (%d B) exceeds max allowed size (%d B)!" %
+                                  (layout.name, entry.psize, layout.max_csize))
+
+                if (layout.max_dsize is not None):
+                    if (entry.dsize > layout.max_dsize):
+                        raise ArchiveError("Layout entry '%s' uncompressed size (%d B) exceeds max allowed size (%d B)!" %
+                                  (layout.name, entry.dsize, layout.max_dsize))
+
         # If hashfile is enabled, create the hash list and stick it into the archive
         if self.hashfile:
             contents = archive.createHashList()
@@ -1098,5 +1127,8 @@ class ManifestLayout(object):
         self.location = None
         # The fixed size in the archive
         self.size = None
+        # Maximum permitted size
+        self.max_csize = None
+        self.max_dsize = None
         # Create a hash entry in the hash file
         self.hash = None
