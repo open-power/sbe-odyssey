@@ -180,12 +180,15 @@ elif [ "$COMPONENT_ID" = "BOOT_LDR" -a ! -z "${ODY_BOOT_LDR_SECUREBOOT_SIGN_MODE
 
 #Check if user has passed signing mode
 elif [ -z "${SIGNING_MODE+x}" ]; then
-    SIGNING_MODE="Development"
+    SIGNING_MODE="development"
     echo "***INFO | SBE | signHashList : Defaulting signing mode to $SIGNING_MODE "
 fi
 
+# Force signing mode to lower case
+SIGNING_MODE=`echo $SIGNING_MODE | tr '[:upper:]' '[:lower:]'`
+
 #Set flag basis Development or production mode.
-if [ "$SIGNING_MODE" = "Development" ]; then
+if [ "$SIGNING_MODE" = "development" ]; then
     if [ "$COMPONENT_ID" = "BOOT_LDR" ]; then
         echo "***INFO | SBE | signHashList : Development Mode Signing."
         echo "***INFO | SBE | signHashList : Signing Boot Loader Hash List."
@@ -207,7 +210,7 @@ if [ "$SIGNING_MODE" = "Development" ]; then
     fi
 
 #TODO: Check op-build env value
-elif [ "$SIGNING_MODE" = "Production" ] ; then
+elif [ "$SIGNING_MODE" = "production" ] ; then
     echo "***INFO | SBE | signHashList : Production Mode Signing"
 
     if [ "$COMPONENT_ID" = "BOOT_LDR" ]; then
