@@ -1003,7 +1003,6 @@
     </description>
     <initToZero></initToZero>
     <valueType>uint64</valueType>
-    <enum>2666 = 0x0A6A, 2933 = 0x0B75, 3200 = 0x0C80, 4000 = 0x0FA0, 4800 = 0x12C0</enum>
     <writeable/>
     <mssUnits> MT/s </mssUnits>
     <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="ody">
