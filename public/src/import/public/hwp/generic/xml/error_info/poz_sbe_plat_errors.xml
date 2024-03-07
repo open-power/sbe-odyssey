@@ -127,4 +127,12 @@
     <ffdc>REQUIRED_SPACE</ffdc>
     <ffdc>AVAILABLE_SPACE</ffdc>
 </hwpError>
+<hwpError>
+    <sbeError/>
+    <rc>RC_THRESHOLD_STACK_LIMIT_CROSSED</rc>
+    <description>Thread stack usage crossed threshold limit</description>
+    <ffdc>THREAD_ID</ffdc>
+    <ffdc>THRESHOLD_PERCENTAGE</ffdc>
+    <ffdc>UTILIZATION_PERCENTAGE</ffdc>
+</hwpError>
 </hwpErrors>
