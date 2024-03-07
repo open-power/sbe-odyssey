@@ -48,8 +48,8 @@ parser.add_argument('-o', '--output', default=None,
                     help="Directory to place output")
 parser.add_argument('-n', '--name', default="image",
                     help="The name to give to the output files")
-parser.add_argument('-c', '--console-level', default=out.levels.WARN, type=out.levels.argparse, choices=list(out.levels),
-                    help="The output level to send to send to the console.  BASE is the default")
+parser.add_argument('-c', '--console-level', default=out.levels.INFO, type=out.levels.argparse, choices=list(out.levels),
+                    help="The output level to send to send to the console.  INFO is the default")
 
 # cmdline loaded up, now parse for it and handle what is found
 args = parser.parse_args()
@@ -83,7 +83,7 @@ if (not os.path.exists(outputPath)):
         sys.exit(1)
 
 # Make sure the user knows where it's all going
-out.print("All output going to: %s/%s.*" % (outputPath, args.name))
+out.info("All output going to: %s/%s.*" % (outputPath, args.name))
 
 # Store our filenames
 # Put them in a dict should we have additional ouput files besides the output pak
@@ -105,7 +105,7 @@ if (not os.path.exists(manifestFile)):
     sys.exit(1)
 
 # Put a message to the screen with the manifest being used
-out.print("Manifest file: %s" % manifestFile)
+out.info("Manifest file: %s" % manifestFile)
 out.moreIndent()
 
 manifest = pak.Manifest()
@@ -129,10 +129,10 @@ if (manifestErrors):
 out.lessIndent()
 
 # Create the archive to load into from the manifest data
-out.print("Creating archive")
+out.info("Creating archive")
 archive = manifest.createArchive()
 
-out.print("Writing archive")
+out.info("Writing archive")
 # All data loaded into the archive, just write it
 archive.save(filenames["pak"])
 
@@ -143,12 +143,21 @@ with open(filenames["manifest"], 'w') as f:
     print(manifest.to_dict(), file=f)
 
 # Print all the output file
-out.print("All output in: %s" % outputPath)
+out.info("All output in: %s" % outputPath)
 out.moreIndent()
-out.print("Manifest: %s" % filenames["manifest"])
-out.print("Archive: %s" % filenames["pak"])
+out.info("Manifest: %s" % filenames["manifest"])
+out.info("Archive: %s" % filenames["pak"])
 out.lessIndent()
 
 # Report on total run time of the program
 timePassed = (time.time() - progStartTime)
 out.info("Total Run Time: %s" % (pakutils.formatTime(timePassed)))
+
+# check archive size
+archive_size = os.path.getsize(filenames["pak"])
+out.info("Archive size: %d B" % archive_size)
+if manifest.max_size is not None:
+    if archive_size > manifest.max_size:
+        out.critical("Finalized archive ('%s') size (%d B) exceeds maximum allowed size (%d B)!" %
+                     (filenames["pak"], archive_size, manifest.max_size))
+        sys.exit(1)
