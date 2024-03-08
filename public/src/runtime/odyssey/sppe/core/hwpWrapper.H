@@ -37,6 +37,7 @@ using  sbeIstepHwpOcmb_t = ReturnCode (*)
 
 using  sbeHwpLoadPIE_t = ReturnCode (*)
                       (const Target<TARGET_TYPE_OCMB_CHIP> & i_target,
+                      fapi2::hwp_data_istream&, fapi2::hwp_data_istream&,
                       fapi2::hwp_data_istream&, fapi2::hwp_data_istream&);
 
 // MEM HWPs
