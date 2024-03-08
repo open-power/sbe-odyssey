@@ -39,7 +39,7 @@
 #include "sbeglobals.H"
 #include "archive.H"
 
-#define MEM_PAKNAME_MAX_CHAR  20 // ddr/ddimm/dmem.bin
+#define MEM_PAKNAME_MAX_CHAR  30 // ddr/ddimm/dmem.bin
 
 using namespace fapi2;
 
@@ -336,56 +336,48 @@ fapi_try_exit:
     #undef SBE_FUNC
 }
 
-ReturnCode istepLoadPIEwithOcmb( voidfuncptr_t i_hwp)
+static ReturnCode getBinaryFromPak(const char* i_pakName, uint32_t &o_Size,
+                                   uint8_t* &o_scratchArea)
 {
-    #define SBE_FUNC " istepLoadPIEwithOcmb "
+    #define SBE_FUNC " getBinaryFromPak "
     SBE_ENTER(SBE_FUNC);
 
     // Variable declaration
     ReturnCode l_rc = FAPI2_RC_SUCCESS;
-    uint8_t *l_scratchArea = nullptr;
 
     do
     {
-        // assret if there in no HWP
-        assert( NULL != i_hwp );
-        Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
-
-        PakWrapper pak((void *)g_partitionOffset, (void *)(g_partitionOffset + g_partitionSize));
-
         char pakname[MEM_PAKNAME_MAX_CHAR] = "";
         l_rc = getBinaryDirectory(pakname);
-
         if (l_rc)
         {
             SBE_ERROR(SBE_FUNC " getBinaryDirectory failed with l_rc[0x%08X]", l_rc);
             break;
         }
 
-        // Now append the pie.bin
-        strcat (pakname,"pie.bin");
+        // Now append the bin file
+        strcat (pakname,i_pakName);
 
-        // Variable declaration
-        uint32_t l_imageSize = 0;
+        PakWrapper pak((void *)g_partitionOffset, (void *)(g_partitionOffset + g_partitionSize));
+
         uint32_t* l_imageStartPtr = nullptr;
-
-        l_rc = pak.get_image_start_ptr_and_size(pakname, &l_imageStartPtr, &l_imageSize);
+        l_rc = pak.get_image_start_ptr_and_size(pakname, &l_imageStartPtr, &o_Size);
 
         //Decompress the file
-        if ((l_rc == FAPI2_RC_SUCCESS) && (l_imageSize != 0))
+        if ((l_rc == FAPI2_RC_SUCCESS) && (o_Size != 0))
         {
-            l_scratchArea = (uint8_t *)Heap::get_instance().scratch_alloc(l_imageSize);
-            if(l_scratchArea == nullptr)
+            o_scratchArea = (uint8_t *)Heap::get_instance().scratch_alloc(o_Size);
+            if(o_scratchArea == nullptr)
             {
                 l_rc = SBE_SEC_HEAP_BUFFER_ALLOC_FAILED;
                 SBE_ERROR(SBE_FUNC " scratch allocation request for [%d] bytes failed " \
-                                    " RC[0x%08x]",l_imageSize, l_rc);
+                                    " RC[0x%08x]",o_Size, l_rc);
                 break;
             }
 
             uint32_t l_size = 0;
             sha3_t l_digest = {0};
-            l_rc = pak.read_file(pakname, l_scratchArea, l_imageSize, &l_digest, &l_size);
+            l_rc = pak.read_file(pakname, o_scratchArea, o_Size, &l_digest, &l_size);
 
             if( l_rc != FAPI2_RC_SUCCESS )
             {
@@ -393,11 +385,11 @@ ReturnCode istepLoadPIEwithOcmb( voidfuncptr_t i_hwp)
                 break;
             }
 
-            if (l_imageSize != l_size)
+            if (o_Size != l_size)
             {
                 l_rc = SBE_SEC_IMAGE_SIZE_MISMATCH;
                 SBE_ERROR(SBE_FUNC "Failed to read, Expected size[%d]" \
-                                    "actual size[%d] ", l_imageSize, l_size);
+                                    "actual size[%d] ", o_Size, l_size);
                 break;
             }
 
@@ -408,21 +400,72 @@ ReturnCode istepLoadPIEwithOcmb( voidfuncptr_t i_hwp)
                 SBE_ERROR(SBE_FUNC " File hash valiadtion failed ", l_rc);
                 break;
             }
+
+            // Pad out image size to 32-bit boundary
+            uint8_t l_remainder = (o_Size % 4);
+            o_Size = (l_remainder == 0) ? o_Size : o_Size + (4 - l_remainder);
+
+        }
+    } while (false);
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
+ReturnCode istepLoadPIEwithOcmb( voidfuncptr_t i_hwp)
+{
+    #define SBE_FUNC " istepLoadPIEwithOcmb "
+    SBE_ENTER(SBE_FUNC);
+
+    // Variable declaration
+    ReturnCode l_rc = FAPI2_RC_SUCCESS;
+
+    uint32_t l_imageSize = 0;
+    uint32_t l_piSections_size = 0;
+    uint8_t *l_scratchArea = nullptr;
+    uint8_t *l_scratchAreaForPiSection = nullptr;
+
+    do
+    {
+        // assret if there in no HWP
+        assert( NULL != i_hwp );
+        Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
+
+        l_rc = getBinaryFromPak("pie.bin", l_imageSize, l_scratchArea);
+        if(l_rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC "Failed to get binary from pak RC=0x%08x ", l_rc);
+            break;
         }
 
-        // Pad out image size to 32-bit boundary
-        uint8_t l_remainder = (l_imageSize % 4);
-        l_imageSize = (l_remainder == 0) ? l_imageSize : l_imageSize + (4 - l_remainder);
+        l_rc = getBinaryFromPak("pie_pointers.bin",l_piSections_size, l_scratchAreaForPiSection);
+        if(l_rc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC "Failed to get binary from pak RC=0x%08x ", l_rc);
+            break;
+        }
 
-        fapi2::hwp_array_istream l_dimm_istream_0((fapi2::hwp_data_unit*)l_scratchArea, (l_imageSize / sizeof(uint32_t)));
-        fapi2::hwp_array_istream l_dimm_istream_1((fapi2::hwp_data_unit*)l_scratchArea, (l_imageSize / sizeof(uint32_t)));
+        fapi2::hwp_array_istream l_dimm_istream_0((fapi2::hwp_data_unit*)l_scratchArea,
+                                                  (l_imageSize / sizeof(uint32_t)));
+        fapi2::hwp_array_istream l_dimm_istream_1((fapi2::hwp_data_unit*)l_scratchArea,
+                                                 (l_imageSize / sizeof(uint32_t)));
+
+        fapi2::hwp_array_istream l_dimm_istream_piSection_0((fapi2::hwp_data_unit*)l_scratchAreaForPiSection,
+                                                         (l_piSections_size / sizeof(uint32_t)));
+        fapi2::hwp_array_istream l_dimm_istream_piSection_1((fapi2::hwp_data_unit*)l_scratchAreaForPiSection,
+                                                         (l_piSections_size / sizeof(uint32_t)));
 
         SBE_EXEC_HWP(l_rc, reinterpret_cast<sbeHwpLoadPIE_t>( i_hwp ), l_ocmb_chip,
-                     l_dimm_istream_0, l_dimm_istream_1);
+                     l_dimm_istream_0, l_dimm_istream_1,
+                     l_dimm_istream_piSection_0, l_dimm_istream_piSection_1);
 
     }while(0);
 
+    // free allocated scratch area
     Heap::get_instance().scratch_free(l_scratchArea);
+    Heap::get_instance().scratch_free(l_scratchAreaForPiSection);
+
     SBE_EXIT(SBE_FUNC);
     return l_rc;
     #undef SBE_FUNC
