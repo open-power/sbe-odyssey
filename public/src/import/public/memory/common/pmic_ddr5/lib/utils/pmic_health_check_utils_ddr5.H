@@ -44,6 +44,7 @@
 static constexpr uint8_t NUMBER_ADDITIONAL_DT_REGS_READ = 2;
 static constexpr uint8_t NUMBER_DT_REGS_READ = 2;
 static constexpr uint8_t NUMBER_PMIC_REGS_READ = 12;
+static constexpr uint8_t SIZEOF_AGGREGATE_STATE = 1;
 
 typedef fapi2::ReturnCode (*pmic_health_check_ddr5_FP_t) (
     const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&,
@@ -236,12 +237,10 @@ void check_pmic_faults(mss::pmic::ddr5::target_info_redundancy_ddr5& io_target_i
 ///
 /// @brief Check for DT faults in regs of a specific DT
 ///
-/// @param[in,out] io_target_info  PMIC and DT target info struct
-/// @param[in,out] io_health_check_info health check struct
-/// @return none
+/// @param[in] dt_health_check_telemetry struct which contains DT regs data
+/// @return mss::pmic::ddr5::dt_state fault state of current DT
 ///
-void get_dt_state(mss::pmic::ddr5::target_info_redundancy_ddr5& io_target_info,
-                  mss::pmic::ddr5::health_check_telemetry_data& io_health_check_info);
+mss::pmic::ddr5::dt_state get_dt_state(const mss::pmic::ddr5::dt_health_check_telemetry& i_dt_health_check);
 
 ///
 /// @brief Reverse the DT regs. When performing bit operations on DT regs,
@@ -249,12 +248,10 @@ void get_dt_state(mss::pmic::ddr5::target_info_redundancy_ddr5& io_target_info,
 ///        After the operations have been performed, we would like to revert
 ///        the style so as to print the data in PMIC style.
 ///
-/// @param[in] i_number_of_target_infos_present number of DT targets to reverse regs
-/// @param[in,out] io_health_check_info struct to be filled in
+/// @param[in,out] io_dt_health_check struct to be filled in
 /// @return None
 ///
-void reverse_dt_regs(const uint8_t i_number_of_target_infos_present,
-                     mss::pmic::ddr5::health_check_telemetry_data& io_health_check_info);
+void reverse_dt_regs(mss::pmic::ddr5::dt_health_check_telemetry& io_dt_health_check);
 
 ///
 /// @brief Check DT faults for all given DTs
@@ -354,6 +351,7 @@ fapi2::ReturnCode send_struct(mss::pmic::ddr5::consolidated_health_check_data& i
 /// @param[in] i_additional_info additional data collected struct in case of n-mode detected
 /// @param[in] i_periodic_tele_info periodic telemetry data collected struct in case of n-mode detected
 /// @param[in,out] io_consolidated_data consolidate data of all the structs to be sent
+/// @param[in] i_number_bytes_to_send number of bytes to send as response to this HWP
 /// @param[out] o_data hwp_data_ostream of struct information
 /// @return fapi2::ReturnCode FAPI2_RC_SUCCESS iff success, else error code
 ///
@@ -362,6 +360,7 @@ fapi2::ReturnCode generate_and_send_response(const mss::pmic::ddr5::target_info_
         const mss::pmic::ddr5::additional_n_mode_telemetry_data& i_additional_info,
         const mss::pmic::ddr5::periodic_telemetry_data& i_periodic_tele_info,
         mss::pmic::ddr5::consolidated_health_check_data& io_consolidated_data,
+        const uint8_t i_number_bytes_to_send,
         fapi2::hwp_data_ostream& o_data);
 
 ///
@@ -375,18 +374,30 @@ void check_and_reset_breadcrumb(mss::pmic::ddr5::target_info_redundancy_ddr5& io
                                 mss::pmic::ddr5::health_check_telemetry_data& io_health_check_info);
 
 ///
+/// @brief Check all the breadcrumbs and return aggregate state as N_MODE if any PMIC/DT
+///         pair has breadcrumb set to STILL_A_FAIL
+///
+/// @param[in,out] io_health_check_info health check struct
+/// @return Aggregate state
+///
+inline mss::pmic::ddr5::aggregate_state check_breadcrumbs_subsequent_n_modes(const
+        mss::pmic::ddr5::health_check_telemetry_data& io_health_check_info);
+
+///
 /// @brief Runs the actual health check for 4U parts
 ///
 /// @param[in,out] io_target_info PMIC and DT target info struct
 /// @param[in,out] io_health_check_info health check struct
 /// @param[in,out] io_additional_info additional health check data
 /// @param[in,out] io_periodic_tele_info periodic telemetry data
+/// @param[in,out] io_number_bytes_to_send number of bytes to send as response to this HWP
 /// @return none
 ///
 void health_check_ddr5(mss::pmic::ddr5::target_info_redundancy_ddr5& io_target_info,
                        mss::pmic::ddr5::health_check_telemetry_data& io_health_check_info,
                        mss::pmic::ddr5::additional_n_mode_telemetry_data& io_additional_info,
-                       mss::pmic::ddr5::periodic_telemetry_data& io_periodic_tele_info);
+                       mss::pmic::ddr5::periodic_telemetry_data& io_periodic_tele_info,
+                       uint8_t& io_number_bytes_to_send);
 
 ///
 /// @brief Runtime Health check helper for 4U parts
@@ -397,6 +408,7 @@ void health_check_ddr5(mss::pmic::ddr5::target_info_redundancy_ddr5& io_target_i
 /// @param[in,out] io_additional_info additional health check data
 /// @param[in,out] io_periodic_tele_info periodic telemetry data
 /// @param[in,out] io_consolidated_data consolidate data of all the structs to be sent
+/// @param[in,out] io_number_bytes_to_send number of bytes to send as response to this HWP
 /// @return fapi2::ReturnCode FAPI2_RC_SUCCESS iff success, else error code
 ///
 fapi2::ReturnCode pmic_health_check_ddr5_helper(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_ocmb_target,
@@ -404,16 +416,7 @@ fapi2::ReturnCode pmic_health_check_ddr5_helper(const fapi2::Target<fapi2::TARGE
         mss::pmic::ddr5::health_check_telemetry_data& io_health_check_info,
         mss::pmic::ddr5::additional_n_mode_telemetry_data& io_additional_info,
         mss::pmic::ddr5::periodic_telemetry_data& io_periodic_tele_info,
-        mss::pmic::ddr5::consolidated_health_check_data& io_consolidated_health_check_data);
-
-///
-/// @brief Runtime health check tool for 4U parts
-/// @param[in] i_ocmb_target ocmb target
-/// @param[out] o_data hwp_data_ostream of struct information
-/// @return fapi2::ReturnCode
-///
-fapi2::ReturnCode run_pmic_health_check_ddr5(
-    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_ocmb_target,
-    fapi2::hwp_data_ostream& o_data);
+        mss::pmic::ddr5::consolidated_health_check_data& io_consolidated_health_check_data,
+        uint8_t& io_number_bytes_to_send);
 
 #endif
