@@ -40,8 +40,8 @@
 #include <pmic_enable_utils_ddr5.H>
 #include <pmic_regs.H>
 #include <pmic_regs_fld.H>
-#include <pmic_health_check_utils_ddr5.H>
-#include <pmic_periodic_telemetry_utils_ddr5.H>
+#include <lib/utils/pmic_health_check_utils_ddr5.H>
+#include <lib/utils/pmic_periodic_telemetry_utils_ddr5.H>
 #include <generic/memory/lib/utils/index.H>
 #include <generic/memory/lib/utils/find.H>
 #include <mss_generic_attribute_getters.H>
@@ -472,6 +472,8 @@ fapi2::ReturnCode validate_pmic_revisions(const fapi2::Target<fapi2::TARGET_TYPE
     fapi2::buffer<uint8_t> l_rev_reg;
     const uint8_t l_pmic_id = mss::index(i_pmic_target);
     uint8_t l_simics = 0;
+
+    // Get attribute value
 #ifdef __PPE__
     const static uint8_t REVISION[] =
     {
@@ -588,6 +590,7 @@ fapi2::ReturnCode enable_2u(
 
     // Ensure the PMICs are in sorted order
     FAPI_TRY(mss::pmic::order_pmics_by_sequence(i_ocmb_target, l_pmics));
+
 #ifdef __PPE__
     const static uint16_t MFG_ID[] =
     {
@@ -905,6 +908,7 @@ fapi2::ReturnCode initialize_pmic(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CH
 #else
             FAPI_TRY_LAMBDA(mss::attr::get_mfg_id[l_relative_pmic_id](i_ocmb_target, l_vendor_id));
 #endif
+
             // Bias with SPD
             if (l_vendor_id == mss::pmic::vendor::TI)
             {
@@ -1068,15 +1072,20 @@ fapi2::ReturnCode redundancy_check_all_pmics(target_info_redundancy_ddr5& io_tar
     mss::pmic::ddr5::health_check_telemetry_data l_health_check_info;
     mss::pmic::ddr5::additional_n_mode_telemetry_data l_additional_info;
     mss::pmic::ddr5::periodic_telemetry_data l_periodic_telemetry_data;
+    uint8_t l_number_bytes_to_send = 0;
 
     // Run Telemetry to reset/clear various trackers
     collect_periodic_tele_data(io_target_info, l_periodic_telemetry_data);
 
     // Calling health check 3 times here to ensure if any PMICs had any issue during IPL, they would be
     // attempted to recover here and would not be in n_mode if not for major issues
-    health_check_ddr5(io_target_info, l_health_check_info, l_additional_info, l_periodic_telemetry_data);
-    health_check_ddr5(io_target_info, l_health_check_info, l_additional_info, l_periodic_telemetry_data);
-    health_check_ddr5(io_target_info, l_health_check_info, l_additional_info, l_periodic_telemetry_data);
+    // The number of bytes to send here is 0 as we are not going to send any data to HB. This is just a place holder
+    health_check_ddr5(io_target_info, l_health_check_info, l_additional_info, l_periodic_telemetry_data,
+                      l_number_bytes_to_send);
+    health_check_ddr5(io_target_info, l_health_check_info, l_additional_info, l_periodic_telemetry_data,
+                      l_number_bytes_to_send);
+    health_check_ddr5(io_target_info, l_health_check_info, l_additional_info, l_periodic_telemetry_data,
+                      l_number_bytes_to_send);
 
     // Check all bread crumbs. If any PMIC has bread crumb not set to ALL_GOOD, report those errors
     FAPI_TRY(check_all_breadcrumbs(io_target_info, l_health_check_info));
