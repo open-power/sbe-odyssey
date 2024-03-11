@@ -110,7 +110,7 @@ def zme_shutdown():
 ISTEP(0, 2, "cfam_reset", "BMC")
 
 # BMC issues CFAM_RESET at this point
-def sim_p11s_cfam_reset():
+def sim_ps_cfam_reset():
     # Do not toggle Tap reset, this is done by Spinal later
     Toggle Spinal CFAM_RESET
 
@@ -762,7 +762,7 @@ Step 2: SBE load, Tap TP init
 
 ISTEP(2, 1, "ph_fsi_init", "SPPE")
 
-def sim_p11t_fsi_init():
+def sim_pt_fsi_init():
     # Run this only on tap-only models
     Toggle Tap CFAM_RESET
 
