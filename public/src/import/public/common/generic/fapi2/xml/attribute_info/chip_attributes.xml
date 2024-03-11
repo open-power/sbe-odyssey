@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2021,2023                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2021,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -42,8 +42,8 @@
       EXPLORER = 0x8,
       ODYSSEY = 0xB,
       GALAXY = 0xC,
-      P11S = 0xD,
-      P11T = 0xE,
+      PS = 0xD,
+      PT = 0xE,
       ZMETIS = 0xF
     </enum>
     <platInit/>
