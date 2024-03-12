@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2023,2024
+# Contributors Listed Below - COPYRIGHT 2023
 # [+] International Business Machines Corp.
 #
 #
@@ -39,25 +39,8 @@ if platform == 'odysseylab'
   subdir_done()
 endif
 
-ODYSSEY_FFDC_DB_FILE_PATH = odyssey_sppe_genfiles_dir_path + '/sbe_ffdc.db'
-
-run_result = run_command(
-    fapiffdctool,
-    'parse',
-        odyssey_abs_error_xml_files_all,
-        '-d', ODYSSEY_FFDC_DB_FILE_PATH,
-        '-p', 'SBE')
-
-if (run_result.returncode() != 0)
-    error(run_result.stderr())
-    message(run_result.stdout())
-endif
-
-run_result = run_command(
-    fapiffdctool,
-    'gensrc',
-        ODYSSEY_FFDC_DB_FILE_PATH,
-        odyssey_sppe_genfiles_dir_path)
+run_result = run_command(parseErrorInfo,'--local-ffdc','--output-dir='
+        +odyssey_sppe_genfiles_dir_path, odyssey_abs_error_xml_files_all)
 
 if (run_result.returncode() != 0)
     error(run_result.stderr())
