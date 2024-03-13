@@ -112,6 +112,7 @@ infile_c = [
             '/memory/odyssey/hwp/ody_deploy_row_repairs.C',
             '/memory/odyssey/hwp/lib/mc/ody_port.C',
             '/memory/odyssey/hwp/lib/ccs/ody_row_repair.C',
+            '/memory/odyssey/hwp/lib/ccs/ody_ccs_read_processing.C',
 
             # Files needed for ody_enable_ecc
             '/memory/odyssey/hwp/ody_enable_ecc.C',
