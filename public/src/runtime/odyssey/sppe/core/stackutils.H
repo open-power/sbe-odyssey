@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/common/utils/stackutils.H $                        */
+/* $Source: public/src/runtime/odyssey/sppe/core/stackutils.H $           */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -60,7 +59,7 @@ uint8_t getKernelStackUtilPercent();
  *        CRITICAL_STACK_LIMIT_PERCENT  --> Assert
  *
  */
-void checkCurThreadStackLimit();
+void checkCurThreadStackUsage();
 
 /**
  * @brief Check if kernel thread stack limit has crossed beyond:
@@ -68,4 +67,19 @@ void checkCurThreadStackLimit();
  *        CRITICAL_STACK_LIMIT_PERCENT  --> Assert
  *
  */
-void checkKernelStackLimit();
+void checkKernelStackUsage();
+
+
+/**
+ * @brief     This function calls getStackUtilPercent() to find the stack 
+ *            utilization of the given thread. If the utilization exceeds
+ *            THRESHOLD_STACK_LIMIT_PERCENT --> create a RE
+ *            CRITICAL_STACK_LIMIT_PERCENT  --> Assert
+ *
+ * @param[in]   i_thread   A pointer to PkThread object for which stack
+ *                         utilization has to be checked.
+ *
+ * @return      none
+ */
+void checkThreadStackUsage(const PkThread* i_thread);
+
