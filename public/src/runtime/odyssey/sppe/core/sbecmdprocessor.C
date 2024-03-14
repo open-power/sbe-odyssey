@@ -50,6 +50,7 @@
 #include "hwpWrapper.H"
 #include "ody_sppe_attr_setup.H"
 #include "poz_perv_mod_misc.H"
+#include "stackutils.H"
 
 const uint64_t PERIODIC_TIMER_INTERVAL_SECONDS = 24*60*60; // 24 hours
 
@@ -330,6 +331,15 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
         } while(false); // Inner do..while loop ends here
 
         SBE_INFO (SBE_FUNC"Command processed. l_rc=[0x%04X]", l_rc );
+
+        checkKernelStackUsage();
+
+        checkThreadStackUsage((&SBE_GLOBAL->threads.sbeCommandReceiver_thread));
+
+        checkThreadStackUsage((&SBE_GLOBAL->threads.sbeSyncCommandProcessor_thread));
+
+        checkThreadStackUsage((&SBE_GLOBAL->threads.sbeAsyncCommandProcessor_thread));
+
         if ( SBE_GLOBAL->sbeIntrSource.isSet(SBE_PROC_ROUTINE, (sbeInterfaceSrc_t)(
                                              SBE_INTERFACE_MASK_DATA_ALL)))
         {

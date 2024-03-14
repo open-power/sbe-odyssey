@@ -27,7 +27,7 @@
 #      used by SROM and BLDR images which do not support it.
 abs_cmn_utils_c_path = [files('sbeutil.C',
                               'metadata_base.C',
-                              'stackutils.C')
+                             )
                        ]
 
 #Note: Add any files that use fapi,targeting etc in below list that will
