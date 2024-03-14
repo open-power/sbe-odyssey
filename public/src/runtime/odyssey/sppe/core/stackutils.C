@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/common/utils/stackutils.C $                        */
+/* $Source: public/src/runtime/odyssey/sppe/core/stackutils.C $           */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
-/* [+] International Business Machines Corp.                              */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -26,6 +25,8 @@
 #include "sbetrace.H"
 #include "stackutils.H"
 #include "assert.h"
+#include "plat_error_scope.H"
+#include "hwp_ffdc_classes.H"
 
 uint8_t getStackUtilPercent(uint32_t stack_base, uint32_t stack_limit)
 {
@@ -52,12 +53,12 @@ uint8_t getStackUtilPercent(uint32_t stack_base, uint32_t stack_limit)
     uint8_t percentageUtilized =
         ((utilizedStackSize * 100) / totalStackSize);
 
-    SBE_INFO(SBE_FUNC "Stack Start : 0x%08x, Stack end : 0x%08x",
+    SBE_INFO(SBE_FUNC "stack start : 0x%08x, end : 0x%08x",
                         stack_base, stack_limit);
 
-    SBE_INFO(SBE_FUNC "Total Stack Size : %d bytes, Stack Utilized : %d bytes, \
-                        Stack UnUtilized : %d bytes, Percentage of Utilization : %d%%",
-                        totalStackSize, utilizedStackSize, stackUnUtilized, percentageUtilized);
+    SBE_INFO(SBE_FUNC "stack size : %d bytes, utilized : %d bytes, "
+                      "utilization : %d%%",
+                      totalStackSize, utilizedStackSize, percentageUtilized);
 
     SBE_EXIT(SBE_FUNC)
     return percentageUtilized;
@@ -75,42 +76,51 @@ uint8_t getKernelStackUtilPercent()
     return getStackUtilPercent(__pk_kernel_stack, __pk_kernel_stack_limit);
 }
 
-void checkCurThreadStackLimit()
+inline void checkLimitAndAct(uint8_t i_threadId, uint8_t i_utilization)
 {
-    #define SBE_FUNC " checkCurThreadStackLimit "
+    assert( i_utilization < CRITICAL_STACK_LIMIT_PERCENT );
+
+    PLAT_FAPI_ASSERT_NOEXIT((i_utilization < THRESHOLD_STACK_LIMIT_PERCENT),
+                            fapi2::THRESHOLD_STACK_LIMIT_CROSSED(fapi2::FAPI2_ERRL_SEV_RECOVERED).
+                            set_THREAD_ID(i_threadId).
+                            set_THRESHOLD_PERCENTAGE(THRESHOLD_STACK_LIMIT_PERCENT).
+                            set_UTILIZATION_PERCENTAGE(i_utilization),
+                            "Thread [%d] stack usage crossed threshold limit", i_threadId);
+}
+
+void checkCurThreadStackUsage()
+{
+    #define SBE_FUNC " checkCurThreadStackUsage"
     SBE_ENTER(SBE_FUNC)
 
     uint8_t curThreadStackUtilPercent = getCurThreadStackUtilPercent();
 
-    assert(curThreadStackUtilPercent < CRITICAL_STACK_LIMIT_PERCENT);
+    PkThread* thread = (PkThread*)__pk_current_thread;
 
-    if(curThreadStackUtilPercent > THRESHOLD_STACK_LIMIT_PERCENT)
-    {
-        //TODO: PFSBE-799 Create RE if stack utilization percentage has crossed set threshold
-        SBE_INFO(SBE_FUNC "**** WARNING : Current Thread Percentage of Utilization : %d%% > Threshold Limit : %d%% ***",
-                            curThreadStackUtilPercent, THRESHOLD_STACK_LIMIT_PERCENT);
-    }
+    checkLimitAndAct(thread->priority, curThreadStackUtilPercent);
 
     SBE_EXIT(SBE_FUNC)
     #undef SBE_FUNC
 }
 
-void checkKernelStackLimit()
+void checkKernelStackUsage()
 {
-    #define SBE_FUNC " checkKernelStackLimit "
+    #define SBE_FUNC " checkKernelStackUsage"
     SBE_ENTER(SBE_FUNC)
 
     uint8_t kernelStackUtilPercent = getKernelStackUtilPercent();
 
-    assert(kernelStackUtilPercent < CRITICAL_STACK_LIMIT_PERCENT);
-
-    if(kernelStackUtilPercent > THRESHOLD_STACK_LIMIT_PERCENT)
-    {
-        //TODO: PFSBE-799 Create RE if stack utilization percentage has crossed set threshold
-        SBE_INFO(SBE_FUNC "**** WARNING : Kernel Thread Percentage of Utilization : %d%% > Threshold Limit : %d%% ***",
-                            kernelStackUtilPercent, THRESHOLD_STACK_LIMIT_PERCENT);
-    }
+    checkLimitAndAct(0, kernelStackUtilPercent);
 
     SBE_EXIT(SBE_FUNC)
     #undef SBE_FUNC
 }
+
+void checkThreadStackUsage(const PkThread* i_thread)
+{
+    uint8_t l_stackUtilPercentage = getStackUtilPercent(i_thread->stack_base,
+                                                        i_thread->stack_limit);
+
+    checkLimitAndAct(i_thread->priority, l_stackUtilPercentage);
+}
+

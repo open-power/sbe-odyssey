@@ -49,6 +49,7 @@
 #include "threadutil.H"
 #include "platsecurityutils.H"
 #include "sbeffdc.H"
+#include "stackutils.H"
 
 extern "C" {
 #include "pk_api.h"
@@ -239,6 +240,9 @@ int  main(int argc, char **argv)
 
         // Populate runtime image metadata
         sbeRuntimePopulateMetadataWrap(g_metadata_ptr);
+
+        // Check the kernel stack utilization
+        checkKernelStackUsage();
 
         SBE_INFO(SBE_FUNC "Start all the threads.");
         // Start running the highest priority thread.
