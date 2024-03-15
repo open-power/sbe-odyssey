@@ -173,10 +173,9 @@ class HwpError(object):
             # TODO: parse gard info
             i_node.remove(g)
 
-        remaining_children = i_node.getchildren()
-        if(len(remaining_children)):
+        if(len(i_node)):
             raise ParseError(
-                f"There are unprocessed nodes {remaining_children} in {self.rc}")
+                f"There are unprocessed nodes {list(i_node)} in {self.rc}")
 
     def processDescription(self):
         '''
@@ -322,10 +321,9 @@ class HwpErrorDB(object):
             raise ParseError(
                 f"Loading xml {fname} failed") from e
 
-        remaining_children = root.getchildren()
-        if(len(remaining_children)):
+        if(len(root)):
             raise ParseError(
-                f"There are unprocessed nodes {remaining_children} in {fname}")
+                f"There are unprocessed nodes {list(root)} in {fname}")
 
     # work around to keep same as old script generated file
     @property
