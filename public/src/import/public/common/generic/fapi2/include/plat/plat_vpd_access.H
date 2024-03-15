@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -30,6 +30,7 @@
 #ifndef _FAPI2_PLAT_VPDACCESS_H_
 #define _FAPI2_PLAT_VPDACCESS_H_
 
+#include <fapi2.H>
 #include <fapi2_vpd_access.H>
 
 namespace fapi2
@@ -62,10 +63,26 @@ inline fapi2::ReturnCode platGetVPD(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_
                                     uint8_t* o_blob)
 {
     fapi2::ReturnCode l_rc = fapi2::FAPI2_RC_SUCCESS;
+    uint8_t l_dram_gen = 0;
+#ifdef __PPE__
+    l_dram_gen = *(fapi2::ATTR::TARGET_TYPE_MEM_PORT::ATTR_MEM_EFF_DRAM_GEN[0]);
+#else
+    const auto& l_ports = i_target.getChildren<fapi2::TARGET_TYPE_MEM_PORT>();
+    uint8_t l_dram_generation[2] = {0};
+    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_GEN, l_ports[0], l_dram_generation));
+    l_dram_gen = l_dram_generation[0];
+#endif
 
     if( o_blob == nullptr )
     {
-        io_vpd_info.iv_size = 128;
+        if(l_dram_gen == fapi2::ENUM_ATTR_MEM_EFF_DRAM_GEN_DDR5)
+        {
+            io_vpd_info.iv_size = 512;
+        }
+        else
+        {
+            io_vpd_info.iv_size = 128;
+        }
     }
     else
     {
@@ -88,14 +105,25 @@ inline fapi2::ReturnCode platGetVPD(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_
             o_blob[0] = 0x10;
         }
 
-        io_vpd_info.iv_efd_type = 0x11;
-        io_vpd_info.iv_dmb_mfg_id = 0x2980;
+        io_vpd_info.iv_efd_type = 0x11; // byte 288 of spd , not getting checked.
         io_vpd_info.iv_dmb_revision = 0x00;
-        io_vpd_info.iv_ddr_mode = 0x0C;
 
+        if(l_dram_gen == fapi2::ENUM_ATTR_MEM_EFF_DRAM_GEN_DDR5)
+        {
+            io_vpd_info.iv_dmb_mfg_id = 0xA480;
+            io_vpd_info.iv_ddr_mode = 0x12;
+        }
+        else
+        {
+            io_vpd_info.iv_dmb_mfg_id = 0x2980;
+            io_vpd_info.iv_ddr_mode = 0x0C;
+        }
     }
 
     return l_rc;
+
+fapi_try_exit:
+    return fapi2::current_err;
 }
 
 };
