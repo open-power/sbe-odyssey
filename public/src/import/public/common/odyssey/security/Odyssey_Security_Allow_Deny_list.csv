@@ -25,3 +25,61 @@ Version,Chiplet,Base Address,Chiplet Id - range,Bit Mask,User,Register name,Desc
 ,MC,08012012,0x08,,N. Rolfe,OD.ODC.TLXT.TLXT_REGS.TLXTINTHLD2,Interrupt handles,write_allowlist
 ,MC,08012013,0x08,,N. Rolfe,OD.ODC.TLXT.TLXT_REGS.TLXTINTHLD3,Interrupt handles,write_allowlist
 ,MC,0801200D,0x08,,N. Rolfe,OD.ODC.TLXT.TLXT_REGS.TLXCFG1,Interrupt handles,write_allowlist
+,TP,000B0120,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE_ACC,Pipe Access Control Register,read_denylist
+,TP,000B0123,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE_ACCMID,Pipe Access Control ControllerID Register,read_denylist
+,TP,000B0101,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE1_STATUS,Status register of PIPE1,read_denylist
+,TP,000B0110,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE1_DATA_IN,Enqueuing location of PIPE1 for writing/adding data,read_denylist
+,TP,000B0100,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE1_DATA_OUT,Dequeuing location of PIPE1 for reading/removing data,read_denylist
+,TP,000B0112,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE1_SIG_EOT,Signaling location for EndOfTransfer (EOT),read_denylist
+,TP,000B0113,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE1_REQ_RESET,Signaling location for requesting FIFO reset,read_denylist
+,TP,000B0104,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE1_RESET,Applying reset function to FIFO,read_denylist
+,TP,000B0105,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE1_ACK_EOT,Acknowledging EndOfTransfer (EOT),read_denylist
+,TP,000B0201,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE2_STATUS,Status register of PIPE2,read_denylist
+,TP,000B0210,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE2_DATA_IN,Enqueuing location of PIPE2 for writing/adding data,read_denylist
+,TP,000B0200,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE2_DATA_OUT,Dequeuing location of PIPE2 for reading/removing data,read_denylist
+,TP,000B0212,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE2_SIG_EOT,Signaling location for EndOfTransfer (EOT),read_denylist
+,TP,000B0213,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE2_REQ_RESET,Signaling location for requesting FIFO reset,read_denylist
+,TP,000B0204,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE2_RESET,Applying reset function to FIFO,read_denylist
+,TP,000B0205,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE2_ACK_EOT,Acknowledging EndOfTransfer (EOT),read_denylist
+,TP,000B0301,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE3_STATUS,Status register of PIPE3,read_denylist
+,TP,000B0310,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE3_DATA_IN,Enqueuing location of PIPE3 for writing/adding data,read_denylist
+,TP,000B0300,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE3_DATA_OUT,Dequeuing location of PIPE3 for reading/removing data,read_denylist
+,TP,000B0312,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE3_SIG_EOT,Signaling location for EndOfTransfer (EOT),read_denylist
+,TP,000B0313,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE3_REQ_RESET,Signaling location for requesting FIFO reset,read_denylist
+,TP,000B0304,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE3_RESET,Applying reset function to FIFO,read_denylist
+,TP,000B0305,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE3_ACK_EOT,Acknowledging EndOfTransfer (EOT),read_denylist
+,TP,000B0401,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE4_STATUS,Status register of PIPE4,read_denylist
+,TP,000B0410,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE4_DATA_IN,Enqueuing location of PIPE4 for writing/adding data,read_denylist
+,TP,000B0400,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE4_DATA_OUT,Dequeuing location of PIPE4 for reading/removing data,read_denylist
+,TP,000B0412,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE4_SIG_EOT,Signaling location for EndOfTransfer (EOT),read_denylist
+,TP,000B0413,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE4_REQ_RESET,Signaling location for requesting FIFO reset,read_denylist
+,TP,000B0404,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE4_RESET,Applying reset function to FIFO,read_denylist
+,TP,000B0405,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE4_ACK_EOT,Acknowledging EndOfTransfer (EOT),read_denylist
+,TP,000B0501,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE5_STATUS,Status register of PIPE5,read_denylist
+,TP,000B0510,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE5_DATA_IN,Enqueuing location of PIPE5 for writing/adding data,read_denylist
+,TP,000B0500,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE5_DATA_OUT,Dequeuing location of PIPE5 for reading/removing data,read_denylist
+,TP,000B0512,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE5_SIG_EOT,Signaling location for EndOfTransfer (EOT),read_denylist
+,TP,000B0513,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE5_REQ_RESET,Signaling location for requesting FIFO reset,read_denylist
+,TP,000B0504,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE5_RESET,Applying reset function to FIFO,read_denylist
+,TP,000B0505,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE5_ACK_EOT,Acknowledging EndOfTransfer (EOT),read_denylist
+,TP,000B0601,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE6_STATUS,Status register of PIPE6,read_denylist
+,TP,000B0610,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE6_DATA_IN,Enqueuing location of PIPE6 for writing/adding data,read_denylist
+,TP,000B0600,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE6_DATA_OUT,Dequeuing location of PIPE6 for reading/removing data,read_denylist
+,TP,000B0612,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE6_SIG_EOT,Signaling location for EndOfTransfer (EOT),read_denylist
+,TP,000B0613,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE6_REQ_RESET,Signaling location for requesting FIFO reset,read_denylist
+,TP,000B0604,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE6_RESET,Applying reset function to FIFO,read_denylist
+,TP,000B0605,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE6_ACK_EOT,Acknowledging EndOfTransfer (EOT),read_denylist
+,TP,000B0701,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE7_STATUS,Status register of PIPE7,read_denylist
+,TP,000B0710,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE7_DATA_IN,Enqueuing location of PIPE7 for writing/adding data,read_denylist
+,TP,000B0700,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE7_DATA_OUT,Dequeuing location of PIPE7 for reading/removing data,read_denylist
+,TP,000B0712,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE7_SIG_EOT,Signaling location for EndOfTransfer (EOT),read_denylist
+,TP,000B0713,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE7_REQ_RESET,Signaling location for requesting FIFO reset,read_denylist
+,TP,000B0704,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE7_RESET,Applying reset function to FIFO,read_denylist
+,TP,000B0705,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE7_ACK_EOT,Acknowledging EndOfTransfer (EOT),read_denylist
+,TP,000B0801,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE8_STATUS,Status register of PIPE8,read_denylist
+,TP,000B0810,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE8_DATA_IN,Enqueuing location of PIPE8 for writing/adding data,read_denylist
+,TP,000B0800,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE8_DATA_OUT,Dequeuing location of PIPE8 for reading/removing data,read_denylist
+,TP,000B0812,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE8_SIG_EOT,Signaling location for EndOfTransfer (EOT),read_denylist
+,TP,000B0813,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE8_REQ_RESET,Signaling location for requesting FIFO reset,read_denylist
+,TP,000B0804,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE8_RESET,Applying reset function to FIFO,read_denylist
+,TP,000B0805,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE8_ACK_EOT,Acknowledging EndOfTransfer (EOT),read_denylist
