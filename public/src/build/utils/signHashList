@@ -212,6 +212,10 @@ if [ "$SIGNING_MODE" = "development" ]; then
 #TODO: Check op-build env value
 elif [ "$SIGNING_MODE" = "production" ] ; then
     echo "***INFO | SBE | signHashList : Production Mode Signing"
+    # Force of SB_PROJECT_INI which may be on for the host FW build and will override
+    # the SB_PROJECT_INI_ODY_BOOT setting
+    unset SB_PROJECT_INI
+    unset SB_ARCHIVE_IN
 
     if [ "$COMPONENT_ID" = "BOOT_LDR" ]; then
         if [ -z $SB_PROJECT_INI_ODY_BOOT ] || [ ! -e $SB_PROJECT_INI_ODY_BOOT ]; then
