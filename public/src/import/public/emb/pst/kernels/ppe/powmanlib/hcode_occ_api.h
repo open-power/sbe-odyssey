@@ -47,16 +47,9 @@ extern "C" {
 //---------------
 // IPC from 405
 //---------------
-//Note: These are really not used. They are just for documentation purposes
-enum MESSAGE_ID_IPI2HI
-{
-    MSGID_405_INVALID       = 0,
-    MSGID_405_START_SUSPEND = 1,
-    MSGID_405_CLIPS         = 2,
-    MSGID_405_SET_PMCR      = 3,
-    MSGID_405_WOF_CONTROL   = 4,
-    MSGID_405_WOF_CRT       = 5
-};
+//
+// See ipc_func_ids.h for IPC_MSGID_405 enums used to communicate with GPE2/PGPE
+//
 
 //
 // Return Codes
@@ -85,17 +78,17 @@ typedef enum
 } PMCR_OWNER;
 
 //
-// Start Suspend Actions
+// Pstate Control Actions
 //
 #define PGPE_ACTION_PSTATE_START   0
 #define PGPE_ACTION_PSTATE_STOP    1
 
-typedef struct ipcmsg_start_stop
+typedef struct ipcmsg_pstate_control
 {
     ipcmsg_base_t   msg_cb;
     uint32_t        action;
     PMCR_OWNER      pmcr_owner;
-} ipcmsg_start_stop_t;
+} ipcmsg_pstate_control_t;
 
 typedef struct ipcmsg_clip_update
 {
@@ -154,7 +147,7 @@ typedef struct
 
 typedef struct ipcmsg_wof_ceffinfo
 {
-    ipcmsg_base_t       msg_cb;
+    ipcmsg_base_t     msg_cb;
     CeffInfo_t*       ceff_info_ptr[MAX_TAPS];     // Ceff Info per Tap
 } ipcmsg_wof_ci_t;
 
