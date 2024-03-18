@@ -66,12 +66,9 @@ ReturnCode poz_sppe_check_for_ready(
         // sample register, break if expected bit is set
         FAPI_TRY(SB_MSG.getCfam(i_target));
 
-        // TODO: Need to remove check of 3(Autoboot done state) once hostboot and
-        // Cronus team will be stable to check with 6(Runtime State).
         if (i_isHreset == true)
         {
-            if (((l_check_for_runtime and SB_MSG.getBits<8, 4>() == 6) or
-                 (l_check_for_runtime and SB_MSG.getBits<8, 4>() == 3)) or
+            if ((l_check_for_runtime and SB_MSG.getBits<8, 4>() == 6) or
                 (not l_check_for_runtime and SB_MSG.getBit<0>()))
             {
                 break;

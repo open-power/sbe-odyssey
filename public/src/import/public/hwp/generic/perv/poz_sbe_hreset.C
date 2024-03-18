@@ -62,9 +62,7 @@ ReturnCode poz_sbe_hreset(
         FAPI_INF("Checking if SBE is in Runtime State");
         FAPI_TRY(SB_MSG.getCfam(i_target));
 
-        // TODO: Need to remove check of 3(Autoboot done state) once hostboot and
-        // Cronus team will be stable to check with 6(Runtime State).
-        if ((SB_MSG.getBits<8, 4>() == 6) || (SB_MSG.getBits<8, 4>() == 3))
+        if (SB_MSG.getBits<8, 4>() == 6)
         {
             FAPI_INF("SBE is in Runtime State");
         }
@@ -117,9 +115,7 @@ ReturnCode poz_sbe_hreset(
         FAPI_INF("Checking if SBE is in Runtime State");
         FAPI_TRY(SB_MSG.getScom(i_target));
 
-        // TODO: Need to remove check of 3(Autoboot done state) once hostboot and
-        // Cronus team will be stable to check with 6(Runtime State).
-        if ((SB_MSG.getBits<8, 4>() == 6) || (SB_MSG.getBits<8, 4>() == 3))
+        if (SB_MSG.getBits<8, 4>() == 6)
         {
             FAPI_INF("SBE is in Runtime State");
         }
