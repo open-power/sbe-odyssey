@@ -23,19 +23,38 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#ifndef __IPC_FUNC_IDS_H__
-#define __IPC_FUNC_IDS_H__
+#pragma once
 
 /// \file ipc_func_ids.h
-/// \brief This file contains the definition of function ID used for
-/// interprocessor communications (IPC) in the OCC.
-///
+/// \brief This file contains the definition of the valid IPC function IDs
+/// used for interprocessor communications (IPC) in the OCC.
 
-// This is a global file that defines all of the valid IPC function ID's.
-// This file is provided as a template for other applications to start from.
+#if defined(__TCC_PLAT)
 
-// Uncomment this if you want to use the ping utility provided by the IPC library
-//#define IPC_ENABLE_PING
+// NOTE: MT Multi Target, ST = Single Target
+IPC_FUNCIDS_TABLE_START
+
+IPC_FUNCIDS_MT_START
+IPC_FUNCIDS_MT_END
+
+IPC_FUNCIDS_ST_START(PMHW_INST_ID_GPE0)
+IPC_FUNCIDS_ST_END(PMHW_INST_ID_GPE0)
+
+IPC_FUNCIDS_ST_START(PMHW_INST_ID_GPE1)
+IPC_FUNCIDS_ST_END(PMHW_INST_ID_GPE1)
+
+IPC_FUNCIDS_ST_START(PMHW_INST_ID_GPE2)
+IPC_FUNCIDS_ST_END(PMHW_INST_ID_GPE2)
+
+IPC_FUNCIDS_ST_START(PMHW_INST_ID_GPE3)
+IPC_FUNCIDS_ST_END(PMHW_INST_ID_GPE3)
+
+IPC_FUNCIDS_TABLE_END
+
+#elif defined(__OCC_PLAT)
+
+// Comment this out if you do not want to use the ping utility provided by the IPC library
+#define IPC_ENABLE_PING
 
 // NOTE: MT Multi Target, ST = Single Target
 IPC_FUNCIDS_TABLE_START
@@ -43,23 +62,46 @@ IPC_FUNCIDS_TABLE_START
 //This is where common function ID's that any instance can support should be
 //defined.
 IPC_FUNCIDS_MT_START
+#ifdef IPC_ENABLE_PING
+    IPC_FUNC_ID(IPC_MT_PING) //anyone can ping anyone else
+#endif
 IPC_FUNCIDS_MT_END
 
 //Functions that are only supported by GPE0 should be defined here
 //These function ID's can only be sent to GPE0
 IPC_FUNCIDS_ST_START(PMHW_INST_ID_GPE0)
+IPC_FUNC_ID(IPC_ST_TEST_FUNC0)
+IPC_FUNC_ID(IPC_ST_APSS_INIT_GPIO_FUNCID)
+IPC_FUNC_ID(IPC_ST_APSS_INIT_MODE_FUNCID)
+IPC_FUNC_ID(IPC_ST_APSS_START_PWR_MEAS_READ_FUNCID)
+IPC_FUNC_ID(IPC_ST_APSS_CONTINUE_PWR_MEAS_READ_FUNCID)
+IPC_FUNC_ID(IPC_ST_APSS_COMPLETE_PWR_MEAS_READ_FUNCID)
+IPC_FUNC_ID(IPC_ST_GET_CORE_DATA_FUNCID)
+IPC_FUNC_ID(IPC_ST_SCOM_OPERATION)
+IPC_FUNC_ID(IPC_ST_GPE0_NOP)
+IPC_FUNC_ID(IPC_ST_GET_NEST_DTS_FUNCID)
+IPC_FUNC_ID(IPC_ST_GET_TOD_FUNCID)
+IPC_FUNC_ID(IPC_ST_APSS_RESET_FUNCID)
+IPC_FUNC_ID(IPC_ST_GET_QUAD_DATA_FUNCID)
 IPC_FUNCIDS_ST_END(PMHW_INST_ID_GPE0)
 
 //Functions that are only supported by GPE1 should be defined here
 //These function ID's can only be sent to GPE1
 IPC_FUNCIDS_ST_START(PMHW_INST_ID_GPE1)
+IPC_FUNC_ID(IPC_ST_GPE1_NOP)
+IPC_FUNC_ID(IPC_ST_24_X_7_FUNCID)
+IPC_FUNC_ID(IPC_ST_GPU_SM_FUNCID)
+IPC_FUNC_ID(IPC_ST_GPE_GPU_INIT_FUNCID)
+IPC_FUNC_ID(IPC_ST_MEMBUF_SCOM_FUNCID)
+IPC_FUNC_ID(IPC_ST_MEMBUF_DATA_FUNCID)
+IPC_FUNC_ID(IPC_ST_MEMBUF_INIT_FUNCID)
 IPC_FUNCIDS_ST_END(PMHW_INST_ID_GPE1)
 
 //Functions that are only supported by GPE2 should be defined here
 //These function ID's can only be sent to GPE2
 IPC_FUNCIDS_ST_START(PMHW_INST_ID_GPE2)
 IPC_FUNC_ID(IPC_MSGID_405_INVALID)
-IPC_FUNC_ID(IPC_MSGID_405_START_SUSPEND)
+IPC_FUNC_ID(IPC_MSGID_405_PSTATE_CONTROL)
 IPC_FUNC_ID(IPC_MSGID_405_CLIPS)
 IPC_FUNC_ID(IPC_MSGID_405_SET_PMCR)
 IPC_FUNC_ID(IPC_MSGID_405_WOF_CONTROL)
@@ -77,11 +119,9 @@ IPC_FUNCIDS_ST_END(PMHW_INST_ID_GPE3)
 
 //Functions that are only supported by PPC should be defined here
 //These function ID's can only be sent to the PPC
-#if defined(__OCC_PLAT)
-    IPC_FUNCIDS_ST_START(PMHW_INST_ID_PPC)
-    IPC_FUNCIDS_ST_END(PMHW_INST_ID_PPC)
-#endif
+IPC_FUNCIDS_ST_START(PMHW_INST_ID_PPC)
+IPC_FUNCIDS_ST_END(PMHW_INST_ID_PPC)
 
 IPC_FUNCIDS_TABLE_END
 
-#endif /*__IPC_FUNC_IDS_H__*/
+#endif // End of if(__TCC_PLAT or __OCC_PLAT)
