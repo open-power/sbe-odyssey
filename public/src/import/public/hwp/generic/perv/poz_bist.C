@@ -49,6 +49,7 @@ enum POZ_BIST_Private_Constants
 {
     // Hardcode mod_arrayinit i_runn_count to worst case value across all chip types
     ARRAYINIT_RUNN_CYCLES = 0x24FFFF,
+    ARRAYINIT_LINEAR_STAGGER = 0xF4240,
 };
 
 // Determine if we only have one chiplet and can unicast BIST
@@ -190,6 +191,7 @@ static ReturnCode poz_bist_execute(
             FAPI_TRY(mod_abist_setup(i_chiplets_target,
                                      i_params.base_regions,
                                      i_params.opcg_count,
+                                     0,
                                      i_params.idle_count,
                                      i_params.chiplets_regions,
                                      i_params.flags & i_params.bist_flags::SKIP_FIRST_CLOCK,
@@ -551,7 +553,8 @@ ReturnCode poz_bist(
         }
 
         // Do the arrayinit
-        FAPI_TRY(mod_arrayinit(l_chiplets_target, l_all_active_regions, ARRAYINIT_RUNN_CYCLES, false));
+        FAPI_TRY(mod_arrayinit(l_chiplets_target, l_all_active_regions, ARRAYINIT_RUNN_CYCLES, false,
+                               ARRAYINIT_LINEAR_STAGGER));
 
         if (l_no_repr_lbist)
         {

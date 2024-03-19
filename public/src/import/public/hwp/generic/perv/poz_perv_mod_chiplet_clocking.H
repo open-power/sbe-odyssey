@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -42,7 +42,9 @@ namespace poz_perv_mod_chiplet_clocking
 enum poz_perv_mod_chiplet_clocking_public_constants
 {
     DEFAULT_RUNN_CYCLES = 0x42FFF,
+    DEFAULT_STAGGER = 0x0,
     DEFAULT_ABIST_START_AT = 0x100000,
+    DEFAULT_LINEAR_STAGGER = 0xF4240,
 };
 };
 
@@ -80,6 +82,7 @@ bool runn_triggers_opcg_infinite(const uint64_t i_runn_cycles);
 /// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
 /// @param[in]   i_regions                 Select base clock / BIST regions
 /// @param[in]   i_runn_cycles             Loop count value to set OPCG run-N mode (>0x7FFFFFFFFFF for infinite)
+/// @param[in]   i_abist_start_stagger     Stagger value per chiplet in OPCG_REG1
 /// @param[in]   i_abist_start_at          Idle count value to set in OPCG_REG1
 /// @param[in]   i_chiplets_regions        Array of custom regions per chiplet in i_target indexed by chiplet ID
 ///                                        If zero for an index, pass; else, overwrite i_regions on that chiplet
@@ -91,6 +94,7 @@ fapi2::ReturnCode mod_abist_setup(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
     uint16_t i_regions,
     uint64_t i_runn_cycles = poz_perv_mod_chiplet_clocking::DEFAULT_RUNN_CYCLES,
+    uint64_t i_abist_start_stagger = poz_perv_mod_chiplet_clocking::DEFAULT_STAGGER,
     uint64_t i_abist_start_at = poz_perv_mod_chiplet_clocking::DEFAULT_ABIST_START_AT,
     const uint16_t* i_chiplets_regions = NULL,
     const bool i_skip_first_clock = false,
@@ -128,6 +132,7 @@ fapi2::ReturnCode mod_opcg_go(
 /// @param[in]   i_target                  Reference to TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST
 /// @param[in]   i_regions                 Select clock / BIST regions
 /// @param[in]   i_runn_cycles             Loop count value to set OPCG run-N mode (>0x7FFFFFFFFFF for infinite)
+/// @param[in]   i_abist_start_stagger     Stagger value per chiplet in OPCG_REG1
 /// @param[in]   i_abist_start_at          Idle count value to set in OPCG_REG1
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
@@ -135,6 +140,7 @@ fapi2::ReturnCode mod_abist_start(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
     uint16_t i_regions,
     uint64_t i_runn_cycles = poz_perv_mod_chiplet_clocking::DEFAULT_RUNN_CYCLES,
+    uint64_t i_abist_start_stagger = poz_perv_mod_chiplet_clocking::DEFAULT_STAGGER,
     uint64_t i_abist_start_at = poz_perv_mod_chiplet_clocking::DEFAULT_ABIST_START_AT);
 
 /// @brief Poll OPCG done bit to check for run-N completeness.
@@ -180,13 +186,15 @@ fapi2::ReturnCode mod_scan0(
 /// @param[in]   i_clock_regions           Select clock regions
 /// @param[in]   i_runn_cycles             Loop count value to set OPCG run-N mode (>0x7FFFFFFFFFF for infinite)
 /// @param[in]   i_do_scan0                Perform scan0 after arrayinit
+/// @param[in]   i_linear_stagger          Chiplet OPCG go stagger values on OPCG REG1
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_arrayinit(
     const fapi2::Target < fapi2::TARGET_TYPE_PERV | fapi2::TARGET_TYPE_MULTICAST > & i_target,
     const uint16_t i_clock_regions = REGION_ALL,
     const uint64_t i_runn_cycles = poz_perv_mod_chiplet_clocking::DEFAULT_RUNN_CYCLES,
-    const bool i_do_scan0 = true);
+    const bool i_do_scan0 = true,
+    const uint64_t i_linear_stagger = poz_perv_mod_chiplet_clocking::DEFAULT_LINEAR_STAGGER);
 
 /// @brief Clock start/stop module
 ///
