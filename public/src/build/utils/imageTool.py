@@ -73,15 +73,18 @@ def getDefaultOpenSslPath():
         raise Exception(err)
     return openSslPath
 
-def runCmd(pipeCmd:str, fail:bool=True):
+def runCmd(pipeCmd:str, fail:bool=True, printStdOut:bool=False):
 
     logger.debug(pipeCmd)
-    resp = subprocess.Popen(pipeCmd, shell=True, stdin=subprocess.PIPE,
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT)
+    resp = subprocess.Popen(pipeCmd, shell=True, stdin=subprocess.PIPE, universal_newlines=True)
     stdout, stderr = resp.communicate()
+
+    if printStdOut and stdout:
+        for line in stdout:
+            logger.info(line)
+
     if resp.returncode != 0 and fail:
-        err = f"{pipeCmd}\n\t==> ErrorMsg: {stdout}"
+        err = f"{pipeCmd}\n\t==> ErrorMsg: {stderr}"
         logger.error(err)
         raise Exception(err)
 
@@ -187,7 +190,7 @@ def signPak(args:argparse.Namespace):
                             -i {hashListFile} -o {signPakWorkDir} \
                             -c {signPakCompId.get(pakName)} \
                             -f {args.signMode} "
-            runCmd(genSecureHdr)
+            runCmd(genSecureHdr,True,True)
 
             # Generate measured.hash file by using generated secure.hdr file
             genMeasuredHash = f"{measuredHashTool} -i {secureHdrFile} \
@@ -344,7 +347,7 @@ parser = argparse.ArgumentParser(description="Use to add necessary files "
 
 parser.add_argument("--pakToolDir", required=True, help="Pass PAK tools \
                     directory")
-parser.add_argument("-l", "--loglevel", default="E", choices=['D', 'I', \
+parser.add_argument("-l", "--loglevel", default="I", choices=['D', 'I', \
                     'W', 'E', 'C'], help="Pass log level to get more traces. "
                     "Supported log levels: D-Debug, I-Info, W-Warning, "
                     "E-Error, C-Critical. (default: %(default)s)")
