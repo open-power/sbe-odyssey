@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -37,6 +37,7 @@
     #include <exp_collect_explorer_active_log.H>
     #include <exp_collect_explorer_saved_A_log.H>
     #include <exp_collect_explorer_saved_B_log.H>
+    #include <ody_pack_ecs_data.H>
 #endif
 
 // Add any other FFDC procedures with #include
