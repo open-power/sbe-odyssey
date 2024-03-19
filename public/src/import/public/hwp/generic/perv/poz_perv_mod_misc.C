@@ -46,7 +46,7 @@ enum POZ_PERV_MOD_MISC_Private_Constants
     CBS_IDLE_HW_NS_DELAY = 640000, // unit is nano seconds [min : 64k x (1/100MHz) = 64k x 10(-8) = 640 us
     //                       max : 64k x (1/50MHz) = 128k x 10(-8) = 1280 us]
     CBS_IDLE_SIM_CYCLE_DELAY = 750000, // unit is sim cycles,to match the poll count change ( 250000 * 30 )
-    SEMAPHORE_POLL_COUNT = 1000,
+    SEMAPHORE_POLL_COUNT = 30000,
     MC_GROUP_MEMBERSHIP_BITX_READ = 0x500F0001,
     PCB_RESPONDER_MCAST_GROUP_1 = 0xF0001,
     HOST_MASK_REG_IPOLL_MASK = 0xF800000000000000,
