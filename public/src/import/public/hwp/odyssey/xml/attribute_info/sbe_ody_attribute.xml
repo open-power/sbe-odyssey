@@ -2688,4 +2688,7 @@
   <entry name="ATTR_RTG_SCAN_ORDER">
     <value>0</value>
   </entry>
+  <entry name="ATTR_ODY_SETUP_SAFEMODE_THROTTLES">
+    <value>0</value>
+  </entry>
 </entries>
