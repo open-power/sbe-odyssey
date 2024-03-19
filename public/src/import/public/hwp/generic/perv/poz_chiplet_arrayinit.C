@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -46,6 +46,7 @@ ReturnCode poz_chiplet_arrayinit(
     const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
     const clock_region i_clock_regions,
     const uint64_t i_runn_cycles,
+    const uint64_t i_linear_stagger,
     const bool i_do_scan0)
 {
     FAPI_INF("Entering ...");
@@ -54,7 +55,7 @@ ReturnCode poz_chiplet_arrayinit(
     FAPI_TRY(get_hotplug_targets(i_target, l_chiplets_mc));
 
     FAPI_DBG("Arrayinit then scan0 all regions on all non-TP chiplets");
-    FAPI_TRY(mod_arrayinit(l_chiplets_mc, i_clock_regions, i_runn_cycles, i_do_scan0));
+    FAPI_TRY(mod_arrayinit(l_chiplets_mc, i_clock_regions, i_runn_cycles, i_do_scan0, i_linear_stagger));
 
 fapi_try_exit:
     FAPI_INF("Exiting ...");
