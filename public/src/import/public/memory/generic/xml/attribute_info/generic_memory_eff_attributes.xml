@@ -183,6 +183,8 @@
     <valueType>uint8</valueType>
     <writeable/>
     <array>2</array>
+    <noSBEAccessor/>
+    <mssAccessorName>dram_bank_group_bits</mssAccessorName>
   </attribute>
 
   <attribute>
@@ -246,7 +248,7 @@
       D7 = 7,
       D8 = 8,
       D16 = 16,
-      RESERVED = 0xFF
+      RESERVED=0xFF
     </enum>
     <writeable/>
     <array>2</array>

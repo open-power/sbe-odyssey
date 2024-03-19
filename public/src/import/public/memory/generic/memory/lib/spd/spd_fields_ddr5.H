@@ -96,6 +96,18 @@ class fields<DDR5, BASE_CNFG>
             SDRAM_WIDTH_START = 0,
             SDRAM_WIDTH_LEN = 3,
 
+            // Byte 7
+#ifndef __PPE__
+            BANK_ADDR_START = 5,
+            BANK_ADDR_LEN = 3,
+
+            BANK_GROUP_START = 1,
+            // Note: this is technically incorrect but saves an unneccessary check for the SPD
+            // If future SPD versions require that BG support 0->2,
+            //   then this will need to be updated and error checking added into the existing eff config
+            BANK_GROUP_LEN = 2,
+#endif
+
 
             //Byte 16, 17, 18
             OPERABLE_START = 4,
@@ -381,6 +393,8 @@ class fields<DDR5, BASE_CNFG>
         static constexpr mss::field_t<mss::endian::LITTLE> SDRAM_WIDTH {6, SDRAM_WIDTH_START, SDRAM_WIDTH_LEN};
 
 #ifndef __PPE__
+        static constexpr mss::field_t<mss::endian::LITTLE> BANK_ADDR_FLD {7, BANK_ADDR_START, BANK_ADDR_LEN};
+        static constexpr mss::field_t<mss::endian::LITTLE> BANK_GROUP_FLD {7, BANK_GROUP_START, BANK_GROUP_LEN};
         static constexpr mss::field_t<mss::endian::LITTLE> OPERABLE_VDD_FLD {16, OPERABLE_START, OPERABLE_LEN};
         static constexpr mss::field_t<mss::endian::LITTLE> ENDURANT_VDD_FLD{16, ENDURANT_START, ENDURANT_LEN};
 #endif
