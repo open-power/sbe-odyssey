@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -260,8 +260,8 @@ inline fapi2::ReturnCode calc_trefi( const refresh_rate i_mode,
 
     o_timing =  (l_refresh_request / i_mode);
 
-    FAPI_INF( "tREFI (ps): %d, refresh request (ps): %d, tREFI_base (ps): %d, REF%dX",
-              o_timing, l_refresh_request, TREFI_BASE, i_mode );
+    FAPI_INF_NO_SBE( "tREFI (ps): %d, refresh request (ps): %d, tREFI_base (ps): %d, REF%dX",
+                     o_timing, l_refresh_request, TREFI_BASE, i_mode );
 
     return fapi2::FAPI2_RC_SUCCESS;
 

@@ -57,6 +57,7 @@ namespace check
 enum firChecklist {GENERIC, OMI, DRAMINIT, CCS, IO_GENERAL, IO_TRAIN};
 
 
+
 ///
 /// @brief Helper function to log an error as related if needed
 /// @tparam T the target type on which to log the error
@@ -268,7 +269,7 @@ inline fapi2::ReturnCode blame_firs( const fapi2::Target<T>& i_target, bool& o_f
     // Exit if we took a FIR error - PRD will handle bad bits
     if(o_firs_found)
     {
-        FAPI_INF(TARGTIDFORMAT " has FIR's set, exiting to let PRD handle it", TARGTID);
+        FAPI_INF_NO_SBE(TARGTIDFORMAT " has FIR's set, exiting to let PRD handle it", TARGTID);
         return fapi2::FAPI2_RC_SUCCESS;
     }
 

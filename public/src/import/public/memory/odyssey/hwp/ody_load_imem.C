@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -68,7 +68,7 @@ extern "C"
 
         if (mss::ody::skip_this_step(fapi2::ENUM_ATTR_ODY_DRAMINIT_STEP_ENABLE_LOAD_IMEM, l_draminit_step_enable))
         {
-            FAPI_INF(TARGTIDFORMAT " ATTR_ODY_DRAMINIT_STEP_ENABLE set to skip ody_load_imem. Exiting...", TARGTID);
+            FAPI_INF_NO_SBE(TARGTIDFORMAT " ATTR_ODY_DRAMINIT_STEP_ENABLE set to skip ody_load_imem. Exiting...", TARGTID);
             return fapi2::FAPI2_RC_SUCCESS;
         }
 

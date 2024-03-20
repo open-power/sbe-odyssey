@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -76,7 +76,9 @@ void spd_helper( const uint8_t (&i_raw_spd)[N],
         memcpy( o_blob, i_raw_spd, o_size );
     }
 
+#ifndef __PPE__
     FAPI_INF("No issues here...");
+#endif
 }
 
 ///

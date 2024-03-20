@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -53,13 +53,13 @@ extern "C"
 
         mss::display_git_commit_info("ody_draminit_log_size");
 
-        FAPI_INF( GENTARGTIDFORMAT " Start ody_draminit_log_size", GENTARGTID(i_port));
+        FAPI_INF_NO_SBE( GENTARGTIDFORMAT " Start ody_draminit_log_size", GENTARGTID(i_port));
 
         FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_ODY_DRAMINIT_VERBOSITY, i_port, l_port_verbosity));
 
-        FAPI_INF(GENTARGTIDFORMAT "is set to verbosity %d of size %d", GENTARGTID(i_port),
-                 l_port_verbosity,
-                 mss::ody::phy::getBufferSizeFromVerboseAttr(l_port_verbosity));
+        FAPI_INF_NO_SBE(GENTARGTIDFORMAT "is set to verbosity %d of size %d", GENTARGTID(i_port),
+                        l_port_verbosity,
+                        mss::ody::phy::getBufferSizeFromVerboseAttr(l_port_verbosity));
         return fapi2::FAPI2_RC_SUCCESS;
 
     fapi_try_exit:
