@@ -167,6 +167,7 @@
     </description>
     <ffdc>GPIO</ffdc>
     <ffdc>PMIC_PAIR_BIT</ffdc>
+    <ffdc>TARGET</ffdc>
     <callout>
       <target>TARGET</target>
       <priority>HIGH</priority>
@@ -327,6 +328,7 @@
     <ffdc>NOMINAL_MV</ffdc>
     <ffdc>MINIMUM_MV</ffdc>
     <ffdc>ACTUAL_MV</ffdc>
+    <ffdc>PMIC_TARGET</ffdc>
     <callout>
       <target>PMIC_TARGET</target>
       <priority>HIGH</priority>
@@ -345,6 +347,7 @@
     <ffdc>EFUSE_DATA</ffdc>
     <ffdc>THRESHOLD_LOW</ffdc>
     <ffdc>THRESHOLD_HIGH</ffdc>
+    <ffdc>PMIC_TARGET</ffdc>
     <callout>
       <target>PMIC_TARGET</target>
       <priority>HIGH</priority>
