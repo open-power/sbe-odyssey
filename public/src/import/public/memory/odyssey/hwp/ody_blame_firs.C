@@ -42,7 +42,6 @@
 
 extern "C"
 {
-
     ///
     /// @brief Check for FIR bits related to a HWP fail
     /// @param[in] i_target OCMB chip
@@ -64,7 +63,7 @@ extern "C"
         fapi2::ReturnCode l_rc(i_rc);
         fapi2::ReturnCode l_scom_error(fapi2::FAPI2_RC_SUCCESS);
 
-        FAPI_INF("Checking for FIRs on %s", mss::c_str(i_target));
+        FAPI_INF_NO_SBE("Checking for FIRs on %s", mss::c_str(i_target));
 
         switch (i_substep)
         {
@@ -139,6 +138,7 @@ extern "C"
 
         // Else return the resulting RC (the original bad RC if no FIRs blamed or SUCCESS if we found a FIR to blame)
         return l_rc;
+
     }
 
 }

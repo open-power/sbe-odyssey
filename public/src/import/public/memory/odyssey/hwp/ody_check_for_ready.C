@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -76,7 +76,7 @@ extern "C"
 
             if (l_rc == fapi2::FAPI2_RC_SUCCESS)
             {
-                FAPI_INF(TARGTIDFORMAT "OCMB is active.", TARGTID);
+                FAPI_INF_NO_SBE(TARGTIDFORMAT "OCMB is active.", TARGTID);
                 break;
             }
 
