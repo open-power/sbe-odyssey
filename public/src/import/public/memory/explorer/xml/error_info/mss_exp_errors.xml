@@ -1391,11 +1391,11 @@
     <ffdc>OCMB_TARGET</ffdc>
     <ffdc>ADDRESS</ffdc>
     <callout>
-      <target>TARGET</target>
+      <target>OCMB_TARGET</target>
       <priority>HIGH</priority>
     </callout>
     <deconfigure>
-      <target>TARGET</target>
+      <target>OCMB_TARGET</target>
     </deconfigure>
   </hwpError>
 
