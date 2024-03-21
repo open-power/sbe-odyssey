@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,7 +39,7 @@ using namespace fapi2;
 enum POZ_CMDTABLE_INTERPRETER_Private_Constants
 {
     FORMAT_MAGIC = 0x434d5461,    // 'CMTa'
-    POLL_TIMEOUT = 100,
+    POLL_TIMEOUT = 1000,
     SB_MSG  = 0x50009,
     NOP     = 0b000,
     CALL    = 0b001,
