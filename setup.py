@@ -36,6 +36,7 @@ import os
 """
 
 from setuptools import setup
+from setuptools.command.build_py import build_py
 
 package_directories = {
     # User Data packages.
@@ -48,10 +49,50 @@ package_directories = {
     "udparsers.poztraceutils":  "public/src/tools/trace/",
     "udpparsers.pozdebugutils": "public/src/tools/debug/"
 }
+# TODO: add golden image stringfiles
+# currently need to run simics and then untar and find the gldnstringfile
+custom_data_files = [
+                        ('ody_data',['images/odyssey/runtime/sppe/odysseySppeStringFile_DD1',])
+                    ]
+
+def check_environment_files():
+    """
+    Check the environment for the needed files
+
+    SBE setup.py is invoked in two contexts:
+    1 - op-build, where the images file exists, post build
+    2 - OpenBMC, where the images file does NOT exist
+        OpenBMC clones a clean SBE PPE repo (source only)
+
+    setup.py will fail if data_files do not exist,
+    so if we encounter a missing file, clear the
+    expectation and only populate the wheel with
+    the usual python source files.
+    """
+    for i in custom_data_files:
+        for x in i[1]:
+            if not os.path.isfile(x):
+                custom_data_files.clear()
+                return
+
+class BuildCommand(build_py):
+    """
+    Subclass the build_py command
+
+    This allows the capability to add custom build
+    steps.
+    """
+    def run(self):
+        # First run the regular build_py
+        build_py.run(self)
+        # Now run the custom step we need
+        check_environment_files()
 
 setup(
     name          = "poz-pel-parser",
+    cmdClass      = {"build_py":BuildCommand},
     version       = os.getenv('PELTOOL_VERSION', '0.1'),
     packages      = package_directories.keys(),
+    data_files    = custom_data_files,
     package_dir   = package_directories,
 )
