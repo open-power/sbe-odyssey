@@ -32,18 +32,19 @@
 
 #define NOR_BASE_ADDRESS_MASK           0xFF000000
 #define NOR_FLASH_SECTOR_BOUNDARY_ALIGN 0xFFFFF000
-#define MAX_BUFFER_SIZE                 0x1000 // 4KB - In bytes always
+#define MAX_BUFFER_SIZE                 0x1000    // 4KB - In bytes always
 #define SPI_ENGINE_NOR                  0
 #define SPIM_BASEADDR_PIB               0x70000
 #define NOR_DEVICE_MAX_SIZE             0x1000000 // 16MB
-#define MEMORY_ID                       1 // refers to one monolithic memory with logical partitions
+#define MEMORY_ID                       1         // refers to one monolithic memory with logical partitions
+#define READ_ONLY_SECTOR_SIZE            0x10000   // 64KB
 
 using namespace fapi2;
 using spi::SPIPort;
 using spi::FlashDevice;
 
 #define SECTOR_NUM_CHECK(sector, address)\
-        ((address >= (sector * SMALLEST_ERASE_BLOCK_SIZE)) && (address < ((sector + 1) * SMALLEST_ERASE_BLOCK_SIZE)))
+        ((address >= (sector * READ_ONLY_SECTOR_SIZE)) && (address < ((sector + 1) * READ_ONLY_SECTOR_SIZE)))
 #define SECTOR_00 0x00
 #define SECTOR_72 0x48
 
