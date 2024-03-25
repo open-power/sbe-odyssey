@@ -41,6 +41,7 @@ import subprocess
 from tabulate import tabulate
 from shutil import copyfileobj
 from typing import Optional, TextIO
+from ctypes import Structure, c_uint32, Union
 
 from icecream.icecream import ic
 
@@ -63,7 +64,7 @@ memory_map = {
         'bldr': # Bootloader Unit type
         {
             'pibmem' : (0xFFF80000, 0x00080000),  # PIBMEM start Image
-            'img'    : (0xFFFEE600, 0x00010000) # Bootloader Image
+            'img'    : (0xFFFEE600, 0x00010000)   # Bootloader Image
         }
     },
     'pst' : # PST Chip type
@@ -86,6 +87,7 @@ class AddressRangeError(Exception):
     pass
 
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 class metadata():
     '''
     ! Metadata parsing class
@@ -194,20 +196,90 @@ class metadata():
         print ("-"*80)
 
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+# ref: public/src/common/core/mbxscratch.H : struct messagingReg_t
+class MsgRegisterField(Structure):
+    _fields_ = [
+        ("iv_progressCode", c_uint32, 6),
+        ("iv_reserved2",    c_uint32, 4),
+        ("iv_minorStep",    c_uint32, 6),
+        ("iv_majorStep",    c_uint32, 4),
+        ("iv_currState",    c_uint32, 4),
+        ("iv_prevState",    c_uint32, 4),
+        ("iv_currImage",    c_uint32, 1),
+        ("iv_reserved1",    c_uint32, 1),
+        ("iv_asyncFFDC",    c_uint32, 1),
+        ("iv_sbeBooted",    c_uint32, 1),
+    ]
+
+
+class MsgRegister(Union):
+    _fields_ = [
+        ("fields", MsgRegisterField),
+        ("value", c_uint32),
+    ]
+
+# ref: public/src/runtime/common/core/sbestates.H : enum sbeState
+SBE_STATES = {
+    0x0 : 'SBE_STATE_CMN_UNKNOWN',
+    0x1 : 'SBE_STATE_CMN_IPLING',
+    0x2 : 'SBE_STATE_CMN_ISTEP',
+    0x3 : 'SBE_STATE_CMN_RUNTIME',
+    0x4 : 'SBE_STATE_CMN_DUMP',
+    0x5 : 'SBE_STATE_CMN_FAILURE',
+    0xA : 'SBE_STATE_CMN_HRESET',
+}
+
+def parseMsgRegister (self, msgReg: int, console: bool = True):
+
+    def parseSbeState(i_state_val:int)->str:
+        return f"{SBE_STATES[i_state_val]} ({hex(i_state_val)})"
+
+    msg_reg_val = MsgRegister()
+    msg_reg_val.value = msgReg
+
+    if console:
+        msg_reg_table = []
+        msg_reg_table.append(["MSG_REG",         hex(msg_reg_val.value   )])
+
+        msg_reg_table.append(["", ""])
+
+        msg_reg_table.append(["iv_sbeBooted",    hex(msg_reg_val.fields.iv_sbeBooted   )])
+        msg_reg_table.append(["iv_asyncFFDC",    hex(msg_reg_val.fields.iv_asyncFFDC   )])
+        msg_reg_table.append(["iv_reserved1",    hex(msg_reg_val.fields.iv_reserved1   )])
+        msg_reg_table.append(["iv_currImage",    hex(msg_reg_val.fields.iv_currImage   )])
+
+        msg_reg_table.append(["iv_prevState",    parseSbeState(msg_reg_val.fields.iv_prevState)])
+        msg_reg_table.append(["iv_currState",    parseSbeState(msg_reg_val.fields.iv_currState)])
+
+        msg_reg_table.append(["iv_majorStep",    hex(msg_reg_val.fields.iv_majorStep   )])
+        msg_reg_table.append(["iv_minorStep",    hex(msg_reg_val.fields.iv_minorStep   )])
+        msg_reg_table.append(["iv_reserved2",    hex(msg_reg_val.fields.iv_reserved2   )])
+        msg_reg_table.append(["iv_progressCode", hex(msg_reg_val.fields.iv_progressCode)])
+        print(tabulate(msg_reg_table, tablefmt='pretty', ))
+
+    return msg_reg_val
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 class utilsTools:
-    def executeCommand (self, command):
+    def executeCommand (self, command, captureOutput:bool = False):
         '''
         ! Execute Command function
           @param command command need to execute on console
+          @param captureOutput capture output in stdout
           @return command execute result
         '''
         try:
             # Execute the command and capture the result
-            result = subprocess.run(command, shell=True)
-            if result.returncode != 0:
+            captureOutput = subprocess.PIPE if captureOutput else None
+            p = subprocess.Popen(command, shell=True, stdout=captureOutput , stderr=subprocess.STDOUT)
+            output, errors = p.communicate()
+            if errors:
                 print ("Command failed")
-                print ("Error: ", result.stderr)
-            return result
+                print ("Error: ", errors)
+                raise ParseError ("executeCommand failed")
+            return output
         except Exception as e:
             print ("Error occurred: ", str(e))
             exit (1)
@@ -230,6 +302,14 @@ class utilsTools:
                     return filepath
         return None
 
+    def getEnvFilePath(filename):
+        for dir in PATH.split(os.pathsep):
+            retPath = os.path.join(dir, filename)
+            if(os.path.exists(retPath)):
+                return os.path.abspath(retPath)
+        print("ERROR: file " + filename +" not found")
+        return 1
+
     def parseSbeTrace(self, toolPath, traceBinPath, traceStringFilePath, outFilePath, printTrace = True):
         pp2fspFile   = self.getFile (toolPath, 'ppe2fsp')
         fsptraceFile = self.getFile (toolPath, 'fsp-trace' )
@@ -243,12 +323,13 @@ class utilsTools:
         print (cmd_parse_to_fsp_format)
         print (cmd_parse_fsp_trace)
 
-        self.executeCommand ( cmd_parse_to_fsp_format )
-        self.executeCommand ( cmd_parse_fsp_trace )
+        result = self.executeCommand ( cmd_parse_to_fsp_format)
+        result = self.executeCommand ( cmd_parse_fsp_trace)
         if printTrace == True:
-            self.executeCommand(cmd_print_output)
+            result = self.executeCommand(cmd_print_output)
 
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 class pibmemMisc:
     """
     ! Common tools class
@@ -304,15 +385,143 @@ class pibmemMisc:
         return fileData
 
 
-# TODO Hardware related tool will cover in phase2
-class hwTools:
-    pass
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+class hwTools(utilsTools):
+    def __init__(self, outputpath: str, chip: str, unit: str, n: int = 0, p: int = 0) -> None:
+        self.chip       = chip
+        self.unit       = unit
+        self.node       = n
+        self.proc       = p
+        self.outputpath = outputpath
 
+    def checkChipState (self):
+        result = self.executeCommand("getcfam " +  self.chip + " 2809 -n" + str(node) + " -p" + str(proc), True)
+        expectedOut = 'k0:n%1d:s0:p%02d'%(node,proc)
+        if expectedOut in result.decode():
+            msgRegValue = result.split()[2]
+            parseMsgRegister( int(msgRegValue, 16) )
+
+    def collectHwPibmemDump(self):
+        if self.chip == "ody":
+            # Cmd: ody_pibmem_dump_wrap.exe -p3 -path ./images/ -verbose -i_ecc_enable
+            cmd = getEnvFilePath("ody_pibmem_dump_wrap.exe") + " -path " + \
+                    self.outputpath + " -i_ecc_enable" + " -n" + str(node) + " -p" + str(proc)
+            print ("*"* 80)
+            print (cmd)
+            self.executeCommand(cmd)
+            print ("*"* 80)
+            p = pathlib.Path(self.outputpath + "/DumpPIBMEM")
+            if p.exists() and p.is_file():
+                size = p.stat().st_size
+                if size == memory_map[self.chip][self.unit]['pibmem'][1]:
+                    return (self.outputpath + "/DumpPIBMEM")
+            raise ParseError (f"ody_pibmem_dump_wrap failed to collect full pibmem dump")
+        else:
+            raise NotImplementedError (f"Chip {self.chip} module not implemented")
+
+    def sbeState(self):
+        if self.chip == "ody":
+            cmd = getEnvFilePath("ody_pibms_reg_dump_wrap.exe")+" -TARGET ody -verbose" + \
+                        " -n" + str(node) + " -p" + str(proc)
+            print ("*"* 80)
+            print ( cmd )
+            self.executeCommand(cmd)
+            print ("*"* 80)
+        else:
+            raise NotImplementedError (f"Chip {self.chip} module not implemented")
+
+    def ppeState(self):
+        if self.chip == "ody":
+            cmd = getEnvFilePath("ody_ppe_state_wrap.exe")+" -chip ody -sbe -snapshot -verbose" + \
+                        " -n" + str(node) + " -p" + str(proc)
+            print ("*"* 80)
+            print ( cmd )
+            self.executeCommand( cmd )
+            print ("*"* 80)
+        else:
+            raise NotImplementedError (f"Chip {self.chip} module not implemented")
+
+    def sbeLocalRegister(self):
+        if self.chip == "ody":
+            try:
+                cmd = getEnvFilePath("ody_sbe_localreg_dump_wrap.exe")+" -verbose -halt" +\
+                            " -n" + str(self.node) + " -p" + str(self.proc)
+                print ("*"* 80)
+                print ( cmd )
+                self.executeCommand( cmd )
+                print ("*"* 80)
+            except:
+                raise ParseError (f"ody_sbe_localreg_dump_wrap wrapper execution failed")
+        else:
+            raise NotImplementedError (f"Chip {self.chip} module not implemented")
+
+    def parseTrace(self, tracetoolpath, stringfile):
+        pibmemDump = collectHwPibmemDump()
+        self.endianness = 'big'
+        print("File path: ", str(pibmemDump))
+
+        pibmemStart = memory_map[self.chip][self.unit]['pibmem'][0]
+        pibemeSize  = memory_map[self.chip][self.unit]['pibmem'][1]
+        metaobj = metadata( pibmemDump, pibmemStart, pibemeSize)
+        meta    = metaobj.getMetadata()
+
+        pibmem = pibmemMisc (pibmemDump, pibmemStart, pibemeSize)
+
+        traceAddr = int.from_bytes( meta[metaobj.TRA_ASCII][:4], self.endianness )
+        traceLen  = int.from_bytes( meta[metaobj.TRA_ASCII][4:], self.endianness )
+
+        traceData = pibmem.pibmemDumpRead (traceAddr, traceLen)
+
+        self.outputpath.mkdir (mode=0o777, parents=True, exist_ok=True)
+        traceFileName = str(self.outputpath / 'plat_trace_response_blob.bin')
+
+        # Print and parsing trace
+        if os.path.exists(traceFileName):
+            os.remove(traceFileName)
+
+        with open(traceFileName, "wb") as traceFile:
+            traceFile.write ( traceData )
+            traceFile.close()
+
+        ffdcTraceFile = pathlib.Path( traceFileName )
+        self.parseSbeTrace (tracetoolpath, ffdcTraceFile, stringfile, self.outputpath, True )
 
 def hw_parse_dump(args):
-    pass
+    print("\n\n##- Hardware Parse dump -##")
+    # file arg
+    if 'trace' in args.dumptype:
+        # required arg
+        if not (hasattr(args, "stringfile") & hasattr(args, "tracetoolpath")):
+            raise AttributeError ("trace dump type requires args are: project, img, sys, str, tracetoolpath")
+        # validate file and directory exist
+        p = pathlib.Path(args.outputpath + "/" + args.stringfile)
+        if not p.exists():
+            raise ParseError (f"Trace Dump type String file not exist, Check the {args.stringfile} file before run.")
+        if not args.tracetoolpath.exists():
+            raise ParseError (f"Trace Dump type Trace tool path not exist, Check the {args.tracetoolpath.name} file before run.")
+
+    # Creating class for HW tools
+    hwtool = hwTools (args.outputpath, args.chip, args.unit, args.n, args.p)
+
+    if 'all' in args.dumptype:
+        hwtool.ppeState()
+        hwtool.sbeLocalRegister()
+        hwtool.sbeState()
+        hwtool.collectTrace(args)
+    else:
+        for level in args.dumptype:
+            print (f" level: {level}")
+            if level == 'ppestate':
+                hwtool.ppeState()
+            elif level == 'localregister':
+                hwtool.sbeLocalRegister()
+            elif level == 'sbestate':
+                hwtool.sbeState()
+            elif level == 'trace':
+                hwtool.collectTrace(args.tracetoolpath, args.stringfile)
 
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 class fileTools(utilsTools):
     """
     ! Files tools class
@@ -618,17 +827,17 @@ class fileTools(utilsTools):
         traceData = pibmem.pibmemDumpRead (traceAddr, traceLen)
 
         self.outputpath.mkdir (mode=0o777, parents=True, exist_ok=True)
-        ffdcTraceFileName = str(self.outputpath / 'ffdc_plat_trace_response_blob.bin')
+        traceFileName = str(self.outputpath / 'plat_trace_response_blob.bin')
 
         # Print and parsing trace
-        if os.path.exists(ffdcTraceFileName):
-            os.remove(ffdcTraceFileName)
+        if os.path.exists(traceFileName):
+            os.remove(traceFileName)
 
-        with open(ffdcTraceFileName, "wb") as traceFile:
+        with open(traceFileName, "wb") as traceFile:
             traceFile.write ( traceData )
             traceFile.close()
 
-        ffdcTraceFile = pathlib.Path( ffdcTraceFileName )
+        ffdcTraceFile = pathlib.Path( traceFileName )
 
         self.parseSbeTrace (args.tracetoolpath, ffdcTraceFile, args.stringfile, self.outputpath, True )
         self.endianness = tmpEndianness
@@ -722,10 +931,16 @@ def file_parse_dump(args):
         parsefiletools = fileTools (args.individualFile, args.outputpath, False)
 
     if args.dumpfile != None:
-        if 'trace' in args.dumptype:
+        if 'trace' in args.dumptype or 'all' in args.dumptype:
             # required arg
-            if not (hasattr(args, "str") & hasattr(args, "tracetoolpath")):
+            if not (hasattr(args, "stringfile") & hasattr(args, "tracetoolpath")):
                 raise AttributeError ("trace level requires args are: project, img, sys, str, tracetoolpath")
+
+            p = pathlib.Path(args.stringfile)
+            if not p.exists():
+                raise ParseError (f"Trace Dump type String file not exist, Check the {args.stringfile} file before run.")
+            if not args.tracetoolpath.exists():
+                raise ParseError (f"Trace Dump type Trace tool path not exist, Check the {args.tracetoolpath.name} file before run")
 
         parsefiletools = fileTools (args.dumpfile, args.outputpath)
         parsefiletools.extract()
@@ -780,29 +995,38 @@ if __name__ == '__main__':
 
     CHIP_UNIT = ['ody', 'pst']
     IMG_TYPE  = ['bldr', 'sppe', 'sbe', 'tsbe']
-    parser.add_argument('chip', metavar=f'chip {CHIP_UNIT}', nargs='?', choices=CHIP_UNIT, help='Enter the chip type')
-    parser.add_argument('unit', metavar=f'unit {IMG_TYPE}',  nargs='?', choices=IMG_TYPE,  help='Enter the chip unit image type')
+    SUPPORTED_DUMPS    = ['ppestate', 'localregister', 'sbestate', 'trace', 'all']
+    parser.add_argument('chip',      metavar=f'chip {CHIP_UNIT}',        nargs='?', choices=CHIP_UNIT,         help='Enter the chip type')
+    parser.add_argument('unit',      metavar=f'unit {IMG_TYPE}',         nargs='?', choices=IMG_TYPE,          help='Enter the chip unit image type')
 
     subparsers = parser.add_subparsers()
     fileparser = subparsers.add_parser('FILE', help='Parse DUMP from FILE')
     # trace, ppe-state, local-register, pibmem-register
     filesubparsers = fileparser.add_subparsers()
-
-    extractparser  = filesubparsers.add_parser('extract',     help='Extract DUM')
-    extractparser.add_argument('-f', '--file', required=True, help='Dump file')
-    extractparser.add_argument("-o","--outputpath", type=pathlib.Path, default='./', help="Extract file path")
+    extractparser  = filesubparsers.add_parser('extract',                             help='Extract DUM')
+    extractparser.add_argument('-f', '--file',       required=True,                   help='Dump file')
+    extractparser.add_argument("-o","--outputpath",  type=pathlib.Path, default='./', help="Extract file path")
     extractparser.set_defaults(func=file_extract_dump)
 
     parsedumpparser  = filesubparsers.add_parser("parse", help="Parse DUMP")
-    DUMP_PARSE_LEVEL = ['ppestate', 'localregister', 'sbestate', 'trace', 'all']
     exclusivegroup = parsedumpparser.add_mutually_exclusive_group(required=True)
     exclusivegroup.add_argument  ("-dumpfile",          help="System Dump file 'SYSDUMP' file")
     exclusivegroup.add_argument  ("-individualFile",    help="Dump parse level file, applies only to a single level for single level")
-    parsedumpparser.add_argument ("-dumptype",          nargs='+', required=True, choices=DUMP_PARSE_LEVEL, help='Dump parse type')
-    parsedumpparser.add_argument ("-o",  "--outputpath",type=pathlib.Path,               default='./',      help="Extract file path")
+    parsedumpparser.add_argument ("-dumptype",          nargs='+', required=True, choices=SUPPORTED_DUMPS,  help='Dump parse level')
     parsedumpparser.add_argument ("-stringfile",                                         help='Required for trace: SBE String file for Trace parse')
     parsedumpparser.add_argument ("-tracetoolpath",     type=pathlib.Path,               help='Required for trace: SBE Trace tool path (ppe2fsp, fsp-trace) for Trace parse')
+    parsedumpparser.add_argument("-o","--outputpath",   type=pathlib.Path, default='./', help="Extract file path")
     parsedumpparser.set_defaults ( func=file_parse_dump )
+
+
+    hwparser = subparsers.add_parser("HW", help="Parse DUMP from Hardware")
+    hwparser.add_argument ("-dumptype",          nargs='+', required=True, choices=SUPPORTED_DUMPS, help='Dump parse type')
+    hwparser.add_argument ('-n',                 nargs='?', default=0,     const=0, type=int, help='Specify which node to act on')
+    hwparser.add_argument ('-p',                 nargs='?', required=True, const=0, type=int, help='Specify which chip position to act on')
+    hwparser.add_argument ("--stringfile",                                                    help='Required for trace: SBE String file for Trace parse')
+    hwparser.add_argument ("--tracetoolpath",    type=pathlib.Path,                           help='Required for trace: SBE Trace tool path (ppe2fsp, fsp-trace) for Trace parse')
+    hwparser.add_argument("-o","--outputpath",   type=pathlib.Path, default='./',             help="Extract file path")
+    hwparser.set_defaults ( func=hw_parse_dump )
 
     args = parser.parse_args()
 
@@ -811,4 +1035,18 @@ if __name__ == '__main__':
         exit(1)
 
     validateChipUnit(parser, args)
-    args.func(args)
+
+    try:
+        args.func(args)
+    except ParseError as e:
+        print("Parse error occurred:", e)
+    except AddressRangeError as e:
+        print("AddressRangeError error occurred:", e)
+    except ValueError as e:
+        print("ValueError error occurred:", e)
+    except NotImplementedError as e:
+        print("NotImplementedError error occurred:", e)
+    except AttributeError as e:
+        print("AttributeError error occurred:", e)
+    except NameError as e:
+        print("NameError error occurred:", e)
