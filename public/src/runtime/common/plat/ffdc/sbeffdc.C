@@ -790,7 +790,6 @@ void ffdcFreeUnwantedError(uint8_t i_threadId)
         // Checking HEAD if we have data
         if (node == nullptr)
         {
-            SBE_INFO (SBE_FUNC "Head is null");
             break;
         }
 
