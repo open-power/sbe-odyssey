@@ -33,7 +33,7 @@
         <valueType>uint8</valueType>
         <default>5</default>
         <platInit/>
-        <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="poz">
+        <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="z">
           <targetTypes>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetTypes>
         </sbeAttrSync>
     </attribute>
