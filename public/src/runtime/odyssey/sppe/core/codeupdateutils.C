@@ -150,6 +150,17 @@ private:
     fapi_try_exit:
         return current_err;
     }
+
+    void handle_verification_error() override
+    {
+        if (SECTOR_NUM_CHECK(SECTOR_00, iv_verify_fail_address) || SECTOR_NUM_CHECK(SECTOR_72, iv_verify_fail_address))
+        {
+            SBE_INFO("Ignore read address:[0x%08x]", iv_verify_fail_address);
+            iv_verify_fail = false;
+            iv_verify_fail_address = 0;
+            iv_verify_fail_length = 0;
+        }
+    }
 };
 
 // A struct to hold all objects associated with a memory device in one place
