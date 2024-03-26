@@ -847,57 +847,58 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::ppe_start(const fapi2::Target<K, M, V>
     fapi2::buffer<uint64_t> l_buffer = 0;
 
     // SRAM Scrub, set via Write-OR to CSCR
-    FAPI_INF("SRAM Scrub");
+    FAPI_DBG("SRAM Scrub");
+    l_buffer.flush<0>();
     l_buffer.setBit<c_sram_scrub_enable_bit>();
     FAPI_TRY(fapi2::putScom(i_target, c_cscr, l_buffer));
     l_buffer.flush<0>();
 
     // Hard reset PPE
-    FAPI_INF("IO hard reset.");
+    FAPI_DBG("IO hard reset.");
     l_buffer = 0x6000000000000000ULL;
     FAPI_TRY(fapi2::putScom(i_target, c_xixcr, l_buffer));
     fapi2::delay(IO_PPE_HARD_RESET_DELAY_NS, IO_PPE_HARD_RESET_DELAY_SIM_CYCLES);
 
     // Verify IAR @ reset vector loc
-    FAPI_INF("Verify IAR reset.");
+    FAPI_DBG("Verify IAR reset.");
     FAPI_TRY(fapi2::getScom(i_target, c_xidbgpro, l_buffer));
     l_buffer.extractToRight<c_xidbgpro_bit, c_xidbgpro_len, uint32_t>(o_iar);
 
-    if ((o_iar != c_ppe_start_reset_iar) || (o_iar == c_ppe_program_exception_iar))
+    if (o_iar != c_ppe_start_reset_iar)
     {
         o_fail = true;
-        FAPI_DBG("IAR (0x%8x) did not reset correctly.", o_iar << 2);
+        FAPI_INF("IAR (0x%8x) did not reset correctly.", o_iar << 2);
         return fapi2::current_err;
     }
 
     l_buffer.flush<0>();
 
     // Resume PPE
-    FAPI_INF("IO resume");
+    FAPI_DBG("IO resume");
     l_buffer = 0x2000000000000000ULL;
     FAPI_TRY(fapi2::putScom(i_target, c_xixcr, l_buffer));
     fapi2::delay(IO_PPE_RESUME_DELAY_NS, IO_PPE_RESUME_DELAY_SIM_CYCLES);
 
-    FAPI_INF("Verify IAR cleared.");
+    FAPI_DBG("Verify IAR cleared.");
     FAPI_TRY(fapi2::getScom(i_target, c_xidbgpro, l_buffer));
     l_buffer.extractToRight<c_xidbgpro_bit, c_xidbgpro_len, uint32_t>(o_iar);
 
-    if (o_iar == c_ppe_start_reset_iar)
+    if (o_iar == c_ppe_start_reset_iar || o_iar == c_ppe_program_exception_iar)
     {
         o_fail = true;
-        FAPI_DBG("IAR (0x%8x) did not resume.", o_iar << 2);
+        FAPI_INF("IAR (0x%8x) did not resume or at program exception.", o_iar << 2);
         return fapi2::current_err;
     }
 
     // Clear Halted FIR Bit
     // Reg is RW_CLEAR
-    FAPI_INF("Clear halted FIR.");
+    FAPI_DBG("Clear halted FIR.");
     l_buffer.flush<0>();
     l_buffer.setBit<c_ppe_halted_bit>();
     FAPI_TRY(fapi2::putScom(i_target, c_lfir_wclear, l_buffer),
              "Error putscom to MAC0_LFIR_REG (clear halt).");
 
-    FAPI_INF("Check PPE halted state");
+    FAPI_DBG("Check PPE halted state");
     FAPI_TRY(fapi2::getScom(i_target, c_xidbgpro, l_buffer),
              "Error putscom to XIDBGPRO (clear halt).");
 
