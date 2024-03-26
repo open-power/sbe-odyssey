@@ -235,6 +235,8 @@ ReturnCode spi::SEEPROMDevice::verify_write(uint32_t i_start, uint32_t i_length,
             iv_verify_fail_address = i_start;
             iv_verify_fail_length = i_length;
         }
+
+        handle_verification_error();
     }
 
 fapi_try_exit:
@@ -360,6 +362,11 @@ ReturnCode spi::SEEPROMDevice::write_end()
 
 fapi_try_exit:
     return current_err;
+}
+
+void spi::SEEPROMDevice::handle_verification_error()
+{
+    // No functional code
 }
 
 // The Flash driver expands upon the SEEPROM driver like so:

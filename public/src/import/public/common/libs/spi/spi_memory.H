@@ -297,6 +297,11 @@ class SEEPROMDevice : public AbstractMemoryDevice
          * This flushes data out to the device whenever we cross a page boundary
          */
         fapi2::ReturnCode write_byte(uint8_t i_byte);
+
+        /**
+         * @brief Handle verification error in device
+         */
+        virtual void handle_verification_error();
 };
 
 /**
