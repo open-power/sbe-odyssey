@@ -44,7 +44,11 @@ def cmd_parse(args):
         vprint("Parsing SBE attributes from " + filt_xml)
         if filt_xml != '':
             SBEAttributes(filt_xml).update_attrdb(db)
-
+    
+    if args.chiptype is not None:
+        vprint("Validating attribute sync to SBE")
+        db.validateAttrSync(args.chiptype)
+ 
     sbe_attr_tank = AttributeStructure(db)
 
     vprint("Storing attribute database to " + args.dbfile[0])
@@ -187,11 +191,13 @@ if __name__ == "__main__":
     parser = ArgumentParser(description="Tools to generate code and modify images according to attributes")
     subparsers = parser.add_subparsers()
 
+    CHIP_TYPE_CHOICES = ["p", "ody", "z"]
     sub = subparsers.add_parser("parse", help="Parse attribute XML and generate attribute database")
     sub.add_argument("attr_xml", nargs="+", help="Attribute definition XML files")
     sub.add_argument("-s", "--sbe_attrs", nargs='+', help="Path to xmls which will filter the sbe required attributes")
     sub.add_argument("-d", "--dbfile", help="Name of the database to be written")
     sub.add_argument("-t", "--targetlist", help="path to json file defining supported targets")
+    sub.add_argument("-c", "--chiptype", help="Chiptype for which attribute sync to SBE has to be performed.", choices=CHIP_TYPE_CHOICES)
     sub.add_argument("-v", "--verbose", action="store_true", help="Increase verbosity")
     sub.set_defaults(func=cmd_parse)
 

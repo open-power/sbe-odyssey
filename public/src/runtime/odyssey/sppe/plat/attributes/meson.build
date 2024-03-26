@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -39,6 +39,7 @@ run_cmd_result = run_command(attrTool, 'parse', EKB_CMN_ATTR_XMLS, EKB_ODY_ATTR_
     '-s', SBE_CMN_ATTR_FILTER_XML, SBE_ODY_ATTR_FILTER_XML,
     '-d', ODYSSEY_ATTR_DB_FILE_PATH,
     '-t', ODYSSEY_TARGET_LIST_JSON,
+    '-c', 'ody',
     # we can keep -v options to get the backtrace if it failed.
     #'-v'
     )

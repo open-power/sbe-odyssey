@@ -77,6 +77,9 @@ class RealAttribute(object):
 
             _chip_types :str = sync_node.attrib.get("chipTypes")
             self.chip_types :list[str] = _chip_types.split(',')
+            if (not set(self.chip_types).issubset(set(['p', 'z', 'ody']))):
+                raise ParseError("Invalid chip type %s specified for sbeAttrSync tag" %
+                                    str(self.chip_types))
 
             _target_types :str = sync_node.find("targetTypes").text
             self.target_types :list[str] = [targ.strip().upper() for targ in _target_types.split(',')]
@@ -395,6 +398,27 @@ class AttributeDB(object):
         except KeyError:
             # return empty list, if no entry for this target
             return []
+
+    def validateAttrSync(self, i_chip_type):
+        """
+        If an attribute is marked for sync from hostboot/cronus ie. toSBE="1" in the attribute
+        definition XML, and if it is not consumed by SBE ie. not present in the SBE filter XML,
+        then for the attribute update chip-op from hostboot/Cronus, SBE will return
+        ATTROVERRIDE_RC_ATTR_NOT_FOUND for that attribute. This function identifies such attributes
+        during the compile time.
+        """
+
+        for attr in self.attributes.values():
+            if(not isinstance(attr, RealAttribute)):
+                continue
+            if (attr.attr_sync != None):
+                if (i_chip_type in attr.attr_sync.chip_types) and (attr.sbe_entry == None):
+                    Message = "Attribute name {} has sbeAttrSync.{}=\"1\""  \
+                        " and it is not present in the SBE filter XML. Please review."
+                    if (attr.attr_sync.to_sbe == True):
+                        raise ParseError(Message.format(attr.name, "toSBE"))
+                    elif (attr.attr_sync.from_sbe == True):
+                        raise ParseError(Message.format(attr.name, "fromSBE"))
 
 class TargetEntry(object):
     """
