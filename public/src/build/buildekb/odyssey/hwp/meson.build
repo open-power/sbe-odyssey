@@ -130,6 +130,7 @@ infile_c = [
             '/memory/odyssey/hwp/lib/ody_dqs_track_utils.C',
             '/memory/odyssey/hwp/lib/ccs/ody_ccs.C',
             '/memory/odyssey/hwp/lib/mcbist/ody_mcbist.C',
+            '/memory/odyssey/hwp/lib/mcbist/ody_mcbist_address.C',
             '/memory/odyssey/hwp/lib/mcbist/ody_memdiags.C',
             '/memory/odyssey/hwp/lib/workarounds/ody_ccs_des_insert_workaround.C',
             ]

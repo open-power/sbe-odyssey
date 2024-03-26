@@ -4115,7 +4115,6 @@ fapi_try_exit:
 }
 #endif
 
-#ifndef __PPE__
 ///
 /// @brief ATTR_MEM_EFF_DIMM_SIZE getter
 /// @param[in] const ref to the TARGET_TYPE_DIMM
@@ -4135,9 +4134,7 @@ inline fapi2::ReturnCode get_dimm_size(const fapi2::Target<fapi2::TARGET_TYPE_DI
 fapi_try_exit:
     return fapi2::current_err;
 }
-#endif
 
-#ifndef __PPE__
 ///
 /// @brief ATTR_MEM_EFF_DIMM_SIZE getter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -4157,7 +4154,6 @@ inline fapi2::ReturnCode get_dimm_size(const fapi2::Target<fapi2::TARGET_TYPE_ME
 fapi_try_exit:
     return fapi2::current_err;
 }
-#endif
 
 ///
 /// @brief ATTR_MEM_EFF_DIMM_SPARE getter

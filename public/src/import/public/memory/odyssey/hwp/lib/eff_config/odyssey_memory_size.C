@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -37,8 +37,8 @@
 #include <fapi2.H>
 
 #include <lib/shared/ody_consts.H>
-#include <mss_generic_attribute_getters.H>
 #include <generic/memory/lib/utils/memory_size.H>
+#include <mss_generic_attribute_getters.H>
 
 namespace mss
 {

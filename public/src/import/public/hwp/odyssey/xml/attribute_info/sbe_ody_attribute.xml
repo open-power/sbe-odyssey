@@ -1041,6 +1041,10 @@
     <value>0x01</value>
     <value>0x0</value>
   </entry>
+  <entry name="ATTR_MEM_EFF_DIMM_SIZE">
+    <value>0x0</value>
+    <value>0x0</value>
+  </entry>
   <entry name="ATTR_MEM_EFF_NUM_MASTER_RANKS_PER_DIMM">
     <value>0x01</value>
     <value>0x0</value>
