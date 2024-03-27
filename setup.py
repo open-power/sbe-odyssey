@@ -47,7 +47,7 @@ package_directories = {
 
     "udparsers.o4500":          "public/src/tools/debug/plugins/ebmc/",
     "udparsers.poztraceutils":  "public/src/tools/trace/",
-    "udpparsers.pozdebugutils": "public/src/tools/debug/"
+    "udparsers.pozdebugutils": "public/src/tools/debug/"
 }
 # TODO: add golden image stringfiles
 # currently need to run simics and then untar and find the gldnstringfile
