@@ -46,8 +46,8 @@ using namespace fapi2;
 
 struct HssTdrChipopParms
 {
-    uint32_t link_mask;
     uint32_t lane_on;
+    uint32_t link_mask;
 };
 
 struct HssUnloadChipopParms
