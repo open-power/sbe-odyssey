@@ -466,7 +466,7 @@ ReturnCode mod_trigger_start(
     SCAN_REGION_TYPE_t SCAN_REGION_TYPE = 0;        // 0x30005
     CLK_REGION_t CLK_REGION = 0;                    // 0x30006
     OPCG_REG0_t OPCG_REG0;                          // 0x30002
-    PCB_OPCG_GO_t PCB_OPCG_GO;                      // 0x30020
+    PCB_OPCG_GO_t PCB_OPCG_GO = 0;                  // 0x30020
 
     FAPI_DBG("Entering mod_trigger_start...");
 
@@ -476,13 +476,10 @@ ReturnCode mod_trigger_start(
     FAPI_TRY(CLK_REGION.putScom(i_target));
 
     FAPI_TRY(OPCG_REG0.getScom(i_target));
-    OPCG_REG0.set_RUNN_MODE(1);
-    OPCG_REG0.set_OPCG_GO(0);
     OPCG_REG0.set_OPCG_TRIGGER_RCVR_MODE(0);
     OPCG_REG0.set_OPCG_TRIGGER_CTRL_MODE(1);
     FAPI_TRY(OPCG_REG0.putScom(i_target));
 
-    FAPI_TRY(PCB_OPCG_GO.getScom(i_target));
     PCB_OPCG_GO.set_PCB_OPCGGO(1);
     FAPI_TRY(PCB_OPCG_GO.putScom(i_target));
 

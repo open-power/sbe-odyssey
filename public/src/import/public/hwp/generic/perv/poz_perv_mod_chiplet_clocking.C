@@ -235,11 +235,12 @@ fapi_try_exit:
 ReturnCode mod_opcg_go(
     const Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_AND > &i_target)
 {
-    OPCG_REG0_t OPCG_REG0;
     FAPI_DBG("Entering ...");
-    FAPI_TRY(OPCG_REG0.getScom(i_target));
-    OPCG_REG0.set_OPCG_GO(1);
-    FAPI_TRY(OPCG_REG0.putScom(i_target));
+
+    PCB_OPCG_GO_t PCB_OPCG_GO = 0;
+    PCB_OPCG_GO.set_PCB_OPCGGO(1);
+
+    FAPI_TRY(PCB_OPCG_GO.putScom(i_target));
 
 fapi_try_exit:
     FAPI_DBG("Exiting ...");
