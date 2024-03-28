@@ -29,7 +29,7 @@
 #include "odysseylink.H"
 
 #ifndef INITIAL_STACK_SIZE
-#define INITIAL_STACK_SIZE 256
+#define INITIAL_STACK_SIZE 512
 #endif
 #define DOUBLE_WORD_SIZE   8
 
