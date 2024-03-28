@@ -791,8 +791,10 @@ def fspTraceBin(fspTraceBinFile, fspTraceHeader, ppe2fspEntriesAll):
     assert fspTraceBinFileSize == fspTraceHeader.size, "Mismatch in FSP Trace Bin file size"
     assert fspTraceBinFileSize <= maxOutputSize, "FSP trace bin file exceeds max size %s" % maxOutputSize
 
-def get_sbe_trace_data_as_string(ppeTraceBinFile, o_fspTraceBinFile):
+def get_sbe_trace_data_as_string(ppeTraceBinFile, o_fspTraceBinFile, i_fspTraceEndianFormat=sys.byteorder):
 
+    global fspTraceEndianFormat
+    fspTraceEndianFormat = i_fspTraceEndianFormat
     #Parse contents of PK trace bufer
     (pkTraceBuff, pkTraceEntryAll) = parsePkTraceBuff(ppeTraceBinFile)
 
@@ -852,7 +854,7 @@ if __name__ == '__main__':
     if fspTraceEndianFormat == "auto":
         fspTraceEndianFormat = sys.byteorder
 
-    get_sbe_trace_data_as_string(ppeTraceBinFile, fspTraceBinFile)
+    get_sbe_trace_data_as_string(ppeTraceBinFile, fspTraceBinFile, fspTraceEndianFormat)
 
     print(textwrap.dedent(''' \n Converted ppe trace to fsp trace successfully.
           Output path: %s''' % fspTraceBinFile ))
