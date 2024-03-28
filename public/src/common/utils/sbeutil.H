@@ -121,11 +121,6 @@ static inline void UNUSED(int dummy, ...) {}
  *  when SBE code executes this instruction in Simics, Simics will
  *  stop the simulation. (Prompt changes from running> to simics> )
  *
- *  If a hap is registered, then Simics will call the hap handler.  Hap
- *  handlers are written in Python, and the best place for them is
- *
- *     src/tools/debug//poz-simics-debug-framework.py
- *
  *  Sample code to register the hap handler:
  *        # arg contains the integer parameter n passed to MAGIC_INSTRUCTION(n)
  *        def magic_instruction_callback(user_arg, cpu, arg):
