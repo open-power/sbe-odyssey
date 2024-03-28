@@ -29,7 +29,7 @@ import os
 import sys
 from udparsers.helpers.miscUtils import getLid
 from udparsers.poztraceutils.ppe2fsp import get_sbe_trace_data_as_string
-from udparsers.pozdebugutils.ffdcparser import FfdcParser
+from udparsers.pozdebugutils.ffdcparser import PlatFfdcPackage, FfdcPackageHeader_t
 from udparsers.helpers.hostfw_trace import get_binary_trace_data_as_string
 
 def getTraceStrData(i_traceBinDataFile, i_stringFile):
@@ -53,8 +53,8 @@ def getTraces(i_pkTraceBinFile, stringFileCommitId):
     traceBinDataFile = "/tmp/pozTraceBin"
     get_sbe_trace_data_as_string(i_pkTraceBinFile, traceBinDataFile)
     lidMap = {
-        "RT_STRING_FILE":"81E006BD.lid",
-        "GLDN_STRING_FILE":"81E006BE.lid"
+        "RT_STRING_FILE":"81e006bd.lid",
+        "GLDN_STRING_FILE":"81e006be.lid"
     }
     stringFileLid = lidMap["RT_STRING_FILE"]
     if (stringFileCommitId == 0x35b89840):
@@ -84,27 +84,28 @@ def parseUDToJson(subType, ver, data):
     try:
         #  - fwDetails
         #  - traces
-        ffdc = FfdcParser(data)
-        # we will have only 1 package in the data and that will be plat package
-        platPkg = ffdc.ffdc_packages[-1]
-        platPkgHeader = platPkg.plat_header
-        userData["fwDetails"] = {
-                            "PrimaryRc":platPkgHeader.priRc,
-                            "SecondaryRc":platPkgHeader.SecRc,
-                            "FWCommitId":platPkgHeader.fwCommitId,
-                            "DD Major":platPkgHeader.ddMajor,
-                            "DD Minor":platPkgHeader.ddMinor,
-                            "Thread Id":platPkgHeader.threadId
+        # create dummy header and pass that
+        ffdcHeader = FfdcPackageHeader_t(magicBytes=0xFBAD, len=0, seqId=0,
+                                        cmdClass=0, cmd=0, slid=0, severity=0,
+                                        chipId=0, fapiRc=0x2000001)
+        ffdcHdrByteArr = bytearray(ffdcHeader)
+        ffdcHdrByteArr.extend(bytearray(data))
+        platFfdcPackage = PlatFfdcPackage(ffdcHeader, ffdcHdrByteArr)
+        platPkgHeader = platFfdcPackage.plat_header
+        userData["fwDetails"]= {
+                            "PrimaryRc":hex(platPkgHeader.priRc),
+                            "SecondaryRc":hex(platPkgHeader.SecRc),
+                            "FWCommitId":hex(platPkgHeader.fwCommitId),
+                            "DD Major":hex(platPkgHeader.ddMajor),
+                            "DD Minor":hex(platPkgHeader.ddMinor),
+                            "Thread Id":hex(platPkgHeader.threadId)
                         }
-        # binary traces
-        # should not assume if traces are present
-        # if present parse it else return header
-        sbeFwCommitId = platPkg.plat_header.fwCommitId
+        sbeFwCommitId = platPkgHeader.fwCommitId
         traceBlob =[]
-        if "trace" in platPkg.blobs:
-            traceBlob = ffdc.ffdc_packages[-1].blobs['trace']
+        if "trace" in platFfdcPackage.blobs:
+            traceBlob = platFfdcPackage.blobs['trace']
         with open(pkTraceBinFile, 'wb') as traceBinFile:
-            traceBinFile.write(ffdc.ffdc_packages[-1].blobs['trace'])
+            traceBinFile.write(platFfdcPackage.blobs['trace'])
         if os.path.exists(pkTraceBinFile):
             trace = getTraces(pkTraceBinFile, sbeFwCommitId)
             if trace is not None:
@@ -112,7 +113,6 @@ def parseUDToJson(subType, ver, data):
             os.remove(pkTraceBinFile)
     except Exception as e:
         userData["Exception_Error"] = e
-
     userDataJsonStr = str()
     if userData is not None:
         userDataJsonStr = json.dumps(userData)
