@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022,2023                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -95,9 +95,6 @@
     <virtual/>
   </entry>
   <entry name="ATTR_CHIP_EC_FEATURE_EX_ZIGZAG_STAGGER">
-    <virtual/>
-  </entry>
-  <entry name="ATTR_CHIP_EC_FEATURE_NO_REPR_LBIST">
     <virtual/>
   </entry>
   <entry name="ATTR_CHIP_EC_FEATURE_PCIE_CLK_EN">
