@@ -536,32 +536,28 @@ ReturnCode poz_bist(
     {
         FAPI_INF("Do an arrayinit");
 
-        uint8_t l_no_repr_lbist;
-        FAPI_TRY(FAPI_ATTR_GET(ATTR_CHIP_EC_FEATURE_NO_REPR_LBIST, i_target, l_no_repr_lbist));
+        // Scan load standard RTG
+        FAPI_TRY(putRing(i_target, ring_id::chiplet_rtg));
+        FAPI_TRY(putRing(i_target, ring_id::core_rtg));
+        FAPI_TRY(putRing(i_target, ring_id::sh_rtg));
 
-        if (l_no_repr_lbist)
-        {
-            // Scan load VPD RTG
-            FAPI_TRY(putRing(i_target, ring_id::chiplet_rtg));
-            FAPI_TRY(putRing(i_target, ring_id::core_rtg));
-            FAPI_TRY(putRing(i_target, ring_id::sh_rtg));
-
-            // Scan load generic RTG optimizations for ABIST
-            FAPI_TRY(putRing(l_chiplets_target, ring_id::abist_chiplet_rtg));
-            FAPI_TRY(putRing(l_chiplets_target, ring_id::abist_core_rtg));
-            FAPI_TRY(putRing(l_chiplets_target, ring_id::abist_sh_rtg));
-        }
+        // Scan load RTG optimizations for ABIST
+        FAPI_TRY(putRing(l_chiplets_target, ring_id::abist_chiplet_rtg));
+        FAPI_TRY(putRing(l_chiplets_target, ring_id::abist_core_rtg));
+        FAPI_TRY(putRing(l_chiplets_target, ring_id::abist_sh_rtg));
 
         // Do the arrayinit
         FAPI_TRY(mod_arrayinit(l_chiplets_target, l_all_active_regions, ARRAYINIT_RUNN_CYCLES, false,
                                ARRAYINIT_LINEAR_STAGGER));
 
-        if (l_no_repr_lbist)
-        {
-            // Post-arrayinit scan0
-            FAPI_TRY(mod_scan0(l_chiplets_target, l_all_active_regions, i_params.scan0_types,
-                               i_params.flags & i_params.bist_flags::SCAN0_ARY_FILL));
-        }
+        // Restore standard RTG minus repr
+        FAPI_TRY(mod_scan0(l_chiplets_target, l_all_active_regions, SCAN_TYPE_RTG | i_params.scan0_types,
+                           i_params.flags & i_params.bist_flags::SCAN0_ARY_FILL));
+        FAPI_TRY(putRing(i_target, ring_id::chiplet_rtg));
+        FAPI_TRY(putRing(i_target, ring_id::core_rtg));
+        FAPI_TRY(putRing(i_target, ring_id::sh_rtg));
+        FAPI_TRY(mod_scan0(l_chiplets_target, l_all_active_regions, SCAN_TYPE_REPR,
+                           i_params.flags & i_params.bist_flags::SCAN0_ARY_FILL));
 
         o_diags.completed_stages |= i_params.bist_stages::ARRAYINIT;
     }
