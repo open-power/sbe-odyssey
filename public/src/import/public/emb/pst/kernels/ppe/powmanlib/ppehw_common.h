@@ -30,12 +30,12 @@
 /// 64bits data
 typedef union
 {
-    uint64_t value;
+    uint64_t value; ///< Raw value
     struct
     {
-        uint32_t upper;
-        uint32_t lower;
-    } words;
+        uint32_t upper; ///< Upper word
+        uint32_t lower; ///< Lower word
+    } words;        ///< Sub words
 } data64_t;
 
 /// 64bit variable breaking into two 32bits macro

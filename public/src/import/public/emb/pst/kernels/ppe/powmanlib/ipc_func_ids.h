@@ -25,8 +25,8 @@
 
 #pragma once
 
-/// \file ipc_func_ids.h
-/// \brief This file contains the definition of the valid IPC function IDs
+/// @file ipc_func_ids.h
+/// @brief This file contains the definition of the valid IPC function IDs
 /// used for interprocessor communications (IPC) in the OCC.
 
 #if defined(__TCC_PLAT)

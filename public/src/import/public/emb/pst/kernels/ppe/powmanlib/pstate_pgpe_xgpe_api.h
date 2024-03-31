@@ -25,45 +25,50 @@
 #ifndef __PSTATES_PGPE_XGPE_API_H__
 #define __PSTATES_PGPE_XGPE_API_H__
 
+/// @file pstate_pgpe_xgpe_api.h
+/// @brief Common structs and functions shared between Pgpe and Xgpe.
 
-#define IPC_PGPE_XGPE_RC_NULL       0x0
-#define IPC_PGPE_XGPE_RC_SUCCESS       0x1
+#define IPC_PGPE_XGPE_RC_NULL       0x0     ///< Null
+#define IPC_PGPE_XGPE_RC_SUCCESS    0x1     ///< Success
 
+/// VRetention Update Types
 enum UPDATE_VRET_TYPES
 {
     UPDATE_VRET_TYPE_CLEAR  =   0x0,
     UPDATE_VRET_TYPE_SET    =   0x1,
 };
 
+/// XGPE Request Operation Types
 enum REQUEST_OP_TYPES
 {
     REQUEST_BEACON_STOP      =   0x1,
 };
 
+/// @brief PGPE to XGPE update VRET structure
 typedef union
 {
-    uint64_t value;
+    uint64_t value; ///< Raw value
     struct
     {
-        uint64_t  reserved          : 4;
-        uint64_t  update_type       : 4;
-        uint64_t  reserved1         : 48;
-        uint64_t  return_code       : 8;
-    } fields;
+        uint64_t  reserved          : 4;    ///< Reserved
+        uint64_t  update_type       : 4;    ///< Type of update (UPDATE_VRET_TYPES)
+        uint64_t  reserved1         : 48    ///< Reserved
+        uint64_t  return_code       : 8;    ///< Return code
+    } fields;       ///< Sub fields
 } ipcmsg_p2x_update_vret_t;
 
 
-
+/// @brief XGPE to PGPE request beacon stop structure
 typedef union
 {
-    uint64_t value;
+    uint64_t value; ///< Raw value
     struct
     {
-        uint64_t  reserved          : 4;
-        uint64_t  req_type          : 4;
-        uint64_t  reserved1         : 48;
-        uint64_t  return_code       : 8;
-    } fields;
+        uint64_t  reserved          : 4;    ///< Reserved
+        uint64_t  req_type          : 4;    ///< Request type (REQUEST_OP_TYPES)
+        uint64_t  reserved1         : 48;   ///< Reserved
+        uint64_t  return_code       : 8;    ///< Return code
+    } fields;       ///< Sub fields
 } ipcmsg_req_beacon_stop_t;
 
 #endif

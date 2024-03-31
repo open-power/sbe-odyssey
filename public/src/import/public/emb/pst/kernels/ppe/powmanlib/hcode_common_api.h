@@ -40,9 +40,12 @@
 extern "C" {
 #endif
 
-//
-// Hcode IPC Return Codes
-//
+/// @addtogroup pm_hcode_lib
+/// @}
+
+///
+/// Hcode IPC Return Codes
+///
 enum IPC_MESSAGE_RCS
 {
     IPC_RC_ERRLOG_FAILED            = 0x00000100,
@@ -52,42 +55,45 @@ enum IPC_MESSAGE_RCS
     IPC_RC_PMSUSPEND_FAILED         = 0x00000300,
 };
 
-
-typedef struct ipcmsg_base
+///
+/// Base contents
+///
+typedef struct
 {
-    int32_t   rc;
+    int32_t   rc;                   ///< Return code
 } ipcmsg_base_t;
 
-//
-// Error Logging
-//
-
-typedef struct ipcmsg_errlog
+///
+/// Error Logging
+///
+typedef struct
 {
-    ipcmsg_base_t   msg_cb;
-    void*           errl_ptr;
+    ipcmsg_base_t   msg_cb;         ///< Message control block
+    void*           errl_ptr;       ///< Error log pointer
 } ipcmsg_errlog_t;
 
-//
-// Deep Operational Trace Offloading
-//
-typedef struct ipcmsg_doptrace_ofl
+///
+/// Deep Operational Trace Offloading
+///
+typedef struct
 {
-    ipcmsg_base_t   msg_cb;
-    void*           doptrc_ptr;
+    ipcmsg_base_t   msg_cb;         ///< Message control block
+    void*           doptrc_ptr;     ///< Deep operational trace pointer
 } ipcmsg_doptrace_ofl_t;
 
-//
-// PM Suspend
-//
-typedef struct ipcmsg_pmsuspend
+///
+/// PM Suspend
+///
+typedef struct
 {
-    ipcmsg_base_t   msg_cb;
+    ipcmsg_base_t   msg_cb;         ///< Message control block
 } ipcmsg_pmsuspend_t;
 
 
 #ifdef __cplusplus
 } // end extern C
 #endif
+
+/// @} end addtogroup
 
 #endif    /* __HCODE_COMMON_API_H__ */

@@ -25,8 +25,8 @@
 #ifndef __TCCHW_INTERRUPTS_H__
 #define __TCCHW_INTERRUPTS_H__
 
-/// \file tcchw_interrupts.h
-/// \brief Interrupt assignments and macros for the TCC
+/// @file tcchw_interrupts.h
+/// @brief Interrupt assignments and macros for the TCC
 ///
 
 #ifndef __ASSEMBLER__
@@ -36,7 +36,7 @@
 ////////////////////////////////////////////////////////////////////////////
 // IRQ
 ////////////////////////////////////////////////////////////////////////////
-
+/// @cond
 // The OCB interrupt controller consists of 2 x 32-bit controllers.  Unlike
 // PPC ASICs, the OCB controllers are _not_ cascaded.  The combined
 // controllers are presented to the application as if there were a single
@@ -218,5 +218,5 @@
         ( TCCHW_IRQ_MASK64(__irq) & TCCHW_VALID_IRQ_MASK); } )
 
 #endif  /* __ASSEMBLER__ */
-
+/// @endcond
 #endif  /* __TCCHW_INTERRUPTS_H__ */

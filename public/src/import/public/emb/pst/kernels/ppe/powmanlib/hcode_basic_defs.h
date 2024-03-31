@@ -24,12 +24,21 @@
 /* IBM_PROLOG_END_TAG                                                     */
 #include <stdint.h>
 
+/// @cond
 #define UNDEFINED_MAX_8   (uint8_t )0xff
 #define UNDEFINED_MAX_16  (uint16_t)0xffff
 #define UNDEFINED_MAX_32  (uint32_t)0xffffffff
 #define UNDEFINED_MAX_64  (uint64_t)0xffffffffffffffff
 #define UNDEFINED_ZERO    (uint32_t)0x00000000
+/// @endcond
 
+/// @addtogroup pm_hcode_lib
+/// {@
+
+/// @brief Perform endian byte swapping on a 2B (16b) value
+///
+/// @param[i]   i_data  Input data
+/// @raturn             Byte swapped value
 static inline uint16_t endian_swap16( uint16_t i_data)
 {
     return (i_data >> 8 | i_data << 8);
@@ -55,3 +64,5 @@ void memcpy64( uint64_t* i_dst, uint64_t* i_src, uint32_t i_bytesize)
     }
 }
 #endif
+
+/// @} end addtogroup

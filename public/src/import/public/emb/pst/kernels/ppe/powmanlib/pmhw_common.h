@@ -25,15 +25,15 @@
 #ifndef __PMHW_COMMON_H__
 #define __PMHW_COMMON_H__
 
-/// \file pmhw_common.h
-/// \brief Common header for OCC and TCC platforms (all kernels)
-
+/// @file pmhw_common.h
+/// @brief Common PPE hardware functions.
 
 #ifndef __ASSEMBLER__
     #include <stdint.h>
-    extern unsigned int g_ocb_timer_divider; //grm
+    extern unsigned int g_ocb_timer_divider; ///< Timer divider
 #endif
 
+/// @cond
 
 ////////////////////////////////////////////////////////////////////////////
 // Interrupt trigger definitions, IRQ list and IRQ routing table
@@ -135,6 +135,7 @@
     #define PMHW_OIRRC_OR(irq)  (((irq) & 0x20) ? OCB_OIRR1C_OR  : OCB_OIRR0C_OR)
     #define PMHW_OIRRC_CLR(irq) (((irq) & 0x20) ? OCB_OIRR1C_CLR : OCB_OIRR0C_CLR)
 #endif  /* __ASSEMBLER__ */
+
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -378,6 +379,8 @@
 #define PCB_MULTICAST_COMPARE 4
 #define PCB_MULTICAST_WRITE   5
 
+/// @endcond  Turn on Doxygen
+
 /// \defgroup pcb_multicast_groups PCB Multicast Groups
 ///
 /// Technically the multicast groups are programmable; This is the multicast
@@ -390,13 +393,14 @@
 ///
 /// @{
 
-#define MC_GROUP_ALL         0
-#define MC_GROUP_EX          1
-#define MC_GROUP_EX_CORE     2
-#define MC_GROUP_ALL_BUT_PRV 3
+#define MC_GROUP_ALL         0      ///< All
+#define MC_GROUP_EX          1      ///< EX no cores
+#define MC_GROUP_EX_CORE     2      ///< EX cores
+#define MC_GROUP_ALL_BUT_PRV 3      ///< All but pervasive
 
 /// @}
 
+/// @cond
 
 /// Convert any SCOM address to a multicast address
 #define MC_ADDRESS(address, group, mode) \
@@ -415,7 +419,6 @@
 /// The 64KB OCI HTM marker space is enabled by default at 0xC0070000
 ///
 /// See the comments for occhw_trace.h
-
 #define PBA_OCI_MARKER_BASE 0xC0070000
 
 
@@ -585,7 +588,6 @@
 
 #define SPRN_PC_AUTOINCREMENT                  0x400
 
-
 ////////////////////////////////
 /// DIMM sensor status codes ///
 ////////////////////////////////
@@ -632,5 +634,5 @@
     #define PMHW_PANIC_TEST6           0x0062fff6
     #define PMHW_PANIC_TEST7           0x0062fff7
 #endif
-
+/// @endcond
 #endif  /* __OCCHW_COMMON_H__ */

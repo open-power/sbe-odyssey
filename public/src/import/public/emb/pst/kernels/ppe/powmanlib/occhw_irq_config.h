@@ -25,8 +25,8 @@
 #ifndef __OCCHW_IRQ_CONFIG_H__
 #define __OCCHW_IRQ_CONFIG_H__
 
-/// \file occhw_irq_config.h
-/// \brief Contains data and macros pertaining to external interrupt routing
+/// @file occhw_irq_config.h
+/// @brief Contains data and macros pertaining to external interrupt routing
 ///        and configuration for processors running in the OCC complex.
 ///
 
@@ -37,14 +37,14 @@
 
 #ifndef __ASSEMBLER__
     /// These globals are statically initialized elsewhere
-    extern uint64_t g_ext_irqs_routeA;
-    extern uint64_t g_ext_irqs_routeB;
-    extern uint64_t g_ext_irqs_routeC;
-    extern uint64_t g_ext_irqs_type;
-    extern uint64_t g_ext_irqs_owned;
-    extern uint64_t g_ext_irqs_polarity;
-    extern uint64_t g_ext_irqs_enable;
-
+    extern uint64_t g_ext_irqs_routeA;      ///< Route A
+    extern uint64_t g_ext_irqs_routeB;      ///< Route B
+    extern uint64_t g_ext_irqs_routeC;      ///< Route C
+    extern uint64_t g_ext_irqs_type;        ///< Type
+    extern uint64_t g_ext_irqs_owned;       ///< Owned
+    extern uint64_t g_ext_irqs_polarity;    ///< Polarity
+    extern uint64_t g_ext_irqs_enable;      ///< Enable
+    /// Check if IRQ is owned by the platform
     #define PLATHW_IRQ_OWNED(irq) ((OCCHW_IRQ_MASK64(irq) & g_ext_irqs_owned) != 0)
 
 #endif

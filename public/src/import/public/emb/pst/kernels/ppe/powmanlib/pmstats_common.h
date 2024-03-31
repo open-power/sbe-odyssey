@@ -25,102 +25,108 @@
 #ifndef __PMSTATS_COMMON_H__
 #define __PMSTATS_COMMON_H__
 
+/// @file pmstats_common.h
+/// @brief Common structs and functions for capturing time duration statistics
+/// of some repetitive activity, like gathering DTS data or calculating IDDQ.
+///
+/// @details
+/// What this API does
+/// ------------------
+/// - Calculates the duration between two TBR time samples, saves it away in a
+///   circular buffer, managed by the API, and finds the avg/min/max of the 16
+///   most recent, ie "running", time samples.
+/// - The updated avg/min/max of the running samples are put into a measurement
+///   statistics data structure, MeasStats_t, supplied by the caller.
+/// - For every 16 time samples two other sets of avg/min/max are updated in the
+///   data structure:
+///   1) the previous set of running values and
+///   2) the lifetime set of all other avg/min/max values that ever were captured
+///      in all other previous sets of previous data (see Characteristics below).
+/// - It will gradually ramp up the running sample count during the gathering of
+///   the very first 16 samples. After this it will enter the steady state phase.
+///
+/// How to use this API
+/// -------------------
+/// - Use meas_stats_init() to initialize your local MeasStats_t data block.
+/// - Use meas_stats_update() to update your local MeasStats_t data block.
+/// - Do *not* modify any of the fields of MeasStats_t data in your local code.
+///
+/// Characteristics
+/// ---------------
+/// - The three data sets captured in the MeasStats_t structure represent
+///   statistical information of the following time zones (given in TBR ticks
+///   of increasing age):
+///   - Running set  :  1-16
+///   - Previous set :  2-17(*) -> 17-32(**)
+///   - Lifetime set : 18-oo(*) -> 33-oo(**)
+/// - The previous data set ("prev") in the MeasStats_t struct is a snapshot of
+///   the running data set ("run") and is updated every 16 samples.
+/// - Also on every 16 samples, the lifetime data set ("life") is updated with
+///   the content of the previous data set. However, importantly, it's updated
+///   **before** the previous data set is being updated with the snapshot of
+///   the running data.
+///
+/// Assumptions of this API
+/// -----------------------
+/// - Time stamps are in TBR ticks.
+/// - Durations are captured in 32-bit variables.
+///   - Assuming a 32 ns TBR tick and a running sample size of 16, the maximum
+///     span between two time stamps supplied to the API should not exceed 8 sec.
+/// - Only this API can update the content of the MeasStats_t data block.
+///
+
 #include <iota.h>
 #include <iota_trace.h>
 #include "pmtiming_common.h"
 
-
-//******************************************************************************
-// What this API does
-// ------------------
-// - Calculates the duration between two TBR time samples, saves it away in a
-//   circular buffer, managed by the API, and finds the avg/min/max of the 16
-//   most recent, ie "running", time samples.
-// - The updated avg/min/max of the running samples are put into a measurement
-//   statistics data structure, MeasStats_t, supplied by the caller.
-// - For every 16 time samples two other sets of avg/min/max are updated in the
-//   data structure:
-//   1) the previous set of running values and
-//   2) the lifetime set of all other avg/min/max values that ever were captured
-//      in all other previous sets of previous data (see Characteristics below).
-// - It will gradually ramp up the running sample count during the gathering of
-//   the very first 16 samples. After this it will enter the steady state phase.
-//
-// How to use this API
-// -------------------
-// - Use meas_stats_init() to initialize your local MeasStats_t data block.
-// - Use meas_stats_update() to update your local MeasStats_t data block.
-// - Do *not* modify any of the fields of MeasStats_t data in your local code.
-//
-// Characteristics
-// ---------------
-// - The three data sets captured in the MeasStats_t structure represent
-//   statistical information of the following time zones (given in TBR ticks
-//   of increasing age):
-//   - Running set  :  1-16
-//   - Previous set :  2-17(*) -> 17-32(**)
-//   - Lifetime set : 18-oo(*) -> 33-oo(**)
-// - The previous data set ("prev") in the MeasStats_t struct is a snapshot of
-//   the running data set ("run") and is updated every 16 samples.
-// - Also on every 16 samples, the lifetime data set ("life") is updated with
-//   the content of the previous data set. However, importantly, it's updated
-//   **before** the previous data set is being updated with the snapshot of
-//   the running data.
-//
-// Assumptions of this API
-// -----------------------
-// - Time stamps are in TBR ticks.
-// - Durations are captured in 32-bit variables.
-//   - Assuming a 32 ns TBR tick and a running sample size of 16, the maximum
-//     span between two time stamps supplied to the API should not exceed 8 sec.
-// - Only this API can update the content of the MeasStats_t data block.
-//
-//******************************************************************************
-
-
+/// Maximum duration
 #define DURATION_MAX           (uint32_t)0xffffffff
+/// Running sample size
 #define RUNNING_SAMPLES_SIZE   (uint16_t)16
 
-//
-// Structure for collecting measurement duration statistics
-// Notes:
-// - Three types of duration stats are collected:
-//   - "run": The most recent [running] stats are updated while accumulating the most
-//     recent [running] duration measurements.
-//   - "prev": The previous stats are replaced with a snapshot of the most recent
-//     [running] stats every time the sample_count_life equals a multiple of the
-//     RUNNING_SAMPLE_SIZE.
-//   - "life": The lifetime stats are updated every time we replace the duration_prev
-//     values. Note that the lifetime stats are a reflection of the past and does
-//     *NOT* take into consideration the running values (until they show up in the
-//     previous values). This is so that, if something goes wrong, that the possibly
-//     increased duration_run max and avg values can be distinguished from the
-//     possibly more normal operation depicted in the duration_life values.
-//
+/// @addtogroup pm_hcode_lib
+/// @{
+
+///
+/// @brief Structure for collecting measurement duration statistics
+/// @note
+/// - Three types of duration stats are collected:
+///   - "run": The most recent [running] stats are updated while accumulating the most
+///     recent [running] duration measurements.
+///   - "prev": The previous stats are replaced with a snapshot of the most recent
+///     [running] stats every time the sample_count_life equals a multiple of the
+///     RUNNING_SAMPLE_SIZE.
+///   - "life": The lifetime stats are updated every time we replace the duration_prev
+///     values. Note that the lifetime stats are a reflection of the past and does
+///     *NOT* take into consideration the running values (until they show up in the
+///     previous values). This is so that, if something goes wrong, that the possibly
+///     increased duration_run max and avg values can be distinguished from the
+///     possibly more normal operation depicted in the duration_life values.
+///
 typedef struct
 {
-    uint32_t duration_run_latest; // Most recent sample
-    uint32_t duration_run_buf[RUNNING_SAMPLES_SIZE]; // FIFO circular buffer
-    uint32_t run_buf_pos;         // Position of oldest value in FIFO (to be over written)
-    uint32_t duration_run_acc;    // Accummulated (summed) value of most recent values in FIFO
-    uint32_t duration_run_avg;    // Avg value of most recent values in FIFO
-    uint32_t duration_run_min;    // Min value of most recent values in FIFO
-    uint32_t duration_run_max;    // Max value of most recent values in FIFO
-    uint32_t duration_prev_avg;   // Avg value of prev RUNNING_SAMPLES_SIZE set of recent values
-    uint32_t duration_prev_min;   // Min value of prev RUNNING_SAMPLES_SIZE set of recent values
-    uint32_t duration_prev_max;   // Max value of prev RUNNING_SAMPLES_SIZE set of recent values
-    uint32_t duration_life_min;   // Min lifetime val of all prev sets (excl current run vals)
-    uint32_t duration_life_max;   // Max lifetime val of all prev sets (excl current run vals)
-    uint32_t sample_count_life;   // Number of lifetime samples
+    uint32_t duration_run_latest; ///< Most recent sample
+    uint32_t duration_run_buf[RUNNING_SAMPLES_SIZE]; ///< FIFO circular buffer
+    uint32_t run_buf_pos;         ///< Position of oldest value in FIFO (to be over written)
+    uint32_t duration_run_acc;    ///< Accummulated (summed) value of most recent values in FIFO
+    uint32_t duration_run_avg;    ///< Avg value of most recent values in FIFO
+    uint32_t duration_run_min;    ///< Min value of most recent values in FIFO
+    uint32_t duration_run_max;    ///< Max value of most recent values in FIFO
+    uint32_t duration_prev_avg;   ///< Avg value of prev RUNNING_SAMPLES_SIZE set of recent values
+    uint32_t duration_prev_min;   ///< Min value of prev RUNNING_SAMPLES_SIZE set of recent values
+    uint32_t duration_prev_max;   ///< Max value of prev RUNNING_SAMPLES_SIZE set of recent values
+    uint32_t duration_life_min;   ///< Min lifetime val of all prev sets (excl current run vals)
+    uint32_t duration_life_max;   ///< Max lifetime val of all prev sets (excl current run vals)
+    uint32_t sample_count_life;   ///< Number of lifetime samples
 } MeasStats_t;
 
 
-/**
- * @function   meas_stats_init()
- * @brief      Initializes measurement duration statistics struct settings
- * @param[out] o_stats //Measurement statistics struct
- * @return     None
- */
+///
+/// @brief Initializes measurement duration statistics struct settings
+///
+/// @param[inout] o_stats Pointer to measurement statistics struct
+/// @return None
+///
 static inline void meas_stats_init(MeasStats_t* o_stats)
 {
     uint8_t i;
@@ -142,14 +148,14 @@ static inline void meas_stats_init(MeasStats_t* o_stats)
 }
 
 
-/**
- * @function   meas_stats_update
- * @brief      Updates measuremet duration statistics
- * @param[in]  i_tbr_begin  //Begining TBR value (at begining of measurements)
- * @param[in]  i_tbr_end    //Ending TBR value (at end of measurements)
- * @param[in/out] io_stats  //Measurement duration statistics struct
- * @return     None
- */
+///
+/// @brief Updates measuremet duration statistics
+///
+/// @param[in]      i_tbr_begin Begining TBR value (at begining of measurements)
+/// @param[in]      i_tbr_end Ending TBR value (at end of measurements)
+/// @param[inout]   io_stats Measurement duration statistics struct
+/// @return None
+///
 static inline void meas_stats_update( uint32_t i_tbr_begin, uint32_t i_tbr_end, MeasStats_t* io_stats)
 {
     // Update sample count
@@ -275,5 +281,7 @@ static inline void meas_stats_update( uint32_t i_tbr_begin, uint32_t i_tbr_end, 
         io_stats->run_buf_pos = pos;
     }
 }
+
+/// @} end addtogroup
 
 #endif  /* __PMSTATS_COMMON_H__ */

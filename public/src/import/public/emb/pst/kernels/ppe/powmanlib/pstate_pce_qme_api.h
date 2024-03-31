@@ -22,16 +22,25 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+
+/// @file  pstate_pce_qme_api.h
+/// @brief Elements between the QME and PCE
+
 #ifndef __PSTATE_PGPE_QME_API_H__
 #define __PSTATE_PGPE_QME_API_H__
 
-
+///
+/// @brief PCE to QME Doorbell 2 message IDs
+///
 enum MESSAGE_ID_DB2
 {
     MSGID_DB2_DDS_AUTO          = 0xFC,
     MSGID_DB2_DDS_DISABLE       = 0xFD,
 };
 
+///
+/// @brief QME to PCE PCB Type 2 acknowledgement IDs
+///
 enum MESSAGE_ID_PCB_TYPE2_ACK_TYPES
 {
     MSGID_PCB_TYPE2_ACK_AUTO_DDS_SUCCESS        = 0xFC,
@@ -39,21 +48,22 @@ enum MESSAGE_ID_PCB_TYPE2_ACK_TYPES
     MSGID_PCB_TYPE2_ACK_QME_ERROR               = 0xFF,
 };
 
-typedef union qme_pgpe_pcb0
+///
+/// @brief QME to PCE PCB Pstate request structure
+///
+typedef union
 {
-    uint32_t value;
+    uint32_t value; ///< Raw value
     struct
     {
 #ifdef _BIG_ENDIAN
-        uint32_t reserved       : 24;
-        uint32_t pstate_target  : 8;
+        uint32_t reserved       : 24;       ///< Reserved
+        uint32_t pstate_target  : 8;        ///< Pstate target (Host or Characterization mode)
 #else
-        uint32_t pstate_target  : 8;
-        uint32_t reserved       : 24;
+        uint32_t pstate_target  : 8;        ///< Pstate target (Host or Characterization mode)
+        uint32_t reserved       : 24;       ///< Reserved
 #endif
-    } fields;
-}   qme_pgpe_pcb0_t;
-
-
+    } fields;       ///< Sub fields
+}   qme_pce_pcb0_t;
 
 #endif //__PSTATE_PGPE_QME_API_H__

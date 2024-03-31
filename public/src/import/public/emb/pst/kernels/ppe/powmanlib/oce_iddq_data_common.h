@@ -25,38 +25,40 @@
 #ifndef __OCE_IDDQ_DATA_COMMON_H__
 #define __OCE_IDDQ_DATA_COMMON_H__
 
+/// @file oce_iddq_data_common.h
+/// @brief OCE generated IDDQ structures
+
 #include <stdint.h>
 #include <pst_hcode_image_defines.H>
 
-
-//
-// OCEIDDQData_t : High-level OCE IDDQ data struct for OCC(405)
-//
-// Notes:
-// - oce_status_flag is a vector and may have multiple bits set.
-// - The data block is managed in link.ld to guarantee 8-byte alignment.
-//
+///
+/// @brief High-level OCE IDDQ data struct for OCC(405)
+///
+/// Notes:
+/// - oce_status_flag is a vector and may have multiple bits set.
+/// - The data block is managed in link.ld to guarantee 8-byte alignment.
+///
 typedef struct
 {
-    uint32_t     iddq_100ua;              // 4B
-    uint32_t     tbr_new_dce_data_detect; // 4B - Time OCE detected NEW data from DCE
-    uint32_t     tbr_iddq_calc_duration;  // 4B - IDDQ calculation duration (ref: data_ready detect)
-    uint32_t     tod_iddq_rcvd;           // 4B - For optional use by 405 using local 2MHz TOD
-    uint16_t     oce_status_flag;         // 2B - Status vector. See OCE_STATUS_FLAGS enum below.
-    uint16_t     undefined[3];            // 6B - Pad to 8B (VC push demand)
+    uint32_t     iddq_100ua;              ///< 4B - IDDQ current (0.1mA)
+    uint32_t     tbr_new_dce_data_detect; ///< 4B - Time OCE detected NEW data from DCE
+    uint32_t     tbr_iddq_calc_duration;  ///< 4B - IDDQ calculation duration (ref: data_ready detect)
+    uint32_t     tod_iddq_rcvd;           ///< 4B - For optional use by 405 using local 2MHz TOD
+    uint16_t     oce_status_flag;         ///< 2B - Status vector. See OCE_STATUS_FLAGS enum below.
+    uint16_t     undefined[3];            ///< 6B - Pad to 8B (VC push demand)
 } OCEIDDQData_t;
 
 
-//
-// Enum of OCE status flags (used by OCEIDDQData_t.oce_status_flag)
-//
+///
+/// @brief Enum of OCE status flags (used by OCEIDDQData_t.oce_status_flag)
+///
 enum OCE_STATUS_FLAGS
 {
-    OCE_STATUS_RESET               = 0b0000000000000000, //Reset init value
-    OCE_STATUS_NORMAL              = 0b0000000000000001, //All is NORMAL
-    OCE_STATUS_DCE_NOT_RESPONDING  = 0b0000000000000010, //DCE has not updated w/NEW data in >1ms
-    OCE_STATUS_IDDQ_RESULT_STALE   = 0b0000000000000100, //Previous time slot's Iddq result used
-    OCE_STATUS_IDDQ_GOING_NEGATIVE = 0b0000000000001000, //Iddq calc going negative
+    OCE_STATUS_RESET               = 0b0000000000000000, ///<Reset init value
+    OCE_STATUS_NORMAL              = 0b0000000000000001, ///<All is NORMAL
+    OCE_STATUS_DCE_NOT_RESPONDING  = 0b0000000000000010, ///<DCE has not updated w/NEW data in >1ms
+    OCE_STATUS_IDDQ_RESULT_STALE   = 0b0000000000000100, ///<Previous time slot's Iddq result used
+    OCE_STATUS_IDDQ_GOING_NEGATIVE = 0b0000000000001000, ///<Iddq calc going negative
 };
 
 
