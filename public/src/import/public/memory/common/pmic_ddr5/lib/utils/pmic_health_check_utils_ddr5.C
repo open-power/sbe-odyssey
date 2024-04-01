@@ -35,8 +35,8 @@
 // EKB-Mirror-To: hostboot
 
 #include <fapi2.H>
-#include <pmic_health_check_utils_ddr5.H>
-#include <pmic_periodic_telemetry_utils_ddr5.H>
+#include <lib/utils/pmic_health_check_utils_ddr5.H>
+#include <lib/utils/pmic_periodic_telemetry_utils_ddr5.H>
 #include <lib/i2c/i2c_pmic.H>
 #include <lib/utils/pmic_consts.H>
 #include <pmic_regs.H>
@@ -86,7 +86,6 @@ void attempt_recovery(mss::pmic::ddr5::target_info_pmic_dt_pair& io_pmic_dt_targ
     fapi2::buffer<uint8_t> l_dt_data_to_write[NUM_BYTES_TO_WRITE];
     fapi2::buffer<uint8_t> l_pmic_buffer;
     fapi2::buffer<uint8_t> l_data_recovery_count;
-
     // Disable efuse
     mss::pmic::ddr5::dt_reg_write(io_pmic_dt_target_info, DT_REGS::EN_REGISTER, 0x00);
 
@@ -183,48 +182,6 @@ void check_and_advance_breadcrumb_reg(mss::pmic::ddr5::target_info_pmic_dt_pair&
 }
 
 ///
-/// @brief Update bread crumbs for a specific PMIC/DT pair
-///
-/// @param[in,out] io_pmic_dt_target_info PMIC and DT target info struct
-/// @param[in,out] io_health_check_info health check struct
-/// @param[in] DT number to be checked for breadcrumbs
-/// @return FAPI2_RC_SUCCESS iff okay
-///
-void update_breadcrumb(mss::pmic::ddr5::target_info_pmic_dt_pair& io_pmic_dt_target_info,
-                       mss::pmic::ddr5::health_check_telemetry_data& io_health_check_info,
-                       const uint8_t i_dt_number)
-{
-    using CONSTS = mss::dt::dt_i2c_devices;
-
-    switch(i_dt_number)
-    {
-        case mss::dt::dt_i2c_devices::DT0:
-            {
-                check_and_advance_breadcrumb_reg(io_pmic_dt_target_info, io_health_check_info.iv_dt[CONSTS::DT0]);
-                break;
-            }
-
-        case mss::dt::dt_i2c_devices::DT1:
-            {
-                check_and_advance_breadcrumb_reg(io_pmic_dt_target_info, io_health_check_info.iv_dt[CONSTS::DT1]);
-                break;
-            }
-
-        case mss::dt::dt_i2c_devices::DT2:
-            {
-                check_and_advance_breadcrumb_reg(io_pmic_dt_target_info, io_health_check_info.iv_dt[CONSTS::DT2]);
-                break;
-            }
-
-        case mss::dt::dt_i2c_devices::DT3:
-            {
-                check_and_advance_breadcrumb_reg(io_pmic_dt_target_info, io_health_check_info.iv_dt[CONSTS::DT3]);
-                break;
-            }
-    }
-}
-
-///
 /// @brief Compare 4 phases provided from 4 pmics, update pmic states if needed
 ///
 /// @tparam N size of the phase value data buffer
@@ -257,7 +214,7 @@ void phase_comparison(mss::pmic::ddr5::target_info_redundancy_ddr5& io_target_in
                                                (const fapi2::Target<fapi2::TARGET_TYPE_POWER_IC>& i_dt) -> fapi2::ReturnCode
             {
                 io_target_info.iv_pmic_dt_map[l_index].iv_pmic_state |= mss::pmic::ddr5::pmic_state::PMIC_CURRENT_IMBALANCE;
-                update_breadcrumb(io_target_info.iv_pmic_dt_map[l_index], io_health_check_info, l_index);
+                check_and_advance_breadcrumb_reg(io_target_info.iv_pmic_dt_map[l_index], io_health_check_info.iv_dt[l_index]);
                 return fapi2::FAPI2_RC_SUCCESS;
             });
         }
@@ -387,6 +344,7 @@ void read_ivdd(mss::pmic::ddr5::target_info_redundancy_ddr5& io_target_info,
     l_raw_card_design = fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_MEM_EFF_DIMM_RAW_CARD_REFERENCE_DESIGN;
     l_raw_card_design = fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_MEM_EFF_DIMM_RAW_CARD_DESIGN_REVISION;
 #endif
+
 
     if (!((l_raw_card_ref_design == RAW_CARD_REF_DESIGN_C) && (l_raw_card_design == RAW_CARD_REV)))
     {
@@ -525,7 +483,6 @@ mss::pmic::ddr5::dt_state check_dt_faults(mss::pmic::ddr5::target_info_redundanc
         mss::pmic::ddr5::health_check_telemetry_data& io_health_check_info)
 {
     using CONSTS = mss::dt::dt_i2c_devices;
-
     FAPI_INF_NO_SBE("Checking DT faults");
 
     get_dt_state(io_target_info, io_health_check_info);
@@ -609,7 +566,6 @@ void read_dt_regs(mss::pmic::ddr5::target_info_redundancy_ddr5& io_target_info,
         {
             static constexpr uint8_t BITS_PER_BYTE = 8;
             using DT_REGS  = mss::dt::regs;
-
             fapi2::buffer<uint8_t> l_data_buffer[NUMBER_DT_REGS_READ];
             fapi2::buffer<uint8_t> l_data_breadcrumb = 0;
 
@@ -623,6 +579,7 @@ void read_dt_regs(mss::pmic::ddr5::target_info_redundancy_ddr5& io_target_info,
 
             mss::pmic::ddr5::dt_reg_read(io_target_info.iv_pmic_dt_map[l_dt_count], DT_REGS::BREADCRUMB, l_data_breadcrumb);
             io_health_check_info.iv_dt[l_dt_count].iv_breadcrumb = l_data_breadcrumb;
+
             return fapi2::FAPI2_RC_SUCCESS;
         });
     }
