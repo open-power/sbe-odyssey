@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -206,21 +206,21 @@ rs4::targetTypeInstanceTraits_t targetTypeInstanceTraits[] =
     { fapi2::LOG_TARGET_TYPE_SHADOW,  rs4::ZME,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
     { fapi2::LOG_TARGET_TYPE_MC,      rs4::ZME,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
     { fapi2::LOG_TARGET_TYPE_MC,      rs4::ODY,  rs4::rs4_pack_instanceTraits(1, 1, 1) },
-    { fapi2::LOG_TARGET_TYPE_EQ,      rs4::P11T, rs4::rs4_pack_instanceTraits(2, 1, 1) },
-    { fapi2::LOG_TARGET_TYPE_CORE,    rs4::P11T, rs4::rs4_pack_instanceTraits(8, 4, 1) },
-    { fapi2::LOG_TARGET_TYPE_TBUSL,   rs4::P11T, rs4::rs4_pack_instanceTraits(1, 1, 1) },
-    { fapi2::LOG_TARGET_TYPE_TBUSC,   rs4::P11T, rs4::rs4_pack_instanceTraits(1, 1, 1) },
-    { fapi2::LOG_TARGET_TYPE_MC,      rs4::P11S, rs4::rs4_pack_instanceTraits(4, 1, 1) },
-    { fapi2::LOG_TARGET_TYPE_TBUSC,   rs4::P11S, rs4::rs4_pack_instanceTraits(4, 1, 1) },
-    { fapi2::LOG_TARGET_TYPE_PAX,     rs4::P11S, rs4::rs4_pack_instanceTraits(8, 1, 1) },
-    { fapi2::LOG_TARGET_TYPE_PAXO,    rs4::P11S, rs4::rs4_pack_instanceTraits(4, 1, 1) },
-    { fapi2::LOG_TARGET_TYPE_PEC6P,   rs4::P11S, rs4::rs4_pack_instanceTraits(4, 1, 1) },
-    { fapi2::LOG_TARGET_TYPE_PEC2P,   rs4::P11S, rs4::rs4_pack_instanceTraits(2, 1, 1) },
-    { fapi2::LOG_TARGET_TYPE_PAU,     rs4::P11S, rs4::rs4_pack_instanceTraits(2, 4, 1) },
-    { fapi2::LOG_TARGET_TYPE_TBUSL,   rs4::P11S, rs4::rs4_pack_instanceTraits(4, 2, 2) },
-    { fapi2::LOG_TARGET_TYPE_INT,     rs4::P11S, rs4::rs4_pack_instanceTraits(1, 2, 1) },
-    { fapi2::LOG_TARGET_TYPE_NX,      rs4::P11S, rs4::rs4_pack_instanceTraits(2, 1, 1) },
-    { fapi2::LOG_TARGET_TYPE_PHB16X,  rs4::P11S, rs4::rs4_pack_instanceTraits(2, 3, 1) },
+    { fapi2::LOG_TARGET_TYPE_EQ,      rs4::PT,   rs4::rs4_pack_instanceTraits(2, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_CORE,    rs4::PT,   rs4::rs4_pack_instanceTraits(8, 4, 1) },
+    { fapi2::LOG_TARGET_TYPE_TBUSL,   rs4::PT,   rs4::rs4_pack_instanceTraits(1, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_TBUSC,   rs4::PT,   rs4::rs4_pack_instanceTraits(1, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_MC,      rs4::PS,   rs4::rs4_pack_instanceTraits(4, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_TBUSC,   rs4::PS,   rs4::rs4_pack_instanceTraits(4, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_PAX,     rs4::PS,   rs4::rs4_pack_instanceTraits(8, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_PAXO,    rs4::PS,   rs4::rs4_pack_instanceTraits(4, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_PEC6P,   rs4::PS,   rs4::rs4_pack_instanceTraits(4, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_PEC2P,   rs4::PS,   rs4::rs4_pack_instanceTraits(2, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_PAU,     rs4::PS,   rs4::rs4_pack_instanceTraits(2, 4, 1) },
+    { fapi2::LOG_TARGET_TYPE_TBUSL,   rs4::PS,   rs4::rs4_pack_instanceTraits(4, 2, 2) },
+    { fapi2::LOG_TARGET_TYPE_INT,     rs4::PS,   rs4::rs4_pack_instanceTraits(1, 2, 1) },
+    { fapi2::LOG_TARGET_TYPE_NX,      rs4::PS,   rs4::rs4_pack_instanceTraits(2, 1, 1) },
+    { fapi2::LOG_TARGET_TYPE_PHB16X,  rs4::PS,   rs4::rs4_pack_instanceTraits(2, 3, 1) },
 };
 
 #ifndef __PPE__
