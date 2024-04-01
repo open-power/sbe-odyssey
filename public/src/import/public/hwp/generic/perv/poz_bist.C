@@ -324,7 +324,7 @@ ReturnCode poz_bist(
     bool l_is_tp_bist = false;
 
     // Regions are handled a little differently for TP BIST
-    // TODO do we need a more complete solution for P11T EQ since region 13 is not PLL there?
+    // TODO do we need a more complete solution for PT EQ since region 13 is not PLL there?
     clock_region l_all_active_regions = REGION_ALL_BUT_PLL;
     uint16_t l_tp_regions = i_params.base_regions;
 
