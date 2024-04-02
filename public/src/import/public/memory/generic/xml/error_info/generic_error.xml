@@ -1391,7 +1391,7 @@
   </hwpError>
 
  <hwpError>
-  <sbeError/>
+    <sbeError/>
     <rc>RC_MSS_NO_PORT_POWER_LIMIT</rc>
     <description>
         Got 0 when calculating port power limit.
@@ -1548,7 +1548,7 @@
  </hwpError>
 
  <hwpError>
-    <sbeError/>
+     <sbeError/>
      <rc>RC_MSS_OUTPUT_OVERFLOW_CALC_UTIL</rc>
     <description>
         Type of output variable is not large enough for the calculations
@@ -1564,7 +1564,7 @@
  </hwpError>
 
  <hwpError>
-    <sbeError/>
+     <sbeError/>
      <rc>RC_MSS_TCCDL_OVERFLOW_CALC</rc>
     <description>
         TCCD_L calculation experienced an overflow
@@ -2198,6 +2198,10 @@
     <ffdc>MC_TARGET</ffdc>
     <ffdc>REQUESTED_INSTRUCTIONS</ffdc>
     <ffdc>MAX_INSTRUCTIONS</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
     <!-- No hardware callout due to being a runtime only error -->
   </hwpError>
 
