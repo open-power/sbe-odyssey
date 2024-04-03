@@ -57,45 +57,6 @@ bool sbeCollectDump::isChipUnitNumAllowed(fapi2::plat_target_handle_t i_target)
                (chipUnitNum <= iv_hdctRow->genericHdr.chipletEnd) ) );
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-/// SBE get DUMP - HDCT PAK section details functions
-////////////////////////////////////////////////////////////////////////////////
-// Constructor
-hdctPakSecDetails::hdctPakSecDetails()
-{
-    size_t imageSize = 0;
-
-    // allocate  scratch area for hdct binary
-    // TODO rc failure case not handled here need to handle
-    //      Jira: PFSBE-533 Handle the Error condition in
-    //            hdctPakSecDetails::hdctPakSecDetails() constructor
-    fapi2::ReturnCode rc = fapi2::plat_loadEmbeddedFile(hdct_binary_fname,
-                                                        (const void *&) iv_startAddr, imageSize, 0);
-    if(rc == fapi2::FAPI2_RC_SUCCESS)
-    {
-        // get the start address using loadEmbeddedFile api
-        iv_endAddr = iv_startAddr + imageSize;
-        //Set currAddr to start of HDCT row
-        iv_currAddr = iv_startAddr;
-        //Dump start with iv_currAddr
-        SBE_INFO("hdctPakSecDetails:: Start Offset: [0x%08X] Size: [0x%08X] End offset: [0x%08X]",
-                                          iv_startAddr, imageSize, iv_endAddr );
-    }
-}
-
-// Destructor
-hdctPakSecDetails::~hdctPakSecDetails()
-{
-    // releasing allocated space for hdct binary
-    if (iv_startAddr)
-    {
-        fapi2::freeEmbeddedFile((void *)iv_startAddr);
-    }
-    iv_startAddr = NULL;
-}
-
-
 /********************* Types of Dump Packets to FIFO START ****************************/
 ////////////////////////////////////////////////////////////////////////////////
 /// SBE get DUMP - Put SCOM
