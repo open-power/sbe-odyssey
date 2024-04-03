@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -97,7 +97,7 @@ class hwp_file_ostream : public fapi2::hwp_data_ostream, public hwp_file_stream
         /// @brief writes the data to the file
         /// @param[in] fapi2::hwp_data_unit     The data to be written to the file
         /// @return  FAPI2_RC_SUCCESS if success, else error code.
-        fapi2::ReturnCodes put(fapi2::hwp_data_unit i_data)
+        fapi2::ReturnCode put(fapi2::hwp_data_unit i_data)
         {
             fapi2::hwp_data_unit l_data = htobe32(i_data);
             return fwrite(&l_data, sizeof(l_data), 1, iv_file) ?
