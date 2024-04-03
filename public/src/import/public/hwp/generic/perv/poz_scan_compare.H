@@ -56,7 +56,7 @@ class hwp_hash_ostream : public hwp_data_ostream
             hash_value = 0;
         };
 
-        virtual ReturnCodes put(hwp_data_unit i_data)
+        virtual ReturnCode put(hwp_data_unit i_data)
         {
             uint32_t l_be32_data = htobe32(i_data);
             hash_value = crc32_update(hash_value, &l_be32_data, sizeof(l_be32_data));

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2020,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2020,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -47,7 +47,7 @@ sbefifo_hwp_data_istream::sbefifo_hwp_data_istream( sbeFifoType fifoType,
 }
 
 
-ReturnCodes sbefifo_hwp_data_istream::get(hwp_data_unit& o_data)
+ReturnCode sbefifo_hwp_data_istream::get(hwp_data_unit& o_data)
 {
     #define SBE_FUNC "sbefifo_hwp_data_istream::get"
     SBE_ENTER(SBE_FUNC);
@@ -134,7 +134,7 @@ uint32_t sbefifo_hwp_data_istream::get( uint32_t i_length, uint32_t* o_buffer,
     #undef SBE_FUNC
 }
 
-ReturnCodes sbefifo_hwp_data_ostream::put(hwp_data_unit i_data)
+ReturnCode sbefifo_hwp_data_ostream::put(hwp_data_unit i_data)
 {
 #define SBE_FUNC "sbefifo_hwp_data_ostream::put(): 1 word"
     SBE_ENTER(SBE_FUNC);
@@ -213,7 +213,7 @@ seeprom_hwp_data_istream::seeprom_hwp_data_istream(const uint32_t *i_data, size_
     }
 }
 
-ReturnCodes seeprom_hwp_data_istream::get(hwp_data_unit& o_data)
+ReturnCode seeprom_hwp_data_istream::get(hwp_data_unit& o_data)
 {
     #define SBE_FUNC "seeprom_hwp_data_istream::get"
     SBE_ENTER(SBE_FUNC);

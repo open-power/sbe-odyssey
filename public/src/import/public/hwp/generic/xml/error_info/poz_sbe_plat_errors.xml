@@ -135,4 +135,11 @@
     <ffdc>THRESHOLD_PERCENTAGE</ffdc>
     <ffdc>UTILIZATION_PERCENTAGE</ffdc>
 </hwpError>
+<hwpError>
+    <sbeError/>
+    <rc>RC_POZ_SBEFIFO_OPERATION_FAILED</rc>
+    <description>SBE FIFO operation failed</description>
+    <ffdc>SBEFIFO_RC</ffdc>
+    <ffdc>OPERATION_TYPE</ffdc>
+</hwpError>
 </hwpErrors>
