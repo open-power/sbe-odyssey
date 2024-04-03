@@ -189,16 +189,33 @@ cmp -s $TEMPFILE $BUILDINFO && rm $TEMPFILE || mv $TEMPFILE $BUILDINFO
 unset TEMPFILE
 
 if [ "$1" == "setup" ]; then
-    cat > $SBEROOT/.user_cross_file.txt <<EOF
-[constants]
-ppetools_path = '$PPETOOLS'
+    if [[ -n $PPETOOLS ]]; then
+        cat > $SBEROOT/.user_cross_file.txt <<EOF
+        [constants]
+        ppetools_path = '$PPETOOLS'
 EOF
+    else
+        echo "ERROR*** : The PPETOOLS path env variable is not set which points to the ppe compiler."
+        exit 0
+EOF
+    fi
 
     #Pass all cross files ir-respective of platform used.
-    CROSS_FILES=" --cross-file $CMN_PUB_MESON_CROSS_FILE_PATH
-                  --cross-file $ODYSSEY_MESON_CROSS_FILE_PATH
-                  --cross-file $PST_MESON_CROSS_FILE_PATH
-                  --cross-file $SBEROOT/.user_cross_file.txt"
+    if [ -d "$SBEROOT_PUB/src/build/mesonutils/pst/" ];then
+    CROSS_FILES+=" --cross-file $PST_MESON_CROSS_FILE_PATH"
+    fi
+
+    if [ -d "$SBEROOT_PUB/src/build/mesonutils/odyssey/" ];then
+    CROSS_FILES+=" --cross-file $ODYSSEY_MESON_CROSS_FILE_PATH"
+    fi
+
+    if [ -d "$SBEROOT_PUB/src/build/mesonutils/common/" ];then
+    CROSS_FILES+=" --cross-file $CMN_PUB_MESON_CROSS_FILE_PATH"
+    fi
+
+    CROSS_FILES+=" --cross-file $SBEROOT/.user_cross_file.txt"
+
+
 
     #Append internal cross file paths if any
     for CROSS_FILE_PATH in ${INT_MESON_CROSS_FILE_PATH[@]}; do
