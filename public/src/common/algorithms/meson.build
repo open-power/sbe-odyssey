@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -25,7 +25,12 @@
 
 subdir('sha3')
 subdir('ecdsa')
+
+isDirCheck = meson.global_source_root() + '/public/src/common/algorithms/dilithium/'
+if file_system.is_dir(isDirCheck)
 subdir('dilithium')
+endif
+
 
 # Currently sha2-512 is not used. This is redundant p10 code
 # If sha2-512 is required uncomment below line
