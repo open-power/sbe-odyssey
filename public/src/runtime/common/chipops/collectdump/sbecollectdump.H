@@ -28,10 +28,7 @@
 #include "sbecmddump.H"
 #include "sbedumpconstants.H"
 #include "plat_hwp_data_stream.H"
-#include "file_access.H"
-#include "filenames.H"
 #include <fapi2_attribute_service.H>
-#include "sbeCmdGetCapabilities.H"
 
 #define DUMP_DATA_LAYOUT_VERSION 0x3
 
@@ -92,14 +89,20 @@ typedef struct hdctPakSecDetails
     /**
      * @brief Constructor, Get the HDCT Pak offset(Start location) from SBE Image
      *
-     * @return  HDCT Pak offset(Start location)
+     * @param[in] i_hdct pointer to hdct load file
+     * @param[in] i_size size of hdct load file
      */
-    hdctPakSecDetails();
-
-    /**
-     * @brief Destructor
-    */
-    ~hdctPakSecDetails();
+    hdctPakSecDetails(const void * i_hdct, uint32_t i_size)
+    {
+        iv_startAddr = (uint32_t)i_hdct;
+        // get the start address using loadEmbeddedFile api
+        iv_endAddr = iv_startAddr + i_size;
+        //Set currAddr to start of HDCT row
+        iv_currAddr = iv_startAddr;
+        //Dump start with iv_currAddr
+        SBE_INFO("hdctPakSecDetails:: Start Offset: [0x%08X] Size: [0x%08X] End offset: [0x%08X]",
+                                        iv_startAddr, i_size, iv_endAddr );
+    }
 
 }hdctPakSecDetails_t;
 
@@ -184,42 +187,40 @@ class sbeCollectDump
         /**
          * @brief Constructor for the class sbeCollectDump
          *
-         * @param [in] dumpID      The id of the dumpType.
-         * @param [in] clockState  Dump collection clock state.(ON or OFF)
-         * @param [in] type        sbe fifo type.
+         * @param [in] i_dumpID      The id of the dumpType.
+         * @param [in] i_clockState  Dump collection clock state.(ON or OFF)
+         * @param [in] i_skipFastArray Skip fast array
+         * @param [in] i_type        sbe fifo type.
+         * @param [in] i_commitId    Commit ID
+         * @param [in] i_hdctData    Pointer to HDCT file
+         * @param [in] i_hdctSize    HDCT file size
+         *
          */
         sbeCollectDump( uint8_t i_dumpID, uint8_t i_clockState, uint8_t i_skipFastArray,
-                        sbeFifoType i_type, uint64_t i_hbMemAddr = 0x00 ):
+                        sbeFifoType i_type, uint64_t i_commitId, const void * i_hdctData,
+                        uint32_t i_hdctSize, uint64_t i_hbMemAddr = 0x00):
                         iv_oStream(i_type, false, i_hbMemAddr),
-                        iv_clockState(i_clockState), iv_fifoType(i_type), iv_skipFastArray(i_skipFastArray)
+                        iv_clockState(i_clockState),
+                        iv_fifoType(i_type),
+                        iv_skipFastArray(i_skipFastArray),
+                        iv_hdctPakSecDetails(i_hdctData, i_hdctSize)
+
         {
-            iv_clockState = i_clockState;
-            iv_dumpType = i_dumpID;
+            iv_clockState           = i_clockState;
+            iv_dumpType             = i_dumpID;
+            iv_dumpHeader.hdctVer   = i_commitId;
+
+            //Get the equivalent HDCT dump type based on the requested Dump type
+            iv_hdctDumpTypeMap            = getEquivDumpType(i_dumpID);
+            iv_dumpHeader.chipTypeToEncode = getDumpHdrChipTypeToEncode();
+
             if (iv_clockState == SBE_DUMP_CLOCK_ON)
                 iv_clockOffEntryFlag = false;
-            //Get the equivalent HDCT dump type based on the requested Dump type
-            iv_hdctDumpTypeMap = getEquivDumpType(i_dumpID);
 
-            SBE_INFO("Dump Type Map is %x ", iv_hdctDumpTypeMap);
+            SBE_INFO("Dump Type Map is 0x%x, Chip Type to Encode: 0x%x",
+                                                    iv_hdctDumpTypeMap,
+                                                    iv_dumpHeader.chipTypeToEncode);
             SBE_INFO("Fast array collection is %x ", iv_skipFastArray);
-
-            //Populate dump header struct with EKB Commit ID
-            fapi2::seeprom_hwp_data_istream stream((uint32_t*)iv_hdctPakSecDetails.iv_startAddr,
-                                            sizeof(uint64_t));
-
-            //Get EKB commit-Id from Info.txt file
-            uint32_t buildDate = 0;
-            uint64_t commitId = 0;
-            char tag[BUILD_TAG_CHAR_MAX_LENGTH] = {0};
-            uint32_t rc = loadAndParseInfoTxt(ekb_info_file_name, CU_IMAGES::EKB, commitId, buildDate, tag);
-            if (rc != SBE_SEC_OPERATION_SUCCESSFUL)
-            {
-                SBE_ERROR(SBE_FUNC " loadAndParseInfoTxt failed for image [%d] from [%s]. "\
-                                "RC[0x%08x]", CU_IMAGES::EKB, ekb_info_file_name, rc);
-            }
-
-            iv_dumpHeader.chipTypeToEncode = getDumpHdrChipTypeToEncode();
-            iv_dumpHeader.hdctVer = commitId;
             SBE_INFO("EKB Commit ID: 0x%.8x%.8x ",
                     SBE::higher32BWord(iv_dumpHeader.hdctVer),
                     SBE::lower32BWord(iv_dumpHeader.hdctVer));
