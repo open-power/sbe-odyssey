@@ -717,6 +717,7 @@ def zme_tp_init():
     mod_multicast_setup(i_target, MCGROUP_GOOD,       0x7FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL)
     mod_multicast_setup(i_target, MCGROUP_GOOD_NO_TP, 0x3FFFFFFFFFFFFFFF, TARGET_STATE_FUNCTIONAL)
     mod_multicast_setup(i_target, MCGROUP_GOOD_EX,    0x0000FFC000000000, TARGET_STATE_FUNCTIONAL)
+    mod_multicast_setup(i_target, MCGROUP_3,          0x0000FF0000000000, TARGET_STATE_FUNCTIONAL)
 
     ## Set up chiplet hang pulses
     uint8_t pre_divider = 0x13
