@@ -88,6 +88,7 @@ infile_c = [
             '/memory/odyssey/hwp/ody_ddrphyinit.C',
             '/memory/odyssey/hwp/lib/phy/ody_draminit_utils.C',
             '/memory/odyssey/hwp/lib/phy/ody_phy_utils.C',
+            '/memory/odyssey/hwp/lib/phy/ody_phy_access.C',
             '/memory/odyssey/hwp/lib/phy/ody_phy_reset.C',
             '/memory/odyssey/hwp/lib/phy/ody_ddrphy_phyinit_config.C',
             '/memory/odyssey/hwp/lib/utils/odyssey_pos.C',
