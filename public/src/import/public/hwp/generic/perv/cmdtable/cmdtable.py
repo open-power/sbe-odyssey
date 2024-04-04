@@ -349,7 +349,7 @@ def load_commands(fname):
 
     return commands
 
-def run_commands(main, cust, target):
+def run_commands(main, cust, target, verbose=True):
     ips = [0, 0]
     tables = [main, cust]
     level = 0
@@ -361,7 +361,8 @@ def run_commands(main, cust, target):
 
         cmd = tables[level][ips[level]]
         ips[level] += 1
-        print("%s:%05d%s" % (("main", "cust")[level], ips[level], cmd))
+        if verbose:
+            print("%s:%05d%s" % (("main", "cust")[level], ips[level], cmd))
 
         if cmd.op == Opcode.CALL:
             if level > 0:
@@ -380,7 +381,8 @@ def run_commands(main, cust, target):
             if cmd.mask < 0xFFFFFFFFFFFFFFFF:
                 value = target.getScom(cmd.address).uint
                 new_value = (value & ~cmd.mask) | cmd.data
-                print("  %016X -> %016X" % (value, new_value))
+                if verbose:
+                    print("  %016X -> %016X" % (value, new_value))
                 target.putScom(cmd.address, new_value)
             else:
                 target.putScom(cmd.address, cmd.data)
@@ -390,7 +392,8 @@ def run_commands(main, cust, target):
             while True:
                 value = target.getScom(cmd.address).uint
                 match = value & cmd.mask == cmd.data
-                print("  %004d: %016X -> %016X %s %016X" % (10000-timeout, value, value & cmd.mask, "==" if match else "!=", cmd.data))
+                if verbose:
+                    print("  %004d: %016X -> %016X %s %016X" % (10000-timeout, value, value & cmd.mask, "==" if match else "!=", cmd.data))
                 if cmd.op == Opcode.POLL:
                     if match:
                         break
@@ -443,7 +446,7 @@ def cmd_run(args):
     cust = load_commands(args.cust) if args.cust else []
 
     if args.dry:
-        run_commands(main, cust, FakeTarget())
+        run_commands(main, cust, FakeTarget(), not args.quiet)
     else:
         import pyecmd
         with pyecmd.Ecmd(args=args.ecmd_args):
@@ -453,7 +456,7 @@ def cmd_run(args):
                     if args.cfam:
                         target = CFAMTranslatorTarget(target)
                     target.delay = pyecmd.delay
-                    if run_commands(main, cust, target) != 0:
+                    if run_commands(main, cust, target, not args.quiet) != 0:
                         exit(1)
 
 def cmd_reverse(args):
@@ -486,6 +489,7 @@ if __name__ == "__main__":
     sub.add_argument("chip", help="Chip to operate on")
     sub.add_argument("main", help="Main command file; type will be autodetected")
     sub.add_argument("cust", nargs="?", default=None, help="Optional custom table file for CALL operations")
+    sub.add_argument("-q", "--quiet", action="store_true", help="Suppress progress printouts")
     sub.add_argument("--dry", action="store_true", help="Dry run - use fake target and don't use ecmd")
     sub.add_argument("--cfam", action="store_true", help="Use CFAM access for FSI mailbox registers")
     sub.set_defaults(func=cmd_run)
