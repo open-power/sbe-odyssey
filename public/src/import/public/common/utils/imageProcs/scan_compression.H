@@ -119,6 +119,64 @@ struct CompressedScanData
 };
 static_assert(sizeof(CompressedScanData) == 16, "rs4 header must be 16 bytes");
 
+
+/*
+ * So, about instance traits.
+ *
+ * There are different types of chip units that can be targeted by a scan operation:
+ *  1. the chip itself (e.g. perv_* rings, nest_* rings)
+ *  2. corresponding to a chiplet, one unit per chiplet (e.g. PAXO)
+ *  3. corresponding to a chiplet, multiple units per chiplet (e.g. core or PHB)
+ *
+ * The scanning code needs this information to translate a generic scan address (from the RS4)
+ * into the specific scan address for a given target by modifying the chiplet ID and region
+ * number according to the chip unit number (aka instance) of the target.
+ *
+ * Cases 1 and 2 are simple:
+ *  1. In case 1 the address can stay the same since there is only one target.
+ *  2. In case 2 the scan address encodes the chiplet ID of instance 0 and we just have to
+ *     add the instance number to the chiplet ID to get the modified address.
+ *
+ * Case 3 is where things get complicated: We have to modify the scan region in the scan
+ * address too, and for that we need to know:
+ *   - how many instances are in one chiplet before we have to move on to the next chiplet?
+ *   - how far apart are the instances inside a chiplet?
+ *
+ * This information is not encoded in the scan address itself so we have to store it separately,
+ * and because it describes how the instances of a unit are distributed across chiplets and scan
+ * regions we call it "instance traits".
+ *
+ * For some additional checking and masking we also need to know the total amount of applicable
+ * chiplets; combined with the base chiplet ID from the scan address this allows us to determine
+ * the valid range of chiplet IDs for a given RS4 image.
+ *
+ * To save space, these three numbers are packed into a 16 bit integer, and to allow for a wider
+ * useable range we store the actual values minus 1 because 0 is never a valid value.
+ *
+ * EXAMPLE:
+ * ========
+ *
+ * We have a hypothetical PHB unit. Our chip has six of them, spread across two chiplets
+ * 0x14..0x15. Each PHB has two scan regions, phbx and phby. The scan regions in each chiplet are
+ * arranged like so:
+ *   0-perv 1-phb0x 2-phb0y 3-phb1x 4-phb1y 5-phb2x 6-phb2y 7-aux
+ *
+ * Let's say we have a scan image targeting the phbx ring. Depending on the target instance number
+ * we would have to target different chiplets and regions:
+ *   instance 0 --> chiplet 0x14 region 1 (phb0x)
+ *   instance 2 --> chiplet 0x14 region 5 (phb2x)
+ *   instance 4 --> chiplet 0x15 region 3 (phb1x)
+ *
+ * To make sure our scanning code knows this we'll encode these values:
+ *   scan address == 0x14032001   (base chiplet 0x14, base scan region 1)
+ *   chiplets_in_group = 2        (two chiplets involved in total)
+ *   instances_per_chiplet = 3    (three PHB regions per chiplet)
+ *   scan_region_shift = 2        (shift by two regions per instance)
+ *
+ * The last three values would be compressed into the iv_instanceTraits field using
+ * rs4_pack_instanceTraits below, which would yield 0x0141.
+ */
+
 /// Pack the iv_instanceTraits bit fields
 static inline uint16_t rs4_pack_instanceTraits(
     uint16_t i_chiplets_in_group,
