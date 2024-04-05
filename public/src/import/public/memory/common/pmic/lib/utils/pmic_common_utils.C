@@ -85,10 +85,12 @@ fapi2::ReturnCode disabled(const fapi2::Target<fapi2::TARGET_TYPE_PMIC>& i_pmic_
 {
     uint8_t l_pmic_force_n_mode_attr = 0;
     fapi2::buffer<uint8_t> l_force_n_mode;
+
 #ifdef __PPE__
     l_pmic_force_n_mode_attr = fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_MEM_PMIC_FORCE_N_MODE;
 #else
     const auto& l_ocmb = mss::find_target<fapi2::TARGET_TYPE_OCMB_CHIP>(i_pmic_target);
+
     FAPI_TRY(mss::attr::get_pmic_force_n_mode(l_ocmb, l_pmic_force_n_mode_attr));
 #endif
     l_force_n_mode = l_pmic_force_n_mode_attr;
@@ -111,13 +113,12 @@ fapi2::ReturnCode unlock_vendor_region(const fapi2::Target<fapi2::TargetType::TA
     using CONSTS = mss::pmic::consts<mss::pmic::product::JEDEC_COMPLIANT>;
 
     // Unlock
-    const fapi2::buffer<uint8_t> l_password_low(CONSTS::VENDOR_PASSWORD_LOW);
-    const fapi2::buffer<uint8_t> l_password_high(CONSTS::VENDOR_PASSWORD_HIGH);
-    const fapi2::buffer<uint8_t> l_unlock_code(CONSTS::UNLOCK_VENDOR_REGION);
+    const fapi2::buffer<uint8_t> l_data[] __attribute__ ((aligned (4))) = {CONSTS::VENDOR_PASSWORD_LOW,
+                                                                           CONSTS::VENDOR_PASSWORD_HIGH,
+                                                                           CONSTS::UNLOCK_VENDOR_REGION
+                                                                          };
 
-    FAPI_TRY(mss::pmic::i2c::reg_write(i_pmic_target, REGS::R37_PASSWORD_LOWER_BYTE_0, l_password_low));
-    FAPI_TRY(mss::pmic::i2c::reg_write(i_pmic_target, REGS::R38_PASSWORD_UPPER_BYTE_1, l_password_high));
-    FAPI_TRY(mss::pmic::i2c::reg_write(i_pmic_target, REGS::R39_COMMAND_CODES, l_unlock_code));
+    FAPI_TRY(mss::pmic::i2c::reg_write_contiguous(i_pmic_target, REGS::R37_PASSWORD_LOWER_BYTE_0, l_data));
 
     return fapi2::FAPI2_RC_SUCCESS;
 fapi_try_exit:
@@ -345,6 +346,7 @@ fapi2::ReturnCode calculate_voltage_bitmap_from_attr(
     uint8_t l_volt = 0;
     int8_t l_volt_offset = 0;
     int8_t l_efd_volt_offset = 0;
+
 #ifdef __PPE__
     static const uint8_t VOLT_SETTING [] =
     {
@@ -465,6 +467,7 @@ fapi2::ReturnCode set_current_limiter_warnings(
         REGS::R1E, // SWC
         REGS::R1F  // SWD
     };
+
 #ifdef __PPE__
     const static uint8_t CURRENT_WARNING[] =
     {
@@ -536,6 +539,7 @@ fapi2::ReturnCode order_pmics_by_sequence(
         // Here we should only be dealing with PMICs of the same DIMM. So we can just check the first one which dimm we're on
         uint8_t l_sequence_pmic_0 = 0;
         uint8_t l_sequence_pmic_1 = 0;
+
 #ifdef __PPE__
         const static uint8_t SEQUENCE[] =
         {
@@ -607,6 +611,7 @@ fapi2::ReturnCode update_seq_with_order_and_delay_attr(
     // Arrays to store the attribute data
     uint8_t l_sequence_orders[CONSTS::NUMBER_OF_RAILS];
     uint8_t l_sequence_delays[CONSTS::NUMBER_OF_RAILS];
+
 #ifdef __PPE__
     const static uint8_t SEQUENCE_ORDER[] =
     {
@@ -742,6 +747,7 @@ fapi2::ReturnCode update_seq_with_reg_attr(const fapi2::Target<fapi2::TARGET_TYP
     uint8_t l_pmic_seq_cfg1_r41 = 0;
     uint8_t l_pmic_seq_cfg2_r42 = 0;
     uint8_t l_pmic_seq_cfg3_r43 = 0;
+
 #ifdef __PPE__
     const static uint8_t SEQUENCE_ORDER_REG40[] =
     {
@@ -786,6 +792,7 @@ fapi2::ReturnCode update_seq_with_reg_attr(const fapi2::Target<fapi2::TARGET_TYP
     FAPI_TRY(mss::attr::get_sequence_order_reg42[i_id](i_ocmb_target, l_pmic_seq_cfg2_r42));
     FAPI_TRY(mss::attr::get_sequence_order_reg43[i_id](i_ocmb_target, l_pmic_seq_cfg3_r43));
 #endif
+
     // Write the attribute values to the PMIC regs
     FAPI_TRY(mss::pmic::i2c::reg_write(i_pmic_target, REGS::R40_POWER_ON_SEQUENCE_CONFIG_1, l_pmic_seq_cfg0_r40));
     FAPI_TRY(mss::pmic::i2c::reg_write(i_pmic_target, REGS::R41_POWER_ON_SEQUENCE_CONFIG_2, l_pmic_seq_cfg1_r41));
@@ -818,6 +825,7 @@ fapi2::ReturnCode bias_with_spd_phase_comb(
 
     uint8_t l_phase_comb = 0;
     fapi2::buffer<uint8_t> l_phase;
+
 #ifdef __PPE__
     const static uint8_t PHASE_COMB[] =
     {
@@ -830,6 +838,7 @@ fapi2::ReturnCode bias_with_spd_phase_comb(
 #else
     FAPI_TRY(mss::attr::get_phase_comb[i_id](i_ocmb_target, l_phase_comb));
 #endif
+
     // Read, replace bit, and then re-write
     FAPI_TRY(mss::pmic::i2c::reg_read_reverse_buffer(i_pmic_target, REGS::R4F, l_phase));
     l_phase.writeBit<FIELDS::SWA_SWB_PHASE_MODE_SELECT>(l_phase_comb);
@@ -857,7 +866,6 @@ fapi2::ReturnCode bias_with_spd_volt_ranges(
     using REGS = pmicRegs<J>;
 
     uint8_t l_sw_range[4] __attribute__ ((aligned (4))) = {0};
-
     fapi2::buffer<uint8_t> l_volt_range_buffer;
 #ifdef __PPE__
     static const uint8_t SW_VOLT_RANGE_SELECT[] __attribute__ ((aligned (4))) =
@@ -893,7 +901,6 @@ fapi2::ReturnCode bias_with_spd_volt_ranges(
 #endif
     // Read in what the register has, as to not overwrite any default values
     FAPI_TRY(mss::pmic::i2c::reg_read_reverse_buffer(i_pmic_target, REGS::R2B, l_volt_range_buffer));
-
     // Set the buffer bits appropriately
     l_volt_range_buffer.writeBit<FIELDS::SWA_VOLTAGE_RANGE>(l_sw_range[0]);
     l_volt_range_buffer.writeBit<FIELDS::SWB_VOLTAGE_RANGE>(l_sw_range[1]);
@@ -925,7 +932,6 @@ fapi2::ReturnCode bias_with_spd_coarse_volt_offset(
     using REGS = pmicRegs<mss::pmic::product::TPS5383X>;
 
     uint8_t l_sw_coarse_offset[4] __attribute__ ((aligned (4))) = {0};
-
     fapi2::buffer<uint8_t> l_volt_coarse_offset_buffer;
 #ifdef __PPE__
     const static uint8_t SW_VOLTAGE_COARSE_OFFSET[] __attribute__ ((aligned (4))) =
@@ -962,7 +968,6 @@ fapi2::ReturnCode bias_with_spd_coarse_volt_offset(
     // Read in what the register has, as to not overwrite any default values
     FAPI_TRY(mss::pmic::i2c::reg_read(i_pmic_target, REGS::R78_VID_OFFSET_COARSE,
                                       l_volt_coarse_offset_buffer));
-
     // Set the buffer bits appropriately
     // Note that the SPD and attributes are numbered right-to-left, so we access the register without reversing it
     l_volt_coarse_offset_buffer.insertFromRight<FIELDS::R78_SWA_VID_OFFSET_COARSE_START_NON_REVERSED,
@@ -1020,9 +1025,7 @@ fapi2::ReturnCode bias_with_spd_startup_seq(
         fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_MEM_EFF_PMIC2_SWA_SEQUENCE_ORDER,
         fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_MEM_EFF_PMIC3_SWA_SEQUENCE_ORDER
     };
-
     l_sequence_order_swa = SWA_SEQUENCE_ORDER[i_id];
-
 #else
     // Get the SWA attribute value just for checking purposes
     // We are keying off the sequence order attribute (which is set to invalid/reserved value when SPD rev is 0.7.0)
@@ -1111,6 +1114,7 @@ fapi2::ReturnCode bias_with_spd_voltages_TI_rev_less_then_23(
     uint8_t l_volt_range_select = 0;
 
     FAPI_TRY(mss::pmic::calculate_voltage_bitmap_from_attr(i_pmic_target, i_id, i_rail_index, l_volt_bitmap));
+
 #ifndef __PPE__
     FAPI_TRY(mss::attr::get_volt_range_select[i_rail_index][i_id](i_ocmb_target, l_volt_range_select));
 #else
@@ -1365,7 +1369,7 @@ fapi2::ReturnCode unlock_pmic_r70_to_ra3(const fapi2::Target<fapi2::TARGET_TYPE_
     using TPS_REGS = pmicRegs<mss::pmic::product::TPS5383X>;
 
     // make sure it is locked to make sure unlock will work afterwards
-    FAPI_TRY(lock_pmic_r70_to_ra3(i_pmic_target));
+    FAPI_TRY(mss::pmic::i2c::reg_write(i_pmic_target, TPS_REGS::RA2_REG_LOCK, 0x00));
 
     // unlock R78 to RA3 by writing RA2=0x95 followed by RA2=0x64
     FAPI_TRY(mss::pmic::i2c::reg_write(i_pmic_target, TPS_REGS::RA2_REG_LOCK, 0x95));
@@ -1375,22 +1379,6 @@ fapi_try_exit:
     return fapi2::current_err;
 }
 
-///
-/// @brief Lock PMIC registers R70 to RA3
-///
-/// @param[in] i_pmic_target PMIC target
-/// @return fapi2::ReturnCode FAPI2_RC_SUCCESS iff success, else error
-///
-fapi2::ReturnCode lock_pmic_r70_to_ra3(const fapi2::Target<fapi2::TARGET_TYPE_PMIC>& i_pmic_target)
-{
-    using TPS_REGS = pmicRegs<mss::pmic::product::TPS5383X>;
-
-    // lock R78 to RA3 by writing RA2=0x00
-    FAPI_TRY(mss::pmic::i2c::reg_write(i_pmic_target, TPS_REGS::RA2_REG_LOCK, 0x00));
-
-fapi_try_exit:
-    return fapi2::current_err;
-}
 
 ///
 /// @brief Checks that the PMIC is enabled via VR Enable bit
@@ -1843,6 +1831,7 @@ fapi2::ReturnCode validate_and_return_pmic_revisions(
     // Get attribute
     FAPI_TRY(mss::attr::get_revision[l_pmic_id](i_ocmb_target, l_rev));
 #endif
+
     // Now check the register
     FAPI_TRY(mss::pmic::i2c::reg_read(i_pmic_target, REGS::R3B_REVISION, o_rev_reg));
 
@@ -1887,6 +1876,7 @@ fapi2::ReturnCode matching_vendors(
     uint16_t l_vendor_attr = 0;
     fapi2::buffer<uint8_t> l_vendor_reg0;
     fapi2::buffer<uint8_t> l_vendor_reg1;
+
 #ifdef __PPE__
     const static uint16_t MFG_ID[] =
     {
@@ -1900,6 +1890,7 @@ fapi2::ReturnCode matching_vendors(
     // Get attribute
     FAPI_TRY(mss::attr::get_mfg_id[l_pmic_id](i_ocmb_target, l_vendor_attr));
 #endif
+
     // Now check the register
     FAPI_TRY(mss::pmic::i2c::reg_read(i_pmic_target, REGS::R3C_VENDOR_ID_BYTE_0, l_vendor_reg0));
     FAPI_TRY(mss::pmic::i2c::reg_read(i_pmic_target, REGS::R3D_VENDOR_ID_BYTE_1, l_vendor_reg1));
