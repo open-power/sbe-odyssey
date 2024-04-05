@@ -44,7 +44,9 @@
 #include <i2c_pmic.H>
 #include <pmic_consts.H>
 #include <pmic_common_utils.H>
-#include <mss_pmic_attribute_getters.H>
+#ifndef __PPE__
+    #include <mss_pmic_attribute_getters.H>
+#endif
 #include <mss_pmic_attribute_accessors_manual.H>
 #include <generic/memory/lib/utils/find.H>
 
@@ -126,6 +128,7 @@ enum aggregate_state : uint8_t
 enum pmic_state : uint8_t
 {
     PMIC_DECONFIGURED       = 0b10000000,
+    PMIC_VIN_OK_Z           = 0b00010000,
     PMIC_NOT_PRESENT        = 0b00001000,
     PMIC_I2C_FAIL           = 0b00000100,
     PMIC_CURRENT_IMBALANCE  = 0b00000010,
@@ -411,6 +414,10 @@ struct __attribute__((__packed__)) pmic_health_check_telemetry
     uint16_t iv_swb_current_mA = 0;
     uint16_t iv_swc_current_mA = 0;
     uint16_t iv_swd_current_mA = 0;
+
+    uint8_t iv_r73_status_5    = 0;
+    uint8_t reserved = 0;
+    uint16_t reserved1 = 0;
 };
 
 ///
@@ -462,11 +469,7 @@ struct __attribute__ ((__packed__)) pmic_additional_n_mode_telemetry_data
     uint8_t iv_r2f_pmic_config   = 0;
     uint8_t iv_r32_pmic_enable   = 0;
     uint8_t iv_r33_temp_status   = 0;
-    uint8_t iv_r73_status_5      = 0;
-
     uint8_t iv_r9c_on_off_config = 0;
-    uint8_t reserved0            = 0;
-    uint16_t reserved1           = 0;
 };
 
 ///
