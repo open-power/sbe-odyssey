@@ -80,19 +80,7 @@ ReturnCode pz_rcs_add(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHI
 
     // Check ATTR for which OSC
     fapi2::ATTR_CP_REFCLOCK_SELECT_Type l_refclock_select = 0;
-    fapi2::ATTR_CHIP_EC_FEATURE_EXTERNAL_PCIE_REFCLOCK_ON_SECONDARY_WHILE_AB_XB_MC_FROM_PRIMARY_CHIP_Type
-    l_pcie_fpll_mux_fix;
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CP_REFCLOCK_SELECT, i_target, l_refclock_select));
-    FAPI_TRY(FAPI_ATTR_GET_PRIVILEGED(
-                 fapi2::ATTR_CHIP_EC_FEATURE_EXTERNAL_PCIE_REFCLOCK_ON_SECONDARY_WHILE_AB_XB_MC_FROM_PRIMARY_CHIP,
-                 i_target, l_pcie_fpll_mux_fix));
-
-    // Check if DD2 & Die 2 because RCS on Die 2 is disabled
-    if (l_pcie_fpll_mux_fix)
-    {
-        FAPI_INF("DD2 & Die 2, skipping");
-        goto fapi_try_exit;
-    }
 
     // Sanity check
     if (!(l_refclock_select == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_BOTH_OSC0
