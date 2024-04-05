@@ -490,6 +490,33 @@
   </hwpError>
 
   <hwpError>
+    <sbeError/>
+    <rc>RC_PMIC_HEALTH_CHECK_FAIL_MNFG_MODE_DDR5_4U</rc>
+    <description>
+       A DDR5 4U PMIC had aggregate state other than N_PLUS_1 when running health check in manufacturing mode.
+    </description>
+    <ffdc>OCMB_TARGET</ffdc>
+    <ffdc>N_MODE_PMIC0</ffdc>
+    <ffdc>N_MODE_PMIC1</ffdc>
+    <ffdc>N_MODE_PMIC2</ffdc>
+    <ffdc>N_MODE_PMIC3</ffdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>MEDIUM</priority>
+    </callout>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+    <gard>
+      <target>OCMB_TARGET</target>
+    </gard>
+  </hwpError>
+
+  <hwpError>
     <rc>RC_PMIC_NON_REDUNDANT_FAIL</rc>
     <description>
        A PMIC had errors during pmic_enable and does not have a redundant backup.
