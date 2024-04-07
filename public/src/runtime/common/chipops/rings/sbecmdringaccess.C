@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -231,11 +231,10 @@ uint32_t sbeGetPutRingWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
     if ( (SBE_SEC_OPERATION_SUCCESSFUL == l_rc) &&
          (i_putStream.isStreamRespHeader( respHdr.rcStatus(),l_ffdc.getRc())) )
     {
-        l_rc  = i_putStream.put(l_ringPos);
+        l_rc = i_putStream.put(1,&l_ringPos);
         if( (SBE_SEC_OPERATION_SUCCESSFUL == l_rc) )
         {
-            l_rc = sbeDsSendRespHdr( respHdr, &l_ffdc,
-                                     i_getStream.getFifoType() );
+            l_rc = sbeDsSendRespHdr( respHdr, &l_ffdc, i_getStream.getFifoType() );
         }
     }
     SBE_EXIT(SBE_FUNC);

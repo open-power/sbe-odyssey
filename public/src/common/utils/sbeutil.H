@@ -61,7 +61,18 @@ if ((l_rc) != SBE_SEC_OPERATION_SUCCESSFUL) \
 { \
     SBE_ERROR(__func__ " Rc =0x%08x",l_rc); \
     break; \
-} \
+}
+
+// If a hardware procedure performs stream operations on FIFO,
+// then the fapiRc returned by that hardware procedure may be
+// FIFO failure. In that case, assign it to secondary RC so
+// that response is not sent to the downstream FIFO.
+#define CHECK_AND_IGNORE_FAPI_FIFO_ERROR(fapiRc, secRc) \
+if ( fapiRc == (uint32_t)RC_POZ_SBEFIFO_OPERATION_FAILED ) \
+{ \
+    secRc = SBE_SEC_FIFO_ACCESS_FAILURE; \
+    break; \
+}
 
 #define CLEAR_FAPI2_CURRENT_ERROR() \
     fapi2::current_err = FAPI2_RC_SUCCESS;

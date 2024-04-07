@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -112,6 +112,8 @@ uint32_t sbeControlTraceArrayWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
             respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
                                SBE_SEC_HWP_FAILURE );
             ffdc.setRc(fapiRc);
+
+            CHECK_AND_IGNORE_FAPI_FIFO_ERROR(fapiRc, l_rc);
         }
 
     } while (false);
@@ -120,7 +122,9 @@ uint32_t sbeControlTraceArrayWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
     if (i_putStream.isStreamRespHeader(respHdr.rcStatus(),ffdc.getRc()) &&
                                         l_rc == SBE_SEC_OPERATION_SUCCESSFUL)
     {
-        l_rc  = i_putStream.put(i_putStream.words_written());
+        uint32_t l_wordsWritten = i_putStream.words_written();
+        l_rc = i_putStream.put(1,&l_wordsWritten);
+
         // If there was a FIFO error, will skip sending the response,
         // instead give the control back to the command processor thread
         if(SBE_SEC_OPERATION_SUCCESSFUL == l_rc)

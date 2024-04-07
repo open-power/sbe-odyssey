@@ -55,6 +55,7 @@ uint32_t sbeControlFastArrayWrap( fapi2::sbefifo_hwp_data_istream& i_getStream,
     do
     {
         SBE_TRY( i_getStream.get(sizeof(req)/sizeof(uint32_t), (uint32_t *)&req, false) );
+
         SBE_INFO(SBE_FUNC "logTargetType [0x%02X] instanceId [0x%02X] flags [0x%02X]",
                  req.logTargetType, static_cast<uint8_t>(req.instanceId),
                  static_cast<uint8_t>(req.flags));
@@ -134,7 +135,7 @@ uint32_t sbeControlFastArrayWrap( fapi2::sbefifo_hwp_data_istream& i_getStream,
                                   "faBlobSize: 0x%8X", faBlobSize);
                 while (faBlobSize--)
                 {
-                    l_rc = o_putStream.put(faBlobSize);
+                    l_rc = o_putStream.put(1,&faBlobSize);
                     CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
                 }
             }
@@ -160,16 +161,19 @@ uint32_t sbeControlFastArrayWrap( fapi2::sbefifo_hwp_data_istream& i_getStream,
             respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
                                SBE_SEC_FAST_ARRAY_HWP_FAILURE);
             ffdc.setRc(fapiRc);
+
+            CHECK_AND_IGNORE_FAPI_FIFO_ERROR(fapiRc, l_rc);
         }
 
     } while(false);
 
     // In case of fastarray chipop SBE will send the response
-    if ((( SBE_SEC_OPERATION_SUCCESSFUL == l_rc ) ||
-         ( fapiRc != FAPI2_RC_PLAT_ERR_SEE_DATA ))  &&
-        ( o_putStream.isStreamRespHeader(respHdr.rcStatus(),ffdc.getRc())) )
+    if ( ( SBE_SEC_OPERATION_SUCCESSFUL == l_rc ) &&
+         ( o_putStream.isStreamRespHeader(respHdr.rcStatus(),ffdc.getRc()) ) )
     {
-        l_rc  = o_putStream.put(o_putStream.words_written());
+        uint32_t l_wordsWritten = o_putStream.words_written();
+        l_rc = o_putStream.put(1, &l_wordsWritten);
+
         // If there was a FIFO error, will skip sending the response,
         // instead give the control back to the command processor thread
         if (l_rc == SBE_SEC_OPERATION_SUCCESSFUL)

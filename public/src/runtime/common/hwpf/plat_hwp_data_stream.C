@@ -25,9 +25,16 @@
 
 #include "plat_hwp_data_stream.H"
 #include "sbeglobals.H"
+#include "plat_error_scope.H"
+#include "hwp_ffdc_classes.H"
 
 using namespace fapi2;
 
+enum sbeFifoOpType : uint8_t
+{
+    SBEFIFO_OP_TYPE_UPSTREAM    = 1,
+    SBEFIFO_OP_TYPE_DOWNSTREAM  = 2
+};
 
 sbefifo_hwp_data_istream::sbefifo_hwp_data_istream( sbeFifoType fifoType,
                                   uint32_t words_left,
@@ -53,45 +60,47 @@ ReturnCode sbefifo_hwp_data_istream::get(hwp_data_unit& o_data)
     SBE_ENTER(SBE_FUNC);
 
     uint32_t len = 1;
-    ReturnCodes fapiRc = FAPI2_RC_SUCCESS;
 
     do
     {
-        if (iv_words_left == 0)
-        {
-            fapiRc = FAPI2_RC_FALSE;
-            break;
-        }
+        PLAT_FAPI_ASSERT( (iv_words_left > 0),
+                           fapi2::POZ_STREAM_GET_FAILED().
+                           set_WORDS_LEFT(0).
+                           set_DATA_IS_NULL((iv_data==NULL)),
+                           "sbefifo_hwp_data_istream::get() iv_words_left is zero");
 
         if(iv_doFifoAccess)
         {
             // PopUp data from the upstream FIFO
             uint32_t fifoRc = sbeUpFifoDeq_mult(len,&o_data, iv_words_left == 1,
                                                         false, iv_fifoType);
-            if (fifoRc)
-            {
-                fapiRc = FAPI2_RC_PLAT_ERR_SEE_DATA;
-                break;
-            }
+
+            PLAT_FAPI_ASSERT( (fifoRc == SBE_SEC_OPERATION_SUCCESSFUL),
+                               fapi2::POZ_SBEFIFO_OPERATION_FAILED().
+                               set_SBEFIFO_RC(fifoRc).
+                               set_OPERATION_TYPE(SBEFIFO_OP_TYPE_UPSTREAM),
+                               "sbefifo_hwp_data_istream::get() sbeUpFifoDeq_mult failed");
+
         }
         else
         {
-            if ((iv_data != NULL) && iv_words_left)
-            {
-                o_data = iv_data[iv_len - iv_words_left];
-            }
-            else
-            {
-                fapiRc = FAPI2_RC_FALSE;
-                break;
-            }
+            PLAT_FAPI_ASSERT( ((iv_data != NULL) && (iv_words_left > 0)),
+                               fapi2::POZ_STREAM_GET_FAILED().
+                               set_WORDS_LEFT(iv_words_left).
+                               set_DATA_IS_NULL((iv_data==NULL)),
+                               "sbefifo_hwp_data_istream::get() data pointer is NULL");
+
+            o_data = iv_data[iv_len - iv_words_left];
         }
 
         iv_words_left--;
     }while(0);
 
-    return fapiRc;
     #undef SBE_FUNC
+
+fapi_try_exit:
+
+    return fapi2::current_err;
 }
 
 
@@ -140,28 +149,22 @@ ReturnCode sbefifo_hwp_data_ostream::put(hwp_data_unit i_data)
     SBE_ENTER(SBE_FUNC);
     uint32_t len = 1; //1 word ie 4 bytes
     uint32_t rc = SBE_SEC_OPERATION_SUCCESSFUL;
-    if(iv_hbMemAddr) //Dump the data into the memory
-    {
-        //ReturnCode rc  = iv_memInterface.accessWithBuffer(
-        //                                      &i_data, 4, iv_isPBALastAccess);
-        if(rc)
-        {
-            SBE_ERROR(SBE_FUNC " PBA write failed in accessWithBuffer");
-            return FAPI2_RC_PLAT_ERR_SEE_DATA;
-        }
-    }
-    else
-    {
-        rc = sbeDownFifoEnq_mult(len, &i_data, iv_fifoType);
-        if (rc)
-        {
-            SBE_ERROR(SBE_FUNC " sbeDownFifoEnq_mult failed.");
-            return FAPI2_RC_PLAT_ERR_SEE_DATA;
-        }
-    }
+
+    rc = sbeDownFifoEnq_mult(len, &i_data, iv_fifoType);
+
+    PLAT_FAPI_ASSERT( (rc == SBE_SEC_OPERATION_SUCCESSFUL),
+                       fapi2::POZ_SBEFIFO_OPERATION_FAILED().
+                       set_SBEFIFO_RC(rc).
+                       set_OPERATION_TYPE(SBEFIFO_OP_TYPE_DOWNSTREAM),
+                       "sbefifo_hwp_data_ostream::put() sbeDownFifoEnq_mult failed");
+
     iv_words_written++;
-    return FAPI2_RC_SUCCESS;
-#undef SBE_FUNC
+
+    #undef SBE_FUNC
+
+fapi_try_exit:
+
+    return fapi2::current_err;
 }
 
 uint32_t sbefifo_hwp_data_ostream::put(uint32_t i_length, uint32_t* i_buffer)

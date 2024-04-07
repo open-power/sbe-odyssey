@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -191,12 +191,13 @@ uint32_t sbeSramAccessWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
         // Get SRAM
         if(i_isGetFlag)
         {
-            l_rc = i_putStream.put( i_putStream.words_written() * 4 );
+            uint32_t l_bytesWritten = i_putStream.words_written() * 4;
+            l_rc = i_putStream.put(1, &l_bytesWritten);
         }
         // Put SRAM
         else
         {
-            l_rc = i_putStream.put( totalReturnLen );
+            l_rc = i_putStream.put(1, &totalReturnLen);
         }
 
         // If there was a FIFO error, will skip sending the response,

@@ -271,7 +271,7 @@ uint32_t sbeCollectDump::writeGetTracearrayPacketToFifo()
             totalCount = totalCount - (endCount - startCount);
             while(totalCount !=0)
             {
-                l_rc = iv_oStream.put(dummyData);
+                l_rc = iv_oStream.put(1,&dummyData);
                 CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
 
                 totalCount = totalCount - 1;
@@ -399,7 +399,7 @@ uint32_t sbeCollectDump::writeGetRingPacketToFifo()
             totalCount = totalCount - (endCount - startCount);
             while(totalCount !=0)
             {
-                l_rc = iv_oStream.put(dummyData);
+                l_rc = iv_oStream.put(1,&dummyData);
                 CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
                 totalCount = totalCount - 1;
             }
@@ -535,7 +535,7 @@ uint32_t sbeCollectDump::writeGetFastArrayPacketToFifo()
                               " Writing dummy data len: 0x%x", totalCount);
             while(totalCount !=0)
             {
-                l_rc = iv_oStream.put(dummyData);
+                l_rc = iv_oStream.put(1,&dummyData);
                 CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
                 totalCount = totalCount - 1;
             }
@@ -797,7 +797,7 @@ uint32_t sbeCollectDump::collectAllHDCTEntries()
         }
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
         //Dump chip-op Footer - DONE
-        l_rc = iv_oStream.put(DUMP_CHIP_OP_FOOTER);
+        l_rc = iv_oStream.put(1,const_cast<uint32_t *>(&DUMP_CHIP_OP_FOOTER));
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
     }
     while(0);
