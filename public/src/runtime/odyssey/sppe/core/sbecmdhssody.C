@@ -95,7 +95,8 @@ uint32_t sbeHssOdyUnload(uint8_t *i_pArg)
         {
             hdr.setStatus(SBE_PRI_GENERIC_EXECUTION_FAILURE, SBE_SEC_GENERIC_FAILURE_IN_EXECUTION);
             ffdc.setRc(fapi_rc);
-            break;
+
+            CHECK_AND_IGNORE_FAPI_FIFO_ERROR(fapi_rc, l_rc);
         }
     } while(false);
 
