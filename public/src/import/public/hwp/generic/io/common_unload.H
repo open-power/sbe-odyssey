@@ -112,15 +112,15 @@ void stream_scom_data(const fapi2::Target<K, M, V>& i_target,
                       fapi2::hwp_bit_ostream& o_ostream,
                       const uint64_t i_base_addr)
 {
-    static constexpr uint32_t offsets[] __attribute__((aligned(8))) = {0x00, 0x02, 0x04, 0x05, 0x0A, 0x0D, 0x0E, 0x13, 0x14, 0x15, 0x17, 0x18, 0x19, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x26, 0x27, 0x2C, 0x2D, 0x2E};
+    static constexpr uint8_t offsets[] __attribute__((aligned(8))) = {0x00, 0x02, 0x04, 0x05, 0x0A, 0x0D, 0x0E, 0x13, 0x14, 0x15, 0x17, 0x18, 0x19, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x26, 0x27, 0x2C, 0x2D, 0x2E};
 
     fapi2::buffer<uint64_t> l_data = 0;
     uint64_t l_addr = 0;
     uint32_t l_rc = 0; // FAPI_RC_SUCCESS
 
-    for (uint32_t i = 0; i < sizeof(offsets) / sizeof(offsets[0]); i++)
+    for (uint32_t l_offset : offsets)
     {
-        l_addr = i_base_addr | offsets[i];
+        l_addr = i_base_addr | l_offset;
 
         l_rc = fapi2::getScom(i_target, l_addr, l_data); // FIR Bits
 
@@ -156,7 +156,7 @@ void stream_mem_data_pp(const fapi2::Target<K, M, V>& i_target,
     static constexpr uint64_t l_base[] __attribute__((aligned(8))) = {0xFFFF30C000000000, 0xFFFF7C0000000000};
     static constexpr uint32_t l_size[] __attribute__((aligned(8))) = {0x20,               0x400};
 
-    for (uint32_t i = 0; i < sizeof(l_base) / sizeof(l_base[0]); i++)
+    for (uint32_t i = 0; i < ARRAY_SIZE(l_base); i++)
     {
         fapi2::putScom(i_target, c_addr_reg, l_base[i]);
 
@@ -203,7 +203,7 @@ void stream_mem_data_pt(const fapi2::Target<K, M, V>& i_target,
     static constexpr uint64_t l_base[] __attribute__((aligned(8))) = {0xFFFF30E000000000, 0xFFFF580000000000};
     static constexpr uint32_t l_size[] __attribute__((aligned(8))) = {0x20,               0x400};
 
-    for (uint32_t i = 0; i < sizeof(l_base) / sizeof(l_base[0]); i++)
+    for (uint32_t i = 0; i < ARRAY_SIZE(l_base); i++)
     {
         fapi2::putScom(i_target, c_addr_reg, l_base[i]);
 
