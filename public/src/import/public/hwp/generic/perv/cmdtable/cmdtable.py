@@ -272,6 +272,9 @@ def cmd_link(args):
     for infile in args.table:
         with open_or_stdio(infile) as f:
             for line in f:
+                line = line.split("#")[0].strip()
+                if not line:
+                    continue
                 commands.append(Command.fromText(line))
 
     if commands[-1].op != Opcode.RETURN:
