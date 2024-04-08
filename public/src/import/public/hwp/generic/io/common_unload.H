@@ -112,7 +112,7 @@ void stream_scom_data(const fapi2::Target<K, M, V>& i_target,
                       fapi2::hwp_bit_ostream& o_ostream,
                       const uint64_t i_base_addr)
 {
-    uint32_t offsets[] = {0x00, 0x02, 0x04, 0x05, 0x0A, 0x0D, 0x0E, 0x13, 0x14, 0x15, 0x17, 0x18, 0x19, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x26, 0x27, 0x2C, 0x2D, 0x2E};
+    static constexpr uint32_t offsets[] __attribute__((aligned(8))) = {0x00, 0x02, 0x04, 0x05, 0x0A, 0x0D, 0x0E, 0x13, 0x14, 0x15, 0x17, 0x18, 0x19, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x26, 0x27, 0x2C, 0x2D, 0x2E};
 
     fapi2::buffer<uint64_t> l_data = 0;
     uint64_t l_addr = 0;
@@ -153,8 +153,8 @@ void stream_mem_data_pp(const fapi2::Target<K, M, V>& i_target,
     auto_increment_ctrl(i_target, i_base_addr, true);
 
     //                      img regs            debug log
-    uint64_t l_base[] = {0xFFFF30C000000000, 0xFFFF7C0000000000};
-    uint32_t l_size[] = {0x20,               0x400};
+    static constexpr uint64_t l_base[] __attribute__((aligned(8))) = {0xFFFF30C000000000, 0xFFFF7C0000000000};
+    static constexpr uint32_t l_size[] __attribute__((aligned(8))) = {0x20,               0x400};
 
     for (uint32_t i = 0; i < sizeof(l_base) / sizeof(l_base[0]); i++)
     {
@@ -200,8 +200,8 @@ void stream_mem_data_pt(const fapi2::Target<K, M, V>& i_target,
 
     // Loop over # of threads for FW & Mem regs
     //                      firmware regs       mem regs
-    uint64_t l_base[] = {0xFFFF30E000000000, 0xFFFF580000000000};
-    uint32_t l_size[] = {0x20,               0x400};
+    static constexpr uint64_t l_base[] __attribute__((aligned(8))) = {0xFFFF30E000000000, 0xFFFF580000000000};
+    static constexpr uint32_t l_size[] __attribute__((aligned(8))) = {0x20,               0x400};
 
     for (uint32_t i = 0; i < sizeof(l_base) / sizeof(l_base[0]); i++)
     {
@@ -248,11 +248,11 @@ void stream_hw_data(const fapi2::Target<K, M, V>& i_target,
     FAPI_DBG("Stream HW Data");
 
     //                                         start    end
-    constexpr uint16_t l_pl_tx_endpoints[] = {0x0808, 0x0BF8};
-    constexpr uint16_t l_pl_rx_endpoints[] = {0x0000, 0x0D40};
+    static constexpr uint16_t l_pl_tx_endpoints[] __attribute__((aligned(8))) = {0x0808, 0x0BF8};
+    static constexpr uint16_t l_pl_rx_endpoints[] __attribute__((aligned(8))) = {0x0000, 0x0D40};
 
-    constexpr uint16_t l_pg_tx_endpoints[] = {0x1808, 0x1C88};
-    constexpr uint16_t l_pg_rx_endpoints[] = {0x1000, 0x16F0};
+    static constexpr uint16_t l_pg_tx_endpoints[] __attribute__((aligned(8))) = {0x1808, 0x1C88};
+    static constexpr uint16_t l_pg_rx_endpoints[] __attribute__((aligned(8))) = {0x1000, 0x16F0};
 
     fapi2::buffer<uint64_t> l_data = 0;
     uint64_t l_addr = 0;
