@@ -43,7 +43,6 @@ infile_c = ['main.C',
             'sbethermalsensorpolltimer.C',
             'sbecmdsramaaccesswrap.C',
             'sbetspollctrl.C',
-            'sbecollectdumpwrap.C',
             'hwptable.C',
             'sbecmdgetmemtraindata.C',
             'poolglobal.C',
@@ -82,7 +81,6 @@ odyssey_abs_core_c_file_paths += [ abs_pak_c_path,
                                     abs_runtime_cmn_security_utils_c_path,
                                     abs_runtime_cmn_scom_filtering_c_path,
                                     abs_i2c_driver_cmn_c_path,
-                                    abs_runtime_cmn_collectdump_c_path,
                                     odyssey_abs_hwpf_c_file_paths,
                                     odyssey_abs_tgt_c_file_paths,
                                     odyssey_abs_attr_c_file_paths,
@@ -93,17 +91,13 @@ odyssey_abs_core_c_file_paths += [ abs_pak_c_path,
 # List of image specific customize files
 #These functions vary for PNOR and Pibmem
 #Odyssey Lab PNOR will still use same list of files
-odyssey_abs_cust_img_c_file_paths = [
-                        files('imgcustomize.C',)
-]
+odyssey_abs_cust_img_c_file_paths = files('imgcustomize.C')
 
 # List of image specific customize files
 #These functions vary for product and lab
 #Odysseylab will have its own implementation of belwow list of files
 #for both PNOR and Pibmem image
-odyssey_img_cust_c_file = [
-                  'atefw.C',
-]
+odyssey_img_cust_c_file = files('atefw.C','sbecollectdumpwrap.C')
 
 ODYSSEY_CHIPOPS_JSON = files('chipop_table.json')
 
@@ -115,7 +109,6 @@ ody_cmn_chipop_json_list = [
                     CMN_GETCAPABILITY_CHIPOPS_JSON,
                     CMN_TRACE_ARRAY_CHIPOPS_JSON,
                     CMN_SRAM_ACCESS_CHIPOPS_JSON,
-                    CMN_COLLECT_DUMP_CHIPOPS_JSON,
                     CMN_ATTRIBUTES_CHIPOPS_JSON,
                     CMN_EXC_HWP_CHIPOPS_JSON,
                     CMN_RING_ACCESS_CHIPOPS_JSON,
@@ -130,10 +123,12 @@ if platform == 'odysseylab'
   subdir_done()
 endif
 
+ody_abs_chipop_json_list = [ody_chipop_json_list, CMN_COLLECT_DUMP_CHIPOPS_JSON]
+
 ############### Chip-op table generation ############
 result_chipoptablegen = run_command(chipoptablegen,
                         '-d', odyssey_sppe_genfiles_dir_path,
-                        '-c', ody_chipop_json_list)
+                        '-c', ody_abs_chipop_json_list)
 
 if not (result_chipoptablegen.returncode() == 0)
   message(result_chipoptablegen.stdout())
@@ -152,7 +147,8 @@ lib_file_name = 'odysseysppe'
 odyssey_sppe_obj_file_cpp = obj_gen_cpp.process([odyssey_abs_core_c_file_paths,
                                                  odyssey_abs_genfiles_c_file_paths,
                                                  odyssey_abs_cust_img_c_file_paths,
-                                                 odyssey_img_cust_c_file
+                                                 odyssey_img_cust_c_file,
+                                                 abs_runtime_cmn_collectdump_c_path
                                                 ],
                                         extra_args : [
                                         meson.get_external_property('gcc_defs_cmn_odyssey'),
