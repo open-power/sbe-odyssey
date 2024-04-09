@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -201,5 +201,10 @@ sbeFifoType sbePipeGetSource (bool reset);
  *    provided it was interrupted (upstream was set up correctly)
  */
 uint32_t sbeHandleDsPipeCnfg (const sbeFifoType  i_usPipe);
+
+/**
+ * @brief Get the desired SBE secondary status for the provided return code (defined for test)
+ */
+uint8_t getTestSbeSecStatusForRc(const uint32_t i_rc);
 
 #endif // __SBEFW_SBEFIFOMSGUTILS_H

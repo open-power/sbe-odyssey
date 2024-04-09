@@ -37,6 +37,7 @@
 #include "sberegaccess.H"
 #include "sbeffdc.H"
 #include "sbeerrorcodes.H"
+#include "poz_rc_utils.H"
 #include "assert.h"
 #include "return_code_defs.H"
 #include "error_info_defs.H"
@@ -755,4 +756,48 @@ uint32_t sbeHandleDsPipeCnfg (const sbeFifoType  i_usPipe)
 
     return rc;
     #undef SBE_FUNC
+}
+
+uint8_t getTestSbeSecStatusForRc(const uint32_t i_rc)
+{
+    if (!i_rc)
+    {
+        return SBE_SEC_OPERATION_SUCCESSFUL;
+    }
+
+    switch (i_rc)
+    {
+        case FAPI2_RC_FILE_NOT_FOUND:
+            return SBE_SEC_FILE_NOT_FOUND;
+
+        case RC_PUTRING_CHECKWORD_DATA_MISMATCH:
+            return SBE_SEC_PUTRING_HEADER_CHECK_FAIL;
+
+        case RC_POZ_SRAM_ABIST_DONE_BIT_ERR:
+            return SBE_SEC_ABIST_NOT_DONE;
+
+        case RC_POZ_OPCG_DONE_NOT_SET_ERR:
+            return SBE_SEC_OPCG_NOT_DONE;
+
+        case RC_DONE_HALT_NOT_SET:
+            return SBE_SEC_HWP_TIMEOUT;
+
+        case RC_BAD_BIST_PARAMS_FORMAT:
+            return SBE_SEC_INVALID_PARAMS;
+
+        case RC_MIXED_TP_CHIPLET_BIST_REQUESTED:
+            return SBE_SEC_INVALID_PARAMS;
+
+        default:
+            if (rcIsPutRingError(i_rc))
+            {
+                return SBE_SEC_PUTRING_FAILED;
+            }
+            else if (rcIsPibError(i_rc))
+            {
+                return SBE_SEC_PCB_PIB_ERR;
+            }
+    }
+
+    return SBE_SEC_GENERIC_FAILURE_IN_EXECUTION;
 }

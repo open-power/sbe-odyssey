@@ -260,8 +260,7 @@ uint32_t sbeHandleIstep(uint8_t *i_pArg)
         {
             SBE_ERROR(SBE_FUNC" sbeExecuteIstep() Failed. major:%u"
                 " minor:%u", req.major, req.minor);
-            respHdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                                SBE_SEC_GENERIC_FAILURE_IN_EXECUTION );
+            respHdr.setStatus(SBE_PRI_GENERIC_EXECUTION_FAILURE, getTestSbeSecStatusForRc(fapiRc));
             ffdc.setRc(fapiRc);
             break;
         }

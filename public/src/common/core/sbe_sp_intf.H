@@ -242,6 +242,10 @@ enum sbeSecondaryResponse
     SBE_SEC_IMAGE_SIZE_MISMATCH               = 0x93,
     SBE_SEC_CU_WRITE_BEGIN_IMAGE_FAILURE      = 0x94,
     SBE_SEC_CU_WRITE_END_IMAGE_FAILURE        = 0x95,
+    SBE_SEC_PUTRING_HEADER_CHECK_FAIL         = 0x96,
+    SBE_SEC_HWP_TIMEOUT                       = 0x97,
+    SBE_SEC_ABIST_NOT_DONE                    = 0x98,
+    SBE_SEC_OPCG_NOT_DONE                     = 0x99,
 };
 
 /**

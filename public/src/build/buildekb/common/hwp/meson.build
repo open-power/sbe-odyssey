@@ -26,6 +26,7 @@ import_generic_dir_path = pub_import_dir_path + '/hwp/generic/perv/'
 
 generic_infile_c = [
                     'poz_perv_utils.C',
+                    'poz_rc_utils.C',
                     'poz_perv_mod_chiplet_clocking.C',
                     'poz_perv_mod_chip_clocking.C',
                     'poz_perv_mod_misc.C',
