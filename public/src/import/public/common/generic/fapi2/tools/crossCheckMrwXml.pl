@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2021,2022
+# Contributors Listed Below - COPYRIGHT 2021,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -65,13 +65,13 @@ use File::Basename;
 # used to check/ensure MRW required attribute values are specified for each
 # expected target instance
 my %nps = (
-    'VBU_P11'      => 1,
+    'VBU_PST'      => 1,
     'WAFER_TAP'    => 1,
     'WAFER_SPINAL' => 1,
 );
 
 my %cpn = (
-    'VBU_P11'      => 1,
+    'VBU_PST'      => 1,
     'WAFER_TAP'    => 1,
     'WAFER_SPINAL' => 1,
 );
@@ -478,7 +478,7 @@ while ( my $line = <INFILE> )
             # If not hitting next attribute definition yet
             if ( $line !~ m/^\/\* ATTR_.* \*\// )
             {
-                push @attr_defs, $line;      # Save all definition lines of this attribute
+                push @attr_defs, $line;            # Save all definition lines of this attribute
                 $last_read_line = tell(INFILE);    # Save file pos
             }
             else

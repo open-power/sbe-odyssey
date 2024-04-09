@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -37,10 +37,10 @@ static const uint32_t FORBIDDEN_CHIP_P10DD1 =  0x00000001;
 static const uint32_t FORBIDDEN_CHIP_P10DD2 =  0x00000002;
 static const uint32_t FORBIDDEN_CHIP_ODYDD1 =  0x00000004;
 static const uint32_t FORBIDDEN_CHIP_ODYDD2 =  0x00000008;
-static const uint32_t FORBIDDEN_CHIP_P11TDD1 = 0x00000010;
-static const uint32_t FORBIDDEN_CHIP_P11TDD2 = 0x00000020;
-static const uint32_t FORBIDDEN_CHIP_P11SDD1 = 0x00000040;
-static const uint32_t FORBIDDEN_CHIP_P11SDD2 = 0x00000080;
+static const uint32_t FORBIDDEN_CHIP_PTDD1 = 0x00000010;
+static const uint32_t FORBIDDEN_CHIP_PTDD2 = 0x00000020;
+static const uint32_t FORBIDDEN_CHIP_PSDD1 = 0x00000040;
+static const uint32_t FORBIDDEN_CHIP_PSDD2 = 0x00000080;
 
 // Both this and forbiddenAccess() below only need to be declared
 // somewhere on the Cronus platform; other platforms won't use it.

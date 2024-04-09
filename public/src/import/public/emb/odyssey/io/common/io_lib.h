@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -1046,7 +1046,7 @@ uint32_t lcl_get_int(uint32_t reg_addr, uint32_t shift);
 // Chip ID: x00=P11, x01=zMetis, x02=Odyssey
 #define SPRN_PIR_CHIP_ID_MASK     0x00000700
 #define SPRN_PIR_CHIP_ID_SHIFT    8
-#define          CHIP_ID_P11      0x00000000
+#define          CHIP_ID_PST      0x00000000
 #define          CHIP_ID_ZM       0x00000100
 #define          CHIP_ID_ODYSSEY  0x00000200
 
@@ -1060,10 +1060,10 @@ uint32_t lcl_get_int(uint32_t reg_addr, uint32_t shift);
 #define          NODE_ID_ZM_ABUS  0x00001000
 #define          NODE_ID_ZM_OMI   0x00001800
 #define          NODE_ID_ZM_PCIE  0x00002000
-#define          NODE_ID_P11_PAXO 0x00000000
-#define          NODE_ID_P11_OMI  0x00002800
-#define          NODE_ID_P11_HUB  0x00001000
-#define          NODE_ID_P11_TAP  0x00001800
+#define          NODE_ID_PST_PAXO 0x00000000
+#define          NODE_ID_PST_OMI  0x00002800
+#define          NODE_ID_PST_HUB  0x00001000
+#define          NODE_ID_PST_TAP  0x00001800
 
 // Revison: x01=DD1, x02=DD2
 #define SPRN_PVR_MAJOR_EC_MASK    0x00000f00
