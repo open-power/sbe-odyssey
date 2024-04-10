@@ -35,6 +35,10 @@
 #include "sberegaccess.H"
 #include "pakwrapper.H"
 #include "filenames.H"
+#include "fapi2.H"
+#include "sbestreampaktohwp.H"
+
+using namespace fapi2;
 
 void sbeSecurityCheckWrap(void)
 {
@@ -78,22 +82,53 @@ void sbePakSearchStartOffset(void)
                         (uint8_t)lfrReg.boot_selection);
 }
 
-void sbeRuntimePopulateMetadataWrap(uint32_t i_metadata_ptr)
+ReturnCode sbeRuntimePopulateMetadataWrap(uint32_t i_metadata_ptr)
 {
-    // Update commit-Id, build-date and build-tag from sbeBuildInfo.bin
-    uint8_t l_runSide = SbeRegAccess::theSbeRegAccess().getBootSelection();
-    uint32_t l_sideStartAddr = getAbsPartitionAddr(l_runSide);
+    #define SBE_FUNC " sbeRuntimePopulateMetadataWrap "
+    SBE_ENTER(SBE_FUNC);
 
-    PakWrapper pak((void *)l_sideStartAddr, (void*)(l_sideStartAddr + NOR_SIDE_SIZE));
-    ARC_RET_t l_pakRc = ARC_OPERATION_SUCCESSFUL;
-    uint32_t *l_filePtr = NULL, l_fileSize = 0;
-    l_pakRc = pak.get_image_start_ptr_and_size(sbe_build_info_fname, &l_filePtr, &l_fileSize);
-    if (l_pakRc != ARC_OPERATION_SUCCESSFUL)
+    // Variable declaration
+    uint8_t *l_scratchArea = nullptr;
+
+    do
     {
-        SBE_ERROR("Failed to read the SBE build info file. RC:[0x%08x]", l_pakRc);
-    }
-    else
-    {
+        // Update commit-Id, build-date and build-tag from sbeBuildInfo.bin
+        uint8_t l_runSide = SbeRegAccess::theSbeRegAccess().getBootSelection();
+        uint32_t l_sideStartAddr = getAbsPartitionAddr(l_runSide);
+
+        PakWrapper pak((void *)l_sideStartAddr, (void*)(l_sideStartAddr + NOR_SIDE_SIZE));
+        uint32_t *l_filePtr = NULL, l_fileSize = 0;
+        uint32_t l_rc = (uint32_t) pak.get_image_start_ptr_and_size(sbe_build_info_fname,
+                                                                    &l_filePtr, &l_fileSize);
+
+        PLAT_FAPI_ASSERT( (l_rc == SBE_SEC_OPERATION_SUCCESSFUL) && (l_fileSize != 0),
+                           POZ_PAK_OPERATION_FAILED().set_PAK_RC(l_rc),
+                           "get_image_start_ptr_and_size failed [%s], size: %d, RC[0x%08x]",
+                           sbe_build_info_fname, l_fileSize, l_rc);
+
+        l_scratchArea = (uint8_t *)Heap::get_instance().scratch_alloc(l_fileSize);
+        PLAT_FAPI_ASSERT( (l_scratchArea != nullptr),
+                           POZ_SCRATCH_ALLOC_FAILED().set_REQUIRED_SPACE(l_fileSize).
+                           set_AVAILABLE_SPACE(Heap::get_instance().getFreeHeapSize()),
+                           "scratch allocation request for [%d] bytes failed ", l_fileSize);
+
+        uint32_t l_size = 0;
+        sha3_t l_digest = {0};
+        l_rc = (uint32_t) pak.read_file(sbe_build_info_fname, l_scratchArea, l_fileSize, &l_digest, &l_size);
+        PLAT_FAPI_ASSERT( (l_rc == SBE_SEC_OPERATION_SUCCESSFUL),
+                           POZ_PAK_OPERATION_FAILED().set_PAK_RC(l_rc),
+                           "Failed to read image file [%s]. RC=0x%08X",
+                            sbe_build_info_fname, l_rc);
+
+         PLAT_FAPI_ASSERT( (l_fileSize == l_size),
+                           POZ_PAK_OPERATION_FAILED().set_PAK_RC(SBE_SEC_IMAGE_SIZE_MISMATCH),
+                           "Failed to read, Expected size[%d] actual size[%d]",
+                            l_fileSize, l_size);
+
+        // checking the image hash and validate
+        // checking the image hash and validate
+        SBE_FAPI_TRY(current_err, check_file_hash_and_validate(sbe_build_info_fname, l_digest),
+                        SBE_FUNC " File hash valiadtion failed RC: [0x%08X]", current_err);
         // Get commit-Id
         memcpy((uint8_t *)(i_metadata_ptr + OFFSET_COMMIT_ID_IN_METADATA),
                 (uint8_t *)l_filePtr, BUILD_DATE_N_COMMIT_ID_MAX_LEN_BYTE);
@@ -105,5 +140,15 @@ void sbeRuntimePopulateMetadataWrap(uint32_t i_metadata_ptr)
         // Get build-tag
         memcpy((uint8_t *)(i_metadata_ptr + OFFSET_BUILD_TAG_IN_METADATA),
             (uint8_t *)(l_filePtr+2), BUILD_TAG_MAX_LENGTH_BYTE);
-    }
+
+
+    }while (false);
+
+    SBE_EXIT(SBE_FUNC);
+
+fapi_try_exit:
+    // free allocated scratch area
+    Heap::get_instance().scratch_free(l_scratchArea);
+    return fapi2::current_err;
+    #undef SBE_FUNC
 }

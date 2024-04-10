@@ -238,9 +238,6 @@ int  main(int argc, char **argv)
             break;
         }
 
-        // Populate runtime image metadata
-        sbeRuntimePopulateMetadataWrap(g_metadata_ptr);
-
         // Check the kernel stack utilization
         checkKernelStackUsage();
 

@@ -32,6 +32,10 @@
 #include "imagemap.H"
 #include "sbe_build_info.H"
 #include <algorithm>
+#include "sbestreampaktohwp.H"
+#include "filenames.H"
+
+using namespace fapi2;
 
 #define INFO_TXT_ENTRY_OPEN_DELIMITER   0x5B       // "["
 #define INFO_TXT_ENTRY_END_DELIMITER    0x5D       // "]"
@@ -759,7 +763,8 @@ uint32_t loadAndParseInfoTxt(const char *i_fileName,
             }
 
             uint32_t l_size = 0;
-            l_rc = pak.read_file(i_fileName, l_scratchArea, l_fileSize, NULL, &l_size);
+            sha3_t l_digest = {0};
+            l_rc = pak.read_file(i_fileName, l_scratchArea, l_fileSize, &l_digest, &l_size);
             if( l_rc != ARC_OPERATION_SUCCESSFUL )
             {
                 SBE_ERROR(SBE_FUNC "Failed to read file" \
@@ -777,6 +782,20 @@ uint32_t loadAndParseInfoTxt(const char *i_fileName,
                                     i_fileName, l_fileSize, l_size);
                 break;
             }
+            if(i_fileName == ekb_info_file_name)
+            {
+                ReturnCode l_fapiRc = FAPI2_RC_SUCCESS;
+                // checking the image hash and validate
+                l_fapiRc = check_file_hash_and_validate(i_fileName, l_digest);
+                if(l_fapiRc != FAPI2_RC_SUCCESS)
+                {
+                    l_rc = SBE_SEC_FILE_HASH_VALIDATION_FAILED;
+                    SBE_ERROR(SBE_FUNC " File hash valiadtion failed RC[0x%08x] ", l_fapiRc);
+                    fapi2::logError(l_fapiRc,fapi2::FAPI2_ERRL_SEV_RECOVERED);
+                    break;
+                }
+            }
+
 
             // Get metadata for the image
             l_rc = getMetadataFromInfoTxt(i_capImg,

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "fapi2.H"
 
 /**
  * @brief This file contains wrapper functions that differin implementation for
@@ -52,6 +53,8 @@ void sbePakSearchStartOffset(void);
 /**
  * @brief Wrapper function to populate metadata in runtime image
  *
+ * @param[in]- i_metadata_ptr is used to update meta data
+ *
+ * @return - Return success/ failure
  */
-void sbeRuntimePopulateMetadataWrap(uint32_t i_metadata_ptr);
-
+fapi2::ReturnCode sbeRuntimePopulateMetadataWrap(uint32_t i_metadata_ptr);
