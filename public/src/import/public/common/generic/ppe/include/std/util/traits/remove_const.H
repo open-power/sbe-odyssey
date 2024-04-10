@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,8 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#ifndef __UTIL_TRAITS_REMOVE_CONST
-#define __UTIL_TRAITS_REMOVE_CONST
+#pragma once
 
 /** @file remove_const.H
  *  Creates a template class remove_const who's type typedef will strip the
@@ -69,5 +68,3 @@ struct remove_const
 
 };
 };
-
-#endif

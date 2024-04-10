@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -28,8 +28,7 @@
 /// @brief VPD access definitions
 ///
 
-#ifndef __VPDACCESSDEFS_H_
-#define __VPDACCESSDEFS_H_
+#pragma once
 
 #include <stdint.h>
 
@@ -59,4 +58,3 @@ template<fapi2::TargetType T>
 class VPDInfo;
 
 }
-#endif

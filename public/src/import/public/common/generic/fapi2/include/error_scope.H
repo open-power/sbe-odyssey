@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,11 +27,7 @@
  * @brief platform specializations which create a scope for automatic error handling
  */
 
-#ifndef __FAPI2_ERROR_SCOPE__
-#define __FAPI2_ERROR_SCOPE__
+#pragma once
 
 #include <plat_error_scope.H>
 #include <fapi2_error_scope.H>
-
-
-#endif

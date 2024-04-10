@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,8 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#ifndef __FAPI2_VARIABLE_BUFFER_UTILS__
-#define __FAPI2_VARIABLE_BUFFER_UTILS__
+#pragma once
 
 #include <inttypes.h>
 
@@ -147,5 +146,3 @@ inline uint32_t bufferCopy(fapi2::variable_buffer& o_dest, ecmdDataBufferBase& i
 //@}
 
 } // namespace fapi2
-
-#endif /* __FAPI2_VARIABLE_BUFFER_UTILS__ */

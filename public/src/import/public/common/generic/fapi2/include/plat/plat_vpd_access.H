@@ -27,8 +27,7 @@
 /// @brief Platform vpd-access definitions
 ///
 
-#ifndef _FAPI2_PLAT_VPDACCESS_H_
-#define _FAPI2_PLAT_VPDACCESS_H_
+#pragma once
 
 #include <fapi2.H>
 #include <fapi2_vpd_access.H>
@@ -127,4 +126,3 @@ fapi_try_exit:
 }
 
 };
-#endif // _FAPI2_PLAT_VPDACCESS_H_

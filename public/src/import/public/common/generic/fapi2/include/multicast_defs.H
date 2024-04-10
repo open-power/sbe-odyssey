@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,8 +22,7 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __FAPI2_COMMON_MULTICAST_DEFS__
-#define __FAPI2_COMMON_MULTICAST_DEFS__
+#pragma once
 
 namespace fapi2
 {
@@ -84,5 +83,3 @@ inline MulticastCoreSelect operator|(const MulticastCoreSelect a, const Multicas
 }
 
 }
-
-#endif

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -28,8 +28,7 @@
 ///
 //
 
-#ifndef _FAPI2_VPDACCESS_H_
-#define _FAPI2_VPDACCESS_H_
+#pragma once
 
 #include <return_code.H>
 #include <target_types.H>
@@ -194,4 +193,3 @@ ReturnCode getVPD(const Target<T, M, V>& i_target,
                   uint8_t* o_blob);
 
 };
-#endif

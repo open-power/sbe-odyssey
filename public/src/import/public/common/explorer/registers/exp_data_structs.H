@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -32,8 +33,7 @@
 // *HWP Level: 2
 // *HWP Consumed by: HB:FSP
 
-#ifndef _EXP_DATA_STRUCTS_H_
-#define _EXP_DATA_STRUCTS_H_
+#pragma once
 
 #include <stdint.h>
 
@@ -1292,5 +1292,3 @@ typedef struct __attribute__((packed))
     uint32_t            fw_img_B_length;
 }
 partition_info_struct;
-
-#endif

@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -23,8 +24,7 @@
 /* IBM_PROLOG_END_TAG                                                     */
 
 
-#ifndef __EXPLR_SCOM_ADDRESSES_H
-#define __EXPLR_SCOM_ADDRESSES_H
+#pragma once
 
 
 
@@ -1521,5 +1521,3 @@ static const uint64_t EXPLR_WDF_WMSK                                          = 
 
 
 static const uint64_t EXPLR_WDF_WSPAR                                         = 0x08012008ull;
-
-#endif

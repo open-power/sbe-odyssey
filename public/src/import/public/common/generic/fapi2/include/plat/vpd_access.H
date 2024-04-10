@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -28,8 +28,7 @@
 /// platform implementation.
 ///
 
-#ifndef __VPDACCESS_H_
-#define __VPDACCESS_H_
+#pragma once
 
 #include <target.H>
 #include <return_code.H>
@@ -57,5 +56,3 @@ template<> fapi2::ReturnCode getVPD(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_
 }
 
 };
-
-#endif // _FAPI2_VPDACCESS_H_

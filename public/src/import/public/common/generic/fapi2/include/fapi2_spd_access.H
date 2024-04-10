@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -28,8 +28,7 @@
 /// @brief Defines the SPD functions that platform must implement
 ///
 
-#ifndef _FAPI2_SPDACCESS_H_
-#define _FAPI2_SPDACCESS_H_
+#pragma once
 
 #include <stdint.h>
 #include <return_code.H>
@@ -57,4 +56,3 @@ fapi2::ReturnCode getSPD( const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target
                           size_t& s );
 
 }
-#endif

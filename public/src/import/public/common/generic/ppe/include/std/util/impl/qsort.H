@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,8 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#ifndef __UTIL_IMPL_QSORT_H
-#define __UTIL_IMPL_QSORT_H
+#pragma once
 
 /** @file qsort.H
  *
@@ -193,5 +192,3 @@ void sort(RandomAccessIterator first, RandomAccessIterator last,
 
 };
 };
-
-#endif

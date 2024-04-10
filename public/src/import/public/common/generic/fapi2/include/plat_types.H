@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,8 +27,7 @@
  * @brief definitions for fapi2 platform types
  */
 
-#ifndef __FAPI2_PLAT_TYPES__
-#define __FAPI2_PLAT_TYPES__
+#pragma once
 
 namespace fapi2
 {
@@ -51,5 +50,3 @@ enum PlatformType
 };
 
 }
-
-#endif

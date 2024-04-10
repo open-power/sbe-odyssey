@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,8 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#ifndef __EXPLR_SCOM_ADDRESSES_FLD_FIXES_H
-#define __EXPLR_SCOM_ADDRESSES_FLD_FIXES_H
+#pragma once
 
 static const uint64_t EXPLR_MIPS_TO_OCMB_INTERRUPT_REGISTER1_DOORBELL           = 63;
 static const uint64_t EXPLR_EFUSE_IMAGE_OUT_0_ENTERPRISE_MODE_DIS               = 53;
@@ -59,5 +59,3 @@ static const uint64_t EXP_DDR4_PHY_MASTER0_LCDLDBGCNTL_LCDLFINESNAP            =
 static const uint64_t EXP_DDR4_PHY_MASTER0_LCDLDBGCNTL_LCDLSTATUSSEL           = 63 - 15;
 static const uint64_t EXP_DDR4_PHY_MASTER0_LCDLDBGCNTL_LCDLSTATUSSEL_LEN       = 4;
 static const uint64_t EXP_DDR4_PHY_MASTER0_MEMALERTCONTROL_MALERTRXEN          = 63 - 13;
-
-#endif

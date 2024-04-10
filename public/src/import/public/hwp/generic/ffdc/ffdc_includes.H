@@ -27,8 +27,7 @@
 /// @brief Main file used to export all include files for FFDC procedures
 ///
 
-#ifndef __FFDC_INCLUDES_H
-#define __FFDC_INCLUDES_H
+#pragma once
 
 #include <fsi_collect_reg_ffdc.H>
 
@@ -41,5 +40,3 @@
 #endif
 
 // Add any other FFDC procedures with #include
-
-#endif

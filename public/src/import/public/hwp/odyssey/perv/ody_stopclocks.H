@@ -31,8 +31,7 @@
 // *HWP Consumed by     : FSP:SBE:HB
 //------------------------------------------------------------------------------
 
-#ifndef _ODY_STOPCLOCKS_H_
-#define _ODY_STOPCLOCKS_H_
+#pragma once
 
 #include <fapi2.H>
 #include <poz_common_stopclocks.H>
@@ -47,6 +46,3 @@
 
 DECLARE_HWP(ody_stopclocks, const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
             const StopClocksFlags i_stopclocks_flags);
-
-
-#endif

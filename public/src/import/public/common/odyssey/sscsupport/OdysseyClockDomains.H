@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -30,8 +30,7 @@
 /// HWP FW Maintainer: n/a
 ///
 
-#ifndef _ODYSSEYCLOCKDOMAINS_H
-#define _ODYSSEYCLOCKDOMAINS_H
+#pragma once
 
 // Due to Cronus legacy, we need to start at CLOCK_DOMAIN_32
 #define ODYSSEY_FAKE_DOMAIN                      CLOCK_DOMAIN_32  // Fake domain placeholder
@@ -48,5 +47,3 @@
 // MEM chiplet
 #define ODYSSEY_MEMVITL_DOMAIN                   CLOCK_DOMAIN_37  // MC VITL
 #define ODYSSEY_MEMNONVITL_DOMAIN                CLOCK_DOMAIN_38  // MC PERV + IO + CORE + CFG + DFI + PUB[01] + PRIM[01]
-
-#endif

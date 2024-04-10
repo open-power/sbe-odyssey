@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -34,8 +35,7 @@
 /// EKB-Mirror-To: hostboot
 ///
 
-#ifndef __MDS_SCOM_ADDRESSES_H
-#define __MDS_SCOM_ADDRESSES_H
+#pragma once
 
 static const uint32_t MDS_I2C_RCW_F0RC0A                     = 0x0000000Dul;
 
@@ -129,5 +129,3 @@ static const uint32_t MDS_NO_MATCHING_SPEC_VALUE_15          = 0x00800668ul;
 static const uint32_t MDS_NO_MATCHING_SPEC_VALUE_16          = 0x000E0077ul;
 
 static const uint32_t MDS_RCW_LTB_SABU_CAG5_TIME_CODE        = 0x00040029ul;
-
-#endif

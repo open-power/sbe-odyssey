@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,8 +27,7 @@
 /// @brief Platform Memory Buffer access definitions
 ///
 
-#ifndef _FAPI2_PLAT_MBVPD_ACCESS_H_
-#define _FAPI2_PLAT_MBVPD_ACCESS_H_
+#pragma once
 
 #include <fapi2_mbvpd_access.H>
 
@@ -58,5 +57,3 @@ inline fapi2::ReturnCode setMBvpdField(const fapi2::MBvpdRecord i_record,
 }
 
 };
-
-#endif

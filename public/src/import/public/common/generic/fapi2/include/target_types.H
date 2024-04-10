@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,8 +27,7 @@
  * @brief definitions for fapi2 target types
  */
 
-#ifndef __FAPI2_TARGET_TYPES__
-#define __FAPI2_TARGET_TYPES__
+#pragma once
 #include <stdint.h>
 #include <base_utils.H>
 
@@ -305,5 +304,3 @@ constexpr TargetType operator~(TargetType x)
 #endif
 
 }
-
-#endif

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -28,12 +28,9 @@
 /// @brief Platform hardware-access definitions
 ///
 
-#ifndef _FAPI2_PLAT_HWACCESS_H_
-#define _FAPI2_PLAT_HWACCESS_H_
+#pragma once
 
 namespace fapi2
 {
 
 }
-
-#endif // _FAPI2_PLAT_HWACCESS_H_

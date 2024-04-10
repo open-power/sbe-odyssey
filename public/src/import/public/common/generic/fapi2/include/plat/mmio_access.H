@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -29,8 +29,7 @@
 ///
 /// NOTE : This is just an example implementation for compiling against
 
-#ifndef _FAPI2_MMIO_ACCESS_H_
-#define _FAPI2_MMIO_ACCESS_H_
+#pragma once
 
 #include <vector>
 #include <iostream>
@@ -108,6 +107,3 @@ inline ReturnCode putMMIO(const Target<K, M, V>& i_target,
 }
 
 };
-
-
-#endif // _FAPI2_MMIO_ACCESS_H_

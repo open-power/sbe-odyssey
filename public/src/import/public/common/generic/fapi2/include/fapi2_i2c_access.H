@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -28,8 +28,7 @@
 /// platform code must implement.
 ///
 
-#ifndef _FAPI2_COMMON_I2C_ACCESS_H_
-#define _FAPI2_COMMON_I2C_ACCESS_H_
+#pragma once
 
 #include <stdint.h>
 #include <vector>
@@ -92,5 +91,3 @@ inline ReturnCode putI2c(const Target<K, M, V>& i_target,
                          const std::vector<uint8_t>& i_data);
 
 };
-
-#endif // _FAPI2_COMMON_I2C_ACCESS_H_

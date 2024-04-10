@@ -33,8 +33,7 @@
 // *HWP Level: 1
 // *HWP Consumed by: HB:Cronus
 
-#ifndef _ODY_CHIPOP_TSNS_DQS_PERIOD_
-#define _ODY_CHIPOP_TSNS_DQS_PERIOD_
+#pragma once
 
 #include <ody_tsns_dqs_period.H>
 
@@ -64,5 +63,3 @@ extern "C"
     );
 
 }//extern C
-
-#endif

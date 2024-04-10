@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,8 +22,7 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __FAPI2_MULTICAST__
-#define __FAPI2_MULTICAST__
+#pragma once
 
 #include <fapi2_multicast.H>
 
@@ -45,5 +44,3 @@ inline bool Multicast<M, G, V>::isMulticast() const
 }
 
 }
-
-#endif

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,8 +27,7 @@
  * @brief definitions for fapi2 variable integral buffers
  */
 
-#ifndef __FAPI2_INTEGRAL_BUFFER__
-#define __FAPI2_INTEGRAL_BUFFER__
+#pragma once
 
 #include <buffer_parameters.H>
 #include <buffer_traits.H>
@@ -846,5 +845,3 @@ class buffer
         T iv_data;
 };
 }
-
-#endif

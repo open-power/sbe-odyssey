@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -34,8 +34,7 @@
 // EKB-Mirror-To: hostboot
 
 
-#ifndef __ODY_OC_REGS_H_
-#define __ODY_OC_REGS_H_
+#pragma once
 
 static const uint32_t ODY_OC_O0MBIT_O0DID_LSB = 0x00000000;
 static const uint32_t ODY_OC_O0MBIT_O0DID_LSB_DEVICE_ID = 0;
@@ -877,5 +876,3 @@ static const uint32_t ODY_OC_O1VSID_LSB_VENDOR_UNIQUE_LEN = 16;
 static const uint32_t ODY_OC_O1VSID_LSB_DVSEC_ID = 16;
 static const uint32_t ODY_OC_O1VSID_LSB_DVSEC_ID_LEN = 16;
 static const uint32_t ODY_OC_O1VSID_MSB = 0x0001060C;
-
-#endif

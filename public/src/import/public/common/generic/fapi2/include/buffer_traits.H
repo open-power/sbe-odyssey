@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,8 +27,7 @@
  * @brief trait definitions for fapi2 buffer base class
  */
 
-#ifndef __FAPI2_BUFFER_TRAITS__
-#define __FAPI2_BUFFER_TRAITS__
+#pragma once
 
 #include <stdint.h>
 #include <vector>
@@ -269,7 +268,3 @@ class bufferTraits<bits_container, uint32_t>
 };
 /// @endcond
 }
-
-
-
-#endif

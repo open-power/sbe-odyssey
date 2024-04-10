@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -31,8 +31,7 @@
 // *HWP Consumed by     : FSP:HB
 //------------------------------------------------------------------------------
 
-#ifndef _POZ_COMMON_STOPCLOCKS_FLAGS_H_
-#define _POZ_COMMON_STOPCLOCKS_FLAGS_H_
+#pragma once
 
 enum StopClocksFlags : uint32_t
 {
@@ -54,5 +53,3 @@ inline StopClocksFlags operator|(const StopClocksFlags a, const StopClocksFlags 
 {
     return static_cast<StopClocksFlags>((uint32_t)a | (uint32_t)b);
 }
-
-#endif

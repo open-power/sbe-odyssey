@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,8 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#ifndef __UTIL_TRAITS_HAS_PLUSEQUALS
-#define __UTIL_TRAITS_HAS_PLUSEQUALS
+#pragma once
 
 /** @file has_plusequals.H
  *  Creates a template class has_plusequals<T> who's value variable will tell
@@ -38,5 +37,3 @@
 
 #undef UTIL_COMPARISON_OPERATOR
 #undef UTIL_COMPARISON_OPERATOR_NAME
-
-#endif

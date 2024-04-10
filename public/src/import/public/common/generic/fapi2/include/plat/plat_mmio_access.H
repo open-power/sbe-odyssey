@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,12 +22,9 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef _FAPI2_PLAT_MMIO_ACCESS_H_
-#define _FAPI2_PLAT_MMIO_ACCESS_H_
+#pragma once
 
 namespace fapi2
 {
 
 };
-
-#endif // _FAPI2_PLAT_MMIO_ACCESS_H_

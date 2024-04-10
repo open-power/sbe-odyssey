@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,8 +27,7 @@
  * @brief platform specializations for fapi2 targets
  */
 
-#ifndef __FAPI2_TARGET__
-#define __FAPI2_TARGET__
+#pragma once
 
 #include <plat_target.H>
 #include <fapi2_target.H>
@@ -322,5 +321,3 @@ inline Target<T, M, V> getTarget(uint64_t Ordinal)
 }
 
 }
-
-#endif

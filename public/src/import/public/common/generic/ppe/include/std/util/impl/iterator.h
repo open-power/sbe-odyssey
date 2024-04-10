@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,8 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#ifndef __UTIL_IMPL_ITERATOR_H
-#define __UTIL_IMPL_ITERATOR_H
+#pragma once
 
 /** @file iterator.h
  *
@@ -149,5 +148,3 @@ Distance distance(InputIterator& first,
 
 };
 };
-
-#endif

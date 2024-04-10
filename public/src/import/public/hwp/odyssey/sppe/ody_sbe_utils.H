@@ -33,8 +33,7 @@
 // *HWP Level: 1
 // *HWP Consumed by: HB:Cronus
 
-#ifndef _ODY_SBE_UTILS_
-#define _ODY_SBE_UTILS_
+#pragma once
 
 #include <stdint.h>
 #include <cstring>
@@ -115,6 +114,3 @@ struct sppeImage_t
     size_t pakSize;
     void* pak;  // Pointer to the pak data for the image
 };
-
-
-#endif

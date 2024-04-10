@@ -22,8 +22,7 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __SCAN_COMPRESSION_H__
-#define __SCAN_COMPRESSION_H__
+#pragma once
 
 /// This header declares and documents the entry points defined in
 /// p10_scan_compression.C.  Some constants are also required by the scan
@@ -489,5 +488,3 @@ static inline const bool rs4_ring_type_is_instance(CompressedScanData* i_rs4Ring
 
 #endif
 }; // namespace
-
-#endif  //  __SCAN_COMPRESSION_H__

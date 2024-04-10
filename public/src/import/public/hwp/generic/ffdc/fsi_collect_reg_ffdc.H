@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,8 +22,7 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __FSI_COLLECT_REG_FFDC_H
-#define __FSI_COLLECT_REG_FFDC_H
+#pragma once
 
 #include <return_code.H>
 #include <error_info_defs.H>
@@ -39,5 +38,3 @@ extern "C"
                                            fapi2::ReturnCode& o_rc);
 
 }
-
-#endif

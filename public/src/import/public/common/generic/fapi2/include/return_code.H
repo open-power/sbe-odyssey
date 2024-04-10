@@ -27,8 +27,7 @@
  * @brief definitions for fapi2 return codes
  */
 
-#ifndef __FAPI2_RETURN_CODE__
-#define __FAPI2_RETURN_CODE__
+#pragma once
 
 #include <stdint.h>
 #include <return_code_defs.H>
@@ -280,5 +279,3 @@ extern ReturnCode current_err;
 #endif
 
 } // namspace fapi2
-
-#endif

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -29,8 +29,7 @@
 /// @brief Defines the Memory Buffer VPD Records and Keywords
 ///
 
-#ifndef _FAPI2_MBVPDACCESS_DEFS_H_
-#define _FAPI2_MBVPDACCESS_DEFS_H_
+#pragma once
 
 namespace fapi2
 {
@@ -121,5 +120,3 @@ enum MBvpdKeyword
     MBVPD_KEYWORD_PDY = 0x46, //#Y
 };
 }
-
-#endif

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -28,8 +28,7 @@
 /// platform code must implement.
 ///
 
-#ifndef _FAPI2_COMMON_HWACCESS_H_
-#define _FAPI2_COMMON_HWACCESS_H_
+#pragma once
 
 #ifdef FAPI_SUPPORT_SPY_AS_ENUM
     #include <spy_ids.H>
@@ -461,5 +460,3 @@ inline ReturnCode getSpyImage(const Target<K, M, V>& i_target,
 
 #endif // PPE and FAPI_VARIABLE_BUFFER_NOT_SUPPORTED
 };
-
-#endif // _FAPI2_HWACCESS_H_

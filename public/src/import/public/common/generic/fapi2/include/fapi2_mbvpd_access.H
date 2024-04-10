@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -29,8 +29,7 @@
 /// @brief Defines the Memory Buffer VPD functions that platform must implement
 ///
 
-#ifndef _FAPI2_MBVPDACCESS_H_
-#define _FAPI2_MBVPDACCESS_H_
+#pragma once
 
 #include <stdint.h>
 #include <return_code.H>
@@ -84,5 +83,3 @@ fapi2::ReturnCode setMBvpdField(const fapi2::MBvpdRecord i_record,
                                 const uint8_t* const i_pBuffer,
                                 const size_t i_fieldSize);
 }
-
-#endif

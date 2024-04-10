@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,8 +22,7 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef _INIT_ODYSSEY_MP_SCOM_PROCEDURE_H_
-#define _INIT_ODYSSEY_MP_SCOM_PROCEDURE_H_
+#pragma once
 
 
 #include <stddef.h>
@@ -39,5 +38,3 @@ extern "C"
     fapi2::ReturnCode odyssey_mp_scom(const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>& TGT0);
 
 }
-
-#endif

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -29,8 +29,7 @@
 /// platform implementation.
 ///
 
-#ifndef _FAPI2_HWACCESS_H_
-#define _FAPI2_HWACCESS_H_
+#pragma once
 
 // variable_buffer isn't supported on PPE
 #ifndef __PPE__
@@ -607,5 +606,3 @@ inline ReturnCode getSpyImage(const Target<K, M, V>& i_target,
 #endif // PPE
 
 };
-
-#endif // _FAPI2_HWACCESS_H_

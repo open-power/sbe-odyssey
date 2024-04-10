@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,8 +27,7 @@
  * @brief platform definitions which create a scope for automatic error handling
  */
 
-#ifndef __FAPI2_PLAT_ERROR_SCOPE__
-#define __FAPI2_PLAT_ERROR_SCOPE__
+#pragma once
 
 /// @cond
 #define PLAT_FAPI_TRY_NO_TRACE( __operation__ )                         \
@@ -83,6 +82,3 @@
         FAPI_ERR(__VA_ARGS__); \
     }
 /// @endcond
-
-
-#endif

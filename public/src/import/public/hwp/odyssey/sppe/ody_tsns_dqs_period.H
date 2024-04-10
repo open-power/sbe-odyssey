@@ -33,8 +33,7 @@
 // *HWP Level: 1
 // *HWP Consumed by: HB:Cronus
 
-#ifndef _ODY_TSNS_DQS_PERIOD_
-#define _ODY_TSNS_DQS_PERIOD_
+#pragma once
 
 #include <fapi2.H>
 #include <stdint.h>
@@ -69,5 +68,3 @@ extern "C"
     );
 
 }//extern C
-
-#endif

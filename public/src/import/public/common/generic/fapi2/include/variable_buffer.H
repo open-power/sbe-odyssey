@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,8 +27,7 @@
  * @brief definitions for fapi2 variable length buffers
  */
 
-#ifndef __FAPI2_VARIABLE_BUFFER__
-#define __FAPI2_VARIABLE_BUFFER__
+#pragma once
 
 #include <buffer_parameters.H>
 #include <buffer_traits.H>
@@ -1323,4 +1322,3 @@ inline OT variable_buffer::get(const bits_type i_offset) const
     return l_tmp;
 }
 }
-#endif

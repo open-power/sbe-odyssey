@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -23,8 +24,7 @@
 /* IBM_PROLOG_END_TAG                                                     */
 
 
-#ifndef __EXPLR_SCOM_ADDRESSES_FIXES_H
-#define __EXPLR_SCOM_ADDRESSES_FIXES_H
+#pragma once
 
 static const uint64_t EXPLR_MIPS_TO_OCMB_INTERRUPT_REGISTER1 = 0x2058ull;
 
@@ -3315,5 +3315,3 @@ static const uint32_t EXPLR_EFUSE_PE_DATA_13                                    
 
 
 static const uint32_t EXPLR_EFUSE_PE_DATA_14                                    = 0x20B0C4ull;
-
-#endif

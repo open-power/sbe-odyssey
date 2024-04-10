@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,8 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#ifndef __poz_ppe_H_
-#define __poz_ppe_H_
+#pragma once
 
 
 #ifndef __PPE_HCODE__
@@ -222,5 +221,4 @@ static const uint32_t TP_TPCHIP_PIB_SBE_SBEPRV_PRV_MISC_PRV_MISC_I2C_TIMEOUT_VAL
 #ifndef __PPE_HCODE__
 }
 }
-#endif
 #endif

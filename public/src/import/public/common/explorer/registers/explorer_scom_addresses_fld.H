@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -22,8 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 
-#ifndef __EXPLR_SCOM_ADDRESSES_FLD_H
-#define __EXPLR_SCOM_ADDRESSES_FLD_H
+#pragma once
 
 
 
@@ -7193,5 +7193,3 @@ static const uint8_t EXPLR_WDF_WSPAR_CFG_STEERING_R3_LEFT                    = 3
 static const uint8_t EXPLR_WDF_WSPAR_CFG_STEERING_R3_LEFT_LEN                = 5   ;
 static const uint8_t EXPLR_WDF_WSPAR_CFG_STEERING_R3_RIGHT                   = 35  ;
 static const uint8_t EXPLR_WDF_WSPAR_CFG_STEERING_R3_RIGHT_LEN               = 5   ;
-
-#endif

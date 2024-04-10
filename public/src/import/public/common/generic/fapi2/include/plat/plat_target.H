@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,8 +27,7 @@
  * @brief platform definitions for fapi2 targets
  */
 
-#ifndef __FAPI2_PLAT_TARGET__
-#define __FAPI2_PLAT_TARGET__
+#pragma once
 
 #include <stdint.h>
 
@@ -41,5 +40,3 @@ namespace fapi2
 {
 typedef uint64_t plat_target_handle_t;
 }
-
-#endif

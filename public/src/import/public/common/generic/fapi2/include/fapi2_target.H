@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,8 +27,7 @@
 /// @brief Common definitions for fapi2 targets
 ///
 
-#ifndef __FAPI2_COMMON_TARGET__
-#define __FAPI2_COMMON_TARGET__
+#pragma once
 
 #include <stdint.h>
 #ifndef __PPE__
@@ -734,5 +733,3 @@ inline constexpr bool is_same(void)
 }
 
 }
-
-#endif

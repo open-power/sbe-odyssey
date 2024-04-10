@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,8 +27,7 @@
  * @brief definitions for fapi2 return codes
  */
 
-#ifndef __FAPI2_RETURN_CODE_DEFS_
-#define __FAPI2_RETURN_CODE_DEFS_
+#pragma once
 
 #include <stdint.h>
 
@@ -133,5 +132,3 @@ enum ReturnCodes : uint32_t
 };
 
 }
-
-#endif

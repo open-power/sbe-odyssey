@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -32,8 +32,7 @@
 //------------------------------------------------------------------------------
 
 
-#ifndef _POZ_COMMON_STOPCLOCKS_H_
-#define _POZ_COMMON_STOPCLOCKS_H_
+#pragma once
 #define btos(x) ((x)?"TRUE":"FALSE")
 
 #include <fapi2.H>
@@ -94,4 +93,3 @@ fapi2::ReturnCode poz_chiplet_stopclocks(
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode poz_stop_chiplet_clocks_with_multicast(
     const fapi2::Target < fapi2::TARGET_TYPE_ANY_POZ_CHIP >& i_target, fapi2::TargetFilter i_target_filter);
-#endif

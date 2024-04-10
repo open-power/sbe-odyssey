@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,8 +27,7 @@
  * @brief common state for fapi2 targets
  */
 
-#ifndef __FAPI2_TARGET_STATES__
-#define __FAPI2_TARGET_STATES__
+#pragma once
 
 namespace fapi2
 {
@@ -41,5 +40,3 @@ enum TargetState
     TARGET_STATE_FUNCTIONAL = 0x00000002,
 };
 }
-
-#endif

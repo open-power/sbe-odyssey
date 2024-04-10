@@ -33,8 +33,7 @@
 // *HWP Level: 2
 // *HWP Consumed by: FSP:HB
 
-#ifndef _ODY_PACK_ECS_DATA_H_
-#define _ODY_PACK_ECS_DATA_H_
+#pragma once
 
 #include <fapi2.H>
 
@@ -75,5 +74,3 @@ extern "C"
         fapi2::ReturnCode& io_rc);
 
 }
-
-#endif

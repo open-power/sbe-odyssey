@@ -27,8 +27,7 @@
  * for supported chips in POWER systems
  */
 
-#ifndef _CHIPIDS_H
-#define _CHIPIDS_H
+#pragma once
 
 #include <stdint.h>
 
@@ -121,5 +120,3 @@ constexpr uint16_t EXPLORER    = 0x8029;
 constexpr uint16_t GEMINI      = 0x80A4;
 
 };
-
-#endif /* _CHIPIDS_H */

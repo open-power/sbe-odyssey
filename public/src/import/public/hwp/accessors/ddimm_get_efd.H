@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -30,8 +30,7 @@
 /// *HWP FW Maintainer: Christian Geddes <crgeddes@us.ibm.com>
 /// *HWP Consumed by: Cronus, FSP, HB
 
-#ifndef _GET_DDR_EFD_H_
-#define _GET_DDR_EFD_H_
+#pragma once
 
 #include <fapi2.H>
 #include <fapi2_vpd_access.H>    // VPDInfo<TARGET_TYPE_OCMB_CHIP>
@@ -107,5 +106,3 @@ extern "C"
         const uint8_t*  const i_spdBuffer, // Don't change pointer nor modify data
         const size_t    i_spdBufferSize);  // Don't modify
 }
-
-#endif

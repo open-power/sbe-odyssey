@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,8 +27,7 @@
  * @brief common definitions which create a scope for automatic error handling
  */
 
-#ifndef __FAPI2_COMMON_ERROR_SCOPE__
-#define __FAPI2_COMMON_ERROR_SCOPE__
+#pragma once
 
 #include <stdint.h>
 #include <plat_error_scope.H>
@@ -93,5 +92,3 @@
 ///
 #define FAPI_ASSERT_NOEXIT( __conditional__, __ffdc__, ... ) \
     PLAT_FAPI_ASSERT_NOEXIT( __conditional__, __ffdc__, __VA_ARGS__ )
-
-#endif

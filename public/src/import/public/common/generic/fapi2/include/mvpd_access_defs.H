@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -29,8 +29,7 @@
 /// @brief Defines the Module VPD Records and Keywords
 ///
 
-#ifndef _FAPI2_MVPDACCESS_DEFS_H_
-#define _FAPI2_MVPDACCESS_DEFS_H_
+#pragma once
 
 namespace fapi2
 {
@@ -142,5 +141,3 @@ enum MvpdKeyword
     MVPD_KEYWORD_UNDEFINED = 0xff, //useful for initializing keyword
 };
 }
-
-#endif

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -29,8 +29,7 @@
 /// @brief Defines the Module VPD functions that platform must implement
 ///
 
-#ifndef _FAPI2_MVPDACCESS_H_
-#define _FAPI2_MVPDACCESS_H_
+#pragma once
 
 #include <stdint.h>
 #include <return_code.H>
@@ -127,6 +126,3 @@ ReturnCode setMvpdField(const MvpdRecord i_record,
                         const uint8_t* const i_pBuffer,
                         const uint32_t i_fieldSize);
 }
-
-
-#endif

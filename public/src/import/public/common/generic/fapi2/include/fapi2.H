@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2022                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,8 +27,7 @@
 /// @brief top level header for fapi2
 ///
 
-#ifndef __FAPI2_TOP_LEVEL__
-#define __FAPI2_TOP_LEVEL__
+#pragma once
 
 #include <base_utils.H>
 #include <target.H>
@@ -55,5 +54,3 @@
 #ifdef FAPI2_MISSING_HEADERS
     #include <mbvpdAccess.H>
 #endif
-
-#endif // __FAPI2_TOP_LEVEL__

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -44,8 +44,7 @@
 // *HWP Consumed by     : Cronus, SBE
 //------------------------------------------------------------------------------
 
-#ifndef _POZ_GETTRACEARRAY_H
-#define _POZ_GETTRACEARRAY_H
+#pragma once
 //------------------------------------------------------------------------------
 // Includes
 //------------------------------------------------------------------------------
@@ -133,6 +132,3 @@ extern "C" ReturnCode poz_gettracearray(
     uint8_t ta_defs_len,
     hwp_data_ostream& o_stream
 );
-
-
-#endif //_POZ_GETTRACEARRAY_H

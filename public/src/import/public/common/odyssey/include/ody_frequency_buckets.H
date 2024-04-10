@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -30,8 +30,7 @@
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#ifndef _ODY_FREQUENCY_BUCKETS_H_
-#define _ODY_FREQUENCY_BUCKETS_H_
+#pragma once
 
 
 //
@@ -89,6 +88,3 @@ const ody_pll_bucket_descriptor_t ODY_PLL_BUCKETS[ODY_NUM_PLL_BUCKETS] =
     { REFCLOCK_FREQ_133, 1600, 25600 }, // bucket 14 Sim-only (VBU)
     { REFCLOCK_FREQ_133, 2000, 32000 }, // bucket 15 Sim-only (DFT)
 };
-
-
-#endif
