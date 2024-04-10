@@ -51,8 +51,10 @@
 #include "ody_sppe_attr_setup.H"
 #include "poz_perv_mod_misc.H"
 #include "stackutils.H"
+#include "imgcustomize.H"
 
 const uint64_t PERIODIC_TIMER_INTERVAL_SECONDS = 24*60*60; // 24 hours
+extern uint32_t g_metadata_ptr SECTION(".g_metadata_ptr");
 
 using namespace fapi2;
 using namespace pib;
@@ -239,9 +241,16 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
     #define SBE_FUNC " sbeSyncCommandProcessor_routine "
     SBE_INFO(SBE_FUNC " Thread started");
 
+    // Populate runtime image metadata
+    ReturnCode l_fapiRc = sbeRuntimePopulateMetadataWrap(g_metadata_ptr);
+    if(l_fapiRc != FAPI2_RC_SUCCESS)
+    {
+        SBE_ERROR(SBE_FUNC " File hash valiadtion failed RC[0x%08x] ", l_fapiRc);
+        fapi2::logError(l_fapiRc,fapi2::FAPI2_ERRL_SEV_RECOVERED);
+    }
+
     // Update SBE msgg reg to indicate that control loop
     // is ready now to receive data on its interfaces
-
     (void)SbeRegAccess::theSbeRegAccess().setSbeReady();
 
     if(SBE::isHreset())
@@ -355,6 +364,7 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
             pk_irq_enable(SBE_IRQ_SBEFIFO_RESET);
         }
     } while(true); // Thread always exists
+
     SBE_EXIT(SBE_FUNC);
     #undef SBE_FUNC
 }

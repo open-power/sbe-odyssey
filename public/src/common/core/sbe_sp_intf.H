@@ -240,6 +240,7 @@ enum sbeSecondaryResponse
     SBE_SEC_TEST_FFDC_SUCCESSFUL              = 0x91,
     SBE_SEC_RAS_INVALID_DEVICE_ID             = 0x92,
     SBE_SEC_IMAGE_SIZE_MISMATCH               = 0x93,
+    SBE_SEC_FILE_HASH_VALIDATION_FAILED       = 0x9A,
 };
 
 /**
