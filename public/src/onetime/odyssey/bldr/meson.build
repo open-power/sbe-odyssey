@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -45,6 +45,7 @@ endforeach
 
 #Tools
 packaging = find_program('build/utils/build.sh')
+bldrCrcFix = find_program('build/utils/bldrcrcfix.sh')
 
 #Add other required libs to build odyssey SROM image
 odyssey_bldr_libs += [odyssey_ekb_cmn_libs,
@@ -177,7 +178,8 @@ obldr_package_img = custom_target( 'obldr_package_img',
                                            obldr_dis_file, obldr_bin_gen],
                                command : [ packaging, meson.current_build_dir(),
                                            odyssey_bldr_img_name, pakTool,
-                                           pakBuildTool, signHashList],
+                                           pakBuildTool, signHashList,
+                                           bldrCrcFix],
                                build_by_default : true,
                                install : true,
                                install_dir : odyssey_bldr_install_path

@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -42,6 +42,10 @@ BLDR_BASE_IMAGE_NAME=$2
 PAK_TOOL_PATH=$3
 PAK_BUILD_TOOL_PATH=$4
 SBE_SIGN_TOOL=$5
+BLDR_FIX_CRC_TOOL=$6
+
+#Fix the Boot Loader Binary CRC
+$BLDR_FIX_CRC_TOOL ${BLDR_MESON_IMAGE_DIR_PATH}/${BLDR_BASE_IMAGE_NAME}.bin
 
 #Boot Loader manifest file path
 BLDR_MANIFEST_PATH=$SBEROOT/public/src/onetime/odyssey/bldr/build/utils/manifest
