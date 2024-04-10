@@ -31,4 +31,3 @@ namespace fapi2
 };
 
 #endif // _FAPI2_PLAT_MMIO_ACCESS_H_
-

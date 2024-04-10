@@ -37,4 +37,3 @@ namespace fapi2
 };
 
 #endif // _FAPI2_PLAT_I2C_ACCESS_H_
-

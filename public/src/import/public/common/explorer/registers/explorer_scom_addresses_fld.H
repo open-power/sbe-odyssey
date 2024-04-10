@@ -7195,4 +7195,3 @@ static const uint8_t EXPLR_WDF_WSPAR_CFG_STEERING_R3_RIGHT                   = 3
 static const uint8_t EXPLR_WDF_WSPAR_CFG_STEERING_R3_RIGHT_LEN               = 5   ;
 
 #endif
-

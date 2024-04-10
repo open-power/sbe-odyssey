@@ -224,4 +224,3 @@ static const uint32_t TP_TPCHIP_PIB_SBE_SBEPRV_PRV_MISC_PRV_MISC_I2C_TIMEOUT_VAL
 }
 #endif
 #endif
-
