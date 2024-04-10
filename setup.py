@@ -90,7 +90,7 @@ class BuildCommand(build_py):
 
 setup(
     name          = "poz-pel-parser",
-    cmdClass      = {"build_py":BuildCommand},
+    cmdclass      = {"build_py":BuildCommand},
     version       = os.getenv('PELTOOL_VERSION', '0.1'),
     packages      = package_directories.keys(),
     data_files    = custom_data_files,
