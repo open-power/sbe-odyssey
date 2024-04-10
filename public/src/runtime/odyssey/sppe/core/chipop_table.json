@@ -13,7 +13,7 @@
       "cmdClass":"A8",
       "command":"0x04",
       "function":"sbeGetMemTrainData",
-      "fences":["SBE_FENCE_AT_CONTINUOUS_IPL","SBE_FENCE_AT_DUMPING"],
+      "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
       "headerFile":"sbecmdgetmemtraindata.H"
     },
     {
