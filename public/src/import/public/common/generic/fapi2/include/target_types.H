@@ -104,6 +104,7 @@ enum LogTargetType : uint8_t
     LOG_TARGET_TYPE_TEMP_SENSOR         = 55, ///< TEMP_SENSOR type
     LOG_TARGET_TYPE_XBUSL               = 56, ///< XBUS Link
     LOG_TARGET_TYPE_SHADOW              = 57, ///< Shadow core
+    LOG_TARGET_TYPE_ASIC_CHIP           = 58, ///< ASIC chip type
     LOG_TARGET_TYPE_MULTICAST           = 63, ///< MULTICAST type
 };
 
@@ -170,6 +171,7 @@ enum TargetType : uint64_t
     TARGET_TYPE_TEMP_SENSOR         = 1ULL << LOG_TARGET_TYPE_TEMP_SENSOR,         ///< TEMP_SENSOR type
     TARGET_TYPE_XBUSL               = 1ULL << LOG_TARGET_TYPE_XBUSL,               ///< XBUS Link
     TARGET_TYPE_SHADOW              = 1ULL << LOG_TARGET_TYPE_SHADOW,              ///< Shadow core
+    TARGET_TYPE_ASIC_CHIP           = 1ULL << LOG_TARGET_TYPE_ASIC_CHIP,           ///< ASIC chip type
     TARGET_TYPE_MULTICAST           = 1ULL << LOG_TARGET_TYPE_MULTICAST,           ///< MULTICAST type
 
     TARGET_TYPE_ALL                 = 0x7FFFFFFFFFFFFFFF, ///< Any/All types
@@ -180,7 +182,8 @@ enum TargetType : uint64_t
                                 TARGET_TYPE_MEMBUF_CHIP |
                                 TARGET_TYPE_OCMB_CHIP |
                                 TARGET_TYPE_COMPUTE_CHIP |
-                                TARGET_TYPE_HUB_CHIP,
+                                TARGET_TYPE_HUB_CHIP |
+                                TARGET_TYPE_ASIC_CHIP,
 
     // Types that correspond to a chiplet or a chiplet subunit
     TARGET_TYPE_CHIPLETS      = TARGET_TYPE_EX            |

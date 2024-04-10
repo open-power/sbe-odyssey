@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -322,6 +322,7 @@ uint16_t convertSbeTargInstanceToFapiPos(fapi2::TargetType i_targType,
             case TARGET_TYPE_SHADOW:
             case TARGET_TYPE_HUB_CHIP:
             case TARGET_TYPE_COMPUTE_CHIP:
+            case TARGET_TYPE_ASIC_CHIP:
                 {
                     max_targets = INVALID_TARGET_COUNT;
                     break;
