@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -26,7 +26,7 @@
 
 ///
 /// @file ody_system_specific_omi.H
-/// @brief OMI EC Feature template check P11
+/// @brief OMI EC Feature template check PST
 ///
 // *HWP HWP Owner: Stephen Glancy <sglancy@us.ibm.com>
 // *HWP HWP Backup: Louis Stermole <stermole@us.ibm.com>
@@ -45,7 +45,7 @@ namespace mss
 namespace omi
 {
 ///
-/// @brief Retrieves ec feature template from attr p11 specific - returns false for now
+/// @brief Retrieves ec feature template from attr pst specific - returns false for now
 /// @param[in] i_proc PROC Chip we are operating on
 /// @param[in,out] io_us_only_0159 EC FEATURE TEMPLATE VALUE
 /// @return fapi2::FAPI2_RC_SUCCESS
@@ -57,7 +57,7 @@ fapi2::ReturnCode get_us_template_support(const fapi2::Target<PROC_TYPE>& i_proc
     return fapi2::FAPI2_RC_SUCCESS;
 }
 ///
-/// @brief Retrieves ec feature template from attr p11 specific - returns false for now
+/// @brief Retrieves ec feature template from attr pst specific - returns false for now
 /// @param[in] i_proc PROC Chip we are operating on
 /// @param[in,out] io_ds_only_0147 EC FEATURE TEMPLATE VALUE
 /// @return fapi2::FAPI2_RC_SUCCESS

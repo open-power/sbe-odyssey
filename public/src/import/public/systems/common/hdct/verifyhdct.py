@@ -50,7 +50,7 @@ def main():
         # Default value as odyssey
         arg = "ody"
 
-    if not (arg == 'odyssey' or arg == 'p11'):
+    if not (arg == 'odyssey' or arg == 'pst'):
         print("Target is not supporting, exiting...")
         sys.exit(1)
 

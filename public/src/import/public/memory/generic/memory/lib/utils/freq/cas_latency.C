@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -56,7 +56,7 @@ const std::vector< uint32_t > CasLatencyTraits<mc_type::EXPLORER>::SUPPORTED_FRE
 const std::vector< uint32_t > CasLatencyTraits<mc_type::ODYSSEY>::SUPPORTED_FREQS =
 {
     DIMM_SPEED_3200,
-    // TODO Zen:MST-1555 Add support for faster DIMM frequencies that P11 supports when we port this to P11
+    // TODO Zen:MST-1555 Add support for faster DIMM frequencies that PST supports when we port this to PST
 };
 
 }// mss

@@ -78,7 +78,7 @@ typedef enum plat_target_type
 typedef union plat_target_handle
 {
     //PLAT NOTE//
-    // Platform: P11 QME
+    // Platform: Tap QME
     // The fields are layout in the way that
     // aligns with the need of address overlay
 

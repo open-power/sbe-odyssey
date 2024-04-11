@@ -27,7 +27,7 @@
 <!--    defined attributes that will be included in the all image of SBE    -->
 <!--    platform. Additionally, build time initial values can also be       -->
 <!--    optionally defined. This xml along with xmls defined for individual -->
-<!--    images (like Odyssey, P11 SPPE etc) will determine final list of    -->
+<!--    images (like Odyssey, PST SPPE etc) will determine final list of    -->
 <!--    attributes and its initial values                                   -->
 <!-- Path to odyssey specific sbe xml:                                      -->
 <!--    public/hwp/odyssey/xml/attribute_info/sbe_ody_attribute.xml         -->

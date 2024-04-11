@@ -124,7 +124,7 @@ inline uint8_t getPIBErrorMask(void)
 // address overlay for all cases, which is maximum cost for every memory access.
 // Here implemented each usage case with their minimum cost
 // 1) for all quad related access, there is no need to do targeting/address overlay
-// due to courtesy of P11 non-ex qme-per-quad architecture, all quad base addresses
+// due to courtesy of Tap non-ex qme-per-quad architecture, all quad base addresses
 // can be used directly without any need to modify the address further.
 // Therefore their target usage is omitted. However, the prototype still include
 // target as parameter to be compatible with generic scom prototype, but note the

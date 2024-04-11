@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2023
+# Contributors Listed Below - COPYRIGHT 2023,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -130,7 +130,7 @@ commonChipTypeNames = {"pu", "memb", "ocmb", "ody"}
 generationToEncode = { None : 0x00,
                        "p9" : 0x01,
                        "p10" : 0x02,
-                       "p11" : 0x03,
+                       "pst" : 0x03,
                      }
 
 ##########
@@ -220,7 +220,7 @@ chipTypeIdToString = { b'\x00' : None,
 generationIdToString = { b'\x00' : None,
                          b'\x01' : "p9",
                          b'\x02' : "p10",
-                         b'\x03' : "p11",
+                         b'\x03' : "pst",
                        }
 
 # Translate environment to string

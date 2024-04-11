@@ -430,7 +430,7 @@ fapi2::ReturnCode after_memdiags<mss::mc_type::ODYSSEY>( const fapi2::Target<fap
 
         // Unmask remaining RDF FIRs
         FAPI_TRY(l_rdf_reg.checkstop<scomt::ody::ODC_RDF0_SCOM_FIR_MAINLINE_AUE>()
-                 // Note: MAINLINE_UE will need to be changed to lxstop on P11
+                 // Note: MAINLINE_UE will need to be changed to lxstop on PST
                  .recoverable_error<scomt::ody::ODC_RDF0_SCOM_FIR_MAINLINE_UE>()
                  .recoverable_error<scomt::ody::ODC_RDF0_SCOM_FIR_MAINLINE_RCD>()
                  .checkstop<scomt::ody::ODC_RDF0_SCOM_FIR_MAINLINE_IAUE>()
@@ -461,7 +461,7 @@ fapi2::ReturnCode after_draminit_mc<mss::mc_type::ODYSSEY>( const fapi2::Target<
     mss::fir::reg2<scomt::ody::ODC_MCBIST_SCOM_MCBISTFIRQ_RW_WCLEAR> l_mcbist_reg(i_target);
 
     // Write MCBISTFIR register per Odyssey unmask spec
-    // NOTE: when this gets ported to p11 this will need to be changed to recoverable
+    // NOTE: when this gets ported to pst this will need to be changed to recoverable
     FAPI_TRY(l_mcbist_reg.attention<scomt::ody::ODC_MCBIST_SCOM_MCBISTFIRQ_MCBISTFIRQ_MCBIST_PROGRAM_COMPLETE>()
              .write(), "Failed to Write MCBIST FIR register " GENTARGTIDFORMAT, GENTARGTID(i_target));
 

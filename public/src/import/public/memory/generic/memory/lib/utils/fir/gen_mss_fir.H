@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -356,7 +356,7 @@ class reg
 };
 
 ///
-/// @brief Small class to hold a Odyssey and P11 style FIR register
+/// @brief Small class to hold a Odyssey and PST style FIR register
 /// @tparam R the FIR register
 /// @tparam RT the type traits for this register (derived)
 ///

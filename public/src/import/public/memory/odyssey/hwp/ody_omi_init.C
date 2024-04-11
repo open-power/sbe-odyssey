@@ -103,7 +103,7 @@ fapi_try_exit:
 fapi2::ReturnCode omiSetUpstreamTemplates(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target)
 {
     //Expected dnstream 0,1,4 to OCMB
-    //Expected upstream 0,5,9 to P10/P11, or host
+    //Expected upstream 0,5,9 to P10/PST, or host
     fapi2::buffer<uint32_t> l_data;
 #ifdef __PPE__
     fapi2::buffer<uint64_t> l_scom;

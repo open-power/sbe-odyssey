@@ -103,7 +103,7 @@
 #define CBS_CS_REG 0x50001
 #define CBS_CS_SECURE_ACCESS_BIT BIT(4)
 
-//added below fields by Sreekanth to support P11
+//added below fields by Sreekanth to support PST
 #define ROOT_CTRL1_SET 0x50121
 #define ROOT_CTRL1__TP_TPM_DI1_DC_B BIT(22)
 

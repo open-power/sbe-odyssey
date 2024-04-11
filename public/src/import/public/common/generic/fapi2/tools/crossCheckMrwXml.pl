@@ -60,7 +60,7 @@ use File::Basename;
 #
 
 #--------------------------------------------------------------------------------
-# P11 system specific properties
+# System specific properties
 #--------------------------------------------------------------------------------
 # used to check/ensure MRW required attribute values are specified for each
 # expected target instance
@@ -77,7 +77,7 @@ my %cpn = (
 );
 
 #--------------------------------------------------------------------------------
-# P11 chip specific properties
+# Chip specific properties
 #--------------------------------------------------------------------------------
 
 sub instances_to_check($$)
