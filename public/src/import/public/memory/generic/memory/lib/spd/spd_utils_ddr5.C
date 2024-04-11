@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -577,9 +577,9 @@ fapi2::ReturnCode process_trefi_nck( const fapi2::Target<fapi2::TARGET_TYPE_MEM_
     constexpr uint64_t TREFI4_PS = 975000;
     uint64_t TREFI_PS = 0;
     //Since SBE might not Support Double / Float Pre-Calculate the Values
-    constexpr uint64_t TEN_PERCENT_FASTER_TREFI1 = 390000;
-    constexpr uint64_t TEN_PERCENT_FASTER_TREFI2 = 195000;
-    constexpr uint64_t TEN_PERCENT_FASTER_TREFI4 = 97500;
+    constexpr uint64_t TEN_PERCENT_FASTER_TREFI1 = TREFI1_PS - (TREFI1_PS / 10);
+    constexpr uint64_t TEN_PERCENT_FASTER_TREFI2 = TREFI2_PS - (TREFI2_PS / 10);
+    constexpr uint64_t TEN_PERCENT_FASTER_TREFI4 = TREFI4_PS - (TREFI4_PS / 10);
 
     switch(i_refresh_request_rate)
     {
@@ -592,13 +592,13 @@ fapi2::ReturnCode process_trefi_nck( const fapi2::Target<fapi2::TARGET_TYPE_MEM_
             break;
 
         case fapi2::ENUM_ATTR_MSS_MRW_REFRESH_RATE_REQUEST_SINGLE_10_PERCENT_FASTER:
-            TREFI_PS = (i_refresh_mode == fapi2::ENUM_ATTR_MSS_MRW_FINE_REFRESH_MODE_NORMAL) ? TREFI1_PS -
-                       TEN_PERCENT_FASTER_TREFI1 : TREFI2_PS - TEN_PERCENT_FASTER_TREFI2;
+            TREFI_PS = (i_refresh_mode == fapi2::ENUM_ATTR_MSS_MRW_FINE_REFRESH_MODE_NORMAL) ?
+                       TEN_PERCENT_FASTER_TREFI1 : TEN_PERCENT_FASTER_TREFI2;
             break;
 
         case fapi2::ENUM_ATTR_MSS_MRW_REFRESH_RATE_REQUEST_DOUBLE_10_PERCENT_FASTER:
-            TREFI_PS = (i_refresh_mode == fapi2::ENUM_ATTR_MSS_MRW_FINE_REFRESH_MODE_NORMAL) ? TREFI2_PS -
-                       TEN_PERCENT_FASTER_TREFI2 : TREFI4_PS - TEN_PERCENT_FASTER_TREFI4;
+            TREFI_PS = (i_refresh_mode == fapi2::ENUM_ATTR_MSS_MRW_FINE_REFRESH_MODE_NORMAL) ?
+                       TEN_PERCENT_FASTER_TREFI2 : TEN_PERCENT_FASTER_TREFI4;
             break;
 
         default:
