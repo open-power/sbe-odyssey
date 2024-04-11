@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/memory/explorer/ffdc/exp_collect_explorer_saved_A_log.C $ */
+/* $Source: public/src/import/public/hwp/generic/ffdc/exp_collect_explorer_active_log.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -24,26 +24,54 @@
 /* IBM_PROLOG_END_TAG                                                     */
 // EKB-Mirror-To: hostboot
 
-/// @file  exp_collect_explorer_saved_A_log.C
+/// @file  exp_collect_explorer_active_log.H
 ///
-/// @brief Collects and adds Explorer SAVED log from image A side to rc
+/// @brief Collects and adds Explorer ACTIVE log to rc
+// ----------------------------------------
+// *HWP HWP Owner: Matt Derksen <mderkse1@us.ibm.com>
+// *HWP HWP Backup: Louis Stermole <stermole@us.ibm.com>
+// *HWP Team: Memory
+// *HWP Level: 2
+// *HWP Consumed by: HB
+// ----------------------------------------
+#ifndef _COLLECT_EXPLORER_ACTIVE_LOG_H_
+#define _COLLECT_EXPLORER_ACTIVE_LOG_H_
+
 //------------------------------------------------------------------------------
-// *HWP HW Owner        : Matt Derksen
-// *HWP HW Backup Owner :  <>
-// *HWP FW Owner        :  <>
-// *HWP Level           : 2
-// *HWP Consumed by     : SE:HB
+// Includes
+//------------------------------------------------------------------------------
+#include <return_code.H>
+#include <error_info_defs.H>
+
+//------------------------------------------------------------------------------
+// Structure definitions
 //------------------------------------------------------------------------------
 
-#include <fapi2.H>
-#include <exp_collect_explorer_log.H>
-#include <exp_collect_explorer_saved_A_log.H>
+// function pointer typedef definition for HWP call support
+typedef fapi2::ReturnCode (*exp_collect_explorer_active_log_FP_t)(
+    const fapi2::ffdc_t&,
+    const fapi2::ffdc_t&,
+    fapi2::ReturnCode& );
 
-/// See header
-fapi2::ReturnCode exp_collect_explorer_saved_A_log(
-    const fapi2::ffdc_t& i_ocmb_chip,
-    const fapi2::ffdc_t& i_size,
-    fapi2::ReturnCode& o_rc )
+extern "C"
 {
-    return exp_collect_explorer_logs(i_ocmb_chip, i_size, SAVED_LOG_A, o_rc);
-}
+///
+/// @brief  Procedure to grab active (RAM) log traces from Explorer chip
+///         and add those traces to the HWP error
+///  @param[in]  i_ocmb_chip - OCMB chip target
+///  @param[in]  i_size - allowable total size (add entries upto this size)
+///  @param[out] o_rc - return code to add FFDC data to.
+///
+/// @return FAPI2_RC_SUCCESS iff ok
+///
+/// NOTE: All input parameters must be of type fapi2::ffdc_t and converted
+///       to the correct type inside the function.
+///
+    fapi2::ReturnCode exp_collect_explorer_active_log(
+        const fapi2::ffdc_t& i_ocmb_chip,
+        const fapi2::ffdc_t& i_size,
+        fapi2::ReturnCode& o_rc );
+
+} // extern "C"
+
+#endif
