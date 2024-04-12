@@ -24,21 +24,23 @@
 /* IBM_PROLOG_END_TAG                                                     */
 ///
 /// @file hwp_file_stream.H
-/// @brief Common unload functions
+/// @brief HWP data streams for reading and writing files on disk
 ///-----------------------------------------------------------------------------
 /// *HW HW Maintainer: Josh Chica <Josh.Chica@ibm.com>
 /// *HW FW Maintainer:
-/// *HW Consumed by  : SBE
+/// *HW Consumed by  : Cronus
 ///-----------------------------------------------------------------------------
 #pragma once
 
 #include <fapi2.H>
 #include <hwp_data_stream.H>
+#include <stdlib.h>
+#include <endian.h>
 
 ///
 /// @class hwp_file_stream
 ///
-///     Streams IO Data back to a binary file
+///     Common base class for file_istream and file_ostream
 ///
 ///
 class hwp_file_stream
@@ -59,6 +61,12 @@ class hwp_file_stream
             {
                 fclose(iv_file);
             }
+        }
+
+        /// @brief Rewind the file back to the beginning
+        void rewind()
+        {
+            std::rewind(iv_file);
         }
     protected:
 
@@ -86,6 +94,34 @@ class hwp_file_stream
         bool iv_close;
 };
 
+/// @class hwp_file_istream
+///     Streams binary data from file
+class hwp_file_istream : public fapi2::hwp_data_istream, public hwp_file_stream
+{
+    public:
+        hwp_file_istream(const char* i_fname) : hwp_file_stream(i_fname, "rb", "reading", stdin) {}
+
+        /// @brief read data from the file
+        /// @param[out] o_data Receives the data read from the file
+        /// @return  FAPI2_RC_SUCCESS if success, FAPI2_RC_FALSE on end-of-file, else error code.
+        fapi2::ReturnCode get(fapi2::hwp_data_unit& o_data)
+        {
+            fapi2::hwp_data_unit l_data;
+
+            if (feof(iv_file))
+            {
+                return fapi2::FAPI2_RC_FALSE;
+            }
+
+            if (!fread(&l_data, sizeof(l_data), 1, iv_file))
+            {
+                return fapi2::FAPI2_RC_PLAT_ERR_SEE_DATA;
+            }
+
+            o_data = be32toh(l_data);
+            return fapi2::FAPI2_RC_SUCCESS;
+        }
+};
 
 /// @class hwp_file_ostream
 ///     Streams binary data to file
@@ -95,7 +131,7 @@ class hwp_file_ostream : public fapi2::hwp_data_ostream, public hwp_file_stream
         hwp_file_ostream(const char* i_fname) : hwp_file_stream(i_fname, "wb", "writing", stdout) {}
 
         /// @brief writes the data to the file
-        /// @param[in] fapi2::hwp_data_unit     The data to be written to the file
+        /// @param[in] i_data  The data to be written to the file
         /// @return  FAPI2_RC_SUCCESS if success, else error code.
         fapi2::ReturnCode put(fapi2::hwp_data_unit i_data)
         {
