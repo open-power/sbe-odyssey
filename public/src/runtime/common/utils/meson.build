@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -28,6 +28,7 @@ runtime_cmn_utils_dir_path = meson.global_source_root() + '/public/src/runtime/c
 infile_c = [
          'heap.C',
          'rt_pak.C',
+         'rtcmnutils.C'
          ]
 
 abs_runtime_cmn_utils_c_path = []

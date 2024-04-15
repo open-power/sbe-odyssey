@@ -22,8 +22,7 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef SBE_UTIL_H
-#define SBE_UTIL_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -150,6 +149,33 @@ inline void SBE_MAGIC_INSTRUCTION(int _n)
         "i" (((n) >> 4) & 0xf),               \
         "i" ((((n) >> 0) & 0xf) | 16));
 }
+
+
+#define SBE_FAPI_TRY( fapiRc, __operation__, ... )              \
+    fapiRc = (__operation__);                                   \
+    if (fapiRc != fapi2::FAPI2_RC_SUCCESS)                      \
+    {                                                           \
+        SBE_ERROR(__VA_ARGS__);                                 \
+        break;                                                  \
+    }
+
+/**
+ * @brief SBE plat check FAPI RC and log the error, MACRO need do while{} loop
+ *
+ * @param fapiRc fapirc variable
+ * @param __operation__ operation will execute
+ * @param ... trace
+ *
+ */
+#define SBE_EXEC_FUNC( fapiRc, __operation__, ... )        \
+    fapiRc = (__operation__);                                   \
+    if (fapiRc != fapi2::FAPI2_RC_SUCCESS)                      \
+    {                                                           \
+        SBE_ERROR(__VA_ARGS__);                                 \
+        logFatalError(fapiRc);                                  \
+        fapi2::current_err = fapi2::FAPI2_RC_SUCCESS;           \
+        break;                                                  \
+    }
 
 // Extern logFatalError
 extern void logFatalError( fapi2::ReturnCode & );
@@ -395,7 +421,4 @@ namespace SBE
                                const uint8_t i_size,
                                const uint8_t i_hexSize,
                                uint8_t *o_hex);
-
 } // namespace SBE
-
-#endif //SBE_UTIL_H

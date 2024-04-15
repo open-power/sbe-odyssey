@@ -38,13 +38,13 @@
 #include "sbeutil.H"
 #include "sbeglobals.H"
 #include "archive.H"
+#include "rtcmnutils.H"
 
 #define MEM_PAKNAME_MAX_CHAR  30 // ddr/ddimm/dmem.bin
 
 using namespace fapi2;
 
 //----------------------------------------------------------------------------
-
 ReturnCode istepWithOcmb( voidfuncptr_t i_hwp)
 {
     #define SBE_FUNC " istepWithOcmb "
@@ -170,31 +170,23 @@ ReturnCode istepLoadIMEMwithOcmb( voidfuncptr_t i_hwp)
 {
     #define SBE_FUNC " istepLoadIMEMwithOcmb "
     SBE_INFO(SBE_FUNC);
-    ReturnCode rc = FAPI2_RC_SUCCESS;
+    ReturnCode fapiRc = FAPI2_RC_SUCCESS;
     do
     {
         PakWrapper pak((void *)g_partitionOffset, (void *)(g_partitionOffset + g_partitionSize));
 
         char pakname[MEM_PAKNAME_MAX_CHAR] = "";
-
-        rc = getBinaryDirectory(pakname);
-        if (rc)
-        {
-            SBE_ERROR(SBE_FUNC " getBinaryDirectory failed with rc 0x%08X", rc);
-            break;
-        }
+        SBE_EXEC_FUNC( fapiRc, getBinaryDirectory(pakname),
+                            SBE_FUNC "getBinaryDirectory failed with rc 0x%08X", fapiRc);
 
         // Now append the imem.bin
         strcat (pakname,"imem.bin");
 
         HwpStreamReceiver rec(0, i_hwp, DDR_IMEM_IMAGE);
-        rc = sbestreampaktohwp(&pak, pakname, rec);
-        if (rc)
-        {
-            SBE_ERROR(SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X", rc);
-        }
+        SBE_EXEC_FUNC( fapiRc, sbestreampaktohwp(&pak, pakname, rec),
+                            SBE_FUNC "sbestreampaktohwp failed with rc 0x%08X", fapiRc);
     }while(0);
-    return rc;
+    return fapiRc;
     #undef SBE_FUNC
 }
 
@@ -202,32 +194,24 @@ ReturnCode istepLoadDMEMwithOcmb( voidfuncptr_t i_hwp)
 {
     #define SBE_FUNC " istepLoadDMEMwithOcmb "
     SBE_INFO(SBE_FUNC);
-    ReturnCode rc = FAPI2_RC_SUCCESS;
+    ReturnCode fapiRc = FAPI2_RC_SUCCESS;
     do
     {
         PakWrapper pak((void *)g_partitionOffset, (void *)(g_partitionOffset + g_partitionSize));
 
         char pakname[MEM_PAKNAME_MAX_CHAR] = "";
-
-        rc = getBinaryDirectory(pakname);
-        if (rc)
-        {
-            SBE_ERROR(SBE_FUNC " getBinaryDirectory failed with rc 0x%08X", rc);
-            break;
-        }
+        SBE_EXEC_FUNC( fapiRc, getBinaryDirectory(pakname),
+                            SBE_FUNC "getBinaryDirectory failed with rc 0x%08X", fapiRc);
 
         // Now append the dmem.bin
         strcat (pakname,"dmem.bin");
 
         HwpStreamReceiver rec(0, i_hwp, DDR_DMEM_IMAGE);
-        rc = sbestreampaktohwp(&pak, pakname, rec);
-        if (rc)
-        {
-            SBE_ERROR(SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X", rc);
-        }
+        SBE_EXEC_FUNC( fapiRc, sbestreampaktohwp(&pak, pakname, rec),
+                            SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X", fapiRc);
     }while(0);
 
-    return rc;
+    return fapiRc;
     #undef SBE_FUNC
 }
 
@@ -235,32 +219,25 @@ ReturnCode istepLoadIOPPEwithOcmb( voidfuncptr_t i_hwp)
 {
     #define SBE_FUNC " istepLoadIOPPEwithOcmb "
     SBE_INFO(SBE_FUNC);
-    ReturnCode rc = FAPI2_RC_SUCCESS;
+    ReturnCode fapiRc = FAPI2_RC_SUCCESS;
 
     do{
         PakWrapper pak((void *)g_partitionOffset, (void *)(g_partitionOffset + g_partitionSize));
 
         {
             HwpStreamReceiver rec(0, i_hwp, IOPPE_BASE_IMAGE);
-            rc = sbestreampaktohwp(&pak, "ioppe/ioo.bin", rec);
-            if (rc)
-            {
-                SBE_ERROR(SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X for ioppe/ioo.bin", rc);
-                break;
-            }
+            SBE_EXEC_FUNC(fapiRc, sbestreampaktohwp(&pak, "ioppe/ioo.bin", rec),
+                               SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X for ioppe/ioo.bin", fapiRc);
         }
 
         {
             HwpStreamReceiver rec(0, i_hwp, IOPPE_MEMREGS_IMAGE);
-            rc = sbestreampaktohwp(&pak, "ioppe/ioo_memregs.bin", rec);
-            if (rc)
-            {
-                SBE_ERROR(SBE_FUNC " sbestreampaktohwp failed with rc 0x%08X for ioppe/ioo_memregs.bin", rc);
-            }
+            SBE_EXEC_FUNC(fapiRc, sbestreampaktohwp(&pak, "ioppe/ioo_memregs.bin", rec),
+                               BE_FUNC " sbestreampaktohwp failed with rc 0x%08X for ioppe/ioo_memregs.bin", fapiRc);
         }
     }while(0);
 
-    return rc;
+    return fapiRc;
     #undef SBE_FUNC
 }
 
@@ -296,43 +273,30 @@ ReturnCode istepDraminitWithOcmb( voidfuncptr_t i_hwp)
     uint32_t *scratchArea = NULL;
     do
     {
-        if(i_hwp != NULL)
+        if (i_hwp == nullptr)
         {
-            // Allocate the scratch space of 64 KB for log data.
-            scratchArea =
-                    (fapi2::hwp_data_unit*)Heap::get_instance().scratch_alloc(SPPE_MEM_TRAINING_DATA_SIZE);
-
-            PLAT_FAPI_ASSERT( (scratchArea != NULL),
-                              POZ_SCRATCH_ALLOC_FAILED().
-                              set_REQUIRED_SPACE(SPPE_MEM_TRAINING_DATA_SIZE).
-                              set_AVAILABLE_SPACE(Heap::get_instance().getFreeHeapSize()),
-                              "scratch allocation failed.");
-
-            // Create the stream class pointing to the scratch space.
-            fapi2::hwp_array_ostream  logStream( scratchArea,
-                                      SPPE_MEM_TRAINING_DATA_SIZE/sizeof(fapi2::hwp_data_unit));
-
-            Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
-            SBE_EXEC_HWP(fapiRc, reinterpret_cast<sbeHwpDraminit_t>( i_hwp ),
-                          l_ocmb_chip, logStream);
-
-            g_dramDataSizeInWords = (logStream.getLength() * sizeof(hwp_data_unit) / 4);
-
-            // Update DRAM offset with allocate the scratch space.
-            g_draminitOffset =  (uint32_t)scratchArea;
+            break;
         }
+
+        SBE_EXEC_FUNC(fapiRc, SBE::allocScratch((void *&)scratchArea, SPPE_MEM_TRAINING_DATA_SIZE),
+                           SBE_FUNC "Scratch allocation failed.")
+
+        // Create the stream class pointing to the scratch space.
+        fapi2::hwp_array_ostream  logStream( scratchArea,
+                                    SPPE_MEM_TRAINING_DATA_SIZE/sizeof(fapi2::hwp_data_unit));
+
+        Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
+        SBE_EXEC_HWP(fapiRc, reinterpret_cast<sbeHwpDraminit_t>( i_hwp ),
+                        l_ocmb_chip, logStream);
+
+        g_dramDataSizeInWords = (logStream.getLength() * sizeof(hwp_data_unit) / 4);
+
+        // Update DRAM offset with allocate the scratch space.
+        g_draminitOffset =  (uint32_t)scratchArea;
     }while(0);
 
     SBE_EXIT(SBE_FUNC);
     return fapiRc;
-
-fapi_try_exit:
-    SBE_EXIT(SBE_FUNC);
-    // PLAT_FAPI_ASSERT will not commit the error.So, it is the responsibility of this
-    // macro user to commit the error log.
-    logFatalError(fapi2::current_err);
-    return fapi2::current_err;
-
     #undef SBE_FUNC
 }
 
@@ -341,75 +305,60 @@ static ReturnCode getBinaryFromPak(const char* i_pakName, uint32_t &o_Size,
 {
     #define SBE_FUNC " getBinaryFromPak "
     SBE_ENTER(SBE_FUNC);
-
-    // Variable declaration
-    ReturnCode l_rc = FAPI2_RC_SUCCESS;
-
     do
     {
         char pakname[MEM_PAKNAME_MAX_CHAR] = "";
-        l_rc = getBinaryDirectory(pakname);
-        if (l_rc)
-        {
-            SBE_ERROR(SBE_FUNC " getBinaryDirectory failed with l_rc[0x%08X]", l_rc);
-            break;
-        }
+
+        SBE_FAPI_TRY(current_err, getBinaryDirectory(pakname), SBE_FUNC "Failed to get binary from pak RC=0x%08x ", current_err);
 
         // Now append the bin file
-        strcat (pakname,i_pakName);
+        strcat (pakname, i_pakName);
 
         PakWrapper pak((void *)g_partitionOffset, (void *)(g_partitionOffset + g_partitionSize));
 
         uint32_t* l_imageStartPtr = nullptr;
-        l_rc = pak.get_image_start_ptr_and_size(pakname, &l_imageStartPtr, &o_Size);
+        uint32_t sec_rc = (uint32_t) pak.get_image_start_ptr_and_size(pakname, &l_imageStartPtr, &o_Size);
 
-        //Decompress the file
-        if ((l_rc == FAPI2_RC_SUCCESS) && (o_Size != 0))
-        {
-            o_scratchArea = (uint8_t *)Heap::get_instance().scratch_alloc(o_Size);
-            if(o_scratchArea == nullptr)
-            {
-                l_rc = SBE_SEC_HEAP_BUFFER_ALLOC_FAILED;
-                SBE_ERROR(SBE_FUNC " scratch allocation request for [%d] bytes failed " \
-                                    " RC[0x%08x]",o_Size, l_rc);
-                break;
-            }
+        PLAT_FAPI_ASSERT( (sec_rc == SBE_SEC_OPERATION_SUCCESSFUL) && (o_Size != 0),
+                          POZ_PAK_OPERATION_FAILED().
+                          set_PAK_RC(sec_rc),
+                          "get_image_start_ptr_and_size failed [%s], size: %d, RC=0x%08X", pakname, o_Size, sec_rc);
 
-            uint32_t l_size = 0;
-            sha3_t l_digest = {0};
-            l_rc = pak.read_file(pakname, o_scratchArea, o_Size, &l_digest, &l_size);
+        o_scratchArea = (uint8_t *)Heap::get_instance().scratch_alloc(o_Size);
+        PLAT_FAPI_ASSERT( (o_scratchArea != nullptr),
+                        POZ_SCRATCH_ALLOC_FAILED().
+                        set_REQUIRED_SPACE(o_Size).
+                        set_AVAILABLE_SPACE(Heap::get_instance().getFreeHeapSize()),
+                        "scratch allocation request for [%d] bytes failed " \
+                            " RC[0x%08x]",o_Size, sec_rc);
 
-            if( l_rc != FAPI2_RC_SUCCESS )
-            {
-                SBE_ERROR(SBE_FUNC "Failed to read image file [%s]. RC=0x%08X", pakname, l_rc);
-                break;
-            }
+        uint32_t l_size = 0;
+        sha3_t l_digest = {0};
+        sec_rc = (uint32_t) pak.read_file(pakname, o_scratchArea, o_Size, &l_digest, &l_size);
+        PLAT_FAPI_ASSERT( (sec_rc == SBE_SEC_OPERATION_SUCCESSFUL),
+                        POZ_PAK_OPERATION_FAILED().
+                        set_PAK_RC(sec_rc),
+                        "Failed to read image file [%s]. RC=0x%08X", pakname, sec_rc);
 
-            if (o_Size != l_size)
-            {
-                l_rc = SBE_SEC_IMAGE_SIZE_MISMATCH;
-                SBE_ERROR(SBE_FUNC "Failed to read, Expected size[%d]" \
-                                    "actual size[%d] ", o_Size, l_size);
-                break;
-            }
+        PLAT_FAPI_ASSERT( (o_Size == l_size),
+                        POZ_PAK_OPERATION_FAILED().
+                        set_PAK_RC(SBE_SEC_IMAGE_SIZE_MISMATCH),
+                        "Failed to read, Expected size[%d] actual size[%d] ",
+                        o_Size, l_size);
 
-            // checking the image hash and validate
-            l_rc = check_file_hash_and_validate(pakname, l_digest);
-            if(l_rc != FAPI2_RC_SUCCESS)
-            {
-                SBE_ERROR(SBE_FUNC " File hash valiadtion failed ", l_rc);
-                break;
-            }
+        // checking the image hash and validate
+        SBE_FAPI_TRY(current_err, check_file_hash_and_validate(pakname, l_digest),
+                        SBE_FUNC " File hash valiadtion failed RC: [0x%08X]", current_err);
 
-            // Pad out image size to 32-bit boundary
-            uint8_t l_remainder = (o_Size % 4);
-            o_Size = (l_remainder == 0) ? o_Size : o_Size + (4 - l_remainder);
+        // Pad out image size to 32-bit boundary
+        uint8_t l_remainder = (o_Size % 4);
+        o_Size = (l_remainder == 0) ? o_Size : o_Size + (4 - l_remainder);
 
-        }
-    } while (false);
+    }while(false);
 
     SBE_EXIT(SBE_FUNC);
-    return l_rc;
+fapi_try_exit:
+    return fapi2::current_err;
     #undef SBE_FUNC
 }
 
@@ -432,19 +381,12 @@ ReturnCode istepLoadPIEwithOcmb( voidfuncptr_t i_hwp)
         assert( NULL != i_hwp );
         Target<TARGET_TYPE_OCMB_CHIP > l_ocmb_chip = g_platTarget->plat_getChipTarget();
 
-        l_rc = getBinaryFromPak("pie.bin", l_imageSize, l_scratchArea);
-        if(l_rc != FAPI2_RC_SUCCESS)
-        {
-            SBE_ERROR(SBE_FUNC "Failed to get binary from pak RC=0x%08x ", l_rc);
-            break;
-        }
+        SBE_EXEC_FUNC ( l_rc, getBinaryFromPak("pie.bin", l_imageSize, l_scratchArea),
+                             SBE_FUNC "Failed to get binary from pak RC=0x%08x ", l_rc );
 
-        l_rc = getBinaryFromPak("pie_pointers.bin",l_piSections_size, l_scratchAreaForPiSection);
-        if(l_rc != FAPI2_RC_SUCCESS)
-        {
-            SBE_ERROR(SBE_FUNC "Failed to get binary from pak RC=0x%08x ", l_rc);
-            break;
-        }
+        SBE_EXEC_FUNC(  l_rc,
+                        getBinaryFromPak("pie_pointers.bin",l_piSections_size, l_scratchAreaForPiSection),
+                        SBE_FUNC "Failed to get binary from pak RC=0x%08x ", l_rc);
 
         fapi2::hwp_array_istream l_dimm_istream_0((fapi2::hwp_data_unit*)l_scratchArea,
                                                   (l_imageSize / sizeof(uint32_t)));
