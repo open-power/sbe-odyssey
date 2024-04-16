@@ -216,6 +216,14 @@ class io_ppe_common
                                         const uint8_t i_num_rx_lanes,
                                         const uint8_t i_num_tx_lanes);
 
+        ///
+        /// @brief Start/stop all of the threads on a link
+        ///
+        /// @param[in] i_target         Chip target to start
+        /// @param[in] i_max_threads    Number of threads on the link
+        /// @param[in] i_stop_thread    Whether to start or stop the thread
+        ///
+        /// @return fapi2::ReturnCode FAPI2_RC_SUCCESS if success, else error code.
         fapi2::ReturnCode stop_thread(const fapi2::Target<K, M, V>& i_target,
                                       const uint8_t i_max_threads,
                                       bool i_stop_thread);
@@ -332,6 +340,7 @@ class io_ppe_common
                                       const int32_t i_rx_lte_z,
                                       const int32_t i_rx_peak1,
                                       const int32_t i_rx_peak2);
+
 
         ///
         /// @brief Set the functional margins for HSS Init
@@ -561,6 +570,19 @@ class io_ppe_common
         fapi2::ReturnCode set_recal_not_run_disable(const fapi2::Target<K, M, V>& i_target,
                 const uint8_t i_thread,
                 const uint32_t i_data);
+
+        ///
+        /// @brief Enable/disable BIST Power Aware
+        ///
+        /// @param[in] i_target         Chip target to start
+        /// @param[in] i_thread         Thread to run on
+        /// @param[in] i_enable         ESD Test value to set
+        ///
+        /// @return fapi2::ReturnCode FAPI2_RC_SUCCESS if success, else error code.
+        fapi2::ReturnCode enable_bist_power_aware(const fapi2::Target<K, M, V>& i_target,
+                const uint8_t i_thread,
+                uint8_t i_enable);
+
 
 #ifdef IOT_IMAGE
 
@@ -1862,6 +1884,19 @@ fapi_try_exit:
     return fapi2::current_err;
 }
 
+template<fapi2::TargetType K, fapi2::MulticastType M, typename V>
+fapi2::ReturnCode io_ppe_common<K, M, V>::enable_bist_power_aware(const fapi2::Target<K, M, V>& i_target,
+        const uint8_t i_thread,
+        uint8_t i_enable)
+{
+    // Set BIST Power Aware
+    FAPI_TRY(MEM_REG_RX_POWER_AWARE_ENABLE_PUT(iv_regs, i_target, i_thread, i_enable));
+
+fapi_try_exit:
+    FAPI_DBG("End");
+    return fapi2::current_err;
+}
+
 // ===============================================================
 // Tbus train
 // ===============================================================
@@ -2033,4 +2068,5 @@ fapi_try_exit:
     FAPI_DBG("End");
     return fapi2::current_err;
 }
+
 #endif
