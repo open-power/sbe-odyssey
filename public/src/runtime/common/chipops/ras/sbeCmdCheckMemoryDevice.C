@@ -114,6 +114,12 @@ uint32_t sbeCmdCheckMemoryDevice(uint8_t *i_pArg)
             break;
         }
 
+        // Perform pre-scrub check for full scope side if any
+        if (l_memCheckCmdMsg.scope == SCOPE_FULL_SIDE)
+        {
+            preScrubCheck();
+        }
+
         // Get memory scrubbed data
         l_rc = getMemoryScrubData(l_memCheckCmdMsg,
                                   l_memDeviceStatusBufferArea,
