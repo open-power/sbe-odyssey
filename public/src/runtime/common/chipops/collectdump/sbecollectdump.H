@@ -173,7 +173,7 @@ class sbeCollectDump
         uint16_t iv_hdctDumpTypeMap; //Equivalent HDCT dump type wrt requested dump type.
         //Unset the below flag once we find the 1st clock HDCT entry for Clock OFF state. Flag needs to be unset if clock ON state(Done in constructor).
         bool iv_clockOffEntryFlag = true;
-        uint8_t iv_skipFastArray = false;
+        uint8_t iv_collectFastArray = true; // Default collect fastarray
         uint32_t iv_OCMBInstance; // OCMB instance number
 
         genericHdctRow_t *iv_hdctRow;
@@ -189,20 +189,20 @@ class sbeCollectDump
          *
          * @param [in] i_dumpID      The id of the dumpType.
          * @param [in] i_clockState  Dump collection clock state.(ON or OFF)
-         * @param [in] i_skipFastArray Skip fast array
+         * @param [in] i_collectFastArray Collect fast array
          * @param [in] i_type        sbe fifo type.
          * @param [in] i_commitId    Commit ID
          * @param [in] i_hdctData    Pointer to HDCT file
          * @param [in] i_hdctSize    HDCT file size
          *
          */
-        sbeCollectDump( uint8_t i_dumpID, uint8_t i_clockState, uint8_t i_skipFastArray,
+        sbeCollectDump( uint8_t i_dumpID, uint8_t i_clockState, uint8_t i_collectFastArray,
                         sbeFifoType i_type, uint64_t i_commitId, const void * i_hdctData,
                         uint32_t i_hdctSize, uint64_t i_hbMemAddr = 0x00):
                         iv_oStream(i_type, false, i_hbMemAddr),
                         iv_clockState(i_clockState),
                         iv_fifoType(i_type),
-                        iv_skipFastArray(i_skipFastArray),
+                        iv_collectFastArray(i_collectFastArray),
                         iv_hdctPakSecDetails(i_hdctData, i_hdctSize)
 
         {
@@ -220,7 +220,7 @@ class sbeCollectDump
             SBE_INFO("Dump Type Map is 0x%x, Chip Type to Encode: 0x%x",
                                                     iv_hdctDumpTypeMap,
                                                     iv_dumpHeader.chipTypeToEncode);
-            SBE_INFO("Fast array collection is %x ", iv_skipFastArray);
+            SBE_INFO("Fast array collection is %x ", iv_collectFastArray);
             SBE_INFO("EKB Commit ID: 0x%.8x%.8x ",
                     SBE::higher32BWord(iv_dumpHeader.hdctVer),
                     SBE::lower32BWord(iv_dumpHeader.hdctVer));
