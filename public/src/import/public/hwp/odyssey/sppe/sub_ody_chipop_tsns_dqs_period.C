@@ -29,7 +29,7 @@
 ///
 // *HWP Owner: Cronus Team
 // *HWP Backup:
-// *HWP Level: 2
+// *HWP Level: 3
 // *HWP Consumed by: Cronus
 
 #include <ody_chipop_tsns_dqs_period.H>
