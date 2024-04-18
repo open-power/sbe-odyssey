@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -28,7 +29,7 @@
 // *HWP HWP Owner: Sneha Kadam <sneha.kadam1@ibm.com>
 // *HWP HWP Backup: Louis Stermole <stermole@us.ibm.com>
 // *HWP Team: Memory
-// *HWP Level: 2
+// *HWP Level: 3
 // *HWP Consumed by: FSP:HB
 
 #ifndef __PMIC_COMMON_UTILS_DDR4_H__

@@ -31,7 +31,7 @@
 // *HWP HWP Owner: Louis Stermole <stermole@us.ibm.com>
 // *HWP HWP Backup: Stephen Glancy <sglancy@us.ibm.com>
 // *HWP Team: Memory
-// *HWP Level: 2
+// *HWP Level: 3
 // *HWP Consumed by: FSP:HB
 
 #include <fapi2.H>
@@ -140,6 +140,7 @@ extern "C"
                 // No default case so that the compiler catches when
                 // a new enum gets  added without the associated
                 // functional change.
+
         }
 
         return l_scom_error;
