@@ -24,10 +24,10 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
 /// @file  pz_rcs_add.C
-/// @brief Lock RCS(Redundant clock switch) FPLLs(pllclksw1/pllclksw2)
+/// @brief Add oscillator to RCS(Redundant clock switch) path
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Chris Steffen (cwsteffen@us.ibm.com)
-// *HWP FW Maintainer   : Oliver Morlok (marquaro@in.ibm.com)
+// *HWP HW Maintainer   : Josh Chica (josh.chica@ibm.com)
+// *HWP FW Maintainer   : Chris Steffen (cwsteffen@us.ibm.com)
 // *HWP Consumed by     : SBE
 //------------------------------------------------------------------------------
 
@@ -103,11 +103,6 @@ ReturnCode pz_rcs_add(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHI
     l_root_ctrl5.putScom(i_target);
     fapi2::delay(WAIT_1US, WAIT_100KCYC);
 
-    l_rcs_ctrl1.getScom(i_target);
-    l_root_ctrl5.getScom(i_target);
-    FAPI_INF("BLOCK_SWO_AUTO %d.", l_rcs_ctrl1.getBit<CTRL1_BLOCK_SWO_AUTO>());
-    FAPI_INF("BLOCK_SWO %d.", l_root_ctrl5.get_BLOCK_SWO());
-
     // Check Alt ref clk for FPLLs
     l_root_ctrl3.getScom(i_target);
 
@@ -174,35 +169,6 @@ ReturnCode pz_rcs_add(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHI
     l_root_ctrl5.set_CLEAR_CLK_ERROR_B(0);
     l_root_ctrl5.putScom(i_target);
     fapi2::delay(WAIT_1US, WAIT_100KCYC);
-
-    l_sns2lth.getScom(i_target);
-
-    // if chosen osc is in use, pass
-    // Set altrefclk to other source
-    if ((l_refclock_select & fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1) == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC0)
-    {
-        if (l_sns2lth.get_MUXSEL_CLK_A() == 1)
-        {
-            FAPI_INF("RCS is already on Side A(OSC0 selected)");
-        }
-        else if (l_sns2lth.get_MUXSEL_CLK_B() == 1)
-        {
-            FAPI_INF("RCS is on Side B, switching to side A; OSC0 Selected");
-            FAPI_TRY(rcs_sw_switch(i_target));
-        }
-    }
-    else if ((l_refclock_select & fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1) == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1)
-    {
-        if (l_sns2lth.get_MUXSEL_CLK_B())
-        {
-            FAPI_INF("RCS is already on Side B(OSC1 selected)");
-        }
-        else if (l_sns2lth.get_MUXSEL_CLK_A())
-        {
-            FAPI_INF("RCS is on Side A, switching to side B; OSC1 Selected");
-            FAPI_TRY(rcs_sw_switch(i_target));
-        }
-    }
 
     FAPI_TRY(rcs_check_errors(i_target, l_refclock_select));
 

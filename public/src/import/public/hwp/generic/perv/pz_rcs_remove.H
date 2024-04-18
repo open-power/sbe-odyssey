@@ -27,7 +27,7 @@
 /// @brief Remove oscillator from RCS(Redundant clock switch) path
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Josh Chica (josh.chica@ibm.com)
-// *HWP FW Maintainer   : Oliver Morlok (marquaro@in.ibm.com)
+// *HWP FW Maintainer   : Chris Steffen (cwsteffen@us.ibm.com)
 // *HWP Consumed by     : SBE
 //------------------------------------------------------------------------------
 

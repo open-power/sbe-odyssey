@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/generic/perv/pz_rcs_add.H $      */
+/* $Source: public/src/import/public/hwp/generic/perv/pz_rcs_switch.H $   */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,8 +23,8 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  pz_rcs_add.H
-/// @brief Add oscillator to RCS(Redundant clock switch) path
+/// @file  pz_rcs_switch.H
+/// @brief Switch oscillator RCS(Redundant clock switch) path
 //------------------------------------------------------------------------------
 // *HWP HW Maintainer   : Josh Chica (josh.chica@ibm.com)
 // *HWP FW Maintainer   : Chris Steffen (cwsteffen@us.ibm.com)
@@ -35,16 +35,11 @@
 
 #include <fapi2.H>
 
-/// @brief Add oscillator to RCS(Redundant clock switch) path
+/// @brief Switch oscillator RCS(Redundant clock switch) path
 /// @param[in]   i_target     Reference to TARGET_TYPE_PROC/HUB_CHIP
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-//DECLARE_HWP(pz_rcs_add,
-//            const fapi2::Target < fapi2::TARGET_TYPE_PROC_CHIP |
-//            fapi2::TARGET_TYPE_HUB_CHIP > &i_target);
-//
-
 // Function pointer typedef definition for HWP call support
-typedef fapi2::ReturnCode (*pz_rcs_add_FP_t)(
+typedef fapi2::ReturnCode (*pz_rcs_switch_FP_t)(
     const fapi2::Target < fapi2::TARGET_TYPE_PROC_CHIP | fapi2::TARGET_TYPE_HUB_CHIP > &);
 
 //------------------------------------------------------------------------------
@@ -53,10 +48,10 @@ typedef fapi2::ReturnCode (*pz_rcs_add_FP_t)(
 //
 extern "C" {
 
-/// @brief Add oscillator to RCS(Redundant clock switch) path
+/// @brief Switch oscillator RCS(Redundant clock switch) path
 /// @param[in]   i_target     Reference to TARGET_TYPE_PROC/HUB_CHIP
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-    fapi2::ReturnCode pz_rcs_add(
+    fapi2::ReturnCode pz_rcs_switch(
         const fapi2::Target < fapi2::TARGET_TYPE_PROC_CHIP | fapi2::TARGET_TYPE_HUB_CHIP > & i_target);
 
 } //extern "C"

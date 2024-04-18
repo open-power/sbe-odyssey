@@ -26,8 +26,8 @@
 /// @file  pz_rcs_setup.C
 /// @brief Lock RCS(Redundant clock switch) FPLLs(pllclksw1/pllclksw2)
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Chris Steffen (cwsteffen@us.ibm.com)
-// *HWP FW Maintainer   : Oliver Morlok (marquaro@in.ibm.com)
+// *HWP HW Maintainer   : Josh Chica (josh.chica@ibm.com)
+// *HWP FW Maintainer   : Chris Steffen (cwsteffen@us.ibm.com)
 // *HWP Consumed by     : SBE
 //------------------------------------------------------------------------------
 
