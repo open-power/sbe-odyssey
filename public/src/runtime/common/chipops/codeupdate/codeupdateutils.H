@@ -342,4 +342,10 @@ uint32_t getSideStartAddressAndSize(const uint8_t i_side,
                                     uint32_t &o_sideStartAddress,
                                     uint32_t &o_sideMaxSize);
 
+/* @brief : This API is used to perform pre-scrub check if any, in storage device
+ *
+ * @return : void
+ */
+void preScrubCheck();
+
 #endif //CODE_UPDATE_UTILS_H

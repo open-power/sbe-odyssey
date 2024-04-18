@@ -549,17 +549,205 @@ uint32_t getSideStartAddressAndSize(const uint8_t i_side,
         break;
         }
 
-        SBE_INFO(SBE_FUNC "For Side:[0x%02x] Device:[0x%02x] Start Address:[0x%08x]",
-                i_side, i_devId, o_sideStartAddress);
-
         // Valid NOR address is 24-bits - 16MB
         o_sideStartAddress -= NOR_SIDE_0_START_ADDR;
 
         // Valid max NOR memory size
         o_sideMaxSize = NOR_SIDE_SIZE;
+
+        SBE_INFO(SBE_FUNC "For Side:[0x%02x] Device:[0x%02x] Start Address:[0x%08x] Max Size:[0x%08x]",
+                i_side, i_devId, o_sideStartAddress, o_sideMaxSize);
+
     }while (false);
 
     SBE_EXIT(SBE_FUNC);
     return l_rc;
+    #undef SBE_FUNC
+}
+
+/* @brief : This API is used to perform pseudo-sync from source to destination for full side
+ *
+ * @param[in] i_sourceAddress : start address of source side
+ * @param[in] i_destAddress : start address of destination side
+ *
+ * @return : pass/ fail
+ */
+static uint32_t pseudoSync(const uint32_t i_sourceAddress,
+                           const uint32_t i_destAddress)
+{
+    #define SBE_FUNC " pseudoSync "
+    SBE_ENTER(SBE_FUNC);
+
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    ReturnCode l_fapiRc = FAPI2_RC_SUCCESS;
+    uint32_t *l_imgBufScratchArea = NULL;
+    spi::AbstractMemoryDevice *l_memHandle = NULL;
+    RASSPIPort *l_portHandle = NULL;
+
+    do
+    {
+        // Get memory device handle
+        l_rc = createMemoryDeviceRAS(SIDE_0_INDEX, MEMORY_ID, l_memHandle, l_portHandle);
+        if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+        {
+            SBE_ERROR(SBE_FUNC " createMemoryDeviceRAS unsuccessful. RC[0x%08x] ", l_rc);
+            break;
+        }
+
+        // Allocate buffer size
+        l_imgBufScratchArea =
+                    (uint32_t *)Heap::get_instance().scratch_alloc(MAX_BUFFER_SIZE);
+        if(l_imgBufScratchArea == NULL)
+        {
+            SBE_ERROR(SBE_FUNC "Allocation of buffer size [0x%08x] failed", MAX_BUFFER_SIZE);
+            l_rc = SBE_SEC_HEAP_BUFFER_ALLOC_FAILED;
+            break;
+        }
+
+        // Perform pseudo-sync from source side to destination side for full side in nor.
+        // This is done to get ecc byte recalculated and updated in the
+        // destination side as well.
+
+        uint32_t l_currentWritingAddress = i_destAddress;
+        uint32_t l_imgOffset = 0;
+        uint32_t l_readWriteLen = 0;
+
+        SBE_DEBUG(SBE_FUNC "Write begin.....");
+        l_fapiRc = l_memHandle->write_begin(l_currentWritingAddress, NOR_SIDE_SIZE);
+        if(l_fapiRc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC "Write begin to device failed, Addr:0x%08X Size:0x%08X",\
+                      l_currentWritingAddress, NOR_SIDE_SIZE);
+            l_rc = SBE_SEC_CU_WRITE_BEGIN_IMAGE_FAILURE;
+            break;
+        }
+
+        for(uint32_t l_len = NOR_SIDE_SIZE; l_len > 0;
+                l_len -= l_readWriteLen, l_imgOffset += l_readWriteLen)
+        {
+            l_readWriteLen = (l_len > MAX_BUFFER_SIZE ? MAX_BUFFER_SIZE : l_len);
+
+            SBE_DEBUG(SBE_FUNC "Read data...");
+            l_fapiRc = l_memHandle->read(i_sourceAddress + l_imgOffset,
+                       l_readWriteLen, l_imgBufScratchArea);
+            if(l_fapiRc != FAPI2_RC_SUCCESS)
+            {
+                SBE_ERROR(SBE_FUNC "Read data from device failed, Addr:0x%08X Size:0x%08X",\
+                          i_sourceAddress + l_imgOffset, l_readWriteLen);
+                l_rc = SBE_SEC_CU_READ_DATA_IMAGE_FAILURE;
+                break;
+            }
+
+            SBE_DEBUG(SBE_FUNC "Write data...");
+            l_fapiRc = l_memHandle->write_data(l_imgBufScratchArea, l_readWriteLen);
+            if(l_fapiRc != FAPI2_RC_SUCCESS)
+            {
+                SBE_ERROR(SBE_FUNC "Write data to device failed, Addr:0x%08X Size:0x%08X",\
+                          l_currentWritingAddress, l_readWriteLen);
+                l_rc = SBE_SEC_CU_WRITE_DATA_IMAGE_FAILURE;
+                break;
+            }
+            l_currentWritingAddress += l_readWriteLen;
+        }
+
+        if (l_fapiRc != FAPI2_RC_SUCCESS)
+        {
+            // Commit the ffdc
+            logError(l_fapiRc, fapi2::FAPI2_ERRL_SEV_PREDICTIVE);
+            CLEAR_FAPI2_CURRENT_ERROR();
+        }
+
+        SBE_INFO(SBE_FUNC "Write end...");
+        l_fapiRc = l_memHandle->write_end();
+        if(l_fapiRc != FAPI2_RC_SUCCESS)
+        {
+            SBE_ERROR(SBE_FUNC "Write end to device failed, Addr:0x%08X Size:0x%08X",\
+                      l_currentWritingAddress, l_readWriteLen);
+            l_rc = SBE_SEC_CU_WRITE_END_IMAGE_FAILURE;
+            break;
+        }
+    }while(false);
+
+    if (l_fapiRc != FAPI2_RC_SUCCESS)
+    {
+        // Commit the ffdc
+        logError(l_fapiRc, fapi2::FAPI2_ERRL_SEV_PREDICTIVE);
+        CLEAR_FAPI2_CURRENT_ERROR();
+    }
+
+    // TODO: for non-zero CE/UE create plat ffdc using sbeLogError()
+    SBE_INFO(SBE_FUNC "CE count:[0x%08x] UE count:[0x%08x]",
+             l_portHandle->iv_ioMemDeviceStatus.numOfCE,
+             l_portHandle->iv_ioMemDeviceStatus.numOfUE);
+
+   //Free the scratch area
+   Heap::get_instance().scratch_free(l_imgBufScratchArea);
+
+    if (l_memHandle != NULL)
+    {
+        freeMemoryDeviceRAS(l_memHandle);
+    }
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
+void preScrubCheck()
+{
+    #define SBE_FUNC " preScrubCheck "
+    SBE_ENTER(SBE_FUNC);
+
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    do
+    {
+        uint8_t l_runningSide = 0, l_nonrunningSide = 0;
+        uint32_t l_runSideStartAddress = 0, l_nonrunSideStartAddress = 0;
+
+        // Get booted side
+        getSideInfo(l_runningSide, l_nonrunningSide);
+
+        if (l_runningSide == GOLDEN_SIDE_INDEX)
+        {
+            SBE_INFO(SBE_FUNC "Booted from golden-side. No pre-scrub check needed");
+            break;
+        }
+
+        switch(l_runningSide)
+        {
+            case SIDE_0_INDEX:
+                getSideAddress(SIDE_0_INDEX, l_runSideStartAddress);
+                getSideAddress(SIDE_1_INDEX, l_nonrunSideStartAddress);
+            break;
+
+            case SIDE_1_INDEX:
+                getSideAddress(SIDE_1_INDEX, l_runSideStartAddress);
+                getSideAddress(SIDE_0_INDEX, l_nonrunSideStartAddress);
+            break;
+        }
+        l_runSideStartAddress -= NOR_SIDE_0_START_ADDR;
+        l_nonrunSideStartAddress -= NOR_SIDE_0_START_ADDR;
+
+        // Full scope scrub is expected to be done by MFG only and for
+        // all three sides. In that case its better to perform pseudo
+        // sync for both sides (except golden) from booted side before
+        // starting the scrub i.e. from running side to non-running
+        // side and then from non-running side to back to running side.
+        // This operation would get ecc byte recalculated and updated
+        // on both sides so all 1's data pattern that may have resulted
+        // from erase operation from golden side as part of code-update
+        // would now have the right ecc byte and incase of any incorrect
+        // ecc byte/ failed to update ecc byte would be caught during the
+        // scrub operation
+        l_rc = pseudoSync(l_runSideStartAddress, l_nonrunSideStartAddress);
+        if (l_rc == SBE_SEC_OPERATION_SUCCESSFUL)
+        {
+            pseudoSync(l_nonrunSideStartAddress, l_runSideStartAddress);
+        }
+
+    }while(false);
+
+    SBE_EXIT(SBE_FUNC);
     #undef SBE_FUNC
 }
