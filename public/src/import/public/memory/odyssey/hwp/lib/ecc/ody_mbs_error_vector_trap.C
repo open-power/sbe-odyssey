@@ -29,7 +29,7 @@
 // *HWP HWP Owner: Geetha Pisapati <geetha.pisapati@ibm.com>
 // *HWP HWP Backup: Louis Stermole <stermole@us.ibm.com>
 // *HWP Team: Memory
-// *HWP Level: 2
+// *HWP Level: 3
 // *HWP Consumed by: Memory
 
 #include <lib/mcbist/ody_mcbist_traits.H>

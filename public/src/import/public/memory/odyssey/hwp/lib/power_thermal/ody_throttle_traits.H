@@ -32,7 +32,7 @@
 // *HWP HWP Owner: Stephen Glancy <sglancy@us.ibm.com>
 // *HWP HWP Backup: Louis Stermole <stermole@us.ibm.com>
 // *HWP Team: Memory
-// *HWP Level: 2
+// *HWP Level: 3
 // *HWP Consumed by: FSP:HB
 
 #ifndef _MSS_ODY_THROTTLE_TRAITS_
@@ -196,7 +196,6 @@ class throttle_traits<mss::mc_type::ODYSSEY>
         static const uint32_t PORT_UTIL_MAP_3200[mss::ody::sizes::MAX_PORT_PER_OCMB];
         static const uint32_t PORT_UTIL_MAP_4000[mss::ody::sizes::MAX_PORT_PER_OCMB];
         static const uint32_t PORT_UTIL_MAP_4800[mss::ody::sizes::MAX_PORT_PER_OCMB];
-
 
 #ifndef __PPE__
         // Definition is in chip folder

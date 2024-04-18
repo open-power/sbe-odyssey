@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -30,7 +30,7 @@
 /// *HWP HWP Owner: Thi Tran thi@us.ibm.com
 /// *HWP HWP Backup: <none>
 /// *HWP Team: VBU
-/// *HWP Level: 2
+/// *HWP Level: 3
 /// *HWP Consumed by: Hostboot / Cronus
 
 #ifndef _ODY_GETIDEC_H_
