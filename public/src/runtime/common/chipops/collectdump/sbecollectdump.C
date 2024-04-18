@@ -582,7 +582,7 @@ uint32_t sbeCollectDump::writeDumpPacketRowToFifo()
         }
 
         if((iv_tocRow.hdctHeader.cmdType == CMD_GETFASTARRAY) &&
-           (iv_skipFastArray == true))
+           (iv_collectFastArray == false))
         {
             SBE_INFO(SBE_FUNC "Fast array collection is not enabled."
                               " Skipping fastarray...");
