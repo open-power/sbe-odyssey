@@ -115,7 +115,7 @@ uint32_t sbeSpiWriteWrap ( fapi2::sbefifo_hwp_data_istream& i_getStream,
     uint32_t len = 0;
     uint32_t* l_imgBufScratchArea = NULL;
 
-    spi::AbstractMemoryDevice *gMemHandle;
+    spi::AbstractMemoryDevice *gMemHandle = NULL;
 
     do
     {
@@ -267,7 +267,7 @@ uint32_t sbeSpiReadWrap ( fapi2::sbefifo_hwp_data_istream& i_getStream,
     uint32_t len = 0;
     uint32_t* l_imgBufScratchArea = NULL;
 
-    spi::AbstractMemoryDevice *gMemHandle;
+    spi::AbstractMemoryDevice *gMemHandle = NULL;
 
     do
     {
@@ -279,6 +279,7 @@ uint32_t sbeSpiReadWrap ( fapi2::sbefifo_hwp_data_istream& i_getStream,
         // If FIFO access failure
         if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
         {
+            SBE_ERROR(SBE_FUNC "FIFO access failure");
             // Let command processor routine to handle the RC.
             break;
         }
