@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/generic/ffdc/ffdc_includes.H $   */
+/* $Source: public/src/import/public/hwp/generic/ffdc/ody_pack_draminit_msgblock_data.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2024                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,25 +22,40 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+// EKB-Mirror-To: hostboot
 ///
-/// @file ffdc_includes.H
-/// @brief Main file used to export all include files for FFDC procedures
+/// @file ody_pack_draminit_msgblock_data.H
+/// @brief Pack draminit message block data
 ///
+// *HWP HWP Owner: Stephenn Glancy <sglancy@us.ibm.com>
+// *HWP HWP Backup: Louis Stermole <stermole@us.ibm.com>
+// *HWP Team: Memory
+// *HWP Level: 2
+// *HWP Consumed by: FSP:HB
 
-#ifndef __FFDC_INCLUDES_H
-#define __FFDC_INCLUDES_H
+#ifndef _ODY_PACK_DRAMINIT_MSGBLOCK_DATA_H_
+#define _ODY_PACK_DRAMINIT_MSGBLOCK_DATA_H_
 
-#include <fsi_collect_reg_ffdc.H>
+#include <fapi2.H>
 
-// These files aren't needed by the SBE
-#ifndef __SBE__
-    #include <exp_collect_explorer_active_log.H>
-    #include <exp_collect_explorer_saved_A_log.H>
-    #include <exp_collect_explorer_saved_B_log.H>
-    #include <ody_pack_ecs_data.H>
-#endif
+typedef fapi2::ReturnCode (*ody_pack_draminit_msgblock_data_FP_t) (
+    const fapi2::ffdc_t& i_msgblock,
+    const fapi2::ffdc_t& i_msgblock_size,
+    fapi2::ReturnCode& io_rc);
 
-// Add any other FFDC procedures with #include
-#include <ody_pack_draminit_msgblock_data.H>
+extern "C"
+{
+    ///
+    /// @brief Pack the Odyssey draminit message block data into HWP error
+    /// @param[in] i_msgblock - pointer to message block data
+    /// @param[in] i_msgblock_size - size of message block data
+    /// @param[in,out] io_rc - return code to add FFDC data to.
+    ///
+    fapi2::ReturnCode ody_pack_draminit_msgblock_data(
+        const fapi2::ffdc_t& i_msgblock,
+        const fapi2::ffdc_t& i_msgblock_size,
+        fapi2::ReturnCode& io_rc);
+
+}
 
 #endif
