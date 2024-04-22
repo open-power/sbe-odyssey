@@ -1,0 +1,106 @@
+#!/bin/sh
+# IBM_PROLOG_BEGIN_TAG
+# This is an automatically generated prolog.
+#
+# $Source: public/src/tools/utils/sbe/venv-utils $
+#
+# OpenPOWER sbe Project
+#
+# Contributors Listed Below - COPYRIGHT 2024
+# [+] International Business Machines Corp.
+#
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+# IBM_PROLOG_END_TAG
+
+# Common function for swaping new shell
+swapingNewShell()
+{
+    # sourcing detect-python file
+    source public/src/tools/utils/sbe/detect-python
+
+    PYTHON_VERSION=$(get_python_version)
+    echo "Python Version: $PYTHON_VERSION"
+
+    # For machines which have python2 as default(mostly all CI machines)
+    # execute scl command. Do nothing if python3 is default.
+    if [ "$PYTHON_VERSION" == "3" ]; then
+        export SCL_PYTHON_ENABLED=0
+        echo "***INFO | Machine has Python3 as default"
+        echo "Spawning new shell (/bin/bash)..."
+        bash --rcfile ./env.bash -i
+    elif [ "$PYTHON_VERSION" == "2" ]; then
+        export SCL_PYTHON_ENABLED=1
+        echo "***INFO | Machine has Python2 as default"
+        # we need to pass "bash --rcfile ./env.bash" as single argument to scl command
+        CMD_ARR=("scl" "enable" "rh-python36" "bash --rcfile ./env.bash -i")
+        echo "Spawning new shell : ${CMD_ARR[@]}"
+        "${CMD_ARR[@]}"
+    else
+        echo "Error: venv-utils | venvSwapingNewShell | Cannot detect python2 or python3"
+        exit -1
+    fi
+}
+
+# The Fucntion activates the Python virtual environment using $SBE_VENV_PATH
+# pre-req: $SBE_VENV_PATH have to be set before function get call
+venvActivate()
+{
+    echo "Setting up python venv"
+    export PATH=${PATH}:$SBE_VENV_PATH/bin
+    python3 -m venv $SBE_VENV_PATH --prompt="SBE" || {
+        if (($? != 0)); then
+            echo "Error: venv-utils | venvActivate  | Failure: $?"
+        fi
+        exit 1
+    }
+    echo "Activating python venv"
+    source $SBE_VENV_PATH/bin/activate || {
+        if (($? != 0)); then
+            echo "Error: venv-utils | venvActivate  | Failure: $?"
+        fi
+        exit 1
+    }
+}
+
+# Function for install required packages which is their in requirements.txt
+installRequiredPackages()
+{
+    echo "Installing Required packages..."
+    CMD="pip install"
+    CMD="$CMD -r $SBEROOT_PUB/src/tools/install/buildtoolrequirements.txt      \
+              -r $SBEROOT_PUB/src/tools/install/debugtoolrequirements.txt      \
+              -r $SBEROOT_PUB/src/tools/install/regressiontoolrequirements.txt \
+            "
+    echo $CMD
+    $CMD || {
+        if (($? != 0)); then
+            echo "Error: venv-utils | installRequiredPackages  | Failure: $?"
+        fi
+        exit 1
+    }
+}
+
+# Function to get the python site package path
+getPythonUserSitePackage()
+{
+    local SITE_PACKAGE=$(python -c 'import site; print(site.getsitepackages()[0])') ||
+    {
+        if (($? != 0)); then
+            echo "Error: venv-utils | get PYTHON_USER_PACKAGE_PATH failed. Failure: $?"
+        fi
+        exit 1
+    }
+    echo $SITE_PACKAGE
+}

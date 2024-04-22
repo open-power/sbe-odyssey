@@ -28,15 +28,6 @@
 # The following ENV variables are required by the pre/post commit hooks
 export PROJECT_NAME=sbe
 export LICENSE=$SBEROOT/LICENSE_PROLOG # Copyright license file for PPE
-SBE_LOCAL_HOME=".sbe/local/" # SBE home local directory
-if [ "$SCL_PYTHON_ENABLED" == 1 ]; then
-    # Python 2 machine, PYTHONUSERBASE location change to ~/.sbe/local/scl_python36/
-    export USER_BIN_DIR=$HOME/$SBE_LOCAL_HOME/scl_python36/bin
-    export PYTHONUSERBASE=$HOME/$SBE_LOCAL_HOME/scl_python36/
-else
-    # Python 3 machine, default user location
-    export USER_BIN_DIR=$HOME/$SBE_LOCAL_HOME/python36/bin
-    export PYTHONUSERBASE=$HOME/$SBE_LOCAL_HOME/python36/
-fi
+
 export SBE_MESON_WRAP=$SBEROOT_PUB/src/build/mesonutils/
-export PATH=${PATH}:$SBE_MESON_WRAP:$USER_BIN_DIR # Update PATH
+export PATH=${PATH}:$SBE_MESON_WRAP # Update PATH

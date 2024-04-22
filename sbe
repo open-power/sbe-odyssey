@@ -27,7 +27,7 @@
 # Exit if any command fails
 set -e
 
-source public/src/tools/utils/sbe/sbe-workon-utils
+source public/src/tools/utils/sbe/venv-utils
 
 if [ -e `pwd`/internal ]; then
     . `pwd`/internal/sbeutils.sh
@@ -298,7 +298,7 @@ sbe_print_env()
         echo "SBEROOT                   = $SBEROOT"
         echo "SBE_PLATFORM              = $SBE_PLATFORM"
         echo "SBE_IMAGE                 = $SBE_IMAGE"
-        echo "PYTHON_USER_PACKAGE_PATH  = $PYTHON_USER_PACKAGE_PATH"
+        echo "SBE_VENV_PATH             = $SBE_VENV_PATH"
     else
         echo "Please do workon and re launch..."
     fi
