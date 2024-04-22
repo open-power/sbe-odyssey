@@ -35,7 +35,7 @@ if [ -e ${SBEROOT_INT} ]; then
 fi
 
 TOOL_VERSION=1
-BASE_CMD="$USER_BIN_DIR/meson"
+BASE_CMD="$SBE_VENV_PATH/bin/meson"
 MESON_BUILD_DIR="$SBEROOT/builddir"
 MESON_INSTALL_DIR="$SBEROOT/images"
 CMN_PUB_MESON_CROSS_FILE_PATH="$SBEROOT_PUB/src/build/mesonutils/common/cross_file.txt"

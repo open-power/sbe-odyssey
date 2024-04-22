@@ -27,6 +27,11 @@ iii. The workspace-specific customization `customrc` has higher priority than
      the user-specific customization `customrc` to support different
      customization between different sbe codes.
 
+SBE `workon` command utilizes a Python virtual environment, with all Python
+packages typically installed in `SBE_ROOT/venv/` by default. Users have the
+option to override this path before using `workon` either through customrc by
+setting `SBE_VENV_PATH` or directly setting `SBE_VENV_PATH`.
+
 **Note:** The `customrc` has higher priority than the `projectrc` so the project
 specific customization will be overwritten based on the `customrc`.
 

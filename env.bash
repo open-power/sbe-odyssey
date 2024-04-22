@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -32,16 +32,19 @@ if [ -z $SBE_CI_ENV_SETUP ]; then
     fi
 fi
 
+source public/src/tools/utils/sbe/venv-utils
+
 echo "Setting environment variables..."
-source public/src/tools/utils/sbe/sbe-workon-utils
-
-# Adding prompt for SBE workon
-export PS1="(SBE)> $PS1"
-
 ROOTDIR=.
 export SBEROOT=`pwd`
 export SBEROOT_PUB="${SBEROOT}/public"
 export SBEROOT_INT="${SBEROOT}/internal"
+
+# SBE_VENV_PATH path can be set according to the user's preferred location.
+# Can be overide using customrc / set SBE_VENV_PATH before workon
+if [ -z "${SBE_VENV_PATH}" ]; then
+    export SBE_VENV_PATH="venv"
+fi
 
 if [ -e ${SBEROOT_PUB}/projectrc ]; then
     source ${SBEROOT_PUB}/projectrc
@@ -64,17 +67,40 @@ if [ -z $SBE_CI_ENV_SETUP ]; then
     source public/src/tools/utils/sbe/sbe_complete
 fi
 
-#Install required packages
+if [[ $SBE_VENV_PATH == "venv" ]]; then
+    RED='\033[0;31m'
+    GREEN='\033[0;32m'
+    NC='\033[0m' # No Color
+
+    echo -e "${RED}"
+    echo "--------------------------------------------------------------------------------"
+    echo -e "${GREEN}"
+    echo " SBE workon python packages uses by default internal path ($SBE_VENV_PATH path)."
+    echo " Can be overridden before workon via customrc by setting 'SBE_VENV_PATH' or"
+    echo " by directly setting 'SBE_VENV_PATH'"
+    echo -e "${RED}"
+    echo "--------------------------------------------------------------------------------"
+    echo -e "${NC}"
+fi
+
+# Activate pyhotn virtual environment
+venvActivate ||
+{
+    echo "Error: env.bash | venvActivate            | Failure $?. Please run 'rm -rf $SBE_VENV_PATH builddir/' and do workon again."
+    exit 1
+}
+
+# Install required python packages
 installRequiredPackages ||
 {
-    echo "Error: env.bash | installRequiredPackages  | Failure $?. Please do workon again."
+    echo "Error: env.bash | installRequiredPackages | Failure $?. Please run 'rm -rf $SBE_VENV_PATH builddir/' and do workon again."
     exit 1
 }
 
 if [ -f "builddir/build.ninja" ]; then
     # Sync with current workon settings
     mesonwrap sync || {
-        echo "Error: env.bash | mesonwrap sync       | Failure $?. Please do workon again."
+        echo "Error: env.bash | mesonwrap sync          | Failure $?. Please run 'rm -rf builddir/' and do workon again."
         exit 1
     }
 fi
