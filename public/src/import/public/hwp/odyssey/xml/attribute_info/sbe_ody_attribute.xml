@@ -2413,6 +2413,9 @@
   <entry name="ATTR_OMI_TX_LANES">
     <value>0xFF000000</value>
   </entry>
+  <entry name="ATTR_OMI_EDPL">
+      <value>0x0</value>
+  </entry>
   <entry name="ATTR_FREQ_OMI_MHZ">
     <value>25600</value>
   </entry>

@@ -75,4 +75,22 @@
           <targetTypes>TARGET_TYPE_OCMB_CHIP</targetTypes>
         </sbeAttrSync>
     </attribute>
+<!-- ********************************************************************** -->
+    <attribute>
+        <id>ATTR_OMI_EDPL</id>
+        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+        <description>
+            Specifies if OMI Error Detection Per Lane is Enabled
+        </description>
+        <valueType>uint8</valueType>
+        <enum>
+            DISABLED = 0x00,
+            ENABLED = 0x01
+        </enum>
+        <default>DISABLED</default>
+        <platInit/>
+        <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="ody">
+          <targetTypes>TARGET_TYPE_OCMB_CHIP</targetTypes>
+        </sbeAttrSync>
+    </attribute>
 </attributes>
