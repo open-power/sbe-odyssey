@@ -58,7 +58,14 @@ sbe_helptext()
         echo "  Topic 'Compile the PPE files on fips Sandbox'"
         echo
         echo "  Usage:"
-        echo "      Refer : $PWD/${SBE_TOOLS_PATH}/sbePrime.py -h"
+        echo "  Command line USAGE options for Copying SBE images and"
+        echo "  debug files simics execution"
+        echo "  sbe prime [skip-sim-install]"
+        echo "  use skip-sim-install to skip install simics and only"
+        echo "  copying files for simics execution"
+        echo "  Default ./sbe prime will always install simics"
+        echo "  if not already present"
+        echo "  ** assumption if simics dir is present then simics is present"
         ;;
     ${SUPPORTED_COMMAND[2]})
         echo "  Topic 'Install required packages at user level to build and use sbe repo'"
@@ -284,7 +291,6 @@ sbe_execute()
     if [ -n "${SBE_INSIDE_WORKON}" ]; then
         echo "Already in a workon.. Continuing"
         sbe_build || exit 1
-        sbe_prime || exit 1
         sbe_run_simics $1
     else
         echo "Please do workon and re launch..."
