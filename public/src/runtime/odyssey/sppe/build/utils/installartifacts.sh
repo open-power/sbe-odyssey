@@ -31,7 +31,7 @@ else
 fi
 
 mkdir -p ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools
-cp ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe_DD1.dis \
+cp -r ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe_DD1.dis \
    ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe_DD1.map \
    ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe_DD1.syms \
    ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe_DD1.attr.db \
@@ -45,7 +45,7 @@ cp ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe_DD
    ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/srom/build/images/odyssey_srom_DD1.map \
    ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/srom/build/images/odyssey_srom_DD1.dis \
    ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/srom/build/images/odyssey_srom_DD1.bin \
-   ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/otprom/build/images/v2.0/odyssey_otprom_DD1.bin \
+   ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/otprom/build/images/v2.0/ \
    ${MESON_SOURCE_ROOT}/public/src/tools/trace/ppe2fsp.py \
    ${MESON_SOURCE_ROOT}/public/src/runtime/tools/attributes/attr* \
    ${MESON_SOURCE_ROOT}/public/src/tools/install/debugtoolrequirements.txt \
@@ -54,8 +54,9 @@ cp ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe_DD
 #NOTE: Add internal paths only inside below condition
 if [ -d "${MESON_SOURCE_ROOT}/internal/" ]; then
 
-   cp ${MESON_SOURCE_ROOT}/internal/src/tools/debug/ppe2fsp `# Keep copying x86 executable as a backup` \
+   cp -r ${MESON_SOURCE_ROOT}/internal/src/tools/debug/ppe2fsp `# Keep copying x86 executable as a backup` \
       ${MESON_SOURCE_ROOT}/internal/src/tools/debug/fsp-trace \
+      ${MESON_SOURCE_ROOT}/internal/src/onetime/odyssey/otprom/build/images/sim/ \
       ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/ || exit 1
 
    # Copy simics related tools and utils into simics dir (This is required for HB)
