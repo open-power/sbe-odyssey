@@ -86,6 +86,99 @@ uint32_t scrubMemoryForAddressNSize(spi::AbstractMemoryDevice *&i_memHandle,
 }
 
 /*
+ * @brief findImageArea : find functional area in a partition,
+ *                          ie, size of the image (partition) excluding pad.pak
+ *
+ * @param[in]    i_side                : Nor side
+ * @param[in]    i_image               : image (partition) number.
+ * @param[inout] io_scrubMemCtrlStruct : struct used to get/set/use various
+ *               context needed for memory scrub operations
+ * @param[out]   o_imageSize           : output argument
+ *
+ * @return rc
+ */
+static uint32_t findImageArea(
+    const uint8_t i_side,
+    const uint8_t i_image,
+    codeUpdateCtrlStruct_t &io_scrubMemCtrlStruct,
+    uint32_t& o_imageSize)
+{
+    #define SBE_FUNC " findImageArea "
+    SBE_ENTER(SBE_FUNC);
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+
+    // initiallize output variable
+    o_imageSize = 0;
+    do
+    {
+        io_scrubMemCtrlStruct.imageType = (uint16_t)CU::g_expectedImgPkgMap[i_image].imageNum;
+
+        l_rc = setSpiEccDiscardMode();
+        if(l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+        {
+            SBE_ERROR(SBE_FUNC "setSpiEccDiscardMode() failed");
+            break;
+        }
+
+        // Get the partition start offset and size for the image from side passed
+        l_rc = getPakEntryFromPartitionTable(i_side,
+                                                (CU_IMAGES)io_scrubMemCtrlStruct.imageType,
+                                                NULL,
+                                                io_scrubMemCtrlStruct);
+        if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+        {
+            SBE_ERROR(SBE_FUNC "getPakEntryFromPartitionTable unsuccessful " \
+                                "Side[%d] imageTyepe[%d] RC[0x%08x]",
+                                i_side, io_scrubMemCtrlStruct.imageType, l_rc);
+            break;
+        }
+
+        // Declaring variable to get pad size
+        uint32_t l_paddedSize = 0;
+        void *l_padStart = NULL;
+
+        // Get the side start offset
+        uint32_t l_sideStartAddress = 0;
+        getSideAddress(i_side, l_sideStartAddress);
+
+        // archive file start address and max size(archive limit)
+        FileArchive pakPadSize((uint32_t *)io_scrubMemCtrlStruct.imageStartAddr,
+                                (uint32_t *)(l_sideStartAddress +
+                                io_scrubMemCtrlStruct.storageDevStruct.storageDevSideSize));
+        l_rc = pakPadSize.locate_padding((void*&)l_padStart, l_paddedSize);
+        if (l_rc != ARC_OPERATION_SUCCESSFUL)
+        {
+            SBE_ERROR("padSize is not found of an image[%d]"
+                        "of address [0x%08x]",io_scrubMemCtrlStruct.imageType,
+                        io_scrubMemCtrlStruct.imageStartAddr);
+            break;
+        }
+        SBE_INFO(SBE_FUNC " padStart[%p], padSize[0x%08x]", (uint8_t*)l_padStart, l_paddedSize);
+
+        //Getting actual image size, this size is going to be scrubbed.
+        //Actual image size will be subtraction of image start address
+        //from return padStart address
+        o_imageSize = (uint32_t)((uint8_t*)l_padStart - io_scrubMemCtrlStruct.imageStartAddr);
+    }while(0);
+
+    // (for safer side just enable ecc mode even when setSpiEccDiscardMode() itself failed)
+    uint32_t temp_rc = setSpiEccEnabledMode();
+    if(temp_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+    {
+        SBE_ERROR(SBE_FUNC "setSpiEccEnabledMode() failed");
+
+        if(l_rc == SBE_SEC_OPERATION_SUCCESSFUL)
+        {
+            l_rc = temp_rc;
+        }
+    }
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
+/*
  * @brief scrubMemoryImageOnly : Scrub image only region in memory for ecc errors
  *
  * @param[in]    i_memHandle         : handle to memory device
@@ -112,47 +205,13 @@ uint32_t scrubMemoryImageOnly(spi::AbstractMemoryDevice *&i_memHandle,
 
         for (uint8_t l_img = 0; l_img < EXPECTED_IMG_SECTION_CNT; l_img++)
         {
-            io_scrubMemCtrlStruct.imageType = (uint16_t)CU::g_expectedImgPkgMap[l_img].imageNum;
-
-            // Get the partition start offset and size for the image from side passed
-            l_rc = getPakEntryFromPartitionTable(l_side,
-                                                 (CU_IMAGES)io_scrubMemCtrlStruct.imageType,
-                                                 NULL,
-                                                 io_scrubMemCtrlStruct);
-            if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+            uint32_t l_actualImageSize;
+            l_rc = findImageArea(l_side, l_img, io_scrubMemCtrlStruct, l_actualImageSize);
+            if(l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
             {
-                SBE_ERROR(SBE_FUNC "getPakEntryFromPartitionTable unsuccessful " \
-                                   "Side[%d] imageTyepe[%d] RC[0x%08x]",
-                                   l_side, io_scrubMemCtrlStruct.imageType, l_rc);
+                SBE_ERROR(SBE_FUNC" findImageArea failed with rc=0x%08X", l_rc);
                 break;
             }
-
-            // Declaring variable to get pad size
-            uint32_t l_paddedSize = 0;
-            void *l_padStart = NULL;
-
-            // Get the side start offset
-            uint32_t l_sideStartAddress = 0;
-            getSideAddress(l_side, l_sideStartAddress);
-
-            // archive file start address and max size(archive limit)
-            FileArchive pakPadSize((uint32_t *)io_scrubMemCtrlStruct.imageStartAddr,
-                                   (uint32_t *)(l_sideStartAddress +
-                                   io_scrubMemCtrlStruct.storageDevStruct.storageDevSideSize));
-            l_rc = pakPadSize.locate_padding((void*&)l_padStart, l_paddedSize);
-            if (l_rc != ARC_OPERATION_SUCCESSFUL)
-            {
-                SBE_ERROR("padSize is not found of an image[%d]"
-                          "of address [0x%08x]",io_scrubMemCtrlStruct.imageType,
-                          io_scrubMemCtrlStruct.imageStartAddr);
-                break;
-            }
-            SBE_INFO(SBE_FUNC " padStart[%p], padSize[0x%08x]", (uint8_t*)l_padStart, l_paddedSize);
-
-            //Getting actual image size, this size is going to be scrubbed.
-            //Actual image size will be subtraction of image start address
-            //from return padStart address
-            uint32_t l_actualImageSize = (uint32_t)((uint8_t*)l_padStart - io_scrubMemCtrlStruct.imageStartAddr);
 
             //converting 24 bit as nor is 16MB 24-bits used to address
             //it to pass on to the spi
