@@ -5,7 +5,8 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2023
+# Contributors Listed Below - COPYRIGHT 2023,2024
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,4 +29,4 @@
 CMN_GETCAPABILITY_CHIPOPS_JSON = files('chipop_table.json')
 
 abs_runtime_cmn_getcapability_c_path = []
-abs_runtime_cmn_getcapability_c_path += files('sbeCmdGetCapabilities.C')
+abs_runtime_cmn_getcapability_c_path += files('sbeCmdGetCapabilities.C', 'sbeCmdGetImagesDetails.C')

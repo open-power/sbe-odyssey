@@ -29,6 +29,7 @@
 #include "sbeutil.H"
 #include "sbe_sp_intf.H"
 #include "capabilities.H"
+#include "sbeCmdGetImagesDetails.H"
 
 /**
  * - No of capabilities that supported by the SBE FW.
@@ -42,51 +43,6 @@
 static const uint16_t GETCAPABILITIES_NO_OF_CAPABILITIES =
                                       NR_CMD_CAPABILITY_WORDS + 1;
 
-/**
- * - No of images count to get images details.
- * - It is used to decide the maximum number of images details
- *   for the GetCapabilities and GetCodeLevels chip-ops.
- */
-static const uint16_t GETCAPABILITIES_NO_OF_IMAGES = 6;
-
-/**
- * @brief Structure for GetCapabilities image details
- */
-struct __attribute__((packed)) ImageDetails_t
-{
-    /**
-     * @brief 2 bytes is reserved for future needs.
-     *        Also, its helps to align with the FIFO a word (aka 4bytes)
-     */
-    uint16_t iv_reserved1;
-
-    /**
-     * @brief Used to maintain the image type
-     */
-    CU_IMAGES iv_imageType; // uint16_t
-
-    /**
-     * @brief Used to maintain the time stamp of an image
-     *        Format- YYYYMMDD
-     */
-    uint32_t iv_buildTime;
-
-    /**
-     * @brief Used to maintain the commit id or the data version id
-     *        depend on the image type.
-     */
-    uint32_t iv_identifier;
-
-    /**
-     * @brief Explicit constructor to initialize its members.
-     */
-    explicit ImageDetails_t() :
-        iv_reserved1(0),
-        iv_imageType(CU_IMAGES::IMG_TYPE_INVALID),
-        iv_buildTime(0),
-        iv_identifier(0)
-    {}
-};
 
 /**
  * @brief Structure for GetCapabilities response data

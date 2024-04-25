@@ -69,7 +69,7 @@ uint32_t sbeCmdGetCapabilities(uint8_t *i_pArg)
     l_hdr.init();
     sbeResponseFfdc_t l_ffdc;
     sbeFifoType l_fifoType;
-    GetCapabilityResp_t l_capRespMsg;
+
     chipOpParam_t* l_configStr = (struct chipOpParam*)i_pArg;
     l_fifoType = static_cast<sbeFifoType>(l_configStr->fifoType);
     SBE_DEBUG(SBE_FUNC "Fifo Type is:[%02X]",l_fifoType);
@@ -89,7 +89,9 @@ uint32_t sbeCmdGetCapabilities(uint8_t *i_pArg)
         // Filling image information that is used in the running SBE firmware.
         // The return code if not successful, will not be send out to the host
         // in the response data as this chip-op is never expected to fail
-        l_rc = fillImagesDetails(l_capRespMsg);
+
+        GetCapabilityResp_t l_capRespMsg;
+        l_rc = fillImagesDetails(l_capRespMsg.iv_sbeFwReleaseTag, l_capRespMsg.iv_ekbFwReleaseTag, l_capRespMsg.iv_imageInfo);
         if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
         {
             SBE_ERROR(SBE_FUNC \

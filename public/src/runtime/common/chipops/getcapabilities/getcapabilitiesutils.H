@@ -61,6 +61,12 @@ typedef struct
  */
 uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg);
 
+
+uint32_t fillImagesDetails(
+    uint8_t (&sbeFwReleaseTag)[BUILD_TAG_CHAR_MAX_LENGTH],
+    uint8_t (&ekbFwReleaseTag)[BUILD_TAG_CHAR_MAX_LENGTH],
+    ImageDetails_t (&imageInfo)[GETCAPABILITIES_NO_OF_IMAGES]);
+
 /**
  * @brief Used to get capabilities details to send in the GetCapabilities
  *        response

@@ -6,6 +6,13 @@
             "function":"sbeCmdGetCapabilities",
             "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
             "headerFile":"sbeCmdGetCapabilities.H"
+        },
+        {
+            "cmdClass":"A8",
+            "command":"0x03",
+            "function":"sbeCmdGetImagesDetails",
+            "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
+            "headerFile":"sbeCmdGetImagesDetails.H"
         }
     ]
 }

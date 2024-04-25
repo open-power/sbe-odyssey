@@ -34,14 +34,17 @@
 #include "getcapabilitiesutils.H"
 #include "sbe_build_info.H"
 
-uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
+uint32_t fillImagesDetails(
+    uint8_t (&sbeFwReleaseTag)[BUILD_TAG_CHAR_MAX_LENGTH],
+    uint8_t (&ekbFwReleaseTag)[BUILD_TAG_CHAR_MAX_LENGTH],
+    ImageDetails_t (&imageInfo)[GETCAPABILITIES_NO_OF_IMAGES])
 {
     #define SBE_FUNC " fillImagesDetails "
     SBE_ENTER(SBE_FUNC);
     uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
 
-    memcpy(o_capMsg.iv_sbeFwReleaseTag, SBE_BUILD_TAG_ODY,
-           std::min(sizeof(o_capMsg.iv_sbeFwReleaseTag), sizeof(SBE_BUILD_TAG_ODY)));
+    memcpy(sbeFwReleaseTag, SBE_BUILD_TAG_ODY,
+           std::min(sizeof(sbeFwReleaseTag), sizeof(SBE_BUILD_TAG_ODY)));
 
     do
     {
@@ -60,8 +63,7 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
                 case CU_IMAGES::SROM:
                     {
                         // Update the image type as SROM.
-                        o_capMsg.iv_imageInfo[l_img].iv_imageType =
-                                                    CU_IMAGES::SROM;
+                        imageInfo[l_img].iv_imageType = CU_IMAGES::SROM;
 
                         // Calling function to get commitID
                         l_rc = getCommitId((uint8_t*)(SROM_ORIGIN +
@@ -72,12 +74,12 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
                             SBE_ERROR(SBE_FUNC " failed to get commitId of an "
                                                " imageType[%d], at Offset[0x%08x] "
                                                " RC[0x%08x] ",
-                                                o_capMsg.iv_imageInfo[l_img].iv_imageType,
+                                                imageInfo[l_img].iv_imageType,
                                                 (SROM_ORIGIN + SROM_VECTOR_SIZE), l_rc);
                             break;
                         }
                         // Update the commit id.
-                        o_capMsg.iv_imageInfo[l_img].iv_identifier = l_commitId;
+                        imageInfo[l_img].iv_identifier = l_commitId;
 
                         //TODO: JIRA: PFSBE-415: Fill SROM build timestamp.
                     }
@@ -89,8 +91,7 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
                         l_commitId = 0;
 
                         // Update the image type as BOOTLOADER
-                        o_capMsg.iv_imageInfo[l_img].iv_imageType =
-                                                CU_IMAGES::BOOTLOADER;
+                        imageInfo[l_img].iv_imageType = CU_IMAGES::BOOTLOADER;
 
                         PakWrapper pak((void *)g_partitionOffset,
                                        (void *)(g_partitionOffset + g_partitionSize));
@@ -102,7 +103,7 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
                         {
                             SBE_ERROR(SBE_FUNC " Pak get image start pointer Failed "
                                                " imageType[%d], RC[0x%08x] ",
-                                                o_capMsg.iv_imageInfo[l_img].iv_imageType,
+                                                imageInfo[l_img].iv_imageType,
                                                 l_rc);
                             break;
                         }
@@ -117,12 +118,12 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
                             SBE_ERROR(SBE_FUNC " failed to get commitId of an "
                                                " imageType[%d], at Offset[%p] "
                                                " RC[0x%08x] ",
-                                                o_capMsg.iv_imageInfo[l_img].iv_imageType,
+                                                imageInfo[l_img].iv_imageType,
                                                 l_startOffset, l_rc);
                             break;
                         }
                         // Update the commit id
-                        o_capMsg.iv_imageInfo[l_img].iv_identifier = l_commitId;
+                        imageInfo[l_img].iv_identifier = l_commitId;
 
                          // Calling function to get time stamp
                         l_rc = getTimeStamp(l_startOffset, l_timeStamp);
@@ -131,12 +132,12 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
                             SBE_ERROR(SBE_FUNC " failed to get timeStamp of an "
                                                " imageType[%d], at Offset[%p] "
                                                " RC[0x%08x] ",
-                                                o_capMsg.iv_imageInfo[l_img].iv_imageType,
+                                                imageInfo[l_img].iv_imageType,
                                                 l_startOffset, l_rc);
                             break;
                         }
                         // Update the time stamp.
-                        o_capMsg.iv_imageInfo[l_img].iv_buildTime = l_timeStamp;
+                        imageInfo[l_img].iv_buildTime = l_timeStamp;
                     }
                     break;
 
@@ -146,8 +147,7 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
                         l_commitId = 0;
 
                         // Update the image type as RUNTIME.
-                        o_capMsg.iv_imageInfo[l_img].iv_imageType =
-                                                    CU_IMAGES::RUNTIME;
+                        imageInfo[l_img].iv_imageType = CU_IMAGES::RUNTIME;
 
                         // Calling function to get commit id
                         l_rc = getCommitId((uint8_t*)(SRAM_ORIGIN +
@@ -158,12 +158,12 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
                             SBE_ERROR(SBE_FUNC " failed to get commitId of an "
                                                " imageType[%d], at Offset[0x%08x] "
                                                " RC[0x%08x] ",
-                                                o_capMsg.iv_imageInfo[l_img].iv_imageType,
+                                                imageInfo[l_img].iv_imageType,
                                                 (SRAM_ORIGIN + VECTOR_SIZE), l_rc);
                             break;
                         }
                         // Update the commit id.
-                        o_capMsg.iv_imageInfo[l_img].iv_identifier = l_commitId;
+                        imageInfo[l_img].iv_identifier = l_commitId;
 
                         // Calling function to get time stamp
                         l_rc = getTimeStamp((uint8_t*)(SRAM_ORIGIN +
@@ -174,34 +174,34 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
                             SBE_ERROR(SBE_FUNC " failed to get timeStamp of an "
                                                " imageType[%d], at Offset[0x%08x] "
                                                " RC[0x%08x] ",
-                                                o_capMsg.iv_imageInfo[l_img].iv_imageType,
+                                                imageInfo[l_img].iv_imageType,
                                                 (SRAM_ORIGIN + VECTOR_SIZE), l_rc);
                             break;
                         }
                         // Update the time stamp.
-                        o_capMsg.iv_imageInfo[l_img].iv_buildTime = l_timeStamp;
+                        imageInfo[l_img].iv_buildTime = l_timeStamp;
                     }
                     break;
 
                 case CU_IMAGES::BMC_OVRD:
                     GET_IMAGE_DETAILS_FROM_INFO_TXT(bmc_info_file_name, CU_IMAGES::BMC_OVRD,\
-                                                    o_capMsg.iv_imageInfo[l_img], l_identifier,\
+                                                    imageInfo[l_img], l_identifier,\
                                                     l_timeStamp, l_tag, l_rc);
                     break;
 
                 case CU_IMAGES::HOST_OVRD:
                     GET_IMAGE_DETAILS_FROM_INFO_TXT(host_info_file_name, CU_IMAGES::HOST_OVRD,\
-                                                    o_capMsg.iv_imageInfo[l_img], l_identifier,\
+                                                    imageInfo[l_img], l_identifier,\
                                                     l_timeStamp, l_tag, l_rc);
                     break;
 
                 case CU_IMAGES::EKB:
                     GET_IMAGE_DETAILS_FROM_INFO_TXT(ekb_info_file_name, CU_IMAGES::EKB,\
-                                                    o_capMsg.iv_imageInfo[l_img], l_identifier,\
+                                                    imageInfo[l_img], l_identifier,\
                                                     l_timeStamp, l_tag, l_rc);
                     if (strlen(l_tag))
                     {
-                        memcpy(o_capMsg.iv_ekbFwReleaseTag, (uint8_t *)l_tag, strlen(l_tag));
+                        memcpy(ekbFwReleaseTag, (uint8_t *)l_tag, strlen(l_tag));
                     }
                     break;
 
@@ -209,13 +209,13 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
                     // Update the image type as invalid.
                     l_rc = SBE_SEC_CU_INVALID_IMAGE_TYPE;
                     SBE_ERROR(SBE_FUNC "Invalid Image type[%d]",
-                              o_capMsg.iv_imageInfo[l_img].iv_imageType);
+                              imageInfo[l_img].iv_imageType);
                     break;
             }
             SBE_INFO(SBE_FUNC "ImageType[%d], TimeStamp[0x%08x], Identifier[0x%08x]",
-                               o_capMsg.iv_imageInfo[l_img].iv_imageType,
-                               o_capMsg.iv_imageInfo[l_img].iv_buildTime,
-                               o_capMsg.iv_imageInfo[l_img].iv_identifier);
+                               imageInfo[l_img].iv_imageType,
+                               imageInfo[l_img].iv_buildTime,
+                               imageInfo[l_img].iv_identifier);
         }
     } while (false);
 
@@ -224,6 +224,10 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
     #undef SBE_FUNC
 }
 
+uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
+{
+    return fillImagesDetails( o_capMsg.iv_sbeFwReleaseTag, o_capMsg.iv_ekbFwReleaseTag, o_capMsg.iv_imageInfo );
+}
 
 void fillCapabilitiesDetails(uint32_t *o_capability)
 {
