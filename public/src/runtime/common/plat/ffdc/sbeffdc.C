@@ -265,7 +265,8 @@ static void ffdcUtils_createPackage( const void * i_packagePtr,
                         hwpParam->hwpLocalDataLen,
                         hwpParam->hwpLocalDataStartAddr,
                         hwpParam->hwpRegDataLen,
-                        hwpParam->hwpRegDataStartAddr
+                        hwpParam->hwpRegDataStartAddr,
+                        i_sev
                         );
     }
 
@@ -284,7 +285,8 @@ static void ffdcUtils_createPackage( const void * i_packagePtr,
                           i_platSize,
                           i_slid,
                           SBE_PRI_GENERIC_EXECUTION_FAILURE,
-                          SBE_SEC_HWP_FAILURE
+                          SBE_SEC_HWP_FAILURE,
+                          i_sev
                         );
     }
 
@@ -1160,7 +1162,7 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
                                  ffdcHwpSize,
                                  ffdcPlatSize,
                                  fapi2::g_ffdcCtrlSingleton.iv_localSlid,
-                                 fapi2::FAPI2_ERRL_SEV_UNRECOVERABLE,
+                                 i_sev,
                                  i_rc,
                                  &params
                                );
