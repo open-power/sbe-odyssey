@@ -24,6 +24,7 @@
 /* IBM_PROLOG_END_TAG                                                     */
 //Functions
 #define BIT(pos) (0xl8 << 1 >> (pos + 1))
+#define BIT0(pos) (0xl0 << 0 >> (pos + 1))  //cbs_start, to set bit to 0
 #define BITS(first, last) ((BIT(first - 1) - 1) & ~(BIT(last) - 1))
 #define BITVALUE(first, last, value) ((value << (63 - last)) & BITS(first, last))
 

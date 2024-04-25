@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -49,3 +49,4 @@
 #define ERR_ABPLL_LOCK_TIMEOUT      0x214
 #define ERR_FPLL3_LOCK_TIMEOUT      0x214 // same as ABPLL on Z
 #define ERR_FPLL4_LOCK_TIMEOUT      0x215
+#define ERR_ANY_PLL_LOCK_TIMEOUT    0x216
