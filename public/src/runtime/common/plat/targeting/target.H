@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -38,7 +38,7 @@ namespace fapi2
     constexpr TargetType TARGET_TYPE_XBUS_CHILDREN = TARGET_TYPE_XBUSL;
     constexpr TargetType TARGET_TYPE_EX_CHILDREN = TARGET_TYPE_L3CACHE | TARGET_TYPE_SHADOW | TARGET_TYPE_CORE;
     constexpr TargetType TARGET_TYPE_OCMB_CHIP_CHILDREN = TARGET_TYPE_PMIC | TARGET_TYPE_GENERICI2CRESPONDER | TARGET_TYPE_MEM_PORT |
-                                                          TARGET_TYPE_DIMM | TARGET_TYPE_POWER_IC;
+                                                          TARGET_TYPE_DIMM | TARGET_TYPE_POWER_IC | TARGET_TYPE_TEMP_SENSOR;
 
     template<TargetType T>
     constexpr LogTargetType fapiTargetTypeToPlatTargetType()
