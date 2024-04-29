@@ -105,7 +105,7 @@ public:
         uint16_t numOfCE;
         uint16_t numOfUE;
     }memDeviceStatus_t __attribute__((aligned(4)));
-    mutable memDeviceStatus_t iv_ioMemDeviceStatus;
+    mutable memDeviceStatus_t iv_ioMemDeviceStatus = {};
 
 private:
     fapi2::ReturnCode handle_spi_errors(
