@@ -77,13 +77,12 @@ void help()
 {
     static const auto helptext =
     {
-        "Usage: spitool [-h] [-k#] [-n#] [-s#] [-p#] [--reset] chip base resp command arguments",
+        "Usage: spitool [-h] [-k#] [-n#] [-s#] [-p#] chip base resp command arguments",
         "  -h         Display this help message.",
         "  -k#        Specify which cage to act on (default = all).",
         "  -n#        Specify which node to act on (default = all).",
         "  -s#        Specify which slot to act on (default = all).",
         "  -p#        Specify which chip position to act on (default = all).",
-        "  --reset    Reset SPI controller before first transaction",
         "  chip       Specify chip to operate on",
         "  base       SCOM base address of SPI controller port",
         "  resp       Responder number (0-3)",
@@ -170,7 +169,6 @@ static const struct
 
 struct
 {
-    bool do_reset = false;
     bool verify = true;
     bool secure = false;
     int locality = 0;
@@ -197,7 +195,8 @@ int parse_args(int& argc, char**& argv)
     // Parse out all optional arguments
     TRY(ecmdCommandArgs(&argc, &argv), "Error calling ecmdCommandArgs.");
 
-    args.do_reset = ecmdParseOption(&argc, &argv, "--reset");
+    TRY(!ecmdParseOption(&argc, &argv, "--reset"), "The --reset option is no longer needed, please remove it");
+
     args.verify = !ecmdParseOption(&argc, &argv, "--noverify");
 
     if (ecmdParseOption(&argc, &argv, "--raw"))
@@ -382,11 +381,6 @@ ReturnCode run_spibase(
     spi::SPIPort port(i_target, args.base_addr, args.responder, args.ecc_mode);
     spi::AbstractMemoryDevice* mem = NULL;
 
-    if (args.do_reset)
-    {
-        FAPI_TRY(port.reset_controller());
-    }
-
     switch (args.command)
     {
         case CMD_EEREAD:
@@ -444,12 +438,6 @@ ReturnCode run_tpm(
     uint8_t* const output_data, size_t& output_len)
 {
     spi::SPITPMPort port(i_target, args.base_addr, args.responder);
-
-    if (args.do_reset)
-    {
-        FAPI_INF("Resetting port");
-        FAPI_TRY(port.reset_controller());
-    }
 
     if (args.command == CMD_RAWTPM)
     {

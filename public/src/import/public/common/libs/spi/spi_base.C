@@ -50,6 +50,13 @@ enum spi_base_constants
     SPIC_STATUS_REG         = 8,
 
     TPM_RDR_MATCH           = 0x00000000FF01FF00ull,
+
+    ERROR_MASK = 0x64000000FFE1FF80ull,
+
+    // Masks to check for proper idle state:
+    // No error flags whatsoever, state machines idle, ignore sequence index
+    IDLE_STATUS_MASK = 0xFFFFFFF0FFFFFFFFull,
+    IDLE_STATUS_EXP  = 0x0001001000000000ull,
 };
 
 #define _SPIOP(op, arg) (uint64_t)((op) | ((arg) & 0xF))
@@ -106,7 +113,21 @@ ReturnCode _SPIPortBase::transaction(const uint64_t cmd, const uint32_t cmd_len,
     }
 
     /* Check SPI controller health before we begin */
-    FAPI_TRY(wait_for_tdr_empty());
+    {
+        buffer<uint64_t> status;
+
+        FAPI_TRY(getscom(SPIC_STATUS_REG, status));
+
+        if ((status & IDLE_STATUS_MASK) != IDLE_STATUS_EXP)
+        {
+            FAPI_INF("SPI controller status not clean (0x%08x%08x), resetting controller",
+                     status >> 32, status);
+            FAPI_TRY(reset_controller());
+
+            // One more status check, this time with FAPI_ASSERT on bad status
+            FAPI_TRY(wait_for_tdr_empty());
+        }
+    }
 
     /* Set up ECC mode */
     {
@@ -447,8 +468,6 @@ ReturnCode _SPIPortBase::poll_status(
     const uint32_t l_nbits = i_bitrange & 0xFF;
     buffer<uint64_t> l_buf;
     uint32_t l_timeout = POLL_COUNT;
-
-    static const uint64_t ERROR_MASK = 0x64000000FFE1FF80;
 
     while (l_timeout)
     {
