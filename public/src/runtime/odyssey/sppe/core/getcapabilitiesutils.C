@@ -224,11 +224,6 @@ uint32_t fillImagesDetails(
     #undef SBE_FUNC
 }
 
-uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
-{
-    return fillImagesDetails( o_capMsg.iv_sbeFwReleaseTag, o_capMsg.iv_ekbFwReleaseTag, o_capMsg.iv_imageInfo );
-}
-
 void fillCapabilitiesDetails(uint32_t *o_capability)
 {
     o_capability[GENERIC_CAPABILITY_START_IDX] =

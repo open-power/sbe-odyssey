@@ -55,13 +55,12 @@ typedef struct
 /**
  * @brief Used to get images details to send in the GetCapabilities response
  *
- * @param[out] o_capMsg The getcapability response buffer
+ * @param[out] sbeFwReleaseTag The sbe fw release tag response buffer
+ * @param[out] ekbFwReleaseTag The ekb fw release tag response buffer
+ * @param[out] imageInfo The images response buffer
  *
  * @return  RC
  */
-uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg);
-
-
 uint32_t fillImagesDetails(
     uint8_t (&sbeFwReleaseTag)[BUILD_TAG_CHAR_MAX_LENGTH],
     uint8_t (&ekbFwReleaseTag)[BUILD_TAG_CHAR_MAX_LENGTH],
