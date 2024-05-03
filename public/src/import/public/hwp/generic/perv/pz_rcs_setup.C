@@ -267,6 +267,12 @@ ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_C
     l_root_ctrl5.set_RCS_RESET(1); // Should be in reset already, but to be sure
     l_root_ctrl5.set_RCS_BYPASS(1); // Should be in bypass already, but to be sure
     l_root_ctrl5.set_RCS_FORCE_CLKSEL(0);
+
+    if ((l_refclock_select & fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1) == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1)
+    {
+        l_root_ctrl5.set_RCS_FORCE_CLKSEL(1);
+    }
+
     l_root_ctrl5.set_RCS_CLK_TEST_IN(0);
     l_root_ctrl5.set_SWO_FORCE_LOW(0);
     l_root_ctrl5.set_BLOCK_SWO(1); // Block Switchovers before we release reset
@@ -319,23 +325,11 @@ ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_C
     // Wait for good clocks to propagate
     fapi2::delay(WAIT_1US, WAIT_100KCYC); // Need the RCS Reset to high for at least 1uS
 
-    if ((l_refclock_select & fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_BOTH_OSC0) == 0x0)
-    {
-        // - To detect errors, we would need bypass low and out of reset
-        // - We need to be out of bypass in case at a future point, we would want to enable redundancy and not see a large phase jump
-        l_root_ctrl5.set_RCS_RESET(0);
-        l_root_ctrl5.putScom(i_target);
-        fapi2::delay(WAIT_1US, WAIT_100KCYC); // Need the RCS Reset to high for at least 1uS
-
-        l_root_ctrl5.set_RCS_BYPASS(0);
-        l_root_ctrl5.putScom(i_target);
-        goto fapi_try_exit;
-    }
-
     // Release RCS Reset
     FAPI_INF("RCS Release Reset");
     l_root_ctrl5.set_RCS_RESET(0);
     l_root_ctrl5.putScom(i_target);
+
     fapi2::delay(WAIT_1US, WAIT_100KCYC);
 
     // Deskew Calibration
@@ -345,16 +339,12 @@ ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_C
     FAPI_INF("RCS Auto Deskew A %d.", l_sns1lth.get_DESKEW_QOUT_A());
     FAPI_INF("RCS Auto Deskew B %d.", l_sns1lth.get_DESKEW_QOUT_B());
 
+    fapi2::delay(WAIT_1MS, WAIT_100KCYC); // Need at least 1ms of stability for the DLL to lock
+
     // Lock the 19.5ps DLL
     FAPI_INF("RCS Locking 19.5ps DLL.");
-    fapi2::delay(WAIT_1MS, WAIT_100KCYC); // Need at least 1ms of stability for the DLL to lock
     l_rcs_ctrl1.setBit<CTRL1_LOCK_19P5_DLL_CODE>();
     l_rcs_ctrl1.putScom(i_target);
-
-    // Release RCS Bypass
-    FAPI_INF("RCS Release Bypass.");
-    l_root_ctrl5.set_RCS_BYPASS(0);
-    l_root_ctrl5.putScom(i_target);
 
     // Clear Errors -- Wait for Errors to propagate
     FAPI_INF("RCS Clearing Errors.");
@@ -389,8 +379,6 @@ ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_C
     l_sns2lth.getScom(i_target);
     FAPI_INF("RCS Sense2 Register(0x2945): 0x%08X.", l_sns2lth);
 
-
-
     FAPI_INF("RCS Verifying Correct Side.");
     l_sns2lth.getScom(i_target);
 
@@ -412,9 +400,14 @@ ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_C
         }
     }
 
-    // Verify Clean State
-    FAPI_INF("Verifying Clean State.");
-    FAPI_TRY(rcs_verify_clean_state(i_target, l_refclock_select));
+    // Release RCS Bypass
+    fapi2::delay(WAIT_1US, WAIT_100KCYC);
+    FAPI_INF("RCS Release Bypass.");
+    l_root_ctrl5.set_RCS_BYPASS(0);
+    l_root_ctrl5.putScom(i_target);
+
+    // Wait at least 10us to allow the unlock detectors to settle
+    fapi2::delay(WAIT_10US, WAIT_100KCYC);
 
     // Clear Errors -- Wait for Errors to propagate
     FAPI_INF("Clearing Errors.");
@@ -426,6 +419,13 @@ ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_C
     l_root_ctrl5.set_CLEAR_CLK_ERROR_A(0);
     l_root_ctrl5.set_CLEAR_CLK_ERROR_B(0);
     l_root_ctrl5.putScom(i_target);
+
+    if ((l_refclock_select & fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_BOTH_OSC0) == 0x0)
+    {
+        l_root_ctrl5.set_BLOCK_SWO(1);
+        l_root_ctrl5.putScom(i_target);
+        goto fapi_try_exit;
+    }
 
     // Verify Clean State
     FAPI_INF("Verifying Clean State.");
