@@ -803,7 +803,8 @@ void ffdcFreeUnwantedError(uint8_t i_threadId)
             SBE_DEBUG(SBE_FUNC "Is node committed: %d, node: [0x%08X], thread ID: [0x%08X]", node->iv_isCommited, node, nodeThreadId);
 
             // node is committed
-            if ( (!node->iv_isCommited) && (i_threadId == nodeThreadId) )
+            if ( (!node->iv_isCommited) && (i_threadId == nodeThreadId) &&
+                 (node != fapi2::g_ffdcCtrlSingleton.getLastUeSpace()) )
             {
                 // not committed node need to delete and attach node
                 deletingNode = node;
@@ -826,7 +827,7 @@ void ffdcFreeUnwantedError(uint8_t i_threadId)
                     prevNode->next = node;
                 }
 
-                SBE_DEBUG(SBE_FUNC "Deleting node [0x%08X]", deletingNode);
+                SBE_INFO(SBE_FUNC "Deleting node [0x%08X]", deletingNode);
                 // Free up the node
                 Heap::get_instance().scratch_free((const void*)deletingNode);
             }
@@ -1122,6 +1123,8 @@ uint32_t ffdcConstructor ( uint32_t i_rc,
         currentNode = ffdcUtils_getLastUeSpace(i_rc, (ffdcLen + sizeof(pozFfdcNode_t)));
     }
 
+    SBE_INFO (SBE_FUNC "RC:[0x%08X], loc:[0x%08X]", i_rc, currentNode);
+
     // Check for Scratch is allocation
     if (currentNode)
     {
@@ -1192,6 +1195,9 @@ void logSbeError( const uint16_t i_primRc,
                   bool i_isFatal
                 )
 {
+    #define SBE_FUNC "logSbeError "
+    SBE_ENTER(SBE_FUNC);
+
     uint32_t ffdcLen = sizeof(pozPlatFfdcPackageFormat_t)+ /* Plat ffdc header + plat header(commit ID + DD level) + Dump field size */
                        sizeof(packageBlobField_t)        + /* FFDC fields size */
                        PLAT_FFDC_TRUNCATED_TRACE_SIZE ;    /* Trace data size  */
@@ -1204,6 +1210,7 @@ void logSbeError( const uint16_t i_primRc,
         currentNode = ffdcUtils_getLastUeSpace(fapi2::FAPI2_RC_PLAT_ERR_SEE_DATA,
                                                ffdcLen + sizeof(pozFfdcNode_t));
     }
+    SBE_INFO (SBE_FUNC "Pri:[0x%08X], Sec:[0x%08X], loc:[0x%08X]", i_primRc, i_secRc, currentNode);
 
     if (currentNode)
     {
@@ -1239,6 +1246,8 @@ void logSbeError( const uint16_t i_primRc,
         SBE_ERROR (SBE_FUNC "scratch space not available and lastUe is not initialized, executing pk_halt()");
         pk_halt();
     }
+    SBE_EXIT(SBE_FUNC);
+    #undef SBE_FUNC
 }
 #endif
 
@@ -1246,10 +1255,14 @@ void logSbeError( const uint16_t i_primRc,
 void logFatalError( fapi2::ReturnCode& i_rc )
 {
 #if defined(MINIMUM_FFDC_RE)
+    #define SBE_FUNC "logFatalError "
+    SBE_ENTER(SBE_FUNC);
 
     ffdcUtils_commitError( i_rc );
 
     pozFfdcNode_t * currentNode = (pozFfdcNode_t *) i_rc.getDataPtr();
+    SBE_INFO (SBE_FUNC "RC:[0x%08X], loc:[0x%08X], Logged:%d",
+                i_rc.getRC(), i_rc.getDataPtr(), currentNode->iv_isCommited);
 
     // Mark Error as a FATAL
     currentNode->iv_isFatal    = true;
@@ -1258,6 +1271,8 @@ void logFatalError( fapi2::ReturnCode& i_rc )
     //       it will break some of the existing flow where sbe functions
     //       which is calling SBE_EXEC_HWP is returning fapi-rc.
     i_rc.setDataPtr ( NULL );
+    SBE_EXIT(SBE_FUNC);
+    #undef SBE_FUNC
 #endif
 }
 
@@ -1306,12 +1321,16 @@ void logError( fapi2::ReturnCode& io_rc,
                fapi2::errlSeverity_t i_sev,
                bool i_unitTestError )
 {
+    #define SBE_FUNC "logError "
+    SBE_ENTER(SBE_FUNC);
 
 #if defined(MINIMUM_FFDC_RE)
 
     ffdcUtils_commitError( io_rc );
 
     pozFfdcNode_t * node = reinterpret_cast<pozFfdcNode_t*>(io_rc.getDataPtr());
+    SBE_INFO (SBE_FUNC "RC:[0x%08X], loc:[0x%08X], Logged:%d",
+                        io_rc.getRC(), io_rc.getDataPtr(), node->iv_isCommited);
     if (node != nullptr)
     {
         if (i_sev != fapi2::FAPI2_ERRL_SEV_UNDEFINED)
@@ -1327,14 +1346,15 @@ void logError( fapi2::ReturnCode& io_rc,
     else
     {
         SBE_ERROR (SBE_FUNC "Lost the iv_dataPtr unable to log the error, "
-                            "executing PK_HALT()");
+                                                        "executing PK_HALT()");
         pk_halt();
     }
 #else
-    SBE_ERROR ("logError Logging RC=0x%08X, with severity=%d", io_rc.getRC(), i_sev);
+    SBE_ERROR (SBE_FUNC "Logging RC=0x%08X, with severity=%d", io_rc.getRC(), i_sev);
     io_rc.setRC ( FAPI2_RC_SUCCESS );
 #endif
-
+    SBE_EXIT(SBE_FUNC);
+    #undef SBE_FUNC
 }
 
 #ifdef MINIMUM_REG_COLLECTION
