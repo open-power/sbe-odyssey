@@ -39,7 +39,12 @@ hexDate   = int(buildDate, 16)
 # query the right repo.
 os.chdir(os.path.dirname(__file__))
 
-commitStr = os.popen('git rev-parse --short=8 HEAD').read().rstrip()
+if "SBE_ODYSSEY_VERSION" in os.environ:
+    commitId = os.getenv("SBE_ODYSSEY_VERSION")
+    commitStr = commitId[:8]
+else:
+    commitStr = os.popen('git rev-parse --short=8 HEAD').read().rstrip()
+
 try:
     commitInt = int(commitStr, 16)
 except:
