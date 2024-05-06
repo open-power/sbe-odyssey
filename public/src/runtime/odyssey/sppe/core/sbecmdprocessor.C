@@ -403,8 +403,6 @@ void sbeAsyncCommandProcessor_routine(void *arg)
         {
             SBE_ERROR(SBE_FUNC "Failed to start the async thread timer with rc"
                                " 0x%08X", l_rc);
-            // Incase of failure set the async bit to true.
-            (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
         }
 
         // Call the thermal sensor polling HWPs and DQS polling.
@@ -412,8 +410,6 @@ void sbeAsyncCommandProcessor_routine(void *arg)
         if(l_rc)
         {
             SBE_ERROR(SBE_FUNC "sbepollTSnDQS failed with rc 0x%08X", l_rc);
-            // Incase of failure set the async bit to true.
-            (void)SbeRegAccess::theSbeRegAccess().updateAsyncFFDCBit(true);
         }
 
         ffdcFreeUnwantedError( pk_current()->priority );
