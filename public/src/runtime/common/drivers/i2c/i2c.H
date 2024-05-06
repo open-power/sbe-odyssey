@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2018,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2018,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -229,6 +229,28 @@ protected:
     return ( ( 8 * NS_PER_SEC ) / ( 10 * i_bus_speed_khz * 1000 ) );
   }
 
+  /**
+   * @brief To read from i2c device
+   *
+   * @param get_size Size that getI2c will read from the HW target.
+   * @param cfgData Buffer that holds data to write to the HW target.
+   *                May be empty if no address/command is required
+   *                before the read.
+   * @param o_data Buffer that holds data read from HW target.
+   * @return ReturnCode FAPI2_RC_SUCCESS if success, else error code.
+   */
+  ReturnCode getI2cHelper( const size_t get_size,
+                        const std::vector<uint8_t>& cfgData,
+                        std::vector<uint8_t>& o_data );
+
+  /**
+   * @brief To write to i2c device
+   *
+   * @param data Buffer that holds data to write to the HW target.
+   * @return ReturnCode fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
+   */
+  ReturnCode putI2cHelper( const std::vector<uint8_t>& data );
+
 private:
 
   /**
@@ -312,28 +334,6 @@ private:
   ReturnCode i2cBusReset();
 
   /**
-   * @brief To read from i2c device
-   *
-   * @param get_size Size that getI2c will read from the HW target.
-   * @param cfgData Buffer that holds data to write to the HW target.
-   *                May be empty if no address/command is required
-   *                before the read.
-   * @param o_data Buffer that holds data read from HW target.
-   * @return ReturnCode FAPI2_RC_SUCCESS if success, else error code.
-   */
-  ReturnCode getI2cHelper( const size_t get_size,
-                        const std::vector<uint8_t>& cfgData,
-                        std::vector<uint8_t>& o_data );
-
-  /**
-   * @brief To write to i2c device
-   *
-   * @param data Buffer that holds data to write to the HW target.
-   * @return ReturnCode fapi2::ReturnCode. FAPI2_RC_SUCCESS if success, else error code.
-   */
-  ReturnCode putI2cHelper( const std::vector<uint8_t>& data );
-
-    /**
    * @brief To read from i2c device
    *        This implementation can be overriden in derived class
    *        based on use case
