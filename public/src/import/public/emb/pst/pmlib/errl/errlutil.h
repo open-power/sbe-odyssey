@@ -44,14 +44,14 @@
 ///             be added. NULL if there is none to be added.
 /// @param[out] o_status [uint32_t] See errlStatusCodes
 ///
-#define PPE_LOG_ERR_INF(i_rc, i_extRc, i_modId,                   \
+#define PPE_LOG_ERR_INF(i_elogOrig,                   \
                         i_userData1, i_userData2, i_userData3,    \
-                        p_usrDtls, o_status)                     \
+                        i_usrDtls, i_pcallOuts, o_status, i_elogSectn) \
 {                                                                 \
     errlUDWords_t uDWords = {i_userData1, i_userData2, i_userData3};\
-    o_status = ppeLogError ( i_rc, i_extRc, i_modId,       \
-                             ERRL_SEV_INFORMATIONAL,       \
-                             &uDWords, p_usrDtls, NULL );              \
+    o_status = ppe_log_error ( i_elogOrig,        \
+                               ERRL_SEV_INFORMATIONAL,       \
+                               &uDWords, i_usrDtls, NULL, i_elogSectn );              \
 }
 
 /// @brief Create and commit an unrecoverable (critical) error log and continue
@@ -70,11 +70,11 @@
 ///
 #define PPE_LOG_ERR_CRITICAL( i_elogOrig,                                   \
                               i_userData1, i_userData2, i_userData3,        \
-                              p_usrDtls, p_callOuts, o_status, i_elogSectn ) \
+                              i_pusrDtls, i_pcallOuts, o_status, i_elogSectn ) \
 {                                                                   \
     errlUDWords_t uDWords = {i_userData1, i_userData2, i_userData3};\
-    o_status = ppeLogError ( i_elogOrig, ERRL_SEV_UNRECOVERABLE, \
-                             &uDWords, p_usrDtls, p_callOuts, i_elogSectn );  \
+    o_status = ppe_log_error ( i_elogOrig, ERRL_SEV_UNRECOVERABLE, \
+                               &uDWords, i_pusrDtls, i_pcallOuts, i_elogSectn );  \
 }
 
 /// @brief Create and commit an unrecoverable (critical) error log and halt PPE

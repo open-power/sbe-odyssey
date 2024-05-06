@@ -40,9 +40,11 @@ extern "C" {
 #endif
 
 /// Max registers (XIRs) to be collected for belly-up PPEs
-#define ERRL_PPE_REGS_MAX 5
+#define ERRL_PPE_REGS_MAX       5
 /// Max Hcode scoreboard size
-#define ERRL_PPE_SCRBRD_SIZE 256
+#define ERRL_PPE_SCRBRD_SIZE    256
+/// Max size for an hcode error log
+#define ERRL_MAX_ENTRY_SZ       0x1000
 
 /// Status code of error logging from error logging infrastructure
 enum errlStatusCodes
@@ -150,8 +152,8 @@ typedef enum   ElogSectnSumm ElogSectnSumm_t;
 /// @param [in] i_pErrTable  Pointer to error log index table for this engine
 ///
 /// @note All other APIs will execute as no-ops if framework is not initialized
-void initErrLogging ( const uint8_t        i_errlSource,
-                      hcode_error_table_t* i_pErrTable );
+void init_err_logging ( const uint8_t        i_errlSource,
+                        hcode_error_table_t* i_pErrTable );
 
 /// @brief Creates an Error Log in the PPE's local SRAM
 ///
@@ -169,13 +171,64 @@ void initErrLogging ( const uint8_t        i_errlSource,
 /// @note: Until pending Error Logs are processed and room is created for a new
 ///        HCode Error Log in SRAM by OCC/(H)TMGT, attempts to create new Error
 ///        Log via createErrl will fail and HCode error logs will be dropped
-errlHndl_t createErrl (
+errlHndl_t create_errl (
     ElogOrginSumm_t i_elogOrig,
     const ERRL_SEVERITY i_sev,
     errlUDWords_t* p_uDWords,
-    ElogSectnSumm_t   i_usrFfdcSectn,
     uint32_t*      o_status );
 
+/// @brief Adds User Details Section to the Error log
+///
+/// @param [inout] io_err A valid error log handle returned via by createErrl
+/// @param [in] i_dataPtr Pointer to the data being added
+/// @param [in] i_size Size of the data being added in bytes. Min. 128B
+/// @param [in] i_version Version of the User Details Section Header
+/// @param [in] i_type Type of the user details section being added
+///
+/// @return uint32_t status of the operation. See errlStatusCodes
+///
+/// @note: Generic method to add user specific data like traces, dashboard, etc.
+/// @note: i_size must be a multiple of 8, min. 128B  & data must be 8B aligned
+/// @note: If i_size is more than available space, an attempt is made to add
+///        user data truncated to the size that can fit in the log (min. 128 B)
+/// @note: If there is an error adding user details section to the Error Log,
+///        the user details section will be dropped from the Error Log
+uint32_t add_usr_dtls_to_errl (
+    errlHndl_t io_err,
+    uint8_t* i_dataPtr,
+    const uint16_t i_size,
+    const uint8_t i_version,
+    const ERRL_USR_DETAIL_TYPE i_type );
+
+/// @brief Add Trace Data to the Error log
+///
+/// @param [inout] io_err A valid error log handle returned via by createErrl
+///
+/// @return void
+///
+/// @note: Common method to add Hcode traces from PK trace buffer to Error Log
+/// @note: If there is an error adding traces to the Error Log, the trace data
+///        will be dropped from the Error Log
+void add_trace_to_errl ( errlHndl_t io_errl );
+
+/// @brief Captures PPE debug registers & sets up an user details section for it
+///
+/// @param [in] i_source PPE whose registers are to be captured, see ERRL_SOURCE
+/// @param [in] i_instance For ERRL_SOURCE_QME, 0..7
+///                        For ERRL_SOURCE_PGPE/ERRL_SOURCE_XGPE, ignored
+/// @param [out] o_ppRegs  Pointer to a valid instance of errlPpeRegs_t
+/// @param [out] o_usrDtls Pointer to a valid instance of errlDataUsrDtls_t
+///
+/// @return void
+///
+/// @note On successful execution,
+///       o_ppeRegs contains PPE XIRs in order specified by errlPpeXirIdx,
+///       o_usrDtls contains valid metadata with payload pointing to o_ppeRegs,
+///       such that it can be directly added to an error log
+void get_ppe_regs_usr_dtls ( const uint8_t i_source,
+                             const uint8_t i_instance,
+                             errlPpeRegs_t* o_ppeRegs,
+                             errlDataUsrDtls_t* o_usrDtls );
 
 /// @brief Commit the Error Log to the Error Log Table for FW processing
 ///
@@ -189,7 +242,7 @@ errlHndl_t createErrl (
 ///        to the OCC SRAM and convert it to a PEL/SEL
 /// @note: OCC or (H)TMGT being busy or not functional due to other reasons, can
 ///        can cause HCode commited errors not converting to PELs/SELs
-uint32_t commitErrl ( errlHndl_t* io_err );
+uint32_t commit_errl ( errlHndl_t io_err );
 
 
 /// @brief Delete the Error Log being processed on this PPE
@@ -201,28 +254,49 @@ uint32_t commitErrl ( errlHndl_t* io_err );
 /// @note: To be used to free up this error slot for reuse by a new error.
 ///        Typically used to abort an error log being processed on the PPE due
 ///        to errors adding callouts or user detail sections, etc.
-uint32_t deleteErrl ( errlHndl_t* io_errl );
+uint32_t delete_errl ( errlHndl_t io_errl );
 
+/// @brief Adds a callout to the Error Log
+///
+/// @param [inout] io_err A valid error log handle returned via by createErrl
+/// @param [in] i_type Type of the callout (hardware FRU, code, etc.)
+/// @param [in] i_calloutValue Specific instance of the type being called out
+/// @param [in] i_priority Priority of this callout for service action
+///
+/// @return uint32_t status of the operation. See errlStatusCodes
+///
+//  @note: Callouts help a service engineer isolate the failing part/subsystem
+/// @note: Customer visible errors (Pred/Unrec) need at least 1 callout.
+/// @note: If there is an error adding callout to the Error Log, the callout
+///        will be dropped from the Error Log
+
+/// @TODO via RTC 211557: Support adding callouts to Hcode Error Logs
+///       TMGT adds a Processor callout as default, until this is supported
+uint32_t  add_callout_to_errl (
+    errlHndl_t io_err,
+    const ERRL_CALLOUT_TYPE i_type,
+    const uint64_t i_calloutValue,
+    const ERRL_CALLOUT_PRIORITY i_priority );
 
 /// @brief  Creates a PM hcode error log
 ///
 /// @param[in]  i_elogOrig  summarizes information pertaining to origin point of elog
 /// @param[in]  i_sev       severity of error log
-/// @param[in]  p_uDWords   collection of userdata1, userdata2 and userdata3
-/// @param[in]  p_usrDtls   collection of user details
-/// @param[in]  p_callOuts  callouts associated with error log
+/// @param[in]  i_pDWords   collection of userdata1, userdata2 and userdata3
+/// @param[in]  i_pusrDtls  points to user data section
+/// @param[in]  i_pcallOuts callouts associated with error log
 /// @param[in]  i_elogSectn user data section to be populated for the log
 /// @return     SUCCESS if function succeeds, error code otherwise.
 ///
-uint32_t ppeLogError ( ElogOrginSumm_t i_elogOrig,
-                       const ERRL_SEVERITY i_sev,
-                       errlUDWords_t*      p_uDWords,
-                       errlDataUsrDtls_t*  p_usrDtls,
-                       errlDataCallout_t*  p_callOuts,
-                       uint32_t  i_elogSectn ) ;
-
-
+///
+uint32_t ppe_log_error ( ElogOrginSumm_t i_elogOrig,
+                         const ERRL_SEVERITY i_sev,
+                         errlUDWords_t*      i_pDWords,
+                         errlDataUsrDtls_t*  i_pusrDtls,
+                         errlDataCallout_t*  i_pcallOuts,
+                         uint32_t  i_elogSectn ) ;
 /// @}  end addtogroup
+
 
 #ifdef __cplusplus
 }

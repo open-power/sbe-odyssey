@@ -40,9 +40,9 @@ extern "C" {
 
 
 // Size of traces to add to ERRL_USR_DTL_TRACE_DATA
-#define ERRL_TRACE_DATA_SZ_PGPE 0x200   ///< PGPE Error Log Trace Size
-#define ERRL_TRACE_DATA_SZ_XGPE 0x200   ///< XGPE Error Log Trace Size
-#define ERRL_TRACE_DATA_SZ_QME  0x200   ///< QME Error Log Trace Size
+#define ERRL_TRACE_DATA_SZ_PGPE 0x800   ///< PGPE Error Log Trace Size
+#define ERRL_TRACE_DATA_SZ_XGPE 0x800   ///< XGPE Error Log Trace Size
+#define ERRL_TRACE_DATA_SZ_QME  0x800   ///< QME Error Log Trace Size
 
 // Defines used to programmatically arrive at QME instance slot mask
 #define ERRL_SLOT_MASK_QME_UNREC_BASE 0x80000000   ///< QME Unrecoverable Log Base
