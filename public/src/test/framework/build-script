@@ -1,0 +1,67 @@
+#!/bin/sh
+# IBM_PROLOG_BEGIN_TAG
+# This is an automatically generated prolog.
+#
+# $Source: public/src/test/framework/build-script $
+#
+# OpenPOWER sbe Project
+#
+# Contributors Listed Below - COPYRIGHT 2015,2024
+#
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+# IBM_PROLOG_END_TAG
+
+set -u
+
+source public/src/tools/utils/sbe/detect-python
+
+usage()
+{
+    echo "Usage: $0 <project_type> <image_type> [--skip-tests]"
+    exit 1
+}
+
+if [ $# -lt 2 ] ; then
+    usage
+fi
+
+CI_SCRIPT_PATH=public/src/test/framework
+CI_SCRIPT=$CI_SCRIPT_PATH/ci_script
+export SBE_CI_ENV_SETUP=1
+export SBE_PLATFORM=$1
+export SBE_IMAGE=$2
+shift 2
+
+PYTHON_VERSION=$(get_python_version)
+
+#For machines which have python2 as default(mostly all CI machines)
+#execute scl command.Do nothing if python3 is default.
+#TODO: Refactor below code to remove duplicate bash command
+if [ "$PYTHON_VERSION" == "3" ]; then
+    echo "***INFO | Machine has Python3 as default"
+    echo "Spawning new shell (/bin/bash)..."
+    export SCL_PYTHON_ENABLED=0
+    bash -c "$CI_SCRIPT $@" || exit 1
+elif [ "$PYTHON_VERSION" == "2" ]; then
+    echo "***INFO | Machine has Python2 as default"
+    # we need to pass "bash --rcfile ./env.bash" as single argument to scl command
+    export SCL_PYTHON_ENABLED=1
+    CMD_ARR=("scl" "enable" "rh-python36" "bash -c $CI_SCRIPT $@")
+    echo "Spawning new shell : ${CMD_ARR[@]}"
+    "${CMD_ARR[@]}" || exit 1
+else
+    echo "Error: Cannot detect python2 or python3"
+    exit 1
+fi

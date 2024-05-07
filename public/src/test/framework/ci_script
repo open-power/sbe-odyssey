@@ -1,0 +1,65 @@
+#!/bin/sh
+# IBM_PROLOG_BEGIN_TAG
+# This is an automatically generated prolog.
+#
+# $Source: public/src/test/framework/ci_script $
+#
+# OpenPOWER sbe Project
+#
+# Contributors Listed Below - COPYRIGHT 2015,2024
+#
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+# IBM_PROLOG_END_TAG
+
+# This script will be called by ./sbe script after a workon
+
+# Install required python modules and application
+
+usage()
+{
+    echo "Usage: $0 [--skip-tests]"
+    exit 1
+}
+
+rm -rf builddir/ genfiles/ images/ simics/sbe/
+
+source ./env.bash || exit 1
+
+# Build the Repo
+echo "===============Meson setup================"
+mesonwrap setup || exit 1
+echo "===============Meson build================"
+mesonwrap build || exit 1
+
+# Check if test's should be run or not. Default is run.
+if [ $# -ne 0 ]; then
+    if [ "$1" == "--skip-tests" ]; then
+        echo "Skipping tests due to --skip-tests"
+        exit 0
+    fi
+
+    usage
+fi
+
+#TODO: need to enable PST SEEPROM CI and remove the if else condition
+if [[ $SBE_IMAGE == "pseeprom" || $SBE_IMAGE == "all" || "$SBE_PLATFORM" == "metis" || "$SBE_PLATFORM" == "all" ]]; then
+    echo "Skipping tests. Simics is not supported for CI run. Selected Platform: $SBE_PLATFORM, Image Type: $SBE_IMAGE "
+else
+    # Add SBE files to simics sandbox.
+    sh ${SBE_TOOLS_PATH}/setup_simics $SBEROOT/simics || exit 1
+
+    # Run simics testcases
+    sh ${SBE_TOOLS_PATH}/autocitest || exit 1
+fi
