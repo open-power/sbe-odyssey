@@ -38,7 +38,7 @@
 #include <lib/fir/ody_fir.H>
 #include <ody_scom_omi.H>
 #include <ody_scom_perv.H>
-#include <pst_scom_mcc_mc.H>
+//#include <pst_scom_mcc_mc.H>
 
 namespace mss
 {
@@ -128,6 +128,9 @@ fapi_try_exit:
         fapi2::current_err;
 }
 
+// TODO: JUP 1098981: Commented out in ekb-src. Waiting for hostfw
+// Commented out because the ekb-src/sbe pipeline is not set up to handle the checking
+// of the Host's FIRs. Instead waiting for hostfw repo to re-enable this code.
 ///
 /// @brief Checks whether any FIRs have lit up on a target
 /// @param[in] i_target - the OCMB_CHIP target on which to operate
@@ -136,96 +139,130 @@ fapi_try_exit:
 /// @return fapi2::ReturnCode FAPI2_RC_SUCCESS iff ok
 /// @note specialization for ODYSSEY and fir checklist for IO_TRAIN regs
 ///
-template <>
-fapi2::ReturnCode bad_fir_bits<mss::mc_type::ODYSSEY, firChecklist::IO_TRAIN>(
-    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
-    fapi2::ReturnCode& io_rc,
-    bool& o_fir_error)
-{
-    /*
-        Check:
-            MC.OMI.FIR.REG: 1,2,6,8,10,11,21,22
-    */
-
-    const auto c_omi_target = i_target.getParent<fapi2::TARGET_TYPE_OMI>();
-
-    fapi2::buffer<uint64_t> l_check_mask(0xFFFFFFFFFFFFFFFF);
-
-    // Start by assuming we do not have a FIR; if true at any point, skip other checks to preserve error o_fir_error = false;
-    // Check MC.OMI.FIR.REG: bits [1,2,6,8,10,11,21,22]
-    if (o_fir_error != true)
-    {
-        l_check_mask.flush<1>()
-        .clearBit<scomt::omi::D_REG_MC_OMI_FIR_DL0_FATAL_ERROR>()
-        .clearBit<scomt::omi::D_REG_MC_OMI_FIR_DL0_DATA_UE>()
-        .clearBit<scomt::omi::D_REG_MC_OMI_FIR_DL0_X4_MODE>()
-        .clearBit<scomt::omi::D_REG_MC_OMI_FIR_DL0_TIMEOUT>()
-        .clearBit<scomt::omi::D_REG_MC_OMI_FIR_DL0_ERROR_RETRAIN>()
-        .clearBit<scomt::omi::D_REG_MC_OMI_FIR_DL0_EDPL_RETRAIN>()
-        .clearBit<scomt::omi::D_REG_MC_OMI_FIR_DL0_SKITTER_ERROR>()
-        .clearBit<scomt::omi::D_REG_MC_OMI_FIR_DL0_SKITTER_DRIFT>();
-
-        FAPI_TRY(bad_fir_bits_helper_with_mask(i_target,
-                                               scomt::omi::D_REG_MC_OMI_FIR_RW_WCLEAR,
-                                               scomt::omi::D_REG_MC_OMI_FIR_MASK_RW_WCLEAR,
-                                               l_check_mask,
-                                               io_rc,
-                                               o_fir_error));
-    }
-
-    // Host FIR checks
-    /*
-        Check:
-            MC.OMI.FIR.REG: 1,2,6,8,10,11,21,22
-    */
-    // PST FIR checks
-    if (o_fir_error != true)
-    {
-        // Check MC.OMI.FIR.REG: bits [0,1,5,7,10]
-        l_check_mask.flush<1>()
-        .clearBit<scomt::mcc::REG_MC_OMI_FIR_DL0_FATAL_ERROR>()
-        .clearBit<scomt::mcc::REG_MC_OMI_FIR_DL0_DATA_UE>()
-        .clearBit<scomt::mcc::REG_MC_OMI_FIR_DL0_X4_MODE>()
-        .clearBit<scomt::mcc::REG_MC_OMI_FIR_DL0_TIMEOUT>()
-        .clearBit<scomt::mcc::REG_MC_OMI_FIR_DL0_EDPL_RETRAIN>();
-
-        FAPI_TRY(bad_fir_bits_helper_with_mask(c_omi_target,
-                                               scomt::mcc::REG_MC_OMI_FIR_WO_OR,
-                                               scomt::mcc::REG_MC_OMI_FIR_MASK_WO_OR,
-                                               l_check_mask,
-                                               io_rc,
-                                               o_fir_error));
-
-        // Check DSTLFIR.REG: bits [8,9,10,11,12,13,16,17,22,23,35,36]
-        if (o_fir_error != true)
-        {
-            l_check_mask.flush<1>()
-            .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_MCS_DSTL_CMD_PARITY_ERROR>()
-            .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_RESET_CREDITS_RD_WDF_BUFFER_NONZERO>()
-            .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_CONFIG_REG_RECOVERABLE_PARITY_ERROR>()
-            .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_CONFIG_REG_FATAL_PARITY_ERROR>()
-            .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_SUBCHANNEL_A_COUNTER_ERROR>()
-            .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_SUBCHANNEL_B_COUNTER_ERROR>()
-            .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_SUBCHANNEL_A_BUFFER_OVERUSE_ERROR>()
-            .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_SUBCHANNEL_B_BUFFER_OVERUSE_ERROR>()
-            .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_SUBCHANNEL_A_CHANNEL_TIMEOUT>()
-            .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_SUBCHANNEL_B_CHANNEL_TIMEOUT>()
-            .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_SUBCHANNEL_A_PARITY_ERROR>()
-            .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_SUBCHANNEL_B_PARITY_ERROR>();
-
-            FAPI_TRY(bad_fir_bits_helper_with_mask(c_omi_target,
-                                                   scomt::mcc::CHAN_DSTL_DSTLFIR_WO_OR,
-                                                   scomt::mcc::CHAN_DSTL_DSTLFIRMASK_WO_OR,
-                                                   l_check_mask,
-                                                   io_rc,
-                                                   o_fir_error));
-        }
-    }
-
-fapi_try_exit:
-    return
-        fapi2::current_err;
-}
+//template <>
+//fapi2::ReturnCode bad_fir_bits<mss::mc_type::ODYSSEY, firChecklist::IO_TRAIN>(
+//    const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+//    fapi2::ReturnCode& io_rc,
+//    bool& o_fir_error)
+//{
+//    /*
+//        Check:
+//            MC.OMI.FIR.REG: 1,2,6,8,10,11,21,22
+//    */
+//
+//    // Commented out in ekb-src, needed for hostfw
+//    //const auto c_omic_target = i_target.getParent<fapi2::TARGET_TYPE_OMI>().getParent<fapi2::TARGET_TYPE_OMIC>();
+//    //const auto c_mcc_target = i_target.getParent<fapi2::TARGET_TYPE_OMI>().getParent<fapi2::TARGET_TYPE_MCC>();
+//
+//    fapi2::ATTR_FAPI_POS_Type l_ocmb_pos = 0;
+//
+//    fapi2::buffer<uint64_t> l_check_mask(0xFFFFFFFFFFFFFFFF);
+//
+//    FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_FAPI_POS, i_target, l_ocmb_pos));
+//    l_ocmb_pos = l_ocmb_pos % 2;
+//
+//    // Start by assuming we do not have a FIR; if true at any point, skip other checks to preserve error o_fir_error = false;
+//    // Check MC.OMI.FIR.REG: bits [1,2,6,8,10,11,21,22]
+//    if (o_fir_error != true)
+//    {
+//        l_check_mask.flush<1>()
+//        .clearBit<scomt::omi::D_REG_MC_OMI_FIR_DL0_FATAL_ERROR>()
+//        .clearBit<scomt::omi::D_REG_MC_OMI_FIR_DL0_DATA_UE>()
+//        .clearBit<scomt::omi::D_REG_MC_OMI_FIR_DL0_X4_MODE>()
+//        .clearBit<scomt::omi::D_REG_MC_OMI_FIR_DL0_TIMEOUT>()
+//        .clearBit<scomt::omi::D_REG_MC_OMI_FIR_DL0_ERROR_RETRAIN>()
+//        .clearBit<scomt::omi::D_REG_MC_OMI_FIR_DL0_EDPL_RETRAIN>()
+//        .clearBit<scomt::omi::D_REG_MC_OMI_FIR_DL0_SKITTER_ERROR>()
+//        .clearBit<scomt::omi::D_REG_MC_OMI_FIR_DL0_SKITTER_DRIFT>();
+//
+//        FAPI_TRY(bad_fir_bits_helper_with_mask(i_target,
+//                                               scomt::omi::D_REG_MC_OMI_FIR_RW_WCLEAR,
+//                                               scomt::omi::D_REG_MC_OMI_FIR_MASK_RW_WCLEAR,
+//                                               l_check_mask,
+//                                               io_rc,
+//                                               o_fir_error));
+//    }
+//
+//    // Host FIR checks
+//    /*
+//        Check:
+//            MC.OMI.FIR.REG: 1,2,6,8,10,11,21,22
+//    */
+//    // PST FIR checks
+//    if (o_fir_error != true)
+//    {
+//        // Check if OMI0
+//        if (l_ocmb_pos == 0)
+//        {
+//            // Check MC.OMI.FIR.REG: bits [0,1,5,7,10]
+//            l_check_mask.flush<1>()
+//            .clearBit<scomt::mcc::REG_MC_OMI_FIR_DL0_FATAL_ERROR>()
+//            .clearBit<scomt::mcc::REG_MC_OMI_FIR_DL0_DATA_UE>()
+//            .clearBit<scomt::mcc::REG_MC_OMI_FIR_DL0_X4_MODE>()
+//            .clearBit<scomt::mcc::REG_MC_OMI_FIR_DL0_TIMEOUT>()
+//            .clearBit<scomt::mcc::REG_MC_OMI_FIR_DL0_EDPL_RETRAIN>();
+//        }
+//        // OMI1
+//        else
+//        {
+//            // Check MC.OMI.FIR.REG: bits [20,21,25,27,30]
+//            l_check_mask.flush<1>()
+//            .clearBit<scomt::mcc::REG_MC_OMI_FIR_DL1_FATAL_ERROR>()
+//            .clearBit<scomt::mcc::REG_MC_OMI_FIR_DL1_DATA_UE>()
+//            .clearBit<scomt::mcc::REG_MC_OMI_FIR_DL1_X4_MODE>()
+//            .clearBit<scomt::mcc::REG_MC_OMI_FIR_DL1_TIMEOUT>()
+//            .clearBit<scomt::mcc::REG_MC_OMI_FIR_DL1_EDPL_RETRAIN>();
+//
+//        }
+//
+//        FAPI_TRY(bad_fir_bits_helper_with_mask(c_omic_target,
+//                                               scomt::mcc::REG_MC_OMI_FIR_RW_WCLEAR,
+//                                               scomt::mcc::REG_MC_OMI_FIR_MASK_RW_WCLEAR,
+//                                               l_check_mask,
+//                                               io_rc,
+//                                               o_fir_error));
+//
+//        // Check DSTLFIR.REG: bits [8,9,10,11,12,13,16,17,22,23,35,36]
+//        if (o_fir_error != true)
+//        {
+//            l_check_mask.flush<1>()
+//            .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_MCS_DSTL_CMD_PARITY_ERROR>()
+//            .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_RESET_CREDITS_RD_WDF_BUFFER_NONZERO>()
+//            .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_CONFIG_REG_RECOVERABLE_PARITY_ERROR>()
+//            .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_CONFIG_REG_FATAL_PARITY_ERROR>();
+//
+//            // Check if OMI0
+//            if (l_ocmb_pos == 0)
+//            {
+//                l_check_mask
+//                .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_SUBCHANNEL_A_COUNTER_ERROR>()
+//                .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_SUBCHANNEL_A_BUFFER_OVERUSE_ERROR>()
+//                .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_SUBCHANNEL_A_CHANNEL_TIMEOUT>()
+//                .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_SUBCHANNEL_A_PARITY_ERROR>();
+//            }
+//            // OMI1
+//            else
+//            {
+//                l_check_mask
+//                .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_SUBCHANNEL_B_COUNTER_ERROR>()
+//                .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_SUBCHANNEL_B_BUFFER_OVERUSE_ERROR>()
+//                .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_SUBCHANNEL_B_CHANNEL_TIMEOUT>()
+//                .clearBit<scomt::mcc::CHAN_DSTL_DSTLFIR_DSTLFIR_SUBCHANNEL_B_PARITY_ERROR>();
+//            }
+//
+//            FAPI_TRY(bad_fir_bits_helper_with_mask(c_mcc_target,
+//                                                   scomt::mcc::CHAN_DSTL_DSTLFIR_RW_WCLEAR,
+//                                                   scomt::mcc::CHAN_DSTL_DSTLFIRMASK_RW_WCLEAR,
+//                                                   l_check_mask,
+//                                                   io_rc,
+//                                                   o_fir_error));
+//        }
+//    }
+//
+//fapi_try_exit:
+//    return
+//        fapi2::current_err;
+//}
 
 } // end check ns
 } // end mss ns
