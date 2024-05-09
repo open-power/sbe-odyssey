@@ -1028,6 +1028,8 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_init(const fapi2::Target<K, M, V>
     uint64_t l_addr = 0;
 
     l_addr = buildAddr(iv_regs->base_addr, i_group, 0, c_reg_rx_datasm_cnt22);
+    FAPI_TRY(getScom(i_target, l_addr, l_buffer),
+             "Error getscom to address 0x%08X.", l_addr);
     FAPI_DBG("RX_DATASM_CNTL22 Address 0x%08X%08X", (l_addr >> 32) & 0xFFFFFFFF, l_addr & 0xFFFFFFFF);
 
     // Write rx_dac_test_check_en = 0
