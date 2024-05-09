@@ -158,6 +158,12 @@ protected:
   uint8_t  iv_max_retry_count = DEFAULT_MAX_I2C_RETRY;
   uint8_t  iv_curr_retry_count = 0x0;
 
+  // Storage for FFDC collection
+  status_reg_t iv_status_reg;
+  interrupt_reg_t iv_interrupt_reg;
+  command_reg_t iv_command_reg;
+  mode_reg_t iv_mode_reg;
+
   /**
   * @brief write to a I2C device
   *
@@ -372,6 +378,13 @@ private:
    * @return ReturnCode FAPI RC
    */
   ReturnCode isI2cResetClean();
+
+  /**
+   * @brief API to collect the necessary I2C registers required for FFDC local variable data
+   *
+   */
+  void collectI2cReg();
+
 };
 
 } //namespace fapi2
