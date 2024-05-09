@@ -34,7 +34,7 @@
  *        sda_input_level and peek_data1 = 0x1
  *
  */
-#define I2CC_EXPECTED_CLEAN_RESET_STATUS 0x01000C0001000000
+#define I2CC_EXPECTED_CLEAN_RESET_STATUS  0x01000C0001000000
 
 namespace fapi2
 {
@@ -87,48 +87,45 @@ ReturnCode i2c::i2cCheckForErrors(status_reg_t &status)
     #define SBE_FUNC " i2cCheckForErrors "
     SBE_ENTER(SBE_FUNC)
 
-    ReturnCode rc = FAPI2_RC_SUCCESS;
-
     do
     {
-
-        PLAT_FAPI_ASSERT(
-                !(status.invalid_cmd ||
-                status.lbus_parity_error ||
-                status.backend_overrun_error ||
-                status.backend_access_error ||
-                status.arbitration_lost_error ||
-                status.nack_received ||
-                status.stop_error
-                ),
+        if(status.invalid_cmd ||
+            status.lbus_parity_error ||
+            status.backend_overrun_error ||
+            status.backend_access_error ||
+            status.arbitration_lost_error ||
+            status.nack_received ||
+            status.stop_error)
+        {
+           collectI2cReg();
+            PLAT_FAPI_ASSERT(false,
                 POZ_I2C_STATUS_ERROR()
-                .set_VALUE(status.value)
+                .set_STATUS_REG_VAL(iv_status_reg.value)
+                .set_CMD_REG_VAL(iv_command_reg.value)
+                .set_MODE_REG_VAL(iv_mode_reg.value)
+                .set_INTR_REG_VAL(iv_interrupt_reg.value)
                 .set_PORT(iv_port)
                 .set_ENGINE(iv_engine)
                 .set_DEVICEADDR(iv_devAddr)
-                .set_RETRYCOUNT(iv_curr_retry_count),
+                .set_RETRYCOUNT(iv_curr_retry_count)
+                .set_BIT_RATE_DIVISOR(iv_bit_rate_divisor),
                 "I2C Status error");
+        }
 
         if(status.any_i2c_interrupt)
         {
-            interrupt_reg_t intreg;
-            rc = i2cRegisterOp(I2C_REG_INTERRUPT,
-                               true,
-                               (uint64_t*)&intreg);
-            if(rc != FAPI2_RC_SUCCESS)
-            {
-                SBE_ERROR(SBE_FUNC " failed for i2cRegisterOp with rc 0x%08X", rc);
-                break;
-            }
-
+           collectI2cReg();
             PLAT_FAPI_ASSERT(false,
                             POZ_I2C_STATUS_INTR_ERROR()
-                            .set_STATUS(status.value)
-                            .set_VALUE(intreg.value)
+                            .set_STATUS_REG_VAL(iv_status_reg.value)
+                            .set_CMD_REG_VAL(iv_command_reg.value)
+                            .set_MODE_REG_VAL(iv_mode_reg.value)
+                            .set_INTR_REG_VAL(iv_interrupt_reg.value)
                             .set_PORT(iv_port)
                             .set_ENGINE(iv_engine)
                             .set_DEVICEADDR(iv_devAddr)
-                            .set_RETRYCOUNT(iv_curr_retry_count),
+                            .set_RETRYCOUNT(iv_curr_retry_count)
+                            .set_BIT_RATE_DIVISOR(iv_bit_rate_divisor),
                             "I2C Interrupt Status error");
         }
     } while(0);
@@ -195,15 +192,20 @@ ReturnCode i2c::i2cWaitForCmdComp()
             }
             if(--timeoutCount == 0)
             {
+               collectI2cReg();
                 PLAT_FAPI_ASSERT(false,
                                 POZ_I2C_WAIT_FOR_CMD_COMP_TIMEOUT_ERROR()
-                                .set_STATUS(status.value)
+                                .set_STATUS_REG_VAL(iv_status_reg.value)
+                                .set_CMD_REG_VAL(iv_command_reg.value)
+                                .set_MODE_REG_VAL(iv_mode_reg.value)
+                                .set_INTR_REG_VAL(iv_interrupt_reg.value)
                                 .set_PORT(iv_port)
                                 .set_ENGINE(iv_engine)
                                 .set_DEVICEADDR(iv_devAddr)
                                 .set_POLLINGINT(iv_polling_interval_ns)
                                 .set_TIMEOUTCOUNT(iv_timeout_count)
-                                .set_RETRYCOUNT(iv_curr_retry_count),
+                                .set_RETRYCOUNT(iv_curr_retry_count)
+                                .set_BIT_RATE_DIVISOR(iv_bit_rate_divisor),
                                 "timedout waiting for cmd completion");
                 break;
             }
@@ -339,15 +341,20 @@ ReturnCode i2c::i2cWaitForFifo(fifo_condition_t condition)
             }
             if(--timeoutCount == 0)
             {
+               collectI2cReg();
                 PLAT_FAPI_ASSERT(false,
                                 POZ_I2C_FIFO_TIMEOUT_ERROR()
-                                .set_STATUS(status.value)
+                                .set_STATUS_REG_VAL(iv_status_reg.value)
+                                .set_CMD_REG_VAL(iv_command_reg.value)
+                                .set_MODE_REG_VAL(iv_mode_reg.value)
+                                .set_INTR_REG_VAL(iv_interrupt_reg.value)
                                 .set_PORT(iv_port)
                                 .set_ENGINE(iv_engine)
                                 .set_DEVICEADDR(iv_devAddr)
                                 .set_POLLINGINT(iv_polling_interval_ns)
                                 .set_TIMEOUTCOUNT(iv_timeout_count)
-                                .set_RETRYCOUNT(iv_curr_retry_count),
+                                .set_RETRYCOUNT(iv_curr_retry_count)
+                                .set_BIT_RATE_DIVISOR(iv_bit_rate_divisor),
                                 "timedout waiting for fifo condition");
                 break;
             }
@@ -521,15 +528,17 @@ ReturnCode i2c::i2cLockEngine()
         {
             SBE_ERROR("Failed to read atomic lock reg. RC: 0x%08X", l_rc);
         }
+
         PLAT_FAPI_ASSERT(false,
                         POZ_I2C_FAILED_TO_LOCK_ENGINE_TIMEOUT_ERROR()
-                        .set_ATOMICLOCKREG(lock_data)
+                        .set_ATOMIC_LOCK_REG_VAL(lock_data)
                         .set_PORT(iv_port)
                         .set_ENGINE(iv_engine)
                         .set_DEVICEADDR(iv_devAddr)
                         .set_POLLINGINT(interval_ns)
                         .set_TIMEOUTCOUNT(timeoutCount)
-                        .set_RETRYCOUNT(iv_curr_retry_count),
+                        .set_RETRYCOUNT(iv_curr_retry_count)
+                        .set_BIT_RATE_DIVISOR(iv_bit_rate_divisor),
                         "timedout waiting to lock i2c engine");
     }
 
@@ -667,19 +676,20 @@ ReturnCode i2c::isI2cResetClean()
         l_i2cc_status_data_act.max_num_of_ports = 0x0;
 
         // confirm clean i2c status after a reset, if not assert
-        PLAT_FAPI_ASSERT(I2CC_EXPECTED_CLEAN_RESET_STATUS == l_i2cc_status_data_act.value,
+        PLAT_FAPI_ASSERT(I2CC_EXPECTED_CLEAN_RESET_STATUS  == l_i2cc_status_data_act.value,
                         POZ_I2CC_RESET_ERROR()
-                        .set_STATUS(l_i2cc_status_data_act.value)
+                        .set_STATUS_REG_VAL(l_i2cc_status_data_act.value)
                         .set_PORT(iv_port)
                         .set_ENGINE(iv_engine)
                         .set_DEVICEADDR(iv_devAddr)
-                        .set_RETRYCOUNT(iv_curr_retry_count),
+                        .set_RETRYCOUNT(iv_curr_retry_count)
+                        .set_BIT_RATE_DIVISOR(iv_bit_rate_divisor),
                         "Unexpected state after i2cc  reset (actual: 0x%08X%08X, expected: 0x%08X%08X) \
                         NOTE: max_num_of_ports is not checked ",
                         SBE::higher32BWord(l_i2cc_status_data_act.value),
                         SBE::lower32BWord(l_i2cc_status_data_act.value),
-                        SBE::higher32BWord(I2CC_EXPECTED_CLEAN_RESET_STATUS),
-                        SBE::lower32BWord(I2CC_EXPECTED_CLEAN_RESET_STATUS)
+                        SBE::higher32BWord(I2CC_EXPECTED_CLEAN_RESET_STATUS ),
+                        SBE::lower32BWord(I2CC_EXPECTED_CLEAN_RESET_STATUS )
                         );
 
     }while(false);
@@ -1192,6 +1202,39 @@ ReturnCode i2c::putI2c( const Target<TARGET_TYPE_ALL>& target,
     }
     SBE_EXIT(SBE_FUNC)
     return rc;
+    #undef SBE_FUNC
+}
+
+void i2c::collectI2cReg()
+{
+    #define SBE_FUNC "collectI2cReg "
+    SBE_ENTER(SBE_FUNC)
+
+    //Initilize the values so that in case we fail to read the regs
+    // FFDC will have deadbeefdeadbeef.
+    iv_status_reg.value = 0xdeadbeefdeadbeef;
+    iv_interrupt_reg.value = 0xdeadbeefdeadbeef;
+    iv_command_reg.value = 0xdeadbeefdeadbeef;
+    iv_mode_reg.value = 0xdeadbeefdeadbeef;
+
+    // Since we are already in fail path we will not check for any RCs
+    i2cRegisterOp(I2C_REG_STATUS,
+                true,
+                (uint64_t*)&iv_status_reg);
+
+    i2cRegisterOp(I2C_REG_INTERRUPT,
+                true,
+                (uint64_t*)&iv_interrupt_reg);
+
+    i2cRegisterOp(I2C_REG_COMMAND,
+                true,
+                (uint64_t*)&iv_command_reg);
+
+    i2cRegisterOp(I2C_REG_MODE,
+                true,
+                (uint64_t*)&iv_mode_reg);
+
+    SBE_EXIT(SBE_FUNC)
     #undef SBE_FUNC
 }
 
