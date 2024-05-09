@@ -55,7 +55,6 @@ usage()
     echo "  -o: Secure Header path"
     echo "  -S: Secure Version."
     echo "  -c: Component ID"
-    echo "  -d: SBE Image Dir path in op-build"
     echo "  -f: signing Mode. Production/Development(Default)"
 }
 
@@ -78,10 +77,6 @@ do
 
         o)
             SECURE_HDR_PATH=$OPTARG
-        ;;
-
-	    d)
-            SBE_IMG_DIR_OP=$OPTARG
         ;;
 
         c)
@@ -141,7 +136,7 @@ if [ ! -z "${SIGNING_BASE_DIR+x}" ]; then
     SIGNING_DIR=$SIGNING_BASE_DIR/$RH_DIR/$SIGNING_UTILS_DIR
     DEV_KEY_DIR=${SIGNING_BASE_DIR}/sb-signing-keys
 
-elif [ -z "${SBE_IMG_DIR_OP+x}" ]; then
+elif [ -z "${OPBUILD_HOST_DIR+x}" ]; then
     echo "***INFO | SBE | signHashList : Not OP_build. Fetching keys and signing scripts from /gsa/..."
     #RH_DIR=`sed 's/^.*release \([0-9]*\)\..*$/rh\1/' /etc/redhat-release`
     #TODO: Update below paths
@@ -155,8 +150,8 @@ elif [ -z "${SBE_IMG_DIR_OP+x}" ]; then
 
 else
     echo "***INFO | SBE | signHashList : OP_build. Fetching keys and signing scripts from OP-Build Tree"
-    DEV_KEY_DIR=${SBE_IMG_DIR_OP}/../../../host/etc/keys/
-    SIGNING_DIR=${SBE_IMG_DIR_OP}/../../../host/usr/bin/
+    DEV_KEY_DIR=${OPBUILD_HOST_DIR}/etc/v2_keys/
+    SIGNING_DIR=${OPBUILD_HOST_DIR}/usr/bin/
 fi
 
 # Adjust paths to pick up the signing tools

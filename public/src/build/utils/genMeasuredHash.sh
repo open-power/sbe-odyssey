@@ -111,7 +111,7 @@ if [ ! -z $SIGNING_BASE_DIR ]; then
     RH_DIR=`sed "s/^.*release \([0-9]*\).*$/rh\1/" /etc/redhat-release`
     SIGNING_DIR=$SIGNING_BASE_DIR/$RH_DIR/$SIGNING_UTILS_DIR
 
-elif [ -z $SBE_IMG_DIR_OP ]; then
+elif [ -z $OPBUILD_HOST_DIR ]; then
     echo "***INFO | SBE | $toolName : Not OP_build. Fetching keys and signing scripts from /gsa/..."
     #RH_DIR=`sed 's/^.*release \([0-9]*\)\..*$/rh\1/' /etc/redhat-release`
     #TODO: Update below paths
@@ -124,7 +124,7 @@ elif [ -z $SBE_IMG_DIR_OP ]; then
 
 else
     echo "***INFO | SBE | $toolName : OP_build. Fetching keys and signing scripts from OP-Build Tree"
-    SIGNING_DIR=${SBE_IMG_DIR_OP}/../../../host/usr/bin/
+    SIGNING_DIR=${OPBUILD_HOST_DIR}/usr/bin/
 fi
 
 # Adjust paths to pick up the signing tools
