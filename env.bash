@@ -33,6 +33,7 @@ if [ -z $SBE_CI_ENV_SETUP ]; then
 fi
 
 source public/src/tools/utils/sbe/venv-utils
+checkAndEnableHashing
 
 echo "Setting environment variables..."
 ROOTDIR=.
