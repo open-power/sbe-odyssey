@@ -24,6 +24,17 @@
 #
 # IBM_PROLOG_END_TAG
 
+# Define the exit hook function
+exit_hook() {
+    # Check if hashing was disabled and restore it if necessary
+    if [ "$CACHE_HASH_STATUS" = "off" ]; then
+        set +h
+    fi
+}
+
+# Set up the exit hook
+trap exit_hook EXIT
+
 # Common function for swaping new shell
 swapingNewShell()
 {
@@ -103,4 +114,15 @@ getPythonUserSitePackage()
         exit 1
     }
     echo $SITE_PACKAGE
+}
+
+# check hashall and enbale if not
+checkAndEnableHashing()
+{
+    # Check if hashall option is enabled
+    if shopt -o | grep -q "hashall.*off"; then
+        echo "Hashing is disabled. Enabling..."
+        export CACHE_HASH_STATUS="off"
+        set -h
+    fi
 }
