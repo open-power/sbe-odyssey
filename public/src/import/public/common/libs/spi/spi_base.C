@@ -55,7 +55,13 @@ enum spi_base_constants
 
     // Masks to check for proper idle state:
     // No error flags whatsoever, state machines idle, ignore sequence index
-    IDLE_STATUS_MASK = 0xFFFFFFF0FFFFFFFFull,
+    // Masks:
+    // bit-3 : RDR_reserved  : Not used
+    // bit-6 : TDR_under_run : set when no tx data available
+    // bit-7 : TDR_reserved  : Not used
+    // bits[28:31] : Sequence index currently being executed
+    // bits[58:63] : Unused general status bits
+    IDLE_STATUS_MASK = 0xECFFFFF0FFFFFFC0ull,
     IDLE_STATUS_EXP  = 0x0001001000000000ull,
 };
 
