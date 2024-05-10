@@ -300,4 +300,5 @@ void stream_hw_data(const fapi2::Target<K, M, V>& i_target,
 
         o_ostream.put16(l_data);
     }
+
 }
