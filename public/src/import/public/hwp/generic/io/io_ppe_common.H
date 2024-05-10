@@ -1307,16 +1307,17 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::ext_cmd_start(const fapi2::Target<K, M
 
     FAPI_TRY(FW_REG_EXT_CMD_STATUS_CLEAR_MODE_GET(iv_regs, i_target, i_thread, l_clear_mode));
 
+    FAPI_TRY(FW_REG_EXT_CMD_REQ_00_31_PUT(iv_regs, i_target, i_thread, 0));
+    FAPI_TRY(iv_regs->flushCache(i_target));
+
     if (l_clear_mode)
     {
-        FAPI_TRY(FW_REG_EXT_CMD_REQ_00_31_PUT(iv_regs, i_target, i_thread, 0));
-        FAPI_TRY(iv_regs->flushCache(i_target));
+        FAPI_DBG("l_clear_mode set:ext_cmd_start_thread");
         FAPI_TRY(FW_REG_EXT_CMD_DONE_00_31_PUT(iv_regs, i_target, i_thread, 0));
         FAPI_TRY(iv_regs->flushCache(i_target));
+        FAPI_TRY(FW_REG_EXT_CMD_FAIL_00_31_PUT(iv_regs, i_target, i_thread, 0));
+        FAPI_TRY(iv_regs->flushCache(i_target));
     }
-
-    FAPI_TRY(FW_REG_EXT_CMD_FAIL_00_31_PUT(iv_regs, i_target, i_thread, 0));
-    FAPI_TRY(iv_regs->flushCache(i_target));
 
     // RX / TX
     FAPI_TRY(FW_REG_EXT_CMD_LANES_RX_00_31_PUT(iv_regs, i_target, i_thread, i_rx_lanes_0_31));
