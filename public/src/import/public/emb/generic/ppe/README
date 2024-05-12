@@ -1,0 +1,5 @@
+kernels:   iota/ or pk/, cannot use both on the same engine
+ppetrace:  ppe trace macro previously known as pk_trace, can be used by either kernel
+baselib:   basic support library of ppe42 software macros, required for either iota or pk
+boltonlib: ppe interrupt drivers between different ppe bolton instances: gpe or standard(sbe/qme)
+sharedlib: unlike above ppe specific libs, this lib supports func compatible across ppe and ppc405

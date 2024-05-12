@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -23,7 +23,7 @@
 #
 # IBM_PROLOG_END_TAG
 
-import_dir_path = pub_import_dir_path + '/emb/pst/kernels/ppe/boltonlib/standard/'
+import_dir_path = pub_import_dir_path + '/emb/generic/ppe/boltonlib/standard/'
 
 infile_c = ['std_init.c',
             'std_irq_init.c',

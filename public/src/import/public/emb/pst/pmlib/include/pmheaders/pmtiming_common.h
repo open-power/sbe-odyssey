@@ -1,0 +1,275 @@
+/* IBM_PROLOG_BEGIN_TAG                                                   */
+/* This is an automatically generated prolog.                             */
+/*                                                                        */
+/* $Source: public/src/import/public/emb/pst/pmlib/include/pmheaders/pmtiming_common.h $ */
+/*                                                                        */
+/* OpenPOWER sbe Project                                                  */
+/*                                                                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* [+] International Business Machines Corp.                              */
+/*                                                                        */
+/*                                                                        */
+/* Licensed under the Apache License, Version 2.0 (the "License");        */
+/* you may not use this file except in compliance with the License.       */
+/* You may obtain a copy of the License at                                */
+/*                                                                        */
+/*     http://www.apache.org/licenses/LICENSE-2.0                         */
+/*                                                                        */
+/* Unless required by applicable law or agreed to in writing, software    */
+/* distributed under the License is distributed on an "AS IS" BASIS,      */
+/* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or        */
+/* implied. See the License for the specific language governing           */
+/* permissions and limitations under the License.                         */
+/*                                                                        */
+/* IBM_PROLOG_END_TAG                                                     */
+#ifndef __PMTIMING_COMMON_H__
+#define __PMTIMING_COMMON_H__
+
+/// @file pmtiming_common.h
+/// @brief Common structs and functions for various timer functions
+///
+/// @note deals with
+/// - managing DEC and FIT timers,
+/// - logging successive Notification times of some anticipated repetitive
+/// event (such as receiving doorbells from the 405)
+/// - calculating the difference and average values of two successive events.
+
+#include <stdint.h>
+#include <ppe42_spr.h>
+#include <gpe_register_addresses.h>
+
+//
+// TSEL register defines for PPE Watchdog and FIT timers
+//
+#define TSEL_WDT_SEL_MASK   0xf0000000  ///< Mask of WDT bits
+#define TSEL_FIT_SEL_MASK   0x0f000000  ///< Mask of FIT bits
+#define TSEL_FIT_SEL_66US   0x0c000000  ///< Corresponds to a ~66us @ 2.0G or 55us @ 2.4G
+#define TSEL_FIT_SEL_262US  0x0a000000  ///< Corresponds to a ~262us @ 2.0G or 218us @ 2.4G
+#define TSEL_FIT_SEL_524US  0x09000000  ///< Corresponds to a ~524us @ 2.0G or 437us @ 2.4G
+
+
+/// TBR maximum value (eg rollover)
+#define TBR_VAL_MAX       (uint32_t)0xffffffff
+/// TBR halt maximum value
+#define TBR_VAL_HALFMAX   (uint32_t)0x80000000
+
+/// @addtogroup pm_hcode_lib
+/// @{
+
+///
+/// @brief TBR time stamp structure to capture notification times/intervals of any sort.
+///
+/// @note
+/// - Typically, these notifications will come from the 405 sending either
+///   doorbells to CEs or IPCs to the GPEs.
+/// - Initialize as follows: max_period=0 and min_period=TBR_VAL_MAX
+/// - The data in this struct are not valid until
+///   - min_period < TBR_VAL_MAX && max_period > 0
+///
+typedef struct
+{
+    uint32_t state;         ///< See NOTIFICATION_STATE enum below
+    uint32_t this_ts;       ///< This timestamp
+    uint32_t prev_ts;       ///< Previous timestamp
+    uint32_t this_period;   ///< This [latest] interval = (this_ts - prev_ts)
+    uint32_t max_period;    ///< Maximum time period
+    uint32_t min_period;    ///< Minimum time period
+} Notification_t;
+
+/// @brief Notification State
+enum NOTIFICATION_STATE
+{
+    NOTIFICATION_STATE_UNDEFINED = 0x1,
+    NOTIFICATION_STATE_NORMAL    = 0x2,
+    NOTIFICATION_STATE_INIT      = 0x3,
+};
+
+
+///
+/// @brief Common DEC kickoff function
+///
+/// @note
+/// - Follows the procedure outlined in the "PPE42 OpenPOWER Embedded Processor Core" User Manual
+///
+/// @param[in] i_delay DEC delay value supplied in PPE clock ticks
+///
+static inline void dec_kickoff( uint32_t i_delay)
+{
+    uint32_t tcr_val = mfspr(SPRN_TCR);
+    tcr_val &= ~TCR_DIE;
+    mtspr(SPRN_TCR, tcr_val);         //Disable DEC interrupt
+
+    mtspr(SPRN_DEC, 0xffffffff);      //Write 0xffffffff
+    mtspr(SPRN_TSR, TSR_DIS);         //Clear any pending DEC interrupt
+    mtspr(SPRN_DEC, i_delay);         //Write poll duration
+
+    tcr_val = mfspr(SPRN_TCR);
+    tcr_val |= TCR_DIE;
+    mtspr(SPRN_TCR, tcr_val);         //Enable DEC interrupt
+}
+
+
+///
+/// @brief Calculate the duration betwen two TBR values w/compensation for overrun of End time
+///
+/// @note
+/// - The algorithm is designed to work with 32-bit Time Base Register (TBR)
+///   readings.
+/// - *Do not* use this function to calculate the difference of any two "ordinary"
+///   uint32 variables.  Because the End time, E, is assumed to represent a time
+///   later than the Begin time, B. Thus, when E overruns MAX (ie, TBR_VAL_MAX),
+///   the effective value of E is actually treated as E=E+MAX+1 until B overruns
+///   MAX as well.
+/// - The algorithm should only be used for durations E-B<=MAX
+///
+/// @param[in] i_begin      Beginning TBR value
+/// @param[in] i_end        Ending TBR value
+/// @return             Delta ticks
+///
+static inline uint32_t calc_tbr_diff( uint32_t i_begin, uint32_t i_end)
+{
+    if (i_end > i_begin)
+    {
+        return (i_end - i_begin);
+    }
+    else
+    {
+        return (TBR_VAL_MAX - i_begin + 1 + i_end);
+    }
+}
+
+
+///
+/// @brief Calculate the average TBR value w/compensation for overrun of End time
+///
+/// @note
+/// - The algorithm is designed to work with 32-bit Time Base Register (TBR)
+///   readings.
+/// - *Do not* use this function to calculate the average of any two "ordinary"
+///   uint32 variables.  Because the End time, E, is assumed to represent a time
+///   later than the Begin time, B. Thus, when E overruns MAX (ie, TBR_VAL_MAX),
+///   the effective value of E is actually treated as E=E+MAX+1 until B overruns
+///   MAX as well.
+/// - The algorithm should only be used for durations E-B<=MAX.
+///
+/// Discussion of particular implementation:
+/// The algorithm below, denoted SHIFT, offers better performance than other
+/// algorithms wrt speed and precision. In the following we will compare it
+/// against the popular EB12=(E+B+1)/2 where E and B represent the End and Begin
+/// times as well as AXOR=(E&B)+((E^B)+1)/2. Though due to chance of overrun of
+/// E+B+1 and (E^B)+1 the algorithms have to be modified.  Please see the
+/// following Refs for examples for some background and how the algorithms can
+/// be implemented:
+///
+/// [1] https://devblogs.microsoft.com/oldnewthing/20220207-00/?p=106223
+///
+/// [2] https://ibm.box.com/s/zlpqsq30rjfudrpt6muy5wd1hhbrmqu4
+///
+/// Logic table wrt Precision:
+/// The following logic table summarizes the precision of the returned result
+/// when LSb(E) != LSb(B), where LSb means the Least Significant bit. The
+/// precision is measured as the deviation from the true float result.
+///
+/// Inputs(LSb(e),LSB(E) --> Precision of Result
+/// |LSb(E)|LSb(B) | SHIFT(E>B)|SHIFT(E<B)| EB12  |  AXOR |
+/// |:----:|:-----:|:---------:|:--------:|:-----:|:-----:|
+/// |   0  |  0    |      0    |    0     |   0   |    0  |
+/// |   0  |  1    |    +0.5   |  -0.5    | +0.5  |  +0.5 |
+/// |   1  |  0    |    -0.5   |  +0.5    | +0.5  |  +0.5 |
+/// |   1  |  1    |      0    |    0     |   0   |    0  |
+///
+/// Speed performance:
+/// The number of OPs, incl all conditionals, can be seen in more detail in
+/// [Ref2]. The following table summarizes the performances:
+///
+/// Number of OPs (w/SWAR proc)
+/// |Domain |  SHIFT  | EB12 |  AXOR  |
+/// |:-----:|:-------:|:----:|:------:|
+/// |E > B  |   5(4)  | 6(6) |  7(6)  |
+/// |E < B  |   7(5)  | 7(6) |  8(6)  |
+
+///
+/// |Conclusion:
+/// In summary SHIFT is slightly faster than the other algorithms while also
+/// being more "fair", though it's unpredictable in whether it returns a result
+/// that has been rounded up or down. This "fairness" aspect results in that the
+/// long term accuracy of multiple returned results from SHIFT will exhibit a
+/// precision of zero while the other algorithms will exhibit a precision of
+/// 0.25 (considering all possible input values (E,B)).
+///
+/// @param[in] i_begin      Beginning TBR value
+/// @param[in] i_end        Ending TBR value
+/// @return                 Delta ticks
+///
+static inline uint32_t calc_tbr_avg( uint32_t i_begin, uint32_t i_end)
+{
+    if (i_end > i_begin)
+    {
+        return ( ((i_begin + 1) >> 1) + (i_end >> 1) );
+    }
+    else if (i_end < i_begin)
+    {
+        // The below expression could overflow, but it's OK as following example shows:
+        //   i_begin = 0xfffffff0
+        //   i_end   = 0x000000c0
+        //   TBR_VAL_MAX = 0xffffffff
+        // From below expression, we get:
+        //   0x7ffffff8 + 0x00000060 + 0x80000000 = 0x1_00000058
+        // where the 32-bit var will ignore 0x1_00000000 and produce 0x00000058.
+        return ( (i_begin >> 1) + ((i_end + 1) >> 1) + TBR_VAL_HALFMAX );
+    }
+    else // End==Begin
+    {
+        return ( i_end );
+    }
+}
+
+///
+/// @brief Initialize the GPE or CE FIT and trace out TSEL content
+///
+/// @note
+/// - Pass zero in i_tsel_fit_sel if you don't intend on programming the TSEL value
+///   in this call.
+///
+/// @param[in] i_fit_handler    Pointer to a FIT handler
+/// @param[in] i_instance_id    Id of the instance (engine)
+/// @param[in] i_tsel_fit_sel   Value of TSEL FIT SEL to set into the hardware
+///
+static inline void fit_init(void* i_fit_handler, uint32_t i_instance_id, uint32_t i_tsel_fit_sel)
+{
+    uint32_t this_tsel_reg_addr = OCI_ADDR(GPE_OCB_GPETSEL, i_instance_id);
+    uint32_t tsel_reg_data = 0;
+    uint32_t tcr_val = 0;
+
+    //Register the handler
+    IOTA_FIT_HANDLER(i_fit_handler); //=> g_iota_fit_handler = (iotaTimerFuncPtr)dce_fit_handler
+
+    //Kick off the FIT
+    mtspr(SPRN_TSR, TSR_FIS); //Clear any pending FIT interrupt
+    tcr_val = mfspr(SPRN_TCR);
+    tcr_val |= TCR_FIE;
+    mtspr(SPRN_TCR, tcr_val); //Enable FIT interrupt - We will need it asap for AUTO Flag monitor.
+
+    // Note that we currently depend on external means to configure the TSEL register
+    // to set the FIT freq, mainly pm_ppe_init HWP. But sometimes a PPE image may get
+    // loaded in such a way that these external means did not get a chance to program
+    // the TSEL.  Therefore, if the TSEL reg's FIT_SEL(4:7) == 0b0000, the FIT will
+    // never fire and this function will assume, if it's called, that we intend on
+    // using the FIT and that if FIT_SEL(4:7) == 0b0000 that the i_tsel_fit_sel
+    // value passed in the argument will be used to program the TSEL reg.
+    tsel_reg_data = in32(this_tsel_reg_addr);
+
+    if ( i_tsel_fit_sel && ((tsel_reg_data & TSEL_FIT_SEL_MASK) == 0) )
+    {
+        tsel_reg_data |= (i_tsel_fit_sel & TSEL_FIT_SEL_MASK);
+        out32(this_tsel_reg_addr, tsel_reg_data);
+    }
+
+    // Check the FIT frequency
+    tsel_reg_data  = in32(this_tsel_reg_addr);
+    PK_TRACE("FIT init: Content of TSEL reg: 0x%08x", tsel_reg_data);
+}
+
+/// @} end addtogroup
+
+#endif  /* __PMTIMING_COMMON_H__ */

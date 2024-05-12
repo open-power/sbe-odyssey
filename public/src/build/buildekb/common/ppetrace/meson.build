@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -23,7 +23,7 @@
 #
 # IBM_PROLOG_END_TAG
 
-import_dir_path = pub_import_dir_path + '/emb/pst/kernels/ppe/ppetrace/'
+import_dir_path = pub_import_dir_path + '/emb/generic/ppe/ppetrace/'
 
 infile_c = ['pk_trace_core.c',
             'pk_trace_big.c',

@@ -55,7 +55,7 @@ MESON_SETUP_EXTRA_DEPENDENCIES = []
 pub_import_dir_path = meson.global_source_root() + '/public/src/import/public/'
 
 #Generate ppetrace preprocessor
-ppetracepp_dir = 'import/public/emb/pst/kernels/ppe/ppetrace/ppetracepp/'
+ppetracepp_dir = 'import/public/emb/generic/ppe/ppetrace/ppetracepp/'
 inc_dir = include_directories(ppetracepp_dir)
 ppetracepp = executable('ppetracepp',
              ppetracepp_dir + 'ppetracepp.C',
