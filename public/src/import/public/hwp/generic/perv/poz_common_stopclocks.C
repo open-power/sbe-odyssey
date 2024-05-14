@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -110,7 +110,7 @@ fapi2::ReturnCode poz_stopclocks_pre_check(
              tp_ep_rst, tp_vitl_clk_off);
 
     FAPI_ASSERT((!tp_vitl_clk_off),
-                fapi2::TP_VITL_CLK_OFF_ERR()
+                fapi2::POZ_TP_VITL_CLK_OFF_ERR()
                 .set_TARGET_CHIP(i_target)
                 .set_PERV_CTRL0_READ_DATA(PERV_CTRL0),
                 "Perv vital clocks are off, stopclocks cant go ahead");
@@ -246,7 +246,7 @@ fapi2::ReturnCode poll_for_cbs_ack(
         --l_timeout;
     }
 
-    FAPI_ASSERT(l_timeout > 0, fapi2::CBS_ACK_NOT_SEEN_ERR()
+    FAPI_ASSERT(l_timeout > 0, fapi2::POZ_CBS_ACK_NOT_SEEN_ERR()
                 .set_TARGET_CHIP(i_target)
                 .set_EXPECTED_ACK_VALUE(poll_data)
                 .set_CBS_STAT_READ_DATA(CBS_STAT)

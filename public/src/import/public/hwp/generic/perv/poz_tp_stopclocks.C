@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -81,7 +81,7 @@ fapi2::ReturnCode poz_tp_stopclocks(
     {
         l_rc = poz_tp_stopclocks_all_regions_except_sbe(i_target);
         FAPI_ASSERT_NOEXIT(l_rc == fapi2::FAPI2_RC_SUCCESS,
-                           fapi2::TP_STOPCLOCKS_ERR()
+                           fapi2::POZ_TP_STOPCLOCKS_ERR()
                            .set_TARGET_CHIP(i_target),
                            "poz_tp_stopclocks returned error when stopping clocks for all regions except SBE");
     }
@@ -90,7 +90,7 @@ fapi2::ReturnCode poz_tp_stopclocks(
     {
         l_rc = poz_sbe_region_stopclocks(i_target, i_bypass_mux);
         FAPI_ASSERT_NOEXIT(l_rc == fapi2::FAPI2_RC_SUCCESS,
-                           fapi2::SBE_STOPCLOCKS_ERR()
+                           fapi2::POZ_SBE_STOPCLOCKS_ERR()
                            .set_TARGET_CHIP(i_target),
                            "poz_sbe_region_stopclocks returned error. ");
     }
