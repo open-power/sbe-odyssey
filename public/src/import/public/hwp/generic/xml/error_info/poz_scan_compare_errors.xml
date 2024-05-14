@@ -29,6 +29,13 @@
   <!-- ******************************************************************** -->
     <hwpError>
       <sbeError/>
+      <rc>RC_NONZERO_MISCOMPARES</rc>
+      <description>At least one ring failed compare check</description>
+      <ffdc>FAILING_RING_COUNT</ffdc>
+    </hwpError>
+  <!-- ******************************************************************** -->
+    <hwpError>
+      <sbeError/>
       <rc>RC_BIST_NONZERO_MISCOMPARES</rc>
       <description>At least one chiplet failed compare check in BIST</description>
       <ffdc>ABIST_NOT_LBIST</ffdc>

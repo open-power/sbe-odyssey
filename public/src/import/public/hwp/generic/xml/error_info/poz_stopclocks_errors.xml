@@ -29,7 +29,7 @@
   <!-- ******************************************************************** -->
   <hwpError>
     <sbeError/>
-    <rc>RC_TP_VITL_CLK_OFF_ERR</rc>
+    <rc>RC_POZ_TP_VITL_CLK_OFF_ERR</rc>
     <description>Perv vital clocks are off, stopclocks cant go ahead</description>
     <ffdc>TARGET_CHIP</ffdc>
     <ffdc>PERV_CTRL0_READ_DATA</ffdc>
@@ -37,7 +37,7 @@
   <!-- ******************************************************************** -->
   <hwpError>
     <sbeError/>
-    <rc>RC_CBS_ACK_NOT_SEEN_ERR</rc>
+    <rc>RC_POZ_CBS_ACK_NOT_SEEN_ERR</rc>
     <description>
       CBS_ACK did not reach expected value within poll time
     </description>
@@ -50,7 +50,7 @@
   <!-- ******************************************************************** -->
   <hwpError>
     <sbeError/>
-    <rc>RC_TP_STOPCLOCKS_ERR</rc>
+    <rc>RC_POZ_TP_STOPCLOCKS_ERR</rc>
     <description>
       Error occured while stopping clocks for all regions of TP except SBE
     </description>
@@ -59,7 +59,7 @@
   <!-- ******************************************************************** -->
   <hwpError>
     <sbeError/>
-    <rc>RC_SBE_STOPCLOCKS_ERR</rc>
+    <rc>RC_POZ_SBE_STOPCLOCKS_ERR</rc>
     <description>
       Error occured while stopping clocks for SBE
     </description>
