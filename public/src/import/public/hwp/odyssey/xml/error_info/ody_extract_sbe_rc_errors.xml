@@ -36,6 +36,7 @@
   <!-- Halt codes for PPE -->
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_SPPE_RUNNING</rc>
     <description>
     SBE engine is in running state, but an error was raised by external FW code.
@@ -45,9 +46,14 @@
     <collectRegisterFfdc><id>ROOT_CTRL_REGS_SCOM</id>        <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>PERV_CTRL_REGS_SCOM</id>        <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>SCRATCH_REGS_SCOM</id>  <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_PROGRAM_INTERRUPT</rc>
     <description>
     Program interrupt promoted
@@ -55,9 +61,23 @@
     <ffdc>TARGET_CHIP</ffdc>
     <collectRegisterFfdc><id>CBS_STATUS_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>ROOT_CTRL_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+    <callout>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <priority>MEDIUM</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </deconfigure>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_INST_STORE_INTR</rc>
     <description>
     Instruction storage interrupt
@@ -65,9 +85,23 @@
     <ffdc>TARGET_CHIP</ffdc>
     <collectRegisterFfdc><id>CBS_STATUS_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>ROOT_CTRL_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+    <callout>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <priority>MEDIUM</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </deconfigure>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_ALIGN_INTR</rc>
     <description>
     Alignment interrupt
@@ -75,9 +109,23 @@
     <ffdc>TARGET_CHIP</ffdc>
     <collectRegisterFfdc><id>CBS_STATUS_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>ROOT_CTRL_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+    <callout>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <priority>MEDIUM</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </deconfigure>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_DATA_STORE_INTR</rc>
     <description>
     Data storage interrupt
@@ -85,9 +133,23 @@
     <ffdc>TARGET_CHIP</ffdc>
     <collectRegisterFfdc><id>CBS_STATUS_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>ROOT_CTRL_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+    <callout>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <priority>MEDIUM</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </deconfigure>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_OTP_UNCORR_ERR</rc>
     <description>
     Uncorrectable error detected in OTPROM memory read
@@ -96,9 +158,19 @@
     <collectRegisterFfdc><id>CBS_STATUS_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>ROOT_CTRL_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>SCRATCH_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
+    <callout>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </deconfigure>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_OTP_ECC_ERR</rc>
     <description>
     Parity/ECC error detected in OTPROM memory
@@ -108,9 +180,19 @@
     <collectRegisterFfdc><id>CBS_STATUS_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>ROOT_CTRL_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>SCRATCH_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
+    <callout>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </deconfigure>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_OTP_TIMEOUT</rc>
     <description>
     PIB Timeout error detected during access to OTPROM
@@ -120,30 +202,60 @@
     <collectRegisterFfdc><id>CBS_STATUS_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>ROOT_CTRL_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>SCRATCH_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
+    <callout>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </deconfigure>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_OTP_PIB_ERR</rc>
     <description>
-    Scom error or 10.2 chipop error detected
+    Scom error detected while accessing OTPROM data range
     </description>
     <ffdc>OCCURRENCE</ffdc>
     <ffdc>TARGET_CHIP</ffdc>
     <collectRegisterFfdc><id>CBS_STATUS_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>ROOT_CTRL_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>SCRATCH_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
+    <callout>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </deconfigure>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_ADDR_NOT_RECOGNIZED</rc>
     <description>
     Address scope out of range
     </description>
     <ffdc>TARGET_CHIP</ffdc>
     <collectRegisterFfdc><id>CBS_STATUS_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+    <callout>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <priority>MEDIUM</priority>
+    </callout>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_PIBMEM_ECC_ERR</rc>
     <description>
     Uncorrectable error occurred while PIB memory access
@@ -153,9 +265,19 @@
     <collectRegisterFfdc><id>CBS_STATUS_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>ROOT_CTRL_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>SCRATCH_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
+    <callout>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </deconfigure>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_SPI_CLK_ERR</rc>
     <description>
     SPI is configured with invalid clock divider (less than 0x4) error detected
@@ -165,9 +287,19 @@
     <collectRegisterFfdc><id>CBS_STATUS_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>ROOT_CTRL_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>SCRATCH_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
+    <callout>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </deconfigure>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_SPI_ECC_ERR</rc>
     <description>
     There are 2 bit flips in read data which cannot be corrected
@@ -177,9 +309,19 @@
     <collectRegisterFfdc><id>CBS_STATUS_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>ROOT_CTRL_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>SCRATCH_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
+    <callout>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </deconfigure>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_SPI_SPRM_CFG_ERR</rc>
     <description>
     SPI configuration error detected
@@ -189,9 +331,23 @@
     <collectRegisterFfdc><id>CBS_STATUS_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>ROOT_CTRL_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>SCRATCH_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+    <callout>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <priority>MEDIUM</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </deconfigure>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_SPI_RSC_ERR</rc>
     <description>
     SPI resources being accessed is not available. Port multiplexer or lock error detected
@@ -201,9 +357,23 @@
     <collectRegisterFfdc><id>CBS_STATUS_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>ROOT_CTRL_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>SCRATCH_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
+    <callout>
+      <procedure>CODE</procedure>
+      <priority>HIGH</priority>
+    </callout>
+    <callout>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <priority>MEDIUM</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </deconfigure>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_SECURE_BOOT_FAIL</rc>
     <description>
     Secure boot failed (any error code starting with 0x1-0x5) 
@@ -212,9 +382,15 @@
     <ffdc>ERROR_CODE</ffdc>
     <ffdc>SCRATCH_REGISTER_13</ffdc>
     <ffdc>SB_MSG</ffdc>
+    <callout>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <priority>HIGH</priority>
+    </callout>
   </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>
+    <sbeError/>
     <rc>RC_PIBMEM_PIB_ERR</rc>
     <description>
     Error detected during pibmem access
@@ -223,6 +399,15 @@
     <collectRegisterFfdc><id>CBS_STATUS_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>ROOT_CTRL_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
     <collectRegisterFfdc><id>SCRATCH_REGS_CFAM</id>       <targetType>TARGET_TYPE_OCMB_CHIP</targetType><target>TARGET_CHIP</target></collectRegisterFfdc>
+    <callout>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>TARGET_CHIP</target>
+      <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
+    </deconfigure>
   </hwpError>
   <!-- ******************************************************************** -->
 </hwpErrors>
