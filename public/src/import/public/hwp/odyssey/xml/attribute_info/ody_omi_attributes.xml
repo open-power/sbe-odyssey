@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2023                             -->
+<!-- Contributors Listed Below - COPYRIGHT 2023,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -24,44 +24,6 @@
 <!-- IBM_PROLOG_END_TAG                                                     -->
 
 <attributes>
-<!-- ********************************************************************** -->
-    <attribute>
-        <id>ATTR_OMI_RX_LANES</id>
-        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
-        <description>
-            Specifies the number of Rx lanes.
-        </description>
-        <valueType>uint32</valueType>
-        <enum>
-            X8 = 0xFF000000,
-            X4 = 0xA5000000,
-            X2 = 0x81000000
-        </enum>
-        <default>X8</default>
-        <platInit/>
-        <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="ody">
-          <targetTypes>TARGET_TYPE_OCMB_CHIP</targetTypes>
-        </sbeAttrSync>
-    </attribute>
-<!-- ********************************************************************** -->
-    <attribute>
-        <id>ATTR_OMI_TX_LANES</id>
-        <targetType>TARGET_TYPE_OCMB_CHIP</targetType>
-        <description>
-            Specifies the number of Tx lanes.
-        </description>
-        <valueType>uint32</valueType>
-        <enum>
-            X8 = 0xFF000000,
-            X4 = 0xA5000000,
-            X2 = 0x81000000
-        </enum>
-        <default>X8</default>
-        <platInit/>
-        <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="ody">
-          <targetTypes>TARGET_TYPE_OCMB_CHIP</targetTypes>
-        </sbeAttrSync>
-    </attribute>
 <!-- ********************************************************************** -->
     <attribute>
         <id>ATTR_OMI_BIST_ESD_TEST</id>
@@ -239,4 +201,4 @@
         </sbeAttrSync>
     </attribute>
 <!-- ********************************************************************** -->
-  </attributes>
+</attributes>
