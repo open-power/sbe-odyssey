@@ -5,7 +5,8 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -63,6 +64,8 @@ uint32_t sbeCmdListAttr(uint8_t *i_pArg)
             l_rc=SBE_SEC_HEAP_SPACE_FULL_FAILURE;
             break;
         }
+        //Initialize the buffer
+        memset(l_outBuffer,0,attrListSize);
         l_rc = fapi2::ATTR::listAttribute(l_outBuffer);
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
         uint32_t len2enqueue = attrListSize / 4;

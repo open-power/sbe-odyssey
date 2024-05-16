@@ -183,7 +183,7 @@ void sbe_target_service::getChipletChildren(const LogTargetType i_child_type,
             target.getChipletNumber() == cplt_id)
         {
             if((i_include_nonfunctional || target.getFunctional()) &&
-               (target.getPresent())) 
+               (target.getPresent()))
             {
                 o_children.push_back(target);
             }
@@ -209,7 +209,7 @@ void sbe_target_service::getMemportChildren(const LogTargetType i_child_type,
              || (target.getTargetInstance() == (2 * parentInstance + 1)))
             {
                 if((i_include_nonfunctional || target.getFunctional()) &&
-                   (target.getPresent())) 
+                   (target.getPresent()))
                 {
                     o_children.push_back(target);
                 }
@@ -319,18 +319,34 @@ sbeSecondaryResponse sbe_target_service::getSbePlatTargetHandle(
                 continue;
             }
 
-            if (i_instanceId < targetInfo.targetCnt)
+            if (i_instanceId < (targetInfo.instanceBase + targetInfo.targetCnt))
             {
                 /* get target handle from TARGET MAP */
                 o_tgtHndl = iv_targets[targetIndex + i_instanceId];
                 rc = SBE_SEC_OPERATION_SUCCESSFUL; // Target and Instance ID found
+                break;
             }
             else
             {
-                rc = SBE_SEC_INVALID_INSTANCE_ID_PASSED; // Instance ID not found
-            }
+                // we may have multiple entries for this target type in the target map
+                // ex: 'LOG_TARGET_TYPE_DIMM'
+                //      in public/src/runtime/odyssey/sppe/plat/targeting/odyTarget.C
+                //
+                //      cpltid  target type                  cpltbased cplt instbase count
+                //      {0xD,  LOG_TARGET_TYPE_DIMM,            0,        0,   0,       2},
+                //      {0xE,  LOG_TARGET_TYPE_DIMM,            0,        0,   2,       2},
+                //
+                //      For the DIMM target instance 0 and 1, it will not come to this else
+                //      part. While searching for the DIMM target instance 2 and 3, first
+                //      time, it will come to this else part. In the next iteration, the if
+                //      condition will be met and the target handle from the TARGET MAP
+                //      will be returned to the caller. For the DIMM target instance greater
+                //      than 3, the fallback rc will be returned.
 
-            break;
+                // So, not breaking here, instead just updating the fallback rc, since
+                // at this point, we are sure that the i_logTargetType passed is correct.
+                rc = SBE_SEC_INVALID_INSTANCE_ID_PASSED;
+            }
         }
     }
 
