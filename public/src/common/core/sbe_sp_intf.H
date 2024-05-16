@@ -247,6 +247,7 @@ enum sbeSecondaryResponse
     SBE_SEC_ABIST_NOT_DONE                    = 0x98,
     SBE_SEC_OPCG_NOT_DONE                     = 0x99,
     SBE_SEC_FILE_HASH_VALIDATION_FAILED       = 0x9A,
+    SBE_SEC_GIT_TAG_FAILURE                   = 0x9B,
 };
 
 /**

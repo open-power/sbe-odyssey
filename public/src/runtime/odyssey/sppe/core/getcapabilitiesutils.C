@@ -32,7 +32,6 @@
 #include "heap.H"
 #include "imagemap.H"
 #include "getcapabilitiesutils.H"
-#include "sbe_build_info.H"
 
 uint32_t fillImagesDetails(
     uint8_t (&sbeFwReleaseTag)[BUILD_TAG_CHAR_MAX_LENGTH],
@@ -42,9 +41,6 @@ uint32_t fillImagesDetails(
     #define SBE_FUNC " fillImagesDetails "
     SBE_ENTER(SBE_FUNC);
     uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
-
-    memcpy(sbeFwReleaseTag, SBE_BUILD_TAG_ODY,
-           std::min(sizeof(sbeFwReleaseTag), sizeof(SBE_BUILD_TAG_ODY)));
 
     do
     {
@@ -180,6 +176,20 @@ uint32_t fillImagesDetails(
                         }
                         // Update the time stamp.
                         imageInfo[l_img].iv_buildTime = l_timeStamp;
+
+                        // Calling function to get the build tag
+                        l_rc = getSBEFwRelTag((uint8_t*)(SRAM_ORIGIN +
+                                                         VECTOR_SIZE),
+                                                         sbeFwReleaseTag);
+                        if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+                        {
+                            SBE_ERROR(SBE_FUNC " failed to get build tag of an "
+                                               " imageType[%d], at Offset[0x%08x] "
+                                               " RC[0x%08x] ",
+                                                imageInfo[l_img].iv_imageType,
+                                                (SRAM_ORIGIN + VECTOR_SIZE), l_rc);
+                            break;
+                        }
                     }
                     break;
 
