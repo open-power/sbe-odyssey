@@ -168,6 +168,18 @@ uint32_t getTimeStamp(const uint8_t *i_meta_start,
  */
 uint32_t getCommitId(const uint8_t *i_meta_start,
                      uint32_t &o_commitID);
+
+/**
+ * @brief used to get build tag from given offset
+ *
+ * @param[in] i_meta_start : address to get build tag
+ * @param[out] o_sbeFwReleaseTag : get build tag as a output from given address
+ *
+ * @return  RC
+ */
+uint32_t getSBEFwRelTag(const uint8_t *i_meta_start,
+                        uint8_t (&o_sbeFwReleaseTag)[BUILD_TAG_CHAR_MAX_LENGTH]);
+
 /*
 * @brief This API is used to retreive information from the info.txt
 *

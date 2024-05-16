@@ -185,6 +185,34 @@ uint32_t getCommitId(const uint8_t *i_meta_start,
     #undef SBE_FUNC
 }
 
+uint32_t getSBEFwRelTag(const uint8_t *i_meta_start,
+                        uint8_t (&sbeFwReleaseTag)[BUILD_TAG_CHAR_MAX_LENGTH])
+{
+    #define SBE_FUNC " getSBEFwRelTag "
+    SBE_ENTER(SBE_FUNC);
+
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    do
+    {
+        // Get image metadata pointer.
+        auto ptrTAGStruct = GET_META_BLD((uint8_t*)i_meta_start);
+        if (ptrTAGStruct == NULL)
+        {
+            l_rc = SBE_SEC_GIT_TAG_FAILURE;
+            SBE_ERROR(SBE_FUNC "Failed to get GIT tag at Addr:[%p] ",
+                                i_meta_start);
+            break;
+        }
+
+        memcpy(sbeFwReleaseTag, (uint8_t *)ptrTAGStruct, sizeof(BUILD_TAG_CHAR_MAX_LENGTH));
+
+    } while(false);
+
+    SBE_EXIT(SBE_FUNC);
+    return l_rc;
+    #undef SBE_FUNC
+}
+
 
 /**
  * @brief This API is Used to get version info of the format supported in info.txt
