@@ -241,6 +241,7 @@ enum sbeSecondaryResponse
     SBE_SEC_RAS_INVALID_DEVICE_ID             = 0x92,
     SBE_SEC_IMAGE_SIZE_MISMATCH               = 0x93,
     SBE_SEC_FILE_HASH_VALIDATION_FAILED       = 0x9A,
+    SBE_SEC_GIT_TAG_FAILURE                   = 0x9B,
 };
 
 /**
