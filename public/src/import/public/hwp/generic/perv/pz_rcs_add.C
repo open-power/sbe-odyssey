@@ -90,19 +90,6 @@ ReturnCode pz_rcs_add(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHI
         goto fapi_try_exit;
     }
 
-    l_rcs_ctrl1.getScom(i_target);
-    l_root_ctrl5.getScom(i_target);
-
-    FAPI_INF("Unblocking switchover");
-    // Unblock switchover
-    l_rcs_ctrl1.getScom(i_target);
-    l_rcs_ctrl1.clearBit<CTRL1_BLOCK_SWO_AUTO>();
-    l_rcs_ctrl1.putScom(i_target);
-    l_root_ctrl5.getScom(i_target);
-    l_root_ctrl5.clearBit<ROOT_CTRL5_BLOCK_SWO>();
-    l_root_ctrl5.putScom(i_target);
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
-
     // Check Alt ref clk for FPLLs
     l_root_ctrl3.getScom(i_target);
 
@@ -171,6 +158,19 @@ ReturnCode pz_rcs_add(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHI
     fapi2::delay(WAIT_1US, WAIT_100KCYC);
 
     FAPI_TRY(rcs_check_errors(i_target, l_refclock_select));
+
+    l_rcs_ctrl1.getScom(i_target);
+    l_root_ctrl5.getScom(i_target);
+
+    FAPI_INF("Unblocking switchover");
+    // Unblock switchover
+    l_rcs_ctrl1.getScom(i_target);
+    l_rcs_ctrl1.clearBit<CTRL1_BLOCK_SWO_AUTO>();
+    l_rcs_ctrl1.putScom(i_target);
+    l_root_ctrl5.getScom(i_target);
+    l_root_ctrl5.clearBit<ROOT_CTRL5_BLOCK_SWO>();
+    l_root_ctrl5.putScom(i_target);
+    fapi2::delay(WAIT_1US, WAIT_100KCYC);
 
 fapi_try_exit:
     FAPI_INF("End RCS Add");
