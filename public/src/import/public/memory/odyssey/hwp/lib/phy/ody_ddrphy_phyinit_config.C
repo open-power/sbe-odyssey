@@ -3599,6 +3599,7 @@ fapi_try_exit:
 //#################################################################################################################
 //#################################################################################################################
 
+#ifndef __PPE__
 ///
 /// @brief Initializes all of the PHY init structures
 /// @param[in] i_target - the memory port on which to operate
@@ -3901,6 +3902,7 @@ fapi2::ReturnCode init_phy_structs_hardcodes( const fapi2::Target<fapi2::TARGET_
 
     return fapi2::FAPI2_RC_SUCCESS;
 }
+#endif
 
 ///
 /// @brief Configures the PHY to be ready for DRAMINIT for the simulation environment
@@ -3978,11 +3980,13 @@ fapi2::ReturnCode run_phy_init( const fapi2::Target<fapi2::TARGET_TYPE_MEM_PORT>
     // TODO: Zen:MST-1895 Make a helper function for this or remove the hardcodes
     if (l_data_source == fapi2::ENUM_ATTR_ODY_MSG_BLOCK_DATA_SOURCE_USE_HARDCODES)
     {
+#ifndef __PPE__
         FAPI_TRY(init_phy_structs_hardcodes(i_target,
                                             l_user_input_basic,
                                             l_user_input_advanced,
                                             l_user_input_dram_config),
                  TARGTIDFORMAT "failed init_phy_structs", TARGTID);
+#endif
     }
     else
     {
