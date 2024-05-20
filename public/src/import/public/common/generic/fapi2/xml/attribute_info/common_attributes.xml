@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2021,2023                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2021,2024                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -53,7 +53,7 @@
       TARGET_TYPE_L3CACHE,
       TARGET_TYPE_INT, TARGET_TYPE_NX, TARGET_TYPE_PAX, TARGET_TYPE_PAXO, TARGET_TYPE_SMPLINK,
       TARGET_TYPE_PEC6P, TARGET_TYPE_PEC2P, TARGET_TYPE_PHB248X, TARGET_TYPE_PHB16X,
-      TARGET_TYPE_POWER_IC, TARGET_TYPE_TEMP_SENSOR
+      TARGET_TYPE_POWER_IC, TARGET_TYPE_TEMP_SENSOR, TARGET_TYPE_ASIC_CHIP
     </targetType>
     <description>
       1 if the target is functional, else 0.  Set by the platform.
@@ -73,7 +73,7 @@
       TARGET_TYPE_DIMM, TARGET_TYPE_OCMB_CHIP, TARGET_TYPE_PMIC,
       TARGET_TYPE_GENERICI2CRESPONDER, TARGET_TYPE_MDS_CTLR,
       TARGET_TYPE_COMPUTE_CHIP, TARGET_TYPE_HUB_CHIP,
-      TARGET_TYPE_POWER_IC, TARGET_TYPE_TEMP_SENSOR
+      TARGET_TYPE_POWER_IC, TARGET_TYPE_TEMP_SENSOR, TARGET_TYPE_ASIC_CHIP
     </targetType>
     <description>
       Physical position of chip/dimm within socket/slot
@@ -118,7 +118,7 @@
       TARGET_TYPE_L3CACHE,
       TARGET_TYPE_INT, TARGET_TYPE_NX, TARGET_TYPE_PAX, TARGET_TYPE_PAXO, TARGET_TYPE_SMPLINK,
       TARGET_TYPE_PEC6P, TARGET_TYPE_PEC2P, TARGET_TYPE_PHB248X, TARGET_TYPE_PHB16X,
-      TARGET_TYPE_POWER_IC, TARGET_TYPE_TEMP_SENSOR
+      TARGET_TYPE_POWER_IC, TARGET_TYPE_TEMP_SENSOR, TARGET_TYPE_ASIC_CHIP
     </targetType>
     <description>
       Logical position of target within a system. This is derived from the SMP location

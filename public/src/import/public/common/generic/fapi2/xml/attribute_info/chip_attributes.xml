@@ -30,7 +30,8 @@
       TARGET_TYPE_PROC_CHIP,
       TARGET_TYPE_HUB_CHIP,
       TARGET_TYPE_COMPUTE_CHIP,
-      TARGET_TYPE_OCMB_CHIP
+      TARGET_TYPE_OCMB_CHIP,
+      TARGET_TYPE_ASIC_CHIP
     </targetType>
     <description>
       Product name of a chip target.
@@ -44,7 +45,9 @@
       GALAXY = 0xC,
       PS = 0xD,
       PT = 0xE,
-      ZMETIS = 0xF
+      ZMETIS = 0xF,
+      FLORENCE = 0x10,
+      NEXUS = 0x11
     </enum>
     <platInit/>
     <privileged/>
@@ -56,7 +59,8 @@
       TARGET_TYPE_PROC_CHIP,
       TARGET_TYPE_HUB_CHIP,
       TARGET_TYPE_COMPUTE_CHIP,
-      TARGET_TYPE_OCMB_CHIP
+      TARGET_TYPE_OCMB_CHIP,
+      TARGET_TYPE_ASIC_CHIP
     </targetType>
     <description>
         EC level of a chip target.
@@ -75,7 +79,8 @@
       TARGET_TYPE_PROC_CHIP,
       TARGET_TYPE_HUB_CHIP,
       TARGET_TYPE_COMPUTE_CHIP,
-      TARGET_TYPE_OCMB_CHIP
+      TARGET_TYPE_OCMB_CHIP,
+      TARGET_TYPE_ASIC_CHIP
     </targetType>
     <description>
         Specifies extra mini-EC versions beyond the standard Major.Minor DD
