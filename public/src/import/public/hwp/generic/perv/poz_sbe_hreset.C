@@ -58,12 +58,23 @@ ReturnCode poz_sbe_hreset(
 
     if (!i_use_scom_path)
     {
+        // Get and set the side to boot the SPPE from
+        // Callers of this HWP need to set the SPPE_BOOT_SIDE
+        // as appropriate to indicate which side to boot from.
+        fapi2::buffer<uint8_t> l_bootSide;
+        FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_SPPE_BOOT_SIDE, i_target, l_bootSide));
+        FAPI_TRY(SB_CS.getCfam(i_target));
+        FAPI_INF("CFAM Current boot side set to %d. l_bootSide=%d", SB_CS.getBits<17, 2>(), l_bootSide);
+        SB_CS.insertFromRight<17, 2, uint8_t>(l_bootSide);
+        FAPI_INF("CFAM New boot side set to %d.", SB_CS.getBits<17, 2>());
+        FAPI_TRY(SB_CS.putCfam(i_target));
+
         //Applying hreset only when SBE is in Runtime State
         FAPI_INF("Checking if SBE is in Runtime State");
         FAPI_TRY(SB_MSG.getCfam(i_target));
 
-        // TODO: Need to remove check of 3(Autoboot done state) once hostboot and
-        // Cronus team will be stable to check with 6(Runtime State).
+        // TODO: Need to remove check of 3 once HB and cronus team will be
+        // Stable to check with 6.
         if ((SB_MSG.getBits<8, 4>() == 6) || (SB_MSG.getBits<8, 4>() == 3))
         {
             FAPI_INF("SBE is in Runtime State");
@@ -72,6 +83,10 @@ ReturnCode poz_sbe_hreset(
         {
             FAPI_INF("SBE is in NOT Runtime State");
         }
+
+        FAPI_INF("Clearing boot status in SB_MSG register before doing HRESET");
+        SB_MSG.clearBit<0>();
+        FAPI_TRY(SB_MSG.putCfam(i_target));
 
         FAPI_INF("Resetting restart vector0 and vector1 ...");
         FAPI_TRY(SB_CS.getCfam(i_target));
@@ -101,11 +116,25 @@ ReturnCode poz_sbe_hreset(
             // bump count
             l_poll++;
 
+            if (!(l_poll <= i_boot_parms.max_polls))
+            {
+                FAPI_TRY(SB_CS.getCfam(i_target));
+
+                if (SB_CS.get_SECURE_DEBUG_MODE())
+                {
+                    FAPI_ERR("SBE Boot failed since SDB is set");
+                }
+            }
+
             // test for timeout
             FAPI_ASSERT((l_poll <= i_boot_parms.max_polls),
                         fapi2::SBE_BOOT_CHECK_ERR_CFAM_PATH()
                         .set_TARGET(i_target)
-                        .set_SB_MSG(SB_MSG()),
+                        .set_POLL_COUNT(i_boot_parms.max_polls)
+                        .set_POLL_DELAY(i_boot_parms.poll_delay_ns)
+                        .set_SB_CS(SB_CS)
+                        .set_SDB(SB_CS.get_SECURE_DEBUG_MODE())
+                        .set_SB_MSG(SB_MSG),
                         //.set_BOOT_TYPE(l_check_for_runtime),
                         "SBE did not Boot up prior to timeout!");
         }
@@ -113,12 +142,23 @@ ReturnCode poz_sbe_hreset(
 
     else
     {
+        // Get and set the side to boot the SPPE from
+        // Callers of this HWP need to set the SPPE_BOOT_SIDE
+        // as appropriate to indicate which side to boot from.
+        fapi2::buffer<uint8_t> l_bootSide;
+        FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_SPPE_BOOT_SIDE, i_target, l_bootSide));
+        FAPI_TRY(SB_CS.getScom(i_target));
+        FAPI_INF("SCOM Current boot side set to %d. l_bootSide=%d", SB_CS.getBits<17, 2>(), l_bootSide);
+        SB_CS.insertFromRight<17, 2, uint8_t>(l_bootSide);
+        FAPI_INF("SCOM New boot side set to %d.", SB_CS.getBits<17, 2>());
+        FAPI_TRY(SB_CS.putScom(i_target));
+
         //Applying hreset only when SBE is in Runtime State
         FAPI_INF("Checking if SBE is in Runtime State");
         FAPI_TRY(SB_MSG.getScom(i_target));
 
-        // TODO: Need to remove check of 3(Autoboot done state) once hostboot and
-        // Cronus team will be stable to check with 6(Runtime State).
+        // TODO: Need to remove check of 3 once HB and cronus team will be
+        // Stable to check with 6.
         if ((SB_MSG.getBits<8, 4>() == 6) || (SB_MSG.getBits<8, 4>() == 3))
         {
             FAPI_INF("SBE is in Runtime State");
@@ -127,6 +167,10 @@ ReturnCode poz_sbe_hreset(
         {
             FAPI_INF("SBE is in NOT Runtime State");
         }
+
+        FAPI_INF("Clearing boot status in SB_MSG register before doing HRESET");
+        SB_MSG.clearBit<0>();
+        FAPI_TRY(SB_MSG.putScom(i_target));
 
         FAPI_INF("Resetting restart vector1 ...");
         FAPI_TRY(SB_CS.getScom(i_target));
@@ -155,11 +199,25 @@ ReturnCode poz_sbe_hreset(
             // bump count
             l_poll++;
 
+            if (!(l_poll <= i_boot_parms.max_polls))
+            {
+                FAPI_TRY(SB_CS.getScom(i_target));
+
+                if (SB_CS.get_SECURE_DEBUG_MODE())
+                {
+                    FAPI_ERR("SBE Boot failed since SDB is set");
+                }
+            }
+
             // test for timeout
             FAPI_ASSERT((l_poll <= i_boot_parms.max_polls),
                         fapi2::SBE_BOOT_CHECK_ERR_SCOM_PATH()
                         .set_TARGET(i_target)
-                        .set_SB_MSG(SB_MSG()),
+                        .set_POLL_COUNT(i_boot_parms.max_polls)
+                        .set_POLL_DELAY(i_boot_parms.poll_delay_ns)
+                        .set_SB_CS(SB_CS)
+                        .set_SDB(SB_CS.get_SECURE_DEBUG_MODE())
+                        .set_SB_MSG(SB_MSG),
                         //.set_BOOT_TYPE(l_check_for_runtime),
                         "SBE did not Boot up prior to timeout!");
         }
