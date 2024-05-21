@@ -51,7 +51,22 @@ enum spi_base_constants
 
     TPM_RDR_MATCH           = 0x00000000FF01FF00ull,
 
-    ERROR_MASK = 0x64000000FFE1FF80ull,
+    // Mask to check for controller errors while polling status.
+    // Trips on every defined error except:
+    //   bit  0 : RDR full : needed for receive
+    //   bit  3 : reserved
+    //   bit  4 : TDR full : needed for transmit
+    //   bit  6 : TDR underrun : occurs at the end of transmission
+    //   bit  7 : reserved
+    //   bits 8:31 : various FSM states
+    //   bit 43 : ECC CE : corrected and thus benign
+    //   bits 45:46 : unused
+    //   bit 57 : mux indicator : not an error
+    //   bit 58 : PIB write returned RETRY response :
+    //            caused by external entity and
+    //            should not disrupt ongoing SPI transaction
+    //   bits 59:63 : unused
+    ERROR_MASK = 0x64000000FFE9FF80ull,
 
     // Masks to check for proper idle state:
     // No error flags whatsoever, state machines idle, ignore sequence index
